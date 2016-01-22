@@ -3,6 +3,7 @@ package com.baomidou.mybatisplus.test;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.baomidou.mybatisplus.handler.BeanHandler;
 import com.baomidou.mybatisplus.mapper.SimpleMapper;
+import com.baomidou.mybatisplus.toolkit.IdWorker;
 
 public class TestMybatisPlus {
 
@@ -18,6 +19,8 @@ public class TestMybatisPlus {
 	 */
 	public static void main( String[] args ) {
 		SimpleMapper memory = new SimpleMapper(getDataSource());
+		
+		System.err.println("\n生成唯一ID: " + IdWorker.getId());
 		
 		/**
 		 * 创建一条记录
