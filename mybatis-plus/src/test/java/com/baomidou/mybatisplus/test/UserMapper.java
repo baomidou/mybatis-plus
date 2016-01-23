@@ -27,4 +27,6 @@ import com.baomidou.mybatisplus.mapper.AutoMapper;
  */
 public interface UserMapper extends AutoMapper<User> {
 
+	int deleteByName(String name);
+
 }

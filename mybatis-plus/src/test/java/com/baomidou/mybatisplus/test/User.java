@@ -16,9 +16,11 @@
 package com.baomidou.mybatisplus.test;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 
-import com.baomidou.mybatisplus.annotation.Id;
-import com.baomidou.mybatisplus.annotation.Table;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 
 /**
  * <p>
@@ -29,18 +31,35 @@ import com.baomidou.mybatisplus.annotation.Table;
  * @Date 2016-01-23
  */
 /* 表名 注解 */
-@Table(name = "user")
+@TableName(value = "user")
 public class User implements Serializable {
 
+	/* 表字段 主键，false 表中不存在的字段，可无该注解 默认 true */
+	@TableField(exist = false)
 	private static final long serialVersionUID = 1L;
 
-	/* 主键ID 注解，auto 属性 true 自增，false 非自增 */
-	@Id
+	/* 主键ID 注解，auto 属性 true 自增，false 非自增 默认 true*/
+	@TableId(auto = true)
 	private long id;
 
 	private String name;
 
 	private int age;
+	
+	public User() {
+		
+	}
+
+	public User(String name, int age) {
+		this.name = name;
+		this.age = age;
+	}
+	
+	public User(long id, String name, int age) {
+		this.id = id;
+		this.name = name;
+		this.age = age;
+	}
 
 	public long getId() {
 		return id;
@@ -66,4 +85,21 @@ public class User implements Serializable {
 		this.age = age;
 	}
 
+	/**
+	 * 测试类型
+	 */
+	public static void main(String args[]) throws IllegalAccessException {
+		User user = new User();
+		user.setName("12306");
+		user.setAge(3);
+		System.err.println(User.class.getName());
+		Field[] fields = user.getClass().getDeclaredFields();
+		for (Field field : fields) {
+			System.out.println("===================================");
+			System.out.println(field.getName());
+			System.out.println(field.getType().toString());
+			field.setAccessible(true);
+			System.out.println(field.get(user));
+		}
+	}
 }

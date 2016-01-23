@@ -2,9 +2,13 @@
  <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.baomidou.mybatisplus.test.UserMapper">
 
-	<select id="selectById" parameterType="long"
+	<select id="selectById" parameterType="java.lang.Long"
 		resultType="com.baomidou.mybatisplus.test.User">
 		select * from user where id=#{id}
 	</select>
+	
+	<delete id="deleteByName" parameterType="java.lang.String" >
+		delete FROM user where name=#{name}
+	</delete>
 
 </mapper>

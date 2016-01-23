@@ -30,9 +30,9 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Table {
+public @interface TableName {
 
 	/** 表名 **/
-	String name() default "";
+	String value() default "";
 
 }

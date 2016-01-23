@@ -129,11 +129,20 @@ public class AutoGenerator {
 				List<String> columns = new ArrayList<String>();
 				List<String> types = new ArrayList<String>();
 				List<String> comments = new ArrayList<String>();
+				Map<String, IdInfo> idMap = new HashMap<String, IdInfo>();
 				ResultSet results = conn.prepareStatement("show full fields from " + table).executeQuery();
 				while (results.next()) {
 					columns.add(results.getString("FIELD"));
 					types.add(results.getString("TYPE"));
 					comments.add(results.getString("COMMENT"));
+					String key = results.getString("KEY");
+					if ("PRI".equals(key)) {
+						boolean autoIncrement = false;
+						if ("auto_increment".equals(results.getString("EXTRA"))) {
+							autoIncrement = true;
+						}
+						idMap.put(results.getString("FIELD"), new IdInfo(key, autoIncrement));
+					}
 				}
 
 				String beanName = getBeanName(table, config.isDbPrefix());
@@ -142,8 +151,8 @@ public class AutoGenerator {
 				/**
 				 * 生成映射文件
 				 */
-				buildEntityBean(columns, types, comments, tableComments.get(table), beanName);
-				buildMapper(table, beanName, mapperName);
+				buildEntityBean(columns, types, comments, tableComments.get(table), idMap, table, beanName);
+				buildMapper(beanName, mapperName);
 				buildMapperXml(columns, types, comments, mapperName);
 			}
 		} catch (Exception e) {
@@ -296,7 +305,7 @@ public class AutoGenerator {
 	 * @throws IOException
 	 */
 	private void buildEntityBean(List<String> columns, List<String> types, List<String> comments, String tableComment,
-			String beanName) throws IOException {
+			Map<String, IdInfo> idMap, String table, String beanName) throws IOException {
 		File beanFile = new File(this.getFileName("entity"), beanName + ".java");
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(beanFile)));
 		bw.write("package " + config.getEntityPackage() + ";");
@@ -305,8 +314,12 @@ public class AutoGenerator {
 		bw.write("import java.io.Serializable;");
 		bw = buildClassComment(bw, tableComment);
 		bw.newLine();
+		bw.write("@TableName(value = \"" + table + "\")");
+		bw.newLine();
 		bw.write("public class " + beanName + " implements Serializable {");
 		bw.newLine();
+		bw.newLine();
+		bw.write("\t@TableField(exist = false)");
 		bw.newLine();
 		bw.write("\tprivate static final long serialVersionUID = 1L;");
 		bw.newLine();
@@ -315,7 +328,20 @@ public class AutoGenerator {
 			bw.newLine();
 			bw.write("\t/** " + comments.get(i) + " */");
 			bw.newLine();
-			bw.write("\tprivate " + processType(types.get(i)) + " " + processField(columns.get(i)) + ";");
+			/*
+			 * 判断ID 添加注解
+			 */
+			String field = processField(columns.get(i));
+			IdInfo idInfo = idMap.get(field);
+			if (idInfo != null) {
+				if (idInfo.isAutoIncrement()) {
+					bw.write("\t@TableId(auto = true)");
+				} else {
+					bw.write("\t@TableId(auto = false)");
+				}
+				bw.newLine();
+			}
+			bw.write("\tprivate " + processType(types.get(i)) + " " + field + ";");
 			bw.newLine();
 		}
 
@@ -327,18 +353,16 @@ public class AutoGenerator {
 			String _tempField = processField(columns.get(i));
 			String _field = _tempField.substring(0, 1).toUpperCase() + _tempField.substring(1);
 			bw.newLine();
+			bw.write("\tpublic " + _tempType + " get" + _field + "() {");
 			bw.newLine();
-			bw.write("\tpublic void set" + _field + "(" + _tempType + " " + _tempField + ") {");
-			bw.newLine();
-			bw.write("\t\tthis." + _tempField + " = " + _tempField + ";");
+			bw.write("\t\treturn this." + _tempField + ";");
 			bw.newLine();
 			bw.write("\t}");
 			bw.newLine();
 			bw.newLine();
+			bw.write("\tpublic void set" + _field + "(" + _tempType + " " + _tempField + ") {");
 			bw.newLine();
-			bw.write("\tpublic " + _tempType + " get" + _field + "() {");
-			bw.newLine();
-			bw.write("\t\treturn this." + _tempField + ";");
+			bw.write("\t\tthis." + _tempField + " = " + _tempField + ";");
 			bw.newLine();
 			bw.write("\t}");
 			bw.newLine();
@@ -357,7 +381,7 @@ public class AutoGenerator {
 	 *
 	 * @throws IOException
 	 */
-	private void buildMapper(String tableName, String beanName, String mapperName) throws IOException {
+	private void buildMapper(String beanName, String mapperName) throws IOException {
 		File mapperFile = new File(this.getFileName("mapper"), mapperName + ".java");
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(mapperFile), "utf-8"));
 		bw.write("package " + config.getMapperPackage() + ";");
@@ -365,16 +389,12 @@ public class AutoGenerator {
 		bw.newLine();
 		bw.write("import " + config.getEntityPackage() + "." + beanName + ";");
 		bw.newLine();
-		bw.write("import com.ext_ext.mybatisext.annotation.TableName;");
-		bw.newLine();
-		bw.write("import com.ext_ext.mybatisext.mapper.CommonMapper;");
+		bw.write("import com.baomidou.mybatisplus.mapper.AutoMapper;");
 		bw.newLine();
 
 		bw = buildClassComment(bw, mapperName + "数据库操作接口类");
 		bw.newLine();
-		bw.write("@TableName(name = \"" + tableName + "\", type = " + beanName + ".class)");
-		bw.newLine();
-		bw.write("public interface " + mapperName + " extends CommonMapper<" + beanName + ">{");
+		bw.write("public interface " + mapperName + " extends AutoMapper<" + beanName + "> {");
 		bw.newLine();
 		bw.newLine();
 
@@ -461,4 +481,30 @@ public class AutoGenerator {
 		return maps;
 	}
 
+	class IdInfo {
+		private String value;
+		private boolean autoIncrement;
+
+		public IdInfo(String value, boolean autoIncrement) {
+			this.value = value;
+			this.autoIncrement = autoIncrement;
+
+		}
+
+		public String getValue() {
+			return value;
+		}
+
+		public void setValue(String value) {
+			this.value = value;
+		}
+
+		public boolean isAutoIncrement() {
+			return autoIncrement;
+		}
+
+		public void setAutoIncrement(boolean autoIncrement) {
+			this.autoIncrement = autoIncrement;
+		}
+	}
 }

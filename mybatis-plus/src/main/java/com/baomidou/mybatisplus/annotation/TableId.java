@@ -24,7 +24,7 @@ import com.baomidou.mybatisplus.toolkit.IdWorker;
 
 /**
  * <p>
- * 数据库主键标识
+ * 表主键标识
  * </p>
  * 
  * @author hubin
@@ -32,7 +32,7 @@ import com.baomidou.mybatisplus.toolkit.IdWorker;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface Id {
+public @interface TableId {
 
 	/**
 	 * 
@@ -46,4 +46,5 @@ public @interface Id {
 	 * 
 	 */
 	boolean auto() default true;
+
 }
