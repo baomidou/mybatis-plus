@@ -312,6 +312,14 @@ public class AutoGenerator {
 		bw.newLine();
 		bw.newLine();
 		bw.write("import java.io.Serializable;");
+		bw.newLine();
+		bw.newLine();
+		bw.write("import com.baomidou.mybatisplus.annotation.TableField;");
+		bw.newLine();
+		bw.write("import com.baomidou.mybatisplus.annotation.TableId;");
+		bw.newLine();
+		bw.write("import com.baomidou.mybatisplus.annotation.TableName;");
+		bw.newLine();
 		bw = buildClassComment(bw, tableComment);
 		bw.newLine();
 		bw.write("@TableName(value = \"" + table + "\")");
