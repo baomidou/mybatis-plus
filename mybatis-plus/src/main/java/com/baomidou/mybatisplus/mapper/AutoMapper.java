@@ -19,7 +19,7 @@ import java.util.List;
 
 /**
  * <p>
- * Mapper继承该接口后，无需编写mapper.xml文件，即可获得CRUD功能
+ * Mapper 继承该接口后，无需编写 mapper.xml 文件，即可获得CRUD功能
  * </p>
  * 
  * @author hubin

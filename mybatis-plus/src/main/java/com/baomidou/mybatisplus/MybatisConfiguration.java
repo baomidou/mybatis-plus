@@ -40,6 +40,13 @@ public class MybatisConfiguration extends Configuration {
 	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	/**
+	 * 初始化调用
+	 */
+	public MybatisConfiguration() {
+		System.err.println("mybatis-plus init success.");
+	}
+	
+	/**
 	 * Mybatis加载sql的顺序：<br>
 	 * 1、加载xml中的sql；<br>
 	 * 2、加载sqlprovider中的sql<br>
