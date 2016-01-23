@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.baomidou</groupId>
 	<artifactId>mybatis-plus</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0</version>
 	<packaging>jar</packaging>
 
 	<name>mybatis-plus</name>
@@ -14,8 +14,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<mybatis.version>3.3.0</mybatis.version>
 		<slf4j-api.version>1.7.13</slf4j-api.version>
-		<persistence-api.version>1.0.2</persistence-api.version>
-		<druid.version>1.0.16</druid.version>
 		<mysql-connector-java.version>5.1.38</mysql-connector-java.version>
 	</properties>
 
@@ -26,11 +24,6 @@
 			<version>${mybatis.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>javax.persistence</groupId>
-			<artifactId>persistence-api</artifactId>
-			<version>${persistence-api.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>${slf4j-api.version}</version>
@@ -38,14 +31,10 @@
 
 		<!-- test begin -->
 		<dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>druid</artifactId>
-			<version>${druid.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>${mysql-connector-java.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<!-- test end -->
 	</dependencies>
