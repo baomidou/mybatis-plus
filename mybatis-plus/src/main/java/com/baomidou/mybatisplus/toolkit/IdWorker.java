@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2011-2014, hubin (jobob@qq.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.baomidou.mybatisplus.toolkit;
 
 import java.net.NetworkInterface;
@@ -21,10 +36,14 @@ import org.apache.ibatis.logging.LogFactory;
  */
 public class IdWorker {
 
-	// 根据具体机器环境提供
+	/**
+	 * 根据具体机器环境提供
+	 */
 	private final long workerId;
 
-	// 滤波器,使时间变小,生成的总位数变小,一旦确定不能变动
+	/**
+	 * 滤波器,使时间变小,生成的总位数变小,一旦确定不能变动
+	 */
 	private final static long twepoch = 1361753741828L;
 
 	private long sequence = 0L;
@@ -43,14 +62,17 @@ public class IdWorker {
 
 	private long lastTimestamp = -1L;
 
-	// 根据主机id获取机器码
+	/**
+	 * 主机和进程的机器码
+	 */
 	private static IdWorker worker = new IdWorker();
 
 	private static final Log logger = LogFactory.getLog(IdWorker.class);
 
-	// 主机和进程的机器码
+	/**
+	 * 主机和进程的机器码
+	 */
 	private static final int _genmachine;
-
 
 	static {
 		try {
@@ -60,12 +82,12 @@ public class IdWorker {
 				try {
 					StringBuilder sb = new StringBuilder();
 					Enumeration<NetworkInterface> e = NetworkInterface.getNetworkInterfaces();
-					while ( e.hasMoreElements() ) {
+					while (e.hasMoreElements()) {
 						NetworkInterface ni = e.nextElement();
 						sb.append(ni.toString());
 					}
 					machinePiece = sb.toString().hashCode() << 16;
-				} catch ( Throwable e ) {
+				} catch (Throwable e) {
 					// exception sometimes happens with IBM JVM, use random
 					logger.error(e.getMessage(), e);
 					machinePiece = new Random().nextInt() << 16;
@@ -82,7 +104,8 @@ public class IdWorker {
 				int processId = new java.util.Random().nextInt();
 				try {
 					processId = java.lang.management.ManagementFactory.getRuntimeMXBean().getName().hashCode();
-				} catch ( Throwable t ) {}
+				} catch (Throwable t) {
+				}
 
 				ClassLoader loader = IdWorker.class.getClassLoader();
 				int loaderId = loader != null ? System.identityHashCode(loader) : 0;
@@ -96,56 +119,36 @@ public class IdWorker {
 
 			_genmachine = machinePiece | processPiece;
 			logger.debug("machine : " + Integer.toHexString(_genmachine));
-		} catch ( Exception e ) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 
 	}
 
-
-	/**
-	 * 创建 IdWorker对象.
-	 *
-	 * @Deprecated 请调用静态方法getId()
-	 * @param workerId
-	 */
-	@Deprecated
-	public IdWorker( final long workerId ) {
-		if ( workerId > IdWorker.maxWorkerId || workerId < 0 ) {
-			throw new IllegalArgumentException(
-					String.format("worker Id can't be greater than %d or less than 0", IdWorker.maxWorkerId));
-		}
-		this.workerId = workerId;
-	}
-
-
 	public IdWorker() {
-		// this.workerId = getAddress() % (IdWorker.maxWorkerId + 1);
 		workerId = _genmachine % (IdWorker.maxWorkerId + 1);
 	}
-
 
 	public static long getId() {
 		return worker.nextId();
 	}
 
-
 	public synchronized long nextId() {
 		long timestamp = timeGen();
-		if ( lastTimestamp == timestamp ) {
+		if (lastTimestamp == timestamp) {
 			sequence = sequence + 1 & IdWorker.sequenceMask;
-			if ( sequence == 0 ) {
+			if (sequence == 0) {
 				// System.out.println("###########" + sequenceMask);//等待下一毫秒
 				timestamp = tilNextMillis(lastTimestamp);
 			}
 		} else {
 			sequence = 0;
 		}
-		if ( timestamp < lastTimestamp ) {
+		if (timestamp < lastTimestamp) {
 			try {
 				throw new Exception(String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds",
-					lastTimestamp - timestamp));
-			} catch ( Exception e ) {
+						lastTimestamp - timestamp));
+			} catch (Exception e) {
 				logger.error(e.getMessage(), e);
 			}
 		}
@@ -154,19 +157,16 @@ public class IdWorker {
 		return timestamp - twepoch << timestampLeftShift | workerId << IdWorker.workerIdShift | sequence;
 	}
 
-
-	private long tilNextMillis( final long lastTimestamp1 ) {
+	private long tilNextMillis(final long lastTimestamp1) {
 		long timestamp = timeGen();
-		while ( timestamp <= lastTimestamp1 ) {
+		while (timestamp <= lastTimestamp1) {
 			timestamp = timeGen();
 		}
 		return timestamp;
 	}
 
-
 	private long timeGen() {
 		return System.currentTimeMillis();
 	}
-
 
 }

@@ -13,6 +13,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<mybatis.version>3.3.0</mybatis.version>
+		<slf4j-api.version>1.7.13</slf4j-api.version>
+		<persistence-api.version>1.0.2</persistence-api.version>
 		<druid.version>1.0.16</druid.version>
 		<mysql-connector-java.version>5.1.38</mysql-connector-java.version>
 	</properties>
@@ -22,6 +24,16 @@
 			<groupId>org.mybatis</groupId>
 			<artifactId>mybatis</artifactId>
 			<version>${mybatis.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.persistence</groupId>
+			<artifactId>persistence-api</artifactId>
+			<version>${persistence-api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j-api.version}</version>
 		</dependency>
 
 		<!-- test begin -->
