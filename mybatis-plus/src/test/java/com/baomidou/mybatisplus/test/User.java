@@ -39,7 +39,7 @@ public class User implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/* 主键ID 注解，auto 属性 true 自增，false 非自增 默认 true*/
-	@TableId(auto = true)
+	@TableId(auto = false)
 	private long id;
 
 	private String name;

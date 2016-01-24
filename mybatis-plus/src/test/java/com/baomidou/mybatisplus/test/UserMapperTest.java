@@ -22,6 +22,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
+import com.baomidou.mybatisplus.toolkit.IdWorker;
 
 /**
  * <p>
@@ -52,7 +53,7 @@ public class UserMapperTest {
 		int result = userMapper.deleteByName("test");
 		System.out.println("\n------------------deleteByName----------------------\n result=" + result);
 		
-		userMapper.insert(new User("test", 18));
+		userMapper.insert(new User(IdWorker.getId(), "test", 18));
 		System.out.println("\n------------------insert----------------------\n name=test, age=18");
 
 		/*

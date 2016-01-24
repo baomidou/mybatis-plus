@@ -39,7 +39,7 @@ public @interface TableId {
 	 * 主键ID，默认 true 数据库自增
 	 * 
 	 * <p>
-	 * 设置为 false 调用 AutoMapper 使用 IdWorker 替你产品一个唯一 ID
+	 * 设置为 false 需要用户传入 ID 内容，工具包 IdWorker 可产品全局唯一 ID
 	 * </p>
 	 * 
 	 * {@link IdWorker}

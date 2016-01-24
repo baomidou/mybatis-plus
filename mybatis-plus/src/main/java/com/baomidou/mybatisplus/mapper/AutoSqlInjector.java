@@ -117,13 +117,21 @@ public class AutoSqlInjector {
 	 */
 	private void injectInsertSql(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
 		KeyGenerator keyGenerator = new NoKeyGenerator();
-		String keyParam = null;
-		if (table.getTableId() != null && table.isAutoIncrement()) {
-			keyGenerator = new Jdbc3KeyGenerator();
-			keyParam = table.getTableId();
-		}
 		StringBuilder fieldBuilder = new StringBuilder();
 		StringBuilder placeholderBuilder = new StringBuilder();
+		String keyParam = null;
+		if (table.getTableId() != null){
+			if(table.isAutoIncrement()) {
+				/* 自增主键 */
+				keyGenerator = new Jdbc3KeyGenerator();
+				keyParam = table.getTableId();
+			} else {
+				/* 非自增，用户生成 */
+				fieldBuilder.append(table.getTableId()).append(",");
+				placeholderBuilder.append("#{" + table.getTableId() + "}").append(",");
+			}
+		}
+		
 		List<String> fieldList = table.getFieldList();
 		int size = fieldList.size();
 		for (int i = 0; i < size; i++) {
