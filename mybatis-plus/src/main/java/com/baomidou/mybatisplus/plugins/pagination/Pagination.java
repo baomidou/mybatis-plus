@@ -118,4 +118,8 @@ public class Pagination extends RowBounds {
 		return current;
 	}
 
+	@Override
+	public String toString() {
+		return "Pagination { total=" + total + " ,size=" + size + " ,pages=" + pages + " ,current=" + current + " }";
+	}
 }

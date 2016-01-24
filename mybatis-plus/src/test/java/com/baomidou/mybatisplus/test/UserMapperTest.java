@@ -18,10 +18,12 @@ package com.baomidou.mybatisplus.test;
 import java.io.InputStream;
 import java.util.List;
 
+import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
+import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.test.entity.User;
 import com.baomidou.mybatisplus.test.mapper.UserMapper;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
@@ -54,9 +56,11 @@ public class UserMapperTest {
 		
 		int result = userMapper.deleteByName("test");
 		System.out.println("\n------------------deleteByName----------------------\n result=" + result);
+		sleep();
 		
 		userMapper.insert(new User(IdWorker.getId(), "test", 18));
 		System.out.println("\n------------------insert----------------------\n name=test, age=18");
+		sleep();
 
 		/*
 		 * 此处的 selectById 被UserMapper.xml中的 selectById 覆盖了
@@ -72,6 +76,8 @@ public class UserMapperTest {
 		System.err.println("\n------------------updateById----------------------");
 		user.setName("MybatisPlus_" + System.currentTimeMillis());
 		userMapper.updateById(user);
+		sleep();
+		
 		/*
 		 * 此处的 selectById 被UserMapper.xml中的 selectById 覆盖了
 		 */
@@ -83,6 +89,21 @@ public class UserMapperTest {
 		for (int i = 0; i < userList.size(); i++) {
 			print(userList.get(i));
 		}
+		
+		System.err.println("\n------------------list 分页查询，不查询总数（此时可自定义 count 查询）----------------------");
+		List<User> rowList = userMapper.list(new RowBounds(0, 2));
+		for (int i = 0; i < rowList.size(); i++) {
+			print(rowList.get(i));
+		}
+		
+		System.err.println("\n------------------list 分页查询，查询总数----------------------");
+		Pagination pagination = new Pagination(0, 2);
+		List<User> paginList = userMapper.list(pagination);
+		for (int i = 0; i < paginList.size(); i++) {
+			print(paginList.get(i));
+		}
+		System.err.println(pagination.toString());
+		
 		// 提交
 		session.commit();
 	}
@@ -91,10 +112,22 @@ public class UserMapperTest {
 	 * 打印测试信息
 	 */
 	private static void print(User user) {
+		sleep();
 		if (user != null) {
 			System.out.println("\n user: id=" + user.getId() + ", name=" + user.getName() + ", age=" + user.getAge());
 		} else {
 			System.out.println("\n user is null.");
+		}
+	}
+	
+	/*
+	 * 慢点打印 
+	 */
+	private static void sleep() {
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 }

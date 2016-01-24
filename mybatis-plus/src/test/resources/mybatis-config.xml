@@ -45,6 +45,9 @@
         <package name="com.baomidou.mybatisplus.test.entity" />
     </typeAliases>
      | -->
+    <typeAliases>
+        <package name="com.baomidou.mybatisplus.test.entity" />
+    </typeAliases>
     
     <!-- 插件配置 -->
     <plugins>
