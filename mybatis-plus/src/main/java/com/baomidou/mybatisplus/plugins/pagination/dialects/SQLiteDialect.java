@@ -13,33 +13,24 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.annotation;
+package com.baomidou.mybatisplus.plugins.pagination.dialects;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.baomidou.mybatisplus.plugins.pagination.IDialect;
 
 /**
  * <p>
- * 表字段标识
+ * SQLite 数据库分页语句组装实现
  * </p>
  * 
  * @author hubin
  * @Date 2016-01-23
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface TableField {
-	
-	/**
-	 * 
-	 * <p>
-	 * 是否为数据库表字段
-	 * </p>
-	 * 默认 true 存在，false 不存在
-	 * 
-	 */
-	boolean exist() default true;
+public class SQLiteDialect implements IDialect {
+
+	public String buildPaginationSql(String originalSql, int offset, int limit) {
+		StringBuffer sql = new StringBuffer(originalSql);
+		sql.append(" limit ").append(limit).append(" offset ").append(offset);
+		return sql.toString();
+	}
 
 }

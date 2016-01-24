@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotations.TableId;
+import com.baomidou.mybatisplus.annotations.TableName;
 
 /**
  * <p>
@@ -141,29 +141,4 @@ public class TableInfoHelper {
 		return result;
 	}
 
-	// /**
-	// * 获取该类的所有字符列表，排查 Transient 类型的字段
-	// *
-	// * @param clazz
-	// * 反射类
-	// * @return
-	// */
-	// public static List<Field> getAllFieldsExcludeTransient(Class<?> clazz) {
-	// List<Field> result = fieldListMap.get(clazz.getName());
-	// if (result != null) {
-	// return result;
-	// }
-	//
-	// result = new LinkedList<Field>();
-	// List<Field> list = getAllFields(clazz);
-	// for (Field field : list) {
-	// if (Modifier.isTransient(field.getModifiers())) {
-	// continue;
-	// }
-	// result.add(field);
-	// }
-	//
-	// fieldListMap.put(clazz.getName(), result);
-	// return result;
-	// }
 }

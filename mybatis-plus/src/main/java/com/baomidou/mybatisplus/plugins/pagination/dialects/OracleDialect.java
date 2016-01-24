@@ -13,38 +13,29 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.annotation;
+package com.baomidou.mybatisplus.plugins.pagination.dialects;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-import com.baomidou.mybatisplus.toolkit.IdWorker;
+import com.baomidou.mybatisplus.plugins.pagination.IDialect;
 
 /**
  * <p>
- * 表主键标识
+ * ORACLE 数据库分页语句组装实现
  * </p>
  * 
  * @author hubin
  * @Date 2016-01-23
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface TableId {
+public class OracleDialect implements IDialect {
 
-	/**
-	 * 
-	 * 主键ID，默认 true 数据库自增
-	 * 
-	 * <p>
-	 * 设置为 false 需要用户传入 ID 内容，工具包 IdWorker 可产品全局唯一 ID
-	 * </p>
-	 * 
-	 * {@link IdWorker}
-	 * 
-	 */
-	boolean auto() default true;
+	public String buildPaginationSql(String originalSql, int offset, int limit) {
+		StringBuilder sql = new StringBuilder(originalSql);
+		/*
+		 * ORACLE 分页是通过 ROWNUMBER 进行的，ROWNUMBER 是从 1 开始的
+		 */
+		offset++;
+		sql.insert(0, "SELECT U.*, ROWNUM R FROM (").append(") U WHERE ROWNUM < ").append(offset + limit);
+		sql.insert(0, "SELECT * FROM (").append(") TEMP WHERE R >= ").append(offset);
+		return sql.toString();
+	}
 
 }
