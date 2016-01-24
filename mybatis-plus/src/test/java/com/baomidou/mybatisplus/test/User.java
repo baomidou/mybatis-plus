@@ -38,7 +38,7 @@ public class User implements Serializable {
 	@TableField(exist = false)
 	private static final long serialVersionUID = 1L;
 
-	/* 主键ID 注解，auto 属性 true 自增，false 非自增 默认 true*/
+	/* 主键ID 注解，auto 属性 true 自增（默认 true），false 非自增（调用插入 insert 需要用户传入ID值）*/
 	@TableId(auto = false)
 	private long id;
 
