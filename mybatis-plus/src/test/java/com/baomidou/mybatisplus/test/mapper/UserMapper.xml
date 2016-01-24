@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
  <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.baomidou.mybatisplus.test.UserMapper">
+<mapper namespace="com.baomidou.mybatisplus.test.mapper.UserMapper">
 
 	<select id="selectById" parameterType="java.lang.Long"
-		resultType="com.baomidou.mybatisplus.test.User">
+		resultType="com.baomidou.mybatisplus.test.entity.User">
 		select * from user where id=#{id}
 	</select>
 	

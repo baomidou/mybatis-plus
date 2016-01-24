@@ -22,6 +22,8 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
+import com.baomidou.mybatisplus.test.entity.User;
+import com.baomidou.mybatisplus.test.mapper.UserMapper;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
 
 /**
@@ -34,7 +36,7 @@ import com.baomidou.mybatisplus.toolkit.IdWorker;
  * @Date 2016-01-23
  */
 public class UserMapperTest {
-	private static final String RESOURCE = "mybatis.xml";
+	private static final String RESOURCE = "mybatis-config.xml";
 
 	/**
 	 * RUN 测试

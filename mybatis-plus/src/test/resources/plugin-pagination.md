@@ -15,7 +15,7 @@
 	     | dialectType 数据库方言  
 	     |             默认支持  mysql  oracle  hsql  sqlite  postgre
 	     | dialectClazz 方言实现类
-	     |              自定义需要实现 com.baomidou.mybatisplus.plugin.pagination.IDialect 接口
+	     |              自定义需要实现 com.baomidou.mybatisplus.plugins.pagination.IDialect 接口
 	     | -->
 	    <!-- 配置方式一、使用 MybatisPlus 提供方言实现类 -->
 	    <plugin interceptor="com.baomidou.mybatisplus.plugins.PaginationInterceptor">
