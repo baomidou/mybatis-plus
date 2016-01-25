@@ -32,7 +32,6 @@ import com.baomidou.mybatisplus.toolkit.IdWorker;
  * <p>
  * MybatisPlus 测试类
  * </p>
- * http://git.oschina.net/jrl/mybatis-mapper
  * 
  * @author hubin
  * @Date 2016-01-23
@@ -58,7 +57,8 @@ public class UserMapperTest {
 		System.out.println("\n------------------deleteByName----------------------\n result=" + result);
 		sleep();
 		
-		userMapper.insert(new User(IdWorker.getId(), "test", 18));
+		Long id = IdWorker.getId();
+		userMapper.insert(new User(id, "test", 18));
 		System.out.println("\n------------------insert----------------------\n name=test, age=18");
 		sleep();
 
@@ -68,7 +68,6 @@ public class UserMapperTest {
 		System.err.println("\n------------------selectById----------------------");
 		User user = userMapper.selectById(2L);
 		print(user);
-
 
 		/*
 		 * updateById 是从 AutoMapper 中继承而来的，UserMapper.xml中并没有申明改sql
@@ -103,6 +102,11 @@ public class UserMapperTest {
 			print(paginList.get(i));
 		}
 		System.err.println(pagination.toString());
+		
+		System.out.println("\n\n------------------deleteById----------------------");
+		sleep();
+		int del = userMapper.deleteById(id);
+		System.err.println(" delete id=" + id + " ,result=" + del);
 		
 		// 提交
 		session.commit();
