@@ -3,6 +3,8 @@
 
 
 > 依赖包
+
+```
 <dependency>
     <groupId>org.mybatis</groupId>
     <artifactId>mybatis-spring</artifactId>
@@ -13,9 +15,10 @@
     <artifactId>mybatis-plus</artifactId>
     <version>最新版本 Maven 为准</version>
 </dependency>
-
+```
 
 > spring 配置
+
 ```
 <!-- MyBatis SqlSessionFactoryBean 配置 -->
 <bean id="sqlSessionFactory" class="com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean">
@@ -41,6 +44,7 @@
 
 
 > mybatis-config.xml
+
 ```
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
@@ -68,14 +72,12 @@
 		<setting name="defaultExecutorType" value="REUSE" />
 		<setting name="defaultStatementTimeout" value="25000" />
 	</settings>
-	
 	<!-- 查询对象别名配置 -->
 	<typeAliases>
 		<!-- 
 		<typeAlias alias="taskVo" type="xxx.vo.TaskVo" />
 		 -->
 	</typeAliases>
-	
 	<!-- 插件配置, spring 中配置，此处就可以不用配置。 -->
      <!-- 
 	<plugins>
@@ -85,12 +87,10 @@
 	     |             默认支持  mysql  oracle  hsql  sqlite  postgre
 	     | dialectClazz 方言实现类
 	     |              自定义需要实现 com.baomidou.mybatisplus.plugins.pagination.IDialect 接口
-	     
 	    1、 配置方式一、使用 MybatisPlus 提供方言实现类
 	    <plugin interceptor="com.baomidou.mybatisplus.plugins.PaginationInterceptor">
 	        <property name="dialectType" value="mysql" />
 	    </plugin>
-	    
 	    2、配置方式二、使用自定义方言实现类 
 	    <plugin interceptor="com.baomidou.mybatisplus.plugins.PaginationInterceptor">
 	        <property name="dialectClazz" value="xxx.dialect.XXDialect" />
@@ -99,4 +99,36 @@
 	| -->
 </configuration>
 ```
+
+
+
+# spring 根据不同环境加载不同配置支持
+
+1、spring 根据不同配置运行模式，加载对应配置内容。
+2、运行模式参数 key 配置 configEnv 默认 spring.runmode
+3、online 线上 ， dev 开发 ， test 测试
+4、首先环境变量中获取，变量名：spring.runmode 变量值：dev
+5、如果不存在 JVM -D选项 参数中获取，例如：-Dspring.runmode=dev
+
+>例如：设置不同环境的数据库密码配置：
+
+```
+jdbc.password_dev_mode=1230600
+jdbc.password_test_mode=2001006
+jdbc.password_online_mode=#!Esd30210
+```
+
+>spring 配置：
+
+```
+<bean id="placeholder" class="com.baomidou.mybatisplus.spring.MutilPropertyPlaceholderConfigurer">
+	<property name="locations">
+		<list>
+			<value>classpath:jdbc.properties</value>
+			<value>classpath*:*-placeholder.properties</value>
+		</list>
+	</property>
+</bean>
+```
+
 
