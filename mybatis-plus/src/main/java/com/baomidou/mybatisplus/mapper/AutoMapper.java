@@ -46,15 +46,35 @@ public interface AutoMapper<T> {
 
 
 	/**
+	 * 删除（批量）
+	 */
+	@SuppressWarnings("rawtypes")
+	int deleteBatchIds( List idList );
+
+
+	/**
 	 * 根据 ID 修改
 	 */
 	int updateById( T entity );
 
 
 	/**
-	 * 根据 ID 查找
+	 * 修改（批量）
+	 */
+	int updateBatch( List<T> entityList );
+
+
+	/**
+	 * 根据 ID 查询
 	 */
 	T selectById( Object id );
+
+
+	/**
+	 * 查询（批量）
+	 */
+	@SuppressWarnings("rawtypes")
+	int selectBatchIds( List idList );
 
 
 	/**

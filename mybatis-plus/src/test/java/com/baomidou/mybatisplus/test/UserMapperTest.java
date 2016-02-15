@@ -16,6 +16,8 @@
 package com.baomidou.mybatisplus.test;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -24,7 +26,6 @@ import org.apache.log4j.BasicConfigurator;
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.test.entity.User;
 import com.baomidou.mybatisplus.test.mapper.UserMapper;
-import com.baomidou.mybatisplus.toolkit.IdWorker;
 
 /**
  * <p>
@@ -68,8 +69,21 @@ public class UserMapperTest {
 //		int rlt = userMapper.insertBatch(ul);
 //		System.err.println(rlt);
 		
-		int rlt = userMapper.insert(new User(IdWorker.getId(), "6", 6));
+		List<User> ul = new ArrayList<User>();
+		ul.add(new User(1L, "1", 1));
+		ul.add(new User(2L, "2", 2));
+		ul.add(new User(3L, "3", 3));
+		int rlt = userMapper.updateBatch(ul);
 		System.err.println(rlt);
+		
+//		List<Long> ids = new ArrayList<Long>();
+//		ids.add(1L);
+//		ids.add(2L);
+//		int rlt = userMapper.deleteBatchIds(ids);
+//		System.err.println(rlt);
+		
+//		int rlt = userMapper.insert(new User(IdWorker.getId(), "6", 6));
+//		System.err.println(rlt);
 		
 //		int result = userMapper.deleteByName("test");
 //		System.out.println("\n------------------deleteByName----------------------\n result=" + result);

@@ -68,31 +68,26 @@ public class AutoSqlInjector {
 		Class<?> modelClass = extractModelClass(mapperClass);
 		TableInfo table = TableInfoHelper.getTableInfo(modelClass);
 
-		/* 新增 */
+		/* 插入 */
 		this.injectInsertSql(false, mapperClass, modelClass, table);
 		this.injectInsertSql(true, mapperClass, modelClass, table);
 
 		/* 没有指定主键，默认忽略按主键修改、删除、查询方法 */
 		if ( table.getTableId() != null ) {
-			/* 根据主键修改，主键名默认为id */
-			this.injectUpdateSql(mapperClass, modelClass, table);
+			/* 删除 */
+			this.injectDeleteSql(false, mapperClass, modelClass, table);
+			this.injectDeleteSql(true, mapperClass, modelClass, table);
+			
+			/* 修改 */
+			this.injectUpdateSql(false, mapperClass, modelClass, table);
+			this.injectUpdateSql(true, mapperClass, modelClass, table);
 
-			/* 根据主键删除，主键名默认为id */
-			SqlSource sqlSource = new RawSqlSource(configuration,
-					String.format(SqlMethod.DELETE_ONE.getSql(), table.getTableName(), table.getTableId()),
-					Object.class);
-			this.addMappedStatement(mapperClass, SqlMethod.DELETE_ONE, sqlSource, SqlCommandType.DELETE, null);
-
-			/* 根据主键查找，主键名默认为id */
-			sqlSource = new RawSqlSource(configuration,
-					String.format(SqlMethod.SELECT_ONE.getSql(), table.getTableName(), table.getTableId()),
-					Object.class);
-			this.addMappedStatement(mapperClass, SqlMethod.SELECT_ONE, sqlSource, SqlCommandType.SELECT, modelClass);
+			/* 查询 */
+			this.injectSelectSql(false, mapperClass, modelClass, table);
 		}
 
 		/* 查询全部 */
-		SqlSource sqlSource = new RawSqlSource(configuration,
-				String.format(SqlMethod.SELECT_ALL.getSql(), table.getTableName()), null);
+		SqlSource sqlSource = new RawSqlSource(configuration, String.format(SqlMethod.SELECT_ALL.getSql(), table.getTableName()), null);
 		this.addMappedStatement(mapperClass, SqlMethod.SELECT_ALL, sqlSource, SqlCommandType.SELECT, modelClass);
 	}
 
@@ -183,29 +178,97 @@ public class AutoSqlInjector {
 			keyGenerator, keyParam, keyParam);
 	}
 
+	/**
+	 * <p>
+	 * 注入删除 SQL 语句
+	 * </p>
+	 * @param batch
+	 * 				是否为批量插入
+	 * @param mapperClass
+	 * @param modelClass
+	 * @param table
+	 */
+	private void injectDeleteSql(boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
+		SqlMethod sqlMethod = SqlMethod.DELETE_ONE;
+		SqlSource sqlSource = null;
+		if (batch) {
+			sqlMethod = SqlMethod.DELETE_BATCH;
+			StringBuilder ids = new StringBuilder();
+			ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\">");
+			ids.append("#{item}");
+			ids.append("\n</foreach>");
+			String sql = String.format(sqlMethod.getSql(), table.getTableName(), table.getTableId(), ids.toString());
+			sqlSource = languageDriver.createSqlSource(configuration, sql.toString(), modelClass);
+		} else {
+			String sql = String.format(sqlMethod.getSql(), table.getTableName(), table.getTableId(), table.getTableId());
+			sqlSource = new RawSqlSource(configuration, sql, Object.class);
+		}
+		this.addMappedStatement(mapperClass, sqlMethod, sqlSource, SqlCommandType.DELETE, null);
+	}
+	
 
 	/**
 	 * <p>
 	 * 注入更新 SQL 语句
 	 * </p>
+	 * @param batch
+	 * 				是否为批量插入
+	 * @param mapperClass
+	 * @param modelClass
+	 * @param table
 	 */
-	private void injectUpdateSql( Class<?> mapperClass, Class<?> modelClass, TableInfo table ) {
-		StringBuilder sqlBuilder = new StringBuilder("UPDATE ").append(table.getTableName()).append(" SET ");
+	private void injectUpdateSql(boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table ) {
+		SqlMethod sqlMethod = SqlMethod.UPDATE_ONE;
+		StringBuilder set = new StringBuilder();
 		List<String> fieldList = table.getFieldList();
 		int size = fieldList.size();
 		for ( int i = 0 ; i < size ; i++ ) {
 			String fieldName = fieldList.get(i);
-			sqlBuilder.append(fieldName).append("=#{").append(fieldName).append("}");
+			set.append(fieldName).append("=#{");
+			if (batch) {
+				set.append("item.");
+			}
+			set.append(fieldName).append("}");
 			if ( i < size - 1 ) {
-				sqlBuilder.append(", ");
+				set.append(", ");
 			}
 		}
-		sqlBuilder.append(" WHERE ").append(table.getTableId()).append("= #{").append(table.getTableId()).append("}");
-		SqlSource sqlSource = new RawSqlSource(configuration, sqlBuilder.toString(), modelClass);
-		this.addUpdateMappedStatement(mapperClass, modelClass, SqlMethod.UPDATE_ONE.getMethod(), sqlSource);
+		StringBuilder id = new StringBuilder();
+		id.append(table.getTableId()).append("=#{");
+		if (batch) {
+			id.append("item.");
+		}
+		id.append(table.getTableId()).append("}");
+		String sql = String.format(sqlMethod.getSql(), table.getTableName(), set.toString(), id.toString());
+		SqlSource sqlSource = null;
+		if(batch){
+			sqlSource = new RawSqlSource(configuration, sql, modelClass);
+		} else {
+			sqlMethod = SqlMethod.UPDATE_BATCH;
+			sqlSource = new RawSqlSource(configuration, String.format(sqlMethod.getSql(), sql), modelClass);
+		}
+		this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
 	}
 
 
+	/**
+	 * <p>
+	 * 注入查询 SQL 语句
+	 * </p>
+	 * @param batch
+	 * 				是否为批量插入
+	 * @param mapperClass
+	 * @param modelClass
+	 * @param table
+	 */
+	private void injectSelectSql(boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
+		/* 根据主键查找，主键名默认为id */
+		SqlSource sqlSource = new RawSqlSource(configuration,
+				String.format(SqlMethod.SELECT_ONE.getSql(), table.getTableName(), table.getTableId(), table.getTableId()), Object.class);
+		this.addMappedStatement(mapperClass, SqlMethod.SELECT_ONE, sqlSource, SqlCommandType.SELECT, modelClass);
+	}
+	
+	
 	private MappedStatement addMappedStatement( Class<?> mapperClass, SqlMethod sm, SqlSource sqlSource,
 			SqlCommandType sqlCommandType, Class<?> resultType ) {
 		return this.addMappedStatement(mapperClass, sm.getMethod(), sqlSource, sqlCommandType, null, resultType,
