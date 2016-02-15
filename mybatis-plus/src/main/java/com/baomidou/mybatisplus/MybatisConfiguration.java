@@ -56,7 +56,11 @@ public class MybatisConfiguration extends Configuration {
 	 */
 	@Override
 	public void addMappedStatement(MappedStatement ms) {
-		if (this.mappedStatements.containsKey(ms.getId())) {// 说明已加载了xml中的节点；忽略mapper中的SqlProvider数据
+		if (this.mappedStatements.containsKey(ms.getId())) {
+			/*
+			 * 说明已加载了xml中的节点；
+			 * 忽略mapper中的SqlProvider数据
+			 */
 			logger.warn("mapper[{}] is ignored, because it's exists, maybe from xml file", ms.getId());
 			return;
 		}

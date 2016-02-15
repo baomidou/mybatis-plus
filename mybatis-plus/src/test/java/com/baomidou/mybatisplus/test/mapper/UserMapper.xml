@@ -13,4 +13,11 @@
 	<select id="list" resultType="User">
 		select * from user
 	</select>
+	
+	<delete id="deleteByIds" parameterType="java.util.List">
+		delete from user where id in
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+		#{item}
+		</foreach>
+	</delete>
 </mapper>

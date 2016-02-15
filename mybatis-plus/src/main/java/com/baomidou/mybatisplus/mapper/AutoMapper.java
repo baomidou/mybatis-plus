@@ -28,24 +28,34 @@ import java.util.List;
 public interface AutoMapper<T> {
 
 	/**
-	 * 新增
+	 * 插入
 	 */
-	int insert(T entity);
+	int insert( T entity );
+
 
 	/**
-	 * 根据主键删除，主键名默认为id
+	 * 插入（批量）
 	 */
-	int deleteById(Object id);
+	int insertBatch( List<T> entityList );
+
 
 	/**
-	 * 根据主键修改，主键名默认为id
+	 * 根据 ID 删除
 	 */
-	int updateById(T entity);
+	int deleteById( Object id );
+
 
 	/**
-	 * 根据主键查找，主键名默认为id
+	 * 根据 ID 修改
 	 */
-	T selectById(Object id);
+	int updateById( T entity );
+
+
+	/**
+	 * 根据 ID 查找
+	 */
+	T selectById( Object id );
+
 
 	/**
 	 * 查询全部
