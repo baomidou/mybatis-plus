@@ -109,7 +109,7 @@ public class PaginationInterceptor implements Interceptor {
 					MappedStatement mappedStatement = (MappedStatement) metaStatementHandler
 							.getValue("delegate.mappedStatement");
 					Connection connection = (Connection) invocation.getArgs()[0];
-					count(originalSql, connection, mappedStatement, boundSql, pagination);
+					this.count(originalSql, connection, mappedStatement, boundSql, pagination);
 				}
 			}
 		}
@@ -128,12 +128,20 @@ public class PaginationInterceptor implements Interceptor {
 	public void count(String sql, Connection connection, MappedStatement mappedStatement, BoundSql boundSql,
 			Pagination page) {
 		/* 记录总记录数 SQL */
-		String countSql = "SELECT COUNT(0) FROM (" + sql + ") AS TOTAL";
+		StringBuffer countSql = new StringBuffer("SELECT COUNT(1) FROM (");
+		countSql.append(sql).append(") AS TOTAL");
+		
+		/* 不支持 order by 查询 */
+		if(sql == null || sql.toUpperCase().contains("ORDER BY")) {
+			System.err.println("Execute SQL: " + countSql.toString());
+			new MybatisPlusException("Consider SQL Performance Not Support ORDER BY.");
+		}
+		
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
-			pstmt = connection.prepareStatement(countSql);
-			BoundSql countBS = new BoundSql(mappedStatement.getConfiguration(), countSql,
+			pstmt = connection.prepareStatement(countSql.toString());
+			BoundSql countBS = new BoundSql(mappedStatement.getConfiguration(), countSql.toString(),
 					boundSql.getParameterMappings(), boundSql.getParameterObject());
 			ParameterHandler parameterHandler = new DefaultParameterHandler(mappedStatement,
 					boundSql.getParameterObject(), countBS);
