@@ -1,0 +1,15 @@
+<html>
+<body>
+用于在velocity中实现模板的继承，包含 block,override,extends指令
+<br/>
+父模板：base.vm
+<br/>
+http://badqiu.iteye.com/blog/558194
+<br/>
+在velocity的properties中增加如下配置以激活自定义指定
+<br/>
+userdirective=com.baomidou.velocity.directive.BlockDirective,com.baomidou.velocity.directive.OverrideDirective,com.baomidou.velocity.directive.ExtendsDirective
+<br/>缓存开启<br/>
+file.resource.loader.cache = true
+</body>
+</html>

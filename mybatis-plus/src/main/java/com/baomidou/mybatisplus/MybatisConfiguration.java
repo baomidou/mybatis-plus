@@ -37,7 +37,7 @@ import com.baomidou.mybatisplus.mapper.AutoSqlInjector;
  */
 public class MybatisConfiguration extends Configuration {
 
-	private Logger logger = LoggerFactory.getLogger(getClass());
+	private Logger logger = LoggerFactory.getLogger(MybatisConfiguration.class);
 
 	/**
 	 * 初始化调用
