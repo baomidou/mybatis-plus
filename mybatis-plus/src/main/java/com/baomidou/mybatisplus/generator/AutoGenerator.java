@@ -58,6 +58,10 @@ public class AutoGenerator {
 		this.config = config;
 	}
 
+	private static String PATH_ENTITY = null;
+	private static String PATH_MAPPER = null;
+	private static String PATH_XML = null;
+	
 	/**
 	 * run 执行
 	 */
@@ -77,6 +81,13 @@ public class AutoGenerator {
 		if (!gf.exists()) {
 			gf.mkdirs();
 		}
+		
+		/**
+		 * 目录初始化
+		 */
+		PATH_ENTITY = getFilePath(gf.getPath(), "entity");
+		PATH_MAPPER = getFilePath(gf.getPath(), "mapper");
+		PATH_XML = getFilePath(gf.getPath(), "xml");
 
 		/**
 		 * 开启生成映射关系
@@ -96,6 +107,8 @@ public class AutoGenerator {
 					Runtime.getRuntime().exec("open " + config.getSaveDir());
 				} else if (osName.contains("Windows")) {
 					Runtime.getRuntime().exec("cmd /c start " + config.getSaveDir());
+				} else {
+					System.err.println("save dir:" + config.getSaveDir());
 				}
 			}
 		} catch (IOException e) {
@@ -103,6 +116,22 @@ public class AutoGenerator {
 		}
 		System.out.println(" generate success! ");
 
+	}
+	
+	/**
+	 * 
+	 * 生成文件地址
+	 * 
+	 * @param segment
+	 *            文件地址片段
+	 * @return
+	 */
+	private static String getFilePath(String savePath, String segment) {
+		File folder = new File(savePath + File.separator + segment);
+		if (!folder.exists()) {
+			folder.mkdir();
+		}
+		return folder.getPath();
 	}
 
 	/**
@@ -224,16 +253,14 @@ public class AutoGenerator {
 			return "Long";
 		} else if (type.indexOf("int") > -1) {
 			return "Integer";
-		} else if (type.indexOf("date") > -1) {
-			return "java.util.Date";
+		} else if (type.indexOf("date") > -1 || type.indexOf("timestamp") > -1) {
+			return "Date";
 		} else if (type.indexOf("text") > -1) {
 			return "String";
-		} else if (type.indexOf("timestamp") > -1) {
-			return "java.util.Date";
 		} else if (type.indexOf("bit") > -1) {
 			return "Boolean";
 		} else if (type.indexOf("decimal") > -1) {
-			return "java.math.BigDecimal";
+			return "BigDecimal";
 		} else if (type.indexOf("blob") > -1) {
 			return "byte[]";
 		} else if (type.indexOf("float") > -1) {
@@ -242,6 +269,42 @@ public class AutoGenerator {
 			return "Double";
 		}
 		return null;
+	}
+	
+	/**
+	 * 字段是否为日期类型
+	 * 
+	 * @param types
+	 *            字段类型列表
+	 * @return
+	 */
+	private boolean isDate(List<String> types) {
+		int size = types.size();
+		for ( int i = 0 ; i < size ; i++ ) {
+			String type = types.get(i);
+			if (type.indexOf("date") > -1 || type.indexOf("timestamp") > -1) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * 字段是否为浮点数类型
+	 * 
+	 * @param types
+	 *            字段类型列表
+	 * @return
+	 */
+	private boolean isDecimal(List<String> types) {
+		int size = types.size();
+		for ( int i = 0 ; i < size ; i++ ) {
+			String type = types.get(i);
+			if (type.indexOf("decimal") > -1) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private String processField(String field) {
@@ -281,22 +344,6 @@ public class AutoGenerator {
 
 	/**
 	 * 
-	 * 生成文件地址
-	 * 
-	 * @param segment
-	 *            文件地址片段
-	 * @return
-	 */
-	private String getFileName(String segment) {
-		File folder = new File(config.getSaveDir() + segment);
-		if (!folder.exists()) {
-			folder.mkdir();
-		}
-		return folder.getPath();
-	}
-
-	/**
-	 * 
 	 * 生成实体类
 	 *
 	 * @param columns
@@ -306,13 +353,21 @@ public class AutoGenerator {
 	 */
 	private void buildEntityBean(List<String> columns, List<String> types, List<String> comments, String tableComment,
 			Map<String, IdInfo> idMap, String table, String beanName) throws IOException {
-		File beanFile = new File(this.getFileName("entity"), beanName + ".java");
+		File beanFile = new File(PATH_ENTITY, beanName + ".java");
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(beanFile)));
 		bw.write("package " + config.getEntityPackage() + ";");
 		bw.newLine();
 		bw.newLine();
 		bw.write("import java.io.Serializable;");
 		bw.newLine();
+		if(isDate(types)){
+			bw.write("import java.util.Date;");
+			bw.newLine();
+		}
+		if(isDecimal(types)){
+			bw.write("import java.math.BigDecimal;");
+			bw.newLine();
+		}
 		bw.newLine();
 		bw.write("import com.baomidou.mybatisplus.annotations.TableField;");
 		bw.newLine();
@@ -390,7 +445,7 @@ public class AutoGenerator {
 	 * @throws IOException
 	 */
 	private void buildMapper(String beanName, String mapperName) throws IOException {
-		File mapperFile = new File(this.getFileName("mapper"), mapperName + ".java");
+		File mapperFile = new File(PATH_MAPPER, mapperName + ".java");
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(mapperFile), "utf-8"));
 		bw.write("package " + config.getMapperPackage() + ";");
 		bw.newLine();
@@ -424,12 +479,11 @@ public class AutoGenerator {
 	 */
 	private void buildMapperXml(List<String> columns, List<String> types, List<String> comments, String mapperName)
 			throws IOException {
-		File mapperXmlFile = new File(this.getFileName("xml"), mapperName + ".xml");
+		File mapperXmlFile = new File(PATH_XML, mapperName + ".xml");
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(mapperXmlFile)));
 		bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		bw.newLine();
-		bw.write(
-				"<!DOCTYPE mapper PUBLIC \"-//mybatis.org//DTD Mapper 3.0//EN\" \"http://mybatis.org/dtd/mybatis-3-mapper.dtd\">");
+		bw.write("<!DOCTYPE mapper PUBLIC \"-//mybatis.org//DTD Mapper 3.0//EN\" \"http://mybatis.org/dtd/mybatis-3-mapper.dtd\">");
 		bw.newLine();
 		bw.write("<mapper namespace=\"" + config.getMapperPackage() + "." + mapperName + "\">");
 		bw.newLine();
