@@ -39,7 +39,7 @@ public class AutoGeneratorTest {
 		ConfigGenerator cg = new ConfigGenerator();
 		cg.setEntityPackage("com.baomidou.entity");// 实体包路径
 		cg.setMapperPackage("com.baomidou.mapper");// 映射文件路径
-		cg.setSaveDir("/Users/hubin/mybatis-plus/");// 生成文件保存位置
+		cg.setSaveDir("D:/mybatis-plus/");// 生成文件保存位置
 
 		/* 数据库相关配置 */
 		cg.setDbDriverName("com.mysql.jdbc.Driver");
