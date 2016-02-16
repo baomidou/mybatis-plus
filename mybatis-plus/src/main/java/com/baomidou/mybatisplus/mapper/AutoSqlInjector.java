@@ -161,7 +161,7 @@ public class AutoSqlInjector {
 			String fielName = fieldList.get(i);
 			if ( !batch ) {
 				fieldBuilder.append("\n\t<if test=\"").append(fielName).append("!=null\">");
-				placeholderBuilder.append("\n\t<if test=\"").append(batch?"item.":"").append(fielName).append("!=null\">");
+				placeholderBuilder.append("\n\t<if test=\"").append(fielName).append("!=null\">");
 			}
 			fieldBuilder.append(fielName).append(",");
 			placeholderBuilder.append("#{").append(batch?"item.":"").append(fielName).append("},");
@@ -231,10 +231,7 @@ public class AutoSqlInjector {
 		for ( int i = 0 ; i < size ; i++ ) {
 			String fieldName = fieldList.get(i);
 			set.append("\n<if test=\"").append(fieldName).append("!=null\">\n");
-			set.append(fieldName).append("=#{").append(fieldName).append("}");
-			if ( i < size - 1 ) {
-				set.append(", ");
-			}
+			set.append(fieldName).append("=#{").append(fieldName).append("},");
 			set.append("\n</if>");
 		}
 		set.append("\n</trim>");

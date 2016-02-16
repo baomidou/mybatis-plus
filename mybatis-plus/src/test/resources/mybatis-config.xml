@@ -89,5 +89,6 @@
      | -->
     <mappers>
         <mapper class="com.baomidou.mybatisplus.test.mapper.UserMapper" />
+        <mapper resource="UserMapper.xml"/>
     </mappers>
 </configuration>
