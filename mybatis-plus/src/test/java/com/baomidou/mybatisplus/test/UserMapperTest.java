@@ -59,13 +59,14 @@ public class UserMapperTest {
 		SqlSession session = sessionFactory.openSession();
 		UserMapper userMapper = session.getMapper(UserMapper.class);
 		System.err.println(" debug run 查询执行 user 表数据变化！ ");
+		session.delete("deleteAll");
 		
 		/**
 		 * 插入
 		 */
 		long id = IdWorker.getId();
-		int rlt = userMapper.insert(new User(id, "test", 18));
-		System.err.println("\n--------------insert----------------\n name=test, age=18");
+		int rlt = userMapper.insert(new User(id, 18));
+		System.err.println("\n--------------insert-------name为空---------\n name=null, age=18");
 		sleep();
 		
 		List<User> ul = new ArrayList<User>();

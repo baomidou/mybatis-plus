@@ -28,8 +28,8 @@ public enum SqlMethod {
 	/**
 	 * 插入
 	 */
-	INSERT_ONE("insert", "插入一条数据", "INSERT INTO %s(%s) VALUES (%s)"),
-	INSERT_BATCH("insertBatch", "批量插入数据", "<script>INSERT INTO %s(%s) VALUES %s</script>"),
+	INSERT_ONE("insert", "插入一条数据", "<script>INSERT INTO %s %s VALUES %s</script>"),
+	INSERT_BATCH("insertBatch", "批量插入数据", "<script>INSERT INTO %s %s VALUES \n<foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\">%s\n</foreach></script>"),
 	
 	/**
 	 * 删除

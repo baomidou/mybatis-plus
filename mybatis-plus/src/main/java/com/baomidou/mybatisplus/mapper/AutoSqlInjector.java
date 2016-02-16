@@ -118,15 +118,25 @@ public class AutoSqlInjector {
 	 * @param table
 	 */
 	private void injectInsertSql( boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table ) {
+		/*
+		 * INSERT INTO table
+		 * <trim prefix="(" suffix=")" suffixOverrides=",">
+		 * 		<if test="xx != null">xx,</if>
+		 * </trim>
+		 * <trim prefix="values (" suffix=")" suffixOverrides=",">
+		 * 		<if test="xx != null">#{xx},</if>
+		 * </trim>
+		 */
 		KeyGenerator keyGenerator = new NoKeyGenerator();
 		StringBuilder fieldBuilder = new StringBuilder();
 		StringBuilder placeholderBuilder = new StringBuilder();
 		SqlMethod sqlMethod = SqlMethod.INSERT_ONE;
 		if ( batch ) {
 			sqlMethod = SqlMethod.INSERT_BATCH;
-			placeholderBuilder.append("\n<foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\">");
 		}
 
+		fieldBuilder.append("\n<trim prefix=\"(\" suffix=\")\" suffixOverrides=\",\">\n");
+		placeholderBuilder.append("\n<trim prefix=\"(\" suffix=\")\" suffixOverrides=\",\">\n");
 		String keyParam = null;
 		if ( table.getTableId() != null ) {
 			if ( table.isAutoIncrement() ) {
@@ -137,7 +147,7 @@ public class AutoSqlInjector {
 				/* 非自增，用户生成 */
 				fieldBuilder.append(table.getTableId()).append(",");
 				if ( batch ) {
-					placeholderBuilder.append("(#{item.");
+					placeholderBuilder.append("#{item.");
 				} else {
 					placeholderBuilder.append("#{");
 				}
@@ -149,30 +159,22 @@ public class AutoSqlInjector {
 		int size = fieldList.size();
 		for ( int i = 0 ; i < size ; i++ ) {
 			String fielName = fieldList.get(i);
-			fieldBuilder.append(fielName);
-			placeholderBuilder.append("#{");
-			if ( batch ) {
-				placeholderBuilder.append("item.");
+			if ( !batch ) {
+				fieldBuilder.append("\n\t<if test=\"").append(fielName).append("!=null\">");
+				placeholderBuilder.append("\n\t<if test=\"").append(batch?"item.":"").append(fielName).append("!=null\">");
 			}
-			placeholderBuilder.append(fielName).append("}");
-			if ( i < size - 1 ) {
-				fieldBuilder.append(",");
-				placeholderBuilder.append(",");
+			fieldBuilder.append(fielName).append(",");
+			placeholderBuilder.append("#{").append(batch?"item.":"").append(fielName).append("},");
+			if ( !batch ) {
+				fieldBuilder.append("</if>");
+				placeholderBuilder.append("</if>");
 			}
 		}
-
-		if ( batch ) {
-			placeholderBuilder.append(")\n</foreach>");
-		}
-
+		fieldBuilder.append("\n</trim>");
+		placeholderBuilder.append("\n</trim>");
 		String sql = String.format(sqlMethod.getSql(), table.getTableName(), fieldBuilder.toString(),
 			placeholderBuilder.toString());
-		SqlSource sqlSource = null;
-		if ( batch ) {
-			sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-		} else {
-			sqlSource = new RawSqlSource(configuration, sql, modelClass);
-		}
+		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
 		this.addInsertMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource,
 			keyGenerator, keyParam, keyParam);
 	}
