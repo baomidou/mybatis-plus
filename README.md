@@ -3,6 +3,10 @@ mybatis 增强工具包，简化开发基本 CURD 操作。
 
 > mybatis + 只做增强不做改变，这里不提倡 sql 写在代码中。
 
+
+> 技术讨论 QQ 群 492238239 
+
+
 Maven 坐标
 ===========
 ```
@@ -31,8 +35,6 @@ com.baomidou.mybatisplus.test.AutoGeneratorTest
 2、使用方法，查看类
 com.baomidou.mybatisplus.test.UserMapperTest
 
-
-> 技术讨论 QQ 群 235079513 
 
 http://baomidou.com/
 
