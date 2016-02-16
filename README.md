@@ -32,6 +32,10 @@ com.baomidou.mybatisplus.test.AutoGeneratorTest
 com.baomidou.mybatisplus.test.UserMapperTest
 
 
+> 技术讨论 QQ 群 235079513 
+
+http://baomidou.com/
+
 [java 基于 Cookie 的 SSO 中间件 kisso](http://git.oschina.net/juapk/kisso)
 
 
