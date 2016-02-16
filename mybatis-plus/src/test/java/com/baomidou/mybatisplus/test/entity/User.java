@@ -40,32 +40,42 @@ public class User implements Serializable {
 
 	/* 主键ID 注解，auto 属性 true 自增（默认 true），false 非自增（调用插入 insert 需要用户传入ID值）*/
 	@TableId(auto = false)
-	private long id;
+	private Long id;
 
 	private String name;
 
-	private int age;
+	private Integer age;
 	
 	public User() {
 		
 	}
 
-	public User(String name, int age) {
+	public User(String name, Integer age) {
 		this.name = name;
 		this.age = age;
 	}
 	
-	public User(long id, String name, int age) {
+	public User(Long id, String name) {
+		this.id = id;
+		this.name = name;
+	}
+	
+	public User(Long id, Integer age) {
+		this.id = id;
+		this.age = age;
+	}
+	
+	public User(Long id, String name, Integer age) {
 		this.id = id;
 		this.name = name;
 		this.age = age;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -77,11 +87,11 @@ public class User implements Serializable {
 		this.name = name;
 	}
 
-	public int getAge() {
+	public Integer getAge() {
 		return age;
 	}
 
-	public void setAge(int age) {
+	public void setAge(Integer age) {
 		this.age = age;
 	}
 

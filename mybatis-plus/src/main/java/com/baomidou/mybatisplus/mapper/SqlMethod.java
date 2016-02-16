@@ -40,14 +40,13 @@ public enum SqlMethod {
 	/**
 	 * 修改
 	 */
-	UPDATE_ONE("updateById", "根据ID 修改数据", "UPDATE %s SET %s WHERE %s"),
-	UPDATE_BATCH("updateBatch", "根据ID集合，批量修改数据", "\n<foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\">%s\n</foreach>"),
+	UPDATE_ONE("updateById", "根据ID 修改数据", "<script>UPDATE %s %s</script>"),
 	
 	/**
 	 * 查询
 	 */
 	SELECT_ONE("selectById", "根据ID 查询一条数据", "SELECT * FROM %s WHERE %s=#{%s}"),
-	SELECT_BATCH("selectBatchIds", "根据ID集合，批量查询数据", ""),
+	SELECT_BATCH("selectBatchIds", "根据ID集合，批量查询数据", "<script>SELECT * FROM %s WHERE %s IN (%s)</script>"),
 	SELECT_ALL("selectAll", "查询满足条件所有数据", "SELECT * FROM %s");
 	
 	private final String method;

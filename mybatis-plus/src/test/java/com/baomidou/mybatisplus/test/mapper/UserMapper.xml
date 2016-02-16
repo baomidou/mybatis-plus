@@ -10,6 +10,10 @@
 		delete FROM user where name=#{name}
 	</delete>
 
+	<delete id="deleteAll">
+		delete FROM user
+	</delete>
+
 	<select id="list" resultType="User">
 		select * from user
 	</select>

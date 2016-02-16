@@ -46,10 +46,9 @@ public interface AutoMapper<T> {
 
 
 	/**
-	 * 删除（批量）
+	 * 删除（根据ID 批量删除）
 	 */
-	@SuppressWarnings("rawtypes")
-	int deleteBatchIds( List idList );
+	int deleteBatchIds( List<Object> idList );
 
 
 	/**
@@ -59,22 +58,15 @@ public interface AutoMapper<T> {
 
 
 	/**
-	 * 修改（批量）
-	 */
-	int updateBatch( List<T> entityList );
-
-
-	/**
 	 * 根据 ID 查询
 	 */
 	T selectById( Object id );
 
 
 	/**
-	 * 查询（批量）
+	 * 查询（根据ID 批量查询）
 	 */
-	@SuppressWarnings("rawtypes")
-	int selectBatchIds( List idList );
+	List<T> selectBatchIds( List<Object> idList );
 
 
 	/**
