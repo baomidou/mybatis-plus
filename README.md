@@ -1,3 +1,4 @@
+![mybatis-plus](http://git.oschina.net/uploads/images/2016/0218/124639_f4ea3095_12260.png "mybatis 增强工具包")
 #mybatis-plus 
 mybatis 增强工具包，简化开发基本 CURD 操作。
 
@@ -20,11 +21,11 @@ Maven 坐标
 
 功能
 ===========
-1、单表 CURD 自动完成
+1、单表 CURD （简单 + 批量）操作，自动完成。
 
 2、分页插件，Count 查询 自动 或 自定义 SQL 查询。
 
-3、Spring 根据不同环境加载不同配置支持
+3、Spring 根据不同环境加载不同配置支持。
 
 
 Usage
