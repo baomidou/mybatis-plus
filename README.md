@@ -1,8 +1,11 @@
 ![mybatis-plus](http://git.oschina.net/uploads/images/2016/0218/124639_f4ea3095_12260.png "mybatis 增强工具包")
-#mybatis-plus 
-mybatis 增强工具包，简化开发基本 CURD 操作。
 
-> mybatis + 只做增强不做改变，这里不提倡 sql 写在代码中。
+#mybatis-plus 
+
+mybatis 增强工具包，简化 CURD 操作。
+
+
+> 启动加载 XML 配置时注入单表 SQL 操作 ，为简化开发工作提供生产率而生。 Mybatis + 只做增强不做改变，这里不提倡 sql 写在代码中。
 
 
 > 技术讨论 QQ 群 492238239 
