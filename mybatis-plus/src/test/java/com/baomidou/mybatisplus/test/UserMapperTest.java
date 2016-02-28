@@ -123,9 +123,6 @@ public class UserMapperTest {
 		 * 此处的 selectById 被UserMapper.xml中的 selectById 覆盖了
 		 * 
 		 */
-		/*
-		 * 此处的 selectById 被UserMapper.xml中的 selectById 覆盖了
-		 */
 		System.err.println("\n------------------selectById----------------------");
 		User user = userMapper.selectById(12L);
 		print(user);
