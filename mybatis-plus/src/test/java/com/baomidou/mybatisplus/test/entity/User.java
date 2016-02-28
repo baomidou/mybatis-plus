@@ -35,36 +35,40 @@ import com.baomidou.mybatisplus.annotations.TableName;
 public class User implements Serializable {
 
 	/* 表字段 主键，false 表中不存在的字段，可无该注解 默认 true */
-	@TableField(exist = false)
+	@TableId(value = "test_id", auto = true)
 	private static final long serialVersionUID = 1L;
 
-	/* 主键ID 注解，auto 属性 true 自增（默认 true），false 非自增（调用插入 insert 需要用户传入ID值）*/
+	/* 主键ID 注解，auto 属性 true 自增（默认 true），false 非自增（调用插入 insert 需要用户传入ID值） */
 	@TableId(auto = false)
 	private Long id;
 
 	private String name;
 
 	private Integer age;
-	
+
+	/* 测试下划线字段命名类型 */
+	@TableField(value = "test_type")
+	private Integer testType;
+
 	public User() {
-		
+
 	}
 
 	public User(String name, Integer age) {
 		this.name = name;
 		this.age = age;
 	}
-	
+
 	public User(Long id, String name) {
 		this.id = id;
 		this.name = name;
 	}
-	
+
 	public User(Long id, Integer age) {
 		this.id = id;
 		this.age = age;
 	}
-	
+
 	public User(Long id, String name, Integer age) {
 		this.id = id;
 		this.name = name;
@@ -93,6 +97,14 @@ public class User implements Serializable {
 
 	public void setAge(Integer age) {
 		this.age = age;
+	}
+
+	public Integer getTestType() {
+		return testType;
+	}
+
+	public void setTestType(Integer testType) {
+		this.testType = testType;
 	}
 
 	/**

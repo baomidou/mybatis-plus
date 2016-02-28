@@ -35,6 +35,11 @@ import com.baomidou.mybatisplus.toolkit.IdWorker;
 public @interface TableId {
 
 	/**
+	 * 字段值（驼峰命名方式，该值可无）
+	 */
+	String value() default "";
+
+	/**
 	 * 
 	 * 主键ID，默认 true 数据库自增
 	 * 

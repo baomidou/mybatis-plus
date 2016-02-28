@@ -393,15 +393,28 @@ public class AutoGenerator {
 			bw.newLine();
 			/*
 			 * 判断ID 添加注解
+			 * <br>
+			 * isLine 是否包含下划线
 			 */
-			String field = processField(columns.get(i));
-			IdInfo idInfo = idMap.get(field);
+			String column = columns.get(i);
+			String field = processField(column);
+			boolean isLine = column.contains("_");
+			IdInfo idInfo = idMap.get(column);
 			if (idInfo != null) {
-				if (idInfo.isAutoIncrement()) {
-					bw.write("\t@TableId(auto = true)");
-				} else {
-					bw.write("\t@TableId(auto = false)");
+				//@TableId(value = "test_id", auto = false)
+				bw.write("\t@TableId(");
+				if (isLine) {
+					bw.write("value = \"" + column + "\", ");
 				}
+				if (idInfo.isAutoIncrement()) {
+					bw.write("auto = true)");
+				} else {
+					bw.write("auto = false)");
+				}
+				bw.newLine();
+			} else if (isLine) {
+				//@TableField(value = "test_type", exist = false)
+				bw.write("\t@TableField(value = \"" + column + "\")");
 				bw.newLine();
 			}
 			bw.write("\tprivate " + processType(types.get(i)) + " " + field + ";");
