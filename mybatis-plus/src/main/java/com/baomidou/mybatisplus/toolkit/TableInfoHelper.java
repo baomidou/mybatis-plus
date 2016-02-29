@@ -41,14 +41,6 @@ public class TableInfoHelper {
 	 * 缓存反射类表信息
 	 */
 	private static Map<String, TableInfo> tableInfoCache = new ConcurrentHashMap<String, TableInfo>();
-	
-	/**
-	 * 缓存 Map 置空通知 GC 垃圾回收
-	 */
-	public static void tableInfoCacheSetNull(){
-		tableInfoCache.clear();
-		tableInfoCache = null;
-	}
 
 	/**
 	 * <p>
