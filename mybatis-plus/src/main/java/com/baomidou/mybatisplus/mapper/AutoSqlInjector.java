@@ -89,6 +89,9 @@ public class AutoSqlInjector {
 			this.injectSelectSql(true, mapperClass, modelClass, table);
 			this.injectSelectByEntitySql(SqlMethod.SELECT_ONE, mapperClass, modelClass, table);
 			this.injectSelectByEntitySql(SqlMethod.SELECT_LIST, mapperClass, modelClass, table);
+			
+			/* 通知 GC 回收 Map */
+			TableInfoHelper.tableInfoCacheSetNull();
 		} else {
 			/**
 			 * 提示
