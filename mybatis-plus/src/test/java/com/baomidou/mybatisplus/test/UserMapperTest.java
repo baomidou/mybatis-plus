@@ -42,7 +42,18 @@ public class UserMapperTest {
 	private static final String RESOURCE = "mybatis-config.xml";
 
 	/**
+	 * 
 	 * RUN 测试
+	 * 
+	 * <p>
+	 * MybatisPlus 加载 SQL 顺序：
+	 * </p>
+	 * 1、加载XML中的SQL<br>
+	 * 2、加载sqlProvider中的SQL<br>
+	 * 3、xmlSql 与 sqlProvider不能包含相同的SQL<br>
+	 * <br>
+	 * 调整后的SQL优先级：xmlSql > sqlProvider > crudSql
+	 * <br>
 	 */
 	public static void main(String[] args) {
 		//使用缺省Log4j环境
@@ -65,18 +76,18 @@ public class UserMapperTest {
 		 * 插入
 		 */
 		long id = IdWorker.getId();
-		int rlt = userMapper.insert(new User(id, "abc", 18));
+		int rlt = userMapper.insert(new User(id, "abc", 18, 0));
 		System.err.println("\n--------------insert-------name为空---------\n name=null, age=18");
 		sleep();
 		
 		List<User> ul = new ArrayList<User>();
-		ul.add(new User(11L, "1", 1));
-		ul.add(new User(12L, "2", 2));
-		ul.add(new User(13L, "3", 3));
-		ul.add(new User(14L, "delname", 4));
-		ul.add(new User(15L, "5", 5));
-		ul.add(new User(16L, "6", 6));
-		ul.add(new User(17L, "7", 7));
+		ul.add(new User(11L, "1", 1, 0));
+		ul.add(new User(12L, "2", 2, 1));
+		ul.add(new User(13L, "3", 3, 1));
+		ul.add(new User(14L, "delname", 4, 0));
+		ul.add(new User(15L, "5", 5, 1));
+		ul.add(new User(16L, "6", 6, 0));
+		ul.add(new User(17L, "7", 7, 0));
 		for ( User u : ul ) {
 			userMapper.insert(u);
 		}
@@ -137,25 +148,25 @@ public class UserMapperTest {
 		User userOne = userMapper.selectOne(new User("MybatisPlus"));
 		print(userOne);
 		
-		System.err.println("\n------------------selectAll----------------------");
-		List<User> ul2 = userMapper.selectAll(null);
+		System.err.println("\n------------------selectList-----查询 testType = 1 的所有数据-----------------");
+		List<User> ul2 = userMapper.selectList(RowBounds.DEFAULT, new User(1));
 		for (int i = 0; i < ul2.size(); i++) {
 			print(ul2.get(i));
 		}
 		
-		System.err.println("\n------------------list 分页查询，不查询总数（此时可自定义 count 查询）----------------------");
-		List<User> rowList = userMapper.list(new RowBounds(0, 2));
-		for (int i = 0; i < rowList.size(); i++) {
-			print(rowList.get(i));
-		}
-		
-		System.err.println("\n------------------list 分页查询，查询总数----------------------");
-		Pagination pagination = new Pagination(0, 2);
-		List<User> paginList = userMapper.list(pagination);
+		System.err.println("\n------------------list 分页查询 ----查询 testType = 1 的所有数据------------------");
+		Pagination pagination = new Pagination(1, 2);
+		List<User> paginList = userMapper.selectList(pagination, new User(1));
 		for (int i = 0; i < paginList.size(); i++) {
 			print(paginList.get(i));
 		}
-		System.err.println(pagination.toString());
+		System.err.println(" 翻页：" + pagination.toString());
+		
+		System.err.println("\n---------------xml---selectListRow 分页查询，不查询总数（此时可自定义 count 查询）----无查询条件--------------");
+		List<User> rowList = userMapper.selectListRow(new RowBounds(0, 2));
+		for (int i = 0; i < rowList.size(); i++) {
+			print(rowList.get(i));
+		}
 
 		/* 删除测试数据  */
 		rlt = session.delete("deleteAll");
@@ -170,10 +181,11 @@ public class UserMapperTest {
 	/*
 	 * 打印测试信息
 	 */
-	private static void print(User user) {
+	private static void print( User user ) {
 		sleep();
-		if (user != null) {
-			System.out.println("\n user: id=" + user.getId() + ", name=" + user.getName() + ", age=" + user.getAge());
+		if ( user != null ) {
+			System.out.println("\n user: id=" + user.getId() + ", name=" + user.getName() 
+			+ ", age=" + user.getAge() + ", testType=" + user.getTestType());
 		} else {
 			System.out.println("\n user is null.");
 		}

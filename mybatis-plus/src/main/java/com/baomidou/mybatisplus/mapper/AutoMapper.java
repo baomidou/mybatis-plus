@@ -17,6 +17,8 @@ package com.baomidou.mybatisplus.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.session.RowBounds;
+
 /**
  * <p>
  * Mapper 继承该接口后，无需编写 mapper.xml 文件，即可获得CRUD功能
@@ -70,8 +72,15 @@ public interface AutoMapper<T> {
 
 
 	/**
+	 * <p>
 	 * 根据 entity 查询全部记录
+	 * </p>
+	 * @param rowBounds
+	 * 				分页查询条件（可以为 null）
+	 * @param entity
+	 * 				实体对象（可以为 null）
+	 * @return
 	 */
-	List<T> selectAll( T entity );
+	List<T> selectList( RowBounds rowBounds, T entity );
 
 }

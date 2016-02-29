@@ -57,6 +57,10 @@ public class User implements Serializable {
 	public User(String name) {
 		this.name = name;
 	}
+	
+	public User(Integer testType) {
+		this.testType = testType;
+	}
 
 	public User(String name, Integer age) {
 		this.name = name;
@@ -73,10 +77,11 @@ public class User implements Serializable {
 		this.age = age;
 	}
 
-	public User(Long id, String name, Integer age) {
+	public User(Long id, String name, Integer age, Integer testType) {
 		this.id = id;
 		this.name = name;
 		this.age = age;
+		this.testType = testType;
 	}
 
 	public Long getId() {

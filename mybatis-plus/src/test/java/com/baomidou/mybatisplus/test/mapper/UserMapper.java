@@ -40,7 +40,7 @@ public interface UserMapper extends AutoMapper<User> {
 	 * @return
 	 */
 	int deleteByName(String name);
-
+	
 	/**
 	 * 用户列表，分页显示
 	 * 
@@ -48,5 +48,5 @@ public interface UserMapper extends AutoMapper<User> {
 	 *            传递参数包含该属性，即自动分页
 	 * @return
 	 */
-	List<User> list(RowBounds pagination);
+	List<User> selectListRow(RowBounds pagination);
 }

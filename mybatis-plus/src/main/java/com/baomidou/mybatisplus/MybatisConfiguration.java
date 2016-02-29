@@ -47,12 +47,15 @@ public class MybatisConfiguration extends Configuration {
 	}
 	
 	/**
-	 * Mybatis加载sql的顺序：<br>
-	 * 1、加载xml中的sql；<br>
-	 * 2、加载sqlprovider中的sql<br>
-	 * 3、xmlsql 与 sqlprovider不能包含相同的sql <br>
+	 * <p>
+	 * MybatisPlus 加载 SQL 顺序：
+	 * </p>
+	 * 1、加载XML中的SQL<br>
+	 * 2、加载sqlProvider中的SQL<br>
+	 * 3、xmlSql 与 sqlProvider不能包含相同的SQL<br>
 	 * <br>
-	 * 调整后的sql优先级：xmlsql > sqlprovider > crudsql
+	 * 调整后的SQL优先级：xmlSql > sqlProvider > crudSql
+	 * <br>
 	 */
 	@Override
 	public void addMappedStatement(MappedStatement ms) {

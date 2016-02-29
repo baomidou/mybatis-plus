@@ -1,22 +1,22 @@
 /*
- Navicat MySQL Data Transfer
+Navicat MySQL Data Transfer
 
- Source Server         : local
- Source Server Version : 50616
- Source Host           : localhost
- Source Database       : mybatis-plus
+Source Server         : localhost
+Source Server Version : 50615
+Source Host           : localhost:3306
+Source Database       : mybatis-plus
 
- Target Server Version : 50616
- File Encoding         : utf-8
+Target Server Type    : MYSQL
+Target Server Version : 50615
+File Encoding         : 65001
 
- Date: 02/28/2016 13:50:48 PM
+Date: 2016-02-29 18:03:37
 */
 
-SET NAMES utf8;
-SET FOREIGN_KEY_CHECKS = 0;
+SET FOREIGN_KEY_CHECKS=0;
 
 -- ----------------------------
---  Table structure for `user`
+-- Table structure for `user`
 -- ----------------------------
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
@@ -25,13 +25,8 @@ CREATE TABLE `user` (
   `age` int(11) NOT NULL COMMENT '年龄',
   `test_type` int(11) NOT NULL DEFAULT '0' COMMENT '测试下划线字段命名类型',
   PRIMARY KEY (`test_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=393377871298560003 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='用户表';
+) ENGINE=MyISAM AUTO_INCREMENT=398402012225470465 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='用户表';
 
 -- ----------------------------
---  Records of `user`
+-- Records of user
 -- ----------------------------
-BEGIN;
-INSERT INTO `user` VALUES ('1', 'test', '18', '0'), ('2', '6', '6', '0'), ('3', '1', '1', '0'), ('393377871298560001', '2', '2', '0'), ('393377871298560002', '3', '3', '0');
-COMMIT;
-
-SET FOREIGN_KEY_CHECKS = 1;

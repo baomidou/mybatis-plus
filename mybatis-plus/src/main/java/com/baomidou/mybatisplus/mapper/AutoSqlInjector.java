@@ -87,7 +87,7 @@ public class AutoSqlInjector {
 			this.injectSelectSql(false, mapperClass, modelClass, table);
 			this.injectSelectSql(true, mapperClass, modelClass, table);
 			this.injectSelectByEntitySql(SqlMethod.SELECT_ONE, mapperClass, modelClass, table);
-			this.injectSelectByEntitySql(SqlMethod.SELECT_ALL, mapperClass, modelClass, table);
+			this.injectSelectByEntitySql(SqlMethod.SELECT_LIST, mapperClass, modelClass, table);
 		} else {
 			/**
 			 * 提示
