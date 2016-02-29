@@ -65,7 +65,7 @@ public class UserMapperTest {
 		 * 插入
 		 */
 		long id = IdWorker.getId();
-		int rlt = userMapper.insert(new User(id, 18));
+		int rlt = userMapper.insert(new User(id, "abc", 18));
 		System.err.println("\n--------------insert-------name为空---------\n name=null, age=18");
 		sleep();
 		
@@ -77,9 +77,9 @@ public class UserMapperTest {
 		ul.add(new User(15L, "5", 5));
 		ul.add(new User(16L, "6", 6));
 		ul.add(new User(17L, "7", 7));
-		rlt = userMapper.insertBatch(ul);
-		System.err.println("\n\n------------insertBatch----------------\n result=" + rlt);
-		sleep();
+		for ( User u : ul ) {
+			userMapper.insert(u);
+		}
 		
 		
 		/**
@@ -119,9 +119,6 @@ public class UserMapperTest {
 		 * <p>
 		 * 查询
 		 * </p>
-		 * 
-		 * 此处的 selectById 被UserMapper.xml中的 selectById 覆盖了
-		 * 
 		 */
 		System.err.println("\n------------------selectById----------------------");
 		User user = userMapper.selectById(12L);

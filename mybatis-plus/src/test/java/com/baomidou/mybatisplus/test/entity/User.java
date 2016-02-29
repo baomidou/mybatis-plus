@@ -34,12 +34,12 @@ import com.baomidou.mybatisplus.annotations.TableName;
 @TableName(value = "user")
 public class User implements Serializable {
 
-	/* 表字段 主键，false 表中不存在的字段，可无该注解 默认 true */
-	@TableId(value = "test_id", auto = true)
+	/* 表字段注解，false 表中不存在的字段，可无该注解 默认 true */
+	@TableField(exist = false)
 	private static final long serialVersionUID = 1L;
 
 	/* 主键ID 注解，auto 属性 true 自增（默认 true），false 非自增（调用插入 insert 需要用户传入ID值） */
-	@TableId(auto = false)
+	@TableId(value = "test_id", auto = false)
 	private Long id;
 
 	private String name;
@@ -48,7 +48,7 @@ public class User implements Serializable {
 
 	/* 测试下划线字段命名类型 */
 	@TableField(value = "test_type")
-	private Integer testType;
+	private Integer testType = 0;
 
 	public User() {
 

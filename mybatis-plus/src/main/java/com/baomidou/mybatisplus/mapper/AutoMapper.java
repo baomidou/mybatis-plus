@@ -34,12 +34,6 @@ public interface AutoMapper<T> {
 
 
 	/**
-	 * 插入（批量）
-	 */
-	int insertBatch( List<T> entityList );
-
-
-	/**
 	 * 根据 ID 删除
 	 */
 	int deleteById( Object id );

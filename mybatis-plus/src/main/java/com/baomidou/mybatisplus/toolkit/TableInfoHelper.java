@@ -51,7 +51,7 @@ public class TableInfoHelper {
 	 *            反射实体类
 	 * @return
 	 */
-	public static TableInfo getTableInfo(Class<?> clazz) {
+	public synchronized static TableInfo getTableInfo(Class<?> clazz) {
 		TableInfo ti = tableInfoCache.get(clazz.getName());
 		if (ti != null) {
 			return ti;
@@ -67,18 +67,29 @@ public class TableInfoHelper {
 			tableInfo.setTableName(camelToUnderline(clazz.getSimpleName()));
 		}
 
-		List<String> fieldList = new ArrayList<String>();
+		List<TableFieldInfo> fieldList = new ArrayList<TableFieldInfo>();
 		for (Field field : list) {
 			/* 主键ID */
 			TableId tableId = field.getAnnotation(TableId.class);
 			if (tableId != null) {
 				tableInfo.setAutoIncrement(tableId.auto());
-				tableInfo.setTableId(field.getName());
+				if(tableId.value() != null && !"".equals(tableId.value())) {
+					/* 自定义字段 */
+					tableInfo.setKeyColumn(tableId.value());
+				}
+				tableInfo.setKeyProperty(field.getName());
 				continue;
 			}
 
+			/* 获取注解属性，自定义字段 */
+			TableField tableField = field.getAnnotation(TableField.class);
+			if (tableField != null && tableField.value() != null && !"".equals(tableField.value())) {
+				fieldList.add(new TableFieldInfo(true, tableField.value(), field.getName()));
+				continue;
+			}
+			
 			/* 字段 */
-			fieldList.add(field.getName());
+			fieldList.add(new TableFieldInfo(field.getName()));
 		}
 
 		/* 字段列表 */
@@ -109,7 +120,7 @@ public class TableInfoHelper {
 	}
 
 	/**
-	 * 获取该类的所有字符列表
+	 * 获取该类的所有属性列表
 	 * 
 	 * @param clazz
 	 *            反射类
