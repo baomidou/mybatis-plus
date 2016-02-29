@@ -48,10 +48,14 @@ public class User implements Serializable {
 
 	/* 测试下划线字段命名类型 */
 	@TableField(value = "test_type")
-	private Integer testType = 0;
+	private Integer testType;
 
 	public User() {
 
+	}
+	
+	public User(String name) {
+		this.name = name;
 	}
 
 	public User(String name, Integer age) {

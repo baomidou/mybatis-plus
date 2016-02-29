@@ -133,8 +133,12 @@ public class UserMapperTest {
 			print(ul1.get(i));
 		}
 
+		System.err.println("\n------------------selectOne----------------------");
+		User userOne = userMapper.selectOne(new User("MybatisPlus"));
+		print(userOne);
+		
 		System.err.println("\n------------------selectAll----------------------");
-		List<User> ul2 = userMapper.selectAll();
+		List<User> ul2 = userMapper.selectAll(null);
 		for (int i = 0; i < ul2.size(); i++) {
 			print(ul2.get(i));
 		}

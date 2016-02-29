@@ -86,9 +86,8 @@ public class AutoSqlInjector {
 			/* 查询 */
 			this.injectSelectSql(false, mapperClass, modelClass, table);
 			this.injectSelectSql(true, mapperClass, modelClass, table);
-
-			/* 查询全部 */
-			injectSelectAllSql(mapperClass, modelClass, table);
+			this.injectSelectByEntitySql(SqlMethod.SELECT_ONE, mapperClass, modelClass, table);
+			this.injectSelectByEntitySql(SqlMethod.SELECT_ALL, mapperClass, modelClass, table);
 		} else {
 			/**
 			 * 提示
@@ -159,11 +158,8 @@ public class AutoSqlInjector {
 				placeholderBuilder.append("#{").append(table.getKeyProperty()).append("},");
 			}
 		}
-
 		List<TableFieldInfo> fieldList = table.getFieldList();
-		int size = fieldList.size();
-		for ( int i = 0 ; i < size ; i++ ) {
-			TableFieldInfo fieldInfo = fieldList.get(i);
+		for ( TableFieldInfo fieldInfo : fieldList ) {
 			fieldBuilder.append("\n\t<if test=\"").append(fieldInfo.getProperty()).append("!=null\">");
 			fieldBuilder.append(fieldInfo.getColumn()).append(",</if>");
 			placeholderBuilder.append("\n\t<if test=\"").append(fieldInfo.getProperty()).append("!=null\">");
@@ -190,7 +186,7 @@ public class AutoSqlInjector {
 	 * @param table
 	 */
 	private void injectDeleteSql( boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table ) {
-		SqlMethod sqlMethod = SqlMethod.DELETE_ONE;
+		SqlMethod sqlMethod = SqlMethod.DELETE_BY_ID;
 		SqlSource sqlSource = null;
 		if ( batch ) {
 			sqlMethod = SqlMethod.DELETE_BATCH;
@@ -218,18 +214,16 @@ public class AutoSqlInjector {
 	 * @param table
 	 */
 	private void injectUpdateSql( Class<?> mapperClass, Class<?> modelClass, TableInfo table ) {
-		SqlMethod sqlMethod = SqlMethod.UPDATE_ONE;
+		SqlMethod sqlMethod = SqlMethod.UPDATE_BY_ID;
 		StringBuilder set = new StringBuilder();
-		List<TableFieldInfo> fieldList = table.getFieldList();
-		int size = fieldList.size();
 		/*
 		 * UPDATE table 
 		 * <trim prefix="SET" suffixOverrides="," suffix="WHERE id=#{id}" >...</trim>
 		 */
 		set.append("<trim prefix=\"SET\" suffixOverrides=\",\" suffix=\"WHERE ");
 		set.append(table.getKeyColumn()).append("=#{").append(table.getKeyProperty()).append("}\">");
-		for ( int i = 0 ; i < size ; i++ ) {
-			TableFieldInfo fieldInfo = fieldList.get(i);
+		List<TableFieldInfo> fieldList = table.getFieldList();
+		for ( TableFieldInfo fieldInfo : fieldList ) {
 			set.append("\n<if test=\"").append(fieldInfo.getProperty()).append("!=null\">\n");
 			set.append(fieldInfo.getColumn()).append("=#{").append(fieldInfo.getProperty()).append("},");
 			set.append("\n</if>");
@@ -252,7 +246,7 @@ public class AutoSqlInjector {
 	 * @param table
 	 */
 	private void injectSelectSql( boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table ) {
-		SqlMethod sqlMethod = SqlMethod.SELECT_ONE;
+		SqlMethod sqlMethod = SqlMethod.SELECT_BY_ID;
 		SqlSource sqlSource = null;
 		if ( batch ) {
 			sqlMethod = SqlMethod.SELECT_BATCH;
@@ -261,39 +255,39 @@ public class AutoSqlInjector {
 			ids.append("#{item}");
 			ids.append("\n</foreach>");
 			sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(),
-				selectColumns(table), table.getTableName(), table.getKeyColumn(), ids.toString()), modelClass);
+				sqlSelectColumns(table), table.getTableName(), table.getKeyColumn(), ids.toString()), modelClass);
 		} else {
-			sqlSource = new RawSqlSource(configuration, String.format(sqlMethod.getSql(), selectColumns(table),
+			sqlSource = new RawSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table),
 				table.getTableName(), table.getKeyColumn(), table.getKeyProperty()), Object.class);
 		}
 		this.addMappedStatement(mapperClass, sqlMethod, sqlSource, SqlCommandType.SELECT, modelClass);
 	}
-
-
+	
+	
 	/**
 	 * <p>
-	 * 注入查询全部 SQL 语句
+	 * 注入实体查询 SQL 语句
 	 * </p>
 	 * @param mapperClass
 	 * @param modelClass
 	 * @param table
 	 */
-	private void injectSelectAllSql( Class<?> mapperClass, Class<?> modelClass, TableInfo table ) {
-		SqlMethod sqlMethod = SqlMethod.SELECT_ALL;
-		SqlSource sqlSource = new RawSqlSource(configuration,
-				String.format(sqlMethod.getSql(), selectColumns(table), table.getTableName()), null);
+	private void injectSelectByEntitySql( SqlMethod sqlMethod, Class<?> mapperClass, Class<?> modelClass,
+			TableInfo table ) {
+		String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(table), table.getTableName(), sqlWhere(table));
+		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
 		this.addMappedStatement(mapperClass, sqlMethod, sqlSource, SqlCommandType.SELECT, modelClass);
 	}
 
 
 	/**
 	 * <p>
-	 * 查询所有表字段
+	 * SQL 查询所有表字段
 	 * </p>
 	 * @param table
 	 * @return
 	 */
-	private String selectColumns( TableInfo table ) {
+	private String sqlSelectColumns( TableInfo table ) {
 		StringBuilder columns = new StringBuilder();
 		if ( table.getKeyColumn() != null ) {
 			columns.append(table.getKeyColumn()).append(" AS ").append(table.getKeyProperty());
@@ -301,9 +295,7 @@ public class AutoSqlInjector {
 			columns.append(table.getKeyProperty());
 		}
 		List<TableFieldInfo> fieldList = table.getFieldList();
-		int size = fieldList.size();
-		for ( int i = 0 ; i < size ; i++ ) {
-			TableFieldInfo fieldInfo = fieldList.get(i);
+		for ( TableFieldInfo fieldInfo : fieldList ) {
 			columns.append(",").append(fieldInfo.getColumn());
 			if ( fieldInfo.isRelated() ) {
 				columns.append(" AS ").append(fieldInfo.getProperty());
@@ -312,6 +304,29 @@ public class AutoSqlInjector {
 		return columns.toString();
 	}
 
+	
+	/**
+	 * <p>
+	 * SQL 查询条件
+	 * </p>
+	 * @param table
+	 * @return
+	 */
+	private String sqlWhere( TableInfo table ) {
+		StringBuilder where = new StringBuilder();
+		where.append("\n<where>");
+		where.append("\n<if test=\"").append(table.getKeyProperty()).append("!=null\">\n");
+		where.append(table.getKeyColumn()).append("=#{").append(table.getKeyProperty()).append("}");
+		where.append("\n</if>");
+		List<TableFieldInfo> fieldList = table.getFieldList();
+		for ( TableFieldInfo fieldInfo : fieldList ) {
+			where.append("\n<if test=\"").append(fieldInfo.getProperty()).append("!=null\">\n");
+			where.append(" AND ").append(fieldInfo.getColumn()).append("=#{").append(fieldInfo.getProperty()).append("}");
+			where.append("\n</if>");
+		}
+		where.append("\n</where>");
+		return where.toString();
+	}
 
 	private MappedStatement addMappedStatement( Class<?> mapperClass, SqlMethod sm, SqlSource sqlSource,
 			SqlCommandType sqlCommandType, Class<?> resultType ) {

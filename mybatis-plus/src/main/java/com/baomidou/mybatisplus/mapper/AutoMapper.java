@@ -64,8 +64,14 @@ public interface AutoMapper<T> {
 
 
 	/**
-	 * 查询全部
+	 * 根据 entity 查询一条记录
 	 */
-	List<T> selectAll();
+	T selectOne( T entity );
+
+
+	/**
+	 * 根据 entity 查询全部记录
+	 */
+	List<T> selectAll( T entity );
 
 }
