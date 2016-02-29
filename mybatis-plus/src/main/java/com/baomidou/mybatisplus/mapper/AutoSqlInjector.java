@@ -33,6 +33,7 @@ import org.apache.ibatis.session.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.baomidou.mybatisplus.annotations.IdType;
 import com.baomidou.mybatisplus.toolkit.TableFieldInfo;
 import com.baomidou.mybatisplus.toolkit.TableInfo;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
@@ -141,7 +142,7 @@ public class AutoSqlInjector {
 		String keyProperty = null;
 		String keyColumn = null;
 		if ( table.getKeyColumn() != null ) {
-			if ( table.isAutoIncrement() ) {
+			if ( table.getIdType() == IdType.AUTO_INCREMENT ) {
 				/* 自增主键 */
 				keyGenerator = new Jdbc3KeyGenerator();
 				keyProperty = table.getKeyProperty();

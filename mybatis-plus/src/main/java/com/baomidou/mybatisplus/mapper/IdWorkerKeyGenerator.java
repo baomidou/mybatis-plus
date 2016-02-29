@@ -7,7 +7,7 @@ import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.mapping.MappedStatement;
 
 
-public class IdKeyGenerator implements KeyGenerator {
+public class IdWorkerKeyGenerator implements KeyGenerator {
 
 	@Override
 	public void processBefore( Executor executor, MappedStatement ms, Statement stmt, Object parameter ) {

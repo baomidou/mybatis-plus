@@ -17,6 +17,8 @@ package com.baomidou.mybatisplus.toolkit;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.annotations.IdType;
+
 /**
  * <p>
  * 数据库表反射信息
@@ -28,9 +30,9 @@ import java.util.List;
 public class TableInfo {
 
 	/**
-	 * 表主键ID 是否自增
+	 * 表主键ID 类型
 	 */
-	private boolean autoIncrement;
+	private IdType idType;
 
 	/**
 	 * 表名称
@@ -52,53 +54,43 @@ public class TableInfo {
 	 */
 	private List<TableFieldInfo> fieldList;
 
-
-	public boolean isAutoIncrement() {
-		return autoIncrement;
+	public IdType getIdType() {
+		return idType;
 	}
 
-
-	public void setAutoIncrement( boolean autoIncrement ) {
-		this.autoIncrement = autoIncrement;
+	public void setIdType(IdType idType) {
+		this.idType = idType;
 	}
-
 
 	public String getTableName() {
 		return tableName;
 	}
 
-
-	public void setTableName( String tableName ) {
+	public void setTableName(String tableName) {
 		this.tableName = tableName;
 	}
-
 
 	public String getKeyProperty() {
 		return keyProperty;
 	}
 
-
-	public void setKeyProperty( String keyProperty ) {
+	public void setKeyProperty(String keyProperty) {
 		this.keyProperty = keyProperty;
 	}
-
 
 	public String getKeyColumn() {
 		return keyColumn;
 	}
 
-
-	public void setKeyColumn( String keyColumn ) {
+	public void setKeyColumn(String keyColumn) {
 		this.keyColumn = keyColumn;
 	}
-
 
 	public List<TableFieldInfo> getFieldList() {
 		return fieldList;
 	}
 
-
-	public void setFieldList( List<TableFieldInfo> fieldList ) {
+	public void setFieldList(List<TableFieldInfo> fieldList) {
 		this.fieldList = fieldList;
 	}
 

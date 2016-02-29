@@ -72,7 +72,7 @@ public class TableInfoHelper {
 			/* 主键ID */
 			TableId tableId = field.getAnnotation(TableId.class);
 			if (tableId != null) {
-				tableInfo.setAutoIncrement(tableId.auto());
+				tableInfo.setIdType(tableId.type());
 				if(tableId.value() != null && !"".equals(tableId.value())) {
 					/* 自定义字段 */
 					tableInfo.setKeyColumn(tableId.value());

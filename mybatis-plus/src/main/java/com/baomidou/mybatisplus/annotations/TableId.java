@@ -20,8 +20,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.baomidou.mybatisplus.toolkit.IdWorker;
-
 /**
  * <p>
  * 表主键标识
@@ -41,15 +39,10 @@ public @interface TableId {
 
 	/**
 	 * 
-	 * 主键ID，默认 true 数据库自增
+	 * 主键ID，默认 ID 自增
 	 * 
-	 * <p>
-	 * 设置为 false 需要用户传入 ID 内容，工具包 IdWorker 可产品全局唯一 ID
-	 * </p>
-	 * 
-	 * {@link IdWorker}
+	 * {@link IdType}
 	 * 
 	 */
-	boolean auto() default true;
-
+	IdType type() default IdType.AUTO_INCREMENT;
 }

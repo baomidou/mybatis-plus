@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.test.entity;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 
+import com.baomidou.mybatisplus.annotations.IdType;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
@@ -38,8 +39,8 @@ public class User implements Serializable {
 	@TableField(exist = false)
 	private static final long serialVersionUID = 1L;
 
-	/* 主键ID 注解，auto 属性 true 自增（默认 true），false 非自增（调用插入 insert 需要用户传入ID值） */
-	@TableId(value = "test_id", auto = false)
+	/* 主键ID 注解，value 字段名，type 用户输入ID */
+	@TableId(value = "test_id", type = IdType.ID_INPUT)
 	private Long id;
 
 	private String name;
