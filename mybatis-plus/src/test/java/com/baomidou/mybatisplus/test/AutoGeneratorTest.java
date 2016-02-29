@@ -46,8 +46,18 @@ public class AutoGeneratorTest {
 		cg.setDbUser("root");
 		cg.setDbPassword("");
 		cg.setDbUrl("jdbc:mysql://127.0.0.1:3306/mybatis-plus?characterEncoding=utf8");
+		
+		/*
+		 * 表主键 ID 生成类型, 自增该设置无效。
+		 * <p>
+		 * IdType.AUTO_INCREMENT 	数据库ID自增
+		 * IdType.ID_INPUT			用户输入ID
+		 * IdType.ID_WORKER			IdWorkerKeyGenerator 生成全局唯一ID工具类（默认配置）
+		 * </p>
+		 */
+		//cg.setIdType(IdType.ID_INPUT);
 
-		/**
+		/*
 		 * 表是否包括前缀
 		 * <p>
 		 * 例如 mp_user 生成实体类 false 为 MpUser , true 为 User

@@ -15,11 +15,12 @@
  */
 package com.baomidou.mybatisplus.generator;
 
+import com.baomidou.mybatisplus.annotations.IdType;
+
 /**
  * <p>
  * 生成器配置类
- ********************************** 
- * 使用前必读*********************
+ ********************************** 使用前必读 *********************
  * saveDir 文件生成目录
  * entity_package entity 包路径
  * mapper_package mapper 包路径
@@ -55,6 +56,8 @@ public class ConfigGenerator {
 	private String dbPassword;
 
 	private String dbUrl;
+	
+	private IdType idType = IdType.ID_WORKER;
 
 	public String getSaveDir() {
 		return saveDir;
@@ -118,6 +121,14 @@ public class ConfigGenerator {
 
 	public void setDbUrl(String dbUrl) {
 		this.dbUrl = dbUrl;
+	}
+
+	public IdType getIdType() {
+		return idType;
+	}
+
+	public void setIdType(IdType idType) {
+		this.idType = idType;
 	}
 
 }

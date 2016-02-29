@@ -30,6 +30,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.annotations.IdType;
+
 /**
  * <p>
  * 映射文件自动生成类
@@ -329,7 +331,6 @@ public class AutoGenerator {
 	 */
 	private BufferedWriter buildClassComment(BufferedWriter bw, String text) throws IOException {
 		bw.newLine();
-		bw.newLine();
 		bw.write("/**");
 		bw.newLine();
 		bw.write(" *");
@@ -360,15 +361,19 @@ public class AutoGenerator {
 		bw.newLine();
 		bw.write("import java.io.Serializable;");
 		bw.newLine();
-		if(isDate(types)){
+		if (isDate(types)) {
 			bw.write("import java.util.Date;");
 			bw.newLine();
 		}
-		if(isDecimal(types)){
+		if (isDecimal(types)) {
 			bw.write("import java.math.BigDecimal;");
 			bw.newLine();
 		}
 		bw.newLine();
+		if (config.getIdType() != IdType.AUTO_INCREMENT) {
+			bw.write("import com.baomidou.mybatisplus.annotations.IdType;");
+			bw.newLine();
+		}
 		bw.write("import com.baomidou.mybatisplus.annotations.TableField;");
 		bw.newLine();
 		bw.write("import com.baomidou.mybatisplus.annotations.TableId;");
@@ -401,17 +406,26 @@ public class AutoGenerator {
 			boolean isLine = column.contains("_");
 			IdInfo idInfo = idMap.get(column);
 			if (idInfo != null) {
-				//@TableId(value = "test_id", auto = false)
-				bw.write("\t@TableId(");
-				if (isLine) {
-					bw.write("value = \"" + column + "\", ");
-				}
+				//@TableId(value = "test_id", type = IdType.AUTO_INCREMENT)
 				if (idInfo.isAutoIncrement()) {
-					bw.write("auto = true)");
+					System.err.println(" Table :{ " + table + " } ID is Auto increment");
+					if (isLine) {
+						bw.write("\t@TableId(value = \"" + column + "\")");
+						bw.newLine();
+					}
 				} else {
-					bw.write("auto = false)");
+					bw.write("\t@TableId(");
+					if (isLine) {
+						bw.write("value = \"" + column + "\", ");
+					}
+					if (config.getIdType() == IdType.ID_WORKER) {
+						bw.write("type = IdType.ID_WORKER");
+					} else if (config.getIdType() == IdType.ID_INPUT) {
+						bw.write("type = IdType.ID_INPUT");
+					}
+					bw.write(")");
+					bw.newLine();
 				}
-				bw.newLine();
 			} else if (isLine) {
 				//@TableField(value = "test_type", exist = false)
 				bw.write("\t@TableField(value = \"" + column + "\")");

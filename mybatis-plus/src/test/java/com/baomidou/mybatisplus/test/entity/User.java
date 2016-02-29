@@ -54,11 +54,11 @@ public class User implements Serializable {
 	public User() {
 
 	}
-	
+
 	public User(String name) {
 		this.name = name;
 	}
-	
+
 	public User(Integer testType) {
 		this.testType = testType;
 	}
