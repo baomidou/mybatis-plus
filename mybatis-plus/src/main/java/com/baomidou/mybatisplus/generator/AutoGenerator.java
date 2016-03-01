@@ -418,9 +418,7 @@ public class AutoGenerator {
 					if (isLine) {
 						bw.write("value = \"" + column + "\", ");
 					}
-					if (config.getIdType() == IdType.ID_WORKER) {
-						bw.write("type = IdType.ID_WORKER");
-					} else if (config.getIdType() == IdType.ID_INPUT) {
+					if (config.getIdType() == IdType.ID_INPUT) {
 						bw.write("type = IdType.ID_INPUT");
 					}
 					bw.write(")");

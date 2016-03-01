@@ -51,8 +51,7 @@ public class AutoGeneratorTest {
 		 * 表主键 ID 生成类型, 自增该设置无效。
 		 * <p>
 		 * IdType.AUTO_INCREMENT 	数据库ID自增
-		 * IdType.ID_INPUT			用户输入ID
-		 * IdType.ID_WORKER			IdWorkerKeyGenerator 生成全局唯一ID工具类（默认配置）
+		 * IdType.ID_INPUT			用户输入ID（默认配置）
 		 * </p>
 		 */
 		//cg.setIdType(IdType.ID_INPUT);

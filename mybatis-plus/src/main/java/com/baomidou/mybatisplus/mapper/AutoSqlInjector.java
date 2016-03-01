@@ -144,9 +144,6 @@ public class AutoSqlInjector {
 		if ( table.getIdType() == IdType.AUTO_INCREMENT ) {
 			/* 自增主键 */
 			keyGenerator = new Jdbc3KeyGenerator();
-		} else if ( table.getIdType() == IdType.ID_WORKER ) {
-			/* IdWorker 生成全局唯一ID */
-			keyGenerator = new IdWorkerKeyGenerator();
 		} else {
 			/* key 属性置空，用户输入 ID */
 			keyProperty = null;
