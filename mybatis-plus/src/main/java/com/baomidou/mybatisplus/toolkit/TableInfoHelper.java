@@ -76,6 +76,9 @@ public class TableInfoHelper {
 				if(tableId.value() != null && !"".equals(tableId.value())) {
 					/* 自定义字段 */
 					tableInfo.setKeyColumn(tableId.value());
+					tableInfo.setKeyRelated(true);
+				} else {
+					tableInfo.setKeyColumn(field.getName());
 				}
 				tableInfo.setKeyProperty(field.getName());
 				continue;

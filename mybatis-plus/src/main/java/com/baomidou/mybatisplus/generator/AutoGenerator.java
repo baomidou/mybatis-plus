@@ -407,14 +407,14 @@ public class AutoGenerator {
 			IdInfo idInfo = idMap.get(column);
 			if (idInfo != null) {
 				//@TableId(value = "test_id", type = IdType.AUTO_INCREMENT)
+				bw.write("\t@TableId");
 				if (idInfo.isAutoIncrement()) {
 					System.err.println(" Table :{ " + table + " } ID is Auto increment");
 					if (isLine) {
-						bw.write("\t@TableId(value = \"" + column + "\")");
-						bw.newLine();
+						bw.write("(value = \"" + column + "\")");
 					}
 				} else {
-					bw.write("\t@TableId(");
+					bw.write("(");
 					if (isLine) {
 						bw.write("value = \"" + column + "\", ");
 					}
@@ -424,8 +424,8 @@ public class AutoGenerator {
 						bw.write("type = IdType.ID_INPUT");
 					}
 					bw.write(")");
-					bw.newLine();
 				}
+				bw.newLine();
 			} else if (isLine) {
 				//@TableField(value = "test_type", exist = false)
 				bw.write("\t@TableField(value = \"" + column + "\")");

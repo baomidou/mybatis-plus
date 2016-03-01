@@ -139,25 +139,20 @@ public class AutoSqlInjector {
 		SqlMethod sqlMethod = SqlMethod.INSERT_ONE;
 		fieldBuilder.append("\n<trim prefix=\"(\" suffix=\")\" suffixOverrides=\",\">\n");
 		placeholderBuilder.append("\n<trim prefix=\"(\" suffix=\")\" suffixOverrides=\",\">\n");
-		String keyProperty = null;
-		String keyColumn = null;
-		if ( table.getKeyColumn() != null ) {
-			if ( table.getIdType() == IdType.AUTO_INCREMENT ) {
-				/* 自增主键 */
-				keyGenerator = new Jdbc3KeyGenerator();
-				keyProperty = table.getKeyProperty();
-				keyColumn = table.getKeyColumn();
-				if ( keyColumn == null ) {
-					keyColumn = table.getKeyProperty();
-				}
-			} else {
-				/* 非自增，用户生成 */
-				//				keyGenerator = new Jdbc3KeyGenerator();//new IdKeyGenerator();
-				//				keyProperty = table.getKeyProperty();
-				//				keyColumn = table.getKeyColumn();
-				fieldBuilder.append(table.getKeyColumn()).append(",");
-				placeholderBuilder.append("#{").append(table.getKeyProperty()).append("},");
-			}
+		String keyProperty = table.getKeyProperty();
+		String keyColumn = table.getKeyColumn();
+		if ( table.getIdType() == IdType.AUTO_INCREMENT ) {
+			/* 自增主键 */
+			keyGenerator = new Jdbc3KeyGenerator();
+		} else if ( table.getIdType() == IdType.ID_WORKER ) {
+			/* IdWorker 生成全局唯一ID */
+			keyGenerator = new IdWorkerKeyGenerator();
+		} else {
+			/* key 属性置空，用户输入 ID */
+			keyProperty = null;
+			keyColumn = null;
+			fieldBuilder.append(table.getKeyColumn()).append(",");
+			placeholderBuilder.append("#{").append(table.getKeyProperty()).append("},");
 		}
 		List<TableFieldInfo> fieldList = table.getFieldList();
 		for ( TableFieldInfo fieldInfo : fieldList ) {
@@ -290,7 +285,7 @@ public class AutoSqlInjector {
 	 */
 	private String sqlSelectColumns( TableInfo table ) {
 		StringBuilder columns = new StringBuilder();
-		if ( table.getKeyColumn() != null ) {
+		if ( table.isKeyRelated() ) {
 			columns.append(table.getKeyColumn()).append(" AS ").append(table.getKeyProperty());
 		} else {
 			columns.append(table.getKeyProperty());
