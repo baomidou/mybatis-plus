@@ -24,8 +24,8 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.log4j.BasicConfigurator;
 
+import com.baomidou.framework.Page;
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
-import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.test.entity.User;
 import com.baomidou.mybatisplus.test.mapper.UserMapper;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
@@ -155,12 +155,13 @@ public class UserMapperTest {
 		}
 		
 		System.err.println("\n------------------list 分页查询 ----查询 testType = 1 的所有数据------------------");
-		Pagination pagination = new Pagination(1, 2);
-		List<User> paginList = userMapper.selectList(pagination, new User(1));
-		for (int i = 0; i < paginList.size(); i++) {
-			print(paginList.get(i));
+		Page<User> page = new Page<User>(1, 2);
+		List<User> paginList = userMapper.selectList(page, new User(1));
+		page.setRecords(paginList);
+		for (int i = 0; i < page.getRecords().size(); i++) {
+			print(page.getRecords().get(i));
 		}
-		System.err.println(" 翻页：" + pagination.toString());
+		System.err.println(" 翻页：" + page.toString());
 		
 		System.err.println("\n---------------xml---selectListRow 分页查询，不查询总数（此时可自定义 count 查询）----无查询条件--------------");
 		List<User> rowList = userMapper.selectListRow(new RowBounds(0, 2));
