@@ -18,7 +18,7 @@ Maven 坐标
 <dependency>
     <groupId>com.baomidou</groupId>
     <artifactId>mybatis-plus</artifactId>
-    <version>1.1</version>
+    <version>maven 官方最新版本为准</version>
 </dependency>
 ```
 
