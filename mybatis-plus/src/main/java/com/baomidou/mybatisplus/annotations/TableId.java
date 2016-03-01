@@ -44,5 +44,5 @@ public @interface TableId {
 	 * {@link IdType}
 	 * 
 	 */
-	IdType type() default IdType.AUTO_INCREMENT;
+	IdType type() default IdType.AUTO;
 }

@@ -139,15 +139,15 @@ public class AutoSqlInjector {
 		SqlMethod sqlMethod = SqlMethod.INSERT_ONE;
 		fieldBuilder.append("\n<trim prefix=\"(\" suffix=\")\" suffixOverrides=\",\">\n");
 		placeholderBuilder.append("\n<trim prefix=\"(\" suffix=\")\" suffixOverrides=\",\">\n");
-		String keyProperty = table.getKeyProperty();
-		String keyColumn = table.getKeyColumn();
-		if ( table.getIdType() == IdType.AUTO_INCREMENT ) {
+		String keyProperty = null;
+		String keyColumn = null;
+		if ( table.getIdType() == IdType.AUTO ) {
 			/* 自增主键 */
 			keyGenerator = new Jdbc3KeyGenerator();
+			keyProperty = table.getKeyProperty();
+			keyColumn = table.getKeyColumn();
 		} else {
-			/* key 属性置空，用户输入 ID */
-			keyProperty = null;
-			keyColumn = null;
+			/* 用户输入自定义ID */
 			fieldBuilder.append(table.getKeyColumn()).append(",");
 			placeholderBuilder.append("#{").append(table.getKeyProperty()).append("},");
 		}

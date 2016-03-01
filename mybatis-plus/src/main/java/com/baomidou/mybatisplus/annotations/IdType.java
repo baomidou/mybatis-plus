@@ -24,8 +24,8 @@ package com.baomidou.mybatisplus.annotations;
  * @Date 2015-11-10
  */
 public enum IdType {
-	AUTO_INCREMENT("0", "数据库ID自增"),
-	ID_INPUT("1", "用户输入ID");
+	AUTO("0", "数据库ID自增"),
+	INPUT("1", "用户输入ID");
 
 	/** 主键 */
 	private final String key;

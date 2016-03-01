@@ -40,7 +40,7 @@ public class User implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/* 主键ID 注解，value 字段名，type 用户输入ID */
-	@TableId(value = "test_id", type = IdType.ID_INPUT)
+	@TableId(value = "test_id", type = IdType.INPUT)
 	private Long id;
 
 	private String name;

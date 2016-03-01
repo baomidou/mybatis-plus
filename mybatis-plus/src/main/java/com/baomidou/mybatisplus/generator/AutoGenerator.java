@@ -370,7 +370,7 @@ public class AutoGenerator {
 			bw.newLine();
 		}
 		bw.newLine();
-		if (config.getIdType() != IdType.AUTO_INCREMENT) {
+		if (config.getIdType() != IdType.AUTO) {
 			bw.write("import com.baomidou.mybatisplus.annotations.IdType;");
 			bw.newLine();
 		}
@@ -418,7 +418,7 @@ public class AutoGenerator {
 					if (isLine) {
 						bw.write("value = \"" + column + "\", ");
 					}
-					if (config.getIdType() == IdType.ID_INPUT) {
+					if (config.getIdType() == IdType.INPUT) {
 						bw.write("type = IdType.ID_INPUT");
 					}
 					bw.write(")");
