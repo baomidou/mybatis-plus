@@ -34,6 +34,7 @@ public enum SqlMethod {
 	 * 删除
 	 */
 	DELETE_BY_ID("deleteById", "根据ID 删除一条数据", "DELETE FROM %s WHERE %s=#{%s}"),
+	DELETE_SELECTIVE("deleteSelective", "根据 entity 条件删除记录", "<script>DELETE FROM %s %s</script>"),
 	DELETE_BATCH("deleteBatchIds", "根据ID集合，批量删除数据", "<script>DELETE FROM %s WHERE %s IN (%s)</script>"),
 	
 	/**

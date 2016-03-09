@@ -31,15 +31,6 @@ import com.baomidou.mybatisplus.test.entity.User;
  * @Date 2016-01-23
  */
 public interface UserMapper extends AutoMapper<User> {
-
-	/**
-	 * 根据用户名删除用户
-	 * 
-	 * @param name
-	 *            用户名称
-	 * @return
-	 */
-	int deleteByName(String name);
 	
 	/**
 	 * 用户列表，分页显示

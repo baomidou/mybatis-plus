@@ -77,7 +77,7 @@ public class UserMapperTest {
 		 */
 		long id = IdWorker.getId();
 		int rlt = userMapper.insert(new User(id, "abc", 18, 0));
-		System.err.println("\n--------------insert-------name为空---------\n name=null, age=18");
+		System.err.println("\n--------------insert-------name为空--------- name=null, age=18");
 		sleep();
 		
 		List<User> ul = new ArrayList<User>();
@@ -97,18 +97,18 @@ public class UserMapperTest {
 		 * 删除
 		 */
 		rlt = userMapper.deleteById(id);
-		System.err.println("\n\n---------deleteById------- delete id=" + id + " ,result=" + rlt);
+		System.err.println("---------deleteById------- delete id=" + id + " ,result=" + rlt + "\n\n");
 		sleep();
 		
 		List<Object> il = new ArrayList<Object>();
 		il.add(16L);
 		il.add(17L);
 		rlt = userMapper.deleteBatchIds(il);
-		System.err.println("\n\n---------deleteBatchIds------- delete id=" + id + " ,result=" + rlt);
+		System.err.println("---------deleteBatchIds------- delete id=" + id + " ,result=" + rlt + "\n\n");
 		sleep();
 		
-		rlt = userMapper.deleteByName("delname");
-		System.out.println("\n--------------deleteByName------------------\n result=" + rlt);
+		rlt = userMapper.deleteSelective(new User(14L, "delname"));
+		System.err.println("--------------deleteSelective------------------ result=" + rlt + "\n\n");
 		sleep();
 		
 		
@@ -121,7 +121,7 @@ public class UserMapperTest {
 		 * 
 		 */
 		rlt = userMapper.updateById(new User(12L, "MybatisPlus"));
-		System.err.println("\n------------------updateById----------------------\n result=" + rlt);
+		System.err.println("------------------updateById---------------------- result=" + rlt + "\n\n");
 		sleep();
 		
 		

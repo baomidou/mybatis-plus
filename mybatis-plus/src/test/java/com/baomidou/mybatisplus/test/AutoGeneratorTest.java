@@ -50,8 +50,8 @@ public class AutoGeneratorTest {
 		/*
 		 * 表主键 ID 生成类型, 自增该设置无效。
 		 * <p>
-		 * IdType.AUTO 		数据库ID自增
-		 * IdType.INPUT		用户输入ID（默认配置）
+		 * IdType.AUTO 		数据库ID自增（默认配置）
+		 * IdType.INPUT		用户输入ID
 		 * </p>
 		 */
 		//cg.setIdType(IdType.INPUT);

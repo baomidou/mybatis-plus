@@ -57,7 +57,7 @@ public class ConfigGenerator {
 
 	private String dbUrl;
 	
-	private IdType idType = IdType.INPUT;
+	private IdType idType = IdType.AUTO;
 
 	public String getSaveDir() {
 		return saveDir;

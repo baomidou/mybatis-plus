@@ -78,6 +78,7 @@ public class AutoSqlInjector {
 			this.injectInsertSql(mapperClass, modelClass, table);
 
 			/* 删除 */
+			this.injectDeleteSelectiveSql(mapperClass, modelClass, table);
 			this.injectDeleteSql(false, mapperClass, modelClass, table);
 			this.injectDeleteSql(true, mapperClass, modelClass, table);
 
@@ -168,6 +169,22 @@ public class AutoSqlInjector {
 	}
 
 
+
+	/**
+	 * <p>
+	 * 注入条件删除 SQL 语句
+	 * </p>
+	 * @param mapperClass
+	 * @param modelClass
+	 * @param table
+	 */
+	private void injectDeleteSelectiveSql( Class<?> mapperClass, Class<?> modelClass, TableInfo table ) {
+		SqlMethod sqlMethod = SqlMethod.DELETE_SELECTIVE;
+		String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlWhere(table));
+		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+		this.addMappedStatement(mapperClass, sqlMethod, sqlSource, SqlCommandType.DELETE, null);
+	}
+
 	/**
 	 * <p>
 	 * 注入删除 SQL 语句
@@ -188,7 +205,7 @@ public class AutoSqlInjector {
 			ids.append("#{item}");
 			ids.append("\n</foreach>");
 			String sql = String.format(sqlMethod.getSql(), table.getTableName(), table.getKeyColumn(), ids.toString());
-			sqlSource = languageDriver.createSqlSource(configuration, sql.toString(), modelClass);
+			sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
 		} else {
 			String sql = String.format(sqlMethod.getSql(), table.getTableName(), table.getKeyColumn(),
 				table.getKeyColumn());

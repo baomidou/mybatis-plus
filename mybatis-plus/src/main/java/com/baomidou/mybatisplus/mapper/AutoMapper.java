@@ -42,6 +42,12 @@ public interface AutoMapper<T> {
 
 
 	/**
+	 * 根据 entity 条件删除记录
+	 */
+	int deleteSelective( T record );
+
+
+	/**
 	 * 删除（根据ID 批量删除）
 	 */
 	int deleteBatchIds( List<Object> idList );
