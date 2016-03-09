@@ -24,8 +24,8 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.log4j.BasicConfigurator;
 
-import com.baomidou.framework.Page;
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.test.entity.User;
 import com.baomidou.mybatisplus.test.mapper.UserMapper;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
