@@ -39,7 +39,9 @@ import com.baomidou.mybatisplus.toolkit.IdWorker;
  * @Date 2016-01-23
  */
 public class UserMapperTest {
+
 	private static final String RESOURCE = "mybatis-config.xml";
+
 
 	/**
 	 * 
@@ -55,10 +57,10 @@ public class UserMapperTest {
 	 * 调整后的SQL优先级：xmlSql > sqlProvider > crudSql
 	 * <br>
 	 */
-	public static void main(String[] args) {
+	public static void main( String[] args ) {
 		//使用缺省Log4j环境
 		BasicConfigurator.configure();
-		
+
 		//加载配置文件
 		InputStream in = UserMapperTest.class.getClassLoader().getResourceAsStream(RESOURCE);
 
@@ -71,7 +73,7 @@ public class UserMapperTest {
 		UserMapper userMapper = session.getMapper(UserMapper.class);
 		System.err.println(" debug run 查询执行 user 表数据变化！ ");
 		session.delete("deleteAll");
-		
+
 		/**
 		 * 插入
 		 */
@@ -79,7 +81,7 @@ public class UserMapperTest {
 		int rlt = userMapper.insert(new User(id, "abc", 18, 0));
 		System.err.println("\n--------------insert-------name为空--------- name=null, age=18");
 		sleep();
-		
+
 		List<User> ul = new ArrayList<User>();
 		ul.add(new User(11L, "1", 1, 0));
 		ul.add(new User(12L, "2", 2, 1));
@@ -91,27 +93,27 @@ public class UserMapperTest {
 		for ( User u : ul ) {
 			userMapper.insert(u);
 		}
-		
-		
+
+
 		/**
 		 * 删除
 		 */
 		rlt = userMapper.deleteById(id);
 		System.err.println("---------deleteById------- delete id=" + id + " ,result=" + rlt + "\n\n");
 		sleep();
-		
+
 		List<Object> il = new ArrayList<Object>();
 		il.add(16L);
 		il.add(17L);
 		rlt = userMapper.deleteBatchIds(il);
 		System.err.println("---------deleteBatchIds------- delete id=" + id + " ,result=" + rlt + "\n\n");
 		sleep();
-		
+
 		rlt = userMapper.deleteSelective(new User(14L, "delname"));
 		System.err.println("--------------deleteSelective------------------ result=" + rlt + "\n\n");
 		sleep();
-		
-		
+
+
 		/**
 		 * <p>
 		 * 修改
@@ -123,9 +125,8 @@ public class UserMapperTest {
 		rlt = userMapper.updateById(new User(12L, "MybatisPlus"));
 		System.err.println("------------------updateById---------------------- result=" + rlt + "\n\n");
 		sleep();
-		
-		
-		
+
+
 		/**
 		 * <p>
 		 * 查询
@@ -134,50 +135,51 @@ public class UserMapperTest {
 		System.err.println("\n------------------selectById----------------------");
 		User user = userMapper.selectById(12L);
 		print(user);
-		
+
 		System.err.println("\n------------------selectBatchIds----------------------");
 		List<Object> idList = new ArrayList<Object>();
 		idList.add(11L);
 		idList.add(12L);
 		List<User> ul1 = userMapper.selectBatchIds(idList);
-		for (int i = 0; i < ul1.size(); i++) {
+		for ( int i = 0 ; i < ul1.size() ; i++ ) {
 			print(ul1.get(i));
 		}
 
 		System.err.println("\n------------------selectOne----------------------");
 		User userOne = userMapper.selectOne(new User("MybatisPlus"));
 		print(userOne);
-		
+
 		System.err.println("\n------------------selectList-----查询 testType = 1 的所有数据-----------------");
 		List<User> ul2 = userMapper.selectList(RowBounds.DEFAULT, new User(1));
-		for (int i = 0; i < ul2.size(); i++) {
+		for ( int i = 0 ; i < ul2.size() ; i++ ) {
 			print(ul2.get(i));
 		}
-		
+
 		System.err.println("\n------------------list 分页查询 ----查询 testType = 1 的所有数据------------------");
 		Page<User> page = new Page<User>(1, 2);
 		List<User> paginList = userMapper.selectList(page, new User(1));
 		page.setRecords(paginList);
-		for (int i = 0; i < page.getRecords().size(); i++) {
+		for ( int i = 0 ; i < page.getRecords().size() ; i++ ) {
 			print(page.getRecords().get(i));
 		}
 		System.err.println(" 翻页：" + page.toString());
-		
+
 		System.err.println("\n---------------xml---selectListRow 分页查询，不查询总数（此时可自定义 count 查询）----无查询条件--------------");
 		List<User> rowList = userMapper.selectListRow(new RowBounds(0, 2));
-		for (int i = 0; i < rowList.size(); i++) {
+		for ( int i = 0 ; i < rowList.size() ; i++ ) {
 			print(rowList.get(i));
 		}
 
 		/* 删除测试数据  */
 		rlt = session.delete("deleteAll");
 		System.err.println("清空测试数据！ rlt=" + rlt);
-		
+
 		/**
 		 * 提交
 		 */
 		session.commit();
 	}
+
 
 	/*
 	 * 打印测试信息
@@ -185,20 +187,22 @@ public class UserMapperTest {
 	private static void print( User user ) {
 		sleep();
 		if ( user != null ) {
-			System.out.println("\n user: id=" + user.getId() + ", name=" + user.getName() 
-			+ ", age=" + user.getAge() + ", testType=" + user.getTestType());
+			System.out.println("\n user: id="
+					+ user.getId() + ", name=" + user.getName() + ", age=" + user.getAge() + ", testType="
+					+ user.getTestType());
 		} else {
 			System.out.println("\n user is null.");
 		}
 	}
-	
+
+
 	/*
 	 * 慢点打印 
 	 */
 	private static void sleep() {
 		try {
 			Thread.sleep(1000);
-		} catch (InterruptedException e) {
+		} catch ( InterruptedException e ) {
 			e.printStackTrace();
 		}
 	}

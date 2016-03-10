@@ -115,17 +115,6 @@ public interface AutoMapper<T> {
 	 * @return int
 	 */
 	T selectOne( T entity );
-	
-	
-	/**
-	 * <p>
-	 * 根据 entity 条件，查询总记录数
-	 * </p>
-	 * @param entity
-	 * 				实体对象
-	 * @return int
-	 */
-	int selectCount( T entity );
 
 
 	/**
