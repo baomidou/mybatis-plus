@@ -88,6 +88,7 @@ public class AutoSqlInjector {
 			/* 查询 */
 			this.injectSelectSql(false, mapperClass, modelClass, table);
 			this.injectSelectSql(true, mapperClass, modelClass, table);
+			this.injectSelectCountByEntitySql(mapperClass, modelClass, table);
 			this.injectSelectByEntitySql(SqlMethod.SELECT_ONE, mapperClass, modelClass, table);
 			this.injectSelectByEntitySql(SqlMethod.SELECT_LIST, mapperClass, modelClass, table);
 		} else {
@@ -276,8 +277,25 @@ public class AutoSqlInjector {
 	
 	/**
 	 * <p>
+	 * 注入实体查询总记录数 SQL 语句
+	 * </p>
+	 * @param mapperClass
+	 * @param modelClass
+	 * @param table
+	 */
+	private void injectSelectCountByEntitySql( Class<?> mapperClass, Class<?> modelClass, TableInfo table ) {
+		SqlMethod sqlMethod = SqlMethod.SELECT_COUNT;
+		String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlWhere(table));
+		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+		this.addMappedStatement(mapperClass, sqlMethod, sqlSource, SqlCommandType.SELECT, modelClass);
+	}
+	
+	
+	/**
+	 * <p>
 	 * 注入实体查询 SQL 语句
 	 * </p>
+	 * @param sqlMethod
 	 * @param mapperClass
 	 * @param modelClass
 	 * @param table

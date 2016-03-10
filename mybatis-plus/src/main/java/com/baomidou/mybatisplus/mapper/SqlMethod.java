@@ -48,6 +48,7 @@ public enum SqlMethod {
 	SELECT_BY_ID("selectById", "根据ID 查询一条数据", "SELECT %s FROM %s WHERE %s=#{%s}"),
 	SELECT_BATCH("selectBatchIds", "根据ID集合，批量查询数据", "<script>SELECT %s FROM %s WHERE %s IN (%s)</script>"),
 	SELECT_ONE("selectOne", "查询满足条件一条数据", "<script>SELECT %s FROM %s %s</script>"),
+	SELECT_COUNT("selectCount", "根据 entity 条件，查询总记录数", "<script>SELECT COUNT(1) FROM %s %s</script>"),
 	SELECT_LIST("selectList", "查询满足条件所有数据", "<script>SELECT %s FROM %s %s</script>");
 	
 	private final String method;

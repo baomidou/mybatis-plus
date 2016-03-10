@@ -30,62 +30,113 @@ import org.apache.ibatis.session.RowBounds;
 public interface AutoMapper<T> {
 
 	/**
-	 * 插入
+	 * <p>
+	 * 插入一条记录
+	 * </p>
+	 * @param entity
+	 * 				实体对象
+	 * @return int
 	 */
 	int insert( T entity );
 
 
 	/**
+	 * <p>
 	 * 根据 ID 删除
+	 * </p>
+	 * @param id
+	 * 			主键ID
+	 * @return int
 	 */
 	int deleteById( Object id );
 
 
 	/**
-	 * 根据 entity 条件删除记录
+	 * <p>
+	 * 根据 entity 条件，删除记录
+	 * </p>
+	 * @param entity
+	 * 				实体对象
+	 * @return int
 	 */
 	int deleteSelective( T entity );
 
 
 	/**
+	 * <p>
 	 * 删除（根据ID 批量删除）
+	 * </p>
+	 * @param entity
+	 * 				实体对象
+	 * @return int
 	 */
 	int deleteBatchIds( List<Object> idList );
 
 
 	/**
+	 * <p>
 	 * 根据 ID 修改
+	 * </p>
+	 * @param entity
+	 * 				实体对象
+	 * @return int
 	 */
 	int updateById( T entity );
 
 
 	/**
+	 * <p>
 	 * 根据 ID 查询
+	 * </p>
+	 * @param id
+	 * 			主键ID
+	 * @return T
 	 */
 	T selectById( Object id );
 
 
 	/**
+	 * <p>
 	 * 查询（根据ID 批量查询）
+	 * </p>
+	 * @param idList
+	 * 				主键ID列表
+	 * @return List<T>
 	 */
 	List<T> selectBatchIds( List<Object> idList );
 
 
 	/**
-	 * 根据 entity 查询一条记录
+	 * <p>
+	 * 根据 entity 条件，查询一条记录
+	 * </p>
+	 * @param entity
+	 * 				实体对象
+	 * @return int
 	 */
 	T selectOne( T entity );
+	
+	
+	/**
+	 * <p>
+	 * 根据 entity 条件，查询总记录数
+	 * </p>
+	 * @param entity
+	 * 				实体对象
+	 * @return int
+	 */
+	int selectCount( T entity );
 
 
 	/**
 	 * <p>
-	 * 根据 entity 查询全部记录
+	 * 根据 entity 条件，查询全部记录
 	 * </p>
 	 * @param rowBounds
-	 * 				分页查询条件（可以为 null）
+	 * 				分页查询条件（可以为 RowBounds.DEFAULT）
 	 * @param entity
 	 * 				实体对象（可以为 null）
-	 * @return
+	 * @return List<T>
 	 */
 	List<T> selectList( RowBounds rowBounds, T entity );
 
