@@ -42,6 +42,17 @@ public interface AutoMapper<T> {
 
 	/**
 	 * <p>
+	 * 插入（批量），该方法不适合 Oracle
+	 * </p>
+	 * @param entityList
+	 * 				实体对象列表
+	 * @return int
+	 */
+	int insertBatch( List<T> entityList );
+
+
+	/**
+	 * <p>
 	 * 根据 ID 删除
 	 * </p>
 	 * @param id

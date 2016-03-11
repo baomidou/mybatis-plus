@@ -51,6 +51,7 @@ import org.springframework.core.NestedIOException;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
+import com.baomidou.mybatisplus.MybatisConfiguration;
 import com.baomidou.mybatisplus.MybatisXmlConfigBuilder;
 
 /**
@@ -381,7 +382,8 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 			if ( LOGGER.isDebugEnabled() ) {
 				LOGGER.debug("Property 'configLocation' not specified, using default MyBatis Configuration");
 			}
-			configuration = new Configuration();
+			//TODO 使用自定义配置
+			configuration = new MybatisConfiguration();
 			configuration.setVariables(this.configurationProperties);
 		}
 

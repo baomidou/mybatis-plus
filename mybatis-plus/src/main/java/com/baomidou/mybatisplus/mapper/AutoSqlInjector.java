@@ -28,11 +28,11 @@ import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.scripting.defaults.RawSqlSource;
-import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
 import org.apache.ibatis.session.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.baomidou.mybatisplus.MybatisXMLLanguageDriver;
 import com.baomidou.mybatisplus.annotations.IdType;
 import com.baomidou.mybatisplus.toolkit.TableFieldInfo;
 import com.baomidou.mybatisplus.toolkit.TableInfo;
@@ -50,7 +50,7 @@ public class AutoSqlInjector {
 
 	private transient Logger logger = LoggerFactory.getLogger(getClass());
 
-	private static final XMLLanguageDriver languageDriver = new XMLLanguageDriver();
+	private static final MybatisXMLLanguageDriver languageDriver = new MybatisXMLLanguageDriver();
 
 	private Configuration configuration;
 
@@ -75,7 +75,8 @@ public class AutoSqlInjector {
 		 */
 		if ( table.getKeyProperty() != null ) {
 			/* 插入 */
-			this.injectInsertSql(mapperClass, modelClass, table);
+			this.injectInsertSql(false, mapperClass, modelClass, table);
+			this.injectInsertSql(true, mapperClass, modelClass, table);
 
 			/* 删除 */
 			this.injectDeleteSelectiveSql(mapperClass, modelClass, table);
@@ -120,15 +121,29 @@ public class AutoSqlInjector {
 	 * <p>
 	 * 注入插入 SQL 语句
 	 * </p>
+	 * @param batch
+	 * 				是否为批量插入
 	 * @param mapperClass
 	 * @param modelClass
 	 * @param table
 	 */
-	private void injectInsertSql( Class<?> mapperClass, Class<?> modelClass, TableInfo table ) {
+	private void injectInsertSql( boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table ) {
+		/*
+		 * INSERT INTO table
+		 * <trim prefix="(" suffix=")" suffixOverrides=",">
+		 * 		<if test="xx != null">xx,</if>
+		 * </trim>
+		 * <trim prefix="values (" suffix=")" suffixOverrides=",">
+		 * 		<if test="xx != null">#{xx},</if>
+		 * </trim>
+		 */
 		KeyGenerator keyGenerator = new NoKeyGenerator();
 		StringBuilder fieldBuilder = new StringBuilder();
 		StringBuilder placeholderBuilder = new StringBuilder();
 		SqlMethod sqlMethod = SqlMethod.INSERT_ONE;
+		if ( batch ) {
+			sqlMethod = SqlMethod.INSERT_BATCH;
+		}
 		fieldBuilder.append("\n<trim prefix=\"(\" suffix=\")\" suffixOverrides=\",\">\n");
 		placeholderBuilder.append("\n<trim prefix=\"(\" suffix=\")\" suffixOverrides=\",\">\n");
 		String keyProperty = null;
@@ -141,14 +156,21 @@ public class AutoSqlInjector {
 		} else {
 			/* 用户输入自定义ID */
 			fieldBuilder.append(table.getKeyColumn()).append(",");
-			placeholderBuilder.append("#{").append(table.getKeyProperty()).append("},");
+			placeholderBuilder.append("#{").append(batch ? "item." : "");
+			placeholderBuilder.append(table.getKeyProperty()).append("},");
 		}
 		List<TableFieldInfo> fieldList = table.getFieldList();
 		for ( TableFieldInfo fieldInfo : fieldList ) {
-			fieldBuilder.append("\n\t<if test=\"").append(fieldInfo.getProperty()).append("!=null\">");
-			fieldBuilder.append(fieldInfo.getColumn()).append(",</if>");
-			placeholderBuilder.append("\n\t<if test=\"").append(fieldInfo.getProperty()).append("!=null\">");
-			placeholderBuilder.append("#{").append(fieldInfo.getProperty()).append("},</if>");
+			if ( !batch ) {
+				fieldBuilder.append("\n\t<if test=\"").append(fieldInfo.getProperty()).append("!=null\">");
+				placeholderBuilder.append("\n\t<if test=\"").append(fieldInfo.getProperty()).append("!=null\">");
+			}
+			fieldBuilder.append(fieldInfo.getColumn()).append(",");
+			placeholderBuilder.append("#{").append(batch ? "item." : "").append(fieldInfo.getProperty()).append("},");
+			if ( !batch ) {
+				fieldBuilder.append("</if>");
+				placeholderBuilder.append("</if>");
+			}
 		}
 		fieldBuilder.append("\n</trim>");
 		placeholderBuilder.append("\n</trim>");
@@ -361,7 +383,7 @@ public class AutoSqlInjector {
 		}
 		return assistant.addMappedStatement(id, sqlSource, StatementType.PREPARED, sqlCommandType, null, null, null,
 			parameterClass, null, resultType, null, false, true, false, keyGenerator, keyProperty, keyColumn,
-			configuration.getDatabaseId(), new XMLLanguageDriver(), null);
+			configuration.getDatabaseId(), new MybatisXMLLanguageDriver(), null);
 	}
 
 }

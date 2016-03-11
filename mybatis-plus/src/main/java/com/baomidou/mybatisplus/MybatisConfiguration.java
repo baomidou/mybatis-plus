@@ -19,6 +19,7 @@ import java.util.Set;
 
 import org.apache.ibatis.io.ResolverUtil;
 import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
@@ -43,6 +44,10 @@ public class MybatisConfiguration extends Configuration {
 	 * 初始化调用
 	 */
 	public MybatisConfiguration() {
+		/*
+		 * 设置自定义 XMLLanguageDriver
+		 */
+		this.languageRegistry.setDefaultDriverClass(MybatisXMLLanguageDriver.class);
 		System.err.println("mybatis-plus init success.");
 	}
 	
@@ -59,6 +64,7 @@ public class MybatisConfiguration extends Configuration {
 	 */
 	@Override
 	public void addMappedStatement(MappedStatement ms) {
+		System.err.println(ms.getLang());
 		if (this.mappedStatements.containsKey(ms.getId())) {
 			/*
 			 * 说明已加载了xml中的节点；
@@ -68,6 +74,11 @@ public class MybatisConfiguration extends Configuration {
 			return;
 		}
 		super.addMappedStatement(ms);
+	}
+	
+	@Override
+	public LanguageDriver getDefaultScriptingLanuageInstance() {
+		return languageRegistry.getDriver(MybatisXMLLanguageDriver.class);
 	}
 
 	@Override

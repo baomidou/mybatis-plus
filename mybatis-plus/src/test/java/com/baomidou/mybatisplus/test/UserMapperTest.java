@@ -90,9 +90,8 @@ public class UserMapperTest {
 		ul.add(new User(15L, "5", 5, 1));
 		ul.add(new User(16L, "6", 6, 0));
 		ul.add(new User(17L, "7", 7, 0));
-		for ( User u : ul ) {
-			userMapper.insert(u);
-		}
+		rlt = userMapper.insertBatch(ul);
+		System.err.println("\n--------------insertBatch----------------" + rlt + "\n\n");
 
 
 		/**

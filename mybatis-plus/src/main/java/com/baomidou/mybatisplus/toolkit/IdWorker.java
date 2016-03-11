@@ -74,6 +74,7 @@ public class IdWorker {
 	 */
 	private static final int _genmachine;
 
+
 	static {
 		try {
 			// build a 2-byte machine piece based on NICs info
@@ -82,14 +83,14 @@ public class IdWorker {
 				try {
 					StringBuilder sb = new StringBuilder();
 					Enumeration<NetworkInterface> e = NetworkInterface.getNetworkInterfaces();
-					while (e.hasMoreElements()) {
+					while ( e.hasMoreElements() ) {
 						NetworkInterface ni = e.nextElement();
 						sb.append(ni.toString());
 					}
 					machinePiece = sb.toString().hashCode() << 16;
-				} catch (Throwable e) {
+				} catch ( Throwable e ) {
 					// exception sometimes happens with IBM JVM, use random
-					logger.error(e.getMessage(), e);
+					logger.error(" IdWorker error. ", e);
 					machinePiece = new Random().nextInt() << 16;
 				}
 				logger.debug("machine piece post: " + Integer.toHexString(machinePiece));
@@ -104,8 +105,7 @@ public class IdWorker {
 				int processId = new java.util.Random().nextInt();
 				try {
 					processId = java.lang.management.ManagementFactory.getRuntimeMXBean().getName().hashCode();
-				} catch (Throwable t) {
-				}
+				} catch ( Throwable t ) {}
 
 				ClassLoader loader = IdWorker.class.getClassLoader();
 				int loaderId = loader != null ? System.identityHashCode(loader) : 0;
@@ -119,37 +119,40 @@ public class IdWorker {
 
 			_genmachine = machinePiece | processPiece;
 			logger.debug("machine : " + Integer.toHexString(_genmachine));
-		} catch (Exception e) {
+		} catch ( Exception e ) {
 			throw new RuntimeException(e);
 		}
 
 	}
 
+
 	public IdWorker() {
 		workerId = _genmachine % (IdWorker.maxWorkerId + 1);
 	}
+
 
 	public static long getId() {
 		return worker.nextId();
 	}
 
+
 	public synchronized long nextId() {
 		long timestamp = timeGen();
-		if (lastTimestamp == timestamp) {
+		if ( lastTimestamp == timestamp ) {
 			sequence = sequence + 1 & IdWorker.sequenceMask;
-			if (sequence == 0) {
+			if ( sequence == 0 ) {
 				// System.out.println("###########" + sequenceMask);//等待下一毫秒
 				timestamp = tilNextMillis(lastTimestamp);
 			}
 		} else {
 			sequence = 0;
 		}
-		if (timestamp < lastTimestamp) {
+		if ( timestamp < lastTimestamp ) {
 			try {
 				throw new Exception(String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds",
-						lastTimestamp - timestamp));
-			} catch (Exception e) {
-				logger.error(e.getMessage(), e);
+					lastTimestamp - timestamp));
+			} catch ( Exception e ) {
+				logger.error(" IdWorker error. ", e);
 			}
 		}
 
@@ -157,13 +160,15 @@ public class IdWorker {
 		return timestamp - twepoch << timestampLeftShift | workerId << IdWorker.workerIdShift | sequence;
 	}
 
-	private long tilNextMillis(final long lastTimestamp1) {
+
+	private long tilNextMillis( final long lastTimestamp1 ) {
 		long timestamp = timeGen();
-		while (timestamp <= lastTimestamp1) {
+		while ( timestamp <= lastTimestamp1 ) {
 			timestamp = timeGen();
 		}
 		return timestamp;
 	}
+
 
 	private long timeGen() {
 		return System.currentTimeMillis();

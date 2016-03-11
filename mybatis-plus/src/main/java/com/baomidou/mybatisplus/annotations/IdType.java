@@ -25,7 +25,11 @@ package com.baomidou.mybatisplus.annotations;
  */
 public enum IdType {
 	AUTO("0", "数据库ID自增"),
-	INPUT("1", "用户输入ID");
+	/*
+	 * 如果插入对象ID 为空，才自动填充。
+	 */
+	ID_WORKER("1", "全局唯一ID"),
+	INPUT("2", "用户输入ID");
 
 	/** 主键 */
 	private final String key;

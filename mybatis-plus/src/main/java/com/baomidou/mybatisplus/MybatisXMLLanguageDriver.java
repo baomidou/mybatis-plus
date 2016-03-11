@@ -13,33 +13,25 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test.mapper;
+package com.baomidou.mybatisplus;
 
-import java.util.List;
-
-import org.apache.ibatis.session.RowBounds;
-
-import com.baomidou.mybatisplus.mapper.AutoMapper;
-import com.baomidou.mybatisplus.test.entity.User;
+import org.apache.ibatis.executor.parameter.ParameterHandler;
+import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
 
 /**
  * <p>
- * 继承 AutoMapper，就自动拥有CRUD方法
+ * 继承 XMLLanguageDriver 重装构造函数，使用自定义 ParameterHandler
  * </p>
- * 
  * @author hubin
- * @Date 2016-01-23
+ * @Date 2016-03-11
  */
-public interface UserMapper extends AutoMapper<User> {
-	
-	/**
-	 * 用户列表，分页显示
-	 * 
-	 * @param pagination
-	 *            传递参数包含该属性，即自动分页
-	 * @return
-	 */
-	List<User> selectListRow(RowBounds pagination);
-	
-	int insertAbc(User user);
+public class MybatisXMLLanguageDriver extends XMLLanguageDriver {
+
+	@Override
+	public ParameterHandler createParameterHandler( MappedStatement mappedStatement, Object parameterObject,
+			BoundSql boundSql ) {
+		return new MybatisDefaultParameterHandler(mappedStatement, parameterObject, boundSql);
+	}
 }
