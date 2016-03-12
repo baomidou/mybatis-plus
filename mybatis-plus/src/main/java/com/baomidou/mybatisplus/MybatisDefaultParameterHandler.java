@@ -36,15 +36,13 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
  * <p>
  * 自定义 ParameterHandler 重装构造函数，填充插入方法主键 ID
  * </p>
+ * 
  * @author hubin
  * @Date 2016-03-11
  */
 public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 
-	public MybatisDefaultParameterHandler(
-			MappedStatement mappedStatement,
-			Object parameterObject,
-			BoundSql boundSql ) {
+	public MybatisDefaultParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
 		super(mappedStatement, processBatch(mappedStatement, parameterObject), boundSql);
 	}
 
@@ -52,70 +50,74 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 	 * <p>
 	 * 批量（填充主键 ID）
 	 * </p>
+	 * 
 	 * @param ms
 	 * @param parameterObject
-	 * 					插入数据库对象
+	 *            插入数据库对象
 	 * @return
 	 */
-	protected static Object processBatch( MappedStatement ms, Object parameterObject ) {
+	protected static Object processBatch(MappedStatement ms, Object parameterObject) {
 		Collection<Object> parameters = getParameters(parameterObject);
-		if ( parameters != null) {
+		if (parameters != null) {
 			List<Object> objList = new ArrayList<Object>();
-		    for (Object parameter : parameters) {
-		    	objList.add(populateKeys(ms, parameter));
-		    }
-		    return objList;
+			for (Object parameter : parameters) {
+				objList.add(populateKeys(ms, parameter));
+			}
+			return objList;
 		} else {
 			return populateKeys(ms, parameterObject);
 		}
 	}
-	
+
 	/**
 	 * <p>
 	 * 处理正常批量插入逻辑
 	 * </p>
 	 * <p>
-	 * org.apache.ibatis.session.defaults.DefaultSqlSession$StrictMap
-	 * 该类方法 wrapCollection 实现 StrictMap 封装逻辑
+	 * org.apache.ibatis.session.defaults.DefaultSqlSession$StrictMap 该类方法
+	 * wrapCollection 实现 StrictMap 封装逻辑
 	 * </p>
+	 * 
 	 * @param parameter
-	 * 				插入数据库对象
+	 *            插入数据库对象
 	 * @return
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected static Collection<Object> getParameters(Object parameter) {
-        Collection<Object> parameters = null;
-        if (parameter instanceof Collection) {
-            parameters = (Collection) parameter;
-        } else if (parameter instanceof Map) {
-            Map parameterMap = (Map) parameter;
-            if (parameterMap.containsKey("collection")) {
-                parameters = (Collection) parameterMap.get("collection");
-            } else if (parameterMap.containsKey("list")) {
-                parameters = (List) parameterMap.get("list");
-            } else if (parameterMap.containsKey("array")) {
-                parameters = Arrays.asList((Object[]) parameterMap.get("array"));
-            }
-        }
-        return parameters;
-    }
+		Collection<Object> parameters = null;
+		if (parameter instanceof Collection) {
+			parameters = (Collection) parameter;
+		} else if (parameter instanceof Map) {
+			Map parameterMap = (Map) parameter;
+			if (parameterMap.containsKey("collection")) {
+				parameters = (Collection) parameterMap.get("collection");
+			} else if (parameterMap.containsKey("list")) {
+				parameters = (List) parameterMap.get("list");
+			} else if (parameterMap.containsKey("array")) {
+				parameters = Arrays.asList((Object[]) parameterMap.get("array"));
+			}
+		}
+		return parameters;
+	}
 
 	/**
 	 * <p>
 	 * 填充主键 ID
 	 * </p>
+	 * 
 	 * @param ms
 	 * @param parameterObject
-	 * 					插入数据库对象
+	 *            插入数据库对象
 	 * @return
 	 */
-	protected static Object populateKeys( MappedStatement ms, Object parameterObject ) {
-		if ( ms.getSqlCommandType() == SqlCommandType.INSERT ) {
+	protected static Object populateKeys(MappedStatement ms, Object parameterObject) {
+		if (ms.getSqlCommandType() == SqlCommandType.INSERT) {
 			TableInfo tableInfo = TableInfoHelper.getTableInfo(parameterObject.getClass());
-			if ( tableInfo != null && tableInfo.getIdType() == IdType.ID_WORKER ) {
+			if (tableInfo != null && tableInfo.getIdType() == IdType.ID_WORKER) {
 				MetaObject metaParam = ms.getConfiguration().newMetaObject(parameterObject);
 				Object idValue = metaParam.getValue(tableInfo.getKeyProperty());
-				if ( idValue == null ) {
+				if (idValue == null) {
+					/* 自定义 ID */
 					metaParam.setValue(tableInfo.getKeyProperty(), IdWorker.getId());
 				}
 				return metaParam.getOriginalObject();

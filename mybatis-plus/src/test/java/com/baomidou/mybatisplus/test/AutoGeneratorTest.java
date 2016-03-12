@@ -50,12 +50,12 @@ public class AutoGeneratorTest {
 		/*
 		 * 表主键 ID 生成类型, 自增该设置无效。
 		 * <p>
-		 * IdType.AUTO 			数据库ID自增（默认配置）
-		 * IdType.ID_WORKER		全局唯一ID
+		 * IdType.AUTO 			数据库ID自增
+		 * IdType.ID_WORKER		全局唯一ID，内容为空自动填充（默认配置）
 		 * IdType.INPUT			用户输入ID
 		 * </p>
 		 */
-		//cg.setIdType(IdType.ID_WORKER);
+		//cg.setIdType(IdType.AUTO);
 
 		/*
 		 * 表是否包括前缀

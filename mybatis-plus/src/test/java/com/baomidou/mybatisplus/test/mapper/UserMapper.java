@@ -31,7 +31,7 @@ import com.baomidou.mybatisplus.test.entity.User;
  * @Date 2016-01-23
  */
 public interface UserMapper extends AutoMapper<User> {
-	
+
 	/**
 	 * 用户列表，分页显示
 	 * 
@@ -40,6 +40,5 @@ public interface UserMapper extends AutoMapper<User> {
 	 * @return
 	 */
 	List<User> selectListRow(RowBounds pagination);
-	
-	int insertAbc(User user);
+
 }

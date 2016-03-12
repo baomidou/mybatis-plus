@@ -370,9 +370,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
 		Configuration configuration;
 
-		/**
-		 * 加载自定义 MybatisXmlConfigBuilder
-		 */
+		//TODO 加载自定义 MybatisXmlConfigBuilder
 		MybatisXmlConfigBuilder xmlConfigBuilder = null;
 		if ( this.configLocation != null ) {
 			xmlConfigBuilder = new MybatisXmlConfigBuilder(this.configLocation.getInputStream(), null,

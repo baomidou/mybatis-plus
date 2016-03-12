@@ -44,13 +44,9 @@ public class MybatisConfiguration extends Configuration {
 	 * 初始化调用
 	 */
 	public MybatisConfiguration() {
-		/*
-		 * 设置自定义 XMLLanguageDriver
-		 */
-		this.languageRegistry.setDefaultDriverClass(MybatisXMLLanguageDriver.class);
 		System.err.println("mybatis-plus init success.");
 	}
-	
+
 	/**
 	 * <p>
 	 * MybatisPlus 加载 SQL 顺序：
@@ -59,25 +55,32 @@ public class MybatisConfiguration extends Configuration {
 	 * 2、加载sqlProvider中的SQL<br>
 	 * 3、xmlSql 与 sqlProvider不能包含相同的SQL<br>
 	 * <br>
-	 * 调整后的SQL优先级：xmlSql > sqlProvider > crudSql
-	 * <br>
+	 * 调整后的SQL优先级：xmlSql > sqlProvider > crudSql <br>
 	 */
 	@Override
 	public void addMappedStatement(MappedStatement ms) {
-		System.err.println(ms.getLang());
 		if (this.mappedStatements.containsKey(ms.getId())) {
 			/*
-			 * 说明已加载了xml中的节点；
-			 * 忽略mapper中的SqlProvider数据
+			 * 说明已加载了xml中的节点； 忽略mapper中的SqlProvider数据
 			 */
 			logger.warn("mapper[{}] is ignored, because it's exists, maybe from xml file", ms.getId());
 			return;
 		}
 		super.addMappedStatement(ms);
 	}
-	
+
+	@Override
+	public void setDefaultScriptingLanguage(Class<?> driver) {
+		if (driver == null) {
+			/* 设置自定义 driver */
+			driver = MybatisXMLLanguageDriver.class;
+		}
+		super.setDefaultScriptingLanguage(driver);
+	}
+
 	@Override
 	public LanguageDriver getDefaultScriptingLanuageInstance() {
+		/* 设置自定义 driver */
 		return languageRegistry.getDriver(MybatisXMLLanguageDriver.class);
 	}
 
@@ -96,7 +99,7 @@ public class MybatisConfiguration extends Configuration {
 		if (!AutoMapper.class.isAssignableFrom(type)) {
 			return;
 		}
-		
+
 		/* 自动注入 SQL */
 		new AutoSqlInjector(this).inject(type);
 	}

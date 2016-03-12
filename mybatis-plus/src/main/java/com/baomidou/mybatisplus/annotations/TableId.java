@@ -44,5 +44,5 @@ public @interface TableId {
 	 * {@link IdType}
 	 * 
 	 */
-	IdType type() default IdType.AUTO;
+	IdType type() default IdType.ID_WORKER;
 }

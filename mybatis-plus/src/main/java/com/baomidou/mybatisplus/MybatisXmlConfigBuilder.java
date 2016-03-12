@@ -84,7 +84,8 @@ public class MybatisXmlConfigBuilder extends BaseBuilder {
 	}
 
 	private MybatisXmlConfigBuilder(XPathParser parser, String environment, Properties props) {
-		super(new MybatisConfiguration());// replace default Configuration class
+		//TODO 自定义 Configuration
+		super(new MybatisConfiguration());
 		ErrorContext.instance().resource("SQL Mapper Configuration");
 		this.configuration.setVariables(props);
 		this.parsed = false;
@@ -203,7 +204,7 @@ public class MybatisXmlConfigBuilder extends BaseBuilder {
 		if (context != null) {
 			Properties props = context.getChildrenAsProperties();
 			// Check that all settings are known to the configuration class
-			MetaClass metaConfig = MetaClass.forClass(Configuration.class, configuration.getReflectorFactory());
+			MetaClass metaConfig = MetaClass.forClass(MybatisConfiguration.class, configuration.getReflectorFactory());
 			for (Object key : props.keySet()) {
 				if (!metaConfig.hasSetter(String.valueOf(key))) {
 					throw new BuilderException("The setting " + key + " is not known.  Make sure you spelled it correctly (case sensitive).");

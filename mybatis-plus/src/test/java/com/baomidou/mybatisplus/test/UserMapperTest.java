@@ -83,6 +83,8 @@ public class UserMapperTest {
 		sleep();
 
 		List<User> ul = new ArrayList<User>();
+		
+		/* 手动输入 ID */
 		ul.add(new User(11L, "1", 1, 0));
 		ul.add(new User(12L, "2", 2, 1));
 		ul.add(new User(13L, "3", 3, 1));
@@ -90,6 +92,10 @@ public class UserMapperTest {
 		ul.add(new User(15L, "5", 5, 1));
 		ul.add(new User(16L, "6", 6, 0));
 		ul.add(new User(17L, "7", 7, 0));
+		
+		/* 使用 ID_WORKER 自动生成 ID */
+		ul.add(new User("8", 8, 1));
+		ul.add(new User("9", 9, 1));
 		rlt = userMapper.insertBatch(ul);
 		System.err.println("\n--------------insertBatch----------------" + rlt + "\n\n");
 
