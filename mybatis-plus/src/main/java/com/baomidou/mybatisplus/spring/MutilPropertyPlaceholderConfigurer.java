@@ -109,7 +109,7 @@ public class MutilPropertyPlaceholderConfigurer extends PropertyPlaceholderConfi
 			 */
 			mode = ONLINE;
 		}
-		System.err.println("\n system " + mode + " mode.");
+		System.err.println("\ncurrent system " + mode + " mode.\n");
 		return mode;
 	}
 
