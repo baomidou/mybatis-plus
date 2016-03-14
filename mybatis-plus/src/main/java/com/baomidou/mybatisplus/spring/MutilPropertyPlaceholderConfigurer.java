@@ -41,6 +41,19 @@ import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
  * jdbc.password_online_mode=#!Esd30210<br>
  * </p>
  * 
+ * <p>
+ * --------------------   使用配置       -------------------------
+ * <bean id="placeholder" class="com.baomidou.mybatisplus.spring.MutilPropertyPlaceholderConfigurer">
+ * 	  <property name="locations">
+ * 		 <list>
+ * 			<value>classpath:jdbc.properties</value>
+ * 			<value>classpath*:*-placeholder.properties</value>
+ * 		 </list>
+ * 	  </property>
+ * </bean>
+ * -------------------------------------------------------
+ * </p>
+ * 
  * @author hubin
  * @Date 2016-01-27
  */
