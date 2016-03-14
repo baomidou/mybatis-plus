@@ -98,9 +98,16 @@ public class MutilPropertyPlaceholderConfigurer extends PropertyPlaceholderConfi
 				mode = DEV;
 			} else if ( TEST.equals(mode) ) {
 				mode = TEST;
-			} else {
-				mode = DEV;
 			}
+			/**
+			 * 其他使用自定义 mode 类型，使用 IP 例如 mode = 30
+			 * 配置为  jdb.url_30_mode = xxxxx 
+			 */
+		} else {
+			/**
+			 * 未指定认为线上模式
+			 */
+			mode = ONLINE;
 		}
 		System.err.println("\n system " + mode + " mode.");
 		return mode;
