@@ -304,7 +304,7 @@ public class AutoSqlInjector {
 	private void injectSelectListSql( Class<?> mapperClass, Class<?> modelClass, TableInfo table ) {
 		SqlMethod sqlMethod = SqlMethod.SELECT_LIST;
 		StringBuilder where = new StringBuilder("\n<if test=\"ew!=null\">");
-		where.append("\n<where>");
+		where.append("\n<if test=\"ew.entity!=null\">\n<where>");
 		where.append("\n<if test=\"ew.entity.").append(table.getKeyProperty()).append("!=null\">\n");
 		where.append(table.getKeyColumn()).append("=#{ew.entity.").append(table.getKeyProperty()).append("}");
 		where.append("\n</if>");
@@ -314,7 +314,7 @@ public class AutoSqlInjector {
 			where.append(" AND ").append(fieldInfo.getColumn()).append("=#{ew.entity.").append(fieldInfo.getProperty()).append("}");
 			where.append("\n</if>");
 		}
-		where.append("\n</where>");
+		where.append("\n</where>\n</if>");
 		where.append("\n<if test=\"ew.orderByField!=null\">\n${ew.orderByField}\n</if>");
 		where.append("\n</if>");
 		String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(table), table.getTableName(), where.toString());

@@ -63,7 +63,7 @@ public class EntityWrapper<T> {
 
 
 	public String getOrderByField() {
-		if ( this.getEntity() != null && this.orderByField != null ) {
+		if ( this.orderByField != null ) {
 			StringBuffer ob = new StringBuffer(" ORDER BY ");
 			ob.append(this.orderByField);
 			return ob.toString();

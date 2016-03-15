@@ -155,15 +155,15 @@ public class UserMapperTest {
 		User userOne = userMapper.selectOne(new User("MybatisPlus"));
 		print(userOne);
 
-		System.err.println("\n------------------selectList-----查询 testType = 1 的所有数据----id--DESC--排序----");
-		EntityWrapper<User> ew = new EntityWrapper<User>(new User(1), "id DESC");
-		List<User> ul2 = userMapper.selectList(RowBounds.DEFAULT, ew);
+		System.err.println("\n------------------selectList-----所有数据----id--DESC--排序----");
+		List<User> ul2 = userMapper.selectList(RowBounds.DEFAULT, new EntityWrapper<User>(null, "id DESC"));
 		for ( int i = 0 ; i < ul2.size() ; i++ ) {
 			print(ul2.get(i));
 		}
 
 		System.err.println("\n------------------list 分页查询 ----查询 testType = 1 的所有数据--id--DESC--排序--------");
 		Page<User> page = new Page<User>(1, 2);
+		EntityWrapper<User> ew = new EntityWrapper<User>(new User(1), "id DESC");
 		List<User> paginList = userMapper.selectList(page, ew);
 		page.setRecords(paginList);
 		for ( int i = 0 ; i < page.getRecords().size() ; i++ ) {
