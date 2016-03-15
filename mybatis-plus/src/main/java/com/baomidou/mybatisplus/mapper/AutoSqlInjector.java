@@ -29,8 +29,6 @@ import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.scripting.defaults.RawSqlSource;
 import org.apache.ibatis.session.Configuration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.baomidou.mybatisplus.MybatisXMLLanguageDriver;
 import com.baomidou.mybatisplus.annotations.IdType;
@@ -47,8 +45,6 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
  * @Date 2016-01-23
  */
 public class AutoSqlInjector {
-
-	private transient Logger logger = LoggerFactory.getLogger(getClass());
 
 	private static final MybatisXMLLanguageDriver languageDriver = new MybatisXMLLanguageDriver();
 
@@ -398,7 +394,7 @@ public class AutoSqlInjector {
 			String keyProperty, String keyColumn) {
 		String statementName = mapperClass.getName() + "." + id;
 		if (configuration.hasStatement(statementName)) {
-			logger.warn("{} Has been loaded by XML or SqlProvider, ignoring the injection of the SQL.", statementName);
+			System.err.println("{" + statementName + "} Has been loaded by XML or SqlProvider, ignoring the injection of the SQL.");
 			return null;
 		}
 		return assistant.addMappedStatement(id, sqlSource, StatementType.PREPARED, sqlCommandType, null, null, null,
