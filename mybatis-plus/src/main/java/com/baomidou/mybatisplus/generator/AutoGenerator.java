@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.baomidou.mybatisplus.annotations.IdType;
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 
 /**
  * <p>
@@ -69,11 +70,9 @@ public class AutoGenerator {
 	 */
 	public static void run(ConfigGenerator config) {
 		if (config == null) {
-			try {
-				throw new Exception(" ConfigGenerator is null. ");
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			throw new MybatisPlusException(" ConfigGenerator is null. ");
+		} else if ( config.getIdType() == null ) {
+			throw new MybatisPlusException("ConfigGenerator IdType is null");
 		}
 
 		/**
@@ -408,18 +407,27 @@ public class AutoGenerator {
 			if (idInfo != null) {
 				//@TableId(value = "test_id", type = IdType.AUTO_INCREMENT)
 				bw.write("\t@TableId");
+				String idType = toIdType();
 				if (idInfo.isAutoIncrement()) {
 					System.err.println(" Table :{ " + table + " } ID is Auto increment");
 					if (isLine) {
-						bw.write("(value = \"" + column + "\", type = IdType.AUTO)");
+						bw.write("(value = \"" + column + "\"");
+						if(idType != null){
+							bw.write(", ");
+							bw.write(idType);
+						}
+						bw.write(")");
 					}
 				} else {
 					bw.write("(");
 					if (isLine) {
-						bw.write("value = \"" + column + "\", ");
+						bw.write("value = \"" + column + "\"");
+						if(idType != null){
+							bw.write(", ");
+						}
 					}
-					if (config.getIdType() == IdType.INPUT) {
-						bw.write("type = IdType.ID_INPUT");
+					if(idType != null){
+						bw.write(idType);
 					}
 					bw.write(")");
 				}
@@ -461,6 +469,15 @@ public class AutoGenerator {
 		bw.newLine();
 		bw.flush();
 		bw.close();
+	}
+	
+	public String toIdType(){
+		if ( config.getIdType() == IdType.AUTO ) {
+			return "type = IdType.AUTO";
+		} else if ( config.getIdType() == IdType.INPUT ) {
+			return "type = IdType.INPUT";
+		}
+		return null;
 	}
 
 	/**

@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.test;
 
+import com.baomidou.mybatisplus.annotations.IdType;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.ConfigGenerator;
 
@@ -55,7 +56,7 @@ public class AutoGeneratorTest {
 		 * IdType.INPUT			用户输入ID
 		 * </p>
 		 */
-		//cg.setIdType(IdType.AUTO);
+		cg.setIdType(IdType.AUTO);
 
 		/*
 		 * 表是否包括前缀
