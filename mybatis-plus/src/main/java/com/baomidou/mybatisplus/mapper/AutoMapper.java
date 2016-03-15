@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 
 /**
@@ -133,11 +134,11 @@ public interface AutoMapper<T> {
 	 * 根据 entity 条件，查询全部记录
 	 * </p>
 	 * @param rowBounds
-	 * 				分页查询条件（可以为 RowBounds.DEFAULT）
-	 * @param entity
-	 * 				实体对象（可以为 null）
+	 * 					分页查询条件（可以为 RowBounds.DEFAULT）
+	 * @param entityWrapper
+	 * 					实体对象封装操作类（可以为 null）
 	 * @return List<T>
 	 */
-	List<T> selectList( RowBounds rowBounds, T entity );
+	List<T> selectList( RowBounds rowBounds, @Param("ew") EntityWrapper<T> entityWrapper);
 
 }

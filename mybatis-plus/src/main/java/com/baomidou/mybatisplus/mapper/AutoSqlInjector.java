@@ -89,8 +89,8 @@ public class AutoSqlInjector {
 			/* 查询 */
 			this.injectSelectSql(false, mapperClass, modelClass, table);
 			this.injectSelectSql(true, mapperClass, modelClass, table);
-			this.injectSelectByEntitySql(SqlMethod.SELECT_ONE, mapperClass, modelClass, table);
-			this.injectSelectByEntitySql(SqlMethod.SELECT_LIST, mapperClass, modelClass, table);
+			this.injectSelectOneSql(mapperClass, modelClass, table);
+			this.injectSelectListSql(mapperClass, modelClass, table);
 		} else {
 			/**
 			 * 提示
@@ -280,7 +280,7 @@ public class AutoSqlInjector {
 
 	/**
 	 * <p>
-	 * 注入实体查询 SQL 语句
+	 * 注入实体查询一条记录 SQL 语句
 	 * </p>
 	 * 
 	 * @param sqlMethod
@@ -288,9 +288,40 @@ public class AutoSqlInjector {
 	 * @param modelClass
 	 * @param table
 	 */
-	private void injectSelectByEntitySql(SqlMethod sqlMethod, Class<?> mapperClass, Class<?> modelClass,
-			TableInfo table) {
+	private void injectSelectOneSql( Class<?> mapperClass, Class<?> modelClass, TableInfo table ) {
+		SqlMethod sqlMethod = SqlMethod.SELECT_ONE;
 		String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(table), table.getTableName(), sqlWhere(table));
+		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+		this.addMappedStatement(mapperClass, sqlMethod, sqlSource, SqlCommandType.SELECT, modelClass);
+	}
+	
+	/**
+	 * <p>
+	 * 注入实体查询记录列表 SQL 语句
+	 * </p>
+	 * 
+	 * @param sqlMethod
+	 * @param mapperClass
+	 * @param modelClass
+	 * @param table
+	 */
+	private void injectSelectListSql( Class<?> mapperClass, Class<?> modelClass, TableInfo table ) {
+		SqlMethod sqlMethod = SqlMethod.SELECT_LIST;
+		StringBuilder where = new StringBuilder("\n<if test=\"ew!=null\">");
+		where.append("\n<where>");
+		where.append("\n<if test=\"ew.entity.").append(table.getKeyProperty()).append("!=null\">\n");
+		where.append(table.getKeyColumn()).append("=#{ew.entity.").append(table.getKeyProperty()).append("}");
+		where.append("\n</if>");
+		List<TableFieldInfo> fieldList = table.getFieldList();
+		for (TableFieldInfo fieldInfo : fieldList) {
+			where.append("\n<if test=\"ew.entity.").append(fieldInfo.getProperty()).append("!=null\">\n");
+			where.append(" AND ").append(fieldInfo.getColumn()).append("=#{ew.entity.").append(fieldInfo.getProperty()).append("}");
+			where.append("\n</if>");
+		}
+		where.append("\n</where>");
+		where.append("\n<if test=\"ew.orderByField!=null\">\n${ew.orderByField}\n</if>");
+		where.append("\n</if>");
+		String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(table), table.getTableName(), where.toString());
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
 		this.addMappedStatement(mapperClass, sqlMethod, sqlSource, SqlCommandType.SELECT, modelClass);
 	}

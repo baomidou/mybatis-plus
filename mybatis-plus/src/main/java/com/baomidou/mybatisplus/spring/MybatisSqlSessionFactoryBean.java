@@ -28,6 +28,7 @@ import javax.sql.DataSource;
 
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.executor.ErrorContext;
+import org.apache.ibatis.io.VFS;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
@@ -101,6 +102,8 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 	//issue #19. No default provider.
 	private DatabaseIdProvider databaseIdProvider;
 
+	private Class<? extends VFS> vfs;
+
 	private ObjectFactory objectFactory;
 
 	private ObjectWrapperFactory objectWrapperFactory;
@@ -108,7 +111,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
 	/**
 	 * Sets the ObjectFactory.
-	 * 
+	 *
 	 * @since 1.1.2
 	 * @param objectFactory
 	 */
@@ -119,7 +122,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
 	/**
 	 * Sets the ObjectWrapperFactory.
-	 * 
+	 *
 	 * @since 1.1.2
 	 * @param objectWrapperFactory
 	 */
@@ -141,13 +144,23 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
 	/**
 	 * Sets the DatabaseIdProvider.
-	 * As of version 1.2.2 this variable is not initialized by default. 
+	 * As of version 1.2.2 this variable is not initialized by default.
 	 *
 	 * @since 1.1.0
 	 * @param databaseIdProvider
 	 */
 	public void setDatabaseIdProvider( DatabaseIdProvider databaseIdProvider ) {
 		this.databaseIdProvider = databaseIdProvider;
+	}
+
+
+	public Class<? extends VFS> getVfs() {
+		return this.vfs;
+	}
+
+
+	public void setVfs( Class<? extends VFS> vfs ) {
+		this.vfs = vfs;
 	}
 
 
@@ -443,6 +456,18 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 			}
 		}
 
+		if ( this.databaseIdProvider != null ) {//fix #64 set databaseId before parse mapper xmls
+			try {
+				configuration.setDatabaseId(this.databaseIdProvider.getDatabaseId(this.dataSource));
+			} catch ( SQLException e ) {
+				throw new NestedIOException("Failed getting a databaseId", e);
+			}
+		}
+
+		if ( this.vfs != null ) {
+			configuration.setVfsImpl(this.vfs);
+		}
+
 		if ( xmlConfigBuilder != null ) {
 			try {
 				xmlConfigBuilder.parse();
@@ -462,14 +487,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 		}
 
 		configuration.setEnvironment(new Environment(this.environment, this.transactionFactory, this.dataSource));
-
-		if ( this.databaseIdProvider != null ) {
-			try {
-				configuration.setDatabaseId(this.databaseIdProvider.getDatabaseId(this.dataSource));
-			} catch ( SQLException e ) {
-				throw new NestedIOException("Failed getting a databaseId", e);
-			}
-		}
 
 		if ( !isEmpty(this.mapperLocations) ) {
 			for ( Resource mapperLocation : this.mapperLocations ) {
@@ -544,4 +561,3 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 	}
 
 }
-

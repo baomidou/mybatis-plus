@@ -25,6 +25,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.log4j.BasicConfigurator;
 
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.test.entity.User;
 import com.baomidou.mybatisplus.test.mapper.UserMapper;
@@ -154,15 +155,16 @@ public class UserMapperTest {
 		User userOne = userMapper.selectOne(new User("MybatisPlus"));
 		print(userOne);
 
-		System.err.println("\n------------------selectList-----查询 testType = 1 的所有数据-----------------");
-		List<User> ul2 = userMapper.selectList(RowBounds.DEFAULT, new User(1));
+		System.err.println("\n------------------selectList-----查询 testType = 1 的所有数据----id--DESC--排序----");
+		EntityWrapper<User> ew = new EntityWrapper<User>(new User(1), "id DESC");
+		List<User> ul2 = userMapper.selectList(RowBounds.DEFAULT, ew);
 		for ( int i = 0 ; i < ul2.size() ; i++ ) {
 			print(ul2.get(i));
 		}
 
-		System.err.println("\n------------------list 分页查询 ----查询 testType = 1 的所有数据------------------");
+		System.err.println("\n------------------list 分页查询 ----查询 testType = 1 的所有数据--id--DESC--排序--------");
 		Page<User> page = new Page<User>(1, 2);
-		List<User> paginList = userMapper.selectList(page, new User(1));
+		List<User> paginList = userMapper.selectList(page, ew);
 		page.setRecords(paginList);
 		for ( int i = 0 ; i < page.getRecords().size() ; i++ ) {
 			print(page.getRecords().get(i));

@@ -58,7 +58,7 @@ import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
  * @Date 2016-01-27
  */
 public class MutilPropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer {
-
+	
 	/**
 	 * <p>
 	 * 运行环境<br>
@@ -105,11 +105,17 @@ public class MutilPropertyPlaceholderConfigurer extends PropertyPlaceholderConfi
 			 */
 		} else {
 			/**
-			 * 未指定认为线上模式
+			 * Windows 认为是开发环境
 			 */
-			mode = ONLINE;
+			String OS = System.getProperty("os.name").toLowerCase();
+			logger.info("os.name: " + OS);
+			if (OS != null && OS.contains("windows")) {
+				mode = DEV;
+			} else {
+				mode = ONLINE;
+			}
 		}
-		System.err.println("\ncurrent system " + mode + " mode.\n");
+		System.err.println("-Dspring.runmode=" + mode + "_mode");
 		return mode;
 	}
 

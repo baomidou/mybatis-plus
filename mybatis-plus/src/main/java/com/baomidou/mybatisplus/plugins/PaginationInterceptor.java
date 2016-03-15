@@ -127,9 +127,13 @@ public class PaginationInterceptor implements Interceptor {
 	 */
 	public void count(String sql, Connection connection, MappedStatement mappedStatement, BoundSql boundSql,
 			Pagination page) {
-		/* 记录总记录数 SQL */
+		String sqlUse = sql;
+		int order_by = sql.lastIndexOf(" ORDER BY ");
+		if ( order_by > -1 ) {
+			sqlUse = sql.substring(0, order_by);
+		}
 		StringBuffer countSql = new StringBuffer("SELECT COUNT(1) FROM (");
-		countSql.append(sql).append(") AS TOTAL");
+		countSql.append(sqlUse).append(") AS TOTAL");
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {

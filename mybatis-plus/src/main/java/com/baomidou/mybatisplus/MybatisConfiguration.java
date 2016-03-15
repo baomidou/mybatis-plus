@@ -16,14 +16,13 @@
 package com.baomidou.mybatisplus;
 
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.apache.ibatis.io.ResolverUtil;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.baomidou.mybatisplus.mapper.AutoMapper;
 import com.baomidou.mybatisplus.mapper.AutoSqlInjector;
@@ -38,7 +37,7 @@ import com.baomidou.mybatisplus.mapper.AutoSqlInjector;
  */
 public class MybatisConfiguration extends Configuration {
 
-	private Logger logger = LoggerFactory.getLogger(MybatisConfiguration.class);
+	protected final Logger logger = Logger.getLogger("MybatisConfiguration");
 
 	/**
 	 * 初始化调用
@@ -63,7 +62,7 @@ public class MybatisConfiguration extends Configuration {
 			/*
 			 * 说明已加载了xml中的节点； 忽略mapper中的SqlProvider数据
 			 */
-			logger.warn("mapper[{}] is ignored, because it's exists, maybe from xml file", ms.getId());
+			logger.severe("mapper[" + ms.getId() + "] is ignored, because it's exists, maybe from xml file");
 			return;
 		}
 		super.addMappedStatement(ms);
