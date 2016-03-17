@@ -232,10 +232,10 @@ public class AutoGenerator {
 			}
 			for (int i = s; i < l; i++) {
 				String temp = tables[i].trim();
-				sb.append(temp.substring(0, 1).toUpperCase()).append(temp.substring(1));
+				sb.append(temp.substring(0, 1).toUpperCase()).append(temp.substring(1).toLowerCase());
 			}
 		} else {
-			sb.append(table.substring(0, 1).toUpperCase()).append(table.substring(1));
+			sb.append(table.substring(0, 1).toUpperCase()).append(table.substring(1).toLowerCase());
 		}
 		return sb.toString();
 	}
