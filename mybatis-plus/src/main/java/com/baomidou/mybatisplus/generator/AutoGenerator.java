@@ -412,24 +412,25 @@ public class AutoGenerator {
 					System.err.println(" Table :{ " + table + " } ID is Auto increment");
 					if (isLine) {
 						bw.write("(value = \"" + column + "\"");
-						if(idType != null){
+						if ( idType != null ) {
 							bw.write(", ");
 							bw.write(idType);
 						}
 						bw.write(")");
 					}
 				} else {
-					bw.write("(");
 					if (isLine) {
-						bw.write("value = \"" + column + "\"");
+						bw.write("(value = \"" + column + "\"");
 						if(idType != null){
 							bw.write(", ");
+							bw.write(idType);
 						}
-					}
-					if(idType != null){
+						bw.write(")");
+					} else if ( idType != null ) {
+						bw.write("(");
 						bw.write(idType);
+						bw.write(")");
 					}
-					bw.write(")");
 				}
 				bw.newLine();
 			} else if (isLine) {
