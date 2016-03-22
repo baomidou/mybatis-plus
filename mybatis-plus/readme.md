@@ -6,12 +6,14 @@
 # 插入
 
 > 	插入一条（id 如果不传入会自动生成）
+
 	```
 	long id = IdWorker.getId();
 	int rlt = userMapper.insert(new User(id, "abc", 18, 0));
 	```
 
 > 	批量插入
+
 	```
 	List<User> ul = new ArrayList<User>();
 	//手动输入 ID
@@ -31,11 +33,13 @@
 # 删除
 
 > 	删除一条
+
 	```
 	int rlt = userMapper.deleteById(id);
 	```
 
 > 	批量删除
+
 	```
 	List<Object> il = new ArrayList<Object>();
 	il.add(16L);
@@ -44,6 +48,7 @@
 	```
 
 > 	按照条件删除
+
 	```
 	int rlt = userMapper.deleteSelective(new User(14L, "delname"));
 	```
@@ -52,6 +57,7 @@
 # 修改
 
 > 	修改
+
 	```
 	int rlt = userMapper.updateById(new User(12L, "MybatisPlus"));
 	```
@@ -61,11 +67,14 @@
 # 查询
 
 > 	根据ID查询
+
 	```
 	User user = userMapper.selectById(12L);
 	```
 
 > 	根据ID批量查询
+
+
 	```
 	List<Object> idList = new ArrayList<Object>();
 	idList.add(11L);
@@ -74,16 +83,19 @@
 	```
 
 > 	根据条件查询
+
 	```
 	User userOne = userMapper.selectOne(new User("MybatisPlus"));
 	```
 
 > 	查询列表 id 排序
+
 	```
 	List<User> ul2 = userMapper.selectList(RowBounds.DEFAULT, new EntityWrapper<User>(null, "id DESC"));
 	```
 
 > 	翻页查询 id 排序
+
 	```
 	Page<User> page = new Page<User>(1, 2);
 	EntityWrapper<User> ew = new EntityWrapper<User>(new User(1), "id DESC");
