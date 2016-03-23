@@ -31,15 +31,6 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
  */
 public interface ISuperService<T> {
 
-	/**
-	 * 判断数据库操作是否成功
-	 * 
-	 * @param result
-	 *            数据库操作返回影响条数
-	 * @return
-	 */
-	boolean retBool( int result );
-
 
 	/**
 	 * <p>
