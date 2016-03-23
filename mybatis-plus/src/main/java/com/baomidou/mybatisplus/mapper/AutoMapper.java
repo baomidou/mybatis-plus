@@ -124,7 +124,7 @@ public interface AutoMapper<T> {
 	 * </p>
 	 * @param entity
 	 * 				实体对象
-	 * @return int
+	 * @return T
 	 */
 	T selectOne( T entity );
 

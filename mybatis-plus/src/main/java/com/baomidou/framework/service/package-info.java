@@ -2,7 +2,7 @@ package com.baomidou.framework.service;
 
 /**
  * 
- * service 抽象类
+ * service 超级抽象类
  * 
  * @author hubin
  * 
