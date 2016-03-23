@@ -44,7 +44,7 @@ public class SuperServiceImpl<T> {
 	 *            数据库操作返回影响条数
 	 * @return boolean
 	 */
-	protected boolean retBool( int result ) {
+	public boolean retBool( int result ) {
 		return (result >= 1) ? true : false;
 	}
 
