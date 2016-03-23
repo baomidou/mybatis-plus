@@ -90,27 +90,26 @@ public class PaginationInterceptor implements Interceptor {
 				throw new MybatisPlusException("The value of the dialect property in mybatis configuration.xml is not defined.");
 			}
 
-			/* 禁用内存分页 */
+			/*
+			 * <p>
+			 * 禁用内存分页
+			 * </p>
+			 * <p>
+			 * 内存分页会查询所有结果出来处理（这个很吓人的），如果结果变化频繁这个数据还会不准。
+			 * </p>
+			 */
 			BoundSql boundSql = (BoundSql) metaStatementHandler.getValue("delegate.boundSql");
-			
-			/* 禁用内存分页 */
 			String originalSql = (String) boundSql.getSql();
 			String paginationSql = dialect.buildPaginationSql(originalSql, rowBounds.getOffset(), rowBounds.getLimit());
 			metaStatementHandler.setValue("delegate.boundSql.sql", paginationSql);
-			
-			/* 禁用内存分页 */
 			metaStatementHandler.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
 			metaStatementHandler.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
 
 			/* 判断是否需要查询总记录条数 */
 			if (rowBounds instanceof Pagination) {
-				Pagination pagination = (Pagination) rowBounds;
-				if (pagination.getTotal() == 0) {
-					MappedStatement mappedStatement = (MappedStatement) metaStatementHandler
-							.getValue("delegate.mappedStatement");
-					Connection connection = (Connection) invocation.getArgs()[0];
-					this.count(originalSql, connection, mappedStatement, boundSql, pagination);
-				}
+				MappedStatement mappedStatement = (MappedStatement) metaStatementHandler.getValue("delegate.mappedStatement");
+				Connection connection = (Connection) invocation.getArgs()[0];
+				this.count(originalSql, connection, mappedStatement, boundSql, (Pagination) rowBounds);
 			}
 		}
 		return invocation.proceed();
