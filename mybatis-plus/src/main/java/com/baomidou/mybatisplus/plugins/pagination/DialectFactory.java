@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.plugins.pagination.dialects.HSQLDialect;
 import com.baomidou.mybatisplus.plugins.pagination.dialects.MySqlDialect;
 import com.baomidou.mybatisplus.plugins.pagination.dialects.OracleDialect;
 import com.baomidou.mybatisplus.plugins.pagination.dialects.PostgreDialect;
+import com.baomidou.mybatisplus.plugins.pagination.dialects.SQLServerDialect;
 import com.baomidou.mybatisplus.plugins.pagination.dialects.SQLiteDialect;
 
 /**
@@ -41,17 +42,19 @@ public class DialectFactory {
 	 * @return
 	 * @throws Exception
 	 */
-	public static IDialect getDialectByDbtype(String dbtype) throws Exception {
-		if ("mysql".equalsIgnoreCase(dbtype)) {
+	public static IDialect getDialectByDbtype( String dbtype ) throws Exception {
+		if ( "mysql".equalsIgnoreCase(dbtype) ) {
 			return new MySqlDialect();
-		} else if ("oracle".equalsIgnoreCase(dbtype)) {
+		} else if ( "oracle".equalsIgnoreCase(dbtype) ) {
 			return new OracleDialect();
-		} else if ("hsql".equalsIgnoreCase(dbtype)) {
+		} else if ( "hsql".equalsIgnoreCase(dbtype) ) {
 			return new HSQLDialect();
-		} else if ("sqlite".equalsIgnoreCase(dbtype)) {
+		} else if ( "sqlite".equalsIgnoreCase(dbtype) ) {
 			return new SQLiteDialect();
-		} else if ("postgre".equalsIgnoreCase(dbtype)) {
+		} else if ( "postgre".equalsIgnoreCase(dbtype) ) {
 			return new PostgreDialect();
+		} else if ( "sqlserver".equalsIgnoreCase(dbtype) ) {
+			return new SQLServerDialect();
 		} else {
 			return null;
 		}

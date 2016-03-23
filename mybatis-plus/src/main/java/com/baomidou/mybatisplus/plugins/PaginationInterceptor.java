@@ -77,8 +77,9 @@ public class PaginationInterceptor implements Interceptor {
 				if (dialectClazz != null && !"".equals(dialectClazz)) {
 					try {
 						Class<?> clazz = Class.forName(dialectClazz);
-						if (IDialect.class.isAssignableFrom(clazz))
+						if (IDialect.class.isAssignableFrom(clazz)) {
 							dialect = (IDialect) clazz.newInstance();
+						}
 					} catch (ClassNotFoundException e) {
 						throw new MybatisPlusException("Class :" + dialectClazz + " is not found");
 					}

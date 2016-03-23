@@ -31,10 +31,10 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
  * @author hubin
  * @Date 2016-03-23
  */
-public class SuperServiceImpl<T> {
+public class SuperServiceImpl<T, M extends AutoMapper<T>> {
 
 	@Autowired
-	protected AutoMapper<T> autoMapper;
+	protected M autoMapper;
 
 
 	/**

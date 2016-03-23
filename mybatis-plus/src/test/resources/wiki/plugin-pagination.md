@@ -13,7 +13,7 @@
      | 分页插件配置 
      | 插件提供二种方言选择：1、默认方言 2、自定义方言实现类，两者均未配置则抛出异常！
      | dialectType 数据库方言  
-     |             默认支持  mysql  oracle  hsql  sqlite  postgre
+     |             默认支持  mysql  oracle  hsql  sqlite  postgre  sqlserver
      | dialectClazz 方言实现类
      |              自定义需要实现 com.baomidou.mybatisplus.plugins.pagination.IDialect 接口
      | -->
