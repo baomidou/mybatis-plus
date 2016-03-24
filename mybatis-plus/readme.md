@@ -37,7 +37,7 @@
 
 > 	批量删除
 
-	List<Object> il = new ArrayList<Object>();
+	List<Long> il = new ArrayList<Long>();
 	il.add(16L);
 	il.add(17L);
 	int rlt = userMapper.deleteBatchIds(il);
@@ -65,7 +65,7 @@
 
 > 	根据ID批量查询
 
-	List<Object> idList = new ArrayList<Object>();
+	List<Long> idList = new ArrayList<Long>();
 	idList.add(11L);
 	idList.add(12L);
 	List<User> ul1 = userMapper.selectBatchIds(idList);
