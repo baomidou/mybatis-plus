@@ -159,7 +159,6 @@ public class AutoGenerator {
 				List<String> columns = new ArrayList<String>();
 				List<String> types = new ArrayList<String>();
 				List<String> comments = new ArrayList<String>();
-				String idType = "Long";
 				Map<String, IdInfo> idMap = new HashMap<String, IdInfo>();
 				ResultSet results = conn.prepareStatement("show full fields from " + table).executeQuery();
 				while (results.next()) {
@@ -173,7 +172,6 @@ public class AutoGenerator {
 							autoIncrement = true;
 						}
 						idMap.put(results.getString("FIELD"), new IdInfo(key, autoIncrement));
-						idType = processType(results.getString("TYPE"));
 					}
 				}
 
@@ -184,7 +182,7 @@ public class AutoGenerator {
 				 * 生成映射文件
 				 */
 				buildEntityBean(columns, types, comments, tableComments.get(table), idMap, table, beanName);
-				buildMapper(beanName, mapperName, idType);
+				buildMapper(beanName, mapperName);
 				buildMapperXml(columns, types, comments, mapperName);
 			}
 		} catch (Exception e) {
@@ -489,10 +487,9 @@ public class AutoGenerator {
 	 * 
 	 * @param beanName
 	 * @param mapperName
-	 * @param idType
 	 * @throws IOException
 	 */
-	private void buildMapper(String beanName, String mapperName, String idType) throws IOException {
+	private void buildMapper(String beanName, String mapperName) throws IOException {
 		File mapperFile = new File(PATH_MAPPER, mapperName + ".java");
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(mapperFile), "utf-8"));
 		bw.write("package " + config.getMapperPackage() + ";");
@@ -505,7 +502,7 @@ public class AutoGenerator {
 
 		bw = buildClassComment(bw, mapperName + "数据库操作接口类");
 		bw.newLine();
-		bw.write("public interface " + mapperName + " extends AutoMapper<" + beanName + ", " + idType + "> {");
+		bw.write("public interface " + mapperName + " extends AutoMapper<" + beanName + "> {");
 		bw.newLine();
 		bw.newLine();
 
