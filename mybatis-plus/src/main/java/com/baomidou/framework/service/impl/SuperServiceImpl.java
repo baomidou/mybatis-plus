@@ -15,23 +15,25 @@
  */
 package com.baomidou.framework.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.baomidou.framework.service.ISuperService;
 import com.baomidou.mybatisplus.mapper.AutoMapper;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 
 /**
  * <p>
- * 抽象 Service 实现类
+ * 抽象 Service 实现类（ 泛型：M 是 mapper 对象， T 是实体，I 是实体表 id 类型 ）
  * </p>
  * 
  * @author hubin
  * @Date 2016-03-23
  */
-public class SuperServiceImpl<T, M extends AutoMapper<T>> {
+public class SuperServiceImpl<M extends AutoMapper<T>, T, I> implements ISuperService<T, I> {
 
 	@Autowired
 	protected M autoMapper;
@@ -44,8 +46,24 @@ public class SuperServiceImpl<T, M extends AutoMapper<T>> {
 	 *            数据库操作返回影响条数
 	 * @return boolean
 	 */
-	public boolean retBool( int result ) {
+	protected boolean retBool( int result ) {
 		return (result >= 1) ? true : false;
+	}
+
+
+	/**
+	 * ID 列表 Long 转换为 Object 对象
+	 *  
+	 * @param ids
+	 * 			Long 类型 ID 列表
+	 * @return
+	 */
+	protected List<Object> toObjectList( List<I> ids ) {
+		List<Object> objList = new ArrayList<Object>();
+		for ( I id : ids ) {
+			objList.add(id);
+		}
+		return objList;
 	}
 
 
@@ -59,7 +77,7 @@ public class SuperServiceImpl<T, M extends AutoMapper<T>> {
 	}
 
 
-	public boolean deleteById( Object id ) {
+	public boolean deleteById( I id ) {
 		return retBool(autoMapper.deleteById(id));
 	}
 
@@ -69,8 +87,8 @@ public class SuperServiceImpl<T, M extends AutoMapper<T>> {
 	}
 
 
-	public boolean deleteBatchIds( List<Object> idList ) {
-		return retBool(autoMapper.deleteBatchIds(idList));
+	public boolean deleteBatchIds( List<I> idList ) {
+		return retBool(autoMapper.deleteBatchIds(toObjectList(idList)));
 	}
 
 
@@ -79,13 +97,13 @@ public class SuperServiceImpl<T, M extends AutoMapper<T>> {
 	}
 
 
-	public T selectById( Object id ) {
+	public T selectById( I id ) {
 		return autoMapper.selectById(id);
 	}
 
 
-	public List<T> selectBatchIds( List<Object> idList ) {
-		return autoMapper.selectBatchIds(idList);
+	public List<T> selectBatchIds( List<I> idList ) {
+		return autoMapper.selectBatchIds(toObjectList(idList));
 	}
 
 
