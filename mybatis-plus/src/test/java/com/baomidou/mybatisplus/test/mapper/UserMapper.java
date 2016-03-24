@@ -30,7 +30,7 @@ import com.baomidou.mybatisplus.test.entity.User;
  * @author hubin
  * @Date 2016-01-23
  */
-public interface UserMapper extends AutoMapper<User> {
+public interface UserMapper extends AutoMapper<User, Long> {
 
 	/**
 	 * 用户列表，分页显示

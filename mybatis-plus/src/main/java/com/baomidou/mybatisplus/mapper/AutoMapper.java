@@ -28,7 +28,7 @@ import org.apache.ibatis.session.RowBounds;
  * @author hubin
  * @Date 2016-01-23
  */
-public interface AutoMapper<T> {
+public interface AutoMapper<T, I> {
 
 	/**
 	 * <p>
@@ -60,7 +60,7 @@ public interface AutoMapper<T> {
 	 * 			主键ID
 	 * @return int
 	 */
-	int deleteById( Object id );
+	int deleteById( I id );
 
 
 	/**
@@ -82,7 +82,7 @@ public interface AutoMapper<T> {
 	 * 				实体对象
 	 * @return int
 	 */
-	int deleteBatchIds( List<Object> idList );
+	int deleteBatchIds( List<I> idList );
 
 
 	/**
@@ -104,7 +104,7 @@ public interface AutoMapper<T> {
 	 * 			主键ID
 	 * @return T
 	 */
-	T selectById( Object id );
+	T selectById( I id );
 
 
 	/**
@@ -115,7 +115,7 @@ public interface AutoMapper<T> {
 	 * 				主键ID列表
 	 * @return List<T>
 	 */
-	List<T> selectBatchIds( List<Object> idList );
+	List<T> selectBatchIds( List<I> idList );
 
 
 	/**

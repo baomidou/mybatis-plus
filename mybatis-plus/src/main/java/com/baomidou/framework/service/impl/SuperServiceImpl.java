@@ -15,7 +15,6 @@
  */
 package com.baomidou.framework.service.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.ibatis.session.RowBounds;
@@ -33,7 +32,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
  * @author hubin
  * @Date 2016-03-23
  */
-public class SuperServiceImpl<M extends AutoMapper<T>, T, I> implements ISuperService<T, I> {
+public class SuperServiceImpl<M extends AutoMapper<T, I>, T, I> implements ISuperService<T, I> {
 
 	@Autowired
 	protected M autoMapper;
@@ -48,22 +47,6 @@ public class SuperServiceImpl<M extends AutoMapper<T>, T, I> implements ISuperSe
 	 */
 	protected boolean retBool( int result ) {
 		return (result >= 1) ? true : false;
-	}
-
-
-	/**
-	 * ID 列表 Long 转换为 Object 对象
-	 *  
-	 * @param ids
-	 * 			Long 类型 ID 列表
-	 * @return
-	 */
-	protected List<Object> toObjectList( List<I> ids ) {
-		List<Object> objList = new ArrayList<Object>();
-		for ( I id : ids ) {
-			objList.add(id);
-		}
-		return objList;
 	}
 
 
@@ -88,7 +71,7 @@ public class SuperServiceImpl<M extends AutoMapper<T>, T, I> implements ISuperSe
 
 
 	public boolean deleteBatchIds( List<I> idList ) {
-		return retBool(autoMapper.deleteBatchIds(toObjectList(idList)));
+		return retBool(autoMapper.deleteBatchIds(idList));
 	}
 
 
@@ -103,7 +86,7 @@ public class SuperServiceImpl<M extends AutoMapper<T>, T, I> implements ISuperSe
 
 
 	public List<T> selectBatchIds( List<I> idList ) {
-		return autoMapper.selectBatchIds(toObjectList(idList));
+		return autoMapper.selectBatchIds(idList);
 	}
 
 

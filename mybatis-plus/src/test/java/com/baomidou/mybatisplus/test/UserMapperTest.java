@@ -108,7 +108,7 @@ public class UserMapperTest {
 		System.err.println("---------deleteById------- delete id=" + id + " ,result=" + rlt + "\n\n");
 		sleep();
 
-		List<Object> il = new ArrayList<Object>();
+		List<Long> il = new ArrayList<Long>();
 		il.add(16L);
 		il.add(17L);
 		rlt = userMapper.deleteBatchIds(il);
@@ -143,7 +143,7 @@ public class UserMapperTest {
 		print(user);
 
 		System.err.println("\n------------------selectBatchIds----------------------");
-		List<Object> idList = new ArrayList<Object>();
+		List<Long> idList = new ArrayList<Long>();
 		idList.add(11L);
 		idList.add(12L);
 		List<User> ul1 = userMapper.selectBatchIds(idList);
