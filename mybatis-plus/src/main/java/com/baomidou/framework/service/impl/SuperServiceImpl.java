@@ -26,7 +26,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 
 /**
  * <p>
- * 抽象 Service 实现类（ 泛型：M 是 mapper 对象， T 是实体，I 是实体表 id 类型 ）
+ * 抽象 Service 实现类（ 泛型：M 是 mapper 对象， T 是实体 ）
  * </p>
  * 
  * @author hubin
