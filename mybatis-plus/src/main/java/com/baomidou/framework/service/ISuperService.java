@@ -29,7 +29,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
  * @author hubin
  * @Date 2016-03-23
  */
-public interface ISuperService<T, I> {
+public interface ISuperService<T> {
 
 
 	/**
@@ -62,7 +62,7 @@ public interface ISuperService<T, I> {
 	 * 			主键ID
 	 * @return boolean
 	 */
-	boolean deleteById( I id );
+	boolean deleteById( Long id );
 
 
 	/**
@@ -84,7 +84,7 @@ public interface ISuperService<T, I> {
 	 * 				实体对象
 	 * @return boolean
 	 */
-	boolean deleteBatchIds( List<I> idList );
+	boolean deleteBatchIds( List<Long> idList );
 
 
 	/**
@@ -106,7 +106,7 @@ public interface ISuperService<T, I> {
 	 * 			主键ID
 	 * @return T
 	 */
-	T selectById( I id );
+	T selectById( Long id );
 
 
 	/**
@@ -117,7 +117,7 @@ public interface ISuperService<T, I> {
 	 * 				主键ID列表
 	 * @return List<T>
 	 */
-	List<T> selectBatchIds( List<I> idList );
+	List<T> selectBatchIds( List<Long> idList );
 
 
 	/**
