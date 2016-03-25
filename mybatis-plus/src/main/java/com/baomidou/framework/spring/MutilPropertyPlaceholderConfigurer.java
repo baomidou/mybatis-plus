@@ -53,6 +53,17 @@ import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
  * </bean>
  * -------------------------------------------------------
  * </p>
+ * <p>
+ * --------------------   使用方法       -------------------------
+ *  //1、 Controller 层使用可以直接注入，通过 prop.getProperty("xxx") 获取 properties 加载配置内容
+ * 	//	@Autowired
+ *	//	protected MutilPropertyPlaceholderConfigurer prop;
+ *	<br>
+ *  //2、 Service 层使用 Value 注解自动获取  properties 加载配置内容
+ *  //	@Value(${'xxxxx'})
+ *  //	private String xxx;
+ * -------------------------------------------------------
+ * </p>
  * 
  * @author hubin
  * @Date 2016-01-27
