@@ -18,7 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
  *  <br>
  *  //2、配置数据加载拦截
  * 	<mvc:interceptors>
- *   	<bean class="com.dongdongxiaoyuan.common.DataLoadingInterceptor" />
+ *   	<bean class="com.baomidou.framework.spring.DataLoadingInterceptor" />
  *  </mvc:interceptors>
  * </p>
  * 
