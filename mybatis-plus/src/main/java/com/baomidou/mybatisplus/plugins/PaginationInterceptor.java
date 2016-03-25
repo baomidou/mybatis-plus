@@ -128,7 +128,7 @@ public class PaginationInterceptor implements Interceptor {
 	public void count(String sql, Connection connection, MappedStatement mappedStatement, BoundSql boundSql,
 			Pagination page) {
 		String sqlUse = sql;
-		int order_by = sql.lastIndexOf(" ORDER BY ");
+		int order_by = sql.toUpperCase().lastIndexOf("ORDER BY");
 		if ( order_by > -1 ) {
 			sqlUse = sql.substring(0, order_by);
 		}
