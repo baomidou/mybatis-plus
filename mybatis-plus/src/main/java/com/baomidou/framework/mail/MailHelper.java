@@ -35,7 +35,7 @@ import org.springframework.ui.velocity.VelocityEngineUtils;
  * @Date 2016-01-15
  */
 public class MailHelper {
-	
+
 	private Logger logger = LoggerFactory.getLogger(MailHelper.class);
 
 	private final static String ENCODING = "UTF-8";
@@ -51,8 +51,13 @@ public class MailHelper {
 	private String mailFrom;
 
 
-	public boolean sendMail( String[] to, String subject, String tplName, Map<String, Object> model ) {
-		return sendMail(this.mailTitle, this.mailFrom, to, subject, tplName, model);
+	public boolean sendMail( String to, String subject, String tplName, Map<String, Object> data ) {
+		return sendMail(new String[ ] { to }, subject, tplName, data);
+	}
+
+
+	public boolean sendMail( String[] to, String subject, String tplName, Map<String, Object> data ) {
+		return sendMail(this.mailTitle, this.mailFrom, to, subject, tplName, data);
 	}
 
 
@@ -69,19 +74,19 @@ public class MailHelper {
 	 *            主题（内容标题）
 	 * @param tplName
 	 *            模板名称（xxx.vm ， 模板地址：/WEB-INF/views/mail/..）
-	 * @param model
+	 * @param data
 	 *            参数（模板参数）
 	 * @return
 	 */
 	private boolean sendMail( String personal, String from, String[] to, String subject, String tplName,
-			Map<String, Object> model ) {
+			Map<String, Object> data ) {
 		try {
 			MimeMessage msg = mailSender.createMimeMessage();
 			MimeMessageHelper msgHelper = new MimeMessageHelper(msg, ENCODING);
 			msgHelper.setFrom(from, personal);
 			msgHelper.setTo(to);
 			msgHelper.setSubject(subject);
-			msgHelper.setText(this.getHtmltext(tplName, model), true);
+			msgHelper.setText(this.getHtmltext(tplName, data), true);
 			mailSender.send(msg);
 			return true;
 		} catch ( Exception e ) {

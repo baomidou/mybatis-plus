@@ -1,0 +1,39 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans   
+    http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+	<bean id="velocityEngine"
+		class="org.springframework.ui.velocity.VelocityEngineFactoryBean">
+		<property name="resourceLoaderPath" value="/WEB-INF/views/mail/" />
+		<property name="velocityProperties">
+			<props>
+				<prop key="default.contentType">text/html; charset=utf-8</prop>
+				<prop key="output.encoding">utf-8</prop>
+				<prop key="input.encoding">utf-8</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<property name="host" value="smtp.baomidou.com" />
+		<property name="port" value="25" />
+		<property name="protocol" value="smtp" />
+		<property name="username" value="xxx@baomidou.com" />
+		<property name="password" value="xxx" />
+		<property name="javaMailProperties">
+			<props>
+				<prop key="mail.smtp.auth">true</prop>
+				<prop key="mail.smtp.starttls.enable">true</prop>
+				<prop key="mail.smtp.quitwait">false</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="mailMail" class="com.baomidou.framework.mail.MailHelper">
+		<property name="velocityEngine" ref="velocityEngine" />
+		<property name="mailSender" ref="mailSender" />
+		<property name="mailTitle" value="mybatisPlus" />
+		<property name="mailFrom" value="xxx@baomidou.com" />
+	</bean>
+</beans>
