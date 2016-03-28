@@ -36,7 +36,7 @@ import org.springframework.ui.velocity.VelocityEngineUtils;
  */
 public class MailHelper {
 
-	private Logger logger = LoggerFactory.getLogger(MailHelper.class);
+	protected Logger logger = LoggerFactory.getLogger(MailHelper.class);
 
 	private final static String ENCODING = "UTF-8";
 
@@ -78,7 +78,7 @@ public class MailHelper {
 	 *            参数（模板参数）
 	 * @return
 	 */
-	private boolean sendMail( String personal, String from, String[] to, String subject, String tplName,
+	protected boolean sendMail( String personal, String from, String[] to, String subject, String tplName,
 			Map<String, Object> data ) {
 		try {
 			MimeMessage msg = mailSender.createMimeMessage();
@@ -96,7 +96,7 @@ public class MailHelper {
 	}
 
 
-	private String getHtmltext( String tplName, Map<String, Object> model ) {
+	protected String getHtmltext( String tplName, Map<String, Object> model ) {
 		return VelocityEngineUtils.mergeTemplateIntoString(this.velocityEngine, tplName, ENCODING, model);
 	}
 
