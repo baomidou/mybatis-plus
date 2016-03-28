@@ -77,7 +77,7 @@ public class EntityWrapper<T> {
 			/**
 			 * 判断是否存在 SQL 注入
 			 */
-			String ob = orderByField.toLowerCase();
+			String ob = orderByField.toUpperCase();
 			if ( ob.contains("INSERT") || ob.contains("DELETE") 
 					|| ob.contains("UPDATE") || ob.contains("SELECT") ) {
 				throw new MybatisPlusException(" orderBy=[" + orderByField + "], There may be SQL injection");
