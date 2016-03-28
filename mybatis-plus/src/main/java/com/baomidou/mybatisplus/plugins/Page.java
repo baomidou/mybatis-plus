@@ -54,7 +54,7 @@ public class Page<T> extends Pagination {
 	public void setRecords( List<T> records ) {
 		this.records = records;
 	}
-	
+
 
 	@Override
 	public String toString() {

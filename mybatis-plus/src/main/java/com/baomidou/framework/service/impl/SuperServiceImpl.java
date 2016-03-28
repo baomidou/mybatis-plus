@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.baomidou.framework.service.ISuperService;
 import com.baomidou.mybatisplus.mapper.AutoMapper;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
 
 /**
  * <p>
@@ -98,4 +99,53 @@ public class SuperServiceImpl<M extends AutoMapper<T>, T> implements ISuperServi
 	public List<T> selectList( RowBounds rowBounds, EntityWrapper<T> entityWrapper ) {
 		return autoMapper.selectList(rowBounds, entityWrapper);
 	}
+
+
+	/**
+	 * <p>
+	 * 查询列表
+	 * </p>
+	 * 
+	 * @param entity
+	 * 				实体对象
+	 * @param orderByField
+	 * 				对应 EntityWrapper 类中 orderByField 字段
+	 * 				{@link EntityWrapper}
+	 * @return
+	 */
+	public List<T> selectList( T entity, String orderByField ) {
+		return autoMapper.selectList(RowBounds.DEFAULT, new EntityWrapper<T>(entity, orderByField));
+	}
+
+
+	public List<T> selectList( T entity ) {
+		return autoMapper.selectList(RowBounds.DEFAULT, new EntityWrapper<T>(entity, null));
+	}
+
+
+	/**
+	 * <p>
+	 * 翻页查询
+	 * </p>
+	 * 
+	 * @param page
+	 * 				翻页对象
+	 * @param entity
+	 * 				实体对象
+	 * @param orderByField
+	 * 				对应 EntityWrapper 类中 orderByField 字段
+	 * 				{@link EntityWrapper}
+	 * @return
+	 */
+	public Page<T> selectPage( Page<T> page, T entity, String orderByField ) {
+		page.setRecords(autoMapper.selectList(page, new EntityWrapper<T>(entity, orderByField)));
+		return page;
+	}
+
+
+	public Page<T> selectPage( Page<T> page, T entity ) {
+		page.setRecords(autoMapper.selectList(page, new EntityWrapper<T>(entity, null)));
+		return page;
+	}
+
 }

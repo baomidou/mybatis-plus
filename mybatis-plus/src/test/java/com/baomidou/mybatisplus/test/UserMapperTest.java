@@ -172,6 +172,7 @@ public class UserMapperTest {
 		System.err.println(" 翻页：" + page.toString());
 
 		System.err.println("\n---------------xml---selectListRow 分页查询，不查询总数（此时可自定义 count 查询）----无查询条件--------------");
+		//TODO 查询总数传 Page 对象即可
 		List<User> rowList = userMapper.selectListRow(new RowBounds(0, 2));
 		for ( int i = 0 ; i < rowList.size() ; i++ ) {
 			print(rowList.get(i));
