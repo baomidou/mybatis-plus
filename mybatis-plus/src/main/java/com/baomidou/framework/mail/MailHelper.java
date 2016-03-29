@@ -96,8 +96,19 @@ public class MailHelper {
 	}
 
 
-	protected String getHtmltext( String tplName, Map<String, Object> model ) {
-		return VelocityEngineUtils.mergeTemplateIntoString(this.velocityEngine, tplName, ENCODING, model);
+	/**
+	 * <p>
+	 * velocity 模板转 html
+	 * </p>
+	 * 
+	 * @param tplName
+	 * 				模板文件名称
+	 * @param data
+	 * 				参数
+	 * @return
+	 */
+	public String getHtmltext( String tplName, Map<String, Object> data ) {
+		return VelocityEngineUtils.mergeTemplateIntoString(this.velocityEngine, tplName, ENCODING, data);
 	}
 
 
