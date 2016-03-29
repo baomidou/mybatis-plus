@@ -417,6 +417,10 @@ public class AutoGenerator {
 							bw.write(idType);
 						}
 						bw.write(")");
+					} else if ( idType != null ) {
+						bw.write("(");
+						bw.write(idType);
+						bw.write(")");
 					}
 				} else {
 					if (isLine) {
