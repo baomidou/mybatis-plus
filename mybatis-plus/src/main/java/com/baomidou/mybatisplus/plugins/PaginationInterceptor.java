@@ -101,18 +101,27 @@ public class PaginationInterceptor implements Interceptor {
 			 */
 			BoundSql boundSql = (BoundSql) metaStatementHandler.getValue("delegate.boundSql");
 			String originalSql = (String) boundSql.getSql();
-			String paginationSql = dialect.buildPaginationSql(originalSql, rowBounds.getOffset(), rowBounds.getLimit());
-			metaStatementHandler.setValue("delegate.boundSql.sql", paginationSql);
 			metaStatementHandler.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
 			metaStatementHandler.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
-
-			/* 判断是否需要查询总记录条数 */
+			String paginationSql = null;
 			if (rowBounds instanceof Pagination) {
+				/**
+				 * 分页查询
+				 */
 				MappedStatement mappedStatement = (MappedStatement) metaStatementHandler.getValue("delegate.mappedStatement");
 				Connection connection = (Connection) invocation.getArgs()[0];
-				this.count(originalSql, connection, mappedStatement, boundSql, (Pagination) rowBounds);
+				Pagination page = this.count(originalSql, connection, mappedStatement, boundSql, (Pagination) rowBounds);
+				paginationSql = dialect.buildPaginationSql(originalSql, page.getCurrentOffset(), page.getSize());
+			} else {
+				/**
+				 * 列表查询
+				 */
+				paginationSql = dialect.buildPaginationSql(originalSql, rowBounds.getOffset(), rowBounds.getLimit());
 			}
+
+			metaStatementHandler.setValue("delegate.boundSql.sql", paginationSql);
 		}
+
 		return invocation.proceed();
 	}
 
@@ -125,7 +134,7 @@ public class PaginationInterceptor implements Interceptor {
 	 * @param boundSql
 	 * @param page
 	 */
-	public void count(String sql, Connection connection, MappedStatement mappedStatement, BoundSql boundSql,
+	public Pagination count(String sql, Connection connection, MappedStatement mappedStatement, BoundSql boundSql,
 			Pagination page) {
 		String sqlUse = sql;
 		int order_by = sql.toUpperCase().lastIndexOf("ORDER BY");
@@ -149,6 +158,13 @@ public class PaginationInterceptor implements Interceptor {
 				total = rs.getInt(1);
 			}
 			page.setTotal(total);
+			/**
+			 * 当前页大于总页数，当前页设置为第一页
+			 */
+			if(page.getCurrent() > page.getPages()){
+				page = new Pagination(1, page.getSize());
+				page.setTotal(total);
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -159,6 +175,7 @@ public class PaginationInterceptor implements Interceptor {
 				e.printStackTrace();
 			}
 		}
+		return page;
 	}
 
 	public Object plugin(Object target) {

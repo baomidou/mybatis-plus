@@ -145,6 +145,9 @@ public class SuperController {
 	 * @return
 	 */
 	protected String toJson( Object object, String format ) {
+		if ( format == null ) {
+			return toJson(object);
+		}
 		return JSON.toJSONStringWithDateFormat(object, format, SerializerFeature.WriteDateUseDateFormat);
 	}
 

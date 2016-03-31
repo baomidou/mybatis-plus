@@ -17,8 +17,6 @@ package com.baomidou.mybatisplus.plugins.pagination;
 
 import org.apache.ibatis.session.RowBounds;
 
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-
 /**
  * <p>
  * 简单分页模型
@@ -40,7 +38,7 @@ public class Pagination extends RowBounds {
 	private int pages;
 
 	/* 当前页 */
-	private int current;
+	private int current = 1;
 
 	public Pagination() {
 		super();
@@ -57,12 +55,19 @@ public class Pagination extends RowBounds {
 	 *            每页显示条数
 	 */
 	public Pagination(int current, int size) {
-		super((current - 1) * size, size);
-		if ( current <= 0 ) {
-			throw new MybatisPlusException("current must be greater than zero.");
+		super(offsetCurrent(current) * size, size);
+		if ( current > 1 ) {
+			this.current = current;
 		}
-		this.current = current;
 		this.size = size;
+	}
+	
+
+	protected static int offsetCurrent( int current ) {
+		if ( current > 0 ) {
+			return current - 1;
+		}
+		return 0;
 	}
 
 	public boolean hasPrevious() {
@@ -83,6 +88,12 @@ public class Pagination extends RowBounds {
 		if (this.total % this.size != 0) {
 			this.pages++;
 		}
+		if(this.current > this.pages){
+			/**
+			 * 当前页大于总页数，当前页设置为第一页
+			 */
+			this.current = 1;
+		}
 	}
 
 	public int getSize() {
@@ -93,6 +104,10 @@ public class Pagination extends RowBounds {
 		return pages;
 	}
 
+	public int getCurrentOffset() {
+		return this.current - 1;
+	}
+	
 	public int getCurrent() {
 		return current;
 	}
