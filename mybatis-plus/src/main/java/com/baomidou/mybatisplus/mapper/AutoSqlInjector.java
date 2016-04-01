@@ -396,7 +396,7 @@ public class AutoSqlInjector {
 	 * @param table
 	 * @return
 	 */
-	protected String sqlSet( boolean selective, TableInfo table ) {
+	private String sqlSet( boolean selective, TableInfo table ) {
 		StringBuilder set = new StringBuilder();
 		set.append("<trim prefix=\"SET\" suffixOverrides=\",\">");
 		List<TableFieldInfo> fieldList = table.getFieldList();
