@@ -166,7 +166,8 @@ public class AutoGenerator {
 				Map<String, IdInfo> idMap = new HashMap<String, IdInfo>();
 				ResultSet results = conn.prepareStatement("show full fields from " + table).executeQuery();
 				while (results.next()) {
-					columns.add(results.getString("FIELD"));
+					String field = results.getString("FIELD");
+					columns.add(field);
 					types.add(results.getString("TYPE"));
 					comments.add(results.getString("COMMENT"));
 					String key = results.getString("KEY");
@@ -175,7 +176,7 @@ public class AutoGenerator {
 						if ("auto_increment".equals(results.getString("EXTRA"))) {
 							autoIncrement = true;
 						}
-						idMap.put(results.getString("FIELD"), new IdInfo(key, autoIncrement));
+						idMap.put(field, new IdInfo(field, autoIncrement));
 					}
 				}
 
@@ -189,7 +190,7 @@ public class AutoGenerator {
 				 */
 				buildEntityBean(columns, types, comments, tableComments.get(table), idMap, table, beanName);
 				buildMapper(beanName, mapperName);
-				buildMapperXml(columns, types, comments, mapperName);
+				buildMapperXml(columns, types, comments, idMap, mapperName);
 				buildService(beanName, serviceName);
 				buildServiceImpl(beanName, serviceImplName, serviceName, mapperName);
 			}
@@ -320,10 +321,9 @@ public class AutoGenerator {
 		StringBuffer sb = new StringBuffer(field.length());
 		String[] fields = field.split("_");
 		String temp = null;
-		sb.append(fields[0]);
-		for (int i = 1; i < fields.length; i++) {
+		for (int i = 0; i < fields.length; i++) {
 			temp = fields[i].trim();
-			sb.append(temp.substring(0, 1).toUpperCase()).append(temp.substring(1));
+			sb.append(temp.substring(0, 1).toUpperCase()).append(temp.substring(1).toLowerCase());
 		}
 		return sb.toString();
 	}
@@ -534,8 +534,8 @@ public class AutoGenerator {
 	 * @param comments
 	 * @throws IOException
 	 */
-	private void buildMapperXml(List<String> columns, List<String> types, List<String> comments, String mapperName)
-			throws IOException {
+	private void buildMapperXml( List<String> columns, List<String> types, List<String> comments,
+			Map<String, IdInfo> idMap, String mapperName ) throws IOException {
 		File mapperXmlFile = new File(PATH_XML, mapperName + ".xml");
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(mapperXmlFile)));
 		bw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
@@ -549,7 +549,7 @@ public class AutoGenerator {
 		/*
 		 * 下面开始写SqlMapper中的方法
 		 */
-		buildSQL(bw, columns);
+		buildSQL(bw, idMap, columns);
 
 		bw.write("</mapper>");
 		bw.flush();
@@ -642,17 +642,23 @@ public class AutoGenerator {
 	 * @param columns
 	 * @throws IOException
 	 */
-	private void buildSQL(BufferedWriter bw, List<String> columns) throws IOException {
+	private void buildSQL( BufferedWriter bw, Map<String, IdInfo> idMap, List<String> columns ) throws IOException {
 		int size = columns.size();
 		bw.write("\t<!-- 通用查询结果列-->");
 		bw.newLine();
 		bw.write("\t<sql id=\"Base_Column_List\">");
 		bw.newLine();
-		bw.write("\t\t id,");
-		for (int i = 1; i < size; i++) {
-			bw.write(" " + columns.get(i));
-			if (i != size - 1) {
-				bw.write(",");
+		
+		for (int i = 0; i < size; i++) {
+			String column = columns.get(i);
+			IdInfo idInfo = idMap.get(column);
+			if ( idInfo != null ) {
+				bw.write("\t\t " + idInfo.getValue() + ",");
+			} else {
+				bw.write(" " + column);
+				if (i != size - 1) {
+					bw.write(",");
+				}
 			}
 		}
 		bw.newLine();
