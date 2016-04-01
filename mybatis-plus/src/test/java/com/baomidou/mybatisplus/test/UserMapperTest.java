@@ -146,7 +146,7 @@ public class UserMapperTest {
 		sleep();
 		
 		rlt = userMapper.updateSelective(new User("00"), new User(15L, "55"));
-		System.err.println("------------------update---------------------- result=" + rlt + "\n\n");
+		System.err.println("------------------updateSelective---------------------- result=" + rlt + "\n\n");
 		sleep();
 
 
@@ -169,7 +169,7 @@ public class UserMapperTest {
 		}
 
 		System.err.println("\n------------------selectOne----------------------");
-		User userOne = userMapper.selectOne(new User("MybatisPlus"));
+		User userOne = userMapper.selectOne(new User("update all column"));
 		print(userOne);
 
 		System.err.println("\n------------------selectList-----所有数据----id--DESC--排序----");
