@@ -44,6 +44,17 @@ public interface ISuperService<T> {
 
 	/**
 	 * <p>
+	 * 插入一条记录（选择字段， null 字段不插入）
+	 * </p>
+	 * @param entity
+	 * 				实体对象
+	 * @return int
+	 */
+	boolean insertSelective( T entity );
+
+
+	/**
+	 * <p>
 	 * 插入（批量），该方法不适合 Oracle
 	 * </p>
 	 * @param entityList
@@ -95,6 +106,40 @@ public interface ISuperService<T> {
 	 * @return boolean
 	 */
 	boolean updateById( T entity );
+
+
+	/**
+	 * <p>
+	 * 根据 ID 选择修改
+	 * </p>
+	 * @param entity
+	 * 				实体对象
+	 */
+	boolean updateSelectiveById( T entity );
+
+
+	/**
+	 * <p>
+	 * 根据 whereEntity 条件，更新记录
+	 * </p>
+	 * @param entity
+	 * 				实体对象
+	 * @return whereEntity
+	 * 				实体查询条件
+	 */
+	boolean update( T entity, T whereEntity );
+
+
+	/**
+	 * <p>
+	 * 根据 whereEntity 条件，选择更新记录
+	 * </p>
+	 * @param entity
+	 * 				实体对象
+	 * @return whereEntity
+	 * 				实体查询条件
+	 */
+	boolean updateSelective( T entity, T whereEntity );
 
 
 	/**

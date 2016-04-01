@@ -29,6 +29,7 @@ public enum SqlMethod {
 	 * 插入
 	 */
 	INSERT_ONE("insert", "插入一条数据", "<script>INSERT INTO %s %s VALUES %s</script>"),
+	INSERT_ONE_SELECTIVE("insertSelective", "插入一条数据（选择字段， null 字段不插入）", "<script>INSERT INTO %s %s VALUES %s</script>"),
 	INSERT_BATCH("insertBatch", "批量插入数据", "<script>INSERT INTO %s %s VALUES \n<foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\">%s\n</foreach></script>"),
 	
 	/**
@@ -41,7 +42,10 @@ public enum SqlMethod {
 	/**
 	 * 修改
 	 */
-	UPDATE_BY_ID("updateById", "根据ID 修改数据", "<script>UPDATE %s %s</script>"),
+	UPDATE_BY_ID("updateById", "根据ID 修改数据", "<script>UPDATE %s %s WHERE %s=#{et.%s}</script>"),
+	UPDATE_SELECTIVE_BY_ID("updateSelectiveById", "根据ID 选择修改数据", "<script>UPDATE %s %s WHERE %s=#{et.%s}</script>"),
+	UPDATE("update", "根据 whereEntity 条件，更新记录", "<script>UPDATE %s %s %s</script>"),
+	UPDATE_SELECTIVE("updateSelective", "根据 whereEntity 条件，选择更新记录", "<script>UPDATE %s %s %s</script>"),
 	
 	/**
 	 * 查询

@@ -28,6 +28,7 @@ import org.apache.ibatis.session.RowBounds;
  * @Date 2016-01-23
  */
 public class Pagination extends RowBounds {
+
 	/* 总数 */
 	private int total;
 
@@ -40,9 +41,11 @@ public class Pagination extends RowBounds {
 	/* 当前页 */
 	private int current = 1;
 
+
 	public Pagination() {
 		super();
 	}
+
 
 	/**
 	 * <p>
@@ -54,41 +57,50 @@ public class Pagination extends RowBounds {
 	 * @param size
 	 *            每页显示条数
 	 */
-	public Pagination(int current, int size) {
-		super(offsetCurrent(current) * size, size);
+	public Pagination( int current, int size ) {
+		super(offsetCurrent(current, size), size);
 		if ( current > 1 ) {
 			this.current = current;
 		}
 		this.size = size;
 	}
-	
 
-	protected static int offsetCurrent( int current ) {
+
+	protected static int offsetCurrent( int current, int size ) {
 		if ( current > 0 ) {
-			return current - 1;
+			return (current - 1) * size;
 		}
 		return 0;
 	}
+
+
+	public int getOffsetCurrent() {
+		return offsetCurrent(this.current, this.size);
+	}
+
 
 	public boolean hasPrevious() {
 		return this.current > 1;
 	}
 
+
 	public boolean hasNext() {
 		return this.current < this.pages;
 	}
+
 
 	public int getTotal() {
 		return total;
 	}
 
-	public void setTotal(int total) {
+
+	public void setTotal( int total ) {
 		this.total = total;
 		this.pages = this.total / this.size;
-		if (this.total % this.size != 0) {
+		if ( this.total % this.size != 0 ) {
 			this.pages++;
 		}
-		if(this.current > this.pages){
+		if ( this.current > this.pages ) {
 			/**
 			 * 当前页大于总页数，当前页设置为第一页
 			 */
@@ -96,21 +108,21 @@ public class Pagination extends RowBounds {
 		}
 	}
 
+
 	public int getSize() {
 		return size;
 	}
+
 
 	public int getPages() {
 		return pages;
 	}
 
-	public int getCurrentOffset() {
-		return this.current - 1;
-	}
-	
+
 	public int getCurrent() {
 		return current;
 	}
+
 
 	@Override
 	public String toString() {

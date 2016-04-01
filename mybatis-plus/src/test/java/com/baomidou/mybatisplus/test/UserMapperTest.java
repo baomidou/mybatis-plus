@@ -79,8 +79,12 @@ public class UserMapperTest {
 		 * 插入
 		 */
 		long id = IdWorker.getId();
-		int rlt = userMapper.insert(new User(id, "abc", 18, 0));
-		System.err.println("\n--------------insert-------name为空--------- name=null, age=18");
+		int rlt = userMapper.insert(new User(id, "abc", 18, 1));
+		System.err.println("\n--------------insert-------" + rlt);
+		sleep();
+		
+		rlt = userMapper.insertSelective(new User("abc", 18));
+		System.err.println("\n--------------insertSelective-------" + rlt);
 		sleep();
 
 		List<User> ul = new ArrayList<User>();
@@ -128,8 +132,21 @@ public class UserMapperTest {
 		 * updateById 是从 AutoMapper 中继承而来的，UserMapper.xml中并没有申明改sql
 		 * 
 		 */
-		rlt = userMapper.updateById(new User(12L, "MybatisPlus"));
+
+		rlt = userMapper.updateSelectiveById(new User(12L, "MybatisPlus"));
+		System.err.println("------------------updateSelectiveById---------------------- result=" + rlt + "\n\n");
+		sleep();
+		
+		rlt = userMapper.updateById(new User(12L, "update all column", 12, 12));
 		System.err.println("------------------updateById---------------------- result=" + rlt + "\n\n");
+		sleep();
+		
+		rlt = userMapper.update(new User("55", 55, 5), new User(15L, "5"));
+		System.err.println("------------------update---------------------- result=" + rlt + "\n\n");
+		sleep();
+		
+		rlt = userMapper.updateSelective(new User("00"), new User(15L, "55"));
+		System.err.println("------------------update---------------------- result=" + rlt + "\n\n");
 		sleep();
 
 

@@ -103,23 +103,26 @@ public class PaginationInterceptor implements Interceptor {
 			String originalSql = (String) boundSql.getSql();
 			metaStatementHandler.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
 			metaStatementHandler.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
-			String paginationSql = null;
+
+			/**
+			 * <p>
+			 * 分页逻辑
+			 * </p>
+			 * <p>
+			 * 查询总记录数 count
+			 * </p>
+			 */
 			if (rowBounds instanceof Pagination) {
-				/**
-				 * 分页查询
-				 */
 				MappedStatement mappedStatement = (MappedStatement) metaStatementHandler.getValue("delegate.mappedStatement");
 				Connection connection = (Connection) invocation.getArgs()[0];
 				Pagination page = this.count(originalSql, connection, mappedStatement, boundSql, (Pagination) rowBounds);
-				paginationSql = dialect.buildPaginationSql(originalSql, page.getCurrentOffset(), page.getSize());
-			} else {
-				/**
-				 * 列表查询
-				 */
-				paginationSql = dialect.buildPaginationSql(originalSql, rowBounds.getOffset(), rowBounds.getLimit());
+				originalSql = dialect.buildPaginationSql(originalSql, page.getOffsetCurrent(), page.getSize());
 			}
 
-			metaStatementHandler.setValue("delegate.boundSql.sql", paginationSql);
+			/**
+			 * 查询 SQL 设置
+			 */
+			metaStatementHandler.setValue("delegate.boundSql.sql", originalSql);
 		}
 
 		return invocation.proceed();

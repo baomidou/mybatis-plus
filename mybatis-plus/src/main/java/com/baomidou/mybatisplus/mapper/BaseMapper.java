@@ -42,6 +42,16 @@ public interface BaseMapper<T, I> {
 	 * @return int
 	 */
 	int insert( T entity );
+	
+	/**
+	 * <p>
+	 * 插入一条记录（选择字段， null 字段不插入）
+	 * </p>
+	 * @param entity
+	 * 				实体对象
+	 * @return int
+	 */
+	int insertSelective( T entity );
 
 
 	/**
@@ -74,7 +84,7 @@ public interface BaseMapper<T, I> {
 	 * 				实体对象
 	 * @return int
 	 */
-	int deleteSelective( T entity );
+	int deleteSelective( @Param("ew" ) T entity);
 
 
 	/**
@@ -96,7 +106,41 @@ public interface BaseMapper<T, I> {
 	 * 				实体对象
 	 * @return int
 	 */
-	int updateById( T entity );
+	int updateById( @Param("et" ) T entity);
+
+
+	/**
+	 * <p>
+	 * 根据 ID 选择修改
+	 * </p>
+	 * @param entity
+	 * 				实体对象
+	 */
+	int updateSelectiveById( @Param("et" ) T entity);
+
+
+	/**
+	 * <p>
+	 * 根据 whereEntity 条件，更新记录
+	 * </p>
+	 * @param entity
+	 * 				实体对象
+	 * @return whereEntity
+	 * 				实体查询条件
+	 */
+	int update( @Param("et" ) T entity, @Param("ew") T whereEntity);
+
+
+	/**
+	 * <p>
+	 * 根据 whereEntity 条件，选择更新记录
+	 * </p>
+	 * @param entity
+	 * 				实体对象
+	 * @return whereEntity
+	 * 				实体查询条件
+	 */
+	int updateSelective( @Param("et" ) T entity, @Param("ew") T whereEntity);
 
 
 	/**
@@ -129,7 +173,7 @@ public interface BaseMapper<T, I> {
 	 * 				实体对象
 	 * @return T
 	 */
-	T selectOne( T entity );
+	T selectOne( @Param("ew" ) T entity);
 
 
 	/**
@@ -142,6 +186,6 @@ public interface BaseMapper<T, I> {
 	 * 					实体对象封装操作类（可以为 null）
 	 * @return List<T>
 	 */
-	List<T> selectList( RowBounds rowBounds, @Param("ew") EntityWrapper<T> entityWrapper);
+	List<T> selectList( RowBounds rowBounds, @Param("ew" ) EntityWrapper<T> entityWrapper);
 
 }
