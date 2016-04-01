@@ -653,12 +653,12 @@ public class AutoGenerator {
 			String column = columns.get(i);
 			IdInfo idInfo = idMap.get(column);
 			if ( idInfo != null ) {
-				bw.write("\t\t " + idInfo.getValue() + ",");
+				bw.write("\t\t " + idInfo.getValue());
 			} else {
 				bw.write(" " + column);
-				if (i != size - 1) {
-					bw.write(",");
-				}
+			}
+			if (i != size - 1) {
+				bw.write(",");
 			}
 		}
 		bw.newLine();
