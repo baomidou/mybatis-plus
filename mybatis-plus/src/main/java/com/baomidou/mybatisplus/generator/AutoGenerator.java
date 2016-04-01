@@ -63,6 +63,8 @@ public class AutoGenerator {
 
 	private static String PATH_ENTITY = null;
 	private static String PATH_MAPPER = null;
+	private static String PATH_SERVICE = null;
+	private static String PATH_SERVICE_IMPL = null;
 	private static String PATH_XML = null;
 	
 	/**
@@ -89,6 +91,8 @@ public class AutoGenerator {
 		PATH_ENTITY = getFilePath(gf.getPath(), "entity");
 		PATH_MAPPER = getFilePath(gf.getPath(), "mapper");
 		PATH_XML = getFilePath(gf.getPath(), "xml");
+		PATH_SERVICE = getFilePath(gf.getPath(), "service");
+		PATH_SERVICE_IMPL = getFilePath(gf.getPath(), "serviceImpl");
 
 		/**
 		 * 开启生成映射关系
@@ -177,6 +181,8 @@ public class AutoGenerator {
 
 				String beanName = getBeanName(table, config.isDbPrefix());
 				String mapperName = beanName + "Mapper";
+				String serviceName = "I" + beanName + "Service";
+				String serviceImplName = beanName + "ServiceImpl";
 
 				/**
 				 * 生成映射文件
@@ -184,6 +190,8 @@ public class AutoGenerator {
 				buildEntityBean(columns, types, comments, tableComments.get(table), idMap, table, beanName);
 				buildMapper(beanName, mapperName);
 				buildMapperXml(columns, types, comments, mapperName);
+				buildService(beanName, serviceName);
+				buildServiceImpl(beanName, serviceImplName, serviceName, mapperName);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -504,13 +512,13 @@ public class AutoGenerator {
 		bw.write("import com.baomidou.mybatisplus.mapper.AutoMapper;");
 		bw.newLine();
 
-		bw = buildClassComment(bw, mapperName + "数据库操作接口类");
+		bw = buildClassComment(bw, beanName + " 表数据库控制层接口");
 		bw.newLine();
 		bw.write("public interface " + mapperName + " extends AutoMapper<" + beanName + "> {");
 		bw.newLine();
 		bw.newLine();
 
-		// ----------定义Mapper中的方法End----------
+		// ----------定义mapper中的方法End----------
 		bw.newLine();
 		bw.write("}");
 		bw.flush();
@@ -544,6 +552,84 @@ public class AutoGenerator {
 		buildSQL(bw, columns);
 
 		bw.write("</mapper>");
+		bw.flush();
+		bw.close();
+	}
+
+	/**
+	 * 
+	 * 构建service文件
+	 * 
+	 * @param beanName
+	 * @param serviceName
+	 * @throws IOException
+	 */
+	private void buildService(String beanName, String serviceName) throws IOException {
+		File serviceFile = new File(PATH_SERVICE, serviceName + ".java");
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(serviceFile), "utf-8"));
+		bw.write("package " + config.getServicePackage() + ";");
+		bw.newLine();
+		bw.newLine();
+		bw.write("import " + config.getEntityPackage() + "." + beanName + ";");
+		bw.newLine();
+		bw.write("import com.baomidou.framework.service.ISuperService;");
+		bw.newLine();
+
+		bw = buildClassComment(bw, beanName + " 表数据服务层接口");
+		bw.newLine();
+		bw.write("public interface " + serviceName + " extends ISuperService<" + beanName + "> {");
+		bw.newLine();
+		bw.newLine();
+
+		// ----------定义service中的方法End----------
+		bw.newLine();
+		bw.write("}");
+		bw.flush();
+		bw.close();
+	}
+	
+	/**
+	 * 
+	 * 构建service实现类文件
+	 * 
+	 * @param beanName
+	 * @param serviceImplName
+	 * @param mapperName
+	 * @throws IOException
+	 */
+	private void buildServiceImpl(String beanName, String serviceImplName, String serviceName, String mapperName) throws IOException {
+		File serviceFile = new File(PATH_SERVICE_IMPL, serviceImplName + ".java");
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(serviceFile), "utf-8"));
+		bw.write("package " + config.getServicePackage() + ".impl;");
+		bw.newLine();
+		bw.newLine();
+		bw.write("import org.springframework.stereotype.Service;");
+		bw.newLine();
+		bw.newLine();
+		bw.write("import " + config.getMapperPackage() + "." + mapperName + ";");
+		bw.newLine();
+		bw.write("import " + config.getEntityPackage() + "." + beanName + ";");
+		bw.newLine();
+		bw.write("import " + config.getServicePackage() + "." + serviceName + ";");
+		bw.newLine();
+		
+		String superServiceImpl = config.getSuperServiceImpl();
+		bw.write("import " + superServiceImpl + ";");
+		bw.newLine();
+		
+		bw = buildClassComment(bw, beanName + " 表数据服务层接口实现类");
+		bw.newLine();
+		bw.write("@Service");
+		bw.newLine();
+		superServiceImpl = superServiceImpl.substring(superServiceImpl.lastIndexOf(".") + 1);
+		bw.write("public class " + serviceImplName + " extends " + superServiceImpl
+				+ "<" + mapperName + ", " + beanName + "> implements " + serviceName + " {");
+		bw.newLine();
+		bw.newLine();
+		
+		// ----------定义service中的方法End----------
+		bw.newLine();
+		bw.write("}");
 		bw.flush();
 		bw.close();
 	}

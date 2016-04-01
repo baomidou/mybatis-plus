@@ -11,6 +11,10 @@
 	int rlt = userMapper.insert(new User(id, "abc", 18, 0));
 
 
+> 	插入一条记录（选择字段， null 字段不插入）
+	int rlt = userMapper.insertSelective(new User("abc", 18));
+
+
 > 	批量插入
 
 	List<User> ul = new ArrayList<User>();
@@ -54,6 +58,21 @@
 > 	修改
 
 	int rlt = userMapper.updateById(new User(12L, "MybatisPlus"));
+
+
+> 	根据 ID 选择修改
+
+	int rlt = userMapper.updateSelectiveById(new User(12L, "MybatisPlus"));
+
+
+> 	根据 whereEntity 条件，更新记录
+
+	int rlt = userMapper.update(new User("55", 55, 5), new User(15L, "5"));
+
+
+> 	根据 whereEntity 条件，选择更新记录
+
+	int rlt = userMapper.updateSelective(new User("00"), new User(15L, "55"));
 
 
 

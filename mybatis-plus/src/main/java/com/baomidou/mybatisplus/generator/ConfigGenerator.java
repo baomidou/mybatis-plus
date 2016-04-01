@@ -46,6 +46,10 @@ public class ConfigGenerator {
 
 	private String mapperPackage;
 
+	private String servicePackage;
+
+	private String superServiceImpl;
+
 	/* db_config */
 	private boolean dbPrefix = false;
 
@@ -56,78 +60,119 @@ public class ConfigGenerator {
 	private String dbPassword;
 
 	private String dbUrl;
-	
+
 	private IdType idType = null;
+
 
 	public String getSaveDir() {
 		return saveDir;
 	}
 
-	public void setSaveDir(String saveDir) {
+
+	public void setSaveDir( String saveDir ) {
 		this.saveDir = saveDir;
 	}
+
 
 	public String getEntityPackage() {
 		return entityPackage;
 	}
 
-	public void setEntityPackage(String entityPackage) {
+
+	public void setEntityPackage( String entityPackage ) {
 		this.entityPackage = entityPackage;
 	}
+
 
 	public String getMapperPackage() {
 		return mapperPackage;
 	}
 
-	public void setMapperPackage(String mapperPackage) {
+
+	public void setMapperPackage( String mapperPackage ) {
 		this.mapperPackage = mapperPackage;
 	}
+
+
+	public String getServicePackage() {
+		return servicePackage;
+	}
+
+
+	public void setServicePackage( String servicePackage ) {
+		this.servicePackage = servicePackage;
+	}
+
+
+	public String getSuperServiceImpl() {
+		if ( superServiceImpl == null || "".equals(superServiceImpl) ) {
+			return "com.baomidou.framework.service.impl.SuperServiceImpl";
+		}
+		return superServiceImpl;
+	}
+
+
+	public void setSuperServiceImpl( String superServiceImpl ) {
+		this.superServiceImpl = superServiceImpl;
+	}
+
 
 	public boolean isDbPrefix() {
 		return dbPrefix;
 	}
 
-	public void setDbPrefix(boolean dbPrefix) {
+
+	public void setDbPrefix( boolean dbPrefix ) {
 		this.dbPrefix = dbPrefix;
 	}
+
 
 	public String getDbDriverName() {
 		return dbDriverName;
 	}
 
-	public void setDbDriverName(String dbDriverName) {
+
+	public void setDbDriverName( String dbDriverName ) {
 		this.dbDriverName = dbDriverName;
 	}
+
 
 	public String getDbUser() {
 		return dbUser;
 	}
 
-	public void setDbUser(String dbUser) {
+
+	public void setDbUser( String dbUser ) {
 		this.dbUser = dbUser;
 	}
+
 
 	public String getDbPassword() {
 		return dbPassword;
 	}
 
-	public void setDbPassword(String dbPassword) {
+
+	public void setDbPassword( String dbPassword ) {
 		this.dbPassword = dbPassword;
 	}
+
 
 	public String getDbUrl() {
 		return dbUrl;
 	}
 
-	public void setDbUrl(String dbUrl) {
+
+	public void setDbUrl( String dbUrl ) {
 		this.dbUrl = dbUrl;
 	}
+
 
 	public IdType getIdType() {
 		return idType;
 	}
 
-	public void setIdType(IdType idType) {
+
+	public void setIdType( IdType idType ) {
 		this.idType = idType;
 	}
 
