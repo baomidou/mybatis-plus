@@ -330,14 +330,10 @@ public class AutoGenerator {
 		 */
 		StringBuffer sb = new StringBuffer(field.length());
 		String[] fields = field.split("_");
-		String temp = null;
-		for (int i = 0; i < fields.length; i++) {
-			temp = fields[i].trim();
-			if (i == 0) {
-				sb.append(temp.substring(0, 1).toLowerCase());
-			} else {
-				sb.append(temp.substring(0, 1).toUpperCase());
-			}
+		sb.append(fields[0].toLowerCase());
+		for (int i = 1; i < fields.length; i++) {
+			String temp = fields[i];
+			sb.append(temp.substring(0, 1).toUpperCase());
 			sb.append(temp.substring(1).toLowerCase());
 		}
 		return sb.toString();
