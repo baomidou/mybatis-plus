@@ -24,6 +24,8 @@ import com.baomidou.mybatisplus.annotations.IdType;
  * saveDir 文件生成目录
  * entity_package entity 包路径
  * mapper_package mapper 包路径
+ * servicePackage service 包路径
+ * superServiceImpl service 父类包路径
  * -------------------------------------
  * 以下数据库相关配置：
  * -------------------------------------
@@ -62,6 +64,11 @@ public class ConfigGenerator {
 	private String dbUrl;
 
 	private IdType idType = null;
+	
+	/*
+	 * 字段是否为驼峰命名（默认 true）
+	 */
+	private boolean isColumnHump = true;
 
 
 	public String getSaveDir() {
@@ -174,6 +181,16 @@ public class ConfigGenerator {
 
 	public void setIdType( IdType idType ) {
 		this.idType = idType;
+	}
+
+
+	public boolean isColumnHump() {
+		return isColumnHump;
+	}
+
+
+	public void setColumnHump(boolean isColumnHump) {
+		this.isColumnHump = isColumnHump;
 	}
 
 }

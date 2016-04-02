@@ -318,12 +318,27 @@ public class AutoGenerator {
 	}
 
 	private String processField(String field) {
+		/*
+		 * 驼峰命名直接返回
+		 */
+		if (config.isColumnHump()) {
+			return field;
+		}
+		
+		/* 
+		 * 处理下划线分割命名字段
+		 */
 		StringBuffer sb = new StringBuffer(field.length());
 		String[] fields = field.split("_");
 		String temp = null;
 		for (int i = 0; i < fields.length; i++) {
 			temp = fields[i].trim();
-			sb.append(temp.substring(0, 1).toUpperCase()).append(temp.substring(1).toLowerCase());
+			if (i == 0) {
+				sb.append(temp.substring(0, 1).toLowerCase());
+			} else {
+				sb.append(temp.substring(0, 1).toUpperCase());
+			}
+			sb.append(temp.substring(1).toLowerCase());
 		}
 		return sb.toString();
 	}
