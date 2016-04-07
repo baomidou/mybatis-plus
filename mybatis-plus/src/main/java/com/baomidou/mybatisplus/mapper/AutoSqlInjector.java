@@ -90,7 +90,8 @@ public class AutoSqlInjector {
 			this.injectSelectSql(false, mapperClass, modelClass, table);
 			this.injectSelectSql(true, mapperClass, modelClass, table);
 			this.injectSelectOneSql(mapperClass, modelClass, table);
-			this.injectSelectListSql(mapperClass, modelClass, table);
+			this.injectSelectListSql(SqlMethod.SELECT_LIST, mapperClass, modelClass, table);
+			this.injectSelectListSql(SqlMethod.SELECT_PAGE, mapperClass, modelClass, table);
 		} else {
 			/**
 			 * 提示
@@ -365,8 +366,7 @@ public class AutoSqlInjector {
 	 * @param modelClass
 	 * @param table
 	 */
-	private void injectSelectListSql( Class<?> mapperClass, Class<?> modelClass, TableInfo table ) {
-		SqlMethod sqlMethod = SqlMethod.SELECT_LIST;
+	private void injectSelectListSql(SqlMethod sqlMethod, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
 		StringBuilder where = new StringBuilder("\n<if test=\"ew!=null\">");
 		where.append("\n<if test=\"ew.entity!=null\">\n<where>");
 		where.append("\n<if test=\"ew.entity.").append(table.getKeyProperty()).append("!=null\">\n");

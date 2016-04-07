@@ -95,13 +95,13 @@
 
 > 	查询列表 id 排序
 
-	List<User> ul2 = userMapper.selectList(RowBounds.DEFAULT, new EntityWrapper<User>(null, "id DESC"));
+	List<User> ul2 = userMapper.selectList(new EntityWrapper<User>(null, "id DESC"));
 
 > 	翻页查询 id 排序
 
 	Page<User> page = new Page<User>(1, 2);
 	EntityWrapper<User> ew = new EntityWrapper<User>(new User(1), "id DESC");
-	List<User> paginList = userMapper.selectList(page, ew);
+	List<User> paginList = userMapper.selectPage(page, ew);
 	page.setRecords(paginList);
 	for ( int i = 0 ; i < page.getRecords().size() ; i++ ) {
 		print(page.getRecords().get(i));

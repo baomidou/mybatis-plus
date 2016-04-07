@@ -180,12 +180,22 @@ public interface BaseMapper<T, I> {
 	 * <p>
 	 * 根据 entity 条件，查询全部记录
 	 * </p>
+	 * @param entityWrapper
+	 * 					实体对象封装操作类（可以为 null）
+	 * @return List<T>
+	 */
+	List<T> selectList( @Param("ew" ) EntityWrapper<T> entityWrapper);
+	
+	/**
+	 * <p>
+	 * 根据 entity 条件，查询全部记录（并翻页）
+	 * </p>
 	 * @param rowBounds
 	 * 					分页查询条件（可以为 RowBounds.DEFAULT）
 	 * @param entityWrapper
 	 * 					实体对象封装操作类（可以为 null）
 	 * @return List<T>
 	 */
-	List<T> selectList( RowBounds rowBounds, @Param("ew" ) EntityWrapper<T> entityWrapper);
+	List<T> selectPage( RowBounds rowBounds, @Param("ew" ) EntityWrapper<T> entityWrapper);
 
 }

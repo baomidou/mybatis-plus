@@ -17,7 +17,6 @@ package com.baomidou.framework.service.impl;
 
 import java.util.List;
 
-import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.baomidou.framework.service.ISuperService;
@@ -121,23 +120,23 @@ public class SuperServiceImpl<M extends AutoMapper<T>, T> implements ISuperServi
 
 
 	public List<T> selectList( T entity, String orderByField ) {
-		return autoMapper.selectList(RowBounds.DEFAULT, new EntityWrapper<T>(entity, orderByField));
+		return autoMapper.selectList(new EntityWrapper<T>(entity, orderByField));
 	}
 
 
 	public List<T> selectList( T entity ) {
-		return autoMapper.selectList(RowBounds.DEFAULT, new EntityWrapper<T>(entity, null));
+		return autoMapper.selectList(new EntityWrapper<T>(entity, null));
 	}
 
 
 	public Page<T> selectPage( Page<T> page, T entity, String orderByField ) {
-		page.setRecords(autoMapper.selectList(page, new EntityWrapper<T>(entity, orderByField)));
+		page.setRecords(autoMapper.selectPage(page, new EntityWrapper<T>(entity, orderByField)));
 		return page;
 	}
 
 
 	public Page<T> selectPage( Page<T> page, T entity ) {
-		page.setRecords(autoMapper.selectList(page, new EntityWrapper<T>(entity, null)));
+		page.setRecords(autoMapper.selectPage(page, new EntityWrapper<T>(entity, null)));
 		return page;
 	}
 
