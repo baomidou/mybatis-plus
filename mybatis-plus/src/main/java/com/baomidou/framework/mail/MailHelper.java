@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.ui.Model;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
 /**
@@ -49,6 +50,16 @@ public class MailHelper {
 	private String mailTitle;
 
 	private String mailFrom;
+
+
+	public boolean sendMail( String to, String subject, String tplName, Model model ) {
+		return sendMail(to, subject, tplName, model.asMap());
+	}
+
+
+	public boolean sendMail( String[] to, String subject, String tplName, Model model ) {
+		return sendMail(to, subject, tplName, model.asMap());
+	}
 
 
 	public boolean sendMail( String to, String subject, String tplName, Map<String, Object> data ) {
@@ -109,6 +120,11 @@ public class MailHelper {
 	 */
 	public String getHtmltext( String tplName, Map<String, Object> data ) {
 		return VelocityEngineUtils.mergeTemplateIntoString(this.velocityEngine, tplName, ENCODING, data);
+	}
+
+
+	public String getHtmltext( String tplName, Model model ) {
+		return getHtmltext(tplName, model.asMap());
 	}
 
 
