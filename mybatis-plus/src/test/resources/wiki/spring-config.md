@@ -105,10 +105,10 @@
 # spring 根据不同环境加载不同配置支持
 
 1、spring 根据不同配置运行模式，加载对应配置内容。
-2、运行模式参数 key 配置 configEnv 默认 spring.runmode
+2、运行模式参数 key 配置 configEnv 默认 sysRunmode
 3、online 线上 ， dev 开发 ， test 测试
-4、首先环境变量中获取，变量名：spring.runmode 变量值：dev
-5、如果不存在 JVM -D选项 参数中获取，例如：-Dspring.runmode=dev
+4、首先环境变量中获取，变量名：sysRunmode 变量值：dev
+5、如果不存在 JVM -D选项 参数中获取，例如：-DsysRunmode=dev
 
 >例如：设置不同环境的数据库密码配置：
 

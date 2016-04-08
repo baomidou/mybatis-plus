@@ -28,10 +28,10 @@ import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
  * spring 根据不同配置运行模式，加载对应配置内容。
  * </p>
  * <p>
- * 运行模式参数 key 配置 configEnv 默认 spring.runmode<br>
+ * 运行模式参数 key 配置 configEnv 默认 sysRunmode<br>
  * online 线上 ， dev 开发 ， test 测试<br>
- * 首先环境变量中获取，变量名：spring.runmode 变量值：dev <br>
- * 如果不存在 JVM -D选项 参数中获取，例如：-Dspring.runmode=dev <br>
+ * 首先环境变量中获取，变量名：sysRunmode 变量值：dev <br>
+ * 如果不存在 JVM -D选项 参数中获取，例如：-DsysRunmode=dev <br>
  * </p>
  * 
  * 例如：设置不同环境的数据库密码配置：
@@ -85,7 +85,7 @@ public class MutilPropertyPlaceholderConfigurer extends PropertyPlaceholderConfi
 	/**
 	 * 运行环境配置变量名
 	 */
-	private String configEnv = "spring.runmode";
+	private String configEnv = "sysRunmode";
 
 	private Properties properties;
 
@@ -93,8 +93,8 @@ public class MutilPropertyPlaceholderConfigurer extends PropertyPlaceholderConfi
 	/**
 	 * 获取当前运行模式，默认 DEV 开发模式。
 	 * <p>
-	 * 首先环境变量中获取，变量名：spring.runmode 变量值：dev <br>
-	 * 如果不存在 JVM -D选项 参数中获取，例如：-Dspring.runmode=dev <br>
+	 * 首先环境变量中获取，变量名：sysRunmode 变量值：dev <br>
+	 * 如果不存在 JVM -D选项 参数中获取，例如：-DsysRunmode=dev <br>
 	 * </p>
 	 */
 	public String getRunMode() {
@@ -118,18 +118,28 @@ public class MutilPropertyPlaceholderConfigurer extends PropertyPlaceholderConfi
 			/**
 			 * Windows 认为是开发环境
 			 */
-			String OS = System.getProperty("os.name").toLowerCase();
-			logger.info("os.name: " + OS);
-			if (OS != null && OS.contains("windows")) {
-				mode = DEV;
-			} else {
+			if (isLinux()) {
 				mode = ONLINE;
+			} else {
+				mode = DEV;
 			}
 		}
-		System.err.println("-Dspring.runmode=" + mode + "_mode");
+		System.err.println("-DsysRunmode=" + mode + "_mode");
 		return mode;
 	}
 
+	
+	/**
+	 * 判断是否为 Linux 环境
+	 */
+	protected boolean isLinux(  ) {
+		String OS = System.getProperty("os.name").toLowerCase();
+		logger.info("os.name: " + OS);
+		if (OS != null && OS.contains("windows")) {
+			return false;
+		}
+		return true;
+	}
 
 	/**
 	 * 
@@ -141,8 +151,20 @@ public class MutilPropertyPlaceholderConfigurer extends PropertyPlaceholderConfi
 	 */
 	@Override
 	protected Properties mergeProperties() throws IOException {
-		Properties mergeProperties = super.mergeProperties();
-		this.properties = new Properties();
+		this.properties = convertMergeProperties(super.mergeProperties());
+		return this.properties;
+	}
+
+	/**
+	 * <p>
+	 * 转换 prop 加载内容
+	 * </p>
+	 * @param mergeProperties
+	 * 					spring 容器加载 Properties 文件
+	 * @return
+	 */
+	protected Properties convertMergeProperties(Properties mergeProperties) {
+		Properties prop = new Properties();
 		String runMode = "_" + getRunMode() + "_mode";
 		Set<Entry<Object, Object>> es = mergeProperties.entrySet();
 		for ( Entry<Object, Object> entry : es ) {
@@ -157,12 +179,11 @@ public class MutilPropertyPlaceholderConfigurer extends PropertyPlaceholderConfi
 					realKey = null;
 				}
 			}
-
 			/**
 			 * 抽取合法属性<br>
 			 * 如果某个属性为空抛出运行时异常
 			 */
-			if ( realKey != null && !properties.containsKey(realKey) ) {
+			if ( realKey != null && !prop.containsKey(realKey) ) {
 				Object value = null;
 				if ( idx > 0 ) {
 					value = mergeProperties.get(realKey + runMode);
@@ -170,15 +191,14 @@ public class MutilPropertyPlaceholderConfigurer extends PropertyPlaceholderConfi
 					value = mergeProperties.get(realKey);
 				}
 				if ( value != null ) {
-					properties.put(realKey, value);
+					prop.put(realKey, value);
 				} else {
 					throw new RuntimeException("impossible empty property for " + realKey);
 				}
 			}
 		}
-		return this.properties;
+		return prop;
 	}
-
 
 	/** 
 	 * 
