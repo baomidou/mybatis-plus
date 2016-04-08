@@ -46,6 +46,11 @@ public class EntityWrapper<T> {
 	}
 
 
+	public EntityWrapper( T entity) {
+		this.setEntity(entity);
+	}
+	
+	
 	public EntityWrapper( T entity, String orderByField ) {
 		this.setEntity(entity);
 		this.setOrderByField(orderByField);
