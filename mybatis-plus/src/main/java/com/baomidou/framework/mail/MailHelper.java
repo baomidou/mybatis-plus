@@ -72,6 +72,16 @@ public class MailHelper {
 	}
 
 
+	public boolean sendMail( String personal, String from, String to, String subject, String tplName, Model model ) {
+		return sendMail(personal, from, new String[ ] { to }, subject, tplName, model.asMap());
+	}
+
+
+	public boolean sendMail( String personal, String from, String[] to, String subject, String tplName, Model model ) {
+		return sendMail(personal, from, to, subject, tplName, model.asMap());
+	}
+
+
 	/**
 	 * 发送邮件
 	 * 
