@@ -89,7 +89,7 @@ public class MailHelper {
 	 *            参数（模板参数）
 	 * @return
 	 */
-	protected boolean sendMail( String personal, String from, String[] to, String subject, String tplName,
+	public boolean sendMail( String personal, String from, String[] to, String subject, String tplName,
 			Map<String, Object> data ) {
 		try {
 			MimeMessage msg = mailSender.createMimeMessage();
