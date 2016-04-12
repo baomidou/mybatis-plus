@@ -361,7 +361,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public void afterPropertiesSet() throws Exception {
 		notNull(dataSource, "Property 'dataSource' is required");
 		notNull(sqlSessionFactoryBuilder, "Property 'sqlSessionFactoryBuilder' is required");
@@ -521,7 +520,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public SqlSessionFactory getObject() throws Exception {
 		if ( this.sqlSessionFactory == null ) {
 			afterPropertiesSet();
@@ -534,7 +532,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public Class<? extends SqlSessionFactory> getObjectType() {
 		return this.sqlSessionFactory == null ? SqlSessionFactory.class : this.sqlSessionFactory.getClass();
 	}
@@ -543,7 +540,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public boolean isSingleton() {
 		return true;
 	}
@@ -552,7 +548,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public void onApplicationEvent( ApplicationEvent event ) {
 		if ( failFast && event instanceof ContextRefreshedEvent ) {
 			// fail-fast -> check all statements are completed

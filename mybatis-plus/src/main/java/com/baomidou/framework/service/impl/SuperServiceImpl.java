@@ -55,7 +55,6 @@ public class SuperServiceImpl<M extends AutoMapper<T>, T> implements ISuperServi
 	}
 
 
-	@Override
 	public boolean insertSelective( T entity ) {
 		return retBool(autoMapper.insertSelective(entity));
 	}
@@ -86,19 +85,16 @@ public class SuperServiceImpl<M extends AutoMapper<T>, T> implements ISuperServi
 	}
 
 
-	@Override
 	public boolean updateSelectiveById( T entity ) {
 		return retBool(autoMapper.updateSelectiveById(entity));
 	}
 
 
-	@Override
 	public boolean update( T entity, T whereEntity ) {
 		return retBool(autoMapper.update(entity, whereEntity));
 	}
 
 
-	@Override
 	public boolean updateSelective( T entity, T whereEntity ) {
 		return retBool(autoMapper.updateSelective(entity, whereEntity));
 	}

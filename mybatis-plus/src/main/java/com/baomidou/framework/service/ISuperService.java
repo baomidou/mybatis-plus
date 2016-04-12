@@ -90,8 +90,8 @@ public interface ISuperService<T> {
 	 * <p>
 	 * 删除（根据ID 批量删除）
 	 * </p>
-	 * @param entity
-	 * 				实体对象
+	 * @param idList
+	 * 				主键ID列表
 	 * @return boolean
 	 */
 	boolean deleteBatchIds( List<Long> idList );

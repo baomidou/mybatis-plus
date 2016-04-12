@@ -27,7 +27,6 @@ import com.baomidou.mybatisplus.plugins.pagination.IDialect;
  */
 public class SQLServerDialect implements IDialect {
 
-	@Override
 	public String buildPaginationSql( String originalSql, int offset, int limit ) {
 		StringBuffer sql = new StringBuffer(originalSql);
 		sql.append(" OFFSET ").append(offset).append(" ROWS FETCH NEXT ");
