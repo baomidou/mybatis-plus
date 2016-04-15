@@ -145,6 +145,21 @@ public interface BaseMapper<T, I> {
 
 	/**
 	 * <p>
+	 * 根据ID 批量更新，该方法不适合 Oracle
+	 * </p>
+	 * <p>
+	 * 数据库连接必须配置：&allowMultiQueries=true
+	 * </p>
+	 * http://my.oschina.net/jsonavaj/blog/265112
+	 * @param entityList
+	 * 				实体对象列表
+	 * @return int
+	 */
+	int updateBatchById( List<T> entityList );
+
+
+	/**
+	 * <p>
 	 * 根据 ID 查询
 	 * </p>
 	 * @param id
