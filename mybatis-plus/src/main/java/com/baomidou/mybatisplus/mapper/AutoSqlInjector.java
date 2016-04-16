@@ -305,15 +305,28 @@ public class AutoSqlInjector {
 	 * @param table
 	 */
 	private void injectUpdateBatchById(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
+		StringBuilder set = new StringBuilder();
+		set.append("<trim prefix=\"SET\" suffixOverrides=\",\">\n");
 		SqlMethod sqlMethod = SqlMethod.UPDATE_BATCH_BY_ID_MYSQL;
 		if (DBType.ORACLE == dbType) {
 			sqlMethod = SqlMethod.UPDATE_BATCH_BY_ID_ORACLE;
-		}
-		StringBuilder set = new StringBuilder();
-		set.append("<trim prefix=\"SET\" suffixOverrides=\",\">");
-		List<TableFieldInfo> fieldList = table.getFieldList();
-		for (TableFieldInfo fieldInfo : fieldList) {
-			set.append(fieldInfo.getColumn()).append("=#{").append(fieldInfo.getProperty()).append("},");
+			List<TableFieldInfo> fieldList = table.getFieldList();
+			for (TableFieldInfo fieldInfo : fieldList) {
+				set.append(fieldInfo.getColumn()).append("=#{").append(fieldInfo.getProperty()).append("},");
+			}
+		} else if (DBType.MYSQL == dbType) {
+			List<TableFieldInfo> fieldList = table.getFieldList();
+			for (TableFieldInfo fieldInfo : fieldList) {
+				set.append("\n<trim prefix=\"").append(fieldInfo.getColumn()).append("=CASE ");
+				set.append(table.getKeyColumn()).append("\" suffix=\"END,\">");
+				set.append("\n<foreach collection=\"list\" item=\"i\" index=\"index\">");
+				set.append("\n<if test=\"i.").append(fieldInfo.getProperty()).append("!=null\">");
+				set.append("\nWHEN ").append("#{i.").append(table.getKeyProperty());
+				set.append("} THEN #{i.").append(fieldInfo.getProperty()).append("}");
+				set.append("\n</if>");
+				set.append("\n</foreach>");
+				set.append("\n</trim>");			
+			}
 		}
 		set.append("\n</trim>");
 		String sql = String.format(sqlMethod.getSql(), table.getTableName(), set.toString(), table.getKeyColumn(),

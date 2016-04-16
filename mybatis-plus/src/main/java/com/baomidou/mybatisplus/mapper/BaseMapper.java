@@ -145,10 +145,7 @@ public interface BaseMapper<T, I> {
 
 	/**
 	 * <p>
-	 * 根据ID 批量更新，该方法不适合 Oracle
-	 * </p>
-	 * <p>
-	 * 数据库连接必须配置：&allowMultiQueries=true
+	 * 根据ID 批量更新
 	 * </p>
 	 * @param entityList
 	 * 				实体对象列表
