@@ -56,7 +56,7 @@ public interface BaseMapper<T, I> {
 
 	/**
 	 * <p>
-	 * 插入（批量），该方法不适合 Oracle
+	 * 插入（批量）
 	 * </p>
 	 * @param entityList
 	 * 				实体对象列表
@@ -150,7 +150,6 @@ public interface BaseMapper<T, I> {
 	 * <p>
 	 * 数据库连接必须配置：&allowMultiQueries=true
 	 * </p>
-	 * http://my.oschina.net/jsonavaj/blog/265112
 	 * @param entityList
 	 * 				实体对象列表
 	 * @return int
