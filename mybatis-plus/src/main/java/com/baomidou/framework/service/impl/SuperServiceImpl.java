@@ -100,6 +100,11 @@ public class SuperServiceImpl<M extends AutoMapper<T>, T> implements ISuperServi
 	}
 
 
+	public boolean updateBatchById(List<T> entityList) {
+		return retBool(autoMapper.updateBatchById(entityList));
+	}
+
+
 	public T selectById( Long id ) {
 		return autoMapper.selectById(id);
 	}

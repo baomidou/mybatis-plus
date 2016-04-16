@@ -48,7 +48,7 @@ public interface ISuperService<T> {
 	 * </p>
 	 * @param entity
 	 * 				实体对象
-	 * @return int
+	 * @return boolean
 	 */
 	boolean insertSelective( T entity );
 
@@ -114,6 +114,7 @@ public interface ISuperService<T> {
 	 * </p>
 	 * @param entity
 	 * 				实体对象
+	 * @return boolean
 	 */
 	boolean updateSelectiveById( T entity );
 
@@ -124,8 +125,9 @@ public interface ISuperService<T> {
 	 * </p>
 	 * @param entity
 	 * 				实体对象
-	 * @return whereEntity
+	 * @param whereEntity
 	 * 				实体查询条件
+	 * @return boolean
 	 */
 	boolean update( T entity, T whereEntity );
 
@@ -136,11 +138,22 @@ public interface ISuperService<T> {
 	 * </p>
 	 * @param entity
 	 * 				实体对象
-	 * @return whereEntity
+	 * @param whereEntity
 	 * 				实体查询条件
+	 * @return boolean
 	 */
 	boolean updateSelective( T entity, T whereEntity );
 
+	
+	/**
+	 * <p>
+	 * 根据ID 批量更新
+	 * </p>
+	 * @param entityList
+	 * 				实体对象列表
+	 * @return boolean
+	 */
+	boolean updateBatchById( List<T> entityList );
 
 	/**
 	 * <p>
