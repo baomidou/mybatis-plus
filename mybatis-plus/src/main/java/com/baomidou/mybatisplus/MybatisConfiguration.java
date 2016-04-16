@@ -26,6 +26,7 @@ import org.apache.ibatis.session.SqlSession;
 
 import com.baomidou.mybatisplus.mapper.AutoMapper;
 import com.baomidou.mybatisplus.mapper.AutoSqlInjector;
+import com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean;
 
 /**
  * <p>
@@ -100,7 +101,7 @@ public class MybatisConfiguration extends Configuration {
 		}
 
 		/* 自动注入 SQL */
-		new AutoSqlInjector(this).inject(type);
+		new AutoSqlInjector(this, MybatisSqlSessionFactoryBean.DB_TYPE).inject(type);
 	}
 
 	@Override

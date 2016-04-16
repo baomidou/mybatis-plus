@@ -51,9 +51,16 @@ public class AutoSqlInjector {
 	private Configuration configuration;
 
 	private MapperBuilderAssistant assistant;
+	
+	private DBType dbType;
+	
+	protected AutoSqlInjector() {
+		/* 保护 */
+	}
 
-	public AutoSqlInjector(Configuration configuration) {
+	public AutoSqlInjector(Configuration configuration, DBType dbType) {
 		this.configuration = configuration;
+		this.dbType = dbType;
 	}
 
 	/**

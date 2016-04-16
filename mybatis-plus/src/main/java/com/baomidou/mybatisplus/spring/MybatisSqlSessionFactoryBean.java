@@ -54,6 +54,7 @@ import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
 import com.baomidou.mybatisplus.MybatisConfiguration;
 import com.baomidou.mybatisplus.MybatisXmlConfigBuilder;
+import com.baomidou.mybatisplus.mapper.DBType;
 
 /**
  * <p>
@@ -107,6 +108,18 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 	private ObjectFactory objectFactory;
 
 	private ObjectWrapperFactory objectWrapperFactory;
+
+	/**
+	 * 数据库类型（默认 MySql）
+	 */
+	public static DBType DB_TYPE = DBType.MYSQL;
+
+	/*
+	 * 注入数据库类型
+	 */
+	public void setDbType(String dbType) {
+		DB_TYPE = DBType.getDBType(dbType);
+	}
 
 
 	/**
