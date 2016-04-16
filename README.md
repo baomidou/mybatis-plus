@@ -6,6 +6,8 @@ mybatis 增强工具包，简化 CURD 操作。
 
 [mybatis-plus 实践及架构原理](http://git.oschina.net/juapk/mybatis-plus/attach_files)
 
+[演示 DEMO](http://git.oschina.net/juapk/SpringWind)
+
 > 启动加载 XML 配置时注入单表 SQL 操作 ，为 简化开发工作 提高生产率 而生。 
 
 > Mybatis + 只做增强不做改变，这里不提倡 sql 写在代码中。
