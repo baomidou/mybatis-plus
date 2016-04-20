@@ -17,12 +17,12 @@ package com.baomidou.framework.service;
 
 /**
  * <p>
- * 主键 Long 类型基础 Service
+ * 主键 String 类型基础 Service
  * </p>
  * 
  * @author hubin
  * @Date 2016-04-20
  */
-public interface ISuperService<T> extends IService<T, Long> {
+public interface ICommonService<T> extends IService<T, String> {
 	
 }

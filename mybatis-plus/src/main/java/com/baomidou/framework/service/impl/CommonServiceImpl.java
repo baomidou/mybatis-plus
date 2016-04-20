@@ -13,16 +13,18 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.framework.service;
+package com.baomidou.framework.service.impl;
+
+import com.baomidou.mybatisplus.mapper.CommonMapper;
 
 /**
  * <p>
- * 主键 Long 类型基础 Service
+ * 主键 String 类型 IService 实现类（ 泛型：M 是 mapper 对象， T 是实体 ）
  * </p>
  * 
  * @author hubin
  * @Date 2016-04-20
  */
-public interface ISuperService<T> extends IService<T, Long> {
-	
+public class CommonServiceImpl<M extends CommonMapper<T>, T> extends ServiceImpl<M, T, String> {
+
 }
