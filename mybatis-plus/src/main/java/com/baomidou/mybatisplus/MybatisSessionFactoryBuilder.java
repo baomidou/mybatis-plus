@@ -38,7 +38,7 @@ public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 	@Override
 	public SqlSessionFactory build(Reader reader, String environment, Properties properties) {
 		try {
-			MybatisXmlConfigBuilder parser = new MybatisXmlConfigBuilder(reader, environment, properties);
+			MybatisXMLConfigBuilder parser = new MybatisXMLConfigBuilder(reader, environment, properties);
 			return build(parser.parse());
 		} catch (Exception e) {
 			throw ExceptionFactory.wrapException("Error building SqlSession.", e);
@@ -55,7 +55,7 @@ public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 	@Override
 	public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
 		try {
-			MybatisXmlConfigBuilder parser = new MybatisXmlConfigBuilder(inputStream, environment, properties);
+			MybatisXMLConfigBuilder parser = new MybatisXMLConfigBuilder(inputStream, environment, properties);
 			return build(parser.parse());
 		} catch (Exception e) {
 			throw ExceptionFactory.wrapException("Error building SqlSession.", e);
