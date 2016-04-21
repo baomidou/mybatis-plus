@@ -500,6 +500,8 @@ public class AutoGenerator {
 			return "type = IdType.AUTO";
 		} else if ( config.getIdType() == IdType.INPUT ) {
 			return "type = IdType.INPUT";
+		} else if ( config.getIdType() == IdType.UUID ) {
+			return "type = IdType.UUID";
 		}
 		return null;
 	}
@@ -520,12 +522,20 @@ public class AutoGenerator {
 		bw.newLine();
 		bw.write("import " + config.getEntityPackage() + "." + beanName + ";");
 		bw.newLine();
-		bw.write("import com.baomidou.mybatisplus.mapper.AutoMapper;");
+		if ( config.getConfigIdType() == ConfigIdType.STRING ) {
+			bw.write("import com.baomidou.mybatisplus.mapper.CommonMapper;");
+		} else {
+			bw.write("import com.baomidou.mybatisplus.mapper.AutoMapper;");
+		}
 		bw.newLine();
 
 		bw = buildClassComment(bw, beanName + " 表数据库控制层接口");
 		bw.newLine();
-		bw.write("public interface " + mapperName + " extends AutoMapper<" + beanName + "> {");
+		if ( config.getConfigIdType() == ConfigIdType.STRING ) {
+			bw.write("public interface " + mapperName + " extends CommonMapper<" + beanName + "> {");
+		} else {
+			bw.write("public interface " + mapperName + " extends AutoMapper<" + beanName + "> {");
+		}
 		bw.newLine();
 		bw.newLine();
 
@@ -583,12 +593,20 @@ public class AutoGenerator {
 		bw.newLine();
 		bw.write("import " + config.getEntityPackage() + "." + beanName + ";");
 		bw.newLine();
-		bw.write("import com.baomidou.framework.service.ISuperService;");
+		if ( config.getConfigIdType() == ConfigIdType.STRING ) {
+			bw.write("import com.baomidou.framework.service.ICommonService;");
+		} else {
+			bw.write("import com.baomidou.framework.service.ISuperService;");
+		}
 		bw.newLine();
 
 		bw = buildClassComment(bw, beanName + " 表数据服务层接口");
 		bw.newLine();
-		bw.write("public interface " + serviceName + " extends ISuperService<" + beanName + "> {");
+		if ( config.getConfigIdType() == ConfigIdType.STRING ) {
+			bw.write("public interface " + serviceName + " extends ICommonService<" + beanName + "> {");
+		} else {
+			bw.write("public interface " + serviceName + " extends ISuperService<" + beanName + "> {");
+		}
 		bw.newLine();
 		bw.newLine();
 

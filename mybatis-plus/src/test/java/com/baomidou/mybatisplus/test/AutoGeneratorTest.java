@@ -45,6 +45,9 @@ public class AutoGeneratorTest {
 		/* 此处可以配置 SuperServiceImpl 子类路径，默认如下 */
 		//cg.setSuperServiceImpl("com.baomidou.framework.service.impl.SuperServiceImpl");
 
+		/* 此处设置 String 类型数据库ID，默认Long类型 */
+		//cg.setConfigIdType(ConfigIdType.STRING);
+
 		cg.setSaveDir("D:/mybatis-plus/");// 生成文件保存位置
 		
 		/*
@@ -62,8 +65,9 @@ public class AutoGeneratorTest {
 		 * 表主键 ID 生成类型, 自增该设置无效。
 		 * <p>
 		 * IdType.AUTO 			数据库ID自增
-		 * IdType.ID_WORKER		全局唯一ID，内容为空自动填充（默认配置）
 		 * IdType.INPUT			用户输入ID
+		 * IdType.ID_WORKER		全局唯一ID，内容为空自动填充（默认配置）
+		 * IdType.UUID			全局唯一ID，内容为空自动填充（默认配置）
 		 * </p>
 		 */
 		cg.setIdType(IdType.AUTO);

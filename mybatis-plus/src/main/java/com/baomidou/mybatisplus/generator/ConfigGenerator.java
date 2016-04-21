@@ -64,7 +64,9 @@ public class ConfigGenerator {
 	private String dbUrl;
 
 	private IdType idType = null;
-	
+
+	private ConfigIdType configIdType = ConfigIdType.LONG;
+
 	/*
 	 * 字段是否为驼峰命名（默认 true）
 	 */
@@ -113,7 +115,11 @@ public class ConfigGenerator {
 
 	public String getSuperServiceImpl() {
 		if ( superServiceImpl == null || "".equals(superServiceImpl) ) {
-			return "com.baomidou.framework.service.impl.SuperServiceImpl";
+			if ( this.getConfigIdType() == ConfigIdType.STRING ) {
+				return "com.baomidou.framework.service.impl.CommonServiceImpl";
+			} else {
+				return "com.baomidou.framework.service.impl.SuperServiceImpl";
+			}
 		}
 		return superServiceImpl;
 	}
@@ -189,8 +195,18 @@ public class ConfigGenerator {
 	}
 
 
-	public void setColumnHump(boolean isColumnHump) {
+	public void setColumnHump( boolean isColumnHump ) {
 		this.isColumnHump = isColumnHump;
+	}
+
+
+	public ConfigIdType getConfigIdType() {
+		return configIdType;
+	}
+
+
+	public void setConfigIdType( ConfigIdType configIdType ) {
+		this.configIdType = configIdType;
 	}
 
 }

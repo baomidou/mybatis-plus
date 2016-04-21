@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -110,15 +111,19 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 	 *            插入数据库对象
 	 * @return
 	 */
-	protected static Object populateKeys(MappedStatement ms, Object parameterObject) {
-		if (ms.getSqlCommandType() == SqlCommandType.INSERT) {
+	protected static Object populateKeys( MappedStatement ms, Object parameterObject ) {
+		if ( ms.getSqlCommandType() == SqlCommandType.INSERT ) {
 			TableInfo tableInfo = TableInfoHelper.getTableInfo(parameterObject.getClass());
-			if (tableInfo != null && tableInfo.getIdType() == IdType.ID_WORKER) {
+			if ( tableInfo != null && tableInfo.getIdType().getKey() >= 2 ){
 				MetaObject metaParam = ms.getConfiguration().newMetaObject(parameterObject);
 				Object idValue = metaParam.getValue(tableInfo.getKeyProperty());
-				if (idValue == null) {
-					/* 自定义 ID */
-					metaParam.setValue(tableInfo.getKeyProperty(), IdWorker.getId());
+				/* 自定义 ID */
+				if ( idValue == null ) {
+					if ( tableInfo.getIdType() == IdType.ID_WORKER ) {
+						metaParam.setValue(tableInfo.getKeyProperty(), IdWorker.getId());
+					} else if ( tableInfo.getIdType() == IdType.UUID ) {
+						metaParam.setValue(tableInfo.getKeyProperty(), get32UUID());
+					}
 				}
 				return metaParam.getOriginalObject();
 			}
@@ -126,4 +131,12 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 		return parameterObject;
 	}
 
+	/**
+	 * <p>
+	 * 获取去掉"-" UUID
+	 * </p>
+	 */
+	protected static synchronized String get32UUID() {
+		return UUID.randomUUID().toString().replace("-", "");
+	}
 }
