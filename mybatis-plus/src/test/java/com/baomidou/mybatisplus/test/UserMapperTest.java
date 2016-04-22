@@ -148,6 +148,9 @@ public class UserMapperTest {
 		rlt = userMapper.updateSelective(new User("00"), new User(15L, "55"));
 		System.err.println("------------------updateSelective---------------------- result=" + rlt + "\n\n");
 		sleep();
+		
+		/* 无条件选择更新 */
+		//userMapper.updateSelective(new User("11"), null);
 
 		List<User> userList = new ArrayList<User>();
 		userList.add(new User(11L, "updateBatchById-1", 1, 1));
