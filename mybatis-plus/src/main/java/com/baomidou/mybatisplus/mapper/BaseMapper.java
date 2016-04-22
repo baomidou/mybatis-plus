@@ -126,7 +126,7 @@ public interface BaseMapper<T, I> {
 	 * @param entity
 	 * 				实体对象
 	 * @return whereEntity
-	 * 				实体查询条件
+	 * 				实体查询条件（可以为 null）
 	 */
 	int update( @Param("et" ) T entity, @Param("ew") T whereEntity);
 
@@ -137,7 +137,7 @@ public interface BaseMapper<T, I> {
 	 * </p>
 	 * @param entity
 	 * 				实体对象
-	 * @return whereEntity
+	 * @return whereEntity（可以为 null）
 	 * 				实体查询条件
 	 */
 	int updateSelective( @Param("et" ) T entity, @Param("ew") T whereEntity);

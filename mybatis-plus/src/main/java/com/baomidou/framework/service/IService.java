@@ -126,7 +126,7 @@ public interface IService<T, I> {
 	 * @param entity
 	 * 				实体对象
 	 * @param whereEntity
-	 * 				实体查询条件
+	 * 				实体查询条件（可以为 null）
 	 * @return boolean
 	 */
 	boolean update( T entity, T whereEntity );
@@ -139,7 +139,7 @@ public interface IService<T, I> {
 	 * @param entity
 	 * 				实体对象
 	 * @param whereEntity
-	 * 				实体查询条件
+	 * 				实体查询条件（可以为 null）
 	 * @return boolean
 	 */
 	boolean updateSelective( T entity, T whereEntity );
