@@ -98,6 +98,7 @@ public class AutoSqlInjector {
 			this.injectSelectSql(false, mapperClass, modelClass, table);
 			this.injectSelectSql(true, mapperClass, modelClass, table);
 			this.injectSelectOneSql(mapperClass, modelClass, table);
+			this.injectSelectCountSql(mapperClass, modelClass, table);
 			this.injectSelectListSql(SqlMethod.SELECT_LIST, mapperClass, modelClass, table);
 			this.injectSelectListSql(SqlMethod.SELECT_PAGE, mapperClass, modelClass, table);
 		} else {
@@ -241,7 +242,7 @@ public class AutoSqlInjector {
 		SqlMethod sqlMethod = SqlMethod.DELETE_SELECTIVE;
 		String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlWhere(table, false));
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-		this.addMappedStatement(mapperClass, sqlMethod, sqlSource, SqlCommandType.DELETE, null);
+		this.addMappedStatement(mapperClass, sqlMethod, sqlSource, SqlCommandType.DELETE, Integer.class);
 	}
 
 	/**
@@ -270,7 +271,7 @@ public class AutoSqlInjector {
 			String sql = String.format(sqlMethod.getSql(), table.getTableName(), table.getKeyColumn(), table.getKeyColumn());
 			sqlSource = new RawSqlSource(configuration, sql, Object.class);
 		}
-		this.addMappedStatement(mapperClass, sqlMethod, sqlSource, SqlCommandType.DELETE, null);
+		this.addMappedStatement(mapperClass, sqlMethod, sqlSource, SqlCommandType.DELETE, Integer.class);
 	}
 
 	/**
@@ -405,6 +406,23 @@ public class AutoSqlInjector {
 	
 	/**
 	 * <p>
+	 * 注入实体查询总记录数 SQL 语句
+	 * </p>
+	 * 
+	 * @param sqlMethod
+	 * @param mapperClass
+	 * @param modelClass
+	 * @param table
+	 */
+	private void injectSelectCountSql( Class<?> mapperClass, Class<?> modelClass, TableInfo table ) {
+		SqlMethod sqlMethod = SqlMethod.SELECT_COUNT;
+		String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlWhere(table, true));
+		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+		this.addMappedStatement(mapperClass, sqlMethod, sqlSource, SqlCommandType.SELECT, Integer.class);
+	}
+	
+	/**
+	 * <p>
 	 * 注入实体查询记录列表 SQL 语句
 	 * </p>
 	 * 
@@ -491,13 +509,13 @@ public class AutoSqlInjector {
 	 * </p>
 	 * 
 	 * @param table
-	 * @param update
-	 * 				是否为更新（支持无条件更新）
+	 * @param space
+	 * 				是否为空判断
 	 * @return
 	 */
-	private String sqlWhere(TableInfo table, boolean update) {
+	private String sqlWhere(TableInfo table, boolean space) {
 		StringBuilder where = new StringBuilder();
-		if ( update ) {
+		if ( space ) {
 			where.append("\n<if test=\"ew!=null\">");
 		}
 		where.append("\n<where>");
@@ -511,7 +529,7 @@ public class AutoSqlInjector {
 			where.append("\n</if>");
 		}
 		where.append("\n</where>");
-		if ( update ) {
+		if ( space ) {
 			where.append("\n</if>");
 		}
 		return where.toString();
@@ -525,13 +543,13 @@ public class AutoSqlInjector {
 
 	private MappedStatement addInsertMappedStatement(Class<?> mapperClass, Class<?> modelClass, String id,
 			SqlSource sqlSource, KeyGenerator keyGenerator, String keyProperty, String keyColumn) {
-		return this.addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.INSERT, modelClass, null,
+		return this.addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.INSERT, modelClass, Integer.class,
 				keyGenerator, keyProperty, keyColumn);
 	}
 
 	private MappedStatement addUpdateMappedStatement(Class<?> mapperClass, Class<?> modelClass, String id,
 			SqlSource sqlSource) {
-		return this.addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.UPDATE, modelClass, null,
+		return this.addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.UPDATE, modelClass, Integer.class,
 				new NoKeyGenerator(), null, null);
 	}
 

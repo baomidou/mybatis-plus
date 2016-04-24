@@ -17,6 +17,8 @@ package com.baomidou.framework.service;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 
@@ -186,6 +188,17 @@ public interface IService<T, I> {
 	 * @return T
 	 */
 	T selectOne( T entity );
+	
+	
+	/**
+	 * <p>
+	 * 根据 entity 条件，查询总记录数
+	 * </p>
+	 * @param entity
+	 * 				实体对象
+	 * @return T
+	 */
+	int selectCount( @Param("ew" ) T entity);
 
 
 	/**

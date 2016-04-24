@@ -179,8 +179,12 @@ public class UserMapperTest {
 		}
 
 		System.err.println("\n------------------selectOne----------------------");
-		User userOne = userMapper.selectOne(new User("update all column"));
+		User userOne = userMapper.selectOne(new User("abc"));
 		print(userOne);
+		
+		System.err.println("\n------------------selectCount----------------------");
+		System.err.println("查询 type=1 总记录数：" + userMapper.selectCount(new User(1)));
+		System.err.println("总记录数：" + userMapper.selectCount(null));
 
 		System.err.println("\n------------------selectList-----所有数据----id--DESC--排序----");
 		List<User> ul2 = userMapper.selectList(new EntityWrapper<User>(null, "id DESC"));

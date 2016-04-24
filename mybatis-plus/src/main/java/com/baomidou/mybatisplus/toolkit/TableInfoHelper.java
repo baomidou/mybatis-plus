@@ -134,7 +134,7 @@ public class TableInfoHelper {
 		Field[] fields = clazz.getDeclaredFields();
 		for (Field field : fields) {
 
-			/* 过滤 transient关键字修饰则该属性 */
+			/* 过滤 transient关键字修饰的属性 */
 			if (Modifier.isTransient(field.getModifiers())) {
 				continue;
 			}

@@ -120,6 +120,11 @@ public class ServiceImpl<M extends BaseMapper<T, I>, T, I> implements IService<T
 	}
 
 
+	public int selectCount(T entity) {
+		return autoMapper.selectCount(entity);
+	}
+
+
 	public List<T> selectList( T entity, String orderByField ) {
 		return autoMapper.selectList(new EntityWrapper<T>(entity, orderByField));
 	}
