@@ -196,7 +196,7 @@ public interface IService<T, I> {
 	 * </p>
 	 * @param entity
 	 * 				实体对象
-	 * @return T
+	 * @return int
 	 */
 	int selectCount( @Param("ew" ) T entity);
 
