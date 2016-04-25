@@ -36,6 +36,7 @@
 		<mybatis.version>3.4.0</mybatis.version>
 		<slf4j.version>1.7.21</slf4j.version>
 		<mysql-connector-java.version>5.1.38</mysql-connector-java.version>
+		<ojdbc14.version>10.2.0.5.0</ojdbc14.version>
 		<servlet-api.version>2.5</servlet-api.version>
 		<spring.version>4.2.5.RELEASE</spring.version>
 	</properties>
@@ -87,6 +88,12 @@
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>${mysql-connector-java.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc14</artifactId>
+			<version>${ojdbc14.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

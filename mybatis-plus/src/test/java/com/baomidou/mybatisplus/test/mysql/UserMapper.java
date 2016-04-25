@@ -13,14 +13,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test.mapper;
+package com.baomidou.mybatisplus.test.mysql;
 
 import java.util.List;
 
 import org.apache.ibatis.session.RowBounds;
 
 import com.baomidou.mybatisplus.mapper.AutoMapper;
-import com.baomidou.mybatisplus.test.entity.User;
 
 /**
  * <p>

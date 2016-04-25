@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.baomidou.mybatisplus.test.mapper.UserMapper">
+<mapper namespace="com.baomidou.mybatisplus.test.mysql.UserMapper">
 
 	<delete id="deleteAll">
-		delete FROM user
+		DELETE FROM USER
 	</delete>
 
 	<!-- 建议字段，采用驼峰命名方法，不然很麻烦 -->

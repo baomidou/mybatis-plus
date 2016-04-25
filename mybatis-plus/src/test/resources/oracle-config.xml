@@ -7,12 +7,12 @@
      | 加载配置文件 resource="jdbc.properties" 
      | 可以在本配置文件中使用 ${name} 来使用属性值
      | -->
-    <properties resource="jdbc.properties">
         <!-- 
+    <properties resource="jdbc.properties">
          | 可通过以下方式定义属性, 加载配置文件中的属性会覆盖掉此处定义的同名属性
          | <property name="" value=""/>
-         | -->
     </properties>
+         | -->
 
     <!-- 
      | 全局配置设置
@@ -39,14 +39,14 @@
      |
     <typeAliases>
      	1、明确定义 
-        <typeAlias type="com.baomidou.mybatisplus.test.entity.User" alias="User" />
+        <typeAlias type="com.baomidou.mybatisplus.test.oracle.User" alias="User" />
         
      	2、扫描指定包下的实体 
-        <package name="com.baomidou.mybatisplus.test.entity" />
+        <package name="com.baomidou.mybatisplus.test.oracle" />
     </typeAliases>
      | -->
     <typeAliases>
-        <package name="com.baomidou.mybatisplus.test.entity" />
+        <package name="com.baomidou.mybatisplus.test.oracle" />
     </typeAliases>
     
     <!-- 插件配置 -->
@@ -60,7 +60,7 @@
 	     |              自定义需要实现 com.baomidou.mybatisplus.plugins.pagination.IDialect 接口
 	     | -->
         <plugin interceptor="com.baomidou.mybatisplus.plugins.PaginationInterceptor">
-            <property name="dialectType" value="mysql" />
+            <property name="dialectType" value="oracle" />
         </plugin>
     </plugins>
 
@@ -71,10 +71,16 @@
 				<property name="" value="" />
 			</transactionManager>
 			<dataSource type="UNPOOLED">
+				<property name="driver" value="oracle.jdbc.driver.OracleDriver" />
+				<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe" />
+				<property name="username" value="mp" />
+				<property name="password" value="mp" />
+			<!-- 
 				<property name="driver" value="${jdbc.driver}" />
 				<property name="url" value="${jdbc.url}" />
 				<property name="username" value="${jdbc.username}" />
 				<property name="password" value="${jdbc.password}" />
+			 -->
 			</dataSource>
 		</environment>
 	</environments>
@@ -88,7 +94,7 @@
      | package  指向可以找到Mapper接口的包名
      | -->
     <mappers>
-        <mapper class="com.baomidou.mybatisplus.test.mapper.UserMapper" />
-        <mapper resource="UserMapper.xml"/>
+        <mapper class="com.baomidou.mybatisplus.test.oracle.TestUserMapper" />
+        <mapper resource="oracle/TestUserMapper.xml"/>
     </mappers>
 </configuration>

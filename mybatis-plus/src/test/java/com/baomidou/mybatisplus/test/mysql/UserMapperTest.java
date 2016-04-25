@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test;
+package com.baomidou.mybatisplus.test.mysql;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -27,8 +27,6 @@ import org.apache.log4j.BasicConfigurator;
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.test.entity.User;
-import com.baomidou.mybatisplus.test.mapper.UserMapper;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
 
 /**
@@ -41,7 +39,7 @@ import com.baomidou.mybatisplus.toolkit.IdWorker;
  */
 public class UserMapperTest {
 
-	private static final String RESOURCE = "mybatis-config.xml";
+	private static final String RESOURCE = "mysql-config.xml";
 
 
 	/**

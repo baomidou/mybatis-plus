@@ -65,6 +65,8 @@ public class ConfigGenerator {
 
 	private IdType idType = null;
 
+	private ConfigDataSource configDataSource = ConfigDataSource.MYSQL;
+
 	private ConfigIdType configIdType = ConfigIdType.LONG;
 
 	/*
@@ -197,6 +199,16 @@ public class ConfigGenerator {
 
 	public void setColumnHump( boolean isColumnHump ) {
 		this.isColumnHump = isColumnHump;
+	}
+
+
+	public ConfigDataSource getConfigDataSource() {
+		return configDataSource;
+	}
+
+
+	public void setConfigDataSource( ConfigDataSource configDataSource ) {
+		this.configDataSource = configDataSource;
 	}
 
 

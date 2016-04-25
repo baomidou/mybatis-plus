@@ -157,6 +157,10 @@ public class AutoGenerator {
 			/**
 			 * 获取数据库表相关信息
 			 */
+			boolean isOracle = false;
+			if ( config.getConfigDataSource() == ConfigDataSource.ORACLE ) {
+				isOracle = true;
+			}
 			List<String> tables = getTables(conn);
 			Map<String, String> tableComments = getTableComment(conn);
 			for (String table : tables) {
@@ -164,22 +168,34 @@ public class AutoGenerator {
 				List<String> types = new ArrayList<String>();
 				List<String> comments = new ArrayList<String>();
 				Map<String, IdInfo> idMap = new HashMap<String, IdInfo>();
-				ResultSet results = conn.prepareStatement("show full fields from " + table).executeQuery();
+				String tableFieldsSql = String.format(config.getConfigDataSource().getTableFieldsSql(), table);
+				ResultSet results = conn.prepareStatement(tableFieldsSql).executeQuery();
 				while (results.next()) {
-					String field = results.getString("FIELD");
+					String field = results.getString(config.getConfigDataSource().getFieldName());
 					columns.add(field);
-					types.add(results.getString("TYPE"));
-					comments.add(results.getString("COMMENT"));
-					String key = results.getString("KEY");
-					if ("PRI".equals(key)) {
-						boolean autoIncrement = false;
-						if ("auto_increment".equals(results.getString("EXTRA"))) {
-							autoIncrement = true;
+					types.add(results.getString(config.getConfigDataSource().getFieldType()));
+					comments.add(results.getString(config.getConfigDataSource().getFieldComment()));
+					if ( !isOracle ) {
+						/* MYSQL 主键ID 处理方式 */
+						String key = results.getString(config.getConfigDataSource().getFieldKey());
+						if ("PRI".equals(key)) {
+							boolean autoIncrement = false;
+							if ("auto_increment".equals(results.getString("EXTRA"))) {
+								autoIncrement = true;
+							}
+							idMap.put(field, new IdInfo(field, autoIncrement));
 						}
-						idMap.put(field, new IdInfo(field, autoIncrement));
 					}
 				}
-
+				if ( isOracle ) {
+					/* ORACLE 主键ID 处理方式 */
+					String idSql = String.format("SELECT A.COLUMN_NAME FROM USER_CONS_COLUMNS A, USER_CONSTRAINTS B WHERE A.CONSTRAINT_NAME = B.CONSTRAINT_NAME AND B.CONSTRAINT_TYPE = 'P' AND A.TABLE_NAME = '%s'", table);
+					ResultSet rs = conn.prepareStatement(idSql).executeQuery();
+					while (rs.next()) {
+						String field = rs.getString(config.getConfigDataSource().getFieldKey());
+						idMap.put(field, new IdInfo(field, false));
+					}
+				}
 				String beanName = getBeanName(table, config.isDbPrefix());
 				String mapperName = beanName + "Mapper";
 				String serviceName = "I" + beanName + "Service";
@@ -215,7 +231,7 @@ public class AutoGenerator {
 	 */
 	private List<String> getTables(Connection conn) throws SQLException {
 		List<String> tables = new ArrayList<String>();
-		PreparedStatement pstate = conn.prepareStatement("show tables");
+		PreparedStatement pstate = conn.prepareStatement(config.getConfigDataSource().getTablesSql());
 		ResultSet results = pstate.executeQuery();
 		while (results.next()) {
 			tables.add(results.getString(1));
@@ -248,15 +264,24 @@ public class AutoGenerator {
 		}
 		return sb.toString();
 	}
+	
+
+	private String processType( String type ) {
+		if ( config.getConfigDataSource() == ConfigDataSource.ORACLE ) {
+			return oracleProcessType(type);
+		}
+		return mysqlProcessType(type);
+	}
+	
 
 	/**
-	 * 字段类型转换
+	 * MYSQL字段类型转换
 	 * 
 	 * @param type
 	 *            字段类型
 	 * @return
 	 */
-	private String processType(String type) {
+	private String mysqlProcessType(String type) {
 		if (type.indexOf("char") > -1) {
 			return "String";
 		} else if (type.indexOf("bigint") > -1) {
@@ -277,6 +302,30 @@ public class AutoGenerator {
 			return "Float";
 		} else if (type.indexOf("double") > -1) {
 			return "Double";
+		}
+		return null;
+	}
+	
+	/**
+	 * ORACLE字段类型转换
+	 * 
+	 * @param type
+	 *            字段类型
+	 * @return
+	 */
+	private String oracleProcessType(String type) {
+		if (type.indexOf("CHAR") > -1) {
+			return "String";
+		} else if (type.indexOf("DATE") > -1) {
+			return "Date";
+		} else if (type.indexOf("NUMBER") > -1) {
+			return "Integer";
+		} else if (type.indexOf("FLOAT") > -1) {
+			return "Float";
+		} else if (type.indexOf("BLOB") > -1) {
+			return "Object";
+		} else if (type.indexOf("RAW") > -1) {
+			return "byte[]";
 		}
 		return null;
 	}
@@ -705,10 +754,11 @@ public class AutoGenerator {
 	 */
 	private Map<String, String> getTableComment(Connection conn) throws SQLException {
 		Map<String, String> maps = new HashMap<String, String>();
-		PreparedStatement pstate = conn.prepareStatement("show table status");
+		PreparedStatement pstate = conn.prepareStatement(config.getConfigDataSource().getTableCommentsSql());
 		ResultSet results = pstate.executeQuery();
 		while (results.next()) {
-			maps.put(results.getString("NAME"), results.getString("COMMENT"));
+			maps.put(results.getString(config.getConfigDataSource().getTableName()), 
+				results.getString(config.getConfigDataSource().getTableComment()));
 		}
 		return maps;
 	}
