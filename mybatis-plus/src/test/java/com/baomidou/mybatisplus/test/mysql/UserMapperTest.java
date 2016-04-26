@@ -27,6 +27,7 @@ import org.apache.log4j.BasicConfigurator;
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.test.mysql.entity.User;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
 
 /**
@@ -38,8 +39,6 @@ import com.baomidou.mybatisplus.toolkit.IdWorker;
  * @Date 2016-01-23
  */
 public class UserMapperTest {
-
-	private static final String RESOURCE = "mysql-config.xml";
 
 
 	/**
@@ -61,7 +60,7 @@ public class UserMapperTest {
 		BasicConfigurator.configure();
 
 		//加载配置文件
-		InputStream in = UserMapperTest.class.getClassLoader().getResourceAsStream(RESOURCE);
+		InputStream in = UserMapperTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
 
 		/*
 		 * 此处采用 MybatisSessionFactoryBuilder 构建

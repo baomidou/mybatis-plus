@@ -24,9 +24,9 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
-import com.baomidou.mybatisplus.mapper.AutoMapper;
 import com.baomidou.mybatisplus.mapper.AutoSqlInjector;
-import com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean;
+import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.baomidou.mybatisplus.mapper.DBType;
 
 /**
  * <p>
@@ -39,6 +39,11 @@ import com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean;
 public class MybatisConfiguration extends Configuration {
 
 	protected final Logger logger = Logger.getLogger("MybatisConfiguration");
+	
+	/**
+	 * 数据库类型（默认 MySql）
+	 */
+	public static DBType DB_TYPE = DBType.MYSQL;
 
 	/**
 	 * 初始化调用
@@ -96,12 +101,12 @@ public class MybatisConfiguration extends Configuration {
 	public <T> void addMapper(Class<T> type) {
 		super.addMapper(type);
 
-		if (!AutoMapper.class.isAssignableFrom(type)) {
+		if (!BaseMapper.class.isAssignableFrom(type)) {
 			return;
 		}
 
 		/* 自动注入 SQL */
-		new AutoSqlInjector(this, MybatisSqlSessionFactoryBean.DB_TYPE).inject(type);
+		new AutoSqlInjector(this, DB_TYPE).inject(type);
 	}
 
 	@Override

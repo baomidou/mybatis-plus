@@ -113,7 +113,7 @@ public class AutoSqlInjector {
 		Type[] types = mapperClass.getGenericInterfaces();
 		ParameterizedType target = null;
 		for (Type type : types) {
-			if (type instanceof ParameterizedType && ((ParameterizedType) type).getRawType().equals(AutoMapper.class)) {
+			if (type instanceof ParameterizedType && BaseMapper.class.isAssignableFrom(mapperClass)) {
 				target = (ParameterizedType) type;
 				break;
 			}
@@ -313,7 +313,7 @@ public class AutoSqlInjector {
 			sqlMethod = SqlMethod.UPDATE_BATCH_BY_ID_ORACLE;
 			List<TableFieldInfo> fieldList = table.getFieldList();
 			for (TableFieldInfo fieldInfo : fieldList) {
-				set.append(fieldInfo.getColumn()).append("=#{").append(fieldInfo.getProperty()).append("},");
+				set.append(fieldInfo.getColumn()).append("=#{item.").append(fieldInfo.getProperty()).append("},");
 			}
 		} else if (DBType.MYSQL == dbType) {
 			List<TableFieldInfo> fieldList = table.getFieldList();

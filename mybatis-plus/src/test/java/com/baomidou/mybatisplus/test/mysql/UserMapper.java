@@ -20,6 +20,7 @@ import java.util.List;
 import org.apache.ibatis.session.RowBounds;
 
 import com.baomidou.mybatisplus.mapper.AutoMapper;
+import com.baomidou.mybatisplus.test.mysql.entity.User;
 
 /**
  * <p>

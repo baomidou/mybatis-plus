@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.test.oracle;
+package com.baomidou.mybatisplus.test.oracle.entity;
 
 import java.io.Serializable;
 
@@ -37,6 +37,18 @@ public class TestUser implements Serializable {
 		this.testId = testId;
 		this.name = name;
 		this.age = age;
+		this.testType = testType;
+	}
+	
+	
+	public TestUser( String name, Integer age, Integer testType ) {
+		this.name = name;
+		this.age = age;
+		this.testType = testType;
+	}
+	
+	
+	public TestUser( Integer testType ) {
 		this.testType = testType;
 	}
 

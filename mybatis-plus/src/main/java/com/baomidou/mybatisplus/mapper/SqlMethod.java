@@ -31,7 +31,7 @@ public enum SqlMethod {
 	INSERT_ONE("insert", "插入一条数据", "<script>INSERT INTO %s %s VALUES %s</script>"),
 	INSERT_ONE_SELECTIVE("insertSelective", "插入一条数据（选择字段， null 字段不插入）", "<script>INSERT INTO %s %s VALUES %s</script>"),
 	INSERT_BATCH_MYSQL("insertBatch", "mysql 批量插入数据", "<script>INSERT INTO %s %s VALUES \n<foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\">%s\n</foreach></script>"),
-	INSERT_BATCH_ORACLE("insertBatch", "oracle 批量插入数据", "<script>INSERT INTO %s %s VALUES \n<foreach item=\"item\" index=\"index\" collection=\"list\" separator=\"union all\">%s\n</foreach></script>"),
+	INSERT_BATCH_ORACLE("insertBatch", "oracle 批量插入数据", "<script>INSERT INTO %s %s \n<foreach item=\"item\" index=\"index\" collection=\"list\" separator=\"UNION ALL\">%s\n</foreach></script>"),
 	
 	/**
 	 * 删除
@@ -45,7 +45,7 @@ public enum SqlMethod {
 	 */
 	UPDATE_BY_ID("updateById", "根据ID 修改数据", "<script>UPDATE %s %s WHERE %s=#{et.%s}</script>"),
 	UPDATE_BATCH_BY_ID_MYSQL("updateBatchById", "mysql 根据ID 批量修改数据", "<script>UPDATE %s %s WHERE %s IN (<foreach collection=\"list\" separator=\",\" item=\"i\" index=\"index\">#{i.%s}</foreach>)</script>"),
-	UPDATE_BATCH_BY_ID_ORACLE("updateBatchById", "oracle 根据ID 批量修改数据", "<script><foreach collection=\"list\" item=\"item\" index=\"index\" open=\"begin\" close=\"end;\" separator=\";\">UPDATE %s %s WHERE %s=#{%s}</foreach></script>"),
+	UPDATE_BATCH_BY_ID_ORACLE("updateBatchById", "oracle 根据ID 批量修改数据", "<script><foreach collection=\"list\" item=\"item\" index=\"index\" open=\"BEGIN\" close=\";END;\" separator=\";\">UPDATE %s %s WHERE %s=#{item.%s}</foreach></script>"),
 	UPDATE_SELECTIVE_BY_ID("updateSelectiveById", "根据ID 选择修改数据", "<script>UPDATE %s %s WHERE %s=#{et.%s}</script>"),
 	UPDATE("update", "根据 whereEntity 条件，更新记录", "<script>UPDATE %s %s %s</script>"),
 	UPDATE_SELECTIVE("updateSelective", "根据 whereEntity 条件，选择更新记录", "<script>UPDATE %s %s %s</script>"),

@@ -39,14 +39,14 @@
      |
     <typeAliases>
      	1、明确定义 
-        <typeAlias type="com.baomidou.mybatisplus.test.mysql.User" alias="User" />
+        <typeAlias type="com.baomidou.mybatisplus.test.mysql.entity.User" alias="User" />
         
      	2、扫描指定包下的实体 
-        <package name="com.baomidou.mybatisplus.test.mysql" />
+        <package name="com.baomidou.mybatisplus.test.mysql.entity" />
     </typeAliases>
      | -->
     <typeAliases>
-        <package name="com.baomidou.mybatisplus.test.mysql" />
+        <package name="com.baomidou.mybatisplus.test.mysql.entity" />
     </typeAliases>
     
     <!-- 插件配置 -->

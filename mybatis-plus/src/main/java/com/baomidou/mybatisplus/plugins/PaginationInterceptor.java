@@ -144,8 +144,8 @@ public class PaginationInterceptor implements Interceptor {
 		if ( order_by > -1 ) {
 			sqlUse = sql.substring(0, order_by);
 		}
-		StringBuffer countSql = new StringBuffer("SELECT COUNT(1) FROM (");
-		countSql.append(sqlUse).append(") AS TOTAL");
+		StringBuffer countSql = new StringBuffer("SELECT COUNT(1) AS TOTAL FROM (");
+		countSql.append(sqlUse).append(") A");
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {

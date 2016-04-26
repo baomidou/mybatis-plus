@@ -16,13 +16,17 @@
 package com.baomidou.mybatisplus.test.oracle;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.log4j.BasicConfigurator;
 
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
-import com.baomidou.mybatisplus.test.mysql.User;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.test.oracle.entity.TestUser;
 
 /**
  * <p>
@@ -33,8 +37,6 @@ import com.baomidou.mybatisplus.test.mysql.User;
  * @Date 2016-04-25
  */
 public class TestUserMapperTest {
-
-	private static final String RESOURCE = "oracle-config.xml";
 
 
 	/**
@@ -47,13 +49,18 @@ public class TestUserMapperTest {
 		BasicConfigurator.configure();
 
 		//加载配置文件
-		InputStream in = TestUserMapperTest.class.getClassLoader().getResourceAsStream(RESOURCE);
+		InputStream in = TestUserMapperTest.class.getClassLoader().getResourceAsStream("oracle-config.xml");
 
 		/*
 		 * 此处采用 MybatisSessionFactoryBuilder 构建
 		 * SqlSessionFactory，目的是引入AutoMapper功能
 		 */
-		SqlSessionFactory sessionFactory = new MybatisSessionFactoryBuilder().build(in);
+		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
+
+		/** 设置数据库类型为 oracle */
+		mf.setDbType("oracle");
+
+		SqlSessionFactory sessionFactory = mf.build(in);
 		SqlSession session = sessionFactory.openSession();
 		TestUserMapper testUserMapper = session.getMapper(TestUserMapper.class);
 		System.err.println(" debug run 查询执行 test_user 表数据变化！ ");
@@ -62,13 +69,48 @@ public class TestUserMapperTest {
 		/**
 		 * 插入
 		 */
-		int rlt = testUserMapper.insert(new TestUser("10001", "abc", 18, 1));
+		int rlt = testUserMapper.insert(new TestUser("10", "abc", 18, 1));
 		System.err.println("\n--------------insert-------" + rlt);
 		sleep();
-
+		
+		/**
+		 * 批量插入
+		 */
+		List<TestUser> ul = new ArrayList<TestUser>();
+		ul.add(new TestUser("11", "1a", 11, 1));
+		ul.add(new TestUser("12", "2a", 12, 2));
+		ul.add(new TestUser("a", 1, 1));
+		ul.add(new TestUser("b", 2, 2));
+		ul.add(new TestUser("c", 3, 1));
+		rlt = testUserMapper.insertBatch(ul);
+		System.err.println("\n--------------insertBatch-------" + rlt);
+		sleep();
+		
+		
+		/**
+		 * 批量更新
+		 */
+		List<TestUser> ul1 = new ArrayList<TestUser>();
+		ul1.add(new TestUser("10", "update-0a", 11, 1));
+		ul1.add(new TestUser("11", "update-1a", 11, 1));
+		ul1.add(new TestUser("12", "update-2a", 12, 2));
+		rlt = testUserMapper.updateBatchById(ul1);
+		System.err.println("\n--------------updateBatchById-------" + rlt);
+		sleep();
+		
+		System.err.println("\n------------------list 分页查询 ----查询 testType = 1 的所有数据--id--DESC--排序--------");
+		Page<TestUser> page = new Page<TestUser>(1, 2);
+		EntityWrapper<TestUser> ew = new EntityWrapper<TestUser>(new TestUser(1), "TEST_ID DESC");
+		List<TestUser> paginList = testUserMapper.selectPage(page, ew);
+		page.setRecords(paginList);
+		for ( int i = 0 ; i < page.getRecords().size() ; i++ ) {
+			print(page.getRecords().get(i));
+		}
+		System.err.println(" 翻页：" + page.toString());
+		
 		/* 删除测试数据  */
-//		rlt = session.delete("deleteAll");
-//		System.err.println("清空测试数据！ rlt=" + rlt);
+		rlt = session.delete("deleteAll");
+		System.err.println("清空测试数据！ rlt=" + rlt);
 
 		/**
 		 * 提交
@@ -80,11 +122,11 @@ public class TestUserMapperTest {
 	/*
 	 * 打印测试信息
 	 */
-	private static void print( User user ) {
+	private static void print( TestUser user ) {
 		sleep();
 		if ( user != null ) {
 			System.out.println("\n user: id="
-					+ user.getId() + ", name=" + user.getName() + ", age=" + user.getAge() + ", testType="
+					+ user.getTestId() + ", name=" + user.getName() + ", age=" + user.getAge() + ", testType="
 					+ user.getTestType());
 		} else {
 			System.out.println("\n user is null.");

@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.test.oracle;
 
 import com.baomidou.mybatisplus.mapper.CommonMapper;
+import com.baomidou.mybatisplus.test.oracle.entity.TestUser;
 
 /**
  *

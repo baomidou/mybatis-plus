@@ -28,13 +28,10 @@ import com.baomidou.mybatisplus.plugins.pagination.IDialect;
 public class OracleDialect implements IDialect {
 
 	public String buildPaginationSql(String originalSql, int offset, int limit) {
-		StringBuilder sql = new StringBuilder(originalSql);
-		/*
-		 * ORACLE 分页是通过 ROWNUMBER 进行的，ROWNUMBER 是从 1 开始的
-		 */
-		offset++;
-		sql.insert(0, "SELECT U.*, ROWNUM R FROM (").append(") U WHERE ROWNUM < ").append(offset + limit);
-		sql.insert(0, "SELECT * FROM (").append(") TEMP WHERE R >= ").append(offset);
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT * FROM ( SELECT TMP.*, ROWNUM ROW_ID FROM ( ");
+        sql.append(originalSql).append(" ) TMP WHERE ROWNUM <=").append(offset);
+        sql.append(") WHERE ROW_ID > ").append(limit);
 		return sql.toString();
 	}
 
