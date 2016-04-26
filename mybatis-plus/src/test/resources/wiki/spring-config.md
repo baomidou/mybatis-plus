@@ -34,6 +34,9 @@
 		    </bean>
         </array>
     </property>
+    <!-- oracle 添加
+    <property name="dbType" value="oracle" />
+    -->
 </bean>
 
 <!-- 加载 mapper.xml 接口 配置文件 -->
