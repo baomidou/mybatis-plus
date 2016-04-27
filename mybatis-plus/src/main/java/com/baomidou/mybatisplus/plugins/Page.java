@@ -30,6 +30,8 @@ import com.baomidou.mybatisplus.plugins.pagination.Pagination;
  */
 public class Page<T> extends Pagination {
 
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * 查询数据列表
 	 */

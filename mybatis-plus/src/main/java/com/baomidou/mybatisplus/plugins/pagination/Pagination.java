@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.plugins.pagination;
 
+import java.io.Serializable;
+
 import org.apache.ibatis.session.RowBounds;
 
 /**
@@ -27,7 +29,9 @@ import org.apache.ibatis.session.RowBounds;
  * @author hubin
  * @Date 2016-01-23
  */
-public class Pagination extends RowBounds {
+public class Pagination extends RowBounds implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	/* 总数 */
 	private int total;
