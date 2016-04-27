@@ -35,7 +35,7 @@ import com.baomidou.mybatisplus.plugins.Page;
 public class ServiceImpl<M extends BaseMapper<T, I>, T, I> implements IService<T, I> {
 
 	@Autowired
-	protected M autoMapper;
+	protected M baseMapper;
 
 
 	/**
@@ -51,98 +51,98 @@ public class ServiceImpl<M extends BaseMapper<T, I>, T, I> implements IService<T
 
 
 	public boolean insert( T entity ) {
-		return retBool(autoMapper.insert(entity));
+		return retBool(baseMapper.insert(entity));
 	}
 
 
 	public boolean insertSelective( T entity ) {
-		return retBool(autoMapper.insertSelective(entity));
+		return retBool(baseMapper.insertSelective(entity));
 	}
 
 
 	public boolean insertBatch( List<T> entityList ) {
-		return retBool(autoMapper.insertBatch(entityList));
+		return retBool(baseMapper.insertBatch(entityList));
 	}
 
 
 	public boolean deleteById( I id ) {
-		return retBool(autoMapper.deleteById(id));
+		return retBool(baseMapper.deleteById(id));
 	}
 
 
 	public boolean deleteSelective( T entity ) {
-		return retBool(autoMapper.deleteSelective(entity));
+		return retBool(baseMapper.deleteSelective(entity));
 	}
 
 
 	public boolean deleteBatchIds( List<I> idList ) {
-		return retBool(autoMapper.deleteBatchIds(idList));
+		return retBool(baseMapper.deleteBatchIds(idList));
 	}
 
 
 	public boolean updateById( T entity ) {
-		return retBool(autoMapper.updateById(entity));
+		return retBool(baseMapper.updateById(entity));
 	}
 
 
 	public boolean updateSelectiveById( T entity ) {
-		return retBool(autoMapper.updateSelectiveById(entity));
+		return retBool(baseMapper.updateSelectiveById(entity));
 	}
 
 
 	public boolean update( T entity, T whereEntity ) {
-		return retBool(autoMapper.update(entity, whereEntity));
+		return retBool(baseMapper.update(entity, whereEntity));
 	}
 
 
 	public boolean updateSelective( T entity, T whereEntity ) {
-		return retBool(autoMapper.updateSelective(entity, whereEntity));
+		return retBool(baseMapper.updateSelective(entity, whereEntity));
 	}
 
 
 	public boolean updateBatchById(List<T> entityList) {
-		return retBool(autoMapper.updateBatchById(entityList));
+		return retBool(baseMapper.updateBatchById(entityList));
 	}
 
 
 	public T selectById( I id ) {
-		return autoMapper.selectById(id);
+		return baseMapper.selectById(id);
 	}
 
 
 	public List<T> selectBatchIds( List<I> idList ) {
-		return autoMapper.selectBatchIds(idList);
+		return baseMapper.selectBatchIds(idList);
 	}
 
 
 	public T selectOne( T entity ) {
-		return autoMapper.selectOne(entity);
+		return baseMapper.selectOne(entity);
 	}
 
 
 	public int selectCount(T entity) {
-		return autoMapper.selectCount(entity);
+		return baseMapper.selectCount(entity);
 	}
 
 
 	public List<T> selectList( T entity, String orderByField ) {
-		return autoMapper.selectList(new EntityWrapper<T>(entity, orderByField));
+		return baseMapper.selectList(new EntityWrapper<T>(entity, orderByField));
 	}
 
 
 	public List<T> selectList( T entity ) {
-		return autoMapper.selectList(new EntityWrapper<T>(entity, null));
+		return baseMapper.selectList(new EntityWrapper<T>(entity, null));
 	}
 
 
 	public Page<T> selectPage( Page<T> page, T entity, String orderByField ) {
-		page.setRecords(autoMapper.selectPage(page, new EntityWrapper<T>(entity, orderByField)));
+		page.setRecords(baseMapper.selectPage(page, new EntityWrapper<T>(entity, orderByField)));
 		return page;
 	}
 
 
 	public Page<T> selectPage( Page<T> page, T entity ) {
-		page.setRecords(autoMapper.selectPage(page, new EntityWrapper<T>(entity, null)));
+		page.setRecords(baseMapper.selectPage(page, new EntityWrapper<T>(entity, null)));
 		return page;
 	}
 
