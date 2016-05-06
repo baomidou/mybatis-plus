@@ -6,11 +6,6 @@
 
 ```
 <dependency>
-    <groupId>org.mybatis</groupId>
-    <artifactId>mybatis-spring</artifactId>
-    <version>1.2.3</version>
-</dependency>
-<dependency>
     <groupId>com.baomidou</groupId>
     <artifactId>mybatis-plus</artifactId>
     <version>最新版本 Maven 为准</version>
