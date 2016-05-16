@@ -36,14 +36,6 @@ Maven 坐标
 
 ![项目结构说明](http://git.oschina.net/uploads/images/2016/0427/104817_6ebcc3eb_12260.png "项目结构说明")
 
-Usage
-===========
-1、代码自动生成，查看类
-com.baomidou.mybatisplus.test.AutoGeneratorTest
-
-2、使用方法，查看类
-com.baomidou.mybatisplus.test.UserMapperTest
-
 
 http://baomidou.com/
 
