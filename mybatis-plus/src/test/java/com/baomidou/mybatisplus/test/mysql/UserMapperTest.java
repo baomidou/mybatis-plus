@@ -71,12 +71,18 @@ public class UserMapperTest {
 		UserMapper userMapper = session.getMapper(UserMapper.class);
 		System.err.println(" debug run 查询执行 user 表数据变化！ ");
 		session.delete("deleteAll");
+		
+		/**
+		 * 注解插件测试
+		 */
+		int rlt = userMapper.insertInjector(new User(1L, "1", 1, 1));
+		System.err.println("--------- insertInjector --------- " + rlt);
 
 		/**
 		 * 插入
 		 */
 		long id = IdWorker.getId();
-		int rlt = userMapper.insert(new User(id, "abc", 18, 1));
+		rlt = userMapper.insert(new User(id, "abc", 18, 1));
 		System.err.println("\n--------------insert-------" + rlt);
 		sleep();
 		

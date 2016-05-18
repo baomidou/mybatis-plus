@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.test.mysql;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.session.RowBounds;
 
 import com.baomidou.mybatisplus.mapper.AutoMapper;
@@ -40,5 +41,11 @@ public interface UserMapper extends AutoMapper<User> {
 	 * @return
 	 */
 	List<User> selectListRow(RowBounds pagination);
+	
+	/**
+	 * 注解插入【测试】
+	 */
+	@Insert("insert into user(test_id,name,age) values(#{id},#{name},#{age})")  
+	int insertInjector(User user);
 
 }
