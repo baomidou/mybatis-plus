@@ -70,7 +70,7 @@ public class ConfigGenerator {
 	private ConfigIdType configIdType = ConfigIdType.LONG;
 
 	/*
-	 * 字段是否为驼峰命名（默认 true）
+	 * 数据库字段是否为驼峰命名（默认 true）
 	 */
 	private boolean isColumnHump = true;
 

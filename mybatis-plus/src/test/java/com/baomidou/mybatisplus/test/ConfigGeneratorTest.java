@@ -19,7 +19,7 @@ public class ConfigGeneratorTest {
 		cg.setSaveDir("D:/mybatis-plus/");// 生成文件保存位置
 
 		/*
-		 * 设置字段是否为驼峰命名，驼峰 true 下划线分割 false
+		 * 设置数据库字段是否为驼峰命名，驼峰 true 下划线分割 false
 		 */
 		cg.setColumnHump(false);
 		/*
