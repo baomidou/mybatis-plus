@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.log4j.BasicConfigurator;
 
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
@@ -45,8 +44,6 @@ public class TestUserMapperTest {
 	 * 
 	 */
 	public static void main( String[] args ) {
-		//使用缺省Log4j环境
-		BasicConfigurator.configure();
 
 		//加载配置文件
 		InputStream in = TestUserMapperTest.class.getClassLoader().getResourceAsStream("oracle-config.xml");
