@@ -74,6 +74,10 @@ public class ConfigGenerator {
 	 */
 	private boolean isColumnHump = true;
 
+	/*
+	 * 指定生成表名
+	 */
+	private String[] tableNames = null;
 
 	public String getSaveDir() {
 		return saveDir;
@@ -219,6 +223,16 @@ public class ConfigGenerator {
 
 	public void setConfigIdType( ConfigIdType configIdType ) {
 		this.configIdType = configIdType;
+	}
+
+	
+	public String[] getTableNames() {
+		return tableNames;
+	}
+
+	
+	public void setTableNames( String[] tableNames ) {
+		this.tableNames = tableNames;
 	}
 
 }

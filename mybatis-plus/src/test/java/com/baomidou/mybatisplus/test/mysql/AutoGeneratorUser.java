@@ -56,6 +56,12 @@ public class AutoGeneratorUser extends ConfigGeneratorTest {
 		 * </p>
 		 */
 		cg.setIdType(IdType.AUTO);
+		
+		/*
+		 * 指定生成表名（默认，所有表）
+		 */
+		//cg.setTableNames(new String[]{"user"});
+		
 		AutoGenerator.run(cg);
 	}
 

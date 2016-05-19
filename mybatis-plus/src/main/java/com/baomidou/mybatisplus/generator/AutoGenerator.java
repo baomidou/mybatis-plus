@@ -26,6 +26,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -230,6 +231,13 @@ public class AutoGenerator {
 	 * @throws SQLException
 	 */
 	private List<String> getTables(Connection conn) throws SQLException {
+		String[] tableNames = config.getTableNames();
+		if ( tableNames != null ) {
+			return Arrays.asList(tableNames);
+		}
+		/**
+		 * 数据库中读取所有表名
+		 */
 		List<String> tables = new ArrayList<String>();
 		PreparedStatement pstate = conn.prepareStatement(config.getConfigDataSource().getTablesSql());
 		ResultSet results = pstate.executeQuery();
