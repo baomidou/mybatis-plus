@@ -20,12 +20,16 @@ import com.baomidou.mybatisplus.annotations.IdType;
 /**
  * <p>
  * 生成器配置类
- ********************************** 使用前必读 *********************
+ * ********************************* 使用前必读 *********************
  * saveDir 文件生成目录
  * entity_package entity 包路径
  * mapper_package mapper 包路径
+ * xmlPackage xx_mapper.xml 包路径，默认为mapper/xml
  * servicePackage service 包路径
- * superServiceImpl service 父类包路径
+ * serviceImplPackage serviceImpl包路径，默认为service/impl
+ * superServiceImpl service 父类包路径名称
+ * tableNames   要生成的表名称，如为空就直接指定所有表.格式为逗号分割
+ * fileOverride 是否覆盖当前已有文件
  * -------------------------------------
  * 以下数据库相关配置：
  * -------------------------------------
@@ -48,12 +52,21 @@ public class ConfigGenerator {
 
 	private String mapperPackage;
 
-	private String servicePackage;
+    private String xmlPackage;
 
-	private String superServiceImpl;
+    private String servicePackage;
 
-	/* db_config */
-	private boolean dbPrefix = false;
+    private String serviceImplPackage;
+
+    private String superServiceImpl;
+
+    private String tableNames;
+
+    private boolean fileOverride = false;
+
+
+    /* db_config */
+    private boolean dbPrefix = false;
 
 	private String dbDriverName;
 
@@ -74,10 +87,6 @@ public class ConfigGenerator {
 	 */
 	private boolean isColumnHump = true;
 
-	/*
-	 * 指定生成表名
-	 */
-	private String[] tableNames = null;
 
 	public String getSaveDir() {
 		return saveDir;
@@ -225,14 +234,41 @@ public class ConfigGenerator {
 		this.configIdType = configIdType;
 	}
 
-	
-	public String[] getTableNames() {
-		return tableNames;
-	}
+    public String getXmlPackage() {
+        if (null == xmlPackage || "".equals(xmlPackage)) {
+            xmlPackage = mapperPackage + ".xml";
+        }
+        return xmlPackage;
+    }
 
-	
-	public void setTableNames( String[] tableNames ) {
-		this.tableNames = tableNames;
-	}
+    public void setXmlPackage(String xmlPackage) {
+        this.xmlPackage = xmlPackage;
+    }
 
+    public String getTableNames() {
+        return tableNames;
+    }
+
+    public void setTableNames(String tableNames) {
+        this.tableNames = tableNames;
+    }
+
+    public boolean isFileOverride() {
+        return fileOverride;
+    }
+
+    public void setFileOverride(boolean fileOverride) {
+        this.fileOverride = fileOverride;
+    }
+
+    public String getServiceImplPackage() {
+        if (null == serviceImplPackage || "".equals(serviceImplPackage)) {
+            serviceImplPackage = servicePackage + ".impl";
+        }
+        return serviceImplPackage;
+    }
+
+    public void setServiceImplPackage(String serviceImplPackage) {
+        this.serviceImplPackage = serviceImplPackage;
+    }
 }
