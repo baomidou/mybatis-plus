@@ -9,16 +9,8 @@ public class ConfigGeneratorTest {
         cg.setEntityPackage("com.baomidou.entity");//entity 实体包路径
         cg.setMapperPackage("com.baomidou.mapper");//mapper 映射文件路径
         cg.setServicePackage("com.baomidou.service");//service 层路径
-        cg.setXmlPackage("com.baomidou.mapper.xml");  // xml层路径（可以不写）
-        cg.setServiceImplPackage("com.baomidou.service.impl");  // serviceimpl层路径（可以不写）
-        cg.setFileOverride(false);  // 默认值为false , 是否覆盖当前路径下已有文件
-
-        /**
-         *  如果配置了就只生成指定表名的文件，如果不配置就全部表
-         *  此处会对表名做校验，如果表名不存在 ，则不会生成任何文件。
-         *  控制台会提示不存在的表名称
-         * */
-        cg.setTableNames("user,roles");
+        cg.setXmlPackage("com.baomidou.mapper.xml");//xml层路径（可以不写）
+        cg.setServiceImplPackage("com.baomidou.service.impl");//serviceimpl层路径（可以不写）
 
 		/* 此处可以配置 SuperServiceImpl 子类路径，默认如下 */
         //cg.setSuperServiceImpl("com.baomidou.framework.service.impl.SuperServiceImpl");
@@ -39,6 +31,11 @@ public class ConfigGeneratorTest {
 		 * </p>
 		 */
         cg.setDbPrefix(false);
+        /*
+         * 默认值为true , 是否覆盖当前路径下已有文件
+         */
+        cg.setFileOverride(true);
         return cg;
     }
+
 }

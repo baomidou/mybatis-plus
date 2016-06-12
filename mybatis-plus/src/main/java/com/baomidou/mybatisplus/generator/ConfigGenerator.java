@@ -60,10 +60,15 @@ public class ConfigGenerator {
 
     private String superServiceImpl;
 
-    private String tableNames;
+	/*
+	 * 指定生成表名
+	 */
+	private String[] tableNames = null;
 
-    private boolean fileOverride = false;
-
+	/*
+	 * 是否覆盖当前路径下已有文件（默认 true）
+	 */
+    private boolean fileOverride = true;
 
     /* db_config */
     private boolean dbPrefix = false;
@@ -245,13 +250,13 @@ public class ConfigGenerator {
         this.xmlPackage = xmlPackage;
     }
 
-    public String getTableNames() {
-        return tableNames;
-    }
+	public String[] getTableNames() {
+		return tableNames;
+	}
 
-    public void setTableNames(String tableNames) {
-        this.tableNames = tableNames;
-    }
+	public void setTableNames( String[] tableNames ) {
+		this.tableNames = tableNames;
+	}
 
     public boolean isFileOverride() {
         return fileOverride;

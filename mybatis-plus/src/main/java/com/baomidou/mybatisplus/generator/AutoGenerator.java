@@ -15,20 +15,32 @@
  */
 package com.baomidou.mybatisplus.generator;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.baomidou.mybatisplus.annotations.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-
-import java.io.*;
-import java.sql.*;
-import java.util.*;
 
 /**
  * <p>
  * 映射文件自动生成类
  * </p>
  *
- * @author hubin
- * @Date 2016-01-23
+ * @author hubin yanghu
+ * @Date 2016-06-12
  */
 public class AutoGenerator {
 
@@ -78,15 +90,6 @@ public class AutoGenerator {
         if (!gf.exists()) {
             gf.mkdirs();
         }
-
-        /**
-         * 目录初始化
-         */
-//        PATH_ENTITY = getFilePath(gf.getPath(), "entity");
-//        PATH_MAPPER = getFilePath(gf.getPath(), "mapper");
-//        PATH_XML = getFilePath(gf.getPath(), "xml");
-//        PATH_SERVICE = getFilePath(gf.getPath(), "service");
-//        PATH_SERVICE_IMPL = getFilePath(gf.getPath(), "serviceImpl");
 
         /**
          * 修改设置最终目录的逻辑
@@ -292,13 +295,13 @@ public class AutoGenerator {
             tables.add(results.getString(1));
         }
 
-        String tableNames = config.getTableNames();
-        if (null == tableNames || "".equals(tableNames.trim())) {
+        String[] tableNames = config.getTableNames();
+		if (null == tableNames || tableNames.length == 0) {
             return tables;
         }
 
         // 循环判断是否配置的所有表都在当前库中存在
-        List<String> custTables = Arrays.asList(tableNames.trim().split(","));
+        List<String> custTables = Arrays.asList(tableNames);
         List<String> notExistTables = new ArrayList<String>();
         for (String tb : custTables) {
             if (!tables.contains(tb)) {
@@ -424,7 +427,6 @@ public class AutoGenerator {
      * @return
      */
     private boolean isDecimal(List<String> types) {
-        int size = types.size();
         for (String type : types) {
             if (type.contains("decimal")) {
                 return true;
