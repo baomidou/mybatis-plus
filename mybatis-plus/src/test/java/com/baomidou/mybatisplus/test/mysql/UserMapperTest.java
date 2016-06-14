@@ -79,7 +79,7 @@ public class UserMapperTest {
 		 * $ 特殊字符测试
 		 */
 		rlt = userMapper.updateSelectiveById(new User(1L, "$"));
-		System.err.println("--------- insertInjector --------- " + rlt);
+		System.err.println("--------- $ 特殊字符测试 --------- " + rlt);
 
 		/**
 		 * ehcache 缓存测试

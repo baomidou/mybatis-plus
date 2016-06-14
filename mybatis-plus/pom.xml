@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.baomidou</groupId>
 	<artifactId>mybatis-plus</artifactId>
-	<version>1.2.16</version>
+	<version>1.2.17</version>
 	<packaging>jar</packaging>
 
 	<name>mybatis-plus</name>
@@ -84,18 +84,18 @@
 			<version>${spring.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-		    <groupId>org.mybatis.caches</groupId>
-		    <artifactId>mybatis-ehcache</artifactId>
-		    <version>${mybatis-ehcache.version}</version>
-			<scope>test</scope>
-		</dependency>
 
 		<!-- test begin -->
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>${mysql-connector-java.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.mybatis.caches</groupId>
+		    <artifactId>mybatis-ehcache</artifactId>
+		    <version>${mybatis-ehcache.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
