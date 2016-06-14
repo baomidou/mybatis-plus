@@ -74,7 +74,13 @@ public class UserMapperTest {
 		 */
 		int rlt = userMapper.insertInjector(new User(1L, "1", 1, 1));
 		System.err.println("--------- insertInjector --------- " + rlt);
-		
+
+		/**
+		 * $ 特殊字符测试
+		 */
+		rlt = userMapper.updateSelectiveById(new User(1L, "$"));
+		System.err.println("--------- insertInjector --------- " + rlt);
+
 		/**
 		 * ehcache 缓存测试
 		 */
