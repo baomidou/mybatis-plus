@@ -27,7 +27,6 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
-import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.io.VFS;
@@ -56,6 +55,7 @@ import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
 import com.baomidou.mybatisplus.MybatisConfiguration;
 import com.baomidou.mybatisplus.MybatisXMLConfigBuilder;
+import com.baomidou.mybatisplus.MybatisXMLMapperBuilder;
 import com.baomidou.mybatisplus.mapper.DBType;
 
 /**
@@ -544,7 +544,8 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 				}
 
 				try {
-					XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(mapperLocation.getInputStream(),
+					//TODO
+					MybatisXMLMapperBuilder xmlMapperBuilder = new MybatisXMLMapperBuilder(mapperLocation.getInputStream(),
 							configuration, mapperLocation.toString(), configuration.getSqlFragments());
 					xmlMapperBuilder.parse();
 				} catch (Exception e) {

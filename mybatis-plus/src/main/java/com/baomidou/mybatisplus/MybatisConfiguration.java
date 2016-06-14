@@ -60,7 +60,6 @@ public class MybatisConfiguration extends Configuration {
 	@Override
 	public void addMappedStatement(MappedStatement ms) {
 		logger.fine(" addMappedStatement: " + ms.getId());
-		System.out.println(ms.getId());
 		if (this.mappedStatements.containsKey(ms.getId())) {
 			/*
 			 * 说明已加载了xml中的节点； 忽略mapper中的SqlProvider数据
