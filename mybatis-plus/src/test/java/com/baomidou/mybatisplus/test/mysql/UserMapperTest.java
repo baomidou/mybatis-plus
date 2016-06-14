@@ -74,6 +74,14 @@ public class UserMapperTest {
 		 */
 		int rlt = userMapper.insertInjector(new User(1L, "1", 1, 1));
 		System.err.println("--------- insertInjector --------- " + rlt);
+		
+		/**
+		 * ehcache 缓存测试
+		 */
+		User cacheUser = userMapper.selectOne(new User(1L, 1));
+		print(cacheUser);
+		cacheUser = userMapper.selectOne(new User(1L, 1));
+		print(cacheUser);
 
 		/**
 		 * 插入

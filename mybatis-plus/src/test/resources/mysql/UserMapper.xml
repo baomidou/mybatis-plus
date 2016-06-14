@@ -2,12 +2,16 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.baomidou.mybatisplus.test.mysql.UserMapper">
 
+	<!-- ehcache 缓存配置, 输出日志 http://www.mybatis.org/ehcache-cache/ -->
+	<cache type="org.mybatis.caches.ehcache.LoggingEhcache" />
+
 	<delete id="deleteAll">
 		DELETE FROM USER
 	</delete>
 
 	<!-- 建议字段，采用驼峰命名方法，不然很麻烦 -->
 	<select id="selectListRow" resultType="User">
-		select test_id AS id,name,age,test_type AS testType from user
+		select test_id AS
+		id,name,age,test_type AS testType from user
 	</select>
 </mapper>

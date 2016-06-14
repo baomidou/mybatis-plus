@@ -50,7 +50,7 @@ public class AutoSqlInjector {
 
 	private Configuration configuration;
 
-	private MapperBuilderAssistant assistant;
+	private MapperBuilderAssistant builderAssistant;
 	
 	private DBType dbType = DBType.MYSQL;
 	
@@ -66,10 +66,8 @@ public class AutoSqlInjector {
 	/**
 	 * 注入单点 crudSql
 	 */
-	public void inject(Class<?> mapperClass) {
-		assistant = new MapperBuilderAssistant(configuration, mapperClass.getName().replaceAll("\\.", "/"));
-		assistant.setCurrentNamespace(mapperClass.getName());
-
+	public void inject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
+		this.builderAssistant = builderAssistant;
 		Class<?> modelClass = extractModelClass(mapperClass);
 		TableInfo table = TableInfoHelper.getTableInfo(modelClass);
 
@@ -561,8 +559,13 @@ public class AutoSqlInjector {
 			System.err.println("{" + statementName + "} Has been loaded by XML or SqlProvider, ignoring the injection of the SQL.");
 			return null;
 		}
-		return assistant.addMappedStatement(id, sqlSource, StatementType.PREPARED, sqlCommandType, null, null, null,
-				parameterClass, null, resultType, null, false, true, false, keyGenerator, keyProperty, keyColumn,
+		/* 缓存逻辑处理 */
+		boolean isSelect = false;
+		if (sqlCommandType == SqlCommandType.SELECT) {
+			isSelect = true;
+		}
+		return builderAssistant.addMappedStatement(id, sqlSource, StatementType.PREPARED, sqlCommandType, null, null, null,
+				parameterClass, null, resultType, null, !isSelect, isSelect, false, keyGenerator, keyProperty, keyColumn,
 				configuration.getDatabaseId(), new MybatisXMLLanguageDriver(), null);
 	}
 

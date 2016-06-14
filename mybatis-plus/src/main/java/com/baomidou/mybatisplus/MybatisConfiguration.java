@@ -15,17 +15,12 @@
  */
 package com.baomidou.mybatisplus;
 
-import java.util.Set;
 import java.util.logging.Logger;
 
-import org.apache.ibatis.io.ResolverUtil;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSession;
 
-import com.baomidou.mybatisplus.mapper.AutoSqlInjector;
-import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.baomidou.mybatisplus.mapper.DBType;
 
 /**
@@ -60,10 +55,12 @@ public class MybatisConfiguration extends Configuration {
 	 * 2、加载sqlProvider中的SQL<br>
 	 * 3、xmlSql 与 sqlProvider不能包含相同的SQL<br>
 	 * <br>
-	 * 调整后的SQL优先级：xmlSql > sqlProvider > crudSql <br>
+	 * 调整后的SQL优先级：xmlSql > sqlProvider > curdSql <br>
 	 */
 	@Override
 	public void addMappedStatement(MappedStatement ms) {
+		logger.fine(" addMappedStatement: " + ms.getId());
+		System.out.println(ms.getId());
 		if (this.mappedStatements.containsKey(ms.getId())) {
 			/*
 			 * 说明已加载了xml中的节点； 忽略mapper中的SqlProvider数据
@@ -89,38 +86,4 @@ public class MybatisConfiguration extends Configuration {
 		return languageRegistry.getDriver(MybatisXMLLanguageDriver.class);
 	}
 
-	@Override
-	public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
-		return super.getMapper(type, sqlSession);
-	}
-
-	/**
-	 * 重新 addMapper 方法
-	 */
-	@Override
-	public <T> void addMapper(Class<T> type) {
-		super.addMapper(type);
-
-		if (!BaseMapper.class.isAssignableFrom(type)) {
-			return;
-		}
-
-		/* 自动注入 SQL */
-		new AutoSqlInjector(this, DB_TYPE).inject(type);
-	}
-
-	@Override
-	public void addMappers(String packageName) {
-		this.addMappers(packageName, Object.class);
-	}
-
-	@Override
-	public void addMappers(String packageName, Class<?> superType) {
-		ResolverUtil<Class<?>> resolverUtil = new ResolverUtil<Class<?>>();
-		resolverUtil.find(new ResolverUtil.IsA(superType), packageName);
-		Set<Class<? extends Class<?>>> mapperSet = resolverUtil.getClasses();
-		for (Class<?> mapperClass : mapperSet) {
-			this.addMapper(mapperClass);
-		}
-	}
 }
