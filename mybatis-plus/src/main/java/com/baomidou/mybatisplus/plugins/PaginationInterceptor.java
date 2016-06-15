@@ -117,7 +117,7 @@ public class PaginationInterceptor implements Interceptor {
 				Connection connection = (Connection) invocation.getArgs()[0];
 				Pagination page = (Pagination) rowBounds;
 				if (page.isSearchCount()) {
-					page = this.count(originalSql, connection, mappedStatement, boundSql, (Pagination) rowBounds);
+					page = this.count(originalSql, connection, mappedStatement, boundSql, page);
 				}
 				originalSql = dialect.buildPaginationSql(originalSql, page.getOffsetCurrent(), page.getSize());
 			}
