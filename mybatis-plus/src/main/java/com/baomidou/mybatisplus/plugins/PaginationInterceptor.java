@@ -115,7 +115,10 @@ public class PaginationInterceptor implements Interceptor {
 			if (rowBounds instanceof Pagination) {
 				MappedStatement mappedStatement = (MappedStatement) metaStatementHandler.getValue("delegate.mappedStatement");
 				Connection connection = (Connection) invocation.getArgs()[0];
-				Pagination page = this.count(originalSql, connection, mappedStatement, boundSql, (Pagination) rowBounds);
+				Pagination page = (Pagination) rowBounds;
+				if (page.isSearchCount()) {
+					page = this.count(originalSql, connection, mappedStatement, boundSql, (Pagination) rowBounds);
+				}
 				originalSql = dialect.buildPaginationSql(originalSql, page.getOffsetCurrent(), page.getSize());
 			}
 

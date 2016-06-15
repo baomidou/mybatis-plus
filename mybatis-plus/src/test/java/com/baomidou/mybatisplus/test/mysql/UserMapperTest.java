@@ -19,13 +19,13 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
 
@@ -218,7 +218,7 @@ public class UserMapperTest {
 
 		System.err.println("\n---------------xml---selectListRow 分页查询，不查询总数（此时可自定义 count 查询）----无查询条件--------------");
 		//TODO 查询总数传 Page 对象即可
-		List<User> rowList = userMapper.selectListRow(new RowBounds(0, 2));
+		List<User> rowList = userMapper.selectListRow(new Pagination(0, 2, false));
 		for ( int i = 0 ; i < rowList.size() ; i++ ) {
 			print(rowList.get(i));
 		}
