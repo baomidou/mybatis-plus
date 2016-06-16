@@ -56,7 +56,9 @@ import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 import com.baomidou.mybatisplus.MybatisConfiguration;
 import com.baomidou.mybatisplus.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.MybatisXMLMapperBuilder;
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.DBType;
+import com.baomidou.mybatisplus.toolkit.PackageHelper;
 
 /**
  * <p>
@@ -455,8 +457,17 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 		}
 
 		if (hasLength(this.typeAliasesPackage)) {
-			String[] typeAliasPackageArray = tokenizeToStringArray(this.typeAliasesPackage,
-					ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
+			//TODO
+			String[] typeAliasPackageArray = null;
+			if (typeAliasesPackage.contains("*")) {
+				typeAliasPackageArray = PackageHelper.convertTypeAliasesPackage(typeAliasesPackage);
+			} else {
+				typeAliasPackageArray = tokenizeToStringArray(this.typeAliasesPackage,
+						ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
+			}
+			if (typeAliasPackageArray == null) {
+				throw new MybatisPlusException("not find typeAliasesPackage:" + typeAliasesPackage);
+			}
 			for (String packageToScan : typeAliasPackageArray) {
 				configuration.getTypeAliasRegistry().registerAliases(packageToScan,
 						typeAliasesSuperType == null ? Object.class : typeAliasesSuperType);
