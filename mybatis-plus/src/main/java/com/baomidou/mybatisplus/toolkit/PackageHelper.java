@@ -54,7 +54,7 @@ public class PackageHelper {
 		ResourcePatternResolver resolver = (ResourcePatternResolver) new PathMatchingResourcePatternResolver();
 		MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory(resolver);
 		String pkg = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX
-				+ ClassUtils.convertClassNameToResourcePath(typeAliasesPackage) + "/**/*.class";
+				+ ClassUtils.convertClassNameToResourcePath(typeAliasesPackage) + "/*.class";
 
 		/*
 		 * 将加载多个绝对匹配的所有Resource
