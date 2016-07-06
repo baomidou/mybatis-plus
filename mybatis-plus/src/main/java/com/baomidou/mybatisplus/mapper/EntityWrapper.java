@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-
 /**
  * <p>
  * Entity 对象封装操作类
@@ -31,6 +29,11 @@ public class EntityWrapper<T> {
 	 * 数据库表映射实体类
 	 */
 	private T entity = null;
+	
+	/**
+	 * SQL 片段
+	 */
+	private String sqlSegment = null;
 
 	/**
 	 * <p>SQL 排序 ORDER BY 字段，例如： id DESC（根据id倒序查询）</p>
@@ -47,16 +50,23 @@ public class EntityWrapper<T> {
 
 
 	public EntityWrapper( T entity) {
-		this.setEntity(entity);
+		this.entity = entity;
 	}
-	
-	
+
+
 	public EntityWrapper( T entity, String orderByField ) {
-		this.setEntity(entity);
-		this.setOrderByField(orderByField);
+		this.entity = entity;
+		this.orderByField = orderByField;
+	}
+	
+	
+	public EntityWrapper( T entity, String sqlSegment, String orderByField ) {
+		this.entity = entity;
+		this.sqlSegment = sqlSegment;
+		this.orderByField = orderByField;
 	}
 
-
+	
 	public T getEntity() {
 		return entity;
 	}
@@ -67,29 +77,49 @@ public class EntityWrapper<T> {
 	}
 
 
-	public String getOrderByField() {
-		if ( this.orderByField != null ) {
-			StringBuffer ob = new StringBuffer(" ORDER BY ");
-			ob.append(this.orderByField);
-			return ob.toString();
+	public String getSqlSegment() {
+		if ( sqlSegment == null && orderByField == null ) {
+			return null;
 		}
-		return null;
+		StringBuffer andOrSql = new StringBuffer();
+		if ( sqlSegment != null ) {
+			andOrSql.append(sqlSegment);
+		}
+		if ( orderByField != null ) {
+			andOrSql.append(" ORDER BY ").append(orderByField);
+		}
+		return stripSqlInjection(andOrSql.toString());
+	}
+
+
+	public void setSqlSegment( String sqlSegment ) {
+		if ( sqlSegment != null && !"".equals(sqlSegment) ) {
+			this.sqlSegment = sqlSegment;
+		}
+	}
+
+
+	public String getOrderByField() {
+		return orderByField;
 	}
 
 
 	public void setOrderByField( String orderByField ) {
 		if ( orderByField != null && !"".equals(orderByField) ) {
-			/**
-			 * 判断是否存在 SQL 注入
-			 */
-			String ob = orderByField.toUpperCase();
-			if ( ob.contains("INSERT") || ob.contains("DELETE") 
-					|| ob.contains("UPDATE") || ob.contains("SELECT") ) {
-				throw new MybatisPlusException(" orderBy=[" + orderByField + "], There may be SQL injection");
-			} else {
-				this.orderByField = orderByField;
-			}
+			this.orderByField = orderByField;
 		}
+	}
+	
+	/**
+	 * <p>
+	 * SQL注入内容剥离
+	 * </p>
+	 * @param value
+	 * 				待处理内容
+	 * @return
+	 */
+	protected String stripSqlInjection(String value) {
+		return value.replaceAll("('.+--)|(--)|(\\|)|(%7C)", "");
 	}
 
 }

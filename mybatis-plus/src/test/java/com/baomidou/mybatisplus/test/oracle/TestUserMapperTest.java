@@ -40,7 +40,7 @@ public class TestUserMapperTest {
 
 	/**
 	 * 
-	 * RUN 测试
+	 * RUN 测试（ 更多查看 MySql 测试类 ）
 	 * 
 	 */
 	public static void main( String[] args ) {

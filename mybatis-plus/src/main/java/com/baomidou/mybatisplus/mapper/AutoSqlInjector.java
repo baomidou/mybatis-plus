@@ -442,7 +442,7 @@ public class AutoSqlInjector {
 			where.append("\n</if>");
 		}
 		where.append("\n</where>\n</if>");
-		where.append("\n<if test=\"ew.orderByField!=null\">\n${ew.orderByField}\n</if>");
+		where.append("\n<if test=\"ew.sqlSegment!=null\">\n${ew.sqlSegment}\n</if>");
 		where.append("\n</if>");
 		String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(table), table.getTableName(), where.toString());
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);

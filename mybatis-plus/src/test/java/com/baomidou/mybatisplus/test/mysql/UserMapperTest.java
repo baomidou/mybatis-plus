@@ -168,8 +168,8 @@ public class UserMapperTest {
 
 		List<User> userList = new ArrayList<User>();
 		userList.add(new User(11L, "updateBatchById-1", 1, 1));
-		userList.add(new User(12L, "updateBatchById-2", 2, 2));
-		userList.add(new User(13L, "updateBatchById-3", 3, 3));
+		userList.add(new User(12L, "updateBatchById-2", 2, 1));
+		userList.add(new User(13L, "updateBatchById-3", 3, 1));
 		rlt = userMapper.updateBatchById(userList);
 		System.err.println("------------------updateBatchById---------------------- result=" + rlt + "\n\n");
 		sleep();
@@ -209,6 +209,10 @@ public class UserMapperTest {
 		System.err.println("\n------------------list 分页查询 ----查询 testType = 1 的所有数据--id--DESC--排序--------");
 		Page<User> page = new Page<User>(1, 2);
 		EntityWrapper<User> ew = new EntityWrapper<User>(new User(1), "id DESC");
+		/**
+		 * 查询条件，支持 sql 片段
+		 */
+		ew.setSqlSegment(" AND name like '%dateBatch%'");
 		List<User> paginList = userMapper.selectPage(page, ew);
 		page.setRecords(paginList);
 		for ( int i = 0 ; i < page.getRecords().size() ; i++ ) {
