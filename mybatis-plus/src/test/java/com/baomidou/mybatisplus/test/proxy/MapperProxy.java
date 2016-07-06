@@ -63,8 +63,8 @@ public class MapperProxy<T> implements InvocationHandler {
 	 */
 	public Object execute( Method method, Object[] args ) {
 		if ( IUserMapper.class.isAssignableFrom(methodInterface) ) {
-			System.out.println("方法名:" + method.getName());
+			System.out.println("类名: " + methodInterface.getName() + " , 方法名: " + method.getName());
 		}
-		return new UserMapperImpl().selectById((Long)args[0]);
+		return new UserMapperImpl().selectById((Long) args[0]);
 	}
 }
