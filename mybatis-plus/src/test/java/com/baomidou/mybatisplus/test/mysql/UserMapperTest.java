@@ -76,12 +76,6 @@ public class UserMapperTest {
 		System.err.println("--------- insertInjector --------- " + rlt);
 
 		/**
-		 * $ 特殊字符测试
-		 */
-		rlt = userMapper.updateSelectiveById(new User(1L, "$"));
-		System.err.println("--------- $ 特殊字符测试 --------- " + rlt);
-
-		/**
 		 * ehcache 缓存测试
 		 */
 		User cacheUser = userMapper.selectOne(new User(1L, 1));

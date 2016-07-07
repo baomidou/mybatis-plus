@@ -25,5 +25,7 @@
     <plugin interceptor="com.baomidou.mybatisplus.plugins.PaginationInterceptor">
         <property name="dialectClazz" value="xxx.dialect.XXDialect" />
     </plugin>
+    <!-- SQL 执行性能分析，开发环境使用，线上不推荐 -->
+    <plugin interceptor="com.baomidou.mybatisplus.plugins.PerformanceInterceptor" />
 </plugins>
 ```
