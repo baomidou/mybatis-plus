@@ -208,11 +208,16 @@ public interface IService<T, I> {
 	 * 
 	 * @param entity
 	 * 				实体对象
+	 * @param sqlSegment
+	 * 				SQL 片段
 	 * @param orderByField
 	 * 				对应 EntityWrapper 类中 orderByField 字段
 	 * 				{@link EntityWrapper}
 	 * @return
 	 */
+	List<T> selectList( T entity, String sqlSegment, String orderByField );
+
+
 	List<T> selectList( T entity, String orderByField );
 
 
@@ -228,11 +233,16 @@ public interface IService<T, I> {
 	 * 				翻页对象
 	 * @param entity
 	 * 				实体对象
+	 * @param sqlSegment
+	 * 				SQL 片段
 	 * @param orderByField
 	 * 				对应 EntityWrapper 类中 orderByField 字段
 	 * 				{@link EntityWrapper}
 	 * @return
 	 */
+	Page<T> selectPage( Page<T> page, T entity, String sqlSegment, String orderByField );
+
+
 	Page<T> selectPage( Page<T> page, T entity, String orderByField );
 
 

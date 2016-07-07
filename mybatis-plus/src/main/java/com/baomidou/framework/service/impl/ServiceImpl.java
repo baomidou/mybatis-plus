@@ -125,6 +125,11 @@ public class ServiceImpl<M extends BaseMapper<T, I>, T, I> implements IService<T
 	}
 
 
+	public List<T> selectList( T entity, String sqlSegment, String orderByField ) {
+		return baseMapper.selectList(new EntityWrapper<T>(entity, sqlSegment, orderByField));		
+	}
+
+
 	public List<T> selectList( T entity, String orderByField ) {
 		return baseMapper.selectList(new EntityWrapper<T>(entity, orderByField));
 	}
@@ -132,6 +137,12 @@ public class ServiceImpl<M extends BaseMapper<T, I>, T, I> implements IService<T
 
 	public List<T> selectList( T entity ) {
 		return baseMapper.selectList(new EntityWrapper<T>(entity, null));
+	}
+
+
+	public Page<T> selectPage( Page<T> page, T entity, String sqlSegment, String orderByField ) {
+		page.setRecords(baseMapper.selectPage(page, new EntityWrapper<T>(entity, sqlSegment, orderByField)));
+		return page;
 	}
 
 

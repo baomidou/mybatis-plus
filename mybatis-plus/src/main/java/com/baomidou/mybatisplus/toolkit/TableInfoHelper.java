@@ -114,10 +114,8 @@ public class TableInfoHelper {
 			char c = param.charAt(i);
 			if (Character.isUpperCase(c) && i > 0) {
 				sb.append("_");
-				sb.append(Character.toUpperCase(c));
-			} else {
-				sb.append(Character.toUpperCase(c));
 			}
+			sb.append(Character.toUpperCase(c));
 		}
 		return sb.toString();
 	}
