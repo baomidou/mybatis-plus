@@ -27,6 +27,8 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -45,6 +47,11 @@ import java.util.Properties;
 		@Signature(type = Executor.class, method = "update", args = { MappedStatement.class, Object.class }) })
 public class PerformanceInterceptor implements Interceptor {
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	
+	/**
+	 * SQL 执行最大时长，超过自动停止运行，有助于发现问题。
+	 */
+	private long maxTime = 0;
 
 	public Object intercept(Invocation invocation) throws Throwable {
 		MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
@@ -62,7 +69,10 @@ public class PerformanceInterceptor implements Interceptor {
 		Object result = invocation.proceed();
 		long end = System.currentTimeMillis();
 		long timing = end - start;
-		System.err.println("耗时：" + timing + " ms" + " - ID：" + statementId + "\n执行 SQL：" + sql);
+		System.err.println(" Time：" + timing + " ms" + " - ID：" + statementId + "\n Execute SQL：" + sql);
+		if (maxTime >= 1 && timing > maxTime) {
+			throw new MybatisPlusException(" The SQL execution time is too large, please optimize ! ");
+		}
 		return result;
 	}
 
@@ -119,4 +129,13 @@ public class PerformanceInterceptor implements Interceptor {
 		}
 		return sql.replaceFirst("\\?", result);
 	}
+
+	public long getMaxTime() {
+		return maxTime;
+	}
+
+	public void setMaxTime(long maxTime) {
+		this.maxTime = maxTime;
+	}
+	
 }
