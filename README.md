@@ -28,11 +28,11 @@ Maven 坐标
 
 功能
 ===========
-1、单表 CURD （简单 + 批量）操作，自动完成。
+1、单表 CURD （简单 + 批量）操作，自动完成（支持 like 比较等查询）。
 
 2、分页插件，Count 查询 自动 或 自定义 SQL 查询。
 
-3、Spring 根据不同环境加载不同配置支持。
+3、Spring 根据不同环境加载不同配置支持（支持 typeAliasesPackage 通配符扫描）。
 
 ![项目结构说明](http://git.oschina.net/uploads/images/2016/0427/104817_6ebcc3eb_12260.png "项目结构说明")
 
