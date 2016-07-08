@@ -17,7 +17,9 @@ package com.baomidou.mybatisplus.test.mysql;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -105,6 +107,7 @@ public class UserMapperTest {
 		ul.add(new User(15L, "5", 5, 1));
 		ul.add(new User(16L, "6", 6, 0));
 		ul.add(new User(17L, "7", 7, 0));
+		ul.add(new User(18L, "deleteByMap", 7, 0));
 		
 		/* 使用 ID_WORKER 自动生成 ID */
 		ul.add(new User("8", 8, 1));
@@ -118,6 +121,12 @@ public class UserMapperTest {
 		 */
 		rlt = userMapper.deleteById(id);
 		System.err.println("---------deleteById------- delete id=" + id + " ,result=" + rlt + "\n\n");
+		sleep();
+
+		Map<String, Object> columnMap = new HashMap<String, Object>();
+		columnMap.put("name", "deleteByMap");
+		rlt = userMapper.deleteByMap(columnMap);
+		System.err.println("---------deleteByMap------- result=" + rlt + "\n\n");
 		sleep();
 
 		List<Long> il = new ArrayList<Long>();
@@ -181,7 +190,15 @@ public class UserMapperTest {
 		List<Long> idList = new ArrayList<Long>();
 		idList.add(11L);
 		idList.add(12L);
-		List<User> ul1 = userMapper.selectBatchIds(idList);
+		List<User> ul0 = userMapper.selectBatchIds(idList);
+		for ( int i = 0 ; i < ul0.size() ; i++ ) {
+			print(ul0.get(i));
+		}
+		
+		System.err.println("\n------------------selectByMap-----满足 map 条件的数据----");
+		Map<String, Object> cm = new HashMap<String, Object>();
+		cm.put("test_type", 1);
+		List<User> ul1 = userMapper.selectByMap(cm);
 		for ( int i = 0 ; i < ul1.size() ; i++ ) {
 			print(ul1.get(i));
 		}

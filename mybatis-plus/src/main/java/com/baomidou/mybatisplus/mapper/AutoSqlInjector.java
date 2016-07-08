@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.mapper;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
@@ -82,6 +83,7 @@ public class AutoSqlInjector {
 
 			/* 删除 */
 			this.injectDeleteSelectiveSql(mapperClass, modelClass, table);
+			this.injectDeleteByMapSql(mapperClass, table);
 			this.injectDeleteSql(false, mapperClass, modelClass, table);
 			this.injectDeleteSql(true, mapperClass, modelClass, table);
 
@@ -95,6 +97,7 @@ public class AutoSqlInjector {
 			/* 查询 */
 			this.injectSelectSql(false, mapperClass, modelClass, table);
 			this.injectSelectSql(true, mapperClass, modelClass, table);
+			this.injectSelectByMapSql(mapperClass, modelClass, table);
 			this.injectSelectOneSql(mapperClass, modelClass, table);
 			this.injectSelectCountSql(mapperClass, modelClass, table);
 			this.injectSelectListSql(SqlMethod.SELECT_LIST, mapperClass, modelClass, table);
@@ -229,7 +232,7 @@ public class AutoSqlInjector {
 
 	/**
 	 * <p>
-	 * 注入条件删除 SQL 语句
+	 * 注入 entity 条件删除 SQL 语句
 	 * </p>
 	 * 
 	 * @param mapperClass
@@ -240,6 +243,22 @@ public class AutoSqlInjector {
 		SqlMethod sqlMethod = SqlMethod.DELETE_SELECTIVE;
 		String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlWhere(table, false));
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+		this.addMappedStatement(mapperClass, sqlMethod, sqlSource, SqlCommandType.DELETE, Integer.class);
+	}
+	
+	/**
+	 * <p>
+	 * 注入 map 条件删除 SQL 语句
+	 * </p>
+	 * 
+	 * @param mapperClass
+	 * @param modelClass
+	 * @param table
+	 */
+	private void injectDeleteByMapSql(Class<?> mapperClass, TableInfo table) {
+		SqlMethod sqlMethod = SqlMethod.DELETE_BY_MAP;
+		String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlWhereByMap());
+		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Map.class);
 		this.addMappedStatement(mapperClass, sqlMethod, sqlSource, SqlCommandType.DELETE, Integer.class);
 	}
 
@@ -293,7 +312,8 @@ public class AutoSqlInjector {
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
 		this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
 	}
-	
+
+
 	/**
 	 * <p>
 	 * 注入批量更新 SQL 语句
@@ -382,6 +402,22 @@ public class AutoSqlInjector {
 			sqlSource = new RawSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table),
 					table.getTableName(), table.getKeyColumn(), table.getKeyProperty()), Object.class);
 		}
+		this.addMappedStatement(mapperClass, sqlMethod, sqlSource, SqlCommandType.SELECT, modelClass);
+	}
+	
+	/**
+	 * <p>
+	 * 注入 map 查询 SQL 语句
+	 * </p>
+	 * 
+	 * @param mapperClass
+	 * @param modelClass
+	 * @param table
+	 */
+	private void injectSelectByMapSql(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
+		SqlMethod sqlMethod = SqlMethod.SELECT_BY_MAP;
+		String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(table), table.getTableName(), sqlWhereByMap());
+		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Map.class);
 		this.addMappedStatement(mapperClass, sqlMethod, sqlSource, SqlCommandType.SELECT, modelClass);
 	}
 
@@ -530,6 +566,19 @@ public class AutoSqlInjector {
 		if ( space ) {
 			where.append("\n</if>");
 		}
+		return where.toString();
+	}
+	
+	/**
+	 * <p>
+	 * SQL map 查询条件
+	 * </p>
+	 */
+	private String sqlWhereByMap() {
+		StringBuilder where = new StringBuilder();
+		where.append("\n<foreach collection=\"cm.keys\" item=\"k\" separator=\"AND\"> ");
+		where.append("\n<if test=\"cm[k]!=null\">").append("${k}=#{cm[${k}]}").append("</if>");
+		where.append("\n</foreach>"); 
 		return where.toString();
 	}
 

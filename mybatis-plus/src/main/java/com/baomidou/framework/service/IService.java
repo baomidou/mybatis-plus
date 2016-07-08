@@ -16,8 +16,7 @@
 package com.baomidou.framework.service;
 
 import java.util.List;
-
-import org.apache.ibatis.annotations.Param;
+import java.util.Map;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
@@ -75,6 +74,17 @@ public interface IService<T, I> {
 	 * @return boolean
 	 */
 	boolean deleteById( I id );
+
+
+	/**
+	 * <p>
+	 * 根据 columnMap 条件，删除记录
+	 * </p>
+	 * @param columnMap
+	 * 				表字段 map 对象
+	 * @return boolean
+	 */
+	boolean deleteByMap( Map<String, Object> columnMap);
 
 
 	/**
@@ -181,6 +191,17 @@ public interface IService<T, I> {
 
 	/**
 	 * <p>
+	 * 查询（根据 columnMap 条件）
+	 * </p>
+	 * @param columnMap
+	 * 				表字段 map 对象
+	 * @return List<T>
+	 */
+	List<T> selectByMap( Map<String, Object> columnMap);
+
+
+	/**
+	 * <p>
 	 * 根据 entity 条件，查询一条记录
 	 * </p>
 	 * @param entity
@@ -198,7 +219,7 @@ public interface IService<T, I> {
 	 * 				实体对象
 	 * @return int
 	 */
-	int selectCount( @Param("ew" ) T entity);
+	int selectCount( T entity);
 
 
 	/**

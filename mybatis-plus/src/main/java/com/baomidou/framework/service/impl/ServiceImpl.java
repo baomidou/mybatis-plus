@@ -16,6 +16,7 @@
 package com.baomidou.framework.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -70,6 +71,11 @@ public class ServiceImpl<M extends BaseMapper<T, I>, T, I> implements IService<T
 	}
 
 
+	public boolean deleteByMap( Map<String, Object> columnMap) {
+		return retBool(baseMapper.deleteByMap(columnMap));
+	}
+
+
 	public boolean deleteSelective( T entity ) {
 		return retBool(baseMapper.deleteSelective(entity));
 	}
@@ -112,6 +118,11 @@ public class ServiceImpl<M extends BaseMapper<T, I>, T, I> implements IService<T
 
 	public List<T> selectBatchIds( List<I> idList ) {
 		return baseMapper.selectBatchIds(idList);
+	}
+
+
+	public List<T> selectByMap( Map<String, Object> columnMap) {
+		return baseMapper.selectByMap(columnMap);
 	}
 
 
