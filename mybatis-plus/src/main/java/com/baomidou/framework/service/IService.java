@@ -221,6 +221,9 @@ public interface IService<T, I> {
 	List<T> selectList( T entity, String orderByField );
 
 
+	List<T> selectList( String sqlSegment, String orderByField );
+
+
 	List<T> selectList( T entity );
 
 
@@ -244,6 +247,9 @@ public interface IService<T, I> {
 
 
 	Page<T> selectPage( Page<T> page, T entity, String orderByField );
+
+
+	Page<T> selectPage( Page<T> page, String sqlSegment, String orderByField );
 
 
 	Page<T> selectPage( Page<T> page, T entity );
