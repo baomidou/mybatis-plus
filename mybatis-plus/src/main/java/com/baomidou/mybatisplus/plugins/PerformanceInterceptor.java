@@ -43,11 +43,13 @@ import java.util.Properties;
  * @author hubin
  * @Date 2016-07-07
  */
-@Intercepts({@Signature(type = Executor.class, method = "query", args = { MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class }),
+@Intercepts({
+		@Signature(type = Executor.class, method = "query", args = { MappedStatement.class, Object.class,
+				RowBounds.class, ResultHandler.class }),
 		@Signature(type = Executor.class, method = "update", args = { MappedStatement.class, Object.class }) })
 public class PerformanceInterceptor implements Interceptor {
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	
+
 	/**
 	 * SQL 执行最大时长，超过自动停止运行，有助于发现问题。
 	 */
@@ -84,7 +86,7 @@ public class PerformanceInterceptor implements Interceptor {
 	}
 
 	public void setProperties(Properties prop) {
-		//TODO
+		// TODO
 	}
 
 	private String getSql(BoundSql boundSql, Object parameterObject, Configuration configuration) {
@@ -120,7 +122,7 @@ public class PerformanceInterceptor implements Interceptor {
 			if (propertyValue instanceof String) {
 				result = "'" + propertyValue + "'";
 			} else if (propertyValue instanceof Date) {
-				result = "'" + DATE_FORMAT.format(propertyValue) + "'";
+				result = "'" + dateToString(propertyValue) + "'";
 			} else {
 				result = propertyValue.toString();
 			}
@@ -130,6 +132,10 @@ public class PerformanceInterceptor implements Interceptor {
 		return sql.replaceFirst("\\?", result);
 	}
 
+	public static synchronized String dateToString(Object obj) {
+		return DATE_FORMAT.format(obj);
+	}
+
 	public long getMaxTime() {
 		return maxTime;
 	}
@@ -137,5 +143,5 @@ public class PerformanceInterceptor implements Interceptor {
 	public void setMaxTime(long maxTime) {
 		this.maxTime = maxTime;
 	}
-	
+
 }
