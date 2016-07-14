@@ -51,7 +51,7 @@ public class AutoGeneratorUser extends ConfigGeneratorTest {
 		 * IdType.AUTO 			数据库ID自增
 		 * IdType.INPUT			用户输入ID
 		 * IdType.ID_WORKER		全局唯一ID，内容为空自动填充（默认配置）
-		 * IdType.UUID			全局唯一ID，内容为空自动填充（默认配置）
+		 * IdType.UUID			全局唯一ID，内容为空自动填充
 		 * </p>
 		 */
 		cg.setIdType(IdType.AUTO);
