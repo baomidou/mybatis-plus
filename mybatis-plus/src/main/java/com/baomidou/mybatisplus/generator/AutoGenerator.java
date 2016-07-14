@@ -390,7 +390,7 @@ public class AutoGenerator {
     private String oracleProcessType(String type) {
         if (type.contains("CHAR")) {
             return "String";
-        } else if (type.contains("DATE")) {
+        } else if (type.contains("DATE") || type.contains("TIMESTAMP")) {
             return "Date";
         } else if (type.contains("NUMBER")) {
             return "Double";
