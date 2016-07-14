@@ -15,12 +15,21 @@
  */
 package com.baomidou.mybatisplus.plugins;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
+
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.mapping.ParameterMode;
-import org.apache.ibatis.plugin.*;
+import org.apache.ibatis.plugin.Interceptor;
+import org.apache.ibatis.plugin.Intercepts;
+import org.apache.ibatis.plugin.Invocation;
+import org.apache.ibatis.plugin.Plugin;
+import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
@@ -28,12 +37,6 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
 
 /**
  * <p>
@@ -48,7 +51,6 @@ import java.util.Properties;
 				RowBounds.class, ResultHandler.class }),
 		@Signature(type = Executor.class, method = "update", args = { MappedStatement.class, Object.class }) })
 public class PerformanceInterceptor implements Interceptor {
-	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	/**
 	 * SQL 执行最大时长，超过自动停止运行，有助于发现问题。
@@ -132,8 +134,8 @@ public class PerformanceInterceptor implements Interceptor {
 		return sql.replaceFirst("\\?", result);
 	}
 
-	public static synchronized String dateToString(Object obj) {
-		return DATE_FORMAT.format(obj);
+	private synchronized String dateToString(Object obj) {
+		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(obj);
 	}
 
 	public long getMaxTime() {
