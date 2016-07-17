@@ -242,10 +242,13 @@ public interface IService<T, I> {
 	List<T> selectList( T entity, String orderByField );
 
 
-	List<T> selectList( String sqlSegment, String orderByField );
-
-
 	List<T> selectList( T entity );
+	
+	
+	List<T> selectListSqlSegment( String sqlSegment );
+
+
+	List<T> selectListSqlSegment( String sqlSegment, String orderByField );
 
 
 	/**
@@ -270,9 +273,12 @@ public interface IService<T, I> {
 	Page<T> selectPage( Page<T> page, T entity, String orderByField );
 
 
-	Page<T> selectPage( Page<T> page, String sqlSegment, String orderByField );
-
-
 	Page<T> selectPage( Page<T> page, T entity );
+
+
+	Page<T> selectPageSqlSegment( Page<T> page, String sqlSegment );
+
+
+	Page<T> selectPageSqlSegment( Page<T> page, String sqlSegment, String orderByField );
 
 }

@@ -144,15 +144,20 @@ public class ServiceImpl<M extends BaseMapper<T, I>, T, I> implements IService<T
 	public List<T> selectList( T entity, String orderByField ) {
 		return baseMapper.selectList(new EntityWrapper<T>(entity, orderByField));
 	}
-	
-	
-	public List<T> selectList( String sqlSegment, String orderByField ) {
-		return baseMapper.selectList(new EntityWrapper<T>(null, sqlSegment, orderByField));
-	}
 
 
 	public List<T> selectList( T entity ) {
 		return baseMapper.selectList(new EntityWrapper<T>(entity, null));
+	}
+	
+	
+	public List<T> selectListSqlSegment( String sqlSegment ) {
+		return baseMapper.selectList(new EntityWrapper<T>(null, sqlSegment, null));
+	}
+	
+	
+	public List<T> selectListSqlSegment( String sqlSegment, String orderByField ) {
+		return baseMapper.selectList(new EntityWrapper<T>(null, sqlSegment, orderByField));
 	}
 
 
@@ -166,16 +171,22 @@ public class ServiceImpl<M extends BaseMapper<T, I>, T, I> implements IService<T
 		page.setRecords(baseMapper.selectPage(page, new EntityWrapper<T>(entity, orderByField)));
 		return page;
 	}
-	
-	
-	public Page<T> selectPage( Page<T> page, String sqlSegment, String orderByField ) {
-		page.setRecords(baseMapper.selectPage(page, new EntityWrapper<T>(null, sqlSegment, orderByField)));
-		return page;
-	}
 
 
 	public Page<T> selectPage( Page<T> page, T entity ) {
 		page.setRecords(baseMapper.selectPage(page, new EntityWrapper<T>(entity, null)));
+		return page;
+	}
+	
+	
+	public Page<T> selectPageSqlSegment( Page<T> page, String sqlSegment ) {
+		page.setRecords(baseMapper.selectPage(page, new EntityWrapper<T>(null, sqlSegment, null)));
+		return page;
+	}
+	
+	
+	public Page<T> selectPageSqlSegment( Page<T> page, String sqlSegment, String orderByField ) {
+		page.setRecords(baseMapper.selectPage(page, new EntityWrapper<T>(null, sqlSegment, orderByField)));
 		return page;
 	}
 
