@@ -18,7 +18,6 @@ package com.baomidou.mybatisplus;
 import java.util.logging.Logger;
 
 import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 
 import com.baomidou.mybatisplus.mapper.DBType;
@@ -77,12 +76,6 @@ public class MybatisConfiguration extends Configuration {
 			driver = MybatisXMLLanguageDriver.class;
 		}
 		super.setDefaultScriptingLanguage(driver);
-	}
-
-	@Override
-	public LanguageDriver getDefaultScriptingLanuageInstance() {
-		/* 设置自定义 driver */
-		return languageRegistry.getDriver(MybatisXMLLanguageDriver.class);
 	}
 
 }
