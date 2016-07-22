@@ -73,16 +73,21 @@ public class TableInfoHelper {
 			/* 主键ID */
 			TableId tableId = field.getAnnotation(TableId.class);
 			if (tableId != null) {
-				tableInfo.setIdType(tableId.type());
-				if(tableId.value() != null && !"".equals(tableId.value())) {
-					/* 自定义字段 */
-					tableInfo.setKeyColumn(tableId.value());
-					tableInfo.setKeyRelated(true);
+				if (tableInfo.getKeyColumn() == null) {
+					tableInfo.setIdType(tableId.type());
+					if(tableId.value() != null && !"".equals(tableId.value())) {
+						/* 自定义字段 */
+						tableInfo.setKeyColumn(tableId.value());
+						tableInfo.setKeyRelated(true);
+					} else {
+						tableInfo.setKeyColumn(field.getName());
+					}
+					tableInfo.setKeyProperty(field.getName());
+					continue;
 				} else {
-					tableInfo.setKeyColumn(field.getName());
+					/* 发现设置多个主键注解抛出异常 */
+					throw new MybatisPlusException("There must be only one, Discover multiple @TableId annotation in " + clazz);
 				}
-				tableInfo.setKeyProperty(field.getName());
-				continue;
 			}
 
 			/* 获取注解属性，自定义字段 */
