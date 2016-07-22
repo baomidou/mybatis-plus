@@ -12,7 +12,7 @@ import com.baomidou.mybatisplus.annotations.TableName;
  * 用户表
  *
  */
-@TableName(value = "TEST_USER")
+@TableName("TEST_USER")
 public class TestUser implements Serializable {
 
 	@TableField(exist = false)

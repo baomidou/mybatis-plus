@@ -31,7 +31,7 @@ import com.baomidou.mybatisplus.annotations.TableName;
  * @Date 2016-01-23
  */
 /* 表名 注解 */
-@TableName(value = "user")
+@TableName("user")
 public class User implements Serializable {
 
 	/* 表字段注解，false 表中不存在的字段，可无该注解 默认 true */

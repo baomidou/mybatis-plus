@@ -196,6 +196,8 @@ public class AutoGenerator {
                 List<String> columns = new ArrayList<String>();
                 List<String> types = new ArrayList<String>();
                 List<String> comments = new ArrayList<String>();
+                /* ID 是否存在,不考虑联合主键设置 */
+                boolean idExist = false;
                 Map<String, IdInfo> idMap = new HashMap<String, IdInfo>();
                 String tableFieldsSql = String.format(config.getConfigDataSource().getTableFieldsSql(), table);
                 ResultSet results = conn.prepareStatement(tableFieldsSql).executeQuery();
@@ -204,7 +206,7 @@ public class AutoGenerator {
                     columns.add(field);
                     types.add(results.getString(config.getConfigDataSource().getFieldType()));
                     comments.add(results.getString(config.getConfigDataSource().getFieldComment()));
-                    if (!isOracle) {
+					if (!isOracle && !idExist) {
                         /* MYSQL 主键ID 处理方式 */
                         String key = results.getString(config.getConfigDataSource().getFieldKey());
                         if ("PRI".equals(key)) {
@@ -212,6 +214,7 @@ public class AutoGenerator {
                             if ("auto_increment".equals(results.getString("EXTRA"))) {
                                 autoIncrement = true;
                             }
+                            idExist = true;
                             idMap.put(field, new IdInfo(field, autoIncrement));
                         }
                     }
@@ -220,8 +223,9 @@ public class AutoGenerator {
                     /* ORACLE 主键ID 处理方式 */
                     String idSql = String.format("SELECT A.COLUMN_NAME FROM USER_CONS_COLUMNS A, USER_CONSTRAINTS B WHERE A.CONSTRAINT_NAME = B.CONSTRAINT_NAME AND B.CONSTRAINT_TYPE = 'P' AND A.TABLE_NAME = '%s'", table);
                     ResultSet rs = conn.prepareStatement(idSql).executeQuery();
-                    while (rs.next()) {
+                    while (rs.next() && !idExist) {
                         String field = rs.getString(config.getConfigDataSource().getFieldKey());
+                        idExist = true;
                         idMap.put(field, new IdInfo(field, false));
                     }
                 }
@@ -516,8 +520,11 @@ public class AutoGenerator {
         bw.newLine();
         bw = buildClassComment(bw, tableComment);
         bw.newLine();
-        bw.write("@TableName(value = \"" + table + "\")");
-        bw.newLine();
+        /* 包含下划线注解 */
+		if (table.contains("_")) {
+        	bw.write("@TableName(\"" + table + "\")");
+        	bw.newLine();
+        }
         bw.write("public class " + beanName + " implements Serializable {");
         bw.newLine();
         bw.newLine();
