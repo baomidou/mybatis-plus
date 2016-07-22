@@ -411,7 +411,6 @@ public class AutoGenerator {
      * @return
      */
     private boolean isDate(List<String> types) {
-//        int size = types.size();
         for (String type : types) {
             if (type.contains("date") || type.contains("timestamp")) {
                 return true;
