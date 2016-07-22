@@ -32,17 +32,18 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface TableId {
 
-	/**
+	/*
+	 * <p>
 	 * 字段值（驼峰命名方式，该值可无）
+	 * </p>
 	 */
 	String value() default "";
 
-	/**
-	 * 
+	/*
+	 * <p>
 	 * 主键ID，默认 ID 自增
-	 * 
+	 * </p>
 	 * {@link IdType}
-	 * 
 	 */
 	IdType type() default IdType.ID_WORKER;
 }

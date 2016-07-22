@@ -32,7 +32,11 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface TableName {
 
-	/** 表名 **/
-	String value() default "";
+	/*
+	 * <p>
+	 * 实体对应的表名【必须】
+	 * </p>
+	 */
+	String value();
 
 }
