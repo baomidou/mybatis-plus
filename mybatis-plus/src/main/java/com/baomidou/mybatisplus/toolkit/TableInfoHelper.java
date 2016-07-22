@@ -26,6 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 
 /**
  * <p>
@@ -97,6 +98,12 @@ public class TableInfoHelper {
 
 		/* 字段列表 */
 		tableInfo.setFieldList(fieldList);
+
+		/* 未发现主键注解抛出异常 */
+		if (tableInfo.getKeyColumn() == null) {
+			throw new MybatisPlusException("Not found @TableId annotation in " + clazz);
+		}
+
 		tableInfoCache.put(clazz.getName(), tableInfo);
 		return tableInfo;
 	}
