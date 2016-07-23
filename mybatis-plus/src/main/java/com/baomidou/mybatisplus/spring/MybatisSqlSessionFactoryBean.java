@@ -121,6 +121,11 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 	public void setDbType(String dbType) {
 		MybatisConfiguration.DB_TYPE = DBType.getDBType(dbType);
 	}
+	
+	//TODO 注入表字段使用下划线命名
+	public void setDbColumnUnderline(boolean dbColumnUnderline) {
+		MybatisConfiguration.DB_COLUMN_UNDERLINE = dbColumnUnderline;
+	}
 
 	/**
 	 * Sets the ObjectFactory.

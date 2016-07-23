@@ -34,10 +34,15 @@ public class MybatisConfiguration extends Configuration {
 
 	protected final Logger logger = Logger.getLogger("MybatisConfiguration");
 	
-	/**
+	/*
 	 * 数据库类型（默认 MySql）
 	 */
 	public static DBType DB_TYPE = DBType.MYSQL;
+	
+	/*
+	 * 数据库字段使用下划线命名（默认 false）
+	 */
+	public static boolean DB_COLUMN_UNDERLINE = false;
 
 	/**
 	 * 初始化调用

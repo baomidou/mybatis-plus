@@ -52,13 +52,13 @@ public class ConfigGenerator {
 
 	private String mapperPackage;
 
-    private String xmlPackage;
+	private String xmlPackage;
 
-    private String servicePackage;
+	private String servicePackage;
 
-    private String serviceImplPackage;
+	private String serviceImplPackage;
 
-    private String superServiceImpl;
+	private String superServiceImpl;
 
 	/*
 	 * 指定生成表名
@@ -68,10 +68,15 @@ public class ConfigGenerator {
 	/*
 	 * 是否覆盖当前路径下已有文件（默认 true）
 	 */
-    private boolean fileOverride = true;
+	private boolean fileOverride = true;
 
-    /* db_config */
-    private boolean dbPrefix = false;
+	/* db_config */
+	private boolean dbPrefix = false;
+
+	/*
+	 * 数据库字段使用下划线命名（默认 false）
+	 */
+	private boolean dbColumnUnderline = false;
 
 	private String dbDriverName;
 
@@ -87,55 +92,41 @@ public class ConfigGenerator {
 
 	private ConfigIdType configIdType = ConfigIdType.LONG;
 
-	/*
-	 * 数据库字段是否为驼峰命名（默认 true）
-	 */
-	private boolean isColumnHump = true;
-
-
 	public String getSaveDir() {
 		return saveDir;
 	}
 
-
-	public void setSaveDir( String saveDir ) {
+	public void setSaveDir(String saveDir) {
 		this.saveDir = saveDir;
 	}
-
 
 	public String getEntityPackage() {
 		return entityPackage;
 	}
 
-
-	public void setEntityPackage( String entityPackage ) {
+	public void setEntityPackage(String entityPackage) {
 		this.entityPackage = entityPackage;
 	}
-
 
 	public String getMapperPackage() {
 		return mapperPackage;
 	}
 
-
-	public void setMapperPackage( String mapperPackage ) {
+	public void setMapperPackage(String mapperPackage) {
 		this.mapperPackage = mapperPackage;
 	}
-
 
 	public String getServicePackage() {
 		return servicePackage;
 	}
 
-
-	public void setServicePackage( String servicePackage ) {
+	public void setServicePackage(String servicePackage) {
 		this.servicePackage = servicePackage;
 	}
 
-
 	public String getSuperServiceImpl() {
-		if ( superServiceImpl == null || "".equals(superServiceImpl) ) {
-			if ( this.getConfigIdType() == ConfigIdType.STRING ) {
+		if (superServiceImpl == null || "".equals(superServiceImpl)) {
+			if (this.getConfigIdType() == ConfigIdType.STRING) {
 				return "com.baomidou.framework.service.impl.CommonServiceImpl";
 			} else {
 				return "com.baomidou.framework.service.impl.SuperServiceImpl";
@@ -144,136 +135,117 @@ public class ConfigGenerator {
 		return superServiceImpl;
 	}
 
-
-	public void setSuperServiceImpl( String superServiceImpl ) {
+	public void setSuperServiceImpl(String superServiceImpl) {
 		this.superServiceImpl = superServiceImpl;
 	}
-
 
 	public boolean isDbPrefix() {
 		return dbPrefix;
 	}
 
-
-	public void setDbPrefix( boolean dbPrefix ) {
+	public void setDbPrefix(boolean dbPrefix) {
 		this.dbPrefix = dbPrefix;
 	}
 
+	public boolean isDbColumnUnderline() {
+		return dbColumnUnderline;
+	}
+
+	public void setDbColumnUnderline(boolean dbColumnUnderline) {
+		this.dbColumnUnderline = dbColumnUnderline;
+	}
 
 	public String getDbDriverName() {
 		return dbDriverName;
 	}
 
-
-	public void setDbDriverName( String dbDriverName ) {
+	public void setDbDriverName(String dbDriverName) {
 		this.dbDriverName = dbDriverName;
 	}
-
 
 	public String getDbUser() {
 		return dbUser;
 	}
 
-
-	public void setDbUser( String dbUser ) {
+	public void setDbUser(String dbUser) {
 		this.dbUser = dbUser;
 	}
-
 
 	public String getDbPassword() {
 		return dbPassword;
 	}
 
-
-	public void setDbPassword( String dbPassword ) {
+	public void setDbPassword(String dbPassword) {
 		this.dbPassword = dbPassword;
 	}
-
 
 	public String getDbUrl() {
 		return dbUrl;
 	}
 
-
-	public void setDbUrl( String dbUrl ) {
+	public void setDbUrl(String dbUrl) {
 		this.dbUrl = dbUrl;
 	}
-
 
 	public IdType getIdType() {
 		return idType;
 	}
 
-
-	public void setIdType( IdType idType ) {
+	public void setIdType(IdType idType) {
 		this.idType = idType;
 	}
-
-
-	public boolean isColumnHump() {
-		return isColumnHump;
-	}
-
-
-	public void setColumnHump( boolean isColumnHump ) {
-		this.isColumnHump = isColumnHump;
-	}
-
 
 	public ConfigDataSource getConfigDataSource() {
 		return configDataSource;
 	}
 
-
-	public void setConfigDataSource( ConfigDataSource configDataSource ) {
+	public void setConfigDataSource(ConfigDataSource configDataSource) {
 		this.configDataSource = configDataSource;
 	}
-
 
 	public ConfigIdType getConfigIdType() {
 		return configIdType;
 	}
 
-
-	public void setConfigIdType( ConfigIdType configIdType ) {
+	public void setConfigIdType(ConfigIdType configIdType) {
 		this.configIdType = configIdType;
 	}
 
-    public String getXmlPackage() {
-        if (null == xmlPackage || "".equals(xmlPackage)) {
-            xmlPackage = mapperPackage + ".xml";
-        }
-        return xmlPackage;
-    }
+	public String getXmlPackage() {
+		if (null == xmlPackage || "".equals(xmlPackage)) {
+			xmlPackage = mapperPackage + ".xml";
+		}
+		return xmlPackage;
+	}
 
-    public void setXmlPackage(String xmlPackage) {
-        this.xmlPackage = xmlPackage;
-    }
+	public void setXmlPackage(String xmlPackage) {
+		this.xmlPackage = xmlPackage;
+	}
 
 	public String[] getTableNames() {
 		return tableNames;
 	}
 
-	public void setTableNames( String[] tableNames ) {
+	public void setTableNames(String[] tableNames) {
 		this.tableNames = tableNames;
 	}
 
-    public boolean isFileOverride() {
-        return fileOverride;
-    }
+	public boolean isFileOverride() {
+		return fileOverride;
+	}
 
-    public void setFileOverride(boolean fileOverride) {
-        this.fileOverride = fileOverride;
-    }
+	public void setFileOverride(boolean fileOverride) {
+		this.fileOverride = fileOverride;
+	}
 
-    public String getServiceImplPackage() {
-        if (null == serviceImplPackage || "".equals(serviceImplPackage)) {
-            serviceImplPackage = servicePackage + ".impl";
-        }
-        return serviceImplPackage;
-    }
+	public String getServiceImplPackage() {
+		if (null == serviceImplPackage || "".equals(serviceImplPackage)) {
+			serviceImplPackage = servicePackage + ".impl";
+		}
+		return serviceImplPackage;
+	}
 
-    public void setServiceImplPackage(String serviceImplPackage) {
-        this.serviceImplPackage = serviceImplPackage;
-    }
+	public void setServiceImplPackage(String serviceImplPackage) {
+		this.serviceImplPackage = serviceImplPackage;
+	}
 }

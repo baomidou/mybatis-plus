@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.baomidou.mybatisplus.MybatisConfiguration;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
@@ -70,7 +71,9 @@ public class TableInfoHelper {
 
 		List<TableFieldInfo> fieldList = new ArrayList<TableFieldInfo>();
 		for (Field field : list) {
-			/* 主键ID */
+			/**
+			 * 主键ID
+			 */
 			TableId tableId = field.getAnnotation(TableId.class);
 			if (tableId != null) {
 				if (tableInfo.getKeyColumn() == null) {
@@ -79,6 +82,9 @@ public class TableInfoHelper {
 						/* 自定义字段 */
 						tableInfo.setKeyColumn(tableId.value());
 						tableInfo.setKeyRelated(true);
+					} else if (MybatisConfiguration.DB_COLUMN_UNDERLINE) {
+						/* 开启字段下划线申明 */
+						tableInfo.setKeyColumn(camelToUnderline(field.getName()));
 					} else {
 						tableInfo.setKeyColumn(field.getName());
 					}
@@ -96,9 +102,16 @@ public class TableInfoHelper {
 				fieldList.add(new TableFieldInfo(true, tableField.value(), field.getName()));
 				continue;
 			}
-			
-			/* 字段 */
-			fieldList.add(new TableFieldInfo(field.getName()));
+
+			/**
+			 * 字段
+			 */
+			if (MybatisConfiguration.DB_COLUMN_UNDERLINE) {
+				/* 开启字段下划线申明 */
+				fieldList.add(new TableFieldInfo(true, camelToUnderline(field.getName()), field.getName()));
+			} else {
+				fieldList.add(new TableFieldInfo(field.getName()));
+			}
 		}
 
 		/* 字段列表 */
@@ -114,7 +127,7 @@ public class TableInfoHelper {
 	}
 
 	/**
-	 * 去掉下划线转换为大写
+	 * 驼峰转下划线
 	 */
 	private static String camelToUnderline(String param) {
 		if (param == null || "".equals(param.trim())) {
@@ -127,11 +140,11 @@ public class TableInfoHelper {
 			if (Character.isUpperCase(c) && i > 0) {
 				sb.append("_");
 			}
-			sb.append(Character.toUpperCase(c));
+			sb.append(Character.toLowerCase(c));
 		}
 		return sb.toString();
 	}
-
+	
 	/**
 	 * 获取该类的所有属性列表
 	 * 

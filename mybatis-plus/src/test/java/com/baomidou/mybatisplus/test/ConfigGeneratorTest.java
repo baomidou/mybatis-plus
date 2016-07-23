@@ -21,9 +21,13 @@ public class ConfigGeneratorTest {
         cg.setSaveDir("D:/mybatis-plus/");// 生成文件保存位置
 
 		/*
-         * 设置数据库字段是否为驼峰命名，驼峰 true 下划线分割 false
+		 * <p>
+		 * true 表示数据库设置全局下划线命名规则，默认 false
+		 * ------------------------------------------------------------------------------------<br>
+		 * 【 开启该设置实体可无 @TableId(value = "test_id") 字段映射，启动配置对应也要开启 true 设置 】
+		 * </p>
 		 */
-        cg.setColumnHump(false);
+        cg.setDbColumnUnderline(false);
         /*
          * 表是否包括前缀
 		 * <p>

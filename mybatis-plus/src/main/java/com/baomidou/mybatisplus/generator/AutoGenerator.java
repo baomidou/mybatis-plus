@@ -442,7 +442,7 @@ public class AutoGenerator {
         /*
          * 驼峰命名直接返回
 		 */
-        if (config.isColumnHump()) {
+		if (null != field && !field.contains("_")) {
             return field;
         }
 
@@ -547,39 +547,32 @@ public class AutoGenerator {
             boolean isLine = column.contains("_");
             IdInfo idInfo = idMap.get(column);
             if (idInfo != null) {
-                //@TableId(value = "test_id", type = IdType.AUTO_INCREMENT)
+                //@TableId(value = "test_id", type = IdType.AUTO)
                 bw.write("\t@TableId");
                 String idType = toIdType();
-                if (idInfo.isAutoIncrement()) {
-                    System.err.println(" Table :{ " + table + " } ID is Auto increment");
-                    if (isLine) {
-                        bw.write("(value = \"" + column + "\"");
-                        if (idType != null) {
-                            bw.write(", ");
-                            bw.write(idType);
-                        }
-                        bw.write(")");
-                    } else if (idType != null) {
-                        bw.write("(");
-                        bw.write(idType);
-                        bw.write(")");
-                    }
-                } else {
-                    if (isLine) {
-                        bw.write("(value = \"" + column + "\"");
-                        if (idType != null) {
-                            bw.write(", ");
-                            bw.write(idType);
-                        }
-                        bw.write(")");
-                    } else if (idType != null) {
-                        bw.write("(");
-                        bw.write(idType);
-                        bw.write(")");
-                    }
+                if (isLine) {
+                	if (config.isDbColumnUnderline()) {
+                		//排除默认自增
+						if (null != idType) {
+                			bw.write("(");
+                			bw.write(idType);
+                			bw.write(")");
+                		}
+                	} else {
+                		bw.write("(value = \"" + column + "\"");
+                		if (null != idType) {
+                			bw.write(", ");
+                			bw.write(idType);
+                		}
+                		bw.write(")");
+                	}
+                } else if (null != idType) {
+                	bw.write("(");
+                	bw.write(idType);
+                	bw.write(")");
                 }
                 bw.newLine();
-            } else if (isLine) {
+			} else if (isLine && !config.isDbColumnUnderline()) {
                 //@TableField(value = "test_type", exist = false)
                 bw.write("\t@TableField(value = \"" + column + "\")");
                 bw.newLine();
