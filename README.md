@@ -12,7 +12,7 @@ mybatis 增强工具包，简化 CURD 操作。
 
 > Mybatis + 只做增强不做改变，这里不提倡 sql 写在代码中。
 
-> 技术讨论 QQ 群 235079513[（有钱的捧个钱场【点击捐赠】, 没钱的捧个人场）](http://git.oschina.net/uploads/images/2015/1222/211207_0acab44e_12260.png)
+> 技术讨论 QQ 群 492238239[（有钱的捧个钱场【点击捐赠】, 没钱的捧个人场）](http://git.oschina.net/uploads/images/2015/1222/211207_0acab44e_12260.png)
 
 
 Maven 坐标
