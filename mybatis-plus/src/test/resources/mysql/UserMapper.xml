@@ -6,7 +6,7 @@
 	<cache type="org.mybatis.caches.ehcache.LoggingEhcache" />
 
 	<delete id="deleteAll">
-		DELETE FROM USER
+		delete from user
 	</delete>
 
 	<!-- 建议字段，采用驼峰命名方法，不然很麻烦 -->
