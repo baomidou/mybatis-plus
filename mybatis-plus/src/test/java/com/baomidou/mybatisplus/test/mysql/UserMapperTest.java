@@ -74,12 +74,16 @@ public class UserMapperTest {
 		 *	 开启该设置实体可无 @TableId(value = "test_id") 字段映射
 		 */
 		//mf.setDbColumnUnderline(true);
-		
+
+		/**
+		 * 设置，自定义 SQL 注入器
+		 */
+		mf.setSqlInjector(new MySqlInjector());
+
 		SqlSessionFactory sessionFactory = mf.build(in);
 		SqlSession session = sessionFactory.openSession();
 		UserMapper userMapper = session.getMapper(UserMapper.class);
 		System.err.println(" debug run 查询执行 user 表数据变化！ ");
-		session.delete("deleteAll");
 		
 		/**
 		 * 注解插件测试
@@ -248,8 +252,10 @@ public class UserMapperTest {
 			print(rowList.get(i));
 		}
 
-		/* 删除测试数据  */
-		rlt = session.delete("deleteAll");
+		/**
+		 * 自定义方法，删除测试数据
+		 */
+		rlt = userMapper.deleteAll();
 		System.err.println("清空测试数据！ rlt=" + rlt);
 
 		/**

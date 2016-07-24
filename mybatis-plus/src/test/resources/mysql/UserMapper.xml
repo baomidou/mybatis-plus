@@ -5,10 +5,6 @@
 	<!-- ehcache 缓存配置, 输出日志 http://www.mybatis.org/ehcache-cache/ -->
 	<cache type="org.mybatis.caches.ehcache.LoggingEhcache" />
 
-	<delete id="deleteAll">
-		delete from user
-	</delete>
-
 	<!-- 建议字段，采用驼峰命名方法，不然很麻烦 -->
 	<select id="selectListRow" resultType="User">
 		select test_id AS

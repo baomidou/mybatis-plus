@@ -49,7 +49,6 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 
-import com.baomidou.mybatisplus.mapper.AutoSqlInjector;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 
 /**
@@ -422,7 +421,7 @@ public class MybatisXMLMapperBuilder extends BaseBuilder {
         }
         //TODO 注入 CURD 动态 SQL
 		if (BaseMapper.class.isAssignableFrom(boundType)) {
-			new AutoSqlInjector(configuration, MybatisConfiguration.DB_TYPE).inject(builderAssistant, boundType);
+			MybatisConfiguration.SQL_INJECTOR.inject(configuration, builderAssistant, boundType);
 		}
       }
     }

@@ -48,4 +48,9 @@ public interface UserMapper extends AutoMapper<User> {
 	@Insert("insert into user(test_id,name,age) values(#{id},#{name},#{age})")  
 	int insertInjector(User user);
 
+	/**
+	 * 自定义注入方法
+	 */
+	int deleteAll();
+
 }

@@ -58,6 +58,7 @@ import com.baomidou.mybatisplus.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.MybatisXMLMapperBuilder;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.DBType;
+import com.baomidou.mybatisplus.mapper.ISqlInjector;
 import com.baomidou.mybatisplus.toolkit.PackageHelper;
 
 /**
@@ -125,6 +126,11 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 	//TODO 注入表字段使用下划线命名
 	public void setDbColumnUnderline(boolean dbColumnUnderline) {
 		MybatisConfiguration.DB_COLUMN_UNDERLINE = dbColumnUnderline;
+	}
+
+	//TODO 注入 SQL注入器
+	public void setSqlInjector(ISqlInjector sqlInjector) {
+		MybatisConfiguration.SQL_INJECTOR = sqlInjector;
 	}
 
 	/**

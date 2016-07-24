@@ -26,6 +26,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
 import com.baomidou.mybatisplus.mapper.DBType;
+import com.baomidou.mybatisplus.mapper.ISqlInjector;
 
 /**
  * <p>
@@ -81,6 +82,11 @@ public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 	//TODO 注入表字段使用下划线命名
 	public void setDbColumnUnderline(boolean dbColumnUnderline) {
 		MybatisConfiguration.DB_COLUMN_UNDERLINE = dbColumnUnderline;
+	}
+
+	//TODO 注入 SQL注入器
+	public void setSqlInjector(ISqlInjector sqlInjector) {
+		MybatisConfiguration.SQL_INJECTOR = sqlInjector;
 	}
 
 }
