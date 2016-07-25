@@ -118,6 +118,10 @@ public class PaginationInterceptor implements Interceptor {
 				Pagination page = (Pagination) rowBounds;
 				if (page.isSearchCount()) {
 					page = this.count(originalSql, connection, mappedStatement, boundSql, page);
+					/** 总数 0 跳出执行 */
+					if (page.getTotal() <= 0) {
+						return invocation.proceed();
+					}
 				}
 				originalSql = dialect.buildPaginationSql(originalSql, page.getOffsetCurrent(), page.getSize());
 			}
