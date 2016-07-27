@@ -534,7 +534,17 @@ public class AutoSqlInjector implements ISqlInjector {
 		}
 		List<TableFieldInfo> fieldList = table.getFieldList();
 		for (TableFieldInfo fieldInfo : fieldList) {
-			columns.append(",").append(fieldInfo.getColumn());
+			columns.append(",");
+			/*
+			 * <p>
+			 * 判断是否存在子查询，不存在直接查询字段内容
+			 * </p>
+			 */
+			if (null != fieldInfo.getQuery()) {
+				columns.append(fieldInfo.getQuery());
+			} else {
+				columns.append(fieldInfo.getColumn());
+			}
 			if (fieldInfo.isRelated()) {
 				columns.append(" AS ").append(fieldInfo.getProperty());
 			}

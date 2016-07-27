@@ -43,48 +43,51 @@ public class TableFieldInfo {
 	 */
 	private String property;
 
+	/**
+	 * 子查询
+	 */
+	private String query = null;
 
-	public TableFieldInfo( boolean related, String column, String property ) {
+	public TableFieldInfo(String column) {
+		this(false, column, column);
+	}
+
+	public TableFieldInfo(boolean related, String column, String property) {
 		this.related = related;
 		this.column = column;
 		this.property = property;
 	}
-
-
-	public TableFieldInfo( String column ) {
-		this.related = false;
-		this.column = column;
-		this.property = column;
-	}
-
 
 	public boolean isRelated() {
 		return related;
 	}
 
-
-	public void setRelated( boolean related ) {
+	public void setRelated(boolean related) {
 		this.related = related;
 	}
-
 
 	public String getColumn() {
 		return column;
 	}
 
-
-	public void setColumn( String column ) {
+	public void setColumn(String column) {
 		this.column = column;
 	}
-
 
 	public String getProperty() {
 		return property;
 	}
 
-
-	public void setProperty( String property ) {
+	public void setProperty(String property) {
 		this.property = property;
+	}
+
+	public String getQuery() {
+		return query;
+	}
+
+	public void setQuery(String query) {
+		this.query = query;
 	}
 
 }
