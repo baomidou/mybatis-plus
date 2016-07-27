@@ -795,8 +795,14 @@ public class AutoGenerator {
             IdInfo idInfo = idMap.get(column);
             if (idInfo != null) {
                 bw.write("\t\t " + idInfo.getValue());
+				if (idInfo.getValue().contains("_")) {
+                	bw.write(" AS " + processField(idInfo.getValue()));
+                }
             } else {
                 bw.write(" " + column);
+				if (column.contains("_")) {
+					bw.write(" AS " + processField(column));
+				}
             }
             if (i != size - 1) {
                 bw.write(",");
