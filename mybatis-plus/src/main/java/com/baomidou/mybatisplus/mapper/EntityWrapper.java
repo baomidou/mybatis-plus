@@ -29,93 +29,87 @@ public class EntityWrapper<T> {
 	 * 数据库表映射实体类
 	 */
 	private T entity = null;
-	
+
 	/**
 	 * SQL 片段
 	 */
 	private String sqlSegment = null;
 
 	/**
-	 * <p>SQL 排序 ORDER BY 字段，例如： id DESC（根据id倒序查询）</p>
 	 * <p>
-	 *  DESC 表示按倒序排序(即：从大到小排序)<br> ACS  表示按正序排序(即：从小到大排序)
+	 * SQL 排序 ORDER BY 字段，例如： id DESC（根据id倒序查询）
+	 * </p>
+	 * <p>
+	 * DESC 表示按倒序排序(即：从大到小排序)<br>
+	 * ACS 表示按正序排序(即：从小到大排序)
 	 * </p>
 	 */
 	private String orderByField = null;
-
 
 	protected EntityWrapper() {
 		/* 保护 */
 	}
 
-
-	public EntityWrapper( T entity) {
+	public EntityWrapper(T entity) {
 		this.entity = entity;
 	}
 
-
-	public EntityWrapper( T entity, String orderByField ) {
+	public EntityWrapper(T entity, String orderByField) {
 		this.entity = entity;
 		this.orderByField = orderByField;
 	}
-	
-	
-	public EntityWrapper( T entity, String sqlSegment, String orderByField ) {
+
+	public EntityWrapper(T entity, String sqlSegment, String orderByField) {
 		this.entity = entity;
 		this.sqlSegment = sqlSegment;
 		this.orderByField = orderByField;
 	}
 
-	
 	public T getEntity() {
 		return entity;
 	}
 
-
-	public void setEntity( T entity ) {
+	public void setEntity(T entity) {
 		this.entity = entity;
 	}
 
-
 	public String getSqlSegment() {
-		if ( sqlSegment == null && orderByField == null ) {
+		if (sqlSegment == null && orderByField == null) {
 			return null;
 		}
 		StringBuffer andOrSql = new StringBuffer();
-		if ( sqlSegment != null ) {
+		if (sqlSegment != null) {
 			andOrSql.append(sqlSegment);
 		}
-		if ( orderByField != null ) {
+		if (orderByField != null) {
 			andOrSql.append(" ORDER BY ").append(orderByField);
 		}
 		return stripSqlInjection(andOrSql.toString());
 	}
 
-
-	public void setSqlSegment( String sqlSegment ) {
-		if ( sqlSegment != null && !"".equals(sqlSegment) ) {
+	public void setSqlSegment(String sqlSegment) {
+		if (sqlSegment != null && !"".equals(sqlSegment)) {
 			this.sqlSegment = sqlSegment;
 		}
 	}
-
 
 	public String getOrderByField() {
 		return orderByField;
 	}
 
-
-	public void setOrderByField( String orderByField ) {
-		if ( orderByField != null && !"".equals(orderByField) ) {
+	public void setOrderByField(String orderByField) {
+		if (orderByField != null && !"".equals(orderByField)) {
 			this.orderByField = orderByField;
 		}
 	}
-	
+
 	/**
 	 * <p>
 	 * SQL注入内容剥离
 	 * </p>
+	 * 
 	 * @param value
-	 * 				待处理内容
+	 *            待处理内容
 	 * @return
 	 */
 	protected String stripSqlInjection(String value) {

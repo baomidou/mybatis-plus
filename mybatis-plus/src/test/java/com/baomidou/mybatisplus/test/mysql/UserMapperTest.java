@@ -84,6 +84,7 @@ public class UserMapperTest {
 		SqlSession session = sessionFactory.openSession();
 		UserMapper userMapper = session.getMapper(UserMapper.class);
 		System.err.println(" debug run 查询执行 user 表数据变化！ ");
+		userMapper.deleteAll();
 		
 		/**
 		 * 注解插件测试
@@ -268,12 +269,11 @@ public class UserMapperTest {
 	/*
 	 * 打印测试信息
 	 */
-	private static void print( User user ) {
+	private static void print(User user) {
 		sleep();
-		if ( user != null ) {
-			System.out.println("\n user: id="
-					+ user.getId() + ", name=" + user.getName() + ", age=" + user.getAge() + ", testType="
-					+ user.getTestType());
+		if (user != null) {
+			System.out.println("\n user: id=" + user.getId() + ", name=" + user.getName() + ", age=" + user.getAge()
+					+ ", testType=" + user.getTestType());
 		} else {
 			System.out.println("\n user is null.");
 		}

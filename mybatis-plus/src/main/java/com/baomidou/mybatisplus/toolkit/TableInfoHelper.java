@@ -98,16 +98,8 @@ public class TableInfoHelper {
 
 			/* 获取注解属性，自定义字段 */
 			TableField tableField = field.getAnnotation(TableField.class);
-			if (tableField != null) {
-				TableFieldInfo tfi = new TableFieldInfo(field.getName());
-				if (null != tableField.value() && !"".equals(tableField.value())) {
-					tfi.setRelated(true);
-					tfi.setColumn(tableField.value());
-				}
-				/* 子查询 */
-				if (null != tableField.query() && !"".equals(tableField.query())) {
-					tfi.setQuery(tableField.query());
-				}
+			if (tableField != null && tableField.value() != null && !"".equals(tableField.value())) {
+				fieldList.add(new TableFieldInfo(true, tableField.value(), field.getName()));
 				continue;
 			}
 

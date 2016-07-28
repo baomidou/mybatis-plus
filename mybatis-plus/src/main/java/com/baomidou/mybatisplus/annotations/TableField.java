@@ -38,13 +38,6 @@ public @interface TableField {
 	 * </p>
 	 */
 	String value() default "";
-
-	/*
-	 * <p>
-	 * 字段内容子查询（ 执行SQL为：(select count(1) from user) AS userTotal ，该值可无 ）
-	 * </p>
-	 */
-	String query() default "";
 	
 	/*
 	 * <p>
