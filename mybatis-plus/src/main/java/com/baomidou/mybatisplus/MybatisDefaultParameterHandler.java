@@ -58,16 +58,26 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 	 * @return
 	 */
 	protected static Object processBatch(MappedStatement ms, Object parameterObject) {
-		Collection<Object> parameters = getParameters(parameterObject);
-		if (parameters != null) {
-			List<Object> objList = new ArrayList<Object>();
-			for (Object parameter : parameters) {
-				objList.add(populateKeys(ms, parameter));
+		if ( ms.getSqlCommandType() == SqlCommandType.INSERT ) {
+			/**
+			 * 只处理插入操作
+			 */
+			Collection<Object> parameters = getParameters(parameterObject);
+			if (parameters != null) {
+				List<Object> objList = new ArrayList<Object>();
+				for (Object parameter : parameters) {
+					if (parameter instanceof Map) {
+						/* map 插入不处理 */
+						continue ;
+					}
+					objList.add(populateKeys(ms, parameter));
+				}
+				return objList;
+			} else {
+				return populateKeys(ms, parameterObject);
 			}
-			return objList;
-		} else {
-			return populateKeys(ms, parameterObject);
 		}
+		return parameterObject;
 	}
 
 	/**
@@ -112,21 +122,19 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 	 * @return
 	 */
 	protected static Object populateKeys( MappedStatement ms, Object parameterObject ) {
-		if ( ms.getSqlCommandType() == SqlCommandType.INSERT ) {
-			TableInfo tableInfo = TableInfoHelper.getTableInfo(parameterObject.getClass());
-			if ( tableInfo != null && tableInfo.getIdType().getKey() >= 2 ){
-				MetaObject metaParam = ms.getConfiguration().newMetaObject(parameterObject);
-				Object idValue = metaParam.getValue(tableInfo.getKeyProperty());
-				/* 自定义 ID */
-				if ( idValue == null ) {
-					if ( tableInfo.getIdType() == IdType.ID_WORKER ) {
-						metaParam.setValue(tableInfo.getKeyProperty(), IdWorker.getId());
-					} else if ( tableInfo.getIdType() == IdType.UUID ) {
-						metaParam.setValue(tableInfo.getKeyProperty(), get32UUID());
-					}
+		TableInfo tableInfo = TableInfoHelper.getTableInfo(parameterObject.getClass());
+		if (null != tableInfo && null != tableInfo.getIdType() && tableInfo.getIdType().getKey() >= 2) {
+			MetaObject metaParam = ms.getConfiguration().newMetaObject(parameterObject);
+			Object idValue = metaParam.getValue(tableInfo.getKeyProperty());
+			/* 自定义 ID */
+			if ( idValue == null ) {
+				if ( tableInfo.getIdType() == IdType.ID_WORKER ) {
+					metaParam.setValue(tableInfo.getKeyProperty(), IdWorker.getId());
+				} else if ( tableInfo.getIdType() == IdType.UUID ) {
+					metaParam.setValue(tableInfo.getKeyProperty(), get32UUID());
 				}
-				return metaParam.getOriginalObject();
 			}
+			return metaParam.getOriginalObject();
 		}
 		return parameterObject;
 	}
