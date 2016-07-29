@@ -68,9 +68,10 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 				for (Object parameter : parameters) {
 					if (parameter instanceof Map) {
 						/* map 插入不处理 */
-						continue ;
+						objList.add(parameter);
+					} else {
+						objList.add(populateKeys(ms, parameter));
 					}
-					objList.add(populateKeys(ms, parameter));
 				}
 				return objList;
 			} else {
