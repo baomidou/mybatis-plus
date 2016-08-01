@@ -28,6 +28,7 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.mapping.StatementType;
+import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.scripting.defaults.RawSqlSource;
 import org.apache.ibatis.session.Configuration;
 
@@ -48,9 +49,9 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
  */
 public class AutoSqlInjector implements ISqlInjector {
 
-	protected static final MybatisXMLLanguageDriver languageDriver = new MybatisXMLLanguageDriver();
-
 	protected Configuration configuration;
+
+	protected LanguageDriver languageDriver;
 
 	protected MapperBuilderAssistant builderAssistant;
 	
@@ -62,6 +63,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	public void inject(Configuration configuration, MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
 		this.configuration = configuration;
 		this.builderAssistant = builderAssistant;
+		this.languageDriver = configuration.getDefaultScriptingLanuageInstance();
 		this.dbType = MybatisConfiguration.DB_TYPE;
 		Class<?> modelClass = extractModelClass(mapperClass);
 		TableInfo table = TableInfoHelper.getTableInfo(modelClass);
