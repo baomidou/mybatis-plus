@@ -1,7 +1,5 @@
 package com.baomidou.mybatisplus.test;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 /**
  * Copyright (c) 2011-2020, hubin (jobob@qq.com).
@@ -32,13 +30,11 @@ import com.baomidou.mybatisplus.toolkit.IdWorker;
  */
 public class IdWorkerTest {
 
-	private static Set<Long> testSet = new HashSet<Long>();
-
 	/**
 	 * 测试
 	 */
 	public static void main(String[] args) {
-		int count = 100000;
+		int count = 1000;
 		ExecutorService executorService = Executors.newFixedThreadPool(count);
 		for (int i = 0; i < count; i++) {
 			executorService.execute(new IdWorkerTest().new Task());
@@ -51,7 +47,6 @@ public class IdWorkerTest {
 				e.printStackTrace();
 			}
 		}
-		System.err.println(" ------ testSet.size ----- " + testSet.size());
 	}
 
 	public class Task implements Runnable {
@@ -59,7 +54,6 @@ public class IdWorkerTest {
 		public void run() {
 			try {
 				long id = IdWorker.getId();
-				testSet.add(id);
 				System.err.println(id);
 			} catch (Exception e) {
 				e.printStackTrace();
