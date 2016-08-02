@@ -33,7 +33,6 @@ import org.apache.ibatis.scripting.defaults.RawSqlSource;
 import org.apache.ibatis.session.Configuration;
 
 import com.baomidou.mybatisplus.MybatisConfiguration;
-import com.baomidou.mybatisplus.MybatisXMLLanguageDriver;
 import com.baomidou.mybatisplus.annotations.IdType;
 import com.baomidou.mybatisplus.toolkit.TableFieldInfo;
 import com.baomidou.mybatisplus.toolkit.TableInfo;
@@ -627,7 +626,7 @@ public class AutoSqlInjector implements ISqlInjector {
 		}
 		return builderAssistant.addMappedStatement(id, sqlSource, StatementType.PREPARED, sqlCommandType, null, null, null,
 				parameterClass, null, resultType, null, !isSelect, isSelect, false, keyGenerator, keyProperty, keyColumn,
-				configuration.getDatabaseId(), new MybatisXMLLanguageDriver(), null);
+				configuration.getDatabaseId(), languageDriver, null);
 	}
 
 }
