@@ -3,6 +3,8 @@
 
 > 	更多文档查看 /mybatis-plus/src/test/resources/wiki
 
+>   官方文档  http://www.mybatis.org/mybatis-3/zh/index.html
+
 # 插入
 
 > 	插入一条（id 如果不传入会自动生成）
