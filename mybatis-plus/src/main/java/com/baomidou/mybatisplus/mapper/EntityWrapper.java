@@ -31,20 +31,14 @@ public class EntityWrapper<T> {
 	private T entity = null;
 
 	/**
+	 * SQL 查询字段内容，例如：id,name,age
+	 */
+	private String sqlSelect = null;
+
+	/**
 	 * SQL 片段
 	 */
 	private String sqlSegment = null;
-
-	/**
-	 * <p>
-	 * SQL 排序 ORDER BY 字段，例如： id DESC（根据id倒序查询）
-	 * </p>
-	 * <p>
-	 * DESC 表示按倒序排序(即：从大到小排序)<br>
-	 * ACS 表示按正序排序(即：从小到大排序)
-	 * </p>
-	 */
-	private String orderByField = null;
 
 	protected EntityWrapper() {
 		/* 保护 */
@@ -54,15 +48,15 @@ public class EntityWrapper<T> {
 		this.entity = entity;
 	}
 
-	public EntityWrapper(T entity, String orderByField) {
-		this.entity = entity;
-		this.orderByField = orderByField;
-	}
-
-	public EntityWrapper(T entity, String sqlSegment, String orderByField) {
+	public EntityWrapper(T entity, String sqlSegment) {
 		this.entity = entity;
 		this.sqlSegment = sqlSegment;
-		this.orderByField = orderByField;
+	}
+
+	public EntityWrapper(T entity, String sqlSelect, String sqlSegment) {
+		this.entity = entity;
+		this.sqlSelect = sqlSelect;
+		this.sqlSegment = sqlSegment;
 	}
 
 	public T getEntity() {
@@ -73,33 +67,36 @@ public class EntityWrapper<T> {
 		this.entity = entity;
 	}
 
-	public String getSqlSegment() {
-		if (sqlSegment == null && orderByField == null) {
+	public String getSqlSelect() {
+		if (sqlSelect == null) {
 			return null;
 		}
-		StringBuffer andOrSql = new StringBuffer();
-		if (sqlSegment != null) {
-			andOrSql.append(sqlSegment);
+		return stripSqlInjection(sqlSelect);
+	}
+
+	public void setSqlSelect(String sqlSelect) {
+		if (sqlSelect != null && !"".equals(sqlSelect)) {
+			this.sqlSelect = sqlSelect;
 		}
-		if (orderByField != null) {
-			andOrSql.append(" ORDER BY ").append(orderByField);
+	}
+
+	public String getSqlSegment() {
+		if (null == sqlSegment) {
+			return null;
 		}
-		return stripSqlInjection(andOrSql.toString());
+		StringBuffer andOr = new StringBuffer();
+		if (null == entity) {
+			andOr.append("WHERE ");
+		} else {
+			andOr.append("AND ");
+		}
+		andOr.append(sqlSegment);
+		return stripSqlInjection(andOr.toString());
 	}
 
 	public void setSqlSegment(String sqlSegment) {
 		if (sqlSegment != null && !"".equals(sqlSegment)) {
 			this.sqlSegment = sqlSegment;
-		}
-	}
-
-	public String getOrderByField() {
-		return orderByField;
-	}
-
-	public void setOrderByField(String orderByField) {
-		if (orderByField != null && !"".equals(orderByField)) {
-			this.orderByField = orderByField;
 		}
 	}
 

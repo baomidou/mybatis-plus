@@ -403,9 +403,9 @@ public class AutoSqlInjector implements ISqlInjector {
 			ids.append("#{item}");
 			ids.append("\n</foreach>");
 			sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(),
-					sqlSelectColumns(table), table.getTableName(), table.getKeyColumn(), ids.toString()), modelClass);
+					sqlSelectColumns(table, false), table.getTableName(), table.getKeyColumn(), ids.toString()), modelClass);
 		} else {
-			sqlSource = new RawSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table),
+			sqlSource = new RawSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false),
 					table.getTableName(), table.getKeyColumn(), table.getKeyProperty()), Object.class);
 		}
 		this.addMappedStatement(mapperClass, sqlMethod, sqlSource, SqlCommandType.SELECT, modelClass);
@@ -422,7 +422,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 */
 	protected void injectSelectByMapSql(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
 		SqlMethod sqlMethod = SqlMethod.SELECT_BY_MAP;
-		String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(table), table.getTableName(), sqlWhereByMap());
+		String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(table, false), table.getTableName(), sqlWhereByMap());
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Map.class);
 		this.addMappedStatement(mapperClass, sqlMethod, sqlSource, SqlCommandType.SELECT, modelClass);
 	}
@@ -439,7 +439,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 */
 	protected void injectSelectOneSql( Class<?> mapperClass, Class<?> modelClass, TableInfo table ) {
 		SqlMethod sqlMethod = SqlMethod.SELECT_ONE;
-		String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(table), table.getTableName(), sqlWhere(table, false));
+		String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(table, false), table.getTableName(), sqlWhere(table, false));
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
 		this.addMappedStatement(mapperClass, sqlMethod, sqlSource, SqlCommandType.SELECT, modelClass);
 	}
@@ -486,7 +486,7 @@ public class AutoSqlInjector implements ISqlInjector {
 		where.append("\n</where>\n</if>");
 		where.append("\n<if test=\"ew.sqlSegment!=null\">\n${ew.sqlSegment}\n</if>");
 		where.append("\n</if>");
-		String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(table), table.getTableName(), where.toString());
+		String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(table, true), table.getTableName(), where.toString());
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
 		this.addMappedStatement(mapperClass, sqlMethod, sqlSource, SqlCommandType.SELECT, modelClass);
 	}
@@ -524,10 +524,15 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * </p>
 	 * 
 	 * @param table
+	 * @param entityWrapper
+	 *            是否为包装类型查询
 	 * @return
 	 */
-	protected String sqlSelectColumns(TableInfo table) {
+	protected String sqlSelectColumns(TableInfo table, boolean entityWrapper) {
 		StringBuilder columns = new StringBuilder();
+		if (entityWrapper) {
+			columns.append("<choose><when test=\"ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>");
+		}
 		if (table.isKeyRelated()) {
 			columns.append(table.getKeyColumn()).append(" AS ").append(table.getKeyProperty());
 		} else {
@@ -539,6 +544,9 @@ public class AutoSqlInjector implements ISqlInjector {
 			if (fieldInfo.isRelated()) {
 				columns.append(" AS ").append(fieldInfo.getProperty());
 			}
+		}
+		if (entityWrapper) {
+			columns.append("</otherwise></choose>");
 		}
 		return columns.toString();
 	}

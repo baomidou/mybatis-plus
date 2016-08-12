@@ -227,18 +227,29 @@ public class UserMapperTest {
 		System.err.println("总记录数：" + userMapper.selectCount(null));
 
 		System.err.println("\n------------------selectList-----所有数据----id--DESC--排序----");
-		List<User> ul2 = userMapper.selectList(new EntityWrapper<User>(null, "id DESC"));
+		List<User> ul2 = userMapper.selectList(new EntityWrapper<User>(null, " 1=1 ORDER BY id DESC"));
 		for ( int i = 0 ; i < ul2.size() ; i++ ) {
 			print(ul2.get(i));
 		}
 
 		System.err.println("\n------------------list 分页查询 ----查询 testType = 1 的所有数据--id--DESC--排序--------");
 		Page<User> page = new Page<User>(1, 2);
-		EntityWrapper<User> ew = new EntityWrapper<User>(new User(1), "id DESC");
-		/**
-		 * 查询条件，支持 sql 片段
+		/*
+		 * 排序 test_id desc
 		 */
-		ew.setSqlSegment(" AND name like '%dateBatch%'");
+		page.setOrderByField("test_id");
+		page.setAsc(false);
+		EntityWrapper<User> ew = new EntityWrapper<User>(new User(1));
+
+		/*
+		 * 查询字段
+		 */
+		ew.setSqlSelect("age,name");
+
+		/*
+		 * 查询条件，SQL 片段（ 注意！程序会自动在 sqlSegmet 内容前面添加 where 或者 and ）
+		 */
+		ew.setSqlSegment("name like '%dateBatch%'");
 		List<User> paginList = userMapper.selectPage(page, ew);
 		page.setRecords(paginList);
 		for ( int i = 0 ; i < page.getRecords().size() ; i++ ) {

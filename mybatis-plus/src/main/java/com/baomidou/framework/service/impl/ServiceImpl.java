@@ -38,7 +38,6 @@ public class ServiceImpl<M extends BaseMapper<T, I>, T, I> implements IService<T
 	@Autowired
 	protected M baseMapper;
 
-
 	/**
 	 * 判断数据库操作是否成功
 	 * 
@@ -46,148 +45,109 @@ public class ServiceImpl<M extends BaseMapper<T, I>, T, I> implements IService<T
 	 *            数据库操作返回影响条数
 	 * @return boolean
 	 */
-	protected boolean retBool( int result ) {
+	protected boolean retBool(int result) {
 		return (result >= 1) ? true : false;
 	}
 
-
-	public boolean insert( T entity ) {
+	public boolean insert(T entity) {
 		return retBool(baseMapper.insert(entity));
 	}
 
-
-	public boolean insertSelective( T entity ) {
+	public boolean insertSelective(T entity) {
 		return retBool(baseMapper.insertSelective(entity));
 	}
 
-
-	public boolean insertBatch( List<T> entityList ) {
+	public boolean insertBatch(List<T> entityList) {
 		return retBool(baseMapper.insertBatch(entityList));
 	}
 
-
-	public boolean deleteById( I id ) {
+	public boolean deleteById(I id) {
 		return retBool(baseMapper.deleteById(id));
 	}
 
-
-	public boolean deleteByMap( Map<String, Object> columnMap) {
+	public boolean deleteByMap(Map<String, Object> columnMap) {
 		return retBool(baseMapper.deleteByMap(columnMap));
 	}
 
-
-	public boolean deleteSelective( T entity ) {
+	public boolean deleteSelective(T entity) {
 		return retBool(baseMapper.deleteSelective(entity));
 	}
 
-
-	public boolean deleteBatchIds( List<I> idList ) {
+	public boolean deleteBatchIds(List<I> idList) {
 		return retBool(baseMapper.deleteBatchIds(idList));
 	}
 
-
-	public boolean updateById( T entity ) {
+	public boolean updateById(T entity) {
 		return retBool(baseMapper.updateById(entity));
 	}
 
-
-	public boolean updateSelectiveById( T entity ) {
+	public boolean updateSelectiveById(T entity) {
 		return retBool(baseMapper.updateSelectiveById(entity));
 	}
 
-
-	public boolean update( T entity, T whereEntity ) {
+	public boolean update(T entity, T whereEntity) {
 		return retBool(baseMapper.update(entity, whereEntity));
 	}
 
-
-	public boolean updateSelective( T entity, T whereEntity ) {
+	public boolean updateSelective(T entity, T whereEntity) {
 		return retBool(baseMapper.updateSelective(entity, whereEntity));
 	}
-
 
 	public boolean updateBatchById(List<T> entityList) {
 		return retBool(baseMapper.updateBatchById(entityList));
 	}
 
-
-	public T selectById( I id ) {
+	public T selectById(I id) {
 		return baseMapper.selectById(id);
 	}
 
-
-	public List<T> selectBatchIds( List<I> idList ) {
+	public List<T> selectBatchIds(List<I> idList) {
 		return baseMapper.selectBatchIds(idList);
 	}
 
-
-	public List<T> selectByMap( Map<String, Object> columnMap) {
+	public List<T> selectByMap(Map<String, Object> columnMap) {
 		return baseMapper.selectByMap(columnMap);
 	}
 
-
-	public T selectOne( T entity ) {
+	public T selectOne(T entity) {
 		return baseMapper.selectOne(entity);
 	}
-
 
 	public int selectCount(T entity) {
 		return baseMapper.selectCount(entity);
 	}
 
-
-	public List<T> selectList( T entity, String sqlSegment, String orderByField ) {
-		return baseMapper.selectList(new EntityWrapper<T>(entity, sqlSegment, orderByField));		
+	public List<T> selectList(T entity, String sqlSelect, String sqlSegment, String orderByField) {
+		StringBuffer segment = new StringBuffer();
+		if (null != sqlSegment) {
+			segment.append(sqlSegment);
+		}
+		if (null != orderByField) {
+			segment.append(" ORDER BY ").append(orderByField);
+		}
+		return baseMapper.selectList(new EntityWrapper<T>(entity, sqlSelect, segment.toString()));
 	}
 
-
-	public List<T> selectList( T entity, String orderByField ) {
-		return baseMapper.selectList(new EntityWrapper<T>(entity, orderByField));
-	}
-
-
-	public List<T> selectList( T entity ) {
-		return baseMapper.selectList(new EntityWrapper<T>(entity, null));
-	}
-	
-	
-	public List<T> selectListSqlSegment( String sqlSegment ) {
-		return baseMapper.selectList(new EntityWrapper<T>(null, sqlSegment, null));
-	}
-	
-	
-	public List<T> selectListSqlSegment( String sqlSegment, String orderByField ) {
-		return baseMapper.selectList(new EntityWrapper<T>(null, sqlSegment, orderByField));
-	}
-
-
-	public Page<T> selectPage( Page<T> page, T entity, String sqlSegment, String orderByField ) {
-		page.setRecords(baseMapper.selectPage(page, new EntityWrapper<T>(entity, sqlSegment, orderByField)));
+	public Page<T> selectPage(Page<T> page, String sqlSelect, T entity, String sqlSegment) {
+		page.setRecords(baseMapper.selectPage(page, new EntityWrapper<T>(entity, sqlSelect, this.convertSqlSegmet(page, sqlSegment))));
 		return page;
 	}
 
-
-	public Page<T> selectPage( Page<T> page, T entity, String orderByField ) {
-		page.setRecords(baseMapper.selectPage(page, new EntityWrapper<T>(entity, orderByField)));
-		return page;
-	}
-
-
-	public Page<T> selectPage( Page<T> page, T entity ) {
-		page.setRecords(baseMapper.selectPage(page, new EntityWrapper<T>(entity, null)));
-		return page;
-	}
-	
-	
-	public Page<T> selectPageSqlSegment( Page<T> page, String sqlSegment ) {
-		page.setRecords(baseMapper.selectPage(page, new EntityWrapper<T>(null, sqlSegment, null)));
-		return page;
-	}
-	
-	
-	public Page<T> selectPageSqlSegment( Page<T> page, String sqlSegment, String orderByField ) {
-		page.setRecords(baseMapper.selectPage(page, new EntityWrapper<T>(null, sqlSegment, orderByField)));
-		return page;
+	/**
+	 * 转换 SQL 片段 + 排序
+	 */
+	protected String convertSqlSegmet(Page<T> page, String sqlSegment) {
+		StringBuffer segment = new StringBuffer();
+		if (null != sqlSegment) {
+			segment.append(sqlSegment);
+		}
+		if (null != page.getOrderByField()) {
+			segment.append(" ORDER BY ").append(page.getOrderByField());
+			if (!page.isAsc()) {
+				segment.append(" DESC");
+			}
+		}
+		return segment.toString();
 	}
 
 }
