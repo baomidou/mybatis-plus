@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, hubin (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -147,30 +147,19 @@ public class PaginationInterceptor implements Interceptor {
 	public Pagination count(String sql, Connection connection, MappedStatement mappedStatement, BoundSql boundSql,
 			Pagination page) {
 		/*
-		 * COUNT SQL
-		 */
-		StringBuffer countSql = new StringBuffer("SELECT COUNT(1) AS TOTAL FROM (");
-
-		/*
 		 * 去掉 ORDER BY
 		 */
-		String sqlTemp = sql.toUpperCase();
 		String sqlUse = sql;
-		int order_by = sqlTemp.lastIndexOf("ORDER BY");
+		int order_by = sql.toUpperCase().lastIndexOf("ORDER BY");
 		if ( order_by > -1 ) {
 			sqlUse = sql.substring(0, order_by);
 		}
 
 		/*
-		 * 去掉 FIELD
+		 * COUNT SQL
 		 */
-		int select_from = sqlTemp.indexOf("FROM");
-		if ( select_from > -1 ) {
-			countSql.append("SELECT 1 ").append(sqlUse.substring(select_from));
-		} else {
-			countSql.append(sqlUse);
-		}
-		countSql.append(") A");
+		StringBuffer countSql = new StringBuffer();
+		countSql.append("SELECT COUNT(1) AS TOTAL FROM (").append(sqlUse).append(") A");
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
