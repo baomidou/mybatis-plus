@@ -118,32 +118,26 @@ public class ServiceImpl<M extends BaseMapper<T, I>, T, I> implements IService<T
 	}
 
 	public List<T> selectList(T entity, String sqlSelect, String sqlSegment, String orderByField) {
-		StringBuffer segment = new StringBuffer();
-		if (null != sqlSegment) {
-			segment.append(sqlSegment);
-		}
-		if (null != orderByField) {
-			segment.append(" ORDER BY ").append(orderByField);
-		}
-		return baseMapper.selectList(new EntityWrapper<T>(entity, sqlSelect, segment.toString()));
+		return baseMapper.selectList(new EntityWrapper<T>(entity, sqlSelect, this.convertSqlSegmet(sqlSegment, orderByField, true)));
 	}
 
 	public Page<T> selectPage(Page<T> page, String sqlSelect, T entity, String sqlSegment) {
-		page.setRecords(baseMapper.selectPage(page, new EntityWrapper<T>(entity, sqlSelect, this.convertSqlSegmet(page, sqlSegment))));
+		EntityWrapper<T> ew = new EntityWrapper<T>(entity, sqlSelect, this.convertSqlSegmet(page.getOrderByField(), sqlSegment, page.isAsc()));
+		page.setRecords(baseMapper.selectPage(page, ew));
 		return page;
 	}
 
 	/**
 	 * 转换 SQL 片段 + 排序
 	 */
-	protected String convertSqlSegmet(Page<T> page, String sqlSegment) {
+	protected String convertSqlSegmet(String sqlSegment, String orderByField, boolean isAsc) {
 		StringBuffer segment = new StringBuffer();
 		if (null != sqlSegment) {
 			segment.append(sqlSegment);
 		}
-		if (null != page.getOrderByField()) {
-			segment.append(" ORDER BY ").append(page.getOrderByField());
-			if (!page.isAsc()) {
+		if (null != orderByField) {
+			segment.append(" ORDER BY ").append(orderByField);
+			if (!isAsc) {
 				segment.append(" DESC");
 			}
 		}

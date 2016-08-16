@@ -29,5 +29,9 @@
     <plugin interceptor="com.baomidou.mybatisplus.plugins.PerformanceInterceptor">
         <property name="maxTime" value="100" />
     </plugin>
+    <!-- SQL 执行分析拦截器 stopProceed 发现全表执行 delete update 是否停止运行 -->
+    <plugin interceptor="com.baomidou.mybatisplus.plugins.SqlExplainInterceptor">
+        <property name="stopProceed" value="false" />
+    </plugin>
 </plugins>
 ```

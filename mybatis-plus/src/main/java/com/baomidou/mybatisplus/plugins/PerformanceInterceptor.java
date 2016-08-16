@@ -46,9 +46,7 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
  * @author hubin
  * @Date 2016-07-07
  */
-@Intercepts({
-		@Signature(type = Executor.class, method = "query", args = { MappedStatement.class, Object.class,
-				RowBounds.class, ResultHandler.class }),
+@Intercepts({@Signature(type = Executor.class, method = "query", args = { MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class }),
 		@Signature(type = Executor.class, method = "update", args = { MappedStatement.class, Object.class }) })
 public class PerformanceInterceptor implements Interceptor {
 

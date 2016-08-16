@@ -263,6 +263,14 @@ public class UserMapperTest {
 		for ( int i = 0 ; i < rowList.size() ; i++ ) {
 			print(rowList.get(i));
 		}
+		
+		/*
+		 * 用户列表
+		 */
+		paginList = userMapper.selectList(new EntityWrapper<User>(null, null, null));
+		for ( int i = 0 ; i < rowList.size() ; i++ ) {
+			print(rowList.get(i));
+		}
 
 		/**
 		 * 自定义方法，删除测试数据

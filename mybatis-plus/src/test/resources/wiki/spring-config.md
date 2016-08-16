@@ -80,7 +80,7 @@
 		 -->
 	</typeAliases>
 	<!-- 插件配置, spring 中配置，此处就可以不用配置。 -->
-     <!-- 
+    <!-- 
 	<plugins>
 	     | 分页插件配置 
 	     | 插件提供二种方言选择：1、默认方言 2、自定义方言实现类，两者均未配置则抛出异常！
@@ -100,40 +100,14 @@
         <plugin interceptor="com.baomidou.mybatisplus.plugins.PerformanceInterceptor">
             <property name="maxTime" value="100" />
         </plugin>
+        <!-- SQL 执行分析拦截器 stopProceed 发现全表执行 delete update 是否停止运行 -->
+        <plugin interceptor="com.baomidou.mybatisplus.plugins.SqlExplainInterceptor">
+            <property name="stopProceed" value="false" />
+        </plugin>
 	</plugins>
 	| -->
 </configuration>
 ```
 
-
-
-# spring 根据不同环境加载不同配置支持
-
-1、spring 根据不同配置运行模式，加载对应配置内容。
-2、运行模式参数 key 配置 configEnv 默认 sysRunmode
-3、online 线上 ， dev 开发 ， test 测试
-4、首先环境变量中获取，变量名：sysRunmode 变量值：dev
-5、如果不存在 JVM -D选项 参数中获取，例如：-DsysRunmode=dev
-
->例如：设置不同环境的数据库密码配置：
-
-```
-jdbc.password_dev_mode=1230600
-jdbc.password_test_mode=2001006
-jdbc.password_online_mode=#!Esd30210
-```
-
->spring 配置：
-
-```
-<bean id="placeholder" class="com.baomidou.mybatisplus.spring.MutilPropertyPlaceholderConfigurer">
-	<property name="locations">
-		<list>
-			<value>classpath:jdbc.properties</value>
-			<value>classpath*:*-placeholder.properties</value>
-		</list>
-	</property>
-</bean>
-```
 
 

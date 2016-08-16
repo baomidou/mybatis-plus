@@ -68,7 +68,7 @@ public class EntityWrapper<T> {
 	}
 
 	public String getSqlSelect() {
-		if (sqlSelect == null) {
+		if (sqlSelect == null || "".equals(sqlSelect)) {
 			return null;
 		}
 		return stripSqlInjection(sqlSelect);
@@ -81,7 +81,7 @@ public class EntityWrapper<T> {
 	}
 
 	public String getSqlSegment() {
-		if (null == sqlSegment) {
+		if (null == sqlSegment || "".equals(sqlSegment)) {
 			return null;
 		}
 		StringBuffer andOr = new StringBuffer();

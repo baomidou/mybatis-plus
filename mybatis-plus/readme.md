@@ -1,5 +1,5 @@
 
-# Mbatis-Plus 使用文档
+# Mybatis-Plus 使用文档
 
 > 	更多文档查看 /mybatis-plus/src/test/resources/wiki
 
