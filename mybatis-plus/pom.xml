@@ -93,16 +93,17 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-		    <groupId>org.mybatis.caches</groupId>
-		    <artifactId>mybatis-ehcache</artifactId>
-		    <version>${mybatis-ehcache.version}</version>
+			<groupId>org.mybatis.caches</groupId>
+			<artifactId>mybatis-ehcache</artifactId>
+			<version>${mybatis-ehcache.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc14</artifactId>
 			<version>${ojdbc14.version}</version>
-			<scope>test</scope>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/test/resources/oracle/ojdbc14.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
