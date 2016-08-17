@@ -361,25 +361,26 @@ public class AutoGenerator {
 	 * @return
 	 */
 	protected String mysqlProcessType(String type) {
-		if (type.contains("char")) {
+		String t = type.toLowerCase();
+		if (t.contains("char")) {
 			return "String";
-		} else if (type.contains("bigint")) {
+		} else if (t.contains("bigint")) {
 			return "Long";
-		} else if (type.contains("int")) {
+		} else if (t.contains("int")) {
 			return "Integer";
-		} else if (type.contains("date") || type.contains("timestamp")) {
+		} else if (t.contains("date") || t.contains("timestamp")) {
 			return "Date";
-		} else if (type.contains("text")) {
+		} else if (t.contains("text")) {
 			return "String";
-		} else if (type.contains("bit")) {
+		} else if (t.contains("bit")) {
 			return "Boolean";
-		} else if (type.contains("decimal")) {
+		} else if (t.contains("decimal")) {
 			return "BigDecimal";
-		} else if (type.contains("blob")) {
+		} else if (t.contains("blob")) {
 			return "byte[]";
-		} else if (type.contains("float")) {
+		} else if (t.contains("float")) {
 			return "Float";
-		} else if (type.contains("double")) {
+		} else if (t.contains("double")) {
 			return "Double";
 		}
 		return null;
@@ -393,17 +394,18 @@ public class AutoGenerator {
 	 * @return
 	 */
 	protected String oracleProcessType(String type) {
-		if (type.contains("CHAR")) {
+		String t = type.toUpperCase();
+		if (t.contains("CHAR")) {
 			return "String";
-		} else if (type.contains("DATE") || type.contains("TIMESTAMP")) {
+		} else if (t.contains("DATE") || t.contains("TIMESTAMP")) {
 			return "Date";
-		} else if (type.contains("NUMBER")) {
+		} else if (t.contains("NUMBER")) {
 			return "Double";
-		} else if (type.contains("FLOAT")) {
+		} else if (t.contains("FLOAT")) {
 			return "Float";
-		} else if (type.contains("BLOB")) {
+		} else if (t.contains("BLOB")) {
 			return "Object";
-		} else if (type.contains("RAW")) {
+		} else if (t.contains("RAW")) {
 			return "byte[]";
 		}
 		return null;
@@ -418,7 +420,8 @@ public class AutoGenerator {
 	 */
 	protected boolean isDate(List<String> types) {
 		for (String type : types) {
-			if (type.contains("date") || type.contains("timestamp")) {
+			String t = type.toLowerCase();
+			if (t.contains("date") || t.contains("timestamp")) {
 				return true;
 			}
 		}
@@ -434,25 +437,25 @@ public class AutoGenerator {
 	 */
 	protected boolean isDecimal(List<String> types) {
 		for (String type : types) {
-			if (type.contains("decimal")) {
+			if (type.toLowerCase().contains("decimal")) {
 				return true;
 			}
 		}
 		return false;
 	}
 
+	/**
+	 * 字段处理
+	 * 
+	 * @param field
+	 *            表字段
+	 * @return
+	 */
 	protected String processField(String field) {
-		/*
-		 * 驼峰命名直接返回
-		 */
-		if (null != field && !field.contains("_")) {
-			return field;
-		}
-
 		/*
 		 * 处理下划线分割命名字段
 		 */
-		StringBuilder sb = new StringBuilder(field.length());
+		StringBuilder sb = new StringBuilder();
 		String[] fields = field.split("_");
 		sb.append(fields[0].toLowerCase());
 		for (int i = 1; i < fields.length; i++) {
@@ -708,20 +711,14 @@ public class AutoGenerator {
 		bw.newLine();
 		bw.write("import " + config.getEntityPackage() + "." + beanName + ";");
 		bw.newLine();
-		if (config.getConfigIdType() == ConfigIdType.STRING) {
-			bw.write("import com.baomidou.framework.service.ICommonService;");
-		} else {
-			bw.write("import com.baomidou.framework.service.ISuperService;");
-		}
+		String superService = config.getSuperService();
+		bw.write("import " + superService);
 		bw.newLine();
 
 		bw = buildClassComment(bw, beanName + " 表数据服务层接口");
 		bw.newLine();
-		if (config.getConfigIdType() == ConfigIdType.STRING) {
-			bw.write("public interface " + serviceName + " extends ICommonService<" + beanName + "> {");
-		} else {
-			bw.write("public interface " + serviceName + " extends ISuperService<" + beanName + "> {");
-		}
+		superService = superService.substring(superService.lastIndexOf(".") + 1);
+		bw.write("public interface " + serviceName + " extends " + superService + "<" + beanName + "> {");
 		bw.newLine();
 		bw.newLine();
 

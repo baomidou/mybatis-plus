@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.generator;
 
 import com.baomidou.mybatisplus.annotations.IdType;
 
+
 /**
  * <p>
  * 生成器配置类
@@ -27,9 +28,13 @@ import com.baomidou.mybatisplus.annotations.IdType;
  * xmlPackage xx_mapper.xml 包路径，默认为mapper/xml
  * servicePackage service 包路径
  * serviceImplPackage serviceImpl包路径，默认为service/impl
- * superServiceImpl service 父类包路径名称
- * tableNames   要生成的表名称，如为空就直接指定所有表.格式为逗号分割
- * fileOverride 是否覆盖当前已有文件
+ * superService 	service 父类包路径名称
+ * superServiceImpl service 实现父类包路径名称
+ * mapperName		自定义 mapper 名称
+ * serviceName		自定义 service 名称
+ * serviceImplName	自定义 serviceImp 名称
+ * tableNames   	要生成的表名称，如为空就直接指定所有表.格式为逗号分割
+ * fileOverride 	是否覆盖当前已有文件
  * -------------------------------------
  * 以下数据库相关配置：
  * -------------------------------------
@@ -57,6 +62,8 @@ public class ConfigGenerator {
 	protected String servicePackage;
 
 	protected String serviceImplPackage;
+
+	protected String superService;
 
 	protected String superServiceImpl;
 
@@ -131,6 +138,21 @@ public class ConfigGenerator {
 
 	public void setServicePackage(String servicePackage) {
 		this.servicePackage = servicePackage;
+	}
+
+	public String getSuperService() {
+		if (superService == null || "".equals(superService)) {
+			if (this.getConfigIdType() == ConfigIdType.STRING) {
+				return "com.baomidou.framework.service.ICommonService";
+			} else {
+				return "com.baomidou.framework.service.ISuperService";
+			}
+		}
+		return superService;
+	}
+
+	public void setSuperService(String superService) {
+		this.superService = superService;
 	}
 
 	public String getSuperServiceImpl() {
