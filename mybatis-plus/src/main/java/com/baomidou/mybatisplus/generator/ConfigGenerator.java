@@ -46,60 +46,60 @@ import com.baomidou.mybatisplus.annotations.IdType;
  */
 public class ConfigGenerator {
 
-	private String saveDir;
+	protected String saveDir;
 
-	private String entityPackage;
+	protected String entityPackage;
 
-	private String mapperPackage;
+	protected String mapperPackage;
 
-	private String xmlPackage;
+	protected String xmlPackage;
 
-	private String servicePackage;
+	protected String servicePackage;
 
-	private String serviceImplPackage;
+	protected String serviceImplPackage;
 
-	private String superServiceImpl;
+	protected String superServiceImpl;
 
 	/*
 	 * 自定义 mapperName serviceName serviceImplName
 	 */
-	private String mapperName = "%sMapper";
+	protected String mapperName = "%sMapper";
 
-	private String serviceName = "I%sService";
+	protected String serviceName = "I%sService";
 
-	private String serviceImplName = "%sServiceImpl";
+	protected String serviceImplName = "%sServiceImpl";
 
 	/*
 	 * 指定生成表名
 	 */
-	private String[] tableNames = null;
+	protected String[] tableNames = null;
 
 	/*
 	 * 是否覆盖当前路径下已有文件（默认 true）
 	 */
-	private boolean fileOverride = true;
+	protected boolean fileOverride = true;
 
 	/* db_config */
-	private boolean dbPrefix = false;
+	protected boolean dbPrefix = false;
 
 	/*
 	 * 数据库字段使用下划线命名（默认 false）
 	 */
-	private boolean dbColumnUnderline = false;
+	protected boolean dbColumnUnderline = false;
 
-	private String dbDriverName;
+	protected String dbDriverName;
 
-	private String dbUser;
+	protected String dbUser;
 
-	private String dbPassword;
+	protected String dbPassword;
 
-	private String dbUrl;
+	protected String dbUrl;
 
-	private IdType idType = null;
+	protected IdType idType = null;
 
-	private ConfigDataSource configDataSource = ConfigDataSource.MYSQL;
+	protected ConfigDataSource configDataSource = ConfigDataSource.MYSQL;
 
-	private ConfigIdType configIdType = ConfigIdType.LONG;
+	protected ConfigIdType configIdType = ConfigIdType.LONG;
 
 	public String getSaveDir() {
 		return saveDir;

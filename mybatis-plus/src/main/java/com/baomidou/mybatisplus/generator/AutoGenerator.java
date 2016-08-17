@@ -44,7 +44,7 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
  */
 public class AutoGenerator {
 
-	private ConfigGenerator config;
+	protected ConfigGenerator config;
 
 	public ConfigGenerator getConfig() {
 		return config;
@@ -62,16 +62,16 @@ public class AutoGenerator {
 		this.config = config;
 	}
 
-	private static String PATH_ENTITY = null;
-	private static String PATH_MAPPER = null;
-	private static String PATH_XML = null;
-	private static String PATH_SERVICE = null;
-	private static String PATH_SERVICE_IMPL = null;
+	protected static String PATH_ENTITY = null;
+	protected static String PATH_MAPPER = null;
+	protected static String PATH_XML = null;
+	protected static String PATH_SERVICE = null;
+	protected static String PATH_SERVICE_IMPL = null;
 
-	private static boolean FILE_OVERRIDE = false;
+	protected static boolean FILE_OVERRIDE = false;
 
-	private static final String JAVA_SUFFIX = ".java";
-	private static final String XML_SUFFIX = ".xml";
+	protected static final String JAVA_SUFFIX = ".java";
+	protected static final String XML_SUFFIX = ".xml";
 
 	/**
 	 * run 执行
@@ -140,7 +140,7 @@ public class AutoGenerator {
 	 * @param packageName
 	 * @return
 	 */
-	private static String getPathFromPackageName(String packageName) {
+	protected static String getPathFromPackageName(String packageName) {
 		if (null == packageName || "".equals(packageName)) {
 			return "";
 		}
@@ -154,7 +154,7 @@ public class AutoGenerator {
 	 *            文件地址片段
 	 * @return
 	 */
-	private static String getFilePath(String savePath, String segment) {
+	protected static String getFilePath(String savePath, String segment) {
 		File folder = new File(savePath + File.separator + segment);
 		if (!folder.exists()) {
 			folder.mkdirs();
@@ -275,7 +275,7 @@ public class AutoGenerator {
 	 * @param suffix
 	 * @return
 	 */
-	private boolean valideFile(String dirPath, String beanName, String suffix) {
+	protected boolean valideFile(String dirPath, String beanName, String suffix) {
 		File file = new File(dirPath, beanName + suffix);
 		return !file.exists() || FILE_OVERRIDE;
 	}
@@ -291,7 +291,7 @@ public class AutoGenerator {
 	 * @return
 	 * @throws SQLException
 	 */
-	private List<String> getTables(Connection conn) throws SQLException {
+	protected List<String> getTables(Connection conn) throws SQLException {
 		List<String> tables = new ArrayList<String>();
 		PreparedStatement pstate = conn.prepareStatement(config.getConfigDataSource().getTablesSql());
 		ResultSet results = pstate.executeQuery();
@@ -327,7 +327,7 @@ public class AutoGenerator {
 	 *            表名
 	 * @return beanName
 	 */
-	private String getBeanName(String table, boolean includePrefix) {
+	protected String getBeanName(String table, boolean includePrefix) {
 		StringBuilder sb = new StringBuilder();
 		if (table.contains("_")) {
 			String[] tables = table.split("_");
@@ -346,7 +346,7 @@ public class AutoGenerator {
 		return sb.toString();
 	}
 
-	private String processType(String type) {
+	protected String processType(String type) {
 		if (config.getConfigDataSource() == ConfigDataSource.ORACLE) {
 			return oracleProcessType(type);
 		}
@@ -360,7 +360,7 @@ public class AutoGenerator {
 	 *            字段类型
 	 * @return
 	 */
-	private String mysqlProcessType(String type) {
+	protected String mysqlProcessType(String type) {
 		if (type.contains("char")) {
 			return "String";
 		} else if (type.contains("bigint")) {
@@ -392,7 +392,7 @@ public class AutoGenerator {
 	 *            字段类型
 	 * @return
 	 */
-	private String oracleProcessType(String type) {
+	protected String oracleProcessType(String type) {
 		if (type.contains("CHAR")) {
 			return "String";
 		} else if (type.contains("DATE") || type.contains("TIMESTAMP")) {
@@ -416,7 +416,7 @@ public class AutoGenerator {
 	 *            字段类型列表
 	 * @return
 	 */
-	private boolean isDate(List<String> types) {
+	protected boolean isDate(List<String> types) {
 		for (String type : types) {
 			if (type.contains("date") || type.contains("timestamp")) {
 				return true;
@@ -432,7 +432,7 @@ public class AutoGenerator {
 	 *            字段类型列表
 	 * @return
 	 */
-	private boolean isDecimal(List<String> types) {
+	protected boolean isDecimal(List<String> types) {
 		for (String type : types) {
 			if (type.contains("decimal")) {
 				return true;
@@ -441,7 +441,7 @@ public class AutoGenerator {
 		return false;
 	}
 
-	private String processField(String field) {
+	protected String processField(String field) {
 		/*
 		 * 驼峰命名直接返回
 		 */
@@ -471,7 +471,7 @@ public class AutoGenerator {
 	 * @return
 	 * @throws IOException
 	 */
-	private BufferedWriter buildClassComment(BufferedWriter bw, String text) throws IOException {
+	protected BufferedWriter buildClassComment(BufferedWriter bw, String text) throws IOException {
 		bw.newLine();
 		bw.write("/**");
 		bw.newLine();
@@ -493,7 +493,7 @@ public class AutoGenerator {
 	 * @param comments
 	 * @throws IOException
 	 */
-	private void buildEntityBean(List<String> columns, List<String> types, List<String> comments, String tableComment,
+	protected void buildEntityBean(List<String> columns, List<String> types, List<String> comments, String tableComment,
 			Map<String, IdInfo> idMap, String table, String beanName) throws IOException {
 		File beanFile = new File(PATH_ENTITY, beanName + ".java");
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(beanFile)));
@@ -533,7 +533,7 @@ public class AutoGenerator {
 		bw.newLine();
 		bw.write("\t@TableField(exist = false)");
 		bw.newLine();
-		bw.write("\tprivate static final long serialVersionUID = 1L;");
+		bw.write("\tprotected static final long serialVersionUID = 1L;");
 		bw.newLine();
 		int size = columns.size();
 		for (int i = 0; i < size; i++) {
@@ -578,7 +578,7 @@ public class AutoGenerator {
 				bw.write("\t@TableField(value = \"" + column + "\")");
 				bw.newLine();
 			}
-			bw.write("\tprivate " + processType(types.get(i)) + " " + field + ";");
+			bw.write("\tprotected " + processType(types.get(i)) + " " + field + ";");
 			bw.newLine();
 		}
 
@@ -630,7 +630,7 @@ public class AutoGenerator {
 	 * @param mapperName
 	 * @throws IOException
 	 */
-	private void buildMapper(String beanName, String mapperName) throws IOException {
+	protected void buildMapper(String beanName, String mapperName) throws IOException {
 		File mapperFile = new File(PATH_MAPPER, mapperName + ".java");
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(mapperFile), "utf-8"));
 		bw.write("package " + config.getMapperPackage() + ";");
@@ -670,7 +670,7 @@ public class AutoGenerator {
 	 * @param comments
 	 * @throws IOException
 	 */
-	private void buildMapperXml(List<String> columns, List<String> types, List<String> comments,
+	protected void buildMapperXml(List<String> columns, List<String> types, List<String> comments,
 			Map<String, IdInfo> idMap, String mapperName) throws IOException {
 		File mapperXmlFile = new File(PATH_XML, mapperName + ".xml");
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(mapperXmlFile)));
@@ -700,7 +700,7 @@ public class AutoGenerator {
 	 * @param serviceName
 	 * @throws IOException
 	 */
-	private void buildService(String beanName, String serviceName) throws IOException {
+	protected void buildService(String beanName, String serviceName) throws IOException {
 		File serviceFile = new File(PATH_SERVICE, serviceName + ".java");
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(serviceFile), "utf-8"));
 		bw.write("package " + config.getServicePackage() + ";");
@@ -740,7 +740,7 @@ public class AutoGenerator {
 	 * @param mapperName
 	 * @throws IOException
 	 */
-	private void buildServiceImpl(String beanName, String serviceImplName, String serviceName, String mapperName)
+	protected void buildServiceImpl(String beanName, String serviceImplName, String serviceName, String mapperName)
 			throws IOException {
 		File serviceFile = new File(PATH_SERVICE_IMPL, serviceImplName + ".java");
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(serviceFile), "utf-8"));
@@ -786,7 +786,7 @@ public class AutoGenerator {
 	 * @param columns
 	 * @throws IOException
 	 */
-	private void buildSQL(BufferedWriter bw, Map<String, IdInfo> idMap, List<String> columns) throws IOException {
+	protected void buildSQL(BufferedWriter bw, Map<String, IdInfo> idMap, List<String> columns) throws IOException {
 		int size = columns.size();
 		bw.write("\t<!-- 通用查询结果列-->");
 		bw.newLine();
@@ -823,7 +823,7 @@ public class AutoGenerator {
 	 * @return
 	 * @throws SQLException
 	 */
-	private Map<String, String> getTableComment(Connection conn) throws SQLException {
+	protected Map<String, String> getTableComment(Connection conn) throws SQLException {
 		Map<String, String> maps = new HashMap<String, String>();
 		PreparedStatement pstate = conn.prepareStatement(config.getConfigDataSource().getTableCommentsSql());
 		ResultSet results = pstate.executeQuery();

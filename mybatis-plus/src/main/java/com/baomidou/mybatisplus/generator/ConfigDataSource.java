@@ -24,8 +24,7 @@ package com.baomidou.mybatisplus.generator;
  * @Date 2016-04-25
  */
 public enum ConfigDataSource {
-	MYSQL("mysql", "show tables", "show table status", "show full fields from %s", "NAME", "COMMENT"
-		,"FIELD","TYPE","COMMENT","KEY"), 
+	MYSQL("mysql", "show tables", "show table status", "show full fields from %s", "NAME", "COMMENT" ,"FIELD","TYPE","COMMENT","KEY"), 
 	ORACLE("oracle", "SELECT * FROM USER_TABLES", "SELECT * FROM USER_TAB_COMMENTS",
 			"SELECT A.COLUMN_NAME, A.DATA_TYPE, B.COMMENTS  FROM USER_TAB_COLUMNS A, USER_COL_COMMENTS B WHERE A.TABLE_NAME=B.TABLE_NAME AND A.COLUMN_NAME = B.COLUMN_NAME AND A.TABLE_NAME='%s'",
 			"TABLE_NAME", "COMMENTS" ,"COLUMN_NAME","DATA_TYPE","COMMENTS","COLUMN_NAME");
@@ -41,18 +40,9 @@ public enum ConfigDataSource {
 	private final String fieldComment;
 	private final String fieldKey;
 
-
-	ConfigDataSource(
-			final String db,
-			final String tablesSql,
-			final String tableCommentsSql,
-			final String tableFieldsSql,
-			final String tableName,
-			final String tableComment,
-			final String fieldName,
-			final String fieldType,
-			final String fieldComment,
-			final String fieldKey ) {
+	ConfigDataSource(final String db, final String tablesSql, final String tableCommentsSql,
+			final String tableFieldsSql, final String tableName, final String tableComment, final String fieldName,
+			final String fieldType, final String fieldComment, final String fieldKey) {
 		this.db = db;
 		this.tablesSql = tablesSql;
 		this.tableCommentsSql = tableCommentsSql;
@@ -65,7 +55,6 @@ public enum ConfigDataSource {
 		this.fieldKey = fieldKey;
 	}
 
-
 	/**
 	 * <p>
 	 * 获取数据库类型（默认 MySql）
@@ -75,60 +64,50 @@ public enum ConfigDataSource {
 	 *            数据库类型字符串
 	 * @return
 	 */
-	public static ConfigDataSource getConfigDataSource( String dbType ) {
-		for ( ConfigDataSource dt : ConfigDataSource.values() ) {
-			if ( dt.getDb().equals(dbType) ) {
+	public static ConfigDataSource getConfigDataSource(String dbType) {
+		for (ConfigDataSource dt : ConfigDataSource.values()) {
+			if (dt.getDb().equals(dbType)) {
 				return dt;
 			}
 		}
 		return MYSQL;
 	}
 
-
 	public String getDb() {
 		return db;
 	}
-
 
 	public String getTablesSql() {
 		return tablesSql;
 	}
 
-
 	public String getTableCommentsSql() {
 		return tableCommentsSql;
 	}
-
 
 	public String getTableFieldsSql() {
 		return tableFieldsSql;
 	}
 
-
 	public String getTableName() {
 		return tableName;
 	}
-
 
 	public String getTableComment() {
 		return tableComment;
 	}
 
-
 	public String getFieldName() {
 		return fieldName;
 	}
-
 
 	public String getFieldType() {
 		return fieldType;
 	}
 
-
 	public String getFieldComment() {
 		return fieldComment;
 	}
-
 
 	public String getFieldKey() {
 		return fieldKey;
