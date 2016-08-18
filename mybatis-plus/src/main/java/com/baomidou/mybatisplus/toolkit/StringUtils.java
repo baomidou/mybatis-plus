@@ -21,7 +21,7 @@ package com.baomidou.mybatisplus.toolkit;
  * </p>
  *
  * @author D.Yang
- * @Date 2016-08-08
+ * @Date 2016-08-18
  */
 public class StringUtils {
 
