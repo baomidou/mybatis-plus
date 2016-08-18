@@ -41,6 +41,8 @@
 		<servlet-api.version>2.5</servlet-api.version>
 		<spring.version>4.2.5.RELEASE</spring.version>
 		<mybatis-ehcache.version>1.0.3</mybatis-ehcache.version>
+		<junit.version>4.12</junit.version>
+		<contiperf.version>2.3.4</contiperf.version>
 	</properties>
 
 	<dependencies>
@@ -109,6 +111,18 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>${logback-classic.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>junit</groupId>
+		    <artifactId>junit</artifactId>
+		    <version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.databene</groupId>
+		    <artifactId>contiperf</artifactId>
+		    <version>${contiperf.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<!-- test end -->

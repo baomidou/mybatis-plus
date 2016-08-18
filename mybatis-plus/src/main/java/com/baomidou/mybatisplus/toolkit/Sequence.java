@@ -30,11 +30,11 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
  * @date 2016-08-01
  */
 public class Sequence {
-	/* 时间起始标记点，作为基准，一般取系统的最近时间（一旦确定不能变动）*/
+	/* 时间起始标记点，作为基准，一般取系统的最近时间（一旦确定不能变动） */
 	private final long twepoch = 1288834974657L;
-	private final long workerIdBits = 10L;/* 机器标识位数 */
-	private final long datacenterIdBits = 10L;
-	private final long maxWorkerId = -1L ^ (-1L << workerIdBits);/* 机器ID最大值 1023 */
+	private final long workerIdBits = 5L;/* 机器标识位数 */
+	private final long datacenterIdBits = 5L;
+	private final long maxWorkerId = -1L ^ (-1L << workerIdBits);
 	private final long maxDatacenterId = -1L ^ (-1L << datacenterIdBits);
 	private final long sequenceBits = 12L;/* 毫秒内自增位 */
 	private final long workerIdShift = sequenceBits;
