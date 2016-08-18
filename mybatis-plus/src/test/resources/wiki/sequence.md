@@ -7,12 +7,12 @@ Twitter-Snowflake算法产生的背景相当简单，为了满足Twitter每秒�
 
 性能测试数据：
 
-![性能测试结果](src/test/resources/wiki/img/perf.png)
+![性能测试结果](img/perf.png)
 
 ##Snowflake算法核心
 把时间戳，工作机器id，序列号组合在一起。
 
-![Snowflake算法核心](src/test/resources/wiki/img/snowflake-64bit.jpg)
+![Snowflake算法核心](img/snowflake-64bit.jpg)
 
 除了最高位bit标记为不可用以外，其余三组bit占位均可浮动，看具体的业务需求而定。默认情况下41bit的时间戳可以支持该算法使用到2082年，10bit的工作机器id可以支持1023台机器，序列号支持1毫秒产生4095个自增序列id。下文会具体分析。
 
