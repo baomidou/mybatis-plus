@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
  * <p>
@@ -79,7 +80,7 @@ public class Page<T> extends Pagination {
 	}
 
 	public void setOrderByField(String orderByField) {
-		if (!"".equals(orderByField)) {
+		if (StringUtils.isNotEmpty(orderByField)) {
 			this.orderByField = orderByField;
 		}
 	}

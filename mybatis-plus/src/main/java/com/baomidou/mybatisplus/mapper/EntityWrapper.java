@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
+import com.baomidou.mybatisplus.toolkit.StringUtils;
+
 /**
  * <p>
  * Entity 对象封装操作类
@@ -68,20 +70,20 @@ public class EntityWrapper<T> {
 	}
 
 	public String getSqlSelect() {
-		if (sqlSelect == null || "".equals(sqlSelect)) {
+		if (StringUtils.isEmpty(sqlSelect)) {
 			return null;
 		}
 		return stripSqlInjection(sqlSelect);
 	}
 
 	public void setSqlSelect(String sqlSelect) {
-		if (sqlSelect != null && !"".equals(sqlSelect)) {
+		if (StringUtils.isNotEmpty(sqlSelect)) {
 			this.sqlSelect = sqlSelect;
 		}
 	}
 
 	public String getSqlSegment() {
-		if (null == sqlSegment || "".equals(sqlSegment)) {
+		if (StringUtils.isEmpty(sqlSegment)) {
 			return null;
 		}
 		StringBuffer andOr = new StringBuffer();
@@ -95,7 +97,7 @@ public class EntityWrapper<T> {
 	}
 
 	public void setSqlSegment(String sqlSegment) {
-		if (sqlSegment != null && !"".equals(sqlSegment)) {
+		if (StringUtils.isNotEmpty(sqlSegment)) {
 			this.sqlSegment = sqlSegment;
 		}
 	}

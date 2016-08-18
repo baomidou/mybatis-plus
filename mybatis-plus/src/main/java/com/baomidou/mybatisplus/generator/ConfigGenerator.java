@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.generator;
 
 import com.baomidou.mybatisplus.annotations.IdType;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 
 /**
@@ -141,7 +142,7 @@ public class ConfigGenerator {
 	}
 
 	public String getSuperService() {
-		if (superService == null || "".equals(superService)) {
+		if (StringUtils.isEmpty(superService)) {
 			if (this.getConfigIdType() == ConfigIdType.STRING) {
 				return "com.baomidou.framework.service.ICommonService";
 			} else {
@@ -156,7 +157,7 @@ public class ConfigGenerator {
 	}
 
 	public String getSuperServiceImpl() {
-		if (superServiceImpl == null || "".equals(superServiceImpl)) {
+		if (StringUtils.isEmpty(superServiceImpl)) {
 			if (this.getConfigIdType() == ConfigIdType.STRING) {
 				return "com.baomidou.framework.service.impl.CommonServiceImpl";
 			} else {
@@ -277,7 +278,7 @@ public class ConfigGenerator {
 	}
 
 	public String getXmlPackage() {
-		if (null == xmlPackage || "".equals(xmlPackage)) {
+		if (StringUtils.isEmpty(xmlPackage)) {
 			xmlPackage = mapperPackage + ".xml";
 		}
 		return xmlPackage;
@@ -304,7 +305,7 @@ public class ConfigGenerator {
 	}
 
 	public String getServiceImplPackage() {
-		if (null == serviceImplPackage || "".equals(serviceImplPackage)) {
+		if (StringUtils.isEmpty(serviceImplPackage)) {
 			serviceImplPackage = servicePackage + ".impl";
 		}
 		return serviceImplPackage;
