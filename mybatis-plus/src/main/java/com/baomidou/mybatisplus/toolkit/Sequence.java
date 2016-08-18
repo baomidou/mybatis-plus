@@ -24,10 +24,12 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 /**
  * <p>
  * 分布式高效有序ID生产黑科技(sequence)
+ * <br>
+ * 优化开源项目：http://git.oschina.net/yu120/sequence
  * </p>
  * 
  * @author hubin
- * @date 2016-08-01
+ * @date 2016-08-18
  */
 public class Sequence {
 	/* 时间起始标记点，作为基准，一般取系统的最近时间（一旦确定不能变动） */
@@ -51,8 +53,14 @@ public class Sequence {
 	private long lastTimestamp = -1L;/* 上次生产id时间戳 */
 	
 	public Sequence() {
-		this.datacenterId = getDatacenterId();
-		/* MAC + PID 的 hashcode 获取16个低位 */
+		/*
+		 * 数据标识id部分
+		 */
+		this.datacenterId = getDatacenterId() % (maxDatacenterId + 1);
+
+		/*
+		 * MAC + PID 的 hashcode 获取16个低位
+		 */
 		long macPidHashCode = (datacenterId + "" + getJvmPid()).hashCode() & 0xffff;
 		this.workerId = macPidHashCode % (maxWorkerId + 1);
 	}
@@ -65,12 +73,10 @@ public class Sequence {
 	 */
 	public Sequence(long workerId, long datacenterId) {
 		if (workerId > maxWorkerId || workerId < 0) {
-			throw new IllegalArgumentException(
-					String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
+			throw new MybatisPlusException(String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
 		}
 		if (datacenterId > maxDatacenterId || datacenterId < 0) {
-			throw new IllegalArgumentException(
-					String.format("datacenter Id can't be greater than %d or less than 0", maxDatacenterId));
+			throw new MybatisPlusException(String.format("datacenter Id can't be greater than %d or less than 0", maxDatacenterId));
 		}
 		this.workerId = workerId;
 		this.datacenterId = datacenterId;
