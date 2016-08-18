@@ -18,6 +18,7 @@ package com.baomidou.framework.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.mapper.Condition;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.baomidou.framework.service.IService;
@@ -117,31 +118,15 @@ public class ServiceImpl<M extends BaseMapper<T, I>, T, I> implements IService<T
 		return baseMapper.selectCount(entity);
 	}
 
-	public List<T> selectList(T entity, String sqlSelect, String sqlSegment, String orderByField) {
-		return baseMapper.selectList(new EntityWrapper<T>(entity, sqlSelect, this.convertSqlSegmet(sqlSegment, orderByField, true)));
+	public List<T> selectList(Condition<T> condition) {
+		return baseMapper.selectList(condition.getEntityWrapper());
 	}
 
-	public Page<T> selectPage(Page<T> page, String sqlSelect, T entity, String sqlSegment) {
-		EntityWrapper<T> ew = new EntityWrapper<T>(entity, sqlSelect, this.convertSqlSegmet(page.getOrderByField(), sqlSegment, page.isAsc()));
-		page.setRecords(baseMapper.selectPage(page, ew));
+	public Page<T> selectPage(Page<T> page, Condition<T> condition) {
+		condition.setOrderByField(page.getOrderByField());
+		condition.setAsc(page.isAsc());
+		page.setRecords(baseMapper.selectPage(page, condition.getEntityWrapper()));
 		return page;
-	}
-
-	/**
-	 * 转换 SQL 片段 + 排序
-	 */
-	protected String convertSqlSegmet(String sqlSegment, String orderByField, boolean isAsc) {
-		StringBuffer segment = new StringBuffer();
-		if (null != sqlSegment) {
-			segment.append(sqlSegment);
-		}
-		if (null != orderByField) {
-			segment.append(" ORDER BY ").append(orderByField);
-			if (!isAsc) {
-				segment.append(" DESC");
-			}
-		}
-		return segment.toString();
 	}
 
 }

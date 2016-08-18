@@ -18,6 +18,7 @@ package com.baomidou.framework.service;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.mapper.Condition;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 
@@ -226,18 +227,12 @@ public interface IService<T, I> {
 	 * <p>
 	 * 查询列表
 	 * </p>
-	 * 
-	 * @param entity
-	 *            实体对象
-	 * @param sqlSelect
-	 *            SQL 查询字段内容，例如：id,name,age
-	 * @param sqlSegment
-	 *            SQL 片段
-	 * @param orderByField
-	 *            对应 EntityWrapper 类中 orderByField 字段 {@link EntityWrapper}
+	 *
+	 * @param condition
+	 *            SQL 查询条件,详见Condition类 {@link Condition}
 	 * @return
 	 */
-	List<T> selectList(T entity, String sqlSelect, String sqlSegment, String orderByField);
+	List<T> selectList(Condition<T> condition);
 
 	/**
 	 * <p>
@@ -246,14 +241,10 @@ public interface IService<T, I> {
 	 * 
 	 * @param page
 	 *            翻页对象
-	 * @param sqlSelect
-	 *            SQL 查询字段内容，例如：id,name,age
-	 * @param entity
-	 *            实体对象
-	 * @param sqlSegment
-	 *            SQL 片段
+	 * @param condition
+	 *            SQL 查询条件,详见Condition类 {@link Condition}
 	 * @return
 	 */
-	Page<T> selectPage(Page<T> page, String sqlSelect, T entity, String sqlSegment);
+	Page<T> selectPage(Page<T> page, Condition<T> condition);
 
 }
