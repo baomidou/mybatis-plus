@@ -78,7 +78,7 @@ public class TableInfoHelper {
 			if (tableId != null) {
 				if (tableInfo.getKeyColumn() == null) {
 					tableInfo.setIdType(tableId.type());
-					if(tableId.value() != null && !"".equals(tableId.value())) {
+					if(StringUtils.isNotEmpty(tableId.value())) {
 						/* 自定义字段 */
 						tableInfo.setKeyColumn(tableId.value());
 						tableInfo.setKeyRelated(true);
@@ -98,7 +98,7 @@ public class TableInfoHelper {
 
 			/* 获取注解属性，自定义字段 */
 			TableField tableField = field.getAnnotation(TableField.class);
-			if (tableField != null && tableField.value() != null && !"".equals(tableField.value())) {
+			if (tableField != null && StringUtils.isNotEmpty(tableField.value())) {
 				fieldList.add(new TableFieldInfo(true, tableField.value(), field.getName()));
 				continue;
 			}
@@ -130,7 +130,7 @@ public class TableInfoHelper {
 	 * 驼峰转下划线
 	 */
 	private static String camelToUnderline(String param) {
-		if (param == null || "".equals(param.trim())) {
+		if (StringUtils.isEmpty(param)) {
 			return "";
 		}
 		int len = param.length();

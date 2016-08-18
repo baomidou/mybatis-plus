@@ -33,6 +33,7 @@ import java.util.Map;
 
 import com.baomidou.mybatisplus.annotations.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
  * <p>
@@ -141,7 +142,7 @@ public class AutoGenerator {
 	 * @return
 	 */
 	protected static String getPathFromPackageName(String packageName) {
-		if (null == packageName || "".equals(packageName)) {
+		if (StringUtils.isEmpty(packageName)) {
 			return "";
 		}
 		return packageName.replace(".", File.separator);
