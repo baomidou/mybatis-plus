@@ -18,13 +18,13 @@ package com.baomidou.mybatisplus.toolkit;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.util.logging.Logger;
 
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 
 /**
  * <p>
- * 分布式高效有序ID生产黑科技(sequence)
- * <br>
+ * 分布式高效有序ID生产黑科技(sequence) <br>
  * 优化开源项目：http://git.oschina.net/yu120/sequence
  * </p>
  * 
@@ -32,6 +32,8 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
  * @date 2016-08-18
  */
 public class Sequence {
+	protected final static Logger logger = Logger.getLogger("Sequence");
+
 	/* 时间起始标记点，作为基准，一般取系统的最近时间（一旦确定不能变动） */
 	private final long twepoch = 1288834974657L;
 	private final long workerIdBits = 5L;/* 机器标识位数 */
@@ -46,23 +48,15 @@ public class Sequence {
 	private final long sequenceMask = -1L ^ (-1L << sequenceBits);
 
 	private long workerId;
-	
+
 	/* 数据标识id部分 */
 	private long datacenterId;
 	private long sequence = 0L;/* 0，并发控制 */
 	private long lastTimestamp = -1L;/* 上次生产id时间戳 */
-	
-	public Sequence() {
-		/*
-		 * 数据标识id部分
-		 */
-		this.datacenterId = getDatacenterId() % (maxDatacenterId + 1);
 
-		/*
-		 * MAC + PID 的 hashcode 获取16个低位
-		 */
-		long macPidHashCode = (datacenterId + "" + getJvmPid()).hashCode() & 0xffff;
-		this.workerId = macPidHashCode % (maxWorkerId + 1);
+	public Sequence() {
+		this.datacenterId = getDatacenterId(maxDatacenterId);
+		this.workerId = getMaxWorkerId(datacenterId, maxWorkerId);
 	}
 
 	/**
@@ -73,10 +67,12 @@ public class Sequence {
 	 */
 	public Sequence(long workerId, long datacenterId) {
 		if (workerId > maxWorkerId || workerId < 0) {
-			throw new MybatisPlusException(String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
+			throw new MybatisPlusException(
+					String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
 		}
 		if (datacenterId > maxDatacenterId || datacenterId < 0) {
-			throw new MybatisPlusException(String.format("datacenter Id can't be greater than %d or less than 0", maxDatacenterId));
+			throw new MybatisPlusException(
+					String.format("datacenter Id can't be greater than %d or less than 0", maxDatacenterId));
 		}
 		this.workerId = workerId;
 		this.datacenterId = datacenterId;
@@ -90,7 +86,7 @@ public class Sequence {
 	public synchronized long nextId() {
 		long timestamp = timeGen();
 		if (timestamp < lastTimestamp) {
-			throw new RuntimeException(String.format(
+			throw new MybatisPlusException(String.format(
 					"Clock moved backwards. Refusing to generate id for %d milliseconds", lastTimestamp - timestamp));
 		}
 		if (lastTimestamp == timestamp) {
@@ -119,19 +115,26 @@ public class Sequence {
 	protected long timeGen() {
 		return SystemClock.now();
 	}
-	
+
 	/**
 	 * <p>
-	 * 获取 PID
+	 * 获取 maxWorkerId
 	 * </p>
 	 */
-	private static String getJvmPid() {
+	protected static long getMaxWorkerId(long datacenterId, long maxWorkerId) {
+		StringBuffer mpid = new StringBuffer();
+		mpid.append(datacenterId);
 		String name = ManagementFactory.getRuntimeMXBean().getName();
-		// get pid
-		if (name != null) {
-			return name.split("@")[0];
+		if (StringUtils.isNotEmpty(name)) {
+			/*
+			 * GET jvmPid
+			 */
+			mpid.append(name.split("@")[0]);
 		}
-		return null;
+		/*
+		 * MAC + PID 的 hashcode 获取16个低位
+		 */
+		return (mpid.toString().hashCode() & 0xffff) % (maxWorkerId + 1);
 	}
 
 	/**
@@ -139,22 +142,23 @@ public class Sequence {
 	 * 数据标识id部分
 	 * </p>
 	 */
-	protected static long getDatacenterId() {
+	protected static long getDatacenterId(long maxDatacenterId) {
+		long id = 0L;
 		try {
 			InetAddress ip = InetAddress.getLocalHost();
 			NetworkInterface network = NetworkInterface.getByInetAddress(ip);
-			long id;
 			if (network == null) {
-				id = 1;
+				id = 1L;
 			} else {
 				byte[] mac = network.getHardwareAddress();
 				id = ((0x000000FF & (long) mac[mac.length - 1])
 						| (0x0000FF00 & (((long) mac[mac.length - 2]) << 8))) >> 6;
+				id = id % (maxDatacenterId + 1);
 			}
-			return id;
 		} catch (Exception e) {
-			throw new MybatisPlusException(e);
+			logger.fine(" getDatacenterId: " + e.getMessage());
 		}
+		return id;
 	}
 
 }
