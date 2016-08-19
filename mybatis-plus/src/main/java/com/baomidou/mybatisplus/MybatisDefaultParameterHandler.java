@@ -128,7 +128,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 			MetaObject metaParam = ms.getConfiguration().newMetaObject(parameterObject);
 			Object idValue = metaParam.getValue(tableInfo.getKeyProperty());
 			/* 自定义 ID */
-			if ( idValue == null ) {
+			if ( null == idValue || "".equals(idValue) ) {
 				if ( tableInfo.getIdType() == IdType.ID_WORKER ) {
 					metaParam.setValue(tableInfo.getKeyProperty(), IdWorker.getId());
 				} else if ( tableInfo.getIdType() == IdType.UUID ) {
