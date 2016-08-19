@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
+import java.text.MessageFormat;
+
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
@@ -38,27 +40,21 @@ public class EntityWrapper<T> {
 	private String sqlSelect = null;
 
 	/**
-	 * SQL 片段
+	 * 查询条件
 	 */
-	private String sqlSegment = null;
+	protected StringBuffer queryFilter = new StringBuffer();
 
-	protected EntityWrapper() {
-		/* 保护 */
+	public EntityWrapper() {
+		// to do nothing
 	}
 
 	public EntityWrapper(T entity) {
 		this.entity = entity;
 	}
 
-	public EntityWrapper(T entity, String sqlSegment) {
-		this.entity = entity;
-		this.sqlSegment = sqlSegment;
-	}
-
-	public EntityWrapper(T entity, String sqlSelect, String sqlSegment) {
+	public EntityWrapper(T entity, String sqlSelect) {
 		this.entity = entity;
 		this.sqlSelect = sqlSelect;
-		this.sqlSegment = sqlSegment;
 	}
 
 	public T getEntity() {
@@ -82,24 +78,84 @@ public class EntityWrapper<T> {
 		}
 	}
 
+	/**
+	 * SQL 片段
+	 */
 	public String getSqlSegment() {
-		if (StringUtils.isEmpty(sqlSegment)) {
+		/*
+		 * 无条件
+		 */
+		String tempQuery = queryFilter.toString().trim();
+		if (StringUtils.isEmpty(tempQuery)) {
 			return null;
 		}
-		StringBuffer andOr = new StringBuffer();
-		if (null == entity) {
-			andOr.append("WHERE ");
-		} else {
-			andOr.append("AND ");
+
+		/*
+		 * 只排序、直接返回
+		 */
+		if (tempQuery.toUpperCase().indexOf("ORDER BY") == 0) {
+			return stripSqlInjection(queryFilter.toString());
 		}
-		andOr.append(sqlSegment);
-		return stripSqlInjection(andOr.toString());
+
+		/*
+		 * SQL 片段
+		 */
+		StringBuffer sqlSegment = new StringBuffer();
+		if (null == this.getEntity()) {
+			sqlSegment.append(" WHERE ");
+		} else {
+			sqlSegment.append(" AND ");
+		}
+		sqlSegment.append(queryFilter.toString());
+		return stripSqlInjection(sqlSegment.toString());
 	}
 
-	public void setSqlSegment(String sqlSegment) {
-		if (StringUtils.isNotEmpty(sqlSegment)) {
-			this.sqlSegment = sqlSegment;
+	/**
+	 * <p>
+	 * 添加查询条件
+	 * </p>
+	 * <p>
+	 * 例如： ew.addFilter("name={0}", "'123'") <br>
+	 * 输出：name='123'
+	 * </p>
+	 * 
+	 * @param filter
+	 *            SQL 片段内容
+	 * @param params
+	 *            格式参数
+	 * @return
+	 */
+	public EntityWrapper<T> addFilter(String filter, Object... params) {
+		if (StringUtils.isEmpty(filter)) {
+			return this;
 		}
+		queryFilter.append(MessageFormat.format(filter, params));
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * 添加查询条件
+	 * </p>
+	 * <p>
+	 * 例如： ew.addFilter("name={0}", "'123'").addFilterIfNeed(false,
+	 * " ORDER BY id") <br>
+	 * 输出：name='123'
+	 * </p>
+	 * 
+	 * @param willAppend
+	 *            判断条件 true 输出 SQL 片段，false 不输出
+	 * @param filter
+	 *            SQL 片段
+	 * @param params
+	 *            格式参数
+	 * @return
+	 */
+	public EntityWrapper<T> addFilterIfNeed(boolean willAppend, String filter, Object... params) {
+		if (willAppend) {
+			addFilter(filter, params);
+		}
+		return this;
 	}
 
 	/**

@@ -41,7 +41,6 @@ import com.baomidou.mybatisplus.toolkit.IdWorker;
  */
 public class UserMapperTest {
 
-
 	/**
 	 * 
 	 * RUN 测试
@@ -53,12 +52,11 @@ public class UserMapperTest {
 	 * 2、加载sqlProvider中的SQL<br>
 	 * 3、xmlSql 与 sqlProvider不能包含相同的SQL<br>
 	 * <br>
-	 * 调整后的SQL优先级：xmlSql > sqlProvider > crudSql
-	 * <br>
+	 * 调整后的SQL优先级：xmlSql > sqlProvider > crudSql <br>
 	 */
-	public static void main( String[] args ) {
+	public static void main(String[] args) {
 
-		//加载配置文件
+		// 加载配置文件
 		InputStream in = UserMapperTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
 
 		/*
@@ -66,14 +64,12 @@ public class UserMapperTest {
 		 * SqlSessionFactory，目的是引入AutoMapper功能
 		 */
 		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
-		
+
 		/*
-		 * 1、数据库字段驼峰命名不需要任何设置
-		 * 2、当前演示是驼峰下划线混合命名
-		 * 3、如下开启，表示数据库字段使用下划线命名，该设置是全局的。
-		 *	 开启该设置实体可无 @TableId(value = "test_id") 字段映射
+		 * 1、数据库字段驼峰命名不需要任何设置 2、当前演示是驼峰下划线混合命名 3、如下开启，表示数据库字段使用下划线命名，该设置是全局的。
+		 * 开启该设置实体可无 @TableId(value = "test_id") 字段映射
 		 */
-		//mf.setDbColumnUnderline(true);
+		// mf.setDbColumnUnderline(true);
 
 		/**
 		 * 设置，自定义 SQL 注入器
@@ -85,7 +81,7 @@ public class UserMapperTest {
 		UserMapper userMapper = session.getMapper(UserMapper.class);
 		System.err.println(" debug run 查询执行 user 表数据变化！ ");
 		userMapper.deleteAll();
-		
+
 		/**
 		 * 注解插件测试
 		 */
@@ -107,13 +103,13 @@ public class UserMapperTest {
 		rlt = userMapper.insert(new User(id, "abc", 18, 1));
 		System.err.println("\n--------------insert-------" + rlt);
 		sleep();
-		
+
 		rlt = userMapper.insertSelective(new User("abc", 18));
 		System.err.println("\n--------------insertSelective-------" + rlt);
 		sleep();
 
 		List<User> ul = new ArrayList<User>();
-		
+
 		/* 手动输入 ID */
 		ul.add(new User(11L, "1", 1, 0));
 		ul.add(new User(12L, "2", 2, 1));
@@ -123,13 +119,12 @@ public class UserMapperTest {
 		ul.add(new User(16L, "6", 6, 0));
 		ul.add(new User(17L, "7", 7, 0));
 		ul.add(new User(18L, "deleteByMap", 7, 0));
-		
+
 		/* 使用 ID_WORKER 自动生成 ID */
 		ul.add(new User("8", 8, 1));
 		ul.add(new User("9", 9, 1));
 		rlt = userMapper.insertBatch(ul);
 		System.err.println("\n--------------insertBatch----------------" + rlt + "\n\n");
-
 
 		/**
 		 * 删除
@@ -155,7 +150,6 @@ public class UserMapperTest {
 		System.err.println("--------------deleteSelective------------------ result=" + rlt + "\n\n");
 		sleep();
 
-
 		/**
 		 * <p>
 		 * 修改
@@ -168,21 +162,21 @@ public class UserMapperTest {
 		rlt = userMapper.updateSelectiveById(new User(12L, "MybatisPlus"));
 		System.err.println("------------------updateSelectiveById---------------------- result=" + rlt + "\n\n");
 		sleep();
-		
+
 		rlt = userMapper.updateById(new User(12L, "update all column", 12, 12));
 		System.err.println("------------------updateById---------------------- result=" + rlt + "\n\n");
 		sleep();
-		
+
 		rlt = userMapper.update(new User("55", 55, 5), new User(15L, "5"));
 		System.err.println("------------------update---------------------- result=" + rlt + "\n\n");
 		sleep();
-		
+
 		rlt = userMapper.updateSelective(new User("00"), new User(15L, "55"));
 		System.err.println("------------------updateSelective---------------------- result=" + rlt + "\n\n");
 		sleep();
-		
+
 		/* 无条件选择更新 */
-		//userMapper.updateSelective(new User("11"), null);
+		// userMapper.updateSelective(new User("11"), null);
 
 		List<User> userList = new ArrayList<User>();
 		userList.add(new User(11L, "updateBatchById-1", 1, 1));
@@ -206,29 +200,29 @@ public class UserMapperTest {
 		idList.add(11L);
 		idList.add(12L);
 		List<User> ul0 = userMapper.selectBatchIds(idList);
-		for ( int i = 0 ; i < ul0.size() ; i++ ) {
+		for (int i = 0; i < ul0.size(); i++) {
 			print(ul0.get(i));
 		}
-		
+
 		System.err.println("\n------------------selectByMap-----满足 map 条件的数据----");
 		Map<String, Object> cm = new HashMap<String, Object>();
 		cm.put("test_type", 1);
 		List<User> ul1 = userMapper.selectByMap(cm);
-		for ( int i = 0 ; i < ul1.size() ; i++ ) {
+		for (int i = 0; i < ul1.size(); i++) {
 			print(ul1.get(i));
 		}
 
 		System.err.println("\n------------------selectOne----------------------");
 		User userOne = userMapper.selectOne(new User("abc"));
 		print(userOne);
-		
+
 		System.err.println("\n------------------selectCount----------------------");
 		System.err.println("查询 type=1 总记录数：" + userMapper.selectCount(new User(1)));
 		System.err.println("总记录数：" + userMapper.selectCount(null));
 
 		System.err.println("\n------------------selectList-----所有数据----id--DESC--排序----");
-		List<User> ul2 = userMapper.selectList(new EntityWrapper<User>(null, " 1=1 ORDER BY id DESC"));
-		for ( int i = 0 ; i < ul2.size() ; i++ ) {
+		List<User> ul2 = userMapper.selectList(new EntityWrapper<User>(null, "age,name"));
+		for (int i = 0; i < ul2.size(); i++) {
 			print(ul2.get(i));
 		}
 
@@ -249,26 +243,27 @@ public class UserMapperTest {
 		/*
 		 * 查询条件，SQL 片段（ 注意！程序会自动在 sqlSegmet 内容前面添加 where 或者 and ）
 		 */
-		ew.setSqlSegment("name like '%dateBatch%'");
+		ew.addFilter("name like {0}", "'%dateBatch%'");
+		ew.addFilter(" ORDER BY {0} {1}", page.getOrderByField(), page.isAsc() ? "" : "DESC");
 		List<User> paginList = userMapper.selectPage(page, ew);
 		page.setRecords(paginList);
-		for ( int i = 0 ; i < page.getRecords().size() ; i++ ) {
+		for (int i = 0; i < page.getRecords().size(); i++) {
 			print(page.getRecords().get(i));
 		}
 		System.err.println(" 翻页：" + page.toString());
 
 		System.err.println("\n---------------xml---selectListRow 分页查询，不查询总数（此时可自定义 count 查询）----无查询条件--------------");
-		//TODO 查询总数传 Page 对象即可
+		// TODO 查询总数传 Page 对象即可
 		List<User> rowList = userMapper.selectListRow(new Pagination(0, 2, false));
-		for ( int i = 0 ; i < rowList.size() ; i++ ) {
+		for (int i = 0; i < rowList.size(); i++) {
 			print(rowList.get(i));
 		}
-		
+
 		/*
 		 * 用户列表
 		 */
-		paginList = userMapper.selectList(new EntityWrapper<User>(null, null, null));
-		for ( int i = 0 ; i < rowList.size() ; i++ ) {
+		paginList = userMapper.selectList(new EntityWrapper<User>());
+		for (int i = 0; i < rowList.size(); i++) {
 			print(rowList.get(i));
 		}
 
@@ -284,7 +279,6 @@ public class UserMapperTest {
 		session.commit();
 	}
 
-
 	/*
 	 * 打印测试信息
 	 */
@@ -298,14 +292,13 @@ public class UserMapperTest {
 		}
 	}
 
-
 	/*
-	 * 慢点打印 
+	 * 慢点打印
 	 */
 	private static void sleep() {
 		try {
 			Thread.sleep(1000);
-		} catch ( InterruptedException e ) {
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}

@@ -18,7 +18,6 @@ package com.baomidou.framework.service.impl;
 import java.util.List;
 import java.util.Map;
 
-import com.baomidou.mybatisplus.mapper.Condition;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.baomidou.framework.service.IService;
@@ -118,14 +117,13 @@ public class ServiceImpl<M extends BaseMapper<T, I>, T, I> implements IService<T
 		return baseMapper.selectCount(entity);
 	}
 
-	public List<T> selectList(Condition<T> condition) {
-		return baseMapper.selectList(condition.getEntityWrapper());
+	public List<T> selectList(EntityWrapper<T> entityWrapper) {
+		return baseMapper.selectList(entityWrapper);
 	}
 
-	public Page<T> selectPage(Page<T> page, Condition<T> condition) {
-		condition.setOrderByField(page.getOrderByField());
-		condition.setAsc(page.isAsc());
-		page.setRecords(baseMapper.selectPage(page, condition.getEntityWrapper()));
+	public Page<T> selectPage(Page<T> page, EntityWrapper<T> entityWrapper) {
+		entityWrapper.addFilter(" ORDER BY {0} {1}", page.getOrderByField(), page.isAsc() ? "" : "DESC");
+		page.setRecords(baseMapper.selectPage(page, entityWrapper));
 		return page;
 	}
 

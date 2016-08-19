@@ -18,7 +18,6 @@ package com.baomidou.framework.service;
 import java.util.List;
 import java.util.Map;
 
-import com.baomidou.mybatisplus.mapper.Condition;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 
@@ -228,11 +227,11 @@ public interface IService<T, I> {
 	 * 查询列表
 	 * </p>
 	 *
-	 * @param condition
-	 *            SQL 查询条件,详见Condition类 {@link Condition}
+	 * @param entityWrapper
+	 *            实体包装类 {@link EntityWrapper}
 	 * @return
 	 */
-	List<T> selectList(Condition<T> condition);
+	List<T> selectList(EntityWrapper<T> entityWrapper);
 
 	/**
 	 * <p>
@@ -241,10 +240,10 @@ public interface IService<T, I> {
 	 * 
 	 * @param page
 	 *            翻页对象
-	 * @param condition
-	 *            SQL 查询条件,详见Condition类 {@link Condition}
+	 * @param entityWrapper
+	 *            实体包装类 {@link EntityWrapper}
 	 * @return
 	 */
-	Page<T> selectPage(Page<T> page, Condition<T> condition);
+	Page<T> selectPage(Page<T> page, EntityWrapper<T> entityWrapper);
 
 }
