@@ -66,7 +66,7 @@ public class TableInfoHelper {
 		if (table != null && table.value() != null && table.value().trim().length() > 0) {
 			tableInfo.setTableName(table.value());
 		} else {
-			tableInfo.setTableName(camelToUnderline(clazz.getSimpleName()));
+			tableInfo.setTableName(StringUtils.camelToUnderline(clazz.getSimpleName()));
 		}
 
 		List<TableFieldInfo> fieldList = new ArrayList<TableFieldInfo>();
@@ -84,7 +84,7 @@ public class TableInfoHelper {
 						tableInfo.setKeyRelated(true);
 					} else if (MybatisConfiguration.DB_COLUMN_UNDERLINE) {
 						/* 开启字段下划线申明 */
-						tableInfo.setKeyColumn(camelToUnderline(field.getName()));
+						tableInfo.setKeyColumn(StringUtils.camelToUnderline(field.getName()));
 					} else {
 						tableInfo.setKeyColumn(field.getName());
 					}
@@ -108,7 +108,7 @@ public class TableInfoHelper {
 			 */
 			if (MybatisConfiguration.DB_COLUMN_UNDERLINE) {
 				/* 开启字段下划线申明 */
-				fieldList.add(new TableFieldInfo(true, camelToUnderline(field.getName()), field.getName()));
+				fieldList.add(new TableFieldInfo(true, StringUtils.camelToUnderline(field.getName()), field.getName()));
 			} else {
 				fieldList.add(new TableFieldInfo(field.getName()));
 			}
@@ -126,24 +126,6 @@ public class TableInfoHelper {
 		return tableInfo;
 	}
 
-	/**
-	 * 驼峰转下划线
-	 */
-	private static String camelToUnderline(String param) {
-		if (StringUtils.isEmpty(param)) {
-			return "";
-		}
-		int len = param.length();
-		StringBuilder sb = new StringBuilder(len);
-		for (int i = 0; i < len; i++) {
-			char c = param.charAt(i);
-			if (Character.isUpperCase(c) && i > 0) {
-				sb.append("_");
-			}
-			sb.append(Character.toLowerCase(c));
-		}
-		return sb.toString();
-	}
 	
 	/**
 	 * 获取该类的所有属性列表
