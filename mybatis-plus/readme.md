@@ -107,17 +107,7 @@
 
 	int count = userMapper.selectCount(null);
 
-> 	查询列表 id 排序
+> 	列表||翻页，模糊、排序 等查询 
 
-	List<User> ul2 = userMapper.selectList(new EntityWrapper<User>(null, "id DESC"));
-
-> 	翻页查询 id 排序
-
-	Page<User> page = new Page<User>(1, 2);
-	EntityWrapper<User> ew = new EntityWrapper<User>(new User(1), "id DESC");
-	List<User> paginList = userMapper.selectPage(page, ew);
-	page.setRecords(paginList);
-	for ( int i = 0 ; i < page.getRecords().size() ; i++ ) {
-		print(page.getRecords().get(i));
-	}
+	参考：mybatis-plus/src/test/java/com/baomidou/mybatisplus/test/mysql/UserMapperTest.java
 

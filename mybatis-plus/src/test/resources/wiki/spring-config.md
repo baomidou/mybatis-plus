@@ -1,5 +1,5 @@
 
-# Spring 配置 myBatis-plus
+# Spring 配置 Mybatis-Plus
 
 
 > 依赖包

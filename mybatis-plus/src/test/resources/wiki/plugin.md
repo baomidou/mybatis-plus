@@ -5,7 +5,7 @@
 ## 分页原理
 简单来说就是通过拦截StatementHandler重写sql语句，实现数据库的物理分页
 
-## 如何使用分页插件 
+## 如何使用插件 
 > **mybatis** 配置文件中配置插件 [mybatis-config.xml]
 ```
 <plugins>
