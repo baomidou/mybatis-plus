@@ -713,7 +713,7 @@ public class AutoGenerator {
 		bw.write("import " + config.getEntityPackage() + "." + beanName + ";");
 		bw.newLine();
 		String superService = config.getSuperService();
-		bw.write("import " + superService);
+		bw.write("import " + superService + ";");
 		bw.newLine();
 
 		bw = buildClassComment(bw, beanName + " 表数据服务层接口");

@@ -129,7 +129,11 @@ public class EntityWrapper<T> {
 		if (StringUtils.isEmpty(filter)) {
 			return this;
 		}
-		queryFilter.append(MessageFormat.format(filter, params));
+		if (null != params && params.length >= 1) {
+			queryFilter.append(MessageFormat.format(filter, params));
+		} else {
+			queryFilter.append(filter);
+		}
 		return this;
 	}
 
