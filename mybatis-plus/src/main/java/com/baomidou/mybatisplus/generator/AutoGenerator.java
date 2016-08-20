@@ -523,8 +523,10 @@ public class AutoGenerator {
 		bw.newLine();
 		bw.write("import com.baomidou.mybatisplus.annotations.TableId;");
 		bw.newLine();
-		bw.write("import com.baomidou.mybatisplus.annotations.TableName;");
-		bw.newLine();
+		if (table.contains("_")) {
+			bw.write("import com.baomidou.mybatisplus.annotations.TableName;");
+			bw.newLine();
+		}
 		bw = buildClassComment(bw, tableComment);
 		bw.newLine();
 		/* 包含下划线注解 */
