@@ -454,6 +454,19 @@ public class AutoGenerator {
 	 */
 	protected String processField(String field) {
 		/*
+		 * 驼峰命名直接返回
+		 */
+		if (!field.contains("_")) {
+			if (StringUtils.isUpperCase(field)) {
+				/*
+				 * 纯大写命名，转为小写属性
+				 */
+				return field.toLowerCase();
+			}
+			return field;
+		}
+
+		/*
 		 * 处理下划线分割命名字段
 		 */
 		StringBuilder sb = new StringBuilder();
