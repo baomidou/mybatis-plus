@@ -102,18 +102,6 @@ public class EntityWrapperTest {
 	}
 
 	@Test
-	public void testBlend() {
-		/*
-		 * 实体查询，混合 SQL 原样输出
-		 */
-		ew.setEntity(new User(1));
-		ew.addFilter("name={0}", "'123'").orderBy("id", false);
-		String sqlSegment = ew.getSqlSegment();
-		System.err.println("testBlend = " + sqlSegment);
-		Assert.assertEquals(" AND name='123' ORDER BY id DESC ", sqlSegment);
-	}
-
-	@Test
 	public void testNoTSQL() {
 		/*
 		 * 非 T-SQL 实体查询

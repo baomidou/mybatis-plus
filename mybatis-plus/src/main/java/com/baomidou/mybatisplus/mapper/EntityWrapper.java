@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import java.text.MessageFormat;
-
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
@@ -28,7 +26,7 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  * @author hubin , yanghu , Dyang
  * @Date 2016-03-15
  */
-public class EntityWrapper<T> {
+public class EntityWrapper<T> extends QueryFilter {
 
 	/**
 	 * WHERE关键字
@@ -84,11 +82,6 @@ public class EntityWrapper<T> {
 	 * SQL 查询字段内容，例如：id,name,age
 	 */
 	protected String sqlSelect = null;
-
-	/**
-	 * 查询条件
-	 */
-	protected StringBuffer queryFilter = new StringBuffer();
 
 	public EntityWrapper() {
 		// to do nothing
@@ -356,106 +349,6 @@ public class EntityWrapper<T> {
 	 */
 	protected String stripSqlInjection(String value) {
 		return value.replaceAll("('.+--)|(--)|(\\|)|(%7C)", "");
-	}
-
-	/**
-	 * <p>
-	 * 添加查询条件
-	 * </p>
-	 * <p>
-	 * 例如：ew.addFilter("name={0}", "'123'") <br>
-	 * 输出：name='123'
-	 * </p>
-	 *
-	 * @param keyWord
-	 *            SQL关键字
-	 * @param filter
-	 *            SQL 片段内容
-	 * @param params
-	 *            格式参数
-	 * @return
-	 */
-	protected EntityWrapper<T> addFilter(String keyWord, String filter, Object... params) {
-		if (StringUtils.isEmpty(filter)) {
-			return this;
-		}
-		if (StringUtils.isNotEmpty(keyWord)) {
-			queryFilter.append(keyWord);
-		}
-		if (null != params && params.length >= 1) {
-			queryFilter.append(MessageFormat.format(filter, params));
-		} else {
-			queryFilter.append(filter);
-		}
-		return this;
-	}
-
-	/**
-	 * <p>
-	 * 添加查询条件
-	 * </p>
-	 * <p>
-	 * 例如：ew.addFilter("name={0}", "'123'") <br>
-	 * 输出：name='123'
-	 * </p>
-	 *
-	 * @param filter
-	 *            SQL 片段内容
-	 * @param params
-	 *            格式参数
-	 * @return
-	 */
-	public EntityWrapper<T> addFilter(String filter, Object... params) {
-		return addFilter(null, filter, params);
-	}
-
-	/**
-	 * <p>
-	 * 添加查询条件
-	 * </p>
-	 * <p>
-	 * 例如：ew.addFilter("name={0}", "'123'").addFilterIfNeed(false,
-	 * " ORDER BY id") <br>
-	 * 输出：name='123'
-	 * </p>
-	 *
-	 * @param keyWord
-	 *            SQL关键字
-	 * @param willAppend
-	 *            判断条件 true 输出 SQL 片段，false 不输出
-	 * @param filter
-	 *            SQL 片段
-	 * @param params
-	 *            格式参数
-	 * @return
-	 */
-	protected EntityWrapper<T> addFilterIfNeed(boolean willAppend, String keyWord, String filter, Object... params) {
-		if (willAppend) {
-			addFilter(keyWord, filter, params);
-		}
-		return this;
-	}
-
-	/**
-	 * <p>
-	 * 添加查询条件
-	 * </p>
-	 * <p>
-	 * 例如：ew.addFilter("name={0}", "'123'").addFilterIfNeed(false,
-	 * " ORDER BY id") <br>
-	 * 输出：name='123'
-	 * </p>
-	 *
-	 * @param willAppend
-	 *            判断条件 true 输出 SQL 片段，false 不输出
-	 * @param filter
-	 *            SQL 片段
-	 * @param params
-	 *            格式参数
-	 * @return
-	 */
-	public EntityWrapper<T> addFilterIfNeed(boolean willAppend, String filter, Object... params) {
-		return addFilterIfNeed(willAppend, null, filter, params);
 	}
 
 }
