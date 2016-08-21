@@ -19,7 +19,6 @@ import java.text.MessageFormat;
 
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
-
 /**
  * <p>
  * 查询条件 filter
