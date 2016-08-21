@@ -37,7 +37,7 @@ Maven 坐标
 
 3、Spring 根据不同环境加载不同配置支持（支持 typeAliasesPackage 通配符扫描）。
 
-![项目结构说明](http://git.oschina.net/uploads/images/2016/0427/104817_6ebcc3eb_12260.png "项目结构说明")
+![项目结构说明](http://git.oschina.net/uploads/images/2016/0821/161516_58956b85_12260.png "项目结构说明")
 
 
 http://baomidou.com/
