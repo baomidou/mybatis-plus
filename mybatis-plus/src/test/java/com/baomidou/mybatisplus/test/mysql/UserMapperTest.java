@@ -237,9 +237,7 @@ public class UserMapperTest {
 		/*
          * 查询条件，SQL 片段(根据常用的写SQL的方式按顺序添加相关条件即可)
 		 */
-        ew.and("name like {0}", "'%dateBatch%'")
-                .and("age={0}", 3)
-                .orderBy("age,name", true);
+        ew.where("name like {0}", "'%dateBatch%'").and("age={0}", 3).orderBy("age,name", true);
         List<User> paginList = userMapper.selectPage(page, ew);
         page.setRecords(paginList);
         for (int i = 0; i < page.getRecords().size(); i++) {

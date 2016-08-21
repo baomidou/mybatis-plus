@@ -31,68 +31,109 @@ import com.baomidou.mybatisplus.test.mysql.entity.User;
  */
 public class EntityWrapperTest {
 
-    /*
-     * User 查询包装器
-     */
-    private EntityWrapper<User> ew = new EntityWrapper<User>();
+	/*
+	 * User 查询包装器
+	 */
+	private EntityWrapper<User> ew = new EntityWrapper<User>();
 
-    @Test
-    public void test() {
-        /*
-         * 无条件测试
+	@Test
+	public void test() {
+		/*
+		 * 无条件测试
 		 */
-        Assert.assertNull(ew.getSqlSegment());
-    }
+		Assert.assertNull(ew.getSqlSegment());
+	}
 
-    @Test
-    public void test1() {
-        ew.setEntity(new User(1));
-        ew.and("name={0}", "'123'").andIfNeed(false, "id=12");
-        String sqlSegment = ew.getSqlSegment();
-        System.err.println(sqlSegment);
-        Assert.assertEquals(" AND name='123'", sqlSegment);
-    }
+	@Test
+	public void test11() {
+		ew.setEntity(new User(1));
+		ew.where("name={0}", "'123'").andIfNeed(false, "id=12");
+		String sqlSegment = ew.getSqlSegment();
+		System.err.println("test11 = " + sqlSegment);
+		Assert.assertEquals(" AND name='123'", sqlSegment);
+	}
 
-    @Test
-    public void test2() {
-        ew.setEntity(new User(1));
-        ew.and("name={0}", "'123'").orderBy("id", false);
-        String sqlSegment = ew.getSqlSegment();
-        System.err.println(sqlSegment);
-        Assert.assertEquals(" AND name='123' ORDER BY id DESC ", sqlSegment);
-    }
+	@Test
+	public void test12() {
+		ew.setEntity(new User(1));
+		ew.where("name={0}", "'123'").orderBy("id", false);
+		String sqlSegment = ew.getSqlSegment();
+		System.err.println("test12 = " + sqlSegment);
+		Assert.assertEquals(" AND name='123' ORDER BY id DESC ", sqlSegment);
+	}
 
-    @Test
-    public void test3() {
-        ew.setEntity(new User(1));
-        ew.orderBy("id", false);
-        String sqlSegment = ew.getSqlSegment();
-        System.err.println(sqlSegment);
-        Assert.assertEquals(" ORDER BY id DESC ", sqlSegment);
-    }
+	@Test
+	public void test13() {
+		/*
+		 * 存在实体查询，只排序
+		 */
+		ew.setEntity(new User(1));
+		ew.orderBy("id", false);
+		String sqlSegment = ew.getSqlSegment();
+		System.err.println("test13 = " + sqlSegment);
+		Assert.assertEquals(" ORDER BY id DESC ", sqlSegment);
+	}
 
-    @Test
-    public void test21() {
-        ew.where("name={0}", "'123'").andIfNeed(false, "id=1").orderBy("id");
-        String sqlSegment = ew.getSqlSegment();
-        System.err.println(sqlSegment);
-        Assert.assertEquals(" WHERE name='123' ORDER BY id", sqlSegment);
-    }
+	@Test
+	public void test21() {
+		ew.where("name={0}", "'123'").andIfNeed(false, "id=1").orderBy("id");
+		String sqlSegment = ew.getSqlSegment();
+		System.err.println("test21 = " + sqlSegment);
+		Assert.assertEquals(" WHERE name='123' ORDER BY id", sqlSegment);
+	}
 
-    @Test
-    public void test22() {
-        ew.where("name={0}", "'123'").orderBy("id", false);
-        String sqlSegment = ew.getSqlSegment();
-        System.err.println(sqlSegment);
-        Assert.assertEquals(" WHERE name='123' ORDER BY id DESC ", sqlSegment);
-    }
+	@Test
+	public void test22() {
+		ew.where("name={0}", "'123'").orderBy("id", false);
+		String sqlSegment = ew.getSqlSegment();
+		System.err.println("test22 = " + sqlSegment);
+		Assert.assertEquals(" WHERE name='123' ORDER BY id DESC ", sqlSegment);
+	}
 
-    @Test
-    public void test23() {
-        ew.orderBy("id",false);
-        String sqlSegment = ew.getSqlSegment();
-        System.err.println(sqlSegment);
-        Assert.assertEquals(" ORDER BY id DESC ", sqlSegment);
-    }
+	@Test
+	public void test23() {
+		/*
+		 * 无实体查询，只排序
+		 */
+		ew.orderBy("id", false);
+		String sqlSegment = ew.getSqlSegment();
+		System.err.println("test23 = " + sqlSegment);
+		Assert.assertEquals(" ORDER BY id DESC ", sqlSegment);
+	}
+
+	@Test
+	public void testBlend() {
+		/*
+		 * 实体查询，混合 SQL 原样输出
+		 */
+		ew.setEntity(new User(1));
+		ew.addFilter("name={0}", "'123'").orderBy("id", false);
+		String sqlSegment = ew.getSqlSegment();
+		System.err.println("testBlend = " + sqlSegment);
+		Assert.assertEquals(" AND name='123' ORDER BY id DESC ", sqlSegment);
+	}
+
+	@Test
+	public void testNoTSQL() {
+		/*
+		 * 非 T-SQL 实体查询
+		 */
+		ew.setEntity(new User(1));
+		ew.addFilter("name={0}", "'123'").addFilterIfNeed(true, " order by id");
+		String sqlSegment = ew.getSqlSegment();
+		System.err.println("testNoTSQL = " + sqlSegment);
+		Assert.assertEquals(" AND name='123' order by id", sqlSegment);
+	}
+
+	@Test
+	public void testNoTSQL1() {
+		/*
+		 * 非 T-SQL 无实体查询
+		 */
+		ew.addFilter("name={0}", "'123'").addFilterIfNeed(false, " order by id");
+		String sqlSegment = ew.getSqlSegment();
+		System.err.println("testNoTSQL1 = " + sqlSegment);
+		Assert.assertEquals(" WHERE name='123'", sqlSegment);
+	}
 
 }

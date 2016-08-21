@@ -121,8 +121,11 @@ public class ServiceImpl<M extends BaseMapper<T, I>, T, I> implements IService<T
     }
 
     public Page<T> selectPage(Page<T> page, EntityWrapper<T> entityWrapper) {
-        page.setRecords(baseMapper.selectPage(page, entityWrapper));
-        return page;
+		if (null != entityWrapper) {
+			entityWrapper.orderBy(page.getOrderByField(), page.isAsc());
+		}
+		page.setRecords(baseMapper.selectPage(page, entityWrapper));
+		return page;
     }
 
 }
