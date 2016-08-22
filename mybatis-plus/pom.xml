@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.baomidou</groupId>
 	<artifactId>mybatis-plus</artifactId>
-	<version>1.4.2</version>
+	<version>1.4.3</version>
 	<packaging>jar</packaging>
 
 	<name>mybatis-plus</name>
@@ -104,8 +104,7 @@
 			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc14</artifactId>
 			<version>${ojdbc14.version}</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/src/test/resources/oracle/ojdbc14.jar</systemPath>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
