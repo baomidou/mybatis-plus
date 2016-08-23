@@ -85,7 +85,7 @@ public class EntityWrapperTest {
         /*
          * 无实体 where ifneed orderby
          */
-        ew.where("name={0}", "'123'").filterIf(false, "id=1").orderBy("id");
+        ew.where("name={0}", "'123'").addFilterIfNeed(false, "id=1").orderBy("id");
         String sqlSegment = ew.getSqlSegment();
         System.err.println("test21 = " + sqlSegment);
         Assert.assertEquals("WHERE (name='123')\nORDER BY id", sqlSegment);
@@ -127,7 +127,7 @@ public class EntityWrapperTest {
         /*
          * 非 T-SQL 无实体查询
 		 */
-        ew.addFilter("name={0}", "'123'").filterIf(false, "status={1}", "1");
+        ew.addFilter("name={0}", "'123'").addFilterIfNeed(false, "status={1}", "1");
         String sqlSegment = ew.getSqlSegment();
         System.err.println("testNoTSQL1 = " + sqlSegment);
         Assert.assertEquals("WHERE (name='123')", sqlSegment);
