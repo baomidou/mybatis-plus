@@ -137,19 +137,6 @@ public class EntityWrapper<T> {
 
     /**
      * <p>
-     * 动态判断是否需要添加条件语句
-     * </p>
-     *
-     * @param sqlAnd and条件语句
-     * @param params 参数集
-     * @return this
-     */
-    public EntityWrapper<T> andIf(boolean need, String sqlAnd, Object... params) {
-        return need ? where(sqlAnd, params) : this;
-    }
-
-    /**
-     * <p>
      * 使用AND连接并换行
      * </p>
      * <p>
@@ -326,6 +313,19 @@ public class EntityWrapper<T> {
 
 
     /**
+     * <p>
+     * 动态判断是否需要添加条件语句
+     * </p>
+     *
+     * @param sqlAnd and条件语句
+     * @param params 参数集
+     * @return this
+     */
+    public EntityWrapper<T> filterIf(boolean need, String sqlAnd, Object... params) {
+        return need ? where(sqlAnd, params) : this;
+    }
+
+    /**
      * 为了兼容之前的版本,可使用where()或and()替代
      *
      * @param sqlWhere where sql部分
@@ -355,7 +355,7 @@ public class EntityWrapper<T> {
      */
 //    @Deprecated
     public EntityWrapper<T> addFilterIfNeed(boolean need, String sqlWhere, Object... params) {
-        return andIf(need, sqlWhere, params);
+        return filterIf(need, sqlWhere, params);
     }
 
     /**
