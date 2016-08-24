@@ -23,6 +23,8 @@ Mybatis 增强工具包 - 简化 CURD 操作
 
 
 ## Maven 坐标
+[点此去下载](http://mvnrepository.com/artifact/com.baomidou/mybatis-plus)
+
 ```
 <dependency>
     <groupId>com.baomidou</groupId>
