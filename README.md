@@ -43,7 +43,7 @@ Mybatis 增强工具包 - 简化 CURD 操作
 ## 其他开源项目
 
 + [基于Cookie的SSO中间件 Kisso](http://git.oschina.net/juapk/kisso)
-+ [Java快速开发框架 SpringWind]()
++ [Java快速开发框架 SpringWind](http://git.oschina.net/juapk/SpringWind)
 
 ## Futures
 > 欢迎提出更好的意见，帮助完善 Mybatis-Plus
