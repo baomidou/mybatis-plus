@@ -1,4 +1,6 @@
-<p align="center"><a href="http://git.oschina.net/juapk/mybatis-plus" target="_blank"><img src="https://camo.githubusercontent.com/422c831b439b031159ed170ec421618aaa17d5a4/687474703a2f2f6769742e6f736368696e612e6e65742f75706c6f6164732f696d616765732f323031362f303231382f3132343633395f66346561333039355f31323236302e706e67"></a></p>
+
+![mybatis-plus](http://git.oschina.net/uploads/images/2016/0824/211639_4d931e7f_12260.png "为 简化开发工作 提高生产率 而生")
+
 <p align="center">
 为 简化开发工作 提高生产率 而生
 </p>
