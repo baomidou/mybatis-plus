@@ -15,16 +15,11 @@
  */
 package com.baomidou.mybatisplus.test;
 
-import com.baomidou.mybatisplus.toolkit.StringUtils;
-import com.sun.deploy.util.ArrayUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * <p>
