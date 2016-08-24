@@ -28,13 +28,13 @@ import java.text.MessageFormat;
  * @author yanghu
  * @Date 2016-08-22
  */
-public class TSQLPlus extends MybatisAbstractSQL<TSQLPlus> {
+public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
 
 	private final String IS_NOT_NULL = " IS NOT NULL";
 	private final String IS_NULL = " IS NULL";
 
 	@Override
-	public TSQLPlus getSelf() {
+	public TSqlPlus getSelf() {
 		return this;
 	}
 
@@ -47,7 +47,7 @@ public class TSQLPlus extends MybatisAbstractSQL<TSQLPlus> {
 	 *            like值,无需前后%, MYSQL及ORACEL通用
 	 * @return
 	 */
-	public TSQLPlus LIKE(String column, String value) {
+	public TSqlPlus LIKE(String column, String value) {
 		handerLike(column, value, false);
 		return this;
 	}
@@ -61,7 +61,7 @@ public class TSQLPlus extends MybatisAbstractSQL<TSQLPlus> {
 	 *            like值,无需前后%, MYSQL及ORACEL通用
 	 * @return
 	 */
-	public TSQLPlus NOT_LIKE(String column, String value) {
+	public TSqlPlus NOT_LIKE(String column, String value) {
 		handerLike(column, value, true);
 		return this;
 	}
@@ -73,7 +73,7 @@ public class TSQLPlus extends MybatisAbstractSQL<TSQLPlus> {
 	 *            以逗号分隔的字段名称
 	 * @return this
 	 */
-	public TSQLPlus IS_NOT_NULL(String columns) {
+	public TSqlPlus IS_NOT_NULL(String columns) {
 		handerNull(columns, IS_NOT_NULL);
 		return this;
 	}
@@ -85,7 +85,7 @@ public class TSQLPlus extends MybatisAbstractSQL<TSQLPlus> {
 	 *            以逗号分隔的字段名称
 	 * @return
 	 */
-	public TSQLPlus IS_NULL(String columns) {
+	public TSqlPlus IS_NULL(String columns) {
 		handerNull(columns, IS_NULL);
 		return this;
 	}

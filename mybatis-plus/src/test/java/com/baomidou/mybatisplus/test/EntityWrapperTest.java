@@ -15,11 +15,16 @@
  */
 package com.baomidou.mybatisplus.test;
 
+import com.baomidou.mybatisplus.toolkit.StringUtils;
+import com.sun.deploy.util.ArrayUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>
@@ -141,7 +146,7 @@ public class EntityWrapperTest {
         ew.setEntity(new User(1));
         ew.where("name={0}", "'zhangsan'").and("id=1")
                 .orNew("status={0}", "0").or("status=1")
-                .notLike("nlike","notvalue")
+                .notLike("nlike", "notvalue")
                 .andNew("new=xx").like("hhh", "ddd")
                 .andNew("pwd=11").isNotNull("n1,n2").isNull("n3")
                 .groupBy("x1").groupBy("x2,x3")
@@ -149,4 +154,19 @@ public class EntityWrapperTest {
                 .orderBy("dd").orderBy("d1,d2");
         System.out.println(ew.getSqlSegment());
     }
+
+    @Test
+    public void testNull() {
+        ew.orderBy(null);
+        String sqlPart = ew.getSqlSegment();
+        Assert.assertNull(sqlPart);
+    }
+
+    @Test
+    public void testNull2() {
+        ew.like(null, null).where("aa={0}", "'bb'").orderBy(null);
+        String sqlPart = ew.getSqlSegment();
+        Assert.assertEquals("WHERE (aa='bb')", sqlPart);
+    }
+
 }
