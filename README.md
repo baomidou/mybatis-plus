@@ -18,10 +18,6 @@ Mybatis 增强工具包 - 简化 CURD 操作
 ## Demo
 + [Spring Wind](http://git.oschina.net/juapk/SpringWind)
 
-## 捐赠记录
-> [捐赠记录,感谢你们的支持！](http://git.oschina.net/juapk/kisso/wikis/%E6%8D%90%E8%B5%A0%E8%AE%B0%E5%BD%95)
-
-
 ## Maven 坐标
 [点此去下载](http://mvnrepository.com/artifact/com.baomidou/mybatis-plus)
 
@@ -56,6 +52,8 @@ Mybatis 增强工具包 - 简化 CURD 操作
 [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
 ## 捐赠
+> [捐赠记录,感谢你们的支持！](http://git.oschina.net/juapk/kisso/wikis/%E6%8D%90%E8%B5%A0%E8%AE%B0%E5%BD%95)
+
 ![捐赠 mybatis-plus](http://git.oschina.net/uploads/images/2015/1222/211207_0acab44e_12260.png "支持一下mybatis-plus")
 
 ## 关注我
