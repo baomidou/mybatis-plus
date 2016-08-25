@@ -32,6 +32,7 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  * superService 	service 父类包路径名称
  * superServiceImpl service 实现父类包路径名称
  * mapperName		自定义 mapper 名称
+ * mapperXMLName	自定义 xml 名称
  * serviceName		自定义 service 名称
  * serviceImplName	自定义 serviceImp 名称
  * tableNames   	要生成的表名称，如为空就直接指定所有表.格式为逗号分割
@@ -72,6 +73,8 @@ public class ConfigGenerator {
 	 * 自定义 mapperName serviceName serviceImplName
 	 */
 	protected String mapperName = "%sMapper";
+
+	protected String mapperXMLName = "%sMapper";
 
 	protected String serviceName = "I%sService";
 
@@ -182,6 +185,16 @@ public class ConfigGenerator {
 	public void setMapperName(String mapperName) {
 		if (verifyDefinedName(mapperName)) {
 			this.mapperName = mapperName;
+		}
+	}
+
+	public String getMapperXMLName() {
+		return mapperXMLName;
+	}
+
+	public void setMapperXMLName(String mapperXMLName) {
+		if (verifyDefinedName(mapperXMLName)) {
+			this.mapperXMLName = mapperXMLName;
 		}
 	}
 

@@ -57,9 +57,10 @@ public class ConfigGeneratorTest {
 		/*
 		 * 自定义类名，需要包含 %s 格式化会填充实体beanName
 		 */
-		// cg.setMapperName("Test%sDao");
-		// cg.setServiceName("Test%sSer");
-		// cg.setServiceImplName("%sSerImpl");
+//		 cg.setMapperName("Test%sDao");
+//		 cg.setMapperXMLName("Test%sMapper");
+//		 cg.setServiceName("Test%sSer");
+//		 cg.setServiceImplName("%sSerImpl");
 		return cg;
 	}
 
