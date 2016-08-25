@@ -176,20 +176,17 @@ public class PaginationInterceptor implements Interceptor {
 				total = rs.getInt(1);
 			}
 			page.setTotal(total);
-			/**
-			 * 当前页大于总页数，当前页设置为第一页
-			 */
-			if(page.getCurrent() > page.getPages()){
-				page = new Pagination(1, page.getSize());
-				page.setTotal(total);
-			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
 			try {
-				rs.close();
-				pstmt.close();
-			} catch (SQLException e) {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (pstmt != null) {
+                    pstmt.close();
+                }
+            } catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
