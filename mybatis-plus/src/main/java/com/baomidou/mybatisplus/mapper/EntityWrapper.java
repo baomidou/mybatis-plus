@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
+import java.io.Serializable;
 import java.text.MessageFormat;
 
 import com.baomidou.mybatisplus.toolkit.StringUtils;
@@ -27,7 +28,8 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  * @author hubin , yanghu , Dyang
  * @Date 2016-03-15
  */
-public class EntityWrapper<T> {
+@SuppressWarnings("serial")
+public class EntityWrapper<T> implements Serializable {
 
     /**
      * 数据库表映射实体类
