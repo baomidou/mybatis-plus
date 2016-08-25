@@ -1,5 +1,15 @@
 # CHANGELOG
 
+
+## [v1.4.4](http://www.oschina.net/news/76419/mybatis-plus-1-4-3) 2016.08.25
+- entitywrapper所有条件类方法支持传入null参数，该条件不会附件到SQL语句中
+- TSQLPlus更名为TSqlPlus与整体命名保持一致。
+- 修复mysql关键字bug——将关键字映射转换加上``符号，增加xml文件生成时可自定义文件后缀名
+- 关闭资源前增加非空判断,避免错误sql引起的空指针错误,增加选择 current>pages 判断
+- TSQL 相关类实现序列化支持 dubbo
+- 增加 mybatis 自动热加载插件
+- 支持数据库 order key 等关键词转义 curd 操作
+
 ## [v1.4.3](http://www.oschina.net/news/76419/mybatis-plus-1-4-3) 2016.08.23
 - 优化 Sequence 兼容无法获取 mac 情况
 - 兼容用户设置 ID 空字符串，自动填充
