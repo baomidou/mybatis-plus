@@ -1,5 +1,4 @@
 /**
-
  * Copyright (c) 2011-2020, hubin (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -39,7 +38,7 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 
 /**
  * <p>
- * SQL 执行分析拦截器
+ * SQL 执行分析拦截器【 目前只支持 MYSQL-5.6.3 以上版本 】
  * </p>
  * 
  * @author hubin

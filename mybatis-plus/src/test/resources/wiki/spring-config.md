@@ -41,7 +41,18 @@
 <bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 	<property name="basePackage" value="xxx.mapper" />
 </bean>
+
+<!-- MyBatis 自动热加载 -->
+<bean class="com.baomidou.mybatisplus.spring.MybatisXMLMapperLoader" >
+    <!-- 设置是否启用: 默认启用 -->
+    <property name="enableAutoReload" value="true" />
+    <!-- 设置sqlSessionFactory -->
+    <property name="sqlSessionFactory" ref="sqlSessionFactory" />
+    <!-- 设置映射文件地址 -->
+    <property name="mapperLocations" value="classpath*:xx/mapper/*.xml" />
+</bean>
 ```
+
 
 
 > mybatis-config.xml
