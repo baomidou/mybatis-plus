@@ -28,6 +28,7 @@ import java.text.MessageFormat;
  * @author yanghu
  * @Date 2016-08-22
  */
+@SuppressWarnings("serial")
 public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
 
 	private final String IS_NOT_NULL = " IS NOT NULL";

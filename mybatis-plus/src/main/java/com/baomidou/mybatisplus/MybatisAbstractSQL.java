@@ -15,12 +15,12 @@
  */
 package com.baomidou.mybatisplus;
 
-import com.baomidou.mybatisplus.toolkit.StringUtils;
-
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
  * <p>
@@ -30,7 +30,8 @@ import java.util.List;
  * @author yanghu
  * @Date 2016-08-22
  */
-public abstract class MybatisAbstractSQL<T> {
+@SuppressWarnings("serial")
+public abstract class MybatisAbstractSQL<T> implements Serializable {
 
     private static final String AND = " AND ";
     private static final String OR = " OR ";
@@ -105,7 +106,7 @@ public abstract class MybatisAbstractSQL<T> {
     /**
      * SQL连接器
      */
-    private static class SafeAppendable {
+	private static class SafeAppendable implements Serializable {
         private final Appendable a;
         private boolean empty = true;
 
@@ -135,7 +136,7 @@ public abstract class MybatisAbstractSQL<T> {
     /**
      * SQL条件类
      */
-    private static class SQLCondition {
+	private static class SQLCondition implements Serializable {
 
         List<String> where = new ArrayList<String>();
         List<String> having = new ArrayList<String>();
