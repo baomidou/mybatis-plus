@@ -21,7 +21,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Properties;
 
-import com.baomidou.mybatisplus.toolkit.StringUtils;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
@@ -40,6 +39,7 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.plugins.pagination.IDialect;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
  * <p>
@@ -51,6 +51,9 @@ import com.baomidou.mybatisplus.plugins.pagination.Pagination;
  */
 @Intercepts({ @Signature(type = StatementHandler.class, method = "prepare", args = { Connection.class, Integer.class }) })
 public class PaginationInterceptor implements Interceptor {
+	
+	/* 溢出总页数，设置第一页 */
+	private boolean overflowCurrent = false;
 	
 	/* 方言类型 */
 	private String dialectType;
@@ -176,6 +179,13 @@ public class PaginationInterceptor implements Interceptor {
 				total = rs.getInt(1);
 			}
 			page.setTotal(total);
+			/*
+			 * 溢出总页数，设置第一页
+			 */
+			if (overflowCurrent && (page.getCurrent() > page.getPages())) {
+				page = new Pagination(1, page.getSize());
+				page.setTotal(total);
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -217,6 +227,10 @@ public class PaginationInterceptor implements Interceptor {
 
 	public void setDialectClazz(String dialectClazz) {
 		this.dialectClazz = dialectClazz;
+	}
+
+	public void setOverflowCurrent(boolean overflowCurrent) {
+		this.overflowCurrent = overflowCurrent;
 	}
 
 }
