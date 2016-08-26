@@ -53,23 +53,16 @@ public class MapperRefresh implements Runnable{
      */
     private static Map<String,List<Resource>> jarMapper = new HashMap<String, List<Resource>>();
 
-    public MapperRefresh(Resource[] mapperLocations, SqlSessionFactory sqlSessionFactory, int delaySeconds, int sleepSeconds) {
+    public MapperRefresh(Resource[] mapperLocations, SqlSessionFactory sqlSessionFactory, int delaySeconds, int sleepSeconds,boolean enabled){
         this.mapperLocations = mapperLocations;
         this.sqlSessionFactory = sqlSessionFactory;
         this.delaySeconds = delaySeconds;
-        this.enabled = true;
+        this.enabled = enabled;
         this.sleepSeconds = sleepSeconds;
         this.run();
     }
 
-    public MapperRefresh(Resource[] mapperLocations, SqlSessionFactory sqlSessionFactory) {
-        this.mapperLocations = mapperLocations;
-        this.sqlSessionFactory = sqlSessionFactory;
-        this.run();
-
-    }
-
-    public MapperRefresh(Resource[] mapperLocations, SqlSessionFactory sqlSessionFactory, boolean enabled) {
+    public MapperRefresh(Resource[] mapperLocations, SqlSessionFactory sqlSessionFactory, boolean enabled){
         this.mapperLocations = mapperLocations;
         this.sqlSessionFactory = sqlSessionFactory;
         this.enabled = enabled;
