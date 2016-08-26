@@ -15,24 +15,23 @@
  */
 package com.baomidou.mybatisplus;
 
-import java.util.logging.Logger;
-
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.session.Configuration;
-
 import com.baomidou.mybatisplus.mapper.AutoSqlInjector;
 import com.baomidou.mybatisplus.mapper.DBType;
 import com.baomidou.mybatisplus.mapper.ISqlInjector;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.session.Configuration;
+
+import java.util.logging.Logger;
 
 /**
  * <p>
  * replace default Configuration class
  * </p>
- * 
+ *
  * @author hubin
  * @Date 2016-01-23
  */
-public class MybatisConfiguration extends Configuration {
+public class MybatisConfiguration extends Configuration{
 
 	protected final Logger logger = Logger.getLogger("MybatisConfiguration");
 
@@ -50,6 +49,11 @@ public class MybatisConfiguration extends Configuration {
 	 * SQL 注入器，实现 ISqlInjector 或继承 AutoSqlInjector 自定义方法
 	 */
 	public static ISqlInjector SQL_INJECTOR = new AutoSqlInjector();
+
+	/*
+	 * 是否刷新mapper
+	 */
+	public static boolean IS_REFRESH = false;
 
 	/**
 	 * 初始化调用
@@ -71,12 +75,16 @@ public class MybatisConfiguration extends Configuration {
 	@Override
 	public void addMappedStatement(MappedStatement ms) {
 		logger.fine(" addMappedStatement: " + ms.getId());
-		if (this.mappedStatements.containsKey(ms.getId())) {
+		if(IS_REFRESH){
+			this.mappedStatements.remove(ms.getId());
+		}else{
+			if (this.mappedStatements.containsKey(ms.getId())){
 			/*
 			 * 说明已加载了xml中的节点； 忽略mapper中的SqlProvider数据
 			 */
-			logger.severe("mapper[" + ms.getId() + "] is ignored, because it's exists, maybe from xml file");
-			return;
+				logger.severe("mapper[" + ms.getId() + "] is ignored, because it's exists, maybe from xml file");
+				return;
+			}
 		}
 		super.addMappedStatement(ms);
 	}
