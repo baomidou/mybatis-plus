@@ -164,4 +164,26 @@ public class EntityWrapperTest {
         Assert.assertEquals("WHERE (aa='bb')", sqlPart);
     }
 
+    /**
+     * 测试带单引号的值是否不会再次添加单引号
+     */
+    @Test
+    public void testNul14() {
+        ew.where("id={0}", "'11'").and("name={0}", 22);
+        String sqlPart = ew.getSqlSegment();
+        System.out.println("sql ==> " + sqlPart);
+        Assert.assertEquals("WHERE (id='11' AND name=22)", sqlPart);
+    }
+
+    /**
+     * 测试带不带单引号的值是否会自动添加单引号
+     */
+    @Test
+    public void testNul15() {
+        ew.where("id={0}", "11").and("name={0}", 22);
+        String sqlPart = ew.getSqlSegment();
+        System.out.println("sql ==> " + sqlPart);
+        Assert.assertEquals("WHERE (id='11' AND name=22)", sqlPart);
+    }
+
 }
