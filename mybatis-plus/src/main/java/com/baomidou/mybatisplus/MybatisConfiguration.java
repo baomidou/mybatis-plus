@@ -31,7 +31,7 @@ import java.util.logging.Logger;
  * @author hubin
  * @Date 2016-01-23
  */
-public class MybatisConfiguration extends Configuration{
+public class MybatisConfiguration extends Configuration {
 
 	protected final Logger logger = Logger.getLogger("MybatisConfiguration");
 
@@ -75,13 +75,16 @@ public class MybatisConfiguration extends Configuration{
 	@Override
 	public void addMappedStatement(MappedStatement ms) {
 		logger.fine(" addMappedStatement: " + ms.getId());
-		if(IS_REFRESH){
-			this.mappedStatements.remove(ms.getId());
-		}else{
-			if (this.mappedStatements.containsKey(ms.getId())){
+		if (IS_REFRESH) {
 			/*
-			 * 说明已加载了xml中的节点； 忽略mapper中的SqlProvider数据
+			 * 支持是否自动刷新 XML 变更内容，开发环境使用【 注：生产环境勿用！】
 			 */
+			this.mappedStatements.remove(ms.getId());
+		} else {
+			if (this.mappedStatements.containsKey(ms.getId())) {
+				/*
+				 * 说明已加载了xml中的节点； 忽略mapper中的SqlProvider数据
+				 */
 				logger.severe("mapper[" + ms.getId() + "] is ignored, because it's exists, maybe from xml file");
 				return;
 			}

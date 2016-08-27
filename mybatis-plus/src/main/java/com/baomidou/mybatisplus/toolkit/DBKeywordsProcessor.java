@@ -46,7 +46,7 @@ public class DBKeywordsProcessor {
 				KEYWORDS.add(keyword);
 			}
 		} catch (Exception e) {
-			logger.severe("If you want to support the keyword query, must have database_keywords.dic \n"
+			logger.warning("If you want to support the keyword query, must have database_keywords.dic \n"
 					+ e.getMessage());
 		} finally {
 			if (br != null) {

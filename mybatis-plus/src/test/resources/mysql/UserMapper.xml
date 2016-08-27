@@ -7,7 +7,6 @@
 
 	<!-- 建议字段，采用驼峰命名方法，不然很麻烦 -->
 	<select id="selectListRow" resultType="User">
-		select test_id AS
-		id,name,age,test_type AS testType from user
+		select test_id AS id,name,age,test_type AS testType from user
 	</select>
 </mapper>
