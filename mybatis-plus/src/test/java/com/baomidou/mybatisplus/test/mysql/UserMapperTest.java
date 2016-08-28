@@ -75,6 +75,11 @@ public class UserMapperTest {
          */
         mf.setSqlInjector(new MySqlInjector());
 
+        /**
+         * 设置，自定义 元对象填充器，实现公共字段自动写入
+         */
+        mf.setMetaObjectHandler(new MyMetaObjectHandler());
+
         SqlSessionFactory sessionFactory = mf.build(in);
         SqlSession session = sessionFactory.openSession();
         UserMapper userMapper = session.getMapper(UserMapper.class);
@@ -116,7 +121,10 @@ public class UserMapperTest {
         ul.add(new User(14L, "delname", 4, 0));
         ul.add(new User(15L, "5", 5, 1));
         ul.add(new User(16L, "6", 6, 0));
-        ul.add(new User(17L, "7", 7, 0));
+
+        /* 测试 name 填充 */
+        ul.add(new User(17L, 7));
+        ul.add(new User(7));
         ul.add(new User(18L, "deleteByMap", 7, 0));
 
 		/* 使用 ID_WORKER 自动生成 ID */
