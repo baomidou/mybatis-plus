@@ -1,7 +1,13 @@
 # CHANGELOG
 
 
-## [v1.4.4](http://www.oschina.net/news/76419/mybatis-plus-1-4-3) 2016.08.25
+## [v1.4.5] 2016.08.28
+- 新增 XML 修改自动热加载功能
+- 添加自动处理EntityWrapper方法中的MessageFormat Params类型为字符串的参数
+- 新增表公共字段自动填充功能
+
+
+## [v1.4.4] 2016.08.25
 - entitywrapper所有条件类方法支持传入null参数，该条件不会附件到SQL语句中
 - TSQLPlus更名为TSqlPlus与整体命名保持一致。
 - 修复mysql关键字bug——将关键字映射转换加上``符号，增加xml文件生成时可自定义文件后缀名
