@@ -26,6 +26,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
 import com.baomidou.mybatisplus.mapper.DBType;
+import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
 import com.baomidou.mybatisplus.mapper.ISqlInjector;
 
 /**
@@ -88,7 +89,7 @@ public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 	}
 
 	// TODO 注入 元对象字段填充控制器
-	public void setMetaObjectHandler(MybatisMetaObjectHandler metaObjectHandler) {
+	public void setMetaObjectHandler(IMetaObjectHandler metaObjectHandler) {
 		MybatisConfiguration.META_OBJECT_HANDLER = metaObjectHandler;
 	}
 }

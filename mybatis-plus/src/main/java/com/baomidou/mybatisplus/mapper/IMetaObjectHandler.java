@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus;
+package com.baomidou.mybatisplus.mapper;
 
 import org.apache.ibatis.reflection.MetaObject;
 
@@ -25,7 +25,7 @@ import org.apache.ibatis.reflection.MetaObject;
  * @author hubin
  * @Date 2016-08-28
  */
-public interface MybatisMetaObjectHandler {
+public interface IMetaObjectHandler {
 
 	/**
 	 * <p>

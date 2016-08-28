@@ -29,6 +29,7 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 
 import com.baomidou.mybatisplus.annotations.IdType;
+import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
 import com.baomidou.mybatisplus.toolkit.TableInfo;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
@@ -136,7 +137,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 				}
 			}
 			/* 自定义元对象填充控制器 */
-			MybatisMetaObjectHandler metaObjectHandler = MybatisConfiguration.META_OBJECT_HANDLER;
+			IMetaObjectHandler metaObjectHandler = MybatisConfiguration.META_OBJECT_HANDLER;
 			if (null != metaObjectHandler) {
 				metaObjectHandler.insertFill(metaObject);
 			}

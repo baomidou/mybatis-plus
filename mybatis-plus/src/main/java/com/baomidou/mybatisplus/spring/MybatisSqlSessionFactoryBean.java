@@ -54,11 +54,11 @@ import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
 import com.baomidou.mybatisplus.MybatisConfiguration;
-import com.baomidou.mybatisplus.MybatisMetaObjectHandler;
 import com.baomidou.mybatisplus.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.MybatisXMLMapperBuilder;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.DBType;
+import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
 import com.baomidou.mybatisplus.mapper.ISqlInjector;
 import com.baomidou.mybatisplus.toolkit.PackageHelper;
 
@@ -136,7 +136,7 @@ public class MybatisSqlSessionFactoryBean
 	}
 
 	// TODO 注入 元对象字段填充控制器
-	public void setMetaObjectHandler(MybatisMetaObjectHandler metaObjectHandler) {
+	public void setMetaObjectHandler(IMetaObjectHandler metaObjectHandler) {
 		MybatisConfiguration.META_OBJECT_HANDLER = metaObjectHandler;
 	}
 

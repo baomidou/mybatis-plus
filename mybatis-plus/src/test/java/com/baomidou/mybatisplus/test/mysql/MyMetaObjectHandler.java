@@ -17,7 +17,7 @@ package com.baomidou.mybatisplus.test.mysql;
 
 import org.apache.ibatis.reflection.MetaObject;
 
-import com.baomidou.mybatisplus.MybatisMetaObjectHandler;
+import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
 
 /**
  * <p>
@@ -27,7 +27,7 @@ import com.baomidou.mybatisplus.MybatisMetaObjectHandler;
  * @author hubin
  * @Date 2016-08-28
  */
-public class MyMetaObjectHandler implements MybatisMetaObjectHandler {
+public class MyMetaObjectHandler implements IMetaObjectHandler {
 
 	/**
 	 * 测试 user 表 name 字段为空自动填充

@@ -15,13 +15,15 @@
  */
 package com.baomidou.mybatisplus;
 
-import com.baomidou.mybatisplus.mapper.AutoSqlInjector;
-import com.baomidou.mybatisplus.mapper.DBType;
-import com.baomidou.mybatisplus.mapper.ISqlInjector;
+import java.util.logging.Logger;
+
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
 
-import java.util.logging.Logger;
+import com.baomidou.mybatisplus.mapper.AutoSqlInjector;
+import com.baomidou.mybatisplus.mapper.DBType;
+import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
+import com.baomidou.mybatisplus.mapper.ISqlInjector;
 
 /**
  * <p>
@@ -53,7 +55,7 @@ public class MybatisConfiguration extends Configuration {
 	/*
 	 * 元对象字段填充控制器
 	 */
-	public static MybatisMetaObjectHandler META_OBJECT_HANDLER = null;
+	public static IMetaObjectHandler META_OBJECT_HANDLER = null;
 
 	/*
 	 * 是否刷新mapper
