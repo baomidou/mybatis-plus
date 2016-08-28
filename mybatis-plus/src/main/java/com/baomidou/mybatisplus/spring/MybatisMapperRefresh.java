@@ -104,8 +104,11 @@ public class MybatisMapperRefresh implements Runnable {
 	}
 
 	public void run() {
-		beforeTime = System.currentTimeMillis();
+		/*
+		 * 启动 XML 热加载
+		 */
 		if (enabled) {
+			beforeTime = System.currentTimeMillis();
 			final MybatisMapperRefresh runnable = this;
 			new Thread(new Runnable() {
 
