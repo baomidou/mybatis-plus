@@ -542,7 +542,7 @@ public class AutoGenerator {
 		bw.newLine();
 		bw.write("\t@TableField(exist = false)");
 		bw.newLine();
-		bw.write("\tprotected static final long serialVersionUID = 1L;");
+		bw.write("\tprivate static final long serialVersionUID = 1L;");
 		bw.newLine();
 		int size = columns.size();
 		for (int i = 0; i < size; i++) {
@@ -587,7 +587,7 @@ public class AutoGenerator {
 				bw.write("\t@TableField(value = \"" + column + "\")");
 				bw.newLine();
 			}
-			bw.write("\tprotected " + processType(types.get(i)) + " " + field + ";");
+			bw.write("\tprivate " + processType(types.get(i)) + " " + field + ";");
 			bw.newLine();
 		}
 
