@@ -46,7 +46,7 @@ public class TableInfoHelper {
 
 	/**
 	 * <p>
-	 * 根据实体类反射获取表信息
+	 * 获取实体映射表信息
 	 * <p>
 	 * 
 	 * @param clazz
@@ -54,11 +54,23 @@ public class TableInfoHelper {
 	 * @return
 	 */
 	public synchronized static TableInfo getTableInfo(Class<?> clazz) {
+		return tableInfoCache.get(clazz.getName());
+	}
+
+	/**
+	 * <p>
+	 * 实体类反射获取表信息【初始化】
+	 * <p>
+	 * 
+	 * @param clazz
+	 *            反射实体类
+	 * @return
+	 */
+	public synchronized static TableInfo initTableInfo(Class<?> clazz) {
 		TableInfo ti = tableInfoCache.get(clazz.getName());
 		if (ti != null) {
 			return ti;
 		}
-		List<Field> list = getAllFields(clazz);
 		TableInfo tableInfo = new TableInfo();
 
 		/* 表名 */
@@ -70,6 +82,7 @@ public class TableInfoHelper {
 		}
 
 		List<TableFieldInfo> fieldList = new ArrayList<TableFieldInfo>();
+		List<Field> list = getAllFields(clazz);
 		for (Field field : list) {
 			/**
 			 * 主键ID
@@ -78,7 +91,7 @@ public class TableInfoHelper {
 			if (tableId != null) {
 				if (tableInfo.getKeyColumn() == null) {
 					tableInfo.setIdType(tableId.type());
-					if(StringUtils.isNotEmpty(tableId.value())) {
+					if (StringUtils.isNotEmpty(tableId.value())) {
 						/* 自定义字段 */
 						tableInfo.setKeyColumn(tableId.value());
 						tableInfo.setKeyRelated(true);
@@ -117,16 +130,20 @@ public class TableInfoHelper {
 		/* 字段列表 */
 		tableInfo.setFieldList(fieldList);
 
-		/* 未发现主键注解抛出异常 */
-		if (tableInfo.getKeyColumn() == null) {
-			throw new MybatisPlusException("Not found @TableId annotation in " + clazz);
+		/*
+		 * 未发现主键注解，跳过注入
+		 */
+		if (null == tableInfo.getKeyColumn()) {
+			return null;
 		}
 
+		/*
+		 * 注入
+		 */
 		tableInfoCache.put(clazz.getName(), tableInfo);
 		return tableInfo;
 	}
 
-	
 	/**
 	 * 获取该类的所有属性列表
 	 * 

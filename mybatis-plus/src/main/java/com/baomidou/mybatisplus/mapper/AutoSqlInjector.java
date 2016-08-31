@@ -65,12 +65,12 @@ public class AutoSqlInjector implements ISqlInjector {
 		this.languageDriver = configuration.getDefaultScriptingLanuageInstance();
 		this.dbType = MybatisConfiguration.DB_TYPE;
 		Class<?> modelClass = extractModelClass(mapperClass);
-		TableInfo table = TableInfoHelper.getTableInfo(modelClass);
+		TableInfo table = TableInfoHelper.initTableInfo(modelClass);
 
 		/**
 		 * 没有指定主键，默认方法不能使用
 		 */
-		if (table.getKeyProperty() != null) {
+		if (null != table && null != table.getKeyProperty()) {
 			/* 插入 */
 			this.injectInsertOneSql(false, mapperClass, modelClass, table);
 			this.injectInsertOneSql(true, mapperClass, modelClass, table);
@@ -104,7 +104,7 @@ public class AutoSqlInjector implements ISqlInjector {
 			/**
 			 * 提示
 			 */
-			System.err.println(String.format("%s ,The unknown primary key, cannot use the generic method", modelClass.toString()));
+			System.err.println(String.format("%s ,Not found @TableId annotation, cannot use mybatis-plus curd method.", modelClass.toString()));
 		}
 	}
 	
