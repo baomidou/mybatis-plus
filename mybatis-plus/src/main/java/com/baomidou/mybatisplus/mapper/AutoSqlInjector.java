@@ -19,6 +19,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
@@ -47,6 +48,7 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
  * @Date 2016-01-23
  */
 public class AutoSqlInjector implements ISqlInjector {
+	protected static final Logger logger = Logger.getLogger("AutoSqlInjector");
 
 	protected Configuration configuration;
 
@@ -102,9 +104,9 @@ public class AutoSqlInjector implements ISqlInjector {
 			this.inject(configuration, builderAssistant, mapperClass, modelClass, table);
 		} else {
 			/**
-			 * 提示
+			 * 警告
 			 */
-			System.err.println(String.format("%s ,Not found @TableId annotation, cannot use mybatis-plus curd method.", modelClass.toString()));
+			logger.warning(String.format("%s ,Not found @TableId annotation, cannot use mybatis-plus curd method.", modelClass.toString()));
 		}
 	}
 	
