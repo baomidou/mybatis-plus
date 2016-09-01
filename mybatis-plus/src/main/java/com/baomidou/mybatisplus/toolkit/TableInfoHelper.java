@@ -53,7 +53,7 @@ public class TableInfoHelper {
 	 *            反射实体类
 	 * @return
 	 */
-	public synchronized static TableInfo getTableInfo(Class<?> clazz) {
+	public static TableInfo getTableInfo(Class<?> clazz) {
 		return tableInfoCache.get(clazz.getName());
 	}
 
