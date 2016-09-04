@@ -593,7 +593,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	protected String sqlWhereByMap() {
 		StringBuilder where = new StringBuilder();
 		where.append("\n<foreach collection=\"cm.keys\" item=\"k\" separator=\"AND\"> ");
-		where.append("\n<if test=\"cm[k]!=null\">").append("${k}=#{cm[${k}]}").append("</if>");
+		where.append("\n${k}=#{cm[${k}]}");
 		where.append("\n</foreach>"); 
 		return where.toString();
 	}

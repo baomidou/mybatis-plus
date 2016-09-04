@@ -142,6 +142,7 @@ public class UserMapperTest {
 
         Map<String, Object> columnMap = new HashMap<String, Object>();
         columnMap.put("name", "deleteByMap");
+        columnMap.put("age", null);
         rlt = userMapper.deleteByMap(columnMap);
         System.err.println("---------deleteByMap------- result=" + rlt + "\n\n");
         sleep();
