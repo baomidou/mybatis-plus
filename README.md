@@ -14,6 +14,10 @@ Mybatis 增强工具包 - 简化 CURD 操作
 
 > 技术讨论 QQ 群 492238239[（有钱的捧个钱场【点击捐赠】, 没钱的捧个人场）](http://git.oschina.net/uploads/images/2015/1222/211207_0acab44e_12260.png)
 
+## 在线阅读文档
+<a href="https://yangyang0507.gitbooks.io/mybatis-plus-doc/content/zh/">Chinese</a> |
+<a href="https://yangyang0507.gitbooks.io/mybatis-plus-doc/content/en/">English</a>
+
 ## 原理
 + [Mybatis-Plus 实践及架构原理](http://git.oschina.net/juapk/mybatis-plus/attach_files)
 
