@@ -1,6 +1,13 @@
 # CHANGELOG
 
 
+
+## [v1.4.6] 2016.09.05
+- 新增无 @TableId 注解跳过注入SQL
+- 支持非表映射对象插入不执行填充
+- xxxByMap 支持 null 查询
+
+
 ## [v1.4.5] 2016.08.28
 - 新增 XML 修改自动热加载功能
 - 添加自动处理EntityWrapper方法中的MessageFormat Params类型为字符串的参数
