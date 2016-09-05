@@ -15,6 +15,8 @@
  */
 package com.baomidou.framework.service.impl;
 
+import com.baomidou.mybatisplus.mapper.CommonMapper;
+
 /**
  * <p>
  * 主键 String 类型 IService 实现类（ 泛型：M 是 mapper 对象， T 是实体 ）
@@ -23,6 +25,6 @@ package com.baomidou.framework.service.impl;
  * @author hubin
  * @Date 2016-04-20
  */
-public class CommonServiceImpl<T> extends ServiceImpl<T, String> {
+public class CommonServiceImpl<M extends CommonMapper<T>, T> extends ServiceImpl<M, T, String> {
 
 }

@@ -28,16 +28,16 @@ import com.baomidou.mybatisplus.plugins.Page;
 
 /**
  * <p>
- * IService 实现类（ 泛型：T 是实体 ， PK 是主键泛型 ）
+ * IService 实现类（ 泛型：M 是 mapper 对象，T 是实体 ， PK 是主键泛型 ）
  * </p>
  *
  * @author hubin
  * @Date 2016-04-20
  */
-public class ServiceImpl<T, PK extends Serializable> implements IService<T, PK> {
+public class ServiceImpl<M extends BaseMapper<T, PK>, T, PK extends Serializable> implements IService<T, PK> {
 
     @Autowired
-    protected BaseMapper<T, PK> baseMapper;
+    protected M baseMapper;
 
     /**
      * 判断数据库操作是否成功
