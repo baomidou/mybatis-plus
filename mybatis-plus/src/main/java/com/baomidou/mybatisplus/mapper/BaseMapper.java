@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +33,7 @@ import org.apache.ibatis.session.RowBounds;
  * @author hubin
  * @Date 2016-01-23
  */
-public interface BaseMapper<T, I> {
+public interface BaseMapper<T, PK extends Serializable> {
 
 	/**
 	 * <p>
@@ -74,7 +75,7 @@ public interface BaseMapper<T, I> {
 	 * 			主键ID
 	 * @return int
 	 */
-	int deleteById( I id );
+	int deleteById( PK id );
 
 
 	/**
@@ -107,7 +108,7 @@ public interface BaseMapper<T, I> {
 	 * 				主键ID列表
 	 * @return int
 	 */
-	int deleteBatchIds( List<I> idList );
+	int deleteBatchIds( List<PK> idList );
 
 
 	/**
@@ -174,7 +175,7 @@ public interface BaseMapper<T, I> {
 	 * 			主键ID
 	 * @return T
 	 */
-	T selectById( I id );
+	T selectById( PK id );
 
 
 	/**
@@ -185,7 +186,7 @@ public interface BaseMapper<T, I> {
 	 * 				主键ID列表
 	 * @return List<T>
 	 */
-	List<T> selectBatchIds( List<I> idList );
+	List<T> selectBatchIds( List<PK> idList );
 	
 	
 	/**

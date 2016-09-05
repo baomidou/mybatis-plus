@@ -15,6 +15,7 @@
  */
 package com.baomidou.framework.service.impl;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -27,16 +28,16 @@ import com.baomidou.mybatisplus.plugins.Page;
 
 /**
  * <p>
- * IService 实现类（ 泛型：M 是 mapper 对象， T 是实体 ， I 是主键泛型 ）
+ * IService 实现类（ 泛型：T 是实体 ， PK 是主键泛型 ）
  * </p>
  *
  * @author hubin
  * @Date 2016-04-20
  */
-public class ServiceImpl<M extends BaseMapper<T, I>, T, I> implements IService<T, I> {
+public class ServiceImpl<T, PK extends Serializable> implements IService<T, PK> {
 
     @Autowired
-    protected M baseMapper;
+    protected BaseMapper<T, PK> baseMapper;
 
     /**
      * 判断数据库操作是否成功
@@ -60,7 +61,7 @@ public class ServiceImpl<M extends BaseMapper<T, I>, T, I> implements IService<T
         return retBool(baseMapper.insertBatch(entityList));
     }
 
-    public boolean deleteById(I id) {
+    public boolean deleteById(PK id) {
         return retBool(baseMapper.deleteById(id));
     }
 
@@ -72,7 +73,7 @@ public class ServiceImpl<M extends BaseMapper<T, I>, T, I> implements IService<T
         return retBool(baseMapper.deleteSelective(entity));
     }
 
-    public boolean deleteBatchIds(List<I> idList) {
+    public boolean deleteBatchIds(List<PK> idList) {
         return retBool(baseMapper.deleteBatchIds(idList));
     }
 
@@ -96,11 +97,11 @@ public class ServiceImpl<M extends BaseMapper<T, I>, T, I> implements IService<T
         return retBool(baseMapper.updateBatchById(entityList));
     }
 
-    public T selectById(I id) {
+    public T selectById(PK id) {
         return baseMapper.selectById(id);
     }
 
-    public List<T> selectBatchIds(List<I> idList) {
+    public List<T> selectBatchIds(List<PK> idList) {
         return baseMapper.selectBatchIds(idList);
     }
 

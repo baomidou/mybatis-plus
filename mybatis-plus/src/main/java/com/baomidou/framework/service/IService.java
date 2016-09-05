@@ -29,7 +29,7 @@ import com.baomidou.mybatisplus.plugins.Page;
  * @author hubin
  * @Date 2016-04-20
  */
-public interface IService<T, I> {
+public interface IService<T, PK> {
 
 	/**
 	 * <p>
@@ -73,7 +73,7 @@ public interface IService<T, I> {
 	 *            主键ID
 	 * @return boolean
 	 */
-	boolean deleteById(I id);
+	boolean deleteById(PK id);
 
 	/**
 	 * <p>
@@ -106,7 +106,7 @@ public interface IService<T, I> {
 	 *            主键ID列表
 	 * @return boolean
 	 */
-	boolean deleteBatchIds(List<I> idList);
+	boolean deleteBatchIds(List<PK> idList);
 
 	/**
 	 * <p>
@@ -176,7 +176,7 @@ public interface IService<T, I> {
 	 *            主键ID
 	 * @return T
 	 */
-	T selectById(I id);
+	T selectById(PK id);
 
 	/**
 	 * <p>
@@ -187,7 +187,7 @@ public interface IService<T, I> {
 	 *            主键ID列表
 	 * @return List<T>
 	 */
-	List<T> selectBatchIds(List<I> idList);
+	List<T> selectBatchIds(List<PK> idList);
 
 	/**
 	 * <p>
