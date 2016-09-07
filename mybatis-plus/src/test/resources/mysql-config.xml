@@ -75,10 +75,10 @@
 	<!-- 环境配置 -->
 	<environments default="development">
 		<environment id="development">
-			<transactionManager type="JDBC">
-				<property name="desiredAutoCommit" value="false"/>
-			</transactionManager>
-			<dataSource type="UNPOOLED">
+			<!-- 使用 JDBC 管理事务 -->
+			<transactionManager type="JDBC" />
+			<!-- 数据库连接池 -->
+			<dataSource type="POOLED">
 				<property name="driver" value="com.mysql.jdbc.Driver" />
 				<property name="url" value="jdbc:mysql://localhost:3306/mybatis-plus" />
 				<property name="username" value="root" />

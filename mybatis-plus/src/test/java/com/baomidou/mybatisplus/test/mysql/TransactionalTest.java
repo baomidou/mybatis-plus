@@ -37,20 +37,18 @@ public class TransactionalTest {
 		 */
 		InputStream in = TransactionalTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
 		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
-		mf.setSqlInjector(new MySqlInjector());
-
 		SqlSessionFactory sessionFactory = mf.build(in);
-		SqlSession session = sessionFactory.openSession();
-		UserMapper userMapper = session.getMapper(UserMapper.class);
-		userMapper.deleteAll();
-
+		SqlSession sqlSession = sessionFactory.openSession();
+		
 		/**
 		 * 插入
 		 */
-		int rlt = userMapper.insertInjector(new User(IdWorker.getId(), "1", 1, 1));
+		UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+		int rlt = userMapper.insert(new User(IdWorker.getId(), "1", 1, 1));
 		System.err.println("--------- insertInjector --------- " + rlt);
 
 //		session.commit();
+//		sqlSession.close();
 	}
 
 }
