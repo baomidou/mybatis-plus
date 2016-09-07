@@ -531,35 +531,45 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * @return
 	 */
 	protected String sqlSelectColumns(TableInfo table, boolean entityWrapper) {
-		/*
-		 * 存在 resultMap 映射返回 *
-		 */
+		StringBuilder columns = new StringBuilder();
 		if (null != table.getResultMap()) {
-			return "*";
+			/*
+			 * 存在 resultMap 映射返回
+			 */
+			if (entityWrapper) {
+				columns.append("<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>");
+			}
+			columns.append("*");
+			if (entityWrapper) {
+				columns.append("</otherwise></choose>");
+			}
+		} else {
+			/*
+			 * 普通查询
+			 */
+			if (entityWrapper) {
+				columns.append("<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>");
+			}
+			if (table.isKeyRelated()) {
+				columns.append(table.getKeyColumn()).append(" AS ").append(table.getKeyProperty());
+			} else {
+				columns.append(table.getKeyProperty());
+			}
+			List<TableFieldInfo> fieldList = table.getFieldList();
+			for (TableFieldInfo fieldInfo : fieldList) {
+				columns.append(",").append(fieldInfo.getColumn());
+				if (fieldInfo.isRelated()) {
+					columns.append(" AS ").append(fieldInfo.getProperty());
+				}
+			}
+			if (entityWrapper) {
+				columns.append("</otherwise></choose>");
+			}
 		}
 
 		/*
 		 * 返回所有查询字段内容
 		 */
-		StringBuilder columns = new StringBuilder();
-		if (entityWrapper) {
-			columns.append("<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>");
-		}
-		if (table.isKeyRelated()) {
-			columns.append(table.getKeyColumn()).append(" AS ").append(table.getKeyProperty());
-		} else {
-			columns.append(table.getKeyProperty());
-		}
-		List<TableFieldInfo> fieldList = table.getFieldList();
-		for (TableFieldInfo fieldInfo : fieldList) {
-			columns.append(",").append(fieldInfo.getColumn());
-			if (fieldInfo.isRelated()) {
-				columns.append(" AS ").append(fieldInfo.getProperty());
-			}
-		}
-		if (entityWrapper) {
-			columns.append("</otherwise></choose>");
-		}
 		return columns.toString();
 	}
 
