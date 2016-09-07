@@ -129,6 +129,13 @@ public class PerformanceInterceptor implements Interceptor {
 		} else {
 			result = "null";
 		}
+
+		/* 特殊处理 $ 符内容 */
+		if (null != result && result.contains("$")) {
+			return sql.replaceFirst("\\?", "[?]").replace("[?]", result);
+		}
+
+		/* 填充占位符 */
 		return sql.replaceFirst("\\?", result);
 	}
 
