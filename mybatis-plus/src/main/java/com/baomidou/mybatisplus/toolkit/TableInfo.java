@@ -40,6 +40,11 @@ public class TableInfo {
 	private String tableName;
 
 	/**
+	 * 表映射结果集
+	 */
+	private String resultMap;
+
+	/**
 	 * <p>
 	 * 主键是否有存在字段名与属性名关联
 	 * </p>
@@ -62,63 +67,59 @@ public class TableInfo {
 	 */
 	private List<TableFieldInfo> fieldList;
 
-
 	public IdType getIdType() {
 		return idType;
 	}
 
-
-	public void setIdType( IdType idType ) {
+	public void setIdType(IdType idType) {
 		this.idType = idType;
 	}
-
 
 	public String getTableName() {
 		return tableName;
 	}
 
-
-	public void setTableName( String tableName ) {
+	public void setTableName(String tableName) {
 		this.tableName = tableName;
 	}
 
+	public String getResultMap() {
+		return resultMap;
+	}
+
+	public void setResultMap(String resultMap) {
+		this.resultMap = resultMap;
+	}
 
 	public boolean isKeyRelated() {
 		return keyRelated;
 	}
 
-
-	public void setKeyRelated( boolean keyRelated ) {
+	public void setKeyRelated(boolean keyRelated) {
 		this.keyRelated = keyRelated;
 	}
-
 
 	public String getKeyProperty() {
 		return keyProperty;
 	}
 
-
-	public void setKeyProperty( String keyProperty ) {
+	public void setKeyProperty(String keyProperty) {
 		this.keyProperty = keyProperty;
 	}
-
 
 	public String getKeyColumn() {
 		return keyColumn;
 	}
 
-
-	public void setKeyColumn( String keyColumn ) {
+	public void setKeyColumn(String keyColumn) {
 		this.keyColumn = keyColumn;
 	}
-
 
 	public List<TableFieldInfo> getFieldList() {
 		return fieldList;
 	}
 
-
-	public void setFieldList( List<TableFieldInfo> fieldList ) {
+	public void setFieldList(List<TableFieldInfo> fieldList) {
 		this.fieldList = fieldList;
 	}
 

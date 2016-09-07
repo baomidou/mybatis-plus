@@ -30,8 +30,8 @@ import com.baomidou.mybatisplus.annotations.TableName;
  * @author hubin
  * @Date 2016-01-23
  */
-/* 表名 注解 */
-@TableName("user")
+/* 表名 value 注解【 驼峰命名可无 】, resultMap 注解测试【 映射 xml 的 resultMap 内容 】 */
+@TableName(resultMap = "userMap")
 public class User implements Serializable {
 
 	/* 表字段注解，false 表中不存在的字段，可无该注解 默认 true */

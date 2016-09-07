@@ -9,4 +9,13 @@
 	<select id="selectListRow" resultType="User">
 		select test_id AS id,name,age,test_type AS testType from user
 	</select>
+	
+	<!-- 测试 resultMap 结果集注入【 注意，实体需要注解 ！！ 】 -->
+	<resultMap type="User" id="userMap">
+		<id column="id" property="id"/>
+		<result column="test_id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="age" property="age"/>
+		<result column="test_type" property="testType"/>
+	</resultMap>
 </mapper>

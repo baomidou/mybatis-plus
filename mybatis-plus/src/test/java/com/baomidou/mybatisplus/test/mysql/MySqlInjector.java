@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.test.mysql;
 
 import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.session.Configuration;
 
@@ -48,7 +47,7 @@ public class MySqlInjector extends AutoSqlInjector {
 		/* mapper 接口方法名一致 */
 		String method = "deleteAll";
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-		this.addMappedStatement(mapperClass, method, sqlSource, SqlCommandType.DELETE, Integer.class);
+		this.addDeleteMappedStatement(mapperClass, method, sqlSource);
 	}
 
 }
