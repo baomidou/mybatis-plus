@@ -35,6 +35,11 @@ import com.baomidou.mybatisplus.toolkit.IdWorker;
  * <p>
  * MybatisPlus 测试类
  * </p>
+ * <p>
+ * 自动提交了事务问题：<br>
+ * http://www.mybatis.org/spring/transactions.html#programmatic<br>
+ * https://github.com/mybatis/spring/issues/39<br>
+ * </p>
  *
  * @author hubin
  * @Date 2016-01-23
