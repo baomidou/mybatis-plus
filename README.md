@@ -25,7 +25,7 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CURD`操作
 
 # 在线阅读文档
 
-[Chinese](http://mp.baomidou.com/zh/) | [English](http://mp.baomidou.com/en/)
+[中文](http://mp.baomidou.com/zh/) | [English](http://mp.baomidou.com/en/)
 
 # 原理
 
