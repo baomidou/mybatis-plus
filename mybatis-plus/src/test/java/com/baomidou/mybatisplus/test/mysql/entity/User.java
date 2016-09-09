@@ -27,8 +27,8 @@ import com.baomidou.mybatisplus.annotations.TableName;
  * 测试用户类
  * </p>
  * 
- * @author hubin
- * @Date 2016-01-23
+ * @author hubin sjy
+ * @Date 2016-09-09
  */
 /* 表名 value 注解【 驼峰命名可无 】, resultMap 注解测试【 映射 xml 的 resultMap 内容 】 */
 @TableName(resultMap = "userMap")
@@ -49,6 +49,9 @@ public class User implements Serializable {
 	/* 测试下划线字段命名类型 */
 	@TableField(value = "test_type")
 	private Integer testType;
+
+	@TableField(value = "roleId,roleName", el = "role.id,role.name")
+	private Role role;
 
 	public User() {
 
@@ -120,6 +123,14 @@ public class User implements Serializable {
 
 	public void setTestType(Integer testType) {
 		this.testType = testType;
+	}
+
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
 	}
 
 	/**

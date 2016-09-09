@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.test.mysql.entity.Role;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
@@ -92,9 +93,29 @@ public class UserMapperTest {
         userMapper.deleteAll();
 
         /**
+         * sjy
+         * 测试@TableField的el属性
+         */
+        Role role = new Role();
+        role.setId(IdWorker.getId());
+        role.setName("admin");
+
+        User userA = new User();
+        userA.setId(IdWorker.getId());
+        userA.setName("junyu_shi");
+        userA.setRole(role);
+
+        int rlt = userMapper.insert(userA);
+        User whereUser = userMapper.selectOne(userA);
+        userA.setAge(18);
+        userMapper.updateById(userA);
+        userMapper.deleteSelective(userA);
+        System.err.println("--------- @TableField el() --------- " + rlt);
+
+        /**
          * 注解插件测试
          */
-        int rlt = userMapper.insertInjector(new User(1L, "1", 1, 1));
+        rlt = userMapper.insertInjector(new User(1L, "1", 1, 1));
         System.err.println("--------- insertInjector --------- " + rlt);
 
         /**

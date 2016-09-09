@@ -25,8 +25,8 @@ import java.lang.annotation.Target;
  * 表字段标识
  * </p>
  * 
- * @author hubin
- * @Date 2016-01-23
+ * @author hubin sjy
+ * @Date 2016-09-09
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
@@ -47,4 +47,9 @@ public @interface TableField {
 	 * 
 	 */
 	boolean exist() default true;
+
+	/**
+	 * 当该Field为类对象时, 可使用#{对象.属性}来映射到数据表.
+	 */
+	String el() default "";
 }

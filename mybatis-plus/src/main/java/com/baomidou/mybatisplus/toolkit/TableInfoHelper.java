@@ -34,8 +34,8 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
  * 实体类反射表辅助类
  * </p>
  * 
- * @author hubin
- * @Date 2016-01-23
+ * @author hubin sjy
+ * @Date 2016-09-09
  */
 public class TableInfoHelper {
 
@@ -116,13 +116,29 @@ public class TableInfoHelper {
 
 			/* 获取注解属性，自定义字段 */
 			TableField tableField = field.getAnnotation(TableField.class);
-			if (tableField != null && StringUtils.isNotEmpty(tableField.value())) {
-				fieldList.add(new TableFieldInfo(true, tableField.value(), field.getName()));
+			if (tableField != null) {
+				String columnName = field.getName();
+				if (StringUtils.isNotEmpty(tableField.value())) {
+					columnName = tableField.value();
+				}
+				// iTODO 是否能再加点其他判断, 保证传入参数格式正确
+				String el = field.getName();
+				if (StringUtils.isNotEmpty(tableField.el())) {
+					el = tableField.el();
+				}
+
+				// iTODO 可以传入多个参数以逗号分开
+				String[] columns = columnName.split(",");
+				String[] els = el.split(",");
+				for (int i = 0; i < columns.length; i++) {
+					fieldList.add(new TableFieldInfo(true, columns[i], field.getName(), els[i]));
+				}
+
 				continue;
 			}
 
 			/**
-			 * 字段
+			 * 字段, 使用camelToUnderline转换驼峰写法为下划线分割法, 如果已制定TableField, 便不会执行这里
 			 */
 			if (MybatisConfiguration.DB_COLUMN_UNDERLINE) {
 				/* 开启字段下划线申明 */

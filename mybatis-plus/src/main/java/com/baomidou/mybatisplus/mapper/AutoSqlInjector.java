@@ -44,8 +44,8 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
  * SQL 自动注入器
  * </p>
  * 
- * @author hubin
- * @Date 2016-01-23
+ * @author hubin sjy
+ * @Date 2016-09-09
  */
 public class AutoSqlInjector implements ISqlInjector {
 	protected static final Logger logger = Logger.getLogger("AutoSqlInjector");
@@ -178,7 +178,7 @@ public class AutoSqlInjector implements ISqlInjector {
 				placeholderBuilder.append("\n\t<if test=\"").append(fieldInfo.getProperty()).append("!=null\">");
 			}
 			fieldBuilder.append(fieldInfo.getColumn()).append(",");
-			placeholderBuilder.append("#{").append(fieldInfo.getProperty()).append("},");
+			placeholderBuilder.append("#{").append(fieldInfo.getEl()).append("},");
 			if (selective) {
 				fieldBuilder.append("</if>");
 				placeholderBuilder.append("</if>");
@@ -228,7 +228,7 @@ public class AutoSqlInjector implements ISqlInjector {
 		List<TableFieldInfo> fieldList = table.getFieldList();
 		for (TableFieldInfo fieldInfo : fieldList) {
 			fieldBuilder.append(fieldInfo.getColumn()).append(",");
-			placeholderBuilder.append("#{item.").append(fieldInfo.getProperty()).append("},");
+			placeholderBuilder.append("#{item.").append(fieldInfo.getEl()).append("},");
 		}
 		fieldBuilder.append("\n</trim>");
 		placeholderBuilder.append("\n</trim>");
@@ -260,7 +260,6 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * </p>
 	 * 
 	 * @param mapperClass
-	 * @param modelClass
 	 * @param table
 	 */
 	protected void injectDeleteByMapSql(Class<?> mapperClass, TableInfo table) {
@@ -339,7 +338,7 @@ public class AutoSqlInjector implements ISqlInjector {
 			sqlMethod = SqlMethod.UPDATE_BATCH_BY_ID_ORACLE;
 			List<TableFieldInfo> fieldList = table.getFieldList();
 			for (TableFieldInfo fieldInfo : fieldList) {
-				set.append(fieldInfo.getColumn()).append("=#{item.").append(fieldInfo.getProperty()).append("},");
+				set.append(fieldInfo.getColumn()).append("=#{item.").append(fieldInfo.getEl()).append("},");
 			}
 		} else if (DBType.MYSQL == dbType) {
 			List<TableFieldInfo> fieldList = table.getFieldList();
@@ -349,7 +348,7 @@ public class AutoSqlInjector implements ISqlInjector {
 				set.append("\n<foreach collection=\"list\" item=\"i\" index=\"index\">");
 				set.append("\n<if test=\"i.").append(fieldInfo.getProperty()).append("!=null\">");
 				set.append("\nWHEN ").append("#{i.").append(table.getKeyProperty());
-				set.append("} THEN #{i.").append(fieldInfo.getProperty()).append("}");
+				set.append("} THEN #{i.").append(fieldInfo.getEl()).append("}");
 				set.append("\n</if>");
 				set.append("\n</foreach>");
 				set.append("\n</trim>");			
@@ -434,7 +433,6 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * 注入实体查询一条记录 SQL 语句
 	 * </p>
 	 * 
-	 * @param sqlMethod
 	 * @param mapperClass
 	 * @param modelClass
 	 * @param table
@@ -451,7 +449,6 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * 注入实体查询总记录数 SQL 语句
 	 * </p>
 	 * 
-	 * @param sqlMethod
 	 * @param mapperClass
 	 * @param modelClass
 	 * @param table
@@ -482,7 +479,7 @@ public class AutoSqlInjector implements ISqlInjector {
 		List<TableFieldInfo> fieldList = table.getFieldList();
 		for (TableFieldInfo fieldInfo : fieldList) {
 			where.append("\n<if test=\"ew.entity.").append(fieldInfo.getProperty()).append("!=null\">\n");
-			where.append(" AND ").append(fieldInfo.getColumn()).append("=#{ew.entity.").append(fieldInfo.getProperty()).append("}");
+			where.append(" AND ").append(fieldInfo.getColumn()).append("=#{ew.entity.").append(fieldInfo.getEl()).append("}");
 			where.append("\n</if>");
 		}
 		where.append("\n</where>\n</if>");
@@ -511,7 +508,7 @@ public class AutoSqlInjector implements ISqlInjector {
 			if ( selective ) {
 				set.append("\n<if test=\"et.").append(fieldInfo.getProperty()).append("!=null\">\n");
 			}
-			set.append(fieldInfo.getColumn()).append("=#{et.").append(fieldInfo.getProperty()).append("},");
+			set.append(fieldInfo.getColumn()).append("=#{et.").append(fieldInfo.getEl()).append("},");
 			if ( selective ) {
 				set.append("\n</if>");
 			}
@@ -595,7 +592,7 @@ public class AutoSqlInjector implements ISqlInjector {
 		List<TableFieldInfo> fieldList = table.getFieldList();
 		for (TableFieldInfo fieldInfo : fieldList) {
 			where.append("\n<if test=\"ew.").append(fieldInfo.getProperty()).append("!=null\">\n");
-			where.append(" AND ").append(fieldInfo.getColumn()).append("=#{ew.").append(fieldInfo.getProperty()).append("}");
+			where.append(" AND ").append(fieldInfo.getColumn()).append("=#{ew.").append(fieldInfo.getEl()).append("}");
 			where.append("\n</if>");
 		}
 		where.append("\n</where>");
