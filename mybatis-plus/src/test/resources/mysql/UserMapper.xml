@@ -17,5 +17,8 @@
 		<result column="name" property="name"/>
 		<result column="age" property="age"/>
 		<result column="test_type" property="testType"/>
+		<result column="phone" property="phone" typeHandler="com.baomidou.mybatisplus.test.mysql.typehandler.PhoneTypeHandler"/>
+
+		<association column="role" property="role" select="com.baomidou.mybatisplus.test.mysql.RoleMapper.selectById"/>
 	</resultMap>
 </mapper>

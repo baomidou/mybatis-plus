@@ -129,8 +129,8 @@ public class TableInfoHelper {
 				if (StringUtils.isNotEmpty(tableField.el())) {
 					el = tableField.el();
 				}
-				String[] columns = columnName.split(",");
-				String[] els = el.split(",");
+				String[] columns = columnName.split(";");
+				String[] els = el.split(";");
 				if (null != columns && null != els && columns.length == els.length) {
 					for (int i = 0; i < columns.length; i++) {
 						fieldList.add(new TableFieldInfo(true, columns[i], field.getName(), els[i]));

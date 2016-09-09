@@ -50,8 +50,12 @@ public class User implements Serializable {
 	@TableField(value = "test_type")
 	private Integer testType;
 
-	@TableField(value = "roleId,roleName", el = "role.id,role.name")
+	@TableField(el = "role.id")
 	private Role role;
+
+	//或@TableField(el = "role,jdbcType=BIGINT)
+	@TableField(el = "phone, typeHandler=com.baomidou.mybatisplus.test.mysql.typehandler.PhoneTypeHandler")
+	private PhoneNumber phone;
 
 	public User() {
 
@@ -131,6 +135,26 @@ public class User implements Serializable {
 
 	public void setRole(Role role) {
 		this.role = role;
+	}
+
+	public PhoneNumber getPhone() {
+		return phone;
+	}
+
+	public void setPhone(PhoneNumber phone) {
+		this.phone = phone;
+	}
+
+	@Override
+	public String toString() {
+		return "User{" +
+				"id=" + id +
+				", name='" + name + '\'' +
+				", age=" + age +
+				", testType=" + testType +
+				", role=" + role +
+				", phone=" + phone +
+				'}';
 	}
 
 	/**

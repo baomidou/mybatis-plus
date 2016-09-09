@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * <p>
@@ -14,7 +15,7 @@ import java.io.Serializable;
  * @author sjy
  * @Date 2016-09-09
  */
-@TableName(value = "role")
+@TableName(value = "role", resultMap = "RoleMap")
 public class Role implements Serializable {
 
 	@TableField(exist = false)
@@ -65,4 +66,14 @@ public class Role implements Serializable {
 		this.description = description;
 	}
 
+
+	@Override
+	public String toString() {
+		return "Role{" +
+				"id=" + id +
+				", name='" + name + '\'' +
+				", sort=" + sort +
+				", description='" + description + '\'' +
+				'}';
+	}
 }
