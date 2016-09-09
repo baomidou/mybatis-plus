@@ -2,3 +2,16 @@
 /.settings/
 /.project
 /.classpath
+
+# IntelliJ project files
+.idea
+*.iml
+out
+html
+
+# gradle
+.gradle
+build
+
+# MacOS
+.DS_Store
