@@ -31,22 +31,13 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface TableField {
-	
+
 	/*
 	 * <p>
 	 * 字段值（驼峰命名方式，该值可无）
 	 * </p>
 	 */
 	String value() default "";
-	
-	/*
-	 * <p>
-	 * 是否为数据库表字段
-	 * </p>
-	 * 默认 true 存在，false 不存在
-	 * 
-	 */
-	boolean exist() default true;
 
 	/*
 	 * <p>
@@ -54,4 +45,25 @@ public @interface TableField {
 	 * </p>
 	 */
 	String el() default "";
+
+	/*
+	 * <p>
+	 * 是否为数据库表字段
+	 * </p>
+	 * <p>
+	 * 默认 true 存在，false 不存在
+	 * </p>
+	 */
+	boolean exist() default true;
+	
+	/*
+	 * <p>
+	 * 字段验证
+	 * </p>
+	 * <p>
+	 * 默认 非 null 判断
+	 * </p>
+	 */
+	FieldStrategy validate() default FieldStrategy.NOT_EMPTY;
+
 }
