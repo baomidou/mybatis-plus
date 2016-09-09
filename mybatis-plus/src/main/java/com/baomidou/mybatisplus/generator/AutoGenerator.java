@@ -118,10 +118,10 @@ public class AutoGenerator {
 					System.err.println("save dir:" + config.getSaveDir());
 				}
 			}
+			System.out.println(" generate success! ");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println(" generate success! ");
 	}
 
 	/**
