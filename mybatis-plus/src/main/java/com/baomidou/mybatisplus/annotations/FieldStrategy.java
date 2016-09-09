@@ -21,12 +21,10 @@ package com.baomidou.mybatisplus.annotations;
  * </p>
  * 
  * @author hubin
- * @Date 2015-11-10
+ * @Date 2016-09-09
  */
 public enum FieldStrategy {
-	IGNORED(0, "忽略"),
-	NOT_NULL(1, "非 null"),
-	NOT_EMPTY(1, "非空");
+	IGNORED(0, "ignored"), NOT_NULL(1, "not null"), NOT_EMPTY(2, "not empty");
 
 	/** 主键 */
 	private final int key;

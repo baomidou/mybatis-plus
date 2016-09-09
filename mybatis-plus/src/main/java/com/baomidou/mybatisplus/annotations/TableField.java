@@ -64,6 +64,6 @@ public @interface TableField {
 	 * 默认 非 null 判断
 	 * </p>
 	 */
-	FieldStrategy validate() default FieldStrategy.NOT_EMPTY;
+	FieldStrategy validate() default FieldStrategy.NOT_NULL;
 
 }

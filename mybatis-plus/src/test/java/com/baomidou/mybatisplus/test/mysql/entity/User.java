@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.test.mysql.entity;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 
+import com.baomidou.mybatisplus.annotations.FieldStrategy;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
@@ -42,6 +43,8 @@ public class User implements Serializable {
 	@TableId(value = "test_id")
 	private Long id;
 
+	/* 测试忽略验证 */
+	@TableField(validate = FieldStrategy.IGNORED)
 	private String name;
 
 	private Integer age;

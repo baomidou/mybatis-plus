@@ -34,6 +34,7 @@ import org.apache.ibatis.scripting.defaults.RawSqlSource;
 import org.apache.ibatis.session.Configuration;
 
 import com.baomidou.mybatisplus.MybatisConfiguration;
+import com.baomidou.mybatisplus.annotations.FieldStrategy;
 import com.baomidou.mybatisplus.annotations.IdType;
 import com.baomidou.mybatisplus.toolkit.TableFieldInfo;
 import com.baomidou.mybatisplus.toolkit.TableInfo;
@@ -174,14 +175,14 @@ public class AutoSqlInjector implements ISqlInjector {
 		List<TableFieldInfo> fieldList = table.getFieldList();
 		for (TableFieldInfo fieldInfo : fieldList) {
 			if (selective) {
-				fieldBuilder.append("\n\t<if test=\"").append(fieldInfo.getProperty()).append("!=null\">");
-				placeholderBuilder.append("\n\t<if test=\"").append(fieldInfo.getProperty()).append("!=null\">");
+				fieldBuilder.append(convertIfTag(fieldInfo, false));
+				placeholderBuilder.append(convertIfTag(fieldInfo, false));
 			}
 			fieldBuilder.append(fieldInfo.getColumn()).append(",");
 			placeholderBuilder.append("#{").append(fieldInfo.getEl()).append("},");
 			if (selective) {
-				fieldBuilder.append("</if>");
-				placeholderBuilder.append("</if>");
+				fieldBuilder.append(convertIfTag(fieldInfo, true));
+				placeholderBuilder.append(convertIfTag(fieldInfo, true));
 			}
 		}
 		fieldBuilder.append("\n</trim>");
@@ -346,10 +347,10 @@ public class AutoSqlInjector implements ISqlInjector {
 				set.append("\n<trim prefix=\"").append(fieldInfo.getColumn()).append("=CASE ");
 				set.append(table.getKeyColumn()).append("\" suffix=\"END,\">");
 				set.append("\n<foreach collection=\"list\" item=\"i\" index=\"index\">");
-				set.append("\n<if test=\"i.").append(fieldInfo.getProperty()).append("!=null\">");
+				set.append(convertIfTag(fieldInfo, "i.", false));
 				set.append("\nWHEN ").append("#{i.").append(table.getKeyProperty());
 				set.append("} THEN #{i.").append(fieldInfo.getEl()).append("}");
-				set.append("\n</if>");
+				set.append(convertIfTag(fieldInfo, true));
 				set.append("\n</foreach>");
 				set.append("\n</trim>");			
 			}
@@ -478,9 +479,9 @@ public class AutoSqlInjector implements ISqlInjector {
 		where.append("\n</if>");
 		List<TableFieldInfo> fieldList = table.getFieldList();
 		for (TableFieldInfo fieldInfo : fieldList) {
-			where.append("\n<if test=\"ew.entity.").append(fieldInfo.getProperty()).append("!=null\">\n");
+			where.append(convertIfTag(fieldInfo, "ew.entity.", false));
 			where.append(" AND ").append(fieldInfo.getColumn()).append("=#{ew.entity.").append(fieldInfo.getEl()).append("}");
-			where.append("\n</if>");
+			where.append(convertIfTag(fieldInfo, true));
 		}
 		where.append("\n</where>\n</if>");
 		where.append("\n<if test=\"ew.sqlSegment!=null\">\n${ew.sqlSegment}\n</if>");
@@ -506,11 +507,11 @@ public class AutoSqlInjector implements ISqlInjector {
 		List<TableFieldInfo> fieldList = table.getFieldList();
 		for ( TableFieldInfo fieldInfo : fieldList ) {
 			if ( selective ) {
-				set.append("\n<if test=\"et.").append(fieldInfo.getProperty()).append("!=null\">\n");
+				set.append(convertIfTag(fieldInfo, "et.", false));
 			}
 			set.append(fieldInfo.getColumn()).append("=#{et.").append(fieldInfo.getEl()).append("},");
 			if ( selective ) {
-				set.append("\n</if>");
+				set.append(convertIfTag(fieldInfo, true));
 			}
 		}
 		set.append("\n</trim>");
@@ -591,9 +592,9 @@ public class AutoSqlInjector implements ISqlInjector {
 		where.append("\n</if>");
 		List<TableFieldInfo> fieldList = table.getFieldList();
 		for (TableFieldInfo fieldInfo : fieldList) {
-			where.append("\n<if test=\"ew.").append(fieldInfo.getProperty()).append("!=null\">\n");
+			where.append(convertIfTag(fieldInfo, "ew.", false));
 			where.append(" AND ").append(fieldInfo.getColumn()).append("=#{ew.").append(fieldInfo.getEl()).append("}");
-			where.append("\n</if>");
+			where.append(convertIfTag(fieldInfo, true));
 		}
 		where.append("\n</where>");
 		if ( space ) {
@@ -613,6 +614,47 @@ public class AutoSqlInjector implements ISqlInjector {
 		where.append("\n${k}=#{cm[${k}]}");
 		where.append("\n</foreach>"); 
 		return where.toString();
+	}
+
+	/**
+	 * <p>
+	 * IF 条件转换方法
+	 * </p>
+	 * 
+	 * @param fieldInfo
+	 * 				字段信息
+	 * @param prefix
+	 * 				条件前缀
+	 * @param colse
+	 * 				是否闭合标签
+	 * @return
+	 */
+	protected String convertIfTag(TableFieldInfo fieldInfo, String prefix, boolean colse) {
+		/* 前缀处理 */
+		String property = fieldInfo.getProperty();
+		if (null != prefix) {
+			property = prefix + property;
+		}
+
+		/* 判断策略 */
+		if (fieldInfo.getFieldStrategy() == FieldStrategy.NOT_NULL) {
+			if (colse) {
+				return "</if>";
+			} else {
+				return String.format("\n\t<if test=\"%s!=null\">", property);
+			}
+		} else if (fieldInfo.getFieldStrategy() == FieldStrategy.NOT_EMPTY) {
+			if (colse) {
+				return "</if>";
+			} else {
+				return String.format("\n\t<if test=\"%s!=null and %s!=''\">", property, property);
+			}
+		}
+		return "";
+	}
+	
+	protected String convertIfTag(TableFieldInfo fieldInfo, boolean colse) {
+		return convertIfTag(fieldInfo, null, colse);
 	}
 
 	/*

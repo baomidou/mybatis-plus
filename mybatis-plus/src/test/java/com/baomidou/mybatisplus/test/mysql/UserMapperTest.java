@@ -138,8 +138,8 @@ public class UserMapperTest {
         System.err.println("\n--------------insert-------" + rlt);
         sleep();
 
-        rlt = userMapper.insertSelective(new User("abc", 18));
-        System.err.println("\n--------------insertSelective-------" + rlt);
+        rlt = userMapper.insertSelective(new User(18));
+        System.err.println("\n----------测试 name 字段忽略验证----insertSelective-------" + rlt);
         sleep();
 
         List<User> ul = new ArrayList<User>();

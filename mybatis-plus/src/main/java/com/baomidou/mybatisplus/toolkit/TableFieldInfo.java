@@ -51,15 +51,16 @@ public class TableFieldInfo {
 	private String el;
 
 	/**
-	 * 字段策略
+	 * 字段策略【 默认，自判断 null 】
 	 */
-	private FieldStrategy fieldStrategy;
+	private FieldStrategy fieldStrategy = FieldStrategy.NOT_NULL;
 
-	public TableFieldInfo(boolean related, String column, String property, String el) {
+	public TableFieldInfo(boolean related, String column, String property, String el, FieldStrategy fieldStrategy) {
 		this.related = related;
 		this.setColumn(column);
 		this.property = property;
 		this.el = el;
+		this.fieldStrategy = fieldStrategy;
 	}
 
 	public TableFieldInfo(boolean related, String column, String property) {
