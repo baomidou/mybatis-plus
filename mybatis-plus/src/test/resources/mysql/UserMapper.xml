@@ -17,8 +17,11 @@
 		<result column="name" property="name"/>
 		<result column="age" property="age"/>
 		<result column="test_type" property="testType"/>
+
+		<!-- 自定义 typeHandler 语法 -->
 		<result column="phone" property="phone" typeHandler="com.baomidou.mybatisplus.test.mysql.typehandler.PhoneTypeHandler"/>
 
+		<!-- 级联查询 -->
 		<association column="role" property="role" select="com.baomidou.mybatisplus.test.mysql.RoleMapper.selectById"/>
 	</resultMap>
 </mapper>
