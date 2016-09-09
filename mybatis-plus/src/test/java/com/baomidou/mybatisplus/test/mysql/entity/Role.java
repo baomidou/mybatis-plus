@@ -7,10 +7,11 @@ import com.baomidou.mybatisplus.annotations.TableName;
 import java.io.Serializable;
 
 /**
- *
+ * <p>
  * 测试角色类
+ * </p>
  *
- * @author springwind
+ * @author sjy
  * @Date 2016-09-09
  */
 @TableName(value = "role")

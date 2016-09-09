@@ -42,7 +42,7 @@ import com.baomidou.mybatisplus.toolkit.IdWorker;
  * https://github.com/mybatis/spring/issues/39<br>
  * </p>
  *
- * @author hubin
+ * @author hubin sjy
  * @Date 2016-01-23
  */
 public class UserMapperTest {
@@ -103,10 +103,14 @@ public class UserMapperTest {
         User userA = new User();
         userA.setId(IdWorker.getId());
         userA.setName("junyu_shi");
+        userA.setAge(1);
+        userA.setTestType(1);
         userA.setRole(role);
 
         int rlt = userMapper.insert(userA);
         User whereUser = userMapper.selectOne(userA);
+        print(whereUser);
+        
         userA.setAge(18);
         userMapper.updateById(userA);
         userMapper.deleteSelective(userA);
@@ -192,7 +196,6 @@ public class UserMapperTest {
          * updateById 是从 AutoMapper 中继承而来的，UserMapper.xml中并没有申明改sql
          *
          */
-
         rlt = userMapper.updateSelectiveById(new User(12L, "MybatisPlus"));
         System.err.println("------------------updateSelectiveById---------------------- result=" + rlt + "\n\n");
         sleep();

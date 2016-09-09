@@ -50,54 +50,46 @@ public class TableFieldInfo {
 
 	public TableFieldInfo(boolean related, String column, String property, String el) {
 		this.related = related;
-		this.column = column;
+		this.setColumn(column);
 		this.property = property;
 		this.el = el;
 	}
 
-
-	public TableFieldInfo( boolean related, String column, String property ) {
+	public TableFieldInfo(boolean related, String column, String property) {
 		this.related = related;
-		this.column = DBKeywordsProcessor.convert(column);
+		this.setColumn(column);
 		this.property = property;
 		this.el = property;
 	}
 
-
-	public TableFieldInfo( String column ) {
+	public TableFieldInfo(String column) {
 		this.related = false;
-		this.column = DBKeywordsProcessor.convert(column);
+		this.setColumn(column);
 		this.property = column;
 		this.el = column;
 	}
-
 
 	public boolean isRelated() {
 		return related;
 	}
 
-
-	public void setRelated( boolean related ) {
+	public void setRelated(boolean related) {
 		this.related = related;
 	}
-
 
 	public String getColumn() {
 		return column;
 	}
 
-
-	public void setColumn( String column ) {
+	public void setColumn(String column) {
 		this.column = DBKeywordsProcessor.convert(column);
 	}
-
 
 	public String getProperty() {
 		return property;
 	}
 
-
-	public void setProperty( String property ) {
+	public void setProperty(String property) {
 		this.property = property;
 	}
 
