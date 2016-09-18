@@ -34,7 +34,17 @@ public class ConfigGeneratorTest {
 		/* 此处设置 String 类型数据库ID，默认Long类型 */
 		// cg.setConfigIdType(ConfigIdType.STRING);
 
-		cg.setSaveDir("D:/mybatis-plus/");// 生成文件保存位置
+		/*
+		 * 生成文件保存位置
+		 */
+		cg.setSaveDir("D:/mybatis-plus/");
+
+		/*
+		 * 【实体】是否生成字段常量（默认 false）<br>
+		 * -----------------------------------<br>
+		 * public static final String ID = "test_id";
+		 */
+		cg.setColumnConstant(false);
 
 		/*
 		 * 【实体】是否为构建者模型（默认 false）<br>
@@ -44,7 +54,7 @@ public class ConfigGeneratorTest {
 		 * 		return this;
 		 * 	}
 		 */
-		// cg.setBuliderModel(true);
+		cg.setBuliderModel(false);
 
 		/*
 		 * <p>

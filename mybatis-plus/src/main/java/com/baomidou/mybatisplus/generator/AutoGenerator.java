@@ -592,6 +592,12 @@ public class AutoGenerator {
 		}
 
 		/*
+		 * 字段常量处理
+		 */
+		this.buildEntityBeanColumnConstant(columns, types, comments, bw, size);
+		bw.newLine();
+
+		/*
 		 * 生成get 和 set方法
 		 */
 		for (int i = 0; i < size; i++) {
@@ -629,6 +635,22 @@ public class AutoGenerator {
 		bw.newLine();
 		bw.flush();
 		bw.close();
+	}
+
+	protected void buildEntityBeanColumnConstant(List<String> columns, List<String> types, List<String> comments,
+			BufferedWriter bw, int size) throws IOException {
+		/*
+		 * 【实体】是否生成字段常量（默认 false）
+		 */
+		if (config.isColumnConstant()) {
+			for (int i = 0; i < size; i++) {
+				String _tempType = processType(types.get(i));
+				String _column = columns.get(i);
+				bw.newLine();
+				bw.write("\tpublic static final " + _tempType + " " + _column.toUpperCase() + " = \"" + _column + "\";");
+			}
+			bw.newLine();
+		}
 	}
 
 	public String toIdType() {

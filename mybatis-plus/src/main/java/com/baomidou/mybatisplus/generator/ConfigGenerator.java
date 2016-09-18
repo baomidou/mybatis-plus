@@ -36,6 +36,7 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  * serviceName		自定义 service 名称
  * serviceImplName	自定义 serviceImp 名称
  * tableNames   	要生成的表名称，如为空就直接指定所有表.格式为逗号分割
+ * columnConstant  【实体】是否生成字段常量（默认 false）
  * buliderModel	   【实体】是否为构建者模型（默认 false）
  * fileOverride 	是否覆盖当前已有文件
  * -------------------------------------
@@ -85,6 +86,13 @@ public class ConfigGenerator {
 	 * 指定生成表名
 	 */
 	protected String[] tableNames = null;
+	
+	/*
+	 * 【实体】是否生成字段常量（默认 false）<br>
+	 * -----------------------------------<br>
+	 * public static final String ID = "test_id";
+	 */
+	protected boolean columnConstant = false;
 
 	/*
 	 * 【实体】是否为构建者模型（默认 false）<br>
@@ -318,6 +326,14 @@ public class ConfigGenerator {
 
 	public void setTableNames(String[] tableNames) {
 		this.tableNames = tableNames;
+	}
+
+	public boolean isColumnConstant() {
+		return columnConstant;
+	}
+
+	public void setColumnConstant(boolean columnConstant) {
+		this.columnConstant = columnConstant;
 	}
 
 	public boolean isBuliderModel() {
