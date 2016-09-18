@@ -150,20 +150,28 @@ public class StringUtils {
     public static String quotaMark(String srcStr) {
         return isEmpty(srcStr) ? "" : "\'" + srcStr + "\'";
     }
-    
-	/**
-	 * 获取对象字符串
-	 *
-	 * @param obj
-	 * @return String
-	 * @date 2016/9/18 0010
-	 * @version 1.0
-	 */
-	public static String getString(Object obj) {
-		if (obj == null) {
-			return EMPTY_STRING;
-		} else {
-			return obj.toString().trim();
-		}
-	}
+
+    /**
+     * 获取对象字符串
+     *
+     * @param obj
+     * @return String
+     * @date 2016/9/18 0010
+     * @version 1.0
+     */
+    public static String getString(Object obj) {
+        return getString(obj, EMPTY_STRING);
+    }
+
+    /**
+     * 获取对象字符串
+     *
+     * @param obj
+     * @return String
+     * @date 2016/9/18 0010
+     * @version 1.0
+     */
+    public static String getString(Object obj, String defaults) {
+        return obj == null ? defaults : ((EMPTY_STRING.equals(obj.toString().trim())) ? defaults : obj.toString().trim());
+    }
 }
