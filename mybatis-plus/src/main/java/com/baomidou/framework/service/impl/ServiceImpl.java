@@ -16,6 +16,7 @@
 package com.baomidou.framework.service.impl;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +26,8 @@ import com.baomidou.framework.service.IService;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.toolkit.TableInfo;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**
  * <p>
@@ -47,6 +50,27 @@ public class ServiceImpl<M extends BaseMapper<T, PK>, T, PK extends Serializable
      */
     protected boolean retBool(int result) {
         return result >= 1;
+    }
+    
+    public boolean insertOrUpdate(T entity) {
+		if (null != entity) {
+			Class<?> cls = entity.getClass();
+			TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
+			if (null != tableInfo) {
+				try {
+					Method m = cls.getMethod("get" + tableInfo.getKeyProperty());
+					Object idVal = m.invoke(entity);
+					if (null != idVal) {
+						return updateById(entity);
+					} else {
+						return insert(entity);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+    	}
+    	return false;
     }
 
     public boolean insert(T entity) {

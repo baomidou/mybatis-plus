@@ -33,6 +33,17 @@ public interface IService<T, PK> {
 
 	/**
 	 * <p>
+	 * TableId 注解存在更新记录，否插入一条记录
+	 * </p>
+	 * 
+	 * @param entity
+	 *            实体对象
+	 * @return boolean
+	 */
+	boolean insertOrUpdate(T entity);
+
+	/**
+	 * <p>
 	 * 插入一条记录
 	 * </p>
 	 * 
