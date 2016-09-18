@@ -32,6 +32,10 @@ public class StringUtils {
      * 下划线字符
      */
     public static final char UNDERLINE = '_';
+    /**
+     * 空字符串
+     */
+    public static final String EMPTY_STRING = "";
 
     /**
      * <p>
@@ -146,4 +150,20 @@ public class StringUtils {
     public static String quotaMark(String srcStr) {
         return isEmpty(srcStr) ? "" : "\'" + srcStr + "\'";
     }
+    
+	/**
+	 * 获取对象字符串
+	 *
+	 * @param obj
+	 * @return String
+	 * @date 2016/9/18 0010
+	 * @version 1.0
+	 */
+	public static String getString(Object obj) {
+		if (obj == null) {
+			return EMPTY_STRING;
+		} else {
+			return obj.toString().trim();
+		}
+	}
 }

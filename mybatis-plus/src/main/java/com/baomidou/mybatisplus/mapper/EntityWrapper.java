@@ -15,10 +15,10 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
+import com.baomidou.mybatisplus.toolkit.StringUtils;
+
 import java.io.Serializable;
 import java.text.MessageFormat;
-
-import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
  * <p>
@@ -376,8 +376,9 @@ public class EntityWrapper<T> implements Serializable {
 
     /**
      * <p>
-     * 处理String类型的参数，自动添加单引号 'value'.
-     * 如果当前字符串已经包含单引号，则不做修改
+     * 处理Object类型的参数
+     * 如果类型为String，自动添加单引号 'value'。当前字符串已经包含单引号，则不做修改
+     * 如果类型为Object，自动转换成String类型
      * </p>
      *
      * @param params 参数集
@@ -387,6 +388,8 @@ public class EntityWrapper<T> implements Serializable {
             Object tempVal = params[i];
             if (tempVal instanceof String && !String.valueOf(tempVal).matches("\'(.+)\'")) {
                 params[i] = StringUtils.quotaMark(String.valueOf(tempVal));
+            }else{
+                params[i] = StringUtils.getString(tempVal);
             }
         }
     }
