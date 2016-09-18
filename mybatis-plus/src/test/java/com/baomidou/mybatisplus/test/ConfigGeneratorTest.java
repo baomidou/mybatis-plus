@@ -37,10 +37,21 @@ public class ConfigGeneratorTest {
 		cg.setSaveDir("D:/mybatis-plus/");// 生成文件保存位置
 
 		/*
-		 * <p> true 表示数据库设置全局下划线命名规则，默认 false
-		 * ---------------------------------------------------------------------
-		 * ---------------<br> 【 开启该设置实体可无 @TableId(value = "test_id")
-		 * 字段映射，启动配置对应也要开启 true 设置 】 </p>
+		 * 【实体】是否为构建者模型（默认 false）<br>
+		 * -----------------------------------<br>
+		 * 	public User setName(String name) {
+		 * 		this.name = name;
+		 * 		return this;
+		 * 	}
+		 */
+		// cg.setBuliderModel(true);
+
+		/*
+		 * <p>
+		 * true 表示数据库设置全局下划线命名规则，默认 false
+		 * -------------------------------------------------------<br>
+		 *【 开启该设置实体可无 @TableId(value = "test_id") 字段映射，启动配置对应也要开启 true 设置 】<br>
+		 * </p>
 		 */
 		cg.setDbColumnUnderline(false);
 

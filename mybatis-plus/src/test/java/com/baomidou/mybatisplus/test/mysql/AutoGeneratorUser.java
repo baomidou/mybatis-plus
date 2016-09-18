@@ -42,7 +42,7 @@ public class AutoGeneratorUser extends ConfigGeneratorTest {
 		/* mysql 数据库相关配置 */
 		cg.setDbDriverName("com.mysql.jdbc.Driver");
 		cg.setDbUser("root");
-		cg.setDbPassword("");
+		cg.setDbPassword("123456");
 		cg.setDbUrl("jdbc:mysql://127.0.0.1:3306/mybatis-plus?characterEncoding=utf8");
 
 		/*
