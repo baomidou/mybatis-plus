@@ -29,7 +29,7 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CURD`操作
 
 # 原理
 
-[Mybatis-Plus 实践及架构原理](http://git.oschina.net/juapk/mybatis-plus/attach_files)
+[Mybatis-Plus 实践及架构原理](http://git.oschina.net/baomidou/mybatis-plus/attach_files)
 
 # Demo
 
@@ -53,7 +53,7 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CURD`操作
 
 # 其他开源项目
 
-- [基于Cookie的SSO中间件 Kisso](http://git.oschina.net/juapk/kisso)
+- [基于Cookie的SSO中间件 Kisso](http://git.oschina.net/baomidou/kisso)
 - [Java快速开发框架 SpringWind](http://git.oschina.net/juapk/SpringWind)
 
 # Futures
