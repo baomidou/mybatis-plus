@@ -606,9 +606,19 @@ public class AutoGenerator {
 			bw.write("\t}");
 			bw.newLine();
 			bw.newLine();
-			bw.write("\tpublic void set" + _field + "(" + _tempType + " " + _tempField + ") {");
-			bw.newLine();
-			bw.write("\t\tthis." + _tempField + " = " + _tempField + ";");
+
+			/* 是否为构建者模型 */
+			if (config.isBuliderModel()) {
+				bw.write("\tpublic " + beanName + " set" + _field + "(" + _tempType + " " + _tempField + ") {");
+				bw.newLine();
+				bw.write("\t\tthis." + _tempField + " = " + _tempField + ";");
+				bw.newLine();
+				bw.write("\t\treturn this;");
+			} else {
+				bw.write("\tpublic void set" + _field + "(" + _tempType + " " + _tempField + ") {");
+				bw.newLine();
+				bw.write("\t\tthis." + _tempField + " = " + _tempField + ";");
+			}
 			bw.newLine();
 			bw.write("\t}");
 			bw.newLine();

@@ -36,6 +36,7 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  * serviceName		自定义 service 名称
  * serviceImplName	自定义 serviceImp 名称
  * tableNames   	要生成的表名称，如为空就直接指定所有表.格式为逗号分割
+ * buliderModel	   【实体】是否为构建者模型（默认 false）
  * fileOverride 	是否覆盖当前已有文件
  * -------------------------------------
  * 以下数据库相关配置：
@@ -85,6 +86,16 @@ public class ConfigGenerator {
 	 */
 	protected String[] tableNames = null;
 
+	/*
+	 * 【实体】是否为构建者模型（默认 false）<br>
+	 * -----------------------------------<br>
+	 * 	public User setName(String name) {
+	 * 		this.name = name;
+	 * 		return this;
+	 * 	}
+	 */
+	protected boolean buliderModel = false;
+	
 	/*
 	 * 是否覆盖当前路径下已有文件（默认 true）
 	 */
@@ -307,6 +318,14 @@ public class ConfigGenerator {
 
 	public void setTableNames(String[] tableNames) {
 		this.tableNames = tableNames;
+	}
+
+	public boolean isBuliderModel() {
+		return buliderModel;
+	}
+
+	public void setBuliderModel(boolean buliderModel) {
+		this.buliderModel = buliderModel;
 	}
 
 	public boolean isFileOverride() {
