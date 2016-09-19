@@ -15,18 +15,18 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import com.baomidou.mybatisplus.toolkit.StringUtils;
-
 import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.List;
+
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
  * <p>
  * Entity 对象封装操作类，定义T-SQL语法
  * </p>
  *
- * @author hubin , yanghu , Dyang
+ * @author hubin , yanghu , Dyang , Caratacus
  * @Date 2016-03-15
  */
 @SuppressWarnings("serial")
@@ -358,7 +358,7 @@ public class EntityWrapper<T> implements Serializable {
      *            匹配值 List集合
      * @return this
      */
-    public EntityWrapper<T> in(String column, List value) {
+    public EntityWrapper<T> in(String column, List<?> value) {
         sql.IN(column, value);
         return this;
     }
@@ -372,7 +372,7 @@ public class EntityWrapper<T> implements Serializable {
      *            匹配值 List集合
      * @return this
      */
-    public EntityWrapper<T> notIn(String column, List value) {
+    public EntityWrapper<T> notIn(String column, List<?> value) {
         sql.NOT_IN(column, value);
         return this;
     }
@@ -449,9 +449,12 @@ public class EntityWrapper<T> implements Serializable {
         if (!need || StringUtils.isEmpty(sqlStr)) {
             return null;
         }
-        if (null != params && params.length > 0) {
-            dealParams(params);
-            sqlStr = MessageFormat.format(sqlStr, params);
+        if (null != params) {
+        	int length = params.length;
+			if (length >= 1) {
+				dealParams(params, length);
+				sqlStr = MessageFormat.format(sqlStr, params);
+        	}
         }
         return sqlStr;
     }
@@ -464,15 +467,12 @@ public class EntityWrapper<T> implements Serializable {
      * </p>
      *
      * @param params 参数集
+     * @param length 参数数量
      */
-    protected void dealParams(Object[] params) {
-        for (int i = 0; i < params.length; i++) {
-            Object tempVal = params[i];
-            if (tempVal instanceof String && !String.valueOf(tempVal).matches("\'(.+)\'")) {
-                params[i] = StringUtils.quotaMark(String.valueOf(tempVal));
-            }else{
-                params[i] = StringUtils.getString(tempVal);
-            }
+    protected void dealParams(Object[] params, int length) {
+        for (int i = 0; i < length; i++) {
+            params[i] = StringUtils.quotaMark(params[i]);
         }
     }
+
 }

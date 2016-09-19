@@ -27,7 +27,7 @@ import java.util.List;
  * 实现AbstractSQL ，实现WHERE条件自定义
  * </p>
  *
- * @author yanghu
+ * @author yanghu , Caratacus
  * @Date 2016-08-22
  */
 @SuppressWarnings("serial")
@@ -120,7 +120,7 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
 	 * @param value  List集合
 	 * @return
 	 */
-	public TSqlPlus IN(String column, List value) {
+	public TSqlPlus IN(String column, List<?> value) {
 		handerIn(column, value, false);
 		return this;
 	}
@@ -132,7 +132,7 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
 	 * @param value  List集合
 	 * @return
 	 */
-	public TSqlPlus NOT_IN(String column, List value) {
+	public TSqlPlus NOT_IN(String column, List<?> value) {
 		handerIn(column, value, true);
 		return this;
 	}
@@ -206,7 +206,7 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
 	 * @param value  集合List
 	 * @param isNot  是否为NOT IN操作
 	 */
-	private void handerIn(String column, List value, boolean isNot) {
+	private void handerIn(String column, List<?> value, boolean isNot) {
 		if (StringUtils.isNotEmpty(column) && CollectionUtil.isNotEmpty(value)) {
 			String inSql = " IN ( %s )";
 			if (isNot) {

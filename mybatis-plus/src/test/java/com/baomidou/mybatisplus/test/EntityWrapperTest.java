@@ -15,13 +15,14 @@
  */
 package com.baomidou.mybatisplus.test;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.test.mysql.entity.User;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.test.mysql.entity.User;
 
 /**
  * <p>
@@ -203,7 +204,7 @@ public class EntityWrapperTest {
      */
     @Test
     public void testNul17() {
-        List list = new ArrayList();
+        List<String> list = new ArrayList<String>();
         list.add("'1'");
         list.add("'2'");
         list.add("'3'");
@@ -218,11 +219,11 @@ public class EntityWrapperTest {
      */
     @Test
     public void testNul18() {
-        List list = new ArrayList();
-        list.add(111111111);
-        list.add(222222222);
-        list.add(333333333);
-        list.add(444444444);
+        List<Long> list = new ArrayList<Long>();
+        list.add(111111111L);
+        list.add(222222222L);
+        list.add(333333333L);
+        list.add(444444444L);
         ew.in("test_type",list);
         String sqlPart = ew.getSqlSegment();
         System.out.println("sql ==> " + sqlPart);
