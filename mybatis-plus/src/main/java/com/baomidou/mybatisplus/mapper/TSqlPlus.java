@@ -35,6 +35,7 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
 
 	private final String IS_NOT_NULL = " IS NOT NULL";
 	private final String IS_NULL = " IS NULL";
+	private final String SQL_LIKE = " LIKE CONCAT(CONCAT({0},{1}),{2})";
 
 	@Override
 	public TSqlPlus getSelf() {
@@ -105,14 +106,16 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
 	 */
 	private void handerLike(String column, String value, boolean isNot) {
 		if (StringUtils.isNotEmpty(column) && StringUtils.isNotEmpty(value)) {
-			String likeSql = " LIKE CONCAT(CONCAT({0},{1}),{2})";
+			StringBuilder inSql = new StringBuilder();
+			inSql.append(column);
 			if (isNot) {
-				likeSql = " NOT" + likeSql;
+				inSql.append(" NOT");
 			}
-			String percent = StringUtils.quotaMark("%");
-			WHERE(column + MessageFormat.format(likeSql, percent, StringUtils.quotaMark(value), percent));
+			inSql.append(MessageFormat.format(SQL_LIKE, "%", StringUtils.quotaMark(value), "%"));
+			WHERE(inSql.toString());
 		}
 	}
+
 	/**
 	 * 将IN语句添加到WHERE条件中
 	 *
@@ -180,11 +183,12 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
 	 */
 	private void handerExists(String value, boolean isNot) {
 		if (StringUtils.isNotEmpty(value)) {
-			String inSql = " EXISTS ( %s )";
+			StringBuilder inSql = new StringBuilder();
 			if (isNot) {
-				inSql = " NOT" + inSql;
+				inSql.append(" NOT");
 			}
-			WHERE(String.format(inSql, value));
+			inSql.append(" EXISTS (").append(value).append(")");
+			WHERE(inSql.toString());
 		}
 	}
 
@@ -208,24 +212,24 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
 	 */
 	private void handerIn(String column, List<?> value, boolean isNot) {
 		if (StringUtils.isNotEmpty(column) && CollectionUtil.isNotEmpty(value)) {
-			String inSql = " IN ( %s )";
+			StringBuilder inSql = new StringBuilder();
+			inSql.append(column);
 			if (isNot) {
-				inSql = " NOT" + inSql;
+				inSql.append(" NOT");
 			}
-			StringBuilder invalue = new StringBuilder();
-			for (int i = 0; i < value.size(); i++) {
-				Object tempVal = value.get(i);
-				if (tempVal instanceof String && !String.valueOf(tempVal).matches("\'(.+)\'")) {
-					tempVal = StringUtils.quotaMark(String.valueOf(tempVal));
-				}
-				if (i + 1 == value.size()) {
-					invalue.append(tempVal);
+			inSql.append(" IN (");
+			int _size = value.size();
+			for (int i = 0; i < _size; i++) {
+				String tempVal = StringUtils.quotaMark(value.get(i));
+				if (i + 1 == _size) {
+					inSql.append(tempVal);
 				} else {
-					invalue.append(tempVal);
-					invalue.append(",");
+					inSql.append(tempVal);
+					inSql.append(",");
 				}
 			}
-			WHERE(column + String.format(inSql, invalue.toString()));
+			inSql.append(")");
+			WHERE(inSql.toString());
 		}
 	}
 
@@ -238,11 +242,13 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
 	 */
 	private void handerIn(String column, String value, boolean isNot) {
 		if (StringUtils.isNotEmpty(column) && StringUtils.isNotEmpty(value)) {
-			String inSql = " IN ( %s )";
+			StringBuilder inSql = new StringBuilder();
+			inSql.append(column);
 			if (isNot) {
-				inSql = " NOT" + inSql;
+				inSql.append(" NOT");
 			}
-			WHERE(column + String.format(inSql, value));
+			inSql.append(" IN (").append(value).append(")");
+			WHERE(inSql.toString());
 		}
 	}
 
