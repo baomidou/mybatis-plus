@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 import java.io.Serializable;
 import java.text.MessageFormat;
+import java.util.List;
 
 /**
  * <p>
@@ -295,6 +296,87 @@ public class EntityWrapper<T> implements Serializable {
         sql.IS_NULL(columns);
         return this;
     }
+
+    /**
+     * EXISTS 条件语句，目前适配mysql及oracle
+     *
+     * @param value
+     *            匹配值
+     * @return this
+     */
+    public EntityWrapper<T> exists(String value) {
+        sql.EXISTS(value);
+        return this;
+    }
+
+    /**
+     * NOT EXISTS条件语句
+     *
+     * @param value
+     *            匹配值
+     * @return this
+     */
+    public EntityWrapper<T> notExists(String value) {
+        sql.NOT_EXISTS(value);
+        return this;
+    }
+
+    /**
+     * IN 条件语句，目前适配mysql及oracle
+     *
+     * @param column
+     *            字段名称
+     * @param value
+     *            逗号拼接的字符串
+     * @return this
+     */
+    public EntityWrapper<T> in(String column, String value) {
+        sql.IN(column, value);
+        return this;
+    }
+
+    /**
+     * NOT IN条件语句
+     *
+     * @param column
+     *            字段名称
+     * @param value
+     *            逗号拼接的字符串
+     * @return this
+     */
+    public EntityWrapper<T> notIn(String column, String value) {
+        sql.NOT_IN(column, value);
+        return this;
+    }
+
+    /**
+     * IN 条件语句，目前适配mysql及oracle
+     *
+     * @param column
+     *            字段名称
+     * @param value
+     *            匹配值 List集合
+     * @return this
+     */
+    public EntityWrapper<T> in(String column, List value) {
+        sql.IN(column, value);
+        return this;
+    }
+
+    /**
+     * NOT IN 条件语句，目前适配mysql及oracle
+     *
+     * @param column
+     *            字段名称
+     * @param value
+     *            匹配值 List集合
+     * @return this
+     */
+    public EntityWrapper<T> notIn(String column, List value) {
+        sql.NOT_IN(column, value);
+        return this;
+    }
+
 
     /**
      * 为了兼容之前的版本,可使用where()或and()替代

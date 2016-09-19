@@ -15,11 +15,13 @@
  */
 package com.baomidou.mybatisplus.test;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.test.mysql.entity.User;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.test.mysql.entity.User;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>
@@ -184,6 +186,47 @@ public class EntityWrapperTest {
         String sqlPart = ew.getSqlSegment();
         System.out.println("sql ==> " + sqlPart);
         Assert.assertEquals("WHERE (id='11' AND name=222222222)", sqlPart);
+    }
+
+    /**
+     * 测试EXISTS
+     */
+    @Test
+    public void testNul16() {
+        ew.notExists("(select * from user)");
+        String sqlPart = ew.getSqlSegment();
+        System.out.println("sql ==> " + sqlPart);
+        Assert.assertEquals("WHERE ( NOT EXISTS ( (select * from user) ))", sqlPart);
+    }
+    /**
+     * 测试NOT IN
+     */
+    @Test
+    public void testNul17() {
+        List list = new ArrayList();
+        list.add("'1'");
+        list.add("'2'");
+        list.add("'3'");
+        list.add("'4'");
+        ew.notIn("test_type",list);
+        String sqlPart = ew.getSqlSegment();
+        System.out.println("sql ==> " + sqlPart);
+        Assert.assertEquals("WHERE (test_type NOT IN ( '1','2','3','4' ))", sqlPart);
+    }
+    /**
+     * 测试IN
+     */
+    @Test
+    public void testNul18() {
+        List list = new ArrayList();
+        list.add(111111111);
+        list.add(222222222);
+        list.add(333333333);
+        list.add(444444444);
+        ew.in("test_type",list);
+        String sqlPart = ew.getSqlSegment();
+        System.out.println("sql ==> " + sqlPart);
+        Assert.assertEquals("WHERE (test_type IN ( 111111111,222222222,333333333,444444444 ))", sqlPart);
     }
 
 }

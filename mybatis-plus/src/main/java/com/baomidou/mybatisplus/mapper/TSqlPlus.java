@@ -16,9 +16,11 @@
 package com.baomidou.mybatisplus.mapper;
 
 import com.baomidou.mybatisplus.MybatisAbstractSQL;
+import com.baomidou.mybatisplus.toolkit.CollectionUtil;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 import java.text.MessageFormat;
+import java.util.List;
 
 /**
  * <p>
@@ -109,6 +111,138 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
 			}
 			String percent = StringUtils.quotaMark("%");
 			WHERE(column + MessageFormat.format(likeSql, percent, StringUtils.quotaMark(value), percent));
+		}
+	}
+	/**
+	 * 将IN语句添加到WHERE条件中
+	 *
+	 * @param column 字段名
+	 * @param value  List集合
+	 * @return
+	 */
+	public TSqlPlus IN(String column, List value) {
+		handerIn(column, value, false);
+		return this;
+	}
+
+	/**
+	 * 将IN语句添加到WHERE条件中
+	 *
+	 * @param column 字段名
+	 * @param value  List集合
+	 * @return
+	 */
+	public TSqlPlus NOT_IN(String column, List value) {
+		handerIn(column, value, true);
+		return this;
+	}
+
+	/**
+	 * 将IN语句添加到WHERE条件中
+	 *
+	 * @param column 字段名
+	 * @param value  逗号拼接的字符串
+	 * @return
+	 */
+	public TSqlPlus IN(String column, String value) {
+		handerIn(column, value, false);
+		return this;
+	}
+
+	/**
+	 * 将IN语句添加到WHERE条件中
+	 *
+	 * @param column 字段名
+	 * @param value  逗号拼接的字符串
+	 * @return
+	 */
+	public TSqlPlus NOT_IN(String column, String value) {
+		handerIn(column, value, true);
+		return this;
+	}
+
+	/**
+	 * 将EXISTS语句添加到WHERE条件中
+	 *
+	 * @param value
+	 * @return
+	 */
+	public TSqlPlus EXISTS(String value) {
+		handerExists(value, false);
+		return this;
+	}
+
+	/**
+	 * 处理EXISTS操作
+	 *
+	 * @param value
+	 * @param isNot 是否为NOT EXISTS操作
+	 */
+	private void handerExists(String value, boolean isNot) {
+		if (StringUtils.isNotEmpty(value)) {
+			String inSql = " EXISTS ( %s )";
+			if (isNot) {
+				inSql = " NOT" + inSql;
+			}
+			WHERE(String.format(inSql, value));
+		}
+	}
+
+	/**
+	 * 将NOT_EXISTS语句添加到WHERE条件中
+	 *
+	 * @param value
+	 * @return
+	 */
+	public TSqlPlus NOT_EXISTS(String value) {
+		handerExists(value, true);
+		return this;
+	}
+
+	/**
+	 * 处理IN操作
+	 *
+	 * @param column 字段名称
+	 * @param value  集合List
+	 * @param isNot  是否为NOT IN操作
+	 */
+	private void handerIn(String column, List value, boolean isNot) {
+		if (StringUtils.isNotEmpty(column) && CollectionUtil.isNotEmpty(value)) {
+			String inSql = " IN ( %s )";
+			if (isNot) {
+				inSql = " NOT" + inSql;
+			}
+			StringBuilder invalue = new StringBuilder();
+			for (int i = 0; i < value.size(); i++) {
+				Object tempVal = value.get(i);
+				if (tempVal instanceof String && !String.valueOf(tempVal).matches("\'(.+)\'")) {
+					tempVal = StringUtils.quotaMark(String.valueOf(tempVal));
+				}
+				if (i + 1 == value.size()) {
+					invalue.append(tempVal);
+				} else {
+					invalue.append(tempVal);
+					invalue.append(",");
+				}
+			}
+			WHERE(column + String.format(inSql, invalue.toString()));
+		}
+	}
+
+	/**
+	 * 处理IN操作
+	 *
+	 * @param column 字段名称
+	 * @param value  逗号拼接的字符串
+	 * @param isNot  是否为NOT IN操作
+	 */
+	private void handerIn(String column, String value, boolean isNot) {
+		if (StringUtils.isNotEmpty(column) && StringUtils.isNotEmpty(value)) {
+			String inSql = " IN ( %s )";
+			if (isNot) {
+				inSql = " NOT" + inSql;
+			}
+			WHERE(column + String.format(inSql, value));
 		}
 	}
 
