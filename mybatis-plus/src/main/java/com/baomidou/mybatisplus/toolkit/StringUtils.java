@@ -151,7 +151,7 @@ public class StringUtils {
 	 * 使用单引号包含字符串
 	 * </p>
 	 *
-	 * @param srcStr
+	 * @param obj
 	 *            原字符串
 	 * @return 单引号包含的原字符串
 	 */
@@ -161,6 +161,27 @@ public class StringUtils {
 			return "\'" + srcStr + "\'";
 		}
 		return srcStr;
+	}
+
+	/**
+	 * 字符串第一个字母大写
+	 * 
+	 * @param str
+	 * @return
+	 */
+	public static String capitalize(final String str) {
+		int strLen;
+		if (str == null || (strLen = str.length()) == 0) {
+			return str;
+		}
+
+		final char firstChar = str.charAt(0);
+		if (Character.isTitleCase(firstChar)) {
+			// already capitalized
+			return str;
+		}
+
+		return new StringBuilder(strLen).append(Character.toTitleCase(firstChar)).append(str.substring(1)).toString();
 	}
 
 }

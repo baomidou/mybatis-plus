@@ -15,11 +15,11 @@
  */
 package com.baomidou.framework.service;
 
-import java.util.List;
-import java.util.Map;
-
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -30,17 +30,6 @@ import com.baomidou.mybatisplus.plugins.Page;
  * @Date 2016-04-20
  */
 public interface IService<T, PK> {
-
-	/**
-	 * <p>
-	 * TableId 注解存在更新记录，否插入一条记录
-	 * </p>
-	 * 
-	 * @param entity
-	 *            实体对象
-	 * @return boolean
-	 */
-	boolean insertOrUpdate(T entity);
 
 	/**
 	 * <p>
@@ -177,6 +166,27 @@ public interface IService<T, PK> {
 	 * @return boolean
 	 */
 	boolean updateBatchById(List<T> entityList);
+
+	/**
+	 * <p>
+	 * TableId 注解存在更新记录，否插入一条记录
+	 * </p>
+	 *
+	 * @param entity
+	 *            实体对象
+	 * @return boolean
+	 */
+	boolean insertOrUpdate(T entity);
+	/**
+	 * <p>
+	 * TableId 注解存在更新记录，否插入一条记录 （选择字段， null 字段不插入）
+	 * </p>
+	 *
+	 * @param entity
+	 *            实体对象
+	 * @return boolean
+	 */
+	boolean insertOrUpdateSelective(T entity);
 
 	/**
 	 * <p>

@@ -15,20 +15,20 @@
  */
 package com.baomidou.framework.service.impl;
 
-import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.baomidou.framework.service.IService;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfo;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -54,19 +54,31 @@ public class ServiceImpl<M extends BaseMapper<T, PK>, T, PK extends Serializable
 		return result >= 1;
 	}
 
+	/**
+	 * <p>
+	 * TableId 注解存在更新记录，否插入一条记录
+	 * </p>
+	 *
+	 * @param entity
+	 *            实体对象
+	 * @param selective
+	 *            true 选择字段 false 不选择字段
+	 * @return boolean
+	 */
 	@Transactional(rollbackFor = Exception.class)
-	public boolean insertOrUpdate(T entity) {
+	public boolean insertOrUpdate(T entity, boolean selective) {
 		if (null != entity) {
 			Class<?> cls = entity.getClass();
 			TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
 			if (null != tableInfo) {
 				try {
-					Method m = cls.getMethod("get" + tableInfo.getKeyProperty());
+					// TODO 没有@TableId 是否应该抛出异常
+					Method m = cls.getMethod("get" + StringUtils.capitalize(tableInfo.getKeyProperty()));
 					Object idVal = m.invoke(entity);
 					if (null != idVal) {
-						return updateById(entity);
+						return selective ? updateSelectiveById(entity) : updateById(entity);
 					} else {
-						return insert(entity);
+						return selective ? insertSelective(entity) : insert(entity);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -74,6 +86,14 @@ public class ServiceImpl<M extends BaseMapper<T, PK>, T, PK extends Serializable
 			}
 		}
 		return false;
+	}
+
+	public boolean insertOrUpdate(T entity) {
+		return insertOrUpdate(entity, false);
+	}
+
+	public boolean insertOrUpdateSelective(T entity) {
+		return insertOrUpdate(entity, true);
 	}
 
 	@Transactional(rollbackFor = Exception.class)
