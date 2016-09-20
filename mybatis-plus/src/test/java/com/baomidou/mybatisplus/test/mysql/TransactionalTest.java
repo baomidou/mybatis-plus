@@ -15,14 +15,13 @@
  */
 package com.baomidou.mybatisplus.test.mysql;
 
-import java.io.InputStream;
-
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+
+import java.io.InputStream;
 
 public class TransactionalTest {
 
@@ -39,7 +38,6 @@ public class TransactionalTest {
 		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
 		SqlSessionFactory sessionFactory = mf.build(in);
 		SqlSession sqlSession = sessionFactory.openSession();
-		
 		/**
 		 * 插入
 		 */
@@ -47,8 +45,9 @@ public class TransactionalTest {
 		int rlt = userMapper.insert(new User(IdWorker.getId(), "1", 1, 1));
 		System.err.println("--------- insertInjector --------- " + rlt);
 
-//		session.commit();
-//		sqlSession.close();
+		//session.commit();
+		sqlSession.rollback();
+		sqlSession.close();
 	}
 
 }
