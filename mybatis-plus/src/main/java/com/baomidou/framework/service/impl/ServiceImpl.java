@@ -16,6 +16,7 @@
 package com.baomidou.framework.service.impl;
 
 import com.baomidou.framework.service.IService;
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
@@ -72,8 +73,11 @@ public class ServiceImpl<M extends BaseMapper<T, PK>, T, PK extends Serializable
 			TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
 			if (null != tableInfo) {
 				try {
-					// TODO 没有@TableId 是否应该抛出异常
-					Method m = cls.getMethod("get" + StringUtils.capitalize(tableInfo.getKeyProperty()));
+					String keyProperty = tableInfo.getKeyProperty();
+					if (keyProperty == null) {
+						throw new MybatisPlusException("Error:  Cannot execute. Could not find @TableId.");
+					}
+					Method m = cls.getMethod("get" + StringUtils.capitalize(keyProperty));
 					Object idVal = m.invoke(entity);
 					if (null != idVal) {
 						return selective ? updateSelectiveById(entity) : updateById(entity);
