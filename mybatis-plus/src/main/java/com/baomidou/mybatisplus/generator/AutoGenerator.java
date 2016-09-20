@@ -373,6 +373,8 @@ public class AutoGenerator {
 			return "Float";
 		} else if (t.contains("double")) {
 			return "Double";
+		} else if (t.contains("json")) {
+			return "String";
 		}
 		return null;
 	}
