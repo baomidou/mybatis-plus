@@ -43,8 +43,6 @@
 		<mybatis-ehcache.version>1.0.3</mybatis-ehcache.version>
 		<junit.version>4.12</junit.version>
 		<contiperf.version>2.3.4</contiperf.version>
-		<hamcrest.version>1.3</hamcrest.version>
-		<mockito.version>2.1.0-RC.1</mockito.version>
 	</properties>
 
 	<dependencies>
@@ -115,33 +113,15 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>${spring.version}</version>
+		    <groupId>junit</groupId>
+		    <artifactId>junit</artifactId>
+		    <version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.databene</groupId>
-			<artifactId>contiperf</artifactId>
-			<version>${contiperf.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hamcrest</groupId>
-			<artifactId>hamcrest-all</artifactId>
-			<version>${hamcrest.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
-			<version>${mockito.version}</version>
+		    <groupId>org.databene</groupId>
+		    <artifactId>contiperf</artifactId>
+		    <version>${contiperf.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<!-- test end -->
