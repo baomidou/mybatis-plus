@@ -15,14 +15,14 @@
  */
 package com.baomidou.mybatisplus.test;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.test.mysql.entity.User;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.test.mysql.entity.User;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>
@@ -38,6 +38,11 @@ public class EntityWrapperTest {
      * User 查询包装器
      */
     private EntityWrapper<User> ew = new EntityWrapper<User>();
+
+    // 初始化
+    static {
+        TableInfoHelper.initTableInfo(User.class);
+    }
 
     @Test
     public void test() {

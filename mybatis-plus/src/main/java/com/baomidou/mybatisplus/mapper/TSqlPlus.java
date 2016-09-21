@@ -111,7 +111,7 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
 			if (isNot) {
 				inSql.append(" NOT");
 			}
-			inSql.append(MessageFormat.format(SQL_LIKE, "%", StringUtils.quotaMark(value), "%"));
+			inSql.append(MessageFormat.format(SQL_LIKE, "'%'", StringUtils.quotaMark(value), "'%'"));
 			WHERE(inSql.toString());
 		}
 	}

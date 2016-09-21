@@ -164,12 +164,16 @@ public class StringUtils {
 	}
 
 	/**
-	 * 字符串第一个字母大写
-	 * 
+	 * 拼接字符串第二个字符串第一个字母大写
+	 *
+	 * @param concatStr
 	 * @param str
 	 * @return
 	 */
-	public static String capitalize(final String str) {
+	public static String concatCapitalize(String concatStr, final String str) {
+		if (isEmpty(concatStr)){
+			concatStr = EMPTY_STRING;
+		}
 		int strLen;
 		if (str == null || (strLen = str.length()) == 0) {
 			return str;
@@ -181,7 +185,16 @@ public class StringUtils {
 			return str;
 		}
 
-		return new StringBuilder(strLen).append(Character.toTitleCase(firstChar)).append(str.substring(1)).toString();
+		return new StringBuilder(strLen).append(concatStr).append(Character.toTitleCase(firstChar)).append(str.substring(1)).toString();
+	}
+	/**
+	 * 字符串第一个字母大写
+	 *
+	 * @param str
+	 * @return
+	 */
+	public static String capitalize(final String str) {
+		return concatCapitalize(null,str);
 	}
 
 }

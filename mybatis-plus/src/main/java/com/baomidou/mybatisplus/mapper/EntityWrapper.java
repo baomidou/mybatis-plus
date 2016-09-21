@@ -15,11 +15,12 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
+import com.baomidou.mybatisplus.toolkit.ReflectionKit;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
+
 import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.List;
-
-import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
  * <p>
@@ -93,8 +94,9 @@ public class EntityWrapper<T> implements Serializable {
             return null;
         }
 
-        // 根据当前实体判断是否需要将WHERE替换成AND
-        sqlWhere = (null != entity) ? sqlWhere.replaceFirst("WHERE", "AND") : sqlWhere;
+        // 根据当前实体判断是否需要将WHERE替换成AND 增加实体不为空但所有属性为空的情况
+        sqlWhere = ((null != entity) && ReflectionKit.checkFieldValueNull(entity)) ? sqlWhere.replaceFirst("WHERE", "AND")
+                : sqlWhere;
 
 		/*
          * 使用防SQL注入处理后返回

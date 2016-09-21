@@ -62,23 +62,23 @@ public class ServiceImpl<M extends BaseMapper<T, PK>, T, PK extends Serializable
 	 *
 	 * @param entity
 	 *            实体对象
-	 * @param selective
+	 * @param isSelective
 	 *            true 选择字段 false 不选择字段
 	 * @return boolean
 	 */
 	@Transactional(rollbackFor = Exception.class)
-	public boolean insertOrUpdate(T entity, boolean selective) {
+	public boolean insertOrUpdate(T entity, boolean isSelective) {
 		if (null != entity) {
 			Class<?> cls = entity.getClass();
 			TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
 			if (null != tableInfo) {
 				try {
-					Method m = cls.getMethod("get" + StringUtils.capitalize(tableInfo.getKeyProperty()));
+					Method m = cls.getMethod(StringUtils.concatCapitalize("get",tableInfo.getKeyProperty()));
 					Object idVal = m.invoke(entity);
 					if (null != idVal) {
-						return selective ? updateSelectiveById(entity) : updateById(entity);
+						return isSelective ? updateSelectiveById(entity) : updateById(entity);
 					} else {
-						return selective ? insertSelective(entity) : insert(entity);
+						return isSelective ? insertSelective(entity) : insert(entity);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
