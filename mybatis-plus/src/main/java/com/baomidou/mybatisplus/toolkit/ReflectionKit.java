@@ -29,7 +29,7 @@ public class ReflectionKit {
 	private static Logger logger = LoggerFactory.getLogger(ReflectionKit.class);
 
 	/**
-	 * 调用对象的get方法检查对象所以属性是否为null
+	 * 调用对象的get方法检查对象所有属性是否为null
 	 * 
 	 * @param bean
 	 * @return boolean true对象所有属性不为null,false对象所有属性为null
@@ -44,7 +44,7 @@ public class ReflectionKit {
 		TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
 
 		if (tableInfo == null) {
-			logger.warn("Error: Could not find @TableId.");
+			logger.warn("Warn: Could not find @TableId.");
 			return false;
 		}
 		List<TableFieldInfo> fieldList = tableInfo.getFieldList();
@@ -61,7 +61,7 @@ public class ReflectionKit {
 					break;
 				}
 			} catch (Exception e) {
-				logger.warn("Unexpected exception on checkFieldValueNull.  Cause:" + e);
+				logger.warn("Warn: Unexpected exception on checkFieldValueNull.  Cause:" + e);
 			}
 
 		}
