@@ -54,7 +54,7 @@ public class ReflectionKit {
      * @param str    属性字符串内容
      * @return Object
      */
-    public static Object getMethodValue(Class cls, Object entity, String str) {
+    public static Object getMethodValue(Class<?> cls, Object entity, String str) {
         Object obj = null;
         try {
             Method method = cls.getMethod(getMethodCapitalize(str));
@@ -77,6 +77,9 @@ public class ReflectionKit {
      * @return Object
      */
     public static Object getMethodValue(Object entity, String str) {
+		if (null == entity) {
+			return null;
+		}
         return getMethodValue(entity.getClass(), entity, str);
     }
 
