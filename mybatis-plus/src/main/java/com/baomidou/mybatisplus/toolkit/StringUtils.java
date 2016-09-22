@@ -32,6 +32,7 @@ public class StringUtils {
 	 * 下划线字符
 	 */
 	public static final char UNDERLINE = '_';
+
 	/**
 	 * 空字符串
 	 */
@@ -47,7 +48,7 @@ public class StringUtils {
 	 * @return 判断结果
 	 */
 	public static boolean isEmpty(String str) {
-		return str == null || "".equals(str.trim());
+		return str == null || EMPTY_STRING.equals(str.trim());
 	}
 
 	/**
@@ -60,7 +61,7 @@ public class StringUtils {
 	 * @return 判断结果
 	 */
 	public static boolean isNotEmpty(String str) {
-		return (str != null) && !"".equals(str.trim());
+		return (str != null) && !EMPTY_STRING.equals(str.trim());
 	}
 
 	/**
@@ -74,7 +75,7 @@ public class StringUtils {
 	 */
 	public static String camelToUnderline(String param) {
 		if (isEmpty(param)) {
-			return "";
+			return EMPTY_STRING;
 		}
 		int len = param.length();
 		StringBuilder sb = new StringBuilder(len);
@@ -99,7 +100,7 @@ public class StringUtils {
 	 */
 	public static String underlineToCamel(String param) {
 		if (isEmpty(param)) {
-			return "";
+			return EMPTY_STRING;
 		}
 		int len = param.length();
 		StringBuilder sb = new StringBuilder(len);
@@ -164,6 +165,7 @@ public class StringUtils {
 	}
 
 	/**
+	 * <p>
 	 * 拼接字符串第二个字符串第一个字母大写
 	 *
 	 * @param concatStr
@@ -171,7 +173,7 @@ public class StringUtils {
 	 * @return
 	 */
 	public static String concatCapitalize(String concatStr, final String str) {
-		if (isEmpty(concatStr)){
+		if (isEmpty(concatStr)) {
 			concatStr = EMPTY_STRING;
 		}
 		int strLen;
@@ -185,16 +187,20 @@ public class StringUtils {
 			return str;
 		}
 
-		return new StringBuilder(strLen).append(concatStr).append(Character.toTitleCase(firstChar)).append(str.substring(1)).toString();
+		return new StringBuilder(strLen).append(concatStr).append(Character.toTitleCase(firstChar))
+				.append(str.substring(1)).toString();
 	}
+
 	/**
+	 * <p>
 	 * 字符串第一个字母大写
+	 * </p>
 	 *
 	 * @param str
 	 * @return
 	 */
 	public static String capitalize(final String str) {
-		return concatCapitalize(null,str);
+		return concatCapitalize(null, str);
 	}
 
 }

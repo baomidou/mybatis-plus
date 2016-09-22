@@ -15,21 +15,22 @@
  */
 package com.baomidou.framework.service.impl;
 
+import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.baomidou.framework.service.IService;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
+import com.baomidou.mybatisplus.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.toolkit.TableInfo;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.io.Serializable;
-import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -73,7 +74,7 @@ public class ServiceImpl<M extends BaseMapper<T, PK>, T, PK extends Serializable
 			TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
 			if (null != tableInfo) {
 				try {
-					Method m = cls.getMethod(StringUtils.concatCapitalize("get",tableInfo.getKeyProperty()));
+					Method m = cls.getMethod(ReflectionKit.getMethodCapitalize(tableInfo.getKeyProperty()));
 					Object idVal = m.invoke(entity);
 					if (null != idVal) {
 						return isSelective ? updateSelectiveById(entity) : updateById(entity);

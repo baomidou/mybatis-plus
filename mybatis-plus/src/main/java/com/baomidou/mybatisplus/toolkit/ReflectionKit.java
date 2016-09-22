@@ -22,34 +22,54 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 反射工具类.
+ * <p>
+ * 反射工具类
+ * </p>
+ *
+ * @author Caratacus
+ * @Date 2016-09-22
  */
 public class ReflectionKit {
 
 	private static Logger logger = LoggerFactory.getLogger(ReflectionKit.class);
 
 	/**
+	 * <p>
+	 * 反射 method 方法名，例如 getId
+	 * </p>
+	 *
+	 * @param str
+	 *            属性字符串内容
+	 * @return
+	 */
+	public static String getMethodCapitalize(final String str) {
+		return StringUtils.concatCapitalize("get", str);
+	}
+
+	/**
 	 * 调用对象的get方法检查对象所有属性是否为null
 	 * 
 	 * @param bean
+	 *            检查对象
 	 * @return boolean true对象所有属性不为null,false对象所有属性为null
 	 */
-	public static boolean checkFieldValueNull(Object bean) {
-		boolean result = false;
-		if (bean == null) {
-			return true;
+	public static boolean checkFieldValueNotNull(Object bean) {
+		if (null == bean) {
+			return false;
 		}
+
 		Class<?> cls = bean.getClass();
 		Method[] methods = cls.getDeclaredMethods();
 		TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
-
-		if (tableInfo == null) {
+		if (null == tableInfo) {
 			logger.warn("Warn: Could not find @TableId.");
 			return false;
 		}
+
+		boolean result = false;
 		List<TableFieldInfo> fieldList = tableInfo.getFieldList();
 		for (TableFieldInfo tableFieldInfo : fieldList) {
-			String fieldGetName = StringUtils.concatCapitalize("get", tableFieldInfo.getProperty());
+			String fieldGetName = getMethodCapitalize(tableFieldInfo.getProperty());
 			if (!checkMethod(methods, fieldGetName)) {
 				continue;
 			}

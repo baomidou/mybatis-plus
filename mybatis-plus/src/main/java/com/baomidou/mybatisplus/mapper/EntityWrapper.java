@@ -85,24 +85,25 @@ public class EntityWrapper<T> implements Serializable {
     /**
      * SQL 片段
      */
-    public String getSqlSegment() {
-        /*
-         * 无条件
+	public String getSqlSegment() {
+		/*
+		 * 无条件
 		 */
-        String sqlWhere = sql.toString();
-        if (StringUtils.isEmpty(sqlWhere)) {
-            return null;
-        }
-
-        // 根据当前实体判断是否需要将WHERE替换成AND 增加实体不为空但所有属性为空的情况
-        sqlWhere = ((null != entity) && ReflectionKit.checkFieldValueNull(entity)) ? sqlWhere.replaceFirst("WHERE", "AND")
-                : sqlWhere;
+		String sqlWhere = sql.toString();
+		if (StringUtils.isEmpty(sqlWhere)) {
+			return null;
+		}
 
 		/*
-         * 使用防SQL注入处理后返回
+		 * 根据当前实体判断是否需要将WHERE替换成 AND 增加实体不为空但所有属性为空的情况
 		 */
-        return stripSqlInjection(sqlWhere);
-    }
+		sqlWhere = ReflectionKit.checkFieldValueNotNull(entity) ? sqlWhere.replaceFirst("WHERE", "AND") : sqlWhere;
+
+		/*
+		 * 使用防SQL注入处理后返回
+		 */
+		return stripSqlInjection(sqlWhere);
+	}
 
     /**
      * <p>
