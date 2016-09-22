@@ -62,7 +62,10 @@ public class ConfigBaseEntity {
 	}
 
 	public String getPackageName() {
-		return packageName;
+		if (StringUtils.isNotEmpty(packageName)) {
+			return packageName + "." + className;
+		}
+		return null;
 	}
 
 	public void setPackageName(String packageName) {

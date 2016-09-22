@@ -15,14 +15,26 @@
  */
 package com.baomidou.mybatisplus.generator;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.baomidou.mybatisplus.annotations.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.toolkit.DBKeywordsProcessor;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
-
-import java.io.*;
-import java.sql.*;
-import java.util.*;
 
 /**
  * <p>
@@ -854,17 +866,35 @@ public class AutoGenerator {
 		bw.newLine();
 		bw.write("\t<sql id=\"Base_Column_List\">");
 		bw.newLine();
-
+		bw.write("\t\t");
+		/*
+		 * 公共字段
+		 */
+		if (null != config.getConfigBaseEntity()) {
+			for (String column : config.getConfigBaseEntity().getColumns()) {
+				bw.write(DBKeywordsProcessor.convert(column));
+				if (column.contains("_")) {
+					bw.write(" AS " + processField(column));
+				}
+				bw.write(", ");
+			}
+		}
+		/**
+		 * 个性字段
+		 */
 		for (int i = 0; i < size; i++) {
 			String column = columns.get(i);
 			IdInfo idInfo = idMap.get(column);
 			if (idInfo != null) {
-				bw.write("\t\t " + DBKeywordsProcessor.convert(idInfo.getValue()));
+				bw.write(DBKeywordsProcessor.convert(idInfo.getValue()));
 				if (idInfo.getValue().contains("_")) {
 					bw.write(" AS " + processField(idInfo.getValue()));
 				}
 			} else {
-				bw.write(" " + DBKeywordsProcessor.convert(column));
+				if (null == config.getConfigBaseEntity()) {
+					bw.write(" ");
+				}
+				bw.write(DBKeywordsProcessor.convert(column));
 				if (column.contains("_")) {
 					bw.write(" AS " + processField(column));
 				}

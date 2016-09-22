@@ -87,6 +87,8 @@ public class ConfigGeneratorTest {
 		 * 自定义 BaseEntity
 		 */
 //		ConfigBaseEntity cbe = new ConfigBaseEntity();
+//		cbe.setPackageName("com.baomidou.test");
+//		cbe.setClassName("BaseEntity");
 //		cbe.setColumns(new String[]{"test_id", "age", "createTime"});
 //		cg.setConfigBaseEntity(cbe);
 		return cg;
