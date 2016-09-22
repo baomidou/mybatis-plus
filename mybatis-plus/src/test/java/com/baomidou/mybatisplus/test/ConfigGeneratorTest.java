@@ -82,6 +82,13 @@ public class ConfigGeneratorTest {
 //		 cg.setMapperXMLName("Test%sMapper");
 //		 cg.setServiceName("Test%sSer");
 //		 cg.setServiceImplName("%sSerImpl");
+		
+		/**
+		 * 自定义 BaseEntity
+		 */
+//		ConfigBaseEntity cbe = new ConfigBaseEntity();
+//		cbe.setColumns(new String[]{"test_id", "age", "createTime"});
+//		cg.setConfigBaseEntity(cbe);
 		return cg;
 	}
 

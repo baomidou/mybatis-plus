@@ -192,6 +192,12 @@ public class AutoGenerator {
 				ResultSet results = conn.prepareStatement(tableFieldsSql).executeQuery();
 				while (results.next()) {
 					String field = results.getString(config.getConfigDataSource().getFieldName());
+
+					/* 开启 baseEntity 跳过公共字段 */
+					if (null != config.getConfigBaseEntity() && config.getConfigBaseEntity().includeColumns(field)) {
+						continue;
+					}
+
 					columns.add(field);
 					types.add(results.getString(config.getConfigDataSource().getFieldType()));
 					comments.add(results.getString(config.getConfigDataSource().getFieldComment()));
@@ -524,10 +530,21 @@ public class AutoGenerator {
 			bw.write("import com.baomidou.mybatisplus.annotations.IdType;");
 			bw.newLine();
 		}
+		bw.newLine();
+		/*
+		 * 开启 BaseEntity 导入自定义包
+		 */
+		if (null != config.getConfigBaseEntity() && null != config.getConfigBaseEntity().getPackageName()
+				&& !config.getEntityPackage().equals(config.getConfigBaseEntity().getPackageName())) {
+			bw.write("import " + config.getConfigBaseEntity().getPackageName() + ";");
+			bw.newLine();
+		}
 		bw.write("import com.baomidou.mybatisplus.annotations.TableField;");
 		bw.newLine();
-		bw.write("import com.baomidou.mybatisplus.annotations.TableId;");
-		bw.newLine();
+		if (null == config.getConfigBaseEntity()) {
+			bw.write("import com.baomidou.mybatisplus.annotations.TableId;");
+			bw.newLine();
+		}
 		if (table.contains("_")) {
 			bw.write("import com.baomidou.mybatisplus.annotations.TableName;");
 			bw.newLine();
@@ -539,7 +556,15 @@ public class AutoGenerator {
 			bw.write("@TableName(\"" + table + "\")");
 			bw.newLine();
 		}
-		bw.write("public class " + beanName + " implements Serializable {");
+		
+		/**
+		 * 实体类名处理，开启 BaseEntity 继承父类
+		 */
+		if (null != config.getConfigBaseEntity()) {
+			bw.write("public class " + beanName + " extends " + config.getConfigBaseEntity().getClassName() + " {");
+		} else {
+			bw.write("public class " + beanName + " implements Serializable {");
+		}
 		bw.newLine();
 		bw.newLine();
 		bw.write("\t@TableField(exist = false)");
