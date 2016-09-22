@@ -818,7 +818,7 @@ public class AutoGenerator {
 			throws IOException {
 		File serviceFile = new File(PATH_SERVICE_IMPL, serviceImplName + ".java");
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(serviceFile), "utf-8"));
-		bw.write("package " + config.getServicePackage() + ".impl;");
+		bw.write("package " + config.getServiceImplPackage() + ";");
 		bw.newLine();
 		bw.newLine();
 		bw.write("import org.springframework.stereotype.Service;");
