@@ -105,6 +105,7 @@
     <mappers>
         <mapper class="com.baomidou.mybatisplus.test.mysql.UserMapper" />
         <mapper class="com.baomidou.mybatisplus.test.mysql.RoleMapper" />
+        <mapper class="com.baomidou.mybatisplus.test.mysql.TestMapper" />
         <mapper resource="mysql/UserMapper.xml"/>
         <mapper resource="mysql/RoleMapper.xml"/>
     </mappers>
