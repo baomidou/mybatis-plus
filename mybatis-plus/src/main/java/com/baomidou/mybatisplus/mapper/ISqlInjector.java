@@ -35,4 +35,11 @@ public interface ISqlInjector {
 	 */
 	void inject(Configuration configuration, MapperBuilderAssistant builderAssistant, Class<?> mapperClass);
 
+	/**
+	 * <p>
+	 * CRUD注入后给予标识 注入过后不再注入
+	 * </p>
+	 */
+	void inspectInject(Configuration configuration, MapperBuilderAssistant builderAssistant, Class<?> mapperClass);
+
 }

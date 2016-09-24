@@ -19,6 +19,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.apache.ibatis.builder.MapperBuilderAssistant;
@@ -58,7 +59,23 @@ public class AutoSqlInjector implements ISqlInjector {
 	protected MapperBuilderAssistant builderAssistant;
 	
 	protected DBType dbType = DBType.MYSQL;
-	
+
+	/**
+	 * CRUD注入后给予标识 注入过后不再注入
+	 * 
+	 * @param configuration
+	 * @param builderAssistant
+	 * @param mapperClass
+	 */
+	public void inspectInject(Configuration configuration, MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
+		String className = mapperClass.toString();
+		Set<String> mapperRegistryCache = MybatisConfiguration.MAPPER_REGISTRY_CACHE;
+		if (!mapperRegistryCache.contains(className)) {
+			inject(configuration, builderAssistant, mapperClass);
+			mapperRegistryCache.add(className);
+		}
+	};
+
 	/**
 	 * 注入单点 crudSql
 	 */

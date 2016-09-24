@@ -439,7 +439,7 @@ public class MybatisXMLMapperBuilder extends BaseBuilder {
 				}
 				//TODO 注入 CURD 动态 SQL
 				if (BaseMapper.class.isAssignableFrom(boundType)) {
-					MybatisConfiguration.SQL_INJECTOR.inject(configuration, builderAssistant, boundType);
+					MybatisConfiguration.SQL_INJECTOR.inspectInject(configuration, builderAssistant, boundType);
 				}
 			}
 		}
