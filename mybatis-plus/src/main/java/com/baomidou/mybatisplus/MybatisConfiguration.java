@@ -122,10 +122,6 @@ public class MybatisConfiguration extends Configuration {
 		}
 		super.setDefaultScriptingLanguage(driver);
 	}
-	@Override
-	public <T> void addMapper(Class<T> type) {
-		mybatisPulsMapperRegistry.addMapper(type);
-	}
 
 	/**
 	 * Mapper注册
@@ -133,6 +129,11 @@ public class MybatisConfiguration extends Configuration {
 	@Override
 	public MapperRegistry getMapperRegistry() {
 		return mybatisPulsMapperRegistry;
+	}
+
+	@Override
+	public <T> void addMapper(Class<T> type) {
+		mybatisPulsMapperRegistry.addMapper(type);
 	}
 
 	@Override

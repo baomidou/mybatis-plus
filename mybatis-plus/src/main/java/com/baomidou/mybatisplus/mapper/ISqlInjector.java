@@ -37,7 +37,10 @@ public interface ISqlInjector {
 
 	/**
 	 * <p>
-	 * CRUD注入后给予标识 注入过后不再注入
+	 * 检查SQL是否已经注入
+	 * </p>
+	 * <p>
+	 * ps:注入基本SQL后给予标识 注入过不再注入
 	 * </p>
 	 */
 	void inspectInject(Configuration configuration, MapperBuilderAssistant builderAssistant, Class<?> mapperClass);
