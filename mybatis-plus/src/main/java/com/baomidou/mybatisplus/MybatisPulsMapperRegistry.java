@@ -51,7 +51,7 @@ public class MybatisPulsMapperRegistry extends MapperRegistry {
 	public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
 		final MapperProxyFactory<T> mapperProxyFactory = (MapperProxyFactory<T>) knownMappers.get(type);
 		if (mapperProxyFactory == null) {
-			throw new BindingException("Type " + type + " is not known to the MapperRegistry.");
+			throw new BindingException("Type " + type + " is not known to the MybatisPlusMapperRegistry.");
 		}
 		try {
 			return mapperProxyFactory.newInstance(sqlSession);
@@ -67,7 +67,7 @@ public class MybatisPulsMapperRegistry extends MapperRegistry {
 	public <T> void addMapper(Class<T> type) {
 		if (type.isInterface()) {
 			if (hasMapper(type)) {
-				throw new BindingException("Type " + type + " is already known to the MapperRegistry.");
+				throw new BindingException("Type " + type + " is already known to the MybatisPlusMapperRegistry.");
 			}
 			boolean loadCompleted = false;
 			try {
