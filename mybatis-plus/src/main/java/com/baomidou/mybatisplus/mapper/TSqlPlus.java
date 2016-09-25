@@ -252,13 +252,24 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
      * @param val2
      */
     public TSqlPlus BETWEEN_AND(String column, String val1, String val2) {
+        between(column, val1, val2);
+        return this;
+    }
+
+    /**
+     * 处理BETWEEN_AND操作
+     *
+     * @param column 字段名称
+     * @param val1
+     * @param val2
+     */
+    private void between(String column, String val1, String val2) {
         if (StringUtils.isNotEmpty(column) && StringUtils.isNotEmpty(val1) && StringUtils.isNotEmpty(val2)) {
             StringBuilder betweenSql = new StringBuilder();
             betweenSql.append(column);
             betweenSql.append(MessageFormat.format(SQL_BETWEEN_AND, val1, val2));
             WHERE(betweenSql.toString());
         }
-        return this;
     }
 
     /**
