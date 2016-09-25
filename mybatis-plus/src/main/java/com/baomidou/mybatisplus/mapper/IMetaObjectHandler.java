@@ -32,7 +32,7 @@ public interface IMetaObjectHandler {
 	 * 插入元对象字段填充
 	 * </p>
 	 * 
-	 * @param Object
+	 * @param metaObject
 	 *            元对象
 	 * @return
 	 */

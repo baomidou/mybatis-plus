@@ -61,7 +61,7 @@ public class StringUtils {
 	 * @return 判断结果
 	 */
 	public static boolean isNotEmpty(String str) {
-		return (str != null) && !EMPTY_STRING.equals(str.trim());
+		return !isEmpty(str);
 	}
 
 	/**

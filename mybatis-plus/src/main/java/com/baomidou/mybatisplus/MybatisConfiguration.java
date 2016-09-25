@@ -15,19 +15,16 @@
  */
 package com.baomidou.mybatisplus;
 
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.logging.Logger;
-
+import com.baomidou.mybatisplus.mapper.AutoSqlInjector;
+import com.baomidou.mybatisplus.mapper.DBType;
+import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
+import com.baomidou.mybatisplus.mapper.ISqlInjector;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
-import com.baomidou.mybatisplus.mapper.AutoSqlInjector;
-import com.baomidou.mybatisplus.mapper.DBType;
-import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
-import com.baomidou.mybatisplus.mapper.ISqlInjector;
+import java.util.logging.Logger;
 
 /**
  * <p>
