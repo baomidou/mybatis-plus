@@ -72,10 +72,6 @@ public class MybatisConfiguration extends Configuration {
 	 * 是否刷新mapper
 	 */
 	public static boolean IS_REFRESH = false;
-	/**
-	 * 缓存注册标识
-	 */
-	public static Set<String> MAPPER_REGISTRY_CACHE = new ConcurrentSkipListSet<String>();
 
 	/**
 	 * 初始化调用

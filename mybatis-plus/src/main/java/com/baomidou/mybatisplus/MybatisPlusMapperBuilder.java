@@ -89,7 +89,7 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.UnknownTypeHandler;
 
-import com.baomidou.mybatisplus.MybatisConfiguration;
+import com.baomidou.mybatisplus.mapper.BaseMapper;
 
 /**
  * 继承 MapperAnnotationBuilder 没有XML配置文件注入基础CRUD方法
@@ -133,8 +133,10 @@ public class MybatisPlusMapperBuilder extends MapperAnnotationBuilder {
 			parseCache();
 			parseCacheRef();
 			Method[] methods = type.getMethods();
-			// 注入增删改查方法
-			MybatisConfiguration.SQL_INJECTOR.inspectInject(configuration, assistant, type);
+			// TODO 注入 CURD 动态 SQL
+			if (BaseMapper.class.isAssignableFrom(type)) {
+				MybatisConfiguration.SQL_INJECTOR.inject(configuration, assistant, type);
+			}
 			for (Method method : methods) {
 				try {
 					// issue #237

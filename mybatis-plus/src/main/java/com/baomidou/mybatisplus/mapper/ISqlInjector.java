@@ -35,14 +35,4 @@ public interface ISqlInjector {
 	 */
 	void inject(Configuration configuration, MapperBuilderAssistant builderAssistant, Class<?> mapperClass);
 
-	/**
-	 * <p>
-	 * 检查SQL是否已经注入
-	 * </p>
-	 * <p>
-	 * ps:注入基本SQL后给予标识 注入过不再注入
-	 * </p>
-	 */
-	void inspectInject(Configuration configuration, MapperBuilderAssistant builderAssistant, Class<?> mapperClass);
-
 }

@@ -227,7 +227,7 @@ public class EntityWrapperTest {
 		ew.in("test_type", list);
 		String sqlPart = ew.getSqlSegment();
 		System.out.println("sql ==> " + sqlPart);
-		Assert.assertEquals("WHERE (test_type BETWEEN 11 AND 33)", sqlPart);
+		Assert.assertEquals("WHERE (test_type IN (111111111,222222222,333333333))", sqlPart);
 	}
 
 	/**

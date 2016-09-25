@@ -27,6 +27,8 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import org.apache.ibatis.builder.xml.XMLConfigBuilder;
+import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.io.VFS;
@@ -55,7 +57,6 @@ import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
 import com.baomidou.mybatisplus.MybatisConfiguration;
 import com.baomidou.mybatisplus.MybatisXMLConfigBuilder;
-import com.baomidou.mybatisplus.MybatisXMLMapperBuilder;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.DBType;
 import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
@@ -67,7 +68,7 @@ import com.baomidou.mybatisplus.toolkit.PackageHelper;
  * 拷贝类 org.mybatis.spring.SqlSessionFactoryBean 修改方法 buildSqlSessionFactory()
  * 加载自定义 MybatisXmlConfigBuilder
  * </p>
- * 
+ *
  * @author hubin
  * @Date 2016-01-23
  */
@@ -300,7 +301,7 @@ public class MybatisSqlSessionFactoryBean
 
 	/**
 	 * Set a customized MyBatis configuration.
-	 * 
+	 *
 	 * @param configuration
 	 *            MyBatis configuration
 	 * @since 1.3.0
@@ -439,8 +440,7 @@ public class MybatisSqlSessionFactoryBean
 
 		Configuration configuration;
 
-		// TODO 加载自定义 MybatisXmlConfigBuilder
-		MybatisXMLConfigBuilder xmlConfigBuilder = null;
+		XMLConfigBuilder xmlConfigBuilder = null;
 		if (this.configuration != null) {
 			configuration = this.configuration;
 			if (configuration.getVariables() == null) {
@@ -449,13 +449,11 @@ public class MybatisSqlSessionFactoryBean
 				configuration.getVariables().putAll(this.configurationProperties);
 			}
 		} else if (this.configLocation != null) {
-			xmlConfigBuilder = new MybatisXMLConfigBuilder(this.configLocation.getInputStream(), null,
-					this.configurationProperties);
+			xmlConfigBuilder = new XMLConfigBuilder(this.configLocation.getInputStream(), null, this.configurationProperties);
 			configuration = xmlConfigBuilder.getConfiguration();
 		} else {
 			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug(
-						"Property `configuration` or 'configLocation' not specified, using default MyBatis Configuration");
+				LOGGER.debug("Property `configuration` or 'configLocation' not specified, using default MyBatis Configuration");
 			}
 			// TODO 使用自定义配置
 			configuration = new MybatisConfiguration();
@@ -533,8 +531,7 @@ public class MybatisSqlSessionFactoryBean
 			}
 		}
 
-		if (this.databaseIdProvider != null) {// fix #64 set databaseId before
-												// parse mapper xmls
+		if (this.databaseIdProvider != null) {//fix #64 set databaseId before parse mapper xmls
 			try {
 				configuration.setDatabaseId(this.databaseIdProvider.getDatabaseId(this.dataSource));
 			} catch (SQLException e) {
@@ -573,10 +570,8 @@ public class MybatisSqlSessionFactoryBean
 				}
 
 				try {
-					// TODO
-					MybatisXMLMapperBuilder xmlMapperBuilder = new MybatisXMLMapperBuilder(
-							mapperLocation.getInputStream(), configuration, mapperLocation.toString(),
-							configuration.getSqlFragments());
+					XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(mapperLocation.getInputStream(),
+							configuration, mapperLocation.toString(), configuration.getSqlFragments());
 					xmlMapperBuilder.parse();
 				} catch (Exception e) {
 					throw new NestedIOException("Failed to parse mapping resource: '" + mapperLocation + "'", e);
