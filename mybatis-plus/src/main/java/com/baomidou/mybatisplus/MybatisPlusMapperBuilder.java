@@ -133,10 +133,7 @@ public class MybatisPlusMapperBuilder extends MapperAnnotationBuilder {
 			parseCache();
 			parseCacheRef();
 			Method[] methods = type.getMethods();
-			// TODO 注入 CURD 动态 SQL
-			if (BaseMapper.class.isAssignableFrom(type)) {
-				MybatisConfiguration.SQL_INJECTOR.inject(configuration, assistant, type);
-			}
+			inspectInject();
 			for (Method method : methods) {
 				try {
 					// issue #237
@@ -149,6 +146,15 @@ public class MybatisPlusMapperBuilder extends MapperAnnotationBuilder {
 			}
 		}
 		parsePendingMethods();
+	}
+
+	/*
+	 * 注入 CURD 动态 SQL
+	 */
+	private void inspectInject() {
+		if (BaseMapper.class.isAssignableFrom(type)) {
+            MybatisConfiguration.SQL_INJECTOR.inject(configuration, assistant, type);
+        }
 	}
 
 	private void parsePendingMethods() {
