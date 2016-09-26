@@ -24,6 +24,8 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.logging.Logger;
 
 /**
@@ -59,7 +61,10 @@ public class MybatisConfiguration extends Configuration {
 	 * Mapper 注册
 	 */
 	public final MybatisPulsMapperRegistry mybatisPulsMapperRegistry = new MybatisPulsMapperRegistry(this);
-
+	/**
+	 * 缓存注册标识
+	 */
+	public static Set<String> MAPPER_REGISTRY_CACHE = new ConcurrentSkipListSet<String>();
 	/*
 	 * 元对象字段填充控制器
 	 */

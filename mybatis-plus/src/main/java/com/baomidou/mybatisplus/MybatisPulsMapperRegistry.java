@@ -63,7 +63,10 @@ public class MybatisPulsMapperRegistry extends MapperRegistry {
 	public <T> void addMapper(Class<T> type) {
 		if (type.isInterface()) {
 			if (hasMapper(type)) {
-				throw new BindingException("Type " + type + " is already known to the MybatisPlusMapperRegistry.");
+				// 如果之前注入 直接返回
+				return;
+				// throw new BindingException("Type " + type +
+				// " is already known to the MybatisPlusMapperRegistry.");
 			}
 			boolean loadCompleted = false;
 			try {
