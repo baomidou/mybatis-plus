@@ -41,6 +41,15 @@ public class Test implements Serializable {
 
 	private String type;
 
+	public Test() {
+
+	}
+
+	public Test(Long id, String type) {
+		this.id = id;
+		this.type = type;
+	}
+
 	public Long getId() {
 		return id;
 	}

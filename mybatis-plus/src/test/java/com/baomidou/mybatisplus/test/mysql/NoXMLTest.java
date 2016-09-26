@@ -17,6 +17,8 @@ package com.baomidou.mybatisplus.test.mysql;
 
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.test.mysql.entity.Test;
+import com.baomidou.mybatisplus.toolkit.IdWorker;
+
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
@@ -45,6 +47,7 @@ public class NoXMLTest {
 		 * 查询是否有结果
 		 */
 		TestMapper testMapper = sqlSession.getMapper(TestMapper.class);
+		testMapper.insert(new Test(IdWorker.getId(), "Caratacus"));
 		List<Test> tests = testMapper.selectList(null);
 		if (null != tests) {
 			for (Test test : tests) {
