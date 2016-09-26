@@ -45,9 +45,9 @@ import org.apache.ibatis.type.JdbcType;
 import javax.sql.DataSource;
 import java.io.InputStream;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * <p>
@@ -366,14 +366,23 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
     }
 
     private void mapperElement(XNode parent) throws Exception {
-        List<String> resources = new ArrayList<String>();
-        List<String> urls = new ArrayList<String>();
-        List<String> mapperClasses = new ArrayList<String>();
+        /**
+         * 定义集合 用来分类放置mybatis的Mapper与XML 按顺序依次遍历
+         */
+
+        //指定在classpath中的mapper文件
+        Set<String> resources = new HashSet<String>();
+        //通过完全文件系统路径或者web URL地址来指向mapper文件
+        Set<String> urls = new HashSet<String>();
+        //指向一个mapper接口
+        Set<String> mapperClasses = new HashSet<String>();
+        //指向可以找到Mapper接口的包名
+        Set<String> packages = new HashSet<String>();
         if (parent != null) {
             for (XNode child : parent.getChildren()) {
                 if ("package".equals(child.getName())) {
                     String mapperPackage = child.getStringAttribute("name");
-                    configuration.addMappers(mapperPackage);
+                    packages.add(mapperPackage);
                 } else {
                     String resource = child.getStringAttribute("resource");
                     String url = child.getStringAttribute("url");
@@ -382,23 +391,13 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
                         resources.add(resource);
                     } else if (resource == null && url != null && mapperClass == null) {
                         urls.add(url);
-
                     } else if (resource == null && url == null && mapperClass != null) {
                         mapperClasses.add(mapperClass);
-
                     } else {
                         throw new BuilderException(
                                 "A mapper element may only specify a url, resource or class, but not more than one.");
                     }
                 }
-            }
-            for (String url : urls) {
-                ErrorContext.instance().resource(url);
-                InputStream inputStream = Resources.getUrlAsStream(url);
-                //TODO
-                MybatisXMLMapperBuilder mapperParser = new MybatisXMLMapperBuilder(inputStream, configuration, url,
-                        configuration.getSqlFragments());
-                mapperParser.parse();
             }
             for (String resource : resources) {
                 ErrorContext.instance().resource(resource);
@@ -408,11 +407,23 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
                         configuration.getSqlFragments());
                 mapperParser.parse();
             }
+            for (String url : urls) {
+                ErrorContext.instance().resource(url);
+                InputStream inputStream = Resources.getUrlAsStream(url);
+                //TODO
+                MybatisXMLMapperBuilder mapperParser = new MybatisXMLMapperBuilder(inputStream, configuration, url,
+                        configuration.getSqlFragments());
+                mapperParser.parse();
+            }
             for (String mapper : mapperClasses) {
+                //TODO
                 Class<?> mapperInterface = Resources.classForName(mapper);
                 configuration.addMapper(mapperInterface);
             }
-
+            for (String aPackage : packages) {
+                //TODO
+                configuration.addMappers(aPackage);
+            }
         }
     }
 
