@@ -21,6 +21,7 @@ import org.apache.ibatis.builder.xml.XMLMapperEntityResolver;
 import org.apache.ibatis.datasource.DataSourceFactory;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.executor.loader.ProxyFactory;
+import org.apache.ibatis.io.ResolverUtil;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.io.VFS;
 import org.apache.ibatis.logging.Log;
@@ -369,36 +370,13 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
         /**
          * 定义集合 用来分类放置mybatis的Mapper与XML 按顺序依次遍历
          */
-
         //指定在classpath中的mapper文件
         Set<String> resources = new HashSet<String>();
-        //通过完全文件系统路径或者web URL地址来指向mapper文件
-        Set<String> urls = new HashSet<String>();
         //指向一个mapper接口
-        Set<String> mapperClasses = new HashSet<String>();
-        //指向可以找到Mapper接口的包名
-        Set<String> packages = new HashSet<String>();
+        Set<Class<?>> mapperClasses = new HashSet<Class<?>>();
         if (parent != null) {
-            for (XNode child : parent.getChildren()) {
-                if ("package".equals(child.getName())) {
-                    String mapperPackage = child.getStringAttribute("name");
-                    packages.add(mapperPackage);
-                } else {
-                    String resource = child.getStringAttribute("resource");
-                    String url = child.getStringAttribute("url");
-                    String mapperClass = child.getStringAttribute("class");
-                    if (resource != null && url == null && mapperClass == null) {
-                        resources.add(resource);
-                    } else if (resource == null && url != null && mapperClass == null) {
-                        urls.add(url);
-                    } else if (resource == null && url == null && mapperClass != null) {
-                        mapperClasses.add(mapperClass);
-                    } else {
-                        throw new BuilderException(
-                                "A mapper element may only specify a url, resource or class, but not more than one.");
-                    }
-                }
-            }
+            setResource(parent, resources, mapperClasses);
+            // 依次遍历 首先 resource 然后 mapper
             for (String resource : resources) {
                 ErrorContext.instance().resource(resource);
                 InputStream inputStream = Resources.getResourceAsStream(resource);
@@ -407,22 +385,46 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
                         configuration.getSqlFragments());
                 mapperParser.parse();
             }
-            for (String url : urls) {
-                ErrorContext.instance().resource(url);
-                InputStream inputStream = Resources.getUrlAsStream(url);
+            for (Class<?> mapper : mapperClasses) {
                 //TODO
-                MybatisXMLMapperBuilder mapperParser = new MybatisXMLMapperBuilder(inputStream, configuration, url,
-                        configuration.getSqlFragments());
-                mapperParser.parse();
+                configuration.addMapper(mapper);
             }
-            for (String mapper : mapperClasses) {
-                //TODO
-                Class<?> mapperInterface = Resources.classForName(mapper);
-                configuration.addMapper(mapperInterface);
-            }
-            for (String aPackage : packages) {
-                //TODO
-                configuration.addMappers(aPackage);
+        }
+    }
+
+    /**
+     * 查找mybatis配置文件填充至Set集合
+     *
+     * @param parent 节点
+     * @param resources
+     * @param mapper
+     * @throws ClassNotFoundException
+     */
+    private void setResource(XNode parent, Set<String> resources, Set<Class<?>> mapper) throws ClassNotFoundException {
+        for (XNode child : parent.getChildren()) {
+            if ("package".equals(child.getName())) {
+                String mapperPackage = child.getStringAttribute("name");
+                ResolverUtil<Class<?>> resolverUtil = new ResolverUtil<Class<?>>();
+                resolverUtil.find(new ResolverUtil.IsA(Object.class), mapperPackage);
+                Set<Class<? extends Class<?>>> mapperSet = resolverUtil.getClasses();
+                for (Class<?> mapperClass : mapperSet) {
+                    mapper.add(mapperClass);
+                }
+            } else {
+                String resource = child.getStringAttribute("resource");
+                String url = child.getStringAttribute("url");
+                String mapperClass = child.getStringAttribute("class");
+                if (resource != null && url == null && mapperClass == null) {
+                    resources.add(resource);
+                } else if (resource == null && url != null && mapperClass == null) {
+                    resources.add(url);
+                } else if (resource == null && url == null && mapperClass != null) {
+                    Class<?> mapperInterface = Resources.classForName(mapperClass);
+                    mapper.add(mapperInterface);
+                } else {
+                    throw new BuilderException(
+                            "A mapper element may only specify a url, resource or class, but not more than one.");
+                }
             }
         }
     }
