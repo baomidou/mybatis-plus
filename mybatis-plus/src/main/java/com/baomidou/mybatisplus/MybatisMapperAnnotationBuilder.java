@@ -90,11 +90,14 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * <p>
  * 继承 MapperAnnotationBuilder 没有XML配置文件注入基础CRUD方法
- *
+ * </p>
+ * 
  * @author Caratacus
+ * @Date 2016-09-26
  */
-public class MybatisPlusMapperBuilder extends MapperAnnotationBuilder {
+public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 
     private final Set<Class<? extends Annotation>> sqlAnnotationTypes = new HashSet<Class<? extends Annotation>>();
     private final Set<Class<? extends Annotation>> sqlProviderAnnotationTypes = new HashSet<Class<? extends Annotation>>();
@@ -103,7 +106,7 @@ public class MybatisPlusMapperBuilder extends MapperAnnotationBuilder {
     private MapperBuilderAssistant assistant;
     private Class<?> type;
 
-    public MybatisPlusMapperBuilder(Configuration configuration, Class<?> type) {
+    public MybatisMapperAnnotationBuilder(Configuration configuration, Class<?> type) {
         super(configuration, type);
         String resource = type.getName().replace('.', '/') + ".java (best guess)";
         this.assistant = new MapperBuilderAssistant(configuration, resource);
@@ -138,6 +141,7 @@ public class MybatisPlusMapperBuilder extends MapperAnnotationBuilder {
                     configuration.addIncompleteMethod(new MethodResolver(this, method));
                 }
             }
+            //TODO 注入存在 xxMapper.xml CURD
            inspectInject(existXml);
         }
         parsePendingMethods();
@@ -172,6 +176,7 @@ public class MybatisPlusMapperBuilder extends MapperAnnotationBuilder {
      *
      * @return boolean ture存在,flase不存在
      */
+    //TODO 该方法改为返回 boolean 判断是否存在 xxxMapper.xml
     private boolean loadXmlResource() {
         boolean flag = true;
         // Spring may not know the real resource name so we check a flag

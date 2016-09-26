@@ -15,30 +15,31 @@
  */
 package com.baomidou.mybatisplus;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.ibatis.binding.BindingException;
 import org.apache.ibatis.binding.MapperProxyFactory;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
+ * <p>
  * 继承至MapperRegistry
+ * </p>
  * 
- * @author Clinton Begin
- * @author Eduardo Macarron
- * @author Lasse Voss
+ * @author Caratacus
+ * @Date 2016-09-26
  */
-public class MybatisPulsMapperRegistry extends MapperRegistry {
+public class MybatisMapperRegistry extends MapperRegistry {
 
 	private final Configuration config;
 	private final Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<Class<?>, MapperProxyFactory<?>>();
 
-	public MybatisPulsMapperRegistry(Configuration config) {
+	public MybatisMapperRegistry(Configuration config) {
 		super(config);
 		this.config = config;
 	}
@@ -63,7 +64,7 @@ public class MybatisPulsMapperRegistry extends MapperRegistry {
 	public <T> void addMapper(Class<T> type) {
 		if (type.isInterface()) {
 			if (hasMapper(type)) {
-				// 如果之前注入 直接返回
+				//TODO 如果之前注入 直接返回
 				return;
 				// throw new BindingException("Type " + type +
 				// " is already known to the MybatisPlusMapperRegistry.");
@@ -76,7 +77,8 @@ public class MybatisPulsMapperRegistry extends MapperRegistry {
 				// otherwise the binding may automatically be attempted by the
 				// mapper parser. If the type is already known, it won't try.
 
-				MybatisPlusMapperBuilder parser = new MybatisPlusMapperBuilder(config, type);
+				//TODO 自定义无 XML 注入
+				MybatisMapperAnnotationBuilder parser = new MybatisMapperAnnotationBuilder(config, type);
 				parser.parse();
 				loadCompleted = true;
 			} finally {

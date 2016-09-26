@@ -60,7 +60,7 @@ public class MybatisConfiguration extends Configuration {
 	/*
 	 * Mapper 注册
 	 */
-	public final MybatisPulsMapperRegistry mybatisPulsMapperRegistry = new MybatisPulsMapperRegistry(this);
+	public final MybatisMapperRegistry mybatisMapperRegistry = new MybatisMapperRegistry(this);
 	/**
 	 * 缓存注册标识
 	 */
@@ -121,37 +121,34 @@ public class MybatisConfiguration extends Configuration {
 		super.setDefaultScriptingLanguage(driver);
 	}
 
-	/**
-	 * Mapper注册
-	 */
 	@Override
 	public MapperRegistry getMapperRegistry() {
-		return mybatisPulsMapperRegistry;
+		return mybatisMapperRegistry;
 	}
 
 	@Override
 	public <T> void addMapper(Class<T> type) {
-		mybatisPulsMapperRegistry.addMapper(type);
+		mybatisMapperRegistry.addMapper(type);
 	}
 
 	@Override
 	public void addMappers(String packageName, Class<?> superType) {
-		mybatisPulsMapperRegistry.addMappers(packageName, superType);
+		mybatisMapperRegistry.addMappers(packageName, superType);
 	}
 
 	@Override
 	public void addMappers(String packageName) {
-		mybatisPulsMapperRegistry.addMappers(packageName);
+		mybatisMapperRegistry.addMappers(packageName);
 	}
 
 	@Override
 	public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
-		return mybatisPulsMapperRegistry.getMapper(type, sqlSession);
+		return mybatisMapperRegistry.getMapper(type, sqlSession);
 	}
 
 	@Override
 	public boolean hasMapper(Class<?> type) {
-		return mybatisPulsMapperRegistry.hasMapper(type);
+		return mybatisMapperRegistry.hasMapper(type);
 	}
 
 }
