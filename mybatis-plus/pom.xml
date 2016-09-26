@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.baomidou</groupId>
     <artifactId>mybatis-plus</artifactId>
-    <version>1.4.6</version>
+    <version>1.4.7</version>
     <packaging>jar</packaging>
 
     <name>mybatis-plus</name>
@@ -37,7 +37,7 @@
         <slf4j.version>1.7.21</slf4j.version>
         <logback-classic.version>1.1.7</logback-classic.version>
         <mysql-connector-java.version>5.1.38</mysql-connector-java.version>
-        <ojdbc14.version>10.2.0.4.0</ojdbc14.version>
+        <ojdbc14.version>10.2.0.5.0</ojdbc14.version>
         <servlet-api.version>2.5</servlet-api.version>
         <spring.version>4.2.5.RELEASE</spring.version>
         <mybatis-ehcache.version>1.0.3</mybatis-ehcache.version>
