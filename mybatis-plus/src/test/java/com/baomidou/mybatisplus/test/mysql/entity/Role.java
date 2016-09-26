@@ -15,11 +15,11 @@
  */
 package com.baomidou.mybatisplus.test.mysql.entity;
 
-import java.io.Serializable;
-
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
+
+import java.io.Serializable;
 
 /**
  * <p>
@@ -29,7 +29,7 @@ import com.baomidou.mybatisplus.annotations.TableName;
  * @author sjy
  * @Date 2016-09-09
  */
-@TableName(resultMap = "RoleMap")
+@TableName("role")
 public class Role implements Serializable {
 
 	@TableField(exist = false)
