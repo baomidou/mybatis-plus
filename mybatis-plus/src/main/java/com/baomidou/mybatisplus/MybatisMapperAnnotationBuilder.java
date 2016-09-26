@@ -131,6 +131,8 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
             parseCache();
             parseCacheRef();
             Method[] methods = type.getMethods();
+            //TODO 注入存在 xxMapper.xml CURD (应该在注解之前注入)
+            inspectInject(existXml);
             for (Method method : methods) {
                 try {
                     // issue #237
@@ -141,8 +143,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                     configuration.addIncompleteMethod(new MethodResolver(this, method));
                 }
             }
-            //TODO 注入存在 xxMapper.xml CURD
-           inspectInject(existXml);
+
         }
         parsePendingMethods();
     }
@@ -172,7 +173,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
     }
 
     /**
-     * 是否存在XML
+     * 是否存在XML(该方法并不能客观的判断resource的路径,只是Mybatis默认认为的xml路径)
      *
      * @return boolean ture存在,flase不存在
      */
