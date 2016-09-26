@@ -21,8 +21,6 @@ import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 
-import static oracle.net.aso.C11.v;
-
 /**
  * <p>
  * 测试没有XML同样注入CRUD SQL 实体

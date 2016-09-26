@@ -15,12 +15,8 @@
  */
 package com.baomidou.mybatisplus.test;
 
-import org.databene.contiperf.PerfTest;
 import org.databene.contiperf.junit.ContiPerfRule;
 import org.junit.Rule;
-import org.junit.Test;
-
-import com.baomidou.mybatisplus.toolkit.IdWorker;
 
 /**
  * <p>

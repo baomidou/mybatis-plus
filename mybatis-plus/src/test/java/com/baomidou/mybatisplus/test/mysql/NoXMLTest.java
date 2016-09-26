@@ -22,11 +22,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
-import com.baomidou.mybatisplus.test.mysql.entity.User;
-import com.baomidou.mybatisplus.toolkit.IdWorker;
-
-import static oracle.net.aso.C11.t;
-import static oracle.net.aso.C11.u;
+import com.baomidou.mybatisplus.test.mysql.entity.Test;
 
 /**
  * <p>
@@ -50,8 +46,14 @@ public class NoXMLTest {
 		 * 查询是否有结果
 		 */
 		TestMapper testMapper = sqlSession.getMapper(TestMapper.class);
-		List<User> users = testMapper.selectList(null);
-		System.out.println(users);
+		List<Test> tests = testMapper.selectList(null);
+		if (null != tests) {
+			for (Test test : tests) {
+				System.out.println("id:"+test.getId()+ " , type:" + test.getType());
+			}
+		} else {
+			System.err.println(" tests is null. ");
+		}
 	}
 
 }

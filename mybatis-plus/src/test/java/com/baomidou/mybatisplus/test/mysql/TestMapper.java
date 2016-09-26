@@ -15,13 +15,8 @@
  */
 package com.baomidou.mybatisplus.test.mysql;
 
-import java.util.List;
-
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.session.RowBounds;
-
 import com.baomidou.mybatisplus.mapper.AutoMapper;
-import com.baomidou.mybatisplus.test.mysql.entity.User;
+import com.baomidou.mybatisplus.test.mysql.entity.Test;
 
 /**
  * <p>
@@ -31,6 +26,6 @@ import com.baomidou.mybatisplus.test.mysql.entity.User;
  * @author Caratacus
  * @Date 2016-09-25
  */
-public interface TestMapper extends AutoMapper<User> {
+public interface TestMapper extends AutoMapper<Test> {
 
 }
