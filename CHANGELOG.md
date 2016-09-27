@@ -18,7 +18,7 @@
 13、支持 mysql5.7+ json enum 类型，代码生成
 14、支持无 xml 自动 curd
 15、完善原生加载顺序
-16、其他
+16、完善EntityWrapper(感谢D.Yang提出的BETWEEN AND)，其他
 
 
 
