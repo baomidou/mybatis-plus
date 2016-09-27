@@ -391,7 +391,7 @@ public class AutoGenerator {
 			return "Float";
 		} else if (t.contains("double")) {
 			return "Double";
-		} else if (t.contains("json")) {
+		} else if (t.contains("json") || t.contains("enum")) {
 			return "String";
 		}
 		return null;
