@@ -370,11 +370,11 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
         /**
          * 定义集合 用来分类放置mybatis的Mapper与XML 按顺序依次遍历
          */
-        //指定在classpath中的mapper文件
-        Set<String> resources = new HashSet<String>();
-        //指向一个mapper接口
-        Set<Class<?>> mapperClasses = new HashSet<Class<?>>();
         if (parent != null) {
+            //指定在classpath中的mapper文件
+            Set<String> resources = new HashSet<String>();
+            //指向一个mapper接口
+            Set<Class<?>> mapperClasses = new HashSet<Class<?>>();
             setResource(parent, resources, mapperClasses);
             // 依次遍历 首先 resource 然后 mapper
             for (String resource : resources) {
