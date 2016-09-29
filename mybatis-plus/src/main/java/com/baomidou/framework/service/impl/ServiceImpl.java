@@ -72,10 +72,10 @@ public class ServiceImpl<M extends BaseMapper<T, PK>, T, PK extends Serializable
 			TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
 			if (null != tableInfo) {
 				Object idVal = ReflectionKit.getMethodValue(cls, entity, tableInfo.getKeyProperty());
-				if (null != idVal) {
-					return isSelective ? updateSelectiveById(entity) : updateById(entity);
-				} else {
+				if (null == idVal || "".equals(idVal)) {
 					return isSelective ? insertSelective(entity) : insert(entity);
+				} else {
+					return isSelective ? updateSelectiveById(entity) : updateById(entity);
 				}
 			} else {
 				throw new MybatisPlusException("Error:  Cannot execute. Could not find @TableId.");
