@@ -32,6 +32,8 @@
         <setting name="cacheEnabled" value="true" />
         <!-- 全局启用或禁用延迟加载。当禁用时，所有关联对象都会即时加载 -->
         <setting name="lazyLoadingEnabled" value="true" />
+        <!-- 是否开启驼峰命名策略，例如 user_nane 映射为 userName -->
+        <setting name="mapUnderscoreToCamelCase" value="false"/>
     </settings>
 
     <!-- 

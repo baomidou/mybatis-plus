@@ -83,6 +83,10 @@ public class AutoSqlInjector implements ISqlInjector {
 		this.builderAssistant = builderAssistant;
 		this.languageDriver = configuration.getDefaultScriptingLanuageInstance();
 		this.dbType = MybatisConfiguration.DB_TYPE;
+		if (configuration.isMapUnderscoreToCamelCase()) {
+			/* 开启驼峰配置 */
+			MybatisConfiguration.DB_COLUMN_UNDERLINE = true;
+		}
 		Class<?> modelClass = extractModelClass(mapperClass);
 		TableInfo table = TableInfoHelper.initTableInfo(modelClass);
 
