@@ -37,6 +37,13 @@ public class MyMetaObjectHandler implements IMetaObjectHandler {
 		if (null == name) {
 			metaObject.setValue("name", "instert-fill");
 		}
+
+		// 测试下划线
+		Object testType = metaObject.getValue("testType");
+		System.err.println("testTypetestType==" + testType);
+		if (null == testType) {
+			metaObject.setValue("testType", 3);
+		}
 	}
 
 }
