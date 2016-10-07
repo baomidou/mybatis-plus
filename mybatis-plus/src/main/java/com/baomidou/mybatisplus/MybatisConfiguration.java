@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus;
 
+import com.baomidou.mybatisplus.annotations.FieldStrategy;
 import com.baomidou.mybatisplus.mapper.AutoSqlInjector;
 import com.baomidou.mybatisplus.mapper.DBType;
 import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
@@ -57,18 +58,26 @@ public class MybatisConfiguration extends Configuration {
 	 * SQL 注入器，实现 ISqlInjector 或继承 AutoSqlInjector 自定义方法
 	 */
 	public static ISqlInjector SQL_INJECTOR = new AutoSqlInjector();
+
 	/*
 	 * Mapper 注册
 	 */
 	public final MybatisMapperRegistry mybatisMapperRegistry = new MybatisMapperRegistry(this);
+
 	/**
 	 * 缓存注册标识
 	 */
 	public static Set<String> MAPPER_REGISTRY_CACHE = new ConcurrentSkipListSet<String>();
+
 	/*
 	 * 元对象字段填充控制器
 	 */
 	public static IMetaObjectHandler META_OBJECT_HANDLER = null;
+
+	/*
+	 * 字段验证策略
+	 */
+	public static FieldStrategy FIELD_STRATEGY = FieldStrategy.NOT_NULL;
 
 	/*
 	 * 是否刷新mapper

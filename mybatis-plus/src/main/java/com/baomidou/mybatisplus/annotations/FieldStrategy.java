@@ -45,4 +45,14 @@ public enum FieldStrategy {
 		return this.desc;
 	}
 
+	public static FieldStrategy getFieldStrategy(int key) {
+		FieldStrategy[] fss = FieldStrategy.values();
+		for (FieldStrategy fs : fss) {
+			if (fs.getKey() == key) {
+				return fs;
+			}
+		}
+		return FieldStrategy.NOT_NULL;
+	}
+
 }

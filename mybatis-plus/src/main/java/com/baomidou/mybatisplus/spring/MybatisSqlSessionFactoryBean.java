@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.spring;
 import com.baomidou.mybatisplus.MybatisConfiguration;
 import com.baomidou.mybatisplus.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.MybatisXMLMapperBuilder;
+import com.baomidou.mybatisplus.annotations.FieldStrategy;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.DBType;
 import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
@@ -136,6 +137,11 @@ public class MybatisSqlSessionFactoryBean
 	// TODO 注入 元对象字段填充控制器
 	public void setMetaObjectHandler(IMetaObjectHandler metaObjectHandler) {
 		MybatisConfiguration.META_OBJECT_HANDLER = metaObjectHandler;
+	}
+
+	// TODO 注入 元对象字段填充控制器
+	public void setFieldStrategy(int key) {
+		MybatisConfiguration.FIELD_STRATEGY = FieldStrategy.getFieldStrategy(key);
 	}
 
 	/**
