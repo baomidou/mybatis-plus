@@ -486,7 +486,7 @@ public class AutoSqlInjector implements ISqlInjector {
 
 	/**
 	 * <p>
-	 * 注入实体查询记录列表 SQL 语句
+	 * 注入EntityWrapper方式查询记录列表 SQL 语句
 	 * </p>
 	 *
 	 * @param sqlMethod
