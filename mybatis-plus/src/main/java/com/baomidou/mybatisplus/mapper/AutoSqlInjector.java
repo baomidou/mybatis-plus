@@ -15,12 +15,13 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import com.baomidou.mybatisplus.MybatisConfiguration;
-import com.baomidou.mybatisplus.annotations.FieldStrategy;
-import com.baomidou.mybatisplus.annotations.IdType;
-import com.baomidou.mybatisplus.toolkit.TableFieldInfo;
-import com.baomidou.mybatisplus.toolkit.TableInfo;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
+
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -33,12 +34,12 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.scripting.defaults.RawSqlSource;
 import org.apache.ibatis.session.Configuration;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
+import com.baomidou.mybatisplus.MybatisConfiguration;
+import com.baomidou.mybatisplus.annotations.FieldStrategy;
+import com.baomidou.mybatisplus.annotations.IdType;
+import com.baomidou.mybatisplus.toolkit.TableFieldInfo;
+import com.baomidou.mybatisplus.toolkit.TableInfo;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**
  * <p>
@@ -495,8 +496,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * @param table
 	 */
 	protected void injectSelectListSql(SqlMethod sqlMethod, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
-		String where = getStringBuilder(table);
-		String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(table, true), table.getTableName(), where);
+		String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(table, true), table.getTableName(), sqlWhereEntityWrapper(table));
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
 		this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, table);
 	}
@@ -511,19 +511,20 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * @param table
 	 */
 	protected void injectSelectCountByEWSql(SqlMethod sqlMethod, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
-		String where = getStringBuilder(table);
-		String sql = String.format(sqlMethod.getSql(), table.getTableName(), where);
+		String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlWhereEntityWrapper(table));
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
 		this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, Integer.class, null);
 	}
 
 	/**
+	 * <p>
 	 * EntityWrapper方式获取select where
+	 * </p>
 	 *
 	 * @param table
 	 * @return String
 	 */
-	private String getStringBuilder(TableInfo table) {
+	protected String sqlWhereEntityWrapper(TableInfo table) {
 		StringBuilder where = new StringBuilder("\n<if test=\"ew!=null\">");
 		where.append("\n<if test=\"ew.entity!=null\">\n<where>");
 		where.append("\n<if test=\"ew.entity.").append(table.getKeyProperty()).append("!=null\">\n");

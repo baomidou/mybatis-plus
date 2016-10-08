@@ -179,7 +179,7 @@ public class ServiceImpl<M extends BaseMapper<T, PK>, T, PK extends Serializable
     }
 
     public int selectCount(EntityWrapper<T> entityWrapper) {
-        return baseMapper.selectCountByEW(entityWrapper);
+        return baseMapper.selectCountByEw(entityWrapper);
     }
 
 	public List<T> selectList(EntityWrapper<T> entityWrapper) {
