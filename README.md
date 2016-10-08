@@ -1,14 +1,17 @@
 ![Mybatis-Plus-Logo](http://git.oschina.net/uploads/images/2016/0824/211639_4d931e7f_12260.png "logo")
 
+[![Version](https://img.shields.io/badge/version-1.4.7-blue.svg)](https://github.com/baomidou/mybatis-plus)
+
+
 > 为简化开发工作、提高生产率而生
 
-# 简介
+# 简介 | Intro
 
 Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 
 > 技术讨论 QQ 群 492238239[（有钱的捧个钱场【点击捐赠】, 没钱的捧个人场）](http://git.oschina.net/uploads/images/2015/1222/211207_0acab44e_12260.png)
 
-# 优点：
+# 优点 | Advantages
 
 - **纯正血统**：完全继承原生 `Mybatis` 的所有特性
 - **最少依赖**：仅仅依赖`Mybatis`以及`Mybatis-Spring`
@@ -23,21 +26,21 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 - **全局拦截**：提供全表`delete`、`update`操作智能分析阻断
 - **避免Sql注入**：内置Sql注入内容剥离器，预防Sql注入攻击
 
-# 在线阅读文档
+# 文档 | Documentation
 
-[中文](http://mp.baomidou.com/zh/) | [English](http://mp.baomidou.com/en/)
+[中文](http://mp.baomidou.com/) | [English](http://mp.baomidou.com/en/)
 
-# 原理
+# 原理 | Principle
 
 [Mybatis-Plus 实践及架构原理](http://git.oschina.net/baomidou/mybatis-plus/attach_files)
 
-# Demo
+# 应用实例 | Demo
 
 [Spring-MVC](http://git.oschina.net/juapk/SpringWind)
 
 [Spring-Boot](https://git.oschina.net/baomidou/mybatisplus-spring-boot)
 
-# Maven 坐标
+# 下载地址 | Download
 
 [点此去下载](http://mvnrepository.com/artifact/com.baomidou/mybatis-plus)
 
@@ -49,29 +52,29 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 </dependency>
 ```
 
-# 结构目录
+# 结构目录 | Architecture
 
 ![项目结构说明](http://git.oschina.net/uploads/images/2016/0821/161516_58956b85_12260.png "项目结构说明")
 
-# 其他开源项目
+# 其他开源项目 | Other Project
 
 - [基于Cookie的SSO中间件 Kisso](http://git.oschina.net/baomidou/kisso)
 - [Java快速开发框架 SpringWind](http://git.oschina.net/juapk/SpringWind)
 
-# Futures
+# 期望 | Futures
 
 > 欢迎提出更好的意见，帮助完善 Mybatis-Plus
 
-# License
+# 版权 | License
 
 [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
-# 捐赠
+# 捐赠 | Donate
 
-> [捐赠记录,感谢你们的支持！](http://git.oschina.net/juapk/kisso/wikis/%E6%8D%90%E8%B5%A0%E8%AE%B0%E5%BD%95)
+> [捐赠记录,感谢你们的支持！](http://git.oschina.net/baomidou/kisso/wikis/%E6%8D%90%E8%B5%A0%E8%AE%B0%E5%BD%95)
 
 ![捐赠 mybatis-plus](http://git.oschina.net/uploads/images/2015/1222/211207_0acab44e_12260.png "支持一下mybatis-plus")
 
-# 关注我
+# 关注我 | About Me
 
 ![程序员日记](http://git.oschina.net/uploads/images/2016/0121/093728_1bc1658f_12260.png "程序员日记")
