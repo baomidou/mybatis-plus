@@ -118,6 +118,7 @@ public class AutoSqlInjector implements ISqlInjector {
 			this.injectSelectByMapSql(mapperClass, modelClass, table);
 			this.injectSelectOneSql(mapperClass, modelClass, table);
 			this.injectSelectCountSql(mapperClass, modelClass, table);
+			this.injectSelectCountByEWSql(SqlMethod.SELECT_COUNT_EW, mapperClass, modelClass, table);
 			this.injectSelectListSql(SqlMethod.SELECT_LIST, mapperClass, modelClass, table);
 			this.injectSelectListSql(SqlMethod.SELECT_PAGE, mapperClass, modelClass, table);
 
@@ -487,13 +488,42 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * <p>
 	 * 注入实体查询记录列表 SQL 语句
 	 * </p>
-	 * 
+	 *
 	 * @param sqlMethod
 	 * @param mapperClass
 	 * @param modelClass
 	 * @param table
 	 */
 	protected void injectSelectListSql(SqlMethod sqlMethod, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
+		String where = getStringBuilder(table);
+		String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(table, true), table.getTableName(), where);
+		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+		this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, table);
+	}
+	/**
+	 * <p>
+	 * 注入EntityWrapper查询总记录数 SQL 语句
+	 * </p>
+	 *
+	 * @param sqlMethod
+	 * @param mapperClass
+	 * @param modelClass
+	 * @param table
+	 */
+	protected void injectSelectCountByEWSql(SqlMethod sqlMethod, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
+		String where = getStringBuilder(table);
+		String sql = String.format(sqlMethod.getSql(), table.getTableName(), where);
+		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+		this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, Integer.class, null);
+	}
+
+	/**
+	 * EntityWrapper方式获取select where
+	 *
+	 * @param table
+	 * @return String
+	 */
+	private String getStringBuilder(TableInfo table) {
 		StringBuilder where = new StringBuilder("\n<if test=\"ew!=null\">");
 		where.append("\n<if test=\"ew.entity!=null\">\n<where>");
 		where.append("\n<if test=\"ew.entity.").append(table.getKeyProperty()).append("!=null\">\n");
@@ -508,9 +538,7 @@ public class AutoSqlInjector implements ISqlInjector {
 		where.append("\n</where>\n</if>");
 		where.append("\n<if test=\"ew.sqlSegment!=null\">\n${ew.sqlSegment}\n</if>");
 		where.append("\n</if>");
-		String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(table, true), table.getTableName(), where.toString());
-		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-		this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, table);
+		return where.toString();
 	}
 
 	/**

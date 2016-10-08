@@ -15,12 +15,12 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.session.RowBounds;
 
 /**
  * <p>
@@ -244,4 +244,13 @@ public interface BaseMapper<T, PK extends Serializable> {
 	 */
 	List<T> selectPage( RowBounds rowBounds, @Param("ew" ) EntityWrapper<T> entityWrapper);
 
+	/**
+	 * <p>
+	 * 根据 EntityWrapper 条件，查询总记录数
+	 * </p>
+	 * @param entityWrapper
+	 * 				实体对象
+	 * @return int
+	 */
+	int selectCountByEW(@Param("ew") EntityWrapper<T> entityWrapper);
 }
