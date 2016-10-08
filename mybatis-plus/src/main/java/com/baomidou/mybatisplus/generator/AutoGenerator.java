@@ -411,6 +411,11 @@ public class AutoGenerator {
 		} else if (t.contains("DATE") || t.contains("TIMESTAMP")) {
 			return "Date";
 		} else if (t.contains("NUMBER")) {
+			if (t.matches("NUMBER\\(+\\d{1}+\\)")) {
+				return "Integer";
+			} else if (t.matches("NUMBER\\(+\\d{2}+\\)")) {
+				return "Long";
+			}
 			return "Double";
 		} else if (t.contains("FLOAT")) {
 			return "Float";

@@ -152,16 +152,23 @@ public class UserMapperTest {
         ul.add(new User(15L, "5", 5, 1));
         ul.add(new User(16L, "6", 6, 0));
 
-        /* 测试 name 填充 */
+        /* 测试 name test_type 填充 */
         ul.add(new User(17L, 7));
+        ul.add(new User(18L, 8));
+        ul.add(new User(19L, 9));
         ul.add(new User(7));
-        ul.add(new User(18L, "deleteByMap", 7, 0));
+        ul.add(new User(20L, "deleteByMap", 7, 0));
 
 		/* 使用 ID_WORKER 自动生成 ID */
         ul.add(new User("8", 8, 1));
         ul.add(new User("9", 9, 1));
         rlt = userMapper.insertBatch(ul);
         System.err.println("\n--------------insertBatch----------------" + rlt + "\n\n");
+
+        /**
+         * 提交，往下操作在一个事物中！！！
+         */
+        session.commit();
 
         /*
          * 删除

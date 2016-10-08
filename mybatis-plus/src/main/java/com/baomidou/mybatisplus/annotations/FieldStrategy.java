@@ -24,7 +24,7 @@ package com.baomidou.mybatisplus.annotations;
  * @Date 2016-09-09
  */
 public enum FieldStrategy {
-	IGNORED(0, "ignored"), NOT_NULL(1, "not null"), NOT_EMPTY(2, "not empty");
+	IGNORED(0, "ignored"), NOT_NULL(1, "not null"), NOT_EMPTY(2, "not empty"), FILL(3, "field fill");
 
 	/** 主键 */
 	private final int key;
@@ -43,6 +43,16 @@ public enum FieldStrategy {
 
 	public String getDesc() {
 		return this.desc;
+	}
+
+	public static FieldStrategy getFieldStrategy(int key) {
+		FieldStrategy[] fss = FieldStrategy.values();
+		for (FieldStrategy fs : fss) {
+			if (fs.getKey() == key) {
+				return fs;
+			}
+		}
+		return FieldStrategy.NOT_NULL;
 	}
 
 }

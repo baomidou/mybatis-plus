@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
+import com.baomidou.mybatisplus.MybatisConfiguration;
 import com.baomidou.mybatisplus.annotations.FieldStrategy;
 
 /**
@@ -60,7 +61,14 @@ public class TableFieldInfo {
 		this.setColumn(column);
 		this.property = property;
 		this.el = el;
-		this.fieldStrategy = fieldStrategy;
+		/*
+		 * 优先使用单个字段注解，否则使用全局配置
+		 */
+		if (fieldStrategy != FieldStrategy.NOT_NULL) {
+			this.fieldStrategy = fieldStrategy;
+		} else {
+			this.fieldStrategy = MybatisConfiguration.FIELD_STRATEGY;
+		}
 	}
 
 	public TableFieldInfo(boolean related, String column, String property) {

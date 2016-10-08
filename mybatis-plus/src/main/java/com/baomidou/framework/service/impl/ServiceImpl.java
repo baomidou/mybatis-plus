@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.toolkit.CollectionUtil;
 import com.baomidou.mybatisplus.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.toolkit.TableInfo;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
@@ -72,10 +73,10 @@ public class ServiceImpl<M extends BaseMapper<T, PK>, T, PK extends Serializable
 			TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
 			if (null != tableInfo) {
 				Object idVal = ReflectionKit.getMethodValue(cls, entity, tableInfo.getKeyProperty());
-				if (null != idVal) {
-					return isSelective ? updateSelectiveById(entity) : updateById(entity);
-				} else {
+				if (null == idVal || "".equals(idVal)) {
 					return isSelective ? insertSelective(entity) : insert(entity);
+				} else {
+					return isSelective ? updateSelectiveById(entity) : updateById(entity);
 				}
 			} else {
 				throw new MybatisPlusException("Error:  Cannot execute. Could not find @TableId.");
@@ -168,9 +169,18 @@ public class ServiceImpl<M extends BaseMapper<T, PK>, T, PK extends Serializable
 		return baseMapper.selectOne(entity);
 	}
 
-	public int selectCount(T entity) {
-		return baseMapper.selectCount(entity);
-	}
+    public T selectOne(EntityWrapper<T> entityWrapper) {
+        List<T> list = baseMapper.selectList(entityWrapper);
+        return CollectionUtil.isNotEmpty(list) ? list.get(0) : null;
+    }
+
+    public int selectCount(T entity) {
+        return baseMapper.selectCount(entity);
+    }
+
+    public int selectCount(EntityWrapper<T> entityWrapper) {
+        return baseMapper.selectCountByEw(entityWrapper);
+    }
 
 	public List<T> selectList(EntityWrapper<T> entityWrapper) {
 		return baseMapper.selectList(entityWrapper);
