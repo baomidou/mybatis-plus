@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 import java.io.Serializable;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -399,6 +400,34 @@ public class EntityWrapper<T> implements Serializable {
 	 */
 	public EntityWrapper<T> notIn(String column, List<?> value) {
 		sql.NOT_IN(column, value);
+		return this;
+	}
+
+	/**
+	 * IN 条件语句，目前适配mysql及oracle
+	 *
+	 * @param column
+	 *            字段名称
+	 * @param value
+	 *            匹配值 object数组
+	 * @return this
+	 */
+	public EntityWrapper<T> in(String column, Object... value) {
+		sql.IN(column, Arrays.asList(value));
+		return this;
+	}
+
+	/**
+	 * NOT IN 条件语句，目前适配mysql及oracle
+	 *
+	 * @param column
+	 *            字段名称
+	 * @param value
+	 *            匹配值 object数组
+	 * @return this
+	 */
+	public EntityWrapper<T> notIn(String column, Object... value) {
+		sql.NOT_IN(column, Arrays.asList(value));
 		return this;
 	}
 
