@@ -15,7 +15,15 @@
  */
 package com.baomidou.framework.service.impl;
 
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.baomidou.framework.service.IService;
+import com.baomidou.mybatisplus.annotations.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
@@ -24,12 +32,6 @@ import com.baomidou.mybatisplus.toolkit.CollectionUtil;
 import com.baomidou.mybatisplus.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.toolkit.TableInfo;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -66,6 +68,7 @@ public class ServiceImpl<M extends BaseMapper<T, PK>, T, PK extends Serializable
 	 *            true 选择字段 false 不选择字段
 	 * @return boolean
 	 */
+	@SuppressWarnings("unchecked")
 	@Transactional(rollbackFor = Exception.class)
 	public boolean insertOrUpdate(T entity, boolean isSelective) {
 		if (null != entity) {
@@ -76,6 +79,15 @@ public class ServiceImpl<M extends BaseMapper<T, PK>, T, PK extends Serializable
 				if (null == idVal || "".equals(idVal)) {
 					return isSelective ? insertSelective(entity) : insert(entity);
 				} else {
+					/* 特殊处理 INPUT 主键策略逻辑 */
+					if (IdType.INPUT == tableInfo.getIdType()) {
+						T entityValue = selectById((PK) idVal);
+						if (null != entityValue) {
+							return isSelective ? updateSelectiveById(entity) : updateById(entity);
+						} else {
+							return isSelective ? insertSelective(entity) : insert(entity);
+						}
+					}
 					return isSelective ? updateSelectiveById(entity) : updateById(entity);
 				}
 			} else {

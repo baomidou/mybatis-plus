@@ -234,6 +234,17 @@ public interface IService<T, PK> {
 
 	/**
 	 * <p>
+	 * 根据 EntityWrapper，查询一条记录
+	 * </p>
+	 *
+	 * @param entityWrapper
+	 *            实体对象
+	 * @return T
+	 */
+	T selectOne(EntityWrapper<T> entityWrapper);
+
+	/**
+	 * <p>
 	 * 根据 entity 条件，查询总记录数
 	 * </p>
 	 * 
@@ -264,17 +275,6 @@ public interface IService<T, PK> {
 	 * @return
 	 */
 	List<T> selectList(EntityWrapper<T> entityWrapper);
-
-	/**
-	 * <p>
-	 * 根据 EntityWrapper，查询一条记录
-	 * </p>
-	 *
-	 * @param entityWrapper
-	 *            实体对象
-	 * @return T
-	 */
-	T selectOne(EntityWrapper<T> entityWrapper);
 
 	/**
 	 * <p>
