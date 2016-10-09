@@ -36,9 +36,11 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 
 # 应用实例 | Demo
 
-[Spring-MVC](http://git.oschina.net/juapk/SpringWind)
+[Spring-MVC](https://git.oschina.net/baomidou/mybatisplus-spring-mvc)
 
 [Spring-Boot](https://git.oschina.net/baomidou/mybatisplus-spring-boot)
+
+[SSM-实战 Demo](http://git.oschina.net/juapk/SpringWind)
 
 # 下载地址 | Download
 
