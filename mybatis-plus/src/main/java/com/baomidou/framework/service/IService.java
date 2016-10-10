@@ -30,7 +30,7 @@ import java.util.Map;
  * @author hubin
  * @Date 2016-04-20
  */
-public interface IService<T, PK extends Serializable> {
+public interface IService<T, PK> {
 
 	/**
 	 * <p>
