@@ -75,7 +75,7 @@ public interface BaseMapper<T, PK extends Serializable> {
 	 * 			主键ID
 	 * @return int
 	 */
-	int deleteById( PK id );
+	int deleteById( Serializable id );
 
 
 	/**
@@ -175,7 +175,7 @@ public interface BaseMapper<T, PK extends Serializable> {
 	 * 			主键ID
 	 * @return T
 	 */
-	T selectById( PK id );
+	T selectById( Serializable id );
 
 
 	/**

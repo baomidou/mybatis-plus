@@ -18,6 +18,7 @@ package com.baomidou.framework.service;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +30,7 @@ import java.util.Map;
  * @author hubin
  * @Date 2016-04-20
  */
-public interface IService<T, PK> {
+public interface IService<T, PK extends Serializable> {
 
 	/**
 	 * <p>
@@ -73,7 +74,7 @@ public interface IService<T, PK> {
 	 *            主键ID
 	 * @return boolean
 	 */
-	boolean deleteById(PK id);
+	boolean deleteById(Serializable id);
 
 	/**
 	 * <p>
@@ -197,7 +198,7 @@ public interface IService<T, PK> {
 	 *            主键ID
 	 * @return T
 	 */
-	T selectById(PK id);
+	T selectById(Serializable id);
 
 	/**
 	 * <p>
