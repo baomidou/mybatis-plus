@@ -15,11 +15,8 @@
  */
 package com.baomidou.mybatisplus.plugins;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
-
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.toolkit.SystemClock;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -36,7 +33,10 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * <p>
@@ -67,9 +67,9 @@ public class PerformanceInterceptor implements Interceptor {
 		Configuration configuration = mappedStatement.getConfiguration();
 		String sql = getSql(boundSql, parameterObject, configuration);
 
-		long start = System.currentTimeMillis();
+		long start = SystemClock.now();
 		Object result = invocation.proceed();
-		long end = System.currentTimeMillis();
+		long end = SystemClock.now();
 		long timing = end - start;
 		System.err.println(" Time：" + timing + " ms" + " - ID：" + statementId + "\n Execute SQL：" + sql + "\n");
 		if (maxTime >= 1 && timing > maxTime) {

@@ -15,20 +15,20 @@
  */
 package com.baomidou.mybatisplus.test;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.spring.MybatisMapperRefresh;
 import com.baomidou.mybatisplus.test.mysql.MySqlInjector;
 import com.baomidou.mybatisplus.test.mysql.UserMapper;
 import com.baomidou.mybatisplus.test.mysql.UserMapperTest;
+import com.baomidou.mybatisplus.toolkit.SystemClock;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * <p>
@@ -59,7 +59,7 @@ public class MybatisMapperRefreshTest {
 				session = sessionFactory.openSession();
 				UserMapper userMapper = session.getMapper(UserMapper.class);
 				userMapper.selectListRow(new Pagination(1, 10));
-				resource[0].getFile().setLastModified(System.currentTimeMillis());
+				resource[0].getFile().setLastModified(SystemClock.now());
 				session.commit();
 				session.close();
 				Thread.sleep(5000);

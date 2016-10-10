@@ -15,17 +15,8 @@
  */
 package com.baomidou.mybatisplus.spring;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
-
+import com.baomidou.mybatisplus.MybatisConfiguration;
+import com.baomidou.mybatisplus.toolkit.SystemClock;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.builder.xml.XMLMapperEntityResolver;
@@ -42,7 +33,16 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.util.ResourceUtils;
 
-import com.baomidou.mybatisplus.MybatisConfiguration;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * <p>
@@ -108,7 +108,7 @@ public class MybatisMapperRefresh implements Runnable {
 		 * 启动 XML 热加载
 		 */
 		if (enabled) {
-			beforeTime = System.currentTimeMillis();
+			beforeTime = SystemClock.now();
 			final MybatisMapperRefresh runnable = this;
 			new Thread(new Runnable() {
 
@@ -157,7 +157,7 @@ public class MybatisMapperRefresh implements Runnable {
 								}
 							}
 							if (MybatisConfiguration.IS_REFRESH) {
-								beforeTime = System.currentTimeMillis();
+								beforeTime = SystemClock.now();
 							}
 							MybatisConfiguration.IS_REFRESH = false;
 						} catch (Exception exception) {
