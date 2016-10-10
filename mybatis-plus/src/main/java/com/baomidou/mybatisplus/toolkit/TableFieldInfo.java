@@ -76,6 +76,7 @@ public class TableFieldInfo {
 		this.setColumn(column);
 		this.property = property;
 		this.el = property;
+		this.fieldStrategy = MybatisConfiguration.FIELD_STRATEGY;
 	}
 
 	public TableFieldInfo(String column) {
@@ -83,6 +84,7 @@ public class TableFieldInfo {
 		this.setColumn(column);
 		this.property = column;
 		this.el = column;
+		this.fieldStrategy = MybatisConfiguration.FIELD_STRATEGY;
 	}
 
 	public boolean isRelated() {

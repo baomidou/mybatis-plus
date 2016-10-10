@@ -35,6 +35,9 @@
     <!-- 全局表为下划线命名设置 true
     <property name="dbColumnUnderline" value="true" />
     -->
+    <!-- 全局字段验证 0、ignored  1、not null 2、not empty
+    <property name="fieldStrategy" value="2" />
+    -->
 </bean>
 
 <!-- 加载 mapper.xml 接口 配置文件 -->
