@@ -68,7 +68,6 @@ public class ServiceImpl<M extends BaseMapper<T, PK>, T, PK extends Serializable
 	 *            true 选择字段 false 不选择字段
 	 * @return boolean
 	 */
-	@SuppressWarnings("unchecked")
 	@Transactional(rollbackFor = Exception.class)
 	public boolean insertOrUpdate(T entity, boolean isSelective) {
 		if (null != entity) {
