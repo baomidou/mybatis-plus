@@ -205,4 +205,8 @@ public class ServiceImpl<M extends BaseMapper<T, PK>, T, PK extends Serializable
 		return page;
 	}
 
+	public Page<T> selectPage(Page<T> page, T entity) {
+		return selectPage(page, new EntityWrapper<T>(entity));
+	}
+
 }
