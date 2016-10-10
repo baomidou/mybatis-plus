@@ -290,6 +290,4 @@ public interface IService<T, PK> {
 	 */
 	Page<T> selectPage(Page<T> page, EntityWrapper<T> entityWrapper);
 
-	Page<T> selectPage(Page<T> page, T entity);
-
 }
