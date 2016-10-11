@@ -15,6 +15,13 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
+import com.baomidou.mybatisplus.MybatisConfiguration;
+import com.baomidou.mybatisplus.activerecord.ex.IllegalTableNameException;
+import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotations.TableId;
+import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -22,12 +29,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import com.baomidou.mybatisplus.MybatisConfiguration;
-import com.baomidou.mybatisplus.annotations.TableField;
-import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.annotations.TableName;
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 
 /**
  * <p>
@@ -43,6 +44,10 @@ public class TableInfoHelper {
 	 * 缓存反射类表信息
 	 */
 	private static Map<String, TableInfo> tableInfoCache = new ConcurrentHashMap<String, TableInfo>();
+	/**
+	 * 缓存表对应实体类className
+	 */
+	private static Map<String, String> classNameCache = new ConcurrentHashMap<String, String>();
 
 	/**
 	 * <p>
@@ -55,6 +60,22 @@ public class TableInfoHelper {
 	 */
 	public static TableInfo getTableInfo(Class<?> clazz) {
 		return tableInfoCache.get(clazz.getName());
+	}
+
+	/**
+	 * <p>
+	 * 获取实体映射表信息
+	 * <p>
+	 *
+	 * @param tableName
+	 *            反射实体类
+	 * @return
+	 */
+	public static TableInfo getTableInfo(String tableName) {
+		String className = classNameCache.get(tableName);
+		if (StringUtils.isEmpty(className))
+			throw new IllegalTableNameException(tableName);
+		return tableInfoCache.get(className);
 	}
 
 	/**
@@ -75,12 +96,13 @@ public class TableInfoHelper {
 
 		/* 表名 */
 		TableName table = clazz.getAnnotation(TableName.class);
+		String tableName;
 		if (table != null && StringUtils.isNotEmpty(table.value())) {
-			tableInfo.setTableName(table.value());
+			tableName = table.value();
 		} else {
-			tableInfo.setTableName(StringUtils.camelToUnderline(clazz.getSimpleName()));
+			tableName = StringUtils.camelToUnderline(clazz.getSimpleName());
 		}
-		
+		tableInfo.setTableName(tableName);
 		/* 表结果集映射 */
 		if (table != null && StringUtils.isNotEmpty(table.resultMap())) {
 			tableInfo.setResultMap(table.resultMap());
@@ -168,6 +190,7 @@ public class TableInfoHelper {
 		 * 注入
 		 */
 		tableInfoCache.put(clazz.getName(), tableInfo);
+		classNameCache.put(tableName, clazz.getName());
 		return tableInfo;
 	}
 
