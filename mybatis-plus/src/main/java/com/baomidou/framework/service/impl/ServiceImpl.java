@@ -15,13 +15,6 @@
  */
 package com.baomidou.framework.service.impl;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.baomidou.framework.service.IService;
 import com.baomidou.mybatisplus.annotations.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
@@ -32,6 +25,12 @@ import com.baomidou.mybatisplus.toolkit.CollectionUtil;
 import com.baomidou.mybatisplus.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.toolkit.TableInfo;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -135,7 +134,7 @@ public class ServiceImpl<M extends BaseMapper<T, PK>, T, PK extends Serializable
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public boolean deleteBatchIds(List<PK> idList) {
+	public boolean deleteBatchIds(List<? extends Serializable> idList) {
 		return retBool(baseMapper.deleteBatchIds(idList));
 	}
 
@@ -168,7 +167,7 @@ public class ServiceImpl<M extends BaseMapper<T, PK>, T, PK extends Serializable
 		return baseMapper.selectById(id);
 	}
 
-	public List<T> selectBatchIds(List<PK> idList) {
+	public List<T> selectBatchIds(List<? extends Serializable> idList) {
 		return baseMapper.selectBatchIds(idList);
 	}
 

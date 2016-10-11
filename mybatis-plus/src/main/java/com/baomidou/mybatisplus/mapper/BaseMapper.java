@@ -108,7 +108,7 @@ public interface BaseMapper<T, PK extends Serializable> {
 	 * 				主键ID列表
 	 * @return int
 	 */
-	int deleteBatchIds( List<PK> idList );
+	int deleteBatchIds( List<? extends Serializable> idList );
 
 
 	/**
@@ -186,7 +186,7 @@ public interface BaseMapper<T, PK extends Serializable> {
 	 * 				主键ID列表
 	 * @return List<T>
 	 */
-	List<T> selectBatchIds( List<PK> idList );
+	List<T> selectBatchIds( List<? extends Serializable> idList );
 	
 	
 	/**

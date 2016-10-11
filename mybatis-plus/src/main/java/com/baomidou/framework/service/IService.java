@@ -107,7 +107,7 @@ public interface IService<T, PK> {
 	 *            主键ID列表
 	 * @return boolean
 	 */
-	boolean deleteBatchIds(List<PK> idList);
+	boolean deleteBatchIds(List<? extends Serializable> idList);
 
 	/**
 	 * <p>
@@ -209,7 +209,7 @@ public interface IService<T, PK> {
 	 *            主键ID列表
 	 * @return List<T>
 	 */
-	List<T> selectBatchIds(List<PK> idList);
+	List<T> selectBatchIds(List<? extends Serializable> idList);
 
 	/**
 	 * <p>
