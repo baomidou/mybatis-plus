@@ -46,7 +46,7 @@ public class ServiceImpl<M extends BaseMapper<T, PK>, T, PK extends Serializable
 	/**
 	 * 子类不用再定义logger对象
 	 */
-	private Logger logger = LoggerFactory.getLogger(getClass());
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	protected M baseMapper;
