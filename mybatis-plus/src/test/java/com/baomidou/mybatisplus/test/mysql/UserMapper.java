@@ -20,7 +20,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.session.RowBounds;
 
-import com.baomidou.mybatisplus.mapper.AutoMapper;
+import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
 
 /**
@@ -31,7 +31,7 @@ import com.baomidou.mybatisplus.test.mysql.entity.User;
  * @author hubin
  * @Date 2016-01-23
  */
-public interface UserMapper extends AutoMapper<User> {
+public interface UserMapper extends BaseMapper<User> {
 
 	/**
 	 * 用户列表，分页显示

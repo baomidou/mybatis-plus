@@ -42,7 +42,7 @@ import java.util.Map;
  * @author hubin
  * @Date 2016-04-20
  */
-public class ServiceImpl<M extends BaseMapper<T, PK>, T, PK extends Serializable> implements IService<T, PK> {
+public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	/**
 	 * 子类不用再定义logger对象
 	 */

@@ -14,7 +14,7 @@ public class ActiveRecordTest {
     public static void main(String[] args) {
         TableInfoHelper.initTableInfo(Test.class);
         DB db = DB.open("jdbc:mysql://localhost/mybatis-plus", "root", "521");
-        List<Record> user = db.active("test").select().all();
+        List<Record> user = db.active("test1").select().all();
         System.out.println(user);
     }
 }
