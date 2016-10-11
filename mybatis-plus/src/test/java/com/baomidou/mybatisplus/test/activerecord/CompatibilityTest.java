@@ -1,14 +1,13 @@
 package com.baomidou.mybatisplus.test.activerecord;
 
-import java.util.Iterator;
-import java.util.List;
-
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.baomidou.mybatisplus.activerecord.DB;
 import com.baomidou.mybatisplus.activerecord.Record;
 import com.baomidou.mybatisplus.activerecord.Table;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.Iterator;
+import java.util.List;
 
 public class CompatibilityTest {
 
@@ -50,24 +49,18 @@ public class CompatibilityTest {
 
 		Record ash = Zombie.create("name:", "Ash");
 		Table ashTweets = ash.get("tweets");
-		Table ashTweetOnBoston = ashTweets.create("city_id:", boston.getInt("id"), "content:", "Hello Boston from Ash!")
-				.get("comments");
-		Table ashTweetOnNewYork = ashTweets
-				.create("city_id:", newyord.getInt("id"), "content:", "Hello NewYord from Ash!").get("comments");
+		Table ashTweetOnBoston = ashTweets.create("city_id:", boston.getInt("id"), "content:", "Hello Boston from Ash!").get("comments");
+		Table ashTweetOnNewYork = ashTweets.create("city_id:", newyord.getInt("id"), "content:", "Hello NewYord from Ash!").get("comments");
 
 		Record bob = Zombie.create("name:", "Bob");
 		Table bobTweets = bob.get("tweets");
-		Table bobTweetOnBoston = bobTweets.create("city_id:", boston.getInt("id"), "content:", "Hello Boston from Bob!")
-				.get("comments");
-		Table bobTweetOnNewYork = bobTweets
-				.create("city_id:", newyord.getInt("id"), "content:", "Hello NewYord from Bob!").get("comments");
+		Table bobTweetOnBoston = bobTweets.create("city_id:", boston.getInt("id"), "content:", "Hello Boston from Bob!").get("comments");
+		Table bobTweetOnNewYork = bobTweets.create("city_id:", newyord.getInt("id"), "content:", "Hello NewYord from Bob!").get("comments");
 
 		Record jim = Zombie.create("name:", "Jim");
 		Table jimTweets = jim.get("tweets");
-		Table jimTweetOnBoston = jimTweets.create("city_id:", boston.getInt("id"), "content:", "Hello Boston from Jim!")
-				.get("comments");
-		Table jimTweetOnNewYork = jimTweets
-				.create("city_id:", newyord.getInt("id"), "content:", "Hello NewYord from Jim!").get("comments");
+		Table jimTweetOnBoston = jimTweets.create("city_id:", boston.getInt("id"), "content:", "Hello Boston from Jim!").get("comments");
+		Table jimTweetOnNewYork = jimTweets.create("city_id:", newyord.getInt("id"), "content:", "Hello NewYord from Jim!").get("comments");
 
 		ashTweetOnBoston.create("zombie_id:", bob.getInt("id"), "content:", "Cool from Bob @ Boston");
 		ashTweetOnBoston.create("zombie_id:", jim.getInt("id"), "content:", "Cool from Jim @ Boston");
@@ -99,13 +92,13 @@ public class CompatibilityTest {
 	public void validateCreate() {
 		Assert.assertEquals(5, dbo.getTableNames().size());
 
-		String[] cityNames = new String[] { "Boston", "NewYork" };
+		String[] cityNames = new String[] {"Boston", "NewYork"};
 		List<Record> cities = City.all();
 		Assert.assertEquals(cityNames.length, cities.size());
 		for (int i = 0; i < cityNames.length; i++)
 			Assert.assertEquals(cityNames[i], cities.get(i).getStr("name"));
 
-		String[] zombieNames = new String[] { "Ash", "Bob", "Jim" };
+		String[] zombieNames = new String[] {"Ash", "Bob", "Jim"};
 		List<Record> zombies = Zombie.all();
 		Assert.assertEquals(zombieNames.length, zombies.size());
 		for (int i = 0; i < zombieNames.length; i++)
@@ -127,8 +120,7 @@ public class CompatibilityTest {
 			for (String city : cityNames) {
 				for (String friend : zombieNames) {
 					if (!zombie.equals(friend)) {
-						Assert.assertEquals(String.format("Cool from %s @ %s", friend, city),
-								comment.next().getStr("content"));
+						Assert.assertEquals(String.format("Cool from %s @ %s", friend, city), comment.next().getStr("content"));
 					}
 				}
 			}
@@ -215,23 +207,22 @@ public class CompatibilityTest {
 
 	@Test
 	public void sqlite3() {
-		test(DB.open("jdbc:sqlite::memory:"));
+		//test(DB.open("jdbc:sqlite::memory:"));
 	}
 
 	@Test
 	public void mysql() {
-		// test(DB.open("jdbc:mysql://localhost/weibo", "redraiment", ""));
+		test(DB.open("jdbc:mysql://localhost/mybatis-plus", "root", "521"));
 	}
 
 	@Test
 	public void postgresql() {
-		// test(DB.open("jdbc:postgresql://localhost/weibo", "postgres",
-		// "123456"));
+		//test(DB.open("jdbc:postgresql://localhost/weibo", "postgres", "123456"));
 	}
 
 	@Test
 	public void hypersql() {
-		test(DB.open("jdbc:hsqldb:mem:weibo", "sa", ""));
+		// test(DB.open("jdbc:hsqldb:mem:weibo", "sa", ""));
 	}
 
 	public void tearDown() {
