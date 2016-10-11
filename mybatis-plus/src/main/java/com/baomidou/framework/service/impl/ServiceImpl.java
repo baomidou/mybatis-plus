@@ -25,6 +25,8 @@ import com.baomidou.mybatisplus.toolkit.CollectionUtil;
 import com.baomidou.mybatisplus.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.toolkit.TableInfo;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +43,10 @@ import java.util.Map;
  * @Date 2016-04-20
  */
 public class ServiceImpl<M extends BaseMapper<T, PK>, T, PK extends Serializable> implements IService<T, PK> {
+	/**
+	 * 子类不用再定义logger对象
+	 */
+	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	protected M baseMapper;
@@ -179,18 +185,25 @@ public class ServiceImpl<M extends BaseMapper<T, PK>, T, PK extends Serializable
 		return baseMapper.selectOne(entity);
 	}
 
-    public T selectOne(EntityWrapper<T> entityWrapper) {
-        List<T> list = baseMapper.selectList(entityWrapper);
-        return CollectionUtil.isNotEmpty(list) ? list.get(0) : null;
-    }
+	public T selectOne(EntityWrapper<T> entityWrapper) {
+		List<T> list = baseMapper.selectList(entityWrapper);
+		if (CollectionUtil.isNotEmpty(list)) {
+			int size = list.size();
+			if (size > 1) {
+				logger.warn("Warn: selectOne Method There are " + size + " results.");
+			}
+			return list.get(0);
+		}
+		return null;
+	}
 
-    public int selectCount(T entity) {
-        return baseMapper.selectCount(entity);
-    }
+	public int selectCount(T entity) {
+		return baseMapper.selectCount(entity);
+	}
 
-    public int selectCount(EntityWrapper<T> entityWrapper) {
-        return baseMapper.selectCountByEw(entityWrapper);
-    }
+	public int selectCount(EntityWrapper<T> entityWrapper) {
+		return baseMapper.selectCountByEw(entityWrapper);
+	}
 
 	public List<T> selectList(EntityWrapper<T> entityWrapper) {
 		return baseMapper.selectList(entityWrapper);
