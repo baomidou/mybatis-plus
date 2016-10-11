@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.baomidou</groupId>
 	<artifactId>mybatis-plus</artifactId>
-	<version>1.4.7</version>
+	<version>1.4.8</version>
 	<packaging>jar</packaging>
 
 	<name>mybatis-plus</name>
