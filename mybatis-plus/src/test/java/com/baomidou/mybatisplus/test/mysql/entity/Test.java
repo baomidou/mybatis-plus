@@ -15,16 +15,10 @@
  */
 package com.baomidou.mybatisplus.test.mysql.entity;
 
-import com.baomidou.mybatisplus.activerecord.Query;
-import com.baomidou.mybatisplus.activerecord.Record;
-import com.baomidou.mybatisplus.activerecord.Table;
+import com.baomidou.mybatisplus.activerecord.Entity;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
-
-import java.io.Serializable;
-
-import static com.baomidou.mybatisplus.toolkit.TableInfoHelper.getTable;
 
 /**
  * <p>
@@ -35,7 +29,7 @@ import static com.baomidou.mybatisplus.toolkit.TableInfoHelper.getTable;
  * @Date 2016-09-25
  */
 @TableName("test")
-public class Test implements Serializable {
+public class Test extends Entity<Test> {
 
 	@TableField(exist = false)
 	private static final long serialVersionUID = 1L;
@@ -71,23 +65,4 @@ public class Test implements Serializable {
 		this.type = type;
 	}
 
-	public static Record insert(Record record){
-        return db().create(record);
-    }
-
-	public static void update(Record record){
-        db().update(record);
-    }
-
-	public static void delete(Record record){
-        db().delete(record);
-    }
-
-    public static Query select(String... columns){
-        return db().select(columns);
-    }
-
-	public static Table db(){
-        return getTable(Test.class);
-    }
 }
