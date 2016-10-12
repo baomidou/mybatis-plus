@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## [v1.4.8] 2016.10.12
+1、insertOrUpdate增加空字符串判断
+2、支持原生驼峰配置 mapUnderscoreToCamelCase 开关设置
+3、支持 TableField FieldStrategy 注解全局配置
+4、SelectOne、SelectCount支持EntityWrapper
+5、oracle 代码生成器支持 Integer Long Dobule 类型区分
+6、优化INPUT主键策略InsertOrUpdate
+7、EntityWrapper IN添加Object数组支持
+8、基础Mapper、Servcie通用方法PK参数类型更改至Serializable
+9、selectOne结果集不唯一时,添加警告提示
+10、修改logger修饰符
+
 
 ## [v1.4.7] 2016.09.27
 
