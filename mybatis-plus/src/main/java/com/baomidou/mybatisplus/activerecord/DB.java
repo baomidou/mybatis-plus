@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.Set;
 
@@ -24,7 +23,6 @@ import com.baomidou.mybatisplus.activerecord.ex.IllegalTableNameException;
 import com.baomidou.mybatisplus.activerecord.ex.SqlExecuteException;
 import com.baomidou.mybatisplus.activerecord.ex.TransactionException;
 import com.baomidou.mybatisplus.activerecord.ex.UnsupportedDatabaseException;
-import com.baomidou.mybatisplus.activerecord.pool.SingletonDataSource;
 
 /**
  * 数据库对象。
@@ -37,25 +35,6 @@ public final class DB {
 
 	static {
 		dialects = ServiceLoader.load(Dialect.class);
-	}
-
-	public static DB open(String url) {
-		return open(url, new Properties());
-	}
-
-	public static DB open(String url, String username, String password) {
-		Properties info = new Properties();
-		info.put("user", username);
-		info.put("password", password);
-		return open(url, info);
-	}
-
-	public static DB open(String url, Properties info) {
-		try {
-			return open(new SingletonDataSource(url, info));
-		} catch (SQLException e) {
-			throw new DBOpenException(e);
-		}
 	}
 
 	public static DB open(DataSource pool) {
