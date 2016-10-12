@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.spring;
 import com.baomidou.mybatisplus.MybatisConfiguration;
 import com.baomidou.mybatisplus.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.MybatisXMLMapperBuilder;
+import com.baomidou.mybatisplus.activerecord.DB;
 import com.baomidou.mybatisplus.annotations.FieldStrategy;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.DBType;
@@ -598,6 +599,8 @@ public class MybatisSqlSessionFactoryBean
 			}
 		}
 
+		//TODO 启动 ActiveRecord
+		DB.open(this.dataSource);
 		return this.sqlSessionFactoryBuilder.build(configuration);
 	}
 
