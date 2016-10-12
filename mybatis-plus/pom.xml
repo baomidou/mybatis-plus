@@ -31,9 +31,7 @@
 	</scm>
 
 	<properties>
-		<!-- 
 		<gpg.keyname>F4B46FB9</gpg.keyname>
-		 -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<mybatis-spring.version>1.3.0</mybatis-spring.version>
 		<mybatis.version>3.4.1</mybatis.version>
@@ -160,11 +158,9 @@
 								<goals>
 									<goal>jar</goal>
 								</goals>
-								<!-- 
 								<configuration>
 									<additionalparam>-Xdoclint:none</additionalparam>
 								</configuration>
-								 -->
 							</execution>
 						</executions>
 					</plugin>

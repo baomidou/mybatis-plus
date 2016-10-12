@@ -694,20 +694,22 @@ public class AutoSqlInjector implements ISqlInjector {
 		if (sqlCommandType == SqlCommandType.INSERT && fieldInfo.getFieldStrategy() == FieldStrategy.FILL) {
 			return "";
 		}
-		if (fieldInfo.getFieldStrategy() == FieldStrategy.NOT_NULL) {
-			if (colse) {
-				return "</if>";
-			} else {
-				return String.format("\n\t<if test=\"%s!=null\">", property);
-			}
+		if (fieldInfo.getFieldStrategy() == FieldStrategy.IGNORED) {
+			return "";
 		} else if (fieldInfo.getFieldStrategy() == FieldStrategy.NOT_EMPTY) {
 			if (colse) {
 				return "</if>";
 			} else {
 				return String.format("\n\t<if test=\"%s!=null and %s!=''\">", property, property);
 			}
+		} else {
+			//FieldStrategy.NOT_NULL
+			if (colse) {
+				return "</if>";
+			} else {
+				return String.format("\n\t<if test=\"%s!=null\">", property);
+			}
 		}
-		return "";
 	}
 	
 	protected String convertIfTagInsert(TableFieldInfo fieldInfo, boolean colse) {
