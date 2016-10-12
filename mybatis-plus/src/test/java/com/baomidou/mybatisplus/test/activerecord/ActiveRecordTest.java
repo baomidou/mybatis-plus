@@ -19,7 +19,6 @@ import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.activerecord.Record;
 import com.baomidou.mybatisplus.test.mysql.TestMapper;
 import com.baomidou.mybatisplus.test.mysql.entity.Test;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 import java.io.InputStream;
 import java.util.List;
@@ -40,8 +39,10 @@ public class ActiveRecordTest {
         InputStream in = TestMapper.class.getClassLoader().getResourceAsStream("mysql-config.xml");
         MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
         mf.build(in);
-        List<Record> test = TableInfoHelper.getTable(Test.class).select().all();
-        System.out.println(test);
+        List<Record> test1 = Test.select().all();
+        List<Record> test2 = Test.db().select().all();
+        System.out.println(test1);
+        System.out.println(test2);
 	}
 
 }

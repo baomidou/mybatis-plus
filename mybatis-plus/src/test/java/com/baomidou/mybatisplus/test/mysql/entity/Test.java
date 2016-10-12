@@ -15,11 +15,16 @@
  */
 package com.baomidou.mybatisplus.test.mysql.entity;
 
-import java.io.Serializable;
-
+import com.baomidou.mybatisplus.activerecord.Query;
+import com.baomidou.mybatisplus.activerecord.Record;
+import com.baomidou.mybatisplus.activerecord.Table;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
+
+import java.io.Serializable;
+
+import static com.baomidou.mybatisplus.toolkit.TableInfoHelper.getTable;
 
 /**
  * <p>
@@ -65,4 +70,17 @@ public class Test implements Serializable {
 	public void setType(String type) {
 		this.type = type;
 	}
+
+	public static Query select(String... columns){
+        return db().select(columns);
+    }
+	public static void update(Record record){
+        db().update(record);
+    }
+	public static void delete(Record record){
+        db().delete(record);
+    }
+	public static Table db(){
+        return getTable(Test.class);
+    }
 }
