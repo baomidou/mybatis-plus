@@ -48,7 +48,7 @@ public final class Table {
 		this.columns = columns;
 		this.relations = relations;
 		this.hooks = hooks;
-		this.primaryKey = name.concat("." + tableInfo.getKeyProperty());
+		this.primaryKey = name.concat("." + tableInfo.getKeyColumn());
 	}
 
 	/**
