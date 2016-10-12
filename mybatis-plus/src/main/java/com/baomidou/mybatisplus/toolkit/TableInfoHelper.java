@@ -205,7 +205,9 @@ public class TableInfoHelper {
 		 */
 		tableInfoCache.put(clazz.getName(), tableInfo);
 		classNameCache.put(tableName, clazz.getName());
-		tableCache.put(clazz.getName(), activeRecordDd.active(tableName));
+		if (null != activeRecordDd) {
+			tableCache.put(clazz.getName(), activeRecordDd.active(tableName));
+		}
 		return tableInfo;
 	}
 
