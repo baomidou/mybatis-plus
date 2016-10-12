@@ -64,6 +64,7 @@ import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.reflection.TypeParameterResolver;
 import org.apache.ibatis.scripting.LanguageDriver;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.JdbcType;
@@ -101,11 +102,11 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
     private final Set<Class<? extends Annotation>> sqlAnnotationTypes = new HashSet<Class<? extends Annotation>>();
     private final Set<Class<? extends Annotation>> sqlProviderAnnotationTypes = new HashSet<Class<? extends Annotation>>();
 
-    private MybatisConfiguration configuration;
+    private Configuration configuration;
     private MapperBuilderAssistant assistant;
     private Class<?> type;
 
-    public MybatisMapperAnnotationBuilder(MybatisConfiguration configuration, Class<?> type) {
+    public MybatisMapperAnnotationBuilder(Configuration configuration, Class<?> type) {
         super(configuration, type);
         String resource = type.getName().replace('.', '/') + ".java (best guess)";
         this.assistant = new MapperBuilderAssistant(configuration, resource);
@@ -192,7 +193,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                 flag = false;
             }
             if (inputStream != null) {
-                MybatisXMLMapperBuilder xmlParser = new MybatisXMLMapperBuilder(inputStream, (MybatisConfiguration) assistant.getConfiguration(), xmlResource,
+                MybatisXMLMapperBuilder xmlParser = new MybatisXMLMapperBuilder(inputStream, assistant.getConfiguration(), xmlResource,
                         configuration.getSqlFragments(), type.getName());
                 xmlParser.parse();
             }

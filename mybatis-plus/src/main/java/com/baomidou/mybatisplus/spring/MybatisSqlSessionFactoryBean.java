@@ -579,7 +579,7 @@ public class MybatisSqlSessionFactoryBean
                 try {
                     // TODO
                     MybatisXMLMapperBuilder xmlMapperBuilder = new MybatisXMLMapperBuilder(
-                            mapperLocation.getInputStream(), (MybatisConfiguration) configuration, mapperLocation.toString(),
+                            mapperLocation.getInputStream(), configuration, mapperLocation.toString(),
                             configuration.getSqlFragments());
                     xmlMapperBuilder.parse();
                 } catch (Exception e) {
