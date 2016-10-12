@@ -1,11 +1,5 @@
 package com.baomidou.mybatisplus.activerecord;
 
-import com.baomidou.mybatisplus.activerecord.ex.IllegalFieldNameException;
-import com.baomidou.mybatisplus.activerecord.ex.SqlExecuteException;
-import com.baomidou.mybatisplus.activerecord.sql.SqlBuilder;
-import com.baomidou.mybatisplus.activerecord.sql.TSqlBuilder;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
-
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,6 +13,13 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import com.baomidou.mybatisplus.activerecord.ex.IllegalFieldNameException;
+import com.baomidou.mybatisplus.activerecord.ex.SqlExecuteException;
+import com.baomidou.mybatisplus.activerecord.sql.SqlBuilder;
+import com.baomidou.mybatisplus.activerecord.sql.TSqlBuilder;
+import com.baomidou.mybatisplus.toolkit.TableInfo;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**
  * 表对象。
@@ -34,17 +35,20 @@ public final class Table {
 	final Map<String, Lambda> hooks;
 	final String primaryKey;
 
+	private String className;
 	private String foreignTable;
 	private final Map<String, Integer> foreignKeys = new HashMap<String, Integer>();
 
 	Table(DB dbo, String name, Map<String, Integer> columns, Map<String, Association> relations,
 			Map<String, Lambda> hooks) {
+		TableInfo tableInfo = TableInfoHelper.getTableInfo(name);
+		this.className = tableInfo.getClassName();
 		this.dbo = dbo;
-		this.name = name;
+		this.name = tableInfo.getTableName();
 		this.columns = columns;
 		this.relations = relations;
 		this.hooks = hooks;
-		this.primaryKey = name.concat("."+TableInfoHelper.getTableInfo(name).getKeyProperty());
+		this.primaryKey = name.concat("." + tableInfo.getKeyProperty());
 	}
 
 	/**
@@ -317,4 +321,13 @@ public final class Table {
 	public List<Record> paging(int page, int size) {
 		return select().limit(size).offset(page * size).all();
 	}
+
+	public String getClassName() {
+		return className;
+	}
+
+	public void setClassName(String className) {
+		this.className = className;
+	}
+
 }

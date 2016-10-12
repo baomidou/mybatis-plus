@@ -67,6 +67,8 @@ public class TableInfo {
 	 */
 	private List<TableFieldInfo> fieldList;
 
+	private String className;
+
 	public IdType getIdType() {
 		return idType;
 	}
@@ -121,6 +123,14 @@ public class TableInfo {
 
 	public void setFieldList(List<TableFieldInfo> fieldList) {
 		this.fieldList = fieldList;
+	}
+
+	public String getClassName() {
+		return className;
+	}
+
+	public void setClassName(String className) {
+		this.className = className;
 	}
 
 }

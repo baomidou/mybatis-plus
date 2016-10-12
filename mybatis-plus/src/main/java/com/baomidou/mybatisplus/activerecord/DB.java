@@ -59,6 +59,9 @@ public final class DB {
 	}
 
 	public static DB open(DataSource pool) {
+		if (null == pool) {
+			return null;
+		}
 		try {
 			Connection base = pool.getConnection();
 			for (Dialect dialect : dialects) {

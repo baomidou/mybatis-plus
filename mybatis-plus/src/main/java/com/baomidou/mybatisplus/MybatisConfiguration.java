@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus;
 
+import com.baomidou.mybatisplus.activerecord.DB;
 import com.baomidou.mybatisplus.annotations.FieldStrategy;
 import com.baomidou.mybatisplus.mapper.AutoSqlInjector;
 import com.baomidou.mybatisplus.mapper.DBType;
@@ -83,11 +84,14 @@ public class MybatisConfiguration extends Configuration {
 	 * 是否刷新mapper
 	 */
 	public static boolean IS_REFRESH = false;
+	
+	private DB activeRecordDd;
 
 	/**
 	 * 初始化调用
 	 */
-	public MybatisConfiguration() {
+	public MybatisConfiguration(DB activeRecordDd) {
+		this.activeRecordDd = activeRecordDd;
 		System.err.println("mybatis-plus init success.");
 	}
 
@@ -158,6 +162,14 @@ public class MybatisConfiguration extends Configuration {
 	@Override
 	public boolean hasMapper(Class<?> type) {
 		return mybatisMapperRegistry.hasMapper(type);
+	}
+
+	public DB getActiveRecordDd() {
+		return activeRecordDd;
+	}
+
+	public void setActiveRecordDd(DB activeRecordDd) {
+		this.activeRecordDd = activeRecordDd;
 	}
 
 }

@@ -15,16 +15,18 @@
  */
 package com.baomidou.mybatisplus.spring;
 
-import com.baomidou.mybatisplus.MybatisConfiguration;
-import com.baomidou.mybatisplus.MybatisXMLConfigBuilder;
-import com.baomidou.mybatisplus.MybatisXMLMapperBuilder;
-import com.baomidou.mybatisplus.activerecord.DB;
-import com.baomidou.mybatisplus.annotations.FieldStrategy;
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.mapper.DBType;
-import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
-import com.baomidou.mybatisplus.mapper.ISqlInjector;
-import com.baomidou.mybatisplus.toolkit.PackageHelper;
+import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.Assert.state;
+import static org.springframework.util.ObjectUtils.isEmpty;
+import static org.springframework.util.StringUtils.hasLength;
+import static org.springframework.util.StringUtils.tokenizeToStringArray;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Properties;
+
+import javax.sql.DataSource;
+
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.io.VFS;
@@ -51,16 +53,16 @@ import org.springframework.core.NestedIOException;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
-import javax.sql.DataSource;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.Properties;
-
-import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.Assert.state;
-import static org.springframework.util.ObjectUtils.isEmpty;
-import static org.springframework.util.StringUtils.hasLength;
-import static org.springframework.util.StringUtils.tokenizeToStringArray;
+import com.baomidou.mybatisplus.MybatisConfiguration;
+import com.baomidou.mybatisplus.MybatisXMLConfigBuilder;
+import com.baomidou.mybatisplus.MybatisXMLMapperBuilder;
+import com.baomidou.mybatisplus.activerecord.DB;
+import com.baomidou.mybatisplus.annotations.FieldStrategy;
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.mapper.DBType;
+import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
+import com.baomidou.mybatisplus.mapper.ISqlInjector;
+import com.baomidou.mybatisplus.toolkit.PackageHelper;
 
 /**
  * <p>
@@ -454,8 +456,9 @@ public class MybatisSqlSessionFactoryBean
 				configuration.getVariables().putAll(this.configurationProperties);
 			}
 		} else if (this.configLocation != null) {
+			//TODO
 			xmlConfigBuilder = new MybatisXMLConfigBuilder(this.configLocation.getInputStream(), null,
-					this.configurationProperties);
+					this.configurationProperties, this.dataSource);
 			configuration = xmlConfigBuilder.getConfiguration();
 		} else {
 			if (LOGGER.isDebugEnabled()) {
@@ -463,7 +466,7 @@ public class MybatisSqlSessionFactoryBean
 						"Property `configuration` or 'configLocation' not specified, using default MyBatis Configuration");
 			}
 			// TODO 使用自定义配置
-			configuration = new MybatisConfiguration();
+			configuration = new MybatisConfiguration(DB.open(this.dataSource));
 			configuration.setVariables(this.configurationProperties);
 		}
 
@@ -599,8 +602,6 @@ public class MybatisSqlSessionFactoryBean
 			}
 		}
 
-		//TODO 启动 ActiveRecord
-		DB.open(this.dataSource);
 		return this.sqlSessionFactoryBuilder.build(configuration);
 	}
 

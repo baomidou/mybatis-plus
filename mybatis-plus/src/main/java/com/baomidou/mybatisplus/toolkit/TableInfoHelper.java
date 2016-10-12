@@ -15,13 +15,6 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
-import com.baomidou.mybatisplus.MybatisConfiguration;
-import com.baomidou.mybatisplus.activerecord.ex.IllegalTableNameException;
-import com.baomidou.mybatisplus.annotations.TableField;
-import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.annotations.TableName;
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -29,6 +22,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import com.baomidou.mybatisplus.MybatisConfiguration;
+import com.baomidou.mybatisplus.activerecord.DB;
+import com.baomidou.mybatisplus.activerecord.Table;
+import com.baomidou.mybatisplus.activerecord.ex.IllegalTableNameException;
+import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotations.TableId;
+import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 
 /**
  * <p>
@@ -43,11 +45,17 @@ public class TableInfoHelper {
 	/**
 	 * 缓存反射类表信息
 	 */
-	private static Map<String, TableInfo> tableInfoCache = new ConcurrentHashMap<String, TableInfo>();
+	private static final Map<String, TableInfo> tableInfoCache = new ConcurrentHashMap<String, TableInfo>();
+
 	/**
 	 * 缓存表对应实体类className
 	 */
-	private static Map<String, String> classNameCache = new ConcurrentHashMap<String, String>();
+	private static final Map<String, String> classNameCache = new ConcurrentHashMap<String, String>();
+
+	/**
+	 * 缓存 Table 信息
+	 */
+	private static final Map<String, Table> tableCache = new ConcurrentHashMap<String, Table>();
 
 	/**
 	 * <p>
@@ -79,6 +87,10 @@ public class TableInfoHelper {
 		return tableInfoCache.get(className);
 	}
 
+	public static Table getTable(Class<?> clazz) {
+		return tableCache.get(clazz.getName());
+	}
+
 	/**
 	 * <p>
 	 * 实体类反射获取表信息【初始化】
@@ -88,12 +100,13 @@ public class TableInfoHelper {
 	 *            反射实体类
 	 * @return
 	 */
-	public synchronized static TableInfo initTableInfo(Class<?> clazz) {
+	public synchronized static TableInfo initTableInfo(Class<?> clazz, DB activeRecordDd) {
 		TableInfo ti = tableInfoCache.get(clazz.getName());
 		if (ti != null) {
 			return ti;
 		}
 		TableInfo tableInfo = new TableInfo();
+		tableInfo.setClassName(clazz.getName());
 
 		/* 表名 */
 		TableName table = clazz.getAnnotation(TableName.class);
@@ -192,6 +205,7 @@ public class TableInfoHelper {
 		 */
 		tableInfoCache.put(clazz.getName(), tableInfo);
 		classNameCache.put(tableName, clazz.getName());
+		tableCache.put(clazz.getName(), activeRecordDd.active(tableName));
 		return tableInfo;
 	}
 

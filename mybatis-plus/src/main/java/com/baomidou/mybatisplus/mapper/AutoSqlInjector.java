@@ -52,7 +52,7 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 public class AutoSqlInjector implements ISqlInjector {
 	protected static final Logger logger = Logger.getLogger("AutoSqlInjector");
 
-	protected Configuration configuration;
+	protected MybatisConfiguration configuration;
 
 	protected LanguageDriver languageDriver;
 
@@ -80,7 +80,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * 注入单点 crudSql
 	 */
 	public void inject(Configuration configuration, MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
-		this.configuration = configuration;
+		this.configuration = (MybatisConfiguration) configuration;
 		this.builderAssistant = builderAssistant;
 		this.languageDriver = configuration.getDefaultScriptingLanuageInstance();
 		this.dbType = MybatisConfiguration.DB_TYPE;
@@ -89,7 +89,7 @@ public class AutoSqlInjector implements ISqlInjector {
 			MybatisConfiguration.DB_COLUMN_UNDERLINE = true;
 		}
 		Class<?> modelClass = extractModelClass(mapperClass);
-		TableInfo table = TableInfoHelper.initTableInfo(modelClass);
+		TableInfo table = TableInfoHelper.initTableInfo(modelClass, this.configuration.getActiveRecordDd());
 
 		/**
 		 * 没有指定主键，默认方法不能使用
