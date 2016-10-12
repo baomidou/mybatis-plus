@@ -16,7 +16,8 @@
 package com.baomidou.mybatisplus.mapper;
 
 import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.apache.ibatis.session.Configuration;
+
+import com.baomidou.mybatisplus.MybatisConfiguration;
 
 /**
  * <p>
@@ -33,7 +34,7 @@ public interface ISqlInjector {
 	 * 注入 SQL
 	 * </p>
 	 */
-	void inject(Configuration configuration, MapperBuilderAssistant builderAssistant, Class<?> mapperClass);
+	void inject(MybatisConfiguration configuration, MapperBuilderAssistant builderAssistant, Class<?> mapperClass);
 
 	/**
 	 * <p>
@@ -43,6 +44,6 @@ public interface ISqlInjector {
 	 * ps:注入基本SQL后给予标识 注入过不再注入
 	 * </p>
 	 */
-	void inspectInject(Configuration configuration, MapperBuilderAssistant builderAssistant, Class<?> mapperClass);
+	void inspectInject(MybatisConfiguration configuration, MapperBuilderAssistant builderAssistant, Class<?> mapperClass);
 
 }

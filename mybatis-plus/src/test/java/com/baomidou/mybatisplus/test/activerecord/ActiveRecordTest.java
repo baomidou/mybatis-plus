@@ -15,14 +15,14 @@
  */
 package com.baomidou.mybatisplus.test.activerecord;
 
-import java.io.InputStream;
-import java.util.List;
-
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.activerecord.Record;
 import com.baomidou.mybatisplus.test.mysql.TestMapper;
 import com.baomidou.mybatisplus.test.mysql.entity.Test;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+
+import java.io.InputStream;
+import java.util.List;
 
 /**
  * <p>
@@ -35,11 +35,22 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 public class ActiveRecordTest {
 
 	public static void main(String[] args) {
-		// 加载配置文件
-		InputStream in = TestMapper.class.getClassLoader().getResourceAsStream("mysql-config.xml");
-		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
-		mf.build(in);
-		List<Record> test = TableInfoHelper.getTable(Test.class).select().all();
-		System.out.println(test);
+
+
+		/*DB db = DB.open("jdbc:mysql://localhost/mybatis-plus", "root", "521");
+		TableInfoHelper.initTableInfo(Test.class,db);
+		List<Record> test1 = db.active("test").select().all();
+		System.out.println(test1);
+
+		*//* 未找到异常 *//*
+		db.active("test1").select().all();*/
+
+
+        // 加载配置文件
+        InputStream in = TestMapper.class.getClassLoader().getResourceAsStream("mysql-config.xml");
+        MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
+        mf.build(in);
+        List<Record> test = TableInfoHelper.getTable(Test.class).select().all();
+        System.out.println(test);
 	}
 }

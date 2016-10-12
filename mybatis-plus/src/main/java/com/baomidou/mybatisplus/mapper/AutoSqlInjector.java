@@ -15,13 +15,13 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
-
+import com.baomidou.mybatisplus.MybatisConfiguration;
+import com.baomidou.mybatisplus.activerecord.DB;
+import com.baomidou.mybatisplus.annotations.FieldStrategy;
+import com.baomidou.mybatisplus.annotations.IdType;
+import com.baomidou.mybatisplus.toolkit.TableFieldInfo;
+import com.baomidou.mybatisplus.toolkit.TableInfo;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -34,12 +34,13 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.scripting.defaults.RawSqlSource;
 import org.apache.ibatis.session.Configuration;
 
-import com.baomidou.mybatisplus.MybatisConfiguration;
-import com.baomidou.mybatisplus.annotations.FieldStrategy;
-import com.baomidou.mybatisplus.annotations.IdType;
-import com.baomidou.mybatisplus.toolkit.TableFieldInfo;
-import com.baomidou.mybatisplus.toolkit.TableInfo;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import javax.sql.DataSource;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * <p>
@@ -67,7 +68,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * @param builderAssistant
 	 * @param mapperClass
 	 */
-	public void inspectInject(Configuration configuration, MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
+	public void inspectInject(MybatisConfiguration configuration, MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
 		String className = mapperClass.toString();
 		Set<String> mapperRegistryCache = MybatisConfiguration.MAPPER_REGISTRY_CACHE;
 		if (!mapperRegistryCache.contains(className)) {
@@ -79,8 +80,8 @@ public class AutoSqlInjector implements ISqlInjector {
 	/**
 	 * 注入单点 crudSql
 	 */
-	public void inject(Configuration configuration, MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
-		this.configuration = (MybatisConfiguration) configuration;
+	public void inject(MybatisConfiguration configuration, MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
+		this.configuration = configuration;
 		this.builderAssistant = builderAssistant;
 		this.languageDriver = configuration.getDefaultScriptingLanuageInstance();
 		this.dbType = MybatisConfiguration.DB_TYPE;
@@ -89,7 +90,8 @@ public class AutoSqlInjector implements ISqlInjector {
 			MybatisConfiguration.DB_COLUMN_UNDERLINE = true;
 		}
 		Class<?> modelClass = extractModelClass(mapperClass);
-		TableInfo table = TableInfoHelper.initTableInfo(modelClass, this.configuration.getActiveRecordDd());
+		DataSource dataSource = configuration.getEnvironment().getDataSource();
+		TableInfo table = TableInfoHelper.initTableInfo(modelClass, DB.open(dataSource));
 
 		/**
 		 * 没有指定主键，默认方法不能使用
@@ -496,10 +498,12 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * @param table
 	 */
 	protected void injectSelectListSql(SqlMethod sqlMethod, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
-		String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(table, true), table.getTableName(), sqlWhereEntityWrapper(table));
+		String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(table, true), table.getTableName(),
+				sqlWhereEntityWrapper(table));
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
 		this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, table);
 	}
+
 	/**
 	 * <p>
 	 * 注入EntityWrapper查询总记录数 SQL 语句
@@ -682,8 +686,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 *            是否闭合标签
 	 * @return
 	 */
-	protected String convertIfTag(SqlCommandType sqlCommandType, TableFieldInfo fieldInfo, String prefix,
-			boolean colse) {
+	protected String convertIfTag(SqlCommandType sqlCommandType, TableFieldInfo fieldInfo, String prefix, boolean colse) {
 		/* 前缀处理 */
 		String property = fieldInfo.getProperty();
 		if (null != prefix) {
@@ -709,7 +712,7 @@ public class AutoSqlInjector implements ISqlInjector {
 		}
 		return "";
 	}
-	
+
 	protected String convertIfTagInsert(TableFieldInfo fieldInfo, boolean colse) {
 		return convertIfTag(SqlCommandType.INSERT, fieldInfo, null, colse);
 	}

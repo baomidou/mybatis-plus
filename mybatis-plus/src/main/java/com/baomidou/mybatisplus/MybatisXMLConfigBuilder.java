@@ -43,8 +43,6 @@ import org.apache.ibatis.session.LocalCacheScope;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.type.JdbcType;
 
-import com.baomidou.mybatisplus.activerecord.DB;
-
 import javax.sql.DataSource;
 import java.io.InputStream;
 import java.io.Reader;
@@ -77,7 +75,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
     }
 
     public MybatisXMLConfigBuilder(Reader reader, String environment, Properties props) {
-        this(new XPathParser(reader, true, props, new XMLMapperEntityResolver()), environment, props, null);
+        this(new XPathParser(reader, true, props, new XMLMapperEntityResolver()), environment, props);
     }
 
     public MybatisXMLConfigBuilder(InputStream inputStream) {
@@ -89,16 +87,12 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
     }
 
     public MybatisXMLConfigBuilder(InputStream inputStream, String environment, Properties props) {
-        this(new XPathParser(inputStream, true, props, new XMLMapperEntityResolver()), environment, props, null);
-    }
-    
-    public MybatisXMLConfigBuilder(InputStream inputStream, String environment, Properties props, DataSource dataSource) {
-    	this(new XPathParser(inputStream, true, props, new XMLMapperEntityResolver()), environment, props, dataSource);
+        this(new XPathParser(inputStream, true, props, new XMLMapperEntityResolver()), environment, props);
     }
 
-    private MybatisXMLConfigBuilder(XPathParser parser, String environment, Properties props, DataSource dataSource) {
+    private MybatisXMLConfigBuilder(XPathParser parser, String environment, Properties props) {
         //TODO 自定义 Configuration
-        super(new MybatisConfiguration(DB.open(dataSource)));
+        super(new MybatisConfiguration());
         ErrorContext.instance().resource("SQL Mapper Configuration");
         this.configuration.setVariables(props);
         this.parsed = false;
@@ -387,7 +381,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
                 ErrorContext.instance().resource(resource);
                 InputStream inputStream = Resources.getResourceAsStream(resource);
                 //TODO
-                MybatisXMLMapperBuilder mapperParser = new MybatisXMLMapperBuilder(inputStream, configuration, resource,
+                MybatisXMLMapperBuilder mapperParser = new MybatisXMLMapperBuilder(inputStream, (MybatisConfiguration) configuration, resource,
                         configuration.getSqlFragments());
                 mapperParser.parse();
             }

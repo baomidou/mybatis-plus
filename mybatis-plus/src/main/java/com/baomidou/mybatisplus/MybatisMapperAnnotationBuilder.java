@@ -15,24 +15,7 @@
  */
 package com.baomidou.mybatisplus;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
-import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
+import com.baomidou.mybatisplus.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Arg;
 import org.apache.ibatis.annotations.CacheNamespace;
 import org.apache.ibatis.annotations.CacheNamespaceRef;
@@ -81,14 +64,29 @@ import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.reflection.TypeParameterResolver;
 import org.apache.ibatis.scripting.LanguageDriver;
-import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.UnknownTypeHandler;
 
-import com.baomidou.mybatisplus.mapper.BaseMapper;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
+import java.lang.reflect.GenericArrayType;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * <p>
@@ -103,11 +101,11 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
     private final Set<Class<? extends Annotation>> sqlAnnotationTypes = new HashSet<Class<? extends Annotation>>();
     private final Set<Class<? extends Annotation>> sqlProviderAnnotationTypes = new HashSet<Class<? extends Annotation>>();
 
-    private Configuration configuration;
+    private MybatisConfiguration configuration;
     private MapperBuilderAssistant assistant;
     private Class<?> type;
 
-    public MybatisMapperAnnotationBuilder(Configuration configuration, Class<?> type) {
+    public MybatisMapperAnnotationBuilder(MybatisConfiguration configuration, Class<?> type) {
         super(configuration, type);
         String resource = type.getName().replace('.', '/') + ".java (best guess)";
         this.assistant = new MapperBuilderAssistant(configuration, resource);
@@ -194,7 +192,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                 flag = false;
             }
             if (inputStream != null) {
-                MybatisXMLMapperBuilder xmlParser = new MybatisXMLMapperBuilder(inputStream, assistant.getConfiguration(), xmlResource,
+                MybatisXMLMapperBuilder xmlParser = new MybatisXMLMapperBuilder(inputStream, (MybatisConfiguration) assistant.getConfiguration(), xmlResource,
                         configuration.getSqlFragments(), type.getName());
                 xmlParser.parse();
             }
