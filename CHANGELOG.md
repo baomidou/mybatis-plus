@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## [v1.4.8] 2016.10.12
+
+1、insertOrUpdate增加主键空字符串判断
+2、支持Mybatis原生驼峰配置 mapUnderscoreToCamelCase 开关设置
+3、支持 TableField FieldStrategy 注解全局配置
+4、SelectOne、SelectCount方法支持EntityWrapper方式
+5、oracle 代码生成器支持 Integer Long Dobule 类型区分
+6、修复INPUT主键策略InsertOrUpdate方法Bug
+7、EntityWrapper IN 添加可变数组支持
+8、基础Mapper、Servcie通用方法PK参数类型更改至Serializable
+9、当selectOne结果集不唯一时,添加警告提示(需开启日志warn模式)
+10、baseService添加logger,子类直接调用logger不用重新定义(需slf4j依赖)
 
 ## [v1.4.7] 2016.09.27
 
@@ -14,13 +26,10 @@
 9、代码生成器新增实体常量生成支持
 10、CRUD 新增 insertOrUpdate 方法
 11、解决MessageFormat.format格式化数字类型sql错误
-12、添加EXISTS IN支持
+12、EntityWrapper添加 EXISTS、IN、BETWEEN AND(感谢D.Yang提出)方法支持
 13、支持 mysql5.7+ json enum 类型，代码生成
-14、支持无 xml 自动 curd
-15、完善原生加载顺序
-16、完善EntityWrapper(感谢D.Yang提出的BETWEEN AND)，其他
-
-
+14、支持无XML依然注入CRUD方法
+15、修改Mybatis原生配置文件加载顺序
 
 ## [v1.4.6] 2016.09.05
 
