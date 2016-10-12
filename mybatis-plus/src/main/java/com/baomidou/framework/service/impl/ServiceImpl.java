@@ -28,7 +28,6 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.List;
@@ -73,7 +72,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	 *            true 选择字段 false 不选择字段
 	 * @return boolean
 	 */
-	@Transactional(rollbackFor = Exception.class)
 	public boolean insertOrUpdate(T entity, boolean isSelective) {
 		if (null != entity) {
 			Class<?> cls = entity.getClass();
@@ -109,62 +107,50 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return insertOrUpdate(entity, true);
 	}
 
-	@Transactional(rollbackFor = Exception.class)
 	public boolean insert(T entity) {
 		return retBool(baseMapper.insert(entity));
 	}
 
-	@Transactional(rollbackFor = Exception.class)
 	public boolean insertSelective(T entity) {
 		return retBool(baseMapper.insertSelective(entity));
 	}
 
-	@Transactional(rollbackFor = Exception.class)
 	public boolean insertBatch(List<T> entityList) {
 		return retBool(baseMapper.insertBatch(entityList));
 	}
 
-	@Transactional(rollbackFor = Exception.class)
 	public boolean deleteById(Serializable id) {
 		return retBool(baseMapper.deleteById(id));
 	}
 
-	@Transactional(rollbackFor = Exception.class)
 	public boolean deleteByMap(Map<String, Object> columnMap) {
 		return retBool(baseMapper.deleteByMap(columnMap));
 	}
 
-	@Transactional(rollbackFor = Exception.class)
 	public boolean deleteSelective(T entity) {
 		return retBool(baseMapper.deleteSelective(entity));
 	}
 
-	@Transactional(rollbackFor = Exception.class)
 	public boolean deleteBatchIds(List<? extends Serializable> idList) {
 		return retBool(baseMapper.deleteBatchIds(idList));
 	}
 
-	@Transactional(rollbackFor = Exception.class)
 	public boolean updateById(T entity) {
 		return retBool(baseMapper.updateById(entity));
 	}
 
-	@Transactional(rollbackFor = Exception.class)
 	public boolean updateSelectiveById(T entity) {
 		return retBool(baseMapper.updateSelectiveById(entity));
 	}
 
-	@Transactional(rollbackFor = Exception.class)
 	public boolean update(T entity, T whereEntity) {
 		return retBool(baseMapper.update(entity, whereEntity));
 	}
 
-	@Transactional(rollbackFor = Exception.class)
 	public boolean updateSelective(T entity, T whereEntity) {
 		return retBool(baseMapper.updateSelective(entity, whereEntity));
 	}
 
-	@Transactional(rollbackFor = Exception.class)
 	public boolean updateBatchById(List<T> entityList) {
 		return retBool(baseMapper.updateBatchById(entityList));
 	}
