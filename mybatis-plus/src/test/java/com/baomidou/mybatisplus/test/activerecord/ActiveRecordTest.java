@@ -35,7 +35,7 @@ public class ActiveRecordTest {
 	public static void main(String[] args) {
 		TableInfoHelper.initTableInfo(Test.class);
 		DB db = DB.open("jdbc:mysql://localhost/mybatis-plus", "root", "123456");
-		List<Record> test = db.active("test1").select().all();
+		List<Record> test = db.active("test").select().all();
 		System.out.println(test);
 
 		/* 未找到异常 */
