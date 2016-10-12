@@ -15,13 +15,15 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import com.baomidou.mybatisplus.MybatisConfiguration;
-import com.baomidou.mybatisplus.activerecord.DB;
-import com.baomidou.mybatisplus.annotations.FieldStrategy;
-import com.baomidou.mybatisplus.annotations.IdType;
-import com.baomidou.mybatisplus.toolkit.TableFieldInfo;
-import com.baomidou.mybatisplus.toolkit.TableInfo;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
+
+import javax.sql.DataSource;
+
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -34,13 +36,13 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.scripting.defaults.RawSqlSource;
 import org.apache.ibatis.session.Configuration;
 
-import javax.sql.DataSource;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
+import com.baomidou.mybatisplus.MybatisConfiguration;
+import com.baomidou.mybatisplus.activerecord.DB;
+import com.baomidou.mybatisplus.annotations.FieldStrategy;
+import com.baomidou.mybatisplus.annotations.IdType;
+import com.baomidou.mybatisplus.toolkit.TableFieldInfo;
+import com.baomidou.mybatisplus.toolkit.TableInfo;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**
  * <p>
@@ -53,7 +55,7 @@ import java.util.logging.Logger;
 public class AutoSqlInjector implements ISqlInjector {
 	protected static final Logger logger = Logger.getLogger("AutoSqlInjector");
 
-	protected MybatisConfiguration configuration;
+	protected Configuration configuration;
 
 	protected LanguageDriver languageDriver;
 
@@ -68,7 +70,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * @param builderAssistant
 	 * @param mapperClass
 	 */
-	public void inspectInject(MybatisConfiguration configuration, MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
+	public void inspectInject(Configuration configuration, MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
 		String className = mapperClass.toString();
 		Set<String> mapperRegistryCache = MybatisConfiguration.MAPPER_REGISTRY_CACHE;
 		if (!mapperRegistryCache.contains(className)) {
@@ -80,7 +82,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	/**
 	 * 注入单点 crudSql
 	 */
-	public void inject(MybatisConfiguration configuration, MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
+	public void inject(Configuration configuration, MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
 		this.configuration = configuration;
 		this.builderAssistant = builderAssistant;
 		this.languageDriver = configuration.getDefaultScriptingLanuageInstance();

@@ -42,14 +42,6 @@ public class ActiveRecordTest {
         mf.build(in);
         List<Record> test = TableInfoHelper.getTable(Test.class).select().all();
         System.out.println(test);
-
-		/*DB db = DB.open("jdbc:mysql://localhost/mybatis-plus", "root", "521");
-		TableInfoHelper.initTableInfo(Test.class,db);
-		List<Record> test1 = db.active("test").select().all();
-		System.out.println(test1);
-
-		*//* 未找到异常 *//*
-		db.active("test1").select().all();*/
-
 	}
+
 }
