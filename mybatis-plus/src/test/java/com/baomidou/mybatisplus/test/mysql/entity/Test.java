@@ -71,15 +71,22 @@ public class Test implements Serializable {
 		this.type = type;
 	}
 
-	public static Query select(String... columns){
-        return db().select(columns);
+	public static Record insert(Record record){
+        return db().create(record);
     }
+
 	public static void update(Record record){
         db().update(record);
     }
+
 	public static void delete(Record record){
         db().delete(record);
     }
+
+    public static Query select(String... columns){
+        return db().select(columns);
+    }
+
 	public static Table db(){
         return getTable(Test.class);
     }
