@@ -36,6 +36,12 @@ public class ActiveRecordTest {
 
 	public static void main(String[] args) {
 
+        // 加载配置文件
+        InputStream in = TestMapper.class.getClassLoader().getResourceAsStream("mysql-config.xml");
+        MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
+        mf.build(in);
+        List<Record> test = TableInfoHelper.getTable(Test.class).select().all();
+        System.out.println(test);
 
 		/*DB db = DB.open("jdbc:mysql://localhost/mybatis-plus", "root", "521");
 		TableInfoHelper.initTableInfo(Test.class,db);
@@ -45,12 +51,5 @@ public class ActiveRecordTest {
 		*//* 未找到异常 *//*
 		db.active("test1").select().all();*/
 
-
-        // 加载配置文件
-        InputStream in = TestMapper.class.getClassLoader().getResourceAsStream("mysql-config.xml");
-        MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
-        mf.build(in);
-        List<Record> test = TableInfoHelper.getTable(Test.class).select().all();
-        System.out.println(test);
 	}
 }
