@@ -68,7 +68,7 @@ public class TableInfoHelper {
 	 * <p>
 	 *
 	 * @param tableName
-	 *            反射实体类
+	 *            数据库表名
 	 * @return
 	 */
 	public static TableInfo getTableInfo(String tableName) {
