@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
+import org.apache.ibatis.builder.BaseBuilder;
 import org.apache.ibatis.builder.BuilderException;
 import org.apache.ibatis.builder.CacheRefResolver;
 import org.apache.ibatis.builder.IncompleteElementException;
@@ -34,6 +35,7 @@ import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.parsing.XNode;
 import org.apache.ibatis.parsing.XPathParser;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 
@@ -59,7 +61,7 @@ import java.util.Properties;
  * @author Clinton Begin hubin
  * @Date 2016-06-13
  */
-public class MybatisXMLMapperBuilder extends MybatisBaseBuilder {
+public class MybatisXMLMapperBuilder extends BaseBuilder {
 
 	private XPathParser parser;
 	private MapperBuilderAssistant builderAssistant;
@@ -67,32 +69,32 @@ public class MybatisXMLMapperBuilder extends MybatisBaseBuilder {
 	private String resource;
 
 	@Deprecated
-	public MybatisXMLMapperBuilder(Reader reader, MybatisConfiguration configuration, String resource,
-			Map<String, XNode> sqlFragments, String namespace) {
+	public MybatisXMLMapperBuilder(Reader reader, Configuration configuration, String resource,
+								   Map<String, XNode> sqlFragments, String namespace) {
 		this(reader, configuration, resource, sqlFragments);
 		this.builderAssistant.setCurrentNamespace(namespace);
 	}
 
 	@Deprecated
-	public MybatisXMLMapperBuilder(Reader reader, MybatisConfiguration configuration, String resource,
+	public MybatisXMLMapperBuilder(Reader reader, Configuration configuration, String resource,
 			Map<String, XNode> sqlFragments) {
 		this(new XPathParser(reader, true, configuration.getVariables(), new XMLMapperEntityResolver()), configuration,
 				resource, sqlFragments);
 	}
 
-	public MybatisXMLMapperBuilder(InputStream inputStream, MybatisConfiguration configuration, String resource,
+	public MybatisXMLMapperBuilder(InputStream inputStream, Configuration configuration, String resource,
 			Map<String, XNode> sqlFragments, String namespace) {
 		this(inputStream, configuration, resource, sqlFragments);
 		this.builderAssistant.setCurrentNamespace(namespace);
 	}
 
-	public MybatisXMLMapperBuilder(InputStream inputStream, MybatisConfiguration configuration, String resource,
+	public MybatisXMLMapperBuilder(InputStream inputStream, Configuration configuration, String resource,
 			Map<String, XNode> sqlFragments) {
 		this(new XPathParser(inputStream, true, configuration.getVariables(), new XMLMapperEntityResolver()),
 				configuration, resource, sqlFragments);
 	}
 
-	private MybatisXMLMapperBuilder(XPathParser parser, MybatisConfiguration configuration, String resource,
+	private MybatisXMLMapperBuilder(XPathParser parser, Configuration configuration, String resource,
 			Map<String, XNode> sqlFragments) {
 		super(configuration);
 		this.builderAssistant = new MapperBuilderAssistant(configuration, resource);

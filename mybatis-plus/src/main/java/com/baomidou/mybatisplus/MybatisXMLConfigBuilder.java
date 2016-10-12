@@ -381,7 +381,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
                 ErrorContext.instance().resource(resource);
                 InputStream inputStream = Resources.getResourceAsStream(resource);
                 //TODO
-                MybatisXMLMapperBuilder mapperParser = new MybatisXMLMapperBuilder(inputStream, (MybatisConfiguration) configuration, resource,
+                MybatisXMLMapperBuilder mapperParser = new MybatisXMLMapperBuilder(inputStream, configuration, resource,
                         configuration.getSqlFragments());
                 mapperParser.parse();
             }
