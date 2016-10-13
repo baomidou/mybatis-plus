@@ -17,11 +17,17 @@ import javax.sql.DataSource;
  */
 public class MybatisActiveRecordConnect {
 
-	// 工厂
+	/*
+	 * Mybatis SqlSessionFactory
+	 */
 	protected SqlSessionFactory factory;
-	// 配置
+	/*
+	 * Mybatis Configuration
+	 */
 	protected Configuration configuration;
-	// 连接
+	/*
+	 * Mybatis DataSource
+	 */
 	protected DataSource dataSource;
 
 	public MybatisActiveRecordConnect(SqlSessionFactory factory) {
@@ -31,10 +37,9 @@ public class MybatisActiveRecordConnect {
 	}
 
 	/**
-	 * 获取连接
-	 * <p>
+	 * 获取Mybatis Transaction(jdbc调用)
 	 *
-	 * @return
+	 * @return Transaction
 	 */
 	public Transaction getTransaction() {
 		Environment environment = configuration.getEnvironment();

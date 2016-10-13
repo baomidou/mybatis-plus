@@ -20,7 +20,9 @@ import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.activerecord.DB;
 import com.baomidou.mybatisplus.activerecord.Record;
 import com.baomidou.mybatisplus.test.mysql.TestMapper;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.junit.Test;
 
 import java.io.InputStream;
 import java.util.List;
@@ -31,11 +33,15 @@ import java.util.List;
  * </p>
  * 
  * @author Caratacus
- * @date 2016-10-11
+ * @date 2016-10-13
  */
 public class ActiveRecordTest {
 
-	public static void main(String[] args) {
+	/**
+	 * 原生Mybatis加载
+	 */
+	@Test
+	public void m1() {
 		// 加载配置文件
 		InputStream inputStream = TestMapper.class.getClassLoader().getResourceAsStream("mysql-config.xml");
 		MybatisSessionFactoryBuilder factoryBuilder = new MybatisSessionFactoryBuilder();
@@ -44,4 +50,17 @@ public class ActiveRecordTest {
 		List<Record> records = db.active("test").select().all();
 		System.out.println(records);
 	}
+
+	/**
+	 * 原生JDBC加载
+	 */
+	@Test
+	public void m2() {
+		// jdbc原生没有缓存tableinfo信息,这里做初始化工作
+		TableInfoHelper.initTableInfo(com.baomidou.mybatisplus.test.mysql.entity.Test.class);
+		DB db = MybatisActiveRecord.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/mybatis-plus", "root", "521");
+		List<Record> records = db.active("test").select().all();
+		System.out.println(records);
+	}
+
 }

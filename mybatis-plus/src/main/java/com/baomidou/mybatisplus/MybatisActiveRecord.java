@@ -63,7 +63,7 @@ public class MybatisActiveRecord {
 	 * @param password
 	 * @return DB
 	 */
-	public DB open(String driver, String url, String username, String password) {
+	public static DB open(String driver, String url, String username, String password) {
 		return connector.open(driver, url, username, password);
 	}
 
