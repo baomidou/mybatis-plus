@@ -15,7 +15,7 @@
  */
 package com.baomidou.mybatisplus.test.mysql.entity;
 
-import com.baomidou.mybatisplus.activerecord.Entity;
+import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
@@ -29,7 +29,7 @@ import com.baomidou.mybatisplus.annotations.TableName;
  * @Date 2016-09-25
  */
 @TableName("test")
-public class Test extends Entity<Test> {
+public class Test extends Model<Test> {
 
 	@TableField(exist = false)
 	private static final long serialVersionUID = 1L;

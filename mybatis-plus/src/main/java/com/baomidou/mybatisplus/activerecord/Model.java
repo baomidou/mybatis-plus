@@ -17,7 +17,6 @@ package com.baomidou.mybatisplus.activerecord;
 
 import java.io.Serializable;
 
-import com.baomidou.mybatisplus.test.mysql.entity.Test;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**
@@ -29,41 +28,14 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
  * @Date 2016-10-12
  */
 @SuppressWarnings({ "serial", "rawtypes" })
-public abstract class Entity<M extends Entity> implements Serializable {
+public abstract class Model<M extends Model> implements Serializable {
 
-	/**
-	 * 插入
-	 */
-	public static Record insert(Record record) {
-		return db().create(record);
+	public Table db() {
+		return db(getClass());
 	}
 
-	/**
-	 * 删除
-	 */
-	public static void delete(Record record) {
-		db().delete(record);
-	}
-
-	/**
-	 * 更新
-	 */
-	public static void update(Record record) {
-		db().update(record);
-	}
-
-	/**
-	 * 查询
-	 */
-	public static Query select(String... columns) {
-		return db().select(columns);
-	}
-
-	/**
-	 * 连接
-	 */
-	public static Table db() {
-		return TableInfoHelper.getTable(Test.class);
+	public static Table db(Class<?> clazz) {
+		return TableInfoHelper.getTable(clazz);
 	}
 
 }
