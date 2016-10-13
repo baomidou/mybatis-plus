@@ -34,7 +34,7 @@ public abstract class Model<M extends Model> implements Serializable {
 		return db(getClass());
 	}
 
-	public static Table db(Class<? extends Model> clazz) {
+	public static Table db(Class<?> clazz) {
 		return TableInfoHelper.getTable(clazz);
 	}
 

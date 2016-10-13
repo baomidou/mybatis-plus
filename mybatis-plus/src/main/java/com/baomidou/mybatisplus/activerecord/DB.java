@@ -1,5 +1,13 @@
 package com.baomidou.mybatisplus.activerecord;
 
+import com.baomidou.mybatisplus.activerecord.d.Dialect;
+import com.baomidou.mybatisplus.activerecord.ex.DBOpenException;
+import com.baomidou.mybatisplus.activerecord.ex.IllegalTableNameException;
+import com.baomidou.mybatisplus.activerecord.ex.SqlExecuteException;
+import com.baomidou.mybatisplus.activerecord.ex.TransactionException;
+import com.baomidou.mybatisplus.activerecord.ex.UnsupportedDatabaseException;
+
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
@@ -15,28 +23,17 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
 
-import javax.sql.DataSource;
-
-import com.baomidou.mybatisplus.activerecord.d.Dialect;
-import com.baomidou.mybatisplus.activerecord.ex.DBOpenException;
-import com.baomidou.mybatisplus.activerecord.ex.IllegalTableNameException;
-import com.baomidou.mybatisplus.activerecord.ex.SqlExecuteException;
-import com.baomidou.mybatisplus.activerecord.ex.TransactionException;
-import com.baomidou.mybatisplus.activerecord.ex.UnsupportedDatabaseException;
-
 /**
  * 数据库对象。
  * 
  * @since 1.0
  * @author redraiment
  */
-public final class DB {
+public class DB {
 	private static final ServiceLoader<Dialect> dialects;
-
 	static {
 		dialects = ServiceLoader.load(Dialect.class);
 	}
-
 	public static DB open(DataSource pool) {
 		if (null == pool) {
 			return null;
@@ -66,7 +63,7 @@ public final class DB {
 	private final Map<String, Map<String, Association>> relations;
 	private final Map<String, Map<String, Lambda>> hooks;
 
-	private DB(DataSource pool, Dialect dialect) {
+	public DB(DataSource pool, Dialect dialect) {
 		this.pool = pool;
 		this.base = new InheritableThreadLocal<Connection>();
 		this.columns = new HashMap<String, Map<String, Integer>>();
