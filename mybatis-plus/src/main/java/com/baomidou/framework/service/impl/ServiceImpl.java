@@ -15,7 +15,19 @@
  */
 package com.baomidou.framework.service.impl;
 
+import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.baomidou.framework.service.IService;
+import com.baomidou.mybatisplus.activerecord.Model;
+import com.baomidou.mybatisplus.activerecord.Table;
 import com.baomidou.mybatisplus.annotations.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
@@ -25,13 +37,6 @@ import com.baomidou.mybatisplus.toolkit.CollectionUtil;
 import com.baomidou.mybatisplus.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.toolkit.TableInfo;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -42,10 +47,11 @@ import java.util.Map;
  * @Date 2016-04-20
  */
 public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
+
 	/**
 	 * 子类不用再定义logger对象
 	 */
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+	protected Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
 	protected M baseMapper;
@@ -201,6 +207,22 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		}
 		page.setRecords(baseMapper.selectPage(page, entityWrapper));
 		return page;
+	}
+
+	/**
+	 * <p>
+	 * ActiveRecord 模型操作 DB
+	 * </p>
+	 */
+	public Table db() {
+		try {
+			Type type = getClass().getGenericSuperclass();
+			//TODO 泛型 0 注意
+			String className = ((ParameterizedType) type).getActualTypeArguments()[0].getTypeName();
+			return Model.db(Class.forName(className));
+		} catch (Exception e) {
+			throw new IllegalStateException("Class is not parametrized with generic type!!! Please use extends <> ");
+		}
 	}
 
 }
