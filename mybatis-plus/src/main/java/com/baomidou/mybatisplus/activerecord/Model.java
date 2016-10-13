@@ -15,9 +15,9 @@
  */
 package com.baomidou.mybatisplus.activerecord;
 
-import java.io.Serializable;
-
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+
+import java.io.Serializable;
 
 /**
  * <p>
@@ -34,7 +34,7 @@ public abstract class Model<M extends Model> implements Serializable {
 		return db(getClass());
 	}
 
-	public static Table db(Class<?> clazz) {
+	public static Table db(Class<? extends Model> clazz) {
 		return TableInfoHelper.getTable(clazz);
 	}
 
