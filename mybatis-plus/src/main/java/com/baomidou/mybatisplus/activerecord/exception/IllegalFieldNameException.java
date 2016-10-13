@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.activerecord.ex;
+package com.baomidou.mybatisplus.activerecord.exception;
 
 /**
  * 列不存在。

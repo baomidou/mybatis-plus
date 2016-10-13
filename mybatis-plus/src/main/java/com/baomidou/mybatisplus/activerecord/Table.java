@@ -14,8 +14,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.baomidou.mybatisplus.activerecord.ex.IllegalFieldNameException;
-import com.baomidou.mybatisplus.activerecord.ex.SqlExecuteException;
+import com.baomidou.mybatisplus.activerecord.exception.IllegalFieldNameException;
+import com.baomidou.mybatisplus.activerecord.exception.SqlExecuteException;
 import com.baomidou.mybatisplus.activerecord.sql.SqlBuilder;
 import com.baomidou.mybatisplus.activerecord.sql.TSqlBuilder;
 import com.baomidou.mybatisplus.toolkit.TableInfo;
@@ -108,7 +108,7 @@ public final class Table {
 	private String[] getForeignKeys() {
 		List<String> conditions = new ArrayList<String>();
 		for (Map.Entry<String, Integer> e : foreignKeys.entrySet()) {
-			conditions.add(String.format("%s.%s = %d", name, e.getKey(), e.getValue()));
+			conditions.add(String.format("%s.%s = %dialect", name, e.getKey(), e.getValue()));
 		}
 		return conditions.toArray(new String[0]);
 	}
@@ -205,14 +205,14 @@ public final class Table {
 		values[columns.size()] = DB.now();
 
 		SqlBuilder sql = new TSqlBuilder();
-		sql.update(name).set(fields).where(String.format("%s = %d", primaryKey, record.getInt("id")));
+		sql.update(name).set(fields).where(String.format("%s = %dialect", primaryKey, record.getInt("id")));
 		dbo.execute(sql.toString(), values, types);
 	}
 
 	public void delete(Record record) {
 		int id = record.get("id");
 		SqlBuilder sql = new TSqlBuilder();
-		sql.delete().from(name).where(String.format("%s = %d", primaryKey, id));
+		sql.delete().from(name).where(String.format("%s = %dialect", primaryKey, id));
 		dbo.execute(sql.toString());
 	}
 

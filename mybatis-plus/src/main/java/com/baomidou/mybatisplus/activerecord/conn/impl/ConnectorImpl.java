@@ -1,6 +1,10 @@
-package com.baomidou.mybatisplus.activerecord;
+package com.baomidou.mybatisplus.activerecord.conn.impl;
 
+import com.baomidou.mybatisplus.MybatisActiveRecordConnect;
 import com.baomidou.mybatisplus.MybatisConfiguration;
+import com.baomidou.mybatisplus.MybatisSqlSessionFactoryHolder;
+import com.baomidou.mybatisplus.activerecord.DB;
+import com.baomidou.mybatisplus.activerecord.conn.Connector;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.mapping.Environment;

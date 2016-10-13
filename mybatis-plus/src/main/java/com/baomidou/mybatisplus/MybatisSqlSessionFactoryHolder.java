@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.activerecord;
+package com.baomidou.mybatisplus;
 
 import org.apache.ibatis.session.SqlSessionFactory;
 

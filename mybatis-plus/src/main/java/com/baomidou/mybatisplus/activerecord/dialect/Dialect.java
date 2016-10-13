@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.activerecord.d;
+package com.baomidou.mybatisplus.activerecord.dialect;
 
 import java.sql.Connection;
 

@@ -1,12 +1,11 @@
 package com.baomidou.mybatisplus.test.activerecord;
 
-import java.util.Arrays;
-import java.util.Collections;
-
+import com.baomidou.mybatisplus.activerecord.Seq;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.baomidou.mybatisplus.activerecord.Seq;
+import java.util.Arrays;
+import java.util.Collections;
 
 public class SeqTest {
 	@Test
@@ -84,7 +83,7 @@ public class SeqTest {
 		Assert.assertArrayEquals(new int[] { 1, 2, 3, 4, 5 }, a);
 
 		String[] s = new String[3];
-		Seq.assignAt(s, Seq.array(0, 2), "a", "d");
+		Seq.assignAt(s, Seq.array(0, 2), "a", "dialect");
 		Seq.assignAt(s, Seq.array(-2, -1), "b", "c");
 		Assert.assertArrayEquals(Seq.array("a", "b", "c"), s);
 	}

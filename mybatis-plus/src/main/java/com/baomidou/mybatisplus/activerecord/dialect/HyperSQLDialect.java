@@ -1,10 +1,10 @@
-package com.baomidou.mybatisplus.activerecord.d;
+package com.baomidou.mybatisplus.activerecord.dialect;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
-import com.baomidou.mybatisplus.activerecord.ex.DBOpenException;
+import com.baomidou.mybatisplus.activerecord.exception.DBOpenException;
 
 /**
  * HyperSQL方言。

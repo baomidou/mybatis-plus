@@ -1,0 +1,4 @@
+com.baomidou.mybatisplus.activerecord.dialect.HyperSQLDialect
+com.baomidou.mybatisplus.activerecord.dialect.MySQLDialect
+com.baomidou.mybatisplus.activerecord.dialect.PostgreSQLDialect
+com.baomidou.mybatisplus.activerecord.dialect.SQLiteDialect

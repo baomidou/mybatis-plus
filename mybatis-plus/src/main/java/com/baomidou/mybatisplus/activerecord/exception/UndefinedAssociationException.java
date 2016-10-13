@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.activerecord.ex;
+package com.baomidou.mybatisplus.activerecord.exception;
 
 /**
  * 遇到未定义的关联时抛出此异常。

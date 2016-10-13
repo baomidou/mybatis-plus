@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.activerecord.ex;
+package com.baomidou.mybatisplus.activerecord.exception;
 
 /**
  * 执行SQL时遇到任何问题抛出此异常。

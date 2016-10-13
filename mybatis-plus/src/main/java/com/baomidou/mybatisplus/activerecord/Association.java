@@ -1,8 +1,8 @@
 package com.baomidou.mybatisplus.activerecord;
 
-import java.util.Map;
+import com.baomidou.mybatisplus.activerecord.exception.UndefinedAssociationException;
 
-import com.baomidou.mybatisplus.activerecord.ex.UndefinedAssociationException;
+import java.util.Map;
 
 /**
  * 表之间的关联。
@@ -66,7 +66,7 @@ public final class Association {
 		if (isCross()) {
 			return String.format(template, assoc.target, target, key).concat(" join ").concat(assoc.assoc(source, id));
 		} else {
-			return String.format(template.concat(" and %1$s.id = %4$d"), source, target, key, id);
+			return String.format(template.concat(" and %1$s.id = %4$dialect"), source, target, key, id);
 		}
 	}
 }

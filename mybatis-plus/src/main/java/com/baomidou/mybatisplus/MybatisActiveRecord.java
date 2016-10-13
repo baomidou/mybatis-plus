@@ -13,8 +13,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.activerecord;
+package com.baomidou.mybatisplus;
 
+import com.baomidou.mybatisplus.activerecord.conn.Connector;
+import com.baomidou.mybatisplus.activerecord.conn.impl.ConnectorImpl;
+import com.baomidou.mybatisplus.activerecord.DB;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 /**

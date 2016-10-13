@@ -240,7 +240,7 @@ public final class Seq {
 	public static int[] assignAt(int[] a, Integer[] indexes, int... values) {
 		if (indexes.length != values.length) {
 			throw new IllegalArgumentException(
-					String.format("index.length(%d) != values.length(%d)", indexes.length, values.length));
+					String.format("index.length(%dialect) != values.length(%dialect)", indexes.length, values.length));
 		}
 		for (int i = 0; i < indexes.length; i++) {
 			int index = indexes[i];
@@ -271,7 +271,7 @@ public final class Seq {
 	public static <E> E[] assignAt(E[] a, Integer[] indexes, E... values) {
 		if (indexes.length != values.length) {
 			throw new IllegalArgumentException(
-					String.format("index.length(%d) != values.length(%d)", indexes.length, values.length));
+					String.format("index.length(%dialect) != values.length(%dialect)", indexes.length, values.length));
 		}
 		for (int i = 0; i < indexes.length; i++) {
 			int index = indexes[i];

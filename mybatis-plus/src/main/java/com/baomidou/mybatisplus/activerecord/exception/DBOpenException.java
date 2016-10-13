@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.activerecord.ex;
+package com.baomidou.mybatisplus.activerecord.exception;
 
 /**
  * 连接数据库时遇到任何问题抛出此异常。

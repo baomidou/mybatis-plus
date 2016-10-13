@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.baomidou.mybatisplus.MybatisConfiguration;
 import com.baomidou.mybatisplus.activerecord.DB;
 import com.baomidou.mybatisplus.activerecord.Table;
-import com.baomidou.mybatisplus.activerecord.ex.IllegalTableNameException;
+import com.baomidou.mybatisplus.activerecord.exception.IllegalTableNameException;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;

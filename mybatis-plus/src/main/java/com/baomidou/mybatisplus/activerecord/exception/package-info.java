@@ -27,4 +27,4 @@
  * <p>jActiveRecord所有的异常均为<code>RuntimeException</code>，
  * 避免了冗余的<code>try {} catch () {}</code>代码。</p>
  */
-package com.baomidou.mybatisplus.activerecord.ex;
+package com.baomidou.mybatisplus.activerecord.exception;

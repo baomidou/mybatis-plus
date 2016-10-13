@@ -1,5 +1,6 @@
-package com.baomidou.mybatisplus.activerecord;
+package com.baomidou.mybatisplus.activerecord.conn;
 
+import com.baomidou.mybatisplus.activerecord.DB;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 /**

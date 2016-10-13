@@ -2,7 +2,7 @@ package com.baomidou.mybatisplus.activerecord;
 
 import java.lang.reflect.Method;
 
-import com.baomidou.mybatisplus.activerecord.ex.IllegalFieldNameException;
+import com.baomidou.mybatisplus.activerecord.exception.IllegalFieldNameException;
 
 final class Lambda {
 	private final Object o;

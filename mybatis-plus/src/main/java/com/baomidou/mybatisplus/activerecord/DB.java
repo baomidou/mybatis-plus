@@ -1,11 +1,11 @@
 package com.baomidou.mybatisplus.activerecord;
 
-import com.baomidou.mybatisplus.activerecord.d.Dialect;
-import com.baomidou.mybatisplus.activerecord.ex.DBOpenException;
-import com.baomidou.mybatisplus.activerecord.ex.IllegalTableNameException;
-import com.baomidou.mybatisplus.activerecord.ex.SqlExecuteException;
-import com.baomidou.mybatisplus.activerecord.ex.TransactionException;
-import com.baomidou.mybatisplus.activerecord.ex.UnsupportedDatabaseException;
+import com.baomidou.mybatisplus.activerecord.dialect.Dialect;
+import com.baomidou.mybatisplus.activerecord.exception.DBOpenException;
+import com.baomidou.mybatisplus.activerecord.exception.IllegalTableNameException;
+import com.baomidou.mybatisplus.activerecord.exception.SqlExecuteException;
+import com.baomidou.mybatisplus.activerecord.exception.TransactionException;
+import com.baomidou.mybatisplus.activerecord.exception.UnsupportedDatabaseException;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -50,7 +50,7 @@ public class DB {
 			}
 
 			DatabaseMetaData meta = base.getMetaData();
-			String version = String.format("%s %d.%d/%s", meta.getDatabaseProductName(), meta.getDatabaseMajorVersion(),
+			String version = String.format("%s %dialect.%dialect/%s", meta.getDatabaseProductName(), meta.getDatabaseMajorVersion(),
 					meta.getDatabaseMinorVersion(), meta.getDatabaseProductVersion());
 			throw new UnsupportedDatabaseException(version);
 		} catch (SQLException e) {
