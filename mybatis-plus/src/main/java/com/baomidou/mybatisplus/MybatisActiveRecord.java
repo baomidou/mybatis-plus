@@ -30,29 +30,39 @@ import org.apache.ibatis.session.SqlSessionFactory;
  */
 public class MybatisActiveRecord {
 
-	// 连接
+	/*
+	 * 数据库连接
+	 */
 	private static final Connector connector = new ConnectorImpl();
 
 	/**
-	 * 根据sping配置的数据源打开,在配置了mybatis的完整配置后 使用SpringManagedTransaction,spring的标准配置.
-	 * 需用SqlSessionFactoryBeanExt代替SqlSessionFactoryBean在spring中进行配置
+	 * 通过spring配置获取DB
 	 *
-	 * @return
+	 * @return DB
 	 */
 	public static DB open() {
 		return connector.open();
 	}
 
 	/**
-	 * 支持多个session工厂
+	 * 通过sqlSessionFactory获取DB
 	 *
 	 * @param sessionFactory
-	 * @return
+	 * @return DB
 	 */
 	public static DB open(SqlSessionFactory sessionFactory) {
 		return connector.open(sessionFactory);
 	}
 
+	/**
+	 * 通过jdbc原生获取DB
+	 *
+	 * @param driver
+	 * @param url
+	 * @param username
+	 * @param password
+	 * @return DB
+	 */
 	public DB open(String driver, String url, String username, String password) {
 		return connector.open(driver, url, username, password);
 	}

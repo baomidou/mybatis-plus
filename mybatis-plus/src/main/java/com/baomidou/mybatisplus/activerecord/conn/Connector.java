@@ -14,28 +14,28 @@ import org.apache.ibatis.session.SqlSessionFactory;
 public interface Connector {
 
 	/**
-	 * spring配置获取DB
+	 * 通过spring配置获取DB
 	 * 
-	 * @return
+	 * @return DB
 	 */
 	public DB open();
 
 	/**
-	 * sessionFactory获取DB
+	 * 通过sqlSessionFactory获取DB
 	 * 
 	 * @param sessionFactory
-	 * @return
+	 * @return DB
 	 */
 	public DB open(SqlSessionFactory sessionFactory);
 
 	/**
-	 * JDBC获取DB
+	 * 通过jdbc获取DB
 	 * 
 	 * @param driver
 	 * @param url
 	 * @param username
 	 * @param password
-	 * @return
+	 * @return DB
 	 */
 	public DB open(String driver, String url, String username, String password);
 
