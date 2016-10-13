@@ -7,7 +7,11 @@ package com.baomidou.mybatisplus.activerecord.exception;
  * @author redraiment
  */
 public class DBOpenException extends RuntimeException {
-  public DBOpenException(Throwable cause) {
-    super(cause);
-  }
+	public DBOpenException(Throwable cause) {
+		super(cause);
+	}
+
+	public DBOpenException(String message) {
+		super(message);
+	}
 }

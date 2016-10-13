@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.activerecord.exception.IllegalTableNameException
 import com.baomidou.mybatisplus.activerecord.exception.SqlExecuteException;
 import com.baomidou.mybatisplus.activerecord.exception.TransactionException;
 import com.baomidou.mybatisplus.activerecord.exception.UnsupportedDatabaseException;
+import com.baomidou.mybatisplus.toolkit.SystemClock;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -30,33 +31,10 @@ import java.util.Set;
  * @author redraiment
  */
 public class DB {
-
+	/*
+	 * 数据库方言
+	 */
 	private static final ServiceLoader<Dialect> dialects;
-	static {
-		dialects = ServiceLoader.load(Dialect.class);
-	}
-
-	public static DB open(DataSource pool) {
-		if (null == pool) {
-			return null;
-		}
-		try {
-			Connection base = pool.getConnection();
-			for (Dialect dialect : dialects) {
-				if (dialect.accept(base)) {
-					base.close();
-					return new DB(pool, dialect);
-				}
-			}
-
-			DatabaseMetaData meta = base.getMetaData();
-			String version = String.format("%s %dialect.%dialect/%s", meta.getDatabaseProductName(), meta.getDatabaseMajorVersion(),
-					meta.getDatabaseMinorVersion(), meta.getDatabaseProductVersion());
-			throw new UnsupportedDatabaseException(version);
-		} catch (SQLException e) {
-			throw new DBOpenException(e);
-		}
-	}
 
 	private final DataSource pool;
 	private final InheritableThreadLocal<Connection> base;
@@ -82,21 +60,21 @@ public class DB {
 		}
 	}
 
-	void close(Connection c) {
-		if (c != null && base.get() != c) {
+	void close(Connection connection) {
+		if (connection != null && base.get() != connection) {
 			try {
-				c.close();
+				connection.close();
 			} catch (SQLException e) {
 				throw new RuntimeException("close Connection fail", e);
 			}
 		}
 	}
 
-	void close(Statement s) {
-		if (s != null) {
+	void close(Statement statement) {
+		if (statement != null) {
 			try {
-				Connection c = s.getConnection();
-				s.close();
+				Connection c = statement.getConnection();
+				statement.close();
 				close(c);
 			} catch (SQLException e) {
 				throw new RuntimeException("close Statement fail", e);
@@ -104,11 +82,11 @@ public class DB {
 		}
 	}
 
-	void close(ResultSet rs) {
-		if (rs != null) {
+	void close(ResultSet resultSet) {
+		if (resultSet != null) {
 			try {
-				Statement s = rs.getStatement();
-				rs.close();
+				Statement s = resultSet.getStatement();
+				resultSet.close();
 				close(s);
 			} catch (SQLException e) {
 				throw new RuntimeException("close ResultSet fail", e);
@@ -119,11 +97,11 @@ public class DB {
 	public Set<String> getTableNames() {
 		Set<String> tables = new HashSet<String>();
 		try {
-			Connection c = pool.getConnection();
-			DatabaseMetaData db = c.getMetaData();
-			ResultSet rs = db.getTables(null, null, "%", new String[] { "TABLE" });
-			while (rs.next()) {
-				tables.add(rs.getString("table_name"));
+			Connection connection = pool.getConnection();
+			DatabaseMetaData data = connection.getMetaData();
+			ResultSet resultSet = data.getTables(null, null, "%", new String[] { "TABLE" });
+			while (resultSet.next()) {
+				tables.add(resultSet.getString("table_name"));
 			}
 		} catch (SQLException e) {
 			throw new DBOpenException(e);
@@ -275,7 +253,7 @@ public class DB {
 
 	/* Transaction */
 	public void batch(Runnable transaction) {
-		// TODO: 不支持嵌套事务
+		// TODO 事务 Caratacus
 		try {
 			Connection c = pool.getConnection();
 			boolean commit = c.getAutoCommit();
@@ -322,7 +300,7 @@ public class DB {
 
 	/* Utility */
 	public static Timestamp now() {
-		return new Timestamp(System.currentTimeMillis());
+		return new Timestamp(SystemClock.now());
 	}
 
 	static String parseKeyParameter(String name) {
@@ -331,5 +309,37 @@ public class DB {
 			name = name.substring(0, name.length() - 1);
 		}
 		return name;
+	}
+
+	static {
+		dialects = ServiceLoader.load(Dialect.class);
+	}
+
+	/**
+	 * Open DataBase
+	 *
+	 * @param pool
+	 * @return DB
+	 */
+	public static DB open(DataSource pool) {
+		if (null == pool) {
+			throw new DBOpenException("Error: Cannot Open DataBase. Cause: DataSource is Null.");
+		}
+		try {
+			Connection base = pool.getConnection();
+			for (Dialect dialect : dialects) {
+				if (dialect.accept(base)) {
+					base.close();
+					return new DB(pool, dialect);
+				}
+			}
+
+			DatabaseMetaData meta = base.getMetaData();
+			String version = String.format("%s %dialect.%dialect/%s", meta.getDatabaseProductName(),
+					meta.getDatabaseMajorVersion(), meta.getDatabaseMinorVersion(), meta.getDatabaseProductVersion());
+			throw new UnsupportedDatabaseException(version);
+		} catch (SQLException e) {
+			throw new DBOpenException(e);
+		}
 	}
 }
