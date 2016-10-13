@@ -23,6 +23,6 @@
  */
 
 /**
- * jActiveRecord是Java的ORM框架，灵感来自Ruby on Rails的ActiveRecord。
+ * ActiveRecord是Java的ORM框架，灵感来自Ruby on Rails的ActiveRecord。
  */
 package com.baomidou.mybatisplus.activerecord;

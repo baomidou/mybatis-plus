@@ -26,7 +26,8 @@
  * <p>该包提供不同数据库实现的特殊SQL方言。</p>
  * <p>方言采用<code>ServiceLoader</code>机制自动加载，因此需要Java 6及以上版本支持。</p>
  * <p>如果用户需要支持除 SQLite3、HyperSQL、MySQL以及PostgreSQL外的其他数据库，
- * 可自行实现<code>me.zzp.ar.dialect.Dialect</code>，并添加到<code>META-INF/services/me.zzp.ar.dialect.Dialect</code>
+ *
+ * 可自行实现<code>com.baomidou.mybatisplus.activerecord.dialect.Dialect</code>，并添加到<code>META-INF/services/com.baomidou.mybatisplus.activerecord.dialect.Dialect</code>
  * 文件中。</p>
  * 
  * @since 1.0
