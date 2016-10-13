@@ -30,10 +30,12 @@ import java.util.Set;
  * @author redraiment
  */
 public class DB {
+
 	private static final ServiceLoader<Dialect> dialects;
 	static {
 		dialects = ServiceLoader.load(Dialect.class);
 	}
+
 	public static DB open(DataSource pool) {
 		if (null == pool) {
 			return null;

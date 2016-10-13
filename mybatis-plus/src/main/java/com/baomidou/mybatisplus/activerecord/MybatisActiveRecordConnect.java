@@ -7,7 +7,15 @@ import org.apache.ibatis.transaction.Transaction;
 
 import javax.sql.DataSource;
 
-public class MybatisConnect {
+/**
+ * <p>
+ * Mybatis ActiveRecord 连接
+ * </p>
+ *
+ * @author Caratacus
+ * @date 2016-10-13
+ */
+public class MybatisActiveRecordConnect {
 
 	// 工厂
 	protected SqlSessionFactory factory;
@@ -16,7 +24,7 @@ public class MybatisConnect {
 	// 连接
 	protected DataSource dataSource;
 
-	public MybatisConnect(SqlSessionFactory factory) {
+	public MybatisActiveRecordConnect(SqlSessionFactory factory) {
 		this.factory = factory;
 		this.configuration = factory.getConfiguration();
 		this.dataSource = factory.getConfiguration().getEnvironment().getDataSource();
@@ -38,6 +46,7 @@ public class MybatisConnect {
 	public Configuration getConfiguration() {
 		return configuration;
 	}
+
 	public DataSource getDataSource() {
 		return dataSource;
 	}

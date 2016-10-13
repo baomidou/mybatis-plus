@@ -84,7 +84,7 @@ public class MybatisConfiguration extends Configuration {
 	 * 是否刷新mapper
 	 */
 	public static boolean IS_REFRESH = false;
-	
+
 	/**
 	 * 初始化调用
 	 */
@@ -93,7 +93,8 @@ public class MybatisConfiguration extends Configuration {
 	}
 
 	/**
-	 * JDBC调用MybatisActiveRecord
+	 * JDBC开启ActiveRecord
+	 * 
 	 * @param environment
 	 */
 	public MybatisConfiguration(Environment environment) {

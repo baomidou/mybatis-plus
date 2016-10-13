@@ -8,46 +8,54 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 
+/**
+ * <p>
+ * 获取连接接口实现
+ * </p>
+ *
+ * @author Caratacus
+ * @date 2016-10-13
+ */
 public class ConnectorImpl implements Connector {
 
-    protected MybatisConnect mybatisConnect;
+	protected MybatisActiveRecordConnect mybatisConnect;
 
-    @Override
-    public DB open() {
-        SqlSessionFactory sessionFactory = MybatisSqlSessionFactoryHolder.getSqlSessionFactory();
-        return initDB(sessionFactory);
-    }
+	@Override
+	public DB open() {
+		SqlSessionFactory sessionFactory = MybatisSqlSessionFactoryHolder.getSqlSessionFactory();
+		return initDB(sessionFactory);
+	}
 
-    @Override
-    public DB open(String driver, String url, String username, String password) {
-        JdbcTransactionFactory factory = new JdbcTransactionFactory();
-        PooledDataSource pool = new PooledDataSource(driver, url, username, password);
-        pool.setPoolPingEnabled(true);
-        //初始化 Environment
-        Environment environment = new Environment(JdbcTransactionFactory.class.getName(), factory, pool);
-        MybatisConfiguration configuration = new MybatisConfiguration(environment);
-        SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new SqlSessionFactoryBuilder();
-        SqlSessionFactory sessionFactory = sqlSessionFactoryBuilder.build(configuration);
-        return initDB(sessionFactory);
-    }
+	@Override
+	public DB open(String driver, String url, String username, String password) {
+		JdbcTransactionFactory factory = new JdbcTransactionFactory();
+		PooledDataSource pool = new PooledDataSource(driver, url, username, password);
+		pool.setPoolPingEnabled(true);
+		// 初始化 Environment
+		Environment environment = new Environment(JdbcTransactionFactory.class.getName(), factory, pool);
+		MybatisConfiguration configuration = new MybatisConfiguration(environment);
+		SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new SqlSessionFactoryBuilder();
+		SqlSessionFactory sessionFactory = sqlSessionFactoryBuilder.build(configuration);
+		return initDB(sessionFactory);
+	}
 
-    @Override
-    public DB open(SqlSessionFactory sessionFactory) {
-        return initDB(sessionFactory);
-    }
+	@Override
+	public DB open(SqlSessionFactory sessionFactory) {
+		return initDB(sessionFactory);
+	}
 
-    /**
-     * 初始化DB
-     *
-     * @param sessionFactory
-     * @return
-     */
-    private DB initDB(SqlSessionFactory sessionFactory) {
-        if (sessionFactory == null) {
-            throw new MybatisPlusException("Get the SqlSessionFactory exception");
-        }
-        this.mybatisConnect = new MybatisConnect(sessionFactory);
-        return DB.open(this.mybatisConnect.getDataSource());
-    }
+	/**
+	 * 初始化DB
+	 *
+	 * @param sessionFactory
+	 * @return
+	 */
+	private DB initDB(SqlSessionFactory sessionFactory) {
+		if (sessionFactory == null) {
+			throw new MybatisPlusException("Get the SqlSessionFactory exception");
+		}
+		this.mybatisConnect = new MybatisActiveRecordConnect(sessionFactory);
+		return DB.open(this.mybatisConnect.getDataSource());
+	}
 
 }

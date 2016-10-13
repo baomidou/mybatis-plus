@@ -19,11 +19,11 @@ import org.apache.ibatis.session.SqlSessionFactory;
 
 /**
  * <p>
- * ActiveRecord 测试
+ * Mybatis开启ActiveRecord
  * </p>
  * 
  * @author Caratacus
- * @date 2016-10-11
+ * @date 2016-10-13
  */
 public class MybatisActiveRecord {
 

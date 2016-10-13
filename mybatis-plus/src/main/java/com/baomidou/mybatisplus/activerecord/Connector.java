@@ -2,6 +2,14 @@ package com.baomidou.mybatisplus.activerecord;
 
 import org.apache.ibatis.session.SqlSessionFactory;
 
+/**
+ * <p>
+ * 获取连接接口
+ * </p>
+ *
+ * @author Caratacus
+ * @date 2016-10-13
+ */
 public interface Connector {
 
 	/**
