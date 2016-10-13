@@ -15,6 +15,7 @@
  */
 package com.baomidou.framework.service;
 
+import com.baomidou.mybatisplus.activerecord.Table;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 
@@ -290,4 +291,10 @@ public interface IService<T> {
 	 */
 	Page<T> selectPage(Page<T> page, EntityWrapper<T> entityWrapper);
 
+	/**
+	 * <p>
+	 * ActiveRecord 模型操作 DB
+	 * </p>
+	 */
+	Table db();
 }
