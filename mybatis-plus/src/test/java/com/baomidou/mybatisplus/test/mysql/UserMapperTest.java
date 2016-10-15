@@ -15,22 +15,21 @@
  */
 package com.baomidou.mybatisplus.test.mysql;
 
+import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.plugins.pagination.Pagination;
+import com.baomidou.mybatisplus.test.mysql.entity.Role;
+import com.baomidou.mybatisplus.test.mysql.entity.User;
+import com.baomidou.mybatisplus.toolkit.IdWorker;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.baomidou.mybatisplus.test.mysql.entity.Role;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-
-import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.plugins.pagination.Pagination;
-import com.baomidou.mybatisplus.test.mysql.entity.User;
-import com.baomidou.mybatisplus.toolkit.IdWorker;
 
 /**
  * <p>
@@ -66,7 +65,7 @@ public class UserMapperTest {
 
 		/*
          * 此处采用 MybatisSessionFactoryBuilder 构建
-		 * SqlSessionFactory，目的是引入AutoMapper功能
+		 * SqlSessionFactory，目的是引入BaseMapper功能
 		 */
         MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
 
@@ -200,7 +199,7 @@ public class UserMapperTest {
          * 修改
          * </p>
          *
-         * updateById 是从 AutoMapper 中继承而来的，UserMapper.xml中并没有申明改sql
+         * updateById 是从 BaseMapper 中继承而来的，UserMapper.xml中并没有申明改sql
          *
          */
         rlt = userMapper.updateSelectiveById(new User(12L, "MybatisPlus"));
