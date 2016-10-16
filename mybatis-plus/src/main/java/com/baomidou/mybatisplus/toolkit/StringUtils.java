@@ -160,8 +160,7 @@ public class StringUtils {
 		String srcStr = String.valueOf(obj);
 		if (obj instanceof String) {
 			// fix #79
-			srcStr = EscapeOfString.escapeString(srcStr);
-			return srcStr;
+			return EscapeOfString.escapeString(srcStr);
 		}
 		return srcStr;
 	}
