@@ -160,8 +160,7 @@ public class StringUtils {
 		String srcStr = String.valueOf(obj);
 		// fix #79
 		if (obj instanceof String) {
-			srcStr = StringEscape.escapeString(srcStr);
-			return srcStr;
+			return StringEscape.escapeString(srcStr);
 		}
 		return srcStr;
 	}
@@ -189,8 +188,8 @@ public class StringUtils {
 			return str;
 		}
 
-		return new StringBuilder(strLen).append(concatStr).append(Character.toTitleCase(firstChar))
-				.append(str.substring(1)).toString();
+		return new StringBuilder(strLen).append(concatStr).append(Character.toTitleCase(firstChar)).append(str.substring(1))
+				.toString();
 	}
 
 	/**
