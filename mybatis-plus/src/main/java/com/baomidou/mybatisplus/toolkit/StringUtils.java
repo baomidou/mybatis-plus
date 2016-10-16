@@ -158,8 +158,10 @@ public class StringUtils {
 	 */
 	public static String quotaMark(Object obj) {
 		String srcStr = String.valueOf(obj);
-		if (obj instanceof String && !srcStr.matches("\'(.+)\'")) {
-			return "\'" + srcStr + "\'";
+		// fix #79
+		if (obj instanceof String) {
+			srcStr = StringEscape.escapeString(srcStr);
+			return srcStr;
 		}
 		return srcStr;
 	}
