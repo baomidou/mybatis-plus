@@ -223,7 +223,6 @@ public class EntityWrapperTest {
 		List<Long> list = new ArrayList<Long>();
 		list.add(111111111L);
 		list.add(222222222L);
-		list.add(333333333L);
 		ew.in("test_type", list);
 		String sqlPart = ew.getSqlSegment();
 		System.out.println("sql ==> " + sqlPart);
@@ -240,7 +239,19 @@ public class EntityWrapperTest {
 		ew.between("test_type", val1, val2);
 		String sqlPart = ew.getSqlSegment();
 		System.out.println("sql ==> " + sqlPart);
-		Assert.assertEquals("WHERE (test_type BETWEEN 11 AND 33)", sqlPart);
+		Assert.assertEquals("WHERE (test_type BETWEEN '11' AND '33')", sqlPart);
 	}
 
+	/**
+	 * 测试Escape
+	 */
+	@Test
+	public void testEscape() {
+		String val1 = "'''";
+		String val2 = "\\";
+		ew.between("test_type", val1, val2);
+		String sqlPart = ew.getSqlSegment();
+		System.out.println("sql ==> " + sqlPart);
+		Assert.assertEquals("WHERE (test_type BETWEEN '\\'' AND '\\\\')", sqlPart);
+	}
 }

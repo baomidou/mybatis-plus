@@ -46,8 +46,10 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
     /**
      * 将LIKE语句添加到WHERE条件中
      *
-     * @param column 字段名
-     * @param value  like值,无需前后%, MYSQL及ORACEL通用
+     * @param column
+     *            字段名
+     * @param value
+     *            like值,无需前后%, MYSQL及ORACEL通用
      * @return
      */
     public TSqlPlus LIKE(String column, String value) {
@@ -58,8 +60,10 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
     /**
      * 将LIKE语句添加到WHERE条件中
      *
-     * @param column 字段名
-     * @param value  like值,无需前后%, MYSQL及ORACEL通用
+     * @param column
+     *            字段名
+     * @param value
+     *            like值,无需前后%, MYSQL及ORACEL通用
      * @return
      */
     public TSqlPlus NOT_LIKE(String column, String value) {
@@ -70,7 +74,8 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
     /**
      * IS NOT NULL查询
      *
-     * @param columns 以逗号分隔的字段名称
+     * @param columns
+     *            以逗号分隔的字段名称
      * @return this
      */
     public TSqlPlus IS_NOT_NULL(String columns) {
@@ -81,7 +86,8 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
     /**
      * IS NULL查询
      *
-     * @param columns 以逗号分隔的字段名称
+     * @param columns
+     *            以逗号分隔的字段名称
      * @return
      */
     public TSqlPlus IS_NULL(String columns) {
@@ -92,9 +98,12 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
     /**
      * 处理LIKE操作
      *
-     * @param column 字段名称
-     * @param value  like匹配值
-     * @param isNot  是否为NOT LIKE操作
+     * @param column
+     *            字段名称
+     * @param value
+     *            like匹配值
+     * @param isNot
+     *            是否为NOT LIKE操作
      */
     private void handerLike(String column, String value, boolean isNot) {
         if (StringUtils.isNotEmpty(column) && StringUtils.isNotEmpty(value)) {
@@ -111,8 +120,10 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
     /**
      * 将IN语句添加到WHERE条件中
      *
-     * @param column 字段名
-     * @param value  List集合
+     * @param column
+     *            字段名
+     * @param value
+     *            List集合
      * @return
      */
     public TSqlPlus IN(String column, List<?> value) {
@@ -123,8 +134,10 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
     /**
      * 将IN语句添加到WHERE条件中
      *
-     * @param column 字段名
-     * @param value  List集合
+     * @param column
+     *            字段名
+     * @param value
+     *            List集合
      * @return
      */
     public TSqlPlus NOT_IN(String column, List<?> value) {
@@ -135,8 +148,10 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
     /**
      * 将IN语句添加到WHERE条件中
      *
-     * @param column 字段名
-     * @param value  逗号拼接的字符串
+     * @param column
+     *            字段名
+     * @param value
+     *            逗号拼接的字符串
      * @return
      */
     public TSqlPlus IN(String column, String value) {
@@ -147,8 +162,10 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
     /**
      * 将IN语句添加到WHERE条件中
      *
-     * @param column 字段名
-     * @param value  逗号拼接的字符串
+     * @param column
+     *            字段名
+     * @param value
+     *            逗号拼接的字符串
      * @return
      */
     public TSqlPlus NOT_IN(String column, String value) {
@@ -171,7 +188,8 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
      * 处理EXISTS操作
      *
      * @param value
-     * @param isNot 是否为NOT EXISTS操作
+     * @param isNot
+     *            是否为NOT EXISTS操作
      */
     private void handerExists(String value, boolean isNot) {
         if (StringUtils.isNotEmpty(value)) {
@@ -198,9 +216,12 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
     /**
      * 处理IN操作
      *
-     * @param column 字段名称
-     * @param value  集合List
-     * @param isNot  是否为NOT IN操作
+     * @param column
+     *            字段名称
+     * @param value
+     *            集合List
+     * @param isNot
+     *            是否为NOT IN操作
      */
     private void handerIn(String column, List<?> value, boolean isNot) {
         if (StringUtils.isNotEmpty(column) && CollectionUtil.isNotEmpty(value)) {
@@ -228,9 +249,12 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
     /**
      * 处理IN操作
      *
-     * @param column 字段名称
-     * @param value  逗号拼接的字符串
-     * @param isNot  是否为NOT IN操作
+     * @param column
+     *            字段名称
+     * @param value
+     *            逗号拼接的字符串
+     * @param isNot
+     *            是否为NOT IN操作
      */
     private void handerIn(String column, String value, boolean isNot) {
         if (StringUtils.isNotEmpty(column) && StringUtils.isNotEmpty(value)) {
@@ -247,7 +271,8 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
     /**
      * 处理BETWEEN_AND操作
      *
-     * @param column 字段名称
+     * @param column
+     *            字段名称
      * @param val1
      * @param val2
      */
@@ -259,7 +284,8 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
     /**
      * 处理BETWEEN_AND操作
      *
-     * @param column 字段名称
+     * @param column
+     *            字段名称
      * @param val1
      * @param val2
      */
@@ -267,7 +293,7 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
         if (StringUtils.isNotEmpty(column) && StringUtils.isNotEmpty(val1) && StringUtils.isNotEmpty(val2)) {
             StringBuilder betweenSql = new StringBuilder();
             betweenSql.append(column);
-            betweenSql.append(MessageFormat.format(SQL_BETWEEN_AND, val1, val2));
+            betweenSql.append(MessageFormat.format(SQL_BETWEEN_AND, StringUtils.quotaMark(val1),StringUtils.quotaMark(val2)));
             WHERE(betweenSql.toString());
         }
     }
@@ -275,8 +301,10 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
     /**
      * 以相同的方式处理null和notnull
      *
-     * @param columns 以逗号分隔的字段名称
-     * @param sqlPart SQL部分
+     * @param columns
+     *            以逗号分隔的字段名称
+     * @param sqlPart
+     *            SQL部分
      */
     private void handerNull(String columns, String sqlPart) {
         if (StringUtils.isNotEmpty(columns)) {
@@ -288,5 +316,4 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
             }
         }
     }
-
 }
