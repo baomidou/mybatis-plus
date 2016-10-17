@@ -18,11 +18,15 @@ package com.baomidou.mybatisplus.test.activerecord;
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.activerecord.Record;
+import com.baomidou.mybatisplus.mapper.SqlMapper;
 import com.baomidou.mybatisplus.test.mysql.TestMapper;
 import com.baomidou.mybatisplus.test.mysql.entity.Test;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -38,13 +42,20 @@ public class ActiveRecordTest {
 		// 加载配置文件
 		InputStream in = TestMapper.class.getClassLoader().getResourceAsStream("mysql-config.xml");
 		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
-		mf.build(in);
-		List<Record> test1 = new Test().db().select().all();
-		System.out.println(test1);
-		List<Record> test2 = Model.db(Test.class).select().all();
-		System.out.println(test2);
-		List<Record> test3 = Test.instance.db().select().all();
-		System.out.println(test3);
+        SqlSessionFactory sqlSessionFactory = mf.build(in);
+        mf.build(in);
+        List<Record> test1 = new Test().db().select().all();
+        System.out.println(test1);
+        List<Record> test2 = Model.db(Test.class).select().all();
+        System.out.println(test2);
+        List<Record> test3 = Test.instance.db().select().all();
+        System.out.println(test3);
+
+
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        SqlMapper sqlMapper = new SqlMapper(sqlSession);
+        List<Map<String, Object>> maps = sqlMapper.selectList("select * from test");
+        System.out.println(maps);
 
 	}
 
