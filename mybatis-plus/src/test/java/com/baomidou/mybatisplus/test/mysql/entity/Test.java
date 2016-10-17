@@ -33,6 +33,7 @@ public class Test extends Model<Test> {
 
 	@TableField(exist = false)
 	private static final long serialVersionUID = 1L;
+	public static final Test instance = new Test();
 
 	/** 主键 */
 	@TableId

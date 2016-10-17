@@ -26,7 +26,7 @@ import java.util.Set;
 
 /**
  * 数据库对象。
- * 
+ *
  * @since 1.0
  * @author redraiment
  */

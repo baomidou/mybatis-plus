@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.mapper;
 
 import com.baomidou.mybatisplus.MybatisConfiguration;
+import com.baomidou.mybatisplus.activerecord.DB;
 import com.baomidou.mybatisplus.annotations.FieldStrategy;
 import com.baomidou.mybatisplus.annotations.IdType;
 import com.baomidou.mybatisplus.toolkit.TableFieldInfo;
@@ -33,6 +34,7 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.scripting.defaults.RawSqlSource;
 import org.apache.ibatis.session.Configuration;
 
+import javax.sql.DataSource;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -90,7 +92,8 @@ public class AutoSqlInjector implements ISqlInjector {
 			MybatisConfiguration.DB_COLUMN_UNDERLINE = configuration.isMapUnderscoreToCamelCase();
 		}
 		Class<?> modelClass = extractModelClass(mapperClass);
-		TableInfo table = TableInfoHelper.initTableInfo(modelClass);
+		DataSource dataSource = configuration.getEnvironment().getDataSource();
+		TableInfo table = TableInfoHelper.initTableInfo(modelClass, DB.open(dataSource));
 
 		/**
 		 * 没有指定主键，默认方法不能使用

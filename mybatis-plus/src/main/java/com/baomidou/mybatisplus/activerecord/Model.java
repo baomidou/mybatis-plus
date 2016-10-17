@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.activerecord;
 
-import com.baomidou.mybatisplus.MybatisActiveRecord;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 import java.io.Serializable;
@@ -35,14 +34,8 @@ public abstract class Model<M extends Model> implements Serializable {
 		return db(getClass());
 	}
 
-	/**
-	 * spring整合时调用
-	 * 
-	 * @param clazz
-	 * @return
-	 */
 	public static Table db(Class<?> clazz) {
-		return MybatisActiveRecord.open().active(TableInfoHelper.getTableInfo(clazz).getTableName());
+		return TableInfoHelper.getTable(clazz);
 	}
 
 }

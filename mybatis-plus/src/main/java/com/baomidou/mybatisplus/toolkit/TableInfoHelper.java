@@ -16,6 +16,8 @@
 package com.baomidou.mybatisplus.toolkit;
 
 import com.baomidou.mybatisplus.MybatisConfiguration;
+import com.baomidou.mybatisplus.activerecord.DB;
+import com.baomidou.mybatisplus.activerecord.Table;
 import com.baomidou.mybatisplus.activerecord.exception.IllegalTableNameException;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
@@ -34,7 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * 实体类反射表辅助类
  * </p>
- * 
+ *
  * @author hubin sjy
  * @Date 2016-09-09
  */
@@ -51,10 +53,15 @@ public class TableInfoHelper {
 	private static final Map<String, String> classNameCache = new ConcurrentHashMap<String, String>();
 
 	/**
+	 * 缓存 Table 信息
+	 */
+	private static final Map<String, Table> tableCache = new ConcurrentHashMap<String, Table>();
+
+	/**
 	 * <p>
 	 * 获取实体映射表信息
 	 * <p>
-	 * 
+	 *
 	 * @param clazz
 	 *            反射实体类
 	 * @return
@@ -80,16 +87,20 @@ public class TableInfoHelper {
 		return tableInfoCache.get(className);
 	}
 
+	public static Table getTable(Class<?> clazz) {
+		return tableCache.get(clazz.getName());
+	}
+
 	/**
 	 * <p>
 	 * 实体类反射获取表信息【初始化】
 	 * <p>
-	 * 
+	 *
 	 * @param clazz
 	 *            反射实体类
 	 * @return
 	 */
-	public synchronized static TableInfo initTableInfo(Class<?> clazz) {
+	public synchronized static TableInfo initTableInfo(Class<?> clazz, DB activeRecordDd) {
 		TableInfo ti = tableInfoCache.get(clazz.getName());
 		if (ti != null) {
 			return ti;
@@ -194,12 +205,15 @@ public class TableInfoHelper {
 		 */
 		tableInfoCache.put(clazz.getName(), tableInfo);
 		classNameCache.put(tableName, clazz.getName());
+		if (null != activeRecordDd) {
+			tableCache.put(clazz.getName(), activeRecordDd.active(tableName));
+		}
 		return tableInfo;
 	}
 
 	/**
 	 * 获取该类的所有属性列表
-	 * 
+	 *
 	 * @param clazz
 	 *            反射类
 	 * @return
