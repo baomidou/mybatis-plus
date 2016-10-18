@@ -19,6 +19,8 @@ import java.io.Serializable;
 
 import org.apache.ibatis.session.RowBounds;
 
+import com.baomidou.mybatisplus.toolkit.StringUtils;
+
 /**
  * <p>
  * 简单分页模型
@@ -47,6 +49,25 @@ public class Pagination extends RowBounds implements Serializable {
 
 	/* 查询总记录数（默认 true） */
 	private boolean searchCount = true;
+
+	/* 查询总数优化（默认 true） */
+	private boolean optimizeCount = true;
+
+	/**
+	 * <p>
+	 * SQL 排序 ORDER BY 字段，例如： id DESC（根据id倒序查询）
+	 * </p>
+	 * <p>
+	 * DESC 表示按倒序排序(即：从大到小排序)<br>
+	 * ASC 表示按正序排序(即：从小到大排序)
+	 * </p>
+	 */
+	private String orderByField;
+
+	/**
+	 * 是否为升序 ASC（ 默认： true ）
+	 */
+	private boolean isAsc = true;
 
 	public Pagination() {
 		super();
@@ -130,6 +151,32 @@ public class Pagination extends RowBounds implements Serializable {
 
 	public void setSearchCount(boolean searchCount) {
 		this.searchCount = searchCount;
+	}
+
+	public boolean isOptimizeCount() {
+		return optimizeCount;
+	}
+
+	public void setOptimizeCount(boolean optimizeCount) {
+		this.optimizeCount = optimizeCount;
+	}
+
+	public String getOrderByField() {
+		return orderByField;
+	}
+
+	public void setOrderByField(String orderByField) {
+		if (StringUtils.isNotEmpty(orderByField)) {
+			this.orderByField = orderByField;
+		}
+	}
+
+	public boolean isAsc() {
+		return isAsc;
+	}
+
+	public void setAsc(boolean isAsc) {
+		this.isAsc = isAsc;
 	}
 
 	@Override
