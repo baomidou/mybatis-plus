@@ -1,407 +1,259 @@
 package com.baomidou.mybatisplus.mapper;
 
+import com.baomidou.mybatisplus.toolkit.CollectionUtil;
 import org.apache.ibatis.builder.StaticSqlSource;
-import org.apache.ibatis.exceptions.TooManyResultsException;
-import org.apache.ibatis.mapping.*;
-import org.apache.ibatis.scripting.LanguageDriver;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ResultMap;
+import org.apache.ibatis.mapping.ResultMapping;
+import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
- * MyBatis执行sql工具，在写SQL的时候建议使用参数形式的可以是${}或#{}
+ * Mybatis执行sql工具,主要为AR方式调用
  *
- * 不建议将参数直接拼到字符串中，当大量这么使用的时候由于缓存MappedStatement而占用更多的内存
  *
- * @author liuzh
- * @since 2015-03-10
+ * @author Caratacus
+ * @since 2016-10-18
  */
 public class SqlMapper {
-    private final MSUtils msUtils;
-    private final SqlSession sqlSession;
 
-    /**
-     * 构造方法，默认缓存MappedStatement
-     *
-     * @param sqlSession
-     */
-    public SqlMapper(SqlSession sqlSession) {
-        this.sqlSession = sqlSession;
-        this.msUtils = new MSUtils(sqlSession.getConfiguration());
-    }
+	protected static final Logger logger = Logger.getLogger("SqlMapper");
 
-    /**
-     * 获取List中最多只有一个的数据
-     *
-     * @param list List结果
-     * @param <T>  泛型类型
-     * @return
-     */
-    private <T> T getOne(List<T> list) {
-        if (list.size() == 1) {
-            return list.get(0);
-        } else if (list.size() > 1) {
-            throw new TooManyResultsException("Expected one result (or null) to be returned by selectOne(), but found: " + list.size());
-        } else {
-            return null;
-        }
-    }
+	private final MSUtils msUtils;
+	private final SqlSession sqlSession;
 
-    /**
-     * 查询返回一个结果，多个结果时抛出异常
-     *
-     * @param sql 执行的sql
-     * @return
-     */
-    public Map<String, Object> selectOne(String sql) {
-        List<Map<String, Object>> list = selectList(sql);
-        return getOne(list);
-    }
+	/**
+	 * 构造方法，默认缓存MappedStatement
+	 *
+	 * @param sqlSession
+	 */
+	public SqlMapper(SqlSession sqlSession) {
+		this.sqlSession = sqlSession;
+		this.msUtils = new MSUtils(sqlSession.getConfiguration());
+	}
 
-    /**
-     * 查询返回一个结果，多个结果时抛出异常
-     *
-     * @param sql   执行的sql
-     * @param value 参数
-     * @return
-     */
-    public Map<String, Object> selectOne(String sql, Object value) {
-        List<Map<String, Object>> list = selectList(sql, value);
-        return getOne(list);
-    }
+	/**
+	 * 获取List中一条的数据
+	 *
+	 * @param list
+	 *            List结果
+	 * @param <T>
+	 *            泛型类型
+	 * @return
+	 */
+	private <T> T getOne(List<T> list) {
 
-    /**
-     * 查询返回一个结果，多个结果时抛出异常
-     *
-     * @param sql        执行的sql
-     * @param resultType 返回的结果类型
-     * @param <T>        泛型类型
-     * @return
-     */
-    public <T> T selectOne(String sql, Class<T> resultType) {
-        List<T> list = selectList(sql, resultType);
-        return getOne(list);
-    }
+		if (CollectionUtil.isNotEmpty(list)) {
+			int size = list.size();
+			if (size > 1) {
+				logger.warning("Warn: selectOne Method There are " + size + " results.");
+			}
+			return list.get(0);
+		}
+		return null;
+	}
 
-    /**
-     * 查询返回一个结果，多个结果时抛出异常
-     *
-     * @param sql        执行的sql
-     * @param value      参数
-     * @param resultType 返回的结果类型
-     * @param <T>        泛型类型
-     * @return
-     */
-    public <T> T selectOne(String sql, Object value, Class<T> resultType) {
-        List<T> list = selectList(sql, value, resultType);
-        return getOne(list);
-    }
+	/**
+	 * 查询返回一个结果，多个结果时抛出异常
+	 *
+	 * @param sql
+	 *            执行的sql
+	 * @return
+	 */
+	public Map<String, Object> selectOne(String sql) {
+		List<Map<String, Object>> list = selectList(sql);
+		return getOne(list);
+	}
 
-    /**
-     * 查询返回List<Map<String, Object>>
-     *
-     * @param sql 执行的sql
-     * @return
-     */
-    public List<Map<String, Object>> selectList(String sql) {
-        String msId = msUtils.select(sql);
-        return sqlSession.selectList(msId);
-    }
+	/**
+	 * 查询返回List<Map<String, Object>>
+	 *
+	 * @param sql
+	 *            执行的sql
+	 * @return
+	 */
+	public List<Map<String, Object>> selectList(String sql) {
+		String msId = msUtils.select(sql);
+		return sqlSession.selectList(msId);
+	}
 
-    /**
-     * 查询返回List<Map<String, Object>>
-     *
-     * @param sql   执行的sql
-     * @param value 参数
-     * @return
-     */
-    public List<Map<String, Object>> selectList(String sql, Object value) {
-        Class<?> parameterType = value != null ? value.getClass() : null;
-        String msId = msUtils.selectDynamic(sql, parameterType);
-        return sqlSession.selectList(msId, value);
-    }
+	/**
+	 * 插入数据
+	 *
+	 * @param sql
+	 *            执行的sql
+	 * @return
+	 */
+	public boolean insert(String sql) {
+		String msId = msUtils.insert(sql);
+		return retBool(sqlSession.insert(msId));
+	}
 
-    /**
-     * 查询返回指定的结果类型
-     *
-     * @param sql        执行的sql
-     * @param resultType 返回的结果类型
-     * @param <T>        泛型类型
-     * @return
-     */
-    public <T> List<T> selectList(String sql, Class<T> resultType) {
-        String msId;
-        if (resultType == null) {
-            msId = msUtils.select(sql);
-        } else {
-            msId = msUtils.select(sql, resultType);
-        }
-        return sqlSession.selectList(msId);
-    }
+	/**
+	 * 更新数据
+	 *
+	 * @param sql
+	 *            执行的sql
+	 * @return
+	 */
+	public boolean update(String sql) {
+		String msId = msUtils.update(sql);
+		return retBool(sqlSession.update(msId));
+	}
 
-    /**
-     * 查询返回指定的结果类型
-     *
-     * @param sql        执行的sql
-     * @param value      参数
-     * @param resultType 返回的结果类型
-     * @param <T>        泛型类型
-     * @return
-     */
-    public <T> List<T> selectList(String sql, Object value, Class<T> resultType) {
-        String msId;
-        Class<?> parameterType = value != null ? value.getClass() : null;
-        if (resultType == null) {
-            msId = msUtils.selectDynamic(sql, parameterType);
-        } else {
-            msId = msUtils.selectDynamic(sql, parameterType, resultType);
-        }
-        return sqlSession.selectList(msId, value);
-    }
+	/**
+	 * 删除数据
+	 *
+	 * @param sql
+	 *            执行的sql
+	 * @return
+	 */
+	public boolean delete(String sql) {
+		String msId = msUtils.delete(sql);
+		return retBool(sqlSession.delete(msId));
+	}
 
-    /**
-     * 插入数据
-     *
-     * @param sql 执行的sql
-     * @return
-     */
-    public int insert(String sql) {
-        String msId = msUtils.insert(sql);
-        return sqlSession.insert(msId);
-    }
+	/**
+	 * 判断数据库操作是否成功
+	 *
+	 * @param result
+	 *            数据库操作返回影响条数
+	 * @return boolean
+	 */
+	private boolean retBool(int result) {
+		return result >= 1;
+	}
 
-    /**
-     * 插入数据
-     *
-     * @param sql   执行的sql
-     * @param value 参数
-     * @return
-     */
-    public int insert(String sql, Object value) {
-        Class<?> parameterType = value != null ? value.getClass() : null;
-        String msId = msUtils.insertDynamic(sql, parameterType);
-        return sqlSession.insert(msId, value);
-    }
+	private class MSUtils {
+		private Configuration configuration;
 
-    /**
-     * 更新数据
-     *
-     * @param sql 执行的sql
-     * @return
-     */
-    public int update(String sql) {
-        String msId = msUtils.update(sql);
-        return sqlSession.update(msId);
-    }
+		private MSUtils(Configuration configuration) {
+			this.configuration = configuration;
+		}
 
-    /**
-     * 更新数据
-     *
-     * @param sql   执行的sql
-     * @param value 参数
-     * @return
-     */
-    public int update(String sql, Object value) {
-        Class<?> parameterType = value != null ? value.getClass() : null;
-        String msId = msUtils.updateDynamic(sql, parameterType);
-        return sqlSession.update(msId, value);
-    }
+		/**
+		 * 创建MSID
+		 *
+		 * @param sql
+		 *            执行的sql
+		 * @param sql
+		 *            执行的sqlCommandType
+		 * @return
+		 */
+		private String newMsId(String sql, SqlCommandType sqlCommandType) {
+			StringBuilder msIdBuilder = new StringBuilder(sqlCommandType.toString());
+			msIdBuilder.append(".").append(sql.hashCode());
+			return msIdBuilder.toString();
+		}
 
-    /**
-     * 删除数据
-     *
-     * @param sql 执行的sql
-     * @return
-     */
-    public int delete(String sql) {
-        String msId = msUtils.delete(sql);
-        return sqlSession.delete(msId);
-    }
+		/**
+		 * 是否已经存在该ID
+		 *
+		 * @param msId
+		 * @return
+		 */
+		private boolean hasMappedStatement(String msId) {
+			return configuration.hasStatement(msId, false);
+		}
 
-    /**
-     * 删除数据
-     *
-     * @param sql   执行的sql
-     * @param value 参数
-     * @return
-     */
-    public int delete(String sql, Object value) {
-        Class<?> parameterType = value != null ? value.getClass() : null;
-        String msId = msUtils.deleteDynamic(sql, parameterType);
-        return sqlSession.delete(msId, value);
-    }
+		/**
+		 * 创建一个查询的MS
+		 *
+		 * @param msId
+		 * @param sqlSource
+		 *            执行的sqlSource
+		 * @param resultType
+		 *            返回的结果类型
+		 */
+		private void newSelectMappedStatement(String msId, SqlSource sqlSource, final Class<?> resultType) {
+			MappedStatement ms = new MappedStatement.Builder(configuration, msId, sqlSource, SqlCommandType.SELECT).resultMaps(
+					new ArrayList<ResultMap>() {
+						{
+							add(new ResultMap.Builder(configuration, "defaultResultMap", resultType,
+									new ArrayList<ResultMapping>(0)).build());
+						}
+					}).build();
+			// 缓存
+			configuration.addMappedStatement(ms);
+		}
 
-    private class MSUtils {
-        private Configuration configuration;
-        private LanguageDriver languageDriver;
+		/**
+		 * 创建一个简单的MS
+		 *
+		 * @param msId
+		 * @param sqlSource
+		 *            执行的sqlSource
+		 * @param sqlCommandType
+		 *            执行的sqlCommandType
+		 */
+		private void newUpdateMappedStatement(String msId, SqlSource sqlSource, SqlCommandType sqlCommandType) {
+			MappedStatement ms = new MappedStatement.Builder(configuration, msId, sqlSource, sqlCommandType).resultMaps(
+					new ArrayList<ResultMap>() {
+						{
+							add(new ResultMap.Builder(configuration, "defaultResultMap", int.class, new ArrayList<ResultMapping>(
+									0)).build());
+						}
+					}).build();
+			// 缓存
+			configuration.addMappedStatement(ms);
+		}
 
-        private MSUtils(Configuration configuration) {
-            this.configuration = configuration;
-            languageDriver = configuration.getDefaultScriptingLanuageInstance();
-        }
+		private String select(String sql) {
+			String msId = newMsId("select", SqlCommandType.SELECT);
+			if (hasMappedStatement(msId)) {
+				return msId;
+			}
+			StaticSqlSource sqlSource = new StaticSqlSource(configuration, sql);
+			newSelectMappedStatement(msId, sqlSource, Map.class);
+			return msId;
+		}
 
-        /**
-         * 创建MSID
-         *
-         * @param sql 执行的sql
-         * @param sql 执行的sqlCommandType
-         * @return
-         */
-        private String newMsId(String sql, SqlCommandType sqlCommandType) {
-            StringBuilder msIdBuilder = new StringBuilder(sqlCommandType.toString());
-            msIdBuilder.append(".").append(sql.hashCode());
-            return msIdBuilder.toString();
-        }
+		private String insert(String sql) {
+			String msId = newMsId("insert", SqlCommandType.INSERT);
+			if (hasMappedStatement(msId)) {
+				return msId;
+			}
+			StaticSqlSource sqlSource = new StaticSqlSource(configuration, sql);
+			newUpdateMappedStatement(msId, sqlSource, SqlCommandType.INSERT);
+			return msId;
+		}
 
-        /**
-         * 是否已经存在该ID
-         *
-         * @param msId
-         * @return
-         */
-        private boolean hasMappedStatement(String msId) {
-            return configuration.hasStatement(msId, false);
-        }
+		private String update(String sql) {
+			String msId = newMsId("update", SqlCommandType.UPDATE);
+			if (hasMappedStatement(msId)) {
+				return msId;
+			}
+			StaticSqlSource sqlSource = new StaticSqlSource(configuration, sql);
+			newUpdateMappedStatement(msId, sqlSource, SqlCommandType.UPDATE);
+			return msId;
+		}
 
-        /**
-         * 创建一个查询的MS
-         *
-         * @param msId
-         * @param sqlSource  执行的sqlSource
-         * @param resultType 返回的结果类型
-         */
-        private void newSelectMappedStatement(String msId, SqlSource sqlSource, final Class<?> resultType) {
-            MappedStatement ms = new MappedStatement.Builder(configuration, msId, sqlSource, SqlCommandType.SELECT)
-                    .resultMaps(new ArrayList<ResultMap>() {
-                        {
-                            add(new ResultMap.Builder(configuration, "defaultResultMap", resultType, new ArrayList<ResultMapping>(0)).build());
-                        }
-                    })
-                    .build();
-            //缓存
-            configuration.addMappedStatement(ms);
-        }
+		private String delete(String sql) {
+			String msId = newMsId("delete", SqlCommandType.DELETE);
+			if (hasMappedStatement(msId)) {
+				return msId;
+			}
+			StaticSqlSource sqlSource = new StaticSqlSource(configuration, sql);
+			newUpdateMappedStatement(msId, sqlSource, SqlCommandType.DELETE);
+			return msId;
+		}
 
-        /**
-         * 创建一个简单的MS
-         *
-         * @param msId
-         * @param sqlSource      执行的sqlSource
-         * @param sqlCommandType 执行的sqlCommandType
-         */
-        private void newUpdateMappedStatement(String msId, SqlSource sqlSource, SqlCommandType sqlCommandType) {
-            MappedStatement ms = new MappedStatement.Builder(configuration, msId, sqlSource, sqlCommandType)
-                    .resultMaps(new ArrayList<ResultMap>() {
-                        {
-                            add(new ResultMap.Builder(configuration, "defaultResultMap", int.class, new ArrayList<ResultMapping>(0)).build());
-                        }
-                    })
-                    .build();
-            //缓存
-            configuration.addMappedStatement(ms);
-        }
+		/**
+		 * 获取Ms名称
+		 * 
+		 * @param name
+		 * @return
+		 */
+		private String getMsName(String name) {
+			return new StringBuilder(getClass().getName()).append(name).toString();
+		}
 
-        private String select(String sql) {
-            String msId = newMsId(sql, SqlCommandType.SELECT);
-            if (hasMappedStatement(msId)) {
-                return msId;
-            }
-            StaticSqlSource sqlSource = new StaticSqlSource(configuration, sql);
-            newSelectMappedStatement(msId, sqlSource, Map.class);
-            return msId;
-        }
-
-        private String selectDynamic(String sql, Class<?> parameterType) {
-            String msId = newMsId(sql + parameterType, SqlCommandType.SELECT);
-            if (hasMappedStatement(msId)) {
-                return msId;
-            }
-            SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, parameterType);
-            newSelectMappedStatement(msId, sqlSource, Map.class);
-            return msId;
-        }
-
-        private String select(String sql, Class<?> resultType) {
-            String msId = newMsId(resultType + sql, SqlCommandType.SELECT);
-            if (hasMappedStatement(msId)) {
-                return msId;
-            }
-            StaticSqlSource sqlSource = new StaticSqlSource(configuration, sql);
-            newSelectMappedStatement(msId, sqlSource, resultType);
-            return msId;
-        }
-
-        private String selectDynamic(String sql, Class<?> parameterType, Class<?> resultType) {
-            String msId = newMsId(resultType + sql + parameterType, SqlCommandType.SELECT);
-            if (hasMappedStatement(msId)) {
-                return msId;
-            }
-            SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, parameterType);
-            newSelectMappedStatement(msId, sqlSource, resultType);
-            return msId;
-        }
-
-        private String insert(String sql) {
-            String msId = newMsId(sql, SqlCommandType.INSERT);
-            if (hasMappedStatement(msId)) {
-                return msId;
-            }
-            StaticSqlSource sqlSource = new StaticSqlSource(configuration, sql);
-            newUpdateMappedStatement(msId, sqlSource, SqlCommandType.INSERT);
-            return msId;
-        }
-
-        private String insertDynamic(String sql, Class<?> parameterType) {
-            String msId = newMsId(sql + parameterType, SqlCommandType.INSERT);
-            if (hasMappedStatement(msId)) {
-                return msId;
-            }
-            SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, parameterType);
-            newUpdateMappedStatement(msId, sqlSource, SqlCommandType.INSERT);
-            return msId;
-        }
-
-        private String update(String sql) {
-            String msId = newMsId(sql, SqlCommandType.UPDATE);
-            if (hasMappedStatement(msId)) {
-                return msId;
-            }
-            StaticSqlSource sqlSource = new StaticSqlSource(configuration, sql);
-            newUpdateMappedStatement(msId, sqlSource, SqlCommandType.UPDATE);
-            return msId;
-        }
-
-        private String updateDynamic(String sql, Class<?> parameterType) {
-            String msId = newMsId(sql + parameterType, SqlCommandType.UPDATE);
-            if (hasMappedStatement(msId)) {
-                return msId;
-            }
-            SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, parameterType);
-            newUpdateMappedStatement(msId, sqlSource, SqlCommandType.UPDATE);
-            return msId;
-        }
-
-        private String delete(String sql) {
-            String msId = newMsId(sql, SqlCommandType.DELETE);
-            if (hasMappedStatement(msId)) {
-                return msId;
-            }
-            StaticSqlSource sqlSource = new StaticSqlSource(configuration, sql);
-            newUpdateMappedStatement(msId, sqlSource, SqlCommandType.DELETE);
-            return msId;
-        }
-
-        private String deleteDynamic(String sql, Class<?> parameterType) {
-            String msId = newMsId(sql + parameterType, SqlCommandType.DELETE);
-            if (hasMappedStatement(msId)) {
-                return msId;
-            }
-            SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, parameterType);
-            newUpdateMappedStatement(msId, sqlSource, SqlCommandType.DELETE);
-            return msId;
-        }
-    }
+	}
 }
