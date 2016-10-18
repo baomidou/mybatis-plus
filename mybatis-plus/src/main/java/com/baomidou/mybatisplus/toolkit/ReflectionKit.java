@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  */
 public class ReflectionKit {
 
-	protected static final Logger logger = Logger.getLogger("SqlMapper");
+	protected static final Logger logger = Logger.getLogger("ReflectionKit");
 
 	/**
 	 * <p>
