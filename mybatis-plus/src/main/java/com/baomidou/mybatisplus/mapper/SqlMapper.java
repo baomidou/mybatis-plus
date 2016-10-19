@@ -242,7 +242,7 @@ public class SqlMapper {
 				logger.warning("SqlMapper Insert Initialization exception");
 				return;
 			}
-			SqlSource sqlSource = languageDriver.createSqlSource(configuration, "${sql}", String.class);
+			SqlSource sqlSource = languageDriver.createSqlSource(configuration, "${sql}", Map.class);
 			newUpdateMappedStatement(INSERT, sqlSource, SqlCommandType.INSERT);
 		}
 
@@ -254,7 +254,7 @@ public class SqlMapper {
 				logger.warning("SqlMapper Update Initialization exception");
 				return;
 			}
-			SqlSource sqlSource = languageDriver.createSqlSource(configuration, "<script>${sql}</script>", String.class);
+			SqlSource sqlSource = languageDriver.createSqlSource(configuration, "${sql}", Map.class);
 			newUpdateMappedStatement(UPDATE, sqlSource, SqlCommandType.UPDATE);
 		}
 
@@ -266,7 +266,7 @@ public class SqlMapper {
 				logger.warning("SqlMapper Delete Initialization exception");
 				return;
 			}
-			SqlSource sqlSource = languageDriver.createSqlSource(configuration, "<script>${sql}</script>", String.class);
+			SqlSource sqlSource = languageDriver.createSqlSource(configuration, "${sql}", Map.class);
 			newUpdateMappedStatement(DELETE, sqlSource, SqlCommandType.DELETE);
 		}
 
