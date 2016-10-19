@@ -29,20 +29,28 @@ import org.apache.ibatis.session.Configuration;
 public interface ISqlInjector {
 
 	/**
-	 * <p>
-	 * 注入 SQL
-	 * </p>
+	 * 根据mapperClass注入SQL
+	 * 
+	 * @param configuration
+	 * @param builderAssistant
+	 * @param mapperClass
 	 */
 	void inject(Configuration configuration, MapperBuilderAssistant builderAssistant, Class<?> mapperClass);
 
 	/**
-	 * <p>
-	 * 检查SQL是否已经注入
-	 * </p>
-	 * <p>
-	 * ps:注入基本SQL后给予标识 注入过不再注入
-	 * </p>
+	 * 检查SQL是否注入(已经注入过不再注入)
+	 * 
+	 * @param configuration
+	 * @param builderAssistant
+	 * @param mapperClass
 	 */
 	void inspectInject(Configuration configuration, MapperBuilderAssistant builderAssistant, Class<?> mapperClass);
+
+	/**
+	 * 注入全局CRUD SQL
+	 * 
+	 * @param configuration
+	 */
+	void injectOfSql(Configuration configuration);
 
 }
