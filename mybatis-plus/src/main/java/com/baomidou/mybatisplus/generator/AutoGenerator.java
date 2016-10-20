@@ -15,6 +15,10 @@
  */
 package com.baomidou.mybatisplus.generator;
 
+import com.baomidou.mybatisplus.annotations.IdType;
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -30,10 +34,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.baomidou.mybatisplus.annotations.IdType;
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
  * <p>
@@ -461,7 +461,7 @@ public class AutoGenerator {
 
 	/**
 	 * 字段处理
-	 * 
+	 *
 	 * @param field
 	 *            表字段
 	 * @return
@@ -572,7 +572,7 @@ public class AutoGenerator {
 			bw.write("@TableName(\"" + table + "\")");
 			bw.newLine();
 		}
-		
+
 		/**
 		 * 实体类名处理，开启 BaseEntity 继承父类
 		 */
@@ -722,20 +722,12 @@ public class AutoGenerator {
 		bw.newLine();
 		bw.write("import " + config.getEntityPackage() + "." + beanName + ";");
 		bw.newLine();
-		if (config.getConfigIdType() == ConfigIdType.STRING) {
-			bw.write("import com.baomidou.mybatisplus.mapper.CommonMapper;");
-		} else {
-			bw.write("import com.baomidou.mybatisplus.mapper.AutoMapper;");
-		}
+		bw.write("import com.baomidou.mybatisplus.mapper.BaseMapper;");
 		bw.newLine();
 
 		bw = buildClassComment(bw, beanName + " 表数据库控制层接口");
 		bw.newLine();
-		if (config.getConfigIdType() == ConfigIdType.STRING) {
-			bw.write("public interface " + mapperName + " extends CommonMapper<" + beanName + "> {");
-		} else {
-			bw.write("public interface " + mapperName + " extends AutoMapper<" + beanName + "> {");
-		}
+		bw.write("public interface " + mapperName + " extends BaseMapper<" + beanName + "> {");
 		bw.newLine();
 		bw.newLine();
 

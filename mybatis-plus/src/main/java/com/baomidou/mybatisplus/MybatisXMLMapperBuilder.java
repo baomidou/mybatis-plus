@@ -109,8 +109,6 @@ public class MybatisXMLMapperBuilder extends BaseBuilder {
 			configuration.addLoadedResource(resource);
 			bindMapperForNamespace();
 		}
-		// TODO 注入全局CRUD SQL
-		MybatisConfiguration.SQL_INJECTOR.injectOfSql(configuration);
 		parsePendingResultMaps();
 		parsePendingChacheRefs();
 		parsePendingStatements();

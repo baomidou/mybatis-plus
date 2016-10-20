@@ -42,6 +42,8 @@ public class MybatisMapperRegistry extends MapperRegistry {
 	public MybatisMapperRegistry(Configuration config) {
 		super(config);
 		this.config = config;
+		// TODO 注入全局CRUD SQL
+		MybatisConfiguration.SQL_INJECTOR.injectOfSql(config);
 	}
 
 	@SuppressWarnings("unchecked")
