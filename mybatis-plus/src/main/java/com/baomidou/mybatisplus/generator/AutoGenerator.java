@@ -15,10 +15,6 @@
  */
 package com.baomidou.mybatisplus.generator;
 
-import com.baomidou.mybatisplus.annotations.IdType;
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -34,6 +30,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.baomidou.mybatisplus.annotations.IdType;
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
  * <p>
@@ -370,13 +370,13 @@ public class AutoGenerator {
 	 */
 	protected String mysqlProcessType(String type) {
 		String t = type.toLowerCase();
-		if (t.contains("char")) {
+		if (t.contains("char") || t.contains("text")) {
 			return "String";
 		} else if (t.contains("bigint")) {
 			return "Long";
 		} else if (t.contains("int")) {
 			return "Integer";
-		} else if (t.contains("date") || t.contains("timestamp")) {
+		} else if (t.contains("date") || t.contains("time") || t.contains("year")) {
 			return "Date";
 		} else if (t.contains("text")) {
 			return "String";
@@ -436,7 +436,7 @@ public class AutoGenerator {
 	protected boolean isDate(List<String> types) {
 		for (String type : types) {
 			String t = type.toLowerCase();
-			if (t.contains("date") || t.contains("timestamp")) {
+			if (t.contains("date") || t.contains("time")) {
 				return true;
 			}
 		}
