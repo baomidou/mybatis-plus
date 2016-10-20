@@ -223,6 +223,7 @@ public class EntityWrapperTest {
 		List<Long> list = new ArrayList<Long>();
 		list.add(111111111L);
 		list.add(222222222L);
+		list.add(333333333L);
 		ew.in("test_type", list);
 		String sqlPart = ew.getSqlSegment();
 		System.out.println("sql ==> " + sqlPart);
