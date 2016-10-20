@@ -103,6 +103,7 @@ public class UserMapperTest {
         userA.setId(IdWorker.getId());
         userA.setName("junyu_shi");
         userA.setAge(1);
+        userA.setDesc("测试一把");
         userA.setTestType(1);
         userA.setRole(role);
 

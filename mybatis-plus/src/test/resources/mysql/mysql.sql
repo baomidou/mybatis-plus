@@ -1,17 +1,15 @@
 /*
- Navicat Premium Data Transfer
+ Navicat MySQL Data Transfer
 
- Source Server         : mysql-admin
- Source Server Type    : MySQL
- Source Server Version : 50621
+ Source Server         : local
+ Source Server Version : 50616
  Source Host           : localhost
  Source Database       : mybatis-plus
 
- Target Server Type    : MySQL
- Target Server Version : 50621
+ Target Server Version : 50616
  File Encoding         : utf-8
 
- Date: 09/09/2016 16:38:46 PM
+ Date: 10/20/2016 22:24:47 PM
 */
 
 SET NAMES utf8;
@@ -30,6 +28,23 @@ CREATE TABLE `role` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
+--  Table structure for `test`
+-- ----------------------------
+DROP TABLE IF EXISTS `test`;
+CREATE TABLE `test` (
+  `id` bigint(20) NOT NULL,
+  `type` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+--  Records of `test`
+-- ----------------------------
+BEGIN;
+INSERT INTO `test` VALUES ('1', '11'), ('2', '22');
+COMMIT;
+
+-- ----------------------------
 --  Table structure for `user`
 -- ----------------------------
 DROP TABLE IF EXISTS `user`;
@@ -40,23 +55,8 @@ CREATE TABLE `user` (
   `test_type` int(11) DEFAULT '0' COMMENT '测试下划线字段命名类型',
   `role` bigint(20) DEFAULT NULL,
   `phone` varchar(64) COLLATE utf8_bin DEFAULT NULL,
+  `desc` varchar(255) COLLATE utf8_bin NOT NULL,
   PRIMARY KEY (`test_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=774164658700161025 DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='用户表';
-
--- ----------------------------
--- Table structure for test
--- ----------------------------
-DROP TABLE IF EXISTS `test`;
-CREATE TABLE `test` (
-  `id` bigint(20) NOT NULL,
-  `type` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- ----------------------------
--- Records of test
--- ----------------------------
-INSERT INTO `test` VALUES ('1', '11');
-INSERT INTO `test` VALUES ('2', '22');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='用户表';
 
 SET FOREIGN_KEY_CHECKS = 1;
