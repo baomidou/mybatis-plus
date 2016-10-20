@@ -100,7 +100,7 @@ public class TableFieldInfo {
 	}
 
 	public void setColumn(String column) {
-		this.column = DBKeywordsProcessor.convert(column);
+		this.column = StringUtils.convert(column);
 	}
 
 	public String getProperty() {

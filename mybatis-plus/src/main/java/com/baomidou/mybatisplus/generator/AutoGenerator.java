@@ -17,7 +17,6 @@ package com.baomidou.mybatisplus.generator;
 
 import com.baomidou.mybatisplus.annotations.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.toolkit.DBKeywordsProcessor;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 import java.io.BufferedWriter;
@@ -869,7 +868,7 @@ public class AutoGenerator {
 		 */
 		if (null != config.getConfigBaseEntity()) {
 			for (String column : config.getConfigBaseEntity().getColumns()) {
-				bw.write(DBKeywordsProcessor.convert(column));
+				bw.write(StringUtils.convert(column));
 				if (column.contains("_")) {
 					bw.write(" AS " + processField(column));
 				}
@@ -883,7 +882,7 @@ public class AutoGenerator {
 			String column = columns.get(i);
 			IdInfo idInfo = idMap.get(column);
 			if (idInfo != null) {
-				bw.write(DBKeywordsProcessor.convert(idInfo.getValue()));
+				bw.write(StringUtils.convert(idInfo.getValue()));
 				if (idInfo.getValue().contains("_")) {
 					bw.write(" AS " + processField(idInfo.getValue()));
 				}
@@ -891,7 +890,7 @@ public class AutoGenerator {
 				if (null == config.getConfigBaseEntity()) {
 					bw.write(" ");
 				}
-				bw.write(DBKeywordsProcessor.convert(column));
+				bw.write(StringUtils.convert(column));
 				if (column.contains("_")) {
 					bw.write(" AS " + processField(column));
 				}

@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.test;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -37,6 +38,11 @@ public class EntityWrapperTest {
 	 * User 查询包装器
 	 */
 	private EntityWrapper<User> ew = new EntityWrapper<User>();
+
+	// 初始化
+	static {
+		TableInfoHelper.initTableInfo(User.class, null);
+	}
 
 	@Test
 	public void test() {
