@@ -879,7 +879,7 @@ public class AutoSqlInjector implements ISqlInjector {
 			logger.warning("SqlMapper Select Initialization exception");
 			return;
 		}
-		SqlSource sqlSource = languageDriver.createSqlSource(configuration, "${sql}", Map.class);
+		SqlSource sqlSource = languageDriver.createSqlSource(configuration, SqlMapper.InjectSQL, Map.class);
 		newSelectMappedStatement(SqlMapper.SELECT, sqlSource, Map.class);
 	}
 
@@ -891,7 +891,7 @@ public class AutoSqlInjector implements ISqlInjector {
 			logger.warning("SqlMapper Insert Initialization exception");
 			return;
 		}
-		SqlSource sqlSource = languageDriver.createSqlSource(configuration, "${sql}", Map.class);
+		SqlSource sqlSource = languageDriver.createSqlSource(configuration, SqlMapper.InjectSQL, Map.class);
 		newUpdateMappedStatement(SqlMapper.INSERT, sqlSource, SqlCommandType.INSERT);
 	}
 
@@ -903,7 +903,7 @@ public class AutoSqlInjector implements ISqlInjector {
 			logger.warning("SqlMapper Update Initialization exception");
 			return;
 		}
-		SqlSource sqlSource = languageDriver.createSqlSource(configuration, "${sql}", Map.class);
+		SqlSource sqlSource = languageDriver.createSqlSource(configuration, SqlMapper.InjectSQL, Map.class);
 		newUpdateMappedStatement(SqlMapper.UPDATE, sqlSource, SqlCommandType.UPDATE);
 	}
 
@@ -915,7 +915,7 @@ public class AutoSqlInjector implements ISqlInjector {
 			logger.warning("SqlMapper Delete Initialization exception");
 			return;
 		}
-		SqlSource sqlSource = languageDriver.createSqlSource(configuration, "${sql}", Map.class);
+		SqlSource sqlSource = languageDriver.createSqlSource(configuration, SqlMapper.InjectSQL, Map.class);
 		newUpdateMappedStatement(SqlMapper.DELETE, sqlSource, SqlCommandType.DELETE);
 	}
 

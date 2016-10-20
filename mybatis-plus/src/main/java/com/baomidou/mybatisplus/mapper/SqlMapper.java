@@ -21,6 +21,7 @@ public class SqlMapper {
 	public static final String DELETE = "SqlMapper.Delete";
 	public static final String UPDATE = "SqlMapper.Update";
 	public static final String SELECT = "SqlMapper.Select";
+	public static final String InjectSQL = "${sql}";
 	private Map<String, String> sqlMap = new ConcurrentHashMap<String, String>();
 	private final SqlSession sqlSession;
 
