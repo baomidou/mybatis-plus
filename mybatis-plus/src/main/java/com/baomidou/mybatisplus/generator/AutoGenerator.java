@@ -33,6 +33,8 @@ import java.util.Map;
 
 import com.baomidou.mybatisplus.annotations.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.mapper.DBType;
+import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
@@ -871,12 +873,21 @@ public class AutoGenerator {
 		bw.write("\t<sql id=\"Base_Column_List\">");
 		bw.newLine();
 		bw.write("\t\t");
+
+		/*
+		 * 数据库类型
+		 */
+		DBType dbType = DBType.ORACLE;
+		if (config.getConfigDataSource() == ConfigDataSource.MYSQL) {
+			dbType = DBType.MYSQL;
+		}
+
 		/*
 		 * 公共字段
 		 */
 		if (null != config.getConfigBaseEntity()) {
 			for (String column : config.getConfigBaseEntity().getColumns()) {
-				bw.write(StringUtils.convert(column));
+				bw.write(SqlReservedWords.convert(dbType, column));
 				if (column.contains("_")) {
 					bw.write(" AS " + processField(column));
 				}
@@ -890,7 +901,7 @@ public class AutoGenerator {
 			String column = columns.get(i);
 			IdInfo idInfo = idMap.get(column);
 			if (idInfo != null) {
-				bw.write(StringUtils.convert(idInfo.getValue()));
+				bw.write(SqlReservedWords.convert(dbType, column));
 				if (idInfo.getValue().contains("_")) {
 					bw.write(" AS " + processField(idInfo.getValue()));
 				}
@@ -898,7 +909,7 @@ public class AutoGenerator {
 				if (null == config.getConfigBaseEntity()) {
 					bw.write(" ");
 				}
-				bw.write(StringUtils.convert(column));
+				bw.write(SqlReservedWords.convert(dbType, column));
 				if (column.contains("_")) {
 					bw.write(" AS " + processField(column));
 				}

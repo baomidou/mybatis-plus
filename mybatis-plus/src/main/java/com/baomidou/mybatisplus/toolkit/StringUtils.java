@@ -204,17 +204,4 @@ public class StringUtils {
 		return concatCapitalize(null, str);
 	}
 
-	/**
-	 * <p>
-	 * 数据库字段转义
-	 * </p>
-	 *
-	 * @param str
-	 *            数据库字段
-	 * @return
-	 */
-	public static String convert(String str) {
-		return String.format("`%s`", str);
-	}
-
 }
