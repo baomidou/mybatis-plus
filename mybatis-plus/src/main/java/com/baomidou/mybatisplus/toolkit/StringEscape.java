@@ -8,7 +8,7 @@ package com.baomidou.mybatisplus.toolkit;
  * @author Caratacus
  * @Date 2016-10-16
  */
-public class EscapeOfString {
+public class StringEscape {
 	/**
 	 * 字符串是否需要转义
 	 * 
