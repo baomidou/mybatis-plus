@@ -15,9 +15,10 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.annotations.IdType;
+import com.baomidou.mybatisplus.mapper.SqlMapper;
+
+import java.util.List;
 
 /**
  * <p>
@@ -61,7 +62,10 @@ public class TableInfo {
 	 * 表主键ID 字段名
 	 */
 	private String keyColumn;
-
+	/**
+	 * 缓存SqlMapper
+	 */
+	private SqlMapper sqlMapper;
 	/**
 	 * 表字段信息列表
 	 */
@@ -133,4 +137,11 @@ public class TableInfo {
 		this.className = className;
 	}
 
+	public SqlMapper getSqlMapper() {
+		return sqlMapper;
+	}
+
+	public void setSqlMapper(SqlMapper sqlMapper) {
+		this.sqlMapper = sqlMapper;
+	}
 }

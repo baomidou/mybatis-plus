@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.mapper.DBType;
 import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
 import com.baomidou.mybatisplus.mapper.ISqlInjector;
 import com.baomidou.mybatisplus.toolkit.PackageHelper;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.io.VFS;
@@ -595,7 +596,10 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 				LOGGER.debug("Property 'mapperLocations' was not specified or no matching resources found");
 			}
 		}
-		return this.sqlSessionFactoryBuilder.build(configuration);
+		SqlSessionFactory sqlSessionFactory = this.sqlSessionFactoryBuilder.build(configuration);
+		// TODO injectSqlMapper
+		TableInfoHelper.injectSqlMapper(sqlSessionFactory);
+		return sqlSessionFactory;
 	}
 
 	/**
@@ -605,8 +609,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 		if (this.sqlSessionFactory == null) {
 			afterPropertiesSet();
 		}
-		// TODO 缓存sqlSessionFactory
-		//SqlMapper sqlMapper = new SqlMapper(sqlSessionFactory.openSession());
 		return this.sqlSessionFactory;
 	}
 

@@ -23,10 +23,13 @@ import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.mapper.SqlMapper;
+import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -244,4 +247,26 @@ public class TableInfoHelper {
 		return result;
 	}
 
+	/**
+	 * 缓存sqlSessionFactory
+	 *
+	 * @param sqlSessionFactory
+	 * @return
+	 */
+	public static void injectSqlMapper(SqlSessionFactory sqlSessionFactory) {
+		SqlMapper sqlMapper = new SqlMapper(sqlSessionFactory.openSession());
+		Collection<TableInfo> values = tableInfoCache.values();
+		for (TableInfo tableInfo : values) {
+			if (null == tableInfo.getSqlMapper())
+				tableInfo.setSqlMapper(sqlMapper);
+		}
+	}
+
+	public static SqlMapper getSqlMapper(Class clazz) {
+		return getTableInfo(clazz).getSqlMapper();
+	}
+
+	public static SqlMapper getSqlMapper(String tableName) {
+		return getTableInfo(tableName).getSqlMapper();
+	}
 }

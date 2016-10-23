@@ -16,9 +16,10 @@
 package com.baomidou.mybatisplus.test.activerecord;
 
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
-import com.baomidou.mybatisplus.mapper.SqlMapper;
+import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.test.mysql.TestMapper;
-import org.apache.ibatis.session.SqlSession;
+import com.baomidou.mybatisplus.test.mysql.entity.Test;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.io.InputStream;
@@ -40,7 +41,11 @@ public class ActiveRecordTest {
 		InputStream in = TestMapper.class.getClassLoader().getResourceAsStream("mysql-config.xml");
 		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
         SqlSessionFactory sqlSessionFactory = mf.build(in);
-       /* List<Record> test1 = new Test().db().select().all();
+        TableInfoHelper.injectSqlMapper(sqlSessionFactory);
+        List<Map<String, Object>> maps = Model.mapper(Test.class).selectList("select * from user");
+        System.out.println(maps);
+
+      /* List<Record> test1 = new Test().db().select().all();
         System.out.println(test1);
         List<Record> test2 = Model.db(Test.class).select().all();
         System.out.println(test2);
@@ -48,12 +53,12 @@ public class ActiveRecordTest {
         System.out.println(test3);*/
 
 
-        SqlSession sqlSession = sqlSessionFactory.openSession();
+       /* SqlSession sqlSession = sqlSessionFactory.openSession();
         SqlMapper sqlMapper = new SqlMapper(sqlSession);
         Map<String, Object> maps = sqlMapper.selectOne("select * from test");
         List<Map<String, Object>> maps1 = sqlMapper.selectList("select * from user");
         System.out.println(maps);
-        System.out.println(maps1);
+        System.out.println(maps1);*/
 
 	}
 

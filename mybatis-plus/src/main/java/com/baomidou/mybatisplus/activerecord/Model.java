@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.activerecord;
 
+import com.baomidou.mybatisplus.mapper.SqlMapper;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 import java.io.Serializable;
@@ -37,5 +38,10 @@ public abstract class Model<M extends Model> implements Serializable {
 	public static Table db(Class<?> clazz) {
 		return TableInfoHelper.getTable(clazz);
 	}
-
+	public static SqlMapper mapper(Class<?> clazz) {
+		return TableInfoHelper.getSqlMapper(clazz);
+	}
+	public static SqlMapper mapper(String tableName) {
+		return TableInfoHelper.getSqlMapper(tableName);
+	}
 }
