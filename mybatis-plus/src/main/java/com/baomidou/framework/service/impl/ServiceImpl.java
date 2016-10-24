@@ -120,6 +120,17 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return retBool(baseMapper.insertBatch(entityList));
 	}
 
+	public boolean insertBatchSelective(List<T> entityList) {
+		if (null == entityList) {
+			return false;
+		}
+		int result = 0;
+		for (T t : entityList) {
+			result = baseMapper.insertSelective(t);
+		}
+		return retBool(result);
+	}
+
 	public boolean deleteById(Serializable id) {
 		return retBool(baseMapper.deleteById(id));
 	}
@@ -212,7 +223,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	public Table db() {
 		try {
 			Type type = getClass().getGenericSuperclass();
-			//TODO 泛型 0 注意
+			// TODO 泛型 0 注意
 			String className = ((ParameterizedType) type).getActualTypeArguments()[0].getTypeName();
 			return Model.db(Class.forName(className));
 		} catch (Exception e) {
