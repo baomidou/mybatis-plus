@@ -40,7 +40,7 @@ public class MyMetaObjectHandler implements IMetaObjectHandler {
 
 		// 测试下划线
 		Object testType = metaObject.getValue("testType");
-		System.err.println("testTypetestType==" + testType);
+		System.err.println("testType==" + testType);
 		if (null == testType) {
 			metaObject.setValue("testType", 3);
 		}
