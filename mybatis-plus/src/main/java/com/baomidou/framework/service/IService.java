@@ -67,6 +67,17 @@ public interface IService<T, PK> {
 
 	/**
 	 * <p>
+	 * 插入（批量）（选择字段， null 字段不插入）
+	 * </p>
+	 * 
+	 * @param entityList
+	 *            实体对象列表
+	 * @return boolean
+	 */
+	boolean insertBatchSelective(List<T> entityList);
+
+	/**
+	 * <p>
 	 * 根据 ID 删除
 	 * </p>
 	 * 
@@ -178,6 +189,7 @@ public interface IService<T, PK> {
 	 * @return boolean
 	 */
 	boolean insertOrUpdate(T entity);
+
 	/**
 	 * <p>
 	 * TableId 注解存在更新记录，否插入一条记录 （选择字段， null 字段不插入）

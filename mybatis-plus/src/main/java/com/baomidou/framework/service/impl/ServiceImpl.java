@@ -116,6 +116,17 @@ public class ServiceImpl<M extends BaseMapper<T, PK>, T, PK extends Serializable
 		return retBool(baseMapper.insertBatch(entityList));
 	}
 
+	public boolean insertBatchSelective(List<T> entityList) {
+		if (null == entityList) {
+			return false;
+		}
+		int result = 0;
+		for (T t : entityList) {
+			result = baseMapper.insertSelective(t);
+		}
+		return retBool(result);
+	}
+
 	public boolean deleteById(Serializable id) {
 		return retBool(baseMapper.deleteById(id));
 	}
