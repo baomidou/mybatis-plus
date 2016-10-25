@@ -15,6 +15,15 @@
  */
 package com.baomidou.framework.service.impl;
 
+import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.baomidou.framework.service.IService;
 import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.activerecord.Table;
@@ -27,14 +36,6 @@ import com.baomidou.mybatisplus.toolkit.CollectionUtil;
 import com.baomidou.mybatisplus.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.toolkit.TableInfo;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * <p>
@@ -117,7 +118,24 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	}
 
 	public boolean insertBatch(List<T> entityList) {
-		return retBool(baseMapper.insertBatch(entityList));
+		if (null == entityList) {
+			return false;
+		}
+		int total = entityList.size();
+		if (total <= 10) {
+			/*
+			 * 设置 10 条内批量，超过循环提交，防止 SQL 超长。
+			 */
+			return retBool(baseMapper.insertBatch(entityList));
+		}
+		int result = 0;
+		for (T t : entityList) {
+			result = baseMapper.insert(t);
+			if (result <= 0) {
+				break;
+			}
+		}
+		return retBool(result);
 	}
 
 	public boolean insertBatchSelective(List<T> entityList) {
@@ -127,6 +145,9 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		int result = 0;
 		for (T t : entityList) {
 			result = baseMapper.insertSelective(t);
+			if (result <= 0) {
+				break;
+			}
 		}
 		return retBool(result);
 	}
