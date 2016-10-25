@@ -75,6 +75,7 @@ public class AutoGenerator {
 	protected static String PATH_XML = null;
 	protected static String PATH_SERVICE = null;
 	protected static String PATH_SERVICE_IMPL = null;
+	protected static String PATH_CONTROLLER_IMPL = null;
 
 	protected static boolean FILE_OVERRIDE = false;
 
@@ -108,6 +109,7 @@ public class AutoGenerator {
 		PATH_XML = getFilePath(saveDir, getPathFromPackageName(config.getXmlPackage()));
 		PATH_SERVICE = getFilePath(saveDir, getPathFromPackageName(config.getServicePackage()));
 		PATH_SERVICE_IMPL = getFilePath(saveDir, getPathFromPackageName(config.getServiceImplPackage()));
+		PATH_CONTROLLER_IMPL = getFilePath(saveDir, getPathFromPackageName(config.getControllerPackage()));
 
 		/**
 		 * 新生成的文件是否覆盖现有文件
@@ -249,6 +251,7 @@ public class AutoGenerator {
 				String mapperXMLName = String.format(config.getMapperXMLName(), beanName);
 				String serviceName = String.format(config.getServiceName(), beanName);
 				String serviceImplName = String.format(config.getServiceImplName(), beanName);
+				String controllerName = String.format(config.getControllerName(), beanName);
 
 				/**
 				 * 根据文件覆盖标志决定是否生成映射文件
@@ -267,6 +270,9 @@ public class AutoGenerator {
 				}
 				if (valideFile(PATH_SERVICE_IMPL, serviceImplName, JAVA_SUFFIX)) {
 					buildServiceImpl(beanName, serviceImplName, serviceName, mapperName);
+				}
+				if (valideFile(PATH_CONTROLLER_IMPL, controllerName, JAVA_SUFFIX)) {
+					buildController(beanName, controllerName);
 				}
 			}
 		} catch (Exception e) {
@@ -849,6 +855,35 @@ public class AutoGenerator {
 		bw.newLine();
 
 		// ----------定义service中的方法End----------
+		bw.newLine();
+		bw.write("}");
+		bw.flush();
+		bw.close();
+	}
+	
+	/**
+	 * 构建service实现类文件
+	 *
+	 * @param beanName
+	 * @param controllerName
+	 * @throws IOException
+	 */
+	protected void buildController(String beanName, String controllerName) throws IOException {
+		File serviceFile = new File(PATH_CONTROLLER_IMPL, controllerName + ".java");
+		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(serviceFile), "utf-8"));
+		bw.write("package " + config.getServiceImplPackage() + ";");
+		bw.newLine();
+		bw.newLine();
+		bw.write("import org.springframework.stereotype.Controller;");
+		bw.newLine();
+		
+		bw = buildClassComment(bw, beanName + " 控制层");
+		bw.newLine();
+		bw.write("@Controller");
+		bw.newLine();
+		bw.write("public class " + controllerName + " {");
+		bw.newLine();
+		bw.newLine();
 		bw.newLine();
 		bw.write("}");
 		bw.flush();
