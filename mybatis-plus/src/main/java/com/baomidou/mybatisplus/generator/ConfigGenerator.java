@@ -24,21 +24,22 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  * 生成器配置类
  * ********************************* 使用前必读 *********************
  * saveDir 文件生成目录
- * entity_package entity 包路径
- * mapper_package mapper 包路径
- * xmlPackage xx_mapper.xml 包路径，默认为mapper/xml
- * servicePackage service 包路径
- * serviceImplPackage serviceImpl包路径，默认为service/impl
- * superService 	service 父类包路径名称
- * superServiceImpl service 实现父类包路径名称
- * mapperName		自定义 mapper 名称
- * mapperXMLName	自定义 xml 名称
- * serviceName		自定义 service 名称
- * serviceImplName	自定义 serviceImp 名称
- * tableNames   	要生成的表名称，如为空就直接指定所有表.格式为逗号分割
- * columnConstant  【实体】是否生成字段常量（默认 false）
- * buliderModel	   【实体】是否为构建者模型（默认 false）
- * fileOverride 	是否覆盖当前已有文件
+ * entity_package 		entity 包路径
+ * mapper_package 		mapper 包路径
+ * xmlPackage 			xx_mapper.xml 包路径，默认为mapper/xml
+ * servicePackage 		service 包路径
+ * controllerPackage 	controller 包路径
+ * serviceImplPackage 	serviceImpl包路径，默认为service/impl
+ * superService 		service 父类包路径名称
+ * superServiceImpl 	service 实现父类包路径名称
+ * mapperName			自定义 mapper 名称
+ * mapperXMLName		自定义 xml 名称
+ * serviceName			自定义 service 名称
+ * serviceImplName		自定义 serviceImp 名称
+ * tableNames   		要生成的表名称，如为空就直接指定所有表.格式为逗号分割
+ * columnConstant  	   【实体】是否生成字段常量（默认 false）
+ * buliderModel	   	   【实体】是否为构建者模型（默认 false）
+ * fileOverride 		是否覆盖当前已有文件
  * -------------------------------------
  * 以下数据库相关配置：
  * -------------------------------------
@@ -67,6 +68,8 @@ public class ConfigGenerator {
 
 	protected String serviceImplPackage;
 
+	protected String controllerPackage;
+
 	protected String superService;
 
 	protected String superServiceImpl;
@@ -81,6 +84,8 @@ public class ConfigGenerator {
 	protected String serviceName = "I%sService";
 
 	protected String serviceImplName = "%sServiceImpl";
+
+	protected String controllerName = "%sController";
 
 	/*
 	 * 指定生成表名
@@ -373,4 +378,21 @@ public class ConfigGenerator {
 	public void setServiceImplPackage(String serviceImplPackage) {
 		this.serviceImplPackage = serviceImplPackage;
 	}
+
+	public String getControllerPackage() {
+		return controllerPackage;
+	}
+
+	public void setControllerPackage(String controllerPackage) {
+		this.controllerPackage = controllerPackage;
+	}
+
+	public String getControllerName() {
+		return controllerName;
+	}
+
+	public void setControllerName(String controllerName) {
+		this.controllerName = controllerName;
+	}
+
 }
