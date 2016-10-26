@@ -15,6 +15,17 @@
  */
 package com.baomidou.framework.service.impl;
 
+import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.baomidou.framework.service.IService;
 import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.activerecord.Table;
@@ -27,15 +38,6 @@ import com.baomidou.mybatisplus.toolkit.CollectionUtil;
 import com.baomidou.mybatisplus.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.toolkit.TableInfo;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
-import org.apache.ibatis.session.ExecutorType;
-import org.apache.ibatis.session.SqlSession;
-import org.springframework.beans.factory.annotation.Autowired;
-import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * <p>
@@ -46,8 +48,6 @@ import java.util.logging.Logger;
  * @Date 2016-04-20
  */
 public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
-
-	protected Class<T> modleClass = ReflectionKit.getSuperClassGenricType(getClass(), 1);
 
 	protected static final Logger logger = Logger.getLogger("ServiceImpl");
 
@@ -146,13 +146,14 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		if (null == entityList) {
 			throw new IllegalArgumentException("entityList must not be empty");
 		}
-		TableInfo tableInfo = TableInfoHelper.getTableInfo(modleClass);
+		TableInfo tableInfo = TableInfoHelper.getTableInfo(currentModleClass());
 		if (null == tableInfo) {
 			throw new MybatisPlusException("Error: insertBatch Fail, ClassGenricType not found .");
 		}
 		SqlSession batchSqlSession = tableInfo.getSqlSessionFactory().openSession(ExecutorType.BATCH, false);
 		try {
-			for (int i = 0; i < entityList.size(); i++) {
+			int size = entityList.size();
+			for (int i = 0; i < size; i++) {
 				if (isSelective) {
 					baseMapper.insertSelective(entityList.get(0));
 				} else {
@@ -169,6 +170,11 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		}
 		return true;
 
+	}
+
+	@SuppressWarnings("unchecked")
+	protected Class<T> currentModleClass() {
+		return ReflectionKit.getSuperClassGenricType(getClass(), 1);
 	}
 
 	public boolean insertBatchSelective(List<T> entityList) {
