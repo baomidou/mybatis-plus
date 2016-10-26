@@ -16,7 +16,7 @@
 package com.baomidou.mybatisplus.toolkit;
 
 import com.baomidou.mybatisplus.MybatisConfiguration;
-import com.baomidou.mybatisplus.MybatisSqlSessionFactoryHolder;
+import com.baomidou.mybatisplus.MybatisPlusHolder;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
@@ -165,7 +165,7 @@ public class TableInfoHelper {
 			return null;
 		}
 		// 缓存
-		tableInfo.setSqlSessionFactory(MybatisSqlSessionFactoryHolder.getSqlSessionFactory());
+		tableInfo.setSqlSessionFactory(MybatisPlusHolder.getSqlSessionFactory());
 		/*
 		 * 注入
 		 */

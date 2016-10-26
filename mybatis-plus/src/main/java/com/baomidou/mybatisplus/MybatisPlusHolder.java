@@ -5,20 +5,20 @@ import org.apache.ibatis.session.SqlSessionFactory;
 
 /**
  * <p>
- * MybatisSqlSessionFactoryHolder
+ * MybatisPlusHolder
  * </p>
  *
  * @author Caratacus
  * @Date 2016-10-26
  */
-public class MybatisSqlSessionFactoryHolder {
+public class MybatisPlusHolder {
 
 	private static SqlSession sqlSession;
 	private static SqlSessionFactory sqlSessionFactory;
 
 	public static void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
-		MybatisSqlSessionFactoryHolder.sqlSessionFactory = sqlSessionFactory;
-		MybatisSqlSessionFactoryHolder.sqlSession = sqlSessionFactory.openSession();
+		MybatisPlusHolder.sqlSessionFactory = sqlSessionFactory;
+		MybatisPlusHolder.sqlSession = sqlSessionFactory.openSession();
 	}
 
 	public static SqlSessionFactory getSqlSessionFactory() {
