@@ -15,7 +15,7 @@
  */
 package com.baomidou.mybatisplus.test.mysql;
 
-import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.baomidou.mybatisplus.mapper.AutoMapper;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.session.RowBounds;
@@ -24,27 +24,27 @@ import java.util.List;
 
 /**
  * <p>
- * 继承 BaseMapper，就自动拥有CRUD方法
+ * 继承 AutoMapper，就自动拥有CRUD方法
  * </p>
- * 
+ *
  * @author hubin
  * @Date 2016-01-23
  */
-public interface UserMapper extends BaseMapper<User> {
+public interface UserMapper extends AutoMapper<User> {
 
 	/**
 	 * 用户列表，分页显示
-	 * 
+	 *
 	 * @param pagination
 	 *            传递参数包含该属性，即自动分页
 	 * @return
 	 */
 	List<User> selectListRow(RowBounds pagination);
-	
+
 	/**
 	 * 注解插入【测试】
 	 */
-	@Insert("insert into user(test_id,name,age) values(#{id},#{name},#{age})")  
+	@Insert("insert into user(test_id,name,age) values(#{id},#{name},#{age})")
 	int insertInjector(User user);
 
 	/**

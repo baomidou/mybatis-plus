@@ -33,7 +33,7 @@ import java.util.Map;
  * @author hubin
  * @Date 2016-01-23
  */
-public interface BaseMapper<T> {
+public interface BaseMapper<T, PK extends Serializable> {
 
 	/**
 	 * <p>

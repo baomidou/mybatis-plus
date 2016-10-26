@@ -2,7 +2,7 @@ package com.baomidou.mybatisplus.toolkit;
 
 /**
  * <p>
- * StringEscape ，数据库字符串转义
+ * EscapeOfString ，数据库字符串转义
  * </p>
  *
  * @author Caratacus
@@ -24,20 +24,6 @@ public class StringEscape {
 			char c = x.charAt(i);
 
 			switch (c) {
-				case 0: /* Must be escaped for 'mysql' */
-
-					needsHexEscape = true;
-					break;
-
-				case '\n': /* Must be escaped for logs */
-					needsHexEscape = true;
-
-					break;
-
-				case '\r':
-					needsHexEscape = true;
-					break;
-
 				case '\\':
 					needsHexEscape = true;
 
@@ -53,9 +39,6 @@ public class StringEscape {
 
 					break;
 
-				case '\032': /* This gives problems on Win32 */
-					needsHexEscape = true;
-					break;
 			}
 
 			if (needsHexEscape) {
@@ -93,23 +76,6 @@ public class StringEscape {
 				char c = x.charAt(i);
 
 				switch (c) {
-					case 0: /* Must be escaped for 'mysql' */
-						buf.append('\\');
-						buf.append('0');
-
-						break;
-
-					case '\n': /* Must be escaped for logs */
-						buf.append('\\');
-						buf.append('n');
-
-						break;
-
-					case '\r':
-						buf.append('\\');
-						buf.append('r');
-
-						break;
 
 					case '\\':
 						buf.append('\\');
@@ -120,19 +86,11 @@ public class StringEscape {
 					case '\'':
 						buf.append('\\');
 						buf.append('\'');
-
 						break;
 
 					case '"': /* Better safe than sorry */
 						buf.append('\\');
 						buf.append('"');
-
-						break;
-
-					case '\032': /* This gives problems on Win32 */
-						buf.append('\\');
-						buf.append('Z');
-
 						break;
 
 					default:

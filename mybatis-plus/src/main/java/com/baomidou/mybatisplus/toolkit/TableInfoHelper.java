@@ -218,8 +218,6 @@ public class TableInfoHelper {
             if (null == tableInfo.getSqlSessionFactory()) {
                 tableInfo.setSqlSessionFactory(sqlSessionFactory);
             }
-
-
         }
     }
 

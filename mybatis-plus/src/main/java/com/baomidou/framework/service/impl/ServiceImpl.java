@@ -41,7 +41,7 @@ import java.util.logging.Logger;
  * @author hubin
  * @Date 2016-04-20
  */
-public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
+public class ServiceImpl<M extends BaseMapper<T, PK>, T, PK extends Serializable> implements IService<T, PK> {
 
     protected Class<T> modleClass = ReflectionKit.getSuperClassGenricType(getClass(), 1);
 

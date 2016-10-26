@@ -15,12 +15,12 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.logging.Logger;
-
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 
 /**
  * <p>
@@ -68,11 +68,11 @@ public class Sequence {
 	public Sequence(long workerId, long datacenterId) {
 		if (workerId > maxWorkerId || workerId < 0) {
 			throw new MybatisPlusException(
-					String.format("worker Id can't be greater than %dialect or less than 0", maxWorkerId));
+					String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
 		}
 		if (datacenterId > maxDatacenterId || datacenterId < 0) {
 			throw new MybatisPlusException(
-					String.format("datacenter Id can't be greater than %dialect or less than 0", maxDatacenterId));
+					String.format("datacenter Id can't be greater than %d or less than 0", maxDatacenterId));
 		}
 		this.workerId = workerId;
 		this.datacenterId = datacenterId;
@@ -87,7 +87,7 @@ public class Sequence {
 		long timestamp = timeGen();
 		if (timestamp < lastTimestamp) {
 			throw new MybatisPlusException(String.format(
-					"Clock moved backwards. Refusing to generate id for %dialect milliseconds", lastTimestamp - timestamp));
+					"Clock moved backwards. Refusing to generate id for %d milliseconds", lastTimestamp - timestamp));
 		}
 		if (lastTimestamp == timestamp) {
 			sequence = (sequence + 1) & sequenceMask;
