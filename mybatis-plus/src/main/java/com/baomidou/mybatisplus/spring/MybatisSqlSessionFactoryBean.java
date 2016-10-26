@@ -597,8 +597,8 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 			}
 		}
 		SqlSessionFactory sqlSessionFactory = this.sqlSessionFactoryBuilder.build(configuration);
-		// TODO injectSqlMapper
-		TableInfoHelper.injectSqlMapper(sqlSessionFactory);
+		// TODO 缓存 sqlSessionFactory
+		TableInfoHelper.cacheSqlSessionFactory(sqlSessionFactory);
 		return sqlSessionFactory;
 	}
 

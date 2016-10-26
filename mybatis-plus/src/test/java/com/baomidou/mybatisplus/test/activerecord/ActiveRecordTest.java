@@ -41,7 +41,7 @@ public class ActiveRecordTest {
 		InputStream in = TestMapper.class.getClassLoader().getResourceAsStream("mysql-config.xml");
 		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
         SqlSessionFactory sqlSessionFactory = mf.build(in);
-        TableInfoHelper.injectSqlMapper(sqlSessionFactory);
+        TableInfoHelper.cacheSqlSessionFactory(sqlSessionFactory);
         List<Map<String, Object>> maps = Model.mapper(Test.class).selectList("select * from user");
         System.out.println(maps);
 

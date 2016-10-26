@@ -27,6 +27,9 @@ import com.baomidou.mybatisplus.toolkit.CollectionUtil;
 import com.baomidou.mybatisplus.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.toolkit.TableInfo;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.transaction.TransactionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.TransactionDefinition;
@@ -50,6 +53,8 @@ import java.util.logging.Logger;
  * @Date 2016-04-20
  */
 public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
+
+	protected Class<T> modleClass = ReflectionKit.getSuperClassGenricType(getClass(), 1);
 
 	protected static final Logger logger = Logger.getLogger("ServiceImpl");
 
@@ -128,6 +133,14 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return retBool(baseMapper.insertBatch(entityList));
 	}
 
+	public boolean insertBatchSelective(List<T> entityList, int batchSize) {
+		return saveBatch(entityList, batchSize, true);
+	}
+
+	public boolean insertBatch(List<T> entityList, int batchSize) {
+		return saveBatch(entityList, batchSize, false);
+	}
+
 	public boolean insertBatch(AbstractPlatformTransactionManager txManager, List<T> entityList, int batchSize) {
 		if (null == entityList) {
 			throw new IllegalArgumentException("entityList must not be empty");
@@ -151,6 +164,50 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * 批量插入
+	 * 
+	 * @param entityList
+	 * @param batchSize
+	 * @param isSelective
+	 * @return
+	 */
+	protected boolean saveBatch(List<T> entityList, int batchSize, boolean isSelective) {
+		if (null == entityList) {
+			throw new IllegalArgumentException("entityList must not be empty");
+		}
+		TableInfo tableInfo = TableInfoHelper.getTableInfo(modleClass);
+		if (null == tableInfo) {
+			throw new MybatisPlusException("Error: insertBatch Fail, ClassGenricType not found .");
+		}
+		SqlSessionFactory sqlSessionFactory = tableInfo.getSqlSessionFactory();
+		SqlSession batchSqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, false);
+		try {
+			int counter = 0;
+			for (T t : entityList) {
+				counter++;
+				if (isSelective) {
+					baseMapper.insertSelective(t);
+				} else {
+					baseMapper.insert(t);
+
+				}
+				if (counter % batchSize == 0) {
+					batchSqlSession.flushStatements();
+					batchSqlSession.commit();
+				}
+			}
+			batchSqlSession.flushStatements();
+			batchSqlSession.commit();
+		} catch (TransactionException e) {
+			batchSqlSession.rollback();
+			logger.warning("Warn: Method insertBatch Fail. Cause:" + e);
+			return false;
+		}
+		return true;
+
 	}
 
 	public boolean insertBatchSelective(List<T> entityList) {

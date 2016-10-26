@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.toolkit;
 
 import com.baomidou.mybatisplus.annotations.IdType;
 import com.baomidou.mybatisplus.mapper.SqlMapper;
+import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.util.List;
 
@@ -66,6 +67,10 @@ public class TableInfo {
 	 * 缓存SqlMapper
 	 */
 	private SqlMapper sqlMapper;
+	/**
+	 * 缓存SqlSessionFactory
+	 */
+	private SqlSessionFactory sqlSessionFactory;
 	/**
 	 * 表字段信息列表
 	 */
@@ -143,5 +148,13 @@ public class TableInfo {
 
 	public void setSqlMapper(SqlMapper sqlMapper) {
 		this.sqlMapper = sqlMapper;
+	}
+
+	public SqlSessionFactory getSqlSessionFactory() {
+		return sqlSessionFactory;
+	}
+
+	public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
+		this.sqlSessionFactory = sqlSessionFactory;
 	}
 }

@@ -17,6 +17,8 @@ package com.baomidou.mybatisplus.toolkit;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -115,4 +117,37 @@ public class ReflectionKit {
 		return result;
 	}
 
+	/**
+	 * 反射对象获取泛型
+	 * 
+	 * @param clazz
+	 *            对象
+	 * @param index
+	 *            泛型所在位置
+	 * @return Class
+	 */
+	public static Class getSuperClassGenricType(final Class clazz, final int index) {
+
+		Type genType = clazz.getGenericSuperclass();
+
+		if (!(genType instanceof ParameterizedType)) {
+			logger.warning(String.format("Warn: %s's superclass not ParameterizedType", clazz.getSimpleName()));
+			return Object.class;
+		}
+
+		Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
+
+		if (index >= params.length || index < 0) {
+			logger.warning(String.format("Warn: " + "Index: %s, Size of %s's Parameterized Type: %s .", index,
+					clazz.getSimpleName(), params.length));
+			return Object.class;
+		}
+		if (!(params[index] instanceof Class)) {
+			logger.warning(String.format("Warn: %s not set the actual class on superclass generic parameter",
+					clazz.getSimpleName()));
+			return Object.class;
+		}
+
+		return (Class) params[index];
+	}
 }

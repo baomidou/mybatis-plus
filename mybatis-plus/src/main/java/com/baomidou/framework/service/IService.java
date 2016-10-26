@@ -74,6 +74,32 @@ public interface IService<T> {
 	 * 
 	 * @param entityList
 	 *            实体对象列表
+	 * @param batchSize
+	 *
+	 * @return boolean
+	 */
+	boolean insertBatchSelective(List<T> entityList, int batchSize);
+
+	/**
+	 * <p>
+	 * 插入（批量）
+	 * </p>
+	 *
+	 * @param entityList
+	 *            实体对象列表
+	 * @param entityList
+	 *
+	 * @return boolean
+	 */
+	boolean insertBatch(List<T> entityList, int batchSize);
+
+	/**
+	 * <p>
+	 * 插入（批量）（选择字段， null 字段不插入）
+	 * </p>
+	 *
+	 * @param entityList
+	 *            实体对象列表
 	 * @return boolean
 	 */
 	boolean insertBatchSelective(List<T> entityList);
@@ -89,11 +115,10 @@ public interface IService<T> {
 	 *            实体对象列表
 	 * @param batchSize
 	 *            批次数量
-	 * @return boolean 
-	 * <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate" >
-	 *     <constructor-arg index="0" ref="sqlSessionFactory"/>
-	 *     <constructor-arg index="1" value="BATCH"/>
-	 * </bean>
+	 * @return boolean <bean id="sqlSession"
+	 *         class="org.mybatis.spring.SqlSessionTemplate" > <constructor-arg
+	 *         index="0" ref="sqlSessionFactory"/> <constructor-arg index="1"
+	 *         value="BATCH"/> </bean>
 	 */
 	boolean insertBatch(AbstractPlatformTransactionManager txManager, List<T> entityList, int batchSize);
 
