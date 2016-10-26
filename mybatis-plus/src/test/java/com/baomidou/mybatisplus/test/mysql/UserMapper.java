@@ -15,23 +15,22 @@
  */
 package com.baomidou.mybatisplus.test.mysql;
 
-import java.util.List;
-
+import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.baomidou.mybatisplus.test.mysql.entity.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.session.RowBounds;
 
-import com.baomidou.mybatisplus.mapper.AutoMapper;
-import com.baomidou.mybatisplus.test.mysql.entity.User;
+import java.util.List;
 
 /**
  * <p>
- * 继承 AutoMapper，就自动拥有CRUD方法
+ * 继承 BaseMapper，就自动拥有CRUD方法
  * </p>
  * 
  * @author hubin
  * @Date 2016-01-23
  */
-public interface UserMapper extends AutoMapper<User> {
+public interface UserMapper extends BaseMapper<User> {
 
 	/**
 	 * 用户列表，分页显示

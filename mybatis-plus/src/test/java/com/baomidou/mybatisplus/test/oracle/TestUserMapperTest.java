@@ -15,17 +15,16 @@
  */
 package com.baomidou.mybatisplus.test.oracle;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.test.oracle.entity.TestUser;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>
@@ -50,7 +49,7 @@ public class TestUserMapperTest {
 
 		/*
 		 * 此处采用 MybatisSessionFactoryBuilder 构建
-		 * SqlSessionFactory，目的是引入AutoMapper功能
+		 * SqlSessionFactory，目的是引入BaseMapper功能
 		 */
 		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
 

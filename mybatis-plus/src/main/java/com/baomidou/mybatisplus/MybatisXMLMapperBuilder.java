@@ -70,7 +70,7 @@ public class MybatisXMLMapperBuilder extends BaseBuilder {
 
 	@Deprecated
 	public MybatisXMLMapperBuilder(Reader reader, Configuration configuration, String resource,
-			Map<String, XNode> sqlFragments, String namespace) {
+								   Map<String, XNode> sqlFragments, String namespace) {
 		this(reader, configuration, resource, sqlFragments);
 		this.builderAssistant.setCurrentNamespace(namespace);
 	}
@@ -109,7 +109,6 @@ public class MybatisXMLMapperBuilder extends BaseBuilder {
 			configuration.addLoadedResource(resource);
 			bindMapperForNamespace();
 		}
-
 		parsePendingResultMaps();
 		parsePendingChacheRefs();
 		parsePendingStatements();

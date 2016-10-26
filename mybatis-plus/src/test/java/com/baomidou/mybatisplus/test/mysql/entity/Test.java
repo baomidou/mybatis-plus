@@ -15,8 +15,7 @@
  */
 package com.baomidou.mybatisplus.test.mysql.entity;
 
-import java.io.Serializable;
-
+import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
@@ -30,10 +29,11 @@ import com.baomidou.mybatisplus.annotations.TableName;
  * @Date 2016-09-25
  */
 @TableName("test")
-public class Test implements Serializable {
+public class Test extends Model<Test> {
 
 	@TableField(exist = false)
 	private static final long serialVersionUID = 1L;
+	public static final Test instance = new Test();
 
 	/** 主键 */
 	@TableId
@@ -65,4 +65,5 @@ public class Test implements Serializable {
 	public void setType(String type) {
 		this.type = type;
 	}
+
 }
