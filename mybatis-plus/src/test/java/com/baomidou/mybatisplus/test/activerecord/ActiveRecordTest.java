@@ -36,10 +36,10 @@ import java.util.Map;
  */
 public class ActiveRecordTest {
 
-	public static void main(String[] args) {
-		// 加载配置文件
-		InputStream in = TestMapper.class.getClassLoader().getResourceAsStream("mysql-config.xml");
-		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
+    public static void main(String[] args) {
+        // 加载配置文件
+        InputStream in = TestMapper.class.getClassLoader().getResourceAsStream("mysql-config.xml");
+        MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
         SqlSessionFactory sqlSessionFactory = mf.build(in);
         TableInfoHelper.cacheSqlSessionFactory(sqlSessionFactory);
         List<Map<String, Object>> maps = Model.mapper(Test.class).selectList("select * from user");
@@ -60,6 +60,6 @@ public class ActiveRecordTest {
         System.out.println(maps);
         System.out.println(maps1);*/
 
-	}
+    }
 
 }

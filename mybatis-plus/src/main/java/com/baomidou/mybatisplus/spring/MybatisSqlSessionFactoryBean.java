@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.spring;
 
 import com.baomidou.mybatisplus.MybatisConfiguration;
+import com.baomidou.mybatisplus.MybatisPlusHolder;
 import com.baomidou.mybatisplus.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.MybatisXMLMapperBuilder;
 import com.baomidou.mybatisplus.annotations.FieldStrategy;
@@ -24,7 +25,6 @@ import com.baomidou.mybatisplus.mapper.DBType;
 import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
 import com.baomidou.mybatisplus.mapper.ISqlInjector;
 import com.baomidou.mybatisplus.toolkit.PackageHelper;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.io.VFS;
@@ -598,7 +598,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 		}
 		SqlSessionFactory sqlSessionFactory = this.sqlSessionFactoryBuilder.build(configuration);
 		// TODO 缓存 sqlSessionFactory
-		TableInfoHelper.cacheSqlSessionFactory(sqlSessionFactory);
+		MybatisPlusHolder.setSqlSessionFactory(sqlSessionFactory);
 		return sqlSessionFactory;
 	}
 
