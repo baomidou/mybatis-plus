@@ -21,6 +21,11 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionException;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.baomidou.framework.service.IService;
 import com.baomidou.mybatisplus.annotations.IdType;
@@ -115,28 +120,39 @@ public class ServiceImpl<M extends BaseMapper<T, PK>, T, PK extends Serializable
 
 	public boolean insertBatch(List<T> entityList) {
 		if (null == entityList) {
+			throw new IllegalArgumentException("entityList must not be empty");
+		}
+		return retBool(baseMapper.insertBatch(entityList));
+	}
+
+	public boolean insertBatch(DataSourceTransactionManager txManager, List<T> entityList, int batchSize) {
+		if (null == entityList) {
+			throw new IllegalArgumentException("entityList must not be empty");
+		}
+		TransactionDefinition def = new DefaultTransactionDefinition();
+		TransactionStatus status = txManager.getTransaction(def);
+		try {
+			int counter = 0;
+			for (T t : entityList) {
+				counter++;
+				baseMapper.insert(t);
+				if (counter % batchSize == 0) {
+					txManager.commit(status);
+					status = txManager.getTransaction(def);
+				}
+			}
+			txManager.commit(status);
+		} catch (TransactionException e) {
+			txManager.rollback(status);
+			e.printStackTrace();
 			return false;
 		}
-		int total = entityList.size();
-		if (total <= 10) {
-			/*
-			 * 设置 10 条内批量，超过循环提交，防止 SQL 超长。
-			 */
-			return retBool(baseMapper.insertBatch(entityList));
-		}
-		int result = 0;
-		for (T t : entityList) {
-			result = baseMapper.insert(t);
-			if (result <= 0) {
-				break;
-			}
-		}
-		return retBool(result);
+		return true;
 	}
 
 	public boolean insertBatchSelective(List<T> entityList) {
 		if (null == entityList) {
-			return false;
+			throw new IllegalArgumentException("entityList must not be empty");
 		}
 		int result = 0;
 		for (T t : entityList) {

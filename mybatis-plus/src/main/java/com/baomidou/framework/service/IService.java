@@ -22,6 +22,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+
 /**
  * <p>
  * 顶级 Service
@@ -64,6 +66,25 @@ public interface IService<T, PK> {
 	 * @return boolean
 	 */
 	boolean insertBatch(List<T> entityList);
+
+	/**
+	 * <p>
+	 * 插入（批量）（ batchSize 批次提交）
+	 * </p>
+	 * 
+	 * @param txManager
+	 *            数据源事务管理器
+	 * @param entityList
+	 *            实体对象列表
+	 * @param batchSize
+	 *            批次数量
+	 * @return boolean 
+	 * <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate" >
+	 *     <constructor-arg index="0" ref="sqlSessionFactory"/>
+	 *     <constructor-arg index="1" value="BATCH"/>
+	 * </bean>
+	 */
+	boolean insertBatch(DataSourceTransactionManager txManager, List<T> entityList, int batchSize);
 
 	/**
 	 * <p>
