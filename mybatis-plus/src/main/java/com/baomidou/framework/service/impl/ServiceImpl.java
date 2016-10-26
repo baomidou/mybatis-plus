@@ -29,14 +29,7 @@ import com.baomidou.mybatisplus.toolkit.TableInfo;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.transaction.TransactionException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.AbstractPlatformTransactionManager;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -134,36 +127,11 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	}
 
 	public boolean insertBatchSelective(List<T> entityList, int batchSize) {
-		return batchInsert(entityList, batchSize, true);
+		return insertBatch(entityList, batchSize, true);
 	}
 
 	public boolean insertBatch(List<T> entityList, int batchSize) {
-		return batchInsert(entityList, batchSize, false);
-	}
-
-	public boolean insertBatch(AbstractPlatformTransactionManager txManager, List<T> entityList, int batchSize) {
-		if (null == entityList) {
-			throw new IllegalArgumentException("entityList must not be empty");
-		}
-		TransactionDefinition def = new DefaultTransactionDefinition();
-		TransactionStatus status = txManager.getTransaction(def);
-		try {
-			int counter = 0;
-			for (T t : entityList) {
-				counter++;
-				baseMapper.insert(t);
-				if (counter % batchSize == 0) {
-					txManager.commit(status);
-					status = txManager.getTransaction(def);
-				}
-			}
-			txManager.commit(status);
-		} catch (TransactionException e) {
-			txManager.rollback(status);
-			e.printStackTrace();
-			return false;
-		}
-		return true;
+		return insertBatch(entityList, batchSize, false);
 	}
 
 	/**
@@ -174,7 +142,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	 * @param isSelective
 	 * @return
 	 */
-	protected boolean batchInsert(List<T> entityList, int batchSize, boolean isSelective) {
+	protected boolean insertBatch(List<T> entityList, int batchSize, boolean isSelective) {
 		if (null == entityList) {
 			throw new IllegalArgumentException("entityList must not be empty");
 		}

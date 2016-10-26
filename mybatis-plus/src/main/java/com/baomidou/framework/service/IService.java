@@ -18,7 +18,6 @@ package com.baomidou.framework.service;
 import com.baomidou.mybatisplus.activerecord.Table;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
-import org.springframework.transaction.support.AbstractPlatformTransactionManager;
 
 import java.io.Serializable;
 import java.util.List;
@@ -103,24 +102,6 @@ public interface IService<T> {
 	 * @return boolean
 	 */
 	boolean insertBatchSelective(List<T> entityList);
-
-	/**
-	 * <p>
-	 * 插入（批量）（ batchSize 批次提交）
-	 * </p>
-	 * 
-	 * @param txManager
-	 *            数据源事务管理器
-	 * @param entityList
-	 *            实体对象列表
-	 * @param batchSize
-	 *            批次数量
-	 * @return boolean <bean id="sqlSession"
-	 *         class="org.mybatis.spring.SqlSessionTemplate" > <constructor-arg
-	 *         index="0" ref="sqlSessionFactory"/> <constructor-arg index="1"
-	 *         value="BATCH"/> </bean>
-	 */
-	boolean insertBatch(AbstractPlatformTransactionManager txManager, List<T> entityList, int batchSize);
 
 	/**
 	 * <p>
