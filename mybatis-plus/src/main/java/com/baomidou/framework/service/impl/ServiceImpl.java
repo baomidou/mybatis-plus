@@ -195,7 +195,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 				}
 			}
 			batchSqlSession.flushStatements();
-		} catch (TransactionException e) {
+		} catch (Exception e) {
 			logger.warning("Warn: Method insertBatch Fail. Cause:" + e);
 			return false;
 		}
