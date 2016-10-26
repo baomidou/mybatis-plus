@@ -15,17 +15,6 @@
  */
 package com.baomidou.framework.service.impl;
 
-import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
-import org.apache.ibatis.session.ExecutorType;
-import org.apache.ibatis.session.SqlSession;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.baomidou.framework.service.IService;
 import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.activerecord.Table;
@@ -38,6 +27,16 @@ import com.baomidou.mybatisplus.toolkit.CollectionUtil;
 import com.baomidou.mybatisplus.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.toolkit.TableInfo;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * <p>
@@ -155,9 +154,9 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 			int size = entityList.size();
 			for (int i = 0; i < size; i++) {
 				if (isSelective) {
-					baseMapper.insertSelective(entityList.get(0));
+					baseMapper.insertSelective(entityList.get(i));
 				} else {
-					baseMapper.insert(entityList.get(0));
+					baseMapper.insert(entityList.get(i));
 				}
 				if (i % batchSize == 0) {
 					batchSqlSession.flushStatements();
