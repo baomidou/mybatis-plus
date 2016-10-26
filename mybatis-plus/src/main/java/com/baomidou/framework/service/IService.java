@@ -15,15 +15,14 @@
  */
 package com.baomidou.framework.service;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-
 import com.baomidou.mybatisplus.activerecord.Table;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import org.springframework.transaction.support.AbstractPlatformTransactionManager;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -96,7 +95,7 @@ public interface IService<T> {
 	 *     <constructor-arg index="1" value="BATCH"/>
 	 * </bean>
 	 */
-	boolean insertBatch(DataSourceTransactionManager txManager, List<T> entityList, int batchSize);
+	boolean insertBatch(AbstractPlatformTransactionManager txManager, List<T> entityList, int batchSize);
 
 	/**
 	 * <p>

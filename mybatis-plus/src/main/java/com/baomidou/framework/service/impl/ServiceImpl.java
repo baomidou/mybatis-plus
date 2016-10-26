@@ -15,20 +15,6 @@
  */
 package com.baomidou.framework.service.impl;
 
-import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
-import org.apache.ibatis.transaction.TransactionException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-
 import com.baomidou.framework.service.IService;
 import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.activerecord.Table;
@@ -41,6 +27,19 @@ import com.baomidou.mybatisplus.toolkit.CollectionUtil;
 import com.baomidou.mybatisplus.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.toolkit.TableInfo;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import org.apache.ibatis.transaction.TransactionException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.AbstractPlatformTransactionManager;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+
+import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * <p>
@@ -129,7 +128,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return retBool(baseMapper.insertBatch(entityList));
 	}
 
-	public boolean insertBatch(DataSourceTransactionManager txManager, List<T> entityList, int batchSize) {
+	public boolean insertBatch(AbstractPlatformTransactionManager txManager, List<T> entityList, int batchSize) {
 		if (null == entityList) {
 			throw new IllegalArgumentException("entityList must not be empty");
 		}
