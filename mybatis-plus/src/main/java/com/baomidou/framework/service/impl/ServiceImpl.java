@@ -134,11 +134,11 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	}
 
 	public boolean insertBatchSelective(List<T> entityList, int batchSize) {
-		return saveBatch(entityList, batchSize, true);
+		return batchInsert(entityList, batchSize, true);
 	}
 
 	public boolean insertBatch(List<T> entityList, int batchSize) {
-		return saveBatch(entityList, batchSize, false);
+		return batchInsert(entityList, batchSize, false);
 	}
 
 	public boolean insertBatch(AbstractPlatformTransactionManager txManager, List<T> entityList, int batchSize) {
@@ -174,7 +174,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	 * @param isSelective
 	 * @return
 	 */
-	protected boolean saveBatch(List<T> entityList, int batchSize, boolean isSelective) {
+	protected boolean batchInsert(List<T> entityList, int batchSize, boolean isSelective) {
 		if (null == entityList) {
 			throw new IllegalArgumentException("entityList must not be empty");
 		}
@@ -182,27 +182,20 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		if (null == tableInfo) {
 			throw new MybatisPlusException("Error: insertBatch Fail, ClassGenricType not found .");
 		}
-		SqlSessionFactory sqlSessionFactory = tableInfo.getSqlSessionFactory();
-		SqlSession batchSqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, false);
+		SqlSession batchSqlSession = tableInfo.getSqlSessionFactory().openSession(ExecutorType.BATCH, false);
 		try {
-			int counter = 0;
-			for (T t : entityList) {
-				counter++;
+			for (int i = 0; i < entityList.size(); i++) {
 				if (isSelective) {
-					baseMapper.insertSelective(t);
+					baseMapper.insertSelective(entityList.get(0));
 				} else {
-					baseMapper.insert(t);
-
+					baseMapper.insert(entityList.get(0));
 				}
-				if (counter % batchSize == 0) {
+				if (i % batchSize == 0) {
 					batchSqlSession.flushStatements();
-					batchSqlSession.commit();
 				}
 			}
 			batchSqlSession.flushStatements();
-			batchSqlSession.commit();
 		} catch (TransactionException e) {
-			batchSqlSession.rollback();
 			logger.warning("Warn: Method insertBatch Fail. Cause:" + e);
 			return false;
 		}
