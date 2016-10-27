@@ -31,7 +31,7 @@
 	</scm>
 
 	<properties>
-		<!-- 
+		<!--
 		<gpg.keyname>F4B46FB9</gpg.keyname>
 		 -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -148,6 +148,26 @@
 		<!-- test end -->
 	</dependencies>
 
+	<!-- 发版时注释START -->
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	<!-- 发版时注释END -->
+
 	<profiles>
 		<profile>
 			<id>release</id>
@@ -178,7 +198,7 @@
 								<goals>
 									<goal>jar</goal>
 								</goals>
-								<!-- 
+								<!--
 								<configuration>
 									<additionalparam>-Xdoclint:none</additionalparam>
 								</configuration>

@@ -135,7 +135,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
 	/**
 	 * 批量插入
-	 * 
+	 *
 	 * @param entityList
 	 * @param batchSize
 	 * @param isSelective

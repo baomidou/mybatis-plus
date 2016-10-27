@@ -94,7 +94,7 @@ public class MybatisConfiguration extends Configuration {
 
 	/**
 	 * JDBC开启ActiveRecord
-	 * 
+	 *
 	 * @param environment
 	 */
 	public MybatisConfiguration(Environment environment) {

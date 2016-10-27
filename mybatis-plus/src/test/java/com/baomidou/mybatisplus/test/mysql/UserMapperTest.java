@@ -110,7 +110,7 @@ public class UserMapperTest {
         int rlt = userMapper.insert(userA);
         User whereUser = userMapper.selectOne(userA);
         print(whereUser);
-        
+
         userA.setAge(18);
         userMapper.updateById(userA);
         userMapper.deleteSelective(userA);

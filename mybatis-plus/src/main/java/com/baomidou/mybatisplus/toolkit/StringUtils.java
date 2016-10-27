@@ -158,8 +158,8 @@ public class StringUtils {
 	 */
 	public static String quotaMark(Object obj) {
 		String srcStr = String.valueOf(obj);
-		// fix #79
 		if (obj instanceof String) {
+			// fix #79
 			return StringEscape.escapeString(srcStr);
 		}
 		return srcStr;

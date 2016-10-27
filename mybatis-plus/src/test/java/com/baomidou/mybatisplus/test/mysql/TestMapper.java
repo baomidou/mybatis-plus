@@ -24,7 +24,7 @@ import com.baomidou.mybatisplus.test.mysql.entity.Test;
  * <p>
  * 继承 BaseMapper，就自动拥有CRUD方法
  * </p>
- * 
+ *
  * @author Caratacus hubin
  * @Date 2016-09-25
  */

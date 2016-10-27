@@ -48,7 +48,7 @@ public interface ISqlInjector {
 
 	/**
 	 * 注入全局CRUD SQL
-	 * 
+	 *
 	 * @param configuration
 	 */
 	void injectOfSql(Configuration configuration);

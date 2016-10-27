@@ -1,7 +1,7 @@
 ![Mybatis-Plus-Logo](http://git.oschina.net/uploads/images/2016/0824/211639_4d931e7f_12260.png "logo")
 
-[![Version](https://img.shields.io/badge/version-1.4.7-blue.svg)](https://github.com/baomidou/mybatis-plus)
-
+[![license](https://img.shields.io/github/license/baomidou/mybatis-plus.svg?maxAge=2592000)](http://www.apache.org/licenses/LICENSE-2.0)
+[![GitHub release](https://img.shields.io/github/release/baomidou/mybatis-plus.svg?maxAge=2592000)](https://github.com/baomidou/mybatis-plus)
 
 > 为简化开发工作、提高生产率而生
 

@@ -30,7 +30,7 @@ import java.util.Map;
  * <p>
  * 继承至MapperRegistry
  * </p>
- * 
+ *
  * @author Caratacus
  * @Date 2016-09-26
  */
