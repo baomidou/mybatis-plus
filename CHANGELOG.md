@@ -1,4 +1,15 @@
 # CHANGELOG
+## [v1.4.9] 2016.1x.xx
+
+1、ServiceImpl去除@Transactional注解、去除Slf4j依赖
+2、解决使用EntityWrapper查询时，参数为特殊字符时，存在sql注入问题
+3、调整Mybatis驼峰配置顺序 MybatisPlus > Mybatis
+4、优化分页插件并修复分页溢出设置不起作用问题
+5、去除DBKeywordsProcessor，添加MySQL自动转义关键词
+6、代码生成器新增支持TEXT、TIME、TIMESTAMP类型生成
+7、新增批量插入方法
+8、代码生成器新增Controller层代码生成
+9、调整EntityWrapper类部分List入参为Collection
 
 ## [v1.4.8] 2016.10.12
 
