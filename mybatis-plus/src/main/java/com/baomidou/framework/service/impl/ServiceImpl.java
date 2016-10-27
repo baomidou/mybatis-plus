@@ -149,9 +149,9 @@ public class ServiceImpl<M extends BaseMapper<T, PK>, T, PK extends Serializable
 			int size = entityList.size();
 			for (int i = 0; i < size; i++) {
 				if (isSelective) {
-					baseMapper.insertSelective(entityList.get(0));
+					baseMapper.insertSelective(entityList.get(i));
 				} else {
-					baseMapper.insert(entityList.get(0));
+					baseMapper.insert(entityList.get(i));
 				}
 				if (i % batchSize == 0) {
 					batchSqlSession.flushStatements();
