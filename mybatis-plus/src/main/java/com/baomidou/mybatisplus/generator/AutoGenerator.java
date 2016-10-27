@@ -862,7 +862,7 @@ public class AutoGenerator {
 	}
 	
 	/**
-	 * 构建service实现类文件
+	 * 构建Controller实现类文件
 	 *
 	 * @param beanName
 	 * @param controllerName

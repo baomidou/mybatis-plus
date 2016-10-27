@@ -15,11 +15,10 @@
  */
 package com.baomidou.mybatisplus.plugins.pagination;
 
-import java.io.Serializable;
-
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 
-import com.baomidou.mybatisplus.toolkit.StringUtils;
+import java.io.Serializable;
 
 /**
  * <p>
@@ -125,12 +124,12 @@ public class Pagination extends RowBounds implements Serializable {
 		if (this.total % this.size != 0) {
 			this.pages++;
 		}
-		if (this.current > this.pages) {
-			/**
-			 * 当前页大于总页数，当前页设置为第一页
-			 */
+		/**
+		 * 当前页大于总页数，当前页设置为第一页
+		 */
+		/*if (this.current > this.pages) {
 			this.current = 1;
-		}
+		}*/
 	}
 
 	public int getSize() {
