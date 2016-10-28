@@ -114,6 +114,11 @@ public class ConfigGenerator {
 	 */
 	protected boolean fileOverride = true;
 
+	/*
+	 * true 生成 resultMap ， false 生成通用 Base_Column_List
+	 */
+	protected boolean resultMap = false;
+
 	/* db_config */
 	protected boolean dbPrefix = false;
 
@@ -358,6 +363,14 @@ public class ConfigGenerator {
 
 	public void setFileOverride(boolean fileOverride) {
 		this.fileOverride = fileOverride;
+	}
+
+	public boolean isResultMap() {
+		return resultMap;
+	}
+
+	public void setResultMap(boolean resultMap) {
+		this.resultMap = resultMap;
 	}
 
 	public String getServiceImplPackage() {
