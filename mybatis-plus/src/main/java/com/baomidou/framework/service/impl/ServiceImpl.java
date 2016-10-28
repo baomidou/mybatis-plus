@@ -32,8 +32,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -120,7 +118,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
 	public boolean insertBatch(List<T> entityList) {
 		if (null == entityList) {
-			throw new IllegalArgumentException("entityList must not be empty");
+			throw new IllegalArgumentException("Error: entityList must not be empty");
 		}
 		return retBool(baseMapper.insertBatch(entityList));
 	}
@@ -143,11 +141,11 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	 */
 	protected boolean insertBatch(List<T> entityList, int batchSize, boolean isSelective) {
 		if (null == entityList) {
-			throw new IllegalArgumentException("entityList must not be empty");
+			throw new IllegalArgumentException("Error: entityList must not be empty");
 		}
 		TableInfo tableInfo = TableInfoHelper.getTableInfo(currentModleClass());
 		if (null == tableInfo) {
-			throw new MybatisPlusException("Error: insertBatch Fail, ClassGenricType not found .");
+			throw new MybatisPlusException("Error: Cannot execute insertBatch Method, ClassGenricType not found .");
 		}
 		SqlSession batchSqlSession = tableInfo.getSqlSessionFactory().openSession(ExecutorType.BATCH, false);
 		try {
@@ -164,7 +162,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 			}
 			batchSqlSession.flushStatements();
 		} catch (Exception e) {
-			logger.warning("Warn: Method insertBatch Fail. Cause:" + e);
+			logger.warning("Error: Cannot execute insertBatch Method. Cause:" + e);
 			return false;
 		}
 		return true;
@@ -178,7 +176,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
 	public boolean insertBatchSelective(List<T> entityList) {
 		if (null == entityList) {
-			throw new IllegalArgumentException("entityList must not be empty");
+			throw new IllegalArgumentException("Error: entityList must not be empty");
 		}
 		int result = 0;
 		for (T t : entityList) {
@@ -247,7 +245,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		if (CollectionUtil.isNotEmpty(list)) {
 			int size = list.size();
 			if (size > 1) {
-				logger.warning("Warn: selectOne Method There are " + size + " results.");
+				logger.warning(String.format("Warn: selectOne Method There are  %s results.", size));
 			}
 			return list.get(0);
 		}
@@ -281,10 +279,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	 */
 	public Table db() {
 		try {
-			Type type = getClass().getGenericSuperclass();
-			// TODO 泛型 0 注意
-			String className = ((ParameterizedType) type).getActualTypeArguments()[0].getTypeName();
-			return Model.db(Class.forName(className));
+			return Model.db(currentModleClass());
 		} catch (Exception e) {
 			throw new IllegalStateException("Class is not parametrized with generic type!!! Please use extends <> ");
 		}
