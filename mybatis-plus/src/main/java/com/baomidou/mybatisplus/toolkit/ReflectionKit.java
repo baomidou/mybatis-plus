@@ -63,9 +63,9 @@ public class ReflectionKit {
 			Method method = cls.getMethod(getMethodCapitalize(str));
 			obj = method.invoke(entity);
 		} catch (NoSuchMethodException e) {
-			logger.warning("Warn: No such method. in " + cls + ".  Cause:" + e);
+			logger.warning(String.format("Warn: No such method. in %s.  Cause:" + e, cls.getSimpleName()));
 		} catch (IllegalAccessException e) {
-			logger.warning("Warn: Cannot execute a private method. in " + cls + ".  Cause:" + e);
+			logger.warning(String.format("Warn: Cannot execute a private method. in %s.  Cause:" + e, cls.getSimpleName()));
 		} catch (InvocationTargetException e) {
 			logger.warning("Warn: Unexpected exception on getMethodValue.  Cause:" + e);
 		}
@@ -138,7 +138,7 @@ public class ReflectionKit {
 		Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
 
 		if (index >= params.length || index < 0) {
-			logger.warning(String.format("Warn: " + "Index: %s, Size of %s's Parameterized Type: %s .", index,
+			logger.warning(String.format("Warn: Index: %s, Size of %s's Parameterized Type: %s .", index,
 					clazz.getSimpleName(), params.length));
 			return Object.class;
 		}
