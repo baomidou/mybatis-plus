@@ -18,36 +18,19 @@ package com.baomidou.mybatisplus.generator;
 import com.baomidou.mybatisplus.annotations.IdType;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
-
 /**
  * <p>
- * 生成器配置类
- * ********************************* 使用前必读 *********************
- * saveDir 文件生成目录
- * entity_package 		entity 包路径
- * mapper_package 		mapper 包路径
- * xmlPackage 			xx_mapper.xml 包路径，默认为mapper/xml
- * servicePackage 		service 包路径
- * controllerPackage 	controller 包路径
- * serviceImplPackage 	serviceImpl包路径，默认为service/impl
- * superService 		service 父类包路径名称
- * superServiceImpl 	service 实现父类包路径名称
- * mapperName			自定义 mapper 名称
- * mapperXMLName		自定义 xml 名称
- * serviceName			自定义 service 名称
- * serviceImplName		自定义 serviceImp 名称
- * tableNames   		要生成的表名称，如为空就直接指定所有表.格式为逗号分割
- * columnConstant  	   【实体】是否生成字段常量（默认 false）
- * buliderModel	   	   【实体】是否为构建者模型（默认 false）
- * fileOverride 		是否覆盖当前已有文件
- * -------------------------------------
- * 以下数据库相关配置：
- * -------------------------------------
- * db_include_prefix 表是否包含前缀，例如: tb_xxx 其中 tb_ 为前缀
- * db_driverName 驱动
- * db_user 用户名
- * db_password 密码
- * db_url 连接地址
+ * 生成器配置类 ********************************* 使用前必读 ********************* saveDir
+ * 文件生成目录 entity_package entity 包路径 mapper_package mapper 包路径 xmlPackage
+ * xx_mapper.xml 包路径，默认为mapper/xml servicePackage service 包路径 controllerPackage
+ * controller 包路径 serviceImplPackage serviceImpl包路径，默认为service/impl superService
+ * service 父类包路径名称 superServiceImpl service 实现父类包路径名称 mapperName 自定义 mapper 名称
+ * mapperXMLName 自定义 xml 名称 serviceName 自定义 service 名称 serviceImplName 自定义
+ * serviceImp 名称 tableNames 要生成的表名称，如为空就直接指定所有表.格式为逗号分割 columnConstant
+ * 【实体】是否生成字段常量（默认 false） buliderModel 【实体】是否为构建者模型（默认 false） fileOverride
+ * 是否覆盖当前已有文件 ------------------------------------- 以下数据库相关配置：
+ * ------------------------------------- db_include_prefix 表是否包含前缀，例如: tb_xxx 其中
+ * tb_ 为前缀 db_driverName 驱动 db_user 用户名 db_password 密码 db_url 连接地址
  **************************************************************
  * </p>
  * 
@@ -91,28 +74,28 @@ public class ConfigGenerator {
 	 * 指定生成表名
 	 */
 	protected String[] tableNames = null;
-	
+
 	/*
-	 * 【实体】是否生成字段常量（默认 false）<br>
-	 * -----------------------------------<br>
-	 * public static final String ID = "test_id";
+	 * 【实体】是否生成字段常量（默认 false）<br> -----------------------------------<br> public
+	 * static final String ID = "test_id";
 	 */
 	protected boolean columnConstant = false;
 
 	/*
-	 * 【实体】是否为构建者模型（默认 false）<br>
-	 * -----------------------------------<br>
-	 * 	public User setName(String name) {
-	 * 		this.name = name;
-	 * 		return this;
-	 * 	}
+	 * 【实体】是否为构建者模型（默认 false）<br> -----------------------------------<br> public
+	 * User setName(String name) { this.name = name; return this; }
 	 */
 	protected boolean buliderModel = false;
-	
+
 	/*
 	 * 是否覆盖当前路径下已有文件（默认 true）
 	 */
 	protected boolean fileOverride = true;
+
+	/*
+	 * true 生成 resultMap ， false 生成通用 Base_Column_List
+	 */
+	protected boolean resultMap = false;
 
 	/* db_config */
 	protected boolean dbPrefix = false;
@@ -137,7 +120,6 @@ public class ConfigGenerator {
 	protected ConfigIdType configIdType = ConfigIdType.LONG;
 
 	protected ConfigBaseEntity configBaseEntity = null;
-
 
 	public String getSaveDir() {
 		return saveDir;
@@ -366,6 +348,14 @@ public class ConfigGenerator {
 
 	public void setFileOverride(boolean fileOverride) {
 		this.fileOverride = fileOverride;
+	}
+
+	public boolean isResultMap() {
+		return resultMap;
+	}
+
+	public void setResultMap(boolean resultMap) {
+		this.resultMap = resultMap;
 	}
 
 	public String getServiceImplPackage() {
