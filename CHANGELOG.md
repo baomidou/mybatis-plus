@@ -10,6 +10,7 @@
 7、新增批量插入方法
 8、代码生成器新增Controller层代码生成
 9、调整EntityWrapper类部分List入参为Collection
+10、代码生成器优化支持 resultMap
 
 ## [v1.4.8] 2016.10.12
 
