@@ -1,5 +1,5 @@
 # CHANGELOG
-## [v1.4.9] 2016.1x.xx
+## [v1.4.9] 2016.10.28
 
 1、ServiceImpl去除@Transactional注解、去除Slf4j依赖
 2、解决使用EntityWrapper查询时，参数为特殊字符时，存在sql注入问题
