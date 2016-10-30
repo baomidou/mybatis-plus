@@ -12,6 +12,8 @@ import org.junit.Test;
  * 
  * http://www.mybatis.org/mybatis-3/zh/statement-builders.html
  * 
+ * http://www.programcreek.com/java-api-examples/index.php?api=org.apache.ibatis.jdbc.ScriptRunner
+ * 
  */
 public class SqlBuilderTest {
 
