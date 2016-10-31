@@ -879,7 +879,7 @@ public class AutoGenerator {
 	protected void buildController(String beanName, String controllerName) throws IOException {
 		File serviceFile = new File(PATH_CONTROLLER_IMPL, controllerName + ".java");
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(serviceFile), "utf-8"));
-		bw.write("package " + config.getServiceImplPackage() + ";");
+		bw.write("package " + config.getControllerPackage() + ";");
 		bw.newLine();
 		bw.newLine();
 		bw.write("import org.springframework.stereotype.Controller;");
@@ -977,7 +977,7 @@ public class AutoGenerator {
 		int size = columns.size();
 		bw.write("\t<!-- 通用查询结果列-->");
 		bw.newLine();
-		bw.write("\t<resultMap id=\"" + beanName + "ResultMap\" type=\"" + beanName + "\">");
+		bw.write("\t<resultMap id=\"" + beanName + "ResultMap\" type=\"" + config.getEntityPackage() + "." + beanName + "\">");
 		bw.newLine();
 		
 		/*
