@@ -137,7 +137,12 @@ public class PaginationInterceptor implements Interceptor {
 						tempSql = originalSql.substring(0, orderByIndex);
 					}
 					if (page.isOptimizeCount() && formIndex > -1) {
-						countSql.append(tempSql.substring(formIndex));
+						// 无排序情况处理
+						if ( orderByIndex > -1 ) {
+							countSql.append(tempSql.substring(formIndex));
+						} else {
+							countSql.append(originalSql.substring(formIndex));
+						}
 					} else {
 						countSql.append("FROM (").append(tempSql).append(") A");
 					}
