@@ -15,16 +15,19 @@
  */
 package com.baomidou.mybatisplus.test.activerecord;
 
-import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
-import com.baomidou.mybatisplus.activerecord.Model;
-import com.baomidou.mybatisplus.test.mysql.TestMapper;
-import com.baomidou.mybatisplus.test.mysql.entity.Test;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
-import org.apache.ibatis.session.SqlSessionFactory;
-
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.ibatis.session.SqlSessionFactory;
+
+import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
+import com.baomidou.mybatisplus.activerecord.Model;
+import com.baomidou.mybatisplus.mapper.SqlMapper;
+import com.baomidou.mybatisplus.plugins.pagination.Pagination;
+import com.baomidou.mybatisplus.test.mysql.TestMapper;
+import com.baomidou.mybatisplus.test.mysql.entity.Test;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**
  * <p>
@@ -42,8 +45,15 @@ public class ActiveRecordTest {
         MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
         SqlSessionFactory sqlSessionFactory = mf.build(in);
         TableInfoHelper.cacheSqlSessionFactory(sqlSessionFactory);
-        List<Map<String, Object>> maps = Model.mapper(Test.class).selectList("select * from user");
+        SqlMapper mapper = Model.mapper(Test.class);
+        boolean rlt = mapper.insert("insert into user (test_id, name) values (1, 'test1'),(2, 'test2')");
+        System.err.println("insert:" + rlt);
+        List<Map<String, Object>> maps = mapper.selectList("select * from user");
         System.out.println(maps);
+        maps = mapper.selectList("select * from user", new Pagination(0, 10));
+        System.out.println("page:" + maps);
+        rlt = mapper.delete("delete from user");
+        System.err.println("insert:" + rlt);
 
       /* List<Record> test1 = new Test().db().select().all();
         System.out.println(test1);

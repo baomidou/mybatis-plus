@@ -1,12 +1,14 @@
 package com.baomidou.mybatisplus.mapper;
 
-import com.baomidou.mybatisplus.toolkit.CollectionUtil;
-import org.apache.ibatis.session.SqlSession;
-
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
+
+import org.apache.ibatis.session.RowBounds;
+import org.apache.ibatis.session.SqlSession;
+
+import com.baomidou.mybatisplus.toolkit.CollectionUtil;
 
 /**
  * Mybatis执行sql工具,主要为AR方式调用
@@ -22,7 +24,7 @@ public class SqlMapper {
 	public static final String UPDATE = "SqlMapper.Update";
 	public static final String SELECT = "SqlMapper.Select";
 	public static final String InjectSQL = "${sql}";
-	private Map<String, String> sqlMap = new ConcurrentHashMap<String, String>();
+	private Map<String, Object> sqlMap = new ConcurrentHashMap<String, Object>();
 	private final SqlSession sqlSession;
 
 	/**
@@ -77,6 +79,20 @@ public class SqlMapper {
 	public List<Map<String, Object>> selectList(String sql) {
 		sqlMap.put("sql", sql);
 		return sqlSession.selectList(SELECT, sqlMap);
+	}
+
+	/**
+	 * 查询返回List<Map<String, Object>>
+	 *
+	 * @param sql
+	 *            执行的sql
+	 * @param rowBounds
+	 *            翻页查询条件
+	 * @return
+	 */
+	public List<Map<String, Object>> selectList(String sql, RowBounds rowBounds) {
+		sqlMap.put("sql", sql);
+		return sqlSession.selectList(SELECT, sqlMap, rowBounds);
 	}
 
 	/**
