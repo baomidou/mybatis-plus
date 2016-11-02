@@ -15,13 +15,16 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import com.baomidou.mybatisplus.MybatisConfiguration;
-import com.baomidou.mybatisplus.activerecord.DB;
-import com.baomidou.mybatisplus.annotations.FieldStrategy;
-import com.baomidou.mybatisplus.annotations.IdType;
-import com.baomidou.mybatisplus.toolkit.TableFieldInfo;
-import com.baomidou.mybatisplus.toolkit.TableInfo;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
+
+import javax.sql.DataSource;
+
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -36,14 +39,13 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.scripting.defaults.RawSqlSource;
 import org.apache.ibatis.session.Configuration;
 
-import javax.sql.DataSource;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
+import com.baomidou.mybatisplus.MybatisConfiguration;
+import com.baomidou.mybatisplus.activerecord.DB;
+import com.baomidou.mybatisplus.annotations.FieldStrategy;
+import com.baomidou.mybatisplus.annotations.IdType;
+import com.baomidou.mybatisplus.toolkit.TableFieldInfo;
+import com.baomidou.mybatisplus.toolkit.TableInfo;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**
  * <p>
@@ -805,21 +807,6 @@ public class AutoSqlInjector implements ISqlInjector {
 		initInsert();
 		initUpdate();
 		initDelete();
-	}
-
-	/**
-	 * 创建MSID
-	 *
-	 * @param sql
-	 *            执行的sql
-	 * @param sql
-	 *            执行的sqlCommandType
-	 * @return
-	 */
-	private String newMsId(String sql, SqlCommandType sqlCommandType) {
-		StringBuilder msIdBuilder = new StringBuilder(sqlCommandType.toString());
-		msIdBuilder.append(".").append(sql.hashCode());
-		return msIdBuilder.toString();
 	}
 
 	/**
