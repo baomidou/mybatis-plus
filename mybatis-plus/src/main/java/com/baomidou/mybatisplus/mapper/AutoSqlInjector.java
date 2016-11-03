@@ -194,8 +194,10 @@ public class AutoSqlInjector implements ISqlInjector {
 		List<TableFieldInfo> fieldList = table.getFieldList();
 		for (TableFieldInfo fieldInfo : fieldList) {
 			fieldBuilder.append(convertIfTagInsert(fieldInfo, false));
+			fieldBuilder.append(fieldInfo.getColumn()).append(",");
 			fieldBuilder.append(convertIfTagInsert(fieldInfo, true));
 			placeholderBuilder.append(convertIfTagInsert(fieldInfo, false));
+			placeholderBuilder.append("#{").append(fieldInfo.getEl()).append("},");
 			placeholderBuilder.append(convertIfTagInsert(fieldInfo, true));
 		}
 		fieldBuilder.append("\n</trim>");

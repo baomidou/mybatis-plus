@@ -141,7 +141,7 @@ public class TableInfoHelper {
 				String[] els = el.split(";");
 				if (null != columns && null != els && columns.length == els.length) {
 					for (int i = 0; i < columns.length; i++) {
-						fieldList.add(new TableFieldInfo(true, columns[i], field.getName(), els[i], tableField.validate()));
+						fieldList.add(new TableFieldInfo(columns[i], field.getName(), els[i], tableField.validate()));
 					}
 				} else {
 					String errorMsg = "Class: %s, Field: %s, 'value' 'el' Length must be consistent.";
@@ -152,13 +152,7 @@ public class TableInfoHelper {
 			/**
 			 * 字段, 使用 camelToUnderline 转换驼峰写法为下划线分割法, 如果已指定 TableField , 便不会执行这里
 			 */
-			TableFieldInfo tfi = null;
-			if (MybatisConfiguration.DB_COLUMN_UNDERLINE) {
-				/* 开启字段下划线申明 */
-				tfi = new TableFieldInfo(true, StringUtils.camelToUnderline(field.getName()), field.getName());
-			} else {
-				tfi = new TableFieldInfo(field.getName());
-			}
+			TableFieldInfo tfi = new TableFieldInfo(field.getName());
 			/* 处理日期类型，不支持空比较 */
 			if (Date.class.isAssignableFrom(field.getType())) {
 				tfi.setFieldStrategy(FieldStrategy.NOT_NULL);
