@@ -116,7 +116,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	}
 
 	public boolean insertBatch(List<T> entityList) {
-		if (null == entityList) {
+		if (CollectionUtil.isEmpty(entityList)) {
 			throw new IllegalArgumentException("Error: entityList must not be empty");
 		}
 		return retBool(baseMapper.insertBatch(entityList));
@@ -139,7 +139,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	 * @return
 	 */
 	protected boolean insertBatch(List<T> entityList, int batchSize, boolean isSelective) {
-		if (null == entityList) {
+		if (CollectionUtil.isEmpty(entityList)) {
 			throw new IllegalArgumentException("Error: entityList must not be empty");
 		}
 		TableInfo tableInfo = TableInfoHelper.getTableInfo(currentModleClass());
@@ -174,7 +174,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	}
 
 	public boolean insertBatchSelective(List<T> entityList) {
-		if (null == entityList) {
+		if (CollectionUtil.isEmpty(entityList)) {
 			throw new IllegalArgumentException("Error: entityList must not be empty");
 		}
 		int result = 0;
