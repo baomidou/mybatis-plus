@@ -66,4 +66,9 @@ public class Test extends Model<Test> {
 		this.type = type;
 	}
 
+	@Override
+	protected Class<Test> classType() {
+		return Test.class;
+	}
+
 }

@@ -39,37 +39,23 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
  */
 public class ActiveRecordTest {
 
-    public static void main(String[] args) {
-        // 加载配置文件
-        InputStream in = TestMapper.class.getClassLoader().getResourceAsStream("mysql-config.xml");
-        MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
-        SqlSessionFactory sqlSessionFactory = mf.build(in);
-        TableInfoHelper.cacheSqlSessionFactory(sqlSessionFactory);
-        SqlMapper mapper = Model.mapper(Test.class);
-        boolean rlt = mapper.insert("insert into user (test_id, name) values (1, 'test1'),(2, 'test2')");
-        System.err.println("insert:" + rlt);
-        List<Map<String, Object>> maps = mapper.selectList("select * from user");
-        System.out.println(maps);
-        maps = mapper.selectList("select * from user", new Pagination(0, 10));
-        System.out.println("page:" + maps);
-        rlt = mapper.delete("delete from user");
-        System.err.println("insert:" + rlt);
-
-      /* List<Record> test1 = new Test().db().select().all();
-        System.out.println(test1);
-        List<Record> test2 = Model.db(Test.class).select().all();
-        System.out.println(test2);
-        List<Record> test3 = Test.instance.db().select().all();
-        System.out.println(test3);*/
-
-
-       /* SqlSession sqlSession = sqlSessionFactory.openSession();
-        SqlMapper sqlMapper = new SqlMapper(sqlSession);
-        Map<String, Object> maps = sqlMapper.selectOne("select * from test");
-        List<Map<String, Object>> maps1 = sqlMapper.selectList("select * from user");
-        System.out.println(maps);
-        System.out.println(maps1);*/
-
-    }
-
+	 public static void main(String[] args) {
+	        // 加载配置文件
+	        InputStream in = TestMapper.class.getClassLoader().getResourceAsStream("mysql-config.xml");
+	        MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
+	        SqlSessionFactory sqlSessionFactory = mf.build(in);
+	        TableInfoHelper.cacheSqlSessionFactory(sqlSessionFactory);
+	        SqlMapper mapper = Model.mapper(Test.class);
+	        boolean rlt = mapper.insert("insert into user (test_id, name) values (1, 'test1'),(2, 'test2')");
+	        System.err.println("insert:" + rlt);
+	        List<Map<String, Object>> maps = mapper.selectList("select * from user");
+	        System.out.println(maps);
+	        maps = mapper.selectList("select * from user", new Pagination(0, 10));
+	        System.out.println("page:" + maps);
+	        rlt = mapper.delete("delete from user");
+	        System.err.println("insert:" + rlt);
+	        
+	        List<Map<String, Object>> ts =  new Test().all();
+	        System.out.println(ts);
+	 }
 }

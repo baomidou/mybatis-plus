@@ -23,8 +23,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import javax.sql.DataSource;
-
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -40,7 +38,6 @@ import org.apache.ibatis.scripting.defaults.RawSqlSource;
 import org.apache.ibatis.session.Configuration;
 
 import com.baomidou.mybatisplus.MybatisConfiguration;
-import com.baomidou.mybatisplus.activerecord.DB;
 import com.baomidou.mybatisplus.annotations.FieldStrategy;
 import com.baomidou.mybatisplus.annotations.IdType;
 import com.baomidou.mybatisplus.toolkit.TableFieldInfo;
@@ -97,8 +94,7 @@ public class AutoSqlInjector implements ISqlInjector {
 			MybatisConfiguration.DB_COLUMN_UNDERLINE = configuration.isMapUnderscoreToCamelCase();
 		}
 		Class<?> modelClass = extractModelClass(mapperClass);
-		DataSource dataSource = configuration.getEnvironment().getDataSource();
-		TableInfo table = TableInfoHelper.initTableInfo(modelClass, DB.open(dataSource));
+		TableInfo table = TableInfoHelper.initTableInfo(modelClass);
 
 		/**
 		 * 没有指定主键，默认方法不能使用

@@ -15,9 +15,16 @@
  */
 package com.baomidou.framework.service.impl;
 
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.baomidou.framework.service.IService;
-import com.baomidou.mybatisplus.activerecord.Model;
-import com.baomidou.mybatisplus.activerecord.Table;
 import com.baomidou.mybatisplus.annotations.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
@@ -27,14 +34,6 @@ import com.baomidou.mybatisplus.toolkit.CollectionUtil;
 import com.baomidou.mybatisplus.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.toolkit.TableInfo;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
-import org.apache.ibatis.session.ExecutorType;
-import org.apache.ibatis.session.SqlSession;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * <p>
@@ -270,19 +269,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		}
 		page.setRecords(baseMapper.selectPage(page, entityWrapper));
 		return page;
-	}
-
-	/**
-	 * <p>
-	 * ActiveRecord 模型操作 DB
-	 * </p>
-	 */
-	public Table db() {
-		try {
-			return Model.db(currentModleClass());
-		} catch (Exception e) {
-			throw new IllegalStateException("Class is not parametrized with generic type!!! Please use extends <> ");
-		}
 	}
 
 }

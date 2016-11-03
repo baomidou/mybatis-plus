@@ -1,126 +1,120 @@
 package com.baomidou.mybatisplus.activerecord;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-/**
- * 行记录对象。
- * 
- * @since 1.0
- * @author redraiment
- */
-public final class Record {
-	private final Table table;
-	private final Map<String, Object> values;
+@SuppressWarnings("rawtypes")
+public abstract class Record<T extends Record> {
+	public int id;
+	public long createdAt;
+	public long updatedAt;
+	public boolean active = true;
 
-	Record(Table table, Map<String, Object> values) {
-		this.table = table;
-		this.values = values;
+	public List<Map<String, Object>> all() {
+		return where(null);
 	}
 
-	public Set<String> columnNames() {
-		return values.keySet();
+	public Map<String, Object> find(int id) {
+		return where("id = ?", id).get(0);
 	}
 
-	@SuppressWarnings("unchecked")
-	public <E> E get(String name) {
-		name = DB.parseKeyParameter(name);
-		Object value = null;
+	public boolean exists(int id) {
+		return where("id = ?", id).size() > 0;
+	}
 
-		if (values.containsKey(name)) {
-			value = values.get(name);
-		} else if (table.relations.containsKey(name)) {
-			Association relation = table.relations.get(name);
-			Table active = table.dbo.active(relation.target);
-			active.join(relation.assoc(table.name, getInt("id")));
-			if (relation.isAncestor() && !relation.isCross()) {
-				active.constrain(relation.key, getInt("id"));
+	public boolean save() {
+		updatedAt = System.currentTimeMillis();
+		if (isNew()) {
+			createdAt = System.currentTimeMillis();
+			return insert();
+		}
+		return update();
+	}
+
+	public void eagerLoad() {
+		List<Field> assoc = getAssociations();
+		for (int i = 0; i < assoc.size(); i++) {
+			try {
+				load(assoc.get(0).getName().replaceAll("_id$", ""));
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-			value = (relation.isOnlyOneResult() ? active.first() : active);
 		}
+	}
 
-		String key = "get_".concat(name);
-		if (table.hooks.containsKey(key)) {
-			value = table.hooks.get(key).call(this, value);
+	public boolean isNew() {
+		return id == 0;
+	}
+
+	protected abstract Class<T> classType();
+
+	protected abstract boolean insert();
+
+	protected abstract boolean update();
+
+	public abstract List<Map<String, Object>> where(String whereClause, Object... args);
+
+	public List<Field> getAssociations() {
+		List<Field> associationsFields = new ArrayList<Field>();
+		Field[] fields = classType().getFields();
+		for (int i = 0; i < fields.length; i++) {
+			Field f = fields[i];
+			if (f.getName().matches(".*_id$"))
+				associationsFields.add(f);
 		}
-		return (E) value;
-	}
-
-	/* For primitive types */
-	public boolean getBool(String name) {
-		return get(name);
-	}
-
-	public byte getByte(String name) {
-		return get(name);
-	}
-
-	public char getChar(String name) {
-		return get(name);
-	}
-
-	public short getShort(String name) {
-		return get(name);
-	}
-
-	public int getInt(String name) {
-		return get(name);
-	}
-
-	public long getLong(String name) {
-		return get(name);
-	}
-
-	public float getFloat(String name) {
-		return get(name);
-	}
-
-	public double getDouble(String name) {
-		return get(name);
-	}
-
-	/* For any other types */
-
-	public String getStr(String name) {
-		return get(name);
-	}
-
-	public <E> E get(String name, Class<E> type) {
-		return type.cast(get(name));
-	}
-
-	public Record set(String name, Object value) {
-		name = DB.parseKeyParameter(name);
-		String key = "set_".concat(name);
-		if (table.hooks.containsKey(key)) {
-			value = table.hooks.get(key).call(this, value);
-		}
-		values.put(name, value);
-		return this;
-	}
-
-	public Record save() {
-		table.update(this);
-		return this;
-	}
-
-	public Record update(Object... args) {
-		for (int i = 0; i < args.length; i += 2) {
-			set(args[i].toString(), args[i + 1]);
-		}
-		return save();
-	}
-
-	public void destroy() {
-		table.delete(this);
+		return associationsFields;
 	}
 
 	@Override
 	public String toString() {
-		StringBuilder line = new StringBuilder();
-		for (Map.Entry<String, Object> e : values.entrySet()) {
-			line.append(String.format("%s = %s\n", e.getKey(), e.getValue()));
+		String obj = "{ id: " + id;
+		List<Field> fields = getFieldsWithoutId();
+		for (int i = 0; i < fields.size(); i++) {
+			obj += ", ";
+			Field f = fields.get(i);
+			try {
+				obj += f.getName() + ": " + f.get(this);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
-		return line.toString();
+		obj += " }";
+		return obj;
 	}
+
+	public List<Field> getFieldsWithoutId() {
+		List<Field> fieldsWithoutId = new ArrayList<Field>();
+		Field[] fields = classType().getFields();
+		for (int i = 0; i < fields.length; i++) {
+			Field f = fields[i];
+			Class<?> t = f.getType();
+			if (isValidType(t) && !f.getName().equals("id")) {
+				fieldsWithoutId.add(f);
+			}
+		}
+		return fieldsWithoutId;
+	}
+
+	public boolean isValidType(Class<?> t) {
+		return (t == String.class || t == boolean.class || t == int.class || t == float.class || t == double.class
+				|| t == long.class);
+	}
+
+	private void load(String name) {
+		try {
+			Field idField = this.classType().getField(name + "_id");
+			Field field = this.classType().getDeclaredField(name);
+			if (idField.getInt(this) == 0) {
+				return;
+			}
+			Object obj = ((Record) field.getType().newInstance()).find(idField.getInt(this));
+			field.setAccessible(true);
+			field.set(this, obj);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 }

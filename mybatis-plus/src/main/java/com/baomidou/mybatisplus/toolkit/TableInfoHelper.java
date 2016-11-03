@@ -15,18 +15,6 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
-import com.baomidou.mybatisplus.MybatisConfiguration;
-import com.baomidou.mybatisplus.MybatisPlusHolder;
-import com.baomidou.mybatisplus.activerecord.DB;
-import com.baomidou.mybatisplus.activerecord.Table;
-import com.baomidou.mybatisplus.activerecord.exception.IllegalTableNameException;
-import com.baomidou.mybatisplus.annotations.TableField;
-import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.annotations.TableName;
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.mapper.SqlMapper;
-import org.apache.ibatis.session.SqlSessionFactory;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -35,6 +23,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.ibatis.session.SqlSessionFactory;
+
+import com.baomidou.mybatisplus.MybatisConfiguration;
+import com.baomidou.mybatisplus.MybatisPlusHolder;
+import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotations.TableId;
+import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.mapper.SqlMapper;
 
 /**
  * <p>
@@ -52,16 +50,6 @@ public class TableInfoHelper {
 	private static final Map<String, TableInfo> tableInfoCache = new ConcurrentHashMap<String, TableInfo>();
 
 	/**
-	 * 缓存表对应实体类className
-	 */
-	private static final Map<String, String> classNameCache = new ConcurrentHashMap<String, String>();
-
-	/**
-	 * 缓存 Table 信息
-	 */
-	private static final Map<String, Table> tableCache = new ConcurrentHashMap<String, Table>();
-
-	/**
 	 * <p>
 	 * 获取实体映射表信息
 	 * <p>
@@ -76,27 +64,6 @@ public class TableInfoHelper {
 
 	/**
 	 * <p>
-	 * 获取实体映射表信息
-	 * <p>
-	 *
-	 * @param tableName
-	 *            数据库表名
-	 * @return
-	 */
-	public static TableInfo getTableInfo(String tableName) {
-		String className = classNameCache.get(tableName);
-		if (StringUtils.isEmpty(className)) {
-			throw new IllegalTableNameException(tableName);
-		}
-		return tableInfoCache.get(className);
-	}
-
-	public static Table getTable(Class<?> clazz) {
-		return tableCache.get(clazz.getName());
-	}
-
-	/**
-	 * <p>
 	 * 实体类反射获取表信息【初始化】
 	 * <p>
 	 *
@@ -104,7 +71,7 @@ public class TableInfoHelper {
 	 *            反射实体类
 	 * @return
 	 */
-	public synchronized static TableInfo initTableInfo(Class<?> clazz, DB activeRecordDd) {
+	public synchronized static TableInfo initTableInfo(Class<?> clazz) {
 		TableInfo ti = tableInfoCache.get(clazz.getName());
 		if (ti != null) {
 			return ti;
@@ -207,10 +174,6 @@ public class TableInfoHelper {
 		 * 注入
 		 */
 		tableInfoCache.put(clazz.getName(), tableInfo);
-		classNameCache.put(tableName, clazz.getName());
-		if (null != activeRecordDd) {
-			tableCache.put(clazz.getName(), activeRecordDd.active(tableName));
-		}
 		return tableInfo;
 	}
 
@@ -266,11 +229,8 @@ public class TableInfoHelper {
         }
     }
 
-    public static SqlMapper getSqlMapper(Class clazz) {
+    public static SqlMapper getSqlMapper(Class<?> clazz) {
         return getTableInfo(clazz).getSqlMapper();
     }
 
-	public static SqlMapper getSqlMapper(String tableName) {
-		return getTableInfo(tableName).getSqlMapper();
-	}
 }
