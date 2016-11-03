@@ -1,5 +1,7 @@
 package com.baomidou.mybatisplus.activerecord;
 
+import com.baomidou.mybatisplus.toolkit.SystemClock;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +27,9 @@ public abstract class Record<T extends Record> {
 	}
 
 	public boolean save() {
-		updatedAt = System.currentTimeMillis();
+		updatedAt = SystemClock.now();
 		if (isNew()) {
-			createdAt = System.currentTimeMillis();
+			createdAt = SystemClock.now();
 			return insert();
 		}
 		return update();
@@ -98,8 +100,7 @@ public abstract class Record<T extends Record> {
 	}
 
 	public boolean isValidType(Class<?> t) {
-		return (t == String.class || t == boolean.class || t == int.class || t == float.class || t == double.class
-				|| t == long.class);
+		return (t == String.class || t == boolean.class || t == int.class || t == float.class || t == double.class || t == long.class);
 	}
 
 	private void load(String name) {
