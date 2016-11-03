@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.activerecord.Model;
 
 public class Task extends Model<Task> {
 	private static final long serialVersionUID = 1L;
-	public int user_id;
+	public Integer user_id;
 	public String description;
 	public boolean done;
 
@@ -22,7 +22,7 @@ public class Task extends Model<Task> {
 
 	public void setUser(User user) {
 		this.user = user;
-		this.user_id = user.id;
+		this.user_id = (Integer) user.pkVal;
 	}
 
 }

@@ -1,6 +1,9 @@
 package com.baomidou.mybatisplus.activerecord;
 
-import java.lang.reflect.Field;
+import com.baomidou.mybatisplus.toolkit.ReflectionKit;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
+import com.baomidou.mybatisplus.toolkit.TableFieldInfo;
+
 import java.util.List;
 
 public class SQLReflect {
@@ -12,50 +15,43 @@ public class SQLReflect {
 	}
 
 	public String insert() {
-		String sqlInsert = "INSERT INTO " + object.getClass().getSimpleName() + " ";
+		String sqlInsert = "INSERT INTO " + object.tableName + " ";
 		sqlInsert += "(";
-		List<Field> fields = object.getFieldsWithoutId();
+		List<TableFieldInfo> fields = object.tableInfo.getFieldList();
 		String values = "VALUES (";
 		for (int i = 0; i < fields.size(); i++) {
 			if (i > 0) {
 				sqlInsert += ", ";
 				values += ", ";
 			}
-			Field f = fields.get(i);
-			sqlInsert += f.getName();
-			try {
-				Object value = f.get(object);
-				if (value != null && f.getType() == String.class)
-					values += "'";
-				values += castValue(value);
-				if (value != null && f.getType() == String.class)
-					values += "'";
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			TableFieldInfo f = fields.get(i);
+			String property = f.getProperty();
+			String column = f.getColumn();
+			Object value = ReflectionKit.getMethodValue(object, property);
+			sqlInsert += column;
+			values += StringUtils.quotaMark(value);
 		}
 		sqlInsert += ") " + values;
-		sqlInsert += ");";
+		sqlInsert += ")";
 		System.err.println(sqlInsert);
 		return sqlInsert;
 	}
 
 	public String update() {
-		String sqlUpdate = "UPDATE " + object.getClass().getSimpleName() + " ";
+		String sqlUpdate = "UPDATE " + object.tableName + " ";
 		sqlUpdate += "SET ";
-		List<Field> fields = object.getFieldsWithoutId();
+        List<TableFieldInfo> fields = object.tableInfo.getFieldList();
 		for (int i = 0; i < fields.size(); i++) {
 			if (i > 0) {
 				sqlUpdate += ", ";
 			}
-			Field f = fields.get(i);
-			try {
-				sqlUpdate += f.getName() + "=" + f.get(object);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+            TableFieldInfo f = fields.get(i);
+            String property = f.getProperty();
+            String column = f.getColumn();
+            Object value = ReflectionKit.getMethodValue(object, property);
+            sqlUpdate += column + "=" + StringUtils.quotaMark(value);
 		}
-		sqlUpdate += " WHERE id = " + object.id + ";";
+		sqlUpdate += " WHERE " + object.primaryKey + " = " + object.pkVal;
 		System.err.println(sqlUpdate);
 		return sqlUpdate;
 	}

@@ -1,7 +1,11 @@
 package com.baomidou.mybatisplus.activerecord;
 
-import com.baomidou.mybatisplus.toolkit.SystemClock;
+import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.toolkit.ReflectionKit;
+import com.baomidou.mybatisplus.toolkit.TableInfo;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,27 +13,68 @@ import java.util.Map;
 
 @SuppressWarnings("rawtypes")
 public abstract class Record<T extends Record> {
-	public int id;
-	public long createdAt;
-	public long updatedAt;
-	public boolean active = true;
+	/**
+	 * 表信息
+	 */
+	@TableField(exist = false)
+	public TableInfo tableInfo;
+	/**
+	 * 表名
+	 */
+	@TableField(exist = false)
+	public String tableName;
+	/**
+	 * 表主键ID 属性名
+	 */
+	@TableField(exist = false)
+	public String primaryKey;
+	/**
+	 * 表主键ID值
+	 */
+	@TableField(exist = false)
+	public Serializable pkVal;
+	/**
+	 * 表主键ID 属性名
+	 */
+	@TableField(exist = false)
+	public String keyProperty;
 
+	/**
+	 * init
+	 */
+	{
+		tableInfo = TableInfoHelper.getTableInfo(getClass());
+		tableName = tableInfo.getTableName();
+		primaryKey = tableInfo.getKeyColumn();
+		keyProperty = tableInfo.getKeyProperty();
+		pkVal = (Serializable) ReflectionKit.getMethodValue(this, keyProperty);
+	}
+
+	/**
+	 * 查询所有
+	 * 
+	 * @return
+	 */
 	public List<Map<String, Object>> all() {
 		return where(null);
 	}
 
-	public Map<String, Object> find(int id) {
-		return where("id = ?", id).get(0);
+	/**
+	 * 根据id查找
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public Map<String, Object> find(Serializable id) {
+		return where(primaryKey + " = ?", id).get(0);
 	}
 
-	public boolean exists(int id) {
-		return where("id = ?", id).size() > 0;
+	public boolean exists(Serializable id) {
+		return where(primaryKey + " = ?", id).size() > 0;
 	}
 
 	public boolean save() {
-		updatedAt = SystemClock.now();
 		if (isNew()) {
-			createdAt = SystemClock.now();
 			return insert();
 		}
 		return update();
@@ -39,6 +84,7 @@ public abstract class Record<T extends Record> {
 		List<Field> assoc = getAssociations();
 		for (int i = 0; i < assoc.size(); i++) {
 			try {
+				// TODO
 				load(assoc.get(0).getName().replaceAll("_id$", ""));
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -47,7 +93,7 @@ public abstract class Record<T extends Record> {
 	}
 
 	public boolean isNew() {
-		return id == 0;
+		return null == pkVal;
 	}
 
 	protected abstract Class<T> classType();
@@ -63,6 +109,7 @@ public abstract class Record<T extends Record> {
 		Field[] fields = classType().getFields();
 		for (int i = 0; i < fields.length; i++) {
 			Field f = fields[i];
+			// TODO
 			if (f.getName().matches(".*_id$"))
 				associationsFields.add(f);
 		}
@@ -71,7 +118,7 @@ public abstract class Record<T extends Record> {
 
 	@Override
 	public String toString() {
-		String obj = "{ id: " + id;
+		String obj = "{ " + primaryKey + ": " + pkVal;
 		List<Field> fields = getFieldsWithoutId();
 		for (int i = 0; i < fields.size(); i++) {
 			obj += ", ";
@@ -92,7 +139,7 @@ public abstract class Record<T extends Record> {
 		for (int i = 0; i < fields.length; i++) {
 			Field f = fields[i];
 			Class<?> t = f.getType();
-			if (isValidType(t) && !f.getName().equals("id")) {
+			if (isValidType(t) && !f.getName().equals(primaryKey)) {
 				fieldsWithoutId.add(f);
 			}
 		}
@@ -105,6 +152,7 @@ public abstract class Record<T extends Record> {
 
 	private void load(String name) {
 		try {
+			// TODO
 			Field idField = this.classType().getField(name + "_id");
 			Field field = this.classType().getDeclaredField(name);
 			if (idField.getInt(this) == 0) {

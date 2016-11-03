@@ -15,12 +15,6 @@
  */
 package com.baomidou.mybatisplus.test.activerecord;
 
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.session.SqlSessionFactory;
-
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.mapper.SqlMapper;
@@ -28,6 +22,11 @@ import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.test.mysql.TestMapper;
 import com.baomidou.mybatisplus.test.mysql.entity.Test;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import org.apache.ibatis.session.SqlSessionFactory;
+
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -39,23 +38,23 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
  */
 public class ActiveRecordTest {
 
-	 public static void main(String[] args) {
-	        // 加载配置文件
-	        InputStream in = TestMapper.class.getClassLoader().getResourceAsStream("mysql-config.xml");
-	        MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
-	        SqlSessionFactory sqlSessionFactory = mf.build(in);
-	        TableInfoHelper.cacheSqlSessionFactory(sqlSessionFactory);
-	        SqlMapper mapper = Model.mapper(Test.class);
-	        boolean rlt = mapper.insert("insert into user (test_id, name) values (1, 'test1'),(2, 'test2')");
-	        System.err.println("insert:" + rlt);
-	        List<Map<String, Object>> maps = mapper.selectList("select * from user");
-	        System.out.println(maps);
-	        maps = mapper.selectList("select * from user", new Pagination(0, 10));
-	        System.out.println("page:" + maps);
-	        rlt = mapper.delete("delete from user");
-	        System.err.println("insert:" + rlt);
-	        
-	        List<Map<String, Object>> ts =  new Test().all();
-	        System.out.println(ts);
-	 }
+	public static void main(String[] args) {
+		// 加载配置文件
+		InputStream in = TestMapper.class.getClassLoader().getResourceAsStream("mysql-config.xml");
+		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
+		SqlSessionFactory sqlSessionFactory = mf.build(in);
+		TableInfoHelper.cacheSqlSessionFactory(sqlSessionFactory);
+		SqlMapper mapper = Model.mapper(Test.class);
+		boolean rlt = mapper.insert("insert into user (test_id, name) values (1, 'test1'),(2, 'test2')");
+		System.err.println("insert:" + rlt);
+		List<Map<String, Object>> maps = mapper.selectList("select * from user");
+		System.out.println(maps);
+		maps = mapper.selectList("select * from user", new Pagination(0, 10));
+		System.out.println("page:" + maps);
+		rlt = mapper.delete("delete from user where test_id in (1,2)");
+		System.err.println("insert:" + rlt);
+
+		List<Map<String, Object>> ts = new Test().all();
+		System.out.println(ts);
+	}
 }
