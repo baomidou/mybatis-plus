@@ -15,6 +15,15 @@
  */
 package com.baomidou.mybatisplus.test.mysql;
 
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
@@ -22,14 +31,6 @@ import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.test.mysql.entity.Role;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -113,7 +114,7 @@ public class UserMapperTest {
 
         userA.setAge(18);
         userMapper.updateById(userA);
-        userMapper.deleteSelective(userA);
+        userMapper.delete(userA);
         System.err.println("--------- @TableField el() --------- " + rlt);
 
         /**
@@ -138,8 +139,8 @@ public class UserMapperTest {
         System.err.println("\n--------------insert-------" + rlt);
         sleep();
 
-        rlt = userMapper.insertSelective(new User(18));
-        System.err.println("\n----------测试 name 字段忽略验证----insertSelective-------" + rlt);
+        rlt = userMapper.insert(new User(18));
+        System.err.println("\n----------测试 name 字段忽略验证----insert-------" + rlt);
         sleep();
 
         List<User> ul = new ArrayList<User>();
@@ -191,8 +192,8 @@ public class UserMapperTest {
         System.err.println("---------deleteBatchIds------- delete id=" + id + " ,result=" + rlt + "\n\n");
         sleep();
 
-        rlt = userMapper.deleteSelective(new User(14L, "delname"));
-        System.err.println("--------------deleteSelective------------------ result=" + rlt + "\n\n");
+        rlt = userMapper.delete(new User(14L, "delname"));
+        System.err.println("--------------delete------------------ result=" + rlt + "\n\n");
         sleep();
 
         /*
@@ -203,8 +204,8 @@ public class UserMapperTest {
          * updateById 是从 BaseMapper 中继承而来的，UserMapper.xml中并没有申明改sql
          *
          */
-        rlt = userMapper.updateSelectiveById(new User(12L, "MybatisPlus"));
-        System.err.println("------------------updateSelectiveById---------------------- result=" + rlt + "\n\n");
+        rlt = userMapper.updateById(new User(12L, "MybatisPlus"));
+        System.err.println("------------------updateById---------------------- result=" + rlt + "\n\n");
         sleep();
 
         rlt = userMapper.updateById(new User(12L, "update all column", 12, 12));
@@ -215,12 +216,12 @@ public class UserMapperTest {
         System.err.println("------------------update---------------------- result=" + rlt + "\n\n");
         sleep();
 
-        rlt = userMapper.updateSelective(new User("00"), new User(15L, "55"));
-        System.err.println("------------------updateSelective---------------------- result=" + rlt + "\n\n");
+        rlt = userMapper.update(new User("00"), new User(15L, "55"));
+        System.err.println("------------------update---------------------- result=" + rlt + "\n\n");
         sleep();
 
 		/* 无条件选择更新 */
-        // userMapper.updateSelective(new User("11"), null);
+        // userMapper.update(new User("11"), null);
 
         List<User> userList = new ArrayList<User>();
         userList.add(new User(11L, "updateBatchById-1", 1, 1));

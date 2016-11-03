@@ -101,26 +101,23 @@ public class AutoSqlInjector implements ISqlInjector {
 		 */
 		if (null != table && null != table.getKeyProperty()) {
 			/* 插入 */
-			this.injectInsertOneSql(false, mapperClass, modelClass, table);
-			this.injectInsertOneSql(true, mapperClass, modelClass, table);
+			this.injectInsertOneSql(mapperClass, modelClass, table);
 			this.injectInsertBatchSql(mapperClass, modelClass, table);
 
 			/* 删除 */
-			this.injectDeleteSelectiveSql(mapperClass, modelClass, table);
+			this.injectDeleteSql(mapperClass, modelClass, table);
 			this.injectDeleteByMapSql(mapperClass, table);
-			this.injectDeleteSql(false, mapperClass, modelClass, table);
-			this.injectDeleteSql(true, mapperClass, modelClass, table);
+			this.injectDeleteByIdSql(false, mapperClass, modelClass, table);
+			this.injectDeleteByIdSql(true, mapperClass, modelClass, table);
 
 			/* 修改 */
-			this.injectUpdateByIdSql(false, mapperClass, modelClass, table);
-			this.injectUpdateByIdSql(true, mapperClass, modelClass, table);
-			this.injectUpdateSql(false, mapperClass, modelClass, table);
-			this.injectUpdateSql(true, mapperClass, modelClass, table);
+			this.injectUpdateByIdSql(mapperClass, modelClass, table);
+			this.injectUpdateSql(mapperClass, modelClass, table);
 			this.injectUpdateBatchById(mapperClass, modelClass, table);
 
 			/* 查询 */
-			this.injectSelectSql(false, mapperClass, modelClass, table);
-			this.injectSelectSql(true, mapperClass, modelClass, table);
+			this.injectSelectByIdSql(false, mapperClass, modelClass, table);
+			this.injectSelectByIdSql(true, mapperClass, modelClass, table);
 			this.injectSelectByMapSql(mapperClass, modelClass, table);
 			this.injectSelectOneSql(mapperClass, modelClass, table);
 			this.injectSelectCountSql(mapperClass, modelClass, table);
@@ -166,13 +163,11 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * 注入插入 SQL 语句
 	 * </p>
 	 *
-	 * @param selective
-	 *            是否选择插入
 	 * @param mapperClass
 	 * @param modelClass
 	 * @param table
 	 */
-	protected void injectInsertOneSql(boolean selective, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
+	protected void injectInsertOneSql(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
 		/*
 		 * INSERT INTO table <trim prefix="(" suffix=")" suffixOverrides=",">
 		 * <if test="xx != null">xx,</if> </trim> <trim prefix="values ("
@@ -182,10 +177,6 @@ public class AutoSqlInjector implements ISqlInjector {
 		KeyGenerator keyGenerator = new NoKeyGenerator();
 		StringBuilder fieldBuilder = new StringBuilder();
 		StringBuilder placeholderBuilder = new StringBuilder();
-		SqlMethod sqlMethod = SqlMethod.INSERT_ONE;
-		if (selective) {
-			sqlMethod = SqlMethod.INSERT_ONE_SELECTIVE;
-		}
 		fieldBuilder.append("\n<trim prefix=\"(\" suffix=\")\" suffixOverrides=\",\">\n");
 		placeholderBuilder.append("\n<trim prefix=\"(\" suffix=\")\" suffixOverrides=\",\">\n");
 		String keyProperty = null;
@@ -202,19 +193,14 @@ public class AutoSqlInjector implements ISqlInjector {
 		}
 		List<TableFieldInfo> fieldList = table.getFieldList();
 		for (TableFieldInfo fieldInfo : fieldList) {
-			if (selective) {
-				fieldBuilder.append(convertIfTagInsert(fieldInfo, false));
-				placeholderBuilder.append(convertIfTagInsert(fieldInfo, false));
-			}
-			fieldBuilder.append(fieldInfo.getColumn()).append(",");
-			placeholderBuilder.append("#{").append(fieldInfo.getEl()).append("},");
-			if (selective) {
-				fieldBuilder.append(convertIfTagInsert(fieldInfo, true));
-				placeholderBuilder.append(convertIfTagInsert(fieldInfo, true));
-			}
+			fieldBuilder.append(convertIfTagInsert(fieldInfo, false));
+			fieldBuilder.append(convertIfTagInsert(fieldInfo, true));
+			placeholderBuilder.append(convertIfTagInsert(fieldInfo, false));
+			placeholderBuilder.append(convertIfTagInsert(fieldInfo, true));
 		}
 		fieldBuilder.append("\n</trim>");
 		placeholderBuilder.append("\n</trim>");
+		SqlMethod sqlMethod = SqlMethod.INSERT_ONE;
 		String sql = String.format(sqlMethod.getSql(), table.getTableName(), fieldBuilder.toString(),
 				placeholderBuilder.toString());
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
@@ -278,8 +264,8 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * @param modelClass
 	 * @param table
 	 */
-	protected void injectDeleteSelectiveSql(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
-		SqlMethod sqlMethod = SqlMethod.DELETE_SELECTIVE;
+	protected void injectDeleteSql(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
+		SqlMethod sqlMethod = SqlMethod.DELETE;
 		String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlWhere(table, false));
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
 		this.addDeleteMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource);
@@ -305,17 +291,15 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * 注入删除 SQL 语句
 	 * </p>
 	 *
-	 * @param batch
-	 *            是否为批量插入
 	 * @param mapperClass
 	 * @param modelClass
 	 * @param table
 	 */
-	protected void injectDeleteSql(boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
+	protected void injectDeleteByIdSql(boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
 		SqlMethod sqlMethod = SqlMethod.DELETE_BY_ID;
 		SqlSource sqlSource = null;
 		if (batch) {
-			sqlMethod = SqlMethod.DELETE_BATCH;
+			sqlMethod = SqlMethod.DELETE_BATCH_BY_IDS;
 			StringBuilder ids = new StringBuilder();
 			ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\">");
 			ids.append("#{item}");
@@ -340,12 +324,9 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * @param modelClass
 	 * @param table
 	 */
-	protected void injectUpdateByIdSql(boolean selective, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
+	protected void injectUpdateByIdSql(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
 		SqlMethod sqlMethod = SqlMethod.UPDATE_BY_ID;
-		if (selective) {
-			sqlMethod = SqlMethod.UPDATE_SELECTIVE_BY_ID;
-		}
-		String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlSet(selective, table), table.getKeyColumn(),
+		String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlSet(table), table.getKeyColumn(),
 				table.getKeyProperty());
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
 		this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
@@ -396,18 +377,13 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * 注入批量更新 SQL 语句
 	 * </p>
 	 *
-	 * @param selective
-	 *            是否选择更新
 	 * @param mapperClass
 	 * @param modelClass
 	 * @param table
 	 */
-	protected void injectUpdateSql(boolean selective, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
+	protected void injectUpdateSql(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
 		SqlMethod sqlMethod = SqlMethod.UPDATE;
-		if (selective) {
-			sqlMethod = SqlMethod.UPDATE_SELECTIVE;
-		}
-		String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlSet(selective, table), sqlWhere(table, true));
+		String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlSet(table), sqlWhere(table, true));
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
 		this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
 	}
@@ -423,11 +399,11 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * @param modelClass
 	 * @param table
 	 */
-	protected void injectSelectSql(boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
+	protected void injectSelectByIdSql(boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
 		SqlMethod sqlMethod = SqlMethod.SELECT_BY_ID;
 		SqlSource sqlSource = null;
 		if (batch) {
-			sqlMethod = SqlMethod.SELECT_BATCH;
+			sqlMethod = SqlMethod.SELECT_BATCH_BY_IDS;
 			StringBuilder ids = new StringBuilder();
 			ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\">");
 			ids.append("#{item}");
@@ -554,23 +530,17 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * SQL 更新 set 语句
 	 * </p>
 	 *
-	 * @param selective
-	 *            是否选择更新
 	 * @param table
 	 * @return
 	 */
-	protected String sqlSet(boolean selective, TableInfo table) {
+	protected String sqlSet(TableInfo table) {
 		StringBuilder set = new StringBuilder();
 		set.append("<trim prefix=\"SET\" suffixOverrides=\",\">");
 		List<TableFieldInfo> fieldList = table.getFieldList();
 		for (TableFieldInfo fieldInfo : fieldList) {
-			if (selective) {
-				set.append(convertIfTag(fieldInfo, "et.", false));
-			}
+			set.append(convertIfTag(fieldInfo, "et.", false));
 			set.append(fieldInfo.getColumn()).append("=#{et.").append(fieldInfo.getEl()).append("},");
-			if (selective) {
-				set.append(convertIfTag(fieldInfo, true));
-			}
+			set.append(convertIfTag(fieldInfo, true));
 		}
 		set.append("\n</trim>");
 		return set.toString();

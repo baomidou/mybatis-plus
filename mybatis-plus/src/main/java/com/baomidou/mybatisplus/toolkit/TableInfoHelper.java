@@ -19,6 +19,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.baomidou.mybatisplus.MybatisConfiguration;
 import com.baomidou.mybatisplus.MybatisPlusHolder;
+import com.baomidou.mybatisplus.annotations.FieldStrategy;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
@@ -150,12 +152,18 @@ public class TableInfoHelper {
 			/**
 			 * 字段, 使用 camelToUnderline 转换驼峰写法为下划线分割法, 如果已指定 TableField , 便不会执行这里
 			 */
+			TableFieldInfo tfi = null;
 			if (MybatisConfiguration.DB_COLUMN_UNDERLINE) {
 				/* 开启字段下划线申明 */
-				fieldList.add(new TableFieldInfo(true, StringUtils.camelToUnderline(field.getName()), field.getName()));
+				tfi = new TableFieldInfo(true, StringUtils.camelToUnderline(field.getName()), field.getName());
 			} else {
-				fieldList.add(new TableFieldInfo(field.getName()));
+				tfi = new TableFieldInfo(field.getName());
 			}
+			/* 处理日期类型，不支持空比较 */
+			if (Date.class.isAssignableFrom(field.getType())) {
+				tfi.setFieldStrategy(FieldStrategy.NOT_NULL);
+			}
+			fieldList.add(tfi);
 		}
 
 		/* 字段列表 */

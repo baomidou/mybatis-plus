@@ -15,12 +15,12 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.session.RowBounds;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
 
 /**
  * <p>
@@ -44,16 +44,6 @@ public interface BaseMapper<T> {
 	 * @return int
 	 */
 	int insert( T entity );
-	
-	/**
-	 * <p>
-	 * 插入一条记录（选择字段， null 字段不插入）
-	 * </p>
-	 * @param entity
-	 * 				实体对象
-	 * @return int
-	 */
-	int insertSelective( T entity );
 
 
 	/**
@@ -97,7 +87,7 @@ public interface BaseMapper<T> {
 	 * 				实体对象
 	 * @return int
 	 */
-	int deleteSelective( @Param("ew" ) T entity);
+	int delete( @Param("ew" ) T entity);
 
 
 	/**
@@ -124,16 +114,6 @@ public interface BaseMapper<T> {
 
 	/**
 	 * <p>
-	 * 根据 ID 选择修改
-	 * </p>
-	 * @param entity
-	 * 				实体对象
-	 */
-	int updateSelectiveById( @Param("et" ) T entity);
-
-
-	/**
-	 * <p>
 	 * 根据 whereEntity 条件，更新记录
 	 * </p>
 	 * @param entity
@@ -142,18 +122,6 @@ public interface BaseMapper<T> {
 	 * 				实体查询条件（可以为 null）
 	 */
 	int update( @Param("et" ) T entity, @Param("ew") T whereEntity);
-
-
-	/**
-	 * <p>
-	 * 根据 whereEntity 条件，选择更新记录
-	 * </p>
-	 * @param entity
-	 * 				实体对象
-	 * @return whereEntity（可以为 null）
-	 * 				实体查询条件
-	 */
-	int updateSelective( @Param("et" ) T entity, @Param("ew") T whereEntity);
 
 
 	/**

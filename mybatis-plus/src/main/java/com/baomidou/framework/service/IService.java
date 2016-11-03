@@ -45,17 +45,6 @@ public interface IService<T> {
 
 	/**
 	 * <p>
-	 * 插入一条记录（选择字段， null 字段不插入）
-	 * </p>
-	 *
-	 * @param entity
-	 *            实体对象
-	 * @return boolean
-	 */
-	boolean insertSelective(T entity);
-
-	/**
-	 * <p>
 	 * 插入（批量），该方法不适合 Oracle
 	 * </p>
 	 *
@@ -64,19 +53,6 @@ public interface IService<T> {
 	 * @return boolean
 	 */
 	boolean insertBatch(List<T> entityList);
-
-	/**
-	 * <p>
-	 * 插入（批量）（选择字段， null 字段不插入）
-	 * </p>
-	 *
-	 * @param entityList
-	 *            实体对象列表
-	 * @param batchSize
-	 *
-	 * @return boolean
-	 */
-	boolean insertBatchSelective(List<T> entityList, int batchSize);
 
 	/**
 	 * <p>
@@ -90,17 +66,6 @@ public interface IService<T> {
 	 * @return boolean
 	 */
 	boolean insertBatch(List<T> entityList, int batchSize);
-
-	/**
-	 * <p>
-	 * 插入（批量）（选择字段， null 字段不插入）
-	 * </p>
-	 *
-	 * @param entityList
-	 *            实体对象列表
-	 * @return boolean
-	 */
-	boolean insertBatchSelective(List<T> entityList);
 
 	/**
 	 * <p>
@@ -133,7 +98,7 @@ public interface IService<T> {
 	 *            实体对象
 	 * @return boolean
 	 */
-	boolean deleteSelective(T entity);
+	boolean delete(T entity);
 
 	/**
 	 * <p>
@@ -159,17 +124,6 @@ public interface IService<T> {
 
 	/**
 	 * <p>
-	 * 根据 ID 选择修改
-	 * </p>
-	 *
-	 * @param entity
-	 *            实体对象
-	 * @return boolean
-	 */
-	boolean updateSelectiveById(T entity);
-
-	/**
-	 * <p>
 	 * 根据 whereEntity 条件，更新记录
 	 * </p>
 	 *
@@ -180,19 +134,6 @@ public interface IService<T> {
 	 * @return boolean
 	 */
 	boolean update(T entity, T whereEntity);
-
-	/**
-	 * <p>
-	 * 根据 whereEntity 条件，选择更新记录
-	 * </p>
-	 *
-	 * @param entity
-	 *            实体对象
-	 * @param whereEntity
-	 *            实体查询条件（可以为 null）
-	 * @return boolean
-	 */
-	boolean updateSelective(T entity, T whereEntity);
 
 	/**
 	 * <p>
@@ -215,17 +156,6 @@ public interface IService<T> {
 	 * @return boolean
 	 */
 	boolean insertOrUpdate(T entity);
-
-	/**
-	 * <p>
-	 * TableId 注解存在更新记录，否插入一条记录 （选择字段， null 字段不插入）
-	 * </p>
-	 *
-	 * @param entity
-	 *            实体对象
-	 * @return boolean
-	 */
-	boolean insertOrUpdateSelective(T entity);
 
 	/**
 	 * <p>
