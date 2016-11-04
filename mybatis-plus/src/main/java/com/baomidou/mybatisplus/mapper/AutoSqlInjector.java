@@ -70,11 +70,11 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * @param builderAssistant
 	 * @param mapperClass
 	 */
-	public void inspectInject(Configuration configuration, MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
+	public void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
 		String className = mapperClass.toString();
 		Set<String> mapperRegistryCache = MybatisConfiguration.MAPPER_REGISTRY_CACHE;
 		if (!mapperRegistryCache.contains(className)) {
-			inject(configuration, builderAssistant, mapperClass);
+			inject(builderAssistant, mapperClass);
 			mapperRegistryCache.add(className);
 		}
 	}
@@ -82,8 +82,8 @@ public class AutoSqlInjector implements ISqlInjector {
 	/**
 	 * 注入单点 crudSql
 	 */
-	public void inject(Configuration configuration, MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
-		this.configuration = configuration;
+	public void inject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
+		this.configuration = builderAssistant.getConfiguration();
 		this.builderAssistant = builderAssistant;
 		this.languageDriver = configuration.getDefaultScriptingLanuageInstance();
 		this.dbType = MybatisConfiguration.DB_TYPE;
@@ -94,7 +94,7 @@ public class AutoSqlInjector implements ISqlInjector {
 			MybatisConfiguration.DB_COLUMN_UNDERLINE = configuration.isMapUnderscoreToCamelCase();
 		}
 		Class<?> modelClass = extractModelClass(mapperClass);
-		TableInfo table = TableInfoHelper.initTableInfo(modelClass);
+		TableInfo table = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
 
 		/**
 		 * 没有指定主键，默认方法不能使用

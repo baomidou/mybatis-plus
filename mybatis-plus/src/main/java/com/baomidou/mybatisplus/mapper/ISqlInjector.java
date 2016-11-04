@@ -31,11 +31,10 @@ public interface ISqlInjector {
 	/**
 	 * 根据mapperClass注入SQL
 	 * 
-	 * @param configuration
 	 * @param builderAssistant
 	 * @param mapperClass
 	 */
-	void inject(Configuration configuration, MapperBuilderAssistant builderAssistant, Class<?> mapperClass);
+	void inject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass);
 
 	/**
 	 * 检查SQL是否注入(已经注入过不再注入)
@@ -44,7 +43,7 @@ public interface ISqlInjector {
 	 * @param builderAssistant
 	 * @param mapperClass
 	 */
-	void inspectInject(Configuration configuration, MapperBuilderAssistant builderAssistant, Class<?> mapperClass);
+	void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass);
 
 	/**
 	 * 注入全局CRUD SQL

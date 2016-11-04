@@ -27,6 +27,7 @@ import com.baomidou.mybatisplus.mapper.SqlMapper;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.test.mysql.TestMapper;
 import com.baomidou.mybatisplus.test.mysql.entity.Test;
+import com.baomidou.mybatisplus.test.mysql.entity.User;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**
@@ -45,8 +46,10 @@ public class ActiveRecordTest {
 		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
 		SqlSessionFactory sqlSessionFactory = mf.build(in);
 		TableInfoHelper.cacheSqlSessionFactory(sqlSessionFactory);
-		SqlMapper mapper = Model.mapper(Test.class);
-		boolean rlt = mapper.insert("insert into user (test_id, name) values (1, 'test1'),(2, 'test2')");
+		SqlMapper mapper = Model.mapper(User.class);
+		boolean rlt = mapper.delete("delete from user"); 
+		System.err.println("delete all:" + rlt);
+		rlt = mapper.insert("insert into user (test_id, name) values (1, 'test1'),(2, 'test2')");
 		System.err.println("insert:" + rlt);
 		List<Map<String, Object>> maps = mapper.selectList("select * from user");
 		System.out.println(maps);

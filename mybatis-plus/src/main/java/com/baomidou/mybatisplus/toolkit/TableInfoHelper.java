@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.baomidou.mybatisplus.MybatisConfiguration;
@@ -73,13 +74,16 @@ public class TableInfoHelper {
 	 *            反射实体类
 	 * @return
 	 */
-	public synchronized static TableInfo initTableInfo(Class<?> clazz) {
+	public synchronized static TableInfo initTableInfo(MapperBuilderAssistant builderAssistant, Class<?> clazz) {
 		TableInfo ti = tableInfoCache.get(clazz.getName());
 		if (ti != null) {
 			return ti;
 		}
 		TableInfo tableInfo = new TableInfo();
-		tableInfo.setClassName(clazz.getName());
+		tableInfo.setSqlMapper(MybatisPlusHolder.getSqlMapper());
+		if (null != builderAssistant) {
+			tableInfo.setCurrentNamespace(builderAssistant.getCurrentNamespace());
+		}
 
 		/* 表名 */
 		TableName table = clazz.getAnnotation(TableName.class);
@@ -118,7 +122,8 @@ public class TableInfoHelper {
 					continue;
 				} else {
 					/* 发现设置多个主键注解抛出异常 */
-					throw new MybatisPlusException("There must be only one, Discover multiple @TableId annotation in " + clazz);
+					throw new MybatisPlusException(
+							"There must be only one, Discover multiple @TableId annotation in " + clazz);
 				}
 			}
 
@@ -169,9 +174,6 @@ public class TableInfoHelper {
 		if (null == tableInfo.getKeyColumn()) {
 			return null;
 		}
-		// 缓存
-		tableInfo.setSqlSessionFactory(MybatisPlusHolder.getSqlSessionFactory());
-		tableInfo.setSqlMapper(MybatisPlusHolder.getSqlMapper());
 		/*
 		 * 注入
 		 */
@@ -212,27 +214,23 @@ public class TableInfoHelper {
 		return result;
 	}
 
-    /**
-     * 缓存sqlSessionFactory 同时注入SqlMapper
-     *
-     * @param sqlSessionFactory
-     * @return
-     */
-    public static void cacheSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
-        SqlMapper sqlMapper = new SqlMapper(sqlSessionFactory.openSession());
-        Collection<TableInfo> values = tableInfoCache.values();
-        for (TableInfo tableInfo : values) {
-            if (null == tableInfo.getSqlSessionFactory()) {
-                tableInfo.setSqlMapper(sqlMapper);
-                tableInfo.setSqlSessionFactory(sqlSessionFactory);
-            }
+	/**
+	 * 缓存sqlSessionFactory 同时注入SqlMapper
+	 *
+	 * @param sqlSessionFactory
+	 * @return
+	 */
+	public static void cacheSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
+		Collection<TableInfo> values = tableInfoCache.values();
+		for (TableInfo tableInfo : values) {
+			if (null == tableInfo.getSqlMapper()) {
+				tableInfo.setSqlMapper(new SqlMapper(sqlSessionFactory));
+			}
+		}
+	}
 
-
-        }
-    }
-
-    public static SqlMapper getSqlMapper(Class<?> clazz) {
-        return getTableInfo(clazz).getSqlMapper();
-    }
+	public static SqlMapper getSqlMapper(Class<?> clazz) {
+		return getTableInfo(clazz).getSqlMapper();
+	}
 
 }

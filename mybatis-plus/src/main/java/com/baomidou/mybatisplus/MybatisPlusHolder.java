@@ -1,6 +1,5 @@
 package com.baomidou.mybatisplus;
 
-import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.baomidou.mybatisplus.mapper.SqlMapper;
@@ -15,26 +14,14 @@ import com.baomidou.mybatisplus.mapper.SqlMapper;
  */
 public class MybatisPlusHolder {
 
-	private static SqlMapper sqlMapper;
-	private static SqlSession sqlSession;
-	private static SqlSessionFactory sqlSessionFactory;
+	private static SqlMapper SQL_MAPPER;
 
-	public static void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
-		MybatisPlusHolder.sqlSessionFactory = sqlSessionFactory;
-		MybatisPlusHolder.sqlSession = sqlSessionFactory.openSession();
-		MybatisPlusHolder.sqlMapper = new SqlMapper(MybatisPlusHolder.sqlSession);
-	}
-
-	public static SqlSessionFactory getSqlSessionFactory() {
-		return sqlSessionFactory;
-	}
-
-	public static SqlSession getSqlSession() {
-		return sqlSession;
+	public static synchronized void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
+		SQL_MAPPER = new SqlMapper(sqlSessionFactory);
 	}
 
 	public static SqlMapper getSqlMapper() {
-		return sqlMapper;
+		return SQL_MAPPER;
 	}
 
 }

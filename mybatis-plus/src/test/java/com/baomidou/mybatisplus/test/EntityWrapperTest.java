@@ -44,7 +44,7 @@ public class EntityWrapperTest {
 
 	// 初始化
 	static {
-		TableInfoHelper.initTableInfo(User.class);
+		TableInfoHelper.initTableInfo(null, User.class);
 	}
 
 	@Test

@@ -3,7 +3,6 @@ package com.baomidou.mybatisplus.activerecord;
 import java.util.List;
 import java.util.Map;
 
-import com.baomidou.mybatisplus.mapper.SqlMapper;
 import com.baomidou.mybatisplus.toolkit.CollectionUtil;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
@@ -11,12 +10,12 @@ public abstract class SQL<T> extends Record<T> {
 
 	@Override
 	protected boolean insert() {
-		return delegateRawSQL().insert(delegateSQLReflect().insert());
+		return sqlMapper().insert(delegateSQLReflect().insert());
 	}
 
 	@Override
 	protected boolean update() {
-		return delegateRawSQL().update(delegateSQLReflect().update());
+		return sqlMapper().update(delegateSQLReflect().update());
 	}
 
 	@Override
@@ -30,7 +29,7 @@ public abstract class SQL<T> extends Record<T> {
 			selectSql.append(" WHERE ").append(whereClause);
 		}
 		System.out.println(selectSql.toString());
-		List<Map<String, Object>> selectList = delegateRawSQL().selectList(selectSql.toString());
+		List<Map<String, Object>> selectList = sqlMapper().selectList(selectSql.toString());
 		if (CollectionUtil.isEmpty(selectList))
 			return null;
 		return selectList;
@@ -39,7 +38,5 @@ public abstract class SQL<T> extends Record<T> {
 	protected SQLReflect delegateSQLReflect() {
 		return new SQLReflect(this);
 	}
-
-	protected abstract SqlMapper delegateRawSQL();
 
 }

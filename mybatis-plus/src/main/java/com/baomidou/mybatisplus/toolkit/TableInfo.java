@@ -15,11 +15,11 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.annotations.IdType;
 import com.baomidou.mybatisplus.mapper.SqlMapper;
-import org.apache.ibatis.session.SqlSessionFactory;
-
-import java.util.List;
+import com.baomidou.mybatisplus.mapper.SqlMethod;
 
 /**
  * <p>
@@ -63,20 +63,38 @@ public class TableInfo {
 	 * 表主键ID 字段名
 	 */
 	private String keyColumn;
-	/**
-	 * 缓存SqlMapper
-	 */
-	private SqlMapper sqlMapper;
-	/**
-	 * 缓存SqlSessionFactory
-	 */
-	private SqlSessionFactory sqlSessionFactory;
+
 	/**
 	 * 表字段信息列表
 	 */
 	private List<TableFieldInfo> fieldList;
 
-	private String className;
+	/**
+	 * 缓存SqlMapper
+	 */
+	private SqlMapper sqlMapper;
+
+	/**
+	 * 命名空间
+	 */
+	private String currentNamespace;
+
+	/**
+	 * <p>
+	 * 获得注入的 SQL Statement
+	 * </p>
+	 * 
+	 * @param sqlMethod
+	 *            MybatisPlus 支持 SQL 方法
+	 * @return
+	 */
+	public String getSqlStatement(SqlMethod sqlMethod) {
+		StringBuffer statement = new StringBuffer();
+		statement.append(currentNamespace);
+		statement.append(".");
+		statement.append(sqlMethod.getMethod());
+		return statement.toString();
+	}
 
 	public IdType getIdType() {
 		return idType;
@@ -134,14 +152,6 @@ public class TableInfo {
 		this.fieldList = fieldList;
 	}
 
-	public String getClassName() {
-		return className;
-	}
-
-	public void setClassName(String className) {
-		this.className = className;
-	}
-
 	public SqlMapper getSqlMapper() {
 		return sqlMapper;
 	}
@@ -150,11 +160,12 @@ public class TableInfo {
 		this.sqlMapper = sqlMapper;
 	}
 
-	public SqlSessionFactory getSqlSessionFactory() {
-		return sqlSessionFactory;
+	public String getCurrentNamespace() {
+		return currentNamespace;
 	}
 
-	public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
-		this.sqlSessionFactory = sqlSessionFactory;
+	public void setCurrentNamespace(String currentNamespace) {
+		this.currentNamespace = currentNamespace;
 	}
+
 }

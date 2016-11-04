@@ -14,11 +14,6 @@ public abstract class Model<T extends Model> extends SQL<T> implements Serializa
 		return TableInfoHelper.getTableInfo(this.classType());
 	}
 
-	@Override
-	protected SqlMapper delegateRawSQL() {
-		return mapper(this.classType());
-	}
-
 	public static SqlMapper mapper(Class<?> clazz) {
 		return TableInfoHelper.getSqlMapper(clazz);
 	}

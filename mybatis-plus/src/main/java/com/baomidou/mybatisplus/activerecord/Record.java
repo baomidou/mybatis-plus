@@ -8,6 +8,8 @@ import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 
+import com.baomidou.mybatisplus.mapper.SqlMapper;
+import com.baomidou.mybatisplus.mapper.SqlMethod;
 import com.baomidou.mybatisplus.toolkit.TableInfo;
 
 public abstract class Record<T> {
@@ -18,8 +20,8 @@ public abstract class Record<T> {
 	 * @return
 	 */
 	public List<T> all() {
-		SqlSession sqlSession = table().getSqlSessionFactory().openSession();
-		return sqlSession.selectList("com.baomidou.mybatisplus.test.mysql.TestMapper.selectList", null);
+		String statement = table().getSqlStatement(SqlMethod.SELECT_LIST);
+		return sqlSession().selectList(statement, null);
 	}
 
 	/**
@@ -45,6 +47,14 @@ public abstract class Record<T> {
 
 	public boolean isNew() {
 		return null == table().getKeyColumn();
+	}
+
+	private SqlSession sqlSession() {
+		return sqlMapper().getSqlSession();
+	}
+
+	protected SqlMapper sqlMapper() {
+		return table().getSqlMapper();
 	}
 
 	protected abstract Class<T> classType();

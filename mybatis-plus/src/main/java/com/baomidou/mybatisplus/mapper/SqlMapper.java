@@ -1,13 +1,16 @@
 package com.baomidou.mybatisplus.mapper;
 
-import com.baomidou.mybatisplus.toolkit.CollectionUtil;
-import org.apache.ibatis.session.RowBounds;
-import org.apache.ibatis.session.SqlSession;
-
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
+
+import org.apache.ibatis.session.RowBounds;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.toolkit.CollectionUtil;
 
 /**
  * Mybatis执行sql工具,主要为AR方式调用
@@ -16,7 +19,6 @@ import java.util.logging.Logger;
  * @since 2016-10-18
  */
 public class SqlMapper {
-
 	protected static final Logger logger = Logger.getLogger("SqlMapper");
 	public static final String INSERT = "SqlMapper.Insert";
 	public static final String DELETE = "SqlMapper.Delete";
@@ -24,15 +26,28 @@ public class SqlMapper {
 	public static final String SELECT = "SqlMapper.Select";
 	public static final String InjectSQL = "${sql}";
 	private Map<String, String> sqlMap = new ConcurrentHashMap<String, String>();
+	private final SqlSessionFactory sqlSessionFactory;
 	private final SqlSession sqlSession;
 
 	/**
-	 * 构造方法，默认缓存MappedStatement
+	 * 构造方法，默认缓存 MappedStatement
 	 *
-	 * @param sqlSession
+	 * @param sqlSessionFactory
 	 */
-	public SqlMapper(SqlSession sqlSession) {
-		this.sqlSession = sqlSession;
+	public SqlMapper(SqlSessionFactory sqlSessionFactory) {
+		if (null == sqlSessionFactory) {
+			throw new MybatisPlusException(" sqlSessionFactory is null.");
+		}
+		this.sqlSessionFactory = sqlSessionFactory;
+		this.sqlSession = sqlSessionFactory.openSession();
+	}
+
+	public SqlSessionFactory getSqlSessionFactory() {
+		return this.sqlSessionFactory;
+	}
+
+	public SqlSession getSqlSession() {
+		return this.sqlSession;
 	}
 
 	/**
@@ -77,7 +92,7 @@ public class SqlMapper {
 	 */
 	public List<Map<String, Object>> selectList(String sql) {
 		sqlMap.put("sql", sql);
-		return sqlSession.selectList(SELECT, sqlMap);
+		return this.sqlSession.selectList(SELECT, sqlMap);
 	}
 
 	/**
@@ -91,7 +106,7 @@ public class SqlMapper {
 	 */
 	public List<Map<String, Object>> selectList(String sql, RowBounds rowBounds) {
 		sqlMap.put("sql", sql);
-		return sqlSession.selectList(SELECT, sqlMap, rowBounds);
+		return this.sqlSession.selectList(SELECT, sqlMap, rowBounds);
 	}
 
 	/**
@@ -103,7 +118,7 @@ public class SqlMapper {
 	 */
 	public boolean insert(String sql) {
 		sqlMap.put("sql", sql);
-		return retBool(sqlSession.insert(INSERT, sqlMap));
+		return retBool(this.sqlSession.insert(INSERT, sqlMap));
 	}
 
 	/**
@@ -115,7 +130,7 @@ public class SqlMapper {
 	 */
 	public boolean update(String sql) {
 		sqlMap.put("sql", sql);
-		return retBool(sqlSession.update(UPDATE, sqlMap));
+		return retBool(this.sqlSession.update(UPDATE, sqlMap));
 	}
 
 	/**
@@ -127,7 +142,7 @@ public class SqlMapper {
 	 */
 	public boolean delete(String sql) {
 		sqlMap.put("sql", sql);
-		return retBool(sqlSession.delete(DELETE, sqlMap));
+		return retBool(this.sqlSession.delete(DELETE, sqlMap));
 	}
 
 	/**
