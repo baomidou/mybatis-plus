@@ -6,9 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.session.SqlSession;
+
 import com.baomidou.mybatisplus.toolkit.TableInfo;
 
-@SuppressWarnings("rawtypes")
 public abstract class Record<T> {
 
 	/**
@@ -16,8 +17,9 @@ public abstract class Record<T> {
 	 * 
 	 * @return
 	 */
-	public List<Map<String, Object>> all() {
-		return where(null);
+	public List<T> all() {
+		SqlSession sqlSession = table().getSqlSessionFactory().openSession();
+		return sqlSession.selectList("com.baomidou.mybatisplus.test.mysql.TestMapper.selectList", null);
 	}
 
 	/**
@@ -39,18 +41,6 @@ public abstract class Record<T> {
 			return insert();
 		}
 		return update();
-	}
-
-	public void eagerLoad() {
-		List<Field> assoc = getAssociations();
-		for (int i = 0; i < assoc.size(); i++) {
-			try {
-				// TODO
-				load(assoc.get(0).getName().replaceAll("_id$", ""));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 	public boolean isNew() {
@@ -89,22 +79,6 @@ public abstract class Record<T> {
 	public boolean isValidType(Class<?> t) {
 		return (t == String.class || t == boolean.class || t == int.class || t == float.class || t == double.class
 				|| t == long.class);
-	}
-
-	private void load(String name) {
-		try {
-			// TODO
-			Field idField = this.classType().getField(name + "_id");
-			Field field = this.classType().getDeclaredField(name);
-			if (idField.getInt(this) == 0) {
-				return;
-			}
-			Object obj = ((Record) field.getType().newInstance()).find(idField.getInt(this));
-			field.setAccessible(true);
-			field.set(this, obj);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 }
