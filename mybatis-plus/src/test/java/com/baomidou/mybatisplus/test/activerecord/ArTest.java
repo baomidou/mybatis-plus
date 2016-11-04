@@ -1,23 +1,19 @@
 package com.baomidou.mybatisplus.test.activerecord;
 
-import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
-import com.baomidou.mybatisplus.activerecord.Model;
-import com.baomidou.mybatisplus.mapper.SqlMapper;
-import com.baomidou.mybatisplus.test.mysql.TestMapper;
-import com.baomidou.mybatisplus.toolkit.TableInfo;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.junit.Test;
-
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.junit.Test;
+
+import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
+import com.baomidou.mybatisplus.activerecord.Model;
+import com.baomidou.mybatisplus.mapper.SqlMapper;
+import com.baomidou.mybatisplus.test.mysql.TestMapper;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+
 public class ArTest {
-	private TableInfo tableInfo;
-	{
-		tableInfo = TableInfoHelper.initTableInfo(User.class);
-	}
 
 	@Test
 	public void test() {
@@ -43,7 +39,7 @@ public class ArTest {
 
 		// Eager loading associations
 		User user2 = new User();
-		user2.pkVal = 10;
+		user2.setId(10L);
 		user2.eagerLoad();
 		System.out.println(user2.save());
 		// Queries

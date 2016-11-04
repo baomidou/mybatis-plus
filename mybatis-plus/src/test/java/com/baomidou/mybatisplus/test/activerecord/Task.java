@@ -1,5 +1,7 @@
 package com.baomidou.mybatisplus.test.activerecord;
 
+import java.io.Serializable;
+
 import com.baomidou.mybatisplus.activerecord.Model;
 
 public class Task extends Model<Task> {
@@ -10,7 +12,6 @@ public class Task extends Model<Task> {
 
 	private User user;
 
-
 	@Override
 	protected Class<Task> classType() {
 		return Task.class;
@@ -20,9 +21,14 @@ public class Task extends Model<Task> {
 		return user;
 	}
 
+	@Override
+	protected Serializable getPrimaryKey() {
+		return user_id;
+	}
+
 	public void setUser(User user) {
 		this.user = user;
-		this.user_id = (Integer) user.pkVal;
+		this.user_id = (Integer) user.getPrimaryKey();
 	}
 
 }

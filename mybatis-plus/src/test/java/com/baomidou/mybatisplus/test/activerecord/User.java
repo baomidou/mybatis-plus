@@ -15,6 +15,11 @@
  */
 package com.baomidou.mybatisplus.test.activerecord;
 
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Map;
+
 import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.FieldStrategy;
 import com.baomidou.mybatisplus.annotations.TableField;
@@ -22,10 +27,6 @@ import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.test.mysql.entity.PhoneNumber;
 import com.baomidou.mybatisplus.test.mysql.entity.Role;
-
-import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -173,6 +174,11 @@ public class User extends Model<User> {
 		return User.class;
 	}
 
+	@Override
+	protected Serializable getPrimaryKey() {
+		return id;
+	}
+
 	public List<Map<String, Object>> getTasks() {
 		return new Task().where("user_id = ?", id);
 	}
@@ -194,4 +200,5 @@ public class User extends Model<User> {
 			System.out.println(field.get(user));
 		}
 	}
+
 }

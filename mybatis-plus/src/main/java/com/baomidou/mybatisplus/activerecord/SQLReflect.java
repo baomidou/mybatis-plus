@@ -1,23 +1,26 @@
 package com.baomidou.mybatisplus.activerecord;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableFieldInfo;
-
-import java.util.List;
+import com.baomidou.mybatisplus.toolkit.TableInfo;
 
 public class SQLReflect {
 
 	private Record<?> object;
+	private TableInfo table;
 
 	public SQLReflect(Record<?> object) {
 		this.object = object;
+		this.table = object.table();
 	}
 
 	public String insert() {
-		String sqlInsert = "INSERT INTO " + object.tableName + " ";
+		String sqlInsert = "INSERT INTO " + table.getTableName() + " ";
 		sqlInsert += "(";
-		List<TableFieldInfo> fields = object.tableInfo.getFieldList();
+		List<TableFieldInfo> fields = table.getFieldList();
 		String values = "VALUES (";
 		for (int i = 0; i < fields.size(); i++) {
 			if (i > 0) {
@@ -38,9 +41,9 @@ public class SQLReflect {
 	}
 
 	public String update() {
-		String sqlUpdate = "UPDATE " + object.tableName + " ";
+		String sqlUpdate = "UPDATE " + table.getTableName() + " ";
 		sqlUpdate += "SET ";
-        List<TableFieldInfo> fields = object.tableInfo.getFieldList();
+        List<TableFieldInfo> fields = table.getFieldList();
 		for (int i = 0; i < fields.size(); i++) {
 			if (i > 0) {
 				sqlUpdate += ", ";
@@ -51,7 +54,7 @@ public class SQLReflect {
             Object value = ReflectionKit.getMethodValue(object, property);
             sqlUpdate += column + "=" + StringUtils.quotaMark(value);
 		}
-		sqlUpdate += " WHERE " + object.primaryKey + " = " + object.pkVal;
+		sqlUpdate += " WHERE " + table.getKeyColumn() + " = " + object.getPrimaryKey();
 		System.err.println(sqlUpdate);
 		return sqlUpdate;
 	}
