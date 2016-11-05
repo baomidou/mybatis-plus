@@ -25,7 +25,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * 插入
 	 * </p>
 	 */
-	public boolean save() {
+	public boolean insert() {
 		return retBool(sqlSession().insert(sqlStatement(SqlMethod.INSERT_ONE), this));
 	}
 
@@ -34,7 +34,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * 插入 OR 更新
 	 * </p>
 	 */
-	public boolean saveOrUpdate() {
+	public boolean insertOrUpdate() {
 		if (null != getPrimaryKey()) {
 			// update
 			return retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE_BY_ID), this));
@@ -190,7 +190,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 *            查询条件值
 	 * @return
 	 */
-	public Page<T> Page(Page<T> page, String columns, String whereClause, Object... args) {
+	public Page<T> selectPage(Page<T> page, String columns, String whereClause, Object... args) {
 		EntityWrapper<T> ew = new EntityWrapper<T>(null, columns);
 		if (StringUtils.isNotEmpty(whereClause)) {
 			ew.addFilter(whereClause, args);
@@ -202,12 +202,12 @@ public abstract class Model<T extends Model> implements Serializable {
 		return page;
 	}
 
-	public Page<T> Page(Page<T> page, String whereClause, Object... args) {
-		return Page(page, null, whereClause, args);
+	public Page<T> selectPage(Page<T> page, String whereClause, Object... args) {
+		return selectPage(page, null, whereClause, args);
 	}
 
-	public Page<T> Page(Page<T> page) {
-		return Page(page, null);
+	public Page<T> selectPage(Page<T> page) {
+		return selectPage(page, null);
 	}
 
 	/**
@@ -221,7 +221,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 *            查询条件值
 	 * @return
 	 */
-	public int count(String whereClause, Object... args) {
+	public int selectCount(String whereClause, Object... args) {
 		List<T> tl = select(whereClause, args);
 		if (CollectionUtil.isEmpty(tl)) {
 			return 0;
@@ -229,8 +229,8 @@ public abstract class Model<T extends Model> implements Serializable {
 		return tl.size();
 	}
 
-	public int count() {
-		return count(null);
+	public int selectCount() {
+		return selectCount(null);
 	}
 
 	/**

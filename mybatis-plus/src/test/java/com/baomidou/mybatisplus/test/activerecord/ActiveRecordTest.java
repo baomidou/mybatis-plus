@@ -47,7 +47,7 @@ public class ActiveRecordTest {
 		// 保存一条记录
 		Test t1 = new Test();
 		t1.setType("test10");
-		boolean rlt = t1.save();
+		boolean rlt = t1.insert();
 		print(" ar save=" + rlt + ", id=" + t1.getId());
 
 		// 根据ID更新
@@ -65,14 +65,14 @@ public class ActiveRecordTest {
 
 		// 插入OR更新
 		t1.setType("t1021");
-		rlt = t1.saveOrUpdate();
+		rlt = t1.insertOrUpdate();
 		print(" ar saveOrUpdate:" + rlt);
 
 		// 根据ID查询
 		Test t2 = t1.selectById();
 		print(" t2 = " + t2.toString());
 		t2.setId(IdWorker.getId());
-		t2.save();
+		t2.insert();
 
 		// 查询所有
 		List<Test> tl = t2.selectAll();
@@ -81,11 +81,11 @@ public class ActiveRecordTest {
 		}
 
 		// 查询总记录数
-		print(" count=" + t2.count());
+		print(" count=" + t2.selectCount());
 
 		// 翻页查询
 		Page<Test> page = new Page<Test>(0, 10);
-		page = t2.Page(page);
+		page = t2.selectPage(page);
 		print(page.toString());
 
 		// 根据ID删除
