@@ -328,7 +328,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 */
 	protected void injectUpdateByIdSql(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
 		SqlMethod sqlMethod = SqlMethod.UPDATE_BY_ID;
-		String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlSet(table), table.getKeyColumn(),
+		String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlSet(table, null), table.getKeyColumn(),
 				table.getKeyProperty());
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
 		this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
@@ -385,7 +385,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 */
 	protected void injectUpdateSql(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
 		SqlMethod sqlMethod = SqlMethod.UPDATE;
-		String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlSet(table), sqlWhere(table, true));
+		String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlSet(table, "et."), sqlWhere(table, true));
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
 		this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
 	}
@@ -533,15 +533,21 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * </p>
 	 *
 	 * @param table
+	 * @param prefix
+	 * 			前缀
 	 * @return
 	 */
-	protected String sqlSet(TableInfo table) {
+	protected String sqlSet(TableInfo table, String prefix) {
 		StringBuilder set = new StringBuilder();
 		set.append("<trim prefix=\"SET\" suffixOverrides=\",\">");
 		List<TableFieldInfo> fieldList = table.getFieldList();
 		for (TableFieldInfo fieldInfo : fieldList) {
-			set.append(convertIfTag(fieldInfo, "et.", false));
-			set.append(fieldInfo.getColumn()).append("=#{et.").append(fieldInfo.getEl()).append("},");
+			set.append(convertIfTag(fieldInfo, prefix, false));
+			set.append(fieldInfo.getColumn()).append("=#{");
+			if (null != prefix) {
+				set.append(prefix);
+			}
+			set.append(fieldInfo.getEl()).append("},");
 			set.append(convertIfTag(fieldInfo, true));
 		}
 		set.append("\n</trim>");

@@ -17,17 +17,14 @@ package com.baomidou.mybatisplus.test.activerecord;
 
 import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
-import com.baomidou.mybatisplus.activerecord.Model;
-import com.baomidou.mybatisplus.mapper.SqlMapper;
-import com.baomidou.mybatisplus.plugins.pagination.Pagination;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.test.mysql.TestMapper;
 import com.baomidou.mybatisplus.test.mysql.entity.Test;
-import com.baomidou.mybatisplus.test.mysql.entity.User;
+import com.baomidou.mybatisplus.toolkit.IdWorker;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**
@@ -46,21 +43,74 @@ public class ActiveRecordTest {
 		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
 		SqlSessionFactory sqlSessionFactory = mf.build(in);
 		TableInfoHelper.cacheSqlSessionFactory(sqlSessionFactory);
-		SqlMapper mapper = Model.mapper(User.class);
-		boolean rlt = mapper.delete("delete from user"); 
-		System.err.println("delete all:" + rlt);
-		rlt = mapper.insert("insert into user (test_id, name) values (1, 'test1'),(2, 'test2')");
-		System.err.println("insert:" + rlt);
-		List<Map<String, Object>> maps = mapper.selectList("select * from user");
-		System.out.println(maps);
-		maps = mapper.selectList("select * from user", new Pagination(0, 10));
-		System.out.println("page:" + maps);
-		rlt = mapper.delete("delete from user where test_id in (1,2)");
-		System.err.println("insert:" + rlt);
 
-		List<Test> ts = new Test().all();
-		if (null != ts) {
-			System.out.println(ts.get(0).getType());
+		// 保存一条记录
+		Test t1 = new Test();
+		t1.setType("test10");
+		boolean rlt = t1.save();
+		print(" ar save=" + rlt + ", id=" + t1.getId());
+
+		// 根据ID更新
+		t1.setType("t1023");
+		rlt = t1.updateById();
+		print(" ar updateById:" + rlt);
+
+		// 更新 SQL
+		rlt = t1.update("update test set type='123' where id=" + t1.getId());
+		print("update sql=" + rlt);
+
+		// 查询 SQL
+		Test t10 = t1.selectOne("id={0}", t1.getId());
+		print("selectOne=" + t10.getType());
+
+		// 插入OR更新
+		t1.setType("t1021");
+		rlt = t1.saveOrUpdate();
+		print(" ar saveOrUpdate:" + rlt);
+
+		// 根据ID查询
+		Test t2 = t1.selectById();
+		print(" t2 = " + t2.toString());
+		t2.setId(IdWorker.getId());
+		t2.save();
+
+		// 查询所有
+		List<Test> tl = t2.selectAll();
+		for (Test t : tl) {
+			print("selectAll=" + t.toString());
 		}
+
+		// 查询总记录数
+		print(" count=" + t2.count());
+
+		// 翻页查询
+		Page<Test> page = new Page<Test>(0, 10);
+		page = t2.Page(page);
+		print(page.toString());
+
+		// 根据ID删除
+		rlt = t2.deleteById();
+		print("deleteById=" + rlt + ", id=" + t2.getId());
+
+		// 根据ID查询
+		Test t20 = t2.selectById();
+		print("t2 删除后是否存在？" + (null != t20));
+
+		// 删除 SQL
+		rlt = t2.delete("type=?", "t1021");
+		System.err.println("delete sql=" + rlt);
 	}
+
+	/*
+	 * 慢点打印
+	 */
+	private static void print(String text) {
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		System.err.println(text);
+	}
+
 }

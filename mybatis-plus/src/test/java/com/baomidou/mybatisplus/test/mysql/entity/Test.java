@@ -68,13 +68,11 @@ public class Test extends Model<Test> {
 	}
 
 	@Override
-	protected Class<Test> classType() {
-		return Test.class;
-	}
-
-
-	@Override
 	protected Serializable getPrimaryKey() {
 		return id;
+	}
+
+	public String toString() {
+		return "{id=" + id + ",type=" + type + "}";
 	}
 }
