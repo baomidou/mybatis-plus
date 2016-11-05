@@ -149,7 +149,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 *            查询条件值
 	 * @return
 	 */
-	public List<T> select(String columns, String whereClause, Object... args) {
+	public List<T> selectList(String columns, String whereClause, Object... args) {
 		EntityWrapper<T> ew = new EntityWrapper<T>(null, columns);
 		if (StringUtils.isNotEmpty(whereClause)) {
 			ew.addFilter(whereClause, args);
@@ -159,12 +159,12 @@ public abstract class Model<T extends Model> implements Serializable {
 		return sqlSession().selectList(sqlStatement(SqlMethod.SELECT_LIST), map);
 	}
 
-	public List<T> select(String whereClause, Object... args) {
-		return select(null, whereClause, args);
+	public List<T> selectList(String whereClause, Object... args) {
+		return selectList(null, whereClause, args);
 	}
 
 	public T selectOne(String columns, String whereClause, Object... args) {
-		List<T> tl = select(columns, whereClause, args);
+		List<T> tl = selectList(columns, whereClause, args);
 		if (CollectionUtil.isEmpty(tl)) {
 			return null;
 		}
@@ -222,7 +222,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * @return
 	 */
 	public int selectCount(String whereClause, Object... args) {
-		List<T> tl = select(whereClause, args);
+		List<T> tl = selectList(whereClause, args);
 		if (CollectionUtil.isEmpty(tl)) {
 			return 0;
 		}
