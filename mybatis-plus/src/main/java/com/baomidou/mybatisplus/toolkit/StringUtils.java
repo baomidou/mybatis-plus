@@ -149,6 +149,30 @@ public class StringUtils {
 
 	/**
 	 * <p>
+	 * SQL 参数填充
+	 * </p>
+	 * 
+	 * @param content
+	 *            填充内容
+	 * @param args
+	 *            填充参数
+	 * @return
+	 */
+	public static String sqlArgsFill(String content, Object... args) {
+		if (null == content) {
+			return null;
+		}
+		if (args != null) {
+			int l = args.length;
+			for (int i = 0; i < l; i++) {
+				content = content.replaceFirst("\\?", quotaMark(args[i]));
+			}
+		}
+		return content;
+	}
+
+	/**
+	 * <p>
 	 * 使用单引号包含字符串
 	 * </p>
 	 *
@@ -188,8 +212,8 @@ public class StringUtils {
 			return str;
 		}
 
-		return new StringBuilder(strLen).append(concatStr).append(Character.toTitleCase(firstChar)).append(str.substring(1))
-				.toString();
+		return new StringBuilder(strLen).append(concatStr).append(Character.toTitleCase(firstChar))
+				.append(str.substring(1)).toString();
 	}
 
 	/**

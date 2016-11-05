@@ -60,7 +60,7 @@ public class ActiveRecordTest {
 		print("update sql=" + rlt);
 
 		// 查询 SQL
-		Test t10 = t1.selectOne("id={0}", t1.getId());
+		Test t10 = t1.selectOne("id=?", t1.getId());
 		print("selectOne=" + t10.getType());
 
 		// 插入OR更新

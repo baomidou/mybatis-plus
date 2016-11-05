@@ -15,13 +15,12 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import com.baomidou.mybatisplus.toolkit.ReflectionKit;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
-
 import java.io.Serializable;
-import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collection;
+
+import com.baomidou.mybatisplus.toolkit.ReflectionKit;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
  * <p>
@@ -526,31 +525,7 @@ public class EntityWrapper<T> implements Serializable {
 		if (!need || StringUtils.isEmpty(sqlStr)) {
 			return null;
 		}
-		if (null != params) {
-			int length = params.length;
-			if (length >= 1) {
-				dealParams(params, length);
-				sqlStr = MessageFormat.format(sqlStr, params);
-			}
-		}
-		return sqlStr;
-	}
-
-	/**
-	 * <p>
-	 * 处理Object类型的参数 如果类型为String，自动添加单引号 'value'。当前字符串已经包含单引号，则不做修改
-	 * 如果类型为Object，自动转换成String类型
-	 * </p>
-	 *
-	 * @param params
-	 *            参数集
-	 * @param length
-	 *            参数数量
-	 */
-	protected void dealParams(Object[] params, int length) {
-		for (int i = 0; i < length; i++) {
-			params[i] = StringUtils.quotaMark(params[i]);
-		}
+		return StringUtils.sqlArgsFill(sqlStr, params);
 	}
 
 }

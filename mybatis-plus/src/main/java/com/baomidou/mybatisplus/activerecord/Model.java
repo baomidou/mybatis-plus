@@ -77,10 +77,8 @@ public abstract class Model<T extends Model> implements Serializable {
 		deleteSql.append("DELETE FROM ");
 		deleteSql.append(table().getTableName());
 		if (null != whereClause) {
-			for (int i = 0; i < args.length; i++) {
-				whereClause = whereClause.replaceFirst("\\?", StringUtils.quotaMark(args[i]));
-			}
-			deleteSql.append(" WHERE ").append(whereClause);
+			deleteSql.append(" WHERE ");
+			deleteSql.append(StringUtils.sqlArgsFill(whereClause, args));
 		}
 		System.out.println(deleteSql.toString());
 		return sqlMapper().delete(deleteSql.toString());
@@ -252,22 +250,18 @@ public abstract class Model<T extends Model> implements Serializable {
 		return sqlMapper().getSqlSession();
 	}
 
-	protected SqlMapper sqlMapper() {
+	private SqlMapper sqlMapper() {
 		return table().getSqlMapper();
 	}
 
-	protected String sqlStatement(SqlMethod sqlMethod) {
+	private String sqlStatement(SqlMethod sqlMethod) {
 		return table().getSqlStatement(sqlMethod);
 	}
 
-	protected TableInfo table() {
+	private TableInfo table() {
 		return TableInfoHelper.getTableInfo(getClass());
 	}
 
 	protected abstract Serializable getPrimaryKey();
-
-	public static SqlMapper mapper(Class<?> clazz) {
-		return TableInfoHelper.getSqlMapper(clazz);
-	}
 
 }
