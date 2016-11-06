@@ -109,17 +109,6 @@ public interface IService<T> {
 	 * 根据 entity 条件，删除记录
 	 * </p>
 	 *
-	 * @param entity
-	 *            实体对象
-	 * @return boolean
-	 */
-	boolean delete(T entity);
-
-	/**
-	 * <p>
-	 * 根据 entity 条件，删除记录
-	 * </p>
-	 *
 	 * @param entityWrapper
 	 *            实体包装类 {@link EntityWrapper}
 	 * @return boolean
@@ -160,19 +149,6 @@ public interface IService<T> {
 	 * @return boolean
 	 */
 	boolean updateById(T entity);
-
-	/**
-	 * <p>
-	 * 根据 whereEntity 条件，更新记录
-	 * </p>
-	 *
-	 * @param entity
-	 *            实体对象
-	 * @param whereEntity
-	 *            实体查询条件（可以为 null）
-	 * @return boolean
-	 */
-	boolean update(T entity, T whereEntity);
 
 	/**
 	 * <p>
@@ -257,17 +233,6 @@ public interface IService<T> {
 
 	/**
 	 * <p>
-	 * 根据 entity 条件，查询一条记录
-	 * </p>
-	 *
-	 * @param entity
-	 *            实体对象
-	 * @return T
-	 */
-	T selectOne(T entity);
-
-	/**
-	 * <p>
 	 * 根据 EntityWrapper，查询一条记录
 	 * </p>
 	 *
@@ -279,17 +244,6 @@ public interface IService<T> {
 
 	/**
 	 * <p>
-	 * 根据 entity 条件，查询总记录数
-	 * </p>
-	 *
-	 * @param entity
-	 *            实体对象
-	 * @return int
-	 */
-	int selectCount(T entity);
-
-	/**
-	 * <p>
 	 * 根据 EntityWrapper 条件，查询总记录数
 	 * </p>
 	 *
@@ -298,17 +252,6 @@ public interface IService<T> {
 	 * @return int
 	 */
 	int selectCount(EntityWrapper<T> entityWrapper);
-
-	/**
-	 * <p>
-	 * 查询列表
-	 * </p>
-	 *
-	 * @param entity
-	 *            实体对象
-	 * @return
-	 */
-	List<T> selectList(T entity);
 
 	/**
 	 * <p>
@@ -344,19 +287,6 @@ public interface IService<T> {
 	 * @return
 	 */
 	Page<T> selectPage(Page<T> page);
-
-	/**
-	 * <p>
-	 * 翻页查询
-	 * </p>
-	 *
-	 * @param page
-	 *            翻页对象
-	 * @param entity
-	 *            实体对象
-	 * @return
-	 */
-	Page<T> selectPage(Page<T> page, T entity);
 
 	/**
 	 * <p>

@@ -126,6 +126,7 @@ public class ReflectionKit {
 	 *            泛型所在位置
 	 * @return Class
 	 */
+	@SuppressWarnings("rawtypes")
 	public static Class getSuperClassGenricType(final Class clazz, final int index) {
 
 		Type genType = clazz.getGenericSuperclass();

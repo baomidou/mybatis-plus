@@ -160,10 +160,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return retBool(baseMapper.deleteByMap(columnMap));
 	}
 
-	public boolean delete(T entity) {
-		return delete(new EntityWrapper<T>(entity));
-	}
-
 	public boolean delete(EntityWrapper<T> entityWrapper) {
 		return retBool(baseMapper.delete(entityWrapper));
 	}
@@ -178,10 +174,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
 	public boolean updateById(T entity) {
 		return retBool(baseMapper.updateById(entity));
-	}
-
-	public boolean update(T entity, T whereEntity) {
-		return update(entity, new EntityWrapper<T>(whereEntity));
 	}
 
 	public boolean update(T entity, EntityWrapper<T> entityWrapper) {
@@ -208,10 +200,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return baseMapper.selectByMap(columnMap);
 	}
 
-	public T selectOne(T entity) {
-		return baseMapper.selectOne(entity);
-	}
-
 	public T selectOne(EntityWrapper<T> entityWrapper) {
 		List<T> list = baseMapper.selectList(entityWrapper);
 		if (CollectionUtil.isNotEmpty(list)) {
@@ -224,16 +212,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return null;
 	}
 
-	public int selectCount(T entity) {
-		return baseMapper.selectCount(new EntityWrapper<T>(entity));
-	}
-
 	public int selectCount(EntityWrapper<T> entityWrapper) {
 		return baseMapper.selectCount(entityWrapper);
-	}
-
-	public List<T> selectList(T entity) {
-		return selectList(new EntityWrapper<T>(entity));
 	}
 
 	public List<T> selectList(EntityWrapper<T> entityWrapper) {
@@ -247,10 +227,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	public Page<T> selectPage(Page<T> page) {
 		page.setRecords(baseMapper.selectPage(page, null));
 		return page;
-	}
-
-	public Page<T> selectPage(Page<T> page, T entity) {
-		return selectPage(page, new EntityWrapper<T>(entity));
 	}
 
 	public Page<T> selectPage(Page<T> page, EntityWrapper<T> entityWrapper) {
