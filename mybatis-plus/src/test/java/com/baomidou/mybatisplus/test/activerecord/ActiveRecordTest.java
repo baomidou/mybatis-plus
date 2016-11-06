@@ -18,14 +18,11 @@ package com.baomidou.mybatisplus.test.activerecord;
 import java.io.InputStream;
 import java.util.List;
 
-import org.apache.ibatis.session.SqlSessionFactory;
-
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.test.mysql.TestMapper;
 import com.baomidou.mybatisplus.test.mysql.entity.Test;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**
  * <p>
@@ -41,8 +38,7 @@ public class ActiveRecordTest {
 		// 加载配置文件
 		InputStream in = TestMapper.class.getClassLoader().getResourceAsStream("mysql-config.xml");
 		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
-		SqlSessionFactory sqlSessionFactory = mf.build(in);
-		TableInfoHelper.cacheSqlSessionFactory(sqlSessionFactory);
+		mf.build(in);
 
 		// 保存一条记录
 		Test t1 = new Test();

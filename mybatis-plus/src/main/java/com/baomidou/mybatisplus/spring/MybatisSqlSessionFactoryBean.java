@@ -54,7 +54,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
 import com.baomidou.mybatisplus.MybatisConfiguration;
-import com.baomidou.mybatisplus.MybatisPlusHolder;
 import com.baomidou.mybatisplus.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.MybatisXMLMapperBuilder;
 import com.baomidou.mybatisplus.annotations.FieldStrategy;
@@ -598,13 +597,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 				LOGGER.debug("Property 'mapperLocations' was not specified or no matching resources found");
 			}
 		}
-		/**
-		 * Holder SqlMapper
-		 */
-		SqlSessionFactory sqlSessionFactory = this.sqlSessionFactoryBuilder.build(configuration);
-		MybatisPlusHolder.setSqlSessionFactory(sqlSessionFactory);
-		//TODO
-		return sqlSessionFactory;
+		return this.sqlSessionFactoryBuilder.build(configuration);
 	}
 
 	/**

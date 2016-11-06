@@ -5,9 +5,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
+import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.defaults.DefaultSqlSessionFactory;
 
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.toolkit.CollectionUtil;
@@ -34,11 +36,8 @@ public class SqlMapper {
 	 *
 	 * @param sqlSessionFactory
 	 */
-	public SqlMapper(SqlSessionFactory sqlSessionFactory) {
-		if (null == sqlSessionFactory) {
-			throw new MybatisPlusException(" sqlSessionFactory is null.");
-		}
-		this.sqlSessionFactory = sqlSessionFactory;
+	public SqlMapper(MapperBuilderAssistant builderAssistant) {
+		this.sqlSessionFactory = new DefaultSqlSessionFactory(builderAssistant.getConfiguration());
 		this.sqlSession = sqlSessionFactory.openSession();
 	}
 

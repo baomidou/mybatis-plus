@@ -18,7 +18,6 @@ package com.baomidou.mybatisplus.toolkit;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,10 +25,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.baomidou.mybatisplus.MybatisConfiguration;
-import com.baomidou.mybatisplus.MybatisPlusHolder;
 import com.baomidou.mybatisplus.annotations.FieldStrategy;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
@@ -80,7 +77,7 @@ public class TableInfoHelper {
 			return ti;
 		}
 		TableInfo tableInfo = new TableInfo();
-		tableInfo.setSqlMapper(MybatisPlusHolder.getSqlMapper());
+		tableInfo.setSqlMapper(new SqlMapper(builderAssistant));
 		if (null != builderAssistant) {
 			tableInfo.setCurrentNamespace(builderAssistant.getCurrentNamespace());
 		}
@@ -212,21 +209,6 @@ public class TableInfoHelper {
 		}
 		result.addAll(getAllFields(superClass));
 		return result;
-	}
-
-	/**
-	 * 缓存sqlSessionFactory 同时注入SqlMapper
-	 *
-	 * @param sqlSessionFactory
-	 * @return
-	 */
-	public static void cacheSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
-		Collection<TableInfo> values = tableInfoCache.values();
-		for (TableInfo tableInfo : values) {
-			if (null == tableInfo.getSqlMapper()) {
-				tableInfo.setSqlMapper(new SqlMapper(sqlSessionFactory));
-			}
-		}
 	}
 
 	public static SqlMapper getSqlMapper(Class<?> clazz) {
