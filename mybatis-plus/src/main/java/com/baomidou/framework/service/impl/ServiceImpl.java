@@ -123,7 +123,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		if (null == tableInfo) {
 			throw new MybatisPlusException("Error: Cannot execute insertBatch Method, ClassGenricType not found .");
 		}
-		SqlSession batchSqlSession = tableInfo.getSqlMapper().getSqlSessionFactory().openSession(ExecutorType.BATCH, false);
+		SqlSession batchSqlSession = tableInfo.getSqlMapper().getSqlSessionFactory().openSession(ExecutorType.BATCH,
+				false);
 		try {
 			int size = entityList.size();
 			for (int i = 0; i < size; i++) {
@@ -203,11 +204,11 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	}
 
 	public int selectCount(T entity) {
-		return baseMapper.selectCount(entity);
+		return baseMapper.selectCount(new EntityWrapper<T>(entity));
 	}
 
 	public int selectCount(EntityWrapper<T> entityWrapper) {
-		return baseMapper.selectCountByEw(entityWrapper);
+		return baseMapper.selectCount(entityWrapper);
 	}
 
 	public List<T> selectList(EntityWrapper<T> entityWrapper) {

@@ -262,7 +262,7 @@ public class UserMapperTest {
         print(userOne);
 
         System.err.println("\n------------------selectCount----------------------");
-        System.err.println("查询 type=1 总记录数：" + userMapper.selectCount(new User(1)));
+        System.err.println("查询 type=1 总记录数：" + userMapper.selectCount(new EntityWrapper<User>(new User(1))));
         System.err.println("总记录数：" + userMapper.selectCount(null));
 
         System.err.println("\n------------------selectList-----所有数据----id--DESC--排序----");
@@ -283,7 +283,7 @@ public class UserMapperTest {
 		/*
          * 查询条件，SQL 片段(根据常用的写SQL的方式按顺序添加相关条件即可)
 		 */
-        ew.where("name like {0}", "'%dateBatch%'").and("age={0}", 3).orderBy("age,name", true);
+        ew.where("name like ?", "'%dateBatch%'").and("age=?", 3).orderBy("age,name", true);
         List<User> paginList = userMapper.selectPage(page, ew);
         page.setRecords(paginList);
         for (int i = 0; i < page.getRecords().size(); i++) {

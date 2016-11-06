@@ -121,7 +121,6 @@ public class AutoSqlInjector implements ISqlInjector {
 			this.injectSelectByMapSql(mapperClass, modelClass, table);
 			this.injectSelectOneSql(mapperClass, modelClass, table);
 			this.injectSelectCountSql(mapperClass, modelClass, table);
-			this.injectSelectCountByEWSql(SqlMethod.SELECT_COUNT_EW, mapperClass, modelClass, table);
 			this.injectSelectListSql(SqlMethod.SELECT_LIST, mapperClass, modelClass, table);
 			this.injectSelectListSql(SqlMethod.SELECT_PAGE, mapperClass, modelClass, table);
 
@@ -454,22 +453,6 @@ public class AutoSqlInjector implements ISqlInjector {
 
 	/**
 	 * <p>
-	 * 注入实体查询总记录数 SQL 语句
-	 * </p>
-	 *
-	 * @param mapperClass
-	 * @param modelClass
-	 * @param table
-	 */
-	protected void injectSelectCountSql(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
-		SqlMethod sqlMethod = SqlMethod.SELECT_COUNT;
-		String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlWhere(table, true));
-		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-		this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, Integer.class, null);
-	}
-
-	/**
-	 * <p>
 	 * 注入EntityWrapper方式查询记录列表 SQL 语句
 	 * </p>
 	 *
@@ -490,12 +473,12 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * 注入EntityWrapper查询总记录数 SQL 语句
 	 * </p>
 	 *
-	 * @param sqlMethod
 	 * @param mapperClass
 	 * @param modelClass
 	 * @param table
 	 */
-	protected void injectSelectCountByEWSql(SqlMethod sqlMethod, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
+	protected void injectSelectCountSql(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
+		SqlMethod sqlMethod = SqlMethod.SELECT_COUNT;
 		String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlWhereEntityWrapper(table));
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
 		this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, Integer.class, null);
