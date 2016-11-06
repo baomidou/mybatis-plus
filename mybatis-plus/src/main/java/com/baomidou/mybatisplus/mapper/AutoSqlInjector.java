@@ -384,7 +384,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 */
 	protected void injectUpdateSql(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
 		SqlMethod sqlMethod = SqlMethod.UPDATE;
-		String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlSet(table, "et."), sqlWhere(table, true));
+		String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlSet(table, "et."), sqlWhereEntityWrapper(table));
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
 		this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
 	}

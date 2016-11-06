@@ -137,6 +137,19 @@ public interface IService<T> {
 
 	/**
 	 * <p>
+	 * 根据 whereEntity 条件，更新记录
+	 * </p>
+	 *
+	 * @param entity
+	 *            实体对象
+	 * @param entityWrapper
+	 *            实体包装类 {@link EntityWrapper}
+	 * @return boolean
+	 */
+	boolean update(T entity, EntityWrapper<T> entityWrapper);
+
+	/**
+	 * <p>
 	 * 根据ID 批量更新
 	 * </p>
 	 *

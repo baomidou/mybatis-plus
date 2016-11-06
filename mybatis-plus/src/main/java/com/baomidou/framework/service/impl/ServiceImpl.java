@@ -168,7 +168,11 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	}
 
 	public boolean update(T entity, T whereEntity) {
-		return retBool(baseMapper.update(entity, whereEntity));
+		return update(entity, new EntityWrapper<T>(whereEntity));
+	}
+
+	public boolean update(T entity, EntityWrapper<T> entityWrapper) {
+		return retBool(baseMapper.update(entity, entityWrapper));
 	}
 
 	public boolean updateBatchById(List<T> entityList) {

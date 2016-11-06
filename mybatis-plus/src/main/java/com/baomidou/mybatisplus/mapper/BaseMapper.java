@@ -119,9 +119,11 @@ public interface BaseMapper<T> {
 	 * 
 	 * @param entity
 	 *            实体对象
-	 * @return whereEntity 实体查询条件（可以为 null）
+	 * @param whereEntity
+	 *            实体对象封装操作类（可以为 null）
+	 * @return
 	 */
-	int update(@Param("et") T entity, @Param("ew") T whereEntity);
+	int update(@Param("et") T entity, @Param("ew") EntityWrapper<T> entityWrapper);
 
 	/**
 	 * <p>

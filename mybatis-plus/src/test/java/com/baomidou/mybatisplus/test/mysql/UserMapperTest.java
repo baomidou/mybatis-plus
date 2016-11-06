@@ -212,11 +212,13 @@ public class UserMapperTest {
         System.err.println("------------------updateById---------------------- result=" + rlt + "\n\n");
         sleep();
 
-        rlt = userMapper.update(new User("55", 55, 5), new User(15L, "5"));
+        rlt = userMapper.update(new User("55", 55, 5), new EntityWrapper<User>(new User(15L, "5")));
         System.err.println("------------------update---------------------- result=" + rlt + "\n\n");
         sleep();
 
-        rlt = userMapper.update(new User("00"), new User(15L, "55"));
+        EntityWrapper<User> ew1 = new EntityWrapper<User>();
+        ew1.addFilter("test_id=? AND name=?", 15L, "55");
+        rlt = userMapper.update(new User("00"), ew1);
         System.err.println("------------------update---------------------- result=" + rlt + "\n\n");
         sleep();
 
