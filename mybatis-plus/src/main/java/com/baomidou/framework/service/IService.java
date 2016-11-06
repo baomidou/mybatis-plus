@@ -239,11 +239,46 @@ public interface IService<T> {
 	 * 查询列表
 	 * </p>
 	 *
+	 * @param entity
+	 *            实体对象
+	 * @return
+	 */
+	List<T> selectList(T entity);
+
+	/**
+	 * <p>
+	 * 查询列表
+	 * </p>
+	 *
 	 * @param entityWrapper
 	 *            实体包装类 {@link EntityWrapper}
 	 * @return
 	 */
 	List<T> selectList(EntityWrapper<T> entityWrapper);
+
+	/**
+	 * <p>
+	 * 翻页查询
+	 * </p>
+	 *
+	 * @param page
+	 *            翻页对象
+	 * @return
+	 */
+	Page<T> selectPage(Page<T> page);
+
+	/**
+	 * <p>
+	 * 翻页查询
+	 * </p>
+	 *
+	 * @param page
+	 *            翻页对象
+	 * @param entity
+	 *            实体对象
+	 * @return
+	 */
+	Page<T> selectPage(Page<T> page, T entity);
 
 	/**
 	 * <p>

@@ -211,8 +211,21 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return baseMapper.selectCount(entityWrapper);
 	}
 
+	public List<T> selectList(T entity) {
+		return selectList(new EntityWrapper<T>(entity));
+	}
+
 	public List<T> selectList(EntityWrapper<T> entityWrapper) {
 		return baseMapper.selectList(entityWrapper);
+	}
+
+	public Page<T> selectPage(Page<T> page) {
+		page.setRecords(baseMapper.selectPage(page, null));
+		return page;
+	}
+
+	public Page<T> selectPage(Page<T> page, T entity) {
+		return selectPage(page, new EntityWrapper<T>(entity));
 	}
 
 	public Page<T> selectPage(Page<T> page, EntityWrapper<T> entityWrapper) {
