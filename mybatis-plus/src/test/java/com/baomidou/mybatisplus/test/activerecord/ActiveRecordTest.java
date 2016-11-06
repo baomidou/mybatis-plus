@@ -56,7 +56,9 @@ public class ActiveRecordTest {
 		print(" ar updateById:" + rlt);
 
 		// 更新 SQL
-		rlt = t1.update("update test set type='123' where id=" + t1.getId());
+		Test t11 = new Test();
+		t11.setType("123");
+		rlt = t11.update("id=?", t1.getId());
 		print("update sql=" + rlt);
 
 		// 查询 SQL
