@@ -17,7 +17,6 @@ package com.baomidou.mybatisplus.mapper;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,8 +27,6 @@ import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
 import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.ResultMap;
-import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.mapping.StatementType;
@@ -267,7 +264,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 */
 	protected void injectDeleteSql(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
 		SqlMethod sqlMethod = SqlMethod.DELETE;
-		String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlWhere(table, false));
+		String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlWhereEntityWrapper(table));
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
 		this.addDeleteMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource);
 	}
@@ -755,115 +752,6 @@ public class AutoSqlInjector implements ISqlInjector {
 		return builderAssistant.addMappedStatement(id, sqlSource, StatementType.PREPARED, sqlCommandType, null, null, null,
 				parameterClass, resultMap, resultType, null, !isSelect, isSelect, false, keyGenerator, keyProperty, keyColumn,
 				configuration.getDatabaseId(), languageDriver, null);
-	}
-
-	public void injectOfSql(Configuration configuration) {
-		this.configuration = configuration;
-		this.languageDriver = configuration.getDefaultScriptingLanuageInstance();
-		initSelect();
-		initInsert();
-		initUpdate();
-		initDelete();
-	}
-
-	/**
-	 * 是否已经存在该ID
-	 *
-	 * @param msId
-	 * @return
-	 */
-	private boolean hasMappedStatement(String msId) {
-		return configuration.hasStatement(msId, false);
-	}
-
-	/**
-	 * 创建一个查询的MS
-	 *
-	 * @param msId
-	 * @param sqlSource
-	 *            执行的sqlSource
-	 * @param resultType
-	 *            返回的结果类型
-	 */
-	private void newSelectMappedStatement(String msId, SqlSource sqlSource, final Class<?> resultType) {
-		MappedStatement ms = new MappedStatement.Builder(configuration, msId, sqlSource, SqlCommandType.SELECT).resultMaps(
-				new ArrayList<ResultMap>() {
-					{
-						add(new ResultMap.Builder(configuration, "defaultResultMap", resultType, new ArrayList<ResultMapping>(0))
-								.build());
-					}
-				}).build();
-		// 缓存
-		configuration.addMappedStatement(ms);
-	}
-
-	/**
-	 * 创建一个简单的MS
-	 *
-	 * @param msId
-	 * @param sqlSource
-	 *            执行的sqlSource
-	 * @param sqlCommandType
-	 *            执行的sqlCommandType
-	 */
-	private void newUpdateMappedStatement(String msId, SqlSource sqlSource, SqlCommandType sqlCommandType) {
-		MappedStatement ms = new MappedStatement.Builder(configuration, msId, sqlSource, sqlCommandType).resultMaps(
-				new ArrayList<ResultMap>() {
-					{
-						add(new ResultMap.Builder(configuration, "defaultResultMap", int.class, new ArrayList<ResultMapping>(0))
-								.build());
-					}
-				}).build();
-		// 缓存
-		configuration.addMappedStatement(ms);
-	}
-
-	/**
-	 * initSelect
-	 */
-	private void initSelect() {
-		if (hasMappedStatement(SqlMapper.SELECT)) {
-			logger.warning("SqlMapper Select Initialization exception");
-			return;
-		}
-		SqlSource sqlSource = languageDriver.createSqlSource(configuration, SqlMapper.InjectSQL, Map.class);
-		newSelectMappedStatement(SqlMapper.SELECT, sqlSource, Map.class);
-	}
-
-	/**
-	 * initInsert
-	 */
-	private void initInsert() {
-		if (hasMappedStatement(SqlMapper.INSERT)) {
-			logger.warning("SqlMapper Insert Initialization exception");
-			return;
-		}
-		SqlSource sqlSource = languageDriver.createSqlSource(configuration, SqlMapper.InjectSQL, Map.class);
-		newUpdateMappedStatement(SqlMapper.INSERT, sqlSource, SqlCommandType.INSERT);
-	}
-
-	/**
-	 * initUpdate
-	 */
-	private void initUpdate() {
-		if (hasMappedStatement(SqlMapper.UPDATE)) {
-			logger.warning("SqlMapper Update Initialization exception");
-			return;
-		}
-		SqlSource sqlSource = languageDriver.createSqlSource(configuration, SqlMapper.InjectSQL, Map.class);
-		newUpdateMappedStatement(SqlMapper.UPDATE, sqlSource, SqlCommandType.UPDATE);
-	}
-
-	/**
-	 * initDelete
-	 */
-	private void initDelete() {
-		if (hasMappedStatement(SqlMapper.DELETE)) {
-			logger.warning("SqlMapper Delete Initialization exception");
-			return;
-		}
-		SqlSource sqlSource = languageDriver.createSqlSource(configuration, SqlMapper.InjectSQL, Map.class);
-		newUpdateMappedStatement(SqlMapper.DELETE, sqlSource, SqlCommandType.DELETE);
 	}
 
 }

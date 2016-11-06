@@ -84,11 +84,11 @@ public interface BaseMapper<T> {
 	 * 根据 entity 条件，删除记录
 	 * </p>
 	 * 
-	 * @param entity
-	 *            实体对象
+	 * @param entityWrapper
+	 *            实体对象封装操作类（可以为 null）
 	 * @return int
 	 */
-	int delete(@Param("ew") T entity);
+	int delete(@Param("ew") EntityWrapper<T> entityWrapper);
 
 	/**
 	 * <p>

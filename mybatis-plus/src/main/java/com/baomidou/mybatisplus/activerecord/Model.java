@@ -97,15 +97,15 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * @return
 	 */
 	public boolean delete(String whereClause, Object... args) {
-		StringBuffer deleteSql = new StringBuffer();
-		deleteSql.append("DELETE FROM ");
-		deleteSql.append(table().getTableName());
-		if (null != whereClause) {
-			deleteSql.append(" WHERE ");
-			deleteSql.append(StringUtils.sqlArgsFill(whereClause, args));
+		Map<String, Object> map = new HashMap<String, Object>();
+		EntityWrapper<T> ew = null;
+		if (StringUtils.isNotEmpty(whereClause)) {
+			ew = new EntityWrapper<T>();
+			ew.addFilter(whereClause, args);
 		}
-		System.out.println(deleteSql.toString());
-		return sqlMapper().delete(deleteSql.toString());
+		// delete
+		map.put("ew", ew);
+		return retBool(sqlSession().delete(sqlStatement(SqlMethod.DELETE), map));
 	}
 
 	/**

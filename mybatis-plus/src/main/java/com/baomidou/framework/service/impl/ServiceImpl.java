@@ -156,7 +156,11 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	}
 
 	public boolean delete(T entity) {
-		return retBool(baseMapper.delete(entity));
+		return delete(new EntityWrapper<T>(entity));
+	}
+
+	public boolean delete(EntityWrapper<T> entityWrapper) {
+		return retBool(baseMapper.delete(entityWrapper));
 	}
 
 	public boolean deleteBatchIds(List<? extends Serializable> idList) {

@@ -102,6 +102,17 @@ public interface IService<T> {
 
 	/**
 	 * <p>
+	 * 根据 entity 条件，删除记录
+	 * </p>
+	 *
+	 * @param entityWrapper
+	 *            实体包装类 {@link EntityWrapper}
+	 * @return boolean
+	 */
+	boolean delete(EntityWrapper<T> entityWrapper);
+
+	/**
+	 * <p>
 	 * 删除（根据ID 批量删除）
 	 * </p>
 	 *

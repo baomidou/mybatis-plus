@@ -15,16 +15,16 @@
  */
 package com.baomidou.mybatisplus;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.ibatis.binding.BindingException;
 import org.apache.ibatis.binding.MapperProxyFactory;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * <p>
@@ -42,8 +42,6 @@ public class MybatisMapperRegistry extends MapperRegistry {
 	public MybatisMapperRegistry(Configuration config) {
 		super(config);
 		this.config = config;
-		// TODO 注入全局CRUD SQL
-		MybatisConfiguration.SQL_INJECTOR.injectOfSql(config);
 	}
 
 	@SuppressWarnings("unchecked")

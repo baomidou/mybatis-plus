@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.mapper;
 
 import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.apache.ibatis.session.Configuration;
 
 /**
  * <p>
@@ -44,12 +43,5 @@ public interface ISqlInjector {
 	 * @param mapperClass
 	 */
 	void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass);
-
-	/**
-	 * 注入全局CRUD SQL
-	 *
-	 * @param configuration
-	 */
-	void injectOfSql(Configuration configuration);
 
 }

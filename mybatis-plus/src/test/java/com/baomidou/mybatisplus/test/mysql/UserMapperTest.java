@@ -114,7 +114,7 @@ public class UserMapperTest {
 
         userA.setAge(18);
         userMapper.updateById(userA);
-        userMapper.delete(userA);
+        userMapper.delete(new EntityWrapper<User>(userA));
         System.err.println("--------- @TableField el() --------- " + rlt);
 
         /**
@@ -192,7 +192,7 @@ public class UserMapperTest {
         System.err.println("---------deleteBatchIds------- delete id=" + id + " ,result=" + rlt + "\n\n");
         sleep();
 
-        rlt = userMapper.delete(new User(14L, "delname"));
+        rlt = userMapper.delete(new EntityWrapper<User>(new User(14L, "delname")));
         System.err.println("--------------delete------------------ result=" + rlt + "\n\n");
         sleep();
 
