@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.jdbc.SQL;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
@@ -309,6 +310,60 @@ public class UserMapperTest {
             print(aPaginList);
         }
 
+        /*
+         * <p>
+         * 纯 SQL 查询！！！
+         * </p>
+         * <p>
+         * 用法参考：/mybatis-plus/src/test/java/com/baomidou/mybatisplus/test/SqlBuilderTest.java
+         * </p>
+         */
+        SQL sql = new SQL() {{
+            SELECT("a.test_id as id, a.name, a.age");
+            FROM("user a");
+            WHERE("a.test_type=?");
+        }};
+        // SQL 插入
+        System.err.println(" insertSql 执行 SQL \n");
+        rlt = userMapper.insertSql(new SQL(){{
+        	INSERT_INTO("user");
+            VALUES("name, age, test_type", "?, ?, ?");
+        }}, "testInsertSql", 5, 1);
+        System.err.println("插入！条数：" + rlt);
+
+        // SQL 查询
+        System.err.println(" selectListSql 执行 SQL \n");
+        List<User> ul3 = userMapper.selectListSql(sql, 1);
+        for (User u : ul3) {
+			print(u);
+		}
+
+        // SQL 删除
+        System.err.println(" deleteSql 执行 SQL \n");
+        rlt = userMapper.deleteSql(new SQL(){{
+        	DELETE_FROM("user");
+        	WHERE("name=?");
+        }}, "testInsertSql");
+        System.err.println("删除！条数：" + rlt);
+
+        // SQL 更新
+        System.err.println(" updateSql 执行 SQL \n");
+        rlt = userMapper.updateSql(new SQL(){{
+        	UPDATE("user");
+        	SET("age=6");
+        	WHERE("test_type=?");
+        }}, 1);
+        System.err.println("成功更新！条数：" + rlt);
+
+        // SQL 翻页
+        System.err.println(" selectPageSql 执行 SQL \n");
+        Page<User> page3 = new Page<User>(0, 10);
+        ul3 = userMapper.selectPageSql(page3, sql, 1);
+        for (User u : ul3) {
+        	print(u);
+        }
+        System.err.println("翻页结果：" + page3.toString());
+        
         /**
          * 自定义方法，删除测试数据
          */

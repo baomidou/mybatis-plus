@@ -19,7 +19,12 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.DeleteProvider;
+import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.SelectProvider;
+import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.jdbc.SQL;
 import org.apache.ibatis.session.RowBounds;
 
 /**
@@ -56,6 +61,20 @@ public interface BaseMapper<T> {
 	 * @return int
 	 */
 	int insertBatch(List<T> entityList);
+
+	/**
+	 * <p>
+	 * 执行 SQL 插入
+	 * </p>
+	 * 
+	 * @param sql
+	 *            SQL语句
+	 * @param args
+	 *            条件参数值
+	 * @return
+	 */
+	@InsertProvider(type = PureSqlProvider.class, method = "sql")
+	int insertSql(SQL sql, Object... args);
 
 	/**
 	 * <p>
@@ -103,6 +122,20 @@ public interface BaseMapper<T> {
 
 	/**
 	 * <p>
+	 * 执行 SQL 删除
+	 * </p>
+	 * 
+	 * @param sql
+	 *            SQL语句
+	 * @param args
+	 *            条件参数值
+	 * @return
+	 */
+	@DeleteProvider(type = PureSqlProvider.class, method = "sql")
+	int deleteSql(SQL sql, Object... args);
+
+	/**
+	 * <p>
 	 * 根据 ID 修改
 	 * </p>
 	 * 
@@ -135,6 +168,20 @@ public interface BaseMapper<T> {
 	 * @return int
 	 */
 	int updateBatchById(List<T> entityList);
+
+	/**
+	 * <p>
+	 * 执行 SQL 更新
+	 * </p>
+	 * 
+	 * @param sql
+	 *            SQL语句
+	 * @param args
+	 *            条件参数值
+	 * @return
+	 */
+	@UpdateProvider(type = PureSqlProvider.class, method = "sql")
+	int updateSql(SQL sql, Object... args);
 
 	/**
 	 * <p>
@@ -204,6 +251,20 @@ public interface BaseMapper<T> {
 
 	/**
 	 * <p>
+	 * 执行 SQL 查询，查询全部记录
+	 * </p>
+	 * 
+	 * @param sql
+	 *            SQL语句
+	 * @param args
+	 *            条件参数值
+	 * @return
+	 */
+	@SelectProvider(type = PureSqlProvider.class, method = "sql")
+	List<T> selectListSql(SQL sql, Object... args);
+
+	/**
+	 * <p>
 	 * 根据 entity 条件，查询全部记录（并翻页）
 	 * </p>
 	 * 
@@ -214,5 +275,19 @@ public interface BaseMapper<T> {
 	 * @return List<T>
 	 */
 	List<T> selectPage(RowBounds rowBounds, @Param("ew") EntityWrapper<T> entityWrapper);
+
+	/**
+	 * <p>
+	 * 执行 SQL 查询，查询全部记录（并翻页）
+	 * </p>
+	 * 
+	 * @param sql
+	 *            SQL语句
+	 * @param args
+	 *            条件参数值
+	 * @return
+	 */
+	@SelectProvider(type = PureSqlProvider.class, method = "sql")
+	List<T> selectPageSql(RowBounds rowBounds, SQL sql, Object... args);
 
 }

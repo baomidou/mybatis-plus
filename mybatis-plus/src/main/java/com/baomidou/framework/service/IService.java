@@ -19,6 +19,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.jdbc.SQL;
+
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 
@@ -66,6 +68,19 @@ public interface IService<T> {
 	 * @return boolean
 	 */
 	boolean insertBatch(List<T> entityList, int batchSize);
+
+	/**
+	 * <p>
+	 * 执行 SQL 插入
+	 * </p>
+	 * 
+	 * @param sql
+	 *            SQL语句
+	 * @param args
+	 *            条件参数值
+	 * @return
+	 */
+	boolean insertSql(SQL sql, Object... args);
 
 	/**
 	 * <p>
@@ -124,6 +139,19 @@ public interface IService<T> {
 
 	/**
 	 * <p>
+	 * 执行 SQL 删除
+	 * </p>
+	 * 
+	 * @param sql
+	 *            SQL语句
+	 * @param args
+	 *            条件参数值
+	 * @return
+	 */
+	boolean deleteSql(SQL sql, Object... args);
+
+	/**
+	 * <p>
 	 * 根据 ID 修改
 	 * </p>
 	 *
@@ -169,6 +197,19 @@ public interface IService<T> {
 	 * @return boolean
 	 */
 	boolean updateBatchById(List<T> entityList);
+
+	/**
+	 * <p>
+	 * 执行 SQL 更新
+	 * </p>
+	 * 
+	 * @param sql
+	 *            SQL语句
+	 * @param args
+	 *            条件参数值
+	 * @return
+	 */
+	boolean updateSql(SQL sql, Object... args);
 
 	/**
 	 * <p>
@@ -282,6 +323,19 @@ public interface IService<T> {
 
 	/**
 	 * <p>
+	 * 执行 SQL 查询，查询列表
+	 * </p>
+	 * 
+	 * @param sql
+	 *            SQL语句
+	 * @param args
+	 *            条件参数值
+	 * @return
+	 */
+	public List<T> selectListSql(SQL sql, Object... args);
+
+	/**
+	 * <p>
 	 * 翻页查询
 	 * </p>
 	 *
@@ -316,5 +370,18 @@ public interface IService<T> {
 	 * @return
 	 */
 	Page<T> selectPage(Page<T> page, EntityWrapper<T> entityWrapper);
+
+	/**
+	 * <p>
+	 * 执行 SQL 查询，翻页查询
+	 * </p>
+	 * 
+	 * @param sql
+	 *            SQL语句
+	 * @param args
+	 *            条件参数值
+	 * @return
+	 */
+	Page<T> selectPageSql(Page<T> page, SQL sql, Object... args);
 
 }

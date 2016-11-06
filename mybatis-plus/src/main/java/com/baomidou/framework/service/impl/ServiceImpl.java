@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.apache.ibatis.jdbc.SQL;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -147,6 +148,10 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return ReflectionKit.getSuperClassGenricType(getClass(), 1);
 	}
 
+	public boolean insertSql(SQL sql, Object... args) {
+		return retBool(baseMapper.insertSql(sql, args));
+	}
+
 	public boolean deleteById(Serializable id) {
 		return retBool(baseMapper.deleteById(id));
 	}
@@ -167,6 +172,10 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return retBool(baseMapper.deleteBatchIds(idList));
 	}
 
+	public boolean deleteSql(SQL sql, Object... args) {
+		return retBool(baseMapper.deleteSql(sql, args));
+	}
+
 	public boolean updateById(T entity) {
 		return retBool(baseMapper.updateById(entity));
 	}
@@ -181,6 +190,10 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
 	public boolean updateBatchById(List<T> entityList) {
 		return retBool(baseMapper.updateBatchById(entityList));
+	}
+
+	public boolean updateSql(SQL sql, Object... args) {
+		return retBool(baseMapper.updateSql(sql, args));
 	}
 
 	public T selectById(Serializable id) {
@@ -227,6 +240,10 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return baseMapper.selectList(entityWrapper);
 	}
 
+	public List<T> selectListSql(SQL sql, Object... args) {
+		return baseMapper.selectListSql(sql, args);
+	}
+
 	public Page<T> selectPage(Page<T> page) {
 		page.setRecords(baseMapper.selectPage(page, null));
 		return page;
@@ -241,6 +258,11 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 			entityWrapper.orderBy(page.getOrderByField(), page.isAsc());
 		}
 		page.setRecords(baseMapper.selectPage(page, entityWrapper));
+		return page;
+	}
+
+	public Page<T> selectPageSql(Page<T> page, SQL sql, Object... args) {
+		page.setRecords(baseMapper.selectPageSql(page, sql, args));
 		return page;
 	}
 
