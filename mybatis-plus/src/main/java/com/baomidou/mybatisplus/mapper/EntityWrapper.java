@@ -52,10 +52,6 @@ public class EntityWrapper<T> implements Serializable {
 		/* 注意，传入查询参数 */
 	}
 
-	public static <T> EntityWrapper<T> instance() {
-		return new EntityWrapper<T>();
-	}
-
 	public EntityWrapper(T entity) {
 		this.entity = entity;
 	}
@@ -69,9 +65,8 @@ public class EntityWrapper<T> implements Serializable {
 		return entity;
 	}
 
-	public EntityWrapper setEntity(T entity) {
+	public void setEntity(T entity) {
 		this.entity = entity;
-		return this;
 	}
 
 	public String getSqlSelect() {
@@ -81,11 +76,10 @@ public class EntityWrapper<T> implements Serializable {
 		return stripSqlInjection(sqlSelect);
 	}
 
-	public EntityWrapper setSqlSelect(String sqlSelect) {
+	public void setSqlSelect(String sqlSelect) {
 		if (StringUtils.isNotEmpty(sqlSelect)) {
 			this.sqlSelect = sqlSelect;
 		}
-		return this;
 	}
 
 	/**
