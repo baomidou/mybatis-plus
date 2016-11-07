@@ -185,7 +185,7 @@ public class EntityWrapperTest {
 	 */
 	@Test
 	public void testNul15() {
-		ew.where("id={0} and ids = {1}", "11",22).and("name={0}", 222222222);
+		ew.where("id={0} and ids = {1}", "11", 22).and("name={0}", 222222222);
 		String sqlPart = ew.getSqlSegment();
 		System.out.println("sql ==> " + sqlPart);
 		Assert.assertEquals("WHERE (id='11' and ids = 22 AND name=222222222)", sqlPart);
@@ -231,6 +231,7 @@ public class EntityWrapperTest {
 		System.out.println("sql ==> " + sqlPart);
 		Assert.assertEquals("WHERE (test_type IN (111111111,222222222,333333333))", sqlPart);
 	}
+
 	/**
 	 * 测试IN
 	 */
@@ -270,5 +271,17 @@ public class EntityWrapperTest {
 		String sqlPart = ew.getSqlSegment();
 		System.out.println("sql ==> " + sqlPart);
 		Assert.assertEquals("WHERE (test_type BETWEEN '\\'' AND '\\\\')", sqlPart);
+	}
+
+	/**
+	 * 测试链式风格
+	 */
+	@Test
+	public void testInstance() {
+		String sqlSegment = EntityWrapper.instance().setEntity(new User(1)).where("name={0}", "'123'")
+				.addFilterIfNeed(false, "id=12").getSqlSegment();
+
+		System.err.println("test11 = " + sqlSegment);
+		Assert.assertEquals("AND (name='123')", sqlSegment);
 	}
 }
