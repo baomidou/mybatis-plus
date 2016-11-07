@@ -15,26 +15,25 @@
  */
 package com.baomidou.framework.service.impl;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
-import org.apache.ibatis.jdbc.SQL;
-import org.apache.ibatis.session.ExecutorType;
-import org.apache.ibatis.session.SqlSession;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.baomidou.framework.service.IService;
 import com.baomidou.mybatisplus.annotations.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.toolkit.CollectionUtil;
 import com.baomidou.mybatisplus.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.toolkit.TableInfo;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import org.apache.ibatis.jdbc.SQL;
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * <p>
@@ -160,8 +159,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return retBool(baseMapper.deleteByMap(columnMap));
 	}
 
-	public boolean delete(EntityWrapper<T> entityWrapper) {
-		return retBool(baseMapper.delete(entityWrapper));
+	public boolean delete(Wrapper<T> wrapper) {
+		return retBool(baseMapper.delete(wrapper));
 	}
 
 	public boolean deleteBatchIds(List<? extends Serializable> idList) {
@@ -176,8 +175,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return retBool(baseMapper.updateById(entity));
 	}
 
-	public boolean update(T entity, EntityWrapper<T> entityWrapper) {
-		return retBool(baseMapper.update(entity, entityWrapper));
+	public boolean update(T entity, Wrapper<T> wrapper) {
+		return retBool(baseMapper.update(entity, wrapper));
 	}
 
 	public boolean updateBatchById(List<T> entityList) {
@@ -200,8 +199,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return baseMapper.selectByMap(columnMap);
 	}
 
-	public T selectOne(EntityWrapper<T> entityWrapper) {
-		List<T> list = baseMapper.selectList(entityWrapper);
+	public T selectOne(Wrapper<T> wrapper) {
+		List<T> list = baseMapper.selectList(wrapper);
 		if (CollectionUtil.isNotEmpty(list)) {
 			int size = list.size();
 			if (size > 1) {
@@ -212,12 +211,12 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return null;
 	}
 
-	public int selectCount(EntityWrapper<T> entityWrapper) {
-		return baseMapper.selectCount(entityWrapper);
+	public int selectCount(Wrapper<T> wrapper) {
+		return baseMapper.selectCount(wrapper);
 	}
 
-	public List<T> selectList(EntityWrapper<T> entityWrapper) {
-		return baseMapper.selectList(entityWrapper);
+	public List<T> selectList(Wrapper<T> wrapper) {
+		return baseMapper.selectList(wrapper);
 	}
 
 	public List<T> selectListSql(SQL sql, Object... args) {
@@ -229,11 +228,11 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return page;
 	}
 
-	public Page<T> selectPage(Page<T> page, EntityWrapper<T> entityWrapper) {
-		if (null != entityWrapper) {
-			entityWrapper.orderBy(page.getOrderByField(), page.isAsc());
+	public Page<T> selectPage(Page<T> page, Wrapper<T> wrapper) {
+		if (null != wrapper) {
+			wrapper.orderBy(page.getOrderByField(), page.isAsc());
 		}
-		page.setRecords(baseMapper.selectPage(page, entityWrapper));
+		page.setRecords(baseMapper.selectPage(page, wrapper));
 		return page;
 	}
 

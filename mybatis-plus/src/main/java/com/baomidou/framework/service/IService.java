@@ -15,14 +15,13 @@
  */
 package com.baomidou.framework.service;
 
+import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.baomidou.mybatisplus.plugins.Page;
+import org.apache.ibatis.jdbc.SQL;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.ibatis.jdbc.SQL;
-
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
 
 /**
  * <p>
@@ -109,11 +108,11 @@ public interface IService<T> {
 	 * 根据 entity 条件，删除记录
 	 * </p>
 	 *
-	 * @param entityWrapper
-	 *            实体包装类 {@link EntityWrapper}
+	 * @param wrapper
+	 *            实体包装类 {@link Wrapper}
 	 * @return boolean
 	 */
-	boolean delete(EntityWrapper<T> entityWrapper);
+	boolean delete(Wrapper<T> wrapper);
 
 	/**
 	 * <p>
@@ -157,11 +156,11 @@ public interface IService<T> {
 	 *
 	 * @param entity
 	 *            实体对象
-	 * @param entityWrapper
-	 *            实体包装类 {@link EntityWrapper}
+	 * @param wrapper
+	 *            实体包装类 {@link Wrapper}
 	 * @return boolean
 	 */
-	boolean update(T entity, EntityWrapper<T> entityWrapper);
+	boolean update(T entity, Wrapper<T> wrapper);
 
 	/**
 	 * <p>
@@ -233,36 +232,36 @@ public interface IService<T> {
 
 	/**
 	 * <p>
-	 * 根据 EntityWrapper，查询一条记录
+	 * 根据 Wrapper，查询一条记录
 	 * </p>
 	 *
-	 * @param entityWrapper
+	 * @param wrapper
 	 *            实体对象
 	 * @return T
 	 */
-	T selectOne(EntityWrapper<T> entityWrapper);
+	T selectOne(Wrapper<T> wrapper);
 
 	/**
 	 * <p>
-	 * 根据 EntityWrapper 条件，查询总记录数
+	 * 根据 Wrapper 条件，查询总记录数
 	 * </p>
 	 *
-	 * @param entityWrapper
+	 * @param wrapper
 	 *            实体对象
 	 * @return int
 	 */
-	int selectCount(EntityWrapper<T> entityWrapper);
+	int selectCount(Wrapper<T> wrapper);
 
 	/**
 	 * <p>
 	 * 查询列表
 	 * </p>
 	 *
-	 * @param entityWrapper
-	 *            实体包装类 {@link EntityWrapper}
+	 * @param wrapper
+	 *            实体包装类 {@link Wrapper}
 	 * @return
 	 */
-	List<T> selectList(EntityWrapper<T> entityWrapper);
+	List<T> selectList(Wrapper<T> wrapper);
 
 	/**
 	 * <p>
@@ -295,11 +294,11 @@ public interface IService<T> {
 	 *
 	 * @param page
 	 *            翻页对象
-	 * @param entityWrapper
-	 *            实体包装类 {@link EntityWrapper}
+	 * @param wrapper
+	 *            实体包装类 {@link Wrapper}
 	 * @return
 	 */
-	Page<T> selectPage(Page<T> page, EntityWrapper<T> entityWrapper);
+	Page<T> selectPage(Page<T> page, Wrapper<T> wrapper);
 
 	/**
 	 * <p>

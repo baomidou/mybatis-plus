@@ -15,10 +15,6 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Param;
@@ -26,6 +22,10 @@ import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.UpdateProvider;
 import org.apache.ibatis.jdbc.SQL;
 import org.apache.ibatis.session.RowBounds;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -103,11 +103,11 @@ public interface BaseMapper<T> {
 	 * 根据 entity 条件，删除记录
 	 * </p>
 	 * 
-	 * @param entityWrapper
+	 * @param wrapper
 	 *            实体对象封装操作类（可以为 null）
 	 * @return int
 	 */
-	int delete(@Param("ew") EntityWrapper<T> entityWrapper);
+	int delete(@Param("ew") Wrapper<T> wrapper);
 
 	/**
 	 * <p>
@@ -152,11 +152,11 @@ public interface BaseMapper<T> {
 	 * 
 	 * @param entity
 	 *            实体对象
-	 * @param whereEntity
+	 * @param wrapper
 	 *            实体对象封装操作类（可以为 null）
 	 * @return
 	 */
-	int update(@Param("et") T entity, @Param("ew") EntityWrapper<T> entityWrapper);
+	int update(@Param("et") T entity, @Param("ew") Wrapper<T> wrapper);
 
 	/**
 	 * <p>
@@ -229,25 +229,25 @@ public interface BaseMapper<T> {
 
 	/**
 	 * <p>
-	 * 根据 EntityWrapper 条件，查询总记录数
+	 * 根据 Wrapper 条件，查询总记录数
 	 * </p>
 	 * 
-	 * @param entityWrapper
+	 * @param wrapper
 	 *            实体对象
 	 * @return int
 	 */
-	int selectCount(@Param("ew") EntityWrapper<T> entityWrapper);
+	int selectCount(@Param("ew") Wrapper<T> wrapper);
 
 	/**
 	 * <p>
 	 * 根据 entity 条件，查询全部记录
 	 * </p>
 	 * 
-	 * @param entityWrapper
+	 * @param wrapper
 	 *            实体对象封装操作类（可以为 null）
 	 * @return List<T>
 	 */
-	List<T> selectList(@Param("ew") EntityWrapper<T> entityWrapper);
+	List<T> selectList(@Param("ew") Wrapper<T> wrapper);
 
 	/**
 	 * <p>
@@ -270,11 +270,11 @@ public interface BaseMapper<T> {
 	 * 
 	 * @param rowBounds
 	 *            分页查询条件（可以为 RowBounds.DEFAULT）
-	 * @param entityWrapper
+	 * @param wrapper
 	 *            实体对象封装操作类（可以为 null）
 	 * @return List<T>
 	 */
-	List<T> selectPage(RowBounds rowBounds, @Param("ew") EntityWrapper<T> entityWrapper);
+	List<T> selectPage(RowBounds rowBounds, @Param("ew") Wrapper<T> wrapper);
 
 	/**
 	 * <p>

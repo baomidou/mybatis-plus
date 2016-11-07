@@ -30,7 +30,24 @@ import java.util.Collection;
  * @Date 2016-11-7
  */
 @SuppressWarnings("serial")
-public abstract class Wrapper implements Serializable {
+public abstract class Wrapper<T> implements Serializable {
+	/**
+	 * 兼容EntityWrapper
+	 * 
+	 * @return
+	 */
+	public T getEntity() {
+		return null;
+	}
+
+	/**
+	 * 兼容EntityWrapper
+	 * 
+	 * @return
+	 */
+	public String getSqlSelect() {
+		return null;
+	}
 
 	/**
 	 * 实现了TSQL语法的SQL实体
