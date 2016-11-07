@@ -15,14 +15,17 @@
  */
 package com.baomidou.mybatisplus.test.activerecord;
 
+import java.io.InputStream;
+import java.util.List;
+
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.jdbc.SQL;
+
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.test.mysql.TestMapper;
 import com.baomidou.mybatisplus.test.mysql.entity.Test;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
-
-import java.io.InputStream;
-import java.util.List;
 
 /**
  * <p>
@@ -90,6 +93,17 @@ public class ActiveRecordTest {
 		rlt = t2.deleteById();
 		print("deleteById=" + rlt + ", id=" + t2.getId());
 
+		//执行 SQL 查询总数
+		List<Test> ul = t2.selectList(new SQL(){{
+			SELECT("*");
+			FROM("test");
+			WHERE("type='t1021'");
+		}}.toString());
+		System.err.println("selectList SQL:");
+		for (Test test : ul) {
+			System.out.println(test.getType());
+		}
+		
 		// 根据ID查询
 		Test t20 = t2.selectById();
 		print("t2 删除后是否存在？" + (null != t20));

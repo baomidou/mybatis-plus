@@ -193,6 +193,19 @@ public abstract class Model<T extends Model> implements Serializable {
 		return sqlSession().selectList(sqlStatement(SqlMethod.SELECT_LIST), map);
 	}
 
+	/**
+	 * <p>
+	 * 执行 SQL 查询
+	 * </p>
+	 * 
+	 * @param sql
+	 *            SQL 语句
+	 * @return
+	 */
+	public List<T> selectList(String sql) {
+		return sqlSession().selectList(table().getCurrentNamespace() + ".selectListSql", sql);
+	}
+
 	public List<T> selectList(String whereClause, Object... args) {
 		return selectList(null, whereClause, args);
 	}

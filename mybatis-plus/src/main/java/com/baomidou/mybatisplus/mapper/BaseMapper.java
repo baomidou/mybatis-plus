@@ -15,17 +15,16 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.UpdateProvider;
-import org.apache.ibatis.jdbc.SQL;
 import org.apache.ibatis.session.RowBounds;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -74,7 +73,7 @@ public interface BaseMapper<T> {
 	 * @return
 	 */
 	@InsertProvider(type = PureSqlProvider.class, method = "sql")
-	int insertSql(SQL sql, Object... args);
+	int insertSql(String sql);
 
 	/**
 	 * <p>
@@ -132,7 +131,7 @@ public interface BaseMapper<T> {
 	 * @return
 	 */
 	@DeleteProvider(type = PureSqlProvider.class, method = "sql")
-	int deleteSql(SQL sql, Object... args);
+	int deleteSql(String sql);
 
 	/**
 	 * <p>
@@ -181,7 +180,7 @@ public interface BaseMapper<T> {
 	 * @return
 	 */
 	@UpdateProvider(type = PureSqlProvider.class, method = "sql")
-	int updateSql(SQL sql, Object... args);
+	int updateSql(String sql);
 
 	/**
 	 * <p>
@@ -261,7 +260,7 @@ public interface BaseMapper<T> {
 	 * @return
 	 */
 	@SelectProvider(type = PureSqlProvider.class, method = "sql")
-	List<T> selectListSql(SQL sql, Object... args);
+	List<T> selectListSql(String sql);
 
 	/**
 	 * <p>
@@ -288,6 +287,6 @@ public interface BaseMapper<T> {
 	 * @return
 	 */
 	@SelectProvider(type = PureSqlProvider.class, method = "sql")
-	List<T> selectPageSql(RowBounds rowBounds, SQL sql, Object... args);
+	List<T> selectPageSql(RowBounds rowBounds, String sql);
 
 }

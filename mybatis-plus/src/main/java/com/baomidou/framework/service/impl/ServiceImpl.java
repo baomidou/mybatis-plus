@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.toolkit.CollectionUtil;
 import com.baomidou.mybatisplus.toolkit.ReflectionKit;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfo;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.apache.ibatis.jdbc.SQL;
@@ -59,6 +60,24 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	 */
 	protected boolean retBool(int result) {
 		return result >= 1;
+	}
+
+	/**
+	 * <p>
+	 * SQL 构建方法
+	 * </p>
+	 * 
+	 * @param sql
+	 *            SQL 语句
+	 * @param args
+	 *            执行参数
+	 * @return
+	 */
+	protected String sqlBuilder(SQL sql, Object... args) {
+		if (null == sql) {
+			throw new MybatisPlusException("sql is null.");
+		}
+		return StringUtils.sqlArgsFill(sql.toString(), args);
 	}
 
 	/**
@@ -148,7 +167,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	}
 
 	public boolean insertSql(SQL sql, Object... args) {
-		return retBool(baseMapper.insertSql(sql, args));
+		return retBool(baseMapper.insertSql(sqlBuilder(sql, args)));
 	}
 
 	public boolean deleteById(Serializable id) {
@@ -168,7 +187,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	}
 
 	public boolean deleteSql(SQL sql, Object... args) {
-		return retBool(baseMapper.deleteSql(sql, args));
+		return retBool(baseMapper.deleteSql(sqlBuilder(sql, args)));
 	}
 
 	public boolean updateById(T entity) {
@@ -184,7 +203,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	}
 
 	public boolean updateSql(SQL sql, Object... args) {
-		return retBool(baseMapper.updateSql(sql, args));
+		return retBool(baseMapper.updateSql(sqlBuilder(sql, args)));
 	}
 
 	public T selectById(Serializable id) {
@@ -220,7 +239,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	}
 
 	public List<T> selectListSql(SQL sql, Object... args) {
-		return baseMapper.selectListSql(sql, args);
+		return baseMapper.selectListSql(sqlBuilder(sql, args));
 	}
 
 	public Page<T> selectPage(Page<T> page) {
@@ -237,7 +256,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	}
 
 	public Page<T> selectPageSql(Page<T> page, SQL sql, Object... args) {
-		page.setRecords(baseMapper.selectPageSql(page, sql, args));
+		page.setRecords(baseMapper.selectPageSql(page, sqlBuilder(sql, args)));
 		return page;
 	}
 

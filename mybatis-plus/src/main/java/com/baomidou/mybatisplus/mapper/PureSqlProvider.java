@@ -15,10 +15,7 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import org.apache.ibatis.jdbc.SQL;
-
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
  * <p>
@@ -37,15 +34,13 @@ public class PureSqlProvider {
 	 * 
 	 * @param sql
 	 *            SQL语句
-	 * @param args
-	 *            条件参数值
 	 * @return
 	 */
-	public String sql(SQL sql, Object... args) {
+	public String sql(String sql) {
 		if (null == sql) {
 			throw new MybatisPlusException("sql is null.");
 		}
-		return StringUtils.sqlArgsFill(sql.toString(), args);
+		return sql;
 	}
 
 }

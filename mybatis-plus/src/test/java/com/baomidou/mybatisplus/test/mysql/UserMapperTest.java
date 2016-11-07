@@ -218,7 +218,7 @@ public class UserMapperTest {
         sleep();
 
         EntityWrapper<User> ew1 = new EntityWrapper<User>();
-        ew1.addFilter("test_id=? AND name=?", 15L, "55");
+        ew1.addFilter("test_id={0} AND name={1}", 15L, "55");
         rlt = userMapper.update(new User("00"), ew1);
         System.err.println("------------------update---------------------- result=" + rlt + "\n\n");
         sleep();
@@ -286,7 +286,7 @@ public class UserMapperTest {
 		/*
          * 查询条件，SQL 片段(根据常用的写SQL的方式按顺序添加相关条件即可)
 		 */
-        ew.where("name like ?", "'%dateBatch%'").and("age=?", 3).orderBy("age,name", true);
+        ew.where("name like {0}", "'%dateBatch%'").and("age={0}", 3).orderBy("age,name", true);
         List<User> paginList = userMapper.selectPage(page, ew);
         page.setRecords(paginList);
         for (int i = 0; i < page.getRecords().size(); i++) {
@@ -321,19 +321,19 @@ public class UserMapperTest {
         SQL sql = new SQL() {{
             SELECT("a.test_id as id, a.name, a.age");
             FROM("user a");
-            WHERE("a.test_type=?");
+            WHERE("a.test_type=1");
         }};
         // SQL 插入
         System.err.println(" insertSql 执行 SQL \n");
         rlt = userMapper.insertSql(new SQL(){{
         	INSERT_INTO("user");
-            VALUES("name, age, test_type", "?, ?, ?");
-        }}, "testInsertSql", 5, 1);
+            VALUES("name, age, test_type", "'testInsertSql', 5, 1");
+        }}.toString());
         System.err.println("插入！条数：" + rlt);
 
         // SQL 查询
         System.err.println(" selectListSql 执行 SQL \n");
-        List<User> ul3 = userMapper.selectListSql(sql, 1);
+        List<User> ul3 = userMapper.selectListSql(sql.toString());
         for (User u : ul3) {
 			print(u);
 		}
@@ -342,8 +342,8 @@ public class UserMapperTest {
         System.err.println(" deleteSql 执行 SQL \n");
         rlt = userMapper.deleteSql(new SQL(){{
         	DELETE_FROM("user");
-        	WHERE("name=?");
-        }}, "testInsertSql");
+        	WHERE("name='testInsertSql'");
+        }}.toString());
         System.err.println("删除！条数：" + rlt);
 
         // SQL 更新
@@ -351,14 +351,14 @@ public class UserMapperTest {
         rlt = userMapper.updateSql(new SQL(){{
         	UPDATE("user");
         	SET("age=6");
-        	WHERE("test_type=?");
-        }}, 1);
+        	WHERE("test_type=1");
+        }}.toString());
         System.err.println("成功更新！条数：" + rlt);
 
         // SQL 翻页
         System.err.println(" selectPageSql 执行 SQL \n");
         Page<User> page3 = new Page<User>(0, 10);
-        ul3 = userMapper.selectPageSql(page3, sql, 1);
+        ul3 = userMapper.selectPageSql(page3, sql.toString());
         for (User u : ul3) {
         	print(u);
         }
