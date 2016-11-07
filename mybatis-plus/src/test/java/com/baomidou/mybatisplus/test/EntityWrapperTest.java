@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.test;
 
+import com.baomidou.mybatisplus.mapper.Condition;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
@@ -185,7 +186,7 @@ public class EntityWrapperTest {
 	 */
 	@Test
 	public void testNul15() {
-		ew.where("id={0} and ids = {1}", "11",22).and("name={0}", 222222222);
+		ew.where("id={0} and ids = {1}", "11", 22).and("name={0}", 222222222);
 		String sqlPart = ew.getSqlSegment();
 		System.out.println("sql ==> " + sqlPart);
 		Assert.assertEquals("WHERE (id='11' and ids = 22 AND name=222222222)", sqlPart);
@@ -231,6 +232,7 @@ public class EntityWrapperTest {
 		System.out.println("sql ==> " + sqlPart);
 		Assert.assertEquals("WHERE (test_type IN (111111111,222222222,333333333))", sqlPart);
 	}
+
 	/**
 	 * 测试IN
 	 */
@@ -268,6 +270,18 @@ public class EntityWrapperTest {
 		String val2 = "\\";
 		ew.between("test_type", val1, val2);
 		String sqlPart = ew.getSqlSegment();
+		System.out.println("sql ==> " + sqlPart);
+		Assert.assertEquals("WHERE (test_type BETWEEN '\\'' AND '\\\\')", sqlPart);
+	}
+
+	/**
+	 * 测试Escape
+	 */
+	@Test
+	public void testInstance() {
+		String val1 = "'''";
+		String val2 = "\\";
+		String sqlPart = Condition.instance().between("test_type", val1, val2).getSqlSegment();
 		System.out.println("sql ==> " + sqlPart);
 		Assert.assertEquals("WHERE (test_type BETWEEN '\\'' AND '\\\\')", sqlPart);
 	}
