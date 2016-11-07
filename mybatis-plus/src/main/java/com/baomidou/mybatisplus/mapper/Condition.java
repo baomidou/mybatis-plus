@@ -26,27 +26,27 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  * @date 2016-11-7
  */
 public class Condition extends Wrapper {
-	/**
-	 * 获取实例
-	 */
-	public static Condition instance() {
+    /**
+     * 获取实例
+     */
+    public static Condition instance() {
 
-		return new Condition();
-	}
+        return new Condition();
+    }
 
-	/**
-	 * SQL 片段
-	 */
-	@Override
-	public String getSqlSegment() {
+    /**
+     * SQL 片段
+     */
+    @Override
+    public String getSqlSegment() {
 		/*
 		 * 无条件
 		 */
-		String sqlWhere = sql.toString();
-		if (StringUtils.isEmpty(sqlWhere)) {
-			return null;
-		}
+        String sqlWhere = sql.toString();
+        if (StringUtils.isEmpty(sqlWhere)) {
+            return null;
+        }
 
-		return sqlWhere;
-	}
+        return sqlWhere;
+    }
 }
