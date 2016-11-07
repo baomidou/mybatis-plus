@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
+import java.text.MessageFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -163,9 +164,12 @@ public class StringUtils {
 			return null;
 		}
 		if (args != null) {
-			int l = args.length;
-			for (int i = 0; i < l; i++) {
-				content = content.replaceFirst("\\?", quotaMark(args[i]));
+			int length = args.length;
+			if (length >= 1) {
+				for (int i = 0; i < length; i++) {
+					args[i] = StringUtils.quotaMark(args[i]);
+				}
+				content = MessageFormat.format(content, args);
 			}
 		}
 		return content;
@@ -212,8 +216,8 @@ public class StringUtils {
 			return str;
 		}
 
-		return new StringBuilder(strLen).append(concatStr).append(Character.toTitleCase(firstChar))
-				.append(str.substring(1)).toString();
+		return new StringBuilder(strLen).append(concatStr).append(Character.toTitleCase(firstChar)).append(str.substring(1))
+				.toString();
 	}
 
 	/**

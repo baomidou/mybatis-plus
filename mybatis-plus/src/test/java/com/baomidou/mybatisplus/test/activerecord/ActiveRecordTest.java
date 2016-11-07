@@ -15,14 +15,14 @@
  */
 package com.baomidou.mybatisplus.test.activerecord;
 
-import java.io.InputStream;
-import java.util.List;
-
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.test.mysql.TestMapper;
 import com.baomidou.mybatisplus.test.mysql.entity.Test;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
+
+import java.io.InputStream;
+import java.util.List;
 
 /**
  * <p>
@@ -54,11 +54,11 @@ public class ActiveRecordTest {
 		// 更新 SQL
 		Test t11 = new Test();
 		t11.setType("123");
-		rlt = t11.update("id=?", t1.getId());
+		rlt = t11.update("id={0}", t1.getId());
 		print("update sql=" + rlt);
 
 		// 查询 SQL
-		Test t10 = t1.selectOne("id=?", t1.getId());
+		Test t10 = t1.selectOne("id={0}", t1.getId());
 		print("selectOne=" + t10.getType());
 
 		// 插入OR更新
@@ -95,7 +95,7 @@ public class ActiveRecordTest {
 		print("t2 删除后是否存在？" + (null != t20));
 
 		// 删除 SQL
-		rlt = t2.delete("type=?", "t1021");
+		rlt = t2.delete("type={0}", "t1021");
 		System.err.println("delete sql=" + rlt);
 	}
 

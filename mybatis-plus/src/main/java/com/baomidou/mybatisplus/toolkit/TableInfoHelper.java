@@ -15,6 +15,15 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
+import com.baomidou.mybatisplus.MybatisConfiguration;
+import com.baomidou.mybatisplus.annotations.FieldStrategy;
+import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotations.TableId;
+import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.mapper.SqlMapper;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -23,16 +32,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.ibatis.builder.MapperBuilderAssistant;
-
-import com.baomidou.mybatisplus.MybatisConfiguration;
-import com.baomidou.mybatisplus.annotations.FieldStrategy;
-import com.baomidou.mybatisplus.annotations.TableField;
-import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.annotations.TableName;
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.mapper.SqlMapper;
 
 /**
  * <p>
@@ -77,7 +76,10 @@ public class TableInfoHelper {
 			return ti;
 		}
 		TableInfo tableInfo = new TableInfo();
-		tableInfo.setSqlMapper(new SqlMapper(builderAssistant));
+		if (null != builderAssistant) {
+			tableInfo.setSqlMapper(new SqlMapper(builderAssistant));
+		}
+
 		if (null != builderAssistant) {
 			tableInfo.setCurrentNamespace(builderAssistant.getCurrentNamespace());
 		}
@@ -119,8 +121,7 @@ public class TableInfoHelper {
 					continue;
 				} else {
 					/* 发现设置多个主键注解抛出异常 */
-					throw new MybatisPlusException(
-							"There must be only one, Discover multiple @TableId annotation in " + clazz);
+					throw new MybatisPlusException("There must be only one, Discover multiple @TableId annotation in " + clazz);
 				}
 			}
 

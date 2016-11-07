@@ -15,17 +15,16 @@
  */
 package com.baomidou.mybatisplus.test;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.test.mysql.entity.User;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import org.junit.Assert;
+import org.junit.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-
-import org.junit.Assert;
-import org.junit.Test;
-
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.test.mysql.entity.User;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**
  * <p>
@@ -61,7 +60,7 @@ public class EntityWrapperTest {
 		 * 实体带where ifneed
 		 */
 		ew.setEntity(new User(1));
-		ew.where("name=?", "'123'").addFilterIfNeed(false, "id=12");
+		ew.where("name={0}", "'123'").addFilterIfNeed(false, "id=12");
 		String sqlSegment = ew.getSqlSegment();
 		System.err.println("test11 = " + sqlSegment);
 		Assert.assertEquals("AND (name='123')", sqlSegment);
@@ -73,7 +72,7 @@ public class EntityWrapperTest {
 		 * 实体带where orderby
 		 */
 		ew.setEntity(new User(1));
-		ew.where("name=?", "'123'").orderBy("id", false);
+		ew.where("name={0}", "'123'").orderBy("id", false);
 		String sqlSegment = ew.getSqlSegment();
 		System.err.println("test12 = " + sqlSegment);
 		Assert.assertEquals("AND (name='123')\nORDER BY id DESC", sqlSegment);
@@ -96,7 +95,7 @@ public class EntityWrapperTest {
 		/*
 		 * 无实体 where ifneed orderby
 		 */
-		ew.where("name=?", "'123'").addFilterIfNeed(false, "id=1").orderBy("id");
+		ew.where("name={0}", "'123'").addFilterIfNeed(false, "id=1").orderBy("id");
 		String sqlSegment = ew.getSqlSegment();
 		System.err.println("test21 = " + sqlSegment);
 		Assert.assertEquals("WHERE (name='123')\nORDER BY id", sqlSegment);
@@ -104,7 +103,7 @@ public class EntityWrapperTest {
 
 	@Test
 	public void test22() {
-		ew.where("name=?", "'123'").orderBy("id", false);
+		ew.where("name={0}", "'123'").orderBy("id", false);
 		String sqlSegment = ew.getSqlSegment();
 		System.err.println("test22 = " + sqlSegment);
 		Assert.assertEquals("WHERE (name='123')\nORDER BY id DESC", sqlSegment);
@@ -127,7 +126,7 @@ public class EntityWrapperTest {
 		 * 实体 filter orderby
 		 */
 		ew.setEntity(new User(1));
-		ew.addFilter("name=?", "'123'").orderBy("id,name");
+		ew.addFilter("name={0}", "'123'").orderBy("id,name");
 		String sqlSegment = ew.getSqlSegment();
 		System.err.println("testNoTSQL = " + sqlSegment);
 		Assert.assertEquals("AND (name='123')\nORDER BY id,name", sqlSegment);
@@ -138,7 +137,7 @@ public class EntityWrapperTest {
 		/*
 		 * 非 T-SQL 无实体查询
 		 */
-		ew.addFilter("name=?", "'123'").addFilterIfNeed(false, "status=?", "1");
+		ew.addFilter("name={0}", "'123'").addFilterIfNeed(false, "status=?", "1");
 		String sqlSegment = ew.getSqlSegment();
 		System.err.println("testNoTSQL1 = " + sqlSegment);
 		Assert.assertEquals("WHERE (name='123')", sqlSegment);
@@ -165,7 +164,7 @@ public class EntityWrapperTest {
 
 	@Test
 	public void testNull2() {
-		ew.like(null, null).where("aa=?", "'bb'").orderBy(null);
+		ew.like(null, null).where("aa={0}", "'bb'").orderBy(null);
 		String sqlPart = ew.getSqlSegment();
 		Assert.assertEquals("WHERE (aa='bb')", sqlPart);
 	}
@@ -175,7 +174,7 @@ public class EntityWrapperTest {
 	 */
 	@Test
 	public void testNul14() {
-		ew.where("id=?", "'11'").and("name=?", 22);
+		ew.where("id={0}", "'11'").and("name={0}", 22);
 		String sqlPart = ew.getSqlSegment();
 		System.out.println("sql ==> " + sqlPart);
 		Assert.assertEquals("WHERE (id='11' AND name=22)", sqlPart);
@@ -186,10 +185,10 @@ public class EntityWrapperTest {
 	 */
 	@Test
 	public void testNul15() {
-		ew.where("id=?", "11").and("name=?", 222222222);
+		ew.where("id={0} and ids = {1}", "11",22).and("name={0}", 222222222);
 		String sqlPart = ew.getSqlSegment();
 		System.out.println("sql ==> " + sqlPart);
-		Assert.assertEquals("WHERE (id='11' AND name=222222222)", sqlPart);
+		Assert.assertEquals("WHERE (id='11' and ids = 22 AND name=222222222)", sqlPart);
 	}
 
 	/**
