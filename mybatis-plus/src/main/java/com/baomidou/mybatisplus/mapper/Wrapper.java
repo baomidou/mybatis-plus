@@ -52,7 +52,7 @@ public abstract class Wrapper<T> implements Serializable {
 	/**
 	 * 实现了TSQL语法的SQL实体
 	 */
-	protected TSqlPlus sql = new TSqlPlus();
+	protected SqlPlus sql = new SqlPlus();
 
 	/**
 	 * SQL 片段 (子类实现)

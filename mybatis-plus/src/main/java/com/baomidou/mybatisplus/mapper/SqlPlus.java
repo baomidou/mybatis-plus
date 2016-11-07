@@ -32,7 +32,7 @@ import java.util.Iterator;
  * @Date 2016-08-22
  */
 @SuppressWarnings("serial")
-public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
+public class SqlPlus extends MybatisAbstractSQL<SqlPlus> {
 
     private final String IS_NOT_NULL = " IS NOT NULL";
     private final String IS_NULL = " IS NULL";
@@ -40,7 +40,7 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
     private final String SQL_BETWEEN_AND = " BETWEEN {0} AND {1}";
 
     @Override
-    public TSqlPlus getSelf() {
+    public SqlPlus getSelf() {
         return this;
     }
 
@@ -53,7 +53,7 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
      *            like值,无需前后%, MYSQL及ORACEL通用
      * @return
      */
-    public TSqlPlus LIKE(String column, String value) {
+    public SqlPlus LIKE(String column, String value) {
         handerLike(column, value, false);
         return this;
     }
@@ -67,7 +67,7 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
      *            like值,无需前后%, MYSQL及ORACEL通用
      * @return
      */
-    public TSqlPlus NOT_LIKE(String column, String value) {
+    public SqlPlus NOT_LIKE(String column, String value) {
         handerLike(column, value, true);
         return this;
     }
@@ -79,7 +79,7 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
      *            以逗号分隔的字段名称
      * @return this
      */
-    public TSqlPlus IS_NOT_NULL(String columns) {
+    public SqlPlus IS_NOT_NULL(String columns) {
         handerNull(columns, IS_NOT_NULL);
         return this;
     }
@@ -91,7 +91,7 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
      *            以逗号分隔的字段名称
      * @return
      */
-    public TSqlPlus IS_NULL(String columns) {
+    public SqlPlus IS_NULL(String columns) {
         handerNull(columns, IS_NULL);
         return this;
     }
@@ -127,7 +127,7 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
      *            List集合
      * @return
      */
-    public TSqlPlus IN(String column, Collection<?> value) {
+    public SqlPlus IN(String column, Collection<?> value) {
         handerIn(column, value, false);
         return this;
     }
@@ -141,7 +141,7 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
      *            List集合
      * @return
      */
-    public TSqlPlus NOT_IN(String column, Collection<?> value) {
+    public SqlPlus NOT_IN(String column, Collection<?> value) {
         handerIn(column, value, true);
         return this;
     }
@@ -155,7 +155,7 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
      *            逗号拼接的字符串
      * @return
      */
-    public TSqlPlus IN(String column, String value) {
+    public SqlPlus IN(String column, String value) {
         handerIn(column, value, false);
         return this;
     }
@@ -169,7 +169,7 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
      *            逗号拼接的字符串
      * @return
      */
-    public TSqlPlus NOT_IN(String column, String value) {
+    public SqlPlus NOT_IN(String column, String value) {
         handerIn(column, value, true);
         return this;
     }
@@ -180,7 +180,7 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
      * @param value
      * @return
      */
-    public TSqlPlus EXISTS(String value) {
+    public SqlPlus EXISTS(String value) {
         handerExists(value, false);
         return this;
     }
@@ -209,7 +209,7 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
      * @param value
      * @return
      */
-    public TSqlPlus NOT_EXISTS(String value) {
+    public SqlPlus NOT_EXISTS(String value) {
         handerExists(value, true);
         return this;
     }
@@ -280,7 +280,7 @@ public class TSqlPlus extends MybatisAbstractSQL<TSqlPlus> {
      * @param val1
      * @param val2
      */
-    public TSqlPlus BETWEEN_AND(String column, String val1, String val2) {
+    public SqlPlus BETWEEN_AND(String column, String val1, String val2) {
         between(column, val1, val2);
         return this;
     }
