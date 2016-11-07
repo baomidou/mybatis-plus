@@ -76,7 +76,8 @@ public class EntityWrapper<T> extends Wrapper {
 	/**
 	 * SQL 片段
 	 */
-	public String getSqlSegment() {
+	@Override
+	public String toString() {
 		/*
 		 * 无条件
 		 */

@@ -40,7 +40,7 @@ public abstract class Wrapper implements Serializable {
 	/**
 	 * SQL 片段 (子类实现)
 	 */
-	public abstract String getSqlSegment();
+	public abstract String toString();
 
 	/**
 	 * <p>
