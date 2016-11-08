@@ -327,15 +327,15 @@ public class UserMapperTest {
         System.err.println(" insertSql 执行 SQL \n");
         rlt = userMapper.insertSql(new SQL(){{
         	INSERT_INTO("user");
-            VALUES("name, age, test_type", "'testInsertSql', 5, 1");
+            VALUES("test_id, name, age, test_type", IdWorker.getId() + ", 'testInsertSql', 5, 1");
         }}.toString());
         System.err.println("插入！条数：" + rlt);
 
         // SQL 查询
         System.err.println(" selectListSql 执行 SQL \n");
-        List<User> ul3 = userMapper.selectListSql(sql.toString());
-        for (User u : ul3) {
-			print(u);
+        List<Map<String, Object>> ul3 = userMapper.selectListSql(sql.toString());
+        for (Map<String, Object> u : ul3) {
+			System.err.println(u);
 		}
 
         // SQL 删除
@@ -357,11 +357,11 @@ public class UserMapperTest {
 
         // SQL 翻页
         System.err.println(" selectPageSql 执行 SQL \n");
-        Page<User> page3 = new Page<User>(0, 10);
-        ul3 = userMapper.selectPageSql(page3, sql.toString());
-        for (User u : ul3) {
-        	print(u);
-        }
+        Page<Map<String, Object>> page3 = new Page<Map<String, Object>>(0, 10);
+        List<Map<String, Object>> ml = userMapper.selectPageSql(page3, sql.toString());
+        for (Map<String, Object> map : ml) {
+        	System.err.println("翻页 map 结果：" + map);
+		}
         System.err.println("翻页结果：" + page3.toString());
         
         /**

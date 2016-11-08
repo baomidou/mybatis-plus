@@ -287,6 +287,6 @@ public interface BaseMapper<T> {
 	 * @return
 	 */
 	@SelectProvider(type = PureSqlProvider.class, method = "sql")
-	List<T> selectPageSql(RowBounds rowBounds, String sql);
+	List<Map<String, Object>> selectPageSql(RowBounds rowBounds, String sql);
 
 }

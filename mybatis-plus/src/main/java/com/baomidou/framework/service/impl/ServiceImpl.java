@@ -15,6 +15,16 @@
  */
 package com.baomidou.framework.service.impl;
 
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+
+import org.apache.ibatis.jdbc.SQL;
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.baomidou.framework.service.IService;
 import com.baomidou.mybatisplus.annotations.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
@@ -26,15 +36,6 @@ import com.baomidou.mybatisplus.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfo;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
-import org.apache.ibatis.jdbc.SQL;
-import org.apache.ibatis.session.ExecutorType;
-import org.apache.ibatis.session.SqlSession;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * <p>
@@ -166,10 +167,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return ReflectionKit.getSuperClassGenricType(getClass(), 1);
 	}
 
-	public boolean insertSql(SQL sql, Object... args) {
-		return retBool(baseMapper.insertSql(sqlBuilder(sql, args)));
-	}
-
 	public boolean deleteById(Serializable id) {
 		return retBool(baseMapper.deleteById(id));
 	}
@@ -186,10 +183,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return retBool(baseMapper.deleteBatchIds(idList));
 	}
 
-	public boolean deleteSql(SQL sql, Object... args) {
-		return retBool(baseMapper.deleteSql(sqlBuilder(sql, args)));
-	}
-
 	public boolean updateById(T entity) {
 		return retBool(baseMapper.updateById(entity));
 	}
@@ -200,10 +193,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
 	public boolean updateBatchById(List<T> entityList) {
 		return retBool(baseMapper.updateBatchById(entityList));
-	}
-
-	public boolean updateSql(SQL sql, Object... args) {
-		return retBool(baseMapper.updateSql(sqlBuilder(sql, args)));
 	}
 
 	public T selectById(Serializable id) {
@@ -238,10 +227,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return baseMapper.selectList(wrapper);
 	}
 
-	public List<T> selectListSql(SQL sql, Object... args) {
-		return baseMapper.selectListSql(sqlBuilder(sql, args));
-	}
-
 	public Page<T> selectPage(Page<T> page) {
 		page.setRecords(baseMapper.selectPage(page, null));
 		return page;
@@ -252,11 +237,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 			wrapper.orderBy(page.getOrderByField(), page.isAsc());
 		}
 		page.setRecords(baseMapper.selectPage(page, wrapper));
-		return page;
-	}
-
-	public Page<T> selectPageSql(Page<T> page, SQL sql, Object... args) {
-		page.setRecords(baseMapper.selectPageSql(page, sqlBuilder(sql, args)));
 		return page;
 	}
 
