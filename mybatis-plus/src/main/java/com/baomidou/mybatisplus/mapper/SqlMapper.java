@@ -1,9 +1,7 @@
 package com.baomidou.mybatisplus.mapper;
 
-import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.defaults.DefaultSqlSessionFactory;
 
 /**
  * Mybatis执行sql工具,主要为AR方式调用
@@ -16,12 +14,12 @@ public class SqlMapper {
 	private final SqlSession sqlSession;
 
 	/**
-	 * 构造方法，默认缓存 MappedStatement
+	 * 构造方法，默认缓存 SqlSessionFactory
 	 *
 	 * @param sqlSessionFactory
 	 */
-	public SqlMapper(MapperBuilderAssistant builderAssistant) {
-		this.sqlSessionFactory = new DefaultSqlSessionFactory(builderAssistant.getConfiguration());
+	public SqlMapper(SqlSessionFactory sqlSessionFactory) {
+		this.sqlSessionFactory = sqlSessionFactory;
 		this.sqlSession = sqlSessionFactory.openSession();
 	}
 

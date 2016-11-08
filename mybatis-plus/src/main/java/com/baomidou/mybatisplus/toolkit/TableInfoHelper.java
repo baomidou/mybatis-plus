@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.toolkit;
 
 import com.baomidou.mybatisplus.MybatisConfiguration;
+import com.baomidou.mybatisplus.MybatisPlusHolder;
 import com.baomidou.mybatisplus.annotations.FieldStrategy;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
@@ -76,14 +77,10 @@ public class TableInfoHelper {
 			return ti;
 		}
 		TableInfo tableInfo = new TableInfo();
-		if (null != builderAssistant) {
-			tableInfo.setSqlMapper(new SqlMapper(builderAssistant));
-		}
 
 		if (null != builderAssistant) {
 			tableInfo.setCurrentNamespace(builderAssistant.getCurrentNamespace());
 		}
-
 		/* 表名 */
 		TableName table = clazz.getAnnotation(TableName.class);
 		String tableName;
@@ -165,7 +162,10 @@ public class TableInfoHelper {
 
 		/* 字段列表 */
 		tableInfo.setFieldList(fieldList);
-
+		/**
+		 * SqlMapper
+		 */
+		tableInfo.setSqlMapper(MybatisPlusHolder.getSqlMapper());
 		/*
 		 * 未发现主键注解，跳过注入
 		 */
