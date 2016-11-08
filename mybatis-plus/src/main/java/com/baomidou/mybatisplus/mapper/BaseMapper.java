@@ -260,7 +260,7 @@ public interface BaseMapper<T> {
 	 * @return
 	 */
 	@SelectProvider(type = PureSqlProvider.class, method = "sql")
-	List<T> selectListSql(String sql);
+	List<Map<String, Object>> selectListSql(String sql);
 
 	/**
 	 * <p>

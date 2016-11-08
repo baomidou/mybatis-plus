@@ -202,7 +202,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 *            SQL 语句
 	 * @return
 	 */
-	public List<T> selectList(String sql) {
+	public List<Map<String, Object>> selectList(String sql) {
 		return sqlSession().selectList(table().getCurrentNamespace() + ".selectListSql", sql);
 	}
 

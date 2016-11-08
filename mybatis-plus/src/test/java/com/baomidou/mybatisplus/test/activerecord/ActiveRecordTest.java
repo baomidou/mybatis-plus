@@ -17,8 +17,8 @@ package com.baomidou.mybatisplus.test.activerecord;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
-import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.jdbc.SQL;
 
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
@@ -94,14 +94,14 @@ public class ActiveRecordTest {
 		print("deleteById=" + rlt + ", id=" + t2.getId());
 
 		//执行 SQL 查询总数
-		List<Test> ul = t2.selectList(new SQL(){{
+		List<Map<String, Object>> ul = t2.selectList(new SQL(){{
 			SELECT("*");
 			FROM("test");
 			WHERE("type='t1021'");
 		}}.toString());
 		System.err.println("selectList SQL:");
-		for (Test test : ul) {
-			System.out.println(test.getType());
+		for (Map<String, Object> map : ul) {
+			System.err.println(map);
 		}
 		
 		// 根据ID查询
