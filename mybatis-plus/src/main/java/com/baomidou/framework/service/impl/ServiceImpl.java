@@ -76,7 +76,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	 */
 	protected String sqlBuilder(SQL sql, Object... args) {
 		if (null == sql) {
-			throw new MybatisPlusException("sql is null.");
+			throw new IllegalArgumentException("Error: sql Can not be empty.");
 		}
 		return StringUtils.sqlArgsFill(sql.toString(), args);
 	}
@@ -111,7 +111,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 					return updateById(entity);
 				}
 			} else {
-				throw new MybatisPlusException("Error:  Cannot execute. Could not find @TableId.");
+				throw new MybatisPlusException("Error:  Can not execute. Could not find @TableId.");
 			}
 		}
 		return false;
