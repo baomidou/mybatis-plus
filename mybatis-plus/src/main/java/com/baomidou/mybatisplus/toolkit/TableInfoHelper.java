@@ -163,7 +163,7 @@ public class TableInfoHelper {
 		/* 字段列表 */
 		tableInfo.setFieldList(fieldList);
 		/**
-		 * SqlMapper
+		 * SqlSessionFactory
 		 */
 		if (null != MybatisPlusHolder.getSqlSessionFactory()) {
 			tableInfo.setSqlSessionFactory(MybatisPlusHolder.getSqlSessionFactory());

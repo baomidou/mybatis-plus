@@ -21,7 +21,6 @@ import com.baomidou.mybatisplus.mapper.DBType;
 import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
 import com.baomidou.mybatisplus.mapper.ISqlInjector;
 import org.apache.ibatis.binding.MapperRegistry;
-import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
@@ -90,15 +89,6 @@ public class MybatisConfiguration extends Configuration {
 	 */
 	public MybatisConfiguration() {
 		System.err.println("mybatis-plus init success.");
-	}
-
-	/**
-	 * JDBC开启ActiveRecord
-	 *
-	 * @param environment
-	 */
-	public MybatisConfiguration(Environment environment) {
-		super(environment);
 	}
 
 	/**
