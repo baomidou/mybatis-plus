@@ -75,7 +75,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	 */
 	protected String sqlBuilder(SQL sql, Object... args) {
 		if (null == sql) {
-			throw new MybatisPlusException("sql is null.");
+			throw new IllegalArgumentException("Error: sql Can not be empty.");
 		}
 		return StringUtils.sqlArgsFill(sql.toString(), args);
 	}
@@ -110,7 +110,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 					return updateById(entity);
 				}
 			} else {
-				throw new MybatisPlusException("Error:  Cannot execute. Could not find @TableId.");
+				throw new MybatisPlusException("Error:  Can not execute. Could not find @TableId.");
 			}
 		}
 		return false;
@@ -142,8 +142,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		if (null == tableInfo) {
 			throw new MybatisPlusException("Error: Cannot execute insertBatch Method, ClassGenricType not found .");
 		}
-		SqlSession batchSqlSession = tableInfo.getSqlMapper().getSqlSessionFactory().openSession(ExecutorType.BATCH,
-				false);
+		SqlSession batchSqlSession = tableInfo.getSqlMapper().getSqlSessionFactory().openSession(ExecutorType.BATCH, false);
 		try {
 			int size = entityList.size();
 			for (int i = 0; i < size; i++) {
@@ -238,7 +237,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return baseMapper.selectList(wrapper);
 	}
 
-	public List<T> selectListSql(SQL sql, Object... args) {
+	public List<Map<String, Object>> selectListSql(SQL sql, Object... args) {
 		return baseMapper.selectListSql(sqlBuilder(sql, args));
 	}
 

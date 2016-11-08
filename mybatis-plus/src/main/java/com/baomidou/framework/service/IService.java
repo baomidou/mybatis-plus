@@ -274,7 +274,7 @@ public interface IService<T> {
 	 *            条件参数值
 	 * @return
 	 */
-	public List<T> selectListSql(SQL sql, Object... args);
+	public List<Map<String, Object>> selectListSql(SQL sql, Object... args);
 
 	/**
 	 * <p>

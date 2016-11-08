@@ -15,16 +15,16 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.UpdateProvider;
 import org.apache.ibatis.session.RowBounds;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -68,8 +68,6 @@ public interface BaseMapper<T> {
 	 * 
 	 * @param sql
 	 *            SQL语句
-	 * @param args
-	 *            条件参数值
 	 * @return
 	 */
 	@InsertProvider(type = PureSqlProvider.class, method = "sql")
@@ -126,8 +124,6 @@ public interface BaseMapper<T> {
 	 * 
 	 * @param sql
 	 *            SQL语句
-	 * @param args
-	 *            条件参数值
 	 * @return
 	 */
 	@DeleteProvider(type = PureSqlProvider.class, method = "sql")
@@ -175,8 +171,6 @@ public interface BaseMapper<T> {
 	 * 
 	 * @param sql
 	 *            SQL语句
-	 * @param args
-	 *            条件参数值
 	 * @return
 	 */
 	@UpdateProvider(type = PureSqlProvider.class, method = "sql")
@@ -255,8 +249,6 @@ public interface BaseMapper<T> {
 	 * 
 	 * @param sql
 	 *            SQL语句
-	 * @param args
-	 *            条件参数值
 	 * @return
 	 */
 	@SelectProvider(type = PureSqlProvider.class, method = "sql")
@@ -282,8 +274,6 @@ public interface BaseMapper<T> {
 	 * 
 	 * @param sql
 	 *            SQL语句
-	 * @param args
-	 *            条件参数值
 	 * @return
 	 */
 	@SelectProvider(type = PureSqlProvider.class, method = "sql")

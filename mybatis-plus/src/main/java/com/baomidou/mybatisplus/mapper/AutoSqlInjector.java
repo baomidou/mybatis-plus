@@ -15,13 +15,12 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
-
+import com.baomidou.mybatisplus.MybatisConfiguration;
+import com.baomidou.mybatisplus.annotations.FieldStrategy;
+import com.baomidou.mybatisplus.annotations.IdType;
+import com.baomidou.mybatisplus.toolkit.TableFieldInfo;
+import com.baomidou.mybatisplus.toolkit.TableInfo;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -34,12 +33,12 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.scripting.defaults.RawSqlSource;
 import org.apache.ibatis.session.Configuration;
 
-import com.baomidou.mybatisplus.MybatisConfiguration;
-import com.baomidou.mybatisplus.annotations.FieldStrategy;
-import com.baomidou.mybatisplus.annotations.IdType;
-import com.baomidou.mybatisplus.toolkit.TableFieldInfo;
-import com.baomidou.mybatisplus.toolkit.TableInfo;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
 
 /**
  * <p>
@@ -63,7 +62,6 @@ public class AutoSqlInjector implements ISqlInjector {
 	/**
 	 * CRUD注入后给予标识 注入过后不再注入
 	 *
-	 * @param configuration
 	 * @param builderAssistant
 	 * @param mapperClass
 	 */
@@ -316,8 +314,6 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * 注入更新 SQL 语句
 	 * </p>
 	 *
-	 * @param selective
-	 *            是否选择更新
 	 * @param mapperClass
 	 * @param modelClass
 	 * @param table
@@ -514,7 +510,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 *
 	 * @param table
 	 * @param prefix
-	 * 			前缀
+	 *            前缀
 	 * @return
 	 */
 	protected String sqlSet(TableInfo table, String prefix) {
@@ -695,7 +691,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * 查询
 	 */
 	public MappedStatement addSelectMappedStatement(Class<?> mapperClass, String id, SqlSource sqlSource, Class<?> resultType,
-													TableInfo table) {
+			TableInfo table) {
 		if (null != table) {
 			String resultMap = table.getResultMap();
 			if (null != resultMap) {
@@ -714,7 +710,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * 插入
 	 */
 	public MappedStatement addInsertMappedStatement(Class<?> mapperClass, Class<?> modelClass, String id, SqlSource sqlSource,
-													KeyGenerator keyGenerator, String keyProperty, String keyColumn) {
+			KeyGenerator keyGenerator, String keyProperty, String keyColumn) {
 		return this.addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.INSERT, modelClass, null, Integer.class,
 				keyGenerator, keyProperty, keyColumn);
 	}
@@ -736,8 +732,8 @@ public class AutoSqlInjector implements ISqlInjector {
 	}
 
 	public MappedStatement addMappedStatement(Class<?> mapperClass, String id, SqlSource sqlSource,
-											  SqlCommandType sqlCommandType, Class<?> parameterClass, String resultMap, Class<?> resultType,
-											  KeyGenerator keyGenerator, String keyProperty, String keyColumn) {
+			SqlCommandType sqlCommandType, Class<?> parameterClass, String resultMap, Class<?> resultType,
+			KeyGenerator keyGenerator, String keyProperty, String keyColumn) {
 		String statementName = mapperClass.getName() + "." + id;
 		if (configuration.hasStatement(statementName)) {
 			System.err.println("{" + statementName

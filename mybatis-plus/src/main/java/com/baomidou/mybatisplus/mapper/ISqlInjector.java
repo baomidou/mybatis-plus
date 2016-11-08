@@ -38,7 +38,6 @@ public interface ISqlInjector {
 	/**
 	 * 检查SQL是否注入(已经注入过不再注入)
 	 * 
-	 * @param configuration
 	 * @param builderAssistant
 	 * @param mapperClass
 	 */
