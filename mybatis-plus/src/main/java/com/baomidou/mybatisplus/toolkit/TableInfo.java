@@ -15,11 +15,11 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.annotations.IdType;
-import com.baomidou.mybatisplus.mapper.SqlMapper;
 import com.baomidou.mybatisplus.mapper.SqlMethod;
+import org.apache.ibatis.session.SqlSessionFactory;
+
+import java.util.List;
 
 /**
  * <p>
@@ -70,14 +70,13 @@ public class TableInfo {
 	private List<TableFieldInfo> fieldList;
 
 	/**
-	 * 缓存SqlMapper
-	 */
-	private SqlMapper sqlMapper;
-
-	/**
 	 * 命名空间
 	 */
 	private String currentNamespace;
+	/**
+	 * 缓存SqlSessionFactory
+	 */
+	private SqlSessionFactory sqlSessionFactory;
 
 	/**
 	 * <p>
@@ -152,14 +151,6 @@ public class TableInfo {
 		this.fieldList = fieldList;
 	}
 
-	public SqlMapper getSqlMapper() {
-		return sqlMapper;
-	}
-
-	public void setSqlMapper(SqlMapper sqlMapper) {
-		this.sqlMapper = sqlMapper;
-	}
-
 	public String getCurrentNamespace() {
 		return currentNamespace;
 	}
@@ -168,4 +159,11 @@ public class TableInfo {
 		this.currentNamespace = currentNamespace;
 	}
 
+	public SqlSessionFactory getSqlSessionFactory() {
+		return sqlSessionFactory;
+	}
+
+	public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
+		this.sqlSessionFactory = sqlSessionFactory;
+	}
 }

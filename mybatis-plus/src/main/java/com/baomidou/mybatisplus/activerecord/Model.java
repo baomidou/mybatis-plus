@@ -15,22 +15,20 @@
  */
 package com.baomidou.mybatisplus.activerecord;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.session.SqlSession;
-
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.SqlMapper;
 import com.baomidou.mybatisplus.mapper.SqlMethod;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.toolkit.CollectionUtil;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfo;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import org.apache.ibatis.session.SqlSession;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -293,12 +291,16 @@ public abstract class Model<T extends Model> implements Serializable {
 		return result >= 1;
 	}
 
+	/**
+	 * 特别说明
+	 * <p>
+	 * openSession时这里虽然设置了自动提交但是如果事务托管了的话 是不起作用的 切记!!
+	 * <p/>
+	 * 
+	 * @return SqlSession
+	 */
 	private SqlSession sqlSession() {
-		return sqlMapper().getSqlSession();
-	}
-
-	private SqlMapper sqlMapper() {
-		return table().getSqlMapper();
+		return table().getSqlSessionFactory().openSession(true);
 	}
 
 	private String sqlStatement(SqlMethod sqlMethod) {

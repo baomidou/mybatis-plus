@@ -22,8 +22,8 @@ import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.mapper.SqlMapper;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -165,7 +165,9 @@ public class TableInfoHelper {
 		/**
 		 * SqlMapper
 		 */
-		tableInfo.setSqlMapper(MybatisPlusHolder.getSqlMapper());
+		if (null != MybatisPlusHolder.getSqlSessionFactory()) {
+			tableInfo.setSqlSessionFactory(MybatisPlusHolder.getSqlSessionFactory());
+		}
 		/*
 		 * 未发现主键注解，跳过注入
 		 */
@@ -212,8 +214,18 @@ public class TableInfoHelper {
 		return result;
 	}
 
-	public static SqlMapper getSqlMapper(Class<?> clazz) {
-		return getTableInfo(clazz).getSqlMapper();
+	/**
+	 * 初始化sqlMapper (供Mybatis原生调用)
+	 * 
+	 * @param sqlSessionFactory
+	 * @return
+	 */
+	public static void initSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
+		for (TableInfo tableInfo : tableInfoCache.values()) {
+			if (null == tableInfo.getSqlSessionFactory()) {
+				tableInfo.setSqlSessionFactory(sqlSessionFactory);
+			}
+		}
 	}
 
 }
