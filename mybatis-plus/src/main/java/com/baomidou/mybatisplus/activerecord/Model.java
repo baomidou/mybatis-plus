@@ -79,6 +79,11 @@ public abstract class Model<T extends Model> implements Serializable {
 		return retBool(sqlSession().delete(sqlStatement(SqlMethod.DELETE_BY_ID), id));
 	}
 
+	/**
+	 * 根据主键删除
+	 * 
+	 * @return
+	 */
 	public boolean deleteById() {
 		return deleteById(getPrimaryKey());
 	}
@@ -107,9 +112,9 @@ public abstract class Model<T extends Model> implements Serializable {
 	}
 
 	/**
-	 * <p>
 	 * 更新
-	 * </p>
+	 * 
+	 * @return
 	 */
 	public boolean updateById() {
 		if (null == getPrimaryKey()) {
@@ -143,9 +148,9 @@ public abstract class Model<T extends Model> implements Serializable {
 	}
 
 	/**
-	 * <p>
 	 * 查询所有
-	 * </p>
+	 * 
+	 * @return
 	 */
 	public List<T> selectAll() {
 		return sqlSession().selectList(sqlStatement(SqlMethod.SELECT_LIST));
@@ -164,6 +169,11 @@ public abstract class Model<T extends Model> implements Serializable {
 		return sqlSession().selectOne(sqlStatement(SqlMethod.SELECT_BY_ID), id);
 	}
 
+	/**
+	 * 根据主键查询
+	 * 
+	 * @return
+	 */
 	public T selectById() {
 		return selectById(getPrimaryKey());
 	}
@@ -204,10 +214,25 @@ public abstract class Model<T extends Model> implements Serializable {
 		return sqlSession().selectList(table().getCurrentNamespace() + ".selectListSql", sql);
 	}
 
+	/**
+	 * 查询所有
+	 * 
+	 * @param whereClause
+	 * @param args
+	 * @return
+	 */
 	public List<T> selectList(String whereClause, Object... args) {
 		return selectList(null, whereClause, args);
 	}
 
+	/**
+	 * 查询一条记录
+	 * 
+	 * @param columns
+	 * @param whereClause
+	 * @param args
+	 * @return
+	 */
 	public T selectOne(String columns, String whereClause, Object... args) {
 		List<T> tl = selectList(columns, whereClause, args);
 		if (CollectionUtil.isEmpty(tl)) {
@@ -216,6 +241,13 @@ public abstract class Model<T extends Model> implements Serializable {
 		return tl.get(0);
 	}
 
+	/**
+	 * 查询一条记录
+	 * 
+	 * @param whereClause
+	 * @param args
+	 * @return
+	 */
 	public T selectOne(String whereClause, Object... args) {
 		return selectOne(null, whereClause, args);
 	}
@@ -247,10 +279,24 @@ public abstract class Model<T extends Model> implements Serializable {
 		return page;
 	}
 
+	/**
+	 * 查询所有(分页)
+	 * 
+	 * @param page
+	 * @param whereClause
+	 * @param args
+	 * @return
+	 */
 	public Page<T> selectPage(Page<T> page, String whereClause, Object... args) {
 		return selectPage(page, null, whereClause, args);
 	}
 
+	/**
+	 * 查询所有(分页)
+	 * 
+	 * @param page
+	 * @return
+	 */
 	public Page<T> selectPage(Page<T> page) {
 		return selectPage(page, null);
 	}
@@ -274,6 +320,13 @@ public abstract class Model<T extends Model> implements Serializable {
 		return tl.size();
 	}
 
+	/**
+	 * <p>
+	 * 查询总数
+	 * </p>
+	 * 
+	 * @return
+	 */
 	public int selectCount() {
 		return selectCount(null);
 	}
@@ -292,21 +345,43 @@ public abstract class Model<T extends Model> implements Serializable {
 	}
 
 	/**
-	 * 特别说明
-	 * <p>
-	 * openSession时这里虽然设置了自动提交但是如果事务托管了的话 是不起作用的 切记!!
-	 * <p/>
+	 * 获取Session
 	 * 
+	 * @param autoCommit
+	 *            true自动提交false则相反
+	 * @return SqlSession
+	 */
+	private SqlSession sqlSession(boolean autoCommit) {
+		return table().getSqlSessionFactory().openSession(autoCommit);
+	}
+
+	/**
+	 * 获取Session 默认自动提交
+	 * <p>
+	 * 特别说明:这里获取SqlSession时这里虽然设置了自动提交但是如果事务托管了的话 是不起作用的 切记!!
+	 * <p/>
+	 *
 	 * @return SqlSession
 	 */
 	private SqlSession sqlSession() {
 		return table().getSqlSessionFactory().openSession(true);
 	}
 
+	/**
+	 * 获取SqlStatement
+	 * 
+	 * @param sqlMethod
+	 * @return
+	 */
 	private String sqlStatement(SqlMethod sqlMethod) {
 		return table().getSqlStatement(sqlMethod);
 	}
 
+	/**
+	 * 获取TableInfo
+	 * 
+	 * @return TableInfo
+	 */
 	private TableInfo table() {
 		return TableInfoHelper.getTableInfo(getClass());
 	}
