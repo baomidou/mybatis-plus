@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.mapper;
 import com.baomidou.mybatisplus.MybatisConfiguration;
 import com.baomidou.mybatisplus.annotations.FieldStrategy;
 import com.baomidou.mybatisplus.annotations.IdType;
+import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
 import com.baomidou.mybatisplus.toolkit.TableFieldInfo;
 import com.baomidou.mybatisplus.toolkit.TableInfo;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
@@ -39,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
+
 
 /**
  * <p>
@@ -134,7 +136,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * 自定义方法，注入点（子类需重写该方法）
 	 */
 	public void inject(Configuration configuration, MapperBuilderAssistant builderAssistant, Class<?> mapperClass,
-			Class<?> modelClass, TableInfo table) {
+					   Class<?> modelClass, TableInfo table) {
 		// to do nothing
 	}
 
@@ -561,15 +563,15 @@ public class AutoSqlInjector implements ISqlInjector {
 				columns.append("<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>");
 			}
 			if (table.isKeyRelated()) {
-				columns.append(table.getKeyColumn()).append(" AS ").append(table.getKeyProperty());
+				columns.append(table.getKeyColumn()).append(" AS ").append(SqlReservedWords.convert(table.getKeyProperty()));
 			} else {
-				columns.append(table.getKeyProperty());
+				columns.append(SqlReservedWords.convert(table.getKeyProperty()));
 			}
 			List<TableFieldInfo> fieldList = table.getFieldList();
 			for (TableFieldInfo fieldInfo : fieldList) {
 				columns.append(",").append(fieldInfo.getColumn());
 				if (fieldInfo.isRelated()) {
-					columns.append(" AS ").append(fieldInfo.getProperty());
+					columns.append(" AS ").append(SqlReservedWords.convert(fieldInfo.getProperty()));
 				}
 			}
 			if (entityWrapper) {
@@ -625,7 +627,11 @@ public class AutoSqlInjector implements ISqlInjector {
 		where.append("\n<if test=\"cm!=null and !cm.isEmpty\">");
 		where.append("\n WHERE ");
 		where.append("\n<foreach collection=\"cm.keys\" item=\"k\" separator=\"AND\"> ");
-		where.append("\n${k}=#{cm[${k}]}");
+		if (DBType.MYSQL == dbType) {
+			where.append("\n`${k}` = #{cm[${k}]}");
+		}else{
+			where.append("\n${k} = #{cm[${k}]}");
+		}
 		where.append("\n</foreach>");
 		where.append("\n</if>");
 		return where.toString();
@@ -691,7 +697,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * 查询
 	 */
 	public MappedStatement addSelectMappedStatement(Class<?> mapperClass, String id, SqlSource sqlSource, Class<?> resultType,
-			TableInfo table) {
+													TableInfo table) {
 		if (null != table) {
 			String resultMap = table.getResultMap();
 			if (null != resultMap) {
@@ -710,7 +716,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * 插入
 	 */
 	public MappedStatement addInsertMappedStatement(Class<?> mapperClass, Class<?> modelClass, String id, SqlSource sqlSource,
-			KeyGenerator keyGenerator, String keyProperty, String keyColumn) {
+													KeyGenerator keyGenerator, String keyProperty, String keyColumn) {
 		return this.addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.INSERT, modelClass, null, Integer.class,
 				keyGenerator, keyProperty, keyColumn);
 	}
@@ -732,8 +738,8 @@ public class AutoSqlInjector implements ISqlInjector {
 	}
 
 	public MappedStatement addMappedStatement(Class<?> mapperClass, String id, SqlSource sqlSource,
-			SqlCommandType sqlCommandType, Class<?> parameterClass, String resultMap, Class<?> resultType,
-			KeyGenerator keyGenerator, String keyProperty, String keyColumn) {
+											  SqlCommandType sqlCommandType, Class<?> parameterClass, String resultMap, Class<?> resultType,
+											  KeyGenerator keyGenerator, String keyProperty, String keyColumn) {
 		String statementName = mapperClass.getName() + "." + id;
 		if (configuration.hasStatement(statementName)) {
 			System.err.println("{" + statementName
