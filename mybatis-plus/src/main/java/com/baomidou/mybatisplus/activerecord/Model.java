@@ -80,7 +80,9 @@ public abstract class Model<T extends Model> implements Serializable {
 	}
 
 	/**
+	 * <p>
 	 * 根据主键删除
+	 * </p>
 	 * 
 	 * @return
 	 */
@@ -112,7 +114,9 @@ public abstract class Model<T extends Model> implements Serializable {
 	}
 
 	/**
+	 * <p>
 	 * 更新
+	 * </p>
 	 * 
 	 * @return
 	 */
@@ -148,7 +152,9 @@ public abstract class Model<T extends Model> implements Serializable {
 	}
 
 	/**
+	 * <p>
 	 * 查询所有
+	 * </p>
 	 * 
 	 * @return
 	 */
@@ -170,7 +176,9 @@ public abstract class Model<T extends Model> implements Serializable {
 	}
 
 	/**
+	 * <p>
 	 * 根据主键查询
+	 * </p>
 	 * 
 	 * @return
 	 */
@@ -215,7 +223,9 @@ public abstract class Model<T extends Model> implements Serializable {
 	}
 
 	/**
+	 * <p>
 	 * 查询所有
+	 * </p>
 	 * 
 	 * @param whereClause
 	 * @param args
@@ -226,7 +236,9 @@ public abstract class Model<T extends Model> implements Serializable {
 	}
 
 	/**
+	 * <p>
 	 * 查询一条记录
+	 * </p>
 	 * 
 	 * @param columns
 	 * @param whereClause
@@ -242,7 +254,9 @@ public abstract class Model<T extends Model> implements Serializable {
 	}
 
 	/**
+	 * <p>
 	 * 查询一条记录
+	 * </p>
 	 * 
 	 * @param whereClause
 	 * @param args
@@ -280,7 +294,9 @@ public abstract class Model<T extends Model> implements Serializable {
 	}
 
 	/**
+	 * <p>
 	 * 查询所有(分页)
+	 * </p>
 	 * 
 	 * @param page
 	 * @param whereClause
@@ -292,9 +308,12 @@ public abstract class Model<T extends Model> implements Serializable {
 	}
 
 	/**
+	 * <p>
 	 * 查询所有(分页)
+	 * </p>
 	 * 
 	 * @param page
+	 *            翻页对象
 	 * @return
 	 */
 	public Page<T> selectPage(Page<T> page) {
@@ -345,13 +364,15 @@ public abstract class Model<T extends Model> implements Serializable {
 	}
 
 	/**
+	 * <p>
 	 * 获取Session
+	 * </p>
 	 * 
 	 * @param autoCommit
 	 *            true自动提交false则相反
 	 * @return SqlSession
 	 */
-	private SqlSession sqlSession(boolean autoCommit) {
+	public SqlSession sqlSession(boolean autoCommit) {
 		return table().getSqlSessionFactory().openSession(autoCommit);
 	}
 
