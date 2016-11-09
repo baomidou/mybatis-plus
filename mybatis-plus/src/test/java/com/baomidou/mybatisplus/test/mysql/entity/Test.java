@@ -18,9 +18,6 @@ package com.baomidou.mybatisplus.test.mysql.entity;
 import java.io.Serializable;
 
 import com.baomidou.mybatisplus.activerecord.Model;
-import com.baomidou.mybatisplus.annotations.TableField;
-import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.annotations.TableName;
 
 /**
  * <p>
@@ -30,14 +27,14 @@ import com.baomidou.mybatisplus.annotations.TableName;
  * @author Caratacu
  * @Date 2016-09-25
  */
-@TableName("test")
+//表名为 test 可以不需要注解，特殊如 @TableName("tb_test")
 public class Test extends Model<Test> {
 
-	@TableField(exist = false)
+	// 静态属性会自动忽略
 	private static final long serialVersionUID = 1L;
 
 	/** 主键 */
-	@TableId
+	// 默认会找 id 为主键，特殊命名需要注解 @TableId
 	private Long id;
 
 	private String type;

@@ -340,12 +340,6 @@ public class UserMapperTest {
         	System.err.println("翻页 map 结果：" + map);
 		}
         System.err.println("翻页结果：" + page3.toString());
-        
-        /**
-         * 自定义方法，删除测试数据
-         */
-        rlt = userMapper.deleteAll();
-        System.err.println("清空测试数据！ rlt=" + rlt);
 
 		// SQL 删除
 		System.err.println(" deleteSql 执行 SQL \n");
