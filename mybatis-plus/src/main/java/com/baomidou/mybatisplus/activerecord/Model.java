@@ -39,4 +39,9 @@ public abstract class Model<T extends Model> implements Serializable {
 		return new Record<T>(this);
 	}
 
+	@SuppressWarnings("unchecked")
+	public static Record<Model> mapper(Model model) {
+		return new Record<Model>(model);
+	}
+
 }
