@@ -139,6 +139,10 @@ public class Pagination extends RowBounds implements Serializable {
 		return pages;
 	}
 
+	public void setCurrent(int current) {
+		this.current = current;
+	}
+
 	public int getCurrent() {
 		return current;
 	}
