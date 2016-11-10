@@ -15,11 +15,11 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
-import com.baomidou.mybatisplus.annotations.IdType;
-import com.baomidou.mybatisplus.mapper.SqlMethod;
+import java.util.List;
+
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import java.util.List;
+import com.baomidou.mybatisplus.annotations.IdType;
 
 /**
  * <p>
@@ -87,11 +87,11 @@ public class TableInfo {
 	 *            MybatisPlus 支持 SQL 方法
 	 * @return
 	 */
-	public String getSqlStatement(SqlMethod sqlMethod) {
+	public String getSqlStatement(String sqlMethod) {
 		StringBuffer statement = new StringBuffer();
 		statement.append(currentNamespace);
 		statement.append(".");
-		statement.append(sqlMethod.getMethod());
+		statement.append(sqlMethod);
 		return statement.toString();
 	}
 
