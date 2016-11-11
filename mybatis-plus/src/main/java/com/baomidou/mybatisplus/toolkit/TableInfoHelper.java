@@ -15,18 +15,6 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.apache.ibatis.session.SqlSessionFactory;
-
 import com.baomidou.mybatisplus.MybatisConfiguration;
 import com.baomidou.mybatisplus.MybatisPlusHolder;
 import com.baomidou.mybatisplus.annotations.FieldStrategy;
@@ -35,6 +23,18 @@ import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.ibatis.session.SqlSessionFactory;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 /**
  * <p>
@@ -45,6 +45,7 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
  * @Date 2016-09-09
  */
 public class TableInfoHelper {
+	protected static final Logger logger = Logger.getLogger("TableInfoHelper");
 
 	/**
 	 * 缓存反射类表信息
@@ -146,6 +147,7 @@ public class TableInfoHelper {
 		 * 未发现主键注解，跳过注入
 		 */
 		if (null == tableInfo.getKeyColumn()) {
+			logger.warning(String.format("Warn: Could not find @TableId in Class: %s, initTableInfo Method Fail.", clazz.getName()));
 			return null;
 		}
 		/*
@@ -251,7 +253,6 @@ public class TableInfoHelper {
 	 * 字段属性初始化
 	 * </p>
 	 * 
-	 * @param tableInfo
 	 * @param fieldList
 	 * @param clazz
 	 * @return true 继续下一个属性判断，返回 continue;
