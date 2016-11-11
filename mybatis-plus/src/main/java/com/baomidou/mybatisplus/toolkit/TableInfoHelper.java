@@ -29,6 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 /**
  * <p>
@@ -40,6 +41,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class TableInfoHelper {
 
+	protected static final Logger logger = Logger.getLogger("TableInfoHelper");
 	/**
 	 * 缓存反射类表信息
 	 */
@@ -162,6 +164,8 @@ public class TableInfoHelper {
 		 * 未发现主键注解，跳过注入
 		 */
 		if (null == tableInfo.getKeyColumn()) {
+			logger.warning(String.format("Warn: Could not find @TableId in Class: %s, initTableInfo Method Fail.",
+					clazz.getName()));
 			return null;
 		}
 		// 缓存
