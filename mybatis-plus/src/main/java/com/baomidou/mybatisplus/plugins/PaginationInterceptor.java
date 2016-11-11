@@ -15,12 +15,11 @@
  */
 package com.baomidou.mybatisplus.plugins;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Properties;
-
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
+import com.baomidou.mybatisplus.plugins.pagination.IDialect;
+import com.baomidou.mybatisplus.plugins.pagination.Pagination;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
@@ -35,11 +34,11 @@ import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.RowBounds;
 
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
-import com.baomidou.mybatisplus.plugins.pagination.IDialect;
-import com.baomidou.mybatisplus.plugins.pagination.Pagination;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Properties;
 
 /**
  * <p>
@@ -51,13 +50,13 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  */
 @Intercepts({ @Signature(type = StatementHandler.class, method = "prepare", args = { Connection.class, Integer.class }) })
 public class PaginationInterceptor implements Interceptor {
-	
+
 	/* 溢出总页数，设置第一页 */
 	private boolean overflowCurrent = false;
-	
+
 	/* 方言类型 */
 	private String dialectType;
-	
+
 	/* 方言实现类 */
 	private String dialectClazz;
 
@@ -67,12 +66,12 @@ public class PaginationInterceptor implements Interceptor {
 			StatementHandler statementHandler = (StatementHandler) target;
 			MetaObject metaStatementHandler = SystemMetaObject.forObject(statementHandler);
 			RowBounds rowBounds = (RowBounds) metaStatementHandler.getValue("delegate.rowBounds");
-			
+
 			/* 不需要分页的场合 */
 			if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
 				return invocation.proceed();
 			}
-			
+
 			/* 定义数据库方言 */
 			IDialect dialect = null;
 			if (StringUtils.isNotEmpty(dialectType)) {
@@ -89,7 +88,7 @@ public class PaginationInterceptor implements Interceptor {
 					}
 				}
 			}
-			
+
 			/* 未配置方言则抛出异常 */
 			if (dialect == null) {
 				throw new MybatisPlusException("The value of the dialect property in mybatis configuration.xml is not defined.");
@@ -126,19 +125,20 @@ public class PaginationInterceptor implements Interceptor {
 					 * COUNT 查询，去掉 ORDER BY 优化执行 SQL
 					 */
 					StringBuffer countSql = new StringBuffer("SELECT COUNT(1) AS TOTAL ");
-					String tempSql = originalSql.toUpperCase();
+					String tempSql = new String(originalSql);
+					String indexOfSql = originalSql.toUpperCase();
 					int formIndex = -1;
 					if (page.isOptimizeCount()) {
-						formIndex = tempSql.indexOf("FROM");
+						formIndex = indexOfSql.indexOf("FROM");
 					}
-					int orderByIndex = tempSql.lastIndexOf("ORDER BY");
-					if ( orderByIndex > -1 ) {
+					int orderByIndex = indexOfSql.lastIndexOf("ORDER BY");
+					if (orderByIndex > -1) {
 						orderBy = false;
 						tempSql = originalSql.substring(0, orderByIndex);
 					}
 					if (page.isOptimizeCount() && formIndex > -1) {
 						// 无排序情况处理
-						if ( orderByIndex > -1 ) {
+						if (orderByIndex > -1) {
 							countSql.append(tempSql.substring(formIndex));
 						} else {
 							countSql.append(originalSql.substring(formIndex));
