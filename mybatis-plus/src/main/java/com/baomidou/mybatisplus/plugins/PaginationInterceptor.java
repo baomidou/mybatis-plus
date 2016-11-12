@@ -44,7 +44,7 @@ import java.util.Properties;
  * <p>
  * 分页拦截器
  * </p>
- * 
+ *
  * @author hubin
  * @Date 2016-01-23
  */
@@ -125,26 +125,25 @@ public class PaginationInterceptor implements Interceptor {
 					 * COUNT 查询，去掉 ORDER BY 优化执行 SQL
 					 */
 					StringBuffer countSql = new StringBuffer("SELECT COUNT(1) AS TOTAL ");
-					String tempSql = new String(originalSql);
-					String indexOfSql = originalSql.toUpperCase();
-					int formIndex = -1;
 					if (page.isOptimizeCount()) {
-						formIndex = indexOfSql.indexOf("FROM");
-					}
-					int orderByIndex = indexOfSql.lastIndexOf("ORDER BY");
-					if (orderByIndex > -1) {
-						orderBy = false;
-						tempSql = originalSql.substring(0, orderByIndex);
-					}
-					if (page.isOptimizeCount() && formIndex > -1) {
-						// 无排序情况处理
-						if (orderByIndex > -1) {
-							countSql.append(tempSql.substring(formIndex));
+						String tempSql = new String(originalSql);
+						String indexOfSql = originalSql.toUpperCase();
+						int formIndex = indexOfSql.indexOf("FROM");
+						int orderByIndex = indexOfSql.lastIndexOf("ORDER BY");
+						if (formIndex > -1) {
+							// 无排序情况处理
+							if (orderByIndex > -1) {
+								tempSql = originalSql.substring(0, orderByIndex);
+								countSql.append(tempSql.substring(formIndex));
+								orderBy = false;
+							} else {
+								countSql.append(originalSql.substring(formIndex));
+							}
 						} else {
-							countSql.append(originalSql.substring(formIndex));
+							countSql.append("FROM (").append(tempSql).append(") A");
 						}
 					} else {
-						countSql.append("FROM (").append(tempSql).append(") A");
+						countSql.append("FROM (").append(originalSql).append(") A");
 					}
 					page = this.count(countSql.toString(), connection, mappedStatement, boundSql, page);
 					/** 总数 0 跳出执行 */
@@ -152,10 +151,9 @@ public class PaginationInterceptor implements Interceptor {
 						return invocation.proceed();
 					}
 				}
-
 				/* 执行 SQL */
 				StringBuffer buildSql = new StringBuffer(originalSql);
-				if (orderBy && null != page.getOrderByField()) {
+				if (orderBy && StringUtils.isNotEmpty(page.getOrderByField())) {
 					buildSql.append(" ORDER BY ").append(page.getOrderByField());
 					buildSql.append(page.isAsc() ? " ASC " : " DESC ");
 				}
@@ -173,23 +171,22 @@ public class PaginationInterceptor implements Interceptor {
 
 	/**
 	 * 查询总记录条数
-	 * 
+	 *
 	 * @param sql
 	 * @param connection
 	 * @param mappedStatement
 	 * @param boundSql
 	 * @param page
 	 */
-	public Pagination count(String sql, Connection connection, MappedStatement mappedStatement, BoundSql boundSql,
-			Pagination page) {
+	public Pagination count(String sql, Connection connection, MappedStatement mappedStatement, BoundSql boundSql, Pagination page) {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
 			pstmt = connection.prepareStatement(sql);
-			BoundSql countBS = new BoundSql(mappedStatement.getConfiguration(), sql,
-					boundSql.getParameterMappings(), boundSql.getParameterObject());
-			ParameterHandler parameterHandler = new DefaultParameterHandler(mappedStatement,
-					boundSql.getParameterObject(), countBS);
+			BoundSql countBS = new BoundSql(mappedStatement.getConfiguration(), sql, boundSql.getParameterMappings(),
+					boundSql.getParameterObject());
+			ParameterHandler parameterHandler = new DefaultParameterHandler(mappedStatement, boundSql.getParameterObject(),
+					countBS);
 			parameterHandler.setParameters(pstmt);
 			rs = pstmt.executeQuery();
 			int total = 0;
@@ -208,13 +205,13 @@ public class PaginationInterceptor implements Interceptor {
 			e.printStackTrace();
 		} finally {
 			try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (pstmt != null) {
-                    pstmt.close();
-                }
-            } catch (SQLException e) {
+				if (rs != null) {
+					rs.close();
+				}
+				if (pstmt != null) {
+					pstmt.close();
+				}
+			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
