@@ -126,21 +126,25 @@ public class PaginationInterceptor implements Interceptor {
 					 */
 					StringBuffer countSql = new StringBuffer("SELECT COUNT(1) AS TOTAL ");
 					if (page.isOptimizeCount()) {
-						String tempSql = new String(originalSql);
+						String tempSql = originalSql.replaceAll("(?i)ORDER[\\s]+BY", "ORDER BY");
 						String indexOfSql = originalSql.toUpperCase();
-						int formIndex = indexOfSql.indexOf("FROM");
-						int orderByIndex = indexOfSql.lastIndexOf("ORDER BY");
-						if (formIndex > -1) {
-							// 无排序情况处理
-							if (orderByIndex > -1) {
-								tempSql = originalSql.substring(0, orderByIndex);
-								countSql.append(tempSql.substring(formIndex));
-								orderBy = false;
+						if (!indexOfSql.contains("DISTINCT")) {
+							int formIndex = indexOfSql.indexOf("FROM");
+							int orderByIndex = indexOfSql.lastIndexOf("ORDER BY");
+							if (formIndex > -1) {
+								// 无排序情况处理
+								if (orderByIndex > -1) {
+									tempSql = originalSql.substring(0, orderByIndex);
+									countSql.append(tempSql.substring(formIndex));
+									orderBy = false;
+								} else {
+									countSql.append(originalSql.substring(formIndex));
+								}
 							} else {
-								countSql.append(originalSql.substring(formIndex));
+								countSql.append("FROM (").append(tempSql).append(") A");
 							}
 						} else {
-							countSql.append("FROM (").append(tempSql).append(") A");
+							countSql.append("FROM (").append(originalSql).append(") A");
 						}
 					} else {
 						countSql.append("FROM (").append(originalSql).append(") A");
