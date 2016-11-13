@@ -135,12 +135,8 @@ public class PaginationInterceptor implements Interceptor {
 					}
 				}
 				/* 执行 SQL */
-				StringBuffer buildSql = new StringBuffer(originalSql);
-				if (orderBy && StringUtils.isNotEmpty(page.getOrderByField())) {
-					buildSql.append(" ORDER BY ").append(page.getOrderByField());
-					buildSql.append(page.isAsc() ? " ASC " : " DESC ");
-				}
-				originalSql = dialect.buildPaginationSql(buildSql.toString(), page.getOffsetCurrent(), page.getSize());
+				String buildSql = SqlUtils.concatOrderBy(originalSql, page, orderBy);
+				originalSql = dialect.buildPaginationSql(buildSql, page.getOffsetCurrent(), page.getSize());
 			}
 
 			/**

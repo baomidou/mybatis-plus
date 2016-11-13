@@ -1,7 +1,7 @@
 package com.baomidou.mybatisplus.toolkit;
 
-
 import com.baomidou.mybatisplus.plugins.entity.CountOptimize;
+import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 
 /**
  * <p>
@@ -14,7 +14,7 @@ import com.baomidou.mybatisplus.plugins.entity.CountOptimize;
 public class SqlUtils {
 	/**
 	 * 获取CountOptimize
-	 * 
+	 *
 	 * @param originalSql
 	 *            需要计算Count SQL
 	 * @param isOptimizeCount
@@ -51,5 +51,26 @@ public class SqlUtils {
 		}
 		countOptimize.setCountSQL(countSql.toString());
 		return countOptimize;
+	}
+
+	/**
+	 * 查询SQL拼接Order By
+	 *
+	 * @param originalSql
+	 *            需要拼接的SQL
+	 * @param page
+	 *            page对象
+	 * @param orderBy
+	 *            是否需要拼接Order By
+	 * @return
+	 */
+	public static String concatOrderBy(String originalSql, Pagination page, boolean orderBy) {
+		if (!orderBy || StringUtils.isEmpty(page.getOrderByField())) {
+			return originalSql;
+		}
+		StringBuffer buildSql = new StringBuffer(originalSql);
+		buildSql.append(" ORDER BY ").append(page.getOrderByField());
+		buildSql.append(page.isAsc() ? " ASC " : " DESC ");
+		return buildSql.toString();
 	}
 }
