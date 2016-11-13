@@ -97,11 +97,7 @@ public class PaginationInterceptor implements Interceptor {
 			}
 
 			/*
-			 * <p>
-			 * 禁用内存分页
-			 * </p>
-			 * <p>
-			 * 内存分页会查询所有结果出来处理（这个很吓人的），如果结果变化频繁这个数据还会不准。
+			 * <p> 禁用内存分页 </p> <p> 内存分页会查询所有结果出来处理（这个很吓人的），如果结果变化频繁这个数据还会不准。
 			 * </p>
 			 */
 			BoundSql boundSql = (BoundSql) metaStatementHandler.getValue("delegate.boundSql");
@@ -135,12 +131,8 @@ public class PaginationInterceptor implements Interceptor {
 					}
 				}
 				/* 执行 SQL */
-				StringBuffer buildSql = new StringBuffer(originalSql);
-				if (orderBy && StringUtils.isNotEmpty(page.getOrderByField())) {
-					buildSql.append(" ORDER BY ").append(page.getOrderByField());
-					buildSql.append(page.isAsc() ? " ASC " : " DESC ");
-				}
-				originalSql = dialect.buildPaginationSql(buildSql.toString(), page.getOffsetCurrent(), page.getSize());
+				String buildSql = SqlUtils.concatOrderBy(originalSql, page, orderBy);
+				originalSql = dialect.buildPaginationSql(buildSql, page.getOffsetCurrent(), page.getSize());
 			}
 
 			/**
