@@ -35,31 +35,31 @@ public enum DBType {
 	/**
 	 * DB2
 	 */
-	DB2("DB2", "DB2数据库"),
+	DB2("db2", "DB2数据库"),
 	/**
 	 * H2
 	 */
-	H2("H2", "H2数据库"),
+	H2("h2", "H2数据库"),
 	/**
 	 * HSQL
 	 */
-	HSQL("HSQL", "HSQL数据库"),
+	HSQL("hsql", "HSQL数据库"),
 	/**
 	 * SQLITE
 	 */
-	SQLITE("SQLite", "SQLite数据库"),
+	SQLITE("sqlite", "SQLite数据库"),
 	/**
 	 * POSTGRE
 	 */
-	POSTGRE("Postgre", "Postgre数据库"),
+	POSTGRE("postgre", "Postgre数据库"),
 	/**
 	 * SQLSERVER2005
 	 */
-	SQLSERVER2005("SQLServer2005", "SQLServer2005数据库"),
+	SQLSERVER2005("sqlserver2005", "SQLServer2005数据库"),
 	/**
 	 * SQLSERVER
 	 */
-	SQLSERVER("SQLServer", "SQLServer数据库");
+	SQLSERVER("sqlserver", "SQLServer数据库");
 
 	private final String db;
 
