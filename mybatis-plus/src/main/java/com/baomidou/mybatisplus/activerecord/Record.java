@@ -26,7 +26,6 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
  * </p>
  * 
  * @author hubin
- * @param <T>
  * @Date 2016-11-06
  */
 public class Record {
