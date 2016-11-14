@@ -24,18 +24,51 @@ package com.baomidou.mybatisplus.mapper;
  * @Date 2016-04-15
  */
 public enum DBType {
-	MYSQL("mysql", "MySql数据库"), ORACLE("oracle", "Oracle数据库");
+	/**
+	 * MYSQL
+	 */
+	MYSQL("mysql", "MySql数据库"),
+	/**
+	 * ORACLE
+	 */
+	ORACLE("oracle", "Oracle数据库"),
+	/**
+	 * DB2
+	 */
+	DB2("DB2", "DB2数据库"),
+	/**
+	 * H2
+	 */
+	H2("H2", "H2数据库"),
+	/**
+	 * HSQL
+	 */
+	HSQL("HSQL", "HSQL数据库"),
+	/**
+	 * SQLITE
+	 */
+	SQLITE("SQLite", "SQLite数据库"),
+	/**
+	 * POSTGRE
+	 */
+	POSTGRE("Postgre", "Postgre数据库"),
+	/**
+	 * SQLSERVER2005
+	 */
+	SQLSERVER2005("SQLServer2005", "SQLServer2005数据库"),
+	/**
+	 * SQLSERVER
+	 */
+	SQLSERVER("SQLServer", "SQLServer数据库");
 
 	private final String db;
 
 	private final String desc;
 
-
-	DBType( final String db, final String desc ) {
+	DBType(final String db, final String desc) {
 		this.db = db;
 		this.desc = desc;
 	}
-
 
 	/**
 	 * <p>
@@ -46,20 +79,18 @@ public enum DBType {
 	 *            数据库类型字符串
 	 * @return
 	 */
-	public static DBType getDBType( String dbType ) {
-		for ( DBType dt : DBType.values() ) {
-			if ( dt.getDb().equals(dbType) ) {
+	public static DBType getDBType(String dbType) {
+		for (DBType dt : DBType.values()) {
+			if (dt.getDb().equals(dbType)) {
 				return dt;
 			}
 		}
 		return MYSQL;
 	}
 
-
 	public String getDb() {
 		return this.db;
 	}
-
 
 	public String getDesc() {
 		return this.desc;
