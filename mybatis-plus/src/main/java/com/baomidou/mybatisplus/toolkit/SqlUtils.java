@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.baomidou.mybatisplus.toolkit;
 
 import com.baomidou.mybatisplus.plugins.entity.CountOptimize;
@@ -12,6 +27,7 @@ import com.baomidou.mybatisplus.plugins.pagination.Pagination;
  * @Date 2016-11-13
  */
 public class SqlUtils {
+
 	/**
 	 * 获取CountOptimize
 	 * 
@@ -22,6 +38,7 @@ public class SqlUtils {
 	 * @return CountOptimize
 	 */
 	public static CountOptimize getCountOptimize(String originalSql, boolean isOptimizeCount) {
+		boolean optimize = false;
 		CountOptimize countOptimize = CountOptimize.newInstance();
 		StringBuffer countSql = new StringBuffer("SELECT COUNT(1) AS TOTAL ");
 		if (isOptimizeCount) {
@@ -29,9 +46,9 @@ public class SqlUtils {
 			String indexOfSql = tempSql.toUpperCase();
 			if (!indexOfSql.contains("DISTINCT")) {
 				int formIndex = indexOfSql.indexOf("FROM");
-				int orderByIndex = indexOfSql.lastIndexOf("ORDER BY");
 				if (formIndex > -1) {
 					// 有排序情况
+					int orderByIndex = indexOfSql.lastIndexOf("ORDER BY");
 					if (orderByIndex > -1) {
 						tempSql = tempSql.substring(0, orderByIndex);
 						countSql.append(tempSql.substring(formIndex));
@@ -40,13 +57,13 @@ public class SqlUtils {
 					} else {
 						countSql.append(tempSql.substring(formIndex));
 					}
-				} else {
-					countSql.append("FROM (").append(originalSql).append(") A");
+					// 执行优化
+					optimize = true;
 				}
-			} else {
-				countSql.append("FROM (").append(originalSql).append(") A");
 			}
-		} else {
+		}
+		if (!optimize) {
+			// 无优化SQL
 			countSql.append("FROM (").append(originalSql).append(") A");
 		}
 		countOptimize.setCountSQL(countSql.toString());
@@ -65,11 +82,13 @@ public class SqlUtils {
 	 * @return
 	 */
 	public static String concatOrderBy(String originalSql, Pagination page, boolean orderBy) {
-		StringBuffer buildSql = new StringBuffer(originalSql);
 		if (orderBy && StringUtils.isNotEmpty(page.getOrderByField())) {
+			StringBuffer buildSql = new StringBuffer(originalSql);
 			buildSql.append(" ORDER BY ").append(page.getOrderByField());
 			buildSql.append(page.isAsc() ? " ASC " : " DESC ");
+			return buildSql.toString();
 		}
-		return buildSql.toString();
+		return originalSql;
 	}
+
 }
