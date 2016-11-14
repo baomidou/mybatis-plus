@@ -75,7 +75,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * @return
 	 */
 	public boolean insertSql(String sql) {
-		return retBool(sqlSession().delete(sqlStatement("insertSql"), sql));
+		return retBool(sqlSession().insert(sqlStatement("insertSql"), sql));
 	}
 
 	/**
