@@ -15,11 +15,14 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
+import com.baomidou.mybatisplus.toolkit.MapUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * <p>
@@ -81,6 +84,97 @@ public abstract class Wrapper<T> implements Serializable {
 	 */
 	public Wrapper<T> where(String sqlWhere, Object... params) {
 		sql.WHERE(formatSql(sqlWhere, params));
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * 等同于SQL的"field=value"表达式
+	 * </p>
+	 *
+	 * @param column
+	 * @param params
+	 * @return
+	 */
+	public Wrapper<T> eq(String column, Object params) {
+		sql.WHERE(formatSql(String.format("%s = {0}", column), params));
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * 等同于SQL的"field=value"表达式
+	 * </p>
+	 *
+	 * @param params
+	 * @return
+	 */
+
+	public Wrapper<T> allEq(Map<String, Object> params) {
+		if (MapUtils.isNotEmpty(params)) {
+			Iterator it = params.entrySet().iterator();
+			while (it.hasNext()) {
+				Map.Entry pairs = (Map.Entry) it.next();
+				sql.WHERE(formatSql(String.format("%s = {0}", pairs.getKey()), pairs.getValue()));
+			}
+
+		}
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * 等同于SQL的"field>value"表达式
+	 * </p>
+	 *
+	 * @param column
+	 * @param params
+	 * @return
+	 */
+	public Wrapper<T> gt(String column, Object params) {
+		sql.WHERE(formatSql(String.format("%s > {0}", column), params));
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * 等同于SQL的"field>=value"表达式
+	 * </p>
+	 *
+	 * @param column
+	 * @param params
+	 * @return
+	 */
+	public Wrapper<T> ge(String column, Object params) {
+		sql.WHERE(formatSql(String.format("%s >= {0}", column), params));
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * 等同于SQL的"field<value"表达式
+	 * </p>
+	 *
+	 * @param column
+	 * @param params
+	 * @return
+	 */
+	public Wrapper<T> lt(String column, Object params) {
+		sql.WHERE(formatSql(String.format("%s < {0}", column), params));
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * 等同于SQL的"field<=value"表达式
+	 * </p>
+	 *
+	 * @param column
+	 * @param params
+	 * @return
+	 */
+	public Wrapper<T> le(String column, Object params) {
+		sql.WHERE(formatSql(String.format("%s <= {0}", column), params));
 		return this;
 	}
 
