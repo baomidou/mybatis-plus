@@ -112,10 +112,10 @@ public abstract class Wrapper<T> implements Serializable {
 
 	public Wrapper<T> allEq(Map<String, Object> params) {
 		if (MapUtils.isNotEmpty(params)) {
-			Iterator it = params.entrySet().iterator();
-			while (it.hasNext()) {
-				Map.Entry pairs = (Map.Entry) it.next();
-				sql.WHERE(formatSql(String.format("%s = {0}", pairs.getKey()), pairs.getValue()));
+			Iterator iterator = params.entrySet().iterator();
+			while (iterator.hasNext()) {
+				Map.Entry entry = (Map.Entry) iterator.next();
+				sql.WHERE(formatSql(String.format("%s = {0}", entry.getKey()), entry.getValue()));
 			}
 
 		}
