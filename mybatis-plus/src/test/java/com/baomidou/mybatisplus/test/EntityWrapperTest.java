@@ -23,7 +23,9 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -284,5 +286,19 @@ public class EntityWrapperTest {
 		String sqlPart = Condition.instance().between("test_type", val1, val2).toString();
 		System.out.println("sql ==> " + sqlPart);
 		Assert.assertEquals("WHERE (test_type BETWEEN '\\'' AND '\\\\')", sqlPart);
+	}
+
+	/**
+	 * 测试Escape
+	 */
+	@Test
+	public void testQbc() {
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put("allEq1","22");
+		map.put("allEq2",3333);
+		map.put("allEq3",66.99);
+		String sqlPart = Condition.instance().gt("gt", 1).le("le",2).lt("le",3).ge("ge",4).eq("eq",5).allEq(map).toString();
+		System.out.println("sql ==> " + sqlPart);
+		Assert.assertEquals("WHERE (gt > 1 AND le <= 2 AND le < 3 AND ge >= 4 AND eq = 5 AND allEq3 = 66.99 AND allEq1 = '22' AND allEq2 = 3333)", sqlPart);
 	}
 }

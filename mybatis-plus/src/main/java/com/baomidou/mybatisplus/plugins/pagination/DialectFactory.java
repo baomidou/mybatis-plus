@@ -26,6 +26,16 @@ import com.baomidou.mybatisplus.plugins.pagination.dialects.SQLServer2005Dialect
 import com.baomidou.mybatisplus.plugins.pagination.dialects.SQLServerDialect;
 import com.baomidou.mybatisplus.plugins.pagination.dialects.SQLiteDialect;
 
+import static com.baomidou.mybatisplus.mapper.DBType.DB2;
+import static com.baomidou.mybatisplus.mapper.DBType.MYSQL;
+import static com.baomidou.mybatisplus.mapper.DBType.ORACLE;
+import static com.baomidou.mybatisplus.mapper.DBType.H2;
+import static com.baomidou.mybatisplus.mapper.DBType.POSTGRE;
+import static com.baomidou.mybatisplus.mapper.DBType.SQLITE;
+import static com.baomidou.mybatisplus.mapper.DBType.SQLSERVER;
+import static com.baomidou.mybatisplus.mapper.DBType.SQLSERVER2005;
+import static com.baomidou.mybatisplus.mapper.DBType.HSQL;
+
 /**
  * <p>
  * 分页方言工厂类
@@ -47,23 +57,23 @@ public class DialectFactory {
 	 * @throws Exception
 	 */
 	public static IDialect getDialectByDbtype(String dbtype) throws Exception {
-		if ("mysql".equalsIgnoreCase(dbtype)) {
+		if (MYSQL.getDb().equalsIgnoreCase(dbtype)) {
 			return new MySqlDialect();
-		} else if ("oracle".equalsIgnoreCase(dbtype)) {
+		} else if (ORACLE.getDb().equalsIgnoreCase(dbtype)) {
 			return new OracleDialect();
-		} else if ("db2".equalsIgnoreCase(dbtype)) {
+		} else if (DB2.getDb().equalsIgnoreCase(dbtype)) {
 			return new DB2Dialect();
-		} else if ("h2".equalsIgnoreCase(dbtype)) {
+		} else if (H2.getDb().equalsIgnoreCase(dbtype)) {
 			return new H2Dialect();
-		} else if ("sqlserver".equalsIgnoreCase(dbtype)) {
+		} else if (SQLSERVER.getDb().equalsIgnoreCase(dbtype)) {
 			return new SQLServerDialect();
-		} else if ("sqlserver2005".equalsIgnoreCase(dbtype)) {
+		} else if (SQLSERVER2005.getDb().equalsIgnoreCase(dbtype)) {
 			return new SQLServer2005Dialect();
-		} else if ("postgre".equalsIgnoreCase(dbtype)) {
+		} else if (POSTGRE.getDb().equalsIgnoreCase(dbtype)) {
 			return new PostgreDialect();
-		} else if ("hsql".equalsIgnoreCase(dbtype)) {
+		} else if (HSQL.getDb().equalsIgnoreCase(dbtype)) {
 			return new HSQLDialect();
-		} else if ("sqlite".equalsIgnoreCase(dbtype)) {
+		} else if (SQLITE.getDb().equalsIgnoreCase(dbtype)) {
 			return new SQLiteDialect();
 		} else {
 			throw new MybatisPlusException("The database is not supported！dbtype:" + dbtype);
