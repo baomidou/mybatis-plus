@@ -44,7 +44,7 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 
 # 下载地址 | Download
 
-[点此去下载](http://mvnrepository.com/artifact/com.baomidou/mybatis-plus)
+[点此去下载](http://maven.aliyun.com/nexus/#nexus-search;quick~mybatis-plus)
 
 ```xml
 <dependency>
