@@ -627,7 +627,7 @@ public class AutoSqlInjector implements ISqlInjector {
 		where.append("\n<if test=\"cm!=null and !cm.isEmpty\">");
 		where.append("\n WHERE ");
 		where.append("\n<foreach collection=\"cm.keys\" item=\"k\" separator=\"AND\"> ");
-		if (DBType.MYSQL == dbType) {
+		if (DBType.MYSQL.equals(dbType)) {
 			where.append("\n`${k}` = #{cm[${k}]}");
 		}else{
 			where.append("\n${k} = #{cm[${k}]}");

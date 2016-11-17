@@ -50,6 +50,9 @@ public class TableInfoHelper {
 	 * 缓存反射类表信息
 	 */
 	private static final Map<String, TableInfo> tableInfoCache = new ConcurrentHashMap<String, TableInfo>();
+	/**
+	 * 默认表主键
+	 */
 	private static final String DEFAULT_ID_NAME = "id";
 
 	/**
@@ -264,12 +267,12 @@ public class TableInfoHelper {
 
 			Class<?> fieldType = field.getType();
 			FieldStrategy validate = tableField.validate();
-            /* 字符串类型默认 FieldStrategy.NOT_EMPTY */
+			/* 字符串类型默认 FieldStrategy.NOT_EMPTY */
 			if (String.class.isAssignableFrom(fieldType) && FieldStrategy.NOT_NULL.equals(validate)) {
 				validate = FieldStrategy.NOT_EMPTY;
 			}
 
-            /*
+			/*
 			 * el 语法支持，可以传入多个参数以逗号分开
 			 */
 			String el = field.getName();
