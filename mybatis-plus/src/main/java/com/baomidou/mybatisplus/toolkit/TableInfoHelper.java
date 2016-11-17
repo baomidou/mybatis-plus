@@ -29,7 +29,6 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -128,10 +127,6 @@ public class TableInfoHelper {
 			 * 字段, 使用 camelToUnderline 转换驼峰写法为下划线分割法, 如果已指定 TableField , 便不会执行这里
 			 */
 			TableFieldInfo tfi = new TableFieldInfo(field.getName());
-			/* 处理日期类型，不支持空比较 */
-			if (Date.class.isAssignableFrom(field.getType())) {
-				tfi.setFieldStrategy(FieldStrategy.NOT_NULL);
-			}
 			fieldList.add(tfi);
 		}
 
@@ -147,7 +142,8 @@ public class TableInfoHelper {
 		 * 未发现主键注解，跳过注入
 		 */
 		if (null == tableInfo.getKeyColumn()) {
-			logger.warning(String.format("Warn: Could not find @TableId in Class: %s, initTableInfo Method Fail.", clazz.getName()));
+			logger.warning(String.format("Warn: Could not find @TableId in Class: %s, initTableInfo Method Fail.",
+					clazz.getName()));
 			return null;
 		}
 		/*
@@ -161,7 +157,7 @@ public class TableInfoHelper {
 	 * <p>
 	 * 判断主键注解是否存在
 	 * </p>
-	 * 
+	 *
 	 * @param list
 	 *            字段列表
 	 * @return
@@ -182,7 +178,7 @@ public class TableInfoHelper {
 	 * <p>
 	 * 主键属性初始化
 	 * </p>
-	 * 
+	 *
 	 * @param tableInfo
 	 * @param field
 	 * @param clazz
@@ -216,7 +212,7 @@ public class TableInfoHelper {
 	 * <p>
 	 * 主键属性初始化
 	 * </p>
-	 * 
+	 *
 	 * @param tableInfo
 	 * @param field
 	 * @param clazz
@@ -252,7 +248,7 @@ public class TableInfoHelper {
 	 * <p>
 	 * 字段属性初始化
 	 * </p>
-	 * 
+	 *
 	 * @param fieldList
 	 * @param clazz
 	 * @return true 继续下一个属性判断，返回 continue;
@@ -266,7 +262,14 @@ public class TableInfoHelper {
 				columnName = tableField.value();
 			}
 
-			/*
+			Class<?> fieldType = field.getType();
+			FieldStrategy validate = tableField.validate();
+            /* 字符串类型默认 FieldStrategy.NOT_EMPTY */
+			if (String.class.isAssignableFrom(fieldType) && FieldStrategy.NOT_NULL.equals(validate)) {
+				validate = FieldStrategy.NOT_EMPTY;
+			}
+
+            /*
 			 * el 语法支持，可以传入多个参数以逗号分开
 			 */
 			String el = field.getName();
@@ -277,7 +280,7 @@ public class TableInfoHelper {
 			String[] els = el.split(";");
 			if (null != columns && null != els && columns.length == els.length) {
 				for (int i = 0; i < columns.length; i++) {
-					fieldList.add(new TableFieldInfo(columns[i], field.getName(), els[i], tableField.validate()));
+					fieldList.add(new TableFieldInfo(columns[i], field.getName(), els[i], validate));
 				}
 			} else {
 				String errorMsg = "Class: %s, Field: %s, 'value' 'el' Length must be consistent.";
@@ -330,7 +333,7 @@ public class TableInfoHelper {
 
 	/**
 	 * 初始化sqlMapper (供Mybatis原生调用)
-	 * 
+	 *
 	 * @param sqlSessionFactory
 	 * @return
 	 */
