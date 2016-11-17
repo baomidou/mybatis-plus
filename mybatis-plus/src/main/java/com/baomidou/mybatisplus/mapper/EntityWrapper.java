@@ -34,11 +34,6 @@ public class EntityWrapper<T> extends Wrapper<T> {
 	 */
 	protected T entity = null;
 
-	/**
-	 * SQL 查询字段内容，例如：id,name,age
-	 */
-	protected String sqlSelect = null;
-
 	public EntityWrapper() {
 		/* 注意，传入查询参数 */
 	}
@@ -58,19 +53,6 @@ public class EntityWrapper<T> extends Wrapper<T> {
 
 	public void setEntity(T entity) {
 		this.entity = entity;
-	}
-
-	public String getSqlSelect() {
-		if (StringUtils.isEmpty(sqlSelect)) {
-			return null;
-		}
-		return stripSqlInjection(sqlSelect);
-	}
-
-	public void setSqlSelect(String sqlSelect) {
-		if (StringUtils.isNotEmpty(sqlSelect)) {
-			this.sqlSelect = sqlSelect;
-		}
 	}
 
 	/**
