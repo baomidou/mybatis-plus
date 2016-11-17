@@ -16,9 +16,11 @@
 package com.baomidou.framework.service.impl;
 
 import com.baomidou.framework.service.IService;
+import com.baomidou.mybatisplus.MybatisConfiguration;
 import com.baomidou.mybatisplus.annotations.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.baomidou.mybatisplus.mapper.DBType;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.toolkit.CollectionUtil;
@@ -124,7 +126,15 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		if (CollectionUtil.isEmpty(entityList)) {
 			throw new IllegalArgumentException("Error: entityList must not be empty");
 		}
-		return retBool(baseMapper.insertBatch(entityList));
+		/*
+		 * 除ORACLE与MYSQL其他数据库调用InsertBatch,默认batchSize 30
+		 */
+		if (!MybatisConfiguration.DB_TYPE.equals(DBType.MYSQL) && !MybatisConfiguration.DB_TYPE.equals(DBType.ORACLE)) {
+			return insertBatch(entityList, 30);
+		} else {
+			return retBool(baseMapper.insertBatch(entityList));
+		}
+
 	}
 
 	/**
@@ -142,8 +152,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		if (null == tableInfo) {
 			throw new MybatisPlusException("Error: Cannot execute insertBatch Method, ClassGenricType not found .");
 		}
-		SqlSession batchSqlSession = tableInfo.getSqlSessionFactory().openSession(ExecutorType.BATCH,
-				false);
+		SqlSession batchSqlSession = tableInfo.getSqlSessionFactory().openSession(ExecutorType.BATCH, false);
 		try {
 			int size = entityList.size();
 			for (int i = 0; i < size; i++) {
