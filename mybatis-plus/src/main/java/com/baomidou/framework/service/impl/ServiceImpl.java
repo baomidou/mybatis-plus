@@ -196,6 +196,9 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	}
 
 	public boolean updateBatchById(List<T> entityList) {
+		if (CollectionUtil.isEmpty(entityList)) {
+			throw new IllegalArgumentException("Error: entityList must not be empty");
+		}
 		SqlSession batchSqlSession = sqlSessionBatch();
 		try {
 			int size = entityList.size();
