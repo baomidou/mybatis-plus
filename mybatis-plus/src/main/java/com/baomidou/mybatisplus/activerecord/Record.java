@@ -80,7 +80,7 @@ public class Record {
 	public static TableInfo table(Class<?> clazz) {
 		TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
 		if (null == tableInfo) {
-			throw new MybatisPlusException("Error: Cannot execute insertBatch Method, ClassGenricType not found .");
+			throw new MybatisPlusException("Error: Cannot execute table Method, ClassGenricType not found .");
 		}
 		return tableInfo;
 	}

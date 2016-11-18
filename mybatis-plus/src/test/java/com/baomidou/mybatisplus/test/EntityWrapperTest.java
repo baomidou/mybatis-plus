@@ -289,7 +289,7 @@ public class EntityWrapperTest {
 	}
 
 	/**
-	 * 测试Escape
+	 * 测试Qbc
 	 */
 	@Test
 	@SuppressWarnings("unchecked")
