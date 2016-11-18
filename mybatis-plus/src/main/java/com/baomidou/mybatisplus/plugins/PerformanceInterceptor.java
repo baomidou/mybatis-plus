@@ -16,6 +16,8 @@
 package com.baomidou.mybatisplus.plugins;
 
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.toolkit.SqlUtils;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.SystemClock;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
@@ -33,8 +35,7 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -46,7 +47,9 @@ import java.util.Properties;
  * @author hubin
  * @Date 2016-07-07
  */
-@Intercepts({@Signature(type = Executor.class, method = "query", args = { MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class }),
+@Intercepts({
+		@Signature(type = Executor.class, method = "query", args = { MappedStatement.class, Object.class, RowBounds.class,
+				ResultHandler.class }),
 		@Signature(type = Executor.class, method = "update", args = { MappedStatement.class, Object.class }) })
 public class PerformanceInterceptor implements Interceptor {
 
@@ -54,6 +57,8 @@ public class PerformanceInterceptor implements Interceptor {
 	 * SQL 执行最大时长，超过自动停止运行，有助于发现问题。
 	 */
 	private long maxTime = 0;
+
+	private boolean format = false;
 
 	public Object intercept(Invocation invocation) throws Throwable {
 		MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
@@ -65,13 +70,16 @@ public class PerformanceInterceptor implements Interceptor {
 		String statementId = mappedStatement.getId();
 		BoundSql boundSql = mappedStatement.getBoundSql(parameterObject);
 		Configuration configuration = mappedStatement.getConfiguration();
-		String sql = getSql(boundSql, parameterObject, configuration);
+		String sql = SqlUtils.sqlFormat(boundSql.getSql(), format);
+
+		List<String> params = getParams(boundSql, parameterObject, configuration);
 
 		long start = SystemClock.now();
 		Object result = invocation.proceed();
 		long end = SystemClock.now();
 		long timing = end - start;
-		System.err.println(" Time：" + timing + " ms" + " - ID：" + statementId + "\n Execute SQL：" + sql + "\n");
+		System.err.println(" Time：" + timing + " ms" + " - ID：" + statementId + "\n SQL Params:" + params.toString()
+				+ "\n Execute SQL：" + sql + "\n");
 		if (maxTime >= 1 && timing > maxTime) {
 			throw new MybatisPlusException(" The SQL execution time is too large, please optimize ! ");
 		}
@@ -89,10 +97,10 @@ public class PerformanceInterceptor implements Interceptor {
 		// TODO
 	}
 
-	private String getSql(BoundSql boundSql, Object parameterObject, Configuration configuration) {
-		String sql = boundSql.getSql().replaceAll("[\\s]+", " ");
+	private List<String> getParams(BoundSql boundSql, Object parameterObject, Configuration configuration) {
 		List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
 		TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
+		List<String> params = new ArrayList<String>();
 		if (parameterMappings != null) {
 			for (int i = 0; i < parameterMappings.size(); i++) {
 				ParameterMapping parameterMapping = parameterMappings.get(i);
@@ -109,38 +117,11 @@ public class PerformanceInterceptor implements Interceptor {
 						MetaObject metaObject = configuration.newMetaObject(parameterObject);
 						value = metaObject.getValue(propertyName);
 					}
-					sql = replacePlaceholder(sql, value);
+					params.add(StringUtils.sqlParam(value));
 				}
 			}
 		}
-		return sql;
-	}
-
-	private String replacePlaceholder(String sql, Object propertyValue) {
-		String result;
-		if (propertyValue != null) {
-			if (propertyValue instanceof String) {
-				result = "'" + propertyValue + "'";
-			} else if (propertyValue instanceof Date) {
-				result = "'" + dateToString(propertyValue) + "'";
-			} else {
-				result = propertyValue.toString();
-			}
-		} else {
-			result = "null";
-		}
-
-		/* 特殊处理 $ 符内容 */
-		if (null != result && result.contains("$")) {
-			return sql.replaceFirst("\\?", "[?]").replace("[?]", result);
-		}
-
-		/* 填充占位符 */
-		return sql.replaceFirst("\\?", result);
-	}
-
-	private synchronized String dateToString(Object obj) {
-		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(obj);
+		return params;
 	}
 
 	public long getMaxTime() {
@@ -151,4 +132,11 @@ public class PerformanceInterceptor implements Interceptor {
 		this.maxTime = maxTime;
 	}
 
+	public boolean isFormat() {
+		return format;
+	}
+
+	public void setFormat(boolean format) {
+		this.format = format;
+	}
 }
