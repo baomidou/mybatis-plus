@@ -172,17 +172,27 @@ public class StringUtils {
 			int length = args.length;
 			if (length >= 1) {
 				for (int i = 0; i < length; i++) {
-					String repStr;
-					if (args[i] instanceof Collection) {
-						repStr = StringUtils.quotaMarkList((Collection<?>) args[i]);
-					} else {
-						repStr = StringUtils.quotaMark(args[i]);
-					}
-					content = content.replace(String.format(PLACE_HOLDER, i), repStr);
+					content = content.replace(String.format(PLACE_HOLDER, i), sqlParam(args[i]));
 				}
 			}
 		}
 		return content;
+	}
+
+	/**
+	 * 获取SQL PARAMS字符串
+	 * 
+	 * @param obj
+	 * @return
+	 */
+	public static String sqlParam(Object obj) {
+		String repStr;
+		if (obj instanceof Collection) {
+			repStr = StringUtils.quotaMarkList((Collection<?>) obj);
+		} else {
+			repStr = StringUtils.quotaMark(obj);
+		}
+		return repStr;
 	}
 
 	/**
