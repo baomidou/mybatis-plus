@@ -63,7 +63,7 @@ public enum DBType {
 	/**
 	 * UNKONWN DB
 	 */
-	OTHER("other", "SQLServer数据库");
+	OTHER("other", "其他数据库");
 
 	private final String db;
 
