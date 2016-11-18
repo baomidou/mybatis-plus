@@ -15,8 +15,10 @@
  */
 package com.baomidou.mybatisplus.activerecord;
 
+import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.toolkit.TableInfo;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
@@ -44,9 +46,28 @@ public class Record {
 
 	/**
 	 * <p>
+	 * 批量操作 SqlSession
+	 * </p>
+	 * 
+	 * @param clazz
+	 *            实体类
+	 * @return SqlSession
+	 */
+	public static SqlSession sqlSessionBatch(Class<?> clazz) {
+		TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
+		if (null == tableInfo) {
+			throw new MybatisPlusException("Error: Cannot execute insertBatch Method, ClassGenricType not found .");
+		}
+		return tableInfo.getSqlSessionFactory().openSession(ExecutorType.BATCH, false);
+	}
+
+	/**
+	 * <p>
 	 * 获取Session
 	 * </p>
 	 * 
+	 * @param clazz
+	 *            实体类
 	 * @param autoCommit
 	 *            true自动提交false则相反
 	 * @return SqlSession

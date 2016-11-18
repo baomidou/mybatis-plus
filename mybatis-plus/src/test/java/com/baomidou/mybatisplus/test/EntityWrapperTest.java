@@ -292,6 +292,7 @@ public class EntityWrapperTest {
 	 * 测试Escape
 	 */
 	@Test
+	@SuppressWarnings("unchecked")
 	public void testQbc() {
 		Map<String,Object> map = new HashMap<String,Object>();
 		map.put("allEq1","22");

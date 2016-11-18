@@ -15,16 +15,17 @@
  */
 package com.baomidou.mybatisplus.test.oracle;
 
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.test.oracle.entity.TestUser;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * <p>
@@ -86,7 +87,9 @@ public class TestUserMapperTest {
 		ul.add(new TestUser("a", 1, 1));
 		ul.add(new TestUser("b", 2, 2));
 		ul.add(new TestUser("c", 3, 1));
-		rlt = testUserMapper.insertBatch(ul);
+		for (TestUser u : ul) {
+			rlt = testUserMapper.insert(u);
+		}
 		System.err.println("\n--------------insertBatch-------" + rlt);
 		sleep();
 		
@@ -98,7 +101,9 @@ public class TestUserMapperTest {
 		ul1.add(new TestUser("10", "update-0a", 11, 1));
 		ul1.add(new TestUser("11", "update-1a", 11, 1));
 		ul1.add(new TestUser("12", "update-2a", 12, 2));
-		rlt = testUserMapper.updateBatchById(ul1);
+		for (TestUser u : ul1) {
+			rlt = testUserMapper.updateById(u);
+		}
 		System.err.println("\n--------------updateBatchById-------" + rlt);
 		sleep();
 		
