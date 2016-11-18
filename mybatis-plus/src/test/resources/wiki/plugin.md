@@ -28,6 +28,8 @@
     <!-- SQL 执行性能分析，开发环境使用，线上不推荐。 maxTime 指的是 sql 最大执行时长 -->
     <plugin interceptor="com.baomidou.mybatisplus.plugins.PerformanceInterceptor">
         <property name="maxTime" value="100" />
+        <!--添加打印SQL格式化-->
+        <property name="format" value="true"/>
     </plugin>
     <!-- SQL 执行分析拦截器 stopProceed 发现全表执行 delete update 是否停止运行 -->
     <plugin interceptor="com.baomidou.mybatisplus.plugins.SqlExplainInterceptor">
