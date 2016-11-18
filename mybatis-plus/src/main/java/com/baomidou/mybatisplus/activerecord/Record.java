@@ -54,11 +54,7 @@ public class Record {
 	 * @return SqlSession
 	 */
 	public static SqlSession sqlSessionBatch(Class<?> clazz) {
-		TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
-		if (null == tableInfo) {
-			throw new MybatisPlusException("Error: Cannot execute insertBatch Method, ClassGenricType not found .");
-		}
-		return tableInfo.getSqlSessionFactory().openSession(ExecutorType.BATCH, false);
+		return table(clazz).getSqlSessionFactory().openSession(ExecutorType.BATCH, false);
 	}
 
 	/**
@@ -82,7 +78,11 @@ public class Record {
 	 * @return TableInfo
 	 */
 	public static TableInfo table(Class<?> clazz) {
-		return TableInfoHelper.getTableInfo(clazz);
+		TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
+		if (null == tableInfo) {
+			throw new MybatisPlusException("Error: Cannot execute insertBatch Method, ClassGenricType not found .");
+		}
+		return tableInfo;
 	}
 
 }
