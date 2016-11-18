@@ -15,13 +15,13 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import com.baomidou.mybatisplus.MybatisConfiguration;
-import com.baomidou.mybatisplus.annotations.FieldStrategy;
-import com.baomidou.mybatisplus.annotations.IdType;
-import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
-import com.baomidou.mybatisplus.toolkit.TableFieldInfo;
-import com.baomidou.mybatisplus.toolkit.TableInfo;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
+
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -34,12 +34,13 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.scripting.defaults.RawSqlSource;
 import org.apache.ibatis.session.Configuration;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
+import com.baomidou.mybatisplus.MybatisConfiguration;
+import com.baomidou.mybatisplus.annotations.FieldStrategy;
+import com.baomidou.mybatisplus.annotations.IdType;
+import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
+import com.baomidou.mybatisplus.toolkit.TableFieldInfo;
+import com.baomidou.mybatisplus.toolkit.TableInfo;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 
 /**
@@ -99,7 +100,6 @@ public class AutoSqlInjector implements ISqlInjector {
 		if (null != table && null != table.getKeyProperty()) {
 			/* 插入 */
 			this.injectInsertOneSql(mapperClass, modelClass, table);
-			this.injectInsertBatchSql(mapperClass, modelClass, table);
 
 			/* 删除 */
 			this.injectDeleteSql(mapperClass, modelClass, table);
@@ -110,7 +110,6 @@ public class AutoSqlInjector implements ISqlInjector {
 			/* 修改 */
 			this.injectUpdateByIdSql(mapperClass, modelClass, table);
 			this.injectUpdateSql(mapperClass, modelClass, table);
-			this.injectUpdateBatchById(mapperClass, modelClass, table);
 
 			/* 查询 */
 			this.injectSelectByIdSql(false, mapperClass, modelClass, table);
@@ -208,53 +207,6 @@ public class AutoSqlInjector implements ISqlInjector {
 
 	/**
 	 * <p>
-	 * 注入批量插入 SQL 语句
-	 * </p>
-	 *
-	 * @param mapperClass
-	 * @param modelClass
-	 * @param table
-	 */
-	protected void injectInsertBatchSql(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
-		KeyGenerator keyGenerator = new NoKeyGenerator();
-		StringBuilder fieldBuilder = new StringBuilder();
-		StringBuilder placeholderBuilder = new StringBuilder();
-		SqlMethod sqlMethod = SqlMethod.INSERT_BATCH_MYSQL;
-		if (DBType.ORACLE == dbType) {
-			sqlMethod = SqlMethod.INSERT_BATCH_ORACLE;
-			placeholderBuilder.append("\n<trim prefix=\"(SELECT \" suffix=\" FROM DUAL)\" suffixOverrides=\",\">\n");
-		} else {
-			placeholderBuilder.append("\n<trim prefix=\"(\" suffix=\")\" suffixOverrides=\",\">\n");
-		}
-		fieldBuilder.append("\n<trim prefix=\"(\" suffix=\")\" suffixOverrides=\",\">\n");
-		String keyProperty = null;
-		String keyColumn = null;
-		if (table.getIdType() == IdType.AUTO) {
-			/* 自增主键 */
-			keyGenerator = new Jdbc3KeyGenerator();
-			keyProperty = table.getKeyProperty();
-			keyColumn = table.getKeyColumn();
-		} else {
-			/* 用户输入自定义ID */
-			fieldBuilder.append(table.getKeyColumn()).append(",");
-			placeholderBuilder.append("#{item.").append(table.getKeyProperty()).append("},");
-		}
-		List<TableFieldInfo> fieldList = table.getFieldList();
-		for (TableFieldInfo fieldInfo : fieldList) {
-			fieldBuilder.append(fieldInfo.getColumn()).append(",");
-			placeholderBuilder.append("#{item.").append(fieldInfo.getEl()).append("},");
-		}
-		fieldBuilder.append("\n</trim>");
-		placeholderBuilder.append("\n</trim>");
-		String sql = String.format(sqlMethod.getSql(), table.getTableName(), fieldBuilder.toString(),
-				placeholderBuilder.toString());
-		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-		this.addInsertMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource, keyGenerator, keyProperty,
-				keyColumn);
-	}
-
-	/**
-	 * <p>
 	 * 注入 entity 条件删除 SQL 语句
 	 * </p>
 	 *
@@ -323,46 +275,6 @@ public class AutoSqlInjector implements ISqlInjector {
 	protected void injectUpdateByIdSql(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
 		SqlMethod sqlMethod = SqlMethod.UPDATE_BY_ID;
 		String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlSet(table, null), table.getKeyColumn(),
-				table.getKeyProperty());
-		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-		this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
-	}
-
-	/**
-	 * <p>
-	 * 注入批量更新 SQL 语句
-	 * </p>
-	 *
-	 * @param mapperClass
-	 * @param modelClass
-	 * @param table
-	 */
-	protected void injectUpdateBatchById(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
-		StringBuilder set = new StringBuilder();
-		set.append("<trim prefix=\"SET\" suffixOverrides=\",\">\n");
-		SqlMethod sqlMethod = SqlMethod.UPDATE_BATCH_BY_ID_MYSQL;
-		if (DBType.ORACLE == dbType) {
-			sqlMethod = SqlMethod.UPDATE_BATCH_BY_ID_ORACLE;
-			List<TableFieldInfo> fieldList = table.getFieldList();
-			for (TableFieldInfo fieldInfo : fieldList) {
-				set.append(fieldInfo.getColumn()).append("=#{item.").append(fieldInfo.getEl()).append("},");
-			}
-		} else if (DBType.MYSQL == dbType) {
-			List<TableFieldInfo> fieldList = table.getFieldList();
-			for (TableFieldInfo fieldInfo : fieldList) {
-				set.append("\n<trim prefix=\"").append(fieldInfo.getColumn()).append("=CASE ");
-				set.append(table.getKeyColumn()).append("\" suffix=\"END,\">");
-				set.append("\n<foreach collection=\"list\" item=\"i\" index=\"index\">");
-				set.append(convertIfTag(fieldInfo, "i.", false));
-				set.append("\nWHEN ").append("#{i.").append(table.getKeyProperty());
-				set.append("} THEN #{i.").append(fieldInfo.getEl()).append("}");
-				set.append(convertIfTag(fieldInfo, true));
-				set.append("\n</foreach>");
-				set.append("\n</trim>");
-			}
-		}
-		set.append("\n</trim>");
-		String sql = String.format(sqlMethod.getSql(), table.getTableName(), set.toString(), table.getKeyColumn(),
 				table.getKeyProperty());
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
 		this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
@@ -627,7 +539,7 @@ public class AutoSqlInjector implements ISqlInjector {
 		where.append("\n<if test=\"cm!=null and !cm.isEmpty\">");
 		where.append("\n WHERE ");
 		where.append("\n<foreach collection=\"cm.keys\" item=\"k\" separator=\"AND\"> ");
-		if (DBType.MYSQL == dbType) {
+		if (DBType.MYSQL.equals(dbType)) {
 			where.append("\n`${k}` = #{cm[${k}]}");
 		}else{
 			where.append("\n${k} = #{cm[${k}]}");

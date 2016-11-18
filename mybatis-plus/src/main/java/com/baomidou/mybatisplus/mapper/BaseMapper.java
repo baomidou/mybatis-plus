@@ -52,17 +52,6 @@ public interface BaseMapper<T> {
 
 	/**
 	 * <p>
-	 * 插入（批量）
-	 * </p>
-	 * 
-	 * @param entityList
-	 *            实体对象列表
-	 * @return int
-	 */
-	int insertBatch(List<T> entityList);
-
-	/**
-	 * <p>
 	 * 执行 SQL 插入
 	 * </p>
 	 * 
@@ -152,17 +141,6 @@ public interface BaseMapper<T> {
 	 * @return
 	 */
 	int update(@Param("et") T entity, @Param("ew") Wrapper<T> wrapper);
-
-	/**
-	 * <p>
-	 * 根据ID 批量更新
-	 * </p>
-	 * 
-	 * @param entityList
-	 *            实体对象列表
-	 * @return int
-	 */
-	int updateBatchById(List<T> entityList);
 
 	/**
 	 * <p>

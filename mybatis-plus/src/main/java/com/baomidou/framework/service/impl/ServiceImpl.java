@@ -15,7 +15,17 @@
  */
 package com.baomidou.framework.service.impl;
 
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+
+import org.apache.ibatis.jdbc.SQL;
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.baomidou.framework.service.IService;
+import com.baomidou.mybatisplus.activerecord.Record;
 import com.baomidou.mybatisplus.annotations.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
@@ -26,15 +36,6 @@ import com.baomidou.mybatisplus.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfo;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
-import org.apache.ibatis.jdbc.SQL;
-import org.apache.ibatis.session.ExecutorType;
-import org.apache.ibatis.session.SqlSession;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * <p>
@@ -78,6 +79,20 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 			throw new IllegalArgumentException("Error: sql Can not be empty.");
 		}
 		return StringUtils.sqlArgsFill(sql.toString(), args);
+	}
+
+	@SuppressWarnings("unchecked")
+	protected Class<T> currentModleClass() {
+		return ReflectionKit.getSuperClassGenricType(getClass(), 1);
+	}
+
+	/**
+	 * <p>
+	 * 批量操作 SqlSession
+	 * </p>
+	 */
+	protected SqlSession sqlSessionBatch() {
+		return Record.sqlSessionBatch(currentModleClass());
 	}
 
 	/**
@@ -124,7 +139,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		if (CollectionUtil.isEmpty(entityList)) {
 			throw new IllegalArgumentException("Error: entityList must not be empty");
 		}
-		return retBool(baseMapper.insertBatch(entityList));
+		return insertBatch(entityList, 30);
 	}
 
 	/**
@@ -138,12 +153,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		if (CollectionUtil.isEmpty(entityList)) {
 			throw new IllegalArgumentException("Error: entityList must not be empty");
 		}
-		TableInfo tableInfo = TableInfoHelper.getTableInfo(currentModleClass());
-		if (null == tableInfo) {
-			throw new MybatisPlusException("Error: Cannot execute insertBatch Method, ClassGenricType not found .");
-		}
-		SqlSession batchSqlSession = tableInfo.getSqlSessionFactory().openSession(ExecutorType.BATCH,
-				false);
+		SqlSession batchSqlSession = sqlSessionBatch();
 		try {
 			int size = entityList.size();
 			for (int i = 0; i < size; i++) {
@@ -159,11 +169,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		}
 		return true;
 
-	}
-
-	@SuppressWarnings("unchecked")
-	protected Class<T> currentModleClass() {
-		return ReflectionKit.getSuperClassGenricType(getClass(), 1);
 	}
 
 	public boolean deleteById(Serializable id) {
@@ -191,7 +196,21 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	}
 
 	public boolean updateBatchById(List<T> entityList) {
-		return retBool(baseMapper.updateBatchById(entityList));
+		SqlSession batchSqlSession = sqlSessionBatch();
+		try {
+			int size = entityList.size();
+			for (int i = 0; i < size; i++) {
+				baseMapper.updateById(entityList.get(i));
+				if (i % 30 == 0) {
+					batchSqlSession.flushStatements();
+				}
+			}
+			batchSqlSession.flushStatements();
+		} catch (Exception e) {
+			logger.warning("Error: Cannot execute insertBatch Method. Cause:" + e);
+			return false;
+		}
+		return true;
 	}
 
 	public T selectById(Serializable id) {

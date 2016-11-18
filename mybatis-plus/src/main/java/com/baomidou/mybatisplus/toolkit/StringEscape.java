@@ -12,16 +12,16 @@ public class StringEscape {
 	/**
 	 * 字符串是否需要转义
 	 *
-	 * @param x
-	 * @param stringLength
+	 * @param str
+	 * @param len
 	 * @return
 	 */
-	private static boolean isEscapeNeededForString(String x, int stringLength) {
+	private static boolean isEscapeNeededForString(String str, int len) {
 
 		boolean needsHexEscape = false;
 
-		for (int i = 0; i < stringLength; ++i) {
-			char c = x.charAt(i);
+		for (int i = 0; i < len; ++i) {
+			char c = str.charAt(i);
 
 			switch (c) {
 				case 0: /* Must be escaped for 'mysql' */
@@ -68,20 +68,20 @@ public class StringEscape {
 	/**
 	 * 转义字符串
 	 *
-	 * @param x
+	 * @param escapeStr
 	 * @return
 	 */
-	public static String escapeString(String x) {
+	public static String escapeString(String escapeStr) {
 
-		if (x.matches("\'(.+)\'")) {
-			x = x.substring(1, x.length() - 1);
+		if (escapeStr.matches("\'(.+)\'")) {
+			escapeStr = escapeStr.substring(1, escapeStr.length() - 1);
 		}
 
-		String parameterAsString = x;
-		int stringLength = x.length();
-		if (isEscapeNeededForString(x, stringLength)) {
+		String parameterAsString = escapeStr;
+		int stringLength = escapeStr.length();
+		if (isEscapeNeededForString(escapeStr, stringLength)) {
 
-			StringBuilder buf = new StringBuilder((int) (x.length() * 1.1));
+			StringBuilder buf = new StringBuilder((int) (escapeStr.length() * 1.1));
 
 			//
 			// Note: buf.append(char) is _faster_ than appending in blocks,
@@ -90,7 +90,7 @@ public class StringEscape {
 			//
 
 			for (int i = 0; i < stringLength; ++i) {
-				char c = x.charAt(i);
+				char c = escapeStr.charAt(i);
 
 				switch (c) {
 					case 0: /* Must be escaped for 'mysql' */

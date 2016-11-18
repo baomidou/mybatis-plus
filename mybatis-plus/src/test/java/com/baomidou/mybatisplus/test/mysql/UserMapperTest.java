@@ -163,7 +163,9 @@ public class UserMapperTest {
 		/* 使用 ID_WORKER 自动生成 ID */
 		ul.add(new User("8", 8, 1));
 		ul.add(new User("9", 9, 1));
-		rlt = userMapper.insertBatch(ul);
+		for (User u : ul) {
+			rlt = userMapper.insert(u);
+		}
 		System.err.println("\n--------------insertBatch----------------" + rlt + "\n\n");
 
 		/**
@@ -226,7 +228,9 @@ public class UserMapperTest {
 		userList.add(new User(11L, "updateBatchById-1", 1, 1));
 		userList.add(new User(12L, "updateBatchById-2", 2, 1));
 		userList.add(new User(13L, "updateBatchById-3", 3, 1));
-		rlt = userMapper.updateBatchById(userList);
+		for (User u : userList) {
+			rlt = userMapper.updateById(u);
+		}
 		System.err.println("------------------updateBatchById---------------------- result=" + rlt + "\n\n");
 		sleep();
 

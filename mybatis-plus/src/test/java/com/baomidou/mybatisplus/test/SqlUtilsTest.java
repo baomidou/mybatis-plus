@@ -23,7 +23,7 @@ public class SqlUtilsTest {
 	public void test1() {
 		String sql = "select * from test orDer    \r\n   by name";
 		CountOptimize countOptimize = SqlUtils.getCountOptimize(sql, true);
-		Assert.assertEquals("CountOptimize{orderBy=false, countSQL='SELECT COUNT(1) AS TOTAL from test '}",
+		Assert.assertEquals("{\"orderBy\":\"false\",\"countSQL\":\"SELECT COUNT(1) AS TOTAL from test \"}",
 				countOptimize.toString());
 
 	}
@@ -35,7 +35,7 @@ public class SqlUtilsTest {
 	public void test2() {
 		String sql = "select distinct name from test orDer       by name";
 		CountOptimize countOptimize = SqlUtils.getCountOptimize(sql, true);
-		Assert.assertEquals("CountOptimize{orderBy=true, countSQL='SELECT COUNT(1) AS TOTAL FROM (select distinct name from test orDer       by name) A'}",
+		Assert.assertEquals("{\"orderBy\":\"true\",\"countSQL\":\"SELECT COUNT(1) AS TOTAL FROM (select distinct name from test orDer       by name) A\"}",
 				countOptimize.toString());
 
 	}
@@ -48,7 +48,7 @@ public class SqlUtilsTest {
 		String sql = "select DATE_FORMAT('2016-05-01 18:31:33','%Y-%m-%d')";
 		CountOptimize countOptimize = SqlUtils.getCountOptimize(sql, true);
 		Assert.assertEquals(
-				"CountOptimize{orderBy=true, countSQL='SELECT COUNT(1) AS TOTAL FROM (select DATE_FORMAT('2016-05-01 18:31:33','%Y-%m-%d')) A'}",
+				"{\"orderBy\":\"true\",\"countSQL\":\"SELECT COUNT(1) AS TOTAL FROM (select DATE_FORMAT('2016-05-01 18:31:33','%Y-%m-%d')) A\"}",
 				countOptimize.toString());
 
 	}
@@ -60,7 +60,7 @@ public class SqlUtilsTest {
 	public void test4() {
 		String sql = "select DATE_FORMAT('2016-05-01 18:31:33','%Y-%m-%d') from test";
 		CountOptimize countOptimize = SqlUtils.getCountOptimize(sql, true);
-		Assert.assertEquals("CountOptimize{orderBy=true, countSQL='SELECT COUNT(1) AS TOTAL from test'}",
+		Assert.assertEquals("{\"orderBy\":\"true\",\"countSQL\":\"SELECT COUNT(1) AS TOTAL from test\"}",
 				countOptimize.toString());
 
 	}

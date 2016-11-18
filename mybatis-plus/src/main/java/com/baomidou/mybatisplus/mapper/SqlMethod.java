@@ -29,9 +29,7 @@ public enum SqlMethod {
 	 * 插入
 	 */
 	INSERT_ONE("insert", "插入一条数据", "<script>INSERT INTO %s %s VALUES %s</script>"),
-	INSERT_BATCH_MYSQL("insertBatch", "mysql 批量插入数据", "<script>INSERT INTO %s %s VALUES \n<foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\">%s\n</foreach></script>"),
-	INSERT_BATCH_ORACLE("insertBatch", "oracle 批量插入数据", "<script>INSERT INTO %s %s \n<foreach item=\"item\" index=\"index\" collection=\"list\" separator=\"UNION ALL\">%s\n</foreach></script>"),
-	
+
 	/**
 	 * 删除
 	 */
@@ -39,15 +37,13 @@ public enum SqlMethod {
 	DELETE_BY_MAP("deleteByMap", "根据columnMap 条件删除记录", "<script>DELETE FROM %s %s</script>"),
 	DELETE("delete", "根据 entity 条件删除记录", "<script>DELETE FROM %s %s</script>"),
 	DELETE_BATCH_BY_IDS("deleteBatchIds", "根据ID集合，批量删除数据", "<script>DELETE FROM %s WHERE %s IN (%s)</script>"),
-	
+
 	/**
 	 * 修改
 	 */
 	UPDATE_BY_ID("updateById", "根据ID 修改数据", "<script>UPDATE %s %s WHERE %s=#{%s}</script>"),
-	UPDATE_BATCH_BY_ID_MYSQL("updateBatchById", "mysql 根据ID 批量修改数据", "<script>UPDATE %s %s WHERE %s IN (<foreach collection=\"list\" separator=\",\" item=\"i\" index=\"index\">#{i.%s}</foreach>)</script>"),
-	UPDATE_BATCH_BY_ID_ORACLE("updateBatchById", "oracle 根据ID 批量修改数据", "<script><foreach collection=\"list\" item=\"item\" index=\"index\" open=\"BEGIN\" close=\";END;\" separator=\";\">UPDATE %s %s WHERE %s=#{item.%s}</foreach></script>"),
 	UPDATE("update", "根据 whereEntity 条件，更新记录", "<script>UPDATE %s %s %s</script>"),
-	
+
 	/**
 	 * 查询
 	 */
@@ -58,7 +54,7 @@ public enum SqlMethod {
 	SELECT_COUNT("selectCount", "查询满足条件总记录数", "<script>SELECT COUNT(1) FROM %s %s</script>"),
 	SELECT_LIST("selectList", "查询满足条件所有数据", "<script>SELECT %s FROM %s %s</script>"),
 	SELECT_PAGE("selectPage", "查询满足条件所有数据（并翻页）", "<script>SELECT %s FROM %s %s</script>");
-	
+
 	private final String method;
 	
 	private final String desc;

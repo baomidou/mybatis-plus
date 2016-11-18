@@ -40,6 +40,8 @@ public class CountOptimize {
 
 	@Override
 	public String toString() {
-		return "CountOptimize{" + "orderBy=" + orderBy + ", countSQL='" + countSQL + '\'' + '}';
+		return new StringBuilder().append("{\"").append("orderBy\":\"").append(orderBy).append("\",").append("\"countSQL\":\"")
+				.append(countSQL).append("\"}").toString();
+
 	}
 }
