@@ -15,7 +15,10 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
+import com.baomidou.mybatisplus.toolkit.MapUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
+
+import java.util.Map;
 
 /**
  * <p>
@@ -27,6 +30,8 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  */
 @SuppressWarnings({ "rawtypes", "serial" })
 public class Condition extends Wrapper {
+
+	private Map<String, Object> params;
 
 	/**
 	 * 获取实例
@@ -40,6 +45,10 @@ public class Condition extends Wrapper {
 	 */
 	@Override
 	public String getSqlSegment() {
+		Map<String, Object> params = getParams();
+		if (MapUtils.isNotEmpty(params)) {
+			allEq(params);
+		}
 		/*
 		 * 无条件
 		 */
@@ -49,5 +58,14 @@ public class Condition extends Wrapper {
 		}
 
 		return sqlWhere;
+	}
+
+	public Map<String, Object> getParams() {
+		return params;
+	}
+
+	public Condition setParams(Map<String, Object> params) {
+		this.params = params;
+		return this;
 	}
 }
