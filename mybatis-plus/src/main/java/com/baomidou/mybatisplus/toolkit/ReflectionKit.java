@@ -113,7 +113,7 @@ public class ReflectionKit {
 			FieldStrategy fieldStrategy = tableFieldInfo.getFieldStrategy();
 			Object val = getMethodValue(cls, bean, tableFieldInfo.getProperty());
 			if (FieldStrategy.NOT_EMPTY.equals(fieldStrategy)) {
-				if (null != val && !val.equals("")) {
+				if (StringUtils.checkValNotNull(val)) {
 					result = true;
 					break;
 				}

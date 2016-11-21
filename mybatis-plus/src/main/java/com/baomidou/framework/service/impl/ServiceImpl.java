@@ -15,15 +15,6 @@
  */
 package com.baomidou.framework.service.impl;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-
-import org.apache.ibatis.jdbc.SQL;
-import org.apache.ibatis.session.SqlSession;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.baomidou.framework.service.IService;
 import com.baomidou.mybatisplus.activerecord.Record;
 import com.baomidou.mybatisplus.annotations.IdType;
@@ -36,6 +27,14 @@ import com.baomidou.mybatisplus.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfo;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import org.apache.ibatis.jdbc.SQL;
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * <p>
@@ -110,7 +109,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 			TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
 			if (null != tableInfo) {
 				Object idVal = ReflectionKit.getMethodValue(cls, entity, tableInfo.getKeyProperty());
-				if (null == idVal || "".equals(idVal)) {
+				if (StringUtils.checkValNull(idVal)) {
 					return insert(entity);
 				} else {
 					/* 特殊处理 INPUT 主键策略逻辑 */
