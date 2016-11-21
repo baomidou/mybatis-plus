@@ -539,7 +539,7 @@ public class AutoSqlInjector implements ISqlInjector {
 		where.append("\n<where> ");
 		where.append("\n<foreach collection=\"cm.keys\" item=\"k\" separator=\"AND\"> ");
 		if (MybatisConfiguration.FIELD_STRATEGY == FieldStrategy.NOT_EMPTY){
-			where.append("\n<if test=\"cm[k] != null and cm[k] != ''\">");
+			where.append("\n<if test=\"cm[k] != null and cm[k] != '' \">");
 		}else{
 			where.append("\n<if test=\"cm[k] != null\">");
 		}
