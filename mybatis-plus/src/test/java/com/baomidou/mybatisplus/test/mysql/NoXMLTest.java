@@ -16,14 +16,15 @@
 package com.baomidou.mybatisplus.test.mysql;
 
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
-import com.baomidou.mybatisplus.test.mysql.entity.Test;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
-
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.junit.Test;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -34,23 +35,42 @@ import java.util.List;
  * @date 2016-09-26
  */
 public class NoXMLTest {
-
-	public static void main(String[] args) {
-		/*
-		 * 加载配置文件
-		 */
+	private SqlSession sqlSession;
+	{
 		InputStream in = NoXMLTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
 		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
 		SqlSessionFactory sessionFactory = mf.build(in);
-		SqlSession sqlSession = sessionFactory.openSession();
+		sqlSession = sessionFactory.openSession();
+	}
+
+	/**
+	 * 测试ByMap忽略null
+	 */
+	@Test
+	public void test1() {
 		/**
 		 * 查询是否有结果
 		 */
 		TestMapper testMapper = sqlSession.getMapper(TestMapper.class);
-		testMapper.insert(new Test(IdWorker.getId(), "Caratacus"));
-		List<Test> tests = testMapper.selectList(null);
+		Map<String, Object> map = new HashMap();
+		map.put("type", null);
+		map.put("id", null);
+		System.out.println(testMapper.selectByMap(map));
+	}
+
+	/**
+	 * 测试没有XML注入CRUD
+	 */
+	@Test
+	public void test2() {
+		/**
+		 * 查询是否有结果
+		 */
+		TestMapper testMapper = sqlSession.getMapper(TestMapper.class);
+		testMapper.insert(new com.baomidou.mybatisplus.test.mysql.entity.Test(IdWorker.getId(), "Caratacus"));
+		List<com.baomidou.mybatisplus.test.mysql.entity.Test> tests = testMapper.selectList(null);
 		if (null != tests) {
-			for (Test test : tests) {
+			for (com.baomidou.mybatisplus.test.mysql.entity.Test test : tests) {
 				System.out.println("id:"+test.getId()+ " , type:" + test.getType());
 			}
 		} else {
