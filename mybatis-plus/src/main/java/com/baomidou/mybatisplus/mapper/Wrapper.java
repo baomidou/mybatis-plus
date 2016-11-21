@@ -121,12 +121,12 @@ public abstract class Wrapper<T> implements Serializable {
      * @param params
      * @return
      */
-
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public Wrapper<T> allEq(Map<String, Object> params) {
         if (MapUtils.isNotEmpty(params)) {
-            Iterator iterator = params.entrySet().iterator();
+			Iterator iterator = params.entrySet().iterator();
             while (iterator.hasNext()) {
-                Map.Entry<String,Object> entry = (Map.Entry<String,Object>) iterator.next();
+				Map.Entry<String,Object> entry = (Map.Entry<String,Object>) iterator.next();
                 Object value = entry.getValue();
                 if(StringUtils.checkValNotNull(value)){
                     sql.WHERE(formatSql(String.format("%s = {0}", entry.getKey()), entry.getValue()));

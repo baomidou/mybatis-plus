@@ -365,8 +365,9 @@ public class SQLFormatter {
 
 	public static void main(String[] args) {
 		String sql = "select     *          from suber where id = '11  122'";
-        String format = new SQLFormatter().format(sql);
-        System.out.println(format);
-        System.out.println(format.replaceAll("([\\s]+(\"|'')?)", ""));
+		String format = new SQLFormatter().format(sql);
+		System.out.println(format);
+		System.out.println(format.replaceAll("([\\s]+(\"|'')?)", ""));
 	}
+
 }
