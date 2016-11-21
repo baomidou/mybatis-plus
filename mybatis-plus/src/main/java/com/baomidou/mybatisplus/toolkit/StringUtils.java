@@ -49,12 +49,21 @@ public class StringUtils {
 	 * 判断字符串是否为空
 	 * </p>
 	 *
-	 * @param str
+	 * @param cs
 	 *            需要判断字符串
 	 * @return 判断结果
 	 */
-	public static boolean isEmpty(String str) {
-		return str == null || EMPTY_STRING.equals(str.trim());
+	public static boolean isEmpty(final CharSequence cs) {
+		int strLen;
+		if (cs == null || (strLen = cs.length()) == 0) {
+			return true;
+		}
+		for (int i = 0; i < strLen; i++) {
+			if (Character.isWhitespace(cs.charAt(i)) == false) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -62,12 +71,12 @@ public class StringUtils {
 	 * 判断字符串是否不为空
 	 * </p>
 	 *
-	 * @param str
+	 * @param cs
 	 *            需要判断字符串
 	 * @return 判断结果
 	 */
-	public static boolean isNotEmpty(String str) {
-		return !isEmpty(str);
+	public static boolean isNotEmpty(final CharSequence cs) {
+		return !isEmpty(cs);
 	}
 
 	/**
@@ -279,6 +288,32 @@ public class StringUtils {
 	 */
 	public static String capitalize(final String str) {
 		return concatCapitalize(null, str);
+	}
+
+	/**
+	 * <p>
+	 * 判断对象是否为空
+	 * </p>
+	 *
+	 * @param object
+	 * @return
+	 */
+	public static boolean checkValNotNull(Object object) {
+		if (object instanceof CharSequence) {
+			return isNotEmpty((CharSequence) object);
+		}
+		return object == null ? false : true;
+	}
+	/**
+	 * <p>
+	 * 判断对象是否为空
+	 * </p>
+	 *
+	 * @param object
+	 * @return
+	 */
+	public static boolean checkValNull(Object object) {
+		return !checkValNotNull(object);
 	}
 
 }

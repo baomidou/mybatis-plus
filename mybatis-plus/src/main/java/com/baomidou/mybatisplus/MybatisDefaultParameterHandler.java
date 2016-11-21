@@ -15,24 +15,24 @@
  */
 package com.baomidou.mybatisplus;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
+import com.baomidou.mybatisplus.annotations.IdType;
+import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
+import com.baomidou.mybatisplus.toolkit.IdWorker;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
+import com.baomidou.mybatisplus.toolkit.TableInfo;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 
-import com.baomidou.mybatisplus.annotations.IdType;
-import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
-import com.baomidou.mybatisplus.toolkit.IdWorker;
-import com.baomidou.mybatisplus.toolkit.TableInfo;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * <p>
@@ -133,7 +133,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 			MetaObject metaObject = ms.getConfiguration().newMetaObject(parameterObject);
 			Object idValue = metaObject.getValue(tableInfo.getKeyProperty());
 			/* 自定义 ID */
-			if (null == idValue || "".equals(idValue)) {
+			if (StringUtils.checkValNull(idValue)) {
 				if (tableInfo.getIdType() == IdType.ID_WORKER) {
 					metaObject.setValue(tableInfo.getKeyProperty(), IdWorker.getId());
 				} else if (tableInfo.getIdType() == IdType.UUID) {
