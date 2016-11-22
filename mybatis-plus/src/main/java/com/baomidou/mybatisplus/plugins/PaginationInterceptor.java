@@ -132,9 +132,6 @@ public class PaginationInterceptor implements Interceptor {
 				return invocation.proceed();
 			}
 
-			/* 定义数据库方言 */
-			IDialect dialect = getiDialect();
-
 			BoundSql boundSql = mappedStatement.getBoundSql(parameterObject);
 			/*
 			 * <p> 禁用内存分页 </p> <p> 内存分页会查询所有结果出来处理（这个很吓人的），如果结果变化频繁这个数据还会不准。
@@ -153,24 +150,17 @@ public class PaginationInterceptor implements Interceptor {
 			if (rowBounds instanceof Pagination) {
 				Connection connection = mappedStatement.getConfiguration().getEnvironment().getDataSource().getConnection();
 				Pagination page = (Pagination) rowBounds;
-				boolean orderBy = true;
 				if (page.isSearchCount()) {
 					/*
 					 * COUNT 查询，去掉 ORDER BY 优化执行 SQL
 					 */
 					CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, page.isOptimizeCount());
-					orderBy = countOptimize.isOrderBy();
 					page = this.count(countOptimize.getCountSQL(), connection, mappedStatement, boundSql, page);
 					/** 总数 0 跳出执行 */
 					if (page.getTotal() <= 0) {
 						return invocation.proceed();
 					}
 				}
-				/* 执行 SQL */
-				String buildSql = SqlUtils.concatOrderBy(originalSql, page, orderBy);
-				originalSql = dialect.buildPaginationSql(buildSql, page.getOffsetCurrent(), page.getSize());
-				/* 更新需要执行SQL */
-				SystemMetaObject.forObject(boundSql).setValue("sql", originalSql);
 			}
 		}
 
