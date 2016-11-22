@@ -44,9 +44,9 @@ public class SqlUtils {
 		CountOptimize countOptimize = CountOptimize.newInstance();
 		StringBuffer countSql = new StringBuffer("SELECT COUNT(1) AS TOTAL ");
 		if (isOptimizeCount) {
-			String tempSql = originalSql.replaceAll("(?i)ORDER[\\s]+BY", "ORDER BY");
+			String tempSql = originalSql.replaceAll("(?i)ORDER[\\s]+BY", "ORDER BY").replaceAll("(?i)GROUP[\\s]+BY", "GROUP BY");
 			String indexOfSql = tempSql.toUpperCase();
-			if (!indexOfSql.contains("DISTINCT")) {
+			if (!indexOfSql.contains("DISTINCT") && !indexOfSql.contains("GROUP BY")) {
 				int formIndex = indexOfSql.indexOf("FROM");
 				if (formIndex > -1) {
 					// 有排序情况
