@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.plugins.entity.CountOptimize;
 import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.plugins.pagination.IDialect;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
+import com.baomidou.mybatisplus.toolkit.IOUtils;
 import com.baomidou.mybatisplus.toolkit.SqlUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import org.apache.ibatis.executor.Executor;
@@ -148,18 +149,23 @@ public class PaginationInterceptor implements Interceptor {
 			 * </p>
 			 */
 			if (rowBounds instanceof Pagination) {
-				Connection connection = mappedStatement.getConfiguration().getEnvironment().getDataSource().getConnection();
-				Pagination page = (Pagination) rowBounds;
-				if (page.isSearchCount()) {
-					/*
-					 * COUNT 查询，去掉 ORDER BY 优化执行 SQL
-					 */
-					CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, page.isOptimizeCount());
-					page = this.count(countOptimize.getCountSQL(), connection, mappedStatement, boundSql, page);
-					/** 总数 0 跳出执行 */
-					if (page.getTotal() <= 0) {
-						return invocation.proceed();
+				Connection connection = null;
+				try {
+					connection = mappedStatement.getConfiguration().getEnvironment().getDataSource().getConnection();
+					Pagination page = (Pagination) rowBounds;
+					if (page.isSearchCount()) {
+						/*
+						 * COUNT 查询，去掉 ORDER BY 优化执行 SQL
+						 */
+						CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, page.isOptimizeCount());
+						page = this.count(countOptimize.getCountSQL(), connection, mappedStatement, boundSql, page);
+						/** 总数 0 跳出执行 */
+						if (page.getTotal() <= 0) {
+							return invocation.proceed();
+						}
 					}
+				} finally {
+					IOUtils.closeQuietly(connection);
 				}
 			}
 		}
