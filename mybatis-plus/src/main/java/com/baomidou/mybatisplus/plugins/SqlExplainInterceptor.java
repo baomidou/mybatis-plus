@@ -15,14 +15,12 @@
  */
 package com.baomidou.mybatisplus.plugins;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.Properties;
-import java.util.logging.Logger;
-
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.toolkit.IOUtils;
 import org.apache.ibatis.builder.StaticSqlSource;
 import org.apache.ibatis.executor.Executor;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
@@ -34,7 +32,10 @@ import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.Configuration;
 
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.Properties;
 
 /**
  * <p>
@@ -44,15 +45,16 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
  * @author hubin
  * @Date 2016-08-16
  */
-@Intercepts({@Signature(type = Executor.class, method = "update", args = { MappedStatement.class, Object.class }) })
+@Intercepts({ @Signature(type = Executor.class, method = "update", args = { MappedStatement.class, Object.class }) })
 public class SqlExplainInterceptor implements Interceptor {
-	protected final Logger logger = Logger.getLogger("SqlExplainInterceptor");
-	
+
+	private static final Log logger = LogFactory.getLog(SqlExplainInterceptor.class);
+
 	/**
 	 * 发现执行全表 delete update 语句是否停止执行
 	 */
 	private boolean stopProceed = false;
-	
+
 	public Object intercept(Invocation invocation) throws Throwable {
 		/**
 		 * 处理 DELETE UPDATE 语句
@@ -77,6 +79,7 @@ public class SqlExplainInterceptor implements Interceptor {
 	 * <p>
 	 * 判断是否执行 SQL
 	 * </p>
+	 * 
 	 * @param configuration
 	 * @param mappedStatement
 	 * @param boundSql
@@ -85,8 +88,8 @@ public class SqlExplainInterceptor implements Interceptor {
 	 * @return
 	 * @throws Exception
 	 */
-	protected void sqlExplain( Configuration configuration, MappedStatement mappedStatement, BoundSql boundSql,
-			Connection connection, Object parameter ) throws Exception {
+	protected void sqlExplain(Configuration configuration, MappedStatement mappedStatement, BoundSql boundSql,
+			Connection connection, Object parameter) {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
@@ -94,35 +97,30 @@ public class SqlExplainInterceptor implements Interceptor {
 			explain.append(boundSql.getSql());
 			String sqlExplain = explain.toString();
 			StaticSqlSource sqlsource = new StaticSqlSource(configuration, sqlExplain, boundSql.getParameterMappings());
-			MappedStatement.Builder builder = new MappedStatement.Builder(configuration, "explain_sql", sqlsource, SqlCommandType.SELECT);
-			builder.resultMaps(mappedStatement.getResultMaps()).resultSetType(mappedStatement.getResultSetType()).statementType(mappedStatement.getStatementType());
+			MappedStatement.Builder builder = new MappedStatement.Builder(configuration, "explain_sql", sqlsource,
+					SqlCommandType.SELECT);
+			builder.resultMaps(mappedStatement.getResultMaps()).resultSetType(mappedStatement.getResultSetType())
+					.statementType(mappedStatement.getStatementType());
 			MappedStatement query_statement = builder.build();
 			DefaultParameterHandler handler = new DefaultParameterHandler(query_statement, parameter, boundSql);
 			stmt = connection.prepareStatement(sqlExplain);
 			handler.setParameters(stmt);
 			rs = stmt.executeQuery();
-			while ( rs.next() ) {
+			while (rs.next()) {
 				if (!"Using where".equals(rs.getString("Extra"))) {
 					String tip = " Full table operation is prohibited. SQL: " + boundSql.getSql();
 					if (this.isStopProceed()) {
 						throw new MybatisPlusException(tip);
 					}
-					logger.severe(tip);
+					logger.error(tip);
 					break;
 				}
 			}
 
-		} catch ( Exception e ) {
-			throw new MybatisPlusException(e); 
+		} catch (Exception e) {
+			throw new MybatisPlusException(e);
 		} finally {
-			if ( rs != null ) {
-				rs.close();
-				rs = null;
-			}
-			if ( stmt != null ) {
-				stmt.close();
-				stmt = null;
-			}
+			IOUtils.closeQuietly(rs, stmt);
 		}
 	}
 

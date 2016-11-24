@@ -21,13 +21,14 @@ import com.baomidou.mybatisplus.mapper.DBType;
 import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
 import com.baomidou.mybatisplus.mapper.ISqlInjector;
 import org.apache.ibatis.binding.MapperRegistry;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.logging.Logger;
 
 /**
  * <p>
@@ -42,7 +43,7 @@ import java.util.logging.Logger;
  */
 public class MybatisConfiguration extends Configuration {
 
-	protected final Logger logger = Logger.getLogger("MybatisConfiguration");
+	private static final Log logger = LogFactory.getLog(MybatisConfiguration.class);
 
 	/*
 	 * 数据库类型（默认 MySql）
@@ -103,7 +104,7 @@ public class MybatisConfiguration extends Configuration {
 	 */
 	@Override
 	public void addMappedStatement(MappedStatement ms) {
-		logger.fine(" addMappedStatement: " + ms.getId());
+		logger.debug(" addMappedStatement: " + ms.getId());
 		if (IS_REFRESH) {
 			/*
 			 * 支持是否自动刷新 XML 变更内容，开发环境使用【 注：生产环境勿用！】
@@ -114,7 +115,7 @@ public class MybatisConfiguration extends Configuration {
 				/*
 				 * 说明已加载了xml中的节点； 忽略mapper中的SqlProvider数据
 				 */
-				logger.severe("mapper[" + ms.getId() + "] is ignored, because it's exists, maybe from xml file");
+				logger.error("mapper[" + ms.getId() + "] is ignored, because it's exists, maybe from xml file");
 				return;
 			}
 		}

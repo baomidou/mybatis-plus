@@ -42,7 +42,6 @@ import org.apache.ibatis.session.RowBounds;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Properties;
 
 /**
@@ -235,19 +234,10 @@ public class PaginationInterceptor implements Interceptor {
 				page = new Pagination(1, page.getSize());
 				page.setTotal(total);
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			// ignored
 		} finally {
-			try {
-				if (rs != null) {
-					rs.close();
-				}
-				if (pstmt != null) {
-					pstmt.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			IOUtils.closeQuietly(pstmt, rs);
 		}
 		return page;
 	}

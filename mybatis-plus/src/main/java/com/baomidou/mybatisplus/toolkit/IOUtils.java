@@ -28,7 +28,6 @@ import java.net.Socket;
 import java.net.URLConnection;
 import java.nio.channels.Selector;
 import java.sql.Connection;
-import java.sql.SQLException;
 
 /**
  * <p>
@@ -389,7 +388,7 @@ public class IOUtils {
 	 * Connection conn = null;
 	 * try {
 	 * 	conn = new Connection();
-	 * 	// process socket
+	 * 	// process close
 	 * 	conn.close();
 	 * } catch (Exception e) {
 	 * 	// error handling
@@ -409,6 +408,88 @@ public class IOUtils {
 			} catch (Exception e) {
 				// ignored
 			}
+		}
+	}
+
+	/**
+	 * Closes a <code>AutoCloseable</code> unconditionally.
+	 * <p>
+	 * Equivalent to {@link AutoCloseable#close()}, except any exceptions will
+	 * be ignored. This is typically used in finally blocks.
+	 * <p>
+	 * Example code:
+	 *
+	 * <pre>
+	 * AutoCloseable closeable = null;
+	 * try {
+	 * 	closeable = new Connection();
+	 * 	// process close
+	 * 	closeable.close();
+	 * } catch (Exception e) {
+	 * 	// error handling
+	 * } finally {
+	 * 	IOUtils.closeQuietly(conn);
+	 * }
+	 * </pre>
+	 *
+	 * @param closeable
+	 *            the Connection to close, may be null or already closed
+	 * @since 2.2
+	 */
+	public static void closeQuietly(final AutoCloseable closeable) {
+		if (closeable != null) {
+			try {
+				closeable.close();
+			} catch (Exception e) {
+				// ignored
+			}
+		}
+	}
+
+	/**
+	 * Closes a <code>AutoCloseable</code> unconditionally.
+	 * <p>
+	 * Equivalent to {@link AutoCloseable#close()}, except any exceptions will
+	 * be ignored.
+	 * <p>
+	 * This is typically used in finally blocks to ensure that the closeable is
+	 * closed even if an Exception was thrown before the normal close statement
+	 * was reached. <br>
+	 * <b>It should not be used to replace the close statement(s) which should
+	 * be present for the non-exceptional case.</b> <br>
+	 * It is only intended to simplify tidying up where normal processing has
+	 * already failed and reporting close failure as well is not necessary or
+	 * useful.
+	 * <p>
+	 * Example code:
+	 * </p>
+	 *
+	 * <pre>
+	 * AutoCloseable closeable = null;
+	 * try {
+	 *     closeable = new AutoCloseable();
+	 *     // processing using the closeable; may throw an Exception
+	 *     closeable.close(); // Normal close - exceptions not ignored
+	 * } catch (Exception e) {
+	 *     // error handling
+	 * } finally {
+	 *     <b>IOUtils.closeQuietly(closeable); // In case normal close was skipped due to Exception</b>
+	 * }
+	 * </pre>
+	 * <p>
+	 * Closing all streams: <br>
+	 *
+	 * @param closeables
+	 *            the objects to close, may be null or already closed
+	 * @see #closeQuietly(AutoCloseable)
+	 * @since 2.5
+	 */
+	public static void closeQuietly(final AutoCloseable... closeables) {
+		if (closeables == null) {
+			return;
+		}
+		for (final AutoCloseable closeable : closeables) {
+			closeQuietly(closeable);
 		}
 	}
 }

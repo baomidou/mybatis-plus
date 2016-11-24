@@ -19,12 +19,12 @@ import com.baomidou.mybatisplus.annotations.FieldStrategy;
 import com.baomidou.mybatisplus.mapper.DBType;
 import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
 import com.baomidou.mybatisplus.mapper.ISqlInjector;
+import com.baomidou.mybatisplus.toolkit.IOUtils;
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.Properties;
@@ -48,11 +48,7 @@ public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 			throw ExceptionFactory.wrapException("Error building SqlSession.", e);
 		} finally {
 			ErrorContext.instance().reset();
-			try {
-				reader.close();
-			} catch (IOException e) {
-				// Intentionally ignore. Prefer previous error.
-			}
+			IOUtils.closeQuietly(reader);
 		}
 	}
 
@@ -65,11 +61,7 @@ public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 			throw ExceptionFactory.wrapException("Error building SqlSession.", e);
 		} finally {
 			ErrorContext.instance().reset();
-			try {
-				inputStream.close();
-			} catch (IOException e) {
-				// Intentionally ignore. Prefer previous error.
-			}
+			IOUtils.closeQuietly(inputStream);
 		}
 	}
 
