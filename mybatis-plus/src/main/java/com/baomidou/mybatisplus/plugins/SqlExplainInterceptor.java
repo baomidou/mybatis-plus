@@ -19,6 +19,8 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.toolkit.IOUtils;
 import org.apache.ibatis.builder.StaticSqlSource;
 import org.apache.ibatis.executor.Executor;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
@@ -34,7 +36,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 /**
  * <p>
@@ -46,7 +47,8 @@ import java.util.logging.Logger;
  */
 @Intercepts({ @Signature(type = Executor.class, method = "update", args = { MappedStatement.class, Object.class }) })
 public class SqlExplainInterceptor implements Interceptor {
-	protected final Logger logger = Logger.getLogger("SqlExplainInterceptor");
+
+	private static final Log logger = LogFactory.getLog(SqlExplainInterceptor.class);
 
 	/**
 	 * 发现执行全表 delete update 语句是否停止执行
@@ -110,7 +112,7 @@ public class SqlExplainInterceptor implements Interceptor {
 					if (this.isStopProceed()) {
 						throw new MybatisPlusException(tip);
 					}
-					logger.severe(tip);
+					logger.error(tip);
 					break;
 				}
 			}
