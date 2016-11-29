@@ -15,12 +15,12 @@
  */
 package com.baomidou.framework.service;
 
+import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.baomidou.mybatisplus.plugins.Page;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
-
-import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.baomidou.mybatisplus.plugins.Page;
 
 /**
  * <p>
@@ -61,11 +61,35 @@ public interface IService<T> {
 	 *
 	 * @param entityList
 	 *            实体对象列表
-	 * @param entityList
+	 * @param batchSize
 	 *
 	 * @return boolean
 	 */
 	boolean insertBatch(List<T> entityList, int batchSize);
+
+	/**
+	 * <p>
+	 * 批量修改插入
+	 * </p>
+	 *
+	 * @param entityList
+	 *            实体对象列表
+	 * @return boolean
+	 */
+	boolean insertOrUpdateBatch(List<T> entityList);
+
+	/**
+	 * <p>
+	 * 批量修改插入
+	 * </p>
+	 *
+	 * @param entityList
+	 *            实体对象列表
+	 * @param batchSize
+	 *
+	 * @return boolean
+	 */
+	boolean insertOrUpdateBatch(List<T> entityList, int batchSize);
 
 	/**
 	 * <p>
