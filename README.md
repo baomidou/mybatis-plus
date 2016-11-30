@@ -42,6 +42,9 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 
 [SSM-实战 Demo](http://git.oschina.net/juapk/SpringWind)
 
+     `如果你喜欢Hibernate，可以尝试使用`
+[Hibernate-Plus](http://git.oschina.net/baomidou/hibernate-plus)
+
 # 下载地址 | Download
 
 [点此去下载](http://maven.aliyun.com/nexus/#nexus-search;quick~mybatis-plus)
