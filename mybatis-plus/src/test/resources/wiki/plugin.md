@@ -24,6 +24,8 @@
     <!-- 配置方式二、使用自定义方言实现类 -->
     <plugin interceptor="com.baomidou.mybatisplus.plugins.PaginationInterceptor">
         <property name="dialectClazz" value="xxx.dialect.XXDialect" />
+        <!--支持aliDruid与jsqlparser 默认default-->
+        <property name="optimizeType" value="aliDruid" />
     </plugin>
     <!-- SQL 执行性能分析，开发环境使用，线上不推荐。 maxTime 指的是 sql 最大执行时长 -->
     <plugin interceptor="com.baomidou.mybatisplus.plugins.PerformanceInterceptor">
