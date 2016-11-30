@@ -94,11 +94,9 @@ public class SqlUtils {
 					countSql.append("FROM (").append(originalSql).append(") A");
 				}
 				countOptimize.setCountSQL(countSql.toString());
-				;
 			}
 
 		}
-
 		return countOptimize;
 	}
 

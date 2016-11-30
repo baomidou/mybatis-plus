@@ -88,6 +88,7 @@ public class SqlExplainInterceptor implements Interceptor {
 	 * @return
 	 * @throws Exception
 	 */
+	@SuppressWarnings("resource")
 	protected void sqlExplain(Configuration configuration, MappedStatement mappedStatement, BoundSql boundSql,
 			Connection connection, Object parameter) {
 		PreparedStatement stmt = null;

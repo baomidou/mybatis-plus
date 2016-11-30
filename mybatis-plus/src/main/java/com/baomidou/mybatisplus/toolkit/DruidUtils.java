@@ -26,6 +26,7 @@ import com.alibaba.druid.sql.PagerUtils;
  * @Date 2016-11-30
  */
 public class DruidUtils {
+
 	/**
 	 * 通过Druid方式获取count语句
 	 * 
