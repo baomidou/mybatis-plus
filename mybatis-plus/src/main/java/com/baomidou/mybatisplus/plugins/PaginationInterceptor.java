@@ -60,10 +60,10 @@ public class PaginationInterceptor implements Interceptor {
 
 	/* 溢出总页数，设置第一页 */
 	private boolean overflowCurrent = false;
-
+	/* Count优化方式 */
+	private String optimizeType = "default";
 	/* 方言类型 */
 	private String dialectType;
-
 	/* 方言实现类 */
 	private String dialectClazz;
 
@@ -107,7 +107,8 @@ public class PaginationInterceptor implements Interceptor {
 					/*
 					 * COUNT 查询，去掉 ORDER BY 优化执行 SQL
 					 */
-					CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, page.isOptimizeCount());
+					CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType,
+							page.isOptimizeCount());
 					orderBy = countOptimize.isOrderBy();
 				}
 				/* 执行 SQL */
@@ -156,7 +157,8 @@ public class PaginationInterceptor implements Interceptor {
 						/*
 						 * COUNT 查询，去掉 ORDER BY 优化执行 SQL
 						 */
-						CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, page.isOptimizeCount());
+						CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType,
+								page.isOptimizeCount());
 						page = this.count(countOptimize.getCountSQL(), connection, mappedStatement, boundSql, page);
 						/** 总数 0 跳出执行 */
 						if (page.getTotal() <= 0) {
@@ -273,5 +275,9 @@ public class PaginationInterceptor implements Interceptor {
 
 	public void setOverflowCurrent(boolean overflowCurrent) {
 		this.overflowCurrent = overflowCurrent;
+	}
+
+	public void setOptimizeType(String optimizeType) {
+		this.optimizeType = optimizeType;
 	}
 }

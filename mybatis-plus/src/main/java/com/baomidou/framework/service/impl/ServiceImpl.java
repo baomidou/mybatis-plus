@@ -67,7 +67,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	 * <p>
 	 * SQL 构建方法
 	 * </p>
-	 * 
+	 *
 	 * @param sql
 	 *            SQL 语句
 	 * @param args
@@ -136,10 +136,32 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	}
 
 	public boolean insertBatch(List<T> entityList) {
+		return insertBatch(entityList, 30);
+	}
+
+	public boolean insertOrUpdateBatch(List<T> entityList) {
+		return insertOrUpdateBatch(entityList, 30);
+	}
+
+	public boolean insertOrUpdateBatch(List<T> entityList, int batchSize) {
 		if (CollectionUtil.isEmpty(entityList)) {
 			throw new IllegalArgumentException("Error: entityList must not be empty");
 		}
-		return insertBatch(entityList, 30);
+		try {
+			SqlSession batchSqlSession = sqlSessionBatch();
+			int size = entityList.size();
+			for (int i = 0; i < size; i++) {
+				insertOrUpdate(entityList.get(i));
+				if (i % batchSize == 0) {
+					batchSqlSession.flushStatements();
+				}
+			}
+			batchSqlSession.flushStatements();
+		} catch (Exception e) {
+			logger.warn("Error: Cannot execute insertOrUpdateBatch Method. Cause:" + e);
+			return false;
+		}
+		return true;
 	}
 
 	/**

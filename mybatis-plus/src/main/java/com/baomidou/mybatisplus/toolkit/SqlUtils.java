@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.toolkit;
 
 import com.baomidou.mybatisplus.plugins.SQLFormatter;
 import com.baomidou.mybatisplus.plugins.entity.CountOptimize;
+import com.baomidou.mybatisplus.plugins.entity.Optimize;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 
 /**
@@ -29,46 +30,73 @@ import com.baomidou.mybatisplus.plugins.pagination.Pagination;
  */
 public class SqlUtils {
 	private final static SQLFormatter sqlFormatter = new SQLFormatter();
+	public static final String SQL_BASE_COUNT = "SELECT COUNT(1) FROM ( %s )";
 
 	/**
 	 * 获取CountOptimize
 	 * 
 	 * @param originalSql
 	 *            需要计算Count SQL
+	 * @param optimizeType
+	 *            count优化方式
 	 * @param isOptimizeCount
 	 *            是否需要优化Count
 	 * @return CountOptimize
 	 */
-	public static CountOptimize getCountOptimize(String originalSql, boolean isOptimizeCount) {
-		boolean optimize = false;
+	public static CountOptimize getCountOptimize(String originalSql, String optimizeType, String dialectType,
+			boolean isOptimizeCount) {
 		CountOptimize countOptimize = CountOptimize.newInstance();
-		StringBuffer countSql = new StringBuffer("SELECT COUNT(1) AS TOTAL ");
 		if (isOptimizeCount) {
 			String tempSql = originalSql.replaceAll("(?i)ORDER[\\s]+BY", "ORDER BY").replaceAll("(?i)GROUP[\\s]+BY", "GROUP BY");
 			String indexOfSql = tempSql.toUpperCase();
-			if (!indexOfSql.contains("DISTINCT") && !indexOfSql.contains("GROUP BY")) {
-				int formIndex = indexOfSql.indexOf("FROM");
-				if (formIndex > -1) {
-					// 有排序情况
-					int orderByIndex = indexOfSql.lastIndexOf("ORDER BY");
-					if (orderByIndex > -1) {
-						tempSql = tempSql.substring(0, orderByIndex);
-						countSql.append(tempSql.substring(formIndex));
-						countOptimize.setOrderBy(false);
-						// 无排序情况
-					} else {
-						countSql.append(tempSql.substring(formIndex));
-					}
-					// 执行优化
-					optimize = true;
-				}
+			// 有排序情况
+			int orderByIndex = indexOfSql.lastIndexOf("ORDER BY");
+			// 只针对 ALI_DRUID DEFAULT 这2种情况
+			if (orderByIndex > -1) {
+				countOptimize.setOrderBy(false);
 			}
+			Optimize opType = Optimize.getOptimizeType(optimizeType);
+			switch (opType) {
+			case ALI_DRUID:
+				/**
+				 * 调用ali druid方式 插件dbType一定要设置为小写与JdbcConstants保持一致
+				 * 
+				 * @see com.alibaba.druid.util.JdbcConstants
+				 */
+				String aliCountSql = DruidUtils.count(originalSql, dialectType);
+				countOptimize.setCountSQL(aliCountSql);
+				break;
+			case JSQLPARSER:
+				/**
+				 * 调用JsqlParser方式
+				 */
+				JsqlParserUtils.jsqlparserCount(countOptimize, originalSql);
+				break;
+			default:
+				StringBuffer countSql = new StringBuffer("SELECT COUNT(1) AS TOTAL ");
+				boolean optimize = false;
+				if (!indexOfSql.contains("DISTINCT") && !indexOfSql.contains("GROUP BY")) {
+					int formIndex = indexOfSql.indexOf("FROM");
+					if (formIndex > -1) {
+						if (orderByIndex > -1) {
+							tempSql = tempSql.substring(0, orderByIndex);
+							countSql.append(tempSql.substring(formIndex));
+							// 无排序情况
+						} else {
+							countSql.append(tempSql.substring(formIndex));
+						}
+						// 执行优化
+						optimize = true;
+					}
+				}
+				if (!optimize) {
+					// 无优化SQL
+					countSql.append("FROM (").append(originalSql).append(") A");
+				}
+				countOptimize.setCountSQL(countSql.toString());
+			}
+
 		}
-		if (!optimize) {
-			// 无优化SQL
-			countSql.append("FROM (").append(originalSql).append(") A");
-		}
-		countOptimize.setCountSQL(countSql.toString());
 		return countOptimize;
 	}
 
@@ -107,4 +135,5 @@ public class SqlUtils {
 			return boundSql.replaceAll("[\\s]+", " ");
 		}
 	}
+
 }
