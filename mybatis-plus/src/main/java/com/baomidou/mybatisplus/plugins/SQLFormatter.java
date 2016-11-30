@@ -80,7 +80,6 @@ public class SQLFormatter {
 		boolean beginLine = true;
 		boolean afterBeginBeforeEnd;
 		boolean afterByOrSetOrFromOrSelect;
-		boolean afterValues;
 		boolean afterOn;
 		boolean afterBetween;
 		boolean afterInsert;
@@ -302,7 +301,6 @@ public class SQLFormatter {
 			out();
 			indent++;
 			newline();
-			afterValues = true;
 		}
 
 		private void closeParen() {
