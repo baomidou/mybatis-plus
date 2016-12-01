@@ -101,10 +101,25 @@ public class ConfigBuilder {
 	 */
 	public ConfigBuilder(PackageConfig packageConfig, DataSourceConfig dataSourceConfig, StrategyConfig strategyConfig,
 			TemplateConfig template, String outputDir) {
-		handlerPackage(outputDir, packageConfig);
+		// 包配置
+		if (null == packageConfig) {
+			handlerPackage(outputDir, new PackageConfig());
+		} else {
+			handlerPackage(outputDir, packageConfig);
+		}
 		handlerDataSource(dataSourceConfig);
-		handlerStrategy(strategyConfig);
-		this.template = template;
+		// 策略配置
+		if (null == strategyConfig) {
+			handlerStrategy(new StrategyConfig());
+		} else {
+			handlerStrategy(strategyConfig);
+		}
+		// 模板配置
+		if (null == template) {
+			this.template = new TemplateConfig();
+		} else {
+			this.template = template;
+		}
 	}
 
 	// ************************ 曝露方法 BEGIN*****************************
@@ -277,7 +292,8 @@ public class ConfigBuilder {
 	 */
 	private List<TableInfo> processTable(List<TableInfo> tableList, NamingStrategy strategy, String tablePrefix) {
 		for (TableInfo tableInfo : tableList) {
-			tableInfo.setEntityName(NamingStrategy.capitalFirst(processName(tableInfo.getName(), strategy, tablePrefix)));
+			tableInfo.setEntityName(
+					NamingStrategy.capitalFirst(processName(tableInfo.getName(), strategy, tablePrefix)));
 			tableInfo.setMapperName(tableInfo.getEntityName() + ConstVal.MAPPER);
 			tableInfo.setXmlName(tableInfo.getMapperName());
 			tableInfo.setServiceName("I" + tableInfo.getEntityName() + ConstVal.SERIVCE);

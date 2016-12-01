@@ -25,17 +25,17 @@ package com.baomidou.mybatisplus.generator.config;
  */
 public class TemplateConfig {
 
-	private String entity;
+	private String entity = ConstVal.TEMPLATE_ENTITY;
 
-	private String service;
+	private String service = ConstVal.TEMPLATE_SERVICE;
 
-	private String serviceImpl;
+	private String serviceImpl = ConstVal.TEMPLATE_SERVICEIMPL;
 
-	private String mapper;
+	private String mapper = ConstVal.TEMPLATE_MAPPER;
 
-	private String xml;
+	private String xml = ConstVal.TEMPLATE_XML;
 
-	private String controller;
+	private String controller = ConstVal.TEMPLATE_CONTROLLER;
 
 	public String getEntity() {
 		return entity;

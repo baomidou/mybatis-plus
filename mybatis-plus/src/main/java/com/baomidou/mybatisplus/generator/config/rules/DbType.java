@@ -34,4 +34,5 @@ public enum DbType {
 	public String getValue() {
 		return value;
 	}
+
 }

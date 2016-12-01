@@ -29,7 +29,7 @@ public class StrategyConfig {
 	/**
 	 * 数据库表映射到实体的命名策略
 	 */
-	private NamingStrategy naming;
+	private NamingStrategy naming = NamingStrategy.nochange;
 
 	private NamingStrategy fieldNaming;
 
@@ -41,7 +41,7 @@ public class StrategyConfig {
 	/**
 	 * Entity 中的ID生成类型
 	 */
-	private IdStrategy idGenType;
+	private IdStrategy idGenType = IdStrategy.id_worker;
 
 	/**
 	 * 自定义继承的Entity类全称，带包名
@@ -51,17 +51,17 @@ public class StrategyConfig {
 	/**
 	 * 自定义继承的Mapper类全称，带包名
 	 */
-	private String superMapperClass;
+	private String superMapperClass = ConstVal.SUPERD_MAPPER_CLASS;
 
 	/**
 	 * 自定义继承的Service类全称，带包名
 	 */
-	private String superServiceClass;
+	private String superServiceClass = ConstVal.SUPERD_SERVICE_CLASS;
 
 	/**
 	 * 自定义继承的ServiceImpl类全称，带包名
 	 */
-	private String superServiceImplClass;
+	private String superServiceImplClass = ConstVal.SUPERD_SERVICEIMPL_CLASS;
 
 	/**
 	 * 自定义继承的Controller类全称，带包名
