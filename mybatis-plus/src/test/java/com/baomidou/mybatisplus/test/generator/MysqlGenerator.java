@@ -15,7 +15,7 @@
  */
 package com.baomidou.mybatisplus.test.generator;
 
-import com.baomidou.mybatisplus.generator.MybatisPlusGenerator;
+import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.PackageConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
@@ -37,7 +37,7 @@ public class MysqlGenerator {
 	 * </p>
 	 */
 	public static void main(String[] args) {
-		MybatisPlusGenerator mpg = new MybatisPlusGenerator();
+		AutoGenerator mpg = new AutoGenerator();
 		mpg.setOutputDir("D://");
 		mpg.setFileOverride(true);
 		mpg.setActiveRecord(true);

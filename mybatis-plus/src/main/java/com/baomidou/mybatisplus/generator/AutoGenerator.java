@@ -46,9 +46,9 @@ import com.baomidou.mybatisplus.generator.config.po.TableInfo;
  * @author YangHu, tangguo
  * @since 2016/8/30
  */
-public class MybatisPlusGenerator extends AbstractGenerator {
+public class AutoGenerator extends AbstractGenerator {
 
-	private static final Log logger = LogFactory.getLog(MybatisPlusGenerator.class);
+	private static final Log logger = LogFactory.getLog(AutoGenerator.class);
 
 	/**
 	 * velocity引擎
