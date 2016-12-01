@@ -16,7 +16,7 @@
 package com.baomidou.mybatisplus.entity;
 
 import com.baomidou.mybatisplus.MybatisConfiguration;
-import com.baomidou.mybatisplus.enums.FieldStrategy;
+import com.baomidou.mybatisplus.annotations.FieldStrategy;
 import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 

@@ -17,7 +17,7 @@ package com.baomidou.framework.service.impl;
 
 import com.baomidou.framework.service.IService;
 import com.baomidou.mybatisplus.activerecord.Record;
-import com.baomidou.mybatisplus.enums.IdType;
+import com.baomidou.mybatisplus.annotations.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;

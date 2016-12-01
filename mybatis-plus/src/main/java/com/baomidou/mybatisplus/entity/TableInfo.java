@@ -15,8 +15,9 @@
  */
 package com.baomidou.mybatisplus.entity;
 
-import com.baomidou.mybatisplus.enums.IdType;
 import org.apache.ibatis.session.SqlSessionFactory;
+
+import com.baomidou.mybatisplus.annotations.IdType;
 
 import java.util.List;
 

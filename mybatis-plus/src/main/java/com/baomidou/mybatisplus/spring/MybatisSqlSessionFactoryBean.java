@@ -19,7 +19,7 @@ import com.baomidou.mybatisplus.MybatisConfiguration;
 import com.baomidou.mybatisplus.MybatisPlusHolder;
 import com.baomidou.mybatisplus.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.MybatisXMLMapperBuilder;
-import com.baomidou.mybatisplus.enums.FieldStrategy;
+import com.baomidou.mybatisplus.annotations.FieldStrategy;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.enums.DBType;
 import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;

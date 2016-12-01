@@ -13,23 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.baomidou.mybatisplus.enums;
+package com.baomidou.mybatisplus.annotations;
 
 /**
  * <p>
- * 生成ID类型枚举类
+ * 字段策略枚举类
  * </p>
  * 
  * @author hubin
- * @Date 2015-11-10
+ * @Date 2016-09-09
  */
-public enum IdType {
-	AUTO(0, "数据库ID自增"),
-	INPUT(1, "用户输入ID"),
-	
-	/* 以下2种类型、只有当插入对象ID 为空，才自动填充。 */
-	ID_WORKER(2, "全局唯一ID"),
-	UUID(3, "全局唯一ID");
+public enum FieldStrategy {
+	IGNORED(0, "ignored"), NOT_NULL(1, "not null"), NOT_EMPTY(2, "not empty"), FILL(3, "field fill");
 
 	/** 主键 */
 	private final int key;
@@ -37,7 +32,7 @@ public enum IdType {
 	/** 描述 */
 	private final String desc;
 
-	IdType(final int key, final String desc) {
+	FieldStrategy(final int key, final String desc) {
 		this.key = key;
 		this.desc = desc;
 	}
@@ -48,6 +43,16 @@ public enum IdType {
 
 	public String getDesc() {
 		return this.desc;
+	}
+
+	public static FieldStrategy getFieldStrategy(int key) {
+		FieldStrategy[] fss = FieldStrategy.values();
+		for (FieldStrategy fs : fss) {
+			if (fs.getKey() == key) {
+				return fs;
+			}
+		}
+		return FieldStrategy.NOT_NULL;
 	}
 
 }
