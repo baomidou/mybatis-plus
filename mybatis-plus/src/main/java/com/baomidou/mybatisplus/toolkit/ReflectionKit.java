@@ -15,9 +15,10 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
-import com.baomidou.mybatisplus.annotations.FieldStrategy;
 import com.baomidou.mybatisplus.entity.TableFieldInfo;
 import com.baomidou.mybatisplus.entity.TableInfo;
+import com.baomidou.mybatisplus.enums.FieldStrategy;
+
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 

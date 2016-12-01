@@ -17,7 +17,7 @@ package com.baomidou.mybatisplus.entity;
 
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import com.baomidou.mybatisplus.annotations.IdType;
+import com.baomidou.mybatisplus.enums.IdType;
 
 import java.util.List;
 

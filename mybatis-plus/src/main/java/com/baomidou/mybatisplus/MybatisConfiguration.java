@@ -16,8 +16,8 @@
 package com.baomidou.mybatisplus;
 
 import com.baomidou.mybatisplus.mapper.AutoSqlInjector;
-import com.baomidou.mybatisplus.annotations.FieldStrategy;
 import com.baomidou.mybatisplus.enums.DBType;
+import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
 import com.baomidou.mybatisplus.mapper.ISqlInjector;
 import org.apache.ibatis.binding.MapperRegistry;
