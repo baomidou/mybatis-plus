@@ -28,45 +28,46 @@ public class PackageConfig {
 	/**
 	 * 父包名。如果为空，将下面子包名必须写全部， 否则就只需写子包名
 	 */
-	private String parent;
+	private String parent = "com.baomidou";
 
 	/**
 	 * 父包模块名。
 	 */
-	private String moduleName;
+	private String moduleName = null;
 
 	/**
 	 * Entity包名
 	 */
-	private String entity;
+	private String entity = "entity";
 
 	/**
 	 * Service包名
 	 */
-	private String service;
+	private String service = "service";
 
 	/**
 	 * Service Impl包名
 	 */
-	private String serviceImpl;
+	private String serviceImpl = "service.impl";
 	/**
 	 * Mapper包名
 	 */
-	private String mapper;
+	private String mapper = "mapper";
 
 	/**
 	 * Mapper XML包名
 	 */
-	private String xml;
+	private String xml = "mapper.xml";
 
 	/**
 	 * Controller包名
 	 */
-	private String controller;
+	private String controller = "web";
 
 	public String getParent() {
-		if (moduleName != null && !"".equals(moduleName.trim()))
+		if (StringUtils.isNotEmpty(moduleName)) {
 			return parent + "." + moduleName;
+		}
 		return parent;
 	}
 

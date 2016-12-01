@@ -19,6 +19,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.generator.config.rules.DbType;
 
 /**
@@ -61,9 +62,15 @@ public class DataSourceConfig {
 				dbType = DbType.MYSQL;
 			} else if (driverName.contains("oracle")) {
 				dbType = DbType.ORACLE;
+			} else {
+				throw new MybatisPlusException("Unknown type of database!");
 			}
 		}
 		return dbType;
+	}
+
+	public void setDbType(DbType dbType) {
+		this.dbType = dbType;
 	}
 
 	/**
@@ -114,10 +121,6 @@ public class DataSourceConfig {
 
 	public void setPassword(String password) {
 		this.password = password;
-	}
-
-	public void setDbType(DbType dbType) {
-		this.dbType = dbType;
 	}
 
 }

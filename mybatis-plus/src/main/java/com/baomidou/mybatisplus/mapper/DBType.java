@@ -84,7 +84,8 @@ public enum DBType {
 	 * @return
 	 */
 	public static DBType getDBType(String dbType) {
-		for (DBType dt : DBType.values()) {
+		DBType[] dts = DBType.values();
+		for (DBType dt : dts) {
 			if (dt.getDb().equals(dbType)) {
 				return dt;
 			}
