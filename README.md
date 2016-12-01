@@ -3,6 +3,12 @@
 [![license](https://img.shields.io/github/license/baomidou/mybatis-plus.svg?maxAge=2592000)](http://www.apache.org/licenses/LICENSE-2.0)
 [![GitHub release](https://img.shields.io/github/release/baomidou/mybatis-plus.svg?maxAge=2592000)](https://github.com/baomidou/mybatis-plus)
 
+
+  `如果你喜欢 Hibernate ，可以尝试使用`
+
+- [Hibernate-Plus](http://git.oschina.net/baomidou/hibernate-plus)
+
+
 > 为简化开发工作、提高生产率而生
 
 # 简介 | Intro
