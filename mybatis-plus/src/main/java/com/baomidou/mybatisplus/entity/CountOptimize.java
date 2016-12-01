@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.plugins.entity;
+package com.baomidou.mybatisplus.entity;
 
 /**
  * <p>

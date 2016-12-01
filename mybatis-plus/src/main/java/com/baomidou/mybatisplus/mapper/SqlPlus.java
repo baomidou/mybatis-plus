@@ -16,7 +16,7 @@
 package com.baomidou.mybatisplus.mapper;
 
 import com.baomidou.mybatisplus.MybatisAbstractSQL;
-import com.baomidou.mybatisplus.toolkit.CollectionUtil;
+import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 import java.text.MessageFormat;
@@ -224,7 +224,7 @@ public class SqlPlus extends MybatisAbstractSQL<SqlPlus> {
 	 *            是否为NOT IN操作
 	 */
 	private void handerIn(String column, Collection<?> value, boolean isNot) {
-		if (StringUtils.isNotEmpty(column) && CollectionUtil.isNotEmpty(value)) {
+		if (StringUtils.isNotEmpty(column) && CollectionUtils.isNotEmpty(value)) {
 			StringBuilder inSql = new StringBuilder();
 			inSql.append(column);
 			if (isNot) {

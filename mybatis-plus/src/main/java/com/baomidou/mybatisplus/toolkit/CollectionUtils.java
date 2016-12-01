@@ -25,7 +25,7 @@ import java.util.Collection;
  * @author Caratacus
  * @Date 2016-09-19
  */
-public class CollectionUtil {
+public class CollectionUtils {
 
 	/**
 	 * <p>
