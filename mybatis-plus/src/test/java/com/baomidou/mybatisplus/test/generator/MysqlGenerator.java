@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.test.generator;
 
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
+import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.PackageConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.rules.DbType;
@@ -38,11 +39,20 @@ public class MysqlGenerator {
 	 */
 	public static void main(String[] args) {
 		AutoGenerator mpg = new AutoGenerator();
-		mpg.setOutputDir("D://");
-		mpg.setFileOverride(true);
-		mpg.setActiveRecord(true);
-		mpg.setEnableCache(false);
-		mpg.setAuthor("Yanghu");
+		
+		// 全局配置
+		GlobalConfig gc = new GlobalConfig();
+		gc.setOutputDir("D://");
+		gc.setFileOverride(true);
+		gc.setActiveRecord(true);
+		gc.setEnableCache(false);
+		gc.setAuthor("Yanghu");
+//		gc.setMapperName("%sDao");
+//		gc.setXmlName("%sDao");
+//		gc.setServiceName("MP%sService");
+//		gc.setServiceImplName("%sServiceDiy");
+//		gc.setControllerName("%sAction");
+		mpg.setGlobalConfig(gc);
 
 		// 数据源配置
 		DataSourceConfig dsc = new DataSourceConfig();

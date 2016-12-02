@@ -29,6 +29,7 @@ import java.util.Set;
 
 import com.baomidou.mybatisplus.generator.config.ConstVal;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
+import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.PackageConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.TemplateConfig;
@@ -88,6 +89,11 @@ public class ConfigBuilder {
 	private TemplateConfig template;
 
 	/**
+	 * 全局配置信息
+	 */
+	private GlobalConfig globalConfig;
+
+	/**
 	 * 在构造器中处理配置
 	 *
 	 * @param outputDir
@@ -100,12 +106,18 @@ public class ConfigBuilder {
 	 *            表配置
 	 */
 	public ConfigBuilder(PackageConfig packageConfig, DataSourceConfig dataSourceConfig, StrategyConfig strategyConfig,
-			TemplateConfig template, String outputDir) {
+			TemplateConfig template, GlobalConfig globalConfig) {
+		// 全局配置
+		if (null == globalConfig) {
+			this.globalConfig = new GlobalConfig();
+		} else {
+			this.globalConfig = globalConfig;
+		}
 		// 包配置
 		if (null == packageConfig) {
-			handlerPackage(outputDir, new PackageConfig());
+			handlerPackage(this.globalConfig.getOutputDir(), new PackageConfig());
 		} else {
-			handlerPackage(outputDir, packageConfig);
+			handlerPackage(this.globalConfig.getOutputDir(), packageConfig);
 		}
 		handlerDataSource(dataSourceConfig);
 		// 策略配置
@@ -292,13 +304,32 @@ public class ConfigBuilder {
 	 */
 	private List<TableInfo> processTable(List<TableInfo> tableList, NamingStrategy strategy, String tablePrefix) {
 		for (TableInfo tableInfo : tableList) {
-			tableInfo.setEntityName(
-					NamingStrategy.capitalFirst(processName(tableInfo.getName(), strategy, tablePrefix)));
-			tableInfo.setMapperName(tableInfo.getEntityName() + ConstVal.MAPPER);
-			tableInfo.setXmlName(tableInfo.getMapperName());
-			tableInfo.setServiceName("I" + tableInfo.getEntityName() + ConstVal.SERIVCE);
-			tableInfo.setServiceImplName(tableInfo.getEntityName() + ConstVal.SERVICEIMPL);
-			tableInfo.setControllerName(tableInfo.getEntityName() + ConstVal.CONTROLLER);
+			tableInfo.setEntityName(NamingStrategy.capitalFirst(processName(tableInfo.getName(), strategy, tablePrefix)));
+			if (StringUtils.isNotEmpty(globalConfig.getMapperName())) {
+				tableInfo.setMapperName(String.format(globalConfig.getMapperName(), tableInfo.getEntityName()));
+			} else {
+				tableInfo.setMapperName(tableInfo.getEntityName() + ConstVal.MAPPER);
+			}
+			if (StringUtils.isNotEmpty(globalConfig.getXmlName())) {
+				tableInfo.setXmlName(String.format(globalConfig.getXmlName(), tableInfo.getEntityName()));
+			} else {
+				tableInfo.setXmlName(tableInfo.getEntityName() + ConstVal.MAPPER);
+			}
+			if (StringUtils.isNotEmpty(globalConfig.getServiceName())) {
+				tableInfo.setServiceName(String.format(globalConfig.getServiceName(), tableInfo.getEntityName()));
+			} else {
+				tableInfo.setServiceName("I" + tableInfo.getEntityName() + ConstVal.SERIVCE);
+			}
+			if (StringUtils.isNotEmpty(globalConfig.getServiceImplName())) {
+				tableInfo.setServiceImplName(String.format(globalConfig.getServiceImplName(), tableInfo.getEntityName()));
+			} else {
+				tableInfo.setServiceImplName(tableInfo.getEntityName() + ConstVal.SERVICEIMPL);
+			}
+			if (StringUtils.isNotEmpty(globalConfig.getControllerName())) {
+				tableInfo.setControllerName(String.format(globalConfig.getControllerName(), tableInfo.getEntityName()));
+			} else {
+				tableInfo.setControllerName(tableInfo.getEntityName() + ConstVal.CONTROLLER);
+			}
 		}
 		return tableList;
 	}
@@ -580,6 +611,14 @@ public class ConfigBuilder {
 			}
 		}
 		return QuerySQL.MYSQL;
+	}
+
+	public GlobalConfig getGlobalConfig() {
+		return globalConfig;
+	}
+
+	public void setGlobalConfig(GlobalConfig globalConfig) {
+		this.globalConfig = globalConfig;
 	}
 
 }

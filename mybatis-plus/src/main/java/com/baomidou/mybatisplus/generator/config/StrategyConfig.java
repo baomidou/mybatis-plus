@@ -19,7 +19,9 @@ import com.baomidou.mybatisplus.generator.config.rules.IdStrategy;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 
 /**
+ * <p>
  * 策略配置项
+ * </p>
  *
  * @author YangHu, tangguo, hubin
  * @since 2016/8/30

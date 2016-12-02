@@ -18,10 +18,11 @@ package com.baomidou.mybatisplus.generator.config;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
+ * <p>
  * 跟包相关的配置项
  *
  * @author YangHu, tangguo
- * @since 2016/8/30
+ * @since 2016-08-30
  */
 public class PackageConfig {
 
