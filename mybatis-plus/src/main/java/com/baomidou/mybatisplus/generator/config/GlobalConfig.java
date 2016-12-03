@@ -53,6 +53,16 @@ public class GlobalConfig {
 	 * 开启 ActiveRecord 模式
 	 */
 	private boolean activeRecord = true;
+
+	/**
+	 * 开启 BaseResultMap
+	 */
+	private boolean baseResultMap = false;
+
+	/**
+	 * 开启 baseColumnList
+	 */
+	private boolean baseColumnList = false;
 	/**
 	 * 各层文件名称方式，例如： %Action 生成 UserAction
 	 */
@@ -108,6 +118,22 @@ public class GlobalConfig {
 
 	public void setActiveRecord(boolean activeRecord) {
 		this.activeRecord = activeRecord;
+	}
+
+	public boolean isBaseResultMap() {
+		return baseResultMap;
+	}
+
+	public void setBaseResultMap(boolean baseResultMap) {
+		this.baseResultMap = baseResultMap;
+	}
+
+	public boolean isBaseColumnList() {
+		return baseColumnList;
+	}
+
+	public void setBaseColumnList(boolean baseColumnList) {
+		this.baseColumnList = baseColumnList;
 	}
 
 	public String getMapperName() {

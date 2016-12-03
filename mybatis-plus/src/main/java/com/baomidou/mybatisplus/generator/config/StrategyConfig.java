@@ -51,6 +51,11 @@ public class StrategyConfig {
 	private String superEntityClass;
 
 	/**
+	 * 自定义基础的Entity类，公共字段
+	 */
+	private String[] superEntityColumns;
+
+	/**
 	 * 自定义继承的Mapper类全称，带包名
 	 */
 	private String superMapperClass = ConstVal.SUPERD_MAPPER_CLASS;
@@ -118,6 +123,25 @@ public class StrategyConfig {
 
 	public void setSuperEntityClass(String superEntityClass) {
 		this.superEntityClass = superEntityClass;
+	}
+
+	public boolean includeSuperEntityColumns(String fieldName) {
+		if (null != superEntityColumns) {
+			for (String column : superEntityColumns) {
+				if (column.contains(fieldName)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public String[] getSuperEntityColumns() {
+		return superEntityColumns;
+	}
+
+	public void setSuperEntityColumns(String[] superEntityColumns) {
+		this.superEntityColumns = superEntityColumns;
 	}
 
 	public String getSuperMapperClass() {

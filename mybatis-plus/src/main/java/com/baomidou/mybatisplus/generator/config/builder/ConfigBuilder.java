@@ -45,7 +45,7 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  * 配置汇总 传递给文件生成工具
  *
  * @author YangHu, tangguo, hubin
- * @since 2016/8/30
+ * @since 2016-08-30
  */
 public class ConfigBuilder {
 
@@ -89,6 +89,11 @@ public class ConfigBuilder {
 	private TemplateConfig template;
 
 	/**
+	 * 策略配置
+	 */
+	private StrategyConfig strategyConfig;
+
+	/**
 	 * 全局配置信息
 	 */
 	private GlobalConfig globalConfig;
@@ -122,10 +127,11 @@ public class ConfigBuilder {
 		handlerDataSource(dataSourceConfig);
 		// 策略配置
 		if (null == strategyConfig) {
-			handlerStrategy(new StrategyConfig());
+			this.strategyConfig = new StrategyConfig();
 		} else {
-			handlerStrategy(strategyConfig);
+			this.strategyConfig = strategyConfig;
 		}
+		handlerStrategy(this.strategyConfig);
 		// 模板配置
 		if (null == template) {
 			this.template = new TemplateConfig();
@@ -304,7 +310,8 @@ public class ConfigBuilder {
 	 */
 	private List<TableInfo> processTable(List<TableInfo> tableList, NamingStrategy strategy, String tablePrefix) {
 		for (TableInfo tableInfo : tableList) {
-			tableInfo.setEntityName(NamingStrategy.capitalFirst(processName(tableInfo.getName(), strategy, tablePrefix)));
+			tableInfo.setEntityName(
+					NamingStrategy.capitalFirst(processName(tableInfo.getName(), strategy, tablePrefix)));
 			if (StringUtils.isNotEmpty(globalConfig.getMapperName())) {
 				tableInfo.setMapperName(String.format(globalConfig.getMapperName(), tableInfo.getEntityName()));
 			} else {
@@ -321,7 +328,8 @@ public class ConfigBuilder {
 				tableInfo.setServiceName("I" + tableInfo.getEntityName() + ConstVal.SERIVCE);
 			}
 			if (StringUtils.isNotEmpty(globalConfig.getServiceImplName())) {
-				tableInfo.setServiceImplName(String.format(globalConfig.getServiceImplName(), tableInfo.getEntityName()));
+				tableInfo.setServiceImplName(
+						String.format(globalConfig.getServiceImplName(), tableInfo.getEntityName()));
 			} else {
 				tableInfo.setServiceImplName(tableInfo.getEntityName() + ConstVal.SERVICEIMPL);
 			}
@@ -444,6 +452,10 @@ public class ConfigBuilder {
 			}
 			// 处理其它信息
 			field.setName(results.getString(querySQL.getFieldName()));
+			if (strategyConfig.includeSuperEntityColumns(field.getName())) {
+				// 跳过公共字段
+				continue;
+			}
 			field.setType(results.getString(querySQL.getFieldType()));
 			field.setPropertyName(processName(field.getName(), strategy));
 			field.setPropertyType(processFiledType(field.getType()));
@@ -611,6 +623,14 @@ public class ConfigBuilder {
 			}
 		}
 		return QuerySQL.MYSQL;
+	}
+
+	public StrategyConfig getStrategyConfig() {
+		return strategyConfig;
+	}
+
+	public void setStrategyConfig(StrategyConfig strategyConfig) {
+		this.strategyConfig = strategyConfig;
 	}
 
 	public GlobalConfig getGlobalConfig() {

@@ -114,6 +114,9 @@ public class AutoGenerator extends AbstractGenerator {
 			ctx.put("author", config.getGlobalConfig().getAuthor());
 			ctx.put("date", date);
 			ctx.put("table", tableInfo);
+			ctx.put("enableCache", config.getGlobalConfig().isEnableCache());
+			ctx.put("baseResultMap", config.getGlobalConfig().isBaseResultMap());
+			ctx.put("baseColumnList", config.getGlobalConfig().isBaseColumnList());
 			ctx.put("entity", tableInfo.getEntityName());
 			ctx.put("addTabeName", !tableInfo.getEntityName().toLowerCase().equals(tableInfo.getName().toLowerCase()));
 			ctx.put("idGenType", config.getIdType());
