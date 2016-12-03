@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.generator.config;
 
-import com.baomidou.mybatisplus.generator.config.rules.IdStrategy;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 
 /**
@@ -39,11 +38,6 @@ public class StrategyConfig {
 	 * 表前缀
 	 */
 	private String tablePrefix;
-
-	/**
-	 * Entity 中的ID生成类型
-	 */
-	private IdStrategy idGenType = IdStrategy.id_worker;
 
 	/**
 	 * 自定义继承的Entity类全称，带包名
@@ -120,14 +114,6 @@ public class StrategyConfig {
 
 	public void setTablePrefix(String tablePrefix) {
 		this.tablePrefix = tablePrefix;
-	}
-
-	public IdStrategy getIdGenType() {
-		return idGenType;
-	}
-
-	public void setIdGenType(IdStrategy idGenType) {
-		this.idGenType = idGenType;
 	}
 
 	public String getSuperEntityClass() {

@@ -15,11 +15,9 @@
  */
 package com.baomidou.mybatisplus;
 
-import com.baomidou.mybatisplus.mapper.AutoSqlInjector;
-import com.baomidou.mybatisplus.enums.DBType;
-import com.baomidou.mybatisplus.enums.FieldStrategy;
-import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
-import com.baomidou.mybatisplus.mapper.ISqlInjector;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
+
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
@@ -27,8 +25,12 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
+import com.baomidou.mybatisplus.enums.DBType;
+import com.baomidou.mybatisplus.enums.FieldStrategy;
+import com.baomidou.mybatisplus.enums.IdType;
+import com.baomidou.mybatisplus.mapper.AutoSqlInjector;
+import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
+import com.baomidou.mybatisplus.mapper.ISqlInjector;
 
 /**
  * <p>
@@ -49,6 +51,11 @@ public class MybatisConfiguration extends Configuration {
 	 * 数据库类型（默认 MySql）
 	 */
 	public static DBType DB_TYPE = DBType.MYSQL;
+	
+	/*
+	 * 主键策略 （默认 ID_WORKER）
+	 */
+	public static IdType ID_TYPE = IdType.ID_WORKER;
 
 	/*
 	 * 数据库字段使用下划线命名（默认 false）

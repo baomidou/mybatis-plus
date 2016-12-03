@@ -36,7 +36,6 @@ import com.baomidou.mybatisplus.generator.config.TemplateConfig;
 import com.baomidou.mybatisplus.generator.config.po.TableField;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.rules.DbType;
-import com.baomidou.mybatisplus.generator.config.rules.IdStrategy;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.config.rules.QuerySQL;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
@@ -65,10 +64,6 @@ public class ConfigBuilder {
 	private String superServiceClass;
 	private String superServiceImplClass;
 	private String superControllerClass;
-	/**
-	 * ID的字符串类型
-	 */
-	private String idType;
 	/**
 	 * 数据库表信息
 	 */
@@ -186,15 +181,6 @@ public class ConfigBuilder {
 	}
 
 	/**
-	 * 获取ID类型
-	 *
-	 * @return id生成方式
-	 */
-	public String getIdType() {
-		return idType;
-	}
-
-	/**
 	 * 表信息
 	 *
 	 * @return 所有表信息
@@ -285,17 +271,6 @@ public class ConfigBuilder {
 		}
 		superEntityClass = config.getSuperEntityClass();
 		superControllerClass = config.getSuperControllerClass();
-
-		// ID 策略判断
-		if (config.getIdGenType() == IdStrategy.auto) {
-			idType = IdStrategy.auto.getValue();
-		} else if (config.getIdGenType() == IdStrategy.input) {
-			idType = IdStrategy.input.getValue();
-		} else if (config.getIdGenType() == IdStrategy.uuid) {
-			idType = IdStrategy.uuid.getValue();
-		} else {
-			idType = IdStrategy.id_worker.getValue();
-		}
 	}
 
 	/**

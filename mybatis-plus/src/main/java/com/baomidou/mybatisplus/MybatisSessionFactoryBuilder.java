@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus;
 
 import com.baomidou.mybatisplus.enums.DBType;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
+import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
 import com.baomidou.mybatisplus.mapper.ISqlInjector;
 import com.baomidou.mybatisplus.toolkit.IOUtils;
@@ -68,6 +69,11 @@ public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 	// TODO 注入数据库类型
 	public void setDbType(String dbType) {
 		MybatisConfiguration.DB_TYPE = DBType.getDBType(dbType);
+	}
+
+	// TODO 注入主键策略
+	public void setIdType(int idType) {
+		MybatisConfiguration.ID_TYPE = IdType.getIdType(idType);
 	}
 
 	// TODO 注入表字段使用下划线命名

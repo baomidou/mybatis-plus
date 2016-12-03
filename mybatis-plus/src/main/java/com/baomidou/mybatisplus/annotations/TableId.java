@@ -43,9 +43,9 @@ public @interface TableId {
 
 	/*
 	 * <p>
-	 * 主键ID，默认 ID 自增
+	 * 主键ID，默认 INPUT
 	 * </p>
 	 * {@link IdType}
 	 */
-	IdType type() default IdType.ID_WORKER;
+	IdType type() default IdType.INPUT;
 }

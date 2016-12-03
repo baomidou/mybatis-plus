@@ -196,7 +196,14 @@ public class TableInfoHelper {
 		TableId tableId = field.getAnnotation(TableId.class);
 		if (tableId != null) {
 			if (tableInfo.getKeyColumn() == null) {
-				tableInfo.setIdType(tableId.type());
+				/*
+				 * 主键策略（ 注解 > 全局 > 默认 ）
+				 */
+				if (IdType.INPUT != tableId.type()) {
+					tableInfo.setIdType(tableId.type());
+				} else {
+					tableInfo.setIdType(MybatisConfiguration.ID_TYPE);
+				}
 				if (StringUtils.isNotEmpty(tableId.value())) {
 					/* 自定义字段 */
 					tableInfo.setKeyColumn(tableId.value());
