@@ -27,6 +27,7 @@ import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
  * <p>
  * 代码生成器演示
  * </p>
+ * 
  * @author hubin
  * @date 2016-12-01
  */
@@ -39,7 +40,7 @@ public class MysqlGenerator {
 	 */
 	public static void main(String[] args) {
 		AutoGenerator mpg = new AutoGenerator();
-		
+
 		// 全局配置
 		GlobalConfig gc = new GlobalConfig();
 		gc.setOutputDir("D://");
@@ -47,11 +48,13 @@ public class MysqlGenerator {
 		gc.setActiveRecord(true);
 		gc.setEnableCache(false);
 		gc.setAuthor("Yanghu");
-//		gc.setMapperName("%sDao");
-//		gc.setXmlName("%sDao");
-//		gc.setServiceName("MP%sService");
-//		gc.setServiceImplName("%sServiceDiy");
-//		gc.setControllerName("%sAction");
+
+		// 自定义文件命名，注意 %s 会自动填充表实体属性！
+		// gc.setMapperName("%sDao");
+		// gc.setXmlName("%sDao");
+		// gc.setServiceName("MP%sService");
+		// gc.setServiceImplName("%sServiceDiy");
+		// gc.setControllerName("%sAction");
 		mpg.setGlobalConfig(gc);
 
 		// 数据源配置
@@ -65,8 +68,20 @@ public class MysqlGenerator {
 
 		// 策略配置
 		StrategyConfig strategy = new StrategyConfig();
-		strategy.setTablePrefix("bmd_");
+		strategy.setTablePrefix("bmd_");// 此处可以修改为您的表前缀
 		strategy.setNaming(NamingStrategy.remove_prefix_and_camel);
+		strategy.setInclude(new String[] { "user" }); // 需要生成的表
+		// strategy.setExclude(new String[]{"test"}); // 排除生成的表
+		// 自定义实体父类
+		// strategy.setSuperEntityClass("com.baomidou.demo.TestEntity");
+		// 自定义 mapper 父类
+		// strategy.setSuperMapperClass("com.baomidou.demo.TestMapper");
+		// 自定义 service 父类
+		// strategy.setSuperServiceClass("com.baomidou.demo.TestService");
+		// 自定义 service 实现类父类
+		// strategy.setSuperServiceImplClass("com.baomidou.demo.TestServiceImpl");
+		// 自定义 controller 父类
+		// strategy.setSuperControllerClass("com.baomidou.demo.TestController");
 		mpg.setStrategy(strategy);
 
 		// 包配置
