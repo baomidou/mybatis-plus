@@ -104,6 +104,10 @@ public class StringUtils {
 		}
 		return sb.toString();
 	}
+	
+	public static void main(String[] args) {
+		System.err.println(StringUtils.camelToUnderline("DSDSSD_SDDS"));
+	}
 
 	/**
 	 * <p>
@@ -118,13 +122,14 @@ public class StringUtils {
 		if (isEmpty(param)) {
 			return EMPTY;
 		}
-		int len = param.length();
+		String temp = param.toLowerCase();
+		int len = temp.length();
 		StringBuilder sb = new StringBuilder(len);
 		for (int i = 0; i < len; i++) {
-			char c = param.charAt(i);
+			char c = temp.charAt(i);
 			if (c == UNDERLINE) {
 				if (++i < len) {
-					sb.append(Character.toUpperCase(param.charAt(i)));
+					sb.append(Character.toUpperCase(temp.charAt(i)));
 				}
 			} else {
 				sb.append(c);
@@ -255,6 +260,7 @@ public class StringUtils {
 	/**
 	 * <p>
 	 * 拼接字符串第二个字符串第一个字母大写
+	 * </p>
 	 *
 	 * @param concatStr
 	 * @param str
@@ -275,8 +281,11 @@ public class StringUtils {
 			return str;
 		}
 
-		return new StringBuilder(strLen).append(concatStr).append(Character.toTitleCase(firstChar)).append(str.substring(1))
-				.toString();
+		StringBuilder sb = new StringBuilder(strLen);
+		sb.append(concatStr);
+		sb.append(Character.toTitleCase(firstChar));
+		sb.append(str.substring(1));
+		return sb.toString();
 	}
 
 	/**

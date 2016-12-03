@@ -15,22 +15,6 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
-import com.baomidou.mybatisplus.MybatisConfiguration;
-import com.baomidou.mybatisplus.MybatisPlusHolder;
-import com.baomidou.mybatisplus.annotations.TableField;
-import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.annotations.TableName;
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.entity.TableFieldInfo;
-import com.baomidou.mybatisplus.entity.TableInfo;
-import com.baomidou.mybatisplus.enums.FieldStrategy;
-import com.baomidou.mybatisplus.enums.IdType;
-
-import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.SqlSessionFactory;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -38,6 +22,22 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.SqlSessionFactory;
+
+import com.baomidou.mybatisplus.MybatisConfiguration;
+import com.baomidou.mybatisplus.MybatisPlusHolder;
+import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotations.TableId;
+import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.entity.TableFieldInfo;
+import com.baomidou.mybatisplus.entity.TableInfo;
+import com.baomidou.mybatisplus.enums.FieldStrategy;
+import com.baomidou.mybatisplus.enums.IdType;
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 
 /**
  * <p>
@@ -134,8 +134,7 @@ public class TableInfoHelper {
 			/**
 			 * 字段, 使用 camelToUnderline 转换驼峰写法为下划线分割法, 如果已指定 TableField , 便不会执行这里
 			 */
-			TableFieldInfo tfi = new TableFieldInfo(field.getName());
-			fieldList.add(tfi);
+			fieldList.add(new TableFieldInfo(field.getName()));
 		}
 
 		/* 字段列表 */
@@ -213,7 +212,7 @@ public class TableInfoHelper {
 					tableInfo.setKeyColumn(StringUtils.camelToUnderline(field.getName()));
 				} else {
 					tableInfo.setKeyColumn(field.getName());
-				}
+				} 
 				tableInfo.setKeyProperty(field.getName());
 				return true;
 			} else {
@@ -236,7 +235,7 @@ public class TableInfoHelper {
 	private static boolean initFieldId(TableInfo tableInfo, Field field, Class<?> clazz) {
 		if (DEFAULT_ID_NAME.equals(field.getName())) {
 			if (tableInfo.getKeyColumn() == null) {
-				tableInfo.setIdType(IdType.ID_WORKER);
+				tableInfo.setIdType(MybatisConfiguration.ID_TYPE);
 				tableInfo.setKeyColumn(field.getName());
 				tableInfo.setKeyProperty(field.getName());
 				return true;
