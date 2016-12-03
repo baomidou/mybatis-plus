@@ -1,12 +1,12 @@
 package ${package.Entity};
 
+#if(${superEntityClassPackage})
+import ${superEntityClassPackage};
+#end
 #if(${activeRecord})
 import com.baomidou.mybatisplus.activerecord.Model;
 #end
-#if(${idGenType}!="ID_WORKER")
-import com.baomidou.mybatisplus.annotations.IdType;
 import com.baomidou.mybatisplus.annotations.TableId;
-#end
 import com.baomidou.mybatisplus.annotations.TableField;
 #if(${addTabeName})
 import com.baomidou.mybatisplus.annotations.TableName;
@@ -24,13 +24,17 @@ import java.util.Date;
  * @author ${author}
  * @since ${date}
  */
-#if(${addTabeName})
+#if(${tabeAnnotation})
 @TableName("${table.name}")
 #end
+#if(${superEntityClass})
+public class ${entity} extends ${superEntityClass} {
+#else
 #if(${activeRecord})
 public class ${entity} extends Model<${entity}> {
 #else
 public class ${entity} implements Serializable {
+#end
 #end
 
     private static final long serialVersionUID = 1L;
@@ -39,14 +43,12 @@ public class ${entity} implements Serializable {
 	/**
 	 * ${field.comment}
 	 */
-#if(${field.keyFlag} && ${idGenType}!="ID_WORKER")
-	@TableId(type = IdType.${idGenType})
-#end
-#if($field.convert && ${field.name.toLowerCase()} != ${field.propertyName.toLowerCase()})
+#if(${field.keyFlag} && ${field.convert})
+	@TableId(value="${field.name}")
+#elseif(${field.convert})
 	@TableField(value="${field.name}")
 #end
 	private ${field.propertyType} ${field.propertyName};
-
 #end
 
 #foreach($field in ${table.fields})
