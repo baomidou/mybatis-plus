@@ -84,6 +84,19 @@ public class StrategyConfig {
 	 * 需要排除的表名
 	 */
 	private String[] exclude = null;
+	/**
+	 * 【实体】是否生成字段常量（默认 false）<br>
+	 * -----------------------------------<br>
+	 * public static final String ID = "test_id";
+	 */
+	private boolean entityColumnConstant = false;
+
+	/**
+	 * 【实体】是否为构建者模型（默认 false）<br>
+	 * -----------------------------------<br>
+	 * public User setName(String name) { this.name = name; return this; }
+	 */
+	private boolean entityBuliderModel = false;
 
 	public NamingStrategy getNaming() {
 		return naming;
@@ -190,6 +203,22 @@ public class StrategyConfig {
 
 	public void setExclude(String[] exclude) {
 		this.exclude = exclude;
+	}
+
+	public boolean isEntityColumnConstant() {
+		return entityColumnConstant;
+	}
+
+	public void setEntityColumnConstant(boolean entityColumnConstant) {
+		this.entityColumnConstant = entityColumnConstant;
+	}
+
+	public boolean isEntityBuliderModel() {
+		return entityBuliderModel;
+	}
+
+	public void setEntityBuliderModel(boolean entityBuliderModel) {
+		this.entityBuliderModel = entityBuliderModel;
 	}
 
 }

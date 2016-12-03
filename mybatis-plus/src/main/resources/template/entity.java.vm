@@ -64,7 +64,16 @@ public class ${entity} implements Serializable {
 
 	public void set${field.capitalName}(${field.propertyType} ${field.propertyName}) {
 		this.${field.propertyName} = ${field.propertyName};
+#if(${entityBuliderModel})
+		return this;
+#end
 	}
 #end
 
+#if(${entityColumnConstant})
+#foreach($field in ${table.fields})
+	public static final String ${field.name.toUpperCase()} = "${field.name}";
+
+#end
+#end
 }

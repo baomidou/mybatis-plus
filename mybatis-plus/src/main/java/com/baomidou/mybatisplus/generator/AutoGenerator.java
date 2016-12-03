@@ -118,6 +118,8 @@ public class AutoGenerator extends AbstractGenerator {
 			ctx.put("baseResultMap", config.getGlobalConfig().isBaseResultMap());
 			ctx.put("baseColumnList", config.getGlobalConfig().isBaseColumnList());
 			ctx.put("entity", tableInfo.getEntityName());
+			ctx.put("entityColumnConstant", config.getStrategyConfig().isEntityColumnConstant());
+			ctx.put("entityBuliderModel", config.getStrategyConfig().isEntityBuliderModel());
 			ctx.put("tabeAnnotation", !tableInfo.getEntityName().toLowerCase().equals(tableInfo.getName().toLowerCase()));
 			ctx.put("superEntityClassPackage", config.getSuperEntityClass());
 			ctx.put("superEntityClass", superEntityClass);

@@ -88,6 +88,12 @@ public class MysqlGenerator {
 		// strategy.setSuperServiceImplClass("com.baomidou.demo.TestServiceImpl");
 		// 自定义 controller 父类
 		// strategy.setSuperControllerClass("com.baomidou.demo.TestController");
+		// 【实体】是否生成字段常量（默认 false）
+		// public static final String ID = "test_id";
+		// strategy.setEntityColumnConstant(true);
+		// 【实体】是否为构建者模型（默认 false）
+		// public User setName(String name) {this.name = name; return this;}
+		// strategy.setEntityBuliderModel(true);
 		mpg.setStrategy(strategy);
 
 		// 包配置
