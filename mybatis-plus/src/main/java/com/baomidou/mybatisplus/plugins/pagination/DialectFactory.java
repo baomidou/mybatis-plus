@@ -26,15 +26,15 @@ import com.baomidou.mybatisplus.plugins.pagination.dialects.SQLServer2005Dialect
 import com.baomidou.mybatisplus.plugins.pagination.dialects.SQLServerDialect;
 import com.baomidou.mybatisplus.plugins.pagination.dialects.SQLiteDialect;
 
-import static com.baomidou.mybatisplus.mapper.DBType.DB2;
-import static com.baomidou.mybatisplus.mapper.DBType.MYSQL;
-import static com.baomidou.mybatisplus.mapper.DBType.ORACLE;
-import static com.baomidou.mybatisplus.mapper.DBType.H2;
-import static com.baomidou.mybatisplus.mapper.DBType.POSTGRE;
-import static com.baomidou.mybatisplus.mapper.DBType.SQLITE;
-import static com.baomidou.mybatisplus.mapper.DBType.SQLSERVER;
-import static com.baomidou.mybatisplus.mapper.DBType.SQLSERVER2005;
-import static com.baomidou.mybatisplus.mapper.DBType.HSQL;
+import static com.baomidou.mybatisplus.enums.DBType.DB2;
+import static com.baomidou.mybatisplus.enums.DBType.MYSQL;
+import static com.baomidou.mybatisplus.enums.DBType.ORACLE;
+import static com.baomidou.mybatisplus.enums.DBType.H2;
+import static com.baomidou.mybatisplus.enums.DBType.POSTGRE;
+import static com.baomidou.mybatisplus.enums.DBType.SQLITE;
+import static com.baomidou.mybatisplus.enums.DBType.SQLSERVER;
+import static com.baomidou.mybatisplus.enums.DBType.SQLSERVER2005;
+import static com.baomidou.mybatisplus.enums.DBType.HSQL;
 
 /**
  * <p>

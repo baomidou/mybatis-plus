@@ -13,13 +13,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.toolkit;
-
-import java.util.List;
+package com.baomidou.mybatisplus.entity;
 
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import com.baomidou.mybatisplus.annotations.IdType;
+import com.baomidou.mybatisplus.enums.IdType;
+
+import java.util.List;
 
 /**
  * <p>

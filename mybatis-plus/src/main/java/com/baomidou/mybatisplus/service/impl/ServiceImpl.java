@@ -13,19 +13,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.framework.service.impl;
+package com.baomidou.mybatisplus.service.impl;
 
-import com.baomidou.framework.service.IService;
 import com.baomidou.mybatisplus.activerecord.Record;
-import com.baomidou.mybatisplus.annotations.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.toolkit.CollectionUtil;
+import com.baomidou.mybatisplus.service.IService;
+import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
-import com.baomidou.mybatisplus.toolkit.TableInfo;
+import com.baomidou.mybatisplus.entity.TableInfo;
+import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.apache.ibatis.jdbc.SQL;
 import org.apache.ibatis.logging.Log;
@@ -144,7 +144,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	}
 
 	public boolean insertOrUpdateBatch(List<T> entityList, int batchSize) {
-		if (CollectionUtil.isEmpty(entityList)) {
+		if (CollectionUtils.isEmpty(entityList)) {
 			throw new IllegalArgumentException("Error: entityList must not be empty");
 		}
 		try {
@@ -172,7 +172,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	 * @return
 	 */
 	public boolean insertBatch(List<T> entityList, int batchSize) {
-		if (CollectionUtil.isEmpty(entityList)) {
+		if (CollectionUtils.isEmpty(entityList)) {
 			throw new IllegalArgumentException("Error: entityList must not be empty");
 		}
 		SqlSession batchSqlSession = sqlSessionBatch();
@@ -218,7 +218,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	}
 
 	public boolean updateBatchById(List<T> entityList) {
-		if (CollectionUtil.isEmpty(entityList)) {
+		if (CollectionUtils.isEmpty(entityList)) {
 			throw new IllegalArgumentException("Error: entityList must not be empty");
 		}
 		SqlSession batchSqlSession = sqlSessionBatch();
@@ -252,7 +252,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
 	public T selectOne(Wrapper<T> wrapper) {
 		List<T> list = baseMapper.selectList(wrapper);
-		if (CollectionUtil.isNotEmpty(list)) {
+		if (CollectionUtils.isNotEmpty(list)) {
 			int size = list.size();
 			if (size > 1) {
 				logger.warn(String.format("Warn: selectOne Method There are  %s results.", size));

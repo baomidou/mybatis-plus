@@ -15,7 +15,7 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
-import com.baomidou.mybatisplus.plugins.entity.CountOptimize;
+import com.baomidou.mybatisplus.entity.CountOptimize;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.expression.LongValue;
@@ -57,12 +57,12 @@ public class JsqlParserUtils {
 			Distinct distinct = plainSelect.getDistinct();
 			List<Expression> groupBy = plainSelect.getGroupByColumnReferences();
 			// 包含 distinct、groupBy不优化
-			if (distinct != null || CollectionUtil.isNotEmpty(groupBy)) {
+			if (distinct != null || CollectionUtils.isNotEmpty(groupBy)) {
 				sqlCount = String.format(SqlUtils.SQL_BASE_COUNT, originalSql);
 			}
 			// 优化Order by
 			List<OrderByElement> orderBy = plainSelect.getOrderByElements();
-			if (CollectionUtil.isNotEmpty(orderBy)) {
+			if (CollectionUtils.isNotEmpty(orderBy)) {
 				plainSelect.setOrderByElements(null);
 				countOptimize.setOrderBy(false);
 			}
@@ -82,7 +82,7 @@ public class JsqlParserUtils {
 	 * @return
 	 */
 	private static List<SelectItem> countSelectItem() {
-		if (CollectionUtil.isNotEmpty(countSelectItem)) {
+		if (CollectionUtils.isNotEmpty(countSelectItem)) {
 			return countSelectItem;
 		}
 		Function function = new Function();

@@ -2,6 +2,9 @@ package ${package.Controller};
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+#if(${superControllerClassPackage})
+import ${superControllerClassPackage};
+#end
 
 /**
  * <p>
@@ -13,6 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 @RequestMapping("#if(${package.ModuleName})/${package.ModuleName}#end/${table.entityName.toLowerCase()}")
+#if(${superControllerClass})
+public class ${table.controllerName} extends ${superControllerClass} {
+#else
 public class ${table.controllerName} {
+#end
 	
 }

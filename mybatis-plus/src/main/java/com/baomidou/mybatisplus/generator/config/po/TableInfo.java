@@ -20,7 +20,9 @@ import java.util.List;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
+ * <p>
  * 表信息，关联到当前字段信息
+ * </p>
  *
  * @author YangHu
  * @since 2016/8/30
