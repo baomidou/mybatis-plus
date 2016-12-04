@@ -15,6 +15,16 @@
  */
 package com.baomidou.mybatisplus.plugins.pagination;
 
+import static com.baomidou.mybatisplus.enums.DBType.DB2;
+import static com.baomidou.mybatisplus.enums.DBType.H2;
+import static com.baomidou.mybatisplus.enums.DBType.HSQL;
+import static com.baomidou.mybatisplus.enums.DBType.MYSQL;
+import static com.baomidou.mybatisplus.enums.DBType.ORACLE;
+import static com.baomidou.mybatisplus.enums.DBType.POSTGRE;
+import static com.baomidou.mybatisplus.enums.DBType.SQLITE;
+import static com.baomidou.mybatisplus.enums.DBType.SQLSERVER;
+import static com.baomidou.mybatisplus.enums.DBType.SQLSERVER2005;
+
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.plugins.pagination.dialects.DB2Dialect;
 import com.baomidou.mybatisplus.plugins.pagination.dialects.H2Dialect;
@@ -25,16 +35,6 @@ import com.baomidou.mybatisplus.plugins.pagination.dialects.PostgreDialect;
 import com.baomidou.mybatisplus.plugins.pagination.dialects.SQLServer2005Dialect;
 import com.baomidou.mybatisplus.plugins.pagination.dialects.SQLServerDialect;
 import com.baomidou.mybatisplus.plugins.pagination.dialects.SQLiteDialect;
-
-import static com.baomidou.mybatisplus.enums.DBType.DB2;
-import static com.baomidou.mybatisplus.enums.DBType.MYSQL;
-import static com.baomidou.mybatisplus.enums.DBType.ORACLE;
-import static com.baomidou.mybatisplus.enums.DBType.H2;
-import static com.baomidou.mybatisplus.enums.DBType.POSTGRE;
-import static com.baomidou.mybatisplus.enums.DBType.SQLITE;
-import static com.baomidou.mybatisplus.enums.DBType.SQLSERVER;
-import static com.baomidou.mybatisplus.enums.DBType.SQLSERVER2005;
-import static com.baomidou.mybatisplus.enums.DBType.HSQL;
 
 /**
  * <p>

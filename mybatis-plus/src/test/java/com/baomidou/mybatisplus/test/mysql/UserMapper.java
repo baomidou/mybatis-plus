@@ -15,12 +15,13 @@
  */
 package com.baomidou.mybatisplus.test.mysql;
 
-import com.baomidou.mybatisplus.mapper.BaseMapper;
-import com.baomidou.mybatisplus.test.mysql.entity.User;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.session.RowBounds;
 
-import java.util.List;
+import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.baomidou.mybatisplus.test.mysql.entity.User;
 
 /**
  * <p>
