@@ -20,6 +20,8 @@ import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.baomidou.mybatisplus.enums.SQLlikeType;
+
 /**
  * <p>
  * String 工具类
@@ -104,7 +106,7 @@ public class StringUtils {
 		}
 		return sb.toString();
 	}
-	
+
 	public static void main(String[] args) {
 		System.err.println(StringUtils.camelToUnderline("DSDSSD_SDDS"));
 	}
@@ -226,6 +228,29 @@ public class StringUtils {
 			return StringEscape.escapeString(srcStr);
 		}
 		return srcStr;
+	}
+
+	/**
+	 * <p>
+	 * 用%连接like
+	 * </p>
+	 *
+	 * @param str
+	 *            原字符串
+	 * @return
+	 */
+	public static String concatLike(String str, SQLlikeType type) {
+		switch (type) {
+		case LEFT:
+			str = "%" + str;
+			break;
+		case RIGHT:
+			str += "%";
+			break;
+		default:
+			str = "%" + str + "%";
+		}
+		return StringEscape.escapeString(str);
 	}
 
 	/**
