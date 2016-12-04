@@ -1,8 +1,10 @@
 package com.baomidou.mybatisplus.test;
 
+import org.junit.Assert;
 import org.junit.Test;
 
-
+import com.baomidou.mybatisplus.entity.CountOptimize;
+import com.baomidou.mybatisplus.toolkit.SqlUtils;
 
 /**
  * <p>
@@ -14,35 +16,51 @@ import org.junit.Test;
  */
 public class SqlUtilsTest {
 	/**
-	 * 测试不规则Order by
+	 * 测试select的count语句 复杂 orderby
 	 */
 	@Test
-	public void test1() {
+	public void sqlCountOptimize1() {
 
+		CountOptimize countOptimize = SqlUtils
+				.getCountOptimize(
+						"select * from user a left join (select uuid from user2) b on b.id = a.aid where a=1 order by (select 1 from dual)",
+						"jsqlparser", "mysql", true);
+		String countsql = countOptimize.getCountSQL();
+		System.out.println(countsql);
+		Assert.assertEquals("SELECT COUNT(1) FROM user a LEFT JOIN (SELECT uuid FROM user2) b ON b.id = a.aid WHERE a = 1",
+				countsql);
 	}
 
 	/**
-	 * 测试distinct 如果存在不优化count sql
+	 * 测试select的count语句 distinct
 	 */
 	@Test
-	public void test2() {
-
+	public void sqlCountOptimize2() {
+		CountOptimize countOptimize = SqlUtils
+				.getCountOptimize(
+						"select distinct * from user a left join (select uuid from user2) b on b.id = a.aid where a=1 order by (select 1 from dual)",
+						"jsqlparser", "mysql", true);
+		String countsql = countOptimize.getCountSQL();
+		System.out.println(countsql);
+		Assert.assertEquals(
+				"SELECT COUNT(1) FROM ( SELECT DISTINCT * FROM user a LEFT JOIN (SELECT uuid FROM user2) b ON b.id = a.aid WHERE a = 1 )",
+				countsql);
 	}
 
 	/**
-	 * 测试没有from的情况 并且有格式化时间的情况
+	 * 测试select的count语句 group by
 	 */
 	@Test
-	public void test3() {
-
-	}
-
-	/**
-	 * 测试没有order by的情况
-	 */
-	@Test
-	public void test4() {
-
+	public void sqlCountOptimize3() {
+		CountOptimize countOptimize = SqlUtils
+				.getCountOptimize(
+						"select * from user a left join (select uuid from user2) b on b.id = a.aid where a=1 group by a.id order by (select 1 from dual)",
+						"jsqlparser", "mysql", true);
+		String countsql = countOptimize.getCountSQL();
+		System.out.println(countsql);
+		Assert.assertEquals(
+				"SELECT COUNT(1) FROM ( SELECT * FROM user a LEFT JOIN (SELECT uuid FROM user2) b ON b.id = a.aid WHERE a = 1 GROUP BY a.id ORDER BY (SELECT 1 FROM dual) )",
+				countsql);
 	}
 
 }
