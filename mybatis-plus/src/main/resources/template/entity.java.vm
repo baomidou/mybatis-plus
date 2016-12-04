@@ -52,7 +52,7 @@ public class ${entity} implements Serializable {
 #end
 
 #foreach($field in ${table.fields})
-#if(${field.propertyName.equals("Boolean")})
+#if(${field.propertyType.equals("Boolean")})
 #set($getprefix="is")
 #else
 #set($getprefix="get")
