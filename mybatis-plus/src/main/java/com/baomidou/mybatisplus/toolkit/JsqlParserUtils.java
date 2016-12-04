@@ -58,7 +58,8 @@ public class JsqlParserUtils {
 			List<Expression> groupBy = plainSelect.getGroupByColumnReferences();
 			// 优化Order by
 			List<OrderByElement> orderBy = plainSelect.getOrderByElements();
-			if (CollectionUtils.isNotEmpty(orderBy)) {
+			// 添加包含groupby 不去除orderby
+			if (CollectionUtils.isEmpty(groupBy) && CollectionUtils.isNotEmpty(orderBy)) {
 				plainSelect.setOrderByElements(null);
 				countOptimize.setOrderBy(false);
 			}

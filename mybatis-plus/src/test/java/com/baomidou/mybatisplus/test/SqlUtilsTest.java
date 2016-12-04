@@ -59,7 +59,7 @@ public class SqlUtilsTest {
 		String countsql = countOptimize.getCountSQL();
 		System.out.println(countsql);
 		Assert.assertEquals(
-				"SELECT COUNT(1) FROM ( SELECT * FROM user a LEFT JOIN (SELECT uuid FROM user2) b ON b.id = a.aid WHERE a = 1 GROUP BY a.id )",
+				"SELECT COUNT(1) FROM ( SELECT * FROM user a LEFT JOIN (SELECT uuid FROM user2) b ON b.id = a.aid WHERE a = 1 GROUP BY a.id ORDER BY (SELECT 1 FROM dual) )",
 				countsql);
 	}
 
