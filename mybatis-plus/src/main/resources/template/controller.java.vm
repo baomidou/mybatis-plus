@@ -15,7 +15,7 @@ import ${superControllerClassPackage};
  * @since ${date}
  */
 @Controller
-@RequestMapping("#if(${package.ModuleName})/${package.ModuleName}#end/${table.entityName.toLowerCase()}")
+@RequestMapping("#if(${package.ModuleName})/${package.ModuleName}#end/${table.entityPath}")
 #if(${superControllerClass})
 public class ${table.controllerName} extends ${superControllerClass} {
 #else

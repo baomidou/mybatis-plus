@@ -59,6 +59,13 @@ public class TableInfo {
 		this.comment = comment;
 	}
 
+	public String getEntityPath() {
+		StringBuffer ep = new StringBuffer();
+		ep.append(entityName.substring(0, 1).toLowerCase());
+		ep.append(entityName.substring(1));
+		return ep.toString();
+	}
+
 	public String getEntityName() {
 		return entityName;
 	}
