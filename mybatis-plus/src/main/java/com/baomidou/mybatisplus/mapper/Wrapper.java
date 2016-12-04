@@ -15,14 +15,15 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import com.baomidou.mybatisplus.toolkit.MapUtils;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
-
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+
+import com.baomidou.mybatisplus.enums.SQLlikeType;
+import com.baomidou.mybatisplus.toolkit.MapUtils;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 
 /**
@@ -339,7 +340,7 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
-     * LIKE条件语句，value中无需前后% 目前适配mysql及oracle
+     * LIKE条件语句，value中无需前后%
      *
      * @param column
      *            字段名称
@@ -348,12 +349,12 @@ public abstract class Wrapper<T> implements Serializable {
      * @return this
      */
     public Wrapper<T> like(String column, String value) {
-        sql.LIKE(column, value);
+        sql.LIKE(column, value,SQLlikeType.DEFAULT);
         return this;
     }
 
     /**
-     * NOT LIKE条件语句，value中无需前后% 目前适配mysql及oracle
+     * NOT LIKE条件语句，value中无需前后%
      *
      * @param column
      *            字段名称
@@ -362,7 +363,36 @@ public abstract class Wrapper<T> implements Serializable {
      * @return this
      */
     public Wrapper<T> notLike(String column, String value) {
-        sql.NOT_LIKE(column, value);
+        sql.NOT_LIKE(column, value,SQLlikeType.DEFAULT);
+        return this;
+    }
+    /**
+     * LIKE条件语句，value中无需前后%
+     *
+     * @param column
+     *            字段名称
+     * @param value
+     *            匹配值
+     * @param type
+     * @return this
+     */
+    public Wrapper<T> like(String column, String value, SQLlikeType type) {
+        sql.LIKE(column, value,type);
+        return this;
+    }
+
+    /**
+     * NOT LIKE条件语句，value中无需前后%
+     *
+     * @param column
+     *            字段名称
+     * @param value
+     *            匹配值
+     * @param type
+     * @return this
+     */
+    public Wrapper<T> notLike(String column, String value, SQLlikeType type) {
+        sql.NOT_LIKE(column, value,type);
         return this;
     }
 

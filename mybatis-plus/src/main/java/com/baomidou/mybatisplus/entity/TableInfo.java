@@ -15,11 +15,11 @@
  */
 package com.baomidou.mybatisplus.entity;
 
+import java.util.List;
+
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.baomidou.mybatisplus.enums.IdType;
-
-import java.util.List;
 
 /**
  * <p>
