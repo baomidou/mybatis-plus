@@ -27,6 +27,7 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import com.baomidou.mybatisplus.toolkit.JdbcUtils;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.io.VFS;
@@ -438,14 +439,10 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 		if(isAutoSetDbType){
 			if (LOGGER.isDebugEnabled()) {
 				String jdbcUrl = dataSource.getConnection().getMetaData().getURL();
-				DBType dbTypes[] = DBType.values();
-				for(DBType dbType:dbTypes){
-					if (jdbcUrl.indexOf(":" + dbType.getDb() + ":") != -1) {
-						MybatisConfiguration.DB_TYPE = dbType;
-						LOGGER.debug(" Auto Set DbType "+dbType.getDb());
-						break;
-					}
-				}
+				String targetDbType = JdbcUtils.getDbType(jdbcUrl);
+				DBType dbType = DBType.getDBType(targetDbType);
+				MybatisConfiguration.DB_TYPE = dbType;
+				LOGGER.debug(" Auto Set DbType "+dbType.getDb());
 			}
 		}
 		this.sqlSessionFactory = buildSqlSessionFactory();
