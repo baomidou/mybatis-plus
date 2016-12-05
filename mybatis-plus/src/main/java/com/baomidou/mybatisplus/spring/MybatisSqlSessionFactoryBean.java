@@ -123,6 +123,8 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
 	private ObjectWrapperFactory objectWrapperFactory;
 
+	private boolean isAutoSetDbType = true;
+
 	// TODO 注入数据库类型
 	public void setDbType(String dbType) {
 		MybatisConfiguration.DB_TYPE = DBType.getDBType(dbType);
@@ -432,7 +434,19 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 		notNull(sqlSessionFactoryBuilder, "Property 'sqlSessionFactoryBuilder' is required");
 		state((configuration == null && configLocation == null) || !(configuration != null && configLocation != null),
 				"Property 'configuration' and 'configLocation' can not specified with together");
-
+		if(isAutoSetDbType){
+			if (LOGGER.isDebugEnabled()) {
+				String jdbcUrl = dataSource.getConnection().getMetaData().getURL();
+				DBType dbTypes[] = DBType.values();
+				for(DBType dbType:dbTypes){
+					if (jdbcUrl.indexOf(":" + dbType.getDb() + ":") != -1) {
+						MybatisConfiguration.DB_TYPE = dbType;
+						LOGGER.debug(" Auto Set DbType "+dbType.getDb());
+						break;
+					}
+				}
+			}
+		}
 		this.sqlSessionFactory = buildSqlSessionFactory();
 	}
 
