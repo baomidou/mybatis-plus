@@ -15,11 +15,11 @@
  */
 package com.baomidou.mybatisplus.plugins;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.Properties;
-
+import com.baomidou.mybatisplus.MybatisConfiguration;
+import com.baomidou.mybatisplus.enums.DBType;
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.toolkit.IOUtils;
+import com.baomidou.mybatisplus.toolkit.VersionUtils;
 import org.apache.ibatis.builder.StaticSqlSource;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.logging.Log;
@@ -35,8 +35,10 @@ import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.Configuration;
 
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.toolkit.IOUtils;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.Properties;
 
 /**
  * <p>
@@ -67,7 +69,11 @@ public class SqlExplainInterceptor implements Interceptor {
 			BoundSql boundSql = ms.getBoundSql(parameter);
 			Executor exe = (Executor) invocation.getTarget();
 			Connection connection = exe.getTransaction().getConnection();
-
+			String databaseVersion = connection.getMetaData().getDatabaseProductVersion();
+			if (MybatisConfiguration.DB_TYPE.equals(DBType.MYSQL) && VersionUtils.compare("5.6.3", databaseVersion)) {
+				logger.warn("Warn: Your mysql version needs to be greater than '5.6.3' to execute of Sql Explain!");
+				return invocation.proceed();
+			}
 			/**
 			 * 执行 SQL 分析
 			 */
