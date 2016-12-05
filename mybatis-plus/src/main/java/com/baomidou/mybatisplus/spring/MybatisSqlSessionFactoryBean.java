@@ -127,6 +127,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
 	// TODO 注入数据库类型
 	public void setDbType(String dbType) {
+		isAutoSetDbType = false;
 		MybatisConfiguration.DB_TYPE = DBType.getDBType(dbType);
 	}
 
