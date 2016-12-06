@@ -587,7 +587,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 				String jdbcUrl = dataSource.getConnection().getMetaData().getURL();
 				mybatisGlobalCache.setDbType(JdbcUtils.getDbType(jdbcUrl));
 			} catch (SQLException e) {
-				LOGGER.debug(" Auto Set DbType Fail !  Cause:" + e);
+				LOGGER.warn("Warn: Auto Set DbType Fail !  Cause:" + e);
 			}
 		}
 		SqlSessionFactory sqlSessionFactory = this.sqlSessionFactoryBuilder.build(configuration);
