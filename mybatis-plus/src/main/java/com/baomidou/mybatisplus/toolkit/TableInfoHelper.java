@@ -15,6 +15,22 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
+import com.baomidou.mybatisplus.MybatisConfiguration;
+import com.baomidou.mybatisplus.MybatisPlusHolder;
+import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotations.TableId;
+import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.entity.MybatisGlobalCache;
+import com.baomidou.mybatisplus.entity.TableFieldInfo;
+import com.baomidou.mybatisplus.entity.TableInfo;
+import com.baomidou.mybatisplus.enums.FieldStrategy;
+import com.baomidou.mybatisplus.enums.IdType;
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.SqlSessionFactory;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -22,22 +38,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.SqlSessionFactory;
-
-import com.baomidou.mybatisplus.MybatisConfiguration;
-import com.baomidou.mybatisplus.MybatisPlusHolder;
-import com.baomidou.mybatisplus.annotations.TableField;
-import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.annotations.TableName;
-import com.baomidou.mybatisplus.entity.TableFieldInfo;
-import com.baomidou.mybatisplus.entity.TableInfo;
-import com.baomidou.mybatisplus.enums.FieldStrategy;
-import com.baomidou.mybatisplus.enums.IdType;
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 
 /**
  * <p>
@@ -52,6 +52,10 @@ public class TableInfoHelper {
 	private static final Log logger = LogFactory.getLog(TableInfoHelper.class);
 
 	/**
+	 * 缓存全局信息
+	 */
+	private static final Map<String, MybatisGlobalCache> globalCache = new ConcurrentHashMap<String, MybatisGlobalCache>();
+	/**
 	 * 缓存反射类表信息
 	 */
 	private static final Map<String, TableInfo> tableInfoCache = new ConcurrentHashMap<String, TableInfo>();
@@ -59,6 +63,37 @@ public class TableInfoHelper {
 	 * 默认表主键
 	 */
 	private static final String DEFAULT_ID_NAME = "id";
+
+	/**
+	 * 根据SqlSessionFactory获取全局配置
+	 * 
+	 * @param sqlSessionFactory
+	 * @return
+	 */
+	public static MybatisGlobalCache getGlobalCache(SqlSessionFactory sqlSessionFactory) {
+		if (sqlSessionFactory != null) {
+			return globalCache.get(sqlSessionFactory.toString());
+		}
+		return null;
+	}
+
+	/**
+	 * <p>
+	 * 设置全局设置(以sqlSessionFactory地址值作为Key)
+	 * <p/>
+	 * 
+	 * @param sqlSessionFactory
+	 * @param mybatisGlobalCache
+	 * @return
+	 */
+	public static void setGlobalCache(SqlSessionFactory sqlSessionFactory, MybatisGlobalCache mybatisGlobalCache) {
+		if (sqlSessionFactory == null || mybatisGlobalCache == null) {
+
+			new MybatisPlusException("Error:  Could not setGlobalCache");
+		}
+		// 设置全局设置
+		globalCache.put(sqlSessionFactory.toString(), mybatisGlobalCache);
+	}
 
 	/**
 	 * <p>
@@ -149,8 +184,7 @@ public class TableInfoHelper {
 		 * 未发现主键注解，跳过注入
 		 */
 		if (null == tableInfo.getKeyColumn()) {
-			logger.warn(String.format("Warn: Could not find @TableId in Class: %s, initTableInfo Method Fail.",
-					clazz.getName()));
+			logger.warn(String.format("Warn: Could not find @TableId in Class: %s, initTableInfo Method Fail.", clazz.getName()));
 			return null;
 		}
 		/*
@@ -212,7 +246,7 @@ public class TableInfoHelper {
 					tableInfo.setKeyColumn(StringUtils.camelToUnderline(field.getName()));
 				} else {
 					tableInfo.setKeyColumn(field.getName());
-				} 
+				}
 				tableInfo.setKeyProperty(field.getName());
 				return true;
 			} else {
