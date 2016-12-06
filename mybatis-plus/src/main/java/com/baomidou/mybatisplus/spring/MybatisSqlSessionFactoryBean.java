@@ -27,7 +27,6 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
-import com.baomidou.mybatisplus.toolkit.JdbcUtils;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.io.VFS;
@@ -64,6 +63,7 @@ import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
 import com.baomidou.mybatisplus.mapper.ISqlInjector;
+import com.baomidou.mybatisplus.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.toolkit.PackageHelper;
 
 /**
@@ -436,13 +436,11 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 		notNull(sqlSessionFactoryBuilder, "Property 'sqlSessionFactoryBuilder' is required");
 		state((configuration == null && configLocation == null) || !(configuration != null && configLocation != null),
 				"Property 'configuration' and 'configLocation' can not specified with together");
-		if(isAutoSetDbType){
+		if (isAutoSetDbType) {
+			String jdbcUrl = dataSource.getConnection().getMetaData().getURL();
+			MybatisConfiguration.DB_TYPE = JdbcUtils.getDbType(jdbcUrl);
 			if (LOGGER.isDebugEnabled()) {
-				String jdbcUrl = dataSource.getConnection().getMetaData().getURL();
-				String targetDbType = JdbcUtils.getDbType(jdbcUrl);
-				DBType dbType = DBType.getDBType(targetDbType);
-				MybatisConfiguration.DB_TYPE = dbType;
-				LOGGER.debug(" Auto Set DbType "+dbType.getDb());
+				LOGGER.debug(" Auto Set DbType " + MybatisConfiguration.DB_TYPE.getDb());
 			}
 		}
 		this.sqlSessionFactory = buildSqlSessionFactory();
