@@ -28,6 +28,7 @@ import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
 import com.baomidou.mybatisplus.mapper.ISqlInjector;
 import com.baomidou.mybatisplus.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.toolkit.PackageHelper;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.io.VFS;
@@ -123,17 +124,13 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
 	private ObjectWrapperFactory objectWrapperFactory;
 
-	private boolean isAutoSetDbType = true;
-
 	private MybatisGlobalCache mybatisGlobalCache = MybatisGlobalCache.defaults();
 
 	// TODO 注入数据库类型
 	public void setDbType(String dbType) {
-		/**
-		 * 关闭默认设置DBTYPE
-		 */
-		isAutoSetDbType = false;
+		// 以用户传递过来的dbType优先
 		mybatisGlobalCache.setDbType(DBType.getDBType(dbType));
+		mybatisGlobalCache.setAutoSetDbType(false);
 	}
 
 	// TODO 注入主键策略
@@ -440,13 +437,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 		notNull(sqlSessionFactoryBuilder, "Property 'sqlSessionFactoryBuilder' is required");
 		state((configuration == null && configLocation == null) || !(configuration != null && configLocation != null),
 				"Property 'configuration' and 'configLocation' can not specified with together");
-		if (isAutoSetDbType) {
-			String jdbcUrl = dataSource.getConnection().getMetaData().getURL();
-			MybatisConfiguration.DB_TYPE = JdbcUtils.getDbType(jdbcUrl);
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug(" Auto Set DbType " + MybatisConfiguration.DB_TYPE.getDb());
-			}
-		}
 		this.sqlSessionFactory = buildSqlSessionFactory();
 	}
 
@@ -591,8 +581,18 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 		}
 
 		configuration.setEnvironment(new Environment(this.environment, this.transactionFactory, this.dataSource));
-
+		// TODO 自动设置数据库类型
+		if (mybatisGlobalCache.isAutoSetDbType()) {
+			try {
+				String jdbcUrl = dataSource.getConnection().getMetaData().getURL();
+				mybatisGlobalCache.setDbType(JdbcUtils.getDbType(jdbcUrl));
+			} catch (SQLException e) {
+				LOGGER.debug(" Auto Set DbType Fail !  Cause:" + e);
+			}
+		}
 		SqlSessionFactory sqlSessionFactory = this.sqlSessionFactoryBuilder.build(configuration);
+		// TODO 设置全局参数属性
+		TableInfoHelper.setGlobalCache(configuration, mybatisGlobalCache);
 		// TODO 缓存 sqlSessionFactory
 		MybatisPlusHolder.setSqlSessionFactory(sqlSessionFactory);
 

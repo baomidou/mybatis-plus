@@ -15,25 +15,25 @@
  */
 package com.baomidou.mybatisplus;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import org.apache.ibatis.mapping.BoundSql;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.SqlCommandType;
-import org.apache.ibatis.reflection.MetaObject;
-import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
-
+import com.baomidou.mybatisplus.entity.MybatisGlobalCache;
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * <p>
@@ -86,7 +86,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 		}
 		return parameterObject;
 	}
-	
+
 	/**
 	 * <p>
 	 * 处理正常批量插入逻辑
@@ -142,7 +142,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 				}
 			}
 			/* 自定义元对象填充控制器 */
-			IMetaObjectHandler metaObjectHandler = MybatisConfiguration.META_OBJECT_HANDLER;
+			IMetaObjectHandler metaObjectHandler = MybatisGlobalCache.getMetaObjectHandler(ms.getConfiguration());
 			if (null != metaObjectHandler) {
 				metaObjectHandler.insertFill(metaObject);
 			}

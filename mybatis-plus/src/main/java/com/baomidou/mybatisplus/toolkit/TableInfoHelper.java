@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
-import com.baomidou.mybatisplus.MybatisConfiguration;
 import com.baomidou.mybatisplus.MybatisPlusHolder;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
@@ -29,6 +28,7 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.lang.reflect.Field;
@@ -67,32 +67,32 @@ public class TableInfoHelper {
 	/**
 	 * 根据SqlSessionFactory获取全局配置
 	 * 
-	 * @param sqlSessionFactory
+	 * @param configuration
 	 * @return
 	 */
-	public static MybatisGlobalCache getGlobalCache(SqlSessionFactory sqlSessionFactory) {
-		if (sqlSessionFactory != null) {
-			return globalCache.get(sqlSessionFactory.toString());
+	public static MybatisGlobalCache getGlobalCache(Configuration configuration) {
+		if (configuration != null) {
+			return globalCache.get(configuration.toString());
 		}
 		return null;
 	}
 
 	/**
 	 * <p>
-	 * 设置全局设置(以sqlSessionFactory地址值作为Key)
+	 * 设置全局设置(以configuration地址值作为Key)
 	 * <p/>
 	 * 
-	 * @param sqlSessionFactory
+	 * @param configuration
 	 * @param mybatisGlobalCache
 	 * @return
 	 */
-	public static void setGlobalCache(SqlSessionFactory sqlSessionFactory, MybatisGlobalCache mybatisGlobalCache) {
-		if (sqlSessionFactory == null || mybatisGlobalCache == null) {
+	public static void setGlobalCache(Configuration configuration, MybatisGlobalCache mybatisGlobalCache) {
+		if (configuration == null || mybatisGlobalCache == null) {
 
 			new MybatisPlusException("Error:  Could not setGlobalCache");
 		}
 		// 设置全局设置
-		globalCache.put(sqlSessionFactory.toString(), mybatisGlobalCache);
+		globalCache.put(configuration.toString(), mybatisGlobalCache);
 	}
 
 	/**
@@ -123,16 +123,18 @@ public class TableInfoHelper {
 			return ti;
 		}
 		TableInfo tableInfo = new TableInfo();
-
+		Configuration configuration = null;
 		if (null != builderAssistant) {
 			tableInfo.setCurrentNamespace(builderAssistant.getCurrentNamespace());
+			configuration = builderAssistant.getConfiguration();
 		}
+		MybatisGlobalCache globalCache = getGlobalCache(configuration);
 		/* 表名 */
 		TableName table = clazz.getAnnotation(TableName.class);
 		String tableName = clazz.getSimpleName();
 		if (table != null && StringUtils.isNotEmpty(table.value())) {
 			tableName = table.value();
-		} else if (MybatisConfiguration.DB_COLUMN_UNDERLINE) {
+		} else if (globalCache.isDbColumnUnderline()) {
 			/* 开启字段下划线申明 */
 			tableName = StringUtils.camelToUnderline(tableName);
 		} else {
@@ -152,24 +154,24 @@ public class TableInfoHelper {
 			 * 主键ID 初始化
 			 */
 			if (existTableId) {
-				if (initTableId(tableInfo, field, clazz)) {
+				if (initTableId(globalCache, tableInfo, field, clazz)) {
 					continue;
 				}
-			} else if (initFieldId(tableInfo, field, clazz)) {
+			} else if (initFieldId(globalCache, tableInfo, field, clazz)) {
 				continue;
 			}
 
 			/**
 			 * 字段初始化
 			 */
-			if (initTableField(fieldList, field, clazz)) {
+			if (initTableField(globalCache, fieldList, field, clazz)) {
 				continue;
 			}
 
 			/**
 			 * 字段, 使用 camelToUnderline 转换驼峰写法为下划线分割法, 如果已指定 TableField , 便不会执行这里
 			 */
-			fieldList.add(new TableFieldInfo(field.getName()));
+			fieldList.add(new TableFieldInfo(globalCache, field.getName()));
 		}
 
 		/* 字段列表 */
@@ -225,7 +227,7 @@ public class TableInfoHelper {
 	 * @param clazz
 	 * @return true 继续下一个属性判断，返回 continue;
 	 */
-	private static boolean initTableId(TableInfo tableInfo, Field field, Class<?> clazz) {
+	private static boolean initTableId(MybatisGlobalCache globalCache, TableInfo tableInfo, Field field, Class<?> clazz) {
 		TableId tableId = field.getAnnotation(TableId.class);
 		if (tableId != null) {
 			if (tableInfo.getKeyColumn() == null) {
@@ -235,13 +237,13 @@ public class TableInfoHelper {
 				if (IdType.INPUT != tableId.type()) {
 					tableInfo.setIdType(tableId.type());
 				} else {
-					tableInfo.setIdType(MybatisConfiguration.ID_TYPE);
+					tableInfo.setIdType(globalCache.getIdType());
 				}
 				if (StringUtils.isNotEmpty(tableId.value())) {
 					/* 自定义字段 */
 					tableInfo.setKeyColumn(tableId.value());
 					tableInfo.setKeyRelated(true);
-				} else if (MybatisConfiguration.DB_COLUMN_UNDERLINE) {
+				} else if (globalCache.isDbColumnUnderline()) {
 					/* 开启字段下划线申明 */
 					tableInfo.setKeyColumn(StringUtils.camelToUnderline(field.getName()));
 				} else {
@@ -266,10 +268,10 @@ public class TableInfoHelper {
 	 * @param clazz
 	 * @return true 继续下一个属性判断，返回 continue;
 	 */
-	private static boolean initFieldId(TableInfo tableInfo, Field field, Class<?> clazz) {
+	private static boolean initFieldId(MybatisGlobalCache mybatisGlobalCache, TableInfo tableInfo, Field field, Class<?> clazz) {
 		if (DEFAULT_ID_NAME.equals(field.getName())) {
 			if (tableInfo.getKeyColumn() == null) {
-				tableInfo.setIdType(MybatisConfiguration.ID_TYPE);
+				tableInfo.setIdType(mybatisGlobalCache.getIdType());
 				tableInfo.setKeyColumn(field.getName());
 				tableInfo.setKeyProperty(field.getName());
 				return true;
@@ -301,7 +303,8 @@ public class TableInfoHelper {
 	 * @param clazz
 	 * @return true 继续下一个属性判断，返回 continue;
 	 */
-	private static boolean initTableField(List<TableFieldInfo> fieldList, Field field, Class<?> clazz) {
+	private static boolean initTableField(MybatisGlobalCache globalCache, List<TableFieldInfo> fieldList, Field field,
+			Class<?> clazz) {
 		/* 获取注解属性，自定义字段 */
 		TableField tableField = field.getAnnotation(TableField.class);
 		if (tableField != null) {
@@ -328,7 +331,7 @@ public class TableInfoHelper {
 			String[] els = el.split(";");
 			if (null != columns && null != els && columns.length == els.length) {
 				for (int i = 0; i < columns.length; i++) {
-					fieldList.add(new TableFieldInfo(columns[i], field.getName(), els[i], validate));
+					fieldList.add(new TableFieldInfo(globalCache, columns[i], field.getName(), els[i], validate));
 				}
 			} else {
 				String errorMsg = "Class: %s, Field: %s, 'value' 'el' Length must be consistent.";

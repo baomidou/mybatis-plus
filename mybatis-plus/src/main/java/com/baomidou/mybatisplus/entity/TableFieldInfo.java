@@ -15,7 +15,7 @@
  */
 package com.baomidou.mybatisplus.entity;
 
-import com.baomidou.mybatisplus.MybatisConfiguration;
+import com.baomidou.mybatisplus.enums.DBType;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
@@ -58,18 +58,19 @@ public class TableFieldInfo {
 	 */
 	private FieldStrategy fieldStrategy = FieldStrategy.NOT_NULL;
 
-	public TableFieldInfo(String column, String property, String el, FieldStrategy fieldStrategy) {
-		if (MybatisConfiguration.DB_COLUMN_UNDERLINE) {
+	public TableFieldInfo(MybatisGlobalCache globalCache, String column, String property, String el, FieldStrategy fieldStrategy) {
+		DBType dbType = globalCache.getDbType();
+		if (globalCache.isDbColumnUnderline()) {
 			/* 开启字段下划线申明 */
 			this.related = true;
-			this.setColumn(StringUtils.camelToUnderline(column));
+			this.setColumn(dbType, StringUtils.camelToUnderline(column));
 		} else if (!column.equals(property)) {
 			/* 没有开启下划线申明 但是column与property不等的情况下设置related为true */
 			this.related = true;
-			this.setColumn(column);
+			this.setColumn(dbType, column);
 		} else {
 			this.related = false;
-			this.setColumn(column);
+			this.setColumn(dbType, column);
 		}
 		this.property = property;
 		this.el = el;
@@ -79,22 +80,23 @@ public class TableFieldInfo {
 		if (fieldStrategy != FieldStrategy.NOT_NULL) {
 			this.fieldStrategy = fieldStrategy;
 		} else {
-			this.fieldStrategy = MybatisConfiguration.FIELD_STRATEGY;
+			this.fieldStrategy = globalCache.getFieldStrategy();
 		}
 	}
 
-	public TableFieldInfo(String column) {
-		if (MybatisConfiguration.DB_COLUMN_UNDERLINE) {
+	public TableFieldInfo(MybatisGlobalCache globalCache, String column) {
+		DBType dbType = globalCache.getDbType();
+		if (globalCache.isDbColumnUnderline()) {
 			/* 开启字段下划线申明 */
 			this.related = true;
-			this.setColumn(StringUtils.camelToUnderline(column));
+			this.setColumn(dbType, StringUtils.camelToUnderline(column));
 		} else {
 			this.related = false;
-			this.setColumn(column);
+			this.setColumn(dbType, column);
 		}
 		this.property = column;
 		this.el = column;
-		this.fieldStrategy = MybatisConfiguration.FIELD_STRATEGY;
+		this.fieldStrategy = globalCache.getFieldStrategy();
 	}
 
 	public boolean isRelated() {
@@ -109,8 +111,8 @@ public class TableFieldInfo {
 		return column;
 	}
 
-	public void setColumn(String column) {
-		this.column = SqlReservedWords.convert(column);
+	public void setColumn(DBType dbType, String column) {
+		this.column = SqlReservedWords.convert(dbType, column);
 	}
 
 	public String getProperty() {

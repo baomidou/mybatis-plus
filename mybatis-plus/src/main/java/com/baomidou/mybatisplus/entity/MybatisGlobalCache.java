@@ -22,6 +22,11 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.AutoSqlInjector;
 import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
 import com.baomidou.mybatisplus.mapper.ISqlInjector;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import org.apache.ibatis.session.Configuration;
+
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * <p>
@@ -51,6 +56,9 @@ public class MybatisGlobalCache {
 	private FieldStrategy fieldStrategy;
 	// 是否刷新mapper
 	private boolean isRefresh = false;
+	// 是否自动获取DBType
+	private boolean isAutoSetDbType = true;
+	private Set<String> mapperRegistryCache = new ConcurrentSkipListSet<String>();
 
 	public DBType getDbType() {
 		return dbType;
@@ -108,6 +116,22 @@ public class MybatisGlobalCache {
 		isRefresh = refresh;
 	}
 
+	public boolean isAutoSetDbType() {
+		return isAutoSetDbType;
+	}
+
+	public void setAutoSetDbType(boolean autoSetDbType) {
+		isAutoSetDbType = autoSetDbType;
+	}
+
+	public Set<String> getMapperRegistryCache() {
+		return mapperRegistryCache;
+	}
+
+	public void setMapperRegistryCache(Set<String> mapperRegistryCache) {
+		this.mapperRegistryCache = mapperRegistryCache;
+	}
+
 	@Override
 	protected MybatisGlobalCache clone() throws CloneNotSupportedException {
 		return (MybatisGlobalCache) super.clone();
@@ -124,6 +148,52 @@ public class MybatisGlobalCache {
 		} catch (CloneNotSupportedException e) {
 			throw new MybatisPlusException("ERROR: CLONE MybatisGlobalCache DEFAULT FAIL !  Cause:" + e);
 		}
+	}
+
+	/**
+	 * 获取MybatisGlobalCache
+	 * 
+	 * @param configuration
+	 * @return
+	 */
+	public static MybatisGlobalCache globalCache(Configuration configuration) {
+		return TableInfoHelper.getGlobalCache(configuration);
+	}
+
+	public static DBType getDbType(Configuration configuration) {
+		return globalCache(configuration).getDbType();
+	}
+
+	public static IdType getIdType(Configuration configuration) {
+		return globalCache(configuration).getIdType();
+	}
+
+	public static boolean isDbColumnUnderline(Configuration configuration) {
+		return globalCache(configuration).isDbColumnUnderline();
+	}
+
+	public static ISqlInjector getSqlInjector(Configuration configuration) {
+		return globalCache(configuration).getSqlInjector();
+	}
+
+	public static IMetaObjectHandler getMetaObjectHandler(Configuration configuration) {
+		return globalCache(configuration).getMetaObjectHandler();
+	}
+
+	public static FieldStrategy getFieldStrategy(Configuration configuration) {
+		return globalCache(configuration).getFieldStrategy();
+	}
+
+	public static boolean isRefresh(Configuration configuration) {
+		return globalCache(configuration).isRefresh();
+	}
+
+	public static boolean isAutoSetDbType(Configuration configuration) {
+		return globalCache(configuration).isAutoSetDbType();
+	}
+
+	public static Set<String> getMapperRegistryCache(Configuration configuration) {
+		return globalCache(configuration).getMapperRegistryCache();
 	}
 
 	// init 初始化默认值

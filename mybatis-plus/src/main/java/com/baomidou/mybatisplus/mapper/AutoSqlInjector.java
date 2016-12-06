@@ -15,12 +15,15 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.baomidou.mybatisplus.entity.MybatisGlobalCache;
+import com.baomidou.mybatisplus.entity.TableFieldInfo;
+import com.baomidou.mybatisplus.entity.TableInfo;
+import com.baomidou.mybatisplus.enums.DBType;
+import com.baomidou.mybatisplus.enums.FieldStrategy;
+import com.baomidou.mybatisplus.enums.IdType;
+import com.baomidou.mybatisplus.enums.SqlMethod;
+import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -35,15 +38,11 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.scripting.defaults.RawSqlSource;
 import org.apache.ibatis.session.Configuration;
 
-import com.baomidou.mybatisplus.MybatisConfiguration;
-import com.baomidou.mybatisplus.entity.TableFieldInfo;
-import com.baomidou.mybatisplus.entity.TableInfo;
-import com.baomidou.mybatisplus.enums.DBType;
-import com.baomidou.mybatisplus.enums.FieldStrategy;
-import com.baomidou.mybatisplus.enums.IdType;
-import com.baomidou.mybatisplus.enums.SqlMethod;
-import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * <p>
@@ -73,7 +72,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 */
 	public void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
 		String className = mapperClass.toString();
-		Set<String> mapperRegistryCache = MybatisConfiguration.MAPPER_REGISTRY_CACHE;
+		Set<String> mapperRegistryCache = MybatisGlobalCache.getMapperRegistryCache(configuration);
 		if (!mapperRegistryCache.contains(className)) {
 			inject(builderAssistant, mapperClass);
 			mapperRegistryCache.add(className);
@@ -87,12 +86,13 @@ public class AutoSqlInjector implements ISqlInjector {
 		this.configuration = builderAssistant.getConfiguration();
 		this.builderAssistant = builderAssistant;
 		this.languageDriver = configuration.getDefaultScriptingLanuageInstance();
-		this.dbType = MybatisConfiguration.DB_TYPE;
+		MybatisGlobalCache globalCache = MybatisGlobalCache.globalCache(configuration);
+		this.dbType = globalCache.getDbType();
 		/*
 		 * 驼峰设置 PLUS 配置 > 原始配置
 		 */
-		if (!MybatisConfiguration.DB_COLUMN_UNDERLINE) {
-			MybatisConfiguration.DB_COLUMN_UNDERLINE = configuration.isMapUnderscoreToCamelCase();
+		if (!globalCache.isDbColumnUnderline()) {
+			globalCache.setDbColumnUnderline(configuration.isMapUnderscoreToCamelCase());
 		}
 		Class<?> modelClass = extractModelClass(mapperClass);
 		TableInfo table = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
@@ -449,6 +449,19 @@ public class AutoSqlInjector implements ISqlInjector {
 
 	/**
 	 * <p>
+	 * 获取需要转义的SQL字段
+	 * </p>
+	 *
+	 * @param convertStr
+	 * @return
+	 */
+	protected String sqlWordConvert(String convertStr) {
+		DBType dbType = MybatisGlobalCache.getDbType(configuration);
+		return SqlReservedWords.convert(dbType, convertStr);
+	}
+
+	/**
+	 * <p>
 	 * SQL 查询所有表字段
 	 * </p>
 	 *
@@ -478,15 +491,15 @@ public class AutoSqlInjector implements ISqlInjector {
 				columns.append("<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>");
 			}
 			if (table.isKeyRelated()) {
-				columns.append(table.getKeyColumn()).append(" AS ").append(SqlReservedWords.convert(table.getKeyProperty()));
+				columns.append(table.getKeyColumn()).append(" AS ").append(sqlWordConvert(table.getKeyProperty()));
 			} else {
-				columns.append(SqlReservedWords.convert(table.getKeyProperty()));
+				columns.append(sqlWordConvert(table.getKeyProperty()));
 			}
 			List<TableFieldInfo> fieldList = table.getFieldList();
 			for (TableFieldInfo fieldInfo : fieldList) {
 				columns.append(",").append(fieldInfo.getColumn());
 				if (fieldInfo.isRelated()) {
-					columns.append(" AS ").append(SqlReservedWords.convert(fieldInfo.getProperty()));
+					columns.append(" AS ").append(sqlWordConvert(fieldInfo.getProperty()));
 				}
 			}
 			if (entityWrapper) {
