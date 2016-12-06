@@ -15,18 +15,6 @@
  */
 package com.baomidou.mybatisplus.generator.config.builder;
 
-import java.io.File;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.baomidou.mybatisplus.generator.config.ConstVal;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.GlobalConfig;
@@ -39,6 +27,18 @@ import com.baomidou.mybatisplus.generator.config.rules.DbType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.config.rules.QuerySQL;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
+
+import java.io.File;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 配置汇总 传递给文件生成工具
@@ -95,15 +95,17 @@ public class ConfigBuilder {
 
 	/**
 	 * 在构造器中处理配置
-	 *
-	 * @param outputDir
-	 *            输出目录
+	 * 
 	 * @param packageConfig
 	 *            包配置
 	 * @param dataSourceConfig
 	 *            数据源配置
 	 * @param strategyConfig
 	 *            表配置
+	 * @param template
+	 *            模板配置
+	 * @param globalConfig
+	 *            全局配置
 	 */
 	public ConfigBuilder(PackageConfig packageConfig, DataSourceConfig dataSourceConfig, StrategyConfig strategyConfig,
 			TemplateConfig template, GlobalConfig globalConfig) {
@@ -285,8 +287,7 @@ public class ConfigBuilder {
 	 */
 	private List<TableInfo> processTable(List<TableInfo> tableList, NamingStrategy strategy, String tablePrefix) {
 		for (TableInfo tableInfo : tableList) {
-			tableInfo.setEntityName(
-					NamingStrategy.capitalFirst(processName(tableInfo.getName(), strategy, tablePrefix)));
+			tableInfo.setEntityName(NamingStrategy.capitalFirst(processName(tableInfo.getName(), strategy, tablePrefix)));
 			if (StringUtils.isNotEmpty(globalConfig.getMapperName())) {
 				tableInfo.setMapperName(String.format(globalConfig.getMapperName(), tableInfo.getEntityName()));
 			} else {
@@ -303,8 +304,7 @@ public class ConfigBuilder {
 				tableInfo.setServiceName("I" + tableInfo.getEntityName() + ConstVal.SERIVCE);
 			}
 			if (StringUtils.isNotEmpty(globalConfig.getServiceImplName())) {
-				tableInfo.setServiceImplName(
-						String.format(globalConfig.getServiceImplName(), tableInfo.getEntityName()));
+				tableInfo.setServiceImplName(String.format(globalConfig.getServiceImplName(), tableInfo.getEntityName()));
 			} else {
 				tableInfo.setServiceImplName(tableInfo.getEntityName() + ConstVal.SERVICEIMPL);
 			}

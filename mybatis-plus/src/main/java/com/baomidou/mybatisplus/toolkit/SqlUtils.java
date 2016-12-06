@@ -43,7 +43,7 @@ public class SqlUtils {
 	 * @return CountOptimize
 	 */
 	public static CountOptimize getCountOptimize(String originalSql, String optimizeType, String dialectType,
-			boolean isOptimizeCount) {
+                                                 boolean isOptimizeCount) {
 		CountOptimize countOptimize = CountOptimize.newInstance();
 		if (isOptimizeCount) {
 			String tempSql = originalSql.replaceAll("(?i)ORDER[\\s]+BY", "ORDER BY").replaceAll("(?i)GROUP[\\s]+BY", "GROUP BY");

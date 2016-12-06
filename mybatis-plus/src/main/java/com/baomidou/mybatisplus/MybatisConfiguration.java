@@ -15,13 +15,14 @@
  */
 package com.baomidou.mybatisplus;
 
-import com.baomidou.mybatisplus.entity.MybatisGlobalCache;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
+
+import com.baomidou.mybatisplus.entity.MybatisGlobalCache;
 
 /**
  * <p>

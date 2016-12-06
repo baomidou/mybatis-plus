@@ -72,7 +72,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 */
 	public void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
 		String className = mapperClass.toString();
-		Set<String> mapperRegistryCache = MybatisGlobalCache.getMapperRegistryCache(configuration);
+		Set<String> mapperRegistryCache = MybatisGlobalCache.getMapperRegistryCache(builderAssistant.getConfiguration());
 		if (!mapperRegistryCache.contains(className)) {
 			inject(builderAssistant, mapperClass);
 			mapperRegistryCache.add(className);

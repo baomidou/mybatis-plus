@@ -25,6 +25,7 @@ import com.baomidou.mybatisplus.mapper.ISqlInjector;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.apache.ibatis.session.Configuration;
 
+import java.io.Serializable;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -36,7 +37,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
  * @author Caratacus
  * @Date 2016-12-06
  */
-public class MybatisGlobalCache {
+public class MybatisGlobalCache implements Cloneable, Serializable {
 	/**
 	 * 默认参数
 	 */

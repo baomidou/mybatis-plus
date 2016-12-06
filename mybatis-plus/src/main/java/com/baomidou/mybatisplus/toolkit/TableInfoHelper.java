@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
+import com.baomidou.mybatisplus.MybatisConfiguration;
 import com.baomidou.mybatisplus.MybatisPlusHolder;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
@@ -127,6 +128,10 @@ public class TableInfoHelper {
 		if (null != builderAssistant) {
 			tableInfo.setCurrentNamespace(builderAssistant.getCurrentNamespace());
 			configuration = builderAssistant.getConfiguration();
+		} else {
+			// TODO 测试用例所走的方法 正常是不会走这里 待优化 Caratacus
+			configuration = new MybatisConfiguration();
+			setGlobalCache(configuration, MybatisGlobalCache.DEFAULT);
 		}
 		MybatisGlobalCache globalCache = getGlobalCache(configuration);
 		/* 表名 */
