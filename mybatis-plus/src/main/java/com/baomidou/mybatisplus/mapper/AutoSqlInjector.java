@@ -540,7 +540,6 @@ public class AutoSqlInjector implements ISqlInjector {
 	protected String sqlWhereByMap() {
 		StringBuilder where = new StringBuilder();
 		where.append("\n<if test=\"cm!=null and !cm.isEmpty\">");
-		where.append("\n<where> ");
 		where.append("\n<foreach collection=\"cm.keys\" item=\"k\" separator=\"AND\"> ");
 		where.append("\n<if test=\"cm[k] != null\">");
 		if (DBType.MYSQL.equals(dbType)) {
@@ -550,7 +549,6 @@ public class AutoSqlInjector implements ISqlInjector {
 		}
 		where.append("\n</if>");
 		where.append("\n</foreach>");
-		where.append("\n</where> ");
 		where.append("\n</if>");
 		return where.toString();
 	}
