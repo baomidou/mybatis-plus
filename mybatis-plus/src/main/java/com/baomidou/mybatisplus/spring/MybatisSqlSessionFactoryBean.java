@@ -15,16 +15,18 @@
  */
 package com.baomidou.mybatisplus.spring;
 
-import com.baomidou.mybatisplus.MybatisConfiguration;
-import com.baomidou.mybatisplus.MybatisPlusHolder;
-import com.baomidou.mybatisplus.MybatisXMLConfigBuilder;
-import com.baomidou.mybatisplus.MybatisXMLMapperBuilder;
-import com.baomidou.mybatisplus.annotations.FieldStrategy;
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.mapper.DBType;
-import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
-import com.baomidou.mybatisplus.mapper.ISqlInjector;
-import com.baomidou.mybatisplus.toolkit.PackageHelper;
+import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.Assert.state;
+import static org.springframework.util.ObjectUtils.isEmpty;
+import static org.springframework.util.StringUtils.hasLength;
+import static org.springframework.util.StringUtils.tokenizeToStringArray;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Properties;
+
+import javax.sql.DataSource;
+
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.io.VFS;
@@ -51,16 +53,18 @@ import org.springframework.core.NestedIOException;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
-import javax.sql.DataSource;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.Properties;
-
-import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.Assert.state;
-import static org.springframework.util.ObjectUtils.isEmpty;
-import static org.springframework.util.StringUtils.hasLength;
-import static org.springframework.util.StringUtils.tokenizeToStringArray;
+import com.baomidou.mybatisplus.MybatisConfiguration;
+import com.baomidou.mybatisplus.MybatisPlusHolder;
+import com.baomidou.mybatisplus.MybatisXMLConfigBuilder;
+import com.baomidou.mybatisplus.MybatisXMLMapperBuilder;
+import com.baomidou.mybatisplus.enums.DBType;
+import com.baomidou.mybatisplus.enums.FieldStrategy;
+import com.baomidou.mybatisplus.enums.IdType;
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
+import com.baomidou.mybatisplus.mapper.ISqlInjector;
+import com.baomidou.mybatisplus.toolkit.JdbcUtils;
+import com.baomidou.mybatisplus.toolkit.PackageHelper;
 
 /**
  * <p>
@@ -120,9 +124,17 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
 	private ObjectWrapperFactory objectWrapperFactory;
 
+	private boolean isAutoSetDbType = true;
+
 	// TODO 注入数据库类型
 	public void setDbType(String dbType) {
+		isAutoSetDbType = false;
 		MybatisConfiguration.DB_TYPE = DBType.getDBType(dbType);
+	}
+
+	// TODO 注入主键策略
+	public void setIdType(int idType) {
+		MybatisConfiguration.ID_TYPE = IdType.getIdType(idType);
 	}
 
 	// TODO 注入表字段使用下划线命名
@@ -424,7 +436,13 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 		notNull(sqlSessionFactoryBuilder, "Property 'sqlSessionFactoryBuilder' is required");
 		state((configuration == null && configLocation == null) || !(configuration != null && configLocation != null),
 				"Property 'configuration' and 'configLocation' can not specified with together");
-
+		if (isAutoSetDbType) {
+			String jdbcUrl = dataSource.getConnection().getMetaData().getURL();
+			MybatisConfiguration.DB_TYPE = JdbcUtils.getDbType(jdbcUrl);
+			if (LOGGER.isDebugEnabled()) {
+				LOGGER.debug(" Auto Set DbType " + MybatisConfiguration.DB_TYPE.getDb());
+			}
+		}
 		this.sqlSessionFactory = buildSqlSessionFactory();
 	}
 

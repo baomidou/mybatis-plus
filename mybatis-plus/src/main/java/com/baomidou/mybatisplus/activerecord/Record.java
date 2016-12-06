@@ -18,8 +18,8 @@ package com.baomidou.mybatisplus.activerecord;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 
+import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.toolkit.TableInfo;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**

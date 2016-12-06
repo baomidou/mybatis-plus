@@ -20,7 +20,9 @@ import java.util.List;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
+ * <p>
  * 表信息，关联到当前字段信息
+ * </p>
  *
  * @author YangHu
  * @since 2016/8/30
@@ -55,6 +57,13 @@ public class TableInfo {
 
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+
+	public String getEntityPath() {
+		StringBuffer ep = new StringBuffer();
+		ep.append(entityName.substring(0, 1).toLowerCase());
+		ep.append(entityName.substring(1));
+		return ep.toString();
 	}
 
 	public String getEntityName() {

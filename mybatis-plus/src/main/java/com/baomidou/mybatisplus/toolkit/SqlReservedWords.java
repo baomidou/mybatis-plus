@@ -19,7 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.baomidou.mybatisplus.MybatisConfiguration;
-import com.baomidou.mybatisplus.mapper.DBType;
+import com.baomidou.mybatisplus.enums.DBType;
 
 /**
  * <p>

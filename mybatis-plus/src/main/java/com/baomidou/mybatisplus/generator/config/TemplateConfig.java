@@ -16,12 +16,12 @@
 package com.baomidou.mybatisplus.generator.config;
 
 /**
+ * <p>
+ * 模板路径配置项
+ * </p>
  * 
- * @ClassName: TemplateConfig
- * @Description: 模板路径配置项
  * @author tzg
- * @date 2016年11月10日 下午4:45:12
- *
+  *@since 2016/11/10
  */
 public class TemplateConfig {
 

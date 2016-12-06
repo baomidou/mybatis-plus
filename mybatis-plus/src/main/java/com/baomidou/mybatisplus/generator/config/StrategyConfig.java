@@ -15,11 +15,12 @@
  */
 package com.baomidou.mybatisplus.generator.config;
 
-import com.baomidou.mybatisplus.generator.config.rules.IdStrategy;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 
 /**
+ * <p>
  * 策略配置项
+ * </p>
  *
  * @author YangHu, tangguo, hubin
  * @since 2016/8/30
@@ -39,14 +40,14 @@ public class StrategyConfig {
 	private String tablePrefix;
 
 	/**
-	 * Entity 中的ID生成类型
-	 */
-	private IdStrategy idGenType = IdStrategy.id_worker;
-
-	/**
 	 * 自定义继承的Entity类全称，带包名
 	 */
 	private String superEntityClass;
+
+	/**
+	 * 自定义基础的Entity类，公共字段
+	 */
+	private String[] superEntityColumns;
 
 	/**
 	 * 自定义继承的Mapper类全称，带包名
@@ -77,6 +78,19 @@ public class StrategyConfig {
 	 * 需要排除的表名
 	 */
 	private String[] exclude = null;
+	/**
+	 * 【实体】是否生成字段常量（默认 false）<br>
+	 * -----------------------------------<br>
+	 * public static final String ID = "test_id";
+	 */
+	private boolean entityColumnConstant = false;
+
+	/**
+	 * 【实体】是否为构建者模型（默认 false）<br>
+	 * -----------------------------------<br>
+	 * public User setName(String name) { this.name = name; return this; }
+	 */
+	private boolean entityBuliderModel = false;
 
 	public NamingStrategy getNaming() {
 		return naming;
@@ -102,20 +116,31 @@ public class StrategyConfig {
 		this.tablePrefix = tablePrefix;
 	}
 
-	public IdStrategy getIdGenType() {
-		return idGenType;
-	}
-
-	public void setIdGenType(IdStrategy idGenType) {
-		this.idGenType = idGenType;
-	}
-
 	public String getSuperEntityClass() {
 		return superEntityClass;
 	}
 
 	public void setSuperEntityClass(String superEntityClass) {
 		this.superEntityClass = superEntityClass;
+	}
+
+	public boolean includeSuperEntityColumns(String fieldName) {
+		if (null != superEntityColumns) {
+			for (String column : superEntityColumns) {
+				if (column.contains(fieldName)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public String[] getSuperEntityColumns() {
+		return superEntityColumns;
+	}
+
+	public void setSuperEntityColumns(String[] superEntityColumns) {
+		this.superEntityColumns = superEntityColumns;
 	}
 
 	public String getSuperMapperClass() {
@@ -164,6 +189,22 @@ public class StrategyConfig {
 
 	public void setExclude(String[] exclude) {
 		this.exclude = exclude;
+	}
+
+	public boolean isEntityColumnConstant() {
+		return entityColumnConstant;
+	}
+
+	public void setEntityColumnConstant(boolean entityColumnConstant) {
+		this.entityColumnConstant = entityColumnConstant;
+	}
+
+	public boolean isEntityBuliderModel() {
+		return entityBuliderModel;
+	}
+
+	public void setEntityBuliderModel(boolean entityBuliderModel) {
+		this.entityBuliderModel = entityBuliderModel;
 	}
 
 }

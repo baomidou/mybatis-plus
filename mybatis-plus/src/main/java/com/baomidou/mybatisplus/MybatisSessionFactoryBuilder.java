@@ -15,19 +15,21 @@
  */
 package com.baomidou.mybatisplus;
 
-import com.baomidou.mybatisplus.annotations.FieldStrategy;
-import com.baomidou.mybatisplus.mapper.DBType;
-import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
-import com.baomidou.mybatisplus.mapper.ISqlInjector;
-import com.baomidou.mybatisplus.toolkit.IOUtils;
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.Properties;
+
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
-import java.io.InputStream;
-import java.io.Reader;
-import java.util.Properties;
+import com.baomidou.mybatisplus.enums.DBType;
+import com.baomidou.mybatisplus.enums.FieldStrategy;
+import com.baomidou.mybatisplus.enums.IdType;
+import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
+import com.baomidou.mybatisplus.mapper.ISqlInjector;
+import com.baomidou.mybatisplus.toolkit.IOUtils;
 
 /**
  * <p>
@@ -68,6 +70,11 @@ public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 	// TODO 注入数据库类型
 	public void setDbType(String dbType) {
 		MybatisConfiguration.DB_TYPE = DBType.getDBType(dbType);
+	}
+
+	// TODO 注入主键策略
+	public void setIdType(int idType) {
+		MybatisConfiguration.ID_TYPE = IdType.getIdType(idType);
 	}
 
 	// TODO 注入表字段使用下划线命名

@@ -1,5 +1,3 @@
-package com.baomidou.mybatisplus.generator.config;
-
 /**
  * Copyright (c) 2011-2020, hubin (jobob@qq.com).
  * <p>
@@ -15,6 +13,8 @@ package com.baomidou.mybatisplus.generator.config;
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+package com.baomidou.mybatisplus.generator.config;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -23,7 +23,9 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.generator.config.rules.DbType;
 
 /**
+ * <p>
  * 数据库配置
+ * </p>
  *
  * @author YangHu
  * @since 2016/8/30

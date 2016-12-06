@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.velocity.Template;
@@ -39,6 +38,7 @@ import com.baomidou.mybatisplus.generator.config.ConstVal;
 import com.baomidou.mybatisplus.generator.config.TemplateConfig;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
  * 生成文件
@@ -46,9 +46,9 @@ import com.baomidou.mybatisplus.generator.config.po.TableInfo;
  * @author YangHu, tangguo
  * @since 2016/8/30
  */
-public class MybatisPlusGenerator extends AbstractGenerator {
+public class AutoGenerator extends AbstractGenerator {
 
-	private static final Log logger = LogFactory.getLog(MybatisPlusGenerator.class);
+	private static final Log logger = LogFactory.getLog(AutoGenerator.class);
 
 	/**
 	 * velocity引擎
@@ -56,16 +56,12 @@ public class MybatisPlusGenerator extends AbstractGenerator {
 	private VelocityEngine engine;
 
 	/**
-	 * 输出文件
+	 * 生成代码
 	 */
-	private Map<String, String> outputFiles;
-
 	public void execute() {
 		logger.debug("==========================准备生成文件...==========================");
 		// 初始化配置
 		initConfig();
-		// 初始化输出文件路径模板
-		initOutputFiles();
 		// 创建输出文件路径
 		mkdirs(config.getPathInfo());
 		// 获取上下文
@@ -75,16 +71,16 @@ public class MybatisPlusGenerator extends AbstractGenerator {
 			batchOutput(ctx.getKey(), ctx.getValue());
 		}
 		// 打开输出目录
-		if (isOpen()) {
+		if (config.getGlobalConfig().isOpen()) {
 			try {
 				String osName = System.getProperty("os.name");
 				if (osName != null) {
 					if (osName.contains("Mac")) {
-						Runtime.getRuntime().exec("open " + getOutputDir());
+						Runtime.getRuntime().exec("open " + config.getGlobalConfig().getOutputDir());
 					} else if (osName.contains("Windows")) {
-						Runtime.getRuntime().exec("cmd /c start " + getOutputDir());
+						Runtime.getRuntime().exec("cmd /c start " + config.getGlobalConfig().getOutputDir());
 					} else {
-						logger.debug("文件输出目录:" + getOutputDir());
+						logger.debug("文件输出目录:" + config.getGlobalConfig().getOutputDir());
 					}
 				}
 			} catch (IOException e) {
@@ -115,10 +111,16 @@ public class MybatisPlusGenerator extends AbstractGenerator {
 		for (TableInfo tableInfo : tableList) {
 			VelocityContext ctx = new VelocityContext();
 			ctx.put("package", packageInfo);
+			ctx.put("author", config.getGlobalConfig().getAuthor());
+			ctx.put("date", date);
 			ctx.put("table", tableInfo);
+			ctx.put("enableCache", config.getGlobalConfig().isEnableCache());
+			ctx.put("baseResultMap", config.getGlobalConfig().isBaseResultMap());
+			ctx.put("baseColumnList", config.getGlobalConfig().isBaseColumnList());
 			ctx.put("entity", tableInfo.getEntityName());
-			ctx.put("addTabeName", !tableInfo.getEntityName().toLowerCase().equals(tableInfo.getName().toLowerCase()));
-			ctx.put("idGenType", config.getIdType());
+			ctx.put("entityColumnConstant", config.getStrategyConfig().isEntityColumnConstant());
+			ctx.put("entityBuliderModel", config.getStrategyConfig().isEntityBuliderModel());
+			ctx.put("tabeAnnotation", !tableInfo.getEntityName().toLowerCase().equals(tableInfo.getName().toLowerCase()));
 			ctx.put("superEntityClassPackage", config.getSuperEntityClass());
 			ctx.put("superEntityClass", superEntityClass);
 			ctx.put("superMapperClassPackage", config.getSuperMapperClass());
@@ -129,10 +131,6 @@ public class MybatisPlusGenerator extends AbstractGenerator {
 			ctx.put("superServiceImplClass", superServiceImplClass);
 			ctx.put("superControllerClassPackage", config.getSuperControllerClass());
 			ctx.put("superControllerClass", superControllerClass);
-			ctx.put("enableCache", isEnableCache());
-			ctx.put("author", getAuthor());
-			ctx.put("activeRecord", isActiveRecord());
-			ctx.put("date", date);
 			ctxData.put(tableInfo.getEntityName(), ctx);
 		}
 		return ctxData;
@@ -145,7 +143,7 @@ public class MybatisPlusGenerator extends AbstractGenerator {
 	 * @return
 	 */
 	private String getSuperClassName(String classPath) {
-		if (StringUtils.isBlank(classPath))
+		if (StringUtils.isEmpty(classPath))
 			return null;
 		return classPath.substring(classPath.lastIndexOf(".") + 1);
 	}
@@ -169,20 +167,6 @@ public class MybatisPlusGenerator extends AbstractGenerator {
 	}
 
 	/**
-	 * 初始化输出目录
-	 */
-	private void initOutputFiles() {
-		outputFiles = new HashMap<String, String>();
-		Map<String, String> pathInfo = config.getPathInfo();
-		outputFiles.put(ConstVal.ENTITY, pathInfo.get(ConstVal.ENTITY_PATH) + ConstVal.ENTITY_NAME);
-		outputFiles.put(ConstVal.MAPPER, pathInfo.get(ConstVal.MAPPER_PATH) + ConstVal.MAPPER_NAME);
-		outputFiles.put(ConstVal.XML, pathInfo.get(ConstVal.XML_PATH) + ConstVal.XML_NAME);
-		outputFiles.put(ConstVal.SERIVCE, pathInfo.get(ConstVal.SERIVCE_PATH) + ConstVal.SERVICE_NAME);
-		outputFiles.put(ConstVal.SERVICEIMPL, pathInfo.get(ConstVal.SERVICEIMPL_PATH) + ConstVal.SERVICEIMPL_NAME);
-		outputFiles.put(ConstVal.CONTROLLER, pathInfo.get(ConstVal.CONTROLLER_PATH) + ConstVal.CONTROLLER_NAME);
-	}
-
-	/**
 	 * 合成上下文与模板
 	 *
 	 * @param context
@@ -190,12 +174,14 @@ public class MybatisPlusGenerator extends AbstractGenerator {
 	 */
 	private void batchOutput(String entityName, VelocityContext context) {
 		try {
-			String entityFile = String.format(outputFiles.get(ConstVal.ENTITY), entityName);
-			String mapperFile = String.format(outputFiles.get(ConstVal.MAPPER), entityName);
-			String xmlFile = String.format(outputFiles.get(ConstVal.XML), entityName);
-			String serviceFile = String.format(outputFiles.get(ConstVal.SERIVCE), entityName);
-			String implFile = String.format(outputFiles.get(ConstVal.SERVICEIMPL), entityName);
-			String controllerFile = String.format(outputFiles.get(ConstVal.CONTROLLER), entityName);
+			TableInfo tableInfo = (TableInfo) context.get("table");
+			Map<String, String> pathInfo = config.getPathInfo();
+			String entityFile = String.format((pathInfo.get(ConstVal.ENTITY_PATH) + ConstVal.ENTITY_NAME), entityName);
+			String mapperFile = String.format((pathInfo.get(ConstVal.MAPPER_PATH) + File.separator + tableInfo.getMapperName() + ConstVal.JAVA_SUFFIX), entityName);
+			String xmlFile = String.format((pathInfo.get(ConstVal.XML_PATH) + File.separator + tableInfo.getXmlName() + ConstVal.XML_SUFFIX), entityName);
+			String serviceFile = String.format((pathInfo.get(ConstVal.SERIVCE_PATH) + File.separator + tableInfo.getServiceName() + ConstVal.JAVA_SUFFIX), entityName);
+			String implFile = String.format((pathInfo.get(ConstVal.SERVICEIMPL_PATH) + File.separator + tableInfo.getServiceImplName() + ConstVal.JAVA_SUFFIX), entityName);
+			String controllerFile = String.format((pathInfo.get(ConstVal.CONTROLLER_PATH) + File.separator + tableInfo.getControllerName() + ConstVal.JAVA_SUFFIX), entityName);
 
 			TemplateConfig template = config.getTemplate();
 
@@ -219,8 +205,7 @@ public class MybatisPlusGenerator extends AbstractGenerator {
 				vmToFile(context, template.getController(), controllerFile);
 			}
 		} catch (IOException e) {
-			logger.error("无法创建文件，请检查配置信息！");
-			e.printStackTrace();
+			logger.error("无法创建文件，请检查配置信息！", e);
 		}
 	}
 
@@ -268,7 +253,7 @@ public class MybatisPlusGenerator extends AbstractGenerator {
 	 */
 	private boolean isCreate(String filePath) {
 		File file = new File(filePath);
-		return !file.exists() || isFileOverride();
+		return !file.exists() || config.getGlobalConfig().isFileOverride();
 	}
 
 }

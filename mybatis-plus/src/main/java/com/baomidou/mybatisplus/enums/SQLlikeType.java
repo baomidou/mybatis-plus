@@ -1,37 +1,49 @@
 /**
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
- * <p>
+ * Copyright (c) 2011-2014, hubin (jobob@qq.com).
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- * <p>
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.generator.config.rules;
+package com.baomidou.mybatisplus.enums;
 
 /**
- * ID生成策略
- *
- * @author YangHu
- * @since 2016/8/30
+ * <p>
+ * SQL like 枚举
+ * </p>
+ * 
+ * @author Caratacus
+ * @Date 2016-12-4
  */
-public enum IdStrategy {
-	auto("AUTO"), id_worker("ID_WORKER"), uuid("UUID"), input("INPUT");
+public enum SQLlikeType {
+	/**
+	 * LEFT
+	 */
+	LEFT("left", "左边"),
+	/**
+	 * RIGHT
+	 */
+	RIGHT("right", "右边"),
+	/**
+	 * DEFAULT
+	 */
+	DEFAULT("default", "两边");
+	/** 主键 */
+	private final String type;
 
-	private String value;
+	/** 描述 */
+	private final String desc;
 
-	IdStrategy(String value) {
-		this.value = value;
+	SQLlikeType(final String type, final String desc) {
+		this.type = type;
+		this.desc = desc;
 	}
-
-	public String getValue() {
-		return value;
-	}
-
 }

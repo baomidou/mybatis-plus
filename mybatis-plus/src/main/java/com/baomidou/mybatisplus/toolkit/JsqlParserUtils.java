@@ -15,7 +15,9 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
-import com.baomidou.mybatisplus.plugins.entity.CountOptimize;
+import java.util.ArrayList;
+import java.util.List;
+
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.expression.LongValue;
@@ -28,8 +30,7 @@ import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 import net.sf.jsqlparser.statement.select.SelectItem;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.baomidou.mybatisplus.entity.CountOptimize;
 
 /**
  * <p>
@@ -56,15 +57,18 @@ public class JsqlParserUtils {
 			PlainSelect plainSelect = (PlainSelect) selectStatement.getSelectBody();
 			Distinct distinct = plainSelect.getDistinct();
 			List<Expression> groupBy = plainSelect.getGroupByColumnReferences();
-			// 包含 distinct、groupBy不优化
-			if (distinct != null || CollectionUtil.isNotEmpty(groupBy)) {
-				sqlCount = String.format(SqlUtils.SQL_BASE_COUNT, originalSql);
-			}
 			// 优化Order by
 			List<OrderByElement> orderBy = plainSelect.getOrderByElements();
-			if (CollectionUtil.isNotEmpty(orderBy)) {
+			// 添加包含groupby 不去除orderby
+			if (CollectionUtils.isEmpty(groupBy) && CollectionUtils.isNotEmpty(orderBy)) {
 				plainSelect.setOrderByElements(null);
 				countOptimize.setOrderBy(false);
+			}
+			// 包含 distinct、groupBy不优化
+			if (distinct != null || CollectionUtils.isNotEmpty(groupBy)) {
+				sqlCount = String.format(SqlUtils.SQL_BASE_COUNT, selectStatement.toString());
+				countOptimize.setCountSQL(sqlCount);
+				return countOptimize;
 			}
 			List<SelectItem> selectCount = countSelectItem();
 			plainSelect.setSelectItems(selectCount);
@@ -82,7 +86,7 @@ public class JsqlParserUtils {
 	 * @return
 	 */
 	private static List<SelectItem> countSelectItem() {
-		if (CollectionUtil.isNotEmpty(countSelectItem)) {
+		if (CollectionUtils.isNotEmpty(countSelectItem)) {
 			return countSelectItem;
 		}
 		Function function = new Function();

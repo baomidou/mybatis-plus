@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
+import com.baomidou.mybatisplus.enums.SQLlikeType;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.regex.Matcher;
@@ -29,7 +31,10 @@ import java.util.regex.Pattern;
  * @Date 2016-08-18
  */
 public class StringUtils {
-	
+
+	/**
+	 * 空字符
+	 */
 	public static final String EMPTY = "";
 
 	/**
@@ -37,10 +42,6 @@ public class StringUtils {
 	 */
 	public static final char UNDERLINE = '_';
 
-	/**
-	 * 空字符串
-	 */
-	public static final String EMPTY_STRING = "";
 	/**
 	 * 占位符
 	 */
@@ -92,7 +93,7 @@ public class StringUtils {
 	 */
 	public static String camelToUnderline(String param) {
 		if (isEmpty(param)) {
-			return EMPTY_STRING;
+			return EMPTY;
 		}
 		int len = param.length();
 		StringBuilder sb = new StringBuilder(len);
@@ -106,6 +107,10 @@ public class StringUtils {
 		return sb.toString();
 	}
 
+	public static void main(String[] args) {
+		System.err.println(StringUtils.camelToUnderline("DSDSSD_SDDS"));
+	}
+
 	/**
 	 * <p>
 	 * 字符串下划线转驼峰格式
@@ -117,15 +122,16 @@ public class StringUtils {
 	 */
 	public static String underlineToCamel(String param) {
 		if (isEmpty(param)) {
-			return EMPTY_STRING;
+			return EMPTY;
 		}
-		int len = param.length();
+		String temp = param.toLowerCase();
+		int len = temp.length();
 		StringBuilder sb = new StringBuilder(len);
 		for (int i = 0; i < len; i++) {
-			char c = param.charAt(i);
+			char c = temp.charAt(i);
 			if (c == UNDERLINE) {
 				if (++i < len) {
-					sb.append(Character.toUpperCase(param.charAt(i)));
+					sb.append(Character.toUpperCase(temp.charAt(i)));
 				}
 			} else {
 				sb.append(c);
@@ -183,7 +189,9 @@ public class StringUtils {
 			int length = args.length;
 			if (length >= 1) {
 				for (int i = 0; i < length; i++) {
-					content = content.replace(String.format(PLACE_HOLDER, i), sqlParam(args[i]));
+					// 改造 String.replace() 用法
+					content = Pattern.compile(String.format(PLACE_HOLDER, i), Pattern.LITERAL).matcher(content)
+							.replaceAll(sqlParam(args[i]));
 				}
 			}
 		}
@@ -226,6 +234,29 @@ public class StringUtils {
 
 	/**
 	 * <p>
+	 * 用%连接like
+	 * </p>
+	 *
+	 * @param str
+	 *            原字符串
+	 * @return
+	 */
+	public static String concatLike(String str, SQLlikeType type) {
+		switch (type) {
+		case LEFT:
+			str = "%" + str;
+			break;
+		case RIGHT:
+			str += "%";
+			break;
+		default:
+			str = "%" + str + "%";
+		}
+		return StringEscape.escapeString(str);
+	}
+
+	/**
+	 * <p>
 	 * 使用单引号包含字符串
 	 * </p>
 	 *
@@ -256,6 +287,7 @@ public class StringUtils {
 	/**
 	 * <p>
 	 * 拼接字符串第二个字符串第一个字母大写
+	 * </p>
 	 *
 	 * @param concatStr
 	 * @param str
@@ -263,7 +295,7 @@ public class StringUtils {
 	 */
 	public static String concatCapitalize(String concatStr, final String str) {
 		if (isEmpty(concatStr)) {
-			concatStr = EMPTY_STRING;
+			concatStr = EMPTY;
 		}
 		int strLen;
 		if (str == null || (strLen = str.length()) == 0) {
@@ -276,8 +308,11 @@ public class StringUtils {
 			return str;
 		}
 
-		return new StringBuilder(strLen).append(concatStr).append(Character.toTitleCase(firstChar)).append(str.substring(1))
-				.toString();
+		StringBuilder sb = new StringBuilder(strLen);
+		sb.append(concatStr);
+		sb.append(Character.toTitleCase(firstChar));
+		sb.append(str.substring(1));
+		return sb.toString();
 	}
 
 	/**
@@ -306,6 +341,7 @@ public class StringUtils {
 		}
 		return object == null ? false : true;
 	}
+
 	/**
 	 * <p>
 	 * 判断对象是否为空
@@ -318,79 +354,98 @@ public class StringUtils {
 		return !checkValNotNull(object);
 	}
 
-    // endsWith
-    //-----------------------------------------------------------------------
+	// endsWith
+	// -----------------------------------------------------------------------
 
-    /**
-     * <p>Check if a String ends with a specified suffix.</p>
-     *
-     * <p><code>null</code>s are handled without exceptions. Two <code>null</code>
-     * references are considered to be equal. The comparison is case sensitive.</p>
-     *
-     * <pre>
-     * StringUtils.endsWith(null, null)      = true
-     * StringUtils.endsWith(null, "abcdef")  = false
-     * StringUtils.endsWith("def", null)     = false
-     * StringUtils.endsWith("def", "abcdef") = true
-     * StringUtils.endsWith("def", "ABCDEF") = false
-     * </pre>
-     *
-     * @see java.lang.String#endsWith(String)
-     * @param str  the String to check, may be null
-     * @param suffix the suffix to find, may be null
-     * @return <code>true</code> if the String ends with the suffix, case sensitive, or
-     *  both <code>null</code>
-     * @since 2.4
-     */
-    public static boolean endsWith(String str, String suffix) {
-        return endsWith(str, suffix, false);
-    }
+	/**
+	 * <p>
+	 * Check if a String ends with a specified suffix.
+	 * </p>
+	 *
+	 * <p>
+	 * <code>null</code>s are handled without exceptions. Two <code>null</code>
+	 * references are considered to be equal. The comparison is case sensitive.
+	 * </p>
+	 *
+	 * <pre>
+	 * StringUtils.endsWith(null, null)      = true
+	 * StringUtils.endsWith(null, "abcdef")  = false
+	 * StringUtils.endsWith("def", null)     = false
+	 * StringUtils.endsWith("def", "abcdef") = true
+	 * StringUtils.endsWith("def", "ABCDEF") = false
+	 * </pre>
+	 *
+	 * @see java.lang.String#endsWith(String)
+	 * @param str
+	 *            the String to check, may be null
+	 * @param suffix
+	 *            the suffix to find, may be null
+	 * @return <code>true</code> if the String ends with the suffix, case
+	 *         sensitive, or both <code>null</code>
+	 * @since 2.4
+	 */
+	public static boolean endsWith(String str, String suffix) {
+		return endsWith(str, suffix, false);
+	}
 
-    /**
-     * <p>Case insensitive check if a String ends with a specified suffix.</p>
-     *
-     * <p><code>null</code>s are handled without exceptions. Two <code>null</code>
-     * references are considered to be equal. The comparison is case insensitive.</p>
-     *
-     * <pre>
-     * StringUtils.endsWithIgnoreCase(null, null)      = true
-     * StringUtils.endsWithIgnoreCase(null, "abcdef")  = false
-     * StringUtils.endsWithIgnoreCase("def", null)     = false
-     * StringUtils.endsWithIgnoreCase("def", "abcdef") = true
-     * StringUtils.endsWithIgnoreCase("def", "ABCDEF") = false
-     * </pre>
-     *
-     * @see java.lang.String#endsWith(String)
-     * @param str  the String to check, may be null
-     * @param suffix the suffix to find, may be null
-     * @return <code>true</code> if the String ends with the suffix, case insensitive, or
-     *  both <code>null</code>
-     * @since 2.4
-     */
-    public static boolean endsWithIgnoreCase(String str, String suffix) {
-        return endsWith(str, suffix, true);
-    }
+	/**
+	 * <p>
+	 * Case insensitive check if a String ends with a specified suffix.
+	 * </p>
+	 *
+	 * <p>
+	 * <code>null</code>s are handled without exceptions. Two <code>null</code>
+	 * references are considered to be equal. The comparison is case
+	 * insensitive.
+	 * </p>
+	 *
+	 * <pre>
+	 * StringUtils.endsWithIgnoreCase(null, null)      = true
+	 * StringUtils.endsWithIgnoreCase(null, "abcdef")  = false
+	 * StringUtils.endsWithIgnoreCase("def", null)     = false
+	 * StringUtils.endsWithIgnoreCase("def", "abcdef") = true
+	 * StringUtils.endsWithIgnoreCase("def", "ABCDEF") = false
+	 * </pre>
+	 *
+	 * @see java.lang.String#endsWith(String)
+	 * @param str
+	 *            the String to check, may be null
+	 * @param suffix
+	 *            the suffix to find, may be null
+	 * @return <code>true</code> if the String ends with the suffix, case
+	 *         insensitive, or both <code>null</code>
+	 * @since 2.4
+	 */
+	public static boolean endsWithIgnoreCase(String str, String suffix) {
+		return endsWith(str, suffix, true);
+	}
 
-    /**
-     * <p>Check if a String ends with a specified suffix (optionally case insensitive).</p>
-     *
-     * @see java.lang.String#endsWith(String)
-     * @param str  the String to check, may be null
-     * @param suffix the suffix to find, may be null
-     * @param ignoreCase inidicates whether the compare should ignore case
-     *  (case insensitive) or not.
-     * @return <code>true</code> if the String starts with the prefix or
-     *  both <code>null</code>
-     */
-    private static boolean endsWith(String str, String suffix, boolean ignoreCase) {
-        if (str == null || suffix == null) {
-            return (str == null && suffix == null);
-        }
-        if (suffix.length() > str.length()) {
-            return false;
-        }
-        int strOffset = str.length() - suffix.length();
-        return str.regionMatches(ignoreCase, strOffset, suffix, 0, suffix.length());
-    }
+	/**
+	 * <p>
+	 * Check if a String ends with a specified suffix (optionally case
+	 * insensitive).
+	 * </p>
+	 *
+	 * @see java.lang.String#endsWith(String)
+	 * @param str
+	 *            the String to check, may be null
+	 * @param suffix
+	 *            the suffix to find, may be null
+	 * @param ignoreCase
+	 *            inidicates whether the compare should ignore case (case
+	 *            insensitive) or not.
+	 * @return <code>true</code> if the String starts with the prefix or both
+	 *         <code>null</code>
+	 */
+	private static boolean endsWith(String str, String suffix, boolean ignoreCase) {
+		if (str == null || suffix == null) {
+			return (str == null && suffix == null);
+		}
+		if (suffix.length() > str.length()) {
+			return false;
+		}
+		int strOffset = str.length() - suffix.length();
+		return str.regionMatches(ignoreCase, strOffset, suffix, 0, suffix.length());
+	}
 
 }

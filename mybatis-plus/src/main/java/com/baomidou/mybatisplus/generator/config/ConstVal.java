@@ -57,18 +57,18 @@ public class ConstVal {
 	public static final String TEMPLATE_CONTROLLER = "/template/controller.java.vm";
 
 	public static final String ENTITY_NAME = File.separator + "%s" + JAVA_SUFFIX;
-	public static final String MAPPER_NAME = File.separator + "%s" + MAPPER + JAVA_SUFFIX;
-	public static final String XML_NAME = File.separator + "%s" + MAPPER + XML_SUFFIX;
-	public static final String SERVICE_NAME = File.separator + "I%s" + SERIVCE + JAVA_SUFFIX;
-	public static final String SERVICEIMPL_NAME = File.separator + "%s" + SERVICEIMPL + JAVA_SUFFIX;
-	public static final String CONTROLLER_NAME = File.separator + "%s" + CONTROLLER + JAVA_SUFFIX;
+//	public static final String MAPPER_NAME = File.separator + "%s" + MAPPER + JAVA_SUFFIX;
+//	public static final String XML_NAME = File.separator + "%s" + MAPPER + XML_SUFFIX;
+//	public static final String SERVICE_NAME = File.separator + "I%s" + SERIVCE + JAVA_SUFFIX;
+//	public static final String SERVICEIMPL_NAME = File.separator + "%s" + SERVICEIMPL + JAVA_SUFFIX;
+//	public static final String CONTROLLER_NAME = File.separator + "%s" + CONTROLLER + JAVA_SUFFIX;
 
 	// 配置使用classloader加载资源
 	public static final String VM_LOADPATH_KEY = "file.resource.loader.class";
 	public static final String VM_LOADPATH_VALUE = "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader";
 
 	public static final String SUPERD_MAPPER_CLASS = "com.baomidou.mybatisplus.mapper.BaseMapper";
-	public static final String SUPERD_SERVICE_CLASS = "com.baomidou.framework.service.IService";
-	public static final String SUPERD_SERVICEIMPL_CLASS = "com.baomidou.framework.service.impl.ServiceImpl";
+	public static final String SUPERD_SERVICE_CLASS = "com.baomidou.mybatisplus.service.IService";
+	public static final String SUPERD_SERVICEIMPL_CLASS = "com.baomidou.mybatisplus.service.impl.ServiceImpl";
 	
 }

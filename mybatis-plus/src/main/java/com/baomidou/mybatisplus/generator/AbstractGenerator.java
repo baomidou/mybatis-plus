@@ -16,20 +16,22 @@
 package com.baomidou.mybatisplus.generator;
 
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
+import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.PackageConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.TemplateConfig;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 
 /**
+ * <p>
  * 插件基类，用于属性配置 设计成抽象类主要是用于后期可扩展，共享参数配置。
+ * </p>
  *
  * @author YangHu
  * @since 2016/8/30
  */
 public abstract class AbstractGenerator {
 
-	
 	/**
 	 * 数据源配置
 	 */
@@ -51,34 +53,9 @@ public abstract class AbstractGenerator {
 	private TemplateConfig template;
 
 	/**
-	 * 生成文件的输出目录
+	 * 全局 相关配置
 	 */
-	private String outputDir;
-
-	/**
-	 * 是否覆盖已有文件
-	 */
-	private boolean fileOverride = false;
-
-	/**
-	 * 是否打开输出目录
-	 */
-	private boolean open = true;
-
-	/**
-	 * 是否在xml中添加二级缓存配置
-	 */
-	private boolean enableCache = true;
-
-	/**
-	 * 开发人员
-	 */
-	private String author;
-
-	/**
-	 * 开启 ActiveRecord 模式
-	 */
-	private boolean activeRecord = true;
+	private GlobalConfig globalConfig;
 
 	protected ConfigBuilder config;
 
@@ -87,7 +64,7 @@ public abstract class AbstractGenerator {
 	 */
 	protected void initConfig() {
 		if (null == config) {
-			config = new ConfigBuilder(packageInfo, dataSource, strategy, template, outputDir);
+			config = new ConfigBuilder(packageInfo, dataSource, strategy, template, globalConfig);
 		}
 	}
 
@@ -123,60 +100,20 @@ public abstract class AbstractGenerator {
 		this.template = template;
 	}
 
-	public String getOutputDir() {
-		return outputDir;
-	}
-
-	public void setOutputDir(String outputDir) {
-		this.outputDir = outputDir;
-	}
-
-	public boolean isFileOverride() {
-		return fileOverride;
-	}
-
-	public void setFileOverride(boolean fileOverride) {
-		this.fileOverride = fileOverride;
-	}
-
-	public boolean isOpen() {
-		return open;
-	}
-
-	public void setOpen(boolean open) {
-		this.open = open;
-	}
-
-	public boolean isEnableCache() {
-		return enableCache;
-	}
-
-	public void setEnableCache(boolean enableCache) {
-		this.enableCache = enableCache;
-	}
-
-	public String getAuthor() {
-		return author;
-	}
-
-	public void setAuthor(String author) {
-		this.author = author;
-	}
-
-	public boolean isActiveRecord() {
-		return activeRecord;
-	}
-
-	public void setActiveRecord(boolean activeRecord) {
-		this.activeRecord = activeRecord;
-	}
-
 	public ConfigBuilder getConfig() {
 		return config;
 	}
 
 	public void setConfig(ConfigBuilder config) {
 		this.config = config;
+	}
+
+	public GlobalConfig getGlobalConfig() {
+		return globalConfig;
+	}
+
+	public void setGlobalConfig(GlobalConfig globalConfig) {
+		this.globalConfig = globalConfig;
 	}
 
 }

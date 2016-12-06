@@ -16,7 +16,7 @@ public class MapUtils {
 	 * @param map
 	 * @return
 	 */
-	public static boolean isEmpty(Map map) {
+	public static boolean isEmpty(Map<?, ?> map) {
 		return (map == null || map.isEmpty());
 	}
 
@@ -26,7 +26,7 @@ public class MapUtils {
 	 * @param map
 	 * @return
 	 */
-	public static boolean isNotEmpty(Map map) {
+	public static boolean isNotEmpty(Map<?, ?> map) {
 		return !isEmpty(map);
 	}
 

@@ -60,6 +60,8 @@ public class NoXMLTest {
 		} else {
 			System.err.println(" tests is null. ");
 		}
+		testMapper.delete(null);
+
 	}
 
 }
