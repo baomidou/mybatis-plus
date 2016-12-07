@@ -37,8 +37,8 @@ import com.baomidou.mybatisplus.toolkit.IdWorker;
  * @Date 2016-09-09
  */
 public class URPTest {
-	public static void main(String[] args) {
 
+	public static void main(String[] args) {
 		// 加载配置文件
 		InputStream in = UserMapperTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
 		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();

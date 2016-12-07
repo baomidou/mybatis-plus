@@ -50,9 +50,9 @@ public class NoXMLTest {
 		 */
 		TestMapper testMapper = sqlSession.getMapper(TestMapper.class);
 		testMapper.insert(new Test(IdWorker.getId(), "Caratacus"));
-		Map<String, Object> map = new HashMap();
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("type", null);
-		map.put("id", null);
+		map.put("id", 1);
 		List<Test> tests = testMapper.selectByMap(map);
 		if (null != tests) {
 			for (Test test : tests) {
