@@ -15,6 +15,16 @@
  */
 package com.baomidou.mybatisplus;
 
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.Properties;
+
+import org.apache.ibatis.exceptions.ExceptionFactory;
+import org.apache.ibatis.executor.ErrorContext;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+
 import com.baomidou.mybatisplus.entity.MybatisGlobalCache;
 import com.baomidou.mybatisplus.enums.DBType;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
@@ -22,15 +32,6 @@ import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
 import com.baomidou.mybatisplus.mapper.ISqlInjector;
 import com.baomidou.mybatisplus.toolkit.IOUtils;
-import org.apache.ibatis.exceptions.ExceptionFactory;
-import org.apache.ibatis.executor.ErrorContext;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
-
-import java.io.InputStream;
-import java.io.Reader;
-import java.util.Properties;
 
 /**
  * <p>

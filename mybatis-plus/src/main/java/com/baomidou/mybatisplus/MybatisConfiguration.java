@@ -64,14 +64,7 @@ public class MybatisConfiguration extends Configuration {
 	@Override
 	public void addMappedStatement(MappedStatement ms) {
 		logger.debug(" addMappedStatement: " + ms.getId());
-		MybatisGlobalCache globalCache = MybatisGlobalCache.globalCache(ms.getConfiguration());
-		if (globalCache == null) {
-			// 没有获取全局配置初始全局配置
-			logger.warn("Warn: Not getting global configuration ! global configuration Initializing !");
-			globalCache = MybatisGlobalCache.defaults();
-            MybatisGlobalCache.setGlobalCache(ms.getConfiguration(), globalCache);
-		}
-		if (globalCache.isRefresh()) {
+		if (MybatisGlobalCache.globalCache(ms.getConfiguration()).isRefresh()) {
 			/*
 			 * 支持是否自动刷新 XML 变更内容，开发环境使用【 注：生产环境勿用！】
 			 */

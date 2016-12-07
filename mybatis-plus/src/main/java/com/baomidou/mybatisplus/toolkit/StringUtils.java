@@ -15,12 +15,12 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
-import com.baomidou.mybatisplus.enums.SQLlikeType;
-
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.baomidou.mybatisplus.enums.SQLlikeType;
 
 /**
  * <p>

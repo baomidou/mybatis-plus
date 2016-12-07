@@ -15,9 +15,9 @@
  */
 package com.baomidou.mybatisplus.entity;
 
-import com.baomidou.mybatisplus.enums.IdType;
-
 import java.util.List;
+
+import com.baomidou.mybatisplus.enums.IdType;
 
 /**
  * <p>

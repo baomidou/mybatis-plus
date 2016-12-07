@@ -15,6 +15,15 @@
  */
 package com.baomidou.mybatisplus.entity;
 
+import java.io.Serializable;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
+
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSessionFactory;
+
 import com.baomidou.mybatisplus.enums.DBType;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.enums.IdType;
@@ -23,12 +32,6 @@ import com.baomidou.mybatisplus.mapper.AutoSqlInjector;
 import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
 import com.baomidou.mybatisplus.mapper.ISqlInjector;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSessionFactory;
-
-import java.io.Serializable;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * <p>
@@ -39,6 +42,9 @@ import java.util.concurrent.ConcurrentSkipListSet;
  * @Date 2016-12-06
  */
 public class MybatisGlobalCache implements Cloneable, Serializable {
+
+	private static final Log logger = LogFactory.getLog(MybatisGlobalCache.class);
+
 	/**
 	 * 默认参数
 	 */
@@ -195,10 +201,10 @@ public class MybatisGlobalCache implements Cloneable, Serializable {
 	 * @return
 	 */
 	public static MybatisGlobalCache globalCache(Configuration configuration) {
-		if (configuration != null) {
-			return globalCache(configuration.toString());
+		if (configuration == null) {
+			throw new MybatisPlusException("Error: You need Initialize MybatisConfiguration !");
 		}
-		return null;
+		return globalCache(configuration.toString());
 	}
 
 	/**
@@ -208,7 +214,13 @@ public class MybatisGlobalCache implements Cloneable, Serializable {
 	 * @return
 	 */
 	public static MybatisGlobalCache globalCache(String configMark) {
-		return TableInfoHelper.getGlobalCache(configMark);
+		MybatisGlobalCache globalCache = TableInfoHelper.getGlobalCache(configMark);
+		if (globalCache == null) {
+			// 没有获取全局配置初始全局配置
+			logger.warn("Warn: Not getting global configuration ! global configuration Initializing !");
+			return DEFAULT;
+		}
+		return globalCache;
 	}
 
 	public static DBType getDbType(Configuration configuration) {
