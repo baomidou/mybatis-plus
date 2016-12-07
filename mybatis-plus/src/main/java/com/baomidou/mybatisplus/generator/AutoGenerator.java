@@ -110,6 +110,13 @@ public class AutoGenerator extends AbstractGenerator {
 
 		for (TableInfo tableInfo : tableList) {
 			VelocityContext ctx = new VelocityContext();
+			if (null != cfg) {
+				/**
+				 * 注入自定义配置
+				 */
+				cfg.initMap();
+				ctx.put("cfg", cfg.getMap());
+			}
 			ctx.put("package", packageInfo);
 			ctx.put("author", config.getGlobalConfig().getAuthor());
 			ctx.put("date", date);
