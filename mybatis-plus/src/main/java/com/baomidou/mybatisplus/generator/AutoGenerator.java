@@ -44,7 +44,7 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  * 生成文件
  * 
  * @author YangHu, tangguo
- * @since 2016/8/30
+ * @since 2016-08-30
  */
 public class AutoGenerator extends AbstractGenerator {
 
@@ -114,6 +114,7 @@ public class AutoGenerator extends AbstractGenerator {
 			ctx.put("author", config.getGlobalConfig().getAuthor());
 			ctx.put("date", date);
 			ctx.put("table", tableInfo);
+			ctx.put("activeRecord", config.getGlobalConfig().isActiveRecord());
 			ctx.put("enableCache", config.getGlobalConfig().isEnableCache());
 			ctx.put("baseResultMap", config.getGlobalConfig().isBaseResultMap());
 			ctx.put("baseColumnList", config.getGlobalConfig().isBaseColumnList());

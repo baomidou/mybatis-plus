@@ -52,7 +52,7 @@ public class NoXMLTest {
 		testMapper.insert(new Test(IdWorker.getId(), "Caratacus"));
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("type", null);
-		map.put("id", 1);
+		map.put("id", null);
 		List<Test> tests = testMapper.selectByMap(map);
 		if (null != tests) {
 			for (Test test : tests) {

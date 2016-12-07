@@ -199,6 +199,9 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	}
 
 	public boolean deleteByMap(Map<String, Object> columnMap) {
+		if (null == columnMap || columnMap.isEmpty()) {
+			throw new MybatisPlusException("deleteByMap columnMap is empty.");
+		}
 		return retBool(baseMapper.deleteByMap(columnMap));
 	}
 
