@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
 import com.baomidou.mybatisplus.mapper.ISqlInjector;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -59,6 +60,9 @@ public class MybatisGlobalCache implements Cloneable, Serializable {
 	private boolean isRefresh = false;
 	// 是否自动获取DBType
 	private boolean isAutoSetDbType = true;
+	// 缓存当前Configuration的SqlSessionFactory
+	private SqlSessionFactory sqlSessionFactory;
+
 	private Set<String> mapperRegistryCache = new ConcurrentSkipListSet<String>();
 
 	public DBType getDbType() {
@@ -133,9 +137,29 @@ public class MybatisGlobalCache implements Cloneable, Serializable {
 		this.mapperRegistryCache = mapperRegistryCache;
 	}
 
+	public SqlSessionFactory getSqlSessionFactory() {
+		return sqlSessionFactory;
+	}
+
+	public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
+		this.sqlSessionFactory = sqlSessionFactory;
+	}
+
 	@Override
 	protected MybatisGlobalCache clone() throws CloneNotSupportedException {
 		return (MybatisGlobalCache) super.clone();
+	}
+
+	/**
+	 * 获取当前的SqlSessionFactory
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	public static SqlSessionFactory currentSessionFactory(Class clazz) {
+		String configMark = TableInfoHelper.getTableInfo(clazz).getConfigMark();
+		MybatisGlobalCache mybatisGlobalCache = MybatisGlobalCache.globalCache(configMark);
+		return mybatisGlobalCache.getSqlSessionFactory();
 	}
 
 	/**
@@ -152,13 +176,39 @@ public class MybatisGlobalCache implements Cloneable, Serializable {
 	}
 
 	/**
-	 * 获取MybatisGlobalCache
+	 * <p>
+	 * 设置全局设置 (统一所有入口)
+	 * <p/>
+	 *
+	 * @param configuration
+	 * @param mybatisGlobalCache
+	 * @return
+	 */
+	public static void setGlobalCache(Configuration configuration, MybatisGlobalCache mybatisGlobalCache) {
+		TableInfoHelper.setGlobalCache(configuration, mybatisGlobalCache);
+	}
+
+	/**
+	 * 获取MybatisGlobalCache (统一所有入口)
 	 * 
 	 * @param configuration
 	 * @return
 	 */
 	public static MybatisGlobalCache globalCache(Configuration configuration) {
-		return TableInfoHelper.getGlobalCache(configuration);
+		if (configuration != null) {
+			return globalCache(configuration.toString());
+		}
+		return null;
+	}
+
+	/**
+	 * 获取MybatisGlobalCache (统一所有入口)
+	 * 
+	 * @param configMark
+	 * @return
+	 */
+	public static MybatisGlobalCache globalCache(String configMark) {
+		return TableInfoHelper.getGlobalCache(configMark);
 	}
 
 	public static DBType getDbType(Configuration configuration) {

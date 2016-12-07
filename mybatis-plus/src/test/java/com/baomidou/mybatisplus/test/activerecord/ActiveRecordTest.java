@@ -15,19 +15,18 @@
  */
 package com.baomidou.mybatisplus.test.activerecord;
 
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.jdbc.SQL;
-import org.apache.ibatis.session.SqlSessionFactory;
-
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.test.mysql.TestMapper;
 import com.baomidou.mybatisplus.test.mysql.entity.Test;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import org.apache.ibatis.jdbc.SQL;
+import org.apache.ibatis.session.SqlSessionFactory;
+
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>

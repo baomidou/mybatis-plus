@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.toolkit;
 
 import com.baomidou.mybatisplus.MybatisConfiguration;
-import com.baomidou.mybatisplus.MybatisPlusHolder;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
@@ -68,12 +67,12 @@ public class TableInfoHelper {
 	/**
 	 * 根据SqlSessionFactory获取全局配置
 	 * 
-	 * @param configuration
+	 * @param configMark
 	 * @return
 	 */
-	public static MybatisGlobalCache getGlobalCache(Configuration configuration) {
-		if (configuration != null) {
-			return globalCache.get(configuration.toString());
+	public static MybatisGlobalCache getGlobalCache(String configMark) {
+		if (StringUtils.isNotEmpty(configMark)) {
+			return globalCache.get(configMark);
 		}
 		return null;
 	}
@@ -89,7 +88,6 @@ public class TableInfoHelper {
 	 */
 	public static void setGlobalCache(Configuration configuration, MybatisGlobalCache mybatisGlobalCache) {
 		if (configuration == null || mybatisGlobalCache == null) {
-
 			new MybatisPlusException("Error:  Could not setGlobalCache");
 		}
 		// 设置全局设置
@@ -131,9 +129,9 @@ public class TableInfoHelper {
 		} else {
 			// TODO 测试用例所走的方法 正常是不会走这里 待优化 Caratacus
 			configuration = new MybatisConfiguration();
-			setGlobalCache(configuration, MybatisGlobalCache.DEFAULT);
+			MybatisGlobalCache.setGlobalCache(configuration, MybatisGlobalCache.DEFAULT);
 		}
-		MybatisGlobalCache globalCache = getGlobalCache(configuration);
+		MybatisGlobalCache globalCache = MybatisGlobalCache.globalCache(configuration);
 		/* 表名 */
 		TableName table = clazz.getAnnotation(TableName.class);
 		String tableName = clazz.getSimpleName();
@@ -182,11 +180,9 @@ public class TableInfoHelper {
 		/* 字段列表 */
 		tableInfo.setFieldList(fieldList);
 		/**
-		 * SqlSessionFactory
+		 * 设置Configuration地址值
 		 */
-		if (null != MybatisPlusHolder.getSqlSessionFactory()) {
-			tableInfo.setSqlSessionFactory(MybatisPlusHolder.getSqlSessionFactory());
-		}
+		tableInfo.setConfigMark(configuration.toString());
 		/*
 		 * 未发现主键注解，跳过注入
 		 */
@@ -394,11 +390,14 @@ public class TableInfoHelper {
 	 * @return
 	 */
 	public static void initSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
-		for (TableInfo tableInfo : tableInfoCache.values()) {
-			if (null == tableInfo.getSqlSessionFactory()) {
-				tableInfo.setSqlSessionFactory(sqlSessionFactory);
-			}
+		Configuration configuration = sqlSessionFactory.getConfiguration();
+		MybatisGlobalCache globalCache = MybatisGlobalCache.globalCache(configuration);
+		if (globalCache == null) {
+			MybatisGlobalCache defaults = MybatisGlobalCache.defaults();
+			defaults.setSqlSessionFactory(sqlSessionFactory);
+			MybatisGlobalCache.setGlobalCache(configuration, defaults);
+		} else {
+			globalCache.setSqlSessionFactory(sqlSessionFactory);
 		}
 	}
-
 }

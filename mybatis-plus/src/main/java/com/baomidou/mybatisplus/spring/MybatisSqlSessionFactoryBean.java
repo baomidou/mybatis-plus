@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.spring;
 
 import com.baomidou.mybatisplus.MybatisConfiguration;
-import com.baomidou.mybatisplus.MybatisPlusHolder;
 import com.baomidou.mybatisplus.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.MybatisXMLMapperBuilder;
 import com.baomidou.mybatisplus.entity.MybatisGlobalCache;
@@ -591,10 +590,10 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 			}
 		}
 		SqlSessionFactory sqlSessionFactory = this.sqlSessionFactoryBuilder.build(configuration);
-		// TODO 设置全局参数属性
-		TableInfoHelper.setGlobalCache(configuration, mybatisGlobalCache);
 		// TODO 缓存 sqlSessionFactory
-		MybatisPlusHolder.setSqlSessionFactory(sqlSessionFactory);
+		mybatisGlobalCache.setSqlSessionFactory(sqlSessionFactory);
+		// TODO 设置全局参数属性
+		MybatisGlobalCache.setGlobalCache(configuration, mybatisGlobalCache);
 
 		if (!isEmpty(this.mapperLocations)) {
 			for (Resource mapperLocation : this.mapperLocations) {

@@ -51,7 +51,7 @@ public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 			MybatisXMLConfigBuilder parser = new MybatisXMLConfigBuilder(reader, environment, properties);
 			// 原生支持全局配置缓存
 			Configuration configuration = parser.parse();
-			TableInfoHelper.setGlobalCache(configuration, globalCache);
+			MybatisGlobalCache.setGlobalCache(configuration, globalCache);
 			return build(configuration);
 		} catch (Exception e) {
 			throw ExceptionFactory.wrapException("Error building SqlSession.", e);
@@ -67,7 +67,7 @@ public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 			MybatisXMLConfigBuilder parser = new MybatisXMLConfigBuilder(inputStream, environment, properties);
 			// 原生支持全局配置缓存
 			Configuration configuration = parser.parse();
-			TableInfoHelper.setGlobalCache(configuration, globalCache);
+			MybatisGlobalCache.setGlobalCache(configuration, globalCache);
 			return build(configuration);
 		} catch (Exception e) {
 			throw ExceptionFactory.wrapException("Error building SqlSession.", e);

@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.activerecord;
 
+import com.baomidou.mybatisplus.entity.MybatisGlobalCache;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 
@@ -54,7 +55,7 @@ public class Record {
 	 * @return SqlSession
 	 */
 	public static SqlSession sqlSessionBatch(Class<?> clazz) {
-		return table(clazz).getSqlSessionFactory().openSession(ExecutorType.BATCH, false);
+		return MybatisGlobalCache.currentSessionFactory(clazz).openSession(ExecutorType.BATCH, false);
 	}
 
 	/**
@@ -69,7 +70,7 @@ public class Record {
 	 * @return SqlSession
 	 */
 	public static SqlSession sqlSession(Class<?> clazz, boolean autoCommit) {
-		return table(clazz).getSqlSessionFactory().openSession(autoCommit);
+        return MybatisGlobalCache.currentSessionFactory(clazz).openSession(autoCommit);
 	}
 
 	/**
