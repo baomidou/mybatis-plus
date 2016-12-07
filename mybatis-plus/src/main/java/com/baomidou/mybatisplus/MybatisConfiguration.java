@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus;
 
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
@@ -64,7 +65,14 @@ public class MybatisConfiguration extends Configuration {
 	@Override
 	public void addMappedStatement(MappedStatement ms) {
 		logger.debug(" addMappedStatement: " + ms.getId());
-		if (MybatisGlobalCache.isRefresh(ms.getConfiguration())) {
+		MybatisGlobalCache globalCache = TableInfoHelper.getGlobalCache(ms.getConfiguration());
+		if (globalCache == null) {
+			// 没有获取全局配置初始全局配置
+			logger.warn("Warn: Not getting global configuration ! global configuration Initializing !");
+			globalCache = MybatisGlobalCache.defaults();
+			TableInfoHelper.setGlobalCache(ms.getConfiguration(), globalCache);
+		}
+		if (globalCache.isRefresh()) {
 			/*
 			 * 支持是否自动刷新 XML 变更内容，开发环境使用【 注：生产环境勿用！】
 			 */
