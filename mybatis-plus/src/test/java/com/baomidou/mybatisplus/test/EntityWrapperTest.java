@@ -315,7 +315,6 @@ public class EntityWrapperTest {
 	 * 测试LIKE
 	 */
 	@Test
-	@SuppressWarnings("unchecked")
 	public void testlike() {
 		String sqlPart = Condition.instance().like("default", "default", SQLlikeType.DEFAULT).like("left","left", SQLlikeType.LEFT).like("right","right", SQLlikeType.RIGHT).toString();
 		System.out.println("sql ==> " + sqlPart);
