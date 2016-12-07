@@ -57,13 +57,7 @@ import com.baomidou.mybatisplus.MybatisConfiguration;
 import com.baomidou.mybatisplus.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.MybatisXMLMapperBuilder;
 import com.baomidou.mybatisplus.entity.MybatisGlobalCache;
-import com.baomidou.mybatisplus.enums.DBType;
-import com.baomidou.mybatisplus.enums.FieldStrategy;
-import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
-import com.baomidou.mybatisplus.mapper.ISqlInjector;
-import com.baomidou.mybatisplus.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.toolkit.PackageHelper;
 
 /**
@@ -124,38 +118,11 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
 	private ObjectWrapperFactory objectWrapperFactory;
 
-	private MybatisGlobalCache mybatisGlobalCache = MybatisGlobalCache.defaults();
+	private MybatisGlobalCache globalCache = MybatisGlobalCache.defaults();
 
-	// TODO 注入数据库类型
-	public void setDbType(String dbType) {
-		// 以用户传递过来的dbType优先
-		mybatisGlobalCache.setDbType(DBType.getDBType(dbType));
-		mybatisGlobalCache.setAutoSetDbType(false);
-	}
-
-	// TODO 注入主键策略
-	public void setIdType(int idType) {
-		mybatisGlobalCache.setIdType(IdType.getIdType(idType));
-	}
-
-	// TODO 注入表字段使用下划线命名
-	public void setDbColumnUnderline(boolean dbColumnUnderline) {
-		mybatisGlobalCache.setDbColumnUnderline(dbColumnUnderline);
-	}
-
-	// TODO 注入 SQL注入器
-	public void setSqlInjector(ISqlInjector sqlInjector) {
-		mybatisGlobalCache.setSqlInjector(sqlInjector);
-	}
-
-	// TODO 注入 元对象字段填充控制器
-	public void setMetaObjectHandler(IMetaObjectHandler metaObjectHandler) {
-		mybatisGlobalCache.setMetaObjectHandler(metaObjectHandler);
-	}
-
-	// TODO 注入 元对象字段填充控制器
-	public void setFieldStrategy(int key) {
-		mybatisGlobalCache.setFieldStrategy(FieldStrategy.getFieldStrategy(key));
+	//TODO 注入全局配置
+	public void setglobalCache(MybatisGlobalCache globalCache) {
+		this.globalCache = globalCache;
 	}
 
 	/**
@@ -582,19 +549,19 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
 		configuration.setEnvironment(new Environment(this.environment, this.transactionFactory, this.dataSource));
 		// TODO 自动设置数据库类型
-		if (mybatisGlobalCache.isAutoSetDbType()) {
+		if (globalCache.isAutoSetDbType()) {
 			try {
 				String jdbcUrl = dataSource.getConnection().getMetaData().getURL();
-				mybatisGlobalCache.setDbType(JdbcUtils.getDbType(jdbcUrl));
+				globalCache.setDbTypeByJdbcUrl(jdbcUrl);
 			} catch (SQLException e) {
 				LOGGER.warn("Warn: Auto Set DbType Fail !  Cause:" + e);
 			}
 		}
 		SqlSessionFactory sqlSessionFactory = this.sqlSessionFactoryBuilder.build(configuration);
 		// TODO 缓存 sqlSessionFactory
-		mybatisGlobalCache.setSqlSessionFactory(sqlSessionFactory);
+		globalCache.setSqlSessionFactory(sqlSessionFactory);
 		// TODO 设置全局参数属性
-		MybatisGlobalCache.setGlobalCache(configuration, mybatisGlobalCache);
+		globalCache.setGlobalCache(configuration);
 
 		if (!isEmpty(this.mapperLocations)) {
 			for (Resource mapperLocation : this.mapperLocations) {

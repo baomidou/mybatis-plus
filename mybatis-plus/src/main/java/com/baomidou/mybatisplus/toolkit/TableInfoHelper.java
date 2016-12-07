@@ -130,7 +130,7 @@ public class TableInfoHelper {
 		} else {
 			// TODO 测试用例所走的方法 正常是不会走这里 待优化 Caratacus
 			configuration = new MybatisConfiguration();
-			MybatisGlobalCache.setGlobalCache(configuration, MybatisGlobalCache.DEFAULT);
+			setGlobalCache(configuration, MybatisGlobalCache.DEFAULT);
 		}
 		MybatisGlobalCache globalCache = MybatisGlobalCache.globalCache(configuration);
 		/* 表名 */
@@ -396,7 +396,7 @@ public class TableInfoHelper {
 		if (globalCache == null) {
 			MybatisGlobalCache defaultCache = MybatisGlobalCache.defaults();
 			defaultCache.setSqlSessionFactory(sqlSessionFactory);
-			MybatisGlobalCache.setGlobalCache(configuration, defaultCache);
+			setGlobalCache(configuration, defaultCache);
 		} else {
 			globalCache.setSqlSessionFactory(sqlSessionFactory);
 		}

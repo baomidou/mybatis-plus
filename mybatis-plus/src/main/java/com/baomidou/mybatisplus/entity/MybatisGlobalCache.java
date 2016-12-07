@@ -31,6 +31,7 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.AutoSqlInjector;
 import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
 import com.baomidou.mybatisplus.mapper.ISqlInjector;
+import com.baomidou.mybatisplus.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**
@@ -41,27 +42,29 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
  * @author Caratacus
  * @Date 2016-12-06
  */
+@SuppressWarnings("serial")
 public class MybatisGlobalCache implements Cloneable, Serializable {
 
+	// 日志
 	private static final Log logger = LogFactory.getLog(MybatisGlobalCache.class);
 
 	/**
 	 * 默认参数
 	 */
-	public static final MybatisGlobalCache DEFAULT;
+	public static final MybatisGlobalCache DEFAULT = new MybatisGlobalCache(new AutoSqlInjector());
 
-	// 数据库类型
-	private DBType dbType;
-	// 主键类型
-	private IdType idType;
-	// 表字段使用下划线命名
-	private boolean dbColumnUnderline;
+	// 数据库类型（默认 MySql）
+	private DBType dbType = DBType.MYSQL;
+	// 主键类型（默认 ID_WORKER）
+	private IdType idType = IdType.ID_WORKER;
+	// 表字段使用下划线命名（默认 false）
+	private boolean dbColumnUnderline = false;
 	// SQL注入器
 	private ISqlInjector sqlInjector;
 	// 元对象字段填充控制器
-	private IMetaObjectHandler metaObjectHandler;
+	private IMetaObjectHandler metaObjectHandler = null;
 	// 元对象字段填充控制器
-	private FieldStrategy fieldStrategy;
+	private FieldStrategy fieldStrategy = FieldStrategy.NOT_NULL;
 	// 是否刷新mapper
 	private boolean isRefresh = false;
 	// 是否自动获取DBType
@@ -71,20 +74,33 @@ public class MybatisGlobalCache implements Cloneable, Serializable {
 
 	private Set<String> mapperRegistryCache = new ConcurrentSkipListSet<String>();
 
+	public MybatisGlobalCache() {
+		// TODO
+	}
+
+	public MybatisGlobalCache(ISqlInjector sqlInjector) {
+		this.sqlInjector = sqlInjector;
+	}
+
 	public DBType getDbType() {
 		return dbType;
 	}
 
-	public void setDbType(DBType dbType) {
-		this.dbType = dbType;
+	public void setDbType(String dbType) {
+		this.dbType = DBType.getDBType(dbType);
+		this.isAutoSetDbType = false;
+	}
+
+	public void setDbTypeByJdbcUrl(String jdbcUrl) {
+		this.dbType = JdbcUtils.getDbType(jdbcUrl);
 	}
 
 	public IdType getIdType() {
 		return idType;
 	}
 
-	public void setIdType(IdType idType) {
-		this.idType = idType;
+	public void setIdType(int idType) {
+		this.idType = IdType.getIdType(idType);
 	}
 
 	public boolean isDbColumnUnderline() {
@@ -115,8 +131,8 @@ public class MybatisGlobalCache implements Cloneable, Serializable {
 		return fieldStrategy;
 	}
 
-	public void setFieldStrategy(FieldStrategy fieldStrategy) {
-		this.fieldStrategy = fieldStrategy;
+	public void setFieldStrategy(int fieldStrategy) {
+		this.fieldStrategy = FieldStrategy.getFieldStrategy(fieldStrategy);
 	}
 
 	public boolean isRefresh() {
@@ -124,7 +140,7 @@ public class MybatisGlobalCache implements Cloneable, Serializable {
 	}
 
 	public void setRefresh(boolean refresh) {
-		isRefresh = refresh;
+		this.isRefresh = refresh;
 	}
 
 	public boolean isAutoSetDbType() {
@@ -132,7 +148,7 @@ public class MybatisGlobalCache implements Cloneable, Serializable {
 	}
 
 	public void setAutoSetDbType(boolean autoSetDbType) {
-		isAutoSetDbType = autoSetDbType;
+		this.isAutoSetDbType = autoSetDbType;
 	}
 
 	public Set<String> getMapperRegistryCache() {
@@ -162,7 +178,7 @@ public class MybatisGlobalCache implements Cloneable, Serializable {
 	 * @param clazz
 	 * @return
 	 */
-	public static SqlSessionFactory currentSessionFactory(Class clazz) {
+	public static SqlSessionFactory currentSessionFactory(Class<?> clazz) {
 		String configMark = TableInfoHelper.getTableInfo(clazz).getConfigMark();
 		MybatisGlobalCache mybatisGlobalCache = MybatisGlobalCache.globalCache(configMark);
 		return mybatisGlobalCache.getSqlSessionFactory();
@@ -190,8 +206,8 @@ public class MybatisGlobalCache implements Cloneable, Serializable {
 	 * @param mybatisGlobalCache
 	 * @return
 	 */
-	public static void setGlobalCache(Configuration configuration, MybatisGlobalCache mybatisGlobalCache) {
-		TableInfoHelper.setGlobalCache(configuration, mybatisGlobalCache);
+	public void setGlobalCache(Configuration configuration) {
+		TableInfoHelper.setGlobalCache(configuration, this);
 	}
 
 	/**
@@ -259,41 +275,4 @@ public class MybatisGlobalCache implements Cloneable, Serializable {
 		return globalCache(configuration).getMapperRegistryCache();
 	}
 
-	// init 初始化默认值
-	static {
-		DEFAULT = new MybatisGlobalCache();
-		/*
-		 * 数据库类型（默认 MySql）
-		 */
-		DEFAULT.setDbType(DBType.MYSQL);
-
-		/*
-		 * 主键策略 （默认 ID_WORKER）
-		 */
-		DEFAULT.setIdType(IdType.ID_WORKER);
-
-		/*
-		 * 数据库字段使用下划线命名（默认 false）
-		 */
-		DEFAULT.setDbColumnUnderline(false);
-
-		/*
-		 * SQL 注入器，实现 ISqlInjector 或继承 AutoSqlInjector 自定义方法
-		 */
-		DEFAULT.setSqlInjector(new AutoSqlInjector());
-
-		/*
-		 * 元对象字段填充控制器
-		 */
-		DEFAULT.setMetaObjectHandler(null);
-		/*
-		 * 字段验证策略
-		 */
-		DEFAULT.setFieldStrategy(FieldStrategy.NOT_NULL);
-
-		/*
-		 * 是否刷新mapper
-		 */
-		DEFAULT.setRefresh(false);
-	}
 }

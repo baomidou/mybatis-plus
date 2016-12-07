@@ -24,6 +24,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
+import com.baomidou.mybatisplus.entity.MybatisGlobalCache;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.spring.MybatisMapperRefresh;
 import com.baomidou.mybatisplus.test.mysql.MySqlInjector;
@@ -49,7 +50,7 @@ public class MybatisMapperRefreshTest {
 	public static void main(String[] args) throws IOException, InterruptedException {
 		InputStream in = UserMapperTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
 		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
-		mf.setSqlInjector(new MySqlInjector());
+		mf.setMybatisGlobalCache(new MybatisGlobalCache(new MySqlInjector()));
 		Resource[] resource = new ClassPathResource[] { new ClassPathResource("mysql/UserMapper.xml") };
 		SqlSessionFactory sessionFactory = mf.build(in);
 		new MybatisMapperRefresh(resource, sessionFactory, 0, 5, true);
