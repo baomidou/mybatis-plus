@@ -192,12 +192,12 @@ public class AutoSqlInjector implements ISqlInjector {
 		}
 		List<TableFieldInfo> fieldList = table.getFieldList();
 		for (TableFieldInfo fieldInfo : fieldList) {
-			fieldBuilder.append(convertIfTagInsert(fieldInfo, false));
+			fieldBuilder.append(convertIfTagIgnored(fieldInfo, false));
 			fieldBuilder.append(fieldInfo.getColumn()).append(",");
-			fieldBuilder.append(convertIfTagInsert(fieldInfo, true));
-			placeholderBuilder.append(convertIfTagInsert(fieldInfo, false));
+			fieldBuilder.append(convertIfTagIgnored(fieldInfo, true));
+			placeholderBuilder.append(convertIfTagIgnored(fieldInfo, false));
 			placeholderBuilder.append("#{").append(fieldInfo.getEl()).append("},");
-			placeholderBuilder.append(convertIfTagInsert(fieldInfo, true));
+			placeholderBuilder.append(convertIfTagIgnored(fieldInfo, true));
 		}
 		fieldBuilder.append("\n</trim>");
 		placeholderBuilder.append("\n</trim>");
@@ -436,13 +436,13 @@ public class AutoSqlInjector implements ISqlInjector {
 		set.append("<trim prefix=\"SET\" suffixOverrides=\",\">");
 		List<TableFieldInfo> fieldList = table.getFieldList();
 		for (TableFieldInfo fieldInfo : fieldList) {
-			set.append(convertIfTag(fieldInfo, prefix, false));
+			set.append(convertIfTag(true, fieldInfo, prefix, false));
 			set.append(fieldInfo.getColumn()).append("=#{");
 			if (null != prefix) {
 				set.append(prefix);
 			}
 			set.append(fieldInfo.getEl()).append("},");
-			set.append(convertIfTag(fieldInfo, true));
+			set.append(convertIfTag(true, fieldInfo, null, true));
 		}
 		set.append("\n</trim>");
 		return set.toString();
@@ -574,8 +574,8 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * IF 条件转换方法
 	 * </p>
 	 *
-	 * @param sqlCommandType
-	 *            SQL 操作类型
+	 * @param ignored
+	 *            允许忽略
 	 * @param fieldInfo
 	 *            字段信息
 	 * @param prefix
@@ -584,41 +584,43 @@ public class AutoSqlInjector implements ISqlInjector {
 	 *            是否闭合标签
 	 * @return
 	 */
-	protected String convertIfTag(SqlCommandType sqlCommandType, TableFieldInfo fieldInfo, String prefix, boolean colse) {
+	protected String convertIfTag(boolean ignored, TableFieldInfo fieldInfo, String prefix, boolean colse) {
+		/* 忽略策略 */
+		FieldStrategy fieldStrategy = fieldInfo.getFieldStrategy(); 
+		if (fieldStrategy == FieldStrategy.IGNORED) {
+			if (ignored) {
+				return "";
+			}
+			// 查询策略
+			fieldStrategy = FieldStrategy.NOT_EMPTY;
+		}
+
+		// 关闭标签
+		if (colse) {
+			return "</if>";
+		}
+
 		/* 前缀处理 */
 		String property = fieldInfo.getProperty();
 		if (null != prefix) {
 			property = prefix + property;
 		}
 
-		/* 判断策略 */
-		if (sqlCommandType == SqlCommandType.INSERT && fieldInfo.getFieldStrategy() == FieldStrategy.FILL) {
-			return "";
-		}
-		if (fieldInfo.getFieldStrategy() == FieldStrategy.IGNORED) {
-			return "";
-		} else if (fieldInfo.getFieldStrategy() == FieldStrategy.NOT_EMPTY) {
-			if (colse) {
-				return "</if>";
-			} else {
-				return String.format("\n\t<if test=\"%s!=null and %s!=''\">", property, property);
-			}
+		// 验证逻辑
+		if (fieldStrategy == FieldStrategy.NOT_EMPTY) {
+			return String.format("\n\t<if test=\"%s!=null and %s!=''\">", property, property);
 		} else {
 			// FieldStrategy.NOT_NULL
-			if (colse) {
-				return "</if>";
-			} else {
-				return String.format("\n\t<if test=\"%s!=null\">", property);
-			}
+			return String.format("\n\t<if test=\"%s!=null\">", property);
 		}
 	}
 
-	protected String convertIfTagInsert(TableFieldInfo fieldInfo, boolean colse) {
-		return convertIfTag(SqlCommandType.INSERT, fieldInfo, null, colse);
+	protected String convertIfTagIgnored(TableFieldInfo fieldInfo, boolean colse) {
+		return convertIfTag(true, fieldInfo, null, colse);
 	}
 
 	protected String convertIfTag(TableFieldInfo fieldInfo, String prefix, boolean colse) {
-		return convertIfTag(SqlCommandType.UNKNOWN, fieldInfo, prefix, colse);
+		return convertIfTag(false, fieldInfo, prefix, colse);
 	}
 
 	protected String convertIfTag(TableFieldInfo fieldInfo, boolean colse) {

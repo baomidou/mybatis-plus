@@ -43,7 +43,6 @@ public class URPTest {
 		InputStream in = UserMapperTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
 		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
 		MybatisGlobalCache globalCache = new MybatisGlobalCache(new MySqlInjector());
-		globalCache.setMetaObjectHandler(new MyMetaObjectHandler());
 		mf.setMybatisGlobalCache(globalCache);
 		SqlSessionFactory sessionFactory = mf.build(in);
 		SqlSession session = sessionFactory.openSession();
