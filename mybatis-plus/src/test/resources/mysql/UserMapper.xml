@@ -9,6 +9,10 @@
 	<select id="selectListRow" resultType="User">
 		select test_id AS id,name,age,test_type AS testType from user
 	</select>
+
+	<delete id="deleteAll">
+		delete FROM user
+	</delete>
 	
 	<!-- 测试 resultMap 结果集注入【 注意，实体需要注解 ！！ 】 -->
 	<resultMap type="User" id="userMap">

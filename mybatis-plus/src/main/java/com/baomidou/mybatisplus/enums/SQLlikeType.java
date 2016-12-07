@@ -36,6 +36,7 @@ public enum SQLlikeType {
 	 * DEFAULT
 	 */
 	DEFAULT("default", "两边");
+
 	/** 主键 */
 	private final String type;
 
@@ -46,4 +47,13 @@ public enum SQLlikeType {
 		this.type = type;
 		this.desc = desc;
 	}
+
+	public String getType() {
+		return type;
+	}
+
+	public String getDesc() {
+		return desc;
+	}
+
 }

@@ -43,7 +43,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.util.ResourceUtils;
 
-import com.baomidou.mybatisplus.MybatisConfiguration;
+import com.baomidou.mybatisplus.entity.MybatisGlobalCache;
 import com.baomidou.mybatisplus.toolkit.SystemClock;
 
 /**
@@ -95,6 +95,7 @@ public class MybatisMapperRefresh implements Runnable {
 		this.delaySeconds = delaySeconds;
 		this.enabled = enabled;
 		this.sleepSeconds = sleepSeconds;
+		this.configuration = sqlSessionFactory.getConfiguration();
 		this.run();
 	}
 
@@ -102,10 +103,12 @@ public class MybatisMapperRefresh implements Runnable {
 		this.mapperLocations = mapperLocations;
 		this.sqlSessionFactory = sqlSessionFactory;
 		this.enabled = enabled;
+		this.configuration = sqlSessionFactory.getConfiguration();
 		this.run();
 	}
 
 	public void run() {
+		final MybatisGlobalCache mybatisGlobalCache = MybatisGlobalCache.globalCache(configuration);
 		/*
 		 * 启动 XML 热加载
 		 */
@@ -148,7 +151,7 @@ public class MybatisMapperRefresh implements Runnable {
 							for (String filePath : fileSet) {
 								File file = new File(filePath);
 								if (file != null && file.isFile() && file.lastModified() > beforeTime) {
-									MybatisConfiguration.IS_REFRESH = true;
+									mybatisGlobalCache.setRefresh(true);
 									List<Resource> removeList = jarMapper.get(filePath);
 									if (removeList != null && !removeList.isEmpty()) {// 如果是jar包中的xml，将刷新jar包中存在的所有xml，后期再修改加载jar中修改过后的xml
 										for (Resource resource : removeList) {
@@ -159,10 +162,10 @@ public class MybatisMapperRefresh implements Runnable {
 									}
 								}
 							}
-							if (MybatisConfiguration.IS_REFRESH) {
+							if (mybatisGlobalCache.isRefresh()) {
 								beforeTime = SystemClock.now();
 							}
-							MybatisConfiguration.IS_REFRESH = false;
+							mybatisGlobalCache.setRefresh(true);
 						} catch (Exception exception) {
 							exception.printStackTrace();
 						}

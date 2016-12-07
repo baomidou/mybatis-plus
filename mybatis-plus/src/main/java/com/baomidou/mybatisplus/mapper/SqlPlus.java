@@ -15,12 +15,12 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
+import java.util.Collection;
+
 import com.baomidou.mybatisplus.MybatisAbstractSQL;
 import com.baomidou.mybatisplus.enums.SQLlikeType;
 import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
-
-import java.util.Collection;
 
 /**
  * <p>

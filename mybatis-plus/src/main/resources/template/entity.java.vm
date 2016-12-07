@@ -44,6 +44,7 @@ public class ${entity} implements Serializable {
 	 * ${field.comment}
 	 */
 #if(${field.keyFlag} && ${field.convert})
+#set($keyPropertyName=${field.propertyName})
 	@TableId(value="${field.name}")
 #elseif(${field.convert})
 	@TableField(value="${field.name}")
@@ -75,5 +76,16 @@ public class ${entity} implements Serializable {
 	public static final String ${field.name.toUpperCase()} = "${field.name}";
 
 #end
+#end
+#if(${activeRecord})
+	@Override
+	protected Serializable getPrimaryKey() {
+#if(${keyPropertyName})
+		return this.${keyPropertyName};
+#else
+		return this.id;
+#end
+	}
+
 #end
 }

@@ -21,6 +21,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
+import com.baomidou.mybatisplus.entity.MybatisGlobalCache;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.test.mysql.entity.PhoneNumber;
 import com.baomidou.mybatisplus.test.mysql.entity.Role;
@@ -36,13 +37,13 @@ import com.baomidou.mybatisplus.toolkit.IdWorker;
  * @Date 2016-09-09
  */
 public class URPTest {
-	public static void main(String[] args) {
 
+	public static void main(String[] args) {
 		// 加载配置文件
 		InputStream in = UserMapperTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
 		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
-		mf.setSqlInjector(new MySqlInjector());
-		mf.setMetaObjectHandler(new MyMetaObjectHandler());
+		MybatisGlobalCache globalCache = new MybatisGlobalCache(new MySqlInjector());
+		mf.setMybatisGlobalCache(globalCache);
 		SqlSessionFactory sessionFactory = mf.build(in);
 		SqlSession session = sessionFactory.openSession();
 

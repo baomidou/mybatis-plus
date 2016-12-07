@@ -44,7 +44,7 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  * 生成文件
  * 
  * @author YangHu, tangguo
- * @since 2016/8/30
+ * @since 2016-08-30
  */
 public class AutoGenerator extends AbstractGenerator {
 
@@ -110,10 +110,18 @@ public class AutoGenerator extends AbstractGenerator {
 
 		for (TableInfo tableInfo : tableList) {
 			VelocityContext ctx = new VelocityContext();
+			if (null != cfg) {
+				/**
+				 * 注入自定义配置
+				 */
+				cfg.initMap();
+				ctx.put("cfg", cfg.getMap());
+			}
 			ctx.put("package", packageInfo);
 			ctx.put("author", config.getGlobalConfig().getAuthor());
 			ctx.put("date", date);
 			ctx.put("table", tableInfo);
+			ctx.put("activeRecord", config.getGlobalConfig().isActiveRecord());
 			ctx.put("enableCache", config.getGlobalConfig().isEnableCache());
 			ctx.put("baseResultMap", config.getGlobalConfig().isBaseResultMap());
 			ctx.put("baseColumnList", config.getGlobalConfig().isBaseColumnList());

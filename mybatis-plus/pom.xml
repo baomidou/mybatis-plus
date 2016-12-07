@@ -47,7 +47,6 @@
 		<spring.version>4.2.5.RELEASE</spring.version>
 		<mybatis-ehcache.version>1.0.3</mybatis-ehcache.version>
 		<junit.version>4.12</junit.version>
-		<contiperf.version>2.3.4</contiperf.version>
 		<velocity.version>1.7</velocity.version>
 	</properties>
 
@@ -106,6 +105,13 @@
 			<version>${alibaba.druid.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		<!-- generator vm -->
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity</artifactId>
+			<version>${velocity.version}</version>
+			<scope>provided</scope>
+		</dependency>
 		<!-- test begin -->
 		<dependency>
 			<groupId>mysql</groupId>
@@ -136,18 +142,6 @@
 			<artifactId>junit</artifactId>
 			<version>${junit.version}</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.databene</groupId>
-			<artifactId>contiperf</artifactId>
-			<version>${contiperf.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.velocity</groupId>
-			<artifactId>velocity</artifactId>
-			<version>${velocity.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<!-- test end -->
 	</dependencies>

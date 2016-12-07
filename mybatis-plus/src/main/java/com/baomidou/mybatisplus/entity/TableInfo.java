@@ -17,8 +17,6 @@ package com.baomidou.mybatisplus.entity;
 
 import java.util.List;
 
-import org.apache.ibatis.session.SqlSessionFactory;
-
 import com.baomidou.mybatisplus.enums.IdType;
 
 /**
@@ -74,9 +72,9 @@ public class TableInfo {
 	 */
 	private String currentNamespace;
 	/**
-	 * 缓存SqlSessionFactory
+	 * MybatisConfiguration 标记 (Configuration内存地址值)
 	 */
-	private SqlSessionFactory sqlSessionFactory;
+	private String configMark;
 
 	/**
 	 * <p>
@@ -159,11 +157,11 @@ public class TableInfo {
 		this.currentNamespace = currentNamespace;
 	}
 
-	public SqlSessionFactory getSqlSessionFactory() {
-		return sqlSessionFactory;
+	public String getConfigMark() {
+		return configMark;
 	}
 
-	public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
-		this.sqlSessionFactory = sqlSessionFactory;
+	public void setConfigMark(String configMark) {
+		this.configMark = configMark;
 	}
 }

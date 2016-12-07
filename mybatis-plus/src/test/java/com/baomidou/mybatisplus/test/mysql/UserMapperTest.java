@@ -26,6 +26,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
+import com.baomidou.mybatisplus.entity.MybatisGlobalCache;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
@@ -80,12 +81,12 @@ public class UserMapperTest {
 		/**
 		 * 设置，自定义 SQL 注入器
 		 */
-		mf.setSqlInjector(new MySqlInjector());
-
+		MybatisGlobalCache globalCache = new MybatisGlobalCache(new MySqlInjector());
 		/**
 		 * 设置，自定义 元对象填充器，实现公共字段自动写入
 		 */
-		mf.setMetaObjectHandler(new MyMetaObjectHandler());
+		globalCache.setMetaObjectHandler(new MyMetaObjectHandler());
+		mf.setMybatisGlobalCache(globalCache);
 
 		SqlSessionFactory sessionFactory = mf.build(in);
 		SqlSession session = sessionFactory.openSession();
