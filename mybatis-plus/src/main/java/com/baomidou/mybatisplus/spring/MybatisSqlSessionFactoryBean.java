@@ -121,7 +121,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 	private MybatisGlobalCache globalCache = MybatisGlobalCache.defaults();
 
 	//TODO 注入全局配置
-	public void setglobalCache(MybatisGlobalCache globalCache) {
+	public void setGlobalCache(MybatisGlobalCache globalCache) {
 		this.globalCache = globalCache;
 	}
 
