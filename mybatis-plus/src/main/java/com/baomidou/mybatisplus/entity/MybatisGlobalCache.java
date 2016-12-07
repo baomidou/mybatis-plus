@@ -15,15 +15,6 @@
  */
 package com.baomidou.mybatisplus.entity;
 
-import java.io.Serializable;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
-
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSessionFactory;
-
 import com.baomidou.mybatisplus.enums.DBType;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.enums.IdType;
@@ -33,6 +24,16 @@ import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
 import com.baomidou.mybatisplus.mapper.ISqlInjector;
 import com.baomidou.mybatisplus.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSessionFactory;
+
+import java.io.Serializable;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * <p>
@@ -47,7 +48,10 @@ public class MybatisGlobalCache implements Cloneable, Serializable {
 
 	// 日志
 	private static final Log logger = LogFactory.getLog(MybatisGlobalCache.class);
-
+	/**
+	 * 缓存全局信息
+	 */
+	private static final Map<String, MybatisGlobalCache> globalCache = new ConcurrentHashMap<String, MybatisGlobalCache>();
 	/**
 	 * 默认参数
 	 */
@@ -199,15 +203,31 @@ public class MybatisGlobalCache implements Cloneable, Serializable {
 
 	/**
 	 * <p>
-	 * 设置全局设置 (统一所有入口)
+	 * 设置全局设置(以configuration地址值作为Key)
 	 * <p/>
 	 *
 	 * @param configuration
 	 * @param mybatisGlobalCache
 	 * @return
 	 */
+	public static void setGlobalCache(Configuration configuration, MybatisGlobalCache mybatisGlobalCache) {
+		if (configuration == null || mybatisGlobalCache == null) {
+			new MybatisPlusException("Error:  Could not setGlobalCache");
+		}
+		// 设置全局设置
+		globalCache.put(configuration.toString(), mybatisGlobalCache);
+	}
+
+	/**
+	 * <p>
+	 * 设置全局设置 (统一所有入口)
+	 * <p/>
+	 *
+	 * @param configuration
+	 * @return
+	 */
 	public void setGlobalCache(Configuration configuration) {
-		TableInfoHelper.setGlobalCache(configuration, this);
+		setGlobalCache(configuration, this);
 	}
 
 	/**
@@ -230,13 +250,13 @@ public class MybatisGlobalCache implements Cloneable, Serializable {
 	 * @return
 	 */
 	public static MybatisGlobalCache globalCache(String configMark) {
-		MybatisGlobalCache globalCache = TableInfoHelper.getGlobalCache(configMark);
-		if (globalCache == null) {
+		MybatisGlobalCache cache = globalCache.get(configMark);
+		if (cache == null) {
 			// 没有获取全局配置初始全局配置
 			logger.warn("Warn: Not getting global configuration ! global configuration Initializing !");
 			return DEFAULT;
 		}
-		return globalCache;
+		return cache;
 	}
 
 	public static DBType getDbType(Configuration configuration) {
