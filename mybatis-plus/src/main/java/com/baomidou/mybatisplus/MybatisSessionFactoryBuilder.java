@@ -22,7 +22,6 @@ import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
 import com.baomidou.mybatisplus.mapper.ISqlInjector;
 import com.baomidou.mybatisplus.toolkit.IOUtils;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.session.Configuration;

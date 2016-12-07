@@ -384,7 +384,7 @@ public class TableInfoHelper {
 	}
 
 	/**
-	 * 初始化sqlMapper (供Mybatis原生调用)
+	 * 初始化SqlSessionFactory (供Mybatis原生调用)
 	 *
 	 * @param sqlSessionFactory
 	 * @return
@@ -393,9 +393,9 @@ public class TableInfoHelper {
 		Configuration configuration = sqlSessionFactory.getConfiguration();
 		MybatisGlobalCache globalCache = MybatisGlobalCache.globalCache(configuration);
 		if (globalCache == null) {
-			MybatisGlobalCache defaults = MybatisGlobalCache.defaults();
-			defaults.setSqlSessionFactory(sqlSessionFactory);
-			MybatisGlobalCache.setGlobalCache(configuration, defaults);
+			MybatisGlobalCache defaultCache = MybatisGlobalCache.defaults();
+			defaultCache.setSqlSessionFactory(sqlSessionFactory);
+			MybatisGlobalCache.setGlobalCache(configuration, defaultCache);
 		} else {
 			globalCache.setSqlSessionFactory(sqlSessionFactory);
 		}

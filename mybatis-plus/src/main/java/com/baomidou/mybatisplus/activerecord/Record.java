@@ -15,10 +15,10 @@
  */
 package com.baomidou.mybatisplus.activerecord;
 
-import com.baomidou.mybatisplus.entity.MybatisGlobalCache;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 
+import com.baomidou.mybatisplus.entity.MybatisGlobalCache;
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;

@@ -23,7 +23,6 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
 import com.baomidou.mybatisplus.entity.MybatisGlobalCache;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**
  * <p>
