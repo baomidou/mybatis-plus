@@ -49,7 +49,7 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 
-import com.baomidou.mybatisplus.entity.MybatisGlobalCache;
+import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
@@ -440,7 +440,7 @@ public class MybatisXMLMapperBuilder extends BaseBuilder {
 				}
 				//TODO 注入 CURD 动态 SQL
 				if (BaseMapper.class.isAssignableFrom(boundType)) {
-					MybatisGlobalCache.getSqlInjector(configuration).inspectInject(builderAssistant, boundType);
+					GlobalConfiguration.getSqlInjector(configuration).inspectInject(builderAssistant, boundType);
 				}
 			}
 		}

@@ -25,7 +25,7 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
-import com.baomidou.mybatisplus.entity.MybatisGlobalCache;
+import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.toolkit.IOUtils;
 
 /**
@@ -38,7 +38,7 @@ import com.baomidou.mybatisplus.toolkit.IOUtils;
  */
 public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 
-	private MybatisGlobalCache globalCache = MybatisGlobalCache.defaults();
+	private GlobalConfiguration globalCache = GlobalConfiguration.defaults();
 
 	@Override
 	public SqlSessionFactory build(Reader reader, String environment, Properties properties) {
@@ -73,7 +73,7 @@ public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 	}
 
 	//TODO 注入全局配置
-	public void setMybatisGlobalCache(MybatisGlobalCache mybatisGlobalCache) {
+	public void setMybatisGlobalCache(GlobalConfiguration mybatisGlobalCache) {
 		this.globalCache = mybatisGlobalCache;
 	}
 

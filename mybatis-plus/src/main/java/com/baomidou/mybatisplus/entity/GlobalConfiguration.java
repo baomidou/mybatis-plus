@@ -44,18 +44,18 @@ import java.util.concurrent.ConcurrentSkipListSet;
  * @Date 2016-12-06
  */
 @SuppressWarnings("serial")
-public class MybatisGlobalCache implements Cloneable, Serializable {
+public class GlobalConfiguration implements Cloneable, Serializable {
 
 	// 日志
-	private static final Log logger = LogFactory.getLog(MybatisGlobalCache.class);
+	private static final Log logger = LogFactory.getLog(GlobalConfiguration.class);
 	/**
 	 * 缓存全局信息
 	 */
-	private static final Map<String, MybatisGlobalCache> globalCache = new ConcurrentHashMap<String, MybatisGlobalCache>();
+	private static final Map<String, GlobalConfiguration> globalCache = new ConcurrentHashMap<String, GlobalConfiguration>();
 	/**
 	 * 默认参数
 	 */
-	public static final MybatisGlobalCache DEFAULT = new MybatisGlobalCache(new AutoSqlInjector());
+	public static final GlobalConfiguration DEFAULT = new GlobalConfiguration(new AutoSqlInjector());
 
 	// 数据库类型（默认 MySql）
 	private DBType dbType = DBType.MYSQL;
@@ -78,11 +78,11 @@ public class MybatisGlobalCache implements Cloneable, Serializable {
 
 	private Set<String> mapperRegistryCache = new ConcurrentSkipListSet<String>();
 
-	public MybatisGlobalCache() {
+	public GlobalConfiguration() {
 		// TODO
 	}
 
-	public MybatisGlobalCache(ISqlInjector sqlInjector) {
+	public GlobalConfiguration(ISqlInjector sqlInjector) {
 		this.sqlInjector = sqlInjector;
 	}
 
@@ -172,8 +172,8 @@ public class MybatisGlobalCache implements Cloneable, Serializable {
 	}
 
 	@Override
-	protected MybatisGlobalCache clone() throws CloneNotSupportedException {
-		return (MybatisGlobalCache) super.clone();
+	protected GlobalConfiguration clone() throws CloneNotSupportedException {
+		return (GlobalConfiguration) super.clone();
 	}
 
 	/**
@@ -184,7 +184,7 @@ public class MybatisGlobalCache implements Cloneable, Serializable {
 	 */
 	public static SqlSessionFactory currentSessionFactory(Class<?> clazz) {
 		String configMark = TableInfoHelper.getTableInfo(clazz).getConfigMark();
-		MybatisGlobalCache mybatisGlobalCache = MybatisGlobalCache.globalCache(configMark);
+		GlobalConfiguration mybatisGlobalCache = GlobalConfiguration.globalCache(configMark);
 		return mybatisGlobalCache.getSqlSessionFactory();
 	}
 
@@ -193,7 +193,7 @@ public class MybatisGlobalCache implements Cloneable, Serializable {
 	 * 
 	 * @return
 	 */
-	public static MybatisGlobalCache defaults() {
+	public static GlobalConfiguration defaults() {
 		try {
 			return DEFAULT.clone();
 		} catch (CloneNotSupportedException e) {
@@ -210,7 +210,7 @@ public class MybatisGlobalCache implements Cloneable, Serializable {
 	 * @param mybatisGlobalCache
 	 * @return
 	 */
-	public static void setGlobalCache(Configuration configuration, MybatisGlobalCache mybatisGlobalCache) {
+	public static void setGlobalCache(Configuration configuration, GlobalConfiguration mybatisGlobalCache) {
 		if (configuration == null || mybatisGlobalCache == null) {
 			new MybatisPlusException("Error:  Could not setGlobalCache");
 		}
@@ -236,7 +236,7 @@ public class MybatisGlobalCache implements Cloneable, Serializable {
 	 * @param configuration
 	 * @return
 	 */
-	public static MybatisGlobalCache globalCache(Configuration configuration) {
+	public static GlobalConfiguration globalCache(Configuration configuration) {
 		if (configuration == null) {
 			throw new MybatisPlusException("Error: You need Initialize MybatisConfiguration !");
 		}
@@ -249,8 +249,8 @@ public class MybatisGlobalCache implements Cloneable, Serializable {
 	 * @param configMark
 	 * @return
 	 */
-	public static MybatisGlobalCache globalCache(String configMark) {
-		MybatisGlobalCache cache = globalCache.get(configMark);
+	public static GlobalConfiguration globalCache(String configMark) {
+		GlobalConfiguration cache = globalCache.get(configMark);
 		if (cache == null) {
 			// 没有获取全局配置初始全局配置
 			logger.warn("Warn: Not getting global configuration ! global configuration Initializing !");

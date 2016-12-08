@@ -15,16 +15,8 @@
  */
 package com.baomidou.mybatisplus.spring;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.baomidou.mybatisplus.entity.GlobalConfiguration;
+import com.baomidou.mybatisplus.toolkit.SystemClock;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.builder.xml.XMLMapperEntityResolver;
@@ -43,8 +35,15 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.util.ResourceUtils;
 
-import com.baomidou.mybatisplus.entity.MybatisGlobalCache;
-import com.baomidou.mybatisplus.toolkit.SystemClock;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * <p>
@@ -108,7 +107,7 @@ public class MybatisMapperRefresh implements Runnable {
 	}
 
 	public void run() {
-		final MybatisGlobalCache mybatisGlobalCache = MybatisGlobalCache.globalCache(configuration);
+		final GlobalConfiguration mybatisGlobalCache = GlobalConfiguration.globalCache(configuration);
 		/*
 		 * 启动 XML 热加载
 		 */

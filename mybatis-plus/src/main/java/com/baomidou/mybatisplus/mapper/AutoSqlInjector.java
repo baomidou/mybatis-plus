@@ -15,12 +15,15 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.baomidou.mybatisplus.entity.GlobalConfiguration;
+import com.baomidou.mybatisplus.entity.TableFieldInfo;
+import com.baomidou.mybatisplus.entity.TableInfo;
+import com.baomidou.mybatisplus.enums.DBType;
+import com.baomidou.mybatisplus.enums.FieldStrategy;
+import com.baomidou.mybatisplus.enums.IdType;
+import com.baomidou.mybatisplus.enums.SqlMethod;
+import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -35,15 +38,11 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.scripting.defaults.RawSqlSource;
 import org.apache.ibatis.session.Configuration;
 
-import com.baomidou.mybatisplus.entity.MybatisGlobalCache;
-import com.baomidou.mybatisplus.entity.TableFieldInfo;
-import com.baomidou.mybatisplus.entity.TableInfo;
-import com.baomidou.mybatisplus.enums.DBType;
-import com.baomidou.mybatisplus.enums.FieldStrategy;
-import com.baomidou.mybatisplus.enums.IdType;
-import com.baomidou.mybatisplus.enums.SqlMethod;
-import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * <p>
@@ -73,7 +72,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 */
 	public void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
 		String className = mapperClass.toString();
-		Set<String> mapperRegistryCache = MybatisGlobalCache.getMapperRegistryCache(builderAssistant.getConfiguration());
+		Set<String> mapperRegistryCache = GlobalConfiguration.getMapperRegistryCache(builderAssistant.getConfiguration());
 		if (!mapperRegistryCache.contains(className)) {
 			inject(builderAssistant, mapperClass);
 			mapperRegistryCache.add(className);
@@ -87,7 +86,7 @@ public class AutoSqlInjector implements ISqlInjector {
 		this.configuration = builderAssistant.getConfiguration();
 		this.builderAssistant = builderAssistant;
 		this.languageDriver = configuration.getDefaultScriptingLanuageInstance();
-		MybatisGlobalCache globalCache = MybatisGlobalCache.globalCache(configuration);
+		GlobalConfiguration globalCache = GlobalConfiguration.globalCache(configuration);
 		this.dbType = globalCache.getDbType();
 		/*
 		 * 驼峰设置 PLUS 配置 > 原始配置
@@ -457,7 +456,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * @return
 	 */
 	protected String sqlWordConvert(String convertStr) {
-		DBType dbType = MybatisGlobalCache.getDbType(configuration);
+		DBType dbType = GlobalConfiguration.getDbType(configuration);
 		return SqlReservedWords.convert(dbType, convertStr);
 	}
 
@@ -593,7 +592,7 @@ public class AutoSqlInjector implements ISqlInjector {
 			}
 			//TODO 考虑日期类型忽略
 			// 查询策略，使用全局策略
-			fieldStrategy = MybatisGlobalCache.globalCache(configuration).getFieldStrategy();
+			fieldStrategy = GlobalConfiguration.globalCache(configuration).getFieldStrategy();
 		}
 
 		// 关闭标签

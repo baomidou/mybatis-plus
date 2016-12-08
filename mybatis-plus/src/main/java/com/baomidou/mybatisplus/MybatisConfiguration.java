@@ -22,7 +22,7 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
-import com.baomidou.mybatisplus.entity.MybatisGlobalCache;
+import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 
 /**
  * <p>
@@ -64,7 +64,7 @@ public class MybatisConfiguration extends Configuration {
 	@Override
 	public void addMappedStatement(MappedStatement ms) {
 		logger.debug(" addMappedStatement: " + ms.getId());
-		if (MybatisGlobalCache.globalCache(ms.getConfiguration()).isRefresh()) {
+		if (GlobalConfiguration.globalCache(ms.getConfiguration()).isRefresh()) {
 			/*
 			 * 支持是否自动刷新 XML 变更内容，开发环境使用【 注：生产环境勿用！】
 			 */

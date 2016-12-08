@@ -56,7 +56,7 @@ import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 import com.baomidou.mybatisplus.MybatisConfiguration;
 import com.baomidou.mybatisplus.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.MybatisXMLMapperBuilder;
-import com.baomidou.mybatisplus.entity.MybatisGlobalCache;
+import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.toolkit.PackageHelper;
 
@@ -118,10 +118,10 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
 	private ObjectWrapperFactory objectWrapperFactory;
 
-	private MybatisGlobalCache globalCache = MybatisGlobalCache.defaults();
+	private GlobalConfiguration globalCache = GlobalConfiguration.defaults();
 
 	//TODO 注入全局配置
-	public void setGlobalCache(MybatisGlobalCache globalCache) {
+	public void setGlobalCache(GlobalConfiguration globalCache) {
 		this.globalCache = globalCache;
 	}
 

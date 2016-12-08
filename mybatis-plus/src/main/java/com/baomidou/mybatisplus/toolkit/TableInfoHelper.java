@@ -19,7 +19,7 @@ import com.baomidou.mybatisplus.MybatisConfiguration;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
-import com.baomidou.mybatisplus.entity.MybatisGlobalCache;
+import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.entity.TableFieldInfo;
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
@@ -95,9 +95,9 @@ public class TableInfoHelper {
 		} else {
 			// TODO 测试用例所走的方法 正常是不会走这里 待优化 Caratacus
 			configuration = new MybatisConfiguration();
-			MybatisGlobalCache.setGlobalCache(configuration, MybatisGlobalCache.DEFAULT);
+			GlobalConfiguration.setGlobalCache(configuration, GlobalConfiguration.DEFAULT);
 		}
-		MybatisGlobalCache globalCache = MybatisGlobalCache.globalCache(configuration);
+		GlobalConfiguration globalCache = GlobalConfiguration.globalCache(configuration);
 		/* 表名 */
 		TableName table = clazz.getAnnotation(TableName.class);
 		String tableName = clazz.getSimpleName();
@@ -194,7 +194,7 @@ public class TableInfoHelper {
 	 * @param clazz
 	 * @return true 继续下一个属性判断，返回 continue;
 	 */
-	private static boolean initTableId(MybatisGlobalCache globalCache, TableInfo tableInfo, Field field, Class<?> clazz) {
+	private static boolean initTableId(GlobalConfiguration globalCache, TableInfo tableInfo, Field field, Class<?> clazz) {
 		TableId tableId = field.getAnnotation(TableId.class);
 		if (tableId != null) {
 			if (tableInfo.getKeyColumn() == null) {
@@ -235,7 +235,7 @@ public class TableInfoHelper {
 	 * @param clazz
 	 * @return true 继续下一个属性判断，返回 continue;
 	 */
-	private static boolean initFieldId(MybatisGlobalCache mybatisGlobalCache, TableInfo tableInfo, Field field, Class<?> clazz) {
+	private static boolean initFieldId(GlobalConfiguration mybatisGlobalCache, TableInfo tableInfo, Field field, Class<?> clazz) {
 		if (DEFAULT_ID_NAME.equals(field.getName())) {
 			if (tableInfo.getKeyColumn() == null) {
 				tableInfo.setIdType(mybatisGlobalCache.getIdType());
@@ -270,8 +270,8 @@ public class TableInfoHelper {
 	 * @param clazz
 	 * @return true 继续下一个属性判断，返回 continue;
 	 */
-	private static boolean initTableField(MybatisGlobalCache globalCache, List<TableFieldInfo> fieldList, Field field,
-			Class<?> clazz) {
+	private static boolean initTableField(GlobalConfiguration globalCache, List<TableFieldInfo> fieldList, Field field,
+                                          Class<?> clazz) {
 		/* 获取注解属性，自定义字段 */
 		TableField tableField = field.getAnnotation(TableField.class);
 		if (tableField != null) {
@@ -357,11 +357,11 @@ public class TableInfoHelper {
 	 */
 	public static void initSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
 		Configuration configuration = sqlSessionFactory.getConfiguration();
-		MybatisGlobalCache globalCache = MybatisGlobalCache.globalCache(configuration);
+		GlobalConfiguration globalCache = GlobalConfiguration.globalCache(configuration);
 		if (globalCache == null) {
-			MybatisGlobalCache defaultCache = MybatisGlobalCache.defaults();
+			GlobalConfiguration defaultCache = GlobalConfiguration.defaults();
 			defaultCache.setSqlSessionFactory(sqlSessionFactory);
-			MybatisGlobalCache.setGlobalCache(configuration, defaultCache);
+			GlobalConfiguration.setGlobalCache(configuration, defaultCache);
 		} else {
 			globalCache.setSqlSessionFactory(sqlSessionFactory);
 		}
