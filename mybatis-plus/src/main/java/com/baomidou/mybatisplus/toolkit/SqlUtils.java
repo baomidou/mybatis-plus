@@ -72,7 +72,7 @@ public class SqlUtils {
 				JsqlParserUtils.jsqlparserCount(countOptimize, originalSql);
 				break;
 			default:
-				StringBuffer countSql = new StringBuffer("SELECT COUNT(1) AS TOTAL ");
+				StringBuffer countSql = new StringBuffer("SELECT COUNT(1) ");
 				boolean optimize = false;
 				if (!indexOfSql.contains("DISTINCT") && !indexOfSql.contains("GROUP BY")) {
 					int formIndex = indexOfSql.indexOf("FROM");
@@ -90,7 +90,7 @@ public class SqlUtils {
 				}
 				if (!optimize) {
 					// 无优化SQL
-					countSql.append("FROM (").append(originalSql).append(") A");
+					countSql.append("FROM ( ").append(originalSql).append(" ) ");
 				}
 				countOptimize.setCountSQL(countSql.toString());
 			}

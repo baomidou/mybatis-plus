@@ -254,6 +254,7 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 		if (cache == null) {
 			// 没有获取全局配置初始全局配置
 			logger.warn("Warn: Not getting global configuration ! global configuration Initializing !");
+			globalCache.put(configMark, DEFAULT);
 			return DEFAULT;
 		}
 		return cache;
