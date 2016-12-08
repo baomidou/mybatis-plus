@@ -50,7 +50,7 @@ public class MybatisMapperRefreshTest {
 	public static void main(String[] args) throws IOException, InterruptedException {
 		InputStream in = UserMapperTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
 		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
-		mf.setMybatisGlobalCache(new GlobalConfiguration(new MySqlInjector()));
+		mf.setGlobalConfig(new GlobalConfiguration(new MySqlInjector()));
 		Resource[] resource = new ClassPathResource[] { new ClassPathResource("mysql/UserMapper.xml") };
 		SqlSessionFactory sessionFactory = mf.build(in);
 		new MybatisMapperRefresh(resource, sessionFactory, 0, 5, true);

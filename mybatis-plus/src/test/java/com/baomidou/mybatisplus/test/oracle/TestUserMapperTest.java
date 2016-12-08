@@ -56,9 +56,9 @@ public class TestUserMapperTest {
 		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
 
 		/** 设置数据库类型为 oracle */
-		GlobalConfiguration globalCache = new GlobalConfiguration();
-		globalCache.setDbType("oracle");
-		mf.setMybatisGlobalCache(globalCache);
+		GlobalConfiguration gc = new GlobalConfiguration();
+		gc.setDbType("oracle");
+		mf.setGlobalConfig(gc);
 
 		/*
 		 * 1、数据库字段驼峰命名不需要任何设置

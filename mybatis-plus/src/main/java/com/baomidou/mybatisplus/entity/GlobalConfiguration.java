@@ -51,7 +51,7 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	/**
 	 * 缓存全局信息
 	 */
-	private static final Map<String, GlobalConfiguration> globalCache = new ConcurrentHashMap<String, GlobalConfiguration>();
+	private static final Map<String, GlobalConfiguration> GLOBAL_CONFIG = new ConcurrentHashMap<String, GlobalConfiguration>();
 	/**
 	 * 默认参数
 	 */
@@ -184,12 +184,12 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	 */
 	public static SqlSessionFactory currentSessionFactory(Class<?> clazz) {
 		String configMark = TableInfoHelper.getTableInfo(clazz).getConfigMark();
-		GlobalConfiguration mybatisGlobalCache = GlobalConfiguration.globalCache(configMark);
-		return mybatisGlobalCache.getSqlSessionFactory();
+		GlobalConfiguration mybatisGlobalConfig = GlobalConfiguration.GlobalConfig(configMark);
+		return mybatisGlobalConfig.getSqlSessionFactory();
 	}
 
 	/**
-	 * 获取默认MybatisGlobalCache
+	 * 获取默认MybatisGlobalConfig
 	 * 
 	 * @return
 	 */
@@ -197,7 +197,7 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 		try {
 			return DEFAULT.clone();
 		} catch (CloneNotSupportedException e) {
-			throw new MybatisPlusException("ERROR: CLONE MybatisGlobalCache DEFAULT FAIL !  Cause:" + e);
+			throw new MybatisPlusException("ERROR: CLONE MybatisGlobalConfig DEFAULT FAIL !  Cause:" + e);
 		}
 	}
 
@@ -207,15 +207,15 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	 * <p/>
 	 *
 	 * @param configuration
-	 * @param mybatisGlobalCache
+	 * @param mybatisGlobalConfig
 	 * @return
 	 */
-	public static void setGlobalCache(Configuration configuration, GlobalConfiguration mybatisGlobalCache) {
-		if (configuration == null || mybatisGlobalCache == null) {
-			new MybatisPlusException("Error:  Could not setGlobalCache");
+	public static void setGlobalConfig(Configuration configuration, GlobalConfiguration mybatisGlobalConfig) {
+		if (configuration == null || mybatisGlobalConfig == null) {
+			new MybatisPlusException("Error:  Could not setGlobalConfig");
 		}
 		// 设置全局设置
-		globalCache.put(configuration.toString(), mybatisGlobalCache);
+		GLOBAL_CONFIG.put(configuration.toString(), mybatisGlobalConfig);
 	}
 
 	/**
@@ -226,74 +226,74 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	 * @param configuration
 	 * @return
 	 */
-	public void setGlobalCache(Configuration configuration) {
-		setGlobalCache(configuration, this);
+	public void setGlobalConfig(Configuration configuration) {
+		setGlobalConfig(configuration, this);
 	}
 
 	/**
-	 * 获取MybatisGlobalCache (统一所有入口)
+	 * 获取MybatisGlobalConfig (统一所有入口)
 	 * 
 	 * @param configuration
 	 * @return
 	 */
-	public static GlobalConfiguration globalCache(Configuration configuration) {
+	public static GlobalConfiguration GlobalConfig(Configuration configuration) {
 		if (configuration == null) {
 			throw new MybatisPlusException("Error: You need Initialize MybatisConfiguration !");
 		}
-		return globalCache(configuration.toString());
+		return GlobalConfig(configuration.toString());
 	}
 
 	/**
-	 * 获取MybatisGlobalCache (统一所有入口)
+	 * 获取MybatisGlobalConfig (统一所有入口)
 	 * 
 	 * @param configMark
 	 * @return
 	 */
-	public static GlobalConfiguration globalCache(String configMark) {
-		GlobalConfiguration cache = globalCache.get(configMark);
+	public static GlobalConfiguration GlobalConfig(String configMark) {
+		GlobalConfiguration cache = GLOBAL_CONFIG.get(configMark);
 		if (cache == null) {
 			// 没有获取全局配置初始全局配置
 			logger.warn("Warn: Not getting global configuration ! global configuration Initializing !");
-			globalCache.put(configMark, DEFAULT);
+			GLOBAL_CONFIG.put(configMark, DEFAULT);
 			return DEFAULT;
 		}
 		return cache;
 	}
 
 	public static DBType getDbType(Configuration configuration) {
-		return globalCache(configuration).getDbType();
+		return GlobalConfig(configuration).getDbType();
 	}
 
 	public static IdType getIdType(Configuration configuration) {
-		return globalCache(configuration).getIdType();
+		return GlobalConfig(configuration).getIdType();
 	}
 
 	public static boolean isDbColumnUnderline(Configuration configuration) {
-		return globalCache(configuration).isDbColumnUnderline();
+		return GlobalConfig(configuration).isDbColumnUnderline();
 	}
 
 	public static ISqlInjector getSqlInjector(Configuration configuration) {
-		return globalCache(configuration).getSqlInjector();
+		return GlobalConfig(configuration).getSqlInjector();
 	}
 
 	public static IMetaObjectHandler getMetaObjectHandler(Configuration configuration) {
-		return globalCache(configuration).getMetaObjectHandler();
+		return GlobalConfig(configuration).getMetaObjectHandler();
 	}
 
 	public static FieldStrategy getFieldStrategy(Configuration configuration) {
-		return globalCache(configuration).getFieldStrategy();
+		return GlobalConfig(configuration).getFieldStrategy();
 	}
 
 	public static boolean isRefresh(Configuration configuration) {
-		return globalCache(configuration).isRefresh();
+		return GlobalConfig(configuration).isRefresh();
 	}
 
 	public static boolean isAutoSetDbType(Configuration configuration) {
-		return globalCache(configuration).isAutoSetDbType();
+		return GlobalConfig(configuration).isAutoSetDbType();
 	}
 
 	public static Set<String> getMapperRegistryCache(Configuration configuration) {
-		return globalCache(configuration).getMapperRegistryCache();
+		return GlobalConfig(configuration).getMapperRegistryCache();
 	}
 
 }

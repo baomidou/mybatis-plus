@@ -38,7 +38,7 @@ import com.baomidou.mybatisplus.toolkit.IOUtils;
  */
 public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 
-	private GlobalConfiguration globalCache = GlobalConfiguration.defaults();
+	private GlobalConfiguration globalConfig = GlobalConfiguration.defaults();
 
 	@Override
 	public SqlSessionFactory build(Reader reader, String environment, Properties properties) {
@@ -46,7 +46,7 @@ public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 			MybatisXMLConfigBuilder parser = new MybatisXMLConfigBuilder(reader, environment, properties);
 			// 原生支持全局配置缓存
 			Configuration configuration = parser.parse();
-			globalCache.setGlobalCache(configuration);
+			globalConfig.setGlobalConfig(configuration);
 			return build(configuration);
 		} catch (Exception e) {
 			throw ExceptionFactory.wrapException("Error building SqlSession.", e);
@@ -62,7 +62,7 @@ public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 			MybatisXMLConfigBuilder parser = new MybatisXMLConfigBuilder(inputStream, environment, properties);
 			// 原生支持全局配置缓存
 			Configuration configuration = parser.parse();
-			globalCache.setGlobalCache(configuration);
+			globalConfig.setGlobalConfig(configuration);
 			return build(configuration);
 		} catch (Exception e) {
 			throw ExceptionFactory.wrapException("Error building SqlSession.", e);
@@ -73,8 +73,8 @@ public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 	}
 
 	//TODO 注入全局配置
-	public void setMybatisGlobalCache(GlobalConfiguration mybatisGlobalCache) {
-		this.globalCache = mybatisGlobalCache;
+	public void setGlobalConfig(GlobalConfiguration globalConfig) {
+		this.globalConfig = globalConfig;
 	}
 
 }

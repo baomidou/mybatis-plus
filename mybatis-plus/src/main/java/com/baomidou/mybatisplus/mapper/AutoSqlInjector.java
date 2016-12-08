@@ -86,7 +86,7 @@ public class AutoSqlInjector implements ISqlInjector {
 		this.configuration = builderAssistant.getConfiguration();
 		this.builderAssistant = builderAssistant;
 		this.languageDriver = configuration.getDefaultScriptingLanuageInstance();
-		GlobalConfiguration globalCache = GlobalConfiguration.globalCache(configuration);
+		GlobalConfiguration globalCache = GlobalConfiguration.GlobalConfig(configuration);
 		this.dbType = globalCache.getDbType();
 		/*
 		 * 驼峰设置 PLUS 配置 > 原始配置
@@ -592,7 +592,7 @@ public class AutoSqlInjector implements ISqlInjector {
 			}
 			//TODO 考虑日期类型忽略
 			// 查询策略，使用全局策略
-			fieldStrategy = GlobalConfiguration.globalCache(configuration).getFieldStrategy();
+			fieldStrategy = GlobalConfiguration.GlobalConfig(configuration).getFieldStrategy();
 		}
 
 		// 关闭标签

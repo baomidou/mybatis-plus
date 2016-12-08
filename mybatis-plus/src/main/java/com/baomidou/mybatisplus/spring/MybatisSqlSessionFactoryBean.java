@@ -118,11 +118,11 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
 	private ObjectWrapperFactory objectWrapperFactory;
 
-	private GlobalConfiguration globalCache = GlobalConfiguration.defaults();
+	private GlobalConfiguration globalConfig = GlobalConfiguration.defaults();
 
 	//TODO 注入全局配置
-	public void setGlobalCache(GlobalConfiguration globalCache) {
-		this.globalCache = globalCache;
+	public void setGlobalConfig(GlobalConfiguration globalConfig) {
+		this.globalConfig = globalConfig;
 	}
 
 	/**
@@ -549,19 +549,19 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
 		configuration.setEnvironment(new Environment(this.environment, this.transactionFactory, this.dataSource));
 		// TODO 自动设置数据库类型
-		if (globalCache.isAutoSetDbType()) {
+		if (globalConfig.isAutoSetDbType()) {
 			try {
 				String jdbcUrl = dataSource.getConnection().getMetaData().getURL();
-				globalCache.setDbTypeByJdbcUrl(jdbcUrl);
+				globalConfig.setDbTypeByJdbcUrl(jdbcUrl);
 			} catch (SQLException e) {
 				LOGGER.warn("Warn: Auto Set DbType Fail !  Cause:" + e);
 			}
 		}
 		SqlSessionFactory sqlSessionFactory = this.sqlSessionFactoryBuilder.build(configuration);
 		// TODO 缓存 sqlSessionFactory
-		globalCache.setSqlSessionFactory(sqlSessionFactory);
+		globalConfig.setSqlSessionFactory(sqlSessionFactory);
 		// TODO 设置全局参数属性
-		globalCache.setGlobalCache(configuration);
+		globalConfig.setGlobalConfig(configuration);
 
 		if (!isEmpty(this.mapperLocations)) {
 			for (Resource mapperLocation : this.mapperLocations) {

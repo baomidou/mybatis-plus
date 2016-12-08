@@ -80,12 +80,12 @@ public class UserMapperTest {
 		/**
 		 * 设置，自定义 SQL 注入器
 		 */
-		GlobalConfiguration globalCache = new GlobalConfiguration(new MySqlInjector());
+		GlobalConfiguration gc = new GlobalConfiguration(new MySqlInjector());
 		/**
 		 * 设置，自定义 元对象填充器，实现公共字段自动写入
 		 */
-		globalCache.setMetaObjectHandler(new MyMetaObjectHandler());
-		mf.setMybatisGlobalCache(globalCache);
+		gc.setMetaObjectHandler(new MyMetaObjectHandler());
+		mf.setGlobalConfig(gc);
 
 		SqlSessionFactory sessionFactory = mf.build(in);
 		SqlSession session = sessionFactory.openSession();

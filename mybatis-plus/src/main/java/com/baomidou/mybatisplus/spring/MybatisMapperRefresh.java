@@ -107,7 +107,7 @@ public class MybatisMapperRefresh implements Runnable {
 	}
 
 	public void run() {
-		final GlobalConfiguration mybatisGlobalCache = GlobalConfiguration.globalCache(configuration);
+		final GlobalConfiguration mybatisGlobalCache = GlobalConfiguration.GlobalConfig(configuration);
 		/*
 		 * 启动 XML 热加载
 		 */

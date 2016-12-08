@@ -42,8 +42,7 @@ public class URPTest {
 		// 加载配置文件
 		InputStream in = UserMapperTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
 		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
-		GlobalConfiguration globalCache = new GlobalConfiguration(new MySqlInjector());
-		mf.setMybatisGlobalCache(globalCache);
+		mf.setGlobalConfig(new GlobalConfiguration(new MySqlInjector()));
 		SqlSessionFactory sessionFactory = mf.build(in);
 		SqlSession session = sessionFactory.openSession();
 
