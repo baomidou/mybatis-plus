@@ -58,7 +58,7 @@ public class TableFieldInfo {
 	 */
 	private FieldStrategy fieldStrategy = FieldStrategy.NOT_NULL;
 
-	public TableFieldInfo(MybatisGlobalCache globalCache, String column, String property, String el, FieldStrategy fieldStrategy) {
+	public TableFieldInfo(GlobalConfiguration globalCache, String column, String property, String el, FieldStrategy fieldStrategy) {
 		DBType dbType = globalCache.getDbType();
 		if (globalCache.isDbColumnUnderline()) {
 			/* 开启字段下划线申明 */
@@ -84,7 +84,7 @@ public class TableFieldInfo {
 		}
 	}
 
-	public TableFieldInfo(MybatisGlobalCache globalCache, String column) {
+	public TableFieldInfo(GlobalConfiguration globalCache, String column) {
 		DBType dbType = globalCache.getDbType();
 		if (globalCache.isDbColumnUnderline()) {
 			/* 开启字段下划线申明 */
