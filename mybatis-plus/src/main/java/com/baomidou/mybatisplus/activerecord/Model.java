@@ -339,7 +339,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 *            SQL语句
 	 * @return
 	 */
-	List<Map<String, Object>> selectPageSql(Page<T> page, String sql) {
+	public List<Map<String, Object>> selectPageSql(Page<T> page, String sql) {
 		return sqlSession().selectList(sqlStatement("selectPageSql"), sql, page);
 	}
 
