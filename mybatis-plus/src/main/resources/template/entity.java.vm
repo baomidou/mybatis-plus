@@ -63,7 +63,7 @@ public class ${entity} implements Serializable {
 		return ${field.propertyName};
 	}
 
-	public void set${field.capitalName}(${field.propertyType} ${field.propertyName}) {
+	public #if(${entityBuliderModel}) ${entity} #else void #end set${field.capitalName}(${field.propertyType} ${field.propertyName}) {
 		this.${field.propertyName} = ${field.propertyName};
 #if(${entityBuliderModel})
 		return this;
