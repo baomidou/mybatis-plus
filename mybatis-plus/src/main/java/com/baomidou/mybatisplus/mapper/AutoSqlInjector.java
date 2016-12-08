@@ -591,8 +591,9 @@ public class AutoSqlInjector implements ISqlInjector {
 			if (ignored) {
 				return "";
 			}
-			// 查询策略
-			fieldStrategy = FieldStrategy.NOT_EMPTY;
+			//TODO 考虑日期类型忽略
+			// 查询策略，使用全局策略
+			fieldStrategy = MybatisGlobalCache.globalCache(configuration).getFieldStrategy();
 		}
 
 		// 关闭标签
