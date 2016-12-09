@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.entity;
 
-import com.baomidou.mybatisplus.enums.DBType;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
@@ -36,7 +35,7 @@ public class TableFieldInfo {
 	 * </p>
 	 * true , false
 	 */
-	private boolean related;
+	private boolean related = false;
 
 	/**
 	 * 字段名
@@ -58,19 +57,17 @@ public class TableFieldInfo {
 	 */
 	private FieldStrategy fieldStrategy = FieldStrategy.NOT_NULL;
 
-	public TableFieldInfo(GlobalConfiguration globalCache, String column, String property, String el, FieldStrategy fieldStrategy) {
-		DBType dbType = globalCache.getDbType();
-		if (globalCache.isDbColumnUnderline()) {
+	public TableFieldInfo(GlobalConfiguration globalConfig, String column, String property, String el, FieldStrategy fieldStrategy) {
+		if (globalConfig.isDbColumnUnderline()) {
 			/* 开启字段下划线申明 */
 			this.related = true;
-			this.setColumn(dbType, StringUtils.camelToUnderline(column));
+			this.setColumn(globalConfig, StringUtils.camelToUnderline(column));
 		} else if (!column.equals(property)) {
 			/* 没有开启下划线申明 但是column与property不等的情况下设置related为true */
 			this.related = true;
-			this.setColumn(dbType, column);
+			this.setColumn(globalConfig, column);
 		} else {
-			this.related = false;
-			this.setColumn(dbType, column);
+			this.setColumn(globalConfig, column);
 		}
 		this.property = property;
 		this.el = el;
@@ -80,23 +77,21 @@ public class TableFieldInfo {
 		if (fieldStrategy != FieldStrategy.NOT_NULL) {
 			this.fieldStrategy = fieldStrategy;
 		} else {
-			this.fieldStrategy = globalCache.getFieldStrategy();
+			this.fieldStrategy = globalConfig.getFieldStrategy();
 		}
 	}
 
-	public TableFieldInfo(GlobalConfiguration globalCache, String column) {
-		DBType dbType = globalCache.getDbType();
-		if (globalCache.isDbColumnUnderline()) {
+	public TableFieldInfo(GlobalConfiguration globalConfig, String column) {
+		if (globalConfig.isDbColumnUnderline()) {
 			/* 开启字段下划线申明 */
 			this.related = true;
-			this.setColumn(dbType, StringUtils.camelToUnderline(column));
+			this.setColumn(globalConfig, StringUtils.camelToUnderline(column));
 		} else {
-			this.related = false;
-			this.setColumn(dbType, column);
+			this.setColumn(globalConfig, column);
 		}
 		this.property = column;
 		this.el = column;
-		this.fieldStrategy = globalCache.getFieldStrategy();
+		this.fieldStrategy = globalConfig.getFieldStrategy();
 	}
 
 	public boolean isRelated() {
@@ -111,8 +106,13 @@ public class TableFieldInfo {
 		return column;
 	}
 
-	public void setColumn(DBType dbType, String column) {
-		this.column = SqlReservedWords.convert(dbType, column);
+	public void setColumn(GlobalConfiguration globalConfig, String column) {
+		String temp = SqlReservedWords.convert(globalConfig.getDbType(), column);
+		if (globalConfig.isCapitalMode() && !isRelated()) {
+			// 全局大写，非注解指定
+			temp = temp.toUpperCase();
+		}
+		this.column = temp;
 	}
 
 	public String getProperty() {

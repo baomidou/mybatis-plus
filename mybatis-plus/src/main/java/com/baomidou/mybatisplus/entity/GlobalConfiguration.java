@@ -67,12 +67,14 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	private ISqlInjector sqlInjector;
 	// 元对象字段填充控制器
 	private IMetaObjectHandler metaObjectHandler = null;
-	// 元对象字段填充控制器
+	// 字段验证策略
 	private FieldStrategy fieldStrategy = FieldStrategy.NOT_NULL;
 	// 是否刷新mapper
 	private boolean isRefresh = false;
 	// 是否自动获取DBType
 	private boolean isAutoSetDbType = true;
+	// 是否大写命名
+	private boolean isCapitalMode = false;
 	// 缓存当前Configuration的SqlSessionFactory
 	private SqlSessionFactory sqlSessionFactory;
 
@@ -294,6 +296,14 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 
 	public static Set<String> getMapperRegistryCache(Configuration configuration) {
 		return GlobalConfig(configuration).getMapperRegistryCache();
+	}
+
+	public boolean isCapitalMode() {
+		return isCapitalMode;
+	}
+
+	public void setCapitalMode(boolean isCapitalMode) {
+		this.isCapitalMode = isCapitalMode;
 	}
 
 }

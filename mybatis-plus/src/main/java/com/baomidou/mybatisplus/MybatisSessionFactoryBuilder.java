@@ -21,7 +21,6 @@ import java.util.Properties;
 
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.ErrorContext;
-import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
@@ -44,10 +43,8 @@ public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 	public SqlSessionFactory build(Reader reader, String environment, Properties properties) {
 		try {
 			MybatisXMLConfigBuilder parser = new MybatisXMLConfigBuilder(reader, environment, properties);
-			// 原生支持全局配置缓存
-			Configuration configuration = parser.parse();
-			globalConfig.setGlobalConfig(configuration);
-			return build(configuration);
+			globalConfig.setGlobalConfig(parser.getConfiguration());
+			return build(parser.parse());
 		} catch (Exception e) {
 			throw ExceptionFactory.wrapException("Error building SqlSession.", e);
 		} finally {
@@ -60,10 +57,8 @@ public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 	public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
 		try {
 			MybatisXMLConfigBuilder parser = new MybatisXMLConfigBuilder(inputStream, environment, properties);
-			// 原生支持全局配置缓存
-			Configuration configuration = parser.parse();
-			globalConfig.setGlobalConfig(configuration);
-			return build(configuration);
+			globalConfig.setGlobalConfig(parser.getConfiguration());
+			return build(parser.parse());
 		} catch (Exception e) {
 			throw ExceptionFactory.wrapException("Error building SqlSession.", e);
 		} finally {

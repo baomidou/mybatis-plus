@@ -85,6 +85,7 @@ public class UserMapperTest {
 		 * 设置，自定义 元对象填充器，实现公共字段自动写入
 		 */
 		gc.setMetaObjectHandler(new MyMetaObjectHandler());
+		//gc.setCapitalMode(true);
 		mf.setGlobalConfig(gc);
 
 		SqlSessionFactory sessionFactory = mf.build(in);

@@ -164,4 +164,5 @@ public class TableInfo {
 	public void setConfigMark(String configMark) {
 		this.configMark = configMark;
 	}
+
 }

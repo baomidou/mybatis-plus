@@ -29,7 +29,6 @@ import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import com.baomidou.mybatisplus.MybatisConfiguration;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
@@ -93,10 +92,6 @@ public class TableInfoHelper {
 		if (null != builderAssistant) {
 			tableInfo.setCurrentNamespace(builderAssistant.getCurrentNamespace());
 			configuration = builderAssistant.getConfiguration();
-		} else {
-			// TODO 测试用例所走的方法 正常是不会走这里 待优化 Caratacus
-			configuration = new MybatisConfiguration();
-			GlobalConfiguration.setGlobalConfig(configuration, GlobalConfiguration.DEFAULT);
 		}
 		GlobalConfiguration globalCache = GlobalConfiguration.GlobalConfig(configuration);
 		/* 表名 */
@@ -104,11 +99,15 @@ public class TableInfoHelper {
 		String tableName = clazz.getSimpleName();
 		if (table != null && StringUtils.isNotEmpty(table.value())) {
 			tableName = table.value();
-		} else if (globalCache.isDbColumnUnderline()) {
-			/* 开启字段下划线申明 */
-			tableName = StringUtils.camelToUnderline(tableName);
 		} else {
-			tableName = tableName.toLowerCase();
+			// 开启字段下划线申明
+			if (globalCache.isDbColumnUnderline()) {
+				tableName = StringUtils.camelToUnderline(tableName);
+			}
+			// 大写命名判断
+			if (globalCache.isCapitalMode()) {
+				tableName = tableName.toUpperCase();
+			}
 		}
 		tableInfo.setTableName(tableName);
 		/* 表结果集映射 */
@@ -154,7 +153,8 @@ public class TableInfoHelper {
 		 * 未发现主键注解，跳过注入
 		 */
 		if (null == tableInfo.getKeyColumn()) {
-			logger.warn(String.format("Warn: Could not find @TableId in Class: %s, initTableInfo Method Fail.", clazz.getName()));
+			logger.warn(String.format("Warn: Could not find @TableId in Class: %s, initTableInfo Method Fail.",
+					clazz.getName()));
 			return null;
 		}
 		/*
@@ -195,7 +195,8 @@ public class TableInfoHelper {
 	 * @param clazz
 	 * @return true 继续下一个属性判断，返回 continue;
 	 */
-	private static boolean initTableId(GlobalConfiguration globalCache, TableInfo tableInfo, Field field, Class<?> clazz) {
+	private static boolean initTableId(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field,
+			Class<?> clazz) {
 		TableId tableId = field.getAnnotation(TableId.class);
 		if (tableId != null) {
 			if (tableInfo.getKeyColumn() == null) {
@@ -205,18 +206,24 @@ public class TableInfoHelper {
 				if (IdType.INPUT != tableId.type()) {
 					tableInfo.setIdType(tableId.type());
 				} else {
-					tableInfo.setIdType(globalCache.getIdType());
+					tableInfo.setIdType(globalConfig.getIdType());
 				}
+				/* 字段 */
+				String column = field.getName();
 				if (StringUtils.isNotEmpty(tableId.value())) {
-					/* 自定义字段 */
-					tableInfo.setKeyColumn(tableId.value());
+					column = tableId.value();
 					tableInfo.setKeyRelated(true);
-				} else if (globalCache.isDbColumnUnderline()) {
-					/* 开启字段下划线申明 */
-					tableInfo.setKeyColumn(StringUtils.camelToUnderline(field.getName()));
 				} else {
-					tableInfo.setKeyColumn(field.getName());
+					// 开启字段下划线申明
+					if (globalConfig.isDbColumnUnderline()) {
+						column = StringUtils.camelToUnderline(column);
+					}
+					// 全局大写命名
+					if (globalConfig.isCapitalMode()) {
+						column = column.toUpperCase();
+					}
 				}
+				tableInfo.setKeyColumn(column);
 				tableInfo.setKeyProperty(field.getName());
 				return true;
 			} else {
@@ -236,12 +243,13 @@ public class TableInfoHelper {
 	 * @param clazz
 	 * @return true 继续下一个属性判断，返回 continue;
 	 */
-	private static boolean initFieldId(GlobalConfiguration mybatisGlobalCache, TableInfo tableInfo, Field field, Class<?> clazz) {
+	private static boolean initFieldId(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field,
+			Class<?> clazz) {
 		if (DEFAULT_ID_NAME.equals(field.getName())) {
 			if (tableInfo.getKeyColumn() == null) {
-				tableInfo.setIdType(mybatisGlobalCache.getIdType());
-				tableInfo.setKeyColumn(field.getName());
-				tableInfo.setKeyProperty(field.getName());
+				tableInfo.setIdType(globalConfig.getIdType());
+				tableInfo.setKeyColumn(globalConfig.isCapitalMode() ? DEFAULT_ID_NAME.toUpperCase() : DEFAULT_ID_NAME);
+				tableInfo.setKeyProperty(DEFAULT_ID_NAME);
 				return true;
 			} else {
 				throwExceptionId(clazz);
@@ -272,7 +280,7 @@ public class TableInfoHelper {
 	 * @return true 继续下一个属性判断，返回 continue;
 	 */
 	private static boolean initTableField(GlobalConfiguration globalCache, List<TableFieldInfo> fieldList, Field field,
-                                          Class<?> clazz) {
+			Class<?> clazz) {
 		/* 获取注解属性，自定义字段 */
 		TableField tableField = field.getAnnotation(TableField.class);
 		if (tableField != null) {
