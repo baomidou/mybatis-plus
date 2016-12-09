@@ -17,7 +17,10 @@ package com.baomidou.mybatisplus.entity;
 
 import java.util.List;
 
+import org.apache.ibatis.session.Configuration;
+
 import com.baomidou.mybatisplus.enums.IdType;
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 
 /**
  * <p>
@@ -161,8 +164,11 @@ public class TableInfo {
 		return configMark;
 	}
 
-	public void setConfigMark(String configMark) {
-		this.configMark = configMark;
+	public void setConfigMark(Configuration configuration) {
+		if (configuration == null) {
+			throw new MybatisPlusException("Error: You need Initialize MybatisConfiguration !");
+		}
+		this.configMark = configuration.toString();
 	}
 
 }

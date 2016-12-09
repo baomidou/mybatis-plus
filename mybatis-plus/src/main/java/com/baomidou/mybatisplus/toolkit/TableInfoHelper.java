@@ -88,12 +88,15 @@ public class TableInfoHelper {
 			return ti;
 		}
 		TableInfo tableInfo = new TableInfo();
-		Configuration configuration = null;
+		GlobalConfiguration globalCache = null;
 		if (null != builderAssistant) {
 			tableInfo.setCurrentNamespace(builderAssistant.getCurrentNamespace());
-			configuration = builderAssistant.getConfiguration();
+			tableInfo.setConfigMark(builderAssistant.getConfiguration());
+			globalCache = GlobalConfiguration.GlobalConfig(builderAssistant.getConfiguration());
+		} else {
+			// 兼容测试场景
+			globalCache = GlobalConfiguration.DEFAULT;
 		}
-		GlobalConfiguration globalCache = GlobalConfiguration.GlobalConfig(configuration);
 		/* 表名 */
 		TableName table = clazz.getAnnotation(TableName.class);
 		String tableName = clazz.getSimpleName();
@@ -145,10 +148,6 @@ public class TableInfoHelper {
 
 		/* 字段列表 */
 		tableInfo.setFieldList(fieldList);
-		/**
-		 * 设置Configuration地址值
-		 */
-		tableInfo.setConfigMark(configuration.toString());
 		/*
 		 * 未发现主键注解，跳过注入
 		 */
