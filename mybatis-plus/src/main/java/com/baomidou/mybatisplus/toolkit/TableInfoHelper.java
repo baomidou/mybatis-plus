@@ -244,11 +244,15 @@ public class TableInfoHelper {
 	 */
 	private static boolean initFieldId(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field,
 			Class<?> clazz) {
-		if (DEFAULT_ID_NAME.equals(field.getName())) {
+		String column = field.getName();
+		if (globalConfig.isCapitalMode()) {
+			column = column.toUpperCase();
+		}
+		if (DEFAULT_ID_NAME.equalsIgnoreCase(column)) {
 			if (tableInfo.getKeyColumn() == null) {
 				tableInfo.setIdType(globalConfig.getIdType());
-				tableInfo.setKeyColumn(globalConfig.isCapitalMode() ? DEFAULT_ID_NAME.toUpperCase() : DEFAULT_ID_NAME);
-				tableInfo.setKeyProperty(DEFAULT_ID_NAME);
+				tableInfo.setKeyColumn(column);
+				tableInfo.setKeyProperty(field.getName());
 				return true;
 			} else {
 				throwExceptionId(clazz);
