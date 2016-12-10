@@ -404,8 +404,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	public int selectCount(Wrapper wrapper) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("ew", wrapper);
-		List<Integer> list = sqlSession().<Integer> selectList(sqlStatement(SqlMethod.SELECT_COUNT), map);
-		return list.get(0);
+		return sqlSession().<Integer> selectOne(sqlStatement(SqlMethod.SELECT_COUNT), map);
 	}
 
 	/**
