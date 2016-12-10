@@ -38,10 +38,4 @@ public class CountOptimize {
 		return new CountOptimize();
 	}
 
-	@Override
-	public String toString() {
-		return new StringBuilder().append("{\"").append("orderBy\":\"").append(orderBy).append("\",").append("\"countSQL\":\"")
-				.append(countSQL).append("\"}").toString();
-
-	}
 }
