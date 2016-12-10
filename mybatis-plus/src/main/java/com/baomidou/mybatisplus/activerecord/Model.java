@@ -390,11 +390,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * @return
 	 */
 	public int selectCount(String whereClause, Object... args) {
-		List<T> tl = selectList(whereClause, args);
-		if (CollectionUtils.isEmpty(tl)) {
-			return 0;
-		}
-		return tl.size();
+		return selectCount(Condition.instance().where(whereClause, args));
 	}
 
 	/**
@@ -402,10 +398,14 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * 查询总数
 	 * </p>
 	 *
+	 * @param wrapper
 	 * @return
 	 */
-	public int selectCount() {
-		return selectCount(null);
+	public int selectCount(Wrapper wrapper) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("ew", wrapper);
+		List<Integer> list = sqlSession().<Integer> selectList(sqlStatement(SqlMethod.SELECT_COUNT), map);
+		return list.get(0);
 	}
 
 	/**

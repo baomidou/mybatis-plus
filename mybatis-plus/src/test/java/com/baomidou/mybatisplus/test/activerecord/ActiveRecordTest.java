@@ -84,7 +84,7 @@ public class ActiveRecordTest {
 		}
 
 		// 查询总记录数
-		print(" count=" + t2.selectCount());
+		print(" count=" + t2.selectCount(null));
 
 		// 翻页查询
 		Page<Test> page = new Page<Test>(0, 10);
