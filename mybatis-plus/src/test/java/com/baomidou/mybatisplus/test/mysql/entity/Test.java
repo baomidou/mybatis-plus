@@ -65,7 +65,7 @@ public class Test extends Model<Test> {
 	}
 
 	@Override
-	protected Serializable getPrimaryKey() {
+	protected Serializable pkVal() {
 		return id;
 	}
 

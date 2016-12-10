@@ -83,7 +83,7 @@ public class ${entity} implements Serializable {
 #end
 #if(${activeRecord})
 	@Override
-	protected Serializable getPrimaryKey() {
+	protected Serializable pkVal() {
 #if(${keyPropertyName})
 		return this.${keyPropertyName};
 #else

@@ -60,7 +60,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * </p>
 	 */
 	public boolean insertOrUpdate() {
-		if (null != this.getPrimaryKey()) {
+		if (null != this.pkVal()) {
 			// update
 			return retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE_BY_ID), this));
 		} else {
@@ -105,7 +105,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * @return
 	 */
 	public boolean deleteById() {
-		return deleteById(this.getPrimaryKey());
+		return deleteById(this.pkVal());
 	}
 
 	/**
@@ -161,7 +161,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * @return
 	 */
 	public boolean updateById() {
-		if (null == this.getPrimaryKey()) {
+		if (null == this.pkVal()) {
 			throw new MybatisPlusException("primaryKey is null.");
 		}
 		// updateById
@@ -247,7 +247,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * @return
 	 */
 	public T selectById() {
-		return selectById(this.getPrimaryKey());
+		return selectById(this.pkVal());
 	}
 
 	/**
@@ -443,6 +443,9 @@ public abstract class Model<T extends Model> implements Serializable {
 		return Record.table(getClass()).getSqlStatement(sqlMethod);
 	}
 
-	protected abstract Serializable getPrimaryKey();
+	/**
+	 * 主键值
+	 */
+	protected abstract Serializable pkVal();
 
 }
