@@ -18,11 +18,12 @@ package com.baomidou.mybatisplus.activerecord;
 import com.baomidou.mybatisplus.enums.SqlMethod;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.Condition;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.SqlSession;
 
 import java.io.Serializable;
@@ -34,13 +35,15 @@ import java.util.Map;
  * <p>
  * ActiveRecord 模式 CRUD
  * </p>
- * 
+ *
  * @author hubin
  * @param <T>
  * @Date 2016-11-06
  */
 @SuppressWarnings({ "serial", "rawtypes" })
 public abstract class Model<T extends Model> implements Serializable {
+
+	private static final Log logger = LogFactory.getLog(Model.class);
 
 	/**
 	 * <p>
@@ -70,20 +73,22 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * <p>
 	 * 执行 SQL 插件
 	 * </p>
-	 * 
+	 *
 	 * @param sql
 	 *            SQL语句
+	 * @param args
+	 *            参数
 	 * @return
 	 */
-	public boolean insertSql(String sql) {
-		return retBool(sqlSession().insert(sqlStatement("insertSql"), sql));
+	public boolean insertSql(String sql, Object... args) {
+		return retBool(sqlSession().insert(sqlStatement("insertSql"), StringUtils.sqlArgsFill(sql, args)));
 	}
 
 	/**
 	 * <p>
 	 * 根据 ID 删除
 	 * </p>
-	 * 
+	 *
 	 * @param id
 	 *            主键ID
 	 * @return
@@ -96,7 +101,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * <p>
 	 * 根据主键删除
 	 * </p>
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean deleteById() {
@@ -107,7 +112,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * <p>
 	 * 删除记录
 	 * </p>
-	 * 
+	 *
 	 * @param whereClause
 	 *            查询条件
 	 * @param args
@@ -115,14 +120,21 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * @return
 	 */
 	public boolean delete(String whereClause, Object... args) {
+		return delete(Condition.instance().where(whereClause, args));
+	}
+
+	/**
+	 * <p>
+	 * 删除记录
+	 * </p>
+	 *
+	 * @param wrapper
+	 * @return
+	 */
+	public boolean delete(Wrapper wrapper) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		EntityWrapper<T> ew = null;
-		if (StringUtils.isNotEmpty(whereClause)) {
-			ew = new EntityWrapper<T>();
-			ew.addFilter(whereClause, args);
-		}
 		// delete
-		map.put("ew", ew);
+		map.put("ew", wrapper);
 		return retBool(sqlSession().delete(sqlStatement(SqlMethod.DELETE), map));
 	}
 
@@ -130,20 +142,22 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * <p>
 	 * 执行 SQL 删除
 	 * </p>
-	 * 
+	 *
 	 * @param sql
 	 *            SQL语句
+	 * @param args
+	 *            参数
 	 * @return
 	 */
-	public boolean deleteSql(String sql) {
-		return retBool(sqlSession().delete(sqlStatement("deleteSql"), sql));
+	public boolean deleteSql(String sql, Object... args) {
+		return retBool(sqlSession().delete(sqlStatement("deleteSql"), StringUtils.sqlArgsFill(sql, args)));
 	}
 
 	/**
 	 * <p>
 	 * 更新
 	 * </p>
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean updateById() {
@@ -158,7 +172,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * <p>
 	 * 执行 SQL 更新
 	 * </p>
-	 * 
+	 *
 	 * @param whereClause
 	 *            查询条件
 	 * @param args
@@ -166,13 +180,22 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * @return
 	 */
 	public boolean update(String whereClause, Object... args) {
+		// update
+		return update(Condition.instance().where(whereClause, args));
+	}
+
+	/**
+	 * <p>
+	 * 执行 SQL 更新
+	 * </p>
+	 *
+	 * @param wrapper
+	 * @return
+	 */
+	public boolean update(Wrapper wrapper) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("et", this);
-		if (StringUtils.isNotEmpty(whereClause)) {
-			EntityWrapper<T> ew = new EntityWrapper<T>();
-			ew.addFilter(whereClause, args);
-			map.put("ew", ew);
-		}
+		map.put("ew", wrapper);
 		// update
 		return retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE), map));
 	}
@@ -181,20 +204,22 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * <p>
 	 * 执行 SQL 更新
 	 * </p>
-	 * 
+	 *
 	 * @param sql
 	 *            SQL语句
+	 * @param args
+	 *            参数
 	 * @return
 	 */
-	public boolean updateSql(String sql) {
-		return retBool(sqlSession().update(sqlStatement("updateSql"), sql));
+	public boolean updateSql(String sql, Object... args) {
+		return retBool(sqlSession().update(sqlStatement("updateSql"), StringUtils.sqlArgsFill(sql, args)));
 	}
 
 	/**
 	 * <p>
 	 * 查询所有
 	 * </p>
-	 * 
+	 *
 	 * @return
 	 */
 	public List<T> selectAll() {
@@ -205,7 +230,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * <p>
 	 * 根据 ID 查询
 	 * </p>
-	 * 
+	 *
 	 * @param id
 	 *            主键ID
 	 * @return
@@ -218,7 +243,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * <p>
 	 * 根据主键查询
 	 * </p>
-	 * 
+	 *
 	 * @return
 	 */
 	public T selectById() {
@@ -229,7 +254,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * <p>
 	 * 查询总记录数
 	 * </p>
-	 * 
+	 *
 	 * @param wrapper
 	 * @return
 	 */
@@ -244,7 +269,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * <p>
 	 * 查询所有
 	 * </p>
-	 * 
+	 *
 	 * @param whereClause
 	 * @param args
 	 * @return
@@ -257,36 +282,42 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * <p>
 	 * 执行 SQL 查询
 	 * </p>
-	 * 
+	 *
 	 * @param sql
 	 *            SQL 语句
+	 * @param args
+	 *            参数
 	 * @return
 	 */
-	public List<Map<String, Object>> selectListSql(String sql) {
-		return sqlSession().selectList(sqlStatement("selectListSql"), sql);
+	public List<Map<String, Object>> selectListSql(String sql, Object... args) {
+		return sqlSession().selectList(sqlStatement("selectListSql"), StringUtils.sqlArgsFill(sql, args));
 	}
 
 	/**
 	 * <p>
 	 * 查询一条记录
 	 * </p>
-	 * 
+	 *
 	 * @param wrapper
 	 * @return
 	 */
 	public T selectOne(Wrapper wrapper) {
-		List<T> tl = selectList(wrapper);
-		if (CollectionUtils.isEmpty(tl)) {
-			return null;
+		List<T> list = selectList(wrapper);
+		if (CollectionUtils.isNotEmpty(list)) {
+			int size = list.size();
+			if (size > 1) {
+				logger.warn(String.format("Warn: selectOne Method There are  %s results.", size));
+			}
+			return list.get(0);
 		}
-		return tl.get(0);
+		return null;
 	}
 
 	/**
 	 * <p>
 	 * 查询一条记录
 	 * </p>
-	 * 
+	 *
 	 * @param whereClause
 	 * @param args
 	 * @return
@@ -299,7 +330,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * <p>
 	 * 翻页查询
 	 * </p>
-	 * 
+	 *
 	 * @param page
 	 *            翻页查询条件
 	 * @param wrapper
@@ -320,7 +351,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * <p>
 	 * 查询所有(分页)
 	 * </p>
-	 * 
+	 *
 	 * @param page
 	 * @param whereClause
 	 * @param args
@@ -334,20 +365,24 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * <p>
 	 * 执行 SQL 查询，查询全部记录（并翻页）
 	 * </p>
-	 * 
+	 *
+	 * @param page
+	 *            分页对象
 	 * @param sql
 	 *            SQL语句
+	 * @param args
+	 *            参数
 	 * @return
 	 */
-	public List<Map<String, Object>> selectPageSql(Page<T> page, String sql) {
-		return sqlSession().selectList(sqlStatement("selectPageSql"), sql, page);
+	public List<Map<String, Object>> selectPageSql(Page<T> page, String sql, Object... args) {
+		return sqlSession().selectList(sqlStatement("selectPageSql"), StringUtils.sqlArgsFill(sql, args), page);
 	}
 
 	/**
 	 * <p>
 	 * 查询总数
 	 * </p>
-	 * 
+	 *
 	 * @param whereClause
 	 *            查询条件
 	 * @param args
@@ -366,7 +401,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * <p>
 	 * 查询总数
 	 * </p>
-	 * 
+	 *
 	 * @return
 	 */
 	public int selectCount() {
@@ -397,7 +432,7 @@ public abstract class Model<T extends Model> implements Serializable {
 
 	/**
 	 * 获取SqlStatement
-	 * 
+	 *
 	 * @param sqlMethod
 	 * @return
 	 */
