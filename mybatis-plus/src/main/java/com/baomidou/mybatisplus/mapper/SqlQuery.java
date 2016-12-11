@@ -15,21 +15,20 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -39,20 +38,21 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
  * @author Caratacus
  * @Date 2016-12-11
  */
-public class SQLQuery {
-	private static final Log logger = LogFactory.getLog(SQLQuery.class);
+public class SqlQuery {
+	private static final Log logger = LogFactory.getLog(SqlQuery.class);
 	// 单例Query
+	public static final SqlQuery query = new SqlQuery();
 	private SqlSessionFactory sqlSessionFactory;
 	private TableInfo tableInfo;
 
-	public SQLQuery() {
+	public SqlQuery() {
 		this.tableInfo = TableInfoHelper.getRandomTableInfo();
 		String configMark = tableInfo.getConfigMark();
 		GlobalConfiguration globalConfiguration = GlobalConfiguration.GlobalConfig(configMark);
 		this.sqlSessionFactory = globalConfiguration.getSqlSessionFactory();
 	}
 
-	public SQLQuery(Class<?> clazz) {
+	public SqlQuery(Class<?> clazz) {
 		this.tableInfo = SqlHelper.table(clazz);
 		String configMark = tableInfo.getConfigMark();
 		GlobalConfiguration globalConfiguration = GlobalConfiguration.GlobalConfig(configMark);
@@ -103,8 +103,8 @@ public class SQLQuery {
 	 * 
 	 * @return
 	 */
-	public static SQLQuery db() {
-		return new SQLQuery();
+	public static SqlQuery db() {
+		return query;
 	}
 
 	/**
@@ -113,8 +113,8 @@ public class SQLQuery {
 	 * @param clazz
 	 * @return
 	 */
-	public static SQLQuery db(Class<?> clazz) {
-		return new SQLQuery(clazz);
+	public static SqlQuery db(Class<?> clazz) {
+		return new SqlQuery(clazz);
 	}
 
 	/**

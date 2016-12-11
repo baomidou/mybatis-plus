@@ -15,24 +15,23 @@
  */
 package com.baomidou.mybatisplus.activerecord;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.SqlSession;
-
 import com.baomidou.mybatisplus.enums.SqlMethod;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.Condition;
-import com.baomidou.mybatisplus.mapper.SQLQuery;
 import com.baomidou.mybatisplus.mapper.SqlHelper;
+import com.baomidou.mybatisplus.mapper.SqlQuery;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.SqlSession;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -338,8 +337,8 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * 执行 SQL
 	 * </p>
 	 */
-	public SQLQuery sql() {
-		return new SQLQuery(getClass());
+	public SqlQuery sql() {
+		return new SqlQuery(getClass());
 	}
 
 	/**
