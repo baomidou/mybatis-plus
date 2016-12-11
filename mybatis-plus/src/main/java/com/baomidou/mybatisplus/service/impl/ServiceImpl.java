@@ -28,7 +28,6 @@ import com.baomidou.mybatisplus.toolkit.MapUtils;
 import com.baomidou.mybatisplus.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
-import org.apache.ibatis.jdbc.SQL;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.SqlSession;
@@ -62,24 +61,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	 */
 	protected boolean retBool(int result) {
 		return result >= 1;
-	}
-
-	/**
-	 * <p>
-	 * SQL 构建方法
-	 * </p>
-	 *
-	 * @param sql
-	 *            SQL 语句
-	 * @param args
-	 *            执行参数
-	 * @return
-	 */
-	protected String sqlBuilder(SQL sql, Object... args) {
-		if (null == sql) {
-			throw new IllegalArgumentException("Error: sql Can not be empty.");
-		}
-		return StringUtils.sqlArgsFill(sql.toString(), args);
 	}
 
 	@SuppressWarnings("unchecked")

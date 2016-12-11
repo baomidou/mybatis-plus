@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.test.activerecord;
 
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.query.SQLQuery;
 import com.baomidou.mybatisplus.test.mysql.TestMapper;
 import com.baomidou.mybatisplus.test.mysql.entity.Test;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
@@ -96,7 +97,7 @@ public class ActiveRecordTest {
 		print("deleteById=" + rlt + ", id=" + t2.getId());
 
 		// 执行 SQL 查询总数
-		List<Map<String, Object>> ul = t2.selectListSql(new SQL() {
+		List<Map<String, Object>> ul = SQLQuery.create().selectList(new SQL() {
 			{
 				SELECT("*");
 				FROM("test");

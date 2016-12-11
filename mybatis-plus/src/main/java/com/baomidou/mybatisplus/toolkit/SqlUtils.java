@@ -29,7 +29,7 @@ import com.baomidou.mybatisplus.plugins.pagination.Pagination;
  */
 public class SqlUtils {
 	private final static SQLFormatter sqlFormatter = new SQLFormatter();
-	public static final String SQL_BASE_COUNT = "SELECT COUNT(1) FROM ( %s )";
+	public static final String SQL_BASE_COUNT = "SELECT COUNT(1) FROM ( %s ) TOTAL";
 
 	/**
 	 * 获取CountOptimize
@@ -96,7 +96,7 @@ public class SqlUtils {
 			}
 			if (!optimize) {
 				// 无优化SQL
-				countSql.append("FROM ( ").append(originalSql).append(" ) ");
+				countSql.append("FROM ( ").append(originalSql).append(" ) TOTAL");
 			}
 			countOptimize.setCountSQL(countSql.toString());
 		}

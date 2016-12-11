@@ -50,7 +50,7 @@ public class SqlUtilsTest {
 		System.out.println(orderBy);
 		Assert.assertFalse(orderBy);
 		Assert.assertEquals(
-				"SELECT COUNT(1) FROM ( SELECT DISTINCT * FROM user a LEFT JOIN (SELECT uuid FROM user2) b ON b.id = a.aid WHERE a = 1 )",
+				"SELECT COUNT(1) FROM ( SELECT DISTINCT * FROM user a LEFT JOIN (SELECT uuid FROM user2) b ON b.id = a.aid WHERE a = 1 ) TOTAL",
 				countsql);
 	}
 
@@ -69,7 +69,7 @@ public class SqlUtilsTest {
 		System.out.println(orderBy);
 		Assert.assertFalse(orderBy);
 		Assert.assertEquals(
-				"SELECT COUNT(1) FROM ( SELECT * FROM user a LEFT JOIN (SELECT uuid FROM user2) b ON b.id = a.aid WHERE a = 1 GROUP BY a.id ORDER BY (SELECT 1 FROM dual) )",
+				"SELECT COUNT(1) FROM ( SELECT * FROM user a LEFT JOIN (SELECT uuid FROM user2) b ON b.id = a.aid WHERE a = 1 GROUP BY a.id ORDER BY (SELECT 1 FROM dual) ) TOTAL",
 				countsql);
 	}
 
@@ -88,7 +88,7 @@ public class SqlUtilsTest {
 		System.out.println(orderBy);
 		Assert.assertFalse(orderBy);
 		Assert.assertEquals(
-				"SELECT COUNT(1) FROM ( select * from user a left join (select uuid from user2) b on b.id = a.aid where a=1 group by a.id order by (select 1 from dual) )",
+				"SELECT COUNT(1) FROM ( select * from user a left join (select uuid from user2) b on b.id = a.aid where a=1 group by a.id order by (select 1 from dual) ) TOTAL",
 				countsql);
 	}
 
@@ -119,7 +119,7 @@ public class SqlUtilsTest {
 		System.out.println(countsql);
 		System.out.println(orderBy);
 		Assert.assertFalse(orderBy);
-		Assert.assertEquals("SELECT COUNT(1) FROM ( select * from test where 1= 1 order by id  )", countsql);
+		Assert.assertEquals("SELECT COUNT(1) FROM ( select * from test where 1= 1 order by id  ) TOTAL", countsql);
 	}
 
 	/**
@@ -133,7 +133,7 @@ public class SqlUtilsTest {
 		System.out.println(countsql);
 		System.out.println(orderBy);
 		Assert.assertTrue(orderBy);
-		Assert.assertEquals("SELECT COUNT(1) FROM ( select * from test where 1= 1  )", countsql);
+		Assert.assertEquals("SELECT COUNT(1) FROM ( select * from test where 1= 1  ) TOTAL", countsql);
 	}
 
 	/**

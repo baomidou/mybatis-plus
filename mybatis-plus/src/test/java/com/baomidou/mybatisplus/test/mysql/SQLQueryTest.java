@@ -48,29 +48,29 @@ public class SQLQueryTest {
 		SqlSessionFactory sessionFactory = mf.build(in);
 		TableInfoHelper.initSqlSessionFactory(sessionFactory);
 
-		boolean b = SQLQuery.create().insertSql("INSERT INTO `test` (`id`, `type`) VALUES ('107880983085826048', 't1021')");
+		boolean b = SQLQuery.create().insert("INSERT INTO `test` (`id`, `type`) VALUES ('107880983085826048', 't1021')");
 		System.out.println(b);
 		Assert.assertTrue(b);
-		boolean b1 = SQLQuery.create().updateSql("UPDATE `test` SET `type`='tttttttt' WHERE (`id`=107880983085826048)");
+		boolean b1 = SQLQuery.create().update("UPDATE `test` SET `type`='tttttttt' WHERE (`id`=107880983085826048)");
 		System.out.println(b1);
 
 		Assert.assertTrue(b1);
-		List<Map<String, Object>> maps = SQLQuery.create().selectListSql("select * from test WHERE (`id`=107880983085826048)");
+		List<Map<String, Object>> maps = SQLQuery.create().selectList("select * from test WHERE (`id`=107880983085826048)");
 		System.out.println(maps);
 		String type = (String) maps.get(0).get("type");
 		System.out.println(type);
 		Assert.assertEquals("tttttttt", type);
-		boolean b2 = SQLQuery.create().deleteSql("DELETE from test WHERE (`id`=107880983085826048)");
+		boolean b2 = SQLQuery.create().delete("DELETE from test WHERE (`id`=107880983085826048)");
 		System.out.println(b2);
 		Assert.assertTrue(b2);
-		List<Map<String, Object>> maps1 = SQLQuery.create().selectListSql("select * from test WHERE (`id`=107880983085826048)");
+		List<Map<String, Object>> maps1 = SQLQuery.create().selectList("select * from test WHERE (`id`=107880983085826048)");
 		System.out.println(maps1);
 		if (CollectionUtils.isEmpty(maps1)) {
 			maps1 = null;
 		}
 		Assert.assertNull(maps1);
         Page page = new Page(1,5);
-        Page<Map<String, Object>> mapPage = SQLQuery.create().selectPageSql(page, "select * from test ");
+        Page<Map<String, Object>> mapPage = SQLQuery.create().selectPage(page, "select * from test ");
         System.out.println(mapPage);
 
     }

@@ -71,7 +71,7 @@ public class SQLQuery implements Query {
 	 *            参数
 	 * @return
 	 */
-	public boolean insertSql(String sql, Object... args) {
+	public boolean insert(String sql, Object... args) {
 		return retBool(sqlSession().insert(sqlStatement("insertSql"), StringUtils.sqlArgsFill(sql, args)));
 	}
 
@@ -86,7 +86,7 @@ public class SQLQuery implements Query {
 	 *            参数
 	 * @return
 	 */
-	public boolean deleteSql(String sql, Object... args) {
+	public boolean delete(String sql, Object... args) {
 		return retBool(sqlSession().delete(sqlStatement("deleteSql"), StringUtils.sqlArgsFill(sql, args)));
 	}
 
@@ -101,7 +101,7 @@ public class SQLQuery implements Query {
 	 *            参数
 	 * @return
 	 */
-	public boolean updateSql(String sql, Object... args) {
+	public boolean update(String sql, Object... args) {
 		return retBool(sqlSession().update(sqlStatement("updateSql"), StringUtils.sqlArgsFill(sql, args)));
 	}
 
@@ -116,7 +116,7 @@ public class SQLQuery implements Query {
 	 *            参数
 	 * @return
 	 */
-	public List<Map<String, Object>> selectListSql(String sql, Object... args) {
+	public List<Map<String, Object>> selectList(String sql, Object... args) {
 		return sqlSession().selectList(sqlStatement("selectListSql"), StringUtils.sqlArgsFill(sql, args));
 	}
 
@@ -131,8 +131,8 @@ public class SQLQuery implements Query {
 	 *            参数
 	 * @return
 	 */
-	public Map<String, Object> selectOneSql(String sql, Object... args) {
-		List<Map<String, Object>> list = selectListSql(sql, args);
+	public Map<String, Object> selectOne(String sql, Object... args) {
+		List<Map<String, Object>> list = selectList(sql, args);
 		if (CollectionUtils.isNotEmpty(list)) {
 			int size = list.size();
 			if (size > 1) {
@@ -156,11 +156,12 @@ public class SQLQuery implements Query {
 	 *            参数
 	 * @return
 	 */
-	public Page<Map<String, Object>> selectPageSql(Page page, String sql, Object... args) {
-        List<Map<String, Object>> list = sqlSession().selectList(sqlStatement("selectPageSql"), StringUtils.sqlArgsFill(sql, args), page);
-        page.setRecords(list);
-        return page;
-    }
+	public Page<Map<String, Object>> selectPage(Page page, String sql, Object... args) {
+		List<Map<String, Object>> list = sqlSession().selectList(sqlStatement("selectPageSql"),
+				StringUtils.sqlArgsFill(sql, args), page);
+		page.setRecords(list);
+		return page;
+	}
 
 	/**
 	 * 获取默认的SqlQuery(适用于单库)

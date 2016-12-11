@@ -71,21 +71,6 @@ public abstract class Model<T extends Model> implements Serializable {
 
 	/**
 	 * <p>
-	 * 执行 SQL 插件
-	 * </p>
-	 *
-	 * @param sql
-	 *            SQL语句
-	 * @param args
-	 *            参数
-	 * @return
-	 */
-	public boolean insertSql(String sql, Object... args) {
-		return retBool(sqlSession().insert(sqlStatement("insertSql"), StringUtils.sqlArgsFill(sql, args)));
-	}
-
-	/**
-	 * <p>
 	 * 根据 ID 删除
 	 * </p>
 	 *
@@ -140,21 +125,6 @@ public abstract class Model<T extends Model> implements Serializable {
 
 	/**
 	 * <p>
-	 * 执行 SQL 删除
-	 * </p>
-	 *
-	 * @param sql
-	 *            SQL语句
-	 * @param args
-	 *            参数
-	 * @return
-	 */
-	public boolean deleteSql(String sql, Object... args) {
-		return retBool(sqlSession().delete(sqlStatement("deleteSql"), StringUtils.sqlArgsFill(sql, args)));
-	}
-
-	/**
-	 * <p>
 	 * 更新
 	 * </p>
 	 *
@@ -198,21 +168,6 @@ public abstract class Model<T extends Model> implements Serializable {
 		map.put("ew", wrapper);
 		// update
 		return retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE), map));
-	}
-
-	/**
-	 * <p>
-	 * 执行 SQL 更新
-	 * </p>
-	 *
-	 * @param sql
-	 *            SQL语句
-	 * @param args
-	 *            参数
-	 * @return
-	 */
-	public boolean updateSql(String sql, Object... args) {
-		return retBool(sqlSession().update(sqlStatement("updateSql"), StringUtils.sqlArgsFill(sql, args)));
 	}
 
 	/**
@@ -276,21 +231,6 @@ public abstract class Model<T extends Model> implements Serializable {
 	 */
 	public List<T> selectList(String whereClause, Object... args) {
 		return selectList(Condition.instance().where(whereClause, args));
-	}
-
-	/**
-	 * <p>
-	 * 执行 SQL 查询
-	 * </p>
-	 *
-	 * @param sql
-	 *            SQL 语句
-	 * @param args
-	 *            参数
-	 * @return
-	 */
-	public List<Map<String, Object>> selectListSql(String sql, Object... args) {
-		return sqlSession().selectList(sqlStatement("selectListSql"), StringUtils.sqlArgsFill(sql, args));
 	}
 
 	/**
@@ -359,23 +299,6 @@ public abstract class Model<T extends Model> implements Serializable {
 	 */
 	public Page<T> selectPage(Page<T> page, String whereClause, Object... args) {
 		return selectPage(page, Condition.instance().where(whereClause, args));
-	}
-
-	/**
-	 * <p>
-	 * 执行 SQL 查询，查询全部记录（并翻页）
-	 * </p>
-	 *
-	 * @param page
-	 *            分页对象
-	 * @param sql
-	 *            SQL语句
-	 * @param args
-	 *            参数
-	 * @return
-	 */
-	public List<Map<String, Object>> selectPageSql(Page<T> page, String sql, Object... args) {
-		return sqlSession().selectList(sqlStatement("selectPageSql"), StringUtils.sqlArgsFill(sql, args), page);
 	}
 
 	/**

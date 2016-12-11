@@ -42,7 +42,7 @@ public interface Query {
 	 *            参数
 	 * @return
 	 */
-	public boolean insertSql(String sql, Object... args);
+	public boolean insert(String sql, Object... args);
 
 	/**
 	 * <p>
@@ -55,7 +55,7 @@ public interface Query {
 	 *            参数
 	 * @return
 	 */
-	public boolean deleteSql(String sql, Object... args);
+	public boolean delete(String sql, Object... args);
 
 	/**
 	 * <p>
@@ -68,7 +68,7 @@ public interface Query {
 	 *            参数
 	 * @return
 	 */
-	public boolean updateSql(String sql, Object... args);
+	public boolean update(String sql, Object... args);
 
 	/**
 	 * <p>
@@ -81,7 +81,7 @@ public interface Query {
 	 *            参数
 	 * @return
 	 */
-	public List<Map<String, Object>> selectListSql(String sql, Object... args);
+	public List<Map<String, Object>> selectList(String sql, Object... args);
 
 	/**
 	 * <p>
@@ -94,8 +94,7 @@ public interface Query {
 	 *            参数
 	 * @return
 	 */
-	public Map<String, Object> selectOneSql(String sql, Object... args);
-
+	public Map<String, Object> selectOne(String sql, Object... args);
 	/**
 	 * <p>
 	 * 执行SQL查询，查询全部记录（并翻页）
@@ -109,6 +108,6 @@ public interface Query {
 	 *            参数
 	 * @return
 	 */
-	public Page<Map<String, Object>> selectPageSql(Page page, String sql, Object... args);
+	public Page<Map<String, Object>> selectPage(Page page, String sql, Object... args);
 
 }
