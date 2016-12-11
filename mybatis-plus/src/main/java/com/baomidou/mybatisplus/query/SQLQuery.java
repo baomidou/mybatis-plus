@@ -15,20 +15,21 @@
  */
 package com.baomidou.mybatisplus.query;
 
-import com.baomidou.mybatisplus.activerecord.Record;
-import com.baomidou.mybatisplus.entity.GlobalConfiguration;
-import com.baomidou.mybatisplus.entity.TableInfo;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.SqlSession;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import com.baomidou.mybatisplus.entity.GlobalConfiguration;
+import com.baomidou.mybatisplus.entity.TableInfo;
+import com.baomidou.mybatisplus.mapper.SqlHelper;
+import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**
  * <p>
@@ -38,7 +39,6 @@ import java.util.Map;
  * @author Caratacus
  * @Date 2016-12-11
  */
-@SuppressWarnings({ "serial", "rawtypes" })
 public class SQLQuery implements Query {
 	private static final Log logger = LogFactory.getLog(SQLQuery.class);
 
@@ -50,26 +50,25 @@ public class SQLQuery implements Query {
 		String configMark = tableInfo.getConfigMark();
 		GlobalConfiguration globalConfiguration = GlobalConfiguration.GlobalConfig(configMark);
 		this.sqlSession = globalConfiguration.getSqlSessionFactory().openSession(true);
-
 	}
 
-	public SQLQuery(Class clazz) {
-		this.tableInfo = Record.table(clazz);
+	public SQLQuery(Class<?> clazz) {
+		this.tableInfo = SqlHelper.table(clazz);
 		String configMark = tableInfo.getConfigMark();
 		GlobalConfiguration globalConfiguration = GlobalConfiguration.GlobalConfig(configMark);
 		this.sqlSession = globalConfiguration.getSqlSessionFactory().openSession(true);
 	}
 
 	public boolean insert(String sql, Object... args) {
-		return retBool(sqlSession().insert(sqlStatement("insertSql"), StringUtils.sqlArgsFill(sql, args)));
+		return SqlHelper.retBool(sqlSession().insert(sqlStatement("insertSql"), StringUtils.sqlArgsFill(sql, args)));
 	}
 
 	public boolean delete(String sql, Object... args) {
-		return retBool(sqlSession().delete(sqlStatement("deleteSql"), StringUtils.sqlArgsFill(sql, args)));
+		return SqlHelper.retBool(sqlSession().delete(sqlStatement("deleteSql"), StringUtils.sqlArgsFill(sql, args)));
 	}
 
 	public boolean update(String sql, Object... args) {
-		return retBool(sqlSession().update(sqlStatement("updateSql"), StringUtils.sqlArgsFill(sql, args)));
+		return SqlHelper.retBool(sqlSession().update(sqlStatement("updateSql"), StringUtils.sqlArgsFill(sql, args)));
 	}
 
 	public List<Map<String, Object>> selectList(String sql, Object... args) {
@@ -77,7 +76,7 @@ public class SQLQuery implements Query {
 	}
 
 	public int selectCount(String sql, Object... args) {
-		return sqlSession().<Integer> selectOne(sqlStatement("selectCountSql"), StringUtils.sqlArgsFill(sql, args));
+		return sqlSession().<Integer>selectOne(sqlStatement("selectCountSql"), StringUtils.sqlArgsFill(sql, args));
 	}
 
 	public Map<String, Object> selectOne(String sql, Object... args) {
@@ -92,7 +91,11 @@ public class SQLQuery implements Query {
 		return Collections.emptyMap();
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Page<Map<String, Object>> selectPage(Page page, String sql, Object... args) {
+		if (null == page) {
+			return null;
+		}
 		List<Map<String, Object>> list = sqlSession().selectList(sqlStatement("selectPageSql"),
 				StringUtils.sqlArgsFill(sql, args), page);
 		page.setRecords(list);
@@ -114,21 +117,8 @@ public class SQLQuery implements Query {
 	 * @param clazz
 	 * @return
 	 */
-	public static Query create(Class clazz) {
+	public static Query create(Class<?> clazz) {
 		return new SQLQuery(clazz);
-	}
-
-	/**
-	 * <p>
-	 * 判断数据库操作是否成功
-	 * </p>
-	 *
-	 * @param result
-	 *            数据库操作返回影响条数
-	 * @return boolean
-	 */
-	private boolean retBool(int result) {
-		return result >= 1;
 	}
 
 	/**
@@ -143,4 +133,5 @@ public class SQLQuery implements Query {
 	private String sqlStatement(String sqlMethod) {
 		return tableInfo.getSqlStatement(sqlMethod);
 	}
+
 }

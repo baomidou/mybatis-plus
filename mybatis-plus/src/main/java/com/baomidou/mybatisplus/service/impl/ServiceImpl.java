@@ -15,11 +15,20 @@
  */
 package com.baomidou.mybatisplus.service.impl;
 
-import com.baomidou.mybatisplus.activerecord.Record;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.baomidou.mybatisplus.mapper.SqlHelper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.IService;
@@ -28,14 +37,6 @@ import com.baomidou.mybatisplus.toolkit.MapUtils;
 import com.baomidou.mybatisplus.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.SqlSession;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -52,17 +53,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	@Autowired
 	protected M baseMapper;
 
-	/**
-	 * 判断数据库操作是否成功
-	 *
-	 * @param result
-	 *            数据库操作返回影响条数
-	 * @return boolean
-	 */
-	protected boolean retBool(int result) {
-		return result >= 1;
-	}
-
 	@SuppressWarnings("unchecked")
 	protected Class<T> currentModleClass() {
 		return ReflectionKit.getSuperClassGenricType(getClass(), 1);
@@ -74,7 +64,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	 * </p>
 	 */
 	protected SqlSession sqlSessionBatch() {
-		return Record.sqlSessionBatch(currentModleClass());
+		return SqlHelper.sqlSessionBatch(currentModleClass());
 	}
 
 	/**
@@ -114,7 +104,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	}
 
 	public boolean insert(T entity) {
-		return retBool(baseMapper.insert(entity));
+		return SqlHelper.retBool(baseMapper.insert(entity));
 	}
 
 	public boolean insertBatch(List<T> entityList) {
@@ -176,30 +166,30 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	}
 
 	public boolean deleteById(Serializable id) {
-		return retBool(baseMapper.deleteById(id));
+		return SqlHelper.retBool(baseMapper.deleteById(id));
 	}
 
 	public boolean deleteByMap(Map<String, Object> columnMap) {
 		if (MapUtils.isEmpty(columnMap)) {
 			throw new MybatisPlusException("deleteByMap columnMap is empty.");
 		}
-		return retBool(baseMapper.deleteByMap(columnMap));
+		return SqlHelper.retBool(baseMapper.deleteByMap(columnMap));
 	}
 
 	public boolean delete(Wrapper<T> wrapper) {
-		return retBool(baseMapper.delete(wrapper));
+		return SqlHelper.retBool(baseMapper.delete(wrapper));
 	}
 
 	public boolean deleteBatchIds(List<? extends Serializable> idList) {
-		return retBool(baseMapper.deleteBatchIds(idList));
+		return SqlHelper.retBool(baseMapper.deleteBatchIds(idList));
 	}
 
 	public boolean updateById(T entity) {
-		return retBool(baseMapper.updateById(entity));
+		return SqlHelper.retBool(baseMapper.updateById(entity));
 	}
 
 	public boolean update(T entity, Wrapper<T> wrapper) {
-		return retBool(baseMapper.update(entity, wrapper));
+		return SqlHelper.retBool(baseMapper.update(entity, wrapper));
 	}
 
 	public boolean updateBatchById(List<T> entityList) {

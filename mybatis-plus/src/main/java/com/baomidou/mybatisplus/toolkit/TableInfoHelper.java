@@ -170,7 +170,8 @@ public class TableInfoHelper {
 		 * 未发现主键注解，跳过注入
 		 */
 		if (null == tableInfo.getKeyColumn()) {
-			logger.warn(String.format("Warn: Could not find @TableId in Class: %s, initTableInfo Method Fail.", clazz.getName()));
+			logger.warn(String.format("Warn: Could not find @TableId in Class: %s, initTableInfo Method Fail.",
+					clazz.getName()));
 			return null;
 		}
 		/*
@@ -211,7 +212,8 @@ public class TableInfoHelper {
 	 * @param clazz
 	 * @return true 继续下一个属性判断，返回 continue;
 	 */
-	private static boolean initTableId(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field, Class<?> clazz) {
+	private static boolean initTableId(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field,
+			Class<?> clazz) {
 		TableId tableId = field.getAnnotation(TableId.class);
 		if (tableId != null) {
 			if (tableInfo.getKeyColumn() == null) {
@@ -258,7 +260,8 @@ public class TableInfoHelper {
 	 * @param clazz
 	 * @return true 继续下一个属性判断，返回 continue;
 	 */
-	private static boolean initFieldId(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field, Class<?> clazz) {
+	private static boolean initFieldId(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field,
+			Class<?> clazz) {
 		String column = field.getName();
 		if (globalConfig.isCapitalMode()) {
 			column = column.toUpperCase();

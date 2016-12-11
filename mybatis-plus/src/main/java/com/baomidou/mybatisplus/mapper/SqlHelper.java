@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.activerecord;
+package com.baomidou.mybatisplus.mapper;
 
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
@@ -25,13 +25,13 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**
  * <p>
- * ActiveRecord 模式 CRUD
+ * SQL 辅助类
  * </p>
  * 
  * @author hubin
  * @Date 2016-11-06
  */
-public class Record {
+public class SqlHelper {
 
 	/**
 	 * 获取Session 默认自动提交
@@ -70,7 +70,7 @@ public class Record {
 	 * @return SqlSession
 	 */
 	public static SqlSession sqlSession(Class<?> clazz, boolean autoCommit) {
-        return GlobalConfiguration.currentSessionFactory(clazz).openSession(autoCommit);
+		return GlobalConfiguration.currentSessionFactory(clazz).openSession(autoCommit);
 	}
 
 	/**
@@ -84,6 +84,19 @@ public class Record {
 			throw new MybatisPlusException("Error: Cannot execute table Method, ClassGenricType not found .");
 		}
 		return tableInfo;
+	}
+
+	/**
+	 * <p>
+	 * 判断数据库操作是否成功
+	 * </p>
+	 *
+	 * @param result
+	 *            数据库操作返回影响条数
+	 * @return boolean
+	 */
+	public static boolean retBool(int result) {
+		return result >= 1;
 	}
 
 }

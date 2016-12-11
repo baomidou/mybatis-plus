@@ -15,21 +15,23 @@
  */
 package com.baomidou.mybatisplus.activerecord;
 
-import com.baomidou.mybatisplus.enums.SqlMethod;
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.mapper.Condition;
-import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.SqlSession;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.SqlSession;
+
+import com.baomidou.mybatisplus.enums.SqlMethod;
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.mapper.Condition;
+import com.baomidou.mybatisplus.mapper.SqlHelper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
  * <p>
@@ -51,7 +53,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * </p>
 	 */
 	public boolean insert() {
-		return retBool(sqlSession().insert(sqlStatement(SqlMethod.INSERT_ONE), this));
+		return SqlHelper.retBool(sqlSession().insert(sqlStatement(SqlMethod.INSERT_ONE), this));
 	}
 
 	/**
@@ -62,10 +64,10 @@ public abstract class Model<T extends Model> implements Serializable {
 	public boolean insertOrUpdate() {
 		if (null != this.pkVal()) {
 			// update
-			return retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE_BY_ID), this));
+			return SqlHelper.retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE_BY_ID), this));
 		} else {
 			// insert
-			return retBool(sqlSession().insert(sqlStatement(SqlMethod.INSERT_ONE), this));
+			return SqlHelper.retBool(sqlSession().insert(sqlStatement(SqlMethod.INSERT_ONE), this));
 		}
 	}
 
@@ -79,7 +81,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * @return
 	 */
 	public boolean deleteById(Serializable id) {
-		return retBool(sqlSession().delete(sqlStatement(SqlMethod.DELETE_BY_ID), id));
+		return SqlHelper.retBool(sqlSession().delete(sqlStatement(SqlMethod.DELETE_BY_ID), id));
 	}
 
 	/**
@@ -120,7 +122,7 @@ public abstract class Model<T extends Model> implements Serializable {
 		Map<String, Object> map = new HashMap<String, Object>();
 		// delete
 		map.put("ew", wrapper);
-		return retBool(sqlSession().delete(sqlStatement(SqlMethod.DELETE), map));
+		return SqlHelper.retBool(sqlSession().delete(sqlStatement(SqlMethod.DELETE), map));
 	}
 
 	/**
@@ -135,7 +137,7 @@ public abstract class Model<T extends Model> implements Serializable {
 			throw new MybatisPlusException("primaryKey is null.");
 		}
 		// updateById
-		return retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE_BY_ID), this));
+		return SqlHelper.retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE_BY_ID), this));
 	}
 
 	/**
@@ -167,7 +169,7 @@ public abstract class Model<T extends Model> implements Serializable {
 		map.put("et", this);
 		map.put("ew", wrapper);
 		// update
-		return retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE), map));
+		return SqlHelper.retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE), map));
 	}
 
 	/**
@@ -327,20 +329,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	public int selectCount(Wrapper wrapper) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("ew", wrapper);
-		return sqlSession().<Integer> selectOne(sqlStatement(SqlMethod.SELECT_COUNT), map);
-	}
-
-	/**
-	 * <p>
-	 * 判断数据库操作是否成功
-	 * </p>
-	 *
-	 * @param result
-	 *            数据库操作返回影响条数
-	 * @return boolean
-	 */
-	private boolean retBool(int result) {
-		return result >= 1;
+		return sqlSession().<Integer>selectOne(sqlStatement(SqlMethod.SELECT_COUNT), map);
 	}
 
 	/**
@@ -349,7 +338,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * <p/>
 	 */
 	private SqlSession sqlSession() {
-		return Record.sqlSession(getClass());
+		return SqlHelper.sqlSession(getClass());
 	}
 
 	/**
@@ -363,7 +352,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	}
 
 	private String sqlStatement(String sqlMethod) {
-		return Record.table(getClass()).getSqlStatement(sqlMethod);
+		return SqlHelper.table(getClass()).getSqlStatement(sqlMethod);
 	}
 
 	/**

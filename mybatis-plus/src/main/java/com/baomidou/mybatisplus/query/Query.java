@@ -15,10 +15,10 @@
  */
 package com.baomidou.mybatisplus.query;
 
-import com.baomidou.mybatisplus.plugins.Page;
-
 import java.util.List;
 import java.util.Map;
+
+import com.baomidou.mybatisplus.plugins.Page;
 
 /**
  * <p>
@@ -28,7 +28,6 @@ import java.util.Map;
  * @author Caratacus
  * @Date 2016-12-11
  */
-@SuppressWarnings({ "serial", "rawtypes" })
 public interface Query {
 
 	/**
@@ -82,6 +81,7 @@ public interface Query {
 	 * @return
 	 */
 	public List<Map<String, Object>> selectList(String sql, Object... args);
+
 	/**
 	 * <p>
 	 * 执行SQL查询总数
@@ -107,6 +107,7 @@ public interface Query {
 	 * @return
 	 */
 	public Map<String, Object> selectOne(String sql, Object... args);
+
 	/**
 	 * <p>
 	 * 执行SQL查询，查询全部记录（并翻页）
@@ -120,6 +121,7 @@ public interface Query {
 	 *            参数
 	 * @return
 	 */
+	@SuppressWarnings("rawtypes")
 	public Page<Map<String, Object>> selectPage(Page page, String sql, Object... args);
 
 }
