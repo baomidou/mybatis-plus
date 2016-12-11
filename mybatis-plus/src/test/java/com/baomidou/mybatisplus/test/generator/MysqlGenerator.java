@@ -18,8 +18,8 @@ package com.baomidou.mybatisplus.test.generator;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
+import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.PackageConfig;
@@ -115,6 +115,16 @@ public class MysqlGenerator {
 			}
 		};
 		mpg.setCfg(cfg);
+
+		// 自定义模板配置
+		// TemplateConfig tc = new TemplateConfig();
+		// tc.setController("...");
+		// tc.setEntity("...");
+		// tc.setMapper("...");
+		// tc.setXml("...");
+		// tc.setService("...");
+		// tc.setServiceImpl("...");
+		// mpg.setTemplate(tc);
 
 		// 执行生成
 		mpg.execute();

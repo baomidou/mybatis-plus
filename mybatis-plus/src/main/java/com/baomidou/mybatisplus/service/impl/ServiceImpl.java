@@ -69,6 +69,19 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
 	/**
 	 * <p>
+	 * 判断数据库操作是否成功
+	 * </p>
+	 *
+	 * @param result
+	 *            数据库操作返回影响条数
+	 * @return boolean
+	 */
+	public boolean retBool(int result) {
+		return result >= 1;
+	}
+
+	/**
+	 * <p>
 	 * TableId 注解存在更新记录，否插入一条记录
 	 * </p>
 	 *
@@ -104,7 +117,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	}
 
 	public boolean insert(T entity) {
-		return SqlHelper.retBool(baseMapper.insert(entity));
+		return retBool(baseMapper.insert(entity));
 	}
 
 	public boolean insertBatch(List<T> entityList) {
@@ -166,30 +179,30 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	}
 
 	public boolean deleteById(Serializable id) {
-		return SqlHelper.retBool(baseMapper.deleteById(id));
+		return retBool(baseMapper.deleteById(id));
 	}
 
 	public boolean deleteByMap(Map<String, Object> columnMap) {
 		if (MapUtils.isEmpty(columnMap)) {
 			throw new MybatisPlusException("deleteByMap columnMap is empty.");
 		}
-		return SqlHelper.retBool(baseMapper.deleteByMap(columnMap));
+		return retBool(baseMapper.deleteByMap(columnMap));
 	}
 
 	public boolean delete(Wrapper<T> wrapper) {
-		return SqlHelper.retBool(baseMapper.delete(wrapper));
+		return retBool(baseMapper.delete(wrapper));
 	}
 
 	public boolean deleteBatchIds(List<? extends Serializable> idList) {
-		return SqlHelper.retBool(baseMapper.deleteBatchIds(idList));
+		return retBool(baseMapper.deleteBatchIds(idList));
 	}
 
 	public boolean updateById(T entity) {
-		return SqlHelper.retBool(baseMapper.updateById(entity));
+		return retBool(baseMapper.updateById(entity));
 	}
 
 	public boolean update(T entity, Wrapper<T> wrapper) {
-		return SqlHelper.retBool(baseMapper.update(entity, wrapper));
+		return retBool(baseMapper.update(entity, wrapper));
 	}
 
 	public boolean updateBatchById(List<T> entityList) {
