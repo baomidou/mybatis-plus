@@ -15,20 +15,6 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSessionFactory;
-
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
@@ -38,6 +24,21 @@ import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSessionFactory;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <p>
@@ -71,6 +72,23 @@ public class TableInfoHelper {
 	 */
 	public static TableInfo getTableInfo(Class<?> clazz) {
 		return tableInfoCache.get(clazz.getName());
+	}
+
+	/**
+	 * <p>
+	 * 随机获取一个TableInfo
+	 * <p>
+	 *
+	 * @return
+	 */
+	public static TableInfo getRandomTableInfo() {
+		Collection<TableInfo> tableInfos = tableInfoCache.values();
+		if (CollectionUtils.isNotEmpty(tableInfos)) {
+			Iterator<TableInfo> iterator = tableInfos.iterator();
+			TableInfo tableInfo = iterator.next();
+			return tableInfo;
+		}
+		return null;
 	}
 
 	/**
@@ -152,8 +170,7 @@ public class TableInfoHelper {
 		 * 未发现主键注解，跳过注入
 		 */
 		if (null == tableInfo.getKeyColumn()) {
-			logger.warn(String.format("Warn: Could not find @TableId in Class: %s, initTableInfo Method Fail.",
-					clazz.getName()));
+			logger.warn(String.format("Warn: Could not find @TableId in Class: %s, initTableInfo Method Fail.", clazz.getName()));
 			return null;
 		}
 		/*
@@ -194,8 +211,7 @@ public class TableInfoHelper {
 	 * @param clazz
 	 * @return true 继续下一个属性判断，返回 continue;
 	 */
-	private static boolean initTableId(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field,
-			Class<?> clazz) {
+	private static boolean initTableId(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field, Class<?> clazz) {
 		TableId tableId = field.getAnnotation(TableId.class);
 		if (tableId != null) {
 			if (tableInfo.getKeyColumn() == null) {
@@ -242,8 +258,7 @@ public class TableInfoHelper {
 	 * @param clazz
 	 * @return true 继续下一个属性判断，返回 continue;
 	 */
-	private static boolean initFieldId(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field,
-			Class<?> clazz) {
+	private static boolean initFieldId(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field, Class<?> clazz) {
 		String column = field.getName();
 		if (globalConfig.isCapitalMode()) {
 			column = column.toUpperCase();

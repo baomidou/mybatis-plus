@@ -251,7 +251,7 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	 * @param configMark
 	 * @return
 	 */
-	private static GlobalConfiguration GlobalConfig(String configMark) {
+	public static GlobalConfiguration GlobalConfig(String configMark) {
 		GlobalConfiguration cache = GLOBAL_CONFIG.get(configMark);
 		if (cache == null) {
 			// 没有获取全局配置初始全局配置
