@@ -15,16 +15,16 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.UpdateProvider;
 import org.apache.ibatis.session.RowBounds;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -208,6 +208,17 @@ public interface BaseMapper<T> {
 	 * @return int
 	 */
 	int selectCount(@Param("ew") Wrapper<T> wrapper);
+
+	/**
+	 * <p>
+	 * 根据SQL查询总记录数
+	 * </p>
+	 *
+	 * @param sql
+	 * @return int
+	 */
+	@SelectProvider(type = PureSqlProvider.class, method = "sql")
+	int selectCountSql(String sql);
 
 	/**
 	 * <p>

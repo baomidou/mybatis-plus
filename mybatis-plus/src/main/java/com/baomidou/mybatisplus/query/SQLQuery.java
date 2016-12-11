@@ -60,77 +60,26 @@ public class SQLQuery implements Query {
 		this.sqlSession = globalConfiguration.getSqlSessionFactory().openSession(true);
 	}
 
-	/**
-	 * <p>
-	 * 执行 SQL 插件
-	 * </p>
-	 *
-	 * @param sql
-	 *            SQL语句
-	 * @param args
-	 *            参数
-	 * @return
-	 */
 	public boolean insert(String sql, Object... args) {
 		return retBool(sqlSession().insert(sqlStatement("insertSql"), StringUtils.sqlArgsFill(sql, args)));
 	}
 
-	/**
-	 * <p>
-	 * 执行 SQL 删除
-	 * </p>
-	 *
-	 * @param sql
-	 *            SQL语句
-	 * @param args
-	 *            参数
-	 * @return
-	 */
 	public boolean delete(String sql, Object... args) {
 		return retBool(sqlSession().delete(sqlStatement("deleteSql"), StringUtils.sqlArgsFill(sql, args)));
 	}
 
-	/**
-	 * <p>
-	 * 执行 SQL 更新
-	 * </p>
-	 *
-	 * @param sql
-	 *            SQL语句
-	 * @param args
-	 *            参数
-	 * @return
-	 */
 	public boolean update(String sql, Object... args) {
 		return retBool(sqlSession().update(sqlStatement("updateSql"), StringUtils.sqlArgsFill(sql, args)));
 	}
 
-	/**
-	 * <p>
-	 * 执行 SQL 查询
-	 * </p>
-	 *
-	 * @param sql
-	 *            SQL 语句
-	 * @param args
-	 *            参数
-	 * @return
-	 */
 	public List<Map<String, Object>> selectList(String sql, Object... args) {
 		return sqlSession().selectList(sqlStatement("selectListSql"), StringUtils.sqlArgsFill(sql, args));
 	}
 
-	/**
-	 * <p>
-	 * 执行 SQL 查询
-	 * </p>
-	 *
-	 * @param sql
-	 *            SQL 语句
-	 * @param args
-	 *            参数
-	 * @return
-	 */
+	public int selectCount(String sql, Object... args) {
+		return sqlSession().<Integer> selectOne(sqlStatement("selectCountSql"), StringUtils.sqlArgsFill(sql, args));
+	}
+
 	public Map<String, Object> selectOne(String sql, Object... args) {
 		List<Map<String, Object>> list = selectList(sql, args);
 		if (CollectionUtils.isNotEmpty(list)) {
@@ -143,19 +92,6 @@ public class SQLQuery implements Query {
 		return Collections.emptyMap();
 	}
 
-	/**
-	 * <p>
-	 * 执行 SQL 查询，查询全部记录（并翻页）
-	 * </p>
-	 *
-	 * @param page
-	 *            分页对象
-	 * @param sql
-	 *            SQL语句
-	 * @param args
-	 *            参数
-	 * @return
-	 */
 	public Page<Map<String, Object>> selectPage(Page page, String sql, Object... args) {
 		List<Map<String, Object>> list = sqlSession().selectList(sqlStatement("selectPageSql"),
 				StringUtils.sqlArgsFill(sql, args), page);

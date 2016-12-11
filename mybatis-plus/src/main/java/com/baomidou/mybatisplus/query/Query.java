@@ -82,6 +82,18 @@ public interface Query {
 	 * @return
 	 */
 	public List<Map<String, Object>> selectList(String sql, Object... args);
+	/**
+	 * <p>
+	 * 执行SQL查询总数
+	 * </p>
+	 *
+	 * @param sql
+	 *            SQL 语句
+	 * @param args
+	 *            参数
+	 * @return
+	 */
+	public int selectCount(String sql, Object... args);
 
 	/**
 	 * <p>

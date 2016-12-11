@@ -69,10 +69,12 @@ public class SQLQueryTest {
 			maps1 = null;
 		}
 		Assert.assertNull(maps1);
-        Page page = new Page(1,5);
-        Page<Map<String, Object>> mapPage = SQLQuery.create().selectPage(page, "select * from test ");
-        System.out.println(mapPage);
+		Page page = new Page(1, 5);
+		Page<Map<String, Object>> mapPage = SQLQuery.create().selectPage(page, "select * from test ");
+		System.out.println(mapPage);
+		int i = SQLQuery.create().selectCount("select count(0) from test ");
+		System.out.println("count:" + i);
 
-    }
+	}
 
 }
