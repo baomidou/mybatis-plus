@@ -15,14 +15,6 @@
  */
 package com.baomidou.mybatisplus.query;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.SqlSession;
-
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.mapper.SqlHelper;
@@ -30,6 +22,14 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -41,22 +41,23 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
  */
 public class SQLQuery implements Query {
 	private static final Log logger = LogFactory.getLog(SQLQuery.class);
-
-	private SqlSession sqlSession;
+	//单例Query
+    public static final Query query = create();
+	private SqlSessionFactory sqlSessionFactory;
 	private TableInfo tableInfo;
 
 	public SQLQuery() {
 		this.tableInfo = TableInfoHelper.getRandomTableInfo();
 		String configMark = tableInfo.getConfigMark();
 		GlobalConfiguration globalConfiguration = GlobalConfiguration.GlobalConfig(configMark);
-		this.sqlSession = globalConfiguration.getSqlSessionFactory().openSession(true);
+		this.sqlSessionFactory = globalConfiguration.getSqlSessionFactory();
 	}
 
 	public SQLQuery(Class<?> clazz) {
 		this.tableInfo = SqlHelper.table(clazz);
 		String configMark = tableInfo.getConfigMark();
 		GlobalConfiguration globalConfiguration = GlobalConfiguration.GlobalConfig(configMark);
-		this.sqlSession = globalConfiguration.getSqlSessionFactory().openSession(true);
+		this.sqlSessionFactory = globalConfiguration.getSqlSessionFactory();
 	}
 
 	public boolean insert(String sql, Object... args) {
@@ -127,7 +128,7 @@ public class SQLQuery implements Query {
 	 * <p/>
 	 */
 	private SqlSession sqlSession() {
-		return sqlSession;
+		return sqlSessionFactory.openSession(true);
 	}
 
 	private String sqlStatement(String sqlMethod) {
