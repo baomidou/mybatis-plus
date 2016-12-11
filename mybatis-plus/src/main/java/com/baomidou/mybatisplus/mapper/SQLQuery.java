@@ -13,23 +13,23 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.query;
+package com.baomidou.mybatisplus.mapper;
 
-import com.baomidou.mybatisplus.entity.GlobalConfiguration;
-import com.baomidou.mybatisplus.entity.TableInfo;
-import com.baomidou.mybatisplus.mapper.SqlHelper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import com.baomidou.mybatisplus.entity.GlobalConfiguration;
+import com.baomidou.mybatisplus.entity.TableInfo;
+import com.baomidou.mybatisplus.plugins.pagination.Pagination;
+import com.baomidou.mybatisplus.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**
  * <p>
@@ -39,10 +39,9 @@ import java.util.Map;
  * @author Caratacus
  * @Date 2016-12-11
  */
-public class SQLQuery implements Query {
+public class SQLQuery {
 	private static final Log logger = LogFactory.getLog(SQLQuery.class);
-	//单例Query
-    public static final Query query = create();
+	// 单例Query
 	private SqlSessionFactory sqlSessionFactory;
 	private TableInfo tableInfo;
 
@@ -92,15 +91,11 @@ public class SQLQuery implements Query {
 		return Collections.emptyMap();
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public Page<Map<String, Object>> selectPage(Page page, String sql, Object... args) {
+	public List<Map<String, Object>> selectPage(Pagination page, String sql, Object... args) {
 		if (null == page) {
 			return null;
 		}
-		List<Map<String, Object>> list = sqlSession().selectList(sqlStatement("selectPageSql"),
-				StringUtils.sqlArgsFill(sql, args), page);
-		page.setRecords(list);
-		return page;
+		return sqlSession().selectList(sqlStatement("selectPageSql"), StringUtils.sqlArgsFill(sql, args), page);
 	}
 
 	/**
@@ -108,7 +103,7 @@ public class SQLQuery implements Query {
 	 * 
 	 * @return
 	 */
-	public static Query create() {
+	public static SQLQuery db() {
 		return new SQLQuery();
 	}
 
@@ -118,7 +113,7 @@ public class SQLQuery implements Query {
 	 * @param clazz
 	 * @return
 	 */
-	public static Query create(Class<?> clazz) {
+	public static SQLQuery db(Class<?> clazz) {
 		return new SQLQuery(clazz);
 	}
 

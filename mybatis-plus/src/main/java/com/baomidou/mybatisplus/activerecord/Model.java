@@ -27,10 +27,10 @@ import org.apache.ibatis.session.SqlSession;
 import com.baomidou.mybatisplus.enums.SqlMethod;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.Condition;
+import com.baomidou.mybatisplus.mapper.SQLQuery;
 import com.baomidou.mybatisplus.mapper.SqlHelper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.query.SQLQuery;
 import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 

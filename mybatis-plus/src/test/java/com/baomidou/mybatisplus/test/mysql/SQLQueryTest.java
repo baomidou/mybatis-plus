@@ -15,18 +15,19 @@
  */
 package com.baomidou.mybatisplus.test.mysql;
 
-import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.query.SQLQuery;
-import com.baomidou.mybatisplus.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
+import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
+import com.baomidou.mybatisplus.mapper.SQLQuery;
+import com.baomidou.mybatisplus.plugins.pagination.Pagination;
+import com.baomidou.mybatisplus.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**
  * <p>
@@ -48,31 +49,31 @@ public class SQLQueryTest {
 		SqlSessionFactory sessionFactory = mf.build(in);
 		TableInfoHelper.initSqlSessionFactory(sessionFactory);
 
-		boolean b = SQLQuery.query.insert("INSERT INTO `test` (`id`, `type`) VALUES ('107880983085826048', 't1021')");
+		boolean b = SQLQuery.db().insert("INSERT INTO `test` (`id`, `type`) VALUES ('107880983085826048', 't1021')");
 		System.out.println(b);
 		Assert.assertTrue(b);
-		boolean b1 = SQLQuery.query.update("UPDATE `test` SET `type`='tttttttt' WHERE (`id`=107880983085826048)");
+		boolean b1 = SQLQuery.db().update("UPDATE `test` SET `type`='tttttttt' WHERE (`id`=107880983085826048)");
 		System.out.println(b1);
 
 		Assert.assertTrue(b1);
-		List<Map<String, Object>> maps = SQLQuery.query.selectList("select * from test WHERE (`id`=107880983085826048)");
+		List<Map<String, Object>> maps = SQLQuery.db().selectList("select * from test WHERE (`id`=107880983085826048)");
 		System.out.println(maps);
 		String type = (String) maps.get(0).get("type");
 		System.out.println(type);
 		Assert.assertEquals("tttttttt", type);
-		boolean b2 = SQLQuery.query.delete("DELETE from test WHERE (`id`=107880983085826048)");
+		boolean b2 = SQLQuery.db().delete("DELETE from test WHERE (`id`=107880983085826048)");
 		System.out.println(b2);
 		Assert.assertTrue(b2);
-		List<Map<String, Object>> maps1 = SQLQuery.query.selectList("select * from test WHERE (`id`=107880983085826048)");
+		List<Map<String, Object>> maps1 = SQLQuery.db()
+				.selectList("select * from test WHERE (`id`=107880983085826048)");
 		System.out.println(maps1);
 		if (CollectionUtils.isEmpty(maps1)) {
 			maps1 = null;
 		}
 		Assert.assertNull(maps1);
-		Page page = new Page(1, 5);
-		Page<Map<String, Object>> mapPage = SQLQuery.query.selectPage(page, "select * from test ");
+		List<Map<String, Object>> mapPage = SQLQuery.db().selectPage(new Pagination(1, 5), "select * from test ");
 		System.out.println(mapPage);
-		int i = SQLQuery.query.selectCount("select count(0) from test ");
+		int i = SQLQuery.db().selectCount("select count(0) from test ");
 		System.out.println("count:" + i);
 
 	}
