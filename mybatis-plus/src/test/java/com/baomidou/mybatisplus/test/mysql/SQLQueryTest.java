@@ -30,11 +30,11 @@ import java.util.Map;
 
 /**
  * <p>
- * 测试没有XML同样注入CRUD SQL
+ * 测试SQLQuery
  * </p>
  *
  * @author Caratacus
- * @date 2016-09-26
+ * @date 2016-12-11
  */
 public class SQLQueryTest {
 

@@ -32,11 +32,11 @@ import java.util.Map;
 
 /**
  * <p>
- * ActiveRecord 模式 CRUD
+ * SQLQuery直接执行SQL
  * </p>
  *
- * @author hubin
- * @Date 2016-11-06
+ * @author Caratacus
+ * @Date 2016-12-11
  */
 @SuppressWarnings({ "serial", "rawtypes" })
 public class SQLQuery implements Query {
