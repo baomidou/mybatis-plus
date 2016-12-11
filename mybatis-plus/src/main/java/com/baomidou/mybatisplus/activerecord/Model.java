@@ -30,6 +30,7 @@ import com.baomidou.mybatisplus.mapper.Condition;
 import com.baomidou.mybatisplus.mapper.SqlHelper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.query.SQLQuery;
 import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
@@ -329,7 +330,16 @@ public abstract class Model<T extends Model> implements Serializable {
 	public int selectCount(Wrapper wrapper) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("ew", wrapper);
-		return sqlSession().<Integer>selectOne(sqlStatement(SqlMethod.SELECT_COUNT), map);
+		return sqlSession().selectOne(sqlStatement(SqlMethod.SELECT_COUNT), map);
+	}
+
+	/**
+	 * <p>
+	 * 执行 SQL
+	 * </p>
+	 */
+	public SQLQuery sql() {
+		return new SQLQuery(getClass());
 	}
 
 	/**

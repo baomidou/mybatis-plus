@@ -15,19 +15,19 @@
  */
 package com.baomidou.mybatisplus.test.activerecord;
 
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.jdbc.SQL;
+import org.apache.ibatis.session.SqlSessionFactory;
+
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.query.SQLQuery;
 import com.baomidou.mybatisplus.test.mysql.TestMapper;
 import com.baomidou.mybatisplus.test.mysql.entity.Test;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
-import org.apache.ibatis.jdbc.SQL;
-import org.apache.ibatis.session.SqlSessionFactory;
-
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -97,7 +97,7 @@ public class ActiveRecordTest {
 		print("deleteById=" + rlt + ", id=" + t2.getId());
 
 		// 执行 SQL 查询总数
-		List<Map<String, Object>> ul = SQLQuery.create().selectList(new SQL() {
+		List<Map<String, Object>> ul = t2.sql().selectList(new SQL() {
 			{
 				SELECT("*");
 				FROM("test");
