@@ -55,7 +55,7 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	/**
 	 * 默认参数
 	 */
-	public static final GlobalConfiguration DEFAULT = new GlobalConfiguration(new AutoSqlInjector());
+	public static final GlobalConfiguration DEFAULT = new GlobalConfiguration();
 
 	// 数据库类型（默认 MySql）
 	private DBType dbType = DBType.MYSQL;
@@ -197,7 +197,9 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	 */
 	public static GlobalConfiguration defaults() {
 		try {
-			return DEFAULT.clone();
+			GlobalConfiguration clone = DEFAULT.clone();
+			clone.setSqlInjector(new AutoSqlInjector());
+			return clone;
 		} catch (CloneNotSupportedException e) {
 			throw new MybatisPlusException("ERROR: CLONE MybatisGlobalConfig DEFAULT FAIL !  Cause:" + e);
 		}
@@ -275,7 +277,14 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	}
 
 	public static ISqlInjector getSqlInjector(Configuration configuration) {
-		return GlobalConfig(configuration).getSqlInjector();
+	    // fix #140
+		GlobalConfiguration globalConfiguration = GlobalConfig(configuration);
+		ISqlInjector sqlInjector = globalConfiguration.getSqlInjector();
+		if (sqlInjector == null) {
+			sqlInjector = new AutoSqlInjector();
+			globalConfiguration.setSqlInjector(sqlInjector);
+		}
+		return sqlInjector;
 	}
 
 	public static IMetaObjectHandler getMetaObjectHandler(Configuration configuration) {

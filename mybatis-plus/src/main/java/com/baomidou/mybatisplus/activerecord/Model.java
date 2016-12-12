@@ -15,15 +15,6 @@
  */
 package com.baomidou.mybatisplus.activerecord;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.SqlSession;
-
 import com.baomidou.mybatisplus.enums.SqlMethod;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.Condition;
@@ -33,6 +24,14 @@ import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.SqlSession;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -63,21 +62,13 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * </p>
 	 */
 	public boolean insertOrUpdate() {
-		if (!isEmptyPkVal()) {
+		if (StringUtils.isNotEmpty(pkVal())) {
 			// update
 			return SqlHelper.retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE_BY_ID), this));
 		} else {
 			// insert
 			return SqlHelper.retBool(sqlSession().insert(sqlStatement(SqlMethod.INSERT_ONE), this));
 		}
-	}
-
-	private boolean isEmptyPkVal() {
-		if(null == this.pkVal())
-			return true;
-		if(this.pkVal() instanceof String && StringUtils.isEmpty(this.pkVal().toString()))
-			return true;
-		return false;
 	}
 
 	/**
@@ -101,7 +92,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * @return
 	 */
 	public boolean deleteById() {
-		if (isEmptyPkVal()) {
+		if (StringUtils.isEmpty(pkVal())) {
 			throw new MybatisPlusException("deleteById primaryKey is null.");
 		}
 		return deleteById(this.pkVal());
@@ -145,7 +136,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * @return
 	 */
 	public boolean updateById() {
-		if (isEmptyPkVal()) {
+		if (StringUtils.isEmpty(pkVal())) {
 			throw new MybatisPlusException("updateById primaryKey is null.");
 		}
 		// updateById
@@ -216,7 +207,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * @return
 	 */
 	public T selectById() {
-		if (isEmptyPkVal()) {
+		if (StringUtils.isEmpty(pkVal())) {
 			throw new MybatisPlusException("selectById primaryKey is null.");
 		}
 		return selectById(this.pkVal());
