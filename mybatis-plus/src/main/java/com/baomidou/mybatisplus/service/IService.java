@@ -15,12 +15,12 @@
  */
 package com.baomidou.mybatisplus.service;
 
+import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.baomidou.mybatisplus.plugins.Page;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
-
-import com.baomidou.mybatisplus.mapper.Wrapper;
-import com.baomidou.mybatisplus.plugins.Page;
 
 /**
  * <p>
@@ -227,6 +227,17 @@ public interface IService<T> {
 
 	/**
 	 * <p>
+	 * 根据 Wrapper，查询一条记录
+	 * </p>
+	 *
+	 * @param wrapper
+	 *            {@link Wrapper}
+	 * @return Map<String,Object>
+	 */
+	Map<String, Object> selectMap(Wrapper wrapper);
+
+	/**
+	 * <p>
 	 * 根据 Wrapper 条件，查询总记录数
 	 * </p>
 	 *
@@ -257,6 +268,30 @@ public interface IService<T> {
 	 * @return
 	 */
 	Page<T> selectPage(Page<T> page);
+
+	/**
+	 * <p>
+	 * 查询列表
+	 * </p>
+	 *
+	 * @param wrapper
+	 *            {@link Wrapper}
+	 * @return
+	 */
+	List<Map<String, Object>> selectMaps(Wrapper wrapper);
+
+	/**
+	 * <p>
+	 * 翻页查询
+	 * </p>
+	 *
+	 * @param page
+	 *            翻页对象
+	 * @param wrapper
+	 *            {@link Wrapper}
+	 * @return
+	 */
+	Page<Map<String, Object>> selectMapsPage(Page page, Wrapper wrapper);
 
 	/**
 	 * <p>

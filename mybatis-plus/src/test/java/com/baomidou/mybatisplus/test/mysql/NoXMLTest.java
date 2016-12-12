@@ -15,17 +15,18 @@
  */
 package com.baomidou.mybatisplus.test.mysql;
 
+import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
+import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.test.mysql.entity.Test;
+import com.baomidou.mybatisplus.toolkit.IdWorker;
+import org.apache.ibatis.session.RowBounds;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-
-import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
-import com.baomidou.mybatisplus.test.mysql.entity.Test;
-import com.baomidou.mybatisplus.toolkit.IdWorker;
 
 /**
  * <p>
@@ -50,7 +51,13 @@ public class NoXMLTest {
 		 */
 		TestMapper testMapper = sqlSession.getMapper(TestMapper.class);
 		testMapper.insert(new Test(IdWorker.getId(), "Caratacus"));
-		Map<String, Object> map = new HashMap<String, Object>();
+        List<Map<String, Object>> list = testMapper.selectMaps(null);
+        List<Map<String, Object>> list1 = testMapper.selectMapsPage(RowBounds.DEFAULT, null);
+        List<Map<String, Object>> list2 = testMapper.selectMapsPage(new Page(1,5), null);
+        System.out.println(list);
+        System.out.println(list1);
+        System.out.println(list2);
+        Map<String, Object> map = new HashMap<String, Object>();
 		map.put("type", null);
 		map.put("id", null);
 		List<Test> tests = testMapper.selectByMap(map);

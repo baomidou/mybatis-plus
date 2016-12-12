@@ -233,6 +233,17 @@ public interface BaseMapper<T> {
 
 	/**
 	 * <p>
+	 * 根据 Wrapper 条件，查询全部记录
+	 * </p>
+	 *
+	 * @param wrapper
+	 *            实体对象封装操作类（可以为 null）
+	 * @return List<T>
+	 */
+	List<Map<String, Object>> selectMaps(@Param("ew") Wrapper<T> wrapper);
+
+	/**
+	 * <p>
 	 * 执行 SQL 查询，查询全部记录
 	 * </p>
 	 * 
@@ -255,6 +266,19 @@ public interface BaseMapper<T> {
 	 * @return List<T>
 	 */
 	List<T> selectPage(RowBounds rowBounds, @Param("ew") Wrapper<T> wrapper);
+
+	/**
+	 * <p>
+	 * 根据 Wrapper 条件，查询全部记录（并翻页）
+	 * </p>
+	 *
+	 * @param rowBounds
+	 *            分页查询条件（可以为 RowBounds.DEFAULT）
+	 * @param wrapper
+	 *            实体对象封装操作类
+	 * @return List<Map<String, Object>>
+	 */
+	List<Map<String, Object>> selectMapsPage(RowBounds rowBounds, @Param("ew") Wrapper wrapper);
 
 	/**
 	 * <p>

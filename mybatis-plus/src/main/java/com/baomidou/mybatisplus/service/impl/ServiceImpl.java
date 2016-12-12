@@ -15,15 +15,6 @@
  */
 package com.baomidou.mybatisplus.service.impl;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.SqlSession;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
@@ -37,6 +28,14 @@ import com.baomidou.mybatisplus.toolkit.MapUtils;
 import com.baomidou.mybatisplus.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -250,6 +249,18 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return null;
 	}
 
+	public Map<String, Object> selectMap(Wrapper wrapper) {
+		List<Map<String, Object>> list = baseMapper.selectMaps(wrapper);
+		if (CollectionUtils.isNotEmpty(list)) {
+			int size = list.size();
+			if (size > 1) {
+				logger.warn(String.format("Warn: selectMap Method There are  %s results.", size));
+			}
+			return list.get(0);
+		}
+		return null;
+	}
+
 	public int selectCount(Wrapper<T> wrapper) {
 		return baseMapper.selectCount(wrapper);
 	}
@@ -260,6 +271,18 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
 	public Page<T> selectPage(Page<T> page) {
 		page.setRecords(baseMapper.selectPage(page, null));
+		return page;
+	}
+
+	public List<Map<String, Object>> selectMaps(Wrapper wrapper) {
+		return baseMapper.selectMaps(wrapper);
+	}
+
+	public Page<Map<String, Object>> selectMapsPage(Page page, Wrapper wrapper) {
+		if (null != wrapper) {
+			wrapper.orderBy(page.getOrderByField(), page.isAsc());
+		}
+		page.setRecords(baseMapper.selectMapsPage(page, wrapper));
 		return page;
 	}
 
