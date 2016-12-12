@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.activerecord.Model;
 #end
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableField;
-#if(${addTabeName})
+#if(${tabeAnnotation})
 import com.baomidou.mybatisplus.annotations.TableName;
 #end
 import java.io.Serializable;
