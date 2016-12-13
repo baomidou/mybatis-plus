@@ -249,7 +249,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return null;
 	}
 
-	public Map<String, Object> selectMap(Wrapper wrapper) {
+	public Map<String, Object> selectMap(Wrapper<T> wrapper) {
 		List<Map<String, Object>> list = baseMapper.selectMaps(wrapper);
 		if (CollectionUtils.isNotEmpty(list)) {
 			int size = list.size();
@@ -274,11 +274,12 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return page;
 	}
 
-	public List<Map<String, Object>> selectMaps(Wrapper wrapper) {
+	public List<Map<String, Object>> selectMaps(Wrapper<T> wrapper) {
 		return baseMapper.selectMaps(wrapper);
 	}
 
-	public Page<Map<String, Object>> selectMapsPage(Page page, Wrapper wrapper) {
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public Page<Map<String, Object>> selectMapsPage(Page page, Wrapper<T> wrapper) {
 		if (null != wrapper) {
 			wrapper.orderBy(page.getOrderByField(), page.isAsc());
 		}

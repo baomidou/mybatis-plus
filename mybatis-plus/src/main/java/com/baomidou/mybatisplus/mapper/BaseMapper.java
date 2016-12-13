@@ -278,7 +278,7 @@ public interface BaseMapper<T> {
 	 *            实体对象封装操作类
 	 * @return List<Map<String, Object>>
 	 */
-	List<Map<String, Object>> selectMapsPage(RowBounds rowBounds, @Param("ew") Wrapper wrapper);
+	List<Map<String, Object>> selectMapsPage(RowBounds rowBounds, @Param("ew") Wrapper<T> wrapper);
 
 	/**
 	 * <p>
