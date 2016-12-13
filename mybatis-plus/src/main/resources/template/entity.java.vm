@@ -1,0 +1,95 @@
+package ${package.Entity};
+
+#if(${superEntityClassPackage})
+import ${superEntityClassPackage};
+#end
+#if(${activeRecord})
+import com.baomidou.mybatisplus.activerecord.Model;
+#end
+import com.baomidou.mybatisplus.annotations.TableId;
+import com.baomidou.mybatisplus.annotations.TableField;
+#if(${tabeAnnotation})
+import com.baomidou.mybatisplus.annotations.TableName;
+#end
+import java.io.Serializable;
+#if(${table.hasDate})
+import java.util.Date;
+#end
+
+/**
+ * <p>
+ * ${table.comment}
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+#if(${tabeAnnotation})
+@TableName("${table.name}")
+#end
+#if(${superEntityClass})
+public class ${entity} extends ${superEntityClass} {
+#else
+#if(${activeRecord})
+public class ${entity} extends Model<${entity}> {
+#else
+public class ${entity} implements Serializable {
+#end
+#end
+
+    private static final long serialVersionUID = 1L;
+
+#foreach($field in ${table.fields})
+	/**
+	 * ${field.comment}
+	 */
+#if(${field.keyFlag} && ${field.convert})
+#set($keyPropertyName=${field.propertyName})
+	@TableId(value="${field.name}")
+#elseif(${field.convert})
+	@TableField(value="${field.name}")
+#end
+	private ${field.propertyType} ${field.propertyName};
+#end
+
+#foreach($field in ${table.fields})
+#if(${field.propertyType.equals("Boolean")})
+#set($getprefix="is")
+#else
+#set($getprefix="get")
+#end
+
+	public ${field.propertyType} ${getprefix}${field.capitalName}() {
+		return ${field.propertyName};
+	}
+
+#if(${entityBuliderModel})
+	public ${entity} set${field.capitalName}(${field.propertyType} ${field.propertyName}) {
+#else
+	public void set${field.capitalName}(${field.propertyType} ${field.propertyName}) {
+#end
+		this.${field.propertyName} = ${field.propertyName};
+#if(${entityBuliderModel})
+		return this;
+#end
+	}
+#end
+
+#if(${entityColumnConstant})
+#foreach($field in ${table.fields})
+	public static final String ${field.name.toUpperCase()} = "${field.name}";
+
+#end
+#end
+#if(${activeRecord})
+	@Override
+	protected Serializable pkVal() {
+#if(${keyPropertyName})
+		return this.${keyPropertyName};
+#else
+		return this.id;
+#end
+	}
+
+#end
+}

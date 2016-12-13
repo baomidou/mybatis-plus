@@ -1,4 +1,31 @@
 # CHANGELOG
+## [v2.0.0] 2016.12.11
+
+1.支持全局大写命名策略
+2.自动分页Count语句优化
+3.优化现有全局配置策略
+4.优化全局验证策略
+5.优化代码生成器(之前硬编码，现使用模板形式)
+6.优化注入通用方法ByMap逻辑
+7.添加自动选择数据库类型
+8.改善SqlExplainInterceptor（自行判断MySQL版本不支持该拦截器则直接放行（版本过低小于5.6.3））
+9.修复部分特殊字符字符多次转义的问题
+10.优化现有EntityWrapper添加Wrapper父类以及Condition链式查询
+11.Wrapper类使LIKE方法兼容多种数据库
+12.优化日志使用原生Mybatis自带的日志输出提示信息
+13.修复使用缓存导致使用分页无法计算Count值
+14.修复PerformanceInterceptor替换`?`导致打印SQL不准确问题，并添加格式化SQL选项
+15.添加多种数据库支持，请查看DBType
+16.添加字符串类型字段非空校验策略（字符串类型自动判断非空以及非空字符串）
+17.Wrapper添加类似QBC查询(eq、gt、lt等等)
+18.支持AR模式（需继承Model）
+19.合并所有Selective通用方法（例如:去除之前的insert方法并把之前的insetSelective改名为insert）
+20.解决sql剥离器会去除`--`的情况
+21.支持MySQL关键词，自动转义
+22.精简底层Service、Mapper继承结构
+23.不喜欢在XML中写SQL的福音，新增执行SQL方式，具体请查看SqlQuery
+24.优化代码结构
+25.解决issus[95,96,98,100,103,104,108,114,119,121,123,124,125,126,127,128,131,133,134,135]，具体请查看里程碑[mybatis-plus 2.0 计划](http://git.oschina.net/baomidou/mybatis-plus/milestones/1)中所有issus
 
 ## [v1.4.9] 2016.10.28
 

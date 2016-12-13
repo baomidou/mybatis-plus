@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.baomidou</groupId>
 	<artifactId>mybatis-plus</artifactId>
-	<version>2.0-rc</version>
+	<version>2.0</version>
 	<packaging>jar</packaging>
 
 	<name>mybatis-plus</name>
@@ -47,7 +47,7 @@
 		<spring.version>4.2.5.RELEASE</spring.version>
 		<mybatis-ehcache.version>1.0.3</mybatis-ehcache.version>
 		<junit.version>4.12</junit.version>
-		<contiperf.version>2.3.4</contiperf.version>
+		<velocity.version>1.7</velocity.version>
 	</properties>
 
 	<dependencies>
@@ -105,6 +105,13 @@
 			<version>${alibaba.druid.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		<!-- generator vm -->
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity</artifactId>
+			<version>${velocity.version}</version>
+			<scope>provided</scope>
+		</dependency>
 		<!-- test begin -->
 		<dependency>
 			<groupId>mysql</groupId>
@@ -134,30 +141,6 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>${junit.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.databene</groupId>
-			<artifactId>contiperf</artifactId>
-			<version>${contiperf.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.xerial</groupId>
-			<artifactId>sqlite-jdbc</artifactId>
-			<version>3.14.2.1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>9.1-901-1.jdbc4</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.hsqldb</groupId>
-			<artifactId>hsqldb</artifactId>
-			<version>2.3.4</version>
 			<scope>test</scope>
 		</dependency>
 		<!-- test end -->

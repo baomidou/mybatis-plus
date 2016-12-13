@@ -15,11 +15,10 @@
  */
 package com.baomidou.mybatisplus.plugins.pagination;
 
-import java.io.Serializable;
-
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 
-import com.baomidou.mybatisplus.toolkit.StringUtils;
+import java.io.Serializable;
 
 /**
  * <p>
@@ -50,8 +49,13 @@ public class Pagination extends RowBounds implements Serializable {
 	/* 查询总记录数（默认 true） */
 	private boolean searchCount = true;
 
-	/* 查询总数优化（默认 true） */
-	private boolean optimizeCount = true;
+	/**
+	 * 查询总数优化（默认 false 该属性只针对于Optimize.DEFAULT有效)
+	 * 
+	 * @see com.baomidou.mybatisplus.enums.Optimize
+	 *
+	 */
+	private boolean optimizeCount = false;
 
 	/**
 	 * <p>

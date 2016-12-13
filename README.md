@@ -3,6 +3,12 @@
 [![license](https://img.shields.io/github/license/baomidou/mybatis-plus.svg?maxAge=2592000)](http://www.apache.org/licenses/LICENSE-2.0)
 [![GitHub release](https://img.shields.io/github/release/baomidou/mybatis-plus.svg?maxAge=2592000)](https://github.com/baomidou/mybatis-plus)
 
+
+  `如果你喜欢 Hibernate ，可以尝试使用`
+
+- [Hibernate-Plus](http://git.oschina.net/baomidou/hibernate-plus)
+
+
 > 为简化开发工作、提高生产率而生
 
 # 简介 | Intro
@@ -42,9 +48,6 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 
 [SSM-实战 Demo](http://git.oschina.net/juapk/SpringWind)
 
-     `如果你喜欢Hibernate，可以尝试使用`
-[Hibernate-Plus](http://git.oschina.net/baomidou/hibernate-plus)
-
 # 下载地址 | Download
 
 [点此去下载](http://maven.aliyun.com/nexus/#nexus-search;quick~mybatis-plus)
@@ -65,6 +68,7 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 
 - [基于Cookie的SSO中间件 Kisso](http://git.oschina.net/baomidou/kisso)
 - [Java快速开发框架 SpringWind](http://git.oschina.net/juapk/SpringWind)
+- [基于Hibernate扩展 Hibernate-Plus](http://git.oschina.net/baomidou/hibernate-plus)
 
 # 期望 | Futures
 

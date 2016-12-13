@@ -19,8 +19,8 @@ import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.session.Configuration;
 
+import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.mapper.AutoSqlInjector;
-import com.baomidou.mybatisplus.toolkit.TableInfo;
 
 /**
  * <p>

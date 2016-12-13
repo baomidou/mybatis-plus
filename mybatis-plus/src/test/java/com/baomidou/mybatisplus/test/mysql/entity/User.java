@@ -18,10 +18,10 @@ package com.baomidou.mybatisplus.test.mysql.entity;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 
-import com.baomidou.mybatisplus.annotations.FieldStrategy;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.enums.FieldStrategy;
 
 /**
  * <p>
@@ -49,7 +49,7 @@ public class User implements Serializable {
 	private Integer age;
 
 	/* 测试下划线字段命名类型, 字段填充 */
-	@TableField(value = "test_type", validate = FieldStrategy.FILL)
+	@TableField(value = "test_type", validate = FieldStrategy.IGNORED)
 	private Integer testType;
 
 	@TableField(el = "role.id")

@@ -23,6 +23,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
+import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.test.oracle.entity.TestUser;
@@ -55,7 +56,9 @@ public class TestUserMapperTest {
 		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
 
 		/** 设置数据库类型为 oracle */
-		mf.setDbType("oracle");
+		GlobalConfiguration gc = new GlobalConfiguration();
+		gc.setDbType("oracle");
+		mf.setGlobalConfig(gc);
 
 		/*
 		 * 1、数据库字段驼峰命名不需要任何设置
