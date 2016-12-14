@@ -27,15 +27,15 @@ public enum SQLlikeType {
 	/**
 	 * LEFT
 	 */
-	LEFT("left", "左边"),
+	LEFT("left", "左边%"),
 	/**
 	 * RIGHT
 	 */
-	RIGHT("right", "右边"),
+	RIGHT("right", "右边%"),
 	/**
 	 * DEFAULT
 	 */
-	DEFAULT("default", "两边");
+	DEFAULT("default", "两边%");
 
 	/** 主键 */
 	private final String type;

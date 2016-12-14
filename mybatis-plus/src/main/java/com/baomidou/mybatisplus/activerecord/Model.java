@@ -62,7 +62,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * </p>
 	 */
 	public boolean insertOrUpdate() {
-		if (StringUtils.isNotEmpty(pkVal())) {
+		if (StringUtils.checkValNotNull(pkVal())) {
 			// update
 			return SqlHelper.retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE_BY_ID), this));
 		} else {
@@ -92,7 +92,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * @return
 	 */
 	public boolean deleteById() {
-		if (StringUtils.isEmpty(pkVal())) {
+		if (StringUtils.checkValNull(pkVal())) {
 			throw new MybatisPlusException("deleteById primaryKey is null.");
 		}
 		return deleteById(this.pkVal());
@@ -136,7 +136,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * @return
 	 */
 	public boolean updateById() {
-		if (StringUtils.isEmpty(pkVal())) {
+		if (StringUtils.checkValNull(pkVal())) {
 			throw new MybatisPlusException("updateById primaryKey is null.");
 		}
 		// updateById
@@ -207,7 +207,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * @return
 	 */
 	public T selectById() {
-		if (StringUtils.isEmpty(pkVal())) {
+		if (StringUtils.checkValNull(pkVal())) {
 			throw new MybatisPlusException("selectById primaryKey is null.");
 		}
 		return selectById(this.pkVal());

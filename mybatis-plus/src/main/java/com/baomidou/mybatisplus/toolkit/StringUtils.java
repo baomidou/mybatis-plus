@@ -351,32 +351,6 @@ public class StringUtils {
 	}
 
 	/**
-	 * 判断对象是否为空
-	 *
-	 * @param str
-	 * @return
-	 */
-	public static boolean isEmpty(Object str) {
-		if (str instanceof CharSequence) {
-			return isEmpty((CharSequence) str);
-		}
-		return (str == null || "".equals(str));
-	}
-
-	/**
-	 * 判断对象是否不为空
-	 *
-	 * @param str
-	 * @return
-	 */
-	public static boolean isNotEmpty(Object str) {
-		return !isEmpty(str);
-	}
-
-	// endsWith
-	// -----------------------------------------------------------------------
-
-	/**
 	 * <p>
 	 * Check if a String ends with a specified suffix.
 	 * </p>
