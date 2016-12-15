@@ -38,12 +38,7 @@ import org.springframework.util.ResourceUtils;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * <p>
@@ -51,7 +46,7 @@ import java.util.Set;
  * Mybatis 映射文件热加载（发生变动后自动重新加载）.<br>
  * 方便开发时使用，不用每次修改xml文件后都要去重启应用.<br>
  * </p>
- * 
+ *
  * @author nieqiurong
  * @Date 2016-08-25
  */
@@ -88,7 +83,7 @@ public class MybatisMapperRefresh implements Runnable {
 	private static Map<String, List<Resource>> jarMapper = new HashMap<String, List<Resource>>();
 
 	public MybatisMapperRefresh(Resource[] mapperLocations, SqlSessionFactory sqlSessionFactory, int delaySeconds,
-			int sleepSeconds, boolean enabled) {
+								int sleepSeconds, boolean enabled) {
 		this.mapperLocations = mapperLocations;
 		this.sqlSessionFactory = sqlSessionFactory;
 		this.delaySeconds = delaySeconds;
@@ -182,7 +177,7 @@ public class MybatisMapperRefresh implements Runnable {
 
 	/**
 	 * 刷新mapper
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	@SuppressWarnings("rawtypes")
@@ -222,7 +217,7 @@ public class MybatisMapperRefresh implements Runnable {
 
 	/**
 	 * 清理parameterMap
-	 * 
+	 *
 	 * @param list
 	 * @param namespace
 	 */
@@ -235,7 +230,7 @@ public class MybatisMapperRefresh implements Runnable {
 
 	/**
 	 * 清理resultMap
-	 * 
+	 *
 	 * @param list
 	 * @param namespace
 	 */
@@ -244,12 +239,29 @@ public class MybatisMapperRefresh implements Runnable {
 			String id = resultMapNode.getStringAttribute("id", resultMapNode.getValueBasedIdentifier());
 			configuration.getResultMapNames().remove(id);
 			configuration.getResultMapNames().remove(namespace + "." + id);
+			clearResultMap(resultMapNode,namespace);
+		}
+	}
+
+	private void clearResultMap(XNode xNode,String namespace){
+		for (XNode resultChild : xNode.getChildren()) {
+			if ("association".equals(resultChild.getName())
+					|| "collection".equals(resultChild.getName())
+					|| "case".equals(resultChild.getName())) {
+				if (resultChild.getStringAttribute("select") == null) {
+					configuration.getResultMapNames().remove(resultChild.getStringAttribute("id",resultChild.getValueBasedIdentifier()));
+					configuration.getResultMapNames().remove(namespace+"."+resultChild.getStringAttribute("id",resultChild.getValueBasedIdentifier()));
+					if(resultChild.getChildren()!=null&&!resultChild.getChildren().isEmpty()){
+						clearResultMap(resultChild,namespace);
+					}
+				}
+			}
 		}
 	}
 
 	/**
 	 * 清理selectKey
-	 * 
+	 *
 	 * @param list
 	 * @param namespace
 	 */
@@ -263,7 +275,7 @@ public class MybatisMapperRefresh implements Runnable {
 
 	/**
 	 * 清理sql节点缓存
-	 * 
+	 *
 	 * @param list
 	 * @param namespace
 	 */
