@@ -51,7 +51,7 @@ public class SqlRunner {
 	public static final String SQL = "sql";
 
 	// 单例Query
-	public static final SqlRunner SQL_QUERY = new SqlRunner();
+	public static final SqlRunner DEFAULT = new SqlRunner();
 	private SqlSessionFactory sqlSessionFactory;
 
 	public SqlRunner() {
@@ -123,7 +123,11 @@ public class SqlRunner {
 	 * @return
 	 */
 	public static SqlRunner db() {
-		return SQL_QUERY;
+		// 初始化的静态变量 还是有前后加载的问题 该判断只会执行一次
+		if (DEFAULT.sqlSessionFactory == null) {
+			DEFAULT.sqlSessionFactory = FACTORY;
+		}
+		return DEFAULT;
 	}
 
 	/**
