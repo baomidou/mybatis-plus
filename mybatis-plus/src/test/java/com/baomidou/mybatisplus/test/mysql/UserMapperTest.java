@@ -23,7 +23,6 @@ import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.test.mysql.entity.Role;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
-import org.apache.ibatis.jdbc.SQL;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
@@ -85,7 +84,7 @@ public class UserMapperTest {
 		 * 设置，自定义 元对象填充器，实现公共字段自动写入
 		 */
 		gc.setMetaObjectHandler(new MyMetaObjectHandler());
-		//gc.setCapitalMode(true);
+		// gc.setCapitalMode(true);
 		mf.setGlobalConfig(gc);
 
 		SqlSessionFactory sessionFactory = mf.build(in);
@@ -303,69 +302,11 @@ public class UserMapperTest {
 		/*
 		 * 用户列表
 		 */
-        System.err.println(" selectList EntityWrapper == null \n");
-        paginList = userMapper.selectList(null);
-        for (User aPaginList : paginList) {
-            print(aPaginList);
-        }
-
-        /*
-         * <p>
-         * 纯 SQL 查询！！！
-         * </p>
-         * <p>
-         * 用法参考：/mybatis-plus/src/test/java/com/baomidou/mybatisplus/test/SqlBuilderTest.java
-         * </p>
-         */
-        SQL sql = new SQL() {{
-            SELECT("a.test_id as id, a.name, a.age");
-            FROM("user a");
-            WHERE("a.test_type=1");
-        }};
-        // SQL 插入
-        System.err.println(" insertSql 执行 SQL \n");
-        rlt = userMapper.insertSql(new SQL(){{
-        	INSERT_INTO("user");
-            VALUES("test_id, name, age, test_type", IdWorker.getId() + ", 'testInsertSql', 5, 1");
-        }}.toString());
-        System.err.println("插入！条数：" + rlt);
-
-        // SQL 查询
-        System.err.println(" selectListSql 执行 SQL \n");
-        List<Map<String, Object>> ul3 = userMapper.selectListSql(sql.toString());
-        for (Map<String, Object> u : ul3) {
-			System.err.println(u);
+		System.err.println(" selectList EntityWrapper == null \n");
+		paginList = userMapper.selectList(null);
+		for (User aPaginList : paginList) {
+			print(aPaginList);
 		}
-
-        // SQL 翻页
-        System.err.println(" selectPageSql 执行 SQL \n");
-        Page<Map<String, Object>> page3 = new Page<Map<String, Object>>(0, 10);
-        List<Map<String, Object>> ml = userMapper.selectPageSql(page3, sql.toString());
-        for (Map<String, Object> map : ml) {
-        	System.err.println("翻页 map 结果：" + map);
-		}
-        System.err.println("翻页结果：" + page3.toString());
-
-		// SQL 删除
-		System.err.println(" deleteSql 执行 SQL \n");
-		rlt = userMapper.deleteSql(new SQL() {
-			{
-				DELETE_FROM("user");
-				WHERE("name='testInsertSql'");
-			}
-		}.toString());
-		System.err.println("删除！条数：" + rlt);
-
-		// SQL 更新
-		System.err.println(" updateSql 执行 SQL \n");
-		rlt = userMapper.updateSql(new SQL() {
-			{
-				UPDATE("user");
-				SET("age=6");
-				WHERE("test_type=1");
-			}
-		}.toString());
-		System.err.println("成功更新！条数：" + rlt);
 
 		/**
 		 * 自定义方法，删除测试数据

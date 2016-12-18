@@ -15,11 +15,7 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import org.apache.ibatis.annotations.DeleteProvider;
-import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.SelectProvider;
-import org.apache.ibatis.annotations.UpdateProvider;
 import org.apache.ibatis.session.RowBounds;
 
 import java.io.Serializable;
@@ -49,18 +45,6 @@ public interface BaseMapper<T> {
 	 * @return int
 	 */
 	int insert(T entity);
-
-	/**
-	 * <p>
-	 * 执行 SQL 插入
-	 * </p>
-	 * 
-	 * @param sql
-	 *            SQL语句
-	 * @return
-	 */
-	@InsertProvider(type = PureSqlProvider.class, method = "sql")
-	int insertSql(String sql);
 
 	/**
 	 * <p>
@@ -108,18 +92,6 @@ public interface BaseMapper<T> {
 
 	/**
 	 * <p>
-	 * 执行 SQL 删除
-	 * </p>
-	 * 
-	 * @param sql
-	 *            SQL语句
-	 * @return
-	 */
-	@DeleteProvider(type = PureSqlProvider.class, method = "sql")
-	int deleteSql(String sql);
-
-	/**
-	 * <p>
 	 * 根据 ID 修改
 	 * </p>
 	 * 
@@ -141,18 +113,6 @@ public interface BaseMapper<T> {
 	 * @return
 	 */
 	int update(@Param("et") T entity, @Param("ew") Wrapper<T> wrapper);
-
-	/**
-	 * <p>
-	 * 执行 SQL 更新
-	 * </p>
-	 * 
-	 * @param sql
-	 *            SQL语句
-	 * @return
-	 */
-	@UpdateProvider(type = PureSqlProvider.class, method = "sql")
-	int updateSql(String sql);
 
 	/**
 	 * <p>
@@ -211,17 +171,6 @@ public interface BaseMapper<T> {
 
 	/**
 	 * <p>
-	 * 根据SQL查询总记录数
-	 * </p>
-	 *
-	 * @param sql
-	 * @return int
-	 */
-	@SelectProvider(type = PureSqlProvider.class, method = "sql")
-	int selectCountSql(String sql);
-
-	/**
-	 * <p>
 	 * 根据 entity 条件，查询全部记录
 	 * </p>
 	 * 
@@ -241,18 +190,6 @@ public interface BaseMapper<T> {
 	 * @return List<T>
 	 */
 	List<Map<String, Object>> selectMaps(@Param("ew") Wrapper<T> wrapper);
-
-	/**
-	 * <p>
-	 * 执行 SQL 查询，查询全部记录
-	 * </p>
-	 * 
-	 * @param sql
-	 *            SQL语句
-	 * @return
-	 */
-	@SelectProvider(type = PureSqlProvider.class, method = "sql")
-	List<Map<String, Object>> selectListSql(String sql);
 
 	/**
 	 * <p>
@@ -279,17 +216,5 @@ public interface BaseMapper<T> {
 	 * @return List<Map<String, Object>>
 	 */
 	List<Map<String, Object>> selectMapsPage(RowBounds rowBounds, @Param("ew") Wrapper<T> wrapper);
-
-	/**
-	 * <p>
-	 * 执行 SQL 查询，查询全部记录（并翻页）
-	 * </p>
-	 * 
-	 * @param sql
-	 *            SQL语句
-	 * @return
-	 */
-	@SelectProvider(type = PureSqlProvider.class, method = "sql")
-	List<Map<String, Object>> selectPageSql(RowBounds rowBounds, String sql);
 
 }
