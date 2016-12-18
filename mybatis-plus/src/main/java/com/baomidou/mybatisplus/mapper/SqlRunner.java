@@ -15,21 +15,21 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
+import com.baomidou.mybatisplus.entity.GlobalConfiguration;
+import com.baomidou.mybatisplus.entity.TableInfo;
+import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import com.baomidou.mybatisplus.entity.GlobalConfiguration;
-import com.baomidou.mybatisplus.entity.TableInfo;
-import com.baomidou.mybatisplus.plugins.pagination.Pagination;
-import com.baomidou.mybatisplus.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -39,44 +39,63 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
  * @author Caratacus
  * @Date 2016-12-11
  */
-public class SqlQuery {
-	private static final Log logger = LogFactory.getLog(SqlQuery.class);
-	// 单例Query
-	public static final SqlQuery SQL_QUERY = new SqlQuery();
-	private SqlSessionFactory sqlSessionFactory;
-	private TableInfo tableInfo;
+public class SqlRunner {
 
-	public SqlQuery() {
-		this.tableInfo = TableInfoHelper.getRandomTableInfo();
+	private static final Log logger = LogFactory.getLog(SqlRunner.class);
+
+	public static final String INSERT = "SqlRunner.Insert";
+	public static final String DELETE = "SqlRunner.Delete";
+	public static final String UPDATE = "SqlRunner.Update";
+	public static final String SELECT = "SqlRunner.Select";
+	public static final String COUNT = "SqlRunner.Count";
+	public static final String SQLScript = "${sql}";
+	public static final String SQL = "sql";
+
+	// 单例Query
+	public static final SqlRunner SQL_QUERY = new SqlRunner();
+	private SqlSessionFactory sqlSessionFactory;
+
+	public SqlRunner() {
+		TableInfo tableInfo = TableInfoHelper.getRandomTableInfo();
 		String configMark = tableInfo.getConfigMark();
 		GlobalConfiguration globalConfiguration = GlobalConfiguration.GlobalConfig(configMark);
 		this.sqlSessionFactory = globalConfiguration.getSqlSessionFactory();
 	}
 
-	public SqlQuery(Class<?> clazz) {
-		this.tableInfo = SqlHelper.table(clazz);
+	public SqlRunner(Class<?> clazz) {
+		TableInfo tableInfo = SqlHelper.table(clazz);
 		GlobalConfiguration globalConfiguration = GlobalConfiguration.GlobalConfig(tableInfo.getConfigMark());
 		this.sqlSessionFactory = globalConfiguration.getSqlSessionFactory();
 	}
 
 	public boolean insert(String sql, Object... args) {
-		return SqlHelper.retBool(sqlSession().insert(sqlStatement("insertSql"), StringUtils.sqlArgsFill(sql, args)));
+		Map<String,String> sqlMap = new HashMap<String,String>();
+		sqlMap.put(SQL,StringUtils.sqlArgsFill(sql, args));
+		return SqlHelper.retBool(sqlSession().insert(INSERT, sqlMap));
 	}
 
 	public boolean delete(String sql, Object... args) {
-		return SqlHelper.retBool(sqlSession().delete(sqlStatement("deleteSql"), StringUtils.sqlArgsFill(sql, args)));
+		Map<String,String> sqlMap = new HashMap<String,String>();
+		sqlMap.put(SQL,StringUtils.sqlArgsFill(sql, args));
+		return SqlHelper.retBool(sqlSession().delete(DELETE, sqlMap));
 	}
 
 	public boolean update(String sql, Object... args) {
-		return SqlHelper.retBool(sqlSession().update(sqlStatement("updateSql"), StringUtils.sqlArgsFill(sql, args)));
+		Map<String,String> sqlMap = new HashMap<String,String>();
+		sqlMap.put(SQL,StringUtils.sqlArgsFill(sql, args));
+		return SqlHelper.retBool(sqlSession().update(UPDATE, sqlMap));
 	}
 
 	public List<Map<String, Object>> selectList(String sql, Object... args) {
-		return sqlSession().selectList(sqlStatement("selectListSql"), StringUtils.sqlArgsFill(sql, args));
+		Map<String,String> sqlMap = new HashMap<String,String>();
+		sqlMap.put(SQL,StringUtils.sqlArgsFill(sql, args));
+		return sqlSession().selectList(SELECT, sqlMap);
 	}
 
 	public int selectCount(String sql, Object... args) {
-		return sqlSession().<Integer>selectOne(sqlStatement("selectCountSql"), StringUtils.sqlArgsFill(sql, args));
+		Map<String,String> sqlMap = new HashMap<String,String>();
+		sqlMap.put(SQL,StringUtils.sqlArgsFill(sql, args));
+		return sqlSession().<Integer> selectOne(COUNT, sqlMap);
 	}
 
 	public Map<String, Object> selectOne(String sql, Object... args) {
@@ -91,11 +110,14 @@ public class SqlQuery {
 		return Collections.emptyMap();
 	}
 
-	public List<Map<String, Object>> selectPage(Pagination page, String sql, Object... args) {
+	public Page<Map<String, Object>> selectPage(Page page, String sql, Object... args) {
 		if (null == page) {
 			return null;
 		}
-		return sqlSession().selectList(sqlStatement("selectPageSql"), StringUtils.sqlArgsFill(sql, args), page);
+		Map<String,String> sqlMap = new HashMap<String,String>();
+		sqlMap.put(SQL,StringUtils.sqlArgsFill(sql, args));
+		page.setRecords(sqlSession().selectList(SELECT, sqlMap, page));
+		return page;
 	}
 
 	/**
@@ -103,7 +125,7 @@ public class SqlQuery {
 	 * 
 	 * @return
 	 */
-	public static SqlQuery db() {
+	public static SqlRunner db() {
 		return SQL_QUERY;
 	}
 
@@ -113,8 +135,8 @@ public class SqlQuery {
 	 * @param clazz
 	 * @return
 	 */
-	public static SqlQuery db(Class<?> clazz) {
-		return new SqlQuery(clazz);
+	public static SqlRunner db(Class<?> clazz) {
+		return new SqlRunner(clazz);
 	}
 
 	/**
@@ -124,10 +146,6 @@ public class SqlQuery {
 	 */
 	private SqlSession sqlSession() {
 		return sqlSessionFactory.openSession(true);
-	}
-
-	private String sqlStatement(String sqlMethod) {
-		return tableInfo.getSqlStatement(sqlMethod);
 	}
 
 }

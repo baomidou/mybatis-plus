@@ -19,7 +19,7 @@ import com.baomidou.mybatisplus.enums.SqlMethod;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.Condition;
 import com.baomidou.mybatisplus.mapper.SqlHelper;
-import com.baomidou.mybatisplus.mapper.SqlQuery;
+import com.baomidou.mybatisplus.mapper.SqlRunner;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.toolkit.CollectionUtils;
@@ -343,8 +343,8 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * 执行 SQL
 	 * </p>
 	 */
-	public SqlQuery sql() {
-		return new SqlQuery(getClass());
+	public SqlRunner sql() {
+		return new SqlRunner(getClass());
 	}
 
 	/**

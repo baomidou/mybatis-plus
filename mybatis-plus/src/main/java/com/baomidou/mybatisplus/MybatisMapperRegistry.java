@@ -15,16 +15,17 @@
  */
 package com.baomidou.mybatisplus;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import org.apache.ibatis.binding.BindingException;
 import org.apache.ibatis.binding.MapperProxyFactory;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <p>
@@ -42,6 +43,8 @@ public class MybatisMapperRegistry extends MapperRegistry {
 	public MybatisMapperRegistry(Configuration config) {
 		super(config);
 		this.config = config;
+		// TODO注入SqlRunner
+		GlobalConfiguration.getSqlInjector(config).injectSqlRunner(config);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -64,7 +67,7 @@ public class MybatisMapperRegistry extends MapperRegistry {
 	public <T> void addMapper(Class<T> type) {
 		if (type.isInterface()) {
 			if (hasMapper(type)) {
-				//TODO 如果之前注入 直接返回
+				// TODO 如果之前注入 直接返回
 				return;
 				// throw new BindingException("Type " + type +
 				// " is already known to the MybatisPlusMapperRegistry.");
@@ -77,7 +80,7 @@ public class MybatisMapperRegistry extends MapperRegistry {
 				// otherwise the binding may automatically be attempted by the
 				// mapper parser. If the type is already known, it won't try.
 
-				//TODO 自定义无 XML 注入
+				// TODO 自定义无 XML 注入
 				MybatisMapperAnnotationBuilder parser = new MybatisMapperAnnotationBuilder(config, type);
 				parser.parse();
 				loadCompleted = true;
