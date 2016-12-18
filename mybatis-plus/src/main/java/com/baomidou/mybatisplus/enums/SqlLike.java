@@ -23,7 +23,7 @@ package com.baomidou.mybatisplus.enums;
  * @author Caratacus
  * @Date 2016-12-4
  */
-public enum SQLlikeType {
+public enum SqlLike {
 	/**
 	 * LEFT
 	 */
@@ -43,7 +43,7 @@ public enum SQLlikeType {
 	/** 描述 */
 	private final String desc;
 
-	SQLlikeType(final String type, final String desc) {
+	SqlLike(final String type, final String desc) {
 		this.type = type;
 		this.desc = desc;
 	}

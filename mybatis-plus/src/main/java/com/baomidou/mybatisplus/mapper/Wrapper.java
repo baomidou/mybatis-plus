@@ -15,15 +15,15 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
+import com.baomidou.mybatisplus.enums.SqlLike;
+import com.baomidou.mybatisplus.toolkit.MapUtils;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
-
-import com.baomidou.mybatisplus.enums.SQLlikeType;
-import com.baomidou.mybatisplus.toolkit.MapUtils;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 
 /**
@@ -349,7 +349,7 @@ public abstract class Wrapper<T> implements Serializable {
      * @return this
      */
     public Wrapper<T> like(String column, String value) {
-        sql.LIKE(column, value,SQLlikeType.DEFAULT);
+        sql.LIKE(column, value, SqlLike.DEFAULT);
         return this;
     }
 
@@ -363,7 +363,7 @@ public abstract class Wrapper<T> implements Serializable {
      * @return this
      */
     public Wrapper<T> notLike(String column, String value) {
-        sql.NOT_LIKE(column, value,SQLlikeType.DEFAULT);
+        sql.NOT_LIKE(column, value, SqlLike.DEFAULT);
         return this;
     }
     /**
@@ -376,7 +376,7 @@ public abstract class Wrapper<T> implements Serializable {
      * @param type
      * @return this
      */
-    public Wrapper<T> like(String column, String value, SQLlikeType type) {
+    public Wrapper<T> like(String column, String value, SqlLike type) {
         sql.LIKE(column, value,type);
         return this;
     }
@@ -391,7 +391,7 @@ public abstract class Wrapper<T> implements Serializable {
      * @param type
      * @return this
      */
-    public Wrapper<T> notLike(String column, String value, SQLlikeType type) {
+    public Wrapper<T> notLike(String column, String value, SqlLike type) {
         sql.NOT_LIKE(column, value,type);
         return this;
     }
