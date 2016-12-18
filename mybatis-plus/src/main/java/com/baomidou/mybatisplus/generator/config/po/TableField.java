@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.generator.config.po;
 
+import com.baomidou.mybatisplus.generator.config.StrategyConfig;
+
 /**
  * <p>
  * 表字段信息
@@ -79,6 +81,9 @@ public class TableField {
 	}
 
 	public boolean isConvert() {
+		if (StrategyConfig.DB_COLUMN_UNDERLINE) {
+			return false;
+		}
 		return !name.equals(propertyName);
 	}
 

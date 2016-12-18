@@ -74,6 +74,7 @@ public class MysqlGenerator {
 
 		// 策略配置
 		StrategyConfig strategy = new StrategyConfig();
+		// strategy.setDbColumnUnderline(true);//全局下划线命名
 		strategy.setTablePrefix("bmd_");// 此处可以修改为您的表前缀
 		strategy.setNaming(NamingStrategy.underline_to_camel);// 表名生成策略
 		// strategy.setInclude(new String[] { "user" }); // 需要生成的表
@@ -116,7 +117,8 @@ public class MysqlGenerator {
 		};
 		mpg.setCfg(cfg);
 
-		// 自定义模板配置
+		// 自定义模板配置，模板可以参考源码 /mybatis-plus/src/main/resources/template 使用 copy
+		// 至您项目 src/main/resources/template 目录下，模板名称也可自定义如下配置：
 		// TemplateConfig tc = new TemplateConfig();
 		// tc.setController("...");
 		// tc.setEntity("...");

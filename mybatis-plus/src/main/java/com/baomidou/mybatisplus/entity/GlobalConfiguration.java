@@ -61,7 +61,7 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	private DBType dbType = DBType.MYSQL;
 	// 主键类型（默认 ID_WORKER）
 	private IdType idType = IdType.ID_WORKER;
-	// 表字段使用下划线命名（默认 false）
+	// 表名、字段名、是否使用下划线命名（默认 false）
 	private boolean dbColumnUnderline = false;
 	// SQL注入器
 	private ISqlInjector sqlInjector;

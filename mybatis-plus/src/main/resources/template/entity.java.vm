@@ -6,8 +6,10 @@ import ${superEntityClassPackage};
 #if(${activeRecord})
 import com.baomidou.mybatisplus.activerecord.Model;
 #end
+#if(!${dbColumnUnderline})
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableField;
+#end
 #if(${tabeAnnotation})
 import com.baomidou.mybatisplus.annotations.TableName;
 #end
@@ -40,11 +42,13 @@ public class ${entity} implements Serializable {
     private static final long serialVersionUID = 1L;
 
 #foreach($field in ${table.fields})
+#if(${field.keyFlag})
+#set($keyPropertyName=${field.propertyName})
+#end
 	/**
 	 * ${field.comment}
 	 */
 #if(${field.keyFlag} && ${field.convert})
-#set($keyPropertyName=${field.propertyName})
 	@TableId(value="${field.name}")
 #elseif(${field.convert})
 	@TableField(value="${field.name}")
