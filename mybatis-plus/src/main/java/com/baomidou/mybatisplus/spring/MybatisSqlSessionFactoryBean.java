@@ -15,18 +15,13 @@
  */
 package com.baomidou.mybatisplus.spring;
 
-import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.Assert.state;
-import static org.springframework.util.ObjectUtils.isEmpty;
-import static org.springframework.util.StringUtils.hasLength;
-import static org.springframework.util.StringUtils.tokenizeToStringArray;
-
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.Properties;
-
-import javax.sql.DataSource;
-
+import com.baomidou.mybatisplus.MybatisConfiguration;
+import com.baomidou.mybatisplus.MybatisXMLConfigBuilder;
+import com.baomidou.mybatisplus.MybatisXMLMapperBuilder;
+import com.baomidou.mybatisplus.entity.GlobalConfiguration;
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.mapper.SqlRunner;
+import com.baomidou.mybatisplus.toolkit.PackageHelper;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.io.VFS;
@@ -53,12 +48,16 @@ import org.springframework.core.NestedIOException;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
-import com.baomidou.mybatisplus.MybatisConfiguration;
-import com.baomidou.mybatisplus.MybatisXMLConfigBuilder;
-import com.baomidou.mybatisplus.MybatisXMLMapperBuilder;
-import com.baomidou.mybatisplus.entity.GlobalConfiguration;
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.toolkit.PackageHelper;
+import javax.sql.DataSource;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Properties;
+
+import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.Assert.state;
+import static org.springframework.util.ObjectUtils.isEmpty;
+import static org.springframework.util.StringUtils.hasLength;
+import static org.springframework.util.StringUtils.tokenizeToStringArray;
 
 /**
  * <p>
@@ -120,7 +119,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
 	private GlobalConfiguration globalConfig = GlobalConfiguration.defaults();
 
-	//TODO 注入全局配置
+	// TODO 注入全局配置
 	public void setGlobalConfig(GlobalConfiguration globalConfig) {
 		this.globalConfig = globalConfig;
 	}
@@ -558,6 +557,8 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 			}
 		}
 		SqlSessionFactory sqlSessionFactory = this.sqlSessionFactoryBuilder.build(configuration);
+		// TODO SqlRunner
+		SqlRunner.FACTORY = sqlSessionFactory;
 		// TODO 缓存 sqlSessionFactory
 		globalConfig.setSqlSessionFactory(sqlSessionFactory);
 		// TODO 设置全局参数属性

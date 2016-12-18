@@ -712,8 +712,7 @@ public class AutoSqlInjector implements ISqlInjector {
 				configuration.getDatabaseId(), languageDriver, null);
 	}
 
-	// ---------------------------------SqlRunner
-	// Inject--------------------------------------------------------------
+	// --------------------------------------------------------SqlRunner------------------------------------------------------------
 	public void injectSqlRunner(Configuration configuration) {
 		this.configuration = configuration;
 		this.languageDriver = configuration.getDefaultScriptingLanuageInstance();
@@ -725,42 +724,27 @@ public class AutoSqlInjector implements ISqlInjector {
 	}
 
 	/**
-	 * 创建MSID
+	 * 是否已经存在MappedStatement
 	 *
-	 * @param sql
-	 *            执行的sql
-	 * @param sql
-	 *            执行的sqlCommandType
+	 * @param mappedStatement
 	 * @return
 	 */
-	private String newMsId(String sql, SqlCommandType sqlCommandType) {
-		StringBuilder msIdBuilder = new StringBuilder(sqlCommandType.toString());
-		msIdBuilder.append(".").append(sql.hashCode());
-		return msIdBuilder.toString();
+	private boolean hasMappedStatement(String mappedStatement) {
+		return configuration.hasStatement(mappedStatement, false);
 	}
 
 	/**
-	 * 是否已经存在该ID
+	 * 创建查询MappedStatement
 	 *
-	 * @param msId
-	 * @return
-	 */
-	private boolean hasMappedStatement(String msId) {
-		return configuration.hasStatement(msId, false);
-	}
-
-	/**
-	 * 创建一个查询的MS
-	 *
-	 * @param msId
+	 * @param mappedStatement
 	 * @param sqlSource
 	 *            执行的sqlSource
 	 * @param resultType
 	 *            返回的结果类型
 	 */
-	private void newSelectMappedStatement(String msId, SqlSource sqlSource, final Class<?> resultType) {
-		MappedStatement ms = new MappedStatement.Builder(configuration, msId, sqlSource, SqlCommandType.SELECT).resultMaps(
-				new ArrayList<ResultMap>() {
+	private void createSelectMappedStatement(String mappedStatement, SqlSource sqlSource, final Class<?> resultType) {
+		MappedStatement ms = new MappedStatement.Builder(configuration, mappedStatement, sqlSource, SqlCommandType.SELECT)
+				.resultMaps(new ArrayList<ResultMap>() {
 					{
 						add(new ResultMap.Builder(configuration, "defaultResultMap", resultType, new ArrayList<ResultMapping>(0))
 								.build());
@@ -771,16 +755,16 @@ public class AutoSqlInjector implements ISqlInjector {
 	}
 
 	/**
-	 * 创建一个简单的MS
+	 * 创建一个MappedStatement
 	 *
-	 * @param msId
+	 * @param mappedStatement
 	 * @param sqlSource
 	 *            执行的sqlSource
 	 * @param sqlCommandType
 	 *            执行的sqlCommandType
 	 */
-	private void newUpdateMappedStatement(String msId, SqlSource sqlSource, SqlCommandType sqlCommandType) {
-		MappedStatement ms = new MappedStatement.Builder(configuration, msId, sqlSource, sqlCommandType).resultMaps(
+	private void createUpdateMappedStatement(String mappedStatement, SqlSource sqlSource, SqlCommandType sqlCommandType) {
+		MappedStatement ms = new MappedStatement.Builder(configuration, mappedStatement, sqlSource, sqlCommandType).resultMaps(
 				new ArrayList<ResultMap>() {
 					{
 						add(new ResultMap.Builder(configuration, "defaultResultMap", int.class, new ArrayList<ResultMapping>(0))
@@ -796,22 +780,23 @@ public class AutoSqlInjector implements ISqlInjector {
 	 */
 	private void initSelect() {
 		if (hasMappedStatement(SqlRunner.SELECT)) {
-			logger.warn("SqlMapper Select Initialization exception");
+			logger.warn("MappedStatement 'SqlRunner.Select' Aalready Exists");
 			return;
 		}
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, SqlRunner.SQLScript, Map.class);
-		newSelectMappedStatement(SqlRunner.SELECT, sqlSource, Map.class);
+		createSelectMappedStatement(SqlRunner.SELECT, sqlSource, Map.class);
 	}
+
 	/**
 	 * initSelect
 	 */
 	private void initCount() {
 		if (hasMappedStatement(SqlRunner.COUNT)) {
-			logger.warn("SqlMapper Select Initialization exception");
+			logger.warn("MappedStatement 'SqlRunner.Count' Aalready Exists");
 			return;
 		}
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, SqlRunner.SQLScript, Map.class);
-		newSelectMappedStatement(SqlRunner.COUNT, sqlSource, Integer.class);
+		createSelectMappedStatement(SqlRunner.COUNT, sqlSource, Integer.class);
 	}
 
 	/**
@@ -819,11 +804,11 @@ public class AutoSqlInjector implements ISqlInjector {
 	 */
 	private void initInsert() {
 		if (hasMappedStatement(SqlRunner.INSERT)) {
-			logger.warn("SqlRunner Insert Initialization exception");
+			logger.warn("MappedStatement 'SqlRunner.Insert' Aalready Exists");
 			return;
 		}
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, SqlRunner.SQLScript, Map.class);
-		newUpdateMappedStatement(SqlRunner.INSERT, sqlSource, SqlCommandType.INSERT);
+		createUpdateMappedStatement(SqlRunner.INSERT, sqlSource, SqlCommandType.INSERT);
 	}
 
 	/**
@@ -831,11 +816,11 @@ public class AutoSqlInjector implements ISqlInjector {
 	 */
 	private void initUpdate() {
 		if (hasMappedStatement(SqlRunner.UPDATE)) {
-			logger.warn("SqlRunner Update Initialization exception");
+			logger.warn("MappedStatement 'SqlRunner.Update' Aalready Exists");
 			return;
 		}
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, SqlRunner.SQLScript, Map.class);
-		newUpdateMappedStatement(SqlRunner.UPDATE, sqlSource, SqlCommandType.UPDATE);
+		createUpdateMappedStatement(SqlRunner.UPDATE, sqlSource, SqlCommandType.UPDATE);
 	}
 
 	/**
@@ -843,11 +828,11 @@ public class AutoSqlInjector implements ISqlInjector {
 	 */
 	private void initDelete() {
 		if (hasMappedStatement(SqlRunner.DELETE)) {
-			logger.warn("SqlRunner Delete Initialization exception");
+			logger.warn("MappedStatement 'SqlRunner.Delete' Aalready Exists");
 			return;
 		}
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, SqlRunner.SQLScript, Map.class);
-		newUpdateMappedStatement(SqlRunner.DELETE, sqlSource, SqlCommandType.DELETE);
+		createUpdateMappedStatement(SqlRunner.DELETE, sqlSource, SqlCommandType.DELETE);
 	}
 
 }

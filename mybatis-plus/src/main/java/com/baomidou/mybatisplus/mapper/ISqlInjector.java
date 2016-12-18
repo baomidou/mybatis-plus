@@ -45,9 +45,10 @@ public interface ISqlInjector {
 	void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass);
 
 	/**
-	 * 注入全局CRUD SQL
-	 *
+	 * 注入SqlRunner相关
+	 * 
 	 * @param configuration
+	 * @see com.baomidou.mybatisplus.mapper.SqlRunner
 	 */
 	void injectSqlRunner(Configuration configuration);
 

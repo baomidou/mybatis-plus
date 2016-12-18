@@ -20,7 +20,6 @@ import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.SqlSession;
@@ -42,7 +41,7 @@ import java.util.Map;
 public class SqlRunner {
 
 	private static final Log logger = LogFactory.getLog(SqlRunner.class);
-
+	public static SqlSessionFactory FACTORY;
 	public static final String INSERT = "SqlRunner.Insert";
 	public static final String DELETE = "SqlRunner.Delete";
 	public static final String UPDATE = "SqlRunner.Update";
@@ -56,10 +55,7 @@ public class SqlRunner {
 	private SqlSessionFactory sqlSessionFactory;
 
 	public SqlRunner() {
-		TableInfo tableInfo = TableInfoHelper.getRandomTableInfo();
-		String configMark = tableInfo.getConfigMark();
-		GlobalConfiguration globalConfiguration = GlobalConfiguration.GlobalConfig(configMark);
-		this.sqlSessionFactory = globalConfiguration.getSqlSessionFactory();
+		this.sqlSessionFactory = FACTORY;
 	}
 
 	public SqlRunner(Class<?> clazz) {
@@ -69,33 +65,36 @@ public class SqlRunner {
 	}
 
 	public boolean insert(String sql, Object... args) {
-		Map<String,String> sqlMap = new HashMap<String,String>();
-		sqlMap.put(SQL,StringUtils.sqlArgsFill(sql, args));
-		return SqlHelper.retBool(sqlSession().insert(INSERT, sqlMap));
+		return SqlHelper.retBool(sqlSession().insert(INSERT, sqlMap(sql, args)));
 	}
 
 	public boolean delete(String sql, Object... args) {
-		Map<String,String> sqlMap = new HashMap<String,String>();
-		sqlMap.put(SQL,StringUtils.sqlArgsFill(sql, args));
-		return SqlHelper.retBool(sqlSession().delete(DELETE, sqlMap));
+		return SqlHelper.retBool(sqlSession().delete(DELETE, sqlMap(sql, args)));
+	}
+
+	/**
+	 * 获取sqlMap参数
+	 * 
+	 * @param sql
+	 * @param args
+	 * @return
+	 */
+	private Map<String, String> sqlMap(String sql, Object... args) {
+		Map<String, String> sqlMap = new HashMap<String, String>();
+		sqlMap.put(SQL, StringUtils.sqlArgsFill(sql, args));
+		return sqlMap;
 	}
 
 	public boolean update(String sql, Object... args) {
-		Map<String,String> sqlMap = new HashMap<String,String>();
-		sqlMap.put(SQL,StringUtils.sqlArgsFill(sql, args));
-		return SqlHelper.retBool(sqlSession().update(UPDATE, sqlMap));
+		return SqlHelper.retBool(sqlSession().update(UPDATE, sqlMap(sql, args)));
 	}
 
 	public List<Map<String, Object>> selectList(String sql, Object... args) {
-		Map<String,String> sqlMap = new HashMap<String,String>();
-		sqlMap.put(SQL,StringUtils.sqlArgsFill(sql, args));
-		return sqlSession().selectList(SELECT, sqlMap);
+		return sqlSession().selectList(SELECT, sqlMap(sql, args));
 	}
 
 	public int selectCount(String sql, Object... args) {
-		Map<String,String> sqlMap = new HashMap<String,String>();
-		sqlMap.put(SQL,StringUtils.sqlArgsFill(sql, args));
-		return sqlSession().<Integer> selectOne(COUNT, sqlMap);
+		return sqlSession().<Integer> selectOne(COUNT, sqlMap(sql, args));
 	}
 
 	public Map<String, Object> selectOne(String sql, Object... args) {
@@ -114,9 +113,7 @@ public class SqlRunner {
 		if (null == page) {
 			return null;
 		}
-		Map<String,String> sqlMap = new HashMap<String,String>();
-		sqlMap.put(SQL,StringUtils.sqlArgsFill(sql, args));
-		page.setRecords(sqlSession().selectList(SELECT, sqlMap, page));
+		page.setRecords(sqlSession().selectList(SELECT, sqlMap(sql, args), page));
 		return page;
 	}
 
