@@ -15,13 +15,13 @@
  */
 package com.baomidou.mybatisplus.test.mysql;
 
-import java.util.List;
-
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.session.RowBounds;
-
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
+
+import java.util.List;
 
 /**
  * <p>
@@ -52,5 +52,14 @@ public interface UserMapper extends BaseMapper<User> {
 	 * 自定义注入方法
 	 */
 	int deleteAll();
+
+	/**
+	 * 根据主键批量查询
+	 * 
+	 * @param pagination
+	 * @param ids
+	 * @return
+	 */
+	List<User> forSelect(RowBounds pagination, @Param("ids") List<String> ids);
 
 }
