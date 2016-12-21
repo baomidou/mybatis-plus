@@ -92,7 +92,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		if (null != entity) {
 			Class<?> cls = entity.getClass();
 			TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
-			if (null != tableInfo) {
+			if (null != tableInfo && tableInfo.getKeyProperty() != null) {
 				Object idVal = ReflectionKit.getMethodValue(cls, entity, tableInfo.getKeyProperty());
 				if (StringUtils.checkValNull(idVal)) {
 					return insert(entity);
