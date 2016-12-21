@@ -5,7 +5,7 @@ import ${superServiceClassPackage};
 
 /**
  * <p>
- * 服务类
+ * ${table.comment}  服务类
  * </p>
  *
  * @author ${author}
