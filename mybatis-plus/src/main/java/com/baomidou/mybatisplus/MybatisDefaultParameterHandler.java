@@ -231,7 +231,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 					} else {
 						MetaObject metaObject = configuration.newMetaObject(parameterObject);
 						value = metaObject.getValue(propertyName);
-						if (Objects.isNull(value) && MapUtils.isNotEmpty(additionalParameters)) {
+						if (value == null && MapUtils.isNotEmpty(additionalParameters)) {
 							// issue #138
 							value = additionalParameters.get(propertyName);
 						}
