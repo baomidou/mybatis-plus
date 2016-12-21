@@ -98,44 +98,46 @@ public class AutoSqlInjector implements ISqlInjector {
 			globalCache.setDbColumnUnderline(configuration.isMapUnderscoreToCamelCase());
 		}
 		Class<?> modelClass = extractModelClass(mapperClass);
-		TableInfo table = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
+		if(modelClass!=null){
+			TableInfo table = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
 
-		/**
-		 * 没有指定主键，默认方法不能使用
-		 */
-		if (null != table && null != table.getKeyProperty()) {
+			/**
+			 * 没有指定主键，默认方法不能使用
+			 */
+			if (null != table && null != table.getKeyProperty()) {
 			/* 插入 */
-			this.injectInsertOneSql(mapperClass, modelClass, table);
+				this.injectInsertOneSql(mapperClass, modelClass, table);
 
 			/* 删除 */
-			this.injectDeleteSql(mapperClass, modelClass, table);
-			this.injectDeleteByMapSql(mapperClass, table);
-			this.injectDeleteByIdSql(false, mapperClass, modelClass, table);
-			this.injectDeleteByIdSql(true, mapperClass, modelClass, table);
+				this.injectDeleteSql(mapperClass, modelClass, table);
+				this.injectDeleteByMapSql(mapperClass, table);
+				this.injectDeleteByIdSql(false, mapperClass, modelClass, table);
+				this.injectDeleteByIdSql(true, mapperClass, modelClass, table);
 
 			/* 修改 */
-			this.injectUpdateByIdSql(mapperClass, modelClass, table);
-			this.injectUpdateSql(mapperClass, modelClass, table);
+				this.injectUpdateByIdSql(mapperClass, modelClass, table);
+				this.injectUpdateSql(mapperClass, modelClass, table);
 
 			/* 查询 */
-			this.injectSelectByIdSql(false, mapperClass, modelClass, table);
-			this.injectSelectByIdSql(true, mapperClass, modelClass, table);
-			this.injectSelectByMapSql(mapperClass, modelClass, table);
-			this.injectSelectOneSql(mapperClass, modelClass, table);
-			this.injectSelectCountSql(mapperClass, modelClass, table);
-			this.injectSelectListSql(SqlMethod.SELECT_LIST, mapperClass, modelClass, table);
-			this.injectSelectListSql(SqlMethod.SELECT_PAGE, mapperClass, modelClass, table);
-			this.injectSelectMapsSql(SqlMethod.SELECT_MAPS, mapperClass, modelClass, table);
-			this.injectSelectMapsSql(SqlMethod.SELECT_MAPS_PAGE, mapperClass, modelClass, table);
+				this.injectSelectByIdSql(false, mapperClass, modelClass, table);
+				this.injectSelectByIdSql(true, mapperClass, modelClass, table);
+				this.injectSelectByMapSql(mapperClass, modelClass, table);
+				this.injectSelectOneSql(mapperClass, modelClass, table);
+				this.injectSelectCountSql(mapperClass, modelClass, table);
+				this.injectSelectListSql(SqlMethod.SELECT_LIST, mapperClass, modelClass, table);
+				this.injectSelectListSql(SqlMethod.SELECT_PAGE, mapperClass, modelClass, table);
+				this.injectSelectMapsSql(SqlMethod.SELECT_MAPS, mapperClass, modelClass, table);
+				this.injectSelectMapsSql(SqlMethod.SELECT_MAPS_PAGE, mapperClass, modelClass, table);
 
 			/* 自定义方法 */
-			this.inject(configuration, builderAssistant, mapperClass, modelClass, table);
-		} else {
-			/**
-			 * 警告
-			 */
-			logger.warn(String.format("%s ,Not found @TableId annotation, cannot use mybatis-plus curd method.",
-					modelClass.toString()));
+				this.inject(configuration, builderAssistant, mapperClass, modelClass, table);
+			} else {
+				/**
+				 * 警告
+				 */
+				logger.warn(String.format("%s ,Not found @TableId annotation, cannot use mybatis-plus curd method.",
+						modelClass.toString()));
+			}
 		}
 	}
 
@@ -148,17 +150,22 @@ public class AutoSqlInjector implements ISqlInjector {
 	}
 
 	protected Class<?> extractModelClass(Class<?> mapperClass) {
-		Type[] types = mapperClass.getGenericInterfaces();
-		ParameterizedType target = null;
-		for (Type type : types) {
-			if (type instanceof ParameterizedType && BaseMapper.class.isAssignableFrom(mapperClass)) {
-				target = (ParameterizedType) type;
-				break;
+		if(mapperClass==BaseMapper.class){
+			logger.warn(" Current Class is BaseMapper ");
+			return null;
+		}else {
+			Type[] types = mapperClass.getGenericInterfaces();
+			ParameterizedType target = null;
+			for (Type type : types) {
+				if (type instanceof ParameterizedType && BaseMapper.class.isAssignableFrom(mapperClass)) {
+					target = (ParameterizedType) type;
+					break;
+				}
 			}
+			Type[] parameters = target.getActualTypeArguments();
+			Class<?> modelClass = (Class<?>) parameters[0];
+			return modelClass;
 		}
-		Type[] parameters = target.getActualTypeArguments();
-		Class<?> modelClass = (Class<?>) parameters[0];
-		return modelClass;
 	}
 
 	/**
