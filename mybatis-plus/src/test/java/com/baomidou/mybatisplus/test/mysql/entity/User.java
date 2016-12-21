@@ -27,7 +27,7 @@ import java.lang.reflect.Field;
  * <p>
  * 测试用户类
  * </p>
- * 
+ *
  * @author hubin sjy
  * @Date 2016-09-09
  */
@@ -55,7 +55,7 @@ public class User implements Serializable {
 	@TableField(el = "role.id")
 	private Role role;
 
-	private String desc;
+	private String desc = "默认描述";
 
 	// 或@TableField(el = "role,jdbcType=BIGINT)
 	@TableField(el = "phone, typeHandler=com.baomidou.mybatisplus.test.mysql.typehandler.PhoneTypeHandler")
