@@ -48,10 +48,14 @@ public class ${entity} implements Serializable {
 	/**
 	 * ${field.comment}
 	 */
-#if(${field.keyFlag} && ${field.convert})
-	@TableId(value="${field.name}")
-#elseif(${field.convert})
+#if(${field.keyFlag})
+	@TableId#if(${field.convert})(value="${field.name}")
+#end
+
+#else
+#if(${field.convert})
 	@TableField(value="${field.name}")
+#end
 #end
 	private ${field.propertyType} ${field.propertyName};
 #end

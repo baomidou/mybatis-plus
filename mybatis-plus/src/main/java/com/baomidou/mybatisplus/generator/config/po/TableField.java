@@ -84,7 +84,7 @@ public class TableField {
 		if (StrategyConfig.DB_COLUMN_UNDERLINE) {
 			return false;
 		}
-		return !name.equals(propertyName);
+		return !name.equalsIgnoreCase(propertyName);
 	}
 
 	public String getCapitalName() {
