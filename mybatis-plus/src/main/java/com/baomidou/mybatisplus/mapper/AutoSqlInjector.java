@@ -102,25 +102,40 @@ public class AutoSqlInjector implements ISqlInjector {
 			TableInfo table = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
 
 			/**
-			 * 没有指定主键，默认方法不能使用
+			 * 表信息不为空的情况
 			 */
-			if (null != table && null != table.getKeyProperty()) {
+			if (null != table) {
+				/**
+				 * #148 表信息包含主键，注入主键相关方法
+				 */
+				if (null != table.getKeyProperty()) {
+					/* 删除 */
+					this.injectDeleteByIdSql(false, mapperClass, modelClass, table);
+					this.injectDeleteByIdSql(true, mapperClass, modelClass, table);
+					/* 修改 */
+					this.injectUpdateByIdSql(mapperClass, modelClass, table);
+					/* 查询 */
+					this.injectSelectByIdSql(false, mapperClass, modelClass, table);
+					this.injectSelectByIdSql(true, mapperClass, modelClass, table);
+				}
+				/**
+				 * 表不包含主键时 给予警告
+				 */
+				if (null == table.getKeyProperty()) {
+					logger.warn(String.format("%s ,Not found @TableId annotation, Cannot use Mybatis-Plus 'xxById' Method.",
+							modelClass.toString()));
+				}
+				/**
+				 * 正常注入无需主键方法
+				 */
 				/* 插入 */
 				this.injectInsertOneSql(mapperClass, modelClass, table);
-
 				/* 删除 */
 				this.injectDeleteSql(mapperClass, modelClass, table);
 				this.injectDeleteByMapSql(mapperClass, table);
-				this.injectDeleteByIdSql(false, mapperClass, modelClass, table);
-				this.injectDeleteByIdSql(true, mapperClass, modelClass, table);
-
 				/* 修改 */
-				this.injectUpdateByIdSql(mapperClass, modelClass, table);
 				this.injectUpdateSql(mapperClass, modelClass, table);
-
 				/* 查询 */
-				this.injectSelectByIdSql(false, mapperClass, modelClass, table);
-				this.injectSelectByIdSql(true, mapperClass, modelClass, table);
 				this.injectSelectByMapSql(mapperClass, modelClass, table);
 				this.injectSelectOneSql(mapperClass, modelClass, table);
 				this.injectSelectCountSql(mapperClass, modelClass, table);
@@ -128,14 +143,13 @@ public class AutoSqlInjector implements ISqlInjector {
 				this.injectSelectListSql(SqlMethod.SELECT_PAGE, mapperClass, modelClass, table);
 				this.injectSelectMapsSql(SqlMethod.SELECT_MAPS, mapperClass, modelClass, table);
 				this.injectSelectMapsSql(SqlMethod.SELECT_MAPS_PAGE, mapperClass, modelClass, table);
-
 				/* 自定义方法 */
 				this.inject(configuration, builderAssistant, mapperClass, modelClass, table);
 			} else {
 				/**
-				 * 警告
+				 * 警告 Mybatis-Plus 默认方法不能使用
 				 */
-				logger.warn(String.format("%s ,Not found @TableId annotation, cannot use mybatis-plus curd method.",
+				logger.warn(String.format("%s ,Not found Table Detail, Cannot use Mybatis-Plus CRUD Method.",
 						modelClass.toString()));
 			}
 		}
@@ -191,16 +205,21 @@ public class AutoSqlInjector implements ISqlInjector {
 		placeholderBuilder.append("\n<trim prefix=\"(\" suffix=\")\" suffixOverrides=\",\">\n");
 		String keyProperty = null;
 		String keyColumn = null;
-		if (table.getIdType() == IdType.AUTO) {
-			/* 自增主键 */
-			keyGenerator = new Jdbc3KeyGenerator();
-			keyProperty = table.getKeyProperty();
-			keyColumn = table.getKeyColumn();
-		} else {
-			/* 用户输入自定义ID */
-			fieldBuilder.append(table.getKeyColumn()).append(",");
-			placeholderBuilder.append("#{").append(table.getKeyProperty()).append("},");
+
+		// 表包含主键处理逻辑,如果不包含主键当普通字段处理
+		if (null != table.getKeyProperty()) {
+			if (table.getIdType() == IdType.AUTO) {
+				/* 自增主键 */
+				keyGenerator = new Jdbc3KeyGenerator();
+				keyProperty = table.getKeyProperty();
+				keyColumn = table.getKeyColumn();
+			} else {
+				/* 用户输入自定义ID */
+				fieldBuilder.append(table.getKeyColumn()).append(",");
+				placeholderBuilder.append("#{").append(table.getKeyProperty()).append("},");
+			}
 		}
+
 		List<TableFieldInfo> fieldList = table.getFieldList();
 		for (TableFieldInfo fieldInfo : fieldList) {
 			fieldBuilder.append(convertIfTagIgnored(fieldInfo, false));

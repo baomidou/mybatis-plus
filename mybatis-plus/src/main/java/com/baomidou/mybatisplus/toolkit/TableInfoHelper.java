@@ -149,11 +149,10 @@ public class TableInfoHelper {
 		/* 字段列表 */
 		tableInfo.setFieldList(fieldList);
 		/*
-		 * 未发现主键注解，跳过注入
+		 * 未发现主键注解，提示警告信息
 		 */
 		if (null == tableInfo.getKeyColumn()) {
-			logger.warn(String.format("Warn: Could not find @TableId in Class: %s, initTableInfo Method Fail.", clazz.getName()));
-			return null;
+			logger.warn(String.format("Warn: Could not find @TableId in Class: %s.", clazz.getName()));
 		}
 		/*
 		 * 注入
