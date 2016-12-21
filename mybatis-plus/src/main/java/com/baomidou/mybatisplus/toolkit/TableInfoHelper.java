@@ -143,7 +143,7 @@ public class TableInfoHelper {
 			/**
 			 * 字段, 使用 camelToUnderline 转换驼峰写法为下划线分割法, 如果已指定 TableField , 便不会执行这里
 			 */
-			fieldList.add(new TableFieldInfo(globalCache, field.getName()));
+			fieldList.add(new TableFieldInfo(globalCache, field.getName(), field.getType().getName()));
 		}
 
 		/* 字段列表 */
@@ -307,7 +307,8 @@ public class TableInfoHelper {
 			String[] els = el.split(";");
 			if (null != columns && null != els && columns.length == els.length) {
 				for (int i = 0; i < columns.length; i++) {
-					fieldList.add(new TableFieldInfo(globalCache, columns[i], field.getName(), els[i], validate));
+					fieldList.add(new TableFieldInfo(globalCache, columns[i], field.getName(), els[i], validate, field.getType()
+							.getName()));
 				}
 			} else {
 				String errorMsg = "Class: %s, Field: %s, 'value' 'el' Length must be consistent.";

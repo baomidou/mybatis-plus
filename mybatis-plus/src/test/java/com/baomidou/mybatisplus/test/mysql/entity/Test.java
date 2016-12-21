@@ -15,9 +15,11 @@
  */
 package com.baomidou.mybatisplus.test.mysql.entity;
 
-import java.io.Serializable;
-
 import com.baomidou.mybatisplus.activerecord.Model;
+import com.baomidou.mybatisplus.annotations.TableField;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * <p>
@@ -27,7 +29,7 @@ import com.baomidou.mybatisplus.activerecord.Model;
  * @author Caratacu
  * @Date 2016-09-25
  */
-//表名为 test 可以不需要注解，特殊如 @TableName("tb_test")
+// 表名为 test 可以不需要注解，特殊如 @TableName("tb_test")
 public class Test extends Model<Test> {
 
 	// 静态属性会自动忽略
@@ -38,6 +40,9 @@ public class Test extends Model<Test> {
 	private Long id;
 
 	private String type;
+
+	@TableField("create_time")
+	private Date createTime;
 
 	public Test() {
 
@@ -64,6 +69,14 @@ public class Test extends Model<Test> {
 		this.type = type;
 	}
 
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+
 	@Override
 	protected Serializable pkVal() {
 		return id;
@@ -72,4 +85,5 @@ public class Test extends Model<Test> {
 	public String toString() {
 		return "{id=" + id + ",type=" + type + "}";
 	}
+
 }

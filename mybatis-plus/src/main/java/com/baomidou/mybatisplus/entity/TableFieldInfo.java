@@ -51,13 +51,18 @@ public class TableFieldInfo {
 	 * 属性表达式#{property}, 可以指定jdbcType, typeHandler等
 	 */
 	private String el;
+	/**
+	 * 属性类型
+	 */
+	private String propertyType;
 
 	/**
 	 * 字段策略【 默认，自判断 null 】
 	 */
 	private FieldStrategy fieldStrategy = FieldStrategy.NOT_NULL;
 
-	public TableFieldInfo(GlobalConfiguration globalConfig, String column, String property, String el, FieldStrategy fieldStrategy) {
+	public TableFieldInfo(GlobalConfiguration globalConfig, String column, String property, String el,
+			FieldStrategy fieldStrategy, String propertyType) {
 		if (globalConfig.isDbColumnUnderline()) {
 			/* 开启字段下划线申明 */
 			this.related = true;
@@ -79,9 +84,10 @@ public class TableFieldInfo {
 		} else {
 			this.fieldStrategy = globalConfig.getFieldStrategy();
 		}
+		this.propertyType = propertyType;
 	}
 
-	public TableFieldInfo(GlobalConfiguration globalConfig, String column) {
+	public TableFieldInfo(GlobalConfiguration globalConfig, String column, String propertyType) {
 		if (globalConfig.isDbColumnUnderline()) {
 			/* 开启字段下划线申明 */
 			this.related = true;
@@ -92,6 +98,7 @@ public class TableFieldInfo {
 		this.property = column;
 		this.el = column;
 		this.fieldStrategy = globalConfig.getFieldStrategy();
+		this.propertyType = propertyType;
 	}
 
 	public boolean isRelated() {
@@ -139,4 +146,11 @@ public class TableFieldInfo {
 		this.fieldStrategy = fieldStrategy;
 	}
 
+	public String getPropertyType() {
+		return propertyType;
+	}
+
+	public void setPropertyType(String propertyType) {
+		this.propertyType = propertyType;
+	}
 }

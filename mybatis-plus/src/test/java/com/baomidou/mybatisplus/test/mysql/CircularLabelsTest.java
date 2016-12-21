@@ -17,12 +17,14 @@ package com.baomidou.mybatisplus.test.mysql;
 
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.test.mysql.entity.Test;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -54,5 +56,11 @@ public class CircularLabelsTest {
         user.setId(1L);
         User users1 = userMapper.selectOne(user);
         System.out.println(users1);
+        TestMapper mapper = session.getMapper(TestMapper.class);
+        Test test = new Test();
+        test.setCreateTime(new Date());
+        test.setType("11111");
+        mapper.insert(test);
+        session.rollback();
     }
 }

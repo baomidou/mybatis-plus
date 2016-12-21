@@ -98,27 +98,27 @@ public class AutoSqlInjector implements ISqlInjector {
 			globalCache.setDbColumnUnderline(configuration.isMapUnderscoreToCamelCase());
 		}
 		Class<?> modelClass = extractModelClass(mapperClass);
-		if(modelClass!=null){
+		if (modelClass != null) {
 			TableInfo table = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
 
 			/**
 			 * 没有指定主键，默认方法不能使用
 			 */
 			if (null != table && null != table.getKeyProperty()) {
-			/* 插入 */
+				/* 插入 */
 				this.injectInsertOneSql(mapperClass, modelClass, table);
 
-			/* 删除 */
+				/* 删除 */
 				this.injectDeleteSql(mapperClass, modelClass, table);
 				this.injectDeleteByMapSql(mapperClass, table);
 				this.injectDeleteByIdSql(false, mapperClass, modelClass, table);
 				this.injectDeleteByIdSql(true, mapperClass, modelClass, table);
 
-			/* 修改 */
+				/* 修改 */
 				this.injectUpdateByIdSql(mapperClass, modelClass, table);
 				this.injectUpdateSql(mapperClass, modelClass, table);
 
-			/* 查询 */
+				/* 查询 */
 				this.injectSelectByIdSql(false, mapperClass, modelClass, table);
 				this.injectSelectByIdSql(true, mapperClass, modelClass, table);
 				this.injectSelectByMapSql(mapperClass, modelClass, table);
@@ -129,7 +129,7 @@ public class AutoSqlInjector implements ISqlInjector {
 				this.injectSelectMapsSql(SqlMethod.SELECT_MAPS, mapperClass, modelClass, table);
 				this.injectSelectMapsSql(SqlMethod.SELECT_MAPS_PAGE, mapperClass, modelClass, table);
 
-			/* 自定义方法 */
+				/* 自定义方法 */
 				this.inject(configuration, builderAssistant, mapperClass, modelClass, table);
 			} else {
 				/**
@@ -150,10 +150,10 @@ public class AutoSqlInjector implements ISqlInjector {
 	}
 
 	protected Class<?> extractModelClass(Class<?> mapperClass) {
-		if(mapperClass==BaseMapper.class){
+		if (mapperClass == BaseMapper.class) {
 			logger.warn(" Current Class is BaseMapper ");
 			return null;
-		}else {
+		} else {
 			Type[] types = mapperClass.getGenericInterfaces();
 			ParameterizedType target = null;
 			for (Type type : types) {
@@ -619,7 +619,6 @@ public class AutoSqlInjector implements ISqlInjector {
 			if (ignored) {
 				return "";
 			}
-			// TODO 考虑日期类型忽略
 			// 查询策略，使用全局策略
 			fieldStrategy = GlobalConfiguration.GlobalConfig(configuration).getFieldStrategy();
 		}
@@ -637,7 +636,13 @@ public class AutoSqlInjector implements ISqlInjector {
 
 		// 验证逻辑
 		if (fieldStrategy == FieldStrategy.NOT_EMPTY) {
-			return String.format("\n\t<if test=\"%s!=null and %s!=''\">", property, property);
+			String propertyType = fieldInfo.getPropertyType();
+			// 如果是Date类型
+			if ("java.util.Date".equals(propertyType) || "java.sql.Date".equals(propertyType)) {
+				return String.format("\n\t<if test=\"%s!=null \">", property, property);
+			} else {
+				return String.format("\n\t<if test=\"%s!=null and %s!=''\">", property, property);
+			}
 		} else {
 			// FieldStrategy.NOT_NULL
 			return String.format("\n\t<if test=\"%s!=null\">", property);
