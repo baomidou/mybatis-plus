@@ -15,13 +15,13 @@
  */
 package com.baomidou.mybatisplus.test.mysql.entity;
 
-import java.io.Serializable;
-import java.lang.reflect.Field;
-
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
+
+import java.io.Serializable;
+import java.lang.reflect.Field;
 
 /**
  * <p>
@@ -55,7 +55,7 @@ public class User implements Serializable {
 	@TableField(el = "role.id")
 	private Role role;
 
-	private String desc = "默认描述";
+	private String desc;
 
 	// 或@TableField(el = "role,jdbcType=BIGINT)
 	@TableField(el = "phone, typeHandler=com.baomidou.mybatisplus.test.mysql.typehandler.PhoneTypeHandler")

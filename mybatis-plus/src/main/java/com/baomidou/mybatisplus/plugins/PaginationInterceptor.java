@@ -35,6 +35,7 @@ import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
+import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
@@ -217,7 +218,7 @@ public class PaginationInterceptor implements Interceptor {
 		ResultSet rs = null;
 		try {
 			pstmt = connection.prepareStatement(sql);
-			MybatisDefaultParameterHandler parameterHandler = new MybatisDefaultParameterHandler(mappedStatement,
+			DefaultParameterHandler parameterHandler = new MybatisDefaultParameterHandler(mappedStatement,
 					boundSql.getParameterObject(), boundSql);
 			parameterHandler.setParameters(pstmt);
 			rs = pstmt.executeQuery();

@@ -45,6 +45,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -60,7 +61,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 	/**
 	 * @see org.apache.ibatis.mapping.BoundSql
 	 */
-	public static Field additionalParametersField;
+	private static Field additionalParametersField;
 	private final TypeHandlerRegistry typeHandlerRegistry;
 	private final MappedStatement mappedStatement;
 	private final Object parameterObject;
@@ -228,12 +229,11 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 					} else if (typeHandlerRegistry.hasTypeHandler(parameterObject.getClass())) {
 						value = parameterObject;
 					} else {
-						if (MapUtils.isNotEmpty(additionalParameters)) {
-							//issue #138
-						    value = additionalParameters.get(propertyName);
-						} else {
-							MetaObject metaObject = configuration.newMetaObject(parameterObject);
-							value = metaObject.getValue(propertyName);
+						MetaObject metaObject = configuration.newMetaObject(parameterObject);
+						value = metaObject.getValue(propertyName);
+						if (Objects.isNull(value) && MapUtils.isNotEmpty(additionalParameters)) {
+							// issue #138
+							value = additionalParameters.get(propertyName);
 						}
 					}
 					TypeHandler typeHandler = parameterMapping.getTypeHandler();

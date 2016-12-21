@@ -42,10 +42,6 @@ public class CircularLabelsTest {
 
 		// 加载配置文件
 		InputStream in = CircularLabelsTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
-		/*
-		 * 此处采用 MybatisSessionFactoryBuilder 构建
-		 * SqlSessionFactory，目的是引入BaseMapper功能
-		 */
 		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
 		SqlSessionFactory sessionFactory = mf.build(in);
 		SqlSession session = sessionFactory.openSession();
@@ -54,5 +50,9 @@ public class CircularLabelsTest {
 		List<User> users = userMapper.forSelect(page, Arrays.asList(new String[] { "1", "2", "3" }));
 		System.out.println(users.toString());
 		System.out.println(page);
-	}
+		User user = new User();
+        user.setId(1L);
+        User users1 = userMapper.selectOne(user);
+        System.out.println(users1);
+    }
 }
