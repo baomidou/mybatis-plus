@@ -185,32 +185,41 @@ public class AutoSqlInjector implements ISqlInjector {
 	 */
 	protected void InjectRequiredPK(MapperBuilderAssistant builderAssistant, Class<?> mapperClass, Class<?> modelClass,
 			TableInfo table) {
-		/* 插入 */
-		this.injectInsertOneSql(mapperClass, modelClass, table);
+		if (null != table.getKeyProperty()) {
+			/* 插入 */
+			this.injectInsertOneSql(mapperClass, modelClass, table);
 
-		/* 删除 */
-		this.injectDeleteSql(mapperClass, modelClass, table);
-		this.injectDeleteByMapSql(mapperClass, table);
-		this.injectDeleteByIdSql(false, mapperClass, modelClass, table);
-		this.injectDeleteByIdSql(true, mapperClass, modelClass, table);
+			/* 删除 */
+			this.injectDeleteSql(mapperClass, modelClass, table);
+			this.injectDeleteByMapSql(mapperClass, table);
+			this.injectDeleteByIdSql(false, mapperClass, modelClass, table);
+			this.injectDeleteByIdSql(true, mapperClass, modelClass, table);
 
-		/* 修改 */
-		this.injectUpdateByIdSql(mapperClass, modelClass, table);
-		this.injectUpdateSql(mapperClass, modelClass, table);
+			/* 修改 */
+			this.injectUpdateByIdSql(mapperClass, modelClass, table);
+			this.injectUpdateSql(mapperClass, modelClass, table);
 
-		/* 查询 */
-		this.injectSelectByIdSql(false, mapperClass, modelClass, table);
-		this.injectSelectByIdSql(true, mapperClass, modelClass, table);
-		this.injectSelectByMapSql(mapperClass, modelClass, table);
-		this.injectSelectOneSql(mapperClass, modelClass, table);
-		this.injectSelectCountSql(mapperClass, modelClass, table);
-		this.injectSelectListSql(SqlMethod.SELECT_LIST, mapperClass, modelClass, table);
-		this.injectSelectListSql(SqlMethod.SELECT_PAGE, mapperClass, modelClass, table);
-		this.injectSelectMapsSql(SqlMethod.SELECT_MAPS, mapperClass, modelClass, table);
-		this.injectSelectMapsSql(SqlMethod.SELECT_MAPS_PAGE, mapperClass, modelClass, table);
+			/* 查询 */
+			this.injectSelectByIdSql(false, mapperClass, modelClass, table);
+			this.injectSelectByIdSql(true, mapperClass, modelClass, table);
+			this.injectSelectByMapSql(mapperClass, modelClass, table);
+			this.injectSelectOneSql(mapperClass, modelClass, table);
+			this.injectSelectCountSql(mapperClass, modelClass, table);
+			this.injectSelectListSql(SqlMethod.SELECT_LIST, mapperClass, modelClass, table);
+			this.injectSelectListSql(SqlMethod.SELECT_PAGE, mapperClass, modelClass, table);
+			this.injectSelectMapsSql(SqlMethod.SELECT_MAPS, mapperClass, modelClass, table);
+			this.injectSelectMapsSql(SqlMethod.SELECT_MAPS_PAGE, mapperClass, modelClass, table);
 
-		/* 自定义方法 */
-		this.inject(configuration, builderAssistant, mapperClass, modelClass, table);
+			/* 自定义方法 */
+			this.inject(configuration, builderAssistant, mapperClass, modelClass, table);
+		} else {
+			/**
+			 * 警告
+			 */
+			logger.warn(String.format("%s ,Not found @TableId annotation, Cannot use Mybatis-Plus crud Method.",
+					modelClass.toString()));
+		}
+
 	}
 
 	/**
