@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.enums.DBType;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.enums.IdType;
+import com.baomidou.mybatisplus.enums.InjectionRules;
 import com.baomidou.mybatisplus.enums.SqlMethod;
 import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
@@ -105,46 +106,13 @@ public class AutoSqlInjector implements ISqlInjector {
 			 * 表信息不为空的情况
 			 */
 			if (null != table) {
-				/**
-				 * #148 表信息包含主键，注入主键相关方法
-				 */
-				if (null != table.getKeyProperty()) {
-					/* 删除 */
-					this.injectDeleteByIdSql(false, mapperClass, modelClass, table);
-					this.injectDeleteByIdSql(true, mapperClass, modelClass, table);
-					/* 修改 */
-					this.injectUpdateByIdSql(mapperClass, modelClass, table);
-					/* 查询 */
-					this.injectSelectByIdSql(false, mapperClass, modelClass, table);
-					this.injectSelectByIdSql(true, mapperClass, modelClass, table);
+				InjectionRules injectionRule = globalCache.getInjectionRule();
+				if (InjectionRules.UNREQUIREDPK.equals(injectionRule)) {
+					InjectUnrequiredPK(builderAssistant, mapperClass, modelClass, table);
+				} else {
+					InjectRequiredPK(builderAssistant, mapperClass, modelClass, table);
 				}
-				/**
-				 * 表不包含主键时 给予警告
-				 */
-				if (null == table.getKeyProperty()) {
-					logger.warn(String.format("%s ,Not found @TableId annotation, Cannot use Mybatis-Plus 'xxById' Method.",
-							modelClass.toString()));
-				}
-				/**
-				 * 正常注入无需主键方法
-				 */
-				/* 插入 */
-				this.injectInsertOneSql(mapperClass, modelClass, table);
-				/* 删除 */
-				this.injectDeleteSql(mapperClass, modelClass, table);
-				this.injectDeleteByMapSql(mapperClass, table);
-				/* 修改 */
-				this.injectUpdateSql(mapperClass, modelClass, table);
-				/* 查询 */
-				this.injectSelectByMapSql(mapperClass, modelClass, table);
-				this.injectSelectOneSql(mapperClass, modelClass, table);
-				this.injectSelectCountSql(mapperClass, modelClass, table);
-				this.injectSelectListSql(SqlMethod.SELECT_LIST, mapperClass, modelClass, table);
-				this.injectSelectListSql(SqlMethod.SELECT_PAGE, mapperClass, modelClass, table);
-				this.injectSelectMapsSql(SqlMethod.SELECT_MAPS, mapperClass, modelClass, table);
-				this.injectSelectMapsSql(SqlMethod.SELECT_MAPS_PAGE, mapperClass, modelClass, table);
-				/* 自定义方法 */
-				this.inject(configuration, builderAssistant, mapperClass, modelClass, table);
+
 			} else {
 				/**
 				 * 警告 Mybatis-Plus 默认方法不能使用
@@ -153,6 +121,96 @@ public class AutoSqlInjector implements ISqlInjector {
 						modelClass.toString()));
 			}
 		}
+	}
+
+	/**
+	 * 注入SQL时不需要主键策略
+	 * 
+	 * @param builderAssistant
+	 * @param mapperClass
+	 * @param modelClass
+	 * @param table
+	 */
+	protected void InjectUnrequiredPK(MapperBuilderAssistant builderAssistant, Class<?> mapperClass, Class<?> modelClass,
+			TableInfo table) {
+		/**
+		 * #148 表信息包含主键，注入主键相关方法
+		 */
+		if (null != table.getKeyProperty()) {
+			/* 删除 */
+			this.injectDeleteByIdSql(false, mapperClass, modelClass, table);
+			this.injectDeleteByIdSql(true, mapperClass, modelClass, table);
+			/* 修改 */
+			this.injectUpdateByIdSql(mapperClass, modelClass, table);
+			/* 查询 */
+			this.injectSelectByIdSql(false, mapperClass, modelClass, table);
+			this.injectSelectByIdSql(true, mapperClass, modelClass, table);
+		}
+		/**
+		 * 表不包含主键时 给予警告
+		 */
+		if (null == table.getKeyProperty()) {
+			logger.warn(String.format("%s ,Not found @TableId annotation, Cannot use Mybatis-Plus 'xxById' Method.",
+					modelClass.toString()));
+		}
+		/**
+		 * 正常注入无需主键方法
+		 */
+		/* 插入 */
+		this.injectInsertOneSql(mapperClass, modelClass, table);
+		/* 删除 */
+		this.injectDeleteSql(mapperClass, modelClass, table);
+		this.injectDeleteByMapSql(mapperClass, table);
+		/* 修改 */
+		this.injectUpdateSql(mapperClass, modelClass, table);
+		/* 查询 */
+		this.injectSelectByMapSql(mapperClass, modelClass, table);
+		this.injectSelectOneSql(mapperClass, modelClass, table);
+		this.injectSelectCountSql(mapperClass, modelClass, table);
+		this.injectSelectListSql(SqlMethod.SELECT_LIST, mapperClass, modelClass, table);
+		this.injectSelectListSql(SqlMethod.SELECT_PAGE, mapperClass, modelClass, table);
+		this.injectSelectMapsSql(SqlMethod.SELECT_MAPS, mapperClass, modelClass, table);
+		this.injectSelectMapsSql(SqlMethod.SELECT_MAPS_PAGE, mapperClass, modelClass, table);
+		/* 自定义方法 */
+		this.inject(configuration, builderAssistant, mapperClass, modelClass, table);
+	}
+
+	/**
+	 * 注入SQL时不需要主键策略
+	 * 
+	 * @param builderAssistant
+	 * @param mapperClass
+	 * @param modelClass
+	 * @param table
+	 */
+	protected void InjectRequiredPK(MapperBuilderAssistant builderAssistant, Class<?> mapperClass, Class<?> modelClass,
+			TableInfo table) {
+		/* 插入 */
+		this.injectInsertOneSql(mapperClass, modelClass, table);
+
+		/* 删除 */
+		this.injectDeleteSql(mapperClass, modelClass, table);
+		this.injectDeleteByMapSql(mapperClass, table);
+		this.injectDeleteByIdSql(false, mapperClass, modelClass, table);
+		this.injectDeleteByIdSql(true, mapperClass, modelClass, table);
+
+		/* 修改 */
+		this.injectUpdateByIdSql(mapperClass, modelClass, table);
+		this.injectUpdateSql(mapperClass, modelClass, table);
+
+		/* 查询 */
+		this.injectSelectByIdSql(false, mapperClass, modelClass, table);
+		this.injectSelectByIdSql(true, mapperClass, modelClass, table);
+		this.injectSelectByMapSql(mapperClass, modelClass, table);
+		this.injectSelectOneSql(mapperClass, modelClass, table);
+		this.injectSelectCountSql(mapperClass, modelClass, table);
+		this.injectSelectListSql(SqlMethod.SELECT_LIST, mapperClass, modelClass, table);
+		this.injectSelectListSql(SqlMethod.SELECT_PAGE, mapperClass, modelClass, table);
+		this.injectSelectMapsSql(SqlMethod.SELECT_MAPS, mapperClass, modelClass, table);
+		this.injectSelectMapsSql(SqlMethod.SELECT_MAPS_PAGE, mapperClass, modelClass, table);
+
+		/* 自定义方法 */
+		this.inject(configuration, builderAssistant, mapperClass, modelClass, table);
 	}
 
 	/**
