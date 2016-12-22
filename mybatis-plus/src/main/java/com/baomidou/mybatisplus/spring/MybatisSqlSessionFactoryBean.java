@@ -50,6 +50,7 @@ import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 
@@ -550,7 +551,11 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 		// TODO 自动设置数据库类型
 		if (globalConfig.isAutoSetDbType()) {
 			try {
-				String jdbcUrl = dataSource.getConnection().getMetaData().getURL();
+				Connection connection = dataSource.getConnection();
+				String jdbcUrl = connection.getMetaData().getURL();
+				if(!connection.isClosed()){
+					connection.close();
+				}
 				globalConfig.setDbTypeByJdbcUrl(jdbcUrl);
 			} catch (SQLException e) {
 				LOGGER.warn("Warn: Auto Set DbType Fail !  Cause:" + e);
