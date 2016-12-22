@@ -45,7 +45,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -166,7 +165,8 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 	 * @return
 	 */
 	protected static Object populateKeys(TableInfo tableInfo, MappedStatement ms, Object parameterObject) {
-		if (null != tableInfo && null != tableInfo.getIdType() && tableInfo.getIdType().getKey() >= 2) {
+		if (null != tableInfo && StringUtils.isNotEmpty(tableInfo.getKeyProperty()) && null != tableInfo.getIdType()
+				&& tableInfo.getIdType().getKey() >= 2) {
 			MetaObject metaObject = ms.getConfiguration().newMetaObject(parameterObject);
 			Object idValue = metaObject.getValue(tableInfo.getKeyProperty());
 			/* 自定义 ID */

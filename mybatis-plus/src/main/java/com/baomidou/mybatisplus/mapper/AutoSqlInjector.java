@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.enums.InjectionRules;
 import com.baomidou.mybatisplus.enums.SqlMethod;
 import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
@@ -136,7 +137,7 @@ public class AutoSqlInjector implements ISqlInjector {
 		/**
 		 * #148 表信息包含主键，注入主键相关方法
 		 */
-		if (null != table.getKeyProperty()) {
+		if (StringUtils.isNotEmpty(table.getKeyProperty())) {
 			/* 删除 */
 			this.injectDeleteByIdSql(false, mapperClass, modelClass, table);
 			this.injectDeleteByIdSql(true, mapperClass, modelClass, table);
@@ -149,7 +150,7 @@ public class AutoSqlInjector implements ISqlInjector {
 		/**
 		 * 表不包含主键时 给予警告
 		 */
-		if (null == table.getKeyProperty()) {
+		if (StringUtils.isEmpty(table.getKeyProperty())) {
 			logger.warn(String.format("%s ,Not found @TableId annotation, Cannot use Mybatis-Plus 'xxById' Method.",
 					modelClass.toString()));
 		}
@@ -185,7 +186,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 */
 	protected void InjectRequiredPK(MapperBuilderAssistant builderAssistant, Class<?> mapperClass, Class<?> modelClass,
 			TableInfo table) {
-		if (null != table.getKeyProperty()) {
+		if (StringUtils.isNotEmpty(table.getKeyProperty())) {
 			/* 插入 */
 			this.injectInsertOneSql(mapperClass, modelClass, table);
 
@@ -274,7 +275,7 @@ public class AutoSqlInjector implements ISqlInjector {
 		String keyColumn = null;
 
 		// 表包含主键处理逻辑,如果不包含主键当普通字段处理
-		if (null != table.getKeyProperty()) {
+		if (StringUtils.isNotEmpty(table.getKeyProperty())) {
 			if (table.getIdType() == IdType.AUTO) {
 				/* 自增主键 */
 				keyGenerator = new Jdbc3KeyGenerator();
@@ -520,7 +521,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	protected String sqlWhereEntityWrapper(TableInfo table) {
 		StringBuilder where = new StringBuilder("\n<if test=\"ew!=null\">");
 		where.append("\n<if test=\"ew.entity!=null\">\n<where>");
-		if (table.getKeyProperty() != null){
+		if (StringUtils.isNotEmpty(table.getKeyProperty())) {
 			where.append("\n<if test=\"ew.entity.").append(table.getKeyProperty()).append("!=null\">\n");
 			where.append(table.getKeyColumn()).append("=#{ew.entity.").append(table.getKeyProperty()).append("}");
 			where.append("\n</if>");
@@ -646,7 +647,7 @@ public class AutoSqlInjector implements ISqlInjector {
 			where.append("\n<if test=\"ew!=null\">");
 		}
 		where.append("\n<where>");
-		if (table.getKeyProperty() != null){
+		if (StringUtils.isNotEmpty(table.getKeyProperty())) {
 			where.append("\n<if test=\"ew.").append(table.getKeyProperty()).append("!=null\">\n");
 			where.append(table.getKeyColumn()).append("=#{ew.").append(table.getKeyProperty()).append("}");
 			where.append("\n</if>");

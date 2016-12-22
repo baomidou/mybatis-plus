@@ -151,7 +151,7 @@ public class TableInfoHelper {
 		/*
 		 * 未发现主键注解，提示警告信息
 		 */
-		if (null == tableInfo.getKeyColumn()) {
+		if (StringUtils.isEmpty(tableInfo.getKeyColumn())) {
 			logger.warn(String.format("Warn: Could not find @TableId in Class: %s.", clazz.getName()));
 		}
 		/*
@@ -195,7 +195,7 @@ public class TableInfoHelper {
 	private static boolean initTableId(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field, Class<?> clazz) {
 		TableId tableId = field.getAnnotation(TableId.class);
 		if (tableId != null) {
-			if (tableInfo.getKeyColumn() == null) {
+			if (StringUtils.isEmpty(tableInfo.getKeyColumn())) {
 				/*
 				 * 主键策略（ 注解 > 全局 > 默认 ）
 				 */
@@ -245,7 +245,7 @@ public class TableInfoHelper {
 			column = column.toUpperCase();
 		}
 		if (DEFAULT_ID_NAME.equalsIgnoreCase(column)) {
-			if (tableInfo.getKeyColumn() == null) {
+			if (StringUtils.isEmpty(tableInfo.getKeyColumn())) {
 				tableInfo.setIdType(globalConfig.getIdType());
 				tableInfo.setKeyColumn(column);
 				tableInfo.setKeyProperty(field.getName());
