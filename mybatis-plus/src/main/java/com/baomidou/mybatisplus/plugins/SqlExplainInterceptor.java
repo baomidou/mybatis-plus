@@ -77,6 +77,7 @@ public class SqlExplainInterceptor implements Interceptor {
 			if (GlobalConfiguration.getDbType(configuration).equals(DBType.MYSQL)
 					&& VersionUtils.compare(minMySQLVersion, databaseVersion)) {
 				logger.warn("Warn: Your mysql version needs to be greater than '5.6.3' to execute of Sql Explain!");
+				IOUtils.closeQuietly(connection);
 				return invocation.proceed();
 			}
 			/**
