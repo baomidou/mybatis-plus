@@ -71,8 +71,7 @@ public class SqlExplainInterceptor implements Interceptor {
 			Configuration configuration = ms.getConfiguration();
 			Object parameter = invocation.getArgs()[1];
 			BoundSql boundSql = ms.getBoundSql(parameter);
-			Executor exe = (Executor) invocation.getTarget();
-			Connection connection = exe.getTransaction().getConnection();
+			Connection connection = configuration.getEnvironment().getDataSource().getConnection();
 			String databaseVersion = connection.getMetaData().getDatabaseProductVersion();
 			if (GlobalConfiguration.getDbType(configuration).equals(DBType.MYSQL)
 					&& VersionUtils.compare(minMySQLVersion, databaseVersion)) {
@@ -134,7 +133,7 @@ public class SqlExplainInterceptor implements Interceptor {
 		} catch (Exception e) {
 			throw new MybatisPlusException(e);
 		} finally {
-			IOUtils.closeQuietly(rs, stmt);
+			IOUtils.closeQuietly(rs, stmt, connection);
 		}
 	}
 
