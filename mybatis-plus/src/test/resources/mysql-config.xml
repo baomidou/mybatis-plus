@@ -34,6 +34,7 @@
         <setting name="lazyLoadingEnabled" value="true" />
         <!-- 是否开启驼峰命名策略，例如 user_nane 映射为 userName -->
         <setting name="mapUnderscoreToCamelCase" value="false"/>
+
     </settings>
 
     <!-- 
@@ -85,6 +86,8 @@
 				<property name="url" value="jdbc:mysql://localhost:3306/mybatis-plus" />
 				<property name="username" value="root" />
 				<property name="password" value="521" />
+                <property name="poolMaximumActiveConnections" value="100"/>
+                <property name="poolMaximumIdleConnections" value="20"/>
 			<!-- 
 				<property name="driver" value="${jdbc.driver}" />
 				<property name="url" value="${jdbc.url}" />
@@ -107,6 +110,7 @@
     <mappers>
         <mapper resource="mysql/RoleMapper.xml"/>
         <mapper class="com.baomidou.mybatisplus.test.mysql.UserMapper" />
+        <mapper class="com.baomidou.mybatisplus.test.mysql.NotPKMapper" />
         <mapper resource="mysql/UserMapper.xml"/>
         <mapper class="com.baomidou.mybatisplus.test.mysql.RoleMapper" />
         <mapper class="com.baomidou.mybatisplus.test.mysql.TestMapper" />

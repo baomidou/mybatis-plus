@@ -39,6 +39,15 @@ CREATE TABLE `test` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
+-- Table structure for not_pk
+-- ----------------------------
+DROP TABLE IF EXISTS `not_pk`;
+CREATE TABLE `not_pk` (
+  `uuid` varchar(64) NOT NULL,
+  `type` varchar(64) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
 --  Records of `test`
 -- ----------------------------
 BEGIN;
