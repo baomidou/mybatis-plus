@@ -520,9 +520,11 @@ public class AutoSqlInjector implements ISqlInjector {
 	protected String sqlWhereEntityWrapper(TableInfo table) {
 		StringBuilder where = new StringBuilder("\n<if test=\"ew!=null\">");
 		where.append("\n<if test=\"ew.entity!=null\">\n<where>");
-		where.append("\n<if test=\"ew.entity.").append(table.getKeyProperty()).append("!=null\">\n");
-		where.append(table.getKeyColumn()).append("=#{ew.entity.").append(table.getKeyProperty()).append("}");
-		where.append("\n</if>");
+		if (table.getKeyProperty() != null){
+			where.append("\n<if test=\"ew.entity.").append(table.getKeyProperty()).append("!=null\">\n");
+			where.append(table.getKeyColumn()).append("=#{ew.entity.").append(table.getKeyProperty()).append("}");
+			where.append("\n</if>");
+		}
 		List<TableFieldInfo> fieldList = table.getFieldList();
 		for (TableFieldInfo fieldInfo : fieldList) {
 			where.append(convertIfTag(fieldInfo, "ew.entity.", false));
@@ -644,9 +646,11 @@ public class AutoSqlInjector implements ISqlInjector {
 			where.append("\n<if test=\"ew!=null\">");
 		}
 		where.append("\n<where>");
-		where.append("\n<if test=\"ew.").append(table.getKeyProperty()).append("!=null\">\n");
-		where.append(table.getKeyColumn()).append("=#{ew.").append(table.getKeyProperty()).append("}");
-		where.append("\n</if>");
+		if (table.getKeyProperty() != null){
+			where.append("\n<if test=\"ew.").append(table.getKeyProperty()).append("!=null\">\n");
+			where.append(table.getKeyColumn()).append("=#{ew.").append(table.getKeyProperty()).append("}");
+			where.append("\n</if>");
+		}
 		List<TableFieldInfo> fieldList = table.getFieldList();
 		for (TableFieldInfo fieldInfo : fieldList) {
 			where.append(convertIfTag(fieldInfo, "ew.", false));

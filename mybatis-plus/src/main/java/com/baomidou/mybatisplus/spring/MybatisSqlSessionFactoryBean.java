@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.MybatisXMLMapperBuilder;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.SqlRunner;
+import com.baomidou.mybatisplus.toolkit.IOUtils;
 import com.baomidou.mybatisplus.toolkit.PackageHelper;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.ErrorContext;
@@ -550,15 +551,15 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 		configuration.setEnvironment(new Environment(this.environment, this.transactionFactory, this.dataSource));
 		// TODO 自动设置数据库类型
 		if (globalConfig.isAutoSetDbType()) {
+			Connection connection = null;
 			try {
-				Connection connection = dataSource.getConnection();
+				connection = dataSource.getConnection();
 				String jdbcUrl = connection.getMetaData().getURL();
-				if(!connection.isClosed()){
-					connection.close();
-				}
 				globalConfig.setDbTypeByJdbcUrl(jdbcUrl);
 			} catch (SQLException e) {
 				LOGGER.warn("Warn: Auto Set DbType Fail !  Cause:" + e);
+			} finally {
+				IOUtils.closeQuietly(connection);
 			}
 		}
 		SqlSessionFactory sqlSessionFactory = this.sqlSessionFactoryBuilder.build(configuration);

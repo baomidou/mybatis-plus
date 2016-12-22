@@ -108,11 +108,11 @@
      | package  指向可以找到Mapper接口的包名
      | -->
     <mappers>
-        <mapper resource="mysql/RoleMapper.xml"/>
-        <mapper class="com.baomidou.mybatisplus.test.mysql.UserMapper" />
+       <!-- <mapper resource="mysql/RoleMapper.xml"/>-->
+      <!--  <mapper class="com.baomidou.mybatisplus.test.mysql.UserMapper" />-->
         <mapper class="com.baomidou.mybatisplus.test.mysql.NotPKMapper" />
-        <mapper resource="mysql/UserMapper.xml"/>
+       <!-- <mapper resource="mysql/UserMapper.xml"/>
         <mapper class="com.baomidou.mybatisplus.test.mysql.RoleMapper" />
-        <mapper class="com.baomidou.mybatisplus.test.mysql.TestMapper" />
+        <mapper class="com.baomidou.mybatisplus.test.mysql.TestMapper" />-->
     </mappers>
 </configuration>

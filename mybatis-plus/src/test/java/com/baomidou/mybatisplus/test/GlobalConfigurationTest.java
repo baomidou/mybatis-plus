@@ -19,16 +19,13 @@ import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.mapper.Condition;
 import com.baomidou.mybatisplus.test.mysql.NotPKMapper;
-import com.baomidou.mybatisplus.test.mysql.TestMapper;
 import com.baomidou.mybatisplus.test.mysql.entity.NotPK;
-import com.baomidou.mybatisplus.test.mysql.entity.Test;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.Assert;
 
 import java.io.InputStream;
-import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -57,13 +54,13 @@ public class GlobalConfigurationTest {
         global.setFieldStrategy(2);
         factoryBuilder.setGlobalConfig(global);
 		SqlSessionFactory sessionFactory = factoryBuilder.build(inputStream);
-		SqlSession session = sessionFactory.openSession(false);
-        TestMapper testMapper = session.getMapper(TestMapper.class);
-        Test test = new Test();
-        test.setCreateTime(new Date());
+		//SqlSession session = sessionFactory.openSession(false);
+      //  TestMapper testMapper = session.getMapper(TestMapper.class);
+      //  Test test = new Test();
+      //  test.setCreateTime(new Date());
         //开启全局校验字符串会忽略空字符串
-        test.setType("");
-        testMapper.insert(test);
+      //  test.setType("");
+      //  testMapper.insert(test);
         //
         SqlSession sqlSession = sessionFactory.openSession(false);
         NotPKMapper pkMapper = sqlSession.getMapper(NotPKMapper.class);
@@ -82,10 +79,10 @@ public class GlobalConfigurationTest {
         }
         Assert.assertNull(notPK2);
         int count = pkMapper.selectCount(Condition.Empty());
-        Assert.assertFalse(count > 0);
-       /* int deleteCount = pkMapper.delete(null);
-        Assert.assertTrue(deleteCount > 0);*/
-        session.rollback();
+        Assert.assertTrue(count > 0);
+        int deleteCount = pkMapper.delete(null);
+        Assert.assertTrue(deleteCount > 0);
+        //session.rollback();
         sqlSession.commit();
     }
 }
