@@ -39,7 +39,26 @@ public enum QuerySQL {
             "ON D.TABLE_NAME = A.TABLE_NAME AND D.CONSTRAINT_TYPE = 'P' " +
             "LEFT JOIN USER_CONS_COLUMNS C ON C.CONSTRAINT_NAME = D.CONSTRAINT_NAME " +
             "AND C.COLUMN_NAME=A.COLUMN_NAME WHERE A.TABLE_NAME = '%s' ",
-            "TABLE_NAME", "COMMENTS", "COLUMN_NAME", "DATA_TYPE", "COMMENTS", "KEY");
+            "TABLE_NAME", "COMMENTS", "COLUMN_NAME", "DATA_TYPE", "COMMENTS", "KEY"),
+
+    SQLSERVER("sqlserver","select cast(name as varchar(500)) as TABLE_NAME from sysObjects where xtype='U' order by name",
+            "select name as TABLE_NAME,(select cast(value as varchar(500)) from sys.extended_properties where major_id=id and minor_id = 0) as COMMENTS from sysobjects where xtype='U'",
+            "SELECT  cast(a.name as varchar(500)) AS TABLE_NAME, cast(b.name as varchar(500)) AS COLUMN_NAME, " +
+                    "cast(c.value as varchar(500)) AS COMMENTS,cast(sys.types.name as varchar(500)) as DATA_TYPE," +
+                    "(" +
+                    " SELECT case count(1) when 1 then 'PRI' else '' end" +
+                    " FROM syscolumns,sysobjects,sysindexes,sysindexkeys,systypes " +
+                    " WHERE syscolumns.xusertype = systypes.xusertype and syscolumns.id = object_id(A.name) AND sysobjects.xtype = 'PK'" +
+                    " AND sysobjects.parent_obj = syscolumns.id " +
+                    " AND sysindexes.id = syscolumns.id " +
+                    " AND sysobjects.name = sysindexes.name AND sysindexkeys.id = syscolumns.id " +
+                    " AND sysindexkeys.indid = sysindexes.indid " +
+                    " AND syscolumns.colid = sysindexkeys.colid and syscolumns.name = B.name) as 'KEY'" +
+                    " FROM sys.tables a " +
+                    " INNER JOIN sys.columns b ON b.object_id = a.object_id" +
+                    " left join sys.types on b.system_type_id=sys.types.system_type_id   " +
+                    " LEFT JOIN sys.extended_properties c ON c.major_id = b.object_id AND c.minor_id = b.column_id " +
+                    " WHERE a.name = '%s'","TABLE_NAME","COMMENTS","COLUMN_NAME","DATA_TYPE","COMMENTS","KEY");
 
     private final String dbType;
     private final String tablesSql;

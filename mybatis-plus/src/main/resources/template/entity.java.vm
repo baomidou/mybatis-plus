@@ -14,10 +14,6 @@ import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
 #end
 import java.io.Serializable;
-#if(${table.hasDate})
-import java.util.Date;
-#end
-
 /**
  * <p>
  * ${table.comment}
@@ -45,9 +41,11 @@ public class ${entity} implements Serializable {
 #if(${field.keyFlag})
 #set($keyPropertyName=${field.propertyName})
 #end
+#if(${field.comment})
 	/**
 	 * ${field.comment}
 	 */
+#end
 #if(${field.keyFlag})
 	@TableId#if(${field.convert})(value="${field.name}")
 #end
