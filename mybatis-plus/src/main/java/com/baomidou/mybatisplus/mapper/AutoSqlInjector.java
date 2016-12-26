@@ -574,8 +574,8 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * @return
 	 */
 	protected String sqlWordConvert(String convertStr) {
-		DBType dbType = GlobalConfiguration.getDbType(configuration);
-		return SqlReservedWords.convert(dbType, convertStr);
+		GlobalConfiguration globalConfig = GlobalConfiguration.GlobalConfig(configuration);
+		return SqlReservedWords.convert(globalConfig, convertStr);
 	}
 
 	/**

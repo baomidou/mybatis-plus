@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.test.mysql.NotPKMapper;
 import com.baomidou.mybatisplus.test.mysql.TestMapper;
 import com.baomidou.mybatisplus.test.mysql.entity.NotPK;
 import com.baomidou.mybatisplus.test.mysql.entity.Test;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -45,16 +46,22 @@ public class GlobalConfigurationTest {
 	 * 全局配置测试
 	 */
 	public static void main(String[] args) {
-
+        GlobalConfiguration global = GlobalConfiguration.defaults();
+        // 不需要主键依然注入部分通用方法
+        global.setInjectionRule(2);
+        global.setAutoSetDbType(true);
+        // 设置全局校验机制为FieldStrategy.Empty
+        global.setFieldStrategy(2);
+        BasicDataSource dataSource = new BasicDataSource();
+		dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+		dataSource.setUrl("jdbc:mysql://127.0.0.1:3306/hibernate-plus?characterEncoding=UTF-8");
+		dataSource.setUsername("root");
+		dataSource.setPassword("521");
+		dataSource.setMaxTotal(1000);
+		GlobalConfiguration.setMetaData(dataSource,global);
 		// 加载配置文件
 		InputStream inputStream = GlobalConfigurationTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
 		MybatisSessionFactoryBuilder factoryBuilder = new MybatisSessionFactoryBuilder();
-		GlobalConfiguration global = GlobalConfiguration.defaults();
-		// 不需要主键依然注入部分通用方法
-		global.setInjectionRule(2);
-		global.setAutoSetDbType(true);
-		// 设置全局校验机制为FieldStrategy.Empty
-		global.setFieldStrategy(2);
 		factoryBuilder.setGlobalConfig(global);
 		SqlSessionFactory sessionFactory = factoryBuilder.build(inputStream);
 		SqlSession session = sessionFactory.openSession(false);

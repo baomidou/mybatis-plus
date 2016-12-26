@@ -114,7 +114,7 @@ public class TableFieldInfo {
 	}
 
 	public void setColumn(GlobalConfiguration globalConfig, String column) {
-		String temp = SqlReservedWords.convert(globalConfig.getDbType(), column);
+		String temp = SqlReservedWords.convert(globalConfig, column);
 		if (globalConfig.isCapitalMode() && !isRelated()) {
 			// 全局大写，非注解指定
 			temp = temp.toUpperCase();

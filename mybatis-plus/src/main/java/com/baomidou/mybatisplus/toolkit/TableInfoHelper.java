@@ -366,15 +366,15 @@ public class TableInfoHelper {
 	 */
 	public static void initSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
 		Configuration configuration = sqlSessionFactory.getConfiguration();
-		GlobalConfiguration globalCache = GlobalConfiguration.GlobalConfig(configuration);
+		GlobalConfiguration globalConfig = GlobalConfiguration.GlobalConfig(configuration);
 		// SqlRunner
 		SqlRunner.FACTORY = sqlSessionFactory;
-		if (globalCache == null) {
+		if (globalConfig == null) {
 			GlobalConfiguration defaultCache = GlobalConfiguration.defaults();
 			defaultCache.setSqlSessionFactory(sqlSessionFactory);
 			GlobalConfiguration.setGlobalConfig(configuration, defaultCache);
 		} else {
-			globalCache.setSqlSessionFactory(sqlSessionFactory);
+			globalConfig.setSqlSessionFactory(sqlSessionFactory);
 		}
 	}
 }

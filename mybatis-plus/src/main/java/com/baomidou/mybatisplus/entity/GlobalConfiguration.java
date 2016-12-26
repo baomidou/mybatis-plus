@@ -23,14 +23,21 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.AutoSqlInjector;
 import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
 import com.baomidou.mybatisplus.mapper.ISqlInjector;
+import com.baomidou.mybatisplus.toolkit.IOUtils;
 import com.baomidou.mybatisplus.toolkit.JdbcUtils;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 
+import javax.sql.DataSource;
 import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -76,12 +83,16 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	private boolean isAutoSetDbType = true;
 	// 是否大写命名
 	private boolean isCapitalMode = false;
+	// 标识符
+	private String identifierQuote;
 	// 注入规则 false不开启无主键注入 true 开启无主键注入
 	private InjectionRules injectionRule = InjectionRules.REQUIREDPK;
 	// 缓存当前Configuration的SqlSessionFactory
 	private SqlSessionFactory sqlSessionFactory;
 
 	private Set<String> mapperRegistryCache = new ConcurrentSkipListSet<String>();
+	// 关键字
+	private Set<String> sqlKeywords = new HashSet<String>();
 
 	public GlobalConfiguration() {
 		// TODO
@@ -190,6 +201,22 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 
 	public void setInjectionRule(int injectionRule) {
 		this.injectionRule = InjectionRules.getInjectionRule(injectionRule);
+	}
+
+	public String getIdentifierQuote() {
+		return identifierQuote;
+	}
+
+	public void setIdentifierQuote(String identifierQuote) {
+		this.identifierQuote = identifierQuote;
+	}
+
+	public Set<String> getSqlKeywords() {
+		return sqlKeywords;
+	}
+
+	public void setSqlKeywords(Set<String> sqlKeywords) {
+		this.sqlKeywords = sqlKeywords;
 	}
 
 	@Override
@@ -328,6 +355,43 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 
 	public static InjectionRules getInjectionRule(Configuration configuration) {
 		return GlobalConfig(configuration).getInjectionRule();
+	}
+
+	public static String identifierQuote(Configuration configuration) {
+		return GlobalConfig(configuration).getIdentifierQuote();
+	}
+
+	public static Set<String> getSqlKeywords(Configuration configuration) {
+		return GlobalConfig(configuration).getSqlKeywords();
+	}
+
+	/**
+	 * 设置元数据相关属性
+	 * 
+	 * @param dataSource
+	 * @param globalConfig
+	 */
+	public static void setMetaData(DataSource dataSource, GlobalConfiguration globalConfig) {
+		Connection connection = null;
+		try {
+			connection = dataSource.getConnection();
+			String jdbcUrl = connection.getMetaData().getURL();
+			List<String> sqlKeywords = StringUtils.splitWorker(connection.getMetaData().getSQLKeywords(), ",", -1, false);
+			// 设置全局关键字
+			globalConfig.setSqlKeywords(new HashSet<String>(sqlKeywords) {
+			});
+			// 设置标识符
+			globalConfig.setIdentifierQuote(connection.getMetaData().getIdentifierQuoteString());
+			// TODO 自动设置数据库类型
+			if (globalConfig.isAutoSetDbType()) {
+				globalConfig.setDbTypeByJdbcUrl(jdbcUrl);
+			}
+		} catch (SQLException e) {
+			logger.warn("Warn: Auto Set DbType Fail !  Cause:" + e);
+		} finally {
+			IOUtils.closeQuietly(connection);
+		}
+
 	}
 
 }
