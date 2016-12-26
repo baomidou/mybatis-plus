@@ -239,17 +239,18 @@ public class StringUtils {
 	 * @return
 	 */
 	public static String concatLike(String str, SqlLike type) {
+		StringBuilder builder = new StringBuilder(str.length() + 3);
 		switch (type) {
 		case LEFT:
-			str = "%" + str;
+			builder.append("%").append(str);
 			break;
 		case RIGHT:
-			str += "%";
+			builder.append(str).append("%");
 			break;
 		default:
-			str = "%" + str + "%";
+			builder.append("%").append(str).append("%");
 		}
-		return StringEscape.escapeString(str);
+		return StringEscape.escapeString(builder.toString());
 	}
 
 	/**

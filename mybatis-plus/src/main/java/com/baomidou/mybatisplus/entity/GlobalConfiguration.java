@@ -392,7 +392,5 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 		} finally {
 			IOUtils.closeQuietly(connection);
 		}
-
 	}
-
 }
