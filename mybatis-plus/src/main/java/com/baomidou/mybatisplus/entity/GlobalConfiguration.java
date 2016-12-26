@@ -376,7 +376,8 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 		try {
 			connection = dataSource.getConnection();
 			String jdbcUrl = connection.getMetaData().getURL();
-			List<String> sqlKeywords = StringUtils.splitWorker(connection.getMetaData().getSQLKeywords(), ",", -1, false);
+			List<String> sqlKeywords = StringUtils.splitWorker(connection.getMetaData().getSQLKeywords().toUpperCase(), ",", -1,
+					false);
 			// 设置全局关键字
 			globalConfig.setSqlKeywords(new HashSet<String>(sqlKeywords) {
 			});

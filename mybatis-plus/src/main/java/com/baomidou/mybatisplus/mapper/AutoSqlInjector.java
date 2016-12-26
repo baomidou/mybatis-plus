@@ -45,6 +45,7 @@ import org.apache.ibatis.session.Configuration;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -608,17 +609,29 @@ public class AutoSqlInjector implements ISqlInjector {
 			if (entityWrapper) {
 				columns.append("<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>");
 			}
-			if (table.isKeyRelated()) {
-				columns.append(table.getKeyColumn()).append(" AS ").append(sqlWordConvert(table.getKeyProperty()));
-			} else {
-				columns.append(sqlWordConvert(table.getKeyProperty()));
-			}
-			List<TableFieldInfo> fieldList = table.getFieldList();
-			for (TableFieldInfo fieldInfo : fieldList) {
-				columns.append(",").append(fieldInfo.getColumn());
-				if (fieldInfo.isRelated()) {
-					columns.append(" AS ").append(sqlWordConvert(fieldInfo.getProperty()));
+			if (StringUtils.isNotEmpty(table.getKeyProperty())) {
+				if (table.isKeyRelated()) {
+					columns.append(table.getKeyColumn()).append(" AS ").append(sqlWordConvert(table.getKeyProperty()));
+				} else {
+					columns.append(sqlWordConvert(table.getKeyProperty()));
 				}
+				columns.append(",");
+			}
+
+			List<TableFieldInfo> fieldList = table.getFieldList();
+			int _size = fieldList.size();
+			int i = 0;
+			Iterator<TableFieldInfo> iterator = fieldList.iterator();
+			while (iterator.hasNext()) {
+				TableFieldInfo fieldInfo = iterator.next();
+				columns.append(fieldInfo.getColumn());
+				if (i + 1 == _size) {
+					columns.append(" AS ").append(sqlWordConvert(fieldInfo.getProperty()));
+				} else {
+					columns.append(" AS ").append(sqlWordConvert(fieldInfo.getProperty()));
+					columns.append(",");
+				}
+				i++;
 			}
 			if (entityWrapper) {
 				columns.append("</otherwise></choose>");

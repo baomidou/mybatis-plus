@@ -30,6 +30,8 @@ import org.junit.Assert;
 
 import java.io.InputStream;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -66,7 +68,8 @@ public class GlobalConfigurationTest {
 		SqlSessionFactory sessionFactory = factoryBuilder.build(inputStream);
 		SqlSession session = sessionFactory.openSession(false);
 		TestMapper testMapper = session.getMapper(TestMapper.class);
-		Test test = new Test();
+        List<Map<String, Object>> list = testMapper.selectMaps(null);
+        Test test = new Test();
 		test.setCreateTime(new Date());
 		// 开启全局校验字符串会忽略空字符串
 		test.setType("");

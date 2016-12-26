@@ -969,9 +969,9 @@ public class SqlReservedWords {
 	public static String convert(GlobalConfiguration globalConfig, String column) {
 		Set<String> sqlKeywords = globalConfig.getSqlKeywords();
 		if (StringUtils.isNotEmpty(column) && CollectionUtils.isNotEmpty(sqlKeywords)) {
-			if (sqlKeywords.contains(sqlKeywords)) {
+			if (sqlKeywords.contains(column.toUpperCase())) {
 				String quote = globalConfig.getIdentifierQuote();
-				return String.format("%s%s%s", quote, column, quote);
+				return new StringBuilder(8).append(quote).append(column).append(quote).toString();
 			}
 		}
 		return column;
