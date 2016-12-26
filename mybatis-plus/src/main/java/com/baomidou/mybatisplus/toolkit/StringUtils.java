@@ -181,16 +181,14 @@ public class StringUtils {
 	 * @return
 	 */
 	public static String sqlArgsFill(String content, Object... args) {
-		if (null == content) {
+		if (StringUtils.isEmpty(content)) {
 			return null;
 		}
 		if (args != null) {
 			int length = args.length;
 			if (length >= 1) {
 				for (int i = 0; i < length; i++) {
-					// 改造 String.replace() 用法
-					content = Pattern.compile(String.format(PLACE_HOLDER, i), Pattern.LITERAL).matcher(content)
-							.replaceAll(sqlParam(args[i]));
+					content = content.replace(String.format(PLACE_HOLDER, i), sqlParam(args[i]));
 				}
 			}
 		}
