@@ -208,7 +208,7 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	}
 
 	public void setIdentifierQuote(String identifierQuote) {
-		this.identifierQuote = identifierQuote;
+		this.identifierQuote = StringUtils.quotaMark(identifierQuote);
 	}
 
 	public Set<String> getSqlKeywords() {
@@ -357,7 +357,7 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 		return GlobalConfig(configuration).getInjectionRule();
 	}
 
-	public static String identifierQuote(Configuration configuration) {
+	public static String getIdentifierQuote(Configuration configuration) {
 		return GlobalConfig(configuration).getIdentifierQuote();
 	}
 
@@ -388,7 +388,7 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 				globalConfig.setDbTypeByJdbcUrl(jdbcUrl);
 			}
 		} catch (SQLException e) {
-			logger.warn("Warn: Auto Set DbType Fail !  Cause:" + e);
+			logger.warn("Warn: GlobalConfiguration setMetaData Fail !  Cause:" + e);
 		} finally {
 			IOUtils.closeQuietly(connection);
 		}

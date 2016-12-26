@@ -971,7 +971,9 @@ public class SqlReservedWords {
 		if (StringUtils.isNotEmpty(column) && CollectionUtils.isNotEmpty(sqlKeywords)) {
 			if (sqlKeywords.contains(column.toUpperCase())) {
 				String quote = globalConfig.getIdentifierQuote();
-				return new StringBuilder(8).append(quote).append(column).append(quote).toString();
+				if (StringUtils.isNotEmpty(quote)) {
+					return new StringBuilder(column.length() + 2).append(quote).append(column).append(quote).toString();
+				}
 			}
 		}
 		return column;
