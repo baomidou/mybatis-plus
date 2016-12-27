@@ -49,8 +49,6 @@ public class GlobalConfigurationTest {
 	 */
 	public static void main(String[] args) {
         GlobalConfiguration global = GlobalConfiguration.defaults();
-        // 不需要主键依然注入部分通用方法
-        global.setInjectionRule(2);
         global.setAutoSetDbType(true);
         // 设置全局校验机制为FieldStrategy.Empty
         global.setFieldStrategy(2);

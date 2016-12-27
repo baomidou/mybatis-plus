@@ -15,17 +15,14 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import com.baomidou.mybatisplus.entity.GlobalConfiguration;
-import com.baomidou.mybatisplus.entity.TableFieldInfo;
-import com.baomidou.mybatisplus.entity.TableInfo;
-import com.baomidou.mybatisplus.enums.DBType;
-import com.baomidou.mybatisplus.enums.FieldStrategy;
-import com.baomidou.mybatisplus.enums.IdType;
-import com.baomidou.mybatisplus.enums.InjectionRules;
-import com.baomidou.mybatisplus.enums.SqlMethod;
-import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -42,13 +39,16 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.scripting.defaults.RawSqlSource;
 import org.apache.ibatis.session.Configuration;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.baomidou.mybatisplus.entity.GlobalConfiguration;
+import com.baomidou.mybatisplus.entity.TableFieldInfo;
+import com.baomidou.mybatisplus.entity.TableInfo;
+import com.baomidou.mybatisplus.enums.DBType;
+import com.baomidou.mybatisplus.enums.FieldStrategy;
+import com.baomidou.mybatisplus.enums.IdType;
+import com.baomidou.mybatisplus.enums.SqlMethod;
+import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**
  * <p>
@@ -102,19 +102,12 @@ public class AutoSqlInjector implements ISqlInjector {
 		}
 		Class<?> modelClass = extractModelClass(mapperClass);
 		if (modelClass != null) {
-			TableInfo table = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
-
 			/**
 			 * 表信息不为空的情况
 			 */
+			TableInfo table = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
 			if (null != table) {
-				InjectionRules injectionRule = globalCache.getInjectionRule();
-				if (InjectionRules.UNREQUIREDPK.equals(injectionRule)) {
-					InjectUnrequiredPK(builderAssistant, mapperClass, modelClass, table);
-				} else {
-					InjectRequiredPK(builderAssistant, mapperClass, modelClass, table);
-				}
-
+				InjectUnrequiredPK(builderAssistant, mapperClass, modelClass, table);
 			} else {
 				/**
 				 * 警告 Mybatis-Plus 默认方法不能使用
@@ -126,7 +119,9 @@ public class AutoSqlInjector implements ISqlInjector {
 	}
 
 	/**
+	 * <p>
 	 * 注入SQL时不需要主键策略
+	 * </p>
 	 * 
 	 * @param builderAssistant
 	 * @param mapperClass
@@ -147,11 +142,8 @@ public class AutoSqlInjector implements ISqlInjector {
 			/* 查询 */
 			this.injectSelectByIdSql(false, mapperClass, modelClass, table);
 			this.injectSelectByIdSql(true, mapperClass, modelClass, table);
-		}
-		/**
-		 * 表不包含主键时 给予警告
-		 */
-		if (StringUtils.isEmpty(table.getKeyProperty())) {
+		} else {
+			// 表不包含主键时 给予警告
 			logger.warn(String.format("%s ,Not found @TableId annotation, Cannot use Mybatis-Plus 'xxById' Method.",
 					modelClass.toString()));
 		}
@@ -175,53 +167,6 @@ public class AutoSqlInjector implements ISqlInjector {
 		this.injectSelectMapsSql(SqlMethod.SELECT_MAPS_PAGE, mapperClass, modelClass, table);
 		/* 自定义方法 */
 		this.inject(configuration, builderAssistant, mapperClass, modelClass, table);
-	}
-
-	/**
-	 * 注入SQL时不需要主键策略
-	 * 
-	 * @param builderAssistant
-	 * @param mapperClass
-	 * @param modelClass
-	 * @param table
-	 */
-	protected void InjectRequiredPK(MapperBuilderAssistant builderAssistant, Class<?> mapperClass, Class<?> modelClass,
-			TableInfo table) {
-		if (StringUtils.isNotEmpty(table.getKeyProperty())) {
-			/* 插入 */
-			this.injectInsertOneSql(mapperClass, modelClass, table);
-
-			/* 删除 */
-			this.injectDeleteSql(mapperClass, modelClass, table);
-			this.injectDeleteByMapSql(mapperClass, table);
-			this.injectDeleteByIdSql(false, mapperClass, modelClass, table);
-			this.injectDeleteByIdSql(true, mapperClass, modelClass, table);
-
-			/* 修改 */
-			this.injectUpdateByIdSql(mapperClass, modelClass, table);
-			this.injectUpdateSql(mapperClass, modelClass, table);
-
-			/* 查询 */
-			this.injectSelectByIdSql(false, mapperClass, modelClass, table);
-			this.injectSelectByIdSql(true, mapperClass, modelClass, table);
-			this.injectSelectByMapSql(mapperClass, modelClass, table);
-			this.injectSelectOneSql(mapperClass, modelClass, table);
-			this.injectSelectCountSql(mapperClass, modelClass, table);
-			this.injectSelectListSql(SqlMethod.SELECT_LIST, mapperClass, modelClass, table);
-			this.injectSelectListSql(SqlMethod.SELECT_PAGE, mapperClass, modelClass, table);
-			this.injectSelectMapsSql(SqlMethod.SELECT_MAPS, mapperClass, modelClass, table);
-			this.injectSelectMapsSql(SqlMethod.SELECT_MAPS_PAGE, mapperClass, modelClass, table);
-
-			/* 自定义方法 */
-			this.inject(configuration, builderAssistant, mapperClass, modelClass, table);
-		} else {
-			/**
-			 * 警告
-			 */
-			logger.warn(String.format("%s ,Not found @TableId annotation, Cannot use Mybatis-Plus crud Method.",
-					modelClass.toString()));
-		}
-
 	}
 
 	/**

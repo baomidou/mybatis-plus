@@ -15,24 +15,6 @@
  */
 package com.baomidou.mybatisplus.entity;
 
-import com.baomidou.mybatisplus.enums.DBType;
-import com.baomidou.mybatisplus.enums.FieldStrategy;
-import com.baomidou.mybatisplus.enums.IdType;
-import com.baomidou.mybatisplus.enums.InjectionRules;
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.mapper.AutoSqlInjector;
-import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
-import com.baomidou.mybatisplus.mapper.ISqlInjector;
-import com.baomidou.mybatisplus.toolkit.IOUtils;
-import com.baomidou.mybatisplus.toolkit.JdbcUtils;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSessionFactory;
-
-import javax.sql.DataSource;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -42,6 +24,25 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
+
+import javax.sql.DataSource;
+
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSessionFactory;
+
+import com.baomidou.mybatisplus.enums.DBType;
+import com.baomidou.mybatisplus.enums.FieldStrategy;
+import com.baomidou.mybatisplus.enums.IdType;
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.mapper.AutoSqlInjector;
+import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
+import com.baomidou.mybatisplus.mapper.ISqlInjector;
+import com.baomidou.mybatisplus.toolkit.IOUtils;
+import com.baomidou.mybatisplus.toolkit.JdbcUtils;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**
  * <p>
@@ -85,8 +86,6 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	private boolean isCapitalMode = false;
 	// 标识符
 	private String identifierQuote;
-	// 注入规则 false不开启无主键注入 true 开启无主键注入
-	private InjectionRules injectionRule = InjectionRules.REQUIREDPK;
 	// 缓存当前Configuration的SqlSessionFactory
 	private SqlSessionFactory sqlSessionFactory;
 
@@ -193,14 +192,6 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 
 	public void setCapitalMode(boolean isCapitalMode) {
 		this.isCapitalMode = isCapitalMode;
-	}
-
-	public InjectionRules getInjectionRule() {
-		return injectionRule;
-	}
-
-	public void setInjectionRule(int injectionRule) {
-		this.injectionRule = InjectionRules.getInjectionRule(injectionRule);
 	}
 
 	public String getIdentifierQuote() {
@@ -353,10 +344,6 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 		return GlobalConfig(configuration).getMapperRegistryCache();
 	}
 
-	public static InjectionRules getInjectionRule(Configuration configuration) {
-		return GlobalConfig(configuration).getInjectionRule();
-	}
-
 	public static String getIdentifierQuote(Configuration configuration) {
 		return GlobalConfig(configuration).getIdentifierQuote();
 	}
@@ -376,8 +363,8 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 		try {
 			connection = dataSource.getConnection();
 			String jdbcUrl = connection.getMetaData().getURL();
-			List<String> sqlKeywords = StringUtils.splitWorker(connection.getMetaData().getSQLKeywords().toUpperCase(), ",", -1,
-					false);
+			List<String> sqlKeywords = StringUtils.splitWorker(connection.getMetaData().getSQLKeywords().toUpperCase(),
+					",", -1, false);
 			// 设置全局关键字
 			globalConfig.setSqlKeywords(new HashSet<String>(sqlKeywords) {
 			});
