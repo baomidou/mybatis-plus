@@ -15,23 +15,6 @@
  */
 package com.baomidou.mybatisplus.entity;
 
-import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
-
-import javax.sql.DataSource;
-
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSessionFactory;
-
 import com.baomidou.mybatisplus.enums.DBType;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.enums.IdType;
@@ -43,6 +26,20 @@ import com.baomidou.mybatisplus.toolkit.IOUtils;
 import com.baomidou.mybatisplus.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSessionFactory;
+
+import javax.sql.DataSource;
+import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * <p>
@@ -199,15 +196,17 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	}
 
 	public void setIdentifierQuote(String identifierQuote) {
-		this.identifierQuote = StringUtils.quotaMark(identifierQuote);
+		this.identifierQuote = identifierQuote;
 	}
 
 	public Set<String> getSqlKeywords() {
 		return sqlKeywords;
 	}
 
-	public void setSqlKeywords(Set<String> sqlKeywords) {
-		this.sqlKeywords = sqlKeywords;
+	public void setSqlKeywords(String sqlKeywords) {
+		if (StringUtils.isNotEmpty(sqlKeywords)) {
+			this.sqlKeywords = new HashSet<String>(StringUtils.splitWorker(sqlKeywords.toUpperCase(), ",", -1, false));
+		}
 	}
 
 	@Override
@@ -217,7 +216,7 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 
 	/**
 	 * 获取当前的SqlSessionFactory
-	 * 
+	 *
 	 * @param clazz
 	 * @return
 	 */
@@ -229,7 +228,7 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 
 	/**
 	 * 获取默认MybatisGlobalConfig
-	 * 
+	 *
 	 * @return
 	 */
 	public static GlobalConfiguration defaults() {
@@ -273,7 +272,7 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 
 	/**
 	 * 获取MybatisGlobalConfig (统一所有入口)
-	 * 
+	 *
 	 * @param configuration
 	 * @return
 	 */
@@ -286,7 +285,7 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 
 	/**
 	 * 获取MybatisGlobalConfig (统一所有入口)
-	 * 
+	 *
 	 * @param configMark
 	 * @return
 	 */
@@ -354,7 +353,7 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 
 	/**
 	 * 设置元数据相关属性
-	 * 
+	 *
 	 * @param dataSource
 	 * @param globalConfig
 	 */
@@ -363,13 +362,6 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 		try {
 			connection = dataSource.getConnection();
 			String jdbcUrl = connection.getMetaData().getURL();
-			List<String> sqlKeywords = StringUtils.splitWorker(connection.getMetaData().getSQLKeywords().toUpperCase(),
-					",", -1, false);
-			// 设置全局关键字
-			globalConfig.setSqlKeywords(new HashSet<String>(sqlKeywords) {
-			});
-			// 设置标识符
-			globalConfig.setIdentifierQuote(connection.getMetaData().getIdentifierQuoteString());
 			// TODO 自动设置数据库类型
 			if (globalConfig.isAutoSetDbType()) {
 				globalConfig.setDbTypeByJdbcUrl(jdbcUrl);
