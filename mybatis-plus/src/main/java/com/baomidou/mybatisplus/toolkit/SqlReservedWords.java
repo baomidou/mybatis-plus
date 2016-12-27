@@ -980,11 +980,10 @@ public class SqlReservedWords {
 	}
 
 	public static boolean containsWord(String word) {
-		boolean rc = false;
 		if (null != word) {
-			rc = RESERVED_WORDS.contains(word.toUpperCase());
+			return RESERVED_WORDS.contains(word.toUpperCase());
 		}
-		return rc;
+		return false;
 	}
 
 	/**

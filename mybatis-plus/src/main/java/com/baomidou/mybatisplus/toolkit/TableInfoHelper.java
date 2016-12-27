@@ -377,4 +377,5 @@ public class TableInfoHelper {
 			globalConfig.setSqlSessionFactory(sqlSessionFactory);
 		}
 	}
+
 }

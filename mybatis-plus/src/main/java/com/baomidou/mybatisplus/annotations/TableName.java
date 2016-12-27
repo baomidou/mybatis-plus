@@ -45,4 +45,5 @@ public @interface TableName {
 	 * </p>
 	 */
 	String resultMap() default "";
+
 }

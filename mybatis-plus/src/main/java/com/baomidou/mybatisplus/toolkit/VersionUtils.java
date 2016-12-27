@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
  * @Date 2016-12-5
  */
 public class VersionUtils {
+
 	/**
 	 * 比较版本号的大小,前者大则返回一个正数,后者大返回一个负数,相等则返回0
 	 * 
@@ -48,8 +49,10 @@ public class VersionUtils {
 	 */
 	public static boolean compare(String version1, String version2) {
 		int num = compareVersion(version1, version2);
-		if (num >= 0)
+		if (num >= 0) {
 			return true;
+		}
 		return false;
 	}
+
 }
