@@ -281,7 +281,7 @@ public class EntityWrapperTest {
 		ew.between("test_type", val1, val2);
 		String sqlPart = ew.toString();
 		System.out.println("sql ==> " + sqlPart);
-		Assert.assertEquals("WHERE (test_type BETWEEN '\\'' AND '\\\\')", sqlPart);
+		Assert.assertEquals("WHERE (test_type BETWEEN '\\\\\\'' AND '\\\\\\\\')", sqlPart);
 	}
 
 	/**
@@ -293,7 +293,7 @@ public class EntityWrapperTest {
 		String val2 = "\\";
 		String sqlPart = Condition.instance().between("test_type", val1, val2).toString();
 		System.out.println("sql ==> " + sqlPart);
-		Assert.assertEquals("WHERE (test_type BETWEEN '\\'' AND '\\\\')", sqlPart);
+		Assert.assertEquals("WHERE (test_type BETWEEN '\\\\\\'' AND '\\\\\\\\')", sqlPart);
 	}
 
 	/**
