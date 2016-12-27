@@ -15,14 +15,15 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.baomidou.mybatisplus.entity.GlobalConfiguration;
+import com.baomidou.mybatisplus.entity.TableFieldInfo;
+import com.baomidou.mybatisplus.entity.TableInfo;
+import com.baomidou.mybatisplus.enums.FieldStrategy;
+import com.baomidou.mybatisplus.enums.IdType;
+import com.baomidou.mybatisplus.enums.SqlMethod;
+import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -39,15 +40,13 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.scripting.defaults.RawSqlSource;
 import org.apache.ibatis.session.Configuration;
 
-import com.baomidou.mybatisplus.entity.GlobalConfiguration;
-import com.baomidou.mybatisplus.entity.TableFieldInfo;
-import com.baomidou.mybatisplus.entity.TableInfo;
-import com.baomidou.mybatisplus.enums.FieldStrategy;
-import com.baomidou.mybatisplus.enums.IdType;
-import com.baomidou.mybatisplus.enums.SqlMethod;
-import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * <p>
@@ -99,7 +98,7 @@ public class AutoSqlInjector implements ISqlInjector {
 			 */
 			TableInfo table = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
 			if (null != table) {
-				InjectUnrequiredPK(builderAssistant, mapperClass, modelClass, table);
+				injectSql(builderAssistant, mapperClass, modelClass, table);
 			} else {
 				/**
 				 * 警告 Mybatis-Plus 默认方法不能使用
@@ -112,7 +111,7 @@ public class AutoSqlInjector implements ISqlInjector {
 
 	/**
 	 * <p>
-	 * 注入SQL时不需要主键策略
+	 * 注入SQL
 	 * </p>
 	 * 
 	 * @param builderAssistant
@@ -120,8 +119,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * @param modelClass
 	 * @param table
 	 */
-	protected void InjectUnrequiredPK(MapperBuilderAssistant builderAssistant, Class<?> mapperClass, Class<?> modelClass,
-			TableInfo table) {
+	protected void injectSql(MapperBuilderAssistant builderAssistant, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
 		/**
 		 * #148 表信息包含主键，注入主键相关方法
 		 */
