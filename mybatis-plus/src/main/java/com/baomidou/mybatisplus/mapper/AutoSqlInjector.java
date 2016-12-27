@@ -617,17 +617,22 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * </p>
 	 */
 	protected String sqlWhereByMap() {
+
 		StringBuilder where = new StringBuilder();
 		where.append("\n<if test=\"cm!=null and !cm.isEmpty\">");
 		where.append("\n<where>");
 		where.append("\n<foreach collection=\"cm.keys\" item=\"k\" separator=\"AND\">");
 		where.append("\n<if test=\"cm[k] != null\">");
 		String quote = GlobalConfiguration.getIdentifierQuote(configuration);
-		where.append("\n");
-		where.append(quote);
-		where.append("${k}");
-		where.append(quote);
-		where.append(" = #{cm[${k}]}");
+		if (StringUtils.isNotEmpty(quote)) {
+			where.append("\n");
+			where.append(quote);
+			where.append("${k}");
+			where.append(quote);
+			where.append(" = #{cm[${k}]}");
+		} else {
+			where.append("\n${k} = #{cm[${k}]}");
+		}
 		where.append("\n</if>");
 		where.append("\n</foreach>");
 		where.append("\n</where>");
