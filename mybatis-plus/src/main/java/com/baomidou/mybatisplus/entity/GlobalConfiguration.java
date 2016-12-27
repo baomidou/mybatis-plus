@@ -92,7 +92,7 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 
 	private Set<String> mapperRegistryCache = new ConcurrentSkipListSet<String>();
 	// 关键字
-	private Set<String> sqlKeywords = new HashSet<String>();
+	private Set<String> sqlKeywords;
 
 	public GlobalConfiguration() {
 		// TODO

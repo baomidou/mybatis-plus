@@ -270,10 +270,8 @@ public class StringUtils {
 		Iterator<?> iterator = coll.iterator();
 		while (iterator.hasNext()) {
 			String tempVal = StringUtils.quotaMark(iterator.next());
-			if (i + 1 == _size) {
-				sqlBuild.append(tempVal);
-			} else {
-				sqlBuild.append(tempVal);
+			sqlBuild.append(tempVal);
+			if (i + 1 < _size) {
 				sqlBuild.append(",");
 			}
 			i++;

@@ -56,7 +56,7 @@ public class GlobalConfigurationTest {
         global.setFieldStrategy(2);
         BasicDataSource dataSource = new BasicDataSource();
 		dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-		dataSource.setUrl("jdbc:mysql://127.0.0.1:3306/hibernate-plus?characterEncoding=UTF-8");
+		dataSource.setUrl("jdbc:mysql://127.0.0.1:3306/mybatis-plus?characterEncoding=UTF-8");
 		dataSource.setUsername("root");
 		dataSource.setPassword("521");
 		dataSource.setMaxTotal(1000);

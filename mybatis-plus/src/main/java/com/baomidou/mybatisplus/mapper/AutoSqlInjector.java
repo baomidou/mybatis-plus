@@ -625,10 +625,8 @@ public class AutoSqlInjector implements ISqlInjector {
 			while (iterator.hasNext()) {
 				TableFieldInfo fieldInfo = iterator.next();
 				columns.append(fieldInfo.getColumn());
-				if (i + 1 == _size) {
-					columns.append(" AS ").append(sqlWordConvert(fieldInfo.getProperty()));
-				} else {
-					columns.append(" AS ").append(sqlWordConvert(fieldInfo.getProperty()));
+				columns.append(" AS ").append(sqlWordConvert(fieldInfo.getProperty()));
+				if (i + 1 < _size) {
 					columns.append(",");
 				}
 				i++;
@@ -689,12 +687,12 @@ public class AutoSqlInjector implements ISqlInjector {
 		where.append("\n<where>");
 		where.append("\n<foreach collection=\"cm.keys\" item=\"k\" separator=\"AND\">");
 		where.append("\n<if test=\"cm[k] != null\">");
-        String quote = GlobalConfiguration.getIdentifierQuote(configuration);
-        where.append("\n");
-        where.append(quote);
-        where.append("${k}");
-        where.append(quote);
-        where.append(" = #{cm[${k}]}");
+		String quote = GlobalConfiguration.getIdentifierQuote(configuration);
+		where.append("\n");
+		where.append(quote);
+		where.append("${k}");
+		where.append(quote);
+		where.append(" = #{cm[${k}]}");
 		where.append("\n</if>");
 		where.append("\n</foreach>");
 		where.append("\n</where>");
