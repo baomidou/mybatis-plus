@@ -42,7 +42,6 @@ import org.apache.ibatis.session.Configuration;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.entity.TableFieldInfo;
 import com.baomidou.mybatisplus.entity.TableInfo;
-import com.baomidou.mybatisplus.enums.DBType;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.enums.SqlMethod;
@@ -59,16 +58,10 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
  * @Date 2016-09-09
  */
 public class AutoSqlInjector implements ISqlInjector {
-
 	private static final Log logger = LogFactory.getLog(AutoSqlInjector.class);
-
 	protected Configuration configuration;
-
 	protected LanguageDriver languageDriver;
-
 	protected MapperBuilderAssistant builderAssistant;
-
-	protected DBType dbType = DBType.MYSQL;
 
 	/**
 	 * CRUD注入后给予标识 注入过后不再注入
@@ -93,7 +86,6 @@ public class AutoSqlInjector implements ISqlInjector {
 		this.builderAssistant = builderAssistant;
 		this.languageDriver = configuration.getDefaultScriptingLanuageInstance();
 		GlobalConfiguration globalCache = GlobalConfiguration.GlobalConfig(configuration);
-		this.dbType = globalCache.getDbType();
 		/*
 		 * 驼峰设置 PLUS 配置 > 原始配置
 		 */
