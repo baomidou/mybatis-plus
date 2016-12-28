@@ -47,7 +47,7 @@ public enum SqlMethod {
 	/**
 	 * 查询
 	 */
-	SELECT_BY_ID("selectById", "根据ID 查询一条数据", "SELECT %s FROM %s WHERE %s=#{%s}"),
+	SELECT_BY_ID("selectById", "根据ID 查询一条数据", "<script>SELECT %s FROM %s WHERE %s=#{%s}</script>"),
 	SELECT_BY_MAP("selectByMap", "根据columnMap 查询一条数据", "<script>SELECT %s FROM %s %s</script>"),
 	SELECT_BATCH_BY_IDS("selectBatchIds", "根据ID集合，批量查询数据", "<script>SELECT %s FROM %s WHERE %s IN (%s)</script>"),
 	SELECT_ONE("selectOne", "查询满足条件一条数据", "<script>SELECT %s FROM %s %s</script>"),

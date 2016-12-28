@@ -36,7 +36,6 @@ import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.scripting.LanguageDriver;
-import org.apache.ibatis.scripting.defaults.RawSqlSource;
 import org.apache.ibatis.session.Configuration;
 
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
@@ -357,8 +356,8 @@ public class AutoSqlInjector implements ISqlInjector {
 			sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(),
 					sqlSelectColumns(table, false), table.getTableName(), table.getKeyColumn(), ids.toString()), modelClass);
 		} else {
-			sqlSource = new RawSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false),
-					table.getTableName(), table.getKeyColumn(), table.getKeyProperty()), Object.class);
+			sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false),
+					table.getTableName(), table.getKeyColumn(), table.getKeyProperty()), modelClass);
 		}
 		this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, table);
 	}
