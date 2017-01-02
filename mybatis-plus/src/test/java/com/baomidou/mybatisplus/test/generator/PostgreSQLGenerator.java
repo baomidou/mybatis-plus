@@ -1,5 +1,8 @@
 package com.baomidou.mybatisplus.test.generator;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
@@ -9,13 +12,10 @@ import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.rules.DbType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Created by nieqiurong on 2016/12/25.
  */
-public class SQLServerGenerator {
+public class PostgreSQLGenerator {
 
     public static void main(String[] args) {
         AutoGenerator mpg = new AutoGenerator();
@@ -28,7 +28,7 @@ public class SQLServerGenerator {
         gc.setEnableCache(false);// XML 二级缓存
         gc.setBaseResultMap(true);// XML ResultMap
         gc.setBaseColumnList(false);// XML columList
-        gc.setAuthor("nieqiurong");
+        gc.setAuthor("hubin");
 
         // 自定义文件命名，注意 %s 会自动填充表实体属性！
         // gc.setMapperName("%sDao");
@@ -40,11 +40,11 @@ public class SQLServerGenerator {
 
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setDbType(DbType.SQL_SERVER);
-        dsc.setDriverName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        dsc.setUsername("sa");
-        dsc.setPassword("nieqiuqiu");
-        dsc.setUrl("jdbc:sqlserver://192.168.1.105:1433;databaseName=mybatis-plus");
+        dsc.setDbType(DbType.POSTGRE_SQL);
+        dsc.setDriverName("org.postgresql.Driver");
+        dsc.setUsername("postgres");
+        dsc.setPassword("521");
+        dsc.setUrl("jdbc:postgresql://localhost:5432/mybatis-plus");
         mpg.setDataSource(dsc);
 
         // 策略配置
@@ -79,6 +79,8 @@ public class SQLServerGenerator {
         // 包配置
         PackageConfig pc = new PackageConfig();
         pc.setModuleName("test");
+        pc.setParent("com.baomidou");
+		pc.setController("controller");
         mpg.setPackageInfo(pc);
 
         // 注入自定义配置，可以在 VM 中使用 cfg.abc 设置的值

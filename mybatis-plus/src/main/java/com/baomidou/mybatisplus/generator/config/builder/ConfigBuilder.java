@@ -486,8 +486,10 @@ public class ConfigBuilder {
 			return processMySqlType(type);
 		} else if (QuerySQL.ORACLE == querySQL) {
 			return processOracleType(type);
-		}else if (QuerySQL.SQLSERVER == querySQL) {
+		} else if (QuerySQL.SQL_SERVER == querySQL) {
 			return processSQLServerType(type);
+		} else if (QuerySQL.POSTGRE_SQL == querySQL) {
+			return processPostgreSQL(type);
 		}
 		return null;
 	}
@@ -524,7 +526,9 @@ public class ConfigBuilder {
 	}
 
 	/**
-	 * MYSQL字段类型转换
+	 * <p>
+	 * Mysql 字段类型转换
+	 * </p>
 	 *
 	 * @param type
 	 *            字段类型
@@ -559,7 +563,9 @@ public class ConfigBuilder {
 	}
 
 	/**
-	 * ORACLE字段类型转换
+	 * <p>
+	 * Oracle 字段类型转换
+	 * </p>
 	 *
 	 * @param type
 	 *            字段类型
@@ -589,7 +595,10 @@ public class ConfigBuilder {
 	}
 
 	/**
-	 * SQLServer字段类型转换
+	 * <p>
+	 * SQLServer 字段类型转换
+	 * </p>
+	 * 
 	 * @param type
 	 * @return
 	 */
@@ -615,6 +624,44 @@ public class ConfigBuilder {
 			return "byte[]";
 		} else if (t.contains("float")||t.contains("real")) {
 			return "Float";
+		}
+		return "String";
+	}
+
+
+	/**
+	 * <p>
+	 * PostgreSQL 字段类型转换
+	 * </p>
+	 *
+	 * @param type
+	 *            字段类型
+	 * @return JAVA类型
+	 */
+	private String processPostgreSQL(String type) {
+		String t = type.toLowerCase();
+		if (t.contains("char") || t.contains("text")) {
+			return "String";
+		} else if (t.contains("bigint")) {
+			return "Long";
+		} else if (t.contains("int")) {
+			return "Integer";
+		} else if (t.contains("date") || t.contains("time") || t.contains("year")) {
+			return "java.util.Date";
+		} else if (t.contains("text")) {
+			return "String";
+		} else if (t.contains("bit")) {
+			return "Boolean";
+		} else if (t.contains("decimal")) {
+			return "java.math.BigDecimal";
+		} else if (t.contains("blob")) {
+			return "byte[]";
+		} else if (t.contains("float")) {
+			return "Float";
+		} else if (t.contains("double")) {
+			return "Double";
+		} else if (t.contains("json") || t.contains("enum")) {
+			return "String";
 		}
 		return "String";
 	}
