@@ -110,6 +110,9 @@ public class TableInfoHelper {
 			// 大写命名判断
 			if (globalCache.isCapitalMode()) {
 				tableName = tableName.toUpperCase();
+			} else {
+				// 首字母小写
+				tableName = StringUtils.firstToLowerCase(tableName);
 			}
 		}
 		tableInfo.setTableName(tableName);

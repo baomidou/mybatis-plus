@@ -15,6 +15,15 @@
  */
 package com.baomidou.mybatisplus.service.impl;
 
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
@@ -28,14 +37,6 @@ import com.baomidou.mybatisplus.toolkit.MapUtils;
 import com.baomidou.mybatisplus.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.SqlSession;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -75,7 +76,10 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	 *            数据库操作返回影响条数
 	 * @return boolean
 	 */
-	public boolean retBool(int result) {
+	public static boolean retBool(Integer result) {
+		if (null == result) {
+			return false;
+		}
 		return result >= 1;
 	}
 
@@ -262,7 +266,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	}
 
 	public int selectCount(Wrapper<T> wrapper) {
-		return baseMapper.selectCount(wrapper);
+		Integer result = baseMapper.selectCount(wrapper);
+		return (null == result) ? 0 : result;
 	}
 
 	public List<T> selectList(Wrapper<T> wrapper) {

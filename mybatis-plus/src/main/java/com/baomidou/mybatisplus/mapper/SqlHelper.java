@@ -95,7 +95,10 @@ public class SqlHelper {
 	 *            数据库操作返回影响条数
 	 * @return boolean
 	 */
-	public static boolean retBool(int result) {
+	public static boolean retBool(Integer result) {
+		if (null == result) {
+			return false;
+		}
 		return result >= 1;
 	}
 

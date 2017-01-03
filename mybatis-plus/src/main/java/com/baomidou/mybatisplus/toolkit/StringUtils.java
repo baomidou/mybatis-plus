@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
-import com.baomidou.mybatisplus.enums.SqlLike;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -24,6 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.baomidou.mybatisplus.enums.SqlLike;
 
 /**
  * <p>
@@ -136,6 +136,25 @@ public class StringUtils {
 				sb.append(c);
 			}
 		}
+		return sb.toString();
+	}
+
+	/**
+	 * <p>
+	 * 首字母转换小写
+	 * </p>
+	 *
+	 * @param param
+	 *            需要转换的字符串
+	 * @return 转换好的字符串
+	 */
+	public static String firstToLowerCase(String param) {
+		if (isEmpty(param)) {
+			return EMPTY;
+		}
+		StringBuilder sb = new StringBuilder(param.length());
+		sb.append(param.substring(0, 1).toLowerCase());
+		sb.append(param.substring(1));
 		return sb.toString();
 	}
 
