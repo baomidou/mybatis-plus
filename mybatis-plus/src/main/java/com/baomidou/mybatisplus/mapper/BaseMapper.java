@@ -193,6 +193,17 @@ public interface BaseMapper<T> {
 
 	/**
 	 * <p>
+	 * 根据 Wrapper 条件，查询全部记录
+	 * </p>
+	 *
+	 * @param wrapper
+	 *            实体对象封装操作类（可以为 null）
+	 * @return List<Object>
+	 */
+	List<Object> selectObjs(@Param("ew") Wrapper<T> wrapper);
+
+	/**
+	 * <p>
 	 * 根据 entity 条件，查询全部记录（并翻页）
 	 * </p>
 	 * 

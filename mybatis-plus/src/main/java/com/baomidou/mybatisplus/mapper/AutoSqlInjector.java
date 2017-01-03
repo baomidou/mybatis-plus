@@ -155,6 +155,7 @@ public class AutoSqlInjector implements ISqlInjector {
 		this.injectSelectListSql(SqlMethod.SELECT_PAGE, mapperClass, modelClass, table);
 		this.injectSelectMapsSql(SqlMethod.SELECT_MAPS, mapperClass, modelClass, table);
 		this.injectSelectMapsSql(SqlMethod.SELECT_MAPS_PAGE, mapperClass, modelClass, table);
+		this.injectSelectObjsSql(SqlMethod.SELECT_OBJS, mapperClass, modelClass, table);
 		/* 自定义方法 */
 		this.inject(configuration, builderAssistant, mapperClass, modelClass, table);
 	}
@@ -427,6 +428,23 @@ public class AutoSqlInjector implements ISqlInjector {
 				sqlWhereEntityWrapper(table));
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
 		this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, Map.class, table);
+	}
+
+	/**
+	 * <p>
+	 * 注入EntityWrapper方式查询记录列表 SQL 语句
+	 * </p>
+	 *
+	 * @param sqlMethod
+	 * @param mapperClass
+	 * @param modelClass
+	 * @param table
+	 */
+	protected void injectSelectObjsSql(SqlMethod sqlMethod, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
+		String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(table, true), table.getTableName(),
+				sqlWhereEntityWrapper(table));
+		SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+		this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, Object.class, table);
 	}
 
 	/**
