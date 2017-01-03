@@ -95,7 +95,7 @@ public class SqlRunner {
 	}
 
 	public int selectCount(String sql, Object... args) {
-		return sqlSession().<Integer> selectOne(COUNT, sqlMap(sql, args));
+		return SqlHelper.retCount(sqlSession().<Integer> selectOne(COUNT, sqlMap(sql, args)));
 	}
 
 	public Map<String, Object> selectOne(String sql, Object... args) {

@@ -102,4 +102,16 @@ public class SqlHelper {
 		return result >= 1;
 	}
 
+	/**
+	 * <p>
+	 * 返回SelectCount执行结果
+	 * </p>
+	 *
+	 * @param result
+	 * @return int
+	 */
+	public static int retCount(Integer result) {
+		return (null == result) ? 0 : result;
+	}
+
 }
