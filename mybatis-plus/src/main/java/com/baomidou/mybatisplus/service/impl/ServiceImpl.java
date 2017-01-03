@@ -70,12 +70,15 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	 * <p>
 	 * 判断数据库操作是否成功
 	 * </p>
+	 * <p>
+	 * 注意！！ 该方法为 Integer 判断，不可传入 int 基本类型
+	 * </p>
 	 *
 	 * @param result
 	 *            数据库操作返回影响条数
 	 * @return boolean
 	 */
-	public static boolean retBool(Integer result) {
+	protected static boolean retBool(Integer result) {
 		return SqlHelper.retBool(result);
 	}
 
