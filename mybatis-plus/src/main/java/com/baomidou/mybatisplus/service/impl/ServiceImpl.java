@@ -281,6 +281,10 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return baseMapper.selectMaps(wrapper);
 	}
 
+	public List<Object> selectObjs(Wrapper<T> wrapper) {
+		return baseMapper.selectObjs(wrapper);
+	}
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Page<Map<String, Object>> selectMapsPage(Page page, Wrapper<T> wrapper) {
 		if (null != wrapper) {
