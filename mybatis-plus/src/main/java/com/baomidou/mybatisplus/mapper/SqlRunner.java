@@ -18,14 +18,10 @@ package com.baomidou.mybatisplus.mapper;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +36,6 @@ import java.util.Map;
  */
 public class SqlRunner {
 
-	private static final Log logger = LogFactory.getLog(SqlRunner.class);
 	// 默认FACTORY
 	public static SqlSessionFactory FACTORY;
 	public static final String INSERT = "com.baomidou.mybatisplus.mapper.SqlRunner.Insert";
@@ -99,15 +94,7 @@ public class SqlRunner {
 	}
 
 	public Map<String, Object> selectOne(String sql, Object... args) {
-		List<Map<String, Object>> list = selectList(sql, args);
-		if (CollectionUtils.isNotEmpty(list)) {
-			int size = list.size();
-			if (size > 1) {
-				logger.warn(String.format("Warn: selectOne Method There are  %s results.", size));
-			}
-			return list.get(0);
-		}
-		return Collections.emptyMap();
+		return SqlHelper.getObject(selectList(sql, args));
 	}
 
 	public Page<Map<String, Object>> selectPage(Page page, String sql, Object... args) {

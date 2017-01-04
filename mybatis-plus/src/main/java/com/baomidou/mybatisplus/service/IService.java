@@ -238,6 +238,17 @@ public interface IService<T> {
 
 	/**
 	 * <p>
+	 * 根据 Wrapper，查询一条记录
+	 * </p>
+	 *
+	 * @param wrapper
+	 *            {@link Wrapper}
+	 * @return Object
+	 */
+	Object selectObj(Wrapper<T> wrapper);
+
+	/**
+	 * <p>
 	 * 根据 Wrapper 条件，查询总记录数
 	 * </p>
 	 *

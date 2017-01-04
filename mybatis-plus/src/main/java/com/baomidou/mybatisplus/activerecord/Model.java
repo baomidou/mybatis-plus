@@ -22,10 +22,7 @@ import com.baomidou.mybatisplus.mapper.SqlHelper;
 import com.baomidou.mybatisplus.mapper.SqlRunner;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.SqlSession;
 
 import java.io.Serializable;
@@ -44,8 +41,6 @@ import java.util.Map;
  */
 @SuppressWarnings({ "serial", "rawtypes" })
 public abstract class Model<T extends Model> implements Serializable {
-
-	private static final Log logger = LogFactory.getLog(Model.class);
 
 	/**
 	 * <p>
@@ -250,15 +245,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * @return
 	 */
 	public T selectOne(Wrapper wrapper) {
-		List<T> list = selectList(wrapper);
-		if (CollectionUtils.isNotEmpty(list)) {
-			int size = list.size();
-			if (size > 1) {
-				logger.warn(String.format("Warn: selectOne Method There are  %s results.", size));
-			}
-			return list.get(0);
-		}
-		return null;
+		return SqlHelper.getObject(selectList(wrapper));
 	}
 
 	/**
