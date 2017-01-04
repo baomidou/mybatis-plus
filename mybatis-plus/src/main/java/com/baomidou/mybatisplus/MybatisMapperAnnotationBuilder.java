@@ -30,6 +30,7 @@ import org.apache.ibatis.annotations.Lang;
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Options.FlushCachePolicy;
+import org.apache.ibatis.annotations.Property;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.ResultMap;
 import org.apache.ibatis.annotations.ResultType;
@@ -63,6 +64,7 @@ import org.apache.ibatis.mapping.ResultSetType;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.mapping.StatementType;
+import org.apache.ibatis.parsing.PropertyParser;
 import org.apache.ibatis.reflection.TypeParameterResolver;
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
@@ -88,6 +90,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -96,7 +99,7 @@ import java.util.Set;
  * </p>
  * 
  * @author Caratacus
- * @Date 2016-09-26
+ * @Date 2017-01-04
  */
 public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 
@@ -207,15 +210,36 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 		if (cacheDomain != null) {
 			Integer size = cacheDomain.size() == 0 ? null : cacheDomain.size();
 			Long flushInterval = cacheDomain.flushInterval() == 0 ? null : cacheDomain.flushInterval();
+			Properties props = convertToProperties(cacheDomain.properties());
 			assistant.useNewCache(cacheDomain.implementation(), cacheDomain.eviction(), flushInterval, size,
-					cacheDomain.readWrite(), cacheDomain.blocking(), null);
+					cacheDomain.readWrite(), cacheDomain.blocking(), props);
 		}
+	}
+
+	private Properties convertToProperties(Property[] properties) {
+		if (properties.length == 0) {
+			return null;
+		}
+		Properties props = new Properties();
+		for (Property property : properties) {
+			props.setProperty(property.name(), PropertyParser.parse(property.value(), configuration.getVariables()));
+		}
+		return props;
 	}
 
 	private void parseCacheRef() {
 		CacheNamespaceRef cacheDomainRef = type.getAnnotation(CacheNamespaceRef.class);
 		if (cacheDomainRef != null) {
-			assistant.useCacheRef(cacheDomainRef.value().getName());
+			Class<?> refType = cacheDomainRef.value();
+			String refName = cacheDomainRef.name();
+			if (refType == void.class && refName.isEmpty()) {
+				throw new BuilderException("Should be specified either value() or name() attribute in the @CacheNamespaceRef");
+			}
+			if (refType != void.class && !refName.isEmpty()) {
+				throw new BuilderException("Cannot use both value() and name() attribute in the @CacheNamespaceRef");
+			}
+			String namespace = (refType != void.class) ? refType.getName() : refName;
+			assistant.useCacheRef(namespace);
 		}
 	}
 
@@ -305,6 +329,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 			boolean isSelect = sqlCommandType == SqlCommandType.SELECT;
 			boolean flushCache = !isSelect;
 			boolean useCache = isSelect;
+
 			KeyGenerator keyGenerator;
 			String keyProperty = "id";
 			String keyColumn = null;
@@ -326,6 +351,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 			} else {
 				keyGenerator = new NoKeyGenerator();
 			}
+
 			if (options != null) {
 				if (FlushCachePolicy.TRUE.equals(options.flushCache())) {
 					flushCache = true;
@@ -334,11 +360,12 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 				}
 				useCache = options.useCache();
 				fetchSize = options.fetchSize() > -1 || options.fetchSize() == Integer.MIN_VALUE ? options.fetchSize() : null; // issue
-				// #348
+																																// #348
 				timeout = options.timeout() > -1 ? options.timeout() : null;
 				statementType = options.statementType();
 				resultSetType = options.resultSetType();
 			}
+
 			String resultMapId = null;
 			ResultMap resultMapAnnotation = method.getAnnotation(ResultMap.class);
 			if (resultMapAnnotation != null) {
@@ -354,6 +381,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 			} else if (isSelect) {
 				resultMapId = parseResultMap(method);
 			}
+
 			assistant.addMappedStatement(mappedStatementId, sqlSource, statementType, sqlCommandType, fetchSize, timeout,
 			// ParameterMapID
 					null, parameterTypeClass, resultMapId, getReturnType(method), resultSetType, flushCache, useCache,
@@ -442,6 +470,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 				}
 			}
 		}
+
 		return returnType;
 	}
 
@@ -478,11 +507,14 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 
 	private SqlCommandType getSqlCommandType(Method method) {
 		Class<? extends Annotation> type = getSqlAnnotationType(method);
+
 		if (type == null) {
 			type = getSqlProviderAnnotationType(method);
+
 			if (type == null) {
 				return SqlCommandType.UNKNOWN;
 			}
+
 			if (type == SelectProvider.class) {
 				type = Select.class;
 			} else if (type == InsertProvider.class) {
@@ -493,6 +525,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 				type = Delete.class;
 			}
 		}
+
 		return SqlCommandType.valueOf(type.getSimpleName().toUpperCase(Locale.ENGLISH));
 	}
 
@@ -598,6 +631,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 		String keyProperty = selectKeyAnnotation.keyProperty();
 		String keyColumn = selectKeyAnnotation.keyColumn();
 		boolean executeBefore = selectKeyAnnotation.before();
+
 		// defaults
 		boolean useCache = false;
 		KeyGenerator keyGenerator = new NoKeyGenerator();
@@ -607,12 +641,16 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 		String parameterMap = null;
 		String resultMap = null;
 		ResultSetType resultSetTypeEnum = null;
+
 		SqlSource sqlSource = buildSqlSourceFromStrings(selectKeyAnnotation.statement(), parameterTypeClass, languageDriver);
 		SqlCommandType sqlCommandType = SqlCommandType.SELECT;
+
 		assistant.addMappedStatement(id, sqlSource, statementType, sqlCommandType, fetchSize, timeout, parameterMap,
 				parameterTypeClass, resultMap, resultTypeClass, resultSetTypeEnum, flushCache, useCache, false, keyGenerator,
 				keyProperty, keyColumn, null, languageDriver, null);
+
 		id = assistant.applyCurrentNamespace(id, false);
+
 		MappedStatement keyStatement = configuration.getMappedStatement(id, false);
 		SelectKeyGenerator answer = new SelectKeyGenerator(keyStatement, executeBefore);
 		configuration.addKeyGenerator(id, answer);

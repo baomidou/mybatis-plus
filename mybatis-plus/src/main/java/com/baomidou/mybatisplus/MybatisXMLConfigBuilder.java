@@ -15,14 +15,6 @@
  */
 package com.baomidou.mybatisplus;
 
-import java.io.InputStream;
-import java.io.Reader;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
-
-import javax.sql.DataSource;
-
 import org.apache.ibatis.builder.BaseBuilder;
 import org.apache.ibatis.builder.BuilderException;
 import org.apache.ibatis.builder.xml.XMLMapperEntityResolver;
@@ -51,6 +43,13 @@ import org.apache.ibatis.session.LocalCacheScope;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.type.JdbcType;
 
+import javax.sql.DataSource;
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
+
 /**
  * <p>
  * Copy from XMLConfigBuilder in Mybatis and replace default Configuration class
@@ -58,7 +57,7 @@ import org.apache.ibatis.type.JdbcType;
  * </p>
  *
  * @author hubin
- * @Date 2016-04-20
+ * @Date 2017-01-04
  */
 public class MybatisXMLConfigBuilder extends BaseBuilder {
 
@@ -112,9 +111,9 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
 
     private void parseConfiguration(XNode root) {
         try {
-            Properties settings = settingsAsPropertiess(root.evalNode("settings"));
-            // issue #117 read properties first
+            //issue #117 read properties first
             propertiesElement(root.evalNode("properties"));
+            Properties settings = settingsAsProperties(root.evalNode("settings"));
             loadCustomVfs(settings);
             typeAliasesElement(root.evalNode("typeAliases"));
             pluginElement(root.evalNode("plugins"));
@@ -132,7 +131,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
         }
     }
 
-    private Properties settingsAsPropertiess(XNode context) {
+    private Properties settingsAsProperties(XNode context) {
         if (context == null) {
             return new Properties();
         }
@@ -141,8 +140,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
         MetaClass metaConfig = MetaClass.forClass(Configuration.class, localReflectorFactory);
         for (Object key : props.keySet()) {
             if (!metaConfig.hasSetter(String.valueOf(key))) {
-                throw new BuilderException(
-                        "The setting " + key + " is not known.  Make sure you spelled it correctly (case sensitive).");
+                throw new BuilderException("The setting " + key + " is not known.  Make sure you spelled it correctly (case sensitive).");
             }
         }
         return props;
@@ -155,7 +153,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
             for (String clazz : clazzes) {
                 if (!clazz.isEmpty()) {
                     @SuppressWarnings("unchecked")
-                    Class<? extends VFS> vfsImpl = (Class<? extends VFS>) Resources.classForName(clazz);
+                    Class<? extends VFS> vfsImpl = (Class<? extends VFS>)Resources.classForName(clazz);
                     configuration.setVfsImpl(vfsImpl);
                 }
             }
@@ -230,8 +228,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
             String resource = context.getStringAttribute("resource");
             String url = context.getStringAttribute("url");
             if (resource != null && url != null) {
-                throw new BuilderException(
-                        "The properties element cannot specify both a URL and a resource based property file reference.  Please specify one or the other.");
+                throw new BuilderException("The properties element cannot specify both a URL and a resource based property file reference.  Please specify one or the other.");
             }
             if (resource != null) {
                 defaults.putAll(Resources.getResourceAsProperties(resource));
@@ -248,16 +245,13 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
     }
 
     private void settingsElement(Properties props) throws Exception {
-        configuration.setAutoMappingBehavior(
-                AutoMappingBehavior.valueOf(props.getProperty("autoMappingBehavior", "PARTIAL")));
-        configuration.setAutoMappingUnknownColumnBehavior(AutoMappingUnknownColumnBehavior
-                .valueOf(props.getProperty("autoMappingUnknownColumnBehavior", "NONE")));
+        configuration.setAutoMappingBehavior(AutoMappingBehavior.valueOf(props.getProperty("autoMappingBehavior", "PARTIAL")));
+        configuration.setAutoMappingUnknownColumnBehavior(AutoMappingUnknownColumnBehavior.valueOf(props.getProperty("autoMappingUnknownColumnBehavior", "NONE")));
         configuration.setCacheEnabled(booleanValueOf(props.getProperty("cacheEnabled"), true));
         configuration.setProxyFactory((ProxyFactory) createInstance(props.getProperty("proxyFactory")));
         configuration.setLazyLoadingEnabled(booleanValueOf(props.getProperty("lazyLoadingEnabled"), false));
-        configuration.setAggressiveLazyLoading(booleanValueOf(props.getProperty("aggressiveLazyLoading"), true));
-        configuration
-                .setMultipleResultSetsEnabled(booleanValueOf(props.getProperty("multipleResultSetsEnabled"), true));
+        configuration.setAggressiveLazyLoading(booleanValueOf(props.getProperty("aggressiveLazyLoading"), false));
+        configuration.setMultipleResultSetsEnabled(booleanValueOf(props.getProperty("multipleResultSetsEnabled"), true));
         configuration.setUseColumnLabel(booleanValueOf(props.getProperty("useColumnLabel"), true));
         configuration.setUseGeneratedKeys(booleanValueOf(props.getProperty("useGeneratedKeys"), false));
         configuration.setDefaultExecutorType(ExecutorType.valueOf(props.getProperty("defaultExecutorType", "SIMPLE")));
@@ -267,15 +261,15 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
         configuration.setSafeRowBoundsEnabled(booleanValueOf(props.getProperty("safeRowBoundsEnabled"), false));
         configuration.setLocalCacheScope(LocalCacheScope.valueOf(props.getProperty("localCacheScope", "SESSION")));
         configuration.setJdbcTypeForNull(JdbcType.valueOf(props.getProperty("jdbcTypeForNull", "OTHER")));
-        configuration.setLazyLoadTriggerMethods(
-                stringSetValueOf(props.getProperty("lazyLoadTriggerMethods"), "equals,clone,hashCode,toString"));
+        configuration.setLazyLoadTriggerMethods(stringSetValueOf(props.getProperty("lazyLoadTriggerMethods"), "equals,clone,hashCode,toString"));
         configuration.setSafeResultHandlerEnabled(booleanValueOf(props.getProperty("safeResultHandlerEnabled"), true));
         configuration.setDefaultScriptingLanguage(resolveClass(props.getProperty("defaultScriptingLanguage")));
         configuration.setCallSettersOnNulls(booleanValueOf(props.getProperty("callSettersOnNulls"), false));
-        configuration.setUseActualParamName(booleanValueOf(props.getProperty("useActualParamName"), false));
+        configuration.setUseActualParamName(booleanValueOf(props.getProperty("useActualParamName"), true));
+        configuration.setReturnInstanceForEmptyRow(booleanValueOf(props.getProperty("returnInstanceForEmptyRow"), false));
         configuration.setLogPrefix(props.getProperty("logPrefix"));
         @SuppressWarnings("unchecked")
-        Class<? extends Log> logImpl = (Class<? extends Log>) resolveClass(props.getProperty("logImpl"));
+        Class<? extends Log> logImpl = (Class<? extends Log>)resolveClass(props.getProperty("logImpl"));
         configuration.setLogImpl(logImpl);
         configuration.setConfigurationFactory(resolveClass(props.getProperty("configurationFactory")));
     }
@@ -291,7 +285,8 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
                     TransactionFactory txFactory = transactionManagerElement(child.evalNode("transactionManager"));
                     DataSourceFactory dsFactory = dataSourceElement(child.evalNode("dataSource"));
                     DataSource dataSource = dsFactory.getDataSource();
-                    Environment.Builder environmentBuilder = new Environment.Builder(id).transactionFactory(txFactory)
+                    Environment.Builder environmentBuilder = new Environment.Builder(id)
+                            .transactionFactory(txFactory)
                             .dataSource(dataSource);
                     configuration.setEnvironment(environmentBuilder.build());
                 }
