@@ -19,10 +19,13 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.util.Properties;
 
+import org.apache.ibatis.exceptions.ExceptionFactory;
+import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
+import com.baomidou.mybatisplus.toolkit.IOUtils;
 
 /**
  * <p>
@@ -38,12 +41,28 @@ public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 
 	@Override
 	public SqlSessionFactory build(Reader reader, String environment, Properties properties) {
-		return globalConfig.signGlobalConfig(super.build(reader, environment, properties));
+		try {
+			MybatisXMLConfigBuilder parser = new MybatisXMLConfigBuilder(reader, environment, properties);
+			return globalConfig.signGlobalConfig(build(parser.parse()));
+		} catch (Exception e) {
+			throw ExceptionFactory.wrapException("Error building SqlSession.", e);
+		} finally {
+			ErrorContext.instance().reset();
+			IOUtils.closeQuietly(reader);
+		}
 	}
 
 	@Override
 	public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
-		return globalConfig.signGlobalConfig(super.build(inputStream, environment, properties));
+		try {
+			MybatisXMLConfigBuilder parser = new MybatisXMLConfigBuilder(inputStream, environment, properties);
+			return globalConfig.signGlobalConfig(build(parser.parse()));
+		} catch (Exception e) {
+			throw ExceptionFactory.wrapException("Error building SqlSession.", e);
+		} finally {
+			ErrorContext.instance().reset();
+			IOUtils.closeQuietly(inputStream);
+		}
 	}
 
 	// TODO 注入全局配置
