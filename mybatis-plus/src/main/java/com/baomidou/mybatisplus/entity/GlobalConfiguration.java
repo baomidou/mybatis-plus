@@ -287,7 +287,7 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 		GlobalConfiguration cache = GLOBAL_CONFIG.get(configMark);
 		if (cache == null) {
 			// 没有获取全局配置初始全局配置
-			logger.warn("Warn: Not getting global configuration ! global configuration Initializing !");
+			logger.debug("DeBug: MyBatis Plus Global configuration Initializing !");
 			GLOBAL_CONFIG.put(configMark, DEFAULT);
 			return DEFAULT;
 		}
