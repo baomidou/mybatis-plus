@@ -556,15 +556,11 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 		SqlRunner.FACTORY = sqlSessionFactory;
 		// TODO 缓存 sqlSessionFactory
 		globalConfig.setSqlSessionFactory(sqlSessionFactory);
-		// TODO 设置全局参数属性
-		globalConfig.setGlobalConfig(configuration);
-
 		if (!isEmpty(this.mapperLocations)) {
 			for (Resource mapperLocation : this.mapperLocations) {
 				if (mapperLocation == null) {
 					continue;
 				}
-
 				try {
 					// TODO
 					MybatisXMLMapperBuilder xmlMapperBuilder = new MybatisXMLMapperBuilder(mapperLocation.getInputStream(),
@@ -585,7 +581,8 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 				LOGGER.debug("Property 'mapperLocations' was not specified or no matching resources found");
 			}
 		}
-		return sqlSessionFactory;
+		// TODO 设置全局参数属性
+		return globalConfig.signGlobalConfig(sqlSessionFactory);
 	}
 
 	/**

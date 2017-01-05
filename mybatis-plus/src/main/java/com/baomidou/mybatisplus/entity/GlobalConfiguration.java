@@ -254,14 +254,17 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 
 	/**
 	 * <p>
-	 * 设置全局设置 (统一所有入口)
-	 * <p/>
+	 * 标记全局设置 (统一所有入口)
+	 * </p>
 	 *
 	 * @param configuration
 	 * @return
 	 */
-	public void setGlobalConfig(Configuration configuration) {
-		setGlobalConfig(configuration, this);
+	public SqlSessionFactory signGlobalConfig(SqlSessionFactory sqlSessionFactory) {
+		if (null != sqlSessionFactory) {
+			setGlobalConfig(sqlSessionFactory.getConfiguration(), this);
+		}
+		return sqlSessionFactory;
 	}
 
 	/**
