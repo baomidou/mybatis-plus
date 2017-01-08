@@ -15,15 +15,17 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
-import java.lang.reflect.*;
-import java.util.List;
-
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-
 import com.baomidou.mybatisplus.entity.TableFieldInfo;
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
 
 /**
  * <p>
@@ -41,21 +43,20 @@ public class ReflectionKit {
 	 * 反射 method 方法名，例如 getId
 	 * </p>
 	 *
-	 *
-     * @param field
-     * @param str
-     *            属性字符串内容
-     * @return
+	 * @param field
+	 * @param str
+	 *            属性字符串内容
+	 * @return
 	 */
 	public static String getMethodCapitalize(Field field, final String str) {
-        Class<?> fieldType = field.getType();
-        String concatstr;
-        if (Boolean.class.equals(fieldType) || boolean.class.equals(fieldType)) {
-            concatstr = "is";
-        }else{
-            concatstr ="get";
-        }
-        return StringUtils.concatCapitalize(concatstr, str);
+		Class<?> fieldType = field.getType();
+		String concatstr;
+		if (Boolean.class.equals(fieldType) || boolean.class.equals(fieldType)) {
+			concatstr = "is";
+		} else {
+			concatstr = "get";
+		}
+		return StringUtils.concatCapitalize(concatstr, str);
 	}
 
 	/**
@@ -71,8 +72,8 @@ public class ReflectionKit {
 	public static Object getMethodValue(Class<?> cls, Object entity, String str) {
 		Object obj = null;
 		try {
-            Field field = cls.getDeclaredField(str);
-            Method method = cls.getMethod(getMethodCapitalize(field,str));
+			Field field = cls.getDeclaredField(str);
+			Method method = cls.getMethod(getMethodCapitalize(field, str));
 			obj = method.invoke(entity);
 		} catch (NoSuchMethodException e) {
 			logger.warn(String.format("Warn: No such method. in %s.  Cause:", cls.getSimpleName()) + e);
