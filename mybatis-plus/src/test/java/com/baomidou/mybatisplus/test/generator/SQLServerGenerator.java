@@ -73,7 +73,7 @@ public class SQLServerGenerator {
         // strategy.setEntityColumnConstant(true);
         // 【实体】是否为构建者模型（默认 false）
         // public User setName(String name) {this.name = name; return this;}
-        // strategy.setEntityBuliderModel(true);
+        // strategy.setentityBuilderModel(true);
         mpg.setStrategy(strategy);
 
         // 包配置

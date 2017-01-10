@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.activerecord.Model;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableField;
 #end
-#if(${tabeAnnotation})
+#if(${tableAnnotation})
 import com.baomidou.mybatisplus.annotations.TableName;
 #end
 import java.io.Serializable;
@@ -22,7 +22,7 @@ import java.io.Serializable;
  * @author ${author}
  * @since ${date}
  */
-#if(${tabeAnnotation})
+#if(${tableAnnotation})
 @TableName("${table.name}")
 #end
 #if(${superEntityClass})
@@ -69,13 +69,13 @@ public class ${entity} implements Serializable {
 		return ${field.propertyName};
 	}
 
-#if(${entityBuliderModel})
+#if(${entityBuilderModel})
 	public ${entity} set${field.capitalName}(${field.propertyType} ${field.propertyName}) {
 #else
 	public void set${field.capitalName}(${field.propertyType} ${field.propertyName}) {
 #end
 		this.${field.propertyName} = ${field.propertyName};
-#if(${entityBuliderModel})
+#if(${entityBuilderModel})
 		return this;
 #end
 	}
