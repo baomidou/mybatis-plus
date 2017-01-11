@@ -10,9 +10,10 @@ import java.io.Serializable;
 
 
 /**
-#if("$!table.comment" != "")* <p>
-  * ${table.comment}
-  * </p>
+#if("$!table.comment" != "")
+ * <p>
+ * ${table.comment}
+ * </p>
 #end
  * @author ${author}
  * @since ${date}
