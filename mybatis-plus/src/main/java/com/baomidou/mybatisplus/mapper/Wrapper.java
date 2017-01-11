@@ -116,6 +116,20 @@ public abstract class Wrapper<T> implements Serializable {
 
     /**
      * <p>
+     * 等同于SQL的"field <> value"表达式
+     * </p>
+     *
+     * @param column
+     * @param params
+     * @return
+     */
+    public Wrapper<T> ne(String column, Object params) {
+        sql.WHERE(formatSql(String.format("%s <> {0}", column), params));
+        return this;
+    }
+
+    /**
+     * <p>
      * 等同于SQL的"field=value"表达式
      * </p>
      *
