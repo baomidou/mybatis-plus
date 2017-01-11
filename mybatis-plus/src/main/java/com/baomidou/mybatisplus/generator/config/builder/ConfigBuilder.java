@@ -337,11 +337,12 @@ public class ConfigBuilder {
 		try {
 			pstate = connection.prepareStatement(querySQL.getTableCommentsSql());
 			ResultSet results = pstate.executeQuery();
+			TableInfo tableInfo;
 			while (results.next()) {
 				String tableName = results.getString(querySQL.getTableName());
 				if (StringUtils.isNotEmpty(tableName)) {
 					String tableComment = results.getString(querySQL.getTableComment());
-					TableInfo tableInfo = new TableInfo();
+					tableInfo = new TableInfo();
 					if (isInclude) {
 						for (String includeTab : config.getInclude()) {
 							if (includeTab.equalsIgnoreCase(tableName)) {
@@ -414,8 +415,9 @@ public class ConfigBuilder {
 		ResultSet results = pstate.executeQuery();
 
 		List<TableField> fieldList = new ArrayList<TableField>();
+		TableField field;
 		while (results.next()) {
-			TableField field = new TableField();
+			field = new TableField();
 			String key = results.getString(querySQL.getFieldKey());
 			// 避免多重主键设置，目前只取第一个找到ID，并放到list中的索引为0的位置
 			boolean isId = StringUtils.isNotEmpty(key) && key.toUpperCase().equals("PRI");

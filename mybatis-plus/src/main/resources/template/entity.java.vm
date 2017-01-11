@@ -10,14 +10,14 @@ import java.io.Serializable;
 
 
 /**
- * <p>
- * ${table.comment}
- * </p>
- *
+#if("$!table.comment" != "")* <p>
+  * ${table.comment}
+  * </p>
+#end
  * @author ${author}
  * @since ${date}
  */
-#if(${tabeAnnotation})
+#if(${tableAnnotation})
 @TableName("${table.name}")
 #end
 #if(${superEntityClass})
@@ -36,10 +36,10 @@ public class ${entity} implements Serializable {
 #if(${field.keyFlag})
 #set($keyPropertyName=${field.propertyName})
 #end
-#if(${field.comment})
-	/**
-	 * ${field.comment}
-	 */
+#if("$!field.comment" != "")
+    /**
+     * ${field.comment}
+     */
 #end
 #if(${field.convert})
 #if(${field.keyFlag})

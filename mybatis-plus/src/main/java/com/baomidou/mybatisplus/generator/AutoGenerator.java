@@ -107,9 +107,9 @@ public class AutoGenerator extends AbstractGenerator {
 		String superServiceImplClass = getSuperClassName(config.getSuperServiceImplClass());
 		String superControllerClass = getSuperClassName(config.getSuperControllerClass());
 		String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-
+		VelocityContext ctx;
 		for (TableInfo tableInfo : tableList) {
-			VelocityContext ctx = new VelocityContext();
+			ctx = new VelocityContext();
 			if (null != cfg) {
 				/**
 				 * 注入自定义配置
@@ -121,7 +121,7 @@ public class AutoGenerator extends AbstractGenerator {
 			if (!tableInfo.getEntityName().toLowerCase().equals(tableInfo.getName().toLowerCase())) {
 				// 表注解
 				tableInfo.setImportPackages("com.baomidou.mybatisplus.annotations.TableName");
-				ctx.put("tabeAnnotation", true);
+				ctx.put("tableAnnotation", true);
 			}
 			if (StringUtils.isNotEmpty(config.getSuperEntityClass())) {
 				// 父实体
