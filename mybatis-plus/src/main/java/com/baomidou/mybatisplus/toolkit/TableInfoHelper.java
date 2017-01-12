@@ -32,9 +32,8 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -331,34 +330,19 @@ public class TableInfoHelper {
 	 * @return
 	 */
 	private static List<Field> getAllFields(Class<?> clazz) {
-		List<Field> result = new LinkedList<Field>();
-		Field[] fields = clazz.getDeclaredFields();
-		for (Field field : fields) {
-
-			/* 过滤静态属性 */
-			if (Modifier.isStatic(field.getModifiers())) {
-				continue;
-			}
-
-			/* 过滤 transient关键字修饰的属性 */
-			if (Modifier.isTransient(field.getModifiers())) {
-				continue;
-			}
-
-			/* 过滤注解非表字段属性 */
-			TableField tableField = field.getAnnotation(TableField.class);
-			if (tableField == null || tableField.exist()) {
-				result.add(field);
+		List<Field> fieldList = ReflectionKit.getFieldList(clazz);
+		if (CollectionUtils.isNotEmpty(fieldList)) {
+			Iterator<Field> iterator = fieldList.iterator();
+			while (iterator.hasNext()) {
+				Field field = iterator.next();
+				/* 过滤注解非表字段属性 */
+				TableField tableField = field.getAnnotation(TableField.class);
+				if (tableField != null && !tableField.exist()) {
+					fieldList.remove(field);
+				}
 			}
 		}
-
-		/* 处理父类字段 */
-		Class<?> superClass = clazz.getSuperclass();
-		if (superClass.equals(Object.class)) {
-			return result;
-		}
-		result.addAll(getAllFields(superClass));
-		return result;
+		return fieldList;
 	}
 
 	/**
