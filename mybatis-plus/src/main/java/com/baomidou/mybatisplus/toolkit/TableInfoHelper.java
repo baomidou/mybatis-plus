@@ -338,7 +338,7 @@ public class TableInfoHelper {
 				/* 过滤注解非表字段属性 */
 				TableField tableField = field.getAnnotation(TableField.class);
 				if (tableField != null && !tableField.exist()) {
-					fieldList.remove(field);
+					iterator.remove();
 				}
 			}
 		}
