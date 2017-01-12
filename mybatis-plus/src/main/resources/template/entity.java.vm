@@ -21,13 +21,11 @@ import java.io.Serializable;
 @TableName("${table.name}")
 #end
 #if(${superEntityClass})
-public class ${entity} extends ${superEntityClass} {
-#else
-#if(${activeRecord})
+public class ${entity} extends ${superEntityClass}#if(${activeRecord})<${entity}>#end {
+#elseif(${activeRecord})
 public class ${entity} extends Model<${entity}> {
 #else
 public class ${entity} implements Serializable {
-#end
 #end
 
     private static final long serialVersionUID = 1L;

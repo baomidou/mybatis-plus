@@ -104,6 +104,7 @@ public class MysqlGenerator {
 		// 包配置
 		PackageConfig pc = new PackageConfig();
 		pc.setModuleName("test");
+		pc.setController("controller");//这里是控制器包名，默认 web
 		mpg.setPackageInfo(pc);
 
 		// 注入自定义配置，可以在 VM 中使用 cfg.abc 设置的值
