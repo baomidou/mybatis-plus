@@ -95,7 +95,7 @@ public class ConfigBuilder {
 
 	/**
 	 * 在构造器中处理配置
-	 * 
+	 *
 	 * @param packageConfig
 	 *            包配置
 	 * @param dataSourceConfig
@@ -193,7 +193,7 @@ public class ConfigBuilder {
 
 	/**
 	 * 模板路径配置信息
-	 * 
+	 *
 	 * @return 所以模板路径配置信息
 	 */
 	public TemplateConfig getTemplate() {
@@ -372,12 +372,13 @@ public class ConfigBuilder {
 					System.err.println("当前数据库为空！！！");
 				}
 			}
-			// 将已经存在的表移除
-			for (TableInfo tabInfo : tableList) {
-				notExistTables.remove(tabInfo.getName());
-			}
-			if (notExistTables.size() > 0) {
-				System.err.println("表 " + notExistTables + " 在数据库中不存在！！！");
+			// 将不存在或排除的表移除
+			for (String table : notExistTables) {
+                for (TableInfo t : tableList) {
+					if (t.getName().equals(table)){
+						tableList.remove(t);
+					}
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -505,7 +506,7 @@ public class ConfigBuilder {
 
 	/**
 	 * 处理字段名称
-	 * 
+	 *
 	 * @param name
 	 * @param strategy
 	 * @param tablePrefix
@@ -598,7 +599,7 @@ public class ConfigBuilder {
 	 * <p>
 	 * SQLServer 字段类型转换
 	 * </p>
-	 * 
+	 *
 	 * @param type
 	 * @return
 	 */
