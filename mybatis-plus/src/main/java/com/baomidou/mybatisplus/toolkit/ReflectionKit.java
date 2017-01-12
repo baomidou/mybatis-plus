@@ -28,7 +28,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -76,7 +78,7 @@ public class ReflectionKit {
 	 * @return Object
 	 */
 	public static Object getMethodValue(Class<?> cls, Object entity, String str) {
-		Map<String, Field> fieldMaps = getFieldMaps(cls);
+		Map<String, Field> fieldMaps = getFieldMap(cls);
 		try {
 			if (MapUtils.isEmpty(fieldMaps)) {
 				throw new MybatisPlusException(
@@ -189,11 +191,30 @@ public class ReflectionKit {
 	 *            反射类
 	 * @return
 	 */
-	private static Map<String, Field> getFieldMaps(Class<?> clazz) {
+	public static Map<String, Field> getFieldMap(Class<?> clazz) {
+		List<Field> fieldList = getFieldList(clazz);
+		Map<String, Field> fieldMap = Collections.emptyMap();
+		if (CollectionUtils.isNotEmpty(fieldList)) {
+			fieldMap = new LinkedHashMap<String, Field>();
+			for (Field field : fieldList) {
+				fieldMap.put(field.getName(), field);
+			}
+		}
+		return fieldMap;
+	}
+
+	/**
+	 * 获取该类的所有属性列表
+	 *
+	 * @param clazz
+	 *            反射类
+	 * @return
+	 */
+	public static List<Field> getFieldList(Class<?> clazz) {
 		if (null == clazz) {
 			return null;
 		}
-		Map<String, Field> fieldMaps = new LinkedHashMap<String, Field>();
+		List<Field> fieldList = new LinkedList<Field>();
 		Field[] fields = clazz.getDeclaredFields();
 		for (Field field : fields) {
 			/* 过滤静态属性 */
@@ -204,14 +225,14 @@ public class ReflectionKit {
 			if (Modifier.isTransient(field.getModifiers())) {
 				continue;
 			}
-			fieldMaps.put(field.getName(), field);
+			fieldList.add(field);
 		}
 		/* 处理父类字段 */
 		Class<?> superClass = clazz.getSuperclass();
 		if (superClass.equals(Object.class)) {
-			return fieldMaps;
+			return fieldList;
 		}
-		fieldMaps.putAll(getFieldMaps(superClass));
-		return fieldMaps;
+		fieldList.addAll(getFieldList(superClass));
+		return fieldList;
 	}
 }
