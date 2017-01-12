@@ -286,7 +286,7 @@ public class ConfigBuilder {
 	 * @param tablePrefix
 	 * @return 补充完整信息后的表
 	 */
-	private List<TableInfo> processTable(List<TableInfo> tableList, NamingStrategy strategy, String tablePrefix) {
+	private List<TableInfo> processTable(List<TableInfo> tableList, NamingStrategy strategy, String[] tablePrefix) {
 		for (TableInfo tableInfo : tableList) {
 			tableInfo.setEntityName(NamingStrategy.capitalFirst(processName(tableInfo.getName(), strategy, tablePrefix)));
 			if (StringUtils.isNotEmpty(globalConfig.getMapperName())) {
@@ -514,7 +514,7 @@ public class ConfigBuilder {
 	 * @param tablePrefix
 	 * @return 根据策略返回处理后的名称
 	 */
-	private String processName(String name, NamingStrategy strategy, String tablePrefix) {
+	private String processName(String name, NamingStrategy strategy, String[] tablePrefix) {
 		String propertyName = "";
 		if (strategy == NamingStrategy.remove_prefix_and_camel) {
 			propertyName = NamingStrategy.removePrefixAndCamel(name, tablePrefix);
