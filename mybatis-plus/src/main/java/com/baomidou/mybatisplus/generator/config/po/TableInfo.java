@@ -140,7 +140,7 @@ public class TableInfo {
 				}
 			}
 			if (!pkgSet.isEmpty()) {
-				this.importPackages =  new ArrayList(Arrays.asList(pkgSet.toArray(new String[] {})));
+				this.importPackages =  new ArrayList<String>(Arrays.asList(pkgSet.toArray(new String[] {})));
 			}
 		}
 	}
