@@ -374,7 +374,11 @@ public class ConfigBuilder {
 			}
 			// 将不存在或排除的表移除
 			for (String table : notExistTables) {
-				tableList.removeIf(tableInfo -> tableInfo.getName().equals(table));
+                for (TableInfo t : tableList) {
+					if (t.getName().equals(table)){
+						tableList.remove(t);
+					}
+				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
