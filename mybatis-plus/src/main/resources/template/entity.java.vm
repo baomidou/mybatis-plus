@@ -41,9 +41,9 @@ public class ${entity} implements Serializable {
 #end
 #if(${field.convert})
 #if(${field.keyFlag})
-	@TableId(value="${field.name}")
+	@TableId("${field.name}")
 #else
-	@TableField(value="${field.name}")
+	@TableField("${field.name}")
 #end
 #end
 	private ${field.propertyType} ${field.propertyName};
