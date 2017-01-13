@@ -190,6 +190,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 		return parameterObject;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void setParameters(PreparedStatement ps) {
 		// 反射获取动态参数

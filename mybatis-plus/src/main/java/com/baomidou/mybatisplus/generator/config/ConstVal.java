@@ -57,11 +57,6 @@ public class ConstVal {
 	public static final String TEMPLATE_CONTROLLER = "/template/controller.java.vm";
 
 	public static final String ENTITY_NAME = File.separator + "%s" + JAVA_SUFFIX;
-//	public static final String MAPPER_NAME = File.separator + "%s" + MAPPER + JAVA_SUFFIX;
-//	public static final String XML_NAME = File.separator + "%s" + MAPPER + XML_SUFFIX;
-//	public static final String SERVICE_NAME = File.separator + "I%s" + SERIVCE + JAVA_SUFFIX;
-//	public static final String SERVICEIMPL_NAME = File.separator + "%s" + SERVICEIMPL + JAVA_SUFFIX;
-//	public static final String CONTROLLER_NAME = File.separator + "%s" + CONTROLLER + JAVA_SUFFIX;
 
 	// 配置使用classloader加载资源
 	public static final String VM_LOADPATH_KEY = "file.resource.loader.class";
