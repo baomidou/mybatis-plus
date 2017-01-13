@@ -15,8 +15,16 @@
  */
 package com.baomidou.mybatisplus.service.impl;
 
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.baomidou.mybatisplus.entity.TableInfo;
-import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.baomidou.mybatisplus.mapper.SqlHelper;
@@ -28,14 +36,6 @@ import com.baomidou.mybatisplus.toolkit.MapUtils;
 import com.baomidou.mybatisplus.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.SqlSession;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -100,16 +100,14 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 				if (StringUtils.checkValNull(idVal)) {
 					return insert(entity);
 				} else {
-					/* 特殊处理 INPUT 主键策略逻辑 */
-					if (IdType.INPUT == tableInfo.getIdType()) {
-						T entityValue = selectById((Serializable) idVal);
-						if (null != entityValue) {
-							return updateById(entity);
-						} else {
-							return insert(entity);
-						}
+					/*
+					 * 更新成功直接返回，失败执行插入逻辑
+					 */
+					boolean rlt = updateById(entity);
+					if (!rlt) {
+						return insert(entity);
 					}
-					return updateById(entity);
+					return rlt;
 				}
 			} else {
 				throw new MybatisPlusException("Error:  Can not execute. Could not find @TableId.");
