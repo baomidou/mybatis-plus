@@ -415,9 +415,8 @@ public class ConfigBuilder {
 		ResultSet results = pstate.executeQuery();
 
 		List<TableField> fieldList = new ArrayList<TableField>();
-		TableField field;
 		while (results.next()) {
-			field = new TableField();
+			TableField field = new TableField();
 			String key = results.getString(querySQL.getFieldKey());
 			// 避免多重主键设置，目前只取第一个找到ID，并放到list中的索引为0的位置
 			boolean isId = StringUtils.isNotEmpty(key) && key.toUpperCase().equals("PRI");
@@ -436,6 +435,15 @@ public class ConfigBuilder {
 			}
 			field.setType(results.getString(querySQL.getFieldType()));
 			field.setPropertyName(processName(field.getName(), strategy));
+			if (StrategyConfig.DB_COLUMN_UNDERLINE) {
+				// 转换字段
+				if (StringUtils.containsUpperCase(field.getName())) {
+					field.setConvert(true);
+				}
+			} else if (!field.getName().equalsIgnoreCase(field.getPropertyName())) {
+				// 转换字段
+				field.setConvert(true);
+			}
 			field.setColumnType(processFiledType(field.getType()));
 			field.setComment(results.getString(querySQL.getFieldComment()));
 			fieldList.add(field);

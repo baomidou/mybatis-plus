@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.generator.config.po;
 
-import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 
 /**
@@ -27,12 +26,21 @@ import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
  * @since 2016-12-03
  */
 public class TableField {
+	private boolean convert;
 	private boolean keyFlag;
 	private String name;
 	private String type;
 	private String propertyName;
 	private DbColumnType columnType;
 	private String comment;
+
+	public boolean isConvert() {
+		return convert;
+	}
+
+	public void setConvert(boolean convert) {
+		this.convert = convert;
+	}
 
 	public boolean isKeyFlag() {
 		return keyFlag;
@@ -87,13 +95,6 @@ public class TableField {
 
 	public void setComment(String comment) {
 		this.comment = comment;
-	}
-
-	public boolean isConvert() {
-		if (StrategyConfig.DB_COLUMN_UNDERLINE) {
-			return false;
-		}
-		return !name.equalsIgnoreCase(propertyName);
 	}
 
 	public String getCapitalName() {
