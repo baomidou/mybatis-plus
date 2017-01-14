@@ -85,6 +85,7 @@ public class UserMapperTest {
 		 */
 		gc.setMetaObjectHandler(new MyMetaObjectHandler());
 		// gc.setCapitalMode(true);
+		gc.setDbColumnUnderline(true);
 		mf.setGlobalConfig(gc);
 
 		SqlSessionFactory sessionFactory = mf.build(in);

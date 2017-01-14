@@ -576,8 +576,15 @@ public class AutoSqlInjector implements ISqlInjector {
 			Iterator<TableFieldInfo> iterator = fieldList.iterator();
 			while (iterator.hasNext()) {
 				TableFieldInfo fieldInfo = iterator.next();
-				columns.append(fieldInfo.getColumn());
-				columns.append(" AS ").append(sqlWordConvert(fieldInfo.getProperty()));
+				//匹配转换内容
+				String wordConvert = sqlWordConvert(fieldInfo.getProperty());
+				if (fieldInfo.getColumn().equals(wordConvert)) {
+					columns.append(wordConvert);
+				} else {
+					// 字段属性不一致
+					columns.append(fieldInfo.getColumn());
+					columns.append(" AS ").append(wordConvert);
+				}
 				if (i + 1 < _size) {
 					columns.append(",");
 				}

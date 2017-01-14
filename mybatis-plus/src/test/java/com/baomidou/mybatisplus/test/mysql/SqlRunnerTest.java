@@ -69,7 +69,7 @@ public class SqlRunnerTest {
 			maps1 = null;
 		}
 		Assert.assertNull(maps1);
-		Page<Map<String, Object>> mapPage = SqlRunner.db().selectPage(new Page(1, 5), "select * from test ");
+		Page<Map<String, Object>> mapPage = SqlRunner.db().selectPage(new Page<Object>(1, 5), "select * from test ");
 		System.out.println(mapPage);
 		int i = SqlRunner.db().selectCount("select count(0) from test ");
 		System.out.println("count:" + i);
