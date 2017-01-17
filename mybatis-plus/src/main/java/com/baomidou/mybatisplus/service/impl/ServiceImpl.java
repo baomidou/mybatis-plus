@@ -15,15 +15,6 @@
  */
 package com.baomidou.mybatisplus.service.impl;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.SqlSession;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
@@ -36,6 +27,14 @@ import com.baomidou.mybatisplus.toolkit.MapUtils;
 import com.baomidou.mybatisplus.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -273,27 +272,27 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Page<Map<String, Object>> selectMapsPage(Page page, Wrapper<T> wrapper) {
-		if (null != wrapper) {
-			wrapper.orderBy(page.getOrderByField(), page.isAsc());
-		}
-		Map<String, Object> condition = page.getCondition();
-		if(!condition.isEmpty()){
-			wrapper.allEq(condition);
-		}
+		fillWrapper(page, wrapper);
 		page.setRecords(baseMapper.selectMapsPage(page, wrapper));
 		return page;
 	}
 
 	public Page<T> selectPage(Page<T> page, Wrapper<T> wrapper) {
-		if (null != wrapper) {
-			wrapper.orderBy(page.getOrderByField(), page.isAsc());
-		}
-		Map<String, Object> condition = page.getCondition();
-		if(!condition.isEmpty()){
-			wrapper.allEq(condition);
-		}
+		fillWrapper(page, wrapper);
 		page.setRecords(baseMapper.selectPage(page, wrapper));
 		return page;
 	}
 
+	/**
+	 * 填充Wrapper
+	 * 
+	 * @param page
+	 * @param wrapper
+	 */
+	protected void fillWrapper(Page<T> page, Wrapper<T> wrapper) {
+		if (null != wrapper) {
+			wrapper.orderBy(page.getOrderByField(), page.isAsc());
+			wrapper.allEq(page.getCondition());
+		}
+	}
 }
