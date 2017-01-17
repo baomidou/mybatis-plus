@@ -577,7 +577,7 @@ public class AutoSqlInjector implements ISqlInjector {
 			Iterator<TableFieldInfo> iterator = fieldList.iterator();
 			while (iterator.hasNext()) {
 				TableFieldInfo fieldInfo = iterator.next();
-				//匹配转换内容
+				// 匹配转换内容
 				String wordConvert = sqlWordConvert(fieldInfo.getProperty());
 				if (fieldInfo.getColumn().equals(wordConvert)) {
 					columns.append(wordConvert);
@@ -705,11 +705,10 @@ public class AutoSqlInjector implements ISqlInjector {
 		// 验证逻辑
 		if (fieldStrategy == FieldStrategy.NOT_EMPTY) {
 			String propertyType = fieldInfo.getPropertyType();
-			// 如果是Date类型
-			if ("java.util.Date".equals(propertyType) || "java.sql.Date".equals(propertyType)) {
-				return String.format("\n\t<if test=\"%s!=null \">", property, property);
-			} else {
+			if (StringUtils.isCharSequence(propertyType)) {
 				return String.format("\n\t<if test=\"%s!=null and %s!=''\">", property, property);
+			} else {
+				return String.format("\n\t<if test=\"%s!=null \">", property, property);
 			}
 		} else {
 			// FieldStrategy.NOT_NULL
@@ -752,7 +751,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * 插入
 	 */
 	public MappedStatement addInsertMappedStatement(Class<?> mapperClass, Class<?> modelClass, String id, SqlSource sqlSource,
-													KeyGenerator keyGenerator, String keyProperty, String keyColumn) {
+			KeyGenerator keyGenerator, String keyProperty, String keyColumn) {
 		return this.addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.INSERT, modelClass, null, Integer.class,
 				keyGenerator, keyProperty, keyColumn);
 	}
