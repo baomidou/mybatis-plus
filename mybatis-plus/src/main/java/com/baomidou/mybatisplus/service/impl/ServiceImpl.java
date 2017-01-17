@@ -276,6 +276,10 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		if (null != wrapper) {
 			wrapper.orderBy(page.getOrderByField(), page.isAsc());
 		}
+		Map<String, Object> condition = page.getCondition();
+		if(!condition.isEmpty()){
+			wrapper.allEq(condition);
+		}
 		page.setRecords(baseMapper.selectMapsPage(page, wrapper));
 		return page;
 	}
