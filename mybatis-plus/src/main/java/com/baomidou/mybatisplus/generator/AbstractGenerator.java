@@ -59,7 +59,7 @@ public abstract class AbstractGenerator {
 
 	protected ConfigBuilder config;
 
-	protected InjectionConfig cfg;
+	protected InjectionConfig injectionConfig;
 
 	/**
 	 * 初始化配置
@@ -67,8 +67,8 @@ public abstract class AbstractGenerator {
 	protected void initConfig() {
 		if (null == config) {
 			config = new ConfigBuilder(packageInfo, dataSource, strategy, template, globalConfig);
-			if (null != cfg) {
-				cfg.setConfig(config);
+			if (null != injectionConfig) {
+				injectionConfig.setConfig(config);
 			}
 		}
 	}
@@ -122,11 +122,11 @@ public abstract class AbstractGenerator {
 	}
 
 	public InjectionConfig getCfg() {
-		return cfg;
+		return injectionConfig;
 	}
 
-	public void setCfg(InjectionConfig cfg) {
-		this.cfg = cfg;
+	public void setCfg(InjectionConfig injectionConfig) {
+		this.injectionConfig = injectionConfig;
 	}
 
 }
