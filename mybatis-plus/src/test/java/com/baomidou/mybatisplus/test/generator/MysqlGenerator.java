@@ -49,7 +49,7 @@ public class MysqlGenerator {
 		GlobalConfig gc = new GlobalConfig();
 		gc.setOutputDir("D://");
 		gc.setFileOverride(true);
-		gc.setActiveRecord(true);// 开启 activeRecord 模式 
+		gc.setActiveRecord(true);// 开启 activeRecord 模式
 		gc.setEnableCache(false);// XML 二级缓存
 		gc.setBaseResultMap(true);// XML ResultMap
 		gc.setBaseColumnList(false);// XML columList
@@ -74,8 +74,9 @@ public class MysqlGenerator {
 
 		// 策略配置
 		StrategyConfig strategy = new StrategyConfig();
+		// strategy.setCapitalMode(true);// 全局大写命名
 		// strategy.setDbColumnUnderline(true);//全局下划线命名
-		strategy.setTablePrefix(new String[]{"bmd_", "mp_"});// 此处可以修改为您的表前缀
+		strategy.setTablePrefix(new String[] { "bmd_", "mp_" });// 此处可以修改为您的表前缀
 		strategy.setNaming(NamingStrategy.remove_prefix_and_camel);// 表名生成策略
 		// strategy.setInclude(new String[] { "user" }); // 需要生成的表
 		// strategy.setExclude(new String[]{"test"}); // 排除生成的表
@@ -104,8 +105,8 @@ public class MysqlGenerator {
 		// 包配置
 		PackageConfig pc = new PackageConfig();
 		pc.setModuleName("test");
-		pc.setParent("com.baomidou");//自定义包路径
-		pc.setController("controller");//这里是控制器包名，默认 web
+		pc.setParent("com.baomidou");// 自定义包路径
+		pc.setController("controller");// 这里是控制器包名，默认 web
 		mpg.setPackageInfo(pc);
 
 		// 注入自定义配置，可以在 VM 中使用 cfg.abc 设置的值

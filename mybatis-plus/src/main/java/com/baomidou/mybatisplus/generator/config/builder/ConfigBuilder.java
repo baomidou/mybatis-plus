@@ -288,7 +288,7 @@ public class ConfigBuilder {
 	 */
 	private List<TableInfo> processTable(List<TableInfo> tableList, NamingStrategy strategy, String[] tablePrefix) {
 		for (TableInfo tableInfo : tableList) {
-			tableInfo.setEntityName(NamingStrategy.capitalFirst(processName(tableInfo.getName(), strategy, tablePrefix)));
+			tableInfo.setEntityName(strategyConfig, NamingStrategy.capitalFirst(processName(tableInfo.getName(), strategy, tablePrefix)));
 			if (StringUtils.isNotEmpty(globalConfig.getMapperName())) {
 				tableInfo.setMapperName(String.format(globalConfig.getMapperName(), tableInfo.getEntityName()));
 			} else {
@@ -410,7 +410,6 @@ public class ConfigBuilder {
 	 */
 	private List<TableField> getListFields(String tableName, NamingStrategy strategy) throws SQLException {
 		boolean havedId = false;
-
 		PreparedStatement pstate = connection.prepareStatement(String.format(querySQL.getTableFieldsSql(), tableName));
 		ResultSet results = pstate.executeQuery();
 
@@ -434,16 +433,7 @@ public class ConfigBuilder {
 				continue;
 			}
 			field.setType(results.getString(querySQL.getFieldType()));
-			field.setPropertyName(processName(field.getName(), strategy));
-			if (StrategyConfig.DB_COLUMN_UNDERLINE) {
-				// 转换字段
-				if (StringUtils.containsUpperCase(field.getName())) {
-					field.setConvert(true);
-				}
-			} else if (!field.getName().equalsIgnoreCase(field.getPropertyName())) {
-				// 转换字段
-				field.setConvert(true);
-			}
+			field.setPropertyName(strategyConfig, processName(field.getName(), strategy));
 			field.setColumnType(processFiledType(field.getType()));
 			field.setComment(results.getString(querySQL.getFieldComment()));
 			fieldList.add(field);
@@ -627,18 +617,17 @@ public class ConfigBuilder {
 			return DbColumnType.STRING;
 		} else if (t.contains("bit")) {
 			return DbColumnType.BOOLEAN;
-		}else if (t.contains("decimal")||t.contains("numeric")){
+		} else if (t.contains("decimal") || t.contains("numeric")) {
 			return DbColumnType.DOUBLE;
-		}else if (t.contains("money")) {
+		} else if (t.contains("money")) {
 			return DbColumnType.BIG_DECIMAL;
-		} else if (t.contains("binary")||t.contains("image")) {
+		} else if (t.contains("binary") || t.contains("image")) {
 			return DbColumnType.BYTE_ARRAY;
-		} else if (t.contains("float")||t.contains("real")) {
+		} else if (t.contains("float") || t.contains("real")) {
 			return DbColumnType.FLOAT;
 		}
 		return DbColumnType.STRING;
 	}
-
 
 	/**
 	 * <p>

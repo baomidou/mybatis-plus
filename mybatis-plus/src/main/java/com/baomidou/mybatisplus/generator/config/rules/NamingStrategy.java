@@ -48,9 +48,14 @@ public enum NamingStrategy {
 			// 没必要转换
 			return "";
 		}
+		String tempName = name;
 		StringBuilder result = new StringBuilder();
+		// 大写数字下划线组成转为小写
+		if (StringUtils.isCapitalMode(name)) {
+			tempName = name.toLowerCase();
+		}
 		// 用下划线将原始字符串分割
-		String camels[] = name.split(ConstVal.UNDERLINE);
+		String camels[] = tempName.split(ConstVal.UNDERLINE);
 		for (String camel : camels) {
 			// 跳过原始字符串中开头、结尾的下换线或双重下划线
 			if (StringUtils.isEmpty(camel)) {

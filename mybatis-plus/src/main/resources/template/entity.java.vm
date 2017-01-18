@@ -17,7 +17,7 @@ import java.io.Serializable;
  * @author ${author}
  * @since ${date}
  */
-#if(${tableAnnotation})
+#if(${table.convert})
 @TableName("${table.name}")
 #end
 #if(${superEntityClass})

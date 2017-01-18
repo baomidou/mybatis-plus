@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
-import com.baomidou.mybatisplus.enums.SqlLike;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -24,6 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.baomidou.mybatisplus.enums.SqlLike;
 
 /**
  * <p>
@@ -386,6 +386,22 @@ public class StringUtils {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * <p>
+	 * 是否为大写命名
+	 * </p>
+	 * 
+	 * @param word
+	 *            待判断字符串
+	 * @return
+	 */
+	public static boolean isCapitalMode(String word) {
+		if (null == word) {
+			return false;
+		}
+		return word.matches("^[0-9A-Z/_]+$");
 	}
 
 	/**

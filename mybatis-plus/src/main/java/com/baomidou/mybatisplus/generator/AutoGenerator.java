@@ -118,10 +118,9 @@ public class AutoGenerator extends AbstractGenerator {
 				ctx.put("cfg", cfg.getMap());
 			}
 			/* ---------- 添加导入包 ---------- */
-			if (!tableInfo.getEntityName().toLowerCase().equals(tableInfo.getName().toLowerCase())) {
+			if (tableInfo.isConvert()) {
 				// 表注解
 				tableInfo.setImportPackages("com.baomidou.mybatisplus.annotations.TableName");
-				ctx.put("tableAnnotation", true);
 			}
 			if (StringUtils.isNotEmpty(config.getSuperEntityClass())) {
 				// 父实体
