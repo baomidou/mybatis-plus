@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.generator;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.generator.config.FileOutConfig;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 
 /**
