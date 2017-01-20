@@ -271,10 +271,11 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * @param wrapper
 	 * @return
 	 */
-	public Page<T> selectPage(Page<T> page, Wrapper wrapper) {
+	public Page<T> selectPage(Page<T> page, Wrapper<T> wrapper) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		if (wrapper != null && StringUtils.isNotEmpty(page.getOrderByField())) {
 			wrapper.orderBy(page.getOrderByField());
+			wrapper.allEq(page.getCondition());
 		}
 		map.put("ew", wrapper);
 		List<T> tl = sqlSession().selectList(sqlStatement(SqlMethod.SELECT_PAGE), map, page);
@@ -292,6 +293,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * @param args
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public Page<T> selectPage(Page<T> page, String whereClause, Object... args) {
 		return selectPage(page, Condition.instance().where(whereClause, args));
 	}

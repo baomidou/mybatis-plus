@@ -20,6 +20,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.generator.config.converts.MySqlTypeConvert;
 import com.baomidou.mybatisplus.generator.config.rules.DbType;
 
 /**
@@ -36,6 +37,10 @@ public class DataSourceConfig {
 	 * 数据库类型
 	 */
 	private DbType dbType;
+	/**
+	 * 类型转换
+	 */
+	private ITypeConvert typeConvert;
 	/**
 	 * 驱动连接的URL
 	 */
@@ -75,6 +80,17 @@ public class DataSourceConfig {
 
 	public void setDbType(DbType dbType) {
 		this.dbType = dbType;
+	}
+
+	public ITypeConvert getTypeConvert() {
+		if (null == typeConvert) {
+			return new MySqlTypeConvert();
+		}
+		return typeConvert;
+	}
+
+	public void setTypeConvert(ITypeConvert typeConvert) {
+		this.typeConvert = typeConvert;
 	}
 
 	/**
