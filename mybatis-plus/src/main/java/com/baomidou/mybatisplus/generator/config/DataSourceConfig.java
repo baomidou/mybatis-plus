@@ -21,6 +21,9 @@ import java.sql.SQLException;
 
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.generator.config.converts.MySqlTypeConvert;
+import com.baomidou.mybatisplus.generator.config.converts.OracleTypeConvert;
+import com.baomidou.mybatisplus.generator.config.converts.PostgreSqlTypeConvert;
+import com.baomidou.mybatisplus.generator.config.converts.SqlServerTypeConvert;
 import com.baomidou.mybatisplus.generator.config.rules.DbType;
 
 /**
@@ -84,7 +87,21 @@ public class DataSourceConfig {
 
 	public ITypeConvert getTypeConvert() {
 		if (null == typeConvert) {
-			return new MySqlTypeConvert();
+			switch (getDbType()) {
+			case ORACLE:
+				typeConvert = new OracleTypeConvert();
+				break;
+			case SQL_SERVER:
+				typeConvert = new SqlServerTypeConvert();
+				break;
+			case POSTGRE_SQL:
+				typeConvert = new PostgreSqlTypeConvert();
+				break;
+			default:
+				// 默认 MYSQL
+				typeConvert = new MySqlTypeConvert();
+				break;
+			}
 		}
 		return typeConvert;
 	}
