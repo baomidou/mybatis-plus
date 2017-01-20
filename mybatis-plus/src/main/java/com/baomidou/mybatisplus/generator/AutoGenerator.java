@@ -221,15 +221,18 @@ public class AutoGenerator extends AbstractGenerator {
 			if (isCreate(controllerFile)) {
 				vmToFile(context, template.getController(), controllerFile);
 			}
-			/**
-			 * 输出自定义文件内容
-			 */
-			List<FileOutConfig> focList = injectionConfig.getFileOutConfigList();
-			if (CollectionUtils.isNotEmpty(focList)) {
-				for (FileOutConfig foc : focList) {
-					vmToFile(context, foc.getTemplatePath(), foc.outputFile(tableInfo));
+			if (injectionConfig != null) {
+				/**
+				 * 输出自定义文件内容
+				 */
+				List<FileOutConfig> focList = injectionConfig.getFileOutConfigList();
+				if (CollectionUtils.isNotEmpty(focList)) {
+					for (FileOutConfig foc : focList) {
+						vmToFile(context, foc.getTemplatePath(), foc.outputFile(tableInfo));
+					}
 				}
 			}
+
 		} catch (IOException e) {
 			logger.error("无法创建文件，请检查配置信息！", e);
 		}
