@@ -15,15 +15,11 @@
  */
 package com.baomidou.mybatisplus.plugins;
 
-import com.baomidou.mybatisplus.MybatisDefaultParameterHandler;
-import com.baomidou.mybatisplus.entity.CountOptimize;
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
-import com.baomidou.mybatisplus.plugins.pagination.IDialect;
-import com.baomidou.mybatisplus.plugins.pagination.Pagination;
-import com.baomidou.mybatisplus.toolkit.IOUtils;
-import com.baomidou.mybatisplus.toolkit.SqlUtils;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.Properties;
+
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
@@ -39,10 +35,13 @@ import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.Properties;
+import com.baomidou.mybatisplus.MybatisDefaultParameterHandler;
+import com.baomidou.mybatisplus.entity.CountOptimize;
+import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
+import com.baomidou.mybatisplus.plugins.pagination.Pagination;
+import com.baomidou.mybatisplus.toolkit.IOUtils;
+import com.baomidou.mybatisplus.toolkit.SqlUtils;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
  * <p>
@@ -52,9 +51,7 @@ import java.util.Properties;
  * @author hubin
  * @Date 2016-01-23
  */
-@Intercepts({
-		@Signature(type = Executor.class, method = "query", args = { MappedStatement.class, Object.class, RowBounds.class,
-				ResultHandler.class }),
+@Intercepts({@Signature(type = Executor.class, method = "query", args = { MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class }),
 		@Signature(type = StatementHandler.class, method = "prepare", args = { Connection.class, Integer.class }) })
 public class PaginationInterceptor implements Interceptor {
 
@@ -79,9 +76,6 @@ public class PaginationInterceptor implements Interceptor {
 			if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
 				return invocation.proceed();
 			}
-
-			/* 定义数据库方言 */
-			IDialect dialect = getiDialect();
 
 			/*
 			 * <p> 禁用内存分页 </p> <p> 内存分页会查询所有结果出来处理（这个很吓人的），如果结果变化频繁这个数据还会不准。
@@ -111,9 +105,10 @@ public class PaginationInterceptor implements Interceptor {
 							page.isOptimizeCount());
 					orderBy = countOptimize.isOrderBy();
 				}
+
 				/* 执行 SQL */
 				String buildSql = SqlUtils.concatOrderBy(originalSql, page, orderBy);
-				originalSql = dialect.buildPaginationSql(buildSql, page.getOffsetCurrent(), page.getSize());
+				originalSql = DialectFactory.buildPaginationSql(page, buildSql, dialectType, dialectClazz);
 			}
 
 			/**
@@ -173,35 +168,6 @@ public class PaginationInterceptor implements Interceptor {
 
 		return invocation.proceed();
 
-	}
-
-	/**
-	 * 获取数据库方言
-	 *
-	 * @return
-	 * @throws Exception
-	 */
-	private IDialect getiDialect() throws Exception {
-		IDialect dialect = null;
-		if (StringUtils.isNotEmpty(dialectType)) {
-			dialect = DialectFactory.getDialectByDbtype(dialectType);
-		} else {
-			if (StringUtils.isNotEmpty(dialectClazz)) {
-				try {
-					Class<?> clazz = Class.forName(dialectClazz);
-					if (IDialect.class.isAssignableFrom(clazz)) {
-						dialect = (IDialect) clazz.newInstance();
-					}
-				} catch (ClassNotFoundException e) {
-					throw new MybatisPlusException("Class :" + dialectClazz + " is not found");
-				}
-			}
-		}
-		/* 未配置方言则抛出异常 */
-		if (dialect == null) {
-			throw new MybatisPlusException("The value of the dialect property in mybatis configuration.xml is not defined.");
-		}
-		return dialect;
 	}
 
 	/**
