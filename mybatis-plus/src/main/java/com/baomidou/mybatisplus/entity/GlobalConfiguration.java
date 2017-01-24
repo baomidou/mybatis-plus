@@ -30,7 +30,10 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionTemplate;
 
 import javax.sql.DataSource;
 import java.io.Serializable;
@@ -87,7 +90,8 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	private SqlSessionFactory sqlSessionFactory;
 
 	private Set<String> mapperRegistryCache = new ConcurrentSkipListSet<String>();
-
+	private SqlSession sqlSession;
+	private SqlSession sqlsessionBatch;
 	public GlobalConfiguration() {
 		// 构造方法
 	}
@@ -179,6 +183,8 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 
 	public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
 		this.sqlSessionFactory = sqlSessionFactory;
+		this.sqlSession = new SqlSessionTemplate(sqlSessionFactory);
+		this.sqlsessionBatch = new SqlSessionTemplate(sqlSessionFactory, ExecutorType.BATCH);
 	}
 
 	public boolean isCapitalMode() {
@@ -201,6 +207,14 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 		if (StringUtils.isNotEmpty(sqlKeywords)) {
 			SqlReservedWords.RESERVED_WORDS.addAll(StringUtils.splitWorker(sqlKeywords.toUpperCase(), ",", -1, false));
 		}
+	}
+
+	public SqlSession getSqlSession() {
+		return sqlSession;
+	}
+
+	public SqlSession getSqlsessionBatch() {
+		return sqlsessionBatch;
 	}
 
 	@Override
@@ -344,6 +358,13 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 		return GlobalConfig(configuration).getIdentifierQuote();
 	}
 
+	public static SqlSession getSqlSession(Configuration configuration) {
+		return GlobalConfig(configuration).getSqlSession();
+	}
+
+	public static SqlSession getSqlsessionBatch(Configuration configuration) {
+		return GlobalConfig(configuration).getSqlsessionBatch();
+	}
 	/**
 	 * 设置元数据相关属性
 	 *
