@@ -33,7 +33,7 @@ import java.util.List;
  * <p>
  * SQL 辅助类
  * </p>
- * 
+ *
  * @author hubin
  * @Date 2016-11-06
  */
@@ -57,26 +57,46 @@ public class SqlHelper {
 	 * <p>
 	 * 批量操作 SqlSession
 	 * </p>
-	 * 
+	 *
 	 * @param clazz
 	 *            实体类
 	 * @return SqlSession
 	 */
 	public static SqlSession sqlSessionBatch(Class<?> clazz) {
-        SqlSessionFactory sqlSessionFactory = GlobalConfiguration.currentSessionFactory(clazz);
-        Configuration configuration = sqlSessionFactory.getConfiguration();
-        SqlSession sqlSession = GlobalConfiguration.GlobalConfig(configuration).getSqlsessionBatch();
-        if (sqlSession != null){
-            return sqlSession;
-        }
-        return GlobalConfiguration.currentSessionFactory(clazz).openSession(ExecutorType.BATCH, false);
+		SqlSession sqlSession = getSqlSession(clazz, true);
+		if (sqlSession != null) {
+			return sqlSession;
+		}
+		return GlobalConfiguration.currentSessionFactory(clazz).openSession(ExecutorType.BATCH, false);
+	}
+
+	/**
+	 * 获取sqlSessionå
+	 *
+	 * @param clazz
+	 * @param isBatch
+	 * @return
+	 */
+	private static SqlSession getSqlSession(Class<?> clazz, boolean isBatch) {
+		try {
+			SqlSessionFactory sqlSessionFactory = GlobalConfiguration.currentSessionFactory(clazz);
+			Configuration configuration = sqlSessionFactory.getConfiguration();
+			GlobalConfiguration globalConfiguration = GlobalConfiguration.GlobalConfig(configuration);
+			if (isBatch) {
+				return globalConfiguration.getSqlsessionBatch();
+			}
+			return globalConfiguration.getSqlsessionBatch();
+		} catch (Exception e) {
+			// ignored
+		}
+		return null;
 	}
 
 	/**
 	 * <p>
 	 * 获取Session
 	 * </p>
-	 * 
+	 *
 	 * @param clazz
 	 *            实体类
 	 * @param autoCommit
@@ -84,18 +104,16 @@ public class SqlHelper {
 	 * @return SqlSession
 	 */
 	public static SqlSession sqlSession(Class<?> clazz, boolean autoCommit) {
-        SqlSessionFactory sqlSessionFactory = GlobalConfiguration.currentSessionFactory(clazz);
-        Configuration configuration = sqlSessionFactory.getConfiguration();
-        SqlSession sqlSession = GlobalConfiguration.GlobalConfig(configuration).getSqlSession();
-        if (sqlSession != null){
-            return sqlSession;
-        }
+		SqlSession sqlSession = getSqlSession(clazz, false);
+		if (sqlSession != null) {
+			return sqlSession;
+		}
 		return GlobalConfiguration.currentSessionFactory(clazz).openSession(autoCommit);
 	}
 
 	/**
 	 * 获取TableInfo
-	 * 
+	 *
 	 * @return TableInfo
 	 */
 	public static TableInfo table(Class<?> clazz) {
@@ -138,7 +156,7 @@ public class SqlHelper {
 	 * <p>
 	 * 从list中取第一条数据返回对应List中泛型的单个结果
 	 * </p>
-	 * 
+	 *
 	 * @param list
 	 * @param <E>
 	 * @return
