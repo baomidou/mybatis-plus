@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.mapper;
 
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
-import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import org.apache.ibatis.session.SqlSession;
@@ -38,6 +37,7 @@ public class SqlRunner {
 
 	// 默认FACTORY
 	public static SqlSessionFactory FACTORY;
+
 	public static final String INSERT = "com.baomidou.mybatisplus.mapper.SqlRunner.Insert";
 	public static final String DELETE = "com.baomidou.mybatisplus.mapper.SqlRunner.Delete";
 	public static final String UPDATE = "com.baomidou.mybatisplus.mapper.SqlRunner.Update";
@@ -48,16 +48,17 @@ public class SqlRunner {
 
 	// 单例Query
 	public static final SqlRunner DEFAULT = new SqlRunner();
+
 	private SqlSessionFactory sqlSessionFactory;
+
+	private Class<?> clazz;
 
 	public SqlRunner() {
 		this.sqlSessionFactory = FACTORY;
 	}
 
 	public SqlRunner(Class<?> clazz) {
-		TableInfo tableInfo = SqlHelper.table(clazz);
-		GlobalConfiguration globalConfiguration = GlobalConfiguration.GlobalConfig(tableInfo.getConfigMark());
-		this.sqlSessionFactory = globalConfiguration.getSqlSessionFactory();
+		this.clazz = clazz;
 	}
 
 	public boolean insert(String sql, Object... args) {
@@ -135,7 +136,10 @@ public class SqlRunner {
 	 * <p/>
 	 */
 	private SqlSession sqlSession() {
-		return sqlSessionFactory.openSession(true);
+		if (clazz != null) {
+			return SqlHelper.sqlSession(clazz);
+		}
+		return GlobalConfiguration.getSqlSession(FACTORY.getConfiguration());
 	}
 
 }

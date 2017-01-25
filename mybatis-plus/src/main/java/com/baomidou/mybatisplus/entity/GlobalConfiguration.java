@@ -88,10 +88,13 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	private String identifierQuote;
 	// 缓存当前Configuration的SqlSessionFactory
 	private SqlSessionFactory sqlSessionFactory;
-
+	// 缓存已注入CRUD的Mapper信息
 	private Set<String> mapperRegistryCache = new ConcurrentSkipListSet<String>();
+	// 单例重用SqlSession
 	private SqlSession sqlSession;
+	// 批量SqlSession
 	private SqlSession sqlsessionBatch;
+
 	public GlobalConfiguration() {
 		// 构造方法
 	}
@@ -365,6 +368,7 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	public static SqlSession getSqlsessionBatch(Configuration configuration) {
 		return GlobalConfig(configuration).getSqlsessionBatch();
 	}
+
 	/**
 	 * 设置元数据相关属性
 	 *

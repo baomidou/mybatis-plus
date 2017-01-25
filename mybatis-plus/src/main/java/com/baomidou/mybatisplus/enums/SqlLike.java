@@ -33,6 +33,10 @@ public enum SqlLike {
 	 */
 	RIGHT("right", "右边%"),
 	/**
+	 * CUSTOM
+	 */
+	CUSTOM("custom", "定制"),
+	/**
 	 * DEFAULT
 	 */
 	DEFAULT("default", "两边%");

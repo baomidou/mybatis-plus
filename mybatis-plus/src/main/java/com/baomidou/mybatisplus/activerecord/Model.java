@@ -57,12 +57,18 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * </p>
 	 */
 	public boolean insertOrUpdate() {
-		if (StringUtils.checkValNotNull(pkVal())) {
-			// update
-			return SqlHelper.retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE_BY_ID), this));
-		} else {
+		if (StringUtils.checkValNull(pkVal())) {
 			// insert
-			return SqlHelper.retBool(sqlSession().insert(sqlStatement(SqlMethod.INSERT_ONE), this));
+			return insert();
+		} else {
+			/*
+			 * 更新成功直接返回，失败执行插入逻辑
+			 */
+			boolean rlt = updateById();
+			if (!rlt) {
+				return insert();
+			}
+			return rlt;
 		}
 	}
 
