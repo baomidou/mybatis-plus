@@ -15,12 +15,12 @@
  */
 package com.baomidou.mybatisplus;
 
+import com.baomidou.mybatisplus.toolkit.StringUtils;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
  * <p>
@@ -107,20 +107,20 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
      * SQL连接器
      */
 	private static class SafeAppendable implements Serializable {
-        private final Appendable a;
+        private final Appendable appendable;
         private boolean empty = true;
 
-        public SafeAppendable(Appendable a) {
+        public SafeAppendable(Appendable appendable) {
             super();
-            this.a = a;
+            this.appendable = appendable;
         }
 
-        public SafeAppendable append(CharSequence s) {
+        public SafeAppendable append(CharSequence charSequence) {
             try {
-                if (empty && s.length() > 0) {
+                if (empty && charSequence.length() > 0) {
                     empty = false;
                 }
-                a.append(s);
+                appendable.append(charSequence);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -222,8 +222,8 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
             return builder.toString();
         }
 
-        public String sql(Appendable a) {
-            SafeAppendable builder = new SafeAppendable(a);
+        public String sql(Appendable appendable) {
+            SafeAppendable builder = new SafeAppendable(appendable);
             return buildSQL(builder);
         }
     }

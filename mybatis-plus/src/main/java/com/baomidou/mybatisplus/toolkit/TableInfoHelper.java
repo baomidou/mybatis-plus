@@ -49,7 +49,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TableInfoHelper {
 
 	private static final Log logger = LogFactory.getLog(TableInfoHelper.class);
-
 	/**
 	 * 缓存反射类表信息
 	 */
