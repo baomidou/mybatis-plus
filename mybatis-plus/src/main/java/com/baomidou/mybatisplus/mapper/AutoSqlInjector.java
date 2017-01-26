@@ -84,7 +84,7 @@ public class AutoSqlInjector implements ISqlInjector {
 		this.configuration = builderAssistant.getConfiguration();
 		this.builderAssistant = builderAssistant;
 		this.languageDriver = configuration.getDefaultScriptingLanguageInstance();
-		GlobalConfiguration globalCache = GlobalConfiguration.GlobalConfig(configuration);
+		GlobalConfiguration globalCache = GlobalConfiguration.getGlobalConfig(configuration);
 		/*
 		 * 驼峰设置 PLUS 配置 > 原始配置
 		 */
@@ -534,7 +534,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 * @return
 	 */
 	protected String sqlWordConvert(String convertStr) {
-		GlobalConfiguration globalConfig = GlobalConfiguration.GlobalConfig(configuration);
+		GlobalConfiguration globalConfig = GlobalConfiguration.getGlobalConfig(configuration);
 		return SqlReservedWords.convert(globalConfig, convertStr);
 	}
 
@@ -704,7 +704,7 @@ public class AutoSqlInjector implements ISqlInjector {
 				return "";
 			}
 			// 查询策略，使用全局策略
-			fieldStrategy = GlobalConfiguration.GlobalConfig(configuration).getFieldStrategy();
+			fieldStrategy = GlobalConfiguration.getGlobalConfig(configuration).getFieldStrategy();
 		}
 
 		// 关闭标签

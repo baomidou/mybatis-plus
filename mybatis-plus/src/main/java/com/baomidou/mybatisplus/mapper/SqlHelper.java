@@ -82,7 +82,7 @@ public class SqlHelper {
 		try {
 			SqlSessionFactory sqlSessionFactory = GlobalConfiguration.currentSessionFactory(clazz);
 			Configuration configuration = sqlSessionFactory.getConfiguration();
-			GlobalConfiguration globalConfiguration = GlobalConfiguration.GlobalConfig(configuration);
+			GlobalConfiguration globalConfiguration = GlobalConfiguration.getGlobalConfig(configuration);
 			if (isBatch) {
 				return globalConfiguration.getSqlsessionBatch();
 			}
