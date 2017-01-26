@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.mapper;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.apache.ibatis.logging.Log;
@@ -172,4 +173,16 @@ public class SqlHelper {
 		return null;
 	}
 
+	/**
+	 * 填充Wrapper
+	 *
+	 * @param page
+	 * @param wrapper
+	 */
+	public static void fillWrapper(Page<?> page, Wrapper<?> wrapper) {
+		if (null != wrapper) {
+			wrapper.orderBy(page.getOrderByField(), page.isAsc());
+			wrapper.allEq(page.getCondition());
+		}
+	}
 }

@@ -279,10 +279,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 */
 	public Page<T> selectPage(Page<T> page, Wrapper<T> wrapper) {
 		Map<String, Object> map = new HashMap<String, Object>();
-		if (wrapper != null && StringUtils.isNotEmpty(page.getOrderByField())) {
-			wrapper.orderBy(page.getOrderByField());
-			wrapper.allEq(page.getCondition());
-		}
+		SqlHelper.fillWrapper(page, wrapper);
 		map.put("ew", wrapper);
 		List<T> tl = sqlSession().selectList(sqlStatement(SqlMethod.SELECT_PAGE), map, page);
 		page.setRecords(tl);
@@ -347,7 +344,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * 获取Session 默认自动提交
 	 * <p/>
 	 */
-	private SqlSession sqlSession() {
+	protected SqlSession sqlSession() {
 		return SqlHelper.sqlSession(getClass());
 	}
 
@@ -357,11 +354,17 @@ public abstract class Model<T extends Model> implements Serializable {
 	 * @param sqlMethod
 	 * @return
 	 */
-	private String sqlStatement(SqlMethod sqlMethod) {
+	protected String sqlStatement(SqlMethod sqlMethod) {
 		return sqlStatement(sqlMethod.getMethod());
 	}
 
-	private String sqlStatement(String sqlMethod) {
+	/**
+	 * 获取SqlStatement
+	 *
+	 * @param sqlMethod
+	 * @return
+	 */
+	protected String sqlStatement(String sqlMethod) {
 		return SqlHelper.table(getClass()).getSqlStatement(sqlMethod);
 	}
 
