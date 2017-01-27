@@ -65,10 +65,8 @@ public class SqlHelper {
 	 */
 	public static SqlSession sqlSessionBatch(Class<?> clazz) {
 		SqlSession sqlSession = getSqlSession(clazz, true);
-		if (sqlSession != null) {
-			return sqlSession;
-		}
-		return GlobalConfiguration.currentSessionFactory(clazz).openSession(ExecutorType.BATCH, false);
+		return (sqlSession != null) ? sqlSession : GlobalConfiguration.currentSessionFactory(clazz).openSession(
+				ExecutorType.BATCH, false);
 	}
 
 	/**
@@ -104,10 +102,7 @@ public class SqlHelper {
 	 */
 	public static SqlSession sqlSession(Class<?> clazz, boolean autoCommit) {
 		SqlSession sqlSession = getSqlSession(clazz, false);
-		if (sqlSession != null) {
-			return sqlSession;
-		}
-		return GlobalConfiguration.currentSessionFactory(clazz).openSession(autoCommit);
+		return (sqlSession != null) ? sqlSession : GlobalConfiguration.currentSessionFactory(clazz).openSession(autoCommit);
 	}
 
 	/**
@@ -133,10 +128,7 @@ public class SqlHelper {
 	 * @return boolean
 	 */
 	public static boolean retBool(Integer result) {
-		if (null == result) {
-			return false;
-		}
-		return result >= 1;
+		return (null == result) ? false : result >= 1;
 	}
 
 	/**

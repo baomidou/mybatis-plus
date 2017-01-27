@@ -136,10 +136,7 @@ public class SqlRunner {
 	 * <p/>
 	 */
 	private SqlSession sqlSession() {
-		if (clazz != null) {
-			return SqlHelper.sqlSession(clazz);
-		}
-		return GlobalConfiguration.getSqlSession(FACTORY.getConfiguration());
+		return clazz != null ? SqlHelper.sqlSession(clazz) : GlobalConfiguration.getSqlSession(FACTORY.getConfiguration());
 	}
 
 }
