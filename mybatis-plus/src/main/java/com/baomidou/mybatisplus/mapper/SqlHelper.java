@@ -79,18 +79,16 @@ public class SqlHelper {
 	 * @return
 	 */
 	private static SqlSession getSqlSession(Class<?> clazz, boolean isBatch) {
+		SqlSession session = null;
 		try {
 			SqlSessionFactory sqlSessionFactory = GlobalConfiguration.currentSessionFactory(clazz);
 			Configuration configuration = sqlSessionFactory.getConfiguration();
 			GlobalConfiguration globalConfiguration = GlobalConfiguration.getGlobalConfig(configuration);
-			if (isBatch) {
-				return globalConfiguration.getSqlsessionBatch();
-			}
-			return globalConfiguration.getSqlsessionBatch();
+			session = isBatch ? globalConfiguration.getSqlsessionBatch() : globalConfiguration.getSqlSession();
 		} catch (Exception e) {
 			// ignored
 		}
-		return null;
+		return session;
 	}
 
 	/**
