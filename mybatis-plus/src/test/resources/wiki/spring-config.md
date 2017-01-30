@@ -1,5 +1,5 @@
 
-# Spring 配置 myBatis-plus
+# Spring 配置 Mybatis-Plus
 
 
 > 依赖包
@@ -32,6 +32,12 @@
     <!-- oracle 添加
     <property name="dbType" value="oracle" />
     -->
+    <!-- 全局表为下划线命名设置 true
+    <property name="dbColumnUnderline" value="true" />
+    -->
+    <!-- 全局字段验证 0、ignored  1、not null 2、not empty
+    <property name="fieldStrategy" value="2" />
+    -->
 </bean>
 
 <!-- 加载 mapper.xml 接口 配置文件 -->
@@ -39,6 +45,36 @@
 	<property name="basePackage" value="xxx.mapper" />
 </bean>
 ```
+
+> 开启动态加载 mapper
+
+```
+
+    参数说明：
+        sqlSessionFactory:session工厂
+        mapperLocations:mapper匹配路径
+        enabled:是否开启动态加载  默认:false
+        delaySeconds:项目启动延迟加载时间  单位：秒  默认:10s
+        sleepSeconds:刷新时间间隔  单位：秒 默认:20s
+    提供了两个构造,挑选一个配置进入spring配置文件即可：
+
+	构造1:
+	    <bean class="com.baomidou.mybatisplus.spring.MybatisMapperRefresh">
+	        <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory"/>
+	        <constructor-arg name="mapperLocations" value="classpath*:mybatis/mappers/*/*.xml"/>
+	        <constructor-arg name="enabled" value="true"/>
+	    </bean>
+	
+	构造2:
+		<bean class="com.baomidou.mybatisplus.spring.MybatisMapperRefresh">
+	        <constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory"/>
+	        <constructor-arg name="mapperLocations" value="classpath*:mybatis/mappers/*/*.xml"/>
+	        <constructor-arg name="delaySeconds" value="10"/>
+	        <constructor-arg name="sleepSeconds" value="20"/>
+	        <constructor-arg name="enabled" value="true"/>
+	    </bean>
+```
+
 
 
 > mybatis-config.xml
@@ -77,7 +113,7 @@
 		 -->
 	</typeAliases>
 	<!-- 插件配置, spring 中配置，此处就可以不用配置。 -->
-     <!-- 
+    <!-- 
 	<plugins>
 	     | 分页插件配置 
 	     | 插件提供二种方言选择：1、默认方言 2、自定义方言实现类，两者均未配置则抛出异常！
@@ -93,40 +129,18 @@
 	    <plugin interceptor="com.baomidou.mybatisplus.plugins.PaginationInterceptor">
 	        <property name="dialectClazz" value="xxx.dialect.XXDialect" />
 	    </plugin>
+        <!-- SQL 执行性能分析，开发环境使用，线上不推荐。 maxTime 指的是 sql 最大执行时长 -->
+        <plugin interceptor="com.baomidou.mybatisplus.plugins.PerformanceInterceptor">
+            <property name="maxTime" value="100" />
+        </plugin>
+        <!-- SQL 执行分析拦截器 stopProceed 发现全表执行 delete update 是否停止运行 -->
+        <plugin interceptor="com.baomidou.mybatisplus.plugins.SqlExplainInterceptor">
+            <property name="stopProceed" value="false" />
+        </plugin>
 	</plugins>
 	| -->
 </configuration>
 ```
 
-
-
-# spring 根据不同环境加载不同配置支持
-
-1、spring 根据不同配置运行模式，加载对应配置内容。
-2、运行模式参数 key 配置 configEnv 默认 sysRunmode
-3、online 线上 ， dev 开发 ， test 测试
-4、首先环境变量中获取，变量名：sysRunmode 变量值：dev
-5、如果不存在 JVM -D选项 参数中获取，例如：-DsysRunmode=dev
-
->例如：设置不同环境的数据库密码配置：
-
-```
-jdbc.password_dev_mode=1230600
-jdbc.password_test_mode=2001006
-jdbc.password_online_mode=#!Esd30210
-```
-
->spring 配置：
-
-```
-<bean id="placeholder" class="com.baomidou.mybatisplus.spring.MutilPropertyPlaceholderConfigurer">
-	<property name="locations">
-		<list>
-			<value>classpath:jdbc.properties</value>
-			<value>classpath*:*-placeholder.properties</value>
-		</list>
-	</property>
-</bean>
-```
 
 

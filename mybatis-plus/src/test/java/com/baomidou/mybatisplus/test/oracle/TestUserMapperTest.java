@@ -23,6 +23,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
+import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.test.oracle.entity.TestUser;
@@ -40,7 +41,7 @@ public class TestUserMapperTest {
 
 	/**
 	 * 
-	 * RUN 测试
+	 * RUN 测试（ 更多查看 MySql 测试类 ）
 	 * 
 	 */
 	public static void main( String[] args ) {
@@ -50,12 +51,22 @@ public class TestUserMapperTest {
 
 		/*
 		 * 此处采用 MybatisSessionFactoryBuilder 构建
-		 * SqlSessionFactory，目的是引入AutoMapper功能
+		 * SqlSessionFactory，目的是引入BaseMapper功能
 		 */
 		MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
 
 		/** 设置数据库类型为 oracle */
-		mf.setDbType("oracle");
+		GlobalConfiguration gc = new GlobalConfiguration();
+		gc.setDbType("oracle");
+		mf.setGlobalConfig(gc);
+
+		/*
+		 * 1、数据库字段驼峰命名不需要任何设置
+		 * 2、当前演示是驼峰下划线混合命名
+		 * 3、如下开启，表示数据库字段使用下划线命名，该设置是全局的。
+		 *	 开启该设置实体可无 @TableId(value = "test_id") 字段映射
+		 */
+		//mf.setDbColumnUnderline(true);
 
 		SqlSessionFactory sessionFactory = mf.build(in);
 		SqlSession session = sessionFactory.openSession();
@@ -79,7 +90,9 @@ public class TestUserMapperTest {
 		ul.add(new TestUser("a", 1, 1));
 		ul.add(new TestUser("b", 2, 2));
 		ul.add(new TestUser("c", 3, 1));
-		rlt = testUserMapper.insertBatch(ul);
+		for (TestUser u : ul) {
+			rlt = testUserMapper.insert(u);
+		}
 		System.err.println("\n--------------insertBatch-------" + rlt);
 		sleep();
 		
@@ -91,7 +104,9 @@ public class TestUserMapperTest {
 		ul1.add(new TestUser("10", "update-0a", 11, 1));
 		ul1.add(new TestUser("11", "update-1a", 11, 1));
 		ul1.add(new TestUser("12", "update-2a", 12, 2));
-		rlt = testUserMapper.updateBatchById(ul1);
+		for (TestUser u : ul1) {
+			rlt = testUserMapper.updateById(u);
+		}
 		System.err.println("\n--------------updateBatchById-------" + rlt);
 		sleep();
 		

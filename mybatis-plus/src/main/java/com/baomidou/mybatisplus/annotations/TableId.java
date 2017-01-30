@@ -20,6 +20,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.baomidou.mybatisplus.enums.IdType;
+
 /**
  * <p>
  * 表主键标识
@@ -32,17 +34,19 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface TableId {
 
-	/**
+	/*
+	 * <p>
 	 * 字段值（驼峰命名方式，该值可无）
+	 * </p>
 	 */
 	String value() default "";
 
-	/**
-	 * 
-	 * 主键ID，默认 ID 自增
-	 * 
+	/*
+	 * <p>
+	 * 主键ID，默认 INPUT
+	 * </p>
 	 * {@link IdType}
-	 * 
 	 */
-	IdType type() default IdType.ID_WORKER;
+	IdType type() default IdType.INPUT;
+
 }

@@ -15,23 +15,24 @@
  */
 package com.baomidou.mybatisplus.test.mysql.entity;
 
-import java.io.Serializable;
-import java.lang.reflect.Field;
-
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.enums.FieldStrategy;
+
+import java.io.Serializable;
+import java.lang.reflect.Field;
 
 /**
  * <p>
  * 测试用户类
  * </p>
- * 
- * @author hubin
- * @Date 2016-01-23
+ *
+ * @author hubin sjy
+ * @Date 2016-09-09
  */
-/* 表名 注解 */
-@TableName(value = "user")
+/* 表名 value 注解【 驼峰命名可无 】, resultMap 注解测试【 映射 xml 的 resultMap 内容 】 */
+@TableName(resultMap = "userMap")
 public class User implements Serializable {
 
 	/* 表字段注解，false 表中不存在的字段，可无该注解 默认 true */
@@ -42,13 +43,23 @@ public class User implements Serializable {
 	@TableId(value = "test_id")
 	private Long id;
 
+	/* 测试忽略验证 */
 	private String name;
 
 	private Integer age;
 
-	/* 测试下划线字段命名类型 */
-	@TableField(value = "test_type")
+	/* 测试下划线字段命名类型, 字段填充 */
+	@TableField(value = "test_type", validate = FieldStrategy.IGNORED)
 	private Integer testType;
+
+	@TableField(el = "role.id")
+	private Role role;
+
+	private String desc = "默认描述";
+
+	// 或@TableField(el = "role,jdbcType=BIGINT)
+	@TableField(el = "phone, typeHandler=com.baomidou.mybatisplus.test.mysql.typehandler.PhoneTypeHandler")
+	private PhoneNumber phone;
 
 	public User() {
 
@@ -83,7 +94,7 @@ public class User implements Serializable {
 		this.age = age;
 		this.testType = testType;
 	}
-	
+
 	public User(String name, Integer age, Integer testType) {
 		this.name = name;
 		this.age = age;
@@ -120,6 +131,36 @@ public class User implements Serializable {
 
 	public void setTestType(Integer testType) {
 		this.testType = testType;
+	}
+
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
+	}
+
+	public PhoneNumber getPhone() {
+		return phone;
+	}
+
+	public void setPhone(PhoneNumber phone) {
+		this.phone = phone;
+	}
+
+	public String getDesc() {
+		return desc;
+	}
+
+	public void setDesc(String desc) {
+		this.desc = desc;
+	}
+
+	@Override
+	public String toString() {
+		return "User{" + "id=" + id + ", name='" + name + '\'' + ", age=" + age + ", testType=" + testType + ", role="
+				+ role + ", phone=" + phone + ", desc=" + desc + '}';
 	}
 
 	/**

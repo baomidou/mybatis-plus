@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!-- 
+     | 全局配置设置
+     |
+     | 可配置选项                                        默认值, 描述
+     |
+     | aggressiveLazyLoading     true, 当设置为‘true’的时候，懒加载的对象可能被任何懒属性全部加载。否则，每个属性都按需加载。
+     | multipleResultSetsEnabled true, 允许和不允许单条语句返回多个数据集（取决于驱动需求）
+     | useColumnLabel            true, 使用列标签代替列名称。不同的驱动器有不同的作法。参考一下驱动器文档，或者用这两个不同的选项进行测试一下。
+     | useGeneratedKeys          false, 允许JDBC 生成主键。需要驱动器支持。如果设为了true，这个设置将强制使用被生成的主键，有一些驱动器不兼容不过仍然可以执行。
+     | autoMappingBehavior       PARTIAL, 指定MyBatis 是否并且如何来自动映射数据表字段与对象的属性。PARTIAL将只自动映射简单的，没有嵌套的结果。FULL 将自动映射所有复杂的结果。
+     | defaultExecutorType       SIMPLE, 配置和设定执行器，SIMPLE 执行器执行其它语句。REUSE 执行器可能重复使用prepared statements 语句，BATCH执行器可以重复执行语句和批量更新。
+     | defaultStatementTimeout   null, 设置一个时限，以决定让驱动器等待数据库回应的多长时间为超时
+     | -->
+    <settings>
+        <!-- 这个配置使全局的映射器启用或禁用缓存 -->
+        <setting name="cacheEnabled" value="true" />
+        <!-- 全局启用或禁用延迟加载。当禁用时，所有关联对象都会即时加载 -->
+        <setting name="lazyLoadingEnabled" value="true" />
+		<setting name="multipleResultSetsEnabled" value="true" />
+		<setting name="useColumnLabel" value="true" />
+		<setting name="defaultExecutorType" value="REUSE" />
+		<setting name="defaultStatementTimeout" value="25000" />
+	</settings>
+
+	<!-- 查询对象别名配置 -->
+	<typeAliases>
+		<!-- 
+		<typeAlias alias="userVo" type="xxx.vo.UserVo" />
+		 -->
+	</typeAliases>
+</configuration>

@@ -15,9 +15,10 @@
  */
 package com.baomidou.mybatisplus.plugins.pagination;
 
-import java.io.Serializable;
-
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 import org.apache.ibatis.session.RowBounds;
+
+import java.io.Serializable;
 
 /**
  * <p>
@@ -36,8 +37,8 @@ public class Pagination extends RowBounds implements Serializable {
 	/* 总数 */
 	private int total;
 
-	/* 每页显示条数 */
-	private int size;
+	/* 每页显示条数，默认 10 */
+	private int size = 10;
 
 	/* 总页数 */
 	private int pages;
@@ -45,11 +46,36 @@ public class Pagination extends RowBounds implements Serializable {
 	/* 当前页 */
 	private int current = 1;
 
+	/* 查询总记录数（默认 true） */
+	private boolean searchCount = true;
+
+	/**
+	 * 查询总数优化（默认 false 该属性只针对于Optimize.DEFAULT有效)
+	 * 
+	 * @see com.baomidou.mybatisplus.enums.Optimize
+	 *
+	 */
+	private boolean optimizeCount = false;
+
+	/**
+	 * <p>
+	 * SQL 排序 ORDER BY 字段，例如： id DESC（根据id倒序查询）
+	 * </p>
+	 * <p>
+	 * DESC 表示按倒序排序(即：从大到小排序)<br>
+	 * ASC 表示按正序排序(即：从小到大排序)
+	 * </p>
+	 */
+	private String orderByField;
+
+	/**
+	 * 是否为升序 ASC（ 默认： true ）
+	 */
+	private boolean isAsc = true;
 
 	public Pagination() {
 		super();
 	}
-
 
 	/**
 	 * <p>
@@ -61,75 +87,110 @@ public class Pagination extends RowBounds implements Serializable {
 	 * @param size
 	 *            每页显示条数
 	 */
-	public Pagination( int current, int size ) {
+	public Pagination(int current, int size) {
+		this(current, size, true);
+	}
+
+	public Pagination(int current, int size, boolean searchCount) {
 		super(offsetCurrent(current, size), size);
-		if ( current > 1 ) {
+		if (current > 1) {
 			this.current = current;
 		}
 		this.size = size;
+		this.searchCount = searchCount;
 	}
 
-
-	protected static int offsetCurrent( int current, int size ) {
-		if ( current > 0 ) {
+	protected static int offsetCurrent(int current, int size) {
+		if (current > 0) {
 			return (current - 1) * size;
 		}
 		return 0;
 	}
 
-
 	public int getOffsetCurrent() {
 		return offsetCurrent(this.current, this.size);
 	}
-
 
 	public boolean hasPrevious() {
 		return this.current > 1;
 	}
 
-
 	public boolean hasNext() {
 		return this.current < this.pages;
 	}
-
 
 	public int getTotal() {
 		return total;
 	}
 
-
-	public void setTotal( int total ) {
+	public void setTotal(int total) {
 		this.total = total;
-		this.pages = this.total / this.size;
-		if ( this.total % this.size != 0 ) {
-			this.pages++;
-		}
-		if ( this.current > this.pages ) {
-			/**
-			 * 当前页大于总页数，当前页设置为第一页
-			 */
-			this.current = 1;
-		}
 	}
-
 
 	public int getSize() {
 		return size;
 	}
 
-
-	public int getPages() {
-		return pages;
+	public void setSize(int size) {
+		this.size = size;
 	}
 
+	public int getPages() {
+		if (this.size == 0) {
+			return 0;
+		}
+		this.pages = this.total / this.size;
+		if (this.total % this.size != 0) {
+			this.pages++;
+		}
+		return this.pages;
+	}
+
+	public void setCurrent(int current) {
+		this.current = current;
+	}
 
 	public int getCurrent() {
 		return current;
 	}
 
+	public boolean isSearchCount() {
+		return searchCount;
+	}
+
+	public void setSearchCount(boolean searchCount) {
+		this.searchCount = searchCount;
+	}
+
+	public boolean isOptimizeCount() {
+		return optimizeCount;
+	}
+
+	public void setOptimizeCount(boolean optimizeCount) {
+		this.optimizeCount = optimizeCount;
+	}
+
+	public String getOrderByField() {
+		return orderByField;
+	}
+
+	public void setOrderByField(String orderByField) {
+		if (StringUtils.isNotEmpty(orderByField)) {
+			this.orderByField = orderByField;
+		}
+	}
+
+	public boolean isAsc() {
+		return isAsc;
+	}
+
+	public void setAsc(boolean isAsc) {
+		this.isAsc = isAsc;
+	}
 
 	@Override
 	public String toString() {
 		return "Pagination { total=" + total + " ,size=" + size + " ,pages=" + pages + " ,current=" + current + " }";
 	}
+
 }

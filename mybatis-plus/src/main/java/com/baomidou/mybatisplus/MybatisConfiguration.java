@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, hubin (jobob@qq.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,30 +15,34 @@
  */
 package com.baomidou.mybatisplus;
 
-import java.util.logging.Logger;
-
+import org.apache.ibatis.binding.MapperRegistry;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSession;
 
-import com.baomidou.mybatisplus.mapper.DBType;
+import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 
 /**
  * <p>
  * replace default Configuration class
  * </p>
- * 
+ * <p>
+ * Caratacus 2016/9/25 replace mapperRegistry
+ * </p>
+ *
  * @author hubin
  * @Date 2016-01-23
  */
 public class MybatisConfiguration extends Configuration {
 
-	protected final Logger logger = Logger.getLogger("MybatisConfiguration");
-	
-	/**
-	 * 数据库类型（默认 MySql）
+	private static final Log logger = LogFactory.getLog(MybatisConfiguration.class);
+
+	/*
+	 * Mapper 注册
 	 */
-	public static DBType DB_TYPE = DBType.MYSQL;
+	public final MybatisMapperRegistry mybatisMapperRegistry = new MybatisMapperRegistry(this);
 
 	/**
 	 * 初始化调用
@@ -59,14 +63,20 @@ public class MybatisConfiguration extends Configuration {
 	 */
 	@Override
 	public void addMappedStatement(MappedStatement ms) {
-		logger.fine(" addMappedStatement: " + ms.getId());
-		System.out.println(ms.getId());
-		if (this.mappedStatements.containsKey(ms.getId())) {
+		logger.debug(" addMappedStatement: " + ms.getId());
+		if (GlobalConfiguration.getGlobalConfig(ms.getConfiguration()).isRefresh()) {
 			/*
-			 * 说明已加载了xml中的节点； 忽略mapper中的SqlProvider数据
+			 * 支持是否自动刷新 XML 变更内容，开发环境使用【 注：生产环境勿用！】
 			 */
-			logger.severe("mapper[" + ms.getId() + "] is ignored, because it's exists, maybe from xml file");
-			return;
+			this.mappedStatements.remove(ms.getId());
+		} else {
+			if (this.mappedStatements.containsKey(ms.getId())) {
+				/*
+				 * 说明已加载了xml中的节点； 忽略mapper中的SqlProvider数据
+				 */
+				logger.error("mapper[" + ms.getId() + "] is ignored, because it's exists, maybe from xml file");
+				return;
+			}
 		}
 		super.addMappedStatement(ms);
 	}
@@ -81,9 +91,33 @@ public class MybatisConfiguration extends Configuration {
 	}
 
 	@Override
-	public LanguageDriver getDefaultScriptingLanuageInstance() {
-		/* 设置自定义 driver */
-		return languageRegistry.getDriver(MybatisXMLLanguageDriver.class);
+	public MapperRegistry getMapperRegistry() {
+		return mybatisMapperRegistry;
+	}
+
+	@Override
+	public <T> void addMapper(Class<T> type) {
+		mybatisMapperRegistry.addMapper(type);
+	}
+
+	@Override
+	public void addMappers(String packageName, Class<?> superType) {
+		mybatisMapperRegistry.addMappers(packageName, superType);
+	}
+
+	@Override
+	public void addMappers(String packageName) {
+		mybatisMapperRegistry.addMappers(packageName);
+	}
+
+	@Override
+	public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
+		return mybatisMapperRegistry.getMapper(type, sqlSession);
+	}
+
+	@Override
+	public boolean hasMapper(Class<?> type) {
+		return mybatisMapperRegistry.hasMapper(type);
 	}
 
 }
