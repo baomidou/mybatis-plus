@@ -108,18 +108,19 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>${spring.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
 			<version>${aspectjweaver.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<!-- spring end -->
+		<!--jsqlparser -->
+		<dependency>
+			<groupId>com.github.jsqlparser</groupId>
+			<artifactId>jsqlparser</artifactId>
+			<version>${jsqlparser.version}</version>
+			<scope>provided</scope>
+		</dependency>
 		<!--jsqlparser -->
 		<dependency>
 			<groupId>com.github.jsqlparser</groupId>

@@ -294,4 +294,5 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		page.setRecords(baseMapper.selectPage(page, wrapper));
 		return page;
 	}
+
 }

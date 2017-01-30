@@ -22,7 +22,10 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.test.mysql.entity.Role;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
+<<<<<<< HEAD
 import com.baomidou.mybatisplus.test.mysql.mapper.UserMapper;
+=======
+>>>>>>> branch 'dev' of https://git.oschina.net/baomidou/mybatis-plus.git
 import com.baomidou.mybatisplus.toolkit.IdWorker;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
