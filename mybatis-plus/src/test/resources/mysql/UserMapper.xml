@@ -39,6 +39,6 @@
                 typeHandler="com.baomidou.mybatisplus.test.mysql.typehandler.PhoneTypeHandler"/>
 
         <!-- 级联查询 -->
-        <association column="role" property="role" select="com.baomidou.mybatisplus.test.mysql.RoleMapper.selectById"/>
+        <association column="role" property="role" select="com.baomidou.mybatisplus.test.mysql.mapper.RoleMapper.selectById"/>
     </resultMap>
 </mapper>

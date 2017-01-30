@@ -28,13 +28,9 @@ import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.spring.MybatisMapperRefresh;
 import com.baomidou.mybatisplus.test.mysql.MySqlInjector;
-<<<<<<< HEAD
 import com.baomidou.mybatisplus.test.mysql.UserMapperTest;
 import com.baomidou.mybatisplus.test.mysql.mapper.UserMapper;
-=======
-import com.baomidou.mybatisplus.test.mysql.UserMapper;
-import com.baomidou.mybatisplus.test.mysql.UserMapperTest;
->>>>>>> branch 'dev' of https://git.oschina.net/baomidou/mybatis-plus.git
+//git.oschina.net/baomidou/mybatis-plus.git
 import com.baomidou.mybatisplus.toolkit.SystemClock;
 
 /**

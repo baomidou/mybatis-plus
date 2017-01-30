@@ -28,17 +28,10 @@ import org.junit.Assert;
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.mapper.Condition;
-<<<<<<< HEAD
 import com.baomidou.mybatisplus.test.mysql.entity.NotPK;
 import com.baomidou.mybatisplus.test.mysql.entity.Test;
 import com.baomidou.mybatisplus.test.mysql.mapper.NotPKMapper;
 import com.baomidou.mybatisplus.test.mysql.mapper.TestMapper;
-=======
-import com.baomidou.mybatisplus.test.mysql.NotPKMapper;
-import com.baomidou.mybatisplus.test.mysql.TestMapper;
-import com.baomidou.mybatisplus.test.mysql.entity.NotPK;
-import com.baomidou.mybatisplus.test.mysql.entity.Test;
->>>>>>> branch 'dev' of https://git.oschina.net/baomidou/mybatis-plus.git
 
 /**
  * <p>

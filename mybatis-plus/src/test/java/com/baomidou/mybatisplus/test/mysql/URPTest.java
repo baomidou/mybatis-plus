@@ -26,11 +26,8 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.test.mysql.entity.PhoneNumber;
 import com.baomidou.mybatisplus.test.mysql.entity.Role;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
-<<<<<<< HEAD
 import com.baomidou.mybatisplus.test.mysql.mapper.RoleMapper;
 import com.baomidou.mybatisplus.test.mysql.mapper.UserMapper;
-=======
->>>>>>> branch 'dev' of https://git.oschina.net/baomidou/mybatis-plus.git
 import com.baomidou.mybatisplus.toolkit.IdWorker;
 
 /**
