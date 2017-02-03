@@ -15,14 +15,6 @@
  */
 package com.baomidou.mybatisplus.test;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
@@ -30,8 +22,14 @@ import com.baomidou.mybatisplus.spring.MybatisMapperRefresh;
 import com.baomidou.mybatisplus.test.mysql.MySqlInjector;
 import com.baomidou.mybatisplus.test.mysql.UserMapperTest;
 import com.baomidou.mybatisplus.test.mysql.mapper.UserMapper;
-//git.oschina.net/baomidou/mybatis-plus.git
 import com.baomidou.mybatisplus.toolkit.SystemClock;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * <p>
