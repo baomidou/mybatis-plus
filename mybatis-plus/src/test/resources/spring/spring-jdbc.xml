@@ -71,7 +71,7 @@
 	<!-- 切面 -->
 	<aop:config>
 		<aop:advisor advice-ref="txAdvice"
-			pointcut="execution(* com.baomidou.mybatisplus.test.mysql.service.impl.*.*(..))" />
+			pointcut="execution(* com.baomidou.*.service.*.*.*(..))" />
 	</aop:config>
 
 	<!-- MyBatis SqlSessionFactoryBean 配置 -->
