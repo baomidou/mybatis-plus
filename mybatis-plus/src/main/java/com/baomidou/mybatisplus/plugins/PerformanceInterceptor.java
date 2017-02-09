@@ -90,15 +90,18 @@ public class PerformanceInterceptor implements Interceptor {
 						page.isOptimizeCount());
 				orderBy = countOptimize.isOrderBy();
 			}
-			String buildSql = SqlUtils.concatOrderBy(boundSql.getSql(), page, orderBy);
-			DialectFactory.buildPaginationSql(pagination, buildSql, dbType, null).replaceAll("[\\s]+", " ");
+			sql = DialectFactory.buildPaginationSql(pagination,
+					SqlUtils.concatOrderBy(boundSql.getSql(), page, orderBy), dbType, null).replaceAll("[\\s]+", " ");
+			sql = getSql(configuration,boundSql,sql);
+		}else {
+			sql = getSql(configuration, boundSql,boundSql.getSql());
 		}
 		String statementId = mappedStatement.getId();
 		long start = SystemClock.now();
 		Object result = invocation.proceed();
 		long end = SystemClock.now();
 		long timing = end - start;
-		sql = SqlUtils.sqlFormat(getSql(configuration, boundSql),format);
+		sql = SqlUtils.sqlFormat(sql,format);
 		System.err.println(" Time：" + timing + " ms" + " - ID：" + statementId + "\n Execute SQL：" + sql + "\n");
 		if (maxTime >= 1 && timing > maxTime) {
 			throw new MybatisPlusException(" The SQL execution time is too large, please optimize ! ");
@@ -106,10 +109,10 @@ public class PerformanceInterceptor implements Interceptor {
 		return result;
 	}
 
-	public static String getSql(Configuration configuration, BoundSql boundSql) {
+	public static String getSql(Configuration configuration, BoundSql boundSql,String sql) {
 		Object parameterObject = boundSql.getParameterObject();
 		List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
-		String sql = boundSql.getSql().replaceAll("[\\s]+", " ");
+		sql = sql.replaceAll("[\\s]+", " ");
 		if (parameterMappings!=null&&parameterMappings.size() > 0 && parameterObject != null) {
 			TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
 			if (typeHandlerRegistry.hasTypeHandler(parameterObject.getClass())) {
