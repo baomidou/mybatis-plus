@@ -20,6 +20,10 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.generator.config.converts.MySqlTypeConvert;
+import com.baomidou.mybatisplus.generator.config.converts.OracleTypeConvert;
+import com.baomidou.mybatisplus.generator.config.converts.PostgreSqlTypeConvert;
+import com.baomidou.mybatisplus.generator.config.converts.SqlServerTypeConvert;
 import com.baomidou.mybatisplus.generator.config.rules.DbType;
 
 /**
@@ -36,6 +40,10 @@ public class DataSourceConfig {
 	 * 数据库类型
 	 */
 	private DbType dbType;
+	/**
+	 * 类型转换
+	 */
+	private ITypeConvert typeConvert;
 	/**
 	 * 驱动连接的URL
 	 */
@@ -64,6 +72,8 @@ public class DataSourceConfig {
 				dbType = DbType.MYSQL;
 			} else if (driverName.contains("oracle")) {
 				dbType = DbType.ORACLE;
+			} else if (driverName.contains("postgresql")) {
+				dbType = DbType.POSTGRE_SQL;
 			} else {
 				throw new MybatisPlusException("Unknown type of database!");
 			}
@@ -73,6 +83,31 @@ public class DataSourceConfig {
 
 	public void setDbType(DbType dbType) {
 		this.dbType = dbType;
+	}
+
+	public ITypeConvert getTypeConvert() {
+		if (null == typeConvert) {
+			switch (getDbType()) {
+			case ORACLE:
+				typeConvert = new OracleTypeConvert();
+				break;
+			case SQL_SERVER:
+				typeConvert = new SqlServerTypeConvert();
+				break;
+			case POSTGRE_SQL:
+				typeConvert = new PostgreSqlTypeConvert();
+				break;
+			default:
+				// 默认 MYSQL
+				typeConvert = new MySqlTypeConvert();
+				break;
+			}
+		}
+		return typeConvert;
+	}
+
+	public void setTypeConvert(ITypeConvert typeConvert) {
+		this.typeConvert = typeConvert;
 	}
 
 	/**

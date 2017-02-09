@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.baomidou</groupId>
 	<artifactId>mybatis-plus</artifactId>
-	<version>2.0</version>
+	<version>2.0.2</version>
 	<packaging>jar</packaging>
 
 	<name>mybatis-plus</name>
@@ -47,6 +47,7 @@
 		<postgresql.version>9.4.1212</postgresql.version>
 		<servlet-api.version>2.5</servlet-api.version>
 		<spring.version>4.3.5.RELEASE</spring.version>
+		<aspectjweaver.version>1.8.9</aspectjweaver.version>
 		<mybatis-ehcache.version>1.1.0</mybatis-ehcache.version>
 		<junit.version>4.12</junit.version>
 		<velocity.version>1.7</velocity.version>
@@ -75,9 +76,10 @@
 			<version>${slf4j.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		<!-- spring begin -->
 		<dependency>
 			<groupId>org.springframework</groupId>
-			<artifactId>spring-jdbc</artifactId>
+			<artifactId>spring-context</artifactId>
 			<version>${spring.version}</version>
 			<scope>provided</scope>
 		</dependency>
@@ -89,8 +91,40 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${spring.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${spring.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
 			<version>${spring.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>${aspectjweaver.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- spring end -->
+		<!--jsqlparser -->
+		<dependency>
+			<groupId>com.github.jsqlparser</groupId>
+			<artifactId>jsqlparser</artifactId>
+			<version>${jsqlparser.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<!--jsqlparser -->

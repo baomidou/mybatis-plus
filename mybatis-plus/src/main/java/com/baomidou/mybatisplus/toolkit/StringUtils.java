@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
+import com.baomidou.mybatisplus.enums.SqlLike;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -22,8 +24,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.baomidou.mybatisplus.enums.SqlLike;
 
 /**
  * <p>
@@ -241,7 +241,7 @@ public class StringUtils {
 	 */
 	public static String quotaMark(Object obj) {
 		String srcStr = String.valueOf(obj);
-		if (obj instanceof String) {
+		if (obj instanceof CharSequence) {
 			// fix #79
 			return StringEscape.escapeString(srcStr);
 		}
@@ -265,6 +265,9 @@ public class StringUtils {
 			break;
 		case RIGHT:
 			builder.append(str).append("%");
+			break;
+		case CUSTOM:
+			builder.append(str);
 			break;
 		default:
 			builder.append("%").append(str).append("%");
@@ -367,6 +370,41 @@ public class StringUtils {
 	 */
 	public static boolean checkValNull(Object object) {
 		return !checkValNotNull(object);
+	}
+
+	/**
+	 * <p>
+	 * 包含大写字母
+	 * </p>
+	 * 
+	 * @param word
+	 *            待判断字符串
+	 * @return
+	 */
+	public static boolean containsUpperCase(String word) {
+		for (int i = 0; i < word.length(); i++) {
+			char c = word.charAt(i);
+			if (Character.isUpperCase(c)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * <p>
+	 * 是否为大写命名
+	 * </p>
+	 * 
+	 * @param word
+	 *            待判断字符串
+	 * @return
+	 */
+	public static boolean isCapitalMode(String word) {
+		if (null == word) {
+			return false;
+		}
+		return word.matches("^[0-9A-Z/_]+$");
 	}
 
 	/**
@@ -602,4 +640,32 @@ public class StringUtils {
 		return list;
 	}
 
+	/**
+	 * 是否为CharSequence类型
+	 *
+	 * @param cls
+	 * @return
+	 */
+	public static Boolean isCharSequence(Class<?> cls) {
+		if (cls != null) {
+			return CharSequence.class.isAssignableFrom(cls);
+		}
+		return false;
+	}
+
+	/**
+	 * 是否为CharSequence类型
+	 *
+	 * @param propertyType
+	 * @return
+	 */
+	public static Boolean isCharSequence(String propertyType) {
+		Class<?> cls = null;
+		try {
+			cls = Class.forName(propertyType);
+		} catch (ClassNotFoundException e) {
+			//
+		}
+		return isCharSequence(cls);
+	}
 }

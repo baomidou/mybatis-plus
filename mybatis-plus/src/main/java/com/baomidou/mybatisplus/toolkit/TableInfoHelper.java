@@ -32,9 +32,8 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -50,7 +49,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TableInfoHelper {
 
 	private static final Log logger = LogFactory.getLog(TableInfoHelper.class);
-
 	/**
 	 * 缓存反射类表信息
 	 */
@@ -92,7 +90,7 @@ public class TableInfoHelper {
 		if (null != builderAssistant) {
 			tableInfo.setCurrentNamespace(builderAssistant.getCurrentNamespace());
 			tableInfo.setConfigMark(builderAssistant.getConfiguration());
-			globalCache = GlobalConfiguration.GlobalConfig(builderAssistant.getConfiguration());
+			globalCache = GlobalConfiguration.getGlobalConfig(builderAssistant.getConfiguration());
 		} else {
 			// 兼容测试场景
 			globalCache = GlobalConfiguration.DEFAULT;
@@ -331,34 +329,19 @@ public class TableInfoHelper {
 	 * @return
 	 */
 	private static List<Field> getAllFields(Class<?> clazz) {
-		List<Field> result = new LinkedList<Field>();
-		Field[] fields = clazz.getDeclaredFields();
-		for (Field field : fields) {
-
-			/* 过滤静态属性 */
-			if (Modifier.isStatic(field.getModifiers())) {
-				continue;
-			}
-
-			/* 过滤 transient关键字修饰的属性 */
-			if (Modifier.isTransient(field.getModifiers())) {
-				continue;
-			}
-
-			/* 过滤注解非表字段属性 */
-			TableField tableField = field.getAnnotation(TableField.class);
-			if (tableField == null || tableField.exist()) {
-				result.add(field);
+		List<Field> fieldList = ReflectionKit.getFieldList(clazz);
+		if (CollectionUtils.isNotEmpty(fieldList)) {
+			Iterator<Field> iterator = fieldList.iterator();
+			while (iterator.hasNext()) {
+				Field field = iterator.next();
+				/* 过滤注解非表字段属性 */
+				TableField tableField = field.getAnnotation(TableField.class);
+				if (tableField != null && !tableField.exist()) {
+					iterator.remove();
+				}
 			}
 		}
-
-		/* 处理父类字段 */
-		Class<?> superClass = clazz.getSuperclass();
-		if (superClass.equals(Object.class)) {
-			return result;
-		}
-		result.addAll(getAllFields(superClass));
-		return result;
+		return fieldList;
 	}
 
 	/**
@@ -369,7 +352,7 @@ public class TableInfoHelper {
 	 */
 	public static void initSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
 		Configuration configuration = sqlSessionFactory.getConfiguration();
-		GlobalConfiguration globalConfig = GlobalConfiguration.GlobalConfig(configuration);
+		GlobalConfiguration globalConfig = GlobalConfiguration.getGlobalConfig(configuration);
 		// SqlRunner
 		SqlRunner.FACTORY = sqlSessionFactory;
 		if (globalConfig == null) {

@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.generator.config;
 
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
  * <p>
@@ -33,6 +34,11 @@ public class StrategyConfig {
 	public static boolean DB_COLUMN_UNDERLINE = false;
 
 	/**
+	 * 是否大写命名
+	 */
+	private boolean isCapitalMode = false;
+
+	/**
 	 * 数据库表映射到实体的命名策略
 	 */
 	private NamingStrategy naming = NamingStrategy.nochange;
@@ -42,7 +48,7 @@ public class StrategyConfig {
 	/**
 	 * 表前缀
 	 */
-	private String tablePrefix;
+	private String[] tablePrefix;
 
 	/**
 	 * 自定义继承的Entity类全称，带包名
@@ -101,6 +107,50 @@ public class StrategyConfig {
 		DB_COLUMN_UNDERLINE = dbColumnUnderline;
 	}
 
+	/**
+	 * <p>
+	 * 大写命名、字段符合大写字母数字下划线命名
+	 * </p>
+	 * 
+	 * @param word
+	 *            待判断字符串
+	 * @return
+	 */
+	public boolean isCapitalModeNaming(String word) {
+		return isCapitalMode && StringUtils.isCapitalMode(word);
+	}
+
+	/**
+	 * <p>
+	 * 表名称包含指定前缀
+	 * </p>
+	 * 
+	 * @param tableName
+	 *            表名称
+	 * @return
+	 */
+	public boolean containsTablePrefix(String tableName) {
+		if (null != tableName) {
+			String[] tps = getTablePrefix();
+			if (null != tps) {
+				for (String tp : tps) {
+					if (tableName.contains(tp)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	public boolean isCapitalMode() {
+		return isCapitalMode;
+	}
+
+	public void setCapitalMode(boolean isCapitalMode) {
+		this.isCapitalMode = isCapitalMode;
+	}
+
 	public NamingStrategy getNaming() {
 		return naming;
 	}
@@ -117,11 +167,11 @@ public class StrategyConfig {
 		this.fieldNaming = fieldNaming;
 	}
 
-	public String getTablePrefix() {
+	public String[] getTablePrefix() {
 		return tablePrefix;
 	}
 
-	public void setTablePrefix(String tablePrefix) {
+	public void setTablePrefix(String[] tablePrefix) {
 		this.tablePrefix = tablePrefix;
 	}
 

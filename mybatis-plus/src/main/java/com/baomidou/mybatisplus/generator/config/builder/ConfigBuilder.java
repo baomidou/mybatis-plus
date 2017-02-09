@@ -16,12 +16,16 @@
 package com.baomidou.mybatisplus.generator.config.builder;
 
 import java.io.File;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.baomidou.mybatisplus.generator.config.ConstVal;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
@@ -78,6 +82,11 @@ public class ConfigBuilder {
 	 * 模板路径配置信息
 	 */
 	private TemplateConfig template;
+	
+	/**
+	 * 数据库配置
+	 */
+	private DataSourceConfig dataSourceConfig;
 
 	/**
 	 * 策略配置
@@ -117,6 +126,7 @@ public class ConfigBuilder {
 		} else {
 			handlerPackage(this.globalConfig.getOutputDir(), packageConfig);
 		}
+		this.dataSourceConfig = dataSourceConfig;
 		handlerDataSource(dataSourceConfig);
 		// 策略配置
 		if (null == strategyConfig) {
@@ -281,9 +291,9 @@ public class ConfigBuilder {
 	 * @param tablePrefix
 	 * @return 补充完整信息后的表
 	 */
-	private List<TableInfo> processTable(List<TableInfo> tableList, NamingStrategy strategy, String tablePrefix) {
+	private List<TableInfo> processTable(List<TableInfo> tableList, NamingStrategy strategy, String[] tablePrefix) {
 		for (TableInfo tableInfo : tableList) {
-			tableInfo.setEntityName(NamingStrategy.capitalFirst(processName(tableInfo.getName(), strategy, tablePrefix)));
+			tableInfo.setEntityName(strategyConfig, NamingStrategy.capitalFirst(processName(tableInfo.getName(), strategy, tablePrefix)));
 			if (StringUtils.isNotEmpty(globalConfig.getMapperName())) {
 				tableInfo.setMapperName(String.format(globalConfig.getMapperName(), tableInfo.getEntityName()));
 			} else {
@@ -332,11 +342,12 @@ public class ConfigBuilder {
 		try {
 			pstate = connection.prepareStatement(querySQL.getTableCommentsSql());
 			ResultSet results = pstate.executeQuery();
+			TableInfo tableInfo;
 			while (results.next()) {
 				String tableName = results.getString(querySQL.getTableName());
 				if (StringUtils.isNotEmpty(tableName)) {
 					String tableComment = results.getString(querySQL.getTableComment());
-					TableInfo tableInfo = new TableInfo();
+					tableInfo = new TableInfo();
 					if (isInclude) {
 						for (String includeTab : config.getInclude()) {
 							if (includeTab.equalsIgnoreCase(tableName)) {
@@ -404,16 +415,12 @@ public class ConfigBuilder {
 	 */
 	private List<TableField> getListFields(String tableName, NamingStrategy strategy) throws SQLException {
 		boolean havedId = false;
-
 		PreparedStatement pstate = connection.prepareStatement(String.format(querySQL.getTableFieldsSql(), tableName));
 		ResultSet results = pstate.executeQuery();
 
 		List<TableField> fieldList = new ArrayList<TableField>();
-		TableField field;
-		Set<String> javaType;
 		while (results.next()) {
-			field = new TableField();
-			javaType = new HashSet<String>();
+			TableField field = new TableField();
 			String key = results.getString(querySQL.getFieldKey());
 			// 避免多重主键设置，目前只取第一个找到ID，并放到list中的索引为0的位置
 			boolean isId = StringUtils.isNotEmpty(key) && key.toUpperCase().equals("PRI");
@@ -431,17 +438,8 @@ public class ConfigBuilder {
 				continue;
 			}
 			field.setType(results.getString(querySQL.getFieldType()));
-			field.setPropertyName(processName(field.getName(), strategy));
-			String propertyType = processFiledType(field.getType());
-			field.setPropertyType(propertyType);
-			if(propertyType!=null){
-				if(propertyType.equals(Date.class.getSimpleName())){
-					javaType.add(Date.class.getName());
-				}else if(propertyType.equals(BigDecimal.class.getSimpleName())){
-					javaType.add(BigDecimal.class.getName());
-				}
-			}
-			field.setJavaType(javaType);
+			field.setPropertyName(strategyConfig, processName(field.getName(), strategy));
+			field.setColumnType(dataSourceConfig.getTypeConvert().processTypeConvert(field.getType()));
 			field.setComment(results.getString(querySQL.getFieldComment()));
 			fieldList.add(field);
 		}
@@ -485,24 +483,6 @@ public class ConfigBuilder {
 	}
 
 	/**
-	 * 处理字段类型
-	 *
-	 * @return 转换成JAVA包装类型
-	 */
-	private String processFiledType(String type) {
-		if (QuerySQL.MYSQL == querySQL) {
-			return processMySqlType(type);
-		} else if (QuerySQL.ORACLE == querySQL) {
-			return processOracleType(type);
-		} else if (QuerySQL.SQL_SERVER == querySQL) {
-			return processSQLServerType(type);
-		} else if (QuerySQL.POSTGRE_SQL == querySQL) {
-			return processPostgreSQL(type);
-		}
-		return null;
-	}
-
-	/**
 	 * 处理字段名称
 	 *
 	 * @return 根据策略返回处理后的名称
@@ -519,7 +499,7 @@ public class ConfigBuilder {
 	 * @param tablePrefix
 	 * @return 根据策略返回处理后的名称
 	 */
-	private String processName(String name, NamingStrategy strategy, String tablePrefix) {
+	private String processName(String name, NamingStrategy strategy, String[] tablePrefix) {
 		String propertyName = "";
 		if (strategy == NamingStrategy.remove_prefix_and_camel) {
 			propertyName = NamingStrategy.removePrefixAndCamel(name, tablePrefix);
@@ -531,147 +511,6 @@ public class ConfigBuilder {
 			propertyName = name;
 		}
 		return propertyName;
-	}
-
-	/**
-	 * <p>
-	 * Mysql 字段类型转换
-	 * </p>
-	 *
-	 * @param type
-	 *            字段类型
-	 * @return JAVA类型
-	 */
-	private String processMySqlType(String type) {
-		String t = type.toLowerCase();
-		if (t.contains("char") || t.contains("text")) {
-			return "String";
-		} else if (t.contains("bigint")) {
-			return "Long";
-		} else if (t.contains("int")) {
-			return "Integer";
-		} else if (t.contains("date") || t.contains("time") || t.contains("year")) {
-			return "Date";
-		} else if (t.contains("text")) {
-			return "String";
-		} else if (t.contains("bit")) {
-			return "Boolean";
-		} else if (t.contains("decimal")) {
-			return "BigDecimal";
-		} else if (t.contains("blob")) {
-			return "byte[]";
-		} else if (t.contains("float")) {
-			return "Float";
-		} else if (t.contains("double")) {
-			return "Double";
-		} else if (t.contains("json") || t.contains("enum")) {
-			return "String";
-		}
-		return "String";
-	}
-
-	/**
-	 * <p>
-	 * Oracle 字段类型转换
-	 * </p>
-	 *
-	 * @param type
-	 *            字段类型
-	 * @return JAVA类型
-	 */
-	private String processOracleType(String type) {
-		String t = type.toUpperCase();
-		if (t.contains("CHAR")) {
-			return "String";
-		} else if (t.contains("DATE") || t.contains("TIMESTAMP")) {
-			return "Date";
-		} else if (t.contains("NUMBER")) {
-			if (t.matches("NUMBER\\(+\\d{1}+\\)")) {
-				return "Integer";
-			} else if (t.matches("NUMBER\\(+\\d{2}+\\)")) {
-				return "Long";
-			}
-			return "Double";
-		} else if (t.contains("FLOAT")) {
-			return "Float";
-		} else if (t.contains("BLOB")) {
-			return "Object";
-		} else if (t.contains("RAW")) {
-			return "byte[]";
-		}
-		return "String";
-	}
-
-	/**
-	 * <p>
-	 * SQLServer 字段类型转换
-	 * </p>
-	 * 
-	 * @param type
-	 * @return
-	 */
-	private String processSQLServerType(String type) {
-		String t = type.toLowerCase();
-		if (t.contains("char") || t.contains("text") || t.contains("xml")) {
-			return "String";
-		} else if (t.contains("bigint")) {
-			return "Long";
-		} else if (t.contains("int")) {
-			return "Integer";
-		} else if (t.contains("date") || t.contains("time")) {
-			return "Date";
-		} else if (t.contains("text")) {
-			return "String";
-		} else if (t.contains("bit")) {
-			return "Boolean";
-		}else if (t.contains("decimal")||t.contains("numeric")){
-			return "Double";
-		}else if (t.contains("money")) {
-			return "BigDecimal";
-		} else if (t.contains("binary")||t.contains("image")) {
-			return "byte[]";
-		} else if (t.contains("float")||t.contains("real")) {
-			return "Float";
-		}
-		return "String";
-	}
-
-
-	/**
-	 * <p>
-	 * PostgreSQL 字段类型转换
-	 * </p>
-	 *
-	 * @param type
-	 *            字段类型
-	 * @return JAVA类型
-	 */
-	private String processPostgreSQL(String type) {
-		String t = type.toLowerCase();
-		if (t.contains("char") || t.contains("text")) {
-			return "String";
-		} else if (t.contains("bigint")) {
-			return "Long";
-		} else if (t.contains("int")) {
-			return "Integer";
-		} else if (t.contains("date") || t.contains("time") || t.contains("year")) {
-			return "Date";
-		} else if (t.contains("text")) {
-			return "String";
-		} else if (t.contains("bit")) {
-			return "Boolean";
-		} else if (t.contains("decimal")) {
-			return "BigDecimal";
-		} else if (t.contains("blob")) {
-			return "byte[]";
-		} else if (t.contains("float")) {
-			return "Float";
-		} else if (t.contains("double")) {
-			return "Double";
-		} else if (t.contains("json") || t.contains("enum")) {
-			return "String";
-		}
-		return "String";
 	}
 
 	/**

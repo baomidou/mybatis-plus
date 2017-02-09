@@ -1,43 +1,31 @@
 package ${package.Entity};
 
-#if(${superEntityClassPackage})
-import ${superEntityClassPackage};
-#end
-#foreach($field in ${table.fields})
-#foreach($javaType in ${field.javaType})
-import ${javaType}
-#end
-#end
 #if(${activeRecord})
 import com.baomidou.mybatisplus.activerecord.Model;
 #end
-#if(!${dbColumnUnderline})
-import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.annotations.TableField;
-#end
-#if(${tabeAnnotation})
-import com.baomidou.mybatisplus.annotations.TableName;
+#foreach($pkg in ${table.importPackages})
+import ${pkg};
 #end
 import java.io.Serializable;
+
+
 /**
- #if("$!table.comment" != "")* <p>
+ * <p>
  * ${table.comment}
  * </p>
- #end*
+ *
  * @author ${author}
  * @since ${date}
  */
-#if(${tabeAnnotation})
+#if(${table.convert})
 @TableName("${table.name}")
 #end
 #if(${superEntityClass})
-public class ${entity} extends ${superEntityClass} {
-#else
-#if(${activeRecord})
+public class ${entity} extends ${superEntityClass}#if(${activeRecord})<${entity}>#end {
+#elseif(${activeRecord})
 public class ${entity} extends Model<${entity}> {
 #else
 public class ${entity} implements Serializable {
-#end
 #end
 
     private static final long serialVersionUID = 1L;
@@ -47,17 +35,15 @@ public class ${entity} implements Serializable {
 #set($keyPropertyName=${field.propertyName})
 #end
 #if("$!field.comment" != "")
-	/**
-	 * ${field.comment}
-	 */
+    /**
+     * ${field.comment}
+     */
 #end
-#if(${field.keyFlag})
-	@TableId#if(${field.convert})(value="${field.name}")
-#end
-
-#else
 #if(${field.convert})
-	@TableField(value="${field.name}")
+#if(${field.keyFlag})
+	@TableId("${field.name}")
+#else
+	@TableField("${field.name}")
 #end
 #end
 	private ${field.propertyType} ${field.propertyName};

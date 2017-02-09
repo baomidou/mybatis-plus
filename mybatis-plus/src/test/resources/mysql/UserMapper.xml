@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.baomidou.mybatisplus.test.mysql.UserMapper">
+<mapper namespace="com.baomidou.mybatisplus.test.mysql.mapper.UserMapper">
 
     <!-- ehcache 缓存配置, 输出日志 http://www.mybatis.org/ehcache-cache/ -->
     <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
@@ -39,6 +39,6 @@
                 typeHandler="com.baomidou.mybatisplus.test.mysql.typehandler.PhoneTypeHandler"/>
 
         <!-- 级联查询 -->
-        <association column="role" property="role" select="com.baomidou.mybatisplus.test.mysql.RoleMapper.selectById"/>
+        <association column="role" property="role" select="com.baomidou.mybatisplus.test.mysql.mapper.RoleMapper.selectById"/>
     </resultMap>
 </mapper>

@@ -18,12 +18,15 @@ package com.baomidou.mybatisplus.mapper;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.util.List;
 
@@ -31,7 +34,7 @@ import java.util.List;
  * <p>
  * SQL 辅助类
  * </p>
- * 
+ *
  * @author hubin
  * @Date 2016-11-06
  */
@@ -55,20 +58,42 @@ public class SqlHelper {
 	 * <p>
 	 * 批量操作 SqlSession
 	 * </p>
-	 * 
+	 *
 	 * @param clazz
 	 *            实体类
 	 * @return SqlSession
 	 */
 	public static SqlSession sqlSessionBatch(Class<?> clazz) {
-		return GlobalConfiguration.currentSessionFactory(clazz).openSession(ExecutorType.BATCH, false);
+		SqlSession sqlSession = getSqlSession(clazz, true);
+		return (sqlSession != null) ? sqlSession : GlobalConfiguration.currentSessionFactory(clazz).openSession(
+				ExecutorType.BATCH, false);
+	}
+
+	/**
+	 * 获取sqlSessionå
+	 *
+	 * @param clazz
+	 * @param isBatch
+	 * @return
+	 */
+	private static SqlSession getSqlSession(Class<?> clazz, boolean isBatch) {
+		SqlSession session = null;
+		try {
+			SqlSessionFactory sqlSessionFactory = GlobalConfiguration.currentSessionFactory(clazz);
+			Configuration configuration = sqlSessionFactory.getConfiguration();
+			GlobalConfiguration globalConfiguration = GlobalConfiguration.getGlobalConfig(configuration);
+			session = isBatch ? globalConfiguration.getSqlsessionBatch() : globalConfiguration.getSqlSession();
+		} catch (Exception e) {
+			// ignored
+		}
+		return session;
 	}
 
 	/**
 	 * <p>
 	 * 获取Session
 	 * </p>
-	 * 
+	 *
 	 * @param clazz
 	 *            实体类
 	 * @param autoCommit
@@ -76,12 +101,13 @@ public class SqlHelper {
 	 * @return SqlSession
 	 */
 	public static SqlSession sqlSession(Class<?> clazz, boolean autoCommit) {
-		return GlobalConfiguration.currentSessionFactory(clazz).openSession(autoCommit);
+		SqlSession sqlSession = getSqlSession(clazz, false);
+		return (sqlSession != null) ? sqlSession : GlobalConfiguration.currentSessionFactory(clazz).openSession(autoCommit);
 	}
 
 	/**
 	 * 获取TableInfo
-	 * 
+	 *
 	 * @return TableInfo
 	 */
 	public static TableInfo table(Class<?> clazz) {
@@ -102,10 +128,7 @@ public class SqlHelper {
 	 * @return boolean
 	 */
 	public static boolean retBool(Integer result) {
-		if (null == result) {
-			return false;
-		}
-		return result >= 1;
+		return (null == result) ? false : result >= 1;
 	}
 
 	/**
@@ -124,7 +147,7 @@ public class SqlHelper {
 	 * <p>
 	 * 从list中取第一条数据返回对应List中泛型的单个结果
 	 * </p>
-	 * 
+	 *
 	 * @param list
 	 * @param <E>
 	 * @return
@@ -140,4 +163,16 @@ public class SqlHelper {
 		return null;
 	}
 
+	/**
+	 * 填充Wrapper
+	 *
+	 * @param page
+	 * @param wrapper
+	 */
+	public static void fillWrapper(Page<?> page, Wrapper<?> wrapper) {
+		if (null != wrapper) {
+			wrapper.orderBy(page.getOrderByField(), page.isAsc());
+			wrapper.allEq(page.getCondition());
+		}
+	}
 }

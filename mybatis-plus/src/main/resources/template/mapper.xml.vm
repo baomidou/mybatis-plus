@@ -10,9 +10,12 @@
 	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="${package.Entity}.${entity}">
 #foreach($field in ${table.fields})
-#if(${field.keyFlag})
+#if(${field.keyFlag})##生成主键排在第一位
 		<id column="${field.name}" property="${field.propertyName}" />
-#else
+#end
+#end
+#foreach($field in ${table.fields})
+#if(!${field.keyFlag})##生成普通字段
 		<result column="${field.name}" property="${field.propertyName}" />
 #end
 #end

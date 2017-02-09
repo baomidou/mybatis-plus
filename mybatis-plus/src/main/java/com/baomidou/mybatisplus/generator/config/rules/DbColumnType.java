@@ -31,8 +31,14 @@ public enum DbColumnType {
 	DOUBLE("Double", null),
 	BOOLEAN("Boolean", null),
 	BYTE_ARRAY("byte[]", null),
+	CHARACTER("Character", null),
 	OBJECT("Object", null),
 	DATE("Date", "java.util.Date"),
+	TIME("Time", "java.sql.Time"),
+	BLOB("Blob", "java.sql.Blob"),
+	CLOB("Clob", "java.sql.Clob"),
+	TIMESTAMP("Timestamp", "java.sql.Timestamp"),
+	BIG_INTEGER("BigInteger", "java.math.BigInteger"),
 	BIG_DECIMAL("BigDecimal", "java.math.BigDecimal");
 
 	/** 类型 */

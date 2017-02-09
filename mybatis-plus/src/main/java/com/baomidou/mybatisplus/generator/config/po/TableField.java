@@ -17,8 +17,7 @@ package com.baomidou.mybatisplus.generator.config.po;
 
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
-
-import java.util.Set;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
  * <p>
@@ -29,13 +28,38 @@ import java.util.Set;
  * @since 2016-12-03
  */
 public class TableField {
+	private boolean convert;
 	private boolean keyFlag;
 	private String name;
 	private String type;
 	private String propertyName;
 	private DbColumnType columnType;
 	private String comment;
-	private Set<String> javaType;
+
+	public boolean isConvert() {
+		return convert;
+	}
+
+	public void setConvert(boolean convert) {
+		this.convert = convert;
+	}
+
+	protected void setConvert(StrategyConfig strategyConfig) {
+		if (strategyConfig.isCapitalModeNaming(name)) {
+			this.convert = false;
+		} else {
+			// 转换字段
+			if (StrategyConfig.DB_COLUMN_UNDERLINE) {
+				// 包含大写处理
+				if (StringUtils.containsUpperCase(name)) {
+					this.convert = true;
+				}
+			} else if (!name.equalsIgnoreCase(propertyName)) {
+				this.convert = true;
+			}
+		}
+	}
+
 	public boolean isKeyFlag() {
 		return keyFlag;
 	}
@@ -64,8 +88,9 @@ public class TableField {
 		return propertyName;
 	}
 
-	public void setPropertyName(String propertyName) {
+	public void setPropertyName(StrategyConfig strategyConfig, String propertyName) {
 		this.propertyName = propertyName;
+		this.setConvert(strategyConfig);
 	}
 
 	public DbColumnType getColumnType() {
@@ -91,22 +116,8 @@ public class TableField {
 		this.comment = comment;
 	}
 
-	public boolean isConvert() {
-		if (StrategyConfig.DB_COLUMN_UNDERLINE) {
-			return false;
-		}
-		return !name.equalsIgnoreCase(propertyName);
-	}
-
 	public String getCapitalName() {
 		return propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
 	}
 
-	public Set<String> getJavaType() {
-		return javaType;
-	}
-
-	public void setJavaType(Set<String> javaType) {
-		this.javaType = javaType;
-	}
 }

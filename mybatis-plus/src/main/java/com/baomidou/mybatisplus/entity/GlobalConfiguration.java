@@ -30,7 +30,10 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionTemplate;
 
 import javax.sql.DataSource;
 import java.io.Serializable;
@@ -85,11 +88,15 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	private String identifierQuote;
 	// 缓存当前Configuration的SqlSessionFactory
 	private SqlSessionFactory sqlSessionFactory;
-
+	// 缓存已注入CRUD的Mapper信息
 	private Set<String> mapperRegistryCache = new ConcurrentSkipListSet<String>();
+	// 单例重用SqlSession
+	private SqlSession sqlSession;
+	// 批量SqlSession
+	private SqlSession sqlsessionBatch;
 
 	public GlobalConfiguration() {
-		// TODO
+		// 构造方法
 	}
 
 	public GlobalConfiguration(ISqlInjector sqlInjector) {
@@ -179,6 +186,8 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 
 	public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
 		this.sqlSessionFactory = sqlSessionFactory;
+		this.sqlSession = new SqlSessionTemplate(sqlSessionFactory);
+		this.sqlsessionBatch = new SqlSessionTemplate(sqlSessionFactory, ExecutorType.BATCH);
 	}
 
 	public boolean isCapitalMode() {
@@ -203,6 +212,14 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 		}
 	}
 
+	public SqlSession getSqlSession() {
+		return sqlSession;
+	}
+
+	public SqlSession getSqlsessionBatch() {
+		return sqlsessionBatch;
+	}
+
 	@Override
 	protected GlobalConfiguration clone() throws CloneNotSupportedException {
 		return (GlobalConfiguration) super.clone();
@@ -216,7 +233,7 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	 */
 	public static SqlSessionFactory currentSessionFactory(Class<?> clazz) {
 		String configMark = TableInfoHelper.getTableInfo(clazz).getConfigMark();
-		GlobalConfiguration mybatisGlobalConfig = GlobalConfiguration.GlobalConfig(configMark);
+		GlobalConfiguration mybatisGlobalConfig = GlobalConfiguration.getGlobalConfig(configMark);
 		return mybatisGlobalConfig.getSqlSessionFactory();
 	}
 
@@ -257,7 +274,7 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	 * 标记全局设置 (统一所有入口)
 	 * </p>
 	 *
-	 * @param configuration
+	 * @param sqlSessionFactory
 	 * @return
 	 */
 	public SqlSessionFactory signGlobalConfig(SqlSessionFactory sqlSessionFactory) {
@@ -273,11 +290,11 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	 * @param configuration
 	 * @return
 	 */
-	public static GlobalConfiguration GlobalConfig(Configuration configuration) {
+	public static GlobalConfiguration getGlobalConfig(Configuration configuration) {
 		if (configuration == null) {
 			throw new MybatisPlusException("Error: You need Initialize MybatisConfiguration !");
 		}
-		return GlobalConfig(configuration.toString());
+		return getGlobalConfig(configuration.toString());
 	}
 
 	/**
@@ -286,7 +303,7 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	 * @param configMark
 	 * @return
 	 */
-	public static GlobalConfiguration GlobalConfig(String configMark) {
+	public static GlobalConfiguration getGlobalConfig(String configMark) {
 		GlobalConfiguration cache = GLOBAL_CONFIG.get(configMark);
 		if (cache == null) {
 			// 没有获取全局配置初始全局配置
@@ -298,20 +315,20 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	}
 
 	public static DBType getDbType(Configuration configuration) {
-		return GlobalConfig(configuration).getDbType();
+		return getGlobalConfig(configuration).getDbType();
 	}
 
 	public static IdType getIdType(Configuration configuration) {
-		return GlobalConfig(configuration).getIdType();
+		return getGlobalConfig(configuration).getIdType();
 	}
 
 	public static boolean isDbColumnUnderline(Configuration configuration) {
-		return GlobalConfig(configuration).isDbColumnUnderline();
+		return getGlobalConfig(configuration).isDbColumnUnderline();
 	}
 
 	public static ISqlInjector getSqlInjector(Configuration configuration) {
 		// fix #140
-		GlobalConfiguration globalConfiguration = GlobalConfig(configuration);
+		GlobalConfiguration globalConfiguration = getGlobalConfig(configuration);
 		ISqlInjector sqlInjector = globalConfiguration.getSqlInjector();
 		if (sqlInjector == null) {
 			sqlInjector = new AutoSqlInjector();
@@ -321,27 +338,35 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	}
 
 	public static IMetaObjectHandler getMetaObjectHandler(Configuration configuration) {
-		return GlobalConfig(configuration).getMetaObjectHandler();
+		return getGlobalConfig(configuration).getMetaObjectHandler();
 	}
 
 	public static FieldStrategy getFieldStrategy(Configuration configuration) {
-		return GlobalConfig(configuration).getFieldStrategy();
+		return getGlobalConfig(configuration).getFieldStrategy();
 	}
 
 	public static boolean isRefresh(Configuration configuration) {
-		return GlobalConfig(configuration).isRefresh();
+		return getGlobalConfig(configuration).isRefresh();
 	}
 
 	public static boolean isAutoSetDbType(Configuration configuration) {
-		return GlobalConfig(configuration).isAutoSetDbType();
+		return getGlobalConfig(configuration).isAutoSetDbType();
 	}
 
 	public static Set<String> getMapperRegistryCache(Configuration configuration) {
-		return GlobalConfig(configuration).getMapperRegistryCache();
+		return getGlobalConfig(configuration).getMapperRegistryCache();
 	}
 
 	public static String getIdentifierQuote(Configuration configuration) {
-		return GlobalConfig(configuration).getIdentifierQuote();
+		return getGlobalConfig(configuration).getIdentifierQuote();
+	}
+
+	public static SqlSession getSqlSession(Configuration configuration) {
+		return getGlobalConfig(configuration).getSqlSession();
+	}
+
+	public static SqlSession getSqlsessionBatch(Configuration configuration) {
+		return getGlobalConfig(configuration).getSqlsessionBatch();
 	}
 
 	/**

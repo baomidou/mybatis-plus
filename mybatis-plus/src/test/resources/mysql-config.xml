@@ -109,10 +109,10 @@
      | -->
     <mappers>
         <mapper resource="mysql/RoleMapper.xml"/>
-        <mapper class="com.baomidou.mybatisplus.test.mysql.UserMapper"/>
-        <mapper class="com.baomidou.mybatisplus.test.mysql.NotPKMapper"/>
+        <mapper class="com.baomidou.mybatisplus.test.mysql.mapper.UserMapper"/>
+        <mapper class="com.baomidou.mybatisplus.test.mysql.mapper.NotPKMapper"/>
         <mapper resource="mysql/UserMapper.xml"/>
-        <mapper class="com.baomidou.mybatisplus.test.mysql.RoleMapper"/>
-        <mapper class="com.baomidou.mybatisplus.test.mysql.TestMapper"/>
+        <mapper class="com.baomidou.mybatisplus.test.mysql.mapper.RoleMapper"/>
+        <mapper class="com.baomidou.mybatisplus.test.mysql.mapper.TestMapper"/>
     </mappers>
 </configuration>

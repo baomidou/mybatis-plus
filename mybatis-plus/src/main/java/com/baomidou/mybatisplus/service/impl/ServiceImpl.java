@@ -15,8 +15,17 @@
  */
 package com.baomidou.mybatisplus.service.impl;
 
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.baomidou.mybatisplus.entity.TableInfo;
-import com.baomidou.mybatisplus.enums.IdType;
+import com.baomidou.mybatisplus.enums.SqlMethod;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.baomidou.mybatisplus.mapper.SqlHelper;
@@ -28,14 +37,6 @@ import com.baomidou.mybatisplus.toolkit.MapUtils;
 import com.baomidou.mybatisplus.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.SqlSession;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -64,6 +65,16 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 	 */
 	protected SqlSession sqlSessionBatch() {
 		return SqlHelper.sqlSessionBatch(currentModleClass());
+	}
+
+	/**
+	 * 获取SqlStatement
+	 *
+	 * @param sqlMethod
+	 * @return
+	 */
+	protected String sqlStatement(SqlMethod sqlMethod) {
+		return SqlHelper.table(currentModleClass()).getSqlStatement(sqlMethod.getMethod());
 	}
 
 	/**
@@ -100,16 +111,14 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 				if (StringUtils.checkValNull(idVal)) {
 					return insert(entity);
 				} else {
-					/* 特殊处理 INPUT 主键策略逻辑 */
-					if (IdType.INPUT == tableInfo.getIdType()) {
-						T entityValue = selectById((Serializable) idVal);
-						if (null != entityValue) {
-							return updateById(entity);
-						} else {
-							return insert(entity);
-						}
+					/*
+					 * 更新成功直接返回，失败执行插入逻辑
+					 */
+					boolean rlt = updateById(entity);
+					if (!rlt) {
+						return insert(entity);
 					}
-					return updateById(entity);
+					return rlt;
 				}
 			} else {
 				throw new MybatisPlusException("Error:  Can not execute. Could not find @TableId.");
@@ -166,7 +175,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		try {
 			int size = entityList.size();
 			for (int i = 0; i < size; i++) {
-				baseMapper.insert(entityList.get(i));
+				batchSqlSession.insert(sqlStatement(SqlMethod.INSERT_ONE), entityList.get(i));
 				if (i % batchSize == 0) {
 					batchSqlSession.flushStatements();
 				}
@@ -215,7 +224,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		try {
 			int size = entityList.size();
 			for (int i = 0; i < size; i++) {
-				baseMapper.updateById(entityList.get(i));
+				batchSqlSession.update(sqlStatement(SqlMethod.UPDATE_BY_ID), entityList.get(i));
 				if (i % 30 == 0) {
 					batchSqlSession.flushStatements();
 				}
@@ -275,17 +284,13 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Page<Map<String, Object>> selectMapsPage(Page page, Wrapper<T> wrapper) {
-		if (null != wrapper) {
-			wrapper.orderBy(page.getOrderByField(), page.isAsc());
-		}
+		SqlHelper.fillWrapper(page, wrapper);
 		page.setRecords(baseMapper.selectMapsPage(page, wrapper));
 		return page;
 	}
 
 	public Page<T> selectPage(Page<T> page, Wrapper<T> wrapper) {
-		if (null != wrapper) {
-			wrapper.orderBy(page.getOrderByField(), page.isAsc());
-		}
+		SqlHelper.fillWrapper(page, wrapper);
 		page.setRecords(baseMapper.selectPage(page, wrapper));
 		return page;
 	}
