@@ -82,8 +82,6 @@ public class PaginationInterceptor implements Interceptor {
 			 */
 			BoundSql boundSql = (BoundSql) metaStatementHandler.getValue("delegate.boundSql");
 			String originalSql = (String) boundSql.getSql();
-			metaStatementHandler.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
-			metaStatementHandler.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
 
 			/**
 			 * <p>
@@ -114,6 +112,8 @@ public class PaginationInterceptor implements Interceptor {
 			 * 查询 SQL 设置
 			 */
 			metaStatementHandler.setValue("delegate.boundSql.sql", originalSql);
+			metaStatementHandler.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
+			metaStatementHandler.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
 		} else {
 			MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
 			Object parameterObject = null;
