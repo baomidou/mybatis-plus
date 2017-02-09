@@ -1,6 +1,11 @@
 package com.baomidou.mybatisplus.plugins;
 
 
+import com.baomidou.mybatisplus.entity.CountOptimize;
+import com.baomidou.mybatisplus.entity.GlobalConfiguration;
+import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
+import com.baomidou.mybatisplus.plugins.pagination.Pagination;
+import com.baomidou.mybatisplus.toolkit.SqlUtils;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
@@ -30,20 +35,43 @@ public class SqlLogInterceptor implements Interceptor {
 
     private static final Log logger = LogFactory.getLog(SqlLogInterceptor.class);
 
+    private String optimizeType = "default";
+
     private Properties properties;
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
         MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
-        Object parameter = null;
-        if (invocation.getArgs().length > 1) {
-            parameter = invocation.getArgs()[1];
+        Object parameter = invocation.getArgs()[1];;
+        RowBounds rowBounds = null;
+        Pagination pagination = null;
+        boolean isPageSql = false;
+        if(invocation.getMethod().getName().equals("query")){
+            rowBounds = (RowBounds) invocation.getArgs()[2];
+            if(rowBounds instanceof Pagination){
+                isPageSql = true;
+                Pagination page = (Pagination) rowBounds;
+                pagination = new Pagination(page.getCurrent(),page.getLimit());
+            }
         }
         BoundSql boundSql = mappedStatement.getBoundSql(parameter);
         Configuration configuration = mappedStatement.getConfiguration();
-        Object returnValue;
-        returnValue = invocation.proceed();
-        String sql = getSql(configuration, boundSql);
+        Object returnValue = invocation.proceed();
+        String sql;
+        if(isPageSql){
+            Pagination page = (Pagination) rowBounds;
+            boolean orderBy = true;
+            String dbType = GlobalConfiguration.getDbType(configuration).getDb();
+            if (page.isSearchCount()) {
+                CountOptimize countOptimize = SqlUtils.getCountOptimize(boundSql.getSql(), optimizeType, dbType,
+                        page.isOptimizeCount());
+                orderBy = countOptimize.isOrderBy();
+            }
+            String buildSql = SqlUtils.concatOrderBy(boundSql.getSql(), page, orderBy);
+            sql = DialectFactory.buildPaginationSql(pagination, buildSql, dbType, null).replaceAll("[\\s]+", " ");;
+        }else {
+            sql = getSql(configuration, boundSql);
+        }
         if(logger.isDebugEnabled()){
             logger.debug("\n\n Run SQL: "+sql+"\n");
         }
@@ -100,5 +128,13 @@ public class SqlLogInterceptor implements Interceptor {
     @Override
     public void setProperties(Properties properties) {
         this.properties = properties;
+    }
+
+    public String getOptimizeType() {
+        return optimizeType;
+    }
+
+    public void setOptimizeType(String optimizeType) {
+        this.optimizeType = optimizeType;
     }
 }
