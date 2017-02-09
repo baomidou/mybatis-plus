@@ -15,10 +15,13 @@
  */
 package com.baomidou.mybatisplus.plugins;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.text.DateFormat;
+import java.util.*;
 
+import com.baomidou.mybatisplus.entity.CountOptimize;
+import com.baomidou.mybatisplus.entity.GlobalConfiguration;
+import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
+import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -58,31 +61,95 @@ public class PerformanceInterceptor implements Interceptor {
 	private long maxTime = 0;
 
 	private boolean format = false;
+	/**
+	 * count 优化方式
+	 */
+	private String optimizeType = "default";
+
+	private Properties properties;
 
 	public Object intercept(Invocation invocation) throws Throwable {
 		MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
-		Object parameterObject = null;
-		if (invocation.getArgs().length > 1) {
-			parameterObject = invocation.getArgs()[1];
+		Object parameterObject = invocation.getArgs()[1];
+		RowBounds rowBounds = null;
+		Pagination pagination = null;
+		boolean isPageSql = false;
+		if(invocation.getMethod().getName().equals("query")){
+			rowBounds = (RowBounds) invocation.getArgs()[2];
+			if(rowBounds instanceof Pagination){
+				isPageSql = true;
+				Pagination page = (Pagination) rowBounds;
+				pagination = new Pagination(page.getCurrent(),page.getLimit());
+			}
 		}
-
-		String statementId = mappedStatement.getId();
 		BoundSql boundSql = mappedStatement.getBoundSql(parameterObject);
 		Configuration configuration = mappedStatement.getConfiguration();
-		String sql = SqlUtils.sqlFormat(boundSql.getSql(), format);
-
-		List<String> params = getParams(boundSql, parameterObject, configuration);
-
+		String sql;
+		if(isPageSql){
+			Pagination page = (Pagination) rowBounds;
+			boolean orderBy = true;
+			String dbType = GlobalConfiguration.getDbType(configuration).getDb();
+			if (page.isSearchCount()) {
+				CountOptimize countOptimize = SqlUtils.getCountOptimize(boundSql.getSql(), optimizeType, dbType,
+						page.isOptimizeCount());
+				orderBy = countOptimize.isOrderBy();
+			}
+			String buildSql = SqlUtils.concatOrderBy(boundSql.getSql(), page, orderBy);
+			DialectFactory.buildPaginationSql(pagination, buildSql, dbType, null).replaceAll("[\\s]+", " ");
+		}
+		String statementId = mappedStatement.getId();
 		long start = SystemClock.now();
 		Object result = invocation.proceed();
 		long end = SystemClock.now();
 		long timing = end - start;
-		System.err.println(" Time：" + timing + " ms" + " - ID：" + statementId + "\n SQL Params:" + params.toString()
-				+ "\n Execute SQL：" + sql + "\n");
+		sql = SqlUtils.sqlFormat(getSql(configuration, boundSql),format);
+		System.err.println(" Time：" + timing + " ms" + " - ID：" + statementId + "\n Execute SQL：" + sql + "\n");
 		if (maxTime >= 1 && timing > maxTime) {
 			throw new MybatisPlusException(" The SQL execution time is too large, please optimize ! ");
 		}
 		return result;
+	}
+
+	public static String getSql(Configuration configuration, BoundSql boundSql) {
+		Object parameterObject = boundSql.getParameterObject();
+		List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
+		String sql = boundSql.getSql().replaceAll("[\\s]+", " ");
+		if (parameterMappings!=null&&parameterMappings.size() > 0 && parameterObject != null) {
+			TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
+			if (typeHandlerRegistry.hasTypeHandler(parameterObject.getClass())) {
+				sql = sql.replaceFirst("\\?", getParameterValue(parameterObject));
+			} else {
+				MetaObject metaObject = configuration.newMetaObject(parameterObject);
+				for (ParameterMapping parameterMapping : parameterMappings) {
+					String propertyName = parameterMapping.getProperty();
+					if (metaObject.hasGetter(propertyName)) {
+						Object obj = metaObject.getValue(propertyName);
+						sql = sql.replaceFirst("\\?", getParameterValue(obj));
+					} else if (boundSql.hasAdditionalParameter(propertyName)) {
+						Object obj = boundSql.getAdditionalParameter(propertyName);
+						sql = sql.replaceFirst("\\?", getParameterValue(obj));
+					}
+				}
+			}
+		}
+		return sql;
+	}
+
+	private static String getParameterValue(Object obj) {
+		String value;
+		if (obj instanceof String) {
+			value = obj!=null ? "'" + obj.toString() + "'":"''";
+		} else if (obj instanceof Date) {
+			if(obj instanceof java.sql.Date){
+				value = obj!=null ? "'" + obj.toString() + "'":"''";
+			}else {
+				DateFormat formatter = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.CHINA);
+				value = obj!=null ? "'" + formatter.format(obj) + "'":"''";
+			}
+		} else {
+			value = obj!=null ? obj.toString():"";
+		}
+		return value;
 	}
 
 	public Object plugin(Object target) {
@@ -93,34 +160,7 @@ public class PerformanceInterceptor implements Interceptor {
 	}
 
 	public void setProperties(Properties prop) {
-		// TODO
-	}
-
-	private List<String> getParams(BoundSql boundSql, Object parameterObject, Configuration configuration) {
-		List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
-		TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
-		List<String> params = new ArrayList<String>();
-		if (parameterMappings != null) {
-			for (int i = 0; i < parameterMappings.size(); i++) {
-				ParameterMapping parameterMapping = parameterMappings.get(i);
-				if (parameterMapping.getMode() != ParameterMode.OUT) {
-					Object value;
-					String propertyName = parameterMapping.getProperty();
-					if (boundSql.hasAdditionalParameter(propertyName)) {
-						value = boundSql.getAdditionalParameter(propertyName);
-					} else if (parameterObject == null) {
-						value = null;
-					} else if (typeHandlerRegistry.hasTypeHandler(parameterObject.getClass())) {
-						value = parameterObject;
-					} else {
-						MetaObject metaObject = configuration.newMetaObject(parameterObject);
-						value = metaObject.getValue(propertyName);
-					}
-					params.add(StringUtils.sqlParam(value));
-				}
-			}
-		}
-		return params;
+		this.properties = prop;
 	}
 
 	public long getMaxTime() {
@@ -137,5 +177,13 @@ public class PerformanceInterceptor implements Interceptor {
 
 	public void setFormat(boolean format) {
 		this.format = format;
+	}
+
+	public String getOptimizeType() {
+		return optimizeType;
+	}
+
+	public void setOptimizeType(String optimizeType) {
+		this.optimizeType = optimizeType;
 	}
 }
