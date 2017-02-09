@@ -80,7 +80,7 @@ public class PerformanceInterceptor implements Interceptor {
 		}
 		BoundSql boundSql = mappedStatement.getBoundSql(parameterObject);
 		Configuration configuration = mappedStatement.getConfiguration();
-		String sql;
+		StringBuilder sqlBuilder = new StringBuilder();
 		if(isPageSql){
 			Pagination page = (Pagination) rowBounds;
 			boolean orderBy = true;
@@ -90,18 +90,18 @@ public class PerformanceInterceptor implements Interceptor {
 						page.isOptimizeCount());
 				orderBy = countOptimize.isOrderBy();
 			}
-			sql = DialectFactory.buildPaginationSql(pagination,
+			String sql = DialectFactory.buildPaginationSql(pagination,
 					SqlUtils.concatOrderBy(boundSql.getSql(), page, orderBy), dbType, null).replaceAll("[\\s]+", " ");
-			sql = getSql(configuration,boundSql,sql);
+			sqlBuilder.append(getSql(configuration,boundSql,sql));
 		}else {
-			sql = getSql(configuration, boundSql,boundSql.getSql());
+			sqlBuilder.append(getSql(configuration, boundSql,boundSql.getSql()));
 		}
 		String statementId = mappedStatement.getId();
 		long start = SystemClock.now();
 		Object result = invocation.proceed();
 		long end = SystemClock.now();
 		long timing = end - start;
-		sql = SqlUtils.sqlFormat(sql,format);
+		String sql = SqlUtils.sqlFormat(sqlBuilder.toString(),format);
 		System.err.println(" Time：" + timing + " ms" + " - ID：" + statementId + "\n Execute SQL：" + sql + "\n");
 		if (maxTime >= 1 && timing > maxTime) {
 			throw new MybatisPlusException(" The SQL execution time is too large, please optimize ! ");
