@@ -1,19 +1,29 @@
 package ${package.Entity};
 
+#if(${superEntityClassPackage})
+import ${superEntityClassPackage};
+#end
+#foreach($field in ${table.fields})
+#foreach($javaType in ${field.javaType})
+import ${javaType}
+#end
+#end
 #if(${activeRecord})
 import com.baomidou.mybatisplus.activerecord.Model;
 #end
-#foreach($pkg in ${table.importPackages})
-import ${pkg};
+#if(!${dbColumnUnderline})
+import com.baomidou.mybatisplus.annotations.TableId;
+import com.baomidou.mybatisplus.annotations.TableField;
+#end
+#if(${tabeAnnotation})
+import com.baomidou.mybatisplus.annotations.TableName;
 #end
 import java.io.Serializable;
-
-
 /**
- * <p>
+ #if("$!table.comment" != "")* <p>
  * ${table.comment}
  * </p>
- *
+ #end*
  * @author ${author}
  * @since ${date}
  */
@@ -36,15 +46,17 @@ public class ${entity} implements Serializable {
 #if(${field.keyFlag})
 #set($keyPropertyName=${field.propertyName})
 #end
-#if(${field.comment})
+#if("$!field.comment" != "")
 	/**
 	 * ${field.comment}
 	 */
 #end
-#if(${field.convert})
 #if(${field.keyFlag})
-	@TableId(value="${field.name}")
+	@TableId#if(${field.convert})(value="${field.name}")
+#end
+
 #else
+#if(${field.convert})
 	@TableField(value="${field.name}")
 #end
 #end

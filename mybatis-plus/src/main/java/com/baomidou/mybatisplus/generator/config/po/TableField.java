@@ -18,6 +18,8 @@ package com.baomidou.mybatisplus.generator.config.po;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 
+import java.util.Set;
+
 /**
  * <p>
  * 表字段信息
@@ -33,7 +35,7 @@ public class TableField {
 	private String propertyName;
 	private DbColumnType columnType;
 	private String comment;
-
+	private Set<String> javaType;
 	public boolean isKeyFlag() {
 		return keyFlag;
 	}
@@ -100,4 +102,11 @@ public class TableField {
 		return propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
 	}
 
+	public Set<String> getJavaType() {
+		return javaType;
+	}
+
+	public void setJavaType(Set<String> javaType) {
+		this.javaType = javaType;
+	}
 }

@@ -16,16 +16,12 @@
 package com.baomidou.mybatisplus.generator.config.builder;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import com.baomidou.mybatisplus.generator.config.ConstVal;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
@@ -35,7 +31,6 @@ import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.TemplateConfig;
 import com.baomidou.mybatisplus.generator.config.po.TableField;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
-import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.DbType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.config.rules.QuerySQL;
@@ -414,8 +409,11 @@ public class ConfigBuilder {
 		ResultSet results = pstate.executeQuery();
 
 		List<TableField> fieldList = new ArrayList<TableField>();
+		TableField field;
+		Set<String> javaType;
 		while (results.next()) {
-			TableField field = new TableField();
+			field = new TableField();
+			javaType = new HashSet<String>();
 			String key = results.getString(querySQL.getFieldKey());
 			// 避免多重主键设置，目前只取第一个找到ID，并放到list中的索引为0的位置
 			boolean isId = StringUtils.isNotEmpty(key) && key.toUpperCase().equals("PRI");
@@ -434,7 +432,16 @@ public class ConfigBuilder {
 			}
 			field.setType(results.getString(querySQL.getFieldType()));
 			field.setPropertyName(processName(field.getName(), strategy));
-			field.setColumnType(processFiledType(field.getType()));
+			String propertyType = processFiledType(field.getType());
+			field.setPropertyType(propertyType);
+			if(propertyType!=null){
+				if(propertyType.equals(Date.class.getSimpleName())){
+					javaType.add(Date.class.getName());
+				}else if(propertyType.equals(BigDecimal.class.getSimpleName())){
+					javaType.add(BigDecimal.class.getName());
+				}
+			}
+			field.setJavaType(javaType);
 			field.setComment(results.getString(querySQL.getFieldComment()));
 			fieldList.add(field);
 		}
@@ -482,7 +489,7 @@ public class ConfigBuilder {
 	 *
 	 * @return 转换成JAVA包装类型
 	 */
-	private DbColumnType processFiledType(String type) {
+	private String processFiledType(String type) {
 		if (QuerySQL.MYSQL == querySQL) {
 			return processMySqlType(type);
 		} else if (QuerySQL.ORACLE == querySQL) {
@@ -492,7 +499,7 @@ public class ConfigBuilder {
 		} else if (QuerySQL.POSTGRE_SQL == querySQL) {
 			return processPostgreSQL(type);
 		}
-		return DbColumnType.STRING;
+		return null;
 	}
 
 	/**
@@ -535,32 +542,32 @@ public class ConfigBuilder {
 	 *            字段类型
 	 * @return JAVA类型
 	 */
-	private DbColumnType processMySqlType(String type) {
+	private String processMySqlType(String type) {
 		String t = type.toLowerCase();
 		if (t.contains("char") || t.contains("text")) {
-			return DbColumnType.STRING;
+			return "String";
 		} else if (t.contains("bigint")) {
-			return DbColumnType.LONG;
+			return "Long";
 		} else if (t.contains("int")) {
-			return DbColumnType.INTEGER;
+			return "Integer";
 		} else if (t.contains("date") || t.contains("time") || t.contains("year")) {
-			return DbColumnType.DATE;
+			return "Date";
 		} else if (t.contains("text")) {
-			return DbColumnType.STRING;
+			return "String";
 		} else if (t.contains("bit")) {
-			return DbColumnType.BOOLEAN;
+			return "Boolean";
 		} else if (t.contains("decimal")) {
-			return DbColumnType.BIG_DECIMAL;
+			return "BigDecimal";
 		} else if (t.contains("blob")) {
-			return DbColumnType.BYTE_ARRAY;
+			return "byte[]";
 		} else if (t.contains("float")) {
-			return DbColumnType.FLOAT;
+			return "Float";
 		} else if (t.contains("double")) {
-			return DbColumnType.DOUBLE;
+			return "Double";
 		} else if (t.contains("json") || t.contains("enum")) {
-			return DbColumnType.STRING;
+			return "String";
 		}
-		return DbColumnType.STRING;
+		return "String";
 	}
 
 	/**
@@ -572,27 +579,27 @@ public class ConfigBuilder {
 	 *            字段类型
 	 * @return JAVA类型
 	 */
-	private DbColumnType processOracleType(String type) {
+	private String processOracleType(String type) {
 		String t = type.toUpperCase();
 		if (t.contains("CHAR")) {
-			return DbColumnType.STRING;
+			return "String";
 		} else if (t.contains("DATE") || t.contains("TIMESTAMP")) {
-			return DbColumnType.DATE;
+			return "Date";
 		} else if (t.contains("NUMBER")) {
 			if (t.matches("NUMBER\\(+\\d{1}+\\)")) {
-				return DbColumnType.INTEGER;
+				return "Integer";
 			} else if (t.matches("NUMBER\\(+\\d{2}+\\)")) {
-				return DbColumnType.LONG;
+				return "Long";
 			}
-			return DbColumnType.DOUBLE;
+			return "Double";
 		} else if (t.contains("FLOAT")) {
-			return DbColumnType.FLOAT;
+			return "Float";
 		} else if (t.contains("BLOB")) {
-			return DbColumnType.OBJECT;
+			return "Object";
 		} else if (t.contains("RAW")) {
-			return DbColumnType.BYTE_ARRAY;
+			return "byte[]";
 		}
-		return DbColumnType.STRING;
+		return "String";
 	}
 
 	/**
@@ -603,30 +610,30 @@ public class ConfigBuilder {
 	 * @param type
 	 * @return
 	 */
-	private DbColumnType processSQLServerType(String type) {
+	private String processSQLServerType(String type) {
 		String t = type.toLowerCase();
 		if (t.contains("char") || t.contains("text") || t.contains("xml")) {
-			return DbColumnType.STRING;
+			return "String";
 		} else if (t.contains("bigint")) {
-			return DbColumnType.LONG;
+			return "Long";
 		} else if (t.contains("int")) {
-			return DbColumnType.INTEGER;
+			return "Integer";
 		} else if (t.contains("date") || t.contains("time")) {
-			return DbColumnType.DATE;
+			return "Date";
 		} else if (t.contains("text")) {
-			return DbColumnType.STRING;
+			return "String";
 		} else if (t.contains("bit")) {
-			return DbColumnType.BOOLEAN;
+			return "Boolean";
 		}else if (t.contains("decimal")||t.contains("numeric")){
-			return DbColumnType.DOUBLE;
+			return "Double";
 		}else if (t.contains("money")) {
-			return DbColumnType.BIG_DECIMAL;
+			return "BigDecimal";
 		} else if (t.contains("binary")||t.contains("image")) {
-			return DbColumnType.BYTE_ARRAY;
+			return "byte[]";
 		} else if (t.contains("float")||t.contains("real")) {
-			return DbColumnType.FLOAT;
+			return "Float";
 		}
-		return DbColumnType.STRING;
+		return "String";
 	}
 
 
@@ -639,32 +646,32 @@ public class ConfigBuilder {
 	 *            字段类型
 	 * @return JAVA类型
 	 */
-	private DbColumnType processPostgreSQL(String type) {
+	private String processPostgreSQL(String type) {
 		String t = type.toLowerCase();
 		if (t.contains("char") || t.contains("text")) {
-			return DbColumnType.STRING;
+			return "String";
 		} else if (t.contains("bigint")) {
-			return DbColumnType.LONG;
+			return "Long";
 		} else if (t.contains("int")) {
-			return DbColumnType.INTEGER;
+			return "Integer";
 		} else if (t.contains("date") || t.contains("time") || t.contains("year")) {
-			return DbColumnType.DATE;
+			return "Date";
 		} else if (t.contains("text")) {
-			return DbColumnType.STRING;
+			return "String";
 		} else if (t.contains("bit")) {
-			return DbColumnType.BOOLEAN;
+			return "Boolean";
 		} else if (t.contains("decimal")) {
-			return DbColumnType.BIG_DECIMAL;
+			return "BigDecimal";
 		} else if (t.contains("blob")) {
-			return DbColumnType.BYTE_ARRAY;
+			return "byte[]";
 		} else if (t.contains("float")) {
-			return DbColumnType.FLOAT;
+			return "Float";
 		} else if (t.contains("double")) {
-			return DbColumnType.DOUBLE;
+			return "Double";
 		} else if (t.contains("json") || t.contains("enum")) {
-			return DbColumnType.STRING;
+			return "String";
 		}
-		return DbColumnType.STRING;
+		return "String";
 	}
 
 	/**
