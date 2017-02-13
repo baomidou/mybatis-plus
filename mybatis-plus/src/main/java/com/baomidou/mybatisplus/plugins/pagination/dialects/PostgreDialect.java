@@ -27,10 +27,11 @@ import com.baomidou.mybatisplus.plugins.pagination.IDialect;
  */
 public class PostgreDialect implements IDialect {
 
+	public static final PostgreDialect INSTANCE = new PostgreDialect();
+
 	public String buildPaginationSql(String originalSql, int offset, int limit) {
 		StringBuffer sql = new StringBuffer(originalSql);
 		sql.append(" limit ").append(limit).append(" offset ").append(offset);
 		return sql.toString();
 	}
-
 }

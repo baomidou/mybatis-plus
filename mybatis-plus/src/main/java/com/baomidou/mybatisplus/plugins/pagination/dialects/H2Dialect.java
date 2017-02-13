@@ -27,6 +27,8 @@ import com.baomidou.mybatisplus.plugins.pagination.IDialect;
  */
 public class H2Dialect implements IDialect {
 
+	public static final H2Dialect INSTANCE = new H2Dialect();
+
 	public String buildPaginationSql(String originalSql, int offset, int limit) {
 		StringBuffer sql = new StringBuffer(originalSql);
 		sql.append(" limit ").append(limit);
@@ -35,5 +37,4 @@ public class H2Dialect implements IDialect {
 		}
 		return sql.toString();
 	}
-
-}
+	}

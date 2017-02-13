@@ -28,6 +28,8 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  */
 public class SQLServer2005Dialect implements IDialect {
 
+	public static final SQLServer2005Dialect INSTANCE = new SQLServer2005Dialect();
+
 	private static String getOrderByPart(String sql) {
 		String loweredString = sql.toLowerCase();
 		int orderByIndex = loweredString.indexOf("order by");
@@ -67,5 +69,4 @@ public class SQLServer2005Dialect implements IDialect {
 				.append(offset + limit).append(" ORDER BY __row_number__");
 		return sql.toString();
 	}
-
 }
