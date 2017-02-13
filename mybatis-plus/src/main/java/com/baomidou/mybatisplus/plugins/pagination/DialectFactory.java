@@ -38,9 +38,6 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  */
 public class DialectFactory {
 
-	// 数据库方言
-	private static IDialect dialect = null;
-
 	/**
 	 * <p>
 	 * 生成翻页执行 SQL
@@ -59,10 +56,8 @@ public class DialectFactory {
 	 */
 	public static String buildPaginationSql(Pagination page, String buildSql, String dialectType, String dialectClazz)
 			throws Exception {
-		if (null == dialect) {
-			dialect = getiDialect(dialectType, dialectClazz);
-		}
-		return dialect.buildPaginationSql(buildSql, page.getOffset(), page.getLimit());
+		// fix #172
+		return getiDialect(dialectType, dialectClazz).buildPaginationSql(buildSql, page.getOffset(), page.getLimit());
 	}
 
 	/**
@@ -78,6 +73,7 @@ public class DialectFactory {
 	 * @throws Exception
 	 */
 	private static IDialect getiDialect(String dialectType, String dialectClazz) throws Exception {
+		IDialect dialect = null;
 		if (StringUtils.isNotEmpty(dialectType)) {
 			dialect = getDialectByDbtype(dialectType);
 		} else {
@@ -110,24 +106,25 @@ public class DialectFactory {
 	 * @throws Exception
 	 */
 	private static IDialect getDialectByDbtype(String dbtype) throws Exception {
+		IDialect dialect = null;
 		if (DBType.MYSQL.getDb().equalsIgnoreCase(dbtype)) {
-			dialect = new MySqlDialect();
+			dialect = MySqlDialect.INSTANCE;
 		} else if (DBType.ORACLE.getDb().equalsIgnoreCase(dbtype)) {
-			dialect = new OracleDialect();
+			dialect = OracleDialect.INSTANCE;
 		} else if (DBType.DB2.getDb().equalsIgnoreCase(dbtype)) {
-			dialect = new DB2Dialect();
+			dialect = DB2Dialect.INSTANCE;
 		} else if (DBType.H2.getDb().equalsIgnoreCase(dbtype)) {
-			dialect = new H2Dialect();
+			dialect = H2Dialect.INSTANCE;
 		} else if (DBType.SQLSERVER.getDb().equalsIgnoreCase(dbtype)) {
-			dialect = new SQLServerDialect();
+			dialect = SQLServerDialect.INSTANCE;
 		} else if (DBType.SQLSERVER2005.getDb().equalsIgnoreCase(dbtype)) {
-			dialect = new SQLServer2005Dialect();
+			dialect = SQLServer2005Dialect.INSTANCE;
 		} else if (DBType.POSTGRE.getDb().equalsIgnoreCase(dbtype)) {
-			dialect = new PostgreDialect();
+			dialect = PostgreDialect.INSTANCE;
 		} else if (DBType.HSQL.getDb().equalsIgnoreCase(dbtype)) {
-			dialect = new HSQLDialect();
+			dialect = HSQLDialect.INSTANCE;
 		} else if (DBType.SQLITE.getDb().equalsIgnoreCase(dbtype)) {
-			dialect = new SQLiteDialect();
+			dialect = SQLiteDialect.INSTANCE;
 		} else {
 			throw new MybatisPlusException("The database is not supported！dbtype:" + dbtype);
 		}
