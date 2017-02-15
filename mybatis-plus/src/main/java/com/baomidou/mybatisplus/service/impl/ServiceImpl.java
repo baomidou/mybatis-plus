@@ -174,9 +174,10 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		SqlSession batchSqlSession = sqlSessionBatch();
 		try {
 			int size = entityList.size();
+			String sqlStatement = sqlStatement(SqlMethod.INSERT_ONE);
 			for (int i = 0; i < size; i++) {
-				batchSqlSession.insert(sqlStatement(SqlMethod.INSERT_ONE), entityList.get(i));
-				if (i % batchSize == 0) {
+				batchSqlSession.insert(sqlStatement, entityList.get(i));
+				if ((i+1) % batchSize == 0) {
 					batchSqlSession.flushStatements();
 				}
 			}
@@ -223,9 +224,10 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		SqlSession batchSqlSession = sqlSessionBatch();
 		try {
 			int size = entityList.size();
+			String sqlStatement = sqlStatement(SqlMethod.UPDATE_BY_ID);
 			for (int i = 0; i < size; i++) {
-				batchSqlSession.update(sqlStatement(SqlMethod.UPDATE_BY_ID), entityList.get(i));
-				if (i % 30 == 0) {
+				batchSqlSession.update(sqlStatement, entityList.get(i));
+				if ((i+1) % 30 == 0) {
 					batchSqlSession.flushStatements();
 				}
 			}
