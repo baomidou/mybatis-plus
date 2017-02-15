@@ -42,6 +42,8 @@ import java.util.Map;
 @SuppressWarnings({ "serial", "rawtypes" })
 public abstract class Model<T extends Model> implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * <p>
 	 * 插入
