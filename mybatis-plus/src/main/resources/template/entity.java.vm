@@ -6,8 +6,6 @@ import com.baomidou.mybatisplus.activerecord.Model;
 #foreach($pkg in ${table.importPackages})
 import ${pkg};
 #end
-import java.io.Serializable;
-
 
 /**
  * <p>
