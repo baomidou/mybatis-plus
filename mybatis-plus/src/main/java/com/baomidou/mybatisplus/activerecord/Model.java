@@ -39,8 +39,10 @@ import java.util.Map;
  * @param <T>
  * @Date 2016-11-06
  */
-@SuppressWarnings({ "serial", "rawtypes" })
+@SuppressWarnings({ "rawtypes" })
 public abstract class Model<T extends Model> implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * <p>
@@ -327,7 +329,7 @@ public abstract class Model<T extends Model> implements Serializable {
 	public int selectCount(Wrapper wrapper) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("ew", wrapper);
-		return SqlHelper.retCount(sqlSession().<Integer> selectOne(sqlStatement(SqlMethod.SELECT_COUNT), map));
+		return SqlHelper.retCount(sqlSession().<Integer>selectOne(sqlStatement(SqlMethod.SELECT_COUNT), map));
 	}
 
 	/**

@@ -4,8 +4,8 @@
 #if(${enableCache})
 	<!-- 开启二级缓存 -->
 	<cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
-#end
 
+#end
 #if(${baseResultMap})
 	<!-- 通用查询映射结果 -->
 	<resultMap id="BaseResultMap" type="${package.Entity}.${entity}">
@@ -20,12 +20,13 @@
 #end
 #end
 	</resultMap>
-#end
 
+#end
 #if(${baseColumnList})
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         ${table.fieldNames}
     </sql>
+
 #end
 </mapper>
