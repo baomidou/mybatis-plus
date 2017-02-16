@@ -42,6 +42,7 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.toolkit.SqlUtils;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.SystemClock;
 
 /**
@@ -165,7 +166,18 @@ public class PerformanceInterceptor implements Interceptor {
 	}
 
 	public void setProperties(Properties prop) {
-		// TODO
+		String maxTime = prop.getProperty("maxTime");
+		String format = prop.getProperty("format");
+		String optimizeType = prop.getProperty("optimizeType");
+		if (StringUtils.isNotEmpty(maxTime)) {
+			this.maxTime = Long.parseLong(maxTime);
+		}
+		if (StringUtils.isNotEmpty(format)) {
+			this.format = Boolean.valueOf(format);
+		}
+		if (StringUtils.isNotEmpty(optimizeType)) {
+			this.optimizeType = optimizeType;
+		}
 	}
 
 	public long getMaxTime() {
