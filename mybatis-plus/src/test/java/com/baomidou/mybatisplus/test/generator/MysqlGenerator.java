@@ -51,7 +51,7 @@ public class MysqlGenerator {
 
 		// 全局配置
 		GlobalConfig gc = new GlobalConfig();
-		gc.setOutputDir("/home/nieqiurong/");
+		gc.setOutputDir("/develop/code/");
 		gc.setFileOverride(true);
 		gc.setActiveRecord(true);// 开启 activeRecord 模式
 		gc.setEnableCache(false);// XML 二级缓存
@@ -72,9 +72,9 @@ public class MysqlGenerator {
 		dsc.setDbType(DbType.MYSQL);
 		dsc.setTypeConvert(new MyFieldTypeConvert());
 		dsc.setDriverName("com.mysql.jdbc.Driver");
-		dsc.setUsername("nieqiurong");
-		dsc.setPassword("nieqiurong");
-		dsc.setUrl("jdbc:mysql://172.16.100.188:3306/mybatis-plus?characterEncoding=utf8");
+		dsc.setUsername("root");
+		dsc.setPassword("521");
+		dsc.setUrl("jdbc:mysql://127.0.0.1:3306/mybatis-plus?characterEncoding=utf8");
 		mpg.setDataSource(dsc);
 
 		// 策略配置
@@ -128,7 +128,7 @@ public class MysqlGenerator {
 			@Override
 			public String outputFile(TableInfo tableInfo) {
 				// 自定义输入文件名称
-				return "D://my_" + tableInfo.getEntityName() + ".java";
+				return "/develop/code/my_" + tableInfo.getEntityName() + ".java";
 			}
 		});
 		cfg.setFileOutConfigList(focList);
