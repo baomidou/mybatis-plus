@@ -811,7 +811,8 @@ public class AutoSqlInjector implements ISqlInjector {
 	public void injectSqlRunner(Configuration configuration) {
 		this.configuration = configuration;
 		this.languageDriver = configuration.getDefaultScriptingLanguageInstance();
-		initSelect();
+		initSelectList();
+		initSelectObjs();
 		initInsert();
 		initUpdate();
 		initDelete();
@@ -873,19 +874,31 @@ public class AutoSqlInjector implements ISqlInjector {
 	}
 
 	/**
-	 * initSelect
+	 * initSelectList
 	 */
-	private void initSelect() {
-		if (hasMappedStatement(SqlRunner.SELECT)) {
+	private void initSelectList() {
+		if (hasMappedStatement(SqlRunner.SELECT_LIST)) {
 			logger.warn("MappedStatement 'SqlRunner.Select' Aalready Exists");
 			return;
 		}
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, SqlRunner.SQLScript, Map.class);
-		createSelectMappedStatement(SqlRunner.SELECT, sqlSource, Map.class);
+		createSelectMappedStatement(SqlRunner.SELECT_LIST, sqlSource, Map.class);
 	}
 
 	/**
-	 * initSelect
+	 * initSelectObjs
+	 */
+	private void initSelectObjs() {
+		if (hasMappedStatement(SqlRunner.SELECT_OBJS)) {
+			logger.warn("MappedStatement 'SqlRunner.Select' Aalready Exists");
+			return;
+		}
+		SqlSource sqlSource = languageDriver.createSqlSource(configuration, SqlRunner.SQLScript, Object.class);
+		createSelectMappedStatement(SqlRunner.SELECT_OBJS, sqlSource, Object.class);
+	}
+
+	/**
+	 * initCount
 	 */
 	private void initCount() {
 		if (hasMappedStatement(SqlRunner.COUNT)) {
