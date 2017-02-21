@@ -6,8 +6,9 @@ import com.baomidou.mybatisplus.activerecord.Model;
 #foreach($pkg in ${table.importPackages})
 import ${pkg};
 #end
+#if(!${activeRecord} && !${superEntityClass})
 import java.io.Serializable;
-
+#end
 
 /**
  * <p>
