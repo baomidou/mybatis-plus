@@ -15,15 +15,6 @@
  */
 package com.baomidou.mybatisplus.service.impl;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.SqlSession;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.enums.SqlMethod;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
@@ -37,6 +28,14 @@ import com.baomidou.mybatisplus.toolkit.MapUtils;
 import com.baomidou.mybatisplus.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -126,6 +125,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		} catch (Exception e) {
 			logger.warn("Error: Cannot execute insertBatch Method. Cause:" + e);
 			return false;
+		} finally {
+			batchSqlSession.close();
 		}
 		return true;
 
@@ -173,8 +174,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		if (CollectionUtils.isEmpty(entityList)) {
 			throw new IllegalArgumentException("Error: entityList must not be empty");
 		}
+		SqlSession batchSqlSession = sqlSessionBatch();
 		try {
-			SqlSession batchSqlSession = sqlSessionBatch();
 			int size = entityList.size();
 			for (int i = 0; i < size; i++) {
 				insertOrUpdate(entityList.get(i));
@@ -186,6 +187,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		} catch (Exception e) {
 			logger.warn("Error: Cannot execute insertOrUpdateBatch Method. Cause:" + e);
 			return false;
+		} finally {
+			batchSqlSession.close();
 		}
 		return true;
 	}
@@ -239,6 +242,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		} catch (Exception e) {
 			logger.warn("Error: Cannot execute insertBatch Method. Cause:" + e);
 			return false;
+		} finally {
+			batchSqlSession.close();
 		}
 		return true;
 	}

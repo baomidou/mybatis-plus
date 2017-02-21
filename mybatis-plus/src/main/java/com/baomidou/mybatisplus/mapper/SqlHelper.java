@@ -64,25 +64,22 @@ public class SqlHelper {
 	 * @return SqlSession
 	 */
 	public static SqlSession sqlSessionBatch(Class<?> clazz) {
-		SqlSession sqlSession = getSqlSession(clazz, true);
-		return (sqlSession != null) ? sqlSession : GlobalConfiguration.currentSessionFactory(clazz).openSession(
-				ExecutorType.BATCH, false);
+		return GlobalConfiguration.currentSessionFactory(clazz).openSession(
+				ExecutorType.BATCH);
 	}
 
 	/**
 	 * 获取sqlSessionå
 	 *
 	 * @param clazz
-	 * @param isBatch
 	 * @return
 	 */
-	private static SqlSession getSqlSession(Class<?> clazz, boolean isBatch) {
+	private static SqlSession getSqlSession(Class<?> clazz) {
 		SqlSession session = null;
 		try {
 			SqlSessionFactory sqlSessionFactory = GlobalConfiguration.currentSessionFactory(clazz);
 			Configuration configuration = sqlSessionFactory.getConfiguration();
-			GlobalConfiguration globalConfiguration = GlobalConfiguration.getGlobalConfig(configuration);
-			session = isBatch ? globalConfiguration.getSqlsessionBatch() : globalConfiguration.getSqlSession();
+			session= GlobalConfiguration.getGlobalConfig(configuration).getSqlSession();
 		} catch (Exception e) {
 			// ignored
 		}
@@ -101,7 +98,7 @@ public class SqlHelper {
 	 * @return SqlSession
 	 */
 	public static SqlSession sqlSession(Class<?> clazz, boolean autoCommit) {
-		SqlSession sqlSession = getSqlSession(clazz, false);
+		SqlSession sqlSession = getSqlSession(clazz);
 		return (sqlSession != null) ? sqlSession : GlobalConfiguration.currentSessionFactory(clazz).openSession(autoCommit);
 	}
 
