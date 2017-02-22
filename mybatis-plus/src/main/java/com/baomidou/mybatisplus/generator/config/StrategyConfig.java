@@ -101,7 +101,7 @@ public class StrategyConfig {
 	 * -----------------------------------<br>
 	 * public User setName(String name) { this.name = name; return this; }
 	 */
-	private boolean entityBuliderModel = false;
+	private boolean entityBuilderModel = false;
 
 	public void setDbColumnUnderline(boolean dbColumnUnderline) {
 		DB_COLUMN_UNDERLINE = dbColumnUnderline;
@@ -258,12 +258,11 @@ public class StrategyConfig {
 		this.entityColumnConstant = entityColumnConstant;
 	}
 
-	public boolean isEntityBuliderModel() {
-		return entityBuliderModel;
+	public boolean isEntityBuilderModel() {
+		return entityBuilderModel;
 	}
 
-	public void setEntityBuliderModel(boolean entityBuliderModel) {
-		this.entityBuliderModel = entityBuliderModel;
+	public void setEntityBuilderModel(boolean entityBuilderModel) {
+		this.entityBuilderModel = entityBuilderModel;
 	}
-
 }
