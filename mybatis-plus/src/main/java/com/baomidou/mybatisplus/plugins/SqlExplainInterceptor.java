@@ -145,7 +145,10 @@ public class SqlExplainInterceptor implements Interceptor {
 	}
 
 	public void setProperties(Properties prop) {
-		// TODO
+		String stopProceed = prop.getProperty("stopProceed");
+		if (StringUtils.isNotEmpty(stopProceed)) {
+			this.stopProceed = Boolean.valueOf(stopProceed);
+		}
 	}
 
 	public boolean isStopProceed() {
