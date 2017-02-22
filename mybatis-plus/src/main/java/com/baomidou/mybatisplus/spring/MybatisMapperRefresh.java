@@ -212,7 +212,7 @@ public class MybatisMapperRefresh implements Runnable {
 					sqlSessionFactory.getConfiguration(), // 注入的sql先不进行处理了
 					resource.toString(), sqlSessionFactory.getConfiguration().getSqlFragments());
 			xmlMapperBuilder.parse();
-			logger.debug("refresh:" + resource + ",success!");
+			logger.debug("refresh: '" + resource + "', success!");
 		} catch (Exception e) {
 			throw new NestedIOException("Failed to parse mapping resource: '" + resource + "'", e);
 		} finally {
