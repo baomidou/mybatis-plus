@@ -15,12 +15,14 @@
  */
 package com.baomidou.mybatisplus.plugins;
 
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
-
+import com.baomidou.mybatisplus.entity.CountOptimize;
+import com.baomidou.mybatisplus.entity.GlobalConfiguration;
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
+import com.baomidou.mybatisplus.plugins.pagination.Pagination;
+import com.baomidou.mybatisplus.toolkit.SqlUtils;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
+import com.baomidou.mybatisplus.toolkit.SystemClock;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -36,14 +38,11 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
-import com.baomidou.mybatisplus.entity.CountOptimize;
-import com.baomidou.mybatisplus.entity.GlobalConfiguration;
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
-import com.baomidou.mybatisplus.plugins.pagination.Pagination;
-import com.baomidou.mybatisplus.toolkit.SqlUtils;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
-import com.baomidou.mybatisplus.toolkit.SystemClock;
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
 
 /**
  * <p>
@@ -53,7 +52,9 @@ import com.baomidou.mybatisplus.toolkit.SystemClock;
  * @author hubin nieqiurong
  * @Date 2016-07-07
  */
-@Intercepts({ @Signature(type = Executor.class, method = "query", args = { MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class }),
+@Intercepts({
+		@Signature(type = Executor.class, method = "query", args = { MappedStatement.class, Object.class, RowBounds.class,
+				ResultHandler.class }),
 		@Signature(type = Executor.class, method = "update", args = { MappedStatement.class, Object.class }) })
 public class PerformanceInterceptor implements Interceptor {
 
@@ -90,10 +91,12 @@ public class PerformanceInterceptor implements Interceptor {
 			boolean orderBy = true;
 			String dbType = GlobalConfiguration.getDbType(configuration).getDb();
 			if (page.isSearchCount()) {
-				CountOptimize countOptimize = SqlUtils.getCountOptimize(boundSql.getSql(), optimizeType, dbType, page.isOptimizeCount());
+				CountOptimize countOptimize = SqlUtils.getCountOptimize(boundSql.getSql(), optimizeType, dbType,
+						page.isOptimizeCount());
 				orderBy = countOptimize.isOrderBy();
 			}
-			String sql = DialectFactory.buildPaginationSql(pagination, SqlUtils.concatOrderBy(boundSql.getSql(), page, orderBy), dbType, null).replaceAll("[\\s]+", " ");
+			String sql = DialectFactory.buildPaginationSql(pagination, SqlUtils.concatOrderBy(boundSql.getSql(), page, orderBy),
+					dbType, null).replaceAll("[\\s]+", " ");
 			sqlBuilder.append(getSql(configuration, boundSql, sql));
 		} else {
 			sqlBuilder.append(getSql(configuration, boundSql, boundSql.getSql()));
@@ -137,6 +140,9 @@ public class PerformanceInterceptor implements Interceptor {
 	}
 
 	private static String getParameterValue(Object obj) {
+		if (StringUtils.checkValNull(obj)) {
+			return StringUtils.EMPTY;
+		}
 		String value;
 		if (obj instanceof String) {
 			value = "'" + obj.toString() + "'";
