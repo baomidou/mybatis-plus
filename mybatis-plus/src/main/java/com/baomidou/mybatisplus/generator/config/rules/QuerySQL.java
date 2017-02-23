@@ -44,7 +44,7 @@ public enum QuerySQL {
 			"select cast(name as varchar(500)) as TABLE_NAME from sysObjects where xtype='U' order by name",
 			"select name as TABLE_NAME,(select cast(value as varchar(500)) from sys.extended_properties where major_id=id and minor_id = 0) as COMMENTS from sysobjects where xtype='U'",
 			"SELECT  cast(a.NAME AS VARCHAR(500)) AS TABLE_NAME,cast(b.NAME AS VARCHAR(500)) AS COLUMN_NAME, "
-					+ "cast(c.VALUE AS VARCHAR(500)) AS COMMENTS,,cast(sys.types.NAME AS VARCHAR (500)) AS DATA_TYPE,"
+					+ "cast(c.VALUE AS VARCHAR(500)) AS COMMENTS,cast(sys.types.NAME AS VARCHAR (500)) AS DATA_TYPE,"
 					+ "(" + " SELECT CASE count(1) WHEN 1 then 'PRI' ELSE '' END"
 					+ " FROM syscolumns,sysobjects,sysindexes,sysindexkeys,systypes "
 					+ " WHERE syscolumns.xusertype = systypes.xusertype AND syscolumns.id = object_id (A.NAME) AND sysobjects.xtype = 'PK'"
