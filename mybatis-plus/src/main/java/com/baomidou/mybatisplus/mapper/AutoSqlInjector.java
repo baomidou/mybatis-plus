@@ -878,7 +878,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 */
 	private void initSelectList() {
 		if (hasMappedStatement(SqlRunner.SELECT_LIST)) {
-			logger.warn("MappedStatement 'SqlRunner.Select' Aalready Exists");
+			logger.warn("MappedStatement 'SqlRunner.SelectList' Aalready Exists");
 			return;
 		}
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, SqlRunner.SQLScript, Map.class);
@@ -890,7 +890,7 @@ public class AutoSqlInjector implements ISqlInjector {
 	 */
 	private void initSelectObjs() {
 		if (hasMappedStatement(SqlRunner.SELECT_OBJS)) {
-			logger.warn("MappedStatement 'SqlRunner.Select' Aalready Exists");
+			logger.warn("MappedStatement 'SqlRunner.SelectObjs' Aalready Exists");
 			return;
 		}
 		SqlSource sqlSource = languageDriver.createSqlSource(configuration, SqlRunner.SQLScript, Object.class);
