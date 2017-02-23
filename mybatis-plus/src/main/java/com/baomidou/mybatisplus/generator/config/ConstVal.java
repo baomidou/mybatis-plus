@@ -49,12 +49,12 @@ public class ConstVal {
 	public static final String JAVA_SUFFIX = ".java";
 	public static final String XML_SUFFIX = ".xml";
 
-	public static final String TEMPLATE_ENTITY = "/template/entity.java.vm";
-	public static final String TEMPLATE_MAPPER = "/template/mapper.java.vm";
-	public static final String TEMPLATE_XML = "/template/mapper.xml.vm";
-	public static final String TEMPLATE_SERVICE = "/template/service.java.vm";
-	public static final String TEMPLATE_SERVICEIMPL = "/template/serviceImpl.java.vm";
-	public static final String TEMPLATE_CONTROLLER = "/template/controller.java.vm";
+	public static final String TEMPLATE_ENTITY = "/templates/entity.java.vm";
+	public static final String TEMPLATE_MAPPER = "/templates/mapper.java.vm";
+	public static final String TEMPLATE_XML = "/templates/mapper.xml.vm";
+	public static final String TEMPLATE_SERVICE = "/templates/service.java.vm";
+	public static final String TEMPLATE_SERVICEIMPL = "/templates/serviceImpl.java.vm";
+	public static final String TEMPLATE_CONTROLLER = "/templates/controller.java.vm";
 
 	public static final String ENTITY_NAME = File.separator + "%s" + JAVA_SUFFIX;
 

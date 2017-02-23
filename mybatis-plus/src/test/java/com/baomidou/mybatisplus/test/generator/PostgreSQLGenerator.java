@@ -12,7 +12,9 @@ import com.baomidou.mybatisplus.generator.config.FileOutConfig;
 import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.PackageConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
+import com.baomidou.mybatisplus.generator.config.converts.OracleTypeConvert;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
+import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.DbType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 
@@ -45,6 +47,14 @@ public class PostgreSQLGenerator {
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
         dsc.setDbType(DbType.POSTGRE_SQL);
+        dsc.setTypeConvert(new OracleTypeConvert(){
+			// 自定义数据库表字段类型转换【可选】
+			@Override
+			public DbColumnType processTypeConvert(String fieldType) {
+				System.out.println("转换类型：" + fieldType);
+				return super.processTypeConvert(fieldType);
+			}
+		});
         dsc.setDriverName("org.postgresql.Driver");
         dsc.setUsername("postgres");
         dsc.setPassword("521");
@@ -98,7 +108,7 @@ public class PostgreSQLGenerator {
 			}
 		};
 		List<FileOutConfig> focList = new ArrayList<FileOutConfig>();
-		focList.add(new FileOutConfig("/template/entity.java.vm") {
+		focList.add(new FileOutConfig("/templates/entity.java.vm") {
 			@Override
 			public String outputFile(TableInfo tableInfo) {
 				// 自定义输入文件名称
