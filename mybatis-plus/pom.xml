@@ -128,12 +128,6 @@
 			<scope>provided</scope>
 		</dependency>
 		<!--jsqlparser -->
-		<dependency>
-			<groupId>com.github.jsqlparser</groupId>
-			<artifactId>jsqlparser</artifactId>
-			<version>${jsqlparser.version}</version>
-			<scope>provided</scope>
-		</dependency>
 		<!--druid -->
 		<dependency>
 			<groupId>com.alibaba</groupId>
