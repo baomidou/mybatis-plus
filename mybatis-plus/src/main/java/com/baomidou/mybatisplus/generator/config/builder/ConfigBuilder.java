@@ -120,11 +120,17 @@ public class ConfigBuilder {
 		} else {
 			this.globalConfig = globalConfig;
 		}
+		// 模板配置
+		if (null == template) {
+			this.template = new TemplateConfig();
+		} else {
+			this.template = template;
+		}
 		// 包配置
 		if (null == packageConfig) {
-			handlerPackage(this.globalConfig.getOutputDir(), new PackageConfig());
+			handlerPackage(this.template, this.globalConfig.getOutputDir(), new PackageConfig());
 		} else {
-			handlerPackage(this.globalConfig.getOutputDir(), packageConfig);
+			handlerPackage(this.template, this.globalConfig.getOutputDir(), packageConfig);
 		}
 		this.dataSourceConfig = dataSourceConfig;
 		handlerDataSource(dataSourceConfig);
@@ -135,12 +141,6 @@ public class ConfigBuilder {
 			this.strategyConfig = strategyConfig;
 		}
 		handlerStrategy(this.strategyConfig);
-		// 模板配置
-		if (null == template) {
-			this.template = new TemplateConfig();
-		} else {
-			this.template = template;
-		}
 	}
 
 	// ************************ 曝露方法 BEGIN*****************************
@@ -211,10 +211,13 @@ public class ConfigBuilder {
 	/**
 	 * 处理包配置
 	 *
+	 * @param template
+	 *            TemplateConfig
+	 * @param outputDir
 	 * @param config
 	 *            PackageConfig
 	 */
-	private void handlerPackage(String outputDir, PackageConfig config) {
+	private void handlerPackage(TemplateConfig template, String outputDir, PackageConfig config) {
 		packageInfo = new HashMap<String, String>();
 		packageInfo.put(ConstVal.MODULENAME, config.getModuleName());
 		packageInfo.put(ConstVal.ENTITY, joinPackage(config.getParent(), config.getEntity()));
@@ -224,13 +227,26 @@ public class ConfigBuilder {
 		packageInfo.put(ConstVal.SERVICEIMPL, joinPackage(config.getParent(), config.getServiceImpl()));
 		packageInfo.put(ConstVal.CONTROLLER, joinPackage(config.getParent(), config.getController()));
 
+		// 生成路径信息
 		pathInfo = new HashMap<String, String>();
-		pathInfo.put(ConstVal.ENTITY_PATH, joinPath(outputDir, packageInfo.get(ConstVal.ENTITY)));
-		pathInfo.put(ConstVal.MAPPER_PATH, joinPath(outputDir, packageInfo.get(ConstVal.MAPPER)));
-		pathInfo.put(ConstVal.XML_PATH, joinPath(outputDir, packageInfo.get(ConstVal.XML)));
-		pathInfo.put(ConstVal.SERIVCE_PATH, joinPath(outputDir, packageInfo.get(ConstVal.SERIVCE)));
-		pathInfo.put(ConstVal.SERVICEIMPL_PATH, joinPath(outputDir, packageInfo.get(ConstVal.SERVICEIMPL)));
-		pathInfo.put(ConstVal.CONTROLLER_PATH, joinPath(outputDir, packageInfo.get(ConstVal.CONTROLLER)));
+		if (StringUtils.isNotEmpty(template.getEntity())) {
+			pathInfo.put(ConstVal.ENTITY_PATH, joinPath(outputDir, packageInfo.get(ConstVal.ENTITY)));
+		}
+		if (StringUtils.isNotEmpty(template.getMapper())) {
+			pathInfo.put(ConstVal.MAPPER_PATH, joinPath(outputDir, packageInfo.get(ConstVal.MAPPER)));
+		}
+		if (StringUtils.isNotEmpty(template.getXml())) {
+			pathInfo.put(ConstVal.XML_PATH, joinPath(outputDir, packageInfo.get(ConstVal.XML)));
+		}
+		if (StringUtils.isNotEmpty(template.getService())) {
+			pathInfo.put(ConstVal.SERIVCE_PATH, joinPath(outputDir, packageInfo.get(ConstVal.SERIVCE)));
+		}
+		if (StringUtils.isNotEmpty(template.getServiceImpl())) {
+			pathInfo.put(ConstVal.SERVICEIMPL_PATH, joinPath(outputDir, packageInfo.get(ConstVal.SERVICEIMPL)));
+		}
+		if (StringUtils.isNotEmpty(template.getController())) {
+			pathInfo.put(ConstVal.CONTROLLER_PATH, joinPath(outputDir, packageInfo.get(ConstVal.CONTROLLER)));
+		}
 	}
 
 	/**

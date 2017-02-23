@@ -249,6 +249,9 @@ public class AutoGenerator extends AbstractGenerator {
 	 *            文件生成的目录
 	 */
 	private void vmToFile(VelocityContext context, String templatePath, String outputFile) throws IOException {
+		if (StringUtils.isEmpty(templatePath)) {
+			return;
+		}
 		VelocityEngine velocity = getVelocityEngine();
 		Template template = velocity.getTemplate(templatePath, ConstVal.UTF8);
 		FileOutputStream fos = new FileOutputStream(outputFile);
