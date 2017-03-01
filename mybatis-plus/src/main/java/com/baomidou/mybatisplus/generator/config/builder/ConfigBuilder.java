@@ -82,7 +82,7 @@ public class ConfigBuilder {
 	 * 模板路径配置信息
 	 */
 	private TemplateConfig template;
-	
+
 	/**
 	 * 数据库配置
 	 */
@@ -100,7 +100,7 @@ public class ConfigBuilder {
 
 	/**
 	 * 在构造器中处理配置
-	 * 
+	 *
 	 * @param packageConfig
 	 *            包配置
 	 * @param dataSourceConfig
@@ -199,7 +199,7 @@ public class ConfigBuilder {
 
 	/**
 	 * 模板路径配置信息
-	 * 
+	 *
 	 * @return 所以模板路径配置信息
 	 */
 	public TemplateConfig getTemplate() {
@@ -421,6 +421,22 @@ public class ConfigBuilder {
 	}
 
 	/**
+	 * 判断主键是否为identity，目前仅对mysql进行检查
+	 * @param results ResultSet
+	 * @return 主键是否为identity
+	 * @throws SQLException
+     */
+	private boolean isKeyIdentity(ResultSet results) throws SQLException{
+		if(QuerySQL.MYSQL==this.querySQL){
+			String extra= results.getString("Extra");
+			if("auto_increment".equals(extra)){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * 将字段信息与表信息关联
 	 *
 	 * @param tableName
@@ -443,6 +459,9 @@ public class ConfigBuilder {
 			// 处理ID
 			if (isId && !havedId) {
 				field.setKeyFlag(true);
+				if(isKeyIdentity(results)){
+					field.setKeyIdentityFlag(true);
+				}
 				havedId = true;
 			} else {
 				field.setKeyFlag(false);
@@ -509,7 +528,7 @@ public class ConfigBuilder {
 
 	/**
 	 * 处理字段名称
-	 * 
+	 *
 	 * @param name
 	 * @param strategy
 	 * @param tablePrefix

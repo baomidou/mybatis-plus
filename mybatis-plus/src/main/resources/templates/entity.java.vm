@@ -2,6 +2,8 @@ package ${package.Entity};
 
 #if(${activeRecord})
 import com.baomidou.mybatisplus.activerecord.Model;
+import com.baomidou.mybatisplus.annotations.TableId;
+import com.baomidou.mybatisplus.enums.IdType;
 #end
 #foreach($pkg in ${table.importPackages})
 import ${pkg};
@@ -40,12 +42,14 @@ public class ${entity} implements Serializable {
      * ${field.comment}
      */
 #end
-#if(${field.convert})
 #if(${field.keyFlag})
-	@TableId("${field.name}")
+#if(${field.keyIdentityFlag})
+	@TableId(value="${field.name}", type= IdType.AUTO)
 #else
-	@TableField("${field.name}")
+    @TableId("${field.name}")
 #end
+#elseif(${field.convert})
+	@TableField("${field.name}")
 #end
 	private ${field.propertyType} ${field.propertyName};
 #end
