@@ -52,6 +52,11 @@ public abstract class Wrapper<T> implements Serializable {
 	protected Boolean isWhere;
 
 	/**
+	 * 拼接WHERE后应该是AND还是OR
+	 */
+	protected String AND_OR = "AND";
+
+	/**
 	 * 兼容EntityWrapper
 	 *
 	 * @return
@@ -261,6 +266,9 @@ public abstract class Wrapper<T> implements Serializable {
 	 * @return this
 	 */
 	public Wrapper<T> or(String sqlOr, Object... params) {
+		if (StringUtils.isEmpty(sql.toString())) {
+			AND_OR = "OR";
+		}
 		sql.OR().WHERE(formatSql(sqlOr, params));
 		return this;
 	}
@@ -281,6 +289,9 @@ public abstract class Wrapper<T> implements Serializable {
 	 * @return this
 	 */
 	public Wrapper<T> orNew(String sqlOr, Object... params) {
+		if (StringUtils.isEmpty(sql.toString())) {
+			AND_OR = "OR";
+		}
 		sql.OR_NEW().WHERE(formatSql(sqlOr, params));
 		return this;
 	}

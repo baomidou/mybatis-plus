@@ -30,10 +30,6 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
 public class EntityWrapper<T> extends Wrapper<T> {
 
 	/**
-	 * 拼接WHERE后应该是AND还是OR
-	 */
-	private String AND_OR = "AND";
-	/**
 	 * 数据库表映射实体类
 	 */
 	protected T entity = null;
@@ -57,50 +53,6 @@ public class EntityWrapper<T> extends Wrapper<T> {
 
 	public void setEntity(T entity) {
 		this.entity = entity;
-	}
-
-	/**
-	 * <p>
-	 * 添加OR条件
-	 * </p>
-	 *
-	 * @param sqlOr
-	 *            or 条件语句
-	 * @param params
-	 *            参数集
-	 * @return this
-	 */
-	@Override
-	public Wrapper<T> or(String sqlOr, Object... params) {
-		if (StringUtils.isEmpty(sql.toString())) {
-			AND_OR = "OR";
-		}
-		super.or(sqlOr, params);
-		return this;
-	}
-
-	/**
-	 * <p>
-	 * 使用OR换行，并添加一个带()的新的条件
-	 * </p>
-	 * <p>
-	 * eg: ew.where("name='zhangsan'").and("id=11").orNew("statu=1"); 输出： WHERE
-	 * (name='zhangsan' AND id=11) OR (statu=1)
-	 * </p>
-	 *
-	 * @param sqlOr
-	 *            AND 条件语句
-	 * @param params
-	 *            参数值
-	 * @return this
-	 */
-	@Override
-	public Wrapper<T> orNew(String sqlOr, Object... params) {
-		if (StringUtils.isEmpty(sql.toString())) {
-			AND_OR = "OR";
-		}
-		super.orNew(sqlOr, params);
-		return this;
 	}
 
 	/**

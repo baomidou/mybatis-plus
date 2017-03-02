@@ -54,7 +54,12 @@ public class Condition extends Wrapper {
 		if (StringUtils.isEmpty(sqlWhere)) {
 			return null;
 		}
-
+		/*
+		 * 根据当前实体判断是否需要将WHERE替换成 AND 增加实体不为空但所有属性为空的情况
+		 */
+		if (isWhere != null) {
+			sqlWhere = isWhere ? sqlWhere : sqlWhere.replaceFirst("WHERE", AND_OR);
+		}
 		return sqlWhere;
 	}
 
