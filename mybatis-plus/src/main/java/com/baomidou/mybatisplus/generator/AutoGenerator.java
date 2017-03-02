@@ -120,6 +120,10 @@ public class AutoGenerator extends AbstractGenerator {
 				ctx.put("cfg", injectionConfig.getMap());
 			}
 			/* ---------- 添加导入包 ---------- */
+			if (config.getGlobalConfig().isActiveRecord()) {
+				// 开启 ActiveRecord 模式
+				tableInfo.setImportPackages("com.baomidou.mybatisplus.activerecord.Model");
+			}
 			if (tableInfo.isConvert()) {
 				// 表注解
 				tableInfo.setImportPackages("com.baomidou.mybatisplus.annotations.TableName");
@@ -127,6 +131,8 @@ public class AutoGenerator extends AbstractGenerator {
 			if (StringUtils.isNotEmpty(config.getSuperEntityClass())) {
 				// 父实体
 				tableInfo.setImportPackages(config.getSuperEntityClass());
+			} else {
+				tableInfo.setImportPackages("java.io.Serializable");
 			}
 			ctx.put("package", packageInfo);
 			ctx.put("author", config.getGlobalConfig().getAuthor());

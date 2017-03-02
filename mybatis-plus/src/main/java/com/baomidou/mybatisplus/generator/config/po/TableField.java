@@ -56,7 +56,7 @@ public class TableField {
 				if (StringUtils.containsUpperCase(name)) {
 					this.convert = true;
 				}
-			} else if (!name.equalsIgnoreCase(propertyName)) {
+			} else if (!name.equals(propertyName)) {
 				this.convert = true;
 			}
 		}

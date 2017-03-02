@@ -1,15 +1,7 @@
 package ${package.Entity};
 
-#if(${activeRecord})
-import com.baomidou.mybatisplus.activerecord.Model;
-import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.enums.IdType;
-#end
 #foreach($pkg in ${table.importPackages})
 import ${pkg};
-#end
-#if(!${superEntityClass})
-import java.io.Serializable;
 #end
 
 /**
@@ -45,7 +37,7 @@ public class ${entity} implements Serializable {
 #if(${field.keyFlag})
 #if(${field.keyIdentityFlag})
 	@TableId(value="${field.name}", type= IdType.AUTO)
-#else
+#elseif(${field.convert})
     @TableId("${field.name}")
 #end
 #elseif(${field.convert})

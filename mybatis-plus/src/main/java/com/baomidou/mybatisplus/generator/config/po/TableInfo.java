@@ -162,10 +162,17 @@ public class TableInfo {
 				if (null != field.getColumnType() && null != field.getColumnType().getPkg()) {
 					pkgSet.add(field.getColumnType().getPkg());
 				}
-				if (field.isKeyFlag() && field.isConvert()) {
-					pkgSet.add("com.baomidou.mybatisplus.annotations.TableId");
-				}
-				if (field.isConvert()) {
+				if (field.isKeyFlag()) {
+					// 主键
+					if (field.isConvert() || field.isKeyIdentityFlag()) {
+						pkgSet.add("com.baomidou.mybatisplus.annotations.TableId");
+					}
+					// 自增
+					if (field.isKeyIdentityFlag()) {
+						pkgSet.add("com.baomidou.mybatisplus.enums.IdType");
+					}
+				} else if (field.isConvert()) {
+					// 普通字段
 					pkgSet.add("com.baomidou.mybatisplus.annotations.TableField");
 				}
 			}
