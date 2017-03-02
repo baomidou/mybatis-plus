@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.plugins.pagination;
 
+import org.apache.ibatis.session.RowBounds;
+
 import com.baomidou.mybatisplus.enums.DBType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.plugins.pagination.dialects.DB2Dialect;
@@ -56,8 +58,24 @@ public class DialectFactory {
 	 */
 	public static String buildPaginationSql(Pagination page, String buildSql, String dialectType, String dialectClazz)
 			throws Exception {
-		// fix #172
-		return getiDialect(dialectType, dialectClazz).buildPaginationSql(buildSql, page.getOffset(), page.getLimit());
+		// fix #172, 196
+		return getiDialect(dialectType, dialectClazz).buildPaginationSql(buildSql, page.getOffsetCurrent(), page.getSize());
+	}
+	
+	/**
+	 * Physical Pagination Interceptor for all the queries with parameter {@link org.apache.ibatis.session.RowBounds}
+	 * 
+	 * @param rowBounds
+	 * @param buildSql
+	 * @param dialectType
+	 * @param dialectClazz
+	 * @return
+	 * @throws Exception
+	 */
+	public static String buildPaginationSql(RowBounds rowBounds, String buildSql, String dialectType, String dialectClazz)
+			throws Exception {
+		// fix #196
+		return getiDialect(dialectType, dialectClazz).buildPaginationSql(buildSql, rowBounds.getOffset(), rowBounds.getLimit());
 	}
 
 	/**

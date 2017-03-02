@@ -63,6 +63,9 @@ public class PaginationInterceptor implements Interceptor {
 	/* 方言实现类 */
 	private String dialectClazz;
 
+	/**
+	 * Physical Pagination Interceptor for all the queries with parameter {@link org.apache.ibatis.session.RowBounds}
+	 */
 	public Object intercept(Invocation invocation) throws Throwable {
 
 		Object target = invocation.getTarget();
@@ -71,46 +74,27 @@ public class PaginationInterceptor implements Interceptor {
 			MetaObject metaStatementHandler = SystemMetaObject.forObject(statementHandler);
 			RowBounds rowBounds = (RowBounds) metaStatementHandler.getValue("delegate.rowBounds");
 
-			/* 不需要分页的场合 */
 			if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
 				return invocation.proceed();
 			}
-
-			/*
-			 * <p> 禁用内存分页 </p> <p> 内存分页会查询所有结果出来处理（这个很吓人的），如果结果变化频繁这个数据还会不准。
-			 * </p>
-			 */
 			BoundSql boundSql = (BoundSql) metaStatementHandler.getValue("delegate.boundSql");
 			String originalSql = (String) boundSql.getSql();
 
-			/**
-			 * <p>
-			 * 分页逻辑
-			 * </p>
-			 * <p>
-			 * 查询总记录数 count
-			 * </p>
-			 */
 			if (rowBounds instanceof Pagination) {
 				Pagination page = (Pagination) rowBounds;
 				boolean orderBy = true;
 				if (page.isSearchCount()) {
-					/*
-					 * COUNT 查询，去掉 ORDER BY 优化执行 SQL
-					 */
 					CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType,
 							page.isOptimizeCount());
 					orderBy = countOptimize.isOrderBy();
 				}
-
-				/* 执行 SQL */
 				String buildSql = SqlUtils.concatOrderBy(originalSql, page, orderBy);
 				originalSql = DialectFactory.buildPaginationSql(page, buildSql, dialectType, dialectClazz);
+			}else{
+				//support physical Pagination for RowBounds 
+				originalSql = DialectFactory.buildPaginationSql(rowBounds, originalSql, dialectType, dialectClazz);
 			}
-
-			/**
-			 * 查询 SQL 设置
-			 */
+			
 			metaStatementHandler.setValue("delegate.boundSql.sql", originalSql);
 			metaStatementHandler.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
 			metaStatementHandler.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
@@ -122,39 +106,22 @@ public class PaginationInterceptor implements Interceptor {
 				parameterObject = invocation.getArgs()[1];
 				rowBounds = (RowBounds) invocation.getArgs()[2];
 			}
-			/* 不需要分页的场合 */
 			if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
 				return invocation.proceed();
 			}
 
 			BoundSql boundSql = mappedStatement.getBoundSql(parameterObject);
-			/*
-			 * <p> 禁用内存分页 </p> <p> 内存分页会查询所有结果出来处理（这个很吓人的），如果结果变化频繁这个数据还会不准。
-			 * </p>
-			 */
 			String originalSql = (String) boundSql.getSql();
 
-			/**
-			 * <p>
-			 * 分页逻辑
-			 * </p>
-			 * <p>
-			 * 查询总记录数 count
-			 * </p>
-			 */
 			if (rowBounds instanceof Pagination) {
 				Connection connection = null;
 				try {
 					Pagination page = (Pagination) rowBounds;
 					if (page.isSearchCount()) {
 						connection = mappedStatement.getConfiguration().getEnvironment().getDataSource().getConnection();
-						/*
-						 * COUNT 查询，去掉 ORDER BY 优化执行 SQL
-						 */
 						CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType,
 								page.isOptimizeCount());
 						this.count(countOptimize.getCountSQL(), connection, mappedStatement, boundSql, page);
-						/** 总数 0 跳出执行 */
 						if (page.getTotal() <= 0) {
 							return invocation.proceed();
 						}
