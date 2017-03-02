@@ -23,13 +23,15 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  * <p>
  * 表字段信息
  * </p>
- * 
+ *
  * @author YangHu
  * @since 2016-12-03
  */
 public class TableField {
 	private boolean convert;
 	private boolean keyFlag;
+	/** 主键是否为自增类型 */
+	private boolean keyIdentityFlag;
 	private String name;
 	private String type;
 	private String propertyName;
@@ -66,6 +68,14 @@ public class TableField {
 
 	public void setKeyFlag(boolean keyFlag) {
 		this.keyFlag = keyFlag;
+	}
+
+	public boolean isKeyIdentityFlag() {
+		return keyIdentityFlag;
+	}
+
+	public void setKeyIdentityFlag(boolean keyIdentityFlag) {
+		this.keyIdentityFlag = keyIdentityFlag;
 	}
 
 	public String getName() {

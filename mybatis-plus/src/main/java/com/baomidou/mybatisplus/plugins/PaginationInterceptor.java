@@ -153,7 +153,7 @@ public class PaginationInterceptor implements Interceptor {
 						 */
 						CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType,
 								page.isOptimizeCount());
-						page = this.count(countOptimize.getCountSQL(), connection, mappedStatement, boundSql, page);
+						this.count(countOptimize.getCountSQL(), connection, mappedStatement, boundSql, page);
 						/** 总数 0 跳出执行 */
 						if (page.getTotal() <= 0) {
 							return invocation.proceed();
@@ -178,7 +178,7 @@ public class PaginationInterceptor implements Interceptor {
 	 * @param boundSql
 	 * @param page
 	 */
-	public Pagination count(String sql, Connection connection, MappedStatement mappedStatement, BoundSql boundSql, Pagination page) {
+	public void count(String sql, Connection connection, MappedStatement mappedStatement, BoundSql boundSql, Pagination page) {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
@@ -204,7 +204,6 @@ public class PaginationInterceptor implements Interceptor {
 		} finally {
 			IOUtils.closeQuietly(pstmt, rs);
 		}
-		return page;
 	}
 
 	public Object plugin(Object target) {
