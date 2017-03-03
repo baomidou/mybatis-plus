@@ -43,8 +43,6 @@ public class StrategyConfig {
 	 */
 	private NamingStrategy naming = NamingStrategy.nochange;
 
-	private NamingStrategy fieldNaming;
-
 	/**
 	 * 表前缀
 	 */
@@ -157,14 +155,6 @@ public class StrategyConfig {
 
 	public void setNaming(NamingStrategy naming) {
 		this.naming = naming;
-	}
-
-	public NamingStrategy getFieldNaming() {
-		return fieldNaming;
-	}
-
-	public void setFieldNaming(NamingStrategy fieldNaming) {
-		this.fieldNaming = fieldNaming;
 	}
 
 	public String[] getTablePrefix() {

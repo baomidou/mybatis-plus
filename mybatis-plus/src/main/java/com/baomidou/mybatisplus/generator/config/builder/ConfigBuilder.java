@@ -353,7 +353,6 @@ public class ConfigBuilder {
 		List<TableInfo> tableList = new ArrayList<TableInfo>();
 		Set<String> notExistTables = new HashSet<String>();
 		NamingStrategy strategy = config.getNaming();
-		NamingStrategy fieldStrategy = config.getFieldNaming();
 		PreparedStatement pstate = null;
 		try {
 			pstate = connection.prepareStatement(querySQL.getTableCommentsSql());
@@ -387,7 +386,7 @@ public class ConfigBuilder {
 						tableInfo.setComment(tableComment);
 					}
 					if (StringUtils.isNotEmpty(tableInfo.getName())) {
-						List<TableField> fieldList = getListFields(tableInfo.getName(), fieldStrategy);
+						List<TableField> fieldList = getListFields(tableInfo.getName(), strategy);
 						tableInfo.setFields(fieldList);
 						tableList.add(tableInfo);
 					}
@@ -535,14 +534,24 @@ public class ConfigBuilder {
 	 * @return 根据策略返回处理后的名称
 	 */
 	private String processName(String name, NamingStrategy strategy, String[] tablePrefix) {
+		boolean removePrefix = false;
+		if (tablePrefix != null && tablePrefix.length >= 1) {
+			removePrefix = true;
+		}
 		String propertyName = "";
-		if (strategy == NamingStrategy.remove_prefix_and_camel) {
-			propertyName = NamingStrategy.removePrefixAndCamel(name, tablePrefix);
+		if (removePrefix) {
+			if (strategy == NamingStrategy.underline_to_camel) {
+				// 删除前缀、下划线转驼峰
+				propertyName = NamingStrategy.removePrefixAndCamel(name, tablePrefix);
+			} else {
+				// 删除前缀
+				propertyName = NamingStrategy.removePrefix(name, tablePrefix);
+			}
 		} else if (strategy == NamingStrategy.underline_to_camel) {
+			// 下划线转驼峰
 			propertyName = NamingStrategy.underlineToCamel(name);
-		} else if (strategy == NamingStrategy.remove_prefix) {
-			propertyName = NamingStrategy.removePrefix(name, tablePrefix);
 		} else {
+			// 不处理
 			propertyName = name;
 		}
 		return propertyName;

@@ -32,15 +32,7 @@ public enum NamingStrategy {
 	/**
 	 * 下划线转驼峰命名
 	 */
-	underline_to_camel,
-	/**
-	 * 仅去掉前缀
-	 */
-	remove_prefix,
-	/**
-	 * 去掉前缀并且转驼峰
-	 */
-	remove_prefix_and_camel;
+	underline_to_camel;
 
 	public static String underlineToCamel(String name) {
 		// 快速检查
