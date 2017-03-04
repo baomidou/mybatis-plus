@@ -169,7 +169,8 @@ public class PaginationInterceptor implements Interceptor {
 		} catch (Exception e) {
 			// ignored
 		} finally {
-			IOUtils.closeQuietly(pstmt, rs);
+			IOUtils.closeQuietly(pstmt);
+			IOUtils.closeQuietly(rs);
 		}
 	}
 
