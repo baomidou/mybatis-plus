@@ -134,7 +134,9 @@ public class SqlExplainInterceptor implements Interceptor {
 		} catch (Exception e) {
 			throw new MybatisPlusException(e);
 		} finally {
-			IOUtils.closeQuietly(rs, stmt, connection);
+			IOUtils.closeQuietly(rs);
+			IOUtils.closeQuietly(stmt);
+			IOUtils.closeQuietly(connection);
 		}
 	}
 

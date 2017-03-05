@@ -28,6 +28,8 @@ import java.net.Socket;
 import java.net.URLConnection;
 import java.nio.channels.Selector;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 /**
  * <p>
@@ -414,17 +416,17 @@ public class IOUtils {
 	/**
 	 * Closes a <code>AutoCloseable</code> unconditionally.
 	 * <p>
-	 * Equivalent to {@link AutoCloseable#close()}, except any exceptions will
-	 * be ignored. This is typically used in finally blocks.
+	 * Equivalent to {@link ResultSet#close()}, except any exceptions will be
+	 * ignored. This is typically used in finally blocks.
 	 * <p>
 	 * Example code:
 	 *
 	 * <pre>
-	 * AutoCloseable closeable = null;
+	 * AutoCloseable statement = null;
 	 * try {
-	 * 	closeable = new Connection();
+	 * 	statement = new Connection();
 	 * 	// process close
-	 * 	closeable.close();
+	 * 	statement.close();
 	 * } catch (Exception e) {
 	 * 	// error handling
 	 * } finally {
@@ -432,14 +434,49 @@ public class IOUtils {
 	 * }
 	 * </pre>
 	 *
-	 * @param closeable
+	 * @param resultSet
 	 *            the Connection to close, may be null or already closed
 	 * @since 2.2
 	 */
-	public static void closeQuietly(final AutoCloseable closeable) {
-		if (closeable != null) {
+	public static void closeQuietly(final ResultSet resultSet) {
+		if (resultSet != null) {
 			try {
-				closeable.close();
+				resultSet.close();
+			} catch (Exception e) {
+				// ignored
+			}
+		}
+	}
+
+	/**
+	 * Closes a <code>AutoCloseable</code> unconditionally.
+	 * <p>
+	 * Equivalent to {@link Statement#close()}, except any exceptions will be
+	 * ignored. This is typically used in finally blocks.
+	 * <p>
+	 * Example code:
+	 *
+	 * <pre>
+	 * AutoCloseable statement = null;
+	 * try {
+	 * 	statement = new Connection();
+	 * 	// process close
+	 * 	statement.close();
+	 * } catch (Exception e) {
+	 * 	// error handling
+	 * } finally {
+	 * 	IOUtils.closeQuietly(conn);
+	 * }
+	 * </pre>
+	 *
+	 * @param statement
+	 *            the Connection to close, may be null or already closed
+	 * @since 2.2
+	 */
+	public static void closeQuietly(final Statement statement) {
+		if (statement != null) {
+			try {
+				statement.close();
 			} catch (Exception e) {
 				// ignored
 			}
@@ -479,17 +516,22 @@ public class IOUtils {
 	 * <p>
 	 * Closing all streams: <br>
 	 *
-	 * @param closeables
+	 * @param statements
 	 *            the objects to close, may be null or already closed
-	 * @see #closeQuietly(AutoCloseable)
+	 * @see #closeQuietly(Statement)
 	 * @since 2.5
 	 */
-	public static void closeQuietly(final AutoCloseable... closeables) {
-		if (closeables == null) {
+	public static void closeQuietly(final Statement... statements) {
+		if (statements == null) {
 			return;
 		}
-		for (final AutoCloseable closeable : closeables) {
-			closeQuietly(closeable);
+		for (final Statement statement : statements) {
+			closeQuietly(statement);
 		}
+	}
+
+	public static void main(String[] args) {
+		String java = System.getProperty("java.version");
+		System.out.println(java);
 	}
 }

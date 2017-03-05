@@ -302,20 +302,39 @@ public class EntityWrapperTest {
 	@Test
 	@SuppressWarnings("unchecked")
 	public void testQbc() {
-		Map<String,Object> map = new HashMap<String,Object>();
-		map.put("allEq1","22");
-		map.put("allEq2",3333);
-		map.put("allEq3",66.99);
-		String sqlPart = Condition.instance().gt("gt", 1).le("le",2).lt("le",3).ge("ge",4).eq("eq",5).allEq(map).toString();
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("allEq1", "22");
+		map.put("allEq2", 3333);
+		map.put("allEq3", 66.99);
+		String sqlPart = Condition.instance().gt("gt", 1).le("le", 2).lt("le", 3).ge("ge", 4).eq("eq", 5).allEq(map).toString();
 		System.out.println("sql ==> " + sqlPart);
-		Assert.assertEquals("WHERE (gt > 1 AND le <= 2 AND le < 3 AND ge >= 4 AND eq = 5 AND allEq3 = 66.99 AND allEq1 = '22' AND allEq2 = 3333)", sqlPart);
+		Assert.assertEquals(
+				"WHERE (gt > 1 AND le <= 2 AND le < 3 AND ge >= 4 AND eq = 5 AND allEq3 = 66.99 AND allEq1 = '22' AND allEq2 = 3333)",
+				sqlPart);
 	}
+
 	/**
 	 * 测试LIKE
 	 */
 	@Test
 	public void testlike() {
-		String sqlPart = Condition.instance().like("default", "default", SqlLike.DEFAULT).like("left","left", SqlLike.LEFT).like("right","right", SqlLike.RIGHT).toString();
+		String sqlPart = Condition.instance().like("default", "default", SqlLike.DEFAULT).like("left", "left", SqlLike.LEFT)
+				.like("right", "right", SqlLike.RIGHT).toString();
+		System.out.println("sql ==> " + sqlPart);
+		Assert.assertEquals("WHERE (default LIKE '%default%' AND left LIKE '%left' AND right LIKE 'right%')", sqlPart);
+	}
+
+	/**
+	 * 测试isWhere
+	 */
+	@Test
+	public void testIsWhere() {
+		/*
+		 * 实体带where ifneed
+		 */
+		ew.setEntity(new User(1));
+		String sqlPart = ew.or("sql = {0}", "sql").like("default", "default", SqlLike.DEFAULT).like("left", "left", SqlLike.LEFT)
+				.like("right", "right", SqlLike.RIGHT).isWhere(false).eq("bool", true).toString();
 		System.out.println("sql ==> " + sqlPart);
 		Assert.assertEquals("WHERE (default LIKE '%default%' AND left LIKE '%left' AND right LIKE 'right%')", sqlPart);
 	}

@@ -664,7 +664,7 @@ public abstract class Wrapper<T> implements Serializable {
 	 * @param bool
 	 * @return this
 	 */
-	protected Wrapper<T> isWhere(Boolean bool) {
+	public Wrapper<T> isWhere(Boolean bool) {
 		this.isWhere = bool;
 		return this;
 	}
