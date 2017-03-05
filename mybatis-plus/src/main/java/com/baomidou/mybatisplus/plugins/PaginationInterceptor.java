@@ -15,15 +15,15 @@
  */
 package com.baomidou.mybatisplus.plugins;
 
-import com.baomidou.mybatisplus.MybatisDefaultParameterHandler;
-import com.baomidou.mybatisplus.entity.CountOptimize;
-import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
-import com.baomidou.mybatisplus.plugins.pagination.Pagination;
-import com.baomidou.mybatisplus.toolkit.IOUtils;
-import com.baomidou.mybatisplus.toolkit.SqlUtils;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.Properties;
+
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.plugin.Interceptor;
@@ -37,10 +37,13 @@ import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.Properties;
+import com.baomidou.mybatisplus.MybatisDefaultParameterHandler;
+import com.baomidou.mybatisplus.entity.CountOptimize;
+import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
+import com.baomidou.mybatisplus.plugins.pagination.Pagination;
+import com.baomidou.mybatisplus.toolkit.IOUtils;
+import com.baomidou.mybatisplus.toolkit.SqlUtils;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
  * <p>
@@ -50,9 +53,11 @@ import java.util.Properties;
  * @author hubin
  * @Date 2016-01-23
  */
-@Intercepts({@Signature(type = Executor.class, method = "query", args = { MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class }),
+@Intercepts({ @Signature(type = Executor.class, method = "query", args = { MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class }),
 		@Signature(type = StatementHandler.class, method = "prepare", args = { Connection.class, Integer.class }) })
 public class PaginationInterceptor implements Interceptor {
+	
+	private static final Log logger = LogFactory.getLog(PaginationInterceptor.class);
 
 	/* 溢出总页数，设置第一页 */
 	private boolean overflowCurrent = false;
@@ -84,28 +89,23 @@ public class PaginationInterceptor implements Interceptor {
 				Pagination page = (Pagination) rowBounds;
 				boolean orderBy = true;
 				if (page.isSearchCount()) {
-					CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType,
-							page.isOptimizeCount());
+					CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType, page.isOptimizeCount());
 					orderBy = countOptimize.isOrderBy();
 				}
 				String buildSql = SqlUtils.concatOrderBy(originalSql, page, orderBy);
 				originalSql = DialectFactory.buildPaginationSql(page, buildSql, dialectType, dialectClazz);
-			}else{
-				//support physical Pagination for RowBounds 
+			} else {
+				// support physical Pagination for RowBounds
 				originalSql = DialectFactory.buildPaginationSql(rowBounds, originalSql, dialectType, dialectClazz);
 			}
-			
+
 			metaStatementHandler.setValue("delegate.boundSql.sql", originalSql);
 			metaStatementHandler.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
 			metaStatementHandler.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
 		} else {
 			MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
-			Object parameterObject = null;
-			RowBounds rowBounds = null;
-			if (invocation.getArgs().length > 1) {
-				parameterObject = invocation.getArgs()[1];
-				rowBounds = (RowBounds) invocation.getArgs()[2];
-			}
+			Object parameterObject = invocation.getArgs()[1];;
+			RowBounds rowBounds = (RowBounds) invocation.getArgs()[2];
 			if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
 				return invocation.proceed();
 			}
@@ -119,8 +119,7 @@ public class PaginationInterceptor implements Interceptor {
 					Pagination page = (Pagination) rowBounds;
 					if (page.isSearchCount()) {
 						connection = mappedStatement.getConfiguration().getEnvironment().getDataSource().getConnection();
-						CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType,
-								page.isOptimizeCount());
+						CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType, page.isOptimizeCount());
 						this.count(countOptimize.getCountSQL(), connection, mappedStatement, boundSql, page);
 						if (page.getTotal() <= 0) {
 							return invocation.proceed();
@@ -150,8 +149,7 @@ public class PaginationInterceptor implements Interceptor {
 		ResultSet rs = null;
 		try {
 			pstmt = connection.prepareStatement(sql);
-			DefaultParameterHandler parameterHandler = new MybatisDefaultParameterHandler(mappedStatement,
-					boundSql.getParameterObject(), boundSql);
+			DefaultParameterHandler parameterHandler = new MybatisDefaultParameterHandler(mappedStatement, boundSql.getParameterObject(), boundSql);
 			parameterHandler.setParameters(pstmt);
 			rs = pstmt.executeQuery();
 			int total = 0;
@@ -167,7 +165,7 @@ public class PaginationInterceptor implements Interceptor {
 				page.setTotal(total);
 			}
 		} catch (Exception e) {
-			// ignored
+			logger.error("分页查询中count查询出错",e);
 		} finally {
 			IOUtils.closeQuietly(pstmt);
 			IOUtils.closeQuietly(rs);

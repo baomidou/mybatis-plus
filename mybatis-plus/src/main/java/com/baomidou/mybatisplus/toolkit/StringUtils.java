@@ -50,6 +50,9 @@ public class StringUtils {
 	 */
 	public static final String PLACE_HOLDER = "{%s}";
 
+	
+	private StringUtils(){
+	}
 	/**
 	 * <p>
 	 * 判断字符串是否为空
@@ -554,8 +557,7 @@ public class StringUtils {
 	 *            treated as one separator.
 	 * @return an array of parsed Strings, {@code null} if null String input
 	 */
-	public static List<String> splitWorker(final String str, final String separatorChars, final int max,
-			final boolean preserveAllTokens) {
+	public static List<String> splitWorker(final String str, final String separatorChars, final int max, final boolean preserveAllTokens) {
 		// Performance tuned for 2.0 (JDK1.4)
 		// Direct code is quicker than StringTokenizer.
 		// Also, StringTokenizer uses isSpace() not isWhitespace()
@@ -664,7 +666,7 @@ public class StringUtils {
 		try {
 			cls = Class.forName(propertyType);
 		} catch (ClassNotFoundException e) {
-			//
+			return false;
 		}
 		return isCharSequence(cls);
 	}
