@@ -28,4 +28,6 @@ import com.baomidou.mybatisplus.test.mysql.entity.User;
  */
 public interface IUserService extends IService<User> {
 
+	void testSqlInjector();
+
 }

@@ -255,7 +255,7 @@ public class GlobalConfiguration implements Cloneable, Serializable {
 	 */
 	public static void setGlobalConfig(Configuration configuration, GlobalConfiguration mybatisGlobalConfig) {
 		if (configuration == null || mybatisGlobalConfig == null) {
-			new MybatisPlusException("Error: Could not setGlobalConfig");
+			throw new MybatisPlusException("Error: Could not setGlobalConfig");
 		}
 		// 设置全局设置
 		GLOBAL_CONFIG.put(configuration.toString(), mybatisGlobalConfig);

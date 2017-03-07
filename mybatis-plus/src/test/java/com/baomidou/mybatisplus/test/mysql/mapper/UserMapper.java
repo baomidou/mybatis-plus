@@ -52,6 +52,12 @@ public interface UserMapper extends BaseMapper<User> {
 	 * 自定义注入方法
 	 */
 	int deleteAll();
+	
+	/**
+	 * 自定义注入逻辑删除方法<br>
+	 * com.baomidou.mybatisplus.test.mysql.MetaObjectHandlerTest
+	 */
+	int deleteLogicById(@Param("id") Long id);
 
 	/**
 	 * 根据主键批量查询
