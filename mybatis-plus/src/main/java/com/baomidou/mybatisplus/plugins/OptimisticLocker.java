@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -98,8 +97,9 @@ public class OptimisticLocker implements Interceptor {
 	}
 
 	public Object plugin(Object target) {
-		if (target instanceof StatementHandler || target instanceof ParameterHandler)
+		if (target instanceof StatementHandler) {
 			return Plugin.wrap(target, this);
+		}
 		return target;
 	}
 
