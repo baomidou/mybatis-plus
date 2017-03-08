@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.plugins.annotations;
+package com.baomidou.mybatisplus.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

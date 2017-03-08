@@ -19,8 +19,8 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.type.TypeException;
 
-import com.baomidou.mybatisplus.plugins.annotations.VersionColumn;
-import com.baomidou.mybatisplus.plugins.annotations.VersionControl;
+import com.baomidou.mybatisplus.annotations.VersionColumn;
+import com.baomidou.mybatisplus.annotations.VersionControl;
 import com.baomidou.mybatisplus.toolkit.PluginUtils;
 
 /**
@@ -34,7 +34,7 @@ import com.baomidou.mybatisplus.toolkit.PluginUtils;
  * @author TaoYu
  */
 @Intercepts({ @Signature(type = StatementHandler.class, method = "prepare", args = { Connection.class, Integer.class }) })
-public class OptimisticLocker implements Interceptor {
+public class OptimisticLockerInterceptor implements Interceptor {
 
 	private static final Map<Class<?>, VersionPo> versionCache = new ConcurrentHashMap<Class<?>, VersionPo>();
 
