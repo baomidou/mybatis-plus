@@ -50,20 +50,18 @@ public class OptimisticLockerInterceptor implements Interceptor {
 		Object parameterObject = boundSql.getParameterObject();
 		Class<? extends Object> parameterClass = parameterObject.getClass();
 
-		String versionColumn = null;
-		Field versionField = null;
 		VersionPo versionPo = versionCache.get(parameterClass);
-		if (versionPo != null) {
-			if (versionPo.isVersionControl) {
-				versionColumn = versionPo.versionColmnName;
-				versionField = versionPo.versionField;
-			} else {
-				return invocation.proceed();
-			}
+		if (versionPo != null && versionPo.isVersionControl) {
+			toVersionSql(metaObject, boundSql, parameterObject, versionPo);
+
 		} else {
+			String versionColumn = null;
+			String versionProperty = null;
+			Class<?> versionType = null;
 			for (Field field : parameterClass.getDeclaredFields()) {
 				if (field.isAnnotationPresent(Version.class)) {
-					versionField = field;
+					versionProperty = field.getName();
+					versionType = field.getType();
 					if (field.isAnnotationPresent(TableName.class)) {
 						versionColumn = field.getAnnotation(TableName.class).value();
 					} else {
@@ -73,28 +71,35 @@ public class OptimisticLockerInterceptor implements Interceptor {
 				}
 			}
 			if (StringUtils.isNotEmpty(versionColumn)) {
-				versionCache.put(parameterClass, new VersionPo(true, versionColumn, versionField));
+				versionPo = new VersionPo(true, versionProperty, versionColumn, versionType);
+				versionCache.put(parameterClass, versionPo);
+				toVersionSql(metaObject, boundSql, parameterObject, versionPo);
 			} else {
 				versionCache.put(parameterClass, new VersionPo(false));
-				return invocation.proceed();
 			}
 		}
-		Object originalVersion = metaObject.getValue("delegate.boundSql.parameterObject." + versionColumn);
-		Class<?> versionType = versionField.getType();
-		if (versionType.equals(Integer.class) || versionType.equals(int.class)) {
-			metaObject.setValue("delegate.boundSql.parameterObject." + versionColumn, (Integer) originalVersion + 1);
-		} else if (versionType.equals(Long.class) || versionType.equals(long.class)) {
-			metaObject.setValue("delegate.boundSql.parameterObject." + versionColumn, (Long) originalVersion + 1);
-		} else {
-			throw new TypeException("Property " + versionField.getName() + " in " + parameterClass.getSimpleName() + " must be [ long, int ] or [ Long, Integer ]");
-		}
-		String originalSql = boundSql.getSql();
-		StringBuilder builder = new StringBuilder(originalSql);
-		builder.append(" AND ");
-		builder.append(versionColumn);
-		builder.append(" = " + originalVersion);
-		metaObject.setValue("delegate.boundSql.sql", builder.toString());
 		return invocation.proceed();
+
+	}
+
+	private void toVersionSql(MetaObject metaObject, BoundSql boundSql, Object parameterObject, VersionPo versionPo) throws Exception {
+		final String versionProperty = versionPo.versionProperty;
+		Object originalVersion = metaObject.getValue("delegate.boundSql.parameterObject." + versionProperty);
+		if (originalVersion != null) {
+			final Class<?> versionType = versionPo.versionType;
+			final String versionColumn = versionPo.versionColumn;
+			Object increValue = null;
+			if (versionType.equals(Integer.class) || versionType.equals(int.class)) {
+				increValue = (Integer) originalVersion + 1;
+			} else if (versionType.equals(Long.class) || versionType.equals(long.class)) {
+				increValue = (Long) originalVersion + 1;
+			} else {
+				throw new TypeException("Property " + versionProperty + " in " + parameterObject.getClass().getSimpleName() + " must be [ long, int ] or [ Long, Integer ]");
+			}
+			metaObject.setValue("delegate.boundSql.parameterObject." + versionProperty, increValue);
+			String versionSql = new StringBuilder(boundSql.getSql()).append(" AND ").append(versionColumn).append(" = " + originalVersion).toString();
+			metaObject.setValue("delegate.boundSql.sql", versionSql);
+		}
 	}
 
 	public Object plugin(Object target) {
@@ -111,22 +116,23 @@ public class OptimisticLockerInterceptor implements Interceptor {
 
 		private Boolean isVersionControl;
 
-		private String versionColmnName;
+		private String versionProperty;
 
-		private Field versionField;
+		private String versionColumn;
+
+		private Class<?> versionType;
 
 		public VersionPo(Boolean isVersionControl) {
 			super();
 			this.isVersionControl = isVersionControl;
 		}
 
-		public VersionPo(Boolean isVersionControl, String versionColmnName, Field versionField) {
+		public VersionPo(Boolean isVersionControl, String versionProperty, String versionColumn, Class<?> versionType) {
 			super();
 			this.isVersionControl = isVersionControl;
-			this.versionColmnName = versionColmnName;
-			this.versionField = versionField;
+			this.versionProperty = versionProperty;
+			this.versionColumn = versionColumn;
+			this.versionType = versionType;
 		}
-
 	}
-
 }
