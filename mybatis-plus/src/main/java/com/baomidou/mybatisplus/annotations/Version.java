@@ -7,13 +7,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 标记在类上,表示是否启用乐观锁
+ * 标记在verison字段上
  * 
  * @author TaoYu
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE })
+@Target({ ElementType.FIELD })
 @Documented
-public @interface VersionControl {
+public @interface Version {
 
 }
