@@ -48,6 +48,9 @@ public class OptimisticLockerInterceptor implements Interceptor {
 		}
 		BoundSql boundSql = (BoundSql) metaObject.getValue("delegate.boundSql");
 		Object parameterObject = boundSql.getParameterObject();
+		if (parameterObject == null) {
+			return invocation.proceed();
+		}
 		Class<? extends Object> parameterClass = parameterObject.getClass();
 
 		VersionPo versionPo = versionCache.get(parameterClass);
