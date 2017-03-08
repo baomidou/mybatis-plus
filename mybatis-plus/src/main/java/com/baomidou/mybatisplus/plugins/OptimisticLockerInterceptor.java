@@ -22,6 +22,7 @@ import org.apache.ibatis.type.TypeException;
 import com.baomidou.mybatisplus.annotations.VersionColumn;
 import com.baomidou.mybatisplus.annotations.VersionControl;
 import com.baomidou.mybatisplus.toolkit.PluginUtils;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
  * MyBatis乐观锁插件
@@ -66,11 +67,11 @@ public class OptimisticLockerInterceptor implements Interceptor {
 						break;
 					}
 				}
-				if (versionColumn == null || versionColumn.isEmpty()) {
-					versionCache.put(parameterClass, new VersionPo(false, versionColumn));
-					return invocation.proceed();
+				if (StringUtils.isNotEmpty(versionColumn)) {
+					versionCache.put(parameterClass, new VersionPo(true, versionColumn));
 				} else {
 					versionCache.put(parameterClass, new VersionPo(false, versionColumn));
+					return invocation.proceed();
 				}
 			} else {
 				versionCache.put(parameterClass, new VersionPo(false));
