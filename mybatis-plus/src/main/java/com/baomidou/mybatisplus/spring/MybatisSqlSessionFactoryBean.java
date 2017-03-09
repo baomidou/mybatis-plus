@@ -488,9 +488,15 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 				}
 			}
 		}
-
+		
+		//#200
+		EWParamInterceptor ewIntcpt = null;
 		if (!isEmpty(this.plugins)) {
 			for (Interceptor plugin : this.plugins) {
+				if(plugin instanceof EWParamInterceptor){
+					ewIntcpt = (EWParamInterceptor) plugin;
+					continue;//add last, work first
+				}
 				configuration.addInterceptor(plugin);
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("Registered plugin: '" + plugin + "'");
@@ -498,7 +504,11 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 			}
 		}
 		//#200
-		configuration.addInterceptor(new EWParamInterceptor());//add last, work first
+		if(ewIntcpt==null){
+			ewIntcpt = new EWParamInterceptor();
+		}
+		configuration.addInterceptor(ewIntcpt);//add last, work first
+		//#200--End--
 
 		if (hasLength(this.typeHandlersPackage)) {
 			String[] typeHandlersPackageArray = tokenizeToStringArray(this.typeHandlersPackage,
