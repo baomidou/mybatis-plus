@@ -42,6 +42,7 @@ import com.baomidou.mybatisplus.entity.CountOptimize;
 import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.toolkit.IOUtils;
+import com.baomidou.mybatisplus.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.toolkit.SqlUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
@@ -75,7 +76,7 @@ public class PaginationInterceptor implements Interceptor {
 
 		Object target = invocation.getTarget();
 		if (target instanceof StatementHandler) {
-			StatementHandler statementHandler = (StatementHandler) target;
+			StatementHandler statementHandler = (StatementHandler) PluginUtils.realTarget(invocation.getTarget());
 			MetaObject metaStatementHandler = SystemMetaObject.forObject(statementHandler);
 			RowBounds rowBounds = (RowBounds) metaStatementHandler.getValue("delegate.rowBounds");
 
