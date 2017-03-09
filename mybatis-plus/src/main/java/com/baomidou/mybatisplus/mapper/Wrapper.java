@@ -42,14 +42,14 @@ import org.apache.ibatis.parsing.TokenHandler;
  */
 @SuppressWarnings("serial")
 public abstract class Wrapper<T> implements Serializable {
-	
+
 	public static final String OPEN_TOKEN = "#{";
 	public static final String CLOSE_TOKEN = "}";
-	
+
 	private static final String MP_GENERAL_PARAMNAME = "MPGENVAL";
-	
-	private Map<String,Object> paramNameValuePairs = new HashMap<>(4);
-	
+
+	private Map<String, Object> paramNameValuePairs = new HashMap<String, Object>(4);
+
 	private AtomicInteger paramNameSeq = new AtomicInteger(0);
 
 	/**
@@ -656,15 +656,22 @@ public abstract class Wrapper<T> implements Serializable {
 	 * <p>
 	 * 根据需要格式化SQL<BR>
 	 * <BR>
-	 * Format SQL for methods: EntityWrapper.where/and/or...("name={0}", value); ALL the {<b>i</b>} will be replaced with #{MPGENVAL<b>i</b>}<BR>
+	 * Format SQL for methods: EntityWrapper.where/and/or...("name={0}", value);
+	 * ALL the {<b>i</b>} will be replaced with #{MPGENVAL<b>i</b>}<BR>
 	 * <BR>
-	 * ew.where("sample_name=<b>{0}</b>", "haha").and("sample_age &gt;<b>{0}</b> and sample_age&lt;<b>{1}</b>", 18, 30) <b>TO</b> sample_name=<b>#{MPGENVAL1}</b> and sample_age&gt;#<b>{MPGENVAL2}</b> and sample_age&lt;<b>#{MPGENVAL3}</b><BR>
+	 * ew.where("sample_name=<b>{0}</b>", "haha").and("sample_age &gt;<b>{0}</b>
+	 * and sample_age&lt;<b>{1}</b>", 18, 30) <b>TO</b>
+	 * sample_name=<b>#{MPGENVAL1}</b> and sample_age&gt;#<b>{MPGENVAL2}</b> and
+	 * sample_age&lt;<b>#{MPGENVAL3}</b><BR>
 	 * OR<BR>
-	 * ew.where("sample_name=<b>#{name}</b>", "haha").and("sample_age &gt;<b>#{ageFrom}</b> and sample_age&lt;<b>#{ageTo}</b>", 18, 30);//SUPPORTTED<BR>
+	 * ew.where("sample_name=<b>#{name}</b>", "haha").and("sample_age
+	 * &gt;<b>#{ageFrom}</b> and sample_age&lt;<b>#{ageTo}</b>", 18,
+	 * 30);//SUPPORTTED<BR>
 	 * BUT<BR>
 	 * {0} and #{value} cannot be mixed used.<BR>
 	 * eg:<BR>
-	 * ew.and("sample_age &gt;{0} and sample_age&lt;#{ageTo}", 18, 30);//not support<BR>
+	 * ew.and("sample_age &gt;{0} and sample_age&lt;#{ageTo}", 18, 30);//not
+	 * support<BR>
 	 * </p>
 	 *
 	 * @param need
@@ -679,33 +686,33 @@ public abstract class Wrapper<T> implements Serializable {
 		if (!need || StringUtils.isEmpty(sqlStr)) {
 			return null;
 		}
-		//#200
+		// #200
 		MpTokenHandler handler = new MpTokenHandler();
 		GenericTokenParser parser = new GenericTokenParser(OPEN_TOKEN, CLOSE_TOKEN, handler);
 		parser.parse(sqlStr);
-		if(handler.hasParam()){
+		if (handler.hasParam()) {
 			List<String> paramNames = handler.getParamNames();
-			if(paramNames!=null && !paramNames.isEmpty()){
+			if (paramNames != null && !paramNames.isEmpty()) {
 				int parmNameSize = paramNames.size();
-				int parmArgSize = params==null?0:params.length;
-				if(parmNameSize>parmArgSize){
-					for(int i=0;i<parmArgSize;++i){
+				int parmArgSize = params == null ? 0 : params.length;
+				if (parmNameSize > parmArgSize) {
+					for (int i = 0; i < parmArgSize; ++i) {
 						paramNameValuePairs.put(paramNames.get(i), params[i]);
 					}
-				}else{
-					for(int i=0;i<parmNameSize;++i){
+				} else {
+					for (int i = 0; i < parmNameSize; ++i) {
 						paramNameValuePairs.put(paramNames.get(i), params[i]);
 					}
 				}
 			}
-		}else{
-			if(params!=null && params.length!=0){
+		} else {
+			if (params != null && params.length != 0) {
 				int size = params.length;
 				String[] paramNames = new String[size];
-				for(int i=0;i<size;++i){
-					String genParamName = MP_GENERAL_PARAMNAME+paramNameSeq.incrementAndGet();
+				for (int i = 0; i < size; ++i) {
+					String genParamName = MP_GENERAL_PARAMNAME + paramNameSeq.incrementAndGet();
 					paramNames[i] = genParamName;
-					sqlStr = sqlStr.replace("{"+i+"}", OPEN_TOKEN+genParamName+CLOSE_TOKEN);
+					sqlStr = sqlStr.replace("{" + i + "}", OPEN_TOKEN + genParamName + CLOSE_TOKEN);
 					paramNameValuePairs.put(genParamName, params[i]);
 				}
 			}
@@ -725,31 +732,33 @@ public abstract class Wrapper<T> implements Serializable {
 		this.isWhere = bool;
 		return this;
 	}
-	
+
 	/**
 	 * Fix issue 200.
 	 * 
 	 * @since 2.0.3
 	 * @return
 	 */
-	public Map<String,Object> getParamNameValuePairs(){
+	public Map<String, Object> getParamNameValuePairs() {
 		return paramNameValuePairs;
 	}
 }
 
-class MpTokenHandler implements TokenHandler{
+class MpTokenHandler implements TokenHandler {
 
-	private List<String> paramNames = new ArrayList<>(4);
-	@Override
+	private List<String> paramNames = new ArrayList<String>(4);
+
 	public String handleToken(String content) {
 		paramNames.add(content);
 		return content;
 	}
+
 	public List<String> getParamNames() {
 		return paramNames;
 	}
-	public boolean hasParam(){
+
+	public boolean hasParam() {
 		return !paramNames.isEmpty();
 	}
-	
+
 }
