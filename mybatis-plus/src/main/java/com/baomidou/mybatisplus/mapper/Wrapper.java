@@ -20,10 +20,17 @@ import com.baomidou.mybatisplus.toolkit.MapUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.apache.ibatis.parsing.GenericTokenParser;
+import org.apache.ibatis.parsing.TokenHandler;
 
 /**
  * <p>
@@ -35,6 +42,15 @@ import java.util.Map;
  */
 @SuppressWarnings("serial")
 public abstract class Wrapper<T> implements Serializable {
+	
+	public static final String OPEN_TOKEN = "#{";
+	public static final String CLOSE_TOKEN = "}";
+	
+	private static final String MP_GENERAL_PARAMNAME = "MPGENVAL";
+	
+	private Map<String,Object> paramNameValuePairs = new HashMap<>(4);
+	
+	private AtomicInteger paramNameSeq = new AtomicInteger(0);
 
 	/**
 	 * SQL 查询字段内容，例如：id,name,age
@@ -638,7 +654,17 @@ public abstract class Wrapper<T> implements Serializable {
 
 	/**
 	 * <p>
-	 * 根据需要格式化SQL
+	 * 根据需要格式化SQL<BR>
+	 * <BR>
+	 * Format SQL for methods: EntityWrapper.where/and/or...("name={0}", value); ALL the {<b>i</b>} will be replaced with #{MPGENVAL<b>i</b>}<BR>
+	 * <BR>
+	 * ew.where("sample_name=<b>{0}</b>", "haha").and("sample_age &gt;<b>{0}</b> and sample_age&lt;<b>{1}</b>", 18, 30) <b>TO</b> sample_name=<b>#{MPGENVAL1}</b> and sample_age&gt;#<b>{MPGENVAL2}</b> and sample_age&lt;<b>#{MPGENVAL3}</b><BR>
+	 * OR<BR>
+	 * ew.where("sample_name=<b>#{name}</b>", "haha").and("sample_age &gt;<b>#{ageFrom}</b> and sample_age&lt;<b>#{ageTo}</b>", 18, 30);//SUPPORTTED<BR>
+	 * BUT<BR>
+	 * {0} and #{value} cannot be mixed used.<BR>
+	 * eg:<BR>
+	 * ew.and("sample_age &gt;{0} and sample_age&lt;#{ageTo}", 18, 30);//not support<BR>
 	 * </p>
 	 *
 	 * @param need
@@ -653,7 +679,38 @@ public abstract class Wrapper<T> implements Serializable {
 		if (!need || StringUtils.isEmpty(sqlStr)) {
 			return null;
 		}
-		return StringUtils.sqlArgsFill(sqlStr, params);
+		//#200
+		MpTokenHandler handler = new MpTokenHandler();
+		GenericTokenParser parser = new GenericTokenParser(OPEN_TOKEN, CLOSE_TOKEN, handler);
+		parser.parse(sqlStr);
+		if(handler.hasParam()){
+			List<String> paramNames = handler.getParamNames();
+			if(paramNames!=null && !paramNames.isEmpty()){
+				int parmNameSize = paramNames.size();
+				int parmArgSize = params==null?0:params.length;
+				if(parmNameSize>parmArgSize){
+					for(int i=0;i<parmArgSize;++i){
+						paramNameValuePairs.put(paramNames.get(i), params[i]);
+					}
+				}else{
+					for(int i=0;i<parmNameSize;++i){
+						paramNameValuePairs.put(paramNames.get(i), params[i]);
+					}
+				}
+			}
+		}else{
+			if(params!=null && params.length!=0){
+				int size = params.length;
+				String[] paramNames = new String[size];
+				for(int i=0;i<size;++i){
+					String genParamName = MP_GENERAL_PARAMNAME+paramNameSeq.incrementAndGet();
+					paramNames[i] = genParamName;
+					sqlStr = sqlStr.replace("{"+i+"}", OPEN_TOKEN+genParamName+CLOSE_TOKEN);
+					paramNameValuePairs.put(genParamName, params[i]);
+				}
+			}
+		}
+		return sqlStr;
 	}
 
 	/**
@@ -668,4 +725,31 @@ public abstract class Wrapper<T> implements Serializable {
 		this.isWhere = bool;
 		return this;
 	}
+	
+	/**
+	 * Fix issue 200.
+	 * 
+	 * @since 2.0.3
+	 * @return
+	 */
+	public Map<String,Object> getParamNameValuePairs(){
+		return paramNameValuePairs;
+	}
+}
+
+class MpTokenHandler implements TokenHandler{
+
+	private List<String> paramNames = new ArrayList<>(4);
+	@Override
+	public String handleToken(String content) {
+		paramNames.add(content);
+		return content;
+	}
+	public List<String> getParamNames() {
+		return paramNames;
+	}
+	public boolean hasParam(){
+		return !paramNames.isEmpty();
+	}
+	
 }

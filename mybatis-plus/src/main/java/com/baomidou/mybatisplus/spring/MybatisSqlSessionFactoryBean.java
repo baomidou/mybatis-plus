@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.MybatisXMLMapperBuilder;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.SqlRunner;
+import com.baomidou.mybatisplus.plugins.EWParamInterceptor;
 import com.baomidou.mybatisplus.toolkit.PackageHelper;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.ErrorContext;
@@ -496,6 +497,8 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 				}
 			}
 		}
+		//#200
+		configuration.addInterceptor(new EWParamInterceptor());//add last, work first
 
 		if (hasLength(this.typeHandlersPackage)) {
 			String[] typeHandlersPackageArray = tokenizeToStringArray(this.typeHandlersPackage,
