@@ -1,12 +1,14 @@
 package com.baomidou.mybatisplus.plugins;
 
 import java.lang.reflect.Field;
-import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.ibatis.executor.statement.StatementHandler;
+import org.apache.ibatis.builder.StaticSqlSource;
+import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
@@ -17,12 +19,18 @@ import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
-import org.apache.ibatis.type.TypeException;
+import org.apache.ibatis.session.Configuration;
 
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.annotations.Version;
-import com.baomidou.mybatisplus.toolkit.PluginUtils;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
+
+import net.sf.jsqlparser.expression.BinaryExpression;
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.LongValue;
+import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
+import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.statement.update.Update;
 
 /**
  * MyBatis乐观锁插件
@@ -34,49 +42,45 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  * 
  * @author TaoYu
  */
-@Intercepts({ @Signature(type = StatementHandler.class, method = "prepare", args = { Connection.class, Integer.class }) })
+@Intercepts({ @Signature(type = Executor.class, method = "update", args = { MappedStatement.class, Object.class }) })
 public class OptimisticLockerInterceptor implements Interceptor {
 
 	private static final Map<Class<?>, VersionPo> versionCache = new ConcurrentHashMap<Class<?>, VersionPo>();
 
 	public Object intercept(Invocation invocation) throws Exception {
-		StatementHandler handler = (StatementHandler) PluginUtils.realTarget(invocation.getTarget());
-		MetaObject metaObject = SystemMetaObject.forObject(handler);
-		MappedStatement ms = (MappedStatement) metaObject.getValue("delegate.mappedStatement");
-		if (ms.getSqlCommandType() != SqlCommandType.UPDATE) {
+		// 先判断入参为null或者不是真正的UPDATE语句
+		MappedStatement ms = (MappedStatement) invocation.getArgs()[0];
+		Object parameterObject = invocation.getArgs()[1];
+		if (parameterObject == null || !ms.getSqlCommandType().equals(SqlCommandType.UPDATE)) {
 			return invocation.proceed();
 		}
-		BoundSql boundSql = (BoundSql) metaObject.getValue("delegate.boundSql");
-		Object parameterObject = boundSql.getParameterObject();
-		if (parameterObject == null) {
-			return invocation.proceed();
-		}
+		// 获得参数类型,去缓存中快速判断是否有version注解才继续执行
 		Class<? extends Object> parameterClass = parameterObject.getClass();
-
 		VersionPo versionPo = versionCache.get(parameterClass);
-		if (versionPo != null && versionPo.isVersionControl) {
-			toVersionSql(metaObject, boundSql, parameterObject, versionPo);
-
+		if (versionPo != null) {
+			if (versionPo.isVersionControl) {
+				processChangeSql(ms, parameterObject, versionPo);
+			}
 		} else {
 			String versionColumn = null;
-			String versionProperty = null;
-			Class<?> versionType = null;
+			Field versionField = null;
 			for (Field field : parameterClass.getDeclaredFields()) {
 				if (field.isAnnotationPresent(Version.class)) {
-					versionProperty = field.getName();
-					versionType = field.getType();
-					if (field.isAnnotationPresent(TableName.class)) {
-						versionColumn = field.getAnnotation(TableName.class).value();
+					versionField = field;
+					TableName tableName = field.getAnnotation(TableName.class);
+					if (tableName != null) {
+						versionColumn = tableName.value();
 					} else {
 						versionColumn = field.getName();
 					}
 					break;
 				}
 			}
-			if (StringUtils.isNotEmpty(versionColumn)) {
-				versionPo = new VersionPo(true, versionProperty, versionColumn, versionType);
-				versionCache.put(parameterClass, versionPo);
-				toVersionSql(metaObject, boundSql, parameterObject, versionPo);
+			if (versionField != null) {
+				versionField.setAccessible(true);
+				VersionPo cachePo = new VersionPo(true, versionColumn, versionField);
+				versionCache.put(parameterClass, cachePo);
+				processChangeSql(ms, parameterObject, cachePo);
 			} else {
 				versionCache.put(parameterClass, new VersionPo(false));
 			}
@@ -85,28 +89,44 @@ public class OptimisticLockerInterceptor implements Interceptor {
 
 	}
 
-	private void toVersionSql(MetaObject metaObject, BoundSql boundSql, Object parameterObject, VersionPo versionPo) throws Exception {
-		final String versionProperty = versionPo.versionProperty;
-		Object originalVersion = metaObject.getValue("delegate.boundSql.parameterObject." + versionProperty);
-		if (originalVersion != null) {
-			final Class<?> versionType = versionPo.versionType;
-			final String versionColumn = versionPo.versionColumn;
-			Object increValue = null;
-			if (versionType.equals(Integer.class) || versionType.equals(int.class)) {
-				increValue = (Integer) originalVersion + 1;
-			} else if (versionType.equals(Long.class) || versionType.equals(long.class)) {
-				increValue = (Long) originalVersion + 1;
-			} else {
-				throw new TypeException("Property " + versionProperty + " in " + parameterObject.getClass().getSimpleName() + " must be [ long, int ] or [ Long, Integer ]");
+	private void processChangeSql(MappedStatement ms, Object parameterObject, VersionPo versionPo) throws Exception {
+		Field versionField = versionPo.versionField;
+		String versionColumn = versionPo.versionColumn;
+		final Object paramVersionValue = versionField.get(parameterObject);
+		if (paramVersionValue != null) {// 先判断传参是否携带version,没带跳过插件,不可能去数据库查吧
+			Configuration configuration = ms.getConfiguration();
+			BoundSql boundSql = ms.getBoundSql(parameterObject);
+			String originalSql = boundSql.getSql();
+			Update parse = (Update) CCJSqlParserUtil.parse(originalSql);
+			List<net.sf.jsqlparser.schema.Column> columns = parse.getColumns();
+			List<String> columnNames = new ArrayList<String>();
+			for (net.sf.jsqlparser.schema.Column column : columns) {
+				columnNames.add(column.getColumnName());
 			}
-			metaObject.setValue("delegate.boundSql.parameterObject." + versionProperty, increValue);
-			String versionSql = new StringBuilder(boundSql.getSql()).append(" AND ").append(versionColumn).append(" = " + originalVersion).toString();
-			metaObject.setValue("delegate.boundSql.sql", versionSql);
+			if (!columnNames.contains(versionColumn)) {// 如果sql没有version手动加一个
+				columns.add(new net.sf.jsqlparser.schema.Column(versionColumn));
+				parse.setColumns(columns);
+			}
+			BinaryExpression expression = (BinaryExpression) parse.getWhere();
+			if (expression != null && !expression.toString().contains(versionColumn)) {
+				EqualsTo equalsTo = new EqualsTo();
+				equalsTo.setLeftExpression(new net.sf.jsqlparser.schema.Column(versionColumn));
+				LongValue longValue = new LongValue(paramVersionValue.toString());
+				equalsTo.setRightExpression(longValue);
+
+				parse.setWhere(new AndExpression(expression, equalsTo));
+
+				List<Expression> expressions = parse.getExpressions();
+				expressions.add(new LongValue(longValue.getValue() + 1));
+				parse.setExpressions(expressions);
+			}
+			MetaObject metaObject = SystemMetaObject.forObject(ms);
+			metaObject.setValue("sqlSource", new StaticSqlSource(configuration, parse.toString(), boundSql.getParameterMappings()));
 		}
 	}
 
 	public Object plugin(Object target) {
-		if (target instanceof StatementHandler) {
+		if (target instanceof Executor) {
 			return Plugin.wrap(target, this);
 		}
 		return target;
@@ -119,23 +139,18 @@ public class OptimisticLockerInterceptor implements Interceptor {
 
 		private Boolean isVersionControl;
 
-		private String versionProperty;
-
 		private String versionColumn;
 
-		private Class<?> versionType;
+		private Field versionField;
 
 		public VersionPo(Boolean isVersionControl) {
-			super();
 			this.isVersionControl = isVersionControl;
 		}
 
-		public VersionPo(Boolean isVersionControl, String versionProperty, String versionColumn, Class<?> versionType) {
-			super();
+		public VersionPo(Boolean isVersionControl, String versionColumn, Field versionField) {
 			this.isVersionControl = isVersionControl;
-			this.versionProperty = versionProperty;
 			this.versionColumn = versionColumn;
-			this.versionType = versionType;
+			this.versionField = versionField;
 		}
 	}
 }
