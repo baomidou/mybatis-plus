@@ -123,7 +123,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 			}
 			batchSqlSession.flushStatements();
 		} catch (Exception e) {
-			logger.warn("Error: Cannot execute insertBatch Method. Cause:" + e);
+			logger.error("Error: Cannot execute insertBatch Method. Cause:" + e);
 			return false;
 		} finally {
 			batchSqlSession.close();
@@ -185,7 +185,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 			}
 			batchSqlSession.flushStatements();
 		} catch (Exception e) {
-			logger.warn("Error: Cannot execute insertOrUpdateBatch Method. Cause:" + e);
+			logger.error("Error: Cannot execute insertOrUpdateBatch Method. Cause:" + e);
 			return false;
 		} finally {
 			batchSqlSession.close();
@@ -240,7 +240,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 			}
 			batchSqlSession.flushStatements();
 		} catch (Exception e) {
-			logger.warn("Error: Cannot execute insertBatch Method. Cause:" + e);
+			logger.error("Error: Cannot execute insertBatch Method. Cause:" + e);
 			return false;
 		} finally {
 			batchSqlSession.close();
