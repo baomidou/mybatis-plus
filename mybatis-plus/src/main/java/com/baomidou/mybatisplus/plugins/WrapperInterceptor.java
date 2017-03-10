@@ -15,9 +15,8 @@
  */
 package com.baomidou.mybatisplus.plugins;
 
-import java.util.Map;
-import java.util.Properties;
-
+import com.baomidou.mybatisplus.mapper.Condition;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.plugin.Interceptor;
@@ -28,38 +27,49 @@ import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
-import com.baomidou.mybatisplus.mapper.Wrapper;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * <p>
- * EntityWrapper ew.and("test_date>{0} and test_date<{1}", Date date1, Date date2):<BR>
- * sql segment will be replaced like: test_date>#{MPGENVAL1} and test_date<#{MPGENVAL2},<BR>
+ * EntityWrapper ew.and("test_date>{0} and test_date<{1}", Date date1, Date
+ * date2):<BR>
+ * sql segment will be replaced like: test_date>#{MPGENVAL1} and
+ * test_date<#{MPGENVAL2},<BR>
  * the parameter MPGENVAL1,MPGENVAL2 should be included in parameter map.<BR>
  * </p>
  *
  * @author yuxiaobin
  * @Date 2017-3-9
  */
-@Intercepts({ 
-	@Signature(type = Executor.class, method = "query", args = { MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class }),
-	@Signature(type = Executor.class, method = "update", args = { MappedStatement.class, Object.class}),
-})
-public class EWParamInterceptor implements Interceptor {
-	
-	//#200
+@Intercepts({
+		@Signature(type = Executor.class, method = "query", args = { MappedStatement.class, Object.class, RowBounds.class,
+				ResultHandler.class }),
+		@Signature(type = Executor.class, method = "update", args = { MappedStatement.class, Object.class }), })
+public class WrapperInterceptor implements Interceptor {
+
+	// #200
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public Object intercept(Invocation invocation) throws Throwable {
 		Object[] args = invocation.getArgs();
-		if(args[1] instanceof Map){
-			Map mp = (Map) args[1];
-			if(mp.containsKey("ew")){
-				Object ewObj = mp.get("ew");
-				if(ewObj instanceof Wrapper){
-					Wrapper ew = (Wrapper) ewObj;
-					mp.putAll(ew.getParamNameValuePairs());
-				}
-			}
-		}
+		if (args[1] instanceof Map) {
+			Map<String, Object> mp = (Map<String, Object>) args[1];
+            Collection<Object> values = mp.values();
+            Iterator<Object> iterator = values.iterator();
+            Wrapper wrapper = null ;
+            while (iterator.hasNext()){
+                Object obj = iterator.next();
+                if (obj instanceof Wrapper) {
+                    wrapper = (Wrapper) obj;
+                    break;
+                }
+            }
+            if (wrapper != null && !wrapper.equals(Condition.Empty())){
+                mp.putAll(wrapper.getParamNameValuePairs());
+            }
+        }
 		return invocation.proceed();
 
 	}
