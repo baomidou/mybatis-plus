@@ -15,18 +15,13 @@
  */
 package com.baomidou.mybatisplus.test.mysql;
 
+import com.baomidou.mybatisplus.test.mysql.entity.User;
+import com.baomidou.mybatisplus.test.mysql.service.IUserService;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import com.baomidou.mybatisplus.test.mysql.entity.User;
-import com.baomidou.mybatisplus.test.mysql.service.IUserService;
 
 /**
  * <p>
@@ -36,13 +31,13 @@ import com.baomidou.mybatisplus.test.mysql.service.IUserService;
  * @author hubin
  * @date 2017-01-30
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({ "classpath:spring/spring-servlet.xml" })
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration({ "classpath:spring/spring-servlet.xml" })
 public class ServiceImplTest {
 	@Autowired
 	private IUserService userService;
 
-	@Test
+	//@Test
 	public void testInsertBatch() throws IOException {
 		List<User> userList = new ArrayList<User>();
 		for (int i = 0; i < 10; i++) {

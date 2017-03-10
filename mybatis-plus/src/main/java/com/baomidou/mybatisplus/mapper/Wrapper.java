@@ -16,21 +16,19 @@
 package com.baomidou.mybatisplus.mapper;
 
 import com.baomidou.mybatisplus.enums.SqlLike;
+import com.baomidou.mybatisplus.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.MapUtils;
+import com.baomidou.mybatisplus.toolkit.SqlUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import org.apache.ibatis.parsing.GenericTokenParser;
-import org.apache.ibatis.parsing.TokenHandler;
 
 /**
  * <p>
@@ -43,8 +41,12 @@ import org.apache.ibatis.parsing.TokenHandler;
 @SuppressWarnings("serial")
 public abstract class Wrapper<T> implements Serializable {
 
-	public static final String OPEN_TOKEN = "#{";
-	public static final String CLOSE_TOKEN = "}";
+	/**
+	 * 占位符
+	 */
+	public static final String PLACE_HOLDER = "{%s}";
+
+	public static final String MYBATIS_PLUS_TOKEN = "#{ew.paramNameValuePairs.%s}";
 
 	private static final String MP_GENERAL_PARAMNAME = "MPGENVAL";
 
@@ -394,7 +396,7 @@ public abstract class Wrapper<T> implements Serializable {
 	 * @return this
 	 */
 	public Wrapper<T> like(String column, String value) {
-		sql.LIKE(column, value, SqlLike.DEFAULT);
+		handerLike(column, value, SqlLike.DEFAULT, false);
 		return this;
 	}
 
@@ -408,8 +410,30 @@ public abstract class Wrapper<T> implements Serializable {
 	 * @return this
 	 */
 	public Wrapper<T> notLike(String column, String value) {
-		sql.NOT_LIKE(column, value, SqlLike.DEFAULT);
+		handerLike(column, value, SqlLike.DEFAULT, true);
 		return this;
+	}
+
+	/**
+	 * 处理LIKE操作
+	 *
+	 * @param column
+	 *            字段名称
+	 * @param value
+	 *            like匹配值
+	 * @param isNot
+	 *            是否为NOT LIKE操作
+	 */
+	private void handerLike(String column, String value, SqlLike type, boolean isNot) {
+		if (StringUtils.isNotEmpty(column) && StringUtils.isNotEmpty(value)) {
+			StringBuilder inSql = new StringBuilder();
+			inSql.append(column);
+			if (isNot) {
+				inSql.append(" NOT");
+			}
+			inSql.append(" LIKE {0}");
+			sql.WHERE(formatSql(String.format("%s = {0}", column), SqlUtils.concatLike(value, type)));
+		}
 	}
 
 	/**
@@ -423,7 +447,7 @@ public abstract class Wrapper<T> implements Serializable {
 	 * @return this
 	 */
 	public Wrapper<T> like(String column, String value, SqlLike type) {
-		sql.LIKE(column, value, type);
+		handerLike(column, value, type, false);
 		return this;
 	}
 
@@ -438,7 +462,7 @@ public abstract class Wrapper<T> implements Serializable {
 	 * @return this
 	 */
 	public Wrapper<T> notLike(String column, String value, SqlLike type) {
-		sql.NOT_LIKE(column, value, type);
+		handerLike(column, value, type, true);
 		return this;
 	}
 
@@ -500,7 +524,9 @@ public abstract class Wrapper<T> implements Serializable {
 	 * @return this
 	 */
 	public Wrapper<T> in(String column, String value) {
-		sql.IN(column, value);
+		if (StringUtils.isNotEmpty(value)) {
+			sql.WHERE(formatSql(inExpression(column, StringUtils.splitWorker(value, ",", -1, false), false), value));
+		}
 		return this;
 	}
 
@@ -514,7 +540,9 @@ public abstract class Wrapper<T> implements Serializable {
 	 * @return this
 	 */
 	public Wrapper<T> notIn(String column, String value) {
-		sql.NOT_IN(column, value);
+		if (StringUtils.isNotEmpty(value)) {
+			sql.WHERE(formatSql(inExpression(column, StringUtils.splitWorker(value, ",", -1, false), true), value));
+		}
 		return this;
 	}
 
@@ -528,7 +556,8 @@ public abstract class Wrapper<T> implements Serializable {
 	 * @return this
 	 */
 	public Wrapper<T> in(String column, Collection<?> value) {
-		sql.IN(column, value);
+		if (CollectionUtils.isNotEmpty(value))
+			sql.WHERE(formatSql(inExpression(column, value, false), value.toArray()));
 		return this;
 	}
 
@@ -542,7 +571,8 @@ public abstract class Wrapper<T> implements Serializable {
 	 * @return this
 	 */
 	public Wrapper<T> notIn(String column, Collection<?> value) {
-		sql.NOT_IN(column, value);
+		if (CollectionUtils.isNotEmpty(value))
+			sql.WHERE(formatSql(inExpression(column, value, true), value.toArray()));
 		return this;
 	}
 
@@ -556,7 +586,8 @@ public abstract class Wrapper<T> implements Serializable {
 	 * @return this
 	 */
 	public Wrapper<T> in(String column, Object[] value) {
-		sql.IN(column, Arrays.asList(value));
+		if (ArrayUtils.isNotEmpty(value))
+			sql.WHERE(formatSql(inExpression(column, Arrays.asList(value), false), value));
 		return this;
 	}
 
@@ -570,8 +601,41 @@ public abstract class Wrapper<T> implements Serializable {
 	 * @return this
 	 */
 	public Wrapper<T> notIn(String column, Object... value) {
-		sql.NOT_IN(column, Arrays.asList(value));
+		if (ArrayUtils.isNotEmpty(value))
+			sql.WHERE(formatSql(inExpression(column, Arrays.asList(value), true), value));
 		return this;
+	}
+
+	/**
+	 * 获取in表达式
+	 *
+	 * @param column
+	 *            字段名称
+	 * @param value
+	 *            集合List
+	 * @param isNot
+	 *            是否为NOT IN操作
+	 */
+	private String inExpression(String column, Collection<?> value, boolean isNot) {
+		if (StringUtils.isNotEmpty(column) && CollectionUtils.isNotEmpty(value)) {
+			StringBuilder inSql = new StringBuilder();
+			inSql.append(column);
+			if (isNot) {
+				inSql.append(" NOT");
+			}
+			inSql.append(" IN ");
+			inSql.append("(");
+			int size = value.size();
+			for (int i = 0; i < size; i++) {
+				inSql.append(String.format(PLACE_HOLDER, i));
+				if (i + 1 < size) {
+					inSql.append(",");
+				}
+			}
+			inSql.append(")");
+			return inSql.toString();
+		}
+		return null;
 	}
 
 	/**
@@ -584,7 +648,7 @@ public abstract class Wrapper<T> implements Serializable {
 	 * @return this
 	 */
 	public Wrapper<T> between(String column, String val1, String val2) {
-		sql.BETWEEN_AND(column, val1, val2);
+		sql.WHERE(formatSql(String.format("%s BETWEEN {0} AND {1}", column), val1, val2));
 		return this;
 	}
 
@@ -663,15 +727,6 @@ public abstract class Wrapper<T> implements Serializable {
 	 * and sample_age&lt;<b>{1}</b>", 18, 30) <b>TO</b>
 	 * sample_name=<b>#{MPGENVAL1}</b> and sample_age&gt;#<b>{MPGENVAL2}</b> and
 	 * sample_age&lt;<b>#{MPGENVAL3}</b><BR>
-	 * OR<BR>
-	 * ew.where("sample_name=<b>#{name}</b>", "haha").and("sample_age
-	 * &gt;<b>#{ageFrom}</b> and sample_age&lt;<b>#{ageTo}</b>", 18,
-	 * 30);//SUPPORTTED<BR>
-	 * BUT<BR>
-	 * {0} and #{value} cannot be mixed used.<BR>
-	 * eg:<BR>
-	 * ew.and("sample_age &gt;{0} and sample_age&lt;#{ageTo}", 18, 30);//not
-	 * support<BR>
 	 * </p>
 	 *
 	 * @param need
@@ -687,34 +742,11 @@ public abstract class Wrapper<T> implements Serializable {
 			return null;
 		}
 		// #200
-		MpTokenHandler handler = new MpTokenHandler();
-		GenericTokenParser parser = new GenericTokenParser(OPEN_TOKEN, CLOSE_TOKEN, handler);
-		parser.parse(sqlStr);
-		if (handler.hasParam()) {
-			List<String> paramNames = handler.getParamNames();
-			if (paramNames != null && !paramNames.isEmpty()) {
-				int parmNameSize = paramNames.size();
-				int parmArgSize = params == null ? 0 : params.length;
-				if (parmNameSize > parmArgSize) {
-					for (int i = 0; i < parmArgSize; ++i) {
-						paramNameValuePairs.put(paramNames.get(i), params[i]);
-					}
-				} else {
-					for (int i = 0; i < parmNameSize; ++i) {
-						paramNameValuePairs.put(paramNames.get(i), params[i]);
-					}
-				}
-			}
-		} else {
-			if (params != null && params.length != 0) {
-				int size = params.length;
-				String[] paramNames = new String[size];
-				for (int i = 0; i < size; ++i) {
-					String genParamName = MP_GENERAL_PARAMNAME + paramNameSeq.incrementAndGet();
-					paramNames[i] = genParamName;
-					sqlStr = sqlStr.replace("{" + i + "}", OPEN_TOKEN + genParamName + CLOSE_TOKEN);
-					paramNameValuePairs.put(genParamName, params[i]);
-				}
+		if (ArrayUtils.isNotEmpty(params)) {
+			for (int i = 0; i < params.length; ++i) {
+				String genParamName = MP_GENERAL_PARAMNAME + paramNameSeq.incrementAndGet();
+				sqlStr = sqlStr.replace(String.format(PLACE_HOLDER, i), String.format(MYBATIS_PLUS_TOKEN, genParamName));
+				paramNameValuePairs.put(genParamName, params[i]);
 			}
 		}
 		return sqlStr;
@@ -742,23 +774,4 @@ public abstract class Wrapper<T> implements Serializable {
 	public Map<String, Object> getParamNameValuePairs() {
 		return paramNameValuePairs;
 	}
-}
-
-class MpTokenHandler implements TokenHandler {
-
-	private List<String> paramNames = new ArrayList<String>(4);
-
-	public String handleToken(String content) {
-		paramNames.add(content);
-		return content;
-	}
-
-	public List<String> getParamNames() {
-		return paramNames;
-	}
-
-	public boolean hasParam() {
-		return !paramNames.isEmpty();
-	}
-
 }

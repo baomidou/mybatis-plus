@@ -15,16 +15,6 @@
  */
 package com.baomidou.mybatisplus.test;
 
-import java.io.InputStream;
-import java.util.Date;
-import java.util.UUID;
-
-import org.apache.commons.dbcp2.BasicDataSource;
-import org.apache.ibatis.session.RowBounds;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.junit.Assert;
-
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.mapper.Condition;
@@ -32,6 +22,15 @@ import com.baomidou.mybatisplus.test.mysql.entity.NotPK;
 import com.baomidou.mybatisplus.test.mysql.entity.Test;
 import com.baomidou.mybatisplus.test.mysql.mapper.NotPKMapper;
 import com.baomidou.mybatisplus.test.mysql.mapper.TestMapper;
+import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.ibatis.session.RowBounds;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.junit.Assert;
+
+import java.io.InputStream;
+import java.util.Date;
+import java.util.UUID;
 
 /**
  * <p>
@@ -80,7 +79,7 @@ public class GlobalConfigurationTest {
 		Assert.assertTrue(num > 0);
 		NotPK notPK1 = pkMapper.selectOne(notPK);
 		Assert.assertNotNull(notPK1);
-		pkMapper.selectPage(RowBounds.DEFAULT, Condition.Empty());
+		pkMapper.selectPage(RowBounds.DEFAULT, Condition.instance().eq("type",12121212));
 		NotPK notPK2 = null;
 		try {
 			notPK2 = pkMapper.selectById("1");

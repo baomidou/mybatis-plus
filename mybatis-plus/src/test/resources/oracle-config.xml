@@ -62,9 +62,6 @@
         <plugin interceptor="com.baomidou.mybatisplus.plugins.PaginationInterceptor">
             <property name="dialectType" value="oracle" />
         </plugin>
-        <!-- EntityWrapper 参数{0},{1}支持全数据类型(Date, Time..) Add last, work first-->
-        <plugin interceptor="com.baomidou.mybatisplus.plugins.EWParamInterceptor">
-        </plugin>
     </plugins>
 
 	<!-- 环境配置 -->
