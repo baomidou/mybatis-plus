@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.plugins;
 
+import com.baomidou.mybatisplus.mapper.Condition;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -57,14 +58,18 @@ public class WrapperInterceptor implements Interceptor {
 			Map<String, Object> mp = (Map<String, Object>) args[1];
             Collection<Object> values = mp.values();
             Iterator<Object> iterator = values.iterator();
+            Wrapper wrapper = null ;
             while (iterator.hasNext()){
                 Object obj = iterator.next();
                 if (obj instanceof Wrapper) {
-                    Wrapper ew = (Wrapper) obj;
-                    mp.putAll(ew.getParamNameValuePairs());
+                    wrapper = (Wrapper) obj;
+                    break;
                 }
             }
-		}
+            if (wrapper != null && !wrapper.equals(Condition.Empty())){
+                mp.putAll(wrapper.getParamNameValuePairs());
+            }
+        }
 		return invocation.proceed();
 
 	}
