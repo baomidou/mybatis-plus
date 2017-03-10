@@ -24,7 +24,6 @@ import org.apache.ibatis.session.Configuration;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.annotations.Version;
 
-import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
@@ -109,14 +108,14 @@ public class OptimisticLockerInterceptor implements Interceptor {
 				columns.add(new Column(versionColumn));
 				parse.setColumns(columns);
 			}
-			BinaryExpression expression = (BinaryExpression) parse.getWhere();
-			if (expression != null && !expression.toString().contains(versionColumn)) {
+			Expression whereExpression = parse.getWhere();
+			if (whereExpression != null && !whereExpression.toString().contains(versionColumn)) {
 				EqualsTo equalsTo = new EqualsTo();
 				equalsTo.setLeftExpression(new Column(versionColumn));
 				LongValue longValue = new LongValue(paramVersionValue.toString());
 				equalsTo.setRightExpression(longValue);
 
-				parse.setWhere(new AndExpression(equalsTo, expression));
+				parse.setWhere(new AndExpression(equalsTo, CCJSqlParserUtil.parseCondExpression("("+whereExpression+")")));
 
 				List<Expression> expressions = parse.getExpressions();
 				expressions.add(new LongValue(longValue.getValue() + 1));
