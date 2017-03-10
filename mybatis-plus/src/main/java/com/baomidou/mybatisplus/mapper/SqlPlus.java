@@ -16,10 +16,7 @@
 package com.baomidou.mybatisplus.mapper;
 
 import com.baomidou.mybatisplus.MybatisAbstractSQL;
-import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
-
-import java.util.Collection;
 
 /**
  * <p>
@@ -65,62 +62,6 @@ public class SqlPlus extends MybatisAbstractSQL<SqlPlus> {
 	}
 
 	/**
-	 * 将IN语句添加到WHERE条件中
-	 *
-	 * @param column
-	 *            字段名
-	 * @param value
-	 *            List集合
-	 * @return
-	 */
-	public SqlPlus IN(String column, Collection<?> value) {
-		handerIn(column, value, false);
-		return this;
-	}
-
-	/**
-	 * 将IN语句添加到WHERE条件中
-	 *
-	 * @param column
-	 *            字段名
-	 * @param value
-	 *            List集合
-	 * @return
-	 */
-	public SqlPlus NOT_IN(String column, Collection<?> value) {
-		handerIn(column, value, true);
-		return this;
-	}
-
-	/**
-	 * 将IN语句添加到WHERE条件中
-	 *
-	 * @param column
-	 *            字段名
-	 * @param value
-	 *            逗号拼接的字符串
-	 * @return
-	 */
-	public SqlPlus IN(String column, String value) {
-		handerIn(column, value, false);
-		return this;
-	}
-
-	/**
-	 * 将IN语句添加到WHERE条件中
-	 *
-	 * @param column
-	 *            字段名
-	 * @param value
-	 *            逗号拼接的字符串
-	 * @return
-	 */
-	public SqlPlus NOT_IN(String column, String value) {
-		handerIn(column, value, true);
-		return this;
-	}
-
-	/**
 	 * 将EXISTS语句添加到WHERE条件中
 	 *
 	 * @param value
@@ -158,45 +99,6 @@ public class SqlPlus extends MybatisAbstractSQL<SqlPlus> {
 	public SqlPlus NOT_EXISTS(String value) {
 		handerExists(value, true);
 		return this;
-	}
-
-	/**
-	 * 处理IN操作
-	 *
-	 * @param column
-	 *            字段名称
-	 * @param value
-	 *            集合List
-	 * @param isNot
-	 *            是否为NOT IN操作
-	 */
-	private void handerIn(String column, Collection<?> value, boolean isNot) {
-		if (StringUtils.isNotEmpty(column) && CollectionUtils.isNotEmpty(value)) {
-			StringBuilder inSql = new StringBuilder();
-			inSql.append(column);
-			if (isNot) {
-				inSql.append(" NOT");
-			}
-			inSql.append(" IN ");
-			inSql.append(StringUtils.quotaMarkList(value));
-			WHERE(inSql.toString());
-		}
-	}
-
-	/**
-	 * 处理IN操作
-	 *
-	 * @param column
-	 *            字段名称
-	 * @param value
-	 *            逗号拼接的字符串
-	 * @param isNot
-	 *            是否为NOT IN操作
-	 */
-	private void handerIn(String column, String value, boolean isNot) {
-		if (StringUtils.isNotEmpty(column) && StringUtils.isNotEmpty(value)) {
-			handerIn(column, StringUtils.splitWorker(value, ",", -1, false), isNot);
-		}
 	}
 
 	/**

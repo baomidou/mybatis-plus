@@ -16,6 +16,8 @@
 package com.baomidou.mybatisplus.mapper;
 
 import com.baomidou.mybatisplus.enums.SqlLike;
+import com.baomidou.mybatisplus.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.MapUtils;
 import com.baomidou.mybatisplus.toolkit.SqlUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
@@ -38,6 +40,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @SuppressWarnings("serial")
 public abstract class Wrapper<T> implements Serializable {
+
+	/**
+	 * 占位符
+	 */
+	public static final String PLACE_HOLDER = "{%s}";
 
 	public static final String MYBATIS_PLUS_TOKEN = "#{ew.paramNameValuePairs.%s}";
 
@@ -517,7 +524,9 @@ public abstract class Wrapper<T> implements Serializable {
 	 * @return this
 	 */
 	public Wrapper<T> in(String column, String value) {
-		sql.IN(column, value);
+		if (StringUtils.isNotEmpty(value)) {
+			sql.WHERE(formatSql(inExpression(column, StringUtils.splitWorker(value, ",", -1, false), false), value));
+		}
 		return this;
 	}
 
@@ -531,7 +540,9 @@ public abstract class Wrapper<T> implements Serializable {
 	 * @return this
 	 */
 	public Wrapper<T> notIn(String column, String value) {
-		sql.NOT_IN(column, value);
+		if (StringUtils.isNotEmpty(value)) {
+			sql.WHERE(formatSql(inExpression(column, StringUtils.splitWorker(value, ",", -1, false), true), value));
+		}
 		return this;
 	}
 
@@ -545,7 +556,8 @@ public abstract class Wrapper<T> implements Serializable {
 	 * @return this
 	 */
 	public Wrapper<T> in(String column, Collection<?> value) {
-		sql.IN(column, value);
+		if (CollectionUtils.isNotEmpty(value))
+			sql.WHERE(formatSql(inExpression(column, value, false), value.toArray()));
 		return this;
 	}
 
@@ -559,7 +571,8 @@ public abstract class Wrapper<T> implements Serializable {
 	 * @return this
 	 */
 	public Wrapper<T> notIn(String column, Collection<?> value) {
-		sql.NOT_IN(column, value);
+		if (CollectionUtils.isNotEmpty(value))
+			sql.WHERE(formatSql(inExpression(column, value, true), value.toArray()));
 		return this;
 	}
 
@@ -573,7 +586,8 @@ public abstract class Wrapper<T> implements Serializable {
 	 * @return this
 	 */
 	public Wrapper<T> in(String column, Object[] value) {
-		sql.IN(column, Arrays.asList(value));
+		if (ArrayUtils.isNotEmpty(value))
+			sql.WHERE(formatSql(inExpression(column, Arrays.asList(value), false), value));
 		return this;
 	}
 
@@ -587,8 +601,41 @@ public abstract class Wrapper<T> implements Serializable {
 	 * @return this
 	 */
 	public Wrapper<T> notIn(String column, Object... value) {
-		sql.NOT_IN(column, Arrays.asList(value));
+		if (ArrayUtils.isNotEmpty(value))
+			sql.WHERE(formatSql(inExpression(column, Arrays.asList(value), true), value));
 		return this;
+	}
+
+	/**
+	 * 获取in表达式
+	 *
+	 * @param column
+	 *            字段名称
+	 * @param value
+	 *            集合List
+	 * @param isNot
+	 *            是否为NOT IN操作
+	 */
+	private String inExpression(String column, Collection<?> value, boolean isNot) {
+		if (StringUtils.isNotEmpty(column) && CollectionUtils.isNotEmpty(value)) {
+			StringBuilder inSql = new StringBuilder();
+			inSql.append(column);
+			if (isNot) {
+				inSql.append(" NOT");
+			}
+			inSql.append(" IN ");
+			inSql.append("(");
+			int size = value.size();
+			for (int i = 0; i < size; i++) {
+				inSql.append(String.format(PLACE_HOLDER, i));
+				if (i + 1 < size) {
+					inSql.append(",");
+				}
+			}
+			inSql.append(")");
+			return inSql.toString();
+		}
+		return null;
 	}
 
 	/**
@@ -695,10 +742,10 @@ public abstract class Wrapper<T> implements Serializable {
 			return null;
 		}
 		// #200
-		if (params != null && params.length != 0) {
+		if (ArrayUtils.isNotEmpty(params)) {
 			for (int i = 0; i < params.length; ++i) {
 				String genParamName = MP_GENERAL_PARAMNAME + paramNameSeq.incrementAndGet();
-				sqlStr = sqlStr.replace("{" + i + "}", String.format(MYBATIS_PLUS_TOKEN, genParamName));
+				sqlStr = sqlStr.replace(String.format(PLACE_HOLDER, i), String.format(MYBATIS_PLUS_TOKEN, genParamName));
 				paramNameValuePairs.put(genParamName, params[i]);
 			}
 		}
