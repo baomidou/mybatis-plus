@@ -30,6 +30,7 @@ import net.sf.jsqlparser.expression.LongValue;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.update.Update;
 
 /**
@@ -98,23 +99,23 @@ public class OptimisticLockerInterceptor implements Interceptor {
 			BoundSql boundSql = ms.getBoundSql(parameterObject);
 			String originalSql = boundSql.getSql();
 			Update parse = (Update) CCJSqlParserUtil.parse(originalSql);
-			List<net.sf.jsqlparser.schema.Column> columns = parse.getColumns();
+			List<Column> columns = parse.getColumns();
 			List<String> columnNames = new ArrayList<String>();
-			for (net.sf.jsqlparser.schema.Column column : columns) {
+			for (Column column : columns) {
 				columnNames.add(column.getColumnName());
 			}
 			if (!columnNames.contains(versionColumn)) {// 如果sql没有version手动加一个
-				columns.add(new net.sf.jsqlparser.schema.Column(versionColumn));
+				columns.add(new Column(versionColumn));
 				parse.setColumns(columns);
 			}
 			BinaryExpression expression = (BinaryExpression) parse.getWhere();
 			if (expression != null && !expression.toString().contains(versionColumn)) {
 				EqualsTo equalsTo = new EqualsTo();
-				equalsTo.setLeftExpression(new net.sf.jsqlparser.schema.Column(versionColumn));
+				equalsTo.setLeftExpression(new Column(versionColumn));
 				LongValue longValue = new LongValue(paramVersionValue.toString());
 				equalsTo.setRightExpression(longValue);
 
-				parse.setWhere(new AndExpression(expression, equalsTo));
+				parse.setWhere(new AndExpression(equalsTo, expression));
 
 				List<Expression> expressions = parse.getExpressions();
 				expressions.add(new LongValue(longValue.getValue() + 1));
