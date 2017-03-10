@@ -39,6 +39,7 @@ import net.sf.jsqlparser.statement.update.Update;
  * <pre>
  * 只支持int和long类型,使用插件需要在需要在 启用的
  * 对象上的version字段上添加{@link Version}注解
+ * 注意只要update的对象version有值就会执行执行操作不论底层是否有set version =?
  * </pre>
  * 
  * @author TaoYu
