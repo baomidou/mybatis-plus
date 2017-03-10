@@ -73,9 +73,6 @@
         <plugin interceptor="com.baomidou.mybatisplus.plugins.SqlExplainInterceptor">
             <property name="stopProceed" value="false"/>
         </plugin>
-        <!-- EntityWrapper 参数{0},{1}支持全数据类型(Date, Time..) Add last, work first-->
-        <plugin interceptor="com.baomidou.mybatisplus.plugins.WrapperInterceptor">
-        </plugin>
     </plugins>
 
     <!-- 环境配置 -->

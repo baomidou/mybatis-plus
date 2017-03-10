@@ -21,7 +21,6 @@ import com.baomidou.mybatisplus.MybatisXMLMapperBuilder;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.SqlRunner;
-import com.baomidou.mybatisplus.plugins.WrapperInterceptor;
 import com.baomidou.mybatisplus.toolkit.PackageHelper;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.ErrorContext;
@@ -488,27 +487,15 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 				}
 			}
 		}
-		
-		//#200
-		WrapperInterceptor ewIntcpt = null;
+
 		if (!isEmpty(this.plugins)) {
 			for (Interceptor plugin : this.plugins) {
-				if(plugin instanceof WrapperInterceptor){
-					ewIntcpt = (WrapperInterceptor) plugin;
-					continue;//add last, work first
-				}
 				configuration.addInterceptor(plugin);
 				if (LOGGER.isDebugEnabled()) {
 					LOGGER.debug("Registered plugin: '" + plugin + "'");
 				}
 			}
 		}
-		//#200
-		if(ewIntcpt==null){
-			ewIntcpt = new WrapperInterceptor();
-		}
-		configuration.addInterceptor(ewIntcpt);//add last, work first
-		//#200--End--
 
 		if (hasLength(this.typeHandlersPackage)) {
 			String[] typeHandlersPackageArray = tokenizeToStringArray(this.typeHandlersPackage,

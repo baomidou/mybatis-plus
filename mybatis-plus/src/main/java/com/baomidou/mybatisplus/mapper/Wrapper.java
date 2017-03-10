@@ -20,17 +20,12 @@ import com.baomidou.mybatisplus.toolkit.MapUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import org.apache.ibatis.parsing.GenericTokenParser;
-import org.apache.ibatis.parsing.TokenHandler;
 
 /**
  * <p>
@@ -43,8 +38,7 @@ import org.apache.ibatis.parsing.TokenHandler;
 @SuppressWarnings("serial")
 public abstract class Wrapper<T> implements Serializable {
 
-	public static final String OPEN_TOKEN = "#{";
-	public static final String CLOSE_TOKEN = "}";
+	public static final String MYBATIS_PLUS_TOKEN = "#{ew.paramNameValuePairs.%s}";
 
 	private static final String MP_GENERAL_PARAMNAME = "MPGENVAL";
 
@@ -687,34 +681,14 @@ public abstract class Wrapper<T> implements Serializable {
 			return null;
 		}
 		// #200
-		MpTokenHandler handler = new MpTokenHandler();
-		GenericTokenParser parser = new GenericTokenParser(OPEN_TOKEN, CLOSE_TOKEN, handler);
-		parser.parse(sqlStr);
-		if (handler.hasParam()) {
-			List<String> paramNames = handler.getParamNames();
-			if (paramNames != null && !paramNames.isEmpty()) {
-				int parmNameSize = paramNames.size();
-				int parmArgSize = params == null ? 0 : params.length;
-				if (parmNameSize > parmArgSize) {
-					for (int i = 0; i < parmArgSize; ++i) {
-						paramNameValuePairs.put(paramNames.get(i), params[i]);
-					}
-				} else {
-					for (int i = 0; i < parmNameSize; ++i) {
-						paramNameValuePairs.put(paramNames.get(i), params[i]);
-					}
-				}
-			}
-		} else {
-			if (params != null && params.length != 0) {
-				int size = params.length;
-				String[] paramNames = new String[size];
-				for (int i = 0; i < size; ++i) {
-					String genParamName = MP_GENERAL_PARAMNAME + paramNameSeq.incrementAndGet();
-					paramNames[i] = genParamName;
-					sqlStr = sqlStr.replace("{" + i + "}", OPEN_TOKEN + genParamName + CLOSE_TOKEN);
-					paramNameValuePairs.put(genParamName, params[i]);
-				}
+		if (params != null && params.length != 0) {
+			int size = params.length;
+			String[] paramNames = new String[size];
+			for (int i = 0; i < size; ++i) {
+				String genParamName = MP_GENERAL_PARAMNAME + paramNameSeq.incrementAndGet();
+				paramNames[i] = genParamName;
+				sqlStr = sqlStr.replace("{" + i + "}", String.format(MYBATIS_PLUS_TOKEN, genParamName));
+				paramNameValuePairs.put(genParamName, params[i]);
 			}
 		}
 		return sqlStr;
@@ -742,23 +716,4 @@ public abstract class Wrapper<T> implements Serializable {
 	public Map<String, Object> getParamNameValuePairs() {
 		return paramNameValuePairs;
 	}
-}
-
-class MpTokenHandler implements TokenHandler {
-
-	private List<String> paramNames = new ArrayList<String>(4);
-
-	public String handleToken(String content) {
-		paramNames.add(content);
-		return content;
-	}
-
-	public List<String> getParamNames() {
-		return paramNames;
-	}
-
-	public boolean hasParam() {
-		return !paramNames.isEmpty();
-	}
-
 }
