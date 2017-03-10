@@ -657,15 +657,6 @@ public abstract class Wrapper<T> implements Serializable {
 	 * and sample_age&lt;<b>{1}</b>", 18, 30) <b>TO</b>
 	 * sample_name=<b>#{MPGENVAL1}</b> and sample_age&gt;#<b>{MPGENVAL2}</b> and
 	 * sample_age&lt;<b>#{MPGENVAL3}</b><BR>
-	 * OR<BR>
-	 * ew.where("sample_name=<b>#{name}</b>", "haha").and("sample_age
-	 * &gt;<b>#{ageFrom}</b> and sample_age&lt;<b>#{ageTo}</b>", 18,
-	 * 30);//SUPPORTTED<BR>
-	 * BUT<BR>
-	 * {0} and #{value} cannot be mixed used.<BR>
-	 * eg:<BR>
-	 * ew.and("sample_age &gt;{0} and sample_age&lt;#{ageTo}", 18, 30);//not
-	 * support<BR>
 	 * </p>
 	 *
 	 * @param need
@@ -682,11 +673,8 @@ public abstract class Wrapper<T> implements Serializable {
 		}
 		// #200
 		if (params != null && params.length != 0) {
-			int size = params.length;
-			String[] paramNames = new String[size];
-			for (int i = 0; i < size; ++i) {
+			for (int i = 0; i < params.length; ++i) {
 				String genParamName = MP_GENERAL_PARAMNAME + paramNameSeq.incrementAndGet();
-				paramNames[i] = genParamName;
 				sqlStr = sqlStr.replace("{" + i + "}", String.format(MYBATIS_PLUS_TOKEN, genParamName));
 				paramNameValuePairs.put(genParamName, params[i]);
 			}
