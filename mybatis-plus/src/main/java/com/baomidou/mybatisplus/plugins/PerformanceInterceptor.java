@@ -55,10 +55,6 @@ public class PerformanceInterceptor implements Interceptor {
 	private long maxTime = 0;
 
 	private boolean format = false;
-	/**
-	 * count 优化方式
-	 */
-	private String optimizeType = "default";
 
 	public Object intercept(Invocation invocation) throws Throwable {
 		Statement statement;
@@ -121,13 +117,5 @@ public class PerformanceInterceptor implements Interceptor {
 
 	public void setFormat(boolean format) {
 		this.format = format;
-	}
-
-	public String getOptimizeType() {
-		return optimizeType;
-	}
-
-	public void setOptimizeType(String optimizeType) {
-		this.optimizeType = optimizeType;
 	}
 }
