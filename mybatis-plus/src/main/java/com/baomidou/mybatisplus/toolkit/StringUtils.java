@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
-import com.baomidou.mybatisplus.enums.SqlLike;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -50,9 +48,9 @@ public class StringUtils {
 	 */
 	public static final String PLACE_HOLDER = "{%s}";
 
-	
-	private StringUtils(){
+	private StringUtils() {
 	}
+
 	/**
 	 * <p>
 	 * 判断字符串是否为空
@@ -249,33 +247,6 @@ public class StringUtils {
 			return StringEscape.escapeString(srcStr);
 		}
 		return srcStr;
-	}
-
-	/**
-	 * <p>
-	 * 用%连接like
-	 * </p>
-	 *
-	 * @param str
-	 *            原字符串
-	 * @return
-	 */
-	public static String concatLike(String str, SqlLike type) {
-		StringBuilder builder = new StringBuilder(str.length() + 3);
-		switch (type) {
-		case LEFT:
-			builder.append("%").append(str);
-			break;
-		case RIGHT:
-			builder.append(str).append("%");
-			break;
-		case CUSTOM:
-			builder.append(str);
-			break;
-		default:
-			builder.append("%").append(str).append("%");
-		}
-		return StringEscape.escapeString(builder.toString());
 	}
 
 	/**
@@ -557,7 +528,8 @@ public class StringUtils {
 	 *            treated as one separator.
 	 * @return an array of parsed Strings, {@code null} if null String input
 	 */
-	public static List<String> splitWorker(final String str, final String separatorChars, final int max, final boolean preserveAllTokens) {
+	public static List<String> splitWorker(final String str, final String separatorChars, final int max,
+			final boolean preserveAllTokens) {
 		// Performance tuned for 2.0 (JDK1.4)
 		// Direct code is quicker than StringTokenizer.
 		// Also, StringTokenizer uses isSpace() not isWhitespace()

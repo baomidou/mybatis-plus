@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.mapper;
 
 import com.baomidou.mybatisplus.enums.SqlLike;
 import com.baomidou.mybatisplus.toolkit.MapUtils;
+import com.baomidou.mybatisplus.toolkit.SqlUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 import java.io.Serializable;
@@ -388,7 +389,7 @@ public abstract class Wrapper<T> implements Serializable {
 	 * @return this
 	 */
 	public Wrapper<T> like(String column, String value) {
-		sql.LIKE(column, value, SqlLike.DEFAULT);
+		handerLike(column, value, SqlLike.DEFAULT, false);
 		return this;
 	}
 
@@ -402,8 +403,30 @@ public abstract class Wrapper<T> implements Serializable {
 	 * @return this
 	 */
 	public Wrapper<T> notLike(String column, String value) {
-		sql.NOT_LIKE(column, value, SqlLike.DEFAULT);
+		handerLike(column, value, SqlLike.DEFAULT, true);
 		return this;
+	}
+
+	/**
+	 * 处理LIKE操作
+	 *
+	 * @param column
+	 *            字段名称
+	 * @param value
+	 *            like匹配值
+	 * @param isNot
+	 *            是否为NOT LIKE操作
+	 */
+	private void handerLike(String column, String value, SqlLike type, boolean isNot) {
+		if (StringUtils.isNotEmpty(column) && StringUtils.isNotEmpty(value)) {
+			StringBuilder inSql = new StringBuilder();
+			inSql.append(column);
+			if (isNot) {
+				inSql.append(" NOT");
+			}
+			inSql.append(" LIKE {0}");
+			sql.WHERE(formatSql(String.format("%s = {0}", column), SqlUtils.concatLike(value, type)));
+		}
 	}
 
 	/**
@@ -417,7 +440,7 @@ public abstract class Wrapper<T> implements Serializable {
 	 * @return this
 	 */
 	public Wrapper<T> like(String column, String value, SqlLike type) {
-		sql.LIKE(column, value, type);
+		handerLike(column, value, type, false);
 		return this;
 	}
 
@@ -432,7 +455,7 @@ public abstract class Wrapper<T> implements Serializable {
 	 * @return this
 	 */
 	public Wrapper<T> notLike(String column, String value, SqlLike type) {
-		sql.NOT_LIKE(column, value, type);
+		handerLike(column, value, type, true);
 		return this;
 	}
 
@@ -578,7 +601,7 @@ public abstract class Wrapper<T> implements Serializable {
 	 * @return this
 	 */
 	public Wrapper<T> between(String column, String val1, String val2) {
-		sql.BETWEEN_AND(column, val1, val2);
+		sql.WHERE(formatSql(String.format("%s BETWEEN {0} AND {1}", column), val1, val2));
 		return this;
 	}
 

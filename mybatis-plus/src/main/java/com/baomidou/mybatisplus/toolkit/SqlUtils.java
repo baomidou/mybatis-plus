@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.toolkit;
 
 import com.baomidou.mybatisplus.entity.CountOptimize;
 import com.baomidou.mybatisplus.enums.Optimize;
+import com.baomidou.mybatisplus.enums.SqlLike;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 
 /**
@@ -138,6 +139,33 @@ public class SqlUtils {
 		} else {
 			return boundSql.replaceAll("[\\s]+", " ");
 		}
+	}
+
+	/**
+	 * <p>
+	 * 用%连接like
+	 * </p>
+	 *
+	 * @param str
+	 *            原字符串
+	 * @return
+	 */
+	public static String concatLike(String str, SqlLike type) {
+		StringBuilder builder = new StringBuilder(str.length() + 3);
+		switch (type) {
+		case LEFT:
+			builder.append("%").append(str);
+			break;
+		case RIGHT:
+			builder.append(str).append("%");
+			break;
+		case CUSTOM:
+			builder.append(str);
+			break;
+		default:
+			builder.append("%").append(str).append("%");
+		}
+		return builder.toString();
 	}
 
 }
