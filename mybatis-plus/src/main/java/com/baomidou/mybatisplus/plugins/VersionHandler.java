@@ -8,16 +8,14 @@ import net.sf.jsqlparser.expression.Expression;
  * @author TaoYu
  */
 public interface VersionHandler {
+
 	/**
-	 * <pre>
 	 * 根据类型得到equalTo右侧的表达式
-	 * 
-	 * </pre>
 	 */
 	Expression getRightExpression(Object param);
 
 	/**
-	 * 根据类型得到+1后的值
+	 * 根据类型得到+1后的表达式
 	 */
 	Expression getPlusExpression(Object param);
 }

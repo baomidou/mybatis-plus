@@ -30,6 +30,7 @@ import org.apache.ibatis.type.TypeException;
 
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.annotations.Version;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
@@ -47,7 +48,6 @@ import net.sf.jsqlparser.statement.update.Update;
  * <pre>
  * 之前：update user set name = ?, password = ? where id = ?
  * 之后：update user set name = ?, password = ?, version = version+1 where id = ? and version = ?
- * 只支持int和long类型,使用插件需要在需要在 启用的
  * 对象上的version字段上添加{@link Version}注解
  * sql可以不需要写version字段,只要对象version有值就会更新
  * 支持int Integer long Long Date Timestamp
@@ -174,10 +174,13 @@ public class OptimisticLockerInterceptor implements Interceptor {
 	}
 
 	public void setProperties(Properties properties) {
-		try {
-			versionHandler = (VersionHandler) Class.forName(properties.getProperty("versionHandler")).newInstance();
-		} catch (Exception e) {
-			throw ExceptionFactory.wrapException("自定义处理器注入失败", e);
+		String versionHandlerClazz = properties.getProperty("versionHandler");
+		if (StringUtils.isNotEmpty(versionHandlerClazz)) {
+			try {
+				versionHandler = (VersionHandler) Class.forName(versionHandlerClazz).newInstance();
+			} catch (Exception e) {
+				throw ExceptionFactory.wrapException("乐观锁插件自定义处理器注入失败", e);
+			}
 		}
 	}
 
