@@ -30,6 +30,7 @@ import org.apache.ibatis.type.TypeException;
 
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.annotations.Version;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
@@ -43,17 +44,16 @@ import net.sf.jsqlparser.statement.update.Update;
 
 /**
  * MyBatis乐观锁插件
- * 
+ *
  * <pre>
  * 之前：update user set name = ?, password = ? where id = ?
  * 之后：update user set name = ?, password = ?, version = version+1 where id = ? and version = ?
- * 只支持int和long类型,使用插件需要在需要在 启用的
  * 对象上的version字段上添加{@link Version}注解
  * sql可以不需要写version字段,只要对象version有值就会更新
  * 支持int Integer long Long Date Timestamp
  * 其他类型可以自定义实现,注入versionHandler
  * </pre>
- * 
+ *
  * @author TaoYu
  */
 @Intercepts({ @Signature(type = Executor.class, method = "update", args = { MappedStatement.class, Object.class }) })
@@ -174,10 +174,13 @@ public class OptimisticLockerInterceptor implements Interceptor {
 	}
 
 	public void setProperties(Properties properties) {
-		try {
-			versionHandler = (VersionHandler) Class.forName(properties.getProperty("versionHandler")).newInstance();
-		} catch (Exception e) {
-			throw ExceptionFactory.wrapException("自定义处理器注入失败", e);
+		String versionHandlerClazz = properties.getProperty("versionHandler");
+		if (StringUtils.isNotEmpty(versionHandlerClazz)) {
+			try {
+				versionHandler = (VersionHandler) Class.forName(versionHandlerClazz).newInstance();
+			} catch (Exception e) {
+				throw ExceptionFactory.wrapException("乐观锁插件自定义处理器注入失败", e);
+			}
 		}
 	}
 
@@ -202,7 +205,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
 
 	/**
 	 * 基本类型处理器
-	 * 
+	 *
 	 * @author TaoYu
 	 */
 	private static class BaseTypeHnadler implements VersionHandler {
@@ -218,7 +221,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
 
 	/**
 	 * 时间类型处理器
-	 * 
+	 *
 	 * @author TaoYu
 	 */
 	private static class DateTypeHandler implements VersionHandler {
