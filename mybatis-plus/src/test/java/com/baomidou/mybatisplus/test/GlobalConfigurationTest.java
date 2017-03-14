@@ -65,6 +65,9 @@ public class GlobalConfigurationTest {
 		SqlSessionFactory sessionFactory = factoryBuilder.build(inputStream);
 		SqlSession session = sessionFactory.openSession(false);
 		TestMapper testMapper = session.getMapper(TestMapper.class);
+        /*Wrapper type = Condition.instance().eq("id",1).or().in("type", new Object[]{1, 2, 3, 4, 5, 6});
+        List list = testMapper.selectList(type);
+        System.out.println(list.toString());*/
         Test test = new Test();
 		test.setCreateTime(new Date());
 		// 开启全局校验字符串会忽略空字符串

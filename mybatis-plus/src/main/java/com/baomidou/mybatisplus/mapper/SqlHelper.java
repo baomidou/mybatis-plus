@@ -64,8 +64,7 @@ public class SqlHelper {
 	 * @return SqlSession
 	 */
 	public static SqlSession sqlSessionBatch(Class<?> clazz) {
-		return GlobalConfiguration.currentSessionFactory(clazz).openSession(
-				ExecutorType.BATCH);
+		return GlobalConfiguration.currentSessionFactory(clazz).openSession(ExecutorType.BATCH);
 	}
 
 	/**
@@ -79,7 +78,7 @@ public class SqlHelper {
 		try {
 			SqlSessionFactory sqlSessionFactory = GlobalConfiguration.currentSessionFactory(clazz);
 			Configuration configuration = sqlSessionFactory.getConfiguration();
-			session= GlobalConfiguration.getGlobalConfig(configuration).getSqlSession();
+			session = GlobalConfiguration.getGlobalConfig(configuration).getSqlSession();
 		} catch (Exception e) {
 			// ignored
 		}
@@ -168,7 +167,9 @@ public class SqlHelper {
 	 */
 	public static void fillWrapper(Page<?> page, Wrapper<?> wrapper) {
 		if (null != wrapper) {
-			wrapper.orderBy(page.getOrderByField(), page.isAsc());
+			if (page.isOpenSort()) {
+				wrapper.orderBy(page.getOrderByField(), page.isAsc());
+			}
 			wrapper.allEq(page.getCondition());
 		}
 	}

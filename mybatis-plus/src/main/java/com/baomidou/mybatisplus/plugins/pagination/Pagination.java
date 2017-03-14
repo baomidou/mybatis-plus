@@ -50,6 +50,13 @@ public class Pagination extends RowBounds implements Serializable {
 	private boolean searchCount = true;
 
 	/**
+	 * 开启排序（默认 true） 只在代码逻辑判断 并不截取sql分析
+	 * 
+	 * @see com.baomidou.mybatisplus.mapper.SqlHelper fillWrapper
+	 **/
+	private boolean openSort = true;
+
+	/**
 	 * 查询总数优化（默认 false 该属性只针对于Optimize.DEFAULT有效)
 	 * 
 	 * @see com.baomidou.mybatisplus.enums.Optimize
@@ -92,12 +99,17 @@ public class Pagination extends RowBounds implements Serializable {
 	}
 
 	public Pagination(int current, int size, boolean searchCount) {
+		this(current, size, searchCount, true);
+	}
+
+	public Pagination(int current, int size, boolean searchCount, boolean openSort) {
 		super(offsetCurrent(current, size), size);
 		if (current > 1) {
 			this.current = current;
 		}
 		this.size = size;
 		this.searchCount = searchCount;
+		this.openSort = openSort;
 	}
 
 	protected static int offsetCurrent(int current, int size) {
@@ -178,6 +190,14 @@ public class Pagination extends RowBounds implements Serializable {
 		if (StringUtils.isNotEmpty(orderByField)) {
 			this.orderByField = orderByField;
 		}
+	}
+
+	public boolean isOpenSort() {
+		return openSort;
+	}
+
+	public void setOpenSort(boolean openSort) {
+		this.openSort = openSort;
 	}
 
 	public boolean isAsc() {

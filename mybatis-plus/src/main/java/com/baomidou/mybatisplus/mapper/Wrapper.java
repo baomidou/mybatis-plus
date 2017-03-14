@@ -274,6 +274,31 @@ public abstract class Wrapper<T> implements Serializable {
 
 	/**
 	 * <p>
+	 * 使用AND连接并换行
+	 * </p>
+	 * <p>
+	 * 
+	 * @return this
+	 */
+	public Wrapper<T> and() {
+		sql.AND_NEW();
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * 使用OR连接并换行
+	 * </p>
+	 *
+	 * @return this
+	 */
+	public Wrapper<T> or() {
+		sql.OR_NEW();
+		return this;
+	}
+
+	/**
+	 * <p>
 	 * 添加OR条件
 	 * </p>
 	 *
