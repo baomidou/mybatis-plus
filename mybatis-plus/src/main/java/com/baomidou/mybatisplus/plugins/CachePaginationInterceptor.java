@@ -15,16 +15,11 @@
  */
 package com.baomidou.mybatisplus.plugins;
 
-import com.baomidou.mybatisplus.entity.CountOptimize;
-import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
-import com.baomidou.mybatisplus.plugins.pagination.Pagination;
-import com.baomidou.mybatisplus.toolkit.PluginUtils;
-import com.baomidou.mybatisplus.toolkit.SqlUtils;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
+import java.sql.Connection;
+import java.util.Properties;
+
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.plugin.Interceptor;
@@ -37,8 +32,12 @@ import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
-import java.sql.Connection;
-import java.util.Properties;
+import com.baomidou.mybatisplus.entity.CountOptimize;
+import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
+import com.baomidou.mybatisplus.plugins.pagination.Pagination;
+import com.baomidou.mybatisplus.toolkit.PluginUtils;
+import com.baomidou.mybatisplus.toolkit.SqlUtils;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
  * <p>
@@ -53,11 +52,6 @@ import java.util.Properties;
 				ResultHandler.class }),
 		@Signature(type = StatementHandler.class, method = "prepare", args = { Connection.class, Integer.class }) })
 public class CachePaginationInterceptor extends PaginationInterceptor implements Interceptor {
-
-	private static final Log logger = LogFactory.getLog(CachePaginationInterceptor.class);
-
-	/* 溢出总页数，设置第一页 */
-	private boolean overflowCurrent = false;
 	/* Count优化方式 */
 	private String optimizeType = "default";
 	/* 方言类型 */
@@ -111,7 +105,6 @@ public class CachePaginationInterceptor extends PaginationInterceptor implements
 
 			BoundSql boundSql = mappedStatement.getBoundSql(parameterObject);
 			String originalSql = (String) boundSql.getSql();
-
 			if (rowBounds instanceof Pagination) {
 				Pagination page = (Pagination) rowBounds;
 				if (page.isSearchCount()) {
@@ -125,7 +118,6 @@ public class CachePaginationInterceptor extends PaginationInterceptor implements
 			}
 		}
 		return invocation.proceed();
-
 	}
 
 	public Object plugin(Object target) {
@@ -153,15 +145,8 @@ public class CachePaginationInterceptor extends PaginationInterceptor implements
 		this.dialectType = dialectType;
 	}
 
-	public void setDialectClazz(String dialectClazz) {
-		this.dialectClazz = dialectClazz;
-	}
-
-	public void setOverflowCurrent(boolean overflowCurrent) {
-		this.overflowCurrent = overflowCurrent;
-	}
-
 	public void setOptimizeType(String optimizeType) {
 		this.optimizeType = optimizeType;
 	}
+
 }

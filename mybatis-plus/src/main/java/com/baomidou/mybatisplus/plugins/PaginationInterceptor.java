@@ -15,14 +15,11 @@
  */
 package com.baomidou.mybatisplus.plugins;
 
-import com.baomidou.mybatisplus.MybatisDefaultParameterHandler;
-import com.baomidou.mybatisplus.entity.CountOptimize;
-import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
-import com.baomidou.mybatisplus.plugins.pagination.Pagination;
-import com.baomidou.mybatisplus.toolkit.IOUtils;
-import com.baomidou.mybatisplus.toolkit.PluginUtils;
-import com.baomidou.mybatisplus.toolkit.SqlUtils;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.Properties;
+
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
@@ -36,13 +33,16 @@ import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
-import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.RowBounds;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.Properties;
+import com.baomidou.mybatisplus.MybatisDefaultParameterHandler;
+import com.baomidou.mybatisplus.entity.CountOptimize;
+import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
+import com.baomidou.mybatisplus.plugins.pagination.Pagination;
+import com.baomidou.mybatisplus.toolkit.IOUtils;
+import com.baomidou.mybatisplus.toolkit.PluginUtils;
+import com.baomidou.mybatisplus.toolkit.SqlUtils;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
  * <p>
@@ -71,7 +71,6 @@ public class PaginationInterceptor implements Interceptor {
 	 * {@link org.apache.ibatis.session.RowBounds}
 	 */
 	public Object intercept(Invocation invocation) throws Throwable {
-
 		Object target = invocation.getTarget();
 		if (target instanceof StatementHandler) {
 			StatementHandler statementHandler = (StatementHandler) PluginUtils.realTarget(invocation.getTarget());
@@ -109,14 +108,13 @@ public class PaginationInterceptor implements Interceptor {
 			}
 
 			/*
-			 * <p> 禁用内存分页 </p> <p> 内存分页会查询所有结果出来处理（这个很吓人的），如果结果变化频繁这个数据还会不准。
-			 * </p>
+			 * <p> 禁用内存分页 </p>
+			 * <p> 内存分页会查询所有结果出来处理（这个很吓人的），如果结果变化频繁这个数据还会不准。</p>
 			 */
 			metaStatementHandler.setValue("delegate.boundSql.sql", originalSql);
 			metaStatementHandler.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
 			metaStatementHandler.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
 		}
-
 		return invocation.proceed();
 	}
 
@@ -131,7 +129,6 @@ public class PaginationInterceptor implements Interceptor {
 	protected void count(String sql, MappedStatement mappedStatement, BoundSql boundSql, Pagination page) {
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
-		Configuration configuration = mappedStatement.getConfiguration();
 		try {
 			Connection connection = mappedStatement.getConfiguration().getEnvironment().getDataSource().getConnection();
 			statement = connection.prepareStatement(sql);
@@ -192,4 +189,5 @@ public class PaginationInterceptor implements Interceptor {
 	public void setOptimizeType(String optimizeType) {
 		this.optimizeType = optimizeType;
 	}
+
 }
