@@ -67,7 +67,7 @@ public class EntityWrapperTest {
 		ew.where("name={0}", "'123'").addFilterIfNeed(false, "id=12");
 		String sqlSegment = ew.toString();
 		System.err.println("test11 = " + sqlSegment);
-		Assert.assertEquals("AND (name=#{ew.paramNameValuePairs.MPGENVAL1})", sqlSegment);
+		Assert.assertEquals("AND (name=?)", sqlSegment);
 	}
 
 	@Test
@@ -79,7 +79,7 @@ public class EntityWrapperTest {
 		ew.where("name={0}", "'123'").orderBy("id", false);
 		String sqlSegment = ew.toString();
 		System.err.println("test12 = " + sqlSegment);
-		Assert.assertEquals("AND (name=#{ew.paramNameValuePairs.MPGENVAL1})\nORDER BY id DESC", sqlSegment);
+		Assert.assertEquals("AND (name=?)\nORDER BY id DESC", sqlSegment);
 	}
 
 	@Test
@@ -102,7 +102,7 @@ public class EntityWrapperTest {
 		ew.where("name={0}", "'123'").addFilterIfNeed(false, "id=1").orderBy("id");
 		String sqlSegment = ew.toString();
 		System.err.println("test21 = " + sqlSegment);
-		Assert.assertEquals("WHERE (name=#{ew.paramNameValuePairs.MPGENVAL1})\nORDER BY id", sqlSegment);
+		Assert.assertEquals("WHERE (name=?)\nORDER BY id", sqlSegment);
 	}
 
 	@Test
@@ -110,7 +110,7 @@ public class EntityWrapperTest {
 		ew.where("name={0}", "'123'").orderBy("id", false);
 		String sqlSegment = ew.toString();
 		System.err.println("test22 = " + sqlSegment);
-		Assert.assertEquals("WHERE (name=#{ew.paramNameValuePairs.MPGENVAL1})\nORDER BY id DESC", sqlSegment);
+		Assert.assertEquals("WHERE (name=?)\nORDER BY id DESC", sqlSegment);
 	}
 
 	@Test
@@ -133,7 +133,7 @@ public class EntityWrapperTest {
 		ew.addFilter("name={0}", "'123'").orderBy("id,name");
 		String sqlSegment = ew.toString();
 		System.err.println("testNoTSQL = " + sqlSegment);
-		Assert.assertEquals("AND (name=#{ew.paramNameValuePairs.MPGENVAL1})\nORDER BY id,name", sqlSegment);
+		Assert.assertEquals("AND (name=?)\nORDER BY id,name", sqlSegment);
 	}
 
 	@Test
@@ -144,7 +144,7 @@ public class EntityWrapperTest {
 		ew.addFilter("name={0}", "'123'").addFilterIfNeed(false, "status=?", "1");
 		String sqlSegment = ew.toString();
 		System.err.println("testNoTSQL1 = " + sqlSegment);
-		Assert.assertEquals("WHERE (name=#{ew.paramNameValuePairs.MPGENVAL1})", sqlSegment);
+		Assert.assertEquals("WHERE (name=?)", sqlSegment);
 	}
 
 	@Test
@@ -158,8 +158,8 @@ public class EntityWrapperTest {
 				.groupBy("x2,x3").having("x1=11").having("x3=433").orderBy("dd").orderBy("d1,d2");
 		System.out.println(ew.toString());
 		Assert.assertEquals("AND (name=? AND id=1) \n" +
-                "OR (status=? OR status=1 AND nlike = #{ew.paramNameValuePairs.MPGENVAL3}) \n" +
-                "AND (new=xx AND hhh = #{ew.paramNameValuePairs.MPGENVAL4}) \n" +
+                "OR (status=? OR status=1 AND nlike = ?) \n" +
+                "AND (new=xx AND hhh = ?) \n" +
                 "AND (pwd=11 AND n1 IS NOT NULL AND n2 IS NOT NULL AND n3 IS NULL)\n" +
                 "GROUP BY x1, x2,x3\n" +
                 "HAVING (x1=11 AND x3=433)\n" +
@@ -177,7 +177,7 @@ public class EntityWrapperTest {
 	public void testNull2() {
 		ew.like(null, null).where("aa={0}", "'bb'").orderBy(null);
 		String sqlPart = ew.toString();
-		Assert.assertEquals("WHERE (aa=#{ew.paramNameValuePairs.MPGENVAL1})", sqlPart);
+		Assert.assertEquals("WHERE (aa=?)", sqlPart);
 	}
 
 	/**
@@ -188,7 +188,7 @@ public class EntityWrapperTest {
 		ew.where("id={0}", "'11'").and("name={0}", 22);
 		String sqlPart = ew.toString();
 		System.out.println("sql ==> " + sqlPart);
-		Assert.assertEquals("WHERE (id=#{ew.paramNameValuePairs.MPGENVAL1} AND name=#{ew.paramNameValuePairs.MPGENVAL2})", sqlPart);
+		Assert.assertEquals("WHERE (id=? AND name=?)", sqlPart);
 	}
 
 	/**
@@ -199,7 +199,7 @@ public class EntityWrapperTest {
 		ew.where("id={0} and ids = {1}", "11", 22).and("name={0}", 222222222);
 		String sqlPart = ew.toString();
 		System.out.println("sql ==> " + sqlPart);
-		Assert.assertEquals("WHERE (id=#{ew.paramNameValuePairs.MPGENVAL1} and ids = #{ew.paramNameValuePairs.MPGENVAL2} AND name=#{ew.paramNameValuePairs.MPGENVAL3})", sqlPart);
+		Assert.assertEquals("WHERE (id=? and ids = ? AND name=?)", sqlPart);
 	}
 
 	/**
@@ -225,7 +225,7 @@ public class EntityWrapperTest {
 		ew.notIn("test_type", list);
 		String sqlPart = ew.toString();
 		System.out.println("sql ==> " + sqlPart);
-		Assert.assertEquals("WHERE (test_type NOT IN (#{ew.paramNameValuePairs.MPGENVAL1},#{ew.paramNameValuePairs.MPGENVAL2},#{ew.paramNameValuePairs.MPGENVAL3}))", sqlPart);
+		Assert.assertEquals("WHERE (test_type NOT IN (?,?,?))", sqlPart);
 	}
 
 	/**
@@ -240,7 +240,7 @@ public class EntityWrapperTest {
 		ew.in("test_type", list);
 		String sqlPart = ew.toString();
 		System.out.println("sql ==> " + sqlPart);
-		Assert.assertEquals("WHERE (test_type IN (#{ew.paramNameValuePairs.MPGENVAL1},#{ew.paramNameValuePairs.MPGENVAL2},#{ew.paramNameValuePairs.MPGENVAL3}))", sqlPart);
+		Assert.assertEquals("WHERE (test_type IN (?,?,?))", sqlPart);
 	}
 
 	/**
@@ -255,7 +255,7 @@ public class EntityWrapperTest {
 		ew.in("test_type", list);
 		String sqlPart = ew.toString();
 		System.out.println("sql ==> " + sqlPart);
-		Assert.assertEquals("WHERE (test_type IN (#{ew.paramNameValuePairs.MPGENVAL1},#{ew.paramNameValuePairs.MPGENVAL2},#{ew.paramNameValuePairs.MPGENVAL3}))", sqlPart);
+		Assert.assertEquals("WHERE (test_type IN (?,?,?))", sqlPart);
 	}
 
 	/**
@@ -268,7 +268,7 @@ public class EntityWrapperTest {
 		ew.between("test_type", val1, val2);
 		String sqlPart = ew.toString();
 		System.out.println("sql ==> " + sqlPart);
-		Assert.assertEquals("WHERE (test_type BETWEEN #{ew.paramNameValuePairs.MPGENVAL1} AND #{ew.paramNameValuePairs.MPGENVAL2})", sqlPart);
+		Assert.assertEquals("WHERE (test_type BETWEEN ? AND ?)", sqlPart);
 	}
 
 	/**
@@ -281,7 +281,7 @@ public class EntityWrapperTest {
 		ew.between("test_type", val1, val2);
 		String sqlPart = ew.toString();
 		System.out.println("sql ==> " + sqlPart);
-		Assert.assertEquals("WHERE (test_type BETWEEN #{ew.paramNameValuePairs.MPGENVAL1} AND #{ew.paramNameValuePairs.MPGENVAL2})", sqlPart);
+		Assert.assertEquals("WHERE (test_type BETWEEN ? AND ?)", sqlPart);
 	}
 
 	/**
@@ -293,7 +293,7 @@ public class EntityWrapperTest {
 		String val2 = "\\";
 		String sqlPart = Condition.instance().between("test_type", val1, val2).toString();
 		System.out.println("sql ==> " + sqlPart);
-		Assert.assertEquals("WHERE (test_type BETWEEN #{ew.paramNameValuePairs.MPGENVAL1} AND #{ew.paramNameValuePairs.MPGENVAL2})", sqlPart);
+		Assert.assertEquals("WHERE (test_type BETWEEN ? AND ?)", sqlPart);
 	}
 
 	/**
@@ -309,7 +309,7 @@ public class EntityWrapperTest {
 		String sqlPart = Condition.instance().gt("gt", 1).le("le", 2).lt("le", 3).ge("ge", 4).eq("eq", 5).allEq(map).toString();
 		System.out.println("sql ==> " + sqlPart);
 		Assert.assertEquals(
-				"WHERE (gt > #{ew.paramNameValuePairs.MPGENVAL1} AND le <= #{ew.paramNameValuePairs.MPGENVAL2} AND le < #{ew.paramNameValuePairs.MPGENVAL3} AND ge >= #{ew.paramNameValuePairs.MPGENVAL4} AND eq = #{ew.paramNameValuePairs.MPGENVAL5} AND allEq3 = #{ew.paramNameValuePairs.MPGENVAL6} AND allEq1 = #{ew.paramNameValuePairs.MPGENVAL7} AND allEq2 = #{ew.paramNameValuePairs.MPGENVAL8})",
+				"WHERE (gt > ? AND le <= ? AND le < ? AND ge >= ? AND eq = ? AND allEq3 = ? AND allEq1 = ? AND allEq2 = ?)",
 				sqlPart);
 	}
 
@@ -321,7 +321,7 @@ public class EntityWrapperTest {
 		String sqlPart = Condition.instance().like("default", "default", SqlLike.DEFAULT).like("left", "left", SqlLike.LEFT)
 				.like("right", "right", SqlLike.RIGHT).toString();
 		System.out.println("sql ==> " + sqlPart);
-		Assert.assertEquals("WHERE (default = #{ew.paramNameValuePairs.MPGENVAL1} AND left = #{ew.paramNameValuePairs.MPGENVAL2} AND right = #{ew.paramNameValuePairs.MPGENVAL3})", sqlPart);
+		Assert.assertEquals("WHERE (default = ? AND left = ? AND right = ?)", sqlPart);
 	}
 
 	/**
@@ -336,6 +336,6 @@ public class EntityWrapperTest {
 		String sqlPart = ew.or("sql = {0}", "sql").like("default", "default", SqlLike.DEFAULT).like("left", "left", SqlLike.LEFT)
 				.like("right", "right", SqlLike.RIGHT).isWhere(true).eq("bool", true).toString();
 		System.out.println("sql ==> " + sqlPart);
-		Assert.assertEquals("WHERE (sql = #{ew.paramNameValuePairs.MPGENVAL1} AND default = #{ew.paramNameValuePairs.MPGENVAL2} AND left = #{ew.paramNameValuePairs.MPGENVAL3} AND right = #{ew.paramNameValuePairs.MPGENVAL4} AND bool = #{ew.paramNameValuePairs.MPGENVAL5})", sqlPart);
+		Assert.assertEquals("WHERE (sql = ? AND default = ? AND left = ? AND right = ? AND bool = ?)", sqlPart);
 	}
 }
