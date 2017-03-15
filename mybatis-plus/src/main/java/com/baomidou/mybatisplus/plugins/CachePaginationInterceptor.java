@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.plugins;
 
-import com.baomidou.mybatisplus.MybatisDefaultParameterHandler;
 import com.baomidou.mybatisplus.entity.CountOptimize;
 import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
@@ -36,13 +35,10 @@ import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
-import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.Properties;
 
 /**
@@ -57,7 +53,7 @@ import java.util.Properties;
 		@Signature(type = Executor.class, method = "query", args = { MappedStatement.class, Object.class, RowBounds.class,
 				ResultHandler.class }),
 		@Signature(type = StatementHandler.class, method = "prepare", args = { Connection.class, Integer.class }) })
-public class CachePaginationInterceptor implements Interceptor {
+public class CachePaginationInterceptor extends PaginationInterceptor implements Interceptor {
 
 	private static final Log logger = LogFactory.getLog(CachePaginationInterceptor.class);
 
@@ -125,7 +121,7 @@ public class CachePaginationInterceptor implements Interceptor {
 						connection = mappedStatement.getConfiguration().getEnvironment().getDataSource().getConnection();
 						CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType,
 								page.isOptimizeCount());
-						this.count(countOptimize.getCountSQL(), connection, mappedStatement, boundSql, page);
+						super.count(countOptimize.getCountSQL(), mappedStatement, boundSql, page);
 						if (page.getTotal() <= 0) {
 							return invocation.proceed();
 						}
@@ -138,44 +134,6 @@ public class CachePaginationInterceptor implements Interceptor {
 
 		return invocation.proceed();
 
-	}
-
-	/**
-	 * 查询总记录条数
-	 *
-	 * @param sql
-	 * @param connection
-	 * @param mappedStatement
-	 * @param boundSql
-	 * @param page
-	 */
-	public void count(String sql, Connection connection, MappedStatement mappedStatement, BoundSql boundSql, Pagination page) {
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		try {
-			pstmt = connection.prepareStatement(sql);
-			DefaultParameterHandler parameterHandler = new MybatisDefaultParameterHandler(mappedStatement,
-					boundSql.getParameterObject(), boundSql);
-			parameterHandler.setParameters(pstmt);
-			rs = pstmt.executeQuery();
-			int total = 0;
-			if (rs.next()) {
-				total = rs.getInt(1);
-			}
-			page.setTotal(total);
-			/*
-			 * 溢出总页数，设置第一页
-			 */
-			if (overflowCurrent && (page.getCurrent() > page.getPages())) {
-				page = new Pagination(1, page.getSize());
-				page.setTotal(total);
-			}
-		} catch (Exception e) {
-			logger.error("分页查询中count查询出错", e);
-		} finally {
-			IOUtils.closeQuietly(pstmt);
-			IOUtils.closeQuietly(rs);
-		}
 	}
 
 	public Object plugin(Object target) {

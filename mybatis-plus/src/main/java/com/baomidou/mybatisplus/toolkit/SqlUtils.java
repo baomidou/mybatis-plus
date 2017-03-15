@@ -117,7 +117,7 @@ public class SqlUtils {
 	 * @return
 	 */
 	public static String concatOrderBy(String originalSql, Pagination page, boolean orderBy) {
-		if (orderBy && StringUtils.isNotEmpty(page.getOrderByField())) {
+		if (orderBy && StringUtils.isNotEmpty(page.getOrderByField()) && page.isOpenSort()) {
 			StringBuffer buildSql = new StringBuffer(originalSql);
 			buildSql.append(" ORDER BY ").append(page.getOrderByField());
 			buildSql.append(page.isAsc() ? " ASC " : " DESC ");
