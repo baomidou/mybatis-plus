@@ -281,6 +281,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 		return baseMapper.selectList(wrapper);
 	}
 
+	@SuppressWarnings("unchecked")
 	public Page<T> selectPage(Page<T> page) {
 		return selectPage(page, Condition.instance());
 	}
