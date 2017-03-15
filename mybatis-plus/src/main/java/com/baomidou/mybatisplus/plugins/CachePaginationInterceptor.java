@@ -57,7 +57,7 @@ import java.util.Properties;
 		@Signature(type = Executor.class, method = "query", args = { MappedStatement.class, Object.class, RowBounds.class,
 				ResultHandler.class }),
 		@Signature(type = StatementHandler.class, method = "prepare", args = { Connection.class, Integer.class }) })
-public class PaginationInterceptor implements Interceptor {
+public class CachePaginationInterceptor implements Interceptor {
 
 	private static final Log logger = LogFactory.getLog(CachePaginationInterceptor.class);
 
