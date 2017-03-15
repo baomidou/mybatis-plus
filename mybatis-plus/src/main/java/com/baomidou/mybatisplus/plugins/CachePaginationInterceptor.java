@@ -18,7 +18,6 @@ package com.baomidou.mybatisplus.plugins;
 import com.baomidou.mybatisplus.entity.CountOptimize;
 import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
-import com.baomidou.mybatisplus.toolkit.IOUtils;
 import com.baomidou.mybatisplus.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.toolkit.SqlUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
@@ -114,24 +113,17 @@ public class CachePaginationInterceptor extends PaginationInterceptor implements
 			String originalSql = (String) boundSql.getSql();
 
 			if (rowBounds instanceof Pagination) {
-				Connection connection = null;
-				try {
-					Pagination page = (Pagination) rowBounds;
-					if (page.isSearchCount()) {
-						connection = mappedStatement.getConfiguration().getEnvironment().getDataSource().getConnection();
-						CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType,
-								page.isOptimizeCount());
-						super.count(countOptimize.getCountSQL(), mappedStatement, boundSql, page);
-						if (page.getTotal() <= 0) {
-							return invocation.proceed();
-						}
+				Pagination page = (Pagination) rowBounds;
+				if (page.isSearchCount()) {
+					CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType,
+							page.isOptimizeCount());
+					super.count(countOptimize.getCountSQL(), mappedStatement, boundSql, page);
+					if (page.getTotal() <= 0) {
+						return invocation.proceed();
 					}
-				} finally {
-					IOUtils.closeQuietly(connection);
 				}
 			}
 		}
-
 		return invocation.proceed();
 
 	}
