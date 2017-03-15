@@ -124,7 +124,7 @@ public class SqlHelper {
 	 * @return boolean
 	 */
 	public static boolean retBool(Integer result) {
-		return (null == result) ? false : result >= 1;
+		return null != result && result >= 1;
 	}
 
 	/**

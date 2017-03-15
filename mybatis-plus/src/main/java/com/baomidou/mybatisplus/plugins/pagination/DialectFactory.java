@@ -124,7 +124,7 @@ public class DialectFactory {
 	 * @throws Exception
 	 */
 	private static IDialect getDialectByDbtype(String dbtype) throws Exception {
-		IDialect dialect = null;
+		IDialect dialect;
 		if (DBType.MYSQL.getDb().equalsIgnoreCase(dbtype)) {
 			dialect = MySqlDialect.INSTANCE;
 		} else if (DBType.ORACLE.getDb().equalsIgnoreCase(dbtype)) {

@@ -66,7 +66,7 @@ public class StringUtils {
 			return true;
 		}
 		for (int i = 0; i < strLen; i++) {
-			if (Character.isWhitespace(cs.charAt(i)) == false) {
+			if (!Character.isWhitespace(cs.charAt(i))) {
 				return false;
 			}
 		}
@@ -331,7 +331,7 @@ public class StringUtils {
 		if (object instanceof CharSequence) {
 			return isNotEmpty((CharSequence) object);
 		}
-		return object == null ? false : true;
+		return object != null;
 	}
 
 	/**
