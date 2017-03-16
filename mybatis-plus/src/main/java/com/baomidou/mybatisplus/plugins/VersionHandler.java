@@ -8,6 +8,11 @@ import net.sf.jsqlparser.expression.Expression;
  * @author TaoYu
  */
 public interface VersionHandler {
+	
+	/**
+	 * 返回需要处理的类型
+	 */
+	Class<?>[] handleType();
 
 	/**
 	 * 根据类型得到equalTo右侧的表达式

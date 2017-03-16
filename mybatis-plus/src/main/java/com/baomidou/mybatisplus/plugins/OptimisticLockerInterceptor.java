@@ -1,17 +1,17 @@
 package com.baomidou.mybatisplus.plugins;
 
-import com.baomidou.mybatisplus.annotations.TableName;
-import com.baomidou.mybatisplus.annotations.Version;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
-import net.sf.jsqlparser.expression.BinaryExpression;
-import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.LongValue;
-import net.sf.jsqlparser.expression.StringValue;
-import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
-import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
-import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.schema.Column;
-import net.sf.jsqlparser.statement.update.Update;
+import java.lang.reflect.Field;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.apache.ibatis.builder.StaticSqlSource;
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.Executor;
@@ -28,34 +28,37 @@ import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.TypeException;
 
-import java.lang.reflect.Field;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
+import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.annotations.Version;
+import com.baomidou.mybatisplus.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
+
+import net.sf.jsqlparser.expression.BinaryExpression;
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.LongValue;
+import net.sf.jsqlparser.expression.StringValue;
+import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
+import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.statement.update.Update;
 
 /**
  * MyBatis乐观锁插件
- *
+ * 
  * <pre>
  * 之前：update user set name = ?, password = ? where id = ?
  * 之后：update user set name = ?, password = ?, version = version+1 where id = ? and version = ?
  * 对象上的version字段上添加{@link Version}注解
  * sql可以不需要写version字段,只要对象version有值就会更新
  * 支持int Integer long Long Date Timestamp
- * 其他类型可以自定义实现,注入versionHandler
+ * 其他类型可以自定义实现,注入versionHandlers,多个以逗号分隔
  * </pre>
- *
+ * 
  * @author TaoYu
  */
 @Intercepts({ @Signature(type = Executor.class, method = "update", args = { MappedStatement.class, Object.class }) })
-public class OptimisticLockerInterceptor implements Interceptor {
+public final class OptimisticLockerInterceptor implements Interceptor {
 
 	/**
 	 * 根据对象类型缓存version基本信息
@@ -65,23 +68,11 @@ public class OptimisticLockerInterceptor implements Interceptor {
 	/**
 	 * 根据version字段类型缓存的处理器
 	 */
-	private static final Map<Class<?>, VersionHandler> handler = new HashMap<Class<?>, VersionHandler>();
-
-	/**
-	 * 自定义实现
-	 */
-	private VersionHandler versionHandler;
+	private static final Map<Class<?>, VersionHandler> typeHandlers = new HashMap<Class<?>, VersionHandler>();
 
 	static {
-		VersionHandler BaseTypeHnadler = new BaseTypeHnadler();
-		handler.put(Long.class, BaseTypeHnadler);
-		handler.put(long.class, BaseTypeHnadler);
-		handler.put(Integer.class, BaseTypeHnadler);
-		handler.put(int.class, BaseTypeHnadler);
-
-		DateTypeHandler dateTypeHandler = new DateTypeHandler();
-		handler.put(Date.class, dateTypeHandler);
-		handler.put(Timestamp.class, dateTypeHandler);
+		registerHandler(new BaseTypeHnadler());
+		registerHandler(new DateTypeHandler());
 	}
 
 	public Object intercept(Invocation invocation) throws Exception {
@@ -103,8 +94,8 @@ public class OptimisticLockerInterceptor implements Interceptor {
 			Field versionField = null;
 			for (Field field : parameterClass.getDeclaredFields()) {
 				if (field.isAnnotationPresent(Version.class)) {
-					if (!handler.containsKey(field.getType()) && versionHandler == null) {
-						throw new TypeException("乐观锁只对int Integer long Long Date Timestamp类型做支持,其他类型请注入versionHandler自定义实现");
+					if (!typeHandlers.containsKey(field.getType())) {
+						throw new TypeException("乐观锁不支持" + field.getType().getName() + "类型,请自定义实现");
 					}
 					versionField = field;
 					TableName tableName = field.getAnnotation(TableName.class);
@@ -150,7 +141,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
 			if (expression != null && !expression.toString().contains(versionColumn)) {
 				EqualsTo equalsTo = new EqualsTo();
 				equalsTo.setLeftExpression(new Column(versionColumn));
-				VersionHandler targetHandler = versionHandler != null ? versionHandler : handler.get(versionField.getType());
+				VersionHandler targetHandler = typeHandlers.get(versionField.getType());
 				Expression rightExpression = targetHandler.getRightExpression(versionValue);
 				Expression plusExpression = targetHandler.getPlusExpression(versionValue);
 				equalsTo.setRightExpression(rightExpression);
@@ -172,12 +163,29 @@ public class OptimisticLockerInterceptor implements Interceptor {
 	}
 
 	public void setProperties(Properties properties) {
-		String versionHandlerClazz = properties.getProperty("versionHandler");
-		if (StringUtils.isNotEmpty(versionHandlerClazz)) {
-			try {
-				versionHandler = (VersionHandler) Class.forName(versionHandlerClazz).newInstance();
-			} catch (Exception e) {
-				throw ExceptionFactory.wrapException("乐观锁插件自定义处理器注入失败", e);
+		String versionHandlers = properties.getProperty("versionHandlers");
+		if (StringUtils.isNotEmpty(versionHandlers)) {
+			String[] userHandlers = versionHandlers.split(",");
+			for (String handlerClazz : userHandlers) {
+				try {
+					VersionHandler versionHandler = (VersionHandler) Class.forName(handlerClazz).newInstance();
+					registerHandler(versionHandler);
+				} catch (Exception e) {
+					throw ExceptionFactory.wrapException("乐观锁插件自定义处理器注册失败", e);
+				}
+
+			}
+		}
+	}
+
+	/**
+	 * 注册处理器
+	 */
+	private static void registerHandler(VersionHandler versionHandler) {
+		Class<?>[] handleType = versionHandler.handleType();
+		if (ArrayUtils.isNotEmpty(handleType)) {
+			for (Class<?> type : handleType) {
+				typeHandlers.put(type, versionHandler);
 			}
 		}
 	}
@@ -203,10 +211,14 @@ public class OptimisticLockerInterceptor implements Interceptor {
 
 	/**
 	 * 基本类型处理器
-	 *
+	 * 
 	 * @author TaoYu
 	 */
 	private static class BaseTypeHnadler implements VersionHandler {
+
+		public Class<?>[] handleType() {
+			return new Class<?>[] { Long.class, long.class, Integer.class, int.class, Short.class, short.class };
+		}
 
 		public Expression getRightExpression(Object param) {
 			return new LongValue(param.toString());
@@ -215,37 +227,44 @@ public class OptimisticLockerInterceptor implements Interceptor {
 		public Expression getPlusExpression(Object param) {
 			return new LongValue(param.toString() + 1);
 		}
+
 	}
 
 	/**
 	 * 时间类型处理器
-	 *
+	 * 
 	 * @author TaoYu
 	 */
 	private static class DateTypeHandler implements VersionHandler {
 
+		public Class<?>[] handleType() {
+			return new Class<?>[] { Date.class, java.sql.Date.class, Timestamp.class };
+		}
+
 		/*
 		 * 时间处理是大坑!!!!!http://www.yufengof.com/2015/08/17/mysql-datetime-type-millisecond-rounding/
 		 */
+
 		public Expression getRightExpression(Object param) {
 			Date date = (Date) param;
 			String millTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format((Date) param);
-			String realTsime = null;
+			String realTime;
 			Integer mills = Integer.valueOf(millTime.substring(20, 21));
 			if (mills >= 5) {
 				Calendar calendar = Calendar.getInstance();
 				calendar.setTime(date);
 				calendar.add(Calendar.SECOND, 1);
-				realTsime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(calendar.getTime());
+				realTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(calendar.getTime());
 			} else {
-				realTsime = millTime.substring(0, 19);
+				realTime = millTime.substring(0, 19);
 			}
-			return new StringValue(realTsime);
+			return new StringValue(realTime);
 		}
 
 		public Expression getPlusExpression(Object param) {
 			return new StringValue(new Timestamp(new Date().getTime()).toString());
 		}
+
 	}
 
 }
