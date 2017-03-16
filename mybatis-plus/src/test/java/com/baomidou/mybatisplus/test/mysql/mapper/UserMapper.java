@@ -21,6 +21,7 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 
+import com.baomidou.mybatisplus.test.mysql.MyBaseMapper;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
 
 /**
