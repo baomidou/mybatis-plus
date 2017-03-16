@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.mapper;
 
 import com.baomidou.mybatisplus.enums.SqlLike;
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.MapUtils;
@@ -44,16 +45,19 @@ public abstract class Wrapper<T> implements Serializable {
 	/**
 	 * 占位符
 	 */
-	public static final String PLACE_HOLDER = "{%s}";
+	private static final String PLACE_HOLDER = "{%s}";
 
-	public static final String MYBATIS_PLUS_TOKEN = "#{ew.paramNameValuePairs.%s}";
+	private static final String MYBATIS_PLUS_TOKEN = "#{%s.paramNameValuePairs.%s}";
 
 	private static final String MP_GENERAL_PARAMNAME = "MPGENVAL";
+
+	private static final String DEFAULT_PARAM_ALIAS = "ew";
 
 	private Map<String, Object> paramNameValuePairs = new HashMap<String, Object>(4);
 
 	private AtomicInteger paramNameSeq = new AtomicInteger(0);
 
+	protected String paramAlias = null;
 	/**
 	 * SQL 查询字段内容，例如：id,name,age
 	 */
@@ -105,7 +109,7 @@ public abstract class Wrapper<T> implements Serializable {
 	public String toString() {
 		String sqlSegment = getSqlSegment();
 		if (StringUtils.isNotEmpty(sqlSegment)) {
-			sqlSegment = sqlSegment.replaceAll("#\\{ew.paramNameValuePairs.MPGENVAL[0-9]+\\}", "\\?");
+			sqlSegment = sqlSegment.replaceAll("#\\{" + getParamAlias() + ".paramNameValuePairs.MPGENVAL[0-9]+\\}", "\\?");
 		}
 		return sqlSegment;
 	}
@@ -774,7 +778,8 @@ public abstract class Wrapper<T> implements Serializable {
 		if (ArrayUtils.isNotEmpty(params)) {
 			for (int i = 0; i < params.length; ++i) {
 				String genParamName = MP_GENERAL_PARAMNAME + paramNameSeq.incrementAndGet();
-				sqlStr = sqlStr.replace(String.format(PLACE_HOLDER, i), String.format(MYBATIS_PLUS_TOKEN, genParamName));
+				sqlStr = sqlStr.replace(String.format(PLACE_HOLDER, i),
+						String.format(MYBATIS_PLUS_TOKEN, getParamAlias(), genParamName));
 				paramNameValuePairs.put(genParamName, params[i]);
 			}
 		}
@@ -802,5 +807,28 @@ public abstract class Wrapper<T> implements Serializable {
 	 */
 	public Map<String, Object> getParamNameValuePairs() {
 		return paramNameValuePairs;
+	}
+
+	public String getParamAlias() {
+		return StringUtils.isEmpty(paramAlias) ? DEFAULT_PARAM_ALIAS : paramAlias;
+	}
+
+	/**
+	 * <p>
+	 * 调用该方法时 应当在吃初始化时优先设置该值 不要重复设置该值 要不然我就给你抛异常了
+	 * </p>
+	 * 
+	 * @param paramAlias
+	 * @return
+	 */
+	public Wrapper<T> setParamAlias(String paramAlias) {
+		if (StringUtils.isNotEmpty(getSqlSegment())) {
+			throw new MybatisPlusException("Error: Please call this method when initializing!");
+		}
+		if (StringUtils.isNotEmpty(this.paramAlias)) {
+			throw new MybatisPlusException("Error: Please do not call the method repeatedly!");
+		}
+		this.paramAlias = paramAlias;
+		return this;
 	}
 }

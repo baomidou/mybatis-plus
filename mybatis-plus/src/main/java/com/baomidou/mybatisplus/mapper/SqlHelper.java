@@ -166,6 +166,9 @@ public class SqlHelper {
 	 * @param wrapper
 	 */
 	public static void fillWrapper(Page<?> page, Wrapper<?> wrapper) {
+		if (null == page) {
+			return;
+		}
 		if (null != wrapper) {
 			if (page.isOpenSort()) {
 				wrapper.orderBy(page.getOrderByField(), page.isAsc());

@@ -333,9 +333,11 @@ public class EntityWrapperTest {
 		 * 实体带where ifneed
 		 */
 		ew.setEntity(new User(1));
+		ew.setParamAlias("ceshi");
 		String sqlPart = ew.or("sql = {0}", "sql").like("default", "default", SqlLike.DEFAULT).like("left", "left", SqlLike.LEFT)
 				.like("right", "right", SqlLike.RIGHT).isWhere(true).eq("bool", true).toString();
 		System.out.println("sql ==> " + sqlPart);
 		Assert.assertEquals("WHERE (sql = ? AND default = ? AND left = ? AND right = ? AND bool = ?)", sqlPart);
+		System.out.println(ew.getSqlSegment());
 	}
 }
