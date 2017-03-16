@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test.mysql.mapper;
+package com.baomidou.mybatisplus.test.mysql;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 
