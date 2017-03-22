@@ -2,133 +2,133 @@
 
 ## [v2.0.3] 2017.03.22
 
-1.优化Wrapper代码结构
-2.优化原有数据库连接获取
-3.解决Page初始化问题(之前只能通过构造方法生效,现在可以通过setget也可以生效)
-4.支持乐观锁插件
-5.改造Wrapper让JDBC底层来处理参数,更好的与PreparedStatement结合
-6.修复相关错误日志提示级别
-7.Wrapper开放isWhere方法,现在可以自定义是否拼接"WHERE"
-8.JDK版本向下兼容,之前相关代码用到了1.7新特性,当前版本解除
-9.sqlserver生成bug修复以及代码优化
-10.优化MybatisPlus,SqlSession获取
-11.解决未配置切点的情况下获取的sqlSession提交不属于当前事务的问题以及多个sqlSession造成的事务问题
-12.增强执行sql类,sqlRunner
-13.Model添加序列化ID,避免以后在修改Model后没有设置序列号ID时序列号ID可以会变动的情况
-14.添加重写默认BaseMapper测试用例
-15.感谢各路小伙伴提问的好的建议以及贡献代码,就不一一点名了
+- 优化Wrapper代码结构
+- 优化原有数据库连接获取
+- 解决Page初始化问题(之前只能通过构造方法生效,现在可以通过setget也可以生效)
+- 支持乐观锁插件
+- 改造Wrapper让JDBC底层来处理参数,更好的与PreparedStatement结合
+- 修复相关错误日志提示级别
+- Wrapper开放isWhere方法,现在可以自定义是否拼接"WHERE"
+- JDK版本向下兼容,之前相关代码用到了1.7新特性,当前版本解除
+- sqlserver生成bug修复以及代码优化
+- 优化MybatisPlus,SqlSession获取
+- 解决未配置切点的情况下获取的sqlSession提交不属于当前事务的问题以及多个sqlSession造成的事务问题
+- 增强执行sql类,sqlRunner
+- Model添加序列化ID,避免以后在修改Model后没有设置序列号ID时序列号ID可以会变动的情况
+- 添加重写默认BaseMapper测试用例
+- 感谢各路小伙伴提问的好的建议以及贡献代码,就不一一点名了
 
 
 ## [v2.0.2] 2017.02.13
-1、修复全局配置不起作用 2.0.1 逻辑
-2、去除byId强制配置类型
-3、Wrapper Page 等程序优化
-4、优化AR模式自动关闭数据库连接(之前需要手动设置事务)
-5、优化代码生成器，下划线名称注解不处理驼峰，支持自定义更多的模板例如 jsp html 等
-6、新增 service 层测试
-7、sql日志记录整合至性能分析插件.
-8、处理多数据源分页插件支持多重数据库
+- 修复全局配置不起作用 2.0.1 逻辑
+- 去除byId强制配置类型
+- Wrapper Page 等程序优化
+- 优化AR模式自动关闭数据库连接(之前需要手动设置事务)
+- 优化代码生成器，下划线名称注解不处理驼峰，支持自定义更多的模板例如 jsp html 等
+- 新增 service 层测试
+- sql日志记录整合至性能分析插件.
+- 处理多数据源分页插件支持多重数据库
 
 
 ## [v2.0.1] 2017.01.15
 
-1.解决EntityWrapper对布尔类型构造sql语句错误
-2.全局配置初始化日志提示调整
-3.Mybatis依赖升级至3.4.2,Mybatis-Spring依赖升级至1.3.1
-4.Service中补充方法(selectObjs,selectMaps)
-5.解决selectCount数据库返回null报错问题
-6.支持PostgreSql代码生成
-7.拓展支持外部提供转义字符以及关键字列表
-8.开放数据库表无主键依然注入MP的CRUD(无主键不能使用MP的xxById方法)
-9.解决EntityWrapper拼接SQL时,首次调用OR方法不起作用的问题
-10.sqlServer代码生成(基于2008版本)
-11.解决生成代码时未导入BigDecimal问题.
-12.释放自动读取数据库时的数据库连接
-13.优化全局校验机制(机制为EMPTY增加忽略Date类型)
-14.优化注入,避免扫描到BaseMapper
-15.优化注入,去除多余注入方法
-16.SQLlikeType改名为SqlLike
-17.解决热加载关联查询错误问题
-18.SqlQuery改名为SqlRunner
-19.优化完善代码生成器
-20.修复代码生成器未导入@tableName
-21.全局配置需要手动添加MP的默认注入类,更改为自动注入简化配置
-22.Wrapper增加ne方法
-23.修复Mybatis动态参数无法生成totalCount问题
-24.代码结构优化，生成器模板优化
-25.解决issus[138,140,142,148,151,152,153,156,157]，具体请查看里程碑[mybatis-plus 2.0.1 计划](http://git.oschina.net/baomidou/mybatis-plus/milestones/2)中所有issus
+- 解决EntityWrapper对布尔类型构造sql语句错误
+- 全局配置初始化日志提示调整
+- Mybatis依赖升级至3.4.2,Mybatis-Spring依赖升级至1.3.1
+- Service中补充方法(selectObjs,selectMaps)
+- 解决selectCount数据库返回null报错问题
+- 支持PostgreSql代码生成
+- 拓展支持外部提供转义字符以及关键字列表
+- 开放数据库表无主键依然注入MP的CRUD(无主键不能使用MP的xxById方法)
+- 解决EntityWrapper拼接SQL时,首次调用OR方法不起作用的问题
+- sqlServer代码生成(基于2008版本)
+- 解决生成代码时未导入BigDecimal问题.
+- 释放自动读取数据库时的数据库连接
+- 优化全局校验机制(机制为EMPTY增加忽略Date类型)
+- 优化注入,避免扫描到BaseMapper
+- 优化注入,去除多余注入方法
+- SQLlikeType改名为SqlLike
+- 解决热加载关联查询错误问题
+- SqlQuery改名为SqlRunner
+- 优化完善代码生成器
+- 修复代码生成器未导入@tableName
+- 全局配置需要手动添加MP的默认注入类,更改为自动注入简化配置
+- Wrapper增加ne方法
+- 修复Mybatis动态参数无法生成totalCount问题
+- 代码结构优化，生成器模板优化
+- 解决issus[138,140,142,148,151,152,153,156,157]，具体请查看里程碑[mybatis-plus 2.0.1 计划](http://git.oschina.net/baomidou/mybatis-plus/milestones/2)中所有issus
 
 ## [v2.0.0] 2016.12.11
 
-1.支持全局大写命名策略
-2.自动分页Count语句优化
-3.优化现有全局配置策略
-4.优化全局验证策略
-5.优化代码生成器(之前硬编码，现使用模板形式)
-6.优化注入通用方法ByMap逻辑
-7.添加自动选择数据库类型
-8.改善SqlExplainInterceptor（自行判断MySQL版本不支持该拦截器则直接放行（版本过低小于5.6.3））
-9.修复部分特殊字符字符多次转义的问题
-10.优化现有EntityWrapper添加Wrapper父类以及Condition链式查询
-11.Wrapper类使LIKE方法兼容多种数据库
-12.优化日志使用原生Mybatis自带的日志输出提示信息
-13.修复使用缓存导致使用分页无法计算Count值
-14.修复PerformanceInterceptor替换`?`导致打印SQL不准确问题，并添加格式化SQL选项
-15.添加多种数据库支持，请查看DBType
-16.添加字符串类型字段非空校验策略（字符串类型自动判断非空以及非空字符串）
-17.Wrapper添加类似QBC查询(eq、gt、lt等等)
-18.支持AR模式（需继承Model）
-19.合并所有Selective通用方法（例如:去除之前的insert方法并把之前的insetSelective改名为insert）
-20.解决sql剥离器会去除`--`的情况
-21.支持MySQL关键词，自动转义
-22.精简底层Service、Mapper继承结构
-23.不喜欢在XML中写SQL的福音，新增执行SQL方式，具体请查看SqlQuery
-24.优化代码结构
-25.解决issus[95,96,98,100,103,104,108,114,119,121,123,124,125,126,127,128,131,133,134,135]，具体请查看里程碑[mybatis-plus 2.0 计划](http://git.oschina.net/baomidou/mybatis-plus/milestones/1)中所有issus
+- 支持全局大写命名策略
+- 自动分页Count语句优化
+- 优化现有全局配置策略
+- 优化全局验证策略
+- 优化代码生成器(之前硬编码，现使用模板形式)
+- 优化注入通用方法ByMap逻辑
+- 添加自动选择数据库类型
+- 改善SqlExplainInterceptor（自行判断MySQL版本不支持该拦截器则直接放行（版本过低小于5.6.3））
+- 修复部分特殊字符字符多次转义的问题
+- 优化现有EntityWrapper添加Wrapper父类以及Condition链式查询
+- Wrapper类使LIKE方法兼容多种数据库
+- 优化日志使用原生Mybatis自带的日志输出提示信息
+- 修复使用缓存导致使用分页无法计算Count值
+- 修复PerformanceInterceptor替换`?`导致打印SQL不准确问题，并添加格式化SQL选项
+- 添加多种数据库支持，请查看DBType
+- 添加字符串类型字段非空校验策略（字符串类型自动判断非空以及非空字符串）
+- Wrapper添加类似QBC查询(eq、gt、lt等等)
+- 支持AR模式（需继承Model）
+- 合并所有Selective通用方法（例如:去除之前的insert方法并把之前的insetSelective改名为insert）
+- 解决sql剥离器会去除`--`的情况
+- 支持MySQL关键词，自动转义
+- 精简底层Service、Mapper继承结构
+- 不喜欢在XML中写SQL的福音，新增执行SQL方式，具体请查看SqlQuery
+- 优化代码结构
+- 解决issus[95,96,98,100,103,104,108,114,119,121,123,124,125,126,127,128,131,133,134,135]，具体请查看里程碑[mybatis-plus 2.0 计划](http://git.oschina.net/baomidou/mybatis-plus/milestones/1)中所有issus
 
 ## [v1.4.9] 2016.10.28
 
-1、ServiceImpl去除@Transactional注解、去除Slf4j依赖
-2、解决使用EntityWrapper查询时，参数为特殊字符时，存在sql注入问题
-3、调整Mybatis驼峰配置顺序 MybatisPlus > Mybatis
-4、优化分页插件并修复分页溢出设置不起作用问题
-5、去除DBKeywordsProcessor，添加MySQL自动转义关键词
-6、代码生成器新增支持TEXT、TIME、TIMESTAMP类型生成
-7、新增批量插入方法
-8、代码生成器新增Controller层代码生成
-9、调整EntityWrapper类部分List入参为Collection
-10、代码生成器优化支持 resultMap
+- ServiceImpl去除@Transactional注解、去除Slf4j依赖
+- 解决使用EntityWrapper查询时，参数为特殊字符时，存在sql注入问题
+- 调整Mybatis驼峰配置顺序 MybatisPlus > Mybatis
+- 优化分页插件并修复分页溢出设置不起作用问题
+- 去除DBKeywordsProcessor，添加MySQL自动转义关键词
+- 代码生成器新增支持TEXT、TIME、TIMESTAMP类型生成
+- 新增批量插入方法
+- 代码生成器新增Controller层代码生成
+- 调整EntityWrapper类部分List入参为Collection
+- 代码生成器优化支持 resultMap
 
 ## [v1.4.8] 2016.10.12
 
-1、insertOrUpdate增加主键空字符串判断
-2、支持Mybatis原生驼峰配置 mapUnderscoreToCamelCase 开关设置
-3、支持 TableField FieldStrategy 注解全局配置
-4、SelectOne、SelectCount方法支持EntityWrapper方式
-5、oracle 代码生成器支持 Integer Long Dobule 类型区分
-6、修复INPUT主键策略InsertOrUpdate方法Bug
-7、EntityWrapper IN 添加可变数组支持
-8、基础Mapper、Servcie通用方法PK参数类型更改至Serializable
-9、当selectOne结果集不唯一时,添加警告提示(需开启日志warn模式)
-10、baseService添加logger,子类直接调用logger不用重新定义(需slf4j依赖)
+- insertOrUpdate增加主键空字符串判断
+- 支持Mybatis原生驼峰配置 mapUnderscoreToCamelCase 开关设置
+- 支持 TableField FieldStrategy 注解全局配置
+- SelectOne、SelectCount方法支持EntityWrapper方式
+- oracle 代码生成器支持 Integer Long Dobule 类型区分
+- 修复INPUT主键策略InsertOrUpdate方法Bug
+- EntityWrapper IN 添加可变数组支持
+- 基础Mapper、Servcie通用方法PK参数类型更改至Serializable
+- 当selectOne结果集不唯一时,添加警告提示(需开启日志warn模式)
+- baseService添加logger,子类直接调用logger不用重新定义(需slf4j依赖)
 
 ## [v1.4.7] 2016.09.27
 
-1、主键注解 I 改为 PK 方便理解，去掉 mapper 注解
-2、性能分析插件，特殊处理 $ 符内容
-3、添加自动提交事务说明，新增事务测试
-4、支持 resultMap 实体结果集映射
-5、增加#TableField(el = "")表达式，当该Field为对象时, 可使用#{对象.属性}来映射到数据表、及测试
-6、新增 typeHanler 级联查询支持
-7、新增验证字段策略枚举类
-8、代码生成器支持实体构建者模型设置
-9、代码生成器新增实体常量生成支持
-10、CRUD 新增 insertOrUpdate 方法
-11、解决MessageFormat.format格式化数字类型sql错误
-12、EntityWrapper添加 EXISTS、IN、BETWEEN AND(感谢D.Yang提出)方法支持
-13、支持 mysql5.7+ json enum 类型，代码生成
-14、支持无XML依然注入CRUD方法
-15、修改Mybatis原生配置文件加载顺序
+- 主键注解 I 改为 PK 方便理解，去掉 mapper 注解
+- 性能分析插件，特殊处理 $ 符内容
+- 添加自动提交事务说明，新增事务测试
+- 支持 resultMap 实体结果集映射
+- 增加#TableField(el = "")表达式，当该Field为对象时, 可使用#{对象.属性}来映射到数据表、及测试
+- 新增 typeHanler 级联查询支持
+- 新增验证字段策略枚举类
+- 代码生成器支持实体构建者模型设置
+- 代码生成器新增实体常量生成支持
+- CRUD 新增 insertOrUpdate 方法
+- 解决MessageFormat.format格式化数字类型sql错误
+- EntityWrapper添加 EXISTS、IN、BETWEEN AND(感谢D.Yang提出)方法支持
+- 支持 mysql5.7+ json enum 类型，代码生成
+- 支持无XML依然注入CRUD方法
+- 修改Mybatis原生配置文件加载顺序
 
 ## [v1.4.6] 2016.09.05
 
