@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## [v2.0.3] 2017.03.22
+
+1.优化Wrapper代码结构
+2.优化原有数据库连接获取
+3.解决Page初始化问题(之前只能通过构造方法生效,现在可以通过setget也可以生效)
+4.支持乐观锁插件
+5.改造Wrapper让JDBC底层来处理参数,更好的与PreparedStatement结合
+6.修复相关错误日志提示级别
+7.Wrapper开放isWhere方法,现在可以自定义是否拼接"WHERE"
+8.JDK版本向下兼容,之前相关代码用到了1.7新特性,当前版本解除
+9.sqlserver生成bug修复以及代码优化
+10.优化MybatisPlus,SqlSession获取
+11.解决未配置切点的情况下获取的sqlSession提交不属于当前事务的问题以及多个sqlSession造成的事务问题
+12.增强执行sql类,sqlRunner
+13.Model添加序列化ID,避免以后在修改Model后没有设置序列号ID时序列号ID可以会变动的情况
+14.添加重写默认BaseMapper测试用例
+15.感谢各路小伙伴提问的好的建议以及贡献代码,就不一一点名了
+
 
 ## [v2.0.2] 2017.02.13
 1、修复全局配置不起作用 2.0.1 逻辑
