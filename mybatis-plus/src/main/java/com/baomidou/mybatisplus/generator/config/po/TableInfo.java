@@ -15,15 +15,15 @@
  */
 package com.baomidou.mybatisplus.generator.config.po;
 
+import com.baomidou.mybatisplus.generator.config.StrategyConfig;
+import com.baomidou.mybatisplus.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import com.baomidou.mybatisplus.generator.config.StrategyConfig;
-import com.baomidou.mybatisplus.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
  * <p>
@@ -94,7 +94,7 @@ public class TableInfo {
 	}
 
 	public String getEntityPath() {
-		StringBuffer ep = new StringBuffer();
+		StringBuilder ep = new StringBuilder();
 		ep.append(entityName.substring(0, 1).toLowerCase());
 		ep.append(entityName.substring(1));
 		return ep.toString();

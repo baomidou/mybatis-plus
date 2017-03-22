@@ -375,10 +375,7 @@ public class StringUtils {
 	 * @return
 	 */
 	public static boolean isCapitalMode(String word) {
-		if (null == word) {
-			return false;
-		}
-		return word.matches("^[0-9A-Z/_]+$");
+		return null != word && word.matches("^[0-9A-Z/_]+$");
 	}
 
 	/**
@@ -621,10 +618,7 @@ public class StringUtils {
 	 * @return
 	 */
 	public static Boolean isCharSequence(Class<?> cls) {
-		if (cls != null) {
-			return CharSequence.class.isAssignableFrom(cls);
-		}
-		return false;
+		return cls != null && CharSequence.class.isAssignableFrom(cls);
 	}
 
 	/**
@@ -634,7 +628,7 @@ public class StringUtils {
 	 * @return
 	 */
 	public static Boolean isCharSequence(String propertyType) {
-		Class<?> cls = null;
+		Class<?> cls;
 		try {
 			cls = Class.forName(propertyType);
 		} catch (ClassNotFoundException e) {

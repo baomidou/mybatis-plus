@@ -79,7 +79,7 @@ public class SqlUtils {
 			JsqlParserUtils.jsqlparserCount(countOptimize, originalSql);
 			break;
 		default:
-			StringBuffer countSql = new StringBuffer("SELECT COUNT(1) ");
+			StringBuilder countSql = new StringBuilder("SELECT COUNT(1) ");
 			boolean optimize = false;
 			if (!indexOfSql.contains("DISTINCT") && !indexOfSql.contains("GROUP BY")) {
 				int formIndex = indexOfSql.indexOf("FROM");
@@ -118,7 +118,7 @@ public class SqlUtils {
 	 */
 	public static String concatOrderBy(String originalSql, Pagination page, boolean orderBy) {
 		if (orderBy && StringUtils.isNotEmpty(page.getOrderByField()) && page.isOpenSort()) {
-			StringBuffer buildSql = new StringBuffer(originalSql);
+			StringBuilder buildSql = new StringBuilder(originalSql);
 			buildSql.append(" ORDER BY ").append(page.getOrderByField());
 			buildSql.append(page.isAsc() ? " ASC " : " DESC ");
 			return buildSql.toString();

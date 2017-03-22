@@ -15,20 +15,19 @@
  */
 package com.baomidou.mybatisplus.test.mysql;
 
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.test.mysql.entity.Test;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
 import com.baomidou.mybatisplus.test.mysql.mapper.TestMapper;
 import com.baomidou.mybatisplus.test.mysql.mapper.UserMapper;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  * <p>
@@ -52,7 +51,7 @@ public class CircularLabelsTest {
 		SqlSession session = sessionFactory.openSession();
 		UserMapper userMapper = session.getMapper(UserMapper.class);
 		Page<User> page = new Page<User>(1, 6);
-		List<User> users = userMapper.forSelect(page, Arrays.asList(new String[] { "1", "2", "3" }));
+		List<User> users = userMapper.forSelect(page, Arrays.asList("1", "2", "3"));
 		System.out.println(users.toString());
 		System.out.println(page);
 		User user = new User();

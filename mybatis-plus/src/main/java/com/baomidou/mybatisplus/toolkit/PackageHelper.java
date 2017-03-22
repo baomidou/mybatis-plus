@@ -15,9 +15,7 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -26,7 +24,8 @@ import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.util.ClassUtils;
 
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * <p>
@@ -64,7 +63,7 @@ public class PackageHelper {
 			Set<String> set = new HashSet<String>();
 			Resource[] resources = resolver.getResources(pkg);
 			if (resources != null && resources.length > 0) {
-				MetadataReader metadataReader = null;
+				MetadataReader metadataReader;
 				for (Resource resource : resources) {
 					if (resource.isReadable()) {
 						metadataReader = metadataReaderFactory.getMetadataReader(resource);

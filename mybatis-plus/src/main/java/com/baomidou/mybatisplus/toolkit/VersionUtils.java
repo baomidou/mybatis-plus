@@ -49,10 +49,6 @@ public class VersionUtils {
 	 */
 	public static boolean compare(String version1, String version2) {
 		int num = compareVersion(version1, version2);
-		if (num >= 0) {
-			return true;
-		}
-		return false;
+		return num >= 0;
 	}
-
 }

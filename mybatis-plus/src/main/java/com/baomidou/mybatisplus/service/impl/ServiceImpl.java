@@ -154,11 +154,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 					/*
 					 * 更新成功直接返回，失败执行插入逻辑
 					 */
-					boolean rlt = updateById(entity);
-					if (!rlt) {
-						return insert(entity);
-					}
-					return rlt;
+					return updateById(entity) || insert(entity);
 				}
 			} else {
 				throw new MybatisPlusException("Error:  Can not execute. Could not find @TableId.");

@@ -86,7 +86,7 @@ public class TableInfoHelper {
 			return ti;
 		}
 		TableInfo tableInfo = new TableInfo();
-		GlobalConfiguration globalCache = null;
+		GlobalConfiguration globalCache;
 		if (null != builderAssistant) {
 			tableInfo.setCurrentNamespace(builderAssistant.getCurrentNamespace());
 			tableInfo.setConfigMark(builderAssistant.getConfiguration());
@@ -264,7 +264,7 @@ public class TableInfoHelper {
 	 * </p>
 	 */
 	private static void throwExceptionId(Class<?> clazz) {
-		StringBuffer errorMsg = new StringBuffer();
+		StringBuilder errorMsg = new StringBuilder();
 		errorMsg.append("There must be only one, Discover multiple @TableId annotation in ");
 		errorMsg.append(clazz.getName());
 		throw new MybatisPlusException(errorMsg.toString());
@@ -305,7 +305,7 @@ public class TableInfoHelper {
 			}
 			String[] columns = columnName.split(";");
 			String[] els = el.split(";");
-			if (null != columns && null != els && columns.length == els.length) {
+			if (columns.length == els.length) {
 				for (int i = 0; i < columns.length; i++) {
 					fieldList.add(new TableFieldInfo(globalCache, columns[i], field.getName(), els[i], validate, field.getType()
 							.getName()));

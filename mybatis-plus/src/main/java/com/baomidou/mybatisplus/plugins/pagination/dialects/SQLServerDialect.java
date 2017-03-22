@@ -30,7 +30,7 @@ public class SQLServerDialect implements IDialect {
 	public static final SQLServerDialect INSTANCE = new SQLServerDialect();
 
 	public String buildPaginationSql(String originalSql, int offset, int limit) {
-		StringBuffer sql = new StringBuffer(originalSql);
+		StringBuilder sql = new StringBuilder(originalSql);
 		sql.append(" OFFSET ").append(offset).append(" ROWS FETCH NEXT ");
 		sql.append(limit).append(" ROWS ONLY");
 		return sql.toString();

@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.toolkit;
 
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,7 +31,7 @@ import java.util.Set;
  */
 public class SqlReservedWords {
 
-	public static Set<String> RESERVED_WORDS;
+	public static final Set<String> RESERVED_WORDS;
 
 	static {
 		String[] words = { "AUDIT", "VOLUMES", "MINVALUE", "STATIC", "FLOOR", "CATALOG", "YEAR", "TRIGGER_CATALOG", "WLM",
@@ -140,10 +141,7 @@ public class SqlReservedWords {
 				"DECLARE", "SUPERUSER", "WHILE" };
 
 		RESERVED_WORDS = new HashSet<String>(words.length);
-
-		for (String word : words) {
-			RESERVED_WORDS.add(word);
-		}
+		Collections.addAll(RESERVED_WORDS, words);
 	}
 
 	/**
@@ -175,10 +173,7 @@ public class SqlReservedWords {
 	 * @return
 	 */
 	public static boolean containsWord(String word) {
-		if (null != word) {
-			return RESERVED_WORDS.contains(word.toUpperCase());
-		}
-		return false;
+		return null != word && RESERVED_WORDS.contains(word.toUpperCase());
 	}
 
 	/**

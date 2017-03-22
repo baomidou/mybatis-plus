@@ -145,36 +145,34 @@ public class MybatisMapperRefresh implements Runnable {
 					} catch (InterruptedException interruptedException) {
 						interruptedException.printStackTrace();
 					}
-					while (true) {
-						try {
-							for (String filePath : fileSet) {
-								File file = new File(filePath);
-								if (file != null && file.isFile() && file.lastModified() > beforeTime) {
-									globalConfig.setRefresh(true);
-									List<Resource> removeList = jarMapper.get(filePath);
-									if (removeList != null && !removeList.isEmpty()) {// 如果是jar包中的xml，将刷新jar包中存在的所有xml，后期再修改加载jar中修改过后的xml
-										for (Resource resource : removeList) {
-											runnable.refresh(resource);
-										}
-									} else {
-										runnable.refresh(new FileSystemResource(file));
+					try {
+						for (String filePath : fileSet) {
+							File file = new File(filePath);
+							if (file.isFile() && file.lastModified() > beforeTime) {
+								globalConfig.setRefresh(true);
+								List<Resource> removeList = jarMapper.get(filePath);
+								if (removeList != null && !removeList.isEmpty()) {// 如果是jar包中的xml，将刷新jar包中存在的所有xml，后期再修改加载jar中修改过后的xml
+									for (Resource resource : removeList) {
+										runnable.refresh(resource);
 									}
+								} else {
+									runnable.refresh(new FileSystemResource(file));
 								}
 							}
-							if (globalConfig.isRefresh()) {
-								beforeTime = SystemClock.now();
-							}
-							globalConfig.setRefresh(true);
-						} catch (Exception exception) {
-							exception.printStackTrace();
 						}
-						try {
-							Thread.sleep(sleepSeconds * 1000);
-						} catch (InterruptedException interruptedException) {
-							interruptedException.printStackTrace();
+						if (globalConfig.isRefresh()) {
+							beforeTime = SystemClock.now();
 						}
-
+						globalConfig.setRefresh(true);
+					} catch (Exception exception) {
+						exception.printStackTrace();
 					}
+					try {
+						Thread.sleep(sleepSeconds * 1000);
+					} catch (InterruptedException interruptedException) {
+						interruptedException.printStackTrace();
+					}
+
 				}
 			}, "mybatis-plus MapperRefresh").start();
 		}

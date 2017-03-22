@@ -15,12 +15,11 @@
  */
 package com.baomidou.mybatisplus.entity;
 
-import java.util.List;
-
-import org.apache.ibatis.session.Configuration;
-
 import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import org.apache.ibatis.session.Configuration;
+
+import java.util.List;
 
 /**
  * <p>
@@ -89,7 +88,7 @@ public class TableInfo {
 	 * @return
 	 */
 	public String getSqlStatement(String sqlMethod) {
-		StringBuffer statement = new StringBuffer();
+		StringBuilder statement = new StringBuilder();
 		statement.append(currentNamespace);
 		statement.append(".");
 		statement.append(sqlMethod);

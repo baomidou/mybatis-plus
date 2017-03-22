@@ -460,7 +460,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
 		if (hasLength(this.typeAliasesPackage)) {
 			// TODO
-			String[] typeAliasPackageArray = null;
+			String[] typeAliasPackageArray;
 			if (typeAliasesPackage.contains("*")) {
 				typeAliasPackageArray = PackageHelper.convertTypeAliasesPackage(typeAliasesPackage);
 			} else {

@@ -61,7 +61,7 @@ public class SqlExplainInterceptor implements Interceptor {
 	/**
 	 * Mysql支持分析SQL的最小版本
 	 */
-	private String minMySQLVersion = "5.6.3";
+	private final String minMySQLVersion = "5.6.3";
 
 	public Object intercept(Invocation invocation) throws Throwable {
 		/**

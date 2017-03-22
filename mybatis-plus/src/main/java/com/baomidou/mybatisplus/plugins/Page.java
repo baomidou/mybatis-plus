@@ -15,12 +15,12 @@
  */
 package com.baomidou.mybatisplus.plugins;
 
+import com.baomidou.mybatisplus.plugins.pagination.Pagination;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 
 /**
  * <p>
@@ -75,7 +75,7 @@ public class Page<T> extends Pagination {
 
 	@Override
 	public String toString() {
-		StringBuffer pg = new StringBuffer();
+		StringBuilder pg = new StringBuilder();
 		pg.append(" Page:{ [").append(super.toString()).append("], ");
 		if (records != null) {
 			pg.append("records-size:").append(records.size());

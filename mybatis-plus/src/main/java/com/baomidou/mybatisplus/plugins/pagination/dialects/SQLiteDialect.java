@@ -30,7 +30,7 @@ public class SQLiteDialect implements IDialect {
 	public static final SQLiteDialect INSTANCE = new SQLiteDialect();
 
 	public String buildPaginationSql(String originalSql, int offset, int limit) {
-		StringBuffer sql = new StringBuffer(originalSql);
+		StringBuilder sql = new StringBuilder(originalSql);
 		sql.append(" limit ").append(limit).append(" offset ").append(offset);
 		return sql.toString();
 	}
