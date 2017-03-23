@@ -164,7 +164,6 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 	 * @return
 	 */
 	protected static Object populateKeys(TableInfo tableInfo, MappedStatement ms, Object parameterObject) {
-
 		if (null == tableInfo || StringUtils.isEmpty(tableInfo.getKeyProperty()) || null == tableInfo.getIdType()) {
             /*
              * 不处理
