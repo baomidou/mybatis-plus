@@ -465,7 +465,7 @@ public abstract class Wrapper<T> implements Serializable {
 				inSql.append(" NOT");
 			}
 			inSql.append(" LIKE {0}");
-			sql.WHERE(formatSql(String.format("%s = {0}", column), SqlUtils.concatLike(value, type)));
+			sql.WHERE(formatSql(inSql.toString(), SqlUtils.concatLike(value, type)));
 		}
 	}
 
@@ -558,7 +558,7 @@ public abstract class Wrapper<T> implements Serializable {
 	 */
 	public Wrapper<T> in(String column, String value) {
 		if (StringUtils.isNotEmpty(value)) {
-			sql.WHERE(formatSql(inExpression(column, StringUtils.splitWorker(value, ",", -1, false), false), value));
+			in(column, StringUtils.splitWorker(value, ",", -1, false));
 		}
 		return this;
 	}
@@ -574,7 +574,7 @@ public abstract class Wrapper<T> implements Serializable {
 	 */
 	public Wrapper<T> notIn(String column, String value) {
 		if (StringUtils.isNotEmpty(value)) {
-			sql.WHERE(formatSql(inExpression(column, StringUtils.splitWorker(value, ",", -1, false), true), value));
+			notIn(column, StringUtils.splitWorker(value, ",", -1, false));
 		}
 		return this;
 	}
@@ -680,8 +680,22 @@ public abstract class Wrapper<T> implements Serializable {
 	 * @param val2
 	 * @return this
 	 */
-	public Wrapper<T> between(String column, String val1, String val2) {
+	public Wrapper<T> between(String column, Object val1, Object val2) {
 		sql.WHERE(formatSql(String.format("%s BETWEEN {0} AND {1}", column), val1, val2));
+		return this;
+	}
+
+	/**
+	 * NOT betwwee 条件语句
+	 *
+	 * @param column
+	 *            字段名称
+	 * @param val1
+	 * @param val2
+	 * @return this
+	 */
+	public Wrapper<T> notBetween(String column, Object val1, Object val2) {
+		sql.WHERE(formatSql(String.format("%s NOT BETWEEN {0} AND {1}", column), val1, val2));
 		return this;
 	}
 

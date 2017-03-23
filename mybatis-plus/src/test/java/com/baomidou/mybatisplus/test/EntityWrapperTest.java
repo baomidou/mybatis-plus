@@ -24,6 +24,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -157,13 +158,9 @@ public class EntityWrapperTest {
 				.andNew("new=xx").like("hhh", "ddd").andNew("pwd=11").isNotNull("n1,n2").isNull("n3").groupBy("x1")
 				.groupBy("x2,x3").having("x1=11").having("x3=433").orderBy("dd").orderBy("d1,d2");
 		System.out.println(ew.toString());
-		Assert.assertEquals("AND (name=? AND id=1) \n" +
-                "OR (status=? OR status=1 AND nlike = ?) \n" +
-                "AND (new=xx AND hhh = ?) \n" +
-                "AND (pwd=11 AND n1 IS NOT NULL AND n2 IS NOT NULL AND n3 IS NULL)\n" +
-                "GROUP BY x1, x2,x3\n" +
-                "HAVING (x1=11 AND x3=433)\n" +
-                "ORDER BY dd, d1,d2",ew.toString());
+		Assert.assertEquals("AND (name=? AND id=1) \n" + "OR (status=? OR status=1 AND nlike = ?) \n"
+				+ "AND (new=xx AND hhh = ?) \n" + "AND (pwd=11 AND n1 IS NOT NULL AND n2 IS NOT NULL AND n3 IS NULL)\n"
+				+ "GROUP BY x1, x2,x3\n" + "HAVING (x1=11 AND x3=433)\n" + "ORDER BY dd, d1,d2", ew.toString());
 	}
 
 	@Test
@@ -334,10 +331,12 @@ public class EntityWrapperTest {
 		 */
 		ew.setEntity(new User(1));
 		ew.setParamAlias("ceshi");
-		String sqlPart = ew.or("sql = {0}", "sql").like("default", "default", SqlLike.DEFAULT).like("left", "left", SqlLike.LEFT)
-				.like("right", "right", SqlLike.RIGHT).isWhere(true).eq("bool", true).toString();
+		ew.or("sql = {0}", "sql").like("default", "default", SqlLike.DEFAULT).like("left", "left", SqlLike.LEFT);
+		ew.in("aaabbbcc", "1,3,4");
+		String sqlPart = ew.in("bbb", Arrays.asList(new String[] { "a", "b", "c" })).like("right", "right", SqlLike.RIGHT).isWhere(true)
+				.eq("bool", true).between("ee","1111","222").toString();
 		System.out.println("sql ==> " + sqlPart);
-		Assert.assertEquals("WHERE (sql = ? AND default = ? AND left = ? AND right = ? AND bool = ?)", sqlPart);
+		Assert.assertEquals("WHERE (sql = ? AND default LIKE ? AND left LIKE ? AND aaabbbcc IN (?,?,?) AND bbb IN (?,?,?) AND right LIKE ? AND bool = ? AND ee BETWEEN ? AND ?)", sqlPart);
 		System.out.println(ew.getSqlSegment());
 	}
 }
