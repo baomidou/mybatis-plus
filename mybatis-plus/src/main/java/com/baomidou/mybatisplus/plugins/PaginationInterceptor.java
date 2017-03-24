@@ -124,8 +124,9 @@ public class PaginationInterceptor implements Interceptor {
 	protected void count(String sql, MappedStatement mappedStatement, BoundSql boundSql, Pagination page) {
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
+		Connection connection = null;
 		try {
-			Connection connection = mappedStatement.getConfiguration().getEnvironment().getDataSource().getConnection();
+			connection = mappedStatement.getConfiguration().getEnvironment().getDataSource().getConnection();
 			statement = connection.prepareStatement(sql);
 			DefaultParameterHandler parameterHandler = new MybatisDefaultParameterHandler(mappedStatement,
 					boundSql.getParameterObject(), boundSql);
@@ -148,6 +149,7 @@ public class PaginationInterceptor implements Interceptor {
 		} finally {
 			IOUtils.closeQuietly(statement);
 			IOUtils.closeQuietly(resultSet);
+			IOUtils.closeQuietly(connection);
 		}
 	}
 
