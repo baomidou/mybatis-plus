@@ -214,6 +214,8 @@ public class TableInfoHelper {
 					// 开启字段下划线申明
 					if (globalConfig.isDbColumnUnderline()) {
 						column = StringUtils.camelToUnderline(column);
+						// fixed 217
+						tableInfo.setKeyRelated(true);
 					}
 					// 全局大写命名
 					if (globalConfig.isCapitalMode()) {
@@ -226,6 +228,9 @@ public class TableInfoHelper {
 			} else {
 				throwExceptionId(clazz);
 			}
+		} else {
+			// fixed 217
+			tableInfo.setIdType(globalConfig.getIdType());
 		}
 		return false;
 	}
