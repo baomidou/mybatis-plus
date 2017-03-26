@@ -15,13 +15,15 @@
  */
 package com.baomidou.mybatisplus.test.mysql.entity;
 
+import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.annotations.Version;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
-
-import java.io.Serializable;
-import java.lang.reflect.Field;
 
 /**
  * <p>
@@ -47,6 +49,9 @@ public class User implements Serializable {
 	private String name;
 
 	private Integer age;
+	
+	/*BigDecimal 测试*/
+	private BigDecimal price;
 
 	/* 测试下划线字段命名类型, 字段填充 */
 	@TableField(value = "test_type", validate = FieldStrategy.IGNORED)
@@ -56,6 +61,9 @@ public class User implements Serializable {
 	private Role role;
 
 	private String desc = "默认描述";
+	
+	@Version
+	private Integer version;
 
 	// 或@TableField(el = "role,jdbcType=BIGINT)
 	@TableField(el = "phone, typeHandler=com.baomidou.mybatisplus.test.mysql.typehandler.PhoneTypeHandler")
@@ -117,6 +125,14 @@ public class User implements Serializable {
 		this.name = name;
 	}
 
+	public BigDecimal getPrice() {
+		return price;
+	}
+
+	public void setPrice(BigDecimal price) {
+		this.price = price;
+	}
+
 	public Integer getAge() {
 		return age;
 	}
@@ -157,10 +173,18 @@ public class User implements Serializable {
 		this.desc = desc;
 	}
 
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
+
 	@Override
 	public String toString() {
-		return "User{" + "id=" + id + ", name='" + name + '\'' + ", age=" + age + ", testType=" + testType + ", role="
-				+ role + ", phone=" + phone + ", desc=" + desc + '}';
+		return "User [id=" + id + ", name=" + name + ", age=" + age + ", price=" + price + ", testType=" + testType
+				+ ", role=" + role + ", desc=" + desc + ", phone=" + phone + "]";
 	}
 
 	/**

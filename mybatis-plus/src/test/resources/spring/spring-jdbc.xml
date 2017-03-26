@@ -89,6 +89,9 @@
 					class="com.baomidou.mybatisplus.plugins.PaginationInterceptor">
 					<property name="dialectType" value="mysql" />
 				</bean>
+				<bean id="optimisticLockerInterceptor"
+					class="com.baomidou.mybatisplus.plugins.OptimisticLockerInterceptor">
+				</bean>
 			</array>
 		</property>
 	</bean>

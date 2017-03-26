@@ -66,6 +66,8 @@ CREATE TABLE `user` (
   `role` bigint(20) DEFAULT NULL,
   `phone` varchar(64) COLLATE utf8_bin DEFAULT NULL,
   `desc` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `price` DECIMAL(10,2) NULL DEFAULT NULL,
+  `version` INT(5) NULL DEFAULT NULL,
   PRIMARY KEY (`test_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='用户表';
 
