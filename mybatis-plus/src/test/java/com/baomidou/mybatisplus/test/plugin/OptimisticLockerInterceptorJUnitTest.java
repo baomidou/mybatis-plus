@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
 
 
@@ -32,7 +33,7 @@ public class OptimisticLockerInterceptorJUnitTest extends UserTestBase{
 		userService.updateById(user);
 		user = userService.selectById(11);
 		Assert.assertEquals(2, user.getAge().intValue());
-		Assert.assertEquals(1, user.getVersion().intValue());
+		Assert.assertEquals(null, user.getVersion());
 	}
 	
 	@Test
@@ -42,6 +43,9 @@ public class OptimisticLockerInterceptorJUnitTest extends UserTestBase{
 		Assert.assertEquals(2, user.getAge().intValue());
 		user.setAge(3);
 		userService.updateById(user);
+		User where = new User();
+		where.setId(userId);
+		userService.update(user, new EntityWrapper<User>(where));
 		user = userService.selectById(userId);
 		Assert.assertEquals(3, user.getAge().intValue());
 		Assert.assertEquals(2, user.getVersion().intValue());
