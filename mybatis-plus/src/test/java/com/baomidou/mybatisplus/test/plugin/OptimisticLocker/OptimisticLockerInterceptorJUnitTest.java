@@ -34,11 +34,13 @@ public class OptimisticLockerInterceptorJUnitTest {
 	}
 
 	@Test
-	public void baseVersion() {
+	public void intVersionTest() {
 		SqlSession sqlSession = sqlSessionFactory.openSession();
 		VersionUserMapper mapper = sqlSession.getMapper(VersionUserMapper.class);
+		// 查到数据
 		VersionUser versionUser = mapper.selectById(1);
-		mapper.update(versionUser, null);
+		// 根据Id更新
+		mapper.updateById(versionUser);
 		sqlSession.close();
 	}
 

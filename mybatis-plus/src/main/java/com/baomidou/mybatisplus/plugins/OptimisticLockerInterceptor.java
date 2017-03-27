@@ -12,9 +12,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.ibatis.binding.MapperMethod;
+import org.apache.ibatis.binding.MapperMethod.ParamMap;
 import org.apache.ibatis.builder.StaticSqlSource;
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.Executor;
+import org.apache.ibatis.javassist.util.proxy.ProxyFactory;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
@@ -83,13 +86,17 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 		if (parameterObject == null || !ms.getSqlCommandType().equals(SqlCommandType.UPDATE)) {
 			return invocation.proceed();
 		}
-		
+
 		// 获得参数类型,去缓存中快速判断是否有version注解才继续执行
 		Class<? extends Object> parameterClass = parameterObject.getClass();
 		Class<?> realClass = null;
-		if(org.apache.ibatis.javassist.util.proxy.ProxyFactory.isProxyClass(parameterClass)){
+		if (parameterObject instanceof ParamMap) {
+			//FIXME 这里还没处理
+			ParamMap<?> tt = (ParamMap<?>) parameterObject;
+			realClass = tt.get("param1").getClass();
+		} else if (ProxyFactory.isProxyClass(parameterClass)) {
 			realClass = parameterClass.getSuperclass();
-		}else{
+		} else {
 			realClass = parameterClass;
 		}
 		VersionCache versionPo = versionCache.get(realClass);
@@ -144,41 +151,41 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 			if (!columnNames.contains(versionColumn)) {// 如果sql没有version手动加一个
 				columns.add(new Column(versionColumn));
 				parse.setColumns(columns);
-			}else{
+			} else {
 				VersionHandler targetHandler = typeHandlers.get(versionField.getType());
 				Expression plusExpression = targetHandler.getPlusExpression(versionValue);
-				VersionExpSimpleTypeVisitor visitor = new VersionExpSimpleTypeVisitor(); 
+				VersionExpSimpleTypeVisitor visitor = new VersionExpSimpleTypeVisitor();
 				plusExpression.accept(visitor);
-				if(visitor.isLongValue()){
+				if (visitor.isLongValue()) {
 					Object versionNewValue = null;
 					String versionClassname = versionValue.getClass().getSimpleName();
 					switch (versionClassname) {
-					case "Long":
-						versionNewValue = Long.parseLong(plusExpression.toString());
-						break;
-					case "long":
-						versionNewValue = Long.parseLong(plusExpression.toString());
-						break;
-					case "Integer":
-						versionNewValue = Integer.parseInt(plusExpression.toString());
-						break;
-					case "int":
-						versionNewValue = Integer.parseInt(plusExpression.toString());
-						break;
-					case "Short":
-						versionNewValue = Short.parseShort(plusExpression.toString());
-						break;
-					case "short":
-						versionNewValue = Short.parseShort(plusExpression.toString());
-						break;
-					default:
-						versionNewValue = versionValue;//not support
-						break;
+						case "Long":
+							versionNewValue = Long.parseLong(plusExpression.toString());
+							break;
+						case "long":
+							versionNewValue = Long.parseLong(plusExpression.toString());
+							break;
+						case "Integer":
+							versionNewValue = Integer.parseInt(plusExpression.toString());
+							break;
+						case "int":
+							versionNewValue = Integer.parseInt(plusExpression.toString());
+							break;
+						case "Short":
+							versionNewValue = Short.parseShort(plusExpression.toString());
+							break;
+						case "short":
+							versionNewValue = Short.parseShort(plusExpression.toString());
+							break;
+						default:
+							versionNewValue = versionValue;// not support
+							break;
 					}
 					versionField.set(parameterObject, versionNewValue);
-				}else{
-					//TODO: 自定义VersionHandler处理 
-					
+				} else {
+					// TODO: 自定义VersionHandler处理
+
 				}
 			}
 			BinaryExpression expression = (BinaryExpression) parse.getWhere();
@@ -310,13 +317,15 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 		}
 
 	}
-	
+
 	private static class VersionExpSimpleTypeVisitor extends ExpressionVisitorAdapter {
 		private boolean longValue = false;
+
 		@Override
 		public void visit(LongValue value) {
 			longValue = true;
 		}
+
 		public boolean isLongValue() {
 			return longValue;
 		}
