@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.binding.MapperMethod.ParamMap;
 import org.apache.ibatis.builder.StaticSqlSource;
 import org.apache.ibatis.exceptions.ExceptionFactory;
@@ -67,7 +66,7 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 	/**
 	 * 根据对象类型缓存version基本信息
 	 */
-	private static final Map<Class<?>, VersionCache> versionCache = new ConcurrentHashMap<Class<?>, VersionCache>();
+	private static final Map<String, VersionCache> versionCache = new ConcurrentHashMap<>();
 
 	/**
 	 * 根据version字段类型缓存的处理器
@@ -93,13 +92,15 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 		if (parameterObject instanceof ParamMap) {
 			//FIXME 这里还没处理
 			ParamMap<?> tt = (ParamMap<?>) parameterObject;
-			realClass = tt.get("param1").getClass();
-		} else if (ProxyFactory.isProxyClass(parameterClass)) {
+			parameterClass = tt.get("param1").getClass();
+		}
+		if (ProxyFactory.isProxyClass(parameterClass)) {
 			realClass = parameterClass.getSuperclass();
 		} else {
 			realClass = parameterClass;
 		}
-		VersionCache versionPo = versionCache.get(realClass);
+		String cacheKey = realClass.getName();
+		VersionCache versionPo = versionCache.get(cacheKey);
 		if (versionPo != null) {
 			if (versionPo.isVersionControl) {
 				processChangeSql(ms, parameterObject, versionPo);
@@ -125,10 +126,10 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 			if (versionField != null) {
 				versionField.setAccessible(true);
 				VersionCache cachePo = new VersionCache(true, versionColumn, versionField);
-				versionCache.put(parameterClass, cachePo);
+				versionCache.put(cacheKey, cachePo);
 				processChangeSql(ms, parameterObject, cachePo);
 			} else {
-				versionCache.put(parameterClass, new VersionCache(false));
+				versionCache.put(cacheKey, new VersionCache(false));
 			}
 		}
 		return invocation.proceed();
@@ -137,7 +138,14 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 	private void processChangeSql(MappedStatement ms, Object parameterObject, VersionCache versionPo) throws Exception {
 		Field versionField = versionPo.versionField;
 		String versionColumn = versionPo.versionColumn;
-		final Object versionValue = versionField.get(parameterObject);
+		Object realObject = null;
+		if (parameterObject instanceof ParamMap) {
+			ParamMap<?> tt = (ParamMap<?>) parameterObject;
+			realObject = tt.get("param1");
+		}else{
+			realObject = parameterObject;
+		}
+		final Object versionValue = versionField.get(realObject);
 		if (versionValue != null) {// 先判断传参是否携带version,没带跳过插件,不可能去数据库查吧
 			Configuration configuration = ms.getConfiguration();
 			BoundSql boundSql = ms.getBoundSql(parameterObject);
@@ -182,7 +190,7 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 							versionNewValue = versionValue;// not support
 							break;
 					}
-					versionField.set(parameterObject, versionNewValue);
+					versionField.set(realObject, versionNewValue);
 				} else {
 					// TODO: 自定义VersionHandler处理
 
