@@ -33,7 +33,7 @@ public class OptimisticLockerInterceptorJUnitTest extends UserTestBase{
 		userService.updateById(user);
 		user = userService.selectById(11);
 		Assert.assertEquals(2, user.getAge().intValue());
-		Assert.assertEquals(null, user.getVersion());
+		Assert.assertEquals(1, user.getVersion().intValue());
 	}
 	
 	@Test
