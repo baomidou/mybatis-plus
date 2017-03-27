@@ -11,12 +11,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
 import com.baomidou.mybatisplus.test.mysql.service.IUserService;
+import com.baomidou.mybatisplus.test.plugin.OptimisticLocker.mapper.TimeVersionUserMapper;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
 
 public abstract class UserTestBase {
 
 	@Autowired
 	protected IUserService userService;
+	
+	@Autowired
+	protected TimeVersionUserMapper timeVersionMapper;
 	
 	@Before
 	public void init(){

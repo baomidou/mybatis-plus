@@ -1,6 +1,8 @@
 package com.baomidou.mybatisplus.test.plugin;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.Date;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -10,6 +12,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
+import com.baomidou.mybatisplus.test.plugin.OptimisticLocker.entity.TimeVersionUser;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -71,6 +74,38 @@ public class OptimisticLockerInterceptorJUnitTest extends UserTestBase{
 		user = userService.selectById(userId);
 		Assert.assertEquals(3, user.getAge().intValue());
 		Assert.assertEquals(3, user.getVersion().intValue());
+	}
+	
+	@Test
+	public void testTimestampVersionControl(){
+		timeVersionMapper.deleteById(1L);
+		TimeVersionUser user = new TimeVersionUser();
+		user.setId(1L);
+		user.setName("name1");
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DAY_OF_MONTH, -1);
+		user.setVersion(cal.getTime());
+		timeVersionMapper.insert(user);
+		
+		cal = Calendar.getInstance();
+		cal.add(Calendar.SECOND, -1);
+		Date date = cal.getTime();
+		System.err.println("date="+date);
+		int compare = user.getVersion().compareTo(date);
+		Assert.assertTrue(compare<0);
+		
+		TimeVersionUser updateUser = new TimeVersionUser();
+		updateUser.setId(1L);
+		updateUser.setName("updname");
+		updateUser.setVersion(user.getVersion());
+		
+		timeVersionMapper.updateById(updateUser);
+		user = timeVersionMapper.selectById(1L);
+		Date version = user.getVersion();
+		System.err.println("after update: version="+version);
+		compare = version.compareTo(date);
+		System.err.println("compare="+compare);
+		Assert.assertTrue(compare>0);
 	}
 	
 }

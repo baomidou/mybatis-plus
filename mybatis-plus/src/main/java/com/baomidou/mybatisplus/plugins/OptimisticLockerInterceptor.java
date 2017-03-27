@@ -39,7 +39,7 @@ import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.ExpressionVisitorAdapter;
 import net.sf.jsqlparser.expression.LongValue;
-import net.sf.jsqlparser.expression.StringValue;
+import net.sf.jsqlparser.expression.TimestampValue;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
@@ -90,7 +90,6 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 		Class<? extends Object> parameterClass = parameterObject.getClass();
 		Class<?> realClass = null;
 		if (parameterObject instanceof ParamMap) {
-			//FIXME 这里还没处理
 			ParamMap<?> tt = (ParamMap<?>) parameterObject;
 			parameterClass = tt.get("param1").getClass();
 		}
@@ -191,9 +190,11 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 							break;
 					}
 					versionField.set(realObject, versionNewValue);
+				} else if(visitor.isTimestampValue()){
+					TimestampValue tsVal = (TimestampValue) plusExpression;
+					versionField.set(realObject, tsVal.getValue());
 				} else {
 					// TODO: 自定义VersionHandler处理
-
 				}
 			}
 			BinaryExpression expression = (BinaryExpression) parse.getWhere();
@@ -307,36 +308,51 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 		public Expression getRightExpression(Object param) {
 			Date date = (Date) param;
 			String millTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format((Date) param);
-			String realTime;
+			String realTimeStr = null;
 			Integer mills = Integer.valueOf(millTime.substring(20, 21));
 			if (mills >= 5) {
 				Calendar calendar = Calendar.getInstance();
 				calendar.setTime(date);
 				calendar.add(Calendar.SECOND, 1);
-				realTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(calendar.getTime());
+				realTimeStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(calendar.getTime());
 			} else {
-				realTime = millTime.substring(0, 19);
+				realTimeStr = "'"+millTime.substring(0, 19)+"'";
 			}
-			return new StringValue(realTime);
+			return  new TimestampValue("'"+realTimeStr+"'");
 		}
 
 		public Expression getPlusExpression(Object param) {
-			return new StringValue(new Timestamp(new Date().getTime()).toString());
+			String currTimeStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+			return  new TimestampValue("'"+currTimeStr+"'");
 		}
 
 	}
 
 	private static class VersionExpSimpleTypeVisitor extends ExpressionVisitorAdapter {
 		private boolean longValue = false;
+		private boolean timestampValue = false;
 
 		@Override
 		public void visit(LongValue value) {
 			longValue = true;
+			timestampValue = false;
+		}
+
+		@Override
+		public void visit(TimestampValue value) {
+			longValue = false;
+			timestampValue = true;
 		}
 
 		public boolean isLongValue() {
 			return longValue;
 		}
+
+		public boolean isTimestampValue() {
+			return timestampValue;
+		}
+		
+		
 	}
 
 }
