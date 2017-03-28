@@ -25,7 +25,7 @@ import com.baomidou.mybatisplus.test.plugin.OptimisticLocker.mapper.LongVersionU
 import com.baomidou.mybatisplus.test.plugin.OptimisticLocker.mapper.ShortVersionUserMapper;
 import com.baomidou.mybatisplus.test.plugin.OptimisticLocker.mapper.TimestampVersionUserMapper;
 
- class OptimisticLockerInterceptorTest {
+public class OptimisticLockerInterceptorTest {
 
 	private static SqlSessionFactory sqlSessionFactory;
 
@@ -83,7 +83,7 @@ import com.baomidou.mybatisplus.test.plugin.OptimisticLocker.mapper.TimestampVer
 		DateVersionUserMapper mapper = sqlSession.getMapper(DateVersionUserMapper.class);
 		DateVersionUser dateVersionUser = new DateVersionUser();
 		dateVersionUser.setName("zhangsan");
-		dateVersionUser.setVersion(new Timestamp(new Date().getTime()));
+		dateVersionUser.setVersion(new Date());
 		// 插入数据
 		mapper.insert(dateVersionUser);
 		// 查找出来
