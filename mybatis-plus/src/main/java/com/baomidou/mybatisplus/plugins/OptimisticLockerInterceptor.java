@@ -2,25 +2,26 @@ package com.baomidou.mybatisplus.plugins;
 
 import java.lang.reflect.Field;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.binding.MapperMethod.ParamMap;
-import org.apache.ibatis.builder.StaticSqlSource;
+import org.apache.ibatis.builder.SqlSourceBuilder;
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.javassist.util.proxy.ProxyFactory;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
@@ -33,14 +34,12 @@ import org.apache.ibatis.type.TypeException;
 
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.annotations.Version;
+import com.baomidou.mybatisplus.test.plugin.OptimisticLocker.entity.LongVersionUser;
 import com.baomidou.mybatisplus.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.ExpressionVisitorAdapter;
-import net.sf.jsqlparser.expression.LongValue;
-import net.sf.jsqlparser.expression.StringValue;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
@@ -67,16 +66,19 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 	/**
 	 * 根据对象类型缓存version基本信息
 	 */
-	private static final Map<Class<?>, VersionCache> versionCache = new ConcurrentHashMap<Class<?>, VersionCache>();
+	private static final Map<String, VersionCache> versionCache = new ConcurrentHashMap<>();
 
 	/**
 	 * 根据version字段类型缓存的处理器
 	 */
-	private static final Map<Class<?>, VersionHandler> typeHandlers = new HashMap<Class<?>, VersionHandler>();
+	private static final Map<Class<?>, VersionHandler<?>> typeHandlers = new HashMap<Class<?>, VersionHandler<?>>();
 
 	static {
-		registerHandler(new BaseTypeHnadler());
+		registerHandler(new ShortTypeHnadler());
+		registerHandler(new IntegerTypeHnadler());
+		registerHandler(new LongTypeHnadler());
 		registerHandler(new DateTypeHandler());
+		registerHandler(new TimestampTypeHandler());
 	}
 
 	public Object intercept(Invocation invocation) throws Exception {
@@ -91,15 +93,17 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 		Class<? extends Object> parameterClass = parameterObject.getClass();
 		Class<?> realClass = null;
 		if (parameterObject instanceof ParamMap) {
-			//FIXME 这里还没处理
+			// FIXME 这里还没处理
 			ParamMap<?> tt = (ParamMap<?>) parameterObject;
-			realClass = tt.get("param1").getClass();
-		} else if (ProxyFactory.isProxyClass(parameterClass)) {
+			parameterClass = tt.get("param1").getClass();
+		}
+		if (ProxyFactory.isProxyClass(parameterClass)) {
 			realClass = parameterClass.getSuperclass();
 		} else {
 			realClass = parameterClass;
 		}
-		VersionCache versionPo = versionCache.get(realClass);
+		String cacheKey = realClass.getName();
+		VersionCache versionPo = versionCache.get(cacheKey);
 		if (versionPo != null) {
 			if (versionPo.isVersionControl) {
 				processChangeSql(ms, parameterObject, versionPo);
@@ -125,85 +129,84 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 			if (versionField != null) {
 				versionField.setAccessible(true);
 				VersionCache cachePo = new VersionCache(true, versionColumn, versionField);
-				versionCache.put(parameterClass, cachePo);
+				versionCache.put(cacheKey, cachePo);
 				processChangeSql(ms, parameterObject, cachePo);
 			} else {
-				versionCache.put(parameterClass, new VersionCache(false));
+				versionCache.put(cacheKey, new VersionCache(false));
 			}
 		}
 		return invocation.proceed();
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void processChangeSql(MappedStatement ms, Object parameterObject, VersionCache versionPo) throws Exception {
 		Field versionField = versionPo.versionField;
 		String versionColumn = versionPo.versionColumn;
-		final Object versionValue = versionField.get(parameterObject);
-		if (versionValue != null) {// 先判断传参是否携带version,没带跳过插件,不可能去数据库查吧
+		Object realObject = null;
+		if (parameterObject instanceof ParamMap) {
+			ParamMap<?> tt = (ParamMap<?>) parameterObject;
+			realObject = tt.get("param1");
+		} else {
+			realObject = parameterObject;
+		}
+		final Object versionValue = versionField.get(realObject);
+		if (versionValue != null) {// 先判断传参是否携带version,没带跳过插件
 			Configuration configuration = ms.getConfiguration();
-			BoundSql boundSql = ms.getBoundSql(parameterObject);
-			String originalSql = boundSql.getSql();
+			BoundSql originBoundSql = ms.getBoundSql(parameterObject);
+			String originalSql = originBoundSql.getSql();
+			// 解析sql,预处理更新字段没有version字段的情况
 			Update parse = (Update) CCJSqlParserUtil.parse(originalSql);
 			List<Column> columns = parse.getColumns();
 			List<String> columnNames = new ArrayList<String>();
 			for (Column column : columns) {
 				columnNames.add(column.getColumnName());
 			}
-			if (!columnNames.contains(versionColumn)) {// 如果sql没有version手动加一个
+			if (!columnNames.contains(versionColumn)) {
 				columns.add(new Column(versionColumn));
 				parse.setColumns(columns);
-			} else {
-				VersionHandler targetHandler = typeHandlers.get(versionField.getType());
-				Expression plusExpression = targetHandler.getPlusExpression(versionValue);
-				VersionExpSimpleTypeVisitor visitor = new VersionExpSimpleTypeVisitor();
-				plusExpression.accept(visitor);
-				if (visitor.isLongValue()) {
-					Object versionNewValue = null;
-					String versionClassname = versionValue.getClass().getSimpleName();
-					switch (versionClassname) {
-						case "Long":
-							versionNewValue = Long.parseLong(plusExpression.toString());
-							break;
-						case "long":
-							versionNewValue = Long.parseLong(plusExpression.toString());
-							break;
-						case "Integer":
-							versionNewValue = Integer.parseInt(plusExpression.toString());
-							break;
-						case "int":
-							versionNewValue = Integer.parseInt(plusExpression.toString());
-							break;
-						case "Short":
-							versionNewValue = Short.parseShort(plusExpression.toString());
-							break;
-						case "short":
-							versionNewValue = Short.parseShort(plusExpression.toString());
-							break;
-						default:
-							versionNewValue = versionValue;// not support
-							break;
-					}
-					versionField.set(parameterObject, versionNewValue);
-				} else {
-					// TODO: 自定义VersionHandler处理
-
-				}
 			}
+			// 添加条件
 			BinaryExpression expression = (BinaryExpression) parse.getWhere();
 			if (expression != null && !expression.toString().contains(versionColumn)) {
 				EqualsTo equalsTo = new EqualsTo();
 				equalsTo.setLeftExpression(new Column(versionColumn));
-				VersionHandler targetHandler = typeHandlers.get(versionField.getType());
-				Expression rightExpression = targetHandler.getRightExpression(versionValue);
-				Expression plusExpression = targetHandler.getPlusExpression(versionValue);
+				Expression rightExpression = new Column("#{originVersionValue}");
 				equalsTo.setRightExpression(rightExpression);
 				parse.setWhere(new AndExpression(equalsTo, expression));
-				List<Expression> expressions = parse.getExpressions();
-				expressions.add(plusExpression);
-				parse.setExpressions(expressions);
 			}
+			String newSql = parse.toString();
+			int originVersionIndex = getOriginVersionIndex(newSql);
+			VersionHandler targetHandler = typeHandlers.get(versionField.getType());
+			targetHandler.plusVersion(parameterObject, versionField, versionValue);
+			SqlSource sqlSource = new SqlSourceBuilder(configuration).parse(newSql, LongVersionUser.class, null);
+			BoundSql newBoundSql = sqlSource.getBoundSql(parameterObject);
+			List<ParameterMapping> parameterMappings = newBoundSql.getParameterMappings();
+			parameterMappings.addAll(originBoundSql.getParameterMappings());
+			List<ParameterMapping> linkedList = new LinkedList<>(originBoundSql.getParameterMappings());
+			linkedList.add(originVersionIndex, parameterMappings.get(0));
+			Map<String, Object> additionalParameters = new HashMap<>();
+			additionalParameters.put("originVersionValue", versionValue);
+			MySqlSource mySqlSource = new MySqlSource(configuration, newBoundSql.getSql(), linkedList, additionalParameters);
 			MetaObject metaObject = SystemMetaObject.forObject(ms);
-			metaObject.setValue("sqlSource", new StaticSqlSource(configuration, parse.toString(), boundSql.getParameterMappings()));
+			metaObject.setValue("sqlSource", mySqlSource);
 		}
+	}
+
+	private int getOriginVersionIndex(String newSql) {
+		int indexOf = newSql.indexOf("#{originVersionValue}");
+		int index = 0;
+		int originVersionIndex = 0;
+		for (int i = 0; i < newSql.length(); i++) {
+			if (newSql.charAt(i) == '?') {
+				index++;
+			}
+			if (indexOf == i) {
+				originVersionIndex = index--;
+				break;
+			}
+
+		}
+		return originVersionIndex;
 	}
 
 	public Object plugin(Object target) {
@@ -219,7 +222,7 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 			String[] userHandlers = versionHandlers.split(",");
 			for (String handlerClazz : userHandlers) {
 				try {
-					VersionHandler versionHandler = (VersionHandler) Class.forName(handlerClazz).newInstance();
+					VersionHandler<?> versionHandler = (VersionHandler<?>) Class.forName(handlerClazz).newInstance();
 					registerHandler(versionHandler);
 				} catch (Exception e) {
 					throw ExceptionFactory.wrapException("乐观锁插件自定义处理器注册失败", e);
@@ -232,7 +235,7 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 	/**
 	 * 注册处理器
 	 */
-	private static void registerHandler(VersionHandler versionHandler) {
+	private static void registerHandler(VersionHandler<?> versionHandler) {
 		Class<?>[] handleType = versionHandler.handleType();
 		if (ArrayUtils.isNotEmpty(handleType)) {
 			for (Class<?> type : handleType) {
@@ -260,74 +263,101 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 		}
 	}
 
-	/**
-	 * 基本类型处理器
-	 * 
-	 * @author TaoYu
-	 */
-	private static class BaseTypeHnadler implements VersionHandler {
+	private class MySqlSource implements SqlSource {
 
-		public Class<?>[] handleType() {
-			return new Class<?>[] { Long.class, long.class, Integer.class, int.class, Short.class, short.class };
+		private String sql;
+		private List<ParameterMapping> parameterMappings;
+		private Configuration configuration;
+		private Map<String, Object> additionalParameters;
+
+		public MySqlSource(Configuration configuration, String sql, List<ParameterMapping> parameterMappings, Map<String, Object> additionalParameters) {
+			this.sql = sql;
+			this.parameterMappings = parameterMappings;
+			this.configuration = configuration;
+			this.additionalParameters = additionalParameters;
 		}
-
-		public Expression getRightExpression(Object param) {
-			return new LongValue(param.toString());
-		}
-
-		public Expression getPlusExpression(Object param) {
-			return new LongValue(Long.parseLong(param.toString()) + 1);
-		}
-
-	}
-
-	/**
-	 * 时间类型处理器
-	 * 
-	 * @author TaoYu
-	 */
-	private static class DateTypeHandler implements VersionHandler {
-
-		public Class<?>[] handleType() {
-			return new Class<?>[] { Date.class, java.sql.Date.class, Timestamp.class };
-		}
-
-		/*
-		 * 时间处理是大坑!!!!!http://www.yufengof.com/2015/08/17/mysql-datetime-type-millisecond-rounding/
-		 */
-
-		public Expression getRightExpression(Object param) {
-			Date date = (Date) param;
-			String millTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S").format((Date) param);
-			String realTime;
-			Integer mills = Integer.valueOf(millTime.substring(20, 21));
-			if (mills >= 5) {
-				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(date);
-				calendar.add(Calendar.SECOND, 1);
-				realTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(calendar.getTime());
-			} else {
-				realTime = millTime.substring(0, 19);
-			}
-			return new StringValue(realTime);
-		}
-
-		public Expression getPlusExpression(Object param) {
-			return new StringValue(new Timestamp(new Date().getTime()).toString());
-		}
-
-	}
-
-	private static class VersionExpSimpleTypeVisitor extends ExpressionVisitorAdapter {
-		private boolean longValue = false;
 
 		@Override
-		public void visit(LongValue value) {
-			longValue = true;
+		public BoundSql getBoundSql(Object parameterObject) {
+			BoundSql boundSql = new BoundSql(configuration, sql, parameterMappings, parameterObject);
+			if (additionalParameters != null && additionalParameters.size() > 0) {
+				for (Entry<String, Object> item : additionalParameters.entrySet()) {
+					boundSql.setAdditionalParameter(item.getKey(), item.getValue());
+				}
+			}
+			return boundSql;
 		}
 
-		public boolean isLongValue() {
-			return longValue;
+	}
+	// *****************************基本类型处理器*****************************
+
+	private static class ShortTypeHnadler implements VersionHandler<Short> {
+
+		@Override
+		public Class<?>[] handleType() {
+			return new Class<?>[] { Short.class, short.class };
+		}
+
+		@Override
+		public void plusVersion(Object paramObj, Field field, Short versionValue) throws Exception {
+			field.set(paramObj, (short) (versionValue + 1));
+		}
+	}
+
+	private static class IntegerTypeHnadler implements VersionHandler<Integer> {
+
+		@Override
+		public Class<?>[] handleType() {
+			return new Class<?>[] { Integer.class, int.class };
+		}
+
+		@Override
+		public void plusVersion(Object paramObj, Field field, Integer versionValue) throws Exception {
+			field.set(paramObj, versionValue + 1);
+		}
+
+	}
+
+	private static class LongTypeHnadler implements VersionHandler<Long> {
+
+		@Override
+		public Class<?>[] handleType() {
+			return new Class<?>[] { Long.class, long.class };
+		}
+
+		@Override
+		public void plusVersion(Object paramObj, Field field, Long versionValue) throws Exception {
+			field.set(paramObj, versionValue + 1);
+		}
+
+	}
+
+	// ***************************** 时间类型处理器*****************************
+	private static class DateTypeHandler implements VersionHandler<Date> {
+
+		@Override
+		public Class<?>[] handleType() {
+			return new Class<?>[] { Date.class };
+		}
+
+		@Override
+		public void plusVersion(Object paramObj, Field field, Date versionValue) throws Exception {
+			field.set(paramObj, new Date());
+
+		}
+	}
+
+	private static class TimestampTypeHandler implements VersionHandler<Timestamp> {
+
+		@Override
+		public Class<?>[] handleType() {
+			return new Class<?>[] { Timestamp.class };
+		}
+
+		@Override
+		public void plusVersion(Object paramObj, Field field, Timestamp versionValue) throws Exception {
+			field.set(paramObj, new Timestamp(new Date().getTime()));
+
 		}
 	}
 

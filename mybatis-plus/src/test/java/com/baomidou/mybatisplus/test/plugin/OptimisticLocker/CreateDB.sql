@@ -18,5 +18,7 @@ CREATE TABLE time_version_user (
 	PRIMARY KEY (`id`)
 ) ENGINE = INNODB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;
 
-insert into version_user (id,name,version) values(1,"zhangsan",1);
+insert into version_user (id,name,version) values(1,"zhangsan",15);
+insert into version_user (id,name,version) values(2,"lisi",null);
+insert into version_user (id,name,version) values(3,"wangwu",109);
 

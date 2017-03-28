@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.annotations.Version;
 
 @TableName("version_user")
-public class VersionUser implements Serializable {
+public class ShortVersionUser implements Serializable {
 
 	@TableField(exist = false)
 	private static final long serialVersionUID = 1L;
@@ -17,7 +17,7 @@ public class VersionUser implements Serializable {
 	private String name;
 
 	@Version
-	private Integer version;
+	private Short version;
 
 	public Long getId() {
 		return id;
@@ -35,11 +35,11 @@ public class VersionUser implements Serializable {
 		this.name = name;
 	}
 
-	public Integer getVersion() {
+	public Short getVersion() {
 		return version;
 	}
 
-	public void setVersion(Integer version) {
+	public void setVersion(Short version) {
 		this.version = version;
 	}
 
