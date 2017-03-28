@@ -69,7 +69,7 @@ public abstract class UserTestBase {
 	public void cleanData(){
 		User user = new User();
 		user.setDesc(null);
-		EntityWrapper<User> ew = new EntityWrapper<>(user);
+		EntityWrapper<User> ew = new EntityWrapper<User>(user);
 		ew.and("1=1");
 		userService.delete(ew);
 	}

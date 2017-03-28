@@ -188,9 +188,9 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 		// 这一句可以全局一个 TODO
 		ParameterMapping parameterMapping = new ParameterMapping.Builder(configuration, "originVersionValue", new UnknownTypeHandler(configuration.getTypeHandlerRegistry()))
 				.build();
-		List<ParameterMapping> parameterMappings = new LinkedList<>(originBoundSql.getParameterMappings());
+		List<ParameterMapping> parameterMappings = new LinkedList<ParameterMapping>(originBoundSql.getParameterMappings());
 		parameterMappings.add(parse.getExpressions().size(), parameterMapping);
-		Map<String, Object> additionalParameters = new HashMap<>();
+		Map<String, Object> additionalParameters = new HashMap<String, Object>();
 		additionalParameters.put("originVersionValue", versionValue);
 		return new MySqlSource(configuration, parse.toString(), parameterMappings, additionalParameters);
 	}
@@ -261,7 +261,6 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 			this.additionalParameters = additionalParameters;
 		}
 
-		@Override
 		public BoundSql getBoundSql(Object parameterObject) {
 			BoundSql boundSql = new BoundSql(configuration, sql, parameterMappings, parameterObject);
 			if (additionalParameters != null && additionalParameters.size() > 0) {
@@ -276,21 +275,20 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 	// *****************************基本类型处理器*****************************
 
 	private static class ShortTypeHnadler implements VersionHandler<Short> {
-		@Override
 		public void plusVersion(Object paramObj, Field field, Short versionValue) throws Exception {
 			field.set(paramObj, (short) (versionValue + 1));
 		}
 	}
 
 	private static class IntegerTypeHnadler implements VersionHandler<Integer> {
-		@Override
+
 		public void plusVersion(Object paramObj, Field field, Integer versionValue) throws Exception {
 			field.set(paramObj, versionValue + 1);
 		}
 	}
 
 	private static class LongTypeHnadler implements VersionHandler<Long> {
-		@Override
+
 		public void plusVersion(Object paramObj, Field field, Long versionValue) throws Exception {
 			field.set(paramObj, versionValue + 1);
 		}
@@ -299,14 +297,14 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 
 	// ***************************** 时间类型处理器*****************************
 	private static class DateTypeHandler implements VersionHandler<Date> {
-		@Override
+
 		public void plusVersion(Object paramObj, Field field, Date versionValue) throws Exception {
 			field.set(paramObj, new Date());
 		}
 	}
 
 	private static class TimestampTypeHandler implements VersionHandler<Timestamp> {
-		@Override
+
 		public void plusVersion(Object paramObj, Field field, Timestamp versionValue) throws Exception {
 			field.set(paramObj, new Timestamp(new Date().getTime()));
 		}
