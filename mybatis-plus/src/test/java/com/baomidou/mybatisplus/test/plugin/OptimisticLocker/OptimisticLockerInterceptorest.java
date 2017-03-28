@@ -25,7 +25,7 @@ import com.baomidou.mybatisplus.test.plugin.OptimisticLocker.mapper.LongVersionU
 import com.baomidou.mybatisplus.test.plugin.OptimisticLocker.mapper.ShortVersionUserMapper;
 import com.baomidou.mybatisplus.test.plugin.OptimisticLocker.mapper.TimestampVersionUserMapper;
 
-public class OptimisticLockerInterceptorJUnitTest {
+ class OptimisticLockerInterceptorest {
 
 	private static SqlSessionFactory sqlSessionFactory;
 

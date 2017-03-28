@@ -66,7 +66,7 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 	/**
 	 * 根据对象类型缓存version基本信息
 	 */
-	private static final Map<String, VersionCache> versionCache = new ConcurrentHashMap<>();
+	private static final Map<Class<?>, VersionCache> versionCache = new ConcurrentHashMap<Class<?>, VersionCache>();
 
 	/**
 	 * 根据version字段类型缓存的处理器
@@ -95,15 +95,13 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 		if (parameterObject instanceof ParamMap) {
 			// FIXME 这里还没处理
 			ParamMap<?> tt = (ParamMap<?>) parameterObject;
-			parameterClass = tt.get("param1").getClass();
-		}
-		if (ProxyFactory.isProxyClass(parameterClass)) {
+			realClass = tt.get("param1").getClass();
+		} else if (ProxyFactory.isProxyClass(parameterClass)) {
 			realClass = parameterClass.getSuperclass();
 		} else {
 			realClass = parameterClass;
 		}
-		String cacheKey = realClass.getName();
-		VersionCache versionPo = versionCache.get(cacheKey);
+		VersionCache versionPo = versionCache.get(realClass);
 		if (versionPo != null) {
 			if (versionPo.isVersionControl) {
 				processChangeSql(ms, parameterObject, versionPo);
@@ -129,10 +127,10 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 			if (versionField != null) {
 				versionField.setAccessible(true);
 				VersionCache cachePo = new VersionCache(true, versionColumn, versionField);
-				versionCache.put(cacheKey, cachePo);
+				versionCache.put(parameterClass, cachePo);
 				processChangeSql(ms, parameterObject, cachePo);
 			} else {
-				versionCache.put(cacheKey, new VersionCache(false));
+				versionCache.put(parameterClass, new VersionCache(false));
 			}
 		}
 		return invocation.proceed();
@@ -142,14 +140,7 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 	private void processChangeSql(MappedStatement ms, Object parameterObject, VersionCache versionPo) throws Exception {
 		Field versionField = versionPo.versionField;
 		String versionColumn = versionPo.versionColumn;
-		Object realObject = null;
-		if (parameterObject instanceof ParamMap) {
-			ParamMap<?> tt = (ParamMap<?>) parameterObject;
-			realObject = tt.get("param1");
-		} else {
-			realObject = parameterObject;
-		}
-		final Object versionValue = versionField.get(realObject);
+		final Object versionValue = versionField.get(parameterObject);
 		if (versionValue != null) {// 先判断传参是否携带version,没带跳过插件
 			Configuration configuration = ms.getConfiguration();
 			BoundSql originBoundSql = ms.getBoundSql(parameterObject);
