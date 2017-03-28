@@ -1,6 +1,8 @@
 package com.baomidou.mybatisplus.plugins;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,8 +36,6 @@ import org.apache.ibatis.type.TypeException;
 
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.annotations.Version;
-import com.baomidou.mybatisplus.test.plugin.OptimisticLocker.entity.LongVersionUser;
-import com.baomidou.mybatisplus.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 import net.sf.jsqlparser.expression.BinaryExpression;
@@ -54,7 +54,7 @@ import net.sf.jsqlparser.statement.update.Update;
  * 之后：update user set name = ?, password = ?, version = version+1 where id = ? and version = ?
  * 对象上的version字段上添加{@link Version}注解
  * sql可以不需要写version字段,只要对象version有值就会更新
- * 支持int Integer long Long Date Timestamp
+ * 支持short,Short,int Integer, long Long, Date Timestamp
  * 其他类型可以自定义实现,注入versionHandlers,多个以逗号分隔
  * </pre>
  * 
@@ -74,11 +74,20 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 	private static final Map<Class<?>, VersionHandler<?>> typeHandlers = new HashMap<Class<?>, VersionHandler<?>>();
 
 	static {
-		registerHandler(new ShortTypeHnadler());
-		registerHandler(new IntegerTypeHnadler());
-		registerHandler(new LongTypeHnadler());
-		registerHandler(new DateTypeHandler());
-		registerHandler(new TimestampTypeHandler());
+		ShortTypeHnadler shortTypeHnadler = new ShortTypeHnadler();
+		typeHandlers.put(short.class, shortTypeHnadler);
+		typeHandlers.put(Short.class, shortTypeHnadler);
+
+		IntegerTypeHnadler integerTypeHnadler = new IntegerTypeHnadler();
+		typeHandlers.put(int.class, integerTypeHnadler);
+		typeHandlers.put(Integer.class, integerTypeHnadler);
+
+		LongTypeHnadler longTypeHnadler = new LongTypeHnadler();
+		typeHandlers.put(long.class, longTypeHnadler);
+		typeHandlers.put(Long.class, longTypeHnadler);
+
+		typeHandlers.put(Date.class, new DateTypeHandler());
+		typeHandlers.put(Timestamp.class, new TimestampTypeHandler());
 	}
 
 	public Object intercept(Invocation invocation) throws Exception {
@@ -169,7 +178,7 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 			int originVersionIndex = getOriginVersionIndex(newSql);
 			VersionHandler targetHandler = typeHandlers.get(versionField.getType());
 			targetHandler.plusVersion(parameterObject, versionField, versionValue);
-			SqlSource sqlSource = new SqlSourceBuilder(configuration).parse(newSql, LongVersionUser.class, null);
+			SqlSource sqlSource = new SqlSourceBuilder(configuration).parse(newSql, parameterObject.getClass(), null);
 			BoundSql newBoundSql = sqlSource.getBoundSql(parameterObject);
 			List<ParameterMapping> parameterMappings = newBoundSql.getParameterMappings();
 			parameterMappings.addAll(originBoundSql.getParameterMappings());
@@ -195,7 +204,6 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 				originVersionIndex = index--;
 				break;
 			}
-
 		}
 		return originVersionIndex;
 	}
@@ -227,12 +235,10 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 	 * 注册处理器
 	 */
 	private static void registerHandler(VersionHandler<?> versionHandler) {
-		Class<?>[] handleType = versionHandler.handleType();
-		if (ArrayUtils.isNotEmpty(handleType)) {
-			for (Class<?> type : handleType) {
-				typeHandlers.put(type, versionHandler);
-			}
-		}
+		Type[] genericInterfaces = versionHandler.getClass().getGenericInterfaces();
+		ParameterizedType parameterizedType = (ParameterizedType) genericInterfaces[0];
+		Class<?> type = (Class<?>) parameterizedType.getActualTypeArguments()[0];
+		typeHandlers.put(type, versionHandler);
 	}
 
 	private class VersionCache {
@@ -283,12 +289,6 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 	// *****************************基本类型处理器*****************************
 
 	private static class ShortTypeHnadler implements VersionHandler<Short> {
-
-		@Override
-		public Class<?>[] handleType() {
-			return new Class<?>[] { Short.class, short.class };
-		}
-
 		@Override
 		public void plusVersion(Object paramObj, Field field, Short versionValue) throws Exception {
 			field.set(paramObj, (short) (versionValue + 1));
@@ -296,26 +296,13 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 	}
 
 	private static class IntegerTypeHnadler implements VersionHandler<Integer> {
-
-		@Override
-		public Class<?>[] handleType() {
-			return new Class<?>[] { Integer.class, int.class };
-		}
-
 		@Override
 		public void plusVersion(Object paramObj, Field field, Integer versionValue) throws Exception {
 			field.set(paramObj, versionValue + 1);
 		}
-
 	}
 
 	private static class LongTypeHnadler implements VersionHandler<Long> {
-
-		@Override
-		public Class<?>[] handleType() {
-			return new Class<?>[] { Long.class, long.class };
-		}
-
 		@Override
 		public void plusVersion(Object paramObj, Field field, Long versionValue) throws Exception {
 			field.set(paramObj, versionValue + 1);
@@ -325,30 +312,16 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 
 	// ***************************** 时间类型处理器*****************************
 	private static class DateTypeHandler implements VersionHandler<Date> {
-
-		@Override
-		public Class<?>[] handleType() {
-			return new Class<?>[] { Date.class };
-		}
-
 		@Override
 		public void plusVersion(Object paramObj, Field field, Date versionValue) throws Exception {
 			field.set(paramObj, new Date());
-
 		}
 	}
 
 	private static class TimestampTypeHandler implements VersionHandler<Timestamp> {
-
-		@Override
-		public Class<?>[] handleType() {
-			return new Class<?>[] { Timestamp.class };
-		}
-
 		@Override
 		public void plusVersion(Object paramObj, Field field, Timestamp versionValue) throws Exception {
 			field.set(paramObj, new Timestamp(new Date().getTime()));
-
 		}
 	}
 

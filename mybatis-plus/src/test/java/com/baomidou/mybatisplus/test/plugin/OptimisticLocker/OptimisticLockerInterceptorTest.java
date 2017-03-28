@@ -52,6 +52,7 @@ public class OptimisticLockerInterceptorTest {
 		ShortVersionUser versionUser = mapper.selectById(1);
 		// 根据Id更新
 		Assert.assertTrue(mapper.updateById(versionUser) == 1);
+		// mapper.update(versionUser, null);
 		sqlSession.close();
 	}
 
