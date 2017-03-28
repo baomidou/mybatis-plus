@@ -15,7 +15,6 @@ import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.ibatis.binding.MapperMethod.ParamMap;
-import org.apache.ibatis.builder.SqlSourceBuilder;
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.javassist.util.proxy.ProxyFactory;
@@ -33,6 +32,7 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.TypeException;
+import org.apache.ibatis.type.UnknownTypeHandler;
 
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.annotations.Version;
@@ -170,42 +170,29 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 			if (expression != null && !expression.toString().contains(versionColumn)) {
 				EqualsTo equalsTo = new EqualsTo();
 				equalsTo.setLeftExpression(new Column(versionColumn));
-				Expression rightExpression = new Column("#{originVersionValue}");
+				Expression rightExpression = new Column("?");
 				equalsTo.setRightExpression(rightExpression);
 				parse.setWhere(new AndExpression(equalsTo, expression));
 			}
-			String newSql = parse.toString();
-			int originVersionIndex = getOriginVersionIndex(newSql);
+			// 给字段赋新值
 			VersionHandler targetHandler = typeHandlers.get(versionField.getType());
 			targetHandler.plusVersion(parameterObject, versionField, versionValue);
-			SqlSource sqlSource = new SqlSourceBuilder(configuration).parse(newSql, parameterObject.getClass(), null);
-			BoundSql newBoundSql = sqlSource.getBoundSql(parameterObject);
-			List<ParameterMapping> parameterMappings = newBoundSql.getParameterMappings();
-			parameterMappings.addAll(originBoundSql.getParameterMappings());
-			List<ParameterMapping> linkedList = new LinkedList<>(originBoundSql.getParameterMappings());
-			linkedList.add(originVersionIndex, parameterMappings.get(0));
-			Map<String, Object> additionalParameters = new HashMap<>();
-			additionalParameters.put("originVersionValue", versionValue);
-			MySqlSource mySqlSource = new MySqlSource(configuration, newBoundSql.getSql(), linkedList, additionalParameters);
+			// 生产带动态参数的sqlSource
+			SqlSource sqlSource = getSqlSource(versionValue, configuration, originBoundSql, parse);
 			MetaObject metaObject = SystemMetaObject.forObject(ms);
-			metaObject.setValue("sqlSource", mySqlSource);
+			metaObject.setValue("sqlSource", sqlSource);
 		}
 	}
 
-	private int getOriginVersionIndex(String newSql) {
-		int indexOf = newSql.indexOf("#{originVersionValue}");
-		int index = 0;
-		int originVersionIndex = 0;
-		for (int i = 0; i < newSql.length(); i++) {
-			if (newSql.charAt(i) == '?') {
-				index++;
-			}
-			if (indexOf == i) {
-				originVersionIndex = index--;
-				break;
-			}
-		}
-		return originVersionIndex;
+	private SqlSource getSqlSource(final Object versionValue, Configuration configuration, BoundSql originBoundSql, Update parse) {
+		// 这一句可以全局一个 TODO
+		ParameterMapping parameterMapping = new ParameterMapping.Builder(configuration, "originVersionValue", new UnknownTypeHandler(configuration.getTypeHandlerRegistry()))
+				.build();
+		List<ParameterMapping> parameterMappings = new LinkedList<>(originBoundSql.getParameterMappings());
+		parameterMappings.add(parse.getExpressions().size(), parameterMapping);
+		Map<String, Object> additionalParameters = new HashMap<>();
+		additionalParameters.put("originVersionValue", versionValue);
+		return new MySqlSource(configuration, parse.toString(), parameterMappings, additionalParameters);
 	}
 
 	public Object plugin(Object target) {
