@@ -97,7 +97,6 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 		if (parameterObject == null || !ms.getSqlCommandType().equals(SqlCommandType.UPDATE)) {
 			return invocation.proceed();
 		}
-
 		// 获得参数类型,去缓存中快速判断是否有version注解才继续执行
 		Class<? extends Object> parameterClass = parameterObject.getClass();
 		Class<?> realClass = null;

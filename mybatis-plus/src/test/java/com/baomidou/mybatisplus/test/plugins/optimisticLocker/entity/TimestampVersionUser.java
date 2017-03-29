@@ -1,13 +1,14 @@
-package com.baomidou.mybatisplus.test.plugin.OptimisticLocker.entity;
+package com.baomidou.mybatisplus.test.plugins.optimisticLocker.entity;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.annotations.Version;
 
-@TableName("version_user")
-public class LongVersionUser implements Serializable {
+@TableName("time_version_user")
+public class TimestampVersionUser implements Serializable {
 
 	@TableField(exist = false)
 	private static final long serialVersionUID = 1L;
@@ -17,7 +18,7 @@ public class LongVersionUser implements Serializable {
 	private String name;
 
 	@Version
-	private Long version;
+	private Timestamp version;
 
 	public Long getId() {
 		return id;
@@ -35,11 +36,11 @@ public class LongVersionUser implements Serializable {
 		this.name = name;
 	}
 
-	public Long getVersion() {
+	public Timestamp getVersion() {
 		return version;
 	}
 
-	public void setVersion(Long version) {
+	public void setVersion(Timestamp version) {
 		this.version = version;
 	}
 

@@ -30,6 +30,7 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.session.ResultHandler;
 
+import com.alibaba.druid.pool.DruidPooledPreparedStatement;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.toolkit.SqlUtils;
@@ -63,6 +64,10 @@ public class PerformanceInterceptor implements Interceptor {
 			statement = (Statement) SystemMetaObject.forObject(firstArg).getValue("h.statement");
 		} else {
 			statement = (Statement) firstArg;
+		}
+		// TODO 这里不太对
+		if (statement instanceof DruidPooledPreparedStatement) {
+			statement = (Statement) SystemMetaObject.forObject(statement).getValue("stmt.statement");
 		}
 		String originalSql = statement.toString();
 		int index = originalSql.indexOf(':');

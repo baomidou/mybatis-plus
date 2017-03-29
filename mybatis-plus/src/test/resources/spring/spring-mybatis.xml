@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- MyBatis SqlSessionFactoryBean 配置 -->
+	<bean id="sqlSessionFactory"
+		class="com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:mybatis-config.xml" />
+		<property name="typeAliasesPackage"
+			value="com.baomidou.mybatisplus.test.mysql.entity;com.baomidou.mybatisplus.test.plugin.OptimisticLocker.entity" />
+		<property name="mapperLocations" value="classpath:mysql/*Mapper.xml" />
+		<property name="globalConfig" ref="globalConfig" />
+		<property name="plugins">
+			<array>
+				<!-- 分页插件配置 -->
+				<bean id="paginationInterceptor"
+					class="com.baomidou.mybatisplus.plugins.PaginationInterceptor">
+					<property name="dialectType" value="mysql" />
+				</bean>
+				<bean id="optimisticLockerInterceptor"
+					class="com.baomidou.mybatisplus.plugins.OptimisticLockerInterceptor">
+				</bean>
+			</array>
+		</property>
+	</bean>
+
+	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg index="0" ref="sqlSessionFactory" />
+	</bean>
+
+	<!-- 注入配置 -->
+	<bean id="globalConfig" class="com.baomidou.mybatisplus.entity.GlobalConfiguration">
+		<property name="sqlInjector" ref="sqlInjector" />
+	</bean>
+	<bean id="sqlInjector" class="com.baomidou.mybatisplus.test.mysql.MySqlInjector" />
+
+	<bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage"
+			value="com.baomidou.mybatisplus.test.mysql.mapper;com.baomidou.mybatisplus.test.plugin.OptimisticLocker.mapper" />
+	</bean>
+</beans>

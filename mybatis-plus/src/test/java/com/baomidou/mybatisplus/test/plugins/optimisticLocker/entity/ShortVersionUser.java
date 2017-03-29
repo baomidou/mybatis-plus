@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.test.plugin.OptimisticLocker.entity;
+package com.baomidou.mybatisplus.test.plugins.optimisticLocker.entity;
 
 import java.io.Serializable;
 

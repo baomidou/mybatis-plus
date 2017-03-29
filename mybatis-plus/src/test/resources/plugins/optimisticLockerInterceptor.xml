@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd   
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd  
+           http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+
+	<context:component-scan base-package="com.baomidou.mybatisplus.test.mysql.plugins" />
+
+	<import resource="classpath:spring/spring-jdbc.xml" />
+
+	<!-- MyBatis SqlSessionFactoryBean 配置 -->
+	<bean id="sqlSessionFactory"
+		class="com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:mybatis-config.xml" />
+		<property name="typeAliasesPackage"
+			value="com.baomidou.mybatisplus.test.mysql.entity;com.baomidou.mybatisplus.test.plugins.optimisticLocker.entity" />
+		<property name="mapperLocations" value="classpath:mysql/*Mapper.xml" />
+		<property name="plugins">
+			<array>
+				<bean class="com.baomidou.mybatisplus.plugins.PerformanceInterceptor" />
+				<bean class="com.baomidou.mybatisplus.plugins.OptimisticLockerInterceptor" />
+			</array>
+		</property>
+	</bean>
+
+	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg index="0" ref="sqlSessionFactory" />
+	</bean>
+
+	<bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage"
+			value="com.baomidou.mybatisplus.test.plugins.optimisticLocker.mapper" />
+	</bean>
+</beans>

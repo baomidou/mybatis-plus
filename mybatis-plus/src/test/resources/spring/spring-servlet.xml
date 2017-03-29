@@ -11,5 +11,7 @@
 
 	<mvc:default-servlet-handler />
 
-	<import resource="classpath:spring/spring-jdbc.xml"/>
+	<import resource="classpath:spring/spring-jdbc.xml" />
+	<import resource="classpath:spring/spring-mybatis.xml" />
+
 </beans>

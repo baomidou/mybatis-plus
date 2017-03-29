@@ -10,4 +10,5 @@
 	<context:component-scan base-package="com.baomidou.mybatisplus.test.mysql" />
 
 	<import resource="classpath:spring/spring-jdbc.xml"/>
+	<import resource="classpath:spring/spring-mybatis.xml"/>
 </beans>
