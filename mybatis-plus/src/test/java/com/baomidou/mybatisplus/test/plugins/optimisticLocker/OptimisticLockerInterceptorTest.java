@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.test.plugins.optimisticLocker.entity.DateVersionUser;
 import com.baomidou.mybatisplus.test.plugins.optimisticLocker.entity.IntVersionUser;
 import com.baomidou.mybatisplus.test.plugins.optimisticLocker.entity.LongVersionUser;
@@ -158,8 +159,9 @@ public class OptimisticLockerInterceptorTest {
 		IntVersionUser versionUser = intVersionUserMapper.selectById(2);
 		Integer originVersion = versionUser.getVersion();
 		// 更新数据
-		versionUser.setName("苗神");
-		intVersionUserMapper.updateById(versionUser);
+		IntVersionUser intVersionUser = new IntVersionUser();
+		intVersionUser.setName("苗神");
+		intVersionUserMapper.update(versionUser, new EntityWrapper<IntVersionUser>(versionUser));
 		Assert.assertTrue(versionUser.getVersion() == originVersion + 1);
 	}
 }
