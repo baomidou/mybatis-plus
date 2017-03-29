@@ -15,14 +15,18 @@
 	<bean id="sqlSessionFactory"
 		class="com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
-		<property name="configLocation" value="classpath:mybatis-config.xml" />
 		<property name="typeAliasesPackage"
-			value="com.baomidou.mybatisplus.test.mysql.entity;com.baomidou.mybatisplus.test.plugins.optimisticLocker.entity" />
-		<property name="mapperLocations" value="classpath:mysql/*Mapper.xml" />
+			value="com.baomidou.mybatisplus.test.plugins.optimisticLocker.entity" />
 		<property name="plugins">
 			<array>
 				<bean class="com.baomidou.mybatisplus.plugins.PerformanceInterceptor" />
-				<bean class="com.baomidou.mybatisplus.plugins.OptimisticLockerInterceptor" />
+				<bean class="com.baomidou.mybatisplus.plugins.OptimisticLockerInterceptor">
+					<property name="properties">
+						<value>
+							versionHandlers=com.baomidou.mybatisplus.test.plugins.optimisticLocker.StringTypeHandler
+						</value>
+					</property>
+				</bean>
 			</array>
 		</property>
 	</bean>

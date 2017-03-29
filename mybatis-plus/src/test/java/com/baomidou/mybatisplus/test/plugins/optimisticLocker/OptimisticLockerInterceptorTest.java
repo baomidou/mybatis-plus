@@ -21,11 +21,13 @@ import com.baomidou.mybatisplus.test.plugins.optimisticLocker.entity.DateVersion
 import com.baomidou.mybatisplus.test.plugins.optimisticLocker.entity.IntVersionUser;
 import com.baomidou.mybatisplus.test.plugins.optimisticLocker.entity.LongVersionUser;
 import com.baomidou.mybatisplus.test.plugins.optimisticLocker.entity.ShortVersionUser;
+import com.baomidou.mybatisplus.test.plugins.optimisticLocker.entity.StringVersionUser;
 import com.baomidou.mybatisplus.test.plugins.optimisticLocker.entity.TimestampVersionUser;
 import com.baomidou.mybatisplus.test.plugins.optimisticLocker.mapper.DateVersionUserMapper;
 import com.baomidou.mybatisplus.test.plugins.optimisticLocker.mapper.IntVersionUserMapper;
 import com.baomidou.mybatisplus.test.plugins.optimisticLocker.mapper.LongVersionUserMapper;
 import com.baomidou.mybatisplus.test.plugins.optimisticLocker.mapper.ShortVersionUserMapper;
+import com.baomidou.mybatisplus.test.plugins.optimisticLocker.mapper.StringVersionUserMapper;
 import com.baomidou.mybatisplus.test.plugins.optimisticLocker.mapper.TimestampVersionUserMapper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -41,6 +43,8 @@ public class OptimisticLockerInterceptorTest {
 	private DateVersionUserMapper dateVersionUserMapper;
 	@Autowired
 	private TimestampVersionUserMapper timestampVersionUserMapper;
+	@Autowired
+	private StringVersionUserMapper stringersionUserMapper;
 	@Autowired
 	private SqlSessionTemplate sqlSessionTemplate;
 
@@ -76,6 +80,24 @@ public class OptimisticLockerInterceptorTest {
 		versionUser.setName("苗神");
 		intVersionUserMapper.updateById(versionUser);
 		Assert.assertTrue(versionUser.getVersion() == originVersion + 1);
+
+		// 重复测试一次,验证动态参数覆盖
+		// 查询数据
+		IntVersionUser versionUser2 = intVersionUserMapper.selectById(2);
+		Integer originVersion2 = versionUser2.getVersion();
+		versionUser2.setAge(16);
+		// 更新数据
+		versionUser2.setName("苗神");
+		intVersionUserMapper.updateById(versionUser2);
+		Assert.assertTrue(versionUser2.getVersion() == originVersion2 + 1);
+
+		// 测试一次数据库中version为null
+		IntVersionUser versionUser3 = intVersionUserMapper.selectById(3);
+		// 更新数据
+		versionUser3.setName("苗神");
+		intVersionUserMapper.updateById(versionUser3);
+		Assert.assertTrue(versionUser3.getVersion() == null);
+
 	}
 
 	@Test
@@ -93,6 +115,7 @@ public class OptimisticLockerInterceptorTest {
 	public void dateVersionTest() {
 		// 插入数据
 		DateVersionUser versionUser = new DateVersionUser();
+		versionUser.setId(15L);
 		versionUser.setName("苗神");
 		Date originVersion = new Date();
 		versionUser.setVersion(originVersion);
@@ -107,6 +130,7 @@ public class OptimisticLockerInterceptorTest {
 	public void timestampVersionTest() {
 		// 插入数据
 		TimestampVersionUser versionUser = new TimestampVersionUser();
+		versionUser.setId(15L);
 		versionUser.setName("苗神");
 		Timestamp originVersion = new Timestamp(new Date().getTime());
 		versionUser.setVersion(originVersion);
@@ -115,5 +139,27 @@ public class OptimisticLockerInterceptorTest {
 		versionUser.setName("小锅盖");
 		timestampVersionUserMapper.updateById(versionUser);
 		Assert.assertTrue(versionUser.getVersion().after(originVersion));
+	}
+
+	@Test
+	public void stringVersionTest() {
+		// 查询数据
+		StringVersionUser versionUser = stringersionUserMapper.selectById(1);
+		String originVersion = versionUser.getVersion();
+		// 更新数据
+		versionUser.setName("苗神");
+		stringersionUserMapper.updateById(versionUser);
+		Assert.assertEquals(versionUser.getVersion(), String.valueOf(Long.parseLong(originVersion) + 1));
+	}
+
+	@Test
+	public void multiParamVersionTest() {
+		// 查询数据
+		IntVersionUser versionUser = intVersionUserMapper.selectById(2);
+		Integer originVersion = versionUser.getVersion();
+		// 更新数据
+		versionUser.setName("苗神");
+		intVersionUserMapper.updateById(versionUser);
+		Assert.assertTrue(versionUser.getVersion() == originVersion + 1);
 	}
 }

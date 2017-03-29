@@ -101,7 +101,7 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 		Class<? extends Object> parameterClass = parameterObject.getClass();
 		Class<?> realClass = null;
 		if (parameterObject instanceof ParamMap) {
-			// FIXME 这里还没处理
+			// FIXME
 			ParamMap<?> tt = (ParamMap<?>) parameterObject;
 			realClass = tt.get("param1").getClass();
 		} else if (ProxyFactory.isProxyClass(parameterClass)) {
@@ -112,18 +112,18 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 		VersionCache versionPo = versionCache.get(realClass);
 		if (versionPo != null) {
 			if (versionPo.isVersionControl) {
-				processChangeSql(ms, parameterObject, versionPo);
+				return processChangeSql(ms, parameterObject, versionPo, invocation);
 			}
 		} else {
 			String versionColumn = null;
 			Field versionField = null;
-			for (Field field : realClass.getDeclaredFields()) {
+			for (final Field field : realClass.getDeclaredFields()) {
 				if (field.isAnnotationPresent(Version.class)) {
 					if (!typeHandlers.containsKey(field.getType())) {
 						throw new TypeException("乐观锁不支持" + field.getType().getName() + "类型,请自定义实现");
 					}
 					versionField = field;
-					TableName tableName = field.getAnnotation(TableName.class);
+					final TableName tableName = field.getAnnotation(TableName.class);
 					if (tableName != null) {
 						versionColumn = tableName.value();
 					} else {
@@ -136,62 +136,78 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 				versionField.setAccessible(true);
 				VersionCache cachePo = new VersionCache(true, versionColumn, versionField);
 				versionCache.put(parameterClass, cachePo);
-				processChangeSql(ms, parameterObject, cachePo);
+				return processChangeSql(ms, parameterObject, cachePo, invocation);
 			} else {
 				versionCache.put(parameterClass, new VersionCache(false));
 			}
 		}
 		return invocation.proceed();
+
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void processChangeSql(MappedStatement ms, Object parameterObject, VersionCache versionPo) throws Exception {
+	private Object processChangeSql(MappedStatement ms, Object parameterObject, VersionCache versionPo, Invocation invocation) throws Exception {
 		Field versionField = versionPo.versionField;
 		String versionColumn = versionPo.versionColumn;
 		final Object versionValue = versionField.get(parameterObject);
 		if (versionValue != null) {// 先判断传参是否携带version,没带跳过插件
 			Configuration configuration = ms.getConfiguration();
 			BoundSql originBoundSql = ms.getBoundSql(parameterObject);
-			String originalSql = originBoundSql.getSql();
-			// 解析sql,预处理更新字段没有version字段的情况
-			Update parse = (Update) CCJSqlParserUtil.parse(originalSql);
-			List<Column> columns = parse.getColumns();
-			List<String> columnNames = new ArrayList<String>();
-			for (Column column : columns) {
-				columnNames.add(column.getColumnName());
-			}
-			if (!columnNames.contains(versionColumn)) {
-				columns.add(new Column(versionColumn));
-				parse.setColumns(columns);
-			}
-			// 添加条件
-			BinaryExpression expression = (BinaryExpression) parse.getWhere();
-			if (expression != null && !expression.toString().contains(versionColumn)) {
-				EqualsTo equalsTo = new EqualsTo();
-				equalsTo.setLeftExpression(new Column(versionColumn));
-				Expression rightExpression = new Column("?");
-				equalsTo.setRightExpression(rightExpression);
-				parse.setWhere(new AndExpression(equalsTo, expression));
-			}
-			// 给字段赋新值
-			VersionHandler targetHandler = typeHandlers.get(versionField.getType());
-			targetHandler.plusVersion(parameterObject, versionField, versionValue);
-			// 生产带动态参数的sqlSource
-			SqlSource sqlSource = getSqlSource(versionValue, configuration, originBoundSql, parse);
+			SqlSource originSqlSource = ms.getSqlSource();
 			MetaObject metaObject = SystemMetaObject.forObject(ms);
-			metaObject.setValue("sqlSource", sqlSource);
+			// 解析sql,预处理更新字段没有version字段的情况
+			try {
+				Update jsqlSql = (Update) CCJSqlParserUtil.parse(originBoundSql.getSql());
+				List<Column> columns = jsqlSql.getColumns();
+				List<String> columnNames = new ArrayList<String>();
+				for (Column column : columns) {
+					columnNames.add(column.getColumnName());
+				}
+				if (!columnNames.contains(versionColumn)) {
+					columns.add(new Column(versionColumn));
+					jsqlSql.setColumns(columns);
+				}
+				// 添加条件
+				BinaryExpression expression = (BinaryExpression) jsqlSql.getWhere();
+				if (expression != null && !expression.toString().contains(versionColumn)) {
+					EqualsTo equalsTo = new EqualsTo();
+					equalsTo.setLeftExpression(new Column(versionColumn));
+					Expression rightExpression = new Column("?");
+					equalsTo.setRightExpression(rightExpression);
+					jsqlSql.setWhere(new AndExpression(equalsTo, expression));
+				}
+				// 给字段赋新值
+				VersionHandler targetHandler = typeHandlers.get(versionField.getType());
+				targetHandler.plusVersion(parameterObject, versionField, versionValue);
+				// 设置sqlSource
+				List<ParameterMapping> parameterMappings = new LinkedList<ParameterMapping>(originBoundSql.getParameterMappings());
+				parameterMappings.add(jsqlSql.getExpressions().size(), createVersionMapping(configuration));
+				Map<String, Object> additionalParameters = new HashMap<String, Object>();
+				additionalParameters.put("originVersionValue", versionValue);
+				SqlSource sqlSource = new OptimisticLockerSqlSource(configuration, jsqlSql.toString(), parameterMappings, additionalParameters);
+				metaObject.setValue("sqlSource", sqlSource);
+				return invocation.proceed();
+			} catch (Exception e) {
+				throw ExceptionFactory.wrapException("乐观锁插件执行失败", e);
+			} finally {
+				metaObject.setValue("sqlSource", originSqlSource);
+			}
+
 		}
+		return invocation.proceed();
 	}
 
-	private SqlSource getSqlSource(final Object versionValue, Configuration configuration, BoundSql originBoundSql, Update parse) {
-		// 这一句可以全局一个 TODO
-		ParameterMapping parameterMapping = new ParameterMapping.Builder(configuration, "originVersionValue", new UnknownTypeHandler(configuration.getTypeHandlerRegistry()))
-				.build();
-		List<ParameterMapping> parameterMappings = new LinkedList<ParameterMapping>(originBoundSql.getParameterMappings());
-		parameterMappings.add(parse.getExpressions().size(), parameterMapping);
-		Map<String, Object> additionalParameters = new HashMap<String, Object>();
-		additionalParameters.put("originVersionValue", versionValue);
-		return new MySqlSource(configuration, parse.toString(), parameterMappings, additionalParameters);
+	private ParameterMapping parameterMapping;
+
+	private ParameterMapping createVersionMapping(Configuration configuration) {
+		if (parameterMapping == null) {
+			synchronized (OptimisticLockerInterceptor.class) {
+				if (parameterMapping == null) {
+					parameterMapping = new ParameterMapping.Builder(configuration, "originVersionValue", new UnknownTypeHandler(configuration.getTypeHandlerRegistry())).build();
+				}
+			}
+		}
+		return parameterMapping;
 	}
 
 	public Object plugin(Object target) {
@@ -212,7 +228,6 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 				} catch (Exception e) {
 					throw ExceptionFactory.wrapException("乐观锁插件自定义处理器注册失败", e);
 				}
-
 			}
 		}
 	}
@@ -246,17 +261,20 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 		}
 	}
 
-	private class MySqlSource implements SqlSource {
+	/**
+	 * 乐观锁数据源,主要是为动态参数设计
+	 */
+	private class OptimisticLockerSqlSource implements SqlSource {
 
+		private Configuration configuration;
 		private String sql;
 		private List<ParameterMapping> parameterMappings;
-		private Configuration configuration;
 		private Map<String, Object> additionalParameters;
 
-		public MySqlSource(Configuration configuration, String sql, List<ParameterMapping> parameterMappings, Map<String, Object> additionalParameters) {
+		public OptimisticLockerSqlSource(Configuration configuration, String sql, List<ParameterMapping> parameterMappings, Map<String, Object> additionalParameters) {
+			this.configuration = configuration;
 			this.sql = sql;
 			this.parameterMappings = parameterMappings;
-			this.configuration = configuration;
 			this.additionalParameters = additionalParameters;
 		}
 
