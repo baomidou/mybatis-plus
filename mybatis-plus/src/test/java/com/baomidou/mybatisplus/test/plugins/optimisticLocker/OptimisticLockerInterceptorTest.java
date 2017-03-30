@@ -4,6 +4,7 @@ import java.io.Reader;
 import java.sql.Connection;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Random;
 
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.jdbc.ScriptRunner;
@@ -34,6 +35,7 @@ import com.baomidou.mybatisplus.test.plugins.optimisticLocker.mapper.TimestampVe
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/plugins/optimisticLockerInterceptor.xml" })
 public class OptimisticLockerInterceptorTest {
+
 	@Autowired
 	private ShortVersionUserMapper shortVersionUserMapper;
 	@Autowired
@@ -151,6 +153,32 @@ public class OptimisticLockerInterceptorTest {
 		versionUser.setName("苗神");
 		stringersionUserMapper.updateById(versionUser);
 		Assert.assertEquals(versionUser.getVersion(), String.valueOf(Long.parseLong(originVersion) + 1));
+	}
+
+	@Test
+	public void multiThreadVersionTest() {
+		final Random random = new Random();
+		for (int i = 50; i < 150; i++) {
+			new Thread(new Runnable() {
+				public void run() {
+					IntVersionUser intVersionUser = new IntVersionUser();
+					intVersionUser.setId(random.nextLong());
+					int version = random.nextInt();
+					intVersionUser.setName("改前" + version);
+					intVersionUser.setVersion(version);
+					intVersionUserMapper.insert(intVersionUser);
+					intVersionUser.setName("改后" + version);
+					intVersionUserMapper.updateById(intVersionUser);
+					Assert.assertTrue(intVersionUser.getVersion() == version + 1);
+				}
+			}, "编号" + i).start();
+		}
+
+		try {
+			Thread.sleep(4000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Test
