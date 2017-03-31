@@ -731,11 +731,11 @@ public class AutoSqlInjector implements ISqlInjector {
 	 *            字段信息
 	 * @param prefix
 	 *            条件前缀
-	 * @param colse
+	 * @param close
 	 *            是否闭合标签
 	 * @return
 	 */
-	protected String convertIfTag(boolean ignored, TableFieldInfo fieldInfo, String prefix, boolean colse) {
+	protected String convertIfTag(boolean ignored, TableFieldInfo fieldInfo, String prefix, boolean close) {
 		/* 忽略策略 */
 		FieldStrategy fieldStrategy = fieldInfo.getFieldStrategy();
 		if (fieldStrategy == FieldStrategy.IGNORED) {
@@ -747,7 +747,7 @@ public class AutoSqlInjector implements ISqlInjector {
 		}
 
 		// 关闭标签
-		if (colse) {
+		if (close) {
 			return "</if>";
 		}
 
