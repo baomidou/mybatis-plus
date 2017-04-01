@@ -73,17 +73,17 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 	private static final Map<Class<?>, VersionHandler<?>> typeHandlers = new HashMap<Class<?>, VersionHandler<?>>();
 
 	static {
-		ShortTypeHandler shortTypeHnadler = new ShortTypeHandler();
-		typeHandlers.put(short.class, shortTypeHnadler);
-		typeHandlers.put(Short.class, shortTypeHnadler);
+		ShortTypeHandler shortTypeHandler = new ShortTypeHandler();
+		typeHandlers.put(short.class, shortTypeHandler);
+		typeHandlers.put(Short.class, shortTypeHandler);
 
-		IntegerTypeHandler integerTypeHnadler = new IntegerTypeHandler();
-		typeHandlers.put(int.class, integerTypeHnadler);
-		typeHandlers.put(Integer.class, integerTypeHnadler);
+		IntegerTypeHandler integerTypeHandler = new IntegerTypeHandler();
+		typeHandlers.put(int.class, integerTypeHandler);
+		typeHandlers.put(Integer.class, integerTypeHandler);
 
-		LongTypeHnadler longTypeHnadler = new LongTypeHnadler();
-		typeHandlers.put(long.class, longTypeHnadler);
-		typeHandlers.put(Long.class, longTypeHnadler);
+		LongTypeHandler longTypeHandler = new LongTypeHandler();
+		typeHandlers.put(long.class, longTypeHandler);
+		typeHandlers.put(Long.class, longTypeHandler);
 
 		typeHandlers.put(Date.class, new DateTypeHandler());
 		typeHandlers.put(Timestamp.class, new TimestampTypeHandler());
@@ -255,7 +255,7 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 		}
 	}
 
-	private static class LongTypeHnadler implements VersionHandler<Long> {
+	private static class LongTypeHandler implements VersionHandler<Long> {
 
 		public void plusVersion(Object paramObj, Field field, Long versionValue) throws Exception {
 			field.set(paramObj, versionValue + 1);
