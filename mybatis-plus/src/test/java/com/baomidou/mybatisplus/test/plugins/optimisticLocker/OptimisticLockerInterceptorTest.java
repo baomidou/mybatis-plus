@@ -64,7 +64,7 @@ public class OptimisticLockerInterceptorTest {
 	}
 
 	@Test
-	public void shorttVersionTest() {
+	public void shortVersionTest() {
 		// 查询数据
 		ShortVersionUser versionUser = shortVersionUserMapper.selectById(1);
 		Short originVersion = versionUser.getVersion();

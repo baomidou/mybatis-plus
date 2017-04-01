@@ -3,7 +3,7 @@ package com.baomidou.mybatisplus.plugins;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.sql.Statement;
+import java.sql.Connection;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
@@ -59,7 +59,7 @@ import net.sf.jsqlparser.statement.update.Update;
  *
  * @author TaoYu
  */
-@Intercepts({ @Signature(type = StatementHandler.class, method = "update", args = { Statement.class }) })
+@Intercepts({ @Signature(type = StatementHandler.class, method = "prepare", args = { Connection.class, Integer.class }) })
 public final class OptimisticLockerInterceptor implements Interceptor {
 
 	/**
