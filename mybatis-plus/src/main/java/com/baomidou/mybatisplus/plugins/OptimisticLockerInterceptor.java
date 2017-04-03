@@ -31,11 +31,13 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.TypeException;
 import org.apache.ibatis.type.UnknownTypeHandler;
 
-import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.Version;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
+import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
@@ -114,9 +116,9 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 						throw new TypeException("乐观锁不支持" + field.getType().getName() + "类型,请自定义实现");
 					}
 					versionField = field;
-					final TableName tableName = field.getAnnotation(TableName.class);
-					if (tableName != null) {
-						versionColumn = tableName.value();
+					final TableField tableField = field.getAnnotation(TableField.class);
+					if (tableField != null) {
+						versionColumn = tableField.value();
 					} else {
 						versionColumn = field.getName();
 					}
@@ -138,14 +140,28 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 
 	private static final Expression RIGHTEXPRESSION = new Column("?");
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void processChangeSql(MappedStatement ms, BoundSql boundSql, CachePo cachePo) throws Exception {
 		Field versionField = cachePo.versionField;
 		String versionColumn = cachePo.versionColumn;
 		Object parameterObject = boundSql.getParameterObject();
 		if (parameterObject instanceof ParamMap) {
-			parameterObject = ((ParamMap) parameterObject).get("et");
+			ParamMap<?> paramMap = (ParamMap<?>) parameterObject;
+			parameterObject = paramMap.get("et");
+			EntityWrapper<?> entityWrapper = (EntityWrapper<?>) paramMap.get("ew");
+			if (entityWrapper != null) {
+				Object entity = entityWrapper.getEntity();
+				if (entity != null && versionField.get(entity) == null) {
+					changSql(ms, boundSql, versionField, versionColumn, parameterObject);
+				}
+			}
+		} else {
+			changSql(ms, boundSql, versionField, versionColumn, parameterObject);
 		}
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void changSql(MappedStatement ms, BoundSql boundSql, Field versionField, String versionColumn, Object parameterObject)
+			throws IllegalAccessException, Exception, JSQLParserException {
 		final Object versionValue = versionField.get(parameterObject);
 		if (versionValue != null) {// 先判断传参是否携带version,没带跳过插件
 			Configuration configuration = ms.getConfiguration();
@@ -161,7 +177,7 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 				equalsTo.setRightExpression(RIGHTEXPRESSION);
 				jsqlSql.setWhere(new AndExpression(equalsTo, expression));
 				List<ParameterMapping> parameterMappings = new LinkedList<ParameterMapping>(boundSql.getParameterMappings());
-				parameterMappings.add(jsqlSql.getExpressions().size(), createVersionMapping(configuration));
+				parameterMappings.add(jsqlSql.getExpressions().size(), getVersionMappingInstance(configuration));
 				MetaObject boundSqlMeta = configuration.newMetaObject(boundSql);
 				boundSqlMeta.setValue("sql", jsqlSql.toString());
 				boundSqlMeta.setValue("parameterMappings", parameterMappings);
@@ -173,7 +189,7 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 
 	private volatile ParameterMapping parameterMapping;
 
-	private ParameterMapping createVersionMapping(Configuration configuration) {
+	private ParameterMapping getVersionMappingInstance(Configuration configuration) {
 		if (parameterMapping == null) {
 			synchronized (OptimisticLockerInterceptor.class) {
 				if (parameterMapping == null) {
@@ -184,6 +200,7 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 		return parameterMapping;
 	}
 
+	@Override
 	public Object plugin(Object target) {
 		if (target instanceof StatementHandler) {
 			return Plugin.wrap(target, this);
@@ -191,6 +208,7 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 		return target;
 	}
 
+	@Override
 	public void setProperties(Properties properties) {
 		String versionHandlers = properties.getProperty("versionHandlers");
 		if (StringUtils.isNotEmpty(versionHandlers)) {
