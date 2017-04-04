@@ -9,33 +9,34 @@ package com.baomidou.mybatisplus.entity;
  * @Date 2016-11-13
  */
 public class CountOptimize {
-	/**
-	 * 是否排序
-	 */
-	private boolean orderBy = true;
-	/**
-	 * 优化后计算Count的SQL
-	 */
-	private String countSQL;
 
-	public boolean isOrderBy() {
-		return orderBy;
-	}
+    /**
+     * 是否排序
+     */
+    private boolean orderBy = true;
+    /**
+     * 优化后计算Count的SQL
+     */
+    private String countSQL;
 
-	public void setOrderBy(boolean orderBy) {
-		this.orderBy = orderBy;
-	}
+    public static CountOptimize newInstance() {
+        return new CountOptimize();
+    }
 
-	public String getCountSQL() {
-		return countSQL;
-	}
+    public boolean isOrderBy() {
+        return orderBy;
+    }
 
-	public void setCountSQL(String countSQL) {
-		this.countSQL = countSQL;
-	}
+    public void setOrderBy(boolean orderBy) {
+        this.orderBy = orderBy;
+    }
 
-	public static CountOptimize newInstance() {
-		return new CountOptimize();
-	}
+    public String getCountSQL() {
+        return countSQL;
+    }
+
+    public void setCountSQL(String countSQL) {
+        this.countSQL = countSQL;
+    }
 
 }

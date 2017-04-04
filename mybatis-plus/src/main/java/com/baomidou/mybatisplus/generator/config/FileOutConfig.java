@@ -26,30 +26,31 @@ import com.baomidou.mybatisplus.generator.config.po.TableInfo;
  * @since 2017-01-18
  */
 public abstract class FileOutConfig {
-	/**
-	 * 模板
-	 */
-	private String templatePath;
 
-	/**
-	 * 输出文件
-	 */
-	public abstract String outputFile(TableInfo tableInfo);
+    /**
+     * 模板
+     */
+    private String templatePath;
 
-	public FileOutConfig() {
+    public FileOutConfig() {
 
-	}
+    }
 
-	public FileOutConfig(String templatePath) {
-		this.templatePath = templatePath;
-	}
+    public FileOutConfig(String templatePath) {
+        this.templatePath = templatePath;
+    }
 
-	public String getTemplatePath() {
-		return templatePath;
-	}
+    /**
+     * 输出文件
+     */
+    public abstract String outputFile(TableInfo tableInfo);
 
-	public void setTemplatePath(String templatePath) {
-		this.templatePath = templatePath;
-	}
+    public String getTemplatePath() {
+        return templatePath;
+    }
+
+    public void setTemplatePath(String templatePath) {
+        this.templatePath = templatePath;
+    }
 
 }

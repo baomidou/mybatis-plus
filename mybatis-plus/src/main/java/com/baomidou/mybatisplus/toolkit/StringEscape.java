@@ -10,140 +10,140 @@ package com.baomidou.mybatisplus.toolkit;
  */
 public class StringEscape {
 
-	/**
-	 * 字符串是否需要转义
-	 *
-	 * @param str
-	 * @param len
-	 * @return
-	 */
-	private static boolean isEscapeNeededForString(String str, int len) {
+    /**
+     * 字符串是否需要转义
+     *
+     * @param str
+     * @param len
+     * @return
+     */
+    private static boolean isEscapeNeededForString(String str, int len) {
 
-		boolean needsHexEscape = false;
+        boolean needsHexEscape = false;
 
-		for (int i = 0; i < len; ++i) {
-			char c = str.charAt(i);
+        for (int i = 0; i < len; ++i) {
+            char c = str.charAt(i);
 
-			switch (c) {
-				case 0: /* Must be escaped for 'mysql' */
+            switch (c) {
+                case 0: /* Must be escaped for 'mysql' */
 
-					needsHexEscape = true;
-					break;
+                    needsHexEscape = true;
+                    break;
 
-				case '\n': /* Must be escaped for logs */
-					needsHexEscape = true;
+                case '\n': /* Must be escaped for logs */
+                    needsHexEscape = true;
 
-					break;
+                    break;
 
-				case '\r':
-					needsHexEscape = true;
-					break;
+                case '\r':
+                    needsHexEscape = true;
+                    break;
 
-				case '\\':
-					needsHexEscape = true;
+                case '\\':
+                    needsHexEscape = true;
 
-					break;
+                    break;
 
-				case '\'':
-					needsHexEscape = true;
+                case '\'':
+                    needsHexEscape = true;
 
-					break;
+                    break;
 
-				case '"': /* Better safe than sorry */
-					needsHexEscape = true;
+                case '"': /* Better safe than sorry */
+                    needsHexEscape = true;
 
-					break;
+                    break;
 
-				case '\032': /* This gives problems on Win32 */
-					needsHexEscape = true;
-					break;
-			}
+                case '\032': /* This gives problems on Win32 */
+                    needsHexEscape = true;
+                    break;
+            }
 
-			if (needsHexEscape) {
-				break; // no need to scan more
-			}
-		}
-		return needsHexEscape;
-	}
+            if (needsHexEscape) {
+                break; // no need to scan more
+            }
+        }
+        return needsHexEscape;
+    }
 
-	/**
-	 * 转义字符串
-	 *
-	 * @param escapeStr
-	 * @return
-	 */
-	public static String escapeString(String escapeStr) {
+    /**
+     * 转义字符串
+     *
+     * @param escapeStr
+     * @return
+     */
+    public static String escapeString(String escapeStr) {
 
-		if (escapeStr.matches("\'(.+)\'")) {
-			escapeStr = escapeStr.substring(1, escapeStr.length() - 1);
-		}
+        if (escapeStr.matches("\'(.+)\'")) {
+            escapeStr = escapeStr.substring(1, escapeStr.length() - 1);
+        }
 
-		String parameterAsString = escapeStr;
-		int stringLength = escapeStr.length();
-		if (isEscapeNeededForString(escapeStr, stringLength)) {
+        String parameterAsString = escapeStr;
+        int stringLength = escapeStr.length();
+        if (isEscapeNeededForString(escapeStr, stringLength)) {
 
-			StringBuilder buf = new StringBuilder((int) (escapeStr.length() * 1.1));
+            StringBuilder buf = new StringBuilder((int) (escapeStr.length() * 1.1));
 
-			//
-			// Note: buf.append(char) is _faster_ than appending in blocks,
-			// because the block append requires a System.arraycopy().... go
-			// figure...
-			//
+            //
+            // Note: buf.append(char) is _faster_ than appending in blocks,
+            // because the block append requires a System.arraycopy().... go
+            // figure...
+            //
 
-			for (int i = 0; i < stringLength; ++i) {
-				char c = escapeStr.charAt(i);
+            for (int i = 0; i < stringLength; ++i) {
+                char c = escapeStr.charAt(i);
 
-				switch (c) {
-					case 0: /* Must be escaped for 'mysql' */
-						buf.append('\\');
-						buf.append('0');
+                switch (c) {
+                    case 0: /* Must be escaped for 'mysql' */
+                        buf.append('\\');
+                        buf.append('0');
 
-						break;
+                        break;
 
-					case '\n': /* Must be escaped for logs */
-						buf.append('\\');
-						buf.append('n');
+                    case '\n': /* Must be escaped for logs */
+                        buf.append('\\');
+                        buf.append('n');
 
-						break;
+                        break;
 
-					case '\r':
-						buf.append('\\');
-						buf.append('r');
+                    case '\r':
+                        buf.append('\\');
+                        buf.append('r');
 
-						break;
+                        break;
 
-					case '\\':
-						buf.append('\\');
-						buf.append('\\');
+                    case '\\':
+                        buf.append('\\');
+                        buf.append('\\');
 
-						break;
+                        break;
 
-					case '\'':
-						buf.append('\\');
-						buf.append('\'');
+                    case '\'':
+                        buf.append('\\');
+                        buf.append('\'');
 
-						break;
+                        break;
 
-					case '"': /* Better safe than sorry */
-						buf.append('\\');
-						buf.append('"');
+                    case '"': /* Better safe than sorry */
+                        buf.append('\\');
+                        buf.append('"');
 
-						break;
+                        break;
 
-					case '\032': /* This gives problems on Win32 */
-						buf.append('\\');
-						buf.append('Z');
+                    case '\032': /* This gives problems on Win32 */
+                        buf.append('\\');
+                        buf.append('Z');
 
-						break;
+                        break;
 
-					default:
-						buf.append(c);
-				}
-			}
+                    default:
+                        buf.append(c);
+                }
+            }
 
-			parameterAsString = buf.toString();
-		}
-		return "\'" + parameterAsString + "\'";
-	}
+            parameterAsString = buf.toString();
+        }
+        return "\'" + parameterAsString + "\'";
+    }
 
 }

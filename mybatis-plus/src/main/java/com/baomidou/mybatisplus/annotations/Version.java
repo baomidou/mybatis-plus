@@ -8,11 +8,11 @@ import java.lang.annotation.Target;
 
 /**
  * 标记在verison字段上
- * 
+ *
  * @author TaoYu
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.FIELD })
+@Target({ElementType.FIELD})
 @Documented
 public @interface Version {
 

@@ -54,6 +54,21 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Autowired
     protected M baseMapper;
 
+    /**
+     * <p>
+     * 判断数据库操作是否成功
+     * </p>
+     * <p>
+     * 注意！！ 该方法为 Integer 判断，不可传入 int 基本类型
+     * </p>
+     *
+     * @param result 数据库操作返回影响条数
+     * @return boolean
+     */
+    protected static boolean retBool(Integer result) {
+        return SqlHelper.retBool(result);
+    }
+
     @SuppressWarnings("unchecked")
     protected Class<T> currentModleClass() {
         return ReflectionKit.getSuperClassGenricType(getClass(), 1);
@@ -76,21 +91,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      */
     protected String sqlStatement(SqlMethod sqlMethod) {
         return SqlHelper.table(currentModleClass()).getSqlStatement(sqlMethod.getMethod());
-    }
-
-    /**
-     * <p>
-     * 判断数据库操作是否成功
-     * </p>
-     * <p>
-     * 注意！！ 该方法为 Integer 判断，不可传入 int 基本类型
-     * </p>
-     *
-     * @param result 数据库操作返回影响条数
-     * @return boolean
-     */
-    protected static boolean retBool(Integer result) {
-        return SqlHelper.retBool(result);
     }
 
     public boolean insert(T entity) {
@@ -116,8 +116,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
-        SqlSession batchSqlSession = sqlSessionBatch();
-        try {
+        try (SqlSession batchSqlSession = sqlSessionBatch()) {
             int size = entityList.size();
             String sqlStatement = sqlStatement(SqlMethod.INSERT_ONE);
             for (int i = 0; i < size; i++) {
@@ -130,8 +129,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         } catch (Exception e) {
             logger.error("Error: Cannot execute insertBatch Method. Cause:" + e);
             return false;
-        } finally {
-            batchSqlSession.close();
         }
         return true;
 
@@ -174,8 +171,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
-        SqlSession batchSqlSession = sqlSessionBatch();
-        try {
+        try (SqlSession batchSqlSession = sqlSessionBatch()) {
             int size = entityList.size();
             for (int i = 0; i < size; i++) {
                 insertOrUpdate(entityList.get(i));
@@ -187,8 +183,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         } catch (Exception e) {
             logger.error("Error: Cannot execute insertOrUpdateBatch Method. Cause:" + e);
             return false;
-        } finally {
-            batchSqlSession.close();
         }
         return true;
     }
@@ -232,8 +226,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
-        SqlSession batchSqlSession = sqlSessionBatch();
-        try {
+        try (SqlSession batchSqlSession = sqlSessionBatch()) {
             int size = entityList.size();
             String sqlStatement = sqlStatement(SqlMethod.UPDATE_BY_ID);
             for (int i = 0; i < size; i++) {
@@ -246,8 +239,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         } catch (Exception e) {
             logger.error("Error: Cannot execute insertBatch Method. Cause:" + e);
             return false;
-        } finally {
-            batchSqlSession.close();
         }
         return true;
     }

@@ -1,12 +1,12 @@
 /**
  * Copyright (c) 2011-2020, hubin (jobob@qq.com).
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -48,105 +48,106 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  * @Date 2016-01-23
  */
 @Intercepts({
-		@Signature(type = Executor.class, method = "query", args = { MappedStatement.class, Object.class, RowBounds.class,
-				ResultHandler.class }),
-		@Signature(type = StatementHandler.class, method = "prepare", args = { Connection.class, Integer.class }) })
+        @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class, RowBounds.class,
+                ResultHandler.class}),
+        @Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 public class CachePaginationInterceptor extends PaginationInterceptor implements Interceptor {
-	/* Count优化方式 */
-	private String optimizeType = "default";
-	/* 方言类型 */
-	private String dialectType;
-	/* 方言实现类 */
-	private String dialectClazz;
 
-	/**
-	 * Physical Pagination Interceptor for all the queries with parameter
-	 * {@link org.apache.ibatis.session.RowBounds}
-	 */
-	public Object intercept(Invocation invocation) throws Throwable {
+    /* Count优化方式 */
+    private String optimizeType = "default";
+    /* 方言类型 */
+    private String dialectType;
+    /* 方言实现类 */
+    private String dialectClazz;
 
-		Object target = invocation.getTarget();
-		if (target instanceof StatementHandler) {
-			StatementHandler statementHandler = (StatementHandler) PluginUtils.realTarget(invocation.getTarget());
-			MetaObject metaStatementHandler = SystemMetaObject.forObject(statementHandler);
-			RowBounds rowBounds = (RowBounds) metaStatementHandler.getValue("delegate.rowBounds");
+    /**
+     * Physical Pagination Interceptor for all the queries with parameter
+     * {@link org.apache.ibatis.session.RowBounds}
+     */
+    public Object intercept(Invocation invocation) throws Throwable {
 
-			if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
-				return invocation.proceed();
-			}
-			BoundSql boundSql = (BoundSql) metaStatementHandler.getValue("delegate.boundSql");
-			String originalSql = (String) boundSql.getSql();
+        Object target = invocation.getTarget();
+        if (target instanceof StatementHandler) {
+            StatementHandler statementHandler = (StatementHandler) PluginUtils.realTarget(invocation.getTarget());
+            MetaObject metaStatementHandler = SystemMetaObject.forObject(statementHandler);
+            RowBounds rowBounds = (RowBounds) metaStatementHandler.getValue("delegate.rowBounds");
 
-			if (rowBounds instanceof Pagination) {
-				Pagination page = (Pagination) rowBounds;
-				boolean orderBy = true;
-				if (page.isSearchCount()) {
-					CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType,
-							page.isOptimizeCount());
-					orderBy = countOptimize.isOrderBy();
-				}
-				String buildSql = SqlUtils.concatOrderBy(originalSql, page, orderBy);
-				originalSql = DialectFactory.buildPaginationSql(page, buildSql, dialectType, dialectClazz);
-			} else {
-				// support physical Pagination for RowBounds
-				originalSql = DialectFactory.buildPaginationSql(rowBounds, originalSql, dialectType, dialectClazz);
-			}
+            if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
+                return invocation.proceed();
+            }
+            BoundSql boundSql = (BoundSql) metaStatementHandler.getValue("delegate.boundSql");
+            String originalSql = boundSql.getSql();
 
-			metaStatementHandler.setValue("delegate.boundSql.sql", originalSql);
-			metaStatementHandler.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
-			metaStatementHandler.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
-		} else {
-			MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
-			Object parameterObject = invocation.getArgs()[1];
-			RowBounds rowBounds = (RowBounds) invocation.getArgs()[2];
-			if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
-				return invocation.proceed();
-			}
+            if (rowBounds instanceof Pagination) {
+                Pagination page = (Pagination) rowBounds;
+                boolean orderBy = true;
+                if (page.isSearchCount()) {
+                    CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType,
+                            page.isOptimizeCount());
+                    orderBy = countOptimize.isOrderBy();
+                }
+                String buildSql = SqlUtils.concatOrderBy(originalSql, page, orderBy);
+                originalSql = DialectFactory.buildPaginationSql(page, buildSql, dialectType, dialectClazz);
+            } else {
+                // support physical Pagination for RowBounds
+                originalSql = DialectFactory.buildPaginationSql(rowBounds, originalSql, dialectType, dialectClazz);
+            }
 
-			BoundSql boundSql = mappedStatement.getBoundSql(parameterObject);
-			String originalSql = (String) boundSql.getSql();
-			if (rowBounds instanceof Pagination) {
-				Pagination page = (Pagination) rowBounds;
-				if (page.isSearchCount()) {
-					CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType,
-							page.isOptimizeCount());
-					super.count(countOptimize.getCountSQL(), mappedStatement, boundSql, page);
-					if (page.getTotal() <= 0) {
-						return invocation.proceed();
-					}
-				}
-			}
-		}
-		return invocation.proceed();
-	}
+            metaStatementHandler.setValue("delegate.boundSql.sql", originalSql);
+            metaStatementHandler.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
+            metaStatementHandler.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
+        } else {
+            MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
+            Object parameterObject = invocation.getArgs()[1];
+            RowBounds rowBounds = (RowBounds) invocation.getArgs()[2];
+            if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
+                return invocation.proceed();
+            }
 
-	public Object plugin(Object target) {
-		if (target instanceof Executor) {
-			return Plugin.wrap(target, this);
-		}
-		if (target instanceof StatementHandler) {
-			return Plugin.wrap(target, this);
-		}
-		return target;
-	}
+            BoundSql boundSql = mappedStatement.getBoundSql(parameterObject);
+            String originalSql = boundSql.getSql();
+            if (rowBounds instanceof Pagination) {
+                Pagination page = (Pagination) rowBounds;
+                if (page.isSearchCount()) {
+                    CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType,
+                            page.isOptimizeCount());
+                    super.count(countOptimize.getCountSQL(), mappedStatement, boundSql, page);
+                    if (page.getTotal() <= 0) {
+                        return invocation.proceed();
+                    }
+                }
+            }
+        }
+        return invocation.proceed();
+    }
 
-	public void setProperties(Properties prop) {
-		String dialectType = prop.getProperty("dialectType");
-		String dialectClazz = prop.getProperty("dialectClazz");
-		if (StringUtils.isNotEmpty(dialectType)) {
-			this.dialectType = dialectType;
-		}
-		if (StringUtils.isNotEmpty(dialectClazz)) {
-			this.dialectClazz = dialectClazz;
-		}
-	}
+    public Object plugin(Object target) {
+        if (target instanceof Executor) {
+            return Plugin.wrap(target, this);
+        }
+        if (target instanceof StatementHandler) {
+            return Plugin.wrap(target, this);
+        }
+        return target;
+    }
 
-	public void setDialectType(String dialectType) {
-		this.dialectType = dialectType;
-	}
+    public void setProperties(Properties prop) {
+        String dialectType = prop.getProperty("dialectType");
+        String dialectClazz = prop.getProperty("dialectClazz");
+        if (StringUtils.isNotEmpty(dialectType)) {
+            this.dialectType = dialectType;
+        }
+        if (StringUtils.isNotEmpty(dialectClazz)) {
+            this.dialectClazz = dialectClazz;
+        }
+    }
 
-	public void setOptimizeType(String optimizeType) {
-		this.optimizeType = optimizeType;
-	}
+    public void setDialectType(String dialectType) {
+        this.dialectType = dialectType;
+    }
+
+    public void setOptimizeType(String optimizeType) {
+        this.optimizeType = optimizeType;
+    }
 
 }

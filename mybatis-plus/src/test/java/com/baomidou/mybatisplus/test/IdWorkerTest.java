@@ -25,40 +25,40 @@ import com.baomidou.mybatisplus.toolkit.IdWorker;
  * <p>
  * IdWorker 并发测试
  * </p>
- * 
+ *
  * @author hubin
  * @date 2016-08-01
  */
 public class IdWorkerTest {
 
-	/**
-	 * 测试
-	 */
-	public static void main(String[] args) {
-		int count = 1000;
-		ExecutorService executorService = Executors.newFixedThreadPool(count);
-		for (int i = 0; i < count; i++) {
-			executorService.execute(new IdWorkerTest().new Task());
-		}
-		executorService.shutdown();
-		while (!executorService.isTerminated()) {
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+    /**
+     * 测试
+     */
+    public static void main(String[] args) {
+        int count = 1000;
+        ExecutorService executorService = Executors.newFixedThreadPool(count);
+        for (int i = 0; i < count; i++) {
+            executorService.execute(new IdWorkerTest().new Task());
+        }
+        executorService.shutdown();
+        while (!executorService.isTerminated()) {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-	public class Task implements Runnable {
+    public class Task implements Runnable {
 
-		public void run() {
-			try {
-				long id = IdWorker.getId();
-				System.err.println(id);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
+        public void run() {
+            try {
+                long id = IdWorker.getId();
+                System.err.println(id);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

@@ -196,7 +196,7 @@ public class TableInfoHelper {
         if (tableId != null) {
             if (StringUtils.isEmpty(tableInfo.getKeyColumn())) {
                 /*
-				 * 主键策略（ 注解 > 全局 > 默认 ）
+                 * 主键策略（ 注解 > 全局 > 默认 ）
 				 */
                 if (IdType.NONE != tableId.type()) {
                     tableInfo.setIdType(tableId.type());

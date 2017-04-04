@@ -29,7 +29,7 @@ import com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean;
 public class MybatisPlusConfig {
 
     @Bean("mybatisSqlSession")
-    public SqlSessionFactory sqlSessionFactory (DataSource dataSource, ResourceLoader resourceLoader, GlobalConfiguration globalConfiguration) throws Exception {
+    public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader, GlobalConfiguration globalConfiguration) throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
         sqlSessionFactory.setDataSource(dataSource);
 //        sqlSessionFactory.setConfigLocation(resourceLoader.getResource("classpath:mybatis-config.xml"));
@@ -41,14 +41,14 @@ public class MybatisPlusConfig {
         PaginationInterceptor pagination = new PaginationInterceptor();
         pagination.setDialectType("h2");
         sqlSessionFactory.setPlugins(new Interceptor[]{
-            pagination
+                pagination
         });
         sqlSessionFactory.setGlobalConfig(globalConfiguration);
         return sqlSessionFactory.getObject();
     }
 
     @Bean
-    public GlobalConfiguration globalConfiguration(){
+    public GlobalConfiguration globalConfiguration() {
         return new GlobalConfiguration();
     }
 }

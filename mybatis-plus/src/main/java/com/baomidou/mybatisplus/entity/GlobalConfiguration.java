@@ -1,12 +1,12 @@
 /**
  * Copyright (c) 2011-2014, hubin (jobob@qq.com).
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -14,6 +14,22 @@
  * the License.
  */
 package com.baomidou.mybatisplus.entity;
+
+import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
+
+import javax.sql.DataSource;
+
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.baomidou.mybatisplus.MybatisSqlSessionTemplate;
 import com.baomidou.mybatisplus.enums.DBType;
@@ -28,20 +44,6 @@ import com.baomidou.mybatisplus.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-
-import javax.sql.DataSource;
-import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * <p>
@@ -54,330 +56,329 @@ import java.util.concurrent.ConcurrentSkipListSet;
 @SuppressWarnings("serial")
 public class GlobalConfiguration implements Cloneable, Serializable {
 
-	// 日志
-	private static final Log logger = LogFactory.getLog(GlobalConfiguration.class);
-	/**
-	 * 缓存全局信息
-	 */
-	private static final Map<String, GlobalConfiguration> GLOBAL_CONFIG = new ConcurrentHashMap<String, GlobalConfiguration>();
-	/**
-	 * 默认参数
-	 */
-	public static final GlobalConfiguration DEFAULT = new GlobalConfiguration();
+    /**
+     * 默认参数
+     */
+    public static final GlobalConfiguration DEFAULT = new GlobalConfiguration();
+    // 日志
+    private static final Log logger = LogFactory.getLog(GlobalConfiguration.class);
+    /**
+     * 缓存全局信息
+     */
+    private static final Map<String, GlobalConfiguration> GLOBAL_CONFIG = new ConcurrentHashMap<String, GlobalConfiguration>();
+    // 数据库类型（默认 MySql）
+    private DBType dbType = DBType.MYSQL;
+    // 主键类型（默认 ID_WORKER）
+    private IdType idType = IdType.ID_WORKER;
+    // 表名、字段名、是否使用下划线命名（默认 false）
+    private boolean dbColumnUnderline = false;
+    // SQL注入器
+    private ISqlInjector sqlInjector;
+    // 元对象字段填充控制器
+    private IMetaObjectHandler metaObjectHandler = null;
+    // 字段验证策略
+    private FieldStrategy fieldStrategy = FieldStrategy.NOT_NULL;
+    // 是否刷新mapper
+    private boolean isRefresh = false;
+    // 是否自动获取DBType
+    private boolean isAutoSetDbType = true;
+    // 是否大写命名
+    private boolean isCapitalMode = false;
+    // 标识符
+    private String identifierQuote;
+    // 缓存当前Configuration的SqlSessionFactory
+    private SqlSessionFactory sqlSessionFactory;
+    // 缓存已注入CRUD的Mapper信息
+    private Set<String> mapperRegistryCache = new ConcurrentSkipListSet<String>();
+    // 单例重用SqlSession
+    private SqlSession sqlSession;
 
-	// 数据库类型（默认 MySql）
-	private DBType dbType = DBType.MYSQL;
-	// 主键类型（默认 ID_WORKER）
-	private IdType idType = IdType.ID_WORKER;
-	// 表名、字段名、是否使用下划线命名（默认 false）
-	private boolean dbColumnUnderline = false;
-	// SQL注入器
-	private ISqlInjector sqlInjector;
-	// 元对象字段填充控制器
-	private IMetaObjectHandler metaObjectHandler = null;
-	// 字段验证策略
-	private FieldStrategy fieldStrategy = FieldStrategy.NOT_NULL;
-	// 是否刷新mapper
-	private boolean isRefresh = false;
-	// 是否自动获取DBType
-	private boolean isAutoSetDbType = true;
-	// 是否大写命名
-	private boolean isCapitalMode = false;
-	// 标识符
-	private String identifierQuote;
-	// 缓存当前Configuration的SqlSessionFactory
-	private SqlSessionFactory sqlSessionFactory;
-	// 缓存已注入CRUD的Mapper信息
-	private Set<String> mapperRegistryCache = new ConcurrentSkipListSet<String>();
-	// 单例重用SqlSession
-	private SqlSession sqlSession;
+    public GlobalConfiguration() {
+        // 构造方法
+    }
 
-	public GlobalConfiguration() {
-		// 构造方法
-	}
+    public GlobalConfiguration(ISqlInjector sqlInjector) {
+        this.sqlInjector = sqlInjector;
+    }
 
-	public GlobalConfiguration(ISqlInjector sqlInjector) {
-		this.sqlInjector = sqlInjector;
-	}
+    /**
+     * 获取当前的SqlSessionFactory
+     *
+     * @param clazz
+     * @return
+     */
+    public static SqlSessionFactory currentSessionFactory(Class<?> clazz) {
+        String configMark = TableInfoHelper.getTableInfo(clazz).getConfigMark();
+        GlobalConfiguration mybatisGlobalConfig = GlobalConfiguration.getGlobalConfig(configMark);
+        return mybatisGlobalConfig.getSqlSessionFactory();
+    }
 
-	public DBType getDbType() {
-		return dbType;
-	}
+    /**
+     * 获取默认MybatisGlobalConfig
+     *
+     * @return
+     */
+    public static GlobalConfiguration defaults() {
+        try {
+            GlobalConfiguration clone = DEFAULT.clone();
+            clone.setSqlInjector(new AutoSqlInjector());
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new MybatisPlusException("ERROR: CLONE MybatisGlobalConfig DEFAULT FAIL !  Cause:" + e);
+        }
+    }
 
-	public void setDbType(String dbType) {
-		this.dbType = DBType.getDBType(dbType);
-		this.isAutoSetDbType = false;
-	}
+    /**
+     * <p>
+     * 设置全局设置(以configuration地址值作为Key)
+     * <p/>
+     *
+     * @param configuration
+     * @param mybatisGlobalConfig
+     * @return
+     */
+    public static void setGlobalConfig(Configuration configuration, GlobalConfiguration mybatisGlobalConfig) {
+        if (configuration == null || mybatisGlobalConfig == null) {
+            throw new MybatisPlusException("Error: Could not setGlobalConfig");
+        }
+        // 设置全局设置
+        GLOBAL_CONFIG.put(configuration.toString(), mybatisGlobalConfig);
+    }
 
-	public void setDbTypeByJdbcUrl(String jdbcUrl) {
-		this.dbType = JdbcUtils.getDbType(jdbcUrl);
-	}
+    /**
+     * 获取MybatisGlobalConfig (统一所有入口)
+     *
+     * @param configuration
+     * @return
+     */
+    public static GlobalConfiguration getGlobalConfig(Configuration configuration) {
+        if (configuration == null) {
+            throw new MybatisPlusException("Error: You need Initialize MybatisConfiguration !");
+        }
+        return getGlobalConfig(configuration.toString());
+    }
 
-	public IdType getIdType() {
-		return idType;
-	}
+    /**
+     * 获取MybatisGlobalConfig (统一所有入口)
+     *
+     * @param configMark
+     * @return
+     */
+    public static GlobalConfiguration getGlobalConfig(String configMark) {
+        GlobalConfiguration cache = GLOBAL_CONFIG.get(configMark);
+        if (cache == null) {
+            // 没有获取全局配置初始全局配置
+            logger.debug("DeBug: MyBatis Plus Global configuration Initializing !");
+            GLOBAL_CONFIG.put(configMark, DEFAULT);
+            return DEFAULT;
+        }
+        return cache;
+    }
 
-	public void setIdType(int idType) {
-		this.idType = IdType.getIdType(idType);
-	}
+    public static DBType getDbType(Configuration configuration) {
+        return getGlobalConfig(configuration).getDbType();
+    }
 
-	public boolean isDbColumnUnderline() {
-		return dbColumnUnderline;
-	}
+    public static IdType getIdType(Configuration configuration) {
+        return getGlobalConfig(configuration).getIdType();
+    }
 
-	public void setDbColumnUnderline(boolean dbColumnUnderline) {
-		this.dbColumnUnderline = dbColumnUnderline;
-	}
+    public static boolean isDbColumnUnderline(Configuration configuration) {
+        return getGlobalConfig(configuration).isDbColumnUnderline();
+    }
 
-	public ISqlInjector getSqlInjector() {
-		return sqlInjector;
-	}
+    public static ISqlInjector getSqlInjector(Configuration configuration) {
+        // fix #140
+        GlobalConfiguration globalConfiguration = getGlobalConfig(configuration);
+        ISqlInjector sqlInjector = globalConfiguration.getSqlInjector();
+        if (sqlInjector == null) {
+            sqlInjector = new AutoSqlInjector();
+            globalConfiguration.setSqlInjector(sqlInjector);
+        }
+        return sqlInjector;
+    }
 
-	public void setSqlInjector(ISqlInjector sqlInjector) {
-		this.sqlInjector = sqlInjector;
-	}
+    public static IMetaObjectHandler getMetaObjectHandler(Configuration configuration) {
+        return getGlobalConfig(configuration).getMetaObjectHandler();
+    }
 
-	public IMetaObjectHandler getMetaObjectHandler() {
-		return metaObjectHandler;
-	}
+    public static FieldStrategy getFieldStrategy(Configuration configuration) {
+        return getGlobalConfig(configuration).getFieldStrategy();
+    }
 
-	public void setMetaObjectHandler(IMetaObjectHandler metaObjectHandler) {
-		this.metaObjectHandler = metaObjectHandler;
-	}
+    public static boolean isRefresh(Configuration configuration) {
+        return getGlobalConfig(configuration).isRefresh();
+    }
 
-	public FieldStrategy getFieldStrategy() {
-		return fieldStrategy;
-	}
+    public static boolean isAutoSetDbType(Configuration configuration) {
+        return getGlobalConfig(configuration).isAutoSetDbType();
+    }
 
-	public void setFieldStrategy(int fieldStrategy) {
-		this.fieldStrategy = FieldStrategy.getFieldStrategy(fieldStrategy);
-	}
+    public static Set<String> getMapperRegistryCache(Configuration configuration) {
+        return getGlobalConfig(configuration).getMapperRegistryCache();
+    }
 
-	public boolean isRefresh() {
-		return isRefresh;
-	}
+    public static String getIdentifierQuote(Configuration configuration) {
+        return getGlobalConfig(configuration).getIdentifierQuote();
+    }
 
-	public void setRefresh(boolean refresh) {
-		this.isRefresh = refresh;
-	}
+    public static SqlSession getSqlSession(Configuration configuration) {
+        return getGlobalConfig(configuration).getSqlSession();
+    }
 
-	public boolean isAutoSetDbType() {
-		return isAutoSetDbType;
-	}
+    /**
+     * 设置元数据相关属性
+     *
+     * @param dataSource
+     * @param globalConfig
+     */
+    public static void setMetaData(DataSource dataSource, GlobalConfiguration globalConfig) {
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+            String jdbcUrl = connection.getMetaData().getURL();
+            // 设置全局关键字
+            globalConfig.setSqlKeywords(connection.getMetaData().getSQLKeywords());
+            // 自动设置数据库类型
+            if (globalConfig.isAutoSetDbType()) {
+                globalConfig.setDbTypeByJdbcUrl(jdbcUrl);
+            }
+        } catch (SQLException e) {
+            logger.warn("Warn: GlobalConfiguration setMetaData Fail !  Cause:" + e);
+        } finally {
+            IOUtils.closeQuietly(connection);
+        }
+    }
 
-	public void setAutoSetDbType(boolean autoSetDbType) {
-		this.isAutoSetDbType = autoSetDbType;
-	}
+    public DBType getDbType() {
+        return dbType;
+    }
 
-	public Set<String> getMapperRegistryCache() {
-		return mapperRegistryCache;
-	}
+    public void setDbType(String dbType) {
+        this.dbType = DBType.getDBType(dbType);
+        this.isAutoSetDbType = false;
+    }
 
-	public void setMapperRegistryCache(Set<String> mapperRegistryCache) {
-		this.mapperRegistryCache = mapperRegistryCache;
-	}
+    public void setDbTypeByJdbcUrl(String jdbcUrl) {
+        this.dbType = JdbcUtils.getDbType(jdbcUrl);
+    }
 
-	public SqlSessionFactory getSqlSessionFactory() {
-		return sqlSessionFactory;
-	}
+    public IdType getIdType() {
+        return idType;
+    }
 
-	public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
-		this.sqlSessionFactory = sqlSessionFactory;
-		this.sqlSession = new MybatisSqlSessionTemplate(sqlSessionFactory);
-	}
+    public void setIdType(int idType) {
+        this.idType = IdType.getIdType(idType);
+    }
 
-	public boolean isCapitalMode() {
-		return isCapitalMode;
-	}
+    public boolean isDbColumnUnderline() {
+        return dbColumnUnderline;
+    }
 
-	public void setCapitalMode(boolean isCapitalMode) {
-		this.isCapitalMode = isCapitalMode;
-	}
+    public void setDbColumnUnderline(boolean dbColumnUnderline) {
+        this.dbColumnUnderline = dbColumnUnderline;
+    }
 
-	public String getIdentifierQuote() {
-		return identifierQuote;
-	}
+    public ISqlInjector getSqlInjector() {
+        return sqlInjector;
+    }
 
-	public void setIdentifierQuote(String identifierQuote) {
-		this.identifierQuote = identifierQuote;
-	}
+    public void setSqlInjector(ISqlInjector sqlInjector) {
+        this.sqlInjector = sqlInjector;
+    }
 
-	public void setSqlKeywords(String sqlKeywords) {
-		if (StringUtils.isNotEmpty(sqlKeywords)) {
-			SqlReservedWords.RESERVED_WORDS.addAll(StringUtils.splitWorker(sqlKeywords.toUpperCase(), ",", -1, false));
-		}
-	}
+    public IMetaObjectHandler getMetaObjectHandler() {
+        return metaObjectHandler;
+    }
 
-	public SqlSession getSqlSession() {
-		return sqlSession;
-	}
+    public void setMetaObjectHandler(IMetaObjectHandler metaObjectHandler) {
+        this.metaObjectHandler = metaObjectHandler;
+    }
 
-	@Override
-	protected GlobalConfiguration clone() throws CloneNotSupportedException {
-		return (GlobalConfiguration) super.clone();
-	}
+    public FieldStrategy getFieldStrategy() {
+        return fieldStrategy;
+    }
 
-	/**
-	 * 获取当前的SqlSessionFactory
-	 *
-	 * @param clazz
-	 * @return
-	 */
-	public static SqlSessionFactory currentSessionFactory(Class<?> clazz) {
-		String configMark = TableInfoHelper.getTableInfo(clazz).getConfigMark();
-		GlobalConfiguration mybatisGlobalConfig = GlobalConfiguration.getGlobalConfig(configMark);
-		return mybatisGlobalConfig.getSqlSessionFactory();
-	}
+    public void setFieldStrategy(int fieldStrategy) {
+        this.fieldStrategy = FieldStrategy.getFieldStrategy(fieldStrategy);
+    }
 
-	/**
-	 * 获取默认MybatisGlobalConfig
-	 *
-	 * @return
-	 */
-	public static GlobalConfiguration defaults() {
-		try {
-			GlobalConfiguration clone = DEFAULT.clone();
-			clone.setSqlInjector(new AutoSqlInjector());
-			return clone;
-		} catch (CloneNotSupportedException e) {
-			throw new MybatisPlusException("ERROR: CLONE MybatisGlobalConfig DEFAULT FAIL !  Cause:" + e);
-		}
-	}
+    public boolean isRefresh() {
+        return isRefresh;
+    }
 
-	/**
-	 * <p>
-	 * 设置全局设置(以configuration地址值作为Key)
-	 * <p/>
-	 *
-	 * @param configuration
-	 * @param mybatisGlobalConfig
-	 * @return
-	 */
-	public static void setGlobalConfig(Configuration configuration, GlobalConfiguration mybatisGlobalConfig) {
-		if (configuration == null || mybatisGlobalConfig == null) {
-			throw new MybatisPlusException("Error: Could not setGlobalConfig");
-		}
-		// 设置全局设置
-		GLOBAL_CONFIG.put(configuration.toString(), mybatisGlobalConfig);
-	}
+    public void setRefresh(boolean refresh) {
+        this.isRefresh = refresh;
+    }
 
-	/**
-	 * <p>
-	 * 标记全局设置 (统一所有入口)
-	 * </p>
-	 *
-	 * @param sqlSessionFactory
-	 * @return
-	 */
-	public SqlSessionFactory signGlobalConfig(SqlSessionFactory sqlSessionFactory) {
-		if (null != sqlSessionFactory) {
-			setGlobalConfig(sqlSessionFactory.getConfiguration(), this);
-		}
-		return sqlSessionFactory;
-	}
+    public boolean isAutoSetDbType() {
+        return isAutoSetDbType;
+    }
 
-	/**
-	 * 获取MybatisGlobalConfig (统一所有入口)
-	 *
-	 * @param configuration
-	 * @return
-	 */
-	public static GlobalConfiguration getGlobalConfig(Configuration configuration) {
-		if (configuration == null) {
-			throw new MybatisPlusException("Error: You need Initialize MybatisConfiguration !");
-		}
-		return getGlobalConfig(configuration.toString());
-	}
+    public void setAutoSetDbType(boolean autoSetDbType) {
+        this.isAutoSetDbType = autoSetDbType;
+    }
 
-	/**
-	 * 获取MybatisGlobalConfig (统一所有入口)
-	 *
-	 * @param configMark
-	 * @return
-	 */
-	public static GlobalConfiguration getGlobalConfig(String configMark) {
-		GlobalConfiguration cache = GLOBAL_CONFIG.get(configMark);
-		if (cache == null) {
-			// 没有获取全局配置初始全局配置
-			logger.debug("DeBug: MyBatis Plus Global configuration Initializing !");
-			GLOBAL_CONFIG.put(configMark, DEFAULT);
-			return DEFAULT;
-		}
-		return cache;
-	}
+    public Set<String> getMapperRegistryCache() {
+        return mapperRegistryCache;
+    }
 
-	public static DBType getDbType(Configuration configuration) {
-		return getGlobalConfig(configuration).getDbType();
-	}
+    public void setMapperRegistryCache(Set<String> mapperRegistryCache) {
+        this.mapperRegistryCache = mapperRegistryCache;
+    }
 
-	public static IdType getIdType(Configuration configuration) {
-		return getGlobalConfig(configuration).getIdType();
-	}
+    public SqlSessionFactory getSqlSessionFactory() {
+        return sqlSessionFactory;
+    }
 
-	public static boolean isDbColumnUnderline(Configuration configuration) {
-		return getGlobalConfig(configuration).isDbColumnUnderline();
-	}
+    public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
+        this.sqlSessionFactory = sqlSessionFactory;
+        this.sqlSession = new MybatisSqlSessionTemplate(sqlSessionFactory);
+    }
 
-	public static ISqlInjector getSqlInjector(Configuration configuration) {
-		// fix #140
-		GlobalConfiguration globalConfiguration = getGlobalConfig(configuration);
-		ISqlInjector sqlInjector = globalConfiguration.getSqlInjector();
-		if (sqlInjector == null) {
-			sqlInjector = new AutoSqlInjector();
-			globalConfiguration.setSqlInjector(sqlInjector);
-		}
-		return sqlInjector;
-	}
+    public boolean isCapitalMode() {
+        return isCapitalMode;
+    }
 
-	public static IMetaObjectHandler getMetaObjectHandler(Configuration configuration) {
-		return getGlobalConfig(configuration).getMetaObjectHandler();
-	}
+    public void setCapitalMode(boolean isCapitalMode) {
+        this.isCapitalMode = isCapitalMode;
+    }
 
-	public static FieldStrategy getFieldStrategy(Configuration configuration) {
-		return getGlobalConfig(configuration).getFieldStrategy();
-	}
+    public String getIdentifierQuote() {
+        return identifierQuote;
+    }
 
-	public static boolean isRefresh(Configuration configuration) {
-		return getGlobalConfig(configuration).isRefresh();
-	}
+    public void setIdentifierQuote(String identifierQuote) {
+        this.identifierQuote = identifierQuote;
+    }
 
-	public static boolean isAutoSetDbType(Configuration configuration) {
-		return getGlobalConfig(configuration).isAutoSetDbType();
-	}
+    public void setSqlKeywords(String sqlKeywords) {
+        if (StringUtils.isNotEmpty(sqlKeywords)) {
+            SqlReservedWords.RESERVED_WORDS.addAll(StringUtils.splitWorker(sqlKeywords.toUpperCase(), ",", -1, false));
+        }
+    }
 
-	public static Set<String> getMapperRegistryCache(Configuration configuration) {
-		return getGlobalConfig(configuration).getMapperRegistryCache();
-	}
+    public SqlSession getSqlSession() {
+        return sqlSession;
+    }
 
-	public static String getIdentifierQuote(Configuration configuration) {
-		return getGlobalConfig(configuration).getIdentifierQuote();
-	}
+    @Override
+    protected GlobalConfiguration clone() throws CloneNotSupportedException {
+        return (GlobalConfiguration) super.clone();
+    }
 
-	public static SqlSession getSqlSession(Configuration configuration) {
-		return getGlobalConfig(configuration).getSqlSession();
-	}
-
-	/**
-	 * 设置元数据相关属性
-	 *
-	 * @param dataSource
-	 * @param globalConfig
-	 */
-	public static void setMetaData(DataSource dataSource, GlobalConfiguration globalConfig) {
-		Connection connection = null;
-		try {
-			connection = dataSource.getConnection();
-			String jdbcUrl = connection.getMetaData().getURL();
-			// 设置全局关键字
-			globalConfig.setSqlKeywords(connection.getMetaData().getSQLKeywords());
-			// 自动设置数据库类型
-			if (globalConfig.isAutoSetDbType()) {
-				globalConfig.setDbTypeByJdbcUrl(jdbcUrl);
-			}
-		} catch (SQLException e) {
-			logger.warn("Warn: GlobalConfiguration setMetaData Fail !  Cause:" + e);
-		} finally {
-			IOUtils.closeQuietly(connection);
-		}
-	}
+    /**
+     * <p>
+     * 标记全局设置 (统一所有入口)
+     * </p>
+     *
+     * @param sqlSessionFactory
+     * @return
+     */
+    public SqlSessionFactory signGlobalConfig(SqlSessionFactory sqlSessionFactory) {
+        if (null != sqlSessionFactory) {
+            setGlobalConfig(sqlSessionFactory.getConfiguration(), this);
+        }
+        return sqlSessionFactory;
+    }
 }

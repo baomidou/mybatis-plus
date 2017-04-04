@@ -15,6 +15,14 @@
  */
 package com.baomidou.mybatisplus;
 
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
+
+import javax.sql.DataSource;
+
 import org.apache.ibatis.builder.BaseBuilder;
 import org.apache.ibatis.builder.BuilderException;
 import org.apache.ibatis.builder.xml.XMLMapperEntityResolver;
@@ -42,13 +50,6 @@ import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.LocalCacheScope;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.type.JdbcType;
-
-import javax.sql.DataSource;
-import java.io.InputStream;
-import java.io.Reader;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
 
 /**
  * <p>
@@ -153,7 +154,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
             for (String clazz : clazzes) {
                 if (!clazz.isEmpty()) {
                     @SuppressWarnings("unchecked")
-                    Class<? extends VFS> vfsImpl = (Class<? extends VFS>)Resources.classForName(clazz);
+                    Class<? extends VFS> vfsImpl = (Class<? extends VFS>) Resources.classForName(clazz);
                     configuration.setVfsImpl(vfsImpl);
                 }
             }
@@ -269,7 +270,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
         configuration.setReturnInstanceForEmptyRow(booleanValueOf(props.getProperty("returnInstanceForEmptyRow"), false));
         configuration.setLogPrefix(props.getProperty("logPrefix"));
         @SuppressWarnings("unchecked")
-        Class<? extends Log> logImpl = (Class<? extends Log>)resolveClass(props.getProperty("logImpl"));
+        Class<? extends Log> logImpl = (Class<? extends Log>) resolveClass(props.getProperty("logImpl"));
         configuration.setLogImpl(logImpl);
         configuration.setConfigurationFactory(resolveClass(props.getProperty("configurationFactory")));
     }
@@ -391,7 +392,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
     /**
      * 查找mybatis配置文件填充至Set集合
      *
-     * @param parent 节点
+     * @param parent    节点
      * @param resources
      * @param mapper
      * @throws ClassNotFoundException
@@ -403,9 +404,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
                 ResolverUtil<Class<?>> resolverUtil = new ResolverUtil<Class<?>>();
                 resolverUtil.find(new ResolverUtil.IsA(Object.class), mapperPackage);
                 Set<Class<? extends Class<?>>> mapperSet = resolverUtil.getClasses();
-                for (Class<?> mapperClass : mapperSet) {
-                    mapper.add(mapperClass);
-                }
+                mapper.addAll(mapperSet);
             } else {
                 String resource = child.getStringAttribute("resource");
                 String url = child.getStringAttribute("url");

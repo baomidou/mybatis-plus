@@ -19,45 +19,49 @@ package com.baomidou.mybatisplus.generator.config.rules;
  * <p>
  * 表字段类型
  * </p>
- * 
+ *
  * @author hubin
  * @since 2017-01-11
  */
 public enum DbColumnType {
-	STRING("String", null),
-	LONG("Long", null),
-	INTEGER("Integer", null),
-	FLOAT("Float", null),
-	DOUBLE("Double", null),
-	BOOLEAN("Boolean", null),
-	BYTE_ARRAY("byte[]", null),
-	CHARACTER("Character", null),
-	OBJECT("Object", null),
-	DATE("Date", "java.util.Date"),
-	TIME("Time", "java.sql.Time"),
-	BLOB("Blob", "java.sql.Blob"),
-	CLOB("Clob", "java.sql.Clob"),
-	TIMESTAMP("Timestamp", "java.sql.Timestamp"),
-	BIG_INTEGER("BigInteger", "java.math.BigInteger"),
-	BIG_DECIMAL("BigDecimal", "java.math.BigDecimal");
+    STRING("String", null),
+    LONG("Long", null),
+    INTEGER("Integer", null),
+    FLOAT("Float", null),
+    DOUBLE("Double", null),
+    BOOLEAN("Boolean", null),
+    BYTE_ARRAY("byte[]", null),
+    CHARACTER("Character", null),
+    OBJECT("Object", null),
+    DATE("Date", "java.util.Date"),
+    TIME("Time", "java.sql.Time"),
+    BLOB("Blob", "java.sql.Blob"),
+    CLOB("Clob", "java.sql.Clob"),
+    TIMESTAMP("Timestamp", "java.sql.Timestamp"),
+    BIG_INTEGER("BigInteger", "java.math.BigInteger"),
+    BIG_DECIMAL("BigDecimal", "java.math.BigDecimal");
 
-	/** 类型 */
-	private final String type;
+    /**
+     * 类型
+     */
+    private final String type;
 
-	/** 包路径 */
-	private final String pkg;
+    /**
+     * 包路径
+     */
+    private final String pkg;
 
-	DbColumnType(final String type, final String pkg) {
-		this.type = type;
-		this.pkg = pkg;
-	}
+    DbColumnType(final String type, final String pkg) {
+        this.type = type;
+        this.pkg = pkg;
+    }
 
-	public String getType() {
-		return this.type;
-	}
+    public String getType() {
+        return this.type;
+    }
 
-	public String getPkg() {
-		return this.pkg;
-	}
+    public String getPkg() {
+        return this.pkg;
+    }
 
 }

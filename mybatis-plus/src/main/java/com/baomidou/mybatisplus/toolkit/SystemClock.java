@@ -1,12 +1,12 @@
 /**
  * Copyright (c) 2011-2020, hubin (jobob@qq.com).
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
@@ -50,12 +50,16 @@ public class SystemClock {
         scheduleClockUpdating();
     }
 
-    private static class InstanceHolder {
-        public static final SystemClock INSTANCE = new SystemClock(1);
-    }
-
     private static SystemClock instance() {
         return InstanceHolder.INSTANCE;
+    }
+
+    public static long now() {
+        return instance().currentTimeMillis();
+    }
+
+    public static String nowDate() {
+        return new Timestamp(instance().currentTimeMillis()).toString();
     }
 
     private void scheduleClockUpdating() {
@@ -77,12 +81,9 @@ public class SystemClock {
         return now.get();
     }
 
-    public static long now() {
-        return instance().currentTimeMillis();
+    private static class InstanceHolder {
+
+        public static final SystemClock INSTANCE = new SystemClock(1);
     }
-    
-	public static String nowDate() {
-		return new Timestamp(instance().currentTimeMillis()).toString();
-	}
 
 }

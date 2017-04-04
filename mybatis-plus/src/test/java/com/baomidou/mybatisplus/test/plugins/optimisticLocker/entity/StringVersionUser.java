@@ -9,39 +9,39 @@ import com.baomidou.mybatisplus.annotations.Version;
 @TableName("version_user")
 public class StringVersionUser implements Serializable {
 
-	@TableField(exist = false)
-	private static final long serialVersionUID = 1L;
+    @TableField(exist = false)
+    private static final long serialVersionUID = 1L;
 
-	private Long id;
+    private Long id;
 
-	private String name;
+    private String name;
 
-	@Version
-	@TableField("version")
-	private String tt;
+    @Version
+    @TableField("version")
+    private String tt;
 
-	public Long getId() {
-		return id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getTt() {
-		return tt;
-	}
+    public String getTt() {
+        return tt;
+    }
 
-	public void setTt(String tt) {
-		this.tt = tt;
-	}
+    public void setTt(String tt) {
+        this.tt = tt;
+    }
 
 }
