@@ -19,7 +19,7 @@ package com.baomidou.mybatisplus.enums;
  * <p>
  * MybatisPlus 支持 SQL 方法
  * </p>
- * 
+ *
  * @author hubin
  * @Date 2016-01-23
  */
@@ -29,6 +29,7 @@ public enum SqlMethod {
 	 * 插入
 	 */
 	INSERT_ONE("insert", "插入一条数据", "<script>INSERT INTO %s %s VALUES %s</script>"),
+	INSERT_ONE_ALL_COLUMN("insertAllColumn", "插入一条数据（选择字段， null 字段不插入）", "<script>INSERT INTO %s %s VALUES %s</script>"),
 
 	/**
 	 * 删除
@@ -42,6 +43,7 @@ public enum SqlMethod {
 	 * 修改
 	 */
 	UPDATE_BY_ID("updateById", "根据ID 修改数据", "<script>UPDATE %s %s WHERE %s=#{%s}</script>"),
+	UPDATE_ALL_COLUMN_BY_ID("updateAllColumnById", "根据ID 选择修改数据", "<script>UPDATE %s %s WHERE %s=#{%s}</script>"),
 	UPDATE("update", "根据 whereEntity 条件，更新记录", "<script>UPDATE %s %s %s</script>"),
 
 	/**
@@ -59,7 +61,7 @@ public enum SqlMethod {
 	SELECT_OBJS("selectObjs", "查询满足条件所有数据", "<script>SELECT %s FROM %s %s</script>");
 
 	private final String method;
-	
+
 	private final String desc;
 
 	private final String sql;

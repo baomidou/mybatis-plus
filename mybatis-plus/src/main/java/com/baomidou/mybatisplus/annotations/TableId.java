@@ -47,6 +47,6 @@ public @interface TableId {
      * </p>
      * {@link IdType}
      */
-    IdType type();
+    IdType type() default IdType.NONE;
 
 }

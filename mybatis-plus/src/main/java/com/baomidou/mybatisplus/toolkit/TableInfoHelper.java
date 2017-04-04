@@ -35,6 +35,7 @@ import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.entity.TableFieldInfo;
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
+import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.SqlRunner;
 
@@ -197,7 +198,7 @@ public class TableInfoHelper {
                 /*
 				 * 主键策略（ 注解 > 全局 > 默认 ）
 				 */
-                if (StringUtils.checkValNull(tableId.type())) {
+                if (IdType.NONE != tableId.type()) {
                     tableInfo.setIdType(tableId.type());
                 } else {
                     tableInfo.setIdType(globalConfig.getIdType());
