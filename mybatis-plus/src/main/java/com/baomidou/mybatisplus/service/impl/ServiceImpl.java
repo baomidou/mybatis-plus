@@ -23,6 +23,7 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.enums.SqlMethod;
@@ -93,14 +94,17 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return SqlHelper.table(currentModleClass()).getSqlStatement(sqlMethod.getMethod());
     }
 
+    @Transactional
     public boolean insert(T entity) {
         return retBool(baseMapper.insert(entity));
     }
 
+    @Transactional
     public boolean insertAllColumn(T entity) {
         return retBool(baseMapper.insertAllColumn(entity));
     }
 
+    @Transactional
     public boolean insertBatch(List<T> entityList) {
         return insertBatch(entityList, 30);
     }
@@ -112,6 +116,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      * @param batchSize
      * @return
      */
+    @Transactional
     public boolean insertBatch(List<T> entityList, int batchSize) {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
@@ -142,6 +147,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      * @param entity 实体对象
      * @return boolean
      */
+    @Transactional
     public boolean insertOrUpdate(T entity) {
         if (null != entity) {
             Class<?> cls = entity.getClass();
@@ -163,10 +169,12 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return false;
     }
 
+    @Transactional
     public boolean insertOrUpdateBatch(List<T> entityList) {
         return insertOrUpdateBatch(entityList, 30);
     }
 
+    @Transactional
     public boolean insertOrUpdateBatch(List<T> entityList, int batchSize) {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
@@ -187,10 +195,12 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return true;
     }
 
+    @Transactional
     public boolean deleteById(Serializable id) {
         return retBool(baseMapper.deleteById(id));
     }
 
+    @Transactional
     public boolean deleteByMap(Map<String, Object> columnMap) {
         if (MapUtils.isEmpty(columnMap)) {
             throw new MybatisPlusException("deleteByMap columnMap is empty.");
@@ -198,30 +208,37 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return retBool(baseMapper.deleteByMap(columnMap));
     }
 
+    @Transactional
     public boolean delete(Wrapper<T> wrapper) {
         return retBool(baseMapper.delete(wrapper));
     }
 
+    @Transactional
     public boolean deleteBatchIds(List<? extends Serializable> idList) {
         return retBool(baseMapper.deleteBatchIds(idList));
     }
 
+    @Transactional
     public boolean updateById(T entity) {
         return retBool(baseMapper.updateById(entity));
     }
 
+    @Transactional
     public boolean updateAllColumnById(T entity) {
         return retBool(baseMapper.updateAllColumnById(entity));
     }
 
+    @Transactional
     public boolean update(T entity, Wrapper<T> wrapper) {
         return retBool(baseMapper.update(entity, wrapper));
     }
 
+    @Transactional
     public boolean updateBatchById(List<T> entityList) {
         return updateBatchById(entityList, 30);
     }
 
+    @Transactional
     public boolean updateBatchById(List<T> entityList, int batchSize) {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");

@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.plugins.Page;
@@ -83,10 +84,12 @@ public class SqlRunner {
         return new SqlRunner(clazz);
     }
 
+    @Transactional
     public boolean insert(String sql, Object... args) {
         return SqlHelper.retBool(sqlSession().insert(INSERT, sqlMap(sql, args)));
     }
 
+    @Transactional
     public boolean delete(String sql, Object... args) {
         return SqlHelper.retBool(sqlSession().delete(DELETE, sqlMap(sql, args)));
     }
@@ -104,6 +107,7 @@ public class SqlRunner {
         return sqlMap;
     }
 
+    @Transactional
     public boolean update(String sql, Object... args) {
         return SqlHelper.retBool(sqlSession().update(UPDATE, sqlMap(sql, args)));
     }

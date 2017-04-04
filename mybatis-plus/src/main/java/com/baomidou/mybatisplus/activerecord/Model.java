@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.enums.SqlMethod;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
@@ -50,6 +51,7 @@ public abstract class Model<T extends Model> implements Serializable {
      * 插入
      * </p>
      */
+    @Transactional
     public boolean insert() {
         return SqlHelper.retBool(sqlSession().insert(sqlStatement(SqlMethod.INSERT_ONE), this));
     }
@@ -59,6 +61,7 @@ public abstract class Model<T extends Model> implements Serializable {
      * 插入 OR 更新
      * </p>
      */
+    @Transactional
     public boolean insertOrUpdate() {
         if (StringUtils.checkValNull(pkVal())) {
             // insert
@@ -80,6 +83,7 @@ public abstract class Model<T extends Model> implements Serializable {
      *            主键ID
      * @return
      */
+    @Transactional
     public boolean deleteById(Serializable id) {
         return SqlHelper.retBool(sqlSession().delete(sqlStatement(SqlMethod.DELETE_BY_ID), id));
     }
@@ -91,6 +95,7 @@ public abstract class Model<T extends Model> implements Serializable {
      *
      * @return
      */
+    @Transactional
     public boolean deleteById() {
         if (StringUtils.checkValNull(pkVal())) {
             throw new MybatisPlusException("deleteById primaryKey is null.");
@@ -109,6 +114,7 @@ public abstract class Model<T extends Model> implements Serializable {
      *            查询条件值
      * @return
      */
+    @Transactional
     public boolean delete(String whereClause, Object... args) {
         return delete(Condition.instance().where(whereClause, args));
     }
@@ -121,6 +127,7 @@ public abstract class Model<T extends Model> implements Serializable {
      * @param wrapper
      * @return
      */
+    @Transactional
     public boolean delete(Wrapper wrapper) {
         Map<String, Object> map = new HashMap<String, Object>();
         // delete
@@ -135,6 +142,7 @@ public abstract class Model<T extends Model> implements Serializable {
      *
      * @return
      */
+    @Transactional
     public boolean updateById() {
         if (StringUtils.checkValNull(pkVal())) {
             throw new MybatisPlusException("updateById primaryKey is null.");
@@ -154,6 +162,7 @@ public abstract class Model<T extends Model> implements Serializable {
      *            查询条件值
      * @return
      */
+    @Transactional
     public boolean update(String whereClause, Object... args) {
         // update
         return update(Condition.instance().where(whereClause, args));
@@ -167,6 +176,7 @@ public abstract class Model<T extends Model> implements Serializable {
      * @param wrapper
      * @return
      */
+    @Transactional
     public boolean update(Wrapper wrapper) {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("et", this);
