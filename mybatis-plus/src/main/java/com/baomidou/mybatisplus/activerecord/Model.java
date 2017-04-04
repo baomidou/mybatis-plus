@@ -116,7 +116,7 @@ public abstract class Model<T extends Model> implements Serializable {
      */
     @Transactional
     public boolean delete(String whereClause, Object... args) {
-        return delete(Condition.instance().where(whereClause, args));
+        return delete(Condition.create().where(whereClause, args));
     }
 
     /**
@@ -165,7 +165,7 @@ public abstract class Model<T extends Model> implements Serializable {
     @Transactional
     public boolean update(String whereClause, Object... args) {
         // update
-        return update(Condition.instance().where(whereClause, args));
+        return update(Condition.create().where(whereClause, args));
     }
 
     /**
@@ -248,7 +248,7 @@ public abstract class Model<T extends Model> implements Serializable {
      * @return
      */
     public List<T> selectList(String whereClause, Object... args) {
-        return selectList(Condition.instance().where(whereClause, args));
+        return selectList(Condition.create().where(whereClause, args));
     }
 
     /**
@@ -273,7 +273,7 @@ public abstract class Model<T extends Model> implements Serializable {
      * @return
      */
     public T selectOne(String whereClause, Object... args) {
-        return selectOne(Condition.instance().where(whereClause, args));
+        return selectOne(Condition.create().where(whereClause, args));
     }
 
     /**
@@ -307,7 +307,7 @@ public abstract class Model<T extends Model> implements Serializable {
      */
     @SuppressWarnings("unchecked")
     public Page<T> selectPage(Page<T> page, String whereClause, Object... args) {
-        return selectPage(page, Condition.instance().where(whereClause, args));
+        return selectPage(page, Condition.create().where(whereClause, args));
     }
 
     /**
@@ -322,7 +322,7 @@ public abstract class Model<T extends Model> implements Serializable {
      * @return
      */
     public int selectCount(String whereClause, Object... args) {
-        return selectCount(Condition.instance().where(whereClause, args));
+        return selectCount(Condition.create().where(whereClause, args));
     }
 
     /**

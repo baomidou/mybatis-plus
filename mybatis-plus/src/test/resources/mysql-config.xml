@@ -62,7 +62,7 @@
          | dialectClazz 方言实现类
          |              自定义需要实现 com.baomidou.mybatisplus.plugins.pagination.IDialect 接口
          | -->
-        <plugin interceptor="com.baomidou.mybatisplus.plugins.CachePaginationInterceptor">
+        <plugin interceptor="com.baomidou.mybatisplus.plugins.PaginationInterceptor">
             <property name="dialectType" value="mysql"/>
         </plugin>
         <!-- SQL 执行性能分析，开发环境使用，线上不推荐。 maxTime 指的是 sql 最大执行时长-->

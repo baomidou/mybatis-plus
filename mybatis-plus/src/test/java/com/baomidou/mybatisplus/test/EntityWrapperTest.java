@@ -289,7 +289,7 @@ public class EntityWrapperTest {
     public void testInstance() {
         String val1 = "'''";
         String val2 = "\\";
-        String sqlPart = Condition.instance().between("test_type", val1, val2).toString();
+        String sqlPart = Condition.create().between("test_type", val1, val2).toString();
         System.out.println("sql ==> " + sqlPart);
         Assert.assertEquals("WHERE (test_type BETWEEN ? AND ?)", sqlPart);
     }
@@ -304,7 +304,7 @@ public class EntityWrapperTest {
         map.put("allEq1", "22");
         map.put("allEq2", 3333);
         map.put("allEq3", 66.99);
-        String sqlPart = Condition.instance().gt("gt", 1).le("le", 2).lt("le", 3).ge("ge", 4).eq("eq", 5).allEq(map).toString();
+        String sqlPart = Condition.create().gt("gt", 1).le("le", 2).lt("le", 3).ge("ge", 4).eq("eq", 5).allEq(map).toString();
         System.out.println("sql ==> " + sqlPart);
         Assert.assertEquals(
                 "WHERE (gt > ? AND le <= ? AND le < ? AND ge >= ? AND eq = ? AND allEq3 = ? AND allEq1 = ? AND allEq2 = ?)",
@@ -316,7 +316,7 @@ public class EntityWrapperTest {
      */
     @Test
     public void testlike() {
-        String sqlPart = Condition.instance().like("default", "default", SqlLike.DEFAULT).like("left", "left", SqlLike.LEFT)
+        String sqlPart = Condition.create().like("default", "default", SqlLike.DEFAULT).like("left", "left", SqlLike.LEFT)
                 .like("right", "right", SqlLike.RIGHT).toString();
         System.out.println("sql ==> " + sqlPart);
         Assert.assertEquals("WHERE (default = ? AND left = ? AND right = ?)", sqlPart);

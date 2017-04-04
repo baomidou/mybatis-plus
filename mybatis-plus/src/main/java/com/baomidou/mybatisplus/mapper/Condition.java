@@ -31,14 +31,20 @@ public class Condition extends Wrapper {
     /**
      * 构建一个Empty条件构造 避免传递参数使用null
      */
-    public static Condition Empty() {
-        return Condition.instance();
+    public static final Condition EMPTY = Condition.create();
+
+    /**
+     * 获取实例
+     */
+    @Deprecated
+    public static Condition instance() {
+        return Condition.create();
     }
 
     /**
      * 获取实例
      */
-    public static Condition instance() {
+    public static Condition create() {
         return new Condition();
     }
 
@@ -48,14 +54,14 @@ public class Condition extends Wrapper {
     @Override
     public String getSqlSegment() {
         /*
-		 * 无条件
+         * 无条件
 		 */
         String sqlWhere = sql.toString();
         if (StringUtils.isEmpty(sqlWhere)) {
             return null;
         }
-		/*
-		 * 根据当前实体判断是否需要将WHERE替换成 AND 增加实体不为空但所有属性为空的情况
+        /*
+         * 根据当前实体判断是否需要将WHERE替换成 AND 增加实体不为空但所有属性为空的情况
 		 */
         if (isWhere != null) {
             sqlWhere = isWhere ? sqlWhere : sqlWhere.replaceFirst("WHERE", AND_OR);
