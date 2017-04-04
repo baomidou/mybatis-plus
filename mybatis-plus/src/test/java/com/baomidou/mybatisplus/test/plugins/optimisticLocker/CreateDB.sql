@@ -10,8 +10,8 @@ CREATE TABLE version_user (
 ) ENGINE = INNODB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;
 
 insert into version_user (id,name,version) values(1,"zhangsan",15);
-insert into version_user (id,name,version) values(2,"wangwu",109);
-insert into version_user (id,name,version) values(3,"lisi",null);
+insert into version_user (id,name,version) values(2,"lisi",109);
+insert into version_user (id,name,version) values(3,"wangwu",null);
 
 DROP TABLE
 IF EXISTS time_version_user;

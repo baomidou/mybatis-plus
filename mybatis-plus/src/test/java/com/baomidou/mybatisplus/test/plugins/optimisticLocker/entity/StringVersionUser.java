@@ -17,7 +17,8 @@ public class StringVersionUser implements Serializable {
 	private String name;
 
 	@Version
-	private String version;
+	@TableField("version")
+	private String tt;
 
 	public Long getId() {
 		return id;
@@ -35,12 +36,12 @@ public class StringVersionUser implements Serializable {
 		this.name = name;
 	}
 
-	public String getVersion() {
-		return version;
+	public String getTt() {
+		return tt;
 	}
 
-	public void setVersion(String version) {
-		this.version = version;
+	public void setTt(String tt) {
+		this.tt = tt;
 	}
 
 }
