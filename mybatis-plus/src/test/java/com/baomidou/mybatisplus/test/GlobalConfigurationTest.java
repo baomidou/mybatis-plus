@@ -83,7 +83,7 @@ public class GlobalConfigurationTest {
         Assert.assertTrue(num > 0);
         NotPK notPK1 = pkMapper.selectOne(notPK);
         Assert.assertNotNull(notPK1);
-        pkMapper.selectPage(RowBounds.DEFAULT, Condition.instance().eq("type", 12121212));
+        pkMapper.selectPage(RowBounds.DEFAULT, Condition.create().eq("type", 12121212));
         NotPK notPK2 = null;
         try {
             notPK2 = pkMapper.selectById("1");
@@ -91,7 +91,7 @@ public class GlobalConfigurationTest {
             System.out.println("因为没有主键,所以没有注入该方法");
         }
         Assert.assertNull(notPK2);
-        int count = pkMapper.selectCount(Condition.Empty());
+        int count = pkMapper.selectCount(Condition.EMPTY);
         Assert.assertTrue(count > 0);
         int deleteCount = pkMapper.delete(null);
         Assert.assertTrue(deleteCount > 0);
