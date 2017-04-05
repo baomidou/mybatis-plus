@@ -60,7 +60,7 @@ public enum QuerySQL {
 
     POSTGRE_SQL("postgre_sql", "select tablename from pg_tables where schemaname='public' ORDER BY tablename",
             "SELECT A.tablename, obj_description(relfilenode, 'pg_class') AS comments FROM pg_tables A, pg_class B WHERE A.schemaname='public' AND A.tablename = B.relname",
-            "SELECT A.attname AS name,format_type(A.atttypid,A.atttypmod) AS type,col_description(A.attrelid,A.attnum) AS comment,(CASE C.contype WHEN 'p' THEN 'PRI' ELSE '' END) AS key"
+            "SELECT DISTINCT A.attname AS name,format_type(A.atttypid,A.atttypmod) AS type,col_description(A.attrelid,A.attnum) AS comment,(CASE C.contype WHEN 'p' THEN 'PRI' ELSE '' END) AS key"
                     + " FROM pg_attribute A INNER JOIN pg_class B ON A.attrelid = B.oid"
                     + " LEFT JOIN pg_constraint C ON A.attnum = C.conkey[1] WHERE B.relname = '%s' AND A.attnum>0",
             "tablename", "comments", "name", "type", "comment", "key");
@@ -131,4 +131,7 @@ public enum QuerySQL {
         return fieldKey;
     }
 
+    public static void main(String[] args) {
+        System.out.println(POSTGRE_SQL.getTableFieldsSql());
+    }
 }
