@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.entity;
 
-import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
@@ -54,7 +53,7 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
  * @Date 2016-12-06
  */
 @SuppressWarnings("serial")
-public class GlobalConfiguration implements Cloneable, Serializable {
+public class GlobalConfiguration implements Cloneable {
 
     /**
      * 默认参数
