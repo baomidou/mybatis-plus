@@ -69,7 +69,7 @@ public abstract class Wrapper<T> implements Serializable {
      * 拼接WHERE后应该是AND还是OR
      */
     protected String AND_OR = "AND";
-    private Map<String, Object> paramNameValuePairs = new HashMap<String, Object>(4);
+    private Map<String, Object> paramNameValuePairs = new HashMap<>(4);
     private AtomicInteger paramNameSeq = new AtomicInteger(0);
 
     /**

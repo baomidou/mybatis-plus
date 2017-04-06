@@ -55,11 +55,11 @@ public class NoXMLTest {
         testMapper.insert(new Test(IdWorker.getId(), "Caratacus"));
         List<Map<String, Object>> list = testMapper.selectMaps(null);
         List<Map<String, Object>> list1 = testMapper.selectMapsPage(RowBounds.DEFAULT, null);
-        List<Map<String, Object>> list2 = testMapper.selectMapsPage(new Page<Object>(1, 5), null);
+        List<Map<String, Object>> list2 = testMapper.selectMapsPage(new Page<>(1, 5), null);
         System.out.println(list);
         System.out.println(list1);
         System.out.println(list2);
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("type", null);
         map.put("id", null);
         List<Test> tests = testMapper.selectByMap(map);

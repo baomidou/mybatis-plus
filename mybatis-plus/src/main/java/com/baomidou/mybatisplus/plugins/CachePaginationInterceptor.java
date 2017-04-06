@@ -97,13 +97,14 @@ public class CachePaginationInterceptor extends PaginationInterceptor implements
             metaStatementHandler.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
             metaStatementHandler.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
         } else {
-            MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
-            Object parameterObject = invocation.getArgs()[1];
             RowBounds rowBounds = (RowBounds) invocation.getArgs()[2];
             if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
                 return invocation.proceed();
             }
-
+            MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
+            Executor executor = (Executor) invocation.getTarget();
+            Connection connection = executor.getTransaction().getConnection();
+            Object parameterObject = invocation.getArgs()[1];
             BoundSql boundSql = mappedStatement.getBoundSql(parameterObject);
             String originalSql = boundSql.getSql();
             if (rowBounds instanceof Pagination) {
@@ -111,7 +112,7 @@ public class CachePaginationInterceptor extends PaginationInterceptor implements
                 if (page.isSearchCount()) {
                     CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType,
                             page.isOptimizeCount());
-                    super.count(countOptimize.getCountSQL(), mappedStatement, boundSql, page);
+                    super.queryTotal(countOptimize.getCountSQL(), mappedStatement, boundSql, page, connection);
                     if (page.getTotal() <= 0) {
                         return invocation.proceed();
                     }

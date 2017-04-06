@@ -88,7 +88,7 @@ public class URPTest {
         whereUser = userMapper.selectOne(userA);
         System.err.println("--------- select user --------- " + whereUser.toString());
 
-        userMapper.delete(new EntityWrapper<User>(userA));
+        userMapper.delete(new EntityWrapper<>(userA));
         System.err.println("--------- delete user --------- " + rlt);
 
     }

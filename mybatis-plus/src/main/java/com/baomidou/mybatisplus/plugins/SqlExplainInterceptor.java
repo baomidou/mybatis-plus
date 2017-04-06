@@ -38,7 +38,6 @@ import org.apache.ibatis.session.Configuration;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.enums.DBType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.toolkit.IOUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.VersionUtils;
 
@@ -69,15 +68,15 @@ public class SqlExplainInterceptor implements Interceptor {
          */
         MappedStatement ms = (MappedStatement) invocation.getArgs()[0];
         if (ms.getSqlCommandType() == SqlCommandType.DELETE || ms.getSqlCommandType() == SqlCommandType.UPDATE) {
+            Executor executor = (Executor) invocation.getTarget();
             Configuration configuration = ms.getConfiguration();
             Object parameter = invocation.getArgs()[1];
             BoundSql boundSql = ms.getBoundSql(parameter);
-            Connection connection = configuration.getEnvironment().getDataSource().getConnection();
+            Connection connection = executor.getTransaction().getConnection();
             String databaseVersion = connection.getMetaData().getDatabaseProductVersion();
             if (GlobalConfiguration.getDbType(configuration).equals(DBType.MYSQL)
                     && VersionUtils.compare(minMySQLVersion, databaseVersion)) {
                 logger.warn("Warn: Your mysql version needs to be greater than '5.6.3' to execute of Sql Explain!");
-                IOUtils.closeQuietly(connection);
                 return invocation.proceed();
             }
             /**
@@ -104,39 +103,32 @@ public class SqlExplainInterceptor implements Interceptor {
     @SuppressWarnings("resource")
     protected void sqlExplain(Configuration configuration, MappedStatement mappedStatement, BoundSql boundSql,
                               Connection connection, Object parameter) {
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        try {
-            StringBuilder explain = new StringBuilder("EXPLAIN ");
-            explain.append(boundSql.getSql());
-            String sqlExplain = explain.toString();
-            StaticSqlSource sqlsource = new StaticSqlSource(configuration, sqlExplain, boundSql.getParameterMappings());
-            MappedStatement.Builder builder = new MappedStatement.Builder(configuration, "explain_sql", sqlsource,
-                    SqlCommandType.SELECT);
-            builder.resultMaps(mappedStatement.getResultMaps()).resultSetType(mappedStatement.getResultSetType())
-                    .statementType(mappedStatement.getStatementType());
-            MappedStatement query_statement = builder.build();
-            DefaultParameterHandler handler = new DefaultParameterHandler(query_statement, parameter, boundSql);
-            stmt = connection.prepareStatement(sqlExplain);
+        StringBuilder explain = new StringBuilder("EXPLAIN ");
+        explain.append(boundSql.getSql());
+        String sqlExplain = explain.toString();
+        StaticSqlSource sqlsource = new StaticSqlSource(configuration, sqlExplain, boundSql.getParameterMappings());
+        MappedStatement.Builder builder = new MappedStatement.Builder(configuration, "explain_sql", sqlsource,
+                SqlCommandType.SELECT);
+        builder.resultMaps(mappedStatement.getResultMaps()).resultSetType(mappedStatement.getResultSetType())
+                .statementType(mappedStatement.getStatementType());
+        MappedStatement query_statement = builder.build();
+        DefaultParameterHandler handler = new DefaultParameterHandler(query_statement, parameter, boundSql);
+        try (PreparedStatement stmt = connection.prepareStatement(sqlExplain)) {
             handler.setParameters(stmt);
-            rs = stmt.executeQuery();
-            while (rs.next()) {
-                if (!"Using where".equals(rs.getString("Extra"))) {
-                    String tip = " Full table operation is prohibited. SQL: " + boundSql.getSql();
-                    if (this.isStopProceed()) {
-                        throw new MybatisPlusException(tip);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    if (!"Using where".equals(rs.getString("Extra"))) {
+                        if (this.isStopProceed()) {
+                            throw new MybatisPlusException("Error: Full table operation is prohibited. SQL: " + boundSql.getSql());
+                        }
+                        break;
                     }
-                    logger.error(tip);
-                    break;
                 }
             }
 
+
         } catch (Exception e) {
             throw new MybatisPlusException(e);
-        } finally {
-            IOUtils.closeQuietly(rs);
-            IOUtils.closeQuietly(stmt);
-            IOUtils.closeQuietly(connection);
         }
     }
 

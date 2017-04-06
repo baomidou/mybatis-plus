@@ -369,9 +369,9 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
          */
         if (parent != null) {
             //指定在classpath中的mapper文件
-            Set<String> resources = new HashSet<String>();
+            Set<String> resources = new HashSet<>();
             //指向一个mapper接口
-            Set<Class<?>> mapperClasses = new HashSet<Class<?>>();
+            Set<Class<?>> mapperClasses = new HashSet<>();
             setResource(parent, resources, mapperClasses);
             // 依次遍历 首先 resource 然后 mapper
             for (String resource : resources) {
@@ -401,7 +401,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
         for (XNode child : parent.getChildren()) {
             if ("package".equals(child.getName())) {
                 String mapperPackage = child.getStringAttribute("name");
-                ResolverUtil<Class<?>> resolverUtil = new ResolverUtil<Class<?>>();
+                ResolverUtil<Class<?>> resolverUtil = new ResolverUtil<>();
                 resolverUtil.find(new ResolverUtil.IsA(Object.class), mapperPackage);
                 Set<Class<? extends Class<?>>> mapperSet = resolverUtil.getClasses();
                 mapper.addAll(mapperSet);

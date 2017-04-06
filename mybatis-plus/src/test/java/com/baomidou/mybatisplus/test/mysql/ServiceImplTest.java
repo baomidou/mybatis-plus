@@ -41,7 +41,7 @@ public class ServiceImplTest {
 
     //@Test
     public void testInsertBatch() throws IOException {
-        List<User> userList = new ArrayList<User>();
+        List<User> userList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             userList.add(new User("u-" + i, i, i));
         }

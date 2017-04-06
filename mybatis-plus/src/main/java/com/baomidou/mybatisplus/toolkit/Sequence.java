@@ -87,7 +87,7 @@ public class Sequence {
      * </p>
      */
     protected static long getMaxWorkerId(long datacenterId, long maxWorkerId) {
-        StringBuffer mpid = new StringBuffer();
+        StringBuilder mpid = new StringBuilder();
         mpid.append(datacenterId);
         String name = ManagementFactory.getRuntimeMXBean().getName();
         if (StringUtils.isNotEmpty(name)) {

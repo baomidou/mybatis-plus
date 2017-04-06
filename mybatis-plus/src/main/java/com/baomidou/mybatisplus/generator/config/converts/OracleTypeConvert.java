@@ -35,7 +35,7 @@ public class OracleTypeConvert implements ITypeConvert {
         } else if (t.contains("DATE") || t.contains("TIMESTAMP")) {
             return DbColumnType.DATE;
         } else if (t.contains("NUMBER")) {
-            if (t.matches("NUMBER\\(+\\d{1}+\\)")) {
+            if (t.matches("NUMBER\\(+\\d\\)")) {
                 return DbColumnType.INTEGER;
             } else if (t.matches("NUMBER\\(+\\d{2}+\\)")) {
                 return DbColumnType.LONG;

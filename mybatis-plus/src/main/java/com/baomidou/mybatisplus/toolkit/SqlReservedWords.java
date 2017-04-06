@@ -140,7 +140,7 @@ public class SqlReservedWords {
                 "DEC", "CASCADED", "ENCRYPTED", "CONTAINSTABLE", "DYNAMIC_FUNCTION", "CONDITION_NUMBER", "BEFORE", "DB2GENERAL",
                 "DECLARE", "SUPERUSER", "WHILE"};
 
-        RESERVED_WORDS = new HashSet<String>(words.length);
+        RESERVED_WORDS = new HashSet<>(words.length);
         Collections.addAll(RESERVED_WORDS, words);
     }
 

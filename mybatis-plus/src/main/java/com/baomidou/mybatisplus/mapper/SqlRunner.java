@@ -102,7 +102,7 @@ public class SqlRunner {
      * @return
      */
     private Map<String, String> sqlMap(String sql, Object... args) {
-        Map<String, String> sqlMap = new HashMap<String, String>();
+        Map<String, String> sqlMap = new HashMap<>();
         sqlMap.put(SQL, StringUtils.sqlArgsFill(sql, args));
         return sqlMap;
     }

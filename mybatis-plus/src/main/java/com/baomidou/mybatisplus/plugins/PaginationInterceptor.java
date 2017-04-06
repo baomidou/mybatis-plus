@@ -25,6 +25,7 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
@@ -39,7 +40,6 @@ import com.baomidou.mybatisplus.MybatisDefaultParameterHandler;
 import com.baomidou.mybatisplus.entity.CountOptimize;
 import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
-import com.baomidou.mybatisplus.toolkit.IOUtils;
 import com.baomidou.mybatisplus.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.toolkit.SqlUtils;
@@ -70,54 +70,51 @@ public class PaginationInterceptor implements Interceptor {
     private String dialectClazz;
 
     /**
-     * Physical Pagination Interceptor for all the queries with parameter
-     * {@link org.apache.ibatis.session.RowBounds}
+     * Physical Pagination Interceptor for all the queries with parameter {@link org.apache.ibatis.session.RowBounds}
      */
     public Object intercept(Invocation invocation) throws Throwable {
-        Object target = invocation.getTarget();
-        if (target instanceof StatementHandler) {
-            StatementHandler statementHandler = (StatementHandler) PluginUtils.realTarget(invocation.getTarget());
-            MetaObject metaStatementHandler = SystemMetaObject.forObject(statementHandler);
-            RowBounds rowBounds = (RowBounds) metaStatementHandler.getValue("delegate.rowBounds");
-
-			/* 不需要分页的场合 */
-            if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
-                return invocation.proceed();
-            }
-            BoundSql boundSql = (BoundSql) metaStatementHandler.getValue("delegate.boundSql");
-            String originalSql = boundSql.getSql();
-            MappedStatement mappedStatement = (MappedStatement) metaStatementHandler.getValue("delegate.mappedStatement");
-            if (isDynamicDataSource()) {
-                try (Connection connection = mappedStatement.getConfiguration().getEnvironment().getDataSource().getConnection()) {
-                    dialectType = JdbcUtils.getDbType(connection.getMetaData().getURL()).getDb();
-                }
-            }
-            if (rowBounds instanceof Pagination) {
-                Pagination page = (Pagination) rowBounds;
-                boolean orderBy = true;
-                if (page.isSearchCount()) {
-                    CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType,
-                            page.isOptimizeCount());
-                    orderBy = countOptimize.isOrderBy();
-                    this.count(countOptimize.getCountSQL(), mappedStatement, boundSql, page);
-                    if (page.getTotal() <= 0) {
-                        return invocation.proceed();
-                    }
-                }
-                String buildSql = SqlUtils.concatOrderBy(originalSql, page, orderBy);
-                originalSql = DialectFactory.buildPaginationSql(page, buildSql, dialectType, dialectClazz);
-            } else {
-                // support physical Pagination for RowBounds
-                originalSql = DialectFactory.buildPaginationSql(rowBounds, originalSql, dialectType, dialectClazz);
-            }
-
-			/*
-             * <p> 禁用内存分页 </p> <p> 内存分页会查询所有结果出来处理（这个很吓人的），如果结果变化频繁这个数据还会不准。</p>
-			 */
-            metaStatementHandler.setValue("delegate.boundSql.sql", originalSql);
-            metaStatementHandler.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
-            metaStatementHandler.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
+        StatementHandler statementHandler = (StatementHandler) PluginUtils.realTarget(invocation.getTarget());
+        MetaObject metaStatementHandler = SystemMetaObject.forObject(statementHandler);
+        // 先判断是不是SELECT操作
+        MappedStatement mappedStatement = (MappedStatement) metaStatementHandler.getValue("delegate.mappedStatement");
+        if (!SqlCommandType.SELECT.equals(mappedStatement.getSqlCommandType())) {
+            return invocation.proceed();
         }
+        RowBounds rowBounds = (RowBounds) metaStatementHandler.getValue("delegate.rowBounds");
+        /* 不需要分页的场合 */
+        if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
+            return invocation.proceed();
+        }
+        BoundSql boundSql = (BoundSql) metaStatementHandler.getValue("delegate.boundSql");
+        String originalSql = boundSql.getSql();
+        Connection connection = (Connection) invocation.getArgs()[0];
+        if (isDynamicDataSource()) {
+            dialectType = JdbcUtils.getDbType(connection.getMetaData().getURL()).getDb();
+        }
+        if (rowBounds instanceof Pagination) {
+            Pagination page = (Pagination) rowBounds;
+            boolean orderBy = true;
+            if (page.isSearchCount()) {
+                CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType, page.isOptimizeCount());
+                orderBy = countOptimize.isOrderBy();
+                this.queryTotal(countOptimize.getCountSQL(), mappedStatement, boundSql, page, connection);
+                if (page.getTotal() <= 0) {
+                    return invocation.proceed();
+                }
+            }
+            String buildSql = SqlUtils.concatOrderBy(originalSql, page, orderBy);
+            originalSql = DialectFactory.buildPaginationSql(page, buildSql, dialectType, dialectClazz);
+        } else {
+            // support physical Pagination for RowBounds
+            originalSql = DialectFactory.buildPaginationSql(rowBounds, originalSql, dialectType, dialectClazz);
+        }
+
+		/*
+         * <p> 禁用内存分页 </p> <p> 内存分页会查询所有结果出来处理（这个很吓人的），如果结果变化频繁这个数据还会不准。</p>
+		 */
+        metaStatementHandler.setValue("delegate.boundSql.sql", originalSql);
+        metaStatementHandler.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
+        metaStatementHandler.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
         return invocation.proceed();
     }
 
@@ -129,35 +126,27 @@ public class PaginationInterceptor implements Interceptor {
      * @param boundSql
      * @param page
      */
-    protected void count(String sql, MappedStatement mappedStatement, BoundSql boundSql, Pagination page) {
-        PreparedStatement statement = null;
-        ResultSet resultSet = null;
-        Connection connection = null;
-        try {
-            connection = mappedStatement.getConfiguration().getEnvironment().getDataSource().getConnection();
-            statement = connection.prepareStatement(sql);
-            DefaultParameterHandler parameterHandler = new MybatisDefaultParameterHandler(mappedStatement,
-                    boundSql.getParameterObject(), boundSql);
+    protected void queryTotal(String sql, MappedStatement mappedStatement, BoundSql boundSql, Pagination page, Connection connection) {
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            DefaultParameterHandler parameterHandler = new MybatisDefaultParameterHandler(mappedStatement, boundSql.getParameterObject(), boundSql);
             parameterHandler.setParameters(statement);
-            resultSet = statement.executeQuery();
             int total = 0;
-            if (resultSet.next()) {
-                total = resultSet.getInt(1);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    total = resultSet.getInt(1);
+                }
             }
             page.setTotal(total);
             /*
              * 溢出总页数，设置第一页
 			 */
-            if (overflowCurrent && (page.getCurrent() > page.getPages())) {
+            int pages = page.getPages();
+            if (overflowCurrent && (page.getCurrent() > pages)) {
                 page = new Pagination(1, page.getSize());
                 page.setTotal(total);
             }
         } catch (Exception e) {
-            logger.error("Error: query page count total fail!", e);
-        } finally {
-            IOUtils.closeQuietly(statement);
-            IOUtils.closeQuietly(resultSet);
-            IOUtils.closeQuietly(connection);
+            logger.error("Error: Method queryTotal execution error !", e);
         }
     }
 

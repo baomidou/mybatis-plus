@@ -51,7 +51,7 @@ public class CircularLabelsTest {
         SqlSessionFactory sessionFactory = mf.build(in);
         SqlSession session = sessionFactory.openSession();
         UserMapper userMapper = session.getMapper(UserMapper.class);
-        Page<User> page = new Page<User>(1, 6);
+        Page<User> page = new Page<>(1, 6);
         List<User> users = userMapper.forSelect(page, Arrays.asList("1", "2", "3"));
         System.out.println(users.toString());
         System.out.println(page);

@@ -166,11 +166,31 @@ public class SqlHelper {
         if (null == page) {
             return;
         }
-        if (null != wrapper && !wrapper.equals(Condition.EMPTY)) {
+        if (isWrapperEmpty(wrapper)) {
             if (page.isOpenSort()) {
                 wrapper.orderBy(page.getOrderByField(), page.isAsc());
             }
             wrapper.allEq(page.getCondition());
         }
+    }
+
+    /**
+     * 判断Wrapper为空
+     *
+     * @param wrapper
+     * @return
+     */
+    public static boolean isWrapperEmpty(Wrapper<?> wrapper) {
+        return null == wrapper || Condition.EMPTY.equals(wrapper);
+    }
+
+    /**
+     * 判断Wrapper不为空
+     *
+     * @param wrapper
+     * @return
+     */
+    public static boolean isWrapperNotEmpty(Wrapper<?> wrapper) {
+        return !isWrapperEmpty(wrapper);
     }
 }

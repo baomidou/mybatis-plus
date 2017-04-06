@@ -511,7 +511,7 @@ public class StringUtils {
         if (len == 0) {
             return Collections.emptyList();
         }
-        final List<String> list = new ArrayList<String>();
+        final List<String> list = new ArrayList<>();
         int sizePlus1 = 1;
         int i = 0, start = 0;
         boolean match = false;

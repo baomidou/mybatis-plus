@@ -51,7 +51,7 @@ public class TestProxy {
         /**
          * 代理方式二
          */
-        MyMapperProxy<IUserMapper> userDaoProxy = new MyMapperProxy<IUserMapper>();
+        MyMapperProxy<IUserMapper> userDaoProxy = new MyMapperProxy<>();
         IUserMapper mapper = userDaoProxy.bind(new UserMapperImpl());
         User user1 = mapper.selectById(1L);
         System.err.println((user1 == null) ? "代理失败" : user1.toString());

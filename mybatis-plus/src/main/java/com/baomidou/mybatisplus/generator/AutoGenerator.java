@@ -101,7 +101,7 @@ public class AutoGenerator extends AbstractGenerator {
     private Map<String, VelocityContext> analyzeData(ConfigBuilder config) {
         List<TableInfo> tableList = config.getTableInfoList();
         Map<String, String> packageInfo = config.getPackageInfo();
-        Map<String, VelocityContext> ctxData = new HashMap<String, VelocityContext>();
+        Map<String, VelocityContext> ctxData = new HashMap<>();
         String superEntityClass = getSuperClassName(config.getSuperEntityClass());
         String superMapperClass = getSuperClassName(config.getSuperMapperClass());
         String superServiceClass = getSuperClassName(config.getSuperServiceClass());
