@@ -140,7 +140,7 @@ public class H2UserTest {
 
     @Test
     public void testSelectPage() {
-        Page<H2User> page = userService.selectPage(new Page<H2User>(1, 3));
+        Page<H2User> page = userService.selectPage(new Page<>(1, 3));
         Assert.assertEquals(3, page.getRecords().size());
     }
 }

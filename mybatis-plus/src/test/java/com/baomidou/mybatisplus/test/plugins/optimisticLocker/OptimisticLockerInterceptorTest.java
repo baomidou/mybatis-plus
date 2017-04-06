@@ -194,7 +194,7 @@ public class OptimisticLockerInterceptorTest {
         intVersionUserMapper.update(versionUser, null);
         Assert.assertTrue(Objects.equals(intVersionUserMapper.selectById(2).getVersion(), originVersion));
         // 空条件
-        intVersionUserMapper.update(versionUser, new EntityWrapper<IntVersionUser>());
+        intVersionUserMapper.update(versionUser, new EntityWrapper<>());
         Assert.assertTrue(Objects.equals(intVersionUserMapper.selectById(2).getVersion(), originVersion));
         // 正常查询不带version
         IntVersionUser wrapper = new IntVersionUser();

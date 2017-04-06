@@ -892,7 +892,7 @@ public class AutoSqlInjector implements ISqlInjector {
         MappedStatement ms = new MappedStatement.Builder(configuration, mappedStatement, sqlSource, SqlCommandType.SELECT)
                 .resultMaps(new ArrayList<ResultMap>() {
                     {
-                        add(new ResultMap.Builder(configuration, "defaultResultMap", resultType, new ArrayList<ResultMapping>(0))
+                        add(new ResultMap.Builder(configuration, "defaultResultMap", resultType, new ArrayList<>(0))
                                 .build());
                     }
                 }).build();
@@ -914,7 +914,7 @@ public class AutoSqlInjector implements ISqlInjector {
         MappedStatement ms = new MappedStatement.Builder(configuration, mappedStatement, sqlSource, sqlCommandType).resultMaps(
                 new ArrayList<ResultMap>() {
                     {
-                        add(new ResultMap.Builder(configuration, "defaultResultMap", int.class, new ArrayList<ResultMapping>(0))
+                        add(new ResultMap.Builder(configuration, "defaultResultMap", int.class, new ArrayList<>(0))
                                 .build());
                     }
                 }).build();

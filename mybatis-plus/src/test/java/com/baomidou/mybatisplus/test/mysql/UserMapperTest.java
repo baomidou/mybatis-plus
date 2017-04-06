@@ -270,7 +270,7 @@ public class UserMapperTest {
         System.err.println("总记录数：" + userMapper.selectCount(null));
 
         System.err.println("\n------------------selectList-----所有数据----id--DESC--排序----");
-        List<User> ul2 = userMapper.selectList(new EntityWrapper<User>(null, "age,name"));
+        List<User> ul2 = userMapper.selectList(new EntityWrapper<>(null, "age,name"));
         for (User anUl2 : ul2) {
             print(anUl2);
         }
