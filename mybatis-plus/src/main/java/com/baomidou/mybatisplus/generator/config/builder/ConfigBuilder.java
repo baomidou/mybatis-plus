@@ -341,10 +341,7 @@ public class ConfigBuilder {
         List<TableInfo> tableList = new ArrayList<TableInfo>();
         Set<String> notExistTables = new HashSet<String>();
         NamingStrategy strategy = config.getNaming();
-        PreparedStatement pstate = null;
-        try {
-            pstate = connection.prepareStatement(querySQL.getTableCommentsSql());
-            ResultSet results = pstate.executeQuery();
+        try (PreparedStatement prepareStatement = connection.prepareStatement(querySQL.getTableCommentsSql());ResultSet results = prepareStatement.executeQuery()){
             TableInfo tableInfo;
             while (results.next()) {
                 String tableName = results.getString(querySQL.getTableName());
@@ -391,18 +388,6 @@ public class ConfigBuilder {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            // 释放资源
-            try {
-                if (pstate != null) {
-                    pstate.close();
-                }
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
         return processTable(tableList, strategy, config.getTablePrefix());
     }
@@ -431,38 +416,40 @@ public class ConfigBuilder {
      * @param strategy  命名策略
      * @return 表信息
      */
-    private List<TableField> getListFields(String tableName, NamingStrategy strategy) throws SQLException {
-        boolean havedId = false;
-        PreparedStatement pstate = connection.prepareStatement(String.format(querySQL.getTableFieldsSql(), tableName));
-        ResultSet results = pstate.executeQuery();
-
+    private List<TableField> getListFields(String tableName, NamingStrategy strategy){
+        boolean haveId = false;
         List<TableField> fieldList = new ArrayList<TableField>();
-        while (results.next()) {
-            TableField field = new TableField();
-            String key = results.getString(querySQL.getFieldKey());
-            // 避免多重主键设置，目前只取第一个找到ID，并放到list中的索引为0的位置
-            boolean isId = StringUtils.isNotEmpty(key) && key.toUpperCase().equals("PRI");
-            // 处理ID
-            if (isId && !havedId) {
-                field.setKeyFlag(true);
-                if (isKeyIdentity(results)) {
-                    field.setKeyIdentityFlag(true);
+        try (PreparedStatement pstate = connection.prepareStatement(String.format(querySQL.getTableFieldsSql(), tableName));
+              ResultSet results = pstate.executeQuery()){
+            while (results.next()) {
+                TableField field = new TableField();
+                String key = results.getString(querySQL.getFieldKey());
+                // 避免多重主键设置，目前只取第一个找到ID，并放到list中的索引为0的位置
+                boolean isId = StringUtils.isNotEmpty(key) && key.toUpperCase().equals("PRI");
+                // 处理ID
+                if (isId && !haveId) {
+                    field.setKeyFlag(true);
+                    if (isKeyIdentity(results)) {
+                        field.setKeyIdentityFlag(true);
+                    }
+                    haveId = true;
+                } else {
+                    field.setKeyFlag(false);
                 }
-                havedId = true;
-            } else {
-                field.setKeyFlag(false);
+                // 处理其它信息
+                field.setName(results.getString(querySQL.getFieldName()));
+                if (strategyConfig.includeSuperEntityColumns(field.getName())) {
+                    // 跳过公共字段
+                    continue;
+                }
+                field.setType(results.getString(querySQL.getFieldType()));
+                field.setPropertyName(strategyConfig, processName(field.getName(), strategy));
+                field.setColumnType(dataSourceConfig.getTypeConvert().processTypeConvert(field.getType()));
+                field.setComment(results.getString(querySQL.getFieldComment()));
+                fieldList.add(field);
             }
-            // 处理其它信息
-            field.setName(results.getString(querySQL.getFieldName()));
-            if (strategyConfig.includeSuperEntityColumns(field.getName())) {
-                // 跳过公共字段
-                continue;
-            }
-            field.setType(results.getString(querySQL.getFieldType()));
-            field.setPropertyName(strategyConfig, processName(field.getName(), strategy));
-            field.setColumnType(dataSourceConfig.getTypeConvert().processTypeConvert(field.getType()));
-            field.setComment(results.getString(querySQL.getFieldComment()));
-            fieldList.add(field);
+        }catch (SQLException e){
+            System.err.println("SQL Exception："+e.getMessage());
         }
         return fieldList;
     }

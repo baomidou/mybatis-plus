@@ -181,7 +181,7 @@ public class AutoSqlInjector implements ISqlInjector {
                     break;
                 }
             }
-            return (Class<?>) target.getActualTypeArguments()[0];
+            return target==null? null:(Class<?>) target.getActualTypeArguments()[0];
         }
     }
 
