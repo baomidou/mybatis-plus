@@ -129,7 +129,7 @@ public abstract class Model<T extends Model> implements Serializable {
      */
     @Transactional
     public boolean delete(Wrapper wrapper) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         // delete
         map.put("ew", wrapper);
         return SqlHelper.retBool(sqlSession().delete(sqlStatement(SqlMethod.DELETE), map));
@@ -178,7 +178,7 @@ public abstract class Model<T extends Model> implements Serializable {
      */
     @Transactional
     public boolean update(Wrapper wrapper) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("et", this);
         map.put("ew", wrapper);
         // update
@@ -233,7 +233,7 @@ public abstract class Model<T extends Model> implements Serializable {
      */
 
     public List<T> selectList(Wrapper wrapper) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("ew", wrapper);
         return sqlSession().selectList(sqlStatement(SqlMethod.SELECT_LIST), map);
     }
@@ -287,7 +287,7 @@ public abstract class Model<T extends Model> implements Serializable {
      * @return
      */
     public Page<T> selectPage(Page<T> page, Wrapper<T> wrapper) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         SqlHelper.fillWrapper(page, wrapper);
         map.put("ew", wrapper);
         List<T> tl = sqlSession().selectList(sqlStatement(SqlMethod.SELECT_PAGE), map, page);
@@ -334,7 +334,7 @@ public abstract class Model<T extends Model> implements Serializable {
      * @return
      */
     public int selectCount(Wrapper wrapper) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("ew", wrapper);
         return SqlHelper.retCount(sqlSession().<Integer>selectOne(sqlStatement(SqlMethod.SELECT_COUNT), map));
     }

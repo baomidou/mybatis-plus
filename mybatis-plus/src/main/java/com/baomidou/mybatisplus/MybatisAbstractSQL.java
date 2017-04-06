@@ -139,12 +139,12 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
      */
     private static class SQLCondition implements Serializable {
 
-        List<String> where = new ArrayList<String>();
-        List<String> having = new ArrayList<String>();
-        List<String> groupBy = new ArrayList<String>();
-        List<String> orderBy = new ArrayList<String>();
-        List<String> lastList = new ArrayList<String>();
-        List<String> andOr = new ArrayList<String>();
+        List<String> where = new ArrayList<>();
+        List<String> having = new ArrayList<>();
+        List<String> groupBy = new ArrayList<>();
+        List<String> orderBy = new ArrayList<>();
+        List<String> lastList = new ArrayList<>();
+        List<String> andOr = new ArrayList<>();
 
         public SQLCondition() {
             andOr.add(AND);
@@ -199,7 +199,7 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
          * @return
          */
         private List<String> clearNull(List<String> parts) {
-            List<String> temps = new ArrayList<String>();
+            List<String> temps = new ArrayList<>();
             for (String part : parts) {
                 if (StringUtils.isEmpty(part)) {
                     continue;

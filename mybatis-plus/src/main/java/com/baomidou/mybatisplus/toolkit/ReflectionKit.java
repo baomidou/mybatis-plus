@@ -182,7 +182,7 @@ public class ReflectionKit {
         List<Field> fieldList = getFieldList(clazz);
         Map<String, Field> fieldMap = Collections.emptyMap();
         if (CollectionUtils.isNotEmpty(fieldList)) {
-            fieldMap = new LinkedHashMap<String, Field>();
+            fieldMap = new LinkedHashMap<>();
             for (Field field : fieldList) {
                 fieldMap.put(field.getName(), field);
             }
@@ -200,7 +200,7 @@ public class ReflectionKit {
         if (null == clazz) {
             return null;
         }
-        List<Field> fieldList = new LinkedList<Field>();
+        List<Field> fieldList = new LinkedList<>();
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
             /* 过滤静态属性 */

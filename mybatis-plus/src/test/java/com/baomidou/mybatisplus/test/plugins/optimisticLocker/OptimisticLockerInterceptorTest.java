@@ -199,13 +199,13 @@ public class OptimisticLockerInterceptorTest {
         // 正常查询不带version
         IntVersionUser wrapper = new IntVersionUser();
         wrapper.setName("lisi");
-        intVersionUserMapper.update(versionUser, new EntityWrapper<IntVersionUser>(wrapper));
+        intVersionUserMapper.update(versionUser, new EntityWrapper<>(wrapper));
         Assert.assertTrue(intVersionUserMapper.selectById(2).getVersion() == originVersion + 1);
         // 原始条件带version按原始逻辑走
         IntVersionUser wrapper2 = new IntVersionUser();
         wrapper2.setName("lisi");
         wrapper2.setVersion(originVersion + 1);
-        intVersionUserMapper.update(versionUser, new EntityWrapper<IntVersionUser>(wrapper2));
+        intVersionUserMapper.update(versionUser, new EntityWrapper<>(wrapper2));
         Assert.assertTrue(intVersionUserMapper.selectById(1).getVersion() == originVersion + 1);
 
     }

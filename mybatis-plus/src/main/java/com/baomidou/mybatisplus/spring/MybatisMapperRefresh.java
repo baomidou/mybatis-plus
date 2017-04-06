@@ -61,7 +61,7 @@ public class MybatisMapperRefresh implements Runnable {
     /**
      * 记录jar包存在的mapper
      */
-    private static Map<String, List<Resource>> jarMapper = new HashMap<String, List<Resource>>();
+    private static Map<String, List<Resource>> jarMapper = new HashMap<>();
     private SqlSessionFactory sqlSessionFactory;
     private Resource[] mapperLocations;
     private Long beforeTime = 0L;
@@ -114,7 +114,7 @@ public class MybatisMapperRefresh implements Runnable {
 
                 public void run() {
                     if (fileSet == null) {
-                        fileSet = new HashSet<String>();
+                        fileSet = new HashSet<>();
                         for (Resource mapperLocation : mapperLocations) {
                             try {
                                 if (ResourceUtils.isJarURL(mapperLocation.getURL())) {
@@ -124,7 +124,7 @@ public class MybatisMapperRefresh implements Runnable {
                                     if (jarMapper.get(key) != null) {
                                         jarMapper.get(key).add(mapperLocation);
                                     } else {
-                                        List<Resource> resourcesList = new ArrayList<Resource>();
+                                        List<Resource> resourcesList = new ArrayList<>();
                                         resourcesList.add(mapperLocation);
                                         jarMapper.put(key, resourcesList);
                                     }

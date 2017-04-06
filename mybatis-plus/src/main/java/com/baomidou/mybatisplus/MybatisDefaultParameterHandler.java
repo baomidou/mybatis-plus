@@ -103,7 +103,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
              */
             Collection<Object> parameters = getParameters(parameterObject);
             if (null != parameters) {
-                List<Object> objList = new ArrayList<Object>();
+                List<Object> objList = new ArrayList<>();
                 for (Object parameter : parameters) {
                     TableInfo tableInfo = TableInfoHelper.getTableInfo(parameter.getClass());
                     if (null != tableInfo) {

@@ -88,7 +88,7 @@ public class ActiveRecordTest {
         print(" count=" + t2.selectCount(null));
 
         // 翻页查询
-        Page<Test> page = new Page<Test>(0, 10);
+        Page<Test> page = new Page<>(0, 10);
         page = t2.selectPage(page, null);
         print(page.toString());
 

@@ -117,7 +117,7 @@ public class UserMapperTest {
 
         userA.setAge(18);
         userMapper.updateById(userA);
-        userMapper.delete(new EntityWrapper<User>(userA));
+        userMapper.delete(new EntityWrapper<>(userA));
         System.err.println("--------- @TableField el() --------- " + rlt);
 
         /**
@@ -146,7 +146,7 @@ public class UserMapperTest {
         System.err.println("\n----------测试 name 字段忽略验证----insert-------" + rlt);
         sleep();
 
-        List<User> ul = new ArrayList<User>();
+        List<User> ul = new ArrayList<>();
 
 		/* 手动输入 ID */
         ul.add(new User(11L, "1", 1, 0));
@@ -183,21 +183,21 @@ public class UserMapperTest {
         System.err.println("---------deleteById------- delete id=" + id + " ,result=" + rlt + "\n\n");
         sleep();
 
-        Map<String, Object> columnMap = new HashMap<String, Object>();
+        Map<String, Object> columnMap = new HashMap<>();
         columnMap.put("name", "deleteByMap");
         columnMap.put("age", null);
         rlt = userMapper.deleteByMap(columnMap);
         System.err.println("---------deleteByMap------- result=" + rlt + "\n\n");
         sleep();
 
-        List<Long> il = new ArrayList<Long>();
+        List<Long> il = new ArrayList<>();
         il.add(16L);
         il.add(17L);
         rlt = userMapper.deleteBatchIds(il);
         System.err.println("---------deleteBatchIds------- delete id=" + id + " ,result=" + rlt + "\n\n");
         sleep();
 
-        rlt = userMapper.delete(new EntityWrapper<User>(new User(14L, "delname")));
+        rlt = userMapper.delete(new EntityWrapper<>(new User(14L, "delname")));
         System.err.println("--------------delete------------------ result=" + rlt + "\n\n");
         sleep();
 
@@ -214,11 +214,11 @@ public class UserMapperTest {
         System.err.println("------------------updateById---------------------- result=" + rlt + "\n\n");
         sleep();
 
-        rlt = userMapper.update(new User("55", 55, 5), new EntityWrapper<User>(new User(15L, "5")));
+        rlt = userMapper.update(new User("55", 55, 5), new EntityWrapper<>(new User(15L, "5")));
         System.err.println("------------------update---------------------- result=" + rlt + "\n\n");
         sleep();
 
-        EntityWrapper<User> ew1 = new EntityWrapper<User>();
+        EntityWrapper<User> ew1 = new EntityWrapper<>();
         ew1.addFilter("test_id={0} AND name={1}", 15L, "55");
         rlt = userMapper.update(new User("00"), ew1);
         System.err.println("------------------update---------------------- result=" + rlt + "\n\n");
@@ -227,7 +227,7 @@ public class UserMapperTest {
 		/* 无条件选择更新 */
         // userMapper.update(new User("11"), null);
 
-        List<User> userList = new ArrayList<User>();
+        List<User> userList = new ArrayList<>();
         userList.add(new User(11L, "updateBatchById-1", 1, 1));
         userList.add(new User(12L, "updateBatchById-2", 2, 1));
         userList.add(new User(13L, "updateBatchById-3", 3, 1));
@@ -245,7 +245,7 @@ public class UserMapperTest {
         print(user);
 
         System.err.println("\n------------------selectBatchIds----------------------");
-        List<Long> idList = new ArrayList<Long>();
+        List<Long> idList = new ArrayList<>();
         idList.add(11L);
         idList.add(12L);
         List<User> ul0 = userMapper.selectBatchIds(idList);
@@ -254,7 +254,7 @@ public class UserMapperTest {
         }
 
         System.err.println("\n------------------selectByMap-----满足 map 条件的数据----");
-        Map<String, Object> cm = new HashMap<String, Object>();
+        Map<String, Object> cm = new HashMap<>();
         cm.put("test_type", 1);
         List<User> ul1 = userMapper.selectByMap(cm);
         for (User anUl1 : ul1) {
@@ -266,7 +266,7 @@ public class UserMapperTest {
         print(userOne);
 
         System.err.println("\n------------------selectCount----------------------");
-        System.err.println("查询 type=1 总记录数：" + userMapper.selectCount(new EntityWrapper<User>(new User(1))));
+        System.err.println("查询 type=1 总记录数：" + userMapper.selectCount(new EntityWrapper<>(new User(1))));
         System.err.println("总记录数：" + userMapper.selectCount(null));
 
         System.err.println("\n------------------selectList-----所有数据----id--DESC--排序----");
@@ -276,8 +276,8 @@ public class UserMapperTest {
         }
 
         System.err.println("\n------------------list 分页查询 ----查询 testType = 1 的所有数据--id--DESC--排序--------");
-        Page<User> page = new Page<User>(1, 2);
-        EntityWrapper<User> ew = new EntityWrapper<User>(new User(1));
+        Page<User> page = new Page<>(1, 2);
+        EntityWrapper<User> ew = new EntityWrapper<>(new User(1));
 
 		/*
 		 * 查询字段

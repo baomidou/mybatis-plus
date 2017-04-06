@@ -47,7 +47,7 @@ public class TableInfo {
     private String controllerName;
 
     private List<TableField> fields;
-    private List<String> importPackages = new ArrayList<String>();
+    private List<String> importPackages = new ArrayList<>();
     private String fieldNames;
 
     public boolean isConvert() {
@@ -158,7 +158,7 @@ public class TableInfo {
         if (CollectionUtils.isNotEmpty(fields)) {
             this.fields = fields;
             // 收集导入包信息
-            Set<String> pkgSet = new HashSet<String>();
+            Set<String> pkgSet = new HashSet<>();
             for (TableField field : fields) {
                 if (null != field.getColumnType() && null != field.getColumnType().getPkg()) {
                     pkgSet.add(field.getColumnType().getPkg());
@@ -178,7 +178,7 @@ public class TableInfo {
                 }
             }
             if (!pkgSet.isEmpty()) {
-                this.importPackages = new ArrayList<String>(Arrays.asList(pkgSet.toArray(new String[]{})));
+                this.importPackages = new ArrayList<>(Arrays.asList(pkgSet.toArray(new String[]{})));
             }
         }
     }

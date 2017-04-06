@@ -61,7 +61,7 @@ public class PackageHelper {
 		 * 将首先通过ClassLoader.getResource("META-INF")加载非模式路径部分，然后进行遍历模式匹配，排除重复包路径
 		 */
         try {
-            Set<String> set = new HashSet<String>();
+            Set<String> set = new HashSet<>();
             Resource[] resources = resolver.getResources(pkg);
             if (resources != null && resources.length > 0) {
                 MetadataReader metadataReader;

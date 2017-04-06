@@ -211,7 +211,7 @@ public class ConfigBuilder {
      * @param config    PackageConfig
      */
     private void handlerPackage(TemplateConfig template, String outputDir, PackageConfig config) {
-        packageInfo = new HashMap<String, String>();
+        packageInfo = new HashMap<>();
         packageInfo.put(ConstVal.MODULENAME, config.getModuleName());
         packageInfo.put(ConstVal.ENTITY, joinPackage(config.getParent(), config.getEntity()));
         packageInfo.put(ConstVal.MAPPER, joinPackage(config.getParent(), config.getMapper()));
@@ -221,7 +221,7 @@ public class ConfigBuilder {
         packageInfo.put(ConstVal.CONTROLLER, joinPackage(config.getParent(), config.getController()));
 
         // 生成路径信息
-        pathInfo = new HashMap<String, String>();
+        pathInfo = new HashMap<>();
         if (StringUtils.isNotEmpty(template.getEntity())) {
             pathInfo.put(ConstVal.ENTITY_PATH, joinPath(outputDir, packageInfo.get(ConstVal.ENTITY)));
         }
@@ -338,8 +338,8 @@ public class ConfigBuilder {
         if (isInclude && isExclude) {
             throw new RuntimeException("<strategy> 标签中 <include> 与 <exclude> 只能配置一项！");
         }
-        List<TableInfo> tableList = new ArrayList<TableInfo>();
-        Set<String> notExistTables = new HashSet<String>();
+        List<TableInfo> tableList = new ArrayList<>();
+        Set<String> notExistTables = new HashSet<>();
         NamingStrategy strategy = config.getNaming();
         try (PreparedStatement prepareStatement = connection.prepareStatement(querySQL.getTableCommentsSql());ResultSet results = prepareStatement.executeQuery()){
             TableInfo tableInfo;
@@ -418,7 +418,7 @@ public class ConfigBuilder {
      */
     private List<TableField> getListFields(String tableName, NamingStrategy strategy){
         boolean haveId = false;
-        List<TableField> fieldList = new ArrayList<TableField>();
+        List<TableField> fieldList = new ArrayList<>();
         try (PreparedStatement pstate = connection.prepareStatement(String.format(querySQL.getTableFieldsSql(), tableName));
               ResultSet results = pstate.executeQuery()){
             while (results.next()) {

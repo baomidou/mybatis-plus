@@ -50,7 +50,7 @@ public class PaginationInterceptorTest {
 	@Test
 	public void pageSimpleTest() {
 		// 最基础分页
-		Page<PageUser> page1 = new Page<PageUser>(current, size);
+		Page<PageUser> page1 = new Page<>(current, size);
 		Page<PageUser> result1 = pageUserService.selectPage(page1);
 		Assert.assertTrue(!result1.getRecords().isEmpty());
 
@@ -59,16 +59,16 @@ public class PaginationInterceptorTest {
 	@Test
 	public void pageOrderByTest() {
 		// 带OrderBy
-		Page<PageUser> page2 = new Page<PageUser>(current, size, "name");
+		Page<PageUser> page2 = new Page<>(current, size, "name");
 		Page<PageUser> result2 = pageUserService.selectPage(page2);
 		Assert.assertTrue(!result2.getRecords().isEmpty());
 		// 没有orderby但是设置了倒叙
-		Page<PageUser> page3 = new Page<PageUser>(current, size);
+		Page<PageUser> page3 = new Page<>(current, size);
 		page3.setAsc(false);
 		Page<PageUser> result3 = pageUserService.selectPage(page3);
 		Assert.assertTrue(!result3.getRecords().isEmpty());
 		// 有orderby设置了倒叙
-		Page<PageUser> page4 = new Page<PageUser>(current, size, "name");
+		Page<PageUser> page4 = new Page<>(current, size, "name");
 		page3.setAsc(false);
 		Page<PageUser> result4 = pageUserService.selectPage(page4);
 		Assert.assertTrue(!result4.getRecords().isEmpty());
@@ -77,7 +77,7 @@ public class PaginationInterceptorTest {
 	@Test
 	public void pageCountTest() {
 		// 设置不count
-		Page<PageUser> page = new Page<PageUser>(current, size);
+		Page<PageUser> page = new Page<>(current, size);
 		page.setSearchCount(false);
 		Page<PageUser> result = pageUserService.selectPage(page);
 		Assert.assertTrue(result.getTotal() == 0);

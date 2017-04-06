@@ -67,12 +67,12 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 	/**
 	 * 根据对象类型缓存version基本信息
 	 */
-	private static final Map<Class<?>, CachePo> versionCache = new ConcurrentHashMap<Class<?>, CachePo>();
+	private static final Map<Class<?>, CachePo> versionCache = new ConcurrentHashMap<>();
 
 	/**
 	 * 根据version字段类型缓存的处理器
 	 */
-	private static final Map<Class<?>, VersionHandler<?>> typeHandlers = new HashMap<Class<?>, VersionHandler<?>>();
+	private static final Map<Class<?>, VersionHandler<?>> typeHandlers = new HashMap<>();
 	private static final Expression RIGHTEXPRESSION = new Column("?");
 
 	static {
@@ -186,7 +186,7 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 				equalsTo.setLeftExpression(new Column(versionColumn));
 				equalsTo.setRightExpression(RIGHTEXPRESSION);
 				jsqlSql.setWhere(new AndExpression(equalsTo, expression));
-				List<ParameterMapping> parameterMappings = new LinkedList<ParameterMapping>(boundSql.getParameterMappings());
+				List<ParameterMapping> parameterMappings = new LinkedList<>(boundSql.getParameterMappings());
 				parameterMappings.add(jsqlSql.getExpressions().size(), getVersionMappingInstance(configuration));
 				MetaObject boundSqlMeta = configuration.newMetaObject(boundSql);
 				boundSqlMeta.setValue("sql", jsqlSql.toString());

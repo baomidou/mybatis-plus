@@ -84,7 +84,7 @@ public class TestUserMapperTest {
         /**
          * 批量插入
          */
-        List<TestUser> ul = new ArrayList<TestUser>();
+        List<TestUser> ul = new ArrayList<>();
         ul.add(new TestUser("11", "1a", 11, 1));
         ul.add(new TestUser("12", "2a", 12, 2));
         ul.add(new TestUser("a", 1, 1));
@@ -99,7 +99,7 @@ public class TestUserMapperTest {
         /**
          * 批量更新
          */
-        List<TestUser> ul1 = new ArrayList<TestUser>();
+        List<TestUser> ul1 = new ArrayList<>();
         ul1.add(new TestUser("10", "update-0a", 11, 1));
         ul1.add(new TestUser("11", "update-1a", 11, 1));
         ul1.add(new TestUser("12", "update-2a", 12, 2));
@@ -110,8 +110,8 @@ public class TestUserMapperTest {
         sleep();
 
         System.err.println("\n------------------list 分页查询 ----查询 testType = 1 的所有数据--id--DESC--排序--------");
-        Page<TestUser> page = new Page<TestUser>(1, 2);
-        EntityWrapper<TestUser> ew = new EntityWrapper<TestUser>(new TestUser(1), "TEST_ID DESC");
+        Page<TestUser> page = new Page<>(1, 2);
+        EntityWrapper<TestUser> ew = new EntityWrapper<>(new TestUser(1), "TEST_ID DESC");
         List<TestUser> paginList = testUserMapper.selectPage(page, ew);
         page.setRecords(paginList);
         for (int i = 0; i < page.getRecords().size(); i++) {

@@ -92,13 +92,13 @@ public class JsqlParserUtils {
         }
         Function function = new Function();
         function.setName("COUNT");
-        List<Expression> expressions = new ArrayList<Expression>();
+        List<Expression> expressions = new ArrayList<>();
         LongValue longValue = new LongValue(1);
         ExpressionList expressionList = new ExpressionList();
         expressions.add(longValue);
         expressionList.setExpressions(expressions);
         function.setParameters(expressionList);
-        countSelectItem = new ArrayList<SelectItem>();
+        countSelectItem = new ArrayList<>();
         SelectExpressionItem selectExpressionItem = new SelectExpressionItem(function);
         countSelectItem.add(selectExpressionItem);
         return countSelectItem;

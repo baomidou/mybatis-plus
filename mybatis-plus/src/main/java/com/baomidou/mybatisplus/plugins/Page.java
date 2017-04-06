@@ -42,7 +42,7 @@ public class Page<T> extends Pagination {
     /**
      * 查询参数
      */
-    private Map<String, Object> condition = new ConcurrentHashMap<String, Object>();
+    private Map<String, Object> condition = new ConcurrentHashMap<>();
 
     public Page() {
         /* 注意，传入翻页参数 */

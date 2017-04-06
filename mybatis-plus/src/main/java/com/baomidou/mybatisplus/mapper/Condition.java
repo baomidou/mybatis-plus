@@ -53,6 +53,9 @@ public class Condition extends Wrapper {
      */
     @Override
     public String getSqlSegment() {
+        if (SqlHelper.isWrapperEmpty(this)) {
+            return null;
+        }
         /*
          * 无条件
 		 */
@@ -68,5 +71,4 @@ public class Condition extends Wrapper {
         }
         return sqlWhere;
     }
-
 }

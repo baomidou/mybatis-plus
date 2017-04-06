@@ -64,7 +64,7 @@ public class GlobalConfiguration implements Cloneable {
     /**
      * 缓存全局信息
      */
-    private static final Map<String, GlobalConfiguration> GLOBAL_CONFIG = new ConcurrentHashMap<String, GlobalConfiguration>();
+    private static final Map<String, GlobalConfiguration> GLOBAL_CONFIG = new ConcurrentHashMap<>();
     // 数据库类型（默认 MySql）
     private DBType dbType = DBType.MYSQL;
     // 主键类型（默认 ID_WORKER）
@@ -88,7 +88,7 @@ public class GlobalConfiguration implements Cloneable {
     // 缓存当前Configuration的SqlSessionFactory
     private SqlSessionFactory sqlSessionFactory;
     // 缓存已注入CRUD的Mapper信息
-    private Set<String> mapperRegistryCache = new ConcurrentSkipListSet<String>();
+    private Set<String> mapperRegistryCache = new ConcurrentSkipListSet<>();
     // 单例重用SqlSession
     private SqlSession sqlSession;
 

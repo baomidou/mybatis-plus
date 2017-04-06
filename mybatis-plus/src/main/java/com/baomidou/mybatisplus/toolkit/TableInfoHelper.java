@@ -53,7 +53,7 @@ public class TableInfoHelper {
     /**
      * 缓存反射类表信息
      */
-    private static final Map<String, TableInfo> tableInfoCache = new ConcurrentHashMap<String, TableInfo>();
+    private static final Map<String, TableInfo> tableInfoCache = new ConcurrentHashMap<>();
     /**
      * 默认表主键
      */
@@ -117,7 +117,7 @@ public class TableInfoHelper {
         if (table != null && StringUtils.isNotEmpty(table.resultMap())) {
             tableInfo.setResultMap(table.resultMap());
         }
-        List<TableFieldInfo> fieldList = new ArrayList<TableFieldInfo>();
+        List<TableFieldInfo> fieldList = new ArrayList<>();
         List<Field> list = getAllFields(clazz);
         boolean existTableId = existTableId(list);
         for (Field field : list) {

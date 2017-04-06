@@ -50,7 +50,7 @@ public class EntityWrapperTest {
     /*
      * User 查询包装器
      */
-    private EntityWrapper<User> ew = new EntityWrapper<User>();
+    private EntityWrapper<User> ew = new EntityWrapper<>();
 
     @Test
     public void test() {
@@ -216,7 +216,7 @@ public class EntityWrapperTest {
      */
     @Test
     public void test17() {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("'1'");
         list.add("'2'");
         list.add("'3'");
@@ -231,7 +231,7 @@ public class EntityWrapperTest {
      */
     @Test
     public void testNul18() {
-        List<Long> list = new ArrayList<Long>();
+        List<Long> list = new ArrayList<>();
         list.add(111111111L);
         list.add(222222222L);
         list.add(333333333L);
@@ -246,7 +246,7 @@ public class EntityWrapperTest {
      */
     @Test
     public void test18() {
-        Set<Long> list = new TreeSet<Long>();
+        Set<Long> list = new TreeSet<>();
         list.add(111111111L);
         list.add(222222222L);
         list.add(333333333L);
@@ -300,7 +300,7 @@ public class EntityWrapperTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testQbc() {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<>();
         map.put("allEq1", "22");
         map.put("allEq2", 3333);
         map.put("allEq3", 66.99);
