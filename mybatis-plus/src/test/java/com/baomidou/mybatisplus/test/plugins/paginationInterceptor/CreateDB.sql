@@ -1,0 +1,9 @@
+DROP TABLE
+IF EXISTS page_user;
+
+CREATE TABLE page_user (
+	id bigint (11) NOT NULL ,
+	NAME VARCHAR (20),
+	age INT (11),
+	PRIMARY KEY (`id`)
+) ENGINE = INNODB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;
