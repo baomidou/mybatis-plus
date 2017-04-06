@@ -60,8 +60,7 @@ public class SqlHelper {
      * 批量操作 SqlSession
      * </p>
      *
-     * @param clazz
-     *            实体类
+     * @param clazz 实体类
      * @return SqlSession
      */
     public static SqlSession sqlSessionBatch(Class<?> clazz) {
@@ -91,10 +90,8 @@ public class SqlHelper {
      * 获取Session
      * </p>
      *
-     * @param clazz
-     *            实体类
-     * @param autoCommit
-     *            true自动提交false则相反
+     * @param clazz      实体类
+     * @param autoCommit true自动提交false则相反
      * @return SqlSession
      */
     public static SqlSession sqlSession(Class<?> clazz, boolean autoCommit) {
@@ -120,8 +117,7 @@ public class SqlHelper {
      * 判断数据库操作是否成功
      * </p>
      *
-     * @param result
-     *            数据库操作返回影响条数
+     * @param result 数据库操作返回影响条数
      * @return boolean
      */
     public static boolean retBool(Integer result) {
@@ -170,7 +166,7 @@ public class SqlHelper {
         if (null == page) {
             return;
         }
-        if (null != wrapper) {
+        if (null != wrapper && !wrapper.equals(Condition.EMPTY)) {
             if (page.isOpenSort()) {
                 wrapper.orderBy(page.getOrderByField(), page.isAsc());
             }
