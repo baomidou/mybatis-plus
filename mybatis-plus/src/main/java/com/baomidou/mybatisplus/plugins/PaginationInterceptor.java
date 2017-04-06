@@ -148,7 +148,8 @@ public class PaginationInterceptor implements Interceptor {
             /*
              * 溢出总页数，设置第一页
 			 */
-            if (overflowCurrent && (page.getCurrent() > page.getPages())) {
+            int pages = page.getPages();
+			if (overflowCurrent && (page.getCurrent() > pages)) {
                 page = new Pagination(1, page.getSize());
                 page.setTotal(total);
             }
