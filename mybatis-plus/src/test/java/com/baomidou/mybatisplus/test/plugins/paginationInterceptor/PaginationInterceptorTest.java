@@ -28,6 +28,9 @@ public class PaginationInterceptorTest {
 	@Autowired
 	private PageUserService pageUserService;
 
+	private int current;
+	private int size;
+
 	@Before
 	public void setUp() throws Exception {
 		SqlSession session = sqlSessionTemplate.getSqlSessionFactory().openSession();
@@ -38,28 +41,45 @@ public class PaginationInterceptorTest {
 		runner.runScript(reader);
 		reader.close();
 		session.close();
+		// 随机当前页和分页大小
+		size = RandomUtils.nextInt(1, 50);
+		current = RandomUtils.nextInt(1, 200 / size);
+		System.err.println("当前页为:" + current + " 分页大小为" + size);
 	}
 
 	@Test
-	public void pageTest() {
-		// 随机当前页和分页大小
-		int size = RandomUtils.nextInt(1, 50);
-		int current = RandomUtils.nextInt(1, 200 / size);
-		System.err.println("当前页为:" + current + " 分页大小为" + size);
-		//最基础分页
-		
+	public void pageSimpleTest() {
+		// 最基础分页
 		Page<PageUser> page1 = new Page<PageUser>(current, size);
 		Page<PageUser> result1 = pageUserService.selectPage(page1);
 		Assert.assertTrue(!result1.getRecords().isEmpty());
-		//带OrderBy
-		
-		Page<PageUser> page2 = new Page<PageUser>(current, size,"name");
+
+	}
+
+	@Test
+	public void pageOrderByTest() {
+		// 带OrderBy
+		Page<PageUser> page2 = new Page<PageUser>(current, size, "name");
 		Page<PageUser> result2 = pageUserService.selectPage(page2);
 		Assert.assertTrue(!result2.getRecords().isEmpty());
-		//倒叙
+		// 没有orderby但是设置了倒叙
 		Page<PageUser> page3 = new Page<PageUser>(current, size);
 		page3.setAsc(false);
 		Page<PageUser> result3 = pageUserService.selectPage(page3);
 		Assert.assertTrue(!result3.getRecords().isEmpty());
+		// 有orderby设置了倒叙
+		Page<PageUser> page4 = new Page<PageUser>(current, size, "name");
+		page3.setAsc(false);
+		Page<PageUser> result4 = pageUserService.selectPage(page4);
+		Assert.assertTrue(!result4.getRecords().isEmpty());
+	}
+
+	@Test
+	public void pageCountTest() {
+		// 设置不count
+		Page<PageUser> page = new Page<PageUser>(current, size);
+		page.setSearchCount(false);
+		Page<PageUser> result = pageUserService.selectPage(page);
+		Assert.assertTrue(result.getTotal() == 0);
 	}
 }
