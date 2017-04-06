@@ -25,6 +25,7 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
@@ -53,155 +54,148 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  * @author hubin
  * @Date 2016-01-23
  */
-@Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
+@Intercepts({ @Signature(type = StatementHandler.class, method = "prepare", args = { Connection.class, Integer.class }) })
 public class PaginationInterceptor implements Interceptor {
 
-    private static final Log logger = LogFactory.getLog(PaginationInterceptor.class);
+	private static final Log logger = LogFactory.getLog(PaginationInterceptor.class);
 
-    /* 溢出总页数，设置第一页 */
-    private boolean overflowCurrent = false;
-    /* 是否设置动态数据源 设置之后动态获取当前数据源 */
-    private boolean dynamicDataSource = false;
-    /* Count优化方式 */
-    private String optimizeType = "default";
-    /* 方言类型 */
-    private String dialectType;
-    /* 方言实现类 */
-    private String dialectClazz;
+	/* 溢出总页数，设置第一页 */
+	private boolean overflowCurrent = false;
+	/* 是否设置动态数据源 设置之后动态获取当前数据源 */
+	private boolean dynamicDataSource = false;
+	/* Count优化方式 */
+	private String optimizeType = "default";
+	/* 方言类型 */
+	private String dialectType;
+	/* 方言实现类 */
+	private String dialectClazz;
 
-    /**
-     * Physical Pagination Interceptor for all the queries with parameter
-     * {@link org.apache.ibatis.session.RowBounds}
-     */
-    public Object intercept(Invocation invocation) throws Throwable {
-        Object target = invocation.getTarget();
-        if (target instanceof StatementHandler) {
-            StatementHandler statementHandler = (StatementHandler) PluginUtils.realTarget(invocation.getTarget());
-            MetaObject metaStatementHandler = SystemMetaObject.forObject(statementHandler);
-            RowBounds rowBounds = (RowBounds) metaStatementHandler.getValue("delegate.rowBounds");
+	/**
+	 * Physical Pagination Interceptor for all the queries with parameter {@link org.apache.ibatis.session.RowBounds}
+	 */
+	public Object intercept(Invocation invocation) throws Throwable {
+		StatementHandler statementHandler = (StatementHandler) PluginUtils.realTarget(invocation.getTarget());
+		MetaObject metaStatementHandler = SystemMetaObject.forObject(statementHandler);
+		// 先判断是不是SELECT操作
+		MappedStatement mappedStatement = (MappedStatement) metaStatementHandler.getValue("delegate.mappedStatement");
+		if (!mappedStatement.getSqlCommandType().equals(SqlCommandType.SELECT)) {
+			return invocation.proceed();
+		}
+		RowBounds rowBounds = (RowBounds) metaStatementHandler.getValue("delegate.rowBounds");
+		/* 不需要分页的场合 */
+		if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
+			return invocation.proceed();
+		}
+		BoundSql boundSql = (BoundSql) metaStatementHandler.getValue("delegate.boundSql");
+		String originalSql = boundSql.getSql();
+		Connection connection = (Connection) invocation.getArgs()[0];
+		if (isDynamicDataSource()) {
+			dialectType = JdbcUtils.getDbType(connection.getMetaData().getURL()).getDb();
+		}
+		if (rowBounds instanceof Pagination) {
+			Pagination page = (Pagination) rowBounds;
+			boolean orderBy = true;
+			if (page.isSearchCount()) {
+				CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType, page.isOptimizeCount());
+				orderBy = countOptimize.isOrderBy();
+				this.count(countOptimize.getCountSQL(), mappedStatement, boundSql, page, connection);
+				if (page.getTotal() <= 0) {
+					return invocation.proceed();
+				}
+			}
+			String buildSql = SqlUtils.concatOrderBy(originalSql, page, orderBy);
+			originalSql = DialectFactory.buildPaginationSql(page, buildSql, dialectType, dialectClazz);
+		} else {
+			// support physical Pagination for RowBounds
+			originalSql = DialectFactory.buildPaginationSql(rowBounds, originalSql, dialectType, dialectClazz);
+		}
 
-			/* 不需要分页的场合 */
-            if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
-                return invocation.proceed();
-            }
-            BoundSql boundSql = (BoundSql) metaStatementHandler.getValue("delegate.boundSql");
-            String originalSql = boundSql.getSql();
-            MappedStatement mappedStatement = (MappedStatement) metaStatementHandler.getValue("delegate.mappedStatement");
-            if (isDynamicDataSource()) {
-                try (Connection connection = mappedStatement.getConfiguration().getEnvironment().getDataSource().getConnection()) {
-                    dialectType = JdbcUtils.getDbType(connection.getMetaData().getURL()).getDb();
-                }
-            }
-            if (rowBounds instanceof Pagination) {
-                Pagination page = (Pagination) rowBounds;
-                boolean orderBy = true;
-                if (page.isSearchCount()) {
-                    CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType,
-                            page.isOptimizeCount());
-                    orderBy = countOptimize.isOrderBy();
-                    this.count(countOptimize.getCountSQL(), mappedStatement, boundSql, page);
-                    if (page.getTotal() <= 0) {
-                        return invocation.proceed();
-                    }
-                }
-                String buildSql = SqlUtils.concatOrderBy(originalSql, page, orderBy);
-                originalSql = DialectFactory.buildPaginationSql(page, buildSql, dialectType, dialectClazz);
-            } else {
-                // support physical Pagination for RowBounds
-                originalSql = DialectFactory.buildPaginationSql(rowBounds, originalSql, dialectType, dialectClazz);
-            }
+		/*
+		 * <p> 禁用内存分页 </p> <p> 内存分页会查询所有结果出来处理（这个很吓人的），如果结果变化频繁这个数据还会不准。</p>
+		 */
+		metaStatementHandler.setValue("delegate.boundSql.sql", originalSql);
+		metaStatementHandler.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
+		metaStatementHandler.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
+		return invocation.proceed();
+	}
 
+	/**
+	 * 查询总记录条数
+	 *
+	 * @param sql
+	 * @param mappedStatement
+	 * @param boundSql
+	 * @param page
+	 */
+	protected void count(String sql, MappedStatement mappedStatement, BoundSql boundSql, Pagination page, Connection connection) {
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
+		try {
+			statement = connection.prepareStatement(sql);
+			DefaultParameterHandler parameterHandler = new MybatisDefaultParameterHandler(mappedStatement, boundSql.getParameterObject(), boundSql);
+			parameterHandler.setParameters(statement);
+			resultSet = statement.executeQuery();
+			int total = 0;
+			if (resultSet.next()) {
+				total = resultSet.getInt(1);
+			}
+			page.setTotal(total);
 			/*
-             * <p> 禁用内存分页 </p> <p> 内存分页会查询所有结果出来处理（这个很吓人的），如果结果变化频繁这个数据还会不准。</p>
+			 * 溢出总页数，设置第一页
 			 */
-            metaStatementHandler.setValue("delegate.boundSql.sql", originalSql);
-            metaStatementHandler.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
-            metaStatementHandler.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
-        }
-        return invocation.proceed();
-    }
-
-    /**
-     * 查询总记录条数
-     *
-     * @param sql
-     * @param mappedStatement
-     * @param boundSql
-     * @param page
-     */
-    protected void count(String sql, MappedStatement mappedStatement, BoundSql boundSql, Pagination page) {
-        PreparedStatement statement = null;
-        ResultSet resultSet = null;
-        Connection connection = null;
-        try {
-            connection = mappedStatement.getConfiguration().getEnvironment().getDataSource().getConnection();
-            statement = connection.prepareStatement(sql);
-            DefaultParameterHandler parameterHandler = new MybatisDefaultParameterHandler(mappedStatement,
-                    boundSql.getParameterObject(), boundSql);
-            parameterHandler.setParameters(statement);
-            resultSet = statement.executeQuery();
-            int total = 0;
-            if (resultSet.next()) {
-                total = resultSet.getInt(1);
-            }
-            page.setTotal(total);
-            /*
-             * 溢出总页数，设置第一页
-			 */
-            int pages = page.getPages();
+			int pages = page.getPages();
 			if (overflowCurrent && (page.getCurrent() > pages)) {
-                page = new Pagination(1, page.getSize());
-                page.setTotal(total);
-            }
-        } catch (Exception e) {
-            logger.error("Error: query page count total fail!", e);
-        } finally {
-            IOUtils.closeQuietly(statement);
-            IOUtils.closeQuietly(resultSet);
-            IOUtils.closeQuietly(connection);
-        }
-    }
+				page = new Pagination(1, page.getSize());
+				page.setTotal(total);
+			}
+		} catch (Exception e) {
+			logger.error("Error: query page count total fail!", e);
+		} finally {
+			IOUtils.closeQuietly(resultSet);
+			IOUtils.closeQuietly(statement);
+		}
+	}
 
-    public Object plugin(Object target) {
-        if (target instanceof StatementHandler) {
-            return Plugin.wrap(target, this);
-        }
-        return target;
-    }
+	public Object plugin(Object target) {
+		if (target instanceof StatementHandler) {
+			return Plugin.wrap(target, this);
+		}
+		return target;
+	}
 
-    public void setProperties(Properties prop) {
-        String dialectType = prop.getProperty("dialectType");
-        String dialectClazz = prop.getProperty("dialectClazz");
+	public void setProperties(Properties prop) {
+		String dialectType = prop.getProperty("dialectType");
+		String dialectClazz = prop.getProperty("dialectClazz");
 
-        if (StringUtils.isNotEmpty(dialectType)) {
-            this.dialectType = dialectType;
-        }
-        if (StringUtils.isNotEmpty(dialectClazz)) {
-            this.dialectClazz = dialectClazz;
-        }
-    }
+		if (StringUtils.isNotEmpty(dialectType)) {
+			this.dialectType = dialectType;
+		}
+		if (StringUtils.isNotEmpty(dialectClazz)) {
+			this.dialectClazz = dialectClazz;
+		}
+	}
 
-    public void setDialectType(String dialectType) {
-        this.dialectType = dialectType;
-    }
+	public void setDialectType(String dialectType) {
+		this.dialectType = dialectType;
+	}
 
-    public void setDialectClazz(String dialectClazz) {
-        this.dialectClazz = dialectClazz;
-    }
+	public void setDialectClazz(String dialectClazz) {
+		this.dialectClazz = dialectClazz;
+	}
 
-    public void setOverflowCurrent(boolean overflowCurrent) {
-        this.overflowCurrent = overflowCurrent;
-    }
+	public void setOverflowCurrent(boolean overflowCurrent) {
+		this.overflowCurrent = overflowCurrent;
+	}
 
-    public void setOptimizeType(String optimizeType) {
-        this.optimizeType = optimizeType;
-    }
+	public void setOptimizeType(String optimizeType) {
+		this.optimizeType = optimizeType;
+	}
 
-    public boolean isDynamicDataSource() {
-        return dynamicDataSource;
-    }
+	public boolean isDynamicDataSource() {
+		return dynamicDataSource;
+	}
 
-    public void setDynamicDataSource(boolean dynamicDataSource) {
-        this.dynamicDataSource = dynamicDataSource;
-    }
+	public void setDynamicDataSource(boolean dynamicDataSource) {
+		this.dynamicDataSource = dynamicDataSource;
+	}
 }

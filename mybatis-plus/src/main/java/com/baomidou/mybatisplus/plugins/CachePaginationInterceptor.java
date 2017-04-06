@@ -111,7 +111,7 @@ public class CachePaginationInterceptor extends PaginationInterceptor implements
                 if (page.isSearchCount()) {
                     CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType,
                             page.isOptimizeCount());
-                    super.count(countOptimize.getCountSQL(), mappedStatement, boundSql, page);
+//                    super.count(countOptimize.getCountSQL(), mappedStatement, boundSql, page);
                     if (page.getTotal() <= 0) {
                         return invocation.proceed();
                     }
