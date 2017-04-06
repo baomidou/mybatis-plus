@@ -96,19 +96,8 @@ public class AutoSqlInjector implements ISqlInjector {
         }
         Class<?> modelClass = extractModelClass(mapperClass);
         if (modelClass != null) {
-            /**
-             * 表信息不为空的情况
-             */
             TableInfo table = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
-            if (null != table) {
-                injectSql(builderAssistant, mapperClass, modelClass, table);
-            } else {
-                /**
-                 * 警告 Mybatis-Plus 默认方法不能使用
-                 */
-                logger.warn(String.format("%s ,Not found Table Detail, Cannot use Mybatis-Plus CRUD Method.",
-                        modelClass.toString()));
-            }
+            injectSql(builderAssistant, mapperClass, modelClass, table);
         }
     }
 
@@ -792,16 +781,16 @@ public class AutoSqlInjector implements ISqlInjector {
         }
     }
 
-    protected String convertIfTagIgnored(TableFieldInfo fieldInfo, boolean colse) {
-        return convertIfTag(true, fieldInfo, null, colse);
+    protected String convertIfTagIgnored(TableFieldInfo fieldInfo, boolean close) {
+        return convertIfTag(true, fieldInfo, null, close);
     }
 
-    protected String convertIfTag(TableFieldInfo fieldInfo, String prefix, boolean colse) {
-        return convertIfTag(false, fieldInfo, prefix, colse);
+    protected String convertIfTag(TableFieldInfo fieldInfo, String prefix, boolean close) {
+        return convertIfTag(false, fieldInfo, prefix, close);
     }
 
-    protected String convertIfTag(TableFieldInfo fieldInfo, boolean colse) {
-        return convertIfTag(fieldInfo, null, colse);
+    protected String convertIfTag(TableFieldInfo fieldInfo, boolean close) {
+        return convertIfTag(fieldInfo, null, close);
     }
 
     /*
