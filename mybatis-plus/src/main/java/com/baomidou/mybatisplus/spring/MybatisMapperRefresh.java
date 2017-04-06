@@ -37,7 +37,6 @@ import org.apache.ibatis.parsing.XNode;
 import org.apache.ibatis.parsing.XPathParser;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.springframework.core.NestedIOException;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -86,7 +85,7 @@ public class MybatisMapperRefresh implements Runnable {
 
     public MybatisMapperRefresh(Resource[] mapperLocations, SqlSessionFactory sqlSessionFactory, int delaySeconds,
                                 int sleepSeconds, boolean enabled) {
-        this.mapperLocations = mapperLocations;
+        this.mapperLocations = mapperLocations.clone();
         this.sqlSessionFactory = sqlSessionFactory;
         this.delaySeconds = delaySeconds;
         this.enabled = enabled;
@@ -96,7 +95,7 @@ public class MybatisMapperRefresh implements Runnable {
     }
 
     public MybatisMapperRefresh(Resource[] mapperLocations, SqlSessionFactory sqlSessionFactory, boolean enabled) {
-        this.mapperLocations = mapperLocations;
+        this.mapperLocations = mapperLocations.clone();
         this.sqlSessionFactory = sqlSessionFactory;
         this.enabled = enabled;
         this.configuration = sqlSessionFactory.getConfiguration();
@@ -183,7 +182,7 @@ public class MybatisMapperRefresh implements Runnable {
      * @throws Exception
      */
     @SuppressWarnings("rawtypes")
-    private void refresh(Resource resource) throws Exception {
+    private void refresh(Resource resource) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
         this.configuration = sqlSessionFactory.getConfiguration();
         boolean isSupper = configuration.getClass().getSuperclass() == Configuration.class;
         try {
@@ -210,9 +209,9 @@ public class MybatisMapperRefresh implements Runnable {
                     resource.toString(), sqlSessionFactory.getConfiguration().getSqlFragments());
             xmlMapperBuilder.parse();
             logger.debug("refresh: '" + resource + "', success!");
-        } catch (Exception e) {
-            throw new NestedIOException("Failed to parse mapping resource: '" + resource + "'", e);
-        } finally {
+        } catch (IOException e) {
+            logger.error("Refresh IOException :"+e.getMessage());
+        }finally {
             ErrorContext.instance().reset();
         }
     }
