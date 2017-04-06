@@ -203,7 +203,7 @@ public class UserMapperTest {
 
 		/*
 		 * <p> 修改 </p>
-		 * 
+		 *
 		 * updateById 是从 BaseMapper 中继承而来的，UserMapper.xml中并没有申明改sql
 		 */
         rlt = userMapper.updateById(new User(12L, "MybatisPlus"));
@@ -270,7 +270,7 @@ public class UserMapperTest {
         System.err.println("总记录数：" + userMapper.selectCount(null));
 
         System.err.println("\n------------------selectList-----所有数据----id--DESC--排序----");
-        List<User> ul2 = userMapper.selectList(new EntityWrapper<>(null, "age,name"));
+        List<User> ul2 = userMapper.selectList(new EntityWrapper<User>(null, "age,name"));
         for (User anUl2 : ul2) {
             print(anUl2);
         }
