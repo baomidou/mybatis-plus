@@ -122,24 +122,17 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 			}
 		} else {
 			String versionColumn = null;
-			Field versionField = null;
-			for (final Field field : parameterClass.getDeclaredFields()) {
-				if (field.isAnnotationPresent(Version.class)) {
-					if (!typeHandlers.containsKey(field.getType())) {
-						throw new TypeException("乐观锁不支持" + field.getType().getName() + "类型,请自定义实现");
-					}
-					versionField = field;
-					final TableField tableField = field.getAnnotation(TableField.class);
-					if (tableField != null) {
-						versionColumn = tableField.value();
-					} else {
-						versionColumn = field.getName();
-					}
-					break;
-				}
-			}
+			Field versionField = getVersionField(parameterClass);
 			if (versionField != null) {
-				versionField.setAccessible(true);
+				if (!typeHandlers.containsKey(versionField.getType())) {
+					throw new TypeException("乐观锁不支持" + versionField.getType().getName() + "类型,请自定义实现");
+				}
+				final TableField tableField = versionField.getAnnotation(TableField.class);
+				if (tableField != null) {
+					versionColumn = tableField.value();
+				} else {
+					versionColumn = versionField.getName();
+				}
 				CachePo cachePo = new CachePo(true, versionColumn, versionField);
 				versionCache.put(parameterClass, cachePo);
 				processChangeSql(ms, boundSql, cachePo);
@@ -148,6 +141,20 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 			}
 		}
 		return invocation.proceed();
+
+	}
+
+	private Field getVersionField(Class<?> parameterClass) {
+		if (parameterClass != Object.class) {
+			for (Field field : parameterClass.getDeclaredFields()) {
+				if (field.isAnnotationPresent(Version.class)) {
+					field.setAccessible(true);
+					return field;
+				}
+			}
+			return getVersionField(parameterClass.getSuperclass());
+		}
+		return null;
 
 	}
 

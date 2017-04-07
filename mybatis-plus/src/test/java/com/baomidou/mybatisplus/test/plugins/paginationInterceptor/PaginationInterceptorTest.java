@@ -2,9 +2,11 @@ package com.baomidou.mybatisplus.test.plugins.paginationInterceptor;
 
 import java.io.Reader;
 import java.sql.Connection;
+import java.util.List;
 
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.jdbc.ScriptRunner;
+import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,6 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.test.plugins.RandomUtils;
 import com.baomidou.mybatisplus.test.plugins.paginationInterceptor.entity.PageUser;
+import com.baomidou.mybatisplus.test.plugins.paginationInterceptor.mapper.PageUserMapper;
 import com.baomidou.mybatisplus.test.plugins.paginationInterceptor.service.PageUserService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -27,6 +30,8 @@ public class PaginationInterceptorTest {
 	private SqlSessionTemplate sqlSessionTemplate;
 	@Autowired
 	private PageUserService pageUserService;
+	@Autowired
+	private PageUserMapper pageUserMapper;
 
 	private int current;
 	private int size;
@@ -81,5 +86,15 @@ public class PaginationInterceptorTest {
 		page.setSearchCount(false);
 		Page<PageUser> result = pageUserService.selectPage(page);
 		Assert.assertTrue(result.getTotal() == 0);
+	}
+
+	@Test
+	public void rowBoundTest() {
+		System.err.println("测试原生RowBounds分页");
+		int offset = RandomUtils.nextInt(1, 190);
+		int limit = RandomUtils.nextInt(1,20);
+		RowBounds rowBounds = new RowBounds(offset, limit);
+		List<PageUser> result = pageUserMapper.selectPage(rowBounds, null);
+		Assert.assertTrue(!result.isEmpty());
 	}
 }

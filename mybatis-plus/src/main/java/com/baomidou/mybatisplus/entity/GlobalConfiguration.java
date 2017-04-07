@@ -52,7 +52,6 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
  * @author Caratacus
  * @Date 2016-12-06
  */
-@SuppressWarnings("serial")
 public class GlobalConfiguration implements Cloneable {
 
     /**
