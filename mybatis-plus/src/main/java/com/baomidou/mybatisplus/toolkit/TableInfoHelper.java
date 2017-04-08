@@ -122,7 +122,7 @@ public class TableInfoHelper {
         boolean existTableId = existTableId(list);
         for (Field field : list) {
 
-            /**
+            /*
              * 主键ID 初始化
              */
             if (existTableId) {
@@ -133,14 +133,14 @@ public class TableInfoHelper {
                 continue;
             }
 
-            /**
+            /*
              * 字段初始化
              */
             if (initTableField(globalCache, fieldList, field, clazz)) {
                 continue;
             }
 
-            /**
+            /*
              * 字段, 使用 camelToUnderline 转换驼峰写法为下划线分割法, 如果已指定 TableField , 便不会执行这里
              */
             fieldList.add(new TableFieldInfo(globalCache, field.getName(), field.getType().getName()));
@@ -203,7 +203,7 @@ public class TableInfoHelper {
                 } else {
                     tableInfo.setIdType(globalConfig.getIdType());
                 }
-				/* 字段 */
+                /* 字段 */
                 String column = field.getName();
                 if (StringUtils.isNotEmpty(tableId.value())) {
                     column = tableId.value();
@@ -277,25 +277,22 @@ public class TableInfoHelper {
      * @param clazz
      * @return true 继续下一个属性判断，返回 continue;
      */
-    private static boolean initTableField(GlobalConfiguration globalCache, List<TableFieldInfo> fieldList, Field field,
-                                          Class<?> clazz) {
-		/* 获取注解属性，自定义字段 */
+    private static boolean initTableField(GlobalConfiguration globalCache, List<TableFieldInfo> fieldList,
+                                          Field field, Class<?> clazz) {
+        /* 获取注解属性，自定义字段 */
         TableField tableField = field.getAnnotation(TableField.class);
         if (tableField != null) {
             String columnName = field.getName();
             if (StringUtils.isNotEmpty(tableField.value())) {
                 columnName = tableField.value();
             }
-
-            Class<?> fieldType = field.getType();
-            FieldStrategy validate = tableField.validate();
-			/* 字符串类型默认 FieldStrategy.NOT_EMPTY */
-            if (String.class.isAssignableFrom(fieldType) && FieldStrategy.NOT_NULL.equals(validate)) {
-                validate = FieldStrategy.NOT_EMPTY;
+            // 自定义字段验证策略 fixed-239
+            FieldStrategy validate = globalCache.getFieldStrategy();
+            if (FieldStrategy.NOT_NULL != tableField.validate()) {
+                validate = tableField.validate();
             }
-
-			/*
-			 * el 语法支持，可以传入多个参数以逗号分开
+            /*
+             * el 语法支持，可以传入多个参数以逗号分开
 			 */
             String el = field.getName();
             if (StringUtils.isNotEmpty(tableField.el())) {
@@ -305,17 +302,15 @@ public class TableInfoHelper {
             String[] els = el.split(";");
             if (columns.length == els.length) {
                 for (int i = 0; i < columns.length; i++) {
-                    fieldList.add(new TableFieldInfo(globalCache, columns[i], field.getName(), els[i], validate, field.getType()
-                            .getName()));
+                    fieldList.add(new TableFieldInfo(globalCache, columns[i], field.getName(), els[i], validate,
+                            field.getType().getName()));
                 }
             } else {
                 String errorMsg = "Class: %s, Field: %s, 'value' 'el' Length must be consistent.";
                 throw new MybatisPlusException(String.format(errorMsg, clazz.getName(), field.getName()));
             }
-
             return true;
         }
-
         return false;
     }
 
@@ -331,7 +326,7 @@ public class TableInfoHelper {
             Iterator<Field> iterator = fieldList.iterator();
             while (iterator.hasNext()) {
                 Field field = iterator.next();
-				/* 过滤注解非表字段属性 */
+                /* 过滤注解非表字段属性 */
                 TableField tableField = field.getAnnotation(TableField.class);
                 if (tableField != null && !tableField.exist()) {
                     iterator.remove();
