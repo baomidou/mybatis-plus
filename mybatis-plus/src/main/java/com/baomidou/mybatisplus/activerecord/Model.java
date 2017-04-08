@@ -48,12 +48,22 @@ public abstract class Model<T extends Model> implements Serializable {
 
     /**
      * <p>
-     * 插入
+     * 插入（字段选择插入）
      * </p>
      */
     @Transactional
     public boolean insert() {
         return SqlHelper.retBool(sqlSession().insert(sqlStatement(SqlMethod.INSERT_ONE), this));
+    }
+
+    /**
+     * <p>
+     * 插入（所有字段插入）
+     * </p>
+     */
+    @Transactional
+    public boolean insertAllColumn() {
+        return SqlHelper.retBool(sqlSession().insert(sqlStatement(SqlMethod.INSERT_ONE_ALL_COLUMN), this));
     }
 
     /**
@@ -137,10 +147,8 @@ public abstract class Model<T extends Model> implements Serializable {
 
     /**
      * <p>
-     * 更新
+     * 更新（字段选择更新）
      * </p>
-     *
-     * @return
      */
     @Transactional
     public boolean updateById() {
@@ -149,6 +157,20 @@ public abstract class Model<T extends Model> implements Serializable {
         }
         // updateById
         return SqlHelper.retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE_BY_ID), this));
+    }
+
+    /**
+     * <p>
+     * 更新（所有字段更新）
+     * </p>
+     */
+    @Transactional
+    public boolean updateAllColumnById() {
+        if (StringUtils.checkValNull(pkVal())) {
+            throw new MybatisPlusException("updateAllColumnById primaryKey is null.");
+        }
+        // updateById
+        return SqlHelper.retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE_ALL_COLUMN_BY_ID), this));
     }
 
     /**
