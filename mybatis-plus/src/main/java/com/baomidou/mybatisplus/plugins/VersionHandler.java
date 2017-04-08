@@ -18,9 +18,12 @@ package com.baomidou.mybatisplus.plugins;
 import java.lang.reflect.Field;
 
 /**
+ * <p>
  * 乐观锁处理器,底层接口
+ * </p>
  *
- * @author TaoYu
+ * @author TaoYu 小锅盖
+ * @since 2017-04-08
  */
 public interface VersionHandler<T> {
 
