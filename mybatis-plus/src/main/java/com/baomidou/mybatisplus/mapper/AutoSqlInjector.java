@@ -89,7 +89,7 @@ public class AutoSqlInjector implements ISqlInjector {
         this.languageDriver = configuration.getDefaultScriptingLanguageInstance();
         GlobalConfiguration globalCache = GlobalConfiguration.getGlobalConfig(configuration);
         /*
-		 * 驼峰设置 PLUS 配置 > 原始配置
+         * 驼峰设置 PLUS 配置 > 原始配置
 		 */
         if (!globalCache.isDbColumnUnderline()) {
             globalCache.setDbColumnUnderline(configuration.isMapUnderscoreToCamelCase());
@@ -116,13 +116,13 @@ public class AutoSqlInjector implements ISqlInjector {
          * #148 表信息包含主键，注入主键相关方法
          */
         if (StringUtils.isNotEmpty(table.getKeyProperty())) {
-			/* 删除 */
+            /* 删除 */
             this.injectDeleteByIdSql(false, mapperClass, modelClass, table);
             this.injectDeleteByIdSql(true, mapperClass, modelClass, table);
-			/* 修改 */
+            /* 修改 */
             this.injectUpdateByIdSql(true, mapperClass, modelClass, table);
             this.injectUpdateByIdSql(false, mapperClass, modelClass, table);
-			/* 查询 */
+            /* 查询 */
             this.injectSelectByIdSql(false, mapperClass, modelClass, table);
             this.injectSelectByIdSql(true, mapperClass, modelClass, table);
         } else {
@@ -181,7 +181,7 @@ public class AutoSqlInjector implements ISqlInjector {
                     break;
                 }
             }
-            return target==null? null:(Class<?>) target.getActualTypeArguments()[0];
+            return target == null ? null : (Class<?>) target.getActualTypeArguments()[0];
         }
     }
 
@@ -190,8 +190,7 @@ public class AutoSqlInjector implements ISqlInjector {
      * 注入插入 SQL 语句
      * </p>
      *
-     * @param selective
-     *            是否选择插入
+     * @param selective   是否选择插入
      * @param mapperClass
      * @param modelClass
      * @param table
@@ -347,8 +346,7 @@ public class AutoSqlInjector implements ISqlInjector {
      * 注入查询 SQL 语句
      * </p>
      *
-     * @param batch
-     *            是否为批量插入
+     * @param batch       是否为批量插入
      * @param mapperClass
      * @param modelClass
      * @param table
@@ -462,7 +460,7 @@ public class AutoSqlInjector implements ISqlInjector {
      *
      * @param mapperClass
      * @param modelClass
-     * @param table
+     * @param table       表信息
      */
     protected void injectSelectCountSql(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
         SqlMethod sqlMethod = SqlMethod.SELECT_COUNT;
@@ -476,7 +474,7 @@ public class AutoSqlInjector implements ISqlInjector {
      * EntityWrapper方式获取select where
      * </p>
      *
-     * @param table
+     * @param table 表信息
      * @return String
      */
     protected String sqlWhereEntityWrapper(TableInfo table) {
@@ -499,15 +497,14 @@ public class AutoSqlInjector implements ISqlInjector {
         return where.toString();
     }
 
-
     /**
      * <p>
      * SQL 更新 set 语句
      * </p>
      *
-     * @param table
-     * @param prefix
-     *            前缀
+     * @param selective 是否选择判断
+     * @param table     表信息
+     * @param prefix    前缀
      * @return
      */
     protected String sqlSet(boolean selective, TableInfo table, String prefix) {
@@ -554,8 +551,7 @@ public class AutoSqlInjector implements ISqlInjector {
      * </p>
      *
      * @param table
-     * @param entityWrapper
-     *            是否为包装类型查询
+     * @param entityWrapper 是否为包装类型查询
      * @return
      */
     protected String sqlSelectColumns(TableInfo table, boolean entityWrapper) {
@@ -634,8 +630,7 @@ public class AutoSqlInjector implements ISqlInjector {
      * SQL 设置selectObj sqlselect
      * </p>
      *
-     * @param table
-     *            是否为包装类型查询
+     * @param table 是否为包装类型查询
      * @return
      */
     protected String sqlSelectObjsColumns(TableInfo table) {
@@ -674,8 +669,7 @@ public class AutoSqlInjector implements ISqlInjector {
      * </p>
      *
      * @param table
-     * @param space
-     *            是否为空判断
+     * @param space 是否为空判断
      * @return
      */
     protected String sqlWhere(TableInfo table, boolean space) {
@@ -735,14 +729,10 @@ public class AutoSqlInjector implements ISqlInjector {
      * IF 条件转换方法
      * </p>
      *
-     * @param ignored
-     *            允许忽略
-     * @param fieldInfo
-     *            字段信息
-     * @param prefix
-     *            条件前缀
-     * @param close
-     *            是否闭合标签
+     * @param ignored   允许忽略
+     * @param fieldInfo 字段信息
+     * @param prefix    条件前缀
+     * @param close     是否闭合标签
      * @return
      */
     protected String convertIfTag(boolean ignored, TableFieldInfo fieldInfo, String prefix, boolean close) {
@@ -882,10 +872,8 @@ public class AutoSqlInjector implements ISqlInjector {
      * 创建查询MappedStatement
      *
      * @param mappedStatement
-     * @param sqlSource
-     *            执行的sqlSource
-     * @param resultType
-     *            返回的结果类型
+     * @param sqlSource       执行的sqlSource
+     * @param resultType      返回的结果类型
      */
     @SuppressWarnings("serial")
     private void createSelectMappedStatement(String mappedStatement, SqlSource sqlSource, final Class<?> resultType) {
@@ -904,10 +892,8 @@ public class AutoSqlInjector implements ISqlInjector {
      * 创建一个MappedStatement
      *
      * @param mappedStatement
-     * @param sqlSource
-     *            执行的sqlSource
-     * @param sqlCommandType
-     *            执行的sqlCommandType
+     * @param sqlSource       执行的sqlSource
+     * @param sqlCommandType  执行的sqlCommandType
      */
     @SuppressWarnings("serial")
     private void createUpdateMappedStatement(String mappedStatement, SqlSource sqlSource, SqlCommandType sqlCommandType) {
