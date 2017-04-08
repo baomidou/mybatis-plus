@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
  * </p>
  *
  * @author hubin
- * @Date 2016-01-23
+ * @since 2016-01-23
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

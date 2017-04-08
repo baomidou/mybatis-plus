@@ -53,13 +53,18 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
  * @Date 2016-12-06
  */
 public class GlobalConfiguration implements Cloneable {
-
+    // 日志
+    private static final Log logger = LogFactory.getLog(GlobalConfiguration.class);
     /**
      * 默认参数
      */
     public static final GlobalConfiguration DEFAULT = new GlobalConfiguration();
-    // 日志
-    private static final Log logger = LogFactory.getLog(GlobalConfiguration.class);
+    /**
+     * 逻辑删除默认值
+     */
+    public static final String LOGIC_DELETE_DEFAULT_VALUE = "1";
+    // 逻辑删除全局值
+    private String logicDeleteValue = null;
     /**
      * 缓存全局信息
      */
@@ -171,6 +176,14 @@ public class GlobalConfiguration implements Cloneable {
             return DEFAULT;
         }
         return cache;
+    }
+
+    public String getLogicDeleteValue() {
+        return logicDeleteValue;
+    }
+
+    public void setLogicDeleteValue(String logicDeleteValue) {
+        this.logicDeleteValue = logicDeleteValue;
     }
 
     public static DBType getDbType(Configuration configuration) {

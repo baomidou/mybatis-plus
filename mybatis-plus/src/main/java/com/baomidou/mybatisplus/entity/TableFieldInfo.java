@@ -62,6 +62,11 @@ public class TableFieldInfo {
     private FieldStrategy fieldStrategy = FieldStrategy.NOT_NULL;
 
     /**
+     * 逻辑删除值
+     */
+    private String logicDeleteValue;
+
+    /**
      * <p>
      * 存在 TableField 注解构造函数
      * </p>
@@ -154,5 +159,13 @@ public class TableFieldInfo {
 
     public void setPropertyType(String propertyType) {
         this.propertyType = propertyType;
+    }
+
+    public String getLogicDeleteValue() {
+        return logicDeleteValue;
+    }
+
+    public void setLogicDeleteValue(String logicDeleteValue) {
+        this.logicDeleteValue = logicDeleteValue;
     }
 }

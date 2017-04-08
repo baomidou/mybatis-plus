@@ -20,6 +20,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
 
 /**
@@ -28,7 +29,7 @@ import com.baomidou.mybatisplus.enums.FieldStrategy;
  * </p>
  *
  * @author hubin sjy
- * @Date 2016-09-09
+ * @since 2016-09-09
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
@@ -71,5 +72,13 @@ public @interface TableField {
      * </p>
      */
     FieldStrategy validate() default FieldStrategy.NOT_NULL;
+
+    /**
+     * <p>
+     * 逻辑删除值<br>
+     * 必须注入配置：com.baomidou.mybatisplus.mapper.LogicSqlInjector 否则无效
+     * </p>
+     */
+    String delval() default GlobalConfiguration.LOGIC_DELETE_DEFAULT_VALUE;
 
 }

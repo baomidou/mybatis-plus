@@ -13,19 +13,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.plugins;
-
-import java.lang.reflect.Field;
+package com.baomidou.mybatisplus.mapper;
 
 /**
- * 乐观锁处理器,底层接口
  *
- * @author TaoYu
  */
-public interface VersionHandler<T> {
+public class LogicSqlInjector extends AutoSqlInjector {
 
-    /**
-     * 根据类型,使得对象对应的字段+1
-     */
-    void plusVersion(Object paramObj, Field field, T versionValue) throws Exception;
 }
