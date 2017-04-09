@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
+import com.baomidou.mybatisplus.annotations.TableLogic;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.annotations.Version;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
@@ -55,6 +56,7 @@ public class User implements Serializable {
 
     /* 测试下划线字段命名类型, 字段填充 */
     @TableField(value = "test_type", validate = FieldStrategy.IGNORED)
+    @TableLogic(value = "-2") // 该注解为了测试逻辑删除、这里设置 -2 为删除值
     private Integer testType;
 
     @TableField(el = "role.id")

@@ -15,6 +15,10 @@
  */
 package com.baomidou.mybatisplus.entity;
 
+import java.lang.reflect.Field;
+
+import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotations.TableLogic;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
@@ -71,41 +75,69 @@ public class TableFieldInfo {
      * 存在 TableField 注解构造函数
      * </p>
      */
-    public TableFieldInfo(GlobalConfiguration globalConfig, String column, String property, String el,
-                          FieldStrategy fieldStrategy, String propertyType) {
-        if (globalConfig.isDbColumnUnderline()) {
-            /* 开启字段下划线申明 */
-            this.related = true;
-        } else if (!column.equals(property)) {
-			/* 没有开启下划线申明 但是column与property不等的情况下设置related为true */
-            this.related = true;
+    public TableFieldInfo(GlobalConfiguration globalConfig, TableInfo tableInfo, String column,
+                          String el, Field field, TableField tableField) {
+        this.property = field.getName();
+        this.propertyType = field.getType().getName();
+        /*
+         * 1、开启字段下划线申明<br>
+         * 2、没有开启下划线申明，但是column与property不等的情况<br>
+         * 设置 related 为 true
+         */
+        if (globalConfig.isDbColumnUnderline() || !column.equals(this.property)) {
+            this.setRelated(true);
         }
         this.setColumn(globalConfig, column);
-        this.property = property;
         this.el = el;
-		/*
-		 * 优先使用单个字段注解，否则使用全局配置
+        /*
+         * 优先使用单个字段注解，否则使用全局配置<br>
+         * 自定义字段验证策略 fixed-239
 		 */
-        if (fieldStrategy != FieldStrategy.NOT_NULL) {
-            this.fieldStrategy = fieldStrategy;
+        if (FieldStrategy.NOT_NULL != tableField.validate()) {
+            this.fieldStrategy = tableField.validate();
         } else {
             this.fieldStrategy = globalConfig.getFieldStrategy();
         }
-        this.propertyType = propertyType;
+        tableInfo.setLogicDelete(this.initLogicDelete(globalConfig, field));
     }
 
-    public TableFieldInfo(GlobalConfiguration globalConfig, String column, String propertyType) {
+    public TableFieldInfo(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field) {
         if (globalConfig.isDbColumnUnderline()) {
-			/* 开启字段下划线申明 */
+            /* 开启字段下划线申明 */
             this.related = true;
             this.setColumn(globalConfig, StringUtils.camelToUnderline(column));
         } else {
-            this.setColumn(globalConfig, column);
+            this.setColumn(globalConfig, field.getName());
         }
-        this.property = column;
-        this.el = column;
+        this.property = field.getName();
+        this.el = field.getName();
         this.fieldStrategy = globalConfig.getFieldStrategy();
-        this.propertyType = propertyType;
+        this.propertyType = field.getType().getName();
+        tableInfo.setLogicDelete(this.initLogicDelete(globalConfig, field));
+    }
+
+    /**
+     * <p>
+     * 逻辑删除初始化
+     * </p>
+     *
+     * @param globalConfig 全局配置
+     * @param field        字段属性对象
+     */
+    private boolean initLogicDelete(GlobalConfiguration globalConfig, Field field) {
+        String deleteValue = globalConfig.getLogicDeleteValue();
+        if (null == deleteValue) {
+            /* 获取注解属性，逻辑处理字段 */
+            TableLogic tableLogic = field.getAnnotation(TableLogic.class);
+            if (null != tableLogic) {
+                if (StringUtils.isNotEmpty(tableLogic.value())) {
+                    deleteValue = tableLogic.value();
+                }
+                this.logicDeleteValue = deleteValue;
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean isRelated() {
@@ -159,6 +191,13 @@ public class TableFieldInfo {
 
     public void setPropertyType(String propertyType) {
         this.propertyType = propertyType;
+    }
+
+    /**
+     * 是否开启逻辑删除
+     */
+    public boolean isLogicDelete() {
+        return StringUtils.isNotEmpty(logicDeleteValue);
     }
 
     public String getLogicDeleteValue() {

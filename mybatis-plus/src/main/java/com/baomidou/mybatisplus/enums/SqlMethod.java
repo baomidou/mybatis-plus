@@ -33,7 +33,7 @@ public enum SqlMethod {
     /**
      * 删除
      */
-    DELETE_BY_ID("deleteById", "根据ID 删除一条数据", "DELETE FROM %s WHERE %s=#{%s}"),
+    DELETE_BY_ID("deleteById", "根据ID 删除一条数据", "<script>DELETE FROM %s WHERE %s=#{%s}</script>"),
     DELETE_BY_MAP("deleteByMap", "根据columnMap 条件删除记录", "<script>DELETE FROM %s %s</script>"),
     DELETE("delete", "根据 entity 条件删除记录", "<script>DELETE FROM %s %s</script>"),
     DELETE_BATCH_BY_IDS("deleteBatchIds", "根据ID集合，批量删除数据", "<script>DELETE FROM %s WHERE %s IN (%s)</script>"),
@@ -41,10 +41,10 @@ public enum SqlMethod {
     /**
      * 逻辑删除
      */
-    LOGIC_DELETE_BY_ID("logicDeleteById", "根据ID 逻辑删除一条数据", "<script>UPDATE %s %s WHERE %s=#{%s}</script>"),
-    LOGIC_DELETE_BY_MAP("logicDeleteByMap", "根据columnMap 条件逻辑删除记录", "<script>UPDATE %s %s WHERE %s %s</script>"),
-    LOGIC_DELETE("logicDelete", "根据 entity 条件逻辑删除记录", "<script>UPDATE %s %s WHERE %s %s</script>"),
-    LOGIC_DELETE_BATCH_BY_IDS("logicDeleteBatchIds", "根据ID集合，批量逻辑删除数据", "<script>UPDATE %s %s WHERE %s IN (%s)</script>"),
+    LOGIC_DELETE_BY_ID("deleteById", "根据ID 逻辑删除一条数据", "<script>UPDATE %s %s WHERE %s=#{%s}</script>"),
+    LOGIC_DELETE_BY_MAP("deleteByMap", "根据columnMap 条件逻辑删除记录", "<script>UPDATE %s %s %s</script>"),
+    LOGIC_DELETE("delete", "根据 entity 条件逻辑删除记录", "<script>UPDATE %s %s %s</script>"),
+    LOGIC_DELETE_BATCH_BY_IDS("deleteBatchIds", "根据ID集合，批量逻辑删除数据", "<script>UPDATE %s %s WHERE %s IN (%s)</script>"),
 
     /**
      * 修改

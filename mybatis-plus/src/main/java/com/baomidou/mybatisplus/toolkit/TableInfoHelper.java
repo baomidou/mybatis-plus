@@ -85,14 +85,14 @@ public class TableInfoHelper {
             return ti;
         }
         TableInfo tableInfo = new TableInfo();
-        GlobalConfiguration globalCache;
+        GlobalConfiguration globalConfig;
         if (null != builderAssistant) {
             tableInfo.setCurrentNamespace(builderAssistant.getCurrentNamespace());
             tableInfo.setConfigMark(builderAssistant.getConfiguration());
-            globalCache = GlobalConfiguration.getGlobalConfig(builderAssistant.getConfiguration());
+            globalConfig = GlobalConfiguration.getGlobalConfig(builderAssistant.getConfiguration());
         } else {
             // 兼容测试场景
-            globalCache = GlobalConfiguration.DEFAULT;
+            globalConfig = GlobalConfiguration.DEFAULT;
         }
         /* 表名 */
         TableName table = clazz.getAnnotation(TableName.class);
@@ -101,11 +101,11 @@ public class TableInfoHelper {
             tableName = table.value();
         } else {
             // 开启字段下划线申明
-            if (globalCache.isDbColumnUnderline()) {
+            if (globalConfig.isDbColumnUnderline()) {
                 tableName = StringUtils.camelToUnderline(tableName);
             }
             // 大写命名判断
-            if (globalCache.isCapitalMode()) {
+            if (globalConfig.isCapitalMode()) {
                 tableName = tableName.toUpperCase();
             } else {
                 // 首字母小写
@@ -126,28 +126,28 @@ public class TableInfoHelper {
              * 主键ID 初始化
              */
             if (existTableId) {
-                if (initTableId(globalCache, tableInfo, field, clazz)) {
+                if (initTableId(globalConfig, tableInfo, field, clazz)) {
                     continue;
                 }
-            } else if (initFieldId(globalCache, tableInfo, field, clazz)) {
+            } else if (initFieldId(globalConfig, tableInfo, field, clazz)) {
                 continue;
             }
 
             /*
              * 字段初始化
              */
-            if (initTableField(globalCache, fieldList, field, clazz)) {
+            if (initTableField(globalConfig, tableInfo, fieldList, field, clazz)) {
                 continue;
             }
 
             /*
              * 字段, 使用 camelToUnderline 转换驼峰写法为下划线分割法, 如果已指定 TableField , 便不会执行这里
              */
-            fieldList.add(new TableFieldInfo(globalCache, field.getName(), field.getType().getName()));
+            fieldList.add(new TableFieldInfo(globalConfig, tableInfo, field));
         }
 
 		/* 字段列表 */
-        tableInfo.setFieldList(fieldList);
+        tableInfo.setFieldList(globalConfig, fieldList);
         /*
          * 未发现主键注解，提示警告信息
 		 */
@@ -273,11 +273,13 @@ public class TableInfoHelper {
      * 字段属性初始化
      * </p>
      *
-     * @param fieldList
-     * @param clazz
+     * @param globalConfig 全局配置
+     * @param tableInfo    表信息
+     * @param fieldList    字段列表
+     * @param clazz        当前表对象类
      * @return true 继续下一个属性判断，返回 continue;
      */
-    private static boolean initTableField(GlobalConfiguration globalCache, List<TableFieldInfo> fieldList,
+    private static boolean initTableField(GlobalConfiguration globalConfig, TableInfo tableInfo, List<TableFieldInfo> fieldList,
                                           Field field, Class<?> clazz) {
         /* 获取注解属性，自定义字段 */
         TableField tableField = field.getAnnotation(TableField.class);
@@ -285,11 +287,6 @@ public class TableInfoHelper {
             String columnName = field.getName();
             if (StringUtils.isNotEmpty(tableField.value())) {
                 columnName = tableField.value();
-            }
-            // 自定义字段验证策略 fixed-239
-            FieldStrategy validate = globalCache.getFieldStrategy();
-            if (FieldStrategy.NOT_NULL != tableField.validate()) {
-                validate = tableField.validate();
             }
             /*
              * el 语法支持，可以传入多个参数以逗号分开
@@ -302,8 +299,7 @@ public class TableInfoHelper {
             String[] els = el.split(";");
             if (columns.length == els.length) {
                 for (int i = 0; i < columns.length; i++) {
-                    fieldList.add(new TableFieldInfo(globalCache, columns[i], field.getName(), els[i], validate,
-                            field.getType().getName()));
+                    fieldList.add(new TableFieldInfo(globalConfig, tableInfo, columns[i], els[i], field, tableField));
                 }
             } else {
                 String errorMsg = "Class: %s, Field: %s, 'value' 'el' Length must be consistent.";

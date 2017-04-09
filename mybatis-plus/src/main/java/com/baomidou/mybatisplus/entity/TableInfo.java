@@ -78,6 +78,10 @@ public class TableInfo {
      * MybatisConfiguration 标记 (Configuration内存地址值)
      */
     private String configMark;
+    /**
+     * 是否开启逻辑删除
+     */
+    private boolean logicDelete = false;
 
     /**
      * <p>
@@ -148,8 +152,19 @@ public class TableInfo {
         return fieldList;
     }
 
-    public void setFieldList(List<TableFieldInfo> fieldList) {
+    public void setFieldList(GlobalConfiguration globalConfig, List<TableFieldInfo> fieldList) {
         this.fieldList = fieldList;
+        /*
+         * 启动逻辑删除注入、判断该表是否启动
+         */
+        if (null != globalConfig.getLogicDeleteValue()) {
+            for (TableFieldInfo tfi: fieldList) {
+                if (tfi.isLogicDelete()) {
+                    this.setLogicDelete(true);
+                    break;
+                }
+            }
+        }
     }
 
     public String getCurrentNamespace() {
@@ -171,4 +186,14 @@ public class TableInfo {
         this.configMark = configuration.toString();
     }
 
+    public boolean isLogicDelete() {
+        return logicDelete;
+    }
+
+    public void setLogicDelete(boolean logicDelete) {
+        if (logicDelete) {
+            // 非 true 不设置，默认 false
+            this.logicDelete = logicDelete;
+        }
+    }
 }

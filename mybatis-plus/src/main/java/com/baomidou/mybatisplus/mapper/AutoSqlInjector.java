@@ -133,7 +133,7 @@ public class AutoSqlInjector implements ISqlInjector {
         /**
          * 正常注入无需主键方法
          */
-		/* 插入 */
+        /* 插入 */
         this.injectInsertOneSql(true, mapperClass, modelClass, table);
         this.injectInsertOneSql(false, mapperClass, modelClass, table);
 		/* 删除 */
@@ -293,18 +293,17 @@ public class AutoSqlInjector implements ISqlInjector {
     protected void injectDeleteByIdSql(boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
         SqlMethod sqlMethod = SqlMethod.DELETE_BY_ID;
         SqlSource sqlSource;
+        String idStr = table.getKeyColumn();
         if (batch) {
             sqlMethod = SqlMethod.DELETE_BATCH_BY_IDS;
             StringBuilder ids = new StringBuilder();
             ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\">");
             ids.append("#{item}");
             ids.append("\n</foreach>");
-            String sql = String.format(sqlMethod.getSql(), table.getTableName(), table.getKeyColumn(), ids.toString());
-            sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        } else {
-            String sql = String.format(sqlMethod.getSql(), table.getTableName(), table.getKeyColumn(), table.getKeyColumn());
-            sqlSource = new RawSqlSource(configuration, sql, Object.class);
+            idStr = ids.toString();
         }
+        String sql = String.format(sqlMethod.getSql(), table.getTableName(), table.getKeyColumn(), idStr);
+        sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
         this.addDeleteMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource);
     }
 
