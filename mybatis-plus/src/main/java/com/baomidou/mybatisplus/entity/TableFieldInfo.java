@@ -15,13 +15,13 @@
  */
 package com.baomidou.mybatisplus.entity;
 
-import java.lang.reflect.Field;
-
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableLogic;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
+
+import java.lang.reflect.Field;
 
 /**
  * <p>
@@ -105,7 +105,7 @@ public class TableFieldInfo {
         if (globalConfig.isDbColumnUnderline()) {
             /* 开启字段下划线申明 */
             this.related = true;
-            this.setColumn(globalConfig, StringUtils.camelToUnderline(column));
+            this.setColumn(globalConfig, StringUtils.camelToUnderline(field.getName()));
         } else {
             this.setColumn(globalConfig, field.getName());
         }
