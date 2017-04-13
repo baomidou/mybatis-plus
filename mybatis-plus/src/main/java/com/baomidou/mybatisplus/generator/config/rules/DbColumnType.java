@@ -39,7 +39,10 @@ public enum DbColumnType {
     CLOB("Clob", "java.sql.Clob"),
     TIMESTAMP("Timestamp", "java.sql.Timestamp"),
     BIG_INTEGER("BigInteger", "java.math.BigInteger"),
-    BIG_DECIMAL("BigDecimal", "java.math.BigDecimal");
+    BIG_DECIMAL("BigDecimal", "java.math.BigDecimal"),
+    LOCAL_DATE("LocalDate", "java.time.LocalDate"),
+    LOCAL_TIME("LocalTime", "java.time.LocalTime"),
+    LOCAL_DATE_TIME("LocalDateTime", "java.time.LocalDateTime");
 
     /**
      * 类型
