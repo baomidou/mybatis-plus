@@ -28,7 +28,7 @@ import java.lang.reflect.Field;
  * 数据库表字段反射信息
  * </p>
  *
- * @author hubin sjy
+ * @author hubin sjy willenfoo
  * @Date 2016-09-09
  */
 public class TableFieldInfo {
@@ -132,19 +132,19 @@ public class TableFieldInfo {
      */
     private boolean initLogicDelete(GlobalConfiguration globalConfig, Field field) {
         String deleteValue = globalConfig.getLogicDeleteValue();
-        String notDeleteValue = globalConfig.getLogicNotDeleteValue();
         if (null == deleteValue) {
             /* 获取注解属性，逻辑处理字段 */
             TableLogic tableLogic = field.getAnnotation(TableLogic.class);
             if (null != tableLogic) {
-                if (StringUtils.isNotEmpty(tableLogic.deleteValue())) {
-                    deleteValue = tableLogic.deleteValue();
-                }
-                if (StringUtils.isNotEmpty(tableLogic.value())) {
-                    notDeleteValue = tableLogic.value();
+            	if (StringUtils.isNotEmpty(tableLogic.value())) {
+            		this.logicNotDeleteValue = tableLogic.value();
+            	} else {
+            		this.logicNotDeleteValue = globalConfig.getLogicNotDeleteValue();
+            	}
+                if (StringUtils.isNotEmpty(tableLogic.delval())) {
+                    deleteValue = tableLogic.delval();
                 }
                 this.logicDeleteValue = deleteValue;
-                this.logicNotDeleteValue = notDeleteValue;
                 return true;
             }
         }

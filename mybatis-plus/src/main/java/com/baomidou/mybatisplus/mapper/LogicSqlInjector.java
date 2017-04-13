@@ -33,7 +33,7 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  * 1、支持逻辑删除
  * </p>
  *
- * @author hubin
+ * @author hubin willenfoo
  * @Date 2017-09-09
  */
 public class LogicSqlInjector extends AutoSqlInjector {
@@ -223,7 +223,7 @@ public class LogicSqlInjector extends AutoSqlInjector {
 	            where.append(" AND ").append(fieldInfo.getColumn()).append("=#{ew.").append(fieldInfo.getEl()).append("}");
 	            where.append(convertIfTag(fieldInfo, true));
 	        }
-	     // 过滤逻辑
+	    	// 过滤逻辑
 	        where.append("\n").append(getLogicDeleteSql(table));
 	        where.append("\n</where>");
 			return where.toString();
