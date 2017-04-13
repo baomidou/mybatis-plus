@@ -87,10 +87,10 @@ public class AutoSqlInjector implements ISqlInjector {
         this.configuration = builderAssistant.getConfiguration();
         this.builderAssistant = builderAssistant;
         this.languageDriver = configuration.getDefaultScriptingLanguageInstance();
-        GlobalConfiguration globalCache = GlobalConfiguration.getGlobalConfig(configuration);
         /*
          * 驼峰设置 PLUS 配置 > 原始配置
 		 */
+        GlobalConfiguration globalCache = this.getGlobalConfig();
         if (!globalCache.isDbColumnUnderline()) {
             globalCache.setDbColumnUnderline(configuration.isMapUnderscoreToCamelCase());
         }
@@ -699,16 +699,7 @@ public class AutoSqlInjector implements ISqlInjector {
         where.append("\n<where>");
         where.append("\n<foreach collection=\"cm.keys\" item=\"k\" separator=\"AND\">");
         where.append("\n<if test=\"cm[k] != null\">");
-        String quote = GlobalConfiguration.getIdentifierQuote(configuration);
-        if (StringUtils.isNotEmpty(quote)) {
-            where.append("\n");
-            where.append(quote);
-            where.append("${k}");
-            where.append(quote);
-            where.append(" = #{cm[${k}]}");
-        } else {
-            where.append("\n${k} = #{cm[${k}]}");
-        }
+        where.append(SqlReservedWords.convert(getGlobalConfig(), "${k}")).append(" = #{cm[${k}]}");
         where.append("\n</if>");
         where.append("\n</foreach>");
         where.append("\n</where>");
@@ -735,7 +726,7 @@ public class AutoSqlInjector implements ISqlInjector {
                 return "";
             }
             // 查询策略，使用全局策略
-            fieldStrategy = GlobalConfiguration.getGlobalConfig(configuration).getFieldStrategy();
+            fieldStrategy = this.getGlobalConfig().getFieldStrategy();
         }
 
         // 关闭标签
@@ -972,4 +963,13 @@ public class AutoSqlInjector implements ISqlInjector {
         createUpdateMappedStatement(SqlRunner.DELETE, sqlSource, SqlCommandType.DELETE);
     }
 
+	/**
+	 * <p>
+	 * 全局配置
+	 * </p>
+	 */
+	protected GlobalConfiguration getGlobalConfig() {
+		return GlobalConfiguration.getGlobalConfig(configuration);
+	}
+	
 }

@@ -239,9 +239,9 @@ public class GlobalConfiguration implements Cloneable {
         return getGlobalConfig(configuration).getMapperRegistryCache();
     }
 
-    public static String getIdentifierQuote(Configuration configuration) {
-        return getGlobalConfig(configuration).getIdentifierQuote();
-    }
+	public static String getIdentifierQuote(Configuration configuration) {
+		return getGlobalConfig(configuration).getIdentifierQuote();
+	}
 
     public static SqlSession getSqlSession(Configuration configuration) {
         return getGlobalConfig(configuration).getSqlSession();
@@ -365,9 +365,12 @@ public class GlobalConfiguration implements Cloneable {
         this.isCapitalMode = isCapitalMode;
     }
 
-    public String getIdentifierQuote() {
-        return identifierQuote;
-    }
+	public String getIdentifierQuote() {
+		if (StringUtils.isEmpty(identifierQuote)) {
+			return dbType.getQuote();
+		}
+		return identifierQuote;
+	}
 
     public void setIdentifierQuote(String identifierQuote) {
         this.identifierQuote = identifierQuote;

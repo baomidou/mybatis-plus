@@ -31,11 +31,11 @@ public enum DBType {
     /**
      * ORACLE
      */
-    ORACLE("oracle", "", "Oracle数据库"),
+    ORACLE("oracle", "\"%s\"", "Oracle数据库"),
     /**
      * DB2
      */
-    DB2("db2", "", "DB2数据库"),
+    DB2("db2", "`%s`", "DB2数据库"),
     /**
      * H2
      */
@@ -51,7 +51,7 @@ public enum DBType {
     /**
      * POSTGRE
      */
-    POSTGRE("postgresql", "", "Postgre数据库"),
+    POSTGRE("postgresql", "\"%s\"", "Postgre数据库"),
     /**
      * SQLSERVER2005
      */

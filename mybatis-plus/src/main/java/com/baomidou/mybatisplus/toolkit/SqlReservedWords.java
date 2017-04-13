@@ -163,15 +163,16 @@ public class SqlReservedWords {
      * @return
      */
     public static String convert(GlobalConfiguration globalConfig, String column) {
-        if (containsWord(column)) {
-            String identifierQuote = StringUtils.isEmpty(globalConfig.getIdentifierQuote()) ? globalConfig.getDbType().getQuote()
-                    : globalConfig.getIdentifierQuote();
-            if (StringUtils.isNotEmpty(identifierQuote)) {
-                return String.format(identifierQuote, column);
-            }
-        }
-        return column;
+		return containsWord(column) ? convertQuote(globalConfig, column) : column;
     }
+
+	public static String convertQuote(GlobalConfiguration globalConfig, String column) {
+		String identifierQuote = globalConfig.getIdentifierQuote();
+		if (StringUtils.isNotEmpty(identifierQuote)) {
+			return String.format(identifierQuote, column);
+		}
+		return column;
+	}
 
     /**
      * 判断关键字中是否包含该字段
