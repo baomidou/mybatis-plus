@@ -194,7 +194,11 @@ public class LogicSqlInjector extends AutoSqlInjector {
 				if (++i > 1) {
 					set.append(",");
 				}
-				set.append(fieldInfo.getColumn()).append("=").append(fieldInfo.getLogicDeleteValue());
+				if ("java.lang.String".equals(fieldInfo.getPropertyType())) {
+					set.append(fieldInfo.getColumn()).append(" = ").append(" '").append(fieldInfo.getLogicDeleteValue()).append("' ");
+				} else {
+					set.append(fieldInfo.getColumn()).append("=").append(fieldInfo.getLogicDeleteValue());
+				}
 			}
 		}
 		return set.toString();
