@@ -215,9 +215,9 @@ public class LogicSqlInjector extends AutoSqlInjector {
 						where.append(" AND ");
 					}
 					if ("java.lang.String".equals(fieldInfo.getPropertyType())) {
-						where.append(fieldInfo.getColumn()).append(" != '").append(fieldInfo.getLogicNotDeleteValue()).append("' ");
+						where.append(fieldInfo.getColumn()).append(" = '").append(fieldInfo.getLogicNotDeleteValue()).append("' ");
 					} else {
-						where.append(fieldInfo.getColumn()).append(" != ").append(fieldInfo.getLogicNotDeleteValue());
+						where.append(fieldInfo.getColumn()).append(" = ").append(fieldInfo.getLogicNotDeleteValue());
 					}
 				}
 			}
