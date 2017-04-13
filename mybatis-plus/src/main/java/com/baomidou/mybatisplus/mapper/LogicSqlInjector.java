@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.mapping.SqlSource;
+import org.apache.ibatis.scripting.defaults.RawSqlSource;
 
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.entity.TableFieldInfo;
@@ -101,6 +102,81 @@ public class LogicSqlInjector extends AutoSqlInjector {
 	}
 
 	/**
+     * <p>
+     * 注入查询 SQL 语句
+     * </p>
+     *
+     * @param batch       是否为批量插入
+     * @param mapperClass
+     * @param modelClass
+     * @param table
+     */
+    protected void injectSelectByIdSql(boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
+    	if (table.isLogicDelete()) {
+    		SqlMethod sqlMethod = SqlMethod.SELECT_BY_ID;
+    		SqlSource sqlSource;
+    		if (batch) {
+    			sqlMethod = SqlMethod.SELECT_BATCH_BY_IDS;
+    			StringBuilder ids = new StringBuilder();
+    			ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\">");
+    			ids.append("#{item}");
+    			ids.append("\n</foreach>");
+    			sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(),
+    					sqlSelectColumns(table, false), table.getTableName(), table.getKeyColumn(), ids.toString(), getLogicDeleteSql(table)), modelClass);
+    		} else {
+    			sqlSource = new RawSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false),
+    					table.getTableName(), table.getKeyColumn(), table.getKeyProperty(), getLogicDeleteSql(table)), Object.class);
+    		}
+    		this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, table);
+    	} else {
+    		// 正常查询
+    		super.injectSelectByIdSql(batch, mapperClass, modelClass, table);
+    	}
+    }
+    
+    /**
+     * <p>
+     * 注入更新 SQL 语句
+     * </p>
+     *
+     * @param mapperClass
+     * @param modelClass
+     * @param table
+     */
+    protected void injectUpdateByIdSql(boolean selective, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
+    	if (table.isLogicDelete()) {
+    		SqlMethod sqlMethod = selective ? SqlMethod.UPDATE_BY_ID : SqlMethod.UPDATE_ALL_COLUMN_BY_ID;
+            String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlSet(selective, table, null), table.getKeyColumn(),
+                    table.getKeyProperty(), getLogicDeleteSql(table));
+            SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+            this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
+    	} else {
+    		super.injectUpdateByIdSql(selective, mapperClass, modelClass, table);
+    	}
+    }
+    
+    /**
+     * 得到逻辑删除过滤条件
+     * @param sql
+     */
+    public String getLogicDeleteSql(TableInfo table) {
+    	StringBuilder sql = new StringBuilder();
+    	// 过滤逻辑
+		List<TableFieldInfo> fieldList = table.getFieldList();
+		for (TableFieldInfo fieldInfo : fieldList) {
+			if (fieldInfo.isLogicDelete()) {
+				sql.append(" AND ");
+				if ("java.lang.String".equals(fieldInfo.getPropertyType())) {
+					sql.append(fieldInfo.getColumn()).append(" = '").append(fieldInfo.getLogicNotDeleteValue()).append("' ");
+				} else {
+					sql.append(fieldInfo.getColumn()).append(" = ").append(fieldInfo.getLogicNotDeleteValue());
+				}
+			}
+		}
+		return sql.toString();
+	}
+    
+	/**
 	 * <p>
 	 * SQL 更新 set 语句
 	 * </p>
@@ -138,7 +214,11 @@ public class LogicSqlInjector extends AutoSqlInjector {
 					if (++i > 1) {
 						where.append(" AND ");
 					}
-					where.append(fieldInfo.getColumn()).append("!=").append(fieldInfo.getLogicDeleteValue());
+					if ("java.lang.String".equals(fieldInfo.getPropertyType())) {
+						where.append(fieldInfo.getColumn()).append(" != '").append(fieldInfo.getLogicNotDeleteValue()).append("' ");
+					} else {
+						where.append(fieldInfo.getColumn()).append(" != ").append(fieldInfo.getLogicNotDeleteValue());
+					}
 				}
 			}
 			// EW 逻辑
@@ -171,7 +251,11 @@ public class LogicSqlInjector extends AutoSqlInjector {
 					if (++i > 1) {
 						where.append(" AND ");
 					}
-					where.append(fieldInfo.getColumn()).append("!=").append(fieldInfo.getLogicDeleteValue());
+					if ("java.lang.String".equals(fieldInfo.getPropertyType())) {
+						where.append(fieldInfo.getColumn()).append(" = '").append(fieldInfo.getLogicNotDeleteValue()).append("' ");
+					} else {
+						where.append(fieldInfo.getColumn()).append(" = ").append(fieldInfo.getLogicNotDeleteValue());
+					}
 				}
 			}
 			// EW 逻辑
@@ -208,7 +292,11 @@ public class LogicSqlInjector extends AutoSqlInjector {
 					if (++i > 1) {
 						where.append("AND ");
 					}
-					where.append(fieldInfo.getColumn()).append("!=").append(fieldInfo.getLogicDeleteValue());
+					if ("java.lang.String".equals(fieldInfo.getPropertyType())) {
+						where.append(fieldInfo.getColumn()).append(" = '").append(fieldInfo.getLogicNotDeleteValue()).append("' ");
+					} else {
+						where.append(fieldInfo.getColumn()).append(" = ").append(fieldInfo.getLogicNotDeleteValue());
+					}
 				}
 			}
 			// MAP 逻辑
@@ -231,4 +319,5 @@ public class LogicSqlInjector extends AutoSqlInjector {
 		return super.sqlWhereByMap(table);
 	}
 
+	
 }

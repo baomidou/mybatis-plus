@@ -71,6 +71,12 @@ public class TableFieldInfo {
     private String logicDeleteValue;
 
     /**
+     * 逻辑未删除值
+     */
+    private String logicNotDeleteValue;
+    
+    
+    /**
      * <p>
      * 存在 TableField 注解构造函数
      * </p>
@@ -126,14 +132,19 @@ public class TableFieldInfo {
      */
     private boolean initLogicDelete(GlobalConfiguration globalConfig, Field field) {
         String deleteValue = globalConfig.getLogicDeleteValue();
+        String notDeleteValue = globalConfig.getLogicNotDeleteValue();
         if (null == deleteValue) {
             /* 获取注解属性，逻辑处理字段 */
             TableLogic tableLogic = field.getAnnotation(TableLogic.class);
             if (null != tableLogic) {
+                if (StringUtils.isNotEmpty(tableLogic.deleteValue())) {
+                    deleteValue = tableLogic.deleteValue();
+                }
                 if (StringUtils.isNotEmpty(tableLogic.value())) {
-                    deleteValue = tableLogic.value();
+                    notDeleteValue = tableLogic.value();
                 }
                 this.logicDeleteValue = deleteValue;
+                this.logicNotDeleteValue = notDeleteValue;
                 return true;
             }
         }
@@ -207,4 +218,13 @@ public class TableFieldInfo {
     public void setLogicDeleteValue(String logicDeleteValue) {
         this.logicDeleteValue = logicDeleteValue;
     }
+
+	public String getLogicNotDeleteValue() {
+		return logicNotDeleteValue;
+	}
+
+	public void setLogicNotDeleteValue(String logicNotDeleteValue) {
+		this.logicNotDeleteValue = logicNotDeleteValue;
+	}
+    
 }

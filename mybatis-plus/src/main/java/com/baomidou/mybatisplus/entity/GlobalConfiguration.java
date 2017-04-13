@@ -65,6 +65,8 @@ public class GlobalConfiguration implements Cloneable {
     public static final String LOGIC_DELETE_DEFAULT_VALUE = "1";
     // 逻辑删除全局值
     private String logicDeleteValue = null;
+    // 逻辑未删除全局值
+    private String logicNotDeleteValue = null;
     /**
      * 缓存全局信息
      */
@@ -186,7 +188,15 @@ public class GlobalConfiguration implements Cloneable {
         this.logicDeleteValue = logicDeleteValue;
     }
 
-    public static DBType getDbType(Configuration configuration) {
+    public String getLogicNotDeleteValue() {
+		return logicNotDeleteValue;
+	}
+
+	public void setLogicNotDeleteValue(String logicNotDeleteValue) {
+		this.logicNotDeleteValue = logicNotDeleteValue;
+	}
+
+	public static DBType getDbType(Configuration configuration) {
         return getGlobalConfig(configuration).getDbType();
     }
 
