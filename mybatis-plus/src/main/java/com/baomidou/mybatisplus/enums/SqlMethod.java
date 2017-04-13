@@ -49,24 +49,37 @@ public enum SqlMethod {
     /**
      * 修改
      */
-    UPDATE_BY_ID("updateById", "根据ID 修改数据", "<script>UPDATE %s %s WHERE %s=#{%s} %s</script>"),
-    UPDATE_ALL_COLUMN_BY_ID("updateAllColumnById", "根据ID 选择修改数据", "<script>UPDATE %s %s WHERE %s=#{%s} %s</script>"),
+    UPDATE_BY_ID("updateById", "根据ID 修改数据", "<script>UPDATE %s %s WHERE %s=#{%s}</script>"),
+    UPDATE_ALL_COLUMN_BY_ID("updateAllColumnById", "根据ID 选择修改数据", "<script>UPDATE %s %s WHERE %s=#{%s}</script>"),
     UPDATE("update", "根据 whereEntity 条件，更新记录", "<script>UPDATE %s %s %s</script>"),
 
     /**
+     * 逻辑删除 -> 修改
+     */
+    LOGIC_UPDATE_BY_ID("updateById", "根据ID 修改数据", "<script>UPDATE %s %s WHERE %s=#{%s} %s</script>"),
+    LOGIC_UPDATE_ALL_COLUMN_BY_ID("updateAllColumnById", "根据ID 选择修改数据", "<script>UPDATE %s %s WHERE %s=#{%s} %s</script>"),
+    
+    
+    /**
      * 查询
      */
-    SELECT_BY_ID("selectById", "根据ID 查询一条数据", "SELECT %s FROM %s WHERE %s=#{%s} %s"),
+    SELECT_BY_ID("selectById", "根据ID 查询一条数据", "SELECT %s FROM %s WHERE %s=#{%s}"),
     SELECT_BY_MAP("selectByMap", "根据columnMap 查询一条数据", "<script>SELECT %s FROM %s %s</script>"),
-    SELECT_BATCH_BY_IDS("selectBatchIds", "根据ID集合，批量查询数据", "<script>SELECT %s FROM %s WHERE %s IN (%s) %s</script>"),
+    SELECT_BATCH_BY_IDS("selectBatchIds", "根据ID集合，批量查询数据", "<script>SELECT %s FROM %s WHERE %s IN (%s)</script>"),
     SELECT_ONE("selectOne", "查询满足条件一条数据", "<script>SELECT %s FROM %s %s</script>"),
     SELECT_COUNT("selectCount", "查询满足条件总记录数", "<script>SELECT COUNT(1) FROM %s %s</script>"),
     SELECT_LIST("selectList", "查询满足条件所有数据", "<script>SELECT %s FROM %s %s</script>"),
     SELECT_PAGE("selectPage", "查询满足条件所有数据（并翻页）", "<script>SELECT %s FROM %s %s</script>"),
     SELECT_MAPS("selectMaps", "查询满足条件所有数据", "<script>SELECT %s FROM %s %s</script>"),
     SELECT_MAPS_PAGE("selectMapsPage", "查询满足条件所有数据（并翻页）", "<script>SELECT %s FROM %s %s</script>"),
-    SELECT_OBJS("selectObjs", "查询满足条件所有数据", "<script>SELECT %s FROM %s %s</script>");
+    SELECT_OBJS("selectObjs", "查询满足条件所有数据", "<script>SELECT %s FROM %s %s</script>"),
 
+	/**
+     * 逻辑删除 -> 查询
+     */
+	LOGIC_SELECT_BY_ID("selectById", "根据ID 查询一条数据", "SELECT %s FROM %s WHERE %s=#{%s} %s"),
+	LOGIC_SELECT_BATCH_BY_IDS("selectBatchIds", "根据ID集合，批量查询数据", "<script>SELECT %s FROM %s WHERE %s IN (%s) %s</script>");
+	
     private final String method;
     private final String desc;
     private final String sql;
