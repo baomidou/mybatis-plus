@@ -18,7 +18,6 @@ package com.baomidou.mybatisplus.plugins;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 
@@ -42,7 +41,7 @@ public class Page<T> extends Pagination {
     /**
      * 查询参数
      */
-    private Map<String, Object> condition = new ConcurrentHashMap<>();
+    private Map<String, Object> condition;
 
     public Page() {
         /* 注意，传入翻页参数 */
