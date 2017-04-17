@@ -32,10 +32,18 @@ public interface IMetaObjectHandler {
      * 插入元对象字段填充
      * </p>
      *
-     * @param metaObject
-     *            元对象
+     * @param metaObject 元对象
      * @return
      */
     void insertFill(MetaObject metaObject);
 
+    /**
+     * 更新元对象字段填充（用于更新时对公共字段的填充）
+     * Created with IntelliJ IDEA.
+     * Author:  Wu Yujie
+     * Email:  coffee377@dingtalk.com
+     * Time:  2017/04/16 15:03
+     * @param metaObject 元对象
+     */
+    void updateFill(MetaObject metaObject);
 }

@@ -15,29 +15,6 @@
  */
 package com.baomidou.mybatisplus;
 
-import java.lang.reflect.Field;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.executor.ErrorContext;
-import org.apache.ibatis.mapping.BoundSql;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.ParameterMapping;
-import org.apache.ibatis.mapping.ParameterMode;
-import org.apache.ibatis.mapping.SqlCommandType;
-import org.apache.ibatis.reflection.MetaObject;
-import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.type.JdbcType;
-import org.apache.ibatis.type.TypeException;
-import org.apache.ibatis.type.TypeHandler;
-import org.apache.ibatis.type.TypeHandlerRegistry;
-
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.enums.IdType;
@@ -46,6 +23,20 @@ import com.baomidou.mybatisplus.toolkit.IdWorker;
 import com.baomidou.mybatisplus.toolkit.MapUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import org.apache.ibatis.executor.ErrorContext;
+import org.apache.ibatis.mapping.*;
+import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.TypeException;
+import org.apache.ibatis.type.TypeHandler;
+import org.apache.ibatis.type.TypeHandlerRegistry;
+
+import java.lang.reflect.Field;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.*;
 
 /**
  * <p>
@@ -92,15 +83,12 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
      * </p>
      *
      * @param ms
-     * @param parameterObject
-     *            插入数据库对象
+     * @param parameterObject 插入数据库对象
      * @return
      */
     protected static Object processBatch(MappedStatement ms, Object parameterObject) {
-        if (ms.getSqlCommandType() == SqlCommandType.INSERT) {
-            /**
-             * 只处理插入操作
-             */
+        /* 只处理插入或更新操作 */
+        if (ms.getSqlCommandType() == SqlCommandType.INSERT || ms.getSqlCommandType() == SqlCommandType.UPDATE) {
             Collection<Object> parameters = getParameters(parameterObject);
             if (null != parameters) {
                 List<Object> objList = new ArrayList<>();
@@ -110,7 +98,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                         objList.add(populateKeys(tableInfo, ms, parameter));
                     } else {
                         /*
-						 * 非表映射类不处理
+                         * 非表映射类不处理
 						 */
                         objList.add(parameter);
                     }
@@ -133,8 +121,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
      * wrapCollection 实现 StrictMap 封装逻辑
      * </p>
      *
-     * @param parameter
-     *            插入数据库对象
+     * @param parameter 插入数据库对象
      * @return
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -160,34 +147,38 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
      * 自定义元对象填充控制器
      * </p>
      *
-     * @param tableInfo
-     * @param ms
+     * @param tableInfo       数据库表反射信息
+     * @param ms              MappedStatement
      * @param parameterObject 插入数据库对象
-     * @return
+     * @return Object
      */
     protected static Object populateKeys(TableInfo tableInfo, MappedStatement ms, Object parameterObject) {
         if (null == tableInfo || StringUtils.isEmpty(tableInfo.getKeyProperty()) || null == tableInfo.getIdType()) {
-            /*
-             * 不处理
-             */
+            /* 不处理 */
             return parameterObject;
         }
         MetaObject metaObject = ms.getConfiguration().newMetaObject(parameterObject);
-        if (tableInfo.getIdType().getKey() >= 2) {
-            Object idValue = metaObject.getValue(tableInfo.getKeyProperty());
+         /* 自定义元对象填充控制器 */
+        IMetaObjectHandler metaObjectHandler = GlobalConfiguration.getMetaObjectHandler(ms.getConfiguration());
+        if(ms.getSqlCommandType() == SqlCommandType.INSERT ){
+            if (tableInfo.getIdType().getKey() >= 2) {
+                Object idValue = metaObject.getValue(tableInfo.getKeyProperty());
             /* 自定义 ID */
-            if (StringUtils.checkValNull(idValue)) {
-                if (tableInfo.getIdType() == IdType.ID_WORKER) {
-                    metaObject.setValue(tableInfo.getKeyProperty(), IdWorker.getId());
-                } else if (tableInfo.getIdType() == IdType.UUID) {
-                    metaObject.setValue(tableInfo.getKeyProperty(), IdWorker.get32UUID());
+                if (StringUtils.checkValNull(idValue)) {
+                    if (tableInfo.getIdType() == IdType.ID_WORKER) {
+                        metaObject.setValue(tableInfo.getKeyProperty(), IdWorker.getId());
+                    } else if (tableInfo.getIdType() == IdType.UUID) {
+                        metaObject.setValue(tableInfo.getKeyProperty(), IdWorker.get32UUID());
+                    }
                 }
             }
-        }
-        /* 自定义元对象填充控制器 */
-        IMetaObjectHandler metaObjectHandler = GlobalConfiguration.getMetaObjectHandler(ms.getConfiguration());
-        if (null != metaObjectHandler) {
-            metaObjectHandler.insertFill(metaObject);
+            if (null != metaObjectHandler) {
+                metaObjectHandler.insertFill(metaObject);
+            }
+        } else if(ms.getSqlCommandType() == SqlCommandType.UPDATE ){
+            if (null != metaObjectHandler) {
+                metaObjectHandler.updateFill(metaObject);
+            }
         }
         return metaObject.getOriginalObject();
     }
