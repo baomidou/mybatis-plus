@@ -46,4 +46,8 @@ public class MyMetaObjectHandler implements IMetaObjectHandler {
         }
     }
 
+    @Override
+    public void updateFill(MetaObject metaObject) {
+
+    }
 }
