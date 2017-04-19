@@ -340,4 +340,17 @@ public class EntityWrapperTest {
         Assert.assertEquals("WHERE (sql = ? AND default LIKE ? AND left LIKE ? AND aaabbbcc IN (?,?,?) AND bbb IN (?,?,?) AND right LIKE ? AND bool = ? AND ee BETWEEN ? AND ?)", sqlPart);
         System.out.println(ew.getSqlSegment());
     }
+
+    /**
+     * 测试 limit
+     */
+    @Test
+    public void testLimit() {
+        ew.where("name={0}", "'123'").orderBy("id", false);
+        ew.limit(0, 3);
+        String sqlSegment = ew.toString();
+        System.err.println("testLimit = " + sqlSegment);
+        Assert.assertEquals("WHERE (name=?)\nORDER BY id DESC LIMIT 0, 3 ", sqlSegment);
+    }
+
 }
