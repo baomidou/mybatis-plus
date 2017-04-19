@@ -749,6 +749,20 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
+     * SQL LIMIT
+     * </p>
+     *
+     * @param begin 起始
+     * @param end   结束
+     * @return this
+     */
+    public Wrapper<T> limit(int begin, int end) {
+        sql.LIMIT(begin, end);
+        return this;
+    }
+
+    /**
      * Fix issue 200.
      *
      * @return
