@@ -15,31 +15,29 @@
  */
 package com.baomidou.mybatisplus;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import org.apache.ibatis.binding.BindingException;
 import org.apache.ibatis.binding.MapperProxyFactory;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
-import com.baomidou.mybatisplus.entity.GlobalConfiguration;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <p>
  * 继承至MapperRegistry
  * </p>
  *
- * @author Caratacus
- * @Date 2016-09-26
+ * @author Caratacus hubin
+ * @since 2017-04-19
  */
 public class MybatisMapperRegistry extends MapperRegistry {
-
+    private final Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<Class<?>, MapperProxyFactory<?>>();
     private final Configuration config;
-    private final Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<>();
 
     public MybatisMapperRegistry(Configuration config) {
         super(config);
@@ -65,6 +63,7 @@ public class MybatisMapperRegistry extends MapperRegistry {
         return knownMappers.containsKey(type);
     }
 
+    @Override
     public <T> void addMapper(Class<T> type) {
         if (type.isInterface()) {
             if (hasMapper(type)) {

@@ -16,6 +16,10 @@
 package com.baomidou.mybatisplus;
 
 import static java.lang.reflect.Proxy.newProxyInstance;
+import static org.apache.ibatis.reflection.ExceptionUtil.unwrapThrowable;
+import static org.mybatis.spring.SqlSessionUtils.closeSqlSession;
+import static org.mybatis.spring.SqlSessionUtils.getSqlSession;
+import static org.mybatis.spring.SqlSessionUtils.isSqlSessionTransactional;
 import static org.springframework.util.Assert.notNull;
 
 import java.lang.reflect.InvocationHandler;
@@ -25,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.cursor.Cursor;
+import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ExecutorType;
@@ -36,12 +41,39 @@ import org.mybatis.spring.MyBatisExceptionTranslator;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.dao.support.PersistenceExceptionTranslator;
 
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-
 /**
- * Copy SqlSessionTemplate
+ * Thread safe, Spring managed, {@code SqlSession} that works with Spring
+ * transaction management to ensure that that the actual SqlSession used is the
+ * one associated with the current Spring transaction. In addition, it manages
+ * the session life-cycle, including closing, committing or rolling back the
+ * session as necessary based on the Spring transaction configuration.
+ * <p>
+ * The template needs a SqlSessionFactory to create SqlSessions, passed as a
+ * constructor argument. It also can be constructed indicating the executor type
+ * to be used, if not, the default executor type, defined in the session factory
+ * will be used.
+ * <p>
+ * This template converts MyBatis PersistenceExceptions into unchecked
+ * DataAccessExceptions, using, by default, a {@code MyBatisExceptionTranslator}.
+ * <p>
+ * Because SqlSessionTemplate is thread safe, a single instance can be shared
+ * by all DAOs; there should also be a small memory savings by doing this. This
+ * pattern can be used in Spring configuration files as follows:
  *
- * @see org.mybatis.spring.SqlSessionTemplate
+ * <pre class="code">
+ * {@code
+ * <bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+ *   <constructor-arg ref="sqlSessionFactory" />
+ * </bean>
+ * }
+ * </pre>
+ *
+ * @author Putthibong Boonbong
+ * @author Hunter Presnall
+ * @author Eduardo Macarron
+ *
+ * @see SqlSessionFactory
+ * @see MyBatisExceptionTranslator
  */
 public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
 
@@ -66,32 +98,34 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
     /**
      * Constructs a Spring managed SqlSession with the {@code SqlSessionFactory}
      * provided as an argument and the given {@code ExecutorType}
-     * {@code ExecutorType} cannot be changed once the
-     * {@code SqlSessionTemplate} is constructed.
+     * {@code ExecutorType} cannot be changed once the {@code SqlSessionTemplate}
+     * is constructed.
      *
      * @param sqlSessionFactory
      * @param executorType
      */
     public MybatisSqlSessionTemplate(SqlSessionFactory sqlSessionFactory, ExecutorType executorType) {
-        this(sqlSessionFactory, executorType, new MyBatisExceptionTranslator(sqlSessionFactory.getConfiguration()
-                .getEnvironment().getDataSource(), true));
+        this(sqlSessionFactory, executorType,
+                new MyBatisExceptionTranslator(
+                        sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(), true));
     }
 
     /**
      * Constructs a Spring managed {@code SqlSession} with the given
-     * {@code SqlSessionFactory} and {@code ExecutorType}. A custom
-     * {@code SQLExceptionTranslator} can be provided as an argument so any
-     * {@code PersistenceException} thrown by MyBatis can be custom translated
-     * to a {@code RuntimeException} The {@code SQLExceptionTranslator} can also
-     * be null and thus no exception translation will be done and MyBatis
-     * exceptions will be thrown
+     * {@code SqlSessionFactory} and {@code ExecutorType}.
+     * A custom {@code SQLExceptionTranslator} can be provided as an
+     * argument so any {@code PersistenceException} thrown by MyBatis
+     * can be custom translated to a {@code RuntimeException}
+     * The {@code SQLExceptionTranslator} can also be null and thus no
+     * exception translation will be done and MyBatis exceptions will be
+     * thrown
      *
      * @param sqlSessionFactory
      * @param executorType
      * @param exceptionTranslator
      */
     public MybatisSqlSessionTemplate(SqlSessionFactory sqlSessionFactory, ExecutorType executorType,
-                                     PersistenceExceptionTranslator exceptionTranslator) {
+                              PersistenceExceptionTranslator exceptionTranslator) {
 
         notNull(sqlSessionFactory, "Property 'sqlSessionFactory' is required");
         notNull(executorType, "Property 'executorType' is required");
@@ -99,8 +133,10 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
         this.sqlSessionFactory = sqlSessionFactory;
         this.executorType = executorType;
         this.exceptionTranslator = exceptionTranslator;
-        this.sqlSessionProxy = (SqlSession) newProxyInstance(SqlSessionFactory.class.getClassLoader(),
-                new Class[]{SqlSession.class}, new SqlSessionInterceptor());
+        this.sqlSessionProxy = (SqlSession) newProxyInstance(
+                SqlSessionFactory.class.getClassLoader(),
+                new Class[] { SqlSession.class },
+                new SqlSessionInterceptor());
     }
 
     public SqlSessionFactory getSqlSessionFactory() {
@@ -118,47 +154,47 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
     /**
      * {@inheritDoc}
      */
-
+    @Override
     public <T> T selectOne(String statement) {
-        return this.sqlSessionProxy.<T>selectOne(statement);
+        return this.sqlSessionProxy.<T> selectOne(statement);
     }
 
     /**
      * {@inheritDoc}
      */
-
+    @Override
     public <T> T selectOne(String statement, Object parameter) {
-        return this.sqlSessionProxy.<T>selectOne(statement, parameter);
+        return this.sqlSessionProxy.<T> selectOne(statement, parameter);
     }
 
     /**
      * {@inheritDoc}
      */
-
+    @Override
     public <K, V> Map<K, V> selectMap(String statement, String mapKey) {
-        return this.sqlSessionProxy.<K, V>selectMap(statement, mapKey);
+        return this.sqlSessionProxy.<K, V> selectMap(statement, mapKey);
     }
 
     /**
      * {@inheritDoc}
      */
-
+    @Override
     public <K, V> Map<K, V> selectMap(String statement, Object parameter, String mapKey) {
-        return this.sqlSessionProxy.<K, V>selectMap(statement, parameter, mapKey);
+        return this.sqlSessionProxy.<K, V> selectMap(statement, parameter, mapKey);
     }
 
     /**
      * {@inheritDoc}
      */
-
+    @Override
     public <K, V> Map<K, V> selectMap(String statement, Object parameter, String mapKey, RowBounds rowBounds) {
-        return this.sqlSessionProxy.<K, V>selectMap(statement, parameter, mapKey, rowBounds);
+        return this.sqlSessionProxy.<K, V> selectMap(statement, parameter, mapKey, rowBounds);
     }
 
     /**
      * {@inheritDoc}
      */
-
+    @Override
     public <T> Cursor<T> selectCursor(String statement) {
         return this.sqlSessionProxy.selectCursor(statement);
     }
@@ -166,7 +202,7 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
     /**
      * {@inheritDoc}
      */
-
+    @Override
     public <T> Cursor<T> selectCursor(String statement, Object parameter) {
         return this.sqlSessionProxy.selectCursor(statement, parameter);
     }
@@ -174,7 +210,7 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
     /**
      * {@inheritDoc}
      */
-
+    @Override
     public <T> Cursor<T> selectCursor(String statement, Object parameter, RowBounds rowBounds) {
         return this.sqlSessionProxy.selectCursor(statement, parameter, rowBounds);
     }
@@ -182,32 +218,31 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
     /**
      * {@inheritDoc}
      */
-
+    @Override
     public <E> List<E> selectList(String statement) {
-        return this.sqlSessionProxy.<E>selectList(statement);
+        return this.sqlSessionProxy.<E> selectList(statement);
     }
 
     /**
      * {@inheritDoc}
      */
-
+    @Override
     public <E> List<E> selectList(String statement, Object parameter) {
-        return this.sqlSessionProxy.<E>selectList(statement, parameter);
+        return this.sqlSessionProxy.<E> selectList(statement, parameter);
     }
 
     /**
      * {@inheritDoc}
      */
-
+    @Override
     public <E> List<E> selectList(String statement, Object parameter, RowBounds rowBounds) {
-        return this.sqlSessionProxy.<E>selectList(statement, parameter, rowBounds);
+        return this.sqlSessionProxy.<E> selectList(statement, parameter, rowBounds);
     }
 
     /**
      * {@inheritDoc}
      */
-
-    @SuppressWarnings("rawtypes")
+    @Override
     public void select(String statement, ResultHandler handler) {
         this.sqlSessionProxy.select(statement, handler);
     }
@@ -215,8 +250,7 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
     /**
      * {@inheritDoc}
      */
-
-    @SuppressWarnings("rawtypes")
+    @Override
     public void select(String statement, Object parameter, ResultHandler handler) {
         this.sqlSessionProxy.select(statement, parameter, handler);
     }
@@ -224,8 +258,7 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
     /**
      * {@inheritDoc}
      */
-
-    @SuppressWarnings("rawtypes")
+    @Override
     public void select(String statement, Object parameter, RowBounds rowBounds, ResultHandler handler) {
         this.sqlSessionProxy.select(statement, parameter, rowBounds, handler);
     }
@@ -233,7 +266,7 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
     /**
      * {@inheritDoc}
      */
-
+    @Override
     public int insert(String statement) {
         return this.sqlSessionProxy.insert(statement);
     }
@@ -241,7 +274,7 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
     /**
      * {@inheritDoc}
      */
-
+    @Override
     public int insert(String statement, Object parameter) {
         return this.sqlSessionProxy.insert(statement, parameter);
     }
@@ -249,7 +282,7 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
     /**
      * {@inheritDoc}
      */
-
+    @Override
     public int update(String statement) {
         return this.sqlSessionProxy.update(statement);
     }
@@ -257,7 +290,7 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
     /**
      * {@inheritDoc}
      */
-
+    @Override
     public int update(String statement, Object parameter) {
         return this.sqlSessionProxy.update(statement, parameter);
     }
@@ -265,7 +298,7 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
     /**
      * {@inheritDoc}
      */
-
+    @Override
     public int delete(String statement) {
         return this.sqlSessionProxy.delete(statement);
     }
@@ -273,7 +306,7 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
     /**
      * {@inheritDoc}
      */
-
+    @Override
     public int delete(String statement, Object parameter) {
         return this.sqlSessionProxy.delete(statement, parameter);
     }
@@ -281,7 +314,7 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
     /**
      * {@inheritDoc}
      */
-
+    @Override
     public <T> T getMapper(Class<T> type) {
         return getConfiguration().getMapper(type, this);
     }
@@ -289,7 +322,7 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
     /**
      * {@inheritDoc}
      */
-
+    @Override
     public void commit() {
         throw new UnsupportedOperationException("Manual commit is not allowed over a Spring managed SqlSession");
     }
@@ -297,7 +330,7 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
     /**
      * {@inheritDoc}
      */
-
+    @Override
     public void commit(boolean force) {
         throw new UnsupportedOperationException("Manual commit is not allowed over a Spring managed SqlSession");
     }
@@ -305,7 +338,7 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
     /**
      * {@inheritDoc}
      */
-
+    @Override
     public void rollback() {
         throw new UnsupportedOperationException("Manual rollback is not allowed over a Spring managed SqlSession");
     }
@@ -313,7 +346,7 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
     /**
      * {@inheritDoc}
      */
-
+    @Override
     public void rollback(boolean force) {
         throw new UnsupportedOperationException("Manual rollback is not allowed over a Spring managed SqlSession");
     }
@@ -321,7 +354,7 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
     /**
      * {@inheritDoc}
      */
-
+    @Override
     public void close() {
         throw new UnsupportedOperationException("Manual close is not allowed over a Spring managed SqlSession");
     }
@@ -329,15 +362,16 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
     /**
      * {@inheritDoc}
      */
-
+    @Override
     public void clearCache() {
         this.sqlSessionProxy.clearCache();
     }
 
     /**
      * {@inheritDoc}
+     *
      */
-
+    @Override
     public Configuration getConfiguration() {
         return this.sqlSessionFactory.getConfiguration();
     }
@@ -345,7 +379,7 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
     /**
      * {@inheritDoc}
      */
-
+    @Override
     public Connection getConnection() {
         return this.sqlSessionProxy.getConnection();
     }
@@ -354,16 +388,15 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
      * {@inheritDoc}
      *
      * @since 1.0.2
+     *
      */
-
+    @Override
     public List<BatchResult> flushStatements() {
         return this.sqlSessionProxy.flushStatements();
     }
 
     /**
      * Allow gently dispose bean:
-     * <p>
-     *
      * <pre>
      * {@code
      *
@@ -371,45 +404,58 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
      *  <constructor-arg index="0" ref="sqlSessionFactory" />
      * </bean>
      * }
-     * </pre>
-     * <p>
-     * The implementation of {@link DisposableBean} forces spring context to use
-     * {@link DisposableBean#destroy()} method instead of
-     * {@link MybatisSqlSessionTemplate#close()} to shutdown gently.
+     *</pre>
      *
-     * @see MybatisSqlSessionTemplate#close()
+     * The implementation of {@link DisposableBean} forces spring context to use {@link DisposableBean#destroy()} method instead of {@link org.mybatis.spring.SqlSessionTemplate#close()} to shutdown gently.
+     *
+     * @see org.mybatis.spring.SqlSessionTemplate#close()
      * @see org.springframework.beans.factory.support.DisposableBeanAdapter#inferDestroyMethodIfNecessary
      * @see org.springframework.beans.factory.support.DisposableBeanAdapter#CLOSE_METHOD_NAME
      */
-
+    @Override
     public void destroy() throws Exception {
-        // This method forces spring disposer to avoid call of
-        // SqlSessionTemplate.close() which gives UnsupportedOperationException
+        //This method forces spring disposer to avoid call of SqlSessionTemplate.close() which gives UnsupportedOperationException
     }
 
     /**
      * Proxy needed to route MyBatis method calls to the proper SqlSession got
-     * from Spring's Transaction Manager It also unwraps exceptions thrown by
-     * {@code Method#invoke(Object, Object...)} to pass a
-     * {@code PersistenceException} to the
-     * {@code PersistenceExceptionTranslator}.
+     * from Spring's Transaction Manager
+     * It also unwraps exceptions thrown by {@code Method#invoke(Object, Object...)} to
+     * pass a {@code PersistenceException} to the {@code PersistenceExceptionTranslator}.
      */
     private class SqlSessionInterceptor implements InvocationHandler {
-
+        @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            SqlSession sqlSession = MybatisSqlSessionTemplate.this.sqlSessionFactory
-                    .openSession(MybatisSqlSessionTemplate.this.executorType);
+            SqlSession sqlSession = getSqlSession(
+                    MybatisSqlSessionTemplate.this.sqlSessionFactory,
+                    MybatisSqlSessionTemplate.this.executorType,
+                    MybatisSqlSessionTemplate.this.exceptionTranslator);
             try {
                 Object result = method.invoke(sqlSession, args);
-                sqlSession.commit(true);
+                if (!isSqlSessionTransactional(sqlSession, MybatisSqlSessionTemplate.this.sqlSessionFactory)) {
+                    // force commit even on non-dirty sessions because some databases require
+                    // a commit/rollback before calling close()
+                    sqlSession.commit(true);
+                }
                 return result;
             } catch (Throwable t) {
-                throw new MybatisPlusException(t);
+                Throwable unwrapped = unwrapThrowable(t);
+                if (MybatisSqlSessionTemplate.this.exceptionTranslator != null && unwrapped instanceof PersistenceException) {
+                    // release the connection to avoid a deadlock if the translator is no loaded. See issue #22
+                    closeSqlSession(sqlSession, MybatisSqlSessionTemplate.this.sqlSessionFactory);
+                    sqlSession = null;
+                    Throwable translated = MybatisSqlSessionTemplate.this.exceptionTranslator.translateExceptionIfPossible((PersistenceException) unwrapped);
+                    if (translated != null) {
+                        unwrapped = translated;
+                    }
+                }
+                throw unwrapped;
             } finally {
                 if (sqlSession != null) {
-                    sqlSession.close();
+                    closeSqlSession(sqlSession, MybatisSqlSessionTemplate.this.sqlSessionFactory);
                 }
             }
         }
     }
+
 }
