@@ -197,10 +197,15 @@ public class TableInfoHelper {
                 /*
                  * 主键策略（ 注解 > 全局 > 默认 ）
 				 */
-                if (IdType.NONE != tableId.type()) {
-                    tableInfo.setIdType(tableId.type());
+                if(StringUtils.isNotEmpty(tableId.sequence())){
+                    tableInfo.setKeySequence(tableId.sequence());
                 } else {
-                    tableInfo.setIdType(globalConfig.getIdType());
+                    // 设置 Sequence 其他策略无效
+                    if (IdType.NONE != tableId.type()) {
+                        tableInfo.setIdType(tableId.type());
+                    } else {
+                        tableInfo.setIdType(globalConfig.getIdType());
+                    }
                 }
                 /* 字段 */
                 String column = field.getName();
