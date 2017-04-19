@@ -49,4 +49,16 @@ public @interface TableId {
      */
     IdType type() default IdType.NONE;
 
+    /**
+     * <p>
+     * 主键 sequence<br>
+     * 例如：@TableId(sequence="user.nextval")<br>
+     * 执行SQL：insert into user (id,name) values(user.nextval, #{name})
+     * </p>
+     * <p>
+     * sequence 非空 type 属性无效
+     * </p>
+     */
+    String sequence() default "";
+
 }

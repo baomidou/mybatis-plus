@@ -35,7 +35,7 @@ public class TableInfo {
     /**
      * 表主键ID 类型
      */
-    private IdType idType;
+    private IdType idType = IdType.NONE;
 
     /**
      * 表名称
@@ -64,7 +64,12 @@ public class TableInfo {
      * 表主键ID 字段名
      */
     private String keyColumn;
-
+    /**
+     * <p>
+     * 表主键ID Sequence
+     * </p>
+     */
+    private String keySequence;
     /**
      * 表字段信息列表
      */
@@ -146,6 +151,14 @@ public class TableInfo {
 
     public void setKeyColumn(String keyColumn) {
         this.keyColumn = keyColumn;
+    }
+
+    public String getKeySequence() {
+        return keySequence;
+    }
+
+    public void setKeySequence(String keySequence) {
+        this.keySequence = keySequence;
     }
 
     public List<TableFieldInfo> getFieldList() {
