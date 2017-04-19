@@ -22,11 +22,7 @@ import java.util.Map;
 
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
-import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
-import com.baomidou.mybatisplus.generator.config.FileOutConfig;
-import com.baomidou.mybatisplus.generator.config.GlobalConfig;
-import com.baomidou.mybatisplus.generator.config.PackageConfig;
-import com.baomidou.mybatisplus.generator.config.StrategyConfig;
+import com.baomidou.mybatisplus.generator.config.*;
 import com.baomidou.mybatisplus.generator.config.converts.MySqlTypeConvert;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
@@ -131,15 +127,19 @@ public class MysqlGenerator {
             }
         };
         List<FileOutConfig> focList = new ArrayList<>();
-        focList.add(new FileOutConfig("/templates/entity.java.vm") {
+        focList.add(new FileOutConfig("/templates/mapper.xml.vm") {
             @Override
             public String outputFile(TableInfo tableInfo) {
-                // 自定义输入文件名称
-                return "/develop/code/my_" + tableInfo.getEntityName() + ".java";
+                return "/develop/code/xml/" + tableInfo.getEntityName() + ".xml";
             }
         });
         cfg.setFileOutConfigList(focList);
         mpg.setCfg(cfg);
+
+        // 关闭默认 xml 生成，调整生成 至 根目录
+        TemplateConfig tc = new TemplateConfig();
+        tc.setXml(null);
+        mpg.setTemplate(tc);
 
         // 自定义模板配置，模板可以参考源码 /mybatis-plus/src/main/resources/template 使用 copy
         // 至您项目 src/main/resources/template 目录下，模板名称也可自定义如下配置：
