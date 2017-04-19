@@ -36,7 +36,7 @@ import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.AutoSqlInjector;
-import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
+import com.baomidou.mybatisplus.mapper.MetaObjectHandler;
 import com.baomidou.mybatisplus.mapper.ISqlInjector;
 import com.baomidou.mybatisplus.toolkit.IOUtils;
 import com.baomidou.mybatisplus.toolkit.JdbcUtils;
@@ -50,7 +50,7 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
  * </p>
  *
  * @author Caratacus
- * @Date 2016-12-06
+ * @since 2016-12-06
  */
 public class GlobalConfiguration implements Cloneable {
     // 日志
@@ -80,7 +80,7 @@ public class GlobalConfiguration implements Cloneable {
     // SQL注入器
     private ISqlInjector sqlInjector;
     // 元对象字段填充控制器
-    private IMetaObjectHandler metaObjectHandler = null;
+    private MetaObjectHandler metaObjectHandler = null;
     // 字段验证策略
     private FieldStrategy fieldStrategy = FieldStrategy.NOT_NULL;
     // 是否刷新mapper
@@ -219,7 +219,7 @@ public class GlobalConfiguration implements Cloneable {
         return sqlInjector;
     }
 
-    public static IMetaObjectHandler getMetaObjectHandler(Configuration configuration) {
+    public static MetaObjectHandler getMetaObjectHandler(Configuration configuration) {
         return getGlobalConfig(configuration).getMetaObjectHandler();
     }
 
@@ -308,11 +308,11 @@ public class GlobalConfiguration implements Cloneable {
         this.sqlInjector = sqlInjector;
     }
 
-    public IMetaObjectHandler getMetaObjectHandler() {
+    public MetaObjectHandler getMetaObjectHandler() {
         return metaObjectHandler;
     }
 
-    public void setMetaObjectHandler(IMetaObjectHandler metaObjectHandler) {
+    public void setMetaObjectHandler(MetaObjectHandler metaObjectHandler) {
         this.metaObjectHandler = metaObjectHandler;
     }
 

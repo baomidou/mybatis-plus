@@ -15,10 +15,11 @@
  */
 package com.baomidou.mybatisplus;
 
+import com.baomidou.mybatisplus.entity.DefaultMetaObjectHandler;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.enums.IdType;
-import com.baomidou.mybatisplus.mapper.IMetaObjectHandler;
+import com.baomidou.mybatisplus.mapper.MetaObjectHandler;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
 import com.baomidou.mybatisplus.toolkit.MapUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
@@ -47,11 +48,11 @@ import java.util.*;
  * @Date 2016-03-11
  */
 public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
-
     /**
      * @see org.apache.ibatis.mapping.BoundSql
      */
     private static Field additionalParametersField;
+    private static MetaObjectHandler metaObjectHandler;
 
     static {
         try {
@@ -87,8 +88,22 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
      * @return
      */
     protected static Object processBatch(MappedStatement ms, Object parameterObject) {
+        boolean isFill = false;
+        // 全局配置是否配置填充器
+        if (null == metaObjectHandler) {
+            metaObjectHandler = GlobalConfiguration.getMetaObjectHandler(ms.getConfiguration());
+            if (null == metaObjectHandler) {
+                metaObjectHandler = new DefaultMetaObjectHandler();
+            }
+        }
         /* 只处理插入或更新操作 */
-        if (ms.getSqlCommandType() == SqlCommandType.INSERT || ms.getSqlCommandType() == SqlCommandType.UPDATE) {
+        if (ms.getSqlCommandType() == SqlCommandType.INSERT) {
+            isFill = true;
+        } else if (ms.getSqlCommandType() == SqlCommandType.UPDATE
+                && metaObjectHandler.openUpdateFill()) {
+            isFill = true;
+        }
+        if (isFill) {
             Collection<Object> parameters = getParameters(parameterObject);
             if (null != parameters) {
                 List<Object> objList = new ArrayList<>();
@@ -157,13 +172,12 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
             /* 不处理 */
             return parameterObject;
         }
+        /* 自定义元对象填充控制器 */
         MetaObject metaObject = ms.getConfiguration().newMetaObject(parameterObject);
-         /* 自定义元对象填充控制器 */
-        IMetaObjectHandler metaObjectHandler = GlobalConfiguration.getMetaObjectHandler(ms.getConfiguration());
-        if(ms.getSqlCommandType() == SqlCommandType.INSERT ){
+        if (ms.getSqlCommandType() == SqlCommandType.INSERT) {
             if (tableInfo.getIdType().getKey() >= 2) {
                 Object idValue = metaObject.getValue(tableInfo.getKeyProperty());
-            /* 自定义 ID */
+                /* 自定义 ID */
                 if (StringUtils.checkValNull(idValue)) {
                     if (tableInfo.getIdType() == IdType.ID_WORKER) {
                         metaObject.setValue(tableInfo.getKeyProperty(), IdWorker.getId());
@@ -172,13 +186,13 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                     }
                 }
             }
-            if (null != metaObjectHandler) {
+            // 插入填充
+            if (metaObjectHandler.openInsertFill()) {
                 metaObjectHandler.insertFill(metaObject);
             }
-        } else if(ms.getSqlCommandType() == SqlCommandType.UPDATE ){
-            if (null != metaObjectHandler) {
-                metaObjectHandler.updateFill(metaObject);
-            }
+        } else if (ms.getSqlCommandType() == SqlCommandType.UPDATE && metaObjectHandler.openUpdateFill()) {
+            // 更新填充
+            metaObjectHandler.updateFill(metaObject);
         }
         return metaObject.getOriginalObject();
     }
@@ -235,4 +249,5 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
             }
         }
     }
+
 }

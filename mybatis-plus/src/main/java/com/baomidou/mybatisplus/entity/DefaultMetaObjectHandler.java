@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2014, hubin (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,41 +13,39 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test.mysql;
-
-import org.apache.ibatis.reflection.MetaObject;
+package com.baomidou.mybatisplus.entity;
 
 import com.baomidou.mybatisplus.mapper.MetaObjectHandler;
+import org.apache.ibatis.reflection.MetaObject;
 
 /**
  * <p>
- * 测试，自定义元对象字段填充控制器，实现公共字段自动写入
+ * 默认填充器关闭操作
  * </p>
  *
  * @author hubin
- * @Date 2016-08-28
+ * @since 2017-04-19
  */
-public class MyMetaObjectHandler extends MetaObjectHandler {
+public class DefaultMetaObjectHandler extends MetaObjectHandler {
 
-    /**
-     * 测试 user 表 name 字段为空自动填充
-     */
+    @Override
     public void insertFill(MetaObject metaObject) {
-//		Object name = metaObject.getValue("name");
-//		if (null == name) {
-//			metaObject.setValue("name", "instert-fill");
-//		}
 
-        // 测试下划线
-        Object testType = metaObject.getValue("testType");
-        System.err.println("testType==" + testType);
-        if (null == testType) {
-            metaObject.setValue("testType", 3);
-        }
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
 
     }
+
+    @Override
+    public boolean openInsertFill() {
+        return false;
+    }
+
+    @Override
+    public boolean openUpdateFill() {
+        return false;
+    }
+
 }

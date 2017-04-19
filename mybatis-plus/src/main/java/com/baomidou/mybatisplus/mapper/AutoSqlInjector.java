@@ -661,10 +661,6 @@ public class AutoSqlInjector implements ISqlInjector {
      * <p>
      * SQL 查询条件
      * </p>
-     *
-     * @param table
-     * @param space 是否为空判断
-     * @return
      */
     protected String sqlWhere(TableInfo table) {
         StringBuilder where = new StringBuilder();
