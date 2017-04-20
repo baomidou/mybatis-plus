@@ -210,15 +210,18 @@ public class AutoSqlInjector implements ISqlInjector {
                 keyProperty = table.getKeyProperty();
                 keyColumn = table.getKeyColumn();
             } else {
-				/* 用户输入自定义ID */
-                fieldBuilder.append(table.getKeyColumn()).append(",");
-                if (StringUtils.isNotEmpty(table.getKeySequence())) {
-                    // Oracle Sequence
-                    placeholderBuilder.append(table.getKeySequence()).append(",");
-                } else {
+            	if(null != table.getKeySequence()){
+            		keyGenerator = TableInfoHelper.genKeyGenerator(table, builderAssistant, sqlMethod.getMethod(), languageDriver);
+                	keyProperty = table.getKeyProperty();
+                    keyColumn = table.getKeyColumn();
+                    fieldBuilder.append(table.getKeyColumn()).append(",");
+                    placeholderBuilder.append("#{").append(table.getKeyProperty()).append("},");
+            	}else{
+            		/* 用户输入自定义ID */
+                    fieldBuilder.append(table.getKeyColumn()).append(",");
                     // 正常自定义主键策略
                     placeholderBuilder.append("#{").append(table.getKeyProperty()).append("},");
-                }
+            	}
             }
         }
 

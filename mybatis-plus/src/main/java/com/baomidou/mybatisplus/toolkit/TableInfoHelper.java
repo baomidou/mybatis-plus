@@ -23,17 +23,28 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.ibatis.executor.keygen.KeyGenerator;
+import org.apache.ibatis.executor.keygen.NoKeyGenerator;
+import org.apache.ibatis.executor.keygen.SelectKeyGenerator;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ResultSetType;
+import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.mapping.SqlSource;
+import org.apache.ibatis.mapping.StatementType;
+import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 
+import com.baomidou.mybatisplus.annotations.KeySequence;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.entity.TableFieldInfo;
 import com.baomidou.mybatisplus.entity.TableInfo;
+import com.baomidou.mybatisplus.enums.DBType;
 import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.SqlRunner;
@@ -112,6 +123,13 @@ public class TableInfoHelper {
             }
         }
         tableInfo.setTableName(tableName);
+        
+        /* Oracle 主键支持 */
+        KeySequence keySequence = clazz.getAnnotation(KeySequence.class);
+        if(keySequence != null){
+        	tableInfo.setKeySequence(keySequence);
+        }
+        
         /* 表结果集映射 */
         if (table != null && StringUtils.isNotEmpty(table.resultMap())) {
             tableInfo.setResultMap(table.resultMap());
@@ -197,16 +215,13 @@ public class TableInfoHelper {
                 /*
                  * 主键策略（ 注解 > 全局 > 默认 ）
 				 */
-                if(StringUtils.isNotEmpty(tableId.sequence())){
-                    tableInfo.setKeySequence(tableId.sequence());
+                // 设置 Sequence 其他策略无效
+                if (IdType.NONE != tableId.type()) {
+                    tableInfo.setIdType(tableId.type());
                 } else {
-                    // 设置 Sequence 其他策略无效
-                    if (IdType.NONE != tableId.type()) {
-                        tableInfo.setIdType(tableId.type());
-                    } else {
-                        tableInfo.setIdType(globalConfig.getIdType());
-                    }
+                    tableInfo.setIdType(globalConfig.getIdType());
                 }
+                
                 /* 字段 */
                 String column = field.getName();
                 if (StringUtils.isNotEmpty(tableId.value())) {
@@ -355,5 +370,39 @@ public class TableInfoHelper {
             globalConfig.setSqlSessionFactory(sqlSessionFactory);
         }
     }
+    
+    public static KeyGenerator genKeyGenerator(TableInfo tableInfo,MapperBuilderAssistant builderAssistant,String baseStatementId, LanguageDriver languageDriver){
+		DBType dbType = GlobalConfiguration.getDbType(builderAssistant.getConfiguration());
+		if(dbType != DBType.ORACLE)
+			throw new IllegalArgumentException("目前仅支持Oracle序列");
+		String id = baseStatementId + SelectKeyGenerator.SELECT_KEY_SUFFIX;
+        Class<?> resultTypeClass = tableInfo.getKeySequence().idClazz();
+        Class<?> parameterTypeClass = null;
+        StatementType statementType = StatementType.PREPARED;
+        String keyProperty = tableInfo.getKeyProperty();
+        String keyColumn = tableInfo.getKeyColumn();
+        boolean executeBefore = true;
+        boolean useCache = false;
+        KeyGenerator keyGenerator = new NoKeyGenerator();
+        Integer fetchSize = null;
+        Integer timeout = null;
+        boolean flushCache = false;
+        String parameterMap = null;
+        String resultMap = null;
+        ResultSetType resultSetTypeEnum = null;
+        String sql = null;
+        if(dbType == DBType.ORACLE)
+        	sql = "select "+tableInfo.getKeySequence().value()+".nextval from dual";
+        SqlSource sqlSource = languageDriver.createSqlSource(builderAssistant.getConfiguration(), sql.trim(), null);
+        SqlCommandType sqlCommandType = SqlCommandType.SELECT;
+        builderAssistant.addMappedStatement(id, sqlSource, statementType, sqlCommandType, fetchSize, timeout, parameterMap,
+                parameterTypeClass, resultMap, resultTypeClass, resultSetTypeEnum, flushCache, useCache, false, keyGenerator,
+                keyProperty, keyColumn, null, languageDriver, null);
+        id = builderAssistant.applyCurrentNamespace(id, false);
+        MappedStatement keyStatement = builderAssistant.getConfiguration().getMappedStatement(id, false);
+        SelectKeyGenerator answer = new SelectKeyGenerator(keyStatement, executeBefore);
+        builderAssistant.getConfiguration().addKeyGenerator(id, answer);
+        return answer;
+	}
 
 }

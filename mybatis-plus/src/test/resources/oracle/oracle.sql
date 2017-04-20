@@ -20,3 +20,22 @@ alter table TEST_USER
     minextents 1
     maxextents unlimited
   );
+
+create table TEST_SEQUSER
+(
+  id        NUMBER(10),
+  name      VARCHAR2(100),
+  age       NUMBER,
+  test_type NUMBER
+);
+
+alter table TEST_SEQUSER
+  add constraint PK_TEST_SEQUSER primary key (ID);
+  
+create sequence SEQ_TEST
+minvalue 1
+maxvalue 999999999999999999999999999
+start with 1
+increment by 1
+cache 20;
+  
