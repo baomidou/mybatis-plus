@@ -59,10 +59,6 @@ public class GlobalConfiguration implements Cloneable {
      * 默认参数
      */
     public static final GlobalConfiguration DEFAULT = new GlobalConfiguration();
-    /**
-     * 逻辑删除默认值
-     */
-    public static final String LOGIC_DELETE_DEFAULT_VALUE = "1";
     // 逻辑删除全局值
     private String logicDeleteValue = null;
     // 逻辑未删除全局值
@@ -80,7 +76,7 @@ public class GlobalConfiguration implements Cloneable {
     // SQL注入器
     private ISqlInjector sqlInjector;
     // 元对象字段填充控制器
-    private MetaObjectHandler metaObjectHandler = null;
+    private MetaObjectHandler metaObjectHandler = new DefaultMetaObjectHandler();
     // 字段验证策略
     private FieldStrategy fieldStrategy = FieldStrategy.NOT_NULL;
     // 是否刷新mapper

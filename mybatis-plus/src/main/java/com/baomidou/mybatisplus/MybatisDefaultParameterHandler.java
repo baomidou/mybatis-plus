@@ -52,7 +52,6 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
      * @see org.apache.ibatis.mapping.BoundSql
      */
     private static Field additionalParametersField;
-    private static MetaObjectHandler metaObjectHandler;
 
     static {
         try {
@@ -90,12 +89,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
     protected static Object processBatch(MappedStatement ms, Object parameterObject) {
         boolean isFill = false;
         // 全局配置是否配置填充器
-        if (null == metaObjectHandler) {
-            metaObjectHandler = GlobalConfiguration.getMetaObjectHandler(ms.getConfiguration());
-            if (null == metaObjectHandler) {
-                metaObjectHandler = new DefaultMetaObjectHandler();
-            }
-        }
+        MetaObjectHandler metaObjectHandler = GlobalConfiguration.getMetaObjectHandler(ms.getConfiguration());
         /* 只处理插入或更新操作 */
         if (ms.getSqlCommandType() == SqlCommandType.INSERT) {
             isFill = true;
@@ -110,7 +104,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                 for (Object parameter : parameters) {
                     TableInfo tableInfo = TableInfoHelper.getTableInfo(parameter.getClass());
                     if (null != tableInfo) {
-                        objList.add(populateKeys(tableInfo, ms, parameter));
+                        objList.add(populateKeys(metaObjectHandler, tableInfo, ms, parameter));
                     } else {
                         /*
                          * 非表映射类不处理
@@ -121,7 +115,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                 return objList;
             } else {
                 TableInfo tableInfo = TableInfoHelper.getTableInfo(parameterObject.getClass());
-                return populateKeys(tableInfo, ms, parameterObject);
+                return populateKeys(metaObjectHandler, tableInfo, ms, parameterObject);
             }
         }
         return parameterObject;
@@ -162,12 +156,14 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
      * 自定义元对象填充控制器
      * </p>
      *
-     * @param tableInfo       数据库表反射信息
-     * @param ms              MappedStatement
-     * @param parameterObject 插入数据库对象
+     * @param metaObjectHandler 元数据填充处理器
+     * @param tableInfo         数据库表反射信息
+     * @param ms                MappedStatement
+     * @param parameterObject   插入数据库对象
      * @return Object
      */
-    protected static Object populateKeys(TableInfo tableInfo, MappedStatement ms, Object parameterObject) {
+    protected static Object populateKeys(MetaObjectHandler metaObjectHandler, TableInfo tableInfo,
+                                         MappedStatement ms, Object parameterObject) {
         if (null == tableInfo || StringUtils.isEmpty(tableInfo.getKeyProperty()) || null == tableInfo.getIdType()) {
             /* 不处理 */
             return parameterObject;
