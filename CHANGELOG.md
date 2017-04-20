@@ -1,12 +1,13 @@
 # CHANGELOG
 
 ## [v2.0.6] 2017.04.20
+- 新增 逻辑删除
+- 新增 Oracle Sequence
+- 新增 jdk1.8 时间类型
 - 完善支持乐观锁
-- 支持逻辑删除
 - 完善字段填充器，支持更新填充
 - 升级 mybatis 依赖为 3.4.4
 - 代码调整优化，支持 wrapper limit 等逻辑
-- 新增 jdk1.8 时间类型
 - 修复 Id 策略 auto bug ，生成器 bug 其他
 
 
