@@ -256,6 +256,7 @@ public class UserMapperTest {
         System.err.println("\n------------------selectByMap-----满足 map 条件的数据----");
         Map<String, Object> cm = new HashMap<>();
         cm.put("test_type", 1);
+        cm.put("1", 1);
         List<User> ul1 = userMapper.selectByMap(cm);
         for (User anUl1 : ul1) {
             print(anUl1);
