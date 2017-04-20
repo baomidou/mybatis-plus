@@ -159,9 +159,9 @@ public class EntityWrapperTest {
                 .andNew("new=xx").like("hhh", "ddd").andNew("pwd=11").isNotNull("n1,n2").isNull("n3").groupBy("x1")
                 .groupBy("x2,x3").having("x1=11").having("x3=433").orderBy("dd").orderBy("d1,d2");
         System.out.println(ew.toString());
-        Assert.assertEquals("AND (name=? AND id=1) \n" + "OR (status=? OR status=1 AND nlike = ?) \n"
-                + "AND (new=xx AND hhh = ?) \n" + "AND (pwd=11 AND n1 IS NOT NULL AND n2 IS NOT NULL AND n3 IS NULL)\n"
-                + "GROUP BY x1, x2,x3\n" + "HAVING (x1=11 AND x3=433)\n" + "ORDER BY dd, d1,d2", ew.toString());
+        Assert.assertEquals("AND (name=? AND id=1) \n" + "OR (status=? OR status=1 AND nlike NOT LIKE ?) \n"
+                + "AND (new=xx AND hhh LIKE ?) \n" + "AND (pwd=11 AND n1 IS NOT NULL AND n2 IS NOT NULL AND n3 IS NULL)\n"
+                + "GROUP BY x1, x2,x3\n" + "HAVING (x1=11 AND x3=433)\n" + "ORDER BY dd AND d1,d2", ew.toString());
     }
 
     @Test
@@ -319,7 +319,7 @@ public class EntityWrapperTest {
         String sqlPart = Condition.create().like("default", "default", SqlLike.DEFAULT).like("left", "left", SqlLike.LEFT)
                 .like("right", "right", SqlLike.RIGHT).toString();
         System.out.println("sql ==> " + sqlPart);
-        Assert.assertEquals("WHERE (default = ? AND left = ? AND right = ?)", sqlPart);
+        Assert.assertEquals("WHERE (default LIKE ? AND left LIKE ? AND right LIKE ?)", sqlPart);
     }
 
     /**
