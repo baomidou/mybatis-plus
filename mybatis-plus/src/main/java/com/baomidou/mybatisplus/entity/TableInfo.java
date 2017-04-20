@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.apache.ibatis.session.Configuration;
 
+import com.baomidou.mybatisplus.annotations.KeySequence;
 import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 
@@ -69,7 +70,7 @@ public class TableInfo {
      * 表主键ID Sequence
      * </p>
      */
-    private String keySequence;
+    private KeySequence keySequence;
     /**
      * 表字段信息列表
      */
@@ -153,11 +154,11 @@ public class TableInfo {
         this.keyColumn = keyColumn;
     }
 
-    public String getKeySequence() {
+    public KeySequence getKeySequence() {
         return keySequence;
     }
 
-    public void setKeySequence(String keySequence) {
+    public void setKeySequence(KeySequence keySequence) {
         this.keySequence = keySequence;
     }
 

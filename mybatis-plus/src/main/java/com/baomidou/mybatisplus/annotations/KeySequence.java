@@ -20,33 +20,26 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.baomidou.mybatisplus.enums.IdType;
-
 /**
  * <p>
- * 表主键标识
+ * 序列主键策略
+ * oracle
  * </p>
  *
- * @author hubin
- * @since 2016-01-23
+ * @author zashitou
+ * @since 2017.4.20
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface TableId {
+@Target(ElementType.TYPE)
+public @interface KeySequence {
 
     /*
      * <p>
-     * 字段值（驼峰命名方式，该值可无）
+     * 实体对应的表名
      * </p>
      */
-    String value() default "";
-
-    /*
-     * <p>
-     * 主键ID
-     * </p>
-     * {@link IdType}
-     */
-    IdType type() default IdType.NONE;
+    String value();
+    
+    Class idClazz() default Long.class;
 
 }

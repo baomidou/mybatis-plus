@@ -95,6 +95,7 @@
      | -->
     <mappers>
         <mapper class="com.baomidou.mybatisplus.test.oracle.TestUserMapper" />
+        <mapper class="com.baomidou.mybatisplus.test.oracle.TestSequserMapper" />
         <mapper resource="oracle/TestUserMapper.xml"/>
     </mappers>
 </configuration>
