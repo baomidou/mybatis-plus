@@ -282,7 +282,7 @@ public class LogicSqlInjector extends AutoSqlInjector {
 			where.append("\n<if test=\"cm!=null and !cm.isEmpty\">");
 			where.append("\n<foreach collection=\"cm.keys\" item=\"k\" separator=\"AND\">");
 			where.append("\n<if test=\"cm[k] != null\">");
-			where.append(SqlReservedWords.convert(getGlobalConfig(), "${k}")).append(" = #{cm[${k}]}");
+			where.append(SqlReservedWords.convert(getGlobalConfig(), "\n${k}")).append(" = #{cm[${k}]}");
 			where.append("</if>");
 			where.append("\n</foreach>");
 			where.append("\n</if>");
