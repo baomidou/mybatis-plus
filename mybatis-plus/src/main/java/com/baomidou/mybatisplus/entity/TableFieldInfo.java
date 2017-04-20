@@ -131,22 +131,20 @@ public class TableFieldInfo {
      * @param field        字段属性对象
      */
     private boolean initLogicDelete(GlobalConfiguration globalConfig, Field field) {
-        String deleteValue = globalConfig.getLogicDeleteValue();
-        if (null == deleteValue) {
-            /* 获取注解属性，逻辑处理字段 */
-            TableLogic tableLogic = field.getAnnotation(TableLogic.class);
-            if (null != tableLogic) {
-            	if (StringUtils.isNotEmpty(tableLogic.value())) {
-            		this.logicNotDeleteValue = tableLogic.value();
-            	} else {
-            		this.logicNotDeleteValue = globalConfig.getLogicNotDeleteValue();
-            	}
-                if (StringUtils.isNotEmpty(tableLogic.delval())) {
-                    deleteValue = tableLogic.delval();
-                }
-                this.logicDeleteValue = deleteValue;
-                return true;
+        /* 获取注解属性，逻辑处理字段 */
+        TableLogic tableLogic = field.getAnnotation(TableLogic.class);
+        if (null != tableLogic) {
+            if (StringUtils.isNotEmpty(tableLogic.value())) {
+                this.logicNotDeleteValue = tableLogic.value();
+            } else {
+                this.logicNotDeleteValue = globalConfig.getLogicNotDeleteValue();
             }
+            if (StringUtils.isNotEmpty(tableLogic.delval())) {
+                this.logicDeleteValue = tableLogic.delval();
+            } else {
+                this.logicDeleteValue = globalConfig.getLogicDeleteValue();
+            }
+            return true;
         }
         return false;
     }
