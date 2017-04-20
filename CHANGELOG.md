@@ -7,7 +7,7 @@
 - 升级 mybatis 依赖为 3.4.4
 - 代码调整优化，支持 wrapper limit 等逻辑
 - 新增 jdk1.8 时间类型
-- 修复生成器 bug 其他
+- 修复 Id 策略 auto bug ，生成器 bug 其他
 
 
 ## [v2.0.5] 2017.03.25
