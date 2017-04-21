@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.annotations;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -31,15 +32,21 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
+@Inherited
 public @interface KeySequence {
 
     /*
      * <p>
-     * 实体对应的表名
+     * 序列名
      * </p>
      */
     String value();
     
+    /*
+     * <p>
+     * id的类型
+     * </p>
+     */
     Class idClazz() default Long.class;
 
 }

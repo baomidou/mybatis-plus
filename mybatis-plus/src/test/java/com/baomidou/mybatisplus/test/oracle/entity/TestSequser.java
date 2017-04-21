@@ -12,8 +12,8 @@ import com.baomidou.mybatisplus.enums.IdType;
  * 用户表
  */
 @TableName("TEST_SEQUSER")
-@KeySequence("SEQ_TEST")
-public class TestSequser implements Serializable {
+//@KeySequence("SEQ_TEST")
+public class TestSequser  extends BaseTestEntity implements Serializable{
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
@@ -21,8 +21,8 @@ public class TestSequser implements Serializable {
     /**
      * 主键ID
      */
-    @TableId(value = "ID")
-    private Long id;
+   // @TableId(value = "ID")
+   // private Long id;
 
     /**
      * 名称
@@ -51,13 +51,13 @@ public class TestSequser implements Serializable {
     }
 
     
-	public Long getId() {
-		return id;
-	}
+	//public Long getId() {
+	//	return id;
+	//}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+	//public void setId(Long id) {
+	//	this.id = id;
+	//}
 
 	public String getName() {
 		return name;

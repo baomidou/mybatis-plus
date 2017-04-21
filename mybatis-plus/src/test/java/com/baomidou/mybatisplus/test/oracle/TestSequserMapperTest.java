@@ -40,7 +40,7 @@ public class TestSequserMapperTest {
 
     /**
      *
-     * RUN 测试（ 更多查看 MySql 测试类 ）
+     * Test Oracle Sequence
      *
      */
     public static void main(String[] args) {
