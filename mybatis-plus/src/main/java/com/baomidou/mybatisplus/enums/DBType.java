@@ -31,7 +31,7 @@ public enum DBType {
     /**
      * ORACLE
      */
-    ORACLE("oracle", "", "Oracle数据库"),
+    ORACLE("oracle", null, "Oracle数据库"),
     /**
      * DB2
      */
@@ -39,11 +39,11 @@ public enum DBType {
     /**
      * H2
      */
-    H2("h2", "", "H2数据库"),
+    H2("h2", null, "H2数据库"),
     /**
      * HSQL
      */
-    HSQL("hsql", "", "HSQL数据库"),
+    HSQL("hsql", null, "HSQL数据库"),
     /**
      * SQLITE
      */
@@ -63,7 +63,7 @@ public enum DBType {
     /**
      * UNKONWN DB
      */
-    OTHER("other", "", "其他数据库");
+    OTHER("other", null, "其他数据库");
 
     private final String db;
 

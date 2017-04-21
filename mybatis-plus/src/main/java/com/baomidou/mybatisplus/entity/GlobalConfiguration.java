@@ -362,11 +362,11 @@ public class GlobalConfiguration implements Cloneable {
     }
 
 	public String getIdentifierQuote() {
-		if (StringUtils.isEmpty(identifierQuote)) {
-			return dbType.getQuote();
-		}
-		return identifierQuote;
-	}
+        if (null == identifierQuote) {
+            return dbType.getQuote();
+        }
+        return identifierQuote;
+    }
 
     public void setIdentifierQuote(String identifierQuote) {
         this.identifierQuote = identifierQuote;
