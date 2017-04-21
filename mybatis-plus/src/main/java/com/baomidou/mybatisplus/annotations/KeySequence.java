@@ -16,37 +16,37 @@
 package com.baomidou.mybatisplus.annotations;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.baomidou.mybatisplus.enums.IdType;
-
 /**
  * <p>
- * 表主键标识
+ * 序列主键策略
+ * oracle
  * </p>
  *
- * @author hubin
- * @since 2016-01-23
+ * @author zashitou
+ * @since 2017.4.20
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface TableId {
+@Target(ElementType.TYPE)
+@Inherited
+public @interface KeySequence {
 
     /*
      * <p>
-     * 字段值（驼峰命名方式，该值可无）
+     * 序列名
      * </p>
      */
-    String value() default "";
-
+    String value();
+    
     /*
      * <p>
-     * 主键ID
+     * id的类型
      * </p>
-     * {@link IdType}
      */
-    IdType type() default IdType.NONE;
+    Class idClazz() default Long.class;
 
 }
