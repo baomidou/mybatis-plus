@@ -15,24 +15,42 @@
  */
 package com.baomidou.mybatisplus;
 
-import com.baomidou.mybatisplus.entity.GlobalConfiguration;
-import com.baomidou.mybatisplus.mapper.BaseMapper;
-import org.apache.ibatis.builder.*;
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import org.apache.ibatis.builder.BaseBuilder;
+import org.apache.ibatis.builder.BuilderException;
+import org.apache.ibatis.builder.CacheRefResolver;
+import org.apache.ibatis.builder.IncompleteElementException;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.ibatis.builder.ResultMapResolver;
 import org.apache.ibatis.builder.xml.XMLMapperEntityResolver;
 import org.apache.ibatis.builder.xml.XMLStatementBuilder;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.io.Resources;
-import org.apache.ibatis.mapping.*;
+import org.apache.ibatis.mapping.Discriminator;
+import org.apache.ibatis.mapping.ParameterMapping;
+import org.apache.ibatis.mapping.ParameterMode;
+import org.apache.ibatis.mapping.ResultFlag;
+import org.apache.ibatis.mapping.ResultMap;
+import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.parsing.XNode;
 import org.apache.ibatis.parsing.XPathParser;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 
-import java.io.InputStream;
-import java.io.Reader;
-import java.util.*;
+import com.baomidou.mybatisplus.entity.GlobalConfiguration;
+import com.baomidou.mybatisplus.mapper.BaseMapper;
 
 /**
  * <p>
@@ -212,7 +230,7 @@ public class MybatisXMLMapperBuilder extends BaseBuilder {
             String type = parameterMapNode.getStringAttribute("type");
             Class<?> parameterClass = resolveClass(type);
             List<XNode> parameterNodes = parameterMapNode.evalNodes("parameter");
-            List<ParameterMapping> parameterMappings = new ArrayList<ParameterMapping>();
+            List<ParameterMapping> parameterMappings = new ArrayList<>();
             for (XNode parameterNode : parameterNodes) {
                 String property = parameterNode.getStringAttribute("property");
                 String javaType = parameterNode.getStringAttribute("javaType");
@@ -302,7 +320,7 @@ public class MybatisXMLMapperBuilder extends BaseBuilder {
         @SuppressWarnings("unchecked")
         Class<? extends TypeHandler<?>> typeHandlerClass = (Class<? extends TypeHandler<?>>) resolveClass(typeHandler);
         JdbcType jdbcTypeEnum = resolveJdbcType(jdbcType);
-        Map<String, String> discriminatorMap = new HashMap<String, String>();
+        Map<String, String> discriminatorMap = new HashMap<>();
         for (XNode caseChild : context.getChildren()) {
             String value = caseChild.getStringAttribute("value");
             String resultMap = caseChild.getStringAttribute("resultMap", processNestedResultMappings(caseChild, resultMappings));

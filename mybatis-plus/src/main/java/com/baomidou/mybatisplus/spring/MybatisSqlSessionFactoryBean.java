@@ -27,8 +27,6 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
-import org.apache.ibatis.builder.xml.XMLConfigBuilder;
-import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.io.VFS;
@@ -94,7 +92,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
     private SqlSessionFactory sqlSessionFactory;
 
     //EnvironmentAware requires spring 3.1
-    private String environment = SqlSessionFactoryBean.class.getSimpleName();
+    private String environment = MybatisSqlSessionFactoryBean.class.getSimpleName();
 
     private boolean failFast;
 

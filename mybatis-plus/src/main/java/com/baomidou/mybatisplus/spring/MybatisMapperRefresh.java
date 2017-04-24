@@ -61,7 +61,7 @@ public class MybatisMapperRefresh implements Runnable {
     /**
      * 记录jar包存在的mapper
      */
-    private static Map<String, List<Resource>> jarMapper = new HashMap<>();
+    private static final Map<String, List<Resource>> jarMapper = new HashMap<>();
     private SqlSessionFactory sqlSessionFactory;
     private Resource[] mapperLocations;
     private Long beforeTime = 0L;
