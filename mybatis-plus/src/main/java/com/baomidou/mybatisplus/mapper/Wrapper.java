@@ -52,15 +52,17 @@ public abstract class Wrapper<T> implements Serializable {
     private static final String MP_GENERAL_PARAMNAME = "MPGENVAL";
 
     private static final String DEFAULT_PARAM_ALIAS = "ew";
+    /**
+     * 实现了TSQL语法的SQL实体
+     */
+    protected final SqlPlus sql = new SqlPlus();
+    private final Map<String, Object> paramNameValuePairs = new HashMap<>(4);
+    private final AtomicInteger paramNameSeq = new AtomicInteger(0);
     protected String paramAlias = null;
     /**
      * SQL 查询字段内容，例如：id,name,age
      */
     protected String sqlSelect = null;
-    /**
-     * 实现了TSQL语法的SQL实体
-     */
-    protected final SqlPlus sql = new SqlPlus();
     /**
      * 自定义是否输出sql为 WHERE OR AND OR OR
      */
@@ -69,8 +71,6 @@ public abstract class Wrapper<T> implements Serializable {
      * 拼接WHERE后应该是AND还是OR
      */
     protected String AND_OR = "AND";
-    private final Map<String, Object> paramNameValuePairs = new HashMap<>(4);
-    private final AtomicInteger paramNameSeq = new AtomicInteger(0);
 
     /**
      * 兼容EntityWrapper

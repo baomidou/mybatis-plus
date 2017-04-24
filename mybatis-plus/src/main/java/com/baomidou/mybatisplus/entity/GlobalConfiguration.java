@@ -36,8 +36,8 @@ import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.AutoSqlInjector;
-import com.baomidou.mybatisplus.mapper.MetaObjectHandler;
 import com.baomidou.mybatisplus.mapper.ISqlInjector;
+import com.baomidou.mybatisplus.mapper.MetaObjectHandler;
 import com.baomidou.mybatisplus.toolkit.IOUtils;
 import com.baomidou.mybatisplus.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
@@ -53,20 +53,21 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
  * @since 2016-12-06
  */
 public class GlobalConfiguration implements Cloneable {
-    // 日志
-    private static final Log logger = LogFactory.getLog(GlobalConfiguration.class);
+
     /**
      * 默认参数
      */
     public static final GlobalConfiguration DEFAULT = new GlobalConfiguration();
-    // 逻辑删除全局值
-    private String logicDeleteValue = null;
-    // 逻辑未删除全局值
-    private String logicNotDeleteValue = null;
+    // 日志
+    private static final Log logger = LogFactory.getLog(GlobalConfiguration.class);
     /**
      * 缓存全局信息
      */
     private static final Map<String, GlobalConfiguration> GLOBAL_CONFIG = new ConcurrentHashMap<>();
+    // 逻辑删除全局值
+    private String logicDeleteValue = null;
+    // 逻辑未删除全局值
+    private String logicNotDeleteValue = null;
     // 数据库类型（默认 MySql）
     private DBType dbType = DBType.MYSQL;
     // 主键类型（默认 ID_WORKER）
@@ -176,23 +177,7 @@ public class GlobalConfiguration implements Cloneable {
         return cache;
     }
 
-    public String getLogicDeleteValue() {
-        return logicDeleteValue;
-    }
-
-    public void setLogicDeleteValue(String logicDeleteValue) {
-        this.logicDeleteValue = logicDeleteValue;
-    }
-
-    public String getLogicNotDeleteValue() {
-		return logicNotDeleteValue;
-	}
-
-	public void setLogicNotDeleteValue(String logicNotDeleteValue) {
-		this.logicNotDeleteValue = logicNotDeleteValue;
-	}
-
-	public static DBType getDbType(Configuration configuration) {
+    public static DBType getDbType(Configuration configuration) {
         return getGlobalConfig(configuration).getDbType();
     }
 
@@ -235,9 +220,9 @@ public class GlobalConfiguration implements Cloneable {
         return getGlobalConfig(configuration).getMapperRegistryCache();
     }
 
-	public static String getIdentifierQuote(Configuration configuration) {
-		return getGlobalConfig(configuration).getIdentifierQuote();
-	}
+    public static String getIdentifierQuote(Configuration configuration) {
+        return getGlobalConfig(configuration).getIdentifierQuote();
+    }
 
     public static SqlSession getSqlSession(Configuration configuration) {
         return getGlobalConfig(configuration).getSqlSession();
@@ -265,6 +250,22 @@ public class GlobalConfiguration implements Cloneable {
         } finally {
             IOUtils.closeQuietly(connection);
         }
+    }
+
+    public String getLogicDeleteValue() {
+        return logicDeleteValue;
+    }
+
+    public void setLogicDeleteValue(String logicDeleteValue) {
+        this.logicDeleteValue = logicDeleteValue;
+    }
+
+    public String getLogicNotDeleteValue() {
+        return logicNotDeleteValue;
+    }
+
+    public void setLogicNotDeleteValue(String logicNotDeleteValue) {
+        this.logicNotDeleteValue = logicNotDeleteValue;
     }
 
     public DBType getDbType() {
@@ -361,7 +362,7 @@ public class GlobalConfiguration implements Cloneable {
         this.isCapitalMode = isCapitalMode;
     }
 
-	public String getIdentifierQuote() {
+    public String getIdentifierQuote() {
         if (null == identifierQuote) {
             return dbType.getQuote();
         }

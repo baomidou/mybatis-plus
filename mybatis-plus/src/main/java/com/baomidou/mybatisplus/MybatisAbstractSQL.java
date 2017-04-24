@@ -143,13 +143,14 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
      * SQL条件类
      */
     private static class SQLCondition implements Serializable {
-        int[] limit = null;
+
         final List<String> where = new ArrayList<>();
         final List<String> having = new ArrayList<>();
         final List<String> groupBy = new ArrayList<>();
         final List<String> orderBy = new ArrayList<>();
-        List<String> lastList = new ArrayList<>();
         final List<String> andOr = new ArrayList<>();
+        int[] limit = null;
+        List<String> lastList = new ArrayList<>();
 
         public SQLCondition() {
             andOr.add(AND);

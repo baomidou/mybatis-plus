@@ -49,6 +49,14 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
 public class ConfigBuilder {
 
     /**
+     * 模板路径配置信息
+     */
+    private final TemplateConfig template;
+    /**
+     * 数据库配置
+     */
+    private final DataSourceConfig dataSourceConfig;
+    /**
      * SQL连接
      */
     private Connection connection;
@@ -68,7 +76,6 @@ public class ConfigBuilder {
      * 数据库表信息
      */
     private List<TableInfo> tableInfoList;
-
     /**
      * 包配置详情
      */
@@ -77,17 +84,6 @@ public class ConfigBuilder {
      * 路径配置信息
      */
     private Map<String, String> pathInfo;
-
-    /**
-     * 模板路径配置信息
-     */
-    private final TemplateConfig template;
-
-    /**
-     * 数据库配置
-     */
-    private final DataSourceConfig dataSourceConfig;
-
     /**
      * 策略配置
      */
@@ -399,7 +395,7 @@ public class ConfigBuilder {
                 tableList.removeAll(excludeTableList);
                 includeTableList = tableList;
             }
-            if (!isInclude && !isExclude){
+            if (!isInclude && !isExclude) {
                 includeTableList = tableList;
             }
         } catch (SQLException e) {
@@ -445,11 +441,11 @@ public class ConfigBuilder {
      * @param strategy  命名策略
      * @return 表信息
      */
-    private List<TableField> getListFields(String tableName, NamingStrategy strategy){
+    private List<TableField> getListFields(String tableName, NamingStrategy strategy) {
         boolean haveId = false;
         List<TableField> fieldList = new ArrayList<>();
         try (PreparedStatement pstate = connection.prepareStatement(String.format(querySQL.getTableFieldsSql(), tableName));
-              ResultSet results = pstate.executeQuery()){
+             ResultSet results = pstate.executeQuery()) {
             while (results.next()) {
                 TableField field = new TableField();
                 String key = results.getString(querySQL.getFieldKey());
@@ -477,8 +473,8 @@ public class ConfigBuilder {
                 field.setComment(results.getString(querySQL.getFieldComment()));
                 fieldList.add(field);
             }
-        }catch (SQLException e){
-            System.err.println("SQL Exception："+e.getMessage());
+        } catch (SQLException e) {
+            System.err.println("SQL Exception：" + e.getMessage());
         }
         return fieldList;
     }

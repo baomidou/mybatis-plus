@@ -37,8 +37,8 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  * ActiveRecord 模式 CRUD
  * </p>
  *
- * @author hubin
  * @param <T>
+ * @author hubin
  * @Date 2016-11-06
  */
 @SuppressWarnings({"rawtypes"})
@@ -78,7 +78,7 @@ public abstract class Model<T extends Model> implements Serializable {
             return insert();
         } else {
             /*
-			 * 更新成功直接返回，失败执行插入逻辑
+             * 更新成功直接返回，失败执行插入逻辑
 			 */
             return updateById() || insert();
         }
@@ -89,8 +89,7 @@ public abstract class Model<T extends Model> implements Serializable {
      * 根据 ID 删除
      * </p>
      *
-     * @param id
-     *            主键ID
+     * @param id 主键ID
      * @return
      */
     @Transactional
@@ -118,10 +117,8 @@ public abstract class Model<T extends Model> implements Serializable {
      * 删除记录
      * </p>
      *
-     * @param whereClause
-     *            查询条件
-     * @param args
-     *            查询条件值
+     * @param whereClause 查询条件
+     * @param args        查询条件值
      * @return
      */
     @Transactional
@@ -178,10 +175,8 @@ public abstract class Model<T extends Model> implements Serializable {
      * 执行 SQL 更新
      * </p>
      *
-     * @param whereClause
-     *            查询条件
-     * @param args
-     *            查询条件值
+     * @param whereClause 查询条件
+     * @param args        查询条件值
      * @return
      */
     @Transactional
@@ -223,8 +218,7 @@ public abstract class Model<T extends Model> implements Serializable {
      * 根据 ID 查询
      * </p>
      *
-     * @param id
-     *            主键ID
+     * @param id 主键ID
      * @return
      */
     public T selectById(Serializable id) {
@@ -303,8 +297,7 @@ public abstract class Model<T extends Model> implements Serializable {
      * 翻页查询
      * </p>
      *
-     * @param page
-     *            翻页查询条件
+     * @param page    翻页查询条件
      * @param wrapper
      * @return
      */
@@ -337,10 +330,8 @@ public abstract class Model<T extends Model> implements Serializable {
      * 查询总数
      * </p>
      *
-     * @param whereClause
-     *            查询条件
-     * @param args
-     *            查询条件值
+     * @param whereClause 查询条件
+     * @param args        查询条件值
      * @return
      */
     public int selectCount(String whereClause, Object... args) {

@@ -15,6 +15,30 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
+import org.apache.ibatis.executor.keygen.KeyGenerator;
+import org.apache.ibatis.executor.keygen.NoKeyGenerator;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ResultMap;
+import org.apache.ibatis.mapping.ResultMapping;
+import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.mapping.SqlSource;
+import org.apache.ibatis.mapping.StatementType;
+import org.apache.ibatis.scripting.LanguageDriver;
+import org.apache.ibatis.scripting.defaults.RawSqlSource;
+import org.apache.ibatis.session.Configuration;
+
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.entity.TableFieldInfo;
 import com.baomidou.mybatisplus.entity.TableInfo;
@@ -24,20 +48,6 @@ import com.baomidou.mybatisplus.enums.SqlMethod;
 import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
-import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
-import org.apache.ibatis.executor.keygen.KeyGenerator;
-import org.apache.ibatis.executor.keygen.NoKeyGenerator;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.mapping.*;
-import org.apache.ibatis.scripting.LanguageDriver;
-import org.apache.ibatis.scripting.defaults.RawSqlSource;
-import org.apache.ibatis.session.Configuration;
-
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.*;
 
 /**
  * <p>
@@ -126,7 +136,7 @@ public class AutoSqlInjector implements ISqlInjector {
         /* 插入 */
         this.injectInsertOneSql(true, mapperClass, modelClass, table);
         this.injectInsertOneSql(false, mapperClass, modelClass, table);
-		/* 删除 */
+        /* 删除 */
         this.injectDeleteSql(mapperClass, modelClass, table);
         this.injectDeleteByMapSql(mapperClass, table);
 		/* 修改 */
@@ -210,18 +220,18 @@ public class AutoSqlInjector implements ISqlInjector {
                 keyProperty = table.getKeyProperty();
                 keyColumn = table.getKeyColumn();
             } else {
-            	if(null != table.getKeySequence()){
-            		keyGenerator = TableInfoHelper.genKeyGenerator(table, builderAssistant, sqlMethod.getMethod(), languageDriver);
-                	keyProperty = table.getKeyProperty();
+                if (null != table.getKeySequence()) {
+                    keyGenerator = TableInfoHelper.genKeyGenerator(table, builderAssistant, sqlMethod.getMethod(), languageDriver);
+                    keyProperty = table.getKeyProperty();
                     keyColumn = table.getKeyColumn();
                     fieldBuilder.append(table.getKeyColumn()).append(",");
                     placeholderBuilder.append("#{").append(table.getKeyProperty()).append("},");
-            	}else{
+                } else {
             		/* 用户输入自定义ID */
                     fieldBuilder.append(table.getKeyColumn()).append(",");
                     // 正常自定义主键策略
                     placeholderBuilder.append("#{").append(table.getKeyProperty()).append("},");
-            	}
+                }
             }
         }
 
@@ -958,13 +968,13 @@ public class AutoSqlInjector implements ISqlInjector {
         createUpdateMappedStatement(SqlRunner.DELETE, sqlSource, SqlCommandType.DELETE);
     }
 
-	/**
-	 * <p>
-	 * 全局配置
-	 * </p>
-	 */
-	protected GlobalConfiguration getGlobalConfig() {
-		return GlobalConfiguration.getGlobalConfig(configuration);
-	}
-	
+    /**
+     * <p>
+     * 全局配置
+     * </p>
+     */
+    protected GlobalConfiguration getGlobalConfig() {
+        return GlobalConfiguration.getGlobalConfig(configuration);
+    }
+
 }

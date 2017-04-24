@@ -105,7 +105,7 @@ public class MybatisMapperRefresh implements Runnable {
     public void run() {
         final GlobalConfiguration globalConfig = GlobalConfiguration.getGlobalConfig(configuration);
         /*
-		 * 启动 XML 热加载
+         * 启动 XML 热加载
 		 */
         if (enabled) {
             beforeTime = SystemClock.now();
@@ -210,8 +210,8 @@ public class MybatisMapperRefresh implements Runnable {
             xmlMapperBuilder.parse();
             logger.debug("refresh: '" + resource + "', success!");
         } catch (IOException e) {
-            logger.error("Refresh IOException :"+e.getMessage());
-        }finally {
+            logger.error("Refresh IOException :" + e.getMessage());
+        } finally {
             ErrorContext.instance().reset();
         }
     }

@@ -61,6 +61,19 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
      * @see org.apache.ibatis.mapping.BoundSql
      */
     private static final Field additionalParametersField = getAdditionalParametersField();
+    private final TypeHandlerRegistry typeHandlerRegistry;
+    private final MappedStatement mappedStatement;
+    private final Object parameterObject;
+    private BoundSql boundSql;
+    private Configuration configuration;
+    public MybatisDefaultParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
+        super(mappedStatement, processBatch(mappedStatement, parameterObject), boundSql);
+        this.mappedStatement = mappedStatement;
+        this.configuration = mappedStatement.getConfiguration();
+        this.typeHandlerRegistry = mappedStatement.getConfiguration().getTypeHandlerRegistry();
+        this.parameterObject = parameterObject;
+        this.boundSql = boundSql;
+    }
 
     /**
      * 反射获取BoundSql中additionalParameters参数字段
@@ -77,21 +90,6 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
             // ignored, Because it will never happen.
         }
         return null;
-    }
-
-    private final TypeHandlerRegistry typeHandlerRegistry;
-    private final MappedStatement mappedStatement;
-    private final Object parameterObject;
-    private BoundSql boundSql;
-    private Configuration configuration;
-
-    public MybatisDefaultParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
-        super(mappedStatement, processBatch(mappedStatement, parameterObject), boundSql);
-        this.mappedStatement = mappedStatement;
-        this.configuration = mappedStatement.getConfiguration();
-        this.typeHandlerRegistry = mappedStatement.getConfiguration().getTypeHandlerRegistry();
-        this.parameterObject = parameterObject;
-        this.boundSql = boundSql;
     }
 
     /**
