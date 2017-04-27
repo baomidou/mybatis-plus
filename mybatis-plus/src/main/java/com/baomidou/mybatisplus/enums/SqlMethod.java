@@ -27,8 +27,8 @@ public enum SqlMethod {
     /**
      * 插入
      */
-    INSERT_ONE("insert", "插入一条数据", "<script>INSERT INTO %s %s VALUES %s</script>"),
-    INSERT_ONE_ALL_COLUMN("insertAllColumn", "插入一条数据（选择字段， null 字段不插入）", "<script>INSERT INTO %s %s VALUES %s</script>"),
+    INSERT_ONE("insert", "插入一条数据（选择字段， null 字段不插入）", "<script>INSERT INTO %s %s VALUES %s</script>"),
+    INSERT_ONE_ALL_COLUMN("insertAllColumn", "插入一条数据（全部字段）", "<script>INSERT INTO %s %s VALUES %s</script>"),
 
     /**
      * 删除
