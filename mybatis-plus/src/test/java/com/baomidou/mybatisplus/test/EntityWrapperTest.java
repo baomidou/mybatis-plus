@@ -26,6 +26,7 @@ import java.util.TreeSet;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.baomidou.mybatisplus.entity.Column;
 import com.baomidou.mybatisplus.enums.SqlLike;
 import com.baomidou.mybatisplus.mapper.Condition;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
@@ -55,14 +56,14 @@ public class EntityWrapperTest {
     @Test
     public void test() {
         /*
-		 * 无条件测试
+         * 无条件测试
 		 */
         Assert.assertNull(ew.toString());
     }
 
     @Test
     public void test11() {
-		/*
+        /*
 		 * 实体带where ifneed
 		 */
         ew.setEntity(new User(1));
@@ -352,5 +353,19 @@ public class EntityWrapperTest {
         System.err.println("testLimit = " + sqlSegment);
         Assert.assertEquals("WHERE (name=?)\nORDER BY id DESC LIMIT 0, 3 ", sqlSegment);
     }
+
+    /**
+     * 测试 sqlselect
+     */
+    @Test
+    public void testSqlSelect() {
+        EntityWrapper entityWrapper = new EntityWrapper();
+        // entityWrapper.setSqlSelect(Column.create().column("col").as("name"),null,Column.create(),Column.create().as("11"),Column.create().column("col"));
+        entityWrapper.setSqlSelect(Column.create().column("col").as("name"), null, Column.create(), Column.create().as("11"), Column.create().column("col"));
+        System.out.println(entityWrapper.getSqlSelect());
+        Assert.assertEquals("col AS name,col", entityWrapper.getSqlSelect());
+
+    }
+
 
 }
