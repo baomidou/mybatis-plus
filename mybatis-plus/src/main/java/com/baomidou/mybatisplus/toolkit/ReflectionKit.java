@@ -59,7 +59,7 @@ public class ReflectionKit {
     public static String getMethodCapitalize(Field field, final String str) {
         Class<?> fieldType = field.getType();
         // fix #176
-        return StringUtils.concatCapitalize(boolean.class.equals(fieldType) ? "is" : "get", str);
+        return StringUtils.concatCapitalize((Boolean.class.equals(fieldType) || boolean.class.equals(fieldType)) ? "is" : "get", str);
     }
 
     /**
