@@ -43,6 +43,9 @@ public class LogicSqlInjector extends AutoSqlInjector {
 	 */
 	private boolean updateReplaceDelete = true;
 	
+	public LogicSqlInjector() {
+		
+	}
 	
 	public LogicSqlInjector(boolean updateReplaceDelete) {
 		this.updateReplaceDelete = updateReplaceDelete;
