@@ -6,7 +6,7 @@ import ${pkg};
 
 /**
  * <p>
- * ${table.comment}
+ * $!{table.comment}
  * </p>
  *
  * @author ${author}

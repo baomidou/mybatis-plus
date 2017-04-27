@@ -15,8 +15,9 @@
  */
 package com.baomidou.mybatisplus.entity;
 
-import com.baomidou.mybatisplus.mapper.MetaObjectHandler;
 import org.apache.ibatis.reflection.MetaObject;
+
+import com.baomidou.mybatisplus.mapper.MetaObjectHandler;
 
 /**
  * <p>

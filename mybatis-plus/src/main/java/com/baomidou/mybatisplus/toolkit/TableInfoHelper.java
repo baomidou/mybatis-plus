@@ -126,8 +126,8 @@ public class TableInfoHelper {
         
         /* Oracle 主键支持 */
         KeySequence keySequence = clazz.getAnnotation(KeySequence.class);
-        if(keySequence != null){
-        	tableInfo.setKeySequence(keySequence);
+        if (keySequence != null) {
+            tableInfo.setKeySequence(keySequence);
         }
         
         /* 表结果集映射 */
@@ -370,12 +370,12 @@ public class TableInfoHelper {
             globalConfig.setSqlSessionFactory(sqlSessionFactory);
         }
     }
-    
-    public static KeyGenerator genKeyGenerator(TableInfo tableInfo,MapperBuilderAssistant builderAssistant,String baseStatementId, LanguageDriver languageDriver){
-		DBType dbType = GlobalConfiguration.getDbType(builderAssistant.getConfiguration());
-		if(dbType != DBType.ORACLE)
-			throw new IllegalArgumentException("目前仅支持Oracle序列");
-		String id = baseStatementId + SelectKeyGenerator.SELECT_KEY_SUFFIX;
+
+    public static KeyGenerator genKeyGenerator(TableInfo tableInfo, MapperBuilderAssistant builderAssistant, String baseStatementId, LanguageDriver languageDriver) {
+        DBType dbType = GlobalConfiguration.getDbType(builderAssistant.getConfiguration());
+        if (dbType != DBType.ORACLE)
+            throw new IllegalArgumentException("目前仅支持Oracle序列");
+        String id = baseStatementId + SelectKeyGenerator.SELECT_KEY_SUFFIX;
         Class<?> resultTypeClass = tableInfo.getKeySequence().idClazz();
         Class<?> parameterTypeClass = null;
         StatementType statementType = StatementType.PREPARED;
@@ -390,9 +390,8 @@ public class TableInfoHelper {
         String parameterMap = null;
         String resultMap = null;
         ResultSetType resultSetTypeEnum = null;
-        String sql = null;
-        if(dbType == DBType.ORACLE)
-        	sql = "select "+tableInfo.getKeySequence().value()+".nextval from dual";
+        //上面已经判断是ORACLE这里直接获取即可无需再判断
+        String sql = "select " + tableInfo.getKeySequence().value() + ".nextval from dual";
         SqlSource sqlSource = languageDriver.createSqlSource(builderAssistant.getConfiguration(), sql.trim(), null);
         SqlCommandType sqlCommandType = SqlCommandType.SELECT;
         builderAssistant.addMappedStatement(id, sqlSource, statementType, sqlCommandType, fetchSize, timeout, parameterMap,
@@ -403,6 +402,6 @@ public class TableInfoHelper {
         SelectKeyGenerator answer = new SelectKeyGenerator(keyStatement, executeBefore);
         builderAssistant.getConfiguration().addKeyGenerator(id, answer);
         return answer;
-	}
+    }
 
 }

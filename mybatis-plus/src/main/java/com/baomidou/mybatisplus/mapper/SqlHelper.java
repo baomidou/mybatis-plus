@@ -166,7 +166,7 @@ public class SqlHelper {
         if (null == page) {
             return;
         }
-        if (isWrapperNotEmpty(wrapper)) {
+        if (isNotEmptyOfWrapper(wrapper)) {
             if (page.isOpenSort()) {
                 wrapper.orderBy(page.getOrderByField(), page.isAsc());
             }
@@ -180,7 +180,7 @@ public class SqlHelper {
      * @param wrapper
      * @return
      */
-    public static boolean isWrapperEmpty(Wrapper<?> wrapper) {
+    public static boolean isEmptyOfWrapper(Wrapper<?> wrapper) {
         return null == wrapper || Condition.EMPTY.equals(wrapper);
     }
 
@@ -190,7 +190,7 @@ public class SqlHelper {
      * @param wrapper
      * @return
      */
-    public static boolean isWrapperNotEmpty(Wrapper<?> wrapper) {
-        return !isWrapperEmpty(wrapper);
+    public static boolean isNotEmptyOfWrapper(Wrapper<?> wrapper) {
+        return !isEmptyOfWrapper(wrapper);
     }
 }

@@ -168,8 +168,8 @@ public class SqlReservedWords {
 
 	public static String convertQuote(GlobalConfiguration globalConfig, String column) {
 		String identifierQuote = globalConfig.getIdentifierQuote();
-		if (StringUtils.isNotEmpty(identifierQuote)) {
-			return String.format(identifierQuote, column);
+        if (null != identifierQuote) {
+            return String.format(identifierQuote, column);
 		}
 		return column;
 	}

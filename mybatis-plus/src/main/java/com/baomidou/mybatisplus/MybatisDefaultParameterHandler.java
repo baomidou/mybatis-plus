@@ -15,17 +15,21 @@
  */
 package com.baomidou.mybatisplus;
 
-import com.baomidou.mybatisplus.entity.DefaultMetaObjectHandler;
-import com.baomidou.mybatisplus.entity.GlobalConfiguration;
-import com.baomidou.mybatisplus.entity.TableInfo;
-import com.baomidou.mybatisplus.enums.IdType;
-import com.baomidou.mybatisplus.mapper.MetaObjectHandler;
-import com.baomidou.mybatisplus.toolkit.IdWorker;
-import com.baomidou.mybatisplus.toolkit.MapUtils;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import java.lang.reflect.Field;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.executor.ErrorContext;
-import org.apache.ibatis.mapping.*;
+import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ParameterMapping;
+import org.apache.ibatis.mapping.ParameterMode;
+import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.Configuration;
@@ -34,10 +38,14 @@ import org.apache.ibatis.type.TypeException;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
-import java.lang.reflect.Field;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.*;
+import com.baomidou.mybatisplus.entity.GlobalConfiguration;
+import com.baomidou.mybatisplus.entity.TableInfo;
+import com.baomidou.mybatisplus.enums.IdType;
+import com.baomidou.mybatisplus.mapper.MetaObjectHandler;
+import com.baomidou.mybatisplus.toolkit.IdWorker;
+import com.baomidou.mybatisplus.toolkit.MapUtils;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**
  * <p>
@@ -48,26 +56,16 @@ import java.util.*;
  * @Date 2016-03-11
  */
 public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
+
     /**
      * @see org.apache.ibatis.mapping.BoundSql
      */
-    private static Field additionalParametersField;
-
-    static {
-        try {
-            additionalParametersField = BoundSql.class.getDeclaredField("additionalParameters");
-            additionalParametersField.setAccessible(true);
-        } catch (NoSuchFieldException e) {
-            // ignored, Because it will never happen.
-        }
-    }
-
+    private static final Field additionalParametersField = getAdditionalParametersField();
     private final TypeHandlerRegistry typeHandlerRegistry;
     private final MappedStatement mappedStatement;
     private final Object parameterObject;
     private BoundSql boundSql;
     private Configuration configuration;
-
     public MybatisDefaultParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
         super(mappedStatement, processBatch(mappedStatement, parameterObject), boundSql);
         this.mappedStatement = mappedStatement;
@@ -75,6 +73,23 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         this.typeHandlerRegistry = mappedStatement.getConfiguration().getTypeHandlerRegistry();
         this.parameterObject = parameterObject;
         this.boundSql = boundSql;
+    }
+
+    /**
+     * 反射获取BoundSql中additionalParameters参数字段
+     *
+     * @return
+     * @see org.apache.ibatis.mapping.BoundSql
+     */
+    private static Field getAdditionalParametersField() {
+        try {
+            Field additionalParametersField = BoundSql.class.getDeclaredField("additionalParameters");
+            additionalParametersField.setAccessible(true);
+            return additionalParametersField;
+        } catch (NoSuchFieldException e) {
+            // ignored, Because it will never happen.
+        }
+        return null;
     }
 
     /**

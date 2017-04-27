@@ -41,7 +41,7 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
     /**
      * SQL条件
      */
-    private SQLCondition sql = new SQLCondition();
+    private final SQLCondition sql = new SQLCondition();
 
     /**
      * 子类泛型实现
@@ -143,13 +143,14 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
      * SQL条件类
      */
     private static class SQLCondition implements Serializable {
+
+        final List<String> where = new ArrayList<>();
+        final List<String> having = new ArrayList<>();
+        final List<String> groupBy = new ArrayList<>();
+        final List<String> orderBy = new ArrayList<>();
+        final List<String> andOr = new ArrayList<>();
         int[] limit = null;
-        List<String> where = new ArrayList<>();
-        List<String> having = new ArrayList<>();
-        List<String> groupBy = new ArrayList<>();
-        List<String> orderBy = new ArrayList<>();
         List<String> lastList = new ArrayList<>();
-        List<String> andOr = new ArrayList<>();
 
         public SQLCondition() {
             andOr.add(AND);

@@ -15,17 +15,18 @@
  */
 package com.baomidou.mybatisplus;
 
-import com.baomidou.mybatisplus.entity.GlobalConfiguration;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.ibatis.binding.BindingException;
 import org.apache.ibatis.binding.MapperProxyFactory;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 
 /**
  * <p>
@@ -36,7 +37,8 @@ import java.util.Map;
  * @since 2017-04-19
  */
 public class MybatisMapperRegistry extends MapperRegistry {
-    private final Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<Class<?>, MapperProxyFactory<?>>();
+
+    private final Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<>();
     private final Configuration config;
 
     public MybatisMapperRegistry(Configuration config) {
