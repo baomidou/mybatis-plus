@@ -20,8 +20,8 @@ public final class PluginUtils {
      */
     public static Object realTarget(Object target) {
         if (Proxy.isProxyClass(target.getClass())) {
-            MetaObject mo = SystemMetaObject.forObject(target);
-            return realTarget(mo.getValue("h.target"));
+            MetaObject metaObject = SystemMetaObject.forObject(target);
+            return realTarget(metaObject.getValue("h.target"));
         }
         return target;
     }

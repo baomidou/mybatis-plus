@@ -26,7 +26,6 @@
 	</environments>
 
 	<mappers>
-		<mapper class="com.baomidou.mybatisplus.test.plugin.OptimisticLocker.mapper.ShortVersionUserMapper" />
 		<mapper class="com.baomidou.mybatisplus.test.plugin.OptimisticLocker.mapper.IntVersionUserMapper" />
 		<mapper class="com.baomidou.mybatisplus.test.plugin.OptimisticLocker.mapper.LongVersionUserMapper" />
 		<mapper class="com.baomidou.mybatisplus.test.plugin.OptimisticLocker.mapper.DateVersionUserMapper" />

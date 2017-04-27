@@ -9,7 +9,7 @@
 
 	<context:component-scan base-package="com.baomidou.mybatisplus.test.plugins.optimisticLocker" />
 
-	<import resource="classpath:spring/spring-jdbc.xml" />
+	<import resource="classpath:h2/spring-jdbc.xml" />
 
 	<!-- MyBatis SqlSessionFactoryBean 配置 -->
 	<bean id="sqlSessionFactory"
@@ -19,7 +19,6 @@
 			value="com.baomidou.mybatisplus.test.plugins.optimisticLocker.entity" />
 		<property name="plugins">
 			<array>
-				
 				<bean class="com.baomidou.mybatisplus.plugins.OptimisticLockerInterceptor">
 					<property name="properties">
 						<value>
