@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.baomidou.mybatisplus.entity.Column;
 import com.baomidou.mybatisplus.enums.SqlLike;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.toolkit.ArrayUtils;
@@ -91,6 +92,33 @@ public abstract class Wrapper<T> implements Serializable {
     public Wrapper<T> setSqlSelect(String sqlSelect) {
         if (StringUtils.isNotEmpty(sqlSelect)) {
             this.sqlSelect = sqlSelect;
+        }
+        return this;
+    }
+
+    /**
+     * 使用对象封装的setsqlselect
+     *
+     * @param column
+     * @return
+     */
+    public Wrapper<T> setSqlSelect(Column... column) {
+        if (ArrayUtils.isNotEmpty(column)) {
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < column.length; i++) {
+                if (column[i] != null) {
+                    String col = column[i].getColumn();
+                    String as = column[i].getAs();
+                    if (StringUtils.isEmpty(col)) {
+                        continue;
+                    }
+                    builder.append(col).append(as);
+                    if (i < column.length - 1) {
+                        builder.append(",");
+                    }
+                }
+            }
+            this.sqlSelect = builder.toString();
         }
         return this;
     }
