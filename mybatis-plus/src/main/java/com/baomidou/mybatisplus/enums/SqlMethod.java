@@ -27,8 +27,8 @@ public enum SqlMethod {
     /**
      * 插入
      */
-    INSERT_ONE("insert", "插入一条数据", "<script>INSERT INTO %s %s VALUES %s</script>"),
-    INSERT_ONE_ALL_COLUMN("insertAllColumn", "插入一条数据（选择字段， null 字段不插入）", "<script>INSERT INTO %s %s VALUES %s</script>"),
+    INSERT_ONE("insert", "插入一条数据（选择字段插入）", "<script>INSERT INTO %s %s VALUES %s</script>"),
+    INSERT_ONE_ALL_COLUMN("insertAllColumn", "插入一条数据（全部字段插入）", "<script>INSERT INTO %s %s VALUES %s</script>"),
 
     /**
      * 删除
@@ -49,8 +49,8 @@ public enum SqlMethod {
     /**
      * 修改
      */
-    UPDATE_BY_ID("updateById", "根据ID 修改数据", "<script>UPDATE %s %s WHERE %s=#{%s}</script>"),
-    UPDATE_ALL_COLUMN_BY_ID("updateAllColumnById", "根据ID 选择修改数据", "<script>UPDATE %s %s WHERE %s=#{%s}</script>"),
+    UPDATE_BY_ID("updateById", "根据ID 选择修改数据", "<script>UPDATE %s %s WHERE %s=#{%s}</script>"),
+    UPDATE_ALL_COLUMN_BY_ID("updateAllColumnById", "根据ID 修改全部数据", "<script>UPDATE %s %s WHERE %s=#{%s}</script>"),
     UPDATE("update", "根据 whereEntity 条件，更新记录", "<script>UPDATE %s %s %s</script>"),
 
     /**

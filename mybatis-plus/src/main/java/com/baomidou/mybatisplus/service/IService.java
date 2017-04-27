@@ -34,7 +34,7 @@ public interface IService<T> {
 
     /**
      * <p>
-     * 插入一条记录
+     * 插入一条记录（选择字段，策略插入）
      * </p>
      *
      * @param entity
@@ -45,7 +45,7 @@ public interface IService<T> {
 
     /**
      * <p>
-     * 插入一条记录（选择字段， null 字段不插入）
+     * 插入一条记录（全部字段）
      * </p>
      *
      * @param entity
@@ -148,7 +148,7 @@ public interface IService<T> {
 
     /**
      * <p>
-     * 根据 ID 修改
+     * 根据 ID 选择修改
      * </p>
      *
      * @param entity
@@ -159,7 +159,7 @@ public interface IService<T> {
 
     /**
      * <p>
-     * 根据 ID 选择修改
+     * 根据 ID 修改全部字段
      * </p>
      *
      * @param entity
