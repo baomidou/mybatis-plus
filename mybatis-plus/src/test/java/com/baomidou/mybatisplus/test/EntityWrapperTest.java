@@ -343,15 +343,15 @@ public class EntityWrapperTest {
     }
 
     /**
-     * 测试 limit
+     * 测试 last
      */
     @Test
     public void testLimit() {
         ew.where("name={0}", "'123'").orderBy("id", false);
-        ew.limit(0, 3);
+        ew.last("limit 1,2");
         String sqlSegment = ew.toString();
         System.err.println("testLimit = " + sqlSegment);
-        Assert.assertEquals("WHERE (name=?)\nORDER BY id DESC LIMIT 0, 3 ", sqlSegment);
+        Assert.assertEquals("WHERE (name=?)\nORDER BY id DESC limit 1,2", sqlSegment);
     }
 
     /**
