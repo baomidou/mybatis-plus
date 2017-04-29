@@ -55,7 +55,7 @@ public enum QuerySQL {
                     + " FROM sys.TABLES a " + " INNER JOIN sys.COLUMNS b ON b.object_id = a.object_id "
                     + " LEFT JOIN sys.types ON b.user_type_id = sys.types.user_type_id   "
                     + " LEFT JOIN sys.extended_properties c ON c.major_id = b.object_id AND c.minor_id = b.column_id "
-                    + " WHERE a.NAME = '%s' ",
+                    + " WHERE a.NAME = '%s' and sys.types.NAME !='sysname' ",
             "TABLE_NAME", "COMMENTS", "COLUMN_NAME", "DATA_TYPE", "COMMENTS", "KEY"),
 
     POSTGRE_SQL("postgre_sql", "select tablename from pg_tables where schemaname='public' ORDER BY tablename",
