@@ -43,6 +43,7 @@ import com.baomidou.mybatisplus.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import org.springframework.core.io.Resource;
 
 /**
  * <p>
@@ -94,7 +95,8 @@ public class GlobalConfiguration implements Cloneable {
     private Set<String> mapperRegistryCache = new ConcurrentSkipListSet<>();
     // 单例重用SqlSession
     private SqlSession sqlSession;
-
+    //mapper
+    private Resource[] mapperLocations;
     public GlobalConfiguration() {
         // 构造方法
     }
@@ -401,5 +403,13 @@ public class GlobalConfiguration implements Cloneable {
             setGlobalConfig(sqlSessionFactory.getConfiguration(), this);
         }
         return sqlSessionFactory;
+    }
+
+    public Resource[] getMapperLocations() {
+        return mapperLocations;
+    }
+
+    public void setMapperLocations(Resource[] mapperLocations) {
+        this.mapperLocations = mapperLocations;
     }
 }

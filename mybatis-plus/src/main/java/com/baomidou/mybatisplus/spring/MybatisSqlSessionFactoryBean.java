@@ -533,8 +533,8 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         globalConfig.setSqlSessionFactory(sqlSessionFactory);
         // TODO 设置全局参数属性
         globalConfig.signGlobalConfig(sqlSessionFactory);
-
         if (!isEmpty(this.mapperLocations)) {
+            globalConfig.setMapperLocations(mapperLocations);
             for (Resource mapperLocation : this.mapperLocations) {
                 if (mapperLocation == null) {
                     continue;
@@ -601,5 +601,4 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             this.sqlSessionFactory.getConfiguration().getMappedStatementNames();
         }
     }
-
 }
