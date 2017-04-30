@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.baomidou.mybatisplus.toolkit.ArrayUtils;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.builder.xml.XMLMapperEntityResolver;
@@ -138,9 +137,6 @@ public class MybatisMapperRefresh implements Runnable {
 
     public void run() {
         final GlobalConfiguration globalConfig = GlobalConfiguration.getGlobalConfig(configuration);
-        if(ArrayUtils.isEmpty(mapperLocations)){
-            this.mapperLocations =  globalConfig.getMapperLocations();
-        }
         /*
          * 启动 XML 热加载
 		 */
