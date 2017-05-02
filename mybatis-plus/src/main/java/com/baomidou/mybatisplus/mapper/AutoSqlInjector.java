@@ -307,14 +307,7 @@ public class AutoSqlInjector implements ISqlInjector {
             sqlMethod = SqlMethod.DELETE_BATCH_BY_IDS;
             StringBuilder ids = new StringBuilder();
             ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\">");
-            ids.append("<choose>");
-            ids.append("<when test=\"item instanceof Number or item instanceof String\">");
             ids.append("#{item}");
-            ids.append("</when>");
-            ids.append("<otherwise>");
-            ids.append("#{item.").append(table.getKeyProperty()).append("}");
-            ids.append("</otherwise>");
-            ids.append("</choose>");
             ids.append("\n</foreach>");
             idStr = ids.toString();
         }
@@ -373,14 +366,7 @@ public class AutoSqlInjector implements ISqlInjector {
             sqlMethod = SqlMethod.SELECT_BATCH_BY_IDS;
             StringBuilder ids = new StringBuilder();
             ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\">");
-            ids.append("<choose>");
-            ids.append("<when test=\"item instanceof Number or item instanceof String\">");
             ids.append("#{item}");
-            ids.append("</when>");
-            ids.append("<otherwise>");
-            ids.append("#{item.").append(table.getKeyProperty()).append("}");
-            ids.append("</otherwise>");
-            ids.append("</choose>");
             ids.append("\n</foreach>");
             sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(),
                     sqlSelectColumns(table, false), table.getTableName(), table.getKeyColumn(), ids.toString()), modelClass);

@@ -95,11 +95,11 @@ public interface BaseMapper<T> {
      * 删除（根据ID 批量删除）
      * </p>
      *
-     * @param list
-     *            删除的集合列表
+     * @param idList
+     *            主键ID列表
      * @return int
      */
-    Integer deleteBatchIds(@Param("list") List<? extends Serializable> list);
+    Integer deleteBatchIds(List<? extends Serializable> idList);
 
     /**
      * <p>
@@ -152,11 +152,11 @@ public interface BaseMapper<T> {
      * 查询（根据ID 批量查询）
      * </p>
      *
-     * @param list
-     *            查询的集合列表
+     * @param idList
+     *            主键ID列表
      * @return List<T>
      */
-    List<T> selectBatchIds(@Param("list") List<? extends Serializable> list);
+    List<T> selectBatchIds(List<? extends Serializable> idList);
 
     /**
      * <p>
