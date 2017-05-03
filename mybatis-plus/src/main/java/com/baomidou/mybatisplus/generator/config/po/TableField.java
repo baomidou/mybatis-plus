@@ -130,7 +130,23 @@ public class TableField {
     }
 
     public String getCapitalName() {
+        //按JavaBean规则来生成get和set方法
+        if (propertyName.length()<=1) {
+            return propertyName.toUpperCase();
+        }
+        if (!isUpperCase(propertyName.substring(0, 1))&&isUpperCase(propertyName.substring(1, 2))) {
+            return propertyName.substring(0, 1).toLowerCase() + propertyName.substring(1);
+        }
         return propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
     }
 
+    //大写返回真
+    private boolean isUpperCase(String letter){
+        char s = letter.toCharArray()[0];
+        if(s>='A'&&s<='Z') {
+            return true;
+        }
+        //数字忽略
+        return false;
+    }
 }
