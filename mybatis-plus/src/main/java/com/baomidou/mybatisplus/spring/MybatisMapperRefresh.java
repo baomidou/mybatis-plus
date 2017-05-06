@@ -63,6 +63,7 @@ public class MybatisMapperRefresh implements Runnable {
      */
     private static final Map<String, List<Resource>> jarMapper = new HashMap<>();
     private SqlSessionFactory sqlSessionFactory;
+    @Deprecated
     private Resource[] mapperLocations;
     private Long beforeTime = 0L;
     private Configuration configuration;
@@ -83,6 +84,15 @@ public class MybatisMapperRefresh implements Runnable {
      */
     private int sleepSeconds = 20;
 
+    /**
+     * see  com.baomidou.mybatisplus.spring.MybatisMapperRefresh#MybatisMapperRefresh(org.apache.ibatis.session.SqlSessionFactory, int, int, boolean)
+     * @param mapperLocations
+     * @param sqlSessionFactory
+     * @param delaySeconds
+     * @param sleepSeconds
+     * @param enabled
+     */
+    @Deprecated
     public MybatisMapperRefresh(Resource[] mapperLocations, SqlSessionFactory sqlSessionFactory, int delaySeconds,
                                 int sleepSeconds, boolean enabled) {
         this.mapperLocations = mapperLocations.clone();
@@ -94,9 +104,32 @@ public class MybatisMapperRefresh implements Runnable {
         this.run();
     }
 
+    /**
+     * see com.baomidou.mybatisplus.spring.MybatisMapperRefresh#MybatisMapperRefresh(org.apache.ibatis.session.SqlSessionFactory, boolean)
+     * @param mapperLocations
+     * @param sqlSessionFactory
+     * @param enabled
+     */
+    @Deprecated
     public MybatisMapperRefresh(Resource[] mapperLocations, SqlSessionFactory sqlSessionFactory, boolean enabled) {
         this.mapperLocations = mapperLocations.clone();
         this.sqlSessionFactory = sqlSessionFactory;
+        this.enabled = enabled;
+        this.configuration = sqlSessionFactory.getConfiguration();
+        this.run();
+    }
+
+    public MybatisMapperRefresh(SqlSessionFactory sqlSessionFactory, boolean enabled) throws Exception {
+        this.sqlSessionFactory = sqlSessionFactory;
+        this.enabled = enabled;
+        this.configuration = sqlSessionFactory.getConfiguration();
+        this.run();
+    }
+
+    public MybatisMapperRefresh(SqlSessionFactory sqlSessionFactory,int delaySeconds, int sleepSeconds,boolean enabled) throws Exception {
+        this.sqlSessionFactory = sqlSessionFactory;
+        this.delaySeconds = delaySeconds;
+        this.sleepSeconds = sleepSeconds;
         this.enabled = enabled;
         this.configuration = sqlSessionFactory.getConfiguration();
         this.run();

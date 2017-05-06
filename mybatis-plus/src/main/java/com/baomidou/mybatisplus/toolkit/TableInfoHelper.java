@@ -83,6 +83,20 @@ public class TableInfoHelper {
 
     /**
      * <p>
+     * 获取所有实体映射表信息
+     * <p>
+     * @return
+     */
+    public static List<TableInfo> getTableInfos() {
+    	List<TableInfo> tableInfos = new ArrayList<TableInfo>();
+    	for (Map.Entry<String, TableInfo> entry : tableInfoCache.entrySet()) {  
+    		tableInfos.add(entry.getValue());  
+    	} 
+        return tableInfos;
+    }
+    
+    /**
+     * <p>
      * 实体类反射获取表信息【初始化】
      * <p>
      *
