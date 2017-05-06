@@ -74,8 +74,8 @@ public class TableFieldInfo {
      * 逻辑未删除值
      */
     private String logicNotDeleteValue;
-    
-    
+
+
     /**
      * <p>
      * 存在 TableField 注解构造函数
@@ -90,10 +90,16 @@ public class TableFieldInfo {
          * 2、没有开启下划线申明，但是column与property不等的情况<br>
          * 设置 related 为 true
          */
-        if (globalConfig.isDbColumnUnderline() || !column.equals(this.property)) {
-            this.setRelated(true);
+        if (globalConfig.isDbColumnUnderline()) {
+             /* 开启字段下划线申明 */
+            this.related = true;
+            this.setColumn(globalConfig, StringUtils.camelToUnderline(column));
+        } else {
+            this.setColumn(globalConfig, column);
+            if (!column.equals(this.property)) {
+                this.related = true;
+            }
         }
-        this.setColumn(globalConfig, column);
         this.el = el;
         /*
          * 优先使用单个字段注解，否则使用全局配置<br>
@@ -131,6 +137,10 @@ public class TableFieldInfo {
      * @param field        字段属性对象
      */
     private boolean initLogicDelete(GlobalConfiguration globalConfig, Field field) {
+        if (null == globalConfig.getLogicDeleteValue()) {
+            // 未设置逻辑删除值不进行
+            return false;
+        }
         /* 获取注解属性，逻辑处理字段 */
         TableLogic tableLogic = field.getAnnotation(TableLogic.class);
         if (null != tableLogic) {
@@ -224,5 +234,5 @@ public class TableFieldInfo {
 	public void setLogicNotDeleteValue(String logicNotDeleteValue) {
 		this.logicNotDeleteValue = logicNotDeleteValue;
 	}
-    
+
 }
