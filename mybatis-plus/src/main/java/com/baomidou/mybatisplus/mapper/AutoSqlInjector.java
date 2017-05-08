@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -646,7 +647,6 @@ public class AutoSqlInjector implements ISqlInjector {
 		 * 普通查询
 		 */
         columns.append("<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>");
-        List<TableFieldInfo> fieldList = table.getFieldList();
         // 主键处理
         if (StringUtils.isNotEmpty(table.getKeyProperty())) {
             if (table.isKeyRelated()) {
@@ -655,15 +655,19 @@ public class AutoSqlInjector implements ISqlInjector {
                 columns.append(sqlWordConvert(table.getKeyProperty()));
             }
         } else {
-            TableFieldInfo fieldInfo = fieldList.get(0);
-            // 匹配转换内容
-            String wordConvert = sqlWordConvert(fieldInfo.getProperty());
-            if (fieldInfo.getColumn().equals(wordConvert)) {
-                columns.append(wordConvert);
-            } else {
-                // 字段属性不一致
-                columns.append(fieldInfo.getColumn());
-                columns.append(" AS ").append(wordConvert);
+            // 表字段处理
+            List<TableFieldInfo> fieldList = table.getFieldList();
+            if (CollectionUtils.isNotEmpty(fieldList)) {
+                TableFieldInfo fieldInfo = fieldList.get(0);
+                // 匹配转换内容
+                String wordConvert = sqlWordConvert(fieldInfo.getProperty());
+                if (fieldInfo.getColumn().equals(wordConvert)) {
+                    columns.append(wordConvert);
+                } else {
+                    // 字段属性不一致
+                    columns.append(fieldInfo.getColumn());
+                    columns.append(" AS ").append(wordConvert);
+                }
             }
         }
         columns.append("</otherwise></choose>");
