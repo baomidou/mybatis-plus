@@ -15,17 +15,16 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.mapping.SqlSource;
-import org.apache.ibatis.scripting.defaults.RawSqlSource;
-
 import com.baomidou.mybatisplus.entity.TableFieldInfo;
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.enums.SqlMethod;
 import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
+import org.apache.ibatis.mapping.SqlSource;
+import org.apache.ibatis.scripting.defaults.RawSqlSource;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -39,24 +38,11 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
 public class LogicSqlInjector extends AutoSqlInjector {
 
 	/**
-	 * 是否用更新来替换删除，默认替换
-	 */
-	private boolean updateReplaceDelete = true;
-	
-	public LogicSqlInjector() {
-		
-	}
-	
-	public LogicSqlInjector(boolean updateReplaceDelete) {
-		this.updateReplaceDelete = updateReplaceDelete;
-	}
-
-	/**
 	 * 根据 ID 删除
 	 */
 	@Override
 	protected void injectDeleteByIdSql(boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
-		if (table.isLogicDelete() && updateReplaceDelete) {
+		if (table.isLogicDelete()) {
 			// 逻辑删除注入
 			SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE_BY_ID;
 			SqlSource sqlSource;
@@ -84,7 +70,7 @@ public class LogicSqlInjector extends AutoSqlInjector {
 	 */
 	@Override
 	protected void injectDeleteSql(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
-		if (table.isLogicDelete()  && updateReplaceDelete) {
+		if (table.isLogicDelete()) {
 			// 逻辑删除注入
 			SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE;
 			String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlLogicSet(table),
@@ -102,7 +88,7 @@ public class LogicSqlInjector extends AutoSqlInjector {
 	 */
 	@Override
 	protected void injectDeleteByMapSql(Class<?> mapperClass, TableInfo table) {
-		if (table.isLogicDelete()  && updateReplaceDelete) {
+		if (table.isLogicDelete()) {
 			// 逻辑删除注入
 			SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE_BY_MAP;
 			String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlLogicSet(table),
@@ -308,13 +294,4 @@ public class LogicSqlInjector extends AutoSqlInjector {
 		return super.sqlWhereByMap(table);
 	}
 
-	public boolean isUpdateReplaceDelete() {
-		return updateReplaceDelete;
-	}
-
-	public void setUpdateReplaceDelete(boolean updateReplaceDelete) {
-		this.updateReplaceDelete = updateReplaceDelete;
-	}
-
-	
 }
