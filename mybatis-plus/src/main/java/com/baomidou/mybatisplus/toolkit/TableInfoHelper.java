@@ -242,6 +242,7 @@ public class TableInfoHelper {
                     // 开启字段下划线申明
                     if (globalConfig.isDbColumnUnderline()) {
                         column = StringUtils.camelToUnderline(column);
+                        tableInfo.setKeyRelated(true);
                     }
                     // 全局大写命名
                     if (globalConfig.isCapitalMode()) {
