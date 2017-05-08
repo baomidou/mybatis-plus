@@ -15,28 +15,6 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.apache.ibatis.executor.keygen.KeyGenerator;
-import org.apache.ibatis.executor.keygen.NoKeyGenerator;
-import org.apache.ibatis.executor.keygen.SelectKeyGenerator;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.ResultSetType;
-import org.apache.ibatis.mapping.SqlCommandType;
-import org.apache.ibatis.mapping.SqlSource;
-import org.apache.ibatis.mapping.StatementType;
-import org.apache.ibatis.scripting.LanguageDriver;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSessionFactory;
-
 import com.baomidou.mybatisplus.annotations.KeySequence;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
@@ -44,10 +22,30 @@ import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.entity.TableFieldInfo;
 import com.baomidou.mybatisplus.entity.TableInfo;
-import com.baomidou.mybatisplus.enums.DBType;
 import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.mapper.IKeyGenerator;
 import com.baomidou.mybatisplus.mapper.SqlRunner;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.ibatis.executor.keygen.KeyGenerator;
+import org.apache.ibatis.executor.keygen.NoKeyGenerator;
+import org.apache.ibatis.executor.keygen.SelectKeyGenerator;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.mapping.SqlSource;
+import org.apache.ibatis.mapping.StatementType;
+import org.apache.ibatis.scripting.LanguageDriver;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSessionFactory;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <p>
@@ -137,13 +135,12 @@ public class TableInfoHelper {
             }
         }
         tableInfo.setTableName(tableName);
-        
-        /* Oracle 主键支持 */
-        KeySequence keySequence = clazz.getAnnotation(KeySequence.class);
-        if (keySequence != null) {
-            tableInfo.setKeySequence(keySequence);
+
+        // 开启了自定义 KEY 生成器
+        if (null != globalConfig.getKeyGenerator()) {
+            tableInfo.setKeySequence(clazz.getAnnotation(KeySequence.class));
         }
-        
+
         /* 表结果集映射 */
         if (table != null && StringUtils.isNotEmpty(table.resultMap())) {
             tableInfo.setResultMap(table.resultMap());
@@ -385,35 +382,30 @@ public class TableInfoHelper {
         }
     }
 
-    public static KeyGenerator genKeyGenerator(TableInfo tableInfo, MapperBuilderAssistant builderAssistant, String baseStatementId, LanguageDriver languageDriver) {
-        DBType dbType = GlobalConfiguration.getDbType(builderAssistant.getConfiguration());
-        if (dbType != DBType.ORACLE)
-            throw new IllegalArgumentException("目前仅支持Oracle序列");
+    /**
+     * <p>
+     * 自定义 KEY 生成器
+     * </p>
+     */
+    public static KeyGenerator genKeyGenerator(TableInfo tableInfo, MapperBuilderAssistant builderAssistant,
+                                               String baseStatementId, LanguageDriver languageDriver) {
+        IKeyGenerator keyGenerator = GlobalConfiguration.getKeyGenerator(builderAssistant.getConfiguration());
+        if (null == keyGenerator) {
+            throw new IllegalArgumentException("not configure IKeyGenerator implementation class.");
+        }
         String id = baseStatementId + SelectKeyGenerator.SELECT_KEY_SUFFIX;
         Class<?> resultTypeClass = tableInfo.getKeySequence().idClazz();
-        Class<?> parameterTypeClass = null;
         StatementType statementType = StatementType.PREPARED;
         String keyProperty = tableInfo.getKeyProperty();
         String keyColumn = tableInfo.getKeyColumn();
-        boolean executeBefore = true;
-        boolean useCache = false;
-        KeyGenerator keyGenerator = new NoKeyGenerator();
-        Integer fetchSize = null;
-        Integer timeout = null;
-        boolean flushCache = false;
-        String parameterMap = null;
-        String resultMap = null;
-        ResultSetType resultSetTypeEnum = null;
-        //上面已经判断是ORACLE这里直接获取即可无需再判断
-        String sql = "select " + tableInfo.getKeySequence().value() + ".nextval from dual";
-        SqlSource sqlSource = languageDriver.createSqlSource(builderAssistant.getConfiguration(), sql.trim(), null);
-        SqlCommandType sqlCommandType = SqlCommandType.SELECT;
-        builderAssistant.addMappedStatement(id, sqlSource, statementType, sqlCommandType, fetchSize, timeout, parameterMap,
-                parameterTypeClass, resultMap, resultTypeClass, resultSetTypeEnum, flushCache, useCache, false, keyGenerator,
-                keyProperty, keyColumn, null, languageDriver, null);
+        SqlSource sqlSource = languageDriver.createSqlSource(builderAssistant.getConfiguration(),
+                keyGenerator.executeSql(tableInfo), null);
+        builderAssistant.addMappedStatement(id, sqlSource, statementType, SqlCommandType.SELECT, null, null, null,
+                null, null, resultTypeClass, null, false, false, false,
+                new NoKeyGenerator(), keyProperty, keyColumn, null, languageDriver, null);
         id = builderAssistant.applyCurrentNamespace(id, false);
         MappedStatement keyStatement = builderAssistant.getConfiguration().getMappedStatement(id, false);
-        SelectKeyGenerator answer = new SelectKeyGenerator(keyStatement, executeBefore);
+        SelectKeyGenerator answer = new SelectKeyGenerator(keyStatement, true);
         builderAssistant.getConfiguration().addKeyGenerator(id, answer);
         return answer;
     }
