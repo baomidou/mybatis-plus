@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.test;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
@@ -12,6 +13,7 @@ import java.util.concurrent.Future;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.baomidou.mybatisplus.test.plugins.RandomUtils;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
 
 /**
@@ -42,14 +44,20 @@ public class IdWorkerTest {
 
 	@Test
 	public void test() throws Exception {
+		double wucha = 0.05;
 		int count = 1000;
+		int wuchaNum = (int) (count * wucha);
+		int high = count + wuchaNum;
+		int low = count - wuchaNum;
+		System.err.println("共有" + count + "个数参与测试,误差系数为" + wucha + "误差值为" + wuchaNum);
+
 		ExecutorService executorService = Executors.newFixedThreadPool(20);
 		final List<Long> results = new ArrayList<>();
 		CompletionService<Long> cs = new ExecutorCompletionService<Long>(executorService);
-
 		for (int i = 1; i < count; i++) {
 			cs.submit(new Callable<Long>() {
 				public Long call() throws Exception {
+					Thread.sleep(RandomUtils.nextInt(1, 2000));
 					return IdWorker.getId();
 				}
 			});
@@ -64,15 +72,12 @@ public class IdWorkerTest {
 			results.add(future.get());
 		}
 		executorService.shutdown();
+		HashSet<Long> set = new HashSet<>(results);
+		// 判断是否有重复
+		Assert.assertEquals(count, set.size());
 		int odd = 0;
 		int even = 0;
-		List<Long> ttt = new ArrayList<>();
 		for (Long id : results) {
-
-			if (ttt.contains(id)) {
-				System.err.println("ssss");
-			}
-			ttt.add(id);
 			if (id % 2 != 0) {
 				odd++;
 			} else {
@@ -81,8 +86,8 @@ public class IdWorkerTest {
 		}
 		System.err.println("奇数:" + odd);
 		System.err.println("偶数:" + even);
-		Assert.assertTrue(odd >= 450 && odd <= 550);
-		Assert.assertTrue(even >= 450 && even <= 550);
+		Assert.assertTrue(odd >= low && odd <= high);
+		Assert.assertTrue(even >= low && even <= high);
 	}
 
 }
