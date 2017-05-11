@@ -129,8 +129,20 @@ public class TableField {
         this.comment = comment;
     }
 
+    /**
+     * 按JavaBean规则来生成get和set方法
+     */
     public String getCapitalName() {
-        return propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
+        if (propertyName.length() <= 1) {
+            return propertyName.toUpperCase();
+        }
+        // 第一个字母 小写、 第二个字母 大写 ，特殊处理
+        String firstChar = propertyName.substring(0, 1);
+        if (Character.isLowerCase(firstChar.toCharArray()[0])
+                && Character.isUpperCase(propertyName.substring(1, 2).toCharArray()[0])) {
+            return firstChar.toLowerCase() + propertyName.substring(1);
+        }
+        return firstChar.toUpperCase() + propertyName.substring(1);
     }
 
 }

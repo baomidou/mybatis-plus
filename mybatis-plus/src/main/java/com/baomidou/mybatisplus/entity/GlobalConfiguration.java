@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 
 import javax.sql.DataSource;
 
+import com.baomidou.mybatisplus.mapper.IKeyGenerator;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.Configuration;
@@ -76,6 +77,8 @@ public class GlobalConfiguration implements Cloneable {
     private boolean dbColumnUnderline = false;
     // SQL注入器
     private ISqlInjector sqlInjector;
+    // 表关键词 key 生成器
+    private IKeyGenerator keyGenerator;
     // 元对象字段填充控制器
     private MetaObjectHandler metaObjectHandler = new DefaultMetaObjectHandler();
     // 字段验证策略
@@ -181,6 +184,10 @@ public class GlobalConfiguration implements Cloneable {
         return getGlobalConfig(configuration).getDbType();
     }
 
+    public static IKeyGenerator getKeyGenerator(Configuration configuration) {
+        return getGlobalConfig(configuration).getKeyGenerator();
+    }
+
     public static IdType getIdType(Configuration configuration) {
         return getGlobalConfig(configuration).getIdType();
     }
@@ -198,6 +205,14 @@ public class GlobalConfiguration implements Cloneable {
             globalConfiguration.setSqlInjector(sqlInjector);
         }
         return sqlInjector;
+    }
+
+    public IKeyGenerator getKeyGenerator() {
+        return keyGenerator;
+    }
+
+    public void setKeyGenerator(IKeyGenerator keyGenerator) {
+        this.keyGenerator = keyGenerator;
     }
 
     public static MetaObjectHandler getMetaObjectHandler(Configuration configuration) {

@@ -93,13 +93,25 @@ public class AutoGenerator extends AbstractGenerator {
     }
 
     /**
+     * <p>
+     * 开放表信息、预留子类重写
+     * </p>
+     *
+     * @param config 配置信息
+     * @return
+     */
+    protected List<TableInfo> getAllTableInfoList(ConfigBuilder config) {
+        return config.getTableInfoList();
+    }
+
+    /**
      * 分析数据
      *
      * @param config 总配置信息
      * @return 解析数据结果集
      */
     private Map<String, VelocityContext> analyzeData(ConfigBuilder config) {
-        List<TableInfo> tableList = config.getTableInfoList();
+        List<TableInfo> tableList = this.getAllTableInfoList(config);
         Map<String, String> packageInfo = config.getPackageInfo();
         Map<String, VelocityContext> ctxData = new HashMap<>();
         String superEntityClass = getSuperClassName(config.getSuperEntityClass());

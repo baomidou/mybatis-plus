@@ -127,15 +127,27 @@ public class Sequence {
 
     /**
      * 获取下一个ID
-     *
      * @return
      */
     public synchronized long nextId() {
         long timestamp = timeGen();
-        if (timestamp < lastTimestamp) {
-            throw new MybatisPlusException(String.format("Clock moved backwards. Refusing to generate id for %d milliseconds",
-                    lastTimestamp - timestamp));
+        if (timestamp < lastTimestamp) {//闰秒
+            long offset = lastTimestamp - timestamp;
+            if (offset <= 5) {
+                try {
+                    wait(offset << 1);
+                    timestamp = timeGen();
+                    if (timestamp < lastTimestamp) {
+                        throw new RuntimeException(String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", offset));
+                    }
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                throw new RuntimeException(String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", offset));
+            }
         }
+
         if (lastTimestamp == timestamp) {
             sequence = (sequence + 1) & sequenceMask;
             if (sequence == 0) {
@@ -147,8 +159,7 @@ public class Sequence {
 
         lastTimestamp = timestamp;
 
-        return ((timestamp - twepoch) << timestampLeftShift) | (datacenterId << datacenterIdShift) | (workerId << workerIdShift)
-                | sequence;
+        return ((timestamp - twepoch) << timestampLeftShift) | (datacenterId << datacenterIdShift) | (workerId << workerIdShift) | sequence;
     }
 
     protected long tilNextMillis(long lastTimestamp) {
