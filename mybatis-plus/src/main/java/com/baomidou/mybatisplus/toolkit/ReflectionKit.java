@@ -15,25 +15,16 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-
 import com.baomidou.mybatisplus.entity.TableFieldInfo;
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+
+import java.lang.reflect.*;
+import java.util.*;
+
 
 /**
  * <p>
@@ -149,16 +140,12 @@ public class ReflectionKit {
      */
     @SuppressWarnings("rawtypes")
     public static Class getSuperClassGenricType(final Class clazz, final int index) {
-
         Type genType = clazz.getGenericSuperclass();
-
         if (!(genType instanceof ParameterizedType)) {
             logger.warn(String.format("Warn: %s's superclass not ParameterizedType", clazz.getSimpleName()));
             return Object.class;
         }
-
         Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
-
         if (index >= params.length || index < 0) {
             logger.warn(String.format("Warn: Index: %s, Size of %s's Parameterized Type: %s .", index, clazz.getSimpleName(),
                     params.length));
@@ -168,7 +155,6 @@ public class ReflectionKit {
             logger.warn(String.format("Warn: %s not set the actual class on superclass generic parameter", clazz.getSimpleName()));
             return Object.class;
         }
-
         return (Class) params[index];
     }
 
@@ -218,7 +204,31 @@ public class ReflectionKit {
         if (superClass.equals(Object.class)) {
             return fieldList;
         }
-        fieldList.addAll(getFieldList(superClass));
+        /* 排除重载属性 */
+        return excludeOverrideSuperField(fieldList, getFieldList(superClass));
+    }
+
+    /**
+     * <p>
+     * 排序重置父类属性
+     * </p>
+     *
+     * @param fieldList      子类属性
+     * @param superFieldList 父类属性
+     */
+    public static List<Field> excludeOverrideSuperField(List<Field> fieldList, List<Field> superFieldList) {
+        // 子类属性
+        Map<String, Field> fieldMap = new HashMap<>();
+        for (Field field : fieldList) {
+            fieldMap.put(field.getName(), field);
+        }
+        for (Field superField : superFieldList) {
+            if (null == fieldMap.get(superField.getName())) {
+                // 加入重置父类属性
+                fieldList.add(superField);
+            }
+        }
         return fieldList;
     }
+
 }
