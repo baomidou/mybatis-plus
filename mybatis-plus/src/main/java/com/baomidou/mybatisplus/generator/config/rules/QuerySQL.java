@@ -131,7 +131,4 @@ public enum QuerySQL {
         return fieldKey;
     }
 
-    public static void main(String[] args) {
-        System.out.println(POSTGRE_SQL.getTableFieldsSql());
-    }
 }

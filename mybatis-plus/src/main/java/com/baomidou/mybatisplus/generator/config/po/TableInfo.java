@@ -47,6 +47,7 @@ public class TableInfo {
     private String controllerName;
 
     private List<TableField> fields;
+    private List<TableField> commonFields;// 公共字段
     private List<String> importPackages = new ArrayList<>();
     private String fieldNames;
 
@@ -181,6 +182,14 @@ public class TableInfo {
                 this.importPackages = new ArrayList<>(Arrays.asList(pkgSet.toArray(new String[]{})));
             }
         }
+    }
+
+    public List<TableField> getCommonFields() {
+        return commonFields;
+    }
+
+    public void setCommonFields(List<TableField> commonFields) {
+        this.commonFields = commonFields;
     }
 
     public List<String> getImportPackages() {

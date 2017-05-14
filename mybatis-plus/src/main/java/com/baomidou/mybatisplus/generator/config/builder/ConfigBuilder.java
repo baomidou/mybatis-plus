@@ -15,30 +15,20 @@
  */
 package com.baomidou.mybatisplus.generator.config.builder;
 
-import java.io.File;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import com.baomidou.mybatisplus.generator.config.ConstVal;
-import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
-import com.baomidou.mybatisplus.generator.config.GlobalConfig;
-import com.baomidou.mybatisplus.generator.config.PackageConfig;
-import com.baomidou.mybatisplus.generator.config.StrategyConfig;
-import com.baomidou.mybatisplus.generator.config.TemplateConfig;
+import com.baomidou.mybatisplus.generator.config.*;
 import com.baomidou.mybatisplus.generator.config.po.TableField;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.rules.DbType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.config.rules.QuerySQL;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
+
+import java.io.File;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 /**
  * 配置汇总 传递给文件生成工具
@@ -345,10 +335,10 @@ public class ConfigBuilder {
         Set<String> notExistTables = new HashSet<>();
 
         NamingStrategy strategy = config.getNaming();
-        PreparedStatement pstate = null;
+        PreparedStatement preparedStatement = null;
         try {
-            pstate = connection.prepareStatement(querySQL.getTableCommentsSql());
-            ResultSet results = pstate.executeQuery();
+            preparedStatement = connection.prepareStatement(querySQL.getTableCommentsSql());
+            ResultSet results = preparedStatement.executeQuery();
             TableInfo tableInfo;
             while (results.next()) {
                 String tableName = results.getString(querySQL.getTableName());
@@ -374,9 +364,7 @@ public class ConfigBuilder {
                             }
                         }
                     }
-                    List<TableField> fieldList = getListFields(tableName, strategy);
-                    tableInfo.setFields(fieldList);
-                    tableList.add(tableInfo);
+                    tableList.add(this.convertTableFields(tableInfo, strategy));
                 } else {
                     System.err.println("当前数据库为空！！！");
                 }
@@ -403,8 +391,8 @@ public class ConfigBuilder {
         } finally {
             // 释放资源
             try {
-                if (pstate != null) {
-                    pstate.close();
+                if (preparedStatement != null) {
+                    preparedStatement.close();
                 }
                 if (connection != null) {
                     connection.close();
@@ -435,17 +423,21 @@ public class ConfigBuilder {
     }
 
     /**
+     * <p>
      * 将字段信息与表信息关联
+     * </p>
      *
-     * @param tableName 表名称
+     * @param tableInfo 表信息
      * @param strategy  命名策略
-     * @return 表信息
+     * @return
      */
-    private List<TableField> getListFields(String tableName, NamingStrategy strategy) {
+    private TableInfo convertTableFields(TableInfo tableInfo, NamingStrategy strategy) {
         boolean haveId = false;
         List<TableField> fieldList = new ArrayList<>();
-        try (PreparedStatement pstate = connection.prepareStatement(String.format(querySQL.getTableFieldsSql(), tableName));
-             ResultSet results = pstate.executeQuery()) {
+        List<TableField> commonFieldList = new ArrayList<>();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(String.format(querySQL.getTableFieldsSql(), tableInfo.getName()));
+            ResultSet results = preparedStatement.executeQuery();
             while (results.next()) {
                 TableField field = new TableField();
                 String key = results.getString(querySQL.getFieldKey());
@@ -463,20 +455,23 @@ public class ConfigBuilder {
                 }
                 // 处理其它信息
                 field.setName(results.getString(querySQL.getFieldName()));
-                if (strategyConfig.includeSuperEntityColumns(field.getName())) {
-                    // 跳过公共字段
-                    continue;
-                }
                 field.setType(results.getString(querySQL.getFieldType()));
                 field.setPropertyName(strategyConfig, processName(field.getName(), strategy));
                 field.setColumnType(dataSourceConfig.getTypeConvert().processTypeConvert(field.getType()));
                 field.setComment(results.getString(querySQL.getFieldComment()));
+                if (strategyConfig.includeSuperEntityColumns(field.getName())) {
+                    // 跳过公共字段
+                    commonFieldList.add(field);
+                    continue;
+                }
                 fieldList.add(field);
             }
         } catch (SQLException e) {
             System.err.println("SQL Exception：" + e.getMessage());
         }
-        return fieldList;
+        tableInfo.setFields(fieldList);
+        tableInfo.setCommonFields(commonFieldList);
+        return tableInfo;
     }
 
     /**

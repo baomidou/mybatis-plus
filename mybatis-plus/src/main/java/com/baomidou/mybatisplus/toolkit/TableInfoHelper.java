@@ -347,7 +347,7 @@ public class TableInfoHelper {
      * @param clazz 反射类
      * @return
      */
-    private static List<Field> getAllFields(Class<?> clazz) {
+    public static List<Field> getAllFields(Class<?> clazz) {
         List<Field> fieldList = ReflectionKit.getFieldList(clazz);
         if (CollectionUtils.isNotEmpty(fieldList)) {
             Iterator<Field> iterator = fieldList.iterator();
