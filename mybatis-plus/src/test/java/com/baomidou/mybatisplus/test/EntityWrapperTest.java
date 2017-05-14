@@ -162,7 +162,7 @@ public class EntityWrapperTest {
         System.out.println(ew.toString());
         Assert.assertEquals("AND (name=? AND id=1) \n" + "OR (status=? OR status=1 AND nlike NOT LIKE ?) \n"
                 + "AND (new=xx AND hhh LIKE ?) \n" + "AND (pwd=11 AND n1 IS NOT NULL AND n2 IS NOT NULL AND n3 IS NULL)\n"
-                + "GROUP BY x1, x2,x3\n" + "HAVING (x1=11 AND x3=433)\n" + "ORDER BY dd AND d1,d2", ew.toString());
+                + "GROUP BY x1, x2,x3\n" + "HAVING (x1=11 AND x3=433)\n" + "ORDER BY dd, d1,d2", ew.toString());
     }
 
     @Test
