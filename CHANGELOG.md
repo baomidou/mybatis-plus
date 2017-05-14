@@ -1,6 +1,21 @@
 # CHANGELOG
 
-## [v2.0.6] 2017.04.20
+## [v2.0.8] 2017.05.15
+- Wrapper添加设置对象sqlSelect
+- 兼容无注解情况
+- 乐观锁去除默认short实现,优化绑定注册器在扫描阶段绑定. 测试改为h2环境.
+- 优化热加载,去除mapper路径配置.
+- 减少刷新Mapper配置
+- 修复tableFiled value 为空情况，开启下划线命名
+- sequence 升级提示
+- 开放表信息、预留子类重写
+- 修改Idwork测试
+- 支持 devtools
+- fixed 259 支持 xml resultMap 公共字段生成
+- fixed pulls 28 支持属性重载
+
+
+## [v2.0.6  2.0.7] 2017.04.20
 - 新增 逻辑删除
 - 新增 Oracle Sequence
 - 新增 jdk1.8 时间类型
