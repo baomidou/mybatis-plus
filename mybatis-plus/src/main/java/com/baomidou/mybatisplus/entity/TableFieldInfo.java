@@ -15,13 +15,13 @@
  */
 package com.baomidou.mybatisplus.entity;
 
+import java.lang.reflect.Field;
+
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableLogic;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
-
-import java.lang.reflect.Field;
 
 /**
  * <p>
@@ -75,6 +75,15 @@ public class TableFieldInfo {
      */
     private String logicNotDeleteValue;
 
+    /**
+     * 插入忽略
+     */
+    private boolean insertIgnore = false;
+
+    /**
+     * 更新忽略
+     */
+    private boolean updateIgnore = false;
 
     /**
      * <p>
@@ -227,12 +236,27 @@ public class TableFieldInfo {
         this.logicDeleteValue = logicDeleteValue;
     }
 
-	public String getLogicNotDeleteValue() {
-		return logicNotDeleteValue;
-	}
+    public String getLogicNotDeleteValue() {
+        return logicNotDeleteValue;
+    }
 
-	public void setLogicNotDeleteValue(String logicNotDeleteValue) {
-		this.logicNotDeleteValue = logicNotDeleteValue;
-	}
+    public void setLogicNotDeleteValue(String logicNotDeleteValue) {
+        this.logicNotDeleteValue = logicNotDeleteValue;
+    }
 
+    public boolean isInsertIgnore() {
+        return insertIgnore;
+    }
+
+    public void setInsertIgnore(boolean insertIgnore) {
+        this.insertIgnore = insertIgnore;
+    }
+
+    public boolean isUpdateIgnore() {
+        return updateIgnore;
+    }
+
+    public void setUpdateIgnore(boolean updateIgnore) {
+        this.updateIgnore = updateIgnore;
+    }
 }
