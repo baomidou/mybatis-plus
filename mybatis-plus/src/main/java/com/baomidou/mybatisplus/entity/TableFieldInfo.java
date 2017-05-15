@@ -120,6 +120,11 @@ public class TableFieldInfo {
             this.fieldStrategy = globalConfig.getFieldStrategy();
         }
         tableInfo.setLogicDelete(this.initLogicDelete(globalConfig, field));
+		/*
+		 * 保存当前字段的插入忽略，更新忽略值
+		 */
+		this.insertIgnore = tableField.insertIgnore();
+        this.updateIgnore = tableField.updateIgnore();
     }
 
     public TableFieldInfo(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field) {
