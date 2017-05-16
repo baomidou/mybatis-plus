@@ -43,6 +43,7 @@ import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.defaults.DefaultSqlSession;
 import org.apache.ibatis.type.TypeException;
 import org.apache.ibatis.type.UnknownTypeHandler;
 
@@ -171,7 +172,9 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 					changSql(ms, boundSql, parameterObject, lockerCache);
 				}
 			}
-		} else {
+		} else if(!(parameterObject instanceof DefaultSqlSession.StrictMap)) {
+			//如果是有逻辑删，且DELETE传入字段为ID或IDS的话，MYBATIS就会使用StrictMap
+			//这里是判断如量不为ParamMap县城不为StrictMap类型就进行乐观锁
 			changSql(ms, boundSql, parameterObject, lockerCache);
 		}
 	}

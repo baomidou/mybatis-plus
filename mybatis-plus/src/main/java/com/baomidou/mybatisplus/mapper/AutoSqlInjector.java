@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -46,6 +45,7 @@ import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.enums.SqlMethod;
+import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
@@ -239,16 +239,19 @@ public class AutoSqlInjector implements ISqlInjector {
         List<TableFieldInfo> fieldList = table.getFieldList();
 
         for (TableFieldInfo fieldInfo : fieldList) {
-            if (selective) {
-                fieldBuilder.append(convertIfTagIgnored(fieldInfo, false));
-                fieldBuilder.append(fieldInfo.getColumn()).append(",");
-                fieldBuilder.append(convertIfTagIgnored(fieldInfo, true));
-                placeholderBuilder.append(convertIfTagIgnored(fieldInfo, false));
-                placeholderBuilder.append("#{").append(fieldInfo.getEl()).append("},");
-                placeholderBuilder.append(convertIfTagIgnored(fieldInfo, true));
-            } else {
-                fieldBuilder.append(fieldInfo.getColumn()).append(",");
-                placeholderBuilder.append("#{").append(fieldInfo.getEl()).append("},");
+            /* 判断是否插入忽略，插入忽略就不生成这个SQL */
+            if(!fieldInfo.isInsertIgnore()) {
+                if (selective) {
+                    fieldBuilder.append(convertIfTagIgnored(fieldInfo, false));
+                    fieldBuilder.append(fieldInfo.getColumn()).append(",");
+                    fieldBuilder.append(convertIfTagIgnored(fieldInfo, true));
+                    placeholderBuilder.append(convertIfTagIgnored(fieldInfo, false));
+                    placeholderBuilder.append("#{").append(fieldInfo.getEl()).append("},");
+                    placeholderBuilder.append(convertIfTagIgnored(fieldInfo, true));
+                } else {
+                    fieldBuilder.append(fieldInfo.getColumn()).append(",");
+                    placeholderBuilder.append("#{").append(fieldInfo.getEl()).append("},");
+                }
             }
         }
         fieldBuilder.append("\n</trim>");
@@ -520,20 +523,23 @@ public class AutoSqlInjector implements ISqlInjector {
         set.append("<trim prefix=\"SET\" suffixOverrides=\",\">");
         List<TableFieldInfo> fieldList = table.getFieldList();
         for (TableFieldInfo fieldInfo : fieldList) {
-            if (selective) {
-                set.append(convertIfTag(true, fieldInfo, prefix, false));
-                set.append(fieldInfo.getColumn()).append("=#{");
-                if (null != prefix) {
-                    set.append(prefix);
+            /* 判断是不是更新忽略，是的话不生成此SQL */
+            if(!fieldInfo.isUpdateIgnore()) {
+                if (selective) {
+                    set.append(convertIfTag(true, fieldInfo, prefix, false));
+                    set.append(fieldInfo.getColumn()).append("=#{");
+                    if (null != prefix) {
+                        set.append(prefix);
+                    }
+                    set.append(fieldInfo.getEl()).append("},");
+                    set.append(convertIfTag(true, fieldInfo, null, true));
+                } else {
+                    set.append(fieldInfo.getColumn()).append("=#{");
+                    if (null != prefix) {
+                        set.append(prefix);
+                    }
+                    set.append(fieldInfo.getEl()).append("},");
                 }
-                set.append(fieldInfo.getEl()).append("},");
-                set.append(convertIfTag(true, fieldInfo, null, true));
-            } else {
-                set.append(fieldInfo.getColumn()).append("=#{");
-                if (null != prefix) {
-                    set.append(prefix);
-                }
-                set.append(fieldInfo.getEl()).append("},");
             }
         }
         set.append("\n</trim>");
