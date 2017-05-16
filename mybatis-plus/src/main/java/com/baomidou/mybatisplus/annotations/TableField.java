@@ -27,7 +27,7 @@ import com.baomidou.mybatisplus.enums.FieldStrategy;
  * 表字段标识
  * </p>
  *
- * @author hubin sjy
+ * @author hubin sjy tantan
  * @since 2016-09-09
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -71,12 +71,13 @@ public @interface TableField {
      * </p>
      */
     FieldStrategy validate() default FieldStrategy.NOT_NULL;
+
     /**
      * <p>
      * 是否插入忽略
      * </p>
      * <p>
-     *     默认为false,即不忽略
+     * 默认为false,即不忽略
      * </p>
      */
     boolean insertIgnore() default false;
@@ -86,7 +87,7 @@ public @interface TableField {
      * 是否更新忽略
      * </p>
      * <p>
-     *     默认为false,即不忽略
+     * 默认为false,即不忽略
      * </p>
      */
     boolean updateIgnore() default false;

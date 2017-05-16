@@ -55,7 +55,7 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
  * SQL 自动注入器
  * </p>
  *
- * @author hubin sjy
+ * @author hubin sjy tantan
  * @Date 2016-09-09
  */
 public class AutoSqlInjector implements ISqlInjector {
@@ -240,18 +240,19 @@ public class AutoSqlInjector implements ISqlInjector {
 
         for (TableFieldInfo fieldInfo : fieldList) {
             /* 判断是否插入忽略，插入忽略就不生成这个SQL */
-            if(!fieldInfo.isInsertIgnore()) {
-                if (selective) {
-                    fieldBuilder.append(convertIfTagIgnored(fieldInfo, false));
-                    fieldBuilder.append(fieldInfo.getColumn()).append(",");
-                    fieldBuilder.append(convertIfTagIgnored(fieldInfo, true));
-                    placeholderBuilder.append(convertIfTagIgnored(fieldInfo, false));
-                    placeholderBuilder.append("#{").append(fieldInfo.getEl()).append("},");
-                    placeholderBuilder.append(convertIfTagIgnored(fieldInfo, true));
-                } else {
-                    fieldBuilder.append(fieldInfo.getColumn()).append(",");
-                    placeholderBuilder.append("#{").append(fieldInfo.getEl()).append("},");
-                }
+            if (fieldInfo.isInsertIgnore()) {
+                continue;
+            }
+            if (selective) {
+                fieldBuilder.append(convertIfTagIgnored(fieldInfo, false));
+                fieldBuilder.append(fieldInfo.getColumn()).append(",");
+                fieldBuilder.append(convertIfTagIgnored(fieldInfo, true));
+                placeholderBuilder.append(convertIfTagIgnored(fieldInfo, false));
+                placeholderBuilder.append("#{").append(fieldInfo.getEl()).append("},");
+                placeholderBuilder.append(convertIfTagIgnored(fieldInfo, true));
+            } else {
+                fieldBuilder.append(fieldInfo.getColumn()).append(",");
+                placeholderBuilder.append("#{").append(fieldInfo.getEl()).append("},");
             }
         }
         fieldBuilder.append("\n</trim>");
@@ -524,22 +525,23 @@ public class AutoSqlInjector implements ISqlInjector {
         List<TableFieldInfo> fieldList = table.getFieldList();
         for (TableFieldInfo fieldInfo : fieldList) {
             /* 判断是不是更新忽略，是的话不生成此SQL */
-            if(!fieldInfo.isUpdateIgnore()) {
-                if (selective) {
-                    set.append(convertIfTag(true, fieldInfo, prefix, false));
-                    set.append(fieldInfo.getColumn()).append("=#{");
-                    if (null != prefix) {
-                        set.append(prefix);
-                    }
-                    set.append(fieldInfo.getEl()).append("},");
-                    set.append(convertIfTag(true, fieldInfo, null, true));
-                } else {
-                    set.append(fieldInfo.getColumn()).append("=#{");
-                    if (null != prefix) {
-                        set.append(prefix);
-                    }
-                    set.append(fieldInfo.getEl()).append("},");
+            if (fieldInfo.isUpdateIgnore()) {
+                continue;
+            }
+            if (selective) {
+                set.append(convertIfTag(true, fieldInfo, prefix, false));
+                set.append(fieldInfo.getColumn()).append("=#{");
+                if (null != prefix) {
+                    set.append(prefix);
                 }
+                set.append(fieldInfo.getEl()).append("},");
+                set.append(convertIfTag(true, fieldInfo, null, true));
+            } else {
+                set.append(fieldInfo.getColumn()).append("=#{");
+                if (null != prefix) {
+                    set.append(prefix);
+                }
+                set.append(fieldInfo.getEl()).append("},");
             }
         }
         set.append("\n</trim>");

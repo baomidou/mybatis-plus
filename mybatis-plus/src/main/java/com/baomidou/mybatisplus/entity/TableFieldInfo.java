@@ -28,7 +28,7 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  * 数据库表字段反射信息
  * </p>
  *
- * @author hubin sjy willenfoo
+ * @author hubin sjy willenfoo tantan
  * @Date 2016-09-09
  */
 public class TableFieldInfo {
