@@ -6,6 +6,7 @@ CREATE TABLE version_user (
 	NAME VARCHAR (20),
 	age INT (11),
 	version INT (11),
+	isDelete INT (11) DEFAULT 0,
 	PRIMARY KEY (`id`)
 ) ENGINE = INNODB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;
 

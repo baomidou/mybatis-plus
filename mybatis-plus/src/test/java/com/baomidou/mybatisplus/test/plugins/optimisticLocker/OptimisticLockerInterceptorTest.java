@@ -27,6 +27,7 @@ import com.baomidou.mybatisplus.test.plugins.optimisticLocker.entity.StringVersi
 import com.baomidou.mybatisplus.test.plugins.optimisticLocker.entity.TimestampVersionUser;
 import com.baomidou.mybatisplus.test.plugins.optimisticLocker.mapper.DateVersionUserMapper;
 import com.baomidou.mybatisplus.test.plugins.optimisticLocker.mapper.IntVersionUserMapper;
+import com.baomidou.mybatisplus.test.plugins.optimisticLocker.mapper.LogicVersionUserMapper;
 import com.baomidou.mybatisplus.test.plugins.optimisticLocker.mapper.LongVersionUserMapper;
 import com.baomidou.mybatisplus.test.plugins.optimisticLocker.mapper.StringVersionUserMapper;
 import com.baomidou.mybatisplus.test.plugins.optimisticLocker.mapper.TimestampVersionUserMapper;
@@ -45,6 +46,8 @@ public class OptimisticLockerInterceptorTest {
 	private TimestampVersionUserMapper timestampVersionUserMapper;
 	@Autowired
 	private StringVersionUserMapper stringersionUserMapper;
+	@Autowired
+	private LogicVersionUserMapper logicVersionUserMapper;
 	@Autowired
 	private SqlSessionTemplate sqlSessionTemplate;
 
@@ -194,6 +197,10 @@ public class OptimisticLockerInterceptorTest {
 		wrapper2.setVersion(originVersion + 1);
 		intVersionUserMapper.update(versionUser, new EntityWrapper<>(wrapper2));
 		Assert.assertTrue(intVersionUserMapper.selectById(1).getVersion() == originVersion + 1);
+	}
 
+	@Test // FIXME这个测试应该归属逻辑删除里
+	public void runWithDeleteLogicTest() {
+		logicVersionUserMapper.deleteById(1L);
 	}
 }

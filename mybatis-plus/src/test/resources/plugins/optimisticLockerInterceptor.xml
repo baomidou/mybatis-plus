@@ -7,7 +7,8 @@
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd  
            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
-	<context:component-scan base-package="com.baomidou.mybatisplus.test.plugins.optimisticLocker" />
+	<context:component-scan
+		base-package="com.baomidou.mybatisplus.test.plugins.optimisticLocker" />
 
 	<import resource="classpath:h2/spring-jdbc.xml" />
 
@@ -39,4 +40,10 @@
 		<property name="basePackage"
 			value="com.baomidou.mybatisplus.test.plugins.optimisticLocker.mapper" />
 	</bean>
+
+	<bean id="globalConfig" class="com.baomidou.mybatisplus.entity.GlobalConfiguration">
+		<property name="sqlInjector" ref="mySqlInjector" />
+	</bean>
+
+	<bean id="mySqlInjector" class="com.baomidou.mybatisplus.mapper.LogicSqlInjector" />
 </beans>
