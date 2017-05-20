@@ -307,7 +307,8 @@ public class AutoSqlInjector implements ISqlInjector {
     protected void injectDeleteByIdSql(boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
         SqlMethod sqlMethod = SqlMethod.DELETE_BY_ID;
         SqlSource sqlSource;
-        String idStr = table.getKeyColumn();
+        // 因为后面要通过get方法获取类型，所以这里要获取key的属性值
+        String idStr = table.getKeyProperty();
         if (batch) {
             sqlMethod = SqlMethod.DELETE_BATCH_BY_IDS;
             StringBuilder ids = new StringBuilder();
