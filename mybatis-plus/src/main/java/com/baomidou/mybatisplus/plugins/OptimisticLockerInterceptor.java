@@ -16,8 +16,10 @@
 package com.baomidou.mybatisplus.plugins;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.ibatis.binding.MapperMethod.ParamMap;
 import org.apache.ibatis.exceptions.ExceptionFactory;
-import org.apache.ibatis.executor.Executor;
+import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMapping;
@@ -40,6 +42,7 @@ import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.defaults.DefaultSqlSession;
 import org.apache.ibatis.type.TypeException;
@@ -48,6 +51,7 @@ import org.apache.ibatis.type.UnknownTypeHandler;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.Version;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 import net.sf.jsqlparser.expression.BinaryExpression;
@@ -76,7 +80,8 @@ import net.sf.jsqlparser.statement.update.Update;
  * @since 2017-04-08
  */
 @Intercepts({
-		@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class}) })
+		@Signature(type = StatementHandler.class, method = "prepare", args = {MappedStatement.class, Object.class}),
+		@Signature(type = StatementHandler.class, method = "parameterize", args = { Statement.class })  })
 public final class OptimisticLockerInterceptor implements Interceptor {
 
 	/**
@@ -105,19 +110,30 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 	}
 
 	public Object intercept(Invocation invocation) throws Exception {
+		//判断是prepare还是parameterize
+		//prepare的时候变更update 条件
+		//parameterize的时候赋值
+		Method m = invocation.getMethod();
+		String methodName ="";
+		if ("prepare".equals(m.getName())) {
+			methodName="prepare";
+		} else if ("parameterize".equals(m.getName())) {
+			methodName="parameterize";
+		}
+		StatementHandler statementHandler = (StatementHandler) PluginUtils.realTarget(invocation.getTarget());
+		MetaObject metaObject = SystemMetaObject.forObject(statementHandler);
 		// 先判断是不是真正的UPDATE操作
-		MappedStatement ms = (MappedStatement) invocation.getArgs()[0];
-		Object parameterObject = invocation.getArgs()[1];
+		MappedStatement ms = (MappedStatement) metaObject.getValue("delegate.mappedStatement");
 		if (!ms.getSqlCommandType().equals(SqlCommandType.UPDATE)) {
 			return invocation.proceed();
 		}
-		BoundSql boundSql = ms.getBoundSql(parameterObject);
+		BoundSql boundSql = (BoundSql) metaObject.getValue("delegate.boundSql");
 		// 获得参数类型,去缓存中快速判断是否有version注解才继续执行
 		Class<?> parameterClass = ms.getParameterMap().getType();
 		LockerCache lockerCache = versionCache.get(parameterClass);
 		if (lockerCache != null) {
 			if (lockerCache.lock) {
-				processChangeSql(ms, boundSql, lockerCache);
+				processChangeSql(ms, boundSql, lockerCache,methodName);
 			}
 		} else {
 			Field versionField = getVersionField(parameterClass);
@@ -133,7 +149,7 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 				}
 				LockerCache lc = new LockerCache(true, versionColumn, versionField, typeHandlers.get(fieldType));
 				versionCache.put(parameterClass, lc);
-				processChangeSql(ms, boundSql, lc);
+				processChangeSql(ms, boundSql, lc,methodName);
 			} else {
 				versionCache.put(parameterClass, LockerCache.INSTANCE);
 			}
@@ -156,7 +172,7 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 
 	}
 
-	private void processChangeSql(MappedStatement ms, BoundSql boundSql, LockerCache lockerCache) throws Exception {
+	private void processChangeSql(MappedStatement ms, BoundSql boundSql, LockerCache lockerCache,String methodName) throws Exception {
 		Object parameterObject = boundSql.getParameterObject();
 		if (parameterObject instanceof ParamMap) {
 			ParamMap<?> paramMap = (ParamMap<?>) parameterObject;
@@ -165,26 +181,25 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 			if (entityWrapper != null) {
 				Object entity = entityWrapper.getEntity();
 				if (entity != null && lockerCache.field.get(entity) == null) {
-					changSql(ms, boundSql, parameterObject, lockerCache);
+					changSql(ms, boundSql, parameterObject, lockerCache,methodName);
 				}
 			}
 		} else if(!(parameterObject instanceof DefaultSqlSession.StrictMap)) {
 			//如果是有逻辑删，且DELETE传入字段为ID或IDS的话，MYBATIS就会使用StrictMap
 			//这里是判断如量不为ParamMap县城不为StrictMap类型就进行乐观锁
-			changSql(ms, boundSql, parameterObject, lockerCache);
+			changSql(ms, boundSql, parameterObject, lockerCache,methodName);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private void changSql(MappedStatement ms, BoundSql boundSql, Object parameterObject, LockerCache lockerCache)
+	private void changSql(MappedStatement ms, BoundSql boundSql, Object parameterObject, LockerCache lockerCache,String methodName)
 			throws Exception {
 		Field versionField = lockerCache.field;
 		String versionColumn = lockerCache.column;
 		final Object versionValue = versionField.get(parameterObject);
 		if (versionValue != null) {// 先判断传参是否携带version,没带跳过插件
 			Configuration configuration = ms.getConfiguration();
-			// 给字段赋新值
-			lockerCache.versionHandler.plusVersion(parameterObject, versionField, versionValue);
+
 			// 处理where条件,添加?
 			Update jsqlSql = (Update) CCJSqlParserUtil.parse(boundSql.getSql());
 			BinaryExpression expression = (BinaryExpression) jsqlSql.getWhere();
@@ -199,8 +214,13 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 				boundSqlMeta.setValue("sql", jsqlSql.toString());
 				boundSqlMeta.setValue("parameterMappings", parameterMappings);
 			}
-			// 设置参数
-			boundSql.setAdditionalParameter("originVersionValue", versionValue);
+			//只有parameterize才给字段赋值
+			if("parameterize".equals(methodName)) {
+				// 给字段赋新值
+				lockerCache.versionHandler.plusVersion(parameterObject, versionField, versionValue);
+				// 设置参数
+				boundSql.setAdditionalParameter("originVersionValue", versionValue);
+			}
 		}
 	}
 	
@@ -220,7 +240,7 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 
 	@Override
 	public Object plugin(Object target) {
-		if (target instanceof Executor) {
+		if (target instanceof StatementHandler) {
 			return Plugin.wrap(target, this);
 		}
 		return target;
