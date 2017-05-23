@@ -30,7 +30,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.ibatis.binding.MapperMethod.ParamMap;
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.Executor;
-import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMapping;
@@ -221,7 +220,7 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 
 	@Override
 	public Object plugin(Object target) {
-		if (target instanceof StatementHandler) {
+		if (target instanceof Executor) {
 			return Plugin.wrap(target, this);
 		}
 		return target;
