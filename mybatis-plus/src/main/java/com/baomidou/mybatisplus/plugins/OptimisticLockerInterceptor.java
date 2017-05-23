@@ -18,7 +18,6 @@ package com.baomidou.mybatisplus.plugins;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.sql.Connection;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,6 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.ibatis.binding.MapperMethod.ParamMap;
 import org.apache.ibatis.exceptions.ExceptionFactory;
+import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -41,7 +41,6 @@ import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.reflection.MetaObject;
-import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.defaults.DefaultSqlSession;
 import org.apache.ibatis.type.TypeException;
@@ -50,7 +49,6 @@ import org.apache.ibatis.type.UnknownTypeHandler;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.Version;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 import net.sf.jsqlparser.expression.BinaryExpression;
@@ -79,7 +77,7 @@ import net.sf.jsqlparser.statement.update.Update;
  * @since 2017-04-08
  */
 @Intercepts({
-		@Signature(type = StatementHandler.class, method = "prepare", args = { Connection.class, Integer.class }) })
+		@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class}) })
 public final class OptimisticLockerInterceptor implements Interceptor {
 
 	/**
@@ -108,14 +106,13 @@ public final class OptimisticLockerInterceptor implements Interceptor {
 	}
 
 	public Object intercept(Invocation invocation) throws Exception {
-		StatementHandler statementHandler = (StatementHandler) PluginUtils.realTarget(invocation.getTarget());
-		MetaObject metaObject = SystemMetaObject.forObject(statementHandler);
 		// 先判断是不是真正的UPDATE操作
-		MappedStatement ms = (MappedStatement) metaObject.getValue("delegate.mappedStatement");
+		MappedStatement ms = (MappedStatement) invocation.getArgs()[0];
+		Object parameterObject = invocation.getArgs()[1];
 		if (!ms.getSqlCommandType().equals(SqlCommandType.UPDATE)) {
 			return invocation.proceed();
 		}
-		BoundSql boundSql = (BoundSql) metaObject.getValue("delegate.boundSql");
+		BoundSql boundSql = ms.getBoundSql(parameterObject);
 		// 获得参数类型,去缓存中快速判断是否有version注解才继续执行
 		Class<?> parameterClass = ms.getParameterMap().getType();
 		LockerCache lockerCache = versionCache.get(parameterClass);
