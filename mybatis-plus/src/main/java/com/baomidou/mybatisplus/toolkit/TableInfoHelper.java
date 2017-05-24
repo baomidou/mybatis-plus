@@ -15,17 +15,13 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
-import com.baomidou.mybatisplus.annotations.KeySequence;
-import com.baomidou.mybatisplus.annotations.TableField;
-import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.annotations.TableName;
-import com.baomidou.mybatisplus.entity.GlobalConfiguration;
-import com.baomidou.mybatisplus.entity.TableFieldInfo;
-import com.baomidou.mybatisplus.entity.TableInfo;
-import com.baomidou.mybatisplus.enums.IdType;
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.mapper.IKeyGenerator;
-import com.baomidou.mybatisplus.mapper.SqlRunner;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
@@ -40,12 +36,17 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.baomidou.mybatisplus.annotations.KeySequence;
+import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotations.TableId;
+import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.entity.GlobalConfiguration;
+import com.baomidou.mybatisplus.entity.TableFieldInfo;
+import com.baomidou.mybatisplus.entity.TableInfo;
+import com.baomidou.mybatisplus.enums.IdType;
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.mapper.IKeyGenerator;
+import com.baomidou.mybatisplus.mapper.SqlRunner;
 
 /**
  * <p>
@@ -83,16 +84,17 @@ public class TableInfoHelper {
      * <p>
      * 获取所有实体映射表信息
      * <p>
+     *
      * @return
      */
     public static List<TableInfo> getTableInfos() {
-    	List<TableInfo> tableInfos = new ArrayList<TableInfo>();
-    	for (Map.Entry<String, TableInfo> entry : tableInfoCache.entrySet()) {  
-    		tableInfos.add(entry.getValue());  
-    	} 
+        List<TableInfo> tableInfos = new ArrayList<TableInfo>();
+        for (Map.Entry<String, TableInfo> entry : tableInfoCache.entrySet()) {
+            tableInfos.add(entry.getValue());
+        }
         return tableInfos;
     }
-    
+
     /**
      * <p>
      * 实体类反射获取表信息【初始化】
@@ -102,11 +104,14 @@ public class TableInfoHelper {
      * @return
      */
     public synchronized static TableInfo initTableInfo(MapperBuilderAssistant builderAssistant, Class<?> clazz) {
-        TableInfo ti = tableInfoCache.get(clazz.getName());
-        if (ti != null) {
-            return ti;
+        TableInfo tableInfo = tableInfoCache.get(clazz.getName());
+        if (StringUtils.checkValNotNull(tableInfo)) {
+            if (StringUtils.checkValNotNull(builderAssistant)) {
+                tableInfo.setConfigMark(builderAssistant.getConfiguration());
+            }
+            return tableInfo;
         }
-        TableInfo tableInfo = new TableInfo();
+        tableInfo = new TableInfo();
         GlobalConfiguration globalConfig;
         if (null != builderAssistant) {
             tableInfo.setCurrentNamespace(builderAssistant.getCurrentNamespace());
