@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<plugins>
+		<plugin interceptor="com.baomidou.mybatisplus.plugins.PerformanceInterceptor"></plugin>
+		<plugin interceptor="com.baomidou.mybatisplus.plugins.OptimisticLockerInterceptor"></plugin>
+	</plugins>
+
+	<environments default="development">
+		<environment id="development">
+			<transactionManager type="JDBC">
+				<property name="" value="" />
+			</transactionManager>
+			<dataSource type="UNPOOLED">
+				<property name="driver" value="com.mysql.jdbc.Driver" />
+				<property name="url" value="jdbc:mysql://localhost:3306/mybatis-plus" />
+				<property name="username" value="root" />
+				<property name="password" value="!Ty5546380" />
+			</dataSource>
+
+		</environment>
+
+	</environments>
+
+	<mappers>
+		<mapper class="com.baomidou.mybatisplus.test.plugin.OptimisticLocker.mapper.IntVersionUserMapper" />
+		<mapper class="com.baomidou.mybatisplus.test.plugin.OptimisticLocker.mapper.LongVersionUserMapper" />
+		<mapper class="com.baomidou.mybatisplus.test.plugin.OptimisticLocker.mapper.DateVersionUserMapper" />
+		<mapper class="com.baomidou.mybatisplus.test.plugin.OptimisticLocker.mapper.TimestampVersionUserMapper" />
+	</mappers>
+
+</configuration>

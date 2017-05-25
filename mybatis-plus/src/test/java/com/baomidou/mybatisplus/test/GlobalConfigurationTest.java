@@ -98,4 +98,11 @@ public class GlobalConfigurationTest {
         session.rollback();
         sqlSession.commit();
     }
+
+
+    @org.junit.Test
+    public void testStringFormat(){
+        String str = "'%s'";
+        System.out.println(String.format(str,"abc"));
+    }
 }

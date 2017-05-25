@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.SqlSession;
@@ -247,7 +248,9 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
             int size = entityList.size();
             String sqlStatement = sqlStatement(SqlMethod.UPDATE_BY_ID);
             for (int i = 0; i < size; i++) {
-                batchSqlSession.update(sqlStatement, entityList.get(i));
+                MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
+                param.put("et",entityList.get(i));
+                batchSqlSession.update(sqlStatement, param);
                 if (i >= 1 && i % batchSize == 0) {
                     batchSqlSession.flushStatements();
                 }

@@ -4,7 +4,6 @@ import java.io.Reader;
 import java.sql.Connection;
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.Objects;
 import java.util.Random;
 
 import org.apache.ibatis.io.Resources;
@@ -23,7 +22,6 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.test.plugins.optimisticLocker.entity.DateVersionUser;
 import com.baomidou.mybatisplus.test.plugins.optimisticLocker.entity.IntVersionUser;
 import com.baomidou.mybatisplus.test.plugins.optimisticLocker.entity.LongVersionUser;
-import com.baomidou.mybatisplus.test.plugins.optimisticLocker.entity.StringVersionUser;
 import com.baomidou.mybatisplus.test.plugins.optimisticLocker.entity.TimestampVersionUser;
 import com.baomidou.mybatisplus.test.plugins.optimisticLocker.mapper.DateVersionUserMapper;
 import com.baomidou.mybatisplus.test.plugins.optimisticLocker.mapper.IntVersionUserMapper;
@@ -56,7 +54,7 @@ public class OptimisticLockerInterceptorTest {
 		SqlSession session = sqlSessionTemplate.getSqlSessionFactory().openSession();
 		Connection conn = session.getConnection();
 		Reader reader = Resources
-				.getResourceAsReader("com/baomidou/mybatisplus/test/plugins/optimisticLocker/CreateDB.sql");
+				.getResourceAsReader("h2/optlock/CreateDB.sql");
 		ScriptRunner runner = new ScriptRunner(conn);
 		runner.setLogWriter(null);
 		runner.runScript(reader);
@@ -137,18 +135,6 @@ public class OptimisticLockerInterceptorTest {
 	}
 
 	@Test
-	public void stringVersionTest() {
-		// 查询数据
-		StringVersionUser versionUser = stringersionUserMapper.selectById(1);
-		String originVersion = versionUser.getTt();
-		// 更新数据
-		versionUser.setName("苗神");
-		stringersionUserMapper.updateById(versionUser);
-		Assert.assertEquals(stringersionUserMapper.selectById(1).getTt(),
-				String.valueOf(Long.parseLong(originVersion) + 1));
-	}
-
-	@Test
 	public void multiThreadVersionTest() {
 		final Random random = new Random();
 		for (int i = 50; i < 150; i++) {
@@ -178,25 +164,31 @@ public class OptimisticLockerInterceptorTest {
 	@Test
 	public void multiParamVersionTest() {
 		// 查询数据
-		IntVersionUser versionUser = intVersionUserMapper.selectById(2);
+		Long id = 2L;
+		IntVersionUser versionUser = intVersionUserMapper.selectById(id);
 		Integer originVersion = versionUser.getVersion();
 		// null条件
+		versionUser.setVersion(null);
 		intVersionUserMapper.update(versionUser, null);
-		Assert.assertTrue(Objects.equals(intVersionUserMapper.selectById(2).getVersion(), originVersion));
+		versionUser = intVersionUserMapper.selectById(id);
+		Assert.assertEquals(originVersion.intValue(), versionUser.getVersion().intValue());
 		// 空条件
+		versionUser.setVersion(null);
 		intVersionUserMapper.update(versionUser, new EntityWrapper<IntVersionUser>());
-		Assert.assertTrue(Objects.equals(intVersionUserMapper.selectById(2).getVersion(), originVersion));
+		Assert.assertEquals(intVersionUserMapper.selectById(id).getVersion(), originVersion);
 		// 正常查询不带version
 		IntVersionUser wrapper = new IntVersionUser();
 		wrapper.setName("lisi");
 		intVersionUserMapper.update(versionUser, new EntityWrapper<>(wrapper));
-		Assert.assertTrue(intVersionUserMapper.selectById(2).getVersion() == originVersion + 1);
+		versionUser = intVersionUserMapper.selectById(id);
+		Assert.assertEquals(versionUser.getVersion(), originVersion);
 		// 原始条件带version按原始逻辑走
 		IntVersionUser wrapper2 = new IntVersionUser();
 		wrapper2.setName("lisi");
-		wrapper2.setVersion(originVersion + 1);
-		intVersionUserMapper.update(versionUser, new EntityWrapper<>(wrapper2));
-		Assert.assertTrue(intVersionUserMapper.selectById(1).getVersion() == originVersion + 1);
+		wrapper2.setId(id);
+		wrapper2.setVersion(versionUser.getVersion() + 1);
+		int effRow = intVersionUserMapper.update(versionUser, new EntityWrapper<>(wrapper2));
+		Assert.assertEquals(0, effRow);
 	}
 
 	@Test // FIXME这个测试应该归属逻辑删除里
