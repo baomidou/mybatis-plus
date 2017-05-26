@@ -55,7 +55,14 @@ public class OptimisticLockerInterceptor implements Interceptor {
     private final Map<Class<?>, EntityField> versionFieldCache = new HashMap<>();
     private final Map<Class<?>, List<EntityField>> entityFieldsCache = new HashMap<>();
 
+    private static final String MP_OPTLOCK_VERSION_ORIGINAL = "MP_OPTLOCK_VERSION_ORIGINAL";
+    private static final String MP_OPTLOCK_VERSION_COLUMN = "MP_OPTLOCK_VERSION_COLUMN";
+    private static final String NAME_ENTITY = "et";
+    private static final String NAME_ENTITY_WRAPPER = "ew";
+    private static final String PARAM_UPDATE_METHOD_NAME = "update";
+
     @Override
+    @SuppressWarnings("unchecked")
     public Object intercept(Invocation invocation) throws Throwable {
         Object[] args = invocation.getArgs();
         MappedStatement ms = (MappedStatement) args[0];
@@ -66,11 +73,10 @@ public class OptimisticLockerInterceptor implements Interceptor {
         if(param instanceof MapperMethod.ParamMap){
             MapperMethod.ParamMap map = (MapperMethod.ParamMap) param;
             Wrapper ew = null;
-            if(map.containsKey("ew")){
-                //mapper.update(updEntity, EntityWrapper<>(whereEntity);
-                ew = (Wrapper) map.get("ew");
+            if(map.containsKey(NAME_ENTITY_WRAPPER)){//mapper.update(updEntity, EntityWrapper<>(whereEntity);
+                ew = (Wrapper) map.get(NAME_ENTITY_WRAPPER);
             }//else updateById(entity) -->> change updateById(entity) to updateById(@Param("et") entity)
-            Object et = map.get("et");
+            Object et = map.get(NAME_ENTITY);
             if(ew!=null){
                 Object entity = ew.getEntity();
                 if(entity!=null){
@@ -84,40 +90,43 @@ public class OptimisticLockerInterceptor implements Interceptor {
                     }
                 }
             }else{
+                String methodId = ms.getId();
+                String updateMethodName = methodId.substring(ms.getId().lastIndexOf(".")+1);
+                if(PARAM_UPDATE_METHOD_NAME.equals(updateMethodName)){//update(entity, null) -->> update all. ignore version
+                    return invocation.proceed();
+                }
                 EntityField entityField = getVersionField(et.getClass());
                 Field versionField = entityField==null?null:entityField.getField();
-                if(versionField!=null) {
-                    Object originalVersionVal = versionField.get(et);
-                    if (originalVersionVal != null) {
-                        TableInfo tableInfo = TableInfoHelper.getTableInfo(et.getClass());
-                        Map<String,Object> entityMap = new HashMap<>();
-                        List<EntityField> fields = getEntityFields(et.getClass());
-                        for(EntityField ef : fields){
-                            Field fd = ef.getField();
-                            if(fd.isAccessible()) {
-                                entityMap.put(fd.getName(), fd.get(et));
-                                if (ef.isVersion()) {
-                                    versionField = fd;
-                                }
+                Object originalVersionVal;
+                if(versionField!=null && (originalVersionVal=versionField.get(et))!=null) {
+                    TableInfo tableInfo = TableInfoHelper.getTableInfo(et.getClass());
+                    Map<String,Object> entityMap = new HashMap<>();
+                    List<EntityField> fields = getEntityFields(et.getClass());
+                    for(EntityField ef : fields){
+                        Field fd = ef.getField();
+                        if(fd.isAccessible()) {
+                            entityMap.put(fd.getName(), fd.get(et));
+                            if (ef.isVersion()) {
+                                versionField = fd;
                             }
                         }
-                        String versionPropertyName = versionField.getName();
-                        List<TableFieldInfo> fieldList = tableInfo.getFieldList();
-                        String versionColumnName = entityField.getColumnName();
-                        if(versionColumnName==null) {
-                            for (TableFieldInfo tf : fieldList) {
-                                if (versionPropertyName.equals(tf.getProperty())) {
-                                    versionColumnName = tf.getColumn();
-                                }
+                    }
+                    String versionPropertyName = versionField.getName();
+                    List<TableFieldInfo> fieldList = tableInfo.getFieldList();
+                    String versionColumnName = entityField.getColumnName();
+                    if(versionColumnName==null) {
+                        for (TableFieldInfo tf : fieldList) {
+                            if (versionPropertyName.equals(tf.getProperty())) {
+                                versionColumnName = tf.getColumn();
                             }
                         }
-                        if (versionColumnName != null) {
-                            entityField.setColumnName(versionColumnName);
-                            entityMap.put(versionField.getName(), getUpdatedVersionVal(originalVersionVal));
-                            entityMap.put("MP_OPTLOCK_VERSION_ORIGINAL", originalVersionVal);
-                            entityMap.put("MP_OPTLOCK_VERSION_COLUMN", versionColumnName);
-                            map.put("et", entityMap);
-                        }
+                    }
+                    if (versionColumnName != null) {
+                        entityField.setColumnName(versionColumnName);
+                        entityMap.put(versionField.getName(), getUpdatedVersionVal(originalVersionVal));
+                        entityMap.put(MP_OPTLOCK_VERSION_ORIGINAL, originalVersionVal);
+                        entityMap.put(MP_OPTLOCK_VERSION_COLUMN, versionColumnName);
+                        map.put(NAME_ENTITY, entityMap);
                     }
                 }
             }
