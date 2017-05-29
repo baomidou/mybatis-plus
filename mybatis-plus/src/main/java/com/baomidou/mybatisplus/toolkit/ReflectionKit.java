@@ -15,15 +15,26 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+
 import com.baomidou.mybatisplus.entity.TableFieldInfo;
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-
-import java.lang.reflect.*;
-import java.util.*;
 
 
 /**
@@ -106,10 +117,7 @@ public class ReflectionKit {
             return false;
         }
         Class<?> cls = bean.getClass();
-        TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
-        if (null == tableInfo) {
-            throw new MybatisPlusException(String.format("Error: Could Not find %s in TableInfo Cache. ", cls.getSimpleName()));
-        }
+        TableInfo tableInfo = getTableInfoAsSuperClass(cls);
         boolean result = false;
         List<TableFieldInfo> fieldList = tableInfo.getFieldList();
         for (TableFieldInfo tableFieldInfo : fieldList) {
@@ -229,6 +237,25 @@ public class ReflectionKit {
             }
         }
         return fieldList;
+    }
+
+    /**
+     * 递归自身的class,获取TableInfo
+     *
+     * @param cls
+     * @return TableInfo
+     * @throws MybatisPlusException
+     */
+    private static TableInfo getTableInfoAsSuperClass(Class<?> cls) {
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
+        if (tableInfo == null) {
+            if (Object.class.equals(cls)) {
+                throw new MybatisPlusException(String.format("Error: Could Not find %s in TableInfo Cache. ", cls.getSimpleName()));
+            } else {
+                tableInfo = getTableInfoAsSuperClass(cls.getSuperclass());
+            }
+        }
+        return tableInfo;
     }
 
 }

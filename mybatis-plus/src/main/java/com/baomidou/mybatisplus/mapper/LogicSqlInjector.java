@@ -15,16 +15,17 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.mapping.SqlSource;
+import org.apache.ibatis.scripting.defaults.RawSqlSource;
+
 import com.baomidou.mybatisplus.entity.TableFieldInfo;
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.enums.SqlMethod;
 import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
-import org.apache.ibatis.mapping.SqlSource;
-import org.apache.ibatis.scripting.defaults.RawSqlSource;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -148,7 +149,14 @@ public class LogicSqlInjector extends AutoSqlInjector {
 		if (table.isLogicDelete()) {
 			SqlMethod sqlMethod = selective ? SqlMethod.LOGIC_UPDATE_BY_ID : SqlMethod.LOGIC_UPDATE_ALL_COLUMN_BY_ID;
 			String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlSet(selective, table, null),
-					table.getKeyColumn(), table.getKeyProperty(), getLogicDeleteSql(table));
+					table.getKeyColumn(), table.getKeyProperty(),
+					"<if test=\"et instanceof java.util.Map\">"+
+						"<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">"
+							+"and ${et.MP_OPTLOCK_VERSION_COLUMN}=#{et.MP_OPTLOCK_VERSION_ORIGINAL}"
+						+ "</if>"
+					+"</if>"+
+					getLogicDeleteSql(table)
+			);
 			SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
 			this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
 		} else {

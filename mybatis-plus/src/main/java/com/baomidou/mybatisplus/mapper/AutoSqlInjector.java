@@ -307,7 +307,8 @@ public class AutoSqlInjector implements ISqlInjector {
     protected void injectDeleteByIdSql(boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
         SqlMethod sqlMethod = SqlMethod.DELETE_BY_ID;
         SqlSource sqlSource;
-        String idStr = table.getKeyColumn();
+        // 因为后面要通过get方法获取类型，所以这里要获取key的属性值
+        String idStr = table.getKeyProperty();
         if (batch) {
             sqlMethod = SqlMethod.DELETE_BATCH_BY_IDS;
             StringBuilder ids = new StringBuilder();
@@ -332,8 +333,14 @@ public class AutoSqlInjector implements ISqlInjector {
      */
     protected void injectUpdateByIdSql(boolean selective, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
         SqlMethod sqlMethod = selective ? SqlMethod.UPDATE_BY_ID : SqlMethod.UPDATE_ALL_COLUMN_BY_ID;
-        String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlSet(selective, table, null), table.getKeyColumn(),
-                table.getKeyProperty());
+        String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlSet(selective, table, "et."), table.getKeyColumn(),
+                "et."+table.getKeyProperty(),
+                "<if test=\"et instanceof java.util.Map\">"+
+                        "<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">"
+                        +"and ${et.MP_OPTLOCK_VERSION_COLUMN}=#{et.MP_OPTLOCK_VERSION_ORIGINAL}"
+                        + "</if>"
+                +"</if>"
+        );
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
         this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
     }

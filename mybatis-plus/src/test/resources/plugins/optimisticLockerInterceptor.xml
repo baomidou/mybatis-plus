@@ -20,13 +20,7 @@
 			value="com.baomidou.mybatisplus.test.plugins.optimisticLocker.entity" />
 		<property name="plugins">
 			<array>
-				<bean class="com.baomidou.mybatisplus.plugins.OptimisticLockerInterceptor">
-					<property name="properties">
-						<value>
-							versionHandlers=com.baomidou.mybatisplus.test.plugins.optimisticLocker.StringTypeHandler
-						</value>
-					</property>
-				</bean>
+				<bean class="com.baomidou.mybatisplus.plugins.OptimisticLockerInterceptor"/>
 				<bean class="com.baomidou.mybatisplus.plugins.PerformanceInterceptor" />
 			</array>
 		</property>

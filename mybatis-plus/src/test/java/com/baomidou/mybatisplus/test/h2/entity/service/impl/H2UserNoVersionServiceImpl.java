@@ -13,22 +13,24 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.plugins;
+package com.baomidou.mybatisplus.test.h2.entity.service.impl;
 
-import java.lang.reflect.Field;
+import org.springframework.stereotype.Service;
+
+import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserNoVersionMapper;
+import com.baomidou.mybatisplus.test.h2.entity.persistent.H2UserNoVersion;
+import com.baomidou.mybatisplus.test.h2.entity.service.IH2UserNoVersionService;
 
 /**
  * <p>
- * 乐观锁处理器,底层接口
+ * Service层测试
  * </p>
  *
- * @author TaoYu 小锅盖
- * @since 2017-04-08
+ * @author hubin
+ * @date 2017-01-30
  */
-public interface VersionHandler<T> {
+@Service
+public class H2UserNoVersionServiceImpl extends ServiceImpl<H2UserNoVersionMapper, H2UserNoVersion> implements IH2UserNoVersionService {
 
-    /**
-     * 根据类型,使得对象对应的字段+1
-     */
-    void plusVersion(Object paramObj, Field field, T versionValue) throws Exception;
 }

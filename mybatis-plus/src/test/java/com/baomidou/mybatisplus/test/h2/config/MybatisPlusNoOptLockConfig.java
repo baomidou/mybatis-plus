@@ -13,15 +13,12 @@ import org.springframework.core.io.ResourceLoader;
 import com.baomidou.mybatisplus.MybatisConfiguration;
 import com.baomidou.mybatisplus.MybatisXMLLanguageDriver;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
-import com.baomidou.mybatisplus.mapper.LogicSqlInjector;
-import com.baomidou.mybatisplus.plugins.OptimisticLockerInterceptor;
 import com.baomidou.mybatisplus.plugins.PaginationInterceptor;
-import com.baomidou.mybatisplus.plugins.PerformanceInterceptor;
 import com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean;
 
 /**
  * <p>
- * Mybatis Plus Config
+ * Mybatis Plus Config without OptimisLock
  * </p>
  *
  * @author Caratacus
@@ -29,7 +26,7 @@ import com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean;
  */
 @Configuration
 @MapperScan("com.baomidou.mybatisplus.test.h2.entity.mapper")
-public class MybatisPlusConfig {
+public class MybatisPlusNoOptLockConfig {
 
     @Bean("mybatisSqlSession")
     public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader, GlobalConfiguration globalConfiguration) throws Exception {
@@ -43,11 +40,8 @@ public class MybatisPlusConfig {
         sqlSessionFactory.setConfiguration(configuration);
         PaginationInterceptor pagination = new PaginationInterceptor();
         pagination.setDialectType("h2");
-        OptimisticLockerInterceptor optLock = new OptimisticLockerInterceptor();
         sqlSessionFactory.setPlugins(new Interceptor[]{
                 pagination,
-                optLock,
-                new PerformanceInterceptor()
         });
         sqlSessionFactory.setGlobalConfig(globalConfiguration);
         return sqlSessionFactory.getObject();
@@ -55,10 +49,8 @@ public class MybatisPlusConfig {
 
     @Bean
     public GlobalConfiguration globalConfiguration() {
-        GlobalConfiguration conf = new GlobalConfiguration(new LogicSqlInjector());
-        conf.setLogicDeleteValue("D");
-        conf.setLogicNotDeleteValue("A");
-        conf.setIdType(2);
-        return conf;
+        GlobalConfiguration globalConfiguration = new GlobalConfiguration();
+        globalConfiguration.setIdType(2);
+        return globalConfiguration;
     }
 }

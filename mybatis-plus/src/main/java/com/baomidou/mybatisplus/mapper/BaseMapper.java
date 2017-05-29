@@ -110,7 +110,7 @@ public interface BaseMapper<T> {
      *            实体对象
      * @return int
      */
-    Integer updateById(T entity);
+    Integer updateById(@Param("et") T entity);
 
     /**
      * <p>
@@ -121,7 +121,7 @@ public interface BaseMapper<T> {
      *            实体对象
      * @return int
      */
-    Integer updateAllColumnById(T entity);
+    Integer updateAllColumnById(@Param("et") T entity);
 
     /**
      * <p>
