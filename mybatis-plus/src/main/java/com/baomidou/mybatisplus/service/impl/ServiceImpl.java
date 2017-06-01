@@ -122,7 +122,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
-        try (SqlSession batchSqlSession = sqlSessionBatch()) {
+        SqlSession batchSqlSession = sqlSessionBatch();
+        try {
             int size = entityList.size();
             String sqlStatement = sqlStatement(SqlMethod.INSERT_ONE);
             for (int i = 0; i < size; i++) {
@@ -132,8 +133,10 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 }
             }
             batchSqlSession.flushStatements();
-        } catch (Exception e) {
+            batchSqlSession.commit();
+        } catch (Throwable e) {
             logger.error("Error: Cannot execute insertBatch Method. Cause:" + e);
+            batchSqlSession.rollback();
             return false;
         }
         return true;
@@ -180,7 +183,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
-        try (SqlSession batchSqlSession = sqlSessionBatch()) {
+        SqlSession batchSqlSession = sqlSessionBatch();
+        try {
             int size = entityList.size();
             for (int i = 0; i < size; i++) {
                 insertOrUpdate(entityList.get(i));
@@ -189,8 +193,10 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 }
             }
             batchSqlSession.flushStatements();
-        } catch (Exception e) {
+            batchSqlSession.commit();
+        } catch (Throwable e) {
             logger.error("Error: Cannot execute insertOrUpdateBatch Method. Cause:" + e);
+            batchSqlSession.rollback();
             return false;
         }
         return true;
@@ -244,7 +250,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
-        try (SqlSession batchSqlSession = sqlSessionBatch()) {
+        SqlSession batchSqlSession = sqlSessionBatch();
+        try {
             int size = entityList.size();
             String sqlStatement = sqlStatement(SqlMethod.UPDATE_BY_ID);
             for (int i = 0; i < size; i++) {
@@ -256,8 +263,10 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 }
             }
             batchSqlSession.flushStatements();
-        } catch (Exception e) {
+            batchSqlSession.commit();
+        } catch (Throwable e) {
             logger.error("Error: Cannot execute insertBatch Method. Cause:" + e);
+            batchSqlSession.rollback();
             return false;
         }
         return true;
