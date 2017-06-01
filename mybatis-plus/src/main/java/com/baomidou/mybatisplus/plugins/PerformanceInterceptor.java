@@ -20,6 +20,8 @@ import java.sql.Statement;
 import java.util.Properties;
 
 import org.apache.ibatis.executor.statement.StatementHandler;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.Intercepts;
@@ -48,13 +50,23 @@ import com.baomidou.mybatisplus.toolkit.SystemClock;
         @Signature(type = StatementHandler.class, method = "update", args = {Statement.class}),
         @Signature(type = StatementHandler.class, method = "batch", args = {Statement.class})})
 public class PerformanceInterceptor implements Interceptor {
-
+    private static final Log logger = LogFactory.getLog(PerformanceInterceptor.class);
     /**
      * SQL 执行最大时长，超过自动停止运行，有助于发现问题。
      */
     private long maxTime = 0;
 
+    /**
+     * SQL 是否格式化
+     */
     private boolean format = false;
+
+    /**
+     * 是否写入日志文件<br>
+     * true 写入日志文件，不阻断程序执行！<br>
+     * 超过设定的最大执行时长异常提示！
+     */
+    private boolean writeInLog = false;
 
     public Object intercept(Invocation invocation) throws Throwable {
         Statement statement;
@@ -84,9 +96,18 @@ public class PerformanceInterceptor implements Interceptor {
         Object target = PluginUtils.realTarget(invocation.getTarget());
         MetaObject metaObject = SystemMetaObject.forObject(target);
         MappedStatement ms = (MappedStatement) metaObject.getValue("delegate.mappedStatement");
-        System.err.println(" Time：" + timing + " ms" + " - ID：" + ms.getId() + "\n Execute SQL：" + formatSql + "\n");
-        if (maxTime >= 1 && timing > maxTime) {
-            throw new MybatisPlusException(" The SQL execution time is too large, please optimize ! ");
+        String sqlTxt = " Time：" + timing + " ms" + " - ID：" + ms.getId() + "\n Execute SQL：" + formatSql + "\n";
+        if (this.isWriteInLog()) {
+            if (maxTime >= 1 && timing > maxTime) {
+                logger.error(sqlTxt);
+            } else {
+                logger.debug(sqlTxt);
+            }
+        } else {
+            System.err.println(sqlTxt);
+            if (maxTime >= 1 && timing > maxTime) {
+                throw new MybatisPlusException(" The SQL execution time is too large, please optimize ! ");
+            }
         }
         return result;
     }
@@ -123,5 +144,13 @@ public class PerformanceInterceptor implements Interceptor {
 
     public void setFormat(boolean format) {
         this.format = format;
+    }
+
+    public boolean isWriteInLog() {
+        return writeInLog;
+    }
+
+    public void setWriteInLog(boolean writeInLog) {
+        this.writeInLog = writeInLog;
     }
 }
