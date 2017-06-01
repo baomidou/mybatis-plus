@@ -82,30 +82,36 @@ public class PerformanceInterceptor implements Interceptor {
         } catch (Exception e) {
             // do nothing
         }
+
+        // 获取执行 SQL
         String originalSql = statement.toString();
         int index = originalSql.indexOf(':');
-        String sql = originalSql;
         if (index > 0) {
-            sql = originalSql.substring(index + 1, originalSql.length());
+            originalSql = originalSql.substring(index + 1, originalSql.length());
         }
+
+        // 计算执行 SQL 耗时
         long start = SystemClock.now();
         Object result = invocation.proceed();
-        long end = SystemClock.now();
-        long timing = end - start;
-        String formatSql = SqlUtils.sqlFormat(sql, format);
+        long timing = SystemClock.now() - start;
+
+        // 格式化 SQL 打印执行结果
         Object target = PluginUtils.realTarget(invocation.getTarget());
         MetaObject metaObject = SystemMetaObject.forObject(target);
         MappedStatement ms = (MappedStatement) metaObject.getValue("delegate.mappedStatement");
-        String sqlTxt = " Time：" + timing + " ms" + " - ID：" + ms.getId() + "\n Execute SQL：" + formatSql + "\n";
+        StringBuilder formatSql = new StringBuilder();
+        formatSql.append(" Time：").append(timing);
+        formatSql.append(" ms - ID：").append(ms.getId());
+        formatSql.append("\n Execute SQL：").append(SqlUtils.sqlFormat(originalSql, format)).append("\n");
         if (this.isWriteInLog()) {
-            if (maxTime >= 1 && timing > maxTime) {
-                logger.error(sqlTxt);
+            if (this.getMaxTime() >= 1 && timing > this.getMaxTime()) {
+                logger.error(formatSql.toString());
             } else {
-                logger.debug(sqlTxt);
+                logger.debug(formatSql.toString());
             }
         } else {
-            System.err.println(sqlTxt);
-            if (maxTime >= 1 && timing > maxTime) {
+            System.err.println(formatSql.toString());
+            if (this.getMaxTime() >= 1 && timing > this.getMaxTime()) {
                 throw new MybatisPlusException(" The SQL execution time is too large, please optimize ! ");
             }
         }
