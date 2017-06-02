@@ -24,6 +24,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
+import com.baomidou.mybatisplus.entity.OracleKeyGenerator;
 import com.baomidou.mybatisplus.test.oracle.entity.TestSequser;
 
 
@@ -54,6 +55,7 @@ public class TestSequserMapperTest {
         GlobalConfiguration gc = new GlobalConfiguration();
         gc.setDbType("oracle");
         gc.setDbColumnUnderline(true);
+        gc.setKeyGenerator(new OracleKeyGenerator());
         mf.setGlobalConfig(gc);
         SqlSessionFactory sessionFactory = mf.build(in);
         SqlSession session = sessionFactory.openSession();
@@ -79,7 +81,7 @@ public class TestSequserMapperTest {
             rlt = testSequserMapper.insert(u);
         }
         for (TestSequser u : ul) {
-        	System.err.println("\n one.id-------:" + u.getId());
+        	System.err.println("\n one.id-------:" + u.getId()+", testId="+u.getTestId());
         }
         
         /**

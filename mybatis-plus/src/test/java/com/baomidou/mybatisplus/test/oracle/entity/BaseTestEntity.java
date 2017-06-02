@@ -5,6 +5,7 @@ import java.io.Serializable;
 import com.baomidou.mybatisplus.annotations.KeySequence;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
+import com.baomidou.mybatisplus.enums.IdType;
 
 /**
  * 用户表
@@ -18,8 +19,10 @@ public class BaseTestEntity implements Serializable {
     /**
      * 主键ID
      */
-    @TableId(value = "ID")
-    private Long id;
+    @TableId(value = "TEST_ID", type = IdType.INPUT)
+    private Long testId;
+
+    private transient Long id;
 
 
     public BaseTestEntity() {
@@ -35,6 +38,11 @@ public class BaseTestEntity implements Serializable {
 		this.id = id;
 	}
 
+    public Long getTestId() {
+        return testId;
+    }
 
-
+    public void setTestId(Long testId) {
+        this.testId = testId;
+    }
 }
