@@ -129,7 +129,17 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                 }
                 return objList;
             } else {
-                TableInfo tableInfo = TableInfoHelper.getTableInfo(parameterObject.getClass());
+                TableInfo tableInfo;
+                if(parameterObject instanceof java.util.Map){
+                    Object et = ((java.util.Map)parameterObject).get("et");
+                    if(et!=null){
+                        tableInfo = TableInfoHelper.getTableInfo(et.getClass());
+                    }else{
+                        tableInfo = null;
+                    }
+                }else{
+                    tableInfo = TableInfoHelper.getTableInfo(parameterObject.getClass());
+                }
                 return populateKeys(metaObjectHandler, tableInfo, ms, parameterObject);
             }
         }
@@ -226,13 +236,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                 if (parameterMapping.getMode() != ParameterMode.OUT) {
                     Object value;
                     String propertyName = parameterMapping.getProperty();
-                    if (boundSql.hasAdditionalParameter(propertyName)) { // issue
-                        // #448
-                        // ask
-                        // first
-                        // for
-                        // additional
-                        // params
+                    if (boundSql.hasAdditionalParameter(propertyName)) {//issue#448 ask first for additional params
                         value = boundSql.getAdditionalParameter(propertyName);
                     } else if (parameterObject == null) {
                         value = null;

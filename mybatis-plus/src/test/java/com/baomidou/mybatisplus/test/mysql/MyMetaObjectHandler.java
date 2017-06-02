@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.test.mysql;
 
+import java.sql.Timestamp;
+
 import org.apache.ibatis.reflection.MetaObject;
 
 import com.baomidou.mybatisplus.mapper.MetaObjectHandler;
@@ -38,16 +40,23 @@ public class MyMetaObjectHandler extends MetaObjectHandler {
 //			metaObject.setValue("name", "instert-fill");
 //		}
 
+        System.out.println("*************************");
+        System.out.println("insert fill");
+        System.out.println("*************************");
+
         // 测试下划线
-        Object testType = metaObject.getValue("testType");
-        System.err.println("testType==" + testType);
-        if (null == testType) {
-            metaObject.setValue("testType", 3);
+        Object testType = getFieldValByName("testType", metaObject);
+        System.out.println("testType="+testType);
+        if(testType==null){
+            setFieldValByName("testType", 3, metaObject);
         }
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
-
+        System.out.println("*************************");
+        System.out.println("update fill");
+        System.out.println("*************************");
+        setFieldValByName("lastUpdatedDt", new Timestamp(System.currentTimeMillis()), metaObject);
     }
 }
