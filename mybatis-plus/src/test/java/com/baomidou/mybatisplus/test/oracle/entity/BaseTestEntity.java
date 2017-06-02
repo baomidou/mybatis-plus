@@ -20,10 +20,7 @@ public class BaseTestEntity implements Serializable {
      * 主键ID
      */
     @TableId(value = "TEST_ID", type = IdType.INPUT)
-    private Long testId;
-
-    private transient Long id;
-
+    private Long id;
 
     public BaseTestEntity() {
 
@@ -38,11 +35,4 @@ public class BaseTestEntity implements Serializable {
 		this.id = id;
 	}
 
-    public Long getTestId() {
-        return testId;
-    }
-
-    public void setTestId(Long testId) {
-        this.testId = testId;
-    }
 }

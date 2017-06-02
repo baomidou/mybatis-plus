@@ -81,7 +81,7 @@ public class TestSequserMapperTest {
             rlt = testSequserMapper.insert(u);
         }
         for (TestSequser u : ul) {
-        	System.err.println("\n one.id-------:" + u.getId()+", testId="+u.getTestId());
+            System.err.println("\n one.id-------:" + u.getId());
         }
         
         /**
