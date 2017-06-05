@@ -1,2 +1,5 @@
 .DS_Store
 D:
+/mybatis-plus/gradlew
+/mybatis-plus/*.bat
+/mybatis-plus/gradle/wrapper
