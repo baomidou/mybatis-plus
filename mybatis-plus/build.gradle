@@ -80,11 +80,11 @@ dependencies {
         exclude(module: 'commons-logging')
     }
     testCompile("org.apache.commons:commons-pool2:2.4.2")
-    testCompile("com.microsoft.sqlserver:sqljdbc4:4.0")
-    testCompile("org.postgresql:postgresql:9.4.1212")
-    testCompile("com.oracle:ojdbc14:10.2.0.5.0")
-    testCompile("com.h2database:h2:1.4.194")
-    testCompile("mysql:mysql-connector-java:5.1.38")
+    testRuntime("com.microsoft.sqlserver:sqljdbc4:4.0")
+    testRuntime("org.postgresql:postgresql:9.4.1212")
+    testRuntime("com.oracle:ojdbc14:10.2.0.5.0")
+    testRuntime("com.h2database:h2:1.4.194")
+    testRuntime("mysql:mysql-connector-java:5.1.38")
     testCompile common
     testCompile("org.slf4j:slf4j-api:1.7.25")
     testCompile("org.slf4j:jcl-over-slf4j:1.7.25")
