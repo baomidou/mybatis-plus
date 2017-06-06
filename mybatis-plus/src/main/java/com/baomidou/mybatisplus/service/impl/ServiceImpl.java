@@ -15,17 +15,6 @@
  */
 package com.baomidou.mybatisplus.service.impl;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.binding.MapperMethod;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.SqlSession;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.enums.SqlMethod;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
@@ -35,11 +24,17 @@ import com.baomidou.mybatisplus.mapper.SqlHelper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.IService;
-import com.baomidou.mybatisplus.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.toolkit.MapUtils;
-import com.baomidou.mybatisplus.toolkit.ReflectionKit;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import com.baomidou.mybatisplus.toolkit.*;
+import org.apache.ibatis.binding.MapperMethod;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -133,11 +128,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 }
             }
             batchSqlSession.flushStatements();
-            batchSqlSession.commit();
         } catch (Throwable e) {
-            logger.error("Error: Cannot execute insertBatch Method. Cause:" + e);
-            batchSqlSession.rollback();
-            return false;
+            throw new MybatisPlusException("Error: Cannot execute insertBatch Method. Cause", e);
         }
         return true;
 
@@ -193,11 +185,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 }
             }
             batchSqlSession.flushStatements();
-            batchSqlSession.commit();
         } catch (Throwable e) {
-            logger.error("Error: Cannot execute insertOrUpdateBatch Method. Cause:" + e);
-            batchSqlSession.rollback();
-            return false;
+            throw new MybatisPlusException("Error: Cannot execute insertBatch Method. Cause", e);
         }
         return true;
     }
@@ -263,11 +252,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 }
             }
             batchSqlSession.flushStatements();
-            batchSqlSession.commit();
         } catch (Throwable e) {
-            logger.error("Error: Cannot execute insertBatch Method. Cause:" + e);
-            batchSqlSession.rollback();
-            return false;
+            throw new MybatisPlusException("Error: Cannot execute insertBatch Method. Cause", e);
         }
         return true;
     }
