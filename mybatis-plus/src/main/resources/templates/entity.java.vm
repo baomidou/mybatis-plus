@@ -86,4 +86,16 @@ public class ${entity} implements Serializable {
 	}
 
 #end
+	@Override
+	public String toString() {
+		return "${entity}{" +
+#foreach($field in ${table.fields})
+#if($!{velocityCount}==1)
+			"${field.propertyName}=" + ${field.propertyName} +
+#else
+			", ${field.propertyName}=" + ${field.propertyName} +
+#end
+#end
+			"}";
+	}
 }
