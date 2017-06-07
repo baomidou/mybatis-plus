@@ -15,6 +15,17 @@
  */
 package com.baomidou.mybatisplus.service.impl;
 
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.binding.MapperMethod;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.enums.SqlMethod;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
@@ -24,17 +35,11 @@ import com.baomidou.mybatisplus.mapper.SqlHelper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.IService;
-import com.baomidou.mybatisplus.toolkit.*;
-import org.apache.ibatis.binding.MapperMethod;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.SqlSession;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
+import com.baomidou.mybatisplus.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.toolkit.MapUtils;
+import com.baomidou.mybatisplus.toolkit.ReflectionKit;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**
  * <p>
@@ -67,7 +72,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     @SuppressWarnings("unchecked")
-    protected Class<T> currentModleClass() {
+    protected Class<T> currentModelClass() {
         return ReflectionKit.getSuperClassGenricType(getClass(), 1);
     }
 
@@ -77,7 +82,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      * </p>
      */
     protected SqlSession sqlSessionBatch() {
-        return SqlHelper.sqlSessionBatch(currentModleClass());
+        return SqlHelper.sqlSessionBatch(currentModelClass());
     }
 
     /**
@@ -87,7 +92,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      * @return
      */
     protected String sqlStatement(SqlMethod sqlMethod) {
-        return SqlHelper.table(currentModleClass()).getSqlStatement(sqlMethod.getMethod());
+        return SqlHelper.table(currentModelClass()).getSqlStatement(sqlMethod.getMethod());
     }
 
     @Transactional
