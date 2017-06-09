@@ -90,4 +90,21 @@ public class IdWorkerTest {
 		Assert.assertTrue(even >= low && even <= high);
 	}
 
+	@Test
+	public void test1() throws Exception {
+		// 毫秒内并发
+		for (int i = 0; i < 1000; i++) {
+			System.out.println(IdWorker.getId());
+		}
+	}
+
+
+	@Test
+	public void test2() throws Exception {
+		// 随机尾数
+		for (int i = 0; i < 1000; i++) {
+			Thread.sleep(10);
+			System.out.println(IdWorker.getId());
+		}
+	}
 }
