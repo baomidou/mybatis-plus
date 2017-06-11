@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baomidou.mybatisplus.test.mysql.mapper.UserMapper">
+
+    <!-- ehcache 缓存配置, 输出日志 http://www.mybatis.org/ehcache-cache/ -->
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+
+    <!-- 建议字段，采用驼峰命名方法，不然很麻烦 -->
+    <select id="selectListRow" resultType="User">
+		select test_id AS id,name,age,test_type AS testType from user
+	</select>
+
+    <!-- 根据主键批量查询 -->
+    <select id="forSelect" resultType="User">
+        select test_id AS id,name,age,test_type AS testType from user
+        <if test="ids!=null">
+            where test_id in
+            <foreach item="item" index="index" collection="ids"
+                     open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+    </select>
+
+    <delete id="deleteAll">
+		delete FROM user
+	</delete>
+
+    <!-- 测试 resultMap 结果集注入【 注意，实体需要注解 ！！ 】 -->
+    <resultMap type="User" id="userMap">
+        <id column="id" property="id"/>
+        <result column="test_id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="age" property="age"/>
+        <result column="test_type" property="testType"/>
+
+        <!-- 自定义 typeHandler 语法 -->
+        <result column="phone" property="phone"
+                typeHandler="com.baomidou.mybatisplus.test.mysql.typehandler.PhoneTypeHandler"/>
+
+        <!-- 级联查询 -->
+        <association column="role" property="role" select="com.baomidou.mybatisplus.test.mysql.mapper.RoleMapper.selectById"/>
+    </resultMap>
+</mapper>

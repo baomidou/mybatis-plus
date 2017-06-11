@@ -1,5 +1,18 @@
+/target/
+/.settings/
+/.project
+/.classpath
+
+# IntelliJ project files
+.idea
+*.iml
+out
+html
+
+# gradle
+.gradle
+build
+
+# MacOS
 .DS_Store
-D:
-/mybatis-plus/gradlew
-/mybatis-plus/*.bat
-/mybatis-plus/gradle/wrapper
+/.gradle
