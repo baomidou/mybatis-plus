@@ -152,18 +152,24 @@ public class TableInfoHelper {
         }
         List<TableFieldInfo> fieldList = new ArrayList<>();
         List<Field> list = getAllFields(clazz);
+        // 标记是否读取到主键 0、否  1、是
+        boolean idNotRead = true;
         boolean existTableId = existTableId(list);
         for (Field field : list) {
 
             /*
              * 主键ID 初始化
              */
-            if (existTableId) {
-                if (initTableId(globalConfig, tableInfo, field, clazz)) {
+            if (idNotRead) {
+                if (existTableId) {
+                    if (initTableId(globalConfig, tableInfo, field, clazz)) {
+                        idNotRead = false;
+                        continue;
+                    }
+                } else if (initFieldId(globalConfig, tableInfo, field, clazz)) {
+                    idNotRead = false;
                     continue;
                 }
-            } else if (initFieldId(globalConfig, tableInfo, field, clazz)) {
-                continue;
             }
 
             /*
