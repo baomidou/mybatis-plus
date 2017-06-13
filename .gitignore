@@ -16,3 +16,4 @@ build
 # MacOS
 .DS_Store
 /.gradle
+mybatis-plus/target/
