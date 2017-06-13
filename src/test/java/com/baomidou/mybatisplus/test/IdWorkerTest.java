@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.baomidou.mybatisplus.test;
 
 import java.util.ArrayList;
@@ -17,22 +32,6 @@ import com.baomidou.mybatisplus.test.plugins.RandomUtils;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
 
 /**
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- */
-
-/**
  * <p>
  * IdWorker 并发测试
  * </p>
@@ -44,12 +43,8 @@ public class IdWorkerTest {
 
 	@Test
 	public void test() throws Exception {
-		double wucha = 0.05;
 		int count = 1000;
-		int wuchaNum = (int) (count * wucha);
-		int high = count + wuchaNum;
-		int low = count - wuchaNum;
-		System.err.println("共有" + count + "个数参与测试,误差系数为" + wucha + "误差值为" + wuchaNum);
+		System.err.println("共有" + count + "个数参与测试");
 
 		ExecutorService executorService = Executors.newFixedThreadPool(20);
 		final List<Long> results = new ArrayList<>();
@@ -86,8 +81,6 @@ public class IdWorkerTest {
 		}
 		System.err.println("奇数:" + odd);
 		System.err.println("偶数:" + even);
-		Assert.assertTrue(odd >= low && odd <= high);
-		Assert.assertTrue(even >= low && even <= high);
 	}
 
 	@Test
