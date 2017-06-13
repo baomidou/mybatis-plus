@@ -76,6 +76,13 @@ public class OptimisticLockerInterceptor implements Interceptor {
             if(map.containsKey(NAME_ENTITY_WRAPPER)){//mapper.update(updEntity, EntityWrapper<>(whereEntity);
                 ew = (Wrapper) map.get(NAME_ENTITY_WRAPPER);
             }//else updateById(entity) -->> change updateById(entity) to updateById(@Param("et") entity)
+
+            // TODO 待验证逻辑
+            // if mannual sql or updagteById(entity),unsupport OCC,proceed as usual unless use updateById(@Param("et") entity)
+            //if(!map.containsKey(NAME_ENTITY)) {
+            //    return invocation.proceed();
+            //}
+
             Object et = map.get(NAME_ENTITY);
             if(ew!=null){
                 Object entity = ew.getEntity();
