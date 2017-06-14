@@ -2,9 +2,7 @@ package com.baomidou.mybatisplus.test.oracle.entity;
 
 import java.io.Serializable;
 
-import com.baomidou.mybatisplus.annotations.KeySequence;
 import com.baomidou.mybatisplus.annotations.TableField;
-import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 
 /**
@@ -26,17 +24,19 @@ public class TestSequser  extends BaseTestEntity implements Serializable{
     /**
      * 名称
      */
+	@TableField(value = "NAME")
     private String name;
 
     /**
      * 年龄
      */
+	@TableField(value = "age")
     private Integer age;
     
     /**
      * 测试下划线字段命名类型
      */
-    //@TableField(value = "TEST_TYPE")
+    @TableField(value = "TEST_TYPE")
     private Integer testType;
 
     public TestSequser() {
@@ -82,4 +82,12 @@ public class TestSequser  extends BaseTestEntity implements Serializable{
 		this.testType = testType;
 	}
 
+	@Override
+	public String toString() {
+		return "TestSequser{" +
+				"name='" + name + '\'' +
+				", age=" + age +
+				", testType=" + testType +
+				'}';
+	}
 }

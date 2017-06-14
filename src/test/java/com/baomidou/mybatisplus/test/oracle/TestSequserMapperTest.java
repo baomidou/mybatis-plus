@@ -25,7 +25,9 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.entity.OracleKeyGenerator;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.test.oracle.entity.TestSequser;
+import com.baomidou.mybatisplus.test.oracle.mapper.TestSequserMapper;
 
 
 /**
@@ -66,7 +68,7 @@ public class TestSequserMapperTest {
         TestSequser one = new TestSequser("abc", 18, 1);
         int rlt = testSequserMapper.insert(one);
         System.err.println("\n one.id-------:" + one.getId());
-        sleep();
+//        sleep();
 
         /**
          * 批量插入
@@ -80,8 +82,19 @@ public class TestSequserMapperTest {
         for (TestSequser u : ul) {
             rlt = testSequserMapper.insert(u);
         }
-        for (TestSequser u : ul) {
-            System.err.println("\n one.id-------:" + u.getId());
+//        for (TestSequser u : ul) {
+//            System.err.println("\n one.id-------:" + u.getId());
+//        }
+
+        System.out.println("********************");
+        List<TestSequser> testList = testSequserMapper.getList();
+        for (TestSequser u : testList) {
+            System.out.println(u);
+        }
+
+        testList = testSequserMapper.selectList(new EntityWrapper<TestSequser>());
+        for (TestSequser u : testList) {
+            System.out.println(u);
         }
         
         /**

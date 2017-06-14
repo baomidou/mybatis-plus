@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.test.oracle;
+package com.baomidou.mybatisplus.test.oracle.mapper;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.baomidou.mybatisplus.test.oracle.entity.TestUser;
