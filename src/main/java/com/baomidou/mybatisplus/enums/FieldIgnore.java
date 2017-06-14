@@ -17,16 +17,17 @@ package com.baomidou.mybatisplus.enums;
 
 /**
  * <p>
- * 字段策略枚举类
+ * 字段忽略策略枚举类
  * </p>
  *
  * @author hubin
  * @Date 2016-09-09
  */
-public enum FieldStrategy {
-    IGNORED(0, "忽略判断"),
-    NOT_NULL(1, "非 NULL 判断"),
-    NOT_EMPTY(2, "非空判断");
+public enum FieldIgnore {
+    DEFAULT(0, "默认方式"),
+    INSERT(1, "忽略插入"),
+    UPDATE(2, "忽略更新"),
+    INSERT_UPDATE(3, "忽略插入和更新");
 
     /**
      * 主键
@@ -38,19 +39,19 @@ public enum FieldStrategy {
      */
     private final String desc;
 
-    FieldStrategy(final int key, final String desc) {
+    FieldIgnore(final int key, final String desc) {
         this.key = key;
         this.desc = desc;
     }
 
-    public static FieldStrategy getFieldStrategy(int key) {
-        FieldStrategy[] fss = FieldStrategy.values();
-        for (FieldStrategy fs : fss) {
-            if (fs.getKey() == key) {
-                return fs;
+    public static FieldIgnore getIgnore(int key) {
+        FieldIgnore[] fis = FieldIgnore.values();
+        for (FieldIgnore fi : fis) {
+            if (fi.getKey() == key) {
+                return fi;
             }
         }
-        return FieldStrategy.NOT_NULL;
+        return FieldIgnore.DEFAULT;
     }
 
     public int getKey() {

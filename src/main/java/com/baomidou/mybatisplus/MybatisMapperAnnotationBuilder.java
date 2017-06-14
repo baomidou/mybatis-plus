@@ -15,49 +15,11 @@
  */
 package com.baomidou.mybatisplus;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
-import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
-import org.apache.ibatis.annotations.Arg;
-import org.apache.ibatis.annotations.CacheNamespace;
-import org.apache.ibatis.annotations.CacheNamespaceRef;
-import org.apache.ibatis.annotations.Case;
-import org.apache.ibatis.annotations.ConstructorArgs;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.DeleteProvider;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.InsertProvider;
-import org.apache.ibatis.annotations.Lang;
-import org.apache.ibatis.annotations.MapKey;
-import org.apache.ibatis.annotations.Options;
+import com.baomidou.mybatisplus.entity.GlobalConfiguration;
+import com.baomidou.mybatisplus.mapper.BaseMapper;
+import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.annotations.Options.FlushCachePolicy;
-import org.apache.ibatis.annotations.Property;
-import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.ResultMap;
-import org.apache.ibatis.annotations.ResultType;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.SelectKey;
-import org.apache.ibatis.annotations.SelectProvider;
-import org.apache.ibatis.annotations.TypeDiscriminator;
-import org.apache.ibatis.annotations.Update;
-import org.apache.ibatis.annotations.UpdateProvider;
 import org.apache.ibatis.binding.BindingException;
 import org.apache.ibatis.binding.MapperMethod.ParamMap;
 import org.apache.ibatis.builder.BuilderException;
@@ -66,21 +28,14 @@ import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.builder.annotation.MapperAnnotationBuilder;
 import org.apache.ibatis.builder.annotation.MethodResolver;
 import org.apache.ibatis.builder.annotation.ProviderSqlSource;
+import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.cursor.Cursor;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
 import org.apache.ibatis.executor.keygen.SelectKeyGenerator;
 import org.apache.ibatis.io.Resources;
-import org.apache.ibatis.mapping.Discriminator;
-import org.apache.ibatis.mapping.FetchType;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.ResultFlag;
-import org.apache.ibatis.mapping.ResultMapping;
-import org.apache.ibatis.mapping.ResultSetType;
-import org.apache.ibatis.mapping.SqlCommandType;
-import org.apache.ibatis.mapping.SqlSource;
-import org.apache.ibatis.mapping.StatementType;
+import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.parsing.PropertyParser;
 import org.apache.ibatis.reflection.TypeParameterResolver;
 import org.apache.ibatis.scripting.LanguageDriver;
@@ -91,8 +46,11 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.UnknownTypeHandler;
 
-import com.baomidou.mybatisplus.entity.GlobalConfiguration;
-import com.baomidou.mybatisplus.mapper.BaseMapper;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.*;
+import java.util.*;
 
 /**
  * <p>
@@ -131,14 +89,16 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
     public void parse() {
         String resource = type.toString();
         if (!configuration.isResourceLoaded(resource)) {
-            boolean existXml = loadXmlResource();
+            loadXmlResource();
             configuration.addLoadedResource(resource);
             assistant.setCurrentNamespace(type.getName());
             parseCache();
             parseCacheRef();
             Method[] methods = type.getMethods();
-            // TODO 注入存在 xxMapper.xml CURD (应该在注解之前注入)
-            inspectInject(existXml);
+            // TODO 注入 CURD 动态 SQL (应该在注解之前注入)
+            if (BaseMapper.class.isAssignableFrom(type)) {
+                GlobalConfiguration.getSqlInjector(configuration).inspectInject(assistant, type);
+            }
             for (Method method : methods) {
                 try {
                     // issue #237
@@ -151,15 +111,6 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
             }
         }
         parsePendingMethods();
-    }
-
-    /*
-     * 注入 CURD 动态 SQL(XML不存在时注入)
-     */
-    private void inspectInject(boolean flag) {
-        if (!flag && BaseMapper.class.isAssignableFrom(type)) {
-            GlobalConfiguration.getSqlInjector(configuration).inspectInject(assistant, type);
-        }
     }
 
     private void parsePendingMethods() {
@@ -177,15 +128,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
         }
     }
 
-    /**
-     * <p>
-     * 是否存在XML(该方法并不能客观的判断resource的路径,只是Mybatis默认认为的xml路径)
-     * </p>
-     *
-     * @return true 存在, false 不存在
-     */
-    private boolean loadXmlResource() {
-        boolean flag = true;
+    private void loadXmlResource() {
         // Spring may not know the real resource name so we check a flag
         // to prevent loading again a resource twice
         // this flag is set at XMLMapperBuilder#bindMapperForNamespace
@@ -196,15 +139,12 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                 inputStream = Resources.getResourceAsStream(type.getClassLoader(), xmlResource);
             } catch (IOException e) {
                 // ignore, resource is not required
-                flag = false;
             }
             if (inputStream != null) {
-                MybatisXMLMapperBuilder xmlParser = new MybatisXMLMapperBuilder(inputStream, assistant.getConfiguration(),
-                        xmlResource, configuration.getSqlFragments(), type.getName());
+                XMLMapperBuilder xmlParser = new XMLMapperBuilder(inputStream, assistant.getConfiguration(), xmlResource, configuration.getSqlFragments(), type.getName());
                 xmlParser.parse();
             }
         }
-        return flag;
     }
 
     private void parseCache() {

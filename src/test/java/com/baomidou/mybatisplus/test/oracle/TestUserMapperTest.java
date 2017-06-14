@@ -27,6 +27,7 @@ import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.test.oracle.entity.TestUser;
+import com.baomidou.mybatisplus.test.oracle.mapper.TestUserMapper;
 
 /**
  * <p>

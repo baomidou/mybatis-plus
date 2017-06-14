@@ -15,16 +15,9 @@
  */
 package com.baomidou.mybatisplus;
 
-import java.io.InputStream;
-import java.io.Reader;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
-
-import javax.sql.DataSource;
-
 import org.apache.ibatis.builder.BaseBuilder;
 import org.apache.ibatis.builder.BuilderException;
+import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.builder.xml.XMLMapperEntityResolver;
 import org.apache.ibatis.datasource.DataSourceFactory;
 import org.apache.ibatis.executor.ErrorContext;
@@ -43,13 +36,16 @@ import org.apache.ibatis.reflection.MetaClass;
 import org.apache.ibatis.reflection.ReflectorFactory;
 import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
-import org.apache.ibatis.session.AutoMappingBehavior;
-import org.apache.ibatis.session.AutoMappingUnknownColumnBehavior;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.ExecutorType;
-import org.apache.ibatis.session.LocalCacheScope;
+import org.apache.ibatis.session.*;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.type.JdbcType;
+
+import javax.sql.DataSource;
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * <p>
@@ -363,6 +359,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
         }
     }
 
+    // TODO 这里需要优化
     private void mapperElement(XNode parent) throws Exception {
         /**
          * 定义集合 用来分类放置mybatis的Mapper与XML 按顺序依次遍历
@@ -378,7 +375,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
                 ErrorContext.instance().resource(resource);
                 InputStream inputStream = Resources.getResourceAsStream(resource);
                 //TODO
-                MybatisXMLMapperBuilder mapperParser = new MybatisXMLMapperBuilder(inputStream, configuration, resource,
+                XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, resource,
                         configuration.getSqlFragments());
                 mapperParser.parse();
             }

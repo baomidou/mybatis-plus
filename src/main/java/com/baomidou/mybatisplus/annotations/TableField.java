@@ -15,12 +15,13 @@
  */
 package com.baomidou.mybatisplus.annotations;
 
+import com.baomidou.mybatisplus.enums.FieldIgnore;
+import com.baomidou.mybatisplus.enums.FieldStrategy;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import com.baomidou.mybatisplus.enums.FieldStrategy;
 
 /**
  * <p>
@@ -74,21 +75,8 @@ public @interface TableField {
 
     /**
      * <p>
-     * 是否插入忽略
-     * </p>
-     * <p>
-     * 默认为false,即不忽略
+     * 字段忽略策略
      * </p>
      */
-    boolean insertIgnore() default false;
-
-    /**
-     * <p>
-     * 是否更新忽略
-     * </p>
-     * <p>
-     * 默认为false,即不忽略
-     * </p>
-     */
-    boolean updateIgnore() default false;
+    FieldIgnore ignore() default FieldIgnore.DEFAULT;
 }
