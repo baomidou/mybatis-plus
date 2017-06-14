@@ -12,7 +12,10 @@ public class PostgreKeyGenerator implements IKeyGenerator {
 
     @Override
     public String executeSql(String incrementerName) {
-        return "select nextval('" + incrementerName + "')";
+        StringBuilder sql = new StringBuilder();
+        sql.append("select nextval('");
+        sql.append(incrementerName);
+        sql.append("')");
+        return sql.toString();
     }
-
 }
