@@ -358,6 +358,7 @@ public class H2UserTest {
         list = userService.selectList(new EntityWrapper<H2User>());
         for (H2User u : list) {
             Assert.assertEquals(u.getName(), nameExpect.get(u.getId()));
+            if (u.getVersion() != null)
             Assert.assertEquals(versionBefore.get(u.getId()) + 1, u.getVersion().intValue());
         }
     }

@@ -251,9 +251,10 @@ public class LogicSqlInjector extends AutoSqlInjector {
 	@Override
 	protected String sqlWhereEntityWrapper(TableInfo table) {
 		if (table.isLogicDelete()) {
-			StringBuilder where = new StringBuilder("\n<where>");
-			// EW 逻辑
-			where.append("\n<if test=\"ew!=null\">\n<if test=\"ew.entity!=null\">");
+			StringBuilder where = new StringBuilder(128);
+			where.append("\n<where>");
+			where.append("\n<if test=\"ew!=null\">");
+			where.append("\n<if test=\"ew.entity!=null\">");
 			if (StringUtils.isNotEmpty(table.getKeyProperty())) {
 				where.append("\n<if test=\"ew.entity.").append(table.getKeyProperty()).append("!=null\">");
 				where.append(" AND ").append(table.getKeyColumn()).append("=#{ew.entity.");
@@ -268,17 +269,17 @@ public class LogicSqlInjector extends AutoSqlInjector {
 				where.append(convertIfTag(fieldInfo, true));
 			}
 			where.append("\n</if>");
+			where.append("\n<if test=\"ew.sqlSegment!=null\">${ew.sqlSegment}\n</if>");
 			where.append("\n</if>");
-
 			// 过滤逻辑, 这段代码放在这里的原因，第一：不把 逻辑的过滤 放在where条件 第一位， 能够方便利用索引
 			where.append("\n").append(getLogicDeleteSql(table));
-			where.append("\n<if test=\"ew!=null\">\n<if test=\"ew.sqlSegment!=null\">${ew.sqlSegment}</if>\n</if>");
 			where.append("\n</where>");
 			return where.toString();
 		}
 		// 正常逻辑
 		return super.sqlWhereEntityWrapper(table);
 	}
+
 
 	@Override
 	protected String sqlWhereByMap(TableInfo table) {
