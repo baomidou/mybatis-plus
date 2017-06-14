@@ -24,7 +24,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
-import com.baomidou.mybatisplus.entity.OracleKeyGenerator;
+import com.baomidou.mybatisplus.incrementer.OracleKeyGenerator;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.test.oracle.entity.TestSequser;
 import com.baomidou.mybatisplus.test.oracle.mapper.TestSequserMapper;

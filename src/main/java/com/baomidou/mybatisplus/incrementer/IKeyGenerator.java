@@ -13,10 +13,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.mapper;
+package com.baomidou.mybatisplus.incrementer;
 
-
-import com.baomidou.mybatisplus.entity.TableInfo;
 
 /**
  * <p>
@@ -33,9 +31,9 @@ public interface IKeyGenerator {
      * 执行 key 生成 SQL
      * </p>
      *
-     * @param tableInfo 数据库表反射信息
+     * @param incrementerName 序列名称
      * @return
      */
-    String executeSql(TableInfo tableInfo);
+    String executeSql(String incrementerName);
 
 }

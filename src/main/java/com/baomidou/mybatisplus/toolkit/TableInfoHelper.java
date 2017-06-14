@@ -45,7 +45,7 @@ import com.baomidou.mybatisplus.entity.TableFieldInfo;
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.mapper.IKeyGenerator;
+import com.baomidou.mybatisplus.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.mapper.SqlRunner;
 
 /**
@@ -408,7 +408,7 @@ public class TableInfoHelper {
         String keyProperty = tableInfo.getKeyProperty();
         String keyColumn = tableInfo.getKeyColumn();
         SqlSource sqlSource = languageDriver.createSqlSource(builderAssistant.getConfiguration(),
-                keyGenerator.executeSql(tableInfo), null);
+                keyGenerator.executeSql(tableInfo.getKeySequence().value()), null);
         builderAssistant.addMappedStatement(id, sqlSource, statementType, SqlCommandType.SELECT, null, null, null,
                 null, null, resultTypeClass, null, false, false, false,
                 new NoKeyGenerator(), keyProperty, keyColumn, null, languageDriver, null);

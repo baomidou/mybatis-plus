@@ -13,9 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.entity;
-
-import com.baomidou.mybatisplus.mapper.IKeyGenerator;
+package com.baomidou.mybatisplus.incrementer;
 
 /**
  * <p>
@@ -28,8 +26,8 @@ import com.baomidou.mybatisplus.mapper.IKeyGenerator;
 public class OracleKeyGenerator implements IKeyGenerator {
 
     @Override
-    public String executeSql(TableInfo tableInfo) {
-        return String.format("SELECT %s.NEXTVAL FROM DUAL", tableInfo.getKeySequence().value());
+    public String executeSql(String incrementerName) {
+        return String.format("SELECT %s.NEXTVAL FROM DUAL", incrementerName);
     }
 
 }
