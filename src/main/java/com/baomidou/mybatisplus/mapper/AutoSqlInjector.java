@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.baomidou.mybatisplus.enums.FieldIgnore;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -240,7 +241,8 @@ public class AutoSqlInjector implements ISqlInjector {
 
         for (TableFieldInfo fieldInfo : fieldList) {
             /* 判断是否插入忽略，插入忽略就不生成这个SQL */
-            if (fieldInfo.isInsertIgnore()) {
+            // TODO 忽略策略待完善
+            if (fieldInfo.getFieldIgnore() == FieldIgnore.INSERT) {
                 continue;
             }
             if (selective) {
@@ -532,7 +534,8 @@ public class AutoSqlInjector implements ISqlInjector {
         List<TableFieldInfo> fieldList = table.getFieldList();
         for (TableFieldInfo fieldInfo : fieldList) {
             /* 判断是不是更新忽略，是的话不生成此SQL */
-            if (fieldInfo.isUpdateIgnore()) {
+            // TODO 忽略策略待完善
+            if (fieldInfo.getFieldIgnore() == FieldIgnore.UPDATE) {
                 continue;
             }
             if (selective) {
