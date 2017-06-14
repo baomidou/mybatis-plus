@@ -152,26 +152,23 @@ public class TableInfoHelper {
         }
         List<TableFieldInfo> fieldList = new ArrayList<>();
         List<Field> list = getAllFields(clazz);
-        // 标记是否读取到主键 0、否  1、是
-        boolean idNotRead = true;
+        // 标记是否读取到主键
+        boolean isReadPK = false;
         boolean existTableId = existTableId(list);
         for (Field field : list) {
-
-            /*
-             * 主键ID 初始化
-             */
-            if (idNotRead) {
+           /*
+            * 主键ID 初始化
+            */
+            if (!isReadPK) {
                 if (existTableId) {
                     if (initTableId(globalConfig, tableInfo, field, clazz)) {
-                        idNotRead = false;
                         continue;
                     }
                 } else if (initFieldId(globalConfig, tableInfo, field, clazz)) {
-                    idNotRead = false;
                     continue;
                 }
+                isReadPK = true;
             }
-
             /*
              * 字段初始化
              */
@@ -417,9 +414,9 @@ public class TableInfoHelper {
                 new NoKeyGenerator(), keyProperty, keyColumn, null, languageDriver, null);
         id = builderAssistant.applyCurrentNamespace(id, false);
         MappedStatement keyStatement = builderAssistant.getConfiguration().getMappedStatement(id, false);
-        SelectKeyGenerator answer = new SelectKeyGenerator(keyStatement, true);
-        builderAssistant.getConfiguration().addKeyGenerator(id, answer);
-        return answer;
+        SelectKeyGenerator selectKeyGenerator = new SelectKeyGenerator(keyStatement, true);
+        builderAssistant.getConfiguration().addKeyGenerator(id, selectKeyGenerator);
+        return selectKeyGenerator;
     }
 
 }
