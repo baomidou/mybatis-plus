@@ -15,15 +15,6 @@
  */
 package com.baomidou.mybatisplus.test.mysql;
 
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
@@ -33,6 +24,14 @@ import com.baomidou.mybatisplus.test.mysql.entity.Role;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
 import com.baomidou.mybatisplus.test.mysql.mapper.UserMapper;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -85,7 +84,7 @@ public class UserMapperTest {
         /**
          * 设置，自定义 元对象填充器，实现公共字段自动写入
          */
-        gc.setMetaObjectHandler(new MyMetaObjectHandler());
+        //gc.setMetaObjectHandler(new MyMetaObjectHandler());
         // gc.setCapitalMode(true);
         gc.setDbColumnUnderline(true);
         mf.setGlobalConfig(gc);

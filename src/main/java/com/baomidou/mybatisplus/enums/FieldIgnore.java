@@ -27,7 +27,7 @@ public enum FieldIgnore {
     DEFAULT(0, "默认方式"),
     INSERT(1, "忽略插入"),
     UPDATE(2, "忽略更新"),
-    INSERT_AND_UPDATE(3, "忽略插入和更新");
+    INSERT_UPDATE(3, "忽略插入和更新");
 
     /**
      * 主键
@@ -45,10 +45,10 @@ public enum FieldIgnore {
     }
 
     public static FieldIgnore getIgnore(int key) {
-        FieldIgnore[] fss = FieldIgnore.values();
-        for (FieldIgnore fs : fss) {
-            if (fs.getKey() == key) {
-                return fs;
+        FieldIgnore[] fis = FieldIgnore.values();
+        for (FieldIgnore fi : fis) {
+            if (fi.getKey() == key) {
+                return fi;
             }
         }
         return FieldIgnore.DEFAULT;
