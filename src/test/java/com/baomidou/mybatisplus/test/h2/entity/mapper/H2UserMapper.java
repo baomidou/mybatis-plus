@@ -23,12 +23,12 @@ public interface H2UserMapper extends BaseMapper<H2User> {
             "select a.addr_id as addrId, a.addr_name as addrName from h2address a" +
                     " join h2user u on u.test_id=a.test_id and u.test_id=#{userId}"
     )
-    public List<H2Addr> getAddrListByUserId(@Param("userId") Long userId);
+     List<H2Addr> getAddrListByUserId(@Param("userId") Long userId);
 
     @Select(
             "select a.addr_id as addrId, a.addr_name as addrName from h2address a" +
                     " join h2user u on u.test_id=a.test_id and u.test_id=#{userId}"
     )
-    public List<H2Addr> getAddrListByUserId(@Param("userId") Long userId, Page<H2Addr> page);
+     List<H2Addr> getAddrListByUserId(@Param("userId") Long userId, Page<H2Addr> page);
 
 }

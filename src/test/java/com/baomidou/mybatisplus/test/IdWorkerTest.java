@@ -48,7 +48,7 @@ public class IdWorkerTest {
 
 		ExecutorService executorService = Executors.newFixedThreadPool(20);
 		final List<Long> results = new ArrayList<>();
-		CompletionService<Long> cs = new ExecutorCompletionService<Long>(executorService);
+		CompletionService<Long> cs = new ExecutorCompletionService<>(executorService);
 		for (int i = 1; i < count; i++) {
 			cs.submit(new Callable<Long>() {
 				public Long call() throws Exception {

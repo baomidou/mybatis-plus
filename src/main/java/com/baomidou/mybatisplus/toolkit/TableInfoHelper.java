@@ -88,7 +88,7 @@ public class TableInfoHelper {
      * @return
      */
     public static List<TableInfo> getTableInfos() {
-        List<TableInfo> tableInfos = new ArrayList<TableInfo>();
+        List<TableInfo> tableInfos = new ArrayList<>();
         for (Map.Entry<String, TableInfo> entry : tableInfoCache.entrySet()) {
             tableInfos.add(entry.getValue());
         }
