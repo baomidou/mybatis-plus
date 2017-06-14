@@ -142,7 +142,7 @@ public class H2UserNoVersionTest {
     }
 
     @Test
-    public void testUpdateById(){
+    public void testUpdateById() {
         Long id = 991L;
         H2UserNoVersion user = new H2UserNoVersion();
         user.setId(id);
@@ -166,7 +166,7 @@ public class H2UserNoVersionTest {
     }
 
     @Test
-    public void testUpdateByEntityWrapper(){
+    public void testUpdateByEntityWrapper() {
         Long id = 992L;
         H2UserNoVersion user = new H2UserNoVersion();
         user.setId(id);
@@ -192,7 +192,7 @@ public class H2UserNoVersionTest {
     }
 
     @Test
-    public void testUpdateByEntityWrapper2(){
+    public void testUpdateByEntityWrapper2() {
         Long id = 993L;
         H2UserNoVersion user = new H2UserNoVersion();
         user.setId(id);
@@ -218,16 +218,16 @@ public class H2UserNoVersionTest {
     }
 
     @Test
-    public void testUpdateBatch(){
+    public void testUpdateBatch() {
         List<H2UserNoVersion> list = userService.selectList(new EntityWrapper<H2UserNoVersion>());
         Map<Long, Integer> userVersionMap = new HashMap<>();
-        for(H2UserNoVersion u:list){
-            userVersionMap.put(u.getId(),u.getVersion());
+        for (H2UserNoVersion u : list) {
+            userVersionMap.put(u.getId(), u.getVersion());
         }
         userService.updateBatchById(list);
 
         list = userService.selectList(new EntityWrapper<H2UserNoVersion>());
-        for(H2UserNoVersion user:list){
+        for (H2UserNoVersion user : list) {
             Assert.assertEquals(userVersionMap.get(user.getId()).intValue(), user.getVersion().intValue());
         }
     }

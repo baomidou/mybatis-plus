@@ -46,8 +46,8 @@ public class MyMetaObjectHandler extends MetaObjectHandler {
 
         // 测试下划线
         Object testType = getFieldValByName("testType", metaObject);
-        System.out.println("testType="+testType);
-        if(testType==null){
+        System.out.println("testType=" + testType);
+        if (testType == null) {
             setFieldValByName("testType", 3, metaObject);
         }
     }

@@ -87,7 +87,7 @@ public class H2UserDateVersionTest {
 
 
     @Test
-    public void testUpdateByIdNoDateVersion(){
+    public void testUpdateByIdNoDateVersion() {
         Long id = 991L;
         H2UserDateVersion user = new H2UserDateVersion();
         user.setId(id);
@@ -111,7 +111,7 @@ public class H2UserDateVersionTest {
 
 
     @Test
-    public void testUpdateByEntityWrapperNoDateVersion(){
+    public void testUpdateByEntityWrapperNoDateVersion() {
         Long id = 992L;
         H2UserDateVersion user = new H2UserDateVersion();
         user.setId(id);
@@ -135,7 +135,7 @@ public class H2UserDateVersionTest {
     }
 
     @Test
-    public void testUpdateByIdWithDateVersion(){
+    public void testUpdateByIdWithDateVersion() {
         Long id = 994L;
         H2UserDateVersion user = new H2UserDateVersion();
         user.setId(id);
@@ -146,16 +146,16 @@ public class H2UserDateVersionTest {
         user.setTestType(1);
         user.setVersion(1);
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DAY_OF_MONTH,-1);
+        cal.add(Calendar.DAY_OF_MONTH, -1);
         user.setTestDate(cal.getTime());
         userMapper.insertAllColumn(user);
 
-        System.out.println("before update: testDate="+user.getTestDate());
+        System.out.println("before update: testDate=" + user.getTestDate());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH");
         H2UserDateVersion userDB = userMapper.selectById(id);
 
         Assert.assertNotNull(userDB.getTestDate());
-        String originalDateVersionStr =sdf.format(cal.getTime());
+        String originalDateVersionStr = sdf.format(cal.getTime());
         Assert.assertEquals(originalDateVersionStr, sdf.format(userDB.getTestDate()));
 
         userDB.setName("991");
@@ -163,7 +163,7 @@ public class H2UserDateVersionTest {
         userDB = userMapper.selectById(id);
         Assert.assertEquals("991", userDB.getName());
         Date versionDate = userDB.getTestDate();
-        System.out.println("after update: testDate="+versionDate);
+        System.out.println("after update: testDate=" + versionDate);
         String versionDateStr = sdf.format(versionDate);
         Assert.assertEquals(sdf.format(new Date()), versionDateStr);
 
@@ -172,7 +172,7 @@ public class H2UserDateVersionTest {
     }
 
     @Test
-    public void testUpdateByEntityWrapperWithDateVersion(){
+    public void testUpdateByEntityWrapperWithDateVersion() {
         Long id = 993L;
         H2UserDateVersion user = new H2UserDateVersion();
         user.setId(id);
@@ -183,7 +183,7 @@ public class H2UserDateVersionTest {
         user.setTestType(1);
         user.setVersion(1);
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DAY_OF_MONTH,-1);
+        cal.add(Calendar.DAY_OF_MONTH, -1);
         user.setTestDate(cal.getTime());
         userMapper.insertAllColumn(user);
 
@@ -194,14 +194,14 @@ public class H2UserDateVersionTest {
         userDB.setVersion(null);
         userMapper.update(updUser, new EntityWrapper<>(userDB));
 
-        System.out.println("before update: testDate="+userDB.getTestDate());
+        System.out.println("before update: testDate=" + userDB.getTestDate());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH");
 
         userDB = userMapper.selectById(id);
         Assert.assertEquals("999", userDB.getName());
 
         Date versionDate = userDB.getTestDate();
-        System.out.println("after update: testDate="+versionDate);
+        System.out.println("after update: testDate=" + versionDate);
         String versionDateStr = sdf.format(versionDate);
         Assert.assertEquals(sdf.format(new Date()), versionDateStr);
     }

@@ -42,9 +42,7 @@ public class TestSequserMapperTest {
 
 
     /**
-     *
      * Test Oracle Sequence
-     *
      */
     public static void main(String[] args) {
 
@@ -96,7 +94,7 @@ public class TestSequserMapperTest {
         for (TestSequser u : testList) {
             System.out.println(u);
         }
-        
+
         /**
          * 提交
          */

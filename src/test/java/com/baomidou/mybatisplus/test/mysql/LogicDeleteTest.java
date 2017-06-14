@@ -64,11 +64,11 @@ public class LogicDeleteTest {
         System.err.println("第一次：逻辑删除testType 改为 1 成功记录数：" + rlt);
         rlt = userMapper.insert(new User(IdWorker.getId(), "logic-delete-2", 28, 2));
         System.err.println("再插入一条成功记录数：" + rlt);
-        rlt = userMapper.delete(Condition.create().eq("test_id",1111));
+        rlt = userMapper.delete(Condition.create().eq("test_id", 1111));
         System.err.println("全表逻辑删除成功记录数：" + rlt);
         List<User> userList = userMapper.selectList(null);
-        for (User u: userList) {
-            System.out.println("全表逻辑删除 ( id= " + u.getId() + " ) 展示结果"+u.getTestType());
+        for (User u : userList) {
+            System.out.println("全表逻辑删除 ( id= " + u.getId() + " ) 展示结果" + u.getTestType());
         }
 
         System.err.println("第二次：逻辑删除testType 改为 1 成功记录数：" + rlt);
@@ -77,8 +77,8 @@ public class LogicDeleteTest {
         rlt = userMapper.deleteByMap(map);
         System.err.println("全表逻辑删除 ByMap 成功记录数：" + rlt);
         userList = userMapper.selectList(null);
-        for (User u: userList) {
-            System.out.println("全表逻辑删除 ( id= " + u.getId() + " ) 展示结果"+u.getTestType());
+        for (User u : userList) {
+            System.out.println("全表逻辑删除 ( id= " + u.getId() + " ) 展示结果" + u.getTestType());
         }
     }
 }

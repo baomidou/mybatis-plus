@@ -86,6 +86,7 @@ public class MybatisMapperRefresh implements Runnable {
 
     /**
      * see  com.baomidou.mybatisplus.spring.MybatisMapperRefresh#MybatisMapperRefresh(org.apache.ibatis.session.SqlSessionFactory, int, int, boolean)
+     *
      * @param mapperLocations
      * @param sqlSessionFactory
      * @param delaySeconds
@@ -106,6 +107,7 @@ public class MybatisMapperRefresh implements Runnable {
 
     /**
      * see com.baomidou.mybatisplus.spring.MybatisMapperRefresh#MybatisMapperRefresh(org.apache.ibatis.session.SqlSessionFactory, boolean)
+     *
      * @param mapperLocations
      * @param sqlSessionFactory
      * @param enabled
@@ -126,7 +128,7 @@ public class MybatisMapperRefresh implements Runnable {
         this.run();
     }
 
-    public MybatisMapperRefresh(SqlSessionFactory sqlSessionFactory,int delaySeconds, int sleepSeconds,boolean enabled) throws Exception {
+    public MybatisMapperRefresh(SqlSessionFactory sqlSessionFactory, int delaySeconds, int sleepSeconds, boolean enabled) throws Exception {
         this.sqlSessionFactory = sqlSessionFactory;
         this.delaySeconds = delaySeconds;
         this.sleepSeconds = sleepSeconds;

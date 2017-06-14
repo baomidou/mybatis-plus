@@ -15,7 +15,7 @@ import com.baomidou.mybatisplus.test.oracle.service.OracleUserSeqService;
  * @date 2017/6/14
  */
 @Service
-public class OracleUserSeqServiceImpl extends ServiceImpl<TestSequserMapper, TestSequser> implements OracleUserSeqService{
+public class OracleUserSeqServiceImpl extends ServiceImpl<TestSequserMapper, TestSequser> implements OracleUserSeqService {
 
 
 }

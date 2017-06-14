@@ -51,6 +51,7 @@ import com.baomidou.mybatisplus.toolkit.SystemClock;
         @Signature(type = StatementHandler.class, method = "update", args = {Statement.class}),
         @Signature(type = StatementHandler.class, method = "batch", args = {Statement.class})})
 public class PerformanceInterceptor implements Interceptor {
+
     private static final Log logger = LogFactory.getLog(PerformanceInterceptor.class);
     /**
      * SQL 执行最大时长，超过自动停止运行，有助于发现问题。
@@ -88,14 +89,14 @@ public class PerformanceInterceptor implements Interceptor {
 
         String originalSql = null;
         String stmtClassName = statement.getClass().getName();
-        if("oracle.jdbc.driver.T4CPreparedStatement".equals(stmtClassName)){
+        if ("oracle.jdbc.driver.T4CPreparedStatement".equals(stmtClassName)) {
             try {
-                if(oracleGetOriginalSqlMethod!=null){
+                if (oracleGetOriginalSqlMethod != null) {
                     Object stmtSql = oracleGetOriginalSqlMethod.invoke(statement);
                     if (stmtSql != null && stmtSql instanceof String) {
                         originalSql = (String) stmtSql;
                     }
-                }else {
+                } else {
                     Class<?> clazz = Class.forName("oracle.jdbc.driver.OracleStatement");
                     oracleGetOriginalSqlMethod = clazz.getDeclaredMethod("getOriginalSql", null);
                     if (oracleGetOriginalSqlMethod != null) {
@@ -108,7 +109,7 @@ public class PerformanceInterceptor implements Interceptor {
             } catch (Exception e) {//ignore
             }
         }
-        if(originalSql==null){
+        if (originalSql == null) {
             originalSql = statement.toString();
         }
 

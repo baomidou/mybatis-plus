@@ -40,8 +40,7 @@ public interface BaseMapper<T> {
      * 插入一条记录
      * </p>
      *
-     * @param entity
-     *            实体对象
+     * @param entity 实体对象
      * @return int
      */
     Integer insert(T entity);
@@ -51,8 +50,7 @@ public interface BaseMapper<T> {
      * 插入一条记录
      * </p>
      *
-     * @param entity
-     *            实体对象
+     * @param entity 实体对象
      * @return int
      */
     Integer insertAllColumn(T entity);
@@ -62,8 +60,7 @@ public interface BaseMapper<T> {
      * 根据 ID 删除
      * </p>
      *
-     * @param id
-     *            主键ID
+     * @param id 主键ID
      * @return int
      */
     Integer deleteById(Serializable id);
@@ -73,8 +70,7 @@ public interface BaseMapper<T> {
      * 根据 columnMap 条件，删除记录
      * </p>
      *
-     * @param columnMap
-     *            表字段 map 对象
+     * @param columnMap 表字段 map 对象
      * @return int
      */
     Integer deleteByMap(@Param("cm") Map<String, Object> columnMap);
@@ -84,8 +80,7 @@ public interface BaseMapper<T> {
      * 根据 entity 条件，删除记录
      * </p>
      *
-     * @param wrapper
-     *            实体对象封装操作类（可以为 null）
+     * @param wrapper 实体对象封装操作类（可以为 null）
      * @return int
      */
     Integer delete(@Param("ew") Wrapper<T> wrapper);
@@ -95,8 +90,7 @@ public interface BaseMapper<T> {
      * 删除（根据ID 批量删除）
      * </p>
      *
-     * @param idList
-     *            主键ID列表
+     * @param idList 主键ID列表
      * @return int
      */
     Integer deleteBatchIds(List<? extends Serializable> idList);
@@ -106,8 +100,7 @@ public interface BaseMapper<T> {
      * 根据 ID 修改
      * </p>
      *
-     * @param entity
-     *            实体对象
+     * @param entity 实体对象
      * @return int
      */
     Integer updateById(@Param("et") T entity);
@@ -117,8 +110,7 @@ public interface BaseMapper<T> {
      * 根据 ID 修改
      * </p>
      *
-     * @param entity
-     *            实体对象
+     * @param entity 实体对象
      * @return int
      */
     Integer updateAllColumnById(@Param("et") T entity);
@@ -128,10 +120,8 @@ public interface BaseMapper<T> {
      * 根据 whereEntity 条件，更新记录
      * </p>
      *
-     * @param entity
-     *            实体对象
-     * @param wrapper
-     *            实体对象封装操作类（可以为 null）
+     * @param entity  实体对象
+     * @param wrapper 实体对象封装操作类（可以为 null）
      * @return
      */
     Integer update(@Param("et") T entity, @Param("ew") Wrapper<T> wrapper);
@@ -141,8 +131,7 @@ public interface BaseMapper<T> {
      * 根据 ID 查询
      * </p>
      *
-     * @param id
-     *            主键ID
+     * @param id 主键ID
      * @return T
      */
     T selectById(Serializable id);
@@ -152,8 +141,7 @@ public interface BaseMapper<T> {
      * 查询（根据ID 批量查询）
      * </p>
      *
-     * @param idList
-     *            主键ID列表
+     * @param idList 主键ID列表
      * @return List<T>
      */
     List<T> selectBatchIds(List<? extends Serializable> idList);
@@ -163,8 +151,7 @@ public interface BaseMapper<T> {
      * 查询（根据 columnMap 条件）
      * </p>
      *
-     * @param columnMap
-     *            表字段 map 对象
+     * @param columnMap 表字段 map 对象
      * @return List<T>
      */
     List<T> selectByMap(@Param("cm") Map<String, Object> columnMap);
@@ -174,8 +161,7 @@ public interface BaseMapper<T> {
      * 根据 entity 条件，查询一条记录
      * </p>
      *
-     * @param entity
-     *            实体对象
+     * @param entity 实体对象
      * @return T
      */
     T selectOne(@Param("ew") T entity);
@@ -185,8 +171,7 @@ public interface BaseMapper<T> {
      * 根据 Wrapper 条件，查询总记录数
      * </p>
      *
-     * @param wrapper
-     *            实体对象
+     * @param wrapper 实体对象
      * @return int
      */
     Integer selectCount(@Param("ew") Wrapper<T> wrapper);
@@ -196,8 +181,7 @@ public interface BaseMapper<T> {
      * 根据 entity 条件，查询全部记录
      * </p>
      *
-     * @param wrapper
-     *            实体对象封装操作类（可以为 null）
+     * @param wrapper 实体对象封装操作类（可以为 null）
      * @return List<T>
      */
     List<T> selectList(@Param("ew") Wrapper<T> wrapper);
@@ -207,8 +191,7 @@ public interface BaseMapper<T> {
      * 根据 Wrapper 条件，查询全部记录
      * </p>
      *
-     * @param wrapper
-     *            实体对象封装操作类（可以为 null）
+     * @param wrapper 实体对象封装操作类（可以为 null）
      * @return List<T>
      */
     List<Map<String, Object>> selectMaps(@Param("ew") Wrapper<T> wrapper);
@@ -218,8 +201,7 @@ public interface BaseMapper<T> {
      * 根据 Wrapper 条件，查询全部记录
      * </p>
      *
-     * @param wrapper
-     *            实体对象封装操作类（可以为 null）
+     * @param wrapper 实体对象封装操作类（可以为 null）
      * @return List<Object>
      */
     List<Object> selectObjs(@Param("ew") Wrapper<T> wrapper);
@@ -229,10 +211,8 @@ public interface BaseMapper<T> {
      * 根据 entity 条件，查询全部记录（并翻页）
      * </p>
      *
-     * @param rowBounds
-     *            分页查询条件（可以为 RowBounds.DEFAULT）
-     * @param wrapper
-     *            实体对象封装操作类（可以为 null）
+     * @param rowBounds 分页查询条件（可以为 RowBounds.DEFAULT）
+     * @param wrapper   实体对象封装操作类（可以为 null）
      * @return List<T>
      */
     List<T> selectPage(RowBounds rowBounds, @Param("ew") Wrapper<T> wrapper);
@@ -242,10 +222,8 @@ public interface BaseMapper<T> {
      * 根据 Wrapper 条件，查询全部记录（并翻页）
      * </p>
      *
-     * @param rowBounds
-     *            分页查询条件（可以为 RowBounds.DEFAULT）
-     * @param wrapper
-     *            实体对象封装操作类
+     * @param rowBounds 分页查询条件（可以为 RowBounds.DEFAULT）
+     * @param wrapper   实体对象封装操作类
      * @return List<Map<String, Object>>
      */
     List<Map<String, Object>> selectMapsPage(RowBounds rowBounds, @Param("ew") Wrapper<T> wrapper);

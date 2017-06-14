@@ -29,20 +29,20 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 /**
  * <p>
  * Optimistic Lock Light version<BR>
- *     Intercept on {@link Executor}.update;<BR>
- *     Support version types: int/Integer, long/Long, java.util.Date, java.sql.Timestamp<BR>
- *     For extra types, please define a subclass and override {@code getUpdatedVersionVal}() method.<BR>
+ * Intercept on {@link Executor}.update;<BR>
+ * Support version types: int/Integer, long/Long, java.util.Date, java.sql.Timestamp<BR>
+ * For extra types, please define a subclass and override {@code getUpdatedVersionVal}() method.<BR>
  * <BR>
  * How to use?<BR>
- *     (1) Define an Entity and add {@link Version} annotation on one entity field.<BR>
- *     (2) Add {@link OptimisticLockerInterceptor} into mybatis plugin.
- *
+ * (1) Define an Entity and add {@link Version} annotation on one entity field.<BR>
+ * (2) Add {@link OptimisticLockerInterceptor} into mybatis plugin.
+ * <p>
  * How to work?<BR>
- *     if update entity with version column=1:<BR>
- *         (1) no {@link OptimisticLockerInterceptor}:<BR>
- *             SQL: update tbl_test set name='abc' where id=100001;<BR>
- *         (2) add {@link OptimisticLockerInterceptor}:<BR>
- *             SQL: update tbl_test set name='abc',version=2 where id=100001 and version=1;
+ * if update entity with version column=1:<BR>
+ * (1) no {@link OptimisticLockerInterceptor}:<BR>
+ * SQL: update tbl_test set name='abc' where id=100001;<BR>
+ * (2) add {@link OptimisticLockerInterceptor}:<BR>
+ * SQL: update tbl_test set name='abc',version=2 where id=100001 and version=1;
  * </p>
  *
  * @author yuxiaobin
@@ -66,45 +66,45 @@ public class OptimisticLockerInterceptor implements Interceptor {
     public Object intercept(Invocation invocation) throws Throwable {
         Object[] args = invocation.getArgs();
         MappedStatement ms = (MappedStatement) args[0];
-        if(SqlCommandType.UPDATE.compareTo(ms.getSqlCommandType())!=0){
+        if (SqlCommandType.UPDATE.compareTo(ms.getSqlCommandType()) != 0) {
             return invocation.proceed();
         }
         Object param = args[1];
-        if(param instanceof MapperMethod.ParamMap){
+        if (param instanceof MapperMethod.ParamMap) {
             MapperMethod.ParamMap map = (MapperMethod.ParamMap) param;
             Wrapper ew = null;
-            if(map.containsKey(NAME_ENTITY_WRAPPER)){//mapper.update(updEntity, EntityWrapper<>(whereEntity);
+            if (map.containsKey(NAME_ENTITY_WRAPPER)) {//mapper.update(updEntity, EntityWrapper<>(whereEntity);
                 ew = (Wrapper) map.get(NAME_ENTITY_WRAPPER);
             }//else updateById(entity) -->> change updateById(entity) to updateById(@Param("et") entity)
             Object et = map.get(NAME_ENTITY);
-            if(ew!=null){
+            if (ew != null) {
                 Object entity = ew.getEntity();
-                if(entity!=null){
+                if (entity != null) {
                     EntityField ef = getVersionField(entity.getClass());
-                    Field versionField = ef==null?null:ef.getField();
+                    Field versionField = ef == null ? null : ef.getField();
                     if (versionField != null) {
                         Object originalVersionVal = versionField.get(entity);
-                        if(originalVersionVal!=null){
+                        if (originalVersionVal != null) {
                             versionField.set(et, getUpdatedVersionVal(originalVersionVal));
                         }
                     }
                 }
-            }else{
+            } else {
                 String methodId = ms.getId();
-                String updateMethodName = methodId.substring(ms.getId().lastIndexOf(".")+1);
-                if(PARAM_UPDATE_METHOD_NAME.equals(updateMethodName)){//update(entity, null) -->> update all. ignore version
+                String updateMethodName = methodId.substring(ms.getId().lastIndexOf(".") + 1);
+                if (PARAM_UPDATE_METHOD_NAME.equals(updateMethodName)) {//update(entity, null) -->> update all. ignore version
                     return invocation.proceed();
                 }
                 EntityField entityField = getVersionField(et.getClass());
-                Field versionField = entityField==null?null:entityField.getField();
+                Field versionField = entityField == null ? null : entityField.getField();
                 Object originalVersionVal;
-                if(versionField!=null && (originalVersionVal=versionField.get(et))!=null) {
+                if (versionField != null && (originalVersionVal = versionField.get(et)) != null) {
                     TableInfo tableInfo = TableInfoHelper.getTableInfo(et.getClass());
-                    Map<String,Object> entityMap = new HashMap<>();
+                    Map<String, Object> entityMap = new HashMap<>();
                     List<EntityField> fields = getEntityFields(et.getClass());
-                    for(EntityField ef : fields){
+                    for (EntityField ef : fields) {
                         Field fd = ef.getField();
-                        if(fd.isAccessible()) {
+                        if (fd.isAccessible()) {
                             entityMap.put(fd.getName(), fd.get(et));
                             if (ef.isVersion()) {
                                 versionField = fd;
@@ -114,7 +114,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
                     String versionPropertyName = versionField.getName();
                     List<TableFieldInfo> fieldList = tableInfo.getFieldList();
                     String versionColumnName = entityField.getColumnName();
-                    if(versionColumnName==null) {
+                    if (versionColumnName == null) {
                         for (TableFieldInfo tf : fieldList) {
                             if (versionPropertyName.equals(tf.getProperty())) {
                                 versionColumnName = tf.getColumn();
@@ -141,21 +141,21 @@ public class OptimisticLockerInterceptor implements Interceptor {
      * @param originalVersionVal
      * @return updated version val
      */
-    protected Object getUpdatedVersionVal(Object originalVersionVal){
+    protected Object getUpdatedVersionVal(Object originalVersionVal) {
         Class<?> versionValClass = originalVersionVal.getClass();
-        if(long.class.equals(versionValClass)){
-            return ((long)originalVersionVal)+1;
-        }else if(Long.class.equals(versionValClass)){
-            return ((Long)originalVersionVal)+1;
-        }else if(int.class.equals(versionValClass)){
-            return ((int)originalVersionVal)+1;
-        }else if(Integer.class.equals(versionValClass)){
-            return ((Integer)originalVersionVal)+1;
-        }else if(Date.class.equals(versionValClass)){
+        if (long.class.equals(versionValClass)) {
+            return ((long) originalVersionVal) + 1;
+        } else if (Long.class.equals(versionValClass)) {
+            return ((Long) originalVersionVal) + 1;
+        } else if (int.class.equals(versionValClass)) {
+            return ((int) originalVersionVal) + 1;
+        } else if (Integer.class.equals(versionValClass)) {
+            return ((Integer) originalVersionVal) + 1;
+        } else if (Date.class.equals(versionValClass)) {
             return new Date();
-        }else if(Timestamp.class.equals(versionValClass)){
+        } else if (Timestamp.class.equals(versionValClass)) {
             return new Timestamp(System.currentTimeMillis());
-        }else{
+        } else {
             return originalVersionVal;//not supported type, return original val.
         }
     }
@@ -177,7 +177,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
         synchronized (parameterClass.getName()) {
             if (versionFieldCache.containsKey(parameterClass)) {
                 return versionFieldCache.get(parameterClass);
-            }else{
+            } else {
                 EntityField field = getVersionFieldRegular(parameterClass);
                 versionFieldCache.put(parameterClass, field);
                 return field;
@@ -185,7 +185,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
         }
     }
 
-    private EntityField getVersionFieldRegular(Class<?> parameterClass){
+    private EntityField getVersionFieldRegular(Class<?> parameterClass) {
         if (parameterClass != Object.class) {
             for (Field field : parameterClass.getDeclaredFields()) {
                 if (field.isAnnotationPresent(Version.class)) {
@@ -198,26 +198,26 @@ public class OptimisticLockerInterceptor implements Interceptor {
         return null;
     }
 
-    private List<EntityField> getEntityFields(Class<?> parameterClass){
-        if(entityFieldsCache.containsKey(parameterClass)){
+    private List<EntityField> getEntityFields(Class<?> parameterClass) {
+        if (entityFieldsCache.containsKey(parameterClass)) {
             return entityFieldsCache.get(parameterClass);
-        }else{
+        } else {
             List<EntityField> fields = getFieldsFromClazz(parameterClass, null);
             entityFieldsCache.put(parameterClass, fields);
             return fields;
         }
     }
 
-    private List<EntityField> getFieldsFromClazz(Class<?> parameterClass, List<EntityField> fieldList){
-        if(fieldList==null){
+    private List<EntityField> getFieldsFromClazz(Class<?> parameterClass, List<EntityField> fieldList) {
+        if (fieldList == null) {
             fieldList = new ArrayList<>();
         }
         List<Field> fields = ReflectionKit.getFieldList(parameterClass);
-        for(Field field:fields){
+        for (Field field : fields) {
             field.setAccessible(true);
             if (field.isAnnotationPresent(Version.class)) {
                 fieldList.add(new EntityField(field, true));
-            }else{
+            } else {
                 fieldList.add(new EntityField(field, false));
             }
         }
@@ -225,7 +225,8 @@ public class OptimisticLockerInterceptor implements Interceptor {
     }
 
 }
-class EntityField{
+
+class EntityField {
 
     private Field field;
     private boolean version;

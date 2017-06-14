@@ -15,12 +15,18 @@
  */
 package com.baomidou.mybatisplus.spring;
 
-import com.baomidou.mybatisplus.MybatisConfiguration;
-import com.baomidou.mybatisplus.MybatisXMLConfigBuilder;
-import com.baomidou.mybatisplus.entity.GlobalConfiguration;
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.mapper.SqlRunner;
-import com.baomidou.mybatisplus.toolkit.PackageHelper;
+import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.Assert.state;
+import static org.springframework.util.ObjectUtils.isEmpty;
+import static org.springframework.util.StringUtils.hasLength;
+import static org.springframework.util.StringUtils.tokenizeToStringArray;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Properties;
+
+import javax.sql.DataSource;
+
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.ErrorContext;
@@ -49,16 +55,12 @@ import org.springframework.core.NestedIOException;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
-import javax.sql.DataSource;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.Properties;
-
-import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.Assert.state;
-import static org.springframework.util.ObjectUtils.isEmpty;
-import static org.springframework.util.StringUtils.hasLength;
-import static org.springframework.util.StringUtils.tokenizeToStringArray;
+import com.baomidou.mybatisplus.MybatisConfiguration;
+import com.baomidou.mybatisplus.MybatisXMLConfigBuilder;
+import com.baomidou.mybatisplus.entity.GlobalConfiguration;
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.mapper.SqlRunner;
+import com.baomidou.mybatisplus.toolkit.PackageHelper;
 
 /**
  * <p>

@@ -15,13 +15,13 @@
  */
 package com.baomidou.mybatisplus.annotations;
 
-import com.baomidou.mybatisplus.enums.FieldIgnore;
-import com.baomidou.mybatisplus.enums.FieldStrategy;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import com.baomidou.mybatisplus.enums.FieldIgnore;
+import com.baomidou.mybatisplus.enums.FieldStrategy;
 
 /**
  * <p>

@@ -141,7 +141,7 @@ public class AutoSqlInjector implements ISqlInjector {
         /* 删除 */
         this.injectDeleteSql(mapperClass, modelClass, table);
         this.injectDeleteByMapSql(mapperClass, table);
-		/* 修改 */
+        /* 修改 */
         this.injectUpdateSql(mapperClass, modelClass, table);
 		/* 查询 */
         this.injectSelectByMapSql(mapperClass, modelClass, table);
@@ -336,12 +336,12 @@ public class AutoSqlInjector implements ISqlInjector {
     protected void injectUpdateByIdSql(boolean selective, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
         SqlMethod sqlMethod = selective ? SqlMethod.UPDATE_BY_ID : SqlMethod.UPDATE_ALL_COLUMN_BY_ID;
         String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlSet(selective, table, "et."), table.getKeyColumn(),
-                "et."+table.getKeyProperty(),
-                "<if test=\"et instanceof java.util.Map\">"+
+                "et." + table.getKeyProperty(),
+                "<if test=\"et instanceof java.util.Map\">" +
                         "<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">"
-                        +"and ${et.MP_OPTLOCK_VERSION_COLUMN}=#{et.MP_OPTLOCK_VERSION_ORIGINAL}"
+                        + "and ${et.MP_OPTLOCK_VERSION_COLUMN}=#{et.MP_OPTLOCK_VERSION_ORIGINAL}"
                         + "</if>"
-                +"</if>"
+                        + "</if>"
         );
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
         this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);

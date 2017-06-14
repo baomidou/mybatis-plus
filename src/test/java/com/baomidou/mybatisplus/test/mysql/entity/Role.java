@@ -35,17 +35,25 @@ public class Role implements Serializable {
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
-    /** 主键 */
+    /**
+     * 主键
+     */
     @TableId
     private Long id;
 
-    /** 角色 */
+    /**
+     * 角色
+     */
     private String name;
 
-    /** 排序 */
+    /**
+     * 排序
+     */
     private Integer sort;
 
-    /** 描述 */
+    /**
+     * 描述
+     */
     private String description;
 
     public Long getId() {

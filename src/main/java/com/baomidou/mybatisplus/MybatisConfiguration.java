@@ -71,7 +71,7 @@ public class MybatisConfiguration extends Configuration {
             this.mappedStatements.remove(ms.getId());
         } else {
             if (this.mappedStatements.containsKey(ms.getId())) {
-				/*
+                /*
 				 * 说明已加载了xml中的节点； 忽略mapper中的SqlProvider数据
 				 */
                 logger.error("mapper[" + ms.getId() + "] is ignored, because it's exists, maybe from xml file");

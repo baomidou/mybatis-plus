@@ -101,8 +101,8 @@ public class GlobalConfigurationTest {
 
 
     @org.junit.Test
-    public void testStringFormat(){
+    public void testStringFormat() {
         String str = "'%s'";
-        System.out.println(String.format(str,"abc"));
+        System.out.println(String.format(str, "abc"));
     }
 }
