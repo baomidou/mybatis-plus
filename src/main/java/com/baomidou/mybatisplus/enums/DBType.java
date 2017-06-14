@@ -82,8 +82,7 @@ public enum DBType {
      * 获取数据库类型（默认 MySql）
      * </p>
      *
-     * @param dbType
-     *            数据库类型字符串
+     * @param dbType 数据库类型字符串
      * @return
      */
     public static DBType getDBType(String dbType) {

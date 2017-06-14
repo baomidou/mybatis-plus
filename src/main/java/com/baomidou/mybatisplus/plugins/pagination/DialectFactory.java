@@ -46,14 +46,10 @@ public class DialectFactory {
      * 生成翻页执行 SQL
      * </p>
      *
-     * @param page
-     *            翻页对象
-     * @param buildSql
-     *            执行 SQL
-     * @param dialectType
-     *            方言类型
-     * @param dialectClazz
-     *            自定义方言实现类
+     * @param page         翻页对象
+     * @param buildSql     执行 SQL
+     * @param dialectType  方言类型
+     * @param dialectClazz 自定义方言实现类
      * @return
      * @throws Exception
      */
@@ -85,10 +81,8 @@ public class DialectFactory {
      * 获取数据库方言
      * </p>
      *
-     * @param dialectType
-     *            方言类型
-     * @param dialectClazz
-     *            自定义方言实现类
+     * @param dialectType  方言类型
+     * @param dialectClazz 自定义方言实现类
      * @return
      * @throws Exception
      */
@@ -120,8 +114,7 @@ public class DialectFactory {
      * 根据数据库类型选择不同分页方言
      * </p>
      *
-     * @param dbType
-     *            数据库类型
+     * @param dbType 数据库类型
      * @return
      * @throws Exception
      */

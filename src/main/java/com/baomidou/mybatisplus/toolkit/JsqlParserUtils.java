@@ -47,8 +47,7 @@ public class JsqlParserUtils {
     /**
      * jsqlparser方式获取select的count语句
      *
-     * @param originalSql
-     *            selectSQL
+     * @param originalSql selectSQL
      * @return
      */
     public static CountOptimize jsqlparserCount(CountOptimize countOptimize, String originalSql) {

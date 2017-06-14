@@ -65,10 +65,8 @@ public class Sequence {
     }
 
     /**
-     * @param workerId
-     *            工作机器ID
-     * @param datacenterId
-     *            序列号
+     * @param workerId     工作机器ID
+     * @param datacenterId 序列号
      */
     public Sequence(long workerId, long datacenterId) {
         if (workerId > maxWorkerId || workerId < 0) {
@@ -93,7 +91,7 @@ public class Sequence {
         String name = ManagementFactory.getRuntimeMXBean().getName();
         if (StringUtils.isNotEmpty(name)) {
             /*
-			 * GET jvmPid
+             * GET jvmPid
 			 */
             mpid.append(name.split("@")[0]);
         }
@@ -128,6 +126,7 @@ public class Sequence {
 
     /**
      * 获取下一个ID
+     *
      * @return
      */
     public synchronized long nextId() {
@@ -158,7 +157,7 @@ public class Sequence {
             }
         } else {
             // 不同毫秒内，序列号置为 1 - 3 随机数
-            sequence = ThreadLocalRandom.current().nextLong(1,3);
+            sequence = ThreadLocalRandom.current().nextLong(1, 3);
         }
 
         lastTimestamp = timestamp;

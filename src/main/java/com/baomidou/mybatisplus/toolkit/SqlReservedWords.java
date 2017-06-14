@@ -156,23 +156,21 @@ public class SqlReservedWords {
      * 数据库字段转义
      * </p>
      *
-     * @param globalConfig
-     *            全局配置
-     * @param column
-     *            数据库字段
+     * @param globalConfig 全局配置
+     * @param column       数据库字段
      * @return
      */
     public static String convert(GlobalConfiguration globalConfig, String column) {
-		return containsWord(column) ? convertQuote(globalConfig, column) : column;
+        return containsWord(column) ? convertQuote(globalConfig, column) : column;
     }
 
-	public static String convertQuote(GlobalConfiguration globalConfig, String column) {
-		String identifierQuote = globalConfig.getIdentifierQuote();
+    public static String convertQuote(GlobalConfiguration globalConfig, String column) {
+        String identifierQuote = globalConfig.getIdentifierQuote();
         if (null != identifierQuote) {
             return String.format(identifierQuote, column);
-		}
-		return column;
-	}
+        }
+        return column;
+    }
 
     /**
      * 判断关键字中是否包含该字段

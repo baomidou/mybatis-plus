@@ -30,17 +30,17 @@ public class OracleUserTest {
     TestSequserMapper sequserMapper;
 
     @Test
-    public void testSelectListMp(){
+    public void testSelectListMp() {
         List<TestSequser> list = sequserMapper.selectList(new EntityWrapper<TestSequser>());
-        for(TestSequser u:list){
+        for (TestSequser u : list) {
             System.out.println(u);
         }
     }
 
     @Test
-    public void testSelectListNative(){
+    public void testSelectListNative() {
         List<TestSequser> list = sequserMapper.getList();
-        for(TestSequser u:list){
+        for (TestSequser u : list) {
             System.out.println(u);
         }
     }

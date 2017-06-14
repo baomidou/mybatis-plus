@@ -42,7 +42,7 @@ public class SqlRunnerTest {
     @Test
     public void test1() {
         /*
-		 * 加载配置文件
+         * 加载配置文件
 		 */
         InputStream in = SqlRunnerTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
         MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();

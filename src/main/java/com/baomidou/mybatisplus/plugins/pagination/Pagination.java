@@ -61,7 +61,6 @@ public class Pagination extends RowBounds implements Serializable {
      * 查询总数优化（默认 false 该属性只针对于Optimize.DEFAULT有效)
      *
      * @see com.baomidou.mybatisplus.enums.Optimize
-     *
      */
     private boolean optimizeCount = false;
 
@@ -90,10 +89,8 @@ public class Pagination extends RowBounds implements Serializable {
      * 分页构造函数
      * </p>
      *
-     * @param current
-     *            当前页
-     * @param size
-     *            每页显示条数
+     * @param current 当前页
+     * @param size    每页显示条数
      */
     public Pagination(int current, int size) {
         this(current, size, true);

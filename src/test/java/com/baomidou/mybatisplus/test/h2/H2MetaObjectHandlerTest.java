@@ -85,13 +85,13 @@ public class H2MetaObjectHandlerTest {
     H2UserMetaobjMapper userMapper;
 
     @Test
-    public void testMetaObjectHandler(){
+    public void testMetaObjectHandler() {
         H2UserMetaObj user = new H2UserMetaObj();
         user.setName("metaobjtest");
         user.setVersion(1);
         user.setAge(12);
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DAY_OF_MONTH,-1);
+        cal.add(Calendar.DAY_OF_MONTH, -1);
         user.setLastUpdatedDt(new Timestamp(cal.getTimeInMillis()));
         user.setDesc("abc");
         userMapper.insert(user);

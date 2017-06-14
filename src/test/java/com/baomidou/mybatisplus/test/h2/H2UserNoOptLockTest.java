@@ -143,7 +143,7 @@ public class H2UserNoOptLockTest {
     }
 
     @Test
-    public void testUpdateByIdOptLock(){
+    public void testUpdateByIdOptLock() {
         Long id = 991L;
         H2User user = new H2User();
         user.setId(id);
@@ -167,7 +167,7 @@ public class H2UserNoOptLockTest {
     }
 
     @Test
-    public void testUpdateAllColumnByIdOptLock(){
+    public void testUpdateAllColumnByIdOptLock() {
         Long id = 997L;
         H2User user = new H2User();
         user.setId(id);
@@ -198,7 +198,7 @@ public class H2UserNoOptLockTest {
     }
 
     @Test
-    public void testUpdateByEntityWrapperOptLock(){
+    public void testUpdateByEntityWrapperOptLock() {
         Long id = 992L;
         H2User user = new H2User();
         user.setId(id);
@@ -224,7 +224,7 @@ public class H2UserNoOptLockTest {
     }
 
     @Test
-    public void testUpdateByEntityWrapperOptLockWithoutVersion(){
+    public void testUpdateByEntityWrapperOptLockWithoutVersion() {
         Long id = 993L;
         H2User user = new H2User();
         user.setId(id);
@@ -250,59 +250,60 @@ public class H2UserNoOptLockTest {
     }
 
     @Test
-    public void testUpdateBatch(){
+    public void testUpdateBatch() {
         List<H2User> list = userService.selectList(new EntityWrapper<H2User>());
         Map<Long, Integer> userVersionMap = new HashMap<>();
-        for(H2User u:list){
-            userVersionMap.put(u.getId(),u.getVersion());
+        for (H2User u : list) {
+            userVersionMap.put(u.getId(), u.getVersion());
         }
 
         Assert.assertTrue(userService.updateBatchById(list));
         list = userService.selectList(new EntityWrapper<H2User>());
-        for(H2User user:list){
+        for (H2User user : list) {
             Assert.assertEquals(userVersionMap.get(user.getId()).intValue(), user.getVersion().intValue());
         }
 
     }
 
     @Test
-    public void testUpdateInLoop(){
+    public void testUpdateInLoop() {
         List<H2User> list = userService.selectList(new EntityWrapper<H2User>());
-        Map<Long,Integer> versionBefore = new HashMap<>();
-        Map<Long,String> nameExpect = new HashMap<>();
+        Map<Long, Integer> versionBefore = new HashMap<>();
+        Map<Long, String> nameExpect = new HashMap<>();
         for (H2User h2User : list) {
             Long id = h2User.getId();
             Integer versionVal = h2User.getVersion();
             versionBefore.put(id, versionVal);
-            String randomName = h2User.getName()+"_"+new Random().nextInt(10);
+            String randomName = h2User.getName() + "_" + new Random().nextInt(10);
             nameExpect.put(id, randomName);
             h2User.setName(randomName);
             userService.updateById(h2User);
         }
 
         list = userService.selectList(new EntityWrapper<H2User>());
-        for(H2User u:list){
+        for (H2User u : list) {
             Assert.assertEquals(u.getName(), nameExpect.get(u.getId()));
             Assert.assertEquals(versionBefore.get(u.getId()).intValue(), u.getVersion().intValue());
         }
     }
+
     @Test
-    public void testUpdateAllColumnInLoop(){
+    public void testUpdateAllColumnInLoop() {
         List<H2User> list = userService.selectList(new EntityWrapper<H2User>());
-        Map<Long,Integer> versionBefore = new HashMap<>();
-        Map<Long,String> nameExpect = new HashMap<>();
+        Map<Long, Integer> versionBefore = new HashMap<>();
+        Map<Long, String> nameExpect = new HashMap<>();
         for (H2User h2User : list) {
             Long id = h2User.getId();
             Integer versionVal = h2User.getVersion();
             versionBefore.put(id, versionVal);
-            String randomName = h2User.getName()+"_"+new Random().nextInt(10);
+            String randomName = h2User.getName() + "_" + new Random().nextInt(10);
             nameExpect.put(id, randomName);
             h2User.setName(randomName);
             userService.updateAllColumnById(h2User);
         }
 
         list = userService.selectList(new EntityWrapper<H2User>());
-        for(H2User u:list){
+        for (H2User u : list) {
             Assert.assertEquals(u.getName(), nameExpect.get(u.getId()));
             Assert.assertEquals(versionBefore.get(u.getId()).intValue(), u.getVersion().intValue());
         }

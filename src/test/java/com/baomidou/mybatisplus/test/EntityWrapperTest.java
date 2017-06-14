@@ -64,7 +64,7 @@ public class EntityWrapperTest {
     @Test
     public void test11() {
         /*
-		 * 实体带where ifneed
+         * 实体带where ifneed
 		 */
         ew.setEntity(new User(1));
         ew.where("name={0}", "'123'").addFilterIfNeed(false, "id=12");

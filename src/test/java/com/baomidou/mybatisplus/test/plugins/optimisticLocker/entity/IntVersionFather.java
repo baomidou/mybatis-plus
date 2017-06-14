@@ -3,6 +3,7 @@ package com.baomidou.mybatisplus.test.plugins.optimisticLocker.entity;
 import com.baomidou.mybatisplus.annotations.Version;
 
 public class IntVersionFather {
+
     @Version
     private Integer version;
 

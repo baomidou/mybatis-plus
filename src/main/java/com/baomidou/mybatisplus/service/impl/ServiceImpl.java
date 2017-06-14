@@ -250,7 +250,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
             String sqlStatement = sqlStatement(SqlMethod.UPDATE_BY_ID);
             for (int i = 0; i < size; i++) {
                 MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
-                param.put("et",entityList.get(i));
+                param.put("et", entityList.get(i));
                 batchSqlSession.update(sqlStatement, param);
                 if (i >= 1 && i % batchSize == 0) {
                     batchSqlSession.flushStatements();

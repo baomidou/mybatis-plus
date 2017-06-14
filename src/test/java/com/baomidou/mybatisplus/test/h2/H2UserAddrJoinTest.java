@@ -64,13 +64,14 @@ public class H2UserAddrJoinTest {
         ) {
             String line;
             while ((line = reader.readLine()) != null) {
-                if(line.isEmpty()){
+                if (line.isEmpty()) {
                     continue;
                 }
                 stmt.execute(line.replace(";", ""));
             }
         }
     }
+
     private static void insertAddr(Statement stmt) throws SQLException, IOException {
         String filename = "addr.insert.sql";
         String filePath = H2UserAddrJoinTest.class.getClassLoader().getResource("").getPath() + "/h2/" + filename;
@@ -79,7 +80,7 @@ public class H2UserAddrJoinTest {
         ) {
             String line;
             while ((line = reader.readLine()) != null) {
-                if(line.isEmpty()){
+                if (line.isEmpty()) {
                     continue;
                 }
                 stmt.execute(line.replace(";", ""));
@@ -104,16 +105,16 @@ public class H2UserAddrJoinTest {
 
 
     @Test
-    public void testJoinTableWithoutPagination(){
+    public void testJoinTableWithoutPagination() {
         List<H2Addr> addrList = userMapper.getAddrListByUserId(101L);
         Assert.assertEquals(5, addrList.size());
     }
+
     @Test
-    public void testJoinTableWithPagination(){
-        List<H2Addr> addrList = userMapper.getAddrListByUserId(101L, new Page<H2Addr>(0,3));
+    public void testJoinTableWithPagination() {
+        List<H2Addr> addrList = userMapper.getAddrListByUserId(101L, new Page<H2Addr>(0, 3));
         Assert.assertEquals(3, addrList.size());
     }
-
 
 
 }

@@ -106,7 +106,7 @@ public class H2UserTest {
     public void testInsertBatch() {
         userService.insert(new H2User("sanmao", 1));
         List<H2User> h2Users = new ArrayList<>();
-        for (int i=0;i<10;i++) {
+        for (int i = 0; i < 10; i++) {
             H2User user = new H2User();
             user.setAge(1);
             user.setPrice(new BigDecimal("6" + i));
@@ -358,7 +358,8 @@ public class H2UserTest {
         list = userService.selectList(new EntityWrapper<H2User>());
         for (H2User u : list) {
             Assert.assertEquals(u.getName(), nameExpect.get(u.getId()));
-            Assert.assertEquals(versionBefore.get(u.getId()) + 1, u.getVersion().intValue());
+            if (u.getVersion() != null)
+                Assert.assertEquals(versionBefore.get(u.getId()) + 1, u.getVersion().intValue());
         }
     }
 
