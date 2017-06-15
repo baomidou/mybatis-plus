@@ -15,18 +15,14 @@
  */
 package com.baomidou.mybatisplus.generator;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
+import com.baomidou.mybatisplus.generator.config.ConstVal;
+import com.baomidou.mybatisplus.generator.config.FileOutConfig;
+import com.baomidou.mybatisplus.generator.config.TemplateConfig;
+import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
+import com.baomidou.mybatisplus.generator.config.po.TableField;
+import com.baomidou.mybatisplus.generator.config.po.TableInfo;
+import com.baomidou.mybatisplus.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.velocity.Template;
@@ -34,13 +30,9 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 
-import com.baomidou.mybatisplus.generator.config.ConstVal;
-import com.baomidou.mybatisplus.generator.config.FileOutConfig;
-import com.baomidou.mybatisplus.generator.config.TemplateConfig;
-import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
-import com.baomidou.mybatisplus.generator.config.po.TableInfo;
-import com.baomidou.mybatisplus.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * 生成文件
@@ -145,6 +137,20 @@ public class AutoGenerator extends AbstractGenerator {
             } else {
                 tableInfo.setImportPackages("java.io.Serializable");
             }
+            // Boolean类型is前缀处理
+            if ( config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix() ) {
+                for ( TableField field : tableInfo.getFields() ) {
+                    if ( field.getPropertyType().equalsIgnoreCase( "boolean" ) ) {
+                        if ( field.getPropertyName().indexOf( "is" ) != -1 ) {
+                            String noIsPropertyName = field.getPropertyName()
+                                                           .substring( 2, field.getPropertyName().length() );
+                            String firstChar        = noIsPropertyName.substring( 0, 1 ).toLowerCase();
+                            String afterChar        = noIsPropertyName.substring( 1, noIsPropertyName.length() );
+                            field.setPropertyName( config.getStrategyConfig(), firstChar + afterChar );
+                        }
+                    }
+                }
+            }
             ctx.put("package", packageInfo);
             ctx.put("author", config.getGlobalConfig().getAuthor());
             ctx.put("activeRecord", config.getGlobalConfig().isActiveRecord());
@@ -156,6 +162,8 @@ public class AutoGenerator extends AbstractGenerator {
             ctx.put("entity", tableInfo.getEntityName());
             ctx.put("entityColumnConstant", config.getStrategyConfig().isEntityColumnConstant());
             ctx.put("entityBuilderModel", config.getStrategyConfig().isEntityBuilderModel());
+            ctx.put("entityLombokModel", config.getStrategyConfig().isEntityLombokModel());
+            ctx.put("entityBooleanColumnRemoveIsPrefix", config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix());
             ctx.put("superEntityClass", superEntityClass);
             ctx.put("superMapperClassPackage", config.getSuperMapperClass());
             ctx.put("superMapperClass", superMapperClass);

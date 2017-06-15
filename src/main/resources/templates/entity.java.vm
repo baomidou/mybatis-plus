@@ -3,6 +3,9 @@ package ${package.Entity};
 #foreach($pkg in ${table.importPackages})
 import ${pkg};
 #end
+#if(${entityLombokModel})
+import lombok.Data;
+#end
 
 /**
  * <p>
@@ -12,6 +15,9 @@ import ${pkg};
  * @author ${author}
  * @since ${date}
  */
+#if(${entityLombokModel})
+@Data
+#end
 #if(${table.convert})
 @TableName("${table.name}")
 #end
@@ -46,6 +52,7 @@ public class ${entity} implements Serializable {
 	private ${field.propertyType} ${field.propertyName};
 #end
 
+#if(!${entityLombokModel})
 #foreach($field in ${table.fields})
 #if(${field.propertyType.equals("Boolean")})
 #set($getprefix="is")
@@ -67,6 +74,7 @@ public class ${entity} implements Serializable {
 		return this;
 #end
 	}
+#end
 #end
 
 #if(${entityColumnConstant})
