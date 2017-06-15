@@ -59,6 +59,20 @@ artifacts {
     archives javadocJar
 }
 
+uploadArchives {
+    def repositoryUrl = "http://172.16.111.124:8081/nexus/content/repositories/releases/"
+    repositories {
+        mavenDeployer {
+            repository(url: "$repositoryUrl") {
+                authentication(userName: "deployment", password: "deployment123")
+            }
+            pom.version = "$project.version"
+            pom.artifactId = "$project.name"
+            pom.groupId = "$project.group"
+        }
+    }
+}
+
 def common = [
         "org.springframework:spring-tx:${springVersion}",
         "org.springframework:spring-jdbc:${springVersion}",
