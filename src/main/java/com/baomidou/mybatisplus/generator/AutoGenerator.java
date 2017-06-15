@@ -139,14 +139,13 @@ public class AutoGenerator extends AbstractGenerator {
             }
             // Boolean类型is前缀处理
             if ( config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix() ) {
-                for ( TableField field : tableInfo.getFields() ) {
-                    if ( field.getPropertyType().equalsIgnoreCase( "boolean" ) ) {
-                        if ( field.getPropertyName().indexOf( "is" ) != -1 ) {
-                            String noIsPropertyName = field.getPropertyName()
-                                                           .substring( 2, field.getPropertyName().length() );
-                            String firstChar        = noIsPropertyName.substring( 0, 1 ).toLowerCase();
-                            String afterChar        = noIsPropertyName.substring( 1, noIsPropertyName.length() );
-                            field.setPropertyName( config.getStrategyConfig(), firstChar + afterChar );
+                for (TableField field : tableInfo.getFields()) {
+                    if (field.getPropertyType().equalsIgnoreCase("boolean")) {
+                        if (field.getPropertyName().indexOf("is") != -1) {
+                            String noIsPropertyName = field.getPropertyName().substring(2, field.getPropertyName().length());
+                            String firstChar = noIsPropertyName.substring(0, 1).toLowerCase();
+                            String afterChar = noIsPropertyName.substring(1, noIsPropertyName.length());
+                            field.setPropertyName(config.getStrategyConfig(), firstChar + afterChar);
                         }
                     }
                 }
@@ -154,7 +153,7 @@ public class AutoGenerator extends AbstractGenerator {
             // RequestMapping 连字符风格 user-info
             if ( config.getStrategyConfig().isControllerMappingHyphenStyle() ) {
                 ctx.put("controllerMappingHyphenStyle", config.getStrategyConfig().isControllerMappingHyphenStyle());
-                ctx.put("controllerMappingHyphen", StringUtils.camelToHyphen( tableInfo.getEntityPath() ));
+                ctx.put("controllerMappingHyphen", StringUtils.camelToHyphen(tableInfo.getEntityPath()));
             }
             
             ctx.put("restControllerStyle", config.getStrategyConfig().isRestControllerStyle());

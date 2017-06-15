@@ -67,11 +67,11 @@ public class MysqlGenerator {
 
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setDbType( DbType.MYSQL);
+        dsc.setDbType(DbType.MYSQL);
         dsc.setTypeConvert(new MySqlTypeConvert() {
             // 自定义数据库表字段类型转换【可选】
             @Override
-            public DbColumnType processTypeConvert( String fieldType) {
+            public DbColumnType processTypeConvert(String fieldType) {
                 System.out.println("转换类型：" + fieldType);
                 // if ( fieldType.toLowerCase().contains( "tinyint" ) ) {
                 //    return DbColumnType.BOOLEAN;
@@ -90,7 +90,7 @@ public class MysqlGenerator {
         // strategy.setCapitalMode(true);// 全局大写命名
         // strategy.setDbColumnUnderline(true);//全局下划线命名
         strategy.setTablePrefix(new String[]{"bmd_", "mp_"});// 此处可以修改为您的表前缀
-        strategy.setNaming( NamingStrategy.underline_to_camel);// 表名生成策略
+        strategy.setNaming(NamingStrategy.underline_to_camel);// 表名生成策略
         // strategy.setInclude(new String[] { "user" }); // 需要生成的表
         // strategy.setExclude(new String[]{"test"}); // 排除生成的表
         // 自定义实体父类
@@ -115,6 +115,8 @@ public class MysqlGenerator {
         // strategy.setEntityLombokModel(true);
         // Boolean类型字段是否移除is前缀处理
         // strategy.setEntityBooleanColumnRemoveIsPrefix(true);
+        // strategy.setRestControllerStyle(true);
+        // strategy.setControllerMappingHyphenStyle(true);
         mpg.setStrategy(strategy);
 
         // 包配置

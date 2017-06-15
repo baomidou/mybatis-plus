@@ -5,6 +5,7 @@ import ${pkg};
 #end
 #if(${entityLombokModel})
 import lombok.Data;
+import lombok.experimental.Accessors;
 #end
 
 /**

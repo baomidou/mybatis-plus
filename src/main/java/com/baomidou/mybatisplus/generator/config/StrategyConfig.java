@@ -118,7 +118,7 @@ public class StrategyConfig {
      *      <code>@Controller</code> -> <code>@RestController</code>
      * </pre>
      */
-    private boolean restControllerStyle          = false;
+    private boolean restControllerStyle = false;
     /**
      * 驼峰转连字符
      * <pre>
@@ -126,7 +126,7 @@ public class StrategyConfig {
      * </pre>
      */
     private boolean controllerMappingHyphenStyle = false;
-   
+
 
     public void setDbColumnUnderline(boolean dbColumnUnderline) {
         DB_COLUMN_UNDERLINE = dbColumnUnderline;
@@ -141,7 +141,7 @@ public class StrategyConfig {
      * @return
      */
     public boolean isCapitalModeNaming(String word) {
-        return isCapitalMode && StringUtils.isCapitalMode( word);
+        return isCapitalMode && StringUtils.isCapitalMode(word);
     }
 
     /**
@@ -281,35 +281,35 @@ public class StrategyConfig {
         this.entityBuilderModel = entityBuilderModel;
     }
 
-    public boolean isEntityLombokModel () {
+    public boolean isEntityLombokModel() {
         return entityLombokModel;
     }
 
-    public void setEntityLombokModel ( boolean entityLombokModel ) {
+    public void setEntityLombokModel(boolean entityLombokModel) {
         this.entityLombokModel = entityLombokModel;
     }
 
-    public boolean isEntityBooleanColumnRemoveIsPrefix () {
+    public boolean isEntityBooleanColumnRemoveIsPrefix() {
         return entityBooleanColumnRemoveIsPrefix;
     }
 
-    public void setEntityBooleanColumnRemoveIsPrefix ( boolean entityBooleanColumnRemoveIsPrefix ) {
+    public void setEntityBooleanColumnRemoveIsPrefix(boolean entityBooleanColumnRemoveIsPrefix) {
         this.entityBooleanColumnRemoveIsPrefix = entityBooleanColumnRemoveIsPrefix;
     }
 
-    public boolean isRestControllerStyle () {
+    public boolean isRestControllerStyle() {
         return restControllerStyle;
     }
 
-    public void setRestControllerStyle ( boolean restControllerStyle ) {
+    public void setRestControllerStyle(boolean restControllerStyle) {
         this.restControllerStyle = restControllerStyle;
     }
 
-    public boolean isControllerMappingHyphenStyle () {
+    public boolean isControllerMappingHyphenStyle() {
         return controllerMappingHyphenStyle;
     }
 
-    public void setControllerMappingHyphenStyle ( boolean controllerMappingHyphenStyle ) {
+    public void setControllerMappingHyphenStyle(boolean controllerMappingHyphenStyle) {
         this.controllerMappingHyphenStyle = controllerMappingHyphenStyle;
     }
 }

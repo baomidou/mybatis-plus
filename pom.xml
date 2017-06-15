@@ -67,6 +67,7 @@
         <junit.version>4.12</junit.version>
         <velocity.version>1.7</velocity.version>
         <h2.version>1.4.194</h2.version>
+        <lombok.version>1.16.16</lombok.version>
     </properties>
 
     <dependencies>
@@ -235,6 +236,12 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>${h2.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>${lombok.version}</artifactId>
+            <version>1.16.16</version>
             <scope>test</scope>
         </dependency>
         <!-- test end -->

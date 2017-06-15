@@ -10,6 +10,9 @@ import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.enums.IdType;
 
+import lombok.Data;
+import lombok.experimental.Accessors;
+
 /**
  * <p>
  * 测试逻辑删除实体
@@ -18,6 +21,8 @@ import com.baomidou.mybatisplus.enums.IdType;
  * @author yuxiaobin
  * @date 2017/6/15
  */
+@Data
+@Accessors(chain = true)
 @TableName("h2user")
 public class H2UserLogicDelete {
 
@@ -50,72 +55,4 @@ public class H2UserLogicDelete {
     @TableField(value = "last_updated_dt")
     private Timestamp lastUpdatedDt;
 
-
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    public Integer getTestType() {
-        return testType;
-    }
-
-    public void setTestType(Integer testType) {
-        this.testType = testType;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
-
-    public Integer getVersion() {
-        return version;
-    }
-
-    public void setVersion(Integer version) {
-        this.version = version;
-    }
-
-    public Timestamp getLastUpdatedDt() {
-        return lastUpdatedDt;
-    }
-
-    public void setLastUpdatedDt(Timestamp lastUpdatedDt) {
-        this.lastUpdatedDt = lastUpdatedDt;
-    }
 }
