@@ -1,7 +1,16 @@
 package com.baomidou.mybatisplus.test.h2;
 
-import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserMetaobjMapper;
-import com.baomidou.mybatisplus.test.h2.entity.persistent.H2UserMetaObj;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+import javax.sql.DataSource;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -12,21 +21,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.sql.DataSource;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserMetaobjMapper;
+import com.baomidou.mybatisplus.test.h2.entity.persistent.H2UserMetaObj;
 
 /**
  * <p>
- * TODO class
  * </p>
  *
  * @author yuxiaobin

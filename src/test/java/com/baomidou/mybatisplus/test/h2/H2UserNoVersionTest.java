@@ -3,7 +3,7 @@ package com.baomidou.mybatisplus.test.h2;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2UserNoVersion;
-import com.baomidou.mybatisplus.test.h2.entity.service.IH2UserNoVersionService;
+import com.baomidou.mybatisplus.test.h2.service.IH2UserNoVersionService;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;

@@ -21,15 +21,15 @@ import com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean;
 
 /**
  * <p>
- * Mybatis Plus Config
+ *     逻辑删除boot方式注入
  * </p>
  *
- * @author Caratacus
- * @date 2017/4/1
+ * @author yuxiaobin
+ * @date 2017/6/15
  */
 @Configuration
 @MapperScan("com.baomidou.mybatisplus.test.h2.entity.mapper")
-public class MybatisPlusConfig {
+public class MybatisPlusLoginDeleteConfig {
 
     @Bean("mybatisSqlSession")
     public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader, GlobalConfiguration globalConfiguration) throws Exception {
