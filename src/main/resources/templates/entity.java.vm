@@ -17,6 +17,7 @@ import lombok.Data;
  */
 #if(${entityLombokModel})
 @Data
+@Accessors(chain = true)
 #end
 #if(${table.convert})
 @TableName("${table.name}")
