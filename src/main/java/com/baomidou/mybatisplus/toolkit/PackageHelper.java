@@ -46,8 +46,7 @@ public class PackageHelper {
      * <property name="typeAliasesPackage" value="com.baomidou.*.entity"/>
      * </p>
      *
-     * @param typeAliasesPackage
-     *            类别名包路径
+     * @param typeAliasesPackage 类别名包路径
      * @return
      */
     public static String[] convertTypeAliasesPackage(String typeAliasesPackage) {

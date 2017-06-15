@@ -35,7 +35,9 @@ public class Test extends Model<Test> {
     // 静态属性会自动忽略
     private static final long serialVersionUID = 1L;
 
-    /** 主键 */
+    /**
+     * 主键
+     */
     // 默认会找 id 为主键，特殊命名需要注解 @TableId
     private Long id;
 

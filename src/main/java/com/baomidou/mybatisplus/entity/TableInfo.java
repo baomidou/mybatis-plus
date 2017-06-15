@@ -94,8 +94,7 @@ public class TableInfo {
      * 获得注入的 SQL Statement
      * </p>
      *
-     * @param sqlMethod
-     *            MybatisPlus 支持 SQL 方法
+     * @param sqlMethod MybatisPlus 支持 SQL 方法
      * @return
      */
     public String getSqlStatement(String sqlMethod) {
@@ -172,7 +171,7 @@ public class TableInfo {
          * 启动逻辑删除注入、判断该表是否启动
          */
         if (null != globalConfig.getLogicDeleteValue()) {
-            for (TableFieldInfo tfi: fieldList) {
+            for (TableFieldInfo tfi : fieldList) {
                 if (tfi.isLogicDelete()) {
                     this.setLogicDelete(true);
                     break;

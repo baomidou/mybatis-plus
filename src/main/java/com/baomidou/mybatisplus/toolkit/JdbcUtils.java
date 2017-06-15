@@ -32,8 +32,7 @@ public class JdbcUtils {
      * 根据连接地址判断数据库类型
      * </p>
      *
-     * @param jdbcUrl
-     *            连接地址
+     * @param jdbcUrl 连接地址
      * @return
      */
     public static DBType getDbType(String jdbcUrl) {

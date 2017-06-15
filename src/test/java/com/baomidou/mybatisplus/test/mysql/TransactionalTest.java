@@ -42,7 +42,7 @@ public class TransactionalTest {
      */
     public static void main(String[] args) {
         /*
-		 * 加载配置文件
+         * 加载配置文件
 		 */
         InputStream in = TransactionalTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
         MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();

@@ -41,10 +41,14 @@ public enum SqlLike {
      */
     DEFAULT("default", "两边%");
 
-    /** 主键 */
+    /**
+     * 主键
+     */
     private final String type;
 
-    /** 描述 */
+    /**
+     * 描述
+     */
     private final String desc;
 
     SqlLike(final String type, final String desc) {

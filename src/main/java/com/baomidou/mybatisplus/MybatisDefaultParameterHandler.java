@@ -66,6 +66,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
     private final Object parameterObject;
     private BoundSql boundSql;
     private Configuration configuration;
+
     public MybatisDefaultParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
         super(mappedStatement, processBatch(mappedStatement, parameterObject), boundSql);
         this.mappedStatement = mappedStatement;
@@ -130,14 +131,14 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                 return objList;
             } else {
                 TableInfo tableInfo;
-                if(parameterObject instanceof java.util.Map){
-                    Object et = ((java.util.Map)parameterObject).get("et");
-                    if(et!=null){
+                if (parameterObject instanceof java.util.Map) {
+                    Object et = ((java.util.Map) parameterObject).get("et");
+                    if (et != null) {
                         tableInfo = TableInfoHelper.getTableInfo(et.getClass());
-                    }else{
+                    } else {
                         tableInfo = null;
                     }
-                }else{
+                } else {
                     tableInfo = TableInfoHelper.getTableInfo(parameterObject.getClass());
                 }
                 return populateKeys(metaObjectHandler, tableInfo, ms, parameterObject);

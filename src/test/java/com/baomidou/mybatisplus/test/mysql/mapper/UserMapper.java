@@ -37,8 +37,7 @@ public interface UserMapper extends MyBaseMapper<User> {
     /**
      * 用户列表，分页显示
      *
-     * @param pagination
-     *            传递参数包含该属性，即自动分页
+     * @param pagination 传递参数包含该属性，即自动分页
      * @return
      */
     List<User> selectListRow(RowBounds pagination);

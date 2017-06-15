@@ -33,7 +33,7 @@ import com.baomidou.mybatisplus.test.h2.entity.persistent.H2UserMetaObj;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
-public class H2UserAutoincrementTest {
+public class H2UserAutoincrementTest extends H2Test {
 
     @Autowired
     private H2UserMetaobjMapper userMapper;
@@ -48,37 +48,9 @@ public class H2UserAutoincrementTest {
             Statement stmt = conn.createStatement();
             stmt.execute(createTableSql);
             stmt.execute("truncate table h2user");
-            insertUsers(stmt);
+            executeSql(stmt, "user.insert.sql");
             conn.commit();
         }
-    }
-
-    private static void insertUsers(Statement stmt) throws SQLException, IOException {
-        String filename = "user.insert.sql";
-        String filePath = H2UserAutoincrementTest.class.getClassLoader().getResource("").getPath() + "/h2/" + filename;
-        try (
-                BufferedReader reader = new BufferedReader(new FileReader(filePath))
-        ) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                stmt.execute(line.replace(";", ""));
-            }
-        }
-    }
-
-    private static String readFile(String filename) {
-        StringBuilder builder = new StringBuilder();
-        String filePath = H2UserAutoincrementTest.class.getClassLoader().getResource("").getPath() + "/h2/" + filename;
-        try (
-                BufferedReader reader = new BufferedReader(new FileReader(filePath))
-        ) {
-            String line;
-            while ((line = reader.readLine()) != null)
-                builder.append(line).append(" ");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return builder.toString();
     }
 
     @Test
@@ -98,7 +70,7 @@ public class H2UserAutoincrementTest {
         user2.setAge(2);
         Assert.assertEquals(1, userMapper.insert(user2).intValue());
         Long userId2 = user2.getId();
-        Assert.assertEquals(id1.intValue()+1, userId2.intValue());
+        Assert.assertEquals(id1.intValue() + 1, userId2.intValue());
     }
 
 }

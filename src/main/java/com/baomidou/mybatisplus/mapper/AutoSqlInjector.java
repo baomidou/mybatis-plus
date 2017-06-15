@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.baomidou.mybatisplus.enums.FieldIgnore;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -43,6 +42,7 @@ import org.apache.ibatis.session.Configuration;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.entity.TableFieldInfo;
 import com.baomidou.mybatisplus.entity.TableInfo;
+import com.baomidou.mybatisplus.enums.FieldIgnore;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.enums.SqlMethod;
@@ -141,7 +141,7 @@ public class AutoSqlInjector implements ISqlInjector {
         /* 删除 */
         this.injectDeleteSql(mapperClass, modelClass, table);
         this.injectDeleteByMapSql(mapperClass, table);
-		/* 修改 */
+        /* 修改 */
         this.injectUpdateSql(mapperClass, modelClass, table);
 		/* 查询 */
         this.injectSelectByMapSql(mapperClass, modelClass, table);
@@ -336,12 +336,12 @@ public class AutoSqlInjector implements ISqlInjector {
     protected void injectUpdateByIdSql(boolean selective, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
         SqlMethod sqlMethod = selective ? SqlMethod.UPDATE_BY_ID : SqlMethod.UPDATE_ALL_COLUMN_BY_ID;
         String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlSet(selective, table, "et."), table.getKeyColumn(),
-                "et."+table.getKeyProperty(),
-                "<if test=\"et instanceof java.util.Map\">"+
+                "et." + table.getKeyProperty(),
+                "<if test=\"et instanceof java.util.Map\">" +
                         "<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">"
-                        +"and ${et.MP_OPTLOCK_VERSION_COLUMN}=#{et.MP_OPTLOCK_VERSION_ORIGINAL}"
+                        + "and ${et.MP_OPTLOCK_VERSION_COLUMN}=#{et.MP_OPTLOCK_VERSION_ORIGINAL}"
                         + "</if>"
-                +"</if>"
+                        + "</if>"
         );
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
         this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
@@ -499,8 +499,10 @@ public class AutoSqlInjector implements ISqlInjector {
      * @return String
      */
     protected String sqlWhereEntityWrapper(TableInfo table) {
-        StringBuilder where = new StringBuilder("\n<if test=\"ew!=null\">");
-        where.append("\n<if test=\"ew.entity!=null\">\n<where>");
+        StringBuilder where = new StringBuilder(128);
+        where.append("\n<where>");
+        where.append("\n<if test=\"ew!=null\">");
+        where.append("\n<if test=\"ew.entity!=null\">");
         if (StringUtils.isNotEmpty(table.getKeyProperty())) {
             where.append("\n<if test=\"ew.entity.").append(table.getKeyProperty()).append("!=null\">\n");
             where.append(table.getKeyColumn()).append("=#{ew.entity.").append(table.getKeyProperty()).append("}");
@@ -512,9 +514,10 @@ public class AutoSqlInjector implements ISqlInjector {
             where.append(" AND ").append(fieldInfo.getColumn()).append("=#{ew.entity.").append(fieldInfo.getEl()).append("}");
             where.append(convertIfTag(fieldInfo, true));
         }
-        where.append("\n</where>\n</if>");
+        where.append("\n</if>");
         where.append("\n<if test=\"ew.sqlSegment!=null\">\n${ew.sqlSegment}\n</if>");
         where.append("\n</if>");
+        where.append("\n</where>");
         return where.toString();
     }
 

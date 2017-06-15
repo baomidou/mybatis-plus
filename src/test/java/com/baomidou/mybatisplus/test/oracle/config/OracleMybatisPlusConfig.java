@@ -13,7 +13,7 @@ import org.springframework.core.io.ResourceLoader;
 import com.baomidou.mybatisplus.MybatisConfiguration;
 import com.baomidou.mybatisplus.MybatisXMLLanguageDriver;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
-import com.baomidou.mybatisplus.entity.OracleKeyGenerator;
+import com.baomidou.mybatisplus.incrementer.OracleKeyGenerator;
 import com.baomidou.mybatisplus.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean;
 

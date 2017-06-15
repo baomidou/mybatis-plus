@@ -29,10 +29,14 @@ public enum IdType {
     /* 以下2种类型、只有当插入对象ID 为空，才自动填充。 */
     ID_WORKER(2, "全局唯一ID"), UUID(3, "全局唯一ID"), NONE(4, "该类型为未设置主键类型");
 
-    /** 主键 */
+    /**
+     * 主键
+     */
     private final int key;
 
-    /** 描述 */
+    /**
+     * 描述
+     */
     private final String desc;
 
     IdType(final int key, final String desc) {
@@ -45,8 +49,7 @@ public enum IdType {
      * 主键策略 （默认 ID_WORKER）
      * </p>
      *
-     * @param idType
-     *            ID 策略类型
+     * @param idType ID 策略类型
      * @return
      */
     public static IdType getIdType(int idType) {

@@ -10,49 +10,49 @@ import com.baomidou.mybatisplus.annotations.Version;
 @TableName("version_user")
 public class LogicVersionUser implements Serializable {
 
-	@TableField(exist = false)
-	private static final long serialVersionUID = 1L;
+    @TableField(exist = false)
+    private static final long serialVersionUID = 1L;
 
-	private Long id;
+    private Long id;
 
-	private String name;
+    private String name;
 
-	@Version
-	private Short version;
-	
-	@TableLogic(value = "0", delval = "1")
-	private Integer isDelete;
+    @Version
+    private Short version;
 
-	public Long getId() {
-		return id;
-	}
+    @TableLogic(value = "0", delval = "1")
+    private Integer isDelete;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public Short getVersion() {
-		return version;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setVersion(Short version) {
-		this.version = version;
-	}
+    public Short getVersion() {
+        return version;
+    }
 
-	public Integer getIsDelete() {
-		return isDelete;
-	}
+    public void setVersion(Short version) {
+        this.version = version;
+    }
 
-	public void setIsDelete(Integer isDelete) {
-		this.isDelete = isDelete;
-	}
+    public Integer getIsDelete() {
+        return isDelete;
+    }
+
+    public void setIsDelete(Integer isDelete) {
+        this.isDelete = isDelete;
+    }
 
 }

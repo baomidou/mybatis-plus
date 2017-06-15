@@ -45,7 +45,7 @@ import com.baomidou.mybatisplus.entity.TableFieldInfo;
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.mapper.IKeyGenerator;
+import com.baomidou.mybatisplus.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.mapper.SqlRunner;
 
 /**
@@ -88,7 +88,7 @@ public class TableInfoHelper {
      * @return
      */
     public static List<TableInfo> getTableInfos() {
-        List<TableInfo> tableInfos = new ArrayList<TableInfo>();
+        List<TableInfo> tableInfos = new ArrayList<>();
         for (Map.Entry<String, TableInfo> entry : tableInfoCache.entrySet()) {
             tableInfos.add(entry.getValue());
         }
@@ -152,26 +152,23 @@ public class TableInfoHelper {
         }
         List<TableFieldInfo> fieldList = new ArrayList<>();
         List<Field> list = getAllFields(clazz);
-        // 标记是否读取到主键 0、否  1、是
-        boolean idNotRead = true;
+        // 标记是否读取到主键
+        boolean isReadPK = false;
         boolean existTableId = existTableId(list);
         for (Field field : list) {
-
-            /*
-             * 主键ID 初始化
-             */
-            if (idNotRead) {
+           /*
+            * 主键ID 初始化
+            */
+            if (!isReadPK) {
                 if (existTableId) {
                     if (initTableId(globalConfig, tableInfo, field, clazz)) {
-                        idNotRead = false;
                         continue;
                     }
                 } else if (initFieldId(globalConfig, tableInfo, field, clazz)) {
-                    idNotRead = false;
                     continue;
                 }
+                isReadPK = true;
             }
-
             /*
              * 字段初始化
              */
@@ -411,15 +408,15 @@ public class TableInfoHelper {
         String keyProperty = tableInfo.getKeyProperty();
         String keyColumn = tableInfo.getKeyColumn();
         SqlSource sqlSource = languageDriver.createSqlSource(builderAssistant.getConfiguration(),
-                keyGenerator.executeSql(tableInfo), null);
+                keyGenerator.executeSql(tableInfo.getKeySequence().value()), null);
         builderAssistant.addMappedStatement(id, sqlSource, statementType, SqlCommandType.SELECT, null, null, null,
                 null, null, resultTypeClass, null, false, false, false,
                 new NoKeyGenerator(), keyProperty, keyColumn, null, languageDriver, null);
         id = builderAssistant.applyCurrentNamespace(id, false);
         MappedStatement keyStatement = builderAssistant.getConfiguration().getMappedStatement(id, false);
-        SelectKeyGenerator answer = new SelectKeyGenerator(keyStatement, true);
-        builderAssistant.getConfiguration().addKeyGenerator(id, answer);
-        return answer;
+        SelectKeyGenerator selectKeyGenerator = new SelectKeyGenerator(keyStatement, true);
+        builderAssistant.getConfiguration().addKeyGenerator(id, selectKeyGenerator);
+        return selectKeyGenerator;
     }
 
 }

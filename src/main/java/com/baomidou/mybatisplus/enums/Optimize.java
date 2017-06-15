@@ -51,8 +51,7 @@ public enum Optimize {
      * 获取优化类型.如果没有找到默认DEFAULT
      * </p>
      *
-     * @param optimizeType
-     *            优化方式
+     * @param optimizeType 优化方式
      * @return
      */
     public static Optimize getOptimizeType(String optimizeType) {
