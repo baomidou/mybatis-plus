@@ -84,7 +84,20 @@ public class H2LogicDeleteTest extends H2Test {
         System.out.println("************************************");
         System.out.println("*********" + list.size());
         System.out.println("************************************");
+    }
 
+    @Test
+    public void testLogicDeleted(){
+        H2UserLogicDelete user = new H2UserLogicDelete();
+        user.setAge(1);
+        user.setPrice(new BigDecimal("9.99"));
+        user.setVersion(-1);
+        userService.insert(user);
+        Long id = user.getId();
+        Assert.assertNotNull(id);
+
+        H2UserLogicDelete userFromDB = userService.selectById(user.getId());
+        Assert.assertNull(userFromDB);
     }
 
 }
