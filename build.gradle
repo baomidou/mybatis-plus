@@ -104,4 +104,6 @@ dependencies {
     testCompile("org.slf4j:jcl-over-slf4j:1.7.25")
     testCompile("org.springframework:spring-test:${springVersion}")
     testCompile("org.springframework:spring-webmvc:${springVersion}")
+    testCompile("org.aspectj:aspectjweaver:1.8.9")
+    testCompile("javax.servlet:servlet-api:2.5")
 }
