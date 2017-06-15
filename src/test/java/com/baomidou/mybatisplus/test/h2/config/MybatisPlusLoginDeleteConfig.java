@@ -21,7 +21,7 @@ import com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean;
 
 /**
  * <p>
- *     逻辑删除boot方式注入
+ * 逻辑删除boot方式注入
  * </p>
  *
  * @author yuxiaobin

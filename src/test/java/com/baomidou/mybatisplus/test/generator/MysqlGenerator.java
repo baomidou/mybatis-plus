@@ -98,7 +98,7 @@ public class MysqlGenerator {
         // 自定义实体父类
         // strategy.setSuperEntityClass("com.baomidou.demo.TestEntity");
         // 自定义实体，公共字段
-        strategy.setSuperEntityColumns(new String[] { "test_id", "age" });
+        strategy.setSuperEntityColumns(new String[]{"test_id", "age"});
         // 自定义 mapper 父类
         // strategy.setSuperMapperClass("com.baomidou.demo.TestMapper");
         // 自定义 service 父类

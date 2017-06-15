@@ -52,7 +52,7 @@ public enum QuerySQL {
                     + " AND sysobjects.NAME = sysindexes.NAME AND sysindexkeys.id = syscolumns.id "
                     + " AND sysindexkeys.indid = sysindexes.indid "
                     + " AND syscolumns.colid = sysindexkeys.colid AND syscolumns.NAME = B.NAME) as 'KEY',"
-                    +"  b.is_identity isIdentity "
+                    + "  b.is_identity isIdentity "
                     + " FROM sys.TABLES a " + " INNER JOIN sys.COLUMNS b ON b.object_id = a.object_id "
                     + " LEFT JOIN sys.types ON b.user_type_id = sys.types.user_type_id   "
                     + " LEFT JOIN sys.extended_properties c ON c.major_id = b.object_id AND c.minor_id = b.column_id "

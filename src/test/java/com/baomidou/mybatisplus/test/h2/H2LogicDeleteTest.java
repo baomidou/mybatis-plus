@@ -87,7 +87,7 @@ public class H2LogicDeleteTest extends H2Test {
     }
 
     @Test
-    public void testLogicDeleted(){
+    public void testLogicDeleted() {
         H2UserLogicDelete user = new H2UserLogicDelete();
         user.setAge(1);
         user.setPrice(new BigDecimal("9.99"));

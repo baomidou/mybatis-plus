@@ -58,7 +58,7 @@ public class EntityWrapperTest {
         /*
          * 无条件测试
 		 */
-        Assert.assertEquals("",ew.originalSql());
+        Assert.assertEquals("", ew.originalSql());
     }
 
     @Test
@@ -75,7 +75,7 @@ public class EntityWrapperTest {
 
     @Test
     public void test12() {
-		/*
+        /*
 		 * 实体带where orderby
 		 */
         ew.setEntity(new User(1));
@@ -169,7 +169,7 @@ public class EntityWrapperTest {
     public void testNull() {
         ew.orderBy(null);
         String sqlPart = ew.originalSql();
-        Assert.assertEquals("",sqlPart);
+        Assert.assertEquals("", sqlPart);
     }
 
     @Test

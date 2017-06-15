@@ -43,7 +43,7 @@ public class H2UserLogicDelete {
 
     private String desc;
 
-//    @Version
+    //    @Version
     @TableLogic
     private Integer version;
 

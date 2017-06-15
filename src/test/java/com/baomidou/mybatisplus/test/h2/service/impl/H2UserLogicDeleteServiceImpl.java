@@ -15,6 +15,6 @@ import com.baomidou.mybatisplus.test.h2.service.IH2UserLogicDeleteService;
  * @date 2017/6/15
  */
 @Service
-public class H2UserLogicDeleteServiceImpl extends ServiceImpl<H2UserLogicDeleteMapper, H2UserLogicDelete> implements IH2UserLogicDeleteService{
+public class H2UserLogicDeleteServiceImpl extends ServiceImpl<H2UserLogicDeleteMapper, H2UserLogicDelete> implements IH2UserLogicDeleteService {
 
 }

@@ -60,7 +60,7 @@ public class EntityWrapper<T> extends Wrapper<T> {
     @Override
     public String getSqlSegment() {
         /*
-		 * 无条件
+         * 无条件
 		 */
         String sqlWhere = sql.toString();
         if (StringUtils.isEmpty(sqlWhere)) {

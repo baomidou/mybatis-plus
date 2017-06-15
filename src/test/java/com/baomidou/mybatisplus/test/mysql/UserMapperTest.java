@@ -177,7 +177,7 @@ public class UserMapperTest {
         session.commit();
 
 		/*
-		 * 删除
+         * 删除
 		 */
         rlt = userMapper.deleteById(id);
         System.err.println("---------deleteById------- delete id=" + id + " ,result=" + rlt + "\n\n");

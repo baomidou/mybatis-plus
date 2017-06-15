@@ -428,9 +428,9 @@ public class ConfigBuilder {
             if ("auto_increment".equals(extra)) {
                 return true;
             }
-        }else if(QuerySQL.SQL_SERVER == this.querySQL){
+        } else if (QuerySQL.SQL_SERVER == this.querySQL) {
             int isIdentity = results.getInt("isIdentity");
-            return 1==isIdentity;
+            return 1 == isIdentity;
         }
         return false;
     }
