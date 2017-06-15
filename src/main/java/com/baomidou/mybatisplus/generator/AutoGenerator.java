@@ -151,6 +151,13 @@ public class AutoGenerator extends AbstractGenerator {
                     }
                 }
             }
+            // RequestMapping 连字符风格 user-info
+            if ( config.getStrategyConfig().isControllerMappingHyphenStyle() ) {
+                ctx.put("controllerMappingHyphenStyle", config.getStrategyConfig().isControllerMappingHyphenStyle());
+                ctx.put("controllerMappingHyphen", StringUtils.camelToHyphen( tableInfo.getEntityPath() ));
+            }
+            
+            ctx.put("restControllerStyle", config.getStrategyConfig().isRestControllerStyle());
             ctx.put("package", packageInfo);
             ctx.put("author", config.getGlobalConfig().getAuthor());
             ctx.put("activeRecord", config.getGlobalConfig().isActiveRecord());

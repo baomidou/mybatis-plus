@@ -112,6 +112,20 @@ public class StrategyConfig {
      * 比如 : 数据库字段名称 : 'is_xxx',类型为 : tinyint. 在映射实体的时候则会去掉is,在实体类中映射最终结果为 xxx
      */
     private boolean entityBooleanColumnRemoveIsPrefix = false;
+    /**
+     * 生成 <code>@RestController</code> 控制器
+     * <pre>
+     *      <code>@Controller</code> -> <code>@RestController</code>
+     * </pre>
+     */
+    private boolean restControllerStyle          = false;
+    /**
+     * 驼峰转连字符
+     * <pre>
+     *      <code>@RequestMapping("/managerUserActionHistory")</code> -> <code>@RequestMapping("/manager-user-action-history")</code>
+     * </pre>
+     */
+    private boolean controllerMappingHyphenStyle = false;
    
 
     public void setDbColumnUnderline(boolean dbColumnUnderline) {
@@ -281,5 +295,21 @@ public class StrategyConfig {
 
     public void setEntityBooleanColumnRemoveIsPrefix ( boolean entityBooleanColumnRemoveIsPrefix ) {
         this.entityBooleanColumnRemoveIsPrefix = entityBooleanColumnRemoveIsPrefix;
+    }
+
+    public boolean isRestControllerStyle () {
+        return restControllerStyle;
+    }
+
+    public void setRestControllerStyle ( boolean restControllerStyle ) {
+        this.restControllerStyle = restControllerStyle;
+    }
+
+    public boolean isControllerMappingHyphenStyle () {
+        return controllerMappingHyphenStyle;
+    }
+
+    public void setControllerMappingHyphenStyle ( boolean controllerMappingHyphenStyle ) {
+        this.controllerMappingHyphenStyle = controllerMappingHyphenStyle;
     }
 }
