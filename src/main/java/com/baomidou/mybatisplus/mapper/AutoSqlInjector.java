@@ -47,6 +47,7 @@ import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.enums.SqlMethod;
 import com.baomidou.mybatisplus.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
@@ -75,7 +76,7 @@ public class AutoSqlInjector implements ISqlInjector {
      */
     public void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
         String className = mapperClass.toString();
-        Set<String> mapperRegistryCache = GlobalConfiguration.getMapperRegistryCache(builderAssistant.getConfiguration());
+        Set<String> mapperRegistryCache = GlobalConfigUtils.getMapperRegistryCache(builderAssistant.getConfiguration());
         if (!mapperRegistryCache.contains(className)) {
             inject(builderAssistant, mapperClass);
             mapperRegistryCache.add(className);
@@ -152,7 +153,7 @@ public class AutoSqlInjector implements ISqlInjector {
         this.injectSelectMapsSql(SqlMethod.SELECT_MAPS, mapperClass, modelClass, table);
         this.injectSelectMapsSql(SqlMethod.SELECT_MAPS_PAGE, mapperClass, modelClass, table);
         this.injectSelectObjsSql(SqlMethod.SELECT_OBJS, mapperClass, modelClass, table);
-		/* 自定义方法 */
+        /* 自定义方法 */
         this.inject(configuration, builderAssistant, mapperClass, modelClass, table);
     }
 
@@ -570,7 +571,7 @@ public class AutoSqlInjector implements ISqlInjector {
      * @return
      */
     protected String sqlWordConvert(String convertStr) {
-        GlobalConfiguration globalConfig = GlobalConfiguration.getGlobalConfig(configuration);
+        GlobalConfiguration globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
         return SqlReservedWords.convert(globalConfig, convertStr);
     }
 
@@ -999,7 +1000,7 @@ public class AutoSqlInjector implements ISqlInjector {
      * </p>
      */
     protected GlobalConfiguration getGlobalConfig() {
-        return GlobalConfiguration.getGlobalConfig(configuration);
+        return GlobalConfigUtils.getGlobalConfig(configuration);
     }
 
 }

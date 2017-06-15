@@ -35,9 +35,9 @@ import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.Configuration;
 
-import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.enums.DBType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.VersionUtils;
 
@@ -74,7 +74,7 @@ public class SqlExplainInterceptor implements Interceptor {
             BoundSql boundSql = ms.getBoundSql(parameter);
             Connection connection = executor.getTransaction().getConnection();
             String databaseVersion = connection.getMetaData().getDatabaseProductVersion();
-            if (GlobalConfiguration.getDbType(configuration).equals(DBType.MYSQL)
+            if (GlobalConfigUtils.getDbType(configuration).equals(DBType.MYSQL)
                     && VersionUtils.compare(minMySQLVersion, databaseVersion)) {
                 logger.warn("Warn: Your mysql version needs to be greater than '5.6.3' to execute of Sql Explain!");
                 return invocation.proceed();

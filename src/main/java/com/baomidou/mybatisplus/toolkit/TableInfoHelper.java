@@ -116,10 +116,10 @@ public class TableInfoHelper {
         if (null != builderAssistant) {
             tableInfo.setCurrentNamespace(builderAssistant.getCurrentNamespace());
             tableInfo.setConfigMark(builderAssistant.getConfiguration());
-            globalConfig = GlobalConfiguration.getGlobalConfig(builderAssistant.getConfiguration());
+            globalConfig = GlobalConfigUtils.getGlobalConfig(builderAssistant.getConfiguration());
         } else {
             // 兼容测试场景
-            globalConfig = GlobalConfiguration.DEFAULT;
+            globalConfig = GlobalConfigUtils.DEFAULT;
         }
         /* 表名 */
         TableName table = clazz.getAnnotation(TableName.class);
@@ -379,13 +379,13 @@ public class TableInfoHelper {
      */
     public static void initSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
         Configuration configuration = sqlSessionFactory.getConfiguration();
-        GlobalConfiguration globalConfig = GlobalConfiguration.getGlobalConfig(configuration);
+        GlobalConfiguration globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
         // SqlRunner
         SqlRunner.FACTORY = sqlSessionFactory;
         if (globalConfig == null) {
-            GlobalConfiguration defaultCache = GlobalConfiguration.defaults();
+            GlobalConfiguration defaultCache = GlobalConfigUtils.defaults();
             defaultCache.setSqlSessionFactory(sqlSessionFactory);
-            GlobalConfiguration.setGlobalConfig(configuration, defaultCache);
+            GlobalConfigUtils.setGlobalConfig(configuration, defaultCache);
         } else {
             globalConfig.setSqlSessionFactory(sqlSessionFactory);
         }
@@ -398,7 +398,7 @@ public class TableInfoHelper {
      */
     public static KeyGenerator genKeyGenerator(TableInfo tableInfo, MapperBuilderAssistant builderAssistant,
                                                String baseStatementId, LanguageDriver languageDriver) {
-        IKeyGenerator keyGenerator = GlobalConfiguration.getKeyGenerator(builderAssistant.getConfiguration());
+        IKeyGenerator keyGenerator = GlobalConfigUtils.getKeyGenerator(builderAssistant.getConfiguration());
         if (null == keyGenerator) {
             throw new IllegalArgumentException("not configure IKeyGenerator implementation class.");
         }

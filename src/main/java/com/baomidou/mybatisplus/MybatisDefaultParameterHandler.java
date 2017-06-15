@@ -38,10 +38,10 @@ import org.apache.ibatis.type.TypeException;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
-import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.mapper.MetaObjectHandler;
+import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
 import com.baomidou.mybatisplus.toolkit.MapUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
@@ -105,7 +105,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
     protected static Object processBatch(MappedStatement ms, Object parameterObject) {
         boolean isFill = false;
         // 全局配置是否配置填充器
-        MetaObjectHandler metaObjectHandler = GlobalConfiguration.getMetaObjectHandler(ms.getConfiguration());
+        MetaObjectHandler metaObjectHandler = GlobalConfigUtils.getMetaObjectHandler(ms.getConfiguration());
         /* 只处理插入或更新操作 */
         if (ms.getSqlCommandType() == SqlCommandType.INSERT) {
             isFill = true;

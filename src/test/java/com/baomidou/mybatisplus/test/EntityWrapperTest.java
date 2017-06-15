@@ -76,7 +76,7 @@ public class EntityWrapperTest {
     @Test
     public void test12() {
         /*
-		 * 实体带where orderby
+         * 实体带where orderby
 		 */
         ew.setEntity(new User(1));
         ew.where("name={0}", "'123'").orderBy("id", false);

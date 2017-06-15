@@ -25,6 +25,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
+import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.toolkit.IOUtils;
 
 /**
@@ -37,13 +38,13 @@ import com.baomidou.mybatisplus.toolkit.IOUtils;
  */
 public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 
-    private GlobalConfiguration globalConfig = GlobalConfiguration.defaults();
+    private GlobalConfiguration globalConfig = GlobalConfigUtils.defaults();
 
     @Override
     public SqlSessionFactory build(Reader reader, String environment, Properties properties) {
         try {
             MybatisXMLConfigBuilder parser = new MybatisXMLConfigBuilder(reader, environment, properties);
-            GlobalConfiguration.setGlobalConfig(parser.getConfiguration(), this.globalConfig);
+            GlobalConfigUtils.setGlobalConfig(parser.getConfiguration(), this.globalConfig);
             return build(parser.parse());
         } catch (Exception e) {
             throw ExceptionFactory.wrapException("Error building SqlSession.", e);
@@ -57,7 +58,7 @@ public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
     public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
         try {
             MybatisXMLConfigBuilder parser = new MybatisXMLConfigBuilder(inputStream, environment, properties);
-            GlobalConfiguration.setGlobalConfig(parser.getConfiguration(), this.globalConfig);
+            GlobalConfigUtils.setGlobalConfig(parser.getConfiguration(), this.globalConfig);
             return build(parser.parse());
         } catch (Exception e) {
             throw ExceptionFactory.wrapException("Error building SqlSession.", e);
