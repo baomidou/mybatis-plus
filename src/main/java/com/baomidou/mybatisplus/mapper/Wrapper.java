@@ -129,14 +129,35 @@ public abstract class Wrapper<T> implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder("Wrapper<T>:");
         String sqlSegment = getSqlSegment();
-        if (StringUtils.isNotEmpty(sqlSegment)) {
-            sb.append(getSqlSegment().replaceAll("#\\{" + getParamAlias() + ".paramNameValuePairs.MPGENVAL[0-9]+}", "\\?")).append("\n");
-        }
+        sb.append(replacePlaceholder(sqlSegment));
         Object entity = getEntity();
         if (entity != null) {
+            sb.append("\n");
             sb.append("entity=").append(entity.toString());
         }
         return sb.toString();
+    }
+
+    /**
+     * 替换占位符
+     *
+     * @param sqlSegment
+     * @return
+     */
+    private String replacePlaceholder(String sqlSegment) {
+        if (StringUtils.isEmpty(sqlSegment)) {
+            return StringUtils.EMPTY;
+        }
+        return sqlSegment.replaceAll("#\\{" + getParamAlias() + ".paramNameValuePairs.MPGENVAL[0-9]+}", "\\?");
+    }
+
+    /**
+     * 原生占位符sql
+     *
+     * @return
+     */
+    public String originalSql() {
+        return replacePlaceholder(getSqlSegment());
     }
 
     /**
@@ -452,6 +473,22 @@ public abstract class Wrapper<T> implements Serializable {
      * (name='zhangsan' AND id=11) AND (statu=1)
      * </p>
      *
+     * @return this
+     */
+    public Wrapper<T> andNew() {
+        sql.AND_NEW();
+        return this;
+    }
+
+    /**
+     * <p>
+     * 使用AND连接并换行
+     * </p>
+     * <p>
+     * eg: ew.where("name='zhangsan'").and("id=11").andNew("statu=1"); 输出： WHERE
+     * (name='zhangsan' AND id=11) AND (statu=1)
+     * </p>
+     *
      * @param sqlAnd AND 条件语句
      * @param params 参数值
      * @return this
@@ -469,7 +506,7 @@ public abstract class Wrapper<T> implements Serializable {
      * @return this
      */
     public Wrapper<T> and() {
-        sql.AND_NEW();
+        sql.AND();
         return this;
     }
 
@@ -481,7 +518,7 @@ public abstract class Wrapper<T> implements Serializable {
      * @return this
      */
     public Wrapper<T> or() {
-        sql.OR_NEW();
+        sql.OR();
         return this;
     }
 
@@ -516,6 +553,22 @@ public abstract class Wrapper<T> implements Serializable {
      */
     public Wrapper<T> or(String sqlOr, Object... params) {
         return or(true, sqlOr, params);
+    }
+
+    /**
+     * <p>
+     * 使用OR换行，并添加一个带()的新的条件
+     * </p>
+     * <p>
+     * eg: ew.where("name='zhangsan'").and("id=11").orNew("statu=1"); 输出： WHERE
+     * (name='zhangsan' AND id=11) OR (statu=1)
+     * </p>
+     *
+     * @return this
+     */
+    public Wrapper<T> orNew() {
+        sql.OR_NEW();
+        return this;
     }
 
     /**
