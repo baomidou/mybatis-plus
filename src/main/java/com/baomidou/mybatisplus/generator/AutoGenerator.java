@@ -131,6 +131,10 @@ public class AutoGenerator extends AbstractGenerator {
                 // 表注解
                 tableInfo.setImportPackages("com.baomidou.mybatisplus.annotations.TableName");
             }
+            if (tableInfo.isLogicDelete(config.getGlobalConfig().getLogicDeletePropertyName())) {
+                // 逻辑删除注解
+            	tableInfo.setImportPackages("com.baomidou.mybatisplus.annotations.TableLogic");
+            }
             if (StringUtils.isNotEmpty(config.getSuperEntityClass())) {
                 // 父实体
                 tableInfo.setImportPackages(config.getSuperEntityClass());
@@ -159,6 +163,7 @@ public class AutoGenerator extends AbstractGenerator {
             ctx.put("restControllerStyle", config.getStrategyConfig().isRestControllerStyle());
             ctx.put("package", packageInfo);
             ctx.put("author", config.getGlobalConfig().getAuthor());
+            ctx.put("logicDeletePropertyName", config.getGlobalConfig().getLogicDeletePropertyName());
             ctx.put("activeRecord", config.getGlobalConfig().isActiveRecord());
             ctx.put("date", date);
             ctx.put("table", tableInfo);
