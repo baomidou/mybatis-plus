@@ -65,7 +65,10 @@ public class SQLServer2005Dialect implements IDialect {
         StringBuilder sql = new StringBuilder();
         sql.append("WITH query AS (SELECT ").append(distinctStr).append("TOP 100 PERCENT ")
                 .append(" ROW_NUMBER() OVER (").append(orderby).append(") as __row_number__, ").append(pagingBuilder)
-                .append(") SELECT * FROM query WHERE __row_number__ BETWEEN ").append(offset).append(" AND ")
+                .append(") SELECT * FROM query WHERE __row_number__ BETWEEN ")
+               //FIX#299：原因：mysql中limit 10(offset,size) 是从第10开始（不包含10）,；而这里用的BETWEEN是两边都包含，所以改为offset+1
+                .append(offset+1)
+                .append(" AND ")
                 .append(offset + limit).append(" ORDER BY __row_number__");
         return sql.toString();
     }
