@@ -584,6 +584,49 @@ public class StringUtils {
         return list;
     }
 
+
+    /**
+     * 第一个首字母小写,之后字符大小写的不变
+     * 
+     * <pre>
+     *      StringUtils.firstCharToLower( "UserService" )     = userService
+     *      StringUtils.firstCharToLower( "UserServiceImpl" ) = userServiceImpl
+     * </pre>
+     * @param rawString : 需要处理的字符串
+     * @return
+     */
+    public static String firstCharToLower ( String rawString ) {
+        return prefixToLower( rawString, 1 );
+    }
+
+    /**
+     * 前n个首字母小写,之后字符大小写的不变
+     *
+     * @param rawString : 需要处理的字符串
+     * @param index     : 多少个字符(从左至右)
+     * @return
+     */
+    public static String prefixToLower ( String rawString, int index ) {
+        String beforeChar = rawString.substring( 0, index ).toLowerCase();
+        String afterChar  = rawString.substring( index, rawString.length() );
+        return beforeChar + afterChar;
+    }
+
+    /**
+     * 删除字符前缀之后,首字母小写,之后字符大小写的不变
+     * 
+     * <pre>
+     *     StringUtils.removePrefixAfterPrefixToLower( "isUser", 2 )     = user 
+     *     StringUtils.removePrefixAfterPrefixToLower( "isUserInfo", 2 ) = userInfo 
+     * </pre> 
+     * @param rawString : 需要处理的字符串  
+     * @param index     : 删除多少个字符(从左至右)
+     * @return
+     */
+    public static String removePrefixAfterPrefixToLower ( String rawString, int index ) {
+        return prefixToLower( rawString.substring( index, rawString.length() ), 1 );
+    }
+    
     /**
      * 是否为CharSequence类型
      *

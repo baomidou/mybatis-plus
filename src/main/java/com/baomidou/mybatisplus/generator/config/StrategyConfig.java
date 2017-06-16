@@ -118,7 +118,7 @@ public class StrategyConfig {
      *      <code>@Controller</code> -> <code>@RestController</code>
      * </pre>
      */
-    private boolean restControllerStyle          = false;
+    private boolean restControllerStyle = false;
     /**
      * 驼峰转连字符
      * <pre>
@@ -126,6 +126,17 @@ public class StrategyConfig {
      * </pre>
      */
     private boolean controllerMappingHyphenStyle = false;
+    /**
+     * Controller中是否生成基本CURD方法,默认不生成
+     * 
+     */
+    private boolean controllerBasicMethod = false;
+    /**
+     * Controller中基本的分页方法是以mybatis plus默认的分页,还是以PageHelper为分页插件,默认为mybatis plus的分页方法 <br/>
+     * 要求 : {@link #controllerBasicMethod} 为 <code>true</code>
+     */
+    private boolean controllerBasicPagingMethodByPageHelper = false;
+            
    
 
     public void setDbColumnUnderline(boolean dbColumnUnderline) {
@@ -311,5 +322,21 @@ public class StrategyConfig {
 
     public void setControllerMappingHyphenStyle ( boolean controllerMappingHyphenStyle ) {
         this.controllerMappingHyphenStyle = controllerMappingHyphenStyle;
+    }
+
+    public boolean isControllerBasicMethod () {
+        return controllerBasicMethod;
+    }
+
+    public void setControllerBasicMethod ( boolean controllerBasicMethod ) {
+        this.controllerBasicMethod = controllerBasicMethod;
+    }
+
+    public boolean isControllerBasicPagingMethodByPageHelper () {
+        return controllerBasicPagingMethodByPageHelper;
+    }
+
+    public void setControllerBasicPagingMethodByPageHelper ( boolean controllerBasicPagingMethodByPageHelper ) {
+        this.controllerBasicPagingMethodByPageHelper = controllerBasicPagingMethodByPageHelper;
     }
 }

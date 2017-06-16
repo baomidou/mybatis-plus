@@ -6,6 +6,14 @@ import ${package.Service}.${table.serviceName};
 import ${superServiceImplClassPackage};
 import org.springframework.stereotype.Service;
 
+#if(${controllerBasicMethod})
+#if(${controllerBasicPagingMethodByPageHelper})
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.github.pagehelper.PageRowBounds;
+#end
+#end
+
 /**
  * <p>
  * $!{table.comment} 服务实现类
@@ -16,5 +24,13 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ${table.serviceImplName} extends ${superServiceImplClass}<${table.mapperName}, ${entity}> implements ${table.serviceName} {
-	
+
+#if(${controllerBasicPagingMethodByPageHelper})
+    @Override
+    public PageInfo listPage( PageRowBounds pageRowBounds ) {
+        PageHelper.startPage( pageRowBounds.getOffset(), pageRowBounds.getLimit() );
+        return new PageInfo( super.selectList( null ) );
+    }
+#end
+
 }
