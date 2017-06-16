@@ -174,13 +174,13 @@ public class GlobalConfigUtils {
      * @param globalConfig
      */
     public static void setMetaData(DataSource dataSource, GlobalConfiguration globalConfig) {
-        try(Connection connection = dataSource.getConnection()) {
+        try (Connection connection = dataSource.getConnection()) {
             String jdbcUrl = connection.getMetaData().getURL();
             // 设置全局关键字
             globalConfig.setSqlKeywords(connection.getMetaData().getSQLKeywords());
             // 自动设置数据库类型
             globalConfig.setDbType(jdbcUrl);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new MybatisPlusException("Error: GlobalConfigUtils setMetaData Fail !  Cause:" + e);
         }
     }

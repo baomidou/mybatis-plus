@@ -77,7 +77,7 @@ public class GlobalConfig {
      * 逻辑删除属性名称
      */
     private String logicDeletePropertyName;
-    
+
     public String getOutputDir() {
         return outputDir;
     }
@@ -182,12 +182,12 @@ public class GlobalConfig {
         this.controllerName = controllerName;
     }
 
-	public String getLogicDeletePropertyName() {
-		return logicDeletePropertyName;
-	}
+    public String getLogicDeletePropertyName() {
+        return logicDeletePropertyName;
+    }
 
-	public void setLogicDeletePropertyName(String logicDeletePropertyName) {
-		this.logicDeletePropertyName = logicDeletePropertyName;
-	}
+    public void setLogicDeletePropertyName(String logicDeletePropertyName) {
+        this.logicDeletePropertyName = logicDeletePropertyName;
+    }
 
 }

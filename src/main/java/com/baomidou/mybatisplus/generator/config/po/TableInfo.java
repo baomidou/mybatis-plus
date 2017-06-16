@@ -204,14 +204,14 @@ public class TableInfo {
      * 逻辑删除
      */
     public boolean isLogicDelete(String logicDeletePropertyName) {
-    	for (TableField tableField : fields) {
-			if (tableField.getPropertyName().equals(logicDeletePropertyName)) {
-				return true;
-			}
-		}
-		return false;
-	}
-    
+        for (TableField tableField : fields) {
+            if (tableField.getPropertyName().equals(logicDeletePropertyName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * 转换filed实体为xmlmapper中的basecolumn字符串信息
      *
