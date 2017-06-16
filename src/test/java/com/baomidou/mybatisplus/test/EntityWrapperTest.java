@@ -88,7 +88,7 @@ public class EntityWrapperTest {
     @Test
     public void test13() {
         /*
-		 * 实体排序
+         * 实体排序
 		 */
         ew.setEntity(new User(1));
         ew.orderBy("id", false);

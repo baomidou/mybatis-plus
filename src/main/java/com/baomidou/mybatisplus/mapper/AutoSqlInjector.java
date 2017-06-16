@@ -200,7 +200,7 @@ public class AutoSqlInjector implements ISqlInjector {
      */
     protected void injectInsertOneSql(boolean selective, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
         /*
-		 * INSERT INTO table <trim prefix="(" suffix=")" suffixOverrides=",">
+         * INSERT INTO table <trim prefix="(" suffix=")" suffixOverrides=",">
 		 * <if test="xx != null">xx,</if> </trim> <trim prefix="values ("
 		 * suffix=")" suffixOverrides=","> <if test="xx != null">#{xx},</if>
 		 * </trim>

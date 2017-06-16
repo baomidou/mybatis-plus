@@ -281,7 +281,7 @@ public class UserMapperTest {
         EntityWrapper<User> ew = new EntityWrapper<>(new User(1));
 
 		/*
-		 * 查询字段
+         * 查询字段
 		 */
         ew.setSqlSelect("age,name");
 
