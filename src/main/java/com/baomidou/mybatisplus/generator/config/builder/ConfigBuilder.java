@@ -41,7 +41,9 @@ import com.baomidou.mybatisplus.generator.config.rules.QuerySQL;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
+ * <p>
  * 配置汇总 传递给文件生成工具
+ * </p>
  *
  * @author YangHu, tangguo, hubin
  * @since 2016-08-30
@@ -578,16 +580,18 @@ public class ConfigBuilder {
         return strategyConfig;
     }
 
-    public void setStrategyConfig(StrategyConfig strategyConfig) {
+    public ConfigBuilder setStrategyConfig(StrategyConfig strategyConfig) {
         this.strategyConfig = strategyConfig;
+        return this;
     }
 
     public GlobalConfig getGlobalConfig() {
         return globalConfig;
     }
 
-    public void setGlobalConfig(GlobalConfig globalConfig) {
+    public ConfigBuilder setGlobalConfig(GlobalConfig globalConfig) {
         this.globalConfig = globalConfig;
+        return this;
     }
 
 }

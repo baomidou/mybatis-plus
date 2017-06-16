@@ -20,8 +20,8 @@ package com.baomidou.mybatisplus.generator.config;
  * 模板路径配置项
  * </p>
  *
- * @author tzg
- * @since 2016/11/10
+ * @author tzg hubin
+ * @since 2017-06-17
  */
 public class TemplateConfig {
 
@@ -41,48 +41,54 @@ public class TemplateConfig {
         return entity;
     }
 
-    public void setEntity(String entity) {
+    public TemplateConfig setEntity(String entity) {
         this.entity = entity;
+        return this;
     }
 
     public String getService() {
         return service;
     }
 
-    public void setService(String service) {
+    public TemplateConfig setService(String service) {
         this.service = service;
+        return this;
     }
 
     public String getServiceImpl() {
         return serviceImpl;
     }
 
-    public void setServiceImpl(String serviceImpl) {
+    public TemplateConfig setServiceImpl(String serviceImpl) {
         this.serviceImpl = serviceImpl;
+        return this;
     }
 
     public String getMapper() {
         return mapper;
     }
 
-    public void setMapper(String mapper) {
+    public TemplateConfig setMapper(String mapper) {
         this.mapper = mapper;
+        return this;
     }
 
     public String getXml() {
         return xml;
     }
 
-    public void setXml(String xml) {
+    public TemplateConfig setXml(String xml) {
         this.xml = xml;
+        return this;
     }
 
     public String getController() {
         return controller;
     }
 
-    public void setController(String controller) {
+    public TemplateConfig setController(String controller) {
         this.controller = controller;
+        return this;
     }
 
 }

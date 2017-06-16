@@ -65,7 +65,9 @@ public class ReflectionKit {
     }
 
     /**
+     * <p>
      * 获取 public get方法的值
+     * </p>
      *
      * @param cls
      * @param entity 实体
@@ -93,7 +95,9 @@ public class ReflectionKit {
     }
 
     /**
+     * <p>
      * 获取 public get方法的值
+     * </p>
      *
      * @param entity 实体
      * @param str    属性字符串内容
@@ -107,7 +111,9 @@ public class ReflectionKit {
     }
 
     /**
+     * <p>
      * 调用对象的get方法检查对象所有属性是否为null
+     * </p>
      *
      * @param bean 检查对象
      * @return boolean true对象所有属性不为null,false对象所有属性为null
@@ -140,7 +146,9 @@ public class ReflectionKit {
     }
 
     /**
+     * <p>
      * 反射对象获取泛型
+     * </p>
      *
      * @param clazz 对象
      * @param index 泛型所在位置
@@ -167,7 +175,9 @@ public class ReflectionKit {
     }
 
     /**
+     * <p>
      * 获取该类的所有属性列表
+     * </p>
      *
      * @param clazz 反射类
      * @return
@@ -185,7 +195,9 @@ public class ReflectionKit {
     }
 
     /**
+     * <p>
      * 获取该类的所有属性列表
+     * </p>
      *
      * @param clazz 反射类
      * @return
@@ -240,7 +252,9 @@ public class ReflectionKit {
     }
 
     /**
+     * <p>
      * 递归自身的class,获取TableInfo
+     * </p>
      *
      * @param cls
      * @return TableInfo

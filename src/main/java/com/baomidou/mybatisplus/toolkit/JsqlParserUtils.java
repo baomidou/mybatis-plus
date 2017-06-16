@@ -45,43 +45,48 @@ public class JsqlParserUtils {
     private static List<SelectItem> countSelectItem = null;
 
     /**
+     * <p>
      * jsqlparser方式获取select的count语句
+     * </p>
      *
      * @param originalSql selectSQL
      * @return
      */
     public static CountOptimize jsqlparserCount(CountOptimize countOptimize, String originalSql) {
-        String sqlCount;
         try {
             Select selectStatement = (Select) CCJSqlParserUtil.parse(originalSql);
             PlainSelect plainSelect = (PlainSelect) selectStatement.getSelectBody();
             Distinct distinct = plainSelect.getDistinct();
             List<Expression> groupBy = plainSelect.getGroupByColumnReferences();
-            // 优化Order by
             List<OrderByElement> orderBy = plainSelect.getOrderByElements();
-            // 添加包含groupby 不去除orderby
+
+            // 添加包含groupBy 不去除orderBy
             if (CollectionUtils.isEmpty(groupBy) && CollectionUtils.isNotEmpty(orderBy)) {
                 plainSelect.setOrderByElements(null);
                 countOptimize.setOrderBy(false);
             }
+
             // 包含 distinct、groupBy不优化
             if (distinct != null || CollectionUtils.isNotEmpty(groupBy)) {
-                sqlCount = String.format(SqlUtils.SQL_BASE_COUNT, selectStatement.toString());
-                countOptimize.setCountSQL(sqlCount);
+                countOptimize.setCountSQL(String.format(SqlUtils.SQL_BASE_COUNT, selectStatement.toString()));
                 return countOptimize;
             }
-            List<SelectItem> selectCount = countSelectItem();
-            plainSelect.setSelectItems(selectCount);
-            sqlCount = selectStatement.toString();
-        } catch (Exception e) {
-            sqlCount = String.format(SqlUtils.SQL_BASE_COUNT, originalSql);
+
+            // 优化 SQL
+            plainSelect.setSelectItems(countSelectItem());
+            countOptimize.setCountSQL(selectStatement.toString());
+            return countOptimize;
+        } catch (Throwable e) {
+            // 无法优化使用原 SQL
+            countOptimize.setCountSQL(String.format(SqlUtils.SQL_BASE_COUNT, originalSql));
+            return countOptimize;
         }
-        countOptimize.setCountSQL(sqlCount);
-        return countOptimize;
     }
 
     /**
+     * <p>
      * 获取jsqlparser中count的SelectItem
+     * </p>
      *
      * @return
      */

@@ -206,7 +206,9 @@ public class StringUtils {
     }
 
     /**
+     * <p>
      * 获取SQL PARAMS字符串
+     * </p>
      *
      * @param obj
      * @return
@@ -585,7 +587,9 @@ public class StringUtils {
     }
 
     /**
+     * <p>
      * 是否为CharSequence类型
+     * </p>
      *
      * @param cls
      * @return
@@ -595,23 +599,25 @@ public class StringUtils {
     }
 
     /**
+     * <p>
      * 是否为CharSequence类型
+     * </p>
      *
      * @param propertyType
      * @return
      */
     public static Boolean isCharSequence(String propertyType) {
-        Class<?> cls;
         try {
-            cls = Class.forName(propertyType);
+            return isCharSequence(Class.forName(propertyType));
         } catch (ClassNotFoundException e) {
             return false;
         }
-        return isCharSequence(cls);
     }
 
     /**
+     * <p>
      * 驼峰转连字符
+     * </p>
      * <pre>
      *     StringUtils.camelToHyphen( "managerAdminUserService" ) = manager-admin-user-service 
      * </pre> 
@@ -620,48 +626,48 @@ public class StringUtils {
      * @return 以'-'分隔
      */
     public static String camelToHyphen(String input) {
-        return wordsToHyphenCase(wordsAndHyphenAndCamelToConstantCase( input ));
+        return wordsToHyphenCase(wordsAndHyphenAndCamelToConstantCase(input));
     }
     
     private static String wordsAndHyphenAndCamelToConstantCase ( String input ) {
         boolean _betweenUpperCases = false;
-        boolean containsLowerCase  = containsLowerCase( input );
+        boolean containsLowerCase = containsLowerCase(input);
 
-        StringBuilder buf          = new StringBuilder();
-        char          previousChar = ' ';
-        char[]        chars        = input.toCharArray();
-        for ( int i = 0 ; i < chars.length ; i++ ) {
-            char    c                                 = chars[i];
-            boolean isUpperCaseAndPreviousIsUpperCase = ( Character.isUpperCase( previousChar ) ) && ( Character.isUpperCase(
-                    c ) );
-            boolean isUpperCaseAndPreviousIsLowerCase = ( Character.isLowerCase( previousChar ) ) && ( Character.isUpperCase(
-                    c ) );
+        StringBuilder buf = new StringBuilder();
+        char previousChar = ' ';
+        char[] chars = input.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            char c = chars[i];
+            boolean isUpperCaseAndPreviousIsUpperCase = (Character.isUpperCase(previousChar)) && (Character.isUpperCase(c));
+            boolean isUpperCaseAndPreviousIsLowerCase = (Character.isLowerCase(previousChar)) && (Character.isUpperCase(c));
 
-            boolean previousIsWhitespace   = Character.isWhitespace( previousChar );
-            boolean lastOneIsNotUnderscore = ( buf.length() > 0 ) && ( buf.charAt( buf.length() - 1 ) != '_' );
-            boolean isNotUnderscore        = c != '_';
-            if ( ( lastOneIsNotUnderscore ) && ( ( isUpperCaseAndPreviousIsLowerCase ) || ( previousIsWhitespace ) || ( ( _betweenUpperCases ) && ( containsLowerCase ) && ( isUpperCaseAndPreviousIsUpperCase ) ) ) ) {
-                buf.append( "_" );
-            } else if ( ( ( separatorAfterDigit ) && ( Character.isDigit( previousChar ) ) && ( Character.isLetter( c ) ) ) || ( ( separatorBeforeDigit ) && ( Character
-                    .isDigit( c ) ) && ( Character.isLetter( previousChar ) ) ) ) {
-                buf.append( '_' );
+            boolean previousIsWhitespace = Character.isWhitespace(previousChar);
+            boolean lastOneIsNotUnderscore = (buf.length() > 0) && (buf.charAt(buf.length() - 1) != '_');
+            boolean isNotUnderscore = c != '_';
+            if ((lastOneIsNotUnderscore) && ((isUpperCaseAndPreviousIsLowerCase) || (previousIsWhitespace) || ((_betweenUpperCases)
+                    && (containsLowerCase) && (isUpperCaseAndPreviousIsUpperCase)))) {
+                buf.append("_");
+            } else if (((separatorAfterDigit) && (Character.isDigit(previousChar))
+                    && (Character.isLetter(c))) || ((separatorBeforeDigit) && (Character
+                    .isDigit(c)) && (Character.isLetter(previousChar)))) {
+                buf.append('_');
             }
-            if ( ( shouldReplace( c ) ) && ( lastOneIsNotUnderscore ) ) {
-                buf.append( '_' );
-            } else if ( ( ! Character.isWhitespace( c ) ) && ( ( isNotUnderscore ) || ( lastOneIsNotUnderscore ) ) ) {
-                buf.append( Character.toUpperCase( c ) );
+            if ((shouldReplace(c)) && (lastOneIsNotUnderscore)) {
+                buf.append('_');
+            } else if ((!Character.isWhitespace(c)) && ((isNotUnderscore) || (lastOneIsNotUnderscore))) {
+                buf.append(Character.toUpperCase(c));
             }
             previousChar = c;
         }
-        if ( Character.isWhitespace( previousChar ) ) {
-            buf.append( "_" );
+        if (Character.isWhitespace(previousChar)) {
+            buf.append("_");
         }
         return buf.toString();
     }
 
     public static boolean containsLowerCase ( String s ) {
-        for ( char c : s.toCharArray() ) {
-            if ( Character.isLowerCase( c ) ) {
+        for (char c : s.toCharArray()) {
+            if (Character.isLowerCase(c)) {
                 return true;
             }
         }
@@ -669,28 +675,29 @@ public class StringUtils {
     }
 
     private static boolean shouldReplace ( char c ) {
-        return ( c == '.' ) || ( c == '_' ) || ( c == '-' );
+        return (c == '.') || (c == '_') || (c == '-');
     }
 
     private static String wordsToHyphenCase ( String s ) {
-        StringBuilder buf      = new StringBuilder();
-        char          lastChar = 'a';
-        for ( char c : s.toCharArray() ) {
-            if ( ( Character.isWhitespace( lastChar ) ) && ( ! Character.isWhitespace( c ) ) && ( '-' != c ) && ( buf.length() > 0 ) && ( buf
-                    .charAt( buf.length() - 1 ) != '-' ) ) {
-                buf.append( "-" );
+        StringBuilder buf = new StringBuilder();
+        char lastChar = 'a';
+        for (char c : s.toCharArray()) {
+            if ((Character.isWhitespace(lastChar)) && (!Character.isWhitespace(c))
+                    && ('-' != c) && (buf.length() > 0)
+                    && (buf.charAt(buf.length() - 1) != '-')) {
+                buf.append("-");
             }
-            if ( '_' == c ) {
-                buf.append( '-' );
-            } else if ( '.' == c ) {
-                buf.append( '-' );
-            } else if ( ! Character.isWhitespace( c ) ) {
-                buf.append( Character.toLowerCase( c ) );
+            if ('_' == c) {
+                buf.append('-');
+            } else if ('.' == c) {
+                buf.append('-');
+            } else if (!Character.isWhitespace(c)) {
+                buf.append(Character.toLowerCase(c));
             }
             lastChar = c;
         }
-        if ( Character.isWhitespace( lastChar ) ) {
-            buf.append( "-" );
+        if (Character.isWhitespace(lastChar)) {
+            buf.append("-");
         }
         return buf.toString();
     }
