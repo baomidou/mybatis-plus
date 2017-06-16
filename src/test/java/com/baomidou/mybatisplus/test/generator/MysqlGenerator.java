@@ -74,7 +74,7 @@ public class MysqlGenerator {
             public DbColumnType processTypeConvert( String fieldType) {
                 System.out.println("转换类型：" + fieldType);
                 // if ( fieldType.toLowerCase().contains( "tinyint" ) ) {
-                //    return DbColumnType.BOOLEAN;
+                //    return DbColumnType.BASIC_BOOLEAN;
                 // }
                 return super.processTypeConvert(fieldType);
             }
@@ -114,9 +114,18 @@ public class MysqlGenerator {
         // 【实体】是否为lombok模型（默认 false）<a href="https://projectlombok.org/">document</a>
         // strategy.setEntityLombokModel(true);
         // Boolean类型字段是否移除is前缀处理
-        // strategy.setEntityBooleanColumnRemoveIsPrefix(true);
+        strategy.setEntityBooleanColumnRemoveIsPrefix(true);
+        // 生成@RestController 控制器
+        // strategy.setRestControllerStyle( true );
+        // @RequestMapping 转连字符风格
+        // strategy.setControllerMappingHyphenStyle( true );
+        // Controller中是否生成基本CURD方法,默认不生成
+        // strategy.setControllerBasicMethod( true );
+        // Controller中基本的分页方法是以mybatis plus默认的分页,还是以PageHelper为分页插件,默认为mybatis plus的分页方法
+        // strategy.setControllerBasicPagingMethodByPageHelper( true );
+        
         mpg.setStrategy(strategy);
-
+        
         // 包配置
         PackageConfig pc = new PackageConfig();
         pc.setModuleName("test");
