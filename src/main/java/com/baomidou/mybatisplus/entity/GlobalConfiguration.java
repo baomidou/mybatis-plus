@@ -48,8 +48,8 @@ public class GlobalConfiguration implements Serializable {
     private String logicDeleteValue = null;
     // 逻辑未删除全局值
     private String logicNotDeleteValue = null;
-    // 数据库类型（默认 MySql）
-    private DBType dbType = DBType.MYSQL;
+    // 数据库类型
+    private DBType dbType;
     // 主键类型（默认 ID_WORKER）
     private IdType idType = IdType.ID_WORKER;
     // 表名、字段名、是否使用下划线命名（默认 false）
@@ -64,8 +64,6 @@ public class GlobalConfiguration implements Serializable {
     private FieldStrategy fieldStrategy = FieldStrategy.NOT_NULL;
     // 是否刷新mapper
     private boolean isRefresh = false;
-    // 是否自动获取DBType
-    private boolean isAutoSetDbType = true;
     // 是否大写命名
     private boolean isCapitalMode = false;
     // 标识符
@@ -115,12 +113,12 @@ public class GlobalConfiguration implements Serializable {
         return dbType;
     }
 
-    public void setDbType(String dbType) {
-        this.dbType = DBType.getDBType(dbType);
-        this.isAutoSetDbType = false;
-    }
-
-    public void setDbTypeByJdbcUrl(String jdbcUrl) {
+    /**
+     * 根据jdbcUrl设置数据库类型
+     *
+     * @param jdbcUrl
+     */
+    public void setDbType(String jdbcUrl) {
         this.dbType = JdbcUtils.getDbType(jdbcUrl);
     }
 
@@ -170,14 +168,6 @@ public class GlobalConfiguration implements Serializable {
 
     public void setRefresh(boolean refresh) {
         this.isRefresh = refresh;
-    }
-
-    public boolean isAutoSetDbType() {
-        return isAutoSetDbType;
-    }
-
-    public void setAutoSetDbType(boolean autoSetDbType) {
-        this.isAutoSetDbType = autoSetDbType;
     }
 
     public Set<String> getMapperRegistryCache() {
