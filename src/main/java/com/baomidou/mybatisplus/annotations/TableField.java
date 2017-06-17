@@ -65,13 +65,13 @@ public @interface TableField {
 
     /**
      * <p>
-     * 字段验证
+     * 字段验证策略
      * </p>
      * <p>
      * 默认 非 null 判断
      * </p>
      */
-    FieldStrategy validate() default FieldStrategy.NOT_NULL;
+    FieldStrategy strategy() default FieldStrategy.NOT_NULL;
 
     /**
      * <p>

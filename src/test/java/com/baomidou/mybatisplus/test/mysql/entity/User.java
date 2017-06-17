@@ -55,7 +55,7 @@ public class User implements Serializable {
     private BigDecimal price;
 
     /* 测试下划线字段命名类型, 字段填充 */
-    @TableField(value = "test_type", validate = FieldStrategy.IGNORED)
+    @TableField(value = "test_type", strategy = FieldStrategy.IGNORED)
     @TableLogic(value = "-2") // 该注解为了测试逻辑删除、这里设置 -2 为删除值
     private Integer testType;
 
