@@ -194,8 +194,5 @@ public class GlobalConfigUtils {
             throw new MybatisPlusException("Error: GlobalConfigUtils setMetaData Fail !  Cause:" + e);
         }
     }
-<<<<<<< HEAD
-=======
 
->>>>>>> dev
 }

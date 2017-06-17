@@ -15,14 +15,11 @@
  */
 package com.baomidou.mybatisplus.test.generator;
 
-<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-=======
 import java.util.Arrays;
 import java.util.HashMap;
->>>>>>> dev
 import java.util.Map;
 
 import com.baomidou.mybatisplus.generator.AutoGenerator;
