@@ -62,7 +62,9 @@ public class SqlRunner {
     }
 
     /**
+     * <p>
      * 获取默认的SqlQuery(适用于单库)
+     * </p>
      *
      * @return
      */
@@ -75,7 +77,9 @@ public class SqlRunner {
     }
 
     /**
+     * <p>
      * 根据当前class对象获取SqlQuery(适用于多库)
+     * </p>
      *
      * @param clazz
      * @return

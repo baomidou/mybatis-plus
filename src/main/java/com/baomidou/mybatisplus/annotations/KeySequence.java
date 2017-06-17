@@ -35,14 +35,14 @@ import java.lang.annotation.Target;
 @Inherited
 public @interface KeySequence {
 
-    /*
+    /**
      * <p>
      * 序列名
      * </p>
      */
     String value() default "";
 
-    /*
+    /**
      * <p>
      * id的类型
      * </p>

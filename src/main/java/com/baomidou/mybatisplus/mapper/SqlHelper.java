@@ -44,7 +44,9 @@ public class SqlHelper {
     private static final Log logger = LogFactory.getLog(SqlHelper.class);
 
     /**
+     * <p>
      * 获取Session 默认自动提交
+     * </p>
      * <p>
      * 特别说明:这里获取SqlSession时这里虽然设置了自动提交但是如果事务托管了的话 是不起作用的 切记!!
      * <p/>
@@ -68,9 +70,11 @@ public class SqlHelper {
     }
 
     /**
-     * 获取sqlSessionå
+     * <p>
+     * 获取sqlSession
+     * </p>
      *
-     * @param clazz
+     * @param clazz 对象类
      * @return
      */
     private static SqlSession getSqlSession(Class<?> clazz) {
@@ -100,9 +104,12 @@ public class SqlHelper {
     }
 
     /**
+     * <p>
      * 获取TableInfo
+     * </p>
      *
-     * @return TableInfo
+     * @param clazz 对象类
+     * @return TableInfo 对象表信息
      */
     public static TableInfo table(Class<?> clazz) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
@@ -157,10 +164,12 @@ public class SqlHelper {
     }
 
     /**
+     * <p>
      * 填充Wrapper
+     * </p>
      *
-     * @param page
-     * @param wrapper
+     * @param page    分页对象
+     * @param wrapper SQL包装对象
      */
     public static void fillWrapper(Page<?> page, Wrapper<?> wrapper) {
         if (null == page) {
@@ -175,9 +184,11 @@ public class SqlHelper {
     }
 
     /**
+     * <p>
      * 判断Wrapper为空
+     * </p>
      *
-     * @param wrapper
+     * @param wrapper SQL包装对象
      * @return
      */
     public static boolean isEmptyOfWrapper(Wrapper<?> wrapper) {
@@ -185,9 +196,11 @@ public class SqlHelper {
     }
 
     /**
+     * <p>
      * 判断Wrapper不为空
+     * </p>
      *
-     * @param wrapper
+     * @param wrapper SQL包装对象
      * @return
      */
     public static boolean isNotEmptyOfWrapper(Wrapper<?> wrapper) {

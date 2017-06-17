@@ -75,7 +75,9 @@ public abstract class Wrapper<T> implements Serializable {
     protected String AND_OR = "AND";
 
     /**
+     * <p>
      * 兼容EntityWrapper
+     * </p>
      *
      * @return
      */
@@ -95,9 +97,11 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * 使用对象封装的setsqlselect
+     * </p>
      *
-     * @param column
+     * @param column 字段
      * @return
      */
     public Wrapper<T> setSqlSelect(Column... column) {
@@ -122,7 +126,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * SQL 片段 (子类实现)
+     * </p>
      */
     public abstract String getSqlSegment();
 
@@ -139,7 +145,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * 替换占位符
+     * </p>
      *
      * @param sqlSegment
      * @return
@@ -152,7 +160,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * 原生占位符sql
+     * </p>
      *
      * @return
      */
@@ -746,7 +756,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * LIKE条件语句，value中无需前后%
+     * </p>
      *
      * @param condition 拼接的前置条件
      * @param column    字段名称
@@ -760,7 +772,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * LIKE条件语句，value中无需前后%
+     * </p>
      *
      * @param column 字段名称
      * @param value  匹配值
@@ -771,7 +785,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * NOT LIKE条件语句，value中无需前后%
+     * </p>
      *
      * @param condition 拼接的前置条件
      * @param column    字段名称
@@ -785,7 +801,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * NOT LIKE条件语句，value中无需前后%
+     * </p>
      *
      * @param column 字段名称
      * @param value  匹配值
@@ -796,7 +814,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * 处理LIKE操作
+     * </p>
      *
      * @param column 字段名称
      * @param value  like匹配值
@@ -815,7 +835,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * LIKE条件语句，value中无需前后%
+     * </p>
      *
      * @param condition 拼接的前置条件
      * @param column    字段名称
@@ -830,7 +852,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * LIKE条件语句，value中无需前后%
+     * </p>
      *
      * @param column 字段名称
      * @param value  匹配值
@@ -842,7 +866,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * NOT LIKE条件语句，value中无需前后%
+     * </p>
      *
      * @param condition 拼接的前置条件
      * @param column    字段名称
@@ -857,7 +883,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * NOT LIKE条件语句，value中无需前后%
+     * </p>
      *
      * @param column 字段名称
      * @param value  匹配值
@@ -869,7 +897,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * is not null 条件
+     * </p>
      *
      * @param condition 拼接的前置条件
      * @param columns   字段名称。多个字段以逗号分隔。
@@ -882,7 +912,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * is not null 条件
+     * </p>
      *
      * @param columns 字段名称。多个字段以逗号分隔。
      * @return this
@@ -892,7 +924,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * is not null 条件
+     * </p>
      *
      * @param condition 拼接的前置条件
      * @param columns   字段名称。多个字段以逗号分隔。
@@ -905,7 +939,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * is not null 条件
+     * </p>
      *
      * @param columns 字段名称。多个字段以逗号分隔。
      * @return this
@@ -915,7 +951,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * EXISTS 条件语句，目前适配mysql及oracle
+     * </p>
      *
      * @param condition 拼接的前置条件
      * @param value     匹配值
@@ -928,7 +966,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * EXISTS 条件语句，目前适配mysql及oracle
+     * </p>
      *
      * @param value 匹配值
      * @return this
@@ -938,7 +978,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * NOT EXISTS条件语句
+     * </p>
      *
      * @param condition 拼接的前置条件
      * @param value     匹配值
@@ -951,7 +993,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * NOT EXISTS条件语句
+     * </p>
      *
      * @param value 匹配值
      * @return this
@@ -961,7 +1005,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * IN 条件语句，目前适配mysql及oracle
+     * </p>
      *
      * @param condition 拼接的前置条件
      * @param column    字段名称
@@ -976,7 +1022,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * IN 条件语句，目前适配mysql及oracle
+     * </p>
      *
      * @param column 字段名称
      * @param value  逗号拼接的字符串
@@ -987,7 +1035,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * NOT IN条件语句
+     * </p>
      *
      * @param condition 拼接的前置条件
      * @param column    字段名称
@@ -1002,7 +1052,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * NOT IN条件语句
+     * </p>
      *
      * @param column 字段名称
      * @param value  逗号拼接的字符串
@@ -1013,7 +1065,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * IN 条件语句，目前适配mysql及oracle
+     * </p>
      *
      * @param condition 拼接的前置条件
      * @param column    字段名称
@@ -1027,7 +1081,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * IN 条件语句，目前适配mysql及oracle
+     * </p>
      *
      * @param column 字段名称
      * @param value  匹配值 List集合
@@ -1038,7 +1094,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * NOT IN 条件语句，目前适配mysql及oracle
+     * </p>
      *
      * @param condition 拼接的前置条件
      * @param column    字段名称
@@ -1052,7 +1110,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * NOT IN 条件语句，目前适配mysql及oracle
+     * </p>
      *
      * @param column 字段名称
      * @param value  匹配值 List集合
@@ -1063,7 +1123,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * IN 条件语句，目前适配mysql及oracle
+     * </p>
      *
      * @param condition 拼接的前置条件
      * @param column    字段名称
@@ -1077,7 +1139,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * IN 条件语句，目前适配mysql及oracle
+     * </p>
      *
      * @param column 字段名称
      * @param value  匹配值 object数组
@@ -1088,7 +1152,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * NOT IN 条件语句，目前适配mysql及oracle
+     * </p>
      *
      * @param condition 拼接的前置条件
      * @param column    字段名称
@@ -1102,7 +1168,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * NOT IN 条件语句，目前适配mysql及oracle
+     * </p>
      *
      * @param column 字段名称
      * @param value  匹配值 object数组
@@ -1113,7 +1181,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * 获取in表达式
+     * </p>
      *
      * @param column 字段名称
      * @param value  集合List
@@ -1142,7 +1212,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * betwwee 条件语句
+     * </p>
      *
      * @param condition 拼接的前置条件
      * @param column    字段名称
@@ -1157,7 +1229,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * betwwee 条件语句
+     * </p>
      *
      * @param column 字段名称
      * @param val1
@@ -1169,7 +1243,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * NOT betwwee 条件语句
+     * </p>
      *
      * @param condition 拼接的前置条件
      * @param column    字段名称
@@ -1184,7 +1260,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * NOT betwwee 条件语句
+     * </p>
      *
      * @param column 字段名称
      * @param val1
@@ -1197,7 +1275,9 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
+     * <p>
      * 为了兼容之前的版本,可使用where()或and()替代
+     * </p>
      *
      * @param sqlWhere where sql部分
      * @param params   参数集

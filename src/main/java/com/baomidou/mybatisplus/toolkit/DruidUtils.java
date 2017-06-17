@@ -28,10 +28,12 @@ import com.alibaba.druid.sql.PagerUtils;
 public class DruidUtils {
 
     /**
+     * <p>
      * 通过Druid方式获取count语句
+     * </p>
      *
-     * @param originalSql
-     * @param dialectType
+     * @param originalSql 原执行 SQL
+     * @param dialectType 数据库方言类型
      * @return
      */
     public static String count(String originalSql, String dialectType) {

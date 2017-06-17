@@ -33,12 +33,12 @@ import com.baomidou.mybatisplus.mapper.MetaObjectHandler;
  */
 public class GlobalConfigUtils {
 
+    // 日志
+    private static final Log logger = LogFactory.getLog(GlobalConfigUtils.class);
     /**
      * 默认参数
      */
     public static final GlobalConfiguration DEFAULT = defaults();
-    // 日志
-    private static final Log logger = LogFactory.getLog(GlobalConfigUtils.class);
     /**
      * 缓存全局信息
      */
@@ -49,9 +49,11 @@ public class GlobalConfigUtils {
     }
 
     /**
+     * <p>
      * 获取当前的SqlSessionFactory
+     * </p>
      *
-     * @param clazz
+     * @param clazz 实体类
      * @return
      */
     public static SqlSessionFactory currentSessionFactory(Class<?> clazz) {
@@ -61,7 +63,9 @@ public class GlobalConfigUtils {
     }
 
     /**
+     * <p>
      * 获取默认MybatisGlobalConfig
+     * </p>
      *
      * @return
      */
@@ -74,8 +78,8 @@ public class GlobalConfigUtils {
      * 设置全局设置(以configuration地址值作为Key)
      * <p/>
      *
-     * @param configuration
-     * @param mybatisGlobalConfig
+     * @param configuration       Mybatis 容器配置对象
+     * @param mybatisGlobalConfig 全局配置
      * @return
      */
     public static void setGlobalConfig(Configuration configuration, GlobalConfiguration mybatisGlobalConfig) {
@@ -87,9 +91,11 @@ public class GlobalConfigUtils {
     }
 
     /**
+     * <p>
      * 获取MybatisGlobalConfig (统一所有入口)
+     * </p>
      *
-     * @param configuration
+     * @param configuration Mybatis 容器配置对象
      * @return
      */
     public static GlobalConfiguration getGlobalConfig(Configuration configuration) {
@@ -100,9 +106,11 @@ public class GlobalConfigUtils {
     }
 
     /**
+     * <p>
      * 获取MybatisGlobalConfig (统一所有入口)
+     * </p>
      *
-     * @param configMark
+     * @param configMark 配置标记
      * @return
      */
     public static GlobalConfiguration getGlobalConfig(String configMark) {
@@ -168,10 +176,12 @@ public class GlobalConfigUtils {
     }
 
     /**
+     * <p>
      * 设置元数据相关属性
+     * </p>
      *
-     * @param dataSource
-     * @param globalConfig
+     * @param dataSource   数据源
+     * @param globalConfig 全局配置
      */
     public static void setMetaData(DataSource dataSource, GlobalConfiguration globalConfig) {
         try (Connection connection = dataSource.getConnection()) {
@@ -184,4 +194,8 @@ public class GlobalConfigUtils {
             throw new MybatisPlusException("Error: GlobalConfigUtils setMetaData Fail !  Cause:" + e);
         }
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> dev
 }

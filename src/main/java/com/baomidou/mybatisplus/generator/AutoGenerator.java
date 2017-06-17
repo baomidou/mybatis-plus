@@ -35,7 +35,11 @@ import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 
 import com.baomidou.mybatisplus.generator.config.ConstVal;
+import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.FileOutConfig;
+import com.baomidou.mybatisplus.generator.config.GlobalConfig;
+import com.baomidou.mybatisplus.generator.config.PackageConfig;
+import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.TemplateConfig;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 import com.baomidou.mybatisplus.generator.config.po.TableField;
@@ -49,10 +53,32 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  * @author YangHu, tangguo
  * @since 2016-08-30
  */
-public class AutoGenerator extends AbstractGenerator {
+public class AutoGenerator {
 
     private static final Log logger = LogFactory.getLog(AutoGenerator.class);
 
+    protected ConfigBuilder config;
+    protected InjectionConfig injectionConfig;
+    /**
+     * 数据源配置
+     */
+    private DataSourceConfig dataSource;
+    /**
+     * 数据库表配置
+     */
+    private StrategyConfig strategy;
+    /**
+     * 包 相关配置
+     */
+    private PackageConfig packageInfo;
+    /**
+     * 模板 相关配置
+     */
+    private TemplateConfig template;
+    /**
+     * 全局 相关配置
+     */
+    private GlobalConfig globalConfig;
     /**
      * velocity引擎
      */
@@ -155,10 +181,8 @@ public class AutoGenerator extends AbstractGenerator {
                 for (TableField field : tableInfo.getFields()) {
                     if (field.getPropertyType().equalsIgnoreCase("boolean")) {
                         if (field.getPropertyName().indexOf("is") != -1) {
-                            String noIsPropertyName = field.getPropertyName().substring(2, field.getPropertyName().length());
-                            String firstChar = noIsPropertyName.substring(0, 1).toLowerCase();
-                            String afterChar = noIsPropertyName.substring(1, noIsPropertyName.length());
-                            field.setPropertyName(config.getStrategyConfig(), firstChar + afterChar);
+                            field.setPropertyName(config.getStrategyConfig(),
+                                    field.getPropertyName().substring(0, 3).toLowerCase().substring(2));
                         }
                     }
                 }
@@ -336,4 +360,80 @@ public class AutoGenerator extends AbstractGenerator {
         return !file.exists() || config.getGlobalConfig().isFileOverride();
     }
 
+
+    // ==================================  相关配置  ==================================
+    /**
+     * 初始化配置
+     */
+    protected void initConfig() {
+        if (null == config) {
+            config = new ConfigBuilder(packageInfo, dataSource, strategy, template, globalConfig);
+            if (null != injectionConfig) {
+                injectionConfig.setConfig(config);
+            }
+        }
+    }
+
+    public DataSourceConfig getDataSource() {
+        return dataSource;
+    }
+
+    public AutoGenerator setDataSource(DataSourceConfig dataSource) {
+        this.dataSource = dataSource;
+        return this;
+    }
+
+    public StrategyConfig getStrategy() {
+        return strategy;
+    }
+
+    public AutoGenerator setStrategy(StrategyConfig strategy) {
+        this.strategy = strategy;
+        return this;
+    }
+
+    public PackageConfig getPackageInfo() {
+        return packageInfo;
+    }
+
+    public AutoGenerator setPackageInfo(PackageConfig packageInfo) {
+        this.packageInfo = packageInfo;
+        return this;
+    }
+
+    public TemplateConfig getTemplate() {
+        return template;
+    }
+
+    public AutoGenerator setTemplate(TemplateConfig template) {
+        this.template = template;
+        return this;
+    }
+
+    public ConfigBuilder getConfig() {
+        return config;
+    }
+
+    public AutoGenerator setConfig(ConfigBuilder config) {
+        this.config = config;
+        return this;
+    }
+
+    public GlobalConfig getGlobalConfig() {
+        return globalConfig;
+    }
+
+    public AutoGenerator setGlobalConfig(GlobalConfig globalConfig) {
+        this.globalConfig = globalConfig;
+        return this;
+    }
+
+    public InjectionConfig getCfg() {
+        return injectionConfig;
+    }
+
+    public AutoGenerator setCfg(InjectionConfig injectionConfig) {
+        this.injectionConfig = injectionConfig;
+        return this;
+    }
 }

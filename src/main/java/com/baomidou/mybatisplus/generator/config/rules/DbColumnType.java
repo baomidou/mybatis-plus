@@ -24,6 +24,13 @@ package com.baomidou.mybatisplus.generator.config.rules;
  * @since 2017-01-11
  */
 public enum DbColumnType {
+    // 基本类型
+    BASE_INT("int", null),
+    BASE_BOOLEAN("boolean", null),
+    BASE_FLOAT("float", null),
+    BASE_DOUBLE("double", null),
+
+    // 包装类型
     STRING("String", null),
     LONG("Long", null),
     INTEGER("Integer", null),
