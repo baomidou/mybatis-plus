@@ -51,6 +51,9 @@ public class ${entity} implements Serializable {
 #elseif(${field.convert})
 	@TableField("${field.name}")
 #end
+#if(${logicDeletePropertyName}==${field.propertyName})
+    @TableLogic
+#end
 	private ${field.propertyType} ${field.propertyName};
 #end
 

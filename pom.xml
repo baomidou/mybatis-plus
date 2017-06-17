@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.baomidou</groupId>
     <artifactId>mybatis-plus</artifactId>
-    <version>2.0.8</version>
+    <version>2.0.9</version>
     <packaging>jar</packaging>
 
     <name>mybatis-plus</name>
@@ -240,8 +240,8 @@
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
-            <artifactId>${lombok.version}</artifactId>
-            <version>1.16.16</version>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- test end -->

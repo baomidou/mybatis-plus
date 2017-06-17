@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.enums;
 
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+
 /**
  * <p>
  * MybatisPlus 数据库类型
@@ -92,7 +94,7 @@ public enum DBType {
                 return dt;
             }
         }
-        return MYSQL;
+        throw new MybatisPlusException("Error: Unknown database type, or do not support changing database!\n");
     }
 
     public String getDb() {
