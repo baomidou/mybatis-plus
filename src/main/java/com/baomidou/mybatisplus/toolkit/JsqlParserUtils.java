@@ -42,7 +42,7 @@ import net.sf.jsqlparser.statement.select.SelectItem;
  */
 public class JsqlParserUtils {
 
-    private static List<SelectItem> countSelectItem = null;
+    private static final List<SelectItem> countSelectItem = countSelectItem();
 
     /**
      * <p>
@@ -73,7 +73,7 @@ public class JsqlParserUtils {
             }
 
             // 优化 SQL
-            plainSelect.setSelectItems(countSelectItem());
+            plainSelect.setSelectItems(countSelectItem);
             countOptimize.setCountSQL(selectStatement.toString());
             return countOptimize;
         } catch (Throwable e) {
@@ -91,9 +91,6 @@ public class JsqlParserUtils {
      * @return
      */
     private static List<SelectItem> countSelectItem() {
-        if (CollectionUtils.isNotEmpty(countSelectItem)) {
-            return countSelectItem;
-        }
         Function function = new Function();
         function.setName("COUNT");
         List<Expression> expressions = new ArrayList<>();
@@ -102,9 +99,9 @@ public class JsqlParserUtils {
         expressions.add(longValue);
         expressionList.setExpressions(expressions);
         function.setParameters(expressionList);
-        countSelectItem = new ArrayList<>();
+        List<SelectItem> selectItems = new ArrayList<>();
         SelectExpressionItem selectExpressionItem = new SelectExpressionItem(function);
-        countSelectItem.add(selectExpressionItem);
-        return countSelectItem;
+        selectItems.add(selectExpressionItem);
+        return selectItems;
     }
 }

@@ -31,9 +31,6 @@ import java.util.Map;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
-import com.baomidou.mybatisplus.entity.TableFieldInfo;
-import com.baomidou.mybatisplus.entity.TableInfo;
-import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 
 
@@ -108,41 +105,6 @@ public class ReflectionKit {
             return null;
         }
         return getMethodValue(entity.getClass(), entity, str);
-    }
-
-    /**
-     * <p>
-     * 调用对象的get方法检查对象所有属性是否为null
-     * </p>
-     *
-     * @param bean 检查对象
-     * @return boolean true对象所有属性不为null,false对象所有属性为null
-     */
-    public static boolean checkFieldValueNotNull(Object bean) {
-        if (null == bean) {
-            return false;
-        }
-        Class<?> cls = bean.getClass();
-        TableInfo tableInfo = getTableInfoAsSuperClass(cls);
-        boolean result = false;
-        List<TableFieldInfo> fieldList = tableInfo.getFieldList();
-        for (TableFieldInfo tableFieldInfo : fieldList) {
-            FieldStrategy fieldStrategy = tableFieldInfo.getFieldStrategy();
-            Object val = getMethodValue(cls, bean, tableFieldInfo.getProperty());
-            if (FieldStrategy.NOT_EMPTY.equals(fieldStrategy)) {
-                if (StringUtils.checkValNotNull(val)) {
-                    result = true;
-                    break;
-                }
-            } else {
-                if (null != val) {
-                    result = true;
-                    break;
-                }
-            }
-
-        }
-        return result;
     }
 
     /**
@@ -250,26 +212,4 @@ public class ReflectionKit {
         }
         return fieldList;
     }
-
-    /**
-     * <p>
-     * 递归自身的class,获取TableInfo
-     * </p>
-     *
-     * @param cls
-     * @return TableInfo
-     * @throws MybatisPlusException
-     */
-    private static TableInfo getTableInfoAsSuperClass(Class<?> cls) {
-        TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
-        if (tableInfo == null) {
-            if (Object.class.equals(cls)) {
-                throw new MybatisPlusException(String.format("Error: Could Not find %s in TableInfo Cache. ", cls.getSimpleName()));
-            } else {
-                tableInfo = getTableInfoAsSuperClass(cls.getSuperclass());
-            }
-        }
-        return tableInfo;
-    }
-
 }
