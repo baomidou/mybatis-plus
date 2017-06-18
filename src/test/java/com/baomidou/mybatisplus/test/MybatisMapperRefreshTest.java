@@ -15,19 +15,15 @@
  */
 package com.baomidou.mybatisplus.test;
 
-import java.io.InputStream;
-
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
-import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.spring.MybatisMapperRefresh;
-import com.baomidou.mybatisplus.test.mysql.MySqlInjector;
-import com.baomidou.mybatisplus.test.mysql.UserMapperTest;
 import com.baomidou.mybatisplus.test.mysql.mapper.UserMapper;
 import com.baomidou.mybatisplus.toolkit.SystemClock;
 
@@ -41,17 +37,22 @@ import com.baomidou.mybatisplus.toolkit.SystemClock;
  * @author nieqiurong
  * @Date 2016-08-25
  */
-public class MybatisMapperRefreshTest {
+public class MybatisMapperRefreshTest extends CrudTest {
+
+    @Override
+    public GlobalConfiguration globalConfiguration() {
+        GlobalConfiguration gc = super.globalConfiguration();
+        // to do nothing
+        return gc;
+    }
 
     /**
      * 测试 Mybatis XML 修改自动刷新
      */
-    public static void main(String[] args) throws Exception {
-        InputStream in = UserMapperTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
-        MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
-        mf.setGlobalConfig(new GlobalConfiguration(new MySqlInjector()));
+    @Test
+    public void test() throws Exception {
         Resource[] resource = new ClassPathResource[]{new ClassPathResource("mysql/UserMapper.xml")};
-        SqlSessionFactory sessionFactory = mf.build(in);
+        SqlSessionFactory sessionFactory = this.sqlSessionFactory();
         new MybatisMapperRefresh(sessionFactory, 0, 5, true);
         boolean isReturn = false;
         SqlSession session = null;
@@ -75,4 +76,5 @@ public class MybatisMapperRefreshTest {
         }
         System.exit(0);
     }
+
 }

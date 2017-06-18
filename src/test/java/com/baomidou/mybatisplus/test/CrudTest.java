@@ -43,6 +43,10 @@ public class CrudTest {
     }
 
     public SqlSessionFactory sqlSessionFactory() {
+        return sqlSessionFactory("mysql-config.xml");
+    }
+
+    public SqlSessionFactory sqlSessionFactory(String configXml) {
         GlobalConfiguration global = this.globalConfiguration();
         BasicDataSource dataSource = new BasicDataSource();
         dataSource.setDriverClassName("com.mysql.jdbc.Driver");
@@ -52,11 +56,10 @@ public class CrudTest {
         dataSource.setMaxTotal(1000);
         GlobalConfigUtils.setMetaData(dataSource, global);
         // 加载配置文件
-        InputStream inputStream = CrudTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
+        InputStream inputStream = CrudTest.class.getClassLoader().getResourceAsStream(configXml);
         MybatisSessionFactoryBuilder factoryBuilder = new MybatisSessionFactoryBuilder();
         factoryBuilder.setGlobalConfig(global);
         return factoryBuilder.build(inputStream);
     }
-
 
 }
