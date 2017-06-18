@@ -15,16 +15,14 @@
  */
 package com.baomidou.mybatisplus.test.mysql;
 
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
 
-import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.test.CrudTest;
 import com.baomidou.mybatisplus.test.mysql.entity.Test;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
 import com.baomidou.mybatisplus.test.mysql.mapper.TestMapper;
@@ -38,18 +36,14 @@ import com.baomidou.mybatisplus.test.mysql.mapper.UserMapper;
  * @author Caratacus
  * @Date 2016-12-21
  */
-public class CircularLabelsTest {
+public class CircularLabelsTest extends CrudTest {
 
     /**
      * 循环标签 测试
      */
-    public static void main(String[] args) {
-
-        // 加载配置文件
-        InputStream in = CircularLabelsTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
-        MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
-        SqlSessionFactory sessionFactory = mf.build(in);
-        SqlSession session = sessionFactory.openSession();
+    @org.junit.Test
+    public void test() {
+        SqlSession session = this.sqlSessionFactory().openSession();
         UserMapper userMapper = session.getMapper(UserMapper.class);
         Page<User> page = new Page<>(1, 6);
         List<User> users = userMapper.forSelect(page, Arrays.asList("1", "2", "3"));

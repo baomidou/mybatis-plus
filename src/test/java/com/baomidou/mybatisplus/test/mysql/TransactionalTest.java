@@ -15,12 +15,10 @@
  */
 package com.baomidou.mybatisplus.test.mysql;
 
-import java.io.InputStream;
-
 import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
+import org.junit.Test;
 
-import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
+import com.baomidou.mybatisplus.test.CrudTest;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
 import com.baomidou.mybatisplus.test.mysql.mapper.UserMapper;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
@@ -33,21 +31,17 @@ import com.baomidou.mybatisplus.toolkit.IdWorker;
  * @author hubin
  * @date 2016-09-20
  */
-public class TransactionalTest {
+public class TransactionalTest extends CrudTest {
 
     /**
      * <p>
      * 事务测试
      * </p>
      */
-    public static void main(String[] args) {
-        /*
-         * 加载配置文件
-		 */
-        InputStream in = TransactionalTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
-        MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
-        SqlSessionFactory sessionFactory = mf.build(in);
-        SqlSession sqlSession = sessionFactory.openSession();
+    @Test
+    public void test() {
+        SqlSession sqlSession = this.sqlSessionFactory().openSession();
+
         /**
          * 插入
          */

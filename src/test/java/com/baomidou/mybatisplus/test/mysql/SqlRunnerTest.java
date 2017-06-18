@@ -15,17 +15,15 @@
  */
 package com.baomidou.mybatisplus.test.mysql;
 
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.mapper.SqlRunner;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.test.CrudTest;
 import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
@@ -37,17 +35,14 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
  * @author Caratacus
  * @date 2016-12-19
  */
-public class SqlRunnerTest {
+public class SqlRunnerTest extends CrudTest {
 
     @Test
     public void test1() {
         /*
          * 加载配置文件
 		 */
-        InputStream in = SqlRunnerTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
-        MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
-        SqlSessionFactory sessionFactory = mf.build(in);
-        TableInfoHelper.initSqlSessionFactory(sessionFactory);
+        TableInfoHelper.initSqlSessionFactory(this.sqlSessionFactory());
 
         boolean b = SqlRunner.db().insert("INSERT INTO `test` (`id`, `type`) VALUES ('107880983085826048', 't1021')");
         System.out.println(b);
