@@ -23,12 +23,14 @@ import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.junit.Test;
 
 import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
+import com.baomidou.mybatisplus.test.CrudTest;
 import com.baomidou.mybatisplus.test.mysql.entity.Role;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
 import com.baomidou.mybatisplus.test.mysql.mapper.UserMapper;
@@ -47,7 +49,19 @@ import com.baomidou.mybatisplus.toolkit.IdWorker;
  * @author hubin sjy
  * @Date 2016-01-23
  */
-public class UserMapperTest {
+public class UserMapperTest extends CrudTest {
+
+    @Override
+    public GlobalConfiguration globalConfiguration() {
+        GlobalConfiguration gc = super.globalConfiguration();
+        /**
+         * 设置，自定义 元对象填充器，实现公共字段自动写入
+         */
+        //gc.setMetaObjectHandler(new MyMetaObjectHandler());
+        // gc.setCapitalMode(true);
+        gc.setDbColumnUnderline(true);
+        return gc;
+    }
 
     /**
      * RUN 测试
@@ -61,37 +75,9 @@ public class UserMapperTest {
      * <br>
      * 调整后的SQL优先级：xmlSql > sqlProvider > crudSql <br>
      */
-    public static void main(String[] args) {
-
-        // 加载配置文件
-        InputStream in = UserMapperTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
-
-		/*
-         * 此处采用 MybatisSessionFactoryBuilder 构建
-		 * SqlSessionFactory，目的是引入BaseMapper功能
-		 */
-        MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
-
-		/*
-         * 1、数据库字段驼峰命名不需要任何设置 2、当前演示是驼峰下划线混合命名 3、如下开启，表示数据库字段使用下划线命名，该设置是全局的。
-		 * 开启该设置实体可无 @TableId(value = "test_id") 字段映射
-		 */
-        // mf.setDbColumnUnderline(true);
-
-        /**
-         * 设置，自定义 SQL 注入器
-         */
-        GlobalConfiguration gc = new GlobalConfiguration(new MySqlInjector());
-        /**
-         * 设置，自定义 元对象填充器，实现公共字段自动写入
-         */
-        //gc.setMetaObjectHandler(new MyMetaObjectHandler());
-        // gc.setCapitalMode(true);
-        gc.setDbColumnUnderline(true);
-        mf.setGlobalConfig(gc);
-
-        SqlSessionFactory sessionFactory = mf.build(in);
-        SqlSession session = sessionFactory.openSession();
+    @Test
+    public void crudTest() {
+        SqlSession session = this.sqlSessionFactory().openSession();
         UserMapper userMapper = session.getMapper(UserMapper.class);
         System.err.println(" debug run 查询执行 user 表数据变化！ ");
         userMapper.deleteAll();
@@ -286,7 +272,7 @@ public class UserMapperTest {
         ew.setSqlSelect("age,name");
 
 		/*
-		 * 查询条件，SQL 片段(根据常用的写SQL的方式按顺序添加相关条件即可)
+         * 查询条件，SQL 片段(根据常用的写SQL的方式按顺序添加相关条件即可)
 		 */
         ew.where("name like {0}", "'%dateBatch%'").and("age={0}", 3).orderBy("age,name", true);
         List<User> paginList = userMapper.selectPage(page, ew);
@@ -304,7 +290,7 @@ public class UserMapperTest {
         }
 
 		/*
-		 * 用户列表
+         * 用户列表
 		 */
         System.err.println(" selectList EntityWrapper == null \n");
         paginList = userMapper.selectList(null);

@@ -15,17 +15,15 @@
  */
 package com.baomidou.mybatisplus.test.mysql;
 
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
 
-import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.test.CrudTest;
 import com.baomidou.mybatisplus.test.mysql.entity.Test;
 import com.baomidou.mybatisplus.test.mysql.mapper.TestMapper;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
@@ -38,16 +36,11 @@ import com.baomidou.mybatisplus.toolkit.IdWorker;
  * @author Caratacus
  * @date 2016-09-26
  */
-public class NoXMLTest {
+public class NoXMLTest extends CrudTest {
 
-    public static void main(String[] args) {
-        /*
-         * 加载配置文件
-		 */
-        InputStream in = NoXMLTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
-        MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
-        SqlSessionFactory sessionFactory = mf.build(in);
-        SqlSession sqlSession = sessionFactory.openSession();
+    @org.junit.Test
+    public void test() {
+        SqlSession sqlSession = this.sqlSessionFactory().openSession();
         /**
          * 查询是否有结果
          */

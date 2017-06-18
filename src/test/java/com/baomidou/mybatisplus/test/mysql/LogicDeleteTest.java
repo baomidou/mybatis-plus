@@ -15,18 +15,16 @@
  */
 package com.baomidou.mybatisplus.test.mysql;
 
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
+import org.junit.Test;
 
-import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.mapper.Condition;
-import com.baomidou.mybatisplus.mapper.LogicSqlInjector;
+import com.baomidou.mybatisplus.test.CrudTest;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
 import com.baomidou.mybatisplus.test.mysql.mapper.UserMapper;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
@@ -39,17 +37,19 @@ import com.baomidou.mybatisplus.toolkit.IdWorker;
  * @author hubin
  * @date 2017-09-09
  */
-public class LogicDeleteTest {
+public class LogicDeleteTest extends CrudTest {
 
-    public static void main(String[] args) {
-        // 加载配置文件
-        InputStream in = UserMapperTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
-        MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
-        GlobalConfiguration gc = new GlobalConfiguration(new LogicSqlInjector());// 注入的是逻辑处理器
+    @Override
+    public GlobalConfiguration globalConfiguration() {
+        GlobalConfiguration gc = super.globalConfiguration();
         gc.setLogicDeleteValue("-1");// 逻辑删除值 -1 测试字段 type
-        mf.setGlobalConfig(gc);
-        SqlSessionFactory sessionFactory = mf.build(in);
-        SqlSession session = sessionFactory.openSession();
+        return gc;
+    }
+
+    @Test
+    public void test() {
+        // 加载配置文件
+        SqlSession session = this.sqlSessionFactory().openSession();
         UserMapper userMapper = session.getMapper(UserMapper.class);
         System.err.println(" debug run 查询执行 user 表数据变化！ ");
         long id = IdWorker.getId();

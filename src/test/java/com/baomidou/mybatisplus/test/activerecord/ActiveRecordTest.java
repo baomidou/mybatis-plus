@@ -15,17 +15,14 @@
  */
 package com.baomidou.mybatisplus.test.activerecord;
 
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.jdbc.SQL;
-import org.apache.ibatis.session.SqlSessionFactory;
 
-import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.test.CrudTest;
 import com.baomidou.mybatisplus.test.mysql.entity.Test;
-import com.baomidou.mybatisplus.test.mysql.mapper.TestMapper;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
@@ -37,15 +34,11 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
  * @author Caratacus
  * @date 2016-10-11
  */
-public class ActiveRecordTest {
+public class ActiveRecordTest extends CrudTest {
 
-    public static void main(String[] args) {
-        // 加载配置文件
-        InputStream in = TestMapper.class.getClassLoader().getResourceAsStream("mysql-config.xml");
-        MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
-        SqlSessionFactory sqlSessionFactory = mf.build(in);
-        TableInfoHelper.initSqlSessionFactory(sqlSessionFactory);
-        sqlSessionFactory.openSession(false);
+    @org.junit.Test
+    public void test() {
+        TableInfoHelper.initSqlSessionFactory(this.sqlSessionFactory());
         // 保存一条记录
         Test t1 = new Test();
         t1.setType("test10");
