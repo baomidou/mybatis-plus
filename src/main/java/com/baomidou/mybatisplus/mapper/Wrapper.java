@@ -1408,10 +1408,10 @@ public abstract class Wrapper<T> implements Serializable {
 
     /**
      * <p>
-     * 调用该方法时 应当在吃初始化时优先设置该值 不要重复设置该值 要不然我就给你抛异常了
+     * 参数别名设置，初始化时优先设置该值、重复设置异常
      * </p>
      *
-     * @param paramAlias
+     * @param paramAlias 参数别名
      * @return
      */
     public Wrapper<T> setParamAlias(String paramAlias) {
