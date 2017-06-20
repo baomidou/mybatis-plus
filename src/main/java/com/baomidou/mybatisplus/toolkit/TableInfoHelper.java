@@ -403,7 +403,7 @@ public class TableInfoHelper {
             throw new IllegalArgumentException("not configure IKeyGenerator implementation class.");
         }
         String id = baseStatementId + SelectKeyGenerator.SELECT_KEY_SUFFIX;
-        Class<?> resultTypeClass = tableInfo.getKeySequence().idClazz();
+        Class<?> resultTypeClass = tableInfo.getKeySequence().clazz();
         StatementType statementType = StatementType.PREPARED;
         String keyProperty = tableInfo.getKeyProperty();
         String keyColumn = tableInfo.getKeyColumn();

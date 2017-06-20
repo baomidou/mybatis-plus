@@ -111,8 +111,8 @@ public class TableFieldInfo {
          * 优先使用单个字段注解，否则使用全局配置<br>
          * 自定义字段验证策略 fixed-239
 		 */
-        if (FieldStrategy.NOT_NULL != tableField.validate()) {
-            this.fieldStrategy = tableField.validate();
+        if (FieldStrategy.NOT_NULL != tableField.strategy()) {
+            this.fieldStrategy = tableField.strategy();
         } else {
             this.fieldStrategy = globalConfig.getFieldStrategy();
         }
