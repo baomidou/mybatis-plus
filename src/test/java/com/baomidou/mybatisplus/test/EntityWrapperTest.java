@@ -31,7 +31,6 @@ import com.baomidou.mybatisplus.enums.SqlLike;
 import com.baomidou.mybatisplus.mapper.Condition;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**
  * <p>
@@ -43,10 +42,6 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
  */
 public class EntityWrapperTest {
 
-    // 初始化
-    static {
-        TableInfoHelper.initTableInfo(null, User.class);
-    }
 
     /*
      * User 查询包装器
