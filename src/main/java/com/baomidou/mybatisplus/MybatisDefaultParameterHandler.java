@@ -103,6 +103,8 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
      * @return
      */
     protected static Object processBatch(MappedStatement ms, Object parameterObject) {
+	//检查parameterObject
+	if (null == parameterObject) return null;
         boolean isFill = false;
         // 全局配置是否配置填充器
         MetaObjectHandler metaObjectHandler = GlobalConfigUtils.getMetaObjectHandler(ms.getConfiguration());
