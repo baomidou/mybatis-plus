@@ -6,7 +6,7 @@ import org.junit.Test;
 import com.baomidou.mybatisplus.plugins.pagination.optimize.AliDruidCountOptimize;
 import com.baomidou.mybatisplus.plugins.pagination.optimize.DefaultCountOptimize;
 import com.baomidou.mybatisplus.plugins.pagination.optimize.JsqlParserCountOptimize;
-import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
+import com.baomidou.mybatisplus.parser.SqlInfo;
 
 /**
  * <p>

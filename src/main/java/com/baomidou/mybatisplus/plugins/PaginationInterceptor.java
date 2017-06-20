@@ -39,8 +39,8 @@ import org.apache.ibatis.session.RowBounds;
 import com.baomidou.mybatisplus.MybatisDefaultParameterHandler;
 import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
-import com.baomidou.mybatisplus.plugins.parser.AbstractSqlParser;
-import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
+import com.baomidou.mybatisplus.parser.AbstractSqlParser;
+import com.baomidou.mybatisplus.parser.SqlInfo;
 import com.baomidou.mybatisplus.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.toolkit.SqlUtils;
@@ -90,7 +90,7 @@ public class PaginationInterceptor implements Interceptor {
         BoundSql boundSql = (BoundSql) metaStatementHandler.getValue("delegate.boundSql");
         String originalSql = boundSql.getSql();
         Connection connection = (Connection) invocation.getArgs()[0];
-        if (isDynamicDataSource()) {
+        if (this.dynamicDataSource) {
             dialectType = JdbcUtils.getDbType(connection.getMetaData().getURL()).getDb();
         }
         if (rowBounds instanceof Pagination) {
@@ -186,10 +186,6 @@ public class PaginationInterceptor implements Interceptor {
 
     public void setOptimizeType(String optimizeType) {
         this.optimizeType = optimizeType;
-    }
-
-    public boolean isDynamicDataSource() {
-        return dynamicDataSource;
     }
 
     public void setDynamicDataSource(boolean dynamicDataSource) {

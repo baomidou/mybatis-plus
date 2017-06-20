@@ -16,8 +16,8 @@
 package com.baomidou.mybatisplus.plugins.pagination.optimize;
 
 import com.alibaba.druid.sql.PagerUtils;
-import com.baomidou.mybatisplus.plugins.parser.AbstractSqlParser;
-import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
+import com.baomidou.mybatisplus.parser.AbstractSqlParser;
+import com.baomidou.mybatisplus.parser.SqlInfo;
 
 /**
  * <p>

@@ -34,8 +34,8 @@ import org.apache.ibatis.session.RowBounds;
 
 import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
-import com.baomidou.mybatisplus.plugins.parser.AbstractSqlParser;
-import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
+import com.baomidou.mybatisplus.parser.AbstractSqlParser;
+import com.baomidou.mybatisplus.parser.SqlInfo;
 import com.baomidou.mybatisplus.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.toolkit.SqlUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;

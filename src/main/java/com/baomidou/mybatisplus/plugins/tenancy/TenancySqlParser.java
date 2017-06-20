@@ -1,7 +1,7 @@
 package com.baomidou.mybatisplus.plugins.tenancy;
 
-import com.baomidou.mybatisplus.plugins.parser.AbstractSqlParser;
-import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
+import com.baomidou.mybatisplus.parser.AbstractSqlParser;
+import com.baomidou.mybatisplus.parser.SqlInfo;
 
 import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.select.SelectBody;
