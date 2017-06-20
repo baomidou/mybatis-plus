@@ -17,11 +17,9 @@ package com.baomidou.mybatisplus.test;
 
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
-import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.spring.MybatisMapperRefresh;
 import com.baomidou.mybatisplus.test.mysql.mapper.UserMapper;
@@ -39,20 +37,13 @@ import com.baomidou.mybatisplus.toolkit.SystemClock;
  */
 public class MybatisMapperRefreshTest extends CrudTest {
 
-    @Override
-    public GlobalConfiguration globalConfiguration() {
-        GlobalConfiguration gc = super.globalConfiguration();
-        // to do nothing
-        return gc;
-    }
 
     /**
      * 测试 Mybatis XML 修改自动刷新
      */
-    @Test
-    public void test() throws Exception {
+    public static void main(String[] args) throws Exception {
         Resource[] resource = new ClassPathResource[]{new ClassPathResource("mysql/UserMapper.xml")};
-        SqlSessionFactory sessionFactory = this.sqlSessionFactory();
+        SqlSessionFactory sessionFactory = new CrudTest().sqlSessionFactory();
         new MybatisMapperRefresh(sessionFactory, 0, 5, true);
         boolean isReturn = false;
         SqlSession session = null;
