@@ -37,9 +37,10 @@ import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.RowBounds;
 
 import com.baomidou.mybatisplus.MybatisDefaultParameterHandler;
-import com.baomidou.mybatisplus.entity.CountOptimize;
 import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
+import com.baomidou.mybatisplus.plugins.parser.AbstractSqlParser;
+import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
 import com.baomidou.mybatisplus.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.toolkit.SqlUtils;
@@ -55,9 +56,10 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  */
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 public class PaginationInterceptor implements Interceptor {
-
+    // 日志
     private static final Log logger = LogFactory.getLog(PaginationInterceptor.class);
-
+    // COUNT SQL 解析
+    private AbstractSqlParser sqlParser;
     /* 溢出总页数，设置第一页 */
     private boolean overflowCurrent = false;
     /* 是否设置动态数据源 设置之后动态获取当前数据源 */
@@ -95,9 +97,10 @@ public class PaginationInterceptor implements Interceptor {
             Pagination page = (Pagination) rowBounds;
             boolean orderBy = true;
             if (page.isSearchCount()) {
-                CountOptimize countOptimize = SqlUtils.getCountOptimize(originalSql, optimizeType, dialectType, page.isOptimizeCount());
-                orderBy = countOptimize.isOrderBy();
-                this.queryTotal(countOptimize.getCountSQL(), mappedStatement, boundSql, page, connection);
+                SqlInfo sqlInfo = SqlUtils.getCountOptimize(sqlParser, originalSql, optimizeType,
+                        dialectType, page.isOptimizeCount());
+                orderBy = sqlInfo.isOrderBy();
+                this.queryTotal(sqlInfo.getSql(), mappedStatement, boundSql, page, connection);
                 if (page.getTotal() <= 0) {
                     return invocation.proceed();
                 }
@@ -191,5 +194,9 @@ public class PaginationInterceptor implements Interceptor {
 
     public void setDynamicDataSource(boolean dynamicDataSource) {
         this.dynamicDataSource = dynamicDataSource;
+    }
+
+    public void setSqlParser(AbstractSqlParser sqlParser) {
+        this.sqlParser = sqlParser;
     }
 }
