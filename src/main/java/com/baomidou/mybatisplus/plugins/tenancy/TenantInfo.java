@@ -27,7 +27,7 @@ import java.util.Properties;
  */
 public interface TenantInfo {
 
-    TenantInfo setFilterConfig(Properties properties);
+    TenantInfo setHandlerConfig(Properties properties);
 
     String getTenantId();
 
