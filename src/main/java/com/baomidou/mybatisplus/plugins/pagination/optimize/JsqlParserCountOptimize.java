@@ -41,7 +41,7 @@ import net.sf.jsqlparser.statement.select.SelectItem;
  * </p>
  *
  * @author hubin
- * @Date 2017-06-20
+ * @since 2017-06-20
  */
 public class JsqlParserCountOptimize extends AbstractSqlParser {
     private static final List<SelectItem> countSelectItem = countSelectItem();

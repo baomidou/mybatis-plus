@@ -24,7 +24,7 @@ import com.baomidou.mybatisplus.parser.SqlInfo;
  * </p>
  *
  * @author hubin
- * @Date 2017-06-20
+ * @since 2017-06-20
  */
 public class DefaultCountOptimize extends AbstractSqlParser {
 
