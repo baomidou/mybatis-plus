@@ -19,7 +19,7 @@ import com.baomidou.mybatisplus.parser.SqlInfo;
 public class SqlUtilsTest {
 
     public SqlInfo jsqlParserCountSqlInfo(String sql) {
-        return new JsqlParserCountOptimize(sql, "mysql").optimizeSql();
+        return new JsqlParserCountOptimize().optimizeSql(sql, "mysql");
     }
 
     /**
@@ -77,7 +77,7 @@ public class SqlUtilsTest {
 
 
     public SqlInfo defaultCountSqlInfo(String sql) {
-        return new DefaultCountOptimize(sql, "mysql").optimizeSql();
+        return new DefaultCountOptimize().optimizeSql(sql, "mysql");
     }
 
     /**
@@ -127,7 +127,7 @@ public class SqlUtilsTest {
 
 
     public SqlInfo aliDruidCountSqlInfo(String sql) {
-        return new AliDruidCountOptimize(sql, "mysql").optimizeSql();
+        return new AliDruidCountOptimize().optimizeSql(sql, "mysql");
     }
 
     /**
