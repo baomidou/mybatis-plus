@@ -29,14 +29,8 @@ import com.baomidou.mybatisplus.parser.SqlInfo;
  */
 public class AliDruidCountOptimize extends AbstractSqlParser {
 
-    public AliDruidCountOptimize(String sql, String dbType) {
-        super(sql, dbType);
-    }
-
     @Override
-    public SqlInfo optimizeSql() {
-        String sql = this.getSql();
-        String dbType = this.getDbType();
+    public SqlInfo optimizeSql(String sql, String dbType) {
         if (logger.isDebugEnabled()) {
             logger.debug(" AliDruidCountOptimize sql=" + sql + ", dbType=" + dbType);
         }

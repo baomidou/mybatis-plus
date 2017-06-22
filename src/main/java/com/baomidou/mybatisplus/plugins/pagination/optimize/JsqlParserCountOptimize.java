@@ -44,17 +44,11 @@ import net.sf.jsqlparser.statement.select.SelectItem;
  * @since 2017-06-20
  */
 public class JsqlParserCountOptimize extends AbstractSqlParser {
+
     private static final List<SelectItem> countSelectItem = countSelectItem();
 
-    public JsqlParserCountOptimize(String sql, String dbType) {
-        super(sql, dbType);
-    }
-
-
     @Override
-    public SqlInfo optimizeSql() {
-        String sql = this.getSql();
-        String dbType = this.getDbType();
+    public SqlInfo optimizeSql(String sql, String dbType) {
         if (logger.isDebugEnabled()) {
             logger.debug(" JsqlParserCountOptimize sql=" + sql + ", dbType=" + dbType);
         }

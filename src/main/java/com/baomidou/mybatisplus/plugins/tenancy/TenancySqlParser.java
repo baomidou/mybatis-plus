@@ -58,15 +58,11 @@ import net.sf.jsqlparser.statement.update.Update;
  * @since 2017-06-20
  */
 public class TenancySqlParser extends AbstractSqlParser {
+
     private TenantInfo tenantInfo;
 
-    public TenancySqlParser(String sql, String dbType) {
-        super(sql, dbType);
-    }
-
     @Override
-    public SqlInfo optimizeSql() {
-        String sql = this.getSql();
+    public SqlInfo optimizeSql(String sql, String dbType) {
         //logger.debug("old sql:{}", sql);
         Statement stmt = null;
         try {

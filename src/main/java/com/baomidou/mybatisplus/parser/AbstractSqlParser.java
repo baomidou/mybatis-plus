@@ -30,36 +30,16 @@ public abstract class AbstractSqlParser {
 
     // 日志
     protected static final Log logger = LogFactory.getLog(AbstractSqlParser.class);
-    private String sql;// SQL 语句
-    private String dbType; // 数据库类型
-
-    public AbstractSqlParser(String sql, String dbType) {
-        this.sql = sql;
-        this.dbType = dbType;
-    }
 
     /**
      * <p>
      * 获取优化 SQL 方法
      * </p>
      *
+     * @param sql    SQL 语句
+     * @param dbType 数据库类型
      * @return SQL 信息
      */
-    public abstract SqlInfo optimizeSql();
+    public abstract SqlInfo optimizeSql(String sql, String dbType);
 
-    public String getSql() {
-        return sql;
-    }
-
-    public void setSql(String sql) {
-        this.sql = sql;
-    }
-
-    public String getDbType() {
-        return dbType;
-    }
-
-    public void setDbType(String dbType) {
-        this.dbType = dbType;
-    }
 }

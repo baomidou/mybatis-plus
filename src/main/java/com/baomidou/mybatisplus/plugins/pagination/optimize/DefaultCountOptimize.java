@@ -28,14 +28,8 @@ import com.baomidou.mybatisplus.parser.SqlInfo;
  */
 public class DefaultCountOptimize extends AbstractSqlParser {
 
-    public DefaultCountOptimize(String sql, String dbType) {
-        super(sql, dbType);
-    }
-
     @Override
-    public SqlInfo optimizeSql() {
-        String sql = this.getSql();
-        String dbType = this.getDbType();
+    public SqlInfo optimizeSql(String sql, String dbType) {
         if (logger.isDebugEnabled()) {
             logger.debug(" DefaultCountOptimize sql=" + sql + ", dbType=" + dbType);
         }

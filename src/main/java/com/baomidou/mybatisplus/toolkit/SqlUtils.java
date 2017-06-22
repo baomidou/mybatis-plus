@@ -35,7 +35,9 @@ import com.baomidou.mybatisplus.parser.SqlInfo;
 public class SqlUtils {
 
     private final static SqlFormatter sqlFormatter = new SqlFormatter();
-    public static final String SQL_BASE_COUNT = "SELECT COUNT(1) FROM ( %s ) TOTAL";
+    public final static String SQL_BASE_COUNT = "SELECT COUNT(1) FROM ( %s ) TOTAL";
+    public static AbstractSqlParser COUNT_SQL_PARSER = null;
+
 
     /**
      * <p>
@@ -63,25 +65,27 @@ public class SqlUtils {
             return sqlInfo;
         }
 
-        // 用户自定义 COUNT SQL 解析
-        if (null != sqlParser) {
-            return sqlParser.optimizeSql();
+        // COUNT SQL 解析器
+        if (null == COUNT_SQL_PARSER) {
+            if (null != sqlParser) {
+                // 用户自定义 COUNT SQL 解析
+                COUNT_SQL_PARSER = sqlParser;
+            } else {
+                // 默认存在的优化类型
+                switch (opType) {
+                    case ALI_DRUID:
+                        COUNT_SQL_PARSER = new AliDruidCountOptimize();
+                        break;
+                    case JSQLPARSER:
+                        COUNT_SQL_PARSER = new JsqlParserCountOptimize();
+                        break;
+                    default:
+                        COUNT_SQL_PARSER = new DefaultCountOptimize();
+                        break;
+                }
+            }
         }
-
-        // 默认存在的优化类型
-        switch (opType) {
-            case ALI_DRUID:
-                sqlParser = new AliDruidCountOptimize(originalSql, dialectType);
-                break;
-            case JSQLPARSER:
-                sqlParser = new JsqlParserCountOptimize(originalSql, dialectType);
-                break;
-            default:
-                sqlParser = new DefaultCountOptimize(originalSql, dialectType);
-                break;
-        }
-
-        return sqlParser.optimizeSql();
+        return COUNT_SQL_PARSER.optimizeSql(originalSql, dialectType);
     }
 
     /**
