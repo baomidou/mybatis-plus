@@ -238,15 +238,18 @@ public class AutoSqlInjector implements ISqlInjector {
             }
         }
 
+        // 是否 IF 标签判断
+        boolean ifTag = true;
         List<TableFieldInfo> fieldList = table.getFieldList();
-
         for (TableFieldInfo fieldInfo : fieldList) {
-            /* 判断是否插入忽略，插入忽略就不生成这个SQL */
-            // TODO 忽略策略待完善
-            if (fieldInfo.getFieldIgnore() == FieldIgnore.INSERT) {
-                continue;
+            /* 判断是否插入忽略 */
+            if (FieldIgnore.INSERT == fieldInfo.getFieldIgnore()
+                    || FieldIgnore.INSERT_UPDATE == fieldInfo.getFieldIgnore()) {
+                ifTag = false;
+            } else {
+                ifTag = true;
             }
-            if (selective) {
+            if (selective && ifTag) {
                 fieldBuilder.append(convertIfTagIgnored(fieldInfo, false));
                 fieldBuilder.append(fieldInfo.getColumn()).append(",");
                 fieldBuilder.append(convertIfTagIgnored(fieldInfo, true));
@@ -338,8 +341,8 @@ public class AutoSqlInjector implements ISqlInjector {
         SqlMethod sqlMethod = selective ? SqlMethod.UPDATE_BY_ID : SqlMethod.UPDATE_ALL_COLUMN_BY_ID;
         String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlSet(selective, table, "et."), table.getKeyColumn(),
                 "et." + table.getKeyProperty(),
-                "<if test=\"et instanceof java.util.Map\">" +
-                        "<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">"
+                "<if test=\"et instanceof java.util.Map\">"
+                        + "<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">"
                         + "and ${et.MP_OPTLOCK_VERSION_COLUMN}=#{et.MP_OPTLOCK_VERSION_ORIGINAL}"
                         + "</if>"
                         + "</if>"
@@ -535,14 +538,19 @@ public class AutoSqlInjector implements ISqlInjector {
     protected String sqlSet(boolean selective, TableInfo table, String prefix) {
         StringBuilder set = new StringBuilder();
         set.append("<trim prefix=\"SET\" suffixOverrides=\",\">");
+
+        // 是否 IF 标签判断
+        boolean ifTag = true;
         List<TableFieldInfo> fieldList = table.getFieldList();
         for (TableFieldInfo fieldInfo : fieldList) {
-            /* 判断是不是更新忽略，是的话不生成此SQL */
-            // TODO 忽略策略待完善
-            if (fieldInfo.getFieldIgnore() == FieldIgnore.UPDATE) {
-                continue;
+            /* 判断是否更新忽略 */
+            if (FieldIgnore.UPDATE == fieldInfo.getFieldIgnore()
+                    || FieldIgnore.INSERT_UPDATE == fieldInfo.getFieldIgnore()) {
+                ifTag = false;
+            } else {
+                ifTag = true;
             }
-            if (selective) {
+            if (selective && ifTag) {
                 set.append(convertIfTag(true, fieldInfo, prefix, false));
                 set.append(fieldInfo.getColumn()).append("=#{");
                 if (null != prefix) {
