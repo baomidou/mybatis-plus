@@ -15,6 +15,9 @@
  */
 package com.baomidou.mybatisplus.generator.config;
 
+import java.util.List;
+
+import com.baomidou.mybatisplus.generator.config.po.TableFill;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
@@ -127,6 +130,15 @@ public class StrategyConfig {
      */
     private boolean controllerMappingHyphenStyle = false;
 
+    /**
+     * 逻辑删除属性名称
+     */
+    private String logicDeleteFieldName;
+
+    /**
+     * 表填充字段
+     */
+    private List<TableFill> tableFillList = null;
 
     public StrategyConfig setDbColumnUnderline(boolean dbColumnUnderline) {
         DB_COLUMN_UNDERLINE = dbColumnUnderline;
@@ -328,6 +340,24 @@ public class StrategyConfig {
 
     public StrategyConfig setControllerMappingHyphenStyle(boolean controllerMappingHyphenStyle) {
         this.controllerMappingHyphenStyle = controllerMappingHyphenStyle;
+        return this;
+    }
+
+    public String getLogicDeleteFieldName() {
+        return logicDeleteFieldName;
+    }
+
+    public StrategyConfig setLogicDeleteFieldName(String logicDeletePropertyName) {
+        this.logicDeleteFieldName = logicDeleteFieldName;
+        return this;
+    }
+
+    public List<TableFill> getTableFillList() {
+        return tableFillList;
+    }
+
+    public StrategyConfig setTableFillList(List<TableFill> tableFillList) {
+        this.tableFillList = tableFillList;
         return this;
     }
 }

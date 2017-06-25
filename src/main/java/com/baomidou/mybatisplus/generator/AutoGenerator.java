@@ -132,7 +132,9 @@ public class AutoGenerator {
     }
 
     /**
+     * <p>
      * 分析数据
+     * </p>
      *
      * @param config 总配置信息
      * @return 解析数据结果集
@@ -166,7 +168,7 @@ public class AutoGenerator {
                 // 表注解
                 tableInfo.setImportPackages("com.baomidou.mybatisplus.annotations.TableName");
             }
-            if (tableInfo.isLogicDelete(config.getGlobalConfig().getLogicDeletePropertyName())) {
+            if (tableInfo.isLogicDelete(config.getStrategyConfig().getLogicDeleteFieldName())) {
                 // 逻辑删除注解
                 tableInfo.setImportPackages("com.baomidou.mybatisplus.annotations.TableLogic");
             }
@@ -196,7 +198,7 @@ public class AutoGenerator {
             ctx.put("restControllerStyle", config.getStrategyConfig().isRestControllerStyle());
             ctx.put("package", packageInfo);
             ctx.put("author", config.getGlobalConfig().getAuthor());
-            ctx.put("logicDeletePropertyName", config.getGlobalConfig().getLogicDeletePropertyName());
+            ctx.put("logicDeleteFieldName", config.getStrategyConfig().getLogicDeleteFieldName());
             ctx.put("activeRecord", config.getGlobalConfig().isActiveRecord());
             ctx.put("date", date);
             ctx.put("table", tableInfo);
@@ -223,7 +225,9 @@ public class AutoGenerator {
     }
 
     /**
+     * <p>
      * 获取类名
+     * </p>
      *
      * @param classPath
      * @return
@@ -235,7 +239,9 @@ public class AutoGenerator {
     }
 
     /**
+     * <p>
      * 处理输出目录
+     * </p>
      *
      * @param pathInfo 路径信息
      */
@@ -252,7 +258,9 @@ public class AutoGenerator {
     }
 
     /**
+     * <p>
      * 合成上下文与模板
+     * </p>
      *
      * @param context vm上下文
      */
@@ -306,7 +314,9 @@ public class AutoGenerator {
     }
 
     /**
+     * <p>
      * 将模板转化成为文件
+     * </p>
      *
      * @param context      内容对象
      * @param templatePath 模板文件

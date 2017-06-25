@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.enums.FieldIgnore;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
@@ -31,6 +32,7 @@ import com.baomidou.mybatisplus.generator.config.PackageConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.TemplateConfig;
 import com.baomidou.mybatisplus.generator.config.converts.MySqlTypeConvert;
+import com.baomidou.mybatisplus.generator.config.po.TableFill;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.DbType;
@@ -52,6 +54,10 @@ public class MysqlGenerator {
      * </p>
      */
     public static void main(String[] args) {
+        // 自定义需要填充的字段
+        List<TableFill> tableFillList = new ArrayList<>();
+        tableFillList.add(new TableFill("ASDD_SS", FieldIgnore.INSERT_UPDATE));
+
         // 代码生成器
         AutoGenerator mpg = new AutoGenerator().setGlobalConfig(
                 // 全局配置
@@ -100,7 +106,8 @@ public class MysqlGenerator {
                         // 自定义实体父类
                         // .setSuperEntityClass("com.baomidou.demo.TestEntity")
                         // 自定义实体，公共字段
-                        .setSuperEntityColumns(new String[]{"test_id", "age"})
+                        .setSuperEntityColumns(new String[]{"test_id"})
+                        .setTableFillList(tableFillList)
                 // 自定义 mapper 父类
                 // .setSuperMapperClass("com.baomidou.demo.TestMapper")
                 // 自定义 service 父类
