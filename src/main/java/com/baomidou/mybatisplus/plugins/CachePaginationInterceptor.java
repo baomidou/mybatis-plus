@@ -32,10 +32,10 @@ import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
-import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
-import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.parser.AbstractSqlParser;
 import com.baomidou.mybatisplus.parser.SqlInfo;
+import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
+import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.toolkit.SqlUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
@@ -112,8 +112,7 @@ public class CachePaginationInterceptor extends PaginationInterceptor implements
             if (rowBounds instanceof Pagination) {
                 Pagination page = (Pagination) rowBounds;
                 if (page.isSearchCount()) {
-                    SqlInfo sqlInfo = SqlUtils.getCountOptimize(sqlParser, originalSql, optimizeType,
-                            dialectType, page.isOptimizeCount());
+                    SqlInfo sqlInfo = SqlUtils.getCountOptimize(sqlParser, originalSql, dialectType);
                     super.queryTotal(sqlInfo.getSql(), mappedStatement, boundSql, page, connection);
                     if (page.getTotal() <= 0) {
                         return invocation.proceed();

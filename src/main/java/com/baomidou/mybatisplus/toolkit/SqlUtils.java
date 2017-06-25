@@ -15,14 +15,11 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
-import com.baomidou.mybatisplus.enums.Optimize;
 import com.baomidou.mybatisplus.enums.SqlLike;
-import com.baomidou.mybatisplus.plugins.pagination.Pagination;
-import com.baomidou.mybatisplus.plugins.pagination.optimize.AliDruidCountOptimize;
-import com.baomidou.mybatisplus.plugins.pagination.optimize.DefaultCountOptimize;
-import com.baomidou.mybatisplus.plugins.pagination.optimize.JsqlParserCountOptimize;
 import com.baomidou.mybatisplus.parser.AbstractSqlParser;
 import com.baomidou.mybatisplus.parser.SqlInfo;
+import com.baomidou.mybatisplus.plugins.pagination.Pagination;
+import com.baomidou.mybatisplus.plugins.pagination.optimize.JsqlParserCountOptimize;
 
 /**
  * <p>
@@ -46,43 +43,17 @@ public class SqlUtils {
      *
      * @param sqlParser       Count SQL 解析类
      * @param originalSql     需要计算Count SQL
-     * @param optimizeType    count优化方式
-     * @param isOptimizeCount 是否需要优化Count
      * @return SqlInfo
      */
-    public static SqlInfo getCountOptimize(AbstractSqlParser sqlParser, String originalSql,
-                                           String optimizeType, String dialectType,
-                                           boolean isOptimizeCount) {
-        Optimize opType = Optimize.getOptimizeType(optimizeType);
-
-        // COUNT SQL 不优化
-        if (!isOptimizeCount && Optimize.DEFAULT == opType) {
-            SqlInfo sqlInfo = SqlInfo.newInstance();
-            String tempSql = originalSql.replaceAll("(?i)ORDER[\\s]+BY", "ORDER BY");
-            int orderByIndex = tempSql.toUpperCase().lastIndexOf("ORDER BY");
-            sqlInfo.setOrderBy(orderByIndex > -1);
-            sqlInfo.setSql(String.format(SQL_BASE_COUNT, originalSql));
-            return sqlInfo;
-        }
-
+    public static SqlInfo getCountOptimize(AbstractSqlParser sqlParser, String originalSql, String dialectType) {
         // COUNT SQL 解析器
         if (null == COUNT_SQL_PARSER) {
             if (null != sqlParser) {
                 // 用户自定义 COUNT SQL 解析
                 COUNT_SQL_PARSER = sqlParser;
             } else {
-                // 默认存在的优化类型
-                switch (opType) {
-                    case ALI_DRUID:
-                        COUNT_SQL_PARSER = new AliDruidCountOptimize();
-                        break;
-                    case JSQLPARSER:
-                        COUNT_SQL_PARSER = new JsqlParserCountOptimize();
-                        break;
-                    default:
-                        COUNT_SQL_PARSER = new DefaultCountOptimize();
-                        break;
-                }
+                // 默认 JsqlParser 优化 COUNT
+                COUNT_SQL_PARSER = new JsqlParserCountOptimize();
             }
         }
         return COUNT_SQL_PARSER.optimizeSql(originalSql, dialectType);

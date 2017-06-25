@@ -65,8 +65,6 @@ public class PaginationInterceptor implements Interceptor {
     private boolean overflowCurrent = false;
     /* 是否设置动态数据源 设置之后动态获取当前数据源 */
     private boolean dynamicDataSource = false;
-    /* Count优化方式 */
-    private String optimizeType = "default";
     /* 方言类型 */
     private String dialectType;
     /* 方言实现类 */
@@ -109,8 +107,7 @@ public class PaginationInterceptor implements Interceptor {
             Pagination page = (Pagination) rowBounds;
             boolean orderBy = true;
             if (page.isSearchCount()) {
-                SqlInfo sqlInfo = SqlUtils.getCountOptimize(sqlParser, originalSql, optimizeType,
-                        dialectType, page.isOptimizeCount());
+                SqlInfo sqlInfo = SqlUtils.getCountOptimize(sqlParser, originalSql, dialectType);
                 orderBy = sqlInfo.isOrderBy();
                 this.queryTotal(sqlInfo.getSql(), mappedStatement, boundSql, page, connection);
                 if (page.getTotal() <= 0) {
@@ -195,10 +192,6 @@ public class PaginationInterceptor implements Interceptor {
 
     public void setOverflowCurrent(boolean overflowCurrent) {
         this.overflowCurrent = overflowCurrent;
-    }
-
-    public void setOptimizeType(String optimizeType) {
-        this.optimizeType = optimizeType;
     }
 
     public void setDynamicDataSource(boolean dynamicDataSource) {

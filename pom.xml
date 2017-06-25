@@ -82,6 +82,11 @@
             <version>${mybatis.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.github.jsqlparser</groupId>
+            <artifactId>jsqlparser</artifactId>
+            <version>${jsqlparser.version}</version>
+        </dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
             <version>${servlet-api.version}</version>
@@ -149,14 +154,6 @@
             <scope>provided</scope>
         </dependency>
         <!-- spring end -->
-        <!--jsqlparser -->
-        <dependency>
-            <groupId>com.github.jsqlparser</groupId>
-            <artifactId>jsqlparser</artifactId>
-            <version>${jsqlparser.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <!--jsqlparser -->
         <!--druid -->
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -284,10 +281,6 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
-                        <configuration>
-                            <javadocExecutable>${java.home}/../bin/javadoc</javadocExecutable>
-                            <additionalparam>-Xdoclint:none</additionalparam>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
