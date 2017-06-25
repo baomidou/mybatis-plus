@@ -40,7 +40,6 @@ public class OracleMybatisPlusConfig {
         configuration.setMapUnderscoreToCamelCase(true);
         sqlSessionFactory.setConfiguration(configuration);
         PaginationInterceptor pagination = new PaginationInterceptor();
-        pagination.setDialectType("oracle");
         sqlSessionFactory.setPlugins(new Interceptor[]{
                 pagination
         });

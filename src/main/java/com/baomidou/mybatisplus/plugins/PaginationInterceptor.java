@@ -105,7 +105,7 @@ public class PaginationInterceptor implements Interceptor {
             if (page.isSearchCount()) {
                 SqlInfo sqlInfo = SqlUtils.getCountOptimize(sqlParser, originalSql);
                 orderBy = sqlInfo.isOrderBy();
-                this.queryTotal(sqlInfo.getSql(), mappedStatement, boundSql, page, connection);
+                this.queryTotal(overflowCurrent, sqlInfo.getSql(), mappedStatement, boundSql, page, connection);
                 if (page.getTotal() <= 0) {
                     return invocation.proceed();
                 }
@@ -135,7 +135,7 @@ public class PaginationInterceptor implements Interceptor {
      * @param boundSql
      * @param page
      */
-    protected void queryTotal(String sql, MappedStatement mappedStatement, BoundSql boundSql, Pagination page, Connection connection) {
+    protected void queryTotal(boolean overflowCurrent, String sql, MappedStatement mappedStatement, BoundSql boundSql, Pagination page, Connection connection) {
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             DefaultParameterHandler parameterHandler = new MybatisDefaultParameterHandler(mappedStatement, boundSql.getParameterObject(), boundSql);
             parameterHandler.setParameters(statement);

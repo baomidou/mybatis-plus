@@ -17,7 +17,7 @@ import com.baomidou.mybatisplus.plugins.pagination.optimize.JsqlParserCountOptim
 public class SqlUtilsTest {
 
     public SqlInfo jsqlParserCountSqlInfo(String sql) {
-        return new JsqlParserCountOptimize().optimizeSql(sql, "mysql");
+        return new JsqlParserCountOptimize().optimizeSql(sql);
     }
 
     /**

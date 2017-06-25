@@ -56,7 +56,7 @@ public class SqlUtils {
                 COUNT_SQL_PARSER = new JsqlParserCountOptimize();
             }
         }
-        return COUNT_SQL_PARSER.optimizeSql(originalSql, null);
+        return COUNT_SQL_PARSER.optimizeSql(originalSql);
     }
 
     /**
