@@ -37,9 +37,8 @@ public abstract class AbstractSqlParser {
      * </p>
      *
      * @param sql    SQL 语句
-     * @param dbType 数据库类型
      * @return SQL 信息
      */
-    public abstract SqlInfo optimizeSql(String sql, String dbType);
+    public abstract SqlInfo optimizeSql(String sql);
 
 }

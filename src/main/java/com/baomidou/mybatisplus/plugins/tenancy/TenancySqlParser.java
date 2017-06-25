@@ -62,7 +62,7 @@ public class TenancySqlParser extends AbstractSqlParser {
     private TenantInfo tenantInfo;
 
     @Override
-    public SqlInfo optimizeSql(String sql, String dbType) {
+    public SqlInfo optimizeSql(String sql) {
         //logger.debug("old sql:{}", sql);
         Statement stmt = null;
         try {

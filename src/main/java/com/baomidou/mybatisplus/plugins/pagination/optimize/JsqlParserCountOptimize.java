@@ -48,9 +48,9 @@ public class JsqlParserCountOptimize extends AbstractSqlParser {
     private static final List<SelectItem> countSelectItem = countSelectItem();
 
     @Override
-    public SqlInfo optimizeSql(String sql, String dbType) {
+    public SqlInfo optimizeSql(String sql) {
         if (logger.isDebugEnabled()) {
-            logger.debug(" JsqlParserCountOptimize sql=" + sql + ", dbType=" + dbType);
+            logger.debug(" JsqlParserCountOptimize sql=" + sql);
         }
         SqlInfo sqlInfo = SqlInfo.newInstance();
         try {
@@ -71,7 +71,6 @@ public class JsqlParserCountOptimize extends AbstractSqlParser {
                 sqlInfo.setSql(String.format(SqlUtils.SQL_BASE_COUNT, selectStatement.toString()));
                 return sqlInfo;
             }
-
             // 优化 SQL
             plainSelect.setSelectItems(countSelectItem);
             sqlInfo.setSql(selectStatement.toString());

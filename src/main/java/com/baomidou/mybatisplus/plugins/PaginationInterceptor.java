@@ -37,6 +37,7 @@ import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.RowBounds;
 
 import com.baomidou.mybatisplus.MybatisDefaultParameterHandler;
+import com.baomidou.mybatisplus.enums.DBType;
 import com.baomidou.mybatisplus.parser.AbstractSqlParser;
 import com.baomidou.mybatisplus.parser.SqlInfo;
 import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
@@ -57,16 +58,13 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  */
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 public class PaginationInterceptor implements Interceptor {
+
     // 日志
     private static final Log logger = LogFactory.getLog(PaginationInterceptor.class);
     // COUNT SQL 解析
     private AbstractSqlParser sqlParser;
     /* 溢出总页数，设置第一页 */
     private boolean overflowCurrent = false;
-    /* 是否设置动态数据源 设置之后动态获取当前数据源 */
-    private boolean dynamicDataSource = false;
-    /* 方言类型 */
-    private String dialectType;
     /* 方言实现类 */
     private String dialectClazz;
     /* 是否开启 PageHelper localPage 模式 */
@@ -100,14 +98,12 @@ public class PaginationInterceptor implements Interceptor {
         BoundSql boundSql = (BoundSql) metaStatementHandler.getValue("delegate.boundSql");
         String originalSql = boundSql.getSql();
         Connection connection = (Connection) invocation.getArgs()[0];
-        if (this.dynamicDataSource) {
-            dialectType = JdbcUtils.getDbType(connection.getMetaData().getURL()).getDb();
-        }
+        DBType dbType = JdbcUtils.getDbType(connection.getMetaData().getURL());
         if (rowBounds instanceof Pagination) {
             Pagination page = (Pagination) rowBounds;
             boolean orderBy = true;
             if (page.isSearchCount()) {
-                SqlInfo sqlInfo = SqlUtils.getCountOptimize(sqlParser, originalSql, dialectType);
+                SqlInfo sqlInfo = SqlUtils.getCountOptimize(sqlParser, originalSql);
                 orderBy = sqlInfo.isOrderBy();
                 this.queryTotal(sqlInfo.getSql(), mappedStatement, boundSql, page, connection);
                 if (page.getTotal() <= 0) {
@@ -115,10 +111,10 @@ public class PaginationInterceptor implements Interceptor {
                 }
             }
             String buildSql = SqlUtils.concatOrderBy(originalSql, page, orderBy);
-            originalSql = DialectFactory.buildPaginationSql(page, buildSql, dialectType, dialectClazz);
+            originalSql = DialectFactory.buildPaginationSql(page, buildSql, dbType, dialectClazz);
         } else {
             // support physical Pagination for RowBounds
-            originalSql = DialectFactory.buildPaginationSql(rowBounds, originalSql, dialectType, dialectClazz);
+            originalSql = DialectFactory.buildPaginationSql(rowBounds, originalSql, dbType, dialectClazz);
         }
 
 		/*
@@ -171,19 +167,11 @@ public class PaginationInterceptor implements Interceptor {
     }
 
     public void setProperties(Properties prop) {
-        String dialectType = prop.getProperty("dialectType");
         String dialectClazz = prop.getProperty("dialectClazz");
 
-        if (StringUtils.isNotEmpty(dialectType)) {
-            this.dialectType = dialectType;
-        }
         if (StringUtils.isNotEmpty(dialectClazz)) {
             this.dialectClazz = dialectClazz;
         }
-    }
-
-    public void setDialectType(String dialectType) {
-        this.dialectType = dialectType;
     }
 
     public void setDialectClazz(String dialectClazz) {
@@ -192,10 +180,6 @@ public class PaginationInterceptor implements Interceptor {
 
     public void setOverflowCurrent(boolean overflowCurrent) {
         this.overflowCurrent = overflowCurrent;
-    }
-
-    public void setDynamicDataSource(boolean dynamicDataSource) {
-        this.dynamicDataSource = dynamicDataSource;
     }
 
     public void setSqlParser(AbstractSqlParser sqlParser) {

@@ -41,11 +41,11 @@ public class SqlUtils {
      * 获取CountOptimize
      * </p>
      *
-     * @param sqlParser       Count SQL 解析类
-     * @param originalSql     需要计算Count SQL
+     * @param sqlParser   Count SQL 解析类
+     * @param originalSql 需要计算Count SQL
      * @return SqlInfo
      */
-    public static SqlInfo getCountOptimize(AbstractSqlParser sqlParser, String originalSql, String dialectType) {
+    public static SqlInfo getCountOptimize(AbstractSqlParser sqlParser, String originalSql) {
         // COUNT SQL 解析器
         if (null == COUNT_SQL_PARSER) {
             if (null != sqlParser) {
@@ -56,7 +56,7 @@ public class SqlUtils {
                 COUNT_SQL_PARSER = new JsqlParserCountOptimize();
             }
         }
-        return COUNT_SQL_PARSER.optimizeSql(originalSql, dialectType);
+        return COUNT_SQL_PARSER.optimizeSql(originalSql, null);
     }
 
     /**

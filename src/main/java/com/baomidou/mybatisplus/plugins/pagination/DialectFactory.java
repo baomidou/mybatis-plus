@@ -15,10 +15,9 @@
  */
 package com.baomidou.mybatisplus.plugins.pagination;
 
-import static com.baomidou.mybatisplus.enums.DBType.getDBType;
-
 import org.apache.ibatis.session.RowBounds;
 
+import com.baomidou.mybatisplus.enums.DBType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.plugins.pagination.dialects.DB2Dialect;
 import com.baomidou.mybatisplus.plugins.pagination.dialects.H2Dialect;
@@ -48,15 +47,15 @@ public class DialectFactory {
      *
      * @param page         翻页对象
      * @param buildSql     执行 SQL
-     * @param dialectType  方言类型
+     * @param dbType  数据库类型
      * @param dialectClazz 自定义方言实现类
      * @return
      * @throws Exception
      */
-    public static String buildPaginationSql(Pagination page, String buildSql, String dialectType, String dialectClazz)
+    public static String buildPaginationSql(Pagination page, String buildSql, DBType dbType, String dialectClazz)
             throws Exception {
         // fix #172, 196
-        return getiDialect(dialectType, dialectClazz).buildPaginationSql(buildSql, page.getOffsetCurrent(), page.getSize());
+        return getiDialect(dbType, dialectClazz).buildPaginationSql(buildSql, page.getOffsetCurrent(), page.getSize());
     }
 
     /**
@@ -65,15 +64,15 @@ public class DialectFactory {
      *
      * @param rowBounds
      * @param buildSql
-     * @param dialectType
+     * @param dbType
      * @param dialectClazz
      * @return
      * @throws Exception
      */
-    public static String buildPaginationSql(RowBounds rowBounds, String buildSql, String dialectType, String dialectClazz)
+    public static String buildPaginationSql(RowBounds rowBounds, String buildSql, DBType dbType, String dialectClazz)
             throws Exception {
         // fix #196
-        return getiDialect(dialectType, dialectClazz).buildPaginationSql(buildSql, rowBounds.getOffset(), rowBounds.getLimit());
+        return getiDialect(dbType, dialectClazz).buildPaginationSql(buildSql, rowBounds.getOffset(), rowBounds.getLimit());
     }
 
     /**
@@ -81,15 +80,15 @@ public class DialectFactory {
      * 获取数据库方言
      * </p>
      *
-     * @param dialectType  方言类型
+     * @param dbType       数据库类型
      * @param dialectClazz 自定义方言实现类
      * @return
      * @throws Exception
      */
-    private static IDialect getiDialect(String dialectType, String dialectClazz) throws Exception {
+    private static IDialect getiDialect(DBType dbType, String dialectClazz) throws Exception {
         IDialect dialect = null;
-        if (StringUtils.isNotEmpty(dialectType)) {
-            dialect = getDialectByDbtype(dialectType);
+        if (StringUtils.checkValNotNull(dbType)) {
+            dialect = getDialectByDbtype(dbType);
         } else {
             if (StringUtils.isNotEmpty(dialectClazz)) {
                 try {
@@ -118,9 +117,9 @@ public class DialectFactory {
      * @return
      * @throws Exception
      */
-    private static IDialect getDialectByDbtype(String dbType) {
+    private static IDialect getDialectByDbtype(DBType dbType) {
         IDialect dialect;
-        switch (getDBType(dbType)) {
+        switch (dbType) {
             case MYSQL:
                 dialect = MySqlDialect.INSTANCE;
                 break;
