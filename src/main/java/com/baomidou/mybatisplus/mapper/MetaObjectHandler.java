@@ -50,7 +50,12 @@ public abstract class MetaObjectHandler {
     public abstract void updateFill(MetaObject metaObject);
 
     /**
+     * <p>
      * Common method to set value for java bean.
+     * </p>
+     * <p>
+     * 如果包含前缀 et 使用该方法，否则可以直接 metaObject.setValue(fieldName, fieldVal);
+     * </p>
      *
      * @param fieldName  java bean property name
      * @param fieldVal   java bean property value
@@ -74,7 +79,12 @@ public abstract class MetaObjectHandler {
     }
 
     /**
+     * <p>
      * get value from java bean by propertyName
+     * </p>
+     * <p>
+     * 如果包含前缀 et 使用该方法，否则可以直接 metaObject.setValue(fieldName, fieldVal);
+     * </p>
      *
      * @param fieldName  java bean property name
      * @param metaObject parameter wrapper

@@ -15,7 +15,7 @@ import com.baomidou.mybatisplus.MybatisXMLLanguageDriver;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean;
-import com.baomidou.mybatisplus.test.mysql.MyMetaObjectHandler;
+import com.baomidou.mybatisplus.test.h2.H2MetaObjectHandler;
 
 /**
  * <p>
@@ -51,7 +51,7 @@ public class MybatisPlusMetaObjConfig {
     public GlobalConfiguration globalConfiguration() {
         GlobalConfiguration globalConfiguration = new GlobalConfiguration();
         globalConfiguration.setIdType(2);
-        globalConfiguration.setMetaObjectHandler(new MyMetaObjectHandler());
+        globalConfiguration.setMetaObjectHandler(new H2MetaObjectHandler());
         return globalConfiguration;
     }
 }
