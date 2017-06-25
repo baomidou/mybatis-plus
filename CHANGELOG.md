@@ -1,5 +1,49 @@
 # CHANGELOG
 
+## [v2.0.9] 2017.06.26
+###Mybaits-Plus
+####主体功能
+- 修正乐观锁和逻辑删除冲突问题
+- 处理在生成注入SQL时之前没有考虑到存在且打开下划线配置情况
+- 修复EntityWrapper继承关系问题
+- Wrapper添加条件判断
+- 性能分析插件支持记录日志提示
+- Wrapper重写了toString方式,解决之前Debug时显示为null给用户造成错觉
+- 处理Sequence非毫秒内并发偶数居多问题
+- 忽略策略优化处理更改了注解的属性
+- 注入Sql的方式优化,去除之前XML注入方式
+- 处理逻辑删除出现2个Where的问题
+- 添加其他数据库序列的实现方式,并开放出接口给用户自行扩展
+- 乐观锁优化调整
+- 优化Wrapper中Where AND OR 去除之前基于反射方式实现,提高代码运行效率
+- 处理不添加mybatis-config.xml主键无法填充问题
+- MybatisPlus添加支持gradle构建方式
+- Wrapper 添加 `and()` `or()` 方法
+- 优化GlobalConfiguration,抽离出GlobalConfigUtils减少耦合
+- 修复Sqlserver2008与SqlServer2005分页问题
+- 新增自动识别数据库,减少用户显式配置
+- 优化分页插件减少用户显示配置属性
+- 自动填充字段问题解决
+- 新增PageHelper,获取当前线程来管理分页(之前老用户最好不要使用,改方式只用户适用MybatisPageHelper用户习惯)
+- 大幅度的添加测试用例(感谢K神支持)
+- 代码的其他优化
+- 添加了JSqlparser的依赖以后不用手动去添加该Jar包
+
+####代码生成
+- 支持逻辑删除方式生成
+- 支持乐观锁方式生成
+- 修复生成器不能识别sqlServer的自增主键代码生成器不能识别SqlServer自增主键的问题
+- 支持Lombok方式生成
+- 支持构建模式方式生成
+- 添加Clob和Blob类型转换
+- 修复Oracle的Number类型字段转换错误问题
+
+###Mybatis-Plus-Boot-Start [1.0.2]
+####主体功能
+- 处理AR模式devtool替换数据源失效问题
+- 添加逻辑删除支持
+- 添加序列支持
+
 ## [v2.0.8] 2017.05.15
 - Wrapper添加设置对象sqlSelect
 - 兼容无注解情况
