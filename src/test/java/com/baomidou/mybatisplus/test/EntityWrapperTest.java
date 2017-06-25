@@ -303,7 +303,7 @@ public class EntityWrapperTest {
         String sqlPart = Condition.create().gt("gt", 1).le("le", 2).lt("le", 3).ge("ge", 4).eq("eq", 5).allEq(map).originalSql();
         System.out.println("sql ==> " + sqlPart);
         Assert.assertEquals(
-                "AND (gt > ? AND le <= ? AND le < ? AND ge >= ? AND eq = ? AND allEq3 = ? AND allEq1 = ? AND allEq2 = ?)",
+                "AND (gt > ? AND le <= ? AND le < ? AND ge >= ? AND eq = ? AND allEq1 = ? AND allEq2 = ? AND allEq3 = ?)",
                 sqlPart);
     }
 

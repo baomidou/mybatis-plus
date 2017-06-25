@@ -46,6 +46,10 @@ public class ActiveRecordTest extends CrudTest {
         print(" ar save=" + rlt + ", id=" + t1.getId());
 
         // 根据ID更新
+        t1.setType("t1001");
+        rlt = t1.updateAllColumnById();
+        print(" ar updateAllColumnById:" + rlt);
+
         t1.setType("t1023");
         rlt = t1.updateById();
         print(" ar updateById:" + rlt);
