@@ -41,7 +41,7 @@ public class PaginationInterceptorTest {
     public void setUp() throws Exception {
         SqlSession session = sqlSessionTemplate.getSqlSessionFactory().openSession();
         Connection conn = session.getConnection();
-        Reader reader = Resources.getResourceAsReader("plugins/paginationInterceptor/CreateDB.sql");
+        Reader reader = Resources.getResourceAsReader("plugins/pagination.sql");
         ScriptRunner runner = new ScriptRunner(conn);
         runner.setLogWriter(null);
         runner.runScript(reader);

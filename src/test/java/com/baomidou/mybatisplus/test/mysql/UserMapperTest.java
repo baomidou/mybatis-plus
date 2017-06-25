@@ -15,17 +15,14 @@
  */
 package com.baomidou.mybatisplus.test.mysql;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.Test;
 
-import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
@@ -57,7 +54,7 @@ public class UserMapperTest extends CrudTest {
         /**
          * 设置，自定义 元对象填充器，实现公共字段自动写入
          */
-        //gc.setMetaObjectHandler(new MyMetaObjectHandler());
+        gc.setMetaObjectHandler(new MyMetaObjectHandler());
         // gc.setCapitalMode(true);
         gc.setDbColumnUnderline(true);
         return gc;
@@ -156,6 +153,7 @@ public class UserMapperTest extends CrudTest {
             rlt = userMapper.insert(u);
         }
         System.err.println("\n--------------insertBatch----------------" + rlt + "\n\n");
+        System.err.println("\n 自定义填充 testType=3 填充成功！" + userMapper.selectById(18L).toString());
 
         /**
          * 提交，往下操作在一个事物中！！！

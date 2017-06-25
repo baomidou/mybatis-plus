@@ -3,7 +3,7 @@ IF EXISTS version_user;
 
 CREATE TABLE version_user (
 	id bigint (11) NOT NULL ,
-	NAME VARCHAR (20),
+	name VARCHAR (20),
 	age INT (11),
 	version INT (11),
 	isDelete INT (11) DEFAULT 0,
@@ -19,7 +19,7 @@ IF EXISTS time_version_user;
 
 CREATE TABLE time_version_user (
 	id bigint (11) NOT NULL ,
-	NAME VARCHAR (20),
+	name VARCHAR (20),
 	version datetime,
 	PRIMARY KEY (`id`)
 ) ENGINE = INNODB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8;
