@@ -37,10 +37,11 @@ import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.RowBounds;
 
 import com.baomidou.mybatisplus.MybatisDefaultParameterHandler;
-import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
-import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.parser.AbstractSqlParser;
 import com.baomidou.mybatisplus.parser.SqlInfo;
+import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
+import com.baomidou.mybatisplus.plugins.pagination.PageHelper;
+import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.toolkit.SqlUtils;
@@ -70,6 +71,8 @@ public class PaginationInterceptor implements Interceptor {
     private String dialectType;
     /* 方言实现类 */
     private String dialectClazz;
+    /* 是否开启 PageHelper localPage 模式 */
+    private boolean localPage = false;
 
     /**
      * Physical Pagination Interceptor for all the queries with parameter {@link org.apache.ibatis.session.RowBounds}
@@ -85,9 +88,11 @@ public class PaginationInterceptor implements Interceptor {
         RowBounds rowBounds = (RowBounds) metaStatementHandler.getValue("delegate.rowBounds");
         /* 不需要分页的场合 */
         if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
-            // @lt 采用ThreadLocal变量处理的分页
-            rowBounds = PageHelper.getPagination();
-            if (rowBounds == null){
+            if (localPage) {
+                // 采用ThreadLocal变量处理的分页
+                rowBounds = PageHelper.getPagination();
+            }
+            if (rowBounds == null) {
                 return invocation.proceed();
             }
         }
@@ -118,7 +123,8 @@ public class PaginationInterceptor implements Interceptor {
         }
 
 		/*
-         * <p> 禁用内存分页 </p> <p> 内存分页会查询所有结果出来处理（这个很吓人的），如果结果变化频繁这个数据还会不准。</p>
+         * <p> 禁用内存分页 </p>
+         * <p> 内存分页会查询所有结果出来处理（这个很吓人的），如果结果变化频繁这个数据还会不准。</p>
 		 */
         metaStatementHandler.setValue("delegate.boundSql.sql", originalSql);
         metaStatementHandler.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
@@ -199,5 +205,9 @@ public class PaginationInterceptor implements Interceptor {
 
     public void setSqlParser(AbstractSqlParser sqlParser) {
         this.sqlParser = sqlParser;
+    }
+
+    public void setLocalPage(boolean localPage) {
+        this.localPage = localPage;
     }
 }
