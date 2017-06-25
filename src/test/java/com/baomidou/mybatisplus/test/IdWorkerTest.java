@@ -26,7 +26,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.junit.Assert;
-import org.junit.Test;
 
 import com.baomidou.mybatisplus.test.plugins.RandomUtils;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
@@ -41,7 +40,14 @@ import com.baomidou.mybatisplus.toolkit.IdWorker;
  */
 public class IdWorkerTest {
 
-    @Test
+    public static void main(String[] args) throws Exception {
+        IdWorkerTest test = new IdWorkerTest();
+        test.test();
+        test.test1();
+        test.test2();
+    }
+
+    //@Test
     public void test() throws Exception {
         int count = 1000;
         System.err.println("共有" + count + "个数参与测试");
@@ -83,7 +89,7 @@ public class IdWorkerTest {
         System.err.println("偶数:" + even);
     }
 
-    @Test
+    //@Test
     public void test1() throws Exception {
         // 毫秒内并发
         for (int i = 0; i < 1000; i++) {
@@ -92,7 +98,7 @@ public class IdWorkerTest {
     }
 
 
-    @Test
+    //@Test
     public void test2() throws Exception {
         // 随机尾数
         for (int i = 0; i < 1000; i++) {

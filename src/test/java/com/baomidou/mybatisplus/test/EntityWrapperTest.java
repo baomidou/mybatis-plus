@@ -17,10 +17,10 @@ package com.baomidou.mybatisplus.test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.junit.Assert;
@@ -296,7 +296,7 @@ public class EntityWrapperTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testQbc() {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new TreeMap<>();
         map.put("allEq1", "22");
         map.put("allEq2", 3333);
         map.put("allEq3", 66.99);
