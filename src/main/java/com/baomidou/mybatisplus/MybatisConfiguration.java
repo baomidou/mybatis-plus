@@ -48,7 +48,8 @@ public class MybatisConfiguration extends Configuration {
      * 初始化调用
      */
     public MybatisConfiguration() {
-        logger.debug("mybatis-plus init success.");
+        this.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
+        logger.debug("Mybatis-plus init success.");
     }
 
     /**
