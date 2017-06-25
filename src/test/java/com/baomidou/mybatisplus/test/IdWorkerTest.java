@@ -41,13 +41,7 @@ import com.baomidou.mybatisplus.toolkit.IdWorker;
  */
 public class IdWorkerTest {
 
-    public static void main(String[] args) throws Exception {
-        IdWorkerTest iwt = new IdWorkerTest();
-        iwt.test();
-        iwt.test1();
-        iwt.test2();
-    }
-
+    @Test
     public void test() throws Exception {
         int count = 1000;
         System.err.println("共有" + count + "个数参与测试");
@@ -89,6 +83,7 @@ public class IdWorkerTest {
         System.err.println("偶数:" + even);
     }
 
+    @Test
     public void test1() throws Exception {
         // 毫秒内并发
         for (int i = 0; i < 1000; i++) {
@@ -97,6 +92,7 @@ public class IdWorkerTest {
     }
 
 
+    @Test
     public void test2() throws Exception {
         // 随机尾数
         for (int i = 0; i < 1000; i++) {
