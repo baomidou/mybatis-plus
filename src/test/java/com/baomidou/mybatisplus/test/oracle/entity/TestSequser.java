@@ -3,11 +3,18 @@ package com.baomidou.mybatisplus.test.oracle.entity;
 import java.io.Serializable;
 
 import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.enums.IdType;
+
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * 用户表
  */
+@Data
+@Accessors(chain = true)
 @TableName("TEST_SEQUSER")
 //@KeySequence("SEQ_TEST")
 public class TestSequser extends BaseTestEntity implements Serializable {
@@ -18,8 +25,14 @@ public class TestSequser extends BaseTestEntity implements Serializable {
     /**
      * 主键ID
      */
+    @TableId(value = "TEST_ID", type = IdType.INPUT)
+    private Long id;
+    /**
+     * 主键ID
+     */
     // @TableId(value = "ID")
     // private Long id;
+
 
     /**
      * 名称
@@ -57,36 +70,4 @@ public class TestSequser extends BaseTestEntity implements Serializable {
     //	this.id = id;
     //}
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getAge() {
-        return age;
-    }
-
-    public void setAge(Integer age) {
-        this.age = age;
-    }
-
-    public Integer getTestType() {
-        return testType;
-    }
-
-    public void setTestType(Integer testType) {
-        this.testType = testType;
-    }
-
-    @Override
-    public String toString() {
-        return "TestSequser{" +
-                "name='" + name + '\'' +
-                ", age=" + age +
-                ", testType=" + testType +
-                '}';
-    }
 }

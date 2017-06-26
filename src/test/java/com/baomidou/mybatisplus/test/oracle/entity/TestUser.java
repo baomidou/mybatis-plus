@@ -7,9 +7,14 @@ import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
 
+import lombok.Data;
+import lombok.experimental.Accessors;
+
 /**
  * 用户表
  */
+@Data
+@Accessors(chain = true)
 @TableName("TEST_USER")
 public class TestUser implements Serializable {
 
