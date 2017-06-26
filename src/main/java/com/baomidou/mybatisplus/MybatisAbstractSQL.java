@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
@@ -106,6 +107,15 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
         StringBuilder sb = new StringBuilder();
         sql().sql(sb);
         return sb.toString();
+    }
+
+    /**
+     * 查看构造器where是否为空
+     *
+     * @return
+     */
+    public boolean isEmptyOfWhere() {
+        return CollectionUtils.isEmpty(sql().where);
     }
 
     /**

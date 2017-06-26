@@ -519,9 +519,10 @@ public class AutoSqlInjector implements ISqlInjector {
             where.append(convertIfTag(fieldInfo, true));
         }
         where.append("\n</if>");
-        where.append("\n<if test=\"ew.sqlSegment!=null\">\n${ew.sqlSegment}\n</if>");
+        where.append("\n<if test=\"ew!=null and ew.sqlSegment!=null and ew.notEmptyOfWhere\">\n${ew.sqlSegment}\n</if>");
         where.append("\n</if>");
         where.append("\n</where>");
+        where.append("\n<if test=\"ew!=null and ew.sqlSegment!=null and ew.emptyOfWhere\">\n${ew.sqlSegment}\n</if>");
         return where.toString();
     }
 

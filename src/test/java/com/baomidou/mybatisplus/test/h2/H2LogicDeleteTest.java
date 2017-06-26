@@ -100,7 +100,7 @@ public class H2LogicDeleteTest extends H2Test {
         userService.insert(user);
         Long id = user.getId();
         Assert.assertNotNull(id);
-
+        Assert.assertNotNull(userService.selectList(Condition.create().orderBy("age")));
         H2UserLogicDelete userFromDB = userService.selectById(user.getId());
         Assert.assertNull(userFromDB);
     }
