@@ -15,18 +15,12 @@
  */
 package com.baomidou.mybatisplus.generator;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
+import com.baomidou.mybatisplus.generator.config.*;
+import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
+import com.baomidou.mybatisplus.generator.config.po.TableField;
+import com.baomidou.mybatisplus.generator.config.po.TableInfo;
+import com.baomidou.mybatisplus.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.velocity.Template;
@@ -34,19 +28,9 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 
-import com.baomidou.mybatisplus.generator.config.ConstVal;
-import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
-import com.baomidou.mybatisplus.generator.config.FileOutConfig;
-import com.baomidou.mybatisplus.generator.config.GlobalConfig;
-import com.baomidou.mybatisplus.generator.config.PackageConfig;
-import com.baomidou.mybatisplus.generator.config.StrategyConfig;
-import com.baomidou.mybatisplus.generator.config.TemplateConfig;
-import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
-import com.baomidou.mybatisplus.generator.config.po.TableField;
-import com.baomidou.mybatisplus.generator.config.po.TableInfo;
-import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
-import com.baomidou.mybatisplus.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * 生成文件
@@ -179,44 +163,23 @@ public class AutoGenerator {
             } else {
                 tableInfo.setImportPackages("java.io.Serializable");
             }
-            
-            
             // Boolean类型is前缀处理
-
-            if ( config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix() ) {
-                for ( TableField field : tableInfo.getFields() ) {
-                    if ( field.getPropertyType().equalsIgnoreCase( "boolean" ) ) {
-                        // 如果是Lombok模式,那么boolean类型使用基本类型,而不是Boolean
-                        // 否则Boolean生成的Get方法是getXXX而不是isXXX,因为Boolean默认值是:null,boolean默认值是:false
-                        if ( config.getStrategyConfig().isEntityLombokModel() ) {
-                            field.setColumnType( DbColumnType.BASIC_BOOLEAN );
+            if (config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix()) {
+                for (TableField field : tableInfo.getFields()) {
+                    if (field.getPropertyType().equalsIgnoreCase("boolean")) {
+                        if (field.getPropertyName().indexOf("is") != -1) {
+                            field.setPropertyName(config.getStrategyConfig(),
+                                                  StringUtils.removePrefixAfterPrefixToLower( field.getPropertyName(), 2 ));
                         }
-                        if ( field.getPropertyName().indexOf( "is" ) != -1 ) {
-                            field.setPropertyName(
-                                    config.getStrategyConfig(),
-                                    StringUtils.removePrefixAfterPrefixToLower( field.getPropertyName(), 2 )
-                            );
-            
-            String primaryKeyTypeString = null;
-            // Controller基本CRUD
-            if ( config.getStrategyConfig().isControllerBasicMethod() ) {
-                for ( TableField field : tableInfo.getFields() ) {
-                    if ( field.isKeyFlag() ) {
-                        primaryKeyTypeString = field.getPropertyType();
-                        break;
                     }
                 }
-                ctx.put( "primaryKeyTypeString", primaryKeyTypeString );
-                ctx.put( "serviceVariableName", StringUtils.firstCharToLower( tableInfo.getServiceName() ) );
-                ctx.put( "entityVariableName", StringUtils.firstCharToLower( tableInfo.getEntityName() ) );
             }
-
-           
             // RequestMapping 连字符风格 user-info
             if (config.getStrategyConfig().isControllerMappingHyphenStyle()) {
                 ctx.put("controllerMappingHyphenStyle", config.getStrategyConfig().isControllerMappingHyphenStyle());
                 ctx.put("controllerMappingHyphen", StringUtils.camelToHyphen(tableInfo.getEntityPath()));
             }
+
             ctx.put("restControllerStyle", config.getStrategyConfig().isRestControllerStyle());
             ctx.put("package", packageInfo);
             ctx.put("author", config.getGlobalConfig().getAuthor());
