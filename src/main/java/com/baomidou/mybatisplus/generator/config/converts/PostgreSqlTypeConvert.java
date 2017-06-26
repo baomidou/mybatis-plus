@@ -44,6 +44,8 @@ public class PostgreSqlTypeConvert implements ITypeConvert {
             return DbColumnType.BOOLEAN;
         } else if (t.contains("decimal")) {
             return DbColumnType.BIG_DECIMAL;
+        } else if (t.contains("clob")) {
+            return DbColumnType.CLOB;
         } else if (t.contains("blob")) {
             return DbColumnType.BYTE_ARRAY;
         } else if (t.contains("float")) {

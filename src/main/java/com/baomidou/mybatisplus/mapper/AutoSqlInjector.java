@@ -47,6 +47,7 @@ import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.enums.SqlMethod;
 import com.baomidou.mybatisplus.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
@@ -75,7 +76,7 @@ public class AutoSqlInjector implements ISqlInjector {
      */
     public void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
         String className = mapperClass.toString();
-        Set<String> mapperRegistryCache = GlobalConfiguration.getMapperRegistryCache(builderAssistant.getConfiguration());
+        Set<String> mapperRegistryCache = GlobalConfigUtils.getMapperRegistryCache(builderAssistant.getConfiguration());
         if (!mapperRegistryCache.contains(className)) {
             inject(builderAssistant, mapperClass);
             mapperRegistryCache.add(className);
@@ -143,7 +144,7 @@ public class AutoSqlInjector implements ISqlInjector {
         this.injectDeleteByMapSql(mapperClass, table);
         /* 修改 */
         this.injectUpdateSql(mapperClass, modelClass, table);
-		/* 查询 */
+        /* 查询 */
         this.injectSelectByMapSql(mapperClass, modelClass, table);
         this.injectSelectOneSql(mapperClass, modelClass, table);
         this.injectSelectCountSql(mapperClass, modelClass, table);
@@ -152,7 +153,7 @@ public class AutoSqlInjector implements ISqlInjector {
         this.injectSelectMapsSql(SqlMethod.SELECT_MAPS, mapperClass, modelClass, table);
         this.injectSelectMapsSql(SqlMethod.SELECT_MAPS_PAGE, mapperClass, modelClass, table);
         this.injectSelectObjsSql(SqlMethod.SELECT_OBJS, mapperClass, modelClass, table);
-		/* 自定义方法 */
+        /* 自定义方法 */
         this.inject(configuration, builderAssistant, mapperClass, modelClass, table);
     }
 
@@ -198,8 +199,8 @@ public class AutoSqlInjector implements ISqlInjector {
      * @param table
      */
     protected void injectInsertOneSql(boolean selective, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
-		/*
-		 * INSERT INTO table <trim prefix="(" suffix=")" suffixOverrides=",">
+        /*
+         * INSERT INTO table <trim prefix="(" suffix=")" suffixOverrides=",">
 		 * <if test="xx != null">xx,</if> </trim> <trim prefix="values ("
 		 * suffix=")" suffixOverrides=","> <if test="xx != null">#{xx},</if>
 		 * </trim>
@@ -237,15 +238,18 @@ public class AutoSqlInjector implements ISqlInjector {
             }
         }
 
+        // 是否 IF 标签判断
+        boolean ifTag = true;
         List<TableFieldInfo> fieldList = table.getFieldList();
-
         for (TableFieldInfo fieldInfo : fieldList) {
-            /* 判断是否插入忽略，插入忽略就不生成这个SQL */
-            // TODO 忽略策略待完善
-            if (fieldInfo.getFieldIgnore() == FieldIgnore.INSERT) {
-                continue;
+            /* 判断是否插入忽略 */
+            if (FieldIgnore.INSERT == fieldInfo.getFieldIgnore()
+                    || FieldIgnore.INSERT_UPDATE == fieldInfo.getFieldIgnore()) {
+                ifTag = false;
+            } else {
+                ifTag = true;
             }
-            if (selective) {
+            if (selective && ifTag) {
                 fieldBuilder.append(convertIfTagIgnored(fieldInfo, false));
                 fieldBuilder.append(fieldInfo.getColumn()).append(",");
                 fieldBuilder.append(convertIfTagIgnored(fieldInfo, true));
@@ -337,8 +341,8 @@ public class AutoSqlInjector implements ISqlInjector {
         SqlMethod sqlMethod = selective ? SqlMethod.UPDATE_BY_ID : SqlMethod.UPDATE_ALL_COLUMN_BY_ID;
         String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlSet(selective, table, "et."), table.getKeyColumn(),
                 "et." + table.getKeyProperty(),
-                "<if test=\"et instanceof java.util.Map\">" +
-                        "<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">"
+                "<if test=\"et instanceof java.util.Map\">"
+                        + "<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">"
                         + "and ${et.MP_OPTLOCK_VERSION_COLUMN}=#{et.MP_OPTLOCK_VERSION_ORIGINAL}"
                         + "</if>"
                         + "</if>"
@@ -534,14 +538,19 @@ public class AutoSqlInjector implements ISqlInjector {
     protected String sqlSet(boolean selective, TableInfo table, String prefix) {
         StringBuilder set = new StringBuilder();
         set.append("<trim prefix=\"SET\" suffixOverrides=\",\">");
+
+        // 是否 IF 标签判断
+        boolean ifTag = true;
         List<TableFieldInfo> fieldList = table.getFieldList();
         for (TableFieldInfo fieldInfo : fieldList) {
-            /* 判断是不是更新忽略，是的话不生成此SQL */
-            // TODO 忽略策略待完善
-            if (fieldInfo.getFieldIgnore() == FieldIgnore.UPDATE) {
-                continue;
+            /* 判断是否更新忽略 */
+            if (FieldIgnore.UPDATE == fieldInfo.getFieldIgnore()
+                    || FieldIgnore.INSERT_UPDATE == fieldInfo.getFieldIgnore()) {
+                ifTag = false;
+            } else {
+                ifTag = true;
             }
-            if (selective) {
+            if (selective && ifTag) {
                 set.append(convertIfTag(true, fieldInfo, prefix, false));
                 set.append(fieldInfo.getColumn()).append("=#{");
                 if (null != prefix) {
@@ -570,7 +579,7 @@ public class AutoSqlInjector implements ISqlInjector {
      * @return
      */
     protected String sqlWordConvert(String convertStr) {
-        GlobalConfiguration globalConfig = GlobalConfiguration.getGlobalConfig(configuration);
+        GlobalConfiguration globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
         return SqlReservedWords.convert(globalConfig, convertStr);
     }
 
@@ -999,7 +1008,7 @@ public class AutoSqlInjector implements ISqlInjector {
      * </p>
      */
     protected GlobalConfiguration getGlobalConfig() {
-        return GlobalConfiguration.getGlobalConfig(configuration);
+        return GlobalConfigUtils.getGlobalConfig(configuration);
     }
 
 }

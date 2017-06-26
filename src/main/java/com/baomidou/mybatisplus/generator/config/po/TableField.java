@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.generator.config.po;
 
+import com.baomidou.mybatisplus.enums.FieldIgnore;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
@@ -40,6 +41,7 @@ public class TableField {
     private String propertyName;
     private DbColumnType columnType;
     private String comment;
+    private String ignore;
 
     public boolean isConvert() {
         return convert;
@@ -145,4 +147,11 @@ public class TableField {
         return firstChar.toUpperCase() + propertyName.substring(1);
     }
 
+    public String getIgnore() {
+        return ignore;
+    }
+
+    public void setIgnore(String ignore) {
+        this.ignore = ignore;
+    }
 }

@@ -111,14 +111,14 @@ public class TableFieldInfo {
          * 优先使用单个字段注解，否则使用全局配置<br>
          * 自定义字段验证策略 fixed-239
 		 */
-        if (FieldStrategy.NOT_NULL != tableField.validate()) {
-            this.fieldStrategy = tableField.validate();
+        if (FieldStrategy.NOT_NULL != tableField.strategy()) {
+            this.fieldStrategy = tableField.strategy();
         } else {
             this.fieldStrategy = globalConfig.getFieldStrategy();
         }
         tableInfo.setLogicDelete(this.initLogicDelete(globalConfig, field));
         /*
-		 * 保存当前字段的插入忽略，更新忽略值
+         * 保存当前字段的插入忽略，更新忽略值
 		 */
         this.fieldIgnore = tableField.ignore();
     }

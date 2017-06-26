@@ -58,13 +58,6 @@ public class Pagination extends RowBounds implements Serializable {
     private boolean openSort = true;
 
     /**
-     * 查询总数优化（默认 false 该属性只针对于Optimize.DEFAULT有效)
-     *
-     * @see com.baomidou.mybatisplus.enums.Optimize
-     */
-    private boolean optimizeCount = false;
-
-    /**
      * <p>
      * SQL 排序 ORDER BY 字段，例如： id DESC（根据id倒序查询）
      * </p>
@@ -170,14 +163,6 @@ public class Pagination extends RowBounds implements Serializable {
 
     public void setSearchCount(boolean searchCount) {
         this.searchCount = searchCount;
-    }
-
-    public boolean isOptimizeCount() {
-        return optimizeCount;
-    }
-
-    public void setOptimizeCount(boolean optimizeCount) {
-        this.optimizeCount = optimizeCount;
     }
 
     public String getOrderByField() {

@@ -15,6 +15,9 @@
  */
 package com.baomidou.mybatisplus.generator.config;
 
+import java.util.List;
+
+import com.baomidou.mybatisplus.generator.config.po.TableFill;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
@@ -136,11 +139,19 @@ public class StrategyConfig {
      * 要求 : {@link #controllerBasicMethod} 为 <code>true</code>
      */
     private boolean controllerBasicPagingMethodByPageHelper = false;
-            
-   
+    /**
+     * 逻辑删除属性名称
+     */
+    private String logicDeleteFieldName;
 
-    public void setDbColumnUnderline(boolean dbColumnUnderline) {
+    /**
+     * 表填充字段
+     */
+    private List<TableFill> tableFillList = null;
+
+    public StrategyConfig setDbColumnUnderline(boolean dbColumnUnderline) {
         DB_COLUMN_UNDERLINE = dbColumnUnderline;
+        return this;
     }
 
     /**
@@ -152,7 +163,7 @@ public class StrategyConfig {
      * @return
      */
     public boolean isCapitalModeNaming(String word) {
-        return isCapitalMode && StringUtils.isCapitalMode( word);
+        return isCapitalMode && StringUtils.isCapitalMode(word);
     }
 
     /**
@@ -181,32 +192,36 @@ public class StrategyConfig {
         return isCapitalMode;
     }
 
-    public void setCapitalMode(boolean isCapitalMode) {
+    public StrategyConfig setCapitalMode(boolean isCapitalMode) {
         this.isCapitalMode = isCapitalMode;
+        return this;
     }
 
     public NamingStrategy getNaming() {
         return naming;
     }
 
-    public void setNaming(NamingStrategy naming) {
+    public StrategyConfig setNaming(NamingStrategy naming) {
         this.naming = naming;
+        return this;
     }
 
     public String[] getTablePrefix() {
         return tablePrefix;
     }
 
-    public void setTablePrefix(String[] tablePrefix) {
+    public StrategyConfig setTablePrefix(String[] tablePrefix) {
         this.tablePrefix = tablePrefix;
+        return this;
     }
 
     public String getSuperEntityClass() {
         return superEntityClass;
     }
 
-    public void setSuperEntityClass(String superEntityClass) {
+    public StrategyConfig setSuperEntityClass(String superEntityClass) {
         this.superEntityClass = superEntityClass;
+        return this;
     }
 
     public boolean includeSuperEntityColumns(String fieldName) {
@@ -224,104 +239,135 @@ public class StrategyConfig {
         return superEntityColumns;
     }
 
-    public void setSuperEntityColumns(String[] superEntityColumns) {
+    public StrategyConfig setSuperEntityColumns(String[] superEntityColumns) {
         this.superEntityColumns = superEntityColumns;
+        return this;
     }
 
     public String getSuperMapperClass() {
         return superMapperClass;
     }
 
-    public void setSuperMapperClass(String superMapperClass) {
+    public StrategyConfig setSuperMapperClass(String superMapperClass) {
         this.superMapperClass = superMapperClass;
+        return this;
     }
 
     public String getSuperServiceClass() {
         return superServiceClass;
     }
 
-    public void setSuperServiceClass(String superServiceClass) {
+    public StrategyConfig setSuperServiceClass(String superServiceClass) {
         this.superServiceClass = superServiceClass;
+        return this;
     }
 
     public String getSuperServiceImplClass() {
         return superServiceImplClass;
     }
 
-    public void setSuperServiceImplClass(String superServiceImplClass) {
+    public StrategyConfig setSuperServiceImplClass(String superServiceImplClass) {
         this.superServiceImplClass = superServiceImplClass;
+        return this;
     }
 
     public String getSuperControllerClass() {
         return superControllerClass;
     }
 
-    public void setSuperControllerClass(String superControllerClass) {
+    public StrategyConfig setSuperControllerClass(String superControllerClass) {
         this.superControllerClass = superControllerClass;
+        return this;
     }
 
     public String[] getInclude() {
         return include;
     }
 
-    public void setInclude(String[] include) {
+    public StrategyConfig setInclude(String[] include) {
         this.include = include;
+        return this;
     }
 
     public String[] getExclude() {
         return exclude;
     }
 
-    public void setExclude(String[] exclude) {
+    public StrategyConfig setExclude(String[] exclude) {
         this.exclude = exclude;
+        return this;
     }
 
     public boolean isEntityColumnConstant() {
         return entityColumnConstant;
     }
 
-    public void setEntityColumnConstant(boolean entityColumnConstant) {
+    public StrategyConfig setEntityColumnConstant(boolean entityColumnConstant) {
         this.entityColumnConstant = entityColumnConstant;
+        return this;
     }
 
     public boolean isEntityBuilderModel() {
         return entityBuilderModel;
     }
 
-    public void setEntityBuilderModel(boolean entityBuilderModel) {
+    public StrategyConfig setEntityBuilderModel(boolean entityBuilderModel) {
         this.entityBuilderModel = entityBuilderModel;
+        return this;
     }
 
-    public boolean isEntityLombokModel () {
+    public boolean isEntityLombokModel() {
         return entityLombokModel;
     }
 
-    public void setEntityLombokModel ( boolean entityLombokModel ) {
+    public StrategyConfig setEntityLombokModel(boolean entityLombokModel) {
         this.entityLombokModel = entityLombokModel;
+        return this;
     }
 
-    public boolean isEntityBooleanColumnRemoveIsPrefix () {
+    public boolean isEntityBooleanColumnRemoveIsPrefix() {
         return entityBooleanColumnRemoveIsPrefix;
     }
 
-    public void setEntityBooleanColumnRemoveIsPrefix ( boolean entityBooleanColumnRemoveIsPrefix ) {
+    public StrategyConfig setEntityBooleanColumnRemoveIsPrefix(boolean entityBooleanColumnRemoveIsPrefix) {
         this.entityBooleanColumnRemoveIsPrefix = entityBooleanColumnRemoveIsPrefix;
+        return this;
     }
 
-    public boolean isRestControllerStyle () {
+    public boolean isRestControllerStyle() {
         return restControllerStyle;
     }
 
-    public void setRestControllerStyle ( boolean restControllerStyle ) {
+    public StrategyConfig setRestControllerStyle(boolean restControllerStyle) {
         this.restControllerStyle = restControllerStyle;
+        return this;
     }
 
-    public boolean isControllerMappingHyphenStyle () {
+    public boolean isControllerMappingHyphenStyle() {
         return controllerMappingHyphenStyle;
     }
 
-    public void setControllerMappingHyphenStyle ( boolean controllerMappingHyphenStyle ) {
+    public StrategyConfig setControllerMappingHyphenStyle(boolean controllerMappingHyphenStyle) {
         this.controllerMappingHyphenStyle = controllerMappingHyphenStyle;
+        return this;
+    }
+
+    public String getLogicDeleteFieldName() {
+        return logicDeleteFieldName;
+    }
+
+    public StrategyConfig setLogicDeleteFieldName(String logicDeletePropertyName) {
+        this.logicDeleteFieldName = logicDeleteFieldName;
+        return this;
+    }
+
+    public List<TableFill> getTableFillList() {
+        return tableFillList;
+    }
+
+    public StrategyConfig setTableFillList(List<TableFill> tableFillList) {
+        this.tableFillList = tableFillList;
+        return this;
     }
 
     public boolean isControllerBasicMethod () {

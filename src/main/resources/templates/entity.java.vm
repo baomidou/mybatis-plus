@@ -5,6 +5,7 @@ import ${pkg};
 #end
 #if(${entityLombokModel})
 import lombok.Data;
+import lombok.experimental.Accessors;
 #end
 
 /**
@@ -47,8 +48,17 @@ public class ${entity} implements Serializable {
 #elseif(${field.convert})
     @TableId("${field.name}")
 #end
+#elseif(${field.ignore})
+#if(${field.convert})
+	@TableField(value = "${field.name}", ignore = FieldIgnore.${field.ignore})
+#else
+	@TableField(ignore = FieldIgnore.${field.ignore})
+#end
 #elseif(${field.convert})
 	@TableField("${field.name}")
+#end
+#if(${logicDeleteFieldName}==${field.name})
+    @TableLogic
 #end
 	private ${field.propertyType} ${field.propertyName};
 #end

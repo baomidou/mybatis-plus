@@ -1,7 +1,5 @@
 package com.baomidou.mybatisplus.test.h2;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -27,7 +25,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
-import com.baomidou.mybatisplus.test.h2.entity.service.IH2UserService;
+import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
 
 /**
  * <p>
@@ -39,7 +37,7 @@ import com.baomidou.mybatisplus.test.h2.entity.service.IH2UserService;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-no-opt-lock-h2.xml"})
-public class H2UserNoOptLockTest {
+public class H2UserNoOptLockTest extends H2Test {
 
     @Autowired
     private IH2UserService userService;
@@ -54,37 +52,9 @@ public class H2UserNoOptLockTest {
             Statement stmt = conn.createStatement();
             stmt.execute(createTableSql);
             stmt.execute("truncate table h2user");
-            insertUsers(stmt);
+            executeSql(stmt, "user.insert.sql");
             conn.commit();
         }
-    }
-
-    private static void insertUsers(Statement stmt) throws SQLException, IOException {
-        String filename = "user.insert.sql";
-        String filePath = H2UserNoOptLockTest.class.getClassLoader().getResource("").getPath() + "/h2/" + filename;
-        try (
-                BufferedReader reader = new BufferedReader(new FileReader(filePath))
-        ) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                stmt.execute(line.replace(";", ""));
-            }
-        }
-    }
-
-    private static String readFile(String filename) {
-        StringBuilder builder = new StringBuilder();
-        String filePath = H2UserNoOptLockTest.class.getClassLoader().getResource("").getPath() + "/h2/" + filename;
-        try (
-                BufferedReader reader = new BufferedReader(new FileReader(filePath))
-        ) {
-            String line;
-            while ((line = reader.readLine()) != null)
-                builder.append(line).append(" ");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return builder.toString();
     }
 
     @Test

@@ -24,11 +24,11 @@ import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**
@@ -44,7 +44,9 @@ public class SqlHelper {
     private static final Log logger = LogFactory.getLog(SqlHelper.class);
 
     /**
+     * <p>
      * 获取Session 默认自动提交
+     * </p>
      * <p>
      * 特别说明:这里获取SqlSession时这里虽然设置了自动提交但是如果事务托管了的话 是不起作用的 切记!!
      * <p/>
@@ -64,21 +66,23 @@ public class SqlHelper {
      * @return SqlSession
      */
     public static SqlSession sqlSessionBatch(Class<?> clazz) {
-        return GlobalConfiguration.currentSessionFactory(clazz).openSession(ExecutorType.BATCH);
+        return GlobalConfigUtils.currentSessionFactory(clazz).openSession(ExecutorType.BATCH);
     }
 
     /**
-     * 获取sqlSessionå
+     * <p>
+     * 获取sqlSession
+     * </p>
      *
-     * @param clazz
+     * @param clazz 对象类
      * @return
      */
     private static SqlSession getSqlSession(Class<?> clazz) {
         SqlSession session = null;
         try {
-            SqlSessionFactory sqlSessionFactory = GlobalConfiguration.currentSessionFactory(clazz);
+            SqlSessionFactory sqlSessionFactory = GlobalConfigUtils.currentSessionFactory(clazz);
             Configuration configuration = sqlSessionFactory.getConfiguration();
-            session = GlobalConfiguration.getGlobalConfig(configuration).getSqlSession();
+            session = GlobalConfigUtils.getGlobalConfig(configuration).getSqlSession();
         } catch (Exception e) {
             // ignored
         }
@@ -96,13 +100,16 @@ public class SqlHelper {
      */
     public static SqlSession sqlSession(Class<?> clazz, boolean autoCommit) {
         SqlSession sqlSession = getSqlSession(clazz);
-        return (sqlSession != null) ? sqlSession : GlobalConfiguration.currentSessionFactory(clazz).openSession(autoCommit);
+        return (sqlSession != null) ? sqlSession : GlobalConfigUtils.currentSessionFactory(clazz).openSession(autoCommit);
     }
 
     /**
+     * <p>
      * 获取TableInfo
+     * </p>
      *
-     * @return TableInfo
+     * @param clazz 对象类
+     * @return TableInfo 对象表信息
      */
     public static TableInfo table(Class<?> clazz) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
@@ -157,10 +164,12 @@ public class SqlHelper {
     }
 
     /**
+     * <p>
      * 填充Wrapper
+     * </p>
      *
-     * @param page
-     * @param wrapper
+     * @param page    分页对象
+     * @param wrapper SQL包装对象
      */
     public static void fillWrapper(Page<?> page, Wrapper<?> wrapper) {
         if (null == page) {
@@ -175,9 +184,11 @@ public class SqlHelper {
     }
 
     /**
+     * <p>
      * 判断Wrapper为空
+     * </p>
      *
-     * @param wrapper
+     * @param wrapper SQL包装对象
      * @return
      */
     public static boolean isEmptyOfWrapper(Wrapper<?> wrapper) {
@@ -185,9 +196,11 @@ public class SqlHelper {
     }
 
     /**
+     * <p>
      * 判断Wrapper不为空
+     * </p>
      *
-     * @param wrapper
+     * @param wrapper SQL包装对象
      * @return
      */
     public static boolean isNotEmptyOfWrapper(Wrapper<?> wrapper) {

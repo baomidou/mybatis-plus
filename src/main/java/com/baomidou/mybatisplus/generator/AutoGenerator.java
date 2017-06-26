@@ -15,15 +15,18 @@
  */
 package com.baomidou.mybatisplus.generator;
 
-import com.baomidou.mybatisplus.generator.config.ConstVal;
-import com.baomidou.mybatisplus.generator.config.FileOutConfig;
-import com.baomidou.mybatisplus.generator.config.TemplateConfig;
-import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
-import com.baomidou.mybatisplus.generator.config.po.TableField;
-import com.baomidou.mybatisplus.generator.config.po.TableInfo;
-import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
-import com.baomidou.mybatisplus.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.velocity.Template;
@@ -31,9 +34,19 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 
-import java.io.*;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import com.baomidou.mybatisplus.generator.config.ConstVal;
+import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
+import com.baomidou.mybatisplus.generator.config.FileOutConfig;
+import com.baomidou.mybatisplus.generator.config.GlobalConfig;
+import com.baomidou.mybatisplus.generator.config.PackageConfig;
+import com.baomidou.mybatisplus.generator.config.StrategyConfig;
+import com.baomidou.mybatisplus.generator.config.TemplateConfig;
+import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
+import com.baomidou.mybatisplus.generator.config.po.TableField;
+import com.baomidou.mybatisplus.generator.config.po.TableInfo;
+import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
+import com.baomidou.mybatisplus.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
  * 生成文件
@@ -41,10 +54,32 @@ import java.util.*;
  * @author YangHu, tangguo
  * @since 2016-08-30
  */
-public class AutoGenerator extends AbstractGenerator {
+public class AutoGenerator {
 
     private static final Log logger = LogFactory.getLog(AutoGenerator.class);
 
+    protected ConfigBuilder config;
+    protected InjectionConfig injectionConfig;
+    /**
+     * 数据源配置
+     */
+    private DataSourceConfig dataSource;
+    /**
+     * 数据库表配置
+     */
+    private StrategyConfig strategy;
+    /**
+     * 包 相关配置
+     */
+    private PackageConfig packageInfo;
+    /**
+     * 模板 相关配置
+     */
+    private TemplateConfig template;
+    /**
+     * 全局 相关配置
+     */
+    private GlobalConfig globalConfig;
     /**
      * velocity引擎
      */
@@ -98,7 +133,9 @@ public class AutoGenerator extends AbstractGenerator {
     }
 
     /**
+     * <p>
      * 分析数据
+     * </p>
      *
      * @param config 总配置信息
      * @return 解析数据结果集
@@ -132,6 +169,10 @@ public class AutoGenerator extends AbstractGenerator {
                 // 表注解
                 tableInfo.setImportPackages("com.baomidou.mybatisplus.annotations.TableName");
             }
+            if (tableInfo.isLogicDelete(config.getStrategyConfig().getLogicDeleteFieldName())) {
+                // 逻辑删除注解
+                tableInfo.setImportPackages("com.baomidou.mybatisplus.annotations.TableLogic");
+            }
             if (StringUtils.isNotEmpty(config.getSuperEntityClass())) {
                 // 父实体
                 tableInfo.setImportPackages(config.getSuperEntityClass());
@@ -141,6 +182,7 @@ public class AutoGenerator extends AbstractGenerator {
             
             
             // Boolean类型is前缀处理
+
             if ( config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix() ) {
                 for ( TableField field : tableInfo.getFields() ) {
                     if ( field.getPropertyType().equalsIgnoreCase( "boolean" ) ) {
@@ -154,10 +196,6 @@ public class AutoGenerator extends AbstractGenerator {
                                     config.getStrategyConfig(),
                                     StringUtils.removePrefixAfterPrefixToLower( field.getPropertyName(), 2 )
                             );
-                        }
-                    }
-                }
-            }
             
             String primaryKeyTypeString = null;
             // Controller基本CRUD
@@ -175,16 +213,14 @@ public class AutoGenerator extends AbstractGenerator {
 
            
             // RequestMapping 连字符风格 user-info
-            if ( config.getStrategyConfig().isControllerMappingHyphenStyle() ) {
+            if (config.getStrategyConfig().isControllerMappingHyphenStyle()) {
                 ctx.put("controllerMappingHyphenStyle", config.getStrategyConfig().isControllerMappingHyphenStyle());
-                ctx.put("controllerMappingHyphen", StringUtils.camelToHyphen( tableInfo.getEntityPath() ));
+                ctx.put("controllerMappingHyphen", StringUtils.camelToHyphen(tableInfo.getEntityPath()));
             }
-            
-            ctx.put("controllerBasicMethod", config.getStrategyConfig().isControllerBasicMethod());
-            ctx.put("controllerBasicPagingMethodByPageHelper", config.getStrategyConfig().isControllerBasicPagingMethodByPageHelper());
             ctx.put("restControllerStyle", config.getStrategyConfig().isRestControllerStyle());
             ctx.put("package", packageInfo);
             ctx.put("author", config.getGlobalConfig().getAuthor());
+            ctx.put("logicDeleteFieldName", config.getStrategyConfig().getLogicDeleteFieldName());
             ctx.put("activeRecord", config.getGlobalConfig().isActiveRecord());
             ctx.put("date", date);
             ctx.put("table", tableInfo);
@@ -211,7 +247,9 @@ public class AutoGenerator extends AbstractGenerator {
     }
 
     /**
+     * <p>
      * 获取类名
+     * </p>
      *
      * @param classPath
      * @return
@@ -223,7 +261,9 @@ public class AutoGenerator extends AbstractGenerator {
     }
 
     /**
+     * <p>
      * 处理输出目录
+     * </p>
      *
      * @param pathInfo 路径信息
      */
@@ -240,7 +280,9 @@ public class AutoGenerator extends AbstractGenerator {
     }
 
     /**
+     * <p>
      * 合成上下文与模板
+     * </p>
      *
      * @param context vm上下文
      */
@@ -294,7 +336,9 @@ public class AutoGenerator extends AbstractGenerator {
     }
 
     /**
+     * <p>
      * 将模板转化成为文件
+     * </p>
      *
      * @param context      内容对象
      * @param templatePath 模板文件
@@ -348,4 +392,80 @@ public class AutoGenerator extends AbstractGenerator {
         return !file.exists() || config.getGlobalConfig().isFileOverride();
     }
 
+
+    // ==================================  相关配置  ==================================
+    /**
+     * 初始化配置
+     */
+    protected void initConfig() {
+        if (null == config) {
+            config = new ConfigBuilder(packageInfo, dataSource, strategy, template, globalConfig);
+            if (null != injectionConfig) {
+                injectionConfig.setConfig(config);
+            }
+        }
+    }
+
+    public DataSourceConfig getDataSource() {
+        return dataSource;
+    }
+
+    public AutoGenerator setDataSource(DataSourceConfig dataSource) {
+        this.dataSource = dataSource;
+        return this;
+    }
+
+    public StrategyConfig getStrategy() {
+        return strategy;
+    }
+
+    public AutoGenerator setStrategy(StrategyConfig strategy) {
+        this.strategy = strategy;
+        return this;
+    }
+
+    public PackageConfig getPackageInfo() {
+        return packageInfo;
+    }
+
+    public AutoGenerator setPackageInfo(PackageConfig packageInfo) {
+        this.packageInfo = packageInfo;
+        return this;
+    }
+
+    public TemplateConfig getTemplate() {
+        return template;
+    }
+
+    public AutoGenerator setTemplate(TemplateConfig template) {
+        this.template = template;
+        return this;
+    }
+
+    public ConfigBuilder getConfig() {
+        return config;
+    }
+
+    public AutoGenerator setConfig(ConfigBuilder config) {
+        this.config = config;
+        return this;
+    }
+
+    public GlobalConfig getGlobalConfig() {
+        return globalConfig;
+    }
+
+    public AutoGenerator setGlobalConfig(GlobalConfig globalConfig) {
+        this.globalConfig = globalConfig;
+        return this;
+    }
+
+    public InjectionConfig getCfg() {
+        return injectionConfig;
+    }
+
+    public AutoGenerator setCfg(InjectionConfig injectionConfig) {
+        this.injectionConfig = injectionConfig;
+        return this;
+    }
 }

@@ -21,7 +21,7 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  * <p>
  * 跟包相关的配置项
  *
- * @author YangHu, tangguo
+ * @author YangHu, tangguo, hubin
  * @since 2016-08-30
  */
 public class PackageConfig {
@@ -72,56 +72,63 @@ public class PackageConfig {
         return parent;
     }
 
-    public void setParent(String parent) {
+    public PackageConfig setParent(String parent) {
         this.parent = parent;
+        return this;
     }
 
     public String getModuleName() {
         return moduleName;
     }
 
-    public void setModuleName(String moduleName) {
+    public PackageConfig setModuleName(String moduleName) {
         this.moduleName = moduleName;
+        return this;
     }
 
     public String getEntity() {
         return entity;
     }
 
-    public void setEntity(String entity) {
+    public PackageConfig setEntity(String entity) {
         this.entity = entity;
+        return this;
     }
 
     public String getService() {
         return service;
     }
 
-    public void setService(String service) {
+    public PackageConfig setService(String service) {
         this.service = service;
+        return this;
     }
 
     public String getServiceImpl() {
         return serviceImpl;
     }
 
-    public void setServiceImpl(String serviceImpl) {
+    public PackageConfig setServiceImpl(String serviceImpl) {
         this.serviceImpl = serviceImpl;
+        return this;
     }
 
     public String getMapper() {
         return mapper;
     }
 
-    public void setMapper(String mapper) {
+    public PackageConfig setMapper(String mapper) {
         this.mapper = mapper;
+        return this;
     }
 
     public String getXml() {
         return xml;
     }
 
-    public void setXml(String xml) {
+    public PackageConfig setXml(String xml) {
         this.xml = xml;
+        return this;
     }
 
     public String getController() {
@@ -131,8 +138,9 @@ public class PackageConfig {
         return controller;
     }
 
-    public void setController(String controller) {
+    public PackageConfig setController(String controller) {
         this.controller = controller;
+        return this;
     }
 
 }

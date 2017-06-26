@@ -42,7 +42,6 @@ public class MybatisPlusConfig {
         configuration.setJdbcTypeForNull(JdbcType.NULL);
         sqlSessionFactory.setConfiguration(configuration);
         PaginationInterceptor pagination = new PaginationInterceptor();
-        pagination.setDialectType("h2");
         OptimisticLockerInterceptor optLock = new OptimisticLockerInterceptor();
         sqlSessionFactory.setPlugins(new Interceptor[]{
                 pagination,
@@ -56,8 +55,8 @@ public class MybatisPlusConfig {
     @Bean
     public GlobalConfiguration globalConfiguration() {
         GlobalConfiguration conf = new GlobalConfiguration(new LogicSqlInjector());
-        conf.setLogicDeleteValue("D");
-        conf.setLogicNotDeleteValue("A");
+        conf.setLogicDeleteValue("-1");
+        conf.setLogicNotDeleteValue("1");
         conf.setIdType(2);
         return conf;
     }

@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.baomidou.mybatisplus.enums.FieldIgnore;
 import com.baomidou.mybatisplus.generator.config.ConstVal;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.GlobalConfig;
@@ -34,6 +35,7 @@ import com.baomidou.mybatisplus.generator.config.PackageConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.TemplateConfig;
 import com.baomidou.mybatisplus.generator.config.po.TableField;
+import com.baomidou.mybatisplus.generator.config.po.TableFill;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.rules.DbType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
@@ -41,7 +43,9 @@ import com.baomidou.mybatisplus.generator.config.rules.QuerySQL;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
+ * <p>
  * 配置汇总 传递给文件生成工具
+ * </p>
  *
  * @author YangHu, tangguo, hubin
  * @since 2016-08-30
@@ -95,7 +99,9 @@ public class ConfigBuilder {
     private GlobalConfig globalConfig;
 
     /**
+     * <p>
      * 在构造器中处理配置
+     * </p>
      *
      * @param packageConfig    包配置
      * @param dataSourceConfig 数据源配置
@@ -137,7 +143,9 @@ public class ConfigBuilder {
     // ************************ 曝露方法 BEGIN*****************************
 
     /**
+     * <p>
      * 所有包配置信息
+     * </p>
      *
      * @return 包配置
      */
@@ -146,7 +154,9 @@ public class ConfigBuilder {
     }
 
     /**
+     * <p>
      * 所有路径配置
+     * </p>
      *
      * @return 路径配置
      */
@@ -163,7 +173,9 @@ public class ConfigBuilder {
     }
 
     /**
+     * <p>
      * 获取超类定义
+     * </p>
      *
      * @return 完整超类名称
      */
@@ -180,7 +192,9 @@ public class ConfigBuilder {
     }
 
     /**
+     * <p>
      * 表信息
+     * </p>
      *
      * @return 所有表信息
      */
@@ -189,7 +203,9 @@ public class ConfigBuilder {
     }
 
     /**
+     * <p>
      * 模板路径配置信息
+     * </p>
      *
      * @return 所以模板路径配置信息
      */
@@ -200,7 +216,9 @@ public class ConfigBuilder {
     // ****************************** 曝露方法 END**********************************
 
     /**
+     * <p>
      * 处理包配置
+     * </p>
      *
      * @param template  TemplateConfig
      * @param outputDir
@@ -239,7 +257,9 @@ public class ConfigBuilder {
     }
 
     /**
+     * <p>
      * 处理数据源配置
+     * </p>
      *
      * @param config DataSourceConfig
      */
@@ -249,7 +269,9 @@ public class ConfigBuilder {
     }
 
     /**
+     * <p>
      * 处理数据库表 加载数据库表、列、注释相关数据集
+     * </p>
      *
      * @param config StrategyConfig
      */
@@ -259,7 +281,9 @@ public class ConfigBuilder {
     }
 
     /**
+     * <p>
      * 处理superClassName,IdClassType,IdStrategy配置
+     * </p>
      *
      * @param config 策略配置
      */
@@ -284,7 +308,9 @@ public class ConfigBuilder {
     }
 
     /**
+     * <P>
      * 处理表对应的类名称
+     * </P>
      *
      * @param tableList   表名称
      * @param strategy    命名策略
@@ -324,9 +350,9 @@ public class ConfigBuilder {
     }
 
     /**
+     * <p>
      * 获取所有的数据库表信息
-     *
-     * @return 表信息
+     * </p>
      */
     private List<TableInfo> getTablesInfo(StrategyConfig config) {
         boolean isInclude = (null != config.getInclude() && config.getInclude().length > 0);
@@ -416,7 +442,9 @@ public class ConfigBuilder {
 
 
     /**
+     * <p>
      * 判断主键是否为identity，目前仅对mysql进行检查
+     * </p>
      *
      * @param results ResultSet
      * @return 主键是否为identity
@@ -428,6 +456,9 @@ public class ConfigBuilder {
             if ("auto_increment".equals(extra)) {
                 return true;
             }
+        } else if (QuerySQL.SQL_SERVER == this.querySQL) {
+            int isIdentity = results.getInt("isIdentity");
+            return 1 == isIdentity;
         }
         return false;
     }
@@ -474,6 +505,16 @@ public class ConfigBuilder {
                     commonFieldList.add(field);
                     continue;
                 }
+                // 填充逻辑判断
+                List<TableFill> tfs = this.getStrategyConfig().getTableFillList();
+                if (null != tfs) {
+                    for (TableFill tf : tfs) {
+                        if (tf.getFieldName().equals(field.getName())) {
+                            field.setIgnore(FieldIgnore.INSERT.name());
+                            break;
+                        }
+                    }
+                }
                 fieldList.add(field);
             }
         } catch (SQLException e) {
@@ -485,7 +526,9 @@ public class ConfigBuilder {
     }
 
     /**
+     * <p>
      * 连接路径字符串
+     * </p>
      *
      * @param parentDir   路径常量字符串
      * @param packageName 包名
@@ -503,7 +546,9 @@ public class ConfigBuilder {
     }
 
     /**
+     * <p>
      * 连接父子包名
+     * </p>
      *
      * @param parent     父包名
      * @param subPackage 子包名
@@ -517,7 +562,9 @@ public class ConfigBuilder {
     }
 
     /**
+     * <p>
      * 处理字段名称
+     * </p>
      *
      * @return 根据策略返回处理后的名称
      */
@@ -526,7 +573,9 @@ public class ConfigBuilder {
     }
 
     /**
+     * <p>
      * 处理字段名称
+     * </p>
      *
      * @param name
      * @param strategy
@@ -575,16 +624,18 @@ public class ConfigBuilder {
         return strategyConfig;
     }
 
-    public void setStrategyConfig(StrategyConfig strategyConfig) {
+    public ConfigBuilder setStrategyConfig(StrategyConfig strategyConfig) {
         this.strategyConfig = strategyConfig;
+        return this;
     }
 
     public GlobalConfig getGlobalConfig() {
         return globalConfig;
     }
 
-    public void setGlobalConfig(GlobalConfig globalConfig) {
+    public ConfigBuilder setGlobalConfig(GlobalConfig globalConfig) {
         this.globalConfig = globalConfig;
+        return this;
     }
 
 }

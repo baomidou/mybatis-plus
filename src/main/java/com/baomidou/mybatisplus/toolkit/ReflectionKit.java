@@ -31,9 +31,6 @@ import java.util.Map;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
-import com.baomidou.mybatisplus.entity.TableFieldInfo;
-import com.baomidou.mybatisplus.entity.TableInfo;
-import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 
 
@@ -65,7 +62,9 @@ public class ReflectionKit {
     }
 
     /**
+     * <p>
      * 获取 public get方法的值
+     * </p>
      *
      * @param cls
      * @param entity 实体
@@ -93,7 +92,9 @@ public class ReflectionKit {
     }
 
     /**
+     * <p>
      * 获取 public get方法的值
+     * </p>
      *
      * @param entity 实体
      * @param str    属性字符串内容
@@ -107,40 +108,9 @@ public class ReflectionKit {
     }
 
     /**
-     * 调用对象的get方法检查对象所有属性是否为null
-     *
-     * @param bean 检查对象
-     * @return boolean true对象所有属性不为null,false对象所有属性为null
-     */
-    public static boolean checkFieldValueNotNull(Object bean) {
-        if (null == bean) {
-            return false;
-        }
-        Class<?> cls = bean.getClass();
-        TableInfo tableInfo = getTableInfoAsSuperClass(cls);
-        boolean result = false;
-        List<TableFieldInfo> fieldList = tableInfo.getFieldList();
-        for (TableFieldInfo tableFieldInfo : fieldList) {
-            FieldStrategy fieldStrategy = tableFieldInfo.getFieldStrategy();
-            Object val = getMethodValue(cls, bean, tableFieldInfo.getProperty());
-            if (FieldStrategy.NOT_EMPTY.equals(fieldStrategy)) {
-                if (StringUtils.checkValNotNull(val)) {
-                    result = true;
-                    break;
-                }
-            } else {
-                if (null != val) {
-                    result = true;
-                    break;
-                }
-            }
-
-        }
-        return result;
-    }
-
-    /**
+     * <p>
      * 反射对象获取泛型
+     * </p>
      *
      * @param clazz 对象
      * @param index 泛型所在位置
@@ -167,7 +137,9 @@ public class ReflectionKit {
     }
 
     /**
+     * <p>
      * 获取该类的所有属性列表
+     * </p>
      *
      * @param clazz 反射类
      * @return
@@ -185,7 +157,9 @@ public class ReflectionKit {
     }
 
     /**
+     * <p>
      * 获取该类的所有属性列表
+     * </p>
      *
      * @param clazz 反射类
      * @return
@@ -238,24 +212,4 @@ public class ReflectionKit {
         }
         return fieldList;
     }
-
-    /**
-     * 递归自身的class,获取TableInfo
-     *
-     * @param cls
-     * @return TableInfo
-     * @throws MybatisPlusException
-     */
-    private static TableInfo getTableInfoAsSuperClass(Class<?> cls) {
-        TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
-        if (tableInfo == null) {
-            if (Object.class.equals(cls)) {
-                throw new MybatisPlusException(String.format("Error: Could Not find %s in TableInfo Cache. ", cls.getSimpleName()));
-            } else {
-                tableInfo = getTableInfoAsSuperClass(cls.getSuperclass());
-            }
-        }
-        return tableInfo;
-    }
-
 }

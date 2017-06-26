@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, hubin (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,19 +13,26 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test.h2.entity.service;
+package com.baomidou.mybatisplus.plugins.tenancy;
 
-import com.baomidou.mybatisplus.service.IService;
-import com.baomidou.mybatisplus.test.h2.entity.persistent.H2UserNoVersion;
+import java.util.Properties;
 
 /**
  * <p>
- * Service层测试
+ * 租户信息
  * </p>
  *
  * @author hubin
- * @date 2017-01-30
+ * @since 2017-06-20
  */
-public interface IH2UserNoVersionService extends IService<H2UserNoVersion> {
+public interface TenantInfo {
+
+    TenantInfo setHandlerConfig(Properties properties);
+
+    String getTenantId();
+
+    String getTenantIdColumn();
+
+    TenantInfo setTenantIdColumn(String tenantIdColumn);
 
 }

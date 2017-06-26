@@ -43,8 +43,12 @@ public class OracleTypeConvert implements ITypeConvert {
             return DbColumnType.DOUBLE;
         } else if (t.contains("FLOAT")) {
             return DbColumnType.FLOAT;
+        } else if (t.contains("clob")) {
+            return DbColumnType.CLOB;
         } else if (t.contains("BLOB")) {
             return DbColumnType.OBJECT;
+        } else if (t.contains("binary")) {
+            return DbColumnType.BYTE_ARRAY;
         } else if (t.contains("RAW")) {
             return DbColumnType.BYTE_ARRAY;
         }

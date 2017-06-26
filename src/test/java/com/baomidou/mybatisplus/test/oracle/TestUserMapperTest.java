@@ -117,7 +117,7 @@ public class TestUserMapperTest {
             print(page.getRecords().get(i));
         }
         System.err.println(" 翻页：" + page.toString());
-		
+
 		/* 删除测试数据  */
         rlt = session.delete("deleteAll");
         System.err.println("清空测试数据！ rlt=" + rlt);

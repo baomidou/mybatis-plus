@@ -53,8 +53,7 @@ public class OptimisticLockerInterceptorTest {
     public void setUp() throws Exception {
         SqlSession session = sqlSessionTemplate.getSqlSessionFactory().openSession();
         Connection conn = session.getConnection();
-        Reader reader = Resources
-                .getResourceAsReader("h2/optlock/CreateDB.sql");
+        Reader reader = Resources.getResourceAsReader("plugins/optimisticLocker.sql");
         ScriptRunner runner = new ScriptRunner(conn);
         runner.setLogWriter(null);
         runner.runScript(reader);
@@ -195,4 +194,5 @@ public class OptimisticLockerInterceptorTest {
     public void runWithDeleteLogicTest() {
         logicVersionUserMapper.deleteById(1L);
     }
+
 }

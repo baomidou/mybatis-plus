@@ -60,6 +60,7 @@ import com.baomidou.mybatisplus.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.SqlRunner;
+import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.toolkit.PackageHelper;
 
 /**
@@ -119,7 +120,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
     private ObjectWrapperFactory objectWrapperFactory;
 
-    private GlobalConfiguration globalConfig = GlobalConfiguration.defaults();
+    private GlobalConfiguration globalConfig = GlobalConfigUtils.defaults();
 
     // TODO 注入全局配置
     public void setGlobalConfig(GlobalConfiguration globalConfig) {
@@ -513,7 +514,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
         configuration.setEnvironment(new Environment(this.environment, this.transactionFactory, this.dataSource));
         // 设置元数据相关
-        GlobalConfiguration.setMetaData(dataSource, globalConfig);
+        GlobalConfigUtils.setMetaData(dataSource, globalConfig);
         SqlSessionFactory sqlSessionFactory = this.sqlSessionFactoryBuilder.build(configuration);
         // TODO SqlRunner
         SqlRunner.FACTORY = sqlSessionFactory;
@@ -524,7 +525,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         if (!isEmpty(this.mapperLocations)) {
             if (globalConfig.isRefresh()) {
                 //TODO 设置自动刷新配置 减少配置
-                new MybatisMapperRefresh(sqlSessionFactory, 2,
+                new MybatisMapperRefresh(this.mapperLocations, sqlSessionFactory, 2,
                         2, true);
             }
             for (Resource mapperLocation : this.mapperLocations) {

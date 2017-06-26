@@ -15,18 +15,13 @@
  */
 package com.baomidou.mybatisplus.test;
 
-import java.io.InputStream;
 import java.util.Date;
 import java.util.UUID;
 
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.Assert;
 
-import com.baomidou.mybatisplus.MybatisSessionFactoryBuilder;
-import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.mapper.Condition;
 import com.baomidou.mybatisplus.test.mysql.entity.NotPK;
 import com.baomidou.mybatisplus.test.mysql.entity.Test;
@@ -41,30 +36,14 @@ import com.baomidou.mybatisplus.test.mysql.mapper.TestMapper;
  * @author Caratacus
  * @Date 2016-12-22
  */
-public class GlobalConfigurationTest {
+public class GlobalConfigurationTest extends CrudTest {
 
     /**
      * 全局配置测试
      */
-    @SuppressWarnings("unchecked")
-    public static void main(String[] args) {
-        GlobalConfiguration global = GlobalConfiguration.defaults();
-        global.setAutoSetDbType(true);
-        // 设置全局校验机制为FieldStrategy.Empty
-        global.setFieldStrategy(2);
-        BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://127.0.0.1:3306/mybatis-plus?characterEncoding=UTF-8");
-        dataSource.setUsername("root");
-        dataSource.setPassword("521");
-        dataSource.setMaxTotal(1000);
-        GlobalConfiguration.setMetaData(dataSource, global);
-        // 加载配置文件
-        InputStream inputStream = GlobalConfigurationTest.class.getClassLoader().getResourceAsStream("mysql-config.xml");
-        MybatisSessionFactoryBuilder factoryBuilder = new MybatisSessionFactoryBuilder();
-        factoryBuilder.setGlobalConfig(global);
-        SqlSessionFactory sessionFactory = factoryBuilder.build(inputStream);
-        SqlSession session = sessionFactory.openSession(false);
+    @org.junit.Test
+    public void testGlobalConfig() {
+        SqlSession session = this.sqlSessionFactory().openSession(false);
         TestMapper testMapper = session.getMapper(TestMapper.class);
         /*Wrapper type = Condition.instance().eq("id",1).or().in("type", new Object[]{1, 2, 3, 4, 5, 6});
         List list = testMapper.selectList(type);
@@ -75,7 +54,7 @@ public class GlobalConfigurationTest {
         test.setType("");
         testMapper.insert(test);
 
-        SqlSession sqlSession = sessionFactory.openSession(false);
+        SqlSession sqlSession = this.sqlSessionFactory().openSession(false);
         NotPKMapper pkMapper = sqlSession.getMapper(NotPKMapper.class);
         NotPK notPK = new NotPK();
         notPK.setUuid(UUID.randomUUID().toString());
@@ -99,10 +78,4 @@ public class GlobalConfigurationTest {
         sqlSession.commit();
     }
 
-
-    @org.junit.Test
-    public void testStringFormat() {
-        String str = "'%s'";
-        System.out.println(String.format(str, "abc"));
-    }
 }

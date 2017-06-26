@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.entity;
 import java.io.Serializable;
 
 import com.baomidou.mybatisplus.mapper.SqlRunner;
+import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
@@ -63,7 +64,7 @@ public class Column implements Serializable {
         }
         String quote = null;
         if (isEscape() && SqlRunner.FACTORY != null) {
-            GlobalConfiguration globalConfig = GlobalConfiguration.getGlobalConfig(SqlRunner.FACTORY.getConfiguration());
+            GlobalConfiguration globalConfig = GlobalConfigUtils.getGlobalConfig(SqlRunner.FACTORY.getConfiguration());
             quote = globalConfig.getIdentifierQuote() == null ? globalConfig.getDbType().getQuote() : globalConfig.getIdentifierQuote();
         }
         return AS + (StringUtils.isNotEmpty(quote) ? String.format(quote, as) : as);

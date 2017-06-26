@@ -1,7 +1,5 @@
 package com.baomidou.mybatisplus.test.h2;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -34,7 +32,7 @@ import com.baomidou.mybatisplus.test.h2.entity.persistent.H2Addr;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
-public class H2UserAddrJoinTest {
+public class H2UserAddrJoinTest extends H2Test {
 
     @Autowired
     private H2UserMapper userMapper;
@@ -50,59 +48,11 @@ public class H2UserAddrJoinTest {
             stmt.execute("truncate table h2user");
             stmt.execute(readFile("addr.ddl.sql"));
             stmt.execute("truncate table h2address");
-            insertUsers(stmt);
-            insertAddr(stmt);
+            executeSql(stmt, "user.insert.sql");
+            executeSql(stmt, "addr.insert.sql");
             conn.commit();
         }
     }
-
-    private static void insertUsers(Statement stmt) throws SQLException, IOException {
-        String filename = "user.insert.sql";
-        String filePath = H2UserAddrJoinTest.class.getClassLoader().getResource("").getPath() + "/h2/" + filename;
-        try (
-                BufferedReader reader = new BufferedReader(new FileReader(filePath))
-        ) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.isEmpty()) {
-                    continue;
-                }
-                stmt.execute(line.replace(";", ""));
-            }
-        }
-    }
-
-    private static void insertAddr(Statement stmt) throws SQLException, IOException {
-        String filename = "addr.insert.sql";
-        String filePath = H2UserAddrJoinTest.class.getClassLoader().getResource("").getPath() + "/h2/" + filename;
-        try (
-                BufferedReader reader = new BufferedReader(new FileReader(filePath))
-        ) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.isEmpty()) {
-                    continue;
-                }
-                stmt.execute(line.replace(";", ""));
-            }
-        }
-    }
-
-    private static String readFile(String filename) {
-        StringBuilder builder = new StringBuilder();
-        String filePath = H2UserAddrJoinTest.class.getClassLoader().getResource("").getPath() + "/h2/" + filename;
-        try (
-                BufferedReader reader = new BufferedReader(new FileReader(filePath))
-        ) {
-            String line;
-            while ((line = reader.readLine()) != null)
-                builder.append(line).append(" ");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return builder.toString();
-    }
-
 
     @Test
     public void testJoinTableWithoutPagination() {
@@ -115,6 +65,5 @@ public class H2UserAddrJoinTest {
         List<H2Addr> addrList = userMapper.getAddrListByUserId(101L, new Page<H2Addr>(0, 3));
         Assert.assertEquals(3, addrList.size());
     }
-
 
 }

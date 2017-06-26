@@ -16,7 +16,7 @@ ext {
 }
 
 group = 'com.baomidou'
-version = '2.0.8'
+version = '2.0.9'
 
 description = "Mybatis 增强工具包 - 只做增强不做改变，简化CRUD操作"
 
@@ -29,8 +29,11 @@ tasks.withType(JavaCompile) {
 
 repositories {
     mavenLocal()
+    maven { url 'http://repo.spring.io/plugins-release' }
+    maven { url "https://plugins.gradle.org/m2/" }
+    maven { url 'http://maven.aliyun.com/nexus/content/groups/public/'}
     mavenCentral()
-    maven { url "http://repo.maven.apache.org/maven2" }
+    jcenter()
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -57,6 +60,20 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 artifacts {
     archives sourcesJar
     archives javadocJar
+}
+
+uploadArchives {
+    def repositoryUrl = "http://172.16.111.124:8081/nexus/content/repositories/releases/"
+    repositories {
+        mavenDeployer {
+            repository(url: "$repositoryUrl") {
+                authentication(userName: "deployment", password: "deployment123")
+            }
+            pom.version = "$project.version"
+            pom.artifactId = "$project.name"
+            pom.groupId = "$project.group"
+        }
+    }
 }
 
 def common = [
@@ -89,4 +106,8 @@ dependencies {
     testCompile("org.slf4j:slf4j-api:1.7.25")
     testCompile("org.slf4j:jcl-over-slf4j:1.7.25")
     testCompile("org.springframework:spring-test:${springVersion}")
+    testCompile("org.springframework:spring-webmvc:${springVersion}")
+    testCompile("org.aspectj:aspectjweaver:1.8.9")
+    testCompile("javax.servlet:servlet-api:2.5")
+    testCompile("org.projectlombok:lombok:1.16.16")
 }

@@ -153,7 +153,9 @@ public abstract class Model<T extends Model> implements Serializable {
             throw new MybatisPlusException("updateById primaryKey is null.");
         }
         // updateById
-        return SqlHelper.retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE_BY_ID), this));
+        Map<String, Object> map = new HashMap<>();
+        map.put("et", this);
+        return SqlHelper.retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE_BY_ID), map));
     }
 
     /**
@@ -166,8 +168,10 @@ public abstract class Model<T extends Model> implements Serializable {
         if (StringUtils.checkValNull(pkVal())) {
             throw new MybatisPlusException("updateAllColumnById primaryKey is null.");
         }
-        // updateById
-        return SqlHelper.retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE_ALL_COLUMN_BY_ID), this));
+        // updateAllColumnById
+        Map<String, Object> map = new HashMap<>();
+        map.put("et", this);
+        return SqlHelper.retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE_ALL_COLUMN_BY_ID), map));
     }
 
     /**

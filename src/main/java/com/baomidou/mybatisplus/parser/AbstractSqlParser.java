@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, hubin (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,24 +13,32 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test.h2.entity.service.impl;
+package com.baomidou.mybatisplus.parser;
 
-import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserMapper;
-import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
-import com.baomidou.mybatisplus.test.h2.entity.service.IH2UserService;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 
 /**
  * <p>
- * Service层测试
+ * 抽象 SQL 解析类
  * </p>
  *
  * @author hubin
- * @date 2017-01-30
+ * @Date 2017-06-20
  */
-@Service
-public class H2UserServiceImpl extends ServiceImpl<H2UserMapper, H2User> implements IH2UserService {
+public abstract class AbstractSqlParser {
+
+    // 日志
+    protected static final Log logger = LogFactory.getLog(AbstractSqlParser.class);
+
+    /**
+     * <p>
+     * 获取优化 SQL 方法
+     * </p>
+     *
+     * @param sql    SQL 语句
+     * @return SQL 信息
+     */
+    public abstract SqlInfo optimizeSql(String sql);
 
 }

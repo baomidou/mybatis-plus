@@ -13,14 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test.h2.entity.service.impl;
+package com.baomidou.mybatisplus.test.h2.service;
 
-import org.springframework.stereotype.Service;
-
-import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserNoVersionMapper;
+import com.baomidou.mybatisplus.service.IService;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2UserNoVersion;
-import com.baomidou.mybatisplus.test.h2.entity.service.IH2UserNoVersionService;
 
 /**
  * <p>
@@ -30,7 +26,6 @@ import com.baomidou.mybatisplus.test.h2.entity.service.IH2UserNoVersionService;
  * @author hubin
  * @date 2017-01-30
  */
-@Service
-public class H2UserNoVersionServiceImpl extends ServiceImpl<H2UserNoVersionMapper, H2UserNoVersion> implements IH2UserNoVersionService {
+public interface IH2UserNoVersionService extends IService<H2UserNoVersion> {
 
 }

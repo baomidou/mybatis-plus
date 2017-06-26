@@ -22,7 +22,7 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
-import com.baomidou.mybatisplus.entity.GlobalConfiguration;
+import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
 
 /**
  * <p>
@@ -48,7 +48,8 @@ public class MybatisConfiguration extends Configuration {
      * 初始化调用
      */
     public MybatisConfiguration() {
-        logger.debug("mybatis-plus init success.");
+        this.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
+        logger.debug("Mybatis-plus init success.");
     }
 
     /**
@@ -64,7 +65,7 @@ public class MybatisConfiguration extends Configuration {
     @Override
     public void addMappedStatement(MappedStatement ms) {
         logger.debug("addMappedStatement: " + ms.getId());
-        if (GlobalConfiguration.isRefresh(ms.getConfiguration())) {
+        if (GlobalConfigUtils.isRefresh(ms.getConfiguration())) {
             /*
              * 支持是否自动刷新 XML 变更内容，开发环境使用【 注：生产环境勿用！】
 			 */
@@ -72,7 +73,7 @@ public class MybatisConfiguration extends Configuration {
         } else {
             if (this.mappedStatements.containsKey(ms.getId())) {
                 /*
-				 * 说明已加载了xml中的节点； 忽略mapper中的SqlProvider数据
+                 * 说明已加载了xml中的节点； 忽略mapper中的SqlProvider数据
 				 */
                 logger.error("mapper[" + ms.getId() + "] is ignored, because it's exists, maybe from xml file");
                 return;
@@ -84,7 +85,7 @@ public class MybatisConfiguration extends Configuration {
     @Override
     public void setDefaultScriptingLanguage(Class<?> driver) {
         if (driver == null) {
-			/* 设置自定义 driver */
+            /* 设置自定义 driver */
             driver = MybatisXMLLanguageDriver.class;
         }
         super.setDefaultScriptingLanguage(driver);

@@ -98,7 +98,7 @@ public class PerformanceInterceptor implements Interceptor {
                     }
                 } else {
                     Class<?> clazz = Class.forName("oracle.jdbc.driver.OracleStatement");
-                    oracleGetOriginalSqlMethod = clazz.getDeclaredMethod("getOriginalSql", null);
+                    oracleGetOriginalSqlMethod = clazz.getDeclaredMethod("getOriginalSql", (Class<?>) null);
                     if (oracleGetOriginalSqlMethod != null) {
                         Object stmtSql = oracleGetOriginalSqlMethod.invoke(statement);
                         if (stmtSql != null && stmtSql instanceof String) {

@@ -1,7 +1,5 @@
 package com.baomidou.mybatisplus.test.h2;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -28,7 +26,6 @@ import com.baomidou.mybatisplus.test.h2.entity.persistent.H2UserMetaObj;
 
 /**
  * <p>
- * TODO class
  * </p>
  *
  * @author yuxiaobin
@@ -36,7 +33,10 @@ import com.baomidou.mybatisplus.test.h2.entity.persistent.H2UserMetaObj;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2-metaobj.xml"})
-public class H2MetaObjectHandlerTest {
+public class H2MetaObjectHandlerTest extends H2Test {
+
+    @Autowired
+    private H2UserMetaobjMapper userMapper;
 
     @BeforeClass
     public static void initDB() throws SQLException, IOException {
@@ -48,41 +48,10 @@ public class H2MetaObjectHandlerTest {
             Statement stmt = conn.createStatement();
             stmt.execute(createTableSql);
             stmt.execute("truncate table h2user");
-            insertUsers(stmt);
+            executeSql(stmt, "user.insert.sql");
             conn.commit();
         }
     }
-
-    private static void insertUsers(Statement stmt) throws SQLException, IOException {
-        String filename = "user.insert.sql";
-        String filePath = H2UserTest.class.getClassLoader().getResource("").getPath() + "/h2/" + filename;
-        try (
-                BufferedReader reader = new BufferedReader(new FileReader(filePath))
-        ) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                stmt.execute(line.replace(";", ""));
-            }
-        }
-    }
-
-    private static String readFile(String filename) {
-        StringBuilder builder = new StringBuilder();
-        String filePath = H2UserTest.class.getClassLoader().getResource("").getPath() + "/h2/" + filename;
-        try (
-                BufferedReader reader = new BufferedReader(new FileReader(filePath))
-        ) {
-            String line;
-            while ((line = reader.readLine()) != null)
-                builder.append(line).append(" ");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return builder.toString();
-    }
-
-    @Autowired
-    H2UserMetaobjMapper userMapper;
 
     @Test
     public void testMetaObjectHandler() {

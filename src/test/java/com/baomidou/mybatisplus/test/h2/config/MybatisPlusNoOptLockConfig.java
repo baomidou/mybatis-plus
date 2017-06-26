@@ -39,7 +39,6 @@ public class MybatisPlusNoOptLockConfig {
         configuration.setJdbcTypeForNull(JdbcType.NULL);
         sqlSessionFactory.setConfiguration(configuration);
         PaginationInterceptor pagination = new PaginationInterceptor();
-        pagination.setDialectType("h2");
         sqlSessionFactory.setPlugins(new Interceptor[]{
                 pagination,
         });

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2014, hubin (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,12 +13,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.toolkit;
+package com.baomidou.mybatisplus.plugins.pagination.optimize;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.baomidou.mybatisplus.entity.CountOptimize;
+import com.baomidou.mybatisplus.parser.AbstractSqlParser;
+import com.baomidou.mybatisplus.parser.SqlInfo;
+import com.baomidou.mybatisplus.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.toolkit.SqlUtils;
 
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Function;
@@ -34,61 +37,60 @@ import net.sf.jsqlparser.statement.select.SelectItem;
 
 /**
  * <p>
- * JsqlParserUtils工具类
+ * JsqlParser Count Optimize
  * </p>
  *
- * @author Caratacus
- * @Date 2016-11-30
+ * @author hubin
+ * @since 2017-06-20
  */
-public class JsqlParserUtils {
+public class JsqlParserCountOptimize extends AbstractSqlParser {
 
-    private static List<SelectItem> countSelectItem = null;
+    private static final List<SelectItem> countSelectItem = countSelectItem();
 
-    /**
-     * jsqlparser方式获取select的count语句
-     *
-     * @param originalSql selectSQL
-     * @return
-     */
-    public static CountOptimize jsqlparserCount(CountOptimize countOptimize, String originalSql) {
-        String sqlCount;
+    @Override
+    public SqlInfo optimizeSql(String sql) {
+        if (logger.isDebugEnabled()) {
+            logger.debug(" JsqlParserCountOptimize sql=" + sql);
+        }
+        SqlInfo sqlInfo = SqlInfo.newInstance();
         try {
-            Select selectStatement = (Select) CCJSqlParserUtil.parse(originalSql);
+            Select selectStatement = (Select) CCJSqlParserUtil.parse(sql);
             PlainSelect plainSelect = (PlainSelect) selectStatement.getSelectBody();
             Distinct distinct = plainSelect.getDistinct();
             List<Expression> groupBy = plainSelect.getGroupByColumnReferences();
-            // 优化Order by
             List<OrderByElement> orderBy = plainSelect.getOrderByElements();
-            // 添加包含groupby 不去除orderby
+
+            // 添加包含groupBy 不去除orderBy
             if (CollectionUtils.isEmpty(groupBy) && CollectionUtils.isNotEmpty(orderBy)) {
                 plainSelect.setOrderByElements(null);
-                countOptimize.setOrderBy(false);
+                sqlInfo.setOrderBy(false);
             }
+
             // 包含 distinct、groupBy不优化
             if (distinct != null || CollectionUtils.isNotEmpty(groupBy)) {
-                sqlCount = String.format(SqlUtils.SQL_BASE_COUNT, selectStatement.toString());
-                countOptimize.setCountSQL(sqlCount);
-                return countOptimize;
+                sqlInfo.setSql(String.format(SqlUtils.SQL_BASE_COUNT, selectStatement.toString()));
+                return sqlInfo;
             }
-            List<SelectItem> selectCount = countSelectItem();
-            plainSelect.setSelectItems(selectCount);
-            sqlCount = selectStatement.toString();
-        } catch (Exception e) {
-            sqlCount = String.format(SqlUtils.SQL_BASE_COUNT, originalSql);
+            // 优化 SQL
+            plainSelect.setSelectItems(countSelectItem);
+            sqlInfo.setSql(selectStatement.toString());
+            return sqlInfo;
+        } catch (Throwable e) {
+            // 无法优化使用原 SQL
+            sqlInfo.setSql(String.format(SqlUtils.SQL_BASE_COUNT, sql));
+            return sqlInfo;
         }
-        countOptimize.setCountSQL(sqlCount);
-        return countOptimize;
     }
 
+
     /**
+     * <p>
      * 获取jsqlparser中count的SelectItem
+     * </p>
      *
      * @return
      */
     private static List<SelectItem> countSelectItem() {
-        if (CollectionUtils.isNotEmpty(countSelectItem)) {
-            return countSelectItem;
-        }
         Function function = new Function();
         function.setName("COUNT");
         List<Expression> expressions = new ArrayList<>();
@@ -97,9 +99,9 @@ public class JsqlParserUtils {
         expressions.add(longValue);
         expressionList.setExpressions(expressions);
         function.setParameters(expressionList);
-        countSelectItem = new ArrayList<>();
+        List<SelectItem> selectItems = new ArrayList<>();
         SelectExpressionItem selectExpressionItem = new SelectExpressionItem(function);
-        countSelectItem.add(selectExpressionItem);
-        return countSelectItem;
+        selectItems.add(selectExpressionItem);
+        return selectItems;
     }
 }

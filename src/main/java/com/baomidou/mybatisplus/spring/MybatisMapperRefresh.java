@@ -43,6 +43,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.util.ResourceUtils;
 
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
+import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.toolkit.SystemClock;
 
 /**
@@ -93,7 +94,6 @@ public class MybatisMapperRefresh implements Runnable {
      * @param sleepSeconds
      * @param enabled
      */
-    @Deprecated
     public MybatisMapperRefresh(Resource[] mapperLocations, SqlSessionFactory sqlSessionFactory, int delaySeconds,
                                 int sleepSeconds, boolean enabled) {
         this.mapperLocations = mapperLocations.clone();
@@ -138,7 +138,7 @@ public class MybatisMapperRefresh implements Runnable {
     }
 
     public void run() {
-        final GlobalConfiguration globalConfig = GlobalConfiguration.getGlobalConfig(configuration);
+        final GlobalConfiguration globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
         /*
          * 启动 XML 热加载
 		 */
@@ -150,24 +150,26 @@ public class MybatisMapperRefresh implements Runnable {
                 public void run() {
                     if (fileSet == null) {
                         fileSet = new HashSet<>();
-                        for (Resource mapperLocation : mapperLocations) {
-                            try {
-                                if (ResourceUtils.isJarURL(mapperLocation.getURL())) {
-                                    String key = new UrlResource(ResourceUtils.extractJarFileURL(mapperLocation.getURL()))
-                                            .getFile().getPath();
-                                    fileSet.add(key);
-                                    if (jarMapper.get(key) != null) {
-                                        jarMapper.get(key).add(mapperLocation);
+                        if (mapperLocations != null) {
+                            for (Resource mapperLocation : mapperLocations) {
+                                try {
+                                    if (ResourceUtils.isJarURL(mapperLocation.getURL())) {
+                                        String key = new UrlResource(ResourceUtils.extractJarFileURL(mapperLocation.getURL()))
+                                                .getFile().getPath();
+                                        fileSet.add(key);
+                                        if (jarMapper.get(key) != null) {
+                                            jarMapper.get(key).add(mapperLocation);
+                                        } else {
+                                            List<Resource> resourcesList = new ArrayList<>();
+                                            resourcesList.add(mapperLocation);
+                                            jarMapper.put(key, resourcesList);
+                                        }
                                     } else {
-                                        List<Resource> resourcesList = new ArrayList<>();
-                                        resourcesList.add(mapperLocation);
-                                        jarMapper.put(key, resourcesList);
+                                        fileSet.add(mapperLocation.getFile().getPath());
                                     }
-                                } else {
-                                    fileSet.add(mapperLocation.getFile().getPath());
+                                } catch (IOException ioException) {
+                                    ioException.printStackTrace();
                                 }
-                            } catch (IOException ioException) {
-                                ioException.printStackTrace();
                             }
                         }
                     }

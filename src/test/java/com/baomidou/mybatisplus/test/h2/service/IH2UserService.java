@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2014, hubin (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,29 +13,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.toolkit;
+package com.baomidou.mybatisplus.test.h2.service;
 
-import com.alibaba.druid.sql.PagerUtils;
+import com.baomidou.mybatisplus.service.IService;
+import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
 
 /**
  * <p>
- * DruidUtils工具类
+ * Service层测试
  * </p>
  *
- * @author Caratacus
- * @Date 2016-11-30
+ * @author hubin
+ * @date 2017-01-30
  */
-public class DruidUtils {
-
-    /**
-     * 通过Druid方式获取count语句
-     *
-     * @param originalSql
-     * @param dialectType
-     * @return
-     */
-    public static String count(String originalSql, String dialectType) {
-        return PagerUtils.count(originalSql, dialectType);
-    }
+public interface IH2UserService extends IService<H2User> {
 
 }

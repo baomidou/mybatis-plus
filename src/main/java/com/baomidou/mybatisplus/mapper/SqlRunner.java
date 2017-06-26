@@ -23,8 +23,8 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
@@ -62,7 +62,9 @@ public class SqlRunner {
     }
 
     /**
+     * <p>
      * 获取默认的SqlQuery(适用于单库)
+     * </p>
      *
      * @return
      */
@@ -75,7 +77,9 @@ public class SqlRunner {
     }
 
     /**
+     * <p>
      * 根据当前class对象获取SqlQuery(适用于多库)
+     * </p>
      *
      * @param clazz
      * @return
@@ -147,7 +151,7 @@ public class SqlRunner {
      * <p/>
      */
     private SqlSession sqlSession() {
-        return (clazz != null) ? SqlHelper.sqlSession(clazz) : GlobalConfiguration.getSqlSession(FACTORY.getConfiguration());
+        return (clazz != null) ? SqlHelper.sqlSession(clazz) : GlobalConfigUtils.getSqlSession(FACTORY.getConfiguration());
     }
 
 }
