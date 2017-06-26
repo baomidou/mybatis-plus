@@ -267,10 +267,9 @@ public class LogicSqlInjector extends AutoSqlInjector {
                 where.append(convertIfTag(fieldInfo, true));
             }
             where.append("\n</if>");
+            where.append("\n").append(getLogicDeleteSql(table));
             where.append("\n<if test=\"ew.sqlSegment!=null\">${ew.sqlSegment}\n</if>");
             where.append("\n</if>");
-            // 过滤逻辑, 这段代码放在这里的原因，第一：不把 逻辑的过滤 放在where条件 第一位， 能够方便利用索引
-            where.append("\n").append(getLogicDeleteSql(table));
             where.append("\n</where>");
             return where.toString();
         }
