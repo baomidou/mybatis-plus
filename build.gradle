@@ -81,13 +81,13 @@ def common = [
         "org.springframework:spring-jdbc:${springVersion}",
         "org.springframework:spring-context-support:${springVersion}",
         "com.alibaba:druid:1.0.29",
-        "org.apache.velocity:velocity:1.7",
-        "com.github.jsqlparser:jsqlparser:1.0"
+        "org.apache.velocity:velocity:1.7"
 ]
 
 dependencies {
     compile ("org.mybatis:mybatis-spring:${mybatisSpringVersion}")
     compile ("org.mybatis:mybatis:${mybatisVersion}")
+    compile ("com.github.jsqlparser:jsqlparser:1.0")
     compileOnly common
     testCompileOnly("javax.servlet:servlet-api:2.5")
     testCompile("org.mybatis.caches:mybatis-ehcache:1.1.0")
