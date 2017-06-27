@@ -188,7 +188,7 @@ public class UserMapperTest extends CrudTest {
 		/*
          * <p> 修改 </p>
 		 *
-		 * updateById 是从 BaseMapper 中继承而来的，UserMapper.xml中并没有申明改sql
+		 * updateById 是从 SuperMapper 中继承而来的，UserMapper.xml中并没有申明改sql
 		 */
         rlt = userMapper.updateById(new User(12L, "MybatisPlus"));
         System.err.println("------------------updateById---------------------- result=" + rlt + "\n\n");
