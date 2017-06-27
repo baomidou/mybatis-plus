@@ -29,7 +29,7 @@ import com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean;
 @MapperScan("com.baomidou.mybatisplus.test.oracle.mapper")
 public class OracleMybatisPlusConfig {
 
-    @Bean
+    @Bean("mybatisSqlSession")
     public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader, GlobalConfiguration globalConfiguration) throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
         sqlSessionFactory.setDataSource(dataSource);

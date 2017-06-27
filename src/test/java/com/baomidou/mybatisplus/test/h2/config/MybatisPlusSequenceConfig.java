@@ -31,7 +31,7 @@ import com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean;
 @MapperScan("com.baomidou.mybatisplus.test.h2.entity.mapper")
 public class MybatisPlusSequenceConfig {
 
-    @Bean
+    @Bean("mybatisSqlSession")
     public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader, GlobalConfiguration globalConfiguration) throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
         sqlSessionFactory.setDataSource(dataSource);
