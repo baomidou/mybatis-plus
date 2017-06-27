@@ -55,7 +55,7 @@ public class DialectFactory {
     public static String buildPaginationSql(Pagination page, String buildSql, DBType dbType, String dialectClazz)
             throws Exception {
         // fix #172, 196
-        return getiDialect(dbType, dialectClazz).buildPaginationSql(buildSql, page.getOffsetCurrent(), page.getSize());
+        return getDialect(dbType, dialectClazz).buildPaginationSql(buildSql, page.getOffsetCurrent(), page.getSize());
     }
 
     /**
@@ -72,7 +72,7 @@ public class DialectFactory {
     public static String buildPaginationSql(RowBounds rowBounds, String buildSql, DBType dbType, String dialectClazz)
             throws Exception {
         // fix #196
-        return getiDialect(dbType, dialectClazz).buildPaginationSql(buildSql, rowBounds.getOffset(), rowBounds.getLimit());
+        return getDialect(dbType, dialectClazz).buildPaginationSql(buildSql, rowBounds.getOffset(), rowBounds.getLimit());
     }
 
     /**
@@ -85,21 +85,19 @@ public class DialectFactory {
      * @return
      * @throws Exception
      */
-    private static IDialect getiDialect(DBType dbType, String dialectClazz) throws Exception {
+    private static IDialect getDialect(DBType dbType, String dialectClazz) throws Exception {
         IDialect dialect = null;
-        if (StringUtils.checkValNotNull(dbType)) {
-            dialect = getDialectByDbtype(dbType);
-        } else {
-            if (StringUtils.isNotEmpty(dialectClazz)) {
-                try {
-                    Class<?> clazz = Class.forName(dialectClazz);
-                    if (IDialect.class.isAssignableFrom(clazz)) {
-                        dialect = (IDialect) clazz.newInstance();
-                    }
-                } catch (ClassNotFoundException e) {
-                    throw new MybatisPlusException("Class :" + dialectClazz + " is not found");
+        if (StringUtils.isNotEmpty(dialectClazz)) {
+            try {
+                Class<?> clazz = Class.forName(dialectClazz);
+                if (IDialect.class.isAssignableFrom(clazz)) {
+                    dialect = (IDialect) clazz.newInstance();
                 }
+            } catch (ClassNotFoundException e) {
+                throw new MybatisPlusException("Class :" + dialectClazz + " is not found");
             }
+        } else if (null != dbType) {
+            dialect = getDialectByDbtype(dbType);
         }
         /* 未配置方言则抛出异常 */
         if (dialect == null) {
