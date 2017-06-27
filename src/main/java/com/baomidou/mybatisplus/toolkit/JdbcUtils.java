@@ -15,7 +15,11 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+
 import com.baomidou.mybatisplus.enums.DBType;
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 
 /**
  * <p>
@@ -27,6 +31,8 @@ import com.baomidou.mybatisplus.enums.DBType;
  */
 public class JdbcUtils {
 
+    private static final Log logger = LogFactory.getLog(JdbcUtils.class);
+
     /**
      * <p>
      * 根据连接地址判断数据库类型
@@ -37,7 +43,7 @@ public class JdbcUtils {
      */
     public static DBType getDbType(String jdbcUrl) {
         if (StringUtils.isEmpty(jdbcUrl)) {
-            return DBType.MYSQL;
+            throw new MybatisPlusException("Error: The jdbcUrl is Null, Cannot read database type");
         }
         if (jdbcUrl.startsWith("jdbc:mysql:") || jdbcUrl.startsWith("jdbc:cobar:")
                 || jdbcUrl.startsWith("jdbc:log4jdbc:mysql:")) {
@@ -59,6 +65,7 @@ public class JdbcUtils {
         } else if (jdbcUrl.startsWith("jdbc:h2:") || jdbcUrl.startsWith("jdbc:log4jdbc:h2:")) {
             return DBType.H2;
         } else {
+            logger.warn("The jdbcUrl is " + jdbcUrl + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!");
             return DBType.OTHER;
         }
     }
