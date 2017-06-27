@@ -2,6 +2,12 @@ package ${package.Service};
 
 import ${package.Entity}.${entity};
 import ${superServiceClassPackage};
+#if(${controllerBasicMethod})
+#if(${controllerBasicPagingMethodByPageHelper})
+import com.github.pagehelper.PageInfo;
+import com.github.pagehelper.PageRowBounds;
+#end
+#end
 
 /**
  * <p>
@@ -12,5 +18,41 @@ import ${superServiceClassPackage};
  * @since ${date}
  */
 public interface ${table.serviceName} extends ${superServiceClass}<${entity}> {
-	
+
+#if(${controllerBasicPagingMethodByPageHelper})
+    /**
+     * 默认分页(PageHelper分页)
+     * @param pageRowBounds
+     *   <pre>
+     *      <table border="1">
+     *          <caption>参数说明({@link PageRowBounds})</caption>
+     *          <tr>
+     *              <td>参数名称</td>
+     *              <td>参数类型</td>
+     *              <td>参数说明</td>
+     *          </tr>
+     *          <tr>
+     *              <td>PageRowBounds#getOffset()</td>
+     *              <td>int</td>
+     *              <td>页码</td>
+     *          </tr>
+     *          <tr>
+     *              <td>PageRowBounds#getLimit()</td>
+     *              <td>int</td>
+     *              <td>每页显示数量</td>
+     *          </tr>
+     *      </table>
+     *      <br>
+     *     示例 :
+     *          <ul>
+     *              <li> 1. PageInfo page = listPage(new PageRowBounds(1,10)); </li>
+     *          </ul>
+     *
+     *
+     *   </pre>                    
+     * @return PageInfo
+     */
+    PageInfo listPage( PageRowBounds pageRowBounds );
+#end
+
 }

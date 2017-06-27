@@ -3,6 +3,20 @@ package ${package.Controller};
 
 import org.springframework.web.bind.annotation.RequestMapping;
 
+#if(${controllerBasicMethod})
+import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import ${package.Entity}.${entity};
+import ${package.Service}.${table.serviceName};
+#if(${controllerBasicPagingMethodByPageHelper})
+import com.github.pagehelper.PageRowBounds;
+import com.github.pagehelper.PageInfo;
+#else
+import com.baomidou.mybatisplus.plugins.Page;
+#end
+#end
+
 #if(${restControllerStyle})
 import org.springframework.web.bind.annotation.RestController;
 #else
@@ -31,5 +45,113 @@ public class ${table.controllerName} extends ${superControllerClass} {
 #else
 public class ${table.controllerName} {
 #end
-	
+#if(${controllerBasicMethod})
+    @Autowired
+    private ${table.serviceName} ${serviceVariableName};
+
+    /*
+      #foreach($field in ${table.fields})
+      
+        #if("$!field.comment" != "") ${field.comment} #end ${field.propertyName} #if(${field.propertyType.equals("Boolean")}) boolean #else ${field.propertyType} #end
+        
+       #end
+      
+     */
+    
+    /**
+     * 
+     * URI    : { GET } #if(${package.ModuleName})/${package.ModuleName}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${table.entityPath}#end/{id}
+     * 
+     * @param id : 主键
+     * @return
+     */
+    @GetMapping("{id}")
+    public ResponseEntity< ${entity} > get ( @PathVariable ${primaryKeyTypeString} id ){
+        return ResponseEntity.ok(${serviceVariableName}.selectById( id ));
+    }
+
+    
+    #if(${controllerBasicPagingMethodByPageHelper})
+        
+    /**
+     * URI    : { GET } #if(${package.ModuleName})/${package.ModuleName}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${table.entityPath}#end
+     *
+     * @param offset : 页码
+     * @param limit  : 每页显示数量
+     * @return
+     */
+    @GetMapping
+    public ResponseEntity< PageInfo > list ( @RequestParam(required = false,defaultValue = "1") int offset,
+                                             @RequestParam(required = false,defaultValue = "10") int limit ){
+        return ResponseEntity.ok(${serviceVariableName}.listPage( new PageRowBounds(offset,limit) ));
+    }
+
+
+    #else
+        
+    /**
+     * URI    : { GET } #if(${package.ModuleName})/${package.ModuleName}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${table.entityPath}#end
+     *
+     * @param current : 页码
+     * @param size    : 每页显示数量
+     * @return
+     */
+    @GetMapping
+    public ResponseEntity< Page > list ( @RequestParam(required = false,defaultValue = "1") int current,
+                                         @RequestParam(required = false,defaultValue = "10") int size ){
+        return ResponseEntity.ok(${serviceVariableName}.selectPage( new Page(current,size) ));
+    }
+    #end
+
+    /**
+     * URI    : { POST } #if(${package.ModuleName})/${package.ModuleName}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${table.entityPath}#end
+     * 
+     * @param ${entityVariableName} : {@link ${entity}}
+     * @return
+     */
+    @PostMapping
+    public ResponseEntity insert ( @RequestBody ${entity} ${entityVariableName} ){
+        if ( ! ${serviceVariableName}.insert( ${entityVariableName}) ){
+            return ResponseEntity.ok("保存失败");    
+        }
+        return ResponseEntity.ok("保存成功");
+    }
+
+    /**
+     * URI    : { PUT } #if(${package.ModuleName})/${package.ModuleName}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${table.entityPath}#end/{id}
+     * 
+     * @param id : 主键
+     * @param ${entityVariableName} : {@link ${entity}}
+     * @return
+     */
+    @PutMapping("{id}")
+    public ResponseEntity update ( @PathVariable ${primaryKeyTypeString} id,
+                                   @RequestBody ${entity} ${entityVariableName} ){
+        #if(${entityLombokModel} || ${entityBuilderModel})
+        if ( ! ${serviceVariableName}.updateById( ${entityVariableName}.setId(id)) ) {
+        #else
+${entityVariableName}.setId(id);
+        if ( ! ${serviceVariableName}.updateById( ${entityVariableName} ) ) {
+        #end
+    return ResponseEntity.ok("更新失败");    
+        }
+        return ResponseEntity.ok("更新成功");
+    }
+
+    /**
+     * URI    : { DELETE } #if(${package.ModuleName})/${package.ModuleName}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${table.entityPath}#end/{id}
+     * 
+     * @param id : 主键
+     * @return
+     */
+    @DeleteMapping("{id}")
+    public ResponseEntity delete ( @PathVariable ${primaryKeyTypeString} id ){
+        if ( ! ${serviceVariableName}.deleteById(id) ){
+            return ResponseEntity.ok("删除失败");    
+        }
+        return ResponseEntity.ok("删除成功");
+    }
+#end
+    
+    
 }

@@ -37,6 +37,7 @@ public enum DbColumnType {
     FLOAT("Float", null),
     DOUBLE("Double", null),
     BOOLEAN("Boolean", null),
+    BASIC_BOOLEAN("boolean", null),
     BYTE_ARRAY("byte[]", null),
     CHARACTER("Character", null),
     OBJECT("Object", null),
