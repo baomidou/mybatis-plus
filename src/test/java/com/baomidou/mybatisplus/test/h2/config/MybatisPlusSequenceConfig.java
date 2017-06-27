@@ -31,7 +31,7 @@ import com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean;
 @MapperScan("com.baomidou.mybatisplus.test.h2.entity.mapper")
 public class MybatisPlusSequenceConfig {
 
-    @Bean("mybatisSqlSession")
+    @Bean
     public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader, GlobalConfiguration globalConfiguration) throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
         sqlSessionFactory.setDataSource(dataSource);
@@ -40,12 +40,12 @@ public class MybatisPlusSequenceConfig {
         MybatisConfiguration configuration = new MybatisConfiguration();
         configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
         configuration.setJdbcTypeForNull(JdbcType.NULL);
+        configuration.setMapUnderscoreToCamelCase(true);
         sqlSessionFactory.setConfiguration(configuration);
         PaginationInterceptor pagination = new PaginationInterceptor();
-        OptimisticLockerInterceptor optLock = new OptimisticLockerInterceptor();
         sqlSessionFactory.setPlugins(new Interceptor[]{
                 pagination,
-                optLock,
+                new OptimisticLockerInterceptor(),
                 new PerformanceInterceptor()
         });
         sqlSessionFactory.setGlobalConfig(globalConfiguration);
@@ -58,6 +58,7 @@ public class MybatisPlusSequenceConfig {
         conf.setIdType(2);
 //        conf.setDbType("h2");
         conf.setKeyGenerator(new H2KeyGenerator());
+//        conf.setDbColumnUnderline(true);
         return conf;
     }
 }

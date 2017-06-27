@@ -72,9 +72,9 @@
 			</transactionManager>
 			<dataSource type="UNPOOLED">
 				<property name="driver" value="oracle.jdbc.driver.OracleDriver" />
-				<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe" />
-				<property name="username" value="mp" />
-				<property name="password" value="mp" />
+				<property name="url" value="jdbc:oracle:thin:@192.168.10.169:1521:orcl" />
+				<property name="username" value="boxinfo" />
+				<property name="password" value="1qaz2wsx" />
 			<!-- 
 				<property name="driver" value="${jdbc.driver}" />
 				<property name="url" value="${jdbc.url}" />
@@ -94,8 +94,8 @@
      | package  指向可以找到Mapper接口的包名
      | -->
     <mappers>
-        <mapper class="com.baomidou.mybatisplus.test.oracle.TestUserMapper" />
-        <mapper class="com.baomidou.mybatisplus.test.oracle.TestSequserMapper" />
+        <mapper class="com.baomidou.mybatisplus.test.oracle.mapper.TestUserMapper" />
+        <mapper class="com.baomidou.mybatisplus.test.oracle.mapper.TestSequserMapper" />
         <mapper resource="oracle/TestUserMapper.xml"/>
     </mappers>
 </configuration>

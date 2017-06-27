@@ -86,11 +86,11 @@ public class H2UserExtendsTest extends H2Test{
 
         user = new H2UserIntVersionExtendTO();
         user.setId(id);
-        user.setName("风神");
+        user.setDesc("Caratacus2");
         userService.updateById(user);
         userFromDB = userService.selectById(id);
-        Assert.assertEquals("风神", userFromDB.getDesc());
-        Assert.assertEquals(new BigDecimal("9.9"), userFromDB.getPrice());
+        Assert.assertEquals("Caratacus2", userFromDB.getDesc());
+        Assert.assertEquals(new BigDecimal("9.99"), userFromDB.getPrice());
     }
 
 
