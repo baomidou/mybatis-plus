@@ -17,9 +17,7 @@
 		<property name="plugins">
 			<array>
 				<bean class="com.baomidou.mybatisplus.plugins.PerformanceInterceptor" />
-				<bean class="com.baomidou.mybatisplus.plugins.PaginationInterceptor">
-					<property name="dialectType" value="mysql" />
-				</bean>
+				<bean class="com.baomidou.mybatisplus.plugins.PaginationInterceptor"/>
 			</array>
 		</property>
 	</bean>

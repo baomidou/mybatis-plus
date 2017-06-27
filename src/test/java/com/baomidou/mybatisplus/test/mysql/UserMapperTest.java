@@ -326,7 +326,7 @@ public class UserMapperTest extends CrudTest {
      */
     private static void sleep() {
         try {
-            Thread.sleep(1000);
+            Thread.sleep(1);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -18,9 +18,7 @@
 			<array>
 				<!-- 分页插件配置 -->
 				<bean id="paginationInterceptor"
-					class="com.baomidou.mybatisplus.plugins.PaginationInterceptor">
-					<property name="dialectType" value="mysql" />
-				</bean>
+					class="com.baomidou.mybatisplus.plugins.PaginationInterceptor"/>
 				<bean id="optimisticLockerInterceptor"
 					class="com.baomidou.mybatisplus.plugins.OptimisticLockerInterceptor">
 				</bean>
