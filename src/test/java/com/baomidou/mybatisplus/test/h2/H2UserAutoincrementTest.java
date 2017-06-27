@@ -20,6 +20,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserMetaobjMapper;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2UserMetaObj;
+import com.baomidou.mybatisplus.test.h2.service.IH2UserMetaobjService;
 
 /**
  * <p>
@@ -35,6 +36,9 @@ public class H2UserAutoincrementTest extends H2Test {
 
     @Autowired
     private H2UserMetaobjMapper userMapper;
+
+    @Autowired
+    IH2UserMetaobjService userService;
 
     @BeforeClass
     public static void initDB() throws SQLException, IOException {
@@ -69,6 +73,35 @@ public class H2UserAutoincrementTest extends H2Test {
         Assert.assertEquals(1, userMapper.insert(user2).intValue());
         Long userId2 = user2.getId();
         Assert.assertEquals(id1.intValue() + 1, userId2.intValue());
+    }
+
+
+    @Test
+    public void testInsertMy(){
+        String name="QiPa";
+        int version =1;
+        int row = userMapper.myInsertWithNameVersion(name, version);
+        Assert.assertEquals(1, row);
+    }
+
+    @Test
+    public void testUpdateMy(){
+        H2UserMetaObj user = new H2UserMetaObj();
+        user.setName("myUpdate");
+        user.setVersion(1);
+        userMapper.insert(user);
+        Long id =user.getId();
+        H2UserMetaObj dbUser = userMapper.selectById(id);
+        Assert.assertNotNull(dbUser);
+        Assert.assertEquals("myUpdate", dbUser.getName());
+
+        Assert.assertEquals(1, userMapper.myUpdateWithNameId(id, "updateMy"));
+
+        dbUser = userMapper.selectById(id);
+        Assert.assertNotNull(dbUser);
+        Assert.assertEquals("updateMy", dbUser.getName());
+        Assert.assertEquals(1, user.getVersion().intValue());
+
     }
 
 }

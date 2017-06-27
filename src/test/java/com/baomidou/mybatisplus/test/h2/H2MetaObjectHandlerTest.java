@@ -83,4 +83,33 @@ public class H2MetaObjectHandlerTest extends H2Test {
         Assert.assertEquals(sdf.format(new Date()), versionDateStr);
     }
 
+
+    @Test
+    public void testInsertMy(){
+        String name="QiPa";
+        int version =1;
+        int row = userMapper.myInsertWithNameVersion(name, version);
+        Assert.assertEquals(1, row);
+    }
+
+    @Test
+    public void testUpdateMy(){
+        H2UserMetaObj user = new H2UserMetaObj();
+        user.setName("myUpdate");
+        user.setVersion(1);
+        userMapper.insert(user);
+        Long id =user.getId();
+        H2UserMetaObj dbUser = userMapper.selectById(id);
+        Assert.assertNotNull(dbUser);
+        Assert.assertEquals("myUpdate", dbUser.getName());
+
+        Assert.assertEquals(1, userMapper.myUpdateWithNameId(id, "updateMy"));
+
+        dbUser = userMapper.selectById(id);
+        Assert.assertNotNull(dbUser);
+        Assert.assertEquals("updateMy", dbUser.getName());
+        Assert.assertEquals(1, user.getVersion().intValue());
+
+    }
+
 }

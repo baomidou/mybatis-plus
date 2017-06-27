@@ -81,8 +81,10 @@ public class OptimisticLockerInterceptor implements Interceptor {
             //if(!map.containsKey(NAME_ENTITY)) {
             //    return invocation.proceed();
             //}
-
-            Object et = map.get(NAME_ENTITY);
+            Object et = null;
+            if(map.containsKey(NAME_ENTITY)){
+                et = map.get(NAME_ENTITY);
+            }
             if (ew != null) {
                 Object entity = ew.getEntity();
                 if (entity != null) {
@@ -95,7 +97,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
                         }
                     }
                 }
-            } else {
+            } else if(et!=null) {
                 String methodId = ms.getId();
                 String updateMethodName = methodId.substring(ms.getId().lastIndexOf(".") + 1);
                 if (PARAM_UPDATE_METHOD_NAME.equals(updateMethodName)) {//update(entity, null) -->> update all. ignore version

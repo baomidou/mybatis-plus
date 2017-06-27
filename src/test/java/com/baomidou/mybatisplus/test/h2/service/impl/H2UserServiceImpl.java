@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.test.h2.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
@@ -33,4 +34,16 @@ import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
 @Service
 public class H2UserServiceImpl extends ServiceImpl<H2UserMapper, H2User> implements IH2UserService {
 
+    @Autowired
+    H2UserMapper userMapper;
+
+    @Override
+    public int myInsert(String name, int version) {
+        return userMapper.myInsertWithNameVersion(name, version);
+    }
+
+    @Override
+    public int myUpdate(Long id, String name) {
+        return userMapper.myUpdateWithNameId(id, name);
+    }
 }
