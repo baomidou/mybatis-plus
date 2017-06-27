@@ -84,15 +84,17 @@ public class PaginationInterceptor implements Interceptor {
         RowBounds rowBounds = (RowBounds) metaStatementHandler.getValue("delegate.rowBounds");
         /* 不需要分页的场合 */
         if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
+            // 本地线程分页
             if (localPage) {
                 // 采用ThreadLocal变量处理的分页
                 rowBounds = PageHelper.getPagination();
                 if (rowBounds == null) {
                     return invocation.proceed();
                 }
+            } else {
+                // 无需分页
+                return invocation.proceed();
             }
-            // 无需分页
-            return invocation.proceed();
         }
         // 针对定义了rowBounds，做为mapper接口方法的参数
         BoundSql boundSql = (BoundSql) metaStatementHandler.getValue("delegate.boundSql");
