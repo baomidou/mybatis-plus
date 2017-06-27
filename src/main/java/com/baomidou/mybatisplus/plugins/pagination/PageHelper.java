@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.plugins.pagination;
 
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 
 /**
  * <p>
@@ -89,7 +88,7 @@ public class PageHelper {
      * @return
      */
     public static boolean isPageable() {
-        return LOCAL_PAGE.get() != null ? true : false;
+        return LOCAL_PAGE.get() != null;
     }
 
     /**

@@ -204,9 +204,6 @@ public class TableInfo {
     }
 
     public void setLogicDelete(boolean logicDelete) {
-        if (logicDelete) {
-            // 非 true 不设置，默认 false
-            this.logicDelete = logicDelete;
-        }
+        this.logicDelete = logicDelete;
     }
 }

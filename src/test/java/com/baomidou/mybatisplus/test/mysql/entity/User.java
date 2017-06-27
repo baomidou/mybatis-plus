@@ -25,7 +25,6 @@ import com.baomidou.mybatisplus.annotations.TableLogic;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.annotations.Version;
 import com.baomidou.mybatisplus.enums.FieldIgnore;
-import com.baomidou.mybatisplus.enums.FieldStrategy;
 
 /**
  * <p>

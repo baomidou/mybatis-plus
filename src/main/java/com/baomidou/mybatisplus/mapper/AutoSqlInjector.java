@@ -239,16 +239,12 @@ public class AutoSqlInjector implements ISqlInjector {
         }
 
         // 是否 IF 标签判断
-        boolean ifTag = true;
+        boolean ifTag;
         List<TableFieldInfo> fieldList = table.getFieldList();
         for (TableFieldInfo fieldInfo : fieldList) {
-            /* 判断是否插入忽略 */
-            if (FieldIgnore.INSERT == fieldInfo.getFieldIgnore()
-                    || FieldIgnore.INSERT_UPDATE == fieldInfo.getFieldIgnore()) {
-                ifTag = false;
-            } else {
-                ifTag = true;
-            }
+            // 在FieldIgnore,INSERT_UPDATE,INSERT 时设置为false
+            ifTag = !(FieldIgnore.INSERT == fieldInfo.getFieldIgnore()
+                    || FieldIgnore.INSERT_UPDATE == fieldInfo.getFieldIgnore());
             if (selective && ifTag) {
                 fieldBuilder.append(convertIfTagIgnored(fieldInfo, false));
                 fieldBuilder.append(fieldInfo.getColumn()).append(",");
@@ -541,16 +537,12 @@ public class AutoSqlInjector implements ISqlInjector {
         set.append("<trim prefix=\"SET\" suffixOverrides=\",\">");
 
         // 是否 IF 标签判断
-        boolean ifTag = true;
+        boolean ifTag;
         List<TableFieldInfo> fieldList = table.getFieldList();
         for (TableFieldInfo fieldInfo : fieldList) {
-            /* 判断是否更新忽略 */
-            if (FieldIgnore.UPDATE == fieldInfo.getFieldIgnore()
-                    || FieldIgnore.INSERT_UPDATE == fieldInfo.getFieldIgnore()) {
-                ifTag = false;
-            } else {
-                ifTag = true;
-            }
+            // 判断是否更新忽略,在FieldIgnore,UPDATE,INSERT_UPDATE设置为false
+            ifTag = !(FieldIgnore.UPDATE == fieldInfo.getFieldIgnore()
+                    || FieldIgnore.INSERT_UPDATE == fieldInfo.getFieldIgnore());
             if (selective && ifTag) {
                 set.append(convertIfTag(true, fieldInfo, prefix, false));
                 set.append(fieldInfo.getColumn()).append("=#{");

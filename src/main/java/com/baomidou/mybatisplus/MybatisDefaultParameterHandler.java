@@ -103,8 +103,8 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
      * @return
      */
     protected static Object processBatch(MappedStatement ms, Object parameterObject) {
-	//检查parameterObject
-	if (null == parameterObject) return null;
+        //检查parameterObject
+        if (null == parameterObject) return null;
         boolean isFill = false;
         // 全局配置是否配置填充器
         MetaObjectHandler metaObjectHandler = GlobalConfigUtils.getMetaObjectHandler(ms.getConfiguration());
@@ -132,18 +132,14 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                 }
                 return objList;
             } else {
-                TableInfo tableInfo;
-                if (parameterObject instanceof java.util.Map) {
-                    Map map = (java.util.Map) parameterObject;
-                    if(map.containsKey("et")){
+                TableInfo tableInfo = null;
+                if (parameterObject instanceof Map) {
+                    Map map = (Map) parameterObject;
+                    if (map.containsKey("et")) {
                         Object et = map.get("et");
                         if (et != null) {
                             tableInfo = TableInfoHelper.getTableInfo(et.getClass());
-                        } else {
-                            tableInfo = null;
                         }
-                    }else{
-                        tableInfo = null;
                     }
                 } else {
                     tableInfo = TableInfoHelper.getTableInfo(parameterObject.getClass());
