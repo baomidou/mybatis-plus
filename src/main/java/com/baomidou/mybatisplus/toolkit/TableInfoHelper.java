@@ -161,13 +161,14 @@ public class TableInfoHelper {
             */
             if (!isReadPK) {
                 if (existTableId) {
-                    if (initTableId(globalConfig, tableInfo, field, clazz)) {
-                        continue;
-                    }
-                } else if (initFieldId(globalConfig, tableInfo, field, clazz)) {
+                    isReadPK = initTableId(globalConfig, tableInfo, field, clazz);
+                } else {
+                    isReadPK = initFieldId(globalConfig, tableInfo, field, clazz);
+                }
+                if (isReadPK) {
                     continue;
                 }
-                isReadPK = true;
+
             }
             /*
              * 字段初始化
