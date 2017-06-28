@@ -17,6 +17,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.baomidou.mybatisplus.test.h2.config.DBConfig;
+import com.baomidou.mybatisplus.test.h2.config.MybatisPlusNoOptLockConfig;
 import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserFillMapper;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2UserFill;
 
@@ -28,7 +30,7 @@ import com.baomidou.mybatisplus.test.h2.entity.persistent.H2UserFill;
  * @date 2017/5/31
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:h2/spring-test-h2-metaobj.xml"})
+@ContextConfiguration(classes = {DBConfig.class, MybatisPlusNoOptLockConfig.class})
 public class H2FillFieldTest extends H2Test {
 
     @Autowired
@@ -37,7 +39,7 @@ public class H2FillFieldTest extends H2Test {
     @BeforeClass
     public static void initDB() throws SQLException, IOException {
         @SuppressWarnings("resource")
-        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:h2/spring-test-h2-metaobj.xml");
+        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:h2/spring-test-h2.xml");
         DataSource ds = (DataSource) context.getBean("dataSource");
         try (Connection conn = ds.getConnection()) {
             String createTableSql = readFile("user.ddl.sql");
@@ -62,14 +64,15 @@ public class H2FillFieldTest extends H2Test {
         Assert.assertNotNull(id);
 
         H2UserFill dbUser = fillMapper.selectById(id);
-        Assert.assertNotNull(dbUser.getTestType());
+        Assert.assertNull(dbUser.getTestType());
+        Assert.assertNotNull(dbUser.getDesc());
 
         dbUser.setTestType(2);
         dbUser.setDesc("ignoreDesc2");
         Assert.assertEquals(1, fillMapper.updateById(dbUser).intValue());
 
         dbUser = fillMapper.selectById(id);
-        Assert.assertEquals("ignoreDesc2", dbUser.getDesc());
+        Assert.assertEquals("ignoreDesc", dbUser.getDesc());
         Assert.assertEquals(2, dbUser.getTestType().intValue());
     }
 
