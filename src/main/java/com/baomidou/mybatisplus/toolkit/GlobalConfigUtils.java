@@ -189,7 +189,9 @@ public class GlobalConfigUtils {
             // 设置全局关键字
             globalConfig.setSqlKeywords(connection.getMetaData().getSQLKeywords());
             // 自动设置数据库类型
-            globalConfig.setDbType(jdbcUrl);
+            if (globalConfig.getDbType() == null) {
+                globalConfig.setDbTypeOfJdbcUrl(jdbcUrl);
+            }
         } catch (Exception e) {
             throw new MybatisPlusException("Error: GlobalConfigUtils setMetaData Fail !  Cause:" + e);
         }

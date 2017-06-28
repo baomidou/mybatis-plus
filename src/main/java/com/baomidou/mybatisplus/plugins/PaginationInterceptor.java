@@ -65,6 +65,8 @@ public class PaginationInterceptor implements Interceptor {
     private AbstractSqlParser sqlParser;
     /* 溢出总页数，设置第一页 */
     private boolean overflowCurrent = false;
+    /* 方言类型 */
+    private String dialectType;
     /* 方言实现类 */
     private String dialectClazz;
     /* 是否开启 PageHelper localPage 模式 */
@@ -100,7 +102,7 @@ public class PaginationInterceptor implements Interceptor {
         BoundSql boundSql = (BoundSql) metaStatementHandler.getValue("delegate.boundSql");
         String originalSql = boundSql.getSql();
         Connection connection = (Connection) invocation.getArgs()[0];
-        DBType dbType = JdbcUtils.getDbType(connection.getMetaData().getURL());
+        DBType dbType = StringUtils.isNotEmpty(dialectType) ? DBType.getDBType(dialectType) : JdbcUtils.getDbType(connection.getMetaData().getURL());
         if (rowBounds instanceof Pagination) {
             Pagination page = (Pagination) rowBounds;
             boolean orderBy = true;
@@ -169,11 +171,19 @@ public class PaginationInterceptor implements Interceptor {
     }
 
     public void setProperties(Properties prop) {
+        String dialectType = prop.getProperty("dialectType");
         String dialectClazz = prop.getProperty("dialectClazz");
 
+        if (StringUtils.isNotEmpty(dialectType)) {
+            this.dialectType = dialectType;
+        }
         if (StringUtils.isNotEmpty(dialectClazz)) {
             this.dialectClazz = dialectClazz;
         }
+    }
+
+    public void setDialectType(String dialectType) {
+        this.dialectType = dialectType;
     }
 
     public void setDialectClazz(String dialectClazz) {
