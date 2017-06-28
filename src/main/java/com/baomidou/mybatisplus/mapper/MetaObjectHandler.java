@@ -62,18 +62,10 @@ public abstract class MetaObjectHandler {
      * @param metaObject meta object parameter
      */
     public MetaObjectHandler setFieldValByName(String fieldName, Object fieldVal, MetaObject metaObject) {
-        String[] fieldNames = metaObject.getGetterNames();
-        boolean containsEt = false;
-        for (String name : fieldNames) {
-            if (META_OBJ_PREFIX.equals(name)) {
-                containsEt = true;
-                break;
-            }
-        }
-        if (containsEt) {
-            metaObject.setValue(META_OBJ_PREFIX + "." + fieldName, fieldVal);
-        } else {
+        if(metaObject.hasGetter(fieldName)) {
             metaObject.setValue(fieldName, fieldVal);
+        } else if (this.hasGetter(fieldName, metaObject)) {
+            metaObject.setValue(META_OBJ_PREFIX + "." + fieldName, fieldVal);
         }
         return this;
     }
@@ -104,6 +96,22 @@ public abstract class MetaObjectHandler {
         } else {
             return metaObject.getValue(fieldName);
         }
+    }
+
+    /**
+     * <p>
+     * 是否存在属性，判断 et 别名方法
+     * </p>
+     *
+     * @param fieldName  java bean property name
+     * @param metaObject parameter wrapper
+     * @return
+     */
+    public boolean hasGetter(String fieldName, MetaObject metaObject) {
+        if (metaObject.hasGetter(fieldName)) {
+            return true;
+        }
+        return metaObject.hasGetter(META_OBJ_PREFIX + "." + fieldName);
     }
 
     /**

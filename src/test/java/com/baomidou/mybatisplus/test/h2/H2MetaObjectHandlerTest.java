@@ -26,6 +26,7 @@ import com.baomidou.mybatisplus.test.h2.entity.persistent.H2UserMetaObj;
 
 /**
  * <p>
+ * 测试元对象填充器
  * </p>
  *
  * @author yuxiaobin

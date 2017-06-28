@@ -24,10 +24,10 @@ package com.baomidou.mybatisplus.enums;
  * @Date 2017-06-27
  */
 public enum FieldFill {
-    DEFAULT(0, "默认方式"),
-    INSERT(1, "忽略插入"),
-    UPDATE(2, "忽略更新"),
-    INSERT_UPDATE(3, "忽略插入和更新");
+    DEFAULT(0, "默认不处理"),
+    INSERT(1, "插入填充字段"),
+    UPDATE(2, "更新填充字段"),
+    INSERT_UPDATE(3, "插入和更新填充字段");
 
     /**
      * 主键

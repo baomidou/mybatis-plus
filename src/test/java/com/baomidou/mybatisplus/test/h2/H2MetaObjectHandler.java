@@ -52,10 +52,7 @@ public class H2MetaObjectHandler extends MetaObjectHandler {
         System.out.println("*************************");
         System.out.println("update fill");
         System.out.println("*************************");
-        String fillField = "lastUpdatedDt";
-        if(metaObject.hasGetter(fillField)) {
-            metaObject.setValue(fillField, new Timestamp(System.currentTimeMillis()));
-        }
+        this.setFieldValByName("lastUpdatedDt", new Timestamp(System.currentTimeMillis()), metaObject);
     }
 }
 
