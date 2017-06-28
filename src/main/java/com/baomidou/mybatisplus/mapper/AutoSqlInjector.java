@@ -42,7 +42,7 @@ import org.apache.ibatis.session.Configuration;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.entity.TableFieldInfo;
 import com.baomidou.mybatisplus.entity.TableInfo;
-import com.baomidou.mybatisplus.enums.FieldIgnore;
+import com.baomidou.mybatisplus.enums.FieldFill;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.enums.SqlMethod;
@@ -243,8 +243,8 @@ public class AutoSqlInjector implements ISqlInjector {
         List<TableFieldInfo> fieldList = table.getFieldList();
         for (TableFieldInfo fieldInfo : fieldList) {
             // 在FieldIgnore,INSERT_UPDATE,INSERT 时设置为false
-            ifTag = !(FieldIgnore.INSERT == fieldInfo.getFieldIgnore()
-                    || FieldIgnore.INSERT_UPDATE == fieldInfo.getFieldIgnore());
+            ifTag = !(FieldFill.INSERT == fieldInfo.getFieldFill()
+                    || FieldFill.INSERT_UPDATE == fieldInfo.getFieldFill());
             if (selective && ifTag) {
                 fieldBuilder.append(convertIfTagIgnored(fieldInfo, false));
                 fieldBuilder.append(fieldInfo.getColumn()).append(",");
@@ -541,8 +541,8 @@ public class AutoSqlInjector implements ISqlInjector {
         List<TableFieldInfo> fieldList = table.getFieldList();
         for (TableFieldInfo fieldInfo : fieldList) {
             // 判断是否更新忽略,在FieldIgnore,UPDATE,INSERT_UPDATE设置为false
-            ifTag = !(FieldIgnore.UPDATE == fieldInfo.getFieldIgnore()
-                    || FieldIgnore.INSERT_UPDATE == fieldInfo.getFieldIgnore());
+            ifTag = !(FieldFill.UPDATE == fieldInfo.getFieldFill()
+                    || FieldFill.INSERT_UPDATE == fieldInfo.getFieldFill());
             if (selective && ifTag) {
                 set.append(convertIfTag(true, fieldInfo, prefix, false));
                 set.append(fieldInfo.getColumn()).append("=#{");

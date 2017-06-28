@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.baomidou.mybatisplus.enums.FieldIgnore;
+import com.baomidou.mybatisplus.enums.FieldFill;
 import com.baomidou.mybatisplus.generator.config.ConstVal;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.GlobalConfig;
@@ -510,7 +510,7 @@ public class ConfigBuilder {
                 if (null != tfs) {
                     for (TableFill tf : tfs) {
                         if (tf.getFieldName().equals(field.getName())) {
-                            field.setIgnore(FieldIgnore.INSERT.name());
+                            field.setIgnore(FieldFill.INSERT.name());
                             break;
                         }
                     }

@@ -19,7 +19,7 @@ import java.lang.reflect.Field;
 
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableLogic;
-import com.baomidou.mybatisplus.enums.FieldIgnore;
+import com.baomidou.mybatisplus.enums.FieldFill;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
@@ -79,7 +79,7 @@ public class TableFieldInfo {
     /**
      * 字段忽略策略
      */
-    private FieldIgnore fieldIgnore = FieldIgnore.DEFAULT;
+    private FieldFill fieldFill = FieldFill.DEFAULT;
 
     /**
      * <p>
@@ -118,9 +118,9 @@ public class TableFieldInfo {
         }
         tableInfo.setLogicDelete(this.initLogicDelete(globalConfig, field));
         /*
-         * 保存当前字段的插入忽略，更新忽略值
+         * 保存当前字段的填充策略
 		 */
-        this.fieldIgnore = tableField.ignore();
+        this.fieldFill = tableField.fill();
     }
 
     public TableFieldInfo(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field) {
@@ -245,11 +245,11 @@ public class TableFieldInfo {
         this.logicNotDeleteValue = logicNotDeleteValue;
     }
 
-    public FieldIgnore getFieldIgnore() {
-        return fieldIgnore;
+    public FieldFill getFieldFill() {
+        return fieldFill;
     }
 
-    public void setFieldIgnore(FieldIgnore fieldIgnore) {
-        this.fieldIgnore = fieldIgnore;
+    public void setFieldFill(FieldFill fieldFill) {
+        this.fieldFill = fieldFill;
     }
 }

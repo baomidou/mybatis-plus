@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.Map;
 
-import com.baomidou.mybatisplus.enums.FieldIgnore;
+import com.baomidou.mybatisplus.enums.FieldFill;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
@@ -55,7 +55,7 @@ public class MysqlGenerator {
     public static void main(String[] args) {
         // 自定义需要填充的字段
         List<TableFill> tableFillList = new ArrayList<>();
-        tableFillList.add(new TableFill("ASDD_SS", FieldIgnore.INSERT_UPDATE));
+        tableFillList.add(new TableFill("ASDD_SS", FieldFill.INSERT_UPDATE));
 
         // 代码生成器
         AutoGenerator mpg = new AutoGenerator().setGlobalConfig(

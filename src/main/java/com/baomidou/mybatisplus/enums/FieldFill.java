@@ -17,13 +17,13 @@ package com.baomidou.mybatisplus.enums;
 
 /**
  * <p>
- * 字段忽略策略枚举类
+ * 字段填充策略枚举类
  * </p>
  *
  * @author hubin
- * @Date 2016-09-09
+ * @Date 2017-06-27
  */
-public enum FieldIgnore {
+public enum FieldFill {
     DEFAULT(0, "默认方式"),
     INSERT(1, "忽略插入"),
     UPDATE(2, "忽略更新"),
@@ -39,19 +39,19 @@ public enum FieldIgnore {
      */
     private final String desc;
 
-    FieldIgnore(final int key, final String desc) {
+    FieldFill(final int key, final String desc) {
         this.key = key;
         this.desc = desc;
     }
 
-    public static FieldIgnore getIgnore(int key) {
-        FieldIgnore[] fis = FieldIgnore.values();
-        for (FieldIgnore fi : fis) {
+    public static FieldFill getIgnore(int key) {
+        FieldFill[] fis = FieldFill.values();
+        for (FieldFill fi : fis) {
             if (fi.getKey() == key) {
                 return fi;
             }
         }
-        return FieldIgnore.DEFAULT;
+        return FieldFill.DEFAULT;
     }
 
     public int getKey() {

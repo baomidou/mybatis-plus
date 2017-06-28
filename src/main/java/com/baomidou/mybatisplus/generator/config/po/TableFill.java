@@ -15,7 +15,7 @@
  */
 package com.baomidou.mybatisplus.generator.config.po;
 
-import com.baomidou.mybatisplus.enums.FieldIgnore;
+import com.baomidou.mybatisplus.enums.FieldFill;
 
 /**
  * <p>
@@ -30,13 +30,13 @@ public class TableFill {
     /* 字段名称 */
     private String fieldName;
     /* 忽略类型 */
-    private FieldIgnore ignore;
+    private FieldFill ignore;
 
     private TableFill() {
         // to do nothing
     }
 
-    public TableFill(String fieldName, FieldIgnore ignore) {
+    public TableFill(String fieldName, FieldFill ignore) {
         this.fieldName = fieldName;
         this.ignore = ignore;
     }
@@ -49,11 +49,11 @@ public class TableFill {
         this.fieldName = fieldName;
     }
 
-    public FieldIgnore getIgnore() {
+    public FieldFill getIgnore() {
         return ignore;
     }
 
-    public void setIgnore(FieldIgnore ignore) {
+    public void setIgnore(FieldFill ignore) {
         this.ignore = ignore;
     }
 }

@@ -80,7 +80,6 @@ def common = [
         "org.springframework:spring-tx:${springVersion}",
         "org.springframework:spring-jdbc:${springVersion}",
         "org.springframework:spring-context-support:${springVersion}",
-        "com.alibaba:druid:1.0.29",
         "org.apache.velocity:velocity:1.7"
 ]
 
