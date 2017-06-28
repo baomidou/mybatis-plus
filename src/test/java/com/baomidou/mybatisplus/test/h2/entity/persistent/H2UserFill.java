@@ -23,7 +23,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @TableName("h2user")
-public class H2UserIgnore extends SuperEntity {
+public class H2UserFill extends SuperEntity {
 
     /* 测试忽略验证 */
     private String name;
@@ -34,7 +34,7 @@ public class H2UserIgnore extends SuperEntity {
     private BigDecimal price;
 
     /* 测试下划线字段命名类型, 字段填充 */
-    @TableField(value = "test_type", strategy = FieldStrategy.IGNORED, fill = FieldFill.UPDATE)
+    @TableField(value = "test_type", fill = FieldFill.UPDATE)
     private Integer testType;
 
     @TableField(value = "desc", fill = FieldFill.INSERT)

@@ -17,8 +17,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserIgnoreMapper;
-import com.baomidou.mybatisplus.test.h2.entity.persistent.H2UserIgnore;
+import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserFillMapper;
+import com.baomidou.mybatisplus.test.h2.entity.persistent.H2UserFill;
 
 /**
  * <p>
@@ -29,10 +29,10 @@ import com.baomidou.mybatisplus.test.h2.entity.persistent.H2UserIgnore;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2-metaobj.xml"})
-public class H2IgnoreFieldTest extends H2Test {
+public class H2FillFieldTest extends H2Test {
 
     @Autowired
-    H2UserIgnoreMapper ignoreMapper;
+    H2UserFillMapper fillMapper;
 
     @BeforeClass
     public static void initDB() throws SQLException, IOException {
@@ -51,29 +51,26 @@ public class H2IgnoreFieldTest extends H2Test {
 
 
     @Test
-    public void testIgnore(){
-        H2UserIgnore u = new H2UserIgnore();
+    public void testFill() {
+        H2UserFill u = new H2UserFill();
         u.setName("ignoreTest");
         u.setTestType(1);
         u.setDesc("ignoreDesc");
-        Assert.assertEquals(1, ignoreMapper.insert(u).intValue());
+        Assert.assertEquals(1, fillMapper.insert(u).intValue());
 
         Long id = u.getId();
         Assert.assertNotNull(id);
 
-        H2UserIgnore dbUser = ignoreMapper.selectById(id);
-        Assert.assertNull(dbUser.getTestType());
+        H2UserFill dbUser = fillMapper.selectById(id);
+        Assert.assertNotNull(dbUser.getTestType());
 
         dbUser.setTestType(2);
         dbUser.setDesc("ignoreDesc2");
-        Assert.assertEquals(1, ignoreMapper.updateById(dbUser).intValue());
+        Assert.assertEquals(1, fillMapper.updateById(dbUser).intValue());
 
-        dbUser = ignoreMapper.selectById(id);
-        Assert.assertEquals("ignoreDesc", dbUser.getDesc());
+        dbUser = fillMapper.selectById(id);
+        Assert.assertEquals("ignoreDesc2", dbUser.getDesc());
         Assert.assertEquals(2, dbUser.getTestType().intValue());
-
     }
-
-
 
 }
