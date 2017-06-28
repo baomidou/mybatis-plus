@@ -15,6 +15,7 @@
 - 修复在自定义insert操作时报`Insert not found et`异常，见#331
 - 修复Sql生成错误问题(普通注入Group,Having,Order)
 - 修复逻辑删除生成Sql顺序错误
+- 感谢各路小伙伴及时反馈的问题,上个版本给大家带来的问题深感抱歉
 
 ###Mybatis-Plus-Boot-Start [1.0.4]
 
