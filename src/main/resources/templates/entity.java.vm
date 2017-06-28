@@ -4,6 +4,8 @@ package ${package.Entity};
 import ${pkg};
 #end
 #if(${entityLombokModel})
+import com.baomidou.mybatisplus.enums.FieldFill;
+
 import lombok.Data;
 import lombok.experimental.Accessors;
 #end
@@ -50,9 +52,9 @@ public class ${entity} implements Serializable {
 #end
 #elseif(${field.ignore})
 #if(${field.convert})
-	@TableField(value = "${field.name}", ignore = FieldIgnore.${field.ignore})
+	@TableField(value = "${field.name}", fill = FieldFill.${field.fill})
 #else
-	@TableField(ignore = FieldIgnore.${field.ignore})
+	@TableField(fill = FieldFill.${field.fill})
 #end
 #elseif(${field.convert})
 	@TableField("${field.name}")

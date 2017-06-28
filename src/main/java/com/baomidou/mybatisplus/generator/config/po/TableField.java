@@ -40,7 +40,7 @@ public class TableField {
     private String propertyName;
     private DbColumnType columnType;
     private String comment;
-    private String ignore;
+    private String fill;
 
     public boolean isConvert() {
         return convert;
@@ -146,11 +146,11 @@ public class TableField {
         return firstChar.toUpperCase() + propertyName.substring(1);
     }
 
-    public String getIgnore() {
-        return ignore;
+    public String getFill() {
+        return fill;
     }
 
-    public void setIgnore(String ignore) {
-        this.ignore = ignore;
+    public void setFill(String fill) {
+        this.fill = fill;
     }
 }

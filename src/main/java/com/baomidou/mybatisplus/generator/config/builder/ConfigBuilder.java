@@ -510,7 +510,7 @@ public class ConfigBuilder {
                 if (null != tfs) {
                     for (TableFill tf : tfs) {
                         if (tf.getFieldName().equals(field.getName())) {
-                            field.setIgnore(FieldFill.INSERT.name());
+                            field.setFill(FieldFill.INSERT.name());
                             break;
                         }
                     }
