@@ -64,7 +64,7 @@ public abstract class MetaObjectHandler {
     public MetaObjectHandler setFieldValByName(String fieldName, Object fieldVal, MetaObject metaObject) {
         if(metaObject.hasGetter(fieldName)) {
             metaObject.setValue(fieldName, fieldVal);
-        } else if (this.hasGetter(fieldName, metaObject)) {
+        } else if (metaObject.hasGetter(META_OBJ_PREFIX + "." + fieldName)) {
             metaObject.setValue(META_OBJ_PREFIX + "." + fieldName, fieldVal);
         }
         return this;
