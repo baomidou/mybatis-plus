@@ -53,7 +53,7 @@
         <logback-classic.version>1.2.2</logback-classic.version>
         <!-- provided or test -->
         <jsqlparser.version>1.0</jsqlparser.version>
-        <alibaba.druid.version>1.0.29</alibaba.druid.version>
+        <alibaba.druid.version>1.1.0</alibaba.druid.version>
         <commons.dbcp2.version>2.1.1</commons.dbcp2.version>
         <commons.pool2.version>2.4.2</commons.pool2.version>
         <sqljdbc4.version>4.0</sqljdbc4.version>
