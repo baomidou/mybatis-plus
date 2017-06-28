@@ -1,5 +1,27 @@
 # CHANGELOG
 
+## [v2.1-gamma] 2017.06.29
+
+####主体功能
+- 修正之前sqlserver自动获取类型错误问题
+- 修复用户无法自定义分页数据库方言问题
+
+####代码生成
+- 完善了自动填充代码生成
+- 修复postgresql生成重复字段问题
+
+####上个版本（2.0.9）升级导致的问题
+- 修复实体主键不在第一位无法读取的问题
+- 修复在自定义insert操作时报`Insert not found et`异常，见#331
+- 修复Sql生成错误问题(普通注入Group,Having,Order)
+- 修复逻辑删除生成Sql顺序错误
+
+###Mybatis-Plus-Boot-Start [1.0.4]
+
+####主体变动
+- 去除Mybatis-plus直接依赖
+- 去除SpringBoot jdbc-starter直接依赖
+
 ## [v2.0.9] 2017.06.26
 ###Mybaits-Plus
 ####主体功能
