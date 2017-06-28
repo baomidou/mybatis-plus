@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.annotations.Version;
-import com.baomidou.mybatisplus.enums.FieldIgnore;
+import com.baomidou.mybatisplus.enums.FieldFill;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.test.h2.entity.SuperEntity;
 
@@ -34,10 +34,10 @@ public class H2UserIgnore extends SuperEntity {
     private BigDecimal price;
 
     /* 测试下划线字段命名类型, 字段填充 */
-    @TableField(value = "test_type", strategy = FieldStrategy.IGNORED, ignore = FieldIgnore.UPDATE)
+    @TableField(value = "test_type", strategy = FieldStrategy.IGNORED, fill = FieldFill.UPDATE)
     private Integer testType;
 
-    @TableField(value = "desc", ignore = FieldIgnore.INSERT)
+    @TableField(value = "desc", fill = FieldFill.INSERT)
     private String desc;
 
     @Version
