@@ -80,7 +80,7 @@ public class H2MetaObjectHandlerTest extends H2Test {
         Date lastUpdatedDt = userDB.getLastUpdatedDt();
         System.out.println("after update: testDate=" + lastUpdatedDt);
         String versionDateStr = sdf.format(lastUpdatedDt);
-        //MyMetaObjectHandler.updateFill() : set 
+        //MyMetaObjectHandler.updateFill() : set
         Assert.assertEquals(sdf.format(new Date()), versionDateStr);
     }
 
@@ -110,7 +110,6 @@ public class H2MetaObjectHandlerTest extends H2Test {
         Assert.assertNotNull(dbUser);
         Assert.assertEquals("updateMy", dbUser.getName());
         Assert.assertEquals(1, user.getVersion().intValue());
-
     }
 
 }

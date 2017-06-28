@@ -4,5 +4,8 @@
 
 	<resultMap id="RoleMap" type="Role" autoMapping="true">
 		<id property="id" column="id" />
+		<id property="name" column="name" />
+		<id property="sort" column="sort" />
+		<id property="description" column="description" />
 	</resultMap>
 </mapper>

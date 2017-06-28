@@ -18,6 +18,7 @@ import com.baomidou.mybatisplus.plugins.OptimisticLockerInterceptor;
 import com.baomidou.mybatisplus.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.plugins.PerformanceInterceptor;
 import com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean;
+import com.baomidou.mybatisplus.test.h2.H2MetaObjectHandler;
 
 /**
  * <p>
@@ -48,6 +49,7 @@ public class MybatisPlusConfig {
                 optLock,
                 new PerformanceInterceptor()
         });
+        globalConfiguration.setMetaObjectHandler(new H2MetaObjectHandler());
         sqlSessionFactory.setGlobalConfig(globalConfiguration);
         return sqlSessionFactory.getObject();
     }

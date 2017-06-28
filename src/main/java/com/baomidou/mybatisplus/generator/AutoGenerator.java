@@ -184,7 +184,7 @@ public class AutoGenerator {
                     if (field.getPropertyType().equalsIgnoreCase("boolean")) {
                         if (field.getPropertyName().contains("is")) {
                             field.setPropertyName(config.getStrategyConfig(),
-                                    field.getPropertyName().substring(0, 3).toLowerCase().substring(2));
+                                    StringUtils.removePrefixAfterPrefixToLower(field.getPropertyName(), 2));
                         }
                     }
                 }

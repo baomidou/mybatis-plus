@@ -40,10 +40,10 @@ public class H2MetaObjectHandler extends MetaObjectHandler {
         System.out.println("*************************");
 
         // 测试下划线
-        Object testType = getFieldValByName("testType", metaObject);
+        Object testType = this.getFieldValByName("testType", metaObject);
         System.out.println("testType=" + testType);
         if (testType == null) {
-            setFieldValByName("testType", 3, metaObject);
+            this.setFieldValByName("testType", 3, metaObject);
         }
     }
 

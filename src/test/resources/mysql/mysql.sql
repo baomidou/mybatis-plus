@@ -28,6 +28,13 @@ CREATE TABLE `role` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
+--  Records of `role`
+-- ----------------------------
+BEGIN;
+INSERT INTO `role` VALUES ('1', '1', '1', '1');
+COMMIT;
+
+-- ----------------------------
 --  Table structure for `test`
 -- ----------------------------
 DROP TABLE IF EXISTS `test`;
