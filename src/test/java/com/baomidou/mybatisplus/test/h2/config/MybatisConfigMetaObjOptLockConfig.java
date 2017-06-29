@@ -54,11 +54,11 @@ public class MybatisConfigMetaObjOptLockConfig {
 
     @Bean
     public GlobalConfiguration globalConfiguration() {
-        GlobalConfiguration globalConfiguration = new GlobalConfiguration(new LogicSqlInjector());
-        globalConfiguration.setLogicDeleteValue("-1");
-        globalConfiguration.setLogicNotDeleteValue("1");
-        globalConfiguration.setIdType(2);
-        globalConfiguration.setMetaObjectHandler(new H2MetaObjectHandler());
-        return globalConfiguration;
+        GlobalConfiguration conf = new GlobalConfiguration(new LogicSqlInjector());
+        conf.setLogicDeleteValue("-1");
+        conf.setLogicNotDeleteValue("1");
+        conf.setIdType(2);
+        conf.setMetaObjectHandler(new H2MetaObjectHandler());
+        return conf;
     }
 }
