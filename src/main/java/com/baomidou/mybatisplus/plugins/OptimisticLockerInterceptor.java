@@ -56,6 +56,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
 
     private static final String MP_OPTLOCK_VERSION_ORIGINAL = "MP_OPTLOCK_VERSION_ORIGINAL";
     private static final String MP_OPTLOCK_VERSION_COLUMN = "MP_OPTLOCK_VERSION_COLUMN";
+    public static final String MP_OPTLOCK_ET_ORIGINAL = "MP_OPTLOCK_ET_ORIGINAL";
     private static final String NAME_ENTITY = "et";
     private static final String NAME_ENTITY_WRAPPER = "ew";
     private static final String PARAM_UPDATE_METHOD_NAME = "update";
@@ -134,6 +135,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
                         entityMap.put(versionField.getName(), getUpdatedVersionVal(originalVersionVal));
                         entityMap.put(MP_OPTLOCK_VERSION_ORIGINAL, originalVersionVal);
                         entityMap.put(MP_OPTLOCK_VERSION_COLUMN, versionColumnName);
+                        entityMap.put(MP_OPTLOCK_ET_ORIGINAL, et);
                         map.put(NAME_ENTITY, entityMap);
                     }
                 }
