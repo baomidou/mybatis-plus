@@ -10,22 +10,21 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.test.oracle.config.OracleDBConfig;
+import com.baomidou.mybatisplus.test.oracle.config.DruidOracleDBConfig;
 import com.baomidou.mybatisplus.test.oracle.config.OracleMybatisPlusConfig;
 import com.baomidou.mybatisplus.test.oracle.entity.TestSequser;
 import com.baomidou.mybatisplus.test.oracle.mapper.TestSequserMapper;
 
 /**
  * <p>
- * oracle user test for spring
  * </p>
  *
  * @author yuxiaobin
- * @date 2017/6/14
+ * @date 2017/7/4
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {OracleDBConfig.class, OracleMybatisPlusConfig.class})
-public class OracleUserTest {
+@ContextConfiguration(classes = {DruidOracleDBConfig.class, OracleMybatisPlusConfig.class})
+public class OracleDruidTest {
 
     @Autowired
     TestSequserMapper sequserMapper;
@@ -58,5 +57,6 @@ public class OracleUserTest {
 
 
     }
+
 
 }

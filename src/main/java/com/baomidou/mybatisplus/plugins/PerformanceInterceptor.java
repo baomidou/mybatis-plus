@@ -53,6 +53,9 @@ import com.baomidou.mybatisplus.toolkit.SystemClock;
 public class PerformanceInterceptor implements Interceptor {
 
     private static final Log logger = LogFactory.getLog(PerformanceInterceptor.class);
+
+    private static final String DruidPooledPreparedStatement = "com.alibaba.druid.pool.DruidPooledPreparedStatement";
+    private static final String T4CPreparedStatement = "oracle.jdbc.driver.T4CPreparedStatement";
     /**
      * SQL 执行最大时长，超过自动停止运行，有助于发现问题。
      */
@@ -71,6 +74,7 @@ public class PerformanceInterceptor implements Interceptor {
     private boolean writeInLog = false;
 
     private Method oracleGetOriginalSqlMethod;
+    private Method druidGetSQLMethod;
 
     public Object intercept(Invocation invocation) throws Throwable {
         Statement statement;
@@ -81,7 +85,6 @@ public class PerformanceInterceptor implements Interceptor {
             statement = (Statement) firstArg;
         }
         try {
-            statement.getClass().getDeclaredField("stmt");
             statement = (Statement) SystemMetaObject.forObject(statement).getValue("stmt.statement");
         } catch (Exception e) {
             // do nothing
@@ -89,7 +92,19 @@ public class PerformanceInterceptor implements Interceptor {
 
         String originalSql = null;
         String stmtClassName = statement.getClass().getName();
-        if ("oracle.jdbc.driver.T4CPreparedStatement".equals(stmtClassName)) {
+        if(DruidPooledPreparedStatement.equals(stmtClassName)){
+            try {
+                if (druidGetSQLMethod == null) {
+                    Class<?> clazz = Class.forName(DruidPooledPreparedStatement);
+                    druidGetSQLMethod = clazz.getMethod("getSql");
+                }
+                Object stmtSql = druidGetSQLMethod.invoke(statement);
+                if (stmtSql != null && stmtSql instanceof String) {
+                    originalSql = (String) stmtSql;
+                }
+            } catch (Exception e) {
+            }
+        }else if (T4CPreparedStatement.equals(stmtClassName)) {
             try {
                 if (oracleGetOriginalSqlMethod != null) {
                     Object stmtSql = oracleGetOriginalSqlMethod.invoke(statement);
@@ -97,8 +112,8 @@ public class PerformanceInterceptor implements Interceptor {
                         originalSql = (String) stmtSql;
                     }
                 } else {
-                    Class<?> clazz = Class.forName("oracle.jdbc.driver.OracleStatement");
-                    oracleGetOriginalSqlMethod = clazz.getDeclaredMethod("getOriginalSql", (Class<?>) null);
+                    Class<?> clazz = Class.forName(T4CPreparedStatement);
+                    oracleGetOriginalSqlMethod = clazz.getDeclaredMethod("getOriginalSql");
                     if (oracleGetOriginalSqlMethod != null) {
                         Object stmtSql = oracleGetOriginalSqlMethod.invoke(statement);
                         if (stmtSql != null && stmtSql instanceof String) {

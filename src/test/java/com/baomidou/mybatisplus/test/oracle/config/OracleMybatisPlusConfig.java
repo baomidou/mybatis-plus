@@ -15,6 +15,7 @@ import com.baomidou.mybatisplus.MybatisXMLLanguageDriver;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.incrementer.OracleKeyGenerator;
 import com.baomidou.mybatisplus.plugins.PaginationInterceptor;
+import com.baomidou.mybatisplus.plugins.PerformanceInterceptor;
 import com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean;
 
 /**
@@ -41,7 +42,8 @@ public class OracleMybatisPlusConfig {
         sqlSessionFactory.setConfiguration(configuration);
         PaginationInterceptor pagination = new PaginationInterceptor();
         sqlSessionFactory.setPlugins(new Interceptor[]{
-                pagination
+                pagination,
+                new PerformanceInterceptor()
         });
         sqlSessionFactory.setGlobalConfig(globalConfiguration);
         return sqlSessionFactory.getObject();
@@ -51,7 +53,7 @@ public class OracleMybatisPlusConfig {
     public GlobalConfiguration globalConfiguration() {
         GlobalConfiguration conf = new GlobalConfiguration();
         conf.setIdType(1);
-        conf.setDbType("oracle");
+//        conf.setDbType("oracle");
         conf.setKeyGenerator(new OracleKeyGenerator());
 //        conf.setDbColumnUnderline(true);
         return conf;

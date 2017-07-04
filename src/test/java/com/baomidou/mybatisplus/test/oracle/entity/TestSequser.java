@@ -3,9 +3,7 @@ package com.baomidou.mybatisplus.test.oracle.entity;
 import java.io.Serializable;
 
 import com.baomidou.mybatisplus.annotations.TableField;
-import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
-import com.baomidou.mybatisplus.enums.IdType;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -25,8 +23,8 @@ public class TestSequser extends BaseTestEntity implements Serializable {
     /**
      * 主键ID
      */
-    @TableId(value = "TEST_ID", type = IdType.INPUT)
-    private Long id;
+//    @TableId(value = "TEST_ID", type = IdType.INPUT)
+//    private Long id;
     /**
      * 主键ID
      */

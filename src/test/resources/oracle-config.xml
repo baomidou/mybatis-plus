@@ -71,8 +71,8 @@
 			<dataSource type="UNPOOLED">
 				<property name="driver" value="oracle.jdbc.driver.OracleDriver" />
 				<property name="url" value="jdbc:oracle:thin:@192.168.10.169:1521:orcl" />
-				<property name="username" value="boxinfo" />
-				<property name="password" value="1qaz2wsx" />
+				<property name="username" value="sa" />
+				<property name="password" value="sa" />
 			<!-- 
 				<property name="driver" value="${jdbc.driver}" />
 				<property name="url" value="${jdbc.url}" />
