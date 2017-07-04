@@ -80,33 +80,29 @@ public class SqlFormatter {
         boolean beginLine = true;
         boolean afterBeginBeforeEnd;
         boolean afterByOrSetOrFromOrSelect;
+        boolean afterValues;
         boolean afterOn;
         boolean afterBetween;
         boolean afterInsert;
         int inFunction;
         int parensSinceSelect;
+        private LinkedList<Integer> parenCounts = new LinkedList<>();
+        private LinkedList<Boolean> afterByOrFromOrSelects = new LinkedList<>();
+
         int indent = 1;
+
         StringBuilder result = new StringBuilder();
         StringTokenizer tokens;
         String lastToken;
         String token;
         String lcToken;
-        private LinkedList<Integer> parenCounts = new LinkedList<>();
-        private LinkedList<Boolean> afterByOrFromOrSelects = new LinkedList<>();
 
         public FormatProcess(String sql) {
-            tokens = new StringTokenizer(sql, "()+*/-=<>'`\"[]," + WHITESPACE, true);
-        }
-
-        private static boolean isFunctionName(String tok) {
-            final char begin = tok.charAt(0);
-            final boolean isIdentifier = Character.isJavaIdentifierStart(begin) || '"' == begin;
-            return isIdentifier && !LOGICAL.contains(tok) && !END_CLAUSES.contains(tok) && !QUANTIFIERS.contains(tok)
-                    && !DML.contains(tok) && !MISC.contains(tok);
-        }
-
-        private static boolean isWhitespace(String token) {
-            return WHITESPACE.contains(token);
+            tokens = new StringTokenizer(
+                    sql,
+                    "()+*/-=<>'`\"[]," + WHITESPACE,
+                    true
+            );
         }
 
         public String perform() {
@@ -118,9 +114,12 @@ public class SqlFormatter {
                 lcToken = token.toLowerCase(Locale.ROOT);
 
                 if ("'".equals(token)) {
-                    String t;
+                    String t = StringUtils.EMPTY;
                     do {
-                        t = tokens.nextToken();
+                        try {
+                            t = tokens.nextToken();
+                        } catch (Exception ignored) {
+                        }
                         token += t;
                     }
                     // cannot handle single quotes
@@ -130,7 +129,8 @@ public class SqlFormatter {
                     do {
                         t = tokens.nextToken();
                         token += t;
-                    } while (!"\"".equals(t));
+                    }
+                    while (!"\"".equals(t));
                 }
 
                 if (afterByOrSetOrFromOrSelect && ",".equals(token)) {
@@ -265,7 +265,9 @@ public class SqlFormatter {
             }
             newline();
             afterBeginBeforeEnd = false;
-            afterByOrSetOrFromOrSelect = "by".equals(lcToken) || "set".equals(lcToken) || "from".equals(lcToken);
+            afterByOrSetOrFromOrSelect = "by".equals(lcToken)
+                    || "set".equals(lcToken)
+                    || "from".equals(lcToken);
         }
 
         private void beginNewClause() {
@@ -288,6 +290,7 @@ public class SqlFormatter {
             out();
             indent++;
             newline();
+            afterValues = true;
         }
 
         private void closeParen() {
@@ -326,6 +329,21 @@ public class SqlFormatter {
                 }
             }
             parensSinceSelect++;
+        }
+
+        private static boolean isFunctionName(String tok) {
+            final char begin = tok.charAt(0);
+            final boolean isIdentifier = Character.isJavaIdentifierStart(begin) || '"' == begin;
+            return isIdentifier &&
+                    !LOGICAL.contains(tok) &&
+                    !END_CLAUSES.contains(tok) &&
+                    !QUANTIFIERS.contains(tok) &&
+                    !DML.contains(tok) &&
+                    !MISC.contains(tok);
+        }
+
+        private static boolean isWhitespace(String token) {
+            return WHITESPACE.contains(token);
         }
 
         private void newline() {
