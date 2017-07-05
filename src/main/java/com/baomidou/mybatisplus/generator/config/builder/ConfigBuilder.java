@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.baomidou.mybatisplus.enums.FieldFill;
 import com.baomidou.mybatisplus.generator.config.ConstVal;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.GlobalConfig;
@@ -506,11 +505,11 @@ public class ConfigBuilder {
                     continue;
                 }
                 // 填充逻辑判断
-                List<TableFill> tfs = this.getStrategyConfig().getTableFillList();
-                if (null != tfs) {
-                    for (TableFill tf : tfs) {
-                        if (tf.getFieldName().equals(field.getName())) {
-                            field.setFill(FieldFill.INSERT.name());
+                List<TableFill> tableFillList = this.getStrategyConfig().getTableFillList();
+                if (null != tableFillList) {
+                    for (TableFill tableFill : tableFillList) {
+                        if (tableFill.getFieldName().equals(field.getName())) {
+                            field.setFill(tableFill.getFieldFill().name());
                             break;
                         }
                     }

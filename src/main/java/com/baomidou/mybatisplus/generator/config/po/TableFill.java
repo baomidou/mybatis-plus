@@ -30,7 +30,7 @@ public class TableFill {
     /* 字段名称 */
     private String fieldName;
     /* 忽略类型 */
-    private FieldFill ignore;
+    private FieldFill fieldFill;
 
     private TableFill() {
         // to do nothing
@@ -38,7 +38,7 @@ public class TableFill {
 
     public TableFill(String fieldName, FieldFill ignore) {
         this.fieldName = fieldName;
-        this.ignore = ignore;
+        this.fieldFill = ignore;
     }
 
     public String getFieldName() {
@@ -49,11 +49,11 @@ public class TableFill {
         this.fieldName = fieldName;
     }
 
-    public FieldFill getIgnore() {
-        return ignore;
+    public FieldFill getFieldFill() {
+        return fieldFill;
     }
 
-    public void setIgnore(FieldFill ignore) {
-        this.ignore = ignore;
+    public void setFieldFill(FieldFill fieldFill) {
+        this.fieldFill = fieldFill;
     }
 }
