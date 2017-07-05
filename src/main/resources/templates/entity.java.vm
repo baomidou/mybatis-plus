@@ -4,7 +4,6 @@ package ${package.Entity};
 import ${pkg};
 #end
 #if(${entityLombokModel})
-import com.baomidou.mybatisplus.enums.FieldFill;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -107,6 +106,7 @@ public class ${entity} implements Serializable {
 	}
 
 #end
+#if(!${entityLombokModel})
 	@Override
 	public String toString() {
 		return "${entity}{" +
@@ -119,4 +119,5 @@ public class ${entity} implements Serializable {
 #end
 			"}";
 	}
+#end
 }

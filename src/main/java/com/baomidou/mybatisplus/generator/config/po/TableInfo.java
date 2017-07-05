@@ -177,6 +177,10 @@ public class TableInfo {
                     // 普通字段
                     pkgSet.add("com.baomidou.mybatisplus.annotations.TableField");
                 }
+                if (null != field.getFill()) {
+                    // 填充字段
+                    pkgSet.add("com.baomidou.mybatisplus.enums.FieldFill");
+                }
             }
             if (!pkgSet.isEmpty()) {
                 this.importPackages = new ArrayList<>(Arrays.asList(pkgSet.toArray(new String[]{})));
