@@ -52,7 +52,7 @@
         <slf4j.version>1.7.25</slf4j.version>
         <logback-classic.version>1.2.2</logback-classic.version>
         <!-- provided or test -->
-        <jsqlparser.version>1.0</jsqlparser.version>
+        <jsqlparser.version>1.1</jsqlparser.version>
         <alibaba.druid.version>1.1.0</alibaba.druid.version>
         <commons.dbcp2.version>2.1.1</commons.dbcp2.version>
         <commons.pool2.version>2.4.2</commons.pool2.version>
@@ -61,13 +61,13 @@
         <ojdbc14.version>10.2.0.5.0</ojdbc14.version>
         <postgresql.version>9.4.1212</postgresql.version>
         <servlet-api.version>2.5</servlet-api.version>
-        <spring.version>4.3.5.RELEASE</spring.version>
-        <aspectjweaver.version>1.8.9</aspectjweaver.version>
+        <spring.version>4.3.9.RELEASE</spring.version>
+        <aspectjweaver.version>1.8.10</aspectjweaver.version>
         <mybatis-ehcache.version>1.1.0</mybatis-ehcache.version>
         <junit.version>4.12</junit.version>
         <velocity.version>1.7</velocity.version>
-        <h2.version>1.4.194</h2.version>
-        <lombok.version>1.16.16</lombok.version>
+        <h2.version>1.4.196</h2.version>
+        <lombok.version>1.16.18</lombok.version>
     </properties>
 
     <dependencies>
@@ -142,12 +142,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>${spring.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
             <version>${aspectjweaver.version}</version>
@@ -197,6 +191,12 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
