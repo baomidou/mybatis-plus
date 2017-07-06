@@ -56,7 +56,7 @@
         <alibaba.druid.version>1.1.0</alibaba.druid.version>
         <commons.dbcp2.version>2.1.1</commons.dbcp2.version>
         <commons.pool2.version>2.4.2</commons.pool2.version>
-        <sqljdbc4.version>4.0</sqljdbc4.version>
+        <mssql-jdbc.version>6.2.0.jre7</mssql-jdbc.version>
         <mysql-connector-java.version>5.1.38</mysql-connector-java.version>
         <ojdbc14.version>10.2.0.5.0</ojdbc14.version>
         <postgresql.version>9.4.1212</postgresql.version>
@@ -219,8 +219,8 @@
         </dependency>
         <dependency>
             <groupId>com.microsoft.sqlserver</groupId>
-            <artifactId>sqljdbc4</artifactId>
-            <version>${sqljdbc4.version}</version>
+            <artifactId>mssql-jdbc</artifactId>
+    		<version>${mssql-jdbc.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
