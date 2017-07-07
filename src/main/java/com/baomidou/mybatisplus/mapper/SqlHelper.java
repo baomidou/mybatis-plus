@@ -29,6 +29,7 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.toolkit.MapUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**
@@ -175,7 +176,11 @@ public class SqlHelper {
         if (null == page) {
             return;
         }
-        if (null != wrapper) {
+        //处理Wrapper为空,但是page.getCondition()不为空的情况
+        if (MapUtils.isNotEmpty(page.getCondition()) && isEmptyOfWrapper(wrapper)) {
+            wrapper = Condition.create();
+        }
+        if (isNotEmptyOfWrapper(wrapper)) {
             if (page.isOpenSort()) {
                 wrapper.orderBy(page.getOrderByField(), page.isAsc());
             }
