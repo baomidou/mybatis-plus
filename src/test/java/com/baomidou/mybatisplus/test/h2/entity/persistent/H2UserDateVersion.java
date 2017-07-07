@@ -69,6 +69,9 @@ public class H2UserDateVersion implements Serializable {
     @Version
     private Date testDate;
 
+    @TableField("last_updated_dt")
+    private Date lastUpdatedDt;
+
     public H2UserDateVersion() {
 
     }

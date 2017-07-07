@@ -71,6 +71,9 @@ public class H2UserVersionAndLogicDeleteEntity implements Serializable {
     @Version
     private Date testDate;
 
+    @TableField("last_updated_dt")
+    private Date lastUpdatedDt;
+
     public H2UserVersionAndLogicDeleteEntity() {
 
     }

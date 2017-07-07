@@ -384,4 +384,19 @@ public class H2UserTest extends H2Test {
 
     }
 
+
+    @Test
+    public void testCondition(){
+        Page<H2User> page = new Page<>(1,3);
+        Map<String,Object> condition = new HashMap<>();
+        condition.put("test_type",1);
+        page.setCondition(condition);
+        Page<H2User> pageResult = userService.selectPage(page);
+        for(H2User u: pageResult.getRecords()){
+            System.out.println(u);
+        }
+        System.out.println(pageResult.getTotal());
+
+    }
+
 }

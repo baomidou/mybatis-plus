@@ -64,9 +64,12 @@ public abstract class MetaObjectHandler {
      * @param metaObject meta object parameter
      */
     public MetaObjectHandler setFieldValByName(String fieldName, Object fieldVal, MetaObject metaObject) {
-        if (metaObject.hasSetter(fieldName) && StringUtils.checkValNull(metaObject.getValue(fieldName))) {
+        if (metaObject.hasSetter(fieldName) &&
+                metaObject.hasGetter(fieldName)) {
             metaObject.setValue(fieldName, fieldVal);
-        } else if (metaObject.hasGetter(META_OBJ_PREFIX + "." + fieldName) && StringUtils.checkValNull(metaObject.getValue(META_OBJ_PREFIX + "." + fieldName))) {
+        } else if (metaObject.hasGetter(META_OBJ_PREFIX) &&
+                StringUtils.checkValNotNull(metaObject.getValue(META_OBJ_PREFIX)) &&
+                metaObject.hasSetter(META_OBJ_PREFIX + "." + fieldName)) {
             metaObject.setValue(META_OBJ_PREFIX + "." + fieldName, fieldVal);
         }
         return this;
