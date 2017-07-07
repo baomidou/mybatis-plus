@@ -97,7 +97,7 @@ public class TableInfoHelper {
      * @return
      */
     public static TableInfo getTableInfo(Class<?> clazz) {
-        return tableInfoCache.get(clazz.getName());
+        return tableInfoCache.get(ClassUtils.getUserClass(clazz).getName());
     }
 
     /**
@@ -223,6 +223,7 @@ public class TableInfoHelper {
      * @param tableInfo
      */
     private static void initFieldFillCache(Class<?> clazz, TableInfo tableInfo) {
+        clazz = ClassUtils.getUserClass(clazz);
         List<TableFieldInfo> tableFieldInfos = tableInfo.getFieldList();
         for (TableFieldInfo tableFieldInfo : tableFieldInfos) {
             FieldFill fieldFill = tableFieldInfo.getFieldFill();
@@ -421,7 +422,7 @@ public class TableInfoHelper {
      * @return
      */
     public static List<Field> getAllFields(Class<?> clazz) {
-        List<Field> fieldList = ReflectionKit.getFieldList(clazz);
+        List<Field> fieldList = ReflectionKit.getFieldList(ClassUtils.getUserClass(clazz));
         if (CollectionUtils.isNotEmpty(fieldList)) {
             Iterator<Field> iterator = fieldList.iterator();
             while (iterator.hasNext()) {
