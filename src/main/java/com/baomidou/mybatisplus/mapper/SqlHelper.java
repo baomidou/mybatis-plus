@@ -175,7 +175,7 @@ public class SqlHelper {
         if (null == page) {
             return;
         }
-        if (isNotEmptyOfWrapper(wrapper)) {
+        if (null != wrapper) {
             if (page.isOpenSort()) {
                 wrapper.orderBy(page.getOrderByField(), page.isAsc());
             }
