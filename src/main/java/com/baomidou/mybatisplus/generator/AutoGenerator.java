@@ -182,7 +182,7 @@ public class AutoGenerator {
             if (config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix()) {
                 for (TableField field : tableInfo.getFields()) {
                     if (field.getPropertyType().equalsIgnoreCase("boolean")) {
-                        if (field.getPropertyName().contains("is")) {
+                        if (field.getPropertyName().startsWith("is")) {
                             field.setPropertyName(config.getStrategyConfig(),
                                     StringUtils.removePrefixAfterPrefixToLower(field.getPropertyName(), 2));
                         }
@@ -209,7 +209,6 @@ public class AutoGenerator {
             ctx.put("entityColumnConstant", config.getStrategyConfig().isEntityColumnConstant());
             ctx.put("entityBuilderModel", config.getStrategyConfig().isEntityBuilderModel());
             ctx.put("entityLombokModel", config.getStrategyConfig().isEntityLombokModel());
-            ctx.put("entityBooleanColumnRemoveIsPrefix", config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix());
             ctx.put("superEntityClass", superEntityClass);
             ctx.put("superMapperClassPackage", config.getSuperMapperClass());
             ctx.put("superMapperClass", superMapperClass);
