@@ -209,6 +209,7 @@ public class AutoGenerator {
             ctx.put("entityColumnConstant", config.getStrategyConfig().isEntityColumnConstant());
             ctx.put("entityBuilderModel", config.getStrategyConfig().isEntityBuilderModel());
             ctx.put("entityLombokModel", config.getStrategyConfig().isEntityLombokModel());
+            ctx.put("entityBooleanColumnRemoveIsPrefix", config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix());
             ctx.put("superEntityClass", superEntityClass);
             ctx.put("superMapperClassPackage", config.getSuperMapperClass());
             ctx.put("superMapperClass", superMapperClass);

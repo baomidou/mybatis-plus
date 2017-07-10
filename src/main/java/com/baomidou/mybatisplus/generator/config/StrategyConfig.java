@@ -347,7 +347,7 @@ public class StrategyConfig {
         return logicDeleteFieldName;
     }
 
-    public StrategyConfig setLogicDeleteFieldName(String logicDeletePropertyName) {
+    public StrategyConfig setLogicDeleteFieldName(String logicDeleteFieldName) {
         this.logicDeleteFieldName = logicDeleteFieldName;
         return this;
     }
