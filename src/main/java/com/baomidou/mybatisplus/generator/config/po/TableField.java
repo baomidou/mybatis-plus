@@ -137,13 +137,17 @@ public class TableField {
         if (propertyName.length() <= 1) {
             return propertyName.toUpperCase();
         }
-        // 第一个字母 小写、 第二个字母 大写 ，特殊处理
-        String firstChar = propertyName.substring(0, 1);
-        if (Character.isLowerCase(firstChar.toCharArray()[0])
-                && Character.isUpperCase(propertyName.substring(1, 2).toCharArray()[0])) {
-            return firstChar.toLowerCase() + propertyName.substring(1);
+        String setGetName = propertyName;
+        if (DbColumnType.BASE_BOOLEAN.getType().equalsIgnoreCase(columnType.getType())) {
+            setGetName = StringUtils.removeIsPrefixIfBoolean(setGetName, Boolean.class);
         }
-        return firstChar.toUpperCase() + propertyName.substring(1);
+        // 第一个字母 小写、 第二个字母 大写 ，特殊处理
+        String firstChar = setGetName.substring(0, 1);
+        if (Character.isLowerCase(firstChar.toCharArray()[0])
+                && Character.isUpperCase(setGetName.substring(1, 2).toCharArray()[0])) {
+            return firstChar.toLowerCase() + setGetName.substring(1);
+        }
+        return firstChar.toUpperCase() + setGetName.substring(1);
     }
 
     public String getFill() {
