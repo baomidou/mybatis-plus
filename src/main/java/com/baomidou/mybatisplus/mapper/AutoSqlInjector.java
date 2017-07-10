@@ -218,7 +218,7 @@ public class AutoSqlInjector implements ISqlInjector {
         // 表包含主键处理逻辑,如果不包含主键当普通字段处理
         if (StringUtils.isNotEmpty(table.getKeyProperty())) {
             if (table.getIdType() == IdType.AUTO) {
-				/* 自增主键 */
+                /* 自增主键 */
                 keyGenerator = new Jdbc3KeyGenerator();
                 keyProperty = table.getKeyProperty();
                 keyColumn = table.getKeyColumn();
@@ -230,7 +230,7 @@ public class AutoSqlInjector implements ISqlInjector {
                     fieldBuilder.append(table.getKeyColumn()).append(",");
                     placeholderBuilder.append("#{").append(table.getKeyProperty()).append("},");
                 } else {
-            		/* 用户输入自定义ID */
+                    /* 用户输入自定义ID */
                     fieldBuilder.append(table.getKeyColumn()).append(",");
                     // 正常自定义主键策略
                     placeholderBuilder.append("#{").append(table.getKeyProperty()).append("},");
@@ -768,13 +768,13 @@ public class AutoSqlInjector implements ISqlInjector {
 
 		/* 前缀处理 */
         String property = fieldInfo.getProperty();
+        Class propertyType = fieldInfo.getPropertyType();
+        property = StringUtils.removeIsPrefixIfBoolean(property, propertyType);
         if (null != prefix) {
             property = prefix + property;
         }
-
         // 验证逻辑
         if (fieldStrategy == FieldStrategy.NOT_EMPTY) {
-            String propertyType = fieldInfo.getPropertyType();
             if (StringUtils.isCharSequence(propertyType)) {
                 return String.format("\n\t<if test=\"%s!=null and %s!=''\">", property, property);
             } else {

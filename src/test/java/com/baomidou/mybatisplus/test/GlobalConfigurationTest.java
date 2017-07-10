@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.test;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.ibatis.session.RowBounds;
@@ -23,6 +24,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.junit.Assert;
 
 import com.baomidou.mybatisplus.mapper.Condition;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.test.mysql.entity.NotPK;
 import com.baomidou.mybatisplus.test.mysql.entity.Test;
@@ -59,10 +61,14 @@ public class GlobalConfigurationTest extends CrudTest {
         NotPKMapper pkMapper = sqlSession.getMapper(NotPKMapper.class);
         NotPK notPK = new NotPK();
         notPK.setUuid(UUID.randomUUID().toString());
+        notPK.setIs(true);
+        notPK.setIsis(false);
         int num = pkMapper.insert(notPK);
         Assert.assertTrue(num > 0);
         NotPK notPK1 = pkMapper.selectOne(notPK);
         Assert.assertNotNull(notPK1);
+        List<NotPK> notPKS = pkMapper.selectPage(RowBounds.DEFAULT, new EntityWrapper<>(notPK));
+        System.out.println(notPKS);
         Wrapper type = Condition.create().eq("type", 12121212);
         Assert.assertFalse(type.isEmptyOfWhere());
         System.out.println(type.getSqlSegment());
@@ -81,7 +87,6 @@ public class GlobalConfigurationTest extends CrudTest {
         Assert.assertTrue(count > 0);
         int deleteCount = pkMapper.delete(null);
         Assert.assertTrue(deleteCount > 0);
-        session.rollback();
         sqlSession.commit();
     }
 

@@ -51,6 +51,8 @@ CREATE TABLE `test` (
 DROP TABLE IF EXISTS `not_pk`;
 CREATE TABLE `not_pk` (
   `uuid` varchar(64) NOT NULL,
+  `is1` int(1) NOT NULL,
+  `is2` int(1) NOT NULL,
   `type` varchar(64) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
