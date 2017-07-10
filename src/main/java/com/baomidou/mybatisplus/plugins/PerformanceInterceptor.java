@@ -102,7 +102,7 @@ public class PerformanceInterceptor implements Interceptor {
                 if (stmtSql != null && stmtSql instanceof String) {
                     originalSql = (String) stmtSql;
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         } else if (T4CPreparedStatement.equals(stmtClassName)) {
             try {

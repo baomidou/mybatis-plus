@@ -589,7 +589,7 @@ public class AutoSqlInjector implements ISqlInjector {
         StringBuilder columns = new StringBuilder();
         if (null != table.getResultMap()) {
             /*
-			 * 存在 resultMap 映射返回
+             * 存在 resultMap 映射返回
 			 */
             if (entityWrapper) {
                 columns.append("<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>");

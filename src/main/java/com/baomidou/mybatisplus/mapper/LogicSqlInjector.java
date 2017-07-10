@@ -178,7 +178,7 @@ public class LogicSqlInjector extends AutoSqlInjector {
         for (TableFieldInfo fieldInfo : fieldList) {
             if (fieldInfo.isLogicDelete()) {
                 sql.append(" AND ").append(fieldInfo.getColumn());
-                if ("java.lang.String".equals(fieldInfo.getPropertyType())) {
+                if (StringUtils.isCharSequence(fieldInfo.getPropertyType())) {
                     sql.append("='").append(fieldInfo.getLogicNotDeleteValue()).append("'");
                 } else {
                     sql.append("=").append(fieldInfo.getLogicNotDeleteValue());
@@ -206,7 +206,7 @@ public class LogicSqlInjector extends AutoSqlInjector {
                     set.append(",");
                 }
                 set.append(fieldInfo.getColumn()).append("=");
-                if ("java.lang.String".equals(fieldInfo.getPropertyType())) {
+                if (StringUtils.isCharSequence(fieldInfo.getPropertyType())) {
                     set.append("'").append(fieldInfo.getLogicDeleteValue()).append("'");
                 } else {
                     set.append(fieldInfo.getLogicDeleteValue());

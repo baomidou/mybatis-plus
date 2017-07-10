@@ -95,7 +95,7 @@ public class EntityWrapperTest {
     @Test
     public void test21() {
         /*
-		 * 无实体 where ifneed orderby
+         * 无实体 where ifneed orderby
 		 */
         ew.where("name={0}", "'123'").addFilterIfNeed(false, "id=1").orderBy("id");
         String sqlSegment = ew.originalSql();

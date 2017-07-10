@@ -16,9 +16,9 @@
 package com.baomidou.mybatisplus.test.generator;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Arrays;
 import java.util.Map;
 
 import com.baomidou.mybatisplus.enums.FieldFill;
@@ -142,7 +142,7 @@ public class MysqlGenerator {
                         map.put("abc", this.getConfig().getGlobalConfig().getAuthor() + "-mp");
                         this.setMap(map);
                     }
-                }.setFileOutConfigList(Arrays.<FileOutConfig>asList(new FileOutConfig("/templates/mapper.xml.vm") {
+                }.setFileOutConfigList(Collections.<FileOutConfig>singletonList(new FileOutConfig("/templates/mapper.xml.vm") {
                     // 自定义输出文件目录
                     @Override
                     public String outputFile(TableInfo tableInfo) {
