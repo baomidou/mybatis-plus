@@ -83,7 +83,7 @@ public class H2LogicDeleteTest extends H2Test {
         Page page = new Page();
 
         page.setOrderByField("desc");
-        userService.selectPage(page, Condition.create().eq("desc","111"));
+        userService.selectPage(page, Condition.create().eq("desc", "111"));
         userService.deleteById(id);
         list = userService.selectList(ew);
         System.out.println("************************************");

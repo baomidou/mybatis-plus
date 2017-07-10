@@ -92,7 +92,7 @@ public class PerformanceInterceptor implements Interceptor {
 
         String originalSql = null;
         String stmtClassName = statement.getClass().getName();
-        if(DruidPooledPreparedStatement.equals(stmtClassName)){
+        if (DruidPooledPreparedStatement.equals(stmtClassName)) {
             try {
                 if (druidGetSQLMethod == null) {
                     Class<?> clazz = Class.forName(DruidPooledPreparedStatement);
@@ -104,7 +104,7 @@ public class PerformanceInterceptor implements Interceptor {
                 }
             } catch (Exception e) {
             }
-        }else if (T4CPreparedStatement.equals(stmtClassName)) {
+        } else if (T4CPreparedStatement.equals(stmtClassName)) {
             try {
                 if (oracleGetOriginalSqlMethod != null) {
                     Object stmtSql = oracleGetOriginalSqlMethod.invoke(statement);

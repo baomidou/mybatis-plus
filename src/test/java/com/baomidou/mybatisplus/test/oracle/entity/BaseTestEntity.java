@@ -22,7 +22,7 @@ public class BaseTestEntity implements Serializable {
     @TableId(value = "TEST_ID", type = IdType.INPUT)
     private Long id;
 
-//    public BaseTestEntity() {
+    //    public BaseTestEntity() {
 //
 //    }
 //

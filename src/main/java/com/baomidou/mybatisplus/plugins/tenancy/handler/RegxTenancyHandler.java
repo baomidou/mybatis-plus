@@ -29,6 +29,7 @@ import com.baomidou.mybatisplus.toolkit.PluginUtils;
  * @since 2017-06-20
  */
 public class RegxTenancyHandler implements TenancyHandler {
+
     //默认过滤还是忽略 true表示按租户过滤
     private boolean filterDefault = false;
     private Pattern tablePatterns[];

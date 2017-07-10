@@ -21,7 +21,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 public class DruidOracleDBConfig {
 
     @Bean
-    public DataSource getDruidDataSource(){
+    public DataSource getDruidDataSource() {
         DruidDataSource dataSource = new DruidDataSource();
         dataSource.setUrl("jdbc:oracle:thin:@192.168.10.169:1521:orcl");
         dataSource.setUsername("sa");

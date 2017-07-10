@@ -46,7 +46,7 @@ public class OracleDruidTest {
     }
 
     @Test
-    public void testInsert(){
+    public void testInsert() {
         TestSequser user = new TestSequser();
         user.setName("seqtest0627");
         user.setAge(12);

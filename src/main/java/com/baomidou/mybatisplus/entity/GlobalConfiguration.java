@@ -121,6 +121,7 @@ public class GlobalConfiguration implements Serializable {
     public void setDbTypeOfJdbcUrl(String jdbcUrl) {
         this.dbType = JdbcUtils.getDbType(jdbcUrl);
     }
+
     public void setDbType(String dbType) {
         this.dbType = DBType.getDBType(dbType);
     }

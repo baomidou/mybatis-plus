@@ -36,7 +36,7 @@ import com.baomidou.mybatisplus.test.h2.entity.persistent.H2UserVersionAndLogicD
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {DBConfig.class, MybatisConfigMetaObjOptLockConfig.class})
-public class H2MetaObjAndVersionAndOptLockTest extends H2Test{
+public class H2MetaObjAndVersionAndOptLockTest extends H2Test {
 
     @BeforeClass
     public static void initDB() throws SQLException, IOException {
@@ -60,7 +60,7 @@ public class H2MetaObjAndVersionAndOptLockTest extends H2Test{
     H2UserVersionAndLogicDeleteMapper userMapper;
 
     @Test
-    public void testInsert(){
+    public void testInsert() {
         Long id = 991L;
         H2UserVersionAndLogicDeleteEntity user = new H2UserVersionAndLogicDeleteEntity();
         user.setId(id);

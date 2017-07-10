@@ -50,7 +50,7 @@ public class JdbcUtils {
             return DBType.MYSQL;
         } else if (jdbcUrl.startsWith("jdbc:oracle:") || jdbcUrl.startsWith("jdbc:log4jdbc:oracle:")) {
             return DBType.ORACLE;
-        } else if (jdbcUrl.startsWith("jdbc:sqlserver:") || jdbcUrl.startsWith("jdbc:microsoft:") ) {
+        } else if (jdbcUrl.startsWith("jdbc:sqlserver:") || jdbcUrl.startsWith("jdbc:microsoft:")) {
             return DBType.SQLSERVER2005;
         } else if (jdbcUrl.startsWith("jdbc:sqlserver2012:")) {
             return DBType.SQLSERVER;

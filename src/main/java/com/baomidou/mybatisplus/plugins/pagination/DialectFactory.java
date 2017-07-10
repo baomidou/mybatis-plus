@@ -47,7 +47,7 @@ public class DialectFactory {
      *
      * @param page         翻页对象
      * @param buildSql     执行 SQL
-     * @param dbType  数据库类型
+     * @param dbType       数据库类型
      * @param dialectClazz 自定义方言实现类
      * @return
      * @throws Exception

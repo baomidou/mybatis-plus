@@ -15,6 +15,6 @@ import com.baomidou.mybatisplus.test.h2.service.IH2UserSequenceService;
  * @date 2017/6/26
  */
 @Service
-public class H2UserSequenceServiceImpl extends ServiceImpl<H2UserSequenceMapper,H2UserSequence> implements IH2UserSequenceService {
+public class H2UserSequenceServiceImpl extends ServiceImpl<H2UserSequenceMapper, H2UserSequence> implements IH2UserSequenceService {
 
 }

@@ -31,8 +31,8 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
 public class StringUtilsTest {
 
     @Test
-    public void removePrefixAfterPrefixToLower(){
-        Assert.assertEquals("user", StringUtils.removePrefixAfterPrefixToLower( "isUser", 2 ));
-        Assert.assertEquals("userInfo", StringUtils.removePrefixAfterPrefixToLower( "isUserInfo", 2 ));
+    public void removePrefixAfterPrefixToLower() {
+        Assert.assertEquals("user", StringUtils.removePrefixAfterPrefixToLower("isUser", 2));
+        Assert.assertEquals("userInfo", StringUtils.removePrefixAfterPrefixToLower("isUserInfo", 2));
     }
 }

@@ -370,8 +370,8 @@ public class AutoGenerator {
         return !file.exists() || config.getGlobalConfig().isFileOverride();
     }
 
-
     // ==================================  相关配置  ==================================
+
     /**
      * 初始化配置
      */

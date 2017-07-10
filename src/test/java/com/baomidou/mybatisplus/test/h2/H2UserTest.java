@@ -355,15 +355,15 @@ public class H2UserTest extends H2Test {
     }
 
     @Test
-    public void testInsertMy(){
-        String name="QiPa";
-        int version =1;
+    public void testInsertMy() {
+        String name = "QiPa";
+        int version = 1;
         int row = userService.myInsert(name, version);
         Assert.assertEquals(1, row);
     }
 
     @Test
-    public void testUpdateMy(){
+    public void testUpdateMy() {
         Long id = 10087L;
         H2User user = new H2User();
         user.setId(id);
@@ -375,7 +375,7 @@ public class H2UserTest extends H2Test {
         Assert.assertNotNull(dbUser);
         Assert.assertEquals("myUpdate", dbUser.getName());
 
-        Assert.assertEquals(1,userService.myUpdate(id, "updateMy"));
+        Assert.assertEquals(1, userService.myUpdate(id, "updateMy"));
 
         dbUser = userService.selectById(id);
         Assert.assertNotNull(dbUser);
@@ -386,13 +386,13 @@ public class H2UserTest extends H2Test {
 
 
     @Test
-    public void testCondition(){
-        Page<H2User> page = new Page<>(1,3);
-        Map<String,Object> condition = new HashMap<>();
-        condition.put("test_type",1);
+    public void testCondition() {
+        Page<H2User> page = new Page<>(1, 3);
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("test_type", 1);
         page.setCondition(condition);
         Page<H2User> pageResult = userService.selectPage(page);
-        for(H2User u: pageResult.getRecords()){
+        for (H2User u : pageResult.getRecords()) {
             System.out.println(u);
         }
         System.out.println(pageResult.getTotal());

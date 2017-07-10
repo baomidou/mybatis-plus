@@ -39,6 +39,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @TableName
 public class H2User extends SuperEntity {
+
     /* 测试忽略验证 */
     private String name;
 

@@ -36,7 +36,7 @@ public abstract class AbstractSqlParser {
      * 获取优化 SQL 方法
      * </p>
      *
-     * @param sql    SQL 语句
+     * @param sql SQL 语句
      * @return SQL 信息
      */
     public abstract SqlInfo optimizeSql(String sql);

@@ -208,15 +208,15 @@ public class H2UserNoVersionTest extends H2Test {
 
 
     @Test
-    public void testInsertMy(){
-        String name="QiPa";
-        int version =1;
+    public void testInsertMy() {
+        String name = "QiPa";
+        int version = 1;
         int row = userMapper.myInsertWithNameVersion(name, version);
         Assert.assertEquals(1, row);
     }
 
     @Test
-    public void testUpdateMy(){
+    public void testUpdateMy() {
         Long id = 10087L;
         H2UserNoVersion user = new H2UserNoVersion();
         user.setId(id);

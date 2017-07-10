@@ -307,7 +307,7 @@ public class ConfigBuilder {
     }
 
     /**
-     * <P>
+     * <p>
      * 处理表对应的类名称
      * </P>
      *

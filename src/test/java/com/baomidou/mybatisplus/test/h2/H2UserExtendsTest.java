@@ -29,7 +29,7 @@ import com.baomidou.mybatisplus.test.h2.service.IH2UserExtendsService;
 
 /**
  * <p>
- *     #328 实体继承属性测试
+ * #328 实体继承属性测试
  * </p>
  *
  * @author yuxiaobin
@@ -37,7 +37,7 @@ import com.baomidou.mybatisplus.test.h2.service.IH2UserExtendsService;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {ServiceConfig.class})
-public class H2UserExtendsTest extends H2Test{
+public class H2UserExtendsTest extends H2Test {
 
     @Autowired
     IH2UserExtendsService userService;
@@ -59,7 +59,7 @@ public class H2UserExtendsTest extends H2Test{
     }
 
     @Test
-    public void testInsert(){
+    public void testInsert() {
         H2UserIntVersionExtendTO user = new H2UserIntVersionExtendTO();
         user.setAge(1);
         user.setPrice(new BigDecimal("9.99"));
@@ -72,7 +72,7 @@ public class H2UserExtendsTest extends H2Test{
     }
 
     @Test
-    public void testUpdate(){
+    public void testUpdate() {
         H2UserIntVersionExtendTO user = new H2UserIntVersionExtendTO();
         user.setAge(1);
         user.setPrice(new BigDecimal("9.99"));
@@ -95,7 +95,7 @@ public class H2UserExtendsTest extends H2Test{
 
 
     @Test
-    public void testDelete(){
+    public void testDelete() {
         H2UserIntVersionExtendTO user = new H2UserIntVersionExtendTO();
         user.setAge(1);
         user.setPrice(new BigDecimal("9.91"));
@@ -162,7 +162,6 @@ public class H2UserExtendsTest extends H2Test{
         Assert.assertEquals(2, userDB.getVersion().intValue());
         Assert.assertEquals("999", userDB.getName());
     }
-
 
 
     @Test

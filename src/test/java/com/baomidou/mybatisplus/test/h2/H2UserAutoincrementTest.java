@@ -77,20 +77,20 @@ public class H2UserAutoincrementTest extends H2Test {
 
 
     @Test
-    public void testInsertMy(){
-        String name="QiPa";
-        int version =1;
+    public void testInsertMy() {
+        String name = "QiPa";
+        int version = 1;
         int row = userMapper.myInsertWithNameVersion(name, version);
         Assert.assertEquals(1, row);
     }
 
     @Test
-    public void testUpdateMy(){
+    public void testUpdateMy() {
         H2UserMetaObj user = new H2UserMetaObj();
         user.setName("myUpdate");
         user.setVersion(1);
         userMapper.insert(user);
-        Long id =user.getId();
+        Long id = user.getId();
         H2UserMetaObj dbUser = userMapper.selectById(id);
         Assert.assertNotNull(dbUser);
         Assert.assertEquals("myUpdate", dbUser.getName());

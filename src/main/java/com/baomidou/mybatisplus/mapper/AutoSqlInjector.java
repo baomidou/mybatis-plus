@@ -588,7 +588,7 @@ public class AutoSqlInjector implements ISqlInjector {
     protected String sqlSelectColumns(TableInfo table, boolean entityWrapper) {
         StringBuilder columns = new StringBuilder();
         if (null != table.getResultMap()) {
-			/*
+            /*
 			 * 存在 resultMap 映射返回
 			 */
             if (entityWrapper) {
