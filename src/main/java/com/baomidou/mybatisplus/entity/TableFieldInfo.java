@@ -77,7 +77,7 @@ public class TableFieldInfo {
     private String logicNotDeleteValue;
 
     /**
-     * 字段忽略策略
+     * 字段填充策略
      */
     private FieldFill fieldFill = FieldFill.DEFAULT;
 
