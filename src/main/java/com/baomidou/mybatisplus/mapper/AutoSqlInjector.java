@@ -613,11 +613,10 @@ public class AutoSqlInjector implements ISqlInjector {
 
             // 主键处理
             if (StringUtils.isNotEmpty(table.getKeyProperty())) {
-                String wordConvert = sqlWordConvert(table.getKeyProperty());
                 if (table.isKeyRelated()) {
-                    columns.append(table.getKeyColumn()).append(" AS ").append(sqlSelectAsColumnConvert(table.getKeyProperty()));
+                    columns.append(table.getKeyColumn()).append(" AS ").append(sqlWordConvert(table.getKeyProperty()));
                 } else {
-                    columns.append(wordConvert);
+                    columns.append(sqlWordConvert(table.getKeyProperty()));
                 }
                 if (_size >= 1) {
                     // 判断其余字段是否存在
@@ -638,7 +637,7 @@ public class AutoSqlInjector implements ISqlInjector {
                     } else {
                         // 字段属性不一致
                         columns.append(fieldInfo.getColumn());
-                        columns.append(" AS ").append(sqlSelectAsColumnConvert(wordConvert));
+                        columns.append(" AS ").append(wordConvert);
                     }
                     if (i + 1 < _size) {
                         columns.append(",");
@@ -673,11 +672,10 @@ public class AutoSqlInjector implements ISqlInjector {
         columns.append("<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>");
         // 主键处理
         if (StringUtils.isNotEmpty(table.getKeyProperty())) {
-            String wordConvert = sqlWordConvert(table.getKeyProperty());
             if (table.isKeyRelated()) {
-                columns.append(table.getKeyColumn()).append(" AS ").append(sqlSelectAsColumnConvert(wordConvert));
+                columns.append(table.getKeyColumn()).append(" AS ").append(sqlWordConvert(table.getKeyProperty()));
             } else {
-                columns.append(wordConvert);
+                columns.append(sqlWordConvert(table.getKeyProperty()));
             }
         } else {
             // 表字段处理
@@ -691,25 +689,12 @@ public class AutoSqlInjector implements ISqlInjector {
                 } else {
                     // 字段属性不一致
                     columns.append(fieldInfo.getColumn());
-                    columns.append(" AS ").append(sqlSelectAsColumnConvert(wordConvert));
+                    columns.append(" AS ").append(wordConvert);
                 }
             }
         }
         columns.append("</otherwise></choose>");
         return columns.toString();
-    }
-
-    /**
-     * <p>
-     * select sql as 字段转换，默认原样返回，预留子类处理<br>
-     * 例如：com.baomidou.mybatisplus.mapper.PostgreSqlInjector<br>
-     * </p>
-     *
-     * @param columnStr 字段内容
-     * @return
-     */
-    protected String sqlSelectAsColumnConvert(String columnStr) {
-        return columnStr;
     }
 
     /**
