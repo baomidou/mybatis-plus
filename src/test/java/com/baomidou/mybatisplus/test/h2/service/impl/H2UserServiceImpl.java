@@ -43,6 +43,22 @@ public class H2UserServiceImpl extends ServiceImpl<H2UserMapper, H2User> impleme
     }
 
     @Override
+    public int myInsertWithParam(String name, int version) {
+        H2User user = new H2User();
+        user.setName(name);
+        user.setVersion(version);
+        return userMapper.myInsertWithParam(user);
+    }
+
+    @Override
+    public int myInsertWithoutParam(String name, int version) {
+        H2User user = new H2User();
+        user.setName(name);
+        user.setVersion(version);
+        return userMapper.myInsertWithoutParam(user);
+    }
+
+    @Override
     public int myUpdate(Long id, String name) {
         return userMapper.myUpdateWithNameId(id, name);
     }

@@ -8,6 +8,9 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -22,6 +25,7 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 
 import com.baomidou.mybatisplus.mapper.Condition;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.test.h2.config.DBConfig;
 import com.baomidou.mybatisplus.test.h2.config.MybatisConfigMetaObjOptLockConfig;
 import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserVersionAndLogicDeleteMapper;
@@ -191,5 +195,69 @@ public class H2MetaObjAndVersionAndOptLockTest extends H2Test {
         Assert.assertNotNull(userMapper.selectList(Condition.create().orderBy("age")));
         H2UserVersionAndLogicDeleteEntity userFromDB = userMapper.selectById(user.getId());
         Assert.assertNull(userFromDB);
+    }
+
+    @Test
+    public void testInsertMy() {
+        String name = "自定义insert";
+        int version = 1;
+        int row = userMapper.myInsertWithNameVersion(name, version);
+        Assert.assertEquals(1, row);
+    }
+
+    @Test
+    public void testInsertObjectWithParam() {
+        String name = "自定义insert带Param注解";
+        int version = 1;
+        H2UserVersionAndLogicDeleteEntity user = new H2UserVersionAndLogicDeleteEntity();
+        user.setName(name);
+        user.setVersion(version);
+        int row = userMapper.myInsertWithParam(user);
+        Assert.assertEquals(1, row);
+    }
+    @Test
+    public void testInsertObjectWithoutParam() {
+        String name = "自定义insert带Param注解";
+        int version = 1;
+        H2UserVersionAndLogicDeleteEntity user = new H2UserVersionAndLogicDeleteEntity();
+        user.setName(name);
+        user.setVersion(version);
+        int row = userMapper.myInsertWithoutParam(user);
+        Assert.assertEquals(1, row);
+    }
+
+    @Test
+    public void testUpdateMy() {
+        Long id = 10087L;
+        H2UserVersionAndLogicDeleteEntity user = new H2UserVersionAndLogicDeleteEntity();
+        user.setId(id);
+        user.setName("myUpdate");
+        user.setVersion(1);
+        userMapper.insert(user);
+
+        H2UserVersionAndLogicDeleteEntity dbUser = userMapper.selectById(id);
+        Assert.assertNotNull(dbUser);
+        Assert.assertEquals("myUpdate", dbUser.getName());
+
+        Assert.assertEquals(1, userMapper.myUpdateWithNameId(id, "updateMy"));
+
+        dbUser = userMapper.selectById(id);
+        Assert.assertNotNull(dbUser);
+        Assert.assertEquals("updateMy", dbUser.getName());
+        Assert.assertEquals(1, user.getVersion().intValue());
+    }
+
+
+    @Test
+    public void testCondition() {
+        Page<H2UserVersionAndLogicDeleteEntity> page = new Page<>(1, 3);
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("test_type", 1);
+        page.setCondition(condition);
+        List<H2UserVersionAndLogicDeleteEntity> pageResult = userMapper.selectPage(page, new EntityWrapper<H2UserVersionAndLogicDeleteEntity>());
+        for (H2UserVersionAndLogicDeleteEntity u : pageResult) {
+            System.out.println(u);
+        }
+
     }
 }

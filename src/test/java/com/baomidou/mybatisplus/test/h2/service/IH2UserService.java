@@ -30,5 +30,9 @@ public interface IH2UserService extends IService<H2User> {
 
     int myInsert(String name, int version);
 
+    int myInsertWithParam(String name, int version);
+
+    int myInsertWithoutParam(String name, int version);
+
     int myUpdate(Long id, String name);
 }

@@ -32,7 +32,7 @@ public interface H2UserMapper extends SuperMapper<H2User> {
             "select a.addr_id as addrId, a.addr_name as addrName from h2address a" +
                     " join h2user u on u.test_id=a.test_id and u.test_id=#{userId}"
     )
-    List<H2Addr> getAddrListByUserId(@Param("userId") Long userId, Page<H2Addr> page);
+    List<H2Addr> getAddrListByUserIdPage(@Param("userId") Long userId, Page<H2Addr> page);
 
     @Insert(
             "insert into h2user(name,version) values(#{name},#{version})"
@@ -44,4 +44,13 @@ public interface H2UserMapper extends SuperMapper<H2User> {
     )
     int myUpdateWithNameId(@Param("id") Long id, @Param("name") String name);
 
+
+    @Insert(
+            "insert into h2user(name,version) values( #{user1.name}, #{user1.version})"
+    )
+    int myInsertWithParam(@Param("user1") H2User user1);
+    @Insert(
+            "insert into h2user(name,version) values( #{name}, #{version})"
+    )
+    int myInsertWithoutParam(H2User user1);
 }
