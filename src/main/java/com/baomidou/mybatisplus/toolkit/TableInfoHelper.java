@@ -225,22 +225,24 @@ public class TableInfoHelper {
     private static void initFieldFillCache(Class<?> clazz, TableInfo tableInfo) {
         clazz = ClassUtils.getUserClass(clazz);
         List<TableFieldInfo> tableFieldInfos = tableInfo.getFieldList();
-        for (TableFieldInfo tableFieldInfo : tableFieldInfos) {
-            FieldFill fieldFill = tableFieldInfo.getFieldFill();
-            if (null == fieldFill || FieldFill.DEFAULT.equals(fieldFill)) {
-                continue;
-            }
-            switch (fieldFill) {
-                case INSERT:
-                    initFieldFill(FieldFill.INSERT, clazz, tableFieldInfo);
-                    break;
-                case UPDATE:
-                    initFieldFill(FieldFill.UPDATE, clazz, tableFieldInfo);
-                    break;
-                case INSERT_UPDATE:
-                    initFieldFill(FieldFill.INSERT, clazz, tableFieldInfo);
-                    initFieldFill(FieldFill.UPDATE, clazz, tableFieldInfo);
-                    break;
+        if (CollectionUtils.isNotEmpty(tableFieldInfos)) {
+            for (TableFieldInfo tableFieldInfo : tableFieldInfos) {
+                FieldFill fieldFill = tableFieldInfo.getFieldFill();
+                if (null == fieldFill || FieldFill.DEFAULT.equals(fieldFill)) {
+                    continue;
+                }
+                switch (fieldFill) {
+                    case INSERT:
+                        initFieldFill(FieldFill.INSERT, clazz, tableFieldInfo);
+                        break;
+                    case UPDATE:
+                        initFieldFill(FieldFill.UPDATE, clazz, tableFieldInfo);
+                        break;
+                    case INSERT_UPDATE:
+                        initFieldFill(FieldFill.INSERT, clazz, tableFieldInfo);
+                        initFieldFill(FieldFill.UPDATE, clazz, tableFieldInfo);
+                        break;
+                }
             }
         }
     }

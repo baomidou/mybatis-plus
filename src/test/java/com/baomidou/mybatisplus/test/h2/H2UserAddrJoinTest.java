@@ -62,7 +62,7 @@ public class H2UserAddrJoinTest extends H2Test {
 
     @Test
     public void testJoinTableWithPagination() {
-        List<H2Addr> addrList = userMapper.getAddrListByUserId(101L, new Page<H2Addr>(0, 3));
+        List<H2Addr> addrList = userMapper.getAddrListByUserIdPage(101L, new Page<H2Addr>(0, 3));
         Assert.assertEquals(3, addrList.size());
     }
 
