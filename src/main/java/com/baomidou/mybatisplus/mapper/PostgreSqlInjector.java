@@ -32,7 +32,7 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  * @author hubin
  * @Date 2017-07-11
  */
-public class PostgreSqlInjector extends AutoSqlInjector {
+public class PostgreSqlInjector extends LogicSqlInjector {
 
     /**
      * <p>
