@@ -96,6 +96,23 @@ public interface IService<T> {
 
     /**
      * <p>
+     * 批量修改或插入全部字段
+     * </p>
+     * @param entityList 实体对象列表
+     * @return boolean
+     */
+    boolean insertOrUpdateAllColumnBatch(List<T> entityList);
+
+    /**
+     * 批量修改或插入全部字段
+     * @param entityList 实体对象列表
+     * @param batchSize
+     * @return boolean
+     */
+    boolean insertOrUpdateAllColumnBatch(List<T> entityList, int batchSize);
+
+    /**
+     * <p>
      * 根据 ID 删除
      * </p>
      *
@@ -188,6 +205,27 @@ public interface IService<T> {
 
     /**
      * <p>
+     * 根据ID 批量更新全部字段
+     * </p>
+     *
+     * @param entityList 实体对象列表
+     * @return boolean
+     */
+    boolean updateAllColumnBatchById(List<T> entityList);
+
+    /**
+     * <p>
+     * 根据ID 批量更新全部字段
+     * </p>
+     *
+     * @param entityList 实体对象列表
+     * @param batchSize  更新批次数量
+     * @return boolean
+     */
+    boolean updateAllColumnBatchById(List<T> entityList, int batchSize);
+
+    /**
+     * <p>
      * TableId 注解存在更新记录，否插入一条记录
      * </p>
      *
@@ -195,6 +233,13 @@ public interface IService<T> {
      * @return boolean
      */
     boolean insertOrUpdate(T entity);
+
+    /**
+     * 插入或修改一条记录的全部字段
+     * @param entity 实体对象
+     * @return boolean
+     */
+    boolean insertOrUpdateAllColumn(T entity);
 
     /**
      * <p>

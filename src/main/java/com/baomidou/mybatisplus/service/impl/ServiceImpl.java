@@ -136,7 +136,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
             throw new MybatisPlusException("Error: Cannot execute insertBatch Method. Cause", e);
         }
         return true;
-
     }
 
     /**
@@ -170,19 +169,66 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     @Transactional
+    public boolean insertOrUpdateAllColumn(T entity) {
+        if (null != entity) {
+            Class<?> cls = entity.getClass();
+            TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
+            if (null != tableInfo && StringUtils.isNotEmpty(tableInfo.getKeyProperty())) {
+                Object idVal = ReflectionKit.getMethodValue(cls, entity, tableInfo.getKeyProperty());
+                if (StringUtils.checkValNull(idVal)) {
+                    return insertAllColumn(entity);
+                } else {
+                    /*
+                     * 更新成功直接返回，失败执行插入逻辑
+					 */
+                    return updateAllColumnById(entity) || insertAllColumn(entity);
+                }
+            } else {
+                throw new MybatisPlusException("Error:  Can not execute. Could not find @TableId.");
+            }
+        }
+        return false;
+    }
+
+    @Transactional
     public boolean insertOrUpdateBatch(List<T> entityList) {
         return insertOrUpdateBatch(entityList, 30);
     }
 
     @Transactional
     public boolean insertOrUpdateBatch(List<T> entityList, int batchSize) {
+        return insertOrUpdateBatch(entityList, batchSize,true);
+    }
+
+    @Transactional
+    public boolean insertOrUpdateAllColumnBatch(List<T> entityList){
+        return insertOrUpdateBatch(entityList, 30,false);
+    }
+
+    @Transactional
+    public boolean insertOrUpdateAllColumnBatch(List<T> entityList, int batchSize){
+        return insertOrUpdateBatch(entityList, batchSize,false);
+    }
+
+    /**
+     * 批量插入修改
+     * @param entityList 实体对象列表
+     * @param batchSize 批量刷新个数
+     * @param selective 是否滤掉空字段
+     * @return boolean
+     */
+    private boolean insertOrUpdateBatch(List<T> entityList, int batchSize, boolean selective){
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
         try (SqlSession batchSqlSession = sqlSessionBatch()) {
             int size = entityList.size();
             for (int i = 0; i < size; i++) {
-                insertOrUpdate(entityList.get(i));
+                if(selective) {
+                    insertOrUpdate(entityList.get(i));
+                }else {
+                    insertOrUpdateAllColumn(entityList.get(i));
+                }
                 if (i >= 1 && i % batchSize == 0) {
                     batchSqlSession.flushStatements();
                 }
@@ -239,12 +285,34 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
     @Transactional
     public boolean updateBatchById(List<T> entityList, int batchSize) {
+        return updateBatchById(entityList, batchSize, true);
+    }
+
+    @Transactional
+    public boolean updateAllColumnBatchById(List<T> entityList){
+        return updateAllColumnBatchById(entityList, 30);
+    }
+
+    @Transactional
+    public boolean updateAllColumnBatchById(List<T> entityList, int batchSize){
+        return updateBatchById(entityList, batchSize, false);
+    }
+
+    /**
+     * 根据主键ID进行批量修改
+     * @param entityList 实体对象列表
+     * @param batchSize 批量刷新个数
+     * @param selective 是否滤掉空字段
+     * @return boolean
+     */
+    private boolean updateBatchById(List<T> entityList, int batchSize, boolean selective) {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
         try (SqlSession batchSqlSession = sqlSessionBatch()) {
             int size = entityList.size();
-            String sqlStatement = sqlStatement(SqlMethod.UPDATE_BY_ID);
+            SqlMethod sqlMethod = selective ? SqlMethod.UPDATE_BY_ID : SqlMethod.UPDATE_ALL_COLUMN_BY_ID;
+            String sqlStatement = sqlStatement(sqlMethod);
             for (int i = 0; i < size; i++) {
                 MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
                 param.put("et", entityList.get(i));
