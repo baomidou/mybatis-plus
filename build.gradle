@@ -62,12 +62,15 @@ artifacts {
     archives javadocJar
 }
 
+//gradle uploadArchives -Durl=发布仓库地址 -DuserName=用户名 -DpassWord=密码
 uploadArchives {
-    def repositoryUrl = "http://172.16.111.124:8081/nexus/content/repositories/releases/"
+    def repositoryUrl = System.getProperty("url")
+    def userName = System.getProperty("userName")
+    def passWord = System.getProperty("passWord")
     repositories {
         mavenDeployer {
             repository(url: "$repositoryUrl") {
-                authentication(userName: "deployment", password: "deployment123")
+                authentication(userName: "${userName}", password: "${passWord}")
             }
             pom.version = "$project.version"
             pom.artifactId = "$project.name"
