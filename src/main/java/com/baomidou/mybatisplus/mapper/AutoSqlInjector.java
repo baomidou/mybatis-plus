@@ -599,7 +599,7 @@ public class AutoSqlInjector implements ISqlInjector {
                 columns.append("</otherwise></choose>");
             }
         } else {
-			/*
+            /*
 			 * 普通查询
 			 */
             if (entityWrapper) {

@@ -369,6 +369,7 @@ public class H2UserTest extends H2Test {
         int row = userService.myInsertWithParam(name, version);
         Assert.assertEquals(1, row);
     }
+
     @Test
     public void testInsertObjectWithoutParam() {
         String name = "自定义insert带Param注解";

@@ -197,36 +197,37 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
     @Transactional
     public boolean insertOrUpdateBatch(List<T> entityList, int batchSize) {
-        return insertOrUpdateBatch(entityList, batchSize,true);
+        return insertOrUpdateBatch(entityList, batchSize, true);
     }
 
     @Transactional
-    public boolean insertOrUpdateAllColumnBatch(List<T> entityList){
-        return insertOrUpdateBatch(entityList, 30,false);
+    public boolean insertOrUpdateAllColumnBatch(List<T> entityList) {
+        return insertOrUpdateBatch(entityList, 30, false);
     }
 
     @Transactional
-    public boolean insertOrUpdateAllColumnBatch(List<T> entityList, int batchSize){
-        return insertOrUpdateBatch(entityList, batchSize,false);
+    public boolean insertOrUpdateAllColumnBatch(List<T> entityList, int batchSize) {
+        return insertOrUpdateBatch(entityList, batchSize, false);
     }
 
     /**
      * 批量插入修改
+     *
      * @param entityList 实体对象列表
-     * @param batchSize 批量刷新个数
-     * @param selective 是否滤掉空字段
+     * @param batchSize  批量刷新个数
+     * @param selective  是否滤掉空字段
      * @return boolean
      */
-    private boolean insertOrUpdateBatch(List<T> entityList, int batchSize, boolean selective){
+    private boolean insertOrUpdateBatch(List<T> entityList, int batchSize, boolean selective) {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
         try (SqlSession batchSqlSession = sqlSessionBatch()) {
             int size = entityList.size();
             for (int i = 0; i < size; i++) {
-                if(selective) {
+                if (selective) {
                     insertOrUpdate(entityList.get(i));
-                }else {
+                } else {
                     insertOrUpdateAllColumn(entityList.get(i));
                 }
                 if (i >= 1 && i % batchSize == 0) {
@@ -289,20 +290,21 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     @Transactional
-    public boolean updateAllColumnBatchById(List<T> entityList){
+    public boolean updateAllColumnBatchById(List<T> entityList) {
         return updateAllColumnBatchById(entityList, 30);
     }
 
     @Transactional
-    public boolean updateAllColumnBatchById(List<T> entityList, int batchSize){
+    public boolean updateAllColumnBatchById(List<T> entityList, int batchSize) {
         return updateBatchById(entityList, batchSize, false);
     }
 
     /**
      * 根据主键ID进行批量修改
+     *
      * @param entityList 实体对象列表
-     * @param batchSize 批量刷新个数
-     * @param selective 是否滤掉空字段
+     * @param batchSize  批量刷新个数
+     * @param selective  是否滤掉空字段
      * @return boolean
      */
     private boolean updateBatchById(List<T> entityList, int batchSize, boolean selective) {

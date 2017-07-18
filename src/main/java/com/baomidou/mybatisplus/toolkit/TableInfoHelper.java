@@ -17,12 +17,9 @@ package com.baomidou.mybatisplus.toolkit;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.ibatis.builder.MapperBuilderAssistant;
@@ -46,7 +43,6 @@ import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.entity.TableFieldInfo;
 import com.baomidou.mybatisplus.entity.TableInfo;
-import com.baomidou.mybatisplus.enums.FieldFill;
 import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.incrementer.IKeyGenerator;
@@ -68,25 +64,9 @@ public class TableInfoHelper {
      */
     private static final Map<String, TableInfo> tableInfoCache = new ConcurrentHashMap<>();
     /**
-     * 自动填充字段信息
-     */
-    private static final Map<FieldFill, Map<Class<?>, Set<String>>> fieldFillMap = new ConcurrentHashMap<>();
-    /**
      * 默认表主键
      */
     private static final String DEFAULT_ID_NAME = "id";
-
-    /**
-     * <p>
-     * 获取自动填充信息
-     * <p>
-     *
-     * @param fieldFill
-     * @return
-     */
-    public static Map<Class<?>, Set<String>> getFieldFillMap(FieldFill fieldFill) {
-        return fieldFillMap.get(fieldFill);
-    }
 
     /**
      * <p>
@@ -211,58 +191,7 @@ public class TableInfoHelper {
          * 注入
 		 */
         tableInfoCache.put(clazz.getName(), tableInfo);
-        //初始化填充字段缓存信息
-        //initFieldFillCache(clazz, tableInfo);
         return tableInfo;
-    }
-
-    /**
-     * 初始化填充字段缓存信息
-     *
-     * @param clazz
-     * @param tableInfo
-     */
-    private static void initFieldFillCache(Class<?> clazz, TableInfo tableInfo) {
-        clazz = ClassUtils.getUserClass(clazz);
-        List<TableFieldInfo> tableFieldInfos = tableInfo.getFieldList();
-        if (CollectionUtils.isNotEmpty(tableFieldInfos)) {
-            for (TableFieldInfo tableFieldInfo : tableFieldInfos) {
-                FieldFill fieldFill = tableFieldInfo.getFieldFill();
-                if (null == fieldFill || FieldFill.DEFAULT.equals(fieldFill)) {
-                    continue;
-                }
-                switch (fieldFill) {
-                    case INSERT:
-                        initFieldFill(FieldFill.INSERT, clazz, tableFieldInfo);
-                        break;
-                    case UPDATE:
-                        initFieldFill(FieldFill.UPDATE, clazz, tableFieldInfo);
-                        break;
-                    case INSERT_UPDATE:
-                        initFieldFill(FieldFill.INSERT, clazz, tableFieldInfo);
-                        initFieldFill(FieldFill.UPDATE, clazz, tableFieldInfo);
-                        break;
-                }
-            }
-        }
-    }
-
-    /**
-     * 初始化填充
-     *
-     * @param fieldFill
-     * @param clazz
-     * @param tableFieldInfo
-     */
-    private static void initFieldFill(FieldFill fieldFill, Class<?> clazz, TableFieldInfo tableFieldInfo) {
-        Map<Class<?>, Set<String>> fillFieldMap = fieldFillMap.get(fieldFill);
-        if (MapUtils.isEmpty(fillFieldMap)) {
-            fillFieldMap = new HashMap<>();
-            fillFieldMap.put(clazz, new TreeSet<String>());
-            fieldFillMap.put(fieldFill, fillFieldMap);
-        }
-        Set<String> properties = fillFieldMap.get(clazz);
-        properties.add(tableFieldInfo.getProperty());
     }
 
     /**

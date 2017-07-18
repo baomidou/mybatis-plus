@@ -215,6 +215,7 @@ public class H2MetaObjAndVersionAndOptLockTest extends H2Test {
         int row = userMapper.myInsertWithParam(user);
         Assert.assertEquals(1, row);
     }
+
     @Test
     public void testInsertObjectWithoutParam() {
         String name = "自定义insert带Param注解";

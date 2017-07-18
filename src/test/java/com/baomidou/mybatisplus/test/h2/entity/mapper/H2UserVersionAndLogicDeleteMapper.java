@@ -50,6 +50,7 @@ public interface H2UserVersionAndLogicDeleteMapper extends BaseMapper<H2UserVers
             "insert into h2user(name,version) values( #{user1.name}, #{user1.version})"
     )
     int myInsertWithParam(@Param("user1") H2UserVersionAndLogicDeleteEntity user1);
+
     @Insert(
             "insert into h2user(name,version) values( #{name}, #{version})"
     )

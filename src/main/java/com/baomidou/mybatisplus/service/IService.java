@@ -98,6 +98,7 @@ public interface IService<T> {
      * <p>
      * 批量修改或插入全部字段
      * </p>
+     *
      * @param entityList 实体对象列表
      * @return boolean
      */
@@ -105,6 +106,7 @@ public interface IService<T> {
 
     /**
      * 批量修改或插入全部字段
+     *
      * @param entityList 实体对象列表
      * @param batchSize
      * @return boolean
@@ -236,6 +238,7 @@ public interface IService<T> {
 
     /**
      * 插入或修改一条记录的全部字段
+     *
      * @param entity 实体对象
      * @return boolean
      */

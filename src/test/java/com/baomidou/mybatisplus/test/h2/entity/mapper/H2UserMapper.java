@@ -49,6 +49,7 @@ public interface H2UserMapper extends SuperMapper<H2User> {
             "insert into h2user(name,version) values( #{user1.name}, #{user1.version})"
     )
     int myInsertWithParam(@Param("user1") H2User user1);
+
     @Insert(
             "insert into h2user(name,version) values( #{name}, #{version})"
     )
