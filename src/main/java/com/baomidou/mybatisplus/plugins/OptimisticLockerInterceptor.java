@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.executor.Executor;
@@ -23,6 +24,7 @@ import com.baomidou.mybatisplus.annotations.Version;
 import com.baomidou.mybatisplus.entity.TableFieldInfo;
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.mapper.Wrapper;
+import com.baomidou.mybatisplus.toolkit.ClassUtils;
 import com.baomidou.mybatisplus.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
@@ -51,8 +53,8 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 @Intercepts({@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})})
 public class OptimisticLockerInterceptor implements Interceptor {
 
-    private final Map<Class<?>, EntityField> versionFieldCache = new HashMap<>();
-    private final Map<Class<?>, List<EntityField>> entityFieldsCache = new HashMap<>();
+    private final Map<Class<?>, EntityField> versionFieldCache = new ConcurrentHashMap<>();
+    private final Map<Class<?>, List<EntityField>> entityFieldsCache = new ConcurrentHashMap<>();
 
     private static final String MP_OPTLOCK_VERSION_ORIGINAL = "MP_OPTLOCK_VERSION_ORIGINAL";
     private static final String MP_OPTLOCK_VERSION_COLUMN = "MP_OPTLOCK_VERSION_COLUMN";
@@ -89,7 +91,8 @@ public class OptimisticLockerInterceptor implements Interceptor {
             if (ew != null) {
                 Object entity = ew.getEntity();
                 if (entity != null) {
-                    EntityField ef = getVersionField(entity.getClass());
+                    Class<?> entityClass = ClassUtils.getUserClass(entity.getClass());
+                    EntityField ef = getVersionField(entityClass);
                     Field versionField = ef == null ? null : ef.getField();
                     if (versionField != null) {
                         Object originalVersionVal = versionField.get(entity);
@@ -101,16 +104,17 @@ public class OptimisticLockerInterceptor implements Interceptor {
             } else if (et != null) {
                 String methodId = ms.getId();
                 String updateMethodName = methodId.substring(ms.getId().lastIndexOf(".") + 1);
-                if (PARAM_UPDATE_METHOD_NAME.equals(updateMethodName)) {//update(entity, null) -->> update all. ignore version
+                if (PARAM_UPDATE_METHOD_NAME.equals(updateMethodName)) {//update(entityClass, null) -->> update all. ignore version
                     return invocation.proceed();
                 }
-                EntityField entityField = this.getVersionField(et.getClass());
+                Class<?> entityClass = ClassUtils.getUserClass(et.getClass());
+                EntityField entityField = this.getVersionField(entityClass);
                 Field versionField = entityField == null ? null : entityField.getField();
                 Object originalVersionVal;
                 if (versionField != null && (originalVersionVal = versionField.get(et)) != null) {
-                    TableInfo tableInfo = TableInfoHelper.getTableInfo(et.getClass());
+                    TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
                     Map<String, Object> entityMap = new HashMap<>();
-                    List<EntityField> fields = getEntityFields(et.getClass());
+                    List<EntityField> fields = getEntityFields(entityClass);
                     for (EntityField ef : fields) {
                         Field fd = ef.getField();
                         if (fd.isAccessible()) {
