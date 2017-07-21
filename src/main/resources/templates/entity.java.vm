@@ -66,10 +66,10 @@ public class ${entity} implements Serializable {
 
 #if(!${entityLombokModel})
 #foreach($field in ${table.fields})
-#if(${field.propertyType.equals("Boolean")})
-#set($getprefix="get")
-#else
+#if(${field.propertyType.equals("boolean")})
 #set($getprefix="is")
+#else
+#set($getprefix="get")
 #end
 
 	public ${field.propertyType} ${getprefix}${field.capitalName}() {
