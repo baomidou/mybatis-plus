@@ -347,6 +347,12 @@ public class StrategyConfig {
         return logicDeleteFieldName;
     }
 
+    /**
+     * 设置逻辑删除字段
+     *
+     * @param logicDeleteFieldName 数据库字段
+     * @return
+     */
     public StrategyConfig setLogicDeleteFieldName(String logicDeleteFieldName) {
         this.logicDeleteFieldName = logicDeleteFieldName;
         return this;

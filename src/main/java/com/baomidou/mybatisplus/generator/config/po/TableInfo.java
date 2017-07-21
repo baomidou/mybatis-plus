@@ -209,7 +209,7 @@ public class TableInfo {
      */
     public boolean isLogicDelete(String logicDeletePropertyName) {
         for (TableField tableField : fields) {
-            if (tableField.getPropertyName().equals(logicDeletePropertyName)) {
+            if (tableField.getName().equals(logicDeletePropertyName)) {
                 return true;
             }
         }
