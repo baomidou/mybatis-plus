@@ -184,7 +184,7 @@ public class H2UserTest extends H2Test {
 
     @Test
     public void testUpdateByEntityWrapperOptLock() {
-        Long id = 992L;
+        Long id = 1992L;
         H2User user = new H2User();
         user.setId(id);
         user.setName("992");
@@ -414,4 +414,17 @@ public class H2UserTest extends H2Test {
 
     }
 
+
+    @Test
+    public void testEntityWrapperSelectSql(){
+        EntityWrapper<H2User> ew = new EntityWrapper<>();
+        ew.setSqlSelect("test_id as id, name, age");
+        List<H2User> list = userService.selectList(ew);
+        for(H2User u:list){
+            Assert.assertNotNull(u.getId());
+            Assert.assertNotNull(u.getName());
+            Assert.assertNull(u.getPrice());
+        }
+
+    }
 }
