@@ -35,8 +35,6 @@ public class PageHelper {
      * <p>
      * 获取总条数
      * </p>
-     *
-     * @return
      */
     public static int getTotal() {
         if (isPageable()) {
@@ -48,10 +46,19 @@ public class PageHelper {
 
     /**
      * <p>
+     * 释放资源并获取总条数
+     * </p>
+     */
+    public static int freeTotal() {
+        int total = getTotal();
+        remove();// 释放资源
+        return total;
+    }
+
+    /**
+     * <p>
      * 获取分页
      * </p>
-     *
-     * @return
      */
     public static Pagination getPagination() {
         return LOCAL_PAGE.get();
@@ -61,8 +68,6 @@ public class PageHelper {
      * <p>
      * 设置分页
      * </p>
-     *
-     * @param page
      */
     public static void setPagination(Pagination page) {
         LOCAL_PAGE.set(page);
