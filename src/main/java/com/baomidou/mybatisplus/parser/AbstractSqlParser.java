@@ -29,7 +29,7 @@ import org.apache.ibatis.logging.LogFactory;
 public abstract class AbstractSqlParser {
 
     // 日志
-    protected static final Log logger = LogFactory.getLog(AbstractSqlParser.class);
+    protected final Log logger = LogFactory.getLog(this.getClass());
 
     /**
      * <p>

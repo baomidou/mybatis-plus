@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.test.h2.entity.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
@@ -54,4 +55,29 @@ public interface H2UserMapper extends SuperMapper<H2User> {
             "insert into h2user(name,version) values( #{name}, #{version})"
     )
     int myInsertWithoutParam(H2User user1);
+
+
+    @Select(" select test_id as id, power(#{ageFrom},2), 'abc?zhazha', CAST(#{nameParam} AS VARCHAR) as name " +
+            " from h2user " +
+            " where age>#{ageFrom} and age<#{ageTo} ")
+    List<H2User> selectUserWithParamInSelectStatememt(Map<String,Object> param);
+
+    @Select(" select test_id as id, power(#{ageFrom},2), 'abc?zhazha', CAST(#{nameParam} AS VARCHAR) as name " +
+            " from h2user " +
+            " where age>#{ageFrom} and age<#{ageTo} ")
+    List<H2User> selectUserWithParamInSelectStatememt4Page(Map<String,Object> param, Page<H2User> page);
+
+    @Select(" select test_id as id, power(${ageFrom},2), '${nameParam}' as name " +
+            " from h2user " +
+            " where age>#{ageFrom} and age<#{ageTo} ")
+    List<H2User> selectUserWithDollarParamInSelectStatememt4Page(Map<String,Object> param, Page<H2User> page);
+
+
+
+    @Select("select count(1) from (" +
+            "select test_id as id, CAST(#{nameParam} AS VARCHAR) as name" +
+            " from h2user " +
+            " where age>#{ageFrom} and age<#{ageTo} " +
+            ") a")
+    int selectCountWithParamInSelectItems(Map<String,Object> param);
 }

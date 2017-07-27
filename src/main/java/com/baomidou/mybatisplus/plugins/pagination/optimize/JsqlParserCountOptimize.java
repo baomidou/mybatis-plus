@@ -65,7 +65,13 @@ public class JsqlParserCountOptimize extends AbstractSqlParser {
                 plainSelect.setOrderByElements(null);
                 sqlInfo.setOrderBy(false);
             }
-
+            //#95 Github, selectItems contains #{} ${}, which will be translated to ?, and it may be in a function: power(#{myInt},2)
+            for (SelectItem item : plainSelect.getSelectItems()) {
+                if(item.toString().contains("?")){
+                    sqlInfo.setSql(String.format(SqlUtils.SQL_BASE_COUNT, selectStatement.toString()));
+                    return sqlInfo;
+                }
+            }
             // 包含 distinct、groupBy不优化
             if (distinct != null || CollectionUtils.isNotEmpty(groupBy)) {
                 sqlInfo.setSql(String.format(SqlUtils.SQL_BASE_COUNT, selectStatement.toString()));
