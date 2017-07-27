@@ -209,7 +209,7 @@ public class H2UserNoVersionTest extends H2Test {
 
     @Test
     public void testInsertMy() {
-        String name = "QiPa";
+        String name = "testInsertMy";
         int version = 1;
         int row = userMapper.myInsertWithNameVersion(name, version);
         Assert.assertEquals(1, row);

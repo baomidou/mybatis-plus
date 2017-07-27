@@ -80,14 +80,14 @@ public class H2MetaObjectHandlerTest extends H2Test {
         Date lastUpdatedDt = userDB.getLastUpdatedDt();
         System.out.println("after update: testDate=" + lastUpdatedDt);
         String versionDateStr = sdf.format(lastUpdatedDt);
-        //MyMetaObjectHandler.updateFill() : set
-        Assert.assertEquals(sdf.format(new Date()), versionDateStr);
+        //MyMetaObjectHandler.updateFill() : set lastUpdatedDt=currentTimestamp
+        Assert.assertEquals(sdf.format(new Date()), versionDateStr);//before update: lastUpdatedDt=currentTimestamp-1day
     }
 
 
     @Test
     public void testInsertMy() {
-        String name = "QiPa";
+        String name = "testInsertMy";
         int version = 1;
         int row = userMapper.myInsertWithNameVersion(name, version);
         Assert.assertEquals(1, row);
