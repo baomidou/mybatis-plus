@@ -114,6 +114,29 @@ public abstract class Wrapper<T> implements Serializable {
         return this;
     }
 
+
+    /**
+     * <p>
+     * 使用字符串数组封装sqlSelect，便于在不需要指定 AS 的情况下通过实体类自动生成的列静态字段快速组装 sqlSelect，<br/>
+     * 减少手动录入的错误率
+     * </p>
+     * @param columns 字段
+     * @return
+     */
+    public Wrapper<T> setSqlSelect(String... columns) {
+        StringBuilder builder = new StringBuilder();
+        for (String column : columns) {
+            if (StringUtils.isNotEmpty(column)) {
+                if (builder.length() > 0) {
+                    builder.append(",");
+                }
+                builder.append(column);
+            }
+        }
+        this.sqlSelect = builder.toString();
+        return this;
+    }
+
     /**
      * <p>
      * 使用对象封装的setsqlselect
