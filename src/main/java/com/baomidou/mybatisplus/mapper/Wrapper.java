@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.baomidou.mybatisplus.entity.Column;
+import com.baomidou.mybatisplus.entity.Columns;
 import com.baomidou.mybatisplus.enums.SqlLike;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.toolkit.ArrayUtils;
@@ -114,7 +115,6 @@ public abstract class Wrapper<T> implements Serializable {
         return this;
     }
 
-
     /**
      * <p>
      * 使用字符串数组封装sqlSelect，便于在不需要指定 AS 的情况下通过实体类自动生成的列静态字段快速组装 sqlSelect，<br/>
@@ -162,6 +162,22 @@ public abstract class Wrapper<T> implements Serializable {
                 }
             }
             this.sqlSelect = builder.toString();
+        }
+        return this;
+    }
+
+    /**
+     * <p>
+     * 使用对象封装的setsqlselect
+     * </p>
+     *
+     * @param columns 字段
+     * @return
+     */
+    public Wrapper<T> setSqlSelect(Columns columns) {
+        Column[] columnArray = columns.getColumns();
+        if (ArrayUtils.isNotEmpty(columnArray)) {
+            setSqlSelect(columnArray);
         }
         return this;
     }
