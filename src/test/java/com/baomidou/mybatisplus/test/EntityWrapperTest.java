@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import com.baomidou.mybatisplus.entity.Columns;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -353,6 +354,17 @@ public class EntityWrapperTest {
      * 测试 sqlselect
      */
     @Test
+    public void testSqlSelectStrings() {
+        EntityWrapper entityWrapper = new EntityWrapper();
+        entityWrapper.setSqlSelect("name", "age", "sex");
+        System.out.println(entityWrapper.getSqlSelect());
+        Assert.assertEquals("name,age,sex", entityWrapper.getSqlSelect());
+    }
+
+    /**
+     * 测试 sqlselect
+     */
+    @Test
     public void testSqlSelect() {
         EntityWrapper entityWrapper = new EntityWrapper();
         // entityWrapper.setSqlSelect(Column.create().column("col").as("name"),null,Column.create(),Column.create().as("11"),Column.create().column("col"));
@@ -362,5 +374,16 @@ public class EntityWrapperTest {
 
     }
 
+    /**
+     * 测试 sqlselect
+     */
+    @Test
+    public void testSqlSelectColumns() {
+        EntityWrapper entityWrapper = new EntityWrapper();
+        Columns columns = Columns.create().column("name", "name1").column("age").column("sex", "sex1", false);
+        entityWrapper.setSqlSelect(columns);
+        System.out.println(entityWrapper.getSqlSelect());
+        Assert.assertEquals("name AS name1,age,sex AS sex1", entityWrapper.getSqlSelect());
+    }
 
 }
