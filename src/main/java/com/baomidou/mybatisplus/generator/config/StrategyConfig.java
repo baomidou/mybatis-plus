@@ -131,6 +131,11 @@ public class StrategyConfig {
     private boolean controllerMappingHyphenStyle = false;
 
     /**
+     * 乐观锁属性名称
+     */
+    private String versionFieldName;
+
+    /**
      * 逻辑删除属性名称
      */
     private String logicDeleteFieldName;
@@ -355,6 +360,21 @@ public class StrategyConfig {
      */
     public StrategyConfig setLogicDeleteFieldName(String logicDeleteFieldName) {
         this.logicDeleteFieldName = logicDeleteFieldName;
+        return this;
+    }
+
+    public String getVersionFieldName() {
+        return versionFieldName;
+    }
+
+    /**
+     * 设置乐观锁字段
+     *
+     * @param versionFieldName 数据库字段
+     * @return
+     */
+    public StrategyConfig setVersionFieldName(String versionFieldName) {
+        this.versionFieldName = versionFieldName;
         return this;
     }
 

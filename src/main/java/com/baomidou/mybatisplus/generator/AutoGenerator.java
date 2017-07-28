@@ -172,6 +172,10 @@ public class AutoGenerator {
                 // 逻辑删除注解
                 tableInfo.setImportPackages("com.baomidou.mybatisplus.annotations.TableLogic");
             }
+            if (StringUtils.isNotEmpty(config.getStrategyConfig().getVersionFieldName())) {
+                // 乐观锁注解
+                tableInfo.setImportPackages("com.baomidou.mybatisplus.annotations.Version");
+            }
             if (StringUtils.isNotEmpty(config.getSuperEntityClass())) {
                 // 父实体
                 tableInfo.setImportPackages(config.getSuperEntityClass());
@@ -199,6 +203,7 @@ public class AutoGenerator {
             ctx.put("package", packageInfo);
             ctx.put("author", config.getGlobalConfig().getAuthor());
             ctx.put("logicDeleteFieldName", config.getStrategyConfig().getLogicDeleteFieldName());
+            ctx.put("versionFieldName", config.getStrategyConfig().getVersionFieldName());
             ctx.put("activeRecord", config.getGlobalConfig().isActiveRecord());
             ctx.put("date", date);
             ctx.put("table", tableInfo);
