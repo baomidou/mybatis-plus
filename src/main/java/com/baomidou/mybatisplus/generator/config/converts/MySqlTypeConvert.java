@@ -46,7 +46,7 @@ public class MySqlTypeConvert implements ITypeConvert {
             return DbColumnType.BIG_DECIMAL;
         } else if (t.contains("clob")) {
             return DbColumnType.CLOB;
-        } else if (t.contains("blog")) {
+        } else if (t.contains("blob")) {
             return DbColumnType.BLOB;
         } else if (t.contains("binary")) {
             return DbColumnType.BYTE_ARRAY;
