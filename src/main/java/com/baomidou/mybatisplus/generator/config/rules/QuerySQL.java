@@ -59,11 +59,11 @@ public enum QuerySQL {
                     + " WHERE a.NAME = '%s' and sys.types.NAME !='sysname' ",
             "TABLE_NAME", "COMMENTS", "COLUMN_NAME", "DATA_TYPE", "COMMENTS", "KEY"),
 
-    POSTGRE_SQL("postgre_sql", "select tablename from pg_tables where schemaname='public' ORDER BY tablename",
-            "SELECT A.tablename, obj_description(relfilenode, 'pg_class') AS comments FROM pg_tables A, pg_class B WHERE A.schemaname='public' AND A.tablename = B.relname",
+    POSTGRE_SQL("postgre_sql", "select tablename from pg_tables where schemaname='%s' ORDER BY tablename",
+            "SELECT A.tablename, obj_description(relfilenode, 'pg_class') AS comments FROM pg_tables A, pg_class B WHERE A.schemaname='%s' AND A.tablename = B.relname",
             "SELECT DISTINCT A.attname AS name,format_type(A.atttypid,A.atttypmod) AS type,col_description(A.attrelid,A.attnum) AS comment,(CASE C.contype WHEN 'p' THEN 'PRI' ELSE '' END) AS key"
                     + " FROM pg_attribute A INNER JOIN pg_class B ON A.attrelid = B.oid"
-                    + " LEFT JOIN pg_constraint C ON A.attnum = C.conkey[1] AND A.attrelid = C.conrelid WHERE B.relname = '%s' AND A.attnum>0",
+                    + " LEFT JOIN pg_constraint C ON A.attnum = C.conkey[1] AND A.attrelid = C.conrelid WHERE B.relname = '%s' AND A.attnum>0 AND position('...' in A.attname) < 1",
             "tablename", "comments", "name", "type", "comment", "key");
 
     private final String dbType;

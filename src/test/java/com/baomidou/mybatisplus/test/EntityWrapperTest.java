@@ -24,6 +24,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import com.baomidou.mybatisplus.entity.Columns;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -31,6 +32,7 @@ import com.baomidou.mybatisplus.entity.Column;
 import com.baomidou.mybatisplus.enums.SqlLike;
 import com.baomidou.mybatisplus.mapper.Condition;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
 
 /**
@@ -115,7 +117,7 @@ public class EntityWrapperTest {
     @Test
     public void test23() {
         /*
-		 * 无实体查询，只排序
+         * 无实体查询，只排序
 		 */
         ew.orderBy("id", false);
         String sqlSegment = ew.originalSql();
@@ -384,6 +386,27 @@ public class EntityWrapperTest {
         entityWrapper.setSqlSelect(columns);
         System.out.println(entityWrapper.getSqlSelect());
         Assert.assertEquals("name AS name1,age,sex AS sex1", entityWrapper.getSqlSelect());
+    }
+
+    /**
+     * 测试 EntityWrapper orderBy
+     */
+    @Test
+    public void testEntityWrapperOrderBy() {
+        EntityWrapper entityWrapper = new EntityWrapper();
+        entityWrapper.orderBy("id desc");
+        System.out.println(entityWrapper.getSqlSegment());
+        Assert.assertEquals("ORDER BY id desc", entityWrapper.getSqlSegment());
+    }
+
+    /**
+     * 测试 Condition orderBy
+     */
+    @Test
+    public void testConditionOrderBy() {
+        Wrapper wrapper = Condition.create().orderBy("id desc");
+        System.out.println(wrapper.getSqlSegment());
+        Assert.assertEquals("ORDER BY id desc", wrapper.getSqlSegment());
     }
 
 }
