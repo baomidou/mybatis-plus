@@ -33,13 +33,6 @@ public class Condition extends Wrapper {
      */
     public static final Condition EMPTY = Condition.create();
 
-    /**
-     * 获取实例
-     */
-    @Deprecated
-    public static Condition instance() {
-        return Condition.create();
-    }
 
     /**
      * 获取实例

@@ -372,7 +372,11 @@ public class ConfigBuilder {
         NamingStrategy strategy = config.getNaming();
         PreparedStatement preparedStatement = null;
         try {
-            preparedStatement = connection.prepareStatement(querySQL.getTableCommentsSql());
+            String tableCommentsSql = querySQL.getTableCommentsSql();
+            if (QuerySQL.POSTGRE_SQL == querySQL) {
+                tableCommentsSql = String.format(tableCommentsSql, dataSourceConfig.getSchemaname());
+            }
+            preparedStatement = connection.prepareStatement(tableCommentsSql);
             ResultSet results = preparedStatement.executeQuery();
             TableInfo tableInfo;
             while (results.next()) {
