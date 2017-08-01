@@ -193,8 +193,11 @@ public class OptimisticLockerInterceptor implements Interceptor {
             }
             // 缓存类信息
             EntityField field = this.getVersionFieldRegular(parameterClass);
-            versionFieldCache.put(parameterClass, field);
-            return field;
+            if(field != null) {
+                versionFieldCache.put(parameterClass, field);
+                return field;
+            }
+            return null;
         }
     }
 
