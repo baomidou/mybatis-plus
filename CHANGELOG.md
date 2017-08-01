@@ -1,5 +1,41 @@
 # CHANGELOG
 
+## [v2.1.0] 2017.08.01
+
+####主体功能
+- 批量sqlSession没有关闭问题修复
+- 处理sql格式化报错问题,添加填充信息
+- #91:关于insertBatch在大数据量的时候优化 github
+- 新增 uuid 主键测试用例
+- 修复BUG自动填充会覆盖之前的值
+- 升级pom依赖，spring-test作用域test
+- 更改sqlServer驱动,去掉乐观锁不需要的string类型测试
+- #86:关于plus的底层映射设计问题 github issue
+- SqlHelper处理Wrapper为空,但是page.getCondition()不为空的情况
+- Merge pull request !33:生成实体增加字段排序 from 老千/master
+- 解决使用代理对象导致无法获取实例缓存信息
+- 解决布尔类型is开头生成sql错误问题
+- DBType设置错误
+- fix #351:DB2Dialect返回NULL
+- fix #356:自动代码生成的Boolean类型的get方法不对
+- fix #353:代码生成@TableLogic问题
+- 新增 PostgreSqlInjector 自动注入器，处理字段大小写敏感，自动双引号转义。
+- 仓库地址与用户信息使用自定义传入.
+- fix #357:代码生成@TableLogic引入包Bug
+- Sequence 新增 mac 判断，分页 pageHelper 模式新增 freeTotal() 方法
+- #95:分页插件俩个建议 Github, selectItems contains #{} ${},
+- 添加 Wrapper#setSqlSelect(String... columns) 方法,方便通过自动生成的实体...
+- fixed github 116 issue
+- fixed osgit IE436  IDVPZ  IDTZH
+
+####代码生成
+- 修改实体生成模板
+- 修复自动填充代码生成错误
+- 新增 postgresql schemaname 生成器支持
+- 调整序列化导入问题
+- 其他
+
+
 ## [v2.1-gamma] 2017.06.29
 
 ####主体功能
