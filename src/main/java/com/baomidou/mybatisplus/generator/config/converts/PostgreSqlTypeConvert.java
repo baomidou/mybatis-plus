@@ -54,6 +54,8 @@ public class PostgreSqlTypeConvert implements ITypeConvert {
             return DbColumnType.DOUBLE;
         } else if (t.contains("json") || t.contains("enum")) {
             return DbColumnType.STRING;
+        } else if (t.contains("boolean")) {
+            return DbColumnType.BOOLEAN;
         }
         return DbColumnType.STRING;
     }
