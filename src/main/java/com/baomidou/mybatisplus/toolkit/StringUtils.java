@@ -38,7 +38,7 @@ public class StringUtils {
      */
     public static final String EMPTY = "";
     /**
-     * 空字符
+     * 字符串 is
      */
     public static final String IS = "is";
 
