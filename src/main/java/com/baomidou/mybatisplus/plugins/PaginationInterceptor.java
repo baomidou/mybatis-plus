@@ -155,12 +155,7 @@ public class PaginationInterceptor implements Interceptor {
 			 */
             int pages = page.getPages();
             if (overflowCurrent && (page.getCurrent() > pages)) {
-            	
-            	// 这里不能使用new，如果new内存地址会改变，导致前面的page无效
-                // page = new Pagination(1, page.getSize());
-                // page.setTotal(total);
-            	
-            	// 设置为第一条
+                // 设置为第一条
                 page.setCurrent(1);
             }
         } catch (Exception e) {
