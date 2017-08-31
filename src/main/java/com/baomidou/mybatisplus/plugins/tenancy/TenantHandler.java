@@ -15,24 +15,20 @@
  */
 package com.baomidou.mybatisplus.plugins.tenancy;
 
-import java.util.Properties;
+import java.io.Serializable;
 
 /**
  * <p>
- * 租户信息
+ * 租户处理器
  * </p>
  *
  * @author hubin
- * @since 2017-06-20
+ * @since 2017-08-31
  */
-public interface TenantInfo {
+public interface TenantHandler {
 
-    TenantInfo setHandlerConfig(Properties properties);
-
-    String getTenantId();
+    Serializable getTenantId();
 
     String getTenantIdColumn();
-
-    TenantInfo setTenantIdColumn(String tenantIdColumn);
 
 }

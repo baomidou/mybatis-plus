@@ -33,10 +33,10 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
 import com.baomidou.mybatisplus.enums.DBType;
-import com.baomidou.mybatisplus.plugins.parser.AbstractSqlParser;
-import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
 import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
+import com.baomidou.mybatisplus.plugins.parser.AbstractSqlParser;
+import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
 import com.baomidou.mybatisplus.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.toolkit.SqlUtils;
@@ -148,16 +148,19 @@ public class CachePaginationInterceptor extends PaginationInterceptor implements
         }
     }
 
-    public void setDialectType(String dialectType) {
+    public CachePaginationInterceptor setDialectType(String dialectType) {
         this.dialectType = dialectType;
+        return this;
     }
 
-    public void setSqlParser(AbstractSqlParser sqlParser) {
+    public CachePaginationInterceptor setSqlParser(AbstractSqlParser sqlParser) {
         this.sqlParser = sqlParser;
+        return this;
     }
 
-    public void setOverflowCurrent(boolean overflowCurrent) {
+    public CachePaginationInterceptor setOverflowCurrent(boolean overflowCurrent) {
         this.overflowCurrent = overflowCurrent;
+        return this;
     }
 
 }

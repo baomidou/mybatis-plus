@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.plugins.tenancy;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.ibatis.reflection.MetaObject;
@@ -30,7 +29,6 @@ import net.sf.jsqlparser.expression.StringValue;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
-import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
@@ -61,7 +59,7 @@ import net.sf.jsqlparser.statement.update.Update;
  */
 public class TenancySqlParser extends AbstractSqlParser {
 
-    private TenantInfo tenantInfo;
+    private TenantHandler tenantHandler;
 
     @Override
     public SqlInfo optimizeSql(MetaObject metaObject, String sql) {
@@ -119,11 +117,11 @@ public class TenancySqlParser extends AbstractSqlParser {
         if (doTableFilter(
                 insert.getTable().getName()
         )) {
-            insert.getColumns().add(new Column(this.tenantInfo.getTenantIdColumn()));
+            insert.getColumns().add(new Column(this.tenantHandler.getTenantIdColumn()));
             if (insert.getSelect() != null) {
                 processPlainSelect((PlainSelect) insert.getSelect().getSelectBody(), true);
             } else if (insert.getItemsList() != null) {
-                ((ExpressionList) insert.getItemsList()).getExpressions().add(new StringValue("," + this.tenantInfo.getTenantId() + ","));
+                ((ExpressionList) insert.getItemsList()).getExpressions().add(new StringValue("," + this.tenantHandler.getTenantId() + ","));
             } else {
                 throw new RuntimeException("无法处理的 sql");
             }
@@ -140,13 +138,13 @@ public class TenancySqlParser extends AbstractSqlParser {
         Expression where = update.getWhere();
         EqualsTo equalsTo = new EqualsTo();
         if (where instanceof BinaryExpression) {
-            equalsTo.setLeftExpression(new Column(this.tenantInfo.getTenantIdColumn()));
-            equalsTo.setRightExpression(new StringValue("," + tenantInfo.getTenantId() + ","));
+            equalsTo.setLeftExpression(new Column(this.tenantHandler.getTenantIdColumn()));
+            equalsTo.setRightExpression(new StringValue("," + tenantHandler.getTenantId() + ","));
             AndExpression andExpression = new AndExpression(equalsTo, where);
             update.setWhere(andExpression);
         } else {
-            equalsTo.setLeftExpression(new Column(this.tenantInfo.getTenantIdColumn()));
-            equalsTo.setRightExpression(new StringValue("," + tenantInfo.getTenantId() + ","));
+            equalsTo.setLeftExpression(new Column(this.tenantHandler.getTenantIdColumn()));
+            equalsTo.setRightExpression(new StringValue("," + tenantHandler.getTenantId() + ","));
             update.setWhere(equalsTo);
         }
     }
@@ -182,7 +180,7 @@ public class TenancySqlParser extends AbstractSqlParser {
             if (doTableFilter(fromTable.getName())) {
                 plainSelect.setWhere(builderExpression(plainSelect.getWhere(), fromTable));
                 if (addColumn)
-                    plainSelect.getSelectItems().add(new SelectExpressionItem(new Column("'" + this.tenantInfo.getTenantId() + "'")));
+                    plainSelect.getSelectItems().add(new SelectExpressionItem(new Column("'" + this.tenantHandler.getTenantId() + "'")));
             }
         } else {
             processFromItem(fromItem);
@@ -254,7 +252,6 @@ public class TenancySqlParser extends AbstractSqlParser {
      */
     public Expression builderExpression(Expression expression, Table table) {
         Expression tenantExpression = null;
-        String[] tenantIds = this.tenantInfo.getTenantId().split(",");
         //当传入table时,字段前加上别名或者table名
         //别名优先使用
         StringBuilder tenantIdColumnName = new StringBuilder();
@@ -262,26 +259,14 @@ public class TenancySqlParser extends AbstractSqlParser {
             tenantIdColumnName.append(table.getAlias() != null ? table.getAlias().getName() : table.getName());
             tenantIdColumnName.append(".");
         }
-        tenantIdColumnName.append(this.tenantInfo.getTenantIdColumn());
+        tenantIdColumnName.append(this.tenantHandler.getTenantIdColumn());
         //生成字段名
         Column tenantColumn = new Column(tenantIdColumnName.toString());
 
-        if (tenantIds.length == 1) {
-            EqualsTo equalsTo = new EqualsTo();
-            tenantExpression = equalsTo;
-            equalsTo.setLeftExpression(tenantColumn);
-            equalsTo.setRightExpression(new StringValue("'" + tenantIds[0] + "'"));
-        } else {
-            //多租户身份
-            InExpression inExpression = new InExpression();
-            tenantExpression = inExpression;
-            inExpression.setLeftExpression(tenantColumn);
-            List<Expression> valueList = new ArrayList<>();
-            for (String tid : tenantIds) {
-                valueList.add(new StringValue("'" + tid + "'"));
-            }
-            inExpression.setRightItemsList(new ExpressionList(valueList));
-        }
+        EqualsTo equalsTo = new EqualsTo();
+        tenantExpression = equalsTo;
+        equalsTo.setLeftExpression(tenantColumn);
+        equalsTo.setRightExpression(new StringValue("'" + this.tenantHandler.getTenantId() + "'"));
 
         //加入判断防止条件为空时生成 "and null" 导致查询结果为空
         if (expression == null) {
@@ -303,5 +288,13 @@ public class TenancySqlParser extends AbstractSqlParser {
 
     private boolean doTableFilter(String table) {
         return true;
+    }
+
+    public TenantHandler getTenantHandler() {
+        return tenantHandler;
+    }
+
+    public void setTenantHandler(TenantHandler tenantHandler) {
+        this.tenantHandler = tenantHandler;
     }
 }

@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.ibatis.executor.statement.StatementHandler;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
@@ -46,8 +44,6 @@ import com.baomidou.mybatisplus.toolkit.PluginUtils;
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 public class SqlParserInterceptor implements Interceptor {
 
-    // 日志
-    private static final Log logger = LogFactory.getLog(SqlParserInterceptor.class);
     private static final String DELEGATE_BOUNDSQL_SQL = "delegate.boundSql.sql";
     // SQL 解析
     private List<AbstractSqlParser> sqlParserList;
@@ -61,14 +57,18 @@ public class SqlParserInterceptor implements Interceptor {
         MetaObject metaObject = SystemMetaObject.forObject(statementHandler);
         // SQL 解析
         if (CollectionUtils.isNotEmpty(sqlParserList)) {
+            int flag = 0;// 标记是否修改过 SQL
             String originalSql = (String) metaObject.getValue(DELEGATE_BOUNDSQL_SQL);
             for (AbstractSqlParser sqlParser : sqlParserList) {
                 SqlInfo sqlInfo = sqlParser.optimizeSql(metaObject, originalSql);
                 if (null != sqlInfo) {
                     originalSql = sqlInfo.getSql();
+                    ++flag;
                 }
             }
-            metaObject.setValue(DELEGATE_BOUNDSQL_SQL, originalSql);
+            if (flag >= 1) {
+                metaObject.setValue(DELEGATE_BOUNDSQL_SQL, originalSql);
+            }
         }
         return invocation.proceed();
     }
@@ -90,7 +90,8 @@ public class SqlParserInterceptor implements Interceptor {
         return sqlParserList;
     }
 
-    public void setSqlParserList(List<AbstractSqlParser> sqlParserList) {
+    public SqlParserInterceptor setSqlParserList(List<AbstractSqlParser> sqlParserList) {
         this.sqlParserList = sqlParserList;
+        return this;
     }
 }
