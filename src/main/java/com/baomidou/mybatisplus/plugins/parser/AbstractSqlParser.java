@@ -13,10 +13,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.parser;
+package com.baomidou.mybatisplus.plugins.parser;
 
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.reflection.MetaObject;
 
 /**
  * <p>
@@ -36,9 +37,10 @@ public abstract class AbstractSqlParser {
      * 获取优化 SQL 方法
      * </p>
      *
-     * @param sql SQL 语句
+     * @param metaObject 元对象
+     * @param sql        SQL 语句
      * @return SQL 信息
      */
-    public abstract SqlInfo optimizeSql(String sql);
+    public abstract SqlInfo optimizeSql(MetaObject metaObject, String sql);
 
 }

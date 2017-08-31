@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.parser;
+package com.baomidou.mybatisplus.plugins.parser;
 
 /**
  * <p>
@@ -36,15 +36,17 @@ public class SqlInfo {
         return sql;
     }
 
-    public void setSql(String sql) {
+    public SqlInfo setSql(String sql) {
         this.sql = sql;
+        return this;
     }
 
     public boolean isOrderBy() {
         return orderBy;
     }
 
-    public void setOrderBy(boolean orderBy) {
+    public SqlInfo setOrderBy(boolean orderBy) {
         this.orderBy = orderBy;
+        return this;
     }
 }

@@ -3,7 +3,7 @@ package com.baomidou.mybatisplus.test;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.baomidou.mybatisplus.parser.SqlInfo;
+import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
 import com.baomidou.mybatisplus.plugins.pagination.optimize.JsqlParserCountOptimize;
 
 /**

@@ -16,8 +16,8 @@
 package com.baomidou.mybatisplus.toolkit;
 
 import com.baomidou.mybatisplus.enums.SqlLike;
-import com.baomidou.mybatisplus.parser.AbstractSqlParser;
-import com.baomidou.mybatisplus.parser.SqlInfo;
+import com.baomidou.mybatisplus.plugins.parser.AbstractSqlParser;
+import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.plugins.pagination.optimize.JsqlParserCountOptimize;
 
@@ -56,7 +56,7 @@ public class SqlUtils {
                 COUNT_SQL_PARSER = new JsqlParserCountOptimize();
             }
         }
-        return COUNT_SQL_PARSER.optimizeSql(originalSql);
+        return COUNT_SQL_PARSER.optimizeSql(null, originalSql);
     }
 
     /**

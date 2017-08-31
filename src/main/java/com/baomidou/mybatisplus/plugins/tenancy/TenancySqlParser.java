@@ -18,8 +18,10 @@ package com.baomidou.mybatisplus.plugins.tenancy;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.baomidou.mybatisplus.parser.AbstractSqlParser;
-import com.baomidou.mybatisplus.parser.SqlInfo;
+import org.apache.ibatis.reflection.MetaObject;
+
+import com.baomidou.mybatisplus.plugins.parser.AbstractSqlParser;
+import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
 
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.BinaryExpression;
@@ -62,7 +64,7 @@ public class TenancySqlParser extends AbstractSqlParser {
     private TenantInfo tenantInfo;
 
     @Override
-    public SqlInfo optimizeSql(String sql) {
+    public SqlInfo optimizeSql(MetaObject metaObject, String sql) {
         //logger.debug("old sql:{}", sql);
         Statement stmt = null;
         try {
@@ -81,9 +83,7 @@ public class TenancySqlParser extends AbstractSqlParser {
             processUpdate((Update) stmt);
         }
         //logger.debug("new sql:{}", stmt);
-        SqlInfo sqlInfo = SqlInfo.newInstance();
-        sqlInfo.setSql(stmt.toString());
-        return sqlInfo;
+        return SqlInfo.newInstance().setSql(stmt.toString());
     }
 
     /**
@@ -125,7 +125,6 @@ public class TenancySqlParser extends AbstractSqlParser {
             } else if (insert.getItemsList() != null) {
                 ((ExpressionList) insert.getItemsList()).getExpressions().add(new StringValue("," + this.tenantInfo.getTenantId() + ","));
             } else {
-                //
                 throw new RuntimeException("无法处理的 sql");
             }
         }

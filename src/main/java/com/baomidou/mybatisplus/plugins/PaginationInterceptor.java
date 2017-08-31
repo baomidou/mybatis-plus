@@ -38,11 +38,11 @@ import org.apache.ibatis.session.RowBounds;
 
 import com.baomidou.mybatisplus.MybatisDefaultParameterHandler;
 import com.baomidou.mybatisplus.enums.DBType;
-import com.baomidou.mybatisplus.parser.AbstractSqlParser;
-import com.baomidou.mybatisplus.parser.SqlInfo;
 import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.plugins.pagination.PageHelper;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
+import com.baomidou.mybatisplus.plugins.parser.AbstractSqlParser;
+import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
 import com.baomidou.mybatisplus.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.toolkit.SqlUtils;
@@ -75,6 +75,7 @@ public class PaginationInterceptor implements Interceptor {
     /**
      * Physical Pagination Interceptor for all the queries with parameter {@link org.apache.ibatis.session.RowBounds}
      */
+    @Override
     public Object intercept(Invocation invocation) throws Throwable {
         StatementHandler statementHandler = (StatementHandler) PluginUtils.realTarget(invocation.getTarget());
         MetaObject metaStatementHandler = SystemMetaObject.forObject(statementHandler);
@@ -163,6 +164,7 @@ public class PaginationInterceptor implements Interceptor {
         }
     }
 
+    @Override
     public Object plugin(Object target) {
         if (target instanceof StatementHandler) {
             return Plugin.wrap(target, this);
@@ -170,6 +172,7 @@ public class PaginationInterceptor implements Interceptor {
         return target;
     }
 
+    @Override
     public void setProperties(Properties prop) {
         String dialectType = prop.getProperty("dialectType");
         String dialectClazz = prop.getProperty("dialectClazz");
@@ -182,23 +185,28 @@ public class PaginationInterceptor implements Interceptor {
         }
     }
 
-    public void setDialectType(String dialectType) {
+    public PaginationInterceptor setDialectType(String dialectType) {
         this.dialectType = dialectType;
+        return this;
     }
 
-    public void setDialectClazz(String dialectClazz) {
+    public PaginationInterceptor setDialectClazz(String dialectClazz) {
         this.dialectClazz = dialectClazz;
+        return this;
     }
 
-    public void setOverflowCurrent(boolean overflowCurrent) {
+    public PaginationInterceptor setOverflowCurrent(boolean overflowCurrent) {
         this.overflowCurrent = overflowCurrent;
+        return this;
     }
 
-    public void setSqlParser(AbstractSqlParser sqlParser) {
+    public PaginationInterceptor setSqlParser(AbstractSqlParser sqlParser) {
         this.sqlParser = sqlParser;
+        return this;
     }
 
-    public void setLocalPage(boolean localPage) {
+    public PaginationInterceptor setLocalPage(boolean localPage) {
         this.localPage = localPage;
+        return this;
     }
 }
