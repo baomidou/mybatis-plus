@@ -41,7 +41,7 @@ import com.baomidou.mybatisplus.enums.DBType;
 import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.plugins.pagination.PageHelper;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
-import com.baomidou.mybatisplus.plugins.parser.AbstractSqlParser;
+import com.baomidou.mybatisplus.plugins.parser.ISqlParser;
 import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
 import com.baomidou.mybatisplus.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.toolkit.PluginUtils;
@@ -62,7 +62,7 @@ public class PaginationInterceptor implements Interceptor {
     // 日志
     private static final Log logger = LogFactory.getLog(PaginationInterceptor.class);
     // COUNT SQL 解析
-    private AbstractSqlParser sqlParser;
+    private ISqlParser sqlParser;
     /* 溢出总页数，设置第一页 */
     private boolean overflowCurrent = false;
     /* 方言类型 */
@@ -78,13 +78,13 @@ public class PaginationInterceptor implements Interceptor {
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
         StatementHandler statementHandler = (StatementHandler) PluginUtils.realTarget(invocation.getTarget());
-        MetaObject metaStatementHandler = SystemMetaObject.forObject(statementHandler);
+        MetaObject metaObject = SystemMetaObject.forObject(statementHandler);
         // 先判断是不是SELECT操作
-        MappedStatement mappedStatement = (MappedStatement) metaStatementHandler.getValue("delegate.mappedStatement");
+        MappedStatement mappedStatement = (MappedStatement) metaObject.getValue("delegate.mappedStatement");
         if (!SqlCommandType.SELECT.equals(mappedStatement.getSqlCommandType())) {
             return invocation.proceed();
         }
-        RowBounds rowBounds = (RowBounds) metaStatementHandler.getValue("delegate.rowBounds");
+        RowBounds rowBounds = (RowBounds) metaObject.getValue("delegate.rowBounds");
         /* 不需要分页的场合 */
         if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
             // 本地线程分页
@@ -100,7 +100,7 @@ public class PaginationInterceptor implements Interceptor {
             }
         }
         // 针对定义了rowBounds，做为mapper接口方法的参数
-        BoundSql boundSql = (BoundSql) metaStatementHandler.getValue("delegate.boundSql");
+        BoundSql boundSql = (BoundSql) metaObject.getValue("delegate.boundSql");
         String originalSql = boundSql.getSql();
         Connection connection = (Connection) invocation.getArgs()[0];
         DBType dbType = StringUtils.isNotEmpty(dialectType) ? DBType.getDBType(dialectType) : JdbcUtils.getDbType(connection.getMetaData().getURL());
@@ -126,9 +126,9 @@ public class PaginationInterceptor implements Interceptor {
          * <p> 禁用内存分页 </p>
          * <p> 内存分页会查询所有结果出来处理（这个很吓人的），如果结果变化频繁这个数据还会不准。</p>
 		 */
-        metaStatementHandler.setValue("delegate.boundSql.sql", originalSql);
-        metaStatementHandler.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
-        metaStatementHandler.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
+        metaObject.setValue("delegate.boundSql.sql", originalSql);
+        metaObject.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
+        metaObject.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
         return invocation.proceed();
     }
 
@@ -200,7 +200,7 @@ public class PaginationInterceptor implements Interceptor {
         return this;
     }
 
-    public PaginationInterceptor setSqlParser(AbstractSqlParser sqlParser) {
+    public PaginationInterceptor setSqlParser(ISqlParser sqlParser) {
         this.sqlParser = sqlParser;
         return this;
     }

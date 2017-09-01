@@ -16,7 +16,7 @@
 package com.baomidou.mybatisplus.toolkit;
 
 import com.baomidou.mybatisplus.enums.SqlLike;
-import com.baomidou.mybatisplus.plugins.parser.AbstractSqlParser;
+import com.baomidou.mybatisplus.plugins.parser.ISqlParser;
 import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.plugins.pagination.optimize.JsqlParserCountOptimize;
@@ -33,7 +33,7 @@ public class SqlUtils {
 
     private final static SqlFormatter sqlFormatter = new SqlFormatter();
     public final static String SQL_BASE_COUNT = "SELECT COUNT(1) FROM ( %s ) TOTAL";
-    public static AbstractSqlParser COUNT_SQL_PARSER = null;
+    public static ISqlParser COUNT_SQL_PARSER = null;
 
 
     /**
@@ -45,7 +45,7 @@ public class SqlUtils {
      * @param originalSql 需要计算Count SQL
      * @return SqlInfo
      */
-    public static SqlInfo getCountOptimize(AbstractSqlParser sqlParser, String originalSql) {
+    public static SqlInfo getCountOptimize(ISqlParser sqlParser, String originalSql) {
         // COUNT SQL 解析器
         if (null == COUNT_SQL_PARSER) {
             if (null != sqlParser) {

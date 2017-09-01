@@ -1,10 +1,10 @@
-package com.baomidou.mybatisplus.test;
+package com.baomidou.mybatisplus.test.sql;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
 import com.baomidou.mybatisplus.plugins.pagination.optimize.JsqlParserCountOptimize;
+import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
 
 /**
  * <p>
@@ -12,12 +12,12 @@ import com.baomidou.mybatisplus.plugins.pagination.optimize.JsqlParserCountOptim
  * </p>
  *
  * @author Caratacus
- * @Date 2016-11-3
+ * @since 2016-11-3
  */
 public class SqlUtilsTest {
 
     public SqlInfo jsqlParserCountSqlInfo(String sql) {
-        return new JsqlParserCountOptimize().optimizeSql(sql);
+        return new JsqlParserCountOptimize().optimizeSql(null, sql);
     }
 
     /**

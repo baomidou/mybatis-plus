@@ -1,12 +1,10 @@
-package com.baomidou.mybatisplus.test;
-
+package com.baomidou.mybatisplus.test.sql;
 
 import static org.junit.Assert.assertEquals;
 
 import org.apache.ibatis.jdbc.SQL;
 import org.junit.Before;
 import org.junit.Test;
-
 
 /**
  * http://www.mybatis.org/mybatis-3/zh/statement-builders.html

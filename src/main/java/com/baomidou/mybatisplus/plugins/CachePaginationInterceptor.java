@@ -35,7 +35,7 @@ import org.apache.ibatis.session.RowBounds;
 import com.baomidou.mybatisplus.enums.DBType;
 import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
-import com.baomidou.mybatisplus.plugins.parser.AbstractSqlParser;
+import com.baomidou.mybatisplus.plugins.parser.ISqlParser;
 import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
 import com.baomidou.mybatisplus.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.toolkit.PluginUtils;
@@ -57,7 +57,7 @@ public class CachePaginationInterceptor extends PaginationInterceptor implements
     /* 溢出总页数，设置第一页 */
     private boolean overflowCurrent = false;
     // COUNT SQL 解析
-    private AbstractSqlParser sqlParser;
+    private ISqlParser sqlParser;
     /* 方言类型 */
     private String dialectType;
     /* 方言实现类 */
@@ -153,7 +153,7 @@ public class CachePaginationInterceptor extends PaginationInterceptor implements
         return this;
     }
 
-    public CachePaginationInterceptor setSqlParser(AbstractSqlParser sqlParser) {
+    public CachePaginationInterceptor setSqlParser(ISqlParser sqlParser) {
         this.sqlParser = sqlParser;
         return this;
     }

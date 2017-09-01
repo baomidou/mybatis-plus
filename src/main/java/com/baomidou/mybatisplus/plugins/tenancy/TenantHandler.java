@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.plugins.tenancy;
 
-import java.io.Serializable;
-
 /**
  * <p>
  * 租户处理器
@@ -27,7 +25,7 @@ import java.io.Serializable;
  */
 public interface TenantHandler {
 
-    Serializable getTenantId();
+    String getTenantId();
 
     String getTenantIdColumn();
 

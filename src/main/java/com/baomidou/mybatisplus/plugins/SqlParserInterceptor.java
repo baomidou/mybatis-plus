@@ -28,7 +28,7 @@ import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 
-import com.baomidou.mybatisplus.plugins.parser.AbstractSqlParser;
+import com.baomidou.mybatisplus.plugins.parser.ISqlParser;
 import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
 import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.PluginUtils;
@@ -46,7 +46,7 @@ public class SqlParserInterceptor implements Interceptor {
 
     private static final String DELEGATE_BOUNDSQL_SQL = "delegate.boundSql.sql";
     // SQL 解析
-    private List<AbstractSqlParser> sqlParserList;
+    private List<ISqlParser> sqlParserList;
 
     /**
      * 拦截 SQL 解析执行
@@ -59,7 +59,7 @@ public class SqlParserInterceptor implements Interceptor {
         if (CollectionUtils.isNotEmpty(sqlParserList)) {
             int flag = 0;// 标记是否修改过 SQL
             String originalSql = (String) metaObject.getValue(DELEGATE_BOUNDSQL_SQL);
-            for (AbstractSqlParser sqlParser : sqlParserList) {
+            for (ISqlParser sqlParser : sqlParserList) {
                 SqlInfo sqlInfo = sqlParser.optimizeSql(metaObject, originalSql);
                 if (null != sqlInfo) {
                     originalSql = sqlInfo.getSql();
@@ -86,11 +86,11 @@ public class SqlParserInterceptor implements Interceptor {
         // to do nothing
     }
 
-    public List<AbstractSqlParser> getSqlParserList() {
+    public List<ISqlParser> getSqlParserList() {
         return sqlParserList;
     }
 
-    public SqlParserInterceptor setSqlParserList(List<AbstractSqlParser> sqlParserList) {
+    public SqlParserInterceptor setSqlParserList(List<ISqlParser> sqlParserList) {
         this.sqlParserList = sqlParserList;
         return this;
     }

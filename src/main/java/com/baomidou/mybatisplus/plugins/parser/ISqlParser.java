@@ -15,22 +15,17 @@
  */
 package com.baomidou.mybatisplus.plugins.parser;
 
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.reflection.MetaObject;
 
 /**
  * <p>
- * 抽象 SQL 解析类
+ * SQL 解析接口
  * </p>
  *
  * @author hubin
- * @Date 2017-06-20
+ * @Date 2017-09-01
  */
-public abstract class AbstractSqlParser {
-
-    // 日志
-    protected final Log logger = LogFactory.getLog(this.getClass());
+public interface ISqlParser {
 
     /**
      * <p>
@@ -41,6 +36,6 @@ public abstract class AbstractSqlParser {
      * @param sql        SQL 语句
      * @return SQL 信息
      */
-    public abstract SqlInfo optimizeSql(MetaObject metaObject, String sql);
+    SqlInfo optimizeSql(MetaObject metaObject, String sql);
 
 }
