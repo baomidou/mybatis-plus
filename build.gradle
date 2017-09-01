@@ -90,7 +90,7 @@ def common = [
 dependencies {
     compile ("org.mybatis:mybatis-spring:${mybatisSpringVersion}")
     compile ("org.mybatis:mybatis:${mybatisVersion}")
-    compile ("com.github.jsqlparser:jsqlparser:1.0")
+    compile ("com.github.jsqlparser:jsqlparser:1.1")
     compileOnly common
     testCompileOnly("javax.servlet:servlet-api:2.5")
     testCompile("org.mybatis.caches:mybatis-ehcache:1.1.0")

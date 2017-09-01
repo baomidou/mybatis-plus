@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.plugins.tenancy;
 
+import net.sf.jsqlparser.expression.Expression;
+
 /**
  * <p>
  * 租户处理器
@@ -25,8 +27,9 @@ package com.baomidou.mybatisplus.plugins.tenancy;
  */
 public interface TenantHandler {
 
-    String getTenantId();
+    Expression getTenantId();
 
     String getTenantIdColumn();
 
+    boolean doTableFilter(String tableName);
 }
