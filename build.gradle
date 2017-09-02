@@ -98,7 +98,7 @@ signing {
     sign configurations.archives
 }
 
-// gradle clean build uploadArchives -Dun=用户名 -Dps=密码
+// gradle clean build uploadArchives -Dun=用户名 -Dps=密码 -x test
 uploadArchives {
     repositories {
         mavenDeployer {
