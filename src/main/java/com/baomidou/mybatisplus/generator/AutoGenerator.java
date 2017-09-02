@@ -358,7 +358,6 @@ public class AutoGenerator {
             p.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, "");
             p.setProperty(Velocity.ENCODING_DEFAULT, ConstVal.UTF8);
             p.setProperty(Velocity.INPUT_ENCODING, ConstVal.UTF8);
-            p.setProperty(Velocity.OUTPUT_ENCODING, ConstVal.UTF8);
             p.setProperty("file.resource.loader.unicode", "true");
             engine = new VelocityEngine(p);
         }

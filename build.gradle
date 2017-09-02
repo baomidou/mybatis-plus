@@ -1,10 +1,10 @@
 apply plugin: 'java'
 apply plugin: 'maven'
+apply plugin: 'signing'
 
 ext {
-
     configuration = [
-        javaVersion = JavaVersion.VERSION_1_7
+            javaVersion = JavaVersion.VERSION_1_7
     ]
 
     libraries = [
@@ -12,11 +12,10 @@ ext {
             mybatisVersion = '3.4.5',
             springVersion = '4.3.5.RELEASE',
     ]
-
 }
 
 group = 'com.baomidou'
-version = '2.1.1'
+version = '2.1.1-SNAPSHOT'
 
 description = "Mybatis 增强工具包 - 只做增强不做改变，简化CRUD操作"
 
@@ -24,16 +23,49 @@ sourceCompatibility = "${javaVersion}"
 targetCompatibility = "${javaVersion}"
 
 tasks.withType(JavaCompile) {
-	options.encoding = 'UTF-8'
+    options.encoding = 'UTF-8'
 }
 
 repositories {
     mavenLocal()
-    maven { url 'http://repo.spring.io/plugins-release' }
-    maven { url "https://plugins.gradle.org/m2/" }
-    maven { url 'http://maven.aliyun.com/nexus/content/groups/public/'}
-    mavenCentral()
+    maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
     jcenter()
+}
+
+def common = [
+        "org.springframework:spring-tx:${springVersion}",
+        "org.springframework:spring-jdbc:${springVersion}",
+        "org.springframework:spring-context-support:${springVersion}",
+        "com.zaxxer:HikariCP:2.7.0",
+        "org.apache.velocity:velocity-engine-core:2.0"
+]
+
+dependencies {
+    compile("org.mybatis:mybatis-spring:${mybatisSpringVersion}")
+    compile("org.mybatis:mybatis:${mybatisVersion}")
+    compile("com.github.jsqlparser:jsqlparser:1.1")
+    compileOnly common
+    testCompileOnly("javax.servlet:servlet-api:2.5")
+    testCompile("org.mybatis.caches:mybatis-ehcache:1.1.0")
+    testCompile("ch.qos.logback:logback-classic:1.2.2")
+    testCompile("junit:junit:4.12")
+    testCompile("org.apache.commons:commons-dbcp2:2.1.1") {
+        exclude(module: 'commons-logging')
+    }
+    testCompile("org.apache.commons:commons-pool2:2.4.2")
+    testCompile("com.microsoft.sqlserver:sqljdbc4:4.0")
+    testCompile("org.postgresql:postgresql:9.4.1212")
+    testCompile("com.oracle:ojdbc14:10.2.0.5.0")
+    testCompile("com.h2database:h2:1.4.194")
+    testCompile("mysql:mysql-connector-java:5.1.38")
+    testCompile common
+    testCompile("org.slf4j:slf4j-api:1.7.25")
+    testCompile("org.slf4j:jcl-over-slf4j:1.7.25")
+    testCompile("org.springframework:spring-test:${springVersion}")
+    testCompile("org.springframework:spring-webmvc:${springVersion}")
+    testCompile("org.aspectj:aspectjweaver:1.8.9")
+    testCompile("javax.servlet:servlet-api:2.5")
+    testCompile("org.projectlombok:lombok:1.16.16")
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -62,55 +94,56 @@ artifacts {
     archives javadocJar
 }
 
-//gradle uploadArchives -Durl=发布仓库地址 -DuserName=用户名 -DpassWord=密码
+signing {
+    sign configurations.archives
+}
+
+// gradle clean build uploadArchives -Dun=用户名 -Dps=密码
 uploadArchives {
-    def repositoryUrl = System.getProperty("url")
-    def userName = System.getProperty("userName")
-    def passWord = System.getProperty("passWord")
     repositories {
         mavenDeployer {
-            repository(url: "$repositoryUrl") {
-                authentication(userName: "${userName}", password: "${passWord}")
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            def userName = System.getProperty("un")
+            def passWord = System.getProperty("ps")
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: userName, password: passWord)
             }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: userName, password: passWord)
+            }
+
             pom.version = "$project.version"
             pom.artifactId = "$project.name"
             pom.groupId = "$project.group"
+            pom.project {
+                name 'kisso'
+                packaging 'jar'
+                description 'kisso is a lightweight Java SSO Framework and reusable components.'
+                url 'https://github.com/baomidou/kisso'
+
+                scm {
+                    connection 'scm:git@github.com:Codearte/gradle-nexus-staging-plugin.git'
+                    developerConnection 'scm:git@github.com:Codearte/gradle-nexus-staging-plugin.git'
+                    url 'https://github.com/baomidou/kisso'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'baomidou'
+                        name 'hubin'
+                        email 'jobob@qq.com'
+                    }
+                }
+            }
         }
     }
-}
-
-def common = [
-        "org.springframework:spring-tx:${springVersion}",
-        "org.springframework:spring-jdbc:${springVersion}",
-        "org.springframework:spring-context-support:${springVersion}",
-        "com.alibaba:druid:1.1.0",
-        "org.apache.velocity:velocity:1.7"
-]
-
-dependencies {
-    compile ("org.mybatis:mybatis-spring:${mybatisSpringVersion}")
-    compile ("org.mybatis:mybatis:${mybatisVersion}")
-    compile ("com.github.jsqlparser:jsqlparser:1.1")
-    compileOnly common
-    testCompileOnly("javax.servlet:servlet-api:2.5")
-    testCompile("org.mybatis.caches:mybatis-ehcache:1.1.0")
-    testCompile("ch.qos.logback:logback-classic:1.2.2")
-    testCompile("junit:junit:4.12")
-    testCompile("org.apache.commons:commons-dbcp2:2.1.1") {
-        exclude(module: 'commons-logging')
-    }
-    testCompile("org.apache.commons:commons-pool2:2.4.2")
-    testCompile("com.microsoft.sqlserver:sqljdbc4:4.0")
-    testCompile("org.postgresql:postgresql:9.4.1212")
-    testCompile("com.oracle:ojdbc14:10.2.0.5.0")
-    testCompile("com.h2database:h2:1.4.194")
-    testCompile("mysql:mysql-connector-java:5.1.38")
-    testCompile common
-    testCompile("org.slf4j:slf4j-api:1.7.25")
-    testCompile("org.slf4j:jcl-over-slf4j:1.7.25")
-    testCompile("org.springframework:spring-test:${springVersion}")
-    testCompile("org.springframework:spring-webmvc:${springVersion}")
-    testCompile("org.aspectj:aspectjweaver:1.8.9")
-    testCompile("javax.servlet:servlet-api:2.5")
-    testCompile("org.projectlombok:lombok:1.16.16")
 }

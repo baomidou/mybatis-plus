@@ -19,6 +19,8 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.reflection.MetaObject;
 
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
@@ -51,12 +53,12 @@ public abstract class AbstractJsqlParser implements ISqlParser {
         if (this.allowProcess(metaObject)) {
             try {
                 Statement statement = CCJSqlParserUtil.parse(sql);
-                logger.debug("old sql: " + sql + "，statement: " + statement);
+                logger.debug("Original SQL: " + sql);
                 if (null != statement) {
                     return this.processParser(statement);
                 }
             } catch (JSQLParserException e) {
-                logger.error("解析sql: " + sql + "，异常: " + e.getMessage());
+                throw new MybatisPlusException("Failed to process, please exclude the tableName or statementId.\n Error SQL: " + sql, e);
             }
         }
         return null;

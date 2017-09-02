@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import com.alibaba.druid.pool.DruidDataSource;
+import com.zaxxer.hikari.HikariDataSource;
 
 /**
  * <p>
@@ -22,8 +22,8 @@ public class DruidOracleDBConfig {
 
     @Bean
     public DataSource getDruidDataSource() {
-        DruidDataSource dataSource = new DruidDataSource();
-        dataSource.setUrl("jdbc:oracle:thin:@192.168.10.169:1521:orcl");
+        HikariDataSource dataSource = new HikariDataSource();
+        dataSource.setJdbcUrl("jdbc:oracle:thin:@192.168.10.169:1521:orcl");
         dataSource.setUsername("sa");
         dataSource.setPassword("sa");
         return dataSource;
@@ -33,5 +33,4 @@ public class DruidOracleDBConfig {
     public DataSourceTransactionManager transactionManager(DataSource ds) {
         return new DataSourceTransactionManager(ds);
     }
-
 }

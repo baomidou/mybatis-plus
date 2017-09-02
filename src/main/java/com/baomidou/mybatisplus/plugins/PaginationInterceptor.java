@@ -57,7 +57,7 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  * @Date 2016-01-23
  */
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
-public class PaginationInterceptor implements Interceptor {
+public class PaginationInterceptor extends SqlParserHandler implements Interceptor {
 
     // 日志
     private static final Log logger = LogFactory.getLog(PaginationInterceptor.class);
@@ -79,6 +79,7 @@ public class PaginationInterceptor implements Interceptor {
     public Object intercept(Invocation invocation) throws Throwable {
         StatementHandler statementHandler = (StatementHandler) PluginUtils.realTarget(invocation.getTarget());
         MetaObject metaObject = SystemMetaObject.forObject(statementHandler);
+        this.sqlParser(metaObject);
         // 先判断是不是SELECT操作
         MappedStatement mappedStatement = (MappedStatement) metaObject.getValue("delegate.mappedStatement");
         if (!SqlCommandType.SELECT.equals(mappedStatement.getSqlCommandType())) {
