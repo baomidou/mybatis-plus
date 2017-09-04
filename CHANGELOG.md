@@ -1,4 +1,15 @@
-# CHANGELOG
+﻿# CHANGELOG
+
+## [v2.1.1-SNAPSHOT] 2017.09.02
+- 修改分页超过总记录数自动设置第一页 bug @wujing 感谢 pr
+- fixed IEID6
+- 升级 mybatis 3.4.5
+- 升级生成器模板引擎 veloctiy 2.0
+- 升级 jsqlparser 1.1
+- 新增 SQL 解析链可动态扩展自定义 SQL 解析
+- 新增 多租户 SQL 解析逻辑，具体查看 spring boot 演示 demo
+- 其他优化调整
+
 
 ## [v2.1.0] 2017.08.01
 
