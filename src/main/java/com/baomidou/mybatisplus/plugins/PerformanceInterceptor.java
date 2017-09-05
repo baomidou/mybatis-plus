@@ -15,29 +15,24 @@
  */
 package com.baomidou.mybatisplus.plugins;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.sql.Statement;
-import java.util.Properties;
-
-import org.apache.ibatis.executor.statement.StatementHandler;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.plugin.Interceptor;
-import org.apache.ibatis.plugin.Intercepts;
-import org.apache.ibatis.plugin.Invocation;
-import org.apache.ibatis.plugin.Plugin;
-import org.apache.ibatis.plugin.Signature;
-import org.apache.ibatis.reflection.MetaObject;
-import org.apache.ibatis.reflection.SystemMetaObject;
-import org.apache.ibatis.session.ResultHandler;
-
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.toolkit.SqlUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.SystemClock;
+import org.apache.ibatis.executor.statement.StatementHandler;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.plugin.*;
+import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.reflection.SystemMetaObject;
+import org.apache.ibatis.session.ResultHandler;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.sql.Statement;
+import java.util.Properties;
 
 /**
  * <p>
@@ -56,6 +51,7 @@ public class PerformanceInterceptor implements Interceptor {
 
     private static final String DruidPooledPreparedStatement = "com.alibaba.druid.pool.DruidPooledPreparedStatement";
     private static final String T4CPreparedStatement = "oracle.jdbc.driver.T4CPreparedStatement";
+    private static final String OraclePreparedStatementWrapper = "oracle.jdbc.driver.OraclePreparedStatementWrapper";
     /**
      * SQL 执行最大时长，超过自动停止运行，有助于发现问题。
      */
@@ -104,7 +100,8 @@ public class PerformanceInterceptor implements Interceptor {
                 }
             } catch (Exception ignored) {
             }
-        } else if (T4CPreparedStatement.equals(stmtClassName)) {
+        } else if (T4CPreparedStatement.equals(stmtClassName)
+                || OraclePreparedStatementWrapper.equals(stmtClassName)) {
             try {
                 if (oracleGetOriginalSqlMethod != null) {
                     Object stmtSql = oracleGetOriginalSqlMethod.invoke(statement);
@@ -112,7 +109,7 @@ public class PerformanceInterceptor implements Interceptor {
                         originalSql = (String) stmtSql;
                     }
                 } else {
-                    Class<?> clazz = Class.forName(T4CPreparedStatement);
+                    Class<?> clazz = Class.forName(stmtClassName);
                     oracleGetOriginalSqlMethod = clazz.getDeclaredMethod("getOriginalSql");
                     if (oracleGetOriginalSqlMethod != null) {
                         Object stmtSql = oracleGetOriginalSqlMethod.invoke(statement);
@@ -183,23 +180,26 @@ public class PerformanceInterceptor implements Interceptor {
         return maxTime;
     }
 
-    public void setMaxTime(long maxTime) {
+    public PerformanceInterceptor setMaxTime(long maxTime) {
         this.maxTime = maxTime;
+        return this;
     }
 
     public boolean isFormat() {
         return format;
     }
 
-    public void setFormat(boolean format) {
+    public PerformanceInterceptor setFormat(boolean format) {
         this.format = format;
+        return this;
     }
 
     public boolean isWriteInLog() {
         return writeInLog;
     }
 
-    public void setWriteInLog(boolean writeInLog) {
+    public PerformanceInterceptor setWriteInLog(boolean writeInLog) {
         this.writeInLog = writeInLog;
+        return this;
     }
 }
