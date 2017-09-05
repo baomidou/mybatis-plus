@@ -51,6 +51,7 @@ public class PostgreSQLGenerator {
 
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
+        dsc.setSchemaname("public");// 指定 SCHEMA
         dsc.setDbType(DbType.POSTGRE_SQL);
         dsc.setTypeConvert(new OracleTypeConvert() {
             // 自定义数据库表字段类型转换【可选】

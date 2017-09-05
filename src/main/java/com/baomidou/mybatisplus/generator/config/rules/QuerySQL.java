@@ -61,9 +61,10 @@ public enum QuerySQL {
 
     POSTGRE_SQL("postgre_sql", "select tablename from pg_tables where schemaname='%s' ORDER BY tablename",
             "SELECT A.tablename, obj_description(relfilenode, 'pg_class') AS comments FROM pg_tables A, pg_class B WHERE A.schemaname='%s' AND A.tablename = B.relname",
-            "SELECT DISTINCT A.attname AS name,format_type(A.atttypid,A.atttypmod) AS type,col_description(A.attrelid,A.attnum) AS comment,(CASE C.contype WHEN 'p' THEN 'PRI' ELSE '' END) AS key"
-                    + " FROM pg_attribute A INNER JOIN pg_class B ON A.attrelid = B.oid"
-                    + " LEFT JOIN pg_constraint C ON A.attnum = C.conkey[1] AND A.attrelid = C.conrelid WHERE B.relname = '%s' AND A.attnum>0 AND position('...' in A.attname) < 1",
+            "SELECT A.name,A.type,A.comment, (CASE C.contype WHEN 'p' THEN 'PRI' ELSE '' END) AS key FROM " +
+                    "(SELECT attnum,attrelid,attname AS name, format_type(atttypid, atttypmod) AS type,col_description(attrelid, attnum) AS comment " +
+                    "FROM pg_attribute WHERE attrelid = '%s.%s'::regclass AND attnum > 0 AND NOT attisdropped " +
+                    "ORDER  BY attnum) A LEFT JOIN pg_constraint C ON A.attnum = C.conkey[1] AND A.attrelid = C.conrelid",
             "tablename", "comments", "name", "type", "comment", "key");
 
     private final String dbType;

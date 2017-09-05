@@ -480,7 +480,11 @@ public class ConfigBuilder {
         List<TableField> fieldList = new ArrayList<>();
         List<TableField> commonFieldList = new ArrayList<>();
         try {
-            PreparedStatement preparedStatement = connection.prepareStatement(String.format(querySQL.getTableFieldsSql(), tableInfo.getName()));
+            String tableFieldsSql = querySQL.getTableFieldsSql();
+            if (QuerySQL.POSTGRE_SQL == querySQL) {
+                tableFieldsSql = String.format(tableFieldsSql, dataSourceConfig.getSchemaname(), tableInfo.getName());
+            }
+            PreparedStatement preparedStatement = connection.prepareStatement(tableFieldsSql);
             ResultSet results = preparedStatement.executeQuery();
             while (results.next()) {
                 TableField field = new TableField();
