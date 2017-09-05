@@ -223,7 +223,7 @@ public class StrategyConfig {
     public boolean includeSuperEntityColumns(String fieldName) {
         if (null != superEntityColumns) {
             for (String column : superEntityColumns) {
-                if (column.contains(fieldName)) {
+                if (column.equals(fieldName)) {
                     return true;
                 }
             }
