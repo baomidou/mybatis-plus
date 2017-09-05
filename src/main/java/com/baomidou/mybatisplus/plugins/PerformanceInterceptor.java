@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.toolkit.SqlUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.SystemClock;
+
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
@@ -48,7 +49,6 @@ import java.util.Properties;
 public class PerformanceInterceptor implements Interceptor {
 
     private static final Log logger = LogFactory.getLog(PerformanceInterceptor.class);
-
     private static final String DruidPooledPreparedStatement = "com.alibaba.druid.pool.DruidPooledPreparedStatement";
     private static final String T4CPreparedStatement = "oracle.jdbc.driver.T4CPreparedStatement";
     private static final String OraclePreparedStatementWrapper = "oracle.jdbc.driver.OraclePreparedStatementWrapper";
@@ -56,19 +56,16 @@ public class PerformanceInterceptor implements Interceptor {
      * SQL 执行最大时长，超过自动停止运行，有助于发现问题。
      */
     private long maxTime = 0;
-
     /**
      * SQL 是否格式化
      */
     private boolean format = false;
-
     /**
      * 是否写入日志文件<br>
      * true 写入日志文件，不阻断程序执行！<br>
      * 超过设定的最大执行时长异常提示！
      */
     private boolean writeInLog = false;
-
     private Method oracleGetOriginalSqlMethod;
     private Method druidGetSQLMethod;
 
@@ -118,7 +115,8 @@ public class PerformanceInterceptor implements Interceptor {
                         }
                     }
                 }
-            } catch (Exception e) {//ignore
+            } catch (Exception e) {
+                //ignore
             }
         }
         if (originalSql == null) {
