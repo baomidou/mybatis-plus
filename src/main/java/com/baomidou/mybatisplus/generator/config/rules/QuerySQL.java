@@ -24,7 +24,7 @@ package com.baomidou.mybatisplus.generator.config.rules;
  * @since 2016-04-25
  */
 public enum QuerySQL {
-    MYSQL("mysql", "show tables", "show table status", "show full fields from %s", "NAME", "COMMENT", "FIELD", "TYPE",
+    MYSQL("mysql", "show tables", "show table status", "show full fields from `%s`", "NAME", "COMMENT", "FIELD", "TYPE",
             "COMMENT", "KEY"),
 
     ORACLE("oracle", "SELECT * FROM USER_TABLES", "SELECT * FROM USER_TAB_COMMENTS",
