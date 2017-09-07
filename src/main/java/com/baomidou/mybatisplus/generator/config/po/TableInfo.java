@@ -179,6 +179,7 @@ public class TableInfo {
                 }
                 if (null != field.getFill()) {
                     // 填充字段
+                    pkgSet.add("com.baomidou.mybatisplus.annotations.TableField");
                     pkgSet.add("com.baomidou.mybatisplus.enums.FieldFill");
                 }
             }
