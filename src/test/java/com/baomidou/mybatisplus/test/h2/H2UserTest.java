@@ -23,6 +23,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.baomidou.mybatisplus.entity.Column;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserMapper;
@@ -420,11 +421,11 @@ public class H2UserTest extends H2Test {
 
 
     @Test
-    public void testEntityWrapperSelectSql(){
+    public void testEntityWrapperSelectSql() {
         EntityWrapper<H2User> ew = new EntityWrapper<>();
         ew.setSqlSelect("test_id as id, name, age");
         List<H2User> list = userService.selectList(ew);
-        for(H2User u:list){
+        for (H2User u : list) {
             Assert.assertNotNull(u.getId());
             Assert.assertNotNull(u.getName());
             Assert.assertNull(u.getPrice());
@@ -433,29 +434,30 @@ public class H2UserTest extends H2Test {
     }
 
     @Test
-    public void testQueryWithParamInSelectStatement(){
-        Map<String,Object> param = new HashMap<>();
+    public void testQueryWithParamInSelectStatement() {
+        Map<String, Object> param = new HashMap<>();
         String nameParam = "selectStmtParam";
         param.put("nameParam", nameParam);
         param.put("ageFrom", 1);
         param.put("ageTo", 100);
         List<H2User> list = userService.queryWithParamInSelectStatememt(param);
         Assert.assertNotNull(list);
-        for(H2User u:list){
+        for (H2User u : list) {
             Assert.assertEquals(nameParam, u.getName());
             Assert.assertNotNull(u.getId());
         }
     }
+
     @Test
-    public void testQueryWithParamInSelectStatement4Page(){
-        Map<String,Object> param = new HashMap<>();
+    public void testQueryWithParamInSelectStatement4Page() {
+        Map<String, Object> param = new HashMap<>();
         String nameParam = "selectStmtParam";
         param.put("nameParam", nameParam);
         param.put("ageFrom", 1);
         param.put("ageTo", 100);
-        Page<H2User> page = userService.queryWithParamInSelectStatememt4Page(param, new Page<H2User>(0,10));
+        Page<H2User> page = userService.queryWithParamInSelectStatememt4Page(param, new Page<H2User>(0, 10));
         Assert.assertNotNull(page.getRecords());
-        for(H2User u:page.getRecords()){
+        for (H2User u : page.getRecords()) {
             Assert.assertEquals(nameParam, u.getName());
             Assert.assertNotNull(u.getId());
         }
@@ -463,8 +465,8 @@ public class H2UserTest extends H2Test {
     }
 
     @Test
-    public void testSelectCountWithParamInSelectItems(){
-        Map<String,Object> param = new HashMap<>();
+    public void testSelectCountWithParamInSelectItems() {
+        Map<String, Object> param = new HashMap<>();
         String nameParam = "selectStmtParam";
         param.put("nameParam", nameParam);
         param.put("ageFrom", 1);
@@ -474,16 +476,32 @@ public class H2UserTest extends H2Test {
     }
 
     @Test
-    public void testPageWithDollarParamInSelectItems(){
-        Map<String,Object> param = new HashMap<>();
+    public void testPageWithDollarParamInSelectItems() {
+        Map<String, Object> param = new HashMap<>();
         String nameParam = "selectStmtParam";
         param.put("nameParam", nameParam);
         param.put("ageFrom", 1);
         param.put("ageTo", 100);
-        Page<H2User> page = new Page<H2User>(0,10);
+        Page<H2User> page = new Page<H2User>(0, 10);
         userMapper.selectUserWithDollarParamInSelectStatememt4Page(param, page);
         Assert.assertNotEquals(0, page.getTotal());
 
+    }
+
+    @Test
+    public void testDistinctColumn() {
+        EntityWrapper<H2User> ew = new EntityWrapper<>();
+        ew.setSqlSelect(Column.create().column("distinct test_type"));//setMapUnderscoreToCamelCase(true)
+        List<H2User> list = userService.selectList(ew);
+        for (H2User u : list) {
+            System.out.println("getTestType=" + u.getTestType());
+            Assert.assertNotNull(u.getTestType());
+        }
+        ew.setSqlSelect("distinct test_type as testType");
+        for (H2User u : userService.selectList(ew)) {
+            System.out.println("testType=" + u.getTestType());
+            Assert.assertNotNull(u.getTestType());
+        }
     }
 
 }
