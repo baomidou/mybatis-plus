@@ -33,7 +33,7 @@ public enum DBType {
     /**
      * ORACLE
      */
-    ORACLE("oracle", null, "Oracle数据库"),
+    ORACLE("oracle", "\"%s\"", "Oracle数据库"),
     /**
      * DB2
      */
