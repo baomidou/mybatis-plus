@@ -37,7 +37,7 @@ import lombok.experimental.Accessors;
 /* 表名 value 注解【 驼峰命名可无 】, resultMap 注解测试【 映射 xml 的 resultMap 内容 】 */
 @Data
 @Accessors(chain = true)
-@TableName
+@TableName("h2user")
 public class H2User extends SuperEntity {
 
     /* 测试忽略验证 */

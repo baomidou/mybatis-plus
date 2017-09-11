@@ -41,6 +41,7 @@ public class MybatisPlusConfig {
 //        configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
 //        org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
         configuration.setJdbcTypeForNull(JdbcType.NULL);
+        configuration.setMapUnderscoreToCamelCase(true);
         sqlSessionFactory.setConfiguration(configuration);
         PaginationInterceptor pagination = new PaginationInterceptor();
         OptimisticLockerInterceptor optLock = new OptimisticLockerInterceptor();
