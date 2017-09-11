@@ -6,8 +6,8 @@ import org.junit.Test;
 
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
-import com.baomidou.mybatisplus.plugins.tenant.TenantSqlParser;
-import com.baomidou.mybatisplus.plugins.tenant.TenantHandler;
+import com.baomidou.mybatisplus.plugins.parser.tenant.TenantSqlParser;
+import com.baomidou.mybatisplus.plugins.parser.tenant.TenantHandler;
 
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;

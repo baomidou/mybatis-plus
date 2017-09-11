@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.plugins.tenant;
+package com.baomidou.mybatisplus.plugins.parser.tenant;
 
 import java.util.List;
 
