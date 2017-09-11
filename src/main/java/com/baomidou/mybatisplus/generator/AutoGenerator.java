@@ -308,7 +308,10 @@ public class AutoGenerator {
                 List<FileOutConfig> focList = injectionConfig.getFileOutConfigList();
                 if (CollectionUtils.isNotEmpty(focList)) {
                     for (FileOutConfig foc : focList) {
-                        vmToFile(context, foc.getTemplatePath(), foc.outputFile(tableInfo));
+                        // 判断自定义文件是否存在
+                        if (isCreate(foc.outputFile(tableInfo))) {
+                            vmToFile(context, foc.getTemplatePath(), foc.outputFile(tableInfo));
+                        }
                     }
                 }
             }
