@@ -1,6 +1,6 @@
 ﻿# CHANGELOG
 
-## [v2.1.1-SNAPSHOT] 2017.09.02
+## [v2.1.1] 2017.09.12
 - 修改分页超过总记录数自动设置第一页 bug @wujing 感谢 pr
 - fixed IEID6
 - 升级 mybatis 3.4.5
@@ -8,6 +8,14 @@
 - 升级 jsqlparser 1.1
 - 新增 SQL 解析链可动态扩展自定义 SQL 解析
 - 新增 多租户 SQL 解析逻辑，具体查看 spring boot 演示 demo
+- jasonlong10 PR 性能分析拦截器 支持OraclePreparedStatementWrapper的情况打印 SQL
+- fixed github issues/145
+- fixed gitee issue/IF1OF
+- add sqlSelect("distinct test_type") test case
+- 添加填充生成器遗漏 TableField 导入类
+- fixed github issues/MYSQL表名含有保留字代码生成时报错 #124:字段全为 大写 下划线命名支持
+- fixed github issues/134
+- PostgreSQL 代码生成支持指定 schema 表字段按照默认排序
 - 其他优化调整
 
 
