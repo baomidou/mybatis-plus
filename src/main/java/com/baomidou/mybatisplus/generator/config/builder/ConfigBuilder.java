@@ -483,6 +483,8 @@ public class ConfigBuilder {
             String tableFieldsSql = querySQL.getTableFieldsSql();
             if (QuerySQL.POSTGRE_SQL == querySQL) {
                 tableFieldsSql = String.format(tableFieldsSql, dataSourceConfig.getSchemaname(), tableInfo.getName());
+            } else {
+                tableFieldsSql = String.format(tableFieldsSql, tableInfo.getName());
             }
             PreparedStatement preparedStatement = connection.prepareStatement(tableFieldsSql);
             ResultSet results = preparedStatement.executeQuery();
