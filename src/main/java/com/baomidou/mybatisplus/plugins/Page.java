@@ -60,16 +60,18 @@ public class Page<T> extends Pagination {
         return records;
     }
 
-    public void setRecords(List<T> records) {
+    public Page<T> setRecords(List<T> records) {
         this.records = records;
+        return this;
     }
 
     public Map<String, Object> getCondition() {
         return condition;
     }
 
-    public void setCondition(Map<String, Object> condition) {
+    public Page<T> setCondition(Map<String, Object> condition) {
         this.condition = condition;
+        return this;
     }
 
     @Override

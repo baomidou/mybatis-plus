@@ -126,16 +126,18 @@ public class Pagination extends RowBounds implements Serializable {
         return total;
     }
 
-    public void setTotal(int total) {
+    public Pagination setTotal(int total) {
         this.total = total;
+        return this;
     }
 
     public int getSize() {
         return size;
     }
 
-    public void setSize(int size) {
+    public Pagination setSize(int size) {
         this.size = size;
+        return this;
     }
 
     public int getPages() {
@@ -153,42 +155,47 @@ public class Pagination extends RowBounds implements Serializable {
         return current;
     }
 
-    public void setCurrent(int current) {
+    public Pagination setCurrent(int current) {
         this.current = current;
+        return this;
     }
 
     public boolean isSearchCount() {
         return searchCount;
     }
 
-    public void setSearchCount(boolean searchCount) {
+    public Pagination setSearchCount(boolean searchCount) {
         this.searchCount = searchCount;
+        return this;
     }
 
     public String getOrderByField() {
         return orderByField;
     }
 
-    public void setOrderByField(String orderByField) {
+    public Pagination setOrderByField(String orderByField) {
         if (StringUtils.isNotEmpty(orderByField)) {
             this.orderByField = orderByField;
         }
+        return this;
     }
 
     public boolean isOpenSort() {
         return openSort;
     }
 
-    public void setOpenSort(boolean openSort) {
+    public Pagination setOpenSort(boolean openSort) {
         this.openSort = openSort;
+        return this;
     }
 
     public boolean isAsc() {
         return isAsc;
     }
 
-    public void setAsc(boolean isAsc) {
+    public Pagination setAsc(boolean isAsc) {
         this.isAsc = isAsc;
+        return this;
     }
 
     @Override
