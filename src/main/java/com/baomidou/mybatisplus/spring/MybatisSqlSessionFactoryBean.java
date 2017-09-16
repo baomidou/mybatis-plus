@@ -426,7 +426,8 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         if (hasLength(this.typeAliasesPackage)) {
             // TODO 支持自定义通配符
             String[] typeAliasPackageArray;
-            if (typeAliasesPackage.contains("*")) {
+            if (typeAliasesPackage.contains("*") && !typeAliasesPackage.contains(",")
+                    && !typeAliasesPackage.contains(";")) {
                 typeAliasPackageArray = PackageHelper.convertTypeAliasesPackage(typeAliasesPackage);
             } else {
                 typeAliasPackageArray = tokenizeToStringArray(this.typeAliasesPackage,
