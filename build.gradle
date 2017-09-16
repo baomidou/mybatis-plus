@@ -15,7 +15,7 @@ ext {
 }
 
 group = 'com.baomidou'
-version = '2.1.1'
+version = '2.1.2'
 
 description = "Mybatis 增强工具包 - 只做增强不做改变，简化CRUD操作"
 
