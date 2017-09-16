@@ -71,37 +71,7 @@ public class CachePaginationInterceptor extends PaginationInterceptor implements
 
         Object target = invocation.getTarget();
         if (target instanceof StatementHandler) {
-            StatementHandler statementHandler = (StatementHandler) PluginUtils.realTarget(invocation.getTarget());
-            MetaObject metaStatementHandler = SystemMetaObject.forObject(statementHandler);
-            RowBounds rowBounds = (RowBounds) metaStatementHandler.getValue("delegate.rowBounds");
-
-            if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
-                return invocation.proceed();
-            }
-            BoundSql boundSql = (BoundSql) metaStatementHandler.getValue("delegate.boundSql");
-            String originalSql = boundSql.getSql();
-            Connection connection = (Connection) invocation.getArgs()[0];
-            DBType dbType = StringUtils.isNotEmpty(dialectType) ? DBType.getDBType(dialectType) : JdbcUtils.getDbType(connection.getMetaData().getURL());
-            if (rowBounds instanceof Pagination) {
-                Pagination page = (Pagination) rowBounds;
-                boolean orderBy = true;
-                if (page.isSearchCount()) {
-                    String tempSql = originalSql.replaceAll("(?i)ORDER[\\s]+BY", "ORDER BY");
-                    int orderByIndex = tempSql.toUpperCase().lastIndexOf("ORDER BY");
-                    if (orderByIndex <= -1) {
-                        orderBy = false;
-                    }
-                }
-                String buildSql = SqlUtils.concatOrderBy(originalSql, page, orderBy);
-                originalSql = DialectFactory.buildPaginationSql(page, buildSql, dbType, dialectClazz);
-            } else {
-                // support physical Pagination for RowBounds
-                originalSql = DialectFactory.buildPaginationSql(rowBounds, originalSql, dbType, dialectClazz);
-            }
-
-            metaStatementHandler.setValue("delegate.boundSql.sql", originalSql);
-            metaStatementHandler.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
-            metaStatementHandler.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
+            return super.intercept(invocation);
         } else {
             RowBounds rowBounds = (RowBounds) invocation.getArgs()[2];
             if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
