@@ -1,5 +1,16 @@
 ﻿# CHANGELOG
 
+
+
+## [v2.1.2] 2017.09.17
+- 修复代码生成器 Bug
+- fixed gitee issues/IF2DY
+- 修改 page 可链式操作
+- 去掉转义 oracle
+- fixed github issues/119
+- fixed gitee issues/IF2OI
+
+
 ## [v2.1.1] 2017.09.12
 - 修改分页超过总记录数自动设置第一页 bug @wujing 感谢 pr
 - fixed IEID6
