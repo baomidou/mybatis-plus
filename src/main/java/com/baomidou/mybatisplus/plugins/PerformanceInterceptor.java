@@ -15,25 +15,29 @@
  */
 package com.baomidou.mybatisplus.plugins;
 
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.toolkit.PluginUtils;
-import com.baomidou.mybatisplus.toolkit.SqlUtils;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
-import com.baomidou.mybatisplus.toolkit.SystemClock;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.sql.Statement;
+import java.util.Properties;
 
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.plugin.*;
+import org.apache.ibatis.plugin.Interceptor;
+import org.apache.ibatis.plugin.Intercepts;
+import org.apache.ibatis.plugin.Invocation;
+import org.apache.ibatis.plugin.Plugin;
+import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.session.ResultHandler;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.sql.Statement;
-import java.util.Properties;
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.toolkit.PluginUtils;
+import com.baomidou.mybatisplus.toolkit.SqlUtils;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
+import com.baomidou.mybatisplus.toolkit.SystemClock;
 
 /**
  * <p>
@@ -107,11 +111,14 @@ public class PerformanceInterceptor implements Interceptor {
                     }
                 } else {
                     Class<?> clazz = Class.forName(stmtClassName);
-                    oracleGetOriginalSqlMethod = clazz.getDeclaredMethod("getOriginalSql");
-                    if (oracleGetOriginalSqlMethod != null) {
-                        Object stmtSql = oracleGetOriginalSqlMethod.invoke(statement);
-                        if (stmtSql != null && stmtSql instanceof String) {
-                            originalSql = (String) stmtSql;
+                    oracleGetOriginalSqlMethod = getMethodRegular(clazz, "getOriginalSql");
+                    if(oracleGetOriginalSqlMethod!=null) {
+                        oracleGetOriginalSqlMethod.setAccessible(true);//OraclePreparedStatementWrapper is not a public class, need set this.
+                        if (oracleGetOriginalSqlMethod != null) {
+                            Object stmtSql = oracleGetOriginalSqlMethod.invoke(statement);
+                            if (stmtSql != null && stmtSql instanceof String) {
+                                originalSql = (String) stmtSql;
+                            }
                         }
                     }
                 }
@@ -199,5 +206,17 @@ public class PerformanceInterceptor implements Interceptor {
     public PerformanceInterceptor setWriteInLog(boolean writeInLog) {
         this.writeInLog = writeInLog;
         return this;
+    }
+
+    public Method getMethodRegular(Class<?> clazz, String methodName) {
+        if (Object.class.equals(clazz)) {
+            return null;
+        }
+        for (Method method : clazz.getDeclaredMethods()) {
+            if (method.getName().equals(methodName)) {
+                return method;
+            }
+        }
+        return getMethodRegular(clazz.getSuperclass(), methodName);
     }
 }
