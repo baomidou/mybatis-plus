@@ -267,9 +267,9 @@ public class LogicSqlInjector extends AutoSqlInjector {
                 where.append(convertIfTag(fieldInfo, true));
             }
             where.append("\n</if>");
-            where.append("\n").append(getLogicDeleteSql(table));
             where.append("\n<if test=\"ew.sqlSegment!=null\">${ew.sqlSegment}\n</if>");
             where.append("\n</if>");
+            where.append("\n").append(getLogicDeleteSql(table));
             where.append("\n</where>");
             return where.toString();
         }
