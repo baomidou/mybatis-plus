@@ -39,6 +39,10 @@ public class LogicDeleteDefaultHandler implements LogicDeleteHandler {
     private static final Map<String, TableFieldInfo> tableLogicDeleteMap = new ConcurrentHashMap<>();
 
     public LogicDeleteDefaultHandler() {
+        init();
+    }
+
+    private void init() {
         if (tableLogicDeleteMap.isEmpty()) {
             List<TableInfo> tableInfos = TableInfoHelper.getTableInfos();
             for (TableInfo tableInfo : tableInfos) {
@@ -55,6 +59,7 @@ public class LogicDeleteDefaultHandler implements LogicDeleteHandler {
 
     @Override
     public Expression getValue(String tableName) {
+        init();
         if (String.class.equals(tableLogicDeleteMap.get(tableName).getPropertyType())) {
             return new StringValue(tableLogicDeleteMap.get(tableName).getLogicNotDeleteValue());
         } else {
@@ -64,11 +69,13 @@ public class LogicDeleteDefaultHandler implements LogicDeleteHandler {
 
     @Override
     public String getColumn(String tableName) {
+        init();
         return tableLogicDeleteMap.get(tableName).getColumn();
     }
 
     @Override
     public boolean doTableFilter(String tableName) {
-        return tableLogicDeleteMap.containsKey(tableName);
+        init();
+        return !tableLogicDeleteMap.containsKey(tableName);
     }
 }

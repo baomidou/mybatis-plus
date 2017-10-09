@@ -43,7 +43,7 @@ import java.util.List;
  */
 public class LogicDeleteSqlParser extends AbstractJsqlParser {
 
-    private LogicDeleteHandler logicDeleteHandler;
+    private LogicDeleteHandler logicDeleteHandler = new LogicDeleteDefaultHandler();
 
     @Override
     public SqlInfo processParser(Statement statement) {
