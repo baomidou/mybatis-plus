@@ -1,0 +1,76 @@
+/**
+ * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.baomidou.mybatisplus.enums;
+
+import java.sql.CallableStatement;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.apache.ibatis.type.BaseTypeHandler;
+import org.apache.ibatis.type.JdbcType;
+
+import com.baomidou.mybatisplus.toolkit.EnumUtils;
+
+/**
+ * <p>
+ * 自定义枚举属性转换器
+ * </p>
+ *
+ * @author hubin
+ * @Date 2017-10-11
+ */
+public class IEnumTypeHandler<E extends Enum<?> & IEnum> extends BaseTypeHandler<IEnum> {
+
+    private Class<E> type;
+
+    public IEnumTypeHandler(Class<E> type) {
+        if (type == null) {
+            throw new IllegalArgumentException("Type argument cannot be null");
+        }
+        this.type = type;
+    }
+
+    @Override
+    public void setNonNullParameter(PreparedStatement ps, int i, IEnum parameter, JdbcType jdbcType)
+            throws SQLException {
+        ps.setObject(i, parameter.getValue());
+    }
+
+    @Override
+    public E getNullableResult(ResultSet rs, String columnName) throws SQLException {
+        if (rs.wasNull()) {
+            return null;
+        }
+        return EnumUtils.valueOf(type, rs.getObject(columnName));
+    }
+
+    @Override
+    public E getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
+        if (rs.wasNull()) {
+            return null;
+        }
+        return EnumUtils.valueOf(type, rs.getObject(columnIndex));
+    }
+
+    @Override
+    public E getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
+        if (cs.wasNull()) {
+            return null;
+        }
+        return EnumUtils.valueOf(type, cs.getObject(columnIndex));
+    }
+}
