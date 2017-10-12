@@ -54,7 +54,7 @@ public class PackageHelper {
         MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory(resolver);
         String pkg = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX
                 + ClassUtils.convertClassNameToResourcePath(typeAliasesPackage) + "/*.class";
-		/*
+        /*
          * 将加载多个绝对匹配的所有Resource
 		 * 将首先通过ClassLoader.getResource("META-INF")加载非模式路径部分，然后进行遍历模式匹配，排除重复包路径
 		 */
@@ -80,4 +80,43 @@ public class PackageHelper {
         }
     }
 
+
+    /**
+     * <p>
+     * 扫描获取指定包路径所有类
+     * </p>
+     *
+     * @param typePackage 扫描类包路径
+     * @return
+     */
+    public static Set<Class> scanTypePackage(String typePackage) {
+        ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        MetadataReaderFactory metadataReaderFactory = new CachingMetadataReaderFactory(resolver);
+        String pkg = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX
+                + ClassUtils.convertClassNameToResourcePath(typePackage) + "/*.class";
+        /*
+         * 将加载多个绝对匹配的所有Resource
+		 * 将首先通过ClassLoader.getResource("META-INF")加载非模式路径部分，然后进行遍历模式匹配，排除重复包路径
+		 */
+        try {
+            Set<Class> set = new HashSet<>();
+            Resource[] resources = resolver.getResources(pkg);
+            if (resources != null && resources.length > 0) {
+                MetadataReader metadataReader;
+                for (Resource resource : resources) {
+                    if (resource.isReadable()) {
+                        metadataReader = metadataReaderFactory.getMetadataReader(resource);
+                        set.add(Class.forName(metadataReader.getClassMetadata().getClassName()));
+                    }
+                }
+            }
+            if (set.isEmpty()) {
+                throw new MybatisPlusException("not find scanTypePackage:" + pkg);
+            } else {
+                return set;
+            }
+        } catch (Exception e) {
+            throw new MybatisPlusException("not find scanTypePackage:" + pkg, e);
+        }
+    }
 }

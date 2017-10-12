@@ -23,7 +23,9 @@ import static org.springframework.util.StringUtils.tokenizeToStringArray;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -59,6 +61,7 @@ import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 import com.baomidou.mybatisplus.MybatisConfiguration;
 import com.baomidou.mybatisplus.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
+import com.baomidou.mybatisplus.enums.IEnum;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.mapper.SqlRunner;
 import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
@@ -453,24 +456,29 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             }
         }
 
-        // TODO 自定义枚举包扫描处理
+        // TODO 自定义枚举类扫描处理
         if (hasLength(this.typeEnumsPackage)) {
-            // 取得类型转换注册器
-            String[] typeEnumsPackageArray;
+            Set<Class> classes = null;
             if (typeEnumsPackage.contains("*") && !typeEnumsPackage.contains(",")
                     && !typeEnumsPackage.contains(";")) {
-                typeEnumsPackageArray = PackageHelper.convertTypeAliasesPackage(typeEnumsPackage);
+                classes = PackageHelper.scanTypePackage(typeEnumsPackage);
             } else {
-                typeEnumsPackageArray = tokenizeToStringArray(this.typeEnumsPackage,
+                String[] typeEnumsPackageArray = tokenizeToStringArray(this.typeEnumsPackage,
                         ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
+                if (typeEnumsPackageArray == null) {
+                    throw new MybatisPlusException("not find typeEnumsPackage:" + typeEnumsPackage);
+                }
+                classes = new HashSet<Class>();
+                for (String typePackage : typeEnumsPackageArray) {
+                    classes.addAll(PackageHelper.scanTypePackage(typePackage));
+                }
             }
-            if (typeEnumsPackageArray == null) {
-                throw new MybatisPlusException("not find typeEnumsPackage:" + typeEnumsPackage);
-            }
+            // 取得类型转换注册器
             TypeHandlerRegistry typeHandlerRegistry = this.configuration.getTypeHandlerRegistry();
-            for (String packageToScan : typeEnumsPackageArray) {
-                // 注册 TODO
-//                typeHandlerRegistry.register(className, "com.baomidou.mybatisplus.enums.IEnumTypeHandler");
+            for (Class cls : classes) {
+                if (cls.isEnum() && IEnum.class.isAssignableFrom(cls)) {
+                    typeHandlerRegistry.register(cls.getName(), "com.baomidou.mybatisplus.enums.IEnumTypeHandler");
+                }
             }
         }
 
