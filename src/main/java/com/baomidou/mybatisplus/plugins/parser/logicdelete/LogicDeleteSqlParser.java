@@ -105,7 +105,7 @@ public class LogicDeleteSqlParser extends AbstractJsqlParser {
         String tableName = table.getName();
         //获得where条件表达式
         EqualsTo equalsTo = new EqualsTo();
-        if (where instanceof BinaryExpression) {
+        if (null != where) {
             equalsTo.setLeftExpression(new Column(this.logicDeleteHandler.getColumn(tableName)));
             equalsTo.setRightExpression(logicDeleteHandler.getValue(tableName));
             return new AndExpression(where, equalsTo);
