@@ -47,12 +47,16 @@ public class IEnumTypeHandler<E extends Enum<?> & IEnum> extends BaseTypeHandler
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, IEnum parameter, JdbcType jdbcType)
             throws SQLException {
-        ps.setObject(i, parameter.getValue());
+        if (jdbcType == null) {
+            ps.setObject(i, parameter.getValue());
+        } else {
+            ps.setObject(i, parameter.getValue(), jdbcType.TYPE_CODE);
+        }
     }
 
     @Override
     public E getNullableResult(ResultSet rs, String columnName) throws SQLException {
-        if (rs.wasNull()) {
+        if (null == rs.getString(columnName) && rs.wasNull()) {
             return null;
         }
         return EnumUtils.valueOf(type, rs.getObject(columnName));
@@ -60,7 +64,7 @@ public class IEnumTypeHandler<E extends Enum<?> & IEnum> extends BaseTypeHandler
 
     @Override
     public E getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
-        if (rs.wasNull()) {
+        if (null == rs.getString(columnIndex) && rs.wasNull()) {
             return null;
         }
         return EnumUtils.valueOf(type, rs.getObject(columnIndex));
@@ -68,7 +72,7 @@ public class IEnumTypeHandler<E extends Enum<?> & IEnum> extends BaseTypeHandler
 
     @Override
     public E getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
-        if (cs.wasNull()) {
+        if (null == cs.getString(columnIndex) && cs.wasNull()) {
             return null;
         }
         return EnumUtils.valueOf(type, cs.getObject(columnIndex));

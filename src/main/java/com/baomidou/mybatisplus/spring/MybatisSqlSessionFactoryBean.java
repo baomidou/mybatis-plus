@@ -476,8 +476,13 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             // 取得类型转换注册器
             TypeHandlerRegistry typeHandlerRegistry = this.configuration.getTypeHandlerRegistry();
             for (Class cls : classes) {
-                if (cls.isEnum() && IEnum.class.isAssignableFrom(cls)) {
-                    typeHandlerRegistry.register(cls.getName(), "com.baomidou.mybatisplus.enums.IEnumTypeHandler");
+                if (cls.isEnum()) {
+                    if (IEnum.class.isAssignableFrom(cls)) {
+                        typeHandlerRegistry.register(cls.getName(), "com.baomidou.mybatisplus.enums.IEnumTypeHandler");
+                    } else {
+                        // 使用原生 EnumOrdinalTypeHandler
+                        typeHandlerRegistry.register(cls.getName(), "org.apache.ibatis.type.EnumOrdinalTypeHandler");
+                    }
                 }
             }
         }
