@@ -24,6 +24,11 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
+import net.sf.jsqlparser.statement.delete.Delete;
+import net.sf.jsqlparser.statement.insert.Insert;
+import net.sf.jsqlparser.statement.select.Select;
+import net.sf.jsqlparser.statement.select.SelectBody;
+import net.sf.jsqlparser.statement.update.Update;
 
 /**
  * <p>
@@ -72,7 +77,31 @@ public abstract class AbstractJsqlParser implements ISqlParser {
      * @param statement JsqlParser Statement
      * @return
      */
-    public abstract SqlInfo processParser(Statement statement);
+    public SqlInfo processParser(Statement statement) {
+        if (statement instanceof Insert) {
+            this.processInsert((Insert) statement);
+        } else if (statement instanceof Select) {
+            this.processSelectBody(((Select) statement).getSelectBody());
+        } else if (statement instanceof Update) {
+            this.processUpdate((Update) statement);
+        } else if (statement instanceof Delete) {
+            this.processDelete((Delete) statement);
+        }
+        logger.debug("parser sql: " + statement.toString());
+        return SqlInfo.newInstance().setSql(statement.toString());
+    }
+
+    // 新增
+    public abstract void processInsert(Insert insert);
+
+    // 删除
+    public abstract void processDelete(Delete delete);
+
+    // 更新
+    public abstract void processUpdate(Update update);
+
+    // 查询
+    public abstract void processSelectBody(SelectBody selectBody);
 
     /**
      * <p>

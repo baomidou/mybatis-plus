@@ -19,7 +19,6 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.plugins.parser.AbstractJsqlParser;
-import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
 
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
@@ -28,14 +27,12 @@ import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
-import net.sf.jsqlparser.statement.Statement;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.select.FromItem;
 import net.sf.jsqlparser.statement.select.Join;
 import net.sf.jsqlparser.statement.select.LateralSubSelect;
 import net.sf.jsqlparser.statement.select.PlainSelect;
-import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectBody;
 import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 import net.sf.jsqlparser.statement.select.SetOperationList;
@@ -47,7 +44,7 @@ import net.sf.jsqlparser.statement.update.Update;
 
 /**
  * <p>
- * 租户 SQL 解析
+ * 租户 SQL 解析（ TenantId 行级 ）
  * </p>
  *
  * @author hubin
@@ -57,25 +54,11 @@ public class TenantSqlParser extends AbstractJsqlParser {
 
     private TenantHandler tenantHandler;
 
-    @Override
-    public SqlInfo processParser(Statement statement) {
-        if (statement instanceof Insert) {
-            this.processInsert((Insert) statement);
-        } else if (statement instanceof Select) {
-            this.processSelectBody(((Select) statement).getSelectBody());
-        } else if (statement instanceof Update) {
-            this.processUpdate((Update) statement);
-        } else if (statement instanceof Delete) {
-            this.processDelete((Delete) statement);
-        }
-        logger.debug("parser sql: " + statement.toString());
-        return SqlInfo.newInstance().setSql(statement.toString());
-    }
-
     /**
      * select 语句处理
      */
-    protected void processSelectBody(SelectBody selectBody) {
+    @Override
+    public void processSelectBody(SelectBody selectBody) {
         if (selectBody instanceof PlainSelect) {
             processPlainSelect((PlainSelect) selectBody);
         } else if (selectBody instanceof WithItem) {
@@ -99,7 +82,8 @@ public class TenantSqlParser extends AbstractJsqlParser {
      * insert 语句处理
      * </p>
      */
-    protected void processInsert(Insert insert) {
+    @Override
+    public void processInsert(Insert insert) {
         if (this.tenantHandler.doTableFilter(insert.getTable().getName())) {
             // 过滤退出执行
             return;
@@ -119,7 +103,8 @@ public class TenantSqlParser extends AbstractJsqlParser {
      * update 语句处理
      * </p>
      */
-    protected void processUpdate(Update update) {
+    @Override
+    public void processUpdate(Update update) {
         List<Table> tableList = update.getTables();
         if (null == tableList || tableList.size() >= 2) {
             throw new MybatisPlusException("Failed to process multiple-table update, please exclude the statementId");
@@ -137,7 +122,8 @@ public class TenantSqlParser extends AbstractJsqlParser {
      * delete 语句处理
      * </p>
      */
-    protected void processDelete(Delete delete) {
+    @Override
+    public void processDelete(Delete delete) {
         if (this.tenantHandler.doTableFilter(delete.getTable().getName())) {
             // 过滤退出执行
             return;

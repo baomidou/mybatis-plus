@@ -19,7 +19,7 @@ import net.sf.jsqlparser.expression.Expression;
 
 /**
  * <p>
- * 租户处理器
+ * 租户处理器（ TenantId 行级 ）
  * </p>
  *
  * @author hubin

@@ -13,23 +13,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.plugins.parser.logicdelete;
-
-import net.sf.jsqlparser.expression.Expression;
+package com.baomidou.mybatisplus.plugins.parser.tenant;
 
 /**
  * <p>
- * 租户处理器
+ * 租户处理器（ Schema 表级 ）
  * </p>
  *
  * @author hubin
  * @since 2017-08-31
  */
-public interface LogicDeleteHandler {
+public interface TenantSchemaHandler {
 
-    Expression getValue(String tableName);
-
-    String getColumn(String tableName);
+    String getTenantSchema();
 
     boolean doTableFilter(String tableName);
 }
