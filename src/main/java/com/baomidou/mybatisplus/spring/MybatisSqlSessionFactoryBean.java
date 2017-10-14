@@ -474,7 +474,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
                 }
             }
             // 取得类型转换注册器
-            TypeHandlerRegistry typeHandlerRegistry = this.configuration.getTypeHandlerRegistry();
+            TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
             for (Class cls : classes) {
                 if (cls.isEnum()) {
                     if (IEnum.class.isAssignableFrom(cls)) {
