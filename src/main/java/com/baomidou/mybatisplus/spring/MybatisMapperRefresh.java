@@ -137,6 +137,7 @@ public class MybatisMapperRefresh implements Runnable {
         this.run();
     }
 
+    @Override
     public void run() {
         final GlobalConfiguration globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
         /*
@@ -147,6 +148,7 @@ public class MybatisMapperRefresh implements Runnable {
             final MybatisMapperRefresh runnable = this;
             new Thread(new Runnable() {
 
+                @Override
                 public void run() {
                     if (fileSet == null) {
                         fileSet = new HashSet<>();

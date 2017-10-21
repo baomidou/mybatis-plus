@@ -40,6 +40,7 @@ public class SQLServer2005Dialect implements IDialect {
         }
     }
 
+    @Override
     public String buildPaginationSql(String originalSql, int offset, int limit) {
         StringBuilder pagingBuilder = new StringBuilder();
         String orderby = getOrderByPart(originalSql);

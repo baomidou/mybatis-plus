@@ -28,6 +28,7 @@ import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
  */
 public class MySqlTypeConvert implements ITypeConvert {
 
+    @Override
     public DbColumnType processTypeConvert(String fieldType) {
         String t = fieldType.toLowerCase();
         if (t.contains("char") || t.contains("text")) {

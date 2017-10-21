@@ -259,13 +259,13 @@ public class StringUtils {
     public static String quotaMarkList(Collection<?> coll) {
         StringBuilder sqlBuild = new StringBuilder();
         sqlBuild.append("(");
-        int _size = coll.size();
+        int size = coll.size();
         int i = 0;
         Iterator<?> iterator = coll.iterator();
         while (iterator.hasNext()) {
             String tempVal = StringUtils.quotaMark(iterator.next());
             sqlBuild.append(tempVal);
-            if (i + 1 < _size) {
+            if (i + 1 < size) {
                 sqlBuild.append(",");
             }
             i++;
@@ -715,7 +715,7 @@ public class StringUtils {
     }
 
     private static String wordsAndHyphenAndCamelToConstantCase(String input) {
-        boolean _betweenUpperCases = false;
+        boolean betweenUpperCases = false;
         boolean containsLowerCase = containsLowerCase(input);
 
         StringBuilder buf = new StringBuilder();
@@ -729,7 +729,7 @@ public class StringUtils {
             boolean previousIsWhitespace = Character.isWhitespace(previousChar);
             boolean lastOneIsNotUnderscore = (buf.length() > 0) && (buf.charAt(buf.length() - 1) != '_');
             boolean isNotUnderscore = c != '_';
-            if ((lastOneIsNotUnderscore) && ((isUpperCaseAndPreviousIsLowerCase) || (previousIsWhitespace) || ((_betweenUpperCases)
+            if ((lastOneIsNotUnderscore) && ((isUpperCaseAndPreviousIsLowerCase) || (previousIsWhitespace) || ((betweenUpperCases)
                     && (containsLowerCase) && (isUpperCaseAndPreviousIsUpperCase)))) {
                 buf.append("_");
             } else if (((separatorAfterDigit) && (Character.isDigit(previousChar))

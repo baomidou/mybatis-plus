@@ -43,6 +43,7 @@ public class DB2Dialect implements IDialect {
         return originalSql.toLowerCase().contains("select distinct");
     }
 
+    @Override
     public String buildPaginationSql(String originalSql, int offset, int limit) {
         int startOfSelect = originalSql.toLowerCase().indexOf("select");
         StringBuilder pagingSelect = new StringBuilder(originalSql.length() + 100)

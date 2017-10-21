@@ -73,6 +73,7 @@ public class PerformanceInterceptor implements Interceptor {
     private Method oracleGetOriginalSqlMethod;
     private Method druidGetSQLMethod;
 
+    @Override
     public Object intercept(Invocation invocation) throws Throwable {
         Statement statement;
         Object firstArg = invocation.getArgs()[0];
@@ -163,6 +164,7 @@ public class PerformanceInterceptor implements Interceptor {
         return result;
     }
 
+    @Override
     public Object plugin(Object target) {
         if (target instanceof StatementHandler) {
             return Plugin.wrap(target, this);
@@ -170,6 +172,7 @@ public class PerformanceInterceptor implements Interceptor {
         return target;
     }
 
+    @Override
     public void setProperties(Properties prop) {
         String maxTime = prop.getProperty("maxTime");
         String format = prop.getProperty("format");

@@ -62,6 +62,7 @@ public class SqlExplainInterceptor implements Interceptor {
      */
     private boolean stopProceed = false;
 
+    @Override
     public Object intercept(Invocation invocation) throws Throwable {
         /**
          * 处理 DELETE UPDATE 语句
@@ -110,8 +111,8 @@ public class SqlExplainInterceptor implements Interceptor {
                 SqlCommandType.SELECT);
         builder.resultMaps(mappedStatement.getResultMaps()).resultSetType(mappedStatement.getResultSetType())
                 .statementType(mappedStatement.getStatementType());
-        MappedStatement query_statement = builder.build();
-        DefaultParameterHandler handler = new DefaultParameterHandler(query_statement, parameter, boundSql);
+        MappedStatement queryStatement = builder.build();
+        DefaultParameterHandler handler = new DefaultParameterHandler(queryStatement, parameter, boundSql);
         try (PreparedStatement stmt = connection.prepareStatement(sqlExplain)) {
             handler.setParameters(stmt);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -131,6 +132,7 @@ public class SqlExplainInterceptor implements Interceptor {
         }
     }
 
+    @Override
     public Object plugin(Object target) {
         if (target instanceof Executor) {
             return Plugin.wrap(target, this);
@@ -138,6 +140,7 @@ public class SqlExplainInterceptor implements Interceptor {
         return target;
     }
 
+    @Override
     public void setProperties(Properties prop) {
         String stopProceed = prop.getProperty("stopProceed");
         if (StringUtils.isNotEmpty(stopProceed)) {

@@ -48,7 +48,7 @@ public class MybatisMapperRegistry extends MapperRegistry {
         GlobalConfigUtils.getSqlInjector(config).injectSqlRunner(config);
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
     public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
         final MapperProxyFactory<T> mapperProxyFactory = (MapperProxyFactory<T>) knownMappers.get(type);
         if (mapperProxyFactory == null) {
@@ -61,6 +61,7 @@ public class MybatisMapperRegistry extends MapperRegistry {
         }
     }
 
+    @Override
     public <T> boolean hasMapper(Class<T> type) {
         return knownMappers.containsKey(type);
     }
@@ -97,6 +98,7 @@ public class MybatisMapperRegistry extends MapperRegistry {
     /**
      * @since 3.2.2
      */
+    @Override
     public Collection<Class<?>> getMappers() {
         return Collections.unmodifiableCollection(knownMappers.keySet());
     }
