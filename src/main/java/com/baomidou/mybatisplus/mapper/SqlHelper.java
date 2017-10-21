@@ -30,6 +30,7 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.toolkit.MapUtils;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**
@@ -176,14 +177,16 @@ public class SqlHelper {
         if (null == page) {
             return;
         }
-        //处理Wrapper为空,但是page.getCondition()不为空的情况
-        if (MapUtils.isNotEmpty(page.getCondition()) && isEmptyOfWrapper(wrapper)) {
+        // wrapper 不存创建一个 Condition
+        if (isEmptyOfWrapper(wrapper)) {
             wrapper = Condition.create();
         }
-        if (isNotEmptyOfWrapper(wrapper)) {
-            if (page.isOpenSort()) {
-                wrapper.orderBy(page.getOrderByField(), page.isAsc());
-            }
+        // 排序
+        if (page.isOpenSort() && StringUtils.isNotEmpty(page.getOrderByField())) {
+            wrapper.orderBy(page.getOrderByField(), page.isAsc());
+        }
+        // MAP 参数查询
+        if (MapUtils.isNotEmpty(page.getCondition())) {
             wrapper.allEq(page.getCondition());
         }
     }

@@ -95,17 +95,20 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return SqlHelper.table(currentModelClass()).getSqlStatement(sqlMethod.getMethod());
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @Override
     public boolean insert(T entity) {
         return retBool(baseMapper.insert(entity));
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @Override
     public boolean insertAllColumn(T entity) {
         return retBool(baseMapper.insertAllColumn(entity));
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @Override
     public boolean insertBatch(List<T> entityList) {
         return insertBatch(entityList, 30);
     }
@@ -117,7 +120,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      * @param batchSize
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @Override
     public boolean insertBatch(List<T> entityList, int batchSize) {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
@@ -146,7 +150,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      * @param entity 实体对象
      * @return boolean
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @Override
     public boolean insertOrUpdate(T entity) {
         if (null != entity) {
             Class<?> cls = entity.getClass();
@@ -168,7 +173,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return false;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @Override
     public boolean insertOrUpdateAllColumn(T entity) {
         if (null != entity) {
             Class<?> cls = entity.getClass();
@@ -190,22 +196,26 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return false;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @Override
     public boolean insertOrUpdateBatch(List<T> entityList) {
         return insertOrUpdateBatch(entityList, 30);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @Override
     public boolean insertOrUpdateBatch(List<T> entityList, int batchSize) {
         return insertOrUpdateBatch(entityList, batchSize, true);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @Override
     public boolean insertOrUpdateAllColumnBatch(List<T> entityList) {
         return insertOrUpdateBatch(entityList, 30, false);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @Override
     public boolean insertOrUpdateAllColumnBatch(List<T> entityList, int batchSize) {
         return insertOrUpdateBatch(entityList, batchSize, false);
     }
@@ -241,12 +251,14 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return true;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @Override
     public boolean deleteById(Serializable id) {
         return retBool(baseMapper.deleteById(id));
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @Override
     public boolean deleteByMap(Map<String, Object> columnMap) {
         if (MapUtils.isEmpty(columnMap)) {
             throw new MybatisPlusException("deleteByMap columnMap is empty.");
@@ -254,47 +266,56 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return retBool(baseMapper.deleteByMap(columnMap));
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @Override
     public boolean delete(Wrapper<T> wrapper) {
         return retBool(baseMapper.delete(wrapper));
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @Override
     public boolean deleteBatchIds(List<? extends Serializable> idList) {
         return retBool(baseMapper.deleteBatchIds(idList));
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @Override
     public boolean updateById(T entity) {
         return retBool(baseMapper.updateById(entity));
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @Override
     public boolean updateAllColumnById(T entity) {
         return retBool(baseMapper.updateAllColumnById(entity));
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @Override
     public boolean update(T entity, Wrapper<T> wrapper) {
         return retBool(baseMapper.update(entity, wrapper));
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @Override
     public boolean updateBatchById(List<T> entityList) {
         return updateBatchById(entityList, 30);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @Override
     public boolean updateBatchById(List<T> entityList, int batchSize) {
         return updateBatchById(entityList, batchSize, true);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @Override
     public boolean updateAllColumnBatchById(List<T> entityList) {
         return updateAllColumnBatchById(entityList, 30);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
+    @Override
     public boolean updateAllColumnBatchById(List<T> entityList, int batchSize) {
         return updateBatchById(entityList, batchSize, false);
     }
@@ -330,58 +351,69 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return true;
     }
 
+    @Override
     public T selectById(Serializable id) {
         return baseMapper.selectById(id);
     }
 
+    @Override
     public List<T> selectBatchIds(List<? extends Serializable> idList) {
         return baseMapper.selectBatchIds(idList);
     }
 
+    @Override
     public List<T> selectByMap(Map<String, Object> columnMap) {
         return baseMapper.selectByMap(columnMap);
     }
 
+    @Override
     public T selectOne(Wrapper<T> wrapper) {
         return SqlHelper.getObject(baseMapper.selectList(wrapper));
     }
 
+    @Override
     public Map<String, Object> selectMap(Wrapper<T> wrapper) {
         return SqlHelper.getObject(baseMapper.selectMaps(wrapper));
     }
 
+    @Override
     public Object selectObj(Wrapper<T> wrapper) {
         return SqlHelper.getObject(baseMapper.selectObjs(wrapper));
     }
 
+    @Override
     public int selectCount(Wrapper<T> wrapper) {
         return SqlHelper.retCount(baseMapper.selectCount(wrapper));
     }
 
+    @Override
     public List<T> selectList(Wrapper<T> wrapper) {
         return baseMapper.selectList(wrapper);
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
     public Page<T> selectPage(Page<T> page) {
         return selectPage(page, Condition.EMPTY);
     }
 
+    @Override
     public List<Map<String, Object>> selectMaps(Wrapper<T> wrapper) {
         return baseMapper.selectMaps(wrapper);
     }
 
+    @Override
     public List<Object> selectObjs(Wrapper<T> wrapper) {
         return baseMapper.selectObjs(wrapper);
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Override
     public Page<Map<String, Object>> selectMapsPage(Page page, Wrapper<T> wrapper) {
         SqlHelper.fillWrapper(page, wrapper);
         page.setRecords(baseMapper.selectMapsPage(page, wrapper));
         return page;
     }
 
+    @Override
     public Page<T> selectPage(Page<T> page, Wrapper<T> wrapper) {
         SqlHelper.fillWrapper(page, wrapper);
         page.setRecords(baseMapper.selectPage(page, wrapper));
