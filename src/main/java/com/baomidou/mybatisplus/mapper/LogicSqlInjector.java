@@ -112,6 +112,7 @@ public class LogicSqlInjector extends AutoSqlInjector {
      * @param modelClass
      * @param table
      */
+    @Override
     protected void injectSelectByIdSql(boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
         if (table.isLogicDelete()) {
             SqlMethod sqlMethod = SqlMethod.LOGIC_SELECT_BY_ID;
@@ -144,6 +145,7 @@ public class LogicSqlInjector extends AutoSqlInjector {
      * @param modelClass
      * @param table
      */
+    @Override
     protected void injectUpdateByIdSql(boolean selective, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
         if (table.isLogicDelete()) {
             SqlMethod sqlMethod = selective ? SqlMethod.LOGIC_UPDATE_BY_ID : SqlMethod.LOGIC_UPDATE_ALL_COLUMN_BY_ID;

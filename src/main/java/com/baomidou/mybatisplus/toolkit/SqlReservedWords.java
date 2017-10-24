@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
+import com.baomidou.mybatisplus.enums.DBType;
 
 /**
  * <p>
@@ -161,6 +162,10 @@ public class SqlReservedWords {
      * @return
      */
     public static String convert(GlobalConfiguration globalConfig, String column) {
+        if (globalConfig.getDbType() == DBType.POSTGRE) {
+            // POSTGRE 直接转换
+            return convertQuote(globalConfig, column);
+        }
         return containsWord(column) ? convertQuote(globalConfig, column) : column;
     }
 

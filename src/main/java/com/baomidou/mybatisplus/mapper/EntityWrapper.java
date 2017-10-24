@@ -46,6 +46,7 @@ public class EntityWrapper<T> extends Wrapper<T> {
         this.sqlSelect = sqlSelect;
     }
 
+    @Override
     public T getEntity() {
         return entity;
     }

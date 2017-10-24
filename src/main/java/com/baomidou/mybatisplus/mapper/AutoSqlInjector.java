@@ -74,6 +74,7 @@ public class AutoSqlInjector implements ISqlInjector {
      * @param builderAssistant
      * @param mapperClass
      */
+    @Override
     public void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
         String className = mapperClass.toString();
         Set<String> mapperRegistryCache = GlobalConfigUtils.getMapperRegistryCache(builderAssistant.getConfiguration());
@@ -86,6 +87,7 @@ public class AutoSqlInjector implements ISqlInjector {
     /**
      * 注入单点 crudSql
      */
+    @Override
     public void inject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
         this.configuration = builderAssistant.getConfiguration();
         this.builderAssistant = builderAssistant;
@@ -606,9 +608,9 @@ public class AutoSqlInjector implements ISqlInjector {
                 columns.append("<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>");
             }
             List<TableFieldInfo> fieldList = table.getFieldList();
-            int _size = 0;
+            int size = 0;
             if (null != fieldList) {
-                _size = fieldList.size();
+                size = fieldList.size();
             }
 
             // 主键处理
@@ -618,13 +620,13 @@ public class AutoSqlInjector implements ISqlInjector {
                 } else {
                     columns.append(sqlWordConvert(table.getKeyProperty()));
                 }
-                if (_size >= 1) {
+                if (size >= 1) {
                     // 判断其余字段是否存在
                     columns.append(",");
                 }
             }
 
-            if (_size >= 1) {
+            if (size >= 1) {
                 // 字段处理
                 int i = 0;
                 Iterator<TableFieldInfo> iterator = fieldList.iterator();
@@ -639,7 +641,7 @@ public class AutoSqlInjector implements ISqlInjector {
                         columns.append(fieldInfo.getColumn());
                         columns.append(" AS ").append(wordConvert);
                     }
-                    if (i + 1 < _size) {
+                    if (i + 1 < size) {
                         columns.append(",");
                     }
                     i++;
@@ -862,6 +864,8 @@ public class AutoSqlInjector implements ISqlInjector {
     }
 
     // --------------------------------------------------------SqlRunner------------------------------------------------------------
+
+    @Override
     public void injectSqlRunner(Configuration configuration) {
         this.configuration = configuration;
         this.languageDriver = configuration.getDefaultScriptingLanguageInstance();

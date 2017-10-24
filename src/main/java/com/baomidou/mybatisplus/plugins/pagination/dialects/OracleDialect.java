@@ -29,6 +29,7 @@ public class OracleDialect implements IDialect {
 
     public static final OracleDialect INSTANCE = new OracleDialect();
 
+    @Override
     public String buildPaginationSql(String originalSql, int offset, int limit) {
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT * FROM ( SELECT TMP.*, ROWNUM ROW_ID FROM ( ");

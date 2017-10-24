@@ -129,6 +129,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
         sqlProviderAnnotationTypes.add(DeleteProvider.class);
     }
 
+    @Override
     public void parse() {
         String resource = type.toString();
         if (!configuration.isResourceLoaded(resource)) {

@@ -67,6 +67,7 @@ public class CachePaginationInterceptor extends PaginationInterceptor implements
      * Physical Pagination Interceptor for all the queries with parameter
      * {@link org.apache.ibatis.session.RowBounds}
      */
+    @Override
     public Object intercept(Invocation invocation) throws Throwable {
 
         Object target = invocation.getTarget();
@@ -97,6 +98,7 @@ public class CachePaginationInterceptor extends PaginationInterceptor implements
         return invocation.proceed();
     }
 
+    @Override
     public Object plugin(Object target) {
         if (target instanceof Executor) {
             return Plugin.wrap(target, this);
@@ -107,6 +109,7 @@ public class CachePaginationInterceptor extends PaginationInterceptor implements
         return target;
     }
 
+    @Override
     public void setProperties(Properties prop) {
         String dialectType = prop.getProperty("dialectType");
         String dialectClazz = prop.getProperty("dialectClazz");
@@ -118,16 +121,19 @@ public class CachePaginationInterceptor extends PaginationInterceptor implements
         }
     }
 
+    @Override
     public CachePaginationInterceptor setDialectType(String dialectType) {
         this.dialectType = dialectType;
         return this;
     }
 
+    @Override
     public CachePaginationInterceptor setSqlParser(ISqlParser sqlParser) {
         this.sqlParser = sqlParser;
         return this;
     }
 
+    @Override
     public CachePaginationInterceptor setOverflowCurrent(boolean overflowCurrent) {
         this.overflowCurrent = overflowCurrent;
         return this;
