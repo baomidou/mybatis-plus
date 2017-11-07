@@ -49,7 +49,8 @@ public class ConstVal {
     public static final String JAVA_SUFFIX = ".java";
     public static final String XML_SUFFIX = ".xml";
 
-    public static final String TEMPLATE_ENTITY = "/templates/entity.java.vm";
+    public static final String TEMPLATE_ENTITY_JAVA = "/templates/entity.java.vm";
+    public static final String TEMPLATE_ENTITY_KT = "/templates/entity.java.vm";
     public static final String TEMPLATE_MAPPER = "/templates/mapper.java.vm";
     public static final String TEMPLATE_XML = "/templates/mapper.xml.vm";
     public static final String TEMPLATE_SERVICE = "/templates/service.java.vm";

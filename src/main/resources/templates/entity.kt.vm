@@ -1,0 +1,96 @@
+package ${package.Entity};
+
+#foreach($pkg in ${table.importPackages})
+import ${pkg};
+#end
+
+/**
+ * <p>
+ * $!{table.comment}
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+#if(${table.convert})
+@TableName("${table.name}")
+#end
+#if(${superEntityClass})
+    class ${entity} : ${superEntityClass}#if(${activeRecord})<${entity}>#end()
+#elseif(${activeRecord})
+    class ${entity} : Model<${entity}>()
+#else
+    class ${entity} : Serializable {
+#end
+
+## ----------  BEGIN 字段循环遍历  ----------
+#foreach($field in ${table.fields})
+    #if(${field.keyFlag})
+        #set($keyPropertyName=${field.propertyName})
+    #end
+    #if("$!field.comment" != "")
+        /**
+         * ${field.comment}
+         */
+    #end
+    #if(${field.keyFlag})
+    ## 主键
+        #if(${field.keyIdentityFlag})
+        @TableId(value = "${field.name}", type = IdType.AUTO)
+        #elseif(${field.convert})
+        @TableId("${field.name}")
+        #end
+    ## 普通字段
+    #elseif(${field.fill})
+    ## -----   存在字段填充设置   -----
+        #if(${field.convert})
+        @TableField(value = "${field.name}", fill = FieldFill.${field.fill})
+        #else
+        @TableField(fill = FieldFill.${field.fill})
+        #end
+    #elseif(${field.convert})
+    @TableField("${field.name}")
+    #end
+## 乐观锁注解
+    #if(${versionFieldName}==${field.name})
+    @Version
+    #end
+## 逻辑删除注解
+    #if(${logicDeleteFieldName}==${field.name})
+    @TableLogic
+    #end
+private ${field.propertyType} ${field.propertyName};
+#end
+## ----------  END 字段循环遍历  ----------
+
+
+#if(${entityColumnConstant})
+#foreach($field in ${table.fields})
+
+    val ${field.name.toUpperCase()} : String = "${field.name}";
+
+#end
+#end
+#if(${activeRecord})
+    override fun pkVal(): Serializable {
+#if(${keyPropertyName})
+        return ${keyPropertyName}!!
+#else
+        return id!!
+#end
+    }
+
+#end
+    @Override
+    public String toString() {
+        return "${entity}{" +
+#foreach($field in ${table.fields})
+#if($!{velocityCount}==1)
+                        "${field.propertyName}=" + ${field.propertyName} +
+#else
+                ", ${field.propertyName}=" + ${field.propertyName} +
+#end
+#end
+        "}";
+    }
+}

@@ -205,6 +205,7 @@ public class AutoGenerator {
             ctx.put("logicDeleteFieldName", config.getStrategyConfig().getLogicDeleteFieldName());
             ctx.put("versionFieldName", config.getStrategyConfig().getVersionFieldName());
             ctx.put("activeRecord", config.getGlobalConfig().isActiveRecord());
+            ctx.put("kotlin", config.getGlobalConfig().isKotlin());
             ctx.put("date", date);
             ctx.put("table", tableInfo);
             ctx.put("enableCache", config.getGlobalConfig().isEnableCache());
@@ -285,7 +286,7 @@ public class AutoGenerator {
 
             // 根据override标识来判断是否需要创建文件
             if (isCreate(entityFile)) {
-                vmToFile(context, template.getEntity(), entityFile);
+                vmToFile(context, template.getEntity(config.getGlobalConfig().isKotlin()), entityFile);
             }
             if (isCreate(mapperFile)) {
                 vmToFile(context, template.getMapper(), mapperFile);

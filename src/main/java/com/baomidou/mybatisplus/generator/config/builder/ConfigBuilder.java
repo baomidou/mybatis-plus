@@ -235,7 +235,7 @@ public class ConfigBuilder {
 
         // 生成路径信息
         pathInfo = new HashMap<>();
-        if (StringUtils.isNotEmpty(template.getEntity())) {
+        if (StringUtils.isNotEmpty(template.getEntity(getGlobalConfig().isKotlin()))) {
             pathInfo.put(ConstVal.ENTITY_PATH, joinPath(outputDir, packageInfo.get(ConstVal.ENTITY)));
         }
         if (StringUtils.isNotEmpty(template.getMapper())) {

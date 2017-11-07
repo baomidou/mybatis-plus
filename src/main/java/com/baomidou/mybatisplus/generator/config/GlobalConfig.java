@@ -51,6 +51,11 @@ public class GlobalConfig {
     private String author;
 
     /**
+     * 开启 Kotlin 模式
+     */
+    private boolean kotlin = false;
+
+    /**
      * 开启 ActiveRecord 模式
      */
     private boolean activeRecord = true;
@@ -116,6 +121,14 @@ public class GlobalConfig {
     public GlobalConfig setAuthor(String author) {
         this.author = author;
         return this;
+    }
+
+    public boolean isKotlin() {
+        return kotlin;
+    }
+
+    public void setKotlin(boolean kotlin) {
+        this.kotlin = kotlin;
     }
 
     public boolean isActiveRecord() {
