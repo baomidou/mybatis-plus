@@ -27,7 +27,8 @@ import ${superControllerClassPackage};
 #end
 @RequestMapping("#if(${package.ModuleName})/${package.ModuleName}#end/#if(${controllerMappingHyphenStyle})${controllerMappingHyphen}#else${table.entityPath}#end")
 #if(${kotlin})
-class ${table.controllerName}#if(${superControllerClass}) : ${superControllerClass}#end
+class ${table.controllerName}#if(${superControllerClass}) : ${superControllerClass}()#end
+
 #else
 #if(${superControllerClass})
 public class ${table.controllerName} extends ${superControllerClass} {
@@ -36,4 +37,5 @@ public class ${table.controllerName} {
 #end
 
 }
+
 #end

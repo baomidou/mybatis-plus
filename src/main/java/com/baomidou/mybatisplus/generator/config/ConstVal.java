@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.generator.config;
 
-import java.io.File;
 import java.nio.charset.Charset;
 
 /**
@@ -47,19 +46,17 @@ public class ConstVal {
     public static final String UNDERLINE = "_";
 
     public static final String JAVA_SUFFIX = ".java";
+    public static final String KT_SUFFIX = ".kt";
     public static final String XML_SUFFIX = ".xml";
 
     public static final String TEMPLATE_ENTITY_JAVA = "/templates/entity.java.vm";
-    public static final String TEMPLATE_ENTITY_KT = "/templates/entity.java.vm";
+    public static final String TEMPLATE_ENTITY_KT = "/templates/entity.kt.vm";
     public static final String TEMPLATE_MAPPER = "/templates/mapper.java.vm";
     public static final String TEMPLATE_XML = "/templates/mapper.xml.vm";
     public static final String TEMPLATE_SERVICE = "/templates/service.java.vm";
     public static final String TEMPLATE_SERVICEIMPL = "/templates/serviceImpl.java.vm";
     public static final String TEMPLATE_CONTROLLER = "/templates/controller.java.vm";
 
-    public static final String ENTITY_NAME = File.separator + "%s" + JAVA_SUFFIX;
-
-    // 配置使用classloader加载资源
     public static final String VM_LOADPATH_KEY = "file.resource.loader.class";
     public static final String VM_LOADPATH_VALUE = "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader";
 

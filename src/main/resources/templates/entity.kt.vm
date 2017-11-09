@@ -16,50 +16,50 @@ import ${pkg};
 @TableName("${table.name}")
 #end
 #if(${superEntityClass})
-    class ${entity} : ${superEntityClass}#if(${activeRecord})<${entity}>#end()
+class ${entity} : ${superEntityClass}#if(${activeRecord})<${entity}>#end()() {
 #elseif(${activeRecord})
-    class ${entity} : Model<${entity}>()
+class ${entity} : Model<${entity}>() {
 #else
-    class ${entity} : Serializable {
+class ${entity} : Serializable {
 #end
 
 ## ----------  BEGIN 字段循环遍历  ----------
 #foreach($field in ${table.fields})
-    #if(${field.keyFlag})
-        #set($keyPropertyName=${field.propertyName})
-    #end
-    #if("$!field.comment" != "")
-        /**
-         * ${field.comment}
-         */
-    #end
-    #if(${field.keyFlag})
-    ## 主键
-        #if(${field.keyIdentityFlag})
-        @TableId(value = "${field.name}", type = IdType.AUTO)
-        #elseif(${field.convert})
-        @TableId("${field.name}")
-        #end
-    ## 普通字段
-    #elseif(${field.fill})
-    ## -----   存在字段填充设置   -----
-        #if(${field.convert})
-        @TableField(value = "${field.name}", fill = FieldFill.${field.fill})
-        #else
-        @TableField(fill = FieldFill.${field.fill})
-        #end
-    #elseif(${field.convert})
+#if(${field.keyFlag})
+#set($keyPropertyName=${field.propertyName})
+#end
+#if("$!field.comment" != "")
+    /**
+     * ${field.comment}
+     */
+#end
+#if(${field.keyFlag})
+## 主键
+#if(${field.keyIdentityFlag})
+    @TableId(value = "${field.name}", type = IdType.AUTO)
+#elseif(${field.convert})
+    @TableId("${field.name}")
+#end
+## 普通字段
+#elseif(${field.fill})
+## -----   存在字段填充设置   -----
+#if(${field.convert})
+    @TableField(value = "${field.name}", fill = FieldFill.${field.fill})
+#else
+    @TableField(fill = FieldFill.${field.fill})
+#end
+#elseif(${field.convert})
     @TableField("${field.name}")
-    #end
+#end
 ## 乐观锁注解
-    #if(${versionFieldName}==${field.name})
+#if(${versionFieldName}==${field.name})
     @Version
-    #end
+#end
 ## 逻辑删除注解
-    #if(${logicDeleteFieldName}==${field.name})
+#if(${logicDeleteFieldName}==${field.name})
     @TableLogic
-    #end
-private ${field.propertyType} ${field.propertyName};
+#end
+    var ${field.propertyName}: ${field.propertyType}? = null
 #end
 ## ----------  END 字段循环遍历  ----------
 
@@ -67,7 +67,7 @@ private ${field.propertyType} ${field.propertyName};
 #if(${entityColumnConstant})
 #foreach($field in ${table.fields})
 
-    val ${field.name.toUpperCase()} : String = "${field.name}";
+    val ${field.name.toUpperCase()} : String = "${field.name}"
 
 #end
 #end
@@ -81,16 +81,15 @@ private ${field.propertyType} ${field.propertyName};
     }
 
 #end
-    @Override
-    public String toString() {
+    override fun toString(): String {
         return "${entity}{" +
 #foreach($field in ${table.fields})
 #if($!{velocityCount}==1)
-                        "${field.propertyName}=" + ${field.propertyName} +
+                "${field.propertyName}=" + ${field.propertyName} +
 #else
                 ", ${field.propertyName}=" + ${field.propertyName} +
 #end
 #end
-        "}";
+        "}"
     }
 }

@@ -67,6 +67,7 @@ public class MysqlGenerator {
                         .setEnableCache(false)// XML 二级缓存
                         .setBaseResultMap(true)// XML ResultMap
                         .setBaseColumnList(true)// XML columList
+                        //.setKotlin(true) 是否生成 kotlin 代码
                         .setAuthor("Yanghu")
                 // 自定义文件命名，注意 %s 会自动填充表实体属性！
                 // .setMapperName("%sDao")
