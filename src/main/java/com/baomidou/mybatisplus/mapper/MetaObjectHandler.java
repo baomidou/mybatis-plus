@@ -16,8 +16,7 @@
 package com.baomidou.mybatisplus.mapper;
 
 import org.apache.ibatis.reflection.MetaObject;
-
-import com.baomidou.mybatisplus.toolkit.StringUtils;
+import org.apache.ibatis.reflection.SystemMetaObject;
 
 /**
  * <p>
@@ -64,13 +63,16 @@ public abstract class MetaObjectHandler {
      * @param metaObject meta object parameter
      */
     public MetaObjectHandler setFieldValByName(String fieldName, Object fieldVal, MetaObject metaObject) {
-        if (metaObject.hasSetter(fieldName) &&
-                metaObject.hasGetter(fieldName)) {
+        if (metaObject.hasSetter(fieldName) && metaObject.hasGetter(fieldName)) {
             metaObject.setValue(fieldName, fieldVal);
-        } else if (metaObject.hasGetter(META_OBJ_PREFIX) &&
-                StringUtils.checkValNotNull(metaObject.getValue(META_OBJ_PREFIX)) &&
-                metaObject.hasSetter(META_OBJ_PREFIX + "." + fieldName)) {
-            metaObject.setValue(META_OBJ_PREFIX + "." + fieldName, fieldVal);
+        } else if (metaObject.hasGetter(META_OBJ_PREFIX)) {
+            Object et = metaObject.getValue(META_OBJ_PREFIX);
+            if (et != null) {
+                MetaObject etMeta = SystemMetaObject.forObject(et);
+                if (etMeta.hasSetter(fieldName)) {
+                    etMeta.setValue(fieldName, fieldVal);
+                }
+            }
         }
         return this;
     }
