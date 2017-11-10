@@ -1,6 +1,16 @@
 ﻿# CHANGELOG
 
 
+## [v2.1.5] 2017.11.11
+- 通用枚举 spring boot 兼容调整
+- PostgreSQL 支持关键词非关键词转换问题
+- Cat73  PR 稍微调整下自动生成的代码
+- 支持 kotlin 代码生成
+- bugfix for metaObj handler set val which not included in ...
+- alibaba 规范调整
+- 其他
+
+
 ## [v2.1.3 - 2.1.4] 2017.10.15
 - 新增通用枚举处理器，参考 spring boot demno
 - 优化 SQL 解析器
