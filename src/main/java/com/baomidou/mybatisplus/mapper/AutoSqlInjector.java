@@ -554,11 +554,15 @@ public class AutoSqlInjector implements ISqlInjector {
                 set.append(fieldInfo.getEl()).append("},");
                 set.append(convertIfTag(true, fieldInfo, null, true));
             } else {
-                set.append(fieldInfo.getColumn()).append("=#{");
-                if (null != prefix) {
-                    set.append(prefix);
+                // 判断是否更新忽略,FieldFill,INSERT设置为false
+                ifTag = !(FieldFill.INSERT == fieldInfo.getFieldFill());
+                if(ifTag){
+                    set.append(fieldInfo.getColumn()).append("=#{");
+                    if (null != prefix) {
+                        set.append(prefix);
+                    }
+                    set.append(fieldInfo.getEl()).append("},");
                 }
-                set.append(fieldInfo.getEl()).append("},");
             }
         }
         set.append("\n</trim>");
