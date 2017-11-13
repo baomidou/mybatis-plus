@@ -15,30 +15,6 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
-import org.apache.ibatis.executor.keygen.KeyGenerator;
-import org.apache.ibatis.executor.keygen.NoKeyGenerator;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.ResultMap;
-import org.apache.ibatis.mapping.ResultMapping;
-import org.apache.ibatis.mapping.SqlCommandType;
-import org.apache.ibatis.mapping.SqlSource;
-import org.apache.ibatis.mapping.StatementType;
-import org.apache.ibatis.scripting.LanguageDriver;
-import org.apache.ibatis.scripting.defaults.RawSqlSource;
-import org.apache.ibatis.session.Configuration;
-
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.entity.TableFieldInfo;
 import com.baomidou.mybatisplus.entity.TableInfo;
@@ -46,11 +22,21 @@ import com.baomidou.mybatisplus.enums.FieldFill;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.enums.SqlMethod;
-import com.baomidou.mybatisplus.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import com.baomidou.mybatisplus.toolkit.*;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
+import org.apache.ibatis.executor.keygen.KeyGenerator;
+import org.apache.ibatis.executor.keygen.NoKeyGenerator;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.mapping.*;
+import org.apache.ibatis.scripting.LanguageDriver;
+import org.apache.ibatis.scripting.defaults.RawSqlSource;
+import org.apache.ibatis.session.Configuration;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.*;
 
 /**
  * <p>
@@ -553,16 +539,13 @@ public class AutoSqlInjector implements ISqlInjector {
                 }
                 set.append(fieldInfo.getEl()).append("},");
                 set.append(convertIfTag(true, fieldInfo, null, true));
-            } else {
-                // 判断是否更新忽略,FieldFill,INSERT设置为false
-                ifTag = !(FieldFill.INSERT == fieldInfo.getFieldFill());
-                if(ifTag){
-                    set.append(fieldInfo.getColumn()).append("=#{");
-                    if (null != prefix) {
-                        set.append(prefix);
-                    }
-                    set.append(fieldInfo.getEl()).append("},");
+            } else if (FieldFill.INSERT != fieldInfo.getFieldFill()) {
+                // 排除填充注解字段
+                set.append(fieldInfo.getColumn()).append("=#{");
+                if (null != prefix) {
+                    set.append(prefix);
                 }
+                set.append(fieldInfo.getEl()).append("},");
             }
         }
         set.append("\n</trim>");
@@ -606,7 +589,7 @@ public class AutoSqlInjector implements ISqlInjector {
             }
         } else {
             /*
-			 * 普通查询
+             * 普通查询
 			 */
             if (entityWrapper) {
                 columns.append("<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>");
@@ -657,7 +640,7 @@ public class AutoSqlInjector implements ISqlInjector {
         }
 
 		/*
-		 * 返回所有查询字段内容
+         * 返回所有查询字段内容
 		 */
         return columns.toString();
     }
