@@ -206,7 +206,7 @@ public class StrategyConfig {
         return tablePrefix;
     }
 
-    public StrategyConfig setTablePrefix(String[] tablePrefix) {
+    public StrategyConfig setTablePrefix(String... tablePrefix) {
         this.tablePrefix = tablePrefix;
         return this;
     }
@@ -235,7 +235,7 @@ public class StrategyConfig {
         return superEntityColumns;
     }
 
-    public StrategyConfig setSuperEntityColumns(String[] superEntityColumns) {
+    public StrategyConfig setSuperEntityColumns(String... superEntityColumns) {
         this.superEntityColumns = superEntityColumns;
         return this;
     }
@@ -280,7 +280,7 @@ public class StrategyConfig {
         return include;
     }
 
-    public StrategyConfig setInclude(String[] include) {
+    public StrategyConfig setInclude(String... include) {
         this.include = include;
         return this;
     }
@@ -289,7 +289,7 @@ public class StrategyConfig {
         return exclude;
     }
 
-    public StrategyConfig setExclude(String[] exclude) {
+    public StrategyConfig setExclude(String... exclude) {
         this.exclude = exclude;
         return this;
     }

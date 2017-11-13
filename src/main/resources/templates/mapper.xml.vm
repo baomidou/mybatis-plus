@@ -3,34 +3,34 @@
 <mapper namespace="${package.Mapper}.${table.mapperName}">
 
 #if(${enableCache})
-	<!-- 开启二级缓存 -->
-	<cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
+    <!-- 开启二级缓存 -->
+    <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
 
 #end
 #if(${baseResultMap})
-	<!-- 通用查询映射结果 -->
-	<resultMap id="BaseResultMap" type="${package.Entity}.${entity}">
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="${package.Entity}.${entity}">
 #foreach($field in ${table.fields})
 #if(${field.keyFlag})##生成主键排在第一位
-		<id column="${field.name}" property="${field.propertyName}" />
+        <id column="${field.name}" property="${field.propertyName}" />
 #end
 #end
 #foreach($field in ${table.commonFields})##生成公共字段
-	<result column="${field.name}" property="${field.propertyName}" />
+    <result column="${field.name}" property="${field.propertyName}" />
 #end
 #foreach($field in ${table.fields})
 #if(!${field.keyFlag})##生成普通字段
-		<result column="${field.name}" property="${field.propertyName}" />
+        <result column="${field.name}" property="${field.propertyName}" />
 #end
 #end
-	</resultMap>
+    </resultMap>
 
 #end
 #if(${baseColumnList})
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
 #foreach($field in ${table.commonFields})
-	#if(${field.name} == ${field.propertyName})${field.name}#else${field.name} AS ${field.propertyName}#end,
+    #if(${field.name} == ${field.propertyName})${field.name}#else${field.name} AS ${field.propertyName}#end,
 #end
         ${table.fieldNames}
     </sql>
