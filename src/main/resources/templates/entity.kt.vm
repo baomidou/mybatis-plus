@@ -16,7 +16,7 @@ import ${pkg};
 @TableName("${table.name}")
 #end
 #if(${superEntityClass})
-class ${entity} : ${superEntityClass}#if(${activeRecord})<${entity}>#end()() {
+class ${entity} : ${superEntityClass}#if(${activeRecord})<${entity}>#end() {
 #elseif(${activeRecord})
 class ${entity} : Model<${entity}>() {
 #else
