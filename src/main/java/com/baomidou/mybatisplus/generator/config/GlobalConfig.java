@@ -127,8 +127,9 @@ public class GlobalConfig {
         return kotlin;
     }
 
-    public void setKotlin(boolean kotlin) {
+    public GlobalConfig setKotlin(boolean kotlin) {
         this.kotlin = kotlin;
+        return this;
     }
 
     public boolean isActiveRecord() {
