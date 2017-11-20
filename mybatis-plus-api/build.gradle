@@ -1,7 +1,7 @@
 dependencies {
-    compile rootProject.ext.dependencies["jsqlparser"]
-    compile rootProject.ext.dependencies["mybatis-spring"]
-    compile rootProject.ext.dependencies["mybatis"]
+    compileOnly rootProject.ext.dependencies["jsqlparser"]
+    compileOnly rootProject.ext.dependencies["mybatis-spring"]
+    compileOnly rootProject.ext.dependencies["mybatis"]
     compileOnly rootProject.ext.dependencies["spring-context-support"]
     compileOnly rootProject.ext.dependencies["spring-jdbc"]
 }
