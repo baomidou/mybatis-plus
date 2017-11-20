@@ -10,13 +10,30 @@ ext {
     ]
 
     dependencies = [
-            "jsqlparser"    : "com.github.jsqlparser:jsqlparser:1.1",
+            "jsqlparser": "com.github.jsqlparser:jsqlparser:1.1",
             "mybatis-spring": "org.mybatis:mybatis-spring:${mybatisSpringVersion}",
             "mybatis": "org.mybatis:mybatis:${mybatisVersion}",
+            "velocity":"org.apache.velocity:velocity-engine-core:2.0",
+            "slf4j-api":"org.slf4j:slf4j-api:1.7.25",
+            "junit":"junit:junit:4.12",
+            "commons-pool2":"org.apache.commons:commons-pool2:2.4.2",
+            "commons-dbcp2":"org.apache.commons:commons-dbcp2:2.1.1",
+            "mybatis-ehcache":"org.mybatis.caches:mybatis-ehcache:1.1.0",
+            "logback-classic":"ch.qos.logback:logback-classic:1.2.2",
+            "sqlserver":"com.microsoft.sqlserver:sqljdbc4:4.0",
+            "postgresql":"org.postgresql:postgresql:9.4.1212",
+            "oracle":"com.oracle:ojdbc14:10.2.0.5.0",
+            "h2":"com.h2database:h2:1.4.194",
+            "mysql":"mysql:mysql-connector-java:5.1.38",
+            "aspectjweaver":"org.aspectj:aspectjweaver:1.8.9",
+            "servlet-api":"javax.servlet:servlet-api:2.5",
+            "lombok":"org.projectlombok:lombok:1.16.16",
+            "hikaricp":"com.zaxxer:HikariCP:2.7.0",
+            "spring-test":"org.springframework:spring-test:${springVersion}",
+            "spring-webmvc":"org.springframework:spring-webmvc:${springVersion}",
             "spring-context-support":"org.springframework:spring-context-support:${springVersion}",
             "spring-jdbc":"org.springframework:spring-jdbc:${springVersion}",
             "spring-tx":"org.springframework:spring-tx:${springVersion}",
-            "velocity":"org.apache.velocity:velocity-engine-core:2.0",
     ]
 }
 
@@ -72,6 +89,10 @@ subprojects{
     artifacts {
         archives sourcesJar
         archives javadocJar
+    }
+
+    configurations {
+        compile.exclude module: "commons-logging"
     }
 
     signing {

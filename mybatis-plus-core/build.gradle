@@ -1,32 +1,31 @@
-
+def common = [
+    rootProject.ext.dependencies["spring-context-support"],
+    rootProject.ext.dependencies["spring-jdbc"]
+]
 dependencies {
     compile project(":mybatis-plus-api")
     compile rootProject.ext.dependencies["jsqlparser"]
     compile rootProject.ext.dependencies["mybatis-spring"]
     compile rootProject.ext.dependencies["mybatis"]
-    compileOnly rootProject.ext.dependencies["spring-context-support"]
-    compileOnly rootProject.ext.dependencies["spring-jdbc"]
-    testCompileOnly "javax.servlet:servlet-api:2.5"
-    testCompile "org.mybatis.caches:mybatis-ehcache:1.1.0"
-    testCompile "ch.qos.logback:logback-classic:1.2.2"
-    testCompile "junit:junit:4.12"
-    testCompile("org.apache.commons:commons-dbcp2:2.1.1") {
-        exclude(module: 'commons-logging')
-    }
-    testCompile "org.apache.commons:commons-pool2:2.4.2"
-    testCompile "com.microsoft.sqlserver:sqljdbc4:4.0"
-    testCompile "org.postgresql:postgresql:9.4.1212"
-    testCompile "com.oracle:ojdbc14:10.2.0.5.0"
-    testCompile "com.h2database:h2:1.4.194"
-    testCompile "mysql:mysql-connector-java:5.1.38"
-    testCompile "org.slf4j:slf4j-api:1.7.25"
-    testCompile "org.slf4j:jcl-over-slf4j:1.7.25"
-    testCompile "org.springframework:spring-test:${springVersion}"
-    testCompile "org.springframework:spring-webmvc:${springVersion}"
-    testCompile "org.aspectj:aspectjweaver:1.8.9"
-    testCompile "javax.servlet:servlet-api:2.5"
-    testCompile "org.projectlombok:lombok:1.16.16"
-    testCompile rootProject.ext.dependencies["spring-context-support"]
-    testCompile rootProject.ext.dependencies["spring-jdbc"]
-    testCompile "com.zaxxer:HikariCP:2.7.0"
+    compileOnly common
+    testCompile common
+    testCompileOnly rootProject.ext.dependencies["servlet-api"]
+    testCompile rootProject.ext.dependencies["mybatis-ehcache"]
+    testCompile rootProject.ext.dependencies["logback-classic"]
+    testCompile rootProject.ext.dependencies["junit"]
+    testCompile rootProject.ext.dependencies["commons-dbcp2"]
+    testCompile rootProject.ext.dependencies["commons-pool2"]
+    testCompile rootProject.ext.dependencies["sqlserver"]
+    testCompile rootProject.ext.dependencies["postgresql"]
+    testCompile rootProject.ext.dependencies["oracle"]
+    testCompile rootProject.ext.dependencies["h2"]
+    testCompile rootProject.ext.dependencies["mysql"]
+    testCompile rootProject.ext.dependencies["slf4j-api"]
+    testCompile rootProject.ext.dependencies["spring-test"]
+    testCompile rootProject.ext.dependencies["spring-webmvc"]
+    testCompile rootProject.ext.dependencies["sqlserver"]
+    testCompile rootProject.ext.dependencies["aspectjweaver"]
+    testCompile rootProject.ext.dependencies["servlet-api"]
+    testCompile rootProject.ext.dependencies["lombok"]
+    testCompile rootProject.ext.dependencies["hikaricp"]
 }
