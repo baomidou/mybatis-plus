@@ -19,7 +19,6 @@ import com.baomidou.mybatisplus.enums.SqlLike;
 import com.baomidou.mybatisplus.plugins.parser.ISqlParser;
 import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
-import com.baomidou.mybatisplus.plugins.pagination.optimize.JsqlParserCountOptimize;
 
 /**
  * <p>
@@ -34,7 +33,6 @@ public class SqlUtils {
     private final static SqlFormatter sqlFormatter = new SqlFormatter();
     public final static String SQL_BASE_COUNT = "SELECT COUNT(1) FROM ( %s ) TOTAL";
     public static ISqlParser COUNT_SQL_PARSER = null;
-
 
     /**
      * <p>
@@ -53,7 +51,16 @@ public class SqlUtils {
                 COUNT_SQL_PARSER = sqlParser;
             } else {
                 // 默认 JsqlParser 优化 COUNT
-                COUNT_SQL_PARSER = new JsqlParserCountOptimize();
+                try {
+                    // TODO: 2017/11/20 这里我改动了下.
+                    COUNT_SQL_PARSER = (ISqlParser) Class.forName("com.baomidou.mybatisplus.plugins.pagination.optimize.JsqlParserCountOptimize").newInstance();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return COUNT_SQL_PARSER.optimizeSql(null, originalSql);
