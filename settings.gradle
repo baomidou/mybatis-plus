@@ -1,1 +1,4 @@
 rootProject.name = 'mybatis-plus'
+include 'mybatis-plus-api'
+include 'mybatis-plus-core'
+
