@@ -25,7 +25,6 @@ dependencies {
     testCompile rootProject.ext.dependencies["spring-webmvc"]
     testCompile rootProject.ext.dependencies["sqlserver"]
     testCompile rootProject.ext.dependencies["aspectjweaver"]
-    testCompile rootProject.ext.dependencies["servlet-api"]
     testCompile rootProject.ext.dependencies["lombok"]
     testCompile rootProject.ext.dependencies["hikaricp"]
 }

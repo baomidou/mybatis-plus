@@ -91,10 +91,6 @@ subprojects{
         archives javadocJar
     }
 
-    configurations {
-        compile.exclude module: "commons-logging"
-    }
-
     signing {
         sign configurations.archives
     }
