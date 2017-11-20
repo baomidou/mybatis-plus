@@ -1,0 +1,11 @@
+dependencies {
+    compile project(":mybatis-plus-api")
+    compile rootProject.ext.dependencies["velocity"]
+    compile rootProject.ext.dependencies["slf4j-api"]
+    testCompile rootProject.ext.dependencies["sqlserver"]
+    testCompile rootProject.ext.dependencies["postgresql"]
+    testCompile rootProject.ext.dependencies["oracle"]
+    testCompile rootProject.ext.dependencies["h2"]
+    testCompile rootProject.ext.dependencies["mysql"]
+    testCompile rootProject.ext.dependencies["logback-classic"]
+}
