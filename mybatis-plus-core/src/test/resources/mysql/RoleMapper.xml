@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.baomidou.mybatisplus.test.mysql.mapper.RoleMapper">
+
+	<resultMap id="RoleMap" type="Role" autoMapping="true">
+		<id property="id" column="id" />
+		<id property="name" column="name" />
+		<id property="sort" column="sort" />
+		<id property="description" column="description" />
+	</resultMap>
+</mapper>
