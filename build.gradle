@@ -39,7 +39,7 @@ ext {
 
 allprojects{
     group = 'com.baomidou'
-    version = '2.1.5'
+    version = '2.1.6'
 }
 
 
@@ -62,6 +62,7 @@ subprojects{
     repositories {
         mavenLocal()
         maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         jcenter()
     }
 
@@ -95,7 +96,7 @@ subprojects{
         sign configurations.archives
     }
 
-// gradle clean build uploadArchives -Dun=用户名 -Dps=密码 -x test
+    // gradle clean build uploadArchives -Dun=用户名 -Dps=密码 -x test
     uploadArchives {
         repositories {
             mavenDeployer {
