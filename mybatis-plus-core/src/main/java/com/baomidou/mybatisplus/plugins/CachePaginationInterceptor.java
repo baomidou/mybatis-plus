@@ -27,20 +27,13 @@ import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
-import org.apache.ibatis.reflection.MetaObject;
-import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
-import com.baomidou.mybatisplus.enums.DBType;
-import com.baomidou.mybatisplus.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.plugins.parser.ISqlParser;
 import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
-import com.baomidou.mybatisplus.toolkit.JdbcUtils;
-import com.baomidou.mybatisplus.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.toolkit.SqlUtils;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
  * <p>
@@ -54,14 +47,14 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
         @Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 public class CachePaginationInterceptor extends PaginationInterceptor implements Interceptor {
 
-    /* 溢出总页数，设置第一页 */
-    private boolean overflowCurrent = false;
-    // COUNT SQL 解析
+    /**
+     * COUNT SQL 解析
+     */
     private ISqlParser sqlParser;
-    /* 方言类型 */
-    private String dialectType;
-    /* 方言实现类 */
-    private String dialectClazz;
+    /**
+     * 溢出总页数，设置第一页
+     */
+    private boolean overflowCurrent = false;
 
     /**
      * Physical Pagination Interceptor for all the queries with parameter
@@ -111,19 +104,11 @@ public class CachePaginationInterceptor extends PaginationInterceptor implements
 
     @Override
     public void setProperties(Properties prop) {
-        String dialectType = prop.getProperty("dialectType");
-        String dialectClazz = prop.getProperty("dialectClazz");
-        if (StringUtils.isNotEmpty(dialectType)) {
-            this.dialectType = dialectType;
-        }
-        if (StringUtils.isNotEmpty(dialectClazz)) {
-            this.dialectClazz = dialectClazz;
-        }
+
     }
 
     @Override
     public CachePaginationInterceptor setDialectType(String dialectType) {
-        this.dialectType = dialectType;
         return this;
     }
 

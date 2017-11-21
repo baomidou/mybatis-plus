@@ -59,17 +59,29 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 public class PaginationInterceptor extends SqlParserHandler implements Interceptor {
 
-    // 日志
+    /**
+     * 日志
+     */
     private static final Log logger = LogFactory.getLog(PaginationInterceptor.class);
-    // COUNT SQL 解析
+    /**
+     * COUNT SQL 解析
+     */
     private ISqlParser sqlParser;
-    /* 溢出总页数，设置第一页 */
+    /**
+     * 溢出总页数，设置第一页
+     */
     private boolean overflowCurrent = false;
-    /* 方言类型 */
+    /**
+     * 方言类型
+     */
     private String dialectType;
-    /* 方言实现类 */
+    /**
+     * 方言实现类
+     */
     private String dialectClazz;
-    /* 是否开启 PageHelper localPage 模式 */
+    /**
+     * 是否开启 PageHelper localPage 模式
+     */
     private boolean localPage = false;
 
     /**
