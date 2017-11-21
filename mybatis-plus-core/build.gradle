@@ -9,12 +9,13 @@ dependencies {
     compile rootProject.ext.dependencies["mybatis"]
     compileOnly common
     testCompile common
-    testCompileOnly rootProject.ext.dependencies["servlet-api"]
+    testCompile rootProject.ext.dependencies["servlet-api"]
     testCompile rootProject.ext.dependencies["mybatis-ehcache"]
     testCompile rootProject.ext.dependencies["logback-classic"]
     testCompile rootProject.ext.dependencies["junit"]
-    testCompile rootProject.ext.dependencies["commons-dbcp2"]
-    testCompile rootProject.ext.dependencies["commons-pool2"]
+    testCompile (rootProject.ext.dependencies["commons-dbcp2"]){
+        exclude module: "commons-logging"
+    }
     testCompile rootProject.ext.dependencies["sqlserver"]
     testCompile rootProject.ext.dependencies["postgresql"]
     testCompile rootProject.ext.dependencies["oracle"]

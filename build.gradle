@@ -16,7 +16,6 @@ ext {
             "velocity":"org.apache.velocity:velocity-engine-core:2.0",
             "slf4j-api":"org.slf4j:slf4j-api:1.7.25",
             "junit":"junit:junit:4.12",
-            "commons-pool2":"org.apache.commons:commons-pool2:2.4.2",
             "commons-dbcp2":"org.apache.commons:commons-dbcp2:2.1.1",
             "mybatis-ehcache":"org.mybatis.caches:mybatis-ehcache:1.1.0",
             "logback-classic":"ch.qos.logback:logback-classic:1.2.2",
