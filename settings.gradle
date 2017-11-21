@@ -1,6 +1,6 @@
 rootProject.name = 'mybatis-plus'
 include 'mybatis-plus'
-include 'mybatis-plus-api'
+include 'mybatis-plus-support'
 include 'mybatis-plus-core'
 include 'mybatis-plus-generate'
 

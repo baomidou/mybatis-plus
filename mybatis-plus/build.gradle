@@ -1,5 +1,5 @@
 dependencies{
-    compile project(":mybatis-plus-api")
+    compile project(":mybatis-plus-support")
     compile project(":mybatis-plus-core")
     compile project(":mybatis-plus-generate")
 }
