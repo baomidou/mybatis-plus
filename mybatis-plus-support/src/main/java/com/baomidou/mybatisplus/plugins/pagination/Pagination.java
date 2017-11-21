@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, hubin (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -35,19 +35,29 @@ public class Pagination extends RowBounds implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /* 总数 */
+    /**
+     * 总数
+     */
     private int total;
 
-    /* 每页显示条数，默认 10 */
+    /**
+     * 每页显示条数，默认 10
+     */
     private int size = 10;
 
-    /* 总页数 */
+    /**
+     * 总页数
+     */
     private int pages;
 
-    /* 当前页 */
+    /**
+     * 当前页
+     */
     private int current = 1;
 
-    /* 查询总记录数（默认 true） */
+    /**
+     * 查询总记录数（默认 true）
+     */
     private boolean searchCount = true;
 
     /**
