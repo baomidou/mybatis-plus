@@ -66,7 +66,7 @@ public class H2UserMetaObj implements Serializable {
 
     @Version
     private Integer version;
-    @TableField(value = "last_updated_dt")
+    @TableField(value = "last_updated_dt",fill = FieldFill.UPDATE)
     private Timestamp lastUpdatedDt;
 
 

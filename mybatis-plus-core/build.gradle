@@ -28,4 +28,5 @@ dependencies {
     testCompile rootProject.ext.dependencies["aspectjweaver"]
     testCompile rootProject.ext.dependencies["lombok"]
     testCompile rootProject.ext.dependencies["hikaricp"]
+    testCompile rootProject.ext.dependencies["druid"]
 }
