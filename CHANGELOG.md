@@ -1,7 +1,19 @@
 ﻿# CHANGELOG
 
 
-## [v2.1.5] 2017.11.11
+## [v2.1.6] 2017.11.22 代号：小秋秋之吻
+1、模块拆分为 support core generate 代码生成分离可选择依赖
+2、解决 gitee issue IFX30 拆分 mybatis-plus-support 包支持
+3、解决 gitee issue IGAPX 通用枚举 bigdecimal 类型映射
+4、druid补充,填充字段修改
+5、修复 kotlin 代码生成部分逻辑 Bug
+6、合并 gitee pr 40 updateAllColumn****等方法排除fill = FieldFill.INSERT注释的字段 感谢 Elsif 
+7、构造模式设置 kotlin 修改
+8、Sql 工具类反射实例优化
+9、其他优化
+
+
+## [v2.1.5] 2017.11.11 代号：离神
 - 通用枚举 spring boot 兼容调整
 - PostgreSQL 支持关键词非关键词转换问题
 - Cat73  PR 稍微调整下自动生成的代码
@@ -18,7 +30,7 @@
 - 其他优化
 
 
-## [v2.1.2] 2017.09.17
+## [v2.1.2] 2017.09.17 代号： X	
 - 修复代码生成器 Bug
 - fixed gitee issues/IF2DY
 - 修改 page 可链式操作
@@ -27,7 +39,7 @@
 - fixed gitee issues/IF2OI
 
 
-## [v2.1.1] 2017.09.12
+## [v2.1.1] 2017.09.12 代号：小锅盖
 - 修改分页超过总记录数自动设置第一页 bug @wujing 感谢 pr
 - fixed IEID6
 - 升级 mybatis 3.4.5
@@ -46,7 +58,7 @@
 - 其他优化调整
 
 
-## [v2.1.0] 2017.08.01
+## [v2.1.0] 2017.08.01 代号：小秋秋
 
 ####主体功能
 - 批量sqlSession没有关闭问题修复
@@ -105,7 +117,7 @@
 - 去除Mybatis-plus直接依赖
 - 去除SpringBoot jdbc-starter直接依赖
 
-## [v2.0.9] 2017.06.26
+## [v2.0.9] 2017.06.26 代号：K 神
 ###Mybaits-Plus
 ####主体功能
 - 修正乐观锁和逻辑删除冲突问题
@@ -143,7 +155,7 @@
 - 添加Clob和Blob类型转换
 - 修复Oracle的Number类型字段转换错误问题
 
-###Mybatis-Plus-Boot-Start [1.0.2]
+###Mybatis-Plus-Boot-Start [1.0.2] 代号：清风
 ####主体功能
 - 处理AR模式devtool替换数据源失效问题
 - 添加逻辑删除支持
