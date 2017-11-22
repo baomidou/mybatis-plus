@@ -2,15 +2,15 @@
 
 
 ## [v2.1.6] 2017.11.22 代号：小秋秋之吻
-1、模块拆分为 support core generate 代码生成分离可选择依赖
-2、解决 gitee issue IFX30 拆分 mybatis-plus-support 包支持
-3、解决 gitee issue IGAPX 通用枚举 bigdecimal 类型映射
-4、druid补充,填充字段修改
-5、修复 kotlin 代码生成部分逻辑 Bug
-6、合并 gitee pr 40 updateAllColumn****等方法排除fill = FieldFill.INSERT注释的字段 感谢 Elsif 
-7、构造模式设置 kotlin 修改
-8、Sql 工具类反射实例优化
-9、其他优化
+- 模块拆分为 support core generate 代码生成分离可选择依赖
+- 解决 gitee issue IFX30 拆分 mybatis-plus-support 包支持
+- 解决 gitee issue IGAPX 通用枚举 bigdecimal 类型映射
+- druid补充,填充字段修改
+- 修复 kotlin 代码生成部分逻辑 Bug
+- 合并 gitee pr 40 updateAllColumn****等方法排除fill = FieldFill.INSERT注释的字段 感谢 Elsif 
+- 构造模式设置 kotlin 修改
+- Sql 工具类反射实例优化
+- 其他优化
 
 
 ## [v2.1.5] 2017.11.11 代号：离神
