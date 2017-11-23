@@ -1000,7 +1000,7 @@ public abstract class Wrapper<T> implements Serializable {
 
     /**
      * <p>
-     * is not null 条件
+     * is null 条件
      * </p>
      *
      * @param condition 拼接的前置条件
@@ -1016,7 +1016,7 @@ public abstract class Wrapper<T> implements Serializable {
 
     /**
      * <p>
-     * is not null 条件
+     * is null 条件
      * </p>
      *
      * @param columns 字段名称。多个字段以逗号分隔。
