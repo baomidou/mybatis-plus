@@ -18,8 +18,6 @@ package com.baomidou.mybatisplus.toolkit;
 
 import com.baomidou.mybatisplus.enums.IEnum;
 
-import java.math.BigDecimal;
-
 /**
  * <p>
  * 枚举处理工具类
@@ -46,15 +44,15 @@ public class EnumUtils {
             if (e.getValue() == value) {
                 // 基本类型
                 return e;
-            } else if (value instanceof String && e.getValue().equals(value)) {
-                // 字符串类型
-                return e;
-            } else if (value instanceof BigDecimal && ((BigDecimal) e.getValue()).compareTo((BigDecimal) value) == 0) {
-                // 结果是:-1 小于,0 等于,1 大于
-                return e;
-            } else if (String.valueOf(e.getValue()).equals(String.valueOf(value))) {
-                // 其他类型
-                return e;
+            } else if (value instanceof Number) {
+                if (e.getValue() instanceof Number &&
+                        ((Number) value).doubleValue() == ((Number) e.getValue()).doubleValue()) {
+                    return e;
+                }
+            } else {
+                if (String.valueOf(value).equals(String.valueOf(e.getValue()))) {
+                    return e;
+                }
             }
         }
         return null;
