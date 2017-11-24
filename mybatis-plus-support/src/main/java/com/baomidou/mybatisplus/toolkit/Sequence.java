@@ -15,16 +15,14 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.concurrent.ThreadLocalRandom;
-
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.plugins.SqlExplainInterceptor;
 
 /**
  * <p>
@@ -37,7 +35,7 @@ import com.baomidou.mybatisplus.plugins.SqlExplainInterceptor;
  */
 public class Sequence {
 
-    private static final Log logger = LogFactory.getLog(SqlExplainInterceptor.class);
+    private static final Log logger = LogFactory.getLog(Sequence.class);
 
     /* 时间起始标记点，作为基准，一般取系统的最近时间（一旦确定不能变动） */
     private final long twepoch = 1288834974657L;

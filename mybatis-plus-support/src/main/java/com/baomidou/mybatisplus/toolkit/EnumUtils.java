@@ -49,10 +49,8 @@ public class EnumUtils {
                         ((Number) value).doubleValue() == ((Number) e.getValue()).doubleValue()) {
                     return e;
                 }
-            } else {
-                if (String.valueOf(value).equals(String.valueOf(e.getValue()))) {
-                    return e;
-                }
+            } else if (String.valueOf(value).equals(String.valueOf(e.getValue()))) {
+                return e;
             }
         }
         return null;
