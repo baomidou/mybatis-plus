@@ -376,6 +376,26 @@ public class ConfigBuilder {
             if (QuerySQL.POSTGRE_SQL == querySQL) {
                 tableCommentsSql = String.format(tableCommentsSql, dataSourceConfig.getSchemaname());
             }
+            //oracle数据库表太多，出现最大游标错误
+            if (QuerySQL.ORACLE == querySQL) {
+                if (isInclude) {
+                    StringBuilder sb = new StringBuilder(tableCommentsSql);
+                    sb.append(" WHERE ").append(querySQL.getTableName()).append(" IN (");
+                    for (String tbname : config.getInclude()) {
+                        sb.append("'").append(tbname.toUpperCase()).append("',");
+                    }
+                    sb.replace(sb.length() - 1, sb.length(), ")");
+                    tableCommentsSql = sb.toString();
+                } else if (isExclude) {
+                    StringBuilder sb = new StringBuilder(tableCommentsSql);
+                    sb.append(" WHERE ").append(querySQL.getTableName()).append(" NOT IN (");
+                    for (String tbname : config.getExclude()) {
+                        sb.append("'").append(tbname.toUpperCase()).append("',");
+                    }
+                    sb.replace(sb.length() - 1, sb.length(), ")");
+                    tableCommentsSql = sb.toString();
+                }
+            }
             preparedStatement = connection.prepareStatement(tableCommentsSql);
             ResultSet results = preparedStatement.executeQuery();
             TableInfo tableInfo;
