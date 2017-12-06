@@ -377,7 +377,7 @@ public class ConfigBuilder {
                 tableCommentsSql = String.format(tableCommentsSql, dataSourceConfig.getSchemaname());
             }
             //oracle数据库表太多，出现最大游标错误
-            if (QuerySQL.ORACLE == querySQL) {
+            else if (QuerySQL.ORACLE == querySQL) {
                 if (isInclude) {
                     StringBuilder sb = new StringBuilder(tableCommentsSql);
                     sb.append(" WHERE ").append(querySQL.getTableName()).append(" IN (");

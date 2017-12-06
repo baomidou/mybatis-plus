@@ -254,7 +254,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean deleteById(Serializable id) {
-        return retBool(baseMapper.deleteById(id));
+        return SqlHelper.delBool(baseMapper.deleteById(id));
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -263,19 +263,19 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         if (MapUtils.isEmpty(columnMap)) {
             throw new MybatisPlusException("deleteByMap columnMap is empty.");
         }
-        return retBool(baseMapper.deleteByMap(columnMap));
+        return SqlHelper.delBool(baseMapper.deleteByMap(columnMap));
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean delete(Wrapper<T> wrapper) {
-        return retBool(baseMapper.delete(wrapper));
+        return SqlHelper.delBool(baseMapper.delete(wrapper));
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean deleteBatchIds(List<? extends Serializable> idList) {
-        return retBool(baseMapper.deleteBatchIds(idList));
+        return SqlHelper.delBool(baseMapper.deleteBatchIds(idList));
     }
 
     @Transactional(rollbackFor = Exception.class)

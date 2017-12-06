@@ -15,8 +15,10 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import java.util.List;
-
+import com.baomidou.mybatisplus.entity.TableInfo;
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.toolkit.*;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.Configuration;
@@ -24,14 +26,7 @@ import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import com.baomidou.mybatisplus.entity.TableInfo;
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.toolkit.MapUtils;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import java.util.List;
 
 /**
  * <p>
@@ -131,6 +126,18 @@ public class SqlHelper {
      */
     public static boolean retBool(Integer result) {
         return null != result && result >= 1;
+    }
+
+    /**
+     * <p>
+     * 删除不存在的逻辑上属于成功
+     * </p>
+     *
+     * @param result 数据库操作返回影响条数
+     * @return boolean
+     */
+    public static boolean delBool(Integer result) {
+        return null != result && result >= 0;
     }
 
     /**
