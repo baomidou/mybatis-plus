@@ -55,4 +55,7 @@ public interface H2UserVersionAndLogicDeleteMapper extends BaseMapper<H2UserVers
             "insert into h2user(name,version) values( #{name}, #{version})"
     )
     int myInsertWithoutParam(H2UserVersionAndLogicDeleteEntity user1);
+
+    @Select("select test_id as id, version, last_updated_dt from h2user where test_id=#{id}")
+    H2UserVersionAndLogicDeleteEntity selectMyRecordById(@Param("id") Long id);
 }

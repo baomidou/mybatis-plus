@@ -212,6 +212,10 @@ public class H2MetaObjAndVersionAndOptLockTest extends H2Test {
         Assert.assertNotNull("testType should be auto filled", user.getTestType());
         userMapper.deleteById(user);
         Assert.assertNotNull("logicDelete should call update(), lastUpdateDt should be auto filled", user.getLastUpdatedDt());
+        Assert.assertNull("logic deleted, should not be retrieved", userMapper.selectById(user.getId()));
+        H2UserVersionAndLogicDeleteEntity userDB = userMapper.selectMyRecordById(user.getId());
+        Assert.assertNotNull("logic delete should not delete record physical", userDB);
+        Assert.assertEquals("logic delete should update version=-1", -1, userDB.getVersion().intValue());
     }
 
     @Test
