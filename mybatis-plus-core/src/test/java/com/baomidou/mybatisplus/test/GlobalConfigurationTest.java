@@ -15,7 +15,9 @@
  */
 package com.baomidou.mybatisplus.test;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,6 +31,7 @@ import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.test.mysql.entity.NotPK;
 import com.baomidou.mybatisplus.test.mysql.entity.Test;
 import com.baomidou.mybatisplus.test.mysql.mapper.NotPKMapper;
+import com.baomidou.mybatisplus.test.mysql.mapper.RoleMapper;
 import com.baomidou.mybatisplus.test.mysql.mapper.TestMapper;
 
 /**
@@ -87,6 +90,13 @@ public class GlobalConfigurationTest extends CrudTest {
         Assert.assertTrue(count > 0);
         int deleteCount = pkMapper.delete(null);
         Assert.assertTrue(deleteCount > 0);
+        List<String> list = new ArrayList<>();
+        list.add("1");
+        list.add("2");
+        list.add("3");
+        RoleMapper mapper = sqlSession.getMapper(RoleMapper.class);
+        System.out.println(mapper.selectBatchIds(list));
+        System.out.println(mapper.selectBatchIds(new HashSet<>(list)));
         sqlSession.commit();
     }
 

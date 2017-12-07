@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.service.impl;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -270,7 +271,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean deleteBatchIds(List<? extends Serializable> idList) {
+    public boolean deleteBatchIds(Collection<? extends Serializable> idList) {
         return SqlHelper.delBool(baseMapper.deleteBatchIds(idList));
     }
 
@@ -353,7 +354,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     @Override
-    public List<T> selectBatchIds(List<? extends Serializable> idList) {
+    public List<T> selectBatchIds(Collection<? extends Serializable> idList) {
         return baseMapper.selectBatchIds(idList);
     }
 

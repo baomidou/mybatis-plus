@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.service;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -151,7 +152,7 @@ public interface IService<T> {
      * @param idList 主键ID列表
      * @return boolean
      */
-    boolean deleteBatchIds(List<? extends Serializable> idList);
+    boolean deleteBatchIds(Collection<? extends Serializable> idList);
 
     /**
      * <p>
@@ -262,7 +263,7 @@ public interface IService<T> {
      * @param idList 主键ID列表
      * @return List<T>
      */
-    List<T> selectBatchIds(List<? extends Serializable> idList);
+    List<T> selectBatchIds(Collection<? extends Serializable> idList);
 
     /**
      * <p>
