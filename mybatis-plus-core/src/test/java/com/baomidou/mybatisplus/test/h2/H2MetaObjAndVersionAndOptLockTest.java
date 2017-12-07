@@ -72,18 +72,20 @@ public class H2MetaObjAndVersionAndOptLockTest extends H2Test {
         user.setAge(91);
         user.setPrice(BigDecimal.TEN);
         user.setDesc("asdf");
-        user.setTestType(1);
+        user.setTestType(null);
         user.setVersion(1);
         userMapper.insertAllColumn(user);
 
         H2UserVersionAndLogicDeleteEntity userDB = userMapper.selectById(id);
-        Assert.assertEquals(null, userDB.getTestDate());
+        Assert.assertEquals("lastUpdateDt should be null for insert()", null, userDB.getLastUpdatedDt());
+        Assert.assertNotNull("testType should not be null for insert() due to insertFill()", userDB.getTestType());
 
         userDB.setName("991");
         userMapper.updateById(userDB);
 
         userDB = userMapper.selectById(id);
         Assert.assertEquals("991", userDB.getName());
+        assertUpdateFill(userDB.getLastUpdatedDt());
     }
 
     @Test
@@ -100,6 +102,7 @@ public class H2MetaObjAndVersionAndOptLockTest extends H2Test {
         userMapper.insertAllColumn(user);
 
         H2UserVersionAndLogicDeleteEntity userDB = userMapper.selectById(id);
+        Assert.assertEquals("testType will only be updated by insertFill() when testType is null ", 1, userDB.getTestType().intValue());
 
         H2UserVersionAndLogicDeleteEntity updUser = new H2UserVersionAndLogicDeleteEntity();
         updUser.setName("999");
@@ -108,6 +111,7 @@ public class H2MetaObjAndVersionAndOptLockTest extends H2Test {
 
         userDB = userMapper.selectById(id);
         Assert.assertEquals("999", userDB.getName());
+        assertUpdateFill(userDB.getLastUpdatedDt());
     }
 
     @Test
@@ -141,9 +145,9 @@ public class H2MetaObjAndVersionAndOptLockTest extends H2Test {
         Date versionDate = userDB.getTestDate();
         System.out.println("after update: testDate=" + versionDate);
         String versionDateStr = sdf.format(versionDate);
-        Assert.assertEquals(sdf.format(new Date()), versionDateStr);
+        Assert.assertEquals("@version field:testDate should be updated to current sysdate", sdf.format(new Date()), versionDateStr);
 
-        Assert.assertNotEquals(originalDateVersionStr, versionDateStr);
+        Assert.assertNotEquals("@version field should be updated", originalDateVersionStr, versionDateStr);
 
     }
 
@@ -179,7 +183,8 @@ public class H2MetaObjAndVersionAndOptLockTest extends H2Test {
         Date versionDate = userDB.getTestDate();
         System.out.println("after update: testDate=" + versionDate);
         String versionDateStr = sdf.format(versionDate);
-        Assert.assertEquals(sdf.format(new Date()), versionDateStr);
+        Assert.assertEquals("@version field:testDate should be updated to current sysdate", sdf.format(new Date()), versionDateStr);
+        assertUpdateFill(userDB.getLastUpdatedDt());
     }
 
 
@@ -245,7 +250,7 @@ public class H2MetaObjAndVersionAndOptLockTest extends H2Test {
         dbUser = userMapper.selectById(id);
         Assert.assertNotNull(dbUser);
         Assert.assertEquals("updateMy", dbUser.getName());
-        Assert.assertEquals(1, user.getVersion().intValue());
+        Assert.assertEquals("自定义update需要自己控制version", 1, user.getVersion().intValue());
     }
 
 

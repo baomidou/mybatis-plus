@@ -77,6 +77,7 @@ public class H2UserDateVersionTest extends H2Test {
 
         userDB = userMapper.selectById(id);
         Assert.assertEquals("991", userDB.getName());
+        Assert.assertEquals(null, userDB.getTestDate());
     }
 
 
@@ -135,9 +136,9 @@ public class H2UserDateVersionTest extends H2Test {
         Date versionDate = userDB.getTestDate();
         System.out.println("after update: testDate=" + versionDate);
         String versionDateStr = sdf.format(versionDate);
-        Assert.assertEquals(sdf.format(new Date()), versionDateStr);
+        Assert.assertEquals("@version field testDate should be updated to current sysdate", sdf.format(new Date()), versionDateStr);
 
-        Assert.assertNotEquals(originalDateVersionStr, versionDateStr);
+        Assert.assertNotEquals("@version field testDate should be updated to current sysdate", originalDateVersionStr, versionDateStr);
 
     }
 
@@ -173,7 +174,7 @@ public class H2UserDateVersionTest extends H2Test {
         Date versionDate = userDB.getTestDate();
         System.out.println("after update: testDate=" + versionDate);
         String versionDateStr = sdf.format(versionDate);
-        Assert.assertEquals(sdf.format(new Date()), versionDateStr);
+        Assert.assertEquals("@version field testDate should be updated to current sysdate", sdf.format(new Date()), versionDateStr);
     }
 
 

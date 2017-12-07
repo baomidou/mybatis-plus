@@ -20,11 +20,11 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import com.baomidou.mybatisplus.annotations.TableField;
-import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableLogic;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.annotations.Version;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
+import com.baomidou.mybatisplus.test.h2.entity.SuperEntity;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -40,15 +40,15 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @TableName("h2user")
-public class H2UserVersionAndLogicDeleteEntity implements Serializable {
+public class H2UserVersionAndLogicDeleteEntity extends SuperEntity implements Serializable {
 
     /* 表字段注解，false 表中不存在的字段，可无该注解 默认 true */
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
     /* 主键ID 注解，value 字段名，type 用户输入ID */
-    @TableId(value = "test_id")
-    private Long id;
+//    @TableId(value = "test_id")
+//    private Long id;
 
     /* 测试忽略验证 */
     private String name;
@@ -71,8 +71,8 @@ public class H2UserVersionAndLogicDeleteEntity implements Serializable {
     @Version
     private Date testDate;
 
-    @TableField("last_updated_dt")
-    private Date lastUpdatedDt;
+//    @TableField(value = "last_updated_dt", fill = FieldFill.UPDATE)
+//    private Date lastUpdatedDt;
 
     public H2UserVersionAndLogicDeleteEntity() {
 
@@ -92,17 +92,17 @@ public class H2UserVersionAndLogicDeleteEntity implements Serializable {
     }
 
     public H2UserVersionAndLogicDeleteEntity(Long id, String name) {
-        this.id = id;
+        this.setId(id);
         this.name = name;
     }
 
     public H2UserVersionAndLogicDeleteEntity(Long id, Integer age) {
-        this.id = id;
+        this.setId(id);
         this.age = age;
     }
 
     public H2UserVersionAndLogicDeleteEntity(Long id, String name, Integer age, Integer testType) {
-        this.id = id;
+        this.setId(id);
         this.name = name;
         this.age = age;
         this.testType = testType;

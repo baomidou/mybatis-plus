@@ -77,14 +77,6 @@ public class H2MetaObjectHandlerTest extends H2Test {
         assertUpdateFill(userDB.getLastUpdatedDt());
     }
 
-    private void assertUpdateFill(Date lastUpdatedDt) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH");
-        System.out.println("after update: testDate=" + lastUpdatedDt);
-        String versionDateStr = sdf.format(lastUpdatedDt);
-        //MyMetaObjectHandler.updateFill() : set lastUpdatedDt=currentTimestamp
-        Assert.assertEquals(sdf.format(new Date()), versionDateStr);//before update: lastUpdatedDt=currentTimestamp-1day
-    }
-
     @Test
     public void testMetaObjectHandlerNullInsert4Update() {
         H2UserMetaObj user = new H2UserMetaObj();

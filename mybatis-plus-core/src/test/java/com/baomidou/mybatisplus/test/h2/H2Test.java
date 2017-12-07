@@ -5,6 +5,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.junit.Assert;
 
 /**
  * <p>
@@ -41,5 +45,13 @@ public class H2Test {
             e.printStackTrace();
         }
         return builder.toString();
+    }
+
+    protected void assertUpdateFill(Date lastUpdatedDt) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH");
+        System.out.println("after update: testDate=" + lastUpdatedDt);
+        String versionDateStr = sdf.format(lastUpdatedDt);
+        //MyMetaObjectHandler.updateFill() : set lastUpdatedDt=currentTimestamp
+        Assert.assertEquals("lastUpdateDt will be updated by H2MetaObjectHandler.updateFill()",sdf.format(new Date()), versionDateStr);//before update: lastUpdatedDt=currentTimestamp-1day
     }
 }
