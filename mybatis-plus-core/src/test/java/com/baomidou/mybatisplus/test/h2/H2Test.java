@@ -52,6 +52,6 @@ public class H2Test {
         System.out.println("after update: testDate=" + lastUpdatedDt);
         String versionDateStr = sdf.format(lastUpdatedDt);
         //MyMetaObjectHandler.updateFill() : set lastUpdatedDt=currentTimestamp
-        Assert.assertEquals("lastUpdateDt will be updated by H2MetaObjectHandler.updateFill()",sdf.format(new Date()), versionDateStr);//before update: lastUpdatedDt=currentTimestamp-1day
+        Assert.assertEquals("lastUpdateDt will be updated by H2MetaObjectHandler.updateFill()", sdf.format(new Date()), versionDateStr);//before update: lastUpdatedDt=currentTimestamp-1day
     }
 }

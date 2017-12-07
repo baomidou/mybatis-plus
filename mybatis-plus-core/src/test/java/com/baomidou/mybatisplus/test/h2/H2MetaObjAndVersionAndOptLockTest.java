@@ -203,15 +203,15 @@ public class H2MetaObjAndVersionAndOptLockTest extends H2Test {
     }
 
     @Test
-    public void testLogicDeleteRecordWithAutoFill(){
+    public void testLogicDeleteRecordWithAutoFill() {
         H2UserVersionAndLogicDeleteEntity user = new H2UserVersionAndLogicDeleteEntity();
         user.setAge(1);
         user.setPrice(new BigDecimal("9.99"));
         user.setVersion(1);
         userMapper.insert(user);
-        Assert.assertNotNull("testType should be auto filled",user.getTestType());
+        Assert.assertNotNull("testType should be auto filled", user.getTestType());
         userMapper.deleteById(user);
-        Assert.assertNotNull("logicDelete should call update(), lastUpdateDt should be auto filled",user.getLastUpdatedDt());
+        Assert.assertNotNull("logicDelete should call update(), lastUpdateDt should be auto filled", user.getLastUpdatedDt());
     }
 
     @Test
