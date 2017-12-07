@@ -34,6 +34,18 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
 public class Pagination extends RowBounds implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    /**
+     * 该操作只是为了忽略RowBounds属性
+     *
+     * @see org.apache.ibatis.session.RowBounds#getOffset()
+     */
+    private transient int offset;
+    /**
+     * 该操作只是为了忽略RowBounds属性
+     *
+     * @see org.apache.ibatis.session.RowBounds#getLimit() ()
+     */
+    private transient int limit;
 
     /**
      * 总数
@@ -43,7 +55,7 @@ public class Pagination extends RowBounds implements Serializable {
     /**
      * 每页显示条数，默认 10
      */
-    private int size = 10;
+    private transient int size = 10;
 
     /**
      * 总页数
@@ -58,14 +70,14 @@ public class Pagination extends RowBounds implements Serializable {
     /**
      * 查询总记录数（默认 true）
      */
-    private boolean searchCount = true;
+    private transient boolean searchCount = true;
 
     /**
      * 开启排序（默认 true） 只在代码逻辑判断 并不截取sql分析
      *
      * @see com.baomidou.mybatisplus.mapper.SqlHelper fillWrapper
      **/
-    private boolean openSort = true;
+    private transient boolean openSort = true;
 
     /**
      * <p>
@@ -76,12 +88,12 @@ public class Pagination extends RowBounds implements Serializable {
      * ASC 表示按正序排序(即：从小到大排序)
      * </p>
      */
-    private String orderByField;
+    private transient String orderByField;
 
     /**
      * 是否为升序 ASC（ 默认： true ）
      */
-    private boolean isAsc = true;
+    private transient boolean isAsc = true;
 
     public Pagination() {
         super();
@@ -120,7 +132,7 @@ public class Pagination extends RowBounds implements Serializable {
         return 0;
     }
 
-    public int getOffsetCurrent() {
+    public int offsetCurrent() {
         return offsetCurrent(this.current, this.size);
     }
 

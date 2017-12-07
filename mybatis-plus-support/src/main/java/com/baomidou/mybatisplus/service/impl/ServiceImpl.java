@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.binding.MapperMethod;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,8 +48,6 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
  * @Date 2016-04-20
  */
 public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
-
-    private static final Log logger = LogFactory.getLog(ServiceImpl.class);
 
     @Autowired
     protected M baseMapper;
