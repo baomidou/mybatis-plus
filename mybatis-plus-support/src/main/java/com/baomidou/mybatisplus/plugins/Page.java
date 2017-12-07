@@ -41,7 +41,7 @@ public class Page<T> extends Pagination {
     /**
      * 查询参数
      */
-    private Map<String, Object> condition;
+    private transient Map<String, Object> condition;
 
     public Page() {
         /* 注意，传入翻页参数 */
