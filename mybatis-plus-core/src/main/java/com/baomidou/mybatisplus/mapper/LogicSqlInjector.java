@@ -47,7 +47,7 @@ public class LogicSqlInjector extends AutoSqlInjector {
             // 逻辑删除注入
             SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE_BY_ID;
             SqlSource sqlSource;
-            String idStr = table.getKeyColumn();
+            String idStr = table.getKeyProperty();
             if (batch) {
                 sqlMethod = SqlMethod.LOGIC_DELETE_BATCH_BY_IDS;
                 StringBuilder ids = new StringBuilder();
