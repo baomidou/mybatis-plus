@@ -60,18 +60,17 @@ public interface H2UserMapper extends SuperMapper<H2User> {
     @Select(" select test_id as id, power(#{ageFrom},2), 'abc?zhazha', CAST(#{nameParam} AS VARCHAR) as name " +
             " from h2user " +
             " where age>#{ageFrom} and age<#{ageTo} ")
-    List<H2User> selectUserWithParamInSelectStatememt(Map<String,Object> param);
+    List<H2User> selectUserWithParamInSelectStatememt(Map<String, Object> param);
 
     @Select(" select test_id as id, power(#{ageFrom},2), 'abc?zhazha', CAST(#{nameParam} AS VARCHAR) as name " +
             " from h2user " +
             " where age>#{ageFrom} and age<#{ageTo} ")
-    List<H2User> selectUserWithParamInSelectStatememt4Page(Map<String,Object> param, Page<H2User> page);
+    List<H2User> selectUserWithParamInSelectStatememt4Page(Map<String, Object> param, Page<H2User> page);
 
     @Select(" select test_id as id, power(${ageFrom},2), '${nameParam}' as name " +
             " from h2user " +
             " where age>#{ageFrom} and age<#{ageTo} ")
-    List<H2User> selectUserWithDollarParamInSelectStatememt4Page(Map<String,Object> param, Page<H2User> page);
-
+    List<H2User> selectUserWithDollarParamInSelectStatememt4Page(Map<String, Object> param, Page<H2User> page);
 
 
     @Select("select count(1) from (" +
@@ -79,5 +78,5 @@ public interface H2UserMapper extends SuperMapper<H2User> {
             " from h2user " +
             " where age>#{ageFrom} and age<#{ageTo} " +
             ") a")
-    int selectCountWithParamInSelectItems(Map<String,Object> param);
+    int selectCountWithParamInSelectItems(Map<String, Object> param);
 }

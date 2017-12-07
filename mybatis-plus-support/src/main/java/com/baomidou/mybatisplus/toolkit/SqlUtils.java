@@ -17,9 +17,9 @@ package com.baomidou.mybatisplus.toolkit;
 
 import com.baomidou.mybatisplus.enums.SqlLike;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.plugins.parser.ISqlParser;
 import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
-import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 
 /**
  * <p>
@@ -43,6 +43,7 @@ public class SqlUtils {
             //skip
         }
     }
+
     /**
      * <p>
      * 获取CountOptimize
@@ -62,7 +63,7 @@ public class SqlUtils {
                 // 默认 JsqlParser 优化 COUNT
                 try {
                     // TODO: 2017/11/20 这里我改动了下.
-                    COUNT_SQL_PARSER =  DEFAULT_CLASS.newInstance();
+                    COUNT_SQL_PARSER = DEFAULT_CLASS.newInstance();
                 } catch (Exception e) {
                     throw new MybatisPlusException(e);
                 }

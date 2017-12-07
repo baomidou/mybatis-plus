@@ -669,7 +669,7 @@ public class AutoSqlInjector implements ISqlInjector {
      */
     protected String sqlSelectObjsColumns(TableInfo table) {
         StringBuilder columns = new StringBuilder();
-		/*
+        /*
 		 * 普通查询
 		 */
         columns.append("<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>");

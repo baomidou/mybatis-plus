@@ -23,12 +23,11 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import com.baomidou.mybatisplus.entity.Columns;
-
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.baomidou.mybatisplus.entity.Column;
+import com.baomidou.mybatisplus.entity.Columns;
 import com.baomidou.mybatisplus.enums.SqlLike;
 import com.baomidou.mybatisplus.mapper.Condition;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
@@ -127,7 +126,7 @@ public class EntityWrapperTest {
 
     @Test
     public void testNoTSQL() {
-		/*
+        /*
 		 * 实体 filter orderby
 		 */
         ew.setEntity(new User(1));

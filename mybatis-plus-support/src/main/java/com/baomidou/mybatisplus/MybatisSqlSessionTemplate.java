@@ -34,9 +34,9 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.MyBatisExceptionTranslator;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.dao.support.PersistenceExceptionTranslator;
+import org.springframework.util.Assert;
 
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import org.springframework.util.Assert;
 
 /**
  * Copy SqlSessionTemplate

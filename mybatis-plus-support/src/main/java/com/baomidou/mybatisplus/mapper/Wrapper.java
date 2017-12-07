@@ -120,6 +120,7 @@ public abstract class Wrapper<T> implements Serializable {
      * 使用字符串数组封装sqlSelect，便于在不需要指定 AS 的情况下通过实体类自动生成的列静态字段快速组装 sqlSelect，<br/>
      * 减少手动录入的错误率
      * </p>
+     *
      * @param columns 字段
      * @return
      */
