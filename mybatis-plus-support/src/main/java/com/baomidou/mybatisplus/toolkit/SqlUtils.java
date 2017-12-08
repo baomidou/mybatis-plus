@@ -112,7 +112,7 @@ public class SqlUtils {
                 if (StringUtils.isNotEmpty(cs)) {
                     builder.append(cs).append(orderWord);
                 }
-                if (++i != columns.size()) {
+                if (++i != columns.size() && StringUtils.isNotEmpty(cs)) {
                     builder.append(", ");
                 }
             }
