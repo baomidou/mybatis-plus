@@ -85,12 +85,13 @@ public class SqlUtils {
     public static String concatOrderBy(String originalSql, Pagination page, boolean orderBy) {
         if (orderBy && page.isOpenSort()) {
             StringBuilder buildSql = new StringBuilder(originalSql);
-            StringBuilder orderBuilder = new StringBuilder();
-            concatOrderBuilder(page.getAsc(), orderBuilder, " ASC ");
-            concatOrderBuilder(page.getDesc(), orderBuilder, " DESC ");
-            String orderStr = orderBuilder.toString();
-            if (StringUtils.isNotEmpty(orderStr)) {
-                buildSql.append(" ORDER BY ").append(orderStr);
+            String ascStr = concatOrderBuilder(page.getAsc(), " ASC");
+            String descStr = concatOrderBuilder(page.getDesc(), " DESC");
+            if (StringUtils.isNotEmpty(ascStr) && StringUtils.isNotEmpty(descStr)) {
+                ascStr += ", ";
+            }
+            if (StringUtils.isNotEmpty(ascStr) || StringUtils.isNotEmpty(descStr)) {
+                buildSql.append(" ORDER BY ").append(ascStr).append(descStr);
             }
             return buildSql.toString();
         }
@@ -101,18 +102,23 @@ public class SqlUtils {
      * 拼接多个排序方法
      *
      * @param columns
-     * @param orderBuilder
      * @param orderWord
      */
-    private static void concatOrderBuilder(List<String> columns, StringBuilder orderBuilder, String orderWord) {
+    private static String concatOrderBuilder(List<String> columns, String orderWord) {
         if (CollectionUtils.isNotEmpty(columns)) {
-            for (String str : columns) {
-                if (StringUtils.isNotEmpty(str)) {
-                    orderBuilder.append(str).append(orderWord);
+            StringBuilder builder = new StringBuilder(16);
+            for (int i = 0; i < columns.size(); ) {
+                String cs = columns.get(i);
+                if (StringUtils.isNotEmpty(cs)) {
+                    builder.append(cs).append(orderWord);
                 }
-
+                if (++i != columns.size()) {
+                    builder.append(", ");
+                }
             }
+            return builder.toString();
         }
+        return StringUtils.EMPTY;
     }
 
     /**

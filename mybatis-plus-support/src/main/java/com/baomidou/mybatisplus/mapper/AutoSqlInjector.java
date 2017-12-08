@@ -754,7 +754,7 @@ public class AutoSqlInjector implements ISqlInjector {
      * @return
      */
     protected String convertIfTag(boolean ignored, TableFieldInfo fieldInfo, String prefix, boolean close) {
-		/* 忽略策略 */
+        /* 忽略策略 */
         FieldStrategy fieldStrategy = fieldInfo.getFieldStrategy();
         if (fieldStrategy == FieldStrategy.IGNORED) {
             if (ignored) {

@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -866,7 +865,7 @@ public abstract class Wrapper<T> implements Serializable {
      * @param columns 需要排序的集合
      * @return this
      */
-    public Wrapper<T> orderDesc(List<String> columns) {
+    public Wrapper<T> orderDesc(Collection<String> columns) {
         return orderBy(true, columns, false);
     }
 
@@ -1194,7 +1193,7 @@ public abstract class Wrapper<T> implements Serializable {
      *
      * @param condition 拼接的前置条件
      * @param column    字段名称
-     * @param value     匹配值 List集合
+     * @param value     匹配值 集合
      * @return this
      */
     public Wrapper<T> in(boolean condition, String column, Collection<?> value) {
@@ -1210,7 +1209,7 @@ public abstract class Wrapper<T> implements Serializable {
      * </p>
      *
      * @param column 字段名称
-     * @param value  匹配值 List集合
+     * @param value  匹配值 集合
      * @return this
      */
     public Wrapper<T> in(String column, Collection<?> value) {
@@ -1224,7 +1223,7 @@ public abstract class Wrapper<T> implements Serializable {
      *
      * @param condition 拼接的前置条件
      * @param column    字段名称
-     * @param value     匹配值 List集合
+     * @param value     匹配值 集合
      * @return this
      */
     public Wrapper<T> notIn(boolean condition, String column, Collection<?> value) {
@@ -1240,7 +1239,7 @@ public abstract class Wrapper<T> implements Serializable {
      * </p>
      *
      * @param column 字段名称
-     * @param value  匹配值 List集合
+     * @param value  匹配值 集合
      * @return this
      */
     public Wrapper<T> notIn(String column, Collection<?> value) {
@@ -1313,7 +1312,7 @@ public abstract class Wrapper<T> implements Serializable {
      * </p>
      *
      * @param column 字段名称
-     * @param value  集合List
+     * @param value  集合
      * @param isNot  是否为NOT IN操作
      */
     private String inExpression(String column, Collection<?> value, boolean isNot) {
