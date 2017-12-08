@@ -127,7 +127,7 @@ public class EntityWrapperTest {
     @Test
     public void testNoTSQL() {
         /*
-		 * 实体 filter orderby
+         * 实体 filter orderby
 		 */
         ew.setEntity(new User(1));
         ew.addFilter("name={0}", "'123'").orderBy("id,name");

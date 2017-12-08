@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.enums.SqlLike;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
@@ -81,13 +83,36 @@ public class SqlUtils {
      * @return
      */
     public static String concatOrderBy(String originalSql, Pagination page, boolean orderBy) {
-        if (orderBy && StringUtils.isNotEmpty(page.getOrderByField()) && page.isOpenSort()) {
+        if (orderBy && page.isOpenSort()) {
             StringBuilder buildSql = new StringBuilder(originalSql);
-            buildSql.append(" ORDER BY ").append(page.getOrderByField());
-            buildSql.append(page.isAsc() ? " ASC " : " DESC ");
+            StringBuilder orderBuilder = new StringBuilder();
+            concatOrderBuilder(page.getAsc(), orderBuilder, " ASC ");
+            concatOrderBuilder(page.getDesc(), orderBuilder, " DESC ");
+            String orderStr = orderBuilder.toString();
+            if (StringUtils.isNotEmpty(orderStr)) {
+                buildSql.append(" ORDER BY ").append(orderStr);
+            }
             return buildSql.toString();
         }
         return originalSql;
+    }
+
+    /**
+     * 拼接多个排序方法
+     *
+     * @param columns
+     * @param orderBuilder
+     * @param orderWord
+     */
+    private static void concatOrderBuilder(List<String> columns, StringBuilder orderBuilder, String orderWord) {
+        if (CollectionUtils.isNotEmpty(columns)) {
+            for (String str : columns) {
+                if (StringUtils.isNotEmpty(str)) {
+                    orderBuilder.append(str).append(orderWord);
+                }
+
+            }
+        }
     }
 
     /**

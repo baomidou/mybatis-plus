@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -818,12 +819,55 @@ public abstract class Wrapper<T> implements Serializable {
      * SQL中orderby关键字跟的条件语句，可根据变更动态排序
      * </p>
      *
+     * @param condition 拼接的前置条件
+     * @param columns   SQL 中的 order by 语句，无需输入 Order By 关键字
+     * @param isAsc     是否为升序
+     * @return this
+     */
+    public Wrapper<T> orderBy(boolean condition, Collection<String> columns, boolean isAsc) {
+        if (condition && CollectionUtils.isNotEmpty(columns)) {
+            for (String column : columns) {
+                orderBy(condition, column, isAsc);
+            }
+        }
+        return this;
+    }
+
+    /**
+     * <p>
+     * SQL中orderby关键字跟的条件语句，可根据变更动态排序
+     * </p>
+     *
      * @param columns SQL 中的 order by 语句，无需输入 Order By 关键字
      * @param isAsc   是否为升序
      * @return this
      */
     public Wrapper<T> orderBy(String columns, boolean isAsc) {
         return orderBy(true, columns, isAsc);
+    }
+
+    /**
+     * <p>
+     * 批量根据ASC排序
+     * </p>
+     *
+     * @param columns 需要排序的集合
+     * @return this
+     */
+    public Wrapper<T> orderAsc(Collection<String> columns) {
+        return orderBy(true, columns, true);
+    }
+
+    /**
+     * <p>
+     * 批量根据DESC排序
+     * </p>
+     *
+     * @param columns 需要排序的集合
+     * @return this
+     */
+    public Wrapper<T> orderDesc(List<String> columns) {
+        return orderBy(true, columns, false);
     }
 
     /**
