@@ -55,7 +55,7 @@ public class Pagination extends RowBounds implements Serializable {
     /**
      * 每页显示条数，默认 10
      */
-    private transient int size = 10;
+    private int size = 10;
 
     /**
      * 总页数
@@ -93,7 +93,7 @@ public class Pagination extends RowBounds implements Serializable {
     /**
      * 是否为升序 ASC（ 默认： true ）
      */
-    private transient boolean isAsc = true;
+    private transient boolean asc = true;
 
     public Pagination() {
         super();
@@ -212,11 +212,11 @@ public class Pagination extends RowBounds implements Serializable {
     }
 
     public boolean isAsc() {
-        return isAsc;
+        return asc;
     }
 
-    public Pagination setAsc(boolean isAsc) {
-        this.isAsc = isAsc;
+    public Pagination setAsc(boolean asc) {
+        this.asc = asc;
         return this;
     }
 
