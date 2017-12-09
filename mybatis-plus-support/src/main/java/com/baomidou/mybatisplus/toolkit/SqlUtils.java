@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.enums.SqlLike;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
@@ -81,13 +83,42 @@ public class SqlUtils {
      * @return
      */
     public static String concatOrderBy(String originalSql, Pagination page, boolean orderBy) {
-        if (orderBy && StringUtils.isNotEmpty(page.getOrderByField()) && page.isOpenSort()) {
+        if (orderBy && page.isOpenSort()) {
             StringBuilder buildSql = new StringBuilder(originalSql);
-            buildSql.append(" ORDER BY ").append(page.getOrderByField());
-            buildSql.append(page.isAsc() ? " ASC " : " DESC ");
+            String ascStr = concatOrderBuilder(page.getAsc(), " ASC");
+            String descStr = concatOrderBuilder(page.getDesc(), " DESC");
+            if (StringUtils.isNotEmpty(ascStr) && StringUtils.isNotEmpty(descStr)) {
+                ascStr += ", ";
+            }
+            if (StringUtils.isNotEmpty(ascStr) || StringUtils.isNotEmpty(descStr)) {
+                buildSql.append(" ORDER BY ").append(ascStr).append(descStr);
+            }
             return buildSql.toString();
         }
         return originalSql;
+    }
+
+    /**
+     * 拼接多个排序方法
+     *
+     * @param columns
+     * @param orderWord
+     */
+    private static String concatOrderBuilder(List<String> columns, String orderWord) {
+        if (CollectionUtils.isNotEmpty(columns)) {
+            StringBuilder builder = new StringBuilder(16);
+            for (int i = 0; i < columns.size(); ) {
+                String cs = columns.get(i);
+                if (StringUtils.isNotEmpty(cs)) {
+                    builder.append(cs).append(orderWord);
+                }
+                if (++i != columns.size() && StringUtils.isNotEmpty(cs)) {
+                    builder.append(", ");
+                }
+            }
+            return builder.toString();
+        }
+        return StringUtils.EMPTY;
     }
 
     /**

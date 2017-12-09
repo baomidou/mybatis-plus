@@ -818,12 +818,55 @@ public abstract class Wrapper<T> implements Serializable {
      * SQL中orderby关键字跟的条件语句，可根据变更动态排序
      * </p>
      *
+     * @param condition 拼接的前置条件
+     * @param columns   SQL 中的 order by 语句，无需输入 Order By 关键字
+     * @param isAsc     是否为升序
+     * @return this
+     */
+    public Wrapper<T> orderBy(boolean condition, Collection<String> columns, boolean isAsc) {
+        if (condition && CollectionUtils.isNotEmpty(columns)) {
+            for (String column : columns) {
+                orderBy(condition, column, isAsc);
+            }
+        }
+        return this;
+    }
+
+    /**
+     * <p>
+     * SQL中orderby关键字跟的条件语句，可根据变更动态排序
+     * </p>
+     *
      * @param columns SQL 中的 order by 语句，无需输入 Order By 关键字
      * @param isAsc   是否为升序
      * @return this
      */
     public Wrapper<T> orderBy(String columns, boolean isAsc) {
         return orderBy(true, columns, isAsc);
+    }
+
+    /**
+     * <p>
+     * 批量根据ASC排序
+     * </p>
+     *
+     * @param columns 需要排序的集合
+     * @return this
+     */
+    public Wrapper<T> orderAsc(Collection<String> columns) {
+        return orderBy(true, columns, true);
+    }
+
+    /**
+     * <p>
+     * 批量根据DESC排序
+     * </p>
+     *
+     * @param columns 需要排序的集合
+     * @return this
+     */
+    public Wrapper<T> orderDesc(Collection<String> columns) {
+        return orderBy(true, columns, false);
     }
 
     /**
@@ -1150,7 +1193,7 @@ public abstract class Wrapper<T> implements Serializable {
      *
      * @param condition 拼接的前置条件
      * @param column    字段名称
-     * @param value     匹配值 List集合
+     * @param value     匹配值 集合
      * @return this
      */
     public Wrapper<T> in(boolean condition, String column, Collection<?> value) {
@@ -1166,7 +1209,7 @@ public abstract class Wrapper<T> implements Serializable {
      * </p>
      *
      * @param column 字段名称
-     * @param value  匹配值 List集合
+     * @param value  匹配值 集合
      * @return this
      */
     public Wrapper<T> in(String column, Collection<?> value) {
@@ -1180,7 +1223,7 @@ public abstract class Wrapper<T> implements Serializable {
      *
      * @param condition 拼接的前置条件
      * @param column    字段名称
-     * @param value     匹配值 List集合
+     * @param value     匹配值 集合
      * @return this
      */
     public Wrapper<T> notIn(boolean condition, String column, Collection<?> value) {
@@ -1196,7 +1239,7 @@ public abstract class Wrapper<T> implements Serializable {
      * </p>
      *
      * @param column 字段名称
-     * @param value  匹配值 List集合
+     * @param value  匹配值 集合
      * @return this
      */
     public Wrapper<T> notIn(String column, Collection<?> value) {
@@ -1269,7 +1312,7 @@ public abstract class Wrapper<T> implements Serializable {
      * </p>
      *
      * @param column 字段名称
-     * @param value  集合List
+     * @param value  集合
      * @param isNot  是否为NOT IN操作
      */
     private String inExpression(String column, Collection<?> value, boolean isNot) {

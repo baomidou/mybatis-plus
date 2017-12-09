@@ -670,7 +670,7 @@ public class AutoSqlInjector implements ISqlInjector {
     protected String sqlSelectObjsColumns(TableInfo table) {
         StringBuilder columns = new StringBuilder();
         /*
-		 * 普通查询
+         * 普通查询
 		 */
         columns.append("<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>");
         // 主键处理
@@ -754,7 +754,7 @@ public class AutoSqlInjector implements ISqlInjector {
      * @return
      */
     protected String convertIfTag(boolean ignored, TableFieldInfo fieldInfo, String prefix, boolean close) {
-		/* 忽略策略 */
+        /* 忽略策略 */
         FieldStrategy fieldStrategy = fieldInfo.getFieldStrategy();
         if (fieldStrategy == FieldStrategy.IGNORED) {
             if (ignored) {

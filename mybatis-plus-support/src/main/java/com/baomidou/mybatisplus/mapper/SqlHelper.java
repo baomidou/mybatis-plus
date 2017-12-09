@@ -30,7 +30,6 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.toolkit.MapUtils;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**
@@ -194,8 +193,9 @@ public class SqlHelper {
             wrapper = Condition.create();
         }
         // 排序
-        if (page.isOpenSort() && StringUtils.isNotEmpty(page.getOrderByField())) {
-            wrapper.orderBy(page.getOrderByField(), page.isAsc());
+        if (page.isOpenSort()) {
+            wrapper.orderAsc(page.getAsc());
+            wrapper.orderDesc(page.getDesc());
         }
         // MAP 参数查询
         if (MapUtils.isNotEmpty(page.getCondition())) {
