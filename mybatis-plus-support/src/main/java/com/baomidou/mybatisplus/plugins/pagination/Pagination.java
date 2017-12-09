@@ -57,7 +57,7 @@ public class Pagination extends RowBounds implements Serializable {
     /**
      * 每页显示条数，默认 10
      */
-    private transient int size = 10;
+    private int size = 10;
 
     /**
      * 总页数
@@ -101,7 +101,7 @@ public class Pagination extends RowBounds implements Serializable {
      * @see #asc
      * @see #desc
      */
-    private transient boolean isAsc = true;
+    private transient boolean ascSort = true;
 
     /**
      * <p>
@@ -243,7 +243,7 @@ public class Pagination extends RowBounds implements Serializable {
     }
 
     public List<String> getAsc() {
-        return orders(isAsc, asc);
+        return orders(ascSort, asc);
     }
 
     private List<String> orders(boolean condition, List<String> columns) {
@@ -276,15 +276,15 @@ public class Pagination extends RowBounds implements Serializable {
      */
     @Deprecated
     public boolean isAsc() {
-        return isAsc;
+        return ascSort;
     }
 
     /**
      * @see #asc
      * @see #desc
      */
-    public Pagination setAsc(boolean isAsc) {
-        this.isAsc = isAsc;
+    public Pagination setAsc(boolean ascSort) {
+        this.ascSort = ascSort;
         return this;
     }
 
