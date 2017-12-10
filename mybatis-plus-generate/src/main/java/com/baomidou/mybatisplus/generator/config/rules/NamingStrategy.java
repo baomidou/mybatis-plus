@@ -41,11 +41,11 @@ public enum NamingStrategy {
             return "";
         }
         String tempName = name;
-        StringBuilder result = new StringBuilder();
-        // 大写数字下划线组成转为小写
-        if (StringUtils.isCapitalMode(name)) {
+        // 大写数字下划线组成转为小写 , 允许混合模式转为小写
+        if (StringUtils.isCapitalMode(name) || StringUtils.isMixedMode(name)) {
             tempName = name.toLowerCase();
         }
+        StringBuilder result = new StringBuilder();
         // 用下划线将原始字符串分割
         String camels[] = tempName.split(ConstVal.UNDERLINE);
         for (String camel : camels) {
