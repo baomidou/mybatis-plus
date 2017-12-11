@@ -17,6 +17,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.baomidou.mybatisplus.test.h2.base.H2Test;
 import com.baomidou.mybatisplus.test.h2.entity.mapper.H2uuidMapper;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2uuid;
 

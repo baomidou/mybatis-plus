@@ -1,14 +1,17 @@
-package com.baomidou.mybatisplus.test.h2;
+package com.baomidou.mybatisplus.test.h2.base;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.junit.Assert;
+
+import com.baomidou.mybatisplus.test.h2.H2UserNoOptLockTest;
 
 /**
  * <p>
@@ -30,6 +33,15 @@ public class H2Test {
                 stmt.execute(line.replace(";", ""));
             }
         }
+    }
+
+    public static void initData(Connection conn) throws SQLException, IOException {
+        String createTableSql = readFile("user.ddl.sql");
+        Statement stmt = conn.createStatement();
+        stmt.execute(createTableSql);
+        stmt.execute("truncate table h2user");
+        executeSql(stmt, "user.insert.sql");
+        conn.commit();
     }
 
     public static String readFile(String filename) {

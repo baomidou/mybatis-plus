@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +22,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.test.h2.base.H2Test;
 import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserNoVersionMapper;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2UserNoVersion;
 import com.baomidou.mybatisplus.test.h2.service.IH2UserNoVersionService;
@@ -51,12 +51,7 @@ public class H2UserNoVersionTest extends H2Test {
         ApplicationContext context = new ClassPathXmlApplicationContext("classpath:h2/spring-test-h2.xml");
         DataSource ds = (DataSource) context.getBean("dataSource");
         try (Connection conn = ds.getConnection()) {
-            String createTableSql = readFile("user.ddl.sql");
-            Statement stmt = conn.createStatement();
-            stmt.execute(createTableSql);
-            stmt.execute("truncate table h2user");
-            executeSql(stmt, "user.insert.sql");
-            conn.commit();
+            initData(conn);
         }
     }
 
