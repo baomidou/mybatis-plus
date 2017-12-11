@@ -263,7 +263,7 @@ public class Pagination extends RowBounds implements Serializable {
     }
 
     public List<String> getDesc() {
-        return orders(!isAsc(), desc);
+        return orders(!isAscSort(), desc);
     }
 
     public void setDesc(List<String> desc) {
@@ -275,7 +275,7 @@ public class Pagination extends RowBounds implements Serializable {
      * @see #desc
      */
     @Deprecated
-    public boolean isAsc() {
+    public boolean isAscSort() {
         return ascSort;
     }
 
@@ -283,7 +283,7 @@ public class Pagination extends RowBounds implements Serializable {
      * @see #asc
      * @see #desc
      */
-    public Pagination setAsc(boolean ascSort) {
+    public Pagination setAscSort(boolean ascSort) {
         this.ascSort = ascSort;
         return this;
     }
