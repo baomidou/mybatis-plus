@@ -1,6 +1,34 @@
 ﻿# CHANGELOG
 
 
+## [v2.1.7] 2017.12.11 代号：清风徐来 ， 该版本号存在分页 asc bug 请改为 2.1.7-SNAPSHOT  
+- 枚举处理：基本类型，Number类型，String类型
+- IGDRW:源码注释错误，容易给人误导 注释错误问题
+- 炮灰 PR !42:添加分页构造方法重载 添加分页构造方法重载
+- 代码生成 > oracle > 解决超出最大游标的问题
+- fixed gitee IGNL9
+- k 神 一大波 testcase 来袭
+- 使用transient关键字去除Page中部分字段参与序列化
+- 去除无效日志
+- fix #IGI3H:selectBatchIds 参数改为Collection类型
+- bugfix for logic delete sql injector
+- 添加多个排序字段支持
+- isAsc 改为 ascSort 不忽略 size
+- fixed github #185:2.0.2版本 自增主键 批量插入问题 pr
+- 其他优化
+
+
+## [v2.1.6] 2017.11.22 代号：小秋秋之吻
+- 模块拆分为 support core generate 代码生成分离可选择依赖
+- 解决 gitee issue IFX30 拆分 mybatis-plus-support 包支持
+- 解决 gitee issue IGAPX 通用枚举 bigdecimal 类型映射
+- druid补充,填充字段修改
+- 修复 kotlin 代码生成部分逻辑 Bug
+- 合并 gitee pr 40 updateAllColumn****等方法排除fill = FieldFill.INSERT注释的字段 感谢 Elsif 
+- 构造模式设置 kotlin 修改
+- Sql 工具类反射实例优化
+- 其他优化
+
 ## [v2.1.6] 2017.11.22 代号：小秋秋之吻
 - 模块拆分为 support core generate 代码生成分离可选择依赖
 - 解决 gitee issue IFX30 拆分 mybatis-plus-support 包支持
