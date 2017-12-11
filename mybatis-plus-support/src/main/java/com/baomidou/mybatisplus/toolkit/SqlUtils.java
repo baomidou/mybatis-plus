@@ -85,8 +85,8 @@ public class SqlUtils {
     public static String concatOrderBy(String originalSql, Pagination page, boolean orderBy) {
         if (orderBy && page.isOpenSort()) {
             StringBuilder buildSql = new StringBuilder(originalSql);
-            String ascStr = concatOrderBuilder(page.getAsc(), " ASC");
-            String descStr = concatOrderBuilder(page.getDesc(), " DESC");
+            String ascStr = concatOrderBuilder(page.getAscs(), " ASC");
+            String descStr = concatOrderBuilder(page.getDescs(), " DESC");
             if (StringUtils.isNotEmpty(ascStr) && StringUtils.isNotEmpty(descStr)) {
                 ascStr += ", ";
             }

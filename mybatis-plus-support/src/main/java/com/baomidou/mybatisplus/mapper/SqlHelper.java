@@ -194,8 +194,8 @@ public class SqlHelper {
         }
         // 排序
         if (page.isOpenSort()) {
-            wrapper.orderAsc(page.getAsc());
-            wrapper.orderDesc(page.getDesc());
+            wrapper.orderAsc(page.getAscs());
+            wrapper.orderDesc(page.getDescs());
         }
         // MAP 参数查询
         if (MapUtils.isNotEmpty(page.getCondition())) {
