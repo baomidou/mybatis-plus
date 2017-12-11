@@ -87,19 +87,19 @@ public class Pagination extends RowBounds implements Serializable {
      * SQL 排序 ASC 集合
      * </p>
      */
-    private transient List<String> asc;
+    private transient List<String> ascs;
     /**
      * <p>
      * SQL 排序 DESC 集合
      * </p>
      */
-    private transient List<String> desc;
+    private transient List<String> descs;
 
     /**
      * 是否为升序 ASC（ 默认： true ）
      *
-     * @see #asc
-     * @see #desc
+     * @see #ascs
+     * @see #descs
      */
     private transient boolean ascSort = true;
 
@@ -111,8 +111,8 @@ public class Pagination extends RowBounds implements Serializable {
      * DESC 表示按倒序排序(即：从大到小排序)<br>
      * ASC 表示按正序排序(即：从小到大排序)
      *
-     * @see #asc
-     * @see #desc
+     * @see #ascs
+     * @see #descs
      * </p>
      */
     private transient String orderByField;
@@ -214,8 +214,8 @@ public class Pagination extends RowBounds implements Serializable {
     }
 
     /**
-     * @see #asc
-     * @see #desc
+     * @see #ascs
+     * @see #descs
      */
     @Deprecated
     public String getOrderByField() {
@@ -223,8 +223,8 @@ public class Pagination extends RowBounds implements Serializable {
     }
 
     /**
-     * @see #asc
-     * @see #desc
+     * @see #ascs
+     * @see #descs
      */
     public Pagination setOrderByField(String orderByField) {
         if (StringUtils.isNotEmpty(orderByField)) {
@@ -242,8 +242,8 @@ public class Pagination extends RowBounds implements Serializable {
         return this;
     }
 
-    public List<String> getAsc() {
-        return orders(ascSort, asc);
+    public List<String> getAscs() {
+        return orders(ascSort, ascs);
     }
 
     private List<String> orders(boolean condition, List<String> columns) {
@@ -258,32 +258,32 @@ public class Pagination extends RowBounds implements Serializable {
         return columns;
     }
 
-    public void setAsc(List<String> asc) {
-        this.asc = asc;
+    public void setAscs(List<String> ascs) {
+        this.ascs = ascs;
     }
 
-    public List<String> getDesc() {
-        return orders(!isAscSort(), desc);
+    public List<String> getDescs() {
+        return orders(!isAsc(), descs);
     }
 
-    public void setDesc(List<String> desc) {
-        this.desc = desc;
+    public void setDescs(List<String> descs) {
+        this.descs = descs;
     }
 
     /**
-     * @see #asc
-     * @see #desc
+     * @see #ascs
+     * @see #descs
      */
     @Deprecated
-    public boolean isAscSort() {
+    public boolean isAsc() {
         return ascSort;
     }
 
     /**
-     * @see #asc
-     * @see #desc
+     * @see #ascs
+     * @see #descs
      */
-    public Pagination setAscSort(boolean ascSort) {
+    public Pagination setAsc(boolean ascSort) {
         this.ascSort = ascSort;
         return this;
     }

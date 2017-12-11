@@ -58,7 +58,7 @@ public class Page<T> extends Pagination {
 
     public Page(int current, int size, String orderByField, boolean ascSort) {
         this(current, size, orderByField);
-        this.setAscSort(ascSort);
+        this.setAsc(ascSort);
     }
 
     public List<T> getRecords() {
