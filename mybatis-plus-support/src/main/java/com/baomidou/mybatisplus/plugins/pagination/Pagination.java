@@ -139,6 +139,8 @@ public class Pagination extends RowBounds implements Serializable {
 
     public Pagination(int current, int size, boolean searchCount, boolean openSort) {
         super(offsetCurrent(current, size), size);
+        setOffset(offsetCurrent(current, size));
+        setLimit(size);
         if (current > 1) {
             this.current = current;
         }
@@ -286,6 +288,24 @@ public class Pagination extends RowBounds implements Serializable {
     public Pagination setAsc(boolean ascSort) {
         this.ascSort = ascSort;
         return this;
+    }
+
+    @Override
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
+    @Override
+    public int getLimit() {
+        return limit;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
     }
 
     @Override
