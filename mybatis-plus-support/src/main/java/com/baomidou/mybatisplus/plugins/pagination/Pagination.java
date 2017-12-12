@@ -101,7 +101,7 @@ public class Pagination extends RowBounds implements Serializable {
      * @see #ascs
      * @see #descs
      */
-    private transient boolean ascSort = true;
+    private transient boolean isAsc = true;
 
     /**
      * <p>
@@ -245,7 +245,7 @@ public class Pagination extends RowBounds implements Serializable {
     }
 
     public List<String> getAscs() {
-        return orders(ascSort, ascs);
+        return orders(isAsc, ascs);
     }
 
     private List<String> orders(boolean condition, List<String> columns) {
@@ -278,15 +278,15 @@ public class Pagination extends RowBounds implements Serializable {
      */
     @Deprecated
     public boolean isAsc() {
-        return ascSort;
+        return isAsc;
     }
 
     /**
      * @see #ascs
      * @see #descs
      */
-    public Pagination setAsc(boolean ascSort) {
-        this.ascSort = ascSort;
+    public Pagination setAsc(boolean isAsc) {
+        this.isAsc = isAsc;
         return this;
     }
 

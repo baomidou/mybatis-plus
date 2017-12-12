@@ -13,7 +13,6 @@
 - fix #IGI3H:selectBatchIds 参数改为Collection类型
 - bugfix for logic delete sql injector
 - 添加多个排序字段支持
-- isAsc 改为 ascSort 不忽略 size
 - fixed github #185:2.0.2版本 自增主键 批量插入问题 pr
 - 其他优化
 
