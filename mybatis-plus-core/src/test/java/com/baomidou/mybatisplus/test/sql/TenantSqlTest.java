@@ -40,10 +40,7 @@ public class TenantSqlTest {
 
             @Override
             public boolean doTableFilter(String tableName) {
-                if ("user".equals(tableName)) {
-                    return true;
-                }
-                return false;
+                return "user".equals(tableName);
             }
         });
     }

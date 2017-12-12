@@ -1,5 +1,5 @@
 /**
- * Copyright 2009-2016 the original author or authors.
+ * Copyright 2009-2017 the original author or authors.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -108,21 +108,24 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
     private final Set<Class<? extends Annotation>> sqlAnnotationTypes = new HashSet<>();
     private final Set<Class<? extends Annotation>> sqlProviderAnnotationTypes = new HashSet<>();
 
-    private Configuration configuration;
-    private MapperBuilderAssistant assistant;
-    private Class<?> type;
+    private final Configuration configuration;
+    private final MapperBuilderAssistant assistant;
+    private final Class<?> type;
 
     public MybatisMapperAnnotationBuilder(Configuration configuration, Class<?> type) {
-        // TODO 执行父类
+        // 执行父类
         super(configuration, type);
+
         String resource = type.getName().replace('.', '/') + ".java (best guess)";
         this.assistant = new MapperBuilderAssistant(configuration, resource);
         this.configuration = configuration;
         this.type = type;
+
         sqlAnnotationTypes.add(Select.class);
         sqlAnnotationTypes.add(Insert.class);
         sqlAnnotationTypes.add(Update.class);
         sqlAnnotationTypes.add(Delete.class);
+
         sqlProviderAnnotationTypes.add(SelectProvider.class);
         sqlProviderAnnotationTypes.add(InsertProvider.class);
         sqlProviderAnnotationTypes.add(UpdateProvider.class);
@@ -483,7 +486,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                 return buildSqlSourceFromStrings(strings, parameterType, languageDriver);
             } else if (sqlProviderAnnotationType != null) {
                 Annotation sqlProviderAnnotation = method.getAnnotation(sqlProviderAnnotationType);
-                return new ProviderSqlSource(assistant.getConfiguration(), sqlProviderAnnotation);
+                return new ProviderSqlSource(assistant.getConfiguration(), sqlProviderAnnotation, type, method);
             }
             return null;
         } catch (Exception e) {

@@ -265,7 +265,7 @@ public class Pagination extends RowBounds implements Serializable {
     }
 
     public List<String> getDescs() {
-        return orders(!isAsc(), descs);
+        return orders(!isAsc, descs);
     }
 
     public void setDescs(List<String> descs) {
