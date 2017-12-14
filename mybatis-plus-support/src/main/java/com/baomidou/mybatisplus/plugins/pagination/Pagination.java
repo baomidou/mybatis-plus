@@ -260,16 +260,18 @@ public class Pagination extends RowBounds implements Serializable {
         return columns;
     }
 
-    public void setAscs(List<String> ascs) {
+    public Pagination setAscs(List<String> ascs) {
         this.ascs = ascs;
+        return this;
     }
 
     public List<String> getDescs() {
         return orders(!isAsc, descs);
     }
 
-    public void setDescs(List<String> descs) {
+    public Pagination setDescs(List<String> descs) {
         this.descs = descs;
+        return this;
     }
 
     /**
@@ -295,8 +297,9 @@ public class Pagination extends RowBounds implements Serializable {
         return offset;
     }
 
-    public void setOffset(int offset) {
+    public Pagination setOffset(int offset) {
         this.offset = offset;
+        return this;
     }
 
     @Override
@@ -304,8 +307,9 @@ public class Pagination extends RowBounds implements Serializable {
         return limit;
     }
 
-    public void setLimit(int limit) {
+    public Pagination setLimit(int limit) {
         this.limit = limit;
+        return this;
     }
 
     @Override
