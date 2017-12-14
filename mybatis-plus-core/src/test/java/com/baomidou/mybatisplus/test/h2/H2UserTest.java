@@ -25,6 +25,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.baomidou.mybatisplus.entity.Column;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.plugins.pagination.PageHelper;
 import com.baomidou.mybatisplus.test.h2.base.H2Test;
 import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserMapper;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
@@ -125,6 +126,16 @@ public class H2UserTest extends H2Test {
     public void testSelectPage() {
         Page<H2User> page = userService.selectPage(new Page<H2User>(1, 3));
         Assert.assertEquals(3, page.getRecords().size());
+    }
+
+    @Test
+    public void testPageHelper() {
+        PageHelper.startPage(1, 3);
+        List<H2User> userList = userService.selectList(new EntityWrapper<H2User>());
+        System.out.println("total=" + PageHelper.freeTotal());
+        Assert.assertEquals("Should do pagination", 3, userList.size());
+        userList = userService.selectList(new EntityWrapper<H2User>());
+        Assert.assertNotEquals("Should not do pagination", 3, userList.size());
     }
 
     @Test
