@@ -65,8 +65,6 @@ class ${entity} : Serializable {
 
 
 #if(${entityColumnConstant})
- 
-#if(${entityColumnConstant})
     companion object {
 #foreach($field in ${table.fields})
 
