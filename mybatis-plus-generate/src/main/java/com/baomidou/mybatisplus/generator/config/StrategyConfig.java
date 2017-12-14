@@ -15,11 +15,11 @@
  */
 package com.baomidou.mybatisplus.generator.config;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.generator.config.po.TableFill;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
+
+import java.util.List;
 
 /**
  * <p>
@@ -50,6 +50,11 @@ public class StrategyConfig {
      * 表前缀
      */
     private String[] tablePrefix;
+
+    /**
+     * 字段前缀
+     */
+    private String[] fieldPrefix;
 
     /**
      * 自定义继承的Entity类全称，带包名
@@ -385,5 +390,13 @@ public class StrategyConfig {
     public StrategyConfig setTableFillList(List<TableFill> tableFillList) {
         this.tableFillList = tableFillList;
         return this;
+    }
+
+    public String[] getFieldPrefix() {
+        return fieldPrefix;
+    }
+
+    public void setFieldPrefix(String[] fieldPrefix) {
+        this.fieldPrefix = fieldPrefix;
     }
 }
