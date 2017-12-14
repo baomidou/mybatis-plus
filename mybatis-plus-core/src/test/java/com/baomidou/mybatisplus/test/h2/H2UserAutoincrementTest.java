@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import javax.sql.DataSource;
 
@@ -18,6 +17,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.baomidou.mybatisplus.test.h2.base.H2Test;
 import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserMetaobjMapper;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2UserMetaObj;
 import com.baomidou.mybatisplus.test.h2.service.IH2UserMetaobjService;
@@ -46,12 +46,7 @@ public class H2UserAutoincrementTest extends H2Test {
         ApplicationContext context = new ClassPathXmlApplicationContext("classpath:h2/spring-test-h2.xml");
         DataSource ds = (DataSource) context.getBean("dataSource");
         try (Connection conn = ds.getConnection()) {
-            String createTableSql = readFile("user.ddl.sql");
-            Statement stmt = conn.createStatement();
-            stmt.execute(createTableSql);
-            stmt.execute("truncate table h2user");
-            executeSql(stmt, "user.insert.sql");
-            conn.commit();
+            initData(conn);
         }
     }
 

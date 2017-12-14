@@ -87,21 +87,21 @@ public class Pagination extends RowBounds implements Serializable {
      * SQL 排序 ASC 集合
      * </p>
      */
-    private transient List<String> asc;
+    private transient List<String> ascs;
     /**
      * <p>
      * SQL 排序 DESC 集合
      * </p>
      */
-    private transient List<String> desc;
+    private transient List<String> descs;
 
     /**
      * 是否为升序 ASC（ 默认： true ）
      *
-     * @see #asc
-     * @see #desc
+     * @see #ascs
+     * @see #descs
      */
-    private transient boolean ascSort = true;
+    private transient boolean isAsc = true;
 
     /**
      * <p>
@@ -111,8 +111,8 @@ public class Pagination extends RowBounds implements Serializable {
      * DESC 表示按倒序排序(即：从大到小排序)<br>
      * ASC 表示按正序排序(即：从小到大排序)
      *
-     * @see #asc
-     * @see #desc
+     * @see #ascs
+     * @see #descs
      * </p>
      */
     private transient String orderByField;
@@ -139,6 +139,8 @@ public class Pagination extends RowBounds implements Serializable {
 
     public Pagination(int current, int size, boolean searchCount, boolean openSort) {
         super(offsetCurrent(current, size), size);
+        setOffset(offsetCurrent(current, size));
+        setLimit(size);
         if (current > 1) {
             this.current = current;
         }
@@ -214,8 +216,8 @@ public class Pagination extends RowBounds implements Serializable {
     }
 
     /**
-     * @see #asc
-     * @see #desc
+     * @see #ascs
+     * @see #descs
      */
     @Deprecated
     public String getOrderByField() {
@@ -223,8 +225,8 @@ public class Pagination extends RowBounds implements Serializable {
     }
 
     /**
-     * @see #asc
-     * @see #desc
+     * @see #ascs
+     * @see #descs
      */
     public Pagination setOrderByField(String orderByField) {
         if (StringUtils.isNotEmpty(orderByField)) {
@@ -242,8 +244,8 @@ public class Pagination extends RowBounds implements Serializable {
         return this;
     }
 
-    public List<String> getAsc() {
-        return orders(ascSort, asc);
+    public List<String> getAscs() {
+        return orders(isAsc, ascs);
     }
 
     private List<String> orders(boolean condition, List<String> columns) {
@@ -258,33 +260,55 @@ public class Pagination extends RowBounds implements Serializable {
         return columns;
     }
 
-    public void setAsc(List<String> asc) {
-        this.asc = asc;
+    public Pagination setAscs(List<String> ascs) {
+        this.ascs = ascs;
+        return this;
     }
 
-    public List<String> getDesc() {
-        return orders(!isAscSort(), desc);
+    public List<String> getDescs() {
+        return orders(!isAsc, descs);
     }
 
-    public void setDesc(List<String> desc) {
-        this.desc = desc;
+    public Pagination setDescs(List<String> descs) {
+        this.descs = descs;
+        return this;
     }
 
     /**
-     * @see #asc
-     * @see #desc
+     * @see #ascs
+     * @see #descs
      */
     @Deprecated
-    public boolean isAscSort() {
-        return ascSort;
+    public boolean isAsc() {
+        return isAsc;
     }
 
     /**
-     * @see #asc
-     * @see #desc
+     * @see #ascs
+     * @see #descs
      */
-    public Pagination setAscSort(boolean ascSort) {
-        this.ascSort = ascSort;
+    public Pagination setAsc(boolean isAsc) {
+        this.isAsc = isAsc;
+        return this;
+    }
+
+    @Override
+    public int getOffset() {
+        return offset;
+    }
+
+    public Pagination setOffset(int offset) {
+        this.offset = offset;
+        return this;
+    }
+
+    @Override
+    public int getLimit() {
+        return limit;
+    }
+
+    public Pagination setLimit(int limit) {
+        this.limit = limit;
         return this;
     }
 

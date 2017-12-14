@@ -598,7 +598,7 @@ public class ConfigBuilder {
      * @return 根据策略返回处理后的名称
      */
     private String processName(String name, NamingStrategy strategy) {
-        return processName(name, strategy, null);
+        return processName(name, strategy, this.strategyConfig.getFieldPrefix());
     }
 
     /**

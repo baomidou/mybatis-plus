@@ -64,8 +64,8 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
     private final TypeHandlerRegistry typeHandlerRegistry;
     private final MappedStatement mappedStatement;
     private final Object parameterObject;
-    private BoundSql boundSql;
-    private Configuration configuration;
+    private final BoundSql boundSql;
+    private final Configuration configuration;
 
     public MybatisDefaultParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
         super(mappedStatement, processBatch(mappedStatement, parameterObject), boundSql);

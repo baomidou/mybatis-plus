@@ -64,9 +64,9 @@ import org.apache.ibatis.type.JdbcType;
 public class MybatisXMLConfigBuilder extends BaseBuilder {
 
     private boolean parsed;
-    private XPathParser parser;
+    private final XPathParser parser;
     private String environment;
-    private ReflectorFactory localReflectorFactory = new DefaultReflectorFactory();
+    private final ReflectorFactory localReflectorFactory = new DefaultReflectorFactory();
 
     public MybatisXMLConfigBuilder(Reader reader) {
         this(reader, null, null);
@@ -364,7 +364,6 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
         }
     }
 
-    // TODO 这里需要优化
     private void mapperElement(XNode parent) throws Exception {
         /**
          * 定义集合 用来分类放置mybatis的Mapper与XML 按顺序依次遍历

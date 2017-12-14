@@ -70,12 +70,12 @@ public class PaginationInterceptorTest {
         Assert.assertTrue(!result2.getRecords().isEmpty());
         // 没有orderby但是设置了倒叙
         Page<PageUser> page3 = new Page<>(current, size);
-        page3.setAsc(false);
+//        page3.setAsc(false);
         Page<PageUser> result3 = pageUserService.selectPage(page3);
         Assert.assertTrue(!result3.getRecords().isEmpty());
         // 有orderby设置了倒叙
         Page<PageUser> page4 = new Page<>(current, size, "name");
-        page3.setAsc(false);
+//        page3.setAsc(false);
         Page<PageUser> result4 = pageUserService.selectPage(page4);
         Assert.assertTrue(!result4.getRecords().isEmpty());
     }

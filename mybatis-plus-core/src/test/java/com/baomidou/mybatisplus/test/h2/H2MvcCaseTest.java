@@ -22,7 +22,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.baomidou.mybatisplus.entity.Column;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.test.h2.base.H2Test;
@@ -39,8 +38,8 @@ import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
  * @date 2017/4/1
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
-public class H2UserTest extends H2Test {
+@ContextConfiguration(locations = {"classpath:h2/spring-test-h2-mvc.xml"})
+public class H2MvcCaseTest extends H2Test {
 
     @Autowired
     private IH2UserService userService;
@@ -51,7 +50,7 @@ public class H2UserTest extends H2Test {
     @BeforeClass
     public static void initDB() throws SQLException, IOException {
         @SuppressWarnings("resource")
-        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:h2/spring-test-h2.xml");
+        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:h2/spring-test-h2-mvc.xml");
         DataSource ds = (DataSource) context.getBean("dataSource");
         try (Connection conn = ds.getConnection()) {
             initData(conn);
@@ -481,22 +480,6 @@ public class H2UserTest extends H2Test {
         userMapper.selectUserWithDollarParamInSelectStatememt4Page(param, page);
         Assert.assertNotEquals(0, page.getTotal());
 
-    }
-
-    @Test
-    public void testDistinctColumn() {
-        EntityWrapper<H2User> ew = new EntityWrapper<>();
-        ew.setSqlSelect(Column.create().column("distinct test_type"));//setMapUnderscoreToCamelCase(true)
-        List<H2User> list = userService.selectList(ew);
-        for (H2User u : list) {
-            System.out.println("getTestType=" + u.getTestType());
-            Assert.assertNotNull(u.getTestType());
-        }
-        ew.setSqlSelect("distinct test_type as testType");
-        for (H2User u : userService.selectList(ew)) {
-            System.out.println("testType=" + u.getTestType());
-            Assert.assertNotNull(u.getTestType());
-        }
     }
 
 }

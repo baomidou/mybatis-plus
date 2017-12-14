@@ -809,7 +809,7 @@ public class AutoSqlInjector implements ISqlInjector {
         if (null != table) {
             String resultMap = table.getResultMap();
             if (null != resultMap) {
-				/* 返回 resultMap 映射结果集 */
+                /* 返回 resultMap 映射结果集 */
                 return this.addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.SELECT, null, resultMap, null,
                         new NoKeyGenerator(), null, null);
             }

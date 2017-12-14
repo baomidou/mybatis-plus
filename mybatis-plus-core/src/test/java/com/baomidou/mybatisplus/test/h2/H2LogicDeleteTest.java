@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -21,6 +20,7 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 import com.baomidou.mybatisplus.mapper.Condition;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.test.h2.base.H2Test;
 import com.baomidou.mybatisplus.test.h2.config.ServiceConfig;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2UserLogicDelete;
 import com.baomidou.mybatisplus.test.h2.service.IH2UserLogicDeleteService;
@@ -44,12 +44,7 @@ public class H2LogicDeleteTest extends H2Test {
         context.refresh();
         DataSource ds = (DataSource) context.getBean("dataSource");
         try (Connection conn = ds.getConnection()) {
-            String createTableSql = readFile("user.ddl.sql");
-            Statement stmt = conn.createStatement();
-            stmt.execute(createTableSql);
-            stmt.execute("truncate table h2user");
-            executeSql(stmt, "user.insert.sql");
-            conn.commit();
+            initData(conn);
         }
     }
 
