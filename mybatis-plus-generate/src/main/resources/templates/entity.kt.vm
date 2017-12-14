@@ -65,11 +65,16 @@ class ${entity} : Serializable {
 
 
 #if(${entityColumnConstant})
+ 
+#if(${entityColumnConstant})
+    companion object {
 #foreach($field in ${table.fields})
 
-    val ${field.name.toUpperCase()} : String = "${field.name}"
+        const val ${field.name.toUpperCase()} : String = "${field.name}"
 
 #end
+    }
+
 #end
 #if(${activeRecord})
     override fun pkVal(): Serializable {
