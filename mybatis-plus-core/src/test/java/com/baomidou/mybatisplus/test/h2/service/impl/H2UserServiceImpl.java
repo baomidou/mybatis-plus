@@ -83,4 +83,9 @@ public class H2UserServiceImpl extends ServiceImpl<H2UserMapper, H2User> impleme
     public int selectCountWithParamInSelectItems(Map<String, Object> param) {
         return userMapper.selectCountWithParamInSelectItems(param);
     }
+
+    @Override
+    public List<Map> mySelectMaps() {
+        return userMapper.mySelectMaps();
+    }
 }

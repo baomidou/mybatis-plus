@@ -33,7 +33,8 @@ ext {
             "spring-context-support":"org.springframework:spring-context-support:${springVersion}",
             "spring-jdbc":"org.springframework:spring-jdbc:${springVersion}",
             "spring-tx":"org.springframework:spring-tx:${springVersion}",
-            "druid":"com.alibaba:druid:1.0.29"
+            "druid":"com.alibaba:druid:1.0.29",
+            "fastjson":"com.alibaba:fastjson:1.2.37"
     ]
 }
 

@@ -45,4 +45,6 @@ public interface IH2UserService extends IService<H2User> {
     Page<H2User> queryWithParamInSelectStatememt4Page(Map<String, Object> param, Page<H2User> page);
 
     int selectCountWithParamInSelectItems(Map<String, Object> param);
+
+    List<Map> mySelectMaps();
 }

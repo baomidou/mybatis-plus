@@ -29,4 +29,5 @@ dependencies {
     testCompile rootProject.ext.dependencies["lombok"]
     testCompile rootProject.ext.dependencies["hikaricp"]
     testCompile rootProject.ext.dependencies["druid"]
+    testCompile rootProject.ext.dependencies["fastjson"]
 }
