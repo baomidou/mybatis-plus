@@ -40,9 +40,9 @@ public interface IH2UserService extends IService<H2User> {
 
     int myUpdate(Long id, String name);
 
-    List<H2User> queryWithParamInSelectStatememt(Map<String,Object> param);
+    List<H2User> queryWithParamInSelectStatememt(Map<String, Object> param);
 
-    Page<H2User> queryWithParamInSelectStatememt4Page(Map<String,Object> param, Page<H2User> page);
+    Page<H2User> queryWithParamInSelectStatememt4Page(Map<String, Object> param, Page<H2User> page);
 
-    int selectCountWithParamInSelectItems(Map<String,Object> param);
+    int selectCountWithParamInSelectItems(Map<String, Object> param);
 }

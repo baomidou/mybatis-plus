@@ -94,7 +94,7 @@ public abstract class Model<T extends Model> implements Serializable {
      */
     @Transactional
     public boolean deleteById(Serializable id) {
-        return SqlHelper.retBool(sqlSession().delete(sqlStatement(SqlMethod.DELETE_BY_ID), id));
+        return SqlHelper.delBool(sqlSession().delete(sqlStatement(SqlMethod.DELETE_BY_ID), id));
     }
 
     /**
@@ -137,9 +137,8 @@ public abstract class Model<T extends Model> implements Serializable {
     @Transactional
     public boolean delete(Wrapper wrapper) {
         Map<String, Object> map = new HashMap<>();
-        // delete
         map.put("ew", wrapper);
-        return SqlHelper.retBool(sqlSession().delete(sqlStatement(SqlMethod.DELETE), map));
+        return SqlHelper.delBool(sqlSession().delete(sqlStatement(SqlMethod.DELETE), map));
     }
 
     /**

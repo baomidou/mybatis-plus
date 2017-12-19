@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.mapper;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -93,7 +94,7 @@ public interface BaseMapper<T> {
      * @param idList 主键ID列表
      * @return int
      */
-    Integer deleteBatchIds(List<? extends Serializable> idList);
+    Integer deleteBatchIds(@Param("coll") Collection<? extends Serializable> idList);
 
     /**
      * <p>
@@ -144,7 +145,7 @@ public interface BaseMapper<T> {
      * @param idList 主键ID列表
      * @return List<T>
      */
-    List<T> selectBatchIds(List<? extends Serializable> idList);
+    List<T> selectBatchIds(@Param("coll") Collection<? extends Serializable> idList);
 
     /**
      * <p>

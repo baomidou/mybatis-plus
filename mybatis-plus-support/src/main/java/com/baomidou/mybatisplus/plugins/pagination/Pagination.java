@@ -16,6 +16,8 @@
 package com.baomidou.mybatisplus.plugins.pagination;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.ibatis.session.RowBounds;
 
@@ -34,6 +36,18 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
 public class Pagination extends RowBounds implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    /**
+     * 该操作只是为了忽略RowBounds属性
+     *
+     * @see org.apache.ibatis.session.RowBounds#getOffset()
+     */
+    private transient int offset;
+    /**
+     * 该操作只是为了忽略RowBounds属性
+     *
+     * @see org.apache.ibatis.session.RowBounds#getLimit() ()
+     */
+    private transient int limit;
 
     /**
      * 总数
@@ -58,14 +72,36 @@ public class Pagination extends RowBounds implements Serializable {
     /**
      * 查询总记录数（默认 true）
      */
-    private boolean searchCount = true;
+    private transient boolean searchCount = true;
 
     /**
      * 开启排序（默认 true） 只在代码逻辑判断 并不截取sql分析
      *
-     * @see com.baomidou.mybatisplus.mapper.SqlHelper fillWrapper
+     * @see com.baomidou.mybatisplus.mapper.SqlHelper#fillWrapper
      **/
-    private boolean openSort = true;
+    private transient boolean openSort = true;
+
+
+    /**
+     * <p>
+     * SQL 排序 ASC 集合
+     * </p>
+     */
+    private transient List<String> ascs;
+    /**
+     * <p>
+     * SQL 排序 DESC 集合
+     * </p>
+     */
+    private transient List<String> descs;
+
+    /**
+     * 是否为升序 ASC（ 默认： true ）
+     *
+     * @see #ascs
+     * @see #descs
+     */
+    private transient boolean isAsc = true;
 
     /**
      * <p>
@@ -74,14 +110,12 @@ public class Pagination extends RowBounds implements Serializable {
      * <p>
      * DESC 表示按倒序排序(即：从大到小排序)<br>
      * ASC 表示按正序排序(即：从小到大排序)
+     *
+     * @see #ascs
+     * @see #descs
      * </p>
      */
-    private String orderByField;
-
-    /**
-     * 是否为升序 ASC（ 默认： true ）
-     */
-    private boolean isAsc = true;
+    private transient String orderByField;
 
     public Pagination() {
         super();
@@ -105,6 +139,8 @@ public class Pagination extends RowBounds implements Serializable {
 
     public Pagination(int current, int size, boolean searchCount, boolean openSort) {
         super(offsetCurrent(current, size), size);
+        setOffset(offsetCurrent(current, size));
+        setLimit(size);
         if (current > 1) {
             this.current = current;
         }
@@ -120,7 +156,7 @@ public class Pagination extends RowBounds implements Serializable {
         return 0;
     }
 
-    public int getOffsetCurrent() {
+    public int offsetCurrent() {
         return offsetCurrent(this.current, this.size);
     }
 
@@ -179,10 +215,19 @@ public class Pagination extends RowBounds implements Serializable {
         return this;
     }
 
+    /**
+     * @see #ascs
+     * @see #descs
+     */
+    @Deprecated
     public String getOrderByField() {
         return orderByField;
     }
 
+    /**
+     * @see #ascs
+     * @see #descs
+     */
     public Pagination setOrderByField(String orderByField) {
         if (StringUtils.isNotEmpty(orderByField)) {
             this.orderByField = orderByField;
@@ -199,12 +244,71 @@ public class Pagination extends RowBounds implements Serializable {
         return this;
     }
 
+    public List<String> getAscs() {
+        return orders(isAsc, ascs);
+    }
+
+    private List<String> orders(boolean condition, List<String> columns) {
+        if (condition && StringUtils.isNotEmpty(orderByField)) {
+            if (columns == null) {
+                columns = new ArrayList<>();
+            }
+            if (!columns.contains(orderByField)) {
+                columns.add(orderByField);
+            }
+        }
+        return columns;
+    }
+
+    public Pagination setAscs(List<String> ascs) {
+        this.ascs = ascs;
+        return this;
+    }
+
+    public List<String> getDescs() {
+        return orders(!isAsc, descs);
+    }
+
+    public Pagination setDescs(List<String> descs) {
+        this.descs = descs;
+        return this;
+    }
+
+    /**
+     * @see #ascs
+     * @see #descs
+     */
+    @Deprecated
     public boolean isAsc() {
         return isAsc;
     }
 
+    /**
+     * @see #ascs
+     * @see #descs
+     */
     public Pagination setAsc(boolean isAsc) {
         this.isAsc = isAsc;
+        return this;
+    }
+
+    @Override
+    public int getOffset() {
+        return offset;
+    }
+
+    public Pagination setOffset(int offset) {
+        this.offset = offset;
+        return this;
+    }
+
+    @Override
+    public int getLimit() {
+        return limit;
+    }
+
+    public Pagination setLimit(int limit) {
+        this.limit = limit;
         return this;
     }
 

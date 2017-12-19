@@ -30,7 +30,6 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.toolkit.MapUtils;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**
@@ -135,6 +134,18 @@ public class SqlHelper {
 
     /**
      * <p>
+     * 删除不存在的逻辑上属于成功
+     * </p>
+     *
+     * @param result 数据库操作返回影响条数
+     * @return boolean
+     */
+    public static boolean delBool(Integer result) {
+        return null != result && result >= 0;
+    }
+
+    /**
+     * <p>
      * 返回SelectCount执行结果
      * </p>
      *
@@ -182,8 +193,9 @@ public class SqlHelper {
             wrapper = Condition.create();
         }
         // 排序
-        if (page.isOpenSort() && StringUtils.isNotEmpty(page.getOrderByField())) {
-            wrapper.orderBy(page.getOrderByField(), page.isAsc());
+        if (page.isOpenSort()) {
+            wrapper.orderAsc(page.getAscs());
+            wrapper.orderDesc(page.getDescs());
         }
         // MAP 参数查询
         if (MapUtils.isNotEmpty(page.getCondition())) {

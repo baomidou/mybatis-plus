@@ -16,12 +16,11 @@
 package com.baomidou.mybatisplus.service.impl;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.binding.MapperMethod;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,8 +49,6 @@ import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
  * @Date 2016-04-20
  */
 public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
-
-    private static final Log logger = LogFactory.getLog(ServiceImpl.class);
 
     @Autowired
     protected M baseMapper;
@@ -254,7 +251,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean deleteById(Serializable id) {
-        return retBool(baseMapper.deleteById(id));
+        return SqlHelper.delBool(baseMapper.deleteById(id));
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -263,19 +260,19 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         if (MapUtils.isEmpty(columnMap)) {
             throw new MybatisPlusException("deleteByMap columnMap is empty.");
         }
-        return retBool(baseMapper.deleteByMap(columnMap));
+        return SqlHelper.delBool(baseMapper.deleteByMap(columnMap));
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean delete(Wrapper<T> wrapper) {
-        return retBool(baseMapper.delete(wrapper));
+        return SqlHelper.delBool(baseMapper.delete(wrapper));
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean deleteBatchIds(List<? extends Serializable> idList) {
-        return retBool(baseMapper.deleteBatchIds(idList));
+    public boolean deleteBatchIds(Collection<? extends Serializable> idList) {
+        return SqlHelper.delBool(baseMapper.deleteBatchIds(idList));
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -357,7 +354,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     @Override
-    public List<T> selectBatchIds(List<? extends Serializable> idList) {
+    public List<T> selectBatchIds(Collection<? extends Serializable> idList) {
         return baseMapper.selectBatchIds(idList);
     }
 

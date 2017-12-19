@@ -78,11 +78,9 @@ public class MybatisMapperRegistry extends MapperRegistry {
             boolean loadCompleted = false;
             try {
                 knownMappers.put(type, new MapperProxyFactory<>(type));
-                // It's important that the type is added before the parser is
-                // run
+                // It's important that the type is added before the parser is run
                 // otherwise the binding may automatically be attempted by the
                 // mapper parser. If the type is already known, it won't try.
-
                 // TODO 自定义无 XML 注入
                 MybatisMapperAnnotationBuilder parser = new MybatisMapperAnnotationBuilder(config, type);
                 parser.parse();

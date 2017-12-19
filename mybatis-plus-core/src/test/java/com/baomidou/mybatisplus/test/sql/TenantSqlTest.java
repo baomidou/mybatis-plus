@@ -6,8 +6,8 @@ import org.junit.Test;
 
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
-import com.baomidou.mybatisplus.plugins.parser.tenant.TenantSqlParser;
 import com.baomidou.mybatisplus.plugins.parser.tenant.TenantHandler;
+import com.baomidou.mybatisplus.plugins.parser.tenant.TenantSqlParser;
 
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
@@ -40,10 +40,7 @@ public class TenantSqlTest {
 
             @Override
             public boolean doTableFilter(String tableName) {
-                if ("user".equals(tableName)) {
-                    return true;
-                }
-                return false;
+                return "user".equals(tableName);
             }
         });
     }

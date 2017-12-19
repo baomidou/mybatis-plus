@@ -27,7 +27,7 @@ import com.baomidou.mybatisplus.annotations.TableId;
  * @author hubin
  * @Date 2016-06-26
  */
-public class SuperEntity implements Serializable {
+public class SuperEntity extends SuSuperEntity implements Serializable {
 
     /* 主键ID 注解，value 字段名，type 用户输入ID */
     @TableId(value = "test_id")

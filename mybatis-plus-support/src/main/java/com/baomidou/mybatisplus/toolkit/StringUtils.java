@@ -376,6 +376,18 @@ public class StringUtils {
 
     /**
      * <p>
+     * 是否为驼峰下划线混合命名
+     * </p>
+     *
+     * @param word 待判断字符串
+     * @return
+     */
+    public static boolean isMixedMode(String word) {
+        return Pattern.compile(".*[A-Z]+.*").matcher(word).matches() && Pattern.compile(".*[/_]+.*").matcher(word).matches();
+    }
+
+    /**
+     * <p>
      * Check if a String ends with a specified suffix.
      * </p>
      * <p>

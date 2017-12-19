@@ -40,6 +40,7 @@ public enum NamingStrategy {
             // 没必要转换
             return "";
         }
+
         // 大写转为小写
         String tempName = name.toLowerCase();
         StringBuilder result = new StringBuilder();

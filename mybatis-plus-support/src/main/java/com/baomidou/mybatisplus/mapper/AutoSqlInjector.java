@@ -15,6 +15,30 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
+import org.apache.ibatis.executor.keygen.KeyGenerator;
+import org.apache.ibatis.executor.keygen.NoKeyGenerator;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ResultMap;
+import org.apache.ibatis.mapping.ResultMapping;
+import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.mapping.SqlSource;
+import org.apache.ibatis.mapping.StatementType;
+import org.apache.ibatis.scripting.LanguageDriver;
+import org.apache.ibatis.scripting.defaults.RawSqlSource;
+import org.apache.ibatis.session.Configuration;
+
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.entity.TableFieldInfo;
 import com.baomidou.mybatisplus.entity.TableInfo;
@@ -22,21 +46,11 @@ import com.baomidou.mybatisplus.enums.FieldFill;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.enums.SqlMethod;
-import com.baomidou.mybatisplus.toolkit.*;
-import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
-import org.apache.ibatis.executor.keygen.KeyGenerator;
-import org.apache.ibatis.executor.keygen.NoKeyGenerator;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.mapping.*;
-import org.apache.ibatis.scripting.LanguageDriver;
-import org.apache.ibatis.scripting.defaults.RawSqlSource;
-import org.apache.ibatis.session.Configuration;
-
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.*;
+import com.baomidou.mybatisplus.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**
  * <p>
@@ -302,7 +316,7 @@ public class AutoSqlInjector implements ISqlInjector {
         if (batch) {
             sqlMethod = SqlMethod.DELETE_BATCH_BY_IDS;
             StringBuilder ids = new StringBuilder();
-            ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\">");
+            ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"coll\" separator=\",\">");
             ids.append("#{item}");
             ids.append("\n</foreach>");
             idStr = ids.toString();
@@ -367,7 +381,7 @@ public class AutoSqlInjector implements ISqlInjector {
         if (batch) {
             sqlMethod = SqlMethod.SELECT_BATCH_BY_IDS;
             StringBuilder ids = new StringBuilder();
-            ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\">");
+            ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"coll\" separator=\",\">");
             ids.append("#{item}");
             ids.append("\n</foreach>");
             sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(),
@@ -655,8 +669,8 @@ public class AutoSqlInjector implements ISqlInjector {
      */
     protected String sqlSelectObjsColumns(TableInfo table) {
         StringBuilder columns = new StringBuilder();
-		/*
-		 * 普通查询
+        /*
+         * 普通查询
 		 */
         columns.append("<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>");
         // 主键处理
@@ -740,7 +754,7 @@ public class AutoSqlInjector implements ISqlInjector {
      * @return
      */
     protected String convertIfTag(boolean ignored, TableFieldInfo fieldInfo, String prefix, boolean close) {
-		/* 忽略策略 */
+        /* 忽略策略 */
         FieldStrategy fieldStrategy = fieldInfo.getFieldStrategy();
         if (fieldStrategy == FieldStrategy.IGNORED) {
             if (ignored) {
@@ -795,7 +809,7 @@ public class AutoSqlInjector implements ISqlInjector {
         if (null != table) {
             String resultMap = table.getResultMap();
             if (null != resultMap) {
-				/* 返回 resultMap 映射结果集 */
+                /* 返回 resultMap 映射结果集 */
                 return this.addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.SELECT, null, resultMap, null,
                         new NoKeyGenerator(), null, null);
             }

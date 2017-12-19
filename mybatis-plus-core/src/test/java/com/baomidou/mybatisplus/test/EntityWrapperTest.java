@@ -23,12 +23,11 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import com.baomidou.mybatisplus.entity.Columns;
-
 import org.junit.Assert;
 import org.junit.Test;
 
 import com.baomidou.mybatisplus.entity.Column;
+import com.baomidou.mybatisplus.entity.Columns;
 import com.baomidou.mybatisplus.enums.SqlLike;
 import com.baomidou.mybatisplus.mapper.Condition;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
@@ -127,8 +126,8 @@ public class EntityWrapperTest {
 
     @Test
     public void testNoTSQL() {
-		/*
-		 * 实体 filter orderby
+        /*
+         * 实体 filter orderby
 		 */
         ew.setEntity(new User(1));
         ew.addFilter("name={0}", "'123'").orderBy("id,name");
@@ -139,8 +138,8 @@ public class EntityWrapperTest {
 
     @Test
     public void testNoTSQL1() {
-		/*
-		 * 非 T-SQL 无实体查询
+        /*
+         * 非 T-SQL 无实体查询
 		 */
         ew.addFilter("name={0}", "'123'").addFilterIfNeed(false, "status=?", "1");
         String sqlSegment = ew.originalSql();
@@ -150,8 +149,8 @@ public class EntityWrapperTest {
 
     @Test
     public void testTSQL11() {
-		/*
-		 * 实体带查询使用方法 输出看结果
+        /*
+         * 实体带查询使用方法 输出看结果
 		 */
         ew.setEntity(new User(1));
         ew.where("name=?", "'zhangsan'").and("id=1").orNew("status=?", "0").or("status=1").notLike("nlike", "notvalue")
@@ -326,8 +325,8 @@ public class EntityWrapperTest {
      */
     @Test
     public void testIsWhere() {
-		/*
-		 * 实体带where ifneed
+        /*
+         * 实体带where ifneed
 		 */
         ew.setEntity(new User(1));
         ew.setParamAlias("ceshi");
@@ -407,6 +406,28 @@ public class EntityWrapperTest {
         Wrapper wrapper = Condition.create().orderBy("id desc");
         System.out.println(wrapper.getSqlSegment());
         Assert.assertEquals("ORDER BY id desc", wrapper.getSqlSegment());
+    }
+
+    /**
+     * 测试 Condition orderBy
+     */
+    @Test
+    public void testConditionOrderBys() {
+        //空集合测试
+        List<String> orders = null;
+        Wrapper wrapper = Condition.create();
+        wrapper.orderAsc(orders);
+        Assert.assertNull(wrapper.getSqlSegment());
+        orders = new ArrayList<>(3);
+        wrapper.orderAsc(orders);
+        Assert.assertNull(wrapper.getSqlSegment());
+        orders.add("id1");
+        orders.add("id2");
+        orders.add("id3");
+        wrapper.orderAsc(orders);
+        Assert.assertEquals("ORDER BY id1 ASC, id2 ASC, id3 ASC", wrapper.getSqlSegment());
+        wrapper.orderDesc(orders);
+        Assert.assertEquals("ORDER BY id1 ASC, id2 ASC, id3 ASC, id1 DESC, id2 DESC, id3 DESC", wrapper.getSqlSegment());
     }
 
 }
