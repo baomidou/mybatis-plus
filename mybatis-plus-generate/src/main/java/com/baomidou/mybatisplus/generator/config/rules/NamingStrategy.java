@@ -40,11 +40,9 @@ public enum NamingStrategy {
             // 没必要转换
             return "";
         }
-        String tempName = name;
-        // 大写数字下划线组成转为小写 , 允许混合模式转为小写
-        if (StringUtils.isCapitalMode(name) || StringUtils.isMixedMode(name)) {
-            tempName = name.toLowerCase();
-        }
+
+        // 大写转为小写
+        String tempName = name.toLowerCase();
         StringBuilder result = new StringBuilder();
         // 用下划线将原始字符串分割
         String camels[] = tempName.split(ConstVal.UNDERLINE);
