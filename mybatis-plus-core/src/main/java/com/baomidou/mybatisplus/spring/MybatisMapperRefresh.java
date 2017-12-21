@@ -64,7 +64,6 @@ public class MybatisMapperRefresh implements Runnable {
      */
     private static final Map<String, List<Resource>> jarMapper = new HashMap<>();
     private SqlSessionFactory sqlSessionFactory;
-    @Deprecated
     private Resource[] mapperLocations;
     private Long beforeTime = 0L;
     private Configuration configuration;
@@ -85,15 +84,6 @@ public class MybatisMapperRefresh implements Runnable {
      */
     private int sleepSeconds = 20;
 
-    /**
-     * see  com.baomidou.mybatisplus.spring.MybatisMapperRefresh#MybatisMapperRefresh(org.apache.ibatis.session.SqlSessionFactory, int, int, boolean)
-     *
-     * @param mapperLocations
-     * @param sqlSessionFactory
-     * @param delaySeconds
-     * @param sleepSeconds
-     * @param enabled
-     */
     public MybatisMapperRefresh(Resource[] mapperLocations, SqlSessionFactory sqlSessionFactory, int delaySeconds,
                                 int sleepSeconds, boolean enabled) {
         this.mapperLocations = mapperLocations.clone();
@@ -105,33 +95,9 @@ public class MybatisMapperRefresh implements Runnable {
         this.run();
     }
 
-    /**
-     * see com.baomidou.mybatisplus.spring.MybatisMapperRefresh#MybatisMapperRefresh(org.apache.ibatis.session.SqlSessionFactory, boolean)
-     *
-     * @param mapperLocations
-     * @param sqlSessionFactory
-     * @param enabled
-     */
-    @Deprecated
     public MybatisMapperRefresh(Resource[] mapperLocations, SqlSessionFactory sqlSessionFactory, boolean enabled) {
         this.mapperLocations = mapperLocations.clone();
         this.sqlSessionFactory = sqlSessionFactory;
-        this.enabled = enabled;
-        this.configuration = sqlSessionFactory.getConfiguration();
-        this.run();
-    }
-
-    public MybatisMapperRefresh(SqlSessionFactory sqlSessionFactory, boolean enabled) throws Exception {
-        this.sqlSessionFactory = sqlSessionFactory;
-        this.enabled = enabled;
-        this.configuration = sqlSessionFactory.getConfiguration();
-        this.run();
-    }
-
-    public MybatisMapperRefresh(SqlSessionFactory sqlSessionFactory, int delaySeconds, int sleepSeconds, boolean enabled) throws Exception {
-        this.sqlSessionFactory = sqlSessionFactory;
-        this.delaySeconds = delaySeconds;
-        this.sleepSeconds = sleepSeconds;
         this.enabled = enabled;
         this.configuration = sqlSessionFactory.getConfiguration();
         this.run();
@@ -187,7 +153,7 @@ public class MybatisMapperRefresh implements Runnable {
                                 if (file.isFile() && file.lastModified() > beforeTime) {
                                     globalConfig.setRefresh(true);
                                     List<Resource> removeList = jarMapper.get(filePath);
-                                    if (removeList != null && !removeList.isEmpty()) {// 如果是jar包中的xml，将刷新jar包中存在的所有xml，后期再修改加载jar中修改过后的xml
+                                    if (removeList != null && !removeList.isEmpty()) {
                                         for (Resource resource : removeList) {
                                             runnable.refresh(resource);
                                         }
@@ -244,7 +210,7 @@ public class MybatisMapperRefresh implements Runnable {
             cleanKeyGenerators(context.evalNodes("insert|update"), namespace);
             cleanSqlElement(context.evalNodes("/mapper/sql"), namespace);
             XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(resource.getInputStream(),
-                    sqlSessionFactory.getConfiguration(), // 注入的sql先不进行处理了
+                    sqlSessionFactory.getConfiguration(),
                     resource.toString(), sqlSessionFactory.getConfiguration().getSqlFragments());
             xmlMapperBuilder.parse();
             logger.debug("refresh: '" + resource + "', success!");
