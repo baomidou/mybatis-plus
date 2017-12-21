@@ -734,7 +734,7 @@ public class AutoSqlInjector implements ISqlInjector {
         where.append("\n<where>");
         where.append("\n<foreach collection=\"cm.keys\" item=\"k\" separator=\"AND\">");
         where.append("\n<if test=\"cm[k] != null\">");
-        where.append(SqlReservedWords.convert(getGlobalConfig(), "\n${k}")).append(" = #{cm[${k}]}");
+        where.append("\n").append(SqlReservedWords.convert(getGlobalConfig(), "${k}")).append(" = #{cm[${k}]}");
         where.append("\n</if>");
         where.append("\n</foreach>");
         where.append("\n</where>");
