@@ -44,7 +44,7 @@ public class MybatisMapperRefreshTest extends CrudTest {
     public static void main(String[] args) throws Exception {
         Resource[] resource = new ClassPathResource[]{new ClassPathResource("mysql/UserMapper.xml")};
         SqlSessionFactory sessionFactory = new CrudTest().sqlSessionFactory();
-        new MybatisMapperRefresh(sessionFactory, 0, 5, true);
+        new MybatisMapperRefresh(resource, sessionFactory, 0, 5, true);
         boolean isReturn = false;
         SqlSession session = null;
         while (!isReturn) {
