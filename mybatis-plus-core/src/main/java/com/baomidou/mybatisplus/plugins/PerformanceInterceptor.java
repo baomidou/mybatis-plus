@@ -56,6 +56,7 @@ public class PerformanceInterceptor implements Interceptor {
     private static final String DruidPooledPreparedStatement = "com.alibaba.druid.pool.DruidPooledPreparedStatement";
     private static final String T4CPreparedStatement = "oracle.jdbc.driver.T4CPreparedStatement";
     private static final String OraclePreparedStatementWrapper = "oracle.jdbc.driver.OraclePreparedStatementWrapper";
+    private static final String HikariPreparedStatementWrapper = "com.zaxxer.hikari.pool.HikariProxyPreparedStatement";
     /**
      * SQL 执行最大时长，超过自动停止运行，有助于发现问题。
      */
@@ -122,6 +123,15 @@ public class PerformanceInterceptor implements Interceptor {
                             }
                         }
                     }
+                }
+            } catch (Exception e) {
+                //ignore
+            }
+        } else if (HikariPreparedStatementWrapper.equals(stmtClassName)) {
+            try {
+                Object sqlStatement = SystemMetaObject.forObject(statement).getValue("delegate.sqlStatement");
+                if (sqlStatement != null) {
+                    originalSql = sqlStatement.toString();
                 }
             } catch (Exception e) {
                 //ignore
