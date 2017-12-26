@@ -40,7 +40,7 @@ public class ${entity} extends Model<${entity}> {
 public class ${entity} implements Serializable {
 #end
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
 ## ----------  BEGIN 字段循环遍历  ----------
 #foreach($field in ${table.fields})
@@ -57,7 +57,7 @@ public class ${entity} implements Serializable {
 #if(${field.keyIdentityFlag})
 	@TableId(value="${field.name}", type= IdType.AUTO)
 #elseif(${field.convert})
-    @TableId("${field.name}")
+	@TableId("${field.name}")
 #end
 ## 普通字段
 #elseif(${field.fill})
@@ -76,7 +76,7 @@ public class ${entity} implements Serializable {
 #end
 ## 逻辑删除注解
 #if(${logicDeleteFieldName}==${field.name})
-    @TableLogic
+	@TableLogic
 #end
 	private ${field.propertyType} ${field.propertyName};
 #end
@@ -130,12 +130,12 @@ public class ${entity} implements Serializable {
 		return "${entity}{" +
 #foreach($field in ${table.fields})
 #if($!{velocityCount}==1)
-			"${field.propertyName}=" + ${field.propertyName} +
+		"${field.propertyName}=" + ${field.propertyName} +
 #else
-			", ${field.propertyName}=" + ${field.propertyName} +
+		", ${field.propertyName}=" + ${field.propertyName} +
 #end
 #end
-			"}";
+		"}";
 	}
 #end
 }
