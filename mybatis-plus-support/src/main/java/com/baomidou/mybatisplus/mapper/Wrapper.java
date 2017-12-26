@@ -59,7 +59,7 @@ public abstract class Wrapper<T> implements Serializable {
      * 实现了TSQL语法的SQL实体
      */
     protected final SqlPlus sql = new SqlPlus();
-    private final Map<String, Object> paramNameValuePairs = new HashMap<>(4);
+    private final Map<String, Object> paramNameValuePairs = new HashMap<>();
     private final AtomicInteger paramNameSeq = new AtomicInteger(0);
     protected String paramAlias = null;
     /**
