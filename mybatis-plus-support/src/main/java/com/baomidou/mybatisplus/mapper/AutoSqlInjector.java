@@ -949,7 +949,7 @@ public class AutoSqlInjector implements ISqlInjector {
             return;
         }
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, SqlRunner.SQLScript, Object.class);
-        createSelectMappedStatement(SqlRunner.SELECT_OBJS, sqlSource, Object.class);
+        createSelectMappedStatement(SqlRunner.SELECT_OBJS, sqlSource, Map.class);
     }
 
     /**
