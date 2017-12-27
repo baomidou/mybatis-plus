@@ -101,8 +101,8 @@ public class SqlRunner {
     /**
      * 获取sqlMap参数
      *
-     * @param sql
-     * @param args
+     * @param sql   指定参数的格式: {0}, {1}
+     * @param args  仅支持String
      * @return
      */
     private Map<String, String> sqlMap(String sql, Object... args) {
@@ -116,14 +116,38 @@ public class SqlRunner {
         return SqlHelper.retBool(sqlSession().update(UPDATE, sqlMap(sql, args)));
     }
 
+    /**
+     * 根据sql查询Map结果集
+     *   SqlRunner.db().selectList("select * from tbl_user where name={0}", "Caratacus")
+     *
+     * @param sql    sql语句，可添加参数，格式：{0},{1}
+     * @param args   只接受String格式
+     * @return
+     */
     public List<Map<String, Object>> selectList(String sql, Object... args) {
         return sqlSession().selectList(SELECT_LIST, sqlMap(sql, args));
     }
 
+    /**
+     * 根据sql查询一个字段值的结果集
+     *   注意：该方法只会返回一个字段的值， 如果需要多字段，请参考{@code selectList()}
+     *
+     * @param sql    sql语句，可添加参数，格式：{0},{1}
+     * @param args   只接受String格式
+     * @return
+     */
     public List<Object> selectObjs(String sql, Object... args) {
         return sqlSession().selectList(SELECT_OBJS, sqlMap(sql, args));
     }
 
+    /**
+     * 根据sql查询一个字段值的一条结果
+     *   注意：该方法只会返回一个字段的值， 如果需要多字段，请参考{@code selectOne()}
+     *
+     * @param sql    sql语句，可添加参数，格式：{0},{1}
+     * @param args   只接受String格式
+     * @return
+     */
     public Object selectObj(String sql, Object... args) {
         return SqlHelper.getObject(selectObjs(sql, args));
     }
