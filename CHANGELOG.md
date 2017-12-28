@@ -1,7 +1,22 @@
 ﻿# CHANGELOG
 
 
-## [v2.1.7] 2017.12.11 代号：清风徐来 ， 该版本号存在分页 asc bug 请改为 2.1.7-SNAPSHOT  
+## [v2.1.8-SNAPSHOT] 2017.12.28   
+- 返回Map自动下划线转驼峰
+- kotlin entity 静态常量支持
+- 优化 pagination 构造模式
+- Merge pull request #201
+- fix: selectByMap @alexqdjay
+- 增加sqlRuner测试用例，修复selectObjs只获取一个字段的bug
+- 新增 BlobTypeHandler
+- 去掉参数map的初始大小配置
+- 增加.editorconfig,模板空格问题修复.
+- Hikaricp连接池无法打印sql
+- 全局中去掉了路径,mapperLocations不可缺少了.
+- k 神 全部覆盖测试用例
+
+
+## [v2.1.7] 2017.12.11 代号：清风徐来 ， 该版本号存在 bug 请改为 2.1.8-SNAPSHOT +   
 - 枚举处理：基本类型，Number类型，String类型
 - IGDRW:源码注释错误，容易给人误导 注释错误问题
 - 炮灰 PR !42:添加分页构造方法重载 添加分页构造方法重载
