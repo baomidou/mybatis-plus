@@ -1,7 +1,7 @@
 ﻿# CHANGELOG
 
 
-## [v2.1.8-SNAPSHOT] 2017.12.28   
+`## [v2.1.8-SNAPSHOT] 2017.12.28   
 - 返回Map自动下划线转驼峰
 - kotlin entity 静态常量支持
 - 优化 pagination 构造模式
@@ -29,7 +29,7 @@
 - bugfix for logic delete sql injector
 - 添加多个排序字段支持
 - fixed github #185:2.0.2版本 自增主键 批量插入问题 pr
-- 其他优化
+- 其他优化`
 
 
 ## [v2.1.6] 2017.11.22 代号：小秋秋之吻
