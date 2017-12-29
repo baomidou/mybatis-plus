@@ -478,10 +478,10 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             for (Class cls : classes) {
                 if (cls.isEnum()) {
                     if (IEnum.class.isAssignableFrom(cls)) {
-                        typeHandlerRegistry.register(cls.getName(), "com.baomidou.mybatisplus.handlers.EnumTypeHandler");
+                        typeHandlerRegistry.register(cls.getName(), com.baomidou.mybatisplus.handlers.EnumTypeHandler.class.getCanonicalName());
                     } else {
                         // 使用原生 EnumOrdinalTypeHandler
-                        typeHandlerRegistry.register(cls.getName(), "org.apache.ibatis.type.EnumOrdinalTypeHandler");
+                        typeHandlerRegistry.register(cls.getName(), org.apache.ibatis.type.EnumOrdinalTypeHandler.class.getCanonicalName());
                     }
                 }
             }
