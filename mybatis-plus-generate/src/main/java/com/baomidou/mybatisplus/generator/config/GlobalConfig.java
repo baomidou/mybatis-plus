@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.generator.config;
 
+import com.baomidou.mybatisplus.enums.IdType;
+
 /**
  * <p>
  * 全局配置
@@ -77,6 +79,19 @@ public class GlobalConfig {
     private String serviceName;
     private String serviceImplName;
     private String controllerName;
+    /**
+     * 指定生成的主键的ID类型
+     */
+    private IdType idType;
+
+    public GlobalConfig setIdType(IdType idType) {
+        this.idType = idType;
+        return this;
+    }
+
+    public IdType getIdType() {
+        return idType;
+    }
 
     public String getOutputDir() {
         return outputDir;

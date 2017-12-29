@@ -36,63 +36,65 @@ class ${entity} : Serializable {
 #if(${field.keyFlag})
 ## 主键
 #if(${field.keyIdentityFlag})
-	@TableId(value = "${field.name}", type = IdType.AUTO)
+    @TableId(value = "${field.name}", type = IdType.AUTO)
+#elseif(!$null.isNull(${idType}) && "$!idType" != "")
+    @TableId(value = "${field.name}", type = IdType.${idType})
 #elseif(${field.convert})
-	@TableId("${field.name}")
+    @TableId("${field.name}")
 #end
 ## 普通字段
 #elseif(${field.fill})
 ## -----   存在字段填充设置   -----
 #if(${field.convert})
-	@TableField(value = "${field.name}", fill = FieldFill.${field.fill})
+    @TableField(value = "${field.name}", fill = FieldFill.${field.fill})
 #else
-	@TableField(fill = FieldFill.${field.fill})
+    @TableField(fill = FieldFill.${field.fill})
 #end
 #elseif(${field.convert})
-	@TableField("${field.name}")
+    @TableField("${field.name}")
 #end
 ## 乐观锁注解
 #if(${versionFieldName}==${field.name})
-	@Version
+    @Version
 #end
 ## 逻辑删除注解
 #if(${logicDeleteFieldName}==${field.name})
-	@TableLogic
+    @TableLogic
 #end
-	var ${field.propertyName}: ${field.propertyType}? = null
+    var ${field.propertyName}: ${field.propertyType}? = null
 #end
 ## ----------  END 字段循环遍历  ----------
 
 
 #if(${entityColumnConstant})
-	companion object {
+    companion object {
 #foreach($field in ${table.fields})
 
-		const val ${field.name.toUpperCase()} : String = "${field.name}"
+        const val ${field.name.toUpperCase()} : String = "${field.name}"
 
 #end
-	}
+    }
 
 #end
 #if(${activeRecord})
-	override fun pkVal(): Serializable {
+    override fun pkVal(): Serializable {
 #if(${keyPropertyName})
-		return ${keyPropertyName}!!
+        return ${keyPropertyName}!!
 #else
-		return id!!
+        return id!!
 #end
-	}
+    }
 
 #end
-	override fun toString(): String {
-		return "${entity}{" +
+    override fun toString(): String {
+        return "${entity}{" +
 #foreach($field in ${table.fields})
 #if($!{velocityCount}==1)
-		"${field.propertyName}=" + ${field.propertyName} +
+        "${field.propertyName}=" + ${field.propertyName} +
 #else
-		", ${field.propertyName}=" + ${field.propertyName} +
+        ", ${field.propertyName}=" + ${field.propertyName} +
 #end
 #end
-		"}"
-	}
+        "}"
+    }
 }

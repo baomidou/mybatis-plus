@@ -15,11 +15,11 @@
  */
 package com.baomidou.mybatisplus.generator.config;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.generator.config.po.TableFill;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
-
-import java.util.List;
 
 /**
  * <p>
@@ -135,6 +135,10 @@ public class StrategyConfig {
      */
     private boolean controllerMappingHyphenStyle = false;
 
+    /**
+     * 是否生成实体时，生成字段注解
+     */
+    private boolean entityTableFieldAnnotationEnable = false;
     /**
      * 乐观锁属性名称
      */
@@ -398,5 +402,19 @@ public class StrategyConfig {
 
     public void setFieldPrefix(String[] fieldPrefix) {
         this.fieldPrefix = fieldPrefix;
+    }
+
+    public StrategyConfig fieldPrefix(String... fieldPrefixs) {
+        setFieldPrefix(fieldPrefixs);
+        return this;
+    }
+
+    public StrategyConfig entityTableFieldAnnotationEnable(boolean isEnableAnnotation) {
+        this.entityTableFieldAnnotationEnable = isEnableAnnotation;
+        return this;
+    }
+
+    public boolean isEntityTableFieldAnnotationEnable() {
+        return entityTableFieldAnnotationEnable;
     }
 }

@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,6 +35,10 @@ import org.apache.velocity.app.VelocityEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.baomidou.mybatisplus.activerecord.Model;
+import com.baomidou.mybatisplus.annotations.TableLogic;
+import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.annotations.Version;
 import com.baomidou.mybatisplus.generator.config.ConstVal;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.FileOutConfig;
@@ -162,25 +167,25 @@ public class AutoGenerator {
             /* ---------- 添加导入包 ---------- */
             if (config.getGlobalConfig().isActiveRecord()) {
                 // 开启 ActiveRecord 模式
-                tableInfo.setImportPackages("com.baomidou.mybatisplus.activerecord.Model");
+                tableInfo.setImportPackages(Model.class.getCanonicalName());
             }
             if (tableInfo.isConvert()) {
                 // 表注解
-                tableInfo.setImportPackages("com.baomidou.mybatisplus.annotations.TableName");
+                tableInfo.setImportPackages(TableName.class.getCanonicalName());
             }
             if (tableInfo.isLogicDelete(config.getStrategyConfig().getLogicDeleteFieldName())) {
                 // 逻辑删除注解
-                tableInfo.setImportPackages("com.baomidou.mybatisplus.annotations.TableLogic");
+                tableInfo.setImportPackages(TableLogic.class.getCanonicalName());
             }
             if (StringUtils.isNotEmpty(config.getStrategyConfig().getVersionFieldName())) {
                 // 乐观锁注解
-                tableInfo.setImportPackages("com.baomidou.mybatisplus.annotations.Version");
+                tableInfo.setImportPackages(Version.class.getCanonicalName());
             }
             if (StringUtils.isNotEmpty(config.getSuperEntityClass())) {
                 // 父实体
                 tableInfo.setImportPackages(config.getSuperEntityClass());
             } else {
-                tableInfo.setImportPackages("java.io.Serializable");
+                tableInfo.setImportPackages(Serializable.class.getCanonicalName());
             }
             // Boolean类型is前缀处理
             if (config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix()) {
@@ -201,16 +206,18 @@ public class AutoGenerator {
 
             ctx.put("restControllerStyle", config.getStrategyConfig().isRestControllerStyle());
             ctx.put("package", packageInfo);
-            ctx.put("author", config.getGlobalConfig().getAuthor());
+            GlobalConfig globalConfig = config.getGlobalConfig();
+            ctx.put("author", globalConfig.getAuthor() + "123");
+            ctx.put("idType", globalConfig.getIdType() == null ? null : globalConfig.getIdType().toString());
             ctx.put("logicDeleteFieldName", config.getStrategyConfig().getLogicDeleteFieldName());
             ctx.put("versionFieldName", config.getStrategyConfig().getVersionFieldName());
-            ctx.put("activeRecord", config.getGlobalConfig().isActiveRecord());
-            ctx.put("kotlin", config.getGlobalConfig().isKotlin());
+            ctx.put("activeRecord", globalConfig.isActiveRecord());
+            ctx.put("kotlin", globalConfig.isKotlin());
             ctx.put("date", date);
             ctx.put("table", tableInfo);
-            ctx.put("enableCache", config.getGlobalConfig().isEnableCache());
-            ctx.put("baseResultMap", config.getGlobalConfig().isBaseResultMap());
-            ctx.put("baseColumnList", config.getGlobalConfig().isBaseColumnList());
+            ctx.put("enableCache", globalConfig.isEnableCache());
+            ctx.put("baseResultMap", globalConfig.isBaseResultMap());
+            ctx.put("baseColumnList", globalConfig.isBaseColumnList());
             ctx.put("entity", tableInfo.getEntityName());
             ctx.put("entityColumnConstant", config.getStrategyConfig().isEntityColumnConstant());
             ctx.put("entityBuilderModel", config.getStrategyConfig().isEntityBuilderModel());

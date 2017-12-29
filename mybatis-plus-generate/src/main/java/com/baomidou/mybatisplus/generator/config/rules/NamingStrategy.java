@@ -66,30 +66,13 @@ public enum NamingStrategy {
     }
 
     /**
-     * 去掉下划线前缀
-     *
-     * @param name
-     * @return
-     */
-    public static String removePrefix(String name) {
-        if (StringUtils.isEmpty(name)) {
-            return "";
-        }
-        int idx = name.indexOf(ConstVal.UNDERLINE);
-        if (idx == -1) {
-            return name;
-        }
-        return name.substring(idx + 1);
-    }
-
-    /**
      * 去掉指定的前缀
      *
      * @param name
      * @param prefix
      * @return
      */
-    public static String removePrefix(String name, String[] prefix) {
+    public static String removePrefix(String name, String... prefix) {
         if (StringUtils.isEmpty(name)) {
             return "";
         }
@@ -103,6 +86,27 @@ public enum NamingStrategy {
             }
         }
         return name;
+    }
+
+    /**
+     * 判断是否包含prefix
+     *
+     * @param name
+     * @param prefix
+     * @return
+     */
+    public static boolean isPrefixContained(String name, String... prefix) {
+        if (StringUtils.isEmpty(name)) {
+            return false;
+        }
+        if (null != prefix) {
+            for (String pf : prefix) {
+                if (name.toLowerCase().matches("^" + pf.toLowerCase() + ".*")) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
