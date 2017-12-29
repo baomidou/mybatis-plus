@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.baomidou.mybatisplus.enums;
+package com.baomidou.mybatisplus.handlers;
 
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
@@ -23,6 +23,7 @@ import java.sql.SQLException;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 
+import com.baomidou.mybatisplus.enums.IEnum;
 import com.baomidou.mybatisplus.toolkit.EnumUtils;
 
 /**
@@ -33,11 +34,11 @@ import com.baomidou.mybatisplus.toolkit.EnumUtils;
  * @author hubin
  * @Date 2017-10-11
  */
-public class IEnumTypeHandler<E extends Enum<?> & IEnum> extends BaseTypeHandler<IEnum> {
+public class EnumTypeHandler<E extends Enum<?> & IEnum> extends BaseTypeHandler<IEnum> {
 
     private Class<E> type;
 
-    public IEnumTypeHandler(Class<E> type) {
+    public EnumTypeHandler(Class<E> type) {
         if (type == null) {
             throw new IllegalArgumentException("Type argument cannot be null");
         }
