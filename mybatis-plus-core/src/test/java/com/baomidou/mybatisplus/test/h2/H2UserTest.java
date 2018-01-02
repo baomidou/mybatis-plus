@@ -126,6 +126,8 @@ public class H2UserTest extends H2Test {
     public void testSelectPage() {
         Page<H2User> page = userService.selectPage(new Page<H2User>(1, 3));
         Assert.assertEquals(3, page.getRecords().size());
+        page = userService.selectPage(new Page<H2User>(2, 3));
+        Assert.assertEquals(2, page.getRecords().size());
     }
 
     @Test
@@ -133,7 +135,7 @@ public class H2UserTest extends H2Test {
         PageHelper.startPage(1, 3);
         List<H2User> userList = userService.selectList(new EntityWrapper<H2User>());
         System.out.println("total=" + PageHelper.freeTotal());
-        Assert.assertEquals("Should do pagination", 3, userList.size());
+        Assert.assertEquals("Should do pagination", 5, userList.size());
         userList = userService.selectList(new EntityWrapper<H2User>());
         Assert.assertNotEquals("Should not do pagination", 3, userList.size());
     }
