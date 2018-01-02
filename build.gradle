@@ -1,150 +1,171 @@
 ext {
-    configuration = [
-            javaVersion = JavaVersion.VERSION_1_7
-    ]
+	configuration = [
+			javaVersion = JavaVersion.VERSION_1_7
+	]
 
-    libraries = [
-            mybatisSpringVersion = '1.3.1',
-            mybatisVersion = '3.4.5',
-            springVersion = '4.3.5.RELEASE',
-    ]
+	libraries = [
+			mybatisSpringVersion = '1.3.1',
+			mybatisVersion = '3.4.5',
+			springVersion = '4.3.5.RELEASE',
+	]
 
-    dependencies = [
-            "jsqlparser": "com.github.jsqlparser:jsqlparser:1.1",
-            "mybatis-spring": "org.mybatis:mybatis-spring:${mybatisSpringVersion}",
-            "mybatis": "org.mybatis:mybatis:${mybatisVersion}",
-            "velocity":"org.apache.velocity:velocity-engine-core:2.0",
-            "slf4j-api":"org.slf4j:slf4j-api:1.7.25",
-            "junit":"junit:junit:4.12",
-            "commons-dbcp2":"org.apache.commons:commons-dbcp2:2.1.1",
-            "mybatis-ehcache":"org.mybatis.caches:mybatis-ehcache:1.1.0",
-            "logback-classic":"ch.qos.logback:logback-classic:1.2.2",
-            "sqlserver":"com.microsoft.sqlserver:sqljdbc4:4.0",
-            "postgresql":"org.postgresql:postgresql:9.4.1212",
-            "oracle":"com.oracle:ojdbc14:10.2.0.5.0",
-            "h2":"com.h2database:h2:1.4.194",
-            "mysql":"mysql:mysql-connector-java:5.1.38",
-            "aspectjweaver":"org.aspectj:aspectjweaver:1.8.9",
-            "servlet-api":"javax.servlet:servlet-api:2.5",
-            "lombok":"org.projectlombok:lombok:1.16.16",
-            "hikaricp":"com.zaxxer:HikariCP:2.7.0",
-            "spring-test":"org.springframework:spring-test:${springVersion}",
-            "spring-webmvc":"org.springframework:spring-webmvc:${springVersion}",
-            "spring-context-support":"org.springframework:spring-context-support:${springVersion}",
-            "spring-jdbc":"org.springframework:spring-jdbc:${springVersion}",
-            "spring-tx":"org.springframework:spring-tx:${springVersion}",
-            "druid":"com.alibaba:druid:1.0.29",
-            "fastjson":"com.alibaba:fastjson:1.2.37"
-    ]
+	dependencies = [
+			"jsqlparser": "com.github.jsqlparser:jsqlparser:1.1",
+			"mybatis-spring": "org.mybatis:mybatis-spring:${mybatisSpringVersion}",
+			"mybatis": "org.mybatis:mybatis:${mybatisVersion}",
+			"velocity":"org.apache.velocity:velocity-engine-core:2.0",
+			"slf4j-api":"org.slf4j:slf4j-api:1.7.25",
+			"junit":"junit:junit:4.12",
+			"commons-dbcp2":"org.apache.commons:commons-dbcp2:2.1.1",
+			"mybatis-ehcache":"org.mybatis.caches:mybatis-ehcache:1.1.0",
+			"logback-classic":"ch.qos.logback:logback-classic:1.2.2",
+			"sqlserver":"com.microsoft.sqlserver:sqljdbc4:4.0",
+			"postgresql":"org.postgresql:postgresql:9.4.1212",
+			"oracle":"com.oracle:ojdbc14:10.2.0.5.0",
+			"h2":"com.h2database:h2:1.4.194",
+			"mysql":"mysql:mysql-connector-java:5.1.38",
+			"aspectjweaver":"org.aspectj:aspectjweaver:1.8.9",
+			"servlet-api":"javax.servlet:servlet-api:2.5",
+			"lombok":"org.projectlombok:lombok:1.16.16",
+			"hikaricp":"com.zaxxer:HikariCP:2.7.0",
+			"spring-test":"org.springframework:spring-test:${springVersion}",
+			"spring-webmvc":"org.springframework:spring-webmvc:${springVersion}",
+			"spring-context-support":"org.springframework:spring-context-support:${springVersion}",
+			"spring-jdbc":"org.springframework:spring-jdbc:${springVersion}",
+			"spring-tx":"org.springframework:spring-tx:${springVersion}",
+			"druid":"com.alibaba:druid:1.0.29",
+			"fastjson":"com.alibaba:fastjson:1.2.37"
+	]
 }
 
 allprojects{
-    group = 'com.baomidou'
-    version = '2.1.8-SNAPSHOT'
+	group = 'com.baomidou'
+	version = '2.1.8-SNAPSHOT'
 }
 
 
 description = "Mybatis 增强工具包 - 只做增强不做改变，简化CRUD操作"
 
+buildscript {
+	repositories {
+		maven { url "https://repo.spring.io/plugins-release" }
+	}
+	dependencies {
+		classpath("io.spring.gradle:propdeps-plugin:0.0.8")
+	}
+}
+
+configure(subprojects) {
+	apply plugin: 'propdeps'
+	apply plugin: 'propdeps-maven'
+	apply plugin: 'propdeps-idea'
+	apply plugin: 'propdeps-eclipse'
+}
 
 subprojects{
 
-    apply plugin: 'java'
-    apply plugin: 'maven'
-    apply plugin: 'signing'
+	apply plugin: 'java'
+	apply plugin: 'signing'
 
-    sourceCompatibility = "${javaVersion}"
-    targetCompatibility = "${javaVersion}"
+	sourceCompatibility = "${javaVersion}"
+	targetCompatibility = "${javaVersion}"
 
-    tasks.withType(JavaCompile) {
-        options.encoding = 'UTF-8'
-    }
+	tasks.withType(JavaCompile) {
+		options.encoding = 'UTF-8'
+	}
 
-    repositories {
-        mavenLocal()
-        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-        jcenter()
-    }
+	repositories {
+		mavenLocal()
+		maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+		maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+		jcenter()
+	}
 
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        classifier = 'sources'
-        from sourceSets.main.allSource
-    }
+	task sourcesJar(type: Jar, dependsOn: classes) {
+		classifier = 'sources'
+		from sourceSets.main.allSource
+	}
 
-    javadoc {
-        options {
-            encoding "UTF-8"
-            charSet 'UTF-8'
-            author true
-            version true
-            failOnError false
-            links "http://docs.oracle.com/javase/7/docs/api"
-        }
-    }
+	javadoc {
+		options {
+			encoding "UTF-8"
+			charSet 'UTF-8'
+			author true
+			version true
+			failOnError false
+			links "http://docs.oracle.com/javase/7/docs/api"
+		}
+	}
 
-    task javadocJar(type: Jar, dependsOn: javadoc) {
-        classifier = 'javadoc'
-        from 'build/docs/javadoc'
-    }
+	task javadocJar(type: Jar, dependsOn: javadoc) {
+		classifier = 'javadoc'
+		from 'build/docs/javadoc'
+	}
 
-    artifacts {
-        archives sourcesJar
-        archives javadocJar
-    }
+	artifacts {
+		archives sourcesJar
+		archives javadocJar
+	}
 
-    signing {
-        sign configurations.archives
-    }
+	tasks.whenTaskAdded { task ->
+		if (task.name.contains('uploadArchives')||task.name.contains("signArchives")){
+			task.enabled = new File(project.property('signing.secretKeyRingFile')).isFile()
+		}
+	}
 
-    // gradle clean build uploadArchives -Dun=用户名 -Dps=密码 -x test
-    uploadArchives {
-        repositories {
-            mavenDeployer {
-                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+	signing {
+		sign configurations.archives
+	}
 
-                def userName = System.getProperty("un")
-                def passWord = System.getProperty("ps")
-                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                    authentication(userName: userName, password: passWord)
-                }
+	// gradle clean build uploadArchives -Dun=用户名 -Dps=密码 -x test
+	uploadArchives {
+		repositories {
+			mavenDeployer {
+				beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                    authentication(userName: userName, password: passWord)
-                }
+				def userName = System.getProperty("un")
+				def passWord = System.getProperty("ps")
+				repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+					authentication(userName: userName, password: passWord)
+				}
 
-                pom.version = "$project.version"
-                pom.artifactId = "$project.name"
-                pom.groupId = "$project.group"
-                pom.project {
-                    name 'mybatis-plus'
-                    packaging 'jar'
-                    description 'An enhanced toolkit of Mybatis to simplify development.'
-                    url 'https://github.com/baomidou/mybatis-plus'
+				snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+					authentication(userName: userName, password: passWord)
+				}
 
-                    scm {
-                        connection 'scm:git@github.com:Codearte/gradle-nexus-staging-plugin.git'
-                        developerConnection 'scm:git@github.com:Codearte/gradle-nexus-staging-plugin.git'
-                        url 'https://github.com/baomidou/mybatis-plus'
-                    }
+				pom.version = "$project.version"
+				pom.artifactId = "$project.name"
+				pom.groupId = "$project.group"
+				pom.project {
+					name 'mybatis-plus'
+					packaging 'jar'
+					description 'An enhanced toolkit of Mybatis to simplify development.'
+					url 'https://github.com/baomidou/mybatis-plus'
 
-                    licenses {
-                        license {
-                            name 'The Apache License, Version 2.0'
-                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                        }
-                    }
+					scm {
+						connection 'scm:git@github.com:Codearte/gradle-nexus-staging-plugin.git'
+						developerConnection 'scm:git@github.com:Codearte/gradle-nexus-staging-plugin.git'
+						url 'https://github.com/baomidou/mybatis-plus'
+					}
 
-                    developers {
-                        developer {
-                            id 'baomidou'
-                            name 'hubin'
-                            email 'jobob@qq.com'
-                        }
-                    }
-                }
-            }
-        }
-    }
+					licenses {
+						license {
+							name 'The Apache License, Version 2.0'
+							url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+						}
+					}
 
+					developers {
+						developer {
+							id 'baomidou'
+							name 'hubin'
+							email 'jobob@qq.com'
+						}
+					}
+				}
+			}
+		}
+	}
+
+	compileJava.dependsOn(processResources)
 }
