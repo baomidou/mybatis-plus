@@ -81,6 +81,9 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 - [Java快速开发框架 SpringWind](http://git.oschina.net/juapk/SpringWind)
 - [基于Hibernate扩展 Hibernate-Plus](http://git.oschina.net/baomidou/hibernate-plus)
 
+# 王者荣耀
+![MPTrophy](https://gitee.com/uploads/images/2018/0102/101803_2fdba060_12260.jpeg)
+
 # 期望 | Futures
 
 > 欢迎提出更好的意见，帮助完善 Mybatis-Plus

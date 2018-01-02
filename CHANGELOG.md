@@ -1,7 +1,7 @@
 ﻿# CHANGELOG
 
 
-`## [v2.1.8-SNAPSHOT] 2017.12.28   
+`## [v2.1.8-SNAPSHOT] 2017.12.28 代号：翻车鱼（秋秋赐名）
 - 返回Map自动下划线转驼峰
 - kotlin entity 静态常量支持
 - 优化 pagination 构造模式
@@ -31,17 +31,6 @@
 - fixed github #185:2.0.2版本 自增主键 批量插入问题 pr
 - 其他优化`
 
-
-## [v2.1.6] 2017.11.22 代号：小秋秋之吻
-- 模块拆分为 support core generate 代码生成分离可选择依赖
-- 解决 gitee issue IFX30 拆分 mybatis-plus-support 包支持
-- 解决 gitee issue IGAPX 通用枚举 bigdecimal 类型映射
-- druid补充,填充字段修改
-- 修复 kotlin 代码生成部分逻辑 Bug
-- 合并 gitee pr 40 updateAllColumn****等方法排除fill = FieldFill.INSERT注释的字段 感谢 Elsif 
-- 构造模式设置 kotlin 修改
-- Sql 工具类反射实例优化
-- 其他优化
 
 ## [v2.1.6] 2017.11.22 代号：小秋秋之吻
 - 模块拆分为 support core generate 代码生成分离可选择依赖
