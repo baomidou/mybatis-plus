@@ -70,6 +70,7 @@ subprojects{
 	sourceCompatibility = "${javaVersion}"
 	targetCompatibility = "${javaVersion}"
 
+	//noinspection GroovyAssignabilityCheck
 	tasks.withType(JavaCompile) {
 		options.encoding = 'UTF-8'
 	}
@@ -109,7 +110,7 @@ subprojects{
 
 	tasks.whenTaskAdded { task ->
 		if (task.name.contains('uploadArchives')||task.name.contains("signArchives")){
-			task.enabled = new File(project.property('signing.secretKeyRingFile')).isFile()
+			task.enabled = new File(project.property('signing.secretKeyRingFile') as String).isFile()
 		}
 	}
 
@@ -122,14 +123,15 @@ subprojects{
 		repositories {
 			mavenDeployer {
 				beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
 				def userName = System.getProperty("un")
 				def passWord = System.getProperty("ps")
 				repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+					//noinspection GroovyAssignabilityCheck
 					authentication(userName: userName, password: passWord)
 				}
 
 				snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+					//noinspection GroovyAssignabilityCheck
 					authentication(userName: userName, password: passWord)
 				}
 
@@ -137,6 +139,7 @@ subprojects{
 				pom.artifactId = "$project.name"
 				pom.groupId = "$project.group"
 				pom.project {
+					//noinspection GroovyAssignabilityCheck
 					name 'mybatis-plus'
 					packaging 'jar'
 					description 'An enhanced toolkit of Mybatis to simplify development.'
@@ -150,6 +153,7 @@ subprojects{
 
 					licenses {
 						license {
+							//noinspection GroovyAssignabilityCheck
 							name 'The Apache License, Version 2.0'
 							url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
 						}
@@ -158,6 +162,7 @@ subprojects{
 					developers {
 						developer {
 							id 'baomidou'
+							//noinspection GroovyAssignabilityCheck
 							name 'hubin'
 							email 'jobob@qq.com'
 						}

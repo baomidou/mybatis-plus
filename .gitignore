@@ -1,19 +1,21 @@
-/target/
-/.settings/
-/.project
-/.classpath
+**/target/
 
+**/.gitignore
 # IntelliJ project files
 .idea
 *.iml
-out
+**/out
 html
+
+# Eclipse project files
+**/.classpath
+**/.project
+**/.settings/
+**/bin/
 
 # gradle
 .gradle
-build
+**/build
 
 # MacOS
 .DS_Store
-/.gradle
-mybatis-plus/target/
