@@ -849,7 +849,7 @@ public class AutoSqlInjector implements ISqlInjector {
                                               SqlCommandType sqlCommandType, Class<?> parameterClass, String resultMap, Class<?> resultType,
                                               KeyGenerator keyGenerator, String keyProperty, String keyColumn) {
         String statementName = mapperClass.getName() + "." + id;
-        if (configuration.hasStatement(statementName)) {
+        if (configuration.hasStatement(statementName,false)) {
             System.err.println("{" + statementName
                     + "} Has been loaded by XML or SqlProvider, ignoring the injection of the SQL.");
             return null;
