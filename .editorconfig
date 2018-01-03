@@ -1,6 +1,12 @@
 root = true
-[*]
+[*.{gradle,vm,xml}]
 charset = utf-8
 indent_style = tab
+trim_trailing_whitespace = true
+insert_final_newline = true
+[*.java]
+charset = utf-8
+indent_style = space
+indent_size = 4
 trim_trailing_whitespace = true
 insert_final_newline = true
