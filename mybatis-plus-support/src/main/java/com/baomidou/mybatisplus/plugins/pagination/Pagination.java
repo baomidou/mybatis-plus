@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.plugins.pagination;
 
+import java.beans.Transient;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,18 +37,6 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
 public class Pagination extends RowBounds implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    /**
-     * 该操作只是为了忽略RowBounds属性
-     *
-     * @see org.apache.ibatis.session.RowBounds#getOffset()
-     */
-    private transient int offset;
-    /**
-     * 该操作只是为了忽略RowBounds属性
-     *
-     * @see org.apache.ibatis.session.RowBounds#getLimit() ()
-     */
-    private transient int limit;
 
     /**
      * 总数
@@ -72,28 +61,27 @@ public class Pagination extends RowBounds implements Serializable {
     /**
      * 查询总记录数（默认 true）
      */
-    private transient boolean searchCount = true;
+    private boolean searchCount = true;
 
     /**
      * 开启排序（默认 true） 只在代码逻辑判断 并不截取sql分析
      *
      * @see com.baomidou.mybatisplus.mapper.SqlHelper#fillWrapper
      **/
-    private transient boolean openSort = true;
-
+    private boolean openSort = true;
 
     /**
      * <p>
      * SQL 排序 ASC 集合
      * </p>
      */
-    private transient List<String> ascs;
+    private List<String> ascs;
     /**
      * <p>
      * SQL 排序 DESC 集合
      * </p>
      */
-    private transient List<String> descs;
+    private List<String> descs;
 
     /**
      * 是否为升序 ASC（ 默认： true ）
@@ -101,7 +89,7 @@ public class Pagination extends RowBounds implements Serializable {
      * @see #ascs
      * @see #descs
      */
-    private transient boolean isAsc = true;
+    private boolean isAsc = true;
 
     /**
      * <p>
@@ -115,7 +103,7 @@ public class Pagination extends RowBounds implements Serializable {
      * @see #descs
      * </p>
      */
-    private transient String orderByField;
+    private String orderByField;
 
     public Pagination() {
         super();
@@ -139,8 +127,6 @@ public class Pagination extends RowBounds implements Serializable {
 
     public Pagination(int current, int size, boolean searchCount, boolean openSort) {
         super(offsetCurrent(current, size), size);
-        setOffset(offsetCurrent(current, size));
-        setLimit(size);
         if (current > 1) {
             this.current = current;
         }
@@ -206,6 +192,7 @@ public class Pagination extends RowBounds implements Serializable {
         return this;
     }
 
+    @Transient
     public boolean isSearchCount() {
         return searchCount;
     }
@@ -220,6 +207,7 @@ public class Pagination extends RowBounds implements Serializable {
      * @see #descs
      */
     @Deprecated
+    @Transient
     public String getOrderByField() {
         return orderByField;
     }
@@ -235,6 +223,7 @@ public class Pagination extends RowBounds implements Serializable {
         return this;
     }
 
+    @Transient
     public boolean isOpenSort() {
         return openSort;
     }
@@ -244,6 +233,7 @@ public class Pagination extends RowBounds implements Serializable {
         return this;
     }
 
+    @Transient
     public List<String> getAscs() {
         return orders(isAsc, ascs);
     }
@@ -265,6 +255,7 @@ public class Pagination extends RowBounds implements Serializable {
         return this;
     }
 
+    @Transient
     public List<String> getDescs() {
         return orders(!isAsc, descs);
     }
@@ -279,6 +270,7 @@ public class Pagination extends RowBounds implements Serializable {
      * @see #descs
      */
     @Deprecated
+    @Transient
     public boolean isAsc() {
         return isAsc;
     }
@@ -293,23 +285,15 @@ public class Pagination extends RowBounds implements Serializable {
     }
 
     @Override
+    @Transient
     public int getOffset() {
-        return offset;
-    }
-
-    public Pagination setOffset(int offset) {
-        this.offset = offset;
-        return this;
+        return super.getOffset();
     }
 
     @Override
+    @Transient
     public int getLimit() {
-        return limit;
-    }
-
-    public Pagination setLimit(int limit) {
-        this.limit = limit;
-        return this;
+        return super.getLimit();
     }
 
     @Override

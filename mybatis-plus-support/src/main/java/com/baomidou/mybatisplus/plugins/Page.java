@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.plugins;
 
+import java.beans.Transient;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +42,7 @@ public class Page<T> extends Pagination {
     /**
      * 查询参数
      */
-    private transient Map<String, Object> condition;
+    private Map<String, Object> condition;
 
     public Page() {
         /* 注意，传入翻页参数 */
@@ -70,6 +71,7 @@ public class Page<T> extends Pagination {
         return this;
     }
 
+    @Transient
     public Map<String, Object> getCondition() {
         return condition;
     }
