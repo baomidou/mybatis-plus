@@ -22,6 +22,7 @@ import java.lang.annotation.Target;
 
 import com.baomidou.mybatisplus.enums.FieldFill;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
+import com.baomidou.mybatisplus.mapper.SqlCondition;
 
 /**
  * <p>
@@ -62,6 +63,16 @@ public @interface TableField {
      * </p>
      */
     boolean exist() default true;
+
+    /**
+     * <p>
+     * 字段 WHERE 实体查询比较条件
+     * </p>
+     * <p>
+     * 默认 `=` 等值
+     * </p>
+     */
+    String condition() default SqlCondition.EQUALS;
 
     /**
      * <p>

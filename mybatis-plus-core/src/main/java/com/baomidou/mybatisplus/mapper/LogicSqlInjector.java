@@ -57,7 +57,7 @@ public class LogicSqlInjector extends AutoSqlInjector {
                 idStr = ids.toString();
             }
             String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlLogicSet(table),
-                    table.getKeyColumn(), idStr);
+                table.getKeyColumn(), idStr);
             sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
             this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
         } else {
@@ -75,7 +75,7 @@ public class LogicSqlInjector extends AutoSqlInjector {
             // 逻辑删除注入
             SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE;
             String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlLogicSet(table),
-                    sqlWhereEntityWrapper(table));
+                sqlWhereEntityWrapper(table));
             SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
             this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
         } else {
@@ -93,7 +93,7 @@ public class LogicSqlInjector extends AutoSqlInjector {
             // 逻辑删除注入
             SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE_BY_MAP;
             String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlLogicSet(table),
-                    sqlWhereByMap(table));
+                sqlWhereByMap(table));
             SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Map.class);
             this.addUpdateMappedStatement(mapperClass, Map.class, sqlMethod.getMethod(), sqlSource);
         } else {
@@ -124,10 +124,10 @@ public class LogicSqlInjector extends AutoSqlInjector {
                 ids.append("#{item}");
                 ids.append("\n</foreach>");
                 sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false),
-                        table.getTableName(), table.getKeyColumn(), ids.toString(), getLogicDeleteSql(table)), modelClass);
+                    table.getTableName(), table.getKeyColumn(), ids.toString(), getLogicDeleteSql(table)), modelClass);
             } else {
                 sqlSource = new RawSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false), table.getTableName(),
-                        table.getKeyColumn(), table.getKeyProperty(), getLogicDeleteSql(table)), Object.class);
+                    table.getKeyColumn(), table.getKeyProperty(), getLogicDeleteSql(table)), Object.class);
             }
             this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, table);
         } else {
@@ -150,14 +150,14 @@ public class LogicSqlInjector extends AutoSqlInjector {
         if (table.isLogicDelete()) {
             SqlMethod sqlMethod = selective ? SqlMethod.LOGIC_UPDATE_BY_ID : SqlMethod.LOGIC_UPDATE_ALL_COLUMN_BY_ID;
             String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlSet(selective, table, "et."),
-                    table.getKeyColumn(),
-                    "et." + table.getKeyProperty(),
-                    "<if test=\"et instanceof java.util.Map\">" +
-                            "<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">"
-                            + "and ${et.MP_OPTLOCK_VERSION_COLUMN}=#{et.MP_OPTLOCK_VERSION_ORIGINAL}"
-                            + "</if>"
-                            + "</if>" +
-                            getLogicDeleteSql(table)
+                table.getKeyColumn(),
+                "et." + table.getKeyProperty(),
+                "<if test=\"et instanceof java.util.Map\">" +
+                    "<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">"
+                    + "and ${et.MP_OPTLOCK_VERSION_COLUMN}=#{et.MP_OPTLOCK_VERSION_ORIGINAL}"
+                    + "</if>"
+                    + "</if>" +
+                    getLogicDeleteSql(table)
             );
             SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
             this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
@@ -235,8 +235,8 @@ public class LogicSqlInjector extends AutoSqlInjector {
             }
             for (TableFieldInfo fieldInfo : fieldList) {
                 where.append(convertIfTag(fieldInfo, "ew.", false));
-                where.append(" AND ").append(fieldInfo.getColumn()).append("=#{ew.");
-                where.append(fieldInfo.getEl()).append("}");
+                where.append(" AND ").append(this.sqlCondition(fieldInfo.getCondition(),
+                    fieldInfo.getColumn(), "ew." + fieldInfo.getEl()));
                 where.append(convertIfTag(fieldInfo, true));
             }
             // 过滤逻辑
@@ -264,8 +264,8 @@ public class LogicSqlInjector extends AutoSqlInjector {
             List<TableFieldInfo> fieldList = table.getFieldList();
             for (TableFieldInfo fieldInfo : fieldList) {
                 where.append(convertIfTag(fieldInfo, "ew.entity.", false));
-                where.append(" AND ").append(fieldInfo.getColumn()).append("=#{ew.entity.");
-                where.append(fieldInfo.getEl()).append("}");
+                where.append(" AND ").append(this.sqlCondition(fieldInfo.getCondition(),
+                    fieldInfo.getColumn(), "ew.entity." + fieldInfo.getEl()));
                 where.append(convertIfTag(fieldInfo, true));
             }
             where.append("\n</if>");
@@ -278,7 +278,6 @@ public class LogicSqlInjector extends AutoSqlInjector {
         // 正常逻辑
         return super.sqlWhereEntityWrapper(table);
     }
-
 
     @Override
     protected String sqlWhereByMap(TableInfo table) {

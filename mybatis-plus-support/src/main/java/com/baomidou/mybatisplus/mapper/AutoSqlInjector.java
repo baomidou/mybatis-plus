@@ -494,6 +494,15 @@ public class AutoSqlInjector implements ISqlInjector {
 
     /**
      * <p>
+     * Sql 运算条件
+     * </p>
+     */
+    protected String sqlCondition(String condition, String column, String property) {
+        return String.format(condition, column, property);
+    }
+
+    /**
+     * <p>
      * EntityWrapper方式获取select where
      * </p>
      *
@@ -513,7 +522,8 @@ public class AutoSqlInjector implements ISqlInjector {
         List<TableFieldInfo> fieldList = table.getFieldList();
         for (TableFieldInfo fieldInfo : fieldList) {
             where.append(convertIfTag(fieldInfo, "ew.entity.", false));
-            where.append(" AND ").append(fieldInfo.getColumn()).append("=#{ew.entity.").append(fieldInfo.getEl()).append("}");
+            where.append(" AND ").append(this.sqlCondition(fieldInfo.getCondition(),
+                fieldInfo.getColumn(), "ew.entity." + fieldInfo.getEl()));
             where.append(convertIfTag(fieldInfo, true));
         }
         where.append("\n</if>");
@@ -716,7 +726,8 @@ public class AutoSqlInjector implements ISqlInjector {
         List<TableFieldInfo> fieldList = table.getFieldList();
         for (TableFieldInfo fieldInfo : fieldList) {
             where.append(convertIfTag(fieldInfo, "ew.", false));
-            where.append(" AND ").append(fieldInfo.getColumn()).append("=#{ew.").append(fieldInfo.getEl()).append("}");
+            where.append(" AND ").append(this.sqlCondition(fieldInfo.getCondition(),
+                fieldInfo.getColumn(), "ew." + fieldInfo.getEl()));
             where.append(convertIfTag(fieldInfo, true));
         }
         where.append("\n</where>");
