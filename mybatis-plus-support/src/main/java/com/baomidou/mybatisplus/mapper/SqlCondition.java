@@ -26,9 +26,13 @@ package com.baomidou.mybatisplus.mapper;
 public class SqlCondition {
 
     /**
-     * 等值
+     * 等于
      */
-    public static final String EQUALS = "%s=#{%s}";
+    public static final String EQUAL = "%s=#{%s}";
+    /**
+     * 不等于
+     */
+    public static final String NOT_EQUAL = "%s&lt;&gt;#{%s}";
     /**
      * % 两边 %
      */

@@ -72,7 +72,7 @@ public @interface TableField {
      * 默认 `=` 等值
      * </p>
      */
-    String condition() default SqlCondition.EQUALS;
+    String condition() default SqlCondition.EQUAL;
 
     /**
      * <p>

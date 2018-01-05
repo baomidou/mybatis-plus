@@ -80,7 +80,7 @@ public class TableFieldInfo {
     /**
      * 字段比较条件
      */
-    private String condition = SqlCondition.EQUALS;
+    private String condition = SqlCondition.EQUAL;
 
     /**
      * 字段填充策略
