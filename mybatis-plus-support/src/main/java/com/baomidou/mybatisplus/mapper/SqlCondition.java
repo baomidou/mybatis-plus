@@ -40,7 +40,7 @@ public class SqlCondition {
     /**
      * % 左
      */
-    public static final String LIKE_LEFT = "%s LIKE CONCAT('%',#{%s}";
+    public static final String LIKE_LEFT = "%s LIKE CONCAT('%',#{%s})";
     /**
      * 右 %
      */
