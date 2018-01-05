@@ -184,9 +184,9 @@ public class SqlHelper {
      * @param page    分页对象
      * @param wrapper SQL包装对象
      */
-    public static void fillWrapper(Page<?> page, Wrapper<?> wrapper) {
+    public static Wrapper<?> fillWrapper(Page<?> page, Wrapper<?> wrapper) {
         if (null == page) {
-            return;
+            return wrapper;
         }
         // wrapper 不存创建一个 Condition
         if (isEmptyOfWrapper(wrapper)) {
@@ -201,6 +201,7 @@ public class SqlHelper {
         if (MapUtils.isNotEmpty(page.getCondition())) {
             wrapper.allEq(page.getCondition());
         }
+        return wrapper;
     }
 
     /**
