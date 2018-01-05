@@ -207,7 +207,7 @@ public class AutoGenerator {
             ctx.put("restControllerStyle", config.getStrategyConfig().isRestControllerStyle());
             ctx.put("package", packageInfo);
             GlobalConfig globalConfig = config.getGlobalConfig();
-            ctx.put("author", globalConfig.getAuthor() + "123");
+            ctx.put("author", globalConfig.getAuthor());
             ctx.put("idType", globalConfig.getIdType() == null ? null : globalConfig.getIdType().toString());
             ctx.put("logicDeleteFieldName", config.getStrategyConfig().getLogicDeleteFieldName());
             ctx.put("versionFieldName", config.getStrategyConfig().getVersionFieldName());
