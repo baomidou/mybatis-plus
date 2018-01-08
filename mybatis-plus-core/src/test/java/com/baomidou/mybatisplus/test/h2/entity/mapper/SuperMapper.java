@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.test.h2.entity;
+package com.baomidou.mybatisplus.test.h2.entity.mapper;
 
 /**
  * <p>
@@ -10,5 +10,5 @@ package com.baomidou.mybatisplus.test.h2.entity;
  */
 public interface SuperMapper<T> extends com.baomidou.mybatisplus.mapper.BaseMapper<T> {
 
-    // 这里可以写 mapper 层公共方法、 注意！！ 不要让在 mapper 目录让 mp 扫描到!!
+    // 这里可以写 mapper 层公共方法、 注意！！ 多泛型的时候请将泛型T放在第一位.
 }

@@ -9,7 +9,6 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.test.h2.entity.SuperMapper;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2Addr;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
 

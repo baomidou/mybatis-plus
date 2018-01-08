@@ -17,12 +17,20 @@ package com.baomidou.mybatisplus.mapper;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.baomidou.mybatisplus.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -46,11 +54,6 @@ import com.baomidou.mybatisplus.enums.FieldFill;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.enums.SqlMethod;
-import com.baomidou.mybatisplus.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**
  * <p>
@@ -168,26 +171,32 @@ public class AutoSqlInjector implements ISqlInjector {
     }
 
     /**
-     * 避免扫描到BaseMapper
+     * 提取泛型模型,多泛型的时候请将泛型T放在第一位
      *
      * @param mapperClass
      * @return
      */
     protected Class<?> extractModelClass(Class<?> mapperClass) {
-        if (mapperClass == BaseMapper.class) {
-            logger.warn(" Current Class is BaseMapper ");
-            return null;
-        } else {
-            Type[] types = mapperClass.getGenericInterfaces();
-            ParameterizedType target = null;
-            for (Type type : types) {
-                if (type instanceof ParameterizedType && BaseMapper.class.isAssignableFrom(mapperClass)) {
-                    target = (ParameterizedType) type;
-                    break;
+        Type[] types = mapperClass.getGenericInterfaces();
+        ParameterizedType target = null;
+        for (Type type : types) {
+            if (type instanceof ParameterizedType) {
+                Type[] typeArray = ((ParameterizedType) type).getActualTypeArguments();
+                if(ArrayUtils.isNotEmpty(typeArray)){
+                    for (Type t:typeArray) {
+                        if(t instanceof TypeVariable || t instanceof WildcardType){
+                            target = null;
+                            break;
+                        }else {
+                            target = (ParameterizedType) type;
+                            break;
+                        }
+                    }
                 }
+                break;
             }
-            return target == null ? null : (Class<?>) target.getActualTypeArguments()[0];
         }
+        return target == null ? null : (Class<?>) target.getActualTypeArguments()[0];
     }
 
     /**
@@ -860,7 +869,7 @@ public class AutoSqlInjector implements ISqlInjector {
                                               SqlCommandType sqlCommandType, Class<?> parameterClass, String resultMap, Class<?> resultType,
                                               KeyGenerator keyGenerator, String keyProperty, String keyColumn) {
         String statementName = mapperClass.getName() + "." + id;
-        if (configuration.hasStatement(statementName,false)) {
+        if (hasMappedStatement(statementName)) {
             System.err.println("{" + statementName
                     + "} Has been loaded by XML or SqlProvider, ignoring the injection of the SQL.");
             return null;

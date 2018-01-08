@@ -1,6 +1,5 @@
 package com.baomidou.mybatisplus.test.h2.entity.mapper;
 
-import com.baomidou.mybatisplus.test.h2.entity.SuperMapper;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2uuid;
 
 /**
