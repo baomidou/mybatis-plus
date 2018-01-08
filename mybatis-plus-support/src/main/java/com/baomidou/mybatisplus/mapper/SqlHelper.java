@@ -213,7 +213,7 @@ public class SqlHelper {
      * @return
      */
     public static boolean isEmptyOfWrapper(Wrapper<?> wrapper) {
-        return null == wrapper || Condition.EMPTY.equals(wrapper);
+        return null == wrapper || Condition.EMPTY == wrapper;
     }
 
     /**
