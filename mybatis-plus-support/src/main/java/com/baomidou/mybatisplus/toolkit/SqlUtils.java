@@ -162,4 +162,19 @@ public class SqlUtils {
         return builder.toString();
     }
 
+
+    /**
+     * <p>
+     * SQL注入内容剥离
+     * </p>
+     *
+     * @param sql 待处理 SQL 内容
+     * @return this
+     */
+    public static String stripSqlInjection(String sql) {
+        if (null == sql) {
+            throw new MybatisPlusException("strip sql is null.");
+        }
+        return sql.replaceAll("('.+--)|(--)|(\\|)|(%7C)", "");
+    }
 }

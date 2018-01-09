@@ -105,7 +105,7 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     public String getSqlSelect() {
-        return StringUtils.isEmpty(sqlSelect) ? null : stripSqlInjection(sqlSelect);
+        return StringUtils.isEmpty(sqlSelect) ? null : SqlUtils.stripSqlInjection(sqlSelect);
     }
 
     public Wrapper<T> setSqlSelect(String sqlSelect) {
@@ -1433,18 +1433,6 @@ public abstract class Wrapper<T> implements Serializable {
      */
     public Wrapper<T> addFilterIfNeed(boolean need, String sqlWhere, Object... params) {
         return need ? where(sqlWhere, params) : this;
-    }
-
-    /**
-     * <p>
-     * SQL注入内容剥离
-     * </p>
-     *
-     * @param value 待处理内容
-     * @return this
-     */
-    protected String stripSqlInjection(String value) {
-        return value.replaceAll("('.+--)|(--)|(\\|)|(%7C)", "");
     }
 
     /**
