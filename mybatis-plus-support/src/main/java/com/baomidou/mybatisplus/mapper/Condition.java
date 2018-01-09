@@ -31,8 +31,12 @@ public class Condition extends Wrapper {
     /**
      * 构建一个Empty条件构造 避免传递参数使用null
      */
-    public static final Condition EMPTY = Condition.create();
-
+    public static final Wrapper EMPTY = new Wrapper() {
+        @Override
+        public String getSqlSegment() {
+            return null;
+        }
+    };
 
     /**
      * 获取实例
@@ -62,4 +66,9 @@ public class Condition extends Wrapper {
         return isWhere != null ? (isWhere ? sqlWhere : sqlWhere.replaceFirst("WHERE", AND_OR)) : sqlWhere.replaceFirst("WHERE", AND_OR);
 
     }
+
+    public static <T> Wrapper<T> empty() {
+        return (Wrapper<T>) EMPTY;
+    }
+
 }
