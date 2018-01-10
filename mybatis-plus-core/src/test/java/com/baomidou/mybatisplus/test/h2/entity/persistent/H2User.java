@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.test.h2.entity.persistent;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableName;
@@ -53,8 +54,8 @@ public class H2User extends SuperEntity {
 
     private String desc;
 
-//    @TableField("last_updated_dt")
-//    private Date lastUpdatedDt;
+    @TableField
+	private Date testDate;
 
     @Version
     private Integer version;
