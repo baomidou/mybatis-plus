@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.ConstVal;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.GlobalConfig;
@@ -91,11 +92,14 @@ public class ConfigBuilder {
      * 策略配置
      */
     private StrategyConfig strategyConfig;
-
     /**
      * 全局配置信息
      */
     private GlobalConfig globalConfig;
+    /**
+     * 注入配置信息
+     */
+    private InjectionConfig injectionConfig;
 
     /**
      * <p>
@@ -199,6 +203,11 @@ public class ConfigBuilder {
      */
     public List<TableInfo> getTableInfoList() {
         return tableInfoList;
+    }
+
+    public ConfigBuilder setTableInfoList(List<TableInfo> tableInfoList) {
+        this.tableInfoList = tableInfoList;
+        return this;
     }
 
     /**
@@ -714,4 +723,12 @@ public class ConfigBuilder {
         return this;
     }
 
+    public InjectionConfig getInjectionConfig() {
+        return injectionConfig;
+    }
+
+    public ConfigBuilder setInjectionConfig(InjectionConfig injectionConfig) {
+        this.injectionConfig = injectionConfig;
+        return this;
+    }
 }

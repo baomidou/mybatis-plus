@@ -47,7 +47,8 @@ public class TableInfo {
     private String controllerName;
 
     private List<TableField> fields;
-    private List<TableField> commonFields;// 公共字段
+    // 公共字段
+    private List<TableField> commonFields;
     private List<String> importPackages = new ArrayList<>();
     private String fieldNames;
 

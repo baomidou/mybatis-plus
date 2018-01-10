@@ -1,9 +1,5 @@
 package ${package.Entity};
 
-#if(${activeRecord})
-import java.io.Serializable;
-
-#end
 #foreach($pkg in ${table.importPackages})
 import ${pkg};
 #end

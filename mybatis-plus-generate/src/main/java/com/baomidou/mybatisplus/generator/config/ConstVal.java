@@ -49,13 +49,13 @@ public class ConstVal {
     public static final String KT_SUFFIX = ".kt";
     public static final String XML_SUFFIX = ".xml";
 
-    public static final String TEMPLATE_ENTITY_JAVA = "/templates/entity.java.vm";
-    public static final String TEMPLATE_ENTITY_KT = "/templates/entity.kt.vm";
-    public static final String TEMPLATE_MAPPER = "/templates/mapper.java.vm";
-    public static final String TEMPLATE_XML = "/templates/mapper.xml.vm";
-    public static final String TEMPLATE_SERVICE = "/templates/service.java.vm";
-    public static final String TEMPLATE_SERVICEIMPL = "/templates/serviceImpl.java.vm";
-    public static final String TEMPLATE_CONTROLLER = "/templates/controller.java.vm";
+    public static final String TEMPLATE_ENTITY_JAVA = "/templates/entity.java";
+    public static final String TEMPLATE_ENTITY_KT = "/templates/entity.kt";
+    public static final String TEMPLATE_MAPPER = "/templates/mapper.java";
+    public static final String TEMPLATE_XML = "/templates/mapper.xml";
+    public static final String TEMPLATE_SERVICE = "/templates/service.java";
+    public static final String TEMPLATE_SERVICEIMPL = "/templates/serviceImpl.java";
+    public static final String TEMPLATE_CONTROLLER = "/templates/controller.java";
 
     public static final String VM_LOADPATH_KEY = "file.resource.loader.class";
     public static final String VM_LOADPATH_VALUE = "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader";
@@ -63,5 +63,10 @@ public class ConstVal {
     public static final String SUPERD_MAPPER_CLASS = "com.baomidou.mybatisplus.mapper.BaseMapper";
     public static final String SUPERD_SERVICE_CLASS = "com.baomidou.mybatisplus.service.IService";
     public static final String SUPERD_SERVICEIMPL_CLASS = "com.baomidou.mybatisplus.service.impl.ServiceImpl";
+
+    /**
+     * 输出相关常量
+     */
+    public static final String OUT_CONFIG = "config";
 
 }
