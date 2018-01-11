@@ -17,6 +17,7 @@ import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.DbType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
+import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 
 /**
  * <p>
@@ -26,9 +27,10 @@ import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
  * @author nieqiurong
  * @Date 2016/12/25
  */
-public class SQLServerGenerator {
+public class SQLServerGenerator extends GeneratorTest {
 
     public static void main(String[] args) {
+        int result = scanner();
         AutoGenerator mpg = new AutoGenerator();
 
         // 全局配置
@@ -112,7 +114,7 @@ public class SQLServerGenerator {
             }
         };
         List<FileOutConfig> focList = new ArrayList<>();
-        focList.add(new FileOutConfig("/templates/entity.java.vm") {
+        focList.add(new FileOutConfig("/templates/entity.java" + ((1 == result) ? ".ftl" : ".vm")) {
             @Override
             public String outputFile(TableInfo tableInfo) {
                 // 自定义输入文件名称
@@ -133,6 +135,9 @@ public class SQLServerGenerator {
         // tc.setServiceImpl("...");
         // mpg.setTemplate(tc);
         // 执行生成
+        if (1 == result) {
+            mpg.setTemplateEngine(new FreemarkerTemplateEngine());
+        }
         mpg.execute();
         // 打印注入设置
         System.err.println(mpg.getCfg().getMap().get("abc"));
