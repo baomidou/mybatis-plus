@@ -27,9 +27,13 @@ import com.baomidou.mybatisplus.enums.FieldFill;
  */
 public class TableFill {
 
-    /* 字段名称 */
+    /**
+     * 字段名称
+     */
     private String fieldName;
-    /* 忽略类型 */
+    /**
+     * 忽略类型
+     */
     private FieldFill fieldFill;
 
     private TableFill() {
