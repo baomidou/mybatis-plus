@@ -39,14 +39,13 @@ public class ${entity} implements Serializable {
 </#if>
 
     private static final long serialVersionUID = 1L;
-
 <#-- ----------  BEGIN 字段循环遍历  ---------->
 <#list table.fields as field>
 <#if field.keyFlag>
 <#assign keyPropertyName="${field.propertyName}"/>
 </#if>
 
-<#if field.comment??>
+<#if field.comment!?length gt 0>
     /**
      * ${field.comment}
      */
@@ -55,12 +54,11 @@ public class ${entity} implements Serializable {
 <#-- 主键 -->
 <#if field.keyIdentityFlag>
     @TableId(value = "${field.name}", type = IdType.AUTO)
-<#elseif idType!>
+<#elseif idType??>
     @TableId(value = "${field.name}", type = IdType.${idType})
 <#elseif field.convert>
     @TableId("${field.name}")
 </#if>
-
 <#-- 普通字段 -->
 <#elseif field.fill??>
 <#-- -----   存在字段填充设置   ----->
@@ -81,7 +79,6 @@ public class ${entity} implements Serializable {
     @TableLogic
 </#if>
     private ${field.propertyType} ${field.propertyName};
-
 </#list>
 <#------------  END 字段循环遍历  ---------->
 
@@ -111,7 +108,7 @@ public class ${entity} implements Serializable {
 
 <#if entityColumnConstant>
 <#list table.fields as field>
-    public static final String ${field.name.toUpperCase()} = "${field.name}";
+    public static final String ${field.name?upper_case} = "${field.name}";
 
 </#list>
 </#if>

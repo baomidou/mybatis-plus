@@ -28,7 +28,8 @@ class ${entity} : Serializable {
 <#if field.keyFlag>
     <#assign keyPropertyName="${field.propertyName}"/>
 </#if>
-<#if field.comment??>
+
+<#if field.comment!?length gt 0>
     /**
      * ${field.comment}
      */
