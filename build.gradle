@@ -35,7 +35,8 @@ ext {
 			"spring-tx":"org.springframework:spring-tx:${springVersion}",
 			"druid":"com.alibaba:druid:1.0.29",
 			"fastjson":"com.alibaba:fastjson:1.2.37",
-			"tomcatjdbc":"org.apache.tomcat:tomcat-jdbc:9.0.2"
+			"tomcatjdbc":"org.apache.tomcat:tomcat-jdbc:9.0.2",
+			"freemarker":"org.freemarker:freemarker:2.3.23"
 	]
 }
 
@@ -77,7 +78,7 @@ subprojects{
 	}
 
 	repositories {
-		mavenLocal()
+//		mavenLocal()
 		maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
 		maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
 		maven { url "http://www.cameliatk.jp/maven2/repository/thirdparty"}
