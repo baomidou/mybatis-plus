@@ -27,7 +27,8 @@ public enum IdType {
     AUTO(0, "数据库ID自增"), INPUT(1, "用户输入ID"),
 
     /* 以下2种类型、只有当插入对象ID 为空，才自动填充。 */
-    ID_WORKER(2, "全局唯一ID"), UUID(3, "全局唯一ID"), NONE(4, "该类型为未设置主键类型");
+    ID_WORKER(2, "全局唯一ID"), UUID(3, "全局唯一ID"), NONE(4, "该类型为未设置主键类型"),
+    ID_WORKER_STR(5, "字符串全局唯一ID");
 
     /**
      * 主键

@@ -37,6 +37,10 @@ public class IdWorker {
         return worker.nextId();
     }
 
+    public static String getIdStr() {
+        return String.valueOf(worker.nextId());
+    }
+
     /**
      * <p>
      * 获取去掉"-" UUID

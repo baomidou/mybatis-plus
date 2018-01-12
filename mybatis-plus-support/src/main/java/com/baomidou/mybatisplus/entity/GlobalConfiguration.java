@@ -44,35 +44,65 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  */
 public class GlobalConfiguration implements Serializable {
 
-    // 逻辑删除全局值
+    /**
+     * 逻辑删除全局值
+     */
     private String logicDeleteValue = null;
-    // 逻辑未删除全局值
+    /**
+     * 逻辑未删除全局值
+     */
     private String logicNotDeleteValue = null;
-    // 数据库类型
+    /**
+     * 数据库类型
+     */
     private DBType dbType;
-    // 主键类型（默认 ID_WORKER）
+    /**
+     * 主键类型（默认 ID_WORKER）
+     */
     private IdType idType = IdType.ID_WORKER;
-    // 表名、字段名、是否使用下划线命名（默认 false）
+    /**
+     * 表名、字段名、是否使用下划线命名（默认 false）
+     */
     private boolean dbColumnUnderline = false;
-    // SQL注入器
+    /**
+     * SQL注入器
+     */
     private ISqlInjector sqlInjector;
-    // 表关键词 key 生成器
+    /**
+     * 表关键词 key 生成器
+     */
     private IKeyGenerator keyGenerator;
-    // 元对象字段填充控制器
+    /**
+     * 元对象字段填充控制器
+     */
     private MetaObjectHandler metaObjectHandler = new DefaultMetaObjectHandler();
-    // 字段验证策略
+    /**
+     * 字段验证策略
+     */
     private FieldStrategy fieldStrategy = FieldStrategy.NOT_NULL;
-    // 是否刷新mapper
+    /**
+     * 是否刷新mapper
+     */
     private boolean isRefresh = false;
-    // 是否大写命名
+    /**
+     * 是否大写命名
+     */
     private boolean isCapitalMode = false;
-    // 标识符
+    /**
+     * 标识符
+     */
     private String identifierQuote;
-    // 缓存当前Configuration的SqlSessionFactory
+    /**
+     * 缓存当前Configuration的SqlSessionFactory
+     */
     private SqlSessionFactory sqlSessionFactory;
-    // 缓存已注入CRUD的Mapper信息
+    /**
+     * 缓存已注入CRUD的Mapper信息
+     */
     private Set<String> mapperRegistryCache = new ConcurrentSkipListSet<>();
-    // 单例重用SqlSession
+    /**
+     * 单例重用SqlSession
+     */
     private SqlSession sqlSession;
 
     public GlobalConfiguration() {
