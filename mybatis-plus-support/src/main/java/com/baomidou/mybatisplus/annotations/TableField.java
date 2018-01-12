@@ -49,7 +49,7 @@ public @interface TableField {
      * </p>
      * <p>
      * 支持：@TableField(el = "role, jdbcType=BIGINT)<br>
-     * 支持：@TableField(el = "role, typeHandler=com.baomidou.xx.typehandler.PhoneTypeHandler")
+     * 支持：@TableField(el = "role, typeHandler=com.baomidou.springcloud.typehandler.PhoneTypeHandler")
      * </p>
      */
     String el() default "";
@@ -66,13 +66,28 @@ public @interface TableField {
 
     /**
      * <p>
-     * 字段 WHERE 实体查询比较条件
+     * 字段 where 实体查询比较条件
      * </p>
      * <p>
      * 默认 `=` 等值
      * </p>
      */
     String condition() default SqlCondition.EQUAL;
+
+    /**
+     * <p>
+     * 字段 update set 部分注入, 该注解优于 el 注解使用
+     * </p>
+     * <p>
+     * 例如：@TableField(.. , update="%s+1") 其中 %s 会填充为字段
+     * 输出 SQL 为：update 表 set 字段=字段+1 where ...
+     * </p>
+     * <p>
+     * 例如：@TableField(.. , update="now()") 使用数据库时间
+     * 输出 SQL 为：update 表 set 字段=now() where ...
+     * </p>
+     */
+    String update() default "";
 
     /**
      * <p>

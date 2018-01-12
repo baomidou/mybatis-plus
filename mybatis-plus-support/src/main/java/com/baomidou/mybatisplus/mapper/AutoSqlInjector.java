@@ -72,7 +72,9 @@ public class AutoSqlInjector implements ISqlInjector {
     protected MapperBuilderAssistant builderAssistant;
 
     /**
-     * CRUD注入后给予标识 注入过后不再注入
+     * <p>
+     * CRUD 注入后给予标识 注入过后不再注入
+     * </p>
      *
      * @param builderAssistant
      * @param mapperClass
@@ -124,13 +126,13 @@ public class AutoSqlInjector implements ISqlInjector {
          * #148 表信息包含主键，注入主键相关方法
          */
         if (StringUtils.isNotEmpty(table.getKeyProperty())) {
-            /* 删除 */
+            /** 删除 */
             this.injectDeleteByIdSql(false, mapperClass, modelClass, table);
             this.injectDeleteByIdSql(true, mapperClass, modelClass, table);
-            /* 修改 */
+            /** 修改 */
             this.injectUpdateByIdSql(true, mapperClass, modelClass, table);
             this.injectUpdateByIdSql(false, mapperClass, modelClass, table);
-            /* 查询 */
+            /** 查询 */
             this.injectSelectByIdSql(false, mapperClass, modelClass, table);
             this.injectSelectByIdSql(true, mapperClass, modelClass, table);
         } else {
@@ -141,15 +143,15 @@ public class AutoSqlInjector implements ISqlInjector {
         /**
          * 正常注入无需主键方法
          */
-        /* 插入 */
+        /** 插入 */
         this.injectInsertOneSql(true, mapperClass, modelClass, table);
         this.injectInsertOneSql(false, mapperClass, modelClass, table);
-        /* 删除 */
+        /** 删除 */
         this.injectDeleteSql(mapperClass, modelClass, table);
         this.injectDeleteByMapSql(mapperClass, table);
-        /* 修改 */
+        /** 修改 */
         this.injectUpdateSql(mapperClass, modelClass, table);
-        /* 查询 */
+        /** 查询 */
         this.injectSelectByMapSql(mapperClass, modelClass, table);
         this.injectSelectOneSql(mapperClass, modelClass, table);
         this.injectSelectCountSql(mapperClass, modelClass, table);
@@ -158,7 +160,7 @@ public class AutoSqlInjector implements ISqlInjector {
         this.injectSelectMapsSql(SqlMethod.SELECT_MAPS, mapperClass, modelClass, table);
         this.injectSelectMapsSql(SqlMethod.SELECT_MAPS_PAGE, mapperClass, modelClass, table);
         this.injectSelectObjsSql(SqlMethod.SELECT_OBJS, mapperClass, modelClass, table);
-        /* 自定义方法 */
+        /** 自定义方法 */
         this.inject(configuration, builderAssistant, mapperClass, modelClass, table);
     }
 
@@ -229,7 +231,7 @@ public class AutoSqlInjector implements ISqlInjector {
         // 表包含主键处理逻辑,如果不包含主键当普通字段处理
         if (StringUtils.isNotEmpty(table.getKeyProperty())) {
             if (table.getIdType() == IdType.AUTO) {
-                /* 自增主键 */
+                /** 自增主键 */
                 keyGenerator = new Jdbc3KeyGenerator();
                 keyProperty = table.getKeyProperty();
                 keyColumn = table.getKeyColumn();
@@ -241,7 +243,7 @@ public class AutoSqlInjector implements ISqlInjector {
                     fieldBuilder.append(table.getKeyColumn()).append(",");
                     placeholderBuilder.append("#{").append(table.getKeyProperty()).append("},");
                 } else {
-                    /* 用户输入自定义ID */
+                    /** 用户输入自定义ID */
                     fieldBuilder.append(table.getKeyColumn()).append(",");
                     // 正常自定义主键策略
                     placeholderBuilder.append("#{").append(table.getKeyProperty()).append("},");
@@ -565,13 +567,18 @@ public class AutoSqlInjector implements ISqlInjector {
             ifTag = !(FieldFill.UPDATE == fieldInfo.getFieldFill()
                     || FieldFill.INSERT_UPDATE == fieldInfo.getFieldFill());
             if (selective && ifTag) {
-                set.append(convertIfTag(true, fieldInfo, prefix, false));
-                set.append(fieldInfo.getColumn()).append("=#{");
-                if (null != prefix) {
-                    set.append(prefix);
+                if (StringUtils.isNotEmpty(fieldInfo.getUpdate())) {
+                    set.append(fieldInfo.getColumn()).append("=");
+                    set.append(String.format(fieldInfo.getUpdate(), fieldInfo.getColumn())).append(",");
+                } else {
+                    set.append(convertIfTag(true, fieldInfo, prefix, false));
+                    set.append(fieldInfo.getColumn()).append("=#{");
+                    if (null != prefix) {
+                        set.append(prefix);
+                    }
+                    set.append(fieldInfo.getEl()).append("},");
+                    set.append(convertIfTag(true, fieldInfo, null, true));
                 }
-                set.append(fieldInfo.getEl()).append("},");
-                set.append(convertIfTag(true, fieldInfo, null, true));
             } else if (FieldFill.INSERT != fieldInfo.getFieldFill()) {
                 // 排除填充注解字段
                 set.append(fieldInfo.getColumn()).append("=#{");
@@ -774,7 +781,7 @@ public class AutoSqlInjector implements ISqlInjector {
      * @return
      */
     protected String convertIfTag(boolean ignored, TableFieldInfo fieldInfo, String prefix, boolean close) {
-        /* 忽略策略 */
+        /** 忽略策略 */
         FieldStrategy fieldStrategy = fieldInfo.getFieldStrategy();
         if (fieldStrategy == FieldStrategy.IGNORED) {
             if (ignored) {
@@ -789,7 +796,7 @@ public class AutoSqlInjector implements ISqlInjector {
             return "</if>";
         }
 
-		/* 前缀处理 */
+		/** 前缀处理 */
         String property = fieldInfo.getProperty();
         Class propertyType = fieldInfo.getPropertyType();
         property = StringUtils.removeIsPrefixIfBoolean(property, propertyType);
@@ -821,7 +828,7 @@ public class AutoSqlInjector implements ISqlInjector {
         return convertIfTag(fieldInfo, null, close);
     }
 
-    /*
+    /**
      * 查询
      */
     public MappedStatement addSelectMappedStatement(Class<?> mapperClass, String id, SqlSource sqlSource, Class<?> resultType,
@@ -829,18 +836,18 @@ public class AutoSqlInjector implements ISqlInjector {
         if (null != table) {
             String resultMap = table.getResultMap();
             if (null != resultMap) {
-                /* 返回 resultMap 映射结果集 */
+                /** 返回 resultMap 映射结果集 */
                 return this.addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.SELECT, null, resultMap, null,
                         new NoKeyGenerator(), null, null);
             }
         }
 
-		/* 普通查询 */
+		/** 普通查询 */
         return this.addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.SELECT, null, null, resultType,
                 new NoKeyGenerator(), null, null);
     }
 
-    /*
+    /**
      * 插入
      */
     public MappedStatement addInsertMappedStatement(Class<?> mapperClass, Class<?> modelClass, String id, SqlSource sqlSource,
@@ -849,7 +856,7 @@ public class AutoSqlInjector implements ISqlInjector {
                 keyGenerator, keyProperty, keyColumn);
     }
 
-    /*
+    /**
      * 删除
      */
     public MappedStatement addDeleteMappedStatement(Class<?> mapperClass, String id, SqlSource sqlSource) {
@@ -857,7 +864,7 @@ public class AutoSqlInjector implements ISqlInjector {
                 new NoKeyGenerator(), null, null);
     }
 
-    /*
+    /**
      * 更新
      */
     public MappedStatement addUpdateMappedStatement(Class<?> mapperClass, Class<?> modelClass, String id, SqlSource sqlSource) {
@@ -874,7 +881,7 @@ public class AutoSqlInjector implements ISqlInjector {
                     + "} Has been loaded by XML or SqlProvider, ignoring the injection of the SQL.");
             return null;
         }
-		/* 缓存逻辑处理 */
+		/** 缓存逻辑处理 */
         boolean isSelect = false;
         if (sqlCommandType == SqlCommandType.SELECT) {
             isSelect = true;

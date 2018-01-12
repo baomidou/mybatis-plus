@@ -78,7 +78,12 @@ public class TableFieldInfo {
     private String logicNotDeleteValue;
 
     /**
-     * 字段比较条件
+     * 字段 update set 部分注入
+     */
+    private String update;
+
+    /**
+     * where 字段比较条件
      */
     private String condition = SqlCondition.EQUAL;
 
@@ -123,6 +128,7 @@ public class TableFieldInfo {
             this.fieldStrategy = globalConfig.getFieldStrategy();
         }
         tableInfo.setLogicDelete(this.initLogicDelete(globalConfig, field));
+        this.update = tableField.update();
         this.condition = tableField.condition();
         /*
          * 保存当前字段的填充策略
@@ -250,6 +256,14 @@ public class TableFieldInfo {
 
     public void setLogicNotDeleteValue(String logicNotDeleteValue) {
         this.logicNotDeleteValue = logicNotDeleteValue;
+    }
+
+    public String getUpdate() {
+        return update;
+    }
+
+    public void setUpdate(String update) {
+        this.update = update;
     }
 
     public String getCondition() {
