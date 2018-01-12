@@ -48,7 +48,8 @@ public abstract class SqlParserHandler {
             }
             // SQL 解析
             if (CollectionUtils.isNotEmpty(this.sqlParserList)) {
-                int flag = 0;// 标记是否修改过 SQL
+                // 标记是否修改过 SQL
+                int flag = 0;
                 String originalSql = (String) metaObject.getValue(PluginUtils.DELEGATE_BOUNDSQL_SQL);
                 for (ISqlParser sqlParser : this.sqlParserList) {
                     SqlInfo sqlInfo = sqlParser.optimizeSql(metaObject, originalSql);

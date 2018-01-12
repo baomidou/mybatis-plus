@@ -362,15 +362,18 @@ public class ConfigBuilder {
     }
 
     /**
+     * <p>
      * 检查是否有
-     *     {@link com.baomidou.mybatisplus.annotations.TableId}
-     *  {@link com.baomidou.mybatisplus.annotations.TableField}
-     *  注解
+     * {@link com.baomidou.mybatisplus.annotations.TableId}
+     * {@link com.baomidou.mybatisplus.annotations.TableField}
+     * 注解
+     * </p>
+     *
      * @param config
      * @param tableInfo
      * @param fieldPrefix
      */
-    private void checkTableIdTableFieldAnnotation(StrategyConfig config, TableInfo tableInfo, String[] fieldPrefix){
+    private void checkTableIdTableFieldAnnotation(StrategyConfig config, TableInfo tableInfo, String[] fieldPrefix) {
         boolean importTableFieldAnnotaion = false;
         boolean importTableIdAnnotaion = false;
         if (config.isEntityTableFieldAnnotationEnable()) {
@@ -396,8 +399,8 @@ public class ConfigBuilder {
         if (importTableIdAnnotaion) {
             tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotations.TableId.class.getCanonicalName());
         }
-        if(globalConfig.getIdType()!=null){
-            if(!importTableIdAnnotaion){
+        if (globalConfig.getIdType() != null) {
+            if (!importTableIdAnnotaion) {
                 tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotations.TableId.class.getCanonicalName());
             }
             tableInfo.getImportPackages().add(com.baomidou.mybatisplus.enums.IdType.class.getCanonicalName());
@@ -465,7 +468,7 @@ public class ConfigBuilder {
                     if (isInclude) {
                         for (String includeTab : config.getInclude()) {
                             if (includeTab.equalsIgnoreCase(tableName)) {
-                                includeTableList.add(tableInfo);
+                                includeTableList.add(this.convertTableFields(tableInfo, strategy));
                             } else {
                                 notExistTables.add(includeTab);
                             }
@@ -479,7 +482,7 @@ public class ConfigBuilder {
                             }
                         }
                     }
-                    tableList.add(this.convertTableFields(tableInfo, strategy));
+                    tableList.add(tableInfo);
                 } else {
                     System.err.println("当前数据库为空！！！");
                 }
@@ -500,6 +503,12 @@ public class ConfigBuilder {
             }
             if (!isInclude && !isExclude) {
                 includeTableList = tableList;
+            }
+            /**
+             * 性能优化，只处理需执行表字段 github issues/219
+             */
+            for (TableInfo ti : includeTableList) {
+                this.convertTableFields(ti, strategy);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -692,7 +701,9 @@ public class ConfigBuilder {
     }
 
     /**
+     * <p>
      * 获取当前的SQL类型
+     * </p>
      *
      * @return DB类型
      */
