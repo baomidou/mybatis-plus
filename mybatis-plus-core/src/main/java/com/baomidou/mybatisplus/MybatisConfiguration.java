@@ -39,7 +39,7 @@ public class MybatisConfiguration extends Configuration {
 
     private static final Log logger = LogFactory.getLog(MybatisConfiguration.class);
 
-    /*
+    /**
      * Mapper 注册
      */
     public final MybatisMapperRegistry mybatisMapperRegistry = new MybatisMapperRegistry(this);

@@ -1,0 +1,8 @@
+dependencies {
+    compile project(":mybatis-plus-core")
+    compile project(":mybatis-plus-support")
+    optional project(":mybatis-plus-generate")
+    compile rootProject.ext.dependencies["springboot-autoconfigure"]
+    compile rootProject.ext.dependencies["springboot-starter-jdbc"]
+    compileOnly rootProject.ext.dependencies["springboot-configuration-processor"]
+}

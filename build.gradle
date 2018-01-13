@@ -7,6 +7,7 @@ ext {
 			mybatisSpringVersion = '1.3.1',
 			mybatisVersion = '3.4.5',
 			springVersion = '4.3.5.RELEASE',
+            springBootVersion = '1.5.9.RELEASE',
 	]
 
 	dependencies = [
@@ -36,7 +37,12 @@ ext {
 			"druid":"com.alibaba:druid:1.0.29",
 			"fastjson":"com.alibaba:fastjson:1.2.37",
 			"tomcatjdbc":"org.apache.tomcat:tomcat-jdbc:9.0.2",
-			"freemarker":"org.freemarker:freemarker:2.3.23"
+			"freemarker":"org.freemarker:freemarker:2.3.23",
+
+            // spring boot
+            "springboot-autoconfigure":"org.springframework.boot:spring-boot-autoconfigure:${springBootVersion}",
+            "springboot-configuration-processor":"org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}",
+            "springboot-starter-jdbc":"org.springframework.boot:spring-boot-starter-jdbc:${springBootVersion}",
 	]
 }
 
