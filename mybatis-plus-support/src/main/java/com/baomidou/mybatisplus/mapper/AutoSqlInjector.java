@@ -28,6 +28,7 @@ import java.util.Set;
 import com.baomidou.mybatisplus.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
@@ -97,7 +98,7 @@ public class AutoSqlInjector implements ISqlInjector {
         this.configuration = builderAssistant.getConfiguration();
         this.builderAssistant = builderAssistant;
         this.languageDriver = configuration.getDefaultScriptingLanguageInstance();
-        /*
+        /**
          * 驼峰设置 PLUS 配置 > 原始配置
 		 */
         GlobalConfiguration globalCache = this.getGlobalConfig();
@@ -105,7 +106,13 @@ public class AutoSqlInjector implements ISqlInjector {
             globalCache.setDbColumnUnderline(configuration.isMapUnderscoreToCamelCase());
         }
         Class<?> modelClass = extractModelClass(mapperClass);
-        if (modelClass != null) {
+        if (null != modelClass) {
+            /**
+             * 初始化 SQL 解析
+             */
+            if (globalCache.isSqlParserCache()) {
+                PluginUtils.initSqlParserInfoCache(mapperClass);
+            }
             TableInfo table = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
             injectSql(builderAssistant, mapperClass, modelClass, table);
         }

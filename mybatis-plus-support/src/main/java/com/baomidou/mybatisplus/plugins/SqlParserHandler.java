@@ -51,7 +51,7 @@ public abstract class SqlParserHandler {
             if (CollectionUtils.isNotEmpty(this.sqlParserList)) {
                 // @SqlParser(filter = true) 跳过该方法解析
                 SqlParserInfo sqlParserInfo = PluginUtils.getSqlParserInfo(metaObject);
-                if (sqlParserInfo.getFilter()) {
+                if (null != sqlParserInfo && sqlParserInfo.getFilter()) {
                     return;
                 }
                 // 标记是否修改过 SQL

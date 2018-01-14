@@ -75,6 +75,10 @@ public class GlobalConfig {
      * 表关键词 key 生成器
      */
     private String keyGenerator;
+    /**
+     * 缓存 Sql 解析初始化
+     */
+    private Boolean sqlParserCache;
 
     public Integer getIdType() {
         return idType;
@@ -164,6 +168,14 @@ public class GlobalConfig {
         this.keyGenerator = keyGenerator;
     }
 
+    public Boolean getSqlParserCache() {
+        return sqlParserCache;
+    }
+
+    public void setSqlParserCache(Boolean sqlParserCache) {
+        this.sqlParserCache = sqlParserCache;
+    }
+
     public GlobalConfiguration convertGlobalConfiguration() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         GlobalConfiguration globalConfiguration = new GlobalConfiguration();
         if (StringUtils.isNotEmpty(this.getIdentifierQuote())) {
@@ -187,7 +199,7 @@ public class GlobalConfig {
         if (StringUtils.checkValNotNull(this.getIdType())) {
             globalConfiguration.setIdType(this.getIdType());
         }
-        if (StringUtils.checkValNotNull(this.getDbColumnUnderline())) {
+        if (null != this.getDbColumnUnderline()) {
             globalConfiguration.setDbColumnUnderline(this.getDbColumnUnderline());
         }
         if (StringUtils.checkValNotNull(this.getFieldStrategy())) {
@@ -198,6 +210,9 @@ public class GlobalConfig {
         }
         if (StringUtils.checkValNotNull(this.getCapitalMode())) {
             globalConfiguration.setCapitalMode(this.getCapitalMode());
+        }
+        if (null != this.getSqlParserCache()) {
+            globalConfiguration.setSqlParserCache(this.getSqlParserCache());
         }
         return globalConfiguration;
     }

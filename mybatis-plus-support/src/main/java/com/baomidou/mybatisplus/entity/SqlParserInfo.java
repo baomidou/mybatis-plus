@@ -16,6 +16,8 @@
 package com.baomidou.mybatisplus.entity;
 
 
+import com.baomidou.mybatisplus.annotations.SqlParser;
+
 /**
  * <p>
  * SQL 解析信息
@@ -33,6 +35,10 @@ public class SqlParserInfo {
 
     public SqlParserInfo() {
 
+    }
+
+    public SqlParserInfo(SqlParser sqlParser) {
+        this.filter = sqlParser.filter();
     }
 
     public boolean getFilter() {

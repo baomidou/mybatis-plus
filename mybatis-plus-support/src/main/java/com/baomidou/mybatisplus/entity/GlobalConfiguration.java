@@ -104,10 +104,16 @@ public class GlobalConfiguration implements Serializable {
      * 单例重用SqlSession
      */
     private SqlSession sqlSession;
+    /**
+     * 缓存 Sql 解析初始化
+     */
+    private boolean sqlParserCache = false;
+
 
     public GlobalConfiguration() {
         // 构造方法
     }
+
 
     public GlobalConfiguration(ISqlInjector sqlInjector) {
         this.sqlInjector = sqlInjector;
@@ -250,6 +256,13 @@ public class GlobalConfiguration implements Serializable {
         return sqlSession;
     }
 
+    public boolean isSqlParserCache() {
+        return sqlParserCache;
+    }
+
+    public void setSqlParserCache(boolean sqlParserCache) {
+        this.sqlParserCache = sqlParserCache;
+    }
 
     /**
      * <p>
