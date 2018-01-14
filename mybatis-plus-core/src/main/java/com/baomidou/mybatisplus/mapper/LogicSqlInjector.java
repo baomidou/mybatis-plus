@@ -253,7 +253,7 @@ public class LogicSqlInjector extends AutoSqlInjector {
         if (table.isLogicDelete()) {
             StringBuilder where = new StringBuilder(128);
             where.append("\n<where>");
-            where.append("\n<if test=\"ew!=null\">");
+            where.append("\n<choose><when test=\"ew!=null\">");
             where.append("\n<if test=\"ew.entity!=null\">");
             if (StringUtils.isNotEmpty(table.getKeyProperty())) {
                 where.append("\n<if test=\"ew.entity.").append(table.getKeyProperty()).append("!=null\">");
@@ -271,7 +271,9 @@ public class LogicSqlInjector extends AutoSqlInjector {
             where.append("\n</if>");
             where.append("\n").append(getLogicDeleteSql(table));
             where.append("\n<if test=\"ew.sqlSegment!=null\">${ew.sqlSegment}\n</if>");
-            where.append("\n</if>");
+            where.append("\n</when><otherwise>");
+            where.append("\n").append(getLogicDeleteSql(table));
+            where.append("\n</otherwise></choose>");
             where.append("\n</where>");
             return where.toString();
         }
