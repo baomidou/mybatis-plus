@@ -427,8 +427,6 @@ public class ConfigBuilder {
 
         //不存在的表名
         Set<String> notExistTables = new HashSet<>();
-
-        NamingStrategy strategy = config.getNaming();
         PreparedStatement preparedStatement = null;
         try {
             String tableCommentsSql = querySQL.getTableCommentsSql();
@@ -468,7 +466,7 @@ public class ConfigBuilder {
                     if (isInclude) {
                         for (String includeTab : config.getInclude()) {
                             if (includeTab.equalsIgnoreCase(tableName)) {
-                                includeTableList.add(this.convertTableFields(tableInfo, strategy));
+                                includeTableList.add(tableInfo);
                             } else {
                                 notExistTables.add(includeTab);
                             }
@@ -508,7 +506,7 @@ public class ConfigBuilder {
              * 性能优化，只处理需执行表字段 github issues/219
              */
             for (TableInfo ti : includeTableList) {
-                this.convertTableFields(ti, strategy);
+                this.convertTableFields(ti, config.getColumnNaming());
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -525,7 +523,7 @@ public class ConfigBuilder {
                 e.printStackTrace();
             }
         }
-        return processTable(includeTableList, strategy, config);
+        return processTable(includeTableList, config.getNaming(), config);
     }
 
 

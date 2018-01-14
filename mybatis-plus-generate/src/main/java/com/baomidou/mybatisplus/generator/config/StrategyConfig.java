@@ -45,6 +45,11 @@ public class StrategyConfig {
      * 数据库表映射到实体的命名策略
      */
     private NamingStrategy naming = NamingStrategy.nochange;
+    /**
+     * 数据库表字段映射到实体的命名策略<br/>
+     * 未指定按照 naming 执行
+     */
+    private NamingStrategy columnNaming = null;
 
     /**
      * 表前缀
@@ -208,6 +213,19 @@ public class StrategyConfig {
 
     public StrategyConfig setNaming(NamingStrategy naming) {
         this.naming = naming;
+        return this;
+    }
+
+    public NamingStrategy getColumnNaming() {
+        if (null == columnNaming) {
+            // 未指定以 naming 策略为准
+            return naming;
+        }
+        return columnNaming;
+    }
+
+    public StrategyConfig setColumnNaming(NamingStrategy columnNaming) {
+        this.columnNaming = columnNaming;
         return this;
     }
 
