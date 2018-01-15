@@ -36,15 +36,15 @@ public class SqlCondition {
     /**
      * % 两边 %
      */
-    public static final String LIKE = "%s LIKE CONCAT('%',#{%s},'%')";
+    public static final String LIKE = "%s LIKE CONCAT('%%',#{%s},'%%')";
     /**
      * % 左
      */
-    public static final String LIKE_LEFT = "%s LIKE CONCAT('%',#{%s})";
+    public static final String LIKE_LEFT = "%s LIKE CONCAT('%%',#{%s})";
     /**
      * 右 %
      */
-    public static final String LIKE_RIGHT = "%s LIKE CONCAT(#{%s},'%')";
+    public static final String LIKE_RIGHT = "%s LIKE CONCAT(#{%s},'%%')";
 
 
 }
