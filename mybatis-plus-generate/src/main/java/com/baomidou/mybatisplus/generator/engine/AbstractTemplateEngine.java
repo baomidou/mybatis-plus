@@ -84,10 +84,10 @@ public abstract class AbstractTemplateEngine {
                 String controllerFile = String.format((pathInfo.get(ConstVal.CONTROLLER_PATH) + File.separator + tableInfo.getControllerName() + this.suffixJavaOrKt()), entityName);
                 TemplateConfig template = this.getConfigBuilder().getTemplate();
                 if (this.isCreate(entityFile)) {
-                    this.writer(objectMap, this.templateFilePath(template.getEntity(this.getConfigBuilder().getGlobalConfig().isKotlin())), mapperFile);
+                    this.writer(objectMap, this.templateFilePath(template.getEntity(this.getConfigBuilder().getGlobalConfig().isKotlin())), entityFile);
                 }
                 if (this.isCreate(mapperFile)) {
-                    this.writer(objectMap, this.templateFilePath(template.getMapper()), entityFile);
+                    this.writer(objectMap, this.templateFilePath(template.getMapper()), mapperFile);
                 }
                 if (this.isCreate(xmlFile)) {
                     this.writer(objectMap, this.templateFilePath(template.getXml()), xmlFile);
