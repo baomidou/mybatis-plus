@@ -37,7 +37,7 @@ ext {
 			"druid":"com.alibaba:druid:1.0.29",
 			"fastjson":"com.alibaba:fastjson:1.2.37",
 			"tomcatjdbc":"org.apache.tomcat:tomcat-jdbc:9.0.2",
-			"freemarker":"org.freemarker:freemarker:2.3.23",
+			"freemarker":"org.freemarker:freemarker:2.3.9",
 
             // spring boot
             "springboot-autoconfigure":"org.springframework.boot:spring-boot-autoconfigure:${springBootVersion}",
