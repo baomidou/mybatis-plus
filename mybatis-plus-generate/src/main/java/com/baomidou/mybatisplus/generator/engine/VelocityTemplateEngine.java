@@ -20,10 +20,12 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Map;
 import java.util.Properties;
+
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
+
 import com.baomidou.mybatisplus.generator.config.ConstVal;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
@@ -38,6 +40,7 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  */
 public class VelocityTemplateEngine extends AbstractTemplateEngine {
 
+    private static final String DOT_VM = ".vm";
     private VelocityEngine velocityEngine;
 
     @Override
@@ -72,8 +75,11 @@ public class VelocityTemplateEngine extends AbstractTemplateEngine {
 
     @Override
     public String templateFilePath(String filePath) {
+        if (null == filePath || filePath.contains(DOT_VM)) {
+            return filePath;
+        }
         StringBuilder fp = new StringBuilder();
-        fp.append(filePath).append(".vm");
+        fp.append(filePath).append(DOT_VM);
         return fp.toString();
     }
 }
