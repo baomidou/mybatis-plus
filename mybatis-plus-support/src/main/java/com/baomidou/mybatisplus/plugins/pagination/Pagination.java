@@ -71,6 +71,11 @@ public class Pagination extends RowBounds implements Serializable {
     private boolean openSort = true;
 
     /**
+     * 优化 Count Sql 设置 false 执行 select count(1) from (listSql)
+     */
+    private boolean optimizeCountSql = true;
+
+    /**
      * <p>
      * SQL 排序 ASC 集合
      * </p>
@@ -231,6 +236,15 @@ public class Pagination extends RowBounds implements Serializable {
     public Pagination setOpenSort(boolean openSort) {
         this.openSort = openSort;
         return this;
+    }
+
+    @Transient
+    public boolean isOptimizeCountSql() {
+        return optimizeCountSql;
+    }
+
+    public void setOptimizeCountSql(boolean optimizeCountSql) {
+        this.optimizeCountSql = optimizeCountSql;
     }
 
     @Transient

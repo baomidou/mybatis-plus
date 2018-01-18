@@ -80,7 +80,7 @@ public class CachePaginationInterceptor extends PaginationInterceptor implements
             if (rowBounds instanceof Pagination) {
                 Pagination page = (Pagination) rowBounds;
                 if (page.isSearchCount()) {
-                    SqlInfo sqlInfo = SqlUtils.getCountOptimize(sqlParser, originalSql);
+                    SqlInfo sqlInfo = SqlUtils.getOptimizeCountSql(page.isOptimizeCountSql(), sqlParser, originalSql);
                     super.queryTotal(overflowCurrent, sqlInfo.getSql(), mappedStatement, boundSql, page, connection);
                     if (page.getTotal() <= 0) {
                         return invocation.proceed();

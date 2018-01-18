@@ -49,7 +49,9 @@ import net.sf.jsqlparser.statement.select.SelectItem;
  */
 public class JsqlParserCountOptimize implements ISqlParser {
 
-    // 日志
+    /**
+     * 日志
+     */
     private final Log logger = LogFactory.getLog(JsqlParserCountOptimize.class);
     private static final List<SelectItem> countSelectItem = countSelectItem();
 
@@ -74,13 +76,13 @@ public class JsqlParserCountOptimize implements ISqlParser {
             //#95 Github, selectItems contains #{} ${}, which will be translated to ?, and it may be in a function: power(#{myInt},2)
             for (SelectItem item : plainSelect.getSelectItems()) {
                 if (item.toString().contains("?")) {
-                    sqlInfo.setSql(String.format(SqlUtils.SQL_BASE_COUNT, selectStatement.toString()));
+                    sqlInfo.setSql(SqlUtils.getOriginalCountSql(selectStatement.toString()));
                     return sqlInfo;
                 }
             }
             // 包含 distinct、groupBy不优化
             if (distinct != null || CollectionUtils.isNotEmpty(groupBy)) {
-                sqlInfo.setSql(String.format(SqlUtils.SQL_BASE_COUNT, selectStatement.toString()));
+                sqlInfo.setSql(SqlUtils.getOriginalCountSql(selectStatement.toString()));
                 return sqlInfo;
             }
             // 优化 SQL
@@ -89,7 +91,7 @@ public class JsqlParserCountOptimize implements ISqlParser {
             return sqlInfo;
         } catch (Throwable e) {
             // 无法优化使用原 SQL
-            sqlInfo.setSql(String.format(SqlUtils.SQL_BASE_COUNT, sql));
+            sqlInfo.setSql(SqlUtils.getOriginalCountSql(sql));
             return sqlInfo;
         }
     }

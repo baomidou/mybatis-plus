@@ -121,7 +121,7 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
             Pagination page = (Pagination) rowBounds;
             boolean orderBy = true;
             if (page.isSearchCount()) {
-                SqlInfo sqlInfo = SqlUtils.getCountOptimize(sqlParser, originalSql);
+                SqlInfo sqlInfo = SqlUtils.getOptimizeCountSql(page.isOptimizeCountSql(), sqlParser, originalSql);
                 orderBy = sqlInfo.isOrderBy();
                 this.queryTotal(overflowCurrent, sqlInfo.getSql(), mappedStatement, boundSql, page, connection);
                 if (page.getTotal() <= 0) {
@@ -135,10 +135,10 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
             originalSql = DialectFactory.buildPaginationSql(rowBounds, originalSql, dbType, dialectClazz);
         }
 
-		/*
+        /*
          * <p> 禁用内存分页 </p>
          * <p> 内存分页会查询所有结果出来处理（这个很吓人的），如果结果变化频繁这个数据还会不准。</p>
-		 */
+         */
         metaObject.setValue("delegate.boundSql.sql", originalSql);
         metaObject.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
         metaObject.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
@@ -166,7 +166,7 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
             page.setTotal(total);
             /*
              * 溢出总页数，设置第一页
-			 */
+             */
             int pages = page.getPages();
             if (overflowCurrent && (page.getCurrent() > pages)) {
                 // 设置为第一条

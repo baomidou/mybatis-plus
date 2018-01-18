@@ -34,7 +34,6 @@ import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
 public class SqlUtils {
 
     private final static SqlFormatter sqlFormatter = new SqlFormatter();
-    public final static String SQL_BASE_COUNT = "SELECT COUNT(1) FROM ( %s ) TOTAL";
     public static ISqlParser COUNT_SQL_PARSER = null;
     private static Class<ISqlParser> DEFAULT_CLASS = null;
 
@@ -48,14 +47,30 @@ public class SqlUtils {
 
     /**
      * <p>
+     * 获取 COUNT 原生 SQL 包装
+     * </p>
+     * @param originalSql
+     * @return
+     */
+    public static String getOriginalCountSql(String originalSql) {
+        return String.format("SELECT COUNT(1) FROM ( %s ) TOTAL", originalSql);
+    }
+
+
+    /**
+     * <p>
      * 获取CountOptimize
      * </p>
      *
-     * @param sqlParser   Count SQL 解析类
-     * @param originalSql 需要计算Count SQL
+     * @param optimizeCountSql 是否优化 Count SQL
+     * @param sqlParser        Count SQL 解析类
+     * @param originalSql      需要计算Count SQL
      * @return SqlInfo
      */
-    public static SqlInfo getCountOptimize(ISqlParser sqlParser, String originalSql) {
+    public static SqlInfo getOptimizeCountSql(boolean optimizeCountSql, ISqlParser sqlParser, String originalSql) {
+        if (!optimizeCountSql) {
+            return SqlInfo.newInstance().setSql(getOriginalCountSql(originalSql));
+        }
         // COUNT SQL 解析器
         if (null == COUNT_SQL_PARSER) {
             if (null != sqlParser) {

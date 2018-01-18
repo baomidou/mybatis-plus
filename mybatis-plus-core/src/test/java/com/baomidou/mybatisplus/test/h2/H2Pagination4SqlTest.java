@@ -46,7 +46,13 @@ public class H2Pagination4SqlTest extends H2Test {
 
     @Test
     public void testJoinTableWithPagination() {
+        this.testOptimizeCountSqlPagination(false);
+        this.testOptimizeCountSqlPagination(true);
+    }
+
+    private void testOptimizeCountSqlPagination(boolean optimizeCountSql) {
         Page<H2Addr> page = new Page<H2Addr>(0, 3);
+        page.setOptimizeCountSql(optimizeCountSql);
         List<H2Addr> addrList = userMapper.getAddrListByUserIdPage(101L, page);
         Assert.assertNotEquals("Should have pagination info", 0, page.getTotal());
         Assert.assertEquals(3, addrList.size());

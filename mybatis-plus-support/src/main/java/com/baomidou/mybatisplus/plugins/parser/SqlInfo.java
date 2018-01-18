@@ -25,8 +25,14 @@ package com.baomidou.mybatisplus.plugins.parser;
  */
 public class SqlInfo {
 
-    private String sql;// SQL 内容
-    private boolean orderBy = true;// 是否排序
+    /**
+     * SQL 内容
+     */
+    private String sql;
+    /**
+     * 是否排序
+     */
+    private boolean orderBy = true;
 
     public static SqlInfo newInstance() {
         return new SqlInfo();

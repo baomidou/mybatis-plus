@@ -40,7 +40,7 @@ public class Page<T> extends Pagination {
     private List<T> records = Collections.emptyList();
 
     /**
-     * 查询参数
+     * 查询参数（ 不会传入到 xml 层，这里是 Controller 层与 service 层传递参数预留 ）
      */
     private Map<String, Object> condition;
 
