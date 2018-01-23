@@ -85,8 +85,8 @@ public class GlobalConfigurationTest extends CrudTest {
         }
         Assert.assertNull(notPK2);
         int count = pkMapper.selectCount(Condition.EMPTY);
-        pkMapper.selectList(Condition.create().orderBy("uuid"));
-        pkMapper.selectList(Condition.create().eq("uuid", "uuid").orderBy("uuid"));
+        pkMapper.selectList(Condition.<NotPK>wrapper().orderBy("uuid"));
+        pkMapper.selectList(Condition.<NotPK>wrapper().eq("uuid", "uuid").orderBy("uuid"));
         Assert.assertTrue(count > 0);
         int deleteCount = pkMapper.delete(null);
         Assert.assertTrue(deleteCount > 0);

@@ -67,8 +67,24 @@ public class Condition extends Wrapper {
 
     }
 
+    /**
+     * 构造一个空的Wrapper<T></>
+     *
+     * @param <T>
+     * @return
+     */
     public static <T> Wrapper<T> empty() {
         return (Wrapper<T>) EMPTY;
+    }
+
+    /**
+     * 构造一个Wrapper<T></>
+     *
+     * @param <T>
+     * @return
+     */
+    public static <T> Wrapper<T> wrapper() {
+        return (Wrapper<T>) new EntityWrapper<>();
     }
 
 }
