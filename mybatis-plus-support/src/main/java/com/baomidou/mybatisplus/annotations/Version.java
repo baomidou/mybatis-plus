@@ -29,9 +29,9 @@ import java.lang.annotation.Target;
  * @author TaoYu
  * @since 2016-01-23
  */
+@Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
-@Documented
 public @interface Version {
 
 }

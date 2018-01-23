@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.annotations;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
@@ -30,9 +31,10 @@ import java.lang.annotation.Target;
  * @author zashitou
  * @since 2017.4.20
  */
+@Documented
+@Inherited
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@Inherited
 public @interface KeySequence {
 
     /**

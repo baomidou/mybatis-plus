@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.annotations;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -32,6 +33,7 @@ import com.baomidou.mybatisplus.mapper.SqlCondition;
  * @author hubin sjy tantan
  * @since 2016-09-09
  */
+@Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface TableField {
