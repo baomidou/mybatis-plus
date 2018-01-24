@@ -17,6 +17,8 @@ ext {
 			"velocity":"org.apache.velocity:velocity-engine-core:2.0",
 			"slf4j-api":"org.slf4j:slf4j-api:1.7.25",
 			"junit":"junit:junit:4.12",
+            "assertj":"org.assertj:assertj-core:3.9.0",
+            "mockito":"org.mockito:mockito-core:2.13.0",
 			"commons-dbcp2":"org.apache.commons:commons-dbcp2:2.1.1",
 			"mybatis-ehcache":"org.mybatis.caches:mybatis-ehcache:1.1.0",
 			"logback-classic":"ch.qos.logback:logback-classic:1.2.2",

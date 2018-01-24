@@ -27,4 +27,5 @@ dependencies {
 	testCompile rootProject.ext.dependencies["druid"]
 	testCompile rootProject.ext.dependencies["fastjson"]
 	testCompile rootProject.ext.dependencies["tomcatjdbc"]
+	testCompile rootProject.ext.dependencies["assertj"]
 }
