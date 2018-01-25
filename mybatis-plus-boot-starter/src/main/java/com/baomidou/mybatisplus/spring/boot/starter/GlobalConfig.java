@@ -44,10 +44,6 @@ public class GlobalConfig {
      */
     private String sqlInjector;
     /**
-     * 元对象字段填充控制器
-     */
-    private String metaObjectHandler;
-    /**
      * 字段验证策略
      */
     private Integer fieldStrategy;
@@ -102,14 +98,6 @@ public class GlobalConfig {
 
     public void setSqlInjector(String sqlInjector) {
         this.sqlInjector = sqlInjector;
-    }
-
-    public String getMetaObjectHandler() {
-        return metaObjectHandler;
-    }
-
-    public void setMetaObjectHandler(String metaObjectHandler) {
-        this.metaObjectHandler = metaObjectHandler;
     }
 
     public Integer getFieldStrategy() {
@@ -189,9 +177,6 @@ public class GlobalConfig {
         }
         if (StringUtils.isNotEmpty(this.getSqlInjector())) {
             globalConfiguration.setSqlInjector((ISqlInjector) Class.forName(this.getSqlInjector()).newInstance());
-        }
-        if (StringUtils.isNotEmpty(this.getMetaObjectHandler())) {
-            globalConfiguration.setMetaObjectHandler((MetaObjectHandler) Class.forName(this.getMetaObjectHandler()).newInstance());
         }
         if (StringUtils.isNotEmpty(this.getKeyGenerator())) {
             globalConfiguration.setKeyGenerator((IKeyGenerator) Class.forName(this.getKeyGenerator()).newInstance());

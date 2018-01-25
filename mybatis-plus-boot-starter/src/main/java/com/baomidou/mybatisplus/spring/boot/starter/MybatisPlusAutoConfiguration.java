@@ -5,6 +5,8 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
+import com.baomidou.mybatisplus.entity.GlobalConfiguration;
+import com.baomidou.mybatisplus.mapper.MetaObjectHandler;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
@@ -28,6 +30,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -77,17 +80,20 @@ public class MybatisPlusAutoConfiguration {
     private final DatabaseIdProvider databaseIdProvider;
 
     private final List<ConfigurationCustomizer> configurationCustomizers;
-
+    
+    private final ApplicationContext applicationContext;
+    
     public MybatisPlusAutoConfiguration(MybatisPlusProperties properties,
                                         ObjectProvider<Interceptor[]> interceptorsProvider,
                                         ResourceLoader resourceLoader,
                                         ObjectProvider<DatabaseIdProvider> databaseIdProvider,
-                                        ObjectProvider<List<ConfigurationCustomizer>> configurationCustomizersProvider) {
+                                        ObjectProvider<List<ConfigurationCustomizer>> configurationCustomizersProvider,ApplicationContext applicationContext) {
         this.properties = properties;
         this.interceptors = interceptorsProvider.getIfAvailable();
         this.resourceLoader = resourceLoader;
         this.databaseIdProvider = databaseIdProvider.getIfAvailable();
         this.configurationCustomizers = configurationCustomizersProvider.getIfAvailable();
+        this.applicationContext = applicationContext;
     }
 
     @PostConstruct
@@ -141,9 +147,19 @@ public class MybatisPlusAutoConfiguration {
         if (!ObjectUtils.isEmpty(this.properties.resolveMapperLocations())) {
             factory.setMapperLocations(this.properties.resolveMapperLocations());
         }
+        GlobalConfiguration globalConfig;
         if (!ObjectUtils.isEmpty(this.properties.getGlobalConfig())) {
-            factory.setGlobalConfig(this.properties.getGlobalConfig().convertGlobalConfiguration());
+            globalConfig = this.properties.getGlobalConfig().convertGlobalConfiguration();
+        }else {
+            globalConfig = new GlobalConfiguration();
         }
+        //注入定义填充
+        if (this.applicationContext.getBeanNamesForType(MetaObjectHandler.class, false,
+            false).length > 0) {
+            MetaObjectHandler metaObjectHandler = this.applicationContext.getBean(MetaObjectHandler.class);
+            globalConfig.setMetaObjectHandler(metaObjectHandler);
+        }
+        factory.setGlobalConfig(globalConfig);
         return factory.getObject();
     }
 
