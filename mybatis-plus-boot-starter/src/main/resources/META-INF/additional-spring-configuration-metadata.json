@@ -95,6 +95,12 @@
     },
     {
       "sourceType": "com.baomidou.mybatisplus.spring.boot.starter.GlobalConfig",
+      "name": "mybatis-plus.global-config.meta-object-handler",
+      "type": "java.lang.String",
+      "description": "元对象字段填充控制器"
+    },
+    {
+      "sourceType": "com.baomidou.mybatisplus.spring.boot.starter.GlobalConfig",
       "name": "mybatis-plus.global-config.refresh-mapper",
       "type": "java.lang.Boolean",
       "description": "是否动态刷新mapper"

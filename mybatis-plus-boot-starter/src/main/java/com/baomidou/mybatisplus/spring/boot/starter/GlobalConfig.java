@@ -44,6 +44,11 @@ public class GlobalConfig {
      */
     private String sqlInjector;
     /**
+     * 元对象字段填充控制器
+     */
+    @Deprecated
+    private String metaObjectHandler;
+    /**
      * 字段验证策略
      */
     private Integer fieldStrategy;
@@ -98,6 +103,21 @@ public class GlobalConfig {
 
     public void setSqlInjector(String sqlInjector) {
         this.sqlInjector = sqlInjector;
+    }
+
+    @Deprecated
+    public String getMetaObjectHandler() {
+        return metaObjectHandler;
+    }
+
+    /**
+     * 不在推荐使用,请自定义bean注入spring容器
+     * @deprecated 2.1.9
+     * @param metaObjectHandler
+     */
+    @Deprecated
+    public void setMetaObjectHandler(String metaObjectHandler) {
+        this.metaObjectHandler = metaObjectHandler;
     }
 
     public Integer getFieldStrategy() {
@@ -177,6 +197,9 @@ public class GlobalConfig {
         }
         if (StringUtils.isNotEmpty(this.getSqlInjector())) {
             globalConfiguration.setSqlInjector((ISqlInjector) Class.forName(this.getSqlInjector()).newInstance());
+        }
+        if (StringUtils.isNotEmpty(this.getMetaObjectHandler())) {
+            globalConfiguration.setMetaObjectHandler((MetaObjectHandler) Class.forName(this.getMetaObjectHandler()).newInstance());
         }
         if (StringUtils.isNotEmpty(this.getKeyGenerator())) {
             globalConfiguration.setKeyGenerator((IKeyGenerator) Class.forName(this.getKeyGenerator()).newInstance());
