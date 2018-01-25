@@ -6,6 +6,8 @@ import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
+import com.baomidou.mybatisplus.incrementer.IKeyGenerator;
+import com.baomidou.mybatisplus.mapper.ISqlInjector;
 import com.baomidou.mybatisplus.mapper.MetaObjectHandler;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.logging.Log;
@@ -80,9 +82,9 @@ public class MybatisPlusAutoConfiguration {
     private final DatabaseIdProvider databaseIdProvider;
 
     private final List<ConfigurationCustomizer> configurationCustomizers;
-    
+
     private final ApplicationContext applicationContext;
-    
+
     public MybatisPlusAutoConfiguration(MybatisPlusProperties properties,
                                         ObjectProvider<Interceptor[]> interceptorsProvider,
                                         ResourceLoader resourceLoader,
@@ -153,11 +155,23 @@ public class MybatisPlusAutoConfiguration {
         }else {
             globalConfig = new GlobalConfiguration();
         }
-        //注入定义填充
+        //注入填充器
         if (this.applicationContext.getBeanNamesForType(MetaObjectHandler.class, false,
             false).length > 0) {
             MetaObjectHandler metaObjectHandler = this.applicationContext.getBean(MetaObjectHandler.class);
             globalConfig.setMetaObjectHandler(metaObjectHandler);
+        }
+        //注入主键生成器
+        if(this.applicationContext.getBeanNamesForType(IKeyGenerator.class,false,
+            false).length >0){
+            IKeyGenerator keyGenerator = this.applicationContext.getBean(IKeyGenerator.class);
+            globalConfig.setKeyGenerator(keyGenerator);
+        }
+        //注入sql注入器
+        if(this.applicationContext.getBeanNamesForType(ISqlInjector.class,false,
+            false).length >0){
+            ISqlInjector iSqlInjector = this.applicationContext.getBean(ISqlInjector.class);
+            globalConfig.setSqlInjector(iSqlInjector);
         }
         factory.setGlobalConfig(globalConfig);
         return factory.getObject();

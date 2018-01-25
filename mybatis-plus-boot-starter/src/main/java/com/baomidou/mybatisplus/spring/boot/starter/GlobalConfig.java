@@ -42,6 +42,7 @@ public class GlobalConfig {
     /**
      * SQL注入器
      */
+    @Deprecated
     private String sqlInjector;
     /**
      * 元对象字段填充控制器
@@ -75,6 +76,7 @@ public class GlobalConfig {
     /**
      * 表关键词 key 生成器
      */
+    @Deprecated
     private String keyGenerator;
     /**
      * 缓存 Sql 解析初始化
@@ -97,10 +99,17 @@ public class GlobalConfig {
         this.dbColumnUnderline = dbColumnUnderline;
     }
 
+    @Deprecated
     public String getSqlInjector() {
         return sqlInjector;
     }
 
+    /**
+     * 不在推荐使用,请自定义bean注入spring容器
+     * @deprecated 2.1.9
+     * @param sqlInjector
+     */
+    @Deprecated
     public void setSqlInjector(String sqlInjector) {
         this.sqlInjector = sqlInjector;
     }
@@ -168,10 +177,17 @@ public class GlobalConfig {
         this.logicNotDeleteValue = logicNotDeleteValue;
     }
 
+    @Deprecated
     public String getKeyGenerator() {
         return keyGenerator;
     }
 
+    /**
+     * 不在推荐使用,请自定义bean注入spring容器
+     * @deprecated 2.1.9
+     * @param keyGenerator
+     */
+    @Deprecated
     public void setKeyGenerator(String keyGenerator) {
         this.keyGenerator = keyGenerator;
     }
