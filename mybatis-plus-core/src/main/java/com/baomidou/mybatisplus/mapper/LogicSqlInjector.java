@@ -51,7 +51,7 @@ public class LogicSqlInjector extends AutoSqlInjector {
             if (batch) {
                 sqlMethod = SqlMethod.LOGIC_DELETE_BATCH_BY_IDS;
                 StringBuilder ids = new StringBuilder();
-                ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"list\" separator=\",\">");
+                ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"coll\" separator=\",\">");
                 ids.append("#{item}");
                 ids.append("\n</foreach>");
                 idStr = ids.toString();
