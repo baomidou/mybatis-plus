@@ -40,7 +40,9 @@ import net.sf.jsqlparser.statement.update.Update;
  */
 public abstract class AbstractJsqlParser implements ISqlParser {
 
-    // 日志
+    /**
+     * 日志
+     */
     protected final Log logger = LogFactory.getLog(this.getClass());
 
     /**

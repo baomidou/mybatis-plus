@@ -192,8 +192,8 @@ public class SqlHelper {
         if (isEmptyOfWrapper(wrapper)) {
             wrapper = Condition.create();
         }
-        // 排序
-        if (page.isOpenSort()) {
+        // 排序 fixed gitee issues/IHF7N
+        if (page.isOpenSort() && page.isSearchCount()) {
             wrapper.orderAsc(page.getAscs());
             wrapper.orderDesc(page.getDescs());
         }
