@@ -131,24 +131,13 @@ public class Pagination extends RowBounds implements Serializable {
     }
 
     public Pagination(int current, int size, boolean searchCount, boolean openSort) {
-        super(offsetCurrent(current, size), size);
+        super(PageHelper.offsetCurrent(current, size), size);
         if (current > 1) {
             this.current = current;
         }
         this.size = size;
         this.searchCount = searchCount;
         this.openSort = openSort;
-    }
-
-    protected static int offsetCurrent(int current, int size) {
-        if (current > 0) {
-            return (current - 1) * size;
-        }
-        return 0;
-    }
-
-    public int offsetCurrent() {
-        return offsetCurrent(this.current, this.size);
     }
 
     public boolean hasPrevious() {

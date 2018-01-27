@@ -53,9 +53,9 @@ public class DialectFactory {
      * @throws Exception
      */
     public static String buildPaginationSql(Pagination page, String buildSql, DBType dbType, String dialectClazz)
-            throws Exception {
+        throws Exception {
         // fix #172, 196
-        return getDialect(dbType, dialectClazz).buildPaginationSql(buildSql, page.offsetCurrent(), page.getSize());
+        return getDialect(dbType, dialectClazz).buildPaginationSql(buildSql, PageHelper.offsetCurrent(page), page.getSize());
     }
 
     /**
@@ -70,7 +70,7 @@ public class DialectFactory {
      * @throws Exception
      */
     public static String buildPaginationSql(RowBounds rowBounds, String buildSql, DBType dbType, String dialectClazz)
-            throws Exception {
+        throws Exception {
         // fix #196
         return getDialect(dbType, dialectClazz).buildPaginationSql(buildSql, rowBounds.getOffset(), rowBounds.getLimit());
     }

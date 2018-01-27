@@ -28,7 +28,9 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 
 public class PageHelper {
 
-    // 分页本地线程变量
+    /**
+     * 分页本地线程变量
+     */
     private static final ThreadLocal<Pagination> LOCAL_PAGE = new ThreadLocal<>();
 
     /**
@@ -46,12 +48,41 @@ public class PageHelper {
 
     /**
      * <p>
+     * 计算当前分页偏移量
+     * </p>
+     *
+     * @param current 当前页
+     * @param size    每页显示数量
+     * @return
+     */
+    public static int offsetCurrent(int current, int size) {
+        if (current > 0) {
+            return (current - 1) * size;
+        }
+        return 0;
+    }
+
+    /**
+     * <p>
+     * Pagination 分页偏移量
+     * </p>
+     */
+    public static int offsetCurrent(Pagination pagination) {
+        if (null == pagination) {
+            return 0;
+        }
+        return offsetCurrent(pagination.getCurrent(), pagination.getSize());
+    }
+
+    /**
+     * <p>
      * 释放资源并获取总条数
      * </p>
      */
     public static int freeTotal() {
         int total = getTotal();
-        remove();// 释放资源
+        // 释放资源
+        remove();
         return total;
     }
 
