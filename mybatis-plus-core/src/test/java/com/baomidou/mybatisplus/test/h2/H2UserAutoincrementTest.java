@@ -66,8 +66,7 @@ public class H2UserAutoincrementTest extends H2Test {
         H2UserMetaObj user2 = new H2UserMetaObj();
         user2.setAge(2);
         Assert.assertEquals(1, userMapper.insert(user2).intValue());
-        Long userId2 = user2.getId();
-        Assert.assertEquals(id1.intValue() + 1, userId2.intValue());
+        Assert.assertNotNull(user2.getId());
     }
 
 
