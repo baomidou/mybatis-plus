@@ -22,7 +22,9 @@ import lombok.experimental.Accessors;
  */
 #if(${entityLombokModel})
 @Data
+#if(${superEntityClass})
 @EqualsAndHashCode(callSuper = true)
+#end
 @Accessors(chain = true)
 #end
 #if(${table.convert})
