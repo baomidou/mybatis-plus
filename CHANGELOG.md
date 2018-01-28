@@ -1,5 +1,21 @@
 ﻿# CHANGELOG
 
+## [v2.1.9] 2018.01.28 代号：怀念（纪念 2017 baomidou 组织小伙伴 MP 共同成长之路，奔向 2018 旺旺旺）
+- page 分页新增控制是否优化 Count Sql 设置
+```
+// 不进行 count sql 优化 
+page.setOptimizeCountSql(false);
+```
+- 注入定义填充，支持sql注入器,主键生成器.
+- fixed github issues/231
+- fixed github issues/234
+- 修改逻辑删除 selectByIds coll 问题
+- fixed gitee issues/IHF7N
+- fixed gitee issues/IHH83
+- 兼容配置方式,优先使用自定义注入.
+- 其他优化
+
+
 ## [v2.1.9-SNAPSHOT] 2018.01.16
 - 调整 Gradle 依赖模式
 - IdType 可选 ID_WORKER_STR `字符串类型` IdWorker.getIdStr() 字符串类型
