@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.generator.InjectionConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,8 +121,11 @@ public abstract class AbstractTemplateEngine {
                     }
                 }
                 // 自定义内容
-                if (null != this.getConfigBuilder().getInjectionConfig()) {
-                    List<FileOutConfig> focList = this.getConfigBuilder().getInjectionConfig().getFileOutConfigList();
+                InjectionConfig injectionConfig = this.getConfigBuilder().getInjectionConfig();
+                if (null != injectionConfig) {
+                    injectionConfig.initMap();
+                    objectMap.put("cfg",injectionConfig.getMap());
+                    List<FileOutConfig> focList = injectionConfig.getFileOutConfigList();
                     if (CollectionUtils.isNotEmpty(focList)) {
                         for (FileOutConfig foc : focList) {
                             if (this.isCreate(foc.outputFile(tableInfo))) {
