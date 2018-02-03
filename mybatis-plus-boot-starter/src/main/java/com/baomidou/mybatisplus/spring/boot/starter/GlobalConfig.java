@@ -99,32 +99,18 @@ public class GlobalConfig {
         this.dbColumnUnderline = dbColumnUnderline;
     }
 
-    @Deprecated
     public String getSqlInjector() {
         return sqlInjector;
     }
 
-    /**
-     * 不在推荐使用,请自定义bean注入spring容器
-     * @deprecated 2.1.9
-     * @param sqlInjector
-     */
-    @Deprecated
     public void setSqlInjector(String sqlInjector) {
         this.sqlInjector = sqlInjector;
     }
 
-    @Deprecated
     public String getMetaObjectHandler() {
         return metaObjectHandler;
     }
 
-    /**
-     * 不在推荐使用,请自定义bean注入spring容器
-     * @deprecated 2.1.9
-     * @param metaObjectHandler
-     */
-    @Deprecated
     public void setMetaObjectHandler(String metaObjectHandler) {
         this.metaObjectHandler = metaObjectHandler;
     }
@@ -177,17 +163,10 @@ public class GlobalConfig {
         this.logicNotDeleteValue = logicNotDeleteValue;
     }
 
-    @Deprecated
     public String getKeyGenerator() {
         return keyGenerator;
     }
 
-    /**
-     * 不在推荐使用,请自定义bean注入spring容器
-     * @deprecated 2.1.9
-     * @param keyGenerator
-     */
-    @Deprecated
     public void setKeyGenerator(String keyGenerator) {
         this.keyGenerator = keyGenerator;
     }

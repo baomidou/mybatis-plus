@@ -47,7 +47,7 @@ strategy.setColumnNaming(NamingStrategy.underline_to_camel);// 允许字段策�
 mpg.setTemplateEngine(new FreemarkerTemplateEngine());
 ```
 - 相关 SQL 解析如多租户可通过 `@SqlParser(filter=true)` 排除 SQL 解析
-```$xslt
+```
 # 开启 SQL 解析缓存注解生效
 mybatis-plus:
     global-config:
