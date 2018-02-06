@@ -19,3 +19,5 @@ html
 
 # MacOS
 .DS_Store
+
+/repo/
