@@ -22,8 +22,8 @@ import java.util.Map;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
 
+import com.baomidou.mybatisplus.core.conditions.Condition;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
-import com.baomidou.mybatisplus.mapper.Condition;
 import com.baomidou.mybatisplus.test.CrudTest;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
 import com.baomidou.mybatisplus.test.mysql.mapper.UserMapper;
@@ -64,7 +64,7 @@ public class LogicDeleteTest extends CrudTest {
         System.err.println("第一次：逻辑删除testType 改为 1 成功记录数：" + rlt);
         rlt = userMapper.insert(new User(IdWorker.getId(), "logic-delete-2", 28, 2));
         System.err.println("再插入一条成功记录数：" + rlt);
-        rlt = userMapper.delete(Condition.create().eq("test_id", 1111));
+        rlt = userMapper.delete(Condition.<User>entityWrapper().eq("test_id", 1111));
         System.err.println("全表逻辑删除成功记录数：" + rlt);
         List<User> userList = userMapper.selectList(null);
         for (User u : userList) {
