@@ -15,7 +15,10 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import com.baomidou.mybatisplus.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.conditions.EntityWrapper;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
 
 /**
  * <p>
@@ -31,12 +34,7 @@ public class Condition extends Wrapper {
     /**
      * 构建一个Empty条件构造 避免传递参数使用null
      */
-    public static final Wrapper EMPTY = new Wrapper() {
-        @Override
-        public String getSqlSegment() {
-            return null;
-        }
-    };
+    public static final Wrapper EMPTY = Wrapper.getInstance();
 
     /**
      * 获取实例

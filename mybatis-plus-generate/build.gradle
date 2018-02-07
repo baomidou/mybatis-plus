@@ -1,5 +1,5 @@
 dependencies {
-	compile project(":mybatis-plus-support")
+	compile project(":mybatis-plus-extension")
 	optional rootProject.ext.dependencies["velocity"]
     optional rootProject.ext.dependencies["freemarker"]
 	testCompile rootProject.ext.dependencies["sqlserver"]

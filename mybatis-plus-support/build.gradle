@@ -1,4 +1,6 @@
 dependencies {
+    //TODO 3.0 to be removed
+    compile project(":mybatis-plus-core")
 	optional rootProject.ext.dependencies["mybatis-spring"]
 	optional rootProject.ext.dependencies["mybatis"]
 	optional rootProject.ext.dependencies["spring-context-support"]

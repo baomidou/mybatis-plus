@@ -15,9 +15,9 @@
  */
 package com.baomidou.mybatisplus.generator.config.po;
 
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
  * <p>

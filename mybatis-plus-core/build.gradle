@@ -1,26 +1,29 @@
+apply plugin: 'java'
+
+sourceCompatibility = 1.7
+
 dependencies {
-	compile project(":mybatis-plus-support")
+    compile project(":mybatis-plus-annotations")
+    compile rootProject.ext.dependencies["mybatis"]
 	compile rootProject.ext.dependencies["jsqlparser"]
-	compile rootProject.ext.dependencies["mybatis-spring"]
-	compile rootProject.ext.dependencies["mybatis"]
-	optional rootProject.ext.dependencies["spring-context-support"]
-	optional rootProject.ext.dependencies["spring-jdbc"]
-	testCompile rootProject.ext.dependencies["servlet-api"]
+//	compile rootProject.ext.dependencies["mybatis-spring"]
+//	optional rootProject.ext.dependencies["spring-context-support"]
+//	optional rootProject.ext.dependencies["spring-jdbc"]
 	testCompile rootProject.ext.dependencies["mybatis-ehcache"]
 	testCompile rootProject.ext.dependencies["logback-classic"]
 	testCompile rootProject.ext.dependencies["junit"]
 	testCompile (rootProject.ext.dependencies["commons-dbcp2"]){
 		exclude module: "commons-logging"
 	}
-	testCompile rootProject.ext.dependencies["sqlserver"]
-	testCompile rootProject.ext.dependencies["postgresql"]
-	testCompile rootProject.ext.dependencies["oracle"]
-	testCompile rootProject.ext.dependencies["h2"]
-	testCompile rootProject.ext.dependencies["mysql"]
-	testCompile rootProject.ext.dependencies["slf4j-api"]
-	testCompile rootProject.ext.dependencies["spring-test"]
-	testCompile rootProject.ext.dependencies["spring-webmvc"]
-	testCompile rootProject.ext.dependencies["sqlserver"]
+//	testCompile rootProject.ext.dependencies["sqlserver"]
+//	testCompile rootProject.ext.dependencies["postgresql"]
+//	testCompile rootProject.ext.dependencies["oracle"]
+//	testCompile rootProject.ext.dependencies["h2"]
+//	testCompile rootProject.ext.dependencies["mysql"]
+//	testCompile rootProject.ext.dependencies["slf4j-api"]
+//	testCompile rootProject.ext.dependencies["spring-test"]
+//	testCompile rootProject.ext.dependencies["spring-webmvc"]
+//	testCompile rootProject.ext.dependencies["sqlserver"]
 	testCompile rootProject.ext.dependencies["aspectjweaver"]
 	testCompile rootProject.ext.dependencies["lombok"]
 	testCompile rootProject.ext.dependencies["hikaricp"]

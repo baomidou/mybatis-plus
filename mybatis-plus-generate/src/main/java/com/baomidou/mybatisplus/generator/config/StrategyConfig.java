@@ -17,9 +17,9 @@ package com.baomidou.mybatisplus.generator.config;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.config.po.TableFill;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
  * <p>

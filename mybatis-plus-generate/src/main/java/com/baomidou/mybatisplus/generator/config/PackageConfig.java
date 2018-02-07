@@ -15,7 +15,8 @@
  */
 package com.baomidou.mybatisplus.generator.config;
 
-import com.baomidou.mybatisplus.toolkit.StringUtils;
+
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 /**
  * <p>
