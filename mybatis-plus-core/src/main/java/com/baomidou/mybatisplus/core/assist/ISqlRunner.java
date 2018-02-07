@@ -16,12 +16,12 @@ import com.baomidou.mybatisplus.core.pagination.Page;
  */
 public abstract class ISqlRunner {
 
-    public static final String INSERT = "com.baomidou.mybatisplus.mapper.SqlRunner.Insert";
-    public static final String DELETE = "com.baomidou.mybatisplus.mapper.SqlRunner.Delete";
-    public static final String UPDATE = "com.baomidou.mybatisplus.mapper.SqlRunner.Update";
-    public static final String SELECT_LIST = "com.baomidou.mybatisplus.mapper.SqlRunner.SelectList";
-    public static final String SELECT_OBJS = "com.baomidou.mybatisplus.mapper.SqlRunner.SelectObjs";
-    public static final String COUNT = "com.baomidou.mybatisplus.mapper.SqlRunner.Count";
+    public static final String INSERT = "com.baomidou.mybatisplus.core.mapper.SqlRunner.Insert";
+    public static final String DELETE = "com.baomidou.mybatisplus.core.mapper.SqlRunner.Delete";
+    public static final String UPDATE = "com.baomidou.mybatisplus.core.mapper.SqlRunner.Update";
+    public static final String SELECT_LIST = "com.baomidou.mybatisplus.core.mapper.SqlRunner.SelectList";
+    public static final String SELECT_OBJS = "com.baomidou.mybatisplus.core.mapper.SqlRunner.SelectObjs";
+    public static final String COUNT = "com.baomidou.mybatisplus.core.mapper.SqlRunner.Count";
     public static final String SQLScript = "${sql}";
     public static final String SQL = "sql";
 
