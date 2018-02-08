@@ -3,7 +3,7 @@ include 'mybatis-plus'
 include 'mybatis-plus-core'
 include 'mybatis-plus-annotations'
 include 'mybatis-plus-extension'
-include 'mybatis-plus-generate'
+include 'mybatis-plus-generator'
 include 'buildSrc'
 
 
