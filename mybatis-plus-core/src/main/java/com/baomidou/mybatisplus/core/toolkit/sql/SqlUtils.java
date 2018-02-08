@@ -17,8 +17,8 @@ package com.baomidou.mybatisplus.core.toolkit.sql;
 
 import java.util.List;
 
-import com.baomidou.mybatisplus.core.assist.ISqlParser;
-import com.baomidou.mybatisplus.core.assist.SqlInfo;
+import com.baomidou.mybatisplus.core.parser.ISqlParser;
+import com.baomidou.mybatisplus.core.parser.SqlInfo;
 import com.baomidou.mybatisplus.core.enums.SqlLike;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.pagination.Pagination;

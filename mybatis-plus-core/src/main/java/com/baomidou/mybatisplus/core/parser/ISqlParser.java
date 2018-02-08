@@ -13,20 +13,30 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.extension.plugins.parser;
+package com.baomidou.mybatisplus.core.parser;
 
 import org.apache.ibatis.reflection.MetaObject;
 
 /**
  * <p>
- * SQL 解析过滤器
+ * SQL 解析接口
  * </p>
  *
  * @author hubin
- * @Date 2017-09-02
+ * @Date 2017-09-01
  */
-public interface ISqlParserFilter {
+public interface ISqlParser {
 
-    boolean doFilter(MetaObject metaObject);
+    /**
+     * <p>
+     * 获取优化 SQL 方法
+     * </p>
+     *
+     * @param metaObject 元对象
+     * @param sql        SQL 语句
+     * @return SQL 信息
+     */
+    //TODO 3.0 change name
+    SqlInfo optimizeSql(MetaObject metaObject, String sql);
 
 }

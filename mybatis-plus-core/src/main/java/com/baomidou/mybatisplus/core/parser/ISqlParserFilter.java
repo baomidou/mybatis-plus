@@ -13,19 +13,20 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.extension.plugins.parser.tenant;
+package com.baomidou.mybatisplus.core.parser;
+
+import org.apache.ibatis.reflection.MetaObject;
 
 /**
  * <p>
- * 租户处理器（ Schema 表级 ）
+ * SQL 解析过滤器
  * </p>
  *
  * @author hubin
- * @since 2017-08-31
+ * @Date 2017-09-02
  */
-public interface TenantSchemaHandler {
+public interface ISqlParserFilter {
 
-    String getTenantSchema();
+    boolean doFilter(MetaObject metaObject);
 
-    boolean doTableFilter(String tableName);
 }

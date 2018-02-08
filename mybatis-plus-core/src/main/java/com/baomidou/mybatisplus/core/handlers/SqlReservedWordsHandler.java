@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.core.handlers;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -134,6 +135,10 @@ public abstract class SqlReservedWordsHandler {
 
     public abstract String convertQuote(GlobalConfiguration globalConfig, String column);
 
+    public boolean addAll(Collection<String> reservedWords) {
+        return RESERVED_WORDS.addAll(reservedWords);
+    }
+
     /**
      * 判断关键字中是否包含该字段
      *
@@ -146,7 +151,7 @@ public abstract class SqlReservedWordsHandler {
 
     //TODO: 3.0
     //可以考虑一个内部类是实现默认的convert， 通过getInstance()方法创建内部实现
-    public static SqlReservedWordsHandler getInstance(){
+    public static SqlReservedWordsHandler getInstance() {
         return new SqlReservedWordsHandler() {
             @Override
             public String convert(GlobalConfiguration globalConfig, String column) {

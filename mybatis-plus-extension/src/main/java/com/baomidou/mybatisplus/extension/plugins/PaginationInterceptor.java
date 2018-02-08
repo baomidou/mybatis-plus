@@ -37,8 +37,8 @@ import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.RowBounds;
 
 import com.baomidou.mybatisplus.core.MybatisDefaultParameterHandler;
-import com.baomidou.mybatisplus.core.assist.ISqlParser;
-import com.baomidou.mybatisplus.core.assist.SqlInfo;
+import com.baomidou.mybatisplus.core.parser.ISqlParser;
+import com.baomidou.mybatisplus.core.parser.SqlInfo;
 import com.baomidou.mybatisplus.core.pagination.PageHelper;
 import com.baomidou.mybatisplus.core.pagination.Pagination;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;

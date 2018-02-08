@@ -19,12 +19,13 @@ import java.util.List;
 
 import org.apache.ibatis.reflection.MetaObject;
 
-import com.baomidou.mybatisplus.core.assist.ISqlParser;
-import com.baomidou.mybatisplus.core.assist.SqlInfo;
+import com.baomidou.mybatisplus.core.parser.ISqlParser;
+import com.baomidou.mybatisplus.core.parser.ISqlParserFilter;
+import com.baomidou.mybatisplus.core.parser.SqlInfo;
+import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
+import com.baomidou.mybatisplus.core.parser.SqlParserInfo;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
-import com.baomidou.mybatisplus.extension.plugins.parser.ISqlParserFilter;
-import com.baomidou.mybatisplus.extension.plugins.parser.SqlParserInfo;
 
 /**
  * <p>
@@ -50,8 +51,7 @@ public abstract class SqlParserHandler {
             // SQL 解析
             if (CollectionUtils.isNotEmpty(this.sqlParserList)) {
                 // @SqlParser(filter = true) 跳过该方法解析
-                //TODO: 3.0 新建parserUtil
-                SqlParserInfo sqlParserInfo = PluginUtils.getSqlParserInfo(metaObject);
+                SqlParserInfo sqlParserInfo = SqlParserHelper.getSqlParserInfo(metaObject);
                 if (null != sqlParserInfo && sqlParserInfo.getFilter()) {
                     return;
                 }
@@ -85,7 +85,8 @@ public abstract class SqlParserHandler {
         return sqlParserFilter;
     }
 
-    public void setSqlParserFilter(ISqlParserFilter sqlParserFilter) {
+    public SqlParserHandler setSqlParserFilter(ISqlParserFilter sqlParserFilter) {
         this.sqlParserFilter = sqlParserFilter;
+        return this;
     }
 }

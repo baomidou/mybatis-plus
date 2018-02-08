@@ -13,13 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.extension.plugins.parser;
+package com.baomidou.mybatisplus.core.parser;
 
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.reflection.MetaObject;
 
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;

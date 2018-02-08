@@ -18,6 +18,8 @@ package com.baomidou.mybatisplus.core.injector;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.session.Configuration;
 
+import com.baomidou.mybatisplus.core.assist.ISqlRunner;
+
 /**
  * <p>
  * SQL 自动注入器接口
@@ -48,7 +50,7 @@ public interface ISqlInjector {
      * 注入SqlRunner相关
      *
      * @param configuration
-     * @see com.baomidou.mybatisplus.core.assist.ISqlRunner
+     * @see ISqlRunner
      */
     void injectSqlRunner(Configuration configuration);
 

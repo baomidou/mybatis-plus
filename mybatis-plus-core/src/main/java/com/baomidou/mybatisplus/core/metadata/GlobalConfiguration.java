@@ -22,7 +22,6 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import com.baomidou.mybatisplus.MybatisSqlSessionTemplate;
 import com.baomidou.mybatisplus.annotations.FieldStrategy;
 import com.baomidou.mybatisplus.annotations.IdType;
 import com.baomidou.mybatisplus.core.enums.IDBType;
@@ -98,7 +97,7 @@ public class GlobalConfiguration implements Serializable {
     /**
      * 缓存当前Configuration的SqlSessionFactory
      */
-    private SqlSessionFactory sqlSessionFactory;
+//    private SqlSessionFactory sqlSessionFactory;
     /**
      * 缓存已注入CRUD的Mapper信息
      */
@@ -232,15 +231,15 @@ public class GlobalConfiguration implements Serializable {
         this.mapperRegistryCache = mapperRegistryCache;
     }
 
-    public SqlSessionFactory getSqlSessionFactory() {
-        return sqlSessionFactory;
-    }
+//    public SqlSessionFactory getSqlSessionFactory() {
+//        return sqlSessionFactory;
+//    }
 
-    public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
-        this.sqlSessionFactory = sqlSessionFactory;
-        //TODO: 3.0 在extension中初始化这个对象
-        this.sqlSession = new MybatisSqlSessionTemplate(sqlSessionFactory);
-    }
+//    public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
+//        this.sqlSessionFactory = sqlSessionFactory;
+//        //TODO: 3.0 在extension中初始化这个对象
+//        this.sqlSession = new MybatisSqlSessionTemplate(sqlSessionFactory);
+//    }
 
     public boolean isCapitalMode() {
         return isCapitalMode;
@@ -266,7 +265,7 @@ public class GlobalConfiguration implements Serializable {
             if (reservedWordsHandler == null) {
                 reservedWordsHandler = SqlReservedWordsHandler.getInstance();
             }
-            reservedWordsHandler.RESERVED_WORDS.addAll(StringUtils.splitWorker(sqlKeywords.toUpperCase(), ",", -1, false));
+            reservedWordsHandler.addAll(StringUtils.splitWorker(sqlKeywords.toUpperCase(), ",", -1, false));
         }
     }
 

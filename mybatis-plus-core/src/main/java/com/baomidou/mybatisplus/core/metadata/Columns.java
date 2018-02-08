@@ -32,7 +32,14 @@ public class Columns implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Columns() {
+        // to do nothing
     }
+
+
+    /**
+     * 字段
+     */
+    private List<Column> columns = new ArrayList<>();
 
     /**
      * 获取实例
@@ -60,11 +67,9 @@ public class Columns implements Serializable {
         return this;
     }
 
-    //字段
-    private List<Column> columns = new ArrayList<>();
 
     public Column[] getColumns() {
-        Column[] columnArray = new Column[columns.size()];
-        return columns.toArray(columnArray);
+        Column[] columnArray = new Column[this.columns.size()];
+        return this.columns.toArray(columnArray);
     }
 }

@@ -13,39 +13,46 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.extension.plugins.parser;
-
-
-import com.baomidou.mybatisplus.annotations.SqlParser;
+package com.baomidou.mybatisplus.core.parser;
 
 /**
  * <p>
- * SQL 解析信息
+ * Sql Info
  * </p>
  *
  * @author hubin
- * @since 2018-01-13
+ * @Date 2017-06-20
  */
-public class SqlParserInfo {
+public class SqlInfo {
 
     /**
-     * 过滤解析
+     * SQL 内容
      */
-    private boolean filter;
+    private String sql;
+    /**
+     * 是否排序
+     */
+    private boolean orderBy = true;
 
-    public SqlParserInfo() {
-
+    public static SqlInfo newInstance() {
+        return new SqlInfo();
     }
 
-    public SqlParserInfo(SqlParser sqlParser) {
-        this.filter = sqlParser.filter();
+    public String getSql() {
+        return sql;
     }
 
-    public boolean getFilter() {
-        return filter;
+    public SqlInfo setSql(String sql) {
+        this.sql = sql;
+        return this;
     }
 
-    public void setFilter(boolean filter) {
-        this.filter = filter;
+    public boolean isOrderBy() {
+        return orderBy;
+    }
+
+    public SqlInfo setOrderBy(boolean orderBy) {
+        this.orderBy = orderBy;
+        return this;
     }
 }
