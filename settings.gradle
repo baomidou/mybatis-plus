@@ -1,7 +1,7 @@
 rootProject.name = 'mybatis-plus'
 include 'mybatis-plus'
 include 'mybatis-plus-core'
-include 'mybatis-plus-annotations'
+include 'mybatis-plus-annotation'
 include 'mybatis-plus-extension'
 include 'mybatis-plus-generator'
 include 'buildSrc'
