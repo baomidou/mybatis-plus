@@ -6,7 +6,10 @@ dependencies {
     compile project(":mybatis-plus-core")
     compile rootProject.ext.dependencies["mybatis-spring"]
     compile rootProject.ext.dependencies["mybatis"]
+ 
     provided rootProject.ext.dependencies["spring-context-support"]
     provided rootProject.ext.dependencies["spring-jdbc"]
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    testCompile 'junit:junit:4.12'
+
 }

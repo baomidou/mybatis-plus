@@ -29,6 +29,7 @@ import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.pagination.Page;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.toolkit.SqlRunner;
 
 /**
  * <p>
@@ -39,7 +40,6 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  * @author hubin
  * @Date 2016-11-06
  */
-@SuppressWarnings({"rawtypes"})
 public abstract class Model<T extends Model> implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -49,7 +49,7 @@ public abstract class Model<T extends Model> implements Serializable {
      * 插入（字段选择插入）
      * </p>
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean insert() {
         return SqlHelper.retBool(sqlSession().insert(sqlStatement(SqlMethod.INSERT_ONE), this));
     }
@@ -59,7 +59,7 @@ public abstract class Model<T extends Model> implements Serializable {
      * 插入（所有字段插入）
      * </p>
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean insertAllColumn() {
         return SqlHelper.retBool(sqlSession().insert(sqlStatement(SqlMethod.INSERT_ONE_ALL_COLUMN), this));
     }
@@ -69,7 +69,7 @@ public abstract class Model<T extends Model> implements Serializable {
      * 插入 OR 更新
      * </p>
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean insertOrUpdate() {
         if (StringUtils.checkValNull(pkVal())) {
             // insert
@@ -90,7 +90,7 @@ public abstract class Model<T extends Model> implements Serializable {
      * @param id 主键ID
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean deleteById(Serializable id) {
         return SqlHelper.delBool(sqlSession().delete(sqlStatement(SqlMethod.DELETE_BY_ID), id));
     }
@@ -102,7 +102,7 @@ public abstract class Model<T extends Model> implements Serializable {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean deleteById() {
         if (StringUtils.checkValNull(pkVal())) {
             throw new MybatisPlusException("deleteById primaryKey is null.");
@@ -119,7 +119,7 @@ public abstract class Model<T extends Model> implements Serializable {
      * @param args        查询条件值
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean delete(String whereClause, Object... args) {
         return delete(Wrapper.<T>getInstance().where(whereClause, args));
     }
@@ -132,7 +132,7 @@ public abstract class Model<T extends Model> implements Serializable {
      * @param wrapper
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean delete(Wrapper wrapper) {
         Map<String, Object> map = new HashMap<>();
         map.put("ew", wrapper);
@@ -144,7 +144,7 @@ public abstract class Model<T extends Model> implements Serializable {
      * 更新（字段选择更新）
      * </p>
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean updateById() {
         if (StringUtils.checkValNull(pkVal())) {
             throw new MybatisPlusException("updateById primaryKey is null.");
@@ -160,7 +160,7 @@ public abstract class Model<T extends Model> implements Serializable {
      * 更新（所有字段更新）
      * </p>
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean updateAllColumnById() {
         if (StringUtils.checkValNull(pkVal())) {
             throw new MybatisPlusException("updateAllColumnById primaryKey is null.");
@@ -180,7 +180,7 @@ public abstract class Model<T extends Model> implements Serializable {
      * @param args        查询条件值
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean update(String whereClause, Object... args) {
         // update
         return update(Wrapper.<T>getInstance().where(whereClause, args));
@@ -194,7 +194,7 @@ public abstract class Model<T extends Model> implements Serializable {
      * @param wrapper
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean update(Wrapper wrapper) {
         Map<String, Object> map = new HashMap<>();
         map.put("et", this);
