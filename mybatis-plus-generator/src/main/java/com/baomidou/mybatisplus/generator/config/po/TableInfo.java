@@ -168,7 +168,7 @@ public class TableInfo {
                 if (field.isKeyFlag()) {
                     // 主键
                     if (field.isConvert() || field.isKeyIdentityFlag()) {
-                        pkgSet.add("com.baomidou.mybatisplus.annotations.TableId");
+                        pkgSet.add("com.baomidou.mybatisplus.annotation.TableId");
                     }
                     // 自增
                     if (field.isKeyIdentityFlag()) {
@@ -176,11 +176,11 @@ public class TableInfo {
                     }
                 } else if (field.isConvert()) {
                     // 普通字段
-                    pkgSet.add("com.baomidou.mybatisplus.annotations.TableField");
+                    pkgSet.add("com.baomidou.mybatisplus.annotation.TableField");
                 }
                 if (null != field.getFill()) {
                     // 填充字段
-                    pkgSet.add("com.baomidou.mybatisplus.annotations.TableField");
+                    pkgSet.add("com.baomidou.mybatisplus.annotation.TableField");
                     pkgSet.add("com.baomidou.mybatisplus.enums.FieldFill");
                 }
             }

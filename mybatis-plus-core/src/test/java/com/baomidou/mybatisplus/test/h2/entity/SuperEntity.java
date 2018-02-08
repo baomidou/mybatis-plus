@@ -17,7 +17,7 @@ package com.baomidou.mybatisplus.test.h2.entity;
 
 import java.io.Serializable;
 
-import com.baomidou.mybatisplus.annotations.TableId;
+import com.baomidou.mybatisplus.annotation.TableId;
 
 /**
  * <p>

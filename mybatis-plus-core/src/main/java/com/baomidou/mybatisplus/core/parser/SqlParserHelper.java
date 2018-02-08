@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.reflection.MetaObject;
 
-import com.baomidou.mybatisplus.annotations.SqlParser;
+import com.baomidou.mybatisplus.annotation.SqlParser;
 
 public class SqlParserHelper {
 

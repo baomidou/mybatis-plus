@@ -13,25 +13,42 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.annotations;
+package com.baomidou.mybatisplus.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
  * <p>
- * 乐观锁注解、标记 @Verison 在字段上
+ * 序列主键策略
+ * oracle
  * </p>
  *
- * @author TaoYu
- * @since 2016-01-23
+ * @author zashitou
+ * @since 2017.4.20
  */
 @Documented
+@Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD})
-public @interface Version {
+@Target(ElementType.TYPE)
+public @interface KeySequence {
+
+    /**
+     * <p>
+     * 序列名
+     * </p>
+     */
+    String value() default "";
+
+    /**
+     * <p>
+     * id的类型
+     * </p>
+     */
+    Class clazz() default Long.class;
 
 }

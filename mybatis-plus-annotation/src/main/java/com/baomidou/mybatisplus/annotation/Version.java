@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.annotations;
+package com.baomidou.mybatisplus.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -23,29 +23,15 @@ import java.lang.annotation.Target;
 
 /**
  * <p>
- * 数据库表相关
+ * 乐观锁注解、标记 @Verison 在字段上
  * </p>
  *
- * @author hubin
+ * @author TaoYu
  * @since 2016-01-23
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface TableName {
-
-    /**
-     * <p>
-     * 实体对应的表名
-     * </p>
-     */
-    String value() default "";
-
-    /**
-     * <p>
-     * 实体映射结果集
-     * </p>
-     */
-    String resultMap() default "";
+@Target({ElementType.FIELD})
+public @interface Version {
 
 }

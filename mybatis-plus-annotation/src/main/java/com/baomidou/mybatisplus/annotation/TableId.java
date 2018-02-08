@@ -13,42 +13,40 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.annotations;
+package com.baomidou.mybatisplus.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
  * <p>
- * 序列主键策略
- * oracle
+ * 表主键标识
  * </p>
  *
- * @author zashitou
- * @since 2017.4.20
+ * @author hubin
+ * @since 2016-01-23
  */
 @Documented
-@Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface KeySequence {
+@Target(ElementType.FIELD)
+public @interface TableId {
 
     /**
      * <p>
-     * 序列名
+     * 字段值（驼峰命名方式，该值可无）
      * </p>
      */
     String value() default "";
 
     /**
      * <p>
-     * id的类型
+     * 主键ID
      * </p>
+     * {@link IdType}
      */
-    Class clazz() default Long.class;
+    IdType type() default IdType.NONE;
 
 }

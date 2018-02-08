@@ -1,6 +1,6 @@
 package com.baomidou.mybatisplus.test.plugins.optimisticLocker.entity;
 
-import com.baomidou.mybatisplus.annotations.Version;
+import com.baomidou.mybatisplus.annotation.Version;
 
 public class IntVersionFather {
 

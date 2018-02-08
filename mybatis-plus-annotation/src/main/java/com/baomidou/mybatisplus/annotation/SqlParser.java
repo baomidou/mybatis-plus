@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, hubin (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,7 +13,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.annotations;
+package com.baomidou.mybatisplus.annotation;
+
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -23,29 +24,21 @@ import java.lang.annotation.Target;
 
 /**
  * <p>
- * 表字段逻辑处理注解（逻辑删除）
+ * 租户注解
  * </p>
  *
  * @author hubin
- * @since 2017-09-09
+ * @since 2018-01-13
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface TableLogic {
+@Target({ElementType.TYPE, ElementType.METHOD})
+public @interface SqlParser {
 
     /**
      * <p>
-     * 默认逻辑未删除值（该值可无、会自动获取全局配置）
+     * 过滤 SQL 解析，默认 false
      * </p>
      */
-    String value() default "";
-
-    /**
-     * <p>
-     * 默认逻辑删除值（该值可无、会自动获取全局配置）
-     * </p>
-     */
-    String delval() default "";
-
+    boolean filter() default false;
 }

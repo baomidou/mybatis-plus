@@ -15,7 +15,7 @@
  */
 package com.baomidou.mybatisplus.generator.config.po;
 
-import com.baomidou.mybatisplus.annotations.FieldFill;
+import com.baomidou.mybatisplus.annotation.FieldFill;
 
 /**
  * <p>

@@ -597,7 +597,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 
     private boolean hasNestedSelect(Result result) {
         if (result.one().select().length() > 0 && result.many().select().length() > 0) {
-            throw new BuilderException("Cannot use both @One and @Many annotations in the same @Result");
+            throw new BuilderException("Cannot use both @One and @Many annotation in the same @Result");
         }
         return result.one().select().length() > 0 || result.many().select().length() > 0;
     }

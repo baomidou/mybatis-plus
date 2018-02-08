@@ -15,7 +15,7 @@
  */
 package com.baomidou.mybatisplus.generator.config;
 
-import com.baomidou.mybatisplus.annotations.IdType;
+import com.baomidou.mybatisplus.annotation.IdType;
 
 /**
  * <p>

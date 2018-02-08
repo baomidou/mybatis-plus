@@ -3,8 +3,8 @@ package com.baomidou.mybatisplus.test.h2.entity.persistent;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import com.baomidou.mybatisplus.annotations.TableField;
-import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
 
 import lombok.Data;

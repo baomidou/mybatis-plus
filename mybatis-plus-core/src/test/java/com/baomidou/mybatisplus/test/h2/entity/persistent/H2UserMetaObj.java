@@ -18,9 +18,9 @@ package com.baomidou.mybatisplus.test.h2.entity.persistent;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-import com.baomidou.mybatisplus.annotations.TableField;
-import com.baomidou.mybatisplus.annotations.TableName;
-import com.baomidou.mybatisplus.annotations.Version;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.Version;
 import com.baomidou.mybatisplus.enums.FieldFill;
 import com.baomidou.mybatisplus.test.h2.entity.SuperEntity;
 

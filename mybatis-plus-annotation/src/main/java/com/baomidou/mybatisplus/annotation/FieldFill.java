@@ -13,20 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.baomidou.mybatisplus.annotations;
+package com.baomidou.mybatisplus.annotation;
 
 /**
  * <p>
- * 字段策略枚举类
+ * 字段填充策略枚举类
  * </p>
  *
  * @author hubin
- * @Date 2016-09-09
+ * @Date 2017-06-27
  */
-public enum FieldStrategy {
-    IGNORED(0, "忽略判断"),
-    NOT_NULL(1, "非 NULL 判断"),
-    NOT_EMPTY(2, "非空判断");
+public enum FieldFill {
+    DEFAULT(0, "默认不处理"),
+    INSERT(1, "插入填充字段"),
+    UPDATE(2, "更新填充字段"),
+    INSERT_UPDATE(3, "插入和更新填充字段");
 
     /**
      * 主键
@@ -38,19 +39,19 @@ public enum FieldStrategy {
      */
     private final String desc;
 
-    FieldStrategy(final int key, final String desc) {
+    FieldFill(final int key, final String desc) {
         this.key = key;
         this.desc = desc;
     }
 
-    public static FieldStrategy getFieldStrategy(int key) {
-        FieldStrategy[] fss = FieldStrategy.values();
-        for (FieldStrategy fs : fss) {
-            if (fs.getKey() == key) {
-                return fs;
+    public static FieldFill getIgnore(int key) {
+        FieldFill[] fis = FieldFill.values();
+        for (FieldFill fi : fis) {
+            if (fi.getKey() == key) {
+                return fi;
             }
         }
-        return FieldStrategy.NOT_NULL;
+        return FieldFill.DEFAULT;
     }
 
     public int getKey() {

@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.annotations;
+package com.baomidou.mybatisplus.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -23,30 +23,29 @@ import java.lang.annotation.Target;
 
 /**
  * <p>
- * 表主键标识
+ * 表字段逻辑处理注解（逻辑删除）
  * </p>
  *
  * @author hubin
- * @since 2016-01-23
+ * @since 2017-09-09
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface TableId {
+public @interface TableLogic {
 
     /**
      * <p>
-     * 字段值（驼峰命名方式，该值可无）
+     * 默认逻辑未删除值（该值可无、会自动获取全局配置）
      * </p>
      */
     String value() default "";
 
     /**
      * <p>
-     * 主键ID
+     * 默认逻辑删除值（该值可无、会自动获取全局配置）
      * </p>
-     * {@link IdType}
      */
-    IdType type() default IdType.NONE;
+    String delval() default "";
 
 }

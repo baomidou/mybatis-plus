@@ -2,8 +2,8 @@ package com.baomidou.mybatisplus.test.h2.entity.persistent;
 
 import java.io.Serializable;
 
-import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.annotations.Version;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.Version;
 
 import lombok.Data;
 import lombok.experimental.Accessors;

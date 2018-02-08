@@ -16,7 +16,7 @@
 package com.baomidou.mybatisplus.core.parser;
 
 
-import com.baomidou.mybatisplus.annotations.SqlParser;
+import com.baomidou.mybatisplus.annotation.SqlParser;
 
 /**
  * <p>

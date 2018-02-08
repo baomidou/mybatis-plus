@@ -364,8 +364,8 @@ public class ConfigBuilder {
     /**
      * <p>
      * 检查是否有
-     * {@link com.baomidou.mybatisplus.annotations.TableId}
-     * {@link com.baomidou.mybatisplus.annotations.TableField}
+     * {@link com.baomidou.mybatisplus.annotation.TableId}
+     * {@link com.baomidou.mybatisplus.annotation.TableField}
      * 注解
      * </p>
      *
@@ -394,16 +394,16 @@ public class ConfigBuilder {
             }
         }
         if (importTableFieldAnnotaion) {
-            tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotations.TableField.class.getCanonicalName());
+            tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotation.TableField.class.getCanonicalName());
         }
         if (importTableIdAnnotaion) {
-            tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotations.TableId.class.getCanonicalName());
+            tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotation.TableId.class.getCanonicalName());
         }
         if (globalConfig.getIdType() != null) {
             if (!importTableIdAnnotaion) {
-                tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotations.TableId.class.getCanonicalName());
+                tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotation.TableId.class.getCanonicalName());
             }
-            tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotations.IdType.class.getCanonicalName());
+            tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotation.IdType.class.getCanonicalName());
         }
     }
 

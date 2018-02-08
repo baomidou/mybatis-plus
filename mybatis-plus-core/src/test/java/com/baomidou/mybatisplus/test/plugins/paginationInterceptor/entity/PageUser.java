@@ -2,7 +2,7 @@ package com.baomidou.mybatisplus.test.plugins.paginationInterceptor.entity;
 
 import java.io.Serializable;
 
-import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.annotation.TableName;
 
 @TableName("page_user")
 public class PageUser implements Serializable {

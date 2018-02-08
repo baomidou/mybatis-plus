@@ -19,8 +19,8 @@ import java.util.List;
 
 import org.apache.ibatis.session.Configuration;
 
-import com.baomidou.mybatisplus.annotations.IdType;
-import com.baomidou.mybatisplus.annotations.KeySequence;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 
 /**

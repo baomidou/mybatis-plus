@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2014, hubin (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,8 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.annotations;
-
+package com.baomidou.mybatisplus.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -24,21 +23,29 @@ import java.lang.annotation.Target;
 
 /**
  * <p>
- * 租户注解
+ * 数据库表相关
  * </p>
  *
  * @author hubin
- * @since 2018-01-13
+ * @since 2016-01-23
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD})
-public @interface SqlParser {
+@Target(ElementType.TYPE)
+public @interface TableName {
 
     /**
      * <p>
-     * 过滤 SQL 解析，默认 false
+     * 实体对应的表名
      * </p>
      */
-    boolean filter() default false;
+    String value() default "";
+
+    /**
+     * <p>
+     * 实体映射结果集
+     * </p>
+     */
+    String resultMap() default "";
+
 }

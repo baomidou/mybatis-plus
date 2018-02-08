@@ -2,7 +2,7 @@ package com.baomidou.mybatisplus.test.h2.entity;
 
 import java.util.Date;
 
-import com.baomidou.mybatisplus.annotations.TableField;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.enums.FieldFill;
 
 /**
