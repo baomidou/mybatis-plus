@@ -15,7 +15,8 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.tenant;
 
-import com.baomidou.mybatisplus.extension.plugins.parser.AbstractJsqlParser;
+
+import com.baomidou.mybatisplus.core.parser.AbstractJsqlParser;
 
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.insert.Insert;

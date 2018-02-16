@@ -42,9 +42,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.util.ResourceUtils;
 
-import com.baomidou.mybatisplus.entity.GlobalConfiguration;
-import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.toolkit.SystemClock;
+import com.baomidou.mybatisplus.core.metadata.GlobalConfiguration;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.SystemClock;
+
 
 /**
  * <p>

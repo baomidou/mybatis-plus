@@ -17,8 +17,8 @@ package com.baomidou.mybatisplus.extension.plugins.tenant;
 
 import java.util.List;
 
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.extension.plugins.parser.AbstractJsqlParser;
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.parser.AbstractJsqlParser;
 
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;

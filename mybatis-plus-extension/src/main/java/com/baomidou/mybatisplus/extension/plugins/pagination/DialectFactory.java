@@ -19,6 +19,8 @@ import org.apache.ibatis.session.RowBounds;
 
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.pagination.PageHelper;
+import com.baomidou.mybatisplus.core.pagination.Pagination;
+import com.baomidou.mybatisplus.core.pagination.dialect.IDialect;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.enums.DBType;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.DB2Dialect;
@@ -31,7 +33,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.SQLServer2
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.SQLServerDialect;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.SQLiteDialect;
 
-import javafx.scene.control.Pagination;
 
 /**
  * <p>

@@ -97,7 +97,7 @@ public class GlobalConfiguration implements Serializable {
     /**
      * 缓存当前Configuration的SqlSessionFactory
      */
-//    private SqlSessionFactory sqlSessionFactory;
+    private SqlSessionFactory sqlSessionFactory;
     /**
      * 缓存已注入CRUD的Mapper信息
      */
@@ -231,15 +231,20 @@ public class GlobalConfiguration implements Serializable {
         this.mapperRegistryCache = mapperRegistryCache;
     }
 
-//    public SqlSessionFactory getSqlSessionFactory() {
-//        return sqlSessionFactory;
-//    }
+    public SqlSessionFactory getSqlSessionFactory() {
+        return sqlSessionFactory;
+    }
 
-//    public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
-//        this.sqlSessionFactory = sqlSessionFactory;
+    public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
+        this.sqlSessionFactory = sqlSessionFactory;
 //        //TODO: 3.0 在extension中初始化这个对象
 //        this.sqlSession = new MybatisSqlSessionTemplate(sqlSessionFactory);
-//    }
+    }
+
+    public GlobalConfiguration setSqlSession(SqlSession sqlSession){
+        this.sqlSession = sqlSession;
+        return this;
+    }
 
     public boolean isCapitalMode() {
         return isCapitalMode;

@@ -15,7 +15,8 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
-import com.baomidou.mybatisplus.plugins.pagination.IDialect;
+
+import com.baomidou.mybatisplus.core.pagination.dialect.IDialect;
 
 /**
  * <p>
