@@ -12,4 +12,6 @@ public interface IDBType {
 
     //TODO: 3.0
     public String getQuote();
+
+    public String getDb();
 }

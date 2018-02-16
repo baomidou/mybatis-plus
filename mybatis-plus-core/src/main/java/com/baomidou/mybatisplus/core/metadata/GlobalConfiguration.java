@@ -162,9 +162,9 @@ public class GlobalConfiguration implements Serializable {
 //    }
 
     //TODO 3.0 通过其他途径设置dbType
-//    public void setDbType(String dbType) {
-//        this.dbType = DBType.getDBType(dbType);
-//    }
+    public void setDbType(IDBType dbType) {
+        this.dbType = dbType;
+    }
 
     public IdType getIdType() {
         return idType;

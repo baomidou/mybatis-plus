@@ -179,20 +179,15 @@ public class GlobalConfigUtils {
      * <p>
      * 设置元数据相关属性
      * </p>
-     *
+     * @deprecated 3.0
      * @param dataSource   数据源
      * @param globalConfig 全局配置
      */
+    @Deprecated
     public static void setMetaData(DataSource dataSource, GlobalConfiguration globalConfig) {
         try (Connection connection = dataSource.getConnection()) {
-            String jdbcUrl = connection.getMetaData().getURL();
             // 设置全局关键字
             globalConfig.setSqlKeywords(connection.getMetaData().getSQLKeywords());
-            // 自动设置数据库类型
-            if (globalConfig.getDbType() == null) {
-                //TODO: 3.0 set jdbcurl
-//                globalConfig.setDbTypeOfJdbcUrl(jdbcUrl);
-            }
         } catch (Exception e) {
             throw new MybatisPlusException("Error: GlobalConfigUtils setMetaData Fail !  Cause:" + e);
         }

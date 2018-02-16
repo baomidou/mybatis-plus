@@ -28,7 +28,7 @@ import com.baomidou.mybatisplys.extension.test.h2.H2MetaObjectHandler;
  * @date 2017/4/1
  */
 @Configuration
-@MapperScan("com.baomidou.mybatisplus.test.h2.entity.mapper")
+@MapperScan("com.baomidou.mybatisplys.extension.test.h2.entity.mapper")
 public class MybatisPlusConfig {
 
     @Bean("mybatisSqlSession")
@@ -36,7 +36,7 @@ public class MybatisPlusConfig {
         MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
         sqlSessionFactory.setDataSource(dataSource);
 //        sqlSessionFactory.setConfigLocation(resourceLoader.getResource("classpath:mybatis-config.xml"));
-        sqlSessionFactory.setTypeAliasesPackage("com.baomidou.mybatisplus.test.h2.entity.persistent");
+        sqlSessionFactory.setTypeAliasesPackage("com.baomidou.mybatisplus.extension.test.h2.entity.persistent");
         MybatisConfiguration configuration = new MybatisConfiguration();
 //        configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
 //        org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();

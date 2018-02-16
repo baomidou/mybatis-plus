@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.extension.plugins.pagination;
 
 import org.apache.ibatis.session.RowBounds;
 
+import com.baomidou.mybatisplus.core.enums.IDBType;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.pagination.PageHelper;
 import com.baomidou.mybatisplus.core.pagination.Pagination;
@@ -56,7 +57,7 @@ public class DialectFactory {
      * @return
      * @throws Exception
      */
-    public static String buildPaginationSql(Pagination page, String buildSql, DBType dbType, String dialectClazz)
+    public static String buildPaginationSql(Pagination page, String buildSql, IDBType dbType, String dialectClazz)
         throws Exception {
         // fix #172, 196
         return getDialect(dbType, dialectClazz).buildPaginationSql(buildSql, PageHelper.offsetCurrent(page), page.getSize());
@@ -73,7 +74,7 @@ public class DialectFactory {
      * @return
      * @throws Exception
      */
-    public static String buildPaginationSql(RowBounds rowBounds, String buildSql, DBType dbType, String dialectClazz)
+    public static String buildPaginationSql(RowBounds rowBounds, String buildSql, IDBType dbType, String dialectClazz)
         throws Exception {
         // fix #196
         return getDialect(dbType, dialectClazz).buildPaginationSql(buildSql, rowBounds.getOffset(), rowBounds.getLimit());
@@ -89,7 +90,7 @@ public class DialectFactory {
      * @return
      * @throws Exception
      */
-    private static IDialect getDialect(DBType dbType, String dialectClazz) throws Exception {
+    private static IDialect getDialect(IDBType dbType, String dialectClazz) throws Exception {
         IDialect dialect = null;
         if (StringUtils.isNotEmpty(dialectClazz)) {
             try {
@@ -119,38 +120,28 @@ public class DialectFactory {
      * @return
      * @throws Exception
      */
-    private static IDialect getDialectByDbtype(DBType dbType) {
+    private static IDialect getDialectByDbtype(IDBType dbType) {
         IDialect dialect;
-        switch (dbType) {
-            case MYSQL:
-                dialect = MySqlDialect.INSTANCE;
-                break;
-            case ORACLE:
-                dialect = OracleDialect.INSTANCE;
-                break;
-            case DB2:
-                dialect = DB2Dialect.INSTANCE;
-                break;
-            case H2:
-                dialect = H2Dialect.INSTANCE;
-                break;
-            case SQLSERVER:
-                dialect = SQLServerDialect.INSTANCE;
-                break;
-            case SQLSERVER2005:
-                dialect = SQLServer2005Dialect.INSTANCE;
-                break;
-            case POSTGRE:
-                dialect = PostgreDialect.INSTANCE;
-                break;
-            case HSQL:
-                dialect = HSQLDialect.INSTANCE;
-                break;
-            case SQLITE:
-                dialect = SQLiteDialect.INSTANCE;
-                break;
-            default:
-                throw new MybatisPlusException("The Database's Not Supported! DBType:" + dbType);
+        if (dbType == DBType.MYSQL) {
+            dialect = MySqlDialect.INSTANCE;
+        } else if (dbType == DBType.ORACLE) {
+            dialect = OracleDialect.INSTANCE;
+        } else if (dbType == DBType.DB2) {
+            dialect = DB2Dialect.INSTANCE;
+        } else if (dbType == DBType.H2) {
+            dialect = H2Dialect.INSTANCE;
+        } else if (dbType == DBType.SQLSERVER) {
+            dialect = SQLServerDialect.INSTANCE;
+        } else if (dbType == DBType.SQLSERVER2005) {
+            dialect = SQLServer2005Dialect.INSTANCE;
+        } else if (dbType == DBType.POSTGRE) {
+            dialect = PostgreDialect.INSTANCE;
+        } else if (dbType == DBType.HSQL) {
+            dialect = HSQLDialect.INSTANCE;
+        } else if (dbType == DBType.SQLITE) {
+            dialect = SQLiteDialect.INSTANCE;
+        } else {
+            throw new MybatisPlusException("The Database's Not Supported! DBType:" + dbType);
         }
         return dialect;
     }

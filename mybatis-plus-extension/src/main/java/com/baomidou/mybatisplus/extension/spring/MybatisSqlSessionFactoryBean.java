@@ -22,6 +22,7 @@ import static org.springframework.util.StringUtils.hasLength;
 import static org.springframework.util.StringUtils.tokenizeToStringArray;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Properties;
@@ -64,6 +65,7 @@ import com.baomidou.mybatisplus.core.enums.IEnum;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.GlobalConfiguration;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.extension.toolkit.PackageHelper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlRunner;
 
@@ -383,6 +385,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             "Property 'configuration' and 'configLocation' can not specified with together");
 
         this.sqlSessionFactory = buildSqlSessionFactory();
+        //TODO: 3.0 注入到globalConfig
     }
 
     /**
@@ -557,7 +560,14 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
         configuration.setEnvironment(new Environment(this.environment, this.transactionFactory, this.dataSource));
         // 设置元数据相关
-        GlobalConfigUtils.setMetaData(dataSource, globalConfig);
+//        GlobalConfigUtils.setMetaData(dataSource, globalConfig);
+        try (Connection connection = dataSource.getConnection()) {
+            // 设置全局关键字
+            globalConfig.setSqlKeywords(connection.getMetaData().getSQLKeywords());
+            globalConfig.setDbType(JdbcUtils.getDbType(connection.getMetaData().getURL()));
+        } catch (Exception e) {
+            throw new MybatisPlusException("Error: GlobalConfigUtils setMetaData Fail !  Cause:" + e);
+        }
         SqlSessionFactory sqlSessionFactory = this.sqlSessionFactoryBuilder.build(configuration);
         // TODO SqlRunner
         SqlRunner.FACTORY = sqlSessionFactory;

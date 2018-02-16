@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.extension.toolkit;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
+import com.baomidou.mybatisplus.core.enums.IDBType;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.enums.DBType;
@@ -42,7 +43,7 @@ public class JdbcUtils {
      * @param jdbcUrl 连接地址
      * @return
      */
-    public static DBType getDbType(String jdbcUrl) {
+    public static IDBType getDbType(String jdbcUrl) {
         if (StringUtils.isEmpty(jdbcUrl)) {
             throw new MybatisPlusException("Error: The jdbcUrl is Null, Cannot read database type");
         }

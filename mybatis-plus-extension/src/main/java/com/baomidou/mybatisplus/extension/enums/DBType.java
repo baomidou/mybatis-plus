@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.extension.enums;
 
+import com.baomidou.mybatisplus.core.enums.IDBType;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 
 /**
@@ -26,7 +27,7 @@ import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
  * @Date 2016-04-15
  */
 //TODO: 3.0 如何在GlobalConfiguration里面支持？
-public enum DBType {
+public enum DBType implements IDBType{
     /**
      * MYSQL
      */
