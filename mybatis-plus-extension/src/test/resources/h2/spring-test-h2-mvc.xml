@@ -7,7 +7,7 @@
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
 
-    <context:component-scan base-package="com.baomidou.mybatisplys.extension.test.h2.service"/>
+    <context:component-scan base-package="com.baomidou.mybatisplus.extension.test.h2.service"/>
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
         <property name="driverClass" value="org.h2.Driver"/>
@@ -18,7 +18,7 @@
 
     <bean id="sqlSessionFactory" class="com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
-        <property name="typeAliasesPackage" value="com.baomidou.mybatisplus.test.com.baomidou.mybatisplys.extension.test.h2.entity"/>
+        <property name="typeAliasesPackage" value="com.baomidou.mybatisplus.extension.test.com.baomidou.mybatisplus.extension.test.h2.entity"/>
         <property name="configuration" ref="mybatisConfig"/>
         <!-- MP 全局配置注入 -->
         <property name="globalConfig" ref="globalConfig"/>
@@ -68,11 +68,11 @@
     <!--<bean id="keyGenerator" class="com.baomidou.mybatisplus.incrementer.OracleKeyGenerator"/>-->
 
     <!-- 自定义处理器 -->
-    <bean id="myMetaObjectHandler" class="com.baomidou.mybatisplys.extension.test.h2.H2MetaObjectHandler"/>
+    <bean id="myMetaObjectHandler" class="com.baomidou.mybatisplus.extension.test.h2.H2MetaObjectHandler"/>
     <bean id="logicSqlInjector" class="com.baomidou.mybatisplus.mapper.LogicSqlInjector"/>
 
     <!-- 配置mybatis 扫描mapper接口的路径-->
     <bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="com.baomidou.mybatisplus.test.com.baomidou.mybatisplys.extension.test.h2.entity.mapper"/>
+        <property name="basePackage" value="com.baomidou.mybatisplus.extension.test.com.baomidou.mybatisplus.extension.test.h2.entity.mapper"/>
     </bean>
 </beans>

@@ -11,6 +11,7 @@ dependencies {
     provided rootProject.ext.dependencies["spring-jdbc"]
     testCompile group: 'org.springframework', name: 'spring-web', version: '4.3.5.RELEASE'
 
+    testCompile 'javax.servlet:servlet-api:2.5'
 
     testCompile 'junit:junit:4.12'
     testCompile rootProject.ext.dependencies["lombok"]

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.baomidou.mybatisplus.test.com.baomidou.mybatisplys.extension.test.mysql.mapper.UserMapper">
+<mapper namespace="com.baomidou.mybatisplus.extension.test.com.baomidou.mybatisplus.extension.test.mysql.mapper.UserMapper">
 
     <!-- ehcache 缓存配置, 输出日志 http://www.mybatis.org/ehcache-cache/ -->
     <cache type="org.mybatis.caches.ehcache.LoggingEhcache"/>
@@ -36,14 +36,14 @@
 
         <!-- 自定义 typeHandler 语法 -->
         <result column="phone" property="phone"
-                typeHandler="com.baomidou.mybatisplus.test.com.baomidou.mybatisplys.extension.test.mysql.typehandler.PhoneTypeHandler"/>
+                typeHandler="com.baomidou.mybatisplus.extension.test.com.baomidou.mybatisplus.extension.test.mysql.typehandler.PhoneTypeHandler"/>
 
         <!-- 级联查询 -->
-        <association column="role" property="role" select="com.baomidou.mybatisplus.test.com.baomidou.mybatisplys.extension.test.mysql.mapper.RoleMapper.selectById"/>
+        <association column="role" property="role" select="com.baomidou.mybatisplus.extension.test.com.baomidou.mybatisplus.extension.test.mysql.mapper.RoleMapper.selectById"/>
     </resultMap>
 
     <!-- 测试 resultMap 结果集注入【 注意，实体需要注解 ！！ 】 -->
-    <select id="selectRoleList" resultMap="com.baomidou.mybatisplys.extension.test.mysql.mapper.RoleMapper.RoleMap">
+    <select id="selectRoleList" resultMap="com.baomidou.mybatisplus.extension.test.mysql.mapper.RoleMapper.RoleMap">
       SELECT * FROM role
     </select>
 </mapper>

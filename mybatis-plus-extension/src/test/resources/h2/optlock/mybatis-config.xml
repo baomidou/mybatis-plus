@@ -26,10 +26,10 @@
 	</environments>
 
 	<mappers>
-		<mapper class="com.baomidou.mybatisplus.test.plugin.OptimisticLocker.mapper.IntVersionUserMapper" />
-		<mapper class="com.baomidou.mybatisplus.test.plugin.OptimisticLocker.mapper.LongVersionUserMapper" />
-		<mapper class="com.baomidou.mybatisplus.test.plugin.OptimisticLocker.mapper.DateVersionUserMapper" />
-		<mapper class="com.baomidou.mybatisplus.test.plugin.OptimisticLocker.mapper.TimestampVersionUserMapper" />
+		<mapper class="com.baomidou.mybatisplus.extension.test.plugin.OptimisticLocker.mapper.IntVersionUserMapper" />
+		<mapper class="com.baomidou.mybatisplus.extension.test.plugin.OptimisticLocker.mapper.LongVersionUserMapper" />
+		<mapper class="com.baomidou.mybatisplus.extension.test.plugin.OptimisticLocker.mapper.DateVersionUserMapper" />
+		<mapper class="com.baomidou.mybatisplus.extension.test.plugin.OptimisticLocker.mapper.TimestampVersionUserMapper" />
 	</mappers>
 
 </configuration>

@@ -42,14 +42,14 @@
      |
     <typeAliases>
      	1、明确定义
-        <typeAlias type="com.baomidou.mybatisplus.test.mysql.entity.User" alias="User" />
+        <typeAlias type="com.baomidou.mybatisplus.extension.test.mysql.entity.User" alias="User" />
 
      	2、扫描指定包下的实体
-        <package name="com.baomidou.mybatisplus.test.mysql.entity" />
+        <package name="com.baomidou.mybatisplus.extension.test.mysql.entity" />
     </typeAliases>
      | -->
     <typeAliases>
-        <package name="com.baomidou.mybatisplus.test.com.baomidou.mybatisplys.extension.test.mysql.entity"/>
+        <package name="com.baomidou.mybatisplus.extension.test.com.baomidou.mybatisplus.extension.test.mysql.entity"/>
     </typeAliases>
 
     <!-- 插件配置 -->
@@ -107,10 +107,10 @@
      | -->
     <mappers>
         <mapper resource="mysql/RoleMapper.xml"/>
-        <mapper class="com.baomidou.mybatisplus.test.com.baomidou.mybatisplys.extension.test.mysql.mapper.UserMapper"/>
-        <mapper class="com.baomidou.mybatisplus.test.com.baomidou.mybatisplys.extension.test.mysql.mapper.NotPKMapper"/>
+        <mapper class="com.baomidou.mybatisplus.extension.test.com.baomidou.mybatisplus.extension.test.mysql.mapper.UserMapper"/>
+        <mapper class="com.baomidou.mybatisplus.extension.test.com.baomidou.mybatisplus.extension.test.mysql.mapper.NotPKMapper"/>
         <mapper resource="mysql/UserMapper.xml"/>
-        <mapper class="com.baomidou.mybatisplus.test.com.baomidou.mybatisplys.extension.test.mysql.mapper.RoleMapper"/>
-        <mapper class="com.baomidou.mybatisplus.test.com.baomidou.mybatisplys.extension.test.mysql.mapper.TestMapper"/>
+        <mapper class="com.baomidou.mybatisplus.extension.test.com.baomidou.mybatisplus.extension.test.mysql.mapper.RoleMapper"/>
+        <mapper class="com.baomidou.mybatisplus.extension.test.com.baomidou.mybatisplus.extension.test.mysql.mapper.TestMapper"/>
     </mappers>
 </configuration>

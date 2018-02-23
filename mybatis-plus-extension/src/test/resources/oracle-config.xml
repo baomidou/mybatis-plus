@@ -39,14 +39,14 @@
      |
     <typeAliases>
      	1、明确定义
-        <typeAlias type="com.baomidou.mybatisplus.test.oracle.entity.User" alias="User" />
+        <typeAlias type="com.baomidou.mybatisplus.extension.test.oracle.entity.User" alias="User" />
 
      	2、扫描指定包下的实体
-        <package name="com.baomidou.mybatisplus.test.oracle.entity" />
+        <package name="com.baomidou.mybatisplus.extension.test.oracle.entity" />
     </typeAliases>
      | -->
     <typeAliases>
-        <package name="com.baomidou.mybatisplus.test.com.baomidou.mybatisplys.extension.test.oracle.entity" />
+        <package name="com.baomidou.mybatisplus.extension.test.com.baomidou.mybatisplus.extension.test.oracle.entity" />
     </typeAliases>
 
     <!-- 插件配置 -->
@@ -92,8 +92,8 @@
      | package  指向可以找到Mapper接口的包名
      | -->
     <mappers>
-        <mapper class="com.baomidou.mybatisplus.test.com.baomidou.mybatisplys.extension.test.oracle.mapper.TestUserMapper" />
-        <mapper class="com.baomidou.mybatisplus.test.com.baomidou.mybatisplys.extension.test.oracle.mapper.TestSequserMapper" />
+        <mapper class="com.baomidou.mybatisplus.extension.test.com.baomidou.mybatisplus.extension.test.oracle.mapper.TestUserMapper" />
+        <mapper class="com.baomidou.mybatisplus.extension.test.com.baomidou.mybatisplus.extension.test.oracle.mapper.TestSequserMapper" />
         <mapper resource="oracle/TestUserMapper.xml"/>
     </mappers>
 </configuration>
