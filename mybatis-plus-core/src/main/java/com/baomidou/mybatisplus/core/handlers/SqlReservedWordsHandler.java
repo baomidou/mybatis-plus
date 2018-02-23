@@ -155,7 +155,7 @@ public abstract class SqlReservedWordsHandler {
         return new SqlReservedWordsHandler() {
             @Override
             public String convert(GlobalConfiguration globalConfig, String column) {
-                return null;
+                return column;
             }
 
             @Override

@@ -42,7 +42,7 @@ public class SqlUtils {
     static {
         try {
             //TODO: 3.0
-            DEFAULT_CLASS = (Class<ISqlParser>) Class.forName("com.baomidou.mybatisplus.plugins.pagination.optimize.JsqlParserCountOptimize");
+            DEFAULT_CLASS = (Class<ISqlParser>) Class.forName("com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParserCountOptimize");
         } catch (ClassNotFoundException e) {
             //skip
         }
@@ -52,6 +52,7 @@ public class SqlUtils {
      * <p>
      * 获取 COUNT 原生 SQL 包装
      * </p>
+     *
      * @param originalSql
      * @return
      */
@@ -82,7 +83,10 @@ public class SqlUtils {
             } else {
                 // 默认 JsqlParser 优化 COUNT
                 try {
-                    // TODO: 2017/11/20 这里我改动了下.
+                    if (DEFAULT_CLASS == null) {//plus-extension not included
+                        return SqlInfo.newInstance().setSql(getOriginalCountSql(originalSql));
+                    }
+                    // TODO 3.0 changed
                     COUNT_SQL_PARSER = DEFAULT_CLASS.newInstance();
                 } catch (Exception e) {
                     throw new MybatisPlusException(e);
