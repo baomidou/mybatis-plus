@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2011-2020, hubin (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
