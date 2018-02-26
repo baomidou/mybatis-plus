@@ -115,36 +115,29 @@ subprojects {
         archives javadocJar
     }
 
-    tasks.whenTaskAdded { task ->
-        if (task.name.contains('uploadArchives') || task.name.contains("signArchives")) {
-            task.enabled = new File(project.property('signing.secretKeyRingFile') as String).isFile()
-        }
-    }
-
-    signing {
-        sign configurations.archives
-    }
-
     // gradle clean build uploadArchives -Dun=用户名 -Dps=密码 -x test
     uploadArchives {
         repositories {
             mavenDeployer {
-                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-                def userName = System.getProperty("un")
-                def passWord = System.getProperty("ps")
-                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                    //noinspection GroovyAssignabilityCheck
-                    authentication(userName: userName, password: passWord)
+                def isLocal = Boolean.valueOf(project.properties.get("local"))
+                if(isLocal){
+                    repository(url: uri('../repo'))
+                }else {
+                    signing {
+                        sign configurations.archives
+                    }
+                    beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+                    def userName = System.getProperty("un")
+                    def passWord = System.getProperty("ps")
+                    pom.version = "$project.version"
+                    pom.artifactId = "$project.name"
+                    pom.groupId = "$project.group"
+                    repository(url: pom.version.endsWith('SNAPSHOT') ? 'https://oss.sonatype.org/content/repositories/snapshots/'
+                        :'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
+                        //noinspection GroovyAssignabilityCheck
+                        authentication(userName: userName, password: passWord)
+                    }
                 }
-
-                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                    //noinspection GroovyAssignabilityCheck
-                    authentication(userName: userName, password: passWord)
-                }
-
-                pom.version = "$project.version"
-                pom.artifactId = "$project.name"
-                pom.groupId = "$project.group"
                 pom.project {
                     //noinspection GroovyAssignabilityCheck
                     name 'mybatis-plus'
