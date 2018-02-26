@@ -28,7 +28,7 @@ import org.apache.ibatis.reflection.SystemMetaObject;
  */
 public abstract class MetaObjectHandler {
 
-    protected static final String META_OBJ_PREFIX = "et";
+    protected static final String META_OBJ_PREFIX = "et" ;
 
     /**
      * <p>
@@ -112,7 +112,7 @@ public abstract class MetaObjectHandler {
         return true;
     }
 
-    public static MetaObjectHandler getInstance(){
+    public static MetaObjectHandler getInstance() {
         return new MetaObjectHandler() {
             @Override
             public void insertFill(MetaObject metaObject) {

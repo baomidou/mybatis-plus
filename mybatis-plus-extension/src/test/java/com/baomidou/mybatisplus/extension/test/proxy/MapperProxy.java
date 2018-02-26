@@ -48,7 +48,7 @@ public class MapperProxy<T> implements InvocationHandler {
             return method.invoke(this, args);
         }
 
-		/* 执行 SQL */
+        /* 执行 SQL */
         return execute(method, args);
     }
 

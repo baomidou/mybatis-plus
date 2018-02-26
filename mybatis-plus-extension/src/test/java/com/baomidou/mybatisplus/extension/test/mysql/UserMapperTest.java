@@ -80,7 +80,7 @@ public class UserMapperTest extends CrudTest {
     public void crudTest() {
         SqlSession session = this.sqlSessionFactory().openSession();
         UserMapper userMapper = session.getMapper(UserMapper.class);
-        System.err.println(" debug run 查询执行 user 表数据变化！ ");
+        System.err.println(" debug run 查询执行 user 表数据变化！ " );
         userMapper.deleteAll();
 
         /**
@@ -88,13 +88,13 @@ public class UserMapperTest extends CrudTest {
          */
         Role role = new Role();
         role.setId(IdWorker.getId());
-        role.setName("admin");
+        role.setName("admin" );
 
         User userA = new User();
         userA.setId(IdWorker.getId());
-        userA.setName("junyu_shi");
+        userA.setName("junyu_shi" );
         userA.setAge(1);
-        userA.setDesc("测试一把");
+        userA.setDesc("测试一把" );
         userA.setTestType(1);
         userA.setRole(role);
 
@@ -110,7 +110,7 @@ public class UserMapperTest extends CrudTest {
         /**
          * 注解插件测试
          */
-        rlt = userMapper.insertInjector(new User(1L, "1", 1, 1));
+        rlt = userMapper.insertInjector(new User(1L, "1" , 1, 1));
         System.err.println("--------- insertInjector --------- " + rlt);
 
         /**
@@ -125,7 +125,7 @@ public class UserMapperTest extends CrudTest {
          * 插入
          */
         long id = IdWorker.getId();
-        rlt = userMapper.insert(new User(id, "abc", 18, 1));
+        rlt = userMapper.insert(new User(id, "abc" , 18, 1));
         System.err.println("\n--------------insert-------" + rlt);
         sleep();
 
@@ -135,28 +135,28 @@ public class UserMapperTest extends CrudTest {
 
         List<User> ul = new ArrayList<>();
 
-		/* 手动输入 ID */
-        ul.add(new User(11L, "1", 1, 0));
-        ul.add(new User(12L, "2", 2, 1));
-        ul.add(new User(13L, "3", 3, 1));
-        ul.add(new User(14L, "delname", 4, 0));
-        ul.add(new User(15L, "5", 5, 1));
-        ul.add(new User(16L, "6", 6, 0));
+        /* 手动输入 ID */
+        ul.add(new User(11L, "1" , 1, 0));
+        ul.add(new User(12L, "2" , 2, 1));
+        ul.add(new User(13L, "3" , 3, 1));
+        ul.add(new User(14L, "delname" , 4, 0));
+        ul.add(new User(15L, "5" , 5, 1));
+        ul.add(new User(16L, "6" , 6, 0));
 
-		/* 测试 name test_type 填充 */
+        /* 测试 name test_type 填充 */
         ul.add(new User(17L, 7));
         ul.add(new User(18L, 8));
         ul.add(new User(19L, 9));
         ul.add(new User(7));
-        ul.add(new User(20L, "deleteByMap", 7, 0));
+        ul.add(new User(20L, "deleteByMap" , 7, 0));
 
-		/* 使用 ID_WORKER 自动生成 ID */
-        ul.add(new User("8", 8, 1));
-        ul.add(new User("9", 9, 1));
+        /* 使用 ID_WORKER 自动生成 ID */
+        ul.add(new User("8" , 8, 1));
+        ul.add(new User("9" , 9, 1));
         for (User u : ul) {
             rlt = userMapper.insert(u);
         }
-        System.err.println("\n--------------insertBatch----------------" + rlt + "\n\n");
+        System.err.println("\n--------------insertBatch----------------" + rlt + "\n\n" );
         System.err.println("\n 自定义填充 testType=3 填充成功！" + userMapper.selectById(18L).toString());
 
         /**
@@ -164,75 +164,75 @@ public class UserMapperTest extends CrudTest {
          */
         session.commit();
 
-		/*
+        /*
          * 删除
-		 */
+         */
         rlt = userMapper.deleteById(id);
-        System.err.println("---------deleteById------- delete id=" + id + " ,result=" + rlt + "\n\n");
+        System.err.println("---------deleteById------- delete id=" + id + " ,result=" + rlt + "\n\n" );
         sleep();
 
         Map<String, Object> columnMap = new HashMap<>();
-        columnMap.put("name", "deleteByMap");
-        columnMap.put("age", null);
+        columnMap.put("name" , "deleteByMap" );
+        columnMap.put("age" , null);
         rlt = userMapper.deleteByMap(columnMap);
-        System.err.println("---------deleteByMap------- result=" + rlt + "\n\n");
+        System.err.println("---------deleteByMap------- result=" + rlt + "\n\n" );
         sleep();
 
         List<Long> il = new ArrayList<>();
         il.add(16L);
         il.add(17L);
         rlt = userMapper.deleteBatchIds(il);
-        System.err.println("---------deleteBatchIds------- delete id=" + id + " ,result=" + rlt + "\n\n");
+        System.err.println("---------deleteBatchIds------- delete id=" + id + " ,result=" + rlt + "\n\n" );
         sleep();
 
-        rlt = userMapper.delete(new EntityWrapper<>(new User(14L, "delname")));
-        System.err.println("--------------delete------------------ result=" + rlt + "\n\n");
+        rlt = userMapper.delete(new EntityWrapper<>(new User(14L, "delname" )));
+        System.err.println("--------------delete------------------ result=" + rlt + "\n\n" );
         sleep();
 
-		/*
+        /*
          * <p> 修改 </p>
-		 *
-		 * updateById 是从 SuperMapper 中继承而来的，UserMapper.xml中并没有申明改sql
-		 */
-        rlt = userMapper.updateById(new User(12L, "MybatisPlus"));
-        System.err.println("------------------updateById---------------------- result=" + rlt + "\n\n");
+         *
+         * updateById 是从 SuperMapper 中继承而来的，UserMapper.xml中并没有申明改sql
+         */
+        rlt = userMapper.updateById(new User(12L, "MybatisPlus" ));
+        System.err.println("------------------updateById---------------------- result=" + rlt + "\n\n" );
         sleep();
 
-        rlt = userMapper.updateById(new User(12L, "update all column", 12, 12));
-        System.err.println("------------------updateById---------------------- result=" + rlt + "\n\n");
+        rlt = userMapper.updateById(new User(12L, "update all column" , 12, 12));
+        System.err.println("------------------updateById---------------------- result=" + rlt + "\n\n" );
         sleep();
 
-        rlt = userMapper.update(new User("55", 55, 5), new EntityWrapper<>(new User(15L, "5")));
-        System.err.println("------------------update---------------------- result=" + rlt + "\n\n");
+        rlt = userMapper.update(new User("55" , 55, 5), new EntityWrapper<>(new User(15L, "5" )));
+        System.err.println("------------------update---------------------- result=" + rlt + "\n\n" );
         sleep();
 
         EntityWrapper<User> ew1 = new EntityWrapper<>();
-        ew1.addFilter("test_id={0} AND name={1}", 15L, "55");
-        rlt = userMapper.update(new User("00"), ew1);
-        System.err.println("------------------update---------------------- result=" + rlt + "\n\n");
+        ew1.addFilter("test_id={0} AND name={1}" , 15L, "55" );
+        rlt = userMapper.update(new User("00" ), ew1);
+        System.err.println("------------------update---------------------- result=" + rlt + "\n\n" );
         sleep();
 
-		/* 无条件选择更新 */
+        /* 无条件选择更新 */
         // userMapper.update(new User("11"), null);
 
         List<User> userList = new ArrayList<>();
-        userList.add(new User(11L, "updateBatchById-1", 1, 1));
-        userList.add(new User(12L, "updateBatchById-2", 2, 1));
-        userList.add(new User(13L, "updateBatchById-3", 3, 1));
+        userList.add(new User(11L, "updateBatchById-1" , 1, 1));
+        userList.add(new User(12L, "updateBatchById-2" , 2, 1));
+        userList.add(new User(13L, "updateBatchById-3" , 3, 1));
         for (User u : userList) {
             rlt = userMapper.updateById(u);
         }
-        System.err.println("------------------updateBatchById---------------------- result=" + rlt + "\n\n");
+        System.err.println("------------------updateBatchById---------------------- result=" + rlt + "\n\n" );
         sleep();
 
-		/*
+        /*
          * <p> 查询 </p>
-		 */
-        System.err.println("\n------------------selectById----------------------");
+         */
+        System.err.println("\n------------------selectById----------------------" );
         User user = userMapper.selectById(12L);
         print(user);
 
-        System.err.println("\n------------------selectBatchIds----------------------");
+        System.err.println("\n------------------selectBatchIds----------------------" );
         List<Long> idList = new ArrayList<>();
         idList.add(11L);
         idList.add(12L);
@@ -241,42 +241,42 @@ public class UserMapperTest extends CrudTest {
             print(anUl0);
         }
 
-        System.err.println("\n------------------selectByMap-----满足 map 条件的数据----");
+        System.err.println("\n------------------selectByMap-----满足 map 条件的数据----" );
         Map<String, Object> cm = new HashMap<>();
-        cm.put("test_type", 1);
-        cm.put("1", 1);
+        cm.put("test_type" , 1);
+        cm.put("1" , 1);
         List<User> ul1 = userMapper.selectByMap(cm);
         for (User anUl1 : ul1) {
             print(anUl1);
         }
 
-        System.err.println("\n------------------selectOne----------------------");
-        User userOne = userMapper.selectOne(new User("abc"));
+        System.err.println("\n------------------selectOne----------------------" );
+        User userOne = userMapper.selectOne(new User("abc" ));
         print(userOne);
 
-        System.err.println("\n------------------selectCount----------------------");
+        System.err.println("\n------------------selectCount----------------------" );
         System.err.println("查询 type=1 总记录数：" + userMapper.selectCount(new EntityWrapper<>(new User(1))));
         System.err.println("总记录数：" + userMapper.selectCount(null));
 
-        System.err.println("\n------------------selectList-----所有数据----id--DESC--排序----");
-        List<User> ul2 = userMapper.selectList(new EntityWrapper<User>(null, "age,name"));
+        System.err.println("\n------------------selectList-----所有数据----id--DESC--排序----" );
+        List<User> ul2 = userMapper.selectList(new EntityWrapper<User>(null, "age,name" ));
         for (User anUl2 : ul2) {
             print(anUl2);
         }
 
-        System.err.println("\n------------------list 分页查询 ----查询 testType = 1 的所有数据--id--DESC--排序--------");
+        System.err.println("\n------------------list 分页查询 ----查询 testType = 1 的所有数据--id--DESC--排序--------" );
         Page<User> page = new Page<>(1, 2);
         EntityWrapper<User> ew = new EntityWrapper<>(new User(1));
 
-		/*
+        /*
          * 查询字段
-		 */
-        ew.setSqlSelect("age,name");
+         */
+        ew.setSqlSelect("age,name" );
 
-		/*
+        /*
          * 查询条件，SQL 片段(根据常用的写SQL的方式按顺序添加相关条件即可)
-		 */
-        ew.where("name like {0}", "'%dateBatch%'").and("age={0}", 3).orderBy("age,name", true);
+         */
+        ew.where("name like {0}" , "'%dateBatch%'" ).and("age={0}" , 3).orderBy("age,name" , true);
         List<User> paginList = userMapper.selectPage(page, ew);
         page.setRecords(paginList);
         for (int i = 0; i < page.getRecords().size(); i++) {
@@ -284,17 +284,17 @@ public class UserMapperTest extends CrudTest {
         }
         System.err.println(" 翻页：" + page.toString());
 
-        System.err.println("\n---------------xml---selectListRow 分页查询，不查询总数（此时可自定义 count 查询）----无查询条件--------------");
+        System.err.println("\n---------------xml---selectListRow 分页查询，不查询总数（此时可自定义 count 查询）----无查询条件--------------" );
         // TODO 查询总数传 Page 对象即可
         List<User> rowList = userMapper.selectListRow(new Pagination(0, 2, false));
         for (User aRowList : rowList) {
             print(aRowList);
         }
 
-		/*
+        /*
          * 用户列表
-		 */
-        System.err.println(" selectList EntityWrapper == null \n");
+         */
+        System.err.println(" selectList EntityWrapper == null \n" );
         paginList = userMapper.selectList(null);
         for (User aPaginList : paginList) {
             print(aPaginList);
@@ -319,9 +319,9 @@ public class UserMapperTest extends CrudTest {
         sleep();
         if (user != null) {
             System.out.println("\n user: id=" + user.getId() + ", name=" + user.getName() + ", age=" + user.getAge()
-                    + ", testType=" + user.getTestType());
+                + ", testType=" + user.getTestType());
         } else {
-            System.out.println("\n user is null.");
+            System.out.println("\n user is null." );
         }
     }
 

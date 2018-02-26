@@ -31,7 +31,7 @@ import org.apache.ibatis.reflection.SystemMetaObject;
  */
 public abstract class PluginUtils {
 
-    public static final String DELEGATE_BOUNDSQL_SQL = "delegate.boundSql.sql";
+    public static final String DELEGATE_BOUNDSQL_SQL = "delegate.boundSql.sql" ;
 
 
     private PluginUtils() {
@@ -47,7 +47,7 @@ public abstract class PluginUtils {
     public static Object realTarget(Object target) {
         if (Proxy.isProxyClass(target.getClass())) {
             MetaObject metaObject = SystemMetaObject.forObject(target);
-            return realTarget(metaObject.getValue("h.target"));
+            return realTarget(metaObject.getValue("h.target" ));
         }
         return target;
     }

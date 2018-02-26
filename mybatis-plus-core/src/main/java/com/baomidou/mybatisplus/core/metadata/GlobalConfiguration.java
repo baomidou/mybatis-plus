@@ -241,7 +241,7 @@ public class GlobalConfiguration implements Serializable {
 //        this.sqlSession = new MybatisSqlSessionTemplate(sqlSessionFactory);
     }
 
-    public GlobalConfiguration setSqlSession(SqlSession sqlSession){
+    public GlobalConfiguration setSqlSession(SqlSession sqlSession) {
         this.sqlSession = sqlSession;
         return this;
     }
@@ -270,7 +270,7 @@ public class GlobalConfiguration implements Serializable {
             if (reservedWordsHandler == null) {
                 reservedWordsHandler = SqlReservedWordsHandler.getInstance();
             }
-            reservedWordsHandler.addAll(StringUtils.splitWorker(sqlKeywords.toUpperCase(), ",", -1, false));
+            reservedWordsHandler.addAll(StringUtils.splitWorker(sqlKeywords.toUpperCase(), "," , -1, false));
         }
     }
 

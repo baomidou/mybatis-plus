@@ -75,7 +75,7 @@ public class JsqlParserCountOptimize implements ISqlParser {
             }
             //#95 Github, selectItems contains #{} ${}, which will be translated to ?, and it may be in a function: power(#{myInt},2)
             for (SelectItem item : plainSelect.getSelectItems()) {
-                if (item.toString().contains("?")) {
+                if (item.toString().contains("?" )) {
                     sqlInfo.setSql(SqlUtils.getOriginalCountSql(selectStatement.toString()));
                     return sqlInfo;
                 }
@@ -104,7 +104,7 @@ public class JsqlParserCountOptimize implements ISqlParser {
      */
     private static List<SelectItem> countSelectItem() {
         Function function = new Function();
-        function.setName("COUNT");
+        function.setName("COUNT" );
         List<Expression> expressions = new ArrayList<>();
         LongValue longValue = new LongValue(1);
         ExpressionList expressionList = new ExpressionList();

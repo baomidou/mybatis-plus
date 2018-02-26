@@ -44,31 +44,31 @@ public class ActiveRecordTest extends CrudTest {
         TableInfoHelper.initSqlSessionFactory(this.sqlSessionFactory());
         // 保存一条记录
         Test t1 = new Test();
-        t1.setType("test10");
+        t1.setType("test10" );
         boolean rlt = t1.insert();
         print(" ar save=" + rlt + ", id=" + t1.getId());
 
         // 根据ID更新
-        t1.setType("t1001");
+        t1.setType("t1001" );
         rlt = t1.updateAllColumnById();
         print(" ar updateAllColumnById:" + rlt);
 
-        t1.setType("t1023");
+        t1.setType("t1023" );
         rlt = t1.updateById();
         print(" ar updateById:" + rlt);
 
         // 更新 SQL
         Test t11 = new Test();
-        t11.setType("123");
-        rlt = t11.update("id={0}", t1.getId());
+        t11.setType("123" );
+        rlt = t11.update("id={0}" , t1.getId());
         print("update sql=" + rlt);
 
         // 查询 SQL
-        Test t10 = t1.selectOne("id={0}", t1.getId());
+        Test t10 = t1.selectOne("id={0}" , t1.getId());
         print("selectOne=" + t10.getType());
 
         // 插入OR更新
-        t1.setType("t1021");
+        t1.setType("t1021" );
         rlt = t1.insertOrUpdate();
         print(" ar saveOrUpdate:" + rlt);
 
@@ -99,12 +99,12 @@ public class ActiveRecordTest extends CrudTest {
         // 执行 SQL 查询总数
         List<Map<String, Object>> ul = t2.sql().selectList(new SQL() {
             {
-                SELECT("*");
-                FROM("test");
-                WHERE("type='t1021'");
+                SELECT("*" );
+                FROM("test" );
+                WHERE("type='t1021'" );
             }
         }.toString());
-        System.err.println("selectList SQL:");
+        System.err.println("selectList SQL:" );
         for (Map<String, Object> map : ul) {
             System.err.println(map);
         }
@@ -114,7 +114,7 @@ public class ActiveRecordTest extends CrudTest {
         print("t2 删除后是否存在？" + (null != t20));
 
         // 删除 SQL
-        rlt = t2.delete("type={0}", "t1021");
+        rlt = t2.delete("type={0}" , "t1021" );
         System.err.println("delete sql=" + rlt);
     }
 

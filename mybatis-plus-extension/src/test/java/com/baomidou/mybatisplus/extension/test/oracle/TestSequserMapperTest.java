@@ -47,7 +47,7 @@ public class TestSequserMapperTest {
     public static void main(String[] args) {
 
         //加载配置文件
-        InputStream in = TestSequserMapperTest.class.getClassLoader().getResourceAsStream("oracle-config.xml");
+        InputStream in = TestSequserMapperTest.class.getClassLoader().getResourceAsStream("oracle-config.xml" );
 
         MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
 
@@ -62,7 +62,7 @@ public class TestSequserMapperTest {
         /**
          * 插入
          */
-        TestSequser one = new TestSequser("abc", 18, 1);
+        TestSequser one = new TestSequser("abc" , 18, 1);
         int rlt = testSequserMapper.insert(one);
         System.err.println("\n one.id-------:" + one.getId());
 //        sleep();
@@ -71,11 +71,11 @@ public class TestSequserMapperTest {
          * 批量插入
          */
         List<TestSequser> ul = new ArrayList<>();
-        ul.add(new TestSequser("abc2", 18, 2));
-        ul.add(new TestSequser("abc3", 18, 3));
-        ul.add(new TestSequser("abc4", 18, 4));
-        ul.add(new TestSequser("abc5", 18, 5));
-        ul.add(new TestSequser("abc6", 18, 6));
+        ul.add(new TestSequser("abc2" , 18, 2));
+        ul.add(new TestSequser("abc3" , 18, 3));
+        ul.add(new TestSequser("abc4" , 18, 4));
+        ul.add(new TestSequser("abc5" , 18, 5));
+        ul.add(new TestSequser("abc6" , 18, 6));
         for (TestSequser u : ul) {
             rlt = testSequserMapper.insert(u);
         }
@@ -83,7 +83,7 @@ public class TestSequserMapperTest {
 //            System.err.println("\n one.id-------:" + u.getId());
 //        }
 
-        System.out.println("********************");
+        System.out.println("********************" );
         List<TestSequser> testList = testSequserMapper.getList();
         for (TestSequser u : testList) {
             System.out.println(u);

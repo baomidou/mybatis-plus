@@ -61,7 +61,7 @@ public class GlobalConfigurationTest extends CrudTest {
         Test test = new Test();
         test.setCreateTime(new Date());
         // 开启全局校验字符串会忽略空字符串
-        test.setType("");
+        test.setType("" );
         testMapper.insert(test);
 
         SqlSession sqlSession = this.sqlSessionFactory().openSession(false);
@@ -84,9 +84,9 @@ public class GlobalConfigurationTest extends CrudTest {
 //        pkMapper.selectPage(RowBounds.DEFAULT, type);
         NotPK notPK2 = null;
         try {
-            notPK2 = pkMapper.selectById("1");
+            notPK2 = pkMapper.selectById("1" );
         } catch (Exception e) {
-            System.out.println("因为没有主键,所以没有注入该方法");
+            System.out.println("因为没有主键,所以没有注入该方法" );
         }
         Assert.assertNull(notPK2);
         int count = pkMapper.selectCount(Condition.EMPTY);
@@ -97,9 +97,9 @@ public class GlobalConfigurationTest extends CrudTest {
         int deleteCount = pkMapper.delete(null);
         Assert.assertTrue(deleteCount > 0);
         List<String> list = new ArrayList<>();
-        list.add("1");
-        list.add("2");
-        list.add("3");
+        list.add("1" );
+        list.add("2" );
+        list.add("3" );
         RoleMapper mapper = sqlSession.getMapper(RoleMapper.class);
         System.out.println(mapper.selectBatchIds(list));
         System.out.println(mapper.selectBatchIds(new HashSet<>(list)));

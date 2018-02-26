@@ -26,21 +26,21 @@ public class H2Test {
     public static void executeSql(Statement stmt, String sqlFilename) throws SQLException, IOException {
         String filePath = H2Test.class.getResource("/h2/" + sqlFilename).getPath();
         try (
-                BufferedReader reader = new BufferedReader(new FileReader(filePath))
+            BufferedReader reader = new BufferedReader(new FileReader(filePath))
         ) {
             String line;
             while ((line = reader.readLine()) != null) {
-                stmt.execute(line.replace(";", ""));
+                stmt.execute(line.replace(";" , "" ));
             }
         }
     }
 
     public static void initData(Connection conn) throws SQLException, IOException {
-        String createTableSql = readFile("user.ddl.sql");
+        String createTableSql = readFile("user.ddl.sql" );
         Statement stmt = conn.createStatement();
         stmt.execute(createTableSql);
-        stmt.execute("truncate table h2user");
-        executeSql(stmt, "user.insert.sql");
+        stmt.execute("truncate table h2user" );
+        executeSql(stmt, "user.insert.sql" );
         conn.commit();
     }
 
@@ -48,11 +48,11 @@ public class H2Test {
         StringBuilder builder = new StringBuilder();
         String filePath = H2UserNoOptLockTest.class.getResource("/h2/" + filename).getPath();
         try (
-                BufferedReader reader = new BufferedReader(new FileReader(filePath))
+            BufferedReader reader = new BufferedReader(new FileReader(filePath))
         ) {
             String line;
             while ((line = reader.readLine()) != null)
-                builder.append(line).append(" ");
+                builder.append(line).append(" " );
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -60,10 +60,10 @@ public class H2Test {
     }
 
     protected void assertUpdateFill(Date lastUpdatedDt) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH" );
         System.out.println("after update: testDate=" + lastUpdatedDt);
         String versionDateStr = sdf.format(lastUpdatedDt);
         //MyMetaObjectHandler.updateFill() : set lastUpdatedDt=currentTimestamp
-        Assert.assertEquals("lastUpdateDt will be updated by H2MetaObjectHandler.updateFill()", sdf.format(new Date()), versionDateStr);//before update: lastUpdatedDt=currentTimestamp-1day
+        Assert.assertEquals("lastUpdateDt will be updated by H2MetaObjectHandler.updateFill()" , sdf.format(new Date()), versionDateStr);//before update: lastUpdatedDt=currentTimestamp-1day
     }
 }

@@ -29,9 +29,9 @@ public class DBHikaricpH2Config {
     public DataSource dataSource() throws SQLException {
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setDriverClassName(Driver.class.getName());
-        hikariConfig.setUsername("sa");
-        hikariConfig.setPassword("");
-        hikariConfig.setJdbcUrl("jdbc:h2:mem:test;MODE=mysql;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE");
+        hikariConfig.setUsername("sa" );
+        hikariConfig.setPassword("" );
+        hikariConfig.setJdbcUrl("jdbc:h2:mem:test;MODE=mysql;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE" );
 //        dataSource.setJdbcUrl();
 //        dataSource.setUsername("sa");
 //        dataSource.setPassword("");

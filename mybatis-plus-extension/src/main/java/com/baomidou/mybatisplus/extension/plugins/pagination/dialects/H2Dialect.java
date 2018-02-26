@@ -33,9 +33,9 @@ public class H2Dialect implements IDialect {
     @Override
     public String buildPaginationSql(String originalSql, int offset, int limit) {
         StringBuilder sql = new StringBuilder(originalSql);
-        sql.append(" limit ").append(limit);
+        sql.append(" limit " ).append(limit);
         if (offset > 0) {
-            sql.append(" offset ").append(offset);
+            sql.append(" offset " ).append(offset);
         }
         return sql.toString();
     }

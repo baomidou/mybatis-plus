@@ -50,9 +50,9 @@ public class H2MvcCaseTest extends AbstractH2UserTest {
 
     @BeforeClass
     public static void initDB() throws SQLException, IOException {
-        @SuppressWarnings("resource")
-        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:h2/spring-test-h2-mvc.xml");
-        DataSource ds = (DataSource) context.getBean("dataSource");
+        @SuppressWarnings("resource" )
+        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:h2/spring-test-h2-mvc.xml" );
+        DataSource ds = (DataSource) context.getBean("dataSource" );
         try (Connection conn = ds.getConnection()) {
             initData(conn);
         }
@@ -136,7 +136,7 @@ public class H2MvcCaseTest extends AbstractH2UserTest {
 
     @Test
     public void testInsertMy() {
-        String name = "自定义insert";
+        String name = "自定义insert" ;
         int version = 1;
         int row = userService.myInsert(name, version);
         Assert.assertEquals(1, row);
@@ -144,7 +144,7 @@ public class H2MvcCaseTest extends AbstractH2UserTest {
 
     @Test
     public void testInsertObjectWithParam() {
-        String name = "自定义insert带Param注解";
+        String name = "自定义insert带Param注解" ;
         int version = 1;
         int row = userService.myInsertWithParam(name, version);
         Assert.assertEquals(1, row);
@@ -152,7 +152,7 @@ public class H2MvcCaseTest extends AbstractH2UserTest {
 
     @Test
     public void testInsertObjectWithoutParam() {
-        String name = "自定义insert带Param注解";
+        String name = "自定义insert带Param注解" ;
         int version = 1;
         int row = userService.myInsertWithoutParam(name, version);
         Assert.assertEquals(1, row);
@@ -168,7 +168,7 @@ public class H2MvcCaseTest extends AbstractH2UserTest {
     public void testCondition() {
         Page<H2User> page = new Page<>(1, 3);
         Map<String, Object> condition = new HashMap<>();
-        condition.put("test_type", 1);
+        condition.put("test_type" , 1);
         page.setCondition(condition);
         Page<H2User> pageResult = userService.selectPage(page);
         for (H2User u : pageResult.getRecords()) {
@@ -182,7 +182,7 @@ public class H2MvcCaseTest extends AbstractH2UserTest {
     @Test
     public void testEntityWrapperSelectSql() {
         EntityWrapper<H2User> ew = new EntityWrapper<>();
-        ew.setSqlSelect("test_id as id, name, age");
+        ew.setSqlSelect("test_id as id, name, age" );
         List<H2User> list = userService.selectList(ew);
         for (H2User u : list) {
             Assert.assertNotNull(u.getId());
@@ -195,10 +195,10 @@ public class H2MvcCaseTest extends AbstractH2UserTest {
     @Test
     public void testQueryWithParamInSelectStatement() {
         Map<String, Object> param = new HashMap<>();
-        String nameParam = "selectStmtParam";
-        param.put("nameParam", nameParam);
-        param.put("ageFrom", 1);
-        param.put("ageTo", 100);
+        String nameParam = "selectStmtParam" ;
+        param.put("nameParam" , nameParam);
+        param.put("ageFrom" , 1);
+        param.put("ageTo" , 100);
         List<H2User> list = userService.queryWithParamInSelectStatememt(param);
         Assert.assertNotNull(list);
         for (H2User u : list) {
@@ -210,10 +210,10 @@ public class H2MvcCaseTest extends AbstractH2UserTest {
     @Test
     public void testQueryWithParamInSelectStatement4Page() {
         Map<String, Object> param = new HashMap<>();
-        String nameParam = "selectStmtParam";
-        param.put("nameParam", nameParam);
-        param.put("ageFrom", 1);
-        param.put("ageTo", 100);
+        String nameParam = "selectStmtParam" ;
+        param.put("nameParam" , nameParam);
+        param.put("ageFrom" , 1);
+        param.put("ageTo" , 100);
         Page<H2User> page = userService.queryWithParamInSelectStatememt4Page(param, new Page<H2User>(0, 10));
         Assert.assertNotNull(page.getRecords());
         for (H2User u : page.getRecords()) {
@@ -226,10 +226,10 @@ public class H2MvcCaseTest extends AbstractH2UserTest {
     @Test
     public void testSelectCountWithParamInSelectItems() {
         Map<String, Object> param = new HashMap<>();
-        String nameParam = "selectStmtParam";
-        param.put("nameParam", nameParam);
-        param.put("ageFrom", 1);
-        param.put("ageTo", 100);
+        String nameParam = "selectStmtParam" ;
+        param.put("nameParam" , nameParam);
+        param.put("ageFrom" , 1);
+        param.put("ageTo" , 100);
         int count = userService.selectCountWithParamInSelectItems(param);
         Assert.assertNotEquals(0, count);
     }
@@ -237,19 +237,19 @@ public class H2MvcCaseTest extends AbstractH2UserTest {
     @Test
     public void testPageWithDollarParamInSelectItems() {
         Map<String, Object> param = new HashMap<>();
-        String nameParam = "selectStmtParam";
+        String nameParam = "selectStmtParam" ;
         int ageFrom = 2;
-        param.put("nameParam", nameParam);
-        param.put("ageFrom", ageFrom);
-        param.put("ageTo", 100);
+        param.put("nameParam" , nameParam);
+        param.put("ageFrom" , ageFrom);
+        param.put("ageTo" , 100);
         Page<H2User> page = new Page<H2User>(0, 10);
         List<H2User> list = userMapper.selectUserWithDollarParamInSelectStatememt4Page(param, page);
         Assert.assertNotEquals(0, page.getTotal());
         H2User user = list.get(0);
-        Assert.assertNotNull("id is selected, should not be null", user.getId());
-        Assert.assertNotNull("age is selected, should not be null", user.getAge());
-        Assert.assertEquals("age is pow(" + ageFrom + ", 2)", 4, user.getAge().intValue());
-        Assert.assertEquals("name is selected, should not be null", "selectStmtParam", user.getName());
+        Assert.assertNotNull("id is selected, should not be null" , user.getId());
+        Assert.assertNotNull("age is selected, should not be null" , user.getAge());
+        Assert.assertEquals("age is pow(" + ageFrom + ", 2)" , 4, user.getAge().intValue());
+        Assert.assertEquals("name is selected, should not be null" , "selectStmtParam" , user.getName());
 
     }
 

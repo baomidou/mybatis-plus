@@ -33,7 +33,7 @@ public class PostgreDialect implements IDialect {
     @Override
     public String buildPaginationSql(String originalSql, int offset, int limit) {
         StringBuilder sql = new StringBuilder(originalSql);
-        sql.append(" limit ").append(limit).append(" offset ").append(offset);
+        sql.append(" limit " ).append(limit).append(" offset " ).append(offset);
         return sql.toString();
     }
 }

@@ -25,52 +25,52 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  */
 public class SqlFormatter {
 
-    public static final String WHITESPACE = " \n\r\f\t";
+    public static final String WHITESPACE = " \n\r\f\t" ;
     private static final Set<String> BEGIN_CLAUSES = new HashSet<>();
     private static final Set<String> END_CLAUSES = new HashSet<>();
     private static final Set<String> LOGICAL = new HashSet<>();
     private static final Set<String> QUANTIFIERS = new HashSet<>();
     private static final Set<String> DML = new HashSet<>();
     private static final Set<String> MISC = new HashSet<>();
-    private static final String INDENT_STRING = "    ";
-    private static final String INITIAL = "\n    ";
+    private static final String INDENT_STRING = "    " ;
+    private static final String INITIAL = "\n    " ;
 
     static {
-        BEGIN_CLAUSES.add("left");
-        BEGIN_CLAUSES.add("right");
-        BEGIN_CLAUSES.add("inner");
-        BEGIN_CLAUSES.add("outer");
-        BEGIN_CLAUSES.add("group");
-        BEGIN_CLAUSES.add("order");
+        BEGIN_CLAUSES.add("left" );
+        BEGIN_CLAUSES.add("right" );
+        BEGIN_CLAUSES.add("inner" );
+        BEGIN_CLAUSES.add("outer" );
+        BEGIN_CLAUSES.add("group" );
+        BEGIN_CLAUSES.add("order" );
 
-        END_CLAUSES.add("where");
-        END_CLAUSES.add("set");
-        END_CLAUSES.add("having");
-        END_CLAUSES.add("join");
-        END_CLAUSES.add("from");
-        END_CLAUSES.add("by");
-        END_CLAUSES.add("join");
-        END_CLAUSES.add("into");
-        END_CLAUSES.add("union");
+        END_CLAUSES.add("where" );
+        END_CLAUSES.add("set" );
+        END_CLAUSES.add("having" );
+        END_CLAUSES.add("join" );
+        END_CLAUSES.add("from" );
+        END_CLAUSES.add("by" );
+        END_CLAUSES.add("join" );
+        END_CLAUSES.add("into" );
+        END_CLAUSES.add("union" );
 
-        LOGICAL.add("and");
-        LOGICAL.add("or");
-        LOGICAL.add("when");
-        LOGICAL.add("else");
-        LOGICAL.add("end");
+        LOGICAL.add("and" );
+        LOGICAL.add("or" );
+        LOGICAL.add("when" );
+        LOGICAL.add("else" );
+        LOGICAL.add("end" );
 
-        QUANTIFIERS.add("in");
-        QUANTIFIERS.add("all");
-        QUANTIFIERS.add("exists");
-        QUANTIFIERS.add("some");
-        QUANTIFIERS.add("any");
+        QUANTIFIERS.add("in" );
+        QUANTIFIERS.add("all" );
+        QUANTIFIERS.add("exists" );
+        QUANTIFIERS.add("some" );
+        QUANTIFIERS.add("any" );
 
-        DML.add("insert");
-        DML.add("update");
-        DML.add("delete");
+        DML.add("insert" );
+        DML.add("update" );
+        DML.add("delete" );
 
-        MISC.add("select");
-        MISC.add("on");
+        MISC.add("select" );
+        MISC.add("on" );
     }
 
     public String format(String source) {
@@ -101,9 +101,9 @@ public class SqlFormatter {
 
         public FormatProcess(String sql) {
             tokens = new StringTokenizer(
-                    sql,
-                    "()+*/-=<>'`\"[]," + WHITESPACE,
-                    true
+                sql,
+                "()+*/-=<>'`\"[]," + WHITESPACE,
+                true
             );
         }
 
@@ -155,7 +155,7 @@ public class SqlFormatter {
                     values();
                 } else if ("on".equals(lcToken)) {
                     on();
-                } else if (afterBetween && lcToken.equals("and")) {
+                } else if (afterBetween && lcToken.equals("and" )) {
                     misc();
                     afterBetween = false;
                 } else if (LOGICAL.contains(lcToken)) {
@@ -222,7 +222,7 @@ public class SqlFormatter {
 
         private void white() {
             if (!beginLine) {
-                result.append(" ");
+                result.append(" " );
             }
         }
 
@@ -268,8 +268,8 @@ public class SqlFormatter {
             newline();
             afterBeginBeforeEnd = false;
             afterByOrSetOrFromOrSelect = "by".equals(lcToken)
-                    || "set".equals(lcToken)
-                    || "from".equals(lcToken);
+                || "set".equals(lcToken)
+                || "from".equals(lcToken);
         }
 
         private void beginNewClause() {
@@ -337,11 +337,11 @@ public class SqlFormatter {
             final char begin = tok.charAt(0);
             final boolean isIdentifier = Character.isJavaIdentifierStart(begin) || '"' == begin;
             return isIdentifier &&
-                    !LOGICAL.contains(tok) &&
-                    !END_CLAUSES.contains(tok) &&
-                    !QUANTIFIERS.contains(tok) &&
-                    !DML.contains(tok) &&
-                    !MISC.contains(tok);
+                !LOGICAL.contains(tok) &&
+                !END_CLAUSES.contains(tok) &&
+                !QUANTIFIERS.contains(tok) &&
+                !DML.contains(tok) &&
+                !MISC.contains(tok);
         }
 
         private static boolean isWhitespace(String token) {
@@ -349,7 +349,7 @@ public class SqlFormatter {
         }
 
         private void newline() {
-            result.append("\n");
+            result.append("\n" );
             for (int i = 0; i < indent; i++) {
                 result.append(INDENT_STRING);
             }

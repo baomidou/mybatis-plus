@@ -58,7 +58,7 @@ import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
  * @author hubin
  * @Date 2016-01-23
  */
-@Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
+@Intercepts({@Signature(type = StatementHandler.class, method = "prepare" , args = {Connection.class, Integer.class})})
 public class PaginationInterceptor extends SqlParserHandler implements Interceptor {
 
     /**
@@ -95,11 +95,11 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
         MetaObject metaObject = SystemMetaObject.forObject(statementHandler);
         this.sqlParser(metaObject);
         // 先判断是不是SELECT操作
-        MappedStatement mappedStatement = (MappedStatement) metaObject.getValue("delegate.mappedStatement");
+        MappedStatement mappedStatement = (MappedStatement) metaObject.getValue("delegate.mappedStatement" );
         if (!SqlCommandType.SELECT.equals(mappedStatement.getSqlCommandType())) {
             return invocation.proceed();
         }
-        RowBounds rowBounds = (RowBounds) metaObject.getValue("delegate.rowBounds");
+        RowBounds rowBounds = (RowBounds) metaObject.getValue("delegate.rowBounds" );
         /* 不需要分页的场合 */
         if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
             // 本地线程分页
@@ -115,7 +115,7 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
             }
         }
         // 针对定义了rowBounds，做为mapper接口方法的参数
-        BoundSql boundSql = (BoundSql) metaObject.getValue("delegate.boundSql");
+        BoundSql boundSql = (BoundSql) metaObject.getValue("delegate.boundSql" );
         String originalSql = boundSql.getSql();
         Connection connection = (Connection) invocation.getArgs()[0];
         //TODO: 3.0
@@ -142,9 +142,9 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
          * <p> 禁用内存分页 </p>
          * <p> 内存分页会查询所有结果出来处理（这个很吓人的），如果结果变化频繁这个数据还会不准。</p>
          */
-        metaObject.setValue("delegate.boundSql.sql", originalSql);
-        metaObject.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
-        metaObject.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
+        metaObject.setValue("delegate.boundSql.sql" , originalSql);
+        metaObject.setValue("delegate.rowBounds.offset" , RowBounds.NO_ROW_OFFSET);
+        metaObject.setValue("delegate.rowBounds.limit" , RowBounds.NO_ROW_LIMIT);
         return invocation.proceed();
     }
 
@@ -176,7 +176,7 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
                 page.setCurrent(1);
             }
         } catch (Exception e) {
-            logger.error("Error: Method queryTotal execution error !", e);
+            logger.error("Error: Method queryTotal execution error !" , e);
         }
     }
 
@@ -190,9 +190,9 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
 
     @Override
     public void setProperties(Properties prop) {
-        String dialectType = prop.getProperty("dialectType");
-        String dialectClazz = prop.getProperty("dialectClazz");
-        String localPage = prop.getProperty("localPage");
+        String dialectType = prop.getProperty("dialectType" );
+        String dialectClazz = prop.getProperty("dialectClazz" );
+        String localPage = prop.getProperty("localPage" );
 
         if (StringUtils.isNotEmpty(dialectType)) {
             this.dialectType = dialectType;

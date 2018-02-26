@@ -27,10 +27,10 @@ public class DBHikaricpMysqlConfig {
     @Bean
     public DataSource dataSource() throws SQLException {
         HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setDriverClassName("com.mysql.jdbc.Driver");
-        hikariConfig.setUsername("root");
-        hikariConfig.setPassword("");
-        hikariConfig.setJdbcUrl("jdbc:mysql://localhost:3306/mybatis-plus");
+        hikariConfig.setDriverClassName("com.mysql.jdbc.Driver" );
+        hikariConfig.setUsername("root" );
+        hikariConfig.setPassword("" );
+        hikariConfig.setJdbcUrl("jdbc:mysql://localhost:3306/mybatis-plus" );
 //        dataSource.setJdbcUrl();
 //        dataSource.setUsername("sa");
 //        dataSource.setPassword("");

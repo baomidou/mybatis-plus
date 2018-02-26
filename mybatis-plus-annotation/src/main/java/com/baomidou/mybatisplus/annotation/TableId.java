@@ -39,7 +39,7 @@ public @interface TableId {
      * 字段值（驼峰命名方式，该值可无）
      * </p>
      */
-    String value() default "";
+    String value() default "" ;
 
     /**
      * <p>

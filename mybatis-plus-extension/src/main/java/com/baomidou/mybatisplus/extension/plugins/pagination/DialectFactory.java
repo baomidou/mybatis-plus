@@ -99,14 +99,14 @@ public class DialectFactory {
                     dialect = (IDialect) clazz.newInstance();
                 }
             } catch (ClassNotFoundException e) {
-                throw new MybatisPlusException("Class :" + dialectClazz + " is not found");
+                throw new MybatisPlusException("Class :" + dialectClazz + " is not found" );
             }
         } else if (null != dbType) {
             dialect = getDialectByDbtype(dbType);
         }
         /* 未配置方言则抛出异常 */
         if (dialect == null) {
-            throw new MybatisPlusException("The value of the dialect property in mybatis configuration.xml is not defined.");
+            throw new MybatisPlusException("The value of the dialect property in mybatis configuration.xml is not defined." );
         }
         return dialect;
     }

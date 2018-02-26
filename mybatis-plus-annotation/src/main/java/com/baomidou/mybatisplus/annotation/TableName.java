@@ -39,13 +39,13 @@ public @interface TableName {
      * 实体对应的表名
      * </p>
      */
-    String value() default "";
+    String value() default "" ;
 
     /**
      * <p>
      * 实体映射结果集
      * </p>
      */
-    String resultMap() default "";
+    String resultMap() default "" ;
 
 }

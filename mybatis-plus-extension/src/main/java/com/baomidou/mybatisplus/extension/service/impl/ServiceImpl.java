@@ -67,7 +67,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return SqlHelper.retBool(result);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked" )
     protected Class<T> currentModelClass() {
         return ReflectionKit.getSuperClassGenricType(getClass(), 1);
     }
@@ -120,7 +120,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Override
     public boolean insertBatch(List<T> entityList, int batchSize) {
         if (CollectionUtils.isEmpty(entityList)) {
-            throw new IllegalArgumentException("Error: entityList must not be empty");
+            throw new IllegalArgumentException("Error: entityList must not be empty" );
         }
         try (SqlSession batchSqlSession = sqlSessionBatch()) {
             int size = entityList.size();
@@ -133,7 +133,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
             }
             batchSqlSession.flushStatements();
         } catch (Throwable e) {
-            throw new MybatisPlusException("Error: Cannot execute insertBatch Method. Cause", e);
+            throw new MybatisPlusException("Error: Cannot execute insertBatch Method. Cause" , e);
         }
         return true;
     }
@@ -159,11 +159,11 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 } else {
                     /*
                      * 更新成功直接返回，失败执行插入逻辑
-					 */
+                     */
                     return updateById(entity) || insert(entity);
                 }
             } else {
-                throw new MybatisPlusException("Error:  Can not execute. Could not find @TableId.");
+                throw new MybatisPlusException("Error:  Can not execute. Could not find @TableId." );
             }
         }
         return false;
@@ -182,11 +182,11 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 } else {
                     /*
                      * 更新成功直接返回，失败执行插入逻辑
-					 */
+                     */
                     return updateAllColumnById(entity) || insertAllColumn(entity);
                 }
             } else {
-                throw new MybatisPlusException("Error:  Can not execute. Could not find @TableId.");
+                throw new MybatisPlusException("Error:  Can not execute. Could not find @TableId." );
             }
         }
         return false;
@@ -226,7 +226,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      */
     private boolean insertOrUpdateBatch(List<T> entityList, int batchSize, boolean selective) {
         if (CollectionUtils.isEmpty(entityList)) {
-            throw new IllegalArgumentException("Error: entityList must not be empty");
+            throw new IllegalArgumentException("Error: entityList must not be empty" );
         }
         try (SqlSession batchSqlSession = sqlSessionBatch()) {
             int size = entityList.size();
@@ -242,7 +242,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
             }
             batchSqlSession.flushStatements();
         } catch (Throwable e) {
-            throw new MybatisPlusException("Error: Cannot execute insertOrUpdateBatch Method. Cause", e);
+            throw new MybatisPlusException("Error: Cannot execute insertOrUpdateBatch Method. Cause" , e);
         }
         return true;
     }
@@ -257,7 +257,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Override
     public boolean deleteByMap(Map<String, Object> columnMap) {
         if (MapUtils.isEmpty(columnMap)) {
-            throw new MybatisPlusException("deleteByMap columnMap is empty.");
+            throw new MybatisPlusException("deleteByMap columnMap is empty." );
         }
         return SqlHelper.delBool(baseMapper.deleteByMap(columnMap));
     }
@@ -326,7 +326,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      */
     private boolean updateBatchById(List<T> entityList, int batchSize, boolean selective) {
         if (CollectionUtils.isEmpty(entityList)) {
-            throw new IllegalArgumentException("Error: entityList must not be empty");
+            throw new IllegalArgumentException("Error: entityList must not be empty" );
         }
         try (SqlSession batchSqlSession = sqlSessionBatch()) {
             int size = entityList.size();
@@ -334,7 +334,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
             String sqlStatement = sqlStatement(sqlMethod);
             for (int i = 0; i < size; i++) {
                 MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
-                param.put("et", entityList.get(i));
+                param.put("et" , entityList.get(i));
                 batchSqlSession.update(sqlStatement, param);
                 if (i >= 1 && i % batchSize == 0) {
                     batchSqlSession.flushStatements();
@@ -342,7 +342,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
             }
             batchSqlSession.flushStatements();
         } catch (Throwable e) {
-            throw new MybatisPlusException("Error: Cannot execute updateBatchById Method. Cause", e);
+            throw new MybatisPlusException("Error: Cannot execute updateBatchById Method. Cause" , e);
         }
         return true;
     }
@@ -405,14 +405,14 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
     @Override
     public Page<Map<String, Object>> selectMapsPage(Page page, Wrapper<T> wrapper) {
-        wrapper = (Wrapper<T>) SqlHelper.fillWrapper(page,  wrapper);
+        wrapper = (Wrapper<T>) SqlHelper.fillWrapper(page, wrapper);
         page.setRecords(baseMapper.selectMapsPage(page, wrapper));
         return page;
     }
 
     @Override
     public Page<T> selectPage(Page<T> page, Wrapper<T> wrapper) {
-        wrapper = (Wrapper<T>) SqlHelper.fillWrapper(page,  wrapper);
+        wrapper = (Wrapper<T>) SqlHelper.fillWrapper(page, wrapper);
         page.setRecords(baseMapper.selectPage(page, wrapper));
         return page;
     }

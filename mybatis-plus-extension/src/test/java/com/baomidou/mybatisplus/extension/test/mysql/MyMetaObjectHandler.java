@@ -35,21 +35,21 @@ public class MyMetaObjectHandler extends MetaObjectHandler {
      */
     public void insertFill(MetaObject metaObject) {
         // 测试下划线
-        Object testType = getFieldValByName("testType", metaObject);
+        Object testType = getFieldValByName("testType" , metaObject);
         System.out.println("testType=" + testType);
         if (testType == null) {// 如果不会设置这里不需要判断, 直接 set
-            System.out.println("*************************");
-            System.out.println("insert fill");
-            System.out.println("*************************");
-            setFieldValByName("testType", 3, metaObject);
+            System.out.println("*************************" );
+            System.out.println("insert fill" );
+            System.out.println("*************************" );
+            setFieldValByName("testType" , 3, metaObject);
         }
     }
 
     @Override
     public boolean openUpdateFill() {
-        System.out.println("*************************");
-        System.out.println(" 关闭更新填充 ");
-        System.out.println("*************************");
+        System.out.println("*************************" );
+        System.out.println(" 关闭更新填充 " );
+        System.out.println("*************************" );
         return false;
     }
 

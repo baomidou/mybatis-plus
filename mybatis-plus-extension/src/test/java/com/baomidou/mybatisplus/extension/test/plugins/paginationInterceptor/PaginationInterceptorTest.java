@@ -41,7 +41,7 @@ public class PaginationInterceptorTest {
     public void setUp() throws Exception {
         SqlSession session = sqlSessionTemplate.getSqlSessionFactory().openSession();
         Connection conn = session.getConnection();
-        Reader reader = Resources.getResourceAsReader("plugins/pagination.sql");
+        Reader reader = Resources.getResourceAsReader("plugins/pagination.sql" );
         ScriptRunner runner = new ScriptRunner(conn);
         runner.setLogWriter(null);
         runner.runScript(reader);
@@ -65,7 +65,7 @@ public class PaginationInterceptorTest {
     @Test
     public void pageOrderByTest() {
         // 带OrderBy
-        Page<PageUser> page2 = new Page<>(current, size, "name");
+        Page<PageUser> page2 = new Page<>(current, size, "name" );
         Page<PageUser> result2 = pageUserService.selectPage(page2);
         Assert.assertTrue(!result2.getRecords().isEmpty());
         // 没有orderby但是设置了倒叙
@@ -74,7 +74,7 @@ public class PaginationInterceptorTest {
         Page<PageUser> result3 = pageUserService.selectPage(page3);
         Assert.assertTrue(!result3.getRecords().isEmpty());
         // 有orderby设置了倒叙
-        Page<PageUser> page4 = new Page<>(current, size, "name");
+        Page<PageUser> page4 = new Page<>(current, size, "name" );
 //        page3.setAsc(false);
         Page<PageUser> result4 = pageUserService.selectPage(page4);
         Assert.assertTrue(!result4.getRecords().isEmpty());
@@ -91,7 +91,7 @@ public class PaginationInterceptorTest {
 
     @Test
     public void rowBoundTest() {
-        System.err.println("测试原生RowBounds分页");
+        System.err.println("测试原生RowBounds分页" );
         int offset = RandomUtils.nextInt(1, 190);
         int limit = RandomUtils.nextInt(1, 20);
         RowBounds rowBounds = new RowBounds(offset, limit);

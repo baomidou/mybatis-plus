@@ -25,7 +25,7 @@ public class MybatisMapWrapper extends MapWrapper {
     public String findProperty(String name, boolean useCamelCaseMapping) {
         if (useCamelCaseMapping
             && ((name.charAt(0) >= 'A' && name.charAt(0) <= 'Z')
-            || name.contains("_"))) {
+            || name.contains("_" ))) {
             return StringUtils.underlineToCamel(name);
         }
         return name;

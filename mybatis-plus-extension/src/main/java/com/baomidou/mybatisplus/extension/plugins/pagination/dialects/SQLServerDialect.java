@@ -33,8 +33,8 @@ public class SQLServerDialect implements IDialect {
     @Override
     public String buildPaginationSql(String originalSql, int offset, int limit) {
         StringBuilder sql = new StringBuilder(originalSql);
-        sql.append(" OFFSET ").append(offset).append(" ROWS FETCH NEXT ");
-        sql.append(limit).append(" ROWS ONLY");
+        sql.append(" OFFSET " ).append(offset).append(" ROWS FETCH NEXT " );
+        sql.append(limit).append(" ROWS ONLY" );
         return sql.toString();
     }
 }

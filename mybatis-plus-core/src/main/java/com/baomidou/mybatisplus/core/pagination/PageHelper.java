@@ -43,7 +43,7 @@ public class PageHelper {
         if (isPageable()) {
             return LOCAL_PAGE.get().getTotal();
         } else {
-            throw new MybatisPlusException("The current thread does not start paging. Please call before PageHelper.startPage");
+            throw new MybatisPlusException("The current thread does not start paging. Please call before PageHelper.startPage" );
         }
     }
 

@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.extension.handlers.MybatisMapWrapper;
 
 /**
  * <p>
- *   开启返回map结果集的下划线转驼峰
+ * 开启返回map结果集的下划线转驼峰
  * </p>
  *
  * @author yuxiaobin

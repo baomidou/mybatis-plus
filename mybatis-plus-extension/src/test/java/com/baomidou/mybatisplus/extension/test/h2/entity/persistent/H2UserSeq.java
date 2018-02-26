@@ -15,8 +15,8 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-@TableName("h2user")
-@KeySequence("SEQ_TEST")
+@TableName("h2user" )
+@KeySequence("SEQ_TEST" )
 public class H2UserSeq {
 
 }

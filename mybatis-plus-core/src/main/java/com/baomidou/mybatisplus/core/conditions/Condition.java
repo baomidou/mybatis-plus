@@ -23,7 +23,7 @@ package com.baomidou.mybatisplus.core.conditions;
  * @author hubin Caratacus
  * @date 2016-11-7
  */
-@SuppressWarnings({"rawtypes", "serial"})
+@SuppressWarnings({"rawtypes" , "serial"})
 public abstract class Condition {
 
     /**

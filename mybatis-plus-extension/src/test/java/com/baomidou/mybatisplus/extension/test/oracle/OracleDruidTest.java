@@ -50,7 +50,7 @@ public class OracleDruidTest {
     @Test
     public void testInsert() {
         TestSequser user = new TestSequser();
-        user.setName("seqtest0627");
+        user.setName("seqtest0627" );
         user.setAge(12);
         user.setTestType(1);
         sequserMapper.insert(user);

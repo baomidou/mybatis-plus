@@ -41,20 +41,20 @@ public class H2uuidTest extends H2Test {
 
     @BeforeClass
     public static void initDB() throws SQLException, IOException {
-        @SuppressWarnings("resource")
-        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:h2/spring-test-h2.xml");
-        DataSource ds = (DataSource) context.getBean("dataSource");
+        @SuppressWarnings("resource" )
+        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:h2/spring-test-h2.xml" );
+        DataSource ds = (DataSource) context.getBean("dataSource" );
         try (Connection conn = ds.getConnection()) {
             Statement stmt = conn.createStatement();
-            stmt.execute(readFile("uuid.sql"));
-            stmt.execute("truncate table h2uuid");
+            stmt.execute(readFile("uuid.sql" ));
+            stmt.execute("truncate table h2uuid" );
             conn.commit();
         }
     }
 
     @Test
     public void testUuid() {
-        H2uuid h2uuid = new H2uuid("3");
+        H2uuid h2uuid = new H2uuid("3" );
         Assert.assertEquals(1, uuidMapper.insert(h2uuid).intValue());
         Assert.assertTrue(h2uuid.getId().length() == 32);
     }

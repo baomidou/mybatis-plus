@@ -46,7 +46,7 @@ public interface UserMapper extends MyBaseMapper<User> {
     /**
      * 注解插入【测试】
      */
-    @Insert("insert into user(test_id,name,age) values(#{id},#{name},#{age})")
+    @Insert("insert into user(test_id,name,age) values(#{id},#{name},#{age})" )
     int insertInjector(User user);
 
     /**
@@ -58,7 +58,7 @@ public interface UserMapper extends MyBaseMapper<User> {
      * 自定义注入逻辑删除方法<br>
      * com.baomidou.mybatisplus.extension.test.mysql.MetaObjectHandlerTest
      */
-    int deleteLogicById(@Param("id") Long id);
+    int deleteLogicById(@Param("id" ) Long id);
 
     /**
      * 根据主键批量查询
@@ -67,7 +67,7 @@ public interface UserMapper extends MyBaseMapper<User> {
      * @param ids
      * @return
      */
-    List<User> forSelect(RowBounds pagination, @Param("ids") List<String> ids);
+    List<User> forSelect(RowBounds pagination, @Param("ids" ) List<String> ids);
 
     // 测试跨 xml resultMap
     List<Role> selectRoleList();

@@ -291,7 +291,7 @@ public interface IService<T> {
      * </p>
      *
      * @param wrapper {@link Wrapper}
-     * @return Map<String,Object>
+     * @return Map<String , Object>
      */
     Map<String, Object> selectMap(Wrapper<T> wrapper);
 
@@ -364,7 +364,7 @@ public interface IService<T> {
      * @param wrapper {@link Wrapper}
      * @return
      */
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings("rawtypes" )
     Page<Map<String, Object>> selectMapsPage(Page page, Wrapper<T> wrapper);
 
     /**

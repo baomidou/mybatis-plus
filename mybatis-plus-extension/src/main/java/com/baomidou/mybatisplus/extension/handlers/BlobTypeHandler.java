@@ -38,30 +38,30 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  */
 public class BlobTypeHandler extends BaseTypeHandler<String> {
 
-	@Override
-	public void setNonNullParameter(PreparedStatement ps, int i, String parameter, JdbcType jdbcType) throws SQLException {
-		try {
-			ps.setBinaryStream(i, new ByteArrayInputStream(parameter.getBytes(StringUtils.UTF8)),
-					parameter.length());
-		} catch (UnsupportedEncodingException e) {
-			throw new MybatisPlusException("Blob Encoding Error!");
-		}
-	}
+    @Override
+    public void setNonNullParameter(PreparedStatement ps, int i, String parameter, JdbcType jdbcType) throws SQLException {
+        try {
+            ps.setBinaryStream(i, new ByteArrayInputStream(parameter.getBytes(StringUtils.UTF8)),
+                parameter.length());
+        } catch (UnsupportedEncodingException e) {
+            throw new MybatisPlusException("Blob Encoding Error!" );
+        }
+    }
 
-	@Override
-	public String getNullableResult(ResultSet rs, String columnName) throws SQLException {
-		return StringUtils.blob2String(rs.getBlob(columnName));
-	}
+    @Override
+    public String getNullableResult(ResultSet rs, String columnName) throws SQLException {
+        return StringUtils.blob2String(rs.getBlob(columnName));
+    }
 
-	@Override
-	public String getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
-		return StringUtils.blob2String(cs.getBlob(columnIndex));
-	}
+    @Override
+    public String getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
+        return StringUtils.blob2String(cs.getBlob(columnIndex));
+    }
 
-	@Override
-	public String getNullableResult(ResultSet rs, int columnIndex)
-			throws SQLException {
-		return null;
-	}
+    @Override
+    public String getNullableResult(ResultSet rs, int columnIndex)
+        throws SQLException {
+        return null;
+    }
 
 }

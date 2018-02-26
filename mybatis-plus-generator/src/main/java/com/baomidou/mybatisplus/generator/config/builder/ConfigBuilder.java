@@ -416,7 +416,7 @@ public class ConfigBuilder {
         boolean isInclude = (null != config.getInclude() && config.getInclude().length > 0);
         boolean isExclude = (null != config.getExclude() && config.getExclude().length > 0);
         if (isInclude && isExclude) {
-            throw new RuntimeException("<strategy> 标签中 <include> 与 <exclude> 只能配置一项！");
+            throw new RuntimeException("<strategy> 标签中 <include> 与 <exclude> 只能配置一项！" );
         }
         //所有的表信息
         List<TableInfo> tableList = new ArrayList<>();
@@ -437,19 +437,19 @@ public class ConfigBuilder {
             else if (QuerySQL.ORACLE == querySQL) {
                 if (isInclude) {
                     StringBuilder sb = new StringBuilder(tableCommentsSql);
-                    sb.append(" WHERE ").append(querySQL.getTableName()).append(" IN (");
+                    sb.append(" WHERE " ).append(querySQL.getTableName()).append(" IN (" );
                     for (String tbname : config.getInclude()) {
-                        sb.append("'").append(tbname.toUpperCase()).append("',");
+                        sb.append("'" ).append(tbname.toUpperCase()).append("'," );
                     }
-                    sb.replace(sb.length() - 1, sb.length(), ")");
+                    sb.replace(sb.length() - 1, sb.length(), ")" );
                     tableCommentsSql = sb.toString();
                 } else if (isExclude) {
                     StringBuilder sb = new StringBuilder(tableCommentsSql);
-                    sb.append(" WHERE ").append(querySQL.getTableName()).append(" NOT IN (");
+                    sb.append(" WHERE " ).append(querySQL.getTableName()).append(" NOT IN (" );
                     for (String tbname : config.getExclude()) {
-                        sb.append("'").append(tbname.toUpperCase()).append("',");
+                        sb.append("'" ).append(tbname.toUpperCase()).append("'," );
                     }
-                    sb.replace(sb.length() - 1, sb.length(), ")");
+                    sb.replace(sb.length() - 1, sb.length(), ")" );
                     tableCommentsSql = sb.toString();
                 }
             }
@@ -482,7 +482,7 @@ public class ConfigBuilder {
                     }
                     tableList.add(tableInfo);
                 } else {
-                    System.err.println("当前数据库为空！！！");
+                    System.err.println("当前数据库为空！！！" );
                 }
             }
             // 将已经存在的表移除，获取配置中数据库不存在的表
@@ -491,7 +491,7 @@ public class ConfigBuilder {
             }
 
             if (notExistTables.size() > 0) {
-                System.err.println("表 " + notExistTables + " 在数据库中不存在！！！");
+                System.err.println("表 " + notExistTables + " 在数据库中不存在！！！" );
             }
 
             // 需要反向生成的表信息
@@ -538,12 +538,12 @@ public class ConfigBuilder {
      */
     private boolean isKeyIdentity(ResultSet results) throws SQLException {
         if (QuerySQL.MYSQL == this.querySQL) {
-            String extra = results.getString("Extra");
+            String extra = results.getString("Extra" );
             if ("auto_increment".equals(extra)) {
                 return true;
             }
         } else if (QuerySQL.SQL_SERVER == this.querySQL) {
-            int isIdentity = results.getInt("isIdentity");
+            int isIdentity = results.getInt("isIdentity" );
             return 1 == isIdentity;
         }
         return false;
@@ -575,7 +575,7 @@ public class ConfigBuilder {
                 TableField field = new TableField();
                 String key = results.getString(querySQL.getFieldKey());
                 // 避免多重主键设置，目前只取第一个找到ID，并放到list中的索引为0的位置
-                boolean isId = StringUtils.isNotEmpty(key) && key.toUpperCase().equals("PRI");
+                boolean isId = StringUtils.isNotEmpty(key) && key.toUpperCase().equals("PRI" );
                 // 处理ID
                 if (isId && !haveId) {
                     field.setKeyFlag(true);
@@ -633,7 +633,7 @@ public class ConfigBuilder {
         if (!StringUtils.endsWith(parentDir, File.separator)) {
             parentDir += File.separator;
         }
-        packageName = packageName.replaceAll("\\.", "\\" + File.separator);
+        packageName = packageName.replaceAll("\\." , "\\" + File.separator);
         return parentDir + packageName;
     }
 

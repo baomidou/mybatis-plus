@@ -24,7 +24,7 @@ import com.baomidou.mybatisplus.extension.test.h2.entity.persistent.H2UserVersio
 
 /**
  * <p>
- *     Tomcatjdbc数据源测试
+ * Tomcatjdbc数据源测试
  * </p>
  *
  * @author yuxiaobin
@@ -36,12 +36,12 @@ public class TomcatJdbcH2Test extends H2Test {
 
     @BeforeClass
     public static void initDB() throws SQLException, IOException {
-        @SuppressWarnings("resource")
+        @SuppressWarnings("resource" )
         AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
         context.register(DBHikaricpH2Config.class);
         context.register(MybatisConfigMetaObjOptLockConfig.class);
         context.refresh();
-        DataSource ds = (DataSource) context.getBean("dataSource");
+        DataSource ds = (DataSource) context.getBean("dataSource" );
         try (Connection conn = ds.getConnection()) {
             initData(conn);
         }

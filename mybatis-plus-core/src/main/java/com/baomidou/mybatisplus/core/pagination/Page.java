@@ -83,13 +83,13 @@ public class Page<T> extends Pagination {
     @Override
     public String toString() {
         StringBuilder pg = new StringBuilder();
-        pg.append(" Page:{ [").append(super.toString()).append("], ");
+        pg.append(" Page:{ [" ).append(super.toString()).append("], " );
         if (records != null) {
-            pg.append("records-size:").append(records.size());
+            pg.append("records-size:" ).append(records.size());
         } else {
-            pg.append("records is null");
+            pg.append("records is null" );
         }
-        return pg.append(" }").toString();
+        return pg.append(" }" ).toString();
     }
 
 }

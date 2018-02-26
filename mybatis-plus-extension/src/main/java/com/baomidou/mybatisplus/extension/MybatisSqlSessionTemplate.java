@@ -74,7 +74,7 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
      */
     public MybatisSqlSessionTemplate(SqlSessionFactory sqlSessionFactory, ExecutorType executorType) {
         this(sqlSessionFactory, executorType, new MyBatisExceptionTranslator(sqlSessionFactory.getConfiguration()
-                .getEnvironment().getDataSource(), true));
+            .getEnvironment().getDataSource(), true));
     }
 
     /**
@@ -93,14 +93,14 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
     public MybatisSqlSessionTemplate(SqlSessionFactory sqlSessionFactory, ExecutorType executorType,
                                      PersistenceExceptionTranslator exceptionTranslator) {
 
-        Assert.notNull(sqlSessionFactory, "Property 'sqlSessionFactory' is required");
-        Assert.notNull(executorType, "Property 'executorType' is required");
+        Assert.notNull(sqlSessionFactory, "Property 'sqlSessionFactory' is required" );
+        Assert.notNull(executorType, "Property 'executorType' is required" );
 
         this.sqlSessionFactory = sqlSessionFactory;
         this.executorType = executorType;
         this.exceptionTranslator = exceptionTranslator;
         this.sqlSessionProxy = (SqlSession) newProxyInstance(SqlSessionFactory.class.getClassLoader(),
-                new Class[]{SqlSession.class}, new SqlSessionInterceptor());
+            new Class[]{SqlSession.class}, new SqlSessionInterceptor());
     }
 
     public SqlSessionFactory getSqlSessionFactory() {
@@ -288,7 +288,7 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
      */
     @Override
     public void commit() {
-        throw new UnsupportedOperationException("Manual commit is not allowed over a Spring managed SqlSession");
+        throw new UnsupportedOperationException("Manual commit is not allowed over a Spring managed SqlSession" );
     }
 
     /**
@@ -296,7 +296,7 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
      */
     @Override
     public void commit(boolean force) {
-        throw new UnsupportedOperationException("Manual commit is not allowed over a Spring managed SqlSession");
+        throw new UnsupportedOperationException("Manual commit is not allowed over a Spring managed SqlSession" );
     }
 
     /**
@@ -304,7 +304,7 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
      */
     @Override
     public void rollback() {
-        throw new UnsupportedOperationException("Manual rollback is not allowed over a Spring managed SqlSession");
+        throw new UnsupportedOperationException("Manual rollback is not allowed over a Spring managed SqlSession" );
     }
 
     /**
@@ -312,7 +312,7 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
      */
     @Override
     public void rollback(boolean force) {
-        throw new UnsupportedOperationException("Manual rollback is not allowed over a Spring managed SqlSession");
+        throw new UnsupportedOperationException("Manual rollback is not allowed over a Spring managed SqlSession" );
     }
 
     /**
@@ -320,7 +320,7 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
      */
     @Override
     public void close() {
-        throw new UnsupportedOperationException("Manual close is not allowed over a Spring managed SqlSession");
+        throw new UnsupportedOperationException("Manual close is not allowed over a Spring managed SqlSession" );
     }
 
     /**
@@ -396,7 +396,7 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             SqlSession sqlSession = MybatisSqlSessionTemplate.this.sqlSessionFactory
-                    .openSession(MybatisSqlSessionTemplate.this.executorType);
+                .openSession(MybatisSqlSessionTemplate.this.executorType);
             try {
                 Object result = method.invoke(sqlSession, args);
                 sqlSession.commit(true);

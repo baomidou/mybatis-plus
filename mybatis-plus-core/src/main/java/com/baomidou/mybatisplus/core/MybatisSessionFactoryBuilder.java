@@ -47,7 +47,7 @@ public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
             GlobalConfigUtils.setGlobalConfig(parser.getConfiguration(), this.globalConfig);
             return build(parser.parse());
         } catch (Exception e) {
-            throw ExceptionFactory.wrapException("Error building SqlSession.", e);
+            throw ExceptionFactory.wrapException("Error building SqlSession." , e);
         } finally {
             ErrorContext.instance().reset();
             IOUtils.closeQuietly(reader);
@@ -61,7 +61,7 @@ public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
             GlobalConfigUtils.setGlobalConfig(parser.getConfiguration(), this.globalConfig);
             return build(parser.parse());
         } catch (Exception e) {
-            throw ExceptionFactory.wrapException("Error building SqlSession.", e);
+            throw ExceptionFactory.wrapException("Error building SqlSession." , e);
         } finally {
             ErrorContext.instance().reset();
             IOUtils.closeQuietly(inputStream);

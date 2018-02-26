@@ -106,8 +106,8 @@ public class TableFieldInfo {
          * 设置 related 为 true
          */
         if (StringUtils.isEmpty(tableField.value())
-                && globalConfig.isDbColumnUnderline()) {
-             /* 开启字段下划线申明 */
+            && globalConfig.isDbColumnUnderline()) {
+            /* 开启字段下划线申明 */
             this.related = true;
             this.setColumn(globalConfig, StringUtils.camelToUnderline(column));
         } else {
@@ -120,7 +120,7 @@ public class TableFieldInfo {
         /*
          * 优先使用单个字段注解，否则使用全局配置<br>
          * 自定义字段验证策略 fixed-239
-		 */
+         */
         if (FieldStrategy.NOT_NULL != tableField.strategy()) {
             this.fieldStrategy = tableField.strategy();
         } else {
@@ -131,7 +131,7 @@ public class TableFieldInfo {
         this.condition = tableField.condition();
         /*
          * 保存当前字段的填充策略
-		 */
+         */
         this.fieldFill = tableField.fill();
     }
 

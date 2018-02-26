@@ -67,7 +67,7 @@ public class StringEscape {
      * @return
      */
     public static String escapeString(String escapeStr) {
-        if (escapeStr.matches("\'(.+)\'")) {
+        if (escapeStr.matches("\'(.+)\'" )) {
             escapeStr = escapeStr.substring(1, escapeStr.length() - 1);
         }
         String parameterAsString = escapeStr;
@@ -129,7 +129,7 @@ public class StringEscape {
             }
             parameterAsString = buf.toString();
         }
-        return "\'" + parameterAsString + "\'";
+        return "\'" + parameterAsString + "\'" ;
     }
 
 }

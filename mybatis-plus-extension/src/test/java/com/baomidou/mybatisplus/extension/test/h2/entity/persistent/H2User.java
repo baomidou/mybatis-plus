@@ -38,7 +38,7 @@ import lombok.experimental.Accessors;
 /* 表名 value 注解【 驼峰命名可无 】, resultMap 注解测试【 映射 xml 的 resultMap 内容 】 */
 @Data
 @Accessors(chain = true)
-@TableName("h2user")
+@TableName("h2user" )
 public class H2User extends SuperEntity {
 
     /* 测试忽略验证 */
@@ -50,13 +50,13 @@ public class H2User extends SuperEntity {
     private BigDecimal price;
 
     /* 测试下划线字段命名类型, 字段填充 */
-    @TableField(value = "test_type", strategy = FieldStrategy.IGNORED)
+    @TableField(value = "test_type" , strategy = FieldStrategy.IGNORED)
     private Integer testType;
 
     private String desc;
 
     @TableField
-	private Date testDate;
+    private Date testDate;
 
     @Version
     private Integer version;

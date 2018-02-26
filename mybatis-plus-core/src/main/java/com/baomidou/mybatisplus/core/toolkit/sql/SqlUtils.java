@@ -42,7 +42,7 @@ public class SqlUtils {
     static {
         try {
             //TODO: 3.0
-            DEFAULT_CLASS = (Class<ISqlParser>) Class.forName("com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParserCountOptimize");
+            DEFAULT_CLASS = (Class<ISqlParser>) Class.forName("com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParserCountOptimize" );
         } catch (ClassNotFoundException e) {
             //skip
         }
@@ -57,7 +57,7 @@ public class SqlUtils {
      * @return
      */
     public static String getOriginalCountSql(String originalSql) {
-        return String.format("SELECT COUNT(1) FROM ( %s ) TOTAL", originalSql);
+        return String.format("SELECT COUNT(1) FROM ( %s ) TOTAL" , originalSql);
     }
 
 
@@ -107,13 +107,13 @@ public class SqlUtils {
     public static String concatOrderBy(String originalSql, Pagination page, boolean orderBy) {
         if (orderBy && page.isOpenSort()) {
             StringBuilder buildSql = new StringBuilder(originalSql);
-            String ascStr = concatOrderBuilder(page.getAscs(), " ASC");
-            String descStr = concatOrderBuilder(page.getDescs(), " DESC");
+            String ascStr = concatOrderBuilder(page.getAscs(), " ASC" );
+            String descStr = concatOrderBuilder(page.getDescs(), " DESC" );
             if (StringUtils.isNotEmpty(ascStr) && StringUtils.isNotEmpty(descStr)) {
-                ascStr += ", ";
+                ascStr += ", " ;
             }
             if (StringUtils.isNotEmpty(ascStr) || StringUtils.isNotEmpty(descStr)) {
-                buildSql.append(" ORDER BY ").append(ascStr).append(descStr);
+                buildSql.append(" ORDER BY " ).append(ascStr).append(descStr);
             }
             return buildSql.toString();
         }
@@ -135,7 +135,7 @@ public class SqlUtils {
                     builder.append(cs).append(orderWord);
                 }
                 if (++i != columns.size() && StringUtils.isNotEmpty(cs)) {
-                    builder.append(", ");
+                    builder.append(", " );
                 }
             }
             return builder.toString();
@@ -154,7 +154,7 @@ public class SqlUtils {
         if (format) {
             return sqlFormatter.format(boundSql);
         } else {
-            return boundSql.replaceAll("[\\s]+", " ");
+            return boundSql.replaceAll("[\\s]+" , " " );
         }
     }
 
@@ -170,16 +170,16 @@ public class SqlUtils {
         StringBuilder builder = new StringBuilder(str.length() + 3);
         switch (type) {
             case LEFT:
-                builder.append("%").append(str);
+                builder.append("%" ).append(str);
                 break;
             case RIGHT:
-                builder.append(str).append("%");
+                builder.append(str).append("%" );
                 break;
             case CUSTOM:
                 builder.append(str);
                 break;
             default:
-                builder.append("%").append(str).append("%");
+                builder.append("%" ).append(str).append("%" );
         }
         return builder.toString();
     }
@@ -195,8 +195,8 @@ public class SqlUtils {
      */
     public static String stripSqlInjection(String sql) {
         if (null == sql) {
-            throw new MybatisPlusException("strip sql is null.");
+            throw new MybatisPlusException("strip sql is null." );
         }
-        return sql.replaceAll("('.+--)|(--)|(\\|)|(%7C)", "");
+        return sql.replaceAll("('.+--)|(--)|(\\|)|(%7C)" , "" );
     }
 }

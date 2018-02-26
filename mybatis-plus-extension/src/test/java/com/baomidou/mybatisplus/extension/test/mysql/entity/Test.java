@@ -43,7 +43,7 @@ public class Test extends Model<Test> {
 
     private String type;
 
-    @TableField("create_time")
+    @TableField("create_time" )
     private Date createTime;
 
     public Test() {
@@ -85,7 +85,7 @@ public class Test extends Model<Test> {
     }
 
     public String toString() {
-        return "{id=" + id + ",type=" + type + "}";
+        return "{id=" + id + ",type=" + type + "}" ;
     }
 
 }

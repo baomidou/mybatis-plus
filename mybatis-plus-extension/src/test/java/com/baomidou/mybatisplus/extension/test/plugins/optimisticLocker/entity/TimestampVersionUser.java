@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.Version;
 
-@TableName("time_version_user")
+@TableName("time_version_user" )
 public class TimestampVersionUser implements Serializable {
 
     @TableField(exist = false)

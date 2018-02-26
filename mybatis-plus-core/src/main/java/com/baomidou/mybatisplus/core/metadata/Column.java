@@ -33,7 +33,7 @@ public class Column implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String AS = " AS ";
+    private static final String AS = " AS " ;
 
     /**
      * 获取实例

@@ -21,10 +21,10 @@ public class ClassUtils {
         if (clazz != null) {
             for (Class<?> cls : clazz.getInterfaces()) {
                 String interfaceName = cls.getName();
-                if (interfaceName.equals("net.sf.cglib.proxy.Factory") //cglib
-                        || interfaceName.equals("org.springframework.cglib.proxy.Factory")
-                        || interfaceName.equals("javassist.util.proxy.ProxyObject") //javassist
-                        || interfaceName.equals("org.apache.ibatis.javassist.util.proxy.ProxyObject")) {
+                if (interfaceName.equals("net.sf.cglib.proxy.Factory" ) //cglib
+                    || interfaceName.equals("org.springframework.cglib.proxy.Factory" )
+                    || interfaceName.equals("javassist.util.proxy.ProxyObject" ) //javassist
+                    || interfaceName.equals("org.apache.ibatis.javassist.util.proxy.ProxyObject" )) {
                     return true;
                 }
             }
@@ -50,7 +50,7 @@ public class ClassUtils {
      */
     public static Class<?> getUserClass(Object object) {
         if (object == null) {
-            throw new MybatisPlusException("Error: Instance must not be null");
+            throw new MybatisPlusException("Error: Instance must not be null" );
         }
         return getUserClass(object.getClass());
     }

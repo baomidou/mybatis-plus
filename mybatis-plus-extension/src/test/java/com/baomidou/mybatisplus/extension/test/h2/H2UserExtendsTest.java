@@ -51,7 +51,7 @@ public class H2UserExtendsTest extends H2Test {
         AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
         context.register(ServiceConfig.class);
         context.refresh();
-        DataSource ds = (DataSource) context.getBean("dataSource");
+        DataSource ds = (DataSource) context.getBean("dataSource" );
         try (Connection conn = ds.getConnection()) {
             initData(conn);
         }
@@ -61,35 +61,35 @@ public class H2UserExtendsTest extends H2Test {
     public void testInsert() {
         H2UserIntVersionExtendTO user = new H2UserIntVersionExtendTO();
         user.setAge(1);
-        user.setPrice(new BigDecimal("9.99"));
+        user.setPrice(new BigDecimal("9.99" ));
         userService.insert(user);
         Assert.assertNotNull(user.getId());
-        user.setDesc("Caratacus");
+        user.setDesc("Caratacus" );
         userService.insertOrUpdate(user);
         H2UserIntVersionExtendTO userFromDB = userService.selectById(user.getId());
-        Assert.assertEquals("Caratacus", userFromDB.getDesc());
+        Assert.assertEquals("Caratacus" , userFromDB.getDesc());
     }
 
     @Test
     public void testUpdate() {
         H2UserIntVersionExtendTO user = new H2UserIntVersionExtendTO();
         user.setAge(1);
-        user.setPrice(new BigDecimal("9.99"));
+        user.setPrice(new BigDecimal("9.99" ));
         userService.insert(user);
         Long id = user.getId();
         Assert.assertNotNull(id);
-        user.setDesc("Caratacus");
+        user.setDesc("Caratacus" );
         userService.insertOrUpdate(user);
         H2UserIntVersionExtendTO userFromDB = userService.selectById(id);
-        Assert.assertEquals("Caratacus", userFromDB.getDesc());
+        Assert.assertEquals("Caratacus" , userFromDB.getDesc());
 
         user = new H2UserIntVersionExtendTO();
         user.setId(id);
-        user.setDesc("Caratacus2");
+        user.setDesc("Caratacus2" );
         userService.updateById(user);
         userFromDB = userService.selectById(id);
-        Assert.assertEquals("Caratacus2", userFromDB.getDesc());
-        Assert.assertEquals(new BigDecimal("9.99"), userFromDB.getPrice());
+        Assert.assertEquals("Caratacus2" , userFromDB.getDesc());
+        Assert.assertEquals(new BigDecimal("9.99" ), userFromDB.getPrice());
     }
 
 
@@ -97,7 +97,7 @@ public class H2UserExtendsTest extends H2Test {
     public void testDelete() {
         H2UserIntVersionExtendTO user = new H2UserIntVersionExtendTO();
         user.setAge(1);
-        user.setPrice(new BigDecimal("9.91"));
+        user.setPrice(new BigDecimal("9.91" ));
         userService.insert(user);
         Long userId = user.getId();
         Assert.assertNotNull(userId);
@@ -117,10 +117,10 @@ public class H2UserExtendsTest extends H2Test {
         Long id = 991L;
         H2UserIntVersionExtendTO user = new H2UserIntVersionExtendTO();
         user.setId(id);
-        user.setName("991");
+        user.setName("991" );
         user.setAge(91);
         user.setPrice(BigDecimal.TEN);
-        user.setDesc("asdf");
+        user.setDesc("asdf" );
         user.setTestType(1);
         user.setVersion(1);
         userService.insertAllColumn(user);
@@ -128,12 +128,12 @@ public class H2UserExtendsTest extends H2Test {
         H2UserIntVersionExtendTO userDB = userService.selectById(id);
         Assert.assertEquals(1, userDB.getVersion().intValue());
 
-        userDB.setName("992");
+        userDB.setName("992" );
         userService.updateById(userDB);
 
         userDB = userService.selectById(id);
         Assert.assertEquals(2, userDB.getVersion().intValue());
-        Assert.assertEquals("992", userDB.getName());
+        Assert.assertEquals("992" , userDB.getName());
     }
 
     @Test
@@ -141,10 +141,10 @@ public class H2UserExtendsTest extends H2Test {
         Long id = 992L;
         H2UserIntVersionExtendTO user = new H2UserIntVersionExtendTO();
         user.setId(id);
-        user.setName("992");
+        user.setName("992" );
         user.setAge(92);
         user.setPrice(BigDecimal.TEN);
-        user.setDesc("asdf");
+        user.setDesc("asdf" );
         user.setTestType(1);
         user.setVersion(1);
         userService.insertAllColumn(user);
@@ -153,13 +153,13 @@ public class H2UserExtendsTest extends H2Test {
         Assert.assertEquals(1, userDB.getVersion().intValue());
 
         H2UserIntVersionExtendTO updUser = new H2UserIntVersionExtendTO();
-        updUser.setName("999");
+        updUser.setName("999" );
 
         userService.update(updUser, new EntityWrapper<>(userDB));
 
         userDB = userService.selectById(id);
         Assert.assertEquals(2, userDB.getVersion().intValue());
-        Assert.assertEquals("999", userDB.getName());
+        Assert.assertEquals("999" , userDB.getName());
     }
 
 
@@ -168,10 +168,10 @@ public class H2UserExtendsTest extends H2Test {
         Long id = 993L;
         H2UserIntVersionExtendTO user = new H2UserIntVersionExtendTO();
         user.setId(id);
-        user.setName("992");
+        user.setName("992" );
         user.setAge(92);
         user.setPrice(BigDecimal.TEN);
-        user.setDesc("asdf");
+        user.setDesc("asdf" );
         user.setTestType(1);
         user.setVersion(1);
         userService.insertAllColumn(user);
@@ -180,13 +180,13 @@ public class H2UserExtendsTest extends H2Test {
         Assert.assertEquals(1, userDB.getVersion().intValue());
 
         H2UserIntVersionExtendTO updUser = new H2UserIntVersionExtendTO();
-        updUser.setName("999");
+        updUser.setName("999" );
         userDB.setVersion(null);
         userService.update(updUser, new EntityWrapper<>(userDB));
 
         userDB = userService.selectById(id);
         Assert.assertEquals(1, userDB.getVersion().intValue());
-        Assert.assertEquals("999", userDB.getName());
+        Assert.assertEquals("999" , userDB.getName());
     }
 
     @Test
@@ -194,10 +194,10 @@ public class H2UserExtendsTest extends H2Test {
         Long id = 998L;
         H2UserIntVersionExtendTO user = new H2UserIntVersionExtendTO();
         user.setId(id);
-        user.setName("992");
+        user.setName("992" );
         user.setAge(92);
         user.setPrice(BigDecimal.TEN);
-        user.setDesc("asdf");
+        user.setDesc("asdf" );
         user.setTestType(1);
         user.setVersion(1);
         userService.insertAllColumn(user);
@@ -205,13 +205,13 @@ public class H2UserExtendsTest extends H2Test {
         H2UserIntVersionExtendTO userDB = userService.selectById(id);
         Assert.assertEquals(1, userDB.getVersion().intValue());
         H2UserIntVersionExtendTO updateUser = new H2UserIntVersionExtendTO();
-        updateUser.setName("998");
+        updateUser.setName("998" );
         boolean result = userService.update(updateUser, new EntityWrapper<H2UserIntVersionExtendTO>());
         Assert.assertTrue(result);
         userDB = userService.selectById(id);
         Assert.assertEquals(1, userDB.getVersion().intValue());
         EntityWrapper<H2UserIntVersionExtendTO> param = new EntityWrapper<>();
-        param.eq("name", "998");
+        param.eq("name" , "998" );
         List<H2UserIntVersionExtendTO> userList = userService.selectList(param);
         Assert.assertTrue(userList.size() > 1);
     }
@@ -221,10 +221,10 @@ public class H2UserExtendsTest extends H2Test {
         Long id = 918L;
         H2UserIntVersionExtendTO user = new H2UserIntVersionExtendTO();
         user.setId(id);
-        user.setName("992");
+        user.setName("992" );
         user.setAge(92);
         user.setPrice(BigDecimal.TEN);
-        user.setDesc("asdf");
+        user.setDesc("asdf" );
         user.setTestType(1);
         user.setVersion(1);
         userService.insertAllColumn(user);
@@ -232,12 +232,12 @@ public class H2UserExtendsTest extends H2Test {
         H2UserIntVersionExtendTO userDB = userService.selectById(id);
         Assert.assertEquals(1, userDB.getVersion().intValue());
         H2UserIntVersionExtendTO updateUser = new H2UserIntVersionExtendTO();
-        updateUser.setName("918");
+        updateUser.setName("918" );
         updateUser.setVersion(1);
         Assert.assertTrue(userService.update(updateUser, null));
         EntityWrapper<H2UserIntVersionExtendTO> ew = new EntityWrapper<>();
         int count1 = userService.selectCount(ew);
-        ew.eq("name", "918").eq("version", 1);
+        ew.eq("name" , "918" ).eq("version" , 1);
         int count2 = userService.selectCount(ew);
         List<H2UserIntVersionExtendTO> userList = userService.selectList(new EntityWrapper<H2UserIntVersionExtendTO>());
         for (H2UserIntVersionExtendTO u : userList) {

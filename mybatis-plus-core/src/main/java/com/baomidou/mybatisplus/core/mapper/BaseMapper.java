@@ -76,7 +76,7 @@ public interface BaseMapper<T> {
      * @param columnMap 表字段 map 对象
      * @return int
      */
-    Integer deleteByMap(@Param("cm") Map<String, Object> columnMap);
+    Integer deleteByMap(@Param("cm" ) Map<String, Object> columnMap);
 
     /**
      * <p>
@@ -86,7 +86,7 @@ public interface BaseMapper<T> {
      * @param wrapper 实体对象封装操作类（可以为 null）
      * @return int
      */
-    Integer delete(@Param("ew") Wrapper<T> wrapper);
+    Integer delete(@Param("ew" ) Wrapper<T> wrapper);
 
     /**
      * <p>
@@ -96,7 +96,7 @@ public interface BaseMapper<T> {
      * @param idList 主键ID列表
      * @return int
      */
-    Integer deleteBatchIds(@Param("coll") Collection<? extends Serializable> idList);
+    Integer deleteBatchIds(@Param("coll" ) Collection<? extends Serializable> idList);
 
     /**
      * <p>
@@ -106,7 +106,7 @@ public interface BaseMapper<T> {
      * @param entity 实体对象
      * @return int
      */
-    Integer updateById(@Param("et") T entity);
+    Integer updateById(@Param("et" ) T entity);
 
     /**
      * <p>
@@ -116,7 +116,7 @@ public interface BaseMapper<T> {
      * @param entity 实体对象
      * @return int
      */
-    Integer updateAllColumnById(@Param("et") T entity);
+    Integer updateAllColumnById(@Param("et" ) T entity);
 
     /**
      * <p>
@@ -127,7 +127,7 @@ public interface BaseMapper<T> {
      * @param wrapper 实体对象封装操作类（可以为 null）
      * @return
      */
-    Integer update(@Param("et") T entity, @Param("ew") Wrapper<T> wrapper);
+    Integer update(@Param("et" ) T entity, @Param("ew" ) Wrapper<T> wrapper);
 
     /**
      * <p>
@@ -147,7 +147,7 @@ public interface BaseMapper<T> {
      * @param idList 主键ID列表
      * @return List<T>
      */
-    List<T> selectBatchIds(@Param("coll") Collection<? extends Serializable> idList);
+    List<T> selectBatchIds(@Param("coll" ) Collection<? extends Serializable> idList);
 
     /**
      * <p>
@@ -157,7 +157,7 @@ public interface BaseMapper<T> {
      * @param columnMap 表字段 map 对象
      * @return List<T>
      */
-    List<T> selectByMap(@Param("cm") Map<String, Object> columnMap);
+    List<T> selectByMap(@Param("cm" ) Map<String, Object> columnMap);
 
     /**
      * <p>
@@ -167,7 +167,7 @@ public interface BaseMapper<T> {
      * @param entity 实体对象
      * @return T
      */
-    T selectOne(@Param("ew") T entity);
+    T selectOne(@Param("ew" ) T entity);
 
     /**
      * <p>
@@ -177,7 +177,7 @@ public interface BaseMapper<T> {
      * @param wrapper 实体对象
      * @return int
      */
-    Integer selectCount(@Param("ew") Wrapper<T> wrapper);
+    Integer selectCount(@Param("ew" ) Wrapper<T> wrapper);
 
     /**
      * <p>
@@ -187,7 +187,7 @@ public interface BaseMapper<T> {
      * @param wrapper 实体对象封装操作类（可以为 null）
      * @return List<T>
      */
-    List<T> selectList(@Param("ew") Wrapper<T> wrapper);
+    List<T> selectList(@Param("ew" ) Wrapper<T> wrapper);
 
     /**
      * <p>
@@ -197,18 +197,18 @@ public interface BaseMapper<T> {
      * @param wrapper 实体对象封装操作类（可以为 null）
      * @return List<T>
      */
-    List<Map<String, Object>> selectMaps(@Param("ew") Wrapper<T> wrapper);
+    List<Map<String, Object>> selectMaps(@Param("ew" ) Wrapper<T> wrapper);
 
     /**
      * <p>
      * 根据 Wrapper 条件，查询全部记录
-	 *   注意： 只返回第一个字段的值
+     * 注意： 只返回第一个字段的值
      * </p>
      *
      * @param wrapper 实体对象封装操作类（可以为 null）
      * @return List<Object>
      */
-    List<Object> selectObjs(@Param("ew") Wrapper<T> wrapper);
+    List<Object> selectObjs(@Param("ew" ) Wrapper<T> wrapper);
 
     /**
      * <p>
@@ -219,7 +219,7 @@ public interface BaseMapper<T> {
      * @param wrapper   实体对象封装操作类（可以为 null）
      * @return List<T>
      */
-    List<T> selectPage(RowBounds rowBounds, @Param("ew") Wrapper<T> wrapper);
+    List<T> selectPage(RowBounds rowBounds, @Param("ew" ) Wrapper<T> wrapper);
 
     /**
      * <p>
@@ -228,8 +228,8 @@ public interface BaseMapper<T> {
      *
      * @param rowBounds 分页查询条件（可以为 RowBounds.DEFAULT）
      * @param wrapper   实体对象封装操作类
-     * @return List<Map<String, Object>>
+     * @return List<Map < String ,   Object>>
      */
-    List<Map<String, Object>> selectMapsPage(RowBounds rowBounds, @Param("ew") Wrapper<T> wrapper);
+    List<Map<String, Object>> selectMapsPage(RowBounds rowBounds, @Param("ew" ) Wrapper<T> wrapper);
 
 }

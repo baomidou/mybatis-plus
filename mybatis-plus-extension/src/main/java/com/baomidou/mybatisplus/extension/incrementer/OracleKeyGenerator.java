@@ -30,8 +30,8 @@ public class OracleKeyGenerator implements IKeyGenerator {
     @Override
     public String executeSql(String incrementerName) {
         StringBuilder sql = new StringBuilder();
-        sql.append("SELECT ").append(incrementerName);
-        sql.append(".NEXTVAL FROM DUAL");
+        sql.append("SELECT " ).append(incrementerName);
+        sql.append(".NEXTVAL FROM DUAL" );
         return sql.toString();
     }
 }

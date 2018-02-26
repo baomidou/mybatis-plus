@@ -302,7 +302,7 @@ public class Pagination extends RowBounds implements Serializable {
 
     @Override
     public String toString() {
-        return "Pagination { total=" + total + " ,size=" + size + " ,pages=" + pages + " ,current=" + current + " }";
+        return "Pagination { total=" + total + " ,size=" + size + " ,pages=" + pages + " ,current=" + current + " }" ;
     }
 
 }

@@ -168,20 +168,20 @@ public class TableInfo {
                 if (field.isKeyFlag()) {
                     // 主键
                     if (field.isConvert() || field.isKeyIdentityFlag()) {
-                        pkgSet.add("com.baomidou.mybatisplus.annotation.TableId");
+                        pkgSet.add("com.baomidou.mybatisplus.annotation.TableId" );
                     }
                     // 自增
                     if (field.isKeyIdentityFlag()) {
-                        pkgSet.add("com.baomidou.mybatisplus.enums.IdType");
+                        pkgSet.add("com.baomidou.mybatisplus.enums.IdType" );
                     }
                 } else if (field.isConvert()) {
                     // 普通字段
-                    pkgSet.add("com.baomidou.mybatisplus.annotation.TableField");
+                    pkgSet.add("com.baomidou.mybatisplus.annotation.TableField" );
                 }
                 if (null != field.getFill()) {
                     // 填充字段
-                    pkgSet.add("com.baomidou.mybatisplus.annotation.TableField");
-                    pkgSet.add("com.baomidou.mybatisplus.enums.FieldFill");
+                    pkgSet.add("com.baomidou.mybatisplus.annotation.TableField" );
+                    pkgSet.add("com.baomidou.mybatisplus.enums.FieldFill" );
                 }
             }
             if (!pkgSet.isEmpty()) {
@@ -231,7 +231,7 @@ public class TableInfo {
                 if (i == fields.size() - 1) {
                     names.append(cov2col(fd));
                 } else {
-                    names.append(cov2col(fd)).append(", ");
+                    names.append(cov2col(fd)).append(", " );
                 }
             }
             fieldNames = names.toString();

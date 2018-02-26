@@ -69,11 +69,11 @@ public class Sequence {
      */
     public Sequence(long workerId, long datacenterId) {
         if (workerId > maxWorkerId || workerId < 0) {
-            throw new MybatisPlusException(String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
+            throw new MybatisPlusException(String.format("worker Id can't be greater than %d or less than 0" , maxWorkerId));
         }
         if (datacenterId > maxDatacenterId || datacenterId < 0) {
             throw new MybatisPlusException(
-                    String.format("datacenter Id can't be greater than %d or less than 0", maxDatacenterId));
+                String.format("datacenter Id can't be greater than %d or less than 0" , maxDatacenterId));
         }
         this.workerId = workerId;
         this.datacenterId = datacenterId;
@@ -91,12 +91,12 @@ public class Sequence {
         if (StringUtils.isNotEmpty(name)) {
             /*
              * GET jvmPid
-			 */
-            mpid.append(name.split("@")[0]);
+             */
+            mpid.append(name.split("@" )[0]);
         }
         /*
          * MAC + PID 的 hashcode 获取16个低位
-		 */
+         */
         return (mpid.toString().hashCode() & 0xffff) % (maxWorkerId + 1);
     }
 
@@ -139,13 +139,13 @@ public class Sequence {
                     wait(offset << 1);
                     timestamp = timeGen();
                     if (timestamp < lastTimestamp) {
-                        throw new RuntimeException(String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", offset));
+                        throw new RuntimeException(String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds" , offset));
                     }
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             } else {
-                throw new RuntimeException(String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds", offset));
+                throw new RuntimeException(String.format("Clock moved backwards.  Refusing to generate id for %d milliseconds" , offset));
             }
         }
 
@@ -164,9 +164,9 @@ public class Sequence {
         lastTimestamp = timestamp;
 
         return ((timestamp - twepoch) << timestampLeftShift)    // 时间戳部分
-                | (datacenterId << datacenterIdShift)           // 数据中心部分
-                | (workerId << workerIdShift)                   // 机器标识部分
-                | sequence;                                     // 序列号部分
+            | (datacenterId << datacenterIdShift)           // 数据中心部分
+            | (workerId << workerIdShift)                   // 机器标识部分
+            | sequence;                                     // 序列号部分
     }
 
     protected long tilNextMillis(long lastTimestamp) {

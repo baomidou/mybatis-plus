@@ -50,7 +50,7 @@ public class IdWorkerTest {
     //@Test
     public void test() throws Exception {
         int count = 1000;
-        System.err.println("共有" + count + "个数参与测试");
+        System.err.println("共有" + count + "个数参与测试" );
 
         ExecutorService executorService = Executors.newFixedThreadPool(20);
         final List<Long> results = new ArrayList<>();

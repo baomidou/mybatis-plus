@@ -42,47 +42,47 @@ public class CodeGeneratorTest {
 
     @Test
     public void generateCode() {
-        String packageName = "com.baomidou.springboot";
+        String packageName = "com.baomidou.springboot" ;
         enableTableFieldAnnotation = false;
         tableIdType = null;
-        generateByTables(packageName + ".noannoidtype", "user");
+        generateByTables(packageName + ".noannoidtype" , "user" );
         enableTableFieldAnnotation = true;
         tableIdType = null;
-        generateByTables(packageName + ".noidtype", "user");
+        generateByTables(packageName + ".noidtype" , "user" );
         enableTableFieldAnnotation = false;
         tableIdType = IdType.INPUT;
-        generateByTables(packageName + ".noanno", "user");
+        generateByTables(packageName + ".noanno" , "user" );
         enableTableFieldAnnotation = true;
         tableIdType = IdType.INPUT;
-        generateByTables(packageName + ".both", "user");
+        generateByTables(packageName + ".both" , "user" );
 
         fieldPrefix = new String[]{"test"};
         enableTableFieldAnnotation = false;
         tableIdType = null;
-        generateByTables(packageName + ".noannoidtypewithprefix", "user");
+        generateByTables(packageName + ".noannoidtypewithprefix" , "user" );
         enableTableFieldAnnotation = true;
         tableIdType = null;
-        generateByTables(packageName + ".noidtypewithprefix", "user");
+        generateByTables(packageName + ".noidtypewithprefix" , "user" );
         enableTableFieldAnnotation = false;
         tableIdType = IdType.INPUT;
-        generateByTables(packageName + ".noannowithprefix", "user");
+        generateByTables(packageName + ".noannowithprefix" , "user" );
         enableTableFieldAnnotation = true;
         tableIdType = IdType.INPUT;
-        generateByTables(packageName + ".withannoidtypeprefix", "user");
+        generateByTables(packageName + ".withannoidtypeprefix" , "user" );
 
         serviceClassNameStartWithI = false;
-        generateByTables(packageName, "user");
+        generateByTables(packageName, "user" );
     }
 
     private void generateByTables(String packageName, String... tableNames) {
         GlobalConfig config = new GlobalConfig();
-        String dbUrl = "jdbc:mysql://localhost:3306/mybatis-plus";
+        String dbUrl = "jdbc:mysql://localhost:3306/mybatis-plus" ;
         DataSourceConfig dataSourceConfig = new DataSourceConfig();
         dataSourceConfig.setDbType(DbType.MYSQL)
             .setUrl(dbUrl)
-            .setUsername("root")
-            .setPassword("")
-            .setDriverName("com.mysql.jdbc.Driver");
+            .setUsername("root" )
+            .setPassword("" )
+            .setDriverName("com.mysql.jdbc.Driver" );
         StrategyConfig strategyConfig = new StrategyConfig();
         strategyConfig
             .setCapitalMode(true)
@@ -94,11 +94,11 @@ public class CodeGeneratorTest {
             .setInclude(tableNames);//修改替换成你需要的表名，多个表名传数组
         config.setActiveRecord(false)
             .setIdType(tableIdType)
-            .setAuthor("K神带你飞")
-            .setOutputDir("d:\\codeGen")
+            .setAuthor("K神带你飞" )
+            .setOutputDir("d:\\codeGen" )
             .setFileOverride(true);
         if (!serviceClassNameStartWithI) {
-            config.setServiceName("%sService");
+            config.setServiceName("%sService" );
         }
         new AutoGenerator().setGlobalConfig(config)
             .setDataSource(dataSourceConfig)
@@ -106,8 +106,8 @@ public class CodeGeneratorTest {
             .setPackageInfo(
                 new PackageConfig()
                     .setParent(packageName)
-                    .setController("controller")
-                    .setEntity("entity")
+                    .setController("controller" )
+                    .setEntity("entity" )
             ).execute();
     }
 }

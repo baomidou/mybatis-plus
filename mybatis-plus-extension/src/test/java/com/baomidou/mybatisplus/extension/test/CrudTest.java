@@ -44,16 +44,16 @@ public class CrudTest {
     }
 
     public SqlSessionFactory sqlSessionFactory() {
-        return sqlSessionFactory("mysql-config.xml");
+        return sqlSessionFactory("mysql-config.xml" );
     }
 
     public SqlSessionFactory sqlSessionFactory(String configXml) {
         GlobalConfiguration global = this.globalConfiguration();
         BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://127.0.0.1:3306/mybatis-plus?characterEncoding=UTF-8");
-        dataSource.setUsername("root");
-        dataSource.setPassword("521");
+        dataSource.setDriverClassName("com.mysql.jdbc.Driver" );
+        dataSource.setUrl("jdbc:mysql://127.0.0.1:3306/mybatis-plus?characterEncoding=UTF-8" );
+        dataSource.setUsername("root" );
+        dataSource.setPassword("521" );
         dataSource.setMaxTotal(1000);
         GlobalConfigUtils.setMetaData(dataSource, global);
         // 加载配置文件

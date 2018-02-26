@@ -48,16 +48,16 @@ import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
  * @author hubin nieqiurong TaoYu
  * @Date 2016-07-07
  */
-@Intercepts({@Signature(type = StatementHandler.class, method = "query", args = {Statement.class, ResultHandler.class}),
-        @Signature(type = StatementHandler.class, method = "update", args = {Statement.class}),
-        @Signature(type = StatementHandler.class, method = "batch", args = {Statement.class})})
+@Intercepts({@Signature(type = StatementHandler.class, method = "query" , args = {Statement.class, ResultHandler.class}),
+    @Signature(type = StatementHandler.class, method = "update" , args = {Statement.class}),
+    @Signature(type = StatementHandler.class, method = "batch" , args = {Statement.class})})
 public class PerformanceInterceptor implements Interceptor {
 
     private static final Log logger = LogFactory.getLog(PerformanceInterceptor.class);
-    private static final String DruidPooledPreparedStatement = "com.alibaba.druid.pool.DruidPooledPreparedStatement";
-    private static final String T4CPreparedStatement = "oracle.jdbc.driver.T4CPreparedStatement";
-    private static final String OraclePreparedStatementWrapper = "oracle.jdbc.driver.OraclePreparedStatementWrapper";
-    private static final String HikariPreparedStatementWrapper = "com.zaxxer.hikari.pool.HikariProxyPreparedStatement";
+    private static final String DruidPooledPreparedStatement = "com.alibaba.druid.pool.DruidPooledPreparedStatement" ;
+    private static final String T4CPreparedStatement = "oracle.jdbc.driver.T4CPreparedStatement" ;
+    private static final String OraclePreparedStatementWrapper = "oracle.jdbc.driver.OraclePreparedStatementWrapper" ;
+    private static final String HikariPreparedStatementWrapper = "com.zaxxer.hikari.pool.HikariProxyPreparedStatement" ;
     /**
      * SQL 执行最大时长，超过自动停止运行，有助于发现问题。
      */
@@ -80,12 +80,12 @@ public class PerformanceInterceptor implements Interceptor {
         Statement statement;
         Object firstArg = invocation.getArgs()[0];
         if (Proxy.isProxyClass(firstArg.getClass())) {
-            statement = (Statement) SystemMetaObject.forObject(firstArg).getValue("h.statement");
+            statement = (Statement) SystemMetaObject.forObject(firstArg).getValue("h.statement" );
         } else {
             statement = (Statement) firstArg;
         }
         try {
-            statement = (Statement) SystemMetaObject.forObject(statement).getValue("stmt.statement");
+            statement = (Statement) SystemMetaObject.forObject(statement).getValue("stmt.statement" );
         } catch (Exception e) {
             // do nothing
         }
@@ -96,7 +96,7 @@ public class PerformanceInterceptor implements Interceptor {
             try {
                 if (druidGetSQLMethod == null) {
                     Class<?> clazz = Class.forName(DruidPooledPreparedStatement);
-                    druidGetSQLMethod = clazz.getMethod("getSql");
+                    druidGetSQLMethod = clazz.getMethod("getSql" );
                 }
                 Object stmtSql = druidGetSQLMethod.invoke(statement);
                 if (stmtSql != null && stmtSql instanceof String) {
@@ -105,7 +105,7 @@ public class PerformanceInterceptor implements Interceptor {
             } catch (Exception ignored) {
             }
         } else if (T4CPreparedStatement.equals(stmtClassName)
-                || OraclePreparedStatementWrapper.equals(stmtClassName)) {
+            || OraclePreparedStatementWrapper.equals(stmtClassName)) {
             try {
                 if (oracleGetOriginalSqlMethod != null) {
                     Object stmtSql = oracleGetOriginalSqlMethod.invoke(statement);
@@ -114,7 +114,7 @@ public class PerformanceInterceptor implements Interceptor {
                     }
                 } else {
                     Class<?> clazz = Class.forName(stmtClassName);
-                    oracleGetOriginalSqlMethod = getMethodRegular(clazz, "getOriginalSql");
+                    oracleGetOriginalSqlMethod = getMethodRegular(clazz, "getOriginalSql" );
                     if (oracleGetOriginalSqlMethod != null) {
                         oracleGetOriginalSqlMethod.setAccessible(true);//OraclePreparedStatementWrapper is not a public class, need set this.
                         if (oracleGetOriginalSqlMethod != null) {
@@ -130,7 +130,7 @@ public class PerformanceInterceptor implements Interceptor {
             }
         } else if (HikariPreparedStatementWrapper.equals(stmtClassName)) {
             try {
-                Object sqlStatement = SystemMetaObject.forObject(statement).getValue("delegate.sqlStatement");
+                Object sqlStatement = SystemMetaObject.forObject(statement).getValue("delegate.sqlStatement" );
                 if (sqlStatement != null) {
                     originalSql = sqlStatement.toString();
                 }
@@ -155,11 +155,11 @@ public class PerformanceInterceptor implements Interceptor {
         // 格式化 SQL 打印执行结果
         Object target = PluginUtils.realTarget(invocation.getTarget());
         MetaObject metaObject = SystemMetaObject.forObject(target);
-        MappedStatement ms = (MappedStatement) metaObject.getValue("delegate.mappedStatement");
+        MappedStatement ms = (MappedStatement) metaObject.getValue("delegate.mappedStatement" );
         StringBuilder formatSql = new StringBuilder();
-        formatSql.append(" Time：").append(timing);
-        formatSql.append(" ms - ID：").append(ms.getId());
-        formatSql.append("\n Execute SQL：").append(SqlUtils.sqlFormat(originalSql, format)).append("\n");
+        formatSql.append(" Time：" ).append(timing);
+        formatSql.append(" ms - ID：" ).append(ms.getId());
+        formatSql.append("\n Execute SQL：" ).append(SqlUtils.sqlFormat(originalSql, format)).append("\n" );
         if (this.isWriteInLog()) {
             if (this.getMaxTime() >= 1 && timing > this.getMaxTime()) {
                 logger.error(formatSql.toString());
@@ -169,7 +169,7 @@ public class PerformanceInterceptor implements Interceptor {
         } else {
             System.err.println(formatSql.toString());
             if (this.getMaxTime() >= 1 && timing > this.getMaxTime()) {
-                throw new MybatisPlusException(" The SQL execution time is too large, please optimize ! ");
+                throw new MybatisPlusException(" The SQL execution time is too large, please optimize ! " );
             }
         }
         return result;
@@ -185,8 +185,8 @@ public class PerformanceInterceptor implements Interceptor {
 
     @Override
     public void setProperties(Properties prop) {
-        String maxTime = prop.getProperty("maxTime");
-        String format = prop.getProperty("format");
+        String maxTime = prop.getProperty("maxTime" );
+        String format = prop.getProperty("format" );
         if (StringUtils.isNotEmpty(maxTime)) {
             this.maxTime = Long.parseLong(maxTime);
         }

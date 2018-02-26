@@ -117,7 +117,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
         // 执行父类
         super(configuration, type);
 
-        String resource = type.getName().replace('.', '/') + ".java (best guess)";
+        String resource = type.getName().replace('.', '/') + ".java (best guess)" ;
         this.assistant = new MapperBuilderAssistant(configuration, resource);
         this.configuration = configuration;
         this.type = type;
@@ -181,7 +181,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
         // to prevent loading again a resource twice
         // this flag is set at XMLMapperBuilder#bindMapperForNamespace
         if (!configuration.isResourceLoaded("namespace:" + type.getName())) {
-            String xmlResource = type.getName().replace('.', '/') + ".xml";
+            String xmlResource = type.getName().replace('.', '/') + ".xml" ;
             InputStream inputStream = null;
             try {
                 inputStream = Resources.getResourceAsStream(type.getClassLoader(), xmlResource);
@@ -202,7 +202,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
             Long flushInterval = cacheDomain.flushInterval() == 0 ? null : cacheDomain.flushInterval();
             Properties props = convertToProperties(cacheDomain.properties());
             assistant.useNewCache(cacheDomain.implementation(), cacheDomain.eviction(), flushInterval, size,
-                    cacheDomain.readWrite(), cacheDomain.blocking(), props);
+                cacheDomain.readWrite(), cacheDomain.blocking(), props);
         }
     }
 
@@ -223,10 +223,10 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
             Class<?> refType = cacheDomainRef.value();
             String refName = cacheDomainRef.name();
             if (refType == void.class && refName.isEmpty()) {
-                throw new BuilderException("Should be specified either value() or name() attribute in the @CacheNamespaceRef");
+                throw new BuilderException("Should be specified either value() or name() attribute in the @CacheNamespaceRef" );
             }
             if (refType != void.class && !refName.isEmpty()) {
-                throw new BuilderException("Cannot use both value() and name() attribute in the @CacheNamespaceRef");
+                throw new BuilderException("Cannot use both value() and name() attribute in the @CacheNamespaceRef" );
             }
             String namespace = (refType != void.class) ? refType.getName() : refName;
             assistant.useCacheRef(namespace);
@@ -250,11 +250,11 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
         }
         StringBuilder suffix = new StringBuilder();
         for (Class<?> c : method.getParameterTypes()) {
-            suffix.append("-");
+            suffix.append("-" );
             suffix.append(c.getSimpleName());
         }
         if (suffix.length() < 1) {
-            suffix.append("-void");
+            suffix.append("-void" );
         }
         return type.getName() + "." + method.getName() + suffix;
     }
@@ -289,9 +289,9 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
             String column = discriminator.column();
             Class<?> javaType = discriminator.javaType() == void.class ? String.class : discriminator.javaType();
             JdbcType jdbcType = discriminator.jdbcType() == JdbcType.UNDEFINED ? null : discriminator.jdbcType();
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings("unchecked" )
             Class<? extends TypeHandler<?>> typeHandler = (Class<? extends TypeHandler<?>>) (discriminator.typeHandler() == UnknownTypeHandler.class ? null
-                    : discriminator.typeHandler());
+                : discriminator.typeHandler());
             Case[] cases = discriminator.cases();
             Map<String, String> discriminatorMap = new HashMap<>();
             for (Case c : cases) {
@@ -321,7 +321,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
             boolean useCache = isSelect;
 
             KeyGenerator keyGenerator;
-            String keyProperty = "id";
+            String keyProperty = "id" ;
             String keyColumn = null;
             if (SqlCommandType.INSERT.equals(sqlCommandType) || SqlCommandType.UPDATE.equals(sqlCommandType)) {
                 // first check for SelectKey annotation - that overrides everything else
@@ -360,7 +360,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                 StringBuilder sb = new StringBuilder();
                 for (String resultMap : resultMaps) {
                     if (sb.length() > 0) {
-                        sb.append(",");
+                        sb.append("," );
                     }
                     sb.append(resultMap);
                 }
@@ -370,30 +370,30 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
             }
 
             assistant.addMappedStatement(
-                    mappedStatementId,
-                    sqlSource,
-                    statementType,
-                    sqlCommandType,
-                    fetchSize,
-                    timeout,
-                    // ParameterMapID
-                    null,
-                    parameterTypeClass,
-                    resultMapId,
-                    getReturnType(method),
-                    resultSetType,
-                    flushCache,
-                    useCache,
-                    // TODO gcode issue #577
-                    false,
-                    keyGenerator,
-                    keyProperty,
-                    keyColumn,
-                    // DatabaseID
-                    null,
-                    languageDriver,
-                    // ResultSets
-                    options != null ? nullOrEmpty(options.resultSets()) : null);
+                mappedStatementId,
+                sqlSource,
+                statementType,
+                sqlCommandType,
+                fetchSize,
+                timeout,
+                // ParameterMapID
+                null,
+                parameterTypeClass,
+                resultMapId,
+                getReturnType(method),
+                resultSetType,
+                flushCache,
+                useCache,
+                // TODO gcode issue #577
+                false,
+                keyGenerator,
+                keyProperty,
+                keyColumn,
+                // DatabaseID
+                null,
+                languageDriver,
+                // ResultSets
+                options != null ? nullOrEmpty(options.resultSets()) : null);
         }
     }
 
@@ -411,7 +411,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
         Class<?>[] parameterTypes = method.getParameterTypes();
         for (Class<?> currentParameterType : parameterTypes) {
             if (!RowBounds.class.isAssignableFrom(currentParameterType)
-                    && !ResultHandler.class.isAssignableFrom(currentParameterType)) {
+                && !ResultHandler.class.isAssignableFrom(currentParameterType)) {
                 if (parameterType == null) {
                     parameterType = currentParameterType;
                 } else {
@@ -483,7 +483,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                     throw new BindingException("You cannot supply both a static SQL and SqlProvider to method named " + method.getName());
                 }
                 Annotation sqlAnnotation = method.getAnnotation(sqlAnnotationType);
-                final String[] strings = (String[]) sqlAnnotation.getClass().getMethod("value").invoke(sqlAnnotation);
+                final String[] strings = (String[]) sqlAnnotation.getClass().getMethod("value" ).invoke(sqlAnnotation);
                 return buildSqlSourceFromStrings(strings, parameterType, languageDriver);
             } else if (sqlProviderAnnotationType != null) {
                 Annotation sqlProviderAnnotation = method.getAnnotation(sqlProviderAnnotationType);
@@ -499,7 +499,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
         final StringBuilder sql = new StringBuilder();
         for (String fragment : strings) {
             sql.append(fragment);
-            sql.append(" ");
+            sql.append(" " );
         }
         return languageDriver.createSqlSource(configuration, sql.toString().trim(), parameterTypeClass);
     }
@@ -552,24 +552,24 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
             if (result.id()) {
                 flags.add(ResultFlag.ID);
             }
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings("unchecked" )
             Class<? extends TypeHandler<?>> typeHandler = (Class<? extends TypeHandler<?>>)
-                    ((result.typeHandler() == UnknownTypeHandler.class) ? null : result.typeHandler());
+                ((result.typeHandler() == UnknownTypeHandler.class) ? null : result.typeHandler());
             ResultMapping resultMapping = assistant.buildResultMapping(
-                    resultType,
-                    nullOrEmpty(result.property()),
-                    nullOrEmpty(result.column()),
-                    result.javaType() == void.class ? null : result.javaType(),
-                    result.jdbcType() == JdbcType.UNDEFINED ? null : result.jdbcType(),
-                    hasNestedSelect(result) ? nestedSelectId(result) : null,
-                    null,
-                    null,
-                    null,
-                    typeHandler,
-                    flags,
-                    null,
-                    null,
-                    isLazy(result));
+                resultType,
+                nullOrEmpty(result.property()),
+                nullOrEmpty(result.column()),
+                result.javaType() == void.class ? null : result.javaType(),
+                result.jdbcType() == JdbcType.UNDEFINED ? null : result.jdbcType(),
+                hasNestedSelect(result) ? nestedSelectId(result) : null,
+                null,
+                null,
+                null,
+                typeHandler,
+                flags,
+                null,
+                null,
+                isLazy(result));
             resultMappings.add(resultMapping);
         }
     }
@@ -579,7 +579,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
         if (nestedSelect.length() < 1) {
             nestedSelect = result.many().select();
         }
-        if (!nestedSelect.contains(".")) {
+        if (!nestedSelect.contains("." )) {
             nestedSelect = type.getName() + "." + nestedSelect;
         }
         return nestedSelect;
@@ -597,7 +597,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 
     private boolean hasNestedSelect(Result result) {
         if (result.one().select().length() > 0 && result.many().select().length() > 0) {
-            throw new BuilderException("Cannot use both @One and @Many annotation in the same @Result");
+            throw new BuilderException("Cannot use both @One and @Many annotation in the same @Result" );
         }
         return result.one().select().length() > 0 || result.many().select().length() > 0;
     }
@@ -609,24 +609,24 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
             if (arg.id()) {
                 flags.add(ResultFlag.ID);
             }
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings("unchecked" )
             Class<? extends TypeHandler<?>> typeHandler = (Class<? extends TypeHandler<?>>)
-                    (arg.typeHandler() == UnknownTypeHandler.class ? null : arg.typeHandler());
+                (arg.typeHandler() == UnknownTypeHandler.class ? null : arg.typeHandler());
             ResultMapping resultMapping = assistant.buildResultMapping(
-                    resultType,
-                    nullOrEmpty(arg.name()),
-                    nullOrEmpty(arg.column()),
-                    arg.javaType() == void.class ? null : arg.javaType(),
-                    arg.jdbcType() == JdbcType.UNDEFINED ? null : arg.jdbcType(),
-                    nullOrEmpty(arg.select()),
-                    nullOrEmpty(arg.resultMap()),
-                    null,
-                    null,
-                    typeHandler,
-                    flags,
-                    null,
-                    null,
-                    false);
+                resultType,
+                nullOrEmpty(arg.name()),
+                nullOrEmpty(arg.column()),
+                arg.javaType() == void.class ? null : arg.javaType(),
+                arg.jdbcType() == JdbcType.UNDEFINED ? null : arg.jdbcType(),
+                nullOrEmpty(arg.select()),
+                nullOrEmpty(arg.resultMap()),
+                null,
+                null,
+                typeHandler,
+                flags,
+                null,
+                null,
+                false);
             resultMappings.add(resultMapping);
         }
     }
@@ -665,8 +665,8 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
         SqlCommandType sqlCommandType = SqlCommandType.SELECT;
 
         assistant.addMappedStatement(id, sqlSource, statementType, sqlCommandType, fetchSize, timeout, parameterMap, parameterTypeClass, resultMap, resultTypeClass, resultSetTypeEnum,
-                flushCache, useCache, false,
-                keyGenerator, keyProperty, keyColumn, null, languageDriver, null);
+            flushCache, useCache, false,
+            keyGenerator, keyProperty, keyColumn, null, languageDriver, null);
 
         id = assistant.applyCurrentNamespace(id, false);
 

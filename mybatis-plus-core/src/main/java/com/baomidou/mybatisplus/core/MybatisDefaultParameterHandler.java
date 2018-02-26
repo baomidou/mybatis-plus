@@ -85,7 +85,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
      */
     private static Field getAdditionalParametersField() {
         try {
-            Field additionalParametersField = BoundSql.class.getDeclaredField("additionalParameters");
+            Field additionalParametersField = BoundSql.class.getDeclaredField("additionalParameters" );
             additionalParametersField.setAccessible(true);
             return additionalParametersField;
         } catch (NoSuchFieldException e) {
@@ -115,7 +115,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         if (ms.getSqlCommandType() == SqlCommandType.INSERT) {
             isFill = true;
         } else if (ms.getSqlCommandType() == SqlCommandType.UPDATE
-                && metaObjectHandler.openUpdateFill()) {
+            && metaObjectHandler.openUpdateFill()) {
             isFill = true;
         }
         if (isFill) {
@@ -129,7 +129,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                     } else {
                         /*
                          * 非表映射类不处理
-						 */
+                         */
                         objList.add(parameter);
                     }
                 }
@@ -138,13 +138,13 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                 TableInfo tableInfo = null;
                 if (parameterObject instanceof Map) {
                     Map map = (Map) parameterObject;
-                    if (map.containsKey("et")) {
-                        Object et = map.get("et");
+                    if (map.containsKey("et" )) {
+                        Object et = map.get("et" );
                         if (et != null) {
                             if (et instanceof Map) {
                                 Map realEtMap = (Map) et;
-                                if (realEtMap.containsKey("MP_OPTLOCK_ET_ORIGINAL")) {//refer to OptimisticLockerInterceptor.MP_OPTLOCK_ET_ORIGINAL
-                                    tableInfo = TableInfoHelper.getTableInfo(realEtMap.get("MP_OPTLOCK_ET_ORIGINAL").getClass());
+                                if (realEtMap.containsKey("MP_OPTLOCK_ET_ORIGINAL" )) {//refer to OptimisticLockerInterceptor.MP_OPTLOCK_ET_ORIGINAL
+                                    tableInfo = TableInfoHelper.getTableInfo(realEtMap.get("MP_OPTLOCK_ET_ORIGINAL" ).getClass());
                                 }
                             } else {
                                 tableInfo = TableInfoHelper.getTableInfo(et.getClass());
@@ -172,19 +172,19 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
      * @param parameter 插入数据库对象
      * @return
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({"rawtypes" , "unchecked"})
     protected static Collection<Object> getParameters(Object parameter) {
         Collection<Object> parameters = null;
         if (parameter instanceof Collection) {
             parameters = (Collection) parameter;
         } else if (parameter instanceof Map) {
             Map parameterMap = (Map) parameter;
-            if (parameterMap.containsKey("collection")) {
-                parameters = (Collection) parameterMap.get("collection");
-            } else if (parameterMap.containsKey("list")) {
-                parameters = (List) parameterMap.get("list");
-            } else if (parameterMap.containsKey("array")) {
-                parameters = Arrays.asList((Object[]) parameterMap.get("array"));
+            if (parameterMap.containsKey("collection" )) {
+                parameters = (Collection) parameterMap.get("collection" );
+            } else if (parameterMap.containsKey("list" )) {
+                parameters = (List) parameterMap.get("list" );
+            } else if (parameterMap.containsKey("array" )) {
+                parameters = Arrays.asList((Object[]) parameterMap.get("array" ));
             }
         }
         return parameters;
@@ -234,7 +234,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         return metaObject.getOriginalObject();
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({"rawtypes" , "unchecked"})
     @Override
     public void setParameters(PreparedStatement ps) {
         // 反射获取动态参数
@@ -244,7 +244,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         } catch (IllegalAccessException e) {
             // ignored, Because it will never happen.
         }
-        ErrorContext.instance().activity("setting parameters").object(mappedStatement.getParameterMap().getId());
+        ErrorContext.instance().activity("setting parameters" ).object(mappedStatement.getParameterMap().getId());
         List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
         if (parameterMappings != null) {
             for (int i = 0; i < parameterMappings.size(); i++) {

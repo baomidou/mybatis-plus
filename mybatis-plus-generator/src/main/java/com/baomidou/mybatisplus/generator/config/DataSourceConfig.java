@@ -43,7 +43,7 @@ public class DataSourceConfig {
     /**
      * PostgreSQL schemaname
      */
-    private String schemaname = "public";
+    private String schemaname = "public" ;
     /**
      * 类型转换
      */
@@ -72,14 +72,14 @@ public class DataSourceConfig {
      */
     public DbType getDbType() {
         if (null == dbType) {
-            if (driverName.contains("mysql")) {
+            if (driverName.contains("mysql" )) {
                 dbType = DbType.MYSQL;
-            } else if (driverName.contains("oracle")) {
+            } else if (driverName.contains("oracle" )) {
                 dbType = DbType.ORACLE;
-            } else if (driverName.contains("postgresql")) {
+            } else if (driverName.contains("postgresql" )) {
                 dbType = DbType.POSTGRE_SQL;
             } else {
-                throw new MybatisPlusException("Unknown type of database!");
+                throw new MybatisPlusException("Unknown type of database!" );
             }
         }
         return dbType;

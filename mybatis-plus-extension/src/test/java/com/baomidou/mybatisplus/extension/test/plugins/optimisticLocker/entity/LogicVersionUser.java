@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.Version;
 
-@TableName("version_user")
+@TableName("version_user" )
 public class LogicVersionUser implements Serializable {
 
     @TableField(exist = false)
@@ -20,7 +20,7 @@ public class LogicVersionUser implements Serializable {
     @Version
     private Short version;
 
-    @TableLogic(value = "0", delval = "1")
+    @TableLogic(value = "0" , delval = "1" )
     private Integer isDelete;
 
     public Long getId() {

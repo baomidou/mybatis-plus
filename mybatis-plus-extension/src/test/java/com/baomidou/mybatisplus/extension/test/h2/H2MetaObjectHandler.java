@@ -36,28 +36,28 @@ public class H2MetaObjectHandler extends MetaObjectHandler {
      * 测试 user 表 name 字段为空自动填充
      */
     public void insertFill(MetaObject metaObject) {
-        System.out.println("*************************");
-        System.out.println("insert fill");
-        System.out.println("*************************");
+        System.out.println("*************************" );
+        System.out.println("insert fill" );
+        System.out.println("*************************" );
 
         // 测试下划线
-        Object testType = this.getFieldValByName("testType", metaObject);
+        Object testType = this.getFieldValByName("testType" , metaObject);
         System.out.println("testType=" + testType);
         if (testType == null) {
             //测试实体没有的字段，配置在公共填充，不应该set到实体里面
-            this.setFieldValByName("testType1", 3, metaObject);
-            this.setFieldValByName("testType", 3, metaObject);
+            this.setFieldValByName("testType1" , 3, metaObject);
+            this.setFieldValByName("testType" , 3, metaObject);
         }
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        System.out.println("*************************");
-        System.out.println("update fill");
-        System.out.println("*************************");
+        System.out.println("*************************" );
+        System.out.println("update fill" );
+        System.out.println("*************************" );
         //测试实体没有的字段，配置在公共填充，不应该set到实体里面
-        this.setFieldValByName("lastUpdatedDt1", new Timestamp(System.currentTimeMillis()), metaObject);
-        this.setFieldValByName("lastUpdatedDt", new Timestamp(System.currentTimeMillis()), metaObject);
+        this.setFieldValByName("lastUpdatedDt1" , new Timestamp(System.currentTimeMillis()), metaObject);
+        this.setFieldValByName("lastUpdatedDt" , new Timestamp(System.currentTimeMillis()), metaObject);
     }
 }
 

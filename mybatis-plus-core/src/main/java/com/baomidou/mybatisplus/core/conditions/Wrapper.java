@@ -42,19 +42,19 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  * @author hubin , yanghu , Dyang , Caratacus
  * @Date 2016-11-7
  */
-@SuppressWarnings("serial")
+@SuppressWarnings("serial" )
 public abstract class Wrapper<T> implements Serializable {
 
     /**
      * 占位符
      */
-    private static final String PLACE_HOLDER = "{%s}";
+    private static final String PLACE_HOLDER = "{%s}" ;
 
-    private static final String MYBATIS_PLUS_TOKEN = "#{%s.paramNameValuePairs.%s}";
+    private static final String MYBATIS_PLUS_TOKEN = "#{%s.paramNameValuePairs.%s}" ;
 
-    private static final String MP_GENERAL_PARAMNAME = "MPGENVAL";
+    private static final String MP_GENERAL_PARAMNAME = "MPGENVAL" ;
 
-    private static final String DEFAULT_PARAM_ALIAS = "ew";
+    private static final String DEFAULT_PARAM_ALIAS = "ew" ;
     /**
      * 实现了TSQL语法的SQL实体
      */
@@ -73,7 +73,7 @@ public abstract class Wrapper<T> implements Serializable {
     /**
      * 拼接WHERE后应该是AND还是ORnull
      */
-    protected String AND_OR = "AND";
+    protected String AND_OR = "AND" ;
 
     /**
      * <p>
@@ -129,7 +129,7 @@ public abstract class Wrapper<T> implements Serializable {
         for (String column : columns) {
             if (StringUtils.isNotEmpty(column)) {
                 if (builder.length() > 0) {
-                    builder.append(",");
+                    builder.append("," );
                 }
                 builder.append(column);
             }
@@ -158,7 +158,7 @@ public abstract class Wrapper<T> implements Serializable {
                     }
                     builder.append(col).append(as);
                     if (i < column.length - 1) {
-                        builder.append(",");
+                        builder.append("," );
                     }
                 }
             }
@@ -192,13 +192,13 @@ public abstract class Wrapper<T> implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("Wrapper<T>:");
+        StringBuilder sb = new StringBuilder("Wrapper<T>:" );
         String sqlSegment = getSqlSegment();
         sb.append(replacePlaceholder(sqlSegment));
         Object entity = getEntity();
         if (entity != null) {
-            sb.append("\n");
-            sb.append("entity=").append(entity.toString());
+            sb.append("\n" );
+            sb.append("entity=" ).append(entity.toString());
         }
         return sb.toString();
     }
@@ -215,7 +215,7 @@ public abstract class Wrapper<T> implements Serializable {
         if (StringUtils.isEmpty(sqlSegment)) {
             return StringUtils.EMPTY;
         }
-        return sqlSegment.replaceAll("#\\{" + getParamAlias() + ".paramNameValuePairs.MPGENVAL[0-9]+}", "\\?");
+        return sqlSegment.replaceAll("#\\{" + getParamAlias() + ".paramNameValuePairs.MPGENVAL[0-9]+}" , "\\?" );
     }
 
     /**
@@ -283,7 +283,7 @@ public abstract class Wrapper<T> implements Serializable {
      */
     public Wrapper<T> eq(boolean condition, String column, Object params) {
         if (condition) {
-            sql.WHERE(formatSql(String.format("%s = {0}", column), params));
+            sql.WHERE(formatSql(String.format("%s = {0}" , column), params));
         }
         return this;
     }
@@ -313,7 +313,7 @@ public abstract class Wrapper<T> implements Serializable {
      */
     public Wrapper<T> ne(boolean condition, String column, Object params) {
         if (condition) {
-            sql.WHERE(formatSql(String.format("%s <> {0}", column), params));
+            sql.WHERE(formatSql(String.format("%s <> {0}" , column), params));
         }
         return this;
     }
@@ -341,7 +341,7 @@ public abstract class Wrapper<T> implements Serializable {
      * @param params
      * @return
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({"rawtypes" , "unchecked"})
     public Wrapper<T> allEq(boolean condition, Map<String, Object> params) {
         if (condition && MapUtils.isNotEmpty(params)) {
             Iterator iterator = params.entrySet().iterator();
@@ -349,7 +349,7 @@ public abstract class Wrapper<T> implements Serializable {
                 Map.Entry<String, Object> entry = (Map.Entry<String, Object>) iterator.next();
                 Object value = entry.getValue();
                 if (StringUtils.checkValNotNull(value)) {
-                    sql.WHERE(formatSql(String.format("%s = {0}", entry.getKey()), entry.getValue()));
+                    sql.WHERE(formatSql(String.format("%s = {0}" , entry.getKey()), entry.getValue()));
                 }
 
             }
@@ -366,7 +366,7 @@ public abstract class Wrapper<T> implements Serializable {
      * @param params
      * @return
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({"rawtypes" , "unchecked"})
     public Wrapper<T> allEq(Map<String, Object> params) {
         return allEq(true, params);
     }
@@ -383,7 +383,7 @@ public abstract class Wrapper<T> implements Serializable {
      */
     public Wrapper<T> gt(boolean condition, String column, Object params) {
         if (condition) {
-            sql.WHERE(formatSql(String.format("%s > {0}", column), params));
+            sql.WHERE(formatSql(String.format("%s > {0}" , column), params));
         }
         return this;
     }
@@ -413,7 +413,7 @@ public abstract class Wrapper<T> implements Serializable {
      */
     public Wrapper<T> ge(boolean condition, String column, Object params) {
         if (condition) {
-            sql.WHERE(formatSql(String.format("%s >= {0}", column), params));
+            sql.WHERE(formatSql(String.format("%s >= {0}" , column), params));
         }
         return this;
     }
@@ -443,7 +443,7 @@ public abstract class Wrapper<T> implements Serializable {
      */
     public Wrapper<T> lt(boolean condition, String column, Object params) {
         if (condition) {
-            sql.WHERE(formatSql(String.format("%s < {0}", column), params));
+            sql.WHERE(formatSql(String.format("%s < {0}" , column), params));
         }
         return this;
     }
@@ -473,7 +473,7 @@ public abstract class Wrapper<T> implements Serializable {
      */
     public Wrapper<T> le(boolean condition, String column, Object params) {
         if (condition) {
-            sql.WHERE(formatSql(String.format("%s <= {0}", column), params));
+            sql.WHERE(formatSql(String.format("%s <= {0}" , column), params));
         }
         return this;
     }
@@ -613,7 +613,7 @@ public abstract class Wrapper<T> implements Serializable {
     public Wrapper<T> or(boolean condition, String sqlOr, Object... params) {
         if (condition) {
             if (StringUtils.isEmpty(sql.toString())) {
-                AND_OR = "OR";
+                AND_OR = "OR" ;
             }
             sql.OR().WHERE(formatSql(sqlOr, params));
         }
@@ -666,7 +666,7 @@ public abstract class Wrapper<T> implements Serializable {
     public Wrapper<T> orNew(boolean condition, String sqlOr, Object... params) {
         if (condition) {
             if (StringUtils.isEmpty(sql.toString())) {
-                AND_OR = "OR";
+                AND_OR = "OR" ;
             }
             sql.OR_NEW().WHERE(formatSql(sqlOr, params));
         }
@@ -808,7 +808,7 @@ public abstract class Wrapper<T> implements Serializable {
      */
     public Wrapper<T> orderBy(boolean condition, String columns, boolean isAsc) {
         if (condition && StringUtils.isNotEmpty(columns)) {
-            sql.ORDER_BY(columns + (isAsc ? " ASC" : " DESC"));
+            sql.ORDER_BY(columns + (isAsc ? " ASC" : " DESC" ));
         }
         return this;
     }
@@ -943,9 +943,9 @@ public abstract class Wrapper<T> implements Serializable {
             StringBuilder inSql = new StringBuilder();
             inSql.append(column);
             if (isNot) {
-                inSql.append(" NOT");
+                inSql.append(" NOT" );
             }
-            inSql.append(" LIKE {0}");
+            inSql.append(" LIKE {0}" );
             sql.WHERE(formatSql(inSql.toString(), SqlUtils.concatLike(value, type)));
         }
     }
@@ -1138,7 +1138,7 @@ public abstract class Wrapper<T> implements Serializable {
      */
     public Wrapper<T> in(boolean condition, String column, String value) {
         if (condition && StringUtils.isNotEmpty(value)) {
-            in(column, StringUtils.splitWorker(value, ",", -1, false));
+            in(column, StringUtils.splitWorker(value, "," , -1, false));
         }
         return this;
     }
@@ -1168,7 +1168,7 @@ public abstract class Wrapper<T> implements Serializable {
      */
     public Wrapper<T> notIn(boolean condition, String column, String value) {
         if (condition && StringUtils.isNotEmpty(value)) {
-            notIn(column, StringUtils.splitWorker(value, ",", -1, false));
+            notIn(column, StringUtils.splitWorker(value, "," , -1, false));
         }
         return this;
     }
@@ -1320,18 +1320,18 @@ public abstract class Wrapper<T> implements Serializable {
             StringBuilder inSql = new StringBuilder();
             inSql.append(column);
             if (isNot) {
-                inSql.append(" NOT");
+                inSql.append(" NOT" );
             }
-            inSql.append(" IN ");
-            inSql.append("(");
+            inSql.append(" IN " );
+            inSql.append("(" );
             int size = value.size();
             for (int i = 0; i < size; i++) {
                 inSql.append(String.format(PLACE_HOLDER, i));
                 if (i + 1 < size) {
-                    inSql.append(",");
+                    inSql.append("," );
                 }
             }
-            inSql.append(")");
+            inSql.append(")" );
             return inSql.toString();
         }
         return null;
@@ -1350,7 +1350,7 @@ public abstract class Wrapper<T> implements Serializable {
      */
     public Wrapper<T> between(boolean condition, String column, Object val1, Object val2) {
         if (condition) {
-            sql.WHERE(formatSql(String.format("%s BETWEEN {0} AND {1}", column), val1, val2));
+            sql.WHERE(formatSql(String.format("%s BETWEEN {0} AND {1}" , column), val1, val2));
         }
         return this;
     }
@@ -1382,7 +1382,7 @@ public abstract class Wrapper<T> implements Serializable {
      */
     public Wrapper<T> notBetween(boolean condition, String column, Object val1, Object val2) {
         if (condition) {
-            sql.WHERE(formatSql(String.format("%s NOT BETWEEN {0} AND {1}", column), val1, val2));
+            sql.WHERE(formatSql(String.format("%s NOT BETWEEN {0} AND {1}" , column), val1, val2));
         }
         return this;
     }
@@ -1532,10 +1532,10 @@ public abstract class Wrapper<T> implements Serializable {
      */
     public Wrapper<T> setParamAlias(String paramAlias) {
         if (StringUtils.isNotEmpty(getSqlSegment())) {
-            throw new MybatisPlusException("Error: Please call this method when initializing!");
+            throw new MybatisPlusException("Error: Please call this method when initializing!" );
         }
         if (StringUtils.isNotEmpty(this.paramAlias)) {
-            throw new MybatisPlusException("Error: Please do not call the method repeatedly!");
+            throw new MybatisPlusException("Error: Please do not call the method repeatedly!" );
         }
         this.paramAlias = paramAlias;
         return this;
@@ -1545,12 +1545,13 @@ public abstract class Wrapper<T> implements Serializable {
     public boolean isEmptyWrapper() {
         return checkWrapperEmpty();
     }
+
     //TODO: 3.0 提供protect方法，让子类可覆盖
     protected boolean checkWrapperEmpty() {
         return sql.isEmptyOfWhere() && sqlSelect == null;
     }
 
-    public static <T> Wrapper<T> getInstance(){
+    public static <T> Wrapper<T> getInstance() {
         return new Wrapper<T>() {
             @Override
             public String getSqlSegment() {

@@ -45,29 +45,29 @@ public class JdbcUtils {
      */
     public static IDBType getDbType(String jdbcUrl) {
         if (StringUtils.isEmpty(jdbcUrl)) {
-            throw new MybatisPlusException("Error: The jdbcUrl is Null, Cannot read database type");
+            throw new MybatisPlusException("Error: The jdbcUrl is Null, Cannot read database type" );
         }
-        if (jdbcUrl.startsWith("jdbc:mysql:") || jdbcUrl.startsWith("jdbc:cobar:")
-                || jdbcUrl.startsWith("jdbc:log4jdbc:mysql:")) {
+        if (jdbcUrl.startsWith("jdbc:mysql:" ) || jdbcUrl.startsWith("jdbc:cobar:" )
+            || jdbcUrl.startsWith("jdbc:log4jdbc:mysql:" )) {
             return DBType.MYSQL;
-        } else if (jdbcUrl.startsWith("jdbc:oracle:") || jdbcUrl.startsWith("jdbc:log4jdbc:oracle:")) {
+        } else if (jdbcUrl.startsWith("jdbc:oracle:" ) || jdbcUrl.startsWith("jdbc:log4jdbc:oracle:" )) {
             return DBType.ORACLE;
-        } else if (jdbcUrl.startsWith("jdbc:sqlserver:") || jdbcUrl.startsWith("jdbc:microsoft:")) {
+        } else if (jdbcUrl.startsWith("jdbc:sqlserver:" ) || jdbcUrl.startsWith("jdbc:microsoft:" )) {
             return DBType.SQLSERVER2005;
-        } else if (jdbcUrl.startsWith("jdbc:sqlserver2012:")) {
+        } else if (jdbcUrl.startsWith("jdbc:sqlserver2012:" )) {
             return DBType.SQLSERVER;
-        } else if (jdbcUrl.startsWith("jdbc:postgresql:") || jdbcUrl.startsWith("jdbc:log4jdbc:postgresql:")) {
+        } else if (jdbcUrl.startsWith("jdbc:postgresql:" ) || jdbcUrl.startsWith("jdbc:log4jdbc:postgresql:" )) {
             return DBType.POSTGRE;
-        } else if (jdbcUrl.startsWith("jdbc:hsqldb:") || jdbcUrl.startsWith("jdbc:log4jdbc:hsqldb:")) {
+        } else if (jdbcUrl.startsWith("jdbc:hsqldb:" ) || jdbcUrl.startsWith("jdbc:log4jdbc:hsqldb:" )) {
             return DBType.HSQL;
-        } else if (jdbcUrl.startsWith("jdbc:db2:")) {
+        } else if (jdbcUrl.startsWith("jdbc:db2:" )) {
             return DBType.DB2;
-        } else if (jdbcUrl.startsWith("jdbc:sqlite:")) {
+        } else if (jdbcUrl.startsWith("jdbc:sqlite:" )) {
             return DBType.SQLITE;
-        } else if (jdbcUrl.startsWith("jdbc:h2:") || jdbcUrl.startsWith("jdbc:log4jdbc:h2:")) {
+        } else if (jdbcUrl.startsWith("jdbc:h2:" ) || jdbcUrl.startsWith("jdbc:log4jdbc:h2:" )) {
             return DBType.H2;
         } else {
-            logger.warn("The jdbcUrl is " + jdbcUrl + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!");
+            logger.warn("The jdbcUrl is " + jdbcUrl + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!" );
             return DBType.OTHER;
         }
     }

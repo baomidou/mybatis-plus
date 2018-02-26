@@ -40,14 +40,14 @@ public class EnumTypeHandler<E extends Enum<?> & IEnum> extends BaseTypeHandler<
 
     public EnumTypeHandler(Class<E> type) {
         if (type == null) {
-            throw new IllegalArgumentException("Type argument cannot be null");
+            throw new IllegalArgumentException("Type argument cannot be null" );
         }
         this.type = type;
     }
 
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, IEnum parameter, JdbcType jdbcType)
-            throws SQLException {
+        throws SQLException {
         if (jdbcType == null) {
             ps.setObject(i, parameter.getValue());
         } else {

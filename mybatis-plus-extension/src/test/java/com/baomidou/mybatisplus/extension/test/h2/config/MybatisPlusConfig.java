@@ -29,15 +29,15 @@ import com.baomidou.mybatisplus.extension.test.h2.H2MetaObjectHandler;
  * @date 2017/4/1
  */
 @Configuration
-@MapperScan("com.baomidou.mybatisplus.extension.test.h2.entity.mapper")
+@MapperScan("com.baomidou.mybatisplus.extension.test.h2.entity.mapper" )
 public class MybatisPlusConfig {
 
-    @Bean("mybatisSqlSession")
+    @Bean("mybatisSqlSession" )
     public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader, GlobalConfiguration globalConfiguration) throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
         sqlSessionFactory.setDataSource(dataSource);
 //        sqlSessionFactory.setConfigLocation(resourceLoader.getResource("classpath:mybatis-config.xml"));
-        sqlSessionFactory.setTypeAliasesPackage("com.baomidou.mybatisplus.extension.test.h2.entity.persistent");
+        sqlSessionFactory.setTypeAliasesPackage("com.baomidou.mybatisplus.extension.test.h2.entity.persistent" );
         MybatisConfiguration configuration = new MybatisConfiguration();
 //        configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
 //        org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
@@ -48,9 +48,9 @@ public class MybatisPlusConfig {
         pagination.setLocalPage(true);
         OptimisticLockerInterceptor optLock = new OptimisticLockerInterceptor();
         sqlSessionFactory.setPlugins(new Interceptor[]{
-                pagination,
-                optLock,
-                new PerformanceInterceptor()
+            pagination,
+            optLock,
+            new PerformanceInterceptor()
         });
         globalConfiguration.setMetaObjectHandler(new H2MetaObjectHandler());
         sqlSessionFactory.setGlobalConfig(globalConfiguration);
@@ -60,8 +60,8 @@ public class MybatisPlusConfig {
     @Bean
     public GlobalConfiguration globalConfiguration() {
         GlobalConfiguration conf = new GlobalConfiguration(new LogicSqlInjector());
-        conf.setLogicDeleteValue("-1");
-        conf.setLogicNotDeleteValue("1");
+        conf.setLogicDeleteValue("-1" );
+        conf.setLogicNotDeleteValue("1" );
         conf.setIdType(2);
         return conf;
     }

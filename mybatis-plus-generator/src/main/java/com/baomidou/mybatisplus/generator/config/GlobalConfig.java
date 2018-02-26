@@ -30,7 +30,7 @@ public class GlobalConfig {
     /**
      * 生成文件的输出目录【默认 D 盘根目录】
      */
-    private String outputDir = "D://";
+    private String outputDir = "D://" ;
 
     /**
      * 是否覆盖已有文件

@@ -44,22 +44,22 @@ public class MySqlInjector extends AutoSqlInjector {
 
     public void deleteAllUser(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
 
-		/* 执行 SQL ，动态 SQL 参考类 SqlMethod */
+        /* 执行 SQL ，动态 SQL 参考类 SqlMethod */
         String sql = "delete from " + table.getTableName();
 
-		/* mapper 接口方法名一致 */
-        String method = "deleteAll";
+        /* mapper 接口方法名一致 */
+        String method = "deleteAll" ;
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
         this.addDeleteMappedStatement(mapperClass, method, sqlSource);
     }
 
     public void deleteLogicById(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
 
-		/* 执行 SQL ，动态 SQL 参考类 SqlMethod */
-        String sql = String.format("UPDATE %s SET test_type=-1 WHERE test_id=#{id}", table.getTableName());
+        /* 执行 SQL ，动态 SQL 参考类 SqlMethod */
+        String sql = String.format("UPDATE %s SET test_type=-1 WHERE test_id=#{id}" , table.getTableName());
 
-		/* mapper 接口方法名一致 */
-        String method = "deleteLogicById";
+        /* mapper 接口方法名一致 */
+        String method = "deleteLogicById" ;
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
 
         // 注意！！ 这里是更新、删除、插入、调用方法注入不一样！！

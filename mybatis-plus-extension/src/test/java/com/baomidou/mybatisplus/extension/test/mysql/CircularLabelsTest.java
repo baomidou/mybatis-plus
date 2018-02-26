@@ -46,7 +46,7 @@ public class CircularLabelsTest extends CrudTest {
         SqlSession session = this.sqlSessionFactory().openSession();
         UserMapper userMapper = session.getMapper(UserMapper.class);
         Page<User> page = new Page<>(1, 6);
-        List<User> users = userMapper.forSelect(page, Arrays.asList("1", "2", "3"));
+        List<User> users = userMapper.forSelect(page, Arrays.asList("1" , "2" , "3" ));
         System.out.println(users.toString());
         System.out.println(page);
         User user = new User();
@@ -56,7 +56,7 @@ public class CircularLabelsTest extends CrudTest {
         TestMapper mapper = session.getMapper(TestMapper.class);
         Test test = new Test();
         test.setCreateTime(new Date());
-        test.setType("11111");
+        test.setType("11111" );
         mapper.insert(test);
         session.rollback();
     }
