@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.baomidou.mybatisplus.generator.InjectionConfig;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,6 +78,20 @@ public abstract class AbstractTemplateEngine {
                 Map<String, Object> objectMap = this.getObjectMap(tableInfo);
                 Map<String, String> pathInfo = this.getConfigBuilder().getPathInfo();
                 TemplateConfig template = this.getConfigBuilder().getTemplate();
+                // 自定义内容
+                InjectionConfig injectionConfig = this.getConfigBuilder().getInjectionConfig();
+                if (null != injectionConfig) {
+                    injectionConfig.initMap();
+                    objectMap.put("cfg", injectionConfig.getMap());
+                    List<FileOutConfig> focList = injectionConfig.getFileOutConfigList();
+                    if (CollectionUtils.isNotEmpty(focList)) {
+                        for (FileOutConfig foc : focList) {
+                            if (this.isCreate(foc.outputFile(tableInfo))) {
+                                this.writer(objectMap, foc.getTemplatePath(), foc.outputFile(tableInfo));
+                            }
+                        }
+                    }
+                }
                 // Mp.java
                 String entityName = tableInfo.getEntityName();
                 if (null != entityName) {
@@ -118,20 +133,6 @@ public abstract class AbstractTemplateEngine {
                     String controllerFile = String.format((pathInfo.get(ConstVal.CONTROLLER_PATH) + File.separator + tableInfo.getControllerName() + this.suffixJavaOrKt()), entityName);
                     if (this.isCreate(controllerFile)) {
                         this.writer(objectMap, this.templateFilePath(template.getController()), controllerFile);
-                    }
-                }
-                // 自定义内容
-                InjectionConfig injectionConfig = this.getConfigBuilder().getInjectionConfig();
-                if (null != injectionConfig) {
-                    injectionConfig.initMap();
-                    objectMap.put("cfg",injectionConfig.getMap());
-                    List<FileOutConfig> focList = injectionConfig.getFileOutConfigList();
-                    if (CollectionUtils.isNotEmpty(focList)) {
-                        for (FileOutConfig foc : focList) {
-                            if (this.isCreate(foc.outputFile(tableInfo))) {
-                                this.writer(objectMap, foc.getTemplatePath(), foc.outputFile(tableInfo));
-                            }
-                        }
                     }
                 }
             }
