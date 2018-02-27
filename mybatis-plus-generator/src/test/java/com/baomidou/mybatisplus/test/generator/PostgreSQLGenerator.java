@@ -121,7 +121,7 @@ public class PostgreSQLGenerator extends GeneratorTest {
             }
         };
         List<FileOutConfig> focList = new ArrayList<>();
-        focList.add(new FileOutConfig("/templates/entity.java" + ((1 == result) ? ".ftl" : ".vm" )) {
+        focList.add(new FileOutConfig("/templates/dto.java" + ((1 == result) ? ".ftl" : ".vm" )) {
             @Override
             public String outputFile(TableInfo tableInfo) {
                 // 自定义输入文件名称
