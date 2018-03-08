@@ -30,6 +30,7 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.MapUtils;
+import com.baomidou.mybatisplus.toolkit.SerializationUtils;
 import com.baomidou.mybatisplus.toolkit.SqlUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
@@ -1475,7 +1476,7 @@ public abstract class Wrapper<T> implements Serializable {
             for (int i = 0; i < params.length; ++i) {
                 String genParamName = MP_GENERAL_PARAMNAME + paramNameSeq.incrementAndGet();
                 sqlStr = sqlStr.replace(String.format(PLACE_HOLDER, i),
-                        String.format(MYBATIS_PLUS_TOKEN, getParamAlias(), genParamName));
+                    String.format(MYBATIS_PLUS_TOKEN, getParamAlias(), genParamName));
                 paramNameValuePairs.put(genParamName, params[i]);
             }
         }
@@ -1539,5 +1540,14 @@ public abstract class Wrapper<T> implements Serializable {
         }
         this.paramAlias = paramAlias;
         return this;
+    }
+
+    /**
+     * <p>
+     * 克隆本身 fixed github issues/241
+     * </p>
+     */
+    public Wrapper<T> clone() {
+        return SerializationUtils.clone(this);
     }
 }
