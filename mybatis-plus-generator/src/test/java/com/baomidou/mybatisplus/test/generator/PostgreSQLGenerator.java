@@ -125,7 +125,7 @@ public class PostgreSQLGenerator extends GeneratorTest {
             @Override
             public String outputFile(TableInfo tableInfo) {
                 // 自定义输入文件名称
-                return "D://my_" + tableInfo.getEntityName() + ".java" ;
+                return "D://test/my_" + tableInfo.getEntityName() + ".java" ;
             }
         });
         cfg.setFileOutConfigList(focList);

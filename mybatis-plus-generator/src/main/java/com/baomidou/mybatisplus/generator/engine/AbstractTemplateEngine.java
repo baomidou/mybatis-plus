@@ -81,7 +81,7 @@ public abstract class AbstractTemplateEngine {
                 InjectionConfig injectionConfig = this.getConfigBuilder().getInjectionConfig();
                 if (null != injectionConfig) {
                     injectionConfig.initMap();
-                    objectMap.put("cfg" , injectionConfig.getMap());
+                    objectMap.put("cfg", injectionConfig.getMap());
                     List<FileOutConfig> focList = injectionConfig.getFileOutConfigList();
                     if (CollectionUtils.isNotEmpty(focList)) {
                         for (FileOutConfig foc : focList) {
@@ -136,7 +136,7 @@ public abstract class AbstractTemplateEngine {
                 }
             }
         } catch (Exception e) {
-            logger.error("无法创建文件，请检查配置信息！" , e);
+            logger.error("无法创建文件，请检查配置信息！", e);
         }
         return this;
     }
@@ -165,7 +165,7 @@ public abstract class AbstractTemplateEngine {
             if (!dir.exists()) {
                 boolean result = dir.mkdirs();
                 if (result) {
-                    logger.debug("创建目录： [" + entry.getValue() + "]" );
+                    logger.debug("创建目录： [" + entry.getValue() + "]");
                 }
             }
         }
@@ -181,11 +181,11 @@ public abstract class AbstractTemplateEngine {
     public void open() {
         if (this.getConfigBuilder().getGlobalConfig().isOpen()) {
             try {
-                String osName = System.getProperty("os.name" );
+                String osName = System.getProperty("os.name");
                 if (osName != null) {
-                    if (osName.contains("Mac" )) {
+                    if (osName.contains("Mac")) {
                         Runtime.getRuntime().exec("open " + this.getConfigBuilder().getGlobalConfig().getOutputDir());
-                    } else if (osName.contains("Windows" )) {
+                    } else if (osName.contains("Windows")) {
                         Runtime.getRuntime().exec("cmd /c start " + this.getConfigBuilder().getGlobalConfig().getOutputDir());
                     } else {
                         logger.debug("文件输出目录:" + this.getConfigBuilder().getGlobalConfig().getOutputDir());
@@ -210,37 +210,37 @@ public abstract class AbstractTemplateEngine {
         Map<String, Object> objectMap = new HashMap<>();
         ConfigBuilder config = this.getConfigBuilder();
         if (config.getStrategyConfig().isControllerMappingHyphenStyle()) {
-            objectMap.put("controllerMappingHyphenStyle" , config.getStrategyConfig().isControllerMappingHyphenStyle());
-            objectMap.put("controllerMappingHyphen" , StringUtils.camelToHyphen(tableInfo.getEntityPath()));
+            objectMap.put("controllerMappingHyphenStyle", config.getStrategyConfig().isControllerMappingHyphenStyle());
+            objectMap.put("controllerMappingHyphen", StringUtils.camelToHyphen(tableInfo.getEntityPath()));
         }
-        objectMap.put("restControllerStyle" , config.getStrategyConfig().isRestControllerStyle());
-        objectMap.put("package" , config.getPackageInfo());
+        objectMap.put("restControllerStyle", config.getStrategyConfig().isRestControllerStyle());
+        objectMap.put("package", config.getPackageInfo());
         GlobalConfig globalConfig = config.getGlobalConfig();
-        objectMap.put("author" , globalConfig.getAuthor());
-        objectMap.put("idType" , globalConfig.getIdType() == null ? null : globalConfig.getIdType().toString());
-        objectMap.put("logicDeleteFieldName" , config.getStrategyConfig().getLogicDeleteFieldName());
-        objectMap.put("versionFieldName" , config.getStrategyConfig().getVersionFieldName());
-        objectMap.put("activeRecord" , globalConfig.isActiveRecord());
-        objectMap.put("kotlin" , globalConfig.isKotlin());
-        objectMap.put("date" , new SimpleDateFormat("yyyy-MM-dd" ).format(new Date()));
-        objectMap.put("table" , tableInfo);
-        objectMap.put("enableCache" , globalConfig.isEnableCache());
-        objectMap.put("baseResultMap" , globalConfig.isBaseResultMap());
-        objectMap.put("baseColumnList" , globalConfig.isBaseColumnList());
-        objectMap.put("entity" , tableInfo.getEntityName());
-        objectMap.put("entityColumnConstant" , config.getStrategyConfig().isEntityColumnConstant());
-        objectMap.put("entityBuilderModel" , config.getStrategyConfig().isEntityBuilderModel());
-        objectMap.put("entityLombokModel" , config.getStrategyConfig().isEntityLombokModel());
-        objectMap.put("entityBooleanColumnRemoveIsPrefix" , config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix());
-        objectMap.put("superEntityClass" , this.getSuperClassName(config.getSuperEntityClass()));
-        objectMap.put("superMapperClassPackage" , config.getSuperMapperClass());
-        objectMap.put("superMapperClass" , this.getSuperClassName(config.getSuperMapperClass()));
-        objectMap.put("superServiceClassPackage" , config.getSuperServiceClass());
-        objectMap.put("superServiceClass" , this.getSuperClassName(config.getSuperServiceClass()));
-        objectMap.put("superServiceImplClassPackage" , config.getSuperServiceImplClass());
-        objectMap.put("superServiceImplClass" , this.getSuperClassName(config.getSuperServiceImplClass()));
-        objectMap.put("superControllerClassPackage" , config.getSuperControllerClass());
-        objectMap.put("superControllerClass" , this.getSuperClassName(config.getSuperControllerClass()));
+        objectMap.put("author", globalConfig.getAuthor());
+        objectMap.put("idType", globalConfig.getIdType() == null ? null : globalConfig.getIdType().toString());
+        objectMap.put("logicDeleteFieldName", config.getStrategyConfig().getLogicDeleteFieldName());
+        objectMap.put("versionFieldName", config.getStrategyConfig().getVersionFieldName());
+        objectMap.put("activeRecord", globalConfig.isActiveRecord());
+        objectMap.put("kotlin", globalConfig.isKotlin());
+        objectMap.put("date", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+        objectMap.put("table", tableInfo);
+        objectMap.put("enableCache", globalConfig.isEnableCache());
+        objectMap.put("baseResultMap", globalConfig.isBaseResultMap());
+        objectMap.put("baseColumnList", globalConfig.isBaseColumnList());
+        objectMap.put("entity", tableInfo.getEntityName());
+        objectMap.put("entityColumnConstant", config.getStrategyConfig().isEntityColumnConstant());
+        objectMap.put("entityBuilderModel", config.getStrategyConfig().isEntityBuilderModel());
+        objectMap.put("entityLombokModel", config.getStrategyConfig().isEntityLombokModel());
+        objectMap.put("entityBooleanColumnRemoveIsPrefix", config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix());
+        objectMap.put("superEntityClass", this.getSuperClassName(config.getSuperEntityClass()));
+        objectMap.put("superMapperClassPackage", config.getSuperMapperClass());
+        objectMap.put("superMapperClass", this.getSuperClassName(config.getSuperMapperClass()));
+        objectMap.put("superServiceClassPackage", config.getSuperServiceClass());
+        objectMap.put("superServiceClass", this.getSuperClassName(config.getSuperServiceClass()));
+        objectMap.put("superServiceImplClassPackage", config.getSuperServiceImplClass());
+        objectMap.put("superServiceImplClass", this.getSuperClassName(config.getSuperServiceImplClass()));
+        objectMap.put("superControllerClassPackage", config.getSuperControllerClass());
+        objectMap.put("superControllerClass", this.getSuperClassName(config.getSuperControllerClass()));
         return objectMap;
     }
 
@@ -255,7 +255,7 @@ public abstract class AbstractTemplateEngine {
         if (StringUtils.isEmpty(classPath)) {
             return null;
         }
-        return classPath.substring(classPath.lastIndexOf("." ) + 1);
+        return classPath.substring(classPath.lastIndexOf(".") + 1);
     }
 
 
@@ -277,9 +277,21 @@ public abstract class AbstractTemplateEngine {
      */
     protected boolean isCreate(String filePath) {
         File file = new File(filePath);
-        return !file.exists() || this.getConfigBuilder().getGlobalConfig().isFileOverride();
+        boolean exist = file.exists();
+        if (!exist) {
+            this.mkDir(file.getParentFile());
+        }
+        return !exist || this.getConfigBuilder().getGlobalConfig().isFileOverride();
     }
 
+    protected void mkDir(File file) {
+        if (file.getParentFile().exists()) {
+            file.mkdir();
+        } else {
+            mkDir(file.getParentFile());
+            file.mkdir();
+        }
+    }
 
     /**
      * 文件后缀
