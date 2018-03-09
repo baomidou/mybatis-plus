@@ -278,7 +278,20 @@ public abstract class AbstractTemplateEngine {
      */
     protected boolean isCreate(String filePath) {
         File file = new File(filePath);
-        return !file.exists() || this.getConfigBuilder().getGlobalConfig().isFileOverride();
+        boolean exist = file.exists();
+        if (!exist) {
+            this.mkDir(file.getParentFile());
+        }
+        return !exist || this.getConfigBuilder().getGlobalConfig().isFileOverride();
+    }
+
+    protected void mkDir(File file) {
+        if (file.getParentFile().exists()) {
+            file.mkdir();
+        } else {
+            mkDir(file.getParentFile());
+            file.mkdir();
+        }
     }
 
 
