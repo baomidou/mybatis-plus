@@ -882,7 +882,7 @@ public abstract class Wrapper<T> implements Serializable {
      */
     public Wrapper<T> like(boolean condition, String column, String value) {
         if (condition) {
-            handerLike(column, value, SqlLike.DEFAULT, false);
+            handlerLike(column, value, SqlLike.DEFAULT, false);
         }
         return this;
     }
@@ -912,7 +912,7 @@ public abstract class Wrapper<T> implements Serializable {
      */
     public Wrapper<T> notLike(boolean condition, String column, String value) {
         if (condition) {
-            handerLike(column, value, SqlLike.DEFAULT, true);
+            handlerLike(column, value, SqlLike.DEFAULT, true);
         }
         return this;
     }
@@ -939,7 +939,7 @@ public abstract class Wrapper<T> implements Serializable {
      * @param value  like匹配值
      * @param isNot  是否为NOT LIKE操作
      */
-    private void handerLike(String column, String value, SqlLike type, boolean isNot) {
+    private void handlerLike(String column, String value, SqlLike type, boolean isNot) {
         if (StringUtils.isNotEmpty(column) && StringUtils.isNotEmpty(value)) {
             StringBuilder inSql = new StringBuilder();
             inSql.append(column);
@@ -964,7 +964,7 @@ public abstract class Wrapper<T> implements Serializable {
      */
     public Wrapper<T> like(boolean condition, String column, String value, SqlLike type) {
         if (condition) {
-            handerLike(column, value, type, false);
+            handlerLike(column, value, type, false);
         }
         return this;
     }
@@ -996,7 +996,7 @@ public abstract class Wrapper<T> implements Serializable {
      */
     public Wrapper<T> notLike(boolean condition, String column, String value, SqlLike type) {
         if (condition) {
-            handerLike(column, value, type, true);
+            handlerLike(column, value, type, true);
         }
         return this;
     }

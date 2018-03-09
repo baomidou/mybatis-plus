@@ -102,7 +102,7 @@ public class DialectFactory {
                 throw new MybatisPlusException("Class :" + dialectClazz + " is not found" );
             }
         } else if (null != dbType) {
-            dialect = getDialectByDbtype(dbType);
+            dialect = getDialectByDbType(dbType);
         }
         /* 未配置方言则抛出异常 */
         if (dialect == null) {
@@ -120,7 +120,7 @@ public class DialectFactory {
      * @return
      * @throws Exception
      */
-    private static IDialect getDialectByDbtype(IDBType dbType) {
+    private static IDialect getDialectByDbType(IDBType dbType) {
         IDialect dialect;
         if (dbType == DBType.MYSQL) {
             dialect = MySqlDialect.INSTANCE;
