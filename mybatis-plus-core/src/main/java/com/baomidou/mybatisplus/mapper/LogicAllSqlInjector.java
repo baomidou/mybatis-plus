@@ -15,14 +15,7 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import com.baomidou.mybatisplus.entity.TableFieldInfo;
 import com.baomidou.mybatisplus.entity.TableInfo;
-import com.baomidou.mybatisplus.enums.SqlMethod;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
-import org.apache.ibatis.mapping.SqlSource;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -58,6 +51,4 @@ public class LogicAllSqlInjector extends SuperLogicSqlInjector {
     protected void injectDeleteByMapSql(Class<?> mapperClass, TableInfo table) {
         super.injectDeleteByMapSql(mapperClass, table);
     }
-
-
 }

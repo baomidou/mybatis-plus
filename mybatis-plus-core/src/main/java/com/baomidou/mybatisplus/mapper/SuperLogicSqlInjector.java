@@ -1,13 +1,14 @@
 package com.baomidou.mybatisplus.mapper;
 
+import java.util.List;
+import java.util.Map;
+
+import org.apache.ibatis.mapping.SqlSource;
+
 import com.baomidou.mybatisplus.entity.TableFieldInfo;
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.enums.SqlMethod;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
-import org.apache.ibatis.mapping.SqlSource;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -111,7 +112,4 @@ public class SuperLogicSqlInjector extends AutoSqlInjector {
         }
         return set.toString();
     }
-
-
-
 }

@@ -15,16 +15,17 @@
  */
 package com.baomidou.mybatisplus.plugins.parser.logicdelete;
 
-import com.baomidou.mybatisplus.entity.TableFieldInfo;
-import com.baomidou.mybatisplus.entity.TableInfo;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
-import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.LongValue;
-import net.sf.jsqlparser.expression.StringValue;
-
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import com.baomidou.mybatisplus.entity.TableFieldInfo;
+import com.baomidou.mybatisplus.entity.TableInfo;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.LongValue;
+import net.sf.jsqlparser.expression.StringValue;
 
 /**
  * <p>
@@ -47,7 +48,7 @@ public class LogicDeleteDefaultHandler implements LogicDeleteHandler {
             List<TableInfo> tableInfos = TableInfoHelper.getTableInfos();
             for (TableInfo tableInfo : tableInfos) {
                 List<TableFieldInfo> tableFieldInfos = tableInfo.getFieldList();
-                for (TableFieldInfo tableFieldInfo: tableFieldInfos) {
+                for (TableFieldInfo tableFieldInfo : tableFieldInfos) {
                     if (tableFieldInfo.isLogicDelete()) {
                         tableLogicDeleteMap.put(tableInfo.getTableName(), tableFieldInfo);
                         break;
