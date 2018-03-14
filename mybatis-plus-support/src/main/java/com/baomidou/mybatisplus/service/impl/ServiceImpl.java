@@ -406,14 +406,14 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Override
     public Page<Map<String, Object>> selectMapsPage(Page page, Wrapper<T> wrapper) {
         wrapper = (Wrapper<T>) SqlHelper.fillWrapper(page,  wrapper);
-        page.setRecords(baseMapper.selectMapsPage(page, wrapper));
+        baseMapper.selectMapsPage(page, wrapper);
         return page;
     }
 
     @Override
     public Page<T> selectPage(Page<T> page, Wrapper<T> wrapper) {
         wrapper = (Wrapper<T>) SqlHelper.fillWrapper(page,  wrapper);
-        page.setRecords(baseMapper.selectPage(page, wrapper));
+        baseMapper.selectPage(page, wrapper);
         return page;
     }
 }
