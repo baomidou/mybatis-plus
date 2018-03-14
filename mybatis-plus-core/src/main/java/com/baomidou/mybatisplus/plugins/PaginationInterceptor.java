@@ -18,7 +18,9 @@ package com.baomidou.mybatisplus.plugins;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.ibatis.builder.StaticSqlSource;
@@ -74,6 +76,10 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
      * 日志
      */
     private static final Log logger = LogFactory.getLog(PaginationInterceptor.class);
+    /**
+     * Count MappedStatement
+     */
+    private static final Map<String, MappedStatement> countMappedStatements = new HashMap<>();
     /**
      * COUNT SQL 解析
      */
@@ -233,22 +239,28 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
      * @return
      */
     private MappedStatement getCountMappedStatement(MappedStatement mappedStatement, BoundSql boundSql, SqlInfo sqlInfo, Object parameter) {
-        Configuration configuration = mappedStatement.getConfiguration();
-        BoundSql countBoundSql = new BoundSql(configuration, sqlInfo.getSql(), boundSql.getParameterMappings(), parameter);
         String countStatementId = mappedStatement.getId() + "Count";
-        MappedStatement countMappedStatement = null;
+        MappedStatement countMappedStatement = countMappedStatements.get(countStatementId);
+        if (null != countMappedStatement) {
+            // Get Cache
+            return countMappedStatement;
+        }
+        Configuration configuration = mappedStatement.getConfiguration();
         try {
             countMappedStatement = configuration.getMappedStatement(countStatementId, false);
         } catch (Throwable t) {
             if (null == countMappedStatement) {
                 // 查询结果集
+                BoundSql countBoundSql = new BoundSql(configuration, sqlInfo.getSql(), boundSql.getParameterMappings(), parameter);
                 SqlSource sqlsource = new StaticSqlSource(configuration, countBoundSql.getSql(), countBoundSql.getParameterMappings());
                 MappedStatement.Builder builder = new MappedStatement.Builder(configuration, countStatementId, sqlsource,
                     SqlCommandType.SELECT);
-                mappedStatement = builder.build();
+                countMappedStatement = builder.build();
             }
         }
-        return mappedStatement;
+        // Cache Count MappedStatement
+        countMappedStatements.put(countStatementId, countMappedStatement);
+        return countMappedStatement;
     }
 
     @Override
