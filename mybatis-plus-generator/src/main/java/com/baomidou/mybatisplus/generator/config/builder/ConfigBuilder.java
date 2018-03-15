@@ -460,6 +460,10 @@ public class ConfigBuilder {
                 String tableName = results.getString(querySQL.getTableName());
                 if (StringUtils.isNotEmpty(tableName)) {
                     String tableComment = results.getString(querySQL.getTableComment());
+                    if (config.isSkipView() && "VIEW".equals(tableComment)) {
+                        // 跳过视图
+                        continue;
+                    }
                     tableInfo = new TableInfo();
                     tableInfo.setName(tableName);
                     tableInfo.setComment(tableComment);
