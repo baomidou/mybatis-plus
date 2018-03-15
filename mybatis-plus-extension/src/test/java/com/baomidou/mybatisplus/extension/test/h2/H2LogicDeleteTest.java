@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -19,10 +20,6 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 
 import com.baomidou.mybatisplus.core.conditions.EntityWrapper;
 import com.baomidou.mybatisplus.core.pagination.Page;
-import com.baomidou.mybatisplus.extension.test.h2.base.H2Test;
-import com.baomidou.mybatisplus.extension.test.h2.config.ServiceConfig;
-import com.baomidou.mybatisplus.extension.test.h2.entity.persistent.H2UserLogicDelete;
-import com.baomidou.mybatisplus.extension.test.h2.service.IH2UserLogicDeleteService;
 import com.baomidou.mybatisplus.extension.test.h2.base.H2Test;
 import com.baomidou.mybatisplus.extension.test.h2.config.ServiceConfig;
 import com.baomidou.mybatisplus.extension.test.h2.entity.persistent.H2UserLogicDelete;
@@ -118,5 +115,11 @@ public class H2LogicDeleteTest extends H2Test {
         H2UserLogicDelete fromDB = userService.selectByIdMy(id);
         Assert.assertNotNull(fromDB);
         System.out.println(fromDB);
+    }
+
+    @Test
+    public void testSelectBatchIds(){
+        userService.selectBatchIds(Arrays.asList(101,102,103,104));
+
     }
 }
