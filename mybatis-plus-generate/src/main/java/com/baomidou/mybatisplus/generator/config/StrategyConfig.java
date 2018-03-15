@@ -42,6 +42,11 @@ public class StrategyConfig {
     private boolean isCapitalMode = false;
 
     /**
+     * 是否跳过视图
+     */
+    private boolean skipView = false;
+
+    /**
      * 数据库表映射到实体的命名策略
      */
     private NamingStrategy naming = NamingStrategy.nochange;
@@ -91,7 +96,7 @@ public class StrategyConfig {
      */
     private String superControllerClass;
 
-    /*
+    /**
      * 需要包含的表名（与exclude二选一配置）
      */
     private String[] include = null;
@@ -204,6 +209,15 @@ public class StrategyConfig {
 
     public StrategyConfig setCapitalMode(boolean isCapitalMode) {
         this.isCapitalMode = isCapitalMode;
+        return this;
+    }
+
+    public boolean isSkipView() {
+        return skipView;
+    }
+
+    public StrategyConfig setSkipView(boolean skipView) {
+        this.skipView = skipView;
         return this;
     }
 
