@@ -583,6 +583,15 @@ public class ConfigBuilder {
                 } else {
                     field.setKeyFlag(false);
                 }
+                // 自定义字段查询
+                String[] fcs = dbQuery.fieldCustom();
+                if (null != fcs) {
+                    Map<String, Object> customMap = new HashMap<>();
+                    for (String fc : fcs) {
+                        customMap.put(fc, results.getObject(fc));
+                    }
+                    field.setCustomMap(customMap);
+                }
                 // 处理其它信息
                 field.setName(results.getString(dbQuery.fieldName()));
                 field.setType(results.getString(dbQuery.fieldType()));

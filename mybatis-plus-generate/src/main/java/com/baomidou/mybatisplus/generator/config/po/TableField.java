@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.generator.config.po;
 
+import java.util.Map;
+
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
@@ -41,6 +43,10 @@ public class TableField {
     private DbColumnType columnType;
     private String comment;
     private String fill;
+    /**
+     * 自定义查询字段列表
+     */
+    private Map<String, Object> customMap;
 
     public boolean isConvert() {
         return convert;
@@ -144,7 +150,7 @@ public class TableField {
         // 第一个字母 小写、 第二个字母 大写 ，特殊处理
         String firstChar = setGetName.substring(0, 1);
         if (Character.isLowerCase(firstChar.toCharArray()[0])
-                && Character.isUpperCase(setGetName.substring(1, 2).toCharArray()[0])) {
+            && Character.isUpperCase(setGetName.substring(1, 2).toCharArray()[0])) {
             return firstChar.toLowerCase() + setGetName.substring(1);
         }
         return firstChar.toUpperCase() + setGetName.substring(1);
@@ -156,5 +162,13 @@ public class TableField {
 
     public void setFill(String fill) {
         this.fill = fill;
+    }
+
+    public Map<String, Object> getCustomMap() {
+        return customMap;
+    }
+
+    public void setCustomMap(Map<String, Object> customMap) {
+        this.customMap = customMap;
     }
 }

@@ -18,7 +18,6 @@ package com.baomidou.mybatisplus.generator.config.querys;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.baomidou.mybatisplus.generator.config.IDbQuery;
 import com.baomidou.mybatisplus.generator.config.rules.DbType;
 
 /**
@@ -29,7 +28,7 @@ import com.baomidou.mybatisplus.generator.config.rules.DbType;
  * @author hubin
  * @since 2018-01-16
  */
-public class MySqlQuery implements IDbQuery {
+public class MySqlQuery extends AbstractDbQuery {
 
 
     @Override

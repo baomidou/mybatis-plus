@@ -95,4 +95,10 @@ public interface IDbQuery {
      * @throws SQLException
      */
     boolean isKeyIdentity(ResultSet results) throws SQLException;
+
+
+    /**
+     * 自定义字段名称
+     */
+    String[] fieldCustom();
 }

@@ -65,6 +65,8 @@ public class PostgreSQLGenerator extends GeneratorTest {
                 return super.processTypeConvert(fieldType);
             }
         });
+        // 自定义数据库信息查询
+        dsc.setDbQuery(new MyPostgreSqlQuery());
         dsc.setDriverName("org.postgresql.Driver");
         dsc.setUsername("postgres");
         dsc.setPassword("521");
