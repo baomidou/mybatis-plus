@@ -13,32 +13,26 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.generator.config.rules;
+package com.baomidou.mybatisplus.generator.config.querys;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import com.baomidou.mybatisplus.generator.config.IDbQuery;
 
 /**
- * 数据库类型定义
+ * <p>
+ * 表数据查询抽象类
+ * </p>
  *
- * @author YangHu
- * @since 2016/8/30
+ * @author hubin
+ * @since 2018-01-16
  */
-public enum DbType {
-    MYSQL("mysql"),
-    ORACLE("oracle"),
-    SQL_SERVER("sql_server"),
-    POSTGRE_SQL("postgre_sql"),
-    OTHER("other db");
+public abstract class AbstractDbQuery implements IDbQuery {
 
 
-    private final String value;
-
-
-    DbType(String value) {
-        this.value = value;
+    @Override
+    public boolean isKeyIdentity(ResultSet results) throws SQLException {
+        return false;
     }
-
-
-    public String getValue() {
-        return value;
-    }
-
 }
