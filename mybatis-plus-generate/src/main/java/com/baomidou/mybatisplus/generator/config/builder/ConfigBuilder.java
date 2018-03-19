@@ -242,7 +242,7 @@ public class ConfigBuilder {
      * @param config    PackageConfig
      */
     private void handlerPackage(TemplateConfig template, String outputDir, PackageConfig config) {
-        packageInfo = new HashMap<>();
+        packageInfo = new HashMap<>(8);
         packageInfo.put(ConstVal.MODULENAME, config.getModuleName());
         packageInfo.put(ConstVal.ENTITY, joinPackage(config.getParent(), config.getEntity()));
         packageInfo.put(ConstVal.MAPPER, joinPackage(config.getParent(), config.getMapper()));
@@ -252,7 +252,7 @@ public class ConfigBuilder {
         packageInfo.put(ConstVal.CONTROLLER, joinPackage(config.getParent(), config.getController()));
 
         // 生成路径信息
-        pathInfo = new HashMap<>();
+        pathInfo = new HashMap<>(6);
         if (StringUtils.isNotEmpty(template.getEntity(getGlobalConfig().isKotlin()))) {
             pathInfo.put(ConstVal.ENTITY_PATH, joinPath(outputDir, packageInfo.get(ConstVal.ENTITY)));
         }
