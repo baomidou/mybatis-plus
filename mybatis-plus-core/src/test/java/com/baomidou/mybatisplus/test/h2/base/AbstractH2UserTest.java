@@ -89,7 +89,7 @@ public abstract class AbstractH2UserTest extends H2Test{
         int size = 3;
         Page<H2User> page = userService.selectPage(new Page<H2User>(1, size));
         Assert.assertEquals(size, page.getRecords().size());
-        int total = page.getTotal();
+        long total = page.getTotal();
         page = userService.selectPage(new Page<H2User>(2, size));
         if (total >= size * 2) {
             Assert.assertEquals(size, page.getRecords().size());

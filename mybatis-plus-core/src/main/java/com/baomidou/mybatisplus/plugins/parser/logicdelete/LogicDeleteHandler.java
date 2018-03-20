@@ -13,32 +13,23 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.generator.config.rules;
+package com.baomidou.mybatisplus.plugins.parser.logicdelete;
+
+import net.sf.jsqlparser.expression.Expression;
 
 /**
- * 数据库类型定义
+ * <p>
+ * 逻辑删除处理器
+ * </p>
  *
- * @author YangHu
- * @since 2016/8/30
+ * @author willenfoo
+ * @since 2018-03-09
  */
-public enum DbType {
-    MYSQL("mysql"),
-    ORACLE("oracle"),
-    SQL_SERVER("sql_server"),
-    POSTGRE_SQL("postgre_sql"),
-    OTHER("other db");
+public interface LogicDeleteHandler {
 
+    Expression getValue(String tableName);
 
-    private final String value;
+    String getColumn(String tableName);
 
-
-    DbType(String value) {
-        this.value = value;
-    }
-
-
-    public String getValue() {
-        return value;
-    }
-
+    boolean doTableFilter(String tableName);
 }

@@ -64,8 +64,13 @@ public class EntityWrapperTest {
          * 实体带where ifneed
 		 */
         ew.setEntity(new User(1));
-        ew.where("name={0}", "'123'").addFilterIfNeed(false, "id=12");
-        String sqlSegment = ew.originalSql();
+        ew.where("name={0}", "'123'");
+        // 测试克隆
+        String sqlSegment = ew.clone().eq("a", 1).originalSql();
+        Assert.assertEquals("AND (name=? AND a = ?)", sqlSegment);
+        System.err.println("test11-clone = " + sqlSegment);
+        ew.addFilterIfNeed(false, "id=12");
+        sqlSegment = ew.originalSql();
         System.err.println("test11 = " + sqlSegment);
         Assert.assertEquals("AND (name=?)", sqlSegment);
     }

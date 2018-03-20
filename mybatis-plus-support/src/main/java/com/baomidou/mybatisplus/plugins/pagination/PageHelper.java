@@ -38,7 +38,7 @@ public class PageHelper {
      * 获取总条数
      * </p>
      */
-    public static int getTotal() {
+    public static long getTotal() {
         if (isPageable()) {
             return LOCAL_PAGE.get().getTotal();
         } else {
@@ -79,8 +79,8 @@ public class PageHelper {
      * 释放资源并获取总条数
      * </p>
      */
-    public static int freeTotal() {
-        int total = getTotal();
+    public static long freeTotal() {
+        long total = getTotal();
         // 释放资源
         remove();
         return total;
