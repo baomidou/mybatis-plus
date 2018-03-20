@@ -432,8 +432,9 @@ public class StrategyConfig {
         return fieldPrefix;
     }
 
-    public void setFieldPrefix(String[] fieldPrefix) {
+    public StrategyConfig setFieldPrefix(String[] fieldPrefix) {
         this.fieldPrefix = fieldPrefix;
+        return this;
     }
 
     public StrategyConfig fieldPrefix(String... fieldPrefixs) {
