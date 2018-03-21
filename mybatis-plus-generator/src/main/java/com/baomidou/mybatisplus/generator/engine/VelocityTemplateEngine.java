@@ -40,7 +40,7 @@ import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
  */
 public class VelocityTemplateEngine extends AbstractTemplateEngine {
 
-    private static final String DOT_VM = ".vm" ;
+    private static final String DOT_VM = ".vm";
     private VelocityEngine velocityEngine;
 
     @Override
@@ -49,10 +49,10 @@ public class VelocityTemplateEngine extends AbstractTemplateEngine {
         if (null == velocityEngine) {
             Properties p = new Properties();
             p.setProperty(ConstVal.VM_LOADPATH_KEY, ConstVal.VM_LOADPATH_VALUE);
-            p.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, "" );
+            p.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, "");
             p.setProperty(Velocity.ENCODING_DEFAULT, ConstVal.UTF8);
             p.setProperty(Velocity.INPUT_ENCODING, ConstVal.UTF8);
-            p.setProperty("file.resource.loader.unicode" , "true" );
+            p.setProperty("file.resource.loader.unicode", "true");
             velocityEngine = new VelocityEngine(p);
         }
         return this;

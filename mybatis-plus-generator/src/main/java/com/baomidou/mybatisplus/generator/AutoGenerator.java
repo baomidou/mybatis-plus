@@ -83,7 +83,7 @@ public class AutoGenerator {
      * 生成代码
      */
     public void execute() {
-        logger.debug("==========================准备生成文件...==========================" );
+        logger.debug("==========================准备生成文件...==========================");
         // 初始化配置
         if (null == config) {
             config = new ConfigBuilder(packageInfo, dataSource, strategy, template, globalConfig);
@@ -97,7 +97,7 @@ public class AutoGenerator {
         }
         // 模板引擎初始化执行文件输出
         templateEngine.init(this.pretreatmentConfigBuilder(config)).mkdirs().batchOutput().open();
-        logger.debug("==========================文件生成完成！！！==========================" );
+        logger.debug("==========================文件生成完成！！！==========================");
     }
 
     /**
@@ -159,8 +159,8 @@ public class AutoGenerator {
             // Boolean类型is前缀处理
             if (config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix()) {
                 for (TableField field : tableInfo.getFields()) {
-                    if (field.getPropertyType().equalsIgnoreCase("boolean" )) {
-                        if (field.getPropertyName().startsWith("is" )) {
+                    if (field.getPropertyType().equalsIgnoreCase("boolean")) {
+                        if (field.getPropertyName().startsWith("is")) {
                             field.setPropertyName(config.getStrategyConfig(),
                                 StringUtils.removePrefixAfterPrefixToLower(field.getPropertyName(), 2));
                         }

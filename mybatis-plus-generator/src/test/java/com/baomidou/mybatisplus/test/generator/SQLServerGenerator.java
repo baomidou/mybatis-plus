@@ -35,14 +35,14 @@ public class SQLServerGenerator extends GeneratorTest {
 
         // 全局配置
         GlobalConfig gc = new GlobalConfig();
-        gc.setOutputDir("D://" );
+        gc.setOutputDir("D://");
         gc.setFileOverride(true);
         gc.setActiveRecord(true);// 开启 activeRecord 模式
         gc.setEnableCache(false);// XML 二级缓存
         gc.setBaseResultMap(true);// XML ResultMap
         gc.setBaseColumnList(false);// XML columList
         //gc.setKotlin(true) 是否生成 kotlin 代码
-        gc.setAuthor("nieqiurong" );
+        gc.setAuthor("nieqiurong");
 
         // 自定义文件命名，注意 %s 会自动填充表实体属性！
         // gc.setMapperName("%sDao");
@@ -63,17 +63,17 @@ public class SQLServerGenerator extends GeneratorTest {
                 return super.processTypeConvert(fieldType);
             }
         });
-        dsc.setDriverName("com.microsoft.sqlserver.jdbc.SQLServerDriver" );
-        dsc.setUsername("sa" );
-        dsc.setPassword("nieqiuqiu" );
-        dsc.setUrl("jdbc:sqlserver://192.168.1.105:1433;databaseName=mybatis-plus" );
+        dsc.setDriverName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+        dsc.setUsername("sa");
+        dsc.setPassword("nieqiuqiu");
+        dsc.setUrl("jdbc:sqlserver://192.168.1.105:1433;databaseName=mybatis-plus");
         mpg.setDataSource(dsc);
 
         // 策略配置
         StrategyConfig strategy = new StrategyConfig();
         // strategy.setCapitalMode(true);// 全局大写命名
         // strategy.setDbColumnUnderline(true);//全局下划线命名
-        strategy.setTablePrefix(new String[]{"bmd_" , "mp_"});// 此处可以修改为您的表前缀
+        strategy.setTablePrefix(new String[]{"bmd_", "mp_"});// 此处可以修改为您的表前缀
         strategy.setNaming(NamingStrategy.underline_to_camel);// 表名生成策略
         // strategy.setInclude(new String[] { "user" }); // 需要生成的表
         // strategy.setExclude(new String[]{"test"}); // 排除生成的表
@@ -99,9 +99,9 @@ public class SQLServerGenerator extends GeneratorTest {
 
         // 包配置
         PackageConfig pc = new PackageConfig();
-        pc.setModuleName("test" );
-        pc.setParent("com.baomidou" );// 自定义包路径
-        pc.setController("controller" );// 这里是控制器包名，默认 web
+        pc.setModuleName("test");
+        pc.setParent("com.baomidou");// 自定义包路径
+        pc.setController("controller");// 这里是控制器包名，默认 web
         mpg.setPackageInfo(pc);
 
         // 注入自定义配置，可以在 VM 中使用 cfg.abc 设置的值
@@ -109,16 +109,16 @@ public class SQLServerGenerator extends GeneratorTest {
             @Override
             public void initMap() {
                 Map<String, Object> map = new HashMap<>();
-                map.put("abc" , this.getConfig().getGlobalConfig().getAuthor() + "-mp" );
+                map.put("abc", this.getConfig().getGlobalConfig().getAuthor() + "-mp");
                 this.setMap(map);
             }
         };
         List<FileOutConfig> focList = new ArrayList<>();
-        focList.add(new FileOutConfig("/templates/entity.java" + ((1 == result) ? ".ftl" : ".vm" )) {
+        focList.add(new FileOutConfig("/templates/entity.java" + ((1 == result) ? ".ftl" : ".vm")) {
             @Override
             public String outputFile(TableInfo tableInfo) {
                 // 自定义输入文件名称
-                return "D://my_" + tableInfo.getEntityName() + ".java" ;
+                return "D://my_" + tableInfo.getEntityName() + ".java";
             }
         });
         cfg.setFileOutConfigList(focList);
@@ -140,7 +140,7 @@ public class SQLServerGenerator extends GeneratorTest {
         }
         mpg.execute();
         // 打印注入设置
-        System.err.println(mpg.getCfg().getMap().get("abc" ));
+        System.err.println(mpg.getCfg().getMap().get("abc"));
     }
 
 }

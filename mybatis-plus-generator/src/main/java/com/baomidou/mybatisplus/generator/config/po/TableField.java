@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.generator.config.po;
 
+import java.util.Map;
+
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
@@ -41,6 +43,10 @@ public class TableField {
     private DbColumnType columnType;
     private String comment;
     private String fill;
+    /**
+     * 自定义查询字段列表
+     */
+    private Map<String, Object> customMap;
 
     public boolean isConvert() {
         return convert;
@@ -156,5 +162,13 @@ public class TableField {
 
     public void setFill(String fill) {
         this.fill = fill;
+    }
+
+    public Map<String, Object> getCustomMap() {
+        return customMap;
+    }
+
+    public void setCustomMap(Map<String, Object> customMap) {
+        this.customMap = customMap;
     }
 }

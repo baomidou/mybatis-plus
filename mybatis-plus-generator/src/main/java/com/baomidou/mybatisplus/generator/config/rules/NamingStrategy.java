@@ -38,7 +38,7 @@ public enum NamingStrategy {
         // 快速检查
         if (StringUtils.isEmpty(name)) {
             // 没必要转换
-            return "" ;
+            return "";
         }
         String tempName = name;
         // 大写数字下划线组成转为小写 , 允许混合模式转为小写
@@ -74,11 +74,11 @@ public enum NamingStrategy {
      */
     public static String removePrefix(String name, String... prefix) {
         if (StringUtils.isEmpty(name)) {
-            return "" ;
+            return "";
         }
         if (null != prefix) {
             for (String pf : prefix) {
-                if (name.toLowerCase().matches("^" + pf.toLowerCase() + ".*" )) {
+                if (name.toLowerCase().matches("^" + pf.toLowerCase() + ".*")) {
                     // 判断是否有匹配的前缀，然后截取前缀
                     // 删除前缀
                     return name.substring(pf.length());
@@ -101,7 +101,7 @@ public enum NamingStrategy {
         }
         if (null != prefix) {
             for (String pf : prefix) {
-                if (name.toLowerCase().matches("^" + pf.toLowerCase() + ".*" )) {
+                if (name.toLowerCase().matches("^" + pf.toLowerCase() + ".*")) {
                     return true;
                 }
             }
@@ -130,7 +130,7 @@ public enum NamingStrategy {
         if (StringUtils.isNotEmpty(name)) {
             return name.substring(0, 1).toUpperCase() + name.substring(1);
         }
-        return "" ;
+        return "";
     }
 
 }

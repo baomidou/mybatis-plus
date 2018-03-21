@@ -43,7 +43,7 @@ public class FreemarkerTemplateEngine extends AbstractTemplateEngine {
         super.init(configBuilder);
         configuration = new Configuration();
         configuration.setDefaultEncoding(ConstVal.UTF8);
-        configuration.setClassForTemplateLoading(FreemarkerTemplateEngine.class, "/" );
+        configuration.setClassForTemplateLoading(FreemarkerTemplateEngine.class, "/");
         return this;
     }
 
@@ -61,7 +61,7 @@ public class FreemarkerTemplateEngine extends AbstractTemplateEngine {
     @Override
     public String templateFilePath(String filePath) {
         StringBuilder fp = new StringBuilder();
-        fp.append(filePath).append(".ftl" );
+        fp.append(filePath).append(".ftl");
         return fp.toString();
     }
 }

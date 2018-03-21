@@ -24,6 +24,10 @@ import com.baomidou.mybatisplus.generator.config.converts.MySqlTypeConvert;
 import com.baomidou.mybatisplus.generator.config.converts.OracleTypeConvert;
 import com.baomidou.mybatisplus.generator.config.converts.PostgreSqlTypeConvert;
 import com.baomidou.mybatisplus.generator.config.converts.SqlServerTypeConvert;
+import com.baomidou.mybatisplus.generator.config.querys.MySqlQuery;
+import com.baomidou.mybatisplus.generator.config.querys.OracleQuery;
+import com.baomidou.mybatisplus.generator.config.querys.PostgreSqlQuery;
+import com.baomidou.mybatisplus.generator.config.querys.SqlServerQuery;
 import com.baomidou.mybatisplus.generator.config.rules.DbType;
 
 /**
@@ -37,13 +41,17 @@ import com.baomidou.mybatisplus.generator.config.rules.DbType;
 public class DataSourceConfig {
 
     /**
+     * 数据库信息查询
+     */
+    private IDbQuery dbQuery;
+    /**
      * 数据库类型
      */
     private DbType dbType;
     /**
      * PostgreSQL schemaname
      */
-    private String schemaname = "public" ;
+    private String schemaname = "public";
     /**
      * 类型转换
      */
@@ -65,6 +73,32 @@ public class DataSourceConfig {
      */
     private String password;
 
+    public IDbQuery getDbQuery() {
+        if (null == dbQuery) {
+            switch (getDbType()) {
+                case ORACLE:
+                    dbQuery = new OracleQuery();
+                    break;
+                case SQL_SERVER:
+                    dbQuery = new SqlServerQuery();
+                    break;
+                case POSTGRE_SQL:
+                    dbQuery = new PostgreSqlQuery();
+                    break;
+                default:
+                    // 默认 MYSQL
+                    dbQuery = new MySqlQuery();
+                    break;
+            }
+        }
+        return dbQuery;
+    }
+
+    public DataSourceConfig setDbQuery(IDbQuery dbQuery) {
+        this.dbQuery = dbQuery;
+        return this;
+    }
+
     /**
      * 判断数据库类型
      *
@@ -72,14 +106,14 @@ public class DataSourceConfig {
      */
     public DbType getDbType() {
         if (null == dbType) {
-            if (driverName.contains("mysql" )) {
+            if (driverName.contains("mysql")) {
                 dbType = DbType.MYSQL;
-            } else if (driverName.contains("oracle" )) {
+            } else if (driverName.contains("oracle")) {
                 dbType = DbType.ORACLE;
-            } else if (driverName.contains("postgresql" )) {
+            } else if (driverName.contains("postgresql")) {
                 dbType = DbType.POSTGRE_SQL;
             } else {
-                throw new MybatisPlusException("Unknown type of database!" );
+                throw new MybatisPlusException("Unknown type of database!");
             }
         }
         return dbType;

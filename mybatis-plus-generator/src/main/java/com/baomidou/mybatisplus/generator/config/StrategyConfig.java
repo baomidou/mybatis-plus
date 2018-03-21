@@ -96,7 +96,7 @@ public class StrategyConfig {
      */
     private String superControllerClass;
 
-    /*
+    /**
      * 需要包含的表名（与exclude二选一配置）
      */
     private String[] include = null;
@@ -181,16 +181,6 @@ public class StrategyConfig {
         return isCapitalMode && StringUtils.isCapitalMode(word);
     }
 
-
-    public boolean isSkipView() {
-        return skipView;
-    }
-
-    public StrategyConfig setSkipView(boolean skipView) {
-        this.skipView = skipView;
-        return this;
-    }
-
     /**
      * <p>
      * 表名称包含指定前缀
@@ -219,6 +209,15 @@ public class StrategyConfig {
 
     public StrategyConfig setCapitalMode(boolean isCapitalMode) {
         this.isCapitalMode = isCapitalMode;
+        return this;
+    }
+
+    public boolean isSkipView() {
+        return skipView;
+    }
+
+    public StrategyConfig setSkipView(boolean skipView) {
+        this.skipView = skipView;
         return this;
     }
 
@@ -433,8 +432,9 @@ public class StrategyConfig {
         return fieldPrefix;
     }
 
-    public void setFieldPrefix(String[] fieldPrefix) {
+    public StrategyConfig setFieldPrefix(String[] fieldPrefix) {
         this.fieldPrefix = fieldPrefix;
+        return this;
     }
 
     public StrategyConfig fieldPrefix(String... fieldPrefixs) {
