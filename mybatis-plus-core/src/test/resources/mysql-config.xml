@@ -4,7 +4,7 @@
     <!--
      | 属性定义配置
      |
-     | 加载配置文件 resource="jdbc.properties" 
+     | 加载配置文件 resource="jdbc.properties"
      | 可以在本配置文件中使用 ${name} 来使用属性值
      | -->
     <!--
@@ -14,7 +14,7 @@
 </properties>
      | -->
 
-    <!-- 
+    <!--
      | 全局配置设置
      |
      | 可配置选项                                        默认值, 描述
@@ -37,14 +37,14 @@
 
     </settings>
 
-    <!-- 
+    <!--
      | 别名定义
      |
     <typeAliases>
-     	1、明确定义 
+     	1、明确定义
         <typeAlias type="com.baomidou.mybatisplus.test.mysql.entity.User" alias="User" />
-        
-     	2、扫描指定包下的实体 
+
+     	2、扫描指定包下的实体
         <package name="com.baomidou.mybatisplus.test.mysql.entity" />
     </typeAliases>
      | -->
@@ -81,7 +81,7 @@
             <!-- 数据库连接池 -->
             <dataSource type="POOLED">
                 <property name="driver" value="com.mysql.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql://localhost:3306/mybatis-plus?useUnicode=true&characterEncoding=UTF-8"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/mybatis-plus?useUnicode=true&amp;characterEncoding=UTF-8"/>
                 <property name="username" value="root"/>
                 <property name="password" value="521"/>
                 <property name="poolMaximumActiveConnections" value="100"/>
