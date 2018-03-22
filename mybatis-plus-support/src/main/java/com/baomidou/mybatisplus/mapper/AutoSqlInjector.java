@@ -25,13 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.baomidou.mybatisplus.toolkit.ArrayUtils;
-import com.baomidou.mybatisplus.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.toolkit.PluginUtils;
-import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -55,6 +48,13 @@ import com.baomidou.mybatisplus.enums.FieldFill;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.enums.SqlMethod;
+import com.baomidou.mybatisplus.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.toolkit.PluginUtils;
+import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
+import com.baomidou.mybatisplus.toolkit.StringUtils;
+import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 
 /**
  * <p>
@@ -98,19 +98,17 @@ public class AutoSqlInjector implements ISqlInjector {
         this.configuration = builderAssistant.getConfiguration();
         this.builderAssistant = builderAssistant;
         this.languageDriver = configuration.getDefaultScriptingLanguageInstance();
-        /**
-         * 驼峰设置 PLUS 配置 > 原始配置
-		 */
-        GlobalConfiguration globalCache = this.getGlobalConfig();
-        if (!globalCache.isDbColumnUnderline()) {
+
+        //去除 驼峰设置 PLUS 配置 > 原生配置 (该配置不需要与原生Mybatis混淆)
+        /*if (!globalCache.isDbColumnUnderline()) {
             globalCache.setDbColumnUnderline(configuration.isMapUnderscoreToCamelCase());
-        }
+        }*/
         Class<?> modelClass = extractModelClass(mapperClass);
         if (null != modelClass) {
             /**
              * 初始化 SQL 解析
              */
-            if (globalCache.isSqlParserCache()) {
+            if (this.getGlobalConfig().isSqlParserCache()) {
                 PluginUtils.initSqlParserInfoCache(mapperClass);
             }
             TableInfo table = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
