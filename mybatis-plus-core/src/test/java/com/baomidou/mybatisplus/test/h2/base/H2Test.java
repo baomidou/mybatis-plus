@@ -36,13 +36,24 @@ public class H2Test {
     }
 
     public static void initData(Connection conn) throws SQLException, IOException {
-        String createTableSql = readFile("user.ddl.sql");
+//        String createTableSql = readFile("user.ddl.sql");
+//        Statement stmt = conn.createStatement();
+//        stmt.execute(createTableSql);
+//        stmt.execute("truncate table h2user");
+//        executeSql(stmt, "user.insert.sql");
+//        conn.commit();
+        initData(conn, "user.ddl.sql", "user.insert.sql", "h2user");
+    }
+
+    public static void initData(Connection conn, String ddlFileName, String insertFileName, String tableName) throws SQLException, IOException {
+        String createTableSql = readFile(ddlFileName);
         Statement stmt = conn.createStatement();
         stmt.execute(createTableSql);
-        stmt.execute("truncate table h2user");
-        executeSql(stmt, "user.insert.sql");
+        stmt.execute("truncate table "+tableName);
+        executeSql(stmt, insertFileName);
         conn.commit();
     }
+
 
     public static String readFile(String filename) {
         StringBuilder builder = new StringBuilder();

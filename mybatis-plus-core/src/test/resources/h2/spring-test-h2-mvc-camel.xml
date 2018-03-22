@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+    <context:component-scan base-package="com.baomidou.mybatisplus.test.h2.service"/>
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+        <property name="driverClass" value="org.h2.Driver"/>
+        <property name="url" value="jdbc:h2:mem:test;MODE=mysql;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"/>
+        <property name="username" value="sa"/>
+        <property name="password" value=""/>
+    </bean>
+
+    <bean id="sqlSessionFactory" class="com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="typeAliasesPackage" value="com.baomidou.mybatisplus.test.h2.entity"/>
+        <property name="configuration" ref="mybatisConfig"/>
+        <!-- MP 全局配置注入 -->
+        <property name="globalConfig" ref="globalConfig"/>
+        <property name="plugins">
+            <array>
+                <!-- 分页插件配置 -->
+                <bean id="paginationInterceptor"
+                      class="com.baomidou.mybatisplus.plugins.PaginationInterceptor"/>
+                <bean id="optimisticLockerInterceptor"
+                      class="com.baomidou.mybatisplus.plugins.OptimisticLockerInterceptor">
+                </bean>
+                <bean id="performanceInterceptor"
+                      class="com.baomidou.mybatisplus.plugins.PerformanceInterceptor"/>
+            </array>
+        </property>
+    </bean>
+
+	<bean id="mybatisMapWrapperFactory" class="com.baomidou.mybatisplus.MybatisMapWrapperFactory"/>
+
+    <bean id="mybatisConfig" class="com.baomidou.mybatisplus.MybatisConfiguration">
+        <property name="mapUnderscoreToCamelCase" value="true"/>
+        <property name="jdbcTypeForNull">
+            <util:constant static-field="org.apache.ibatis.type.JdbcType.NULL"/>
+        </property>
+		<property name="objectWrapperFactory" ref="mybatisMapWrapperFactory"/>
+    </bean>
+
+    <bean id="globalConfig" class="com.baomidou.mybatisplus.entity.GlobalConfiguration">
+        <!-- 逻辑删除 定义下面3个参数-->
+        <property name="sqlInjector" ref="logicSqlInjector"/>
+        <property name="logicDeleteValue" value="-1"/>
+        <property name="logicNotDeleteValue" value="1"/>
+        <!-- 全局ID类型： 0, "数据库ID自增"， 1, "用户输入ID", 2, "全局唯一ID", 3, "全局唯一ID"-->
+        <property name="idType" value="2"/>
+        <property name="dbColumnUnderline" value="false"/>
+        <!-- 2.1-gamma+ 数据库自动识别，无需配置数据库类型
+        <property name="dbType" value="mysql" />
+        -->
+        <!--主键Sequence-->
+        <!--<property name="keyGenerator" ref="keyGenerator"/>-->
+        <!-- 公共字段填充处理器 -->
+        <property name="metaObjectHandler" ref="myMetaObjectHandler"/>
+        <!--数据库关键字转义符，'desc', "desc" 2.1-gamma+不需要制定-->
+        <!--<property name="identifierQuote" value="'" />-->
+    </bean>
+
+    <!-- 配置oracle主键Sequence， 其他类型数据库，请配置相应的类型-->
+    <!--<bean id="keyGenerator" class="com.baomidou.mybatisplus.incrementer.OracleKeyGenerator"/>-->
+
+    <!-- 自定义处理器 -->
+    <bean id="myMetaObjectHandler" class="com.baomidou.mybatisplus.test.h2.H2MetaObjectHandler"/>
+    <bean id="logicSqlInjector" class="com.baomidou.mybatisplus.mapper.LogicSqlInjector"/>
+
+    <!-- 配置mybatis 扫描mapper接口的路径-->
+    <bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.baomidou.mybatisplus.test.h2.entity.mapper"/>
+    </bean>
+</beans>
