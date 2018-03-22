@@ -98,13 +98,11 @@ public class AutoSqlInjector implements ISqlInjector {
         this.configuration = builderAssistant.getConfiguration();
         this.builderAssistant = builderAssistant;
         this.languageDriver = configuration.getDefaultScriptingLanguageInstance();
-        /**
-         * 驼峰设置 PLUS 配置 > 原始配置
-         */
-        GlobalConfiguration globalCache = this.getGlobalConfig();
-        if (!globalCache.isDbColumnUnderline()) {
+
+        //去除 驼峰设置 PLUS 配置 > 原生配置 (该配置不需要与原生Mybatis混淆)
+        /*if (!globalCache.isDbColumnUnderline()) {
             globalCache.setDbColumnUnderline(configuration.isMapUnderscoreToCamelCase());
-        }
+        }*/
         Class<?> modelClass = extractModelClass(mapperClass);
         if (null != modelClass) {
             /**
