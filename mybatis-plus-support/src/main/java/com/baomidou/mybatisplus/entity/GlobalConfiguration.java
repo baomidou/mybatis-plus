@@ -61,9 +61,9 @@ public class GlobalConfiguration implements Serializable {
      */
     private IdType idType = IdType.ID_WORKER;
     /**
-     * 表名、字段名、是否使用下划线命名（默认 false）
+     * 表名、字段名、是否使用下划线命名（默认 true: 数据库下划线命名）
      */
-    private boolean dbColumnUnderline = false;
+    private boolean dbColumnUnderline = true;
     /**
      * SQL注入器
      */
