@@ -235,7 +235,7 @@ public class H2UserTest extends AbstractH2UserTest {
         param.put("ageTo", 100);
         Page<H2User> page = new Page<H2User>(0, 10);
         userMapper.selectUserWithDollarParamInSelectStatememt4Page(param, page);
-        Assert.assertNotEquals(0, page.getTotal());
+        Assert.assertNotEquals(0L, page.getTotal());
 
     }
 

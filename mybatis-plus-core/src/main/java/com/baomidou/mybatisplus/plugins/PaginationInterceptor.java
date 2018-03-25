@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2011-2020, hubin (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -157,17 +157,17 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             DefaultParameterHandler parameterHandler = new MybatisDefaultParameterHandler(mappedStatement, boundSql.getParameterObject(), boundSql);
             parameterHandler.setParameters(statement);
-            int total = 0;
+            long total = 0;
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    total = resultSet.getInt(1);
+                    total = resultSet.getLong(1);
                 }
             }
             page.setTotal(total);
             /*
              * 溢出总页数，设置第一页
              */
-            int pages = page.getPages();
+            long pages = page.getPages();
             if (overflowCurrent && (page.getCurrent() > pages)) {
                 // 设置为第一条
                 page.setCurrent(1);

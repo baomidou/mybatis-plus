@@ -1,5 +1,20 @@
 ﻿# CHANGELOG
 
+## [v2.2.0] 2018.03.21
+- 升级 mybatis 3.4.6
+- 升级 mybatis-spring 1.3.2
+- IGKLA:activeRecord模式下，乐观锁不支持 修复activeRecord模式下，乐观锁不支持
+- fixed github issues/236 可配置视图跳过
+- fixed gitee issues/IHN8Y
+- fixed gitee issues/IHUIJ
+- fixed github issues/241 支持 wrapper clone
+- 逻辑删除，支持全update、select类型SQL自动添加逻辑删除字段
+- 重构生成器 QuerySQL 可自定义查询表字段大小等信息
+- 生成器其定义关闭默认模块优化
+- 新增代码生成器基本类型
+- 不存在文件夹递归生成支持
+
+
 ## [v2.1.9] 2018.01.28 代号：怀念（纪念 2017 baomidou 组织小伙伴 MP 共同成长之路，奔向 2018 旺旺旺）
 - page 分页新增控制是否优化 Count Sql 设置
 ```

@@ -24,6 +24,10 @@ import com.baomidou.mybatisplus.generator.config.converts.MySqlTypeConvert;
 import com.baomidou.mybatisplus.generator.config.converts.OracleTypeConvert;
 import com.baomidou.mybatisplus.generator.config.converts.PostgreSqlTypeConvert;
 import com.baomidou.mybatisplus.generator.config.converts.SqlServerTypeConvert;
+import com.baomidou.mybatisplus.generator.config.querys.MySqlQuery;
+import com.baomidou.mybatisplus.generator.config.querys.OracleQuery;
+import com.baomidou.mybatisplus.generator.config.querys.PostgreSqlQuery;
+import com.baomidou.mybatisplus.generator.config.querys.SqlServerQuery;
 import com.baomidou.mybatisplus.generator.config.rules.DbType;
 
 /**
@@ -36,6 +40,10 @@ import com.baomidou.mybatisplus.generator.config.rules.DbType;
  */
 public class DataSourceConfig {
 
+    /**
+     * 数据库信息查询
+     */
+    private IDbQuery dbQuery;
     /**
      * 数据库类型
      */
@@ -64,6 +72,32 @@ public class DataSourceConfig {
      * 数据库连接密码
      */
     private String password;
+
+    public IDbQuery getDbQuery() {
+        if (null == dbQuery) {
+            switch (getDbType()) {
+                case ORACLE:
+                    dbQuery = new OracleQuery();
+                    break;
+                case SQL_SERVER:
+                    dbQuery = new SqlServerQuery();
+                    break;
+                case POSTGRE_SQL:
+                    dbQuery = new PostgreSqlQuery();
+                    break;
+                default:
+                    // 默认 MYSQL
+                    dbQuery = new MySqlQuery();
+                    break;
+            }
+        }
+        return dbQuery;
+    }
+
+    public DataSourceConfig setDbQuery(IDbQuery dbQuery) {
+        this.dbQuery = dbQuery;
+        return this;
+    }
 
     /**
      * 判断数据库类型
