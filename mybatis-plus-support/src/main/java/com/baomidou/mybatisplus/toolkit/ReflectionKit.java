@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.toolkit;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -211,5 +212,35 @@ public class ReflectionKit {
             }
         }
         return fieldList;
+    }
+
+    /**
+     * 获取对象中包含有annotation的属性值
+     *
+     * @param obj             对象
+     * @param annotationClass 对象属性上的注解
+     */
+    public static <T, V> V getAttr(T obj, Class<? extends Annotation> annotationClass) {
+        List<Field> fieldList = getFieldList(obj.getClass());
+
+        Field idField = null;
+        for (Field field : fieldList) {
+            if (null != field.getAnnotation(annotationClass)) {
+                idField = field;
+            }
+        }
+
+        if (idField == null) {
+            throw new RuntimeException("not found field annotation");
+        }
+
+        idField.setAccessible(true);
+        V val;
+        try {
+            val = (V) idField.get(obj);
+        } catch (Exception e) {
+            throw new RuntimeException("get object value failure");
+        }
+        return val;
     }
 }

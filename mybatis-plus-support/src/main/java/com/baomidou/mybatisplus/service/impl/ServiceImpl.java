@@ -17,9 +17,11 @@ package com.baomidou.mybatisplus.service.impl;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.annotations.TableId;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -160,7 +162,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 } else {
                     /*
                      * 更新成功直接返回，失败执行插入逻辑
-					 */
+                     */
                     return updateById(entity) || insert(entity);
                 }
             } else {
@@ -183,7 +185,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 } else {
                     /*
                      * 更新成功直接返回，失败执行插入逻辑
-					 */
+                     */
                     return updateAllColumnById(entity) || insertAllColumn(entity);
                 }
             } else {
@@ -354,8 +356,18 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     @Override
+    public T selectByIdIgnoreLogic(Serializable id) {
+        return baseMapper.selectByIdIgnoreLogic(id);
+    }
+
+    @Override
     public List<T> selectBatchIds(Collection<? extends Serializable> idList) {
         return baseMapper.selectBatchIds(idList);
+    }
+
+    @Override
+    public List<T> selectBatchIdsIgnoreLogic(Collection<? extends Serializable> idList) {
+        return baseMapper.selectBatchIdsIgnoreLogic(idList);
     }
 
     @Override
@@ -405,15 +417,28 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
     @Override
     public Page<Map<String, Object>> selectMapsPage(Page page, Wrapper<T> wrapper) {
-        wrapper = (Wrapper<T>) SqlHelper.fillWrapper(page,  wrapper);
+        wrapper = (Wrapper<T>) SqlHelper.fillWrapper(page, wrapper);
         page.setRecords(baseMapper.selectMapsPage(page, wrapper));
         return page;
     }
 
     @Override
     public Page<T> selectPage(Page<T> page, Wrapper<T> wrapper) {
-        wrapper = (Wrapper<T>) SqlHelper.fillWrapper(page,  wrapper);
+        wrapper = (Wrapper<T>) SqlHelper.fillWrapper(page, wrapper);
         page.setRecords(baseMapper.selectPage(page, wrapper));
         return page;
+    }
+
+    @Override
+    public Map<Serializable, T> selectMap(Collection<? extends Serializable> idList) {
+        List<T> list = selectBatchIds(idList);
+
+        Map<Serializable, T> map = new HashMap<>(list.size());
+
+        for (T item : list) {
+            Serializable key = ReflectionKit.getAttr(item, TableId.class);
+            map.put(key, item);
+        }
+        return map;
     }
 }

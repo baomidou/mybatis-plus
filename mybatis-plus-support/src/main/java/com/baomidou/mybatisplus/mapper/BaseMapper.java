@@ -139,6 +139,16 @@ public interface BaseMapper<T> {
 
     /**
      * <p>
+     * 根据 ID 查询(忽略逻辑删除)
+     * </p>
+     *
+     * @param id 主键ID
+     * @return T
+     */
+    T selectByIdIgnoreLogic(Serializable id);
+
+    /**
+     * <p>
      * 查询（根据ID 批量查询）
      * </p>
      *
@@ -146,6 +156,16 @@ public interface BaseMapper<T> {
      * @return List<T>
      */
     List<T> selectBatchIds(@Param("coll") Collection<? extends Serializable> idList);
+
+    /**
+     * <p>
+     * 查询（根据ID 批量查询）(忽略逻辑删除)
+     * </p>
+     *
+     * @param idList 主键ID列表
+     * @return List<T>
+     */
+    List<T> selectBatchIdsIgnoreLogic(@Param("coll") Collection<? extends Serializable> idList);
 
     /**
      * <p>
