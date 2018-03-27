@@ -51,9 +51,9 @@ public class LogicSqlInjector extends AutoSqlInjector {
             if (batch) {
                 sqlMethod = SqlMethod.LOGIC_DELETE_BATCH_BY_IDS;
                 StringBuilder ids = new StringBuilder();
-                ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"coll\" separator=\",\">" );
-                ids.append("#{item}" );
-                ids.append("\n</foreach>" );
+                ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"coll\" separator=\",\">");
+                ids.append("#{item}");
+                ids.append("\n</foreach>");
                 idStr = ids.toString();
             }
             String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlLogicSet(table),
@@ -120,9 +120,9 @@ public class LogicSqlInjector extends AutoSqlInjector {
             if (batch) {
                 sqlMethod = SqlMethod.LOGIC_SELECT_BATCH_BY_IDS;
                 StringBuilder ids = new StringBuilder();
-                ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"coll\" separator=\",\">" );
-                ids.append("#{item}" );
-                ids.append("\n</foreach>" );
+                ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"coll\" separator=\",\">");
+                ids.append("#{item}");
+                ids.append("\n</foreach>");
                 sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false),
                     table.getTableName(), table.getKeyColumn(), ids.toString(), getLogicDeleteSql(table)), modelClass);
             } else {
@@ -149,7 +149,7 @@ public class LogicSqlInjector extends AutoSqlInjector {
     protected void injectUpdateByIdSql(boolean selective, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
         if (table.isLogicDelete()) {
             SqlMethod sqlMethod = selective ? SqlMethod.LOGIC_UPDATE_BY_ID : SqlMethod.LOGIC_UPDATE_ALL_COLUMN_BY_ID;
-            String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlSet(selective, table, "et." ),
+            String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlSet(selective, table, "et."),
                 table.getKeyColumn(),
                 "et." + table.getKeyProperty(),
                 "<if test=\"et instanceof java.util.Map\">" +
@@ -179,11 +179,11 @@ public class LogicSqlInjector extends AutoSqlInjector {
         List<TableFieldInfo> fieldList = table.getFieldList();
         for (TableFieldInfo fieldInfo : fieldList) {
             if (fieldInfo.isLogicDelete()) {
-                sql.append(" AND " ).append(fieldInfo.getColumn());
+                sql.append(" AND ").append(fieldInfo.getColumn());
                 if (StringUtils.isCharSequence(fieldInfo.getPropertyType())) {
-                    sql.append("='" ).append(fieldInfo.getLogicNotDeleteValue()).append("'" );
+                    sql.append("='").append(fieldInfo.getLogicNotDeleteValue()).append("'");
                 } else {
-                    sql.append("=" ).append(fieldInfo.getLogicNotDeleteValue());
+                    sql.append("=").append(fieldInfo.getLogicNotDeleteValue());
                 }
             }
         }
@@ -200,16 +200,16 @@ public class LogicSqlInjector extends AutoSqlInjector {
      */
     protected String sqlLogicSet(TableInfo table) {
         List<TableFieldInfo> fieldList = table.getFieldList();
-        StringBuilder set = new StringBuilder("SET " );
+        StringBuilder set = new StringBuilder("SET ");
         int i = 0;
         for (TableFieldInfo fieldInfo : fieldList) {
             if (fieldInfo.isLogicDelete()) {
                 if (++i > 1) {
-                    set.append("," );
+                    set.append(",");
                 }
-                set.append(fieldInfo.getColumn()).append("=" );
+                set.append(fieldInfo.getColumn()).append("=");
                 if (StringUtils.isCharSequence(fieldInfo.getPropertyType())) {
-                    set.append("'" ).append(fieldInfo.getLogicDeleteValue()).append("'" );
+                    set.append("'").append(fieldInfo.getLogicDeleteValue()).append("'");
                 } else {
                     set.append(fieldInfo.getLogicDeleteValue());
                 }
@@ -223,25 +223,25 @@ public class LogicSqlInjector extends AutoSqlInjector {
     @Override
     protected String sqlWhere(TableInfo table) {
         if (table.isLogicDelete()) {
-            StringBuilder where = new StringBuilder("\n<where>" );
+            StringBuilder where = new StringBuilder("\n<where>");
             // 过滤逻辑
             List<TableFieldInfo> fieldList = table.getFieldList();
             // EW 逻辑
             if (StringUtils.isNotEmpty(table.getKeyProperty())) {
-                where.append("\n<if test=\"ew." ).append(table.getKeyProperty()).append("!=null\">" );
-                where.append(" AND " ).append(table.getKeyColumn()).append("=#{ew." );
-                where.append(table.getKeyProperty()).append("}" );
-                where.append("</if>" );
+                where.append("\n<if test=\"ew.").append(table.getKeyProperty()).append("!=null\">");
+                where.append(" AND ").append(table.getKeyColumn()).append("=#{ew.");
+                where.append(table.getKeyProperty()).append("}");
+                where.append("</if>");
             }
             for (TableFieldInfo fieldInfo : fieldList) {
-                where.append(convertIfTag(fieldInfo, "ew." , false));
-                where.append(" AND " ).append(this.sqlCondition(fieldInfo.getCondition(),
+                where.append(convertIfTag(fieldInfo, "ew.", false));
+                where.append(" AND ").append(this.sqlCondition(fieldInfo.getCondition(),
                     fieldInfo.getColumn(), "ew." + fieldInfo.getEl()));
                 where.append(convertIfTag(fieldInfo, true));
             }
             // 过滤逻辑
-            where.append("\n" ).append(getLogicDeleteSql(table));
-            where.append("\n</where>" );
+            where.append("\n").append(getLogicDeleteSql(table));
+            where.append("\n</where>");
             return where.toString();
         }
         // 正常逻辑
@@ -252,29 +252,29 @@ public class LogicSqlInjector extends AutoSqlInjector {
     protected String sqlWhereEntityWrapper(TableInfo table) {
         if (table.isLogicDelete()) {
             StringBuilder where = new StringBuilder(128);
-            where.append("\n<where>" );
-            where.append("\n<choose><when test=\"ew!=null\">" );
-            where.append("\n<if test=\"ew.entity!=null\">" );
+            where.append("\n<where>");
+            where.append("\n<choose><when test=\"ew!=null\">");
+            where.append("\n<if test=\"ew.entity!=null\">");
             if (StringUtils.isNotEmpty(table.getKeyProperty())) {
-                where.append("\n<if test=\"ew.entity." ).append(table.getKeyProperty()).append("!=null\">" );
-                where.append(" AND " ).append(table.getKeyColumn()).append("=#{ew.entity." );
-                where.append(table.getKeyProperty()).append("}" );
-                where.append("</if>" );
+                where.append("\n<if test=\"ew.entity.").append(table.getKeyProperty()).append("!=null\">");
+                where.append(" AND ").append(table.getKeyColumn()).append("=#{ew.entity.");
+                where.append(table.getKeyProperty()).append("}");
+                where.append("</if>");
             }
             List<TableFieldInfo> fieldList = table.getFieldList();
             for (TableFieldInfo fieldInfo : fieldList) {
-                where.append(convertIfTag(fieldInfo, "ew.entity." , false));
-                where.append(" AND " ).append(this.sqlCondition(fieldInfo.getCondition(),
+                where.append(convertIfTag(fieldInfo, "ew.entity.", false));
+                where.append(" AND ").append(this.sqlCondition(fieldInfo.getCondition(),
                     fieldInfo.getColumn(), "ew.entity." + fieldInfo.getEl()));
                 where.append(convertIfTag(fieldInfo, true));
             }
-            where.append("\n</if>" );
-            where.append("\n" ).append(getLogicDeleteSql(table));
-            where.append("\n<if test=\"ew.sqlSegment!=null\">${ew.sqlSegment}\n</if>" );
-            where.append("\n</when><otherwise>" );
-            where.append("\n" ).append(getLogicDeleteSql(table));
-            where.append("\n</otherwise></choose>" );
-            where.append("\n</where>" );
+            where.append("\n</if>");
+            where.append("\n").append(getLogicDeleteSql(table));
+            where.append("\n<if test=\"ew.sqlSegment!=null\">${ew.sqlSegment}\n</if>");
+            where.append("\n</when><otherwise>");
+            where.append("\n").append(getLogicDeleteSql(table));
+            where.append("\n</otherwise></choose>");
+            where.append("\n</where>");
             return where.toString();
         }
         // 正常逻辑
@@ -285,20 +285,20 @@ public class LogicSqlInjector extends AutoSqlInjector {
     protected String sqlWhereByMap(TableInfo table) {
         if (table.isLogicDelete()) {
             StringBuilder where = new StringBuilder();
-            where.append("\n<where>" );
+            where.append("\n<where>");
             // MAP 逻辑
-            where.append("\n<if test=\"cm!=null and !cm.isEmpty\">" );
-            where.append("\n<foreach collection=\"cm.keys\" item=\"k\" separator=\"AND\">" );
-            where.append("\n<if test=\"cm[k] != null\">" );
+            where.append("\n<if test=\"cm!=null and !cm.isEmpty\">");
+            where.append("\n<foreach collection=\"cm.keys\" item=\"k\" separator=\"AND\">");
+            where.append("\n<if test=\"cm[k] != null\">");
 //            where.append(SqlReservedWords.convert(getGlobalConfig(), "\n${k}")).append(" = #{cm[${k}]}");
             //TODO: 3.0
-            where.append(getGlobalConfig().getReservedWordsHandler().convert(getGlobalConfig(), "\n${k}" )).append(" = #{cm[${k}]}" );
-            where.append("</if>" );
-            where.append("\n</foreach>" );
-            where.append("\n</if>" );
+            where.append(getGlobalConfig().getReservedWordsHandler().convert(getGlobalConfig(), "\n${k}")).append(" = #{cm[${k}]}");
+            where.append("</if>");
+            where.append("\n</foreach>");
+            where.append("\n</if>");
             // 过滤逻辑
-            where.append("\n" ).append(getLogicDeleteSql(table));
-            where.append("\n</where>" );
+            where.append("\n").append(getLogicDeleteSql(table));
+            where.append("\n</where>");
             return where.toString();
         }
         // 正常逻辑

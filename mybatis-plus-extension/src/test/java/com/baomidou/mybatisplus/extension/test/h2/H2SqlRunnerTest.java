@@ -44,9 +44,9 @@ public class H2SqlRunnerTest extends H2Test {
 
     @BeforeClass
     public static void initDB() throws SQLException, IOException {
-        @SuppressWarnings("resource" )
-        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:h2/spring-test-h2.xml" );
-        DataSource ds = (DataSource) context.getBean("dataSource" );
+        @SuppressWarnings("resource")
+        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:h2/spring-test-h2.xml");
+        DataSource ds = (DataSource) context.getBean("dataSource");
         try (Connection conn = ds.getConnection()) {
             initData(conn);
         }
@@ -54,7 +54,7 @@ public class H2SqlRunnerTest extends H2Test {
 
     @Test
     public void testSelect() {
-        List<Map<String, Object>> list = SqlRunner.db().selectList("select * from h2user where test_type={0}" , 1);
+        List<Map<String, Object>> list = SqlRunner.db().selectList("select * from h2user where test_type={0}", 1);
         for (Map<String, Object> map : list) {
             System.out.println(JSONObject.toJSON(map));
         }
@@ -62,48 +62,48 @@ public class H2SqlRunnerTest extends H2Test {
 
     @Test
     public void testInsert() {
-        SqlRunner.db().insert("insert into h2user(name,age,test_type,test_date,version) values ({0},{1},{2},{3},{4})" ,
-            "Kshen" , 19, 1, null, 1);
-        Object obj = SqlRunner.db().selectObj("select name,test_id from h2user where name={0}" , "Kshen" );
+        SqlRunner.db().insert("insert into h2user(name,age,test_type,test_date,version) values ({0},{1},{2},{3},{4})",
+            "Kshen", 19, 1, null, 1);
+        Object obj = SqlRunner.db().selectObj("select name,test_id from h2user where name={0}", "Kshen");
         Assert.assertNotNull(obj);
-        Assert.assertEquals("only return first column's value" , "Kshen" , obj);
+        Assert.assertEquals("only return first column's value", "Kshen", obj);
         System.out.println(obj);
     }
 
     @Test
     public void testUpdate() {
-        List<Map<String, Object>> list = SqlRunner.db().selectList("select * from h2user where test_type={0}" , 1);
+        List<Map<String, Object>> list = SqlRunner.db().selectList("select * from h2user where test_type={0}", 1);
         Map<String, Object> user1 = list.get(0);
         System.out.println(JSONObject.toJSON(user1));
-        Long testId = (Long) user1.get("TEST_ID" );
-        String name = (String) user1.get("NAME" );
+        Long testId = (Long) user1.get("TEST_ID");
+        String name = (String) user1.get("NAME");
         Assert.assertNotNull(testId);
         Assert.assertNotNull(name);
-        SqlRunner.db().update("update h2user set name={0} where test_id={1}" , "Kshen" , testId);
-        list = SqlRunner.db().selectList("select * from h2user where test_id={0}" , testId);
+        SqlRunner.db().update("update h2user set name={0} where test_id={1}", "Kshen", testId);
+        list = SqlRunner.db().selectList("select * from h2user where test_id={0}", testId);
         user1 = list.get(0);
         System.out.println(JSONObject.toJSON(user1));
-        Assert.assertNotEquals("name should be updated" , name, user1.get("NAME" ));
+        Assert.assertNotEquals("name should be updated", name, user1.get("NAME"));
     }
 
     @Test
     public void testDelete() {
-        List<Map<String, Object>> list = SqlRunner.db().selectList("select * from h2user where test_type={0}" , 1);
+        List<Map<String, Object>> list = SqlRunner.db().selectList("select * from h2user where test_type={0}", 1);
         Map<String, Object> user1 = list.get(0);
         System.out.println(JSONObject.toJSON(user1));
-        Long testId = (Long) user1.get("TEST_ID" );
-        SqlRunner.db().delete("delete from h2user where test_id={0}" , testId);
-        list = SqlRunner.db().selectList("select * from h2user where test_id={0}" , testId);
-        Assert.assertTrue("this record should be deleted" , list == null || list.isEmpty());
+        Long testId = (Long) user1.get("TEST_ID");
+        SqlRunner.db().delete("delete from h2user where test_id={0}", testId);
+        list = SqlRunner.db().selectList("select * from h2user where test_id={0}", testId);
+        Assert.assertTrue("this record should be deleted", list == null || list.isEmpty());
     }
 
     @Test
     public void testSelectObjs() {
-        List<Object> list = SqlRunner.db().selectObjs("select name,test_id from h2user" );
-        Assert.assertTrue("only return first column value" , list.get(0) instanceof String);
+        List<Object> list = SqlRunner.db().selectObjs("select name,test_id from h2user");
+        Assert.assertTrue("only return first column value", list.get(0) instanceof String);
 
-        list = SqlRunner.db().selectObjs("select test_id,name from h2user" );
-        Assert.assertTrue("only return first column value" , list.get(0) instanceof Long);
+        list = SqlRunner.db().selectObjs("select test_id,name from h2user");
+        Assert.assertTrue("only return first column value", list.get(0) instanceof Long);
     }
 
 }

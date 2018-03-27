@@ -21,9 +21,9 @@ public final class RandomUtils {
     private static final Logger log = LoggerFactory.getLogger(RandomUtils.class);
 
     private static final Random RANDOM = new Random();
-    private static final String STRING_AND_NUMBER = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" ;
-    private static final String STRING = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" ;
-    private static final String NUMBER = "0123456789" ;
+    private static final String STRING_AND_NUMBER = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    private static final String STRING = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final String NUMBER = "0123456789";
 
     private RandomUtils() {
     }
@@ -43,9 +43,9 @@ public final class RandomUtils {
                 byte[] b = new byte[2];
                 b[0] = highPos.byteValue();
                 b[1] = lowPos.byteValue();
-                sb.append(new String(b, "GBK" ));
+                sb.append(new String(b, "GBK"));
             } catch (UnsupportedEncodingException e) {
-                log.error("转换字符为GBK失败" , e);
+                log.error("转换字符为GBK失败", e);
             }
         }
         return sb.toString();
@@ -66,7 +66,7 @@ public final class RandomUtils {
      * @return 32位UUID字符串，去除"-"
      */
     public static String random32UUID() {
-        return randomUUID().replace("-" , "" );
+        return randomUUID().replace("-", "");
     }
 
     /**

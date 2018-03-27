@@ -29,7 +29,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
  * @author sjy
  * @Date 2016-09-09
  */
-@TableName(resultMap = "RoleMap" )
+@TableName(resultMap = "RoleMap")
 public class Role implements Serializable {
 
     @TableField(exist = false)

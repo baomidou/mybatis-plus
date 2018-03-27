@@ -11,7 +11,7 @@ import com.baomidou.mybatisplus.annotation.SqlParser;
 
 public class SqlParserHelper {
 
-    public static final String DELEGATE_MAPPED_STATEMENT = "delegate.mappedStatement" ;
+    public static final String DELEGATE_MAPPED_STATEMENT = "delegate.mappedStatement";
     /**
      * SQL 解析缓存
      */
@@ -31,7 +31,7 @@ public class SqlParserHelper {
             SqlParser sqlParser = method.getAnnotation(SqlParser.class);
             if (null != sqlParser) {
                 StringBuilder sid = new StringBuilder();
-                sid.append(mapperClass.getName()).append("." ).append(method.getName());
+                sid.append(mapperClass.getName()).append(".").append(method.getName());
                 sqlParserInfoCache.put(sid.toString(), new SqlParserInfo(sqlParser));
             }
         }

@@ -18,7 +18,8 @@
 
     <bean id="sqlSessionFactory" class="com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
-        <property name="typeAliasesPackage" value="com.baomidou.mybatisplus.extension.test.com.baomidou.mybatisplus.extension.test.h2.entity"/>
+        <property name="typeAliasesPackage"
+                  value="com.baomidou.mybatisplus.extension.test.com.baomidou.mybatisplus.extension.test.h2.entity"/>
         <property name="configuration" ref="mybatisConfig"/>
         <!-- MP 全局配置注入 -->
         <property name="globalConfig" ref="globalConfig"/>
@@ -36,14 +37,14 @@
         </property>
     </bean>
 
-	<bean id="mybatisMapWrapperFactory" class="com.baomidou.mybatisplus.MybatisMapWrapperFactory"/>
+    <bean id="mybatisMapWrapperFactory" class="com.baomidou.mybatisplus.MybatisMapWrapperFactory"/>
 
     <bean id="mybatisConfig" class="com.baomidou.mybatisplus.MybatisConfiguration">
         <property name="mapUnderscoreToCamelCase" value="true"/>
         <property name="jdbcTypeForNull">
             <util:constant static-field="org.apache.ibatis.type.JdbcType.NULL"/>
         </property>
-		<property name="objectWrapperFactory" ref="mybatisMapWrapperFactory"/>
+        <property name="objectWrapperFactory" ref="mybatisMapWrapperFactory"/>
     </bean>
 
     <bean id="globalConfig" class="com.baomidou.mybatisplus.entity.GlobalConfiguration">
@@ -73,6 +74,7 @@
 
     <!-- 配置mybatis 扫描mapper接口的路径-->
     <bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="com.baomidou.mybatisplus.extension.test.com.baomidou.mybatisplus.extension.test.h2.entity.mapper"/>
+        <property name="basePackage"
+                  value="com.baomidou.mybatisplus.extension.test.com.baomidou.mybatisplus.extension.test.h2.entity.mapper"/>
     </bean>
 </beans>

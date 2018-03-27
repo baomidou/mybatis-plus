@@ -26,10 +26,10 @@ package com.baomidou.mybatisplus.extension.test.proxy.mapper;
 public class UserMapperImpl implements IUserMapper {
 
     public User selectById(Long id) {
-        System.err.println(" ---  执行SQL 绑定数据 ---" );
+        System.err.println(" ---  执行SQL 绑定数据 ---");
         User user = new User();
         user.setId(id);
-        user.setName("mybatis-plus" );
+        user.setName("mybatis-plus");
         user.setAge(100);
         return user;
     }

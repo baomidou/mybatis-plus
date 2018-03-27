@@ -57,7 +57,7 @@ public class H2LogicDeleteSqlParserTest extends H2Test {
 
 
     @Test
-    public void testMySelect(){
+    public void testMySelect() {
         personMapper.getAddrListByUserId(1L);
         //TODO: 然并无
     }

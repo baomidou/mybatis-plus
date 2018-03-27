@@ -7,12 +7,12 @@
      | 加载配置文件 resource="jdbc.properties"
      | 可以在本配置文件中使用 ${name} 来使用属性值
      | -->
-        <!--
-    <properties resource="jdbc.properties">
-         | 可通过以下方式定义属性, 加载配置文件中的属性会覆盖掉此处定义的同名属性
-         | <property name="" value=""/>
-    </properties>
-         | -->
+    <!--
+<properties resource="jdbc.properties">
+     | 可通过以下方式定义属性, 加载配置文件中的属性会覆盖掉此处定义的同名属性
+     | <property name="" value=""/>
+</properties>
+     | -->
 
     <!--
      | 全局配置设置
@@ -29,9 +29,9 @@
      | -->
     <settings>
         <!-- 这个配置使全局的映射器启用或禁用缓存 -->
-        <setting name="cacheEnabled" value="true" />
+        <setting name="cacheEnabled" value="true"/>
         <!-- 全局启用或禁用延迟加载。当禁用时，所有关联对象都会即时加载 -->
-        <setting name="lazyLoadingEnabled" value="true" />
+        <setting name="lazyLoadingEnabled" value="true"/>
     </settings>
 
     <!--
@@ -46,42 +46,42 @@
     </typeAliases>
      | -->
     <typeAliases>
-        <package name="com.baomidou.mybatisplus.extension.test.com.baomidou.mybatisplus.extension.test.oracle.entity" />
+        <package name="com.baomidou.mybatisplus.extension.test.com.baomidou.mybatisplus.extension.test.oracle.entity"/>
     </typeAliases>
 
     <!-- 插件配置 -->
     <plugins>
-	    <!--
-	     | 分页插件配置
-	     | 插件提供二种方言选择：1、默认方言 2、自定义方言实现类，两者均未配置则抛出异常！
-	     | dialectType 数据库方言
-	     |             默认支持  mysql  oracle  hsql  sqlite  postgre  sqlserver
-	     | dialectClazz 方言实现类
-	     |              自定义需要实现 com.baomidou.mybatisplus.plugins.pagination.IDialect 接口
-	     | -->
+        <!--
+         | 分页插件配置
+         | 插件提供二种方言选择：1、默认方言 2、自定义方言实现类，两者均未配置则抛出异常！
+         | dialectType 数据库方言
+         |             默认支持  mysql  oracle  hsql  sqlite  postgre  sqlserver
+         | dialectClazz 方言实现类
+         |              自定义需要实现 com.baomidou.mybatisplus.plugins.pagination.IDialect 接口
+         | -->
         <plugin interceptor="com.baomidou.mybatisplus.plugins.PaginationInterceptor"/>
     </plugins>
 
-	<!-- 环境配置 -->
-	<environments default="development">
-		<environment id="development">
-			<transactionManager type="JDBC">
-				<property name="" value="" />
-			</transactionManager>
-			<dataSource type="UNPOOLED">
-				<property name="driver" value="oracle.jdbc.driver.OracleDriver" />
-				<property name="url" value="jdbc:oracle:thin:@192.168.10.169:1521:orcl" />
-				<property name="username" value="sa" />
-				<property name="password" value="sa" />
-			<!--
-				<property name="driver" value="${jdbc.driver}" />
-				<property name="url" value="${jdbc.url}" />
-				<property name="username" value="${jdbc.username}" />
-				<property name="password" value="${jdbc.password}" />
-			 -->
-			</dataSource>
-		</environment>
-	</environments>
+    <!-- 环境配置 -->
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC">
+                <property name="" value=""/>
+            </transactionManager>
+            <dataSource type="UNPOOLED">
+                <property name="driver" value="oracle.jdbc.driver.OracleDriver"/>
+                <property name="url" value="jdbc:oracle:thin:@192.168.10.169:1521:orcl"/>
+                <property name="username" value="sa"/>
+                <property name="password" value="sa"/>
+                <!--
+                    <property name="driver" value="${jdbc.driver}" />
+                    <property name="url" value="${jdbc.url}" />
+                    <property name="username" value="${jdbc.username}" />
+                    <property name="password" value="${jdbc.password}" />
+                 -->
+            </dataSource>
+        </environment>
+    </environments>
 
     <!--
      | SQL映射定义Mappers
@@ -92,8 +92,10 @@
      | package  指向可以找到Mapper接口的包名
      | -->
     <mappers>
-        <mapper class="com.baomidou.mybatisplus.extension.test.com.baomidou.mybatisplus.extension.test.oracle.mapper.TestUserMapper" />
-        <mapper class="com.baomidou.mybatisplus.extension.test.com.baomidou.mybatisplus.extension.test.oracle.mapper.TestSequserMapper" />
+        <mapper
+            class="com.baomidou.mybatisplus.extension.test.com.baomidou.mybatisplus.extension.test.oracle.mapper.TestUserMapper"/>
+        <mapper
+            class="com.baomidou.mybatisplus.extension.test.com.baomidou.mybatisplus.extension.test.oracle.mapper.TestSequserMapper"/>
         <mapper resource="oracle/TestUserMapper.xml"/>
     </mappers>
 </configuration>

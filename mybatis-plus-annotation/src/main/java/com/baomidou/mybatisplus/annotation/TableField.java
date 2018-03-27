@@ -40,7 +40,7 @@ public @interface TableField {
      * 字段值（驼峰命名方式，该值可无）
      * </p>
      */
-    String value() default "" ;
+    String value() default "";
 
     /**
      * <p>
@@ -51,7 +51,7 @@ public @interface TableField {
      * 支持：@TableField(el = "role, typeHandler=com.baomidou.springcloud.typehandler.PhoneTypeHandler")
      * </p>
      */
-    String el() default "" ;
+    String el() default "";
 
     /**
      * <p>
@@ -86,7 +86,7 @@ public @interface TableField {
      * 输出 SQL 为：update 表 set 字段=now() where ...
      * </p>
      */
-    String update() default "" ;
+    String update() default "";
 
     /**
      * <p>

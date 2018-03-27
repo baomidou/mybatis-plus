@@ -55,7 +55,7 @@ public class H2Person extends SuperEntityCamel {
     private String desc;
 
     @TableField
-	private Date testDate;
+    private Date testDate;
 
     @Version
     private Integer version;

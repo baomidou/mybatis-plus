@@ -16,7 +16,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
  */
 public abstract class SuSuperEntity {
 
-    @TableField(value = "last_updated_dt" , fill = FieldFill.UPDATE)
+    @TableField(value = "last_updated_dt", fill = FieldFill.UPDATE)
     private Date lastUpdatedDt;
 
     public Date getLastUpdatedDt() {

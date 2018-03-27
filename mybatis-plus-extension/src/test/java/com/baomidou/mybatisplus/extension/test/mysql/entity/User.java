@@ -35,7 +35,7 @@ import com.baomidou.mybatisplus.annotation.Version;
  * @Date 2016-09-09
  */
 /* 表名 value 注解【 驼峰命名可无 】, resultMap 注解测试【 映射 xml 的 resultMap 内容 】 */
-@TableName(resultMap = "userMap" )
+@TableName(resultMap = "userMap")
 public class User implements Serializable {
 
     /* 表字段注解，false 表中不存在的字段，可无该注解 默认 true */
@@ -43,7 +43,7 @@ public class User implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /* 主键ID 注解，value 字段名，type 用户输入ID */
-    @TableId(value = "test_id" )
+    @TableId(value = "test_id")
     private Long id;
 
     /* 测试忽略验证 */
@@ -55,20 +55,20 @@ public class User implements Serializable {
     private BigDecimal price;
 
     /* 测试下划线字段命名类型, 字段填充 */
-    @TableField(value = "test_type" , fill = FieldFill.INSERT)
-    @TableLogic(value = "-2" ) // 该注解为了测试逻辑删除、这里设置 -2 为删除值
+    @TableField(value = "test_type", fill = FieldFill.INSERT)
+    @TableLogic(value = "-2") // 该注解为了测试逻辑删除、这里设置 -2 为删除值
     private Integer testType;
 
-    @TableField(el = "role.id" )
+    @TableField(el = "role.id")
     private Role role;
 
-    private String desc = "默认描述" ;
+    private String desc = "默认描述";
 
     @Version
     private Integer version;
 
     // 或@TableField(el = "role,jdbcType=BIGINT)
-    @TableField(el = "phone, typeHandler=com.baomidou.mybatisplus.extension.test.mysql.typehandler.PhoneTypeHandler" )
+    @TableField(el = "phone, typeHandler=com.baomidou.mybatisplus.extension.test.mysql.typehandler.PhoneTypeHandler")
     private PhoneNumber phone;
 
     public User() {
@@ -116,12 +116,12 @@ public class User implements Serializable {
      */
     public static void main(String args[]) throws IllegalAccessException {
         User user = new User();
-        user.setName("12306" );
+        user.setName("12306");
         user.setAge(3);
         System.err.println(User.class.getName());
         Field[] fields = user.getClass().getDeclaredFields();
         for (Field field : fields) {
-            System.out.println("===================================" );
+            System.out.println("===================================");
             System.out.println(field.getName());
             System.out.println(field.getType().toString());
             field.setAccessible(true);
@@ -204,6 +204,6 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return "User [id=" + id + ", name=" + name + ", age=" + age + ", price=" + price + ", testType=" + testType
-            + ", role=" + role + ", desc=" + desc + ", phone=" + phone + "]" ;
+            + ", role=" + role + ", desc=" + desc + ", phone=" + phone + "]";
     }
 }

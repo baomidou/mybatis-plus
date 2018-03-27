@@ -379,10 +379,10 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        notNull(dataSource, "Property 'dataSource' is required" );
-        notNull(sqlSessionFactoryBuilder, "Property 'sqlSessionFactoryBuilder' is required" );
+        notNull(dataSource, "Property 'dataSource' is required");
+        notNull(sqlSessionFactoryBuilder, "Property 'sqlSessionFactoryBuilder' is required");
         state((configuration == null && configLocation == null) || !(configuration != null && configLocation != null),
-            "Property 'configuration' and 'configLocation' can not specified with together" );
+            "Property 'configuration' and 'configLocation' can not specified with together");
 
         this.sqlSessionFactory = buildSqlSessionFactory();
         //TODO: 3.0 注入到globalConfig
@@ -416,7 +416,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             configuration = xmlConfigBuilder.getConfiguration();
         } else {
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration" );
+                LOGGER.debug("Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration");
             }
             // TODO 使用自定义配置
             configuration = new MybatisConfiguration();
@@ -440,8 +440,8 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         if (hasLength(this.typeAliasesPackage)) {
             // TODO 支持自定义通配符
             String[] typeAliasPackageArray;
-            if (typeAliasesPackage.contains("*" ) && !typeAliasesPackage.contains("," )
-                && !typeAliasesPackage.contains(";" )) {
+            if (typeAliasesPackage.contains("*") && !typeAliasesPackage.contains(",")
+                && !typeAliasesPackage.contains(";")) {
                 typeAliasPackageArray = PackageHelper.convertTypeAliasesPackage(typeAliasesPackage);
             } else {
                 typeAliasPackageArray = tokenizeToStringArray(this.typeAliasesPackage,
@@ -454,7 +454,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
                 configuration.getTypeAliasRegistry().registerAliases(packageToScan,
                     typeAliasesSuperType == null ? Object.class : typeAliasesSuperType);
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Scanned package: '" + packageToScan + "' for aliases" );
+                    LOGGER.debug("Scanned package: '" + packageToScan + "' for aliases");
                 }
             }
         }
@@ -462,8 +462,8 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         // TODO 自定义枚举类扫描处理
         if (hasLength(this.typeEnumsPackage)) {
             Set<Class> classes = null;
-            if (typeEnumsPackage.contains("*" ) && !typeEnumsPackage.contains("," )
-                && !typeEnumsPackage.contains(";" )) {
+            if (typeEnumsPackage.contains("*") && !typeEnumsPackage.contains(",")
+                && !typeEnumsPackage.contains(";")) {
                 classes = PackageHelper.scanTypePackage(typeEnumsPackage);
             } else {
                 String[] typeEnumsPackageArray = tokenizeToStringArray(this.typeEnumsPackage,
@@ -494,7 +494,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             for (Class<?> typeAlias : this.typeAliases) {
                 configuration.getTypeAliasRegistry().registerAlias(typeAlias);
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Registered type alias: '" + typeAlias + "'" );
+                    LOGGER.debug("Registered type alias: '" + typeAlias + "'");
                 }
             }
         }
@@ -503,7 +503,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             for (Interceptor plugin : this.plugins) {
                 configuration.addInterceptor(plugin);
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Registered plugin: '" + plugin + "'" );
+                    LOGGER.debug("Registered plugin: '" + plugin + "'");
                 }
             }
         }
@@ -514,7 +514,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             for (String packageToScan : typeHandlersPackageArray) {
                 configuration.getTypeHandlerRegistry().register(packageToScan);
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Scanned package: '" + packageToScan + "' for type handlers" );
+                    LOGGER.debug("Scanned package: '" + packageToScan + "' for type handlers");
                 }
             }
         }
@@ -523,7 +523,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             for (TypeHandler<?> typeHandler : this.typeHandlers) {
                 configuration.getTypeHandlerRegistry().register(typeHandler);
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Registered type handler: '" + typeHandler + "'" );
+                    LOGGER.debug("Registered type handler: '" + typeHandler + "'");
                 }
             }
         }
@@ -532,7 +532,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             try {
                 configuration.setDatabaseId(this.databaseIdProvider.getDatabaseId(this.dataSource));
             } catch (SQLException e) {
-                throw new NestedIOException("Failed getting a databaseId" , e);
+                throw new NestedIOException("Failed getting a databaseId", e);
             }
         }
 
@@ -545,7 +545,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
                 xmlConfigBuilder.parse();
 
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Parsed configuration file: '" + this.configLocation + "'" );
+                    LOGGER.debug("Parsed configuration file: '" + this.configLocation + "'");
                 }
             } catch (Exception ex) {
                 throw new NestedIOException("Failed to parse config resource: " + this.configLocation, ex);
@@ -592,18 +592,18 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
                         configuration, mapperLocation.toString(), configuration.getSqlFragments());
                     xmlMapperBuilder.parse();
                 } catch (Exception e) {
-                    throw new NestedIOException("Failed to parse mapping resource: '" + mapperLocation + "'" , e);
+                    throw new NestedIOException("Failed to parse mapping resource: '" + mapperLocation + "'", e);
                 } finally {
                     ErrorContext.instance().reset();
                 }
 
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Parsed mapper file: '" + mapperLocation + "'" );
+                    LOGGER.debug("Parsed mapper file: '" + mapperLocation + "'");
                 }
             }
         } else {
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Property 'mapperLocations' was not specified or no matching resources found" );
+                LOGGER.debug("Property 'mapperLocations' was not specified or no matching resources found");
             }
         }
         return sqlSessionFactory;

@@ -270,7 +270,7 @@ public class GlobalConfiguration implements Serializable {
             if (reservedWordsHandler == null) {
                 reservedWordsHandler = SqlReservedWordsHandler.getInstance();
             }
-            reservedWordsHandler.addAll(StringUtils.splitWorker(sqlKeywords.toUpperCase(), "," , -1, false));
+            reservedWordsHandler.addAll(StringUtils.splitWorker(sqlKeywords.toUpperCase(), ",", -1, false));
         }
     }
 

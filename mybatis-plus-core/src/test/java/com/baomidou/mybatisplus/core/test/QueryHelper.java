@@ -6,6 +6,7 @@ import com.trigersoft.jaque.expression.Expression;
 import com.trigersoft.jaque.expression.InvocationExpression;
 import com.trigersoft.jaque.expression.LambdaExpression;
 import com.trigersoft.jaque.expression.MemberExpression;
+
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
@@ -23,8 +24,8 @@ public class QueryHelper {
         return (Method) ((MemberExpression) ((InvocationExpression) body).getTarget()).getMember();
     }
 
-    public static Map<Method,String> introspector(Class clazz) {
-        Map<Method,String>  map = new LinkedHashMap<>();
+    public static Map<Method, String> introspector(Class clazz) {
+        Map<Method, String> map = new LinkedHashMap<>();
         BeanInfo beanInfo = null;
         try {
             beanInfo = Introspector.getBeanInfo(clazz, Object.class);
@@ -36,14 +37,14 @@ public class QueryHelper {
             for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
                 if (propertyDescriptor.getName().equals(field.getName())) {
                     TableField tableField = field.getDeclaredAnnotation(TableField.class);
-                    if(tableField==null){
-                    map.put(propertyDescriptor.getReadMethod(),field.getName());
-                    }else {
+                    if (tableField == null) {
+                        map.put(propertyDescriptor.getReadMethod(), field.getName());
+                    } else {
                         String value = tableField.value();
-                        if(value==null||value.isEmpty()){
-                            map.put(propertyDescriptor.getReadMethod(),field.getName());
-                        }else{
-                        map.put(propertyDescriptor.getReadMethod(), value);
+                        if (value == null || value.isEmpty()) {
+                            map.put(propertyDescriptor.getReadMethod(), field.getName());
+                        } else {
+                            map.put(propertyDescriptor.getReadMethod(), value);
                         }
                     }
                 }

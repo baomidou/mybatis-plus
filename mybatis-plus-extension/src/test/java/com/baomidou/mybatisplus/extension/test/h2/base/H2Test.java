@@ -30,7 +30,7 @@ public class H2Test {
         ) {
             String line;
             while ((line = reader.readLine()) != null) {
-                stmt.execute(line.replace(";" , "" ));
+                stmt.execute(line.replace(";", ""));
             }
         }
     }
@@ -49,7 +49,7 @@ public class H2Test {
         String createTableSql = readFile(ddlFileName);
         Statement stmt = conn.createStatement();
         stmt.execute(createTableSql);
-        stmt.execute("truncate table "+tableName);
+        stmt.execute("truncate table " + tableName);
         executeSql(stmt, insertFileName);
         conn.commit();
     }
@@ -62,7 +62,7 @@ public class H2Test {
         ) {
             String line;
             while ((line = reader.readLine()) != null)
-                builder.append(line).append(" " );
+                builder.append(line).append(" ");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -70,10 +70,10 @@ public class H2Test {
     }
 
     protected void assertUpdateFill(Date lastUpdatedDt) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH" );
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH");
         System.out.println("after update: testDate=" + lastUpdatedDt);
         String versionDateStr = sdf.format(lastUpdatedDt);
         //MyMetaObjectHandler.updateFill() : set lastUpdatedDt=currentTimestamp
-        Assert.assertEquals("lastUpdateDt will be updated by H2MetaObjectHandler.updateFill()" , sdf.format(new Date()), versionDateStr);//before update: lastUpdatedDt=currentTimestamp-1day
+        Assert.assertEquals("lastUpdateDt will be updated by H2MetaObjectHandler.updateFill()", sdf.format(new Date()), versionDateStr);//before update: lastUpdatedDt=currentTimestamp-1day
     }
 }

@@ -40,7 +40,7 @@ public class EnumTypeHandler<E extends Enum<?> & IEnum> extends BaseTypeHandler<
 
     public EnumTypeHandler(Class<E> type) {
         if (type == null) {
-            throw new IllegalArgumentException("Type argument cannot be null" );
+            throw new IllegalArgumentException("Type argument cannot be null");
         }
         this.type = type;
     }

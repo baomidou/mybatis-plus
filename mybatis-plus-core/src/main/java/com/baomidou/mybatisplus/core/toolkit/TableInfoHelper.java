@@ -66,7 +66,7 @@ public class TableInfoHelper {
     /**
      * 默认表主键
      */
-    private static final String DEFAULT_ID_NAME = "id" ;
+    private static final String DEFAULT_ID_NAME = "id";
 
     /**
      * <p>
@@ -185,7 +185,7 @@ public class TableInfoHelper {
          * 未发现主键注解，提示警告信息
          */
         if (StringUtils.isEmpty(tableInfo.getKeyColumn())) {
-            logger.warn(String.format("Warn: Could not find @TableId in Class: %s." , clazz.getName()));
+            logger.warn(String.format("Warn: Could not find @TableId in Class: %s.", clazz.getName()));
         }
         /*
          * 注入
@@ -299,7 +299,7 @@ public class TableInfoHelper {
      */
     private static void throwExceptionId(Class<?> clazz) {
         StringBuilder errorMsg = new StringBuilder();
-        errorMsg.append("There must be only one, Discover multiple @TableId annotation in " );
+        errorMsg.append("There must be only one, Discover multiple @TableId annotation in ");
         errorMsg.append(clazz.getName());
         throw new MybatisPlusException(errorMsg.toString());
     }
@@ -331,14 +331,14 @@ public class TableInfoHelper {
             if (StringUtils.isNotEmpty(tableField.el())) {
                 el = tableField.el();
             }
-            String[] columns = columnName.split(";" );
-            String[] els = el.split(";" );
+            String[] columns = columnName.split(";");
+            String[] els = el.split(";");
             if (columns.length == els.length) {
                 for (int i = 0; i < columns.length; i++) {
                     fieldList.add(new TableFieldInfo(globalConfig, tableInfo, columns[i], els[i], field, tableField));
                 }
             } else {
-                String errorMsg = "Class: %s, Field: %s, 'value' 'el' Length must be consistent." ;
+                String errorMsg = "Class: %s, Field: %s, 'value' 'el' Length must be consistent.";
                 throw new MybatisPlusException(String.format(errorMsg, clazz.getName(), field.getName()));
             }
             return true;
@@ -397,7 +397,7 @@ public class TableInfoHelper {
                                                String baseStatementId, LanguageDriver languageDriver) {
         IKeyGenerator keyGenerator = GlobalConfigUtils.getKeyGenerator(builderAssistant.getConfiguration());
         if (null == keyGenerator) {
-            throw new IllegalArgumentException("not configure IKeyGenerator implementation class." );
+            throw new IllegalArgumentException("not configure IKeyGenerator implementation class.");
         }
         String id = baseStatementId + SelectKeyGenerator.SELECT_KEY_SUFFIX;
         Class<?> resultTypeClass = tableInfo.getKeySequence().clazz();

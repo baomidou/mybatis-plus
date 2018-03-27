@@ -94,7 +94,7 @@ public class TenantSqlParser extends AbstractJsqlParser {
         } else if (insert.getItemsList() != null) {
             ((ExpressionList) insert.getItemsList()).getExpressions().add(tenantHandler.getTenantId());
         } else {
-            throw new MybatisPlusException("Failed to process multiple-table update, please exclude the tableName or statementId" );
+            throw new MybatisPlusException("Failed to process multiple-table update, please exclude the tableName or statementId");
         }
     }
 
@@ -107,7 +107,7 @@ public class TenantSqlParser extends AbstractJsqlParser {
     public void processUpdate(Update update) {
         List<Table> tableList = update.getTables();
         if (null == tableList || tableList.size() >= 2) {
-            throw new MybatisPlusException("Failed to process multiple-table update, please exclude the statementId" );
+            throw new MybatisPlusException("Failed to process multiple-table update, please exclude the statementId");
         }
         Table table = tableList.get(0);
         if (this.tenantHandler.doTableFilter(table.getName())) {
@@ -208,7 +208,7 @@ public class TenantSqlParser extends AbstractJsqlParser {
                 processSelectBody(subSelect.getSelectBody());
             }
         } else if (fromItem instanceof ValuesList) {
-            logger.debug("Perform a subquery, if you do not give us feedback" );
+            logger.debug("Perform a subquery, if you do not give us feedback");
         } else if (fromItem instanceof LateralSubSelect) {
             LateralSubSelect lateralSubSelect = (LateralSubSelect) fromItem;
             if (lateralSubSelect.getSubSelect() != null) {
@@ -273,7 +273,7 @@ public class TenantSqlParser extends AbstractJsqlParser {
         }
         StringBuilder column = new StringBuilder();
         column.append(table.getAlias().getName());
-        column.append("." );
+        column.append(".");
         column.append(this.tenantHandler.getTenantIdColumn());
         return new Column(column.toString());
     }

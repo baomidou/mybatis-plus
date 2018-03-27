@@ -34,7 +34,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-@TableName("h2uuid" )
+@TableName("h2uuid")
 public class H2uuid implements Serializable {
 
     // 静态属性会自动忽略

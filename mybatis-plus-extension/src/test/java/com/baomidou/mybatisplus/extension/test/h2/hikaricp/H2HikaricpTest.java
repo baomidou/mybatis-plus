@@ -34,12 +34,12 @@ public class H2HikaricpTest extends H2Test {
 
     @BeforeClass
     public static void initDB() throws SQLException, IOException {
-        @SuppressWarnings("resource" )
+        @SuppressWarnings("resource")
         AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
         context.register(DBHikaricpH2Config.class);
         context.register(MybatisConfigMetaObjOptLockConfig.class);
         context.refresh();
-        DataSource ds = (DataSource) context.getBean("dataSource" );
+        DataSource ds = (DataSource) context.getBean("dataSource");
         try (Connection conn = ds.getConnection()) {
             initData(conn);
         }

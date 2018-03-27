@@ -45,7 +45,7 @@ public class TestProxy {
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
-            System.err.println("\n" );
+            System.err.println("\n");
         }
 
         /**
@@ -66,7 +66,7 @@ class MyMapperProxy<T extends IUserMapper> implements InvocationHandler {
 
     private T t;
 
-    @SuppressWarnings("unchecked" )
+    @SuppressWarnings("unchecked")
     public T bind(T t) {
         this.t = t;
         return (T) Proxy.newProxyInstance(t.getClass().getClassLoader(), t.getClass().getInterfaces(), this);
@@ -81,10 +81,10 @@ class MyMapperProxy<T extends IUserMapper> implements InvocationHandler {
     }
 
     private void before() {
-        System.out.println("before ..." );
+        System.out.println("before ...");
     }
 
     private void after() {
-        System.out.println("after" );
+        System.out.println("after");
     }
 }

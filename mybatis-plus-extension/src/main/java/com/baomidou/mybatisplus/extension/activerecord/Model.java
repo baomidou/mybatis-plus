@@ -105,7 +105,7 @@ public abstract class Model<T extends Model> implements Serializable {
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteById() {
         if (StringUtils.checkValNull(pkVal())) {
-            throw new MybatisPlusException("deleteById primaryKey is null." );
+            throw new MybatisPlusException("deleteById primaryKey is null.");
         }
         return deleteById(this.pkVal());
     }
@@ -135,7 +135,7 @@ public abstract class Model<T extends Model> implements Serializable {
     @Transactional(rollbackFor = Exception.class)
     public boolean delete(Wrapper wrapper) {
         Map<String, Object> map = new HashMap<>();
-        map.put("ew" , wrapper);
+        map.put("ew", wrapper);
         return SqlHelper.delBool(sqlSession().delete(sqlStatement(SqlMethod.DELETE), map));
     }
 
@@ -147,11 +147,11 @@ public abstract class Model<T extends Model> implements Serializable {
     @Transactional(rollbackFor = Exception.class)
     public boolean updateById() {
         if (StringUtils.checkValNull(pkVal())) {
-            throw new MybatisPlusException("updateById primaryKey is null." );
+            throw new MybatisPlusException("updateById primaryKey is null.");
         }
         // updateById
         Map<String, Object> map = new HashMap<>();
-        map.put("et" , this);
+        map.put("et", this);
         return SqlHelper.retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE_BY_ID), map));
     }
 
@@ -163,11 +163,11 @@ public abstract class Model<T extends Model> implements Serializable {
     @Transactional(rollbackFor = Exception.class)
     public boolean updateAllColumnById() {
         if (StringUtils.checkValNull(pkVal())) {
-            throw new MybatisPlusException("updateAllColumnById primaryKey is null." );
+            throw new MybatisPlusException("updateAllColumnById primaryKey is null.");
         }
         // updateAllColumnById
         Map<String, Object> map = new HashMap<>();
-        map.put("et" , this);
+        map.put("et", this);
         return SqlHelper.retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE_ALL_COLUMN_BY_ID), map));
     }
 
@@ -197,8 +197,8 @@ public abstract class Model<T extends Model> implements Serializable {
     @Transactional(rollbackFor = Exception.class)
     public boolean update(Wrapper wrapper) {
         Map<String, Object> map = new HashMap<>();
-        map.put("et" , this);
-        map.put("ew" , wrapper);
+        map.put("et", this);
+        map.put("ew", wrapper);
         // update
         return SqlHelper.retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE), map));
     }
@@ -235,7 +235,7 @@ public abstract class Model<T extends Model> implements Serializable {
      */
     public T selectById() {
         if (StringUtils.checkValNull(pkVal())) {
-            throw new MybatisPlusException("selectById primaryKey is null." );
+            throw new MybatisPlusException("selectById primaryKey is null.");
         }
         return selectById(this.pkVal());
     }
@@ -251,7 +251,7 @@ public abstract class Model<T extends Model> implements Serializable {
 
     public List<T> selectList(Wrapper wrapper) {
         Map<String, Object> map = new HashMap<>();
-        map.put("ew" , wrapper);
+        map.put("ew", wrapper);
         return sqlSession().selectList(sqlStatement(SqlMethod.SELECT_LIST), map);
     }
 
@@ -305,7 +305,7 @@ public abstract class Model<T extends Model> implements Serializable {
     public Page<T> selectPage(Page<T> page, Wrapper<T> wrapper) {
         Map<String, Object> map = new HashMap<>();
         wrapper = (Wrapper<T>) SqlHelper.fillWrapper(page, wrapper);
-        map.put("ew" , wrapper);
+        map.put("ew", wrapper);
         List<T> tl = sqlSession().selectList(sqlStatement(SqlMethod.SELECT_PAGE), map, page);
         page.setRecords(tl);
         return page;
@@ -321,7 +321,7 @@ public abstract class Model<T extends Model> implements Serializable {
      * @param args
      * @return
      */
-    @SuppressWarnings("unchecked" )
+    @SuppressWarnings("unchecked")
     public Page<T> selectPage(Page<T> page, String whereClause, Object... args) {
         return selectPage(page, Wrapper.<T>getInstance().where(whereClause, args));
     }
@@ -349,7 +349,7 @@ public abstract class Model<T extends Model> implements Serializable {
      */
     public int selectCount(Wrapper wrapper) {
         Map<String, Object> map = new HashMap<>();
-        map.put("ew" , wrapper);
+        map.put("ew", wrapper);
         return SqlHelper.retCount(sqlSession().<Integer>selectOne(sqlStatement(SqlMethod.SELECT_COUNT), map));
     }
 

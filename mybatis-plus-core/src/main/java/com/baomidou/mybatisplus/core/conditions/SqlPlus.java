@@ -25,11 +25,11 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  * @author yanghu , Caratacus , hubin
  * @Date 2016-08-22
  */
-@SuppressWarnings("serial" )
+@SuppressWarnings("serial")
 public class SqlPlus extends MybatisAbstractSQL<SqlPlus> {
 
-    private final String IS_NOT_NULL = " IS NOT NULL" ;
-    private final String IS_NULL = " IS NULL" ;
+    private final String IS_NOT_NULL = " IS NOT NULL";
+    private final String IS_NULL = " IS NULL";
 
     @Override
     public SqlPlus getSelf() {
@@ -87,9 +87,9 @@ public class SqlPlus extends MybatisAbstractSQL<SqlPlus> {
         if (StringUtils.isNotEmpty(value)) {
             StringBuilder inSql = new StringBuilder();
             if (isNot) {
-                inSql.append(" NOT" );
+                inSql.append(" NOT");
             }
-            inSql.append(" EXISTS (" ).append(value).append(")" );
+            inSql.append(" EXISTS (").append(value).append(")");
             WHERE(inSql.toString());
         }
     }
@@ -117,7 +117,7 @@ public class SqlPlus extends MybatisAbstractSQL<SqlPlus> {
      */
     private void handlerNull(String columns, String sqlPart) {
         if (StringUtils.isNotEmpty(columns)) {
-            String[] cols = columns.split("," );
+            String[] cols = columns.split(",");
             for (String col : cols) {
                 if (StringUtils.isNotEmpty(col.trim())) {
                     WHERE(col + sqlPart);

@@ -49,7 +49,7 @@ public class MybatisConfiguration extends Configuration {
      */
     public MybatisConfiguration() {
         this.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
-        logger.debug("Mybatis-plus init success." );
+        logger.debug("Mybatis-plus init success.");
     }
 
     /**
@@ -75,7 +75,7 @@ public class MybatisConfiguration extends Configuration {
                 /*
                  * 说明已加载了xml中的节点； 忽略mapper中的SqlProvider数据
                  */
-                logger.error("mapper[" + ms.getId() + "] is ignored, because it's exists, maybe from xml file" );
+                logger.error("mapper[" + ms.getId() + "] is ignored, because it's exists, maybe from xml file");
                 return;
             }
         }

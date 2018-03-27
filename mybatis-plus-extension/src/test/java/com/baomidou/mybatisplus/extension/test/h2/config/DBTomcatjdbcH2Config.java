@@ -27,9 +27,9 @@ public class DBTomcatjdbcH2Config {
     @Bean
     public DataSource dataSource() throws SQLException {
         PoolConfiguration configuration = new PoolProperties();
-        configuration.setUrl("jdbc:h2:mem:test;MODE=mysql;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE" );
-        configuration.setUsername("sa" );
-        configuration.setPassword("" );
+        configuration.setUrl("jdbc:h2:mem:test;MODE=mysql;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE");
+        configuration.setUsername("sa");
+        configuration.setPassword("");
         configuration.setDriverClassName(org.h2.Driver.class.getCanonicalName());
         return new org.apache.tomcat.jdbc.pool.DataSource(configuration);
     }

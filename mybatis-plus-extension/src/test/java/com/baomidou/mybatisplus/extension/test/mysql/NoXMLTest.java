@@ -45,7 +45,7 @@ public class NoXMLTest extends CrudTest {
          * 查询是否有结果
          */
         TestMapper testMapper = sqlSession.getMapper(TestMapper.class);
-        testMapper.insert(new Test(IdWorker.getId(), "Caratacus" ));
+        testMapper.insert(new Test(IdWorker.getId(), "Caratacus"));
         List<Map<String, Object>> list = testMapper.selectMaps(null);
         List<Map<String, Object>> list1 = testMapper.selectMapsPage(RowBounds.DEFAULT, null);
         List<Map<String, Object>> list2 = testMapper.selectMapsPage(new Page<>(1, 5), null);
@@ -53,15 +53,15 @@ public class NoXMLTest extends CrudTest {
         System.out.println(list1);
         System.out.println(list2);
         Map<String, Object> map = new HashMap<>();
-        map.put("type" , null);
-        map.put("id" , null);
+        map.put("type", null);
+        map.put("id", null);
         List<Test> tests = testMapper.selectByMap(map);
         if (null != tests) {
             for (Test test : tests) {
                 System.out.println("id:" + test.getId() + " , type:" + test.getType());
             }
         } else {
-            System.err.println(" tests is null. " );
+            System.err.println(" tests is null. ");
         }
         testMapper.delete(null);
 

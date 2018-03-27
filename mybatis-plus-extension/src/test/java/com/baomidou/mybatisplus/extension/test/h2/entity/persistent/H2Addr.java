@@ -17,16 +17,16 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-@TableName("h2address" )
+@TableName("h2address")
 public class H2Addr {
 
-    @TableId("addr_id" )
+    @TableId("addr_id")
     private Long addrId;
 
-    @TableField("addr_name" )
+    @TableField("addr_name")
     private String addrName;
 
-    @TableField("test_id" )
+    @TableField("test_id")
     private Long testId;
 
 }

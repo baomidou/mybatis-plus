@@ -47,9 +47,9 @@ public class H2UserNoOptLockTest extends H2Test {
 
     @BeforeClass
     public static void initDB() throws SQLException, IOException {
-        @SuppressWarnings("resource" )
-        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:h2/spring-test-h2.xml" );
-        DataSource ds = (DataSource) context.getBean("dataSource" );
+        @SuppressWarnings("resource")
+        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:h2/spring-test-h2.xml");
+        DataSource ds = (DataSource) context.getBean("dataSource");
         try (Connection conn = ds.getConnection()) {
             initData(conn);
         }
@@ -59,20 +59,20 @@ public class H2UserNoOptLockTest extends H2Test {
     public void testInsert() {
         H2User user = new H2User();
         user.setAge(1);
-        user.setPrice(new BigDecimal("9.99" ));
+        user.setPrice(new BigDecimal("9.99"));
         userService.insert(user);
         Assert.assertNotNull(user.getId());
-        user.setDesc("Caratacus" );
+        user.setDesc("Caratacus");
         userService.insertOrUpdate(user);
         H2User userFromDB = userService.selectById(user.getId());
-        Assert.assertEquals("Caratacus" , userFromDB.getDesc());
+        Assert.assertEquals("Caratacus", userFromDB.getDesc());
     }
 
     @Test
     public void testDelete() {
         H2User user = new H2User();
         user.setAge(1);
-        user.setPrice(new BigDecimal("9.99" ));
+        user.setPrice(new BigDecimal("9.99"));
         userService.insert(user);
         Long userId = user.getId();
         Assert.assertNotNull(userId);
@@ -115,10 +115,10 @@ public class H2UserNoOptLockTest extends H2Test {
         Long id = 991L;
         H2User user = new H2User();
         user.setId(id);
-        user.setName("991" );
+        user.setName("991");
         user.setAge(91);
         user.setPrice(BigDecimal.TEN);
-        user.setDesc("asdf" );
+        user.setDesc("asdf");
         user.setTestType(1);
         user.setVersion(1);
         userService.insertAllColumn(user);
@@ -126,12 +126,12 @@ public class H2UserNoOptLockTest extends H2Test {
         H2User userDB = userService.selectById(id);
         Assert.assertEquals(1, userDB.getVersion().intValue());
 
-        userDB.setName("991" );
+        userDB.setName("991");
         userService.updateById(userDB);
 
         userDB = userService.selectById(id);
         Assert.assertEquals(1, userDB.getVersion().intValue());
-        Assert.assertEquals("991" , userDB.getName());
+        Assert.assertEquals("991", userDB.getName());
     }
 
     @Test
@@ -139,10 +139,10 @@ public class H2UserNoOptLockTest extends H2Test {
         Long id = 997L;
         H2User user = new H2User();
         user.setId(id);
-        user.setName("991" );
+        user.setName("991");
         user.setAge(91);
         user.setPrice(BigDecimal.TEN);
-        user.setDesc("asdf" );
+        user.setDesc("asdf");
         user.setTestType(1);
         user.setVersion(1);
         userService.insertAllColumn(user);
@@ -150,19 +150,19 @@ public class H2UserNoOptLockTest extends H2Test {
         H2User userDB = userService.selectById(id);
         Assert.assertEquals(1, userDB.getVersion().intValue());
 
-        userDB.setName("991" );
+        userDB.setName("991");
         userService.updateAllColumnById(userDB);
 
         userDB = userService.selectById(id);
         Assert.assertEquals(1, userDB.getVersion().intValue());
-        Assert.assertEquals("991" , userDB.getName());
+        Assert.assertEquals("991", userDB.getName());
 
-        userDB.setName("990" );
+        userDB.setName("990");
         userService.updateById(userDB);
 
         userDB = userService.selectById(id);
         Assert.assertEquals(1, userDB.getVersion().intValue());
-        Assert.assertEquals("990" , userDB.getName());
+        Assert.assertEquals("990", userDB.getName());
     }
 
     @Test
@@ -170,10 +170,10 @@ public class H2UserNoOptLockTest extends H2Test {
         Long id = 992L;
         H2User user = new H2User();
         user.setId(id);
-        user.setName("992" );
+        user.setName("992");
         user.setAge(92);
         user.setPrice(BigDecimal.TEN);
-        user.setDesc("asdf" );
+        user.setDesc("asdf");
         user.setTestType(1);
         user.setVersion(1);
         userService.insertAllColumn(user);
@@ -182,13 +182,13 @@ public class H2UserNoOptLockTest extends H2Test {
         Assert.assertEquals(1, userDB.getVersion().intValue());
 
         H2User updUser = new H2User();
-        updUser.setName("999" );
+        updUser.setName("999");
 
         userService.update(updUser, new EntityWrapper<>(userDB));
 
         userDB = userService.selectById(id);
         Assert.assertEquals(1, userDB.getVersion().intValue());
-        Assert.assertEquals("999" , userDB.getName());
+        Assert.assertEquals("999", userDB.getName());
     }
 
     @Test
@@ -196,10 +196,10 @@ public class H2UserNoOptLockTest extends H2Test {
         Long id = 993L;
         H2User user = new H2User();
         user.setId(id);
-        user.setName("992" );
+        user.setName("992");
         user.setAge(92);
         user.setPrice(BigDecimal.TEN);
-        user.setDesc("asdf" );
+        user.setDesc("asdf");
         user.setTestType(1);
         user.setVersion(1);
         userService.insertAllColumn(user);
@@ -208,13 +208,13 @@ public class H2UserNoOptLockTest extends H2Test {
         Assert.assertEquals(1, userDB.getVersion().intValue());
 
         H2User updUser = new H2User();
-        updUser.setName("999" );
+        updUser.setName("999");
         userDB.setVersion(null);
         userService.update(updUser, new EntityWrapper<>(userDB));
 
         userDB = userService.selectById(id);
         Assert.assertEquals(1, userDB.getVersion().intValue());
-        Assert.assertEquals("999" , userDB.getName());
+        Assert.assertEquals("999", userDB.getName());
     }
 
     @Test
@@ -280,7 +280,7 @@ public class H2UserNoOptLockTest extends H2Test {
 
     @Test
     public void testInsertMy() {
-        String name = "testInsertMy" ;
+        String name = "testInsertMy";
         int version = 1;
         int row = userService.myInsert(name, version);
         Assert.assertEquals(1, row);
@@ -291,19 +291,19 @@ public class H2UserNoOptLockTest extends H2Test {
         Long id = 10087L;
         H2User user = new H2User();
         user.setId(id);
-        user.setName("myUpdate" );
+        user.setName("myUpdate");
         user.setVersion(1);
         userService.insert(user);
 
         H2User dbUser = userService.selectById(id);
         Assert.assertNotNull(dbUser);
-        Assert.assertEquals("myUpdate" , dbUser.getName());
+        Assert.assertEquals("myUpdate", dbUser.getName());
 
-        Assert.assertEquals(1, userService.myUpdate(id, "updateMy" ));
+        Assert.assertEquals(1, userService.myUpdate(id, "updateMy"));
 
         dbUser = userService.selectById(id);
         Assert.assertNotNull(dbUser);
-        Assert.assertEquals("updateMy" , dbUser.getName());
+        Assert.assertEquals("updateMy", dbUser.getName());
         Assert.assertEquals(1, user.getVersion().intValue());
 
     }

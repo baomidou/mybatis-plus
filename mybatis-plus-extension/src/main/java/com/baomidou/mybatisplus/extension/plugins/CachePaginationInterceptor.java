@@ -43,8 +43,8 @@ import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
  * @author hubin
  * @Date 2016-01-23
  */
-@Intercepts({@Signature(type = Executor.class, method = "query" , args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}),
-    @Signature(type = StatementHandler.class, method = "prepare" , args = {Connection.class, Integer.class})})
+@Intercepts({@Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}),
+    @Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 public class CachePaginationInterceptor extends PaginationInterceptor implements Interceptor {
 
     /**

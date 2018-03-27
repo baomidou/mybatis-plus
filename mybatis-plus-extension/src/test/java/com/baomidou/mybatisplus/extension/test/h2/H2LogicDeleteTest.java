@@ -42,7 +42,7 @@ public class H2LogicDeleteTest extends H2Test {
         AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
         context.register(ServiceConfig.class);
         context.refresh();
-        DataSource ds = (DataSource) context.getBean("dataSource" );
+        DataSource ds = (DataSource) context.getBean("dataSource");
         try (Connection conn = ds.getConnection()) {
             initData(conn);
         }
@@ -55,43 +55,43 @@ public class H2LogicDeleteTest extends H2Test {
     public void testInsert() {
         H2UserLogicDelete user = new H2UserLogicDelete();
         user.setAge(1);
-        user.setPrice(new BigDecimal("9.99" ));
+        user.setPrice(new BigDecimal("9.99"));
         user.setVersion(1);
         userService.insert(user);
         Long id = user.getId();
         Assert.assertNotNull(id);
-        user.setDesc("Caratacus" );
+        user.setDesc("Caratacus");
         userService.insertOrUpdate(user);
-        System.out.println("************************************" );
+        System.out.println("************************************");
         System.out.println("*********" + user.getVersion());
-        System.out.println("************************************" );
+        System.out.println("************************************");
         user = new H2UserLogicDelete();
         user.setId(id);
         EntityWrapper<H2UserLogicDelete> ew = new EntityWrapper<>(user);
         List<H2UserLogicDelete> list = userService.selectList(ew);
-        System.out.println("************************************" );
+        System.out.println("************************************");
         System.out.println("*********" + list.size());
-        System.out.println("************************************" );
+        System.out.println("************************************");
         H2UserLogicDelete userFromDB = userService.selectById(user.getId());
-        Assert.assertEquals("Caratacus" , userFromDB.getDesc());
+        Assert.assertEquals("Caratacus", userFromDB.getDesc());
         Assert.assertEquals(1, userFromDB.getVersion().intValue());
         Page page = new Page();
 
-        page.setOrderByField("desc" );
+        page.setOrderByField("desc");
         //TODO 3.0
 //        userService.selectPage(page, Condition.create().eq("desc", "111"));
         userService.deleteById(id);
         list = userService.selectList(ew);
-        System.out.println("************************************" );
+        System.out.println("************************************");
         System.out.println("*********" + list.size());
-        System.out.println("************************************" );
+        System.out.println("************************************");
     }
 
     @Test
     public void testLogicDeleted() {
         H2UserLogicDelete user = new H2UserLogicDelete();
         user.setAge(1);
-        user.setPrice(new BigDecimal("9.99" ));
+        user.setPrice(new BigDecimal("9.99"));
         user.setVersion(-1);
         userService.insert(user);
         Long id = user.getId();
@@ -106,7 +106,7 @@ public class H2LogicDeleteTest extends H2Test {
     public void testDelete() {
         H2UserLogicDelete user = new H2UserLogicDelete();
         user.setAge(1);
-        user.setPrice(new BigDecimal("9.99" ));
+        user.setPrice(new BigDecimal("9.99"));
         user.setVersion(1);
         userService.insert(user);
         Long id = user.getId();
@@ -118,8 +118,8 @@ public class H2LogicDeleteTest extends H2Test {
     }
 
     @Test
-    public void testSelectBatchIds(){
-        userService.selectBatchIds(Arrays.asList(101,102,103,104));
+    public void testSelectBatchIds() {
+        userService.selectBatchIds(Arrays.asList(101, 102, 103, 104));
 
     }
 }

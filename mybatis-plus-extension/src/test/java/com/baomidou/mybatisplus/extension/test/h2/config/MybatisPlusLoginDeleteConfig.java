@@ -29,15 +29,15 @@ import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
  * @date 2017/6/15
  */
 @Configuration
-@MapperScan("com.baomidou.mybatisplus.extension.test.h2.entity.mapper" )
+@MapperScan("com.baomidou.mybatisplus.extension.test.h2.entity.mapper")
 public class MybatisPlusLoginDeleteConfig {
 
-    @Bean("mybatisSqlSession" )
+    @Bean("mybatisSqlSession")
     public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader, GlobalConfiguration globalConfiguration) throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
         sqlSessionFactory.setDataSource(dataSource);
 //        sqlSessionFactory.setConfigLocation(resourceLoader.getResource("classpath:mybatis-config.xml"));
-        sqlSessionFactory.setTypeAliasesPackage("com.baomidou.mybatisplus.extension.test.h2.entity.persistent" );
+        sqlSessionFactory.setTypeAliasesPackage("com.baomidou.mybatisplus.extension.test.h2.entity.persistent");
         MybatisConfiguration configuration = new MybatisConfiguration();
         configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
         configuration.setJdbcTypeForNull(JdbcType.NULL);
@@ -56,8 +56,8 @@ public class MybatisPlusLoginDeleteConfig {
     @Bean
     public GlobalConfiguration globalConfiguration() {
         GlobalConfiguration conf = new GlobalConfiguration(new LogicSqlInjector());
-        conf.setLogicDeleteValue("-1" );
-        conf.setLogicNotDeleteValue("1" );
+        conf.setLogicDeleteValue("-1");
+        conf.setLogicNotDeleteValue("1");
         conf.setIdType(2);
         return conf;
     }

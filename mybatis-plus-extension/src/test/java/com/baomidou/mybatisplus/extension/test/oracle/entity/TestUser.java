@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-@TableName("TEST_USER" )
+@TableName("TEST_USER")
 public class TestUser implements Serializable {
 
     @TableField(exist = false)
@@ -24,7 +24,7 @@ public class TestUser implements Serializable {
     /**
      * 主键ID
      */
-    @TableId(value = "TEST_ID" , type = IdType.UUID)
+    @TableId(value = "TEST_ID", type = IdType.UUID)
     private String testId;
 
     /**
@@ -40,7 +40,7 @@ public class TestUser implements Serializable {
     /**
      * 测试下划线字段命名类型
      */
-    @TableField(value = "TEST_TYPE" )
+    @TableField(value = "TEST_TYPE")
     private Integer testType;
 
 

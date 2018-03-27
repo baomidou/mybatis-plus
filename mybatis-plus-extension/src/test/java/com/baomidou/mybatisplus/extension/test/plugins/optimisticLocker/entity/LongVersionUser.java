@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.Version;
 
-@TableName("version_user" )
+@TableName("version_user")
 public class LongVersionUser implements Serializable {
 
     @TableField(exist = false)

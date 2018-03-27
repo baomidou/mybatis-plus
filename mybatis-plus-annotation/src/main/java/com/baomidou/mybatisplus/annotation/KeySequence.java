@@ -42,7 +42,7 @@ public @interface KeySequence {
      * 序列名
      * </p>
      */
-    String value() default "" ;
+    String value() default "";
 
     /**
      * <p>

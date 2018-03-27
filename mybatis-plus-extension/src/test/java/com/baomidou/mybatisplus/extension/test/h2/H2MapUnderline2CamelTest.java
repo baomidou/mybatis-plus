@@ -49,7 +49,7 @@ public class H2MapUnderline2CamelTest extends H2Test {
         AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
         context.register(DBConfig.class);
         context.refresh();
-        DataSource ds = (DataSource) context.getBean("dataSource" );
+        DataSource ds = (DataSource) context.getBean("dataSource");
         try (Connection conn = ds.getConnection()) {
             initData(conn);
         }
@@ -60,23 +60,23 @@ public class H2MapUnderline2CamelTest extends H2Test {
         List<Map<String, Object>> list = userService.selectMaps(new EntityWrapper<H2User>());
         for (Map<String, Object> map : list) {
             System.out.println(map);
-            Object obj = map.get("TEST_DATE" );
+            Object obj = map.get("TEST_DATE");
             if (obj != null) {
                 System.out.println("TEST_DATE.class" + obj.getClass().getName());
             } else {
-                obj = map.get("test_date" );
+                obj = map.get("test_date");
                 if (obj != null) {
                     System.out.println("test_date.class" + obj.getClass().getName());
                 } else {
-                    obj = map.get("testDate" );
+                    obj = map.get("testDate");
                     if (obj != null) {
                         System.out.println("testDate.class" + obj.getClass().getName());
                     } else {
-                        obj = map.get("TESTDATE" );
+                        obj = map.get("TESTDATE");
                         if (obj != null) {
                             System.out.println("TESTDATE.class" + obj.getClass().getName());
                         } else {
-                            obj = map.get("testdate" );
+                            obj = map.get("testdate");
                             if (obj != null) {
                                 System.out.println("testdate.class" + obj.getClass().getName());
                             }
@@ -92,11 +92,11 @@ public class H2MapUnderline2CamelTest extends H2Test {
         List<Map> list = userService.mySelectMaps();
         for (Map map : list) {
             System.out.println(JSONObject.toJSON(map));
-            System.out.println("TESTID=" + map.get("TESTID" ));
-            System.out.println("testid=" + map.get("testid" ));
-            System.out.println("testId=" + map.get("testId" ));
-            System.out.println("TEST_ID=" + map.get("TEST_ID" ));
-            System.out.println("test_id=" + map.get("test_id" ));
+            System.out.println("TESTID=" + map.get("TESTID"));
+            System.out.println("testid=" + map.get("testid"));
+            System.out.println("testId=" + map.get("testId"));
+            System.out.println("TEST_ID=" + map.get("TEST_ID"));
+            System.out.println("test_id=" + map.get("test_id"));
 //            Assert.assertNotNull("test_id should be auto converted to testId", map.get("testId"));
 //            Assert.assertNull("test_id should be auto converted to testId", map.get("TESTID"));
 //            Assert.assertNull("test_id should be auto converted to testId", map.get("testid"));
@@ -109,27 +109,27 @@ public class H2MapUnderline2CamelTest extends H2Test {
     @Test
     public void testSelectSql4SelectMaps() {
         EntityWrapper<H2User> ew = new EntityWrapper<>();
-        ew.setSqlSelect("test_id, test_type" );
+        ew.setSqlSelect("test_id, test_type");
         List<Map<String, Object>> list = userService.selectMaps(ew);
         for (Map<String, Object> map : list) {
             System.out.println(map);
-            Object obj = map.get("TEST_DATE" );
+            Object obj = map.get("TEST_DATE");
             if (obj != null) {
                 System.out.println("TEST_DATE.class" + obj.getClass().getName());
             } else {
-                obj = map.get("test_date" );
+                obj = map.get("test_date");
                 if (obj != null) {
                     System.out.println("test_date.class" + obj.getClass().getName());
                 } else {
-                    obj = map.get("testDate" );
+                    obj = map.get("testDate");
                     if (obj != null) {
                         System.out.println("testDate.class" + obj.getClass().getName());
                     } else {
-                        obj = map.get("TESTDATE" );
+                        obj = map.get("TESTDATE");
                         if (obj != null) {
                             System.out.println("TESTDATE.class" + obj.getClass().getName());
                         } else {
-                            obj = map.get("testdate" );
+                            obj = map.get("testdate");
                             if (obj != null) {
                                 System.out.println("testdate.class" + obj.getClass().getName());
                             }
@@ -143,12 +143,12 @@ public class H2MapUnderline2CamelTest extends H2Test {
     @Test
     public void testSelectSqlNotMapping() {
         EntityWrapper<H2User> ew = new EntityWrapper<>();
-        ew.setSqlSelect("test_id, test_type" );
+        ew.setSqlSelect("test_id, test_type");
         List<H2User> list = userService.selectList(ew);
         for (H2User u : list) {
             System.out.println(JSONObject.toJSON(u));
-            Assert.assertNull("test_id is not null, but should not mapping to id" , u.getId());
-            Assert.assertNotNull("test_type should be convert to testType" , u.getTestType());
+            Assert.assertNull("test_id is not null, but should not mapping to id", u.getId());
+            Assert.assertNotNull("test_type should be convert to testType", u.getTestType());
         }
     }
 
@@ -156,8 +156,8 @@ public class H2MapUnderline2CamelTest extends H2Test {
     public void testMpSelect() {
         List<H2User> list = userService.selectList(new EntityWrapper<H2User>());
         for (H2User u : list) {
-            Assert.assertNotNull("id should not be null" , u.getId());
-            Assert.assertNotNull("test_type should not be null" , u.getTestType());
+            Assert.assertNotNull("id should not be null", u.getId());
+            Assert.assertNotNull("test_type should not be null", u.getTestType());
         }
     }
 }

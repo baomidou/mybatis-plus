@@ -31,13 +31,13 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  * @author yanghu
  * @Date 2016-08-22
  */
-@SuppressWarnings("serial" )
+@SuppressWarnings("serial")
 public abstract class MybatisAbstractSQL<T> implements Serializable {
 
-    private static final String AND = " AND " ;
-    private static final String OR = " OR " ;
-    private static final String AND_NEW = ") \nAND (" ;
-    private static final String OR_NEW = ") \nOR (" ;
+    private static final String AND = " AND ";
+    private static final String OR = " OR ";
+    private static final String AND_NEW = ") \nAND (";
+    private static final String OR_NEW = ") \nOR (";
 
     /**
      * SQL条件
@@ -184,13 +184,13 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
             parts = clearNull(parts);
             if (!parts.isEmpty()) {
                 if (!builder.isEmpty()) {
-                    builder.append("\n" );
+                    builder.append("\n");
                 }
 
                 builder.append(keyword);
-                builder.append(" " );
+                builder.append(" ");
                 builder.append(open);
-                String last = "__" ;
+                String last = "__";
                 for (int i = 0, n = parts.size(); i < n; i++) {
                     String part = parts.get(i);
                     if (i > 0) {
@@ -232,12 +232,12 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
          * @return
          */
         private String buildSQL(SafeAppendable builder) {
-            sqlClause(builder, "WHERE" , where, "(" , ")" , AND);
-            sqlClause(builder, "GROUP BY" , groupBy, "" , "" , ", " );
-            sqlClause(builder, "HAVING" , having, "(" , ")" , AND);
-            sqlClause(builder, "ORDER BY" , orderBy, "" , "" , ", " );
+            sqlClause(builder, "WHERE", where, "(", ")", AND);
+            sqlClause(builder, "GROUP BY", groupBy, "", "", ", ");
+            sqlClause(builder, "HAVING", having, "(", ")", AND);
+            sqlClause(builder, "ORDER BY", orderBy, "", "", ", ");
             if (StringUtils.isNotEmpty(last)) {
-                builder.append(" " );
+                builder.append(" ");
                 builder.append(last);
             }
             return builder.toString();

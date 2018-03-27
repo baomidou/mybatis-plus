@@ -49,14 +49,14 @@ import com.baomidou.mybatisplus.extension.toolkit.VersionUtils;
  * @author hubin
  * @Date 2016-08-16
  */
-@Intercepts({@Signature(type = Executor.class, method = "update" , args = {MappedStatement.class, Object.class})})
+@Intercepts({@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})})
 public class SqlExplainInterceptor implements Interceptor {
 
     private static final Log logger = LogFactory.getLog(SqlExplainInterceptor.class);
     /**
      * Mysql支持分析SQL的最小版本
      */
-    private final String minMySQLVersion = "5.6.3" ;
+    private final String minMySQLVersion = "5.6.3";
     /**
      * 发现执行全表 delete update 语句是否停止执行
      */
@@ -77,7 +77,7 @@ public class SqlExplainInterceptor implements Interceptor {
             String databaseVersion = connection.getMetaData().getDatabaseProductVersion();
             if (GlobalConfigUtils.getDbType(configuration).equals(DBType.MYSQL)
                 && VersionUtils.compare(minMySQLVersion, databaseVersion)) {
-                logger.warn("Warn: Your mysql version needs to be greater than '5.6.3' to execute of Sql Explain!" );
+                logger.warn("Warn: Your mysql version needs to be greater than '5.6.3' to execute of Sql Explain!");
                 return invocation.proceed();
             }
             /**
@@ -103,11 +103,11 @@ public class SqlExplainInterceptor implements Interceptor {
      */
     protected void sqlExplain(Configuration configuration, MappedStatement mappedStatement, BoundSql boundSql,
                               Connection connection, Object parameter) {
-        StringBuilder explain = new StringBuilder("EXPLAIN " );
+        StringBuilder explain = new StringBuilder("EXPLAIN ");
         explain.append(boundSql.getSql());
         String sqlExplain = explain.toString();
         StaticSqlSource sqlsource = new StaticSqlSource(configuration, sqlExplain, boundSql.getParameterMappings());
-        MappedStatement.Builder builder = new MappedStatement.Builder(configuration, "explain_sql" , sqlsource,
+        MappedStatement.Builder builder = new MappedStatement.Builder(configuration, "explain_sql", sqlsource,
             SqlCommandType.SELECT);
         builder.resultMaps(mappedStatement.getResultMaps()).resultSetType(mappedStatement.getResultSetType())
             .statementType(mappedStatement.getStatementType());
@@ -117,7 +117,7 @@ public class SqlExplainInterceptor implements Interceptor {
             handler.setParameters(stmt);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    if (!"Using where".equals(rs.getString("Extra" ))) {
+                    if (!"Using where".equals(rs.getString("Extra"))) {
                         if (this.isStopProceed()) {
                             throw new MybatisPlusException("Error: Full table operation is prohibited. SQL: " + boundSql.getSql());
                         }
@@ -142,7 +142,7 @@ public class SqlExplainInterceptor implements Interceptor {
 
     @Override
     public void setProperties(Properties prop) {
-        String stopProceed = prop.getProperty("stopProceed" );
+        String stopProceed = prop.getProperty("stopProceed");
         if (StringUtils.isNotEmpty(stopProceed)) {
             this.stopProceed = Boolean.valueOf(stopProceed);
         }

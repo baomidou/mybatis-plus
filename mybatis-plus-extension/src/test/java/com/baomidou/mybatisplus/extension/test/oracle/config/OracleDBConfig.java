@@ -26,9 +26,9 @@ public class OracleDBConfig {
     public DataSource dataSource() throws SQLException {
         SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
         dataSource.setDriver(new OracleDriver());
-        dataSource.setUrl("jdbc:oracle:thin:@192.168.10.169:1521:orcl" );
-        dataSource.setUsername("sa" );
-        dataSource.setPassword("sa" );
+        dataSource.setUrl("jdbc:oracle:thin:@192.168.10.169:1521:orcl");
+        dataSource.setUsername("sa");
+        dataSource.setPassword("sa");
         return dataSource;
 //        SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
 //        dataSource.setDriver(new Driver());

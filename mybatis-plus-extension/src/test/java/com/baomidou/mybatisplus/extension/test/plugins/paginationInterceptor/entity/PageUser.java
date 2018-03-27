@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 
-@TableName("page_user" )
+@TableName("page_user")
 public class PageUser implements Serializable {
 
     private static final long serialVersionUID = 1L;

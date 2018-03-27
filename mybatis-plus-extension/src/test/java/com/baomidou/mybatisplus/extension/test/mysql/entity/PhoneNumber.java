@@ -40,7 +40,7 @@ public class PhoneNumber {
 
     public PhoneNumber(String string) {
         if (string != null) {
-            String[] parts = string.split("-" );
+            String[] parts = string.split("-");
             if (parts.length > 0)
                 this.countryCode = parts[0];
             if (parts.length > 1)

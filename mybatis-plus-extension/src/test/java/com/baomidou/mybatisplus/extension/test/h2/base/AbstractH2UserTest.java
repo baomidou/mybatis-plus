@@ -36,17 +36,17 @@ public abstract class AbstractH2UserTest extends H2Test {
     protected void insertSimpleCase() {
         H2User user = new H2User();
         user.setAge(1);
-        user.setPrice(new BigDecimal("9.99" ));
+        user.setPrice(new BigDecimal("9.99"));
         userService.insert(user);
         Assert.assertNotNull(user.getId());
-        user.setDesc("Caratacus" );
+        user.setDesc("Caratacus");
         userService.insertOrUpdate(user);
         H2User userFromDB = userService.selectById(user.getId());
-        Assert.assertEquals("Caratacus" , userFromDB.getDesc());
+        Assert.assertEquals("Caratacus", userFromDB.getDesc());
     }
 
     protected void insertBatchSimpleCase() {
-        userService.insert(new H2User("sanmao" , 1));
+        userService.insert(new H2User("sanmao", 1));
         List<H2User> h2Users = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             H2User user = new H2User();
@@ -61,7 +61,7 @@ public abstract class AbstractH2UserTest extends H2Test {
     protected void deleteSimpleCase() {
         H2User user = new H2User();
         user.setAge(1);
-        user.setPrice(new BigDecimal("9.99" ));
+        user.setPrice(new BigDecimal("9.99"));
         userService.insert(user);
         Long userId = user.getId();
         Assert.assertNotNull(userId);
@@ -102,19 +102,19 @@ public abstract class AbstractH2UserTest extends H2Test {
         PageHelper.startPage(1, 3);
         List<H2User> userList = userService.selectList(new EntityWrapper<H2User>());
         System.out.println("total=" + PageHelper.freeTotal());
-        Assert.assertEquals("Should do pagination" , 3, userList.size());
+        Assert.assertEquals("Should do pagination", 3, userList.size());
         userList = userService.selectList(new EntityWrapper<H2User>());
-        Assert.assertNotEquals("Should not do pagination" , 3, userList.size());
+        Assert.assertNotEquals("Should not do pagination", 3, userList.size());
     }
 
     protected void updateByIdWithOptLock() {
         Long id = 991L;
         H2User user = new H2User();
         user.setId(id);
-        user.setName("991" );
+        user.setName("991");
         user.setAge(91);
         user.setPrice(BigDecimal.TEN);
-        user.setDesc("asdf" );
+        user.setDesc("asdf");
         user.setTestType(1);
         user.setVersion(1);
         userService.insertAllColumn(user);
@@ -122,22 +122,22 @@ public abstract class AbstractH2UserTest extends H2Test {
         H2User userDB = userService.selectById(id);
         Assert.assertEquals(1, userDB.getVersion().intValue());
 
-        userDB.setName("991" );
+        userDB.setName("991");
         userService.updateById(userDB);
 
         userDB = userService.selectById(id);
         Assert.assertEquals(2, userDB.getVersion().intValue());
-        Assert.assertEquals("991" , userDB.getName());
+        Assert.assertEquals("991", userDB.getName());
     }
 
     protected void updateAllColumnByIdCase() {
         Long id = 997L;
         H2User user = new H2User();
         user.setId(id);
-        user.setName("991" );
+        user.setName("991");
         user.setAge(91);
         user.setPrice(BigDecimal.TEN);
-        user.setDesc("asdf" );
+        user.setDesc("asdf");
         user.setTestType(1);
         user.setVersion(1);
         userService.insertAllColumn(user);
@@ -145,29 +145,29 @@ public abstract class AbstractH2UserTest extends H2Test {
         H2User userDB = userService.selectById(id);
         Assert.assertEquals(1, userDB.getVersion().intValue());
 
-        userDB.setName("991" );
+        userDB.setName("991");
         userService.updateAllColumnById(userDB);
 
         userDB = userService.selectById(id);
         Assert.assertEquals(2, userDB.getVersion().intValue());
-        Assert.assertEquals("991" , userDB.getName());
+        Assert.assertEquals("991", userDB.getName());
 
-        userDB.setName("990" );
+        userDB.setName("990");
         userService.updateById(userDB);
 
         userDB = userService.selectById(id);
         Assert.assertEquals(3, userDB.getVersion().intValue());
-        Assert.assertEquals("990" , userDB.getName());
+        Assert.assertEquals("990", userDB.getName());
     }
 
     protected void updateByEntityWrapperOptLock() {
         Long id = 1992L;
         H2User user = new H2User();
         user.setId(id);
-        user.setName("992" );
+        user.setName("992");
         user.setAge(92);
         user.setPrice(BigDecimal.TEN);
-        user.setDesc("asdf" );
+        user.setDesc("asdf");
         user.setTestType(1);
         user.setVersion(1);
         userService.insertAllColumn(user);
@@ -176,23 +176,23 @@ public abstract class AbstractH2UserTest extends H2Test {
         Assert.assertEquals(1, userDB.getVersion().intValue());
 
         H2User updUser = new H2User();
-        updUser.setName("999" );
+        updUser.setName("999");
 
         userService.update(updUser, new EntityWrapper<>(userDB));
 
         userDB = userService.selectById(id);
         Assert.assertEquals(2, userDB.getVersion().intValue());
-        Assert.assertEquals("999" , userDB.getName());
+        Assert.assertEquals("999", userDB.getName());
     }
 
     protected void updateByEntityWrapperOptLockWithoutVersionVal() {
         Long id = 993L;
         H2User user = new H2User();
         user.setId(id);
-        user.setName("992" );
+        user.setName("992");
         user.setAge(92);
         user.setPrice(BigDecimal.TEN);
-        user.setDesc("asdf" );
+        user.setDesc("asdf");
         user.setTestType(1);
         user.setVersion(1);
         userService.insertAllColumn(user);
@@ -201,23 +201,23 @@ public abstract class AbstractH2UserTest extends H2Test {
         Assert.assertEquals(1, userDB.getVersion().intValue());
 
         H2User updUser = new H2User();
-        updUser.setName("999" );
+        updUser.setName("999");
         userDB.setVersion(null);
         userService.update(updUser, new EntityWrapper<>(userDB));
 
         userDB = userService.selectById(id);
         Assert.assertEquals(1, userDB.getVersion().intValue());
-        Assert.assertEquals("999" , userDB.getName());
+        Assert.assertEquals("999", userDB.getName());
     }
 
     protected void updateByEntityWrapperNoEntity() {
         Long id = 998L;
         H2User user = new H2User();
         user.setId(id);
-        user.setName("992" );
+        user.setName("992");
         user.setAge(92);
         user.setPrice(BigDecimal.TEN);
-        user.setDesc("asdf" );
+        user.setDesc("asdf");
         user.setTestType(1);
         user.setVersion(1);
         userService.insertAllColumn(user);
@@ -225,13 +225,13 @@ public abstract class AbstractH2UserTest extends H2Test {
         H2User userDB = userService.selectById(id);
         Assert.assertEquals(1, userDB.getVersion().intValue());
         H2User updateUser = new H2User();
-        updateUser.setName("998" );
+        updateUser.setName("998");
         boolean result = userService.update(updateUser, new EntityWrapper<H2User>());
         Assert.assertTrue(result);
         userDB = userService.selectById(id);
         Assert.assertEquals(1, userDB.getVersion().intValue());
         EntityWrapper<H2User> param = new EntityWrapper<>();
-        param.eq("name" , "998" );
+        param.eq("name", "998");
         List<H2User> userList = userService.selectList(param);
         Assert.assertTrue(userList.size() > 1);
     }
@@ -240,10 +240,10 @@ public abstract class AbstractH2UserTest extends H2Test {
         Long id = 918L;
         H2User user = new H2User();
         user.setId(id);
-        user.setName("992" );
+        user.setName("992");
         user.setAge(92);
         user.setPrice(BigDecimal.TEN);
-        user.setDesc("asdf" );
+        user.setDesc("asdf");
         user.setTestType(1);
         user.setVersion(1);
         userService.insertAllColumn(user);
@@ -251,12 +251,12 @@ public abstract class AbstractH2UserTest extends H2Test {
         H2User userDB = userService.selectById(id);
         Assert.assertEquals(1, userDB.getVersion().intValue());
         H2User updateUser = new H2User();
-        updateUser.setName("918" );
+        updateUser.setName("918");
         updateUser.setVersion(1);
         Assert.assertTrue(userService.update(updateUser, null));
         EntityWrapper<H2User> ew = new EntityWrapper<>();
         int count1 = userService.selectCount(ew);
-        ew.eq("name" , "918" ).eq("version" , 1);
+        ew.eq("name", "918").eq("version", 1);
         int count2 = userService.selectCount(ew);
         List<H2User> userList = userService.selectList(new EntityWrapper<H2User>());
         for (H2User u : userList) {
@@ -328,34 +328,34 @@ public abstract class AbstractH2UserTest extends H2Test {
         Long id = 10087L;
         H2User user = new H2User();
         user.setId(id);
-        user.setName("myUpdate" );
+        user.setName("myUpdate");
         user.setVersion(1);
         userService.insert(user);
 
         H2User dbUser = userService.selectById(id);
         Assert.assertNotNull(dbUser);
-        Assert.assertEquals("myUpdate" , dbUser.getName());
+        Assert.assertEquals("myUpdate", dbUser.getName());
 
-        Assert.assertEquals(1, userService.myUpdate(id, "updateMy" ));
+        Assert.assertEquals(1, userService.myUpdate(id, "updateMy"));
 
         dbUser = userService.selectById(id);
         Assert.assertNotNull(dbUser);
-        Assert.assertEquals("updateMy" , dbUser.getName());
+        Assert.assertEquals("updateMy", dbUser.getName());
         Assert.assertEquals(1, user.getVersion().intValue());
     }
 
     protected void selectWithPageCondition() {
         H2User user = new H2User();
-        user.setName("pageCondition" );
+        user.setName("pageCondition");
         user.setTestType(99);
         user.setVersion(1);
         userService.insert(user);
         Page<H2User> page = new Page<>(1, 3);
         Map<String, Object> condition = new HashMap<>();
-        condition.put("test_type" , 99);
+        condition.put("test_type", 99);
         page.setCondition(condition);
         Page<H2User> pageResult = userService.selectPage(page);
-        Assert.assertEquals("testType=99 should only have 1 record" , 1, pageResult.getTotal());
+        Assert.assertEquals("testType=99 should only have 1 record", 1, pageResult.getTotal());
         for (H2User u : pageResult.getRecords()) {
             System.out.println(u);
         }

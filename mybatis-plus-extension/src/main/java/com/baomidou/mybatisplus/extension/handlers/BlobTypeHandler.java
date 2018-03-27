@@ -44,7 +44,7 @@ public class BlobTypeHandler extends BaseTypeHandler<String> {
             ps.setBinaryStream(i, new ByteArrayInputStream(parameter.getBytes(StringUtils.UTF8)),
                 parameter.length());
         } catch (UnsupportedEncodingException e) {
-            throw new MybatisPlusException("Blob Encoding Error!" );
+            throw new MybatisPlusException("Blob Encoding Error!");
         }
     }
 

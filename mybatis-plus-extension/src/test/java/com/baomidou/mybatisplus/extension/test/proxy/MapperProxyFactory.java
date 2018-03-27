@@ -31,7 +31,7 @@ public class MapperProxyFactory {
         return newInstance(type);
     }
 
-    @SuppressWarnings("unchecked" )
+    @SuppressWarnings("unchecked")
     public static <T> T newInstance(Class<T> methodInterface) {
         final MapperProxy<T> methodProxy = new MapperProxy<>(methodInterface);
         return (T) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),

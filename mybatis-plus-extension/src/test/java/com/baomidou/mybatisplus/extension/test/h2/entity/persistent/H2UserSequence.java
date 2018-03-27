@@ -22,8 +22,8 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-@TableName("h2user" )
-@KeySequence("SEQ_TEST" )
+@TableName("h2user")
+@KeySequence("SEQ_TEST")
 public class H2UserSequence {
 
 
@@ -38,7 +38,7 @@ public class H2UserSequence {
     /**
      * 主键ID
      */
-    @TableId(value = "TEST_ID" , type = IdType.INPUT)
+    @TableId(value = "TEST_ID", type = IdType.INPUT)
     private Long id;
 
     private String name;
@@ -49,7 +49,7 @@ public class H2UserSequence {
     private BigDecimal price;
 
     /* 测试下划线字段命名类型, 字段填充 */
-    @TableField(value = "test_type" , strategy = FieldStrategy.IGNORED)
+    @TableField(value = "test_type", strategy = FieldStrategy.IGNORED)
     private Integer testType;
 
     private String desc;

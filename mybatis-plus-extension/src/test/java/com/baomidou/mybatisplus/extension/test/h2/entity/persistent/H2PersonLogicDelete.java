@@ -55,7 +55,7 @@ public class H2PersonLogicDelete extends SuperEntityCamel {
     private String desc;
 
     @TableField
-	private Date testDate;
+    private Date testDate;
 
     @TableLogic(value = "0", delval = "-1")
     private Integer version;

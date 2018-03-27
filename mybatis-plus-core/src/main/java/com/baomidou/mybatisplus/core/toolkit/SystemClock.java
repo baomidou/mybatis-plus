@@ -67,7 +67,7 @@ public class SystemClock {
 
             @Override
             public Thread newThread(Runnable runnable) {
-                Thread thread = new Thread(runnable, "System Clock" );
+                Thread thread = new Thread(runnable, "System Clock");
                 thread.setDaemon(true);
                 return thread;
             }

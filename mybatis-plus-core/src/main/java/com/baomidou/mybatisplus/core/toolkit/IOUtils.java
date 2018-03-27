@@ -216,7 +216,7 @@ public class IOUtils {
                 closeable.close();
             }
         } catch (final IOException ioe) {
-            logger.error("error close io" , ioe);
+            logger.error("error close io", ioe);
         }
     }
 
@@ -300,7 +300,7 @@ public class IOUtils {
             try {
                 sock.close();
             } catch (final IOException ioe) {
-                logger.error("error close io" , ioe);
+                logger.error("error close io", ioe);
             }
         }
     }
@@ -334,7 +334,7 @@ public class IOUtils {
             try {
                 selector.close();
             } catch (final IOException ioe) {
-                logger.error("error close io" , ioe);
+                logger.error("error close io", ioe);
             }
         }
     }
@@ -368,7 +368,7 @@ public class IOUtils {
             try {
                 sock.close();
             } catch (final IOException ioe) {
-                logger.error("error close io" , ioe);
+                logger.error("error close io", ioe);
             }
         }
     }
@@ -402,7 +402,7 @@ public class IOUtils {
             try {
                 conn.close();
             } catch (Exception e) {
-                logger.error("error close conn" , e);
+                logger.error("error close conn", e);
             }
         }
     }
@@ -436,7 +436,7 @@ public class IOUtils {
             try {
                 resultSet.close();
             } catch (Exception e) {
-                logger.error("error close resultSet" , e);
+                logger.error("error close resultSet", e);
             }
         }
     }
@@ -470,7 +470,7 @@ public class IOUtils {
             try {
                 statement.close();
             } catch (Exception e) {
-                logger.error("error close statement" , e);
+                logger.error("error close statement", e);
             }
         }
     }

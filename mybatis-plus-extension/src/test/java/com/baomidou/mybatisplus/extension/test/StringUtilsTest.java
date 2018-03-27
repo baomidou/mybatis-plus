@@ -33,8 +33,8 @@ public class StringUtilsTest {
 
     @Test
     public void removePrefixAfterPrefixToLower() {
-        Assert.assertEquals("user" , StringUtils.removePrefixAfterPrefixToLower("isUser" , 2));
-        Assert.assertEquals("userInfo" , StringUtils.removePrefixAfterPrefixToLower("isUserInfo" , 2));
-        Assert.assertEquals(true, StringUtils.isMixedMode("Xxx_ss1aa" ));
+        Assert.assertEquals("user", StringUtils.removePrefixAfterPrefixToLower("isUser", 2));
+        Assert.assertEquals("userInfo", StringUtils.removePrefixAfterPrefixToLower("isUserInfo", 2));
+        Assert.assertEquals(true, StringUtils.isMixedMode("Xxx_ss1aa"));
     }
 }

@@ -50,21 +50,21 @@ import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
  * @author yuxiaobin
  * @date 2017/5/24
  */
-@Intercepts({@Signature(type = Executor.class, method = "update" , args = {MappedStatement.class, Object.class})})
+@Intercepts({@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})})
 public class OptimisticLockerInterceptor implements Interceptor {
 
     private final Map<Class<?>, EntityField> versionFieldCache = new ConcurrentHashMap<>();
     private final Map<Class<?>, List<EntityField>> entityFieldsCache = new ConcurrentHashMap<>();
 
-    private static final String MP_OPTLOCK_VERSION_ORIGINAL = "MP_OPTLOCK_VERSION_ORIGINAL" ;
-    private static final String MP_OPTLOCK_VERSION_COLUMN = "MP_OPTLOCK_VERSION_COLUMN" ;
-    public static final String MP_OPTLOCK_ET_ORIGINAL = "MP_OPTLOCK_ET_ORIGINAL" ;
-    private static final String NAME_ENTITY = "et" ;
-    private static final String NAME_ENTITY_WRAPPER = "ew" ;
-    private static final String PARAM_UPDATE_METHOD_NAME = "update" ;
+    private static final String MP_OPTLOCK_VERSION_ORIGINAL = "MP_OPTLOCK_VERSION_ORIGINAL";
+    private static final String MP_OPTLOCK_VERSION_COLUMN = "MP_OPTLOCK_VERSION_COLUMN";
+    public static final String MP_OPTLOCK_ET_ORIGINAL = "MP_OPTLOCK_ET_ORIGINAL";
+    private static final String NAME_ENTITY = "et";
+    private static final String NAME_ENTITY_WRAPPER = "ew";
+    private static final String PARAM_UPDATE_METHOD_NAME = "update";
 
     @Override
-    @SuppressWarnings("unchecked" )
+    @SuppressWarnings("unchecked")
     public Object intercept(Invocation invocation) throws Throwable {
         Object[] args = invocation.getArgs();
         MappedStatement ms = (MappedStatement) args[0];
@@ -103,7 +103,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
                 }
             } else if (et != null) {
                 String methodId = ms.getId();
-                String updateMethodName = methodId.substring(ms.getId().lastIndexOf("." ) + 1);
+                String updateMethodName = methodId.substring(ms.getId().lastIndexOf(".") + 1);
                 if (PARAM_UPDATE_METHOD_NAME.equals(updateMethodName)) {//update(entityClass, null) -->> update all. ignore version
                     return invocation.proceed();
                 }

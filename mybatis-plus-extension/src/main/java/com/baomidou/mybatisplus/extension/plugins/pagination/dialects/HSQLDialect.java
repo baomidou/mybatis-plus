@@ -33,7 +33,7 @@ public class HSQLDialect implements IDialect {
     @Override
     public String buildPaginationSql(String originalSql, int offset, int limit) {
         StringBuilder sql = new StringBuilder(originalSql);
-        sql.append(" limit " ).append(offset).append("," ).append(limit);
+        sql.append(" limit ").append(offset).append(",").append(limit);
         return sql.toString();
     }
 }

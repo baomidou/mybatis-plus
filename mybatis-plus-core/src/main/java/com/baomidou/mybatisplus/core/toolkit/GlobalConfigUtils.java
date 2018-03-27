@@ -84,7 +84,7 @@ public class GlobalConfigUtils {
      */
     public static void setGlobalConfig(Configuration configuration, GlobalConfiguration mybatisGlobalConfig) {
         if (configuration == null || mybatisGlobalConfig == null) {
-            throw new MybatisPlusException("Error: Could not setGlobalConfig" );
+            throw new MybatisPlusException("Error: Could not setGlobalConfig");
         }
         // 设置全局设置
         GLOBAL_CONFIG.put(configuration.toString(), mybatisGlobalConfig);
@@ -100,7 +100,7 @@ public class GlobalConfigUtils {
      */
     public static GlobalConfiguration getGlobalConfig(Configuration configuration) {
         if (configuration == null) {
-            throw new MybatisPlusException("Error: You need Initialize MybatisConfiguration !" );
+            throw new MybatisPlusException("Error: You need Initialize MybatisConfiguration !");
         }
         return getGlobalConfig(configuration.toString());
     }
@@ -117,7 +117,7 @@ public class GlobalConfigUtils {
         GlobalConfiguration cache = GLOBAL_CONFIG.get(configMark);
         if (cache == null) {
             // 没有获取全局配置初始全局配置
-            logger.debug("DeBug: MyBatis Plus Global configuration Initializing !" );
+            logger.debug("DeBug: MyBatis Plus Global configuration Initializing !");
             GLOBAL_CONFIG.put(configMark, DEFAULT);
             return DEFAULT;
         }

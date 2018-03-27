@@ -28,7 +28,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
  * @author Caratacu
  * @Date 2016-12-22
  */
-@TableName("not_pk" )
+@TableName("not_pk")
 public class NotPK implements Serializable {
 
     // 静态属性会自动忽略
@@ -36,9 +36,9 @@ public class NotPK implements Serializable {
 
     private String uuid;
 
-    @TableField("is1" )
+    @TableField("is1")
     private boolean isIs;
-    @TableField("is2" )
+    @TableField("is2")
     private Boolean isis;
 
     private String type;

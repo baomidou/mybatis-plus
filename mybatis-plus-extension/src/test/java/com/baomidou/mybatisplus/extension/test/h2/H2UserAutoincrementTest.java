@@ -46,9 +46,9 @@ public class H2UserAutoincrementTest extends H2Test {
 
     @BeforeClass
     public static void initDB() throws SQLException, IOException {
-        @SuppressWarnings("resource" )
-        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:h2/spring-test-h2.xml" );
-        DataSource ds = (DataSource) context.getBean("dataSource" );
+        @SuppressWarnings("resource")
+        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:h2/spring-test-h2.xml");
+        DataSource ds = (DataSource) context.getBean("dataSource");
         try (Connection conn = ds.getConnection()) {
             initData(conn);
         }
@@ -58,14 +58,14 @@ public class H2UserAutoincrementTest extends H2Test {
     public void testInsert() {
         H2UserMetaObj user = new H2UserMetaObj();
         user.setAge(1);
-        user.setPrice(new BigDecimal("9.99" ));
+        user.setPrice(new BigDecimal("9.99"));
         Assert.assertEquals(1, userMapper.insert(user).intValue());
         Long id1 = user.getId();
         Assert.assertNotNull(id1);
-        user.setDesc("Caratacus" );
+        user.setDesc("Caratacus");
         Assert.assertEquals(1, userMapper.updateById(user).intValue());
         H2UserMetaObj userFromDB = userMapper.selectById(id1);
-        Assert.assertEquals("Caratacus" , userFromDB.getDesc());
+        Assert.assertEquals("Caratacus", userFromDB.getDesc());
 
         H2UserMetaObj user2 = new H2UserMetaObj();
         user2.setAge(2);
@@ -76,7 +76,7 @@ public class H2UserAutoincrementTest extends H2Test {
 
     @Test
     public void testInsertMy() {
-        String name = "testInsertMy" ;
+        String name = "testInsertMy";
         int version = 1;
         int row = userMapper.myInsertWithNameVersion(name, version);
         Assert.assertEquals(1, row);
@@ -85,19 +85,19 @@ public class H2UserAutoincrementTest extends H2Test {
     @Test
     public void testUpdateMy() {
         H2UserMetaObj user = new H2UserMetaObj();
-        user.setName("myUpdate" );
+        user.setName("myUpdate");
         user.setVersion(1);
         userMapper.insert(user);
         Long id = user.getId();
         H2UserMetaObj dbUser = userMapper.selectById(id);
         Assert.assertNotNull(dbUser);
-        Assert.assertEquals("myUpdate" , dbUser.getName());
+        Assert.assertEquals("myUpdate", dbUser.getName());
 
-        Assert.assertEquals(1, userMapper.myUpdateWithNameId(id, "updateMy" ));
+        Assert.assertEquals(1, userMapper.myUpdateWithNameId(id, "updateMy"));
 
         dbUser = userMapper.selectById(id);
         Assert.assertNotNull(dbUser);
-        Assert.assertEquals("updateMy" , dbUser.getName());
+        Assert.assertEquals("updateMy", dbUser.getName());
         Assert.assertEquals(1, user.getVersion().intValue());
 
     }

@@ -23,9 +23,9 @@ public class DruidOracleDBConfig {
     @Bean
     public DataSource getDruidDataSource() {
         HikariDataSource dataSource = new HikariDataSource();
-        dataSource.setJdbcUrl("jdbc:oracle:thin:@192.168.10.169:1521:orcl" );
-        dataSource.setUsername("sa" );
-        dataSource.setPassword("sa" );
+        dataSource.setJdbcUrl("jdbc:oracle:thin:@192.168.10.169:1521:orcl");
+        dataSource.setUsername("sa");
+        dataSource.setPassword("sa");
         return dataSource;
     }
 

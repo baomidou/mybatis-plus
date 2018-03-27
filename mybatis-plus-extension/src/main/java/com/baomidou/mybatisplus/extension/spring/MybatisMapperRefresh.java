@@ -178,7 +178,7 @@ public class MybatisMapperRefresh implements Runnable {
 
                     } while (true);
                 }
-            }, "mybatis-plus MapperRefresh" ).start();
+            }, "mybatis-plus MapperRefresh").start();
         }
     }
 
@@ -187,34 +187,34 @@ public class MybatisMapperRefresh implements Runnable {
      *
      * @throws Exception
      */
-    @SuppressWarnings("rawtypes" )
+    @SuppressWarnings("rawtypes")
     private void refresh(Resource resource) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
         this.configuration = sqlSessionFactory.getConfiguration();
         boolean isSupper = configuration.getClass().getSuperclass() == Configuration.class;
         try {
-            Field loadedResourcesField = isSupper ? configuration.getClass().getSuperclass().getDeclaredField("loadedResources" )
-                : configuration.getClass().getDeclaredField("loadedResources" );
+            Field loadedResourcesField = isSupper ? configuration.getClass().getSuperclass().getDeclaredField("loadedResources")
+                : configuration.getClass().getDeclaredField("loadedResources");
             loadedResourcesField.setAccessible(true);
             Set loadedResourcesSet = ((Set) loadedResourcesField.get(configuration));
             XPathParser xPathParser = new XPathParser(resource.getInputStream(), true, configuration.getVariables(),
                 new XMLMapperEntityResolver());
-            XNode context = xPathParser.evalNode("/mapper" );
-            String namespace = context.getStringAttribute("namespace" );
-            Field field = MapperRegistry.class.getDeclaredField("knownMappers" );
+            XNode context = xPathParser.evalNode("/mapper");
+            String namespace = context.getStringAttribute("namespace");
+            Field field = MapperRegistry.class.getDeclaredField("knownMappers");
             field.setAccessible(true);
             Map mapConfig = (Map) field.get(configuration.getMapperRegistry());
             mapConfig.remove(Resources.classForName(namespace));
             loadedResourcesSet.remove(resource.toString());
             configuration.getCacheNames().remove(namespace);
-            cleanParameterMap(context.evalNodes("/mapper/parameterMap" ), namespace);
-            cleanResultMap(context.evalNodes("/mapper/resultMap" ), namespace);
-            cleanKeyGenerators(context.evalNodes("insert|update" ), namespace);
-            cleanSqlElement(context.evalNodes("/mapper/sql" ), namespace);
+            cleanParameterMap(context.evalNodes("/mapper/parameterMap"), namespace);
+            cleanResultMap(context.evalNodes("/mapper/resultMap"), namespace);
+            cleanKeyGenerators(context.evalNodes("insert|update"), namespace);
+            cleanSqlElement(context.evalNodes("/mapper/sql"), namespace);
             XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(resource.getInputStream(),
                 sqlSessionFactory.getConfiguration(),
                 resource.toString(), sqlSessionFactory.getConfiguration().getSqlFragments());
             xmlMapperBuilder.parse();
-            logger.debug("refresh: '" + resource + "', success!" );
+            logger.debug("refresh: '" + resource + "', success!");
         } catch (IOException e) {
             logger.error("Refresh IOException :" + e.getMessage());
         } finally {
@@ -230,7 +230,7 @@ public class MybatisMapperRefresh implements Runnable {
      */
     private void cleanParameterMap(List<XNode> list, String namespace) {
         for (XNode parameterMapNode : list) {
-            String id = parameterMapNode.getStringAttribute("id" );
+            String id = parameterMapNode.getStringAttribute("id");
             configuration.getParameterMaps().remove(namespace + "." + id);
         }
     }
@@ -243,7 +243,7 @@ public class MybatisMapperRefresh implements Runnable {
      */
     private void cleanResultMap(List<XNode> list, String namespace) {
         for (XNode resultMapNode : list) {
-            String id = resultMapNode.getStringAttribute("id" , resultMapNode.getValueBasedIdentifier());
+            String id = resultMapNode.getStringAttribute("id", resultMapNode.getValueBasedIdentifier());
             configuration.getResultMapNames().remove(id);
             configuration.getResultMapNames().remove(namespace + "." + id);
             clearResultMap(resultMapNode, namespace);
@@ -254,11 +254,11 @@ public class MybatisMapperRefresh implements Runnable {
         for (XNode resultChild : xNode.getChildren()) {
             if ("association".equals(resultChild.getName()) || "collection".equals(resultChild.getName())
                 || "case".equals(resultChild.getName())) {
-                if (resultChild.getStringAttribute("select" ) == null) {
+                if (resultChild.getStringAttribute("select") == null) {
                     configuration.getResultMapNames().remove(
-                        resultChild.getStringAttribute("id" , resultChild.getValueBasedIdentifier()));
+                        resultChild.getStringAttribute("id", resultChild.getValueBasedIdentifier()));
                     configuration.getResultMapNames().remove(
-                        namespace + "." + resultChild.getStringAttribute("id" , resultChild.getValueBasedIdentifier()));
+                        namespace + "." + resultChild.getStringAttribute("id", resultChild.getValueBasedIdentifier()));
                     if (resultChild.getChildren() != null && !resultChild.getChildren().isEmpty()) {
                         clearResultMap(resultChild, namespace);
                     }
@@ -275,7 +275,7 @@ public class MybatisMapperRefresh implements Runnable {
      */
     private void cleanKeyGenerators(List<XNode> list, String namespace) {
         for (XNode context : list) {
-            String id = context.getStringAttribute("id" );
+            String id = context.getStringAttribute("id");
             configuration.getKeyGeneratorNames().remove(id + SelectKeyGenerator.SELECT_KEY_SUFFIX);
             configuration.getKeyGeneratorNames().remove(namespace + "." + id + SelectKeyGenerator.SELECT_KEY_SUFFIX);
         }
@@ -289,7 +289,7 @@ public class MybatisMapperRefresh implements Runnable {
      */
     private void cleanSqlElement(List<XNode> list, String namespace) {
         for (XNode context : list) {
-            String id = context.getStringAttribute("id" );
+            String id = context.getStringAttribute("id");
             configuration.getSqlFragments().remove(id);
             configuration.getSqlFragments().remove(namespace + "." + id);
         }

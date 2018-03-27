@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 /**
  * 用户表
  */
-@KeySequence("SEQ_TEST" )
+@KeySequence("SEQ_TEST")
 public class BaseTestEntity implements Serializable {
 
     @TableField(exist = false)
@@ -19,7 +19,7 @@ public class BaseTestEntity implements Serializable {
     /**
      * 主键ID
      */
-    @TableId(value = "TEST_ID" , type = IdType.INPUT)
+    @TableId(value = "TEST_ID", type = IdType.INPUT)
     private Long id;
 
     //    public BaseTestEntity() {

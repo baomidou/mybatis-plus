@@ -42,7 +42,7 @@ public class LogicDeleteTest extends CrudTest {
     @Override
     public GlobalConfiguration globalConfiguration() {
         GlobalConfiguration gc = super.globalConfiguration();
-        gc.setLogicDeleteValue("-1" );// 逻辑删除值 -1 测试字段 type
+        gc.setLogicDeleteValue("-1");// 逻辑删除值 -1 测试字段 type
         return gc;
     }
 
@@ -51,9 +51,9 @@ public class LogicDeleteTest extends CrudTest {
         // 加载配置文件
         SqlSession session = this.sqlSessionFactory().openSession();
         UserMapper userMapper = session.getMapper(UserMapper.class);
-        System.err.println(" debug run 查询执行 user 表数据变化！ " );
+        System.err.println(" debug run 查询执行 user 表数据变化！ ");
         long id = IdWorker.getId();
-        int rlt = userMapper.insert(new User(id, "logic-delete-1" , 18, 1));
+        int rlt = userMapper.insert(new User(id, "logic-delete-1", 18, 1));
         System.err.println("插入成功记录数：" + rlt);
         rlt = userMapper.deleteById(id);
         System.err.println("根据 ID 逻辑删除成功记录数：" + rlt);
@@ -62,9 +62,9 @@ public class LogicDeleteTest extends CrudTest {
         uu.setId(333L);
         uu.setTestType(1);
         System.err.println("第一次：逻辑删除testType 改为 1 成功记录数：" + rlt);
-        rlt = userMapper.insert(new User(IdWorker.getId(), "logic-delete-2" , 28, 2));
+        rlt = userMapper.insert(new User(IdWorker.getId(), "logic-delete-2", 28, 2));
         System.err.println("再插入一条成功记录数：" + rlt);
-        rlt = userMapper.delete(Condition.<User>entityWrapper().eq("test_id" , 1111));
+        rlt = userMapper.delete(Condition.<User>entityWrapper().eq("test_id", 1111));
         System.err.println("全表逻辑删除成功记录数：" + rlt);
         List<User> userList = userMapper.selectList(null);
         for (User u : userList) {
@@ -73,7 +73,7 @@ public class LogicDeleteTest extends CrudTest {
 
         System.err.println("第二次：逻辑删除testType 改为 1 成功记录数：" + rlt);
         Map<String, Object> map = new HashMap<>();
-        map.put("test_id" , id);
+        map.put("test_id", id);
         rlt = userMapper.deleteByMap(map);
         System.err.println("全表逻辑删除 ByMap 成功记录数：" + rlt);
         userList = userMapper.selectList(null);

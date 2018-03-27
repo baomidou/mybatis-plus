@@ -36,14 +36,14 @@
         </property>
     </bean>
 
-	<bean id="mybatisMapWrapperFactory" class="com.baomidou.mybatisplus.extension.MybatisMapWrapperFactory"/>
+    <bean id="mybatisMapWrapperFactory" class="com.baomidou.mybatisplus.extension.MybatisMapWrapperFactory"/>
 
     <bean id="mybatisConfig" class="com.baomidou.mybatisplus.core.MybatisConfiguration">
         <property name="mapUnderscoreToCamelCase" value="true"/>
         <property name="jdbcTypeForNull">
             <util:constant static-field="org.apache.ibatis.type.JdbcType.NULL"/>
         </property>
-		<property name="objectWrapperFactory" ref="mybatisMapWrapperFactory"/>
+        <property name="objectWrapperFactory" ref="mybatisMapWrapperFactory"/>
     </bean>
 
     <bean id="globalConfig" class="com.baomidou.mybatisplus.core.metadata.GlobalConfiguration">

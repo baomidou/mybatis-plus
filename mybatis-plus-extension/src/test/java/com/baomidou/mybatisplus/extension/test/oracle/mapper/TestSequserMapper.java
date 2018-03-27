@@ -12,6 +12,6 @@ import com.baomidou.mybatisplus.extension.test.oracle.entity.TestSequser;
  */
 public interface TestSequserMapper extends BaseMapper<TestSequser> {
 
-    @Select("select * from TEST_SEQUSER" )
+    @Select("select * from TEST_SEQUSER")
     List<TestSequser> getList();
 }

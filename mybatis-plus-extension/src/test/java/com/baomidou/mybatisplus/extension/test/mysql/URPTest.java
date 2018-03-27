@@ -52,8 +52,8 @@ public class URPTest extends CrudTest {
         SqlSession session = this.sqlSessionFactory().openSession();
         RoleMapper roleMapper = session.getMapper(RoleMapper.class);
         Role role = new Role();
-        role.setName("K 神" );
-        role.setDescription("无敌战神 K" );
+        role.setName("K 神");
+        role.setDescription("无敌战神 K");
         role.setSort(2);
         roleMapper.insert(role);
         UserMapper userMapper = session.getMapper(UserMapper.class);
@@ -74,15 +74,15 @@ public class URPTest extends CrudTest {
          */
         Role role = new Role();
         role.setId(IdWorker.getId());
-        role.setName("admin" );
+        role.setName("admin");
         int rlt = roleMapper.insert(role);
         System.err.println("--------- insert role --------- " + rlt);
 
-        PhoneNumber phone = new PhoneNumber("81" , "0576" , "82453832" );
+        PhoneNumber phone = new PhoneNumber("81", "0576", "82453832");
 
         User userA = new User();
         userA.setId(IdWorker.getId());
-        userA.setName("junyu_shi" );
+        userA.setName("junyu_shi");
         userA.setAge(15);
         userA.setTestType(1);
         userA.setRole(role);
@@ -97,7 +97,7 @@ public class URPTest extends CrudTest {
         // 和Role属性用于保存resultmap的级联查询. 在插入时, 就需要写user.setRoleId(), 然后updateUser.
         role = new Role();
         role.setId(IdWorker.getId());
-        role.setName("root" );
+        role.setName("root");
         roleMapper.insert(role);
         userA.setRole(role);
         userMapper.updateById(userA);

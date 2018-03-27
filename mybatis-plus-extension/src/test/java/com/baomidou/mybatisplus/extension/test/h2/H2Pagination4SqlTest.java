@@ -57,7 +57,7 @@ public class H2Pagination4SqlTest extends H2Test {
         Page<H2Addr> page = new Page<H2Addr>(0, 3);
         page.setOptimizeCountSql(optimizeCountSql);
         List<H2Addr> addrList = userMapper.getAddrListByUserIdPage(101L, page);
-        Assert.assertNotEquals("Should have pagination info" , 0, page.getTotal());
+        Assert.assertNotEquals("Should have pagination info", 0, page.getTotal());
         Assert.assertEquals(3, addrList.size());
     }
 

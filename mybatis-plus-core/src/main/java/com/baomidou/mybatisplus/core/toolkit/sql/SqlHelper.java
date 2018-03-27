@@ -117,7 +117,7 @@ public class SqlHelper {
     public static TableInfo table(Class<?> clazz) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
         if (null == tableInfo) {
-            throw new MybatisPlusException("Error: Cannot execute table Method, ClassGenricType not found ." );
+            throw new MybatisPlusException("Error: Cannot execute table Method, ClassGenricType not found .");
         }
         return tableInfo;
     }
@@ -171,7 +171,7 @@ public class SqlHelper {
         if (CollectionUtils.isNotEmpty(list)) {
             int size = list.size();
             if (size > 1) {
-                logger.warn(String.format("Warn: execute Method There are  %s results." , size));
+                logger.warn(String.format("Warn: execute Method There are  %s results.", size));
             }
             return list.get(0);
         }

@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-@TableName("TEST_SEQUSER" )
+@TableName("TEST_SEQUSER")
 //@KeySequence("SEQ_TEST")
 public class TestSequser extends BaseTestEntity implements Serializable {
 
@@ -35,19 +35,19 @@ public class TestSequser extends BaseTestEntity implements Serializable {
     /**
      * 名称
      */
-    @TableField(value = "NAME" )
+    @TableField(value = "NAME")
     private String name;
 
     /**
      * 年龄
      */
-    @TableField(value = "age" )
+    @TableField(value = "age")
     private Integer age;
 
     /**
      * 测试下划线字段命名类型
      */
-    @TableField(value = "TEST_TYPE" )
+    @TableField(value = "TEST_TYPE")
     private Integer testType;
 
     public TestSequser() {

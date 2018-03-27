@@ -42,9 +42,9 @@ public class H2MetaObjectHandlerTest extends H2Test {
 
     @BeforeClass
     public static void initDB() throws SQLException, IOException {
-        @SuppressWarnings("resource" )
-        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:h2/spring-test-h2-metaobj.xml" );
-        DataSource ds = (DataSource) context.getBean("dataSource" );
+        @SuppressWarnings("resource")
+        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:h2/spring-test-h2-metaobj.xml");
+        DataSource ds = (DataSource) context.getBean("dataSource");
         try (Connection conn = ds.getConnection()) {
             initData(conn);
         }
@@ -53,37 +53,37 @@ public class H2MetaObjectHandlerTest extends H2Test {
     @Test
     public void testMetaObjectHandler() {
         H2UserMetaObj user = new H2UserMetaObj();
-        user.setName("metaobjtest" );
+        user.setName("metaobjtest");
         user.setVersion(1);
         user.setAge(12);
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DAY_OF_MONTH, -1);
         user.setLastUpdatedDt(new Timestamp(cal.getTimeInMillis()));
-        user.setDesc("abc" );
+        user.setDesc("abc");
         userMapper.insert(user);
         System.out.println("before update: getLastUpdatedDt=" + user.getLastUpdatedDt());
         Assert.assertNotNull(userMapper.selectById(user.getId()).getTestType());
 
-        user.setName("999" );
+        user.setName("999");
         userMapper.updateById(user);
         H2UserMetaObj userDB = userMapper.selectById(user.getId());
         //MyMetaObjectHandler.insertFill() : set default testType value=3
         Assert.assertEquals(3, userDB.getTestType().intValue());
-        Assert.assertEquals("999" , userDB.getName());
+        Assert.assertEquals("999", userDB.getName());
         assertUpdateFill(userDB.getLastUpdatedDt());
     }
 
     @Test
     public void testMetaObjectHandlerNullInsert4Update() {
         H2UserMetaObj user = new H2UserMetaObj();
-        user.setName("metaobjtest" );
+        user.setName("metaobjtest");
         user.setVersion(1);
         user.setAge(12);
-        user.setDesc("abc" );
+        user.setDesc("abc");
         userMapper.insert(user);
         System.out.println("before update: getLastUpdatedDt=" + user.getLastUpdatedDt());
         Assert.assertNotNull(userMapper.selectById(user.getId()).getTestType());
-        user.setName("999" );
+        user.setName("999");
         userMapper.updateById(user);
         H2UserMetaObj userDB = userMapper.selectById(user.getId());
         assertUpdateFill(userDB.getLastUpdatedDt());
@@ -92,7 +92,7 @@ public class H2MetaObjectHandlerTest extends H2Test {
 
     @Test
     public void testInsertMy() {
-        String name = "testInsertMy" ;
+        String name = "testInsertMy";
         int version = 1;
         int row = userMapper.myInsertWithNameVersion(name, version);
         Assert.assertEquals(1, row);
@@ -101,19 +101,19 @@ public class H2MetaObjectHandlerTest extends H2Test {
     @Test
     public void testUpdateMy() {
         H2UserMetaObj user = new H2UserMetaObj();
-        user.setName("myUpdate" );
+        user.setName("myUpdate");
         user.setVersion(1);
         userMapper.insert(user);
         Long id = user.getId();
         H2UserMetaObj dbUser = userMapper.selectById(id);
         Assert.assertNotNull(dbUser);
-        Assert.assertEquals("myUpdate" , dbUser.getName());
+        Assert.assertEquals("myUpdate", dbUser.getName());
 
-        Assert.assertEquals(1, userMapper.myUpdateWithNameId(id, "updateMy" ));
+        Assert.assertEquals(1, userMapper.myUpdateWithNameId(id, "updateMy"));
 
         dbUser = userMapper.selectById(id);
         Assert.assertNotNull(dbUser);
-        Assert.assertEquals("updateMy" , dbUser.getName());
+        Assert.assertEquals("updateMy", dbUser.getName());
         Assert.assertEquals(1, user.getVersion().intValue());
     }
 

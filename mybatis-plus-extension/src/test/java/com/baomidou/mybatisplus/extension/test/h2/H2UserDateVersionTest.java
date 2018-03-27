@@ -45,9 +45,9 @@ public class H2UserDateVersionTest extends H2Test {
 
     @BeforeClass
     public static void initDB() throws SQLException, IOException {
-        @SuppressWarnings("resource" )
-        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:h2/spring-test-h2.xml" );
-        DataSource ds = (DataSource) context.getBean("dataSource" );
+        @SuppressWarnings("resource")
+        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:h2/spring-test-h2.xml");
+        DataSource ds = (DataSource) context.getBean("dataSource");
         try (Connection conn = ds.getConnection()) {
             initData(conn);
         }
@@ -59,10 +59,10 @@ public class H2UserDateVersionTest extends H2Test {
         Long id = 991L;
         H2UserDateVersion user = new H2UserDateVersion();
         user.setId(id);
-        user.setName("991" );
+        user.setName("991");
         user.setAge(91);
         user.setPrice(BigDecimal.TEN);
-        user.setDesc("asdf" );
+        user.setDesc("asdf");
         user.setTestType(1);
         user.setVersion(1);
         userMapper.insertAllColumn(user);
@@ -70,11 +70,11 @@ public class H2UserDateVersionTest extends H2Test {
         H2UserDateVersion userDB = userMapper.selectById(id);
         Assert.assertEquals(null, userDB.getTestDate());
 
-        userDB.setName("991" );
+        userDB.setName("991");
         userMapper.updateById(userDB);
 
         userDB = userMapper.selectById(id);
-        Assert.assertEquals("991" , userDB.getName());
+        Assert.assertEquals("991", userDB.getName());
         Assert.assertEquals(null, userDB.getTestDate());
     }
 
@@ -84,10 +84,10 @@ public class H2UserDateVersionTest extends H2Test {
         Long id = 992L;
         H2UserDateVersion user = new H2UserDateVersion();
         user.setId(id);
-        user.setName("992" );
+        user.setName("992");
         user.setAge(92);
         user.setPrice(BigDecimal.TEN);
-        user.setDesc("asdf" );
+        user.setDesc("asdf");
         user.setTestType(1);
         user.setVersion(1);
         userMapper.insertAllColumn(user);
@@ -95,12 +95,12 @@ public class H2UserDateVersionTest extends H2Test {
         H2UserDateVersion userDB = userMapper.selectById(id);
 
         H2UserDateVersion updUser = new H2UserDateVersion();
-        updUser.setName("999" );
+        updUser.setName("999");
 
         userMapper.update(updUser, new EntityWrapper<>(userDB));
 
         userDB = userMapper.selectById(id);
-        Assert.assertEquals("999" , userDB.getName());
+        Assert.assertEquals("999", userDB.getName());
     }
 
     @Test
@@ -108,10 +108,10 @@ public class H2UserDateVersionTest extends H2Test {
         Long id = 994L;
         H2UserDateVersion user = new H2UserDateVersion();
         user.setId(id);
-        user.setName("994" );
+        user.setName("994");
         user.setAge(91);
         user.setPrice(BigDecimal.TEN);
-        user.setDesc("asdf" );
+        user.setDesc("asdf");
         user.setTestType(1);
         user.setVersion(1);
         Calendar cal = Calendar.getInstance();
@@ -120,23 +120,23 @@ public class H2UserDateVersionTest extends H2Test {
         userMapper.insertAllColumn(user);
 
         System.out.println("before update: testDate=" + user.getTestDate());
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH" );
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH");
         H2UserDateVersion userDB = userMapper.selectById(id);
 
         Assert.assertNotNull(userDB.getTestDate());
         String originalDateVersionStr = sdf.format(cal.getTime());
         Assert.assertEquals(originalDateVersionStr, sdf.format(userDB.getTestDate()));
 
-        userDB.setName("991" );
+        userDB.setName("991");
         userMapper.updateById(userDB);
         userDB = userMapper.selectById(id);
-        Assert.assertEquals("991" , userDB.getName());
+        Assert.assertEquals("991", userDB.getName());
         Date versionDate = userDB.getTestDate();
         System.out.println("after update: testDate=" + versionDate);
         String versionDateStr = sdf.format(versionDate);
-        Assert.assertEquals("@version field testDate should be updated to current sysdate" , sdf.format(new Date()), versionDateStr);
+        Assert.assertEquals("@version field testDate should be updated to current sysdate", sdf.format(new Date()), versionDateStr);
 
-        Assert.assertNotEquals("@version field testDate should be updated to current sysdate" , originalDateVersionStr, versionDateStr);
+        Assert.assertNotEquals("@version field testDate should be updated to current sysdate", originalDateVersionStr, versionDateStr);
 
     }
 
@@ -145,10 +145,10 @@ public class H2UserDateVersionTest extends H2Test {
         Long id = 993L;
         H2UserDateVersion user = new H2UserDateVersion();
         user.setId(id);
-        user.setName("992" );
+        user.setName("992");
         user.setAge(92);
         user.setPrice(BigDecimal.TEN);
-        user.setDesc("asdf" );
+        user.setDesc("asdf");
         user.setTestType(1);
         user.setVersion(1);
         Calendar cal = Calendar.getInstance();
@@ -159,20 +159,20 @@ public class H2UserDateVersionTest extends H2Test {
         H2UserDateVersion userDB = userMapper.selectById(id);
 
         H2UserDateVersion updUser = new H2UserDateVersion();
-        updUser.setName("999" );
+        updUser.setName("999");
         userDB.setVersion(null);
         userMapper.update(updUser, new EntityWrapper<>(userDB));
 
         System.out.println("before update: testDate=" + userDB.getTestDate());
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH" );
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH");
 
         userDB = userMapper.selectById(id);
-        Assert.assertEquals("999" , userDB.getName());
+        Assert.assertEquals("999", userDB.getName());
 
         Date versionDate = userDB.getTestDate();
         System.out.println("after update: testDate=" + versionDate);
         String versionDateStr = sdf.format(versionDate);
-        Assert.assertEquals("@version field testDate should be updated to current sysdate" , sdf.format(new Date()), versionDateStr);
+        Assert.assertEquals("@version field testDate should be updated to current sysdate", sdf.format(new Date()), versionDateStr);
     }
 
 

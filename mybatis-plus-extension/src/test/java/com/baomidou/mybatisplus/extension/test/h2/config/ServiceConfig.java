@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @Import(value = {DBConfig.class, MybatisPlusConfig.class})
-@ComponentScan("com.baomidou.mybatisplus.extension.test.h2.service" )
+@ComponentScan("com.baomidou.mybatisplus.extension.test.h2.service")
 public class ServiceConfig {
 
 

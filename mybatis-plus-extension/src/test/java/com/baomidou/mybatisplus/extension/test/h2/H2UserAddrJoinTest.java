@@ -43,17 +43,17 @@ public class H2UserAddrJoinTest extends H2Test {
 
     @BeforeClass
     public static void initDB() throws SQLException, IOException {
-        @SuppressWarnings("resource" )
-        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:h2/spring-test-h2.xml" );
-        DataSource ds = (DataSource) context.getBean("dataSource" );
+        @SuppressWarnings("resource")
+        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:h2/spring-test-h2.xml");
+        DataSource ds = (DataSource) context.getBean("dataSource");
         try (Connection conn = ds.getConnection()) {
             Statement stmt = conn.createStatement();
-            stmt.execute(readFile("user.ddl.sql" ));
-            stmt.execute("truncate table h2user" );
-            stmt.execute(readFile("addr.ddl.sql" ));
-            stmt.execute("truncate table h2address" );
-            executeSql(stmt, "user.insert.sql" );
-            executeSql(stmt, "addr.insert.sql" );
+            stmt.execute(readFile("user.ddl.sql"));
+            stmt.execute("truncate table h2user");
+            stmt.execute(readFile("addr.ddl.sql"));
+            stmt.execute("truncate table h2address");
+            executeSql(stmt, "user.insert.sql");
+            executeSql(stmt, "addr.insert.sql");
             conn.commit();
         }
     }
@@ -68,7 +68,7 @@ public class H2UserAddrJoinTest extends H2Test {
     public void testJoinTableWithPagination() {
         Page<H2Addr> page = new Page<H2Addr>(0, 3);
         List<H2Addr> addrList = userMapper.getAddrListByUserIdPage(101L, page);
-        Assert.assertNotEquals("Should have pagination info" , 0, page.getTotal());
+        Assert.assertNotEquals("Should have pagination info", 0, page.getTotal());
         Assert.assertEquals(3, addrList.size());
     }
 

@@ -154,7 +154,7 @@ public class SqlRunner extends ISqlRunner {
         return SqlHelper.getObject(selectList(sql, args));
     }
 
-    @SuppressWarnings({"unchecked" , "rawtypes"})
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public Page<Map<String, Object>> selectPage(Page page, String sql, Object... args) {
         if (null == page) {
             return null;

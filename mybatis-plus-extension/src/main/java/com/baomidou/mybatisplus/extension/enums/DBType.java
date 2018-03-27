@@ -31,43 +31,43 @@ public enum DBType implements IDBType {
     /**
      * MYSQL
      */
-    MYSQL("mysql" , "`%s`" , "MySql数据库" ),
+    MYSQL("mysql", "`%s`", "MySql数据库"),
     /**
      * ORACLE
      */
-    ORACLE("oracle" , null, "Oracle数据库" ),
+    ORACLE("oracle", null, "Oracle数据库"),
     /**
      * DB2
      */
-    DB2("db2" , null, "DB2数据库" ),
+    DB2("db2", null, "DB2数据库"),
     /**
      * H2
      */
-    H2("h2" , null, "H2数据库" ),
+    H2("h2", null, "H2数据库"),
     /**
      * HSQL
      */
-    HSQL("hsql" , null, "HSQL数据库" ),
+    HSQL("hsql", null, "HSQL数据库"),
     /**
      * SQLITE
      */
-    SQLITE("sqlite" , "`%s`" , "SQLite数据库" ),
+    SQLITE("sqlite", "`%s`", "SQLite数据库"),
     /**
      * POSTGRE
      */
-    POSTGRE("postgresql" , "\"%s\"" , "Postgre数据库" ),
+    POSTGRE("postgresql", "\"%s\"", "Postgre数据库"),
     /**
      * SQLSERVER2005
      */
-    SQLSERVER2005("sqlserver2005" , null, "SQLServer2005数据库" ),
+    SQLSERVER2005("sqlserver2005", null, "SQLServer2005数据库"),
     /**
      * SQLSERVER
      */
-    SQLSERVER("sqlserver" , null, "SQLServer数据库" ),
+    SQLSERVER("sqlserver", null, "SQLServer数据库"),
     /**
      * UNKONWN DB
      */
-    OTHER("other" , null, "其他数据库" );
+    OTHER("other", null, "其他数据库");
 
     private final String db;
 
@@ -96,7 +96,7 @@ public enum DBType implements IDBType {
                 return dt;
             }
         }
-        throw new MybatisPlusException("Error: Unknown database type, or do not support changing database!\n" );
+        throw new MybatisPlusException("Error: Unknown database type, or do not support changing database!\n");
     }
 
     public String getDb() {

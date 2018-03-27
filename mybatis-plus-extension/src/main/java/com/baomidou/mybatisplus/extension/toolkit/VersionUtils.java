@@ -22,11 +22,11 @@ public class VersionUtils {
      */
     public static int compareVersion(String version1, String version2) {
         if (StringUtils.isEmpty(version1) || StringUtils.isEmpty(version2)) {
-            throw new MybatisPlusException("Error: CompareVersion Error: Illegal Argument !" );
+            throw new MybatisPlusException("Error: CompareVersion Error: Illegal Argument !");
         }
         // 切割点 "."；
-        String[] versionArray1 = version1.split("\\." );
-        String[] versionArray2 = version2.split("\\." );
+        String[] versionArray1 = version1.split("\\.");
+        String[] versionArray2 = version2.split("\\.");
         int idx = 0;
         // 取最小长度值
         int minLength = Math.min(versionArray1.length, versionArray2.length);

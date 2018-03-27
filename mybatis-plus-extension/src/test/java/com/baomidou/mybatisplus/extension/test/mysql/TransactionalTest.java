@@ -49,7 +49,7 @@ public class TransactionalTest extends CrudTest {
          * 插入
          */
         UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
-        int rlt = userMapper.insert(new User(IdWorker.getId(), "1" , 1, 1));
+        int rlt = userMapper.insert(new User(IdWorker.getId(), "1", 1, 1));
         System.err.println("--------- insertInjector --------- " + rlt);
 
         //session.commit();

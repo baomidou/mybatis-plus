@@ -38,7 +38,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     // 注入测试
     public void testSqlInjector() {
         Long id = IdWorker.getId();
-        int rlt = baseMapper.insert(new User(id, "abc" , 18, 1));
+        int rlt = baseMapper.insert(new User(id, "abc", 18, 1));
         System.err.println("插入ID：" + id + ", 执行结果：" + rlt);
         rlt = baseMapper.deleteLogicById(id);
         System.err.println("测试注入执行结果：" + rlt);

@@ -93,42 +93,42 @@ public abstract class AbstractTemplateEngine {
                 }
                 // Mp.java
                 String entityName = tableInfo.getEntityName();
-                if (null != entityName) {
+                if (null != entityName && null != pathInfo.get(ConstVal.ENTITY_PATH)) {
                     String entityFile = String.format((pathInfo.get(ConstVal.ENTITY_PATH) + File.separator + "%s" + this.suffixJavaOrKt()), entityName);
                     if (this.isCreate(entityFile)) {
                         this.writer(objectMap, this.templateFilePath(template.getEntity(this.getConfigBuilder().getGlobalConfig().isKotlin())), entityFile);
                     }
                 }
                 // MpMapper.java
-                if (null != tableInfo.getMapperName()) {
+                if (null != tableInfo.getMapperName() && null != pathInfo.get(ConstVal.MAPPER_PATH)) {
                     String mapperFile = String.format((pathInfo.get(ConstVal.MAPPER_PATH) + File.separator + tableInfo.getMapperName() + this.suffixJavaOrKt()), entityName);
                     if (this.isCreate(mapperFile)) {
                         this.writer(objectMap, this.templateFilePath(template.getMapper()), mapperFile);
                     }
                 }
                 // MpMapper.xml
-                if (null != tableInfo.getXmlName()) {
+                if (null != tableInfo.getXmlName() && null != pathInfo.get(ConstVal.XML_PATH)) {
                     String xmlFile = String.format((pathInfo.get(ConstVal.XML_PATH) + File.separator + tableInfo.getXmlName() + ConstVal.XML_SUFFIX), entityName);
                     if (this.isCreate(xmlFile)) {
                         this.writer(objectMap, this.templateFilePath(template.getXml()), xmlFile);
                     }
                 }
                 // IMpService.java
-                if (null != tableInfo.getServiceName()) {
+                if (null != tableInfo.getServiceName() && null != pathInfo.get(ConstVal.SERIVCE_PATH)) {
                     String serviceFile = String.format((pathInfo.get(ConstVal.SERIVCE_PATH) + File.separator + tableInfo.getServiceName() + this.suffixJavaOrKt()), entityName);
                     if (this.isCreate(serviceFile)) {
                         this.writer(objectMap, this.templateFilePath(template.getService()), serviceFile);
                     }
                 }
                 // MpServiceImpl.java
-                if (null != tableInfo.getServiceImplName()) {
+                if (null != tableInfo.getServiceImplName() && null != pathInfo.get(ConstVal.SERVICEIMPL_PATH)) {
                     String implFile = String.format((pathInfo.get(ConstVal.SERVICEIMPL_PATH) + File.separator + tableInfo.getServiceImplName() + this.suffixJavaOrKt()), entityName);
                     if (this.isCreate(implFile)) {
                         this.writer(objectMap, this.templateFilePath(template.getServiceImpl()), implFile);
                     }
                 }
                 // MpController.java
-                if (null != tableInfo.getControllerName()) {
+                if (null != tableInfo.getControllerName() && null != pathInfo.get(ConstVal.CONTROLLER_PATH)) {
                     String controllerFile = String.format((pathInfo.get(ConstVal.CONTROLLER_PATH) + File.separator + tableInfo.getControllerName() + this.suffixJavaOrKt()), entityName);
                     if (this.isCreate(controllerFile)) {
                         this.writer(objectMap, this.templateFilePath(template.getController()), controllerFile);

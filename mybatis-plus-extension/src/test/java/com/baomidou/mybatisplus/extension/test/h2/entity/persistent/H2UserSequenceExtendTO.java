@@ -19,7 +19,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-@TableName("h2user" )
+@TableName("h2user")
 public class H2UserSequenceExtendTO extends BaseSequenceEntity {
 
     public H2UserSequenceExtendTO() {
@@ -39,7 +39,7 @@ public class H2UserSequenceExtendTO extends BaseSequenceEntity {
     private BigDecimal price;
 
     /* 测试下划线字段命名类型, 字段填充 */
-    @TableField(value = "test_type" , strategy = FieldStrategy.IGNORED)
+    @TableField(value = "test_type", strategy = FieldStrategy.IGNORED)
     private Integer testType;
 
     private String desc;

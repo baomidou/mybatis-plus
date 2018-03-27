@@ -27,19 +27,19 @@ public enum SqlLike {
     /**
      * LEFT
      */
-    LEFT("left" , "左边%" ),
+    LEFT("left", "左边%"),
     /**
      * RIGHT
      */
-    RIGHT("right" , "右边%" ),
+    RIGHT("right", "右边%"),
     /**
      * CUSTOM
      */
-    CUSTOM("custom" , "定制" ),
+    CUSTOM("custom", "定制"),
     /**
      * DEFAULT
      */
-    DEFAULT("default" , "两边%" );
+    DEFAULT("default", "两边%");
 
     /**
      * 主键

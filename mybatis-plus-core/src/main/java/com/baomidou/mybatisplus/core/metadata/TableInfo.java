@@ -100,7 +100,7 @@ public class TableInfo {
     public String getSqlStatement(String sqlMethod) {
         StringBuilder statement = new StringBuilder();
         statement.append(currentNamespace);
-        statement.append("." );
+        statement.append(".");
         statement.append(sqlMethod);
         return statement.toString();
     }
@@ -194,7 +194,7 @@ public class TableInfo {
 
     public void setConfigMark(Configuration configuration) {
         if (configuration == null) {
-            throw new MybatisPlusException("Error: You need Initialize MybatisConfiguration !" );
+            throw new MybatisPlusException("Error: You need Initialize MybatisConfiguration !");
         }
         this.configMark = configuration.toString();
     }

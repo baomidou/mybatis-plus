@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.test.h2.entity.persistent.H2UserVersio
 
 /**
  * <p>
- *   AR模式的service
+ * AR模式的service
  * </p>
  *
  * @author yuxiaobin

@@ -40,16 +40,16 @@ public class StringUtils {
     /**
      * UTF-8 编码格式
      */
-    public static final String UTF8 = "UTF-8" ;
+    public static final String UTF8 = "UTF-8";
 
     /**
      * 空字符
      */
-    public static final String EMPTY = "" ;
+    public static final String EMPTY = "";
     /**
      * 字符串 is
      */
-    public static final String IS = "is" ;
+    public static final String IS = "is";
 
     /**
      * 下划线字符
@@ -59,7 +59,7 @@ public class StringUtils {
     /**
      * 占位符
      */
-    public static final String PLACE_HOLDER = "{%s}" ;
+    public static final String PLACE_HOLDER = "{%s}";
 
     private static boolean separatorBeforeDigit = false;
     private static boolean separatorAfterDigit = true;
@@ -83,7 +83,7 @@ public class StringUtils {
                 byte[] returnValue = blob.getBytes(1, (int) blob.length());
                 return new String(returnValue, UTF8);
             } catch (Exception e) {
-                throw new MybatisPlusException("Blob Convert To String Error!" );
+                throw new MybatisPlusException("Blob Convert To String Error!");
             }
         }
         return null;
@@ -201,7 +201,7 @@ public class StringUtils {
      * @return
      */
     public static boolean isUpperCase(String str) {
-        return match("^[A-Z]+$" , str);
+        return match("^[A-Z]+$", str);
     }
 
     /**
@@ -288,7 +288,7 @@ public class StringUtils {
      */
     public static String quotaMarkList(Collection<?> coll) {
         StringBuilder sqlBuild = new StringBuilder();
-        sqlBuild.append("(" );
+        sqlBuild.append("(");
         int size = coll.size();
         int i = 0;
         Iterator<?> iterator = coll.iterator();
@@ -296,11 +296,11 @@ public class StringUtils {
             String tempVal = StringUtils.quotaMark(iterator.next());
             sqlBuild.append(tempVal);
             if (i + 1 < size) {
-                sqlBuild.append("," );
+                sqlBuild.append(",");
             }
             i++;
         }
-        sqlBuild.append(")" );
+        sqlBuild.append(")");
         return sqlBuild.toString();
     }
 
@@ -401,7 +401,7 @@ public class StringUtils {
      * @return
      */
     public static boolean isCapitalMode(String word) {
-        return null != word && word.matches("^[0-9A-Z/_]+$" );
+        return null != word && word.matches("^[0-9A-Z/_]+$");
     }
 
     /**
@@ -413,7 +413,7 @@ public class StringUtils {
      * @return
      */
     public static boolean isMixedMode(String word) {
-        return Pattern.compile(".*[A-Z]+.*" ).matcher(word).matches() && Pattern.compile(".*[/_]+.*" ).matcher(word).matches();
+        return Pattern.compile(".*[A-Z]+.*").matcher(word).matches() && Pattern.compile(".*[/_]+.*").matcher(word).matches();
     }
 
     /**
@@ -773,7 +773,7 @@ public class StringUtils {
             boolean isNotUnderscore = c != '_';
             if ((lastOneIsNotUnderscore) && ((isUpperCaseAndPreviousIsLowerCase) || (previousIsWhitespace) || ((betweenUpperCases)
                 && (containsLowerCase) && (isUpperCaseAndPreviousIsUpperCase)))) {
-                buf.append("_" );
+                buf.append("_");
             } else if (((separatorAfterDigit) && (Character.isDigit(previousChar))
                 && (Character.isLetter(c))) || ((separatorBeforeDigit) && (Character
                 .isDigit(c)) && (Character.isLetter(previousChar)))) {
@@ -787,7 +787,7 @@ public class StringUtils {
             previousChar = c;
         }
         if (Character.isWhitespace(previousChar)) {
-            buf.append("_" );
+            buf.append("_");
         }
         return buf.toString();
     }
@@ -812,7 +812,7 @@ public class StringUtils {
             if ((Character.isWhitespace(lastChar)) && (!Character.isWhitespace(c))
                 && ('-' != c) && (buf.length() > 0)
                 && (buf.charAt(buf.length() - 1) != '-')) {
-                buf.append("-" );
+                buf.append("-");
             }
             if ('_' == c) {
                 buf.append('-');
@@ -824,7 +824,7 @@ public class StringUtils {
             lastChar = c;
         }
         if (Character.isWhitespace(lastChar)) {
-            buf.append("-" );
+            buf.append("-");
         }
         return buf.toString();
     }

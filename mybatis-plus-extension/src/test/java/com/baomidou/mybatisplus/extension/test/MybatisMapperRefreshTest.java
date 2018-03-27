@@ -44,7 +44,7 @@ public class MybatisMapperRefreshTest extends CrudTest {
      * 测试 Mybatis XML 修改自动刷新
      */
     public static void main(String[] args) throws Exception {
-        Resource[] resource = new ClassPathResource[]{new ClassPathResource("mysql/UserMapper.xml" )};
+        Resource[] resource = new ClassPathResource[]{new ClassPathResource("mysql/UserMapper.xml")};
         SqlSessionFactory sessionFactory = new CrudTest().sqlSessionFactory();
         new MybatisMapperRefresh(resource, sessionFactory, 0, 5, true);
         boolean isReturn = false;

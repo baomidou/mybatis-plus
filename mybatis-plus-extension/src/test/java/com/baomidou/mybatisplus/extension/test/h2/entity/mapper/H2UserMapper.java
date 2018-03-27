@@ -28,29 +28,29 @@ public interface H2UserMapper extends SuperMapper<H2User> {
         "select a.addr_id as addrId, a.addr_name as addrName from h2address a" +
             " join h2user u on u.test_id=a.test_id and u.test_id=#{userId}"
     )
-    List<H2Addr> getAddrListByUserId(@Param("userId" ) Long userId);
+    List<H2Addr> getAddrListByUserId(@Param("userId") Long userId);
 
     @Select(
         "select a.addr_id as addrId, a.addr_name as addrName from h2address a" +
             " join h2user u on u.test_id=a.test_id and u.test_id=#{userId}"
     )
-    List<H2Addr> getAddrListByUserIdPage(@Param("userId" ) Long userId, Page<H2Addr> page);
+    List<H2Addr> getAddrListByUserIdPage(@Param("userId") Long userId, Page<H2Addr> page);
 
     @Insert(
         "insert into h2user(name,version) values(#{name},#{version})"
     )
-    int myInsertWithNameVersion(@Param("name" ) String name, @Param("version" ) int version);
+    int myInsertWithNameVersion(@Param("name") String name, @Param("version") int version);
 
     @Update(
         "update h2user set name=#{name} where test_id=#{id}"
     )
-    int myUpdateWithNameId(@Param("id" ) Long id, @Param("name" ) String name);
+    int myUpdateWithNameId(@Param("id") Long id, @Param("name") String name);
 
 
     @Insert(
         "insert into h2user(name,version) values( #{user1.name}, #{user1.version})"
     )
-    int myInsertWithParam(@Param("user1" ) H2User user1);
+    int myInsertWithParam(@Param("user1") H2User user1);
 
     @Insert(
         "insert into h2user(name,version) values( #{name}, #{version})"
@@ -60,17 +60,17 @@ public interface H2UserMapper extends SuperMapper<H2User> {
 
     @Select(" select test_id as id, power(#{ageFrom},2), 'abc?zhazha', CAST(#{nameParam} AS VARCHAR) as name " +
         " from h2user " +
-        " where age>#{ageFrom} and age<#{ageTo} " )
+        " where age>#{ageFrom} and age<#{ageTo} ")
     List<H2User> selectUserWithParamInSelectStatememt(Map<String, Object> param);
 
     @Select(" select test_id as id, power(#{ageFrom},2), 'abc?zhazha', CAST(#{nameParam} AS VARCHAR) as name " +
         " from h2user " +
-        " where age>#{ageFrom} and age<#{ageTo} " )
+        " where age>#{ageFrom} and age<#{ageTo} ")
     List<H2User> selectUserWithParamInSelectStatememt4Page(Map<String, Object> param, Page<H2User> page);
 
     @Select(" select test_id as id, power(${ageFrom},2) as age, '${nameParam}' as name " +
         " from h2user " +
-        " where age>#{ageFrom} and age<#{ageTo} " )
+        " where age>#{ageFrom} and age<#{ageTo} ")
     List<H2User> selectUserWithDollarParamInSelectStatememt4Page(Map<String, Object> param, Page<H2User> page);
 
 
@@ -78,9 +78,9 @@ public interface H2UserMapper extends SuperMapper<H2User> {
         "select test_id as id, CAST(#{nameParam} AS VARCHAR) as name" +
         " from h2user " +
         " where age>#{ageFrom} and age<#{ageTo} " +
-        ") a" )
+        ") a")
     int selectCountWithParamInSelectItems(Map<String, Object> param);
 
-    @Select("select * from h2user" )
+    @Select("select * from h2user")
     List<Map> mySelectMaps();
 }

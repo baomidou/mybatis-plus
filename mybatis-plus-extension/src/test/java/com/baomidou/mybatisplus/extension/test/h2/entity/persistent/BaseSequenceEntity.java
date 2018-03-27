@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-@KeySequence("SEQ_TEST" )
+@KeySequence("SEQ_TEST")
 public abstract class BaseSequenceEntity {
 
     @TableField(exist = false)
@@ -26,7 +26,7 @@ public abstract class BaseSequenceEntity {
     /**
      * 主键ID
      */
-    @TableId(value = "TEST_ID" , type = IdType.INPUT)
+    @TableId(value = "TEST_ID", type = IdType.INPUT)
     private Long id;
 
 }
