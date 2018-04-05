@@ -166,6 +166,6 @@ public abstract class AbstractMethod {
     /**
      * 注入自定义 MappedStatement
      */
-    abstract MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo);
+    public abstract MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo);
 
 }
