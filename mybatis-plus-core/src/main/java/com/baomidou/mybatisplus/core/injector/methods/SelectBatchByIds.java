@@ -17,29 +17,30 @@ package com.baomidou.mybatisplus.core.injector.methods;
 
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
+import org.apache.ibatis.scripting.defaults.RawSqlSource;
 
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 
 /**
  * <p>
- * 根据 ID 集合删除
+ * 根据 ID 删除
  * </p>
  *
  * @author hubin
  * @since 2018-04-06
  */
-public class DeleteBatchByIds extends AbstractMethod {
+public class SelectBatchByIds extends AbstractMethod {
 
     @Override
-    MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
-        SqlMethod sqlMethod = SqlMethod.DELETE_BATCH_BY_IDS;
+    public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
+        SqlMethod sqlMethod = SqlMethod.SELECT_BATCH_BY_IDS;
         StringBuilder ids = new StringBuilder();
-        ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"coll\" separator=\",\">");
+        ids.append("<foreach item=\"item\" index=\"index\" collection=\"coll\" separator=\",\">");
         ids.append("#{item}");
-        ids.append("\n</foreach>");
-        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), tableInfo.getKeyColumn(), ids.toString());
-        SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return this.addDeleteMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource);
+        ids.append("</foreach>");
+        SqlSource sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(),
+            this.sqlSelectColumns(tableInfo, false), tableInfo.getTableName(), tableInfo.getKeyColumn(), ids.toString()), modelClass);
+        return this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, tableInfo);
     }
 }

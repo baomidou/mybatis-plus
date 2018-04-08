@@ -31,7 +31,9 @@ import com.baomidou.mybatisplus.core.assist.ISqlRunner;
 public interface ISqlInjector {
 
     /**
-     * 根据mapperClass注入SQL
+     * <p>
+     * 根据 mapperClass 注入SQL
+     * </p>
      *
      * @param builderAssistant
      * @param mapperClass
@@ -39,7 +41,9 @@ public interface ISqlInjector {
     void inject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass);
 
     /**
+     * <p>
      * 检查SQL是否注入(已经注入过不再注入)
+     * </p>
      *
      * @param builderAssistant
      * @param mapperClass
@@ -47,7 +51,9 @@ public interface ISqlInjector {
     void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass);
 
     /**
-     * 注入SqlRunner相关
+     * <p>
+     * 注入 SqlRunner 相关
+     * </p>
      *
      * @param configuration
      * @see ISqlRunner

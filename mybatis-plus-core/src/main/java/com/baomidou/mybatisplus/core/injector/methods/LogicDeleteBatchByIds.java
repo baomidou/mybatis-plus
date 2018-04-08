@@ -29,10 +29,10 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
  * @author hubin
  * @since 2018-04-06
  */
-public class DeleteBatchByIds extends AbstractMethod {
+public class LogicDeleteBatchByIds extends AbstractMethod {
 
     @Override
-    MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
+    public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.DELETE_BATCH_BY_IDS;
         StringBuilder ids = new StringBuilder();
         ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"coll\" separator=\",\">");

@@ -23,23 +23,19 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
 
 /**
  * <p>
- * 根据 ID 集合删除
+ * 根据 ID 删除
  * </p>
  *
  * @author hubin
  * @since 2018-04-06
  */
-public class DeleteBatchByIds extends AbstractMethod {
+public class LogicDeleteByMap extends AbstractMethod {
 
     @Override
-    MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
-        SqlMethod sqlMethod = SqlMethod.DELETE_BATCH_BY_IDS;
-        StringBuilder ids = new StringBuilder();
-        ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"coll\" separator=\",\">");
-        ids.append("#{item}");
-        ids.append("\n</foreach>");
-        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), tableInfo.getKeyColumn(), ids.toString());
-        SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+    public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
+        SqlMethod sqlMethod = SqlMethod.DELETE_BY_ID;
+        SqlSource sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(),
+            tableInfo.getTableName(), tableInfo.getKeyColumn(), tableInfo.getKeyProperty()), modelClass);
         return this.addDeleteMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource);
     }
 }
