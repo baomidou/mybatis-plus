@@ -33,7 +33,7 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
 public class DeleteBatchByIds extends AbstractMethod {
 
     @Override
-    MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
+    public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.DELETE_BATCH_BY_IDS;
         StringBuilder ids = new StringBuilder();
         ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"coll\" separator=\",\">");

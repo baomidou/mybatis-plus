@@ -43,7 +43,7 @@ import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 public class Insert extends AbstractMethod {
 
     @Override
-    MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
+    public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         KeyGenerator keyGenerator = new NoKeyGenerator();
         StringBuilder fieldBuilder = new StringBuilder();
         StringBuilder placeholderBuilder = new StringBuilder();
