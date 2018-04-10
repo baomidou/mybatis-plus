@@ -66,7 +66,7 @@ public class AutoSqlInjector implements ISqlInjector {
      * @param builderAssistant
      * @param mapperClass
      */
-    @Override
+//    @Override
     public void inject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
         String className = mapperClass.toString();
         Set<String> mapperRegistryCache = GlobalConfigUtils.getMapperRegistryCache(builderAssistant.getConfiguration());
