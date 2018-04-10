@@ -15,12 +15,7 @@
  */
 package com.baomidou.mybatisplus.extension.test.mysql;
 
-import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.apache.ibatis.mapping.SqlSource;
-import org.apache.ibatis.session.Configuration;
-
-import com.baomidou.mybatisplus.core.injector.AutoSqlInjector;
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 
 
 /**
@@ -31,7 +26,7 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
  * @author hubin
  * @Date 2016-07-23
  */
-public class MySqlInjector extends AutoSqlInjector {
+public class MySqlInjector extends DefaultSqlInjector {
 
 //    @Override
 //    public void inject(Configuration configuration, MapperBuilderAssistant builderAssistant, Class<?> mapperClass,

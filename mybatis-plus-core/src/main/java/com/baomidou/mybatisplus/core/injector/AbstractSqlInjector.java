@@ -34,10 +34,7 @@ import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
  * @author hubin
  * @since 2018-04-07
  */
-public class AutoSqlInjector implements ISqlInjector {
-
-    private List<AbstractMethod> methodList;
-
+public abstract class AbstractSqlInjector implements ISqlInjector {
 
     /**
      * <p>
@@ -49,25 +46,6 @@ public class AutoSqlInjector implements ISqlInjector {
      */
     @Override
     public void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
-        String className = mapperClass.toString();
-        Set<String> mapperRegistryCache = GlobalConfigUtils.getMapperRegistryCache(builderAssistant.getConfiguration());
-        if (!mapperRegistryCache.contains(className)) {
-            inject(builderAssistant, mapperClass);
-            mapperRegistryCache.add(className);
-        }
-    }
-
-
-    /**
-     * <p>
-     * CRUD 注入后给予标识 注入过后不再注入
-     * </p>
-     *
-     * @param builderAssistant
-     * @param mapperClass
-     */
-//    @Override
-    public void inject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
         String className = mapperClass.toString();
         Set<String> mapperRegistryCache = GlobalConfigUtils.getMapperRegistryCache(builderAssistant.getConfiguration());
         if (!mapperRegistryCache.contains(className)) {
@@ -86,19 +64,11 @@ public class AutoSqlInjector implements ISqlInjector {
 
     @Override
     public void injectSqlRunner(Configuration configuration) {
-        // TODO 这里考虑控制是否初始化 SqlRuner
-        new SqlRunnerInjector().inject(configuration);
+        // to do nothing
     }
 
 
-    public List<AbstractMethod> getMethodList() {
-        return methodList;
-    }
-
-
-    public void setMethodList(List<AbstractMethod> methodList) {
-        this.methodList = methodList;
-    }
+    public abstract List<AbstractMethod> getMethodList();
 
 
 }

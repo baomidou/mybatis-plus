@@ -22,12 +22,12 @@ package com.baomidou.mybatisplus.extension.injector;
 //import org.apache.ibatis.scripting.defaults.RawSqlSource;
 //
 //import com.baomidou.mybatisplus.core.enums.SqlMethod;
-//import com.baomidou.mybatisplus.core.injector.AutoSqlInjector;
+//import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 //import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 //import com.baomidou.mybatisplus.core.metadata.TableInfo;
 //import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
-import com.baomidou.mybatisplus.core.injector.AutoSqlInjector;
+import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 
 /**
  * <p>
@@ -38,7 +38,7 @@ import com.baomidou.mybatisplus.core.injector.AutoSqlInjector;
  * @author hubin willenfoo
  * @Date 2017-09-09
  */
-public class LogicSqlInjector extends AutoSqlInjector {
+public class LogicSqlInjector extends DefaultSqlInjector {
 //
 //    /**
 //     * 根据 ID 删除

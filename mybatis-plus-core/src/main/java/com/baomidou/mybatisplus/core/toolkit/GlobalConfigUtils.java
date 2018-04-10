@@ -19,7 +19,7 @@ import com.baomidou.mybatisplus.core.enums.IDBType;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
-import com.baomidou.mybatisplus.core.injector.AutoSqlInjector;
+import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.core.metadata.GlobalConfiguration;
 
@@ -145,7 +145,7 @@ public class GlobalConfigUtils {
         GlobalConfiguration globalConfiguration = getGlobalConfig(configuration);
         ISqlInjector sqlInjector = globalConfiguration.getSqlInjector();
         if (sqlInjector == null) {
-            sqlInjector = new AutoSqlInjector();
+            sqlInjector = new DefaultSqlInjector();
             globalConfiguration.setSqlInjector(sqlInjector);
         }
         return sqlInjector;
