@@ -3,6 +3,7 @@ package com.baomidou.mybatisplus.test.h2;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,20 @@ public class H2UserTest extends AbstractH2UserTest {
     public void testInsertBatch() {
         insertBatchSimpleCase();
     }
+
+    @Test
+    public void testSelectBatch(){
+        List<Long> idList = new ArrayList<>(4);
+        idList.add(101L);
+        idList.add(102L);
+        idList.add(103L);
+        idList.add(104L);
+        List<H2User> userList = userService.selectBatchIds(idList);
+        for(H2User u:userList){
+            System.out.println(u);
+        }
+    }
+
 
     @Test
     public void testDelete() {
