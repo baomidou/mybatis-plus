@@ -185,11 +185,17 @@ public abstract class Wrapper<T> implements Serializable {
     }
 
     /**
-     * <p>
      * SQL 片段 (子类实现)
-     * </p>
      */
     public abstract String getSqlSegment();
+
+    /**
+     * SQL SET 字段
+     */
+    public String getSqlSet() {
+        // to do nothing
+        return null;
+    }
 
     @Override
     public String toString() {

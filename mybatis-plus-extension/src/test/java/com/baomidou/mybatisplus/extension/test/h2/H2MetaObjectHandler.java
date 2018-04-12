@@ -35,6 +35,7 @@ public class H2MetaObjectHandler extends MetaObjectHandler {
     /**
      * 测试 user 表 name 字段为空自动填充
      */
+    @Override
     public void insertFill(MetaObject metaObject) {
         System.out.println("*************************");
         System.out.println("insert fill");

@@ -33,6 +33,7 @@ public class MyMetaObjectHandler extends MetaObjectHandler {
     /**
      * 测试 user 表 name 字段为空自动填充
      */
+    @Override
     public void insertFill(MetaObject metaObject) {
         // 测试下划线
         Object testType = getFieldValByName("testType", metaObject);
