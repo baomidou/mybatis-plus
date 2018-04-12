@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -13,9 +14,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
 import com.baomidou.mybatisplus.mapper.Condition;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
@@ -39,9 +41,7 @@ public class H2LogicDeleteTest extends H2Test {
 
     @BeforeClass
     public static void init() throws SQLException, IOException {
-        AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
-        context.register(ServiceConfig.class);
-        context.refresh();
+        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:h2/spring-test-h2.xml");
         DataSource ds = (DataSource) context.getBean("dataSource");
         try (Connection conn = ds.getConnection()) {
             initData(conn);
@@ -113,5 +113,19 @@ public class H2LogicDeleteTest extends H2Test {
         H2UserLogicDelete fromDB = userService.selectByIdMy(id);
         Assert.assertNotNull(fromDB);
         System.out.println(fromDB);
+    }
+
+    @Test
+    public void testDeleteBatch(){
+        List<Long> idList = new ArrayList<>(4);
+        idList.add(101L);
+        idList.add(102L);
+        idList.add(103L);
+        idList.add(104L);
+        userService.deleteBatchIds(idList);
+        Assert.assertNull(userService.selectById(101));
+        Assert.assertNull(userService.selectById(102));
+        Assert.assertNull(userService.selectById(103));
+        Assert.assertNull(userService.selectById(104));
     }
 }
