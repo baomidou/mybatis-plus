@@ -48,8 +48,8 @@ import com.baomidou.mybatisplus.toolkit.SystemClock;
  * @Date 2016-07-07
  */
 @Intercepts({@Signature(type = StatementHandler.class, method = "query", args = {Statement.class, ResultHandler.class}),
-        @Signature(type = StatementHandler.class, method = "update", args = {Statement.class}),
-        @Signature(type = StatementHandler.class, method = "batch", args = {Statement.class})})
+    @Signature(type = StatementHandler.class, method = "update", args = {Statement.class}),
+    @Signature(type = StatementHandler.class, method = "batch", args = {Statement.class})})
 public class PerformanceInterceptor implements Interceptor {
 
     private static final Log logger = LogFactory.getLog(PerformanceInterceptor.class);
@@ -83,10 +83,18 @@ public class PerformanceInterceptor implements Interceptor {
         } else {
             statement = (Statement) firstArg;
         }
+        MetaObject stmtMetaObj = SystemMetaObject.forObject(statement);
         try {
-            statement = (Statement) SystemMetaObject.forObject(statement).getValue("stmt.statement");
+            statement = (Statement) stmtMetaObj.getValue("stmt.statement");
         } catch (Exception e) {
             // do nothing
+        }
+        if (stmtMetaObj.hasGetter("delegate")) {//Hikari
+            try {
+                statement = (Statement) stmtMetaObj.getValue("delegate");
+            } catch (Exception e) {
+
+            }
         }
 
         String originalSql = null;
@@ -104,7 +112,7 @@ public class PerformanceInterceptor implements Interceptor {
             } catch (Exception ignored) {
             }
         } else if (T4CPreparedStatement.equals(stmtClassName)
-                || OraclePreparedStatementWrapper.equals(stmtClassName)) {
+            || OraclePreparedStatementWrapper.equals(stmtClassName)) {
             try {
                 if (oracleGetOriginalSqlMethod != null) {
                     Object stmtSql = oracleGetOriginalSqlMethod.invoke(statement);
@@ -123,15 +131,6 @@ public class PerformanceInterceptor implements Interceptor {
                             }
                         }
                     }
-                }
-            } catch (Exception e) {
-                //ignore
-            }
-        } else if (HikariPreparedStatementWrapper.equals(stmtClassName)) {
-            try {
-                Object sqlStatement = SystemMetaObject.forObject(statement).getValue("delegate.sqlStatement");
-                if (sqlStatement != null) {
-                    originalSql = sqlStatement.toString();
                 }
             } catch (Exception e) {
                 //ignore
