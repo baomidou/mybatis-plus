@@ -257,6 +257,16 @@ public interface IService<T> {
 
     /**
      * <p>
+     * 根据 ID 查询(忽略逻辑删除)
+     * </p>
+     *
+     * @param id 主键ID
+     * @return T
+     */
+    T selectByIdIgnoreLogic(Serializable id);
+
+    /**
+     * <p>
      * 查询（根据ID 批量查询）
      * </p>
      *
@@ -264,6 +274,16 @@ public interface IService<T> {
      * @return List<T>
      */
     List<T> selectBatchIds(Collection<? extends Serializable> idList);
+
+    /**
+     * <p>
+     * 查询（根据ID 批量查询）(忽略逻辑删除)
+     * </p>
+     *
+     * @param idList 主键ID列表
+     * @return List<T>
+     */
+    List<T> selectBatchIdsIgnoreLogic(Collection<? extends Serializable> idList);
 
     /**
      * <p>
@@ -378,4 +398,13 @@ public interface IService<T> {
      */
     Page<T> selectPage(Page<T> page, Wrapper<T> wrapper);
 
+    /**
+     * <p>
+     * 查询（根据ID 批量查询，并转换为map）
+     * </p>
+     *
+     * @param idList    主键列表
+     * @return 以实体id为Map的key， 实体为Map的val
+     */
+    Map<Serializable, T> selectMap(Collection<? extends Serializable> idList);
 }

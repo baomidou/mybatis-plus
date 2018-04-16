@@ -1,10 +1,13 @@
 package com.baomidou.mybatisplus.test.h2;
 
 import java.io.IOException;
+import java.io.Serializable;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -267,4 +270,21 @@ public class H2UserTest extends AbstractH2UserTest {
         }
     }
 
+
+    @Test
+    public void testSelectMap() {
+
+        List<Long> list = new LinkedList<>();
+        for (int i = 0; i < 10; i++) {
+            H2User user = new H2User();
+            user.setAge(1);
+            user.setPrice(new BigDecimal("9.99"));
+            user.setVersion(1);
+            userService.insert(user);
+            list.add(user.getId());
+        }
+
+        Map<Serializable, H2User> map = userService.selectMap(list);
+        System.out.println(map);
+    }
 }

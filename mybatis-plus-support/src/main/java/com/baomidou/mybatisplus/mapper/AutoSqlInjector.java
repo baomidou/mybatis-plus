@@ -138,8 +138,10 @@ public class AutoSqlInjector implements ISqlInjector {
             this.injectUpdateByIdSql(true, mapperClass, modelClass, table);
             this.injectUpdateByIdSql(false, mapperClass, modelClass, table);
             /** 查询 */
-            this.injectSelectByIdSql(false, mapperClass, modelClass, table);
-            this.injectSelectByIdSql(true, mapperClass, modelClass, table);
+            this.injectSelectByIdSql(false, false, mapperClass, modelClass, table);
+            this.injectSelectByIdSql(false, true, mapperClass, modelClass, table);
+            this.injectSelectByIdSql(true, false, mapperClass, modelClass, table);
+            this.injectSelectByIdSql(true, true, mapperClass, modelClass, table);
         } else {
             // 表不包含主键时 给予警告
             logger.warn(String.format("%s ,Not found @TableId annotation, Cannot use Mybatis-Plus 'xxById' Method.",
@@ -391,20 +393,31 @@ public class AutoSqlInjector implements ISqlInjector {
      * @param modelClass
      * @param table
      */
-    protected void injectSelectByIdSql(boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
-        SqlMethod sqlMethod = SqlMethod.SELECT_BY_ID;
+    protected void injectSelectByIdSql(boolean ignoreLogic, boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
+        SqlMethod sqlMethod;
         SqlSource sqlSource;
         if (batch) {
-            sqlMethod = SqlMethod.SELECT_BATCH_BY_IDS;
+            if(ignoreLogic){
+                sqlMethod = SqlMethod.SELECT_BATCH_BY_IDS;
+            }else {
+                sqlMethod = SqlMethod.LOGIC_IGNORE_SELECT_BATCH_BY_IDS;
+            }
+
             StringBuilder ids = new StringBuilder();
             ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"coll\" separator=\",\">");
             ids.append("#{item}");
             ids.append("\n</foreach>");
             sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(),
-                    sqlSelectColumns(table, false), table.getTableName(), table.getKeyColumn(), ids.toString()), modelClass);
+                sqlSelectColumns(table, false), table.getTableName(), table.getKeyColumn(), ids.toString()), modelClass);
         } else {
+            if(ignoreLogic){
+                sqlMethod = SqlMethod.LOGIC_IGNORE_SELECT_BY_ID;
+            }else {
+                sqlMethod = SqlMethod.SELECT_BY_ID;
+            }
+
             sqlSource = new RawSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false),
-                    table.getTableName(), table.getKeyColumn(), table.getKeyProperty()), Object.class);
+                table.getTableName(), table.getKeyColumn(), table.getKeyProperty()), Object.class);
         }
         this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, table);
     }

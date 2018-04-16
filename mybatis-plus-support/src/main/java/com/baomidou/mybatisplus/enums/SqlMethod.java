@@ -77,6 +77,8 @@ public enum SqlMethod {
     /**
      * 逻辑删除 -> 查询
      */
+    LOGIC_IGNORE_SELECT_BY_ID("selectByIdIgnoreLogic", "忽略逻辑删除字段根据ID 查询一条数据", "SELECT %s FROM %s WHERE %s=#{%s}"),
+    LOGIC_IGNORE_SELECT_BATCH_BY_IDS("selectBatchIdIgnoreLogic", "忽略逻辑删除字段根据ID集合，批量查询数据", "<script>SELECT %s FROM %s WHERE %s IN (%s)</script>"),
     LOGIC_SELECT_BY_ID("selectById", "根据ID 查询一条数据", "SELECT %s FROM %s WHERE %s=#{%s} %s"),
     LOGIC_SELECT_BATCH_BY_IDS("selectBatchIds", "根据ID集合，批量查询数据", "<script>SELECT %s FROM %s WHERE %s IN (%s) %s</script>");
 

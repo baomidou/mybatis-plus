@@ -113,12 +113,17 @@ public class LogicSqlInjector extends AutoSqlInjector {
      * @param table
      */
     @Override
-    protected void injectSelectByIdSql(boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
+    protected void injectSelectByIdSql(boolean ignoreLogic, boolean batch, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
         if (table.isLogicDelete()) {
-            SqlMethod sqlMethod = SqlMethod.LOGIC_SELECT_BY_ID;
+            SqlMethod sqlMethod;
             SqlSource sqlSource;
             if (batch) {
-                sqlMethod = SqlMethod.LOGIC_SELECT_BATCH_BY_IDS;
+                if(ignoreLogic){
+                    sqlMethod = SqlMethod.LOGIC_SELECT_BATCH_BY_IDS;
+                }else {
+                    sqlMethod = SqlMethod.LOGIC_IGNORE_SELECT_BATCH_BY_IDS;
+                }
+
                 StringBuilder ids = new StringBuilder();
                 ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"coll\" separator=\",\">");
                 ids.append("#{item}");
@@ -126,13 +131,19 @@ public class LogicSqlInjector extends AutoSqlInjector {
                 sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false),
                     table.getTableName(), table.getKeyColumn(), ids.toString(), getLogicDeleteSql(table)), modelClass);
             } else {
+                if(ignoreLogic){
+                    sqlMethod = SqlMethod.LOGIC_IGNORE_SELECT_BY_ID;
+                }else {
+                    sqlMethod = SqlMethod.LOGIC_SELECT_BY_ID;
+                }
+
                 sqlSource = new RawSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false), table.getTableName(),
                     table.getKeyColumn(), table.getKeyProperty(), getLogicDeleteSql(table)), Object.class);
             }
             this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, table);
         } else {
             // 正常查询
-            super.injectSelectByIdSql(batch, mapperClass, modelClass, table);
+            super.injectSelectByIdSql(ignoreLogic, batch, mapperClass, modelClass, table);
         }
     }
 
