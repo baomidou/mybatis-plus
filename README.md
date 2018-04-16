@@ -57,7 +57,7 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 
 [mybatisplus-sharding-jdbc](https://gitee.com/baomidou/mybatisplus-sharding-jdbc)
 
-[SSM-实战 Demo](http://git.oschina.net/juapk/SpringWind)
+[SSM-实战 Demo](http://git.oschina.net/baomidou/SpringWind)
 
 # 下载地址 | Download
 
