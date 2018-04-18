@@ -112,6 +112,10 @@ public class OptimisticLockerInterceptor implements Interceptor {
                 Object originalVersionVal;
                 if (versionField != null && (originalVersionVal = versionField.get(et)) != null) {
                     TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
+                    while(tableInfo==null && entityClass!=null){
+                        entityClass = ClassUtils.getUserClass(entityClass.getSuperclass());
+                        tableInfo = TableInfoHelper.getTableInfo(entityClass);
+                    }
                     Map<String, Object> entityMap = new HashMap<>();
                     List<EntityField> fields = getEntityFields(entityClass);
                     for (EntityField ef : fields) {
