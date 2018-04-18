@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotations.TableField;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableLogic;
 import com.baomidou.mybatisplus.annotations.TableName;
+import com.baomidou.mybatisplus.enums.FieldFill;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.enums.IdType;
 
@@ -52,7 +53,7 @@ public class H2UserLogicDelete {
     @TableLogic
     private Integer version;
 
-    @TableField(value = "last_updated_dt")
+    @TableField(value = "last_updated_dt", fill = FieldFill.UPDATE)
     private Timestamp lastUpdatedDt;
 
 }
