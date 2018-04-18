@@ -580,12 +580,81 @@ public abstract class Wrapper<T> implements Serializable {
      * <p>
      * 使用AND连接并换行
      * </p>
-     * <p>
      *
      * @return this
      */
     public Wrapper<T> and() {
         sql.AND();
+        return this;
+    }
+
+    /**
+     * <p>
+     * 左嵌套方法
+     * </p>
+     *
+     * @return this
+     */
+    public Wrapper<T> leftNest() {
+        leftNest(1);
+        return this;
+    }
+
+    /**
+     * <p>
+     * 右嵌套方法
+     * </p>
+     *
+     * @return this
+     */
+    public Wrapper<T> rightNest() {
+        rightNest(1);
+        return this;
+    }
+
+    /**
+     * <p>
+     * 左嵌套方法,一般认为填补mp一个条件中多重嵌套解决方案
+     * </p>
+     *
+     * @param num 嵌套数量
+     * @return this
+     */
+    public Wrapper<T> leftNest(int num) {
+        nest("(", num);
+        return this;
+    }
+
+    /**
+     * <p>
+     * 右嵌套方法,一般认为填补mp一个条件中多重嵌套解决方案
+     * </p>
+     *
+     * @param num 嵌套数量
+     * @return this
+     */
+    public Wrapper<T> rightNest(int num) {
+        nest(")", num);
+        return this;
+    }
+
+    /**
+     * <p>
+     * 嵌套方法,一般认为填补mp一个条件中多重嵌套解决方案
+     * </p>
+     *
+     * @param nest 嵌套字符串 "(" or ")"
+     * @param num  嵌套数量
+     * @return this
+     */
+    private Wrapper<T> nest(String nest, int num) {
+        if (num >= 1) {
+            StringBuilder builder = new StringBuilder(num);
+            for (int i = 0; i < num; i++) {
+                builder.append(nest);
+            }
+            sql.SUPP(builder.toString());
+        }
         return this;
     }
 
