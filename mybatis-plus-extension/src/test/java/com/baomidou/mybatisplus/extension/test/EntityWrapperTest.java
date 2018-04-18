@@ -52,7 +52,7 @@ public class EntityWrapperTest {
     public void test() {
         /*
          * 无条件测试
-         */
+		 */
         Assert.assertEquals("", ew.originalSql());
     }
 
@@ -60,7 +60,7 @@ public class EntityWrapperTest {
     public void test11() {
         /*
          * 实体带where ifneed
-         */
+		 */
         ew.setEntity(new User(1));
         ew.where("name={0}", "'123'");
         // 测试克隆
@@ -77,7 +77,7 @@ public class EntityWrapperTest {
     public void test12() {
         /*
          * 实体带where orderby
-         */
+		 */
         ew.setEntity(new User(1));
         ew.where("name={0}", "'123'").orderBy("id", false);
         String sqlSegment = ew.originalSql();
@@ -89,7 +89,7 @@ public class EntityWrapperTest {
     public void test13() {
         /*
          * 实体排序
-         */
+		 */
         ew.setEntity(new User(1));
         ew.orderBy("id", false);
         String sqlSegment = ew.originalSql();
@@ -101,7 +101,7 @@ public class EntityWrapperTest {
     public void test21() {
         /*
          * 无实体 where ifneed orderby
-         */
+		 */
         ew.where("name={0}", "'123'").addFilterIfNeed(false, "id=1").orderBy("id");
         String sqlSegment = ew.originalSql();
         System.err.println("test21 = " + sqlSegment);
@@ -120,7 +120,7 @@ public class EntityWrapperTest {
     public void test23() {
         /*
          * 无实体查询，只排序
-         */
+		 */
         ew.orderBy("id", false);
         String sqlSegment = ew.originalSql();
         System.err.println("test23 = " + sqlSegment);
@@ -131,7 +131,7 @@ public class EntityWrapperTest {
     public void testNoTSQL() {
         /*
          * 实体 filter orderby
-         */
+		 */
         ew.setEntity(new User(1));
         ew.addFilter("name={0}", "'123'").orderBy("id,name");
         String sqlSegment = ew.originalSql();
@@ -143,7 +143,7 @@ public class EntityWrapperTest {
     public void testNoTSQL1() {
         /*
          * 非 T-SQL 无实体查询
-         */
+		 */
         ew.addFilter("name={0}", "'123'").addFilterIfNeed(false, "status=?", "1");
         String sqlSegment = ew.originalSql();
         System.err.println("testNoTSQL1 = " + sqlSegment);
@@ -154,7 +154,7 @@ public class EntityWrapperTest {
     public void testTSQL11() {
         /*
          * 实体带查询使用方法 输出看结果
-         */
+		 */
         ew.setEntity(new User(1));
         ew.where("name=?", "'zhangsan'").and("id=1").orNew("status=?", "0").or("status=1").notLike("nlike", "notvalue")
             .andNew("new=xx").like("hhh", "ddd").andNew("pwd=11").isNotNull("n1,n2").isNull("n3").groupBy("x1")
@@ -333,7 +333,7 @@ public class EntityWrapperTest {
     public void testIsWhere() {
         /*
          * 实体带where ifneed
-         */
+		 */
         ew.setEntity(new User(1));
         ew.setParamAlias("ceshi");
         ew.or("sql = {0}", "sql").like("default", "default", SqlLike.DEFAULT).like("left", "left", SqlLike.LEFT);
@@ -421,21 +421,39 @@ public class EntityWrapperTest {
     @Test
     public void testConditionOrderBys() {
         //空集合测试
-        //TODO: 3.0
-//        List<String> orders = null;
-//        Wrapper wrapper = Condition.create();
-//        wrapper.orderAsc(orders);
-//        Assert.assertNull(wrapper.getSqlSegment());
-//        orders = new ArrayList<>(3);
-//        wrapper.orderAsc(orders);
-//        Assert.assertNull(wrapper.getSqlSegment());
-//        orders.add("id1");
-//        orders.add("id2");
-//        orders.add("id3");
-//        wrapper.orderAsc(orders);
-//        Assert.assertEquals("ORDER BY id1 ASC, id2 ASC, id3 ASC", wrapper.getSqlSegment());
-//        wrapper.orderDesc(orders);
-//        Assert.assertEquals("ORDER BY id1 ASC, id2 ASC, id3 ASC, id1 DESC, id2 DESC, id3 DESC", wrapper.getSqlSegment());
+        List<String> orders = null;
+        EntityWrapper wrapper = new EntityWrapper();
+        wrapper.orderAsc(orders);
+        Assert.assertNull(wrapper.getSqlSegment());
+        orders = new ArrayList<>(3);
+        wrapper.orderAsc(orders);
+        Assert.assertNull(wrapper.getSqlSegment());
+        orders.add("id1");
+        orders.add("id2");
+        orders.add("id3");
+        wrapper.orderAsc(orders);
+        Assert.assertEquals("ORDER BY id1 ASC, id2 ASC, id3 ASC", wrapper.getSqlSegment());
+        wrapper.orderDesc(orders);
+        Assert.assertEquals("ORDER BY id1 ASC, id2 ASC, id3 ASC, id1 DESC, id2 DESC, id3 DESC", wrapper.getSqlSegment());
+    }
+
+    @Test
+    public void testNest1() {
+        EntityWrapper entityWrapper = new EntityWrapper();
+        String sqlSegment = entityWrapper.eq("aaa", "aaa").andNew().leftNest().eq("a", "a").orNew().eq("b", "b").eq("c", "c").rightNest().originalSql();
+        Assert.assertEquals(sqlSegment, "AND (aaa = ?) \n" +
+            "AND ((a = ?) \n" +
+            "OR (b = ? AND c = ?))");
+    }
+
+    @Test
+    public void testNest2() {
+        EntityWrapper entityWrapper = new EntityWrapper();
+        String sqlSegment = entityWrapper.eq("aaa", "aaa").andNew().leftNest(2).eq("a", "a").orNew().eq("b", "b").eq("c", "c").rightNest().orNew().eq("d", "d").eq("e", "e").rightNest().originalSql();
+        Assert.assertEquals(sqlSegment, "AND (aaa = ?) \n" +
+            "AND (((a = ?) \n" +
+            "OR (b = ? AND c = ?)) \n" +
+            "OR (d = ? AND e = ?))");
     }
 
 }

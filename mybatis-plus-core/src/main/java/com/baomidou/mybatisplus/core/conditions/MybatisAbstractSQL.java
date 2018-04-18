@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -38,6 +39,8 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
     private static final String OR = " OR ";
     private static final String AND_NEW = ") \nAND (";
     private static final String OR_NEW = ") \nOR (";
+    private static final Pattern pattern = Pattern.compile("[(|)|\\s]+");
+
 
     /**
      * SQL条件
@@ -69,6 +72,20 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
 
     public T AND() {
         sql().lastList.add(AND);
+        return getSelf();
+    }
+
+    /**
+     * <p>
+     * 补充方法,一般认为填补mp一个条件中多重嵌套解决方案
+     * 注:参数请不要传入外界动态参数否则可能会产生sql注入的危险
+     * </p>
+     *
+     * @param supp 补充语句
+     * @return this
+     */
+    public T SUPP(String supp) {
+        sql().where.add(supp);
         return getSelf();
     }
 
@@ -199,7 +216,10 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
                             last = part;
                             continue;
                         } else {
-                            builder.append(conjunction);
+                            //not nest append conjunction
+                            if (!checkNest(part) && !checkNest(last)) {
+                                builder.append(conjunction);
+                            }
                         }
                     }
                     builder.append(part);
@@ -245,6 +265,16 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
 
         public String sql(Appendable appendable) {
             return buildSQL(new SafeAppendable(appendable));
+        }
+
+        /**
+         * 检查是否嵌套
+         *
+         * @param args
+         * @return true 嵌套
+         */
+        private boolean checkNest(String args) {
+            return pattern.matcher(args).matches();
         }
     }
 }
