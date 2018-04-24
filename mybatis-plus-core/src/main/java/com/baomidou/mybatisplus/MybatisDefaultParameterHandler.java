@@ -114,7 +114,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         if (ms.getSqlCommandType() == SqlCommandType.INSERT) {
             isFill = true;
         } else if (ms.getSqlCommandType() == SqlCommandType.UPDATE
-                && metaObjectHandler.openUpdateFill()) {
+            && metaObjectHandler.openUpdateFill()) {
             isFill = true;
         }
         if (isFill) {

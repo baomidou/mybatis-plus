@@ -44,9 +44,9 @@ public class MybatisPlusSequenceConfig {
         sqlSessionFactory.setConfiguration(configuration);
         PaginationInterceptor pagination = new PaginationInterceptor();
         sqlSessionFactory.setPlugins(new Interceptor[]{
-                pagination,
-                new OptimisticLockerInterceptor(),
-                new PerformanceInterceptor()
+            pagination,
+            new OptimisticLockerInterceptor(),
+            new PerformanceInterceptor()
         });
         sqlSessionFactory.setGlobalConfig(globalConfiguration);
         return sqlSessionFactory.getObject();

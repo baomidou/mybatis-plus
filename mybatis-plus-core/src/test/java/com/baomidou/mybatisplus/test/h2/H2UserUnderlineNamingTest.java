@@ -47,13 +47,13 @@ public class H2UserUnderlineNamingTest extends AbstractH2UserTest {
     }
 
     @Test
-    public void testUnderLineNaming(){
+    public void testUnderLineNaming() {
         H2UserUnderline user = new H2UserUnderline();
         user.setName("underlineName").setAge(12).setTest_type(1).setVersion(1);
         userUnderlineMapper.insert(user);
 
         List<H2UserUnderline> list = userUnderlineMapper.selectList(new EntityWrapper<H2UserUnderline>());
-        for(H2UserUnderline u:list){
+        for (H2UserUnderline u : list) {
             System.out.println(u);
         }
     }

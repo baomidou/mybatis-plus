@@ -54,7 +54,7 @@ public class H2Horse extends SuperEntityCamel {
     private String desc;
 
     @TableField(value = "test_date")
-	private Date testDate;
+    private Date testDate;
 
     @Version
     private Integer version;

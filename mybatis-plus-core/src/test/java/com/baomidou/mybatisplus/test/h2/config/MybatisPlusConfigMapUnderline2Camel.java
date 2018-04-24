@@ -11,8 +11,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
 
-import com.baomidou.mybatisplus.MybatisMapWrapperFactory;
 import com.baomidou.mybatisplus.MybatisConfiguration;
+import com.baomidou.mybatisplus.MybatisMapWrapperFactory;
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.mapper.LogicSqlInjector;
 import com.baomidou.mybatisplus.plugins.OptimisticLockerInterceptor;
@@ -51,9 +51,9 @@ public class MybatisPlusConfigMapUnderline2Camel {
         PaginationInterceptor pagination = new PaginationInterceptor();
         OptimisticLockerInterceptor optLock = new OptimisticLockerInterceptor();
         sqlSessionFactory.setPlugins(new Interceptor[]{
-                pagination,
-                optLock,
-                new PerformanceInterceptor()
+            pagination,
+            optLock,
+            new PerformanceInterceptor()
         });
         globalConfiguration.setMetaObjectHandler(new H2MetaObjectHandler());
         sqlSessionFactory.setGlobalConfig(globalConfiguration);

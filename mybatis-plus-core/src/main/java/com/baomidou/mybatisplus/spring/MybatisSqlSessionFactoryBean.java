@@ -380,7 +380,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         notNull(dataSource, "Property 'dataSource' is required");
         notNull(sqlSessionFactoryBuilder, "Property 'sqlSessionFactoryBuilder' is required");
         state((configuration == null && configLocation == null) || !(configuration != null && configLocation != null),
-                "Property 'configuration' and 'configLocation' can not specified with together");
+            "Property 'configuration' and 'configLocation' can not specified with together");
 
         this.sqlSessionFactory = buildSqlSessionFactory();
     }
@@ -438,18 +438,18 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             // TODO 支持自定义通配符
             String[] typeAliasPackageArray;
             if (typeAliasesPackage.contains("*") && !typeAliasesPackage.contains(",")
-                    && !typeAliasesPackage.contains(";")) {
+                && !typeAliasesPackage.contains(";")) {
                 typeAliasPackageArray = PackageHelper.convertTypeAliasesPackage(typeAliasesPackage);
             } else {
                 typeAliasPackageArray = tokenizeToStringArray(this.typeAliasesPackage,
-                        ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
+                    ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
             }
             if (typeAliasPackageArray == null) {
                 throw new MybatisPlusException("not find typeAliasesPackage:" + typeAliasesPackage);
             }
             for (String packageToScan : typeAliasPackageArray) {
                 configuration.getTypeAliasRegistry().registerAliases(packageToScan,
-                        typeAliasesSuperType == null ? Object.class : typeAliasesSuperType);
+                    typeAliasesSuperType == null ? Object.class : typeAliasesSuperType);
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Scanned package: '" + packageToScan + "' for aliases");
                 }
@@ -460,11 +460,11 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         if (hasLength(this.typeEnumsPackage)) {
             Set<Class> classes = null;
             if (typeEnumsPackage.contains("*") && !typeEnumsPackage.contains(",")
-                    && !typeEnumsPackage.contains(";")) {
+                && !typeEnumsPackage.contains(";")) {
                 classes = PackageHelper.scanTypePackage(typeEnumsPackage);
             } else {
                 String[] typeEnumsPackageArray = tokenizeToStringArray(this.typeEnumsPackage,
-                        ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
+                    ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
                 if (typeEnumsPackageArray == null) {
                     throw new MybatisPlusException("not find typeEnumsPackage:" + typeEnumsPackage);
                 }
@@ -507,7 +507,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
         if (hasLength(this.typeHandlersPackage)) {
             String[] typeHandlersPackageArray = tokenizeToStringArray(this.typeHandlersPackage,
-                    ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
+                ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
             for (String packageToScan : typeHandlersPackageArray) {
                 configuration.getTypeHandlerRegistry().register(packageToScan);
                 if (LOGGER.isDebugEnabled()) {
@@ -569,7 +569,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             if (globalConfig.isRefresh()) {
                 //TODO 设置自动刷新配置 减少配置
                 new MybatisMapperRefresh(this.mapperLocations, sqlSessionFactory, 2,
-                        2, true);
+                    2, true);
             }
             for (Resource mapperLocation : this.mapperLocations) {
                 if (mapperLocation == null) {
@@ -579,7 +579,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
                 try {
                     // TODO  这里也换了噢噢噢噢
                     XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(mapperLocation.getInputStream(),
-                            configuration, mapperLocation.toString(), configuration.getSqlFragments());
+                        configuration, mapperLocation.toString(), configuration.getSqlFragments());
                     xmlMapperBuilder.parse();
                 } catch (Exception e) {
                     throw new NestedIOException("Failed to parse mapping resource: '" + mapperLocation + "'", e);

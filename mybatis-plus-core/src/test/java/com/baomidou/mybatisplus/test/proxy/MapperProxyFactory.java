@@ -35,7 +35,7 @@ public class MapperProxyFactory {
     public static <T> T newInstance(Class<T> methodInterface) {
         final MapperProxy<T> methodProxy = new MapperProxy<>(methodInterface);
         return (T) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-                new Class[]{methodInterface}, methodProxy);
+            new Class[]{methodInterface}, methodProxy);
     }
 
 }

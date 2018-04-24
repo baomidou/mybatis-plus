@@ -47,9 +47,9 @@ public class MybatisPlusConfig {
         pagination.setLocalPage(true);
         OptimisticLockerInterceptor optLock = new OptimisticLockerInterceptor();
         sqlSessionFactory.setPlugins(new Interceptor[]{
-                pagination,
-                optLock,
-                new PerformanceInterceptor()
+            pagination,
+            optLock,
+            new PerformanceInterceptor()
         });
         globalConfiguration.setMetaObjectHandler(new H2MetaObjectHandler());
         sqlSessionFactory.setGlobalConfig(globalConfiguration);

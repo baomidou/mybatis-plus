@@ -123,7 +123,7 @@ public class MybatisMapperRefresh implements Runnable {
                                 try {
                                     if (ResourceUtils.isJarURL(mapperLocation.getURL())) {
                                         String key = new UrlResource(ResourceUtils.extractJarFileURL(mapperLocation.getURL()))
-                                                .getFile().getPath();
+                                            .getFile().getPath();
                                         fileSet.add(key);
                                         if (jarMapper.get(key) != null) {
                                             jarMapper.get(key).add(mapperLocation);
@@ -192,11 +192,11 @@ public class MybatisMapperRefresh implements Runnable {
         boolean isSupper = configuration.getClass().getSuperclass() == Configuration.class;
         try {
             Field loadedResourcesField = isSupper ? configuration.getClass().getSuperclass().getDeclaredField("loadedResources")
-                    : configuration.getClass().getDeclaredField("loadedResources");
+                : configuration.getClass().getDeclaredField("loadedResources");
             loadedResourcesField.setAccessible(true);
             Set loadedResourcesSet = ((Set) loadedResourcesField.get(configuration));
             XPathParser xPathParser = new XPathParser(resource.getInputStream(), true, configuration.getVariables(),
-                    new XMLMapperEntityResolver());
+                new XMLMapperEntityResolver());
             XNode context = xPathParser.evalNode("/mapper");
             String namespace = context.getStringAttribute("namespace");
             Field field = MapperRegistry.class.getDeclaredField("knownMappers");
@@ -210,8 +210,8 @@ public class MybatisMapperRefresh implements Runnable {
             cleanKeyGenerators(context.evalNodes("insert|update"), namespace);
             cleanSqlElement(context.evalNodes("/mapper/sql"), namespace);
             XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(resource.getInputStream(),
-                    sqlSessionFactory.getConfiguration(),
-                    resource.toString(), sqlSessionFactory.getConfiguration().getSqlFragments());
+                sqlSessionFactory.getConfiguration(),
+                resource.toString(), sqlSessionFactory.getConfiguration().getSqlFragments());
             xmlMapperBuilder.parse();
             logger.debug("refresh: '" + resource + "', success!");
         } catch (IOException e) {
@@ -252,12 +252,12 @@ public class MybatisMapperRefresh implements Runnable {
     private void clearResultMap(XNode xNode, String namespace) {
         for (XNode resultChild : xNode.getChildren()) {
             if ("association".equals(resultChild.getName()) || "collection".equals(resultChild.getName())
-                    || "case".equals(resultChild.getName())) {
+                || "case".equals(resultChild.getName())) {
                 if (resultChild.getStringAttribute("select") == null) {
                     configuration.getResultMapNames().remove(
-                            resultChild.getStringAttribute("id", resultChild.getValueBasedIdentifier()));
+                        resultChild.getStringAttribute("id", resultChild.getValueBasedIdentifier()));
                     configuration.getResultMapNames().remove(
-                            namespace + "." + resultChild.getStringAttribute("id", resultChild.getValueBasedIdentifier()));
+                        namespace + "." + resultChild.getStringAttribute("id", resultChild.getValueBasedIdentifier()));
                     if (resultChild.getChildren() != null && !resultChild.getChildren().isEmpty()) {
                         clearResultMap(resultChild, namespace);
                     }

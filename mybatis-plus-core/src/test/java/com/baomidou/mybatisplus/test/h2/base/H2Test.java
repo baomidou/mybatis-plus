@@ -26,7 +26,7 @@ public class H2Test {
     public static void executeSql(Statement stmt, String sqlFilename) throws SQLException, IOException {
         String filePath = H2Test.class.getResource("/h2/" + sqlFilename).getPath();
         try (
-                BufferedReader reader = new BufferedReader(new FileReader(filePath))
+            BufferedReader reader = new BufferedReader(new FileReader(filePath))
         ) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -49,7 +49,7 @@ public class H2Test {
         String createTableSql = readFile(ddlFileName);
         Statement stmt = conn.createStatement();
         stmt.execute(createTableSql);
-        stmt.execute("truncate table "+tableName);
+        stmt.execute("truncate table " + tableName);
         executeSql(stmt, insertFileName);
         conn.commit();
     }
@@ -59,7 +59,7 @@ public class H2Test {
         StringBuilder builder = new StringBuilder();
         String filePath = H2UserNoOptLockTest.class.getResource("/h2/" + filename).getPath();
         try (
-                BufferedReader reader = new BufferedReader(new FileReader(filePath))
+            BufferedReader reader = new BufferedReader(new FileReader(filePath))
         ) {
             String line;
             while ((line = reader.readLine()) != null)

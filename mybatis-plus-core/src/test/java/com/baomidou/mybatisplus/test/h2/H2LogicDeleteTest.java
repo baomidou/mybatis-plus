@@ -116,7 +116,7 @@ public class H2LogicDeleteTest extends H2Test {
     }
 
     @Test
-    public void testDeleteBatch(){
+    public void testDeleteBatch() {
         List<Long> idList = new ArrayList<>(4);
         idList.add(101L);
         idList.add(102L);

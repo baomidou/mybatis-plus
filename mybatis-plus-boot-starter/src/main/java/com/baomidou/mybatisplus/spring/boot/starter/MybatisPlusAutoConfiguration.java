@@ -5,10 +5,6 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
-import com.baomidou.mybatisplus.entity.GlobalConfiguration;
-import com.baomidou.mybatisplus.incrementer.IKeyGenerator;
-import com.baomidou.mybatisplus.mapper.ISqlInjector;
-import com.baomidou.mybatisplus.mapper.MetaObjectHandler;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
@@ -47,6 +43,10 @@ import org.springframework.util.StringUtils;
 
 import com.baomidou.mybatisplus.MybatisConfiguration;
 import com.baomidou.mybatisplus.MybatisXMLLanguageDriver;
+import com.baomidou.mybatisplus.entity.GlobalConfiguration;
+import com.baomidou.mybatisplus.incrementer.IKeyGenerator;
+import com.baomidou.mybatisplus.mapper.ISqlInjector;
+import com.baomidou.mybatisplus.mapper.MetaObjectHandler;
 import com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean;
 
 /**
@@ -89,7 +89,7 @@ public class MybatisPlusAutoConfiguration {
                                         ObjectProvider<Interceptor[]> interceptorsProvider,
                                         ResourceLoader resourceLoader,
                                         ObjectProvider<DatabaseIdProvider> databaseIdProvider,
-                                        ObjectProvider<List<ConfigurationCustomizer>> configurationCustomizersProvider,ApplicationContext applicationContext) {
+                                        ObjectProvider<List<ConfigurationCustomizer>> configurationCustomizersProvider, ApplicationContext applicationContext) {
         this.properties = properties;
         this.interceptors = interceptorsProvider.getIfAvailable();
         this.resourceLoader = resourceLoader;
@@ -152,7 +152,7 @@ public class MybatisPlusAutoConfiguration {
         GlobalConfiguration globalConfig;
         if (!ObjectUtils.isEmpty(this.properties.getGlobalConfig())) {
             globalConfig = this.properties.getGlobalConfig().convertGlobalConfiguration();
-        }else {
+        } else {
             globalConfig = new GlobalConfiguration();
         }
         //注入填充器
@@ -162,14 +162,14 @@ public class MybatisPlusAutoConfiguration {
             globalConfig.setMetaObjectHandler(metaObjectHandler);
         }
         //注入主键生成器
-        if(this.applicationContext.getBeanNamesForType(IKeyGenerator.class,false,
-            false).length >0){
+        if (this.applicationContext.getBeanNamesForType(IKeyGenerator.class, false,
+            false).length > 0) {
             IKeyGenerator keyGenerator = this.applicationContext.getBean(IKeyGenerator.class);
             globalConfig.setKeyGenerator(keyGenerator);
         }
         //注入sql注入器
-        if(this.applicationContext.getBeanNamesForType(ISqlInjector.class,false,
-            false).length >0){
+        if (this.applicationContext.getBeanNamesForType(ISqlInjector.class, false,
+            false).length > 0) {
             ISqlInjector iSqlInjector = this.applicationContext.getBean(ISqlInjector.class);
             globalConfig.setSqlInjector(iSqlInjector);
         }

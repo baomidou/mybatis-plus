@@ -54,7 +54,7 @@ public class H2HorseCamelUnderMixTest extends AbstractH2UserTest {
         horse.setName("horse");
         camelUnderlineMixMapper.insert(horse);
         List<H2Horse> list = camelUnderlineMixMapper.selectList(new EntityWrapper<H2Horse>());
-        for(H2Horse horse1: list){
+        for (H2Horse horse1 : list) {
             System.out.println(horse1);
         }
     }

@@ -288,8 +288,8 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
                     DataSourceFactory dsFactory = dataSourceElement(child.evalNode("dataSource"));
                     DataSource dataSource = dsFactory.getDataSource();
                     Environment.Builder environmentBuilder = new Environment.Builder(id)
-                            .transactionFactory(txFactory)
-                            .dataSource(dataSource);
+                        .transactionFactory(txFactory)
+                        .dataSource(dataSource);
                     configuration.setEnvironment(environmentBuilder.build());
                 }
             }
@@ -380,7 +380,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
                 InputStream inputStream = Resources.getResourceAsStream(resource);
                 //TODO
                 XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, resource,
-                        configuration.getSqlFragments());
+                    configuration.getSqlFragments());
                 mapperParser.parse();
             }
             for (Class<?> mapper : mapperClasses) {
@@ -419,7 +419,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
                     mapper.add(mapperInterface);
                 } else {
                     throw new BuilderException(
-                            "A mapper element may only specify a url, resource or class, but not more than one.");
+                        "A mapper element may only specify a url, resource or class, but not more than one.");
                 }
             }
         }

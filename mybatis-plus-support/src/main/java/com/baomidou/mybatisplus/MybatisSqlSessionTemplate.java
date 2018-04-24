@@ -74,7 +74,7 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
      */
     public MybatisSqlSessionTemplate(SqlSessionFactory sqlSessionFactory, ExecutorType executorType) {
         this(sqlSessionFactory, executorType, new MyBatisExceptionTranslator(sqlSessionFactory.getConfiguration()
-                .getEnvironment().getDataSource(), true));
+            .getEnvironment().getDataSource(), true));
     }
 
     /**
@@ -100,7 +100,7 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
         this.executorType = executorType;
         this.exceptionTranslator = exceptionTranslator;
         this.sqlSessionProxy = (SqlSession) newProxyInstance(SqlSessionFactory.class.getClassLoader(),
-                new Class[]{SqlSession.class}, new SqlSessionInterceptor());
+            new Class[]{SqlSession.class}, new SqlSessionInterceptor());
     }
 
     public SqlSessionFactory getSqlSessionFactory() {
@@ -396,7 +396,7 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             SqlSession sqlSession = MybatisSqlSessionTemplate.this.sqlSessionFactory
-                    .openSession(MybatisSqlSessionTemplate.this.executorType);
+                .openSession(MybatisSqlSessionTemplate.this.executorType);
             try {
                 Object result = method.invoke(sqlSession, args);
                 sqlSession.commit(true);

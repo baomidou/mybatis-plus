@@ -1,13 +1,15 @@
 package com.baomidou.mybatisplus.test.sql;
 
-import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
-import com.baomidou.mybatisplus.plugins.parser.logicdelete.LogicDeleteHandler;
-import com.baomidou.mybatisplus.plugins.parser.logicdelete.LogicDeleteSqlParser;
-import net.sf.jsqlparser.expression.Expression;
-import net.sf.jsqlparser.expression.StringValue;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
+import com.baomidou.mybatisplus.plugins.parser.logicdelete.LogicDeleteHandler;
+import com.baomidou.mybatisplus.plugins.parser.logicdelete.LogicDeleteSqlParser;
+
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.StringValue;
 
 /**
  * <p>

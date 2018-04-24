@@ -107,7 +107,7 @@ public class TableFieldInfo {
          * 设置 related 为 true
          */
         if (StringUtils.isEmpty(tableField.value())
-                && globalConfig.isDbColumnUnderline()) {
+            && globalConfig.isDbColumnUnderline()) {
              /* 开启字段下划线申明 */
             this.related = true;
             this.setColumn(globalConfig, StringUtils.camelToUnderline(column));
