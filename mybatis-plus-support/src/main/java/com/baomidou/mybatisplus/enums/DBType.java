@@ -31,6 +31,10 @@ public enum DBType {
      */
     MYSQL("mysql", "`%s`", "MySql数据库"),
     /**
+     * MARIADB
+     */
+    MARIADB("mariadb", "`%s`", "MariaDB数据库"),
+    /**
      * ORACLE
      */
     ORACLE("oracle", null, "Oracle数据库"),

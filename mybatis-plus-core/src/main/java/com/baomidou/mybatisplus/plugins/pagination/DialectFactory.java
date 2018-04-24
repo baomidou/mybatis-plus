@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.plugins.pagination.dialects.DB2Dialect;
 import com.baomidou.mybatisplus.plugins.pagination.dialects.H2Dialect;
 import com.baomidou.mybatisplus.plugins.pagination.dialects.HSQLDialect;
+import com.baomidou.mybatisplus.plugins.pagination.dialects.MariaDBDialect;
 import com.baomidou.mybatisplus.plugins.pagination.dialects.MySqlDialect;
 import com.baomidou.mybatisplus.plugins.pagination.dialects.OracleDialect;
 import com.baomidou.mybatisplus.plugins.pagination.dialects.PostgreDialect;
@@ -120,6 +121,9 @@ public class DialectFactory {
         switch (dbType) {
             case MYSQL:
                 dialect = MySqlDialect.INSTANCE;
+                break;
+            case MARIADB:
+                dialect = MariaDBDialect.INSTANCE;
                 break;
             case ORACLE:
                 dialect = OracleDialect.INSTANCE;
