@@ -1,6 +1,6 @@
 package com.baomidou.mybatisplus.test.h2.entity.mapper;
 
-import com.baomidou.mybatisplus.test.h2.entity.persistent.H2Horse;
+import com.baomidou.mybatisplus.test.h2.entity.persistent.H2PersonInputPK;
 
 /**
  * <p>
@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.test.h2.entity.persistent.H2Horse;
  * @author Caratacus
  * @date 2017/4/1
  */
-public interface H2CamelUnderlineMixMapper extends SuperMapper<H2Horse> {
+public interface H2PersonInputPKMapper extends SuperMapper<H2PersonInputPK> {
 
 
 }
