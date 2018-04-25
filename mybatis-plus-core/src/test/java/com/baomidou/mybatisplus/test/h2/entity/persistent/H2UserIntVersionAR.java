@@ -64,7 +64,7 @@ public class H2UserIntVersionAR extends Model<H2UserIntVersionAR> {
     private String desc;
 
     @TableField
-	private Date testDate;
+    private Date testDate;
 
     @Version
     private Integer version;

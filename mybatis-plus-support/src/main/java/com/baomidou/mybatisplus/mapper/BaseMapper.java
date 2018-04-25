@@ -200,7 +200,7 @@ public interface BaseMapper<T> {
     /**
      * <p>
      * 根据 Wrapper 条件，查询全部记录
-	 *   注意： 只返回第一个字段的值
+     * 注意： 只返回第一个字段的值
      * </p>
      *
      * @param wrapper 实体对象封装操作类（可以为 null）

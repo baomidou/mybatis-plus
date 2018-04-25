@@ -27,7 +27,6 @@ import org.apache.ibatis.reflection.SystemMetaObject;
 
 import com.baomidou.mybatisplus.annotations.SqlParser;
 import com.baomidou.mybatisplus.entity.SqlParserInfo;
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 
 /**
  * <p>

@@ -19,13 +19,13 @@ import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
 
 /**
  * <p>
- *  test cases for {@link H2User}
+ * test cases for {@link H2User}
  * </p>
  *
  * @author yuxiaobin
  * @date 2018/1/5
  */
-public abstract class AbstractH2UserTest extends H2Test{
+public abstract class AbstractH2UserTest extends H2Test {
 
     @Autowired
     protected IH2UserService userService;
@@ -33,7 +33,7 @@ public abstract class AbstractH2UserTest extends H2Test{
     @Autowired
     protected H2UserMapper userMapper;
 
-    protected void insertSimpleCase(){
+    protected void insertSimpleCase() {
         H2User user = new H2User();
         user.setAge(1);
         user.setPrice(new BigDecimal("9.99"));
@@ -45,7 +45,7 @@ public abstract class AbstractH2UserTest extends H2Test{
         Assert.assertEquals("Caratacus", userFromDB.getDesc());
     }
 
-    protected void insertBatchSimpleCase(){
+    protected void insertBatchSimpleCase() {
         userService.insert(new H2User("sanmao", 1));
         List<H2User> h2Users = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
@@ -58,7 +58,7 @@ public abstract class AbstractH2UserTest extends H2Test{
         Assert.assertTrue(userService.insertBatch(h2Users));
     }
 
-    protected void deleteSimpleCase(){
+    protected void deleteSimpleCase() {
         H2User user = new H2User();
         user.setAge(1);
         user.setPrice(new BigDecimal("9.99"));
@@ -69,7 +69,7 @@ public abstract class AbstractH2UserTest extends H2Test{
         Assert.assertNull(userService.selectById(userId));
     }
 
-    protected void selectOneSimpleCase(){
+    protected void selectOneSimpleCase() {
         H2User user = new H2User();
         user.setId(105L);
         EntityWrapper<H2User> ew = new EntityWrapper<>(user);
@@ -77,7 +77,7 @@ public abstract class AbstractH2UserTest extends H2Test{
         Assert.assertNotNull(userFromDB);
     }
 
-    protected void selectListSimpleCase(){
+    protected void selectListSimpleCase() {
         H2User user = new H2User();
         EntityWrapper<H2User> ew = new EntityWrapper<>(user);
         List<H2User> list = userService.selectList(ew);
@@ -85,7 +85,7 @@ public abstract class AbstractH2UserTest extends H2Test{
         Assert.assertNotEquals(0, list.size());
     }
 
-    protected void selectPageSimpleCase(){
+    protected void selectPageSimpleCase() {
         int size = 3;
         Page<H2User> page = userService.selectPage(new Page<H2User>(1, size));
         Assert.assertEquals(size, page.getRecords().size());
@@ -98,7 +98,7 @@ public abstract class AbstractH2UserTest extends H2Test{
         }
     }
 
-    protected void selectPageHelperCase(){
+    protected void selectPageHelperCase() {
         PageHelper.startPage(1, 3);
         List<H2User> userList = userService.selectList(new EntityWrapper<H2User>());
         System.out.println("total=" + PageHelper.freeTotal());
@@ -107,7 +107,7 @@ public abstract class AbstractH2UserTest extends H2Test{
         Assert.assertNotEquals("Should not do pagination", 3, userList.size());
     }
 
-    protected void updateByIdWithOptLock(){
+    protected void updateByIdWithOptLock() {
         Long id = 991L;
         H2User user = new H2User();
         user.setId(id);
@@ -130,7 +130,7 @@ public abstract class AbstractH2UserTest extends H2Test{
         Assert.assertEquals("991", userDB.getName());
     }
 
-    protected void updateAllColumnByIdCase(){
+    protected void updateAllColumnByIdCase() {
         Long id = 997L;
         H2User user = new H2User();
         user.setId(id);
@@ -267,7 +267,7 @@ public abstract class AbstractH2UserTest extends H2Test{
         Assert.assertEquals(count1, count2);
     }
 
-    protected void updateBatchSimpleCase(){
+    protected void updateBatchSimpleCase() {
         List<H2User> list = userService.selectList(new EntityWrapper<H2User>());
         Map<Long, Integer> userVersionMap = new HashMap<>();
         for (H2User u : list) {
@@ -281,7 +281,7 @@ public abstract class AbstractH2UserTest extends H2Test{
         }
     }
 
-    protected void updateInLoopCase(){
+    protected void updateInLoopCase() {
         List<H2User> list = userService.selectList(new EntityWrapper<H2User>());
         Map<Long, Integer> versionBefore = new HashMap<>();
         Map<Long, String> nameExpect = new HashMap<>();
@@ -303,7 +303,7 @@ public abstract class AbstractH2UserTest extends H2Test{
         }
     }
 
-    protected void updateAllColumnInLoop(){
+    protected void updateAllColumnInLoop() {
         List<H2User> list = userService.selectList(new EntityWrapper<H2User>());
         Map<Long, Integer> versionBefore = new HashMap<>();
         Map<Long, String> nameExpect = new HashMap<>();
@@ -324,7 +324,7 @@ public abstract class AbstractH2UserTest extends H2Test{
         }
     }
 
-    protected void updateByMySql(){
+    protected void updateByMySql() {
         Long id = 10087L;
         H2User user = new H2User();
         user.setId(id);
@@ -344,7 +344,7 @@ public abstract class AbstractH2UserTest extends H2Test{
         Assert.assertEquals(1, user.getVersion().intValue());
     }
 
-    protected void selectWithPageCondition(){
+    protected void selectWithPageCondition() {
         H2User user = new H2User();
         user.setName("pageCondition");
         user.setTestType(99);

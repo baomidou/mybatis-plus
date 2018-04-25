@@ -42,8 +42,8 @@ public class OracleMybatisPlusConfig {
         sqlSessionFactory.setConfiguration(configuration);
         PaginationInterceptor pagination = new PaginationInterceptor();
         sqlSessionFactory.setPlugins(new Interceptor[]{
-                pagination,
-                new PerformanceInterceptor()
+            pagination,
+            new PerformanceInterceptor()
         });
         sqlSessionFactory.setGlobalConfig(globalConfiguration);
         return sqlSessionFactory.getObject();

@@ -44,9 +44,9 @@ public class MybatisPlusLoginDeleteConfig {
         PaginationInterceptor pagination = new PaginationInterceptor();
         OptimisticLockerInterceptor optLock = new OptimisticLockerInterceptor();
         sqlSessionFactory.setPlugins(new Interceptor[]{
-                pagination,
-                optLock,
-                new PerformanceInterceptor()
+            pagination,
+            optLock,
+            new PerformanceInterceptor()
         });
         sqlSessionFactory.setGlobalConfig(globalConfiguration);
         return sqlSessionFactory.getObject();

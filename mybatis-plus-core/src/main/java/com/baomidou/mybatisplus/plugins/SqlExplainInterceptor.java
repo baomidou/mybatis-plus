@@ -76,7 +76,7 @@ public class SqlExplainInterceptor implements Interceptor {
             Connection connection = executor.getTransaction().getConnection();
             String databaseVersion = connection.getMetaData().getDatabaseProductVersion();
             if (GlobalConfigUtils.getDbType(configuration).equals(DBType.MYSQL)
-                    && VersionUtils.compare(minMySQLVersion, databaseVersion)) {
+                && VersionUtils.compare(minMySQLVersion, databaseVersion)) {
                 logger.warn("Warn: Your mysql version needs to be greater than '5.6.3' to execute of Sql Explain!");
                 return invocation.proceed();
             }
@@ -108,9 +108,9 @@ public class SqlExplainInterceptor implements Interceptor {
         String sqlExplain = explain.toString();
         StaticSqlSource sqlsource = new StaticSqlSource(configuration, sqlExplain, boundSql.getParameterMappings());
         MappedStatement.Builder builder = new MappedStatement.Builder(configuration, "explain_sql", sqlsource,
-                SqlCommandType.SELECT);
+            SqlCommandType.SELECT);
         builder.resultMaps(mappedStatement.getResultMaps()).resultSetType(mappedStatement.getResultSetType())
-                .statementType(mappedStatement.getStatementType());
+            .statementType(mappedStatement.getStatementType());
         MappedStatement queryStatement = builder.build();
         DefaultParameterHandler handler = new DefaultParameterHandler(queryStatement, parameter, boundSql);
         try (PreparedStatement stmt = connection.prepareStatement(sqlExplain)) {

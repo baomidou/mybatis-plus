@@ -49,7 +49,7 @@ public class H2HikaricpTest extends H2Test {
     H2UserVersionAndLogicDeleteMapper userMapper;
 
     @Test
-    public void testPerformanceInteceptor(){
+    public void testPerformanceInteceptor() {
         userMapper.selectList(new EntityWrapper<H2UserVersionAndLogicDeleteEntity>());
     }
 }

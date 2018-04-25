@@ -46,7 +46,7 @@ public class EnumUtils {
                 return e;
             } else if (value instanceof Number) {
                 if (e.getValue() instanceof Number &&
-                        ((Number) value).doubleValue() == ((Number) e.getValue()).doubleValue()) {
+                    ((Number) value).doubleValue() == ((Number) e.getValue()).doubleValue()) {
                     return e;
                 }
             } else if (String.valueOf(value).equals(String.valueOf(e.getValue()))) {

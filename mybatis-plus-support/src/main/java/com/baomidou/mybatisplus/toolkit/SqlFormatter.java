@@ -99,9 +99,9 @@ public class SqlFormatter {
 
         public FormatProcess(String sql) {
             tokens = new StringTokenizer(
-                    sql,
-                    "()+*/-=<>'`\"[]," + WHITESPACE,
-                    true
+                sql,
+                "()+*/-=<>'`\"[]," + WHITESPACE,
+                true
             );
         }
 
@@ -266,8 +266,8 @@ public class SqlFormatter {
             newline();
             afterBeginBeforeEnd = false;
             afterByOrSetOrFromOrSelect = "by".equals(lcToken)
-                    || "set".equals(lcToken)
-                    || "from".equals(lcToken);
+                || "set".equals(lcToken)
+                || "from".equals(lcToken);
         }
 
         private void beginNewClause() {
@@ -335,11 +335,11 @@ public class SqlFormatter {
             final char begin = tok.charAt(0);
             final boolean isIdentifier = Character.isJavaIdentifierStart(begin) || '"' == begin;
             return isIdentifier &&
-                    !LOGICAL.contains(tok) &&
-                    !END_CLAUSES.contains(tok) &&
-                    !QUANTIFIERS.contains(tok) &&
-                    !DML.contains(tok) &&
-                    !MISC.contains(tok);
+                !LOGICAL.contains(tok) &&
+                !END_CLAUSES.contains(tok) &&
+                !QUANTIFIERS.contains(tok) &&
+                !DML.contains(tok) &&
+                !MISC.contains(tok);
         }
 
         private static boolean isWhitespace(String token) {

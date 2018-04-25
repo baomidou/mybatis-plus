@@ -58,14 +58,14 @@ public class H2UserTest extends AbstractH2UserTest {
     }
 
     @Test
-    public void testSelectBatch(){
+    public void testSelectBatch() {
         List<Long> idList = new ArrayList<>(4);
         idList.add(101L);
         idList.add(102L);
         idList.add(103L);
         idList.add(104L);
         List<H2User> userList = userService.selectBatchIds(idList);
-        for(H2User u:userList){
+        for (H2User u : userList) {
             System.out.println(u);
         }
     }

@@ -55,7 +55,7 @@ public class H2UserUnderline extends SuperEntity {
     private String desc;
 
     @TableField(value = "test_date")
-	private Date test_date;
+    private Date test_date;
 
     @Version
     private Integer version;

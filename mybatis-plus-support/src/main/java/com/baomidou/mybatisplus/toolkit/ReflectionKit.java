@@ -76,7 +76,7 @@ public class ReflectionKit {
         try {
             if (MapUtils.isEmpty(fieldMaps)) {
                 throw new MybatisPlusException(
-                        String.format("Error: NoSuchField in %s for %s.  Cause:", cls.getSimpleName(), str));
+                    String.format("Error: NoSuchField in %s for %s.  Cause:", cls.getSimpleName(), str));
             }
             Method method = cls.getMethod(getMethodCapitalize(fieldMaps.get(str), str));
             return method.invoke(entity);
@@ -84,8 +84,8 @@ public class ReflectionKit {
             throw new MybatisPlusException(String.format("Error: NoSuchMethod in %s.  Cause:", cls.getSimpleName()) + e);
         } catch (IllegalAccessException e) {
             throw new MybatisPlusException(String.format("Error: Cannot execute a private method. in %s.  Cause:",
-                    cls.getSimpleName())
-                    + e);
+                cls.getSimpleName())
+                + e);
         } catch (InvocationTargetException e) {
             throw new MybatisPlusException("Error: InvocationTargetException on getMethodValue.  Cause:" + e);
         }
@@ -126,7 +126,7 @@ public class ReflectionKit {
         Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
         if (index >= params.length || index < 0) {
             logger.warn(String.format("Warn: Index: %s, Size of %s's Parameterized Type: %s .", index, clazz.getSimpleName(),
-                    params.length));
+                params.length));
             return Object.class;
         }
         if (!(params[index] instanceof Class)) {

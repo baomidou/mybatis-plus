@@ -63,7 +63,7 @@ public class H2SqlRunnerTest extends H2Test {
     @Test
     public void testInsert() {
         SqlRunner.db().insert("insert into h2user(name,age,test_type,test_date,version) values ({0},{1},{2},{3},{4})",
-                "Kshen", 19, 1, null, 1);
+            "Kshen", 19, 1, null, 1);
         Object obj = SqlRunner.db().selectObj("select name,test_id from h2user where name={0}", "Kshen");
         Assert.assertNotNull(obj);
         Assert.assertEquals("only return first column's value", "Kshen", obj);

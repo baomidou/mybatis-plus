@@ -13,29 +13,26 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test.proxy;
+package com.baomidou.mybatisplus.plugins.pagination.dialects;
 
-import java.lang.reflect.Proxy;
+import com.baomidou.mybatisplus.plugins.pagination.IDialect;
 
 /**
  * <p>
- * 类似  org.apache.ibatis.binding.MapperProxyFactory<T>
+ * MariaDB 数据库分页语句组装实现
  * </p>
  *
- * @author hubin
- * @Date 2016-07-06
+ * @author Caratacus
+ * @Date 2018-04-24
  */
-public class MapperProxyFactory {
+public class MariaDBDialect implements IDialect {
 
-    public static <T> T getMapper(Class<T> type) {
-        return newInstance(type);
+    public static final MariaDBDialect INSTANCE = new MariaDBDialect();
+
+    @Override
+    public String buildPaginationSql(String originalSql, int offset, int limit) {
+        StringBuilder sql = new StringBuilder(originalSql);
+        sql.append(" LIMIT ").append(offset).append(",").append(limit);
+        return sql.toString();
     }
-
-    @SuppressWarnings("unchecked")
-    public static <T> T newInstance(Class<T> methodInterface) {
-        final MapperProxy<T> methodProxy = new MapperProxy<>(methodInterface);
-        return (T) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-            new Class[]{methodInterface}, methodProxy);
-    }
-
 }

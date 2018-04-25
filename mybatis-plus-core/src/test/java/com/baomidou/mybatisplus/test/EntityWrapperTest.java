@@ -159,12 +159,12 @@ public class EntityWrapperTest {
 		 */
         ew.setEntity(new User(1));
         ew.where("name=?", "'zhangsan'").and("id=1").orNew("status=?", "0").or("status=1").notLike("nlike", "notvalue")
-                .andNew("new=xx").like("hhh", "ddd").andNew("pwd=11").isNotNull("n1,n2").isNull("n3").groupBy("x1")
-                .groupBy("x2,x3").having("x1=11").having("x3=433").orderBy("dd").orderBy("d1,d2");
+            .andNew("new=xx").like("hhh", "ddd").andNew("pwd=11").isNotNull("n1,n2").isNull("n3").groupBy("x1")
+            .groupBy("x2,x3").having("x1=11").having("x3=433").orderBy("dd").orderBy("d1,d2");
         System.out.println(ew.originalSql());
         Assert.assertEquals("AND (name=? AND id=1) \n" + "OR (status=? OR status=1 AND nlike NOT LIKE ?) \n"
-                + "AND (new=xx AND hhh LIKE ?) \n" + "AND (pwd=11 AND n1 IS NOT NULL AND n2 IS NOT NULL AND n3 IS NULL)\n"
-                + "GROUP BY x1, x2,x3\n" + "HAVING (x1=11 AND x3=433)\n" + "ORDER BY dd, d1,d2", ew.originalSql());
+            + "AND (new=xx AND hhh LIKE ?) \n" + "AND (pwd=11 AND n1 IS NOT NULL AND n2 IS NOT NULL AND n3 IS NULL)\n"
+            + "GROUP BY x1, x2,x3\n" + "HAVING (x1=11 AND x3=433)\n" + "ORDER BY dd, d1,d2", ew.originalSql());
     }
 
     @Test
@@ -310,8 +310,8 @@ public class EntityWrapperTest {
         String sqlPart = Condition.create().gt("gt", 1).le("le", 2).lt("le", 3).ge("ge", 4).eq("eq", 5).allEq(map).originalSql();
         System.out.println("sql ==> " + sqlPart);
         Assert.assertEquals(
-                "AND (gt > ? AND le <= ? AND le < ? AND ge >= ? AND eq = ? AND allEq1 = ? AND allEq2 = ? AND allEq3 = ?)",
-                sqlPart);
+            "AND (gt > ? AND le <= ? AND le < ? AND ge >= ? AND eq = ? AND allEq1 = ? AND allEq2 = ? AND allEq3 = ?)",
+            sqlPart);
     }
 
     /**
@@ -320,7 +320,7 @@ public class EntityWrapperTest {
     @Test
     public void testlike() {
         String sqlPart = Condition.create().like("default", "default", SqlLike.DEFAULT).like("left", "left", SqlLike.LEFT)
-                .like("right", "right", SqlLike.RIGHT).originalSql();
+            .like("right", "right", SqlLike.RIGHT).originalSql();
         System.out.println("sql ==> " + sqlPart);
         Assert.assertEquals("AND (default LIKE ? AND left LIKE ? AND right LIKE ?)", sqlPart);
     }
@@ -338,7 +338,7 @@ public class EntityWrapperTest {
         ew.or("sql = {0}", "sql").like("default", "default", SqlLike.DEFAULT).like("left", "left", SqlLike.LEFT);
         ew.in("aaabbbcc", "1,3,4");
         String sqlPart = ew.in("bbb", Arrays.asList(new String[]{"a", "b", "c"})).like("right", "right", SqlLike.RIGHT).isWhere(true)
-                .eq("bool", true).between("ee", "1111", "222").originalSql();
+            .eq("bool", true).between("ee", "1111", "222").originalSql();
         System.out.println("sql ==> " + sqlPart);
         Assert.assertEquals("WHERE (sql = ? AND default LIKE ? AND left LIKE ? AND aaabbbcc IN (?,?,?) AND bbb IN (?,?,?) AND right LIKE ? AND bool = ? AND ee BETWEEN ? AND ?)", sqlPart);
         System.out.println(ew.getSqlSegment());
@@ -433,6 +433,23 @@ public class EntityWrapperTest {
         Assert.assertEquals("ORDER BY id1 ASC, id2 ASC, id3 ASC", wrapper.getSqlSegment());
         wrapper.orderDesc(orders);
         Assert.assertEquals("ORDER BY id1 ASC, id2 ASC, id3 ASC, id1 DESC, id2 DESC, id3 DESC", wrapper.getSqlSegment());
+    }
+
+    @Test
+    public void testNest1() {
+        String sqlSegment = Condition.create().eq("aaa", "aaa").andNew().leftNest().eq("a", "a").orNew().eq("b", "b").eq("c", "c").rightNest().originalSql();
+        Assert.assertEquals(sqlSegment, "AND (aaa = ?) \n" +
+            "AND ((a = ?) \n" +
+            "OR (b = ? AND c = ?))");
+    }
+
+    @Test
+    public void testNest2() {
+        String sqlSegment = Condition.create().eq("aaa", "aaa").andNew().leftNest(2).eq("a", "a").orNew().eq("b", "b").eq("c", "c").rightNest().orNew().eq("d", "d").eq("e", "e").rightNest().originalSql();
+        Assert.assertEquals(sqlSegment, "AND (aaa = ?) \n" +
+            "AND (((a = ?) \n" +
+            "OR (b = ? AND c = ?)) \n" +
+            "OR (d = ? AND e = ?))");
     }
 
 }

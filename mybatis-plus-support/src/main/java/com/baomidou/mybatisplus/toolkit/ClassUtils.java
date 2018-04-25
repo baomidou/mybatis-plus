@@ -21,9 +21,9 @@ public class ClassUtils {
             for (Class<?> cls : clazz.getInterfaces()) {
                 String interfaceName = cls.getName();
                 if (interfaceName.equals("net.sf.cglib.proxy.Factory") //cglib
-                        || interfaceName.equals("org.springframework.cglib.proxy.Factory")
-                        || interfaceName.equals("javassist.util.proxy.ProxyObject") //javassist
-                        || interfaceName.equals("org.apache.ibatis.javassist.util.proxy.ProxyObject")) {
+                    || interfaceName.equals("org.springframework.cglib.proxy.Factory")
+                    || interfaceName.equals("javassist.util.proxy.ProxyObject") //javassist
+                    || interfaceName.equals("org.apache.ibatis.javassist.util.proxy.ProxyObject")) {
                     return true;
                 }
             }

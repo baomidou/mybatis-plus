@@ -315,7 +315,7 @@ public class UserMapperTest extends CrudTest {
         sleep();
         if (user != null) {
             System.out.println("\n user: id=" + user.getId() + ", name=" + user.getName() + ", age=" + user.getAge()
-                    + ", testType=" + user.getTestType());
+                + ", testType=" + user.getTestType());
         } else {
             System.out.println("\n user is null.");
         }

@@ -44,9 +44,9 @@ public class MybatisConfigMetaObjOptLockConfig {
         sqlSessionFactory.setConfiguration(configuration);
         PaginationInterceptor pagination = new PaginationInterceptor();
         sqlSessionFactory.setPlugins(new Interceptor[]{
-                pagination,
-                new PerformanceInterceptor(),
-                new OptimisticLockerInterceptor()
+            pagination,
+            new PerformanceInterceptor(),
+            new OptimisticLockerInterceptor()
         });
         sqlSessionFactory.setGlobalConfig(globalConfiguration);
         return sqlSessionFactory.getObject();

@@ -237,7 +237,7 @@ public class TableInfoHelper {
                 } else {
                     tableInfo.setIdType(globalConfig.getIdType());
                 }
-                
+
                 /* 字段 */
                 String column = field.getName();
                 if (StringUtils.isNotEmpty(tableId.value())) {
@@ -405,10 +405,10 @@ public class TableInfoHelper {
         String keyProperty = tableInfo.getKeyProperty();
         String keyColumn = tableInfo.getKeyColumn();
         SqlSource sqlSource = languageDriver.createSqlSource(builderAssistant.getConfiguration(),
-                keyGenerator.executeSql(tableInfo.getKeySequence().value()), null);
+            keyGenerator.executeSql(tableInfo.getKeySequence().value()), null);
         builderAssistant.addMappedStatement(id, sqlSource, statementType, SqlCommandType.SELECT, null, null, null,
-                null, null, resultTypeClass, null, false, false, false,
-                new NoKeyGenerator(), keyProperty, keyColumn, null, languageDriver, null);
+            null, null, resultTypeClass, null, false, false, false,
+            new NoKeyGenerator(), keyProperty, keyColumn, null, languageDriver, null);
         id = builderAssistant.applyCurrentNamespace(id, false);
         MappedStatement keyStatement = builderAssistant.getConfiguration().getMappedStatement(id, false);
         SelectKeyGenerator selectKeyGenerator = new SelectKeyGenerator(keyStatement, true);

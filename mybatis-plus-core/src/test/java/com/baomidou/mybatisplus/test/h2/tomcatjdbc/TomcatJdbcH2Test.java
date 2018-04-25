@@ -24,7 +24,7 @@ import com.baomidou.mybatisplus.test.h2.entity.persistent.H2UserVersionAndLogicD
 
 /**
  * <p>
- *     Tomcatjdbc数据源测试
+ * Tomcatjdbc数据源测试
  * </p>
  *
  * @author yuxiaobin

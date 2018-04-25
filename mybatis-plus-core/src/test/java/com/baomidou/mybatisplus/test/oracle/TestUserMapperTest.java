@@ -136,8 +136,8 @@ public class TestUserMapperTest {
         sleep();
         if (user != null) {
             System.out.println("\n user: id="
-                    + user.getTestId() + ", name=" + user.getName() + ", age=" + user.getAge() + ", testType="
-                    + user.getTestType());
+                + user.getTestId() + ", name=" + user.getName() + ", age=" + user.getAge() + ", testType="
+                + user.getTestType());
         } else {
             System.out.println("\n user is null.");
         }
