@@ -51,10 +51,12 @@ public class H2PersonInputPKTest extends AbstractH2UserTest {
         H2PersonInputPK person = new H2PersonInputPK();
         person.setName("person");
         person.setTestType(1);
-        person.setId(123456789L);
+        Long id = 123456789L;
+        person.setId(id);
         person.setLastUpdatedDt(new Date());
         Assert.assertEquals(1, personMapper.insert(person).intValue());
-        Long id = person.getId();
+        Long idReturn = person.getId();
+        Assert.assertEquals(idReturn, id);
         Assert.assertNotNull(personMapper.selectById(id));
     }
 
