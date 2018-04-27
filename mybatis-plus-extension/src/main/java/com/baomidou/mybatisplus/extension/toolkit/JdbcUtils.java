@@ -50,6 +50,8 @@ public class JdbcUtils {
         if (jdbcUrl.startsWith("jdbc:mysql:") || jdbcUrl.startsWith("jdbc:cobar:")
             || jdbcUrl.startsWith("jdbc:log4jdbc:mysql:")) {
             return DBType.MYSQL;
+        } else if (jdbcUrl.startsWith("jdbc:mariadb:")) {
+            return DBType.MARIADB;
         } else if (jdbcUrl.startsWith("jdbc:oracle:") || jdbcUrl.startsWith("jdbc:log4jdbc:oracle:")) {
             return DBType.ORACLE;
         } else if (jdbcUrl.startsWith("jdbc:sqlserver:") || jdbcUrl.startsWith("jdbc:microsoft:")) {

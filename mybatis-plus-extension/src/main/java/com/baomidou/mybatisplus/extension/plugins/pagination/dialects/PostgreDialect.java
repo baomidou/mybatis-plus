@@ -28,7 +28,6 @@ import com.baomidou.mybatisplus.core.pagination.dialect.IDialect;
  */
 public class PostgreDialect implements IDialect {
 
-    public static final PostgreDialect INSTANCE = new PostgreDialect();
 
     @Override
     public String buildPaginationSql(String originalSql, int offset, int limit) {

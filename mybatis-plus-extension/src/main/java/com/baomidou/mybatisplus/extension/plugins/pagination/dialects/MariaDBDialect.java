@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2011-2014, hubin (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -20,20 +20,18 @@ import com.baomidou.mybatisplus.core.pagination.dialect.IDialect;
 
 /**
  * <p>
- * SQLServer 数据库分页语句组装实现
+ * MariaDB 数据库分页语句组装实现
  * </p>
  *
- * @author hubin
- * @Date 2016-03-23
+ * @author Caratacus
+ * @Date 2018-04-24
  */
-public class SQLServerDialect implements IDialect {
-
+public class MariaDBDialect implements IDialect {
 
     @Override
     public String buildPaginationSql(String originalSql, int offset, int limit) {
         StringBuilder sql = new StringBuilder(originalSql);
-        sql.append(" OFFSET ").append(offset).append(" ROWS FETCH NEXT ");
-        sql.append(limit).append(" ROWS ONLY");
+        sql.append(" LIMIT ").append(offset).append(",").append(limit);
         return sql.toString();
     }
 }

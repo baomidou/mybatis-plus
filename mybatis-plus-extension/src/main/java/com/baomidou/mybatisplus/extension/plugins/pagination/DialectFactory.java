@@ -15,10 +15,14 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.apache.ibatis.session.RowBounds;
 
 import com.baomidou.mybatisplus.core.enums.IDBType;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.pagination.PageHelper;
 import com.baomidou.mybatisplus.core.pagination.Pagination;
 import com.baomidou.mybatisplus.core.pagination.dialect.IDialect;
@@ -27,6 +31,7 @@ import com.baomidou.mybatisplus.extension.enums.DBType;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.DB2Dialect;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.H2Dialect;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.HSQLDialect;
+import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.MariaDBDialect;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.MySqlDialect;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.OracleDialect;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.PostgreDialect;
@@ -44,6 +49,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.SQLiteDial
  * @Date 2016-01-23
  */
 public class DialectFactory {
+    /**
+     * 方言缓存
+     */
+    private static final Map<String, IDialect> dialectCache = new ConcurrentHashMap<>();
 
     /**
      * <p>
@@ -91,18 +100,29 @@ public class DialectFactory {
      * @throws Exception
      */
     private static IDialect getDialect(IDBType dbType, String dialectClazz) throws Exception {
-        IDialect dialect = null;
-        if (StringUtils.isNotEmpty(dialectClazz)) {
-            try {
-                Class<?> clazz = Class.forName(dialectClazz);
-                if (IDialect.class.isAssignableFrom(clazz)) {
-                    dialect = (IDialect) clazz.newInstance();
-                }
-            } catch (ClassNotFoundException e) {
-                throw new MybatisPlusException("Class :" + dialectClazz + " is not found");
+        IDialect dialect = dialectCache.get(dbType.getDb());
+        if (null == dialect) {
+            // 自定义方言
+            dialect = dialectCache.get(dialectClazz);
+            if (null != dialect) {
+                return dialect;
             }
-        } else if (null != dbType) {
-            dialect = getDialectByDbType(dbType);
+
+            // 缓存方言
+            if (StringUtils.isNotEmpty(dialectClazz)) {
+                try {
+                    Class<?> clazz = Class.forName(dialectClazz);
+                    if (IDialect.class.isAssignableFrom(clazz)) {
+                        dialect = (IDialect) clazz.newInstance();
+                        dialectCache.put(dialectClazz, dialect);
+                    }
+                } catch (ClassNotFoundException e) {
+                    throw new MybatisPlusException("Class :" + dialectClazz + " is not found");
+                }
+            } else {
+                dialect = getDialectByDbType(dbType);
+                dialectCache.put(dbType.getDb(), dialect);
+            }
         }
         /* 未配置方言则抛出异常 */
         if (dialect == null) {
@@ -121,29 +141,37 @@ public class DialectFactory {
      * @throws Exception
      */
     private static IDialect getDialectByDbType(IDBType dbType) {
-        IDialect dialect;
         if (dbType == DBType.MYSQL) {
-            dialect = MySqlDialect.INSTANCE;
-        } else if (dbType == DBType.ORACLE) {
-            dialect = OracleDialect.INSTANCE;
-        } else if (dbType == DBType.DB2) {
-            dialect = DB2Dialect.INSTANCE;
-        } else if (dbType == DBType.H2) {
-            dialect = H2Dialect.INSTANCE;
-        } else if (dbType == DBType.SQLSERVER) {
-            dialect = SQLServerDialect.INSTANCE;
-        } else if (dbType == DBType.SQLSERVER2005) {
-            dialect = SQLServer2005Dialect.INSTANCE;
-        } else if (dbType == DBType.POSTGRE) {
-            dialect = PostgreDialect.INSTANCE;
-        } else if (dbType == DBType.HSQL) {
-            dialect = HSQLDialect.INSTANCE;
-        } else if (dbType == DBType.SQLITE) {
-            dialect = SQLiteDialect.INSTANCE;
-        } else {
-            throw new MybatisPlusException("The Database's Not Supported! DBType:" + dbType);
+            return new MySqlDialect();
         }
-        return dialect;
+        if (dbType == DBType.MARIADB) {
+            return new MariaDBDialect();
+        }
+        if (dbType == DBType.ORACLE) {
+            return new OracleDialect();
+        }
+        if (dbType == DBType.DB2) {
+            return new DB2Dialect();
+        }
+        if (dbType == DBType.H2) {
+            return new H2Dialect();
+        }
+        if (dbType == DBType.SQLSERVER) {
+            return new SQLServerDialect();
+        }
+        if (dbType == DBType.SQLSERVER2005) {
+            return new SQLServer2005Dialect();
+        }
+        if (dbType == DBType.POSTGRE) {
+            return new PostgreDialect();
+        }
+        if (dbType == DBType.HSQL) {
+            return new HSQLDialect();
+        }
+        if (dbType == DBType.SQLITE) {
+            return new SQLiteDialect();
+        }
+        throw new MybatisPlusException("The Database's Not Supported! DBType:" + dbType);
     }
 
 }

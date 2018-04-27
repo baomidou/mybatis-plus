@@ -28,7 +28,6 @@ import com.baomidou.mybatisplus.core.pagination.dialect.IDialect;
  */
 public class HSQLDialect implements IDialect {
 
-    public static final HSQLDialect INSTANCE = new HSQLDialect();
 
     @Override
     public String buildPaginationSql(String originalSql, int offset, int limit) {
