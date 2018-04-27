@@ -123,10 +123,10 @@ public class DialectFactory {
                 dialect = getDialectByDbType(dbType);
                 dialectCache.put(dbType.getDb(), dialect);
             }
-        }
-        /* 未配置方言则抛出异常 */
-        if (dialect == null) {
-            throw new MybatisPlusException("The value of the dialect property in mybatis configuration.xml is not defined.");
+            /* 未配置方言则抛出异常 */
+            if (dialect == null) {
+                throw new MybatisPlusException("The value of the dialect property in mybatis configuration.xml is not defined.");
+            }
         }
         return dialect;
     }
