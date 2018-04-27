@@ -27,7 +27,6 @@ import com.baomidou.mybatisplus.plugins.pagination.IDialect;
  */
 public class MariaDBDialect implements IDialect {
 
-    public static final MariaDBDialect INSTANCE = new MariaDBDialect();
 
     @Override
     public String buildPaginationSql(String originalSql, int offset, int limit) {

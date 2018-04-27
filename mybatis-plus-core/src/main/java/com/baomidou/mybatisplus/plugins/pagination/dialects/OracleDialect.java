@@ -27,7 +27,6 @@ import com.baomidou.mybatisplus.plugins.pagination.IDialect;
  */
 public class OracleDialect implements IDialect {
 
-    public static final OracleDialect INSTANCE = new OracleDialect();
 
     @Override
     public String buildPaginationSql(String originalSql, int offset, int limit) {

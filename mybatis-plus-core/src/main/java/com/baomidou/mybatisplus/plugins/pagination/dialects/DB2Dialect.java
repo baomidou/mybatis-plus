@@ -27,7 +27,6 @@ import com.baomidou.mybatisplus.plugins.pagination.IDialect;
  */
 public class DB2Dialect implements IDialect {
 
-    public static final DB2Dialect INSTANCE = new DB2Dialect();
 
     private static String getRowNumber(String originalSql) {
         StringBuilder rownumber = new StringBuilder(50).append("rownumber() over(");

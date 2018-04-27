@@ -27,7 +27,6 @@ import com.baomidou.mybatisplus.plugins.pagination.IDialect;
  */
 public class MySqlDialect implements IDialect {
 
-    public static final MySqlDialect INSTANCE = new MySqlDialect();
 
     @Override
     public String buildPaginationSql(String originalSql, int offset, int limit) {

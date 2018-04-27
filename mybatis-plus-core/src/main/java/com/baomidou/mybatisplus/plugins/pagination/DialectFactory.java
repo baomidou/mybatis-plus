@@ -15,6 +15,9 @@
  */
 package com.baomidou.mybatisplus.plugins.pagination;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.apache.ibatis.session.RowBounds;
 
 import com.baomidou.mybatisplus.enums.DBType;
@@ -40,6 +43,12 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  * @Date 2016-01-23
  */
 public class DialectFactory {
+
+    /**
+     * 方言缓存
+     */
+    private static final Map<String, IDialect> dialectCache = new ConcurrentHashMap<>();
+
 
     /**
      * <p>
@@ -87,18 +96,29 @@ public class DialectFactory {
      * @throws Exception
      */
     private static IDialect getDialect(DBType dbType, String dialectClazz) throws Exception {
-        IDialect dialect = null;
-        if (StringUtils.isNotEmpty(dialectClazz)) {
-            try {
-                Class<?> clazz = Class.forName(dialectClazz);
-                if (IDialect.class.isAssignableFrom(clazz)) {
-                    dialect = (IDialect) clazz.newInstance();
-                }
-            } catch (ClassNotFoundException e) {
-                throw new MybatisPlusException("Class :" + dialectClazz + " is not found");
+        IDialect dialect = dialectCache.get(dbType.getDb());
+        if (null == dialect) {
+            // 自定义方言
+            dialect = dialectCache.get(dialectClazz);
+            if (null != dialect) {
+                return dialect;
             }
-        } else if (null != dbType) {
-            dialect = getDialectByDbtype(dbType);
+
+            // 缓存方言
+            if (StringUtils.isNotEmpty(dialectClazz)) {
+                try {
+                    Class<?> clazz = Class.forName(dialectClazz);
+                    if (IDialect.class.isAssignableFrom(clazz)) {
+                        dialect = (IDialect) clazz.newInstance();
+                        dialectCache.put(dialectClazz, dialect);
+                    }
+                } catch (ClassNotFoundException e) {
+                    throw new MybatisPlusException("Class :" + dialectClazz + " is not found");
+                }
+            } else {
+                dialect = getDialectByDbType(dbType);
+                dialectCache.put(dbType.getDb(), dialect);
+            }
         }
         /* 未配置方言则抛出异常 */
         if (dialect == null) {
@@ -116,43 +136,38 @@ public class DialectFactory {
      * @return
      * @throws Exception
      */
-    private static IDialect getDialectByDbtype(DBType dbType) {
-        IDialect dialect;
-        switch (dbType) {
-            case MYSQL:
-                dialect = MySqlDialect.INSTANCE;
-                break;
-            case MARIADB:
-                dialect = MariaDBDialect.INSTANCE;
-                break;
-            case ORACLE:
-                dialect = OracleDialect.INSTANCE;
-                break;
-            case DB2:
-                dialect = DB2Dialect.INSTANCE;
-                break;
-            case H2:
-                dialect = H2Dialect.INSTANCE;
-                break;
-            case SQLSERVER:
-                dialect = SQLServerDialect.INSTANCE;
-                break;
-            case SQLSERVER2005:
-                dialect = SQLServer2005Dialect.INSTANCE;
-                break;
-            case POSTGRE:
-                dialect = PostgreDialect.INSTANCE;
-                break;
-            case HSQL:
-                dialect = HSQLDialect.INSTANCE;
-                break;
-            case SQLITE:
-                dialect = SQLiteDialect.INSTANCE;
-                break;
-            default:
-                throw new MybatisPlusException("The Database's Not Supported! DBType:" + dbType);
+    private static IDialect getDialectByDbType(DBType dbType) {
+        if (dbType == DBType.MYSQL) {
+            return new MySqlDialect();
         }
-        return dialect;
+        if (dbType == DBType.MARIADB) {
+            return new MariaDBDialect();
+        }
+        if (dbType == DBType.ORACLE) {
+            return new OracleDialect();
+        }
+        if (dbType == DBType.DB2) {
+            return new DB2Dialect();
+        }
+        if (dbType == DBType.H2) {
+            return new H2Dialect();
+        }
+        if (dbType == DBType.SQLSERVER) {
+            return new SQLServerDialect();
+        }
+        if (dbType == DBType.SQLSERVER2005) {
+            return new SQLServer2005Dialect();
+        }
+        if (dbType == DBType.POSTGRE) {
+            return new PostgreDialect();
+        }
+        if (dbType == DBType.HSQL) {
+            return new HSQLDialect();
+        }
+        if (dbType == DBType.SQLITE) {
+            return new SQLiteDialect();
+        }
+        throw new MybatisPlusException("The Database's Not Supported! DBType:" + dbType);
     }
 
 }

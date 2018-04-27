@@ -84,17 +84,17 @@ public class H2PersonInputPK extends SuSuperEntityCamel {
     }
 
     public H2PersonInputPK(Long id, String name) {
-        this.setId(id);
+        this.id = id;
         this.name = name;
     }
 
     public H2PersonInputPK(Long id, Integer age) {
-        this.setId(id);
+        this.id = id;
         this.age = age;
     }
 
     public H2PersonInputPK(Long id, String name, Integer age, Integer testType) {
-        this.setId(id);
+        this.id = id;
         this.name = name;
         this.age = age;
         this.testType = testType;

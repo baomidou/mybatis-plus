@@ -28,7 +28,6 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
  */
 public class SQLServer2005Dialect implements IDialect {
 
-    public static final SQLServer2005Dialect INSTANCE = new SQLServer2005Dialect();
 
     private static String getOrderByPart(String sql) {
         String loweredString = sql.toLowerCase();

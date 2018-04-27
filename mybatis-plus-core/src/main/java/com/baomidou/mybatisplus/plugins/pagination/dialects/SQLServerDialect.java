@@ -27,7 +27,6 @@ import com.baomidou.mybatisplus.plugins.pagination.IDialect;
  */
 public class SQLServerDialect implements IDialect {
 
-    public static final SQLServerDialect INSTANCE = new SQLServerDialect();
 
     @Override
     public String buildPaginationSql(String originalSql, int offset, int limit) {
