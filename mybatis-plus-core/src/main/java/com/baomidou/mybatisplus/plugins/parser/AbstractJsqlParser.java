@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.plugins.parser;
 
+import net.sf.jsqlparser.statement.Statements;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.reflection.MetaObject;
@@ -59,10 +60,21 @@ public abstract class AbstractJsqlParser implements ISqlParser {
     public SqlInfo optimizeSql(MetaObject metaObject, String sql) {
         if (this.allowProcess(metaObject)) {
             try {
-                Statement statement = CCJSqlParserUtil.parse(sql);
                 logger.debug("Original SQL: " + sql);
-                if (null != statement) {
-                    return this.processParser(statement);
+
+                StringBuilder sqlStringBuilder = new StringBuilder();
+                Statements statements = CCJSqlParserUtil.parseStatements(sql);
+                int i = 0;
+                for (Statement statement : statements.getStatements()) {
+                    if (null != statement) {
+                        if (i++ > 0) {
+                            sqlStringBuilder.append(';');
+                        }
+                        sqlStringBuilder.append(this.processParser(statement).getSql());
+                    }
+                }
+                if (sqlStringBuilder.length() > 0) {
+                    return SqlInfo.newInstance().setSql(sqlStringBuilder.toString());
                 }
             } catch (JSQLParserException e) {
                 throw new MybatisPlusException("Failed to process, please exclude the tableName or statementId.\n Error SQL: " + sql, e);

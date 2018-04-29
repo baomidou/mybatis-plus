@@ -25,6 +25,8 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
+import net.sf.jsqlparser.expression.operators.relational.ItemsList;
+import net.sf.jsqlparser.expression.operators.relational.MultiExpressionList;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.delete.Delete;
@@ -92,7 +94,15 @@ public class TenantSqlParser extends AbstractJsqlParser {
         if (insert.getSelect() != null) {
             processPlainSelect((PlainSelect) insert.getSelect().getSelectBody(), true);
         } else if (insert.getItemsList() != null) {
-            ((ExpressionList) insert.getItemsList()).getExpressions().add(tenantHandler.getTenantId());
+            ItemsList itemsList = insert.getItemsList();
+            if (itemsList instanceof MultiExpressionList) {
+                List<ExpressionList> exprList = ((MultiExpressionList) itemsList).getExprList();
+                for (ExpressionList el : exprList) {
+                    el.getExpressions().add(tenantHandler.getTenantId());
+                }
+            } else {
+                ((ExpressionList) insert.getItemsList()).getExpressions().add(tenantHandler.getTenantId());
+            }
         } else {
             throw new MybatisPlusException("Failed to process multiple-table update, please exclude the tableName or statementId");
         }
