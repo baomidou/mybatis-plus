@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.plugins.parser;
 
 import net.sf.jsqlparser.statement.Statements;
+
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.reflection.MetaObject;
@@ -61,7 +62,7 @@ public abstract class AbstractJsqlParser implements ISqlParser {
         if (this.allowProcess(metaObject)) {
             try {
                 logger.debug("Original SQL: " + sql);
-
+                // fixed github pull/295
                 StringBuilder sqlStringBuilder = new StringBuilder();
                 Statements statements = CCJSqlParserUtil.parseStatements(sql);
                 int i = 0;

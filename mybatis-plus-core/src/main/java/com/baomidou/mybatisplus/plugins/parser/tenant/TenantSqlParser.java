@@ -94,6 +94,7 @@ public class TenantSqlParser extends AbstractJsqlParser {
         if (insert.getSelect() != null) {
             processPlainSelect((PlainSelect) insert.getSelect().getSelectBody(), true);
         } else if (insert.getItemsList() != null) {
+            // fixed github pull/295
             ItemsList itemsList = insert.getItemsList();
             if (itemsList instanceof MultiExpressionList) {
                 List<ExpressionList> exprList = ((MultiExpressionList) itemsList).getExprList();
