@@ -1,7 +1,7 @@
-package ${package.Entity};
+package ${package.Entity}
 
 #foreach($pkg in ${table.importPackages})
-import ${pkg};
+import ${pkg}
 #end
 
 /**
@@ -61,7 +61,11 @@ class ${entity} : Serializable {
 #if(${logicDeleteFieldName}==${field.name})
     @TableLogic
 #end
+    #if(${field.propertyType}=="Integer")
+    var ${field.propertyName}: Int? = null
+    #else
     var ${field.propertyName}: ${field.propertyType}? = null
+    #end
 #end
 ## ----------  END 字段循环遍历  ----------
 
@@ -77,11 +81,11 @@ class ${entity} : Serializable {
 
 #end
 #if(${activeRecord})
-    override fun pkVal(): Serializable {
+    override fun pkVal(): Serializable? {
 #if(${keyPropertyName})
-        return ${keyPropertyName}!!
+        return ${keyPropertyName}
 #else
-        return id!!
+        return null
 #end
     }
 
