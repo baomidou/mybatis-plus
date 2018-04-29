@@ -118,13 +118,16 @@ public class MybatisPlusAutoConfiguration {
         }
         MybatisConfiguration configuration = this.properties.getConfiguration();
         if (configuration == null && !StringUtils.hasText(this.properties.getConfigLocation())) {
-            configuration = new MybatisConfiguration();            
-            configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
+            configuration = new MybatisConfiguration();
         }
         if (configuration != null && !CollectionUtils.isEmpty(this.configurationCustomizers)) {
             for (ConfigurationCustomizer customizer : this.configurationCustomizers) {
                 customizer.customize(configuration);
             }
+        }
+        // TODO 自定义配置
+        if (null != configuration) {
+            configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
         }
         factory.setConfiguration(configuration);
         if (this.properties.getConfigurationProperties() != null) {
