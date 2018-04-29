@@ -118,14 +118,14 @@ public class MybatisPlusAutoConfiguration {
         }
         MybatisConfiguration configuration = this.properties.getConfiguration();
         if (configuration == null && !StringUtils.hasText(this.properties.getConfigLocation())) {
-            configuration = new MybatisConfiguration();
+            configuration = new MybatisConfiguration();            
+            configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
         }
         if (configuration != null && !CollectionUtils.isEmpty(this.configurationCustomizers)) {
             for (ConfigurationCustomizer customizer : this.configurationCustomizers) {
                 customizer.customize(configuration);
             }
         }
-        configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
         factory.setConfiguration(configuration);
         if (this.properties.getConfigurationProperties() != null) {
             factory.setConfigurationProperties(this.properties.getConfigurationProperties());
