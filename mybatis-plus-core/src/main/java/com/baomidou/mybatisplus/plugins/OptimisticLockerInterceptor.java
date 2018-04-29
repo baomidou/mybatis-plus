@@ -74,9 +74,11 @@ public class OptimisticLockerInterceptor implements Interceptor {
         if (param instanceof HashMap) {
             HashMap map = (HashMap) param;
             Wrapper ew = null;
-            if (map.containsKey(NAME_ENTITY_WRAPPER)) {//mapper.update(updEntity, EntityWrapper<>(whereEntity);
+            if (map.containsKey(NAME_ENTITY_WRAPPER)) {
+                // mapper.update(updEntity, EntityWrapper<>(whereEntity);
                 ew = (Wrapper) map.get(NAME_ENTITY_WRAPPER);
-            }//else updateById(entity) -->> change updateById(entity) to updateById(@Param("et") entity)
+            }
+            //else updateById(entity) -->> change updateById(entity) to updateById(@Param("et") entity)
 
             // TODO 待验证逻辑
             // if mannual sql or updagteById(entity),unsupport OCC,proceed as usual unless use updateById(@Param("et") entity)
@@ -103,7 +105,8 @@ public class OptimisticLockerInterceptor implements Interceptor {
             } else if (et != null) {
                 String methodId = ms.getId();
                 String updateMethodName = methodId.substring(ms.getId().lastIndexOf(".") + 1);
-                if (PARAM_UPDATE_METHOD_NAME.equals(updateMethodName)) {//update(entityClass, null) -->> update all. ignore version
+                if (PARAM_UPDATE_METHOD_NAME.equals(updateMethodName)) {
+                    //update(entityClass, null) -->> update all. ignore version
                     return invocation.proceed();
                 }
                 Class<?> entityClass = ClassUtils.getUserClass(et.getClass());
@@ -112,7 +115,8 @@ public class OptimisticLockerInterceptor implements Interceptor {
                 Object originalVersionVal;
                 if (versionField != null && (originalVersionVal = versionField.get(et)) != null) {
                     TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
-                    while(tableInfo==null && entityClass!=null){
+                    // fixed github 299
+                    while (null == tableInfo && null != entityClass) {
                         entityClass = ClassUtils.getUserClass(entityClass.getSuperclass());
                         tableInfo = TableInfoHelper.getTableInfo(entityClass);
                     }
