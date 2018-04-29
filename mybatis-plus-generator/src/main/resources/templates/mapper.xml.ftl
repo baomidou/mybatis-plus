@@ -30,7 +30,7 @@
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
 <#list table.commonFields as field>
-    <#if field.name == field.propertyName>${field.name}<#else>${field.name} AS ${field.propertyName}</#if>,
+        ${field.name},
 </#list>
         ${table.fieldNames}
     </sql>
