@@ -229,27 +229,14 @@ public class TableInfo {
             for (int i = 0; i < fields.size(); i++) {
                 TableField fd = fields.get(i);
                 if (i == fields.size() - 1) {
-                    names.append(cov2col(fd));
+                    names.append(fd.getName());
                 } else {
-                    names.append(cov2col(fd)).append(", ");
+                    names.append(fd.getName()).append(", ");
                 }
             }
             fieldNames = names.toString();
         }
         return fieldNames;
-    }
-
-    /**
-     * mapper xml中的字字段添加as
-     *
-     * @param field 字段实体
-     * @return 转换后的信息
-     */
-    private String cov2col(TableField field) {
-        if (null != field) {
-            return field.isConvert() ? field.getName() + " AS " + field.getPropertyName() : field.getName();
-        }
-        return StringUtils.EMPTY;
     }
 
 }
