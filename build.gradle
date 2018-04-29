@@ -73,6 +73,7 @@ configure(subprojects) {
 subprojects{
 
     apply plugin: 'java'
+    apply plugin: 'osgi'
     apply plugin: 'signing'
     apply plugin: 'maven-deploy'
 
