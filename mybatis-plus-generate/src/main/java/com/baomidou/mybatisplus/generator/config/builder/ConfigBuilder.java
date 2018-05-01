@@ -247,7 +247,7 @@ public class ConfigBuilder {
         packageInfo.put(ConstVal.ENTITY, joinPackage(config.getParent(), config.getEntity()));
         packageInfo.put(ConstVal.MAPPER, joinPackage(config.getParent(), config.getMapper()));
         packageInfo.put(ConstVal.XML, joinPackage(config.getParent(), config.getXml()));
-        packageInfo.put(ConstVal.SERIVCE, joinPackage(config.getParent(), config.getService()));
+        packageInfo.put(ConstVal.SERVICE, joinPackage(config.getParent(), config.getService()));
         packageInfo.put(ConstVal.SERVICEIMPL, joinPackage(config.getParent(), config.getServiceImpl()));
         packageInfo.put(ConstVal.CONTROLLER, joinPackage(config.getParent(), config.getController()));
 
@@ -263,7 +263,7 @@ public class ConfigBuilder {
             pathInfo.put(ConstVal.XML_PATH, joinPath(outputDir, packageInfo.get(ConstVal.XML)));
         }
         if (StringUtils.isNotEmpty(template.getService())) {
-            pathInfo.put(ConstVal.SERIVCE_PATH, joinPath(outputDir, packageInfo.get(ConstVal.SERIVCE)));
+            pathInfo.put(ConstVal.SERVICE_PATH, joinPath(outputDir, packageInfo.get(ConstVal.SERVICE)));
         }
         if (StringUtils.isNotEmpty(template.getServiceImpl())) {
             pathInfo.put(ConstVal.SERVICEIMPL_PATH, joinPath(outputDir, packageInfo.get(ConstVal.SERVICEIMPL)));
@@ -356,7 +356,7 @@ public class ConfigBuilder {
             if (StringUtils.isNotEmpty(globalConfig.getServiceName())) {
                 tableInfo.setServiceName(String.format(globalConfig.getServiceName(), tableInfo.getEntityName()));
             } else {
-                tableInfo.setServiceName("I" + tableInfo.getEntityName() + ConstVal.SERIVCE);
+                tableInfo.setServiceName("I" + tableInfo.getEntityName() + ConstVal.SERVICE);
             }
             if (StringUtils.isNotEmpty(globalConfig.getServiceImplName())) {
                 tableInfo.setServiceImplName(String.format(globalConfig.getServiceImplName(), tableInfo.getEntityName()));
