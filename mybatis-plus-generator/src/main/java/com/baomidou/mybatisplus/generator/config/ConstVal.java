@@ -28,14 +28,14 @@ public class ConstVal {
     public static final String MODULENAME = "ModuleName";
 
     public static final String ENTITY = "Entity";
-    public static final String SERIVCE = "Service";
+    public static final String SERVICE = "Service";
     public static final String SERVICEIMPL = "ServiceImpl";
     public static final String MAPPER = "Mapper";
     public static final String XML = "Xml";
     public static final String CONTROLLER = "Controller";
 
     public static final String ENTITY_PATH = "entity_path";
-    public static final String SERIVCE_PATH = "serivce_path";
+    public static final String SERVICE_PATH = "service_path";
     public static final String SERVICEIMPL_PATH = "serviceimpl_path";
     public static final String MAPPER_PATH = "mapper_path";
     public static final String XML_PATH = "xml_path";

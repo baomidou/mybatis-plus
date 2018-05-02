@@ -73,11 +73,11 @@ public class ${entity} implements Serializable {
     @TableField("${field.name}")
 </#if>
 <#-- 乐观锁注解 -->
-<#if versionFieldName!"" == field.name>
+<#if (versionFieldName!"") == field.name>
     @Version
 </#if>
 <#-- 逻辑删除注解 -->
-<#if logicDeleteFieldName!"" == field.name>
+<#if (logicDeleteFieldName!"") == field.name>
     @TableLogic
 </#if>
     private ${field.propertyType} ${field.propertyName};

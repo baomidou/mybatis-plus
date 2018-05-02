@@ -114,8 +114,8 @@ public abstract class AbstractTemplateEngine {
                     }
                 }
                 // IMpService.java
-                if (null != tableInfo.getServiceName() && null != pathInfo.get(ConstVal.SERIVCE_PATH)) {
-                    String serviceFile = String.format((pathInfo.get(ConstVal.SERIVCE_PATH) + File.separator + tableInfo.getServiceName() + this.suffixJavaOrKt()), entityName);
+                if (null != tableInfo.getServiceName() && null != pathInfo.get(ConstVal.SERVICE_PATH)) {
+                    String serviceFile = String.format((pathInfo.get(ConstVal.SERVICE_PATH) + File.separator + tableInfo.getServiceName() + this.suffixJavaOrKt()), entityName);
                     if (this.isCreate(serviceFile)) {
                         this.writer(objectMap, this.templateFilePath(template.getService()), serviceFile);
                     }
