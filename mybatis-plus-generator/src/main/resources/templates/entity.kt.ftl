@@ -1,7 +1,7 @@
-package ${package.Entity};
+package ${package.Entity}
 
 <#list table.importPackages as pkg>
-import ${pkg};
+import ${pkg}
 </#list>
 
 /**
@@ -62,7 +62,11 @@ class ${entity} : Serializable {
 <#if (logicDeleteFieldName!"") == field.name>
     @TableLogic
 </#if>
+    <#if field.propertyType == "Integer">
+    var ${field.propertyName}: Int? = null
+    <#else>
     var ${field.propertyName}: ${field.propertyType}? = null
+    </#if>
 </#list>
 <#-- ----------  END 字段循环遍历  ---------->
 
@@ -80,9 +84,9 @@ class ${entity} : Serializable {
 <#if activeRecord>
     override fun pkVal(): Serializable {
 <#if keyPropertyName??>
-        return ${keyPropertyName}!!
+        return ${keyPropertyName}
 <#else>
-        return id!!
+        return null
 </#if>
     }
 

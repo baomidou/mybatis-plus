@@ -120,7 +120,7 @@ public class ${entity} implements Serializable {
 <#if keyPropertyName??>
         return this.${keyPropertyName};
 <#else>
-        return this.id;
+        return null;
 </#if>
     }
 
