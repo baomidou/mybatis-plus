@@ -103,13 +103,11 @@ public class DialectFactory {
         IDialect dialect = dialectCache.get(dbType.getDb());
         if (null == dialect) {
             // 自定义方言
-            dialect = dialectCache.get(dialectClazz);
-            if (null != dialect) {
-                return dialect;
-            }
-
-            // 缓存方言
             if (StringUtils.isNotEmpty(dialectClazz)) {
+                dialect = dialectCache.get(dialectClazz);
+                if (null != dialect) {
+                    return dialect;
+                }
                 try {
                     Class<?> clazz = Class.forName(dialectClazz);
                     if (IDialect.class.isAssignableFrom(clazz)) {
@@ -120,6 +118,7 @@ public class DialectFactory {
                     throw new MybatisPlusException("Class :" + dialectClazz + " is not found");
                 }
             } else {
+                // 缓存方言
                 dialect = getDialectByDbType(dbType);
                 dialectCache.put(dbType.getDb(), dialect);
             }
