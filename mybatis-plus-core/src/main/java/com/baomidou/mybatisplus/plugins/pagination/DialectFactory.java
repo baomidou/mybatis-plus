@@ -98,14 +98,13 @@ public class DialectFactory {
     private static IDialect getDialect(DBType dbType, String dialectClazz) throws Exception {
         IDialect dialect = dialectCache.get(dbType.getDb());
         if (null == dialect) {
-            // 自定义方言
-            dialect = dialectCache.get(dialectClazz);
-            if (null != dialect) {
-                return dialect;
-            }
-
             // 缓存方言
             if (StringUtils.isNotEmpty(dialectClazz)) {
+                // 自定义方言
+                dialect = dialectCache.get(dialectClazz);
+                if (null != dialect) {
+                    return dialect;
+                }
                 try {
                     Class<?> clazz = Class.forName(dialectClazz);
                     if (IDialect.class.isAssignableFrom(clazz)) {
