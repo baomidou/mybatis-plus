@@ -42,17 +42,12 @@ public class Pagination extends RowBounds implements Serializable {
     /**
      * 总数
      */
-    private int total;
+    private long total;
 
     /**
      * 每页显示条数，默认 10
      */
     private int size = 10;
-
-    /**
-     * 总页数
-     */
-    private int pages;
 
     /**
      * 当前页
@@ -146,14 +141,14 @@ public class Pagination extends RowBounds implements Serializable {
     }
 
     public boolean hasNext() {
-        return this.current < this.pages;
+        return this.current < this.getPages();
     }
 
-    public int getTotal() {
+    public long getTotal() {
         return total;
     }
 
-    public Pagination setTotal(int total) {
+    public Pagination setTotal(long total) {
         this.total = total;
         return this;
     }
@@ -167,15 +162,19 @@ public class Pagination extends RowBounds implements Serializable {
         return this;
     }
 
-    public int getPages() {
+    /**
+     * 总页数
+     * fixed github /issues/309
+     */
+    public long getPages() {
         if (this.size == 0) {
-            return 0;
+            return 0L;
         }
-        this.pages = this.total / this.size;
+        long pages = this.total / this.size;
         if (this.total % this.size != 0) {
-            this.pages++;
+            pages++;
         }
-        return this.pages;
+        return pages;
     }
 
     public int getCurrent() {
@@ -302,7 +301,8 @@ public class Pagination extends RowBounds implements Serializable {
 
     @Override
     public String toString() {
-        return "Pagination { total=" + total + " ,size=" + size + " ,pages=" + pages + " ,current=" + current + " }";
+        return "Pagination { total=" + total + " ,size=" + size + " ,pages=" + this.getPages() + " ,current=" + current + " }";
     }
 
 }
+
