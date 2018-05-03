@@ -49,11 +49,6 @@ public class Pagination extends RowBounds implements Serializable {
     private int size = 10;
 
     /**
-     * 总页数
-     */
-    private long pages;
-
-    /**
      * 当前页
      */
     private int current = 1;
@@ -145,7 +140,7 @@ public class Pagination extends RowBounds implements Serializable {
     }
 
     public boolean hasNext() {
-        return this.current < this.pages;
+        return this.current < this.getPages();
     }
 
     public long getTotal() {
@@ -166,15 +161,19 @@ public class Pagination extends RowBounds implements Serializable {
         return this;
     }
 
+    /**
+     * 总页数
+     * fixed github /issues/309
+     */
     public long getPages() {
         if (this.size == 0) {
             return 0L;
         }
-        this.pages = this.total / this.size;
+        long pages = this.total / this.size;
         if (this.total % this.size != 0) {
-            this.pages++;
+            pages++;
         }
-        return this.pages;
+        return pages;
     }
 
     public int getCurrent() {
@@ -301,7 +300,7 @@ public class Pagination extends RowBounds implements Serializable {
 
     @Override
     public String toString() {
-        return "Pagination { total=" + total + " ,size=" + size + " ,pages=" + pages + " ,current=" + current + " }";
+        return "Pagination { total=" + total + " ,size=" + size + " ,pages=" + this.getPages() + " ,current=" + current + " }";
     }
 
 }
