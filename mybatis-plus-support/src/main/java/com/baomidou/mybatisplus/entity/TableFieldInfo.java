@@ -119,10 +119,9 @@ public class TableFieldInfo {
         }
         this.el = el;
         /*
-         * 优先使用单个字段注解，否则使用全局配置<br>
-         * 自定义字段验证策略 fixed-239
+         * 优先使用单个字段注解，否则使用全局配置
 		 */
-        if (FieldStrategy.NOT_NULL != tableField.strategy()) {
+        if (globalConfig.getFieldStrategy() != tableField.strategy()) {
             this.fieldStrategy = tableField.strategy();
         } else {
             this.fieldStrategy = globalConfig.getFieldStrategy();
