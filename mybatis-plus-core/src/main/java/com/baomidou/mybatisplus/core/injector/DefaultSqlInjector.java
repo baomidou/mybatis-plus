@@ -15,30 +15,12 @@
  */
 package com.baomidou.mybatisplus.core.injector;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.baomidou.mybatisplus.core.injector.methods.*;
 import org.apache.ibatis.session.Configuration;
 
-import com.baomidou.mybatisplus.core.injector.methods.Delete;
-import com.baomidou.mybatisplus.core.injector.methods.DeleteBatchByIds;
-import com.baomidou.mybatisplus.core.injector.methods.DeleteById;
-import com.baomidou.mybatisplus.core.injector.methods.DeleteByMap;
-import com.baomidou.mybatisplus.core.injector.methods.Insert;
-import com.baomidou.mybatisplus.core.injector.methods.InsertAllColumn;
-import com.baomidou.mybatisplus.core.injector.methods.SelectBatchByIds;
-import com.baomidou.mybatisplus.core.injector.methods.SelectById;
-import com.baomidou.mybatisplus.core.injector.methods.SelectByMap;
-import com.baomidou.mybatisplus.core.injector.methods.SelectCount;
-import com.baomidou.mybatisplus.core.injector.methods.SelectList;
-import com.baomidou.mybatisplus.core.injector.methods.SelectMaps;
-import com.baomidou.mybatisplus.core.injector.methods.SelectMapsPage;
-import com.baomidou.mybatisplus.core.injector.methods.SelectObjs;
-import com.baomidou.mybatisplus.core.injector.methods.SelectOne;
-import com.baomidou.mybatisplus.core.injector.methods.SelectPage;
-import com.baomidou.mybatisplus.core.injector.methods.Update;
-import com.baomidou.mybatisplus.core.injector.methods.UpdateAllColumnById;
-import com.baomidou.mybatisplus.core.injector.methods.UpdateById;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -54,27 +36,28 @@ public class DefaultSqlInjector extends AbstractSqlInjector {
 
     @Override
     public List<AbstractMethod> getMethodList() {
-        List<AbstractMethod> methodList = new ArrayList<>();
-        methodList.add(new Insert());
-        methodList.add(new InsertAllColumn());
-        methodList.add(new Delete());
-        methodList.add(new DeleteByMap());
-        methodList.add(new DeleteById());
-        methodList.add(new DeleteBatchByIds());
-        methodList.add(new Update());
-        methodList.add(new UpdateById());
-        methodList.add(new UpdateAllColumnById());
-        methodList.add(new SelectById());
-        methodList.add(new SelectBatchByIds());
-        methodList.add(new SelectByMap());
-        methodList.add(new SelectOne());
-        methodList.add(new SelectCount());
-        methodList.add(new SelectMaps());
-        methodList.add(new SelectMapsPage());
-        methodList.add(new SelectObjs());
-        methodList.add(new SelectList());
-        methodList.add(new SelectPage());
-        return methodList;
+        return Stream.of(
+            new Insert(),
+            new InsertAllColumn(),
+            new Delete(),
+            new DeleteByMap(),
+            new DeleteById(),
+            new DeleteBatchByIds(),
+            new Update(),
+            new UpdateById(),
+            new UpdateAllColumnById(),
+            new SelectById(),
+            new SelectBatchByIds(),
+            new SelectByMap(),
+            new SelectOne(),
+            new SelectCount(),
+            new SelectMaps(),
+            new SelectMapsPage(),
+            new SelectObjs(),
+            new SelectList(),
+            new SelectList(),
+            new SelectPage()
+        ).collect(Collectors.toList());
     }
 
 
