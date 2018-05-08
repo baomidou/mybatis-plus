@@ -15,15 +15,14 @@
  */
 package com.baomidou.mybatisplus.core.injector;
 
-import java.util.List;
-import java.util.Set;
-
-import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.apache.ibatis.session.Configuration;
-
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.ibatis.session.Configuration;
+
+import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -54,21 +53,15 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
                 throw new MybatisPlusException("No effective injection method was found.");
             }
             // 循环注入自定义方法
-            for (AbstractMethod method : methodList) {
-                method.inject(builderAssistant, mapperClass);
-            }
+            methodList.forEach(m -> m.inject(builderAssistant, mapperClass));
             mapperRegistryCache.add(className);
         }
     }
-
 
     @Override
     public void injectSqlRunner(Configuration configuration) {
         // to do nothing
     }
 
-
     public abstract List<AbstractMethod> getMethodList();
-
-
 }
