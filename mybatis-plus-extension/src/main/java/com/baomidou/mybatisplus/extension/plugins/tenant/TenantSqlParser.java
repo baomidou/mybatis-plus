@@ -83,10 +83,7 @@ public class TenantSqlParser extends AbstractJsqlParser {
             // fixed github pull/295
             ItemsList itemsList = insert.getItemsList();
             if (itemsList instanceof MultiExpressionList) {
-                List<ExpressionList> exprList = ((MultiExpressionList) itemsList).getExprList();
-                for (ExpressionList el : exprList) {
-                    el.getExpressions().add(tenantHandler.getTenantId());
-                }
+                ((MultiExpressionList) itemsList).getExprList().forEach(el -> el.getExpressions().add(tenantHandler.getTenantId()));
             } else {
                 ((ExpressionList) insert.getItemsList()).getExpressions().add(tenantHandler.getTenantId());
             }
@@ -180,10 +177,10 @@ public class TenantSqlParser extends AbstractJsqlParser {
         }
         List<Join> joins = plainSelect.getJoins();
         if (joins != null && joins.size() > 0) {
-            for (Join join : joins) {
-                processJoin(join);
-                processFromItem(join.getRightItem());
-            }
+            joins.forEach(j -> {
+                processJoin(j);
+                processFromItem(j.getRightItem());
+            });
         }
     }
 
