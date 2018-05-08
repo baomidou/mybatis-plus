@@ -158,14 +158,10 @@ public class AutoGenerator {
             }
             // Boolean类型is前缀处理
             if (config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix()) {
-                for (TableField field : tableInfo.getFields()) {
-                    if ("boolean".equalsIgnoreCase(field.getPropertyType())) {
-                        if (field.getPropertyName().startsWith("is")) {
-                            field.setPropertyName(config.getStrategyConfig(),
-                                StringUtils.removePrefixAfterPrefixToLower(field.getPropertyName(), 2));
-                        }
-                    }
-                }
+                tableInfo.getFields().stream().filter(field -> "boolean".equalsIgnoreCase(field.getPropertyType()))
+                    .filter(field -> field.getPropertyName().startsWith("is"))
+                    .forEach(field -> field.setPropertyName(config.getStrategyConfig(),
+                        StringUtils.removePrefixAfterPrefixToLower(field.getPropertyName(), 2)));
             }
         }
         return config.setTableInfoList(tableList);

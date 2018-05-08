@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.IntStream;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -210,12 +211,7 @@ public class TableInfo {
      * 逻辑删除
      */
     public boolean isLogicDelete(String logicDeletePropertyName) {
-        for (TableField tableField : fields) {
-            if (tableField.getName().equals(logicDeletePropertyName)) {
-                return true;
-            }
-        }
-        return false;
+        return fields.stream().anyMatch(tf -> tf.getName().equals(logicDeletePropertyName));
     }
 
     /**
@@ -226,14 +222,14 @@ public class TableInfo {
     public String getFieldNames() {
         if (StringUtils.isEmpty(fieldNames)) {
             StringBuilder names = new StringBuilder();
-            for (int i = 0; i < fields.size(); i++) {
+            IntStream.range(0, fields.size()).forEach(i -> {
                 TableField fd = fields.get(i);
                 if (i == fields.size() - 1) {
                     names.append(fd.getName());
                 } else {
                     names.append(fd.getName()).append(", ");
                 }
-            }
+            });
             fieldNames = names.toString();
         }
         return fieldNames;

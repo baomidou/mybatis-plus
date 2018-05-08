@@ -21,6 +21,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -453,17 +454,13 @@ public class ConfigBuilder {
                 if (isInclude) {
                     StringBuilder sb = new StringBuilder(tablesSql);
                     sb.append(" WHERE ").append(dbQuery.tableName()).append(" IN (");
-                    for (String tbname : config.getInclude()) {
-                        sb.append("'").append(tbname.toUpperCase()).append("',");
-                    }
+                    Arrays.stream(config.getInclude()).forEach(tbname -> sb.append("'").append(tbname.toUpperCase()).append("',"));
                     sb.replace(sb.length() - 1, sb.length(), ")");
                     tablesSql = sb.toString();
                 } else if (isExclude) {
                     StringBuilder sb = new StringBuilder(tablesSql);
                     sb.append(" WHERE ").append(dbQuery.tableName()).append(" NOT IN (");
-                    for (String tbname : config.getExclude()) {
-                        sb.append("'").append(tbname.toUpperCase()).append("',");
-                    }
+                    Arrays.stream(config.getExclude()).forEach(tbname -> sb.append("'").append(tbname.toUpperCase()).append("',"));
                     sb.replace(sb.length() - 1, sb.length(), ")");
                     tablesSql = sb.toString();
                 }
@@ -524,9 +521,7 @@ public class ConfigBuilder {
             /**
              * 性能优化，只处理需执行表字段 github issues/219
              */
-            for (TableInfo ti : includeTableList) {
-                this.convertTableFields(ti, config.getColumnNaming());
-            }
+            includeTableList.forEach(ti -> this.convertTableFields(ti, config.getColumnNaming()));
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -606,12 +601,8 @@ public class ConfigBuilder {
                 // 填充逻辑判断
                 List<TableFill> tableFillList = this.getStrategyConfig().getTableFillList();
                 if (null != tableFillList) {
-                    for (TableFill tableFill : tableFillList) {
-                        if (tableFill.getFieldName().equals(field.getName())) {
-                            field.setFill(tableFill.getFieldFill().name());
-                            break;
-                        }
-                    }
+                    tableFillList.stream().filter(tf -> tf.getFieldName().equals(field.getName()))
+                        .findFirst().ifPresent(tf -> field.setFill(tf.getFieldFill().name()));
                 }
                 fieldList.add(field);
             }

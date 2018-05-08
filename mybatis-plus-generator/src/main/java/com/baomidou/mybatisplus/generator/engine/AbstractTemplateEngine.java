@@ -159,16 +159,15 @@ public abstract class AbstractTemplateEngine {
      * </p>
      */
     public AbstractTemplateEngine mkdirs() {
-        Map<String, String> pathInfo = this.getConfigBuilder().getPathInfo();
-        for (Map.Entry<String, String> entry : pathInfo.entrySet()) {
-            File dir = new File(entry.getValue());
+        this.getConfigBuilder().getPathInfo().forEach((key, value) -> {
+            File dir = new File(value);
             if (!dir.exists()) {
                 boolean result = dir.mkdirs();
                 if (result) {
-                    logger.debug("创建目录： [" + entry.getValue() + "]");
+                    logger.debug("创建目录： [" + value + "]");
                 }
             }
-        }
+        });
         return this;
     }
 

@@ -170,8 +170,8 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
             /*
              * 溢出总页数，设置第一页
              */
-            int pages = page.getPages();
-            if (overflowCurrent && (page.getCurrent() > pages)) {
+            long pages = page.getPages();
+            if (overflowCurrent && Long.valueOf(page.getCurrent()).compareTo(pages) > 0) {
                 // 设置为第一条
                 page.setCurrent(1);
             }
