@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.annotation;
 
+import lombok.Getter;
+
 /**
  * <p>
  * 字段填充策略枚举类
@@ -23,6 +25,7 @@ package com.baomidou.mybatisplus.annotation;
  * @author hubin
  * @Date 2017-06-27
  */
+@Getter
 public enum FieldFill {
     DEFAULT(0, "默认不处理"),
     INSERT(1, "插入填充字段"),
@@ -52,14 +55,6 @@ public enum FieldFill {
             }
         }
         return FieldFill.DEFAULT;
-    }
-
-    public int getKey() {
-        return this.key;
-    }
-
-    public String getDesc() {
-        return this.desc;
     }
 
 }
