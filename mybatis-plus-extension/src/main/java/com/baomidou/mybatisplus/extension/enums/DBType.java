@@ -103,10 +103,12 @@ public enum DBType implements IDBType {
         throw new MybatisPlusException("Error: Unknown database type, or do not support changing database!\n");
     }
 
+    @Override
     public String getDb() {
         return this.db;
     }
 
+    @Override
     public String getQuote() {
         return this.quote;
     }

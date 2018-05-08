@@ -11,7 +11,7 @@ package com.baomidou.mybatisplus.core.enums;
 public interface IDBType {
 
     //TODO: 3.0
-    public String getQuote();
+    String getQuote();
 
-    public String getDb();
+    String getDb();
 }
