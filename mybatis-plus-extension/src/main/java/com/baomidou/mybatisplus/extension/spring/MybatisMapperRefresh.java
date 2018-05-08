@@ -63,7 +63,7 @@ public class MybatisMapperRefresh implements Runnable {
     /**
      * 记录jar包存在的mapper
      */
-    private static final Map<String, List<Resource>> jarMapper = new HashMap<>();
+    private static final Map<String, List<Resource>> JAR_MAPPER = new HashMap<>();
     private SqlSessionFactory sqlSessionFactory;
     private Resource[] mapperLocations;
     private Long beforeTime = 0L;
@@ -126,12 +126,12 @@ public class MybatisMapperRefresh implements Runnable {
                                         String key = new UrlResource(ResourceUtils.extractJarFileURL(mapperLocation.getURL()))
                                             .getFile().getPath();
                                         fileSet.add(key);
-                                        if (jarMapper.get(key) != null) {
-                                            jarMapper.get(key).add(mapperLocation);
+                                        if (JAR_MAPPER.get(key) != null) {
+                                            JAR_MAPPER.get(key).add(mapperLocation);
                                         } else {
                                             List<Resource> resourcesList = new ArrayList<>();
                                             resourcesList.add(mapperLocation);
-                                            jarMapper.put(key, resourcesList);
+                                            JAR_MAPPER.put(key, resourcesList);
                                         }
                                     } else {
                                         fileSet.add(mapperLocation.getFile().getPath());
@@ -153,7 +153,7 @@ public class MybatisMapperRefresh implements Runnable {
                                 File file = new File(filePath);
                                 if (file.isFile() && file.lastModified() > beforeTime) {
                                     globalConfig.setRefresh(true);
-                                    List<Resource> removeList = jarMapper.get(filePath);
+                                    List<Resource> removeList = JAR_MAPPER.get(filePath);
                                     if (removeList != null && !removeList.isEmpty()) {
                                         for (Resource resource : removeList) {
                                             runnable.refresh(resource);

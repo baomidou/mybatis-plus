@@ -1641,6 +1641,7 @@ public abstract class Wrapper<T> implements Serializable {
      * 克隆本身 fixed github issues/241
      * </p>
      */
+    @Override
     public Wrapper<T> clone() {
         return SerializationUtils.clone(this);
     }

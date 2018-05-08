@@ -21,10 +21,10 @@ public class ClassUtils {
         if (clazz != null) {
             for (Class<?> cls : clazz.getInterfaces()) {
                 String interfaceName = cls.getName();
-                if (interfaceName.equals("net.sf.cglib.proxy.Factory") //cglib
-                    || interfaceName.equals("org.springframework.cglib.proxy.Factory")
-                    || interfaceName.equals("javassist.util.proxy.ProxyObject") //javassist
-                    || interfaceName.equals("org.apache.ibatis.javassist.util.proxy.ProxyObject")) {
+                if ("net.sf.cglib.proxy.Factory".equals(interfaceName) //cglib
+                    || "org.springframework.cglib.proxy.Factory".equals(interfaceName)
+                    || "javassist.util.proxy.ProxyObject".equals(interfaceName) //javassist
+                    || "org.apache.ibatis.javassist.util.proxy.ProxyObject".equals(interfaceName)) {
                     return true;
                 }
             }

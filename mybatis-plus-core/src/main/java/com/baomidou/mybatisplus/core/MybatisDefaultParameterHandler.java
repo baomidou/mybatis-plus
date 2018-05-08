@@ -61,7 +61,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
     /**
      * @see BoundSql
      */
-    private static final Field additionalParametersField = getAdditionalParametersField();
+    private static final Field ADDITIONAL_PARAMETERS_FIELD = getAdditionalParametersField();
     private final TypeHandlerRegistry typeHandlerRegistry;
     private final MappedStatement mappedStatement;
     private final Object parameterObject;
@@ -240,7 +240,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         // 反射获取动态参数
         Map<String, Object> additionalParameters = null;
         try {
-            additionalParameters = (Map<String, Object>) additionalParametersField.get(boundSql);
+            additionalParameters = (Map<String, Object>) ADDITIONAL_PARAMETERS_FIELD.get(boundSql);
         } catch (IllegalAccessException e) {
             // ignored, Because it will never happen.
         }

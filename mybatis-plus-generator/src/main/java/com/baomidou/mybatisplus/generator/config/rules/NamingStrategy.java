@@ -47,7 +47,7 @@ public enum NamingStrategy {
         }
         StringBuilder result = new StringBuilder();
         // 用下划线将原始字符串分割
-        String camels[] = tempName.split(ConstVal.UNDERLINE);
+        String[] camels = tempName.split(ConstVal.UNDERLINE);
         for (String camel : camels) {
             // 跳过原始字符串中开头、结尾的下换线或双重下划线
             if (StringUtils.isEmpty(camel)) {

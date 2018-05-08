@@ -83,11 +83,13 @@ public class SqlRunner extends ISqlRunner {
     }
 
     @Transactional
+    @Override
     public boolean insert(String sql, Object... args) {
         return SqlHelper.retBool(sqlSession().insert(INSERT, sqlMap(sql, args)));
     }
 
     @Transactional
+    @Override
     public boolean delete(String sql, Object... args) {
         return SqlHelper.retBool(sqlSession().delete(DELETE, sqlMap(sql, args)));
     }
@@ -106,6 +108,7 @@ public class SqlRunner extends ISqlRunner {
     }
 
     @Transactional
+    @Override
     public boolean update(String sql, Object... args) {
         return SqlHelper.retBool(sqlSession().update(UPDATE, sqlMap(sql, args)));
     }
@@ -118,6 +121,7 @@ public class SqlRunner extends ISqlRunner {
      * @param args 只接受String格式
      * @return
      */
+    @Override
     public List<Map<String, Object>> selectList(String sql, Object... args) {
         return sqlSession().selectList(SELECT_LIST, sqlMap(sql, args));
     }
@@ -130,6 +134,7 @@ public class SqlRunner extends ISqlRunner {
      * @param args 只接受String格式
      * @return
      */
+    @Override
     public List<Object> selectObjs(String sql, Object... args) {
         return sqlSession().selectList(SELECT_OBJS, sqlMap(sql, args));
     }
@@ -142,19 +147,23 @@ public class SqlRunner extends ISqlRunner {
      * @param args 只接受String格式
      * @return
      */
+    @Override
     public Object selectObj(String sql, Object... args) {
         return SqlHelper.getObject(selectObjs(sql, args));
     }
 
+    @Override
     public int selectCount(String sql, Object... args) {
         return SqlHelper.retCount(sqlSession().<Integer>selectOne(COUNT, sqlMap(sql, args)));
     }
 
+    @Override
     public Map<String, Object> selectOne(String sql, Object... args) {
         return SqlHelper.getObject(selectList(sql, args));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
+    @Override
     public Page<Map<String, Object>> selectPage(Page page, String sql, Object... args) {
         if (null == page) {
             return null;

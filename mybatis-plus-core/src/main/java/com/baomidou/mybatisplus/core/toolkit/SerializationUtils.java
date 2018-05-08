@@ -222,19 +222,19 @@ public class SerializationUtils {
      */
     static class ClassLoaderAwareObjectInputStream extends ObjectInputStream {
 
-        private static final Map<String, Class<?>> primitiveTypes =
+        private static final Map<String, Class<?>> PRIMITIVE_TYPES =
             new HashMap<>();
 
         static {
-            primitiveTypes.put("byte", byte.class);
-            primitiveTypes.put("short", short.class);
-            primitiveTypes.put("int", int.class);
-            primitiveTypes.put("long", long.class);
-            primitiveTypes.put("float", float.class);
-            primitiveTypes.put("double", double.class);
-            primitiveTypes.put("boolean", boolean.class);
-            primitiveTypes.put("char", char.class);
-            primitiveTypes.put("void", void.class);
+            PRIMITIVE_TYPES.put("byte", byte.class);
+            PRIMITIVE_TYPES.put("short", short.class);
+            PRIMITIVE_TYPES.put("int", int.class);
+            PRIMITIVE_TYPES.put("long", long.class);
+            PRIMITIVE_TYPES.put("float", float.class);
+            PRIMITIVE_TYPES.put("double", double.class);
+            PRIMITIVE_TYPES.put("boolean", boolean.class);
+            PRIMITIVE_TYPES.put("char", char.class);
+            PRIMITIVE_TYPES.put("void", void.class);
         }
 
         private final ClassLoader classLoader;
@@ -270,7 +270,7 @@ public class SerializationUtils {
                 try {
                     return Class.forName(name, false, Thread.currentThread().getContextClassLoader());
                 } catch (final ClassNotFoundException cnfe) {
-                    final Class<?> cls = primitiveTypes.get(name);
+                    final Class<?> cls = PRIMITIVE_TYPES.get(name);
                     if (cls != null) {
                         return cls;
                     }

@@ -62,7 +62,7 @@ public class TableInfoHelper {
     /**
      * 缓存反射类表信息
      */
-    private static final Map<String, TableInfo> tableInfoCache = new ConcurrentHashMap<>();
+    private static final Map<String, TableInfo> TABLE_INFO_CACHE = new ConcurrentHashMap<>();
     /**
      * 默认表主键
      */
@@ -77,7 +77,7 @@ public class TableInfoHelper {
      * @return
      */
     public static TableInfo getTableInfo(Class<?> clazz) {
-        return tableInfoCache.get(ClassUtils.getUserClass(clazz).getName());
+        return TABLE_INFO_CACHE.get(ClassUtils.getUserClass(clazz).getName());
     }
 
     /**
@@ -88,7 +88,7 @@ public class TableInfoHelper {
      * @return
      */
     public static List<TableInfo> getTableInfos() {
-        return new ArrayList<>(tableInfoCache.values());
+        return new ArrayList<>(TABLE_INFO_CACHE.values());
     }
 
     /**
@@ -100,7 +100,7 @@ public class TableInfoHelper {
      * @return
      */
     public synchronized static TableInfo initTableInfo(MapperBuilderAssistant builderAssistant, Class<?> clazz) {
-        TableInfo tableInfo = tableInfoCache.get(clazz.getName());
+        TableInfo tableInfo = TABLE_INFO_CACHE.get(clazz.getName());
         if (StringUtils.checkValNotNull(tableInfo)) {
             if (StringUtils.checkValNotNull(builderAssistant)) {
                 tableInfo.setConfigMark(builderAssistant.getConfiguration());
@@ -190,7 +190,7 @@ public class TableInfoHelper {
         /*
          * 注入
          */
-        tableInfoCache.put(clazz.getName(), tableInfo);
+        TABLE_INFO_CACHE.put(clazz.getName(), tableInfo);
         return tableInfo;
     }
 

@@ -32,14 +32,14 @@ public class IdWorker {
     /**
      * 主机和进程的机器码
      */
-    private static final Sequence worker = new Sequence();
+    private static final Sequence WORKER = new Sequence();
 
     public static long getId() {
-        return worker.nextId();
+        return WORKER.nextId();
     }
 
     public static String getIdStr() {
-        return String.valueOf(worker.nextId());
+        return String.valueOf(WORKER.nextId());
     }
 
     /**

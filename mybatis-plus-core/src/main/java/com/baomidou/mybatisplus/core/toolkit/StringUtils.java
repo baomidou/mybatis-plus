@@ -64,6 +64,10 @@ public class StringUtils {
     private static boolean separatorBeforeDigit = false;
     private static boolean separatorAfterDigit = true;
 
+   private static final Pattern PATTERN_ONE = Pattern.compile(".*[A-Z]+.*");
+
+    private static final Pattern PATTERN_TWO = Pattern.compile(".*[/_]+.*");
+
 
     private StringUtils() {
     }
@@ -413,7 +417,7 @@ public class StringUtils {
      * @return
      */
     public static boolean isMixedMode(String word) {
-        return Pattern.compile(".*[A-Z]+.*").matcher(word).matches() && Pattern.compile(".*[/_]+.*").matcher(word).matches();
+        return PATTERN_ONE.matcher(word).matches() && PATTERN_TWO.matcher(word).matches();
     }
 
     /**

@@ -22,7 +22,6 @@ import org.apache.ibatis.session.RowBounds;
 
 import com.baomidou.mybatisplus.core.enums.IDBType;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.pagination.PageHelper;
 import com.baomidou.mybatisplus.core.pagination.Pagination;
 import com.baomidou.mybatisplus.core.pagination.dialect.IDialect;
@@ -52,7 +51,7 @@ public class DialectFactory {
     /**
      * 方言缓存
      */
-    private static final Map<String, IDialect> dialectCache = new ConcurrentHashMap<>();
+    private static final Map<String, IDialect> DIALECT_CACHE = new ConcurrentHashMap<>();
 
     /**
      * <p>
@@ -100,11 +99,11 @@ public class DialectFactory {
      * @throws Exception
      */
     private static IDialect getDialect(IDBType dbType, String dialectClazz) throws Exception {
-        IDialect dialect = dialectCache.get(dbType.getDb());
+        IDialect dialect = DIALECT_CACHE.get(dbType.getDb());
         if (null == dialect) {
             // 自定义方言
             if (StringUtils.isNotEmpty(dialectClazz)) {
-                dialect = dialectCache.get(dialectClazz);
+                dialect = DIALECT_CACHE.get(dialectClazz);
                 if (null != dialect) {
                     return dialect;
                 }
@@ -112,7 +111,7 @@ public class DialectFactory {
                     Class<?> clazz = Class.forName(dialectClazz);
                     if (IDialect.class.isAssignableFrom(clazz)) {
                         dialect = (IDialect) clazz.newInstance();
-                        dialectCache.put(dialectClazz, dialect);
+                        DIALECT_CACHE.put(dialectClazz, dialect);
                     }
                 } catch (ClassNotFoundException e) {
                     throw new MybatisPlusException("Class :" + dialectClazz + " is not found");
@@ -120,7 +119,7 @@ public class DialectFactory {
             } else {
                 // 缓存方言
                 dialect = getDialectByDbType(dbType);
-                dialectCache.put(dbType.getDb(), dialect);
+                DIALECT_CACHE.put(dbType.getDb(), dialect);
             }
             /* 未配置方言则抛出异常 */
             if (dialect == null) {

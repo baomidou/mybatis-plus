@@ -39,7 +39,7 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
     private static final String OR = " OR ";
     private static final String AND_NEW = ") \nAND (";
     private static final String OR_NEW = ") \nOR (";
-    private static final Pattern pattern = Pattern.compile("[(|)|\\s]+");
+    private static final Pattern PATTERN = Pattern.compile("[(|)|\\s]+");
 
 
     /**
@@ -274,7 +274,7 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
          * @return true 嵌套
          */
         private boolean checkNest(String args) {
-            return pattern.matcher(args).matches();
+            return PATTERN.matcher(args).matches();
         }
     }
 }

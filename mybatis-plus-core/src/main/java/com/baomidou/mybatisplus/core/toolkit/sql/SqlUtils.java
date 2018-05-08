@@ -35,7 +35,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  */
 public class SqlUtils {
 
-    private final static SqlFormatter sqlFormatter = new SqlFormatter();
+    private final static SqlFormatter SQL_FORMATTER = new SqlFormatter();
     public static ISqlParser COUNT_SQL_PARSER = null;
     private static Class<ISqlParser> DEFAULT_CLASS = null;
 
@@ -152,7 +152,7 @@ public class SqlUtils {
      */
     public static String sqlFormat(String boundSql, boolean format) {
         if (format) {
-            return sqlFormatter.format(boundSql);
+            return SQL_FORMATTER.format(boundSql);
         } else {
             return boundSql.replaceAll("[\\s]+", " ");
         }
