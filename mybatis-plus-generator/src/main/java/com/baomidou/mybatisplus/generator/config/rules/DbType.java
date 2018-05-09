@@ -16,14 +16,21 @@
 package com.baomidou.mybatisplus.generator.config.rules;
 
 /**
+ * <p>
  * 数据库类型定义
+ * </p>
  *
- * @author YangHu
- * @since 2016/8/30
+ * @author YangHu hubin
+ * @since 2016-08-30
  */
 public enum DbType {
     MYSQL("mysql"),
+    MARIADB("mariadb"),
     ORACLE("oracle"),
+    DB2("db2"),
+    H2("h2"),
+    HSQL("hsql"),
+    SQLITE("sqlite"),
     SQL_SERVER("sql_server"),
     POSTGRE_SQL("postgre_sql"),
     OTHER("other db");
