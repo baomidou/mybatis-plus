@@ -23,7 +23,12 @@ package com.baomidou.mybatisplus.generator.config.rules;
  */
 public enum DbType {
     MYSQL("mysql"),
+    MARIADB("mariadb"),
     ORACLE("oracle"),
+    DB2("db2"),
+    H2("h2"),
+    HSQL("hsql"),
+    SQLITE("sqlite"),
     SQL_SERVER("sql_server"),
     POSTGRE_SQL("postgre_sql"),
     OTHER("other db");
