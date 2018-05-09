@@ -42,7 +42,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.util.ResourceUtils;
 
-import com.baomidou.mybatisplus.core.metadata.GlobalConfiguration;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.SystemClock;
 
@@ -106,7 +106,7 @@ public class MybatisMapperRefresh implements Runnable {
 
     @Override
     public void run() {
-        final GlobalConfiguration globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
+        final GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
         /*
          * 启动 XML 热加载
          */

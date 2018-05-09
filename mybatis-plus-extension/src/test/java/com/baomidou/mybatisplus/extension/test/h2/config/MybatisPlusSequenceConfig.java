@@ -12,7 +12,7 @@ import org.springframework.core.io.ResourceLoader;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.MybatisXMLLanguageDriver;
-import com.baomidou.mybatisplus.core.metadata.GlobalConfiguration;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.extension.incrementer.H2KeyGenerator;
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
@@ -33,7 +33,7 @@ import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 public class MybatisPlusSequenceConfig {
 
     @Bean("mybatisSqlSession")
-    public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader, GlobalConfiguration globalConfiguration) throws Exception {
+    public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader, GlobalConfig globalConfiguration) throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
         sqlSessionFactory.setDataSource(dataSource);
 //        sqlSessionFactory.setConfigLocation(resourceLoader.getResource("classpath:mybatis-config.xml"));
@@ -54,11 +54,11 @@ public class MybatisPlusSequenceConfig {
     }
 
     @Bean
-    public GlobalConfiguration globalConfiguration() {
-        GlobalConfiguration conf = new GlobalConfiguration();
-        conf.setIdType(2);
+    public GlobalConfig globalConfiguration() {
+        GlobalConfig conf = new GlobalConfig();
+        conf.getDbConfig().setIdType(2);
 //        conf.setDbType("h2");
-        conf.setKeyGenerator(new H2KeyGenerator());
+        conf.getDbConfig().setKeyGenerator(new H2KeyGenerator());
 //        conf.setDbColumnUnderline(true);
         return conf;
     }

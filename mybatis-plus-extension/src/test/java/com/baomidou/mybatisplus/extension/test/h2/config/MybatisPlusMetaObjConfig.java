@@ -12,11 +12,10 @@ import org.springframework.core.io.ResourceLoader;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.MybatisXMLLanguageDriver;
-import com.baomidou.mybatisplus.core.metadata.GlobalConfiguration;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
-import com.baomidou.mybatisplus.extension.test.h2.H2MetaObjectHandler;
 import com.baomidou.mybatisplus.extension.test.h2.H2MetaObjectHandler;
 
 /**
@@ -32,7 +31,7 @@ import com.baomidou.mybatisplus.extension.test.h2.H2MetaObjectHandler;
 public class MybatisPlusMetaObjConfig {
 
     @Bean("mybatisSqlSession")
-    public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader, GlobalConfiguration globalConfiguration) throws Exception {
+    public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader, GlobalConfig globalConfiguration) throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
         sqlSessionFactory.setDataSource(dataSource);
 //        sqlSessionFactory.setConfigLocation(resourceLoader.getResource("classpath:mybatis-config.xml"));
@@ -51,8 +50,8 @@ public class MybatisPlusMetaObjConfig {
     }
 
     @Bean
-    public GlobalConfiguration globalConfiguration() {
-        GlobalConfiguration globalConfiguration = new GlobalConfiguration();
+    public GlobalConfig globalConfiguration() {
+        GlobalConfig globalConfiguration = new GlobalConfig();
         globalConfiguration.setIdType(2);
         globalConfiguration.setMetaObjectHandler(new H2MetaObjectHandler());
         return globalConfiguration;

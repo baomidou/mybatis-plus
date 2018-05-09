@@ -46,7 +46,7 @@
         <property name="objectWrapperFactory" ref="mybatisMapWrapperFactory"/>
     </bean>
 
-    <bean id="globalConfig" class="com.baomidou.mybatisplus.core.metadata.GlobalConfiguration">
+    <bean id="globalConfig" class="com.baomidou.mybatisplus.core.config.GlobalConfig">
         <!-- 逻辑删除 定义下面3个参数-->
         <property name="sqlInjector" ref="logicSqlInjector"/>
         <property name="logicDeleteValue" value="-1"/>

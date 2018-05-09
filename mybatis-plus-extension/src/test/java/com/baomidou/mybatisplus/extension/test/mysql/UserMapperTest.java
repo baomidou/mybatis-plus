@@ -24,14 +24,10 @@ import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
 
 import com.baomidou.mybatisplus.core.conditions.EntityWrapper;
-import com.baomidou.mybatisplus.core.metadata.GlobalConfiguration;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.pagination.Page;
 import com.baomidou.mybatisplus.core.pagination.Pagination;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
-import com.baomidou.mybatisplus.extension.test.CrudTest;
-import com.baomidou.mybatisplus.extension.test.mysql.entity.Role;
-import com.baomidou.mybatisplus.extension.test.mysql.entity.User;
-import com.baomidou.mybatisplus.extension.test.mysql.mapper.UserMapper;
 import com.baomidou.mybatisplus.extension.test.CrudTest;
 import com.baomidou.mybatisplus.extension.test.mysql.entity.Role;
 import com.baomidou.mybatisplus.extension.test.mysql.entity.User;
@@ -53,8 +49,8 @@ import com.baomidou.mybatisplus.extension.test.mysql.mapper.UserMapper;
 public class UserMapperTest extends CrudTest {
 
     @Override
-    public GlobalConfiguration globalConfiguration() {
-        GlobalConfiguration gc = super.globalConfiguration();
+    public GlobalConfig globalConfiguration() {
+        GlobalConfig gc = super.globalConfiguration();
         /**
          * 设置，自定义 元对象填充器，实现公共字段自动写入
          */

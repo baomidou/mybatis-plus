@@ -24,7 +24,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.baomidou.mybatisplus.core.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.core.conditions.EntityWrapper;
-import com.baomidou.mybatisplus.core.metadata.GlobalConfiguration;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.extension.incrementer.OracleKeyGenerator;
 import com.baomidou.mybatisplus.extension.test.oracle.entity.TestSequser;
 import com.baomidou.mybatisplus.extension.test.oracle.mapper.TestSequserMapper;
@@ -52,7 +52,7 @@ public class TestSequserMapperTest {
         MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
 
         /** 设置数据库类型为 oracle */
-        GlobalConfiguration gc = new GlobalConfiguration();
+        GlobalConfig gc = new GlobalConfig();
         gc.setDbColumnUnderline(true);
         gc.setKeyGenerator(new OracleKeyGenerator());
         mf.setGlobalConfig(gc);

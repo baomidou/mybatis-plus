@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.SqlCondition;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.core.config.DbConfig;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 /**
@@ -96,7 +97,7 @@ public class TableFieldInfo {
      * 存在 TableField 注解构造函数
      * </p>
      */
-    public TableFieldInfo(GlobalConfiguration globalConfig, TableInfo tableInfo, String column,
+    public TableFieldInfo(DbConfig dbConfig, TableInfo tableInfo, String column,
                           String el, Field field, TableField tableField) {
         this.property = field.getName();
         this.propertyType = field.getType();
@@ -106,12 +107,12 @@ public class TableFieldInfo {
          * 设置 related 为 true
          */
         if (StringUtils.isEmpty(tableField.value())
-            && globalConfig.isDbColumnUnderline()) {
+            && dbConfig.isColumnUnderline()) {
             /* 开启字段下划线申明 */
             this.related = true;
-            this.setColumn(globalConfig, StringUtils.camelToUnderline(column));
+            this.setColumn(dbConfig, StringUtils.camelToUnderline(column));
         } else {
-            this.setColumn(globalConfig, column);
+            this.setColumn(dbConfig, column);
             if (!column.equals(this.property)) {
                 this.related = true;
             }
@@ -120,12 +121,12 @@ public class TableFieldInfo {
         /*
          * 优先使用单个字段注解，否则使用全局配置
          */
-        if (globalConfig.getFieldStrategy() != tableField.strategy()) {
+        if (dbConfig.getFieldStrategy() != tableField.strategy()) {
             this.fieldStrategy = tableField.strategy();
         } else {
-            this.fieldStrategy = globalConfig.getFieldStrategy();
+            this.fieldStrategy = dbConfig.getFieldStrategy();
         }
-        tableInfo.setLogicDelete(this.initLogicDelete(globalConfig, field));
+        tableInfo.setLogicDelete(this.initLogicDelete(dbConfig, field));
         this.update = tableField.update();
         this.condition = tableField.condition();
         /*
@@ -134,19 +135,19 @@ public class TableFieldInfo {
         this.fieldFill = tableField.fill();
     }
 
-    public TableFieldInfo(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field) {
-        if (globalConfig.isDbColumnUnderline()) {
+    public TableFieldInfo(DbConfig dbConfig, TableInfo tableInfo, Field field) {
+        if (dbConfig.isColumnUnderline()) {
             /* 开启字段下划线申明 */
             this.related = true;
-            this.setColumn(globalConfig, StringUtils.camelToUnderline(field.getName()));
+            this.setColumn(dbConfig, StringUtils.camelToUnderline(field.getName()));
         } else {
-            this.setColumn(globalConfig, field.getName());
+            this.setColumn(dbConfig, field.getName());
         }
         this.property = field.getName();
         this.el = field.getName();
-        this.fieldStrategy = globalConfig.getFieldStrategy();
+        this.fieldStrategy = dbConfig.getFieldStrategy();
         this.propertyType = field.getType();
-        tableInfo.setLogicDelete(this.initLogicDelete(globalConfig, field));
+        tableInfo.setLogicDelete(this.initLogicDelete(dbConfig, field));
     }
 
     /**
@@ -154,11 +155,11 @@ public class TableFieldInfo {
      * 逻辑删除初始化
      * </p>
      *
-     * @param globalConfig 全局配置
-     * @param field        字段属性对象
+     * @param dbConfig 数据库全局配置
+     * @param field    字段属性对象
      */
-    private boolean initLogicDelete(GlobalConfiguration globalConfig, Field field) {
-        if (null == globalConfig.getLogicDeleteValue()) {
+    private boolean initLogicDelete(DbConfig dbConfig, Field field) {
+        if (null == dbConfig.getLogicDeleteValue()) {
             // 未设置逻辑删除值不进行
             return false;
         }
@@ -168,12 +169,12 @@ public class TableFieldInfo {
             if (StringUtils.isNotEmpty(tableLogic.value())) {
                 this.logicNotDeleteValue = tableLogic.value();
             } else {
-                this.logicNotDeleteValue = globalConfig.getLogicNotDeleteValue();
+                this.logicNotDeleteValue = dbConfig.getLogicNotDeleteValue();
             }
             if (StringUtils.isNotEmpty(tableLogic.delval())) {
                 this.logicDeleteValue = tableLogic.delval();
             } else {
-                this.logicDeleteValue = globalConfig.getLogicDeleteValue();
+                this.logicDeleteValue = dbConfig.getLogicDeleteValue();
             }
             return true;
         }
@@ -192,10 +193,9 @@ public class TableFieldInfo {
         return column;
     }
 
-    public void setColumn(GlobalConfiguration globalConfig, String column) {
-        //TODO: 3.0 updated
-        String temp = globalConfig.getReservedWordsHandler().convert(globalConfig, column);
-        if (globalConfig.isCapitalMode() && !isRelated()) {
+    public void setColumn(DbConfig dbConfig, String column) {
+        String temp = dbConfig.getReservedWordsHandler().convert(dbConfig.getDbType(), column);
+        if (dbConfig.isCapitalMode() && !isRelated()) {
             // 全局大写，非注解指定
             temp = temp.toUpperCase();
         }

@@ -5,7 +5,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.baomidou.mybatisplus.core.metadata.GlobalConfiguration;
+import com.baomidou.mybatisplus.core.config.DbConfig;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.enums.IDBType;
 
 /**
  * <p>
@@ -130,37 +132,34 @@ public abstract class SqlReservedWordsHandler {
         Collections.addAll(RESERVED_WORDS, words);
     }
 
-    //TODO: 3.0 这里考虑实现类从GlobalConfiguration获取，所以从GlobalConfiguration中配置,不需要参数调用
-    public abstract String convert(GlobalConfiguration globalConfig, String column);
-
-    public abstract String convertQuote(GlobalConfiguration globalConfig, String column);
+    public abstract String convert(IDBType dbType, String column);
 
     public boolean addAll(Collection<String> reservedWords) {
         return RESERVED_WORDS.addAll(reservedWords);
     }
 
     /**
+     * <p>
      * 判断关键字中是否包含该字段
+     * </p>
      *
-     * @param word
+     * @param column 字段
      * @return
      */
-    protected boolean containsWord(String word) {
-        return null != word && RESERVED_WORDS.contains(word.toUpperCase());
+    protected boolean contains(String column) {
+        return null != column && RESERVED_WORDS.contains(column.toUpperCase());
     }
 
-    //TODO: 3.0
-    //可以考虑一个内部类是实现默认的convert， 通过getInstance()方法创建内部实现
+    /**
+     * 内部默认实现
+     */
     public static SqlReservedWordsHandler getInstance() {
         return new SqlReservedWordsHandler() {
-            @Override
-            public String convert(GlobalConfiguration globalConfig, String column) {
-                return column;
-            }
 
             @Override
-            public String convertQuote(GlobalConfiguration globalConfig, String column) {
-                return null;
+            public String convert(IDBType dbType, String column) {
+                // default do nothing
+                return column;
             }
         };
     }

@@ -23,7 +23,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
 
 import com.baomidou.mybatisplus.core.conditions.Condition;
-import com.baomidou.mybatisplus.core.metadata.GlobalConfiguration;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.test.CrudTest;
 import com.baomidou.mybatisplus.extension.test.mysql.entity.User;
@@ -40,8 +40,8 @@ import com.baomidou.mybatisplus.extension.test.mysql.mapper.UserMapper;
 public class LogicDeleteTest extends CrudTest {
 
     @Override
-    public GlobalConfiguration globalConfiguration() {
-        GlobalConfiguration gc = super.globalConfiguration();
+    public GlobalConfig globalConfiguration() {
+        GlobalConfig gc = super.globalConfiguration();
         gc.setLogicDeleteValue("-1");// 逻辑删除值 -1 测试字段 type
         return gc;
     }

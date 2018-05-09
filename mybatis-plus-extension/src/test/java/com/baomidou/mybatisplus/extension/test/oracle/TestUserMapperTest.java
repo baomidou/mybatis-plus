@@ -24,7 +24,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.baomidou.mybatisplus.core.MybatisSessionFactoryBuilder;
 import com.baomidou.mybatisplus.core.conditions.EntityWrapper;
-import com.baomidou.mybatisplus.core.metadata.GlobalConfiguration;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.pagination.Page;
 import com.baomidou.mybatisplus.extension.test.oracle.entity.TestUser;
 import com.baomidou.mybatisplus.extension.test.oracle.mapper.TestUserMapper;
@@ -55,7 +55,7 @@ public class TestUserMapperTest {
         MybatisSessionFactoryBuilder mf = new MybatisSessionFactoryBuilder();
 
         /** 设置数据库类型为 oracle */
-        GlobalConfiguration gc = new GlobalConfiguration();
+        GlobalConfig gc = new GlobalConfig();
         mf.setGlobalConfig(gc);
 
         /*

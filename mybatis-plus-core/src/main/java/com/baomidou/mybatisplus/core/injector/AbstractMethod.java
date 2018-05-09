@@ -34,7 +34,7 @@ import org.apache.ibatis.session.Configuration;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
-import com.baomidou.mybatisplus.core.metadata.GlobalConfiguration;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
@@ -168,15 +168,11 @@ public abstract class AbstractMethod {
      * 获取需要转义的SQL字段
      * </p>
      *
-     * @param convertStr
+     * @param column 字段
      * @return
      */
-    protected String sqlWordConvert(String convertStr) {
-//        GlobalConfiguration globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
-//        return SqlReservedWords.convert(globalConfig, convertStr);
-        //TODO: 3.0
-        // 定义一个interface, 通过GlobalConfiguration获取
-        return convertStr;
+    protected String sqlWordConvert(String column) {
+        return this.getGlobalConfig().getDbConfig().getReservedWordsHandler().convert(this.getGlobalConfig(), column);
     }
 
     /**
@@ -335,9 +331,7 @@ public abstract class AbstractMethod {
         where.append("\n<where>");
         where.append("\n<foreach collection=\"cm.keys\" item=\"k\" separator=\"AND\">");
         where.append("\n<if test=\"cm[k] != null\">");
-        //TODO: 3.0
-        where.append("\n").append(this.getGlobalConfig().getReservedWordsHandler().convert(getGlobalConfig(), "${k}")).append(" = #{cm[${k}]}");
-//        where.append("\n").append(SqlReservedWords.convert(getGlobalConfig(), "${k}")).append(" = #{cm[${k}]}");
+        where.append("\n").append(this.sqlWordConvert("${k}")).append(" = #{cm[${k}]}");
         where.append("\n</if>");
         where.append("\n</foreach>");
         where.append("\n</where>");
@@ -364,7 +358,7 @@ public abstract class AbstractMethod {
                 return "";
             }
             // 查询策略，使用全局策略
-            fieldStrategy = this.getGlobalConfig().getFieldStrategy();
+            fieldStrategy = this.getGlobalConfig().getDbConfig().getFieldStrategy();
         }
 
         // 关闭标签
@@ -456,7 +450,7 @@ public abstract class AbstractMethod {
      * 查询
      */
     protected MappedStatement addSelectMappedStatement(Class<?> mapperClass, String id, SqlSource sqlSource, Class<?> resultType,
-                                                    TableInfo table) {
+                                                       TableInfo table) {
         if (null != table) {
             String resultMap = table.getResultMap();
             if (null != resultMap) {
@@ -476,7 +470,7 @@ public abstract class AbstractMethod {
      * 插入
      */
     protected MappedStatement addInsertMappedStatement(Class<?> mapperClass, Class<?> modelClass, String id, SqlSource sqlSource,
-                                                    KeyGenerator keyGenerator, String keyProperty, String keyColumn) {
+                                                       KeyGenerator keyGenerator, String keyProperty, String keyColumn) {
         return this.addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.INSERT, modelClass, null, Integer.class,
             keyGenerator, keyProperty, keyColumn);
     }
@@ -504,8 +498,8 @@ public abstract class AbstractMethod {
      * 添加 MappedStatement 到 Mybatis 容器
      */
     protected MappedStatement addMappedStatement(Class<?> mapperClass, String id, SqlSource sqlSource,
-                                              SqlCommandType sqlCommandType, Class<?> parameterClass, String resultMap, Class<?> resultType,
-                                              KeyGenerator keyGenerator, String keyProperty, String keyColumn) {
+                                                 SqlCommandType sqlCommandType, Class<?> parameterClass, String resultMap, Class<?> resultType,
+                                                 KeyGenerator keyGenerator, String keyProperty, String keyColumn) {
         String statementName = mapperClass.getName() + "." + id;
         if (hasMappedStatement(statementName)) {
             System.err.println("{" + statementName + "} Has been loaded by XML or SqlProvider, ignoring the injection of the SQL.");
@@ -527,7 +521,7 @@ public abstract class AbstractMethod {
      * 全局配置
      * </p>
      */
-    protected GlobalConfiguration getGlobalConfig() {
+    protected GlobalConfig getGlobalConfig() {
         return GlobalConfigUtils.getGlobalConfig(configuration);
     }
 

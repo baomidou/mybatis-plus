@@ -1,11 +1,8 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
-import java.sql.Connection;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-
-import javax.sql.DataSource;
 
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
@@ -13,15 +10,14 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.enums.IDBType;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
-import com.baomidou.mybatisplus.core.metadata.GlobalConfiguration;
 
 /**
  * <p>
@@ -33,16 +29,18 @@ import com.baomidou.mybatisplus.core.metadata.GlobalConfiguration;
  */
 public class GlobalConfigUtils {
 
-    // 日志
+    /**
+     * 日志
+     */
     private static final Log logger = LogFactory.getLog(GlobalConfigUtils.class);
     /**
      * 默认参数
      */
-    public static final GlobalConfiguration DEFAULT = defaults();
+    public static final GlobalConfig DEFAULT = defaults();
     /**
      * 缓存全局信息
      */
-    private static final Map<String, GlobalConfiguration> GLOBAL_CONFIG = new ConcurrentHashMap<>();
+    private static final Map<String, GlobalConfig> GLOBAL_CONFIG = new ConcurrentHashMap<>();
 
     public GlobalConfigUtils() {
         // 构造方法
@@ -58,7 +56,7 @@ public class GlobalConfigUtils {
      */
     public static SqlSessionFactory currentSessionFactory(Class<?> clazz) {
         String configMark = TableInfoHelper.getTableInfo(clazz).getConfigMark();
-        GlobalConfiguration mybatisGlobalConfig = GlobalConfigUtils.getGlobalConfig(configMark);
+        GlobalConfig mybatisGlobalConfig = GlobalConfigUtils.getGlobalConfig(configMark);
         return mybatisGlobalConfig.getSqlSessionFactory();
     }
 
@@ -69,8 +67,8 @@ public class GlobalConfigUtils {
      *
      * @return
      */
-    public static GlobalConfiguration defaults() {
-        return new GlobalConfiguration();
+    public static GlobalConfig defaults() {
+        return new GlobalConfig();
     }
 
     /**
@@ -82,7 +80,7 @@ public class GlobalConfigUtils {
      * @param mybatisGlobalConfig 全局配置
      * @return
      */
-    public static void setGlobalConfig(Configuration configuration, GlobalConfiguration mybatisGlobalConfig) {
+    public static void setGlobalConfig(Configuration configuration, GlobalConfig mybatisGlobalConfig) {
         if (configuration == null || mybatisGlobalConfig == null) {
             throw new MybatisPlusException("Error: Could not setGlobalConfig");
         }
@@ -98,7 +96,7 @@ public class GlobalConfigUtils {
      * @param configuration Mybatis 容器配置对象
      * @return
      */
-    public static GlobalConfiguration getGlobalConfig(Configuration configuration) {
+    public static GlobalConfig getGlobalConfig(Configuration configuration) {
         if (configuration == null) {
             throw new MybatisPlusException("Error: You need Initialize MybatisConfiguration !");
         }
@@ -113,8 +111,8 @@ public class GlobalConfigUtils {
      * @param configMark 配置标记
      * @return
      */
-    public static GlobalConfiguration getGlobalConfig(String configMark) {
-        GlobalConfiguration cache = GLOBAL_CONFIG.get(configMark);
+    public static GlobalConfig getGlobalConfig(String configMark) {
+        GlobalConfig cache = GLOBAL_CONFIG.get(configMark);
         if (cache == null) {
             // 没有获取全局配置初始全局配置
             logger.debug("DeBug: MyBatis Plus Global configuration Initializing !");
@@ -125,24 +123,24 @@ public class GlobalConfigUtils {
     }
 
     public static IDBType getDbType(Configuration configuration) {
-        return getGlobalConfig(configuration).getDbType();
+        return getGlobalConfig(configuration).getDbConfig().getDbType();
     }
 
     public static IKeyGenerator getKeyGenerator(Configuration configuration) {
-        return getGlobalConfig(configuration).getKeyGenerator();
+        return getGlobalConfig(configuration).getDbConfig().getKeyGenerator();
     }
 
     public static IdType getIdType(Configuration configuration) {
-        return getGlobalConfig(configuration).getIdType();
+        return getGlobalConfig(configuration).getDbConfig().getIdType();
     }
 
     public static boolean isDbColumnUnderline(Configuration configuration) {
-        return getGlobalConfig(configuration).isDbColumnUnderline();
+        return getGlobalConfig(configuration).getDbConfig().isColumnUnderline();
     }
 
     public static ISqlInjector getSqlInjector(Configuration configuration) {
         // fix #140
-        GlobalConfiguration globalConfiguration = getGlobalConfig(configuration);
+        GlobalConfig globalConfiguration = getGlobalConfig(configuration);
         ISqlInjector sqlInjector = globalConfiguration.getSqlInjector();
         if (sqlInjector == null) {
             sqlInjector = new DefaultSqlInjector();
@@ -155,10 +153,6 @@ public class GlobalConfigUtils {
         return getGlobalConfig(configuration).getMetaObjectHandler();
     }
 
-    public static FieldStrategy getFieldStrategy(Configuration configuration) {
-        return getGlobalConfig(configuration).getFieldStrategy();
-    }
-
     public static boolean isRefresh(Configuration configuration) {
         return getGlobalConfig(configuration).isRefresh();
     }
@@ -167,31 +161,7 @@ public class GlobalConfigUtils {
         return getGlobalConfig(configuration).getMapperRegistryCache();
     }
 
-    public static String getIdentifierQuote(Configuration configuration) {
-        return getGlobalConfig(configuration).getIdentifierQuote();
-    }
-
     public static SqlSession getSqlSession(Configuration configuration) {
         return getGlobalConfig(configuration).getSqlSession();
     }
-
-    /**
-     * <p>
-     * 设置元数据相关属性
-     * </p>
-     *
-     * @param dataSource   数据源
-     * @param globalConfig 全局配置
-     * @deprecated 3.0
-     */
-    @Deprecated
-    public static void setMetaData(DataSource dataSource, GlobalConfiguration globalConfig) {
-        try (Connection connection = dataSource.getConnection()) {
-            // 设置全局关键字
-            globalConfig.setSqlKeywords(connection.getMetaData().getSQLKeywords());
-        } catch (Exception e) {
-            throw new MybatisPlusException("Error: GlobalConfigUtils setMetaData Fail !  Cause:" + e);
-        }
-    }
-
 }

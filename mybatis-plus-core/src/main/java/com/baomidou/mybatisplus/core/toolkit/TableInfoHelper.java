@@ -42,9 +42,10 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.assist.ISqlRunner;
+import com.baomidou.mybatisplus.core.config.DbConfig;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
-import com.baomidou.mybatisplus.core.metadata.GlobalConfiguration;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 
@@ -108,7 +109,7 @@ public class TableInfoHelper {
             return tableInfo;
         }
         tableInfo = new TableInfo();
-        GlobalConfiguration globalConfig;
+        GlobalConfig globalConfig;
         if (null != builderAssistant) {
             tableInfo.setCurrentNamespace(builderAssistant.getCurrentNamespace());
             tableInfo.setConfigMark(builderAssistant.getConfiguration());
@@ -117,18 +118,26 @@ public class TableInfoHelper {
             // 兼容测试场景
             globalConfig = GlobalConfigUtils.DEFAULT;
         }
-        /* 表名 */
+
+        /* 数据库全局配置 */
+        DbConfig dbConfig = globalConfig.getDbConfig();
+
+        // 表名
         TableName table = clazz.getAnnotation(TableName.class);
         String tableName = clazz.getSimpleName();
         if (table != null && StringUtils.isNotEmpty(table.value())) {
             tableName = table.value();
         } else {
-            // 开启字段下划线申明
-            if (globalConfig.isDbColumnUnderline()) {
+            // 开启表名下划线申明
+            if (dbConfig.isTableUnderline()) {
                 tableName = StringUtils.camelToUnderline(tableName);
+                if (null != dbConfig.getTablePrefix()) {
+                    // 存在表名前缀
+                    tableName = dbConfig.getTablePrefix() + tableName;
+                }
             }
             // 大写命名判断
-            if (globalConfig.isCapitalMode()) {
+            if (dbConfig.isCapitalMode()) {
                 tableName = tableName.toUpperCase();
             } else {
                 // 首字母小写
@@ -138,7 +147,7 @@ public class TableInfoHelper {
         tableInfo.setTableName(tableName);
 
         // 开启了自定义 KEY 生成器
-        if (null != globalConfig.getKeyGenerator()) {
+        if (null != dbConfig.getKeyGenerator()) {
             tableInfo.setKeySequence(clazz.getAnnotation(KeySequence.class));
         }
 
@@ -157,9 +166,9 @@ public class TableInfoHelper {
              */
             if (!isReadPK) {
                 if (existTableId) {
-                    isReadPK = initTableId(globalConfig, tableInfo, field, clazz);
+                    isReadPK = initTableId(dbConfig, tableInfo, field, clazz);
                 } else {
-                    isReadPK = initFieldId(globalConfig, tableInfo, field, clazz);
+                    isReadPK = initFieldId(dbConfig, tableInfo, field, clazz);
                 }
                 if (isReadPK) {
                     continue;
@@ -169,14 +178,14 @@ public class TableInfoHelper {
             /*
              * 字段初始化
              */
-            if (initTableField(globalConfig, tableInfo, fieldList, field, clazz)) {
+            if (initTableField(dbConfig, tableInfo, fieldList, field, clazz)) {
                 continue;
             }
 
             /*
              * 字段, 使用 camelToUnderline 转换驼峰写法为下划线分割法, 如果已指定 TableField , 便不会执行这里
              */
-            fieldList.add(new TableFieldInfo(globalConfig, tableInfo, field));
+            fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field));
         }
 
         /* 字段列表 */
@@ -224,7 +233,7 @@ public class TableInfoHelper {
      * @param clazz
      * @return true 继续下一个属性判断，返回 continue;
      */
-    private static boolean initTableId(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field, Class<?> clazz) {
+    private static boolean initTableId(DbConfig dbConfig, TableInfo tableInfo, Field field, Class<?> clazz) {
         TableId tableId = field.getAnnotation(TableId.class);
         if (tableId != null) {
             if (StringUtils.isEmpty(tableInfo.getKeyColumn())) {
@@ -235,7 +244,7 @@ public class TableInfoHelper {
                 if (IdType.NONE != tableId.type()) {
                     tableInfo.setIdType(tableId.type());
                 } else {
-                    tableInfo.setIdType(globalConfig.getIdType());
+                    tableInfo.setIdType(dbConfig.getIdType());
                 }
 
                 /* 字段 */
@@ -245,12 +254,12 @@ public class TableInfoHelper {
                     tableInfo.setKeyRelated(true);
                 } else {
                     // 开启字段下划线申明
-                    if (globalConfig.isDbColumnUnderline()) {
+                    if (dbConfig.isColumnUnderline()) {
                         column = StringUtils.camelToUnderline(column);
                         tableInfo.setKeyRelated(true);
                     }
                     // 全局大写命名
-                    if (globalConfig.isCapitalMode()) {
+                    if (dbConfig.isCapitalMode()) {
                         column = column.toUpperCase();
                     }
                 }
@@ -274,14 +283,14 @@ public class TableInfoHelper {
      * @param clazz
      * @return true 继续下一个属性判断，返回 continue;
      */
-    private static boolean initFieldId(GlobalConfiguration globalConfig, TableInfo tableInfo, Field field, Class<?> clazz) {
+    private static boolean initFieldId(DbConfig dbConfig, TableInfo tableInfo, Field field, Class<?> clazz) {
         String column = field.getName();
-        if (globalConfig.isCapitalMode()) {
+        if (dbConfig.isCapitalMode()) {
             column = column.toUpperCase();
         }
         if (DEFAULT_ID_NAME.equalsIgnoreCase(column)) {
             if (StringUtils.isEmpty(tableInfo.getKeyColumn())) {
-                tableInfo.setIdType(globalConfig.getIdType());
+                tableInfo.setIdType(dbConfig.getIdType());
                 tableInfo.setKeyColumn(column);
                 tableInfo.setKeyProperty(field.getName());
                 return true;
@@ -309,41 +318,40 @@ public class TableInfoHelper {
      * 字段属性初始化
      * </p>
      *
-     * @param globalConfig 全局配置
-     * @param tableInfo    表信息
-     * @param fieldList    字段列表
-     * @param clazz        当前表对象类
+     * @param dbConfig  数据库全局配置
+     * @param tableInfo 表信息
+     * @param fieldList 字段列表
+     * @param clazz     当前表对象类
      * @return true 继续下一个属性判断，返回 continue;
      */
-    private static boolean initTableField(GlobalConfiguration globalConfig, TableInfo tableInfo, List<TableFieldInfo> fieldList,
+    private static boolean initTableField(DbConfig dbConfig, TableInfo tableInfo, List<TableFieldInfo> fieldList,
                                           Field field, Class<?> clazz) {
         /* 获取注解属性，自定义字段 */
         TableField tableField = field.getAnnotation(TableField.class);
-        if (tableField != null) {
-            String columnName = field.getName();
-            if (StringUtils.isNotEmpty(tableField.value())) {
-                columnName = tableField.value();
-            }
-            /*
-             * el 语法支持，可以传入多个参数以逗号分开
-             */
-            String el = field.getName();
-            if (StringUtils.isNotEmpty(tableField.el())) {
-                el = tableField.el();
-            }
-            String[] columns = columnName.split(";");
-            String[] els = el.split(";");
-            if (columns.length == els.length) {
-                for (int i = 0; i < columns.length; i++) {
-                    fieldList.add(new TableFieldInfo(globalConfig, tableInfo, columns[i], els[i], field, tableField));
-                }
-            } else {
-                String errorMsg = "Class: %s, Field: %s, 'value' 'el' Length must be consistent.";
-                throw new MybatisPlusException(String.format(errorMsg, clazz.getName(), field.getName()));
+        if (null == tableField) {
+            return false;
+        }
+        String columnName = field.getName();
+        if (StringUtils.isNotEmpty(tableField.value())) {
+            columnName = tableField.value();
+        }
+        /*
+         * el 语法支持，可以传入多个参数以逗号分开
+         */
+        String el = field.getName();
+        if (StringUtils.isNotEmpty(tableField.el())) {
+            el = tableField.el();
+        }
+        String[] columns = columnName.split(";");
+        String[] els = el.split(";");
+        if (columns.length == els.length) {
+            for (int i = 0; i < columns.length; i++) {
+                fieldList.add(new TableFieldInfo(dbConfig, tableInfo, columns[i], els[i], field, tableField));
             }
             return true;
         }
-        return false;
+        throw new MybatisPlusException(String.format("Class: %s, Field: %s, 'value' 'el' Length must be consistent.",
+            clazz.getName(), field.getName()));
     }
 
     /**
@@ -376,11 +384,11 @@ public class TableInfoHelper {
      */
     public static void initSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
         Configuration configuration = sqlSessionFactory.getConfiguration();
-        GlobalConfiguration globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
+        GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
         // SqlRunner
         ISqlRunner.FACTORY = sqlSessionFactory;
         if (globalConfig == null) {
-            GlobalConfiguration defaultCache = GlobalConfigUtils.defaults();
+            GlobalConfig defaultCache = GlobalConfigUtils.defaults();
             defaultCache.setSqlSessionFactory(sqlSessionFactory);
             GlobalConfigUtils.setGlobalConfig(configuration, defaultCache);
         } else {

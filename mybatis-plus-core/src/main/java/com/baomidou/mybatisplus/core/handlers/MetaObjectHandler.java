@@ -114,6 +114,7 @@ public abstract class MetaObjectHandler {
 
     public static MetaObjectHandler getInstance() {
         return new MetaObjectHandler() {
+
             @Override
             public void insertFill(MetaObject metaObject) {
                 //default do nothing

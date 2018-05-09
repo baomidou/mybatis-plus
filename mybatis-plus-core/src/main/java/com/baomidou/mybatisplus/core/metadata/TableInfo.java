@@ -21,6 +21,7 @@ import org.apache.ibatis.session.Configuration;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 
 /**
@@ -165,7 +166,7 @@ public class TableInfo {
         return fieldList;
     }
 
-    public void setFieldList(GlobalConfiguration globalConfig, List<TableFieldInfo> fieldList) {
+    public void setFieldList(GlobalConfig globalConfig, List<TableFieldInfo> fieldList) {
         this.fieldList = fieldList;
         /*
          * 启动逻辑删除注入、判断该表是否启动

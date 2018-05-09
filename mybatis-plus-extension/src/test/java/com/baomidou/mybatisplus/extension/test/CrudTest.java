@@ -21,7 +21,7 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.baomidou.mybatisplus.core.MybatisSessionFactoryBuilder;
-import com.baomidou.mybatisplus.core.metadata.GlobalConfiguration;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 
 
@@ -35,11 +35,11 @@ import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
  */
 public class CrudTest {
 
-    public GlobalConfiguration globalConfiguration() {
-        GlobalConfiguration global = GlobalConfigUtils.defaults();
+    public GlobalConfig globalConfiguration() {
+        GlobalConfig global = GlobalConfigUtils.defaults();
         // global.setAutoSetDbType(true);
         // 设置全局校验机制为FieldStrategy.Empty
-        global.setFieldStrategy(2);
+        global.getDbConfig().setFieldStrategy(2);
         return global;
     }
 
@@ -48,14 +48,14 @@ public class CrudTest {
     }
 
     public SqlSessionFactory sqlSessionFactory(String configXml) {
-        GlobalConfiguration global = this.globalConfiguration();
+        GlobalConfig global = this.globalConfiguration();
         BasicDataSource dataSource = new BasicDataSource();
         dataSource.setDriverClassName("com.mysql.jdbc.Driver");
         dataSource.setUrl("jdbc:mysql://127.0.0.1:3306/mybatis-plus?characterEncoding=UTF-8");
         dataSource.setUsername("root");
         dataSource.setPassword("521");
         dataSource.setMaxTotal(1000);
-        GlobalConfigUtils.setMetaData(dataSource, global);
+        //GlobalConfigUtils.setMetaData(dataSource, global);
         // 加载配置文件
         InputStream inputStream = CrudTest.class.getClassLoader().getResourceAsStream(configXml);
         MybatisSessionFactoryBuilder factoryBuilder = new MybatisSessionFactoryBuilder();

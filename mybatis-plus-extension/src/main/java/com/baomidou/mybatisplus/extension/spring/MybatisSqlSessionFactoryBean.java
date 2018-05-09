@@ -61,9 +61,9 @@ import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.MybatisXMLConfigBuilder;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.enums.IEnum;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.metadata.GlobalConfiguration;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.extension.toolkit.PackageHelper;
@@ -129,10 +129,10 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
     private ObjectWrapperFactory objectWrapperFactory;
 
-    private GlobalConfiguration globalConfig = GlobalConfigUtils.defaults();
+    private GlobalConfig globalConfig = GlobalConfigUtils.defaults();
 
     // TODO 注入全局配置
-    public void setGlobalConfig(GlobalConfiguration globalConfig) {
+    public void setGlobalConfig(GlobalConfig globalConfig) {
         this.globalConfig = globalConfig;
     }
 

@@ -24,7 +24,7 @@ import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
-import com.baomidou.mybatisplus.core.metadata.GlobalConfiguration;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.IOUtils;
 
@@ -38,7 +38,7 @@ import com.baomidou.mybatisplus.core.toolkit.IOUtils;
  */
 public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 
-    private GlobalConfiguration globalConfig = GlobalConfigUtils.defaults();
+    private GlobalConfig globalConfig = GlobalConfigUtils.defaults();
 
     @Override
     public SqlSessionFactory build(Reader reader, String environment, Properties properties) {
@@ -69,7 +69,7 @@ public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
     }
 
     // TODO 注入全局配置
-    public void setGlobalConfig(GlobalConfiguration globalConfig) {
+    public void setGlobalConfig(GlobalConfig globalConfig) {
         this.globalConfig = globalConfig;
     }
 
