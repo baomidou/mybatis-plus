@@ -5,18 +5,46 @@ package com.baomidou.mybatisplus.core.test.LambdaTest;
  * @Date 2018/5/10
  * @This 自己的实现类
  * @R 入参类型
+ * @T 实体类
  */
 public abstract class Wrappers<This, R, T> {
 
-    abstract T getEntity();
+    private T entity;
 
-    abstract This where(boolean condition, String sqlWhere, Object... params);
+    public T getEntity() {
+        return entity;
+    }
+
+    @SuppressWarnings("unchecked")
+    public This setEntity(T t){
+        entity = t;
+        return (This) this;
+    }
+
+    abstract String getColumn(R r);
+
+    @SuppressWarnings("unchecked")
+    This where(boolean condition, String sqlWhere, Object... params) {
+        //todo 一通操作组装成sql
+        return (This) this;
+    }
 
     This eq(R r, Object params) {
         return eq(true, r, params);
     }
 
-    abstract This eq(boolean condition, R r, Object params);
+    @SuppressWarnings("unchecked")
+    This eq(boolean condition, R r, Object params) {
+        //todo 一通操作组装成sql
+        if (condition) {
+            // todo 咔咔咔
+            getColumn(r);//todo 这是获取到的字段名 user_id
+        }
+        return (This) this;
+    }
 
-    abstract String getSqlSegment();
+    String getSqlSegment() {
+        //SQL 片段
+        return null;
+    }
 }

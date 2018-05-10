@@ -1,30 +1,19 @@
 package com.baomidou.mybatisplus.core.test.LambdaTest;
 
-import java.util.function.Function;
+import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
+import com.baomidou.mybatisplus.core.toolkit.support.SerializedFunction;
+import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 
 /**
  * @author ming
  * @Date 2018/5/10
  */
-public class LambdaEntityWrapper<T> extends Wrappers<LambdaEntityWrapper<T>, Function<T, ?>, T> {
+public class LambdaEntityWrapper<T> extends Wrappers<LambdaEntityWrapper<T>, SerializedFunction<T, ?>, T> {
 
     @Override
-    public T getEntity() {
-        return null;
-    }
-
-    @Override
-    public LambdaEntityWrapper<T> where(boolean condition, String sqlWhere, Object... params) {
-        return null;
-    }
-
-    @Override
-    public LambdaEntityWrapper<T> eq(boolean condition, Function<T, ?> trFunction, Object params) {
-        return null;
-    }
-
-    @Override
-    public String getSqlSegment() {
-        return null;
+    String getColumn(SerializedFunction<T, ?> tFunction) {
+        //todo 能执行?
+        SerializedLambda resolve = LambdaUtils.resolve(tFunction);
+        return resolve.getImplMethodName();
     }
 }
