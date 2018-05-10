@@ -150,13 +150,11 @@ public class TenantSqlParser extends AbstractJsqlParser {
     protected BinaryExpression andExpression(Table table, Expression where) {
         //获得where条件表达式
         EqualsTo equalsTo = new EqualsTo();
-        if (null != where) {
-            equalsTo.setLeftExpression(new Column(this.tenantHandler.getTenantIdColumn()));
-            equalsTo.setRightExpression(tenantHandler.getTenantId());
-            return new AndExpression(equalsTo, where);
-        }
         equalsTo.setLeftExpression(this.getAliasColumn(table));
         equalsTo.setRightExpression(tenantHandler.getTenantId());
+        if (null != where) {
+            return new AndExpression(equalsTo, where);
+        }
         return equalsTo;
     }
 

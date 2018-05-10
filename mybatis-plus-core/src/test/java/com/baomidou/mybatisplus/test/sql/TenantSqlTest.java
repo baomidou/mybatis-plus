@@ -86,7 +86,7 @@ public class TenantSqlTest {
     @Test
     public void deleteJoin() {
         SqlInfo sqlInfo = tenantSqlParser.optimizeSql(null, "DELETE gc FROM guide_category AS gc LEFT JOIN guide AS g ON g.id_guide = gc.id_guide WHERE g.title IS NULL LIMIT 5");
-        Assert.assertEquals("DELETE gc FROM guide_category AS gc LEFT JOIN guide AS g ON g.id_guide = gc.id_guide WHERE gc.tenant_id = 1000 LIMIT 5", sqlInfo.getSql());
+        Assert.assertEquals("DELETE gc FROM guide_category AS gc LEFT JOIN guide AS g ON g.id_guide = gc.id_guide WHERE gc.tenant_id = 1000 AND g.title IS NULL LIMIT 5", sqlInfo.getSql());
     }
 
     // ----------------------------    update 测试     ----------------------------
