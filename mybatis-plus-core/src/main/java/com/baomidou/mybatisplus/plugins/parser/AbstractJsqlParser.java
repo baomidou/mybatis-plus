@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.plugins.parser;
 
-import net.sf.jsqlparser.statement.Statements;
-
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.reflection.MetaObject;
@@ -26,6 +24,7 @@ import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
+import net.sf.jsqlparser.statement.Statements;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.select.Select;
@@ -71,7 +70,12 @@ public abstract class AbstractJsqlParser implements ISqlParser {
                         if (i++ > 0) {
                             sqlStringBuilder.append(';');
                         }
-                        sqlStringBuilder.append(this.processParser(statement).getSql());
+                        SqlInfo sqlInfo = this.processParser(statement);
+                        if (null == sqlInfo) {
+                            // 底层实现要求不执行 SQL 解析
+                            return null;
+                        }
+                        sqlStringBuilder.append(sqlInfo.getSql());
                     }
                 }
                 if (sqlStringBuilder.length() > 0) {

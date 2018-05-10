@@ -7,7 +7,7 @@ ext {
         mybatisSpringVersion = '1.3.2',
         mybatisVersion = '3.4.6',
         springVersion = '4.3.5.RELEASE',
-        springBootVersion = '1.5.12.RELEASE',
+        springBootVersion = '1.5.13.RELEASE',
     ]
 
     dependencies = [
@@ -49,7 +49,7 @@ ext {
 
 allprojects{
     group = 'com.baomidou'
-    version = '2.2.0'
+    version = '2.3-SNAPSHOT'
 }
 
 
