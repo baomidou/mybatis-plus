@@ -131,10 +131,6 @@ public class TableInfoHelper {
             // 开启表名下划线申明
             if (dbConfig.isTableUnderline()) {
                 tableName = StringUtils.camelToUnderline(tableName);
-                if (null != dbConfig.getTablePrefix()) {
-                    // 存在表名前缀
-                    tableName = dbConfig.getTablePrefix() + tableName;
-                }
             }
             // 大写命名判断
             if (dbConfig.isCapitalMode()) {
@@ -142,6 +138,10 @@ public class TableInfoHelper {
             } else {
                 // 首字母小写
                 tableName = StringUtils.firstToLowerCase(tableName);
+            }
+            // 存在表名前缀
+            if (null != dbConfig.getTablePrefix()) {
+                tableName = dbConfig.getTablePrefix() + tableName;
             }
         }
         tableInfo.setTableName(tableName);
