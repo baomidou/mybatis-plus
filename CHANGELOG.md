@@ -1,5 +1,32 @@
 ﻿# CHANGELOG
 
+## [v2.3] 2018.05.10
+- 数据库方言支持 mariadb
+- 支持全局表前缀配置 tablePrefix 属性
+- 解决多租户字段无别名问题
+- 多租户拦截器支持批量更新操作
+- 新增常用预留数据库类型
+- 修复freemarker乐观锁、逻辑删除字段判断问题
+- 更改全局配置 > 默认数据库下划线命名=true
+- Wrapper包装SQL添加处理多重嵌套的情况
+- 去除 驼峰设置 PLUS 配置 > 原生配置 (该配置不需要与原生Mybatis混淆)
+- 去掉多个方法对象静态初始化减少启动内存消耗
+- fixed github pull/295 多租户拦截器支持批量更新操作
+- Merge pull request #279:查询列表时会默认的查询总数和总页数 from robinwen/patch-1
+- merge github pull/290 xml column not as
+- configuration setDefaultScriptingLanguage 非空判断
+- 解决乐观锁 updateById 父类对象无法找到异常 github issue 299
+- 增加数据库下划线-实体下划线命名-testcase
+- Merge pull request #301:MP 代码生成器不能识别sqlServer的自增主键 from BestBurning/dev
+- Pagination 对象 copyProperties bug 修复 github issues/309
+- testcase for : Long PK type=INPUT
+- Hikari delegate issue
+- add test case for underline & camel mixed entity by using
+- fixed issues#299 -> 解决updateById(subclass)时会找不到对应的父类库表而报null
+- fixed github issues/318
+- fixed github issues/300
+
+
 ## [v2.2.0] 2018.03.21
 - 升级 mybatis 3.4.6
 - 升级 mybatis-spring 1.3.2
