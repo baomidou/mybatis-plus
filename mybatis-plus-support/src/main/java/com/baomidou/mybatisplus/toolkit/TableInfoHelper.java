@@ -134,6 +134,10 @@ public class TableInfoHelper {
                 // 首字母小写
                 tableName = StringUtils.firstToLowerCase(tableName);
             }
+            // 存在表前缀
+            if (null != globalConfig.getTablePrefix()) {
+                tableName = globalConfig.getTablePrefix() + tableName;
+            }
         }
         tableInfo.setTableName(tableName);
 
@@ -152,9 +156,9 @@ public class TableInfoHelper {
         boolean isReadPK = false;
         boolean existTableId = existTableId(list);
         for (Field field : list) {
-           /*
-            * 主键ID 初始化
-            */
+            /*
+             * 主键ID 初始化
+             */
             if (!isReadPK) {
                 if (existTableId) {
                     isReadPK = initTableId(globalConfig, tableInfo, field, clazz);
@@ -179,17 +183,17 @@ public class TableInfoHelper {
             fieldList.add(new TableFieldInfo(globalConfig, tableInfo, field));
         }
 
-		/* 字段列表 */
+        /* 字段列表 */
         tableInfo.setFieldList(globalConfig, fieldList);
         /*
          * 未发现主键注解，提示警告信息
-		 */
+         */
         if (StringUtils.isEmpty(tableInfo.getKeyColumn())) {
             logger.warn(String.format("Warn: Could not find @TableId in Class: %s.", clazz.getName()));
         }
         /*
          * 注入
-		 */
+         */
         tableInfoCache.put(clazz.getName(), tableInfo);
         return tableInfo;
     }
@@ -230,7 +234,7 @@ public class TableInfoHelper {
             if (StringUtils.isEmpty(tableInfo.getKeyColumn())) {
                 /*
                  * 主键策略（ 注解 > 全局 > 默认 ）
-				 */
+                 */
                 // 设置 Sequence 其他策略无效
                 if (IdType.NONE != tableId.type()) {
                     tableInfo.setIdType(tableId.type());
@@ -326,7 +330,7 @@ public class TableInfoHelper {
             }
             /*
              * el 语法支持，可以传入多个参数以逗号分开
-			 */
+             */
             String el = field.getName();
             if (StringUtils.isNotEmpty(tableField.el())) {
                 el = tableField.el();

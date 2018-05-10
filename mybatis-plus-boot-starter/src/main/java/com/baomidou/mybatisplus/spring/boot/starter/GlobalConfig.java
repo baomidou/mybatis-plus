@@ -36,6 +36,10 @@ public class GlobalConfig {
      */
     private Integer idType;
     /**
+     * 表前缀
+     */
+    private String tablePrefix;
+    /**
      * 表名、字段名、是否使用下划线命名
      */
     private Boolean dbColumnUnderline;
@@ -89,6 +93,14 @@ public class GlobalConfig {
 
     public void setIdType(Integer idType) {
         this.idType = idType;
+    }
+
+    public String getTablePrefix() {
+        return tablePrefix;
+    }
+
+    public void setTablePrefix(String tablePrefix) {
+        this.tablePrefix = tablePrefix;
     }
 
     public Boolean getDbColumnUnderline() {
@@ -201,6 +213,9 @@ public class GlobalConfig {
         }
         if (StringUtils.checkValNotNull(this.getIdType())) {
             globalConfiguration.setIdType(this.getIdType());
+        }
+        if (StringUtils.checkValNotNull(this.getTablePrefix())) {
+            globalConfiguration.setTablePrefix(this.getTablePrefix());
         }
         if (null != this.getDbColumnUnderline()) {
             globalConfiguration.setDbColumnUnderline(this.getDbColumnUnderline());

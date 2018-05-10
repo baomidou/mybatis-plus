@@ -53,6 +53,10 @@ public class GlobalConfiguration implements Serializable {
      */
     private String logicNotDeleteValue = null;
     /**
+     * 表前缀
+     */
+    private String tablePrefix;
+    /**
      * 数据库类型
      */
     private DBType dbType;
@@ -233,6 +237,14 @@ public class GlobalConfiguration implements Serializable {
 
     public void setCapitalMode(boolean isCapitalMode) {
         this.isCapitalMode = isCapitalMode;
+    }
+
+    public String getTablePrefix() {
+        return tablePrefix;
+    }
+
+    public void setTablePrefix(String tablePrefix) {
+        this.tablePrefix = tablePrefix;
     }
 
     public String getIdentifierQuote() {
