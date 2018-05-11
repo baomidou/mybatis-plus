@@ -17,11 +17,11 @@ package com.baomidou.mybatisplus.core.toolkit.sql;
 
 import java.util.List;
 
-import com.baomidou.mybatisplus.core.parser.ISqlParser;
-import com.baomidou.mybatisplus.core.parser.SqlInfo;
 import com.baomidou.mybatisplus.core.enums.SqlLike;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.pagination.Pagination;
+import com.baomidou.mybatisplus.core.parser.ISqlParser;
+import com.baomidou.mybatisplus.core.parser.SqlInfo;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
@@ -152,10 +152,12 @@ public class SqlUtils {
      */
     public static String sqlFormat(String boundSql, boolean format) {
         if (format) {
-            return SQL_FORMATTER.format(boundSql);
-        } else {
-            return boundSql.replaceAll("[\\s]+", " ");
+            try {
+                return SQL_FORMATTER.format(boundSql);
+            } catch (Exception ignored) {
+            }
         }
+        return boundSql;
     }
 
     /**
