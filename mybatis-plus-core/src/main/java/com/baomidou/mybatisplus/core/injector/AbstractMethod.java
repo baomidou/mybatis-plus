@@ -172,7 +172,8 @@ public abstract class AbstractMethod {
      * @return
      */
     protected String sqlWordConvert(String column) {
-        return this.getGlobalConfig().getDbConfig().getReservedWordsHandler().convert(this.getGlobalConfig(), column);
+        return this.getGlobalConfig().getDbConfig().getReservedWordsHandler()
+            .convert(this.getGlobalConfig().getDbConfig().getDbType(), column);
     }
 
     /**

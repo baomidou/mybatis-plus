@@ -171,7 +171,7 @@ public class TableInfo {
         /*
          * 启动逻辑删除注入、判断该表是否启动
          */
-        if (null != globalConfig.getLogicDeleteValue()) {
+        if (null != globalConfig.getDbConfig().getLogicDeleteValue()) {
             for (TableFieldInfo tfi : fieldList) {
                 if (tfi.isLogicDelete()) {
                     this.setLogicDelete(true);

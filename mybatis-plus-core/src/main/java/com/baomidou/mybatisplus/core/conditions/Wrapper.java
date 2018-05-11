@@ -25,8 +25,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.baomidou.mybatisplus.core.enums.SqlLike;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.metadata.Column;
-import com.baomidou.mybatisplus.core.metadata.Columns;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.MapUtils;
@@ -43,7 +41,6 @@ import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
  * @author hubin , yanghu , Dyang , Caratacus
  * @Date 2016-11-7
  */
-@SuppressWarnings("serial")
 public abstract class Wrapper<T> implements Serializable {
 
     /**
@@ -63,10 +60,6 @@ public abstract class Wrapper<T> implements Serializable {
     private final Map<String, Object> paramNameValuePairs = new HashMap<>();
     private final AtomicInteger paramNameSeq = new AtomicInteger(0);
     protected String paramAlias = null;
-    /**
-     * SQL 查询字段内容，例如：id,name,age
-     */
-    protected String sqlSelect = null;
     /**
      * 自定义是否输出sql为 WHERE OR AND OR OR
      */
@@ -105,97 +98,10 @@ public abstract class Wrapper<T> implements Serializable {
         return !isEmptyOfWhere();
     }
 
-    public String getSqlSelect() {
-        return StringUtils.isEmpty(sqlSelect) ? null : SqlUtils.stripSqlInjection(sqlSelect);
-    }
-
-    public Wrapper<T> setSqlSelect(String sqlSelect) {
-        if (StringUtils.isNotEmpty(sqlSelect)) {
-            this.sqlSelect = sqlSelect;
-        }
-        return this;
-    }
-
-    /**
-     * <p>
-     * 使用字符串数组封装sqlSelect，便于在不需要指定 AS 的情况下通过实体类自动生成的列静态字段快速组装 sqlSelect，<br/>
-     * 减少手动录入的错误率
-     * </p>
-     *
-     * @param columns 字段
-     * @return
-     */
-    public Wrapper<T> setSqlSelect(String... columns) {
-        StringBuilder builder = new StringBuilder();
-        for (String column : columns) {
-            if (StringUtils.isNotEmpty(column)) {
-                if (builder.length() > 0) {
-                    builder.append(",");
-                }
-                builder.append(column);
-            }
-        }
-        this.sqlSelect = builder.toString();
-        return this;
-    }
-
-    /**
-     * <p>
-     * 使用对象封装的setsqlselect
-     * </p>
-     *
-     * @param column 字段
-     * @return
-     */
-    public Wrapper<T> setSqlSelect(Column... column) {
-        if (ArrayUtils.isNotEmpty(column)) {
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < column.length; i++) {
-                if (column[i] != null) {
-                    String col = column[i].getColumn();
-                    String as = column[i].getAs();
-                    if (StringUtils.isEmpty(col)) {
-                        continue;
-                    }
-                    builder.append(col).append(as);
-                    if (i < column.length - 1) {
-                        builder.append(",");
-                    }
-                }
-            }
-            this.sqlSelect = builder.toString();
-        }
-        return this;
-    }
-
-    /**
-     * <p>
-     * 使用对象封装的setsqlselect
-     * </p>
-     *
-     * @param columns 字段
-     * @return
-     */
-    public Wrapper<T> setSqlSelect(Columns columns) {
-        Column[] columnArray = columns.getColumns();
-        if (ArrayUtils.isNotEmpty(columnArray)) {
-            setSqlSelect(columnArray);
-        }
-        return this;
-    }
-
     /**
      * SQL 片段 (子类实现)
      */
     public abstract String getSqlSegment();
-
-    /**
-     * SQL SET 字段
-     */
-    public String getSqlSet() {
-        // to do nothing
-        return null;
-    }
 
     @Override
     public String toString() {
@@ -1617,14 +1523,11 @@ public abstract class Wrapper<T> implements Serializable {
         return this;
     }
 
-    //TODO: 3.0
-    public boolean isEmptyWrapper() {
-        return checkWrapperEmpty();
-    }
-
-    //TODO: 3.0 提供protect方法，让子类可覆盖
-    protected boolean checkWrapperEmpty() {
-        return sql.isEmptyOfWhere() && sqlSelect == null;
+    /**
+     * 是否为空
+     */
+    public boolean isEmpty() {
+        return sql.isEmptyOfWhere();
     }
 
     public static <T> Wrapper<T> getInstance() {

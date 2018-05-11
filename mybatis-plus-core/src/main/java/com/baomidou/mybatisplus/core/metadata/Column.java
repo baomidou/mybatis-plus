@@ -66,7 +66,8 @@ public class Column implements Serializable {
         String quote = null;
         if (isEscape() && ISqlRunner.FACTORY != null) {
             GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(ISqlRunner.FACTORY.getConfiguration());
-            quote = globalConfig.getIdentifierQuote() == null ? globalConfig.getDbType().getQuote() : globalConfig.getIdentifierQuote();
+            // TODO 这里调整了转义
+            // quote = globalConfig.getIdentifierQuote() == null ? globalConfig.getDbType().getQuote() : globalConfig.getIdentifierQuote();
         }
         return AS + (StringUtils.isNotEmpty(quote) ? String.format(quote, as) : as);
     }

@@ -26,13 +26,16 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  * @author hubin , yanghu , Dyang , Caratacus
  * @Date 2016-11-7
  */
-@SuppressWarnings("serial")
 public class UpdateWrapper<T> extends Wrapper<T> {
 
     /**
      * 数据库表映射实体类
      */
     protected T entity = null;
+    /**
+     * SQL 更新字段内容，例如：name='1',age=2
+     */
+    protected String sqlSet = null;
 
     public UpdateWrapper() {
         /* 注意，传入查询参数 */
@@ -42,9 +45,9 @@ public class UpdateWrapper<T> extends Wrapper<T> {
         this.entity = entity;
     }
 
-    public UpdateWrapper(T entity, String sqlSelect) {
+    public UpdateWrapper(T entity, String sqlSet) {
         this.entity = entity;
-        this.sqlSelect = sqlSelect;
+        this.sqlSet = sqlSet;
     }
 
     @Override
@@ -59,10 +62,8 @@ public class UpdateWrapper<T> extends Wrapper<T> {
     /**
      * SQL SET 字段
      */
-    @Override
     public String getSqlSet() {
-
-        return null;
+        return this.sqlSet;
     }
 
     /**
