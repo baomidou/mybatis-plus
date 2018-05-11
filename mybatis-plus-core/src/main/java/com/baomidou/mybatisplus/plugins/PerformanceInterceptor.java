@@ -18,7 +18,13 @@ package com.baomidou.mybatisplus.plugins;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.logging.Log;
@@ -34,6 +40,7 @@ import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.session.ResultHandler;
 
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.toolkit.SqlUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
@@ -56,7 +63,6 @@ public class PerformanceInterceptor implements Interceptor {
     private static final String DruidPooledPreparedStatement = "com.alibaba.druid.pool.DruidPooledPreparedStatement";
     private static final String T4CPreparedStatement = "oracle.jdbc.driver.T4CPreparedStatement";
     private static final String OraclePreparedStatementWrapper = "oracle.jdbc.driver.OraclePreparedStatementWrapper";
-    private static final String HikariPreparedStatementWrapper = "com.zaxxer.hikari.pool.HikariProxyPreparedStatement";
     /**
      * SQL 执行最大时长，超过自动停止运行，有助于发现问题。
      */
@@ -139,10 +145,10 @@ public class PerformanceInterceptor implements Interceptor {
         if (originalSql == null) {
             originalSql = statement.toString();
         }
-
-        int index = originalSql.indexOf(':');
+        originalSql = originalSql.replaceAll("[\\s]+", " ");
+        int index = indexOfSqlStart(originalSql);
         if (index > 0) {
-            originalSql = originalSql.substring(index + 1, originalSql.length());
+            originalSql = originalSql.substring(index, originalSql.length());
         }
 
         // 计算执行 SQL 耗时
@@ -230,5 +236,32 @@ public class PerformanceInterceptor implements Interceptor {
             }
         }
         return getMethodRegular(clazz.getSuperclass(), methodName);
+    }
+
+    /**
+     * 获取sql语句开头部分
+     *
+     * @param sql
+     * @return
+     */
+    private int indexOfSqlStart(String sql) {
+        String upperCaseSql = sql.toUpperCase();
+        Set<Integer> set = new HashSet<>();
+        set.add(upperCaseSql.indexOf("SELECT "));
+        set.add(upperCaseSql.indexOf("UPDATE "));
+        set.add(upperCaseSql.indexOf("INSERT "));
+        set.add(upperCaseSql.indexOf("DELETE "));
+        set.remove(-1);
+        if (CollectionUtils.isEmpty(set)) {
+            return -1;
+        }
+        List<Integer> list = new ArrayList<>(set);
+        Collections.sort(list, new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return o1.compareTo(o2);
+            }
+        });
+        return list.get(0);
     }
 }

@@ -146,10 +146,12 @@ public class SqlUtils {
      */
     public static String sqlFormat(String boundSql, boolean format) {
         if (format) {
-            return sqlFormatter.format(boundSql);
-        } else {
-            return boundSql.replaceAll("[\\s]+", " ");
+            try {
+                return sqlFormatter.format(boundSql);
+            } catch (Exception ignored) {
+            }
         }
+        return boundSql;
     }
 
     /**
