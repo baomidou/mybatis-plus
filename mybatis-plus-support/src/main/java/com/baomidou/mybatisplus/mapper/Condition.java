@@ -83,8 +83,8 @@ public class Condition extends Wrapper {
      * @param <T>
      * @return
      */
-    public static <T> Wrapper<T> wrapper() {
-        return (Wrapper<T>) new EntityWrapper<>();
+    public static <T> EntityWrapper<T> wrapper() {
+        return new EntityWrapper<>();
     }
 
 }
