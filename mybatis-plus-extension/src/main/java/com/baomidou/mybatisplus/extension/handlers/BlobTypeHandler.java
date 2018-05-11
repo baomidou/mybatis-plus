@@ -59,8 +59,7 @@ public class BlobTypeHandler extends BaseTypeHandler<String> {
     }
 
     @Override
-    public String getNullableResult(ResultSet rs, int columnIndex)
-        throws SQLException {
+    public String getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
         return null;
     }
 
