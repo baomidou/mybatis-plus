@@ -156,6 +156,8 @@ public class AutoSqlInjector implements ISqlInjector {
         this.injectDeleteByMapSql(mapperClass, table);
         /** 修改 */
         this.injectUpdateSql(mapperClass, modelClass, table);
+        /** 修改 (自定义 set 属性) */
+        this.injectUpdateForSetSql(mapperClass, modelClass, table);
         /** 查询 */
         this.injectSelectByMapSql(mapperClass, modelClass, table);
         this.injectSelectOneSql(mapperClass, modelClass, table);
@@ -383,6 +385,22 @@ public class AutoSqlInjector implements ISqlInjector {
 
     /**
      * <p>
+     * 注入批量更新 SQL 语句
+     * </p>
+     *
+     * @param mapperClass
+     * @param modelClass
+     * @param table
+     */
+    protected void injectUpdateForSetSql(Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
+        SqlMethod sqlMethod = SqlMethod.UPDATE_FOR_SET;
+        String sql = String.format(sqlMethod.getSql(), table.getTableName(), customSqlSet(), sqlWhereEntityWrapper(table));
+        SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+        this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
+    }
+
+    /**
+     * <p>
      * 注入查询 SQL 语句
      * </p>
      *
@@ -593,6 +611,21 @@ public class AutoSqlInjector implements ISqlInjector {
                 set.append(fieldInfo.getEl()).append("},");
             }
         }
+        set.append("\n</trim>");
+        return set.toString();
+    }
+
+    /**
+     * <p>
+     * SQL 自定义更新 set 语句
+     * </p>
+     *
+     * @return
+     */
+    protected String customSqlSet() {
+        StringBuilder set = new StringBuilder();
+        set.append("<trim prefix=\"SET\" suffixOverrides=\",\">");
+        set.append("\n${setStr}");
         set.append("\n</trim>");
         return set.toString();
     }

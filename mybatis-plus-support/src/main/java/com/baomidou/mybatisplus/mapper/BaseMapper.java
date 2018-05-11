@@ -129,6 +129,17 @@ public interface BaseMapper<T> {
 
     /**
      * <p>
+     * 根据 whereEntity 条件，更新记录
+     * </p>
+     *
+     * @param setStr  set字符串
+     * @param wrapper 实体对象封装操作类（可以为 null）
+     * @return
+     */
+    Integer updateForSet(@Param("setStr") String setStr, @Param("ew") Wrapper<T> wrapper);
+
+    /**
+     * <p>
      * 根据 ID 查询
      * </p>
      *

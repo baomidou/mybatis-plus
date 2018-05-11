@@ -1,17 +1,22 @@
 package com.baomidou.mybatisplus.test.generator;
 
 import com.baomidou.mybatisplus.generator.AutoGenerator;
-import com.baomidou.mybatisplus.generator.config.*;
+import com.baomidou.mybatisplus.generator.config.ConstVal;
+import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
+import com.baomidou.mybatisplus.generator.config.GlobalConfig;
+import com.baomidou.mybatisplus.generator.config.PackageConfig;
+import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 import com.baomidou.mybatisplus.generator.config.rules.DbType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 
 /**
  * 自定义模块生成,临时解决方案.
+ *
  * @author nieqiurong 2018/5/1
  */
 public class CustomModuleGenerator {
-    
+
     public static void main(String[] args) {
         AutoGenerator mpg = new AutoGenerator().setGlobalConfig(
             new GlobalConfig().setOutputDir("/nieqiurong/baomidou/").setActiveRecord(true).setAuthor("苞米地")
@@ -31,5 +36,5 @@ public class CustomModuleGenerator {
         mpg.setConfig(config);
         mpg.execute();
     }
-    
+
 }

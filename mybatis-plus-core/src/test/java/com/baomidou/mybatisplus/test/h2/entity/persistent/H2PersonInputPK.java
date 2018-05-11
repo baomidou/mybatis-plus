@@ -60,7 +60,7 @@ public class H2PersonInputPK extends SuSuperEntityCamel {
     private String desc;
 
     @TableField
-	private Date testDate;
+    private Date testDate;
 
     @Version
     private Integer version;

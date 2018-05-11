@@ -187,6 +187,17 @@ public interface IService<T> {
 
     /**
      * <p>
+     * 根据 whereEntity 条件，自定义set值更新记录
+     * </p>
+     *
+     * @param setStr  set值字符串
+     * @param wrapper 实体包装类 {@link Wrapper}
+     * @return boolean
+     */
+    boolean updateForSet(String setStr, Wrapper<T> wrapper);
+
+    /**
+     * <p>
      * 根据ID 批量更新
      * </p>
      *

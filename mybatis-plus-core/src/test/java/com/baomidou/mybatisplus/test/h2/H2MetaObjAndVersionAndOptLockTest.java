@@ -264,6 +264,22 @@ public class H2MetaObjAndVersionAndOptLockTest extends H2Test {
         Assert.assertEquals("自定义update需要自己控制version", 1, user.getVersion().intValue());
     }
 
+    @Test
+    public void testUpdateForSet() {
+        Long id = 100899L;
+        H2UserVersionAndLogicDeleteEntity user = new H2UserVersionAndLogicDeleteEntity();
+        user.setId(id);
+        user.setName("myUpdate");
+        user.setVersion(1);
+        user.setTestType(1);
+        userMapper.insert(user);
+        userMapper.updateForSet("`name` = 'myUpdateForSet',test_type=test_type+1", Condition.create().eq("test_id", id));
+        H2UserVersionAndLogicDeleteEntity dbUser = userMapper.selectById(id);
+        Assert.assertNotNull(dbUser);
+        Assert.assertEquals("myUpdateForSet", dbUser.getName());
+        Assert.assertEquals("自定义update test_type++", 2, dbUser.getTestType().intValue());
+    }
+
 
     @Test
     public void testCondition() {

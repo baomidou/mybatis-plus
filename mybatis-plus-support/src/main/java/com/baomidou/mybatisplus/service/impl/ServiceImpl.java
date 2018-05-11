@@ -295,6 +295,12 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
+    public boolean updateForSet(String setStr, Wrapper<T> wrapper) {
+        return retBool(baseMapper.updateForSet(setStr, wrapper));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
     public boolean updateBatchById(List<T> entityList) {
         return updateBatchById(entityList, 30);
     }
