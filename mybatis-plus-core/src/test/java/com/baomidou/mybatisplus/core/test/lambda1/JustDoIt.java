@@ -12,10 +12,10 @@ public class JustDoIt {
 
     public static void main(String[] args) {
         BaseMapper<User> mapper = new UserMapper();
-        StrWrapper1<User> eq1 = new StrWrapper1<User>().eq("", 1);
-        LambdaWrapper1<User> eq2 = new LambdaWrapper1<User>().eq(User::getId, 1);
-        mapper.selectList(eq1);
+        StrWrapper1<User> eq1 = new StrWrapper1<User>().eq("id", 1);
+        LambdaWrapper1<User> eq2 = new LambdaWrapper1<User>().eq(User::getName, 1).ne(User::getId,2);
         mapper.selectList(eq2);
+        mapper.selectList(eq1);
     }
 
     @Data
