@@ -215,7 +215,7 @@ public class SqlHelper {
      * @return
      */
     public static boolean isEmptyOfWrapper(Wrapper<?> wrapper) {
-        return null == wrapper || wrapper.isEmptyWrapper();
+        return null == wrapper || wrapper.isEmpty();
     }
 
     /**
