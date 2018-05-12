@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -235,14 +236,8 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
          * @return
          */
         private List<String> clearNull(List<String> parts) {
-            List<String> temps = new ArrayList<>();
-            for (String part : parts) {
-                if (StringUtils.isEmpty(part)) {
-                    continue;
-                }
-                temps.add(part);
-            }
-            return temps;
+            return parts.stream().filter(part -> !StringUtils.isEmpty(part))
+                .collect(Collectors.toList());
         }
 
         /**

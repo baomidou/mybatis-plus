@@ -30,7 +30,9 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.MapUtils;
 import com.baomidou.mybatisplus.core.toolkit.SerializationUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
+import com.baomidou.mybatisplus.core.toolkit.support.SerializedFunction;
 
 
 /**
@@ -38,7 +40,7 @@ import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
  * 条件构造抽象类，定义T-SQL语法
  * </p>
  *
- * @author hubin , yanghu , Dyang , Caratacus
+ * @author hubin , yanghu , Dyang , Caratacus, hcl
  * @Date 2016-11-7
  */
 public abstract class Wrapper<T> implements Serializable {
@@ -212,6 +214,31 @@ public abstract class Wrapper<T> implements Serializable {
      */
     public Wrapper<T> eq(String column, Object params) {
         return eq(true, column, params);
+    }
+
+    public Wrapper<T> eq(boolean condition, SerializedFunction<T, ?> func, Object params) {
+        if (condition) {
+            sql.WHERE(formatSql(String.format("%s = {0}", toCol(func)), params));
+        }
+        return this;
+    }
+
+    /**
+     * 为了支持字段重构做出的修改
+     * <p>
+     * 你可以在指定 Wrapper<T> 泛型的前提下这么使用:
+     * <p>
+     * Wrapper<User> wrapper = new EntityWrapper<User>();
+     * wrapper.eq(User::getUserName, "baomidou")
+     * <p>
+     * 改方法会根据规则（比如配置的字段映射、或者下划线规则）将 User::getUserName 转换为对应的数据库字段信息
+     *
+     * @param func   需要转换的 function
+     * @param params 参数信息
+     * @return 返回自身
+     */
+    public Wrapper<T> eq(SerializedFunction<T, ?> func, Object params) {
+        return eq(true, func, params);
     }
 
     /**
@@ -1547,6 +1574,14 @@ public abstract class Wrapper<T> implements Serializable {
     @Override
     public Wrapper<T> clone() {
         return SerializationUtils.clone(this);
+    }
+
+    /**
+     * @param func function
+     * @return 返回从 function 中解析出的 column
+     */
+    protected String toCol(SerializedFunction<T, ?> func) {
+        return TableInfoHelper.toColumn(func);
     }
 }
 

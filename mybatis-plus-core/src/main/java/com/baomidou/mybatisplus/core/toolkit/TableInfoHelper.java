@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.baomidou.mybatisplus.core.toolkit.support.LambdaCache;
@@ -49,6 +50,8 @@ import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.support.SerializedFunction;
+import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 
 /**
  * <p>
@@ -65,10 +68,78 @@ public class TableInfoHelper {
      * 缓存反射类表信息
      */
     private static final Map<String, TableInfo> TABLE_INFO_CACHE = new ConcurrentHashMap<>();
+
+    /**
+     * lambda 字段缓存
+     */
+    private static final Map<String, String> LAMBDA_COLUMN_CACHE = new ConcurrentHashMap<>();
     /**
      * 默认表主键
      */
     private static final String DEFAULT_ID_NAME = "id";
+
+    /**
+     * @param func 需要进行转换的 func
+     * @param <T>  被函数调用的类型，这个必须指定
+     * @return 返回解析后的列名
+     */
+    public static <T> String toColumn(SerializedFunction<T, ?> func) {
+        SerializedLambda lambda = LambdaUtils.resolve(func);
+        // 使用 class 名称和方法名称作为缓存的键值
+        String cacheKey = lambda.getImplClass() + lambda.getImplMethodName();
+        return Optional.ofNullable(LAMBDA_COLUMN_CACHE.get(cacheKey))
+            .orElseGet(() -> {
+                String column = resolveColumn(lambda);
+                LAMBDA_COLUMN_CACHE.put(cacheKey, column);
+                return column;
+            });
+    }
+
+    /**
+     * @param lambda 需要解析的 column
+     * @return 返回解析后列的信息
+     */
+    private static String resolveColumn(SerializedLambda lambda) {
+        String filedName = resolveFieldName(lambda);
+        // 为防止后面字段，驼峰等信息根据配置发生变化，此处不自己解析字段信息
+        return getTableInfo(resolveClass(lambda)).getFieldList().stream()
+            .filter(fieldInfo -> filedName.equals(fieldInfo.getProperty()))
+            .findAny()
+            .map(TableFieldInfo::getColumn)
+            .orElseThrow(() -> {
+                String message = String.format("没有根据 %s#%s 解析到对应的表列名称，您可能排除了该字段或者 %s 方法不是标准的 getter 方法"
+                    , lambda.getImplClass(), lambda.getImplMethodName(), lambda.getImplMethodName());
+                return new MybatisPlusException(message);
+            });
+    }
+
+    /**
+     * @param lambda 需要解析的 lambda
+     * @return 返回解析后的字段名称
+     */
+    private static String resolveFieldName(SerializedLambda lambda) {
+        String name = lambda.getImplMethodName();
+        if (name.startsWith("get")) {
+            name = name.substring(3, name.length());
+        } else if (name.startsWith("is")) {
+            name = name.substring(2, name.length());
+        }
+        // 小写第一个字母
+        return StringUtils.firstToLowerCase(name);
+    }
+
+    /**
+     * @param lambda 需要解析的 lambda
+     * @return 返回解析后的class
+     */
+    private static Class<?> resolveClass(SerializedLambda lambda) {
+        String className = lambda.getImplClass().replace('/', '.');
+        try {
+            return Class.forName(className);
+        } catch (ClassNotFoundException e) {    // 这个异常不可能发生
+            throw new MybatisPlusException("Class : " + className + " 不存在？你是怎么调用的？", e);
+        }
+    }
 
     /**
      * <p>

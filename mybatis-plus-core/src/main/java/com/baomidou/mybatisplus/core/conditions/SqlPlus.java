@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
+import java.util.Arrays;
+
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 /**
@@ -117,12 +119,10 @@ public class SqlPlus extends MybatisAbstractSQL<SqlPlus> {
      */
     private void handlerNull(String columns, String sqlPart) {
         if (StringUtils.isNotEmpty(columns)) {
-            String[] cols = columns.split(",");
-            for (String col : cols) {
-                if (StringUtils.isNotEmpty(col.trim())) {
-                    WHERE(col + sqlPart);
-                }
-            }
+            Arrays.stream(columns.split(","))
+                .filter(col -> StringUtils.isNotEmpty(col.trim()))
+                .map(col -> col + sqlPart)
+                .forEach(this::WHERE);
         }
     }
 }
