@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.baomidou.mybatisplus.core.toolkit.support.LambdaCache;
+import com.baomidou.mybatisplus.core.toolkit.support.Property;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
@@ -50,7 +51,6 @@ import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.support.SerializedFunction;
 import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 
 /**
@@ -83,7 +83,7 @@ public class TableInfoHelper {
      * @param <T>  被函数调用的类型，这个必须指定
      * @return 返回解析后的列名
      */
-    public static <T> String toColumn(SerializedFunction<T, ?> func) {
+    public static <T> String toColumn(Property<T, ?> func) {
         SerializedLambda lambda = LambdaUtils.resolve(func);
         // 使用 class 名称和方法名称作为缓存的键值
         String cacheKey = lambda.getImplClass() + lambda.getImplMethodName();
