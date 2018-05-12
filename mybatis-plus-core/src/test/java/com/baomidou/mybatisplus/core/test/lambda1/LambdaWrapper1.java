@@ -2,20 +2,27 @@ package com.baomidou.mybatisplus.core.test.lambda1;
 
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.support.SerializedFunction;
+import com.baomidou.mybatisplus.core.toolkit.support.LambdaCache;
+import com.baomidou.mybatisplus.core.toolkit.support.Property;
 import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 
 /**
  * @author ming
  * @Date 2018/5/11
  */
-public class LambdaWrapper1<T> extends AbstractWrapper1<LambdaWrapper1<T>, T,SerializedFunction<T, ?>> {
+public class LambdaWrapper1<T> extends AbstractWrapper1<LambdaWrapper1<T>, T, Property<T, ?>> {
+
+    private Class<T> clazz;
+
+    public LambdaWrapper1(Class<T> clazz) {
+        this.clazz = clazz;
+    }
 
     @Override
-    String getColumn(SerializedFunction<T, ?> tProperty) {
+    String getColumn(Property<T, ?> tProperty) {
         //todo 能执行?
         SerializedLambda resolve = LambdaUtils.resolve(tProperty);
-        return resolve.getImplMethodName();
+        return LambdaCache.getColumn(clazz, StringUtils.firstToLowerCase(resolve.getImplMethodName().substring(3)));
     }
 
     @Override

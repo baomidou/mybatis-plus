@@ -41,7 +41,7 @@ public class SerializedLambda implements Serializable {
      * @param lambda lambda对象
      * @return 返回解析后的 SerializedLambda
      */
-    public static SerializedLambda convert(SerializedFunction lambda) {
+    public static SerializedLambda convert(Property lambda) {
         byte[] bytes = SerializationUtils.serialize(lambda);
         try (ObjectInputStream objIn = new ObjectInputStream(new ByteArrayInputStream(bytes)) {
             @Override

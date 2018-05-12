@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.WeakHashMap;
 
-import com.baomidou.mybatisplus.core.toolkit.support.SerializedFunction;
+import com.baomidou.mybatisplus.core.toolkit.support.Property;
 import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 
 /**
@@ -29,7 +29,7 @@ public final class LambdaUtils {
      * @param <T>  类型，被调用的 Function 对象的目标类型
      * @return 返回解析后的结果
      */
-    public static <T> SerializedLambda resolve(SerializedFunction<T, ?> func) {
+    public static <T> SerializedLambda resolve(Property<T, ?> func) {
         Class clazz = func.getClass();
         return Optional.ofNullable(CACHE.get(clazz))
             .map(WeakReference::get)

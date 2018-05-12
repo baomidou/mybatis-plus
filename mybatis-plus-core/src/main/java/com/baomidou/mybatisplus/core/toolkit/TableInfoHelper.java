@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.baomidou.mybatisplus.core.toolkit.support.LambdaCache;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
@@ -200,6 +201,7 @@ public class TableInfoHelper {
          * 注入
          */
         TABLE_INFO_CACHE.put(clazz.getName(), tableInfo);
+        LambdaCache.put(clazz,tableInfo);
         return tableInfo;
     }
 
