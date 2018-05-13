@@ -6,23 +6,25 @@ import com.baomidou.mybatisplus.core.toolkit.support.LambdaCache;
 import com.baomidou.mybatisplus.core.toolkit.support.Property;
 import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 
+import java.util.Map;
+
 /**
  * @author ming
  * @Date 2018/5/11
  */
 public class LambdaWrapper1<T> extends AbstractWrapper1<LambdaWrapper1<T>, T, Property<T, ?>> {
 
-    private Class<T> clazz;
+    private Map<String, String> clomunMap;
 
     public LambdaWrapper1(Class<T> clazz) {
-        this.clazz = clazz;
+        clomunMap = LambdaCache.getColumnMap(clazz);
     }
 
     @Override
     String getColumn(Property<T, ?> tProperty) {
         //todo 能执行?
         SerializedLambda resolve = LambdaUtils.resolve(tProperty);
-        return LambdaCache.getColumn(clazz, StringUtils.firstToLowerCase(resolve.getImplMethodName().substring(3)));
+        return clomunMap.get(StringUtils.firstToLowerCase(resolve.getImplMethodName().substring(3)));
     }
 
     @Override

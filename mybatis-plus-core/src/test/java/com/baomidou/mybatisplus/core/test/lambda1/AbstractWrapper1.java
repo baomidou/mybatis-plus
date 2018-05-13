@@ -1556,6 +1556,7 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * @return
      * @since 2.0.3
      */
+    @Override
     public Map<String, Object> getParamNameValuePairs() {
         return paramNameValuePairs;
     }

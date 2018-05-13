@@ -28,7 +28,7 @@ public class LambdaCache {
         return map;
     }
 
-    public static String getColumn(Class clazz, String property) {
-        return LAMBDA_CACHE.get(clazz.getName()).get(property);
+    public static Map<String, String> getColumnMap(Class clazz) {
+        return LAMBDA_CACHE.get(clazz.getName());
     }
 }

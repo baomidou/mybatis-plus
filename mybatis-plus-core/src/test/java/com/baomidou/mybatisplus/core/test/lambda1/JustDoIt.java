@@ -1,7 +1,5 @@
 package com.baomidou.mybatisplus.core.test.lambda1;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import lombok.Data;
 
