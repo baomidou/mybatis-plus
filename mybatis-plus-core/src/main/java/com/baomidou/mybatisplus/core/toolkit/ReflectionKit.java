@@ -27,6 +27,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
@@ -53,7 +54,6 @@ public class ReflectionKit {
      *
      * @param field
      * @param str   属性字符串内容
-     * @return
      */
     public static String getMethodCapitalize(Field field, final String str) {
         Class<?> fieldType = field.getType();
@@ -142,17 +142,11 @@ public class ReflectionKit {
      * </p>
      *
      * @param clazz 反射类
-     * @return
      */
     public static Map<String, Field> getFieldMap(Class<?> clazz) {
         List<Field> fieldList = getFieldList(clazz);
-        Map<String, Field> fieldMap = Collections.emptyMap();
-        if (CollectionUtils.isNotEmpty(fieldList)) {
-            fieldMap = new LinkedHashMap<>();
-            for (Field field : fieldList) {
-                fieldMap.put(field.getName(), field);
-            }
-        }
+        Map<String, Field> fieldMap = CollectionUtils.isNotEmpty(fieldList) ? new LinkedHashMap<>() : Collections.emptyMap();
+        fieldList.forEach(field -> fieldMap.put(field.getName(), field));
         return fieldMap;
     }
 
@@ -162,7 +156,6 @@ public class ReflectionKit {
      * </p>
      *
      * @param clazz 反射类
-     * @return
      */
     public static List<Field> getFieldList(Class<?> clazz) {
         if (null == clazz) {
@@ -170,17 +163,10 @@ public class ReflectionKit {
         }
         List<Field> fieldList = new LinkedList<>();
         Field[] fields = clazz.getDeclaredFields();
-        for (Field field : fields) {
-            /* 过滤静态属性 */
-            if (Modifier.isStatic(field.getModifiers())) {
-                continue;
-            }
-            /* 过滤 transient关键字修饰的属性 */
-            if (Modifier.isTransient(field.getModifiers())) {
-                continue;
-            }
-            fieldList.add(field);
-        }
+        Stream.of(fields)
+            .filter(field -> !Modifier.isStatic(field.getModifiers())/* 过滤静态属性 */)
+            .filter(field -> !Modifier.isTransient(field.getModifiers())/* 过滤 transient关键字修饰的属性 */)
+            .forEach(fieldList::add);
         /* 处理父类字段 */
         Class<?> superClass = clazz.getSuperclass();
         if (superClass.equals(Object.class)) {
@@ -201,15 +187,8 @@ public class ReflectionKit {
     public static List<Field> excludeOverrideSuperField(List<Field> fieldList, List<Field> superFieldList) {
         // 子类属性
         Map<String, Field> fieldMap = new HashMap<>();
-        for (Field field : fieldList) {
-            fieldMap.put(field.getName(), field);
-        }
-        for (Field superField : superFieldList) {
-            if (null == fieldMap.get(superField.getName())) {
-                // 加入重置父类属性
-                fieldList.add(superField);
-            }
-        }
+        fieldList.forEach(field -> fieldMap.put(field.getName(), field));
+        superFieldList.stream().filter(field -> fieldMap.get(field.getName()) == null).forEach(fieldList::add);
         return fieldList;
     }
 }
