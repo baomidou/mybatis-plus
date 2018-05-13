@@ -145,9 +145,12 @@ public class ReflectionKit {
      */
     public static Map<String, Field> getFieldMap(Class<?> clazz) {
         List<Field> fieldList = getFieldList(clazz);
-        Map<String, Field> fieldMap = CollectionUtils.isNotEmpty(fieldList) ? new LinkedHashMap<>() : Collections.emptyMap();
-        fieldList.forEach(field -> fieldMap.put(field.getName(), field));
-        return fieldMap;
+        if (CollectionUtils.isNotEmpty(fieldList)) {
+            Map<String, Field> fieldMap = new LinkedHashMap<>();
+            fieldList.forEach(field -> fieldMap.put(field.getName(), field));
+            return fieldMap;
+        }
+        return Collections.emptyMap();
     }
 
     /**
