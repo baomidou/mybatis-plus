@@ -32,7 +32,7 @@ import com.baomidou.mybatisplus.core.toolkit.SerializationUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
-import com.baomidou.mybatisplus.core.toolkit.support.SerializedFunction;
+import com.baomidou.mybatisplus.core.toolkit.support.Property;
 
 
 /**
@@ -216,7 +216,7 @@ public abstract class Wrapper<T> implements Serializable {
         return eq(true, column, params);
     }
 
-    public Wrapper<T> eq(boolean condition, SerializedFunction<T, ?> func, Object params) {
+    public Wrapper<T> eq(boolean condition, Property<T, ?> func, Object params) {
         if (condition) {
             sql.WHERE(formatSql(String.format("%s = {0}", toCol(func)), params));
         }
@@ -237,7 +237,7 @@ public abstract class Wrapper<T> implements Serializable {
      * @param params 参数信息
      * @return 返回自身
      */
-    public Wrapper<T> eq(SerializedFunction<T, ?> func, Object params) {
+    public Wrapper<T> eq(Property<T, ?> func, Object params) {
         return eq(true, func, params);
     }
 
@@ -1580,7 +1580,7 @@ public abstract class Wrapper<T> implements Serializable {
      * @param func function
      * @return 返回从 function 中解析出的 column
      */
-    protected String toCol(SerializedFunction<T, ?> func) {
+    protected String toCol(Property<T, ?> func) {
         return TableInfoHelper.toColumn(func);
     }
 }
