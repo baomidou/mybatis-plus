@@ -15,24 +15,15 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
-
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -164,12 +155,10 @@ public class ReflectionKit {
         if (null == clazz) {
             return null;
         }
-        List<Field> fieldList = new LinkedList<>();
-        Field[] fields = clazz.getDeclaredFields();
-        Stream.of(fields)
+        List<Field> fieldList = Stream.of(clazz.getDeclaredFields())
             .filter(field -> !Modifier.isStatic(field.getModifiers())/* 过滤静态属性 */)
             .filter(field -> !Modifier.isTransient(field.getModifiers())/* 过滤 transient关键字修饰的属性 */)
-            .forEach(fieldList::add);
+            .collect(Collectors.toCollection(LinkedList::new));
         /* 处理父类字段 */
         Class<?> superClass = clazz.getSuperclass();
         if (superClass.equals(Object.class)) {
@@ -189,8 +178,7 @@ public class ReflectionKit {
      */
     public static List<Field> excludeOverrideSuperField(List<Field> fieldList, List<Field> superFieldList) {
         // 子类属性
-        Map<String, Field> fieldMap = new HashMap<>();
-        fieldList.forEach(field -> fieldMap.put(field.getName(), field));
+        Map<String, Field> fieldMap = fieldList.stream().collect(Collectors.toMap(Field::getName, Function.identity()));
         superFieldList.stream().filter(field -> fieldMap.get(field.getName()) == null).forEach(fieldList::add);
         return fieldList;
     }
