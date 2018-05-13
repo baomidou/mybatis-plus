@@ -14,17 +14,17 @@ import java.util.Map;
  */
 public class LambdaWrapper1<T> extends AbstractWrapper1<LambdaWrapper1<T>, T, Property<T, ?>> {
 
-    private Map<String, String> clomunMap;
+    private Map<String, String> columnMap;
 
     public LambdaWrapper1(Class<T> clazz) {
-        clomunMap = LambdaCache.getColumnMap(clazz);
+        columnMap = LambdaCache.getColumnMap(clazz);
     }
 
     @Override
     String getColumn(Property<T, ?> tProperty) {
         //todo 能执行?
         SerializedLambda resolve = LambdaUtils.resolve(tProperty);
-        return clomunMap.get(StringUtils.firstToLowerCase(resolve.getImplMethodName().substring(3)));
+        return columnMap.get(StringUtils.firstToLowerCase(resolve.getImplMethodName().substring(3)));
     }
 
     @Override
