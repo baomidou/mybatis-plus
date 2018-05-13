@@ -15,17 +15,17 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
+
 import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -64,7 +64,7 @@ public class StringUtils {
     private static boolean separatorBeforeDigit = false;
     private static boolean separatorAfterDigit = true;
 
-   private static final Pattern PATTERN_ONE = Pattern.compile(".*[A-Z]+.*");
+    private static final Pattern PATTERN_ONE = Pattern.compile(".*[A-Z]+.*");
 
     private static final Pattern PATTERN_TWO = Pattern.compile(".*[/_]+.*");
 
@@ -291,21 +291,7 @@ public class StringUtils {
      * @return 单引号包含的原字符串的集合形式
      */
     public static String quotaMarkList(Collection<?> coll) {
-        StringBuilder sqlBuild = new StringBuilder();
-        sqlBuild.append("(");
-        int size = coll.size();
-        int i = 0;
-        Iterator<?> iterator = coll.iterator();
-        while (iterator.hasNext()) {
-            String tempVal = StringUtils.quotaMark(iterator.next());
-            sqlBuild.append(tempVal);
-            if (i + 1 < size) {
-                sqlBuild.append(",");
-            }
-            i++;
-        }
-        sqlBuild.append(")");
-        return sqlBuild.toString();
+        return coll.stream().map(StringUtils::quotaMark).collect(Collectors.joining(",", "(", ")"));
     }
 
     /**
