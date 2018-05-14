@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @Date 2018/5/11
  */
 @SuppressWarnings("unchecked")
-public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
+public abstract class AbstractWrapper1<This extends AbstractWrapper1<This, T, R>, T, R> implements Wrapper1<T> {
 
     /**
      * 占位符
@@ -215,7 +215,7 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * </p>
      *
      * @param condition 拼接的前置条件
-     * @param r  where语句
+     * @param r         where语句
      * @param params    参数集
      * @return this
      */
@@ -236,8 +236,8 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * 输出: WHERE (NAME='zhangsan' AND id=123)
      * </p>
      *
-     * @param r where语句
-     * @param params   参数集
+     * @param r      where语句
+     * @param params 参数集
      * @return this
      */
     This where(R r, Object... params) {
@@ -470,7 +470,7 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * </p>
      *
      * @param condition 拼接的前置条件
-     * @param r    and条件语句
+     * @param r         and条件语句
      * @param params    参数集
      * @return this
      */
@@ -486,7 +486,7 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * AND 连接后续条件
      * </p>
      *
-     * @param r and条件语句
+     * @param r      and条件语句
      * @param params 参数集
      * @return this
      */
@@ -504,7 +504,7 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * </p>
      *
      * @param condition 拼接的前置条件
-     * @param r    AND 条件语句
+     * @param r         AND 条件语句
      * @param params    参数值
      * @return this
      */
@@ -540,7 +540,7 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * (name='zhangsan' AND id=11) AND (statu=1)
      * </p>
      *
-     * @param r AND 条件语句
+     * @param r      AND 条件语句
      * @param params 参数值
      * @return this
      */
@@ -648,7 +648,7 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * </p>
      *
      * @param condition 拼接的前置条件
-     * @param r     or 条件语句
+     * @param r         or 条件语句
      * @param params    参数集
      * @return this
      */
@@ -667,7 +667,7 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * 添加OR条件
      * </p>
      *
-     * @param r  or 条件语句
+     * @param r      or 条件语句
      * @param params 参数集
      * @return this
      */
@@ -701,7 +701,7 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * </p>
      *
      * @param condition 拼接的前置条件
-     * @param r     AND 条件语句
+     * @param r         AND 条件语句
      * @param params    参数值
      * @return this
      */
@@ -724,7 +724,7 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * (name='zhangsan' AND id=11) OR (statu=1)
      * </p>
      *
-     * @param r  AND 条件语句
+     * @param r      AND 条件语句
      * @param params 参数值
      * @return this
      */
@@ -741,7 +741,7 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * </p>
      *
      * @param condition 拼接的前置条件
-     * @param r   SQL 中的 Group by 语句，无需输入 Group By 关键字
+     * @param r         SQL 中的 Group by 语句，无需输入 Group By 关键字
      * @return this
      */
     This groupBy(boolean condition, R r) {
@@ -812,7 +812,7 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * </p>
      *
      * @param condition 拼接的前置条件
-     * @param r   SQL 中的 order by 语句，无需输入 Order By 关键字
+     * @param r         SQL 中的 order by 语句，无需输入 Order By 关键字
      * @return this
      */
     This orderBy(boolean condition, R r) {
@@ -844,7 +844,7 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * </p>
      *
      * @param condition 拼接的前置条件
-     * @param r   SQL 中的 order by 语句，无需输入 Order By 关键字
+     * @param r         SQL 中的 order by 语句，无需输入 Order By 关键字
      * @param isAsc     是否为升序
      * @return this
      */
@@ -879,8 +879,8 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * SQL中orderby关键字跟的条件语句，可根据变更动态排序
      * </p>
      *
-     * @param r SQL 中的 order by 语句，无需输入 Order By 关键字
-     * @param isAsc   是否为升序
+     * @param r     SQL 中的 order by 语句，无需输入 Order By 关键字
+     * @param isAsc 是否为升序
      * @return this
      */
     This orderBy(R r, boolean isAsc) {
@@ -917,7 +917,7 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * </p>
      *
      * @param condition 拼接的前置条件
-     * @param r    字段名称
+     * @param r         字段名称
      * @param value     匹配值
      * @return this
      */
@@ -933,8 +933,8 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * LIKE条件语句，value中无需前后%
      * </p>
      *
-     * @param r 字段名称
-     * @param value  匹配值
+     * @param r     字段名称
+     * @param value 匹配值
      * @return this
      */
     This like(R r, String value) {
@@ -947,7 +947,7 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * </p>
      *
      * @param condition 拼接的前置条件
-     * @param r    字段名称
+     * @param r         字段名称
      * @param value     匹配值
      * @return this
      */
@@ -963,8 +963,8 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * NOT LIKE条件语句，value中无需前后%
      * </p>
      *
-     * @param r 字段名称
-     * @param value  匹配值
+     * @param r     字段名称
+     * @param value 匹配值
      * @return this
      */
     This notLike(R r, String value) {
@@ -976,9 +976,9 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * 处理LIKE操作
      * </p>
      *
-     * @param r 字段名称
-     * @param value  like匹配值
-     * @param isNot  是否为NOT LIKE操作
+     * @param r     字段名称
+     * @param value like匹配值
+     * @param isNot 是否为NOT LIKE操作
      */
     private void handlerLike(R r, String value, SqlLike type, boolean isNot) {
         if (StringUtils.isNotEmpty(getColumn(r)) && StringUtils.isNotEmpty(value)) {
@@ -998,7 +998,7 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * </p>
      *
      * @param condition 拼接的前置条件
-     * @param r    字段名称
+     * @param r         字段名称
      * @param value     匹配值
      * @param type
      * @return this
@@ -1015,8 +1015,8 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * LIKE条件语句，value中无需前后%
      * </p>
      *
-     * @param r 字段名称
-     * @param value  匹配值
+     * @param r     字段名称
+     * @param value 匹配值
      * @param type
      * @return this
      */
@@ -1030,7 +1030,7 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * </p>
      *
      * @param condition 拼接的前置条件
-     * @param r    字段名称
+     * @param r         字段名称
      * @param value     匹配值
      * @param type
      * @return this
@@ -1047,8 +1047,8 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * NOT LIKE条件语句，value中无需前后%
      * </p>
      *
-     * @param r 字段名称
-     * @param value  匹配值
+     * @param r     字段名称
+     * @param value 匹配值
      * @param type
      * @return this
      */
@@ -1062,7 +1062,7 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * </p>
      *
      * @param condition 拼接的前置条件
-     * @param r   字段名称。多个字段以逗号分隔。
+     * @param r         字段名称。多个字段以逗号分隔。
      * @return this
      */
     This isNotNull(boolean condition, R r) {
@@ -1090,7 +1090,7 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * </p>
      *
      * @param condition 拼接的前置条件
-     * @param r   字段名称。多个字段以逗号分隔。
+     * @param r         字段名称。多个字段以逗号分隔。
      * @return this
      */
     This isNull(boolean condition, R r) {
@@ -1174,7 +1174,7 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * </p>
      *
      * @param condition 拼接的前置条件
-     * @param r    字段名称
+     * @param r         字段名称
      * @param value     逗号拼接的字符串
      * @return this
      */
@@ -1190,8 +1190,8 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * IN 条件语句，目前适配mysql及oracle
      * </p>
      *
-     * @param r 字段名称
-     * @param value  逗号拼接的字符串
+     * @param r     字段名称
+     * @param value 逗号拼接的字符串
      * @return this
      */
     This in(R r, String value) {
@@ -1204,7 +1204,7 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * </p>
      *
      * @param condition 拼接的前置条件
-     * @param r    字段名称
+     * @param r         字段名称
      * @param value     逗号拼接的字符串
      * @return this
      */
@@ -1220,8 +1220,8 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * NOT IN条件语句
      * </p>
      *
-     * @param r 字段名称
-     * @param value  逗号拼接的字符串
+     * @param r     字段名称
+     * @param value 逗号拼接的字符串
      * @return this
      */
     This notIn(R r, String value) {
@@ -1234,7 +1234,7 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * </p>
      *
      * @param condition 拼接的前置条件
-     * @param r    字段名称
+     * @param r         字段名称
      * @param value     匹配值 集合
      * @return this
      */
@@ -1250,8 +1250,8 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * IN 条件语句，目前适配mysql及oracle
      * </p>
      *
-     * @param r 字段名称
-     * @param value  匹配值 集合
+     * @param r     字段名称
+     * @param value 匹配值 集合
      * @return this
      */
     This in(R r, Collection<?> value) {
@@ -1264,7 +1264,7 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * </p>
      *
      * @param condition 拼接的前置条件
-     * @param r    字段名称
+     * @param r         字段名称
      * @param value     匹配值 集合
      * @return this
      */
@@ -1280,8 +1280,8 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * NOT IN 条件语句，目前适配mysql及oracle
      * </p>
      *
-     * @param r 字段名称
-     * @param value  匹配值 集合
+     * @param r     字段名称
+     * @param value 匹配值 集合
      * @return this
      */
     This notIn(R r, Collection<?> value) {
@@ -1294,7 +1294,7 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * </p>
      *
      * @param condition 拼接的前置条件
-     * @param r    字段名称
+     * @param r         字段名称
      * @param value     匹配值 object数组
      * @return this
      */
@@ -1310,8 +1310,8 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * IN 条件语句，目前适配mysql及oracle
      * </p>
      *
-     * @param r 字段名称
-     * @param value  匹配值 object数组
+     * @param r     字段名称
+     * @param value 匹配值 object数组
      * @return this
      */
     This in(R r, Object[] value) {
@@ -1324,7 +1324,7 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * </p>
      *
      * @param condition 拼接的前置条件
-     * @param r    字段名称
+     * @param r         字段名称
      * @param value     匹配值 object数组
      * @return this
      */
@@ -1340,8 +1340,8 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * NOT IN 条件语句，目前适配mysql及oracle
      * </p>
      *
-     * @param r 字段名称
-     * @param value  匹配值 object数组
+     * @param r     字段名称
+     * @param value 匹配值 object数组
      * @return this
      */
     This notIn(R r, Object... value) {
@@ -1353,9 +1353,9 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * 获取in表达式
      * </p>
      *
-     * @param r 字段名称
-     * @param value  集合
-     * @param isNot  是否为NOT IN操作
+     * @param r     字段名称
+     * @param value 集合
+     * @param isNot 是否为NOT IN操作
      */
     private String inExpression(R r, Collection<?> value, boolean isNot) {
         if (StringUtils.isNotEmpty(getColumn(r)) && CollectionUtils.isNotEmpty(value)) {
@@ -1385,7 +1385,7 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * </p>
      *
      * @param condition 拼接的前置条件
-     * @param r    字段名称
+     * @param r         字段名称
      * @param val1
      * @param val2
      * @return this
@@ -1402,7 +1402,7 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * betwwee 条件语句
      * </p>
      *
-     * @param r 字段名称
+     * @param r    字段名称
      * @param val1
      * @param val2
      * @return this
@@ -1417,7 +1417,7 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * </p>
      *
      * @param condition 拼接的前置条件
-     * @param r    字段名称
+     * @param r         字段名称
      * @param val1
      * @param val2
      * @return this
@@ -1434,7 +1434,7 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * NOT betwwee 条件语句
      * </p>
      *
-     * @param r 字段名称
+     * @param r    字段名称
      * @param val1
      * @param val2
      * @return this
@@ -1449,8 +1449,8 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * 为了兼容之前的版本,可使用where()或and()替代
      * </p>
      *
-     * @param r where sql部分
-     * @param params   参数集
+     * @param r      where sql部分
+     * @param params 参数集
      * @return this
      */
     This addFilter(R r, Object... params) {
@@ -1468,13 +1468,13 @@ public abstract class AbstractWrapper1<This, T, R> implements Wrapper1<T> {
      * 输出: WHERE (name='zhangsan' AND id=22)
      * </p>
      *
-     * @param need     是否需要添加该条件
-     * @param r 条件语句
-     * @param params   参数集
+     * @param need   是否需要添加该条件
+     * @param r      条件语句
+     * @param params 参数集
      * @return this
      */
     This addFilterIfNeed(boolean need, R r, Object... params) {
-        return need ? where(r, params) : (This)this;
+        return need ? where(r, params) : (This) this;
     }
 
     /**
