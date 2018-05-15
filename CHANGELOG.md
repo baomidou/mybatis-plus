@@ -1,11 +1,14 @@
 ﻿# CHANGELOG
 
-## [v2.3] 2018.05.10
+## [v2.3] 2018.05.15
 - 数据库方言支持 mariadb
 - 支持全局表前缀配置 tablePrefix 属性
 - 解决多租户字段无别名问题
 - 多租户拦截器支持批量更新操作
 - 新增常用预留数据库类型
+- BaseMapper、ServiceImpl添加UpdateForSet
+- Condition添加获取EntitiyWrapper静态方法
+- 处理打印sql问题
 - 修复freemarker乐观锁、逻辑删除字段判断问题
 - 更改全局配置 > 默认数据库下划线命名=true
 - Wrapper包装SQL添加处理多重嵌套的情况
