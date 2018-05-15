@@ -236,7 +236,7 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
          * @return
          */
         private List<String> clearNull(List<String> parts) {
-            return parts.stream().filter(part -> !StringUtils.isEmpty(part))
+            return parts.stream().filter(StringUtils::isNotEmpty)
                 .collect(Collectors.toList());
         }
 
