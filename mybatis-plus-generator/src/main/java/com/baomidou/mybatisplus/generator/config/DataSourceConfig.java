@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.generator.config.converts.MySqlTypeConvert;
 import com.baomidou.mybatisplus.generator.config.converts.OracleTypeConvert;
 import com.baomidou.mybatisplus.generator.config.converts.PostgreSqlTypeConvert;
 import com.baomidou.mybatisplus.generator.config.converts.SqlServerTypeConvert;
+import com.baomidou.mybatisplus.generator.config.querys.DB2Query;
 import com.baomidou.mybatisplus.generator.config.querys.MySqlQuery;
 import com.baomidou.mybatisplus.generator.config.querys.OracleQuery;
 import com.baomidou.mybatisplus.generator.config.querys.PostgreSqlQuery;
@@ -84,6 +85,9 @@ public class DataSourceConfig {
                     break;
                 case POSTGRE_SQL:
                     dbQuery = new PostgreSqlQuery();
+                    break;
+                case DB2:
+                    dbQuery = new DB2Query();
                     break;
                 default:
                     // 默认 MYSQL
