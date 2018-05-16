@@ -1,0 +1,12 @@
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+dependencies {
+    compile project(":mybatis-plus-core")
+    compile project(":mybatis-plus-extension")
+    compile project(":mybatis-plus-annotation")
+    testCompile 'junit:junit:4.12'
+    compileOnly rootProject.ext.dependencies["lombok"]
+
+}
