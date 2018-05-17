@@ -49,7 +49,6 @@ public class SqlFormatter {
         END_CLAUSES.add("join");
         END_CLAUSES.add("from");
         END_CLAUSES.add("by");
-        END_CLAUSES.add("join");
         END_CLAUSES.add("into");
         END_CLAUSES.add("union");
 
