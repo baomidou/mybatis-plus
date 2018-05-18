@@ -591,7 +591,7 @@ public class ConfigBuilder {
                 field.setName(results.getString(dbQuery.fieldName()));
                 field.setType(results.getString(dbQuery.fieldType()));
                 field.setPropertyName(strategyConfig, processName(field.getName(), strategy));
-                field.setColumnType(dataSourceConfig.getTypeConvert().processTypeConvert(field.getType()));
+                field.setColumnType(dataSourceConfig.getTypeConvert(globalConfig.isUseJava8Time()).processTypeConvert(field.getType()));
                 field.setComment(results.getString(dbQuery.fieldComment()));
                 if (strategyConfig.includeSuperEntityColumns(field.getName())) {
                     // 跳过公共字段

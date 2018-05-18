@@ -136,21 +136,21 @@ public class DataSourceConfig {
         this.schemaname = schemaname;
     }
 
-    public ITypeConvert getTypeConvert() {
+    public ITypeConvert getTypeConvert(boolean useJava8Time) {
         if (null == typeConvert) {
             switch (getDbType()) {
                 case ORACLE:
-                    typeConvert = new OracleTypeConvert();
+                    typeConvert = new OracleTypeConvert().setUseJava8Time(useJava8Time);
                     break;
                 case SQL_SERVER:
-                    typeConvert = new SqlServerTypeConvert();
+                    typeConvert = new SqlServerTypeConvert().setUseJava8Time(useJava8Time);
                     break;
                 case POSTGRE_SQL:
-                    typeConvert = new PostgreSqlTypeConvert();
+                    typeConvert = new PostgreSqlTypeConvert().setUseJava8Time(useJava8Time);
                     break;
                 default:
                     // 默认 MYSQL
-                    typeConvert = new MySqlTypeConvert();
+                    typeConvert = new MySqlTypeConvert().setUseJava8Time(useJava8Time);
                     break;
             }
         }

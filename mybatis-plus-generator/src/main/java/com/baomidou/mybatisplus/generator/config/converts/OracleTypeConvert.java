@@ -26,7 +26,7 @@ import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
  * @author hubin
  * @date 2017-01-20
  */
-public class OracleTypeConvert implements ITypeConvert {
+public class OracleTypeConvert extends ITypeConvert<OracleTypeConvert> {
 
     @Override
     public DbColumnType processTypeConvert(String fieldType) {

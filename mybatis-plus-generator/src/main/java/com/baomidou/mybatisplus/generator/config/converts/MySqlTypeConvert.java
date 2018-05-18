@@ -26,7 +26,7 @@ import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
  * @author hubin
  * @date 2017-01-20
  */
-public class MySqlTypeConvert implements ITypeConvert {
+public class MySqlTypeConvert extends ITypeConvert<MySqlTypeConvert> {
 
     @Override
     public DbColumnType processTypeConvert(String fieldType) {
@@ -37,8 +37,6 @@ public class MySqlTypeConvert implements ITypeConvert {
             return DbColumnType.LONG;
         } else if (t.contains("int")) {
             return DbColumnType.INTEGER;
-        } else if (t.contains("date") || t.contains("time") || t.contains("year")) {
-            return DbColumnType.DATE;
         } else if (t.contains("text")) {
             return DbColumnType.STRING;
         } else if (t.contains("bit")) {
@@ -57,6 +55,19 @@ public class MySqlTypeConvert implements ITypeConvert {
             return DbColumnType.DOUBLE;
         } else if (t.contains("json") || t.contains("enum")) {
             return DbColumnType.STRING;
+        } else if (t.contains("date") || t.contains("time") || t.contains("year")) {
+            if (useJava8Time) {
+                switch (t) {
+                    case "date":
+                        return DbColumnType.LOCAL_DATE;
+                    case "time":
+                        return DbColumnType.LOCAL_TIME;
+                    default:
+                        return DbColumnType.LOCAL_DATE_TIME;
+                }
+            } else {
+                return DbColumnType.DATE;
+            }
         }
         return DbColumnType.STRING;
     }

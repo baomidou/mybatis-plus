@@ -26,7 +26,7 @@ import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
  * @author hubin
  * @date 2017-01-20
  */
-public class SqlServerTypeConvert implements ITypeConvert {
+public class SqlServerTypeConvert extends ITypeConvert<SqlServerTypeConvert> {
 
     @Override
     public DbColumnType processTypeConvert(String fieldType) {
