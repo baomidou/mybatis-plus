@@ -15,16 +15,16 @@
  */
 package com.baomidou.mybatisplus.core.config;
 
-import java.io.Serializable;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
-
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import lombok.Data;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+
+import java.io.Serializable;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * <p>
@@ -34,6 +34,7 @@ import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
  * @author Caratacus
  * @since 2016-12-06
  */
+@Data
 public class GlobalConfig implements Serializable {
 
     /**
@@ -68,79 +69,6 @@ public class GlobalConfig implements Serializable {
      * 元对象字段填充控制器
      */
     private MetaObjectHandler metaObjectHandler = MetaObjectHandler.getInstance();
-
-
-    public GlobalConfig() {
-        // 构造方法
-    }
-
-    public GlobalConfig(ISqlInjector sqlInjector) {
-        this.sqlInjector = sqlInjector;
-    }
-
-    public boolean isRefresh() {
-        return refresh;
-    }
-
-    public void setRefresh(boolean refresh) {
-        this.refresh = refresh;
-    }
-
-    public boolean isSqlParserCache() {
-        return sqlParserCache;
-    }
-
-    public void setSqlParserCache(boolean sqlParserCache) {
-        this.sqlParserCache = sqlParserCache;
-    }
-
-    public DbConfig getDbConfig() {
-        return dbConfig;
-    }
-
-    public void setDbConfig(DbConfig dbConfig) {
-        this.dbConfig = dbConfig;
-    }
-
-    public ISqlInjector getSqlInjector() {
-        return sqlInjector;
-    }
-
-    public void setSqlInjector(ISqlInjector sqlInjector) {
-        this.sqlInjector = sqlInjector;
-    }
-
-    public SqlSession getSqlSession() {
-        return sqlSession;
-    }
-
-    public void setSqlSession(SqlSession sqlSession) {
-        this.sqlSession = sqlSession;
-    }
-
-    public SqlSessionFactory getSqlSessionFactory() {
-        return sqlSessionFactory;
-    }
-
-    public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
-        this.sqlSessionFactory = sqlSessionFactory;
-    }
-
-    public Set<String> getMapperRegistryCache() {
-        return mapperRegistryCache;
-    }
-
-    public void setMapperRegistryCache(Set<String> mapperRegistryCache) {
-        this.mapperRegistryCache = mapperRegistryCache;
-    }
-
-    public MetaObjectHandler getMetaObjectHandler() {
-        return metaObjectHandler;
-    }
-
-    public void setMetaObjectHandler(MetaObjectHandler metaObjectHandler) {
-        this.metaObjectHandler = metaObjectHandler;
-    }
 
     /**
      * <p>
