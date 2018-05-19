@@ -270,18 +270,20 @@ public class TenantSqlParser extends AbstractJsqlParser {
 
     /**
      * <p>
-     * 字段是否添加别名设置
+     * 租户字段别名设置<br>
+     * tableName.tenantId 或 tableAlias.tenantId
      * </p>
      *
      * @param table 表对象
      * @return 字段
      */
     protected Column getAliasColumn(Table table) {
-        if (null == table.getAlias()) {
-            return new Column(this.tenantHandler.getTenantIdColumn());
-        }
         StringBuilder column = new StringBuilder();
-        column.append(table.getAlias().getName());
+        if (null == table.getAlias()) {
+            column.append(table.getName());
+        } else {
+            column.append(table.getAlias().getName());
+        }
         column.append(".");
         column.append(this.tenantHandler.getTenantIdColumn());
         return new Column(column.toString());
