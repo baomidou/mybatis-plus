@@ -436,9 +436,5 @@ public class TableInfoHelper {
         builderAssistant.getConfiguration().addKeyGenerator(id, selectKeyGenerator);
         return selectKeyGenerator;
     }
-    
-    public static void addTableInfoCache(String className,TableInfo tableInfo){
-        tableInfoCache.put(className, tableInfo);
-    }
 
 }
