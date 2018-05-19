@@ -77,7 +77,24 @@ public class TableInfoHelper {
      * @return
      */
     public static TableInfo getTableInfo(Class<?> clazz) {
-        return tableInfoCache.get(ClassUtils.getUserClass(clazz).getName());
+        TableInfo tableInfo = tableInfoCache.get(ClassUtils.getUserClass(clazz).getName());
+        if(tableInfo!=null){
+            return tableInfo;
+        }else{
+            //尝试获取父类缓存
+            Class c = clazz;
+            while (tableInfo==null && Object.class!=c){
+                c = c.getSuperclass();
+                tableInfo = tableInfoCache.get(ClassUtils.getUserClass(c).getName());
+            }
+            if(tableInfo!=null){
+                tableInfoCache.put(ClassUtils.getUserClass(clazz).getName(),tableInfo);
+            }else{
+                //找不到了,我也很绝望呀
+                logger.warn(ClassUtils.getUserClass(clazz).getName() + "Not Found TableInfoCache.");
+            }
+        }
+        return tableInfo;
     }
 
     /**
@@ -418,6 +435,10 @@ public class TableInfoHelper {
         SelectKeyGenerator selectKeyGenerator = new SelectKeyGenerator(keyStatement, true);
         builderAssistant.getConfiguration().addKeyGenerator(id, selectKeyGenerator);
         return selectKeyGenerator;
+    }
+    
+    public static void addTableInfoCache(String className,TableInfo tableInfo){
+        tableInfoCache.put(className, tableInfo);
     }
 
 }
