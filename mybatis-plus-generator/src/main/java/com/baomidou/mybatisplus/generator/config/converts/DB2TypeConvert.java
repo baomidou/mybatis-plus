@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.generator.config.converts;
 
+import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.ITypeConvert;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 
@@ -26,10 +27,10 @@ import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
  * @author zhanyao
  * @date 2018-05-16
  */
-public class DB2TypeConvert extends ITypeConvert<DB2TypeConvert> {
+public class DB2TypeConvert implements ITypeConvert {
 
     @Override
-    public DbColumnType processTypeConvert(String fieldType) {
+    public DbColumnType processTypeConvert(GlobalConfig globalConfig, String fieldType) {
         String t = fieldType.toUpperCase();
         if (t.contains("CHAR")) {
             return DbColumnType.STRING;

@@ -25,23 +25,18 @@ import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
  * @author hubin
  * @date 2017-01-20
  */
-public abstract class ITypeConvert<T extends ITypeConvert<T>> {
+public interface ITypeConvert {
 
-    protected boolean useJava8Time;
 
     /**
      * <p>
      * 执行类型转换
      * </p>
      *
-     * @param fieldType 字段类型
+     * @param globalConfig 全局配置
+     * @param fieldType    字段类型
      * @return
      */
-    public abstract DbColumnType processTypeConvert(String fieldType);
+    DbColumnType processTypeConvert(GlobalConfig globalConfig, String fieldType);
 
-    @SuppressWarnings("unchecked")
-    public T setUseJava8Time(boolean useJava8Time) {
-        this.useJava8Time = useJava8Time;
-        return (T) this;
-    }
 }

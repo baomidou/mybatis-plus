@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.generator.config.converts;
 
+import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.ITypeConvert;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 
@@ -26,10 +27,10 @@ import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
  * @author hubin
  * @date 2017-01-20
  */
-public class MySqlTypeConvert extends ITypeConvert<MySqlTypeConvert> {
+public class MySqlTypeConvert implements ITypeConvert {
 
     @Override
-    public DbColumnType processTypeConvert(String fieldType) {
+    public DbColumnType processTypeConvert(GlobalConfig globalConfig, String fieldType) {
         String t = fieldType.toLowerCase();
         if (t.contains("char") || t.contains("text")) {
             return DbColumnType.STRING;
@@ -56,7 +57,7 @@ public class MySqlTypeConvert extends ITypeConvert<MySqlTypeConvert> {
         } else if (t.contains("json") || t.contains("enum")) {
             return DbColumnType.STRING;
         } else if (t.contains("date") || t.contains("time") || t.contains("year")) {
-            if (useJava8Time) {
+            if (globalConfig.isUseJava8Time()) {
                 switch (t) {
                     case "date":
                         return DbColumnType.LOCAL_DATE;

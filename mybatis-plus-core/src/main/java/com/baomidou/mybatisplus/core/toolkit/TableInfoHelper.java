@@ -23,8 +23,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.baomidou.mybatisplus.core.toolkit.support.LambdaCache;
-import com.baomidou.mybatisplus.core.toolkit.support.Property;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
@@ -51,6 +49,8 @@ import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.support.LambdaCache;
+import com.baomidou.mybatisplus.core.toolkit.support.Property;
 import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 
 /**
@@ -151,21 +151,20 @@ public class TableInfoHelper {
      */
     public static TableInfo getTableInfo(Class<?> clazz) {
         TableInfo tableInfo = TABLE_INFO_CACHE.get(ClassUtils.getUserClass(clazz).getName());
-        if(tableInfo!=null){
+        if (null != tableInfo) {
             return tableInfo;
-        }else{
-            //尝试获取父类缓存
-            Class c = clazz;
-            while (tableInfo==null && Object.class!=c){
-                c = c.getSuperclass();
-                tableInfo = TABLE_INFO_CACHE.get(ClassUtils.getUserClass(c).getName());
-            }
-            if(tableInfo!=null){
-                TABLE_INFO_CACHE.put(ClassUtils.getUserClass(clazz).getName(),tableInfo);
-            }else{
-                //找不到了,我也很绝望呀
-                logger.warn(ClassUtils.getUserClass(clazz).getName() + "Not Found TableInfoCache.");
-            }
+        }
+        //尝试获取父类缓存
+        Class c = clazz;
+        while (null == tableInfo && Object.class != c) {
+            c = c.getSuperclass();
+            tableInfo = TABLE_INFO_CACHE.get(ClassUtils.getUserClass(c).getName());
+        }
+        if (null == tableInfo) {
+            //找不到了,我也很绝望呀
+            logger.warn(ClassUtils.getUserClass(clazz).getName() + "Not Found TableInfoCache.");
+        } else {
+            TABLE_INFO_CACHE.put(ClassUtils.getUserClass(clazz).getName(), tableInfo);
         }
         return tableInfo;
     }
@@ -289,7 +288,7 @@ public class TableInfoHelper {
          * 注入
          */
         TABLE_INFO_CACHE.put(clazz.getName(), tableInfo);
-        LambdaCache.put(clazz,tableInfo);
+        LambdaCache.put(clazz, tableInfo);
         return tableInfo;
     }
 
