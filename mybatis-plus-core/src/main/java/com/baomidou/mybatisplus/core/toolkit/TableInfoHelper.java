@@ -150,7 +150,24 @@ public class TableInfoHelper {
      * @return
      */
     public static TableInfo getTableInfo(Class<?> clazz) {
-        return TABLE_INFO_CACHE.get(ClassUtils.getUserClass(clazz).getName());
+        TableInfo tableInfo = TABLE_INFO_CACHE.get(ClassUtils.getUserClass(clazz).getName());
+        if(tableInfo!=null){
+            return tableInfo;
+        }else{
+            //尝试获取父类缓存
+            Class c = clazz;
+            while (tableInfo==null && Object.class!=c){
+                c = c.getSuperclass();
+                tableInfo = TABLE_INFO_CACHE.get(ClassUtils.getUserClass(c).getName());
+            }
+            if(tableInfo!=null){
+                TABLE_INFO_CACHE.put(ClassUtils.getUserClass(clazz).getName(),tableInfo);
+            }else{
+                //找不到了,我也很绝望呀
+                logger.warn(ClassUtils.getUserClass(clazz).getName() + "Not Found TableInfoCache.");
+            }
+        }
+        return tableInfo;
     }
 
     /**
