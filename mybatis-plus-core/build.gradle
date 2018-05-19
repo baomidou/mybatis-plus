@@ -6,17 +6,14 @@ dependencies {
     compile project(":mybatis-plus-annotation")
     compile rootProject.ext.dependencies["mybatis"]
     compile rootProject.ext.dependencies["jsqlparser"]
-    compileOnly rootProject.ext.dependencies["lombok"]
     compile group: 'com.trigersoft', name: 'jaque', version: '2.1.2'
 
     testCompile rootProject.ext.dependencies["mybatis-ehcache"]
     testCompile rootProject.ext.dependencies["logback-classic"]
-    testCompile rootProject.ext.dependencies["junit"]
     testCompile(rootProject.ext.dependencies["commons-dbcp2"]) {
         exclude module: "commons-logging"
     }
     testCompile rootProject.ext.dependencies["aspectjweaver"]
-    testCompile rootProject.ext.dependencies["lombok"]
     testCompile rootProject.ext.dependencies["hikaricp"]
     testCompile rootProject.ext.dependencies["druid"]
     testCompile rootProject.ext.dependencies["fastjson"]

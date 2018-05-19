@@ -10,5 +10,4 @@ dependencies {
     testCompile rootProject.ext.dependencies["h2"]
     testCompile rootProject.ext.dependencies["mysql"]
     testCompile rootProject.ext.dependencies["logback-classic"]
-    testCompile rootProject.ext.dependencies["junit"]
 }

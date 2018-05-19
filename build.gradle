@@ -27,7 +27,7 @@ ext {
         //test
         "spring-test"           : "org.springframework:spring-test:${springVersion}",
         "junit"                 : "junit:junit:4.12",
-        "lombok"                : "org.projectlombok:lombok:1.16.16",
+        "lombok"                : "org.projectlombok:lombok:1.16.20",
         "fastjson"              : "com.alibaba:fastjson:1.2.37",
         "tomcatjdbc"            : "org.apache.tomcat:tomcat-jdbc:9.0.2",
         //datasource
@@ -87,6 +87,11 @@ subprojects {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "http://www.cameliatk.jp/maven2/repository/thirdparty" }
         jcenter()
+    }
+
+    dependencies {
+        compileOnly dependencies["lombok"]
+        testCompile dependencies["junit"]
     }
 
     task sourcesJar(type: Jar, dependsOn: classes) {

@@ -13,8 +13,6 @@ dependencies {
 
     testCompile 'javax.servlet:servlet-api:2.5'
 
-    testCompile 'junit:junit:4.12'
-    testCompile rootProject.ext.dependencies["lombok"]
     testCompile rootProject.ext.dependencies["spring-test"]
     testCompile rootProject.ext.dependencies["fastjson"]
 
