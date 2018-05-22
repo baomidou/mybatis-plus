@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.generator.config;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -72,9 +73,9 @@ public class GlobalConfig {
     private boolean baseResultMap = false;
 
     /**
-     * 是否使用 java8 的时间类型
+     * 时间类型对应策略
      */
-    private boolean useJava8Time = true;
+    private DateType dateType = DateType.TIME_PACK;
 
     /**
      * 开启 baseColumnList

@@ -57,20 +57,33 @@ public class MySqlTypeConvert implements ITypeConvert {
         } else if (t.contains("json") || t.contains("enum")) {
             return DbColumnType.STRING;
         } else if (t.contains("date") || t.contains("time") || t.contains("year")) {
-            if (globalConfig.isUseJava8Time()) {
-                switch (t) {
-                    case "date":
-                        return DbColumnType.LOCAL_DATE;
-                    case "time":
-                        return DbColumnType.LOCAL_TIME;
-                    default:
-                        return DbColumnType.LOCAL_DATE_TIME;
-                }
-            } else {
-                return DbColumnType.DATE;
+            switch (globalConfig.getDateType()) {
+                case ONLY_DATE:
+                    return DbColumnType.DATE;
+                case SQL_PACK:
+                    switch (t) {
+                        case "date":
+                            return DbColumnType.DATE_SQL;
+                        case "time":
+                            return DbColumnType.TIME;
+                        case "year"://todo 这个year可能有bug
+                            return DbColumnType.DATE_SQL;
+                        default:
+                            return DbColumnType.TIMESTAMP;
+                    }
+                case TIME_PACK:
+                    switch (t) {
+                        case "date":
+                            return DbColumnType.LOCAL_DATE;
+                        case "time":
+                            return DbColumnType.LOCAL_TIME;
+                        case "year":
+                            return DbColumnType.YEAR;
+                        default:
+                            return DbColumnType.LOCAL_DATE_TIME;
+                    }
             }
         }
         return DbColumnType.STRING;
     }
-
 }
