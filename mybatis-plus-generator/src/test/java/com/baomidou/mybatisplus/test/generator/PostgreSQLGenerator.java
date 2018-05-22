@@ -59,9 +59,9 @@ public class PostgreSQLGenerator extends GeneratorTest {
         dsc.setTypeConvert(new OracleTypeConvert() {
             // 自定义数据库表字段类型转换【可选】
             @Override
-            public DbColumnType processTypeConvert(String fieldType) {
+            public DbColumnType processTypeConvert(GlobalConfig globalConfig, String fieldType) {
                 System.out.println("转换类型：" + fieldType);
-                return super.processTypeConvert(fieldType);
+                return super.processTypeConvert(globalConfig, fieldType);
             }
         });
         // 自定义数据库信息查询

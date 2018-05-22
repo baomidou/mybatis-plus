@@ -84,12 +84,12 @@ public class MysqlGenerator extends GeneratorTest {
                 .setTypeConvert(new MySqlTypeConvert() {
                     // 自定义数据库表字段类型转换【可选】
                     @Override
-                    public DbColumnType processTypeConvert(String fieldType) {
+                    public DbColumnType processTypeConvert(GlobalConfig globalConfig, String fieldType) {
                         System.out.println("转换类型：" + fieldType);
                         // if ( fieldType.toLowerCase().contains( "tinyint" ) ) {
                         //    return DbColumnType.BOOLEAN;
                         // }
-                        return super.processTypeConvert(fieldType);
+                        return super.processTypeConvert(globalConfig, fieldType);
                     }
                 })
                 .setDriverName("com.mysql.jdbc.Driver")
