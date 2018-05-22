@@ -20,16 +20,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.generator.config.converts.MySqlTypeConvert;
-import com.baomidou.mybatisplus.generator.config.converts.OracleTypeConvert;
-import com.baomidou.mybatisplus.generator.config.converts.PostgreSqlTypeConvert;
-import com.baomidou.mybatisplus.generator.config.converts.SqlServerTypeConvert;
-import com.baomidou.mybatisplus.generator.config.querys.DB2Query;
-import com.baomidou.mybatisplus.generator.config.querys.MySqlQuery;
-import com.baomidou.mybatisplus.generator.config.querys.OracleQuery;
-import com.baomidou.mybatisplus.generator.config.querys.PostgreSqlQuery;
-import com.baomidou.mybatisplus.generator.config.querys.SqlServerQuery;
+import com.baomidou.mybatisplus.generator.config.converts.*;
+import com.baomidou.mybatisplus.generator.config.querys.*;
 import com.baomidou.mybatisplus.generator.config.rules.DbType;
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * <p>
@@ -39,6 +34,8 @@ import com.baomidou.mybatisplus.generator.config.rules.DbType;
  * @author YangHu
  * @since 2016/8/30
  */
+@Data
+@Accessors(chain = true)
 public class DataSourceConfig {
 
     /**
@@ -89,6 +86,9 @@ public class DataSourceConfig {
                 case DB2:
                     dbQuery = new DB2Query();
                     break;
+                case MARIADB:
+                    dbQuery = new MariadbQuery();
+                    break;
                 default:
                     // 默认 MYSQL
                     dbQuery = new MySqlQuery();
@@ -96,11 +96,6 @@ public class DataSourceConfig {
             }
         }
         return dbQuery;
-    }
-
-    public DataSourceConfig setDbQuery(IDbQuery dbQuery) {
-        this.dbQuery = dbQuery;
-        return this;
     }
 
     /**
@@ -116,24 +111,15 @@ public class DataSourceConfig {
                 dbType = DbType.ORACLE;
             } else if (driverName.contains("postgresql")) {
                 dbType = DbType.POSTGRE_SQL;
+            } else if (driverName.contains("mariadb")) {
+                dbType = DbType.MARIADB;
+            } else if (driverName.contains("db2")) {
+                dbType = DbType.DB2;
             } else {
                 throw new MybatisPlusException("Unknown type of database!");
             }
         }
         return dbType;
-    }
-
-    public DataSourceConfig setDbType(DbType dbType) {
-        this.dbType = dbType;
-        return this;
-    }
-
-    public String getSchemaname() {
-        return schemaname;
-    }
-
-    public void setSchemaname(String schemaname) {
-        this.schemaname = schemaname;
     }
 
     public ITypeConvert getTypeConvert() {
@@ -148,6 +134,12 @@ public class DataSourceConfig {
                 case POSTGRE_SQL:
                     typeConvert = new PostgreSqlTypeConvert();
                     break;
+                case MARIADB:
+                    typeConvert = new MySqlTypeConvert();
+                    break;
+                case DB2:
+                    typeConvert = new DB2TypeConvert();
+                    break;
                 default:
                     // 默认 MYSQL
                     typeConvert = new MySqlTypeConvert();
@@ -155,11 +147,6 @@ public class DataSourceConfig {
             }
         }
         return typeConvert;
-    }
-
-    public DataSourceConfig setTypeConvert(ITypeConvert typeConvert) {
-        this.typeConvert = typeConvert;
-        return this;
     }
 
     /**
@@ -177,41 +164,4 @@ public class DataSourceConfig {
         }
         return conn;
     }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public DataSourceConfig setUrl(String url) {
-        this.url = url;
-        return this;
-    }
-
-    public String getDriverName() {
-        return driverName;
-    }
-
-    public DataSourceConfig setDriverName(String driverName) {
-        this.driverName = driverName;
-        return this;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public DataSourceConfig setUsername(String username) {
-        this.username = username;
-        return this;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public DataSourceConfig setPassword(String password) {
-        this.password = password;
-        return this;
-    }
-
 }
