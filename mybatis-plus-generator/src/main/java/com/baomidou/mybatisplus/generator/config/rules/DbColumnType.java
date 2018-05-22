@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.generator.config.rules;
 
+import lombok.Getter;
+
 /**
  * <p>
  * 表字段类型
@@ -23,6 +25,7 @@ package com.baomidou.mybatisplus.generator.config.rules;
  * @author hubin
  * @since 2017-01-11
  */
+@Getter
 public enum DbColumnType {
     // 基本类型
     BASE_INT("int", null),
@@ -74,13 +77,4 @@ public enum DbColumnType {
         this.type = type;
         this.pkg = pkg;
     }
-
-    public String getType() {
-        return this.type;
-    }
-
-    public String getPkg() {
-        return this.pkg;
-    }
-
 }
