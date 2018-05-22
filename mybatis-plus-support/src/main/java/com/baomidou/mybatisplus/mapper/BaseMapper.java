@@ -121,8 +121,8 @@ public interface BaseMapper<T> {
      * 根据 whereEntity 条件，更新记录
      * </p>
      *
-     * @param entity  实体对象
-     * @param wrapper 实体对象封装操作类（可以为 null）
+     * @param entity  实体对象(更新的数据， name='Abc')
+     * @param wrapper 实体对象封装操作类（更新条件，可以为 null）
      * @return
      */
     Integer update(@Param("et") T entity, @Param("ew") Wrapper<T> wrapper);
