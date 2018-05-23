@@ -90,8 +90,8 @@ subprojects {
     }
 
     dependencies {
-        compileOnly dependencies["lombok"]
-        testCompile dependencies["junit"]
+        compileOnly rootProject.ext.dependencies["lombok"]
+        testCompile rootProject.ext.dependencies["junit"]
     }
 
     task sourcesJar(type: Jar, dependsOn: classes) {
