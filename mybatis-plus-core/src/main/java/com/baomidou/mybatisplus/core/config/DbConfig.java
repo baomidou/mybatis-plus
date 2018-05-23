@@ -6,9 +6,12 @@ import com.baomidou.mybatisplus.core.enums.IDBType;
 import com.baomidou.mybatisplus.core.handlers.SqlReservedWordsHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 
+import lombok.Data;
+
 /**
  * 数据库相关配置
  */
+@Data
 public class DbConfig {
 
     /**
@@ -57,91 +60,14 @@ public class DbConfig {
     private SqlReservedWordsHandler reservedWordsHandler = SqlReservedWordsHandler.getInstance();
 
 
-    public IDBType getDbType() {
-        return dbType;
-    }
-
-    public void setDbType(IDBType dbType) {
-        this.dbType = dbType;
-    }
-
-    public IdType getIdType() {
-        return idType;
-    }
-
-    public void setIdType(int idType) {
+    public DbConfig setIdType(int idType) {
         this.idType = IdType.getIdType(idType);
+        return this;
     }
 
-    public String getTablePrefix() {
-        return tablePrefix;
-    }
-
-    public void setTablePrefix(String tablePrefix) {
-        this.tablePrefix = tablePrefix;
-    }
-
-    public boolean isTableUnderline() {
-        return tableUnderline;
-    }
-
-    public void setTableUnderline(boolean tableUnderline) {
-        this.tableUnderline = tableUnderline;
-    }
-
-    public boolean isColumnUnderline() {
-        return columnUnderline;
-    }
-
-    public void setColumnUnderline(boolean columnUnderline) {
-        this.columnUnderline = columnUnderline;
-    }
-
-    public boolean isCapitalMode() {
-        return capitalMode;
-    }
-
-    public void setCapitalMode(boolean capitalMode) {
-        this.capitalMode = capitalMode;
-    }
-
-    public IKeyGenerator getKeyGenerator() {
-        return keyGenerator;
-    }
-
-    public void setKeyGenerator(IKeyGenerator keyGenerator) {
-        this.keyGenerator = keyGenerator;
-    }
-
-    public String getLogicDeleteValue() {
-        return logicDeleteValue;
-    }
-
-    public void setLogicDeleteValue(String logicDeleteValue) {
-        this.logicDeleteValue = logicDeleteValue;
-    }
-
-    public String getLogicNotDeleteValue() {
-        return logicNotDeleteValue;
-    }
-
-    public void setLogicNotDeleteValue(String logicNotDeleteValue) {
-        this.logicNotDeleteValue = logicNotDeleteValue;
-    }
-
-    public FieldStrategy getFieldStrategy() {
-        return fieldStrategy;
-    }
-
-    public void setFieldStrategy(int fieldStrategy) {
+    public DbConfig setFieldStrategy(int fieldStrategy) {
         this.fieldStrategy = FieldStrategy.getFieldStrategy(fieldStrategy);
+        return this;
     }
 
-    public SqlReservedWordsHandler getReservedWordsHandler() {
-        return reservedWordsHandler;
-    }
-
-    public void setReservedWordsHandler(SqlReservedWordsHandler reservedWordsHandler) {
-        this.reservedWordsHandler = reservedWordsHandler;
-    }
 }
