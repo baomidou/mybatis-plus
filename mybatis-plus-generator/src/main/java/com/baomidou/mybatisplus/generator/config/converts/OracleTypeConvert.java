@@ -31,27 +31,34 @@ public class OracleTypeConvert implements ITypeConvert {
 
     @Override
     public DbColumnType processTypeConvert(GlobalConfig globalConfig, String fieldType) {
-        String t = fieldType.toUpperCase();
-        if (t.contains("CHAR")) {
+        String t = fieldType.toLowerCase();
+        if (t.contains("char")) {
             return DbColumnType.STRING;
-        } else if (t.contains("DATE") || t.contains("TIMESTAMP")) {
-            return DbColumnType.DATE;
-        } else if (t.contains("NUMBER")) {
-            if (t.matches("NUMBER\\(+\\d\\)")) {
+        } else if (t.contains("date") || t.contains("timestamp")) {
+            switch (globalConfig.getDateType()) {
+                case ONLY_DATE:
+                    return DbColumnType.DATE;
+                case SQL_PACK:
+                    return DbColumnType.TIMESTAMP;
+                case TIME_PACK:
+                    return DbColumnType.LOCAL_DATE_TIME;
+            }
+        } else if (t.contains("number")) {
+            if (t.matches("number\\(+\\d\\)")) {
                 return DbColumnType.INTEGER;
-            } else if (t.matches("NUMBER\\(+\\d{2}+\\)")) {
+            } else if (t.matches("number\\(+\\d{2}+\\)")) {
                 return DbColumnType.LONG;
             }
             return DbColumnType.DOUBLE;
-        } else if (t.contains("FLOAT")) {
+        } else if (t.contains("float")) {
             return DbColumnType.FLOAT;
         } else if (t.contains("clob")) {
             return DbColumnType.CLOB;
-        } else if (t.contains("BLOB")) {
-            return DbColumnType.OBJECT;
+        } else if (t.contains("blob")) {
+            return DbColumnType.BLOB;
         } else if (t.contains("binary")) {
             return DbColumnType.BYTE_ARRAY;
-        } else if (t.contains("RAW")) {
+        } else if (t.contains("raw")) {
             return DbColumnType.BYTE_ARRAY;
         }
         return DbColumnType.STRING;

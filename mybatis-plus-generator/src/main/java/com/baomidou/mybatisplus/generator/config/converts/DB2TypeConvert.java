@@ -31,28 +31,46 @@ public class DB2TypeConvert implements ITypeConvert {
 
     @Override
     public DbColumnType processTypeConvert(GlobalConfig globalConfig, String fieldType) {
-        String t = fieldType.toUpperCase();
-        if (t.contains("CHAR")) {
+        String t = fieldType.toLowerCase();
+        if (t.contains("char")) {
             return DbColumnType.STRING;
-        } else if (t.contains("DATE") || t.contains("TIMESTAMP")) {
-            return DbColumnType.DATE;
-        } else if (t.contains("NUMBER")) {
-            if (t.matches("NUMBER\\(+\\d\\)")) {
-                return DbColumnType.INTEGER;
-            } else if (t.matches("NUMBER\\(+\\d{2}+\\)")) {
-                return DbColumnType.LONG;
+        } else if (t.contains("date") || t.contains("time")) {
+            switch (globalConfig.getDateType()) {
+                case ONLY_DATE:
+                    return DbColumnType.DATE;
+                case SQL_PACK:
+                    switch (t) {
+                        case "time":
+                            return DbColumnType.TIME;
+                        case "date":
+                            return DbColumnType.DATE_SQL;
+                        case "timestamp":
+                            return DbColumnType.TIMESTAMP;
+                    }
+                case TIME_PACK:
+                    switch (t) {
+                        case "time":
+                            return DbColumnType.LOCAL_TIME;
+                        case "date":
+                            return DbColumnType.LOCAL_DATE;
+                        case "timestamp":
+                            return DbColumnType.LOCAL_DATE_TIME;
+                    }
             }
-            return DbColumnType.DOUBLE;
-        } else if (t.contains("FLOAT")) {
+        } else if (t.contains("float")) {//todo float类型真多,心累,慢慢来
             return DbColumnType.FLOAT;
+        } else if (t.contains("double")) {
+            return DbColumnType.DOUBLE;
         } else if (t.contains("clob")) {
             return DbColumnType.CLOB;
-        } else if (t.contains("BLOB")) {
+        } else if (t.contains("blob")) {
             return DbColumnType.OBJECT;
         } else if (t.contains("binary")) {
             return DbColumnType.BYTE_ARRAY;
-        } else if (t.contains("RAW")) {
+        } else if (t.contains("raw")) {
             return DbColumnType.BYTE_ARRAY;
+        } else if (t.contains("boolean")) {
+            return DbColumnType.BOOLEAN;
         }
         return DbColumnType.STRING;
     }
