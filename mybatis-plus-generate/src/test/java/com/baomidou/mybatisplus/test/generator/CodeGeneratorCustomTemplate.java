@@ -1,25 +1,31 @@
 package com.baomidou.mybatisplus.test.generator;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Test;
 
 import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
+import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.PackageConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
+import com.baomidou.mybatisplus.generator.config.TemplateConfig;
 import com.baomidou.mybatisplus.generator.config.rules.DbType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 
 /**
  * <p>
- * 代码生成器 示例
+ * 自定义模板，生成代码
+ * 仅示例了mapper.xml文件
  * </p>
  *
- * @author K神
- * @date 2017/12/29
+ * @author yuxiaobin
+ * @date 2018/5/23
  */
-public class CodeGeneratorTest {
+public class CodeGeneratorCustomTemplate {
 
     /**
      * 是否强制带上注解
@@ -40,41 +46,7 @@ public class CodeGeneratorTest {
      */
     boolean serviceClassNameStartWithI = true;
 
-    @Test
-    public void generateCode() {
-        String packageName = "com.baomidou.springboot";
-        enableTableFieldAnnotation = false;
-        tableIdType = null;
-        generateByTables(packageName + ".noannoidtype", "user");
-        enableTableFieldAnnotation = true;
-        tableIdType = null;
-        generateByTables(packageName + ".noidtype", "user");
-        enableTableFieldAnnotation = false;
-        tableIdType = IdType.INPUT;
-        generateByTables(packageName + ".noanno", "user");
-        enableTableFieldAnnotation = true;
-        tableIdType = IdType.INPUT;
-        generateByTables(packageName + ".both", "user");
-
-        fieldPrefix = new String[]{"test"};
-        enableTableFieldAnnotation = false;
-        tableIdType = null;
-        generateByTables(packageName + ".noannoidtypewithprefix", "user");
-        enableTableFieldAnnotation = true;
-        tableIdType = null;
-        generateByTables(packageName + ".noidtypewithprefix", "user");
-        enableTableFieldAnnotation = false;
-        tableIdType = IdType.INPUT;
-        generateByTables(packageName + ".noannowithprefix", "user");
-        enableTableFieldAnnotation = true;
-        tableIdType = IdType.INPUT;
-        generateByTables(packageName + ".withannoidtypeprefix", "user");
-
-        serviceClassNameStartWithI = false;
-        generateByTables(packageName, "user");
-    }
-
-    private void generateByTables(String packageName, String... tableNames) {
+    private void generateByTablesWithInjectConfig(String packageName, String... tableNames) {
         GlobalConfig config = new GlobalConfig();
         String dbUrl = "jdbc:mysql://localhost:3306/mybatis-plus";
         DataSourceConfig dataSourceConfig = new DataSourceConfig();
@@ -85,7 +57,7 @@ public class CodeGeneratorTest {
             .setDriverName("com.mysql.jdbc.Driver");
         StrategyConfig strategyConfig = new StrategyConfig();
         strategyConfig
-//            .setVersionFieldName("version")
+            .setVersionFieldName("version")
             .setCapitalMode(true)
             .setEntityLombokModel(false)
             .setDbColumnUnderline(true)
@@ -96,13 +68,25 @@ public class CodeGeneratorTest {
         config.setActiveRecord(false)
             .setIdType(tableIdType)
             .setAuthor("K神带你飞")
-//            .setBaseResultMap(true)
+            .setBaseResultMap(true)
             .setOutputDir("d:\\codeGen")
             .setFileOverride(true);
         if (!serviceClassNameStartWithI) {
             config.setServiceName("%sService");
         }
+        TemplateConfig templateConfig = new TemplateConfig();
+        templateConfig.setXml("/templates/mapper2.xml");
+        InjectionConfig injectionConfig = new InjectionConfig() {
+            @Override
+            public void initMap() {//自定义参数
+                Map<String, Object> map = new HashMap<>();
+                map.put("abc", this.getConfig().getGlobalConfig().getAuthor() + "-mp");
+                this.setMap(map);
+            }
+        };
         new AutoGenerator().setGlobalConfig(config)
+            .setTemplate(templateConfig)//自定义模板路径
+            .setCfg(injectionConfig)
             .setDataSource(dataSourceConfig)
             .setStrategy(strategyConfig)
             .setPackageInfo(
@@ -113,4 +97,12 @@ public class CodeGeneratorTest {
             ).execute();
     }
 
+
+    @Test
+    public void generateCodeWithInjectConfig() {
+        String packageName = "com.baomidou.springboot";
+        enableTableFieldAnnotation = false;
+        tableIdType = null;
+        generateByTablesWithInjectConfig(packageName, "user");
+    }
 }
