@@ -1,13 +1,18 @@
 package com.baomidou.mybatisplus.test.generator;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Test;
 
 import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
+import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.PackageConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
+import com.baomidou.mybatisplus.generator.config.TemplateConfig;
 import com.baomidou.mybatisplus.generator.config.rules.DbType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 
@@ -85,6 +90,7 @@ public class CodeGeneratorTest {
             .setDriverName("com.mysql.jdbc.Driver");
         StrategyConfig strategyConfig = new StrategyConfig();
         strategyConfig
+//            .setVersionFieldName("version")
             .setCapitalMode(true)
             .setEntityLombokModel(false)
             .setDbColumnUnderline(true)
@@ -95,6 +101,7 @@ public class CodeGeneratorTest {
         config.setActiveRecord(false)
             .setIdType(tableIdType)
             .setAuthor("K神带你飞")
+//            .setBaseResultMap(true)
             .setOutputDir("d:\\codeGen")
             .setFileOverride(true);
         if (!serviceClassNameStartWithI) {
@@ -109,5 +116,66 @@ public class CodeGeneratorTest {
                     .setController("controller")
                     .setEntity("entity")
             ).execute();
+    }
+
+
+    private void generateByTablesWithInjectConfig(String packageName, String... tableNames) {
+        GlobalConfig config = new GlobalConfig();
+        String dbUrl = "jdbc:mysql://localhost:3306/mybatis-plus";
+        DataSourceConfig dataSourceConfig = new DataSourceConfig();
+        dataSourceConfig.setDbType(DbType.MYSQL)
+            .setUrl(dbUrl)
+            .setUsername("root")
+            .setPassword("")
+            .setDriverName("com.mysql.jdbc.Driver");
+        StrategyConfig strategyConfig = new StrategyConfig();
+        strategyConfig
+            .setVersionFieldName("version")
+            .setCapitalMode(true)
+            .setEntityLombokModel(false)
+            .setDbColumnUnderline(true)
+            .setNaming(NamingStrategy.underline_to_camel)
+            .entityTableFieldAnnotationEnable(enableTableFieldAnnotation)
+            .fieldPrefix(fieldPrefix)//test_id -> id, test_type -> type
+            .setInclude(tableNames);//修改替换成你需要的表名，多个表名传数组
+        config.setActiveRecord(false)
+            .setIdType(tableIdType)
+            .setAuthor("K神带你飞")
+            .setBaseResultMap(true)
+            .setOutputDir("d:\\codeGen")
+            .setFileOverride(true);
+        if (!serviceClassNameStartWithI) {
+            config.setServiceName("%sService");
+        }
+        TemplateConfig templateConfig = new TemplateConfig();
+        templateConfig.setXml("/templates/mapper2.xml");
+        InjectionConfig injectionConfig = new InjectionConfig() {
+            @Override
+            public void initMap() {
+                Map<String, Object> map = new HashMap<>();
+                map.put("abc", this.getConfig().getGlobalConfig().getAuthor() + "-mp");
+                this.setMap(map);
+            }
+        };
+        new AutoGenerator().setGlobalConfig(config)
+            .setTemplate(templateConfig)
+            .setCfg(injectionConfig)
+            .setDataSource(dataSourceConfig)
+            .setStrategy(strategyConfig)
+            .setPackageInfo(
+                new PackageConfig()
+                    .setParent(packageName)
+                    .setController("controller")
+                    .setEntity("entity")
+            ).execute();
+    }
+
+
+    @Test
+    public void generateCodeWithInjectConfig() {
+        String packageName = "com.baomidou.springboot";
+        enableTableFieldAnnotation = false;
+        tableIdType = null;
+        generateByTablesWithInjectConfig(packageName, "user");
     }
 }
