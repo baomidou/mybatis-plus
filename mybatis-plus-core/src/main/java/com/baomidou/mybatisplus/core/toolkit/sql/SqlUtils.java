@@ -36,7 +36,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 public class SqlUtils {
 
     private final static SqlFormatter SQL_FORMATTER = new SqlFormatter();
-    public static ISqlParser COUNT_SQL_PARSER = null;
+    private static ISqlParser COUNT_SQL_PARSER = null;
     private static Class<ISqlParser> DEFAULT_CLASS = null;
 
     static {

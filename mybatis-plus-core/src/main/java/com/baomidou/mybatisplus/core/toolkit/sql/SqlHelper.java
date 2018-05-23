@@ -45,6 +45,8 @@ import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 public class SqlHelper {
 
     private static final Log logger = LogFactory.getLog(SqlHelper.class);
+    public static SqlSessionFactory FACTORY;
+
 
     /**
      * <p>

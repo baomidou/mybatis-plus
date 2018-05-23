@@ -19,7 +19,7 @@ import com.baomidou.mybatisplus.core.enums.IDBType;
  */
 public abstract class SqlReservedWordsHandler {
 
-    public static final Set<String> RESERVED_WORDS;
+    public static final Set<String> RESERVED_WORDS = new HashSet<>();
 
     static {
         String[] words = {"AUDIT", "VOLUMES", "MINVALUE", "STATIC", "FLOOR", "CATALOG", "YEAR", "TRIGGER_CATALOG", "WLM",
@@ -128,7 +128,6 @@ public abstract class SqlReservedWordsHandler {
             "DEC", "CASCADED", "ENCRYPTED", "CONTAINSTABLE", "DYNAMIC_FUNCTION", "CONDITION_NUMBER", "BEFORE", "DB2GENERAL",
             "DECLARE", "SUPERUSER", "WHILE"};
 
-        RESERVED_WORDS = new HashSet<>(words.length);
         Collections.addAll(RESERVED_WORDS, words);
     }
 

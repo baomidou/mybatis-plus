@@ -188,8 +188,8 @@ public class TenantSqlParser extends AbstractJsqlParser {
     protected void processFromItem(FromItem fromItem) {
         if (fromItem instanceof SubJoin) {
             SubJoin subJoin = (SubJoin) fromItem;
-            if (subJoin.getJoin() != null) {
-                processJoin(subJoin.getJoin());
+            if (subJoin.getJoinList() != null) {
+                subJoin.getJoinList().forEach(j -> processJoin(j));
             }
             if (subJoin.getLeft() != null) {
                 processFromItem(subJoin.getLeft());

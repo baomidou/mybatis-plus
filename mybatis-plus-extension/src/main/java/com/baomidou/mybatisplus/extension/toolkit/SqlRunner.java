@@ -37,7 +37,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  * @author Caratacus
  * @Date 2016-12-11
  */
-public class SqlRunner extends ISqlRunner {
+public class SqlRunner implements ISqlRunner {
 
     // 单例Query
     public static final SqlRunner DEFAULT = new SqlRunner();
@@ -48,7 +48,7 @@ public class SqlRunner extends ISqlRunner {
     private Class<?> clazz;
 
     public SqlRunner() {
-        this.sqlSessionFactory = FACTORY;
+        this.sqlSessionFactory = SqlHelper.FACTORY;
     }
 
     public SqlRunner(Class<?> clazz) {
@@ -65,7 +65,7 @@ public class SqlRunner extends ISqlRunner {
     public static SqlRunner db() {
         // 初始化的静态变量 还是有前后加载的问题 该判断只会执行一次
         if (DEFAULT.sqlSessionFactory == null) {
-            DEFAULT.sqlSessionFactory = FACTORY;
+            DEFAULT.sqlSessionFactory = SqlHelper.FACTORY;
         }
         return DEFAULT;
     }
@@ -178,7 +178,7 @@ public class SqlRunner extends ISqlRunner {
      * <p/>
      */
     private SqlSession sqlSession() {
-        return (clazz != null) ? SqlHelper.sqlSession(clazz) : GlobalConfigUtils.getSqlSession(FACTORY.getConfiguration());
+        return (clazz != null) ? SqlHelper.sqlSession(clazz) : GlobalConfigUtils.getSqlSession(SqlHelper.FACTORY.getConfiguration());
     }
 
 }

@@ -377,13 +377,13 @@ public abstract class AbstractMethod {
         // 验证逻辑
         if (fieldStrategy == FieldStrategy.NOT_EMPTY) {
             if (StringUtils.isCharSequence(propertyType)) {
-                return String.format("\n\t<if test=\"%s!=null and %s!=''\">", property, property);
+                return String.format("<if test=\"%s!=null and %s!=''\">", property, property);
             } else {
-                return String.format("\n\t<if test=\"%s!=null \">", property);
+                return String.format("<if test=\"%s!=null \">", property);
             }
         } else {
             // FieldStrategy.NOT_NULL
-            return String.format("\n\t<if test=\"%s!=null\">", property);
+            return String.format("<if test=\"%s!=null\">", property);
         }
     }
 

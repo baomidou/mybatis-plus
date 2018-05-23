@@ -57,7 +57,7 @@ public class TableField {
             this.convert = false;
         } else {
             // 转换字段
-            if (StrategyConfig.DB_COLUMN_UNDERLINE) {
+            if (strategyConfig.isDbColumnUnderline()) {
                 // 包含大写处理
                 if (StringUtils.containsUpperCase(name)) {
                     this.convert = true;

@@ -34,7 +34,7 @@ public class StrategyConfig {
     /**
      * 表名、字段名、是否使用下划线命名（默认 false）
      */
-    public static boolean DB_COLUMN_UNDERLINE = false;
+    private boolean dbColumnUnderline = false;
 
     /**
      * 是否大写命名
@@ -164,8 +164,12 @@ public class StrategyConfig {
      */
     private List<TableFill> tableFillList = null;
 
+    public boolean isDbColumnUnderline() {
+        return dbColumnUnderline;
+    }
+
     public StrategyConfig setDbColumnUnderline(boolean dbColumnUnderline) {
-        DB_COLUMN_UNDERLINE = dbColumnUnderline;
+        this.dbColumnUnderline = dbColumnUnderline;
         return this;
     }
 

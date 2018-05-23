@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.assist.ISqlRunner;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
 
 /**
  * <p>
@@ -64,8 +65,8 @@ public class Column implements Serializable {
             return StringUtils.EMPTY;
         }
         String quote = null;
-        if (isEscape() && ISqlRunner.FACTORY != null) {
-            GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(ISqlRunner.FACTORY.getConfiguration());
+        if (isEscape() && SqlHelper.FACTORY != null) {
+            GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(SqlHelper.FACTORY.getConfiguration());
             // TODO 这里调整了转义
             // quote = globalConfig.getIdentifierQuote() == null ? globalConfig.getDbType().getQuote() : globalConfig.getIdentifierQuote();
         }

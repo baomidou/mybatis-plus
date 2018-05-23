@@ -65,6 +65,7 @@ import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.enums.IEnum;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.extension.toolkit.PackageHelper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlRunner;
@@ -563,14 +564,14 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 //        GlobalConfigUtils.setMetaData(dataSource, globalConfig);
         try (Connection connection = dataSource.getConnection()) {
             // 设置全局关键字
-            globalConfig.setSqlKeywords(connection.getMetaData().getSQLKeywords());
-            globalConfig.setDbType(JdbcUtils.getDbType(connection.getMetaData().getURL()));
+            //globalConfig.getDbConfig().setSqlKeywords(connection.getMetaData().getSQLKeywords());
+            globalConfig.getDbConfig().setDbType(JdbcUtils.getDbType(connection.getMetaData().getURL()));
         } catch (Exception e) {
             throw new MybatisPlusException("Error: GlobalConfigUtils setMetaData Fail !  Cause:" + e);
         }
         SqlSessionFactory sqlSessionFactory = this.sqlSessionFactoryBuilder.build(configuration);
         // TODO SqlRunner
-        SqlRunner.FACTORY = sqlSessionFactory;
+        SqlHelper.FACTORY = sqlSessionFactory;
         // TODO 缓存 sqlSessionFactory
         globalConfig.setSqlSessionFactory(sqlSessionFactory);
         // TODO 设置全局参数属性

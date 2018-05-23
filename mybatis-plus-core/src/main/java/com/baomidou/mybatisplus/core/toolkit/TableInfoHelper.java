@@ -49,6 +49,7 @@ import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
 import com.baomidou.mybatisplus.core.toolkit.support.LambdaCache;
 import com.baomidou.mybatisplus.core.toolkit.support.Property;
 import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
@@ -475,7 +476,7 @@ public class TableInfoHelper {
         Configuration configuration = sqlSessionFactory.getConfiguration();
         GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
         // SqlRunner
-        ISqlRunner.FACTORY = sqlSessionFactory;
+        SqlHelper.FACTORY = sqlSessionFactory;
         if (globalConfig == null) {
             GlobalConfig defaultCache = GlobalConfigUtils.defaults();
             defaultCache.setSqlSessionFactory(sqlSessionFactory);

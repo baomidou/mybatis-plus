@@ -128,8 +128,9 @@ public class PerformanceInterceptor implements Interceptor {
                     Class<?> clazz = Class.forName(stmtClassName);
                     oracleGetOriginalSqlMethod = getMethodRegular(clazz, "getOriginalSql");
                     if (oracleGetOriginalSqlMethod != null) {
-                        oracleGetOriginalSqlMethod.setAccessible(true);//OraclePreparedStatementWrapper is not a public class, need set this.
-                        if (oracleGetOriginalSqlMethod != null) {
+                        //OraclePreparedStatementWrapper is not a public class, need set this.
+                        oracleGetOriginalSqlMethod.setAccessible(true);
+                        if (null != oracleGetOriginalSqlMethod) {
                             Object stmtSql = oracleGetOriginalSqlMethod.invoke(statement);
                             if (stmtSql != null && stmtSql instanceof String) {
                                 originalSql = (String) stmtSql;
