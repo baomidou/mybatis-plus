@@ -74,8 +74,8 @@ public class CodeGeneratorCustomTemplate {
         if (!serviceClassNameStartWithI) {
             config.setServiceName("%sService");
         }
-        TemplateConfig templateConfig = new TemplateConfig();
-        templateConfig.setXml("/templates/mapper2.xml");
+        TemplateConfig templateConfig = new TemplateConfig()
+            .setXml("/templates/mapper2.xml");//注意：不要带上.vm
         InjectionConfig injectionConfig = new InjectionConfig() {
             @Override
             public void initMap() {//自定义参数
