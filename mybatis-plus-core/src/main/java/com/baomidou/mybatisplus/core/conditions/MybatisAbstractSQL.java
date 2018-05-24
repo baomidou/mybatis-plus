@@ -33,6 +33,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  * @author yanghu
  * @Date 2016-08-22
  */
+@Deprecated
 @SuppressWarnings("serial")
 public abstract class MybatisAbstractSQL<T> implements Serializable {
 

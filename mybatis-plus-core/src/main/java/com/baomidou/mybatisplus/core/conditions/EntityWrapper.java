@@ -16,21 +16,17 @@
 package com.baomidou.mybatisplus.core.conditions;
 
 
-import com.baomidou.mybatisplus.core.metadata.Column;
-import com.baomidou.mybatisplus.core.metadata.Columns;
-import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 
 /**
  * <p>
- * Entity 对象封装操作类，定义T-SQL语法
+ * Entity 对象封装操作类
  * </p>
  *
- * @author hubin , yanghu , Dyang , Caratacus
- * @Date 2016-11-7
+ * @author hubin
+ * @Date 2018-05-25
  */
-@SuppressWarnings("serial")
 public class EntityWrapper<T> extends Wrapper<T> {
 
     /**
@@ -76,90 +72,11 @@ public class EntityWrapper<T> extends Wrapper<T> {
     }
 
     /**
-     * <p>
-     * 使用字符串数组封装sqlSelect，便于在不需要指定 AS 的情况下通过实体类自动生成的列静态字段快速组装 sqlSelect，<br/>
-     * 减少手动录入的错误率
-     * </p>
-     *
-     * @param columns 字段
-     * @return
-     */
-    public Wrapper<T> setSqlSelect(String... columns) {
-        StringBuilder builder = new StringBuilder();
-        for (String column : columns) {
-            if (StringUtils.isNotEmpty(column)) {
-                if (builder.length() > 0) {
-                    builder.append(",");
-                }
-                builder.append(column);
-            }
-        }
-        this.sqlSelect = builder.toString();
-        return this;
-    }
-
-    /**
-     * <p>
-     * 使用对象封装的setsqlselect
-     * </p>
-     *
-     * @param column 字段
-     * @return
-     */
-    public Wrapper<T> setSqlSelect(Column... column) {
-        if (ArrayUtils.isNotEmpty(column)) {
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < column.length; i++) {
-                if (column[i] != null) {
-                    String col = column[i].getColumn();
-                    String as = column[i].getAs();
-                    if (StringUtils.isEmpty(col)) {
-                        continue;
-                    }
-                    builder.append(col).append(as);
-                    if (i < column.length - 1) {
-                        builder.append(",");
-                    }
-                }
-            }
-            this.sqlSelect = builder.toString();
-        }
-        return this;
-    }
-
-    /**
-     * <p>
-     * 使用对象封装的setsqlselect
-     * </p>
-     *
-     * @param columns 字段
-     * @return
-     */
-    public Wrapper<T> setSqlSelect(Columns columns) {
-        Column[] columnArray = columns.getColumns();
-        if (ArrayUtils.isNotEmpty(columnArray)) {
-            setSqlSelect(columnArray);
-        }
-        return this;
-    }
-
-    /**
      * SQL 片段
      */
     @Override
     public String getSqlSegment() {
-        /*
-         * 无条件
-         */
-        String sqlWhere = sql.toString();
-        if (StringUtils.isEmpty(sqlWhere)) {
-            return null;
-        }
-
-        /*
-         * 根据当前实体判断是否需要将WHERE替换成 AND 增加实体不为空但所有属性为空的情况
-         */
-        return isWhere != null ? (isWhere ? sqlWhere : sqlWhere.replaceFirst("WHERE", AND_OR)) : sqlWhere.replaceFirst("WHERE", AND_OR);
+        return null;
     }
 
 }

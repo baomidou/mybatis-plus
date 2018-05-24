@@ -1,7 +1,5 @@
 package com.baomidou.mybatisplus.mapper;
 
-
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.Column;
 import com.baomidou.mybatisplus.core.metadata.Columns;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;

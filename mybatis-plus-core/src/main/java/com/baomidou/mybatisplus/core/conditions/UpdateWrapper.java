@@ -16,8 +16,6 @@
 package com.baomidou.mybatisplus.core.conditions;
 
 
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-
 /**
  * <p>
  * Entity 对象封装操作类，定义T-SQL语法
@@ -26,7 +24,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  * @author hubin , yanghu , Dyang , Caratacus
  * @Date 2016-11-7
  */
-public class UpdateWrapper<T> extends Wrapper<T> {
+public class UpdateWrapper<T> extends Wrapper {
 
     /**
      * 数据库表映射实体类
@@ -71,18 +69,8 @@ public class UpdateWrapper<T> extends Wrapper<T> {
      */
     @Override
     public String getSqlSegment() {
-        /*
-         * 无条件
-         */
-        String sqlWhere = sql.toString();
-        if (StringUtils.isEmpty(sqlWhere)) {
-            return null;
-        }
 
-        /*
-         * 根据当前实体判断是否需要将WHERE替换成 AND 增加实体不为空但所有属性为空的情况
-         */
-        return isWhere != null ? (isWhere ? sqlWhere : sqlWhere.replaceFirst("WHERE", AND_OR)) : sqlWhere.replaceFirst("WHERE", AND_OR);
+        return null;
     }
 
 }

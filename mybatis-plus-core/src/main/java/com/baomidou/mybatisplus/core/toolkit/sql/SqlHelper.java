@@ -197,14 +197,14 @@ public class SqlHelper {
             wrapper = new EntityWrapper<>();
         }
         // 排序 fixed gitee issues/IHF7N
-        if (page.isOpenSort() && page.isSearchCount()) {
-            wrapper.orderAsc(page.getAscs());
-            wrapper.orderDesc(page.getDescs());
-        }
-        // MAP 参数查询
-        if (MapUtils.isNotEmpty(page.getCondition())) {
-            wrapper.allEq(page.getCondition());
-        }
+//        if (page.isOpenSort() && page.isSearchCount()) {
+//            wrapper.orderAsc(page.getAscs());
+//            wrapper.orderDesc(page.getDescs());
+//        }
+//        // MAP 参数查询
+//        if (MapUtils.isNotEmpty(page.getCondition())) {
+//            wrapper.allEq(page.getCondition());
+//        }
         return wrapper;
     }
 
@@ -217,7 +217,7 @@ public class SqlHelper {
      * @return
      */
     public static boolean isEmptyOfWrapper(Wrapper<?> wrapper) {
-        return null == wrapper || wrapper.isEmpty();
+        return null == wrapper;// || wrapper.isEmpty();
     }
 
     /**

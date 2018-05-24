@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
 
-import com.baomidou.mybatisplus.core.conditions.Condition;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.extension.test.CrudTest;

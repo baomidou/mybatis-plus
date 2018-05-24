@@ -25,13 +25,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Assert;
 
-import com.baomidou.mybatisplus.core.conditions.Condition;
 import com.baomidou.mybatisplus.core.conditions.EntityWrapper;
-import com.baomidou.mybatisplus.extension.test.mysql.entity.NotPK;
-import com.baomidou.mybatisplus.extension.test.mysql.entity.Test;
-import com.baomidou.mybatisplus.extension.test.mysql.mapper.NotPKMapper;
-import com.baomidou.mybatisplus.extension.test.mysql.mapper.RoleMapper;
-import com.baomidou.mybatisplus.extension.test.mysql.mapper.TestMapper;
 import com.baomidou.mybatisplus.extension.test.mysql.entity.NotPK;
 import com.baomidou.mybatisplus.extension.test.mysql.entity.Test;
 import com.baomidou.mybatisplus.extension.test.mysql.mapper.NotPKMapper;
