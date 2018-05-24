@@ -2,17 +2,17 @@ package com.baomidou.mybatisplus.core.test.query;
 
 import com.baomidou.mybatisplus.core.test.query.clause.*;
 import com.baomidou.mybatisplus.core.test.query.predicate.*;
-import com.baomidou.mybatisplus.core.test.query.struct.Statement;
+import com.baomidou.mybatisplus.core.test.query.struct.SqlStatement;
 
 import java.util.function.Function;
 
 
 public class Query implements ISqlSegment {
 
-   private final Statement statement;
+   private final SqlStatement statement;
 
    public Query() {
-      this.statement = new Statement();
+      this.statement = new SqlStatement();
    }
 
    /**
@@ -71,8 +71,7 @@ public class Query implements ISqlSegment {
     * @return this
     */
    public Query where(String expression, Function<Condition, Condition> condition) {
-      Where where = new Where(condition
-         .apply(new Condition().apply(expression)));
+      Where where = new Where(condition.apply(new Condition().apply(expression)));
       return add(where);
    }
 

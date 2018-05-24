@@ -1,6 +1,8 @@
 package com.baomidou.mybatisplus.core.test.query.struct;
 
 
-public interface SimpleQueue<T> {
+public interface ISqlQueue<T> {
+
    void enqueue(T element);
+
 }

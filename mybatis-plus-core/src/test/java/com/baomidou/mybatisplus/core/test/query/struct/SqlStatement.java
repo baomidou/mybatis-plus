@@ -8,17 +8,17 @@ import java.util.Deque;
 import com.baomidou.mybatisplus.core.test.query.ISqlSegment;
 
 
-public class Statement implements SimpleQueue<ISqlSegment>, ISqlSegment {
+public class SqlStatement implements ISqlQueue<ISqlSegment>, ISqlSegment {
 
     private Deque<ISqlSegment> deque;
 
-    public Statement() {
+    public SqlStatement() {
         this.deque = new ArrayDeque<>();
     }
 
     @Override
-    public void enqueue(ISqlSegment stringable) {
-        deque.add(stringable);
+    public void enqueue(ISqlSegment sqlSegment) {
+        deque.add(sqlSegment);
     }
 
     @Override

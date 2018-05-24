@@ -18,7 +18,7 @@ public class QueryTest {
             .from("bunnies b")
             .where("b.age > 18", condition ->
                 condition.and("b.type = 'rabid'")
-                    .and("b.abc=12"))
+                    .or("b.abc=12"))
             .sqlSegment();
 
         log(sql);
