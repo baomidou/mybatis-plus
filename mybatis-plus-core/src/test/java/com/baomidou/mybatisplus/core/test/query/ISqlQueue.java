@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.core.test.query.struct;
+package com.baomidou.mybatisplus.core.test.query;
 
 
 public interface ISqlQueue<T> {

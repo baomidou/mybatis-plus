@@ -1,11 +1,9 @@
-package com.baomidou.mybatisplus.core.test.query.struct;
+package com.baomidou.mybatisplus.core.test.query;
 
 import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-
-import com.baomidou.mybatisplus.core.test.query.ISqlSegment;
 
 
 public class SqlStatement implements ISqlQueue<ISqlSegment>, ISqlSegment {

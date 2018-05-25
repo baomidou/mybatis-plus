@@ -1,9 +1,5 @@
 package com.baomidou.mybatisplus.core.test.query;
 
-import com.baomidou.mybatisplus.core.test.query.clause.*;
-import com.baomidou.mybatisplus.core.test.query.predicate.*;
-import com.baomidou.mybatisplus.core.test.query.struct.SqlStatement;
-
 import java.util.function.Function;
 
 
@@ -32,27 +28,6 @@ public class Query implements ISqlSegment {
     */
    public Query select(String... columns) {
       return add(new Select(columns));
-   }
-
-   /**
-    * SELECT table(s)
-    * @param tables table or tables from which to select
-    * @return this
-    */
-   public Query from(String... tables) {
-      return add(new From(tables));
-   }
-
-   /**
-    * FROM table JOIN(s)
-    * @param table from which to select
-    * @param joins function to populate join clauses
-    * @return this
-    */
-   public Query from(String table, Function<Table, Table> joins) {
-      From from = new From(new String[]{ table });
-      from.joins(joins.apply(new Table()));
-      return add(from);
    }
 
    /**

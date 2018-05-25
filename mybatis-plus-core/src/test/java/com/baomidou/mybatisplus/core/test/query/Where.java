@@ -1,7 +1,4 @@
-package com.baomidou.mybatisplus.core.test.query.clause;
-
-import com.baomidou.mybatisplus.core.test.query.ISqlSegment;
-import com.baomidou.mybatisplus.core.test.query.predicate.Condition;
+package com.baomidou.mybatisplus.core.test.query;
 
 
 public class Where implements ISqlSegment {
