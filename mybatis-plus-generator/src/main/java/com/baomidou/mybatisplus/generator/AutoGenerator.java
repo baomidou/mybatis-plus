@@ -25,7 +25,6 @@ import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.Version;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.PackageConfig;
@@ -136,7 +135,8 @@ public class AutoGenerator {
             /* ---------- 添加导入包 ---------- */
             if (config.getGlobalConfig().isActiveRecord()) {
                 // 开启 ActiveRecord 模式
-                tableInfo.setImportPackages(Model.class.getCanonicalName());
+                // todo
+              //  tableInfo.setImportPackages(Model.class.getCanonicalName());
             }
             if (tableInfo.isConvert()) {
                 // 表注解

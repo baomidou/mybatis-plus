@@ -390,7 +390,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Override
     //TODO 3.0
     public Page<T> selectPage(Page<T> page) {
-        return selectPage(page, Wrapper.<T>getInstance());
+        return null;//selectPage(page, Wrapper.<T>getInstance());
     }
 
     @Override
