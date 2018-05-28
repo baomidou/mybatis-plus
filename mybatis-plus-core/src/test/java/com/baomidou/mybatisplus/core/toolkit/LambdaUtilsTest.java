@@ -27,7 +27,7 @@ public class LambdaUtilsTest {
 
     private class Cond<T> {
         private StringBuilder sb = new StringBuilder();
-        private Cond<T> eq(Property<T, Object> prop, Object val) {
+        private Cond<T> eq(Property<T, ?> prop, Object val) {
             SerializedLambda lambda = LambdaUtils.resolve(prop);
             this.sb.append(lambda.getImplMethodName()).append(" = ").append(val);
             return this;
