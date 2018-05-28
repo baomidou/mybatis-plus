@@ -63,22 +63,6 @@ public class Condition implements ISqlSegment {
     }
 
     /**
-     * NOT 关键词
-     */
-    public Condition not() {
-        expression.add(NOT);
-        return this;
-    }
-
-    /**
-     * HAVING 关键词
-     */
-    public Condition having() {
-        expression.add(HAVING);
-        return this;
-    }
-
-    /**
      * LIKE '%值%'
      */
     public Condition like(String condition) {
@@ -121,7 +105,7 @@ public class Condition implements ISqlSegment {
     /**
      * 不等于 <>
      */
-    public Condition NE(String condition) {
+    public Condition ne(String condition) {
         return this.addCondition(condition, NE);
     }
 
@@ -186,6 +170,22 @@ public class Condition implements ISqlSegment {
     }
 
     /**
+     * NOT 关键词
+     */
+    public Condition not() {
+        expression.add(NOT);
+        return this;
+    }
+
+    /**
+     * HAVING 关键词
+     */
+    public Condition having() {
+        expression.add(HAVING);
+        return this;
+    }
+
+    /**
      * exists ( sql 语句 )
      */
     public Condition exists(String condition) {
@@ -195,7 +195,7 @@ public class Condition implements ISqlSegment {
     /**
      * BETWEEN 值1 AND 值2
      */
-    public Condition BETWEEN(String condition, Object val1, Object val2) {
+    public Condition between(String condition, Object val1, Object val2) {
         expression.add(() -> condition);
         expression.add(BETWEEN);
         expression.add(() -> "val1");
@@ -221,7 +221,7 @@ public class Condition implements ISqlSegment {
      * @param keyword   SQL 关键词
      * @return
      */
-    private Condition addCondition(String condition, Keywords keyword) {
+    protected Condition addCondition(String condition, Keywords keyword) {
         expression.add(keyword);
         expression.add(() -> condition);
         return this;
@@ -236,7 +236,7 @@ public class Condition implements ISqlSegment {
      * @param keyword   SQL 关键词
      * @return
      */
-    private Condition addNestedCondition(String condition, Keywords keyword) {
+    protected Condition addNestedCondition(String condition, Keywords keyword) {
         expression.add(keyword);
         expression.add(() -> "(");
         expression.add(() -> condition);
@@ -253,7 +253,7 @@ public class Condition implements ISqlSegment {
      * @param keyword   SQL 关键词
      * @return
      */
-    private Condition addNestedCondition(Function<Condition, Condition> condition, Keywords keyword) {
+    protected Condition addNestedCondition(Function<Condition, Condition> condition, Keywords keyword) {
         expression.add(keyword);
         expression.add(() -> "(");
         expression.add(condition.apply(new Condition()));

@@ -14,7 +14,6 @@ public class QueryTest {
     @Test
     public void test() {
         String sql = new Query()
-            .select("b.*")
             .where("b.age > 18", condition ->
                 condition.and("b.type = 'rabid'")
                     .or(nested -> nested.apply("name='12'").and("age=1"))
@@ -23,7 +22,7 @@ public class QueryTest {
             ).sqlSegment();
 
         log(sql);
-        assertEquals("SELECT b.* WHERE b.age > 18 AND b.type = 'rabid' OR ( name='12' AND age=1 ) NOT IN ( ads,2112,212 ) LIMIT 1", sql);
+        assertEquals("WHERE b.age > 18 AND b.type = 'rabid' OR ( name='12' AND age=1 ) NOT IN ( ads,2112,212 ) LIMIT 1", sql);
     }
 
 }

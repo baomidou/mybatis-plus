@@ -22,15 +22,6 @@ public class Query implements ISqlSegment {
    }
 
    /**
-    * SELECT column(s)
-    * @param columns column or columns to select
-    * @return this
-    */
-   public Query select(String... columns) {
-      return add(new Select(columns));
-   }
-
-   /**
     * WHERE expression
     * @param expression to
     * @return this
