@@ -5,7 +5,7 @@ import org.junit.Test;
 import com.baomidou.mybatisplus.core.conditions.EntityWrapper;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 
-public class SqlConditionTest {
+public class QueryWrapperTest {
 
     private void log(String message) {
         System.out.println(message);
@@ -18,7 +18,7 @@ public class SqlConditionTest {
     }
 
 //    public void test() {
-//        String sql = new SqlCondition()
+//        String sql = new QueryWrapper()
 //            .where("b.age > 18", condition ->
 //                condition.and("b.type = 'rabid'")
 //                    .or(nested -> nested.apply("name='12'").and("age=1"))

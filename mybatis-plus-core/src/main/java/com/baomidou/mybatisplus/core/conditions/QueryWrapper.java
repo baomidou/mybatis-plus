@@ -35,7 +35,7 @@ import static com.baomidou.mybatisplus.core.enums.SqlKeyword.*;
  * @author hubin
  * @since 2017-05-26
  */
-public class SqlCondition<T> extends Wrapper<T> {
+public class QueryWrapper<T> extends Wrapper<T> {
 
     /**
      * 占位符
@@ -52,35 +52,35 @@ public class SqlCondition<T> extends Wrapper<T> {
     protected String paramAlias = null;
     private List<ISqlSegment> expression = new ArrayList<>();
 
-    public SqlCondition apply(String condition) {
+    public QueryWrapper apply(String condition) {
         expression.add(() -> condition);
         return this;
     }
 
-    public SqlCondition and(Function<SqlCondition, SqlCondition> func) {
+    public QueryWrapper and(Function<QueryWrapper, QueryWrapper> func) {
         return addNestedCondition(func, AND);
     }
 
-    public SqlCondition or(String column, Object val) {
+    public QueryWrapper or(String column, Object val) {
         return this.addCondition(column, OR, val);
     }
 
-    public SqlCondition or(Function<SqlCondition, SqlCondition> func) {
+    public QueryWrapper or(Function<QueryWrapper, QueryWrapper> func) {
         return addNestedCondition(func, OR);
     }
 
-    public SqlCondition in(String condition) {
+    public QueryWrapper in(String condition) {
         return this.addNestedCondition(condition, IN);
     }
 
-    public SqlCondition notIn(String condition) {
+    public QueryWrapper notIn(String condition) {
         return this.not().in(condition);
     }
 
     /**
      * LIKE '%值%'
      */
-    public SqlCondition like(String condition) {
+    public QueryWrapper like(String condition) {
         expression.add(LIKE);
         expression.add(() -> "'%");
         expression.add(() -> condition);
@@ -91,7 +91,7 @@ public class SqlCondition<T> extends Wrapper<T> {
     /**
      * LIKE '%值'
      */
-    public SqlCondition likeLeft(String condition) {
+    public QueryWrapper likeLeft(String condition) {
         expression.add(LIKE);
         expression.add(() -> "'%");
         expression.add(() -> condition);
@@ -102,7 +102,7 @@ public class SqlCondition<T> extends Wrapper<T> {
     /**
      * LIKE '值%'
      */
-    public SqlCondition likeRight(String condition) {
+    public QueryWrapper likeRight(String condition) {
         expression.add(LIKE);
         expression.add(() -> "'");
         expression.add(() -> condition);
@@ -113,77 +113,77 @@ public class SqlCondition<T> extends Wrapper<T> {
     /**
      * 等于 =
      */
-    public SqlCondition eq(String column, Object val) {
+    public QueryWrapper eq(String column, Object val) {
         return this.addCondition(column, EQ, val);
     }
 
     /**
      * 不等于 <>
      */
-    public SqlCondition ne(String column, Object val) {
+    public QueryWrapper ne(String column, Object val) {
         return this.addCondition(column, NE, val);
     }
 
     /**
      * 大于 >
      */
-    public SqlCondition gt(String column, Object val) {
+    public QueryWrapper gt(String column, Object val) {
         return this.addCondition(column, GT, val);
     }
 
     /**
      * 大于等于 >=
      */
-    public SqlCondition ge(String column, Object val) {
+    public QueryWrapper ge(String column, Object val) {
         return this.addCondition(column, GE, val);
     }
 
     /**
      * 小于 <
      */
-    public SqlCondition lt(String column, Object val) {
+    public QueryWrapper lt(String column, Object val) {
         return this.addCondition(column, LT, val);
     }
 
     /**
      * 小于等于 <=
      */
-    public SqlCondition le(String column, Object val) {
+    public QueryWrapper le(String column, Object val) {
         return this.addCondition(column, LE, val);
     }
 
     /**
      * 字段 IS NULL
      */
-    public SqlCondition isNull(String column) {
+    public QueryWrapper isNull(String column) {
         return this.isNull(true, column);
     }
 
     /**
      * 字段 IS NULL
      */
-    public SqlCondition isNull(boolean condition, String column) {
+    public QueryWrapper isNull(boolean condition, String column) {
         return doIt(condition, () -> column, IS_NULL);
     }
 
     /**
      * 字段 IS NOT NULL
      */
-    public SqlCondition isNotNull(String column) {
+    public QueryWrapper isNotNull(String column) {
         return this.isNotNull(true, column);
     }
 
     /**
      * 字段 IS NOT NULL
      */
-    public SqlCondition isNotNull(boolean condition, String column) {
+    public QueryWrapper isNotNull(boolean condition, String column) {
         return doIt(condition, () -> column, IS_NOT_NULL);
     }
 
     /**
      * 分组：GROUP BY 字段, ...
      */
-    public SqlCondition groupBy(String column) {
+    public QueryWrapper groupBy(String column) {
         expression.add(GROUP_BY);
         expression.add(() -> column);
         return this;
@@ -192,7 +192,7 @@ public class SqlCondition<T> extends Wrapper<T> {
     /**
      * 排序：ORDER BY 字段, ...
      */
-    public SqlCondition orderBy(String column) {
+    public QueryWrapper orderBy(String column) {
         expression.add(ORDER_BY);
         expression.add(() -> column);
         return this;
@@ -201,7 +201,7 @@ public class SqlCondition<T> extends Wrapper<T> {
     /**
      * HAVING 关键词
      */
-    public SqlCondition having() {
+    public QueryWrapper having() {
         expression.add(HAVING);
         return this;
     }
@@ -209,14 +209,14 @@ public class SqlCondition<T> extends Wrapper<T> {
     /**
      * exists ( sql 语句 )
      */
-    public SqlCondition exists(String condition) {
+    public QueryWrapper exists(String condition) {
         return this.addNestedCondition(condition, EXISTS);
     }
 
     /**
      * BETWEEN 值1 AND 值2
      */
-    public SqlCondition between(String condition, Object val1, Object val2) {
+    public QueryWrapper between(String condition, Object val1, Object val2) {
         expression.add(() -> condition);
         expression.add(BETWEEN);
         expression.add(() -> "val1");
@@ -228,7 +228,7 @@ public class SqlCondition<T> extends Wrapper<T> {
     /**
      * LAST 拼接在 SQL 末尾
      */
-    public SqlCondition last(String condition) {
+    public QueryWrapper last(String condition) {
         expression.add(() -> condition);
         return this;
     }
@@ -236,7 +236,7 @@ public class SqlCondition<T> extends Wrapper<T> {
     /**
      * NOT 关键词
      */
-    protected SqlCondition not() {
+    protected QueryWrapper not() {
         expression.add(NOT);
         return this;
     }
@@ -251,7 +251,7 @@ public class SqlCondition<T> extends Wrapper<T> {
      * @param val        条件值
      * @return
      */
-    protected SqlCondition addCondition(String column, SqlKeyword sqlKeyword, Object val) {
+    protected QueryWrapper addCondition(String column, SqlKeyword sqlKeyword, Object val) {
         expression.add(() -> column);
         expression.add(sqlKeyword);
         expression.add(() -> this.formatSql("{0}", val));
@@ -267,7 +267,7 @@ public class SqlCondition<T> extends Wrapper<T> {
      * @param sqlKeyword SQL 关键词
      * @return
      */
-    protected SqlCondition addNestedCondition(Object val, SqlKeyword sqlKeyword) {
+    protected QueryWrapper addNestedCondition(Object val, SqlKeyword sqlKeyword) {
         expression.add(sqlKeyword);
         expression.add(() -> this.formatSql("({0})", val));
         return this;
@@ -282,15 +282,15 @@ public class SqlCondition<T> extends Wrapper<T> {
      * @param sqlKeyword SQL 关键词
      * @return
      */
-    protected SqlCondition addNestedCondition(Function<SqlCondition, SqlCondition> condition, SqlKeyword sqlKeyword) {
+    protected QueryWrapper addNestedCondition(Function<QueryWrapper, QueryWrapper> condition, SqlKeyword sqlKeyword) {
         expression.add(sqlKeyword);
         expression.add(() -> "(");
-        expression.add(condition.apply(new SqlCondition()));
+        expression.add(condition.apply(new QueryWrapper()));
         expression.add(() -> ")");
         return this;
     }
 
-    protected SqlCondition doIt(boolean condition, ISqlSegment... iSqlSegments) {
+    protected QueryWrapper doIt(boolean condition, ISqlSegment... iSqlSegments) {
         if (condition) {
             expression.addAll(Arrays.asList(iSqlSegments));
         }
