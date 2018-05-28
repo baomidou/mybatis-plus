@@ -62,101 +62,166 @@ public class QueryWrapper<T> extends Wrapper<T> {
     }
 
     public QueryWrapper or(String column, Object val) {
-        return this.addCondition(column, OR, val);
+        return addCondition(true, column, OR, val);//todo 待动
     }
 
     public QueryWrapper or(Function<QueryWrapper, QueryWrapper> func) {
         return addNestedCondition(func, OR);
     }
 
-    public QueryWrapper in(String condition) {
-        return this.addNestedCondition(condition, IN);
+    public QueryWrapper in(String condition) {//todo 待动
+        return addNestedCondition(condition, IN);
     }
 
     public QueryWrapper notIn(String condition) {
-        return this.not().in(condition);
+        return not().in(condition);
     }
 
     /**
      * LIKE '%值%'
      */
-    public QueryWrapper like(String condition) {
-        expression.add(LIKE);
-        expression.add(() -> "'%");
-        expression.add(() -> condition);
-        expression.add(() -> "%'");
-        return this;
+    public QueryWrapper like(String column, Object val) {
+        return like(true, column, val);
+    }
+
+    /**
+     * LIKE '%值%'
+     */
+    public QueryWrapper like(boolean condition, String column, Object val) {
+        return doIt(condition, () -> column, LIKE, () -> "'%", () -> formatSql("{0}", val), () -> "%'");
     }
 
     /**
      * LIKE '%值'
      */
-    public QueryWrapper likeLeft(String condition) {
-        expression.add(LIKE);
-        expression.add(() -> "'%");
-        expression.add(() -> condition);
-        expression.add(() -> "'");
-        return this;
+    public QueryWrapper likeLeft(String column, Object val) {
+        return likeLeft(true, column, val);
+    }
+
+    /**
+     * LIKE '%值'
+     */
+    public QueryWrapper likeLeft(boolean condition, String column, Object val) {
+        return doIt(condition, () -> column, LIKE, () -> "'%", () -> formatSql("{0}", val), () -> "'");
     }
 
     /**
      * LIKE '值%'
      */
-    public QueryWrapper likeRight(String condition) {
-        expression.add(LIKE);
-        expression.add(() -> "'");
-        expression.add(() -> condition);
-        expression.add(() -> "%'");
-        return this;
+    public QueryWrapper likeRight(String column, Object val) {
+        return likeRight(true, column, val);
+    }
+
+    /**
+     * LIKE '值%'
+     */
+    public QueryWrapper likeRight(boolean condition, String column, Object val) {
+        return doIt(condition, () -> column, LIKE, () -> "'", () -> formatSql("{0}", val), () -> "%'");
     }
 
     /**
      * 等于 =
      */
     public QueryWrapper eq(String column, Object val) {
-        return this.addCondition(column, EQ, val);
+        return eq(true, column, val);
+    }
+
+    /**
+     * 等于 =
+     */
+    public QueryWrapper eq(boolean condition, String column, Object val) {
+        return addCondition(condition, column, EQ, val);
     }
 
     /**
      * 不等于 <>
      */
     public QueryWrapper ne(String column, Object val) {
-        return this.addCondition(column, NE, val);
+        return ne(true, column, val);
+    }
+
+    /**
+     * 不等于 <>
+     */
+    public QueryWrapper ne(boolean condition, String column, Object val) {
+        return addCondition(condition, column, NE, val);
     }
 
     /**
      * 大于 >
      */
     public QueryWrapper gt(String column, Object val) {
-        return this.addCondition(column, GT, val);
+        return gt(true, column, val);
+    }
+
+    /**
+     * 大于 >
+     */
+    public QueryWrapper gt(boolean condition, String column, Object val) {
+        return addCondition(condition, column, GT, val);
     }
 
     /**
      * 大于等于 >=
      */
     public QueryWrapper ge(String column, Object val) {
-        return this.addCondition(column, GE, val);
+        return ge(true, column, val);
+    }
+
+    /**
+     * 大于等于 >=
+     */
+    public QueryWrapper ge(boolean condition, String column, Object val) {
+        return addCondition(condition, column, GE, val);
     }
 
     /**
      * 小于 <
      */
     public QueryWrapper lt(String column, Object val) {
-        return this.addCondition(column, LT, val);
+        return lt(true, column, val);
+    }
+
+    /**
+     * 小于 <
+     */
+    public QueryWrapper lt(boolean condition, String column, Object val) {
+        return addCondition(condition, column, LT, val);
     }
 
     /**
      * 小于等于 <=
      */
     public QueryWrapper le(String column, Object val) {
-        return this.addCondition(column, LE, val);
+        return le(true, column, val);
+    }
+
+    /**
+     * 小于等于 <=
+     */
+    public QueryWrapper le(boolean condition, String column, Object val) {
+        return addCondition(condition, column, LE, val);
+    }
+
+    /**
+     * BETWEEN 值1 AND 值2
+     */
+    public QueryWrapper between(String column, Object val1, Object val2) {
+        return between(true, column, "val1", "val2");
+    }
+
+    /**
+     * BETWEEN 值1 AND 值2
+     */
+    public QueryWrapper between(boolean condition, String column, Object val1, Object val2) {
+        return doIt(condition, () -> column, BETWEEN, () -> "val1", AND, () -> "val2");
     }
 
     /**
      * 字段 IS NULL
      */
     public QueryWrapper isNull(String column) {
-        return this.isNull(true, column);
+        return isNull(true, column);
     }
 
     /**
@@ -170,7 +235,7 @@ public class QueryWrapper<T> extends Wrapper<T> {
      * 字段 IS NOT NULL
      */
     public QueryWrapper isNotNull(String column) {
-        return this.isNotNull(true, column);
+        return isNotNull(true, column);
     }
 
     /**
@@ -184,26 +249,21 @@ public class QueryWrapper<T> extends Wrapper<T> {
      * 分组：GROUP BY 字段, ...
      */
     public QueryWrapper groupBy(String column) {
-        expression.add(GROUP_BY);
-        expression.add(() -> column);
-        return this;
+        return doIt(true, GROUP_BY, () -> column);
     }
 
     /**
      * 排序：ORDER BY 字段, ...
      */
-    public QueryWrapper orderBy(String column) {
-        expression.add(ORDER_BY);
-        expression.add(() -> column);
-        return this;
+    public QueryWrapper orderBy(String column) {//todo 产生的sql有bug
+        return doIt(true, ORDER_BY, () -> column);
     }
 
     /**
      * HAVING 关键词
      */
     public QueryWrapper having() {
-        expression.add(HAVING);
-        return this;
+        return doIt(true, HAVING);
     }
 
     /**
@@ -214,31 +274,17 @@ public class QueryWrapper<T> extends Wrapper<T> {
     }
 
     /**
-     * BETWEEN 值1 AND 值2
-     */
-    public QueryWrapper between(String condition, Object val1, Object val2) {
-        expression.add(() -> condition);
-        expression.add(BETWEEN);
-        expression.add(() -> "val1");
-        expression.add(AND);
-        expression.add(() -> "val2");
-        return this;
-    }
-
-    /**
      * LAST 拼接在 SQL 末尾
      */
     public QueryWrapper last(String condition) {
-        expression.add(() -> condition);
-        return this;
+        return doIt(true, () -> condition);
     }
 
     /**
      * NOT 关键词
      */
-    protected QueryWrapper not() {
-        expression.add(NOT);
-        return this;
+    protected QueryWrapper not() {//todo 待考虑
+        return doIt(true, NOT);
     }
 
     /**
@@ -246,16 +292,14 @@ public class QueryWrapper<T> extends Wrapper<T> {
      * 普通查询条件
      * </p>
      *
+     * @param condition  是否执行
      * @param column     字段
      * @param sqlKeyword SQL 关键词
      * @param val        条件值
-     * @return
+     * @return this
      */
-    protected QueryWrapper addCondition(String column, SqlKeyword sqlKeyword, Object val) {
-        expression.add(() -> column);
-        expression.add(sqlKeyword);
-        expression.add(() -> this.formatSql("{0}", val));
-        return this;
+    protected QueryWrapper addCondition(boolean condition, String column, SqlKeyword sqlKeyword, Object val) {
+        return doIt(condition, () -> column, sqlKeyword, () -> this.formatSql("{0}", val));
     }
 
     /**
@@ -265,12 +309,10 @@ public class QueryWrapper<T> extends Wrapper<T> {
      *
      * @param val        查询条件值
      * @param sqlKeyword SQL 关键词
-     * @return
+     * @return this
      */
     protected QueryWrapper addNestedCondition(Object val, SqlKeyword sqlKeyword) {
-        expression.add(sqlKeyword);
-        expression.add(() -> this.formatSql("({0})", val));
-        return this;
+        return doIt(true, sqlKeyword, () -> this.formatSql("({0})", val));
     }
 
     /**
@@ -280,16 +322,21 @@ public class QueryWrapper<T> extends Wrapper<T> {
      *
      * @param condition  查询条件值
      * @param sqlKeyword SQL 关键词
-     * @return
+     * @return this
      */
     protected QueryWrapper addNestedCondition(Function<QueryWrapper, QueryWrapper> condition, SqlKeyword sqlKeyword) {
-        expression.add(sqlKeyword);
-        expression.add(() -> "(");
-        expression.add(condition.apply(new QueryWrapper()));
-        expression.add(() -> ")");
-        return this;
+        return doIt(true, sqlKeyword, () -> "(", condition.apply(new QueryWrapper()), () -> ")");
     }
 
+    /**
+     * <p>
+     * 对sql片段进行组装
+     * </p>
+     *
+     * @param condition    是否执行
+     * @param iSqlSegments sql片段数组
+     * @return this
+     */
     protected QueryWrapper doIt(boolean condition, ISqlSegment... iSqlSegments) {
         if (condition) {
             expression.addAll(Arrays.asList(iSqlSegments));
