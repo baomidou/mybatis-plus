@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, hubin (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -24,7 +24,7 @@ package com.baomidou.mybatisplus.core.conditions;
  * @author hubin , yanghu , Dyang , Caratacus
  * @Date 2016-11-7
  */
-public class UpdateWrapper<T> extends Wrapper {
+public class UpdateWrapper<T> extends SqlCondition<T> {
 
     /**
      * 数据库表映射实体类

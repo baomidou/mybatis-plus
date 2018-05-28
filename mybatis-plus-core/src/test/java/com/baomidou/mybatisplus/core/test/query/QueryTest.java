@@ -4,11 +4,20 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import com.baomidou.mybatisplus.core.conditions.EntityWrapper;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+
 
 public class QueryTest {
 
     private void log(String message) {
         System.out.println(message);
+    }
+
+    @Test
+    public void test1() {
+        Wrapper wrapper = new EntityWrapper().eq("abc", 123);
+        log(wrapper.getSqlSegment());
     }
 
     @Test

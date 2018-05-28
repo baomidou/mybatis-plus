@@ -27,7 +27,7 @@ import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
  * @author hubin
  * @Date 2018-05-25
  */
-public class EntityWrapper<T> extends Wrapper<T> {
+public class EntityWrapper<T> extends SqlCondition<T> {
 
     /**
      * 数据库表映射实体类
@@ -37,6 +37,7 @@ public class EntityWrapper<T> extends Wrapper<T> {
      * SQL 查询字段内容，例如：id,name,age
      */
     protected String sqlSelect = null;
+
 
     public EntityWrapper() {
         /* 注意，传入查询参数 */
@@ -70,13 +71,4 @@ public class EntityWrapper<T> extends Wrapper<T> {
         }
         return this;
     }
-
-    /**
-     * SQL 片段
-     */
-    @Override
-    public String getSqlSegment() {
-        return null;
-    }
-
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2014, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2020, hubin (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -15,23 +15,20 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
+
 /**
  * <p>
- * 条件构造抽象类
+ * SQL 片段接口
  * </p>
  *
  * @author hubin
- * @Date 2018-05-25
+ * @since 2018-05-28
  */
-public abstract class Wrapper<T> implements ISqlSegment {
-
+public interface ISqlSegment {
 
     /**
-     * 实体对象（子类实现）
+     * SQL 片段
      */
-    public T getEntity() {
-        return null;
-    }
+   String getSqlSegment();
 
 }
-
