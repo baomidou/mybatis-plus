@@ -62,6 +62,10 @@ public class Condition implements ISqlSegment {
         return this.addNestedCondition(condition, IN);
     }
 
+    public Condition notIn(String condition) {
+        return this.not().addNestedCondition(condition, IN);
+    }
+
     /**
      * LIKE '%值%'
      */
@@ -170,14 +174,6 @@ public class Condition implements ISqlSegment {
     }
 
     /**
-     * NOT 关键词
-     */
-    public Condition not() {
-        expression.add(NOT);
-        return this;
-    }
-
-    /**
      * HAVING 关键词
      */
     public Condition having() {
@@ -209,6 +205,14 @@ public class Condition implements ISqlSegment {
      */
     public Condition last(String condition) {
         expression.add(() -> condition);
+        return this;
+    }
+
+    /**
+     * NOT 关键词
+     */
+    protected Condition not() {
+        expression.add(NOT);
         return this;
     }
 

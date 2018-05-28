@@ -17,7 +17,7 @@ public class QueryTest {
             .where("b.age > 18", condition ->
                 condition.and("b.type = 'rabid'")
                     .or(nested -> nested.apply("name='12'").and("age=1"))
-                    .not().in("ads,2112,212")
+                    .notIn("ads,2112,212")
                     .last("LIMIT 1")
             ).sqlSegment();
 
