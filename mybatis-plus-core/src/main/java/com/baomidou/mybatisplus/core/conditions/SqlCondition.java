@@ -15,36 +15,16 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.AND;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.BETWEEN;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.EQ;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.EXISTS;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GE;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GROUP_BY;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GT;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.HAVING;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IN;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IS_NOT_NULL;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IS_NULL;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LE;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LIKE;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LT;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NE;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NOT;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.OR;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ORDER_BY;
+import com.baomidou.mybatisplus.core.enums.SqlKeyword;
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.baomidou.mybatisplus.core.enums.SqlKeyword;
-import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.*;
 
 
 /**
@@ -67,10 +47,10 @@ public class SqlCondition<T> extends Wrapper<T> {
     private static final String MP_GENERAL_PARAMNAME = "MPGENVAL";
 
     private static final String DEFAULT_PARAM_ALIAS = "ew";
-    private List<ISqlSegment> expression = new ArrayList<>();
     private final Map<String, Object> paramNameValuePairs = new HashMap<>();
     private final AtomicInteger paramNameSeq = new AtomicInteger(0);
     protected String paramAlias = null;
+    private List<ISqlSegment> expression = new ArrayList<>();
 
     public SqlCondition apply(String condition) {
         expression.add(() -> condition);
@@ -176,9 +156,14 @@ public class SqlCondition<T> extends Wrapper<T> {
      * 字段 IS NULL
      */
     public SqlCondition isNull(String column) {
-        expression.add(() -> column);
-        expression.add(IS_NULL);
-        return this;
+        return doIt(true, () -> column, IS_NULL);
+    }
+
+    /**
+     * 字段 IS NULL
+     */
+    public SqlCondition isNull(boolean condition, String column) {
+        return doIt(condition, () -> column, IS_NULL);
     }
 
     /**
@@ -297,6 +282,13 @@ public class SqlCondition<T> extends Wrapper<T> {
         expression.add(() -> "(");
         expression.add(condition.apply(new SqlCondition()));
         expression.add(() -> ")");
+        return this;
+    }
+
+    protected SqlCondition doIt(boolean condition, ISqlSegment... iSqlSegments) {
+        if (condition) {
+            expression.addAll(Arrays.asList(iSqlSegments));
+        }
         return this;
     }
 

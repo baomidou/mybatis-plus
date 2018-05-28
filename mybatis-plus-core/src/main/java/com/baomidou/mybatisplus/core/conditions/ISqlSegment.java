@@ -24,6 +24,7 @@ package com.baomidou.mybatisplus.core.conditions;
  * @author hubin
  * @since 2018-05-28
  */
+@FunctionalInterface
 public interface ISqlSegment {
 
     /**
