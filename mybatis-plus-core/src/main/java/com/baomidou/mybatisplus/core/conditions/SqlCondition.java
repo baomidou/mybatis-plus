@@ -156,7 +156,7 @@ public class SqlCondition<T> extends Wrapper<T> {
      * 字段 IS NULL
      */
     public SqlCondition isNull(String column) {
-        return doIt(true, () -> column, IS_NULL);
+        return this.isNull(true, column);
     }
 
     /**
@@ -170,9 +170,14 @@ public class SqlCondition<T> extends Wrapper<T> {
      * 字段 IS NOT NULL
      */
     public SqlCondition isNotNull(String column) {
-        expression.add(() -> column);
-        expression.add(IS_NOT_NULL);
-        return this;
+        return this.isNotNull(true, column);
+    }
+
+    /**
+     * 字段 IS NOT NULL
+     */
+    public SqlCondition isNotNull(boolean condition, String column) {
+        return doIt(condition, () -> column, IS_NOT_NULL);
     }
 
     /**

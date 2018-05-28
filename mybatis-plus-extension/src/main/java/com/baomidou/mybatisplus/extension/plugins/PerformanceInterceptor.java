@@ -94,7 +94,8 @@ public class PerformanceInterceptor implements Interceptor {
         } catch (Exception e) {
             // do nothing
         }
-        if (stmtMetaObj.hasGetter("delegate")) {//Hikari
+        if (stmtMetaObj.hasGetter("delegate")) {
+            //Hikari
             try {
                 statement = (Statement) stmtMetaObj.getValue("delegate");
             } catch (Exception ignored) {
