@@ -3,7 +3,7 @@ dependencies {
     compile project(":mybatis-plus-generator")
     compile project(":mybatis-plus-adapter")
 
-    testCompile 'org.springframework:spring-webL:4.3.5.RELEASE'
+    testCompile 'org.springframework:spring-web:4.3.5.RELEASE'
     testCompile 'javax.servlet:servlet-api:2.5'
 
     testCompile rootProject.ext.dependencies["spring-test"]
