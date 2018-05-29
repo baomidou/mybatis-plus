@@ -15,16 +15,39 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
-import com.baomidou.mybatisplus.core.enums.SqlKeyword;
-import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.AND;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.BETWEEN;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.EQ;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.EXISTS;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GE;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GROUP_BY;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GT;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.HAVING;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IN;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IS_NOT_NULL;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IS_NULL;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LE;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LIKE;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LT;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NE;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NOT;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.OR;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ORDER_BY;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.*;
+import com.baomidou.mybatisplus.core.enums.SqlKeyword;
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.support.Property;
 
 
 /**
@@ -61,8 +84,9 @@ public class QueryWrapper<T> extends Wrapper<T> {
         return addNestedCondition(func, AND);
     }
 
-    public QueryWrapper or(String column, Object val) {
-        return addCondition(true, column, OR, val);//todo 待动
+    public QueryWrapper or(Property<T, ?> property, Object val) {
+        //todo 待动
+        return addCondition(true, property, OR, val);
     }
 
     public QueryWrapper or(Function<QueryWrapper, QueryWrapper> func) {
@@ -122,85 +146,85 @@ public class QueryWrapper<T> extends Wrapper<T> {
     /**
      * 等于 =
      */
-    public QueryWrapper eq(String column, Object val) {
-        return eq(true, column, val);
+    public QueryWrapper eq(Property<T, ?> property, Object val) {
+        return eq(true, property, val);
     }
 
     /**
      * 等于 =
      */
-    public QueryWrapper eq(boolean condition, String column, Object val) {
-        return addCondition(condition, column, EQ, val);
+    public QueryWrapper eq(boolean condition, Property<T, ?> property, Object val) {
+        return addCondition(condition, property, EQ, val);
     }
 
     /**
      * 不等于 <>
      */
-    public QueryWrapper ne(String column, Object val) {
-        return ne(true, column, val);
+    public QueryWrapper ne(Property<T, ?> property, Object val) {
+        return ne(true, property, val);
     }
 
     /**
      * 不等于 <>
      */
-    public QueryWrapper ne(boolean condition, String column, Object val) {
-        return addCondition(condition, column, NE, val);
+    public QueryWrapper ne(boolean condition, Property<T, ?> property, Object val) {
+        return addCondition(condition, property, NE, val);
     }
 
     /**
      * 大于 >
      */
-    public QueryWrapper gt(String column, Object val) {
-        return gt(true, column, val);
+    public QueryWrapper gt(Property<T, ?> property, Object val) {
+        return gt(true, property, val);
     }
 
     /**
      * 大于 >
      */
-    public QueryWrapper gt(boolean condition, String column, Object val) {
-        return addCondition(condition, column, GT, val);
+    public QueryWrapper gt(boolean condition, Property<T, ?> property, Object val) {
+        return addCondition(condition, property, GT, val);
     }
 
     /**
      * 大于等于 >=
      */
-    public QueryWrapper ge(String column, Object val) {
-        return ge(true, column, val);
+    public QueryWrapper ge(Property<T, ?> property, Object val) {
+        return ge(true, property, val);
     }
 
     /**
      * 大于等于 >=
      */
-    public QueryWrapper ge(boolean condition, String column, Object val) {
-        return addCondition(condition, column, GE, val);
+    public QueryWrapper ge(boolean condition, Property<T, ?> property, Object val) {
+        return addCondition(condition, property, GE, val);
     }
 
     /**
      * 小于 <
      */
-    public QueryWrapper lt(String column, Object val) {
-        return lt(true, column, val);
+    public QueryWrapper lt(Property<T, ?> property, Object val) {
+        return lt(true, property, val);
     }
 
     /**
      * 小于 <
      */
-    public QueryWrapper lt(boolean condition, String column, Object val) {
-        return addCondition(condition, column, LT, val);
+    public QueryWrapper lt(boolean condition, Property<T, ?> property, Object val) {
+        return addCondition(condition, property, LT, val);
     }
 
     /**
      * 小于等于 <=
      */
-    public QueryWrapper le(String column, Object val) {
-        return le(true, column, val);
+    public QueryWrapper le(Property<T, ?> property, Object val) {
+        return le(true, property, val);
     }
 
     /**
      * 小于等于 <=
      */
-    public QueryWrapper le(boolean condition, String column, Object val) {
-        return addCondition(condition, column, LE, val);
+    public QueryWrapper le(boolean condition, Property<T, ?> property, Object val) {
+        return addCondition(condition, property, LE, val);
     }
 
     /**
@@ -293,13 +317,14 @@ public class QueryWrapper<T> extends Wrapper<T> {
      * </p>
      *
      * @param condition  是否执行
-     * @param column     字段
+     * @param property   属性
      * @param sqlKeyword SQL 关键词
      * @param val        条件值
      * @return this
      */
-    protected QueryWrapper addCondition(boolean condition, String column, SqlKeyword sqlKeyword, Object val) {
-        return doIt(condition, () -> column, sqlKeyword, () -> this.formatSql("{0}", val));
+    protected QueryWrapper addCondition(boolean condition, Property<T, ?> property, SqlKeyword sqlKeyword, Object val) {
+        return doIt(condition, () -> TableInfoHelper.toColumn(property),
+            sqlKeyword, () -> this.formatSql("{0}", val));
     }
 
     /**
@@ -333,13 +358,13 @@ public class QueryWrapper<T> extends Wrapper<T> {
      * 对sql片段进行组装
      * </p>
      *
-     * @param condition    是否执行
-     * @param iSqlSegments sql片段数组
+     * @param condition   是否执行
+     * @param sqlSegments sql片段数组
      * @return this
      */
-    protected QueryWrapper doIt(boolean condition, ISqlSegment... iSqlSegments) {
+    protected QueryWrapper doIt(boolean condition, ISqlSegment... sqlSegments) {
         if (condition) {
-            expression.addAll(Arrays.asList(iSqlSegments));
+            expression.addAll(Arrays.asList(sqlSegments));
         }
         return this;
     }

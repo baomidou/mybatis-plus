@@ -33,5 +33,11 @@ public abstract class Wrapper<T> implements ISqlSegment {
         return null;
     }
 
+    /**
+     * 更新 SQL 片段（子类实现）
+     */
+    public String getSqlSet() {
+        return null;
+    }
 }
 

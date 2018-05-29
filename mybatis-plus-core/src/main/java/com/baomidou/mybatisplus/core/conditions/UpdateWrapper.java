@@ -60,6 +60,7 @@ public class UpdateWrapper<T> extends QueryWrapper<T> {
     /**
      * SQL SET 字段
      */
+    @Override
     public String getSqlSet() {
         return this.sqlSet;
     }

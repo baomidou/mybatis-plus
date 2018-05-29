@@ -13,7 +13,7 @@ public class QueryWrapperTest {
 
     @Test
     public void test() {
-        Wrapper wrapper = new EntityWrapper().eq("abc", 123);
+        Wrapper wrapper = new EntityWrapper().eq(User::getName, 123);
         log(wrapper.getSqlSegment());
     }
 

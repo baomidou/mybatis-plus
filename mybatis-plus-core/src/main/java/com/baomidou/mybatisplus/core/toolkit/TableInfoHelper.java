@@ -42,7 +42,6 @@ import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.core.assist.ISqlRunner;
 import com.baomidou.mybatisplus.core.config.DbConfig;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
@@ -102,16 +101,17 @@ public class TableInfoHelper {
      */
     private static String resolveColumn(SerializedLambda lambda) {
         String filedName = resolveFieldName(lambda);
+        return filedName;
         // 为防止后面字段，驼峰等信息根据配置发生变化，此处不自己解析字段信息
-        return getTableInfo(resolveClass(lambda)).getFieldList().stream()
-            .filter(fieldInfo -> filedName.equals(fieldInfo.getProperty()))
-            .findAny()
-            .map(TableFieldInfo::getColumn)
-            .orElseThrow(() -> {
-                String message = String.format("没有根据 %s#%s 解析到对应的表列名称，您可能排除了该字段或者 %s 方法不是标准的 getter 方法"
-                    , lambda.getImplClass(), lambda.getImplMethodName(), lambda.getImplMethodName());
-                return new MybatisPlusException(message);
-            });
+//        return getTableInfo(resolveClass(lambda)).getFieldList().stream()
+//            .filter(fieldInfo -> filedName.equals(fieldInfo.getProperty()))
+//            .findAny()
+//            .map(TableFieldInfo::getColumn)
+//            .orElseThrow(() -> {
+//                String message = String.format("没有根据 %s#%s 解析到对应的表列名称，您可能排除了该字段或者 %s 方法不是标准的 getter 方法"
+//                    , lambda.getImplClass(), lambda.getImplMethodName(), lambda.getImplMethodName());
+//                return new MybatisPlusException(message);
+//            });
     }
 
     /**

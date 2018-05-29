@@ -58,6 +58,8 @@ public class SerializedLambda implements Serializable {
 
     @Override
     public String toString() {
-        return super.toString() + implClass.replace("/", ".") + "#" + implMethodName;
+        return new StringBuilder(super.toString())
+            .append(implClass.replace("/", "."))
+            .append("#").append(implMethodName).toString();
     }
 }
