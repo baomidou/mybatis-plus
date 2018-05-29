@@ -15,37 +15,16 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.AND;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.BETWEEN;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.EQ;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.EXISTS;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GE;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GROUP_BY;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GT;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.HAVING;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IN;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IS_NOT_NULL;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IS_NULL;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LE;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LIKE;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LT;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NE;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NOT;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.OR;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ORDER_BY;
+import com.baomidou.mybatisplus.core.enums.SqlKeyword;
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.baomidou.mybatisplus.core.enums.SqlKeyword;
-import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.*;
 
 
 /**
@@ -317,6 +296,22 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
 
     /**
      * <p>
+     * 普通查询条件
+     * </p>
+     *
+     * @param condition  是否执行
+     * @param column     属性
+     * @param sqlKeyword SQL 关键词
+     * @param val        条件值
+     * @return this
+     */
+    protected This addCondition(boolean condition, R column, SqlKeyword sqlKeyword, Object val) {
+        return doIt(condition, () -> columnToString(column),
+            sqlKeyword, () -> this.formatSql("{0}", val));
+    }
+
+    /**
+     * <p>
      * 嵌套查询条件
      * </p>
      *
@@ -330,18 +325,17 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
 
     /**
      * <p>
-     * 普通查询条件
+     * 多重嵌套查询条件
      * </p>
      *
-     * @param condition  是否执行
-     * @param column     属性
+     * @param condition  查询条件值
      * @param sqlKeyword SQL 关键词
-     * @param val        条件值
-     * @return this
+     * @return
      */
-    protected This addCondition(boolean condition, R column, SqlKeyword sqlKeyword, Object val) {
-        return doIt(condition, () -> columnToString(column),
-            sqlKeyword, () -> this.formatSql("{0}", val));
+    protected This addNestedCondition(Function<This, This> condition, SqlKeyword sqlKeyword) {
+//        return doIt(true, sqlKeyword, () -> "(",
+//            condition.apply(instance(paramNameValuePairs, paramNameSeq)), () -> ")");
+        return null;//todo 待处理
     }
 
     /**
