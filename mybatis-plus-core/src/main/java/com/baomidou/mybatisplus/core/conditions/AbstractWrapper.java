@@ -56,7 +56,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  * @author hubin
  * @since 2017-05-26
  */
-public abstract class AbstractWrapper<T, R, Q extends AbstractWrapper<T, R, Q>> extends Wrapper<T> {
+public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, This>> extends Wrapper<T> {
 
     private List<ISqlSegment> expression = new ArrayList<>();
     private static final String MP_GENERAL_PARAMNAME = "MPGENVAL";
@@ -74,243 +74,243 @@ public abstract class AbstractWrapper<T, R, Q extends AbstractWrapper<T, R, Q>> 
 
     public abstract String columnToString(R column);
 
-    public Q apply(String condition) {
+    public This apply(String condition) {
         expression.add(() -> condition);
         return typedThis();
     }
 
-    public Q notIn(String condition) {
+    public This notIn(String condition) {
         return not().in(condition);
     }
 
     /**
      * LIKE '%值%'
      */
-    public Q like(R column, Object val) {
+    public This like(R column, Object val) {
         return like(true, column, val);
     }
 
     /**
      * LIKE '%值%'
      */
-    public Q like(boolean condition, R column, Object val) {
+    public This like(boolean condition, R column, Object val) {
         return doIt(condition, () -> columnToString(column), LIKE, () -> "'%", () -> formatSql("{0}", val), () -> "%'");
     }
 
     /**
      * LIKE '%值'
      */
-    public Q likeLeft(R column, Object val) {
+    public This likeLeft(R column, Object val) {
         return likeLeft(true, column, val);
     }
 
     /**
      * LIKE '%值'
      */
-    public Q likeLeft(boolean condition, R column, Object val) {
+    public This likeLeft(boolean condition, R column, Object val) {
         return doIt(condition, () -> columnToString(column), LIKE, () -> "'%", () -> formatSql("{0}", val), () -> "'");
     }
 
     /**
      * LIKE '值%'
      */
-    public Q likeRight(R column, Object val) {
+    public This likeRight(R column, Object val) {
         return likeRight(true, column, val);
     }
 
     /**
      * LIKE '值%'
      */
-    public Q likeRight(boolean condition, R column, Object val) {
+    public This likeRight(boolean condition, R column, Object val) {
         return doIt(condition, () -> columnToString(column), LIKE, () -> "'", () -> formatSql("{0}", val), () -> "%'");
     }
 
     /**
      * 等于 =
      */
-    public Q eq(R column, Object val) {
+    public This eq(R column, Object val) {
         return eq(true, column, val);
     }
 
     /**
      * 等于 =
      */
-    public Q eq(boolean condition, R column, Object val) {
+    public This eq(boolean condition, R column, Object val) {
         return addCondition(condition, column, EQ, val);
     }
 
     /**
      * 不等于 <>
      */
-    public Q ne(R column, Object val) {
+    public This ne(R column, Object val) {
         return ne(true, column, val);
     }
 
     /**
      * 不等于 <>
      */
-    public Q ne(boolean condition, R column, Object val) {
+    public This ne(boolean condition, R column, Object val) {
         return addCondition(condition, column, NE, val);
     }
 
     /**
      * 大于 >
      */
-    public Q gt(R column, Object val) {
+    public This gt(R column, Object val) {
         return gt(true, column, val);
     }
 
     /**
      * 大于 >
      */
-    public Q gt(boolean condition, R column, Object val) {
+    public This gt(boolean condition, R column, Object val) {
         return addCondition(condition, column, GT, val);
     }
 
     /**
      * 大于等于 >=
      */
-    public Q ge(R column, Object val) {
+    public This ge(R column, Object val) {
         return ge(true, column, val);
     }
 
     /**
      * 大于等于 >=
      */
-    public Q ge(boolean condition, R column, Object val) {
+    public This ge(boolean condition, R column, Object val) {
         return addCondition(condition, column, GE, val);
     }
 
     /**
      * 小于 <
      */
-    public Q lt(R column, Object val) {
+    public This lt(R column, Object val) {
         return lt(true, column, val);
     }
 
     /**
      * 小于 <
      */
-    public Q lt(boolean condition, R column, Object val) {
+    public This lt(boolean condition, R column, Object val) {
         return addCondition(condition, column, LT, val);
     }
 
     /**
      * 小于等于 <=
      */
-    public Q le(R column, Object val) {
+    public This le(R column, Object val) {
         return le(true, column, val);
     }
 
     /**
      * 小于等于 <=
      */
-    public Q le(boolean condition, R column, Object val) {
+    public This le(boolean condition, R column, Object val) {
         return addCondition(condition, column, LE, val);
     }
 
     /**
      * BETWEEN 值1 AND 值2
      */
-    public Q between(R column, Object val1, Object val2) {
+    public This between(R column, Object val1, Object val2) {
         return between(true, column, "val1", "val2");
     }
 
     /**
      * BETWEEN 值1 AND 值2
      */
-    public Q between(boolean condition, R column, Object val1, Object val2) {
+    public This between(boolean condition, R column, Object val1, Object val2) {
         return doIt(condition, () -> columnToString(column), BETWEEN, () -> "val1", AND, () -> "val2");
     }
 
     /**
      * 字段 IS NULL
      */
-    public Q isNull(R column) {
+    public This isNull(R column) {
         return isNull(true, column);
     }
 
     /**
      * 字段 IS NULL
      */
-    public Q isNull(boolean condition, R column) {
+    public This isNull(boolean condition, R column) {
         return doIt(condition, () -> columnToString(column), IS_NULL);
     }
 
     /**
      * 字段 IS NOT NULL
      */
-    public Q isNotNull(R column) {
+    public This isNotNull(R column) {
         return isNotNull(true, column);
     }
 
     /**
      * 字段 IS NOT NULL
      */
-    public Q isNotNull(boolean condition, R column) {
+    public This isNotNull(boolean condition, R column) {
         return doIt(condition, () -> columnToString(column), IS_NOT_NULL);
     }
 
     /**
      * 分组：GROUP BY 字段, ...
      */
-    public Q groupBy(R column) {
+    public This groupBy(R column) {
         return doIt(true, GROUP_BY, () -> columnToString(column));
     }
 
     /**
      * 排序：ORDER BY 字段, ...
      */
-    public Q orderBy(R column) {//todo 产生的sql有bug
+    public This orderBy(R column) {//todo 产生的sql有bug
         return doIt(true, ORDER_BY, () -> columnToString(column));
     }
 
     /**
      * HAVING 关键词
      */
-    public Q having() {
+    public This having() {
         return doIt(true, HAVING);
     }
 
     /**
      * exists ( sql 语句 )
      */
-    public Q exists(String condition) {
+    public This exists(String condition) {
         return this.addNestedCondition(condition, EXISTS);
     }
 
     /**
      * LAST 拼接在 SQL 末尾
      */
-    public Q last(String condition) {
+    public This last(String condition) {
         return doIt(true, () -> condition);
     }
 
     /**
      * NOT 关键词
      */
-    protected Q not() {//todo 待考虑
+    protected This not() {//todo 待考虑
         return doIt(true, NOT);
     }
 
-    public Q and() {
+    public This and() {
         expression.add(AND);
         return typedThis();
     }
 
-    public Q and(Function<Q, Q> func) {
+    public This and(Function<This, This> func) {
         return addNestedCondition(func, AND);
     }
 
-    public Q or(Function<Q, Q> func) {
+    public This or(Function<This, This> func) {
         return addNestedCondition(func, OR);
     }
 
-    public Q in(String condition) {//todo 待动
+    public This in(String condition) {//todo 待动
         return addNestedCondition(condition, IN);
     }
 
-    public Q or(R column, Object val) {
+    public This or(R column, Object val) {
         //todo 待动
         return addCondition(true, column, OR, val);
     }
@@ -324,7 +324,7 @@ public abstract class AbstractWrapper<T, R, Q extends AbstractWrapper<T, R, Q>> 
      * @param sqlKeyword SQL 关键词
      * @return this
      */
-    protected Q addNestedCondition(Object val, SqlKeyword sqlKeyword) {
+    protected This addNestedCondition(Object val, SqlKeyword sqlKeyword) {
         return doIt(true, sqlKeyword, () -> this.formatSql("({0})", val));
     }
 
@@ -339,7 +339,7 @@ public abstract class AbstractWrapper<T, R, Q extends AbstractWrapper<T, R, Q>> 
      * @param val        条件值
      * @return this
      */
-    protected Q addCondition(boolean condition, R column, SqlKeyword sqlKeyword, Object val) {
+    protected This addCondition(boolean condition, R column, SqlKeyword sqlKeyword, Object val) {
         return doIt(condition, () -> columnToString(column),
             sqlKeyword, () -> this.formatSql("{0}", val));
     }
@@ -399,7 +399,7 @@ public abstract class AbstractWrapper<T, R, Q extends AbstractWrapper<T, R, Q>> 
      * @param sqlSegments sql片段数组
      * @return this
      */
-    protected Q doIt(boolean condition, ISqlSegment... sqlSegments) {
+    protected This doIt(boolean condition, ISqlSegment... sqlSegments) {
         if (condition) {
             expression.addAll(Arrays.asList(sqlSegments));
         }
@@ -411,8 +411,8 @@ public abstract class AbstractWrapper<T, R, Q extends AbstractWrapper<T, R, Q>> 
     }
 
     @SuppressWarnings("unchecked")
-    protected Q typedThis() {
-        return (Q) this;
+    protected This typedThis() {
+        return (This) this;
     }
 
     @Override

@@ -16,6 +16,10 @@ public class WrapperTest {
         Wrapper wrapper = new EntityWrapper<User>().stream().eq(User::getName, 123)
             .and().eq(User::getId, 1);
         log(wrapper.getSqlSegment());
+
+        wrapper = new EntityWrapper<User>().eq("name", 123)
+            .and().eq("id", 1);
+        log(wrapper.getSqlSegment());
     }
 
 //    public void test() {
