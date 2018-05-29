@@ -88,9 +88,9 @@ public class EntityWrapper<T> extends AbstractWrapper<T, String, EntityWrapper<T
         return typedThis();
     }
 
-//    public LambdaWrapper<T> stream() {
-//        return new LambdaWrapper<>();
-//    }
+    public LambdaWrapper<T> stream() {//todo 这里有必要吗
+        return new LambdaWrapper<>();
+    }
 
     @Override
     protected EntityWrapper<T> instance(AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
