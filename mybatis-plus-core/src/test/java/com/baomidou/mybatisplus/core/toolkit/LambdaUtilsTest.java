@@ -19,6 +19,17 @@ public class LambdaUtilsTest {
 
         Cond<TestPojo> cond = new Cond<>();
         System.out.println(cond.eq(TestPojo::getId, 123).toString());
+
+        // 如果连着写，必须指定后者的泛型
+        new Cond<>().eq(TestPojo::getId, 123)
+            .eq(TestPojo::getId, 123)
+            .eq(TestPojo::getId, 123);
+
+        new Cond<TestPojo>() {{
+            eq(TestPojo::getId, 123);
+            eq(TestPojo::getId, 123);
+            eq(TestPojo::getId, 456);
+        }};
     }
 
     @Getter
@@ -26,13 +37,17 @@ public class LambdaUtilsTest {
         private int id;
     }
 
-    private class Cond<T> {
+    public class Cond<T> {
+
         private StringBuilder sb = new StringBuilder();
-        private Cond<T> eq(Property<T, ?> prop, Object val) {
+
+        // 这个 TYPE 类型和 T 就没有关系了
+        <TYPE> Cond<T> eq(Property<TYPE, ?> prop, Object val) {
             SerializedLambda lambda = LambdaUtils.resolve(prop);
             this.sb.append(lambda.getImplMethodName()).append(" = ").append(val);
             return this;
         }
+
         @Override
         public String toString() {
             return sb.toString();
