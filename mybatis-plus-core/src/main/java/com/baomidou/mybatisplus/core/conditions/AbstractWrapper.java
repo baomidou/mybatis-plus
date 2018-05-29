@@ -278,8 +278,15 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     /**
      * 排序：ORDER BY 字段, ...
      */
-    public This orderBy(R column) {//todo 产生的sql有bug
-        return doIt(true, ORDER_BY, () -> columnToString(column));
+    public This orderBy(R column) {
+        return orderBy(column, true);
+    }
+
+    /**
+     * 排序：ORDER BY 字段, ...
+     */
+    public This orderBy(R column, boolean isAsc) {//todo 产生的sql有bug
+        return doIt(true, ORDER_BY, () -> columnToString(column), isAsc ? ASC : DESC);
     }
 
     /**
