@@ -46,19 +46,14 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     private static final String PLACE_HOLDER = "{%s}";
     private static final String MYBATIS_PLUS_TOKEN = "#{%s.paramNameValuePairs.%s}";
     protected AtomicInteger paramNameSeq;
-    protected Map<String, Object> paramNameValuePairs = new HashMap<>();
+    protected Map<String, Object> paramNameValuePairs;
     protected String paramAlias = null;
     private List<ISqlSegment> expression = new ArrayList<>();
 
     public abstract String columnToString(R column);
 
     public This apply(String condition) {
-        expression.add(() -> condition);
-        return typedThis();
-    }
-
-    public This notIn(String condition) {
-        return not().in(condition);
+        return doIt(true, () -> condition);
     }
 
     /**
@@ -72,7 +67,8 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * LIKE '%值%'
      */
     public This like(boolean condition, R column, Object val) {
-        return doIt(condition, () -> columnToString(column), LIKE, () -> "'%", () -> formatSql("{0}", val), () -> "%'");
+        return doIt(condition, () -> columnToString(column), LIKE, () -> "'%", () -> formatSql("{0}", val),
+            () -> "%'");
     }
 
     /**
@@ -86,7 +82,8 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * LIKE '%值'
      */
     public This likeLeft(boolean condition, R column, Object val) {
-        return doIt(condition, () -> columnToString(column), LIKE, () -> "'%", () -> formatSql("{0}", val), () -> "'");
+        return doIt(condition, () -> columnToString(column), LIKE, () -> "'%", () -> formatSql("{0}", val),
+            () -> "'");
     }
 
     /**
@@ -100,7 +97,8 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * LIKE '值%'
      */
     public This likeRight(boolean condition, R column, Object val) {
-        return doIt(condition, () -> columnToString(column), LIKE, () -> "'", () -> formatSql("{0}", val), () -> "%'");
+        return doIt(condition, () -> columnToString(column), LIKE, () -> "'", () -> formatSql("{0}", val),
+            () -> "%'");
     }
 
     /**
@@ -191,14 +189,29 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * BETWEEN 值1 AND 值2
      */
     public This between(R column, Object val1, Object val2) {
-        return between(true, column, "val1", "val2");
+        return between(true, column, val1, val2);
     }
 
     /**
      * BETWEEN 值1 AND 值2
      */
     public This between(boolean condition, R column, Object val1, Object val2) {
-        return doIt(condition, () -> columnToString(column), BETWEEN, () -> "val1", AND, () -> "val2");
+        return doIt(condition, () -> columnToString(column), BETWEEN, () -> formatSql("{0}", val1), AND,
+            () -> formatSql("{0}", val2));
+    }
+
+    /**
+     * NOT BETWEEN 值1 AND 值2
+     */
+    public This notBetween(R column, Object val1, Object val2) {
+        return notBetween(true, column, val1, val1);
+    }
+
+    /**
+     * NOT BETWEEN 值1 AND 值2
+     */
+    public This notBetween(boolean condition, R column, Object val1, Object val2) {
+        return not().between(condition, column, val1, val2);
     }
 
     /**
@@ -230,23 +243,35 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     public This and() {
-        return doIt(true, AND);
+        return and(true);
+    }
+
+    public This and(boolean condition) {
+        return doIt(condition, AND);
     }
 
     public This and(Function<This, This> func) {
-        return addNestedCondition(func, AND);
+        return and(true, func);
+    }
+
+    public This and(boolean condition, Function<This, This> func) {
+        return addNestedCondition(condition, func, AND);
     }
 
     public This or() {
-        return doIt(true, OR);
+        return or(true);
+    }
+
+    public This or(boolean condition) {
+        return doIt(condition, OR);
     }
 
     public This or(Function<This, This> func) {
-        return addNestedCondition(func, OR);
+        return or(true, func);
     }
 
-    public This in(String condition) {//todo 待动
-        return addNestedCondition(condition, IN);
+    public This or(boolean condition, Function<This, This> func) {
+        return addNestedCondition(condition, func, OR);
     }
 
     /**
@@ -267,6 +292,23 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     /**
+     * 字段 not in (value.get(0), value.get(1), ...)
+     */
+    public This notIn(R column, Collection<?> value) {
+        return notIn(true, column, value);
+    }
+
+    /**
+     * 字段 not in (value.get(0), value.get(1), ...)
+     */
+    public This notIn(boolean condition, R column, Collection<?> value) {
+        if (CollectionUtils.isEmpty(value)) {
+            return typedThis();
+        }
+        return not().in(condition, column, value);
+    }
+
+    /**
      * 分组：GROUP BY 字段, ...
      */
     public This groupBy(R column) {
@@ -283,29 +325,98 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     /**
      * 排序：ORDER BY 字段, ...
      */
-    public This orderBy(R column, boolean isAsc) {//todo 产生的sql有bug
+    public This orderBy(R column, boolean isAsc) {//todo 多次调用如何解决?
         return doIt(true, ORDER_BY, () -> columnToString(column), isAsc ? ASC : DESC);
+    }
+
+    /**
+     * 字段 in
+     * 例: in("select id from table where age < 20")
+     */
+    public This in(String sql) {
+        return in(true, sql);
+    }
+
+    /**
+     * 字段 in
+     */
+    public This in(boolean condition, String sql) {
+        return addNestedCondition(condition, sql, IN);
+    }
+
+    /**
+     * 字段 not in
+     * 例: notIn("select id from table where age < 20")
+     */
+    public This notIn(String sql) {
+        return notIn(true, sql);
+    }
+
+    /**
+     * 字段 not in
+     */
+    public This notIn(boolean condition, String sql) {
+        return not().in(condition, sql);
+    }
+
+    /**
+     * HAVING 关键词
+     * 例: having("sum(age) > {0}", 1)
+     */
+    public This having(String sqlHaving, Object... params) {
+        return having(true, sqlHaving, params);
     }
 
     /**
      * HAVING 关键词
      */
-    public This having() {
-        return doIt(true, HAVING);
+    public This having(boolean condition, String sqlHaving, Object... params) {
+        return doIt(condition, HAVING, () -> formatSqlIfNeed(condition, sqlHaving, params));
+    }
+
+    /**
+     * exists ( sql 语句 )
+     * 例: exists("select id from table where age = 1")
+     */
+    public This exists(String sql) {
+        return exists(true, sql);
     }
 
     /**
      * exists ( sql 语句 )
      */
-    public This exists(String condition) {
-        return this.addNestedCondition(condition, EXISTS);
+    public This exists(boolean condition, String sql) {
+        return addNestedCondition(condition, sql, EXISTS);
+    }
+
+    /**
+     * not exists ( sql 语句 )
+     * 例: notExists("select id from table where age = 1")
+     */
+    public This notExists(String sql) {
+        return notExists(true, sql);
+    }
+
+    /**
+     * not exists ( sql 语句 )
+     */
+    public This notExists(boolean condition, String sql) {
+        return not().exists(condition, sql);
+    }
+
+    /**
+     * LAST 拼接在 SQL 末尾
+     * 例: last("limit 10")
+     */
+    public This last(String sql) {
+        return last(true, sql);
     }
 
     /**
      * LAST 拼接在 SQL 末尾
      */
-    public This last(String condition) {
-        return doIt(true, () -> condition);
+    public This last(boolean condition, String sql) {
+        return doIt(condition, () -> sql);
     }
 
     /**
@@ -340,8 +451,8 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * @param sqlKeyword SQL 关键词
      * @return this
      */
-    protected This addNestedCondition(Object val, SqlKeyword sqlKeyword) {
-        return doIt(true, sqlKeyword, () -> this.formatSql("({0})", val));
+    protected This addNestedCondition(boolean condition, String val, SqlKeyword sqlKeyword) {
+        return doIt(condition, sqlKeyword, () -> this.formatSql("({0})", val));
     }
 
     /**
@@ -353,9 +464,9 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * @param sqlKeyword SQL 关键词
      * @return
      */
-    protected This addNestedCondition(Function<This, This> condition, SqlKeyword sqlKeyword) {
-        return doIt(true, sqlKeyword, () -> "(",
-            condition.apply(instance(paramNameSeq, paramNameValuePairs)), () -> ")");
+    protected This addNestedCondition(boolean condition, Function<This, This> func, SqlKeyword sqlKeyword) {
+        return doIt(condition, sqlKeyword, () -> "(",
+            func.apply(instance(paramNameSeq, paramNameValuePairs)), () -> ")");
     }
 
     /**
