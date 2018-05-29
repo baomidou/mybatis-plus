@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.core.conditions;
 
 import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 import java.util.*;
@@ -37,19 +38,17 @@ import static com.baomidou.mybatisplus.core.enums.SqlKeyword.*;
  */
 public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, This>> extends Wrapper<T> {
 
-    private List<ISqlSegment> expression = new ArrayList<>();
     private static final String MP_GENERAL_PARAMNAME = "MPGENVAL";
-    private final AtomicInteger paramNameSeq = new AtomicInteger(0);
-    private final Map<String, Object> paramNameValuePairs = new HashMap<>();
-    protected String paramAlias = null;
     private static final String DEFAULT_PARAM_ALIAS = "ew";
-
     /**
      * 占位符
      */
     private static final String PLACE_HOLDER = "{%s}";
-
     private static final String MYBATIS_PLUS_TOKEN = "#{%s.paramNameValuePairs.%s}";
+    private final AtomicInteger paramNameSeq = new AtomicInteger(0);
+    private final Map<String, Object> paramNameValuePairs = new HashMap<>();
+    protected String paramAlias = null;
+    private List<ISqlSegment> expression = new ArrayList<>();
 
     public abstract String columnToString(R column);
 
@@ -230,6 +229,45 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
         return doIt(condition, () -> columnToString(column), IS_NOT_NULL);
     }
 
+    public This and() {
+        expression.add(AND);
+        return typedThis();
+    }
+
+    public This and(Function<This, This> func) {
+        return addNestedCondition(func, AND);
+    }
+
+    public This or(Function<This, This> func) {
+        return addNestedCondition(func, OR);
+    }
+
+    public This or(R column, Object val) {
+        //todo 待动
+        return addCondition(true, column, OR, val);
+    }
+
+    public This in(String condition) {//todo 待动
+        return addNestedCondition(condition, IN);
+    }
+
+    /**
+     * 字段 in (value.get(0), value.get(1), ...)
+     */
+    public This in(R column, Collection<?> value) {
+        return in(true, column, value);
+    }
+
+    /**
+     * 字段 in (value.get(0), value.get(1), ...)
+     */
+    public This in(boolean condition, R column, Collection<?> value) {
+        if (CollectionUtils.isEmpty(value)) {
+            return typedThis();
+        }
+        return doIt(condition, () -> columnToString(column), IN, () -> "(", inExpression(value), () -> ")");
+    }
+
     /**
      * 分组：GROUP BY 字段, ...
      */
@@ -268,30 +306,8 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     /**
      * NOT 关键词
      */
-    protected This not() {//todo 待考虑
+    protected This not() {
         return doIt(true, NOT);
-    }
-
-    public This and() {
-        expression.add(AND);
-        return typedThis();
-    }
-
-    public This and(Function<This, This> func) {
-        return addNestedCondition(func, AND);
-    }
-
-    public This or(Function<This, This> func) {
-        return addNestedCondition(func, OR);
-    }
-
-    public This in(String condition) {//todo 待动
-        return addNestedCondition(condition, IN);
-    }
-
-    public This or(R column, Object val) {
-        //todo 待动
-        return addCondition(true, column, OR, val);
     }
 
     /**
@@ -382,6 +398,17 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
             }
         }
         return sqlStr;
+    }
+
+    /**
+     * <p>
+     * 获取in表达式 不带括号
+     * </p>
+     *
+     * @param value 集合
+     */
+    private ISqlSegment inExpression(Collection<?> value) {
+        return () -> value.stream().map(i -> formatSql("{0}", i)).collect(Collectors.joining(","));
     }
 
     /**
