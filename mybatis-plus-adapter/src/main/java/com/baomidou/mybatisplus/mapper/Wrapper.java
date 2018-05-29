@@ -25,14 +25,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.baomidou.mybatisplus.core.conditions.SqlPlus;
 import com.baomidou.mybatisplus.core.enums.SqlLike;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.metadata.Column;
+import com.baomidou.mybatisplus.core.metadata.Columns;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.MapUtils;
 import com.baomidou.mybatisplus.core.toolkit.SerializationUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
-import com.baomidou.mybatisplus.core.toolkit.support.Property;
 
 
 /**
@@ -63,6 +63,10 @@ public abstract class Wrapper<T> extends com.baomidou.mybatisplus.core.condition
     private final Map<String, Object> paramNameValuePairs = new HashMap<>();
     private final AtomicInteger paramNameSeq = new AtomicInteger(0);
     protected String paramAlias = null;
+    /**
+     * SQL 查询字段内容，例如：id,name,age
+     */
+    protected String sqlSelect = null;
     /**
      * 自定义是否输出sql为 WHERE OR AND OR OR
      */
@@ -101,6 +105,92 @@ public abstract class Wrapper<T> extends com.baomidou.mybatisplus.core.condition
     public boolean isNotEmptyOfWhere() {
         return !isEmptyOfWhere();
     }
+
+    public String getSqlSelect() {
+        return StringUtils.isEmpty(sqlSelect) ? null : SqlUtils.stripSqlInjection(sqlSelect);
+    }
+
+    public Wrapper<T> setSqlSelect(String sqlSelect) {
+        if (StringUtils.isNotEmpty(sqlSelect)) {
+            this.sqlSelect = sqlSelect;
+        }
+        return this;
+    }
+
+    /**
+     * <p>
+     * 使用字符串数组封装sqlSelect，便于在不需要指定 AS 的情况下通过实体类自动生成的列静态字段快速组装 sqlSelect，<br/>
+     * 减少手动录入的错误率
+     * </p>
+     *
+     * @param columns 字段
+     * @return
+     */
+    public Wrapper<T> setSqlSelect(String... columns) {
+        StringBuilder builder = new StringBuilder();
+        for (String column : columns) {
+            if (StringUtils.isNotEmpty(column)) {
+                if (builder.length() > 0) {
+                    builder.append(",");
+                }
+                builder.append(column);
+            }
+        }
+        this.sqlSelect = builder.toString();
+        return this;
+    }
+
+    /**
+     * <p>
+     * 使用对象封装的setsqlselect
+     * </p>
+     *
+     * @param column 字段
+     * @return
+     */
+    public Wrapper<T> setSqlSelect(Column... column) {
+        if (ArrayUtils.isNotEmpty(column)) {
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < column.length; i++) {
+                if (column[i] != null) {
+                    String col = column[i].getColumn();
+                    String as = column[i].getAs();
+                    if (StringUtils.isEmpty(col)) {
+                        continue;
+                    }
+                    builder.append(col).append(as);
+                    if (i < column.length - 1) {
+                        builder.append(",");
+                    }
+                }
+            }
+            this.sqlSelect = builder.toString();
+        }
+        return this;
+    }
+
+    /**
+     * <p>
+     * 使用对象封装的setsqlselect
+     * </p>
+     *
+     * @param columns 字段
+     * @return
+     */
+    public Wrapper<T> setSqlSelect(Columns columns) {
+        Column[] columnArray = columns.getColumns();
+        if (ArrayUtils.isNotEmpty(columnArray)) {
+            setSqlSelect(columnArray);
+        }
+        return this;
+    }
+
+    /**
+     * <p>
+     * SQL 片段 (子类实现)
+     * </p>
+     */
+    public abstract String getSqlSegment();
 
     @Override
     public String toString() {
@@ -211,31 +301,6 @@ public abstract class Wrapper<T> extends com.baomidou.mybatisplus.core.condition
      */
     public Wrapper<T> eq(String column, Object params) {
         return eq(true, column, params);
-    }
-
-    public Wrapper<T> eq(boolean condition, Property<T, ?> func, Object params) {
-        if (condition) {
-            sql.WHERE(formatSql(String.format("%s = {0}", toCol(func)), params));
-        }
-        return this;
-    }
-
-    /**
-     * 为了支持字段重构做出的修改
-     * <p>
-     * 你可以在指定 Wrapper<T> 泛型的前提下这么使用:
-     * <p>
-     * Wrapper<User> wrapper = new EntityWrapper<User>();
-     * wrapper.eq(User::getUserName, "baomidou")
-     * <p>
-     * 改方法会根据规则（比如配置的字段映射、或者下划线规则）将 User::getUserName 转换为对应的数据库字段信息
-     *
-     * @param func   需要转换的 function
-     * @param params 参数信息
-     * @return 返回自身
-     */
-    public Wrapper<T> eq(Property<T, ?> func, Object params) {
-        return eq(true, func, params);
     }
 
     /**
@@ -887,7 +952,7 @@ public abstract class Wrapper<T> extends com.baomidou.mybatisplus.core.condition
      */
     public Wrapper<T> like(boolean condition, String column, String value) {
         if (condition) {
-            handlerLike(column, value, SqlLike.DEFAULT, false);
+            handerLike(column, value, SqlLike.DEFAULT, false);
         }
         return this;
     }
@@ -917,7 +982,7 @@ public abstract class Wrapper<T> extends com.baomidou.mybatisplus.core.condition
      */
     public Wrapper<T> notLike(boolean condition, String column, String value) {
         if (condition) {
-            handlerLike(column, value, SqlLike.DEFAULT, true);
+            handerLike(column, value, SqlLike.DEFAULT, true);
         }
         return this;
     }
@@ -944,7 +1009,7 @@ public abstract class Wrapper<T> extends com.baomidou.mybatisplus.core.condition
      * @param value  like匹配值
      * @param isNot  是否为NOT LIKE操作
      */
-    private void handlerLike(String column, String value, SqlLike type, boolean isNot) {
+    private void handerLike(String column, String value, SqlLike type, boolean isNot) {
         if (StringUtils.isNotEmpty(column) && StringUtils.isNotEmpty(value)) {
             StringBuilder inSql = new StringBuilder();
             inSql.append(column);
@@ -969,7 +1034,7 @@ public abstract class Wrapper<T> extends com.baomidou.mybatisplus.core.condition
      */
     public Wrapper<T> like(boolean condition, String column, String value, SqlLike type) {
         if (condition) {
-            handlerLike(column, value, type, false);
+            handerLike(column, value, type, false);
         }
         return this;
     }
@@ -1001,7 +1066,7 @@ public abstract class Wrapper<T> extends com.baomidou.mybatisplus.core.condition
      */
     public Wrapper<T> notLike(boolean condition, String column, String value, SqlLike type) {
         if (condition) {
-            handlerLike(column, value, type, true);
+            handerLike(column, value, type, true);
         }
         return this;
     }
@@ -1548,22 +1613,6 @@ public abstract class Wrapper<T> extends com.baomidou.mybatisplus.core.condition
     }
 
     /**
-     * 是否为空
-     */
-    public boolean isEmpty() {
-        return sql.isEmptyOfWhere();
-    }
-
-    public static <T> Wrapper<T> getInstance() {
-        return new Wrapper<T>() {
-            @Override
-            public String getSqlSegment() {
-                return null;
-            }
-        };
-    }
-
-    /**
      * <p>
      * 克隆本身 fixed github issues/241
      * </p>
@@ -1571,14 +1620,6 @@ public abstract class Wrapper<T> extends com.baomidou.mybatisplus.core.condition
     @Override
     public Wrapper<T> clone() {
         return SerializationUtils.clone(this);
-    }
-
-    /**
-     * @param func function
-     * @return 返回从 function 中解析出的 column
-     */
-    protected String toCol(Property<T, ?> func) {
-        return TableInfoHelper.toColumn(func);
     }
 }
 

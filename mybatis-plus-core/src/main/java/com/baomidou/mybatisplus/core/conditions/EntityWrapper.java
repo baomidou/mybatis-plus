@@ -27,7 +27,7 @@ import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
  * @author hubin
  * @Date 2018-05-25
  */
-public class EntityWrapper<T> extends QueryWrapper<T> {
+public class EntityWrapper<T> extends QueryWrapper<T, EntityWrapper<T>> {
 
     /**
      * 数据库表映射实体类
