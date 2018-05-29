@@ -16,6 +16,9 @@
 package com.baomidou.mybatisplus.core.conditions;
 
 
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * <p>
  * Entity 对象封装操作类，定义T-SQL语法
@@ -48,6 +51,13 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
         this.sqlSet = sqlSet;
     }
 
+    private UpdateWrapper(T entity, String sqlSet, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
+        this.entity = entity;
+        this.sqlSet = sqlSet;
+        this.paramNameSeq = paramNameSeq;
+        this.paramNameValuePairs = paramNameValuePairs;
+    }
+
     @Override
     public T getEntity() {
         return entity;
@@ -70,8 +80,12 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
      */
     @Override
     public String getSqlSegment() {
-
         return null;
+    }
+
+    @Override
+    protected UpdateWrapper<T> instance(AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
+        return new UpdateWrapper<>(entity, sqlSet, paramNameSeq, paramNameValuePairs);
     }
 
     @Override

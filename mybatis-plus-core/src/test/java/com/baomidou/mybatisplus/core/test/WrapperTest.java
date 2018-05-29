@@ -1,9 +1,8 @@
 package com.baomidou.mybatisplus.core.test;
 
-import org.junit.Test;
-
 import com.baomidou.mybatisplus.core.conditions.EntityWrapper;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import org.junit.Test;
 
 public class WrapperTest {
 
@@ -20,6 +19,16 @@ public class WrapperTest {
         wrapper = new EntityWrapper<User>().eq("name", 123)
             .and().eq("id", 1);
         log(wrapper.getSqlSegment());
+    }
+
+    @Test
+    public void test1() {
+        EntityWrapper<User> ew = new EntityWrapper<User>()
+            .eq("xxx", 123)
+            .and(i -> i.eq("andx", 65444).and().le("ande", 66666))
+            .and().ne("xxx", 222);
+        log(ew.getSqlSegment());
+        ew.getParamNameValuePairs().forEach((k, v) -> System.out.println("key = " + k + " ; value = " + v));
     }
 
 //    public void test() {

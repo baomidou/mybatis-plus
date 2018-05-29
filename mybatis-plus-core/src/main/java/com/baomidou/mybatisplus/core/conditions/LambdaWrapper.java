@@ -15,8 +15,14 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.Property;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * <p>
@@ -26,7 +32,66 @@ import com.baomidou.mybatisplus.core.toolkit.support.Property;
  * @author hubin
  * @since 2017-05-26
  */
-public class LambdaWrapper<T> extends AbstractWrapper<T, Property<T, ?>,  LambdaWrapper<T>> {
+public class LambdaWrapper<T> extends AbstractWrapper<T, Property<T, ?>, LambdaWrapper<T>> {
+    /**
+     * 数据库表映射实体类
+     */
+    protected T entity = null;
+    /**
+     * SQL 查询字段内容，例如：id,name,age
+     */
+    protected String sqlSelect = null;
+
+    public LambdaWrapper() {
+        this.paramNameSeq = new AtomicInteger(0);
+        this.paramNameValuePairs = new HashMap<>();
+    }
+
+    public LambdaWrapper(T entity) {
+        this.entity = entity;
+        this.paramNameSeq = new AtomicInteger(0);
+        this.paramNameValuePairs = new HashMap<>();
+    }
+
+    public LambdaWrapper(T entity, String sqlSelect) {
+        this.entity = entity;
+        this.sqlSelect = sqlSelect;
+        this.paramNameSeq = new AtomicInteger(0);
+        this.paramNameValuePairs = new HashMap<>();
+    }
+
+    private LambdaWrapper(T entity, String sqlSelect, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
+        this.entity = entity;
+        this.sqlSelect = sqlSelect;
+        this.paramNameSeq = paramNameSeq;
+        this.paramNameValuePairs = paramNameValuePairs;
+    }
+
+    @Override
+    public T getEntity() {
+        return entity;
+    }
+
+    public LambdaWrapper<T> setEntity(T entity) {
+        this.entity = entity;
+        return typedThis();
+    }
+
+    public String getSqlSelect() {
+        return StringUtils.isEmpty(sqlSelect) ? null : SqlUtils.stripSqlInjection(sqlSelect);
+    }
+
+    public LambdaWrapper<T> setSqlSelect(String sqlSelect) {
+        if (StringUtils.isNotEmpty(sqlSelect)) {
+            this.sqlSelect = sqlSelect;
+        }
+        return typedThis();
+    }
+
+    @Override
+    protected LambdaWrapper<T> instance(AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
+        return new LambdaWrapper<>(entity, sqlSelect, paramNameSeq, paramNameValuePairs);
+    }
 
     @Override
     public String columnToString(Property<T, ?> column) {

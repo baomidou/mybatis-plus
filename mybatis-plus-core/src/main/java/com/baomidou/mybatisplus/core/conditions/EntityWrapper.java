@@ -19,6 +19,10 @@ package com.baomidou.mybatisplus.core.conditions;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * <p>
  * Entity 对象封装操作类
@@ -38,18 +42,29 @@ public class EntityWrapper<T> extends AbstractWrapper<T, String, EntityWrapper<T
      */
     protected String sqlSelect = null;
 
-
     public EntityWrapper() {
-        /* 注意，传入查询参数 */
+        this.paramNameSeq = new AtomicInteger(0);
+        this.paramNameValuePairs = new HashMap<>();
     }
 
     public EntityWrapper(T entity) {
         this.entity = entity;
+        this.paramNameSeq = new AtomicInteger(0);
+        this.paramNameValuePairs = new HashMap<>();
     }
 
     public EntityWrapper(T entity, String sqlSelect) {
         this.entity = entity;
         this.sqlSelect = sqlSelect;
+        this.paramNameSeq = new AtomicInteger(0);
+        this.paramNameValuePairs = new HashMap<>();
+    }
+
+    private EntityWrapper(T entity, String sqlSelect, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
+        this.entity = entity;
+        this.sqlSelect = sqlSelect;
+        this.paramNameSeq = paramNameSeq;
+        this.paramNameValuePairs = paramNameValuePairs;
     }
 
     @Override
@@ -59,7 +74,7 @@ public class EntityWrapper<T> extends AbstractWrapper<T, String, EntityWrapper<T
 
     public EntityWrapper<T> setEntity(T entity) {
         this.entity = entity;
-        return this;
+        return typedThis();
     }
 
     public String getSqlSelect() {
@@ -70,11 +85,16 @@ public class EntityWrapper<T> extends AbstractWrapper<T, String, EntityWrapper<T
         if (StringUtils.isNotEmpty(sqlSelect)) {
             this.sqlSelect = sqlSelect;
         }
-        return this;
+        return typedThis();
     }
 
-    public LambdaWrapper<T> stream() {
-        return new LambdaWrapper<>();
+//    public LambdaWrapper<T> stream() {
+//        return new LambdaWrapper<>();
+//    }
+
+    @Override
+    protected EntityWrapper<T> instance(AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
+        return new EntityWrapper<>(entity, sqlSelect, paramNameSeq, paramNameValuePairs);
     }
 
     @Override

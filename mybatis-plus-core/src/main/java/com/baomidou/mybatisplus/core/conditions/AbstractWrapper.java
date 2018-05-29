@@ -45,8 +45,8 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      */
     private static final String PLACE_HOLDER = "{%s}";
     private static final String MYBATIS_PLUS_TOKEN = "#{%s.paramNameValuePairs.%s}";
-    private final AtomicInteger paramNameSeq = new AtomicInteger(0);
-    private final Map<String, Object> paramNameValuePairs = new HashMap<>();
+    protected AtomicInteger paramNameSeq;
+    protected Map<String, Object> paramNameValuePairs = new HashMap<>();
     protected String paramAlias = null;
     private List<ISqlSegment> expression = new ArrayList<>();
 
@@ -354,10 +354,14 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * @return
      */
     protected This addNestedCondition(Function<This, This> condition, SqlKeyword sqlKeyword) {
-//        return doIt(true, sqlKeyword, () -> "(",
-//            condition.apply(instance(paramNameValuePairs, paramNameSeq)), () -> ")");
-        return null;//todo 待处理
+        return doIt(true, sqlKeyword, () -> "(",
+            condition.apply(instance(paramNameSeq, paramNameValuePairs)), () -> ")");
     }
+
+    /**
+     * 子类返回一个自己的新对象
+     */
+    protected abstract This instance(AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs);
 
     /**
      * <p>
@@ -449,4 +453,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
             .collect(Collectors.toList()));
     }
 
+    public Map<String, Object> getParamNameValuePairs() {
+        return paramNameValuePairs;
+    }
 }
