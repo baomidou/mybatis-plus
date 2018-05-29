@@ -5,7 +5,7 @@ import org.junit.Test;
 import com.baomidou.mybatisplus.core.conditions.EntityWrapper;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 
-public class QueryWrapperTest {
+public class WrapperTest {
 
     private void log(String message) {
         System.out.println(message);
@@ -13,7 +13,7 @@ public class QueryWrapperTest {
 
     @Test
     public void test() {
-        Wrapper wrapper = new EntityWrapper<User>().eq(User::getName, 123)
+        Wrapper wrapper = new EntityWrapper<User>().stream().eq(User::getName, 123)
             .and().eq(User::getId, 1);
         log(wrapper.getSqlSegment());
     }

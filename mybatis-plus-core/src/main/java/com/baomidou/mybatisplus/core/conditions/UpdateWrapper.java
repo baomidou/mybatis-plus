@@ -24,7 +24,7 @@ package com.baomidou.mybatisplus.core.conditions;
  * @author hubin , yanghu , Dyang , Caratacus
  * @Date 2016-11-7
  */
-public class UpdateWrapper<T> extends QueryWrapper<T, UpdateWrapper<T>> {
+public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T>> {
 
     /**
      * 数据库表映射实体类
@@ -74,4 +74,8 @@ public class UpdateWrapper<T> extends QueryWrapper<T, UpdateWrapper<T>> {
         return null;
     }
 
+    @Override
+    public String columnToString(String column) {
+        return column;
+    }
 }

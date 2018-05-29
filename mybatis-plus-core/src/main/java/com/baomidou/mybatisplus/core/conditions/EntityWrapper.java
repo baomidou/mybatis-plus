@@ -27,7 +27,7 @@ import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
  * @author hubin
  * @Date 2018-05-25
  */
-public class EntityWrapper<T> extends QueryWrapper<T, EntityWrapper<T>> {
+public class EntityWrapper<T> extends AbstractWrapper<T, String, EntityWrapper<T>> {
 
     /**
      * 数据库表映射实体类
@@ -57,18 +57,28 @@ public class EntityWrapper<T> extends QueryWrapper<T, EntityWrapper<T>> {
         return entity;
     }
 
-    public void setEntity(T entity) {
+    public EntityWrapper<T> setEntity(T entity) {
         this.entity = entity;
+        return this;
     }
 
     public String getSqlSelect() {
         return StringUtils.isEmpty(sqlSelect) ? null : SqlUtils.stripSqlInjection(sqlSelect);
     }
 
-    public Wrapper<T> setSqlSelect(String sqlSelect) {
+    public EntityWrapper<T> setSqlSelect(String sqlSelect) {
         if (StringUtils.isNotEmpty(sqlSelect)) {
             this.sqlSelect = sqlSelect;
         }
         return this;
+    }
+
+    public LambdaWrapper<T> stream() {
+        return new LambdaWrapper<>();
+    }
+
+    @Override
+    public String columnToString(String column) {
+        return column;
     }
 }
