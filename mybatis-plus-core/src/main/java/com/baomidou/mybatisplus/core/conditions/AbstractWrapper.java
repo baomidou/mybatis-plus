@@ -230,21 +230,19 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     public This and() {
-        expression.add(AND);
-        return typedThis();
+        return doIt(true, AND);
     }
 
     public This and(Function<This, This> func) {
         return addNestedCondition(func, AND);
     }
 
-    public This or(Function<This, This> func) {
-        return addNestedCondition(func, OR);
+    public This or() {
+        return doIt(true, OR);
     }
 
-    public This or(R column, Object val) {
-        //todo 待动
-        return addCondition(true, column, OR, val);
+    public This or(Function<This, This> func) {
+        return addNestedCondition(func, OR);
     }
 
     public This in(String condition) {//todo 待动
