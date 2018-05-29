@@ -265,7 +265,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
         if (CollectionUtils.isEmpty(value)) {
             return typedThis();
         }
-        return doIt(condition, () -> columnToString(column), IN, () -> "(", inExpression(value), () -> ")");
+        return doIt(condition, () -> columnToString(column), IN, inExpression(value));
     }
 
     /**
@@ -402,13 +402,14 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
 
     /**
      * <p>
-     * 获取in表达式 不带括号
+     * 获取in表达式 包含括号
      * </p>
      *
      * @param value 集合
      */
     private ISqlSegment inExpression(Collection<?> value) {
-        return () -> value.stream().map(i -> formatSql("{0}", i)).collect(Collectors.joining(","));
+        return () -> value.stream().map(i -> formatSql("{0}", i))
+            .collect(Collectors.joining(",", "(", ")"));
     }
 
     /**
