@@ -34,6 +34,7 @@ public class LambdaUtilsTest {
 
     @Getter
     private class TestPojo {
+
         private int id;
     }
 
@@ -41,8 +42,9 @@ public class LambdaUtilsTest {
 
         private StringBuilder sb = new StringBuilder();
 
-        // 这个 TYPE 类型和 T 就没有关系了
-        <TYPE> Cond<T> eq(Property<TYPE, ?> prop, Object val) {
+        // 这个 TYPE 类型和 T 就没有关系了 ；
+        // 如果有需要的话，使用 extends 来建立关系，保证class一致，稍微做点编写检查
+        <TYPE extends T> Cond<T> eq(Property<TYPE, ?> prop, Object val) {
             SerializedLambda lambda = LambdaUtils.resolve(prop);
             this.sb.append(lambda.getImplMethodName()).append(" = ").append(val);
             return this;
