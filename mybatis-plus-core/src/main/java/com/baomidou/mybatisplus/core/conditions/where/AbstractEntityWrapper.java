@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 
 /**
- * @author miemie
+ * @author hubin miemie HCL
  * @since 2018-05-30
  */
 public abstract class AbstractEntityWrapper<T, R, This extends AbstractEntityWrapper<T, R, This>> extends AbstractWrapper<T, R, This> {

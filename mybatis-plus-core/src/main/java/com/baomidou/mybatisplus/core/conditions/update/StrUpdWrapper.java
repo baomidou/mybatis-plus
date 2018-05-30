@@ -1,11 +1,10 @@
 package com.baomidou.mybatisplus.core.conditions.update;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * @author miemie
+ * @author hubin miemie HCL
  * @since 2018-05-30
  */
 public class StrUpdWrapper<T> extends AbstractUpdWrapper<T, String, StrUpdWrapper<T>> {
