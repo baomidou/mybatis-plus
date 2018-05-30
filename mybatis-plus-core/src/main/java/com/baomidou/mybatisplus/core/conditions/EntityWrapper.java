@@ -93,12 +93,12 @@ public class EntityWrapper<T> extends AbstractWrapper<T, String, EntityWrapper<T
     }
 
     @Override
-    protected EntityWrapper<T> instance(AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
-        return new EntityWrapper<>(entity, sqlSelect, paramNameSeq, paramNameValuePairs);
+    public String columnToString(String column) {
+        return column;
     }
 
     @Override
-    public String columnToString(String column) {
-        return column;
+    protected EntityWrapper<T> instance(AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
+        return new EntityWrapper<>(entity, sqlSelect, paramNameSeq, paramNameValuePairs);
     }
 }

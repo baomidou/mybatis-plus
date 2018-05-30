@@ -16,9 +16,6 @@
 package com.baomidou.mybatisplus.core.conditions;
 
 
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-
 /**
  * <p>
  * Entity 对象封装操作类，定义T-SQL语法
@@ -27,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author hubin , yanghu , Dyang , Caratacus
  * @Date 2016-11-7
  */
-public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T>> {
+public abstract class AbstractUpdWrapper<T, R, This extends AbstractUpdWrapper<T, R, This>> extends AbstractWrapper<T, R, This> {
 
     /**
      * 数据库表映射实体类
@@ -38,32 +35,12 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
      */
     protected String sqlSet = null;
 
-    public UpdateWrapper() {
-        /* 注意，传入查询参数 */
-    }
-
-    public UpdateWrapper(T entity) {
-        this.entity = entity;
-    }
-
-    public UpdateWrapper(T entity, String sqlSet) {
-        this.entity = entity;
-        this.sqlSet = sqlSet;
-    }
-
-    private UpdateWrapper(T entity, String sqlSet, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
-        this.entity = entity;
-        this.sqlSet = sqlSet;
-        this.paramNameSeq = paramNameSeq;
-        this.paramNameValuePairs = paramNameValuePairs;
-    }
-
     @Override
     public T getEntity() {
         return entity;
     }
 
-    public UpdateWrapper<T> setEntity(T entity) {
+    public This setEntity(T entity) {
         this.entity = entity;
         return typedThis();
     }
@@ -82,15 +59,5 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
     @Override
     public String getSqlSegment() {
         return null;
-    }
-
-    @Override
-    protected UpdateWrapper<T> instance(AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
-        return new UpdateWrapper<>(entity, sqlSet, paramNameSeq, paramNameValuePairs);
-    }
-
-    @Override
-    public String columnToString(String column) {
-        return column;
     }
 }

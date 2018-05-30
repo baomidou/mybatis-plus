@@ -89,12 +89,12 @@ public class LambdaWrapper<T> extends AbstractWrapper<T, Property<T, ?>, LambdaW
     }
 
     @Override
-    protected LambdaWrapper<T> instance(AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
-        return new LambdaWrapper<>(entity, sqlSelect, paramNameSeq, paramNameValuePairs);
+    public String columnToString(Property<T, ?> column) {
+        return TableInfoHelper.toColumn(column);
     }
 
     @Override
-    public String columnToString(Property<T, ?> column) {
-        return TableInfoHelper.toColumn(column);
+    protected LambdaWrapper<T> instance(AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
+        return new LambdaWrapper<>(entity, sqlSelect, paramNameSeq, paramNameValuePairs);
     }
 }
