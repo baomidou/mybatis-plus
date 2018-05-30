@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
+import java.io.Serializable;
+
 /**
  * <p>
  * 条件构造抽象类
@@ -23,7 +25,7 @@ package com.baomidou.mybatisplus.core.conditions;
  * @author hubin
  * @Date 2018-05-25
  */
-public abstract class Wrapper<T> implements ISqlSegment {
+public abstract class Wrapper<T> implements ISqlSegment, Serializable {
 
     /**
      * 实体对象（子类实现）

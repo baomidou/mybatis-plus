@@ -44,7 +44,7 @@ import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
  * @Date 2016-11-7
  */
 @Deprecated
-public abstract class Wrapper<T> extends com.baomidou.mybatisplus.core.conditions.Wrapper<T> {
+public class Wrapper<T> extends com.baomidou.mybatisplus.core.conditions.Wrapper<T> {
 
     /**
      * 占位符
@@ -184,13 +184,6 @@ public abstract class Wrapper<T> extends com.baomidou.mybatisplus.core.condition
         }
         return this;
     }
-
-    /**
-     * <p>
-     * SQL 片段 (子类实现)
-     * </p>
-     */
-    public abstract String getSqlSegment();
 
     @Override
     public String toString() {
@@ -1620,6 +1613,12 @@ public abstract class Wrapper<T> extends com.baomidou.mybatisplus.core.condition
     @Override
     public Wrapper<T> clone() {
         return SerializationUtils.clone(this);
+    }
+
+    @Override
+    public String getSqlSegment() {
+        // 子类重载
+        return null;
     }
 }
 
