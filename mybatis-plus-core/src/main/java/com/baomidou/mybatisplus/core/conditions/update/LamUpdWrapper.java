@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.core.conditions;
+package com.baomidou.mybatisplus.core.conditions.update;
 
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.support.Property;

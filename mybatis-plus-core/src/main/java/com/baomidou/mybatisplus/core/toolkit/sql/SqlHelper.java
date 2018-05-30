@@ -24,14 +24,13 @@ import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import com.baomidou.mybatisplus.core.conditions.EntityWrapper;
+import com.baomidou.mybatisplus.core.conditions.where.StrEntityWrapper;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.pagination.Page;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.core.toolkit.MapUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 
 /**
@@ -194,7 +193,7 @@ public class SqlHelper {
         }
         // wrapper 不存创建一个 Condition
         if (isEmptyOfWrapper(wrapper)) {
-            wrapper = new EntityWrapper<>();
+            wrapper = new StrEntityWrapper<>();
         }
         // 排序 fixed gitee issues/IHF7N
 //        if (page.isOpenSort() && page.isSearchCount()) {

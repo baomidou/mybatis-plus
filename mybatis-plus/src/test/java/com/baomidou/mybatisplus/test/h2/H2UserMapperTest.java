@@ -1,30 +1,19 @@
 package com.baomidou.mybatisplus.test.h2;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.sql.DataSource;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.baomidou.mybatisplus.core.conditions.EntityWrapper;
-import com.baomidou.mybatisplus.core.pagination.Page;
 import com.baomidou.mybatisplus.test.h2.config.H2Db;
 import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserMapper;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
-import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
 
 /**
  * <p>

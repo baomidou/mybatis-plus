@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.core.conditions;
+package com.baomidou.mybatisplus.core.conditions.update;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
