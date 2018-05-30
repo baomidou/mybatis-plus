@@ -15,17 +15,41 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
-import com.baomidou.mybatisplus.core.enums.SqlKeyword;
-import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.AND;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ASC;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.BETWEEN;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.DESC;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.EQ;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.EXISTS;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GE;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GROUP_BY;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GT;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.HAVING;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IN;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IS_NOT_NULL;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IS_NULL;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LE;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LIKE;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LT;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NE;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NOT;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.OR;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ORDER_BY;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.*;
+import com.baomidou.mybatisplus.core.enums.SqlKeyword;
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 
 /**
@@ -50,6 +74,21 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     protected String paramAlias = null;
     private List<ISqlSegment> expression = new ArrayList<>();
     private boolean didOrderBy = false;
+
+    /**
+     * 数据库表映射实体类
+     */
+    protected T entity;
+
+    @Override
+    public T getEntity() {
+        return this.entity;
+    }
+
+    public This setEntity(T entity) {
+        this.entity = entity;
+        return typedThis();
+    }
 
     public abstract String columnToString(R column);
 

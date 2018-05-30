@@ -28,9 +28,18 @@ import java.io.Serializable;
 public abstract class Wrapper<T> implements ISqlSegment, Serializable {
 
     /**
+     * <p>
      * 实体对象（子类实现）
+     * </p>
+     *
+     * @return 泛型 T
      */
-    public T getEntity() {
+    public abstract T getEntity();
+
+    /**
+     * 查询条件 SQL 片段（子类实现）
+     */
+    public String getSqlSelect() {
         return null;
     }
 
