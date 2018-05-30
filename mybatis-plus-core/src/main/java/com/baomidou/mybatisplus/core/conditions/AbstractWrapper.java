@@ -49,6 +49,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     protected Map<String, Object> paramNameValuePairs;
     protected String paramAlias = null;
     private List<ISqlSegment> expression = new ArrayList<>();
+    private boolean didOrderBy = false;
 
     public abstract String columnToString(R column);
 
@@ -325,8 +326,12 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     /**
      * 排序：ORDER BY 字段, ...
      */
-    public This orderBy(R column, boolean isAsc) {//todo 多次调用如何解决?
-        return doIt(true, ORDER_BY, () -> columnToString(column), isAsc ? ASC : DESC);
+    public This orderBy(R column, boolean isAsc) {//todo 多次调用如下解决?
+        if (!didOrderBy) {
+            didOrderBy = true;
+            return doIt(true, ORDER_BY, () -> columnToString(column), isAsc ? ASC : DESC);
+        }
+        return doIt(true, () -> ",", () -> columnToString(column), isAsc ? ASC : DESC);
     }
 
     /**
