@@ -73,7 +73,7 @@ public class TableInfoHelper {
      * @param <T>  被函数调用的类型，这个必须指定
      * @return 返回解析后的列名
      */
-    public static <T> String toColumn(Property<T, ?> func) {
+    public static <T> String toColumn(Property<T, ?> func) {//todo 只需要返回className以及methodName,放到lamWrapper里根据缓存取出columnName
         SerializedLambda lambda = LambdaUtils.resolve(func);
         // 使用 class 名称和方法名称作为缓存的键值
         String cacheKey = lambda.getImplClass() + lambda.getImplMethodName();
