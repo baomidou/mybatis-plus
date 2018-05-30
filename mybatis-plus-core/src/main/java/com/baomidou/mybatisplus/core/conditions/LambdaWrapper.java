@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 查询条件封装
  * </p>
  *
- * @author hubin
+ * @author hubin miemie HCL
  * @since 2017-05-26
  */
 public class LambdaWrapper<T> extends AbstractWrapper<T, Property<T, ?>, LambdaWrapper<T>> {

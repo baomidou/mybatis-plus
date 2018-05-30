@@ -33,7 +33,7 @@ import static com.baomidou.mybatisplus.core.enums.SqlKeyword.*;
  * 查询条件封装
  * </p>
  *
- * @author hubin
+ * @author hubin miemie HCL
  * @since 2017-05-26
  */
 public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, This>> extends Wrapper<T> {

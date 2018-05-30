@@ -21,7 +21,7 @@ package com.baomidou.mybatisplus.core.conditions;
  * SQL 片段接口
  * </p>
  *
- * @author hubin
+ * @author hubin miemie HCL
  * @since 2018-05-28
  */
 @FunctionalInterface

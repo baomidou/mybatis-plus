@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Entity 对象封装操作类
  * </p>
  *
- * @author hubin
+ * @author hubin miemie HCL
  * @Date 2018-05-25
  */
 public class EntityWrapper<T> extends AbstractWrapper<T, String, EntityWrapper<T>> {
