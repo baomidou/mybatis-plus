@@ -15,14 +15,16 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.core.config.DbConfig;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
+import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
+import com.baomidou.mybatisplus.core.toolkit.support.Property;
+import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
@@ -37,21 +39,9 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.KeySequence;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.core.config.DbConfig;
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
-import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
-import com.baomidou.mybatisplus.core.toolkit.support.LambdaCache;
-import com.baomidou.mybatisplus.core.toolkit.support.Property;
-import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
+import java.lang.reflect.Field;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <p>
@@ -133,6 +123,7 @@ public class TableInfoHelper {
      * @param lambda 需要解析的 lambda
      * @return 返回解析后的class
      */
+    @Deprecated
     private static Class<?> resolveClass(SerializedLambda lambda) {
         String className = lambda.getImplClass().replace('/', '.');
         try {
@@ -289,7 +280,7 @@ public class TableInfoHelper {
          * 注入
          */
         TABLE_INFO_CACHE.put(clazz.getName(), tableInfo);
-        LambdaCache.put(clazz, tableInfo);
+        LambdaUtils.createCache(clazz.getName(), tableInfo);
         return tableInfo;
     }
 
