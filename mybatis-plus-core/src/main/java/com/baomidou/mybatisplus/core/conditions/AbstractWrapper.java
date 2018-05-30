@@ -73,6 +73,20 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     /**
+     * NOT LIKE '%值%'
+     */
+    public This notLike(R column, Object val) {
+        return notLike(true, column, val);
+    }
+
+    /**
+     * NOT LIKE '%值%'
+     */
+    public This notLike(boolean condition, R column, Object val) {
+        return not(condition).like(condition, column, val);
+    }
+
+    /**
      * LIKE '%值'
      */
     public This likeLeft(R column, Object val) {
