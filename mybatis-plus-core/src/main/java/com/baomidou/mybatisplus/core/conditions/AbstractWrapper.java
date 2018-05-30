@@ -211,7 +211,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * NOT BETWEEN 值1 AND 值2
      */
     public This notBetween(boolean condition, R column, Object val1, Object val2) {
-        return not().between(condition, column, val1, val2);
+        return not(condition).between(condition, column, val1, val2);
     }
 
     /**
@@ -305,7 +305,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
         if (CollectionUtils.isEmpty(value)) {
             return typedThis();
         }
-        return not().in(condition, column, value);
+        return not(condition).in(condition, column, value);
     }
 
     /**
@@ -356,7 +356,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * 字段 not in
      */
     public This notIn(boolean condition, String sql) {
-        return not().in(condition, sql);
+        return not(condition).in(condition, sql);
     }
 
     /**
@@ -401,7 +401,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * not exists ( sql 语句 )
      */
     public This notExists(boolean condition, String sql) {
-        return not().exists(condition, sql);
+        return not(condition).exists(condition, sql);
     }
 
     /**
@@ -422,8 +422,8 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     /**
      * NOT 关键词
      */
-    protected This not() {
-        return doIt(true, NOT);
+    protected This not(boolean condition) {
+        return doIt(condition, NOT);
     }
 
     /**
