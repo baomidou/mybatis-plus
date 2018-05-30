@@ -33,21 +33,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class LamEntityWrapper<T> extends AbstractEntityWrapper<T, Property<T, ?>, LamEntityWrapper<T>> {
 
     public LamEntityWrapper() {
-        this.paramNameSeq = new AtomicInteger(0);
-        this.paramNameValuePairs = new HashMap<>();
+        initNeed();
     }
 
     public LamEntityWrapper(T entity) {
         this.entity = entity;
-        this.paramNameSeq = new AtomicInteger(0);
-        this.paramNameValuePairs = new HashMap<>();
+        initNeed();
     }
 
     public LamEntityWrapper(T entity, String sqlSelect) {
         this.entity = entity;
         this.sqlSelect = sqlSelect;
-        this.paramNameSeq = new AtomicInteger(0);
-        this.paramNameValuePairs = new HashMap<>();
+        initNeed();
     }
 
     private LamEntityWrapper(T entity, String sqlSelect, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {

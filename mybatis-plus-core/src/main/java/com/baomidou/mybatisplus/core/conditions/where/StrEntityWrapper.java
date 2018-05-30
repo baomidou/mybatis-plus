@@ -30,23 +30,19 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class StrEntityWrapper<T> extends AbstractEntityWrapper<T, String, StrEntityWrapper<T>> {
 
-
     public StrEntityWrapper() {
-        this.paramNameSeq = new AtomicInteger(0);
-        this.paramNameValuePairs = new HashMap<>();
+        initNeed();
     }
 
     public StrEntityWrapper(T entity) {
         this.entity = entity;
-        this.paramNameSeq = new AtomicInteger(0);
-        this.paramNameValuePairs = new HashMap<>();
+        initNeed();
     }
 
     public StrEntityWrapper(T entity, String sqlSelect) {
         this.entity = entity;
         this.sqlSelect = sqlSelect;
-        this.paramNameSeq = new AtomicInteger(0);
-        this.paramNameValuePairs = new HashMap<>();
+        initNeed();
     }
 
     private StrEntityWrapper(T entity, String sqlSelect, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {

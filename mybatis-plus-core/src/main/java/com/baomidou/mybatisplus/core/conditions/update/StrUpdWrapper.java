@@ -1,25 +1,29 @@
 package com.baomidou.mybatisplus.core.conditions.update;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * @author ming
- * @since 2018/5/30
+ * @author miemie
+ * @since 2018-05-30
  */
 public class StrUpdWrapper<T> extends AbstractUpdWrapper<T, String, StrUpdWrapper<T>> {
 
     public StrUpdWrapper() {
         /* 注意，传入查询参数 */
+        initNeed();
     }
 
     public StrUpdWrapper(T entity) {
         this.entity = entity;
+        initNeed();
     }
 
     public StrUpdWrapper(T entity, String sqlSet) {
         this.entity = entity;
         this.sqlSet = sqlSet;
+        initNeed();
     }
 
     private StrUpdWrapper(T entity, String sqlSet, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {

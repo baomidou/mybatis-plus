@@ -552,6 +552,14 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     /**
+     * 必要的初始化
+     */
+    protected void initNeed() {
+        this.paramNameSeq = new AtomicInteger(0);
+        this.paramNameValuePairs = new HashMap<>();
+    }
+
+    /**
      * <p>
      * 对sql片段进行组装
      * </p>
