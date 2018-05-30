@@ -63,8 +63,9 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
         return entity;
     }
 
-    public void setEntity(T entity) {
+    public UpdateWrapper<T> setEntity(T entity) {
         this.entity = entity;
+        return typedThis();
     }
 
     /**
@@ -72,7 +73,7 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
      */
     @Override
     public String getSqlSet() {
-        return this.sqlSet;
+        return sqlSet;
     }
 
     /**
