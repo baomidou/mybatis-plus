@@ -290,14 +290,14 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     /**
-     * 字段 in (value.get(0), value.get(1), ...)
+     * 字段 IN (value.get(0), value.get(1), ...)
      */
     public This in(R column, Collection<?> value) {
         return in(true, column, value);
     }
 
     /**
-     * 字段 in (value.get(0), value.get(1), ...)
+     * 字段 IN (value.get(0), value.get(1), ...)
      */
     public This in(boolean condition, R column, Collection<?> value) {
         if (CollectionUtils.isEmpty(value)) {
@@ -307,14 +307,14 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     /**
-     * 字段 not in (value.get(0), value.get(1), ...)
+     * 字段 NOT IN (value.get(0), value.get(1), ...)
      */
     public This notIn(R column, Collection<?> value) {
         return notIn(true, column, value);
     }
 
     /**
-     * 字段 not in (value.get(0), value.get(1), ...)
+     * 字段 NOT IN (value.get(0), value.get(1), ...)
      */
     public This notIn(boolean condition, R column, Collection<?> value) {
         if (CollectionUtils.isEmpty(value)) {
@@ -349,7 +349,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     /**
-     * 字段 in
+     * 字段 IN ( sql 语句 )
      * 例: in("select id from table where age < 20")
      */
     public This in(String sql) {
@@ -357,14 +357,14 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     /**
-     * 字段 in
+     * 字段 IN ( sql 语句 )
      */
     public This in(boolean condition, String sql) {
         return addNestedCondition(condition, sql, IN);
     }
 
     /**
-     * 字段 not in
+     * 字段 NOT IN ( sql 语句 )
      * 例: notIn("select id from table where age < 20")
      */
     public This notIn(String sql) {
@@ -372,14 +372,14 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     /**
-     * 字段 not in
+     * 字段 NOT IN ( sql 语句 )
      */
     public This notIn(boolean condition, String sql) {
         return not(condition).in(condition, sql);
     }
 
     /**
-     * HAVING 关键词
+     * HAVING ( sql 语句 )
      * 例: having("sum(age) > {0}", 1)
      */
     public This having(String sqlHaving, Object... params) {
@@ -387,14 +387,14 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     /**
-     * HAVING 关键词
+     * HAVING ( sql 语句 )
      */
     public This having(boolean condition, String sqlHaving, Object... params) {
         return doIt(condition, HAVING, () -> formatSqlIfNeed(condition, sqlHaving, params));
     }
 
     /**
-     * exists ( sql 语句 )
+     * EXISTS ( sql 语句 )
      * 例: exists("select id from table where age = 1")
      */
     public This exists(String sql) {
@@ -402,14 +402,14 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     /**
-     * exists ( sql 语句 )
+     * EXISTS ( sql 语句 )
      */
     public This exists(boolean condition, String sql) {
         return addNestedCondition(condition, sql, EXISTS);
     }
 
     /**
-     * not exists ( sql 语句 )
+     * NOT EXISTS ( sql 语句 )
      * 例: notExists("select id from table where age = 1")
      */
     public This notExists(String sql) {
@@ -417,7 +417,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     /**
-     * not exists ( sql 语句 )
+     * NOT EXISTS ( sql 语句 )
      */
     public This notExists(boolean condition, String sql) {
         return not(condition).exists(condition, sql);
