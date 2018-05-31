@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.conditions.select;
 
-
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;

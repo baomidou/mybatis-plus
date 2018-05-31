@@ -2,6 +2,8 @@ package com.baomidou.mybatisplus.core.test;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.select.EntityWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+
 import org.junit.Test;
 
 public class WrapperTest {
@@ -27,6 +29,17 @@ public class WrapperTest {
             .and().ne("xxx", 222);
         log(ew.getSqlSegment());
         ew.getParamNameValuePairs().forEach((k, v) -> System.out.println("key = " + k + " ; value = " + v));
+    }
+
+    @Test
+    public void test2() {
+        UpdateWrapper<User> ew = new UpdateWrapper<User>()
+            .set("name", "三毛").set("id", 1)
+            .eq("xxx", 123)
+            .and(i -> i.eq("andx", 65444).and().le("ande", 66666))
+            .and().ne("xxx", 222);
+        log(ew.getSqlSet());
+        log(ew.getSqlSegment());
     }
 
 //    public void test() {
