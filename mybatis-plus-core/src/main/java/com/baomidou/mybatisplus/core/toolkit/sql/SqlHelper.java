@@ -15,8 +15,14 @@
  */
 package com.baomidou.mybatisplus.core.toolkit.sql;
 
-import java.util.List;
-
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.where.EntityWrapper;
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.pagination.Page;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.Configuration;
@@ -24,13 +30,7 @@ import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.pagination.Page;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
+import java.util.List;
 
 /**
  * <p>
@@ -192,7 +192,7 @@ public class SqlHelper {
         }
         // wrapper 不存创建一个 Condition
         if (isEmptyOfWrapper(wrapper)) {
-            wrapper = new StrEntityWrapper<>();
+            wrapper = new EntityWrapper<>();
         }
         // 排序 fixed gitee issues/IHF7N
 //        if (page.isOpenSort() && page.isSearchCount()) {
