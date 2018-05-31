@@ -60,13 +60,10 @@ public class StringUtils {
      * 占位符
      */
     public static final String PLACE_HOLDER = "{%s}";
-
+    private static final Pattern PATTERN_ONE = Pattern.compile(".*[A-Z]+.*");
+    private static final Pattern PATTERN_TWO = Pattern.compile(".*[/_]+.*");
     private static boolean separatorBeforeDigit = false;
     private static boolean separatorAfterDigit = true;
-
-    private static final Pattern PATTERN_ONE = Pattern.compile(".*[A-Z]+.*");
-
-    private static final Pattern PATTERN_TWO = Pattern.compile(".*[/_]+.*");
 
 
     private StringUtils() {
@@ -148,6 +145,24 @@ public class StringUtils {
             sb.append(Character.toLowerCase(c));
         }
         return sb.toString();
+    }
+
+    /**
+     * <p>
+     * 解析 getMethodName -> propertyName
+     * </p>
+     *
+     * @param getMethodName 需要解析的
+     * @return 返回解析后的字段名称
+     */
+    public static String resolveFieldName(String getMethodName) {
+        if (getMethodName.startsWith("get")) {
+            getMethodName = getMethodName.substring(3, getMethodName.length());
+        } else if (getMethodName.startsWith("is")) {
+            getMethodName = getMethodName.substring(2, getMethodName.length());
+        }
+        // 小写第一个字母
+        return StringUtils.firstToLowerCase(getMethodName);
     }
 
     /**

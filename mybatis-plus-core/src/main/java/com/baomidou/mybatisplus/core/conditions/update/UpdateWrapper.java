@@ -1,9 +1,9 @@
 package com.baomidou.mybatisplus.core.conditions.update;
 
+import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
+
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 
 /**
  * <p>
@@ -42,7 +42,7 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
     }
 
     public LambdaUpdateWrapper<T> stream() {
-        return new LambdaUpdateWrapper<>(this.entity, this.sqlSet);
+        return new LambdaUpdateWrapper<>(entity, sqlSet, paramNameSeq, paramNameValuePairs);
     }
 
     @Override

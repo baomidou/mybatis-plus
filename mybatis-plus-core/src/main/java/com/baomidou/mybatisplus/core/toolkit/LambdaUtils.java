@@ -53,4 +53,8 @@ public final class LambdaUtils {
         tableInfo.getFieldList().forEach(i -> map.put(i.getProperty(), i.getColumn()));
         return map;
     }
+
+    public static Map<String, String> getColumnMap(String entityClassName) {
+        return LAMBDA_CACHE.get(entityClassName);
+    }
 }

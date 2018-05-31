@@ -15,14 +15,12 @@
  */
 package com.baomidou.mybatisplus.core.conditions.where;
 
+import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
+
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
-import com.baomidou.mybatisplus.core.toolkit.support.Property;
 
 /**
  * <p>
@@ -32,29 +30,14 @@ import com.baomidou.mybatisplus.core.toolkit.support.Property;
  * @author hubin miemie HCL
  * @since 2017-05-26
  */
-public class LambdaEntityWrapper<T> extends AbstractWrapper<T, Property<T, ?>, LambdaEntityWrapper<T>> {
+public class LambdaEntityWrapper<T> extends AbstractLambdaWrapper<T, LambdaEntityWrapper<T>> {
 
     /**
      * SQL 查询字段内容，例如：id,name,age
      */
     private String sqlSelect;
 
-
-    public LambdaEntityWrapper() {
-        this(null, null);
-    }
-
-    public LambdaEntityWrapper(T entity) {
-        this(entity, null);
-    }
-
-    public LambdaEntityWrapper(T entity, String sqlSelect) {
-        this.entity = entity;
-        this.sqlSelect = sqlSelect;
-        this.initNeed();
-    }
-
-    private LambdaEntityWrapper(T entity, String sqlSelect, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
+    LambdaEntityWrapper(T entity, String sqlSelect, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
         this.entity = entity;
         this.sqlSelect = sqlSelect;
         this.paramNameSeq = paramNameSeq;
@@ -70,13 +53,9 @@ public class LambdaEntityWrapper<T> extends AbstractWrapper<T, Property<T, ?>, L
         if (StringUtils.isNotEmpty(sqlSelect)) {
             this.sqlSelect = sqlSelect;
         }
-        return this;
+        return typedThis();
     }
 
-    @Override
-    public String columnToString(Property<T, ?> column) {
-        return TableInfoHelper.toColumn(column);
-    }
 
     @Override
     protected LambdaEntityWrapper<T> instance(AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {

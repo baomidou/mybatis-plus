@@ -1,9 +1,8 @@
 package com.baomidou.mybatisplus.core.test;
 
-import org.junit.Test;
-
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.where.EntityWrapper;
+import org.junit.Test;
 
 public class WrapperTest {
 
@@ -13,10 +12,11 @@ public class WrapperTest {
 
     @Test
     public void test() {
-        Wrapper wrapper = new EntityWrapper<User>().stream().eq(User::getName, 123)
+        Wrapper<User> wrapper = new EntityWrapper<User>().stream().eq(User::getName, 123)
             .or(c -> c.eq(User::getRoleId, 1).eq(User::getId, 2))
             .and().eq(User::getId, 1);
         log(wrapper.getSqlSegment());
+
     }
 
     @Test

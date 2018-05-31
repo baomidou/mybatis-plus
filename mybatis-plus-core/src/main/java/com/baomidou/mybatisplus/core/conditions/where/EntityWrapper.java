@@ -16,12 +16,12 @@
 package com.baomidou.mybatisplus.core.conditions.where;
 
 
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
+
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * <p>
@@ -38,18 +38,6 @@ public class EntityWrapper<T> extends AbstractWrapper<T, String, EntityWrapper<T
      */
     private String sqlSelect;
 
-
-    @Override
-    public String getSqlSelect() {
-        return StringUtils.isEmpty(sqlSelect) ? null : SqlUtils.stripSqlInjection(sqlSelect);
-    }
-
-    public EntityWrapper<T> setSqlSelect(String sqlSelect) {
-        if (StringUtils.isNotEmpty(sqlSelect)) {
-            this.sqlSelect = sqlSelect;
-        }
-        return this;
-    }
 
     public EntityWrapper() {
         this(null, null);
@@ -72,8 +60,20 @@ public class EntityWrapper<T> extends AbstractWrapper<T, String, EntityWrapper<T
         this.paramNameValuePairs = paramNameValuePairs;
     }
 
+    @Override
+    public String getSqlSelect() {
+        return StringUtils.isEmpty(sqlSelect) ? null : SqlUtils.stripSqlInjection(sqlSelect);
+    }
+
+    public EntityWrapper<T> setSqlSelect(String sqlSelect) {
+        if (StringUtils.isNotEmpty(sqlSelect)) {
+            this.sqlSelect = sqlSelect;
+        }
+        return typedThis();
+    }
+
     public LambdaEntityWrapper<T> stream() {
-        return new LambdaEntityWrapper<>(this.entity, this.sqlSelect);
+        return new LambdaEntityWrapper<>(entity, sqlSelect, paramNameSeq, paramNameValuePairs);
     }
 
     @Override

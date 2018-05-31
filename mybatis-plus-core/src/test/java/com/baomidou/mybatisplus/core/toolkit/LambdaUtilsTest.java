@@ -1,12 +1,10 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import com.baomidou.mybatisplus.core.toolkit.support.Property;
 import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
-
 import lombok.Getter;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class LambdaUtilsTest {
 
@@ -15,7 +13,7 @@ public class LambdaUtilsTest {
         SerializedLambda lambda = LambdaUtils.resolve(TestPojo::getId);
         Assert.assertEquals(TestPojo.class.getName(), lambda.getImplClass().replace("/", "."));
         Assert.assertEquals("getId", lambda.getImplMethodName());
-        Assert.assertEquals("id", TableInfoHelper.toColumn(TestPojo::getId));
+        Assert.assertEquals("id", StringUtils.resolveFieldName(lambda.getImplMethodName()));
 
         Cond<TestPojo> cond = new Cond<>();
         System.out.println(cond.eq(TestPojo::getId, 123).toString());
