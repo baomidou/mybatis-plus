@@ -1,7 +1,7 @@
 package com.baomidou.mybatisplus.core.test;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.where.EntityWrapper;
+import com.baomidou.mybatisplus.core.conditions.select.EntityWrapper;
 import org.junit.Test;
 
 public class WrapperTest {
