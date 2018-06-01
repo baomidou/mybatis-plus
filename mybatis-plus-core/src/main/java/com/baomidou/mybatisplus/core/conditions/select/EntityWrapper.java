@@ -37,7 +37,6 @@ public class EntityWrapper<T> extends AbstractWrapper<T, String, EntityWrapper<T
      */
     private String sqlSelect;
 
-
     public EntityWrapper() {
         this(null, null);
     }
@@ -64,7 +63,7 @@ public class EntityWrapper<T> extends AbstractWrapper<T, String, EntityWrapper<T
         return StringUtils.isEmpty(sqlSelect) ? null : SqlUtils.stripSqlInjection(sqlSelect);
     }
 
-    public EntityWrapper<T> setSqlSelect(String sqlSelect) {
+    public EntityWrapper<T> select(String sqlSelect) {
         if (StringUtils.isNotEmpty(sqlSelect)) {
             this.sqlSelect = sqlSelect;
         }
@@ -72,11 +71,11 @@ public class EntityWrapper<T> extends AbstractWrapper<T, String, EntityWrapper<T
     }
 
     public LambdaEntityWrapper<T> stream() {
-        return new LambdaEntityWrapper<>(entity, sqlSelect, paramNameSeq, paramNameValuePairs);
+        return new LambdaEntityWrapper<>(entity, paramNameSeq, paramNameValuePairs);
     }
 
     @Override
-    public String columnToString(String column) {
+    protected String columnToString(String column) {
         return column;
     }
 

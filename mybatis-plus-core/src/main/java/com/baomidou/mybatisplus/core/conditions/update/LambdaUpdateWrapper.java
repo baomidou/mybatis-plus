@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.Property;
 
 /**
@@ -39,7 +40,7 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
     /**
      * SQL 更新字段内容，例如：name='1',age=2
      */
-    private List<String> expression = new ArrayList<>();
+    private List<String> sqlSet = new ArrayList<>();
 
     LambdaUpdateWrapper(T entity, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
         this.entity = entity;
@@ -49,14 +50,20 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
 
     @Override
     public String getSqlSet() {
-        if (CollectionUtils.isEmpty(expression)) {
+        if (CollectionUtils.isEmpty(sqlSet)) {
             return null;
         }
-        return expression.stream().collect(joining(","));
+        return SqlUtils.stripSqlInjection(sqlSet.stream().collect(joining(",")));
     }
 
     public LambdaUpdateWrapper<T> set(Property<T, ?> column, Object val) {
-        expression.add(String.format("%s=%s", columnToString(column), val));
+        return this.set(true, column, val);
+    }
+
+    public LambdaUpdateWrapper<T> set(boolean condition, Property<T, ?> column, Object val) {
+        if (condition) {
+            sqlSet.add(String.format("%s=%s", columnToString(column), val));
+        }
         return typedThis();
     }
 

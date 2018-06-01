@@ -90,7 +90,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
         return typedThis();
     }
 
-    public abstract String columnToString(R column);
+    protected abstract String columnToString(R column);
 
     public This apply(String condition) {
         return doIt(true, () -> condition);

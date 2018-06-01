@@ -38,7 +38,7 @@ public abstract class AbstractLambdaWrapper<T, This extends AbstractLambdaWrappe
     private boolean initColumnMap = false;
 
     @Override
-    public String columnToString(Property<T, ?> column) {
+    protected String columnToString(Property<T, ?> column) {
         return getColumn(LambdaUtils.resolve(column));
     }
 

@@ -42,6 +42,14 @@ public class WrapperTest {
         log(ew.getSqlSegment());
     }
 
+    @Test
+    public void test3() {
+        UpdateWrapper<User> ew = new UpdateWrapper<User>()
+           .setSql("abc=1,def=2").eq("id", 1).and().ge("age", 3);
+        log(ew.getSqlSet());
+        log(ew.getSqlSegment());
+    }
+
 //    public void test() {
 //        String sql = new QueryWrapper()
 //            .where("b.age > 18", condition ->

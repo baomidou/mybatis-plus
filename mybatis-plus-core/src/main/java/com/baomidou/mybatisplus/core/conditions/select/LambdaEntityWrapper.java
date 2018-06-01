@@ -15,10 +15,16 @@
  */
 package com.baomidou.mybatisplus.core.conditions.select;
 
+import static java.util.stream.Collectors.joining;
+
 import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
+import com.baomidou.mybatisplus.core.toolkit.support.Property;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -35,23 +41,33 @@ public class LambdaEntityWrapper<T> extends AbstractLambdaWrapper<T, LambdaEntit
     /**
      * SQL 查询字段内容，例如：id,name,age
      */
-    private String sqlSelect;
+    private List<String> sqlSelect = new ArrayList<>();
 
-    LambdaEntityWrapper(T entity, String sqlSelect, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
+    LambdaEntityWrapper(T entity, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
         this.entity = entity;
-        this.sqlSelect = sqlSelect;
         this.paramNameSeq = paramNameSeq;
         this.paramNameValuePairs = paramNameValuePairs;
     }
 
     @Override
     public String getSqlSelect() {
-        return StringUtils.isEmpty(sqlSelect) ? null : SqlUtils.stripSqlInjection(sqlSelect);
+        if (CollectionUtils.isEmpty(sqlSelect)) {
+            return null;
+        }
+        return SqlUtils.stripSqlInjection(sqlSelect.stream().collect(joining(",")));
     }
 
-    public LambdaEntityWrapper<T> setSqlSelect(String sqlSelect) {
-        if (StringUtils.isNotEmpty(sqlSelect)) {
-            this.sqlSelect = sqlSelect;
+    /**
+     * <p>
+     * SELECT 部分 SQL 设置
+     * </p>
+     *
+     * @param columns 查询字段
+     * @return
+     */
+    public LambdaEntityWrapper<T> select(Property<T, ?>... columns) {
+        for (Property<T, ?> column : columns) {
+            sqlSelect.add(this.columnToString(column));
         }
         return typedThis();
     }
@@ -59,6 +75,6 @@ public class LambdaEntityWrapper<T> extends AbstractLambdaWrapper<T, LambdaEntit
 
     @Override
     protected LambdaEntityWrapper<T> instance(AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
-        return new LambdaEntityWrapper<>(entity, sqlSelect, paramNameSeq, paramNameValuePairs);
+        return new LambdaEntityWrapper<>(entity, paramNameSeq, paramNameValuePairs);
     }
 }

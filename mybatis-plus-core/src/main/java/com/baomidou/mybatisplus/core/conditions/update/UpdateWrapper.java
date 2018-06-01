@@ -38,7 +38,7 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
     /**
      * SQL 更新字段内容，例如：name='1',age=2
      */
-    private List<String> expression = new ArrayList<>();
+    private List<String> sqlSet = new ArrayList<>();
 
     public UpdateWrapper() {
         this(null);
@@ -61,20 +61,57 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
 
     @Override
     public String getSqlSet() {
-        if (CollectionUtils.isEmpty(expression)) {
+        if (CollectionUtils.isEmpty(sqlSet)) {
             return null;
         }
-        return expression.stream().collect(joining(","));
+        return sqlSet.stream().collect(joining(","));
     }
 
+    /**
+     * <p>
+     * SQL SET 字段
+     * </p>
+     *
+     * @param column 字段
+     * @param val    值
+     * @return
+     */
     public UpdateWrapper<T> set(String column, Object val) {
-        // todo 待优化
-        expression.add(String.format("%s=%s", column, val));
+        return this.set(true, column, val);
+    }
+
+    /**
+     * <p>
+     * SQL SET 字段
+     * </p>
+     *
+     * @param condition 操作条件
+     * @param column    字段
+     * @param val       值
+     * @return
+     */
+    public UpdateWrapper<T> set(boolean condition, String column, Object val) {
+        if (condition) {
+            sqlSet.add(String.format("%s=%s", column, val));
+        }
+        return typedThis();
+    }
+
+    /**
+     * <p>
+     * SET 部分 SQL
+     * </p>
+     *
+     * @param sql SET 部分内容
+     * @return
+     */
+    public UpdateWrapper<T> setSql(String sql) {
+        sqlSet.add(sql);
         return typedThis();
     }
 
     @Override
-    public String columnToString(String column) {
+    protected String columnToString(String column) {
         return column;
     }
 
