@@ -116,6 +116,7 @@ public class PerformanceInterceptor implements Interceptor {
                     originalSql = (String) stmtSql;
                 }
             } catch (Exception ignored) {
+                ignored.printStackTrace();
             }
         } else if (T4CPreparedStatement.equals(stmtClassName)
             || OraclePreparedStatementWrapper.equals(stmtClassName)) {
