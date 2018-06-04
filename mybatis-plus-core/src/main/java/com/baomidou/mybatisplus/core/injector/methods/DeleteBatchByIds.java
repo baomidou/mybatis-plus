@@ -36,7 +36,7 @@ public class DeleteBatchByIds extends AbstractMethod {
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.DELETE_BATCH_BY_IDS;
         StringBuilder ids = new StringBuilder();
-        ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"coll\" separator=\",\">");
+        ids.append("\n<foreach item=\"item\" collection=\"coll\" separator=\",\">");
         ids.append("#{item}");
         ids.append("\n</foreach>");
         String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), tableInfo.getKeyColumn(), ids.toString());
