@@ -80,6 +80,20 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      */
     protected T entity;
 
+    /**
+     * 判断构造条件不为空
+     */
+    public boolean isNotEmptyOfWhere() {
+        return CollectionUtils.isNotEmpty(expression);
+    }
+
+    /**
+     * 判断构造条件为空
+     */
+    public boolean isEmptyOfWhere() {
+        return CollectionUtils.isEmpty(expression);
+    }
+
     @Override
     public T getEntity() {
         return this.entity;

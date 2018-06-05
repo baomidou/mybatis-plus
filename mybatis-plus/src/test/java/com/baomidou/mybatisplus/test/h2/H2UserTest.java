@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.baomidou.mybatisplus.core.conditions.select.EntityWrapper;
 import com.baomidou.mybatisplus.core.pagination.Page;
 import com.baomidou.mybatisplus.test.h2.config.H2Db;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
@@ -65,8 +66,8 @@ public class H2UserTest extends BaseTest {
 
     @Test
     public void testEntityWrapperSelectSql() {
-        StrEntityWrapper<H2User> ew = new StrEntityWrapper<>();
-        ew.setSqlSelect("test_id as id, name, age");
+        EntityWrapper<H2User> ew = new EntityWrapper<>();
+        ew.select("test_id as id, name, age");
         List<H2User> list = userService.selectList(ew);
         for (H2User u : list) {
             Assert.assertNotNull(u.getId());

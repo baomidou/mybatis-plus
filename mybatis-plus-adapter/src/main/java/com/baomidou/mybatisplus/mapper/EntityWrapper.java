@@ -44,6 +44,7 @@ public class EntityWrapper<T> extends Wrapper<T> {
         this.entity = entity;
     }
 
+    @Override
     public String getSqlSelect() {
         return StringUtils.isEmpty(sqlSelect) ? null : SqlUtils.stripSqlInjection(sqlSelect);
     }

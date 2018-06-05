@@ -76,6 +76,10 @@ public class Wrapper<T> extends com.baomidou.mybatisplus.core.conditions.Wrapper
      */
     protected String AND_OR = "AND";
 
+    public static Wrapper getInstance() {
+        return new Wrapper();
+    }
+
     /**
      * <p>
      * 兼容EntityWrapper
@@ -106,6 +110,7 @@ public class Wrapper<T> extends com.baomidou.mybatisplus.core.conditions.Wrapper
         return !isEmptyOfWhere();
     }
 
+    @Override
     public String getSqlSelect() {
         return StringUtils.isEmpty(sqlSelect) ? null : SqlUtils.stripSqlInjection(sqlSelect);
     }
