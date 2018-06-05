@@ -106,8 +106,20 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
 
     protected abstract String columnToString(R column);
 
-    public This apply(String condition) {
-        return doIt(true, () -> condition);
+    /**
+     * 追加 sql
+     * 例: apply("date_format(column,'%Y-%m-%d') = '2008-08-08'")
+     */
+    public This apply(String sql) {
+        return doIt(true, () -> sql);
+    }
+
+    /**
+     * 追加 sql
+     * 例: apply("date_format(column,'%Y-%m-%d') = {0}", LocalDate.now())
+     */
+    public This apply(String sql, Object... value) {
+        return doIt(true, () -> formatSql(sql, value));
     }
 
     /**
@@ -121,8 +133,8 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * LIKE '%值%'
      */
     public This like(boolean condition, R column, Object val) {
-        return doIt(condition, () -> columnToString(column), LIKE, () -> "'%", () -> formatSql("{0}", val),
-            () -> "%'");
+        return doIt(condition, () -> columnToString(column), LIKE, () -> "\"%\"", () -> formatSql("{0}", val),
+            () -> "\"%\"");
     }
 
     /**
@@ -150,8 +162,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * LIKE '%值'
      */
     public This likeLeft(boolean condition, R column, Object val) {
-        return doIt(condition, () -> columnToString(column), LIKE, () -> "'%", () -> formatSql("{0}", val),
-            () -> "'");
+        return doIt(condition, () -> columnToString(column), LIKE, () -> "\"%\"", () -> formatSql("{0}", val));
     }
 
     /**
@@ -165,8 +176,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * LIKE '值%'
      */
     public This likeRight(boolean condition, R column, Object val) {
-        return doIt(condition, () -> columnToString(column), LIKE, () -> "'", () -> formatSql("{0}", val),
-            () -> "%'");
+        return doIt(condition, () -> columnToString(column), LIKE, () -> formatSql("{0}", val), () -> "\"%\"");
     }
 
     /**
