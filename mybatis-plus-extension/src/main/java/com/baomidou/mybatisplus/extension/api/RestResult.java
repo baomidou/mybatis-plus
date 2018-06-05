@@ -81,9 +81,12 @@ public class RestResult<T> {
         return ApiErrorCode.SUCCESS.getCode().equals(this.code);
     }
 
-    public T getData(IErrorCode errorCode) {
+    /**
+     * 服务间调用非业务正常，异常直接释放
+     */
+    public T serviceData() {
         if (!isSuccess()) {
-            throw new RestException(errorCode);
+            throw new RestException(this.msg);
         }
         return data;
     }
