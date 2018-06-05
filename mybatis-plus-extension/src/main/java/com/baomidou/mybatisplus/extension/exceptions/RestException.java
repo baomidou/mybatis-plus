@@ -13,30 +13,43 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.core.exceptions;
+package com.baomidou.mybatisplus.extension.exceptions;
+
+import com.baomidou.mybatisplus.extension.api.IErrorCode;
 
 /**
  * <p>
- * MybatisPlus 异常类
+ * Rest 请求异常类
  * </p>
  *
  * @author hubin
- * @Date 2016-01-23
+ * @since 2017-06-26
  */
-public class MybatisPlusException extends RuntimeException {
+public class RestException extends RuntimeException {
 
-    private static final long serialVersionUID = 1L;
+    /**
+     * 错误码
+     */
+    private IErrorCode errorCode;
 
-    public MybatisPlusException(String message) {
+    public RestException(IErrorCode errorCode) {
+        super(errorCode.getMsg());
+        this.errorCode = errorCode;
+    }
+
+    public RestException(String message) {
         super(message);
     }
 
-    public MybatisPlusException(Throwable throwable) {
-        super(throwable);
+    public RestException(Throwable cause) {
+        super(cause);
     }
 
-    public MybatisPlusException(String message, Throwable throwable) {
-        super(message, throwable);
+    public RestException(String message, Throwable cause) {
+        super(message, cause);
     }
 
+    public IErrorCode getErrorCode() {
+        return errorCode;
+    }
 }

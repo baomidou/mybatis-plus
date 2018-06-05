@@ -13,30 +13,25 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.core.exceptions;
+package com.baomidou.mybatisplus.extension.api;
 
 /**
  * <p>
- * MybatisPlus 异常类
+ * 错误码接口
  * </p>
  *
  * @author hubin
- * @Date 2016-01-23
+ * @since 2018-06-05
  */
-public class MybatisPlusException extends RuntimeException {
+public interface IErrorCode {
 
-    private static final long serialVersionUID = 1L;
+    /**
+     * 错误编码 0、失败 1、正常
+     */
+    String getCode();
 
-    public MybatisPlusException(String message) {
-        super(message);
-    }
-
-    public MybatisPlusException(Throwable throwable) {
-        super(throwable);
-    }
-
-    public MybatisPlusException(String message, Throwable throwable) {
-        super(message, throwable);
-    }
-
+    /**
+     * 错误描述
+     */
+    String getMsg();
 }
