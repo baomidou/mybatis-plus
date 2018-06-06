@@ -1,7 +1,12 @@
 package com.baomidou.mybatisplus.test.h2;
 
+import static java.util.stream.Collectors.toList;
+
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -11,8 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.select.EntityWrapper;
-import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.test.h2.config.H2Db;
 import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserMapper;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
@@ -33,12 +39,12 @@ public class H2UserMapperTest extends BaseTest {
     protected H2UserMapper userMapper;
 
     @BeforeClass
-    public static void aInitDB() throws SQLException, IOException {
+    public static void InitDB() throws SQLException, IOException {
         H2Db.initH2User();
     }
 
     @Test
-    public void bInsert() {
+    public void crudTest() {
         H2User h2User = new H2User();
         h2User.setName(NQQ);
         h2User.setAge(1);
@@ -46,11 +52,43 @@ public class H2UserMapperTest extends BaseTest {
         Assert.assertTrue(1 == userMapper.insert(h2User));
 
         log(h2User.getId());
-    }
 
-    @Test
-    public void cUpdate() {
-        H2User h2User = new H2User();
+        // 新增一条自定义 ID = 1 的测试删除数据
+        h2User.setId(1L);
+        h2User.setName("测试");
+        userMapper.insert(h2User);
+        for (int i = 0; i < 10; i++) {
+            userMapper.insert(new H2User("mp" + i, i));
+        }
+        Assert.assertTrue(1 == userMapper.deleteById(1L));
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("name", "mp0");
+        map.put("age", 0);
+
+        // 根据 map 查询
+        h2User = userMapper.selectByMap(map).get(0);
+        Assert.assertTrue(0 == h2User.getAge());
+
+        // 根据 map 删除
+        Assert.assertTrue(1 == userMapper.deleteByMap(map));
+
+        // 查询列表
+        Wrapper<H2User> wrapper = new EntityWrapper<H2User>().stream().like(H2User::getName, "mp");
+        log(wrapper.getSqlSegment());
+
+        List<H2User> h2UserList = userMapper.selectList(wrapper);
+        Assert.assertTrue(CollectionUtils.isNotEmpty(h2UserList));
+
+        // 查询总数
+        int count = userMapper.selectCount(wrapper.clone());
+        Assert.assertTrue(count > 1);
+
+        // 批量删除
+        Assert.assertTrue(count == userMapper.deleteBatchIds(h2UserList
+            .stream().map(u -> u.getId()).collect(toList())));
+
+        h2User = new H2User();
         h2User.setAge(2);
         Assert.assertTrue(1 == userMapper.update(h2User,
             new EntityWrapper<H2User>().eq("name", NQQ)));
@@ -58,12 +96,8 @@ public class H2UserMapperTest extends BaseTest {
         h2User.setAge(3);
         Assert.assertTrue(1 == userMapper.update(h2User,
             new EntityWrapper<H2User>().stream().eq(H2User::getName, NQQ)));
-    }
 
-    @Test
-    public void dSelectOne() {
-        H2User h2User = userMapper.selectOne(new H2User().setName(NQQ));
-        Assert.assertNotNull(h2User);
+        Assert.assertNotNull(userMapper.selectOne(new H2User().setName(NQQ)));
 
         log(h2User.toString());
     }

@@ -16,6 +16,8 @@
 package com.baomidou.mybatisplus.core.conditions;
 
 
+import java.io.Serializable;
+
 /**
  * <p>
  * SQL 片段接口
@@ -25,7 +27,7 @@ package com.baomidou.mybatisplus.core.conditions;
  * @since 2018-05-28
  */
 @FunctionalInterface
-public interface ISqlSegment {
+public interface ISqlSegment extends Serializable {
 
     /**
      * SQL 片段

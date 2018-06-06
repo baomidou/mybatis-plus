@@ -17,6 +17,8 @@ package com.baomidou.mybatisplus.core.conditions;
 
 import java.io.Serializable;
 
+import com.baomidou.mybatisplus.core.toolkit.SerializationUtils;
+
 /**
  * <p>
  * 条件构造抽象类
@@ -48,6 +50,11 @@ public abstract class Wrapper<T> implements ISqlSegment, Serializable {
      */
     public String getSqlSet() {
         return null;
+    }
+
+    @Override
+    public Wrapper<T> clone() {
+        return SerializationUtils.clone(this);
     }
 
 }

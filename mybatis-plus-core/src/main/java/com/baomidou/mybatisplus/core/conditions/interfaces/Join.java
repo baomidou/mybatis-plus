@@ -15,7 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.conditions.interfaces;
 
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.EXISTS;
+import java.io.Serializable;
 
 /**
  * <p>
@@ -26,7 +26,7 @@ import static com.baomidou.mybatisplus.core.enums.SqlKeyword.EXISTS;
  * @author hubin miemie HCL
  * @since 2017-05-26
  */
-public interface Join<This> {
+public interface Join<This> extends Serializable {
 
     /**
      * 拼接 AND

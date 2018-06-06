@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -30,7 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author hubin miemie HCL
  * @Date 2018-05-25
  */
-public class EntityWrapper<T> extends AbstractWrapper<T, String, EntityWrapper<T>> {
+public class EntityWrapper<T> extends AbstractWrapper<T, String, EntityWrapper<T>> implements Serializable {
 
     /**
      * SQL 查询字段内容，例如：id,name,age

@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.core.conditions.interfaces;
 
+import java.io.Serializable;
+
 /**
  * <p>
  * 查询条件封装
@@ -24,7 +26,7 @@ package com.baomidou.mybatisplus.core.conditions.interfaces;
  * @author hubin miemie HCL
  * @since 2017-05-26
  */
-public interface Compare<This, R> {
+public interface Compare<This, R> extends Serializable {
 
     /**
      * 等于 =

@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.Property;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author hubin miemie HCL
  * @since 2017-05-26
  */
-public class LambdaEntityWrapper<T> extends AbstractLambdaWrapper<T, LambdaEntityWrapper<T>> {
+public class LambdaEntityWrapper<T> extends AbstractLambdaWrapper<T, LambdaEntityWrapper<T>> implements Serializable {
 
     /**
      * SQL 查询字段内容，例如：id,name,age

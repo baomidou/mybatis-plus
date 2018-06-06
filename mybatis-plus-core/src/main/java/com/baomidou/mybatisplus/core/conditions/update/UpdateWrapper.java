@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +35,7 @@ import static java.util.stream.Collectors.joining;
  * @author hubin miemie HCL
  * @since 2018-05-30
  */
-public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T>> {
+public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T>> implements Serializable {
 
     /**
      * SQL 更新字段内容，例如：name='1',age=2

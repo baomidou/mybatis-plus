@@ -34,9 +34,9 @@ public class DeleteByMap extends AbstractMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
-        SqlMethod sqlMethod = SqlMethod.DELETE_BY_ID;
+        SqlMethod sqlMethod = SqlMethod.DELETE_BY_MAP;
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(),
-            tableInfo.getTableName(), tableInfo.getKeyColumn(), tableInfo.getKeyProperty()), modelClass);
+            tableInfo.getTableName(), this.sqlWhereByMap(tableInfo)), modelClass);
         return this.addDeleteMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource);
     }
 }

@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.conditions.interfaces;
 
+import java.io.Serializable;
 import java.util.function.Function;
 
 /**
@@ -26,7 +27,7 @@ import java.util.function.Function;
  * @author hubin miemie HCL
  * @since 2017-05-26
  */
-public interface Nested<This> {
+public interface Nested<This> extends Serializable {
 
     /**
      * AND 嵌套

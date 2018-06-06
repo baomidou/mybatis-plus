@@ -36,6 +36,7 @@ import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NOT;
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.OR;
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ORDER_BY;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -64,9 +65,8 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  * @since 2017-05-26
  */
 public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, This>> extends Wrapper<T>
-    implements Compare<This, R>, Nested<This>, Join<This> {
+    implements Compare<This, R>, Nested<This>, Join<This>, Serializable {
 
-    @SuppressWarnings("unchecked")
     protected This typedThis = (This) this;
 
     private static final String MP_GENERAL_PARAMNAME = "MPGENVAL";
@@ -164,8 +164,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      */
     @Override
     public This like(boolean condition, R column, Object val) {
-        return doIt(condition, () -> columnToString(column), LIKE, () -> "\"%\"", () -> formatSql("{0}", val),
-            () -> "\"%\"");
+        return doIt(condition, () -> columnToString(column), LIKE, () -> formatSql("CONCAT('%',{0},'%')", val));
     }
 
     /**
@@ -280,6 +279,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     /**
      * EXISTS ( sql 语句 )
      */
+    @Override
     public This exists(boolean condition, String existsSql) {
         return addNestedCondition(condition, existsSql, EXISTS);
     }
@@ -287,10 +287,12 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     /**
      * NOT EXISTS ( sql 语句 )
      */
+    @Override
     public This notExists(boolean condition, String notExistsSql) {
         return not(condition).exists(condition, notExistsSql);
     }
     //todo 上面的分完了,还剩下面的
+
     /**
      * 字段 IS NULL
      */
