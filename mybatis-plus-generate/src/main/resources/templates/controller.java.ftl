@@ -33,7 +33,7 @@ class ${table.controllerName}<#if superControllerClass??> : ${superControllerCla
 public class ${table.controllerName} extends ${superControllerClass} {
 <#else>
 public class ${table.controllerName} {
+</#if>
 
 }
-</#if>
 </#if>
