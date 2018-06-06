@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.conditions.interfaces;
 
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.EXISTS;
-
 /**
  * <p>
  * 查询条件封装
