@@ -67,7 +67,7 @@ public class EntityWrapper<T> extends AbstractWrapper<T, String, EntityWrapper<T
         if (StringUtils.isNotEmpty(sqlSelect)) {
             this.sqlSelect = sqlSelect;
         }
-        return typedThis();
+        return typedThis;
     }
 
     public LambdaEntityWrapper<T> stream() {

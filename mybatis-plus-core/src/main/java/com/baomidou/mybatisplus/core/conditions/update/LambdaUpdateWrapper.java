@@ -64,7 +64,7 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
         if (condition) {
             sqlSet.add(String.format("%s=%s", columnToString(column), formatSql("{0}", val)));
         }
-        return typedThis();
+        return typedThis;
     }
 
     @Override

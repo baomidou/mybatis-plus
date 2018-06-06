@@ -69,7 +69,7 @@ public class LambdaEntityWrapper<T> extends AbstractLambdaWrapper<T, LambdaEntit
         for (Property<T, ?> column : columns) {
             sqlSelect.add(this.columnToString(column));
         }
-        return typedThis();
+        return typedThis;
     }
 
 

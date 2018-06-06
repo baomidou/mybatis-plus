@@ -95,7 +95,7 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
         if (condition) {
             sqlSet.add(String.format("%s=%s", column, formatSql("{0}", val)));
         }
-        return typedThis();
+        return typedThis;
     }
 
     /**
@@ -108,7 +108,7 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
      */
     public UpdateWrapper<T> setSql(String sql) {
         sqlSet.add(sql);
-        return typedThis();
+        return typedThis;
     }
 
     @Override
