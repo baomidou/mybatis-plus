@@ -43,6 +43,11 @@ ext {
         //code generator
         "velocity"              : "org.apache.velocity:velocity-engine-core:2.0",
         "freemarker"            : "org.freemarker:freemarker:2.3.9",
+
+        // spring boot
+        "springboot-autoconfigure":"org.springframework.boot:spring-boot-autoconfigure:${springBootVersion}",
+        "springboot-configuration-processor":"org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}",
+        "springboot-starter-jdbc":"org.springframework.boot:spring-boot-starter-jdbc:${springBootVersion}",
     ]
 }
 
