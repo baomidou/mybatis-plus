@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.core.conditions.interfaces;
 
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.EXISTS;
+
 /**
  * <p>
  * 查询条件封装
@@ -105,6 +107,33 @@ public interface Join<This> {
      * 例: apply("date_format(column,'%Y-%m-%d') = {0}", LocalDate.now())
      */
     This apply(boolean condition, String applySql, Object... value);
+
+
+    /**
+     * EXISTS ( sql 语句 )
+     * 例: exists("select id from table where age = 1")
+     */
+    default This exists(String existsSql) {
+        return exists(true, existsSql);
+    }
+
+    /**
+     * EXISTS ( sql 语句 )
+     */
+    This exists(boolean condition, String existsSql);
+
+    /**
+     * NOT EXISTS ( sql 语句 )
+     * 例: notExists("select id from table where age = 1")
+     */
+    default This notExists(String notExistsSql) {
+        return notExists(true, notExistsSql);
+    }
+
+    /**
+     * NOT EXISTS ( sql 语句 )
+     */
+    This notExists(boolean condition, String notExistsSql);
 
     /**
      * LAST 拼接在 SQL 末尾

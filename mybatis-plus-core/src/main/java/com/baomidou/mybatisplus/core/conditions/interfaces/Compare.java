@@ -99,6 +99,30 @@ public interface Compare<This, R> {
     This le(boolean condition, R column, Object val);
 
     /**
+     * BETWEEN 值1 AND 值2
+     */
+    default This between(R column, Object val1, Object val2) {
+        return between(true, column, val1, val2);
+    }
+
+    /**
+     * BETWEEN 值1 AND 值2
+     */
+    This between(boolean condition, R column, Object val1, Object val2);
+
+    /**
+     * NOT BETWEEN 值1 AND 值2
+     */
+    default This notBetween(R column, Object val1, Object val2) {
+        return notBetween(true, column, val1, val2);
+    }
+
+    /**
+     * NOT BETWEEN 值1 AND 值2
+     */
+    This notBetween(boolean condition, R column, Object val1, Object val2);
+
+    /**
      * LIKE '%值%'
      */
     default This like(R column, Object val) {
