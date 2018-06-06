@@ -147,6 +147,6 @@ public interface Join<This> {
      */
     @Deprecated
     default This last(boolean condition, String lastSql) {
-        return apply(true, lastSql);
+        return apply(condition, lastSql);
     }
 }
