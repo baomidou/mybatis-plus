@@ -15,7 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.conditions.interfaces;
 
-import java.io.Serializable;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.EXISTS;
 
 /**
  * <p>
@@ -26,7 +26,7 @@ import java.io.Serializable;
  * @author hubin miemie HCL
  * @since 2017-05-26
  */
-public interface Join<This> extends Serializable {
+public interface Join<This> {
 
     /**
      * 拼接 AND
@@ -149,6 +149,6 @@ public interface Join<This> extends Serializable {
      */
     @Deprecated
     default This last(boolean condition, String lastSql) {
-        return apply(true, lastSql);
+        return apply(condition, lastSql);
     }
 }
