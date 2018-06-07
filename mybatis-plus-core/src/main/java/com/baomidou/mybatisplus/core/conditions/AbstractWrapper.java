@@ -44,7 +44,9 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     implements Compare<This, R>, Nested<This>, Join<This>, Func<This, R> {
     @SuppressWarnings("unchecked")
     protected final This typedThis = (This) this;
-
+    /**
+     * 前缀
+     */
     private static final String MP_GENERAL_PARAMNAME = "MPGENVAL";
     private static final String DEFAULT_PARAM_ALIAS = "ew";
     /**
@@ -315,14 +317,11 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
 
     @Override
     public This orderBy(boolean condition, R column, boolean isAsc) {
-        if (condition) {
-            if (!didOrderBy) {
-                didOrderBy = true;
-                return doIt(true, ORDER_BY, () -> columnToString(column), isAsc ? ASC : DESC);
-            }
-            return doIt(true, () -> ",", () -> columnToString(column), isAsc ? ASC : DESC);
+        if (condition && !didOrderBy) {
+            didOrderBy = true;
+            return doIt(true, ORDER_BY, () -> columnToString(column), isAsc ? ASC : DESC);
         }
-        return typedThis;
+        return doIt(condition, () -> ",", () -> columnToString(column), isAsc ? ASC : DESC);
     }
 
     /**
