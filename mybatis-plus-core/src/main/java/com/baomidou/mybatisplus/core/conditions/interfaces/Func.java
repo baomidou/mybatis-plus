@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.conditions.interfaces;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 /**
@@ -26,7 +27,7 @@ import java.util.Collection;
  * @author hubin miemie HCL
  * @since 2017-05-26
  */
-public interface Func<This, R> {
+public interface Func<This, R> extends Serializable {
 
     /**
      * 字段 IS NULL

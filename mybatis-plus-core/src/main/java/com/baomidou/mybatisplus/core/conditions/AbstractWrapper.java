@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -41,7 +42,7 @@ import static com.baomidou.mybatisplus.core.enums.SqlKeyword.*;
  * @since 2017-05-26
  */
 public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, This>> extends Wrapper<T>
-    implements Compare<This, R>, Nested<This>, Join<This>, Func<This, R> {
+    implements Compare<This, R>, Nested<This>, Join<This>, Func<This, R>, Serializable {
     /**
      * 前缀
      */
