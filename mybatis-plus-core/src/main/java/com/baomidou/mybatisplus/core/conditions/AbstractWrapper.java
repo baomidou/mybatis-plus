@@ -352,8 +352,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * @return this
      */
     protected This addCondition(boolean condition, R column, SqlKeyword sqlKeyword, Object val) {
-        return doIt(condition, () -> columnToString(column),
-            sqlKeyword, () -> this.formatSql("{0}", val));
+        return doIt(condition, () -> columnToString(column), sqlKeyword, () -> this.formatSql("{0}", val));
     }
 
     /**
