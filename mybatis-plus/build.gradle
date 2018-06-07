@@ -19,5 +19,5 @@ dependencies {
     testCompile rootProject.ext.dependencies["postgresql"]
     testCompile rootProject.ext.dependencies["oracle"]
     testCompile rootProject.ext.dependencies["mysql"]
-    testCompile "org.apache.logging.log4j:log4j-slf4j-impl:2.9.1"
+    testCompile "org.apache.logging.log4j:log4j-slf4j-impl:2.11.0"
 }
