@@ -97,8 +97,8 @@ public class TableFieldInfo {
      * 存在 TableField 注解构造函数
      * </p>
      */
-    public TableFieldInfo(DbConfig dbConfig, TableInfo tableInfo, String column,
-                          String el, Field field, TableField tableField) {
+    public TableFieldInfo(boolean underCamel, DbConfig dbConfig, TableInfo tableInfo,
+                          String column, String el, Field field, TableField tableField) {
         this.property = field.getName();
         this.propertyType = field.getType();
         /*
@@ -106,17 +106,19 @@ public class TableFieldInfo {
          * 2、没有开启下划线申明，但是column与property不等的情况<br>
          * 设置 related 为 true
          */
-        if (StringUtils.isEmpty(tableField.value())
-            && dbConfig.isColumnUnderline()) {
+        if (StringUtils.isEmpty(tableField.value())) {
             /* 开启字段下划线申明 */
-            this.related = true;
-            this.setColumn(dbConfig, StringUtils.camelToUnderline(column));
-        } else {
-            this.setColumn(dbConfig, column);
-            if (!column.equals(this.property)) {
+            if (dbConfig.isColumnUnderline()) {
+                column = StringUtils.camelToUnderline(column);
+            }
+            /* 未开启下划线转驼峰模式 AS 转换 */
+            if (!underCamel) {
                 this.related = true;
             }
+        } else if (!column.equals(this.property)) {
+            this.related = true;
         }
+        this.setColumn(dbConfig, column);
         this.el = el;
         /*
          * 优先使用单个字段注解，否则使用全局配置
@@ -135,11 +137,14 @@ public class TableFieldInfo {
         this.fieldFill = tableField.fill();
     }
 
-    public TableFieldInfo(DbConfig dbConfig, TableInfo tableInfo, Field field) {
+    public TableFieldInfo(boolean underCamel, DbConfig dbConfig, TableInfo tableInfo, Field field) {
         if (dbConfig.isColumnUnderline()) {
             /* 开启字段下划线申明 */
-            this.related = true;
             this.setColumn(dbConfig, StringUtils.camelToUnderline(field.getName()));
+            /* 未开启下划线转驼峰模式 AS 转换 */
+            if (!underCamel) {
+                this.related = true;
+            }
         } else {
             this.setColumn(dbConfig, field.getName());
         }

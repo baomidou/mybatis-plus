@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
+
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
@@ -135,6 +136,11 @@ public class TableInfoHelper {
             globalConfig = GlobalConfigUtils.DEFAULT;
         }
 
+        /***
+         * 是否开启下划线转驼峰模式
+         */
+        boolean underCamel = builderAssistant.getConfiguration().isMapUnderscoreToCamelCase();
+
         /* 数据库全局配置 */
         DbConfig dbConfig = globalConfig.getDbConfig();
 
@@ -182,7 +188,7 @@ public class TableInfoHelper {
              */
             if (!isReadPK) {
                 if (existTableId) {
-                    isReadPK = initTableId(dbConfig, tableInfo, field, clazz);
+                    isReadPK = initTableId(underCamel, dbConfig, tableInfo, field, clazz);
                 } else {
                     isReadPK = initFieldId(dbConfig, tableInfo, field, clazz);
                 }
@@ -194,14 +200,14 @@ public class TableInfoHelper {
             /*
              * 字段初始化
              */
-            if (initTableField(dbConfig, tableInfo, fieldList, field, clazz)) {
+            if (initTableField(underCamel, dbConfig, tableInfo, fieldList, field, clazz)) {
                 continue;
             }
 
             /*
              * 字段, 使用 camelToUnderline 转换驼峰写法为下划线分割法, 如果已指定 TableField , 便不会执行这里
              */
-            fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field));
+            fieldList.add(new TableFieldInfo(underCamel, dbConfig, tableInfo, field));
         }
 
         /* 字段列表 */
@@ -245,12 +251,14 @@ public class TableInfoHelper {
      * 主键属性初始化
      * </p>
      *
-     * @param tableInfo
-     * @param field
-     * @param clazz
+     * @param underCamel 下划线转驼峰模式
+     * @param tableInfo  表信息
+     * @param field      字段
+     * @param clazz      实体类
      * @return true 继续下一个属性判断，返回 continue;
      */
-    private static boolean initTableId(DbConfig dbConfig, TableInfo tableInfo, Field field, Class<?> clazz) {
+    private static boolean initTableId(boolean underCamel, DbConfig dbConfig, TableInfo tableInfo,
+                                       Field field, Class<?> clazz) {
         TableId tableId = field.getAnnotation(TableId.class);
         if (tableId != null) {
             if (StringUtils.isEmpty(tableInfo.getKeyColumn())) {
@@ -273,7 +281,10 @@ public class TableInfoHelper {
                     // 开启字段下划线申明
                     if (dbConfig.isColumnUnderline()) {
                         column = StringUtils.camelToUnderline(column);
-                        tableInfo.setKeyRelated(true);
+                        // 未开启下户线转驼峰 AS 转换
+                        if (!underCamel) {
+                            tableInfo.setKeyRelated(true);
+                        }
                     }
                     // 全局大写命名
                     if (dbConfig.isCapitalMode()) {
@@ -295,12 +306,13 @@ public class TableInfoHelper {
      * 主键属性初始化
      * </p>
      *
-     * @param tableInfo
-     * @param field
-     * @param clazz
+     * @param tableInfo 表信息
+     * @param field     字段
+     * @param clazz     实体类
      * @return true 继续下一个属性判断，返回 continue;
      */
-    private static boolean initFieldId(DbConfig dbConfig, TableInfo tableInfo, Field field, Class<?> clazz) {
+    private static boolean initFieldId(DbConfig dbConfig, TableInfo tableInfo,
+                                       Field field, Class<?> clazz) {
         String column = field.getName();
         if (dbConfig.isCapitalMode()) {
             column = column.toUpperCase();
@@ -335,14 +347,15 @@ public class TableInfoHelper {
      * 字段属性初始化
      * </p>
      *
-     * @param dbConfig  数据库全局配置
-     * @param tableInfo 表信息
-     * @param fieldList 字段列表
-     * @param clazz     当前表对象类
+     * @param underCamel 下划线转驼峰模式
+     * @param dbConfig   数据库全局配置
+     * @param tableInfo  表信息
+     * @param fieldList  字段列表
+     * @param clazz      当前表对象类
      * @return true 继续下一个属性判断，返回 continue;
      */
-    private static boolean initTableField(DbConfig dbConfig, TableInfo tableInfo, List<TableFieldInfo> fieldList,
-                                          Field field, Class<?> clazz) {
+    private static boolean initTableField(boolean underCamel, DbConfig dbConfig, TableInfo tableInfo,
+                                          List<TableFieldInfo> fieldList, Field field, Class<?> clazz) {
         /* 获取注解属性，自定义字段 */
         TableField tableField = field.getAnnotation(TableField.class);
         if (null == tableField) {
@@ -363,7 +376,8 @@ public class TableInfoHelper {
         String[] els = el.split(";");
         if (columns.length == els.length) {
             for (int i = 0; i < columns.length; i++) {
-                fieldList.add(new TableFieldInfo(dbConfig, tableInfo, columns[i], els[i], field, tableField));
+                fieldList.add(new TableFieldInfo(underCamel, dbConfig, tableInfo,
+                    columns[i], els[i], field, tableField));
             }
             return true;
         }

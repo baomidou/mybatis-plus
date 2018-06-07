@@ -231,13 +231,9 @@ public abstract class AbstractMethod {
                 while (iterator.hasNext()) {
                     TableFieldInfo fieldInfo = iterator.next();
                     // 匹配转换内容
-                    String wordConvert = sqlWordConvert(fieldInfo.getProperty());
-                    if (fieldInfo.getColumn().equals(wordConvert)) {
-                        columns.append(wordConvert);
-                    } else {
-                        // 字段属性不一致
-                        columns.append(fieldInfo.getColumn());
-                        columns.append(" AS ").append(wordConvert);
+                    columns.append(this.sqlWordConvert(fieldInfo.getColumn()));
+                    if (fieldInfo.isRelated()) {
+                        columns.append(" AS ").append(fieldInfo.getProperty());
                     }
                     if (i + 1 < size) {
                         columns.append(",");
