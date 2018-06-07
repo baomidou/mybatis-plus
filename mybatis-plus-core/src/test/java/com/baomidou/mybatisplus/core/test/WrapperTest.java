@@ -15,7 +15,7 @@ public class WrapperTest {
     @Test
     public void test() {
         Wrapper<User> wrapper = new QueryWrapper<User>().lambda().eq(User::getName, 123)
-            .or(c -> c.eq(User::getRoleId, 1).eq(User::getId, 2))
+            .orNested(c -> c.eq(User::getRoleId, 1).eq(User::getId, 2))
             .and().eq(User::getId, 1);
         log(wrapper.getSqlSegment());
 
@@ -25,7 +25,7 @@ public class WrapperTest {
     public void test1() {
         QueryWrapper<User> ew = new QueryWrapper<User>()
             .eq("xxx", 123)
-            .and(i -> i.eq("andx", 65444).and().le("ande", 66666))
+            .andNested(i -> i.eq("andx", 65444).and().le("ande", 66666))
             .and().ne("xxx", 222);
         log(ew.getSqlSegment());
         ew.getParamNameValuePairs().forEach((k, v) -> System.out.println("key = " + k + " ; value = " + v));
@@ -36,7 +36,7 @@ public class WrapperTest {
         UpdateWrapper<User> ew = new UpdateWrapper<User>()
             .set("name", "三毛").set("id", 1)
             .eq("xxx", 123)
-            .and(i -> i.eq("andx", 65444).and().le("ande", 66666))
+            .andNested(i -> i.eq("andx", 65444).and().le("ande", 66666))
             .and().ne("xxx", 222);
         log(ew.getSqlSet());
         log(ew.getSqlSegment());

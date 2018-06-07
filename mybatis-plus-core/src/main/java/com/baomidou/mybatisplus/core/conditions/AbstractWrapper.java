@@ -42,8 +42,6 @@ import static com.baomidou.mybatisplus.core.enums.SqlKeyword.*;
  */
 public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, This>> extends Wrapper<T>
     implements Compare<This, R>, Nested<This>, Join<This>, Func<This, R> {
-    @SuppressWarnings("unchecked")
-    protected final This typedThis = (This) this;
     /**
      * 前缀
      */
@@ -54,6 +52,8 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      */
     private static final String PLACE_HOLDER = "{%s}";
     private static final String MYBATIS_PLUS_TOKEN = "#{%s.paramNameValuePairs.%s}";
+    @SuppressWarnings("unchecked")
+    protected final This typedThis = (This) this;
     /**
      * 必要度量
      */
@@ -192,7 +192,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * AND 嵌套
      */
     @Override
-    public This and(boolean condition, Function<This, This> func) {
+    public This andNested(boolean condition, Function<This, This> func) {
         return and(condition).addNestedCondition(condition, func);
     }
 
@@ -200,8 +200,16 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * OR 嵌套
      */
     @Override
-    public This or(boolean condition, Function<This, This> func) {
+    public This orNested(boolean condition, Function<This, This> func) {
         return or(condition).addNestedCondition(condition, func);
+    }
+
+    /**
+     * 正常嵌套 不带 AND 或者 OR
+     */
+    @Override
+    public This nested(boolean condition, Function<This, This> func) {
+        return addNestedCondition(condition, func);
     }
 
     /**

@@ -65,7 +65,8 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
      * @param columns 查询字段
      * @return
      */
-    public LambdaQueryWrapper<T> select(Property<T, ?>... columns) {
+    @SafeVarargs
+    public final LambdaQueryWrapper<T> select(Property<T, ?>... columns) {
         for (Property<T, ?> column : columns) {
             sqlSelect.add(this.columnToString(column));
         }

@@ -36,15 +36,22 @@ public class MysqlTestDataMapperTest {
         println(testDataMapper.selectList(new QueryWrapper<TestData>()
             .eq("id", 1L)
             .and()
-            .like("test_str", 1)));
+            .like("test_str", 1)
+            .and()
+            .between("test_double", 1L, 2L)));
     }
 
     @Test
     public void specialSelectList() {
-        println(testDataMapper.selectList(new QueryWrapper<TestData>().lambda()
+        println(testDataMapper.selectList(new QueryWrapper<TestData>()
+            .lambda()
+            .select(TestData::getId)
             .eq(TestData::getId, 1L)
+            .andNested(i -> i.between(TestData::getTestDouble, 1L, 2L))
             .and()
-            .eq(TestData::getTestInt, 1)));
+            .eq(TestData::getTestInt, 1)
+            .and()
+            .between(TestData::getTestDouble, 1L, 2L)));
     }
 
     private void println(List<TestData> list) {
