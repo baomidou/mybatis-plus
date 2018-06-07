@@ -32,26 +32,26 @@ public interface Nested<This> extends Serializable {
     /**
      * AND 嵌套
      */
-    default This andNested(Function<This, This> func) {
-        return andNested(true, func);
+    default This and(Function<This, This> func) {
+        return and(true, func);
     }
 
     /**
      * AND 嵌套
      */
-    This andNested(boolean condition, Function<This, This> func);
+    This and(boolean condition, Function<This, This> func);
 
     /**
      * OR 嵌套
      */
-    default This orNested(Function<This, This> func) {
-        return orNested(true, func);
+    default This or(Function<This, This> func) {
+        return or(true, func);
     }
 
     /**
      * OR 嵌套
      */
-    This orNested(boolean condition, Function<This, This> func);
+    This or(boolean condition, Function<This, This> func);
 
     /**
      * 正常嵌套 不带 AND 或者 OR

@@ -193,7 +193,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * AND 嵌套
      */
     @Override
-    public This andNested(boolean condition, Function<This, This> func) {
+    public This and(boolean condition, Function<This, This> func) {
         return and(condition).addNestedCondition(condition, func);
     }
 
@@ -201,7 +201,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * OR 嵌套
      */
     @Override
-    public This orNested(boolean condition, Function<This, This> func) {
+    public This or(boolean condition, Function<This, This> func) {
         return or(condition).addNestedCondition(condition, func);
     }
 
