@@ -17,7 +17,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.select.EntityWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.test.h2.config.H2Db;
 import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserMapper;
@@ -74,7 +74,7 @@ public class H2UserMapperTest extends BaseTest {
         Assert.assertTrue(1 == userMapper.deleteByMap(map));
 
         // 查询列表
-        Wrapper<H2User> wrapper = new EntityWrapper<H2User>().stream().like(H2User::getName, "mp");
+        Wrapper<H2User> wrapper = new QueryWrapper<H2User>().lambda().like(H2User::getName, "mp");
         log(wrapper.getSqlSegment());
 
         List<H2User> h2UserList = userMapper.selectList(wrapper);
@@ -91,11 +91,11 @@ public class H2UserMapperTest extends BaseTest {
         h2User = new H2User();
         h2User.setAge(2);
         Assert.assertTrue(1 == userMapper.update(h2User,
-            new EntityWrapper<H2User>().eq("name", NQQ)));
+            new QueryWrapper<H2User>().eq("name", NQQ)));
 
         h2User.setAge(3);
         Assert.assertTrue(1 == userMapper.update(h2User,
-            new EntityWrapper<H2User>().stream().eq(H2User::getName, NQQ)));
+            new QueryWrapper<H2User>().lambda().eq(H2User::getName, NQQ)));
 
         Assert.assertNotNull(userMapper.selectOne(new H2User().setName(NQQ)));
 

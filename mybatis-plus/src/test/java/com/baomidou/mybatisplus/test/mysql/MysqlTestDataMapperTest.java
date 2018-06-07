@@ -1,6 +1,6 @@
 package com.baomidou.mybatisplus.test.mysql;
 
-import com.baomidou.mybatisplus.core.conditions.select.EntityWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.test.base.entity.TestData;
 import com.baomidou.mybatisplus.test.base.mapper.TestDataMapper;
 import com.baomidou.mybatisplus.test.h2.BaseTest;
@@ -34,7 +34,7 @@ public class MysqlTestDataMapperTest extends BaseTest {
 
     @Test
     public void commonSelectList() {
-        List<TestData> list = testDataMapper.selectList(new EntityWrapper<TestData>()
+        List<TestData> list = testDataMapper.selectList(new QueryWrapper<TestData>()
             .eq("id", 1L)
             .like("test_str", 1));
         list.forEach(System.out::println);
@@ -42,7 +42,7 @@ public class MysqlTestDataMapperTest extends BaseTest {
 
     @Test
     public void specialSelectList() {
-        testDataMapper.selectList(new EntityWrapper<TestData>().stream()
+        testDataMapper.selectList(new QueryWrapper<TestData>().lambda()
             .and());
     }
 }

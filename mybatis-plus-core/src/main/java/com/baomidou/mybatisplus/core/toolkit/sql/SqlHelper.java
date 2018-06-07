@@ -16,7 +16,7 @@
 package com.baomidou.mybatisplus.core.toolkit.sql;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.select.EntityWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.pagination.Page;
@@ -192,7 +192,7 @@ public class SqlHelper {
         }
         // wrapper 不存创建一个 Condition
         if (isEmptyOfWrapper(wrapper)) {
-            wrapper = new EntityWrapper<>();
+            wrapper = new QueryWrapper<>();
         }
         // 排序 fixed gitee issues/IHF7N
 //        if (page.isOpenSort() && page.isSearchCount()) {

@@ -1,7 +1,7 @@
 package com.baomidou.mybatisplus.core.test;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.select.EntityWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 
 import org.junit.Test;
@@ -14,7 +14,7 @@ public class WrapperTest {
 
     @Test
     public void test() {
-        Wrapper<User> wrapper = new EntityWrapper<User>().stream().eq(User::getName, 123)
+        Wrapper<User> wrapper = new QueryWrapper<User>().lambda().eq(User::getName, 123)
             .or(c -> c.eq(User::getRoleId, 1).eq(User::getId, 2))
             .and().eq(User::getId, 1);
         log(wrapper.getSqlSegment());
@@ -23,7 +23,7 @@ public class WrapperTest {
 
     @Test
     public void test1() {
-        EntityWrapper<User> ew = new EntityWrapper<User>()
+        QueryWrapper<User> ew = new QueryWrapper<User>()
             .eq("xxx", 123)
             .and(i -> i.eq("andx", 65444).and().le("ande", 66666))
             .and().ne("xxx", 222);

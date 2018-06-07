@@ -804,7 +804,7 @@ public class Wrapper<T> extends com.baomidou.mybatisplus.core.conditions.Wrapper
      * @param condition 拼接的前置条件
      * @param sqlHaving having关键字后面跟随的语句
      * @param params    参数集
-     * @return EntityWrapper<T>
+     * @return QueryWrapper<T>
      */
     public Wrapper<T> having(boolean condition, String sqlHaving, Object... params) {
         if (condition) {
@@ -823,7 +823,7 @@ public class Wrapper<T> extends com.baomidou.mybatisplus.core.conditions.Wrapper
      *
      * @param sqlHaving having关键字后面跟随的语句
      * @param params    参数集
-     * @return EntityWrapper<T>
+     * @return QueryWrapper<T>
      */
     public Wrapper<T> having(String sqlHaving, Object... params) {
         return having(true, sqlHaving, params);
@@ -1521,7 +1521,7 @@ public class Wrapper<T> extends com.baomidou.mybatisplus.core.conditions.Wrapper
      * <p>
      * 根据需要格式化SQL<BR>
      * <BR>
-     * Format SQL for methods: EntityWrapper<T>.where/and/or...("name={0}", value);
+     * Format SQL for methods: QueryWrapper<T>.where/and/or...("name={0}", value);
      * ALL the {<b>i</b>} will be replaced with #{MPGENVAL<b>i</b>}<BR>
      * <BR>
      * ew.where("sample_name=<b>{0}</b>", "haha").and("sample_age &gt;<b>{0}</b>

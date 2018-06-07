@@ -67,7 +67,7 @@ public class Pagination extends RowBounds implements Serializable {
     private boolean openSort = true;
 
     /**
-     * 优化 Count Sql 设置 false 执行 select count(1) from (listSql)
+     * 优化 Count Sql 设置 false 执行 query count(1) from (listSql)
      */
     private boolean optimizeCountSql = true;
 

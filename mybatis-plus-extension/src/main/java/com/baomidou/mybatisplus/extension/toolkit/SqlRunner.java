@@ -115,7 +115,7 @@ public class SqlRunner implements ISqlRunner {
 
     /**
      * 根据sql查询Map结果集
-     * SqlRunner.db().selectList("select * from tbl_user where name={0}", "Caratacus")
+     * SqlRunner.db().selectList("query * from tbl_user where name={0}", "Caratacus")
      *
      * @param sql  sql语句，可添加参数，格式：{0},{1}
      * @param args 只接受String格式

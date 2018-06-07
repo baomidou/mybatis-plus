@@ -46,7 +46,7 @@ public class TenantSqlParser extends AbstractJsqlParser {
     private TenantHandler tenantHandler;
 
     /**
-     * select 语句处理
+     * query 语句处理
      */
     @Override
     public void processSelectBody(SelectBody selectBody) {

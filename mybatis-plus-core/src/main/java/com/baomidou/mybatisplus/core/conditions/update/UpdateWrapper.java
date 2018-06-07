@@ -57,7 +57,7 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
         this.paramNameValuePairs = paramNameValuePairs;
     }
 
-    public LambdaUpdateWrapper<T> stream() {
+    public LambdaUpdateWrapper<T> lambda() {
         return new LambdaUpdateWrapper<>(entity, paramNameSeq, paramNameValuePairs);
     }
 

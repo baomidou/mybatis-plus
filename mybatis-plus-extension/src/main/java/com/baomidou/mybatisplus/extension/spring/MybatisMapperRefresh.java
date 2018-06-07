@@ -254,7 +254,7 @@ public class MybatisMapperRefresh implements Runnable {
         for (XNode resultChild : xNode.getChildren()) {
             if ("association".equals(resultChild.getName()) || "collection".equals(resultChild.getName())
                 || "case".equals(resultChild.getName())) {
-                if (resultChild.getStringAttribute("select") == null) {
+                if (resultChild.getStringAttribute("query") == null) {
                     configuration.getResultMapNames().remove(
                         resultChild.getStringAttribute("id", resultChild.getValueBasedIdentifier()));
                     configuration.getResultMapNames().remove(

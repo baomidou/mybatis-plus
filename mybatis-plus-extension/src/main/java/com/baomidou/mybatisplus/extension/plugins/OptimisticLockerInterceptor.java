@@ -76,7 +76,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
             MapperMethod.ParamMap map = (MapperMethod.ParamMap) param;
             Wrapper ew = null;
             if (map.containsKey(NAME_ENTITY_WRAPPER)) {
-                // mapper.update(updEntity, EntityWrapper<>(whereEntity);
+                // mapper.update(updEntity, QueryWrapper<>(whereEntity);
                 ew = (Wrapper) map.get(NAME_ENTITY_WRAPPER);
             }
             //else updateById(entity) -->> change updateById(entity) to updateById(@Param("et") entity)
