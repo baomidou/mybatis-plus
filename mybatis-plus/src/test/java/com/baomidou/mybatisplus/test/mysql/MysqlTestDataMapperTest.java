@@ -9,6 +9,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -47,8 +48,10 @@ public class MysqlTestDataMapperTest {
             .nested(i -> i.eq(TestData::getId, 1L))
             .orNested(i -> i.between(TestData::getTestDouble, 1L, 2L))
             .orNested(i -> i.eq(TestData::getTestInt, 1))
-            .and()
-            .between(TestData::getTestDouble, 1L, 2L)));
+            .and().eq(TestData::getTestBoolean, true)
+            .and().eq(TestData::getTestDate,LocalDate.of(2008, 8, 8))
+            .and().between(TestData::getTestDate, LocalDate.of(2008, 1, 1),
+                LocalDate.of(2008, 12, 12))));
     }
 
     private void println(List<TestData> list) {
