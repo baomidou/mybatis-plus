@@ -1,0 +1,120 @@
+{
+  "hints": [{
+    "sourceType": "com.baomidou.mybatisplus.spring.boot.starter.GlobalConfig",
+    "name": "mybatis-plus.global-config.id-type",
+    "type": "java.lang.Integer",
+    "description": "主键类型",
+    "values": [
+      {
+        "value": "0",
+        "description": "数据库ID自增"
+      }, {
+        "value": "1",
+        "description": "用户输入ID"
+      }, {
+        "value": "2",
+        "description": "分布式全局唯一ID"
+      }, {
+        "value": "3",
+        "description": "全局唯一ID-UUID"
+      }
+    ]
+  },{
+      "sourceType": "com.baomidou.mybatisplus.spring.boot.starter.GlobalConfig",
+      "name": "mybatis-plus.global-config.field-strategy",
+      "type": "java.lang.Integer",
+      "description": "字段验证策略",
+      "values": [
+        {
+          "value": "0",
+          "description": "忽略判断"
+        }, {
+          "value": "1",
+          "description": "非 NULL 判断"
+        }, {
+          "value": "2",
+          "description": "非空判断"
+        }
+    ]
+  }],
+  "groups": [
+    {
+      "sourceType": "com.baomidou.mybatisplus.spring.boot.starter.MybatisPlusProperties",
+      "name": "mybatis-plus",
+      "type": "com.baomidou.mybatisplus.spring.boot.starter.MybatisPlusProperties"
+    },
+    {
+      "sourceType": "com.baomidou.mybatisplus.spring.boot.starter.MybatisPlusProperties",
+      "name": "mybatis-plus.configuration",
+      "sourceMethod": "getConfiguration()",
+      "type": "com.baomidou.mybatisplus.MybatisConfiguration"
+    },
+    {
+      "sourceType": "com.baomidou.mybatisplus.spring.boot.starter.MybatisPlusProperties",
+      "name": "mybatis-plus.global-config",
+      "sourceMethod": "getGlobalConfig()",
+      "type": "com.baomidou.mybatisplus.spring.boot.starter.GlobalConfig"
+    }
+  ],
+  "properties": [
+    {
+      "sourceType": "com.baomidou.mybatisplus.spring.boot.starter.GlobalConfig",
+      "name": "mybatis-plus.global-config.capital-mode",
+      "type": "java.lang.Boolean",
+      "description": "是否大写命名"
+    },
+    {
+      "sourceType": "com.baomidou.mybatisplus.spring.boot.starter.GlobalConfig",
+      "name": "mybatis-plus.global-config.db-column-underline",
+      "type": "java.lang.Boolean",
+      "description": "是否使用下划线命名"
+    },
+    {
+      "sourceType": "com.baomidou.mybatisplus.spring.boot.starter.GlobalConfig",
+      "name": "mybatis-plus.global-config.identifier-quote",
+      "type": "java.lang.String",
+      "description": "标识符"
+    },
+    {
+      "sourceType": "com.baomidou.mybatisplus.spring.boot.starter.GlobalConfig",
+      "name": "mybatis-plus.global-config.key-generator",
+      "type": "java.lang.String",
+      "description": "表关键词key生成器"
+    },
+    {
+      "sourceType": "com.baomidou.mybatisplus.spring.boot.starter.GlobalConfig",
+      "name": "mybatis-plus.global-config.logic-delete-value",
+      "type": "java.lang.String",
+      "description": "逻辑删除全局值"
+    },
+    {
+      "sourceType": "com.baomidou.mybatisplus.spring.boot.starter.GlobalConfig",
+      "name": "mybatis-plus.global-config.logic-not-delete-value",
+      "type": "java.lang.String",
+      "description": "逻辑未删除全局值"
+    },
+    {
+      "sourceType": "com.baomidou.mybatisplus.spring.boot.starter.GlobalConfig",
+      "name": "mybatis-plus.global-config.meta-object-handler",
+      "type": "java.lang.String",
+      "description": "元对象字段填充控制器"
+    },
+    {
+      "sourceType": "com.baomidou.mybatisplus.spring.boot.starter.GlobalConfig",
+      "name": "mybatis-plus.global-config.refresh-mapper",
+      "type": "java.lang.Boolean",
+      "description": "是否动态刷新mapper"
+    },
+    {
+      "sourceType": "com.baomidou.mybatisplus.spring.boot.starter.GlobalConfig",
+      "name": "mybatis-plus.global-config.sql-injector",
+      "type": "java.lang.String",
+      "description": "SQL注入器"
+    },{
+      "sourceType": "com.baomidou.mybatisplus.spring.boot.starter.MybatisPlusProperties",
+      "name": "mybatis-plus.type-enums-package",
+      "type": "java.lang.String",
+      "description": "自定义枚举包"
+    }
+  ]
+}

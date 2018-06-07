@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core.config;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import lombok.Data;
@@ -53,6 +54,10 @@ public class GlobalConfig implements Serializable {
      * SQL注入器
      */
     private ISqlInjector sqlInjector;
+    /**
+     * 表关键词 key 生成器
+     */
+    private IKeyGenerator keyGenerator;
     /**
      * 单例重用SqlSession
      */
