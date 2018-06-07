@@ -43,13 +43,10 @@ public class MysqlTestDataMapperTest {
 
     @Test
     public void specialSelectList() {
-        println(testDataMapper.selectList(new QueryWrapper<TestData>()
-            .lambda()
-            .select(TestData::getId)
-            .eq(TestData::getId, 1L)
-            .andNested(i -> i.between(TestData::getTestDouble, 1L, 2L))
-            .and()
-            .eq(TestData::getTestInt, 1)
+        println(testDataMapper.selectList(new QueryWrapper<TestData>().lambda()
+            .nested(i -> i.eq(TestData::getId, 1L))
+            .orNested(i -> i.between(TestData::getTestDouble, 1L, 2L))
+            .orNested(i -> i.eq(TestData::getTestInt, 1))
             .and()
             .between(TestData::getTestDouble, 1L, 2L)));
     }
