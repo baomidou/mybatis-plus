@@ -3,7 +3,6 @@ package com.baomidou.mybatisplus.test.mysql;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.test.base.entity.TestData;
 import com.baomidou.mybatisplus.test.base.mapper.TestDataMapper;
-import com.baomidou.mybatisplus.test.h2.BaseTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -14,7 +13,7 @@ import java.util.List;
 
 /**
  * <p>
- * Mybatis Plus H2 Junit Test
+ * Mybatis Plus mysql Junit Test
  * </p>
  *
  * @author hubin
@@ -22,7 +21,7 @@ import java.util.List;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:mysql/spring-test-mysql.xml"})
-public class MysqlTestDataMapperTest extends BaseTest {
+public class MysqlTestDataMapperTest {
 
     @Resource
     protected TestDataMapper testDataMapper;
