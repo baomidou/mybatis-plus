@@ -143,8 +143,8 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * LIKE '%值%'
      */
     @Override
-    public This like(boolean condition, R column, Object val) {//todo 有bug
-        return doIt(condition, () -> columnToString(column), LIKE, () -> formatSql("%{0}%", val));
+    public This like(boolean condition, R column, Object val) {
+        return doIt(condition, () -> columnToString(column), LIKE, () -> formatSql("{0}", "%" + val + "%"));
     }
 
     /**
@@ -160,7 +160,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      */
     @Override
     public This likeLeft(boolean condition, R column, Object val) {
-        return doIt(condition, () -> columnToString(column), LIKE, () -> "\"%\"", () -> formatSql("{0}", val));
+        return doIt(condition, () -> columnToString(column), LIKE, () -> formatSql("{0}", "%" + val));
     }
 
     /**
@@ -168,7 +168,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      */
     @Override
     public This likeRight(boolean condition, R column, Object val) {
-        return doIt(condition, () -> columnToString(column), LIKE, () -> formatSql("{0}", val), () -> "\"%\"");
+        return doIt(condition, () -> columnToString(column), LIKE, () -> formatSql("{0}", val + "%"));
     }
 
     /**
