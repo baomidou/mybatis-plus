@@ -55,10 +55,6 @@ public class GlobalConfig implements Serializable {
      */
     private ISqlInjector sqlInjector;
     /**
-     * 表关键词 key 生成器
-     */
-    private IKeyGenerator keyGenerator;
-    /**
      * 单例重用SqlSession
      */
     private SqlSession sqlSession;
