@@ -34,15 +34,21 @@ public class MysqlTestDataMapperTest extends BaseTest {
 
     @Test
     public void commonSelectList() {
-        List<TestData> list = testDataMapper.selectList(new EntityWrapper<TestData>()
+        println(testDataMapper.selectList(new EntityWrapper<TestData>()
             .eq("id", 1L)
-            .like("test_str", 1));
-        list.forEach(System.out::println);
+            .and()
+            .like("test_str", 1)));
     }
 
     @Test
     public void specialSelectList() {
-        testDataMapper.selectList(new EntityWrapper<TestData>().stream()
-            .and());
+        println(testDataMapper.selectList(new EntityWrapper<TestData>().stream()
+            .eq(TestData::getId, 1L)
+            .and()
+            .eq(TestData::getTestInt, 1)));
+    }
+
+    private void println(List<TestData> list) {
+        list.forEach(System.out::println);
     }
 }
