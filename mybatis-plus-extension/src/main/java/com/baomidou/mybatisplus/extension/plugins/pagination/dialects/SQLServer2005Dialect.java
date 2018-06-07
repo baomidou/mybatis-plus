@@ -48,9 +48,9 @@ public class SQLServer2005Dialect implements IDialect {
 
         String loweredString = originalSql.toLowerCase();
         String sqlPartString = originalSql;
-        if (loweredString.trim().startsWith("query")) {
+        if (loweredString.trim().startsWith("select")) {
             int index = 6;
-            if (loweredString.startsWith("query distinct")) {
+            if (loweredString.startsWith("select distinct")) {
                 distinctStr = "DISTINCT ";
                 index = 15;
             }
@@ -64,9 +64,9 @@ public class SQLServer2005Dialect implements IDialect {
         }
 
         StringBuilder sql = new StringBuilder();
-        sql.append("WITH query AS (SELECT ").append(distinctStr).append("TOP 100 PERCENT ")
+        sql.append("WITH select AS (SELECT ").append(distinctStr).append("TOP 100 PERCENT ")
             .append(" ROW_NUMBER() OVER (").append(orderby).append(") as __row_number__, ").append(pagingBuilder)
-            .append(") SELECT * FROM query WHERE __row_number__ BETWEEN ")
+            .append(") SELECT * FROM select WHERE __row_number__ BETWEEN ")
             //FIX#299：原因：mysql中limit 10(offset,size) 是从第10开始（不包含10）,；而这里用的BETWEEN是两边都包含，所以改为offset+1
             .append(offset + 1)
             .append(" AND ")

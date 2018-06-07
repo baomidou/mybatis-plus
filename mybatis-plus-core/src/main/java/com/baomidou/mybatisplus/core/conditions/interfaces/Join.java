@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.conditions.interfaces;
 
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.EXISTS;
-
 import java.io.Serializable;
 
 /**
@@ -113,7 +111,7 @@ public interface Join<This> extends Serializable {
 
     /**
      * EXISTS ( sql 语句 )
-     * 例: exists("query id from table where age = 1")
+     * 例: exists("select id from table where age = 1")
      */
     default This exists(String existsSql) {
         return exists(true, existsSql);
@@ -126,7 +124,7 @@ public interface Join<This> extends Serializable {
 
     /**
      * NOT EXISTS ( sql 语句 )
-     * 例: notExists("query id from table where age = 1")
+     * 例: notExists("select id from table where age = 1")
      */
     default This notExists(String notExistsSql) {
         return notExists(true, notExistsSql);

@@ -39,7 +39,7 @@ public class SqlServerQuery extends AbstractDbQuery {
 
     @Override
     public String tablesSql() {
-        return "query cast(so.name as varchar(500)) as TABLE_NAME, " +
+        return "select cast(so.name as varchar(500)) as TABLE_NAME, " +
             "cast(sep.value as varchar(500)) as COMMENTS from sysobjects so " +
             "left JOIN sys.extended_properties sep on sep.major_id=so.id and sep.minor_id=0 " +
             "where (xtype='U' or xtype='v')";
@@ -58,7 +58,7 @@ public class SqlServerQuery extends AbstractDbQuery {
             + " AND sysindexkeys.indid = sysindexes.indid "
             + " AND syscolumns.colid = sysindexkeys.colid AND syscolumns.NAME = B.NAME) as 'KEY',"
             + "  b.is_identity isIdentity "
-            + " FROM ( query name,object_id from sys.tables UNION all query name,object_id from sys.views ) a "
+            + " FROM ( select name,object_id from sys.tables UNION all select name,object_id from sys.views ) a "
             + " INNER JOIN sys.COLUMNS b ON b.object_id = a.object_id "
             + " LEFT JOIN sys.types ON b.user_type_id = sys.types.user_type_id   "
             + " LEFT JOIN sys.extended_properties c ON c.major_id = b.object_id AND c.minor_id = b.column_id "

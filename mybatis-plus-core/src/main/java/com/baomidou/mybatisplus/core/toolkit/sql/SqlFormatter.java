@@ -68,7 +68,7 @@ public class SqlFormatter {
         DML.add("update");
         DML.add("delete");
 
-        MISC.add("query");
+        MISC.add("select");
         MISC.add("on");
     }
 
@@ -146,7 +146,7 @@ public class SqlFormatter {
                     beginNewClause();
                 } else if (END_CLAUSES.contains(lcToken)) {
                     endNewClause();
-                } else if ("query".equals(lcToken)) {
+                } else if ("select".equals(lcToken)) {
                     select();
                 } else if (DML.contains(lcToken)) {
                     updateOrInsertOrDelete();

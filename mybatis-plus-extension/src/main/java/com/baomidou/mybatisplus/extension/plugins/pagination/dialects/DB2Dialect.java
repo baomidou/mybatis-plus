@@ -40,14 +40,14 @@ public class DB2Dialect implements IDialect {
     }
 
     private static boolean hasDistinct(String originalSql) {
-        return originalSql.toLowerCase().contains("query distinct");
+        return originalSql.toLowerCase().contains("select distinct");
     }
 
     @Override
     public String buildPaginationSql(String originalSql, int offset, int limit) {
-        int startOfSelect = originalSql.toLowerCase().indexOf("query");
+        int startOfSelect = originalSql.toLowerCase().indexOf("select");
         StringBuilder pagingSelect = new StringBuilder(originalSql.length() + 100)
-            .append(originalSql.substring(0, startOfSelect)).append("query * from ( query ")
+            .append(originalSql.substring(0, startOfSelect)).append("select * from ( select ")
             .append(getRowNumber(originalSql));
         if (hasDistinct(originalSql)) {
             pagingSelect.append(" row_.* from ( ").append(originalSql.substring(startOfSelect)).append(" ) as row_");
@@ -56,7 +56,7 @@ public class DB2Dialect implements IDialect {
         }
         pagingSelect.append(" ) as temp_ where rownumber_ ");
 
-        // add the restriction to the outer query
+        // add the restriction to the outer select
         if (offset > 0) {
             String endString = offset + "+" + limit;
             pagingSelect.append("between ").append(offset).append("+1 and ").append(endString);
