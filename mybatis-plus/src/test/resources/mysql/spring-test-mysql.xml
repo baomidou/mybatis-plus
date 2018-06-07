@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <!--<context:component-scan base-package="com.baomidou.mybatisplus.test.h2.service"/>-->
+
+    <bean name="dbConfig" class="com.baomidou.mybatisplus.test.mysql.config.DBConfig"/>
+    <bean name="mybatisPlusConfig" class="com.baomidou.mybatisplus.test.mysql.config.MybatisPlusConfig"/>
+
+</beans>
