@@ -15,45 +15,21 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.AND;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ASC;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.BETWEEN;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.DESC;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.EQ;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.EXISTS;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GE;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GROUP_BY;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GT;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.HAVING;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IN;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IS_NOT_NULL;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IS_NULL;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LE;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LIKE;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LT;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NE;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NOT;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.OR;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ORDER_BY;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 import com.baomidou.mybatisplus.core.conditions.interfaces.Compare;
+import com.baomidou.mybatisplus.core.conditions.interfaces.Func;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Join;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Nested;
 import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.*;
 
 
 /**
@@ -65,9 +41,9 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  * @since 2017-05-26
  */
 public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, This>> extends Wrapper<T>
-    implements Compare<This, R>, Nested<This>, Join<This>, Serializable {
-
-    protected This typedThis = (This) this;
+    implements Compare<This, R>, Nested<This>, Join<This>, Func<This, R> {
+    @SuppressWarnings("unchecked")
+    protected final This typedThis = (This) this;
 
     private static final String MP_GENERAL_PARAMNAME = "MPGENVAL";
     private static final String DEFAULT_PARAM_ALIAS = "ew";
@@ -76,16 +52,18 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      */
     private static final String PLACE_HOLDER = "{%s}";
     private static final String MYBATIS_PLUS_TOKEN = "#{%s.paramNameValuePairs.%s}";
+    /**
+     * 必要度量
+     */
     protected AtomicInteger paramNameSeq;
     protected Map<String, Object> paramNameValuePairs;
     protected String paramAlias = null;
-    private List<ISqlSegment> expression = new ArrayList<>();
-    private boolean didOrderBy = false;
-
     /**
      * 数据库表映射实体类
      */
     protected T entity;
+    private List<ISqlSegment> expression = new ArrayList<>();
+    private boolean didOrderBy = false;
 
     /**
      * 判断构造条件不为空
@@ -163,8 +141,8 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * LIKE '%值%'
      */
     @Override
-    public This like(boolean condition, R column, Object val) {
-        return doIt(condition, () -> columnToString(column), LIKE, () -> formatSql("CONCAT('%',{0},'%')", val));
+    public This like(boolean condition, R column, Object val) {//todo 有bug
+        return doIt(condition, () -> columnToString(column), LIKE, () -> formatSql("%{0}%", val));
     }
 
     /**
@@ -291,18 +269,11 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     public This notExists(boolean condition, String notExistsSql) {
         return not(condition).exists(condition, notExistsSql);
     }
-    //todo 上面的分完了,还剩下面的
 
     /**
      * 字段 IS NULL
      */
-    public This isNull(R column) {
-        return isNull(true, column);
-    }
-
-    /**
-     * 字段 IS NULL
-     */
+    @Override
     public This isNull(boolean condition, R column) {
         return doIt(condition, () -> columnToString(column), IS_NULL);
     }
@@ -310,13 +281,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     /**
      * 字段 IS NOT NULL
      */
-    public This isNotNull(R column) {
-        return isNotNull(true, column);
-    }
-
-    /**
-     * 字段 IS NOT NULL
-     */
+    @Override
     public This isNotNull(boolean condition, R column) {
         return doIt(condition, () -> columnToString(column), IS_NOT_NULL);
     }
@@ -324,13 +289,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     /**
      * 字段 IN (value.get(0), value.get(1), ...)
      */
-    public This in(R column, Collection<?> value) {
-        return in(true, column, value);
-    }
-
-    /**
-     * 字段 IN (value.get(0), value.get(1), ...)
-     */
+    @Override
     public This in(boolean condition, R column, Collection<?> value) {
         if (CollectionUtils.isEmpty(value)) {
             return typedThis;
@@ -341,13 +300,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     /**
      * 字段 NOT IN (value.get(0), value.get(1), ...)
      */
-    public This notIn(R column, Collection<?> value) {
-        return notIn(true, column, value);
-    }
-
-    /**
-     * 字段 NOT IN (value.get(0), value.get(1), ...)
-     */
+    @Override
     public This notIn(boolean condition, R column, Collection<?> value) {
         if (CollectionUtils.isEmpty(value)) {
             return typedThis;
@@ -355,42 +308,27 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
         return not(condition).in(condition, column, value);
     }
 
-    /**
-     * 分组：GROUP BY 字段, ...
-     */
-    public This groupBy(R column) {
-        return doIt(true, GROUP_BY, () -> columnToString(column));
+    @Override
+    public This groupBy(boolean condition, R column) {
+        return doIt(condition, GROUP_BY, () -> columnToString(column));
     }
 
-    /**
-     * 排序：ORDER BY 字段, ...
-     */
-    public This orderBy(R column) {
-        return orderBy(column, true);
-    }
-
-    /**
-     * 排序：ORDER BY 字段, ...
-     */
-    public This orderBy(R column, boolean isAsc) {//todo 多次调用如下解决?
-        if (!didOrderBy) {
-            didOrderBy = true;
-            return doIt(true, ORDER_BY, () -> columnToString(column), isAsc ? ASC : DESC);
+    @Override
+    public This orderBy(boolean condition, R column, boolean isAsc) {
+        if (condition) {
+            if (!didOrderBy) {
+                didOrderBy = true;
+                return doIt(true, ORDER_BY, () -> columnToString(column), isAsc ? ASC : DESC);
+            }
+            return doIt(true, () -> ",", () -> columnToString(column), isAsc ? ASC : DESC);
         }
-        return doIt(true, () -> ",", () -> columnToString(column), isAsc ? ASC : DESC);
-    }
-
-    /**
-     * HAVING ( sql 语句 )
-     * 例: having("sum(age) > {0}", 1)
-     */
-    public This having(String sqlHaving, Object... params) {
-        return having(true, sqlHaving, params);
+        return typedThis;
     }
 
     /**
      * HAVING ( sql 语句 )
      */
+    @Override
     public This having(boolean condition, String sqlHaving, Object... params) {
         return doIt(condition, HAVING, () -> formatSqlIfNeed(condition, sqlHaving, params));
     }

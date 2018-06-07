@@ -1,5 +1,7 @@
 package com.baomidou.mybatisplus.test.mysql;
 
+import com.baomidou.mybatisplus.core.conditions.select.EntityWrapper;
+import com.baomidou.mybatisplus.test.base.entity.TestData;
 import com.baomidou.mybatisplus.test.base.mapper.TestDataMapper;
 import com.baomidou.mybatisplus.test.h2.BaseTest;
 import org.junit.Test;
@@ -8,6 +10,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * <p>
@@ -27,5 +30,19 @@ public class MysqlTestDataMapperTest extends BaseTest {
     @Test
     public void selectById() {
         System.out.println(testDataMapper.selectById(1L));
+    }
+
+    @Test
+    public void commonSelectList() {
+        List<TestData> list = testDataMapper.selectList(new EntityWrapper<TestData>()
+            .eq("id", 1L)
+            .like("test_str", 1));
+        list.forEach(System.out::println);
+    }
+
+    @Test
+    public void specialSelectList() {
+        testDataMapper.selectList(new EntityWrapper<TestData>().stream()
+            .and());
     }
 }
