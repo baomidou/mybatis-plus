@@ -228,7 +228,6 @@ public abstract class AbstractMethod {
 
             if (size >= 1) {
                 // 字段处理
-                // 字段处理
                 columns.append(fieldList.stream().map(j -> {
                     String v = this.sqlWordConvert(j.getColumn());
                     if (j.isRelated()) {
@@ -296,11 +295,11 @@ public abstract class AbstractMethod {
      */
     protected String sqlWhere(TableInfo table) {
         StringBuilder where = new StringBuilder();
-        where.append("\n<where>");
+        where.append("<where>");
         if (StringUtils.isNotEmpty(table.getKeyProperty())) {
-            where.append("\n<if test=\"ew.").append(table.getKeyProperty()).append("!=null\">\n");
+            where.append("<if test=\"ew.").append(table.getKeyProperty()).append("!=null\">");
             where.append(table.getKeyColumn()).append("=#{ew.").append(table.getKeyProperty()).append("}");
-            where.append("\n</if>");
+            where.append("</if>");
         }
         List<TableFieldInfo> fieldList = table.getFieldList();
         for (TableFieldInfo fieldInfo : fieldList) {
@@ -309,7 +308,7 @@ public abstract class AbstractMethod {
                 fieldInfo.getColumn(), "ew." + fieldInfo.getEl()));
             where.append(convertIfTag(fieldInfo, true));
         }
-        where.append("\n</where>");
+        where.append("</where>");
         return where.toString();
     }
 
@@ -320,15 +319,15 @@ public abstract class AbstractMethod {
      */
     protected String sqlWhereByMap(TableInfo table) {
         StringBuilder where = new StringBuilder();
-        where.append("\n<if test=\"cm!=null and !cm.isEmpty\">");
-        where.append("\n<where>");
-        where.append("\n<foreach collection=\"cm\" index=\"k\" item=\"v\" separator=\"AND\">");
-        where.append("\n<if test=\"v != null\">");
-        where.append("\n").append(this.sqlWordConvert("${k}")).append(" = #{v}");
-        where.append("\n</if>");
-        where.append("\n</foreach>");
-        where.append("\n</where>");
-        where.append("\n</if>");
+        where.append("<if test=\"cm!=null and !cm.isEmpty\">");
+        where.append("<where>");
+        where.append("<foreach collection=\"cm\" index=\"k\" item=\"v\" separator=\"AND\">");
+        where.append("<if test=\"v != null\">");
+        where.append(this.sqlWordConvert("${k}")).append(" = #{v}");
+        where.append("</if>");
+        where.append("</foreach>");
+        where.append("</where>");
+        where.append("</if>");
         return where.toString();
     }
 
@@ -415,13 +414,13 @@ public abstract class AbstractMethod {
      */
     protected String sqlWhereEntityWrapper(TableInfo table) {
         StringBuilder where = new StringBuilder(128);
-        where.append("\n<where>");
-        where.append("\n<if test=\"ew!=null\">");
-        where.append("\n<if test=\"ew.entity!=null\">");
+        where.append("<where>");
+        where.append("<if test=\"ew!=null\">");
+        where.append("<if test=\"ew.entity!=null\">");
         if (StringUtils.isNotEmpty(table.getKeyProperty())) {
-            where.append("\n<if test=\"ew.entity.").append(table.getKeyProperty()).append("!=null\">\n");
+            where.append("<if test=\"ew.entity.").append(table.getKeyProperty()).append("!=null\">");
             where.append(table.getKeyColumn()).append("=#{ew.entity.").append(table.getKeyProperty()).append("}");
-            where.append("\n</if>");
+            where.append("</if>");
         }
         List<TableFieldInfo> fieldList = table.getFieldList();
         for (TableFieldInfo fieldInfo : fieldList) {
@@ -430,11 +429,11 @@ public abstract class AbstractMethod {
                 fieldInfo.getColumn(), "ew.entity." + fieldInfo.getEl()));
             where.append(convertIfTag(fieldInfo, true));
         }
-        where.append("\n</if>");
-        where.append("\n<if test=\"ew!=null and ew.sqlSegment!=null and ew.notEmptyOfWhere\">\n${ew.sqlSegment}\n</if>");
-        where.append("\n</if>");
-        where.append("\n</where>");
-        where.append("\n<if test=\"ew!=null and ew.sqlSegment!=null and ew.emptyOfWhere\">\n${ew.sqlSegment}\n</if>");
+        where.append("</if>");
+        where.append("<if test=\"ew!=null and ew.sqlSegment!=null and ew.notEmptyOfWhere\">${ew.sqlSegment}</if>");
+        where.append("</if>");
+        where.append("</where>");
+        where.append("<if test=\"ew!=null and ew.sqlSegment!=null and ew.emptyOfWhere\">${ew.sqlSegment}</if>");
         return where.toString();
     }
 
