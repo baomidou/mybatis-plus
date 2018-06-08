@@ -228,10 +228,10 @@ public abstract class AbstractMethod {
 
             if (size >= 1) {
                 // 字段处理
-                columns.append(fieldList.stream().map(j -> {
-                    String v = this.sqlWordConvert(j.getColumn());
-                    if (j.isRelated()) {
-                        v += (" AS " + j.getProperty());
+                columns.append(fieldList.stream().map(i -> {
+                    String v = this.sqlWordConvert(i.getColumn());
+                    if (i.isRelated()) {
+                        v += (" AS " + i.getProperty());
                     }
                     return v;
                 }).collect(Collectors.joining(",")));
@@ -279,8 +279,7 @@ public abstract class AbstractMethod {
                     columns.append(wordConvert);
                 } else {
                     // 字段属性不一致
-                    columns.append(fieldInfo.getColumn());
-                    columns.append(" AS ").append(wordConvert);
+                    columns.append(fieldInfo.getColumn()).append(" AS ").append(wordConvert);
                 }
             }
         }
@@ -294,8 +293,7 @@ public abstract class AbstractMethod {
      * </p>
      */
     protected String sqlWhere(TableInfo table) {
-        StringBuilder where = new StringBuilder();
-        where.append("<where>");
+        StringBuilder where = new StringBuilder("<where>");
         if (StringUtils.isNotEmpty(table.getKeyProperty())) {
             where.append("<if test=\"ew.").append(table.getKeyProperty()).append("!=null\">");
             where.append(table.getKeyColumn()).append("=#{ew.").append(table.getKeyProperty()).append("}");
@@ -308,8 +306,7 @@ public abstract class AbstractMethod {
                 fieldInfo.getColumn(), "ew." + fieldInfo.getEl()));
             where.append(convertIfTag(fieldInfo, true));
         }
-        where.append("</where>");
-        return where.toString();
+        return where.append("</where>").toString();
     }
 
     /**
@@ -318,17 +315,15 @@ public abstract class AbstractMethod {
      * </p>
      */
     protected String sqlWhereByMap(TableInfo table) {
-        StringBuilder where = new StringBuilder();
-        where.append("<if test=\"cm!=null and !cm.isEmpty\">");
-        where.append("<where>");
-        where.append("<foreach collection=\"cm\" index=\"k\" item=\"v\" separator=\"AND\">");
-        where.append("<if test=\"v != null\">");
-        where.append(this.sqlWordConvert("${k}")).append(" = #{v}");
-        where.append("</if>");
-        where.append("</foreach>");
-        where.append("</where>");
-        where.append("</if>");
-        return where.toString();
+        return "<if test=\"cm!=null and !cm.isEmpty\">" +
+            "<where>" +
+            "<foreach collection=\"cm\" index=\"k\" item=\"v\" separator=\"AND\">" +
+            "<if test=\"v != null\">" +
+            "${k} = #{v}" +
+            "</if>" +
+            "</foreach>" +
+            "</where>" +
+            "</if>";
     }
 
     /**
@@ -377,7 +372,6 @@ public abstract class AbstractMethod {
             return String.format("<if test=\"%s!=null\">", property);
         }
     }
-
 
     protected String convertIfTagIgnored(TableFieldInfo fieldInfo, boolean close) {
         return convertIfTag(true, fieldInfo, null, close);
