@@ -13,10 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.extension.enums;
+package com.baomidou.mybatisplus.annotation;
 
-import com.baomidou.mybatisplus.core.enums.IDBType;
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+
+import lombok.Getter;
 
 /**
  * <p>
@@ -24,10 +24,10 @@ import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
  * </p>
  *
  * @author hubin
- * @since 2016-04-15
+ * @since 2018-06-09
  */
-//TODO: 3.0 如何在GlobalConfiguration里面支持？
-public enum DBType implements IDBType {
+@Getter
+public enum DbType {
     /**
      * MYSQL
      */
@@ -59,15 +59,15 @@ public enum DBType implements IDBType {
     /**
      * POSTGRE
      */
-    POSTGRE("postgresql", "\"%s\"", "Postgre数据库"),
+    POSTGRE_SQL("postgresql", "\"%s\"", "Postgre数据库"),
     /**
      * SQLSERVER2005
      */
-    SQLSERVER2005("sqlserver2005", null, "SQLServer2005数据库"),
+    SQL_SERVER2005("sqlserver2005", null, "SQLServer2005数据库"),
     /**
      * SQLSERVER
      */
-    SQLSERVER("sqlserver", null, "SQLServer数据库"),
+    SQL_SERVER("sqlserver", null, "SQLServer数据库"),
     /**
      * UNKONWN DB
      */
@@ -79,7 +79,7 @@ public enum DBType implements IDBType {
 
     private final String desc;
 
-    DBType(final String db, final String quote, final String desc) {
+    DbType(final String db, final String quote, final String desc) {
         this.db = db;
         this.quote = quote;
         this.desc = desc;
@@ -93,28 +93,14 @@ public enum DBType implements IDBType {
      * @param dbType 数据库类型字符串
      * @return
      */
-    public static DBType getDBType(String dbType) {
-        DBType[] dts = DBType.values();
-        for (DBType dt : dts) {
+    public static DbType getDbType(String dbType) {
+        DbType[] dts = DbType.values();
+        for (DbType dt : dts) {
             if (dt.getDb().equalsIgnoreCase(dbType)) {
                 return dt;
             }
         }
-        throw new MybatisPlusException("Error: Unknown database type, or do not support changing database!\n");
-    }
-
-    @Override
-    public String getDb() {
-        return this.db;
-    }
-
-    @Override
-    public String getQuote() {
-        return this.quote;
-    }
-
-    public String getDesc() {
-        return this.desc;
+        return OTHER;
     }
 
 }

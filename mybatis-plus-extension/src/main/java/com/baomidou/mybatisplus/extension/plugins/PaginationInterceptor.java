@@ -36,8 +36,8 @@ import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.RowBounds;
 
+import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.MybatisDefaultParameterHandler;
-import com.baomidou.mybatisplus.core.enums.IDBType;
 import com.baomidou.mybatisplus.core.pagination.PageHelper;
 import com.baomidou.mybatisplus.core.pagination.Pagination;
 import com.baomidou.mybatisplus.core.parser.ISqlParser;
@@ -45,7 +45,6 @@ import com.baomidou.mybatisplus.core.parser.SqlInfo;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
-import com.baomidou.mybatisplus.extension.enums.DBType;
 import com.baomidou.mybatisplus.extension.handlers.SqlParserHandler;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
@@ -119,7 +118,7 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
         String originalSql = boundSql.getSql();
         Connection connection = (Connection) invocation.getArgs()[0];
         //TODO: 3.0
-        IDBType dbType = StringUtils.isNotEmpty(dialectType) ? DBType.getDBType(dialectType) : JdbcUtils.getDbType(connection.getMetaData().getURL());
+        DbType dbType = StringUtils.isNotEmpty(dialectType) ? DbType.getDbType(dialectType) : JdbcUtils.getDbType(connection.getMetaData().getURL());
         if (rowBounds instanceof Pagination) {
             Pagination page = (Pagination) rowBounds;
             boolean orderBy = true;

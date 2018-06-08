@@ -15,7 +15,7 @@
  */
 package com.baomidou.mybatisplus.generator.config.querys;
 
-import com.baomidou.mybatisplus.generator.config.rules.DbType;
+import com.baomidou.mybatisplus.annotation.DbType;
 
 /**
  * <p>

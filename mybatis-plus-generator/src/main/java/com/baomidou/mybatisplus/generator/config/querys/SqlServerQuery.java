@@ -18,7 +18,7 @@ package com.baomidou.mybatisplus.generator.config.querys;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.baomidou.mybatisplus.generator.config.rules.DbType;
+import com.baomidou.mybatisplus.annotation.DbType;
 
 /**
  * <p>

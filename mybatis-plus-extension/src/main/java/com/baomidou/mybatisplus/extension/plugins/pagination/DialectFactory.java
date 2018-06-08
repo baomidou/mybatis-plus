@@ -20,13 +20,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.ibatis.session.RowBounds;
 
-import com.baomidou.mybatisplus.core.enums.IDBType;
+import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.pagination.PageHelper;
 import com.baomidou.mybatisplus.core.pagination.Pagination;
 import com.baomidou.mybatisplus.core.pagination.dialect.IDialect;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.extension.enums.DBType;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.DB2Dialect;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.H2Dialect;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.HSQLDialect;
@@ -65,7 +64,7 @@ public class DialectFactory {
      * @return
      * @throws Exception
      */
-    public static String buildPaginationSql(Pagination page, String buildSql, IDBType dbType, String dialectClazz)
+    public static String buildPaginationSql(Pagination page, String buildSql, DbType dbType, String dialectClazz)
         throws Exception {
         // fix #172, 196
         return getDialect(dbType, dialectClazz).buildPaginationSql(buildSql, PageHelper.offsetCurrent(page), page.getSize());
@@ -82,7 +81,7 @@ public class DialectFactory {
      * @return
      * @throws Exception
      */
-    public static String buildPaginationSql(RowBounds rowBounds, String buildSql, IDBType dbType, String dialectClazz)
+    public static String buildPaginationSql(RowBounds rowBounds, String buildSql, DbType dbType, String dialectClazz)
         throws Exception {
         // fix #196
         return getDialect(dbType, dialectClazz).buildPaginationSql(buildSql, rowBounds.getOffset(), rowBounds.getLimit());
@@ -98,7 +97,7 @@ public class DialectFactory {
      * @return
      * @throws Exception
      */
-    private static IDialect getDialect(IDBType dbType, String dialectClazz) throws Exception {
+    private static IDialect getDialect(DbType dbType, String dialectClazz) throws Exception {
         IDialect dialect = DIALECT_CACHE.get(dbType.getDb());
         if (null == dialect) {
             // 自定义方言
@@ -138,35 +137,35 @@ public class DialectFactory {
      * @return
      * @throws Exception
      */
-    private static IDialect getDialectByDbType(IDBType dbType) {
-        if (dbType == DBType.MYSQL) {
+    private static IDialect getDialectByDbType(DbType dbType) {
+        if (dbType == DbType.MYSQL) {
             return new MySqlDialect();
         }
-        if (dbType == DBType.MARIADB) {
+        if (dbType == DbType.MARIADB) {
             return new MariaDBDialect();
         }
-        if (dbType == DBType.ORACLE) {
+        if (dbType == DbType.ORACLE) {
             return new OracleDialect();
         }
-        if (dbType == DBType.DB2) {
+        if (dbType == DbType.DB2) {
             return new DB2Dialect();
         }
-        if (dbType == DBType.H2) {
+        if (dbType == DbType.H2) {
             return new H2Dialect();
         }
-        if (dbType == DBType.SQLSERVER) {
+        if (dbType == DbType.SQL_SERVER) {
             return new SQLServerDialect();
         }
-        if (dbType == DBType.SQLSERVER2005) {
+        if (dbType == DbType.SQL_SERVER2005) {
             return new SQLServer2005Dialect();
         }
-        if (dbType == DBType.POSTGRE) {
+        if (dbType == DbType.POSTGRE_SQL) {
             return new PostgreDialect();
         }
-        if (dbType == DBType.HSQL) {
+        if (dbType == DbType.HSQL) {
             return new HSQLDialect();
         }
-        if (dbType == DBType.SQLITE) {
+        if (dbType == DbType.SQLITE) {
             return new SQLiteDialect();
         }
         throw new MybatisPlusException("The Database's Not Supported! DBType:" + dbType);

@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.config.DbConfig;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
@@ -13,7 +14,6 @@ import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.enums.IDBType;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
@@ -125,7 +125,7 @@ public class GlobalConfigUtils {
         return cache;
     }
 
-    public static IDBType getDbType(Configuration configuration) {
+    public static DbType getDbType(Configuration configuration) {
         return getGlobalConfig(configuration).getDbConfig().getDbType();
     }
 

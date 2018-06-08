@@ -5,9 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.baomidou.mybatisplus.core.config.DbConfig;
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.enums.IDBType;
+import com.baomidou.mybatisplus.annotation.DbType;
 
 /**
  * <p>
@@ -131,7 +129,7 @@ public abstract class SqlReservedWordsHandler {
         Collections.addAll(RESERVED_WORDS, words);
     }
 
-    public abstract String convert(IDBType dbType, String column);
+    public abstract String convert(DbType dbType, String column);
 
     public boolean addAll(Collection<String> reservedWords) {
         return RESERVED_WORDS.addAll(reservedWords);
@@ -156,7 +154,7 @@ public abstract class SqlReservedWordsHandler {
         return new SqlReservedWordsHandler() {
 
             @Override
-            public String convert(IDBType dbType, String column) {
+            public String convert(DbType dbType, String column) {
                 // default do nothing
                 return column;
             }

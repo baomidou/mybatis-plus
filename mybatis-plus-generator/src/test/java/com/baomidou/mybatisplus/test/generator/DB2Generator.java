@@ -5,17 +5,16 @@ import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.PackageConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
-import com.baomidou.mybatisplus.generator.config.rules.DbType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 
 public class DB2Generator {
-	
+
 	public static void main(String[] args) {
 		String packageName = "com.crea.gwms";
         boolean serviceNameStartWithI = true;//user -> UserService, 设置成true: user -> IUserService
         generateByTables(serviceNameStartWithI, packageName, "USER");
 	}
-	
+
 	public static void generateByTables(boolean serviceNameStartWithI, String packageName, String... tableNames) {
         GlobalConfig config = new GlobalConfig();
         String dbUrl = "jdbc:db2://192.168.0.227:50000/TRADECTR";
@@ -58,5 +57,5 @@ public class DB2Generator {
     private void generateByTables(String packageName, String... tableNames) {
         generateByTables(true, packageName, tableNames);
     }
-    
+
 }

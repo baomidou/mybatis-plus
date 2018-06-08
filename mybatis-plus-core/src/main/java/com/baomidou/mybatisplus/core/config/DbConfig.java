@@ -1,8 +1,8 @@
 package com.baomidou.mybatisplus.core.config;
 
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.core.enums.IDBType;
 import com.baomidou.mybatisplus.core.handlers.SqlReservedWordsHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 
@@ -21,7 +21,7 @@ public class DbConfig {
     /**
      * 数据库类型
      */
-    private IDBType dbType;
+    private DbType dbType;
     /**
      * 主键类型（默认 ID_WORKER）
      */
