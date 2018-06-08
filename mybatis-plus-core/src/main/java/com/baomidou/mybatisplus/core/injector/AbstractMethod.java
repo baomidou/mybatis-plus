@@ -19,8 +19,8 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -228,20 +228,14 @@ public abstract class AbstractMethod {
 
             if (size >= 1) {
                 // 字段处理
-                int i = 0;
-                Iterator<TableFieldInfo> iterator = fieldList.iterator();
-                while (iterator.hasNext()) {
-                    TableFieldInfo fieldInfo = iterator.next();
-                    // 匹配转换内容
-                    columns.append(this.sqlWordConvert(fieldInfo.getColumn()));
-                    if (fieldInfo.isRelated()) {
-                        columns.append(" AS ").append(fieldInfo.getProperty());
+                // 字段处理
+                columns.append(fieldList.stream().map(j -> {
+                    String v = this.sqlWordConvert(j.getColumn());
+                    if (j.isRelated()) {
+                        v += (" AS " + j.getProperty());
                     }
-                    if (i + 1 < size) {
-                        columns.append(",");
-                    }
-                    i++;
-                }
+                    return v;
+                }).collect(Collectors.joining(",")));
             }
             if (entityWrapper) {
                 columns.append("</otherwise></choose>");

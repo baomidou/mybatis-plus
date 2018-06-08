@@ -11,7 +11,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -59,9 +61,16 @@ public class MysqlTestDataMapperTest {
 
     @Test
     public void update() {
-        TestData updData = new TestData().setId(1L).setTestStr("123123");
-        TestData whereData = new TestData().setId(1L);
-        testDataMapper.update(updData, null);
+        TestData data = new TestData().setId(1L).setTestStr("123123");
+        testDataMapper.update(data, new UpdateWrapper<TestData>().eq("id", 1L));
+    }
+
+    @Test
+    public void mm() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", 1L);
+        map.put("test_int", 1);
+        println(testDataMapper.selectByMap(map));
     }
 
     private void println(List<TestData> list) {
