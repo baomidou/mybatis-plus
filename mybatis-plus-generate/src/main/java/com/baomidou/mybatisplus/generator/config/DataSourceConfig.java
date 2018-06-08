@@ -26,6 +26,7 @@ import com.baomidou.mybatisplus.generator.config.converts.OracleTypeConvert;
 import com.baomidou.mybatisplus.generator.config.converts.PostgreSqlTypeConvert;
 import com.baomidou.mybatisplus.generator.config.converts.SqlServerTypeConvert;
 import com.baomidou.mybatisplus.generator.config.querys.DB2Query;
+import com.baomidou.mybatisplus.generator.config.querys.MariadbQuery;
 import com.baomidou.mybatisplus.generator.config.querys.MySqlQuery;
 import com.baomidou.mybatisplus.generator.config.querys.OracleQuery;
 import com.baomidou.mybatisplus.generator.config.querys.PostgreSqlQuery;
@@ -90,6 +91,9 @@ public class DataSourceConfig {
                 case DB2:
                 	dbQuery = new DB2Query();
                 	break;
+                case MARIADB:
+                    dbQuery = new MariadbQuery();
+                    break;
                 default:
                     // 默认 MYSQL
                     dbQuery = new MySqlQuery();
@@ -119,6 +123,8 @@ public class DataSourceConfig {
                 dbType = DbType.POSTGRE_SQL;
             } else if (driverName.contains("db2")) {
                 dbType = DbType.DB2;
+            } else if (driverName.contains("mariadb")) {
+                dbType = DbType.MARIADB;
             } else {
                 throw new MybatisPlusException("Unknown type of database!");
             }
@@ -154,6 +160,9 @@ public class DataSourceConfig {
                 case DB2:
                 	typeConvert = new DB2TypeConvert();
                 	break;
+                case MARIADB:
+                    typeConvert = new MySqlTypeConvert();
+                    break;
                 default:
                     // 默认 MYSQL
                     typeConvert = new MySqlTypeConvert();
