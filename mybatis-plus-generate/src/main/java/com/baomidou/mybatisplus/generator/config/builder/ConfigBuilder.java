@@ -570,7 +570,6 @@ public class ConfigBuilder {
             ResultSet results = preparedStatement.executeQuery();
             while (results.next()) {
                 TableField field = new TableField();
-                //System.out.println(dbQuery.fieldKey());
                 String key = results.getString(dbQuery.fieldKey());
                 // 避免多重主键设置，目前只取第一个找到ID，并放到list中的索引为0的位置
                 boolean isId = StringUtils.isNotEmpty(key) && key.toUpperCase().equals("1");
