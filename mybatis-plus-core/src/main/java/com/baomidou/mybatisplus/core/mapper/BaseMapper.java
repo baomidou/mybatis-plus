@@ -56,7 +56,6 @@ public interface BaseMapper<T> {
      * @param entity 实体对象
      * @return int
      */
-    @Deprecated
     Integer insertAllColumn(T entity);
 
     /**
