@@ -125,7 +125,7 @@ public interface BaseMapper<T> {
      *
      * @param entity        实体对象 (set 条件值)
      * @param updateWrapper 实体对象封装操作类（可以为 null）
-     * @return
+     * @return int
      */
     Integer update(@Param("et") T entity, @Param("ew") Wrapper<T> updateWrapper);
 
