@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.generator.config;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
@@ -29,6 +30,7 @@ import lombok.experimental.Accessors;
  * @since 2016-12-02
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 public class GlobalConfig {
 

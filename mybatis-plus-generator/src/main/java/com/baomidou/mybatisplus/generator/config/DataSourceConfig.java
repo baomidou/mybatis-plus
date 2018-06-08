@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.generator.config.converts.*;
 import com.baomidou.mybatisplus.generator.config.querys.*;
 import com.baomidou.mybatisplus.generator.config.rules.DbType;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
@@ -35,6 +36,7 @@ import lombok.experimental.Accessors;
  * @since 2016/8/30
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 public class DataSourceConfig {
 
