@@ -20,6 +20,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.generator.config.converts.DB2TypeConvert;
 import com.baomidou.mybatisplus.generator.config.converts.MySqlTypeConvert;
 import com.baomidou.mybatisplus.generator.config.converts.OracleTypeConvert;
 import com.baomidou.mybatisplus.generator.config.converts.PostgreSqlTypeConvert;
@@ -116,6 +117,8 @@ public class DataSourceConfig {
                 dbType = DbType.ORACLE;
             } else if (driverName.contains("postgresql")) {
                 dbType = DbType.POSTGRE_SQL;
+            } else if (driverName.contains("db2")) {
+                dbType = DbType.DB2;
             } else {
                 throw new MybatisPlusException("Unknown type of database!");
             }
@@ -148,6 +151,9 @@ public class DataSourceConfig {
                 case POSTGRE_SQL:
                     typeConvert = new PostgreSqlTypeConvert();
                     break;
+                case DB2:
+                	typeConvert = new DB2TypeConvert();
+                	break;
                 default:
                     // 默认 MYSQL
                     typeConvert = new MySqlTypeConvert();
