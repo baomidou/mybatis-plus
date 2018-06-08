@@ -567,7 +567,12 @@ public class ConfigBuilder {
                 TableField field = new TableField();
                 String key = results.getString(dbQuery.fieldKey());
                 // 避免多重主键设置，目前只取第一个找到ID，并放到list中的索引为0的位置
-                boolean isId = StringUtils.isNotEmpty(key) && "PRI".equals(key.toUpperCase());
+                boolean isId;
+                if (DbType.DB2 == dbQuery.dbType()) {
+                    isId = StringUtils.isNotEmpty(key) && "1".equals(key);
+                } else {
+                    isId = StringUtils.isNotEmpty(key) && "PRI".equals(key.toUpperCase());
+                }
                 // 处理ID
                 if (isId && !haveId) {
                     field.setKeyFlag(true);

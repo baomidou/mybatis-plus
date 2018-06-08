@@ -111,10 +111,10 @@ public class DataSourceConfig {
                 dbType = DbType.ORACLE;
             } else if (driverName.contains("postgresql")) {
                 dbType = DbType.POSTGRE_SQL;
-            } else if (driverName.contains("mariadb")) {
-                dbType = DbType.MARIADB;
             } else if (driverName.contains("db2")) {
                 dbType = DbType.DB2;
+            } else if (driverName.contains("mariadb")) {
+                dbType = DbType.MARIADB;
             } else {
                 throw new MybatisPlusException("Unknown type of database!");
             }
@@ -134,11 +134,11 @@ public class DataSourceConfig {
                 case POSTGRE_SQL:
                     typeConvert = new PostgreSqlTypeConvert();
                     break;
-                case MARIADB:
-                    typeConvert = new MySqlTypeConvert();
-                    break;
                 case DB2:
                     typeConvert = new DB2TypeConvert();
+                    break;
+                case MARIADB:
+                    typeConvert = new MySqlTypeConvert();
                     break;
                 default:
                     // 默认 MYSQL
