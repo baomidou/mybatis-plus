@@ -15,15 +15,14 @@
  */
 package com.baomidou.mybatisplus.core.mapper;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.session.RowBounds;
-
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 
 /**
  * <p>
@@ -83,10 +82,10 @@ public interface BaseMapper<T> {
      * 根据 entity 条件，删除记录
      * </p>
      *
-     * @param wrapper 实体对象封装操作类（可以为 null）
+     * @param queryWrapper 实体对象封装操作类（可以为 null）
      * @return int
      */
-    Integer delete(@Param("ew") Wrapper<T> wrapper);
+    Integer delete(@Param("ew") Wrapper<T> queryWrapper);
 
     /**
      * <p>
@@ -124,11 +123,11 @@ public interface BaseMapper<T> {
      * 根据 whereEntity 条件，更新记录
      * </p>
      *
-     * @param entity  实体对象
-     * @param wrapper 实体对象封装操作类（可以为 null）
+     * @param entity        实体对象 (set 条件值)
+     * @param updateWrapper 实体对象封装操作类（可以为 null）
      * @return
      */
-    Integer update(@Param("et") T entity, @Param("ew") Wrapper<T> wrapper);
+    Integer update(@Param("et") T entity, @Param("ew") Wrapper<T> updateWrapper);
 
     /**
      * <p>
@@ -175,30 +174,30 @@ public interface BaseMapper<T> {
      * 根据 Wrapper 条件，查询总记录数
      * </p>
      *
-     * @param wrapper 实体对象
+     * @param queryWrapper 实体对象
      * @return int
      */
-    Integer selectCount(@Param("ew") Wrapper<T> wrapper);
+    Integer selectCount(@Param("ew") Wrapper<T> queryWrapper);
 
     /**
      * <p>
      * 根据 entity 条件，查询全部记录
      * </p>
      *
-     * @param wrapper 实体对象封装操作类（可以为 null）
+     * @param queryWrapper 实体对象封装操作类（可以为 null）
      * @return List<T>
      */
-    List<T> selectList(@Param("ew") Wrapper<T> wrapper);
+    List<T> selectList(@Param("ew") Wrapper<T> queryWrapper);
 
     /**
      * <p>
      * 根据 Wrapper 条件，查询全部记录
      * </p>
      *
-     * @param wrapper 实体对象封装操作类（可以为 null）
+     * @param queryWrapper 实体对象封装操作类（可以为 null）
      * @return List<T>
      */
-    List<Map<String, Object>> selectMaps(@Param("ew") Wrapper<T> wrapper);
+    List<Map<String, Object>> selectMaps(@Param("ew") Wrapper<T> queryWrapper);
 
     /**
      * <p>
@@ -206,31 +205,31 @@ public interface BaseMapper<T> {
      * 注意： 只返回第一个字段的值
      * </p>
      *
-     * @param wrapper 实体对象封装操作类（可以为 null）
+     * @param queryWrapper 实体对象封装操作类（可以为 null）
      * @return List<Object>
      */
-    List<Object> selectObjs(@Param("ew") Wrapper<T> wrapper);
+    List<Object> selectObjs(@Param("ew") Wrapper<T> queryWrapper);
 
     /**
      * <p>
      * 根据 entity 条件，查询全部记录（并翻页）
      * </p>
      *
-     * @param rowBounds 分页查询条件（可以为 RowBounds.DEFAULT）
-     * @param wrapper   实体对象封装操作类（可以为 null）
+     * @param rowBounds    分页查询条件（可以为 RowBounds.DEFAULT）
+     * @param queryWrapper 实体对象封装操作类（可以为 null）
      * @return List<T>
      */
-    List<T> selectPage(RowBounds rowBounds, @Param("ew") Wrapper<T> wrapper);
+    List<T> selectPage(RowBounds rowBounds, @Param("ew") Wrapper<T> queryWrapper);
 
     /**
      * <p>
      * 根据 Wrapper 条件，查询全部记录（并翻页）
      * </p>
      *
-     * @param rowBounds 分页查询条件（可以为 RowBounds.DEFAULT）
-     * @param wrapper   实体对象封装操作类
-     * @return List<Map   <   String   ,       Object>>
+     * @param rowBounds    分页查询条件（可以为 RowBounds.DEFAULT）
+     * @param queryWrapper 实体对象封装操作类
+     * @return List<Map<String,Object>>
      */
-    List<Map<String, Object>> selectMapsPage(RowBounds rowBounds, @Param("ew") Wrapper<T> wrapper);
+    List<Map<String, Object>> selectMapsPage(RowBounds rowBounds, @Param("ew") Wrapper<T> queryWrapper);
 
 }

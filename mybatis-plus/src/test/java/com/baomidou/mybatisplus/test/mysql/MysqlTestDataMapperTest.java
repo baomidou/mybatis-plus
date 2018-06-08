@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.test.mysql;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.test.base.entity.TestData;
 import com.baomidou.mybatisplus.test.base.mapper.TestDataMapper;
 import org.junit.Test;
@@ -54,6 +55,13 @@ public class MysqlTestDataMapperTest {
             .and().eq(TestData::getTestDate, LocalDate.of(2008, 8, 8))
             .and().between(TestData::getTestDate, LocalDate.of(2008, 1, 1),
                 LocalDate.of(2008, 12, 12))));
+    }
+
+    @Test
+    public void update() {
+        TestData updData = new TestData().setId(1L).setTestStr("123123");
+        TestData whereData = new TestData().setId(1L);
+        testDataMapper.update(updData, null);
     }
 
     private void println(List<TestData> list) {
