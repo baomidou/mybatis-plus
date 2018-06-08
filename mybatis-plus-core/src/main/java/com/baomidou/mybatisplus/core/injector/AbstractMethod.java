@@ -57,7 +57,6 @@ public abstract class AbstractMethod {
     protected LanguageDriver languageDriver;
     protected MapperBuilderAssistant builderAssistant;
 
-
     /**
      * 注入自定义方法
      */
@@ -72,7 +71,6 @@ public abstract class AbstractMethod {
             this.injectMappedStatement(mapperClass, modelClass, tableInfo);
         }
     }
-
 
     /**
      * 提取泛型模型,多泛型的时候请将泛型T放在第一位
@@ -103,7 +101,6 @@ public abstract class AbstractMethod {
         return target == null ? null : (Class<?>) target.getActualTypeArguments()[0];
     }
 
-
     /**
      * 是否已经存在MappedStatement
      *
@@ -113,7 +110,6 @@ public abstract class AbstractMethod {
     private boolean hasMappedStatement(String mappedStatement) {
         return configuration.hasStatement(mappedStatement, false);
     }
-
 
     /**
      * <p>
@@ -138,16 +134,16 @@ public abstract class AbstractMethod {
                 || FieldFill.INSERT_UPDATE == fieldInfo.getFieldFill());
             if (selective && ifTag) {
                 if (StringUtils.isNotEmpty(fieldInfo.getUpdate())) {
-                    set.append(fieldInfo.getColumn()).append("=");
-                    set.append(String.format(fieldInfo.getUpdate(), fieldInfo.getColumn())).append(",");
+                    set.append(fieldInfo.getColumn()).append("=")
+                        .append(String.format(fieldInfo.getUpdate(), fieldInfo.getColumn())).append(",");
                 } else {
-                    set.append(convertIfTag(true, fieldInfo, prefix, false));
-                    set.append(fieldInfo.getColumn()).append("=#{");
+                    set.append(convertIfTag(true, fieldInfo, prefix, false))
+                        .append(fieldInfo.getColumn()).append("=#{");
                     if (null != prefix) {
                         set.append(prefix);
                     }
-                    set.append(fieldInfo.getEl()).append("},");
-                    set.append(convertIfTag(true, fieldInfo, null, true));
+                    set.append(fieldInfo.getEl()).append("},")
+                        .append(convertIfTag(true, fieldInfo, null, true));
                 }
             } else if (FieldFill.INSERT != fieldInfo.getFieldFill()) {
                 // 排除填充注解字段
@@ -159,11 +155,10 @@ public abstract class AbstractMethod {
             }
         }
         // UpdateWrapper SqlSet 部分
-        set.append("<if test=\"ew != null and ew.sqlSet != null\">${ew.sqlSet}</if>");
-        set.append("</trim>");
+        set.append("<if test=\"ew != null and ew.sqlSet != null\">${ew.sqlSet}</if>")
+            .append("</trim>");
         return set.toString();
     }
-
 
     /**
      * <p>
@@ -295,16 +290,16 @@ public abstract class AbstractMethod {
     protected String sqlWhere(TableInfo table) {
         StringBuilder where = new StringBuilder("<where>");
         if (StringUtils.isNotEmpty(table.getKeyProperty())) {
-            where.append("<if test=\"ew.").append(table.getKeyProperty()).append("!=null\">");
-            where.append(table.getKeyColumn()).append("=#{ew.").append(table.getKeyProperty()).append("}");
-            where.append("</if>");
+            where.append("<if test=\"ew.").append(table.getKeyProperty()).append("!=null\">")
+                .append(table.getKeyColumn()).append("=#{ew.").append(table.getKeyProperty()).append("}")
+                .append("</if>");
         }
         List<TableFieldInfo> fieldList = table.getFieldList();
         for (TableFieldInfo fieldInfo : fieldList) {
-            where.append(convertIfTag(fieldInfo, "ew.", false));
-            where.append(" AND ").append(this.sqlCondition(fieldInfo.getCondition(),
-                fieldInfo.getColumn(), "ew." + fieldInfo.getEl()));
-            where.append(convertIfTag(fieldInfo, true));
+            where.append(convertIfTag(fieldInfo, "ew.", false))
+                .append(" AND ").append(this.sqlCondition(fieldInfo.getCondition(),
+                fieldInfo.getColumn(), "ew." + fieldInfo.getEl()))
+                .append(convertIfTag(fieldInfo, true));
         }
         return where.append("</where>").toString();
     }
@@ -378,16 +373,13 @@ public abstract class AbstractMethod {
         return convertIfTag(true, fieldInfo, null, close);
     }
 
-
     protected String convertIfTag(TableFieldInfo fieldInfo, String prefix, boolean close) {
         return convertIfTag(false, fieldInfo, prefix, close);
     }
 
-
     protected String convertIfTag(TableFieldInfo fieldInfo, boolean close) {
         return convertIfTag(fieldInfo, null, close);
     }
-
 
     /**
      * <p>
@@ -397,7 +389,6 @@ public abstract class AbstractMethod {
     protected String sqlCondition(String condition, String column, String property) {
         return String.format(condition, column, property);
     }
-
 
     /**
      * <p>
@@ -432,7 +423,6 @@ public abstract class AbstractMethod {
         return where.toString();
     }
 
-
     /**
      * 查询
      */
@@ -452,7 +442,6 @@ public abstract class AbstractMethod {
             new NoKeyGenerator(), null, null);
     }
 
-
     /**
      * 插入
      */
@@ -462,7 +451,6 @@ public abstract class AbstractMethod {
             keyGenerator, keyProperty, keyColumn);
     }
 
-
     /**
      * 删除
      */
@@ -471,7 +459,6 @@ public abstract class AbstractMethod {
             new NoKeyGenerator(), null, null);
     }
 
-
     /**
      * 更新
      */
@@ -479,7 +466,6 @@ public abstract class AbstractMethod {
         return this.addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.UPDATE, modelClass, null, Integer.class,
             new NoKeyGenerator(), null, null);
     }
-
 
     /**
      * 添加 MappedStatement 到 Mybatis 容器
@@ -502,7 +488,6 @@ public abstract class AbstractMethod {
             configuration.getDatabaseId(), languageDriver, null);
     }
 
-
     /**
      * <p>
      * 全局配置
@@ -512,10 +497,8 @@ public abstract class AbstractMethod {
         return GlobalConfigUtils.getGlobalConfig(configuration);
     }
 
-
     /**
      * 注入自定义 MappedStatement
      */
     public abstract MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo);
-
 }
