@@ -25,7 +25,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
  * </p>
  *
  * @author hubin
- * @Date 2016-06-26
+ * @since 2016-06-26
  */
 public class SuperEntity extends SuSuperEntity implements Serializable {
 

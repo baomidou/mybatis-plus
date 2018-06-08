@@ -33,7 +33,7 @@ import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
  * </p>
  *
  * @author hubin
- * @date 2017-01-30
+ * @since 2017-01-30
  */
 @Service
 public class H2UserServiceImpl extends ServiceImpl<H2UserMapper, H2User> implements IH2UserService {

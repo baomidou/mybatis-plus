@@ -25,7 +25,7 @@ import java.util.List;
  * </p>
  *
  * @author bliver
- * @Date 2017-07-28
+ * @since 2017-07-28
  */
 public class Columns implements Serializable {
 

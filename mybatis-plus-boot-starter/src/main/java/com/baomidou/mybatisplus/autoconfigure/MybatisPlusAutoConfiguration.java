@@ -161,7 +161,7 @@ public class MybatisPlusAutoConfiguration {
         if (this.applicationContext.getBeanNamesForType(IKeyGenerator.class, false,
             false).length > 0) {
             IKeyGenerator keyGenerator = this.applicationContext.getBean(IKeyGenerator.class);
-            globalConfig.setKeyGenerator(keyGenerator);
+            globalConfig.getDbConfig().setKeyGenerator(keyGenerator);
         }
         //注入sql注入器
         if (this.applicationContext.getBeanNamesForType(ISqlInjector.class, false,

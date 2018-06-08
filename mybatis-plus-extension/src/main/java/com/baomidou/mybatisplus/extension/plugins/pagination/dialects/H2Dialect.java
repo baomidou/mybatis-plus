@@ -24,7 +24,7 @@ import com.baomidou.mybatisplus.core.pagination.dialect.IDialect;
  * </p>
  *
  * @author hubin
- * @Date 2016-11-10
+ * @since 2016-11-10
  */
 public class H2Dialect implements IDialect {
 

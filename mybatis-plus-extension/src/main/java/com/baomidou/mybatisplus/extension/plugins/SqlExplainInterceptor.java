@@ -47,7 +47,7 @@ import com.baomidou.mybatisplus.extension.toolkit.VersionUtils;
  * </p>
  *
  * @author hubin
- * @Date 2016-08-16
+ * @since 2016-08-16
  */
 @Intercepts({@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})})
 public class SqlExplainInterceptor implements Interceptor {

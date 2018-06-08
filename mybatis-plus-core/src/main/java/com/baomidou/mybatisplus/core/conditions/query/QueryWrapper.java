@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * </p>
  *
  * @author hubin miemie HCL
- * @Date 2018-05-25
+ * @since 2018-05-25
  */
 public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>> implements Serializable {
 

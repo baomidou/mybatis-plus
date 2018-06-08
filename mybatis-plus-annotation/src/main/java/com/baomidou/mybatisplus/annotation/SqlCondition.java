@@ -21,7 +21,7 @@ package com.baomidou.mybatisplus.annotation;
  * </p>
  *
  * @author hubin
- * @Date 2018-01-05
+ * @since 2018-01-05
  */
 public class SqlCondition {
 

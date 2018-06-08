@@ -24,7 +24,7 @@ import org.apache.ibatis.reflection.SystemMetaObject;
  * </p>
  *
  * @author hubin
- * @Date 2016-08-28
+ * @since 2016-08-28
  */
 public abstract class MetaObjectHandler {
 

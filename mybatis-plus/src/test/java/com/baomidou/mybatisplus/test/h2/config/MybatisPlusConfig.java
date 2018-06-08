@@ -25,7 +25,7 @@ import com.baomidou.mybatisplus.test.h2.H2MetaObjectHandler;
  * </p>
  *
  * @author Caratacus
- * @date 2017/4/1
+ * @since 2017/4/1
  */
 @Configuration
 @MapperScan("com.baomidou.mybatisplus.test.h2.entity.mapper")

@@ -36,7 +36,7 @@ import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
  * </p>
  *
  * @author hubin willenfoo
- * @Date 2017-09-09
+ * @since 2017-09-09
  */
 public class LogicSqlInjector extends DefaultSqlInjector {
 //

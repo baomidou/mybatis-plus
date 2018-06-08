@@ -17,7 +17,7 @@ import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
  * </p>
  *
  * @author K神
- * @date 2017/12/29
+ * @since 2017/12/29
  */
 public class CodeGeneratorTest {
 

@@ -38,7 +38,7 @@ import net.sf.jsqlparser.statement.update.Update;
  * </p>
  *
  * @author hubin
- * @Date 2017-06-20
+ * @since 2017-06-20
  */
 public abstract class AbstractJsqlParser implements ISqlParser {
 

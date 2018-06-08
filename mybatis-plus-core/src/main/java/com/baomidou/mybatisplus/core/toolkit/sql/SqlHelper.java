@@ -38,7 +38,7 @@ import java.util.List;
  * </p>
  *
  * @author hubin
- * @Date 2016-11-06
+ * @since 2016-11-06
  */
 public class SqlHelper {
 
@@ -52,7 +52,7 @@ public class SqlHelper {
      * </p>
      * <p>
      * 特别说明:这里获取SqlSession时这里虽然设置了自动提交但是如果事务托管了的话 是不起作用的 切记!!
-     * <p/>
+     * </p>
      *
      * @return SqlSession
      */

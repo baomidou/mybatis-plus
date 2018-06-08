@@ -6,7 +6,7 @@ package com.baomidou.mybatisplus.core.toolkit;
  * </p>
  *
  * @author Caratacus
- * @Date 2017-03-09
+ * @since 2017-03-09
  */
 public class ArrayUtils {
 

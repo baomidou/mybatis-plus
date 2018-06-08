@@ -25,7 +25,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  * </p>
  *
  * @author hubin
- * @Date 2016-11-10
+ * @since 2016-11-10
  */
 public class SQLServer2005Dialect implements IDialect {
 

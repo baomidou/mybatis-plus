@@ -29,7 +29,7 @@ import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
  * </p>
  *
  * @author Caratacus
- * @Date 2017-04-27
+ * @since 2017-04-27
  */
 public class Column implements Serializable {
 

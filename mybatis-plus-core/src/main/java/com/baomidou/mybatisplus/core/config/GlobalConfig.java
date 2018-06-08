@@ -20,6 +20,9 @@ import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
+
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
@@ -36,6 +39,8 @@ import java.util.concurrent.ConcurrentSkipListSet;
  * @since 2016-12-06
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
+@Accessors(chain = true)
 public class GlobalConfig implements Serializable {
 
     /**

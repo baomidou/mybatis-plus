@@ -23,7 +23,7 @@ import org.apache.ibatis.reflection.MetaObject;
  * </p>
  *
  * @author hubin
- * @Date 2017-09-02
+ * @since 2017-09-02
  */
 public interface ISqlParserFilter {
 

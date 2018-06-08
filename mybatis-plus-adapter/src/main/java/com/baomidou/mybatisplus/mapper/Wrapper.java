@@ -41,7 +41,7 @@ import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
  * </p>
  *
  * @author hubin , yanghu , Dyang , Caratacus, hcl
- * @Date 2016-11-7
+ * @since 2016-11-7
  */
 @Deprecated
 public class Wrapper<T> extends com.baomidou.mybatisplus.core.conditions.Wrapper<T> {

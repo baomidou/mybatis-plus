@@ -24,7 +24,7 @@ import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
  * </p>
  *
  * @author hubin
- * @Date 2016-04-15
+ * @since 2016-04-15
  */
 //TODO: 3.0 如何在GlobalConfiguration里面支持？
 public enum DBType implements IDBType {

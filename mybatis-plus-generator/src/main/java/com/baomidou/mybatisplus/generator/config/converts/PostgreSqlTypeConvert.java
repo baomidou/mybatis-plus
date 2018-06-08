@@ -25,7 +25,7 @@ import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
  * </p>
  *
  * @author hubin
- * @date 2017-01-20
+ * @since 2017-01-20
  */
 public class PostgreSqlTypeConvert implements ITypeConvert {
 

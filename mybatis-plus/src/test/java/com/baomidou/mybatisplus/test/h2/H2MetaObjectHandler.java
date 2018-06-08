@@ -28,7 +28,7 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
  * </p>
  *
  * @author hubin
- * @Date 2017-06-25
+ * @since 2017-06-25
  */
 public class H2MetaObjectHandler extends MetaObjectHandler {
 

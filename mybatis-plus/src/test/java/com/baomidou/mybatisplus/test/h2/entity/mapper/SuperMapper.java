@@ -6,7 +6,7 @@ package com.baomidou.mybatisplus.test.h2.entity.mapper;
  * </p>
  *
  * @author hubin
- * @date 2017-06-26
+ * @since 2017-06-26
  */
 public interface SuperMapper<T> extends com.baomidou.mybatisplus.core.mapper.BaseMapper<T> {
 

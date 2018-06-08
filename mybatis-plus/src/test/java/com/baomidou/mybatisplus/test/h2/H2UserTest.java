@@ -26,7 +26,7 @@ import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
  * </p>
  *
  * @author Caratacus
- * @date 2017/4/1
+ * @since 2017/4/1
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})

@@ -7,11 +7,15 @@ import com.baomidou.mybatisplus.core.handlers.SqlReservedWordsHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
 /**
  * 数据库相关配置
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
+@Accessors(chain = true)
 public class DbConfig {
 
     /**

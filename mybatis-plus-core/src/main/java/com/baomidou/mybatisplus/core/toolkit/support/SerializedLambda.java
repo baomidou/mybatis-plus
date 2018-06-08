@@ -18,7 +18,7 @@ import lombok.Getter;
  * 负责将一个支持序列的 Function 序列化为 SerializedLambda
  *
  * @author HCL
- * @Date 2018/05/10
+ * @since 2018/05/10
  */
 @Getter
 public class SerializedLambda implements Serializable {

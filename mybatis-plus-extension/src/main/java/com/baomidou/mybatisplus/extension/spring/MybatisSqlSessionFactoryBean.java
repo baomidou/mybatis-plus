@@ -77,7 +77,7 @@ import com.baomidou.mybatisplus.extension.toolkit.SqlRunner;
  * </p>
  *
  * @author hubin
- * @Date 2017-01-04
+ * @since 2017-01-04
  */
 public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, InitializingBean, ApplicationListener<ApplicationEvent> {
 

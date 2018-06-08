@@ -21,7 +21,7 @@ package com.baomidou.mybatisplus.core.exceptions;
  * </p>
  *
  * @author hubin
- * @Date 2016-01-23
+ * @since 2016-01-23
  */
 public class MybatisPlusException extends RuntimeException {
 

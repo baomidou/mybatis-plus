@@ -33,7 +33,7 @@ import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
  * 注意：插件仅支持RowBounds及其子类作为分页参数
  *
  * @author hubin
- * @Date 2016-01-23
+ * @since 2016-01-23
  */
 public class Pagination extends RowBounds implements Serializable {
 

@@ -15,7 +15,7 @@ import com.baomidou.mybatisplus.core.enums.IDBType;
  * </p>
  *
  * @author yuxiaobin
- * @date 2018/2/6
+ * @since 2018/2/6
  */
 public abstract class SqlReservedWordsHandler {
 

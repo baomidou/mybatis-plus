@@ -51,7 +51,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * </p>
  *
  * @author hubin sjy
- * @Date 2016-09-09
+ * @since 2016-09-09
  */
 public class TableInfoHelper {
 

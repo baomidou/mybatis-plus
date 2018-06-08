@@ -23,7 +23,7 @@ import lombok.Getter;
  * </p>
  *
  * @author hubin
- * @Date 2016-09-09
+ * @since 2016-09-09
  */
 @Getter
 public enum FieldStrategy {

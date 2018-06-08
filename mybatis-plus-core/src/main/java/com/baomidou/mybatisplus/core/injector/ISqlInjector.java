@@ -26,7 +26,7 @@ import com.baomidou.mybatisplus.core.assist.ISqlRunner;
  * </p>
  *
  * @author hubin
- * @Date 2016-07-24
+ * @since 2016-07-24
  */
 public interface ISqlInjector {
 

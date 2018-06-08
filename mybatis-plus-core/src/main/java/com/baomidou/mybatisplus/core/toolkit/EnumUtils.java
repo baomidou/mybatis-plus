@@ -24,7 +24,7 @@ import com.baomidou.mybatisplus.core.enums.IEnum;
  * </p>
  *
  * @author hubin
- * @Date 2017-10-11
+ * @since 2017-10-11
  */
 public class EnumUtils {
 

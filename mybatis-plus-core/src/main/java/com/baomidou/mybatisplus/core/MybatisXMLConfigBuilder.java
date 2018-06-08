@@ -59,7 +59,7 @@ import org.apache.ibatis.type.JdbcType;
  * </p>
  *
  * @author hubin
- * @Date 2017-01-04
+ * @since 2017-01-04
  */
 public class MybatisXMLConfigBuilder extends BaseBuilder {
 

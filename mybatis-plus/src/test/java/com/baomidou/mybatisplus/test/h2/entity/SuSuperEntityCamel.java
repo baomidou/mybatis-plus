@@ -13,7 +13,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
  * </p>
  *
  * @author yuxiaobin
- * @date 2017/12/7
+ * @since 2017/12/7
  */
 public abstract class SuSuperEntityCamel {
 

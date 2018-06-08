@@ -33,7 +33,7 @@ import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
  * </p>
  *
  * @author hubin
- * @Date 2016-01-23
+ * @since 2016-01-23
  */
 public class MybatisConfiguration extends Configuration {
 

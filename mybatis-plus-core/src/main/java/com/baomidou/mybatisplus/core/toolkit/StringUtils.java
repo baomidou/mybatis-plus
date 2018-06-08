@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  * </p>
  *
  * @author D.Yang
- * @Date 2016-08-18
+ * @since 2016-08-18
  */
 public class StringUtils {
 

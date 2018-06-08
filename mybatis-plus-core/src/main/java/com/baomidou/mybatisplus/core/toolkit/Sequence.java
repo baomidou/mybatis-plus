@@ -32,7 +32,7 @@ import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
  * </p>
  *
  * @author hubin
- * @date 2016-08-18
+ * @since 2016-08-18
  */
 public class Sequence {
 

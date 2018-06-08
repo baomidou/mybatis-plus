@@ -28,7 +28,7 @@ import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
  * </p>
  *
  * @author hubin
- * @date 2017-01-30
+ * @since 2017-01-30
  */
 public interface IH2UserService extends IService<H2User> {
 

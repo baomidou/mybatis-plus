@@ -44,7 +44,7 @@ import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
  * </p>
  *
  * @author hubin
- * @date 2016-12-01
+ * @since 2016-12-01
  */
 public class MysqlGenerator extends GeneratorTest {
 

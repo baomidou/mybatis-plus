@@ -31,7 +31,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  * </p>
  *
  * @author hubin sjy willenfoo tantan
- * @Date 2016-09-09
+ * @since 2016-09-09
  */
 public class TableFieldInfo {
 

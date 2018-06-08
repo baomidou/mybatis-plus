@@ -34,7 +34,7 @@ import com.baomidou.mybatisplus.core.toolkit.IOUtils;
  * </p>
  *
  * @author hubin
- * @Date 2016-01-23
+ * @since 2016-01-23
  */
 public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 

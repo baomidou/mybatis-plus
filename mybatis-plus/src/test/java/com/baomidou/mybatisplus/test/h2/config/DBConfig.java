@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * </p>
  *
  * @author Caratacus
- * @date 2017/4/1
+ * @since 2017/4/1
  */
 @Configuration
 @EnableTransactionManagement

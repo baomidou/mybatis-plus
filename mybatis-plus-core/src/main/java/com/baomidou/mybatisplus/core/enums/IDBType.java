@@ -6,7 +6,7 @@ package com.baomidou.mybatisplus.core.enums;
  * </p>
  *
  * @author yuxiaobin
- * @date 2018/2/7
+ * @since 2018/2/7
  */
 public interface IDBType {
 

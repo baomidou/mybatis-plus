@@ -102,7 +102,7 @@ import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
  * </p>
  *
  * @author Caratacus
- * @Date 2017-01-04
+ * @since 2017-01-04
  */
 public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 

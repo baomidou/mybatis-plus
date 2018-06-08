@@ -23,7 +23,7 @@ import java.io.Serializable;
  * </p>
  *
  * @author hubin
- * @Date 2017-10-11
+ * @since 2017-10-11
  */
 public interface IEnum<T extends Serializable> {
 

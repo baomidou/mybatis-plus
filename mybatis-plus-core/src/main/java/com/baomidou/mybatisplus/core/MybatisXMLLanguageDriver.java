@@ -26,7 +26,7 @@ import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
  * </p>
  *
  * @author hubin
- * @Date 2016-03-11
+ * @since 2016-03-11
  */
 public class MybatisXMLLanguageDriver extends XMLLanguageDriver {
 

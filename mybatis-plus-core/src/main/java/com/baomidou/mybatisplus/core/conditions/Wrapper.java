@@ -25,7 +25,7 @@ import com.baomidou.mybatisplus.core.toolkit.SerializationUtils;
  * </p>
  *
  * @author hubin
- * @Date 2018-05-25
+ * @since 2018-05-25
  */
 public abstract class Wrapper<T> implements ISqlSegment, Serializable {
 

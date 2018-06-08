@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
  * </p>
  *
  * @author Caratacus
- * @Date 2017-06-12
+ * @since 2017-06-12
  */
 public class H2KeyGenerator implements IKeyGenerator {
 

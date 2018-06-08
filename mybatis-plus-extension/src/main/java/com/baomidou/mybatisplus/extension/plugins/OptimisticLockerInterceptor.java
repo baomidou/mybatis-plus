@@ -48,7 +48,7 @@ import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
  * </p>
  *
  * @author yuxiaobin
- * @date 2017/5/24
+ * @since 2017/5/24
  */
 @Intercepts({@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})})
 public class OptimisticLockerInterceptor implements Interceptor {

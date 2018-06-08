@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * @author ming
- * @Date 2018/5/12
+ * @since 2018/5/12
  */
 @FunctionalInterface
 public interface Property<T, R> extends Serializable {

@@ -18,7 +18,7 @@ import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
  * </p>
  *
  * @author Caratacus
- * @date 2017/4/1
+ * @since 2017/4/1
  */
 public interface H2UserMapper extends SuperMapper<H2User> {
 

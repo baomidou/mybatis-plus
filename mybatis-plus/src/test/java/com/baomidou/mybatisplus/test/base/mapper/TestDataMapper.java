@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.test.base.entity.TestData;
 
 /**
  * @author miemie
- * @date 2018/6/7
+ * @since 2018/6/7
  */
 public interface TestDataMapper extends BaseMapper<TestData> {
 }

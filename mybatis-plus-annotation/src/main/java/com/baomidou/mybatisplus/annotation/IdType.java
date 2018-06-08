@@ -23,7 +23,7 @@ import lombok.Getter;
  * </p>
  *
  * @author hubin
- * @Date 2015-11-10
+ * @since 2015-11-10
  */
 @Getter
 public enum IdType {

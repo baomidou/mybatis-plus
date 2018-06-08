@@ -25,7 +25,7 @@ import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
  * </p>
  *
  * @author nieqiurong
- * @Date 2016/12/25
+ * @since 2016/12/25
  */
 public class SQLServerGenerator extends GeneratorTest {
 
