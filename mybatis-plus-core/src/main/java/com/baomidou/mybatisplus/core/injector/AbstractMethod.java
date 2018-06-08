@@ -328,9 +328,9 @@ public abstract class AbstractMethod {
         StringBuilder where = new StringBuilder();
         where.append("\n<if test=\"cm!=null and !cm.isEmpty\">");
         where.append("\n<where>");
-        where.append("\n<foreach collection=\"cm.keys\" item=\"k\" separator=\"AND\">");
-        where.append("\n<if test=\"cm[k] != null\">");
-        where.append("\n").append(this.sqlWordConvert("${k}")).append(" = #{cm[${k}]}");
+        where.append("\n<foreach collection=\"cm\" index=\"k\" item=\"v\" separator=\"AND\">");
+        where.append("\n<if test=\"v != null\">");
+        where.append("\n").append(this.sqlWordConvert("${k}")).append(" = #{v}");
         where.append("\n</if>");
         where.append("\n</foreach>");
         where.append("\n</where>");
