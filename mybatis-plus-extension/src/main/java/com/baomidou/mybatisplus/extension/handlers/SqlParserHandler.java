@@ -27,6 +27,8 @@ import com.baomidou.mybatisplus.core.parser.SqlParserInfo;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 
+import lombok.Data;
+
 /**
  * <p>
  * SQL 解析处理器
@@ -35,6 +37,7 @@ import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
  * @author hubin
  * @Date 2016-08-31
  */
+@Data
 public abstract class SqlParserHandler {
 
     private List<ISqlParser> sqlParserList;
@@ -70,23 +73,5 @@ public abstract class SqlParserHandler {
                 }
             }
         }
-    }
-
-    public List<ISqlParser> getSqlParserList() {
-        return sqlParserList;
-    }
-
-    public SqlParserHandler setSqlParserList(List<ISqlParser> sqlParserList) {
-        this.sqlParserList = sqlParserList;
-        return this;
-    }
-
-    public ISqlParserFilter getSqlParserFilter() {
-        return sqlParserFilter;
-    }
-
-    public SqlParserHandler setSqlParserFilter(ISqlParserFilter sqlParserFilter) {
-        this.sqlParserFilter = sqlParserFilter;
-        return this;
     }
 }
