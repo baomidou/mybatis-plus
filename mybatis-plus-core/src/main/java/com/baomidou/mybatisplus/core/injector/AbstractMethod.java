@@ -158,7 +158,9 @@ public abstract class AbstractMethod {
                 set.append(fieldInfo.getEl()).append("},");
             }
         }
-        set.append("\n</trim>");
+        // UpdateWrapper SqlSet 部分
+        set.append("<if test=\"ew != null and ew.sqlSet != null\">${ew.sqlSet}</if>");
+        set.append("</trim>");
         return set.toString();
     }
 

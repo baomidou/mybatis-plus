@@ -18,6 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.test.h2.config.H2Db;
 import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserMapper;
@@ -90,12 +91,20 @@ public class H2UserMapperTest extends BaseTest {
 
         h2User = new H2User();
         h2User.setAge(2);
+        h2User.setDesc("测试置空");
         Assert.assertTrue(1 == userMapper.update(h2User,
             new QueryWrapper<H2User>().eq("name", NQQ)));
 
+        log(userMapper.selectOne(new H2User().setName(NQQ).setAge(2)));
+
         h2User.setAge(3);
+        h2User.setDesc(null);
         Assert.assertTrue(1 == userMapper.update(h2User,
-            new QueryWrapper<H2User>().lambda().eq(H2User::getName, NQQ)));
+            new UpdateWrapper<H2User>().lambda()
+                .set(H2User::getDesc, "")
+                .eq(H2User::getName, NQQ)));
+
+        log(userMapper.selectOne(new H2User().setName(NQQ).setAge(3)));
 
         Assert.assertNotNull(userMapper.selectOne(new H2User().setName(NQQ)));
 

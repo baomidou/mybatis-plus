@@ -101,4 +101,15 @@ public class H2User extends SuperEntity {
         this.testType = testType;
     }
 
+    @Override
+    public String toString() {
+        return null == this ? "h2user is null." : new StringBuilder()
+            .append("h2user:{name=").append(name).append(",")
+            .append("age=").append(age).append(",")
+            .append("price=").append(price).append(",")
+            .append("testType=").append(testType).append(",")
+            .append("desc=").append(desc).append(",")
+            .append("testDate=").append(testDate).append(",")
+            .append("version=").append(version).toString();
+    }
 }

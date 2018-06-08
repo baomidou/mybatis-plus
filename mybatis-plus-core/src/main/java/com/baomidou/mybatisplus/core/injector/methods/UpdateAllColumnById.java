@@ -24,18 +24,20 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
 
 /**
  * <p>
- * 根据 ID 更新所有字段
+ * 根据 ID 更新所有字段<br/>
+ * 该方法 3.1 删除，建议迁移到 update 使用 UpdateWrapper 处理空字段问题
  * </p>
  *
  * @author hubin
  * @since 2018-04-06
  */
+@Deprecated
 public class UpdateAllColumnById extends AbstractMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.UPDATE_ALL_COLUMN_BY_ID;
-        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlSet(false, tableInfo, "et."),
+        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), this.sqlSet(false, tableInfo, "et."),
             tableInfo.getKeyColumn(), "et." + tableInfo.getKeyProperty(),
             "<if test=\"et instanceof java.util.Map\">"
             + "<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">"
