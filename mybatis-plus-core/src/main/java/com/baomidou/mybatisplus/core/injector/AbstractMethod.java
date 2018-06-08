@@ -315,15 +315,7 @@ public abstract class AbstractMethod {
      * </p>
      */
     protected String sqlWhereByMap(TableInfo table) {
-        StringBuilder where = new StringBuilder();
-        where.append("<if test=\"cm!=null and !cm.isEmpty\">");
-        where.append("<where>");
-        where.append("<foreach collection=\"cm\" index=\"k\" item=\"v\" separator=\"AND\">");
-        where.append("<if test=\"v != null\">${k}=#{v}</if>");
-        where.append("</foreach>");
-        where.append("</where>");
-        where.append("</if>");
-        return where.toString();
+        return "<if test=\"cm!=null and !cm.isEmpty\"><where><foreach collection=\"cm\" index=\"k\" item=\"v\" separator=\"AND\"><if test=\"v != null\">${k}=#{v}</if></foreach></where></if>";
     }
 
     /**
