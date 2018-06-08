@@ -21,21 +21,21 @@ import java.util.Map;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.MapUtils;
-import com.baomidou.mybatisplus.extension.exceptions.RestException;
+import com.baomidou.mybatisplus.extension.exceptions.ApiException;
 import com.baomidou.mybatisplus.extension.toolkit.ObjectUtils;
 
 /**
  * <p>
- * REST 业务断言<br>
+ * REST API 业务断言<br>
  * 参考：org.junit.Assert
  * </p>
  *
  * @author hubin
  * @since 2018-06-05
  */
-public class RestAssert {
+public class ApiAssert {
 
-    protected RestAssert() {
+    protected ApiAssert() {
         // to do noting
     }
 
@@ -116,7 +116,7 @@ public class RestAssert {
      * @param errorCode 异常错误码
      */
     public static void fail(IErrorCode errorCode) {
-        throw new RestException(errorCode);
+        throw new ApiException(errorCode);
     }
 
     public static void fail(boolean condition, IErrorCode errorCode) {
@@ -126,7 +126,7 @@ public class RestAssert {
     }
 
     public static void fail(String message) {
-        throw new RestException(message);
+        throw new ApiException(message);
     }
 
     public static void fail(boolean condition, String message) {

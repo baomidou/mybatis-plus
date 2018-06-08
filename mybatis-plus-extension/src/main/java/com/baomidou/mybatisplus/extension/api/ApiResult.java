@@ -16,17 +16,17 @@
 package com.baomidou.mybatisplus.extension.api;
 
 import com.baomidou.mybatisplus.extension.enums.ApiErrorCode;
-import com.baomidou.mybatisplus.extension.exceptions.RestException;
+import com.baomidou.mybatisplus.extension.exceptions.ApiException;
 
 /**
  * <p>
- * API REST 返回结果
+ * REST API 返回结果
  * </p>
  *
  * @author hubin
  * @since 2018-06-05
  */
-public class RestResult<T> {
+public class ApiResult<T> {
 
     /**
      * 业务错误码
@@ -41,11 +41,11 @@ public class RestResult<T> {
      */
     private String msg;
 
-    public RestResult() {
+    public ApiResult() {
         // to do nothing
     }
 
-    public RestResult(IErrorCode errorCode) {
+    public ApiResult(IErrorCode errorCode) {
         if (errorCode == null) {
             errorCode = ApiErrorCode.FAILED;
         }
@@ -53,28 +53,28 @@ public class RestResult<T> {
         this.msg = errorCode.getMsg();
     }
 
-    public static <T> RestResult<T> ok(T data) {
+    public static <T> ApiResult<T> ok(T data) {
         return restResult(data, ApiErrorCode.SUCCESS);
     }
 
-    public static <T> RestResult<T> failed(String msg) {
+    public static <T> ApiResult<T> failed(String msg) {
         return restResult(null, ApiErrorCode.FAILED.getCode(), msg);
     }
 
-    public static <T> RestResult<T> failed(IErrorCode errorCode) {
+    public static <T> ApiResult<T> failed(IErrorCode errorCode) {
         return restResult(null, errorCode);
     }
 
-    public static <T> RestResult<T> restResult(T data, IErrorCode errorCode) {
+    public static <T> ApiResult<T> restResult(T data, IErrorCode errorCode) {
         return restResult(data, errorCode.getCode(), errorCode.getMsg());
     }
 
-    private static <T> RestResult<T> restResult(T data, String code, String msg) {
-        RestResult<T> restResult = new RestResult<>();
-        restResult.setCode(code);
-        restResult.setData(data);
-        restResult.setMsg(msg);
-        return restResult;
+    private static <T> ApiResult<T> restResult(T data, String code, String msg) {
+        ApiResult<T> apiResult = new ApiResult<>();
+        apiResult.setCode(code);
+        apiResult.setData(data);
+        apiResult.setMsg(msg);
+        return apiResult;
     }
 
     public boolean isSuccess() {
@@ -86,7 +86,7 @@ public class RestResult<T> {
      */
     public T serviceData() {
         if (!isSuccess()) {
-            throw new RestException(this.msg);
+            throw new ApiException(this.msg);
         }
         return data;
     }

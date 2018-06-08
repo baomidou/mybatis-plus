@@ -19,33 +19,33 @@ import com.baomidou.mybatisplus.extension.api.IErrorCode;
 
 /**
  * <p>
- * Rest 请求异常类
+ * REST API 请求异常类
  * </p>
  *
  * @author hubin
  * @since 2017-06-26
  */
-public class RestException extends RuntimeException {
+public class ApiException extends RuntimeException {
 
     /**
      * 错误码
      */
     private IErrorCode errorCode;
 
-    public RestException(IErrorCode errorCode) {
+    public ApiException(IErrorCode errorCode) {
         super(errorCode.getMsg());
         this.errorCode = errorCode;
     }
 
-    public RestException(String message) {
+    public ApiException(String message) {
         super(message);
     }
 
-    public RestException(Throwable cause) {
+    public ApiException(Throwable cause) {
         super(cause);
     }
 
-    public RestException(String message, Throwable cause) {
+    public ApiException(String message, Throwable cause) {
         super(message, cause);
     }
 

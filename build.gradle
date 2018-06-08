@@ -18,7 +18,9 @@ ext {
         "spring-context-support": "org.springframework:spring-context-support:${springVersion}",
         "spring-jdbc"           : "org.springframework:spring-jdbc:${springVersion}",
         "spring-tx"             : "org.springframework:spring-tx:${springVersion}",
+        "spring-web"             : "org.springframework:spring-web:${springVersion}",
 
+        "javax.servlet-api"         : "javax.servlet:javax.servlet-api:3.1.0",
         "aspectjweaver"         : "org.aspectj:aspectjweaver:1.8.9",
         "mockito"               : "org.mockito:mockito-core:2.13.0",
         "mybatis-ehcache"       : "org.mybatis.caches:mybatis-ehcache:1.1.0",

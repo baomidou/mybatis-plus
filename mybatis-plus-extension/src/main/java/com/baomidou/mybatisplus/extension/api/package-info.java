@@ -1,6 +1,6 @@
 /**
  * <p>
- * 通用 Controller API 层封装
+ * REST API 相关通用类
  * </p>
  *
  * @author hubin

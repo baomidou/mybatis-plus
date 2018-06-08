@@ -9,10 +9,11 @@ dependencies {
 
     provided rootProject.ext.dependencies["spring-context-support"]
     provided rootProject.ext.dependencies["spring-jdbc"]
-    testCompile group: 'org.springframework', name: 'spring-web', version: '4.3.5.RELEASE'
+    provided rootProject.ext.dependencies["javax.servlet-api"]
+    provided rootProject.ext.dependencies["slf4j-api"]
 
-    testCompile 'javax.servlet:servlet-api:2.5'
-
+    testCompile rootProject.ext.dependencies["spring-web"]
+    testCompile rootProject.ext.dependencies["javax.servlet-api"]
     testCompile rootProject.ext.dependencies["spring-test"]
     testCompile rootProject.ext.dependencies["fastjson"]
 
