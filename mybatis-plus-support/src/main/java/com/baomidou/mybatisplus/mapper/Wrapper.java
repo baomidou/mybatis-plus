@@ -15,24 +15,15 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.baomidou.mybatisplus.entity.Column;
 import com.baomidou.mybatisplus.entity.Columns;
 import com.baomidou.mybatisplus.enums.SqlLike;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.toolkit.ArrayUtils;
-import com.baomidou.mybatisplus.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.toolkit.MapUtils;
-import com.baomidou.mybatisplus.toolkit.SerializationUtils;
-import com.baomidou.mybatisplus.toolkit.SqlUtils;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
+import com.baomidou.mybatisplus.toolkit.*;
+
+import java.io.Serializable;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -1326,7 +1317,7 @@ public abstract class Wrapper<T> implements Serializable {
      * @param value     匹配值 object数组
      * @return this
      */
-    public Wrapper<T> in(boolean condition, String column, Object[] value) {
+    public Wrapper<T> in(boolean condition, String column, Object... value) {
         if (condition && ArrayUtils.isNotEmpty(value)) {
             sql.WHERE(formatSql(inExpression(column, Arrays.asList(value), false), value));
         }
@@ -1342,7 +1333,7 @@ public abstract class Wrapper<T> implements Serializable {
      * @param value  匹配值 object数组
      * @return this
      */
-    public Wrapper<T> in(String column, Object[] value) {
+    public Wrapper<T> in(String column, Object... value) {
         return in(true, column, value);
     }
 
