@@ -70,6 +70,9 @@ public class PageMapperMethod {
                     result = executeForCursor(sqlSession, args);
                 } else {
                     Object param = method.convertArgsToSqlCommandParam(args);
+                    /**
+                     * 这下面
+                     */
                     if (Page.class.isAssignableFrom(method.getReturnType()) && args != null
                         && Page.class.isAssignableFrom(args[0].getClass())) {
                         List<Object> o = (List<Object>) executeForMany2(sqlSession, args);
@@ -77,6 +80,9 @@ public class PageMapperMethod {
                     } else {
                         result = sqlSession.selectOne(command.getName(), param);
                     }
+                    /**
+                     * 这上面
+                     */
                 }
                 break;
             case FLUSH:

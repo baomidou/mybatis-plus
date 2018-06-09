@@ -1,14 +1,15 @@
 package com.baomidou.mybatisplus.test.mysql.config;
 
+import java.sql.SQLException;
+
+import javax.sql.DataSource;
+
 import org.h2.Driver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
-import javax.sql.DataSource;
-import java.sql.SQLException;
 
 /**
  * @author miemie
@@ -25,7 +26,7 @@ public class DBConfig {
         dataSource.setUrl("jdbc:mysql://localhost:3306/mybatis_plus");
         dataSource.setDriverClass(com.mysql.jdbc.Driver.class);
         dataSource.setUsername("root");
-        dataSource.setPassword("123456");
+        dataSource.setPassword("123123");
         return dataSource;
     }
 

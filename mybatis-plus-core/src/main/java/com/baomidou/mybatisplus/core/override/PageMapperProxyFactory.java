@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.ibatis.session.SqlSession;
 
 /**
+ * 替换掉引用
  * @author ming
  * @since 2018/6/9
  */

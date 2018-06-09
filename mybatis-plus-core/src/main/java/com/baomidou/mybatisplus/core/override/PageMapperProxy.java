@@ -13,6 +13,7 @@ import org.apache.ibatis.reflection.ExceptionUtil;
 import org.apache.ibatis.session.SqlSession;
 
 /**
+ * 替换掉引用
  * @author ming
  * @since 2018/6/9
  */

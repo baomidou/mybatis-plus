@@ -1,19 +1,23 @@
 package com.baomidou.mybatisplus.test.mysql;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.test.base.entity.TestData;
-import com.baomidou.mybatisplus.test.base.mapper.TestDataMapper;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.pagination.Page;
+import com.baomidou.mybatisplus.test.base.entity.TestData;
+import com.baomidou.mybatisplus.test.base.mapper.TestDataMapper;
 
 /**
  * <p>
@@ -66,11 +70,33 @@ public class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void mm() {
+    public void selectByMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("id", 1L);
         map.put("test_int", 1);
         println(testDataMapper.selectByMap(map));
+    }
+
+    @Test
+    public void selectPage() {
+        Page<TestData> page = new Page<>();
+        page.setSize(5).setCurrent(1);
+        Page<TestData> dataPage = testDataMapper.selectPage(page, new QueryWrapper<TestData>().lambda()
+            .eq(TestData::getTestInt, 1));
+        System.out.println(dataPage.getTotal());
+        System.out.println(dataPage.getRecords().size());
+        println(page.getRecords());
+    }
+
+    @Test
+    public void mm() {
+        ArrayList<TestData> list = new ArrayList<>();
+        Pages<TestData> a = (Pages<TestData>) list;
+        System.out.println(a);
+    }
+
+    private class Pages<T> extends ArrayList<T> {
+
     }
 
     private void println(List<TestData> list) {

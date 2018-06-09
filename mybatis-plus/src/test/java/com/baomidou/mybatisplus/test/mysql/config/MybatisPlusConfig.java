@@ -1,18 +1,19 @@
 package com.baomidou.mybatisplus.test.mysql.config;
 
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.config.DbConfig;
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
-import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
-import com.baomidou.mybatisplus.test.h2.H2MetaObjectHandler;
+import javax.sql.DataSource;
+
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.JdbcType;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.sql.DataSource;
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.config.DbConfig;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
+import com.baomidou.mybatisplus.test.h2.H2MetaObjectHandler;
 
 /**
  * <p>
@@ -27,7 +28,7 @@ import javax.sql.DataSource;
 public class MybatisPlusConfig {
 
     @Bean("mybatisSqlSession")
-    public SqlSessionFactory sqlSessionFactory(DataSource dataSource, GlobalConfig globalConfiguration) throws Exception {
+    public SqlSessionFactory sqlSessionFactory(DataSource dataSource, GlobalConfig globalConfig) throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
         sqlSessionFactory.setDataSource(dataSource);
 //        sqlSessionFactory.setConfigLocation(resourceLoader.getResource("classpath:mybatis-config.xml"));
@@ -37,22 +38,23 @@ public class MybatisPlusConfig {
 //        org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
         configuration.setJdbcTypeForNull(JdbcType.NULL);
         configuration.setMapUnderscoreToCamelCase(true);
-        sqlSessionFactory.setConfiguration(configuration);
         PaginationInterceptor pagination = new PaginationInterceptor();
-        pagination.setLocalPage(true);
+        configuration.addInterceptor(pagination);
+        sqlSessionFactory.setConfiguration(configuration);
+//        pagination.setLocalPage(true);
 //        OptimisticLockerInterceptor optLock = new OptimisticLockerInterceptor();
 //        sqlSessionFactory.setPlugins(new Interceptor[]{
 //            pagination,
 //            optLock,
 //            new PerformanceInterceptor()
 //        });
-        globalConfiguration.setMetaObjectHandler(new H2MetaObjectHandler());
-        sqlSessionFactory.setGlobalConfig(globalConfiguration);
+        globalConfig.setMetaObjectHandler(new H2MetaObjectHandler());
+        sqlSessionFactory.setGlobalConfig(globalConfig);
         return sqlSessionFactory.getObject();
     }
 
     @Bean
-    public GlobalConfig globalConfiguration() {
+    public GlobalConfig globalConfig() {
         GlobalConfig conf = new GlobalConfig();
 //        LogicSqlInjector logicSqlInjector = new LogicSqlInjector();
 //        conf.setLogicDeleteValue("-1");
