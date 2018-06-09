@@ -28,7 +28,7 @@ import org.apache.ibatis.session.SqlSession;
  * 重写类： org.apache.ibatis.binding.MapperProxyFactory
  * </p>
  *
- * @author ming
+ * @author miemie
  * @since 2018-06-09
  */
 public class PageMapperProxyFactory<T> {
