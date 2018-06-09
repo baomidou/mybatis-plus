@@ -15,14 +15,16 @@
  */
 package com.baomidou.mybatisplus.core.mapper;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.session.RowBounds;
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
+
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.pagination.Page;
 
 /**
  * <p>
@@ -219,7 +221,7 @@ public interface BaseMapper<T> {
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      * @return List<T>
      */
-    List<T> selectPage(RowBounds rowBounds, @Param("ew") Wrapper<T> queryWrapper);
+    Page<T> selectPage(RowBounds rowBounds, @Param("ew") Wrapper<T> queryWrapper);
 
     /**
      * <p>

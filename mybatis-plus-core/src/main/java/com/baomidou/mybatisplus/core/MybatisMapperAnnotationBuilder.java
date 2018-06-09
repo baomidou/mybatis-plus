@@ -59,7 +59,6 @@ import org.apache.ibatis.annotations.TypeDiscriminator;
 import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.annotations.UpdateProvider;
 import org.apache.ibatis.binding.BindingException;
-import org.apache.ibatis.binding.MapperMethod.ParamMap;
 import org.apache.ibatis.builder.BuilderException;
 import org.apache.ibatis.builder.IncompleteElementException;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
@@ -93,6 +92,7 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.UnknownTypeHandler;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.override.PageMapperMethod;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 
 
@@ -416,7 +416,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                     parameterType = currentParameterType;
                 } else {
                     // issue #135
-                    parameterType = ParamMap.class;
+                    parameterType = PageMapperMethod.ParamMap.class;
                 }
             }
         }
