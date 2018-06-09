@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core.conditions.interfaces;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -66,16 +67,44 @@ public interface Func<This, R> extends Serializable {
     This in(boolean condition, R column, Collection<?> value);
 
     /**
+     * 字段 IN (v0, v1, ...)
+     */
+    default This in(R column, Object... values) {
+        return in(true, column, values);
+    }
+
+    /**
+     * 字段 IN (v0, v1, ...)
+     */
+    default This in(boolean condition, R column, Object... values) {
+        return this.in(condition, column, Arrays.asList(values));
+    }
+
+    /**
      * 字段 NOT IN (value.get(0), value.get(1), ...)
      */
-    default This notIn(R column, Collection<?> value) {
-        return notIn(true, column, value);
+    default This notIn(R column, Collection<?> values) {
+        return notIn(true, column, values);
     }
 
     /**
      * 字段 NOT IN (value.get(0), value.get(1), ...)
      */
     This notIn(boolean condition, R column, Collection<?> value);
+
+    /**
+     * 字段 NOT IN (v0, v1, ...)
+     */
+    default This notIn(R column, Object... value) {
+        return notIn(true, column, value);
+    }
+
+    /**
+     * 字段 NOT IN (v0, v1, ...)
+     */
+    default This notIn(boolean condition, R column, Object... values) {
+        return this.notIn(condition, column, Arrays.asList(values));
+    }
 
     /**
      * 分组：GROUP BY 字段, ...
