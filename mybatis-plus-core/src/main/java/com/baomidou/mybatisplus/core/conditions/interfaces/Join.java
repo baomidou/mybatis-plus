@@ -134,21 +134,4 @@ public interface Join<This> extends Serializable {
      * NOT EXISTS ( sql 语句 )
      */
     This notExists(boolean condition, String notExistsSql);
-
-    /**
-     * LAST 拼接在 SQL 末尾
-     * 例: last("limit 10")
-     */
-    @Deprecated
-    default This last(String lastSql) {
-        return last(true, lastSql);
-    }
-
-    /**
-     * LAST 拼接在 SQL 末尾
-     */
-    @Deprecated
-    default This last(boolean condition, String lastSql) {
-        return apply(condition, lastSql);
-    }
 }
