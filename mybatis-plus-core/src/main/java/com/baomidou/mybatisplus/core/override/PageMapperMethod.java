@@ -45,7 +45,7 @@ import com.baomidou.mybatisplus.core.pagination.Page;
  * 重写类： org.apache.ibatis.binding.MapperMethod
  * </p>
  *
- * @author ming
+ * @author miemie
  * @since 2018-06-09
  */
 public class PageMapperMethod {
