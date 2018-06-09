@@ -37,7 +37,7 @@ public class UpdateAllColumnById extends AbstractMethod {
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.UPDATE_ALL_COLUMN_BY_ID;
-        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), this.sqlSet(false, tableInfo, "et."),
+        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), this.sqlSet(false, false, tableInfo, "et."),
             tableInfo.getKeyColumn(), "et." + tableInfo.getKeyProperty(),
             "<if test=\"et instanceof java.util.Map\">"
             + "<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">"

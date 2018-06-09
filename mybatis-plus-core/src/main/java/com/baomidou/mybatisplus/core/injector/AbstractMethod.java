@@ -117,11 +117,12 @@ public abstract class AbstractMethod {
      * </p>
      *
      * @param selective 是否选择判断
+     * @param ew        是否存在 UpdateWrapper 条件
      * @param table     表信息
      * @param prefix    前缀
      * @return
      */
-    protected String sqlSet(boolean selective, TableInfo table, String prefix) {
+    protected String sqlSet(boolean selective, boolean ew, TableInfo table, String prefix) {
         StringBuilder set = new StringBuilder();
         set.append("<trim prefix=\"SET\" suffixOverrides=\",\">");
 
@@ -155,8 +156,10 @@ public abstract class AbstractMethod {
             }
         }
         // UpdateWrapper SqlSet 部分
-        set.append("<if test=\"ew != null and ew.sqlSet != null\">${ew.sqlSet}</if>")
-            .append("</trim>");
+        if (ew) {
+            set.append("<if test=\"ew != null and ew.sqlSet != null\">${ew.sqlSet}</if>");
+        }
+        set.append("</trim>");
         return set.toString();
     }
 
@@ -314,8 +317,8 @@ public abstract class AbstractMethod {
             .append("<if test=\"cm!=null and !cm.isEmpty\">")
             .append("<where>")
             .append("<foreach collection=\"cm\" index=\"k\" item=\"v\" separator=\"AND\">")
-            .append("<choose><when test=\"v==null\">${k} IS NULL</when>")
-            .append("<otherwise>${k}=#{v}</otherwise></choose>")
+            .append("<choose><when test=\"v==null\"> ${k} IS NULL </when>")
+            .append("<otherwise> ${k}=#{v} </otherwise></choose>")
             .append("</foreach>")
             .append("</where>")
             .append("</if>")

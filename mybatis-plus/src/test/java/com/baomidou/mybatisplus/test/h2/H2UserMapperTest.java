@@ -89,6 +89,7 @@ public class H2UserMapperTest extends BaseTest {
         Assert.assertTrue(count == userMapper.deleteBatchIds(h2UserList
             .stream().map(u -> u.getId()).collect(toList())));
 
+        // 更新
         h2User = new H2User();
         h2User.setAge(2);
         h2User.setDesc("测试置空");
@@ -106,6 +107,11 @@ public class H2UserMapperTest extends BaseTest {
 
         log(userMapper.selectOne(new H2User().setName(NQQ).setAge(3)));
 
+        // 根据主键更新 age = 18
+        h2User.setAge(18);
+        Assert.assertNotNull(1 == userMapper.updateById(h2User));
+
+        // 查询一条记录
         Assert.assertNotNull(userMapper.selectOne(new H2User().setName(NQQ)));
 
         log(h2User.toString());
