@@ -19,6 +19,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.pagination.Page;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.test.h2.config.H2Db;
 import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserMapper;
@@ -115,6 +116,14 @@ public class H2UserMapperTest extends BaseTest {
         Assert.assertNotNull(userMapper.selectOne(new H2User().setName(NQQ)));
 
         log(h2User.toString());
+
+        // 分页查询
+        Page<H2User> h2UserPage = userMapper.selectPage(new Page<H2User>(0, 10), null);
+        if (null != h2UserPage) {
+            System.out.println(h2UserPage.getCondition());
+            System.out.println(h2UserPage.getTotal());
+            System.out.println(h2UserPage.getSize());
+        }
     }
 
 }
