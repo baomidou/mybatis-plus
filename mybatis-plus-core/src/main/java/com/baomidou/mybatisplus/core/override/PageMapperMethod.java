@@ -38,7 +38,7 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 
-import com.baomidou.mybatisplus.core.pagination.Page;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 
 /**
  * <p>
@@ -92,10 +92,10 @@ public class PageMapperMethod {
                     /**
                      * 这下面
                      */
-                    if (Page.class.isAssignableFrom(method.getReturnType()) && args != null
-                        && Page.class.isAssignableFrom(args[0].getClass())) {
+                    if (IPage.class.isAssignableFrom(method.getReturnType()) && args != null
+                        && IPage.class.isAssignableFrom(args[0].getClass())) {
                         List<Object> o = (List<Object>) executeForMany2(sqlSession, args);
-                        result = ((Page) args[0]).setRecords(o);
+                        result = ((IPage) args[0]).setRecords(o);
                     } else {
                         result = sqlSession.selectOne(command.getName(), param);
                     }

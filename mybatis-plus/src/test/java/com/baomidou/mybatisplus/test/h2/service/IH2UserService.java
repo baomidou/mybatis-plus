@@ -18,7 +18,7 @@ package com.baomidou.mybatisplus.test.h2.service;
 import java.util.List;
 import java.util.Map;
 
-import com.baomidou.mybatisplus.core.pagination.Page;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
 
@@ -42,7 +42,7 @@ public interface IH2UserService extends IService<H2User> {
 
     List<H2User> queryWithParamInSelectStatememt(Map<String, Object> param);
 
-    Page<H2User> queryWithParamInSelectStatememt4Page(Map<String, Object> param, Page<H2User> page);
+    IPage<H2User> queryWithParamInSelectStatememt4Page(Map<String, Object> param, IPage<H2User> page);
 
     int selectCountWithParamInSelectItems(Map<String, Object> param);
 

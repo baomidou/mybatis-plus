@@ -24,10 +24,10 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.assist.ISqlRunner;
-import com.baomidou.mybatisplus.core.pagination.Page;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
 
 /**
  * <p>
@@ -164,11 +164,12 @@ public class SqlRunner implements ISqlRunner {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
-    public Page<Map<String, Object>> selectPage(Page page, String sql, Object... args) {
+    public IPage<Map<String, Object>> selectPage(IPage page, String sql, Object... args) {
         if (null == page) {
             return null;
         }
-        page.setRecords(sqlSession().selectList(SELECT_LIST, sqlMap(sql, args), page));
+        // TODO 待完成
+      //  page.setRecords(sqlSession().selectList(SELECT_LIST, sqlMap(sql, args), page));
         return page;
     }
 

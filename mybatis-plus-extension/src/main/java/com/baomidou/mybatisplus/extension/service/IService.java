@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.pagination.Page;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 
 /**
  * <p>
@@ -333,7 +333,7 @@ public interface IService<T> {
      * @param page 翻页对象
      * @return
      */
-    Page<T> selectPage(Page<T> page);
+    IPage<T> selectPage(IPage<T> page);
 
     /**
      * <p>
@@ -365,7 +365,7 @@ public interface IService<T> {
      * @return
      */
     @SuppressWarnings("rawtypes")
-    Page<Map<String, Object>> selectMapsPage(Page page, Wrapper<T> wrapper);
+    IPage<Map<String, Object>> selectMapsPage(IPage page, Wrapper<T> wrapper);
 
     /**
      * <p>
@@ -376,6 +376,6 @@ public interface IService<T> {
      * @param wrapper 实体包装类 {@link Wrapper}
      * @return
      */
-    Page<T> selectPage(Page<T> page, Wrapper<T> wrapper);
+    IPage<T> selectPage(IPage<T> page, Wrapper<T> wrapper);
 
 }

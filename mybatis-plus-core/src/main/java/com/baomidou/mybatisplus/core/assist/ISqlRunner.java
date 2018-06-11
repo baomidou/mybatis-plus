@@ -3,9 +3,7 @@ package com.baomidou.mybatisplus.core.assist;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.session.SqlSessionFactory;
-
-import com.baomidou.mybatisplus.core.pagination.Page;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 
 /**
  * <p>
@@ -41,5 +39,5 @@ public interface ISqlRunner {
 
     Map<String, Object> selectOne(String sql, Object... args);
 
-    Page<Map<String, Object>> selectPage(Page page, String sql, Object... args);
+    IPage<Map<String, Object>> selectPage(IPage page, String sql, Object... args);
 }

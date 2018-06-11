@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.session.RowBounds;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -228,10 +227,10 @@ public interface BaseMapper<T> {
      * 根据 Wrapper 条件，查询全部记录（并翻页）
      * </p>
      *
-     * @param rowBounds    分页查询条件（可以为 RowBounds.DEFAULT）
+     * @param page         分页查询条件
      * @param queryWrapper 实体对象封装操作类
-     * @return List<Map < String , Object>>
+     * @return
      */
-    List<Map<String, Object>> selectMapsPage(RowBounds rowBounds, @Param("ew") Wrapper<T> queryWrapper);
+    List<Map<String, Object>> selectMapsPage(IPage page, @Param("ew") Wrapper<T> queryWrapper);
 
 }

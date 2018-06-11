@@ -29,8 +29,8 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.pagination.Page;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.MapUtils;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
@@ -388,8 +388,9 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     @Override
-    //TODO 3.0
-    public Page<T> selectPage(Page<T> page) {
+    public IPage<T> selectPage(IPage<T> page) {
+        //TODO 3.0
+
         return null;//selectPage(page, Wrapper.<T>getInstance());
     }
 
@@ -404,13 +405,13 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     @Override
-    public Page<Map<String, Object>> selectMapsPage(Page page, Wrapper<T> wrapper) {
+    public IPage<Map<String, Object>> selectMapsPage(IPage page, Wrapper<T> wrapper) {
         wrapper = (Wrapper<T>) SqlHelper.fillWrapper(page, wrapper);
         return page.setRecords(baseMapper.selectMapsPage(page, wrapper));
     }
 
     @Override
-    public Page<T> selectPage(Page<T> page, Wrapper<T> wrapper) {
+    public IPage<T> selectPage(IPage<T> page, Wrapper<T> wrapper) {
         wrapper = (Wrapper<T>) SqlHelper.fillWrapper(page, wrapper);
         return baseMapper.selectPage(page, wrapper);
     }

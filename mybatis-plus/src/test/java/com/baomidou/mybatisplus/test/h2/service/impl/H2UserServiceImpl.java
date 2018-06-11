@@ -21,7 +21,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.baomidou.mybatisplus.core.pagination.Page;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserMapper;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
@@ -73,9 +73,9 @@ public class H2UserServiceImpl extends ServiceImpl<H2UserMapper, H2User> impleme
     }
 
     @Override
-    public Page<H2User> queryWithParamInSelectStatememt4Page(Map<String, Object> param, Page<H2User> page) {
-        page.setSearchCount(true);
-        userMapper.selectUserWithParamInSelectStatememt4Page(param, page);
+    public IPage<H2User> queryWithParamInSelectStatememt4Page(Map<String, Object> param, IPage<H2User> page) {
+        //page.setSearchCount(true);
+//        userMapper.selectUserWithParamInSelectStatememt4Page(param, page);
         return page;
     }
 
