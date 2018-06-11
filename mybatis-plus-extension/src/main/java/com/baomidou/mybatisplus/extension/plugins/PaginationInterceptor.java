@@ -171,11 +171,11 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
      * @return
      */
     public static String concatOrderBy(String originalSql, IPage page, boolean orderBy) {
-        if (orderBy && (CollectionUtils.isNotEmpty(page.getAscs())
-            || CollectionUtils.isNotEmpty(page.getDescs()))) {
+        if (orderBy && (CollectionUtils.isNotEmpty(page.ascs())
+            || CollectionUtils.isNotEmpty(page.descs()))) {
             StringBuilder buildSql = new StringBuilder(originalSql);
-            String ascStr = concatOrderBuilder(page.getAscs(), " ASC");
-            String descStr = concatOrderBuilder(page.getDescs(), " DESC");
+            String ascStr = concatOrderBuilder(page.ascs(), " ASC");
+            String descStr = concatOrderBuilder(page.descs(), " DESC");
             if (StringUtils.isNotEmpty(ascStr) && StringUtils.isNotEmpty(descStr)) {
                 ascStr += ", ";
             }
