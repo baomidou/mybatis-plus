@@ -18,8 +18,8 @@ package com.baomidou.mybatisplus.core.conditions.interfaces;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
-
-import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -79,10 +79,8 @@ public interface Func<This, R> extends Serializable {
      * 字段 IN (v0, v1, ...)
      */
     default This in(boolean condition, R column, Object... values) {
-        if (ArrayUtils.isEmpty(values)) {
-            return (This) this;
-        }
-        return this.in(condition, column, Arrays.asList(values));
+        return in(condition, column, Arrays.stream(Optional.ofNullable(values).orElseGet(() -> new Object[]{}))
+            .collect(Collectors.toList()));
     }
 
     /**
@@ -108,7 +106,8 @@ public interface Func<This, R> extends Serializable {
      * 字段 NOT IN (v0, v1, ...)
      */
     default This notIn(boolean condition, R column, Object... values) {
-        return this.notIn(condition, column, Arrays.asList(values));
+        return notIn(condition, column, Arrays.stream(Optional.ofNullable(values).orElseGet(() -> new Object[]{}))
+            .collect(Collectors.toList()));
     }
 
     /**
