@@ -88,8 +88,8 @@ public class H2UserMapperTest extends BaseTest {
         Assert.assertTrue(count > 1);
 
         // 批量删除
-//        Assert.assertTrue(count == userMapper.deleteBatchIds(h2UserList
-//            .stream().map(u -> u.getId()).collect(toList())));
+        Assert.assertTrue(count == userMapper.deleteBatchIds(h2UserList
+            .stream().map(u -> u.getId()).collect(toList())));
 
         // 更新
         h2User = new H2User();
@@ -123,6 +123,14 @@ public class H2UserMapperTest extends BaseTest {
         if (null != h2UserPage) {
             System.out.println(h2UserPage.getTotal());
             System.out.println(h2UserPage.getSize());
+        }
+
+        // 查询结果集
+        List<Map<String, Object>> mapList = userMapper.selectMaps(new QueryWrapper<H2User>().lambda().eq(H2User::getName, NQQ));
+        if (CollectionUtils.isNotEmpty(mapList)) {
+            for (Map m : mapList) {
+                System.out.println(m);
+            }
         }
     }
 

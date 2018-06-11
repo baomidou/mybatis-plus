@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.core.injector.methods;
 
+import java.util.Map;
+
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
 
@@ -38,6 +40,6 @@ public class SelectMapsPage extends AbstractMethod {
         String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(tableInfo, true),
             tableInfo.getTableName(), this.sqlWhereEntityWrapper(tableInfo));
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, tableInfo);
+        return this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, Map.class, tableInfo);
     }
 }
