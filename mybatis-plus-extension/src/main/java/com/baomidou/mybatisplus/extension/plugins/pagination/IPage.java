@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination;
 
+import java.util.List;
+
 /**
  * <p>
  * 分页 Page 对象接口
@@ -27,15 +29,57 @@ public interface IPage {
 
     /**
      * <p>
+     * 查询总页数
+     * </p>
+     *
+     * @return true 是 / false 否
+     */
+    default boolean searchCount() {
+        return true;
+    }
+
+    /**
+     * <p>
+     * 降序字段集合
+     * </p>
+     *
+     * @return
+     */
+    default List<String> descs() {
+        return null;
+    }
+
+    /**
+     * <p>
+     * 升序字段集合
+     * </p>
+     *
+     * @return
+     */
+    default List<String> ascs() {
+        return null;
+    }
+
+    /**
+     * <p>
+     * 自动优化 COUNT SQL
+     * </p>
+     *
+     * @return true 是 / false 否
+     */
+    default boolean optimizeCountSql() {
+        return true;
+    }
+
+    /**
+     * <p>
      * 计算当前分页偏移量
      * </p>
      *
-     * @param current 当前页
-     * @param size    每页显示数量
      * @return
      */
-    default long offsetCurrent(long current, long size) {
-        return current > 0 ? (current - 1) * size : 0;
+    default long offset() {
+        return this.getCurrent() > 0 ? (this.getCurrent() - 1) * this.getSize() : 0;
     }
 
     /**
@@ -46,31 +90,34 @@ public interface IPage {
      * @return
      */
     default long getPages() {
-        if (this.size() == 0) {
+        if (this.getSize() == 0) {
             return 0L;
         }
-        long pages = this.total() / this.size();
-        if (this.total() % this.size() != 0) {
+        long pages = this.getTotal() / this.getSize();
+        if (this.getTotal() % this.getSize() != 0) {
             pages++;
         }
         return pages;
     }
 
     /**
-     * 总数
-     */
-    /**
      * <p>
-     * 当前分页总页数
+     * 当前满足条件总行数
      * </p>
      *
      * @return
      */
-    long total();
+    long getTotal();
 
     /**
-     * 每页显示条数，默认 10
+     * <p>
+     * 设置当前满足条件总行数
+     * </p>
+     *
+     * @return 当前对象
      */
+    IPage setTotal(long total);
+
     /**
      * <p>
      * 当前分页总页数
@@ -78,7 +125,7 @@ public interface IPage {
      *
      * @return
      */
-    long size();
+    long getSize();
 
     /**
      * <p>
@@ -87,6 +134,15 @@ public interface IPage {
      *
      * @return
      */
-    long current();
+    long getCurrent();
+
+    /**
+     * <p>
+     * 设置当前页
+     * </p>
+     *
+     * @return 当前对象
+     */
+    IPage setCurrent(long current);
 
 }

@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
-
-import com.baomidou.mybatisplus.core.pagination.dialect.IDialect;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 /**
@@ -41,7 +39,7 @@ public class SQLServer2005Dialect implements IDialect {
     }
 
     @Override
-    public String buildPaginationSql(String originalSql, int offset, int limit) {
+    public String buildPaginationSql(String originalSql, long offset, long limit) {
         StringBuilder pagingBuilder = new StringBuilder();
         String orderby = getOrderByPart(originalSql);
         String distinctStr = "";

@@ -16,6 +16,10 @@
 package com.baomidou.mybatisplus.extension.plugins.pagination;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 
 /**
  * <p>
@@ -46,6 +50,19 @@ public class Pagination<T> implements IPage, Serializable {
      * 查询总记录数（默认 true）
      */
     private boolean searchCount = true;
+    /**
+     * <p>
+     * SQL 排序 ASC 集合
+     * </p>
+     */
+    private List<String> ascs;
+    /**
+     * <p>
+     * SQL 排序 DESC 集合
+     * </p>
+     */
+    private List<String> descs;
+
 
     public Pagination() {
         // to do nothing
@@ -93,12 +110,14 @@ public class Pagination<T> implements IPage, Serializable {
         return this.current < this.getPages();
     }
 
-    public void setTotal(long total) {
+    @Override
+    public Pagination setTotal(long total) {
         this.total = total;
+        return this;
     }
 
     @Override
-    public long total() {
+    public long getTotal() {
         return this.total;
     }
 
@@ -107,25 +126,62 @@ public class Pagination<T> implements IPage, Serializable {
     }
 
     @Override
-    public long size() {
+    public long getSize() {
         return this.size;
     }
 
-    public void setCurrent(long current) {
+    @Override
+    public Pagination setCurrent(long current) {
         this.current = current;
+        return this;
     }
 
-
     @Override
-    public long current() {
+    public long getCurrent() {
         return this.current;
     }
 
-    public boolean isSearchCount() {
+    @Override
+    public boolean searchCount() {
         return searchCount;
     }
 
     public void setSearchCount(boolean searchCount) {
         this.searchCount = searchCount;
     }
+
+    @Override
+    public List<String> ascs() {
+        return ascs;
+    }
+
+    public Pagination setAscs(List<String> ascs) {
+        this.ascs = ascs;
+        return this;
+    }
+
+    public Pagination setAscs(String... ascs) {
+        if (ArrayUtils.isNotEmpty(ascs)) {
+            this.ascs = Arrays.asList(ascs);
+        }
+        return this;
+    }
+
+    @Override
+    public List<String> descs() {
+        return descs;
+    }
+
+    public Pagination setDescs(List<String> descs) {
+        this.descs = descs;
+        return this;
+    }
+
+    public Pagination setDescs(String... descs) {
+        if (ArrayUtils.isNotEmpty(descs)) {
+            this.descs = Arrays.asList(descs);
+        }
+        return this;
+    }
+
 }

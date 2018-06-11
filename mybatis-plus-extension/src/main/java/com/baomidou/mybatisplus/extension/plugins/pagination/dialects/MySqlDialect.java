@@ -15,9 +15,6 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
-
-import com.baomidou.mybatisplus.core.pagination.dialect.IDialect;
-
 /**
  * <p>
  * MYSQL 数据库分页语句组装实现
@@ -29,7 +26,7 @@ import com.baomidou.mybatisplus.core.pagination.dialect.IDialect;
 public class MySqlDialect implements IDialect {
 
     @Override
-    public String buildPaginationSql(String originalSql, int offset, int limit) {
+    public String buildPaginationSql(String originalSql, long offset, long limit) {
         StringBuilder sql = new StringBuilder(originalSql);
         sql.append(" LIMIT ").append(offset).append(",").append(limit);
         return sql.toString();

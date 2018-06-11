@@ -15,9 +15,6 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
-
-import com.baomidou.mybatisplus.core.pagination.dialect.IDialect;
-
 /**
  * <p>
  * H2 数据库分页方言
@@ -30,7 +27,7 @@ public class H2Dialect implements IDialect {
 
 
     @Override
-    public String buildPaginationSql(String originalSql, int offset, int limit) {
+    public String buildPaginationSql(String originalSql, long offset, long limit) {
         StringBuilder sql = new StringBuilder(originalSql);
         sql.append(" limit ").append(limit);
         if (offset > 0) {

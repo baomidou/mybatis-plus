@@ -22,13 +22,11 @@ import org.apache.ibatis.session.RowBounds;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.pagination.PageHelper;
-import com.baomidou.mybatisplus.core.pagination.Pagination;
-import com.baomidou.mybatisplus.core.pagination.dialect.IDialect;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.DB2Dialect;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.H2Dialect;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.HSQLDialect;
+import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.MariaDBDialect;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.MySqlDialect;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.OracleDialect;
@@ -47,6 +45,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.SQLiteDial
  * @since 2016-01-23
  */
 public class DialectFactory {
+
     /**
      * 方言缓存
      */
@@ -74,17 +73,17 @@ public class DialectFactory {
      * Physical Pagination Interceptor for all the queries with parameter
      * {@link RowBounds}
      *
-     * @param rowBounds
-     * @param buildSql
-     * @param dbType
-     * @param dialectClazz
+     * @param page         翻页对象
+     * @param buildSql     编译 SQL
+     * @param dbType       数据类型
+     * @param dialectClazz 数据库方言
      * @return
      * @throws Exception
      */
-    public static String buildPaginationSql(RowBounds rowBounds, String buildSql, DbType dbType, String dialectClazz)
+    public static String buildPaginationSql(IPage page, String buildSql, DbType dbType, String dialectClazz)
         throws Exception {
         // fix #196
-        return getDialect(dbType, dialectClazz).buildPaginationSql(buildSql, rowBounds.getOffset(), rowBounds.getLimit());
+        return getDialect(dbType, dialectClazz).buildPaginationSql(buildSql, page.offset(), page.getSize());
     }
 
     /**

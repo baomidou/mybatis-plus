@@ -18,6 +18,8 @@ package com.baomidou.mybatisplus.extension.plugins;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.ibatis.executor.statement.StatementHandler;
@@ -38,15 +40,15 @@ import org.apache.ibatis.session.RowBounds;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.MybatisDefaultParameterHandler;
-import com.baomidou.mybatisplus.core.pagination.PageHelper;
-import com.baomidou.mybatisplus.core.pagination.Pagination;
 import com.baomidou.mybatisplus.core.parser.ISqlParser;
 import com.baomidou.mybatisplus.core.parser.SqlInfo;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import com.baomidou.mybatisplus.extension.handlers.SqlParserHandler;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
+import com.baomidou.mybatisplus.extension.plugins.pagination.IPage;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 
 /**
@@ -71,7 +73,7 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
     /**
      * 溢出总页数，设置第一页
      */
-    private boolean overflowCurrent = false;
+    private boolean overflow = false;
     /**
      * 方言类型
      */
@@ -92,50 +94,63 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
     public Object intercept(Invocation invocation) throws Throwable {
         StatementHandler statementHandler = (StatementHandler) PluginUtils.realTarget(invocation.getTarget());
         MetaObject metaObject = SystemMetaObject.forObject(statementHandler);
+
+        // SQL 解析
         this.sqlParser(metaObject);
+
         // 先判断是不是SELECT操作
         MappedStatement mappedStatement = (MappedStatement) metaObject.getValue("delegate.mappedStatement");
         if (!SqlCommandType.SELECT.equals(mappedStatement.getSqlCommandType())) {
             return invocation.proceed();
         }
-        RowBounds rowBounds = (RowBounds) metaObject.getValue("delegate.rowBounds");
+
+        // 针对定义了rowBounds，做为mapper接口方法的参数
+        BoundSql boundSql = (BoundSql) metaObject.getValue("delegate.boundSql");
+        Object paramObj = boundSql.getParameterObject();
+
+        // 判断参数里是否有page对象
+        IPage page = null;
+        if (paramObj instanceof IPage) {
+            page = (IPage) paramObj;
+        } else if (paramObj instanceof Map) {
+            for (Object arg : ((Map) paramObj).values()) {
+                if (arg instanceof IPage) {
+                    page = (IPage) arg;
+                    break;
+                }
+            }
+        }
+
         /* 不需要分页的场合 */
-        if (rowBounds == null || rowBounds == RowBounds.DEFAULT) {
+        if (page == null) {
             // 本地线程分页
             if (localPage) {
                 // 采用ThreadLocal变量处理的分页
-                rowBounds = PageHelper.getPagination();
-                if (rowBounds == null) {
-                    return invocation.proceed();
-                }
+//                page = PageHelper.getPagination();
+//                if (page == null) {
+//                    return invocation.proceed();
+//                }
             } else {
                 // 无需分页
                 return invocation.proceed();
             }
         }
-        // 针对定义了rowBounds，做为mapper接口方法的参数
-        BoundSql boundSql = (BoundSql) metaObject.getValue("delegate.boundSql");
+
         String originalSql = boundSql.getSql();
         Connection connection = (Connection) invocation.getArgs()[0];
-        //TODO: 3.0
         DbType dbType = StringUtils.isNotEmpty(dialectType) ? DbType.getDbType(dialectType) : JdbcUtils.getDbType(connection.getMetaData().getURL());
-        if (rowBounds instanceof Pagination) {
-            Pagination page = (Pagination) rowBounds;
-            boolean orderBy = true;
-            if (page.isSearchCount()) {
-                SqlInfo sqlInfo = SqlUtils.getOptimizeCountSql(page.isOptimizeCountSql(), sqlParser, originalSql);
-                orderBy = sqlInfo.isOrderBy();
-                this.queryTotal(overflowCurrent, sqlInfo.getSql(), mappedStatement, boundSql, page, connection);
-                if (page.getTotal() <= 0) {
-                    return invocation.proceed();
-                }
+
+        boolean orderBy = true;
+        if (page.searchCount()) {
+            SqlInfo sqlInfo = SqlUtils.getOptimizeCountSql(page.optimizeCountSql(), sqlParser, originalSql);
+            orderBy = sqlInfo.isOrderBy();
+            this.queryTotal(overflow, sqlInfo.getSql(), mappedStatement, boundSql, page, connection);
+            if (page.getTotal() <= 0) {
+                return invocation.proceed();
             }
-            String buildSql = SqlUtils.concatOrderBy(originalSql, page, orderBy);
-            originalSql = DialectFactory.buildPaginationSql(page, buildSql, dbType, dialectClazz);
-        } else {
-            // support physical Pagination for RowBounds
-            originalSql = DialectFactory.buildPaginationSql(rowBounds, originalSql, dbType, dialectClazz);
         }
+        String buildSql = concatOrderBy(originalSql, page, orderBy);
+        originalSql = DialectFactory.buildPaginationSql(page, buildSql, dbType, dialectClazz);
 
         /*
          * <p> 禁用内存分页 </p>
@@ -148,6 +163,54 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
     }
 
     /**
+     * 查询SQL拼接Order By
+     *
+     * @param originalSql 需要拼接的SQL
+     * @param page        page对象
+     * @param orderBy     是否需要拼接Order By
+     * @return
+     */
+    public static String concatOrderBy(String originalSql, IPage page, boolean orderBy) {
+        if (orderBy && (CollectionUtils.isNotEmpty(page.getAscs())
+            || CollectionUtils.isNotEmpty(page.getDescs()))) {
+            StringBuilder buildSql = new StringBuilder(originalSql);
+            String ascStr = concatOrderBuilder(page.getAscs(), " ASC");
+            String descStr = concatOrderBuilder(page.getDescs(), " DESC");
+            if (StringUtils.isNotEmpty(ascStr) && StringUtils.isNotEmpty(descStr)) {
+                ascStr += ", ";
+            }
+            if (StringUtils.isNotEmpty(ascStr) || StringUtils.isNotEmpty(descStr)) {
+                buildSql.append(" ORDER BY ").append(ascStr).append(descStr);
+            }
+            return buildSql.toString();
+        }
+        return originalSql;
+    }
+
+    /**
+     * 拼接多个排序方法
+     *
+     * @param columns
+     * @param orderWord
+     */
+    private static String concatOrderBuilder(List<String> columns, String orderWord) {
+        if (CollectionUtils.isNotEmpty(columns)) {
+            StringBuilder builder = new StringBuilder(16);
+            for (int i = 0; i < columns.size(); ) {
+                String cs = columns.get(i);
+                if (StringUtils.isNotEmpty(cs)) {
+                    builder.append(cs).append(orderWord);
+                }
+                if (++i != columns.size() && StringUtils.isNotEmpty(cs)) {
+                    builder.append(", ");
+                }
+            }
+            return builder.toString();
+        }
+        return StringUtils.EMPTY;
+    }
+
+    /**
      * 查询总记录条数
      *
      * @param sql
@@ -155,7 +218,7 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
      * @param boundSql
      * @param page
      */
-    protected void queryTotal(boolean overflowCurrent, String sql, MappedStatement mappedStatement, BoundSql boundSql, Pagination page, Connection connection) {
+    protected void queryTotal(boolean overflowCurrent, String sql, MappedStatement mappedStatement, BoundSql boundSql, IPage page, Connection connection) {
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             DefaultParameterHandler parameterHandler = new MybatisDefaultParameterHandler(mappedStatement, boundSql.getParameterObject(), boundSql);
             parameterHandler.setParameters(statement);
@@ -214,8 +277,8 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
         return this;
     }
 
-    public PaginationInterceptor setOverflowCurrent(boolean overflowCurrent) {
-        this.overflowCurrent = overflowCurrent;
+    public PaginationInterceptor setOverflow(boolean overflow) {
+        this.overflow = overflow;
         return this;
     }
 

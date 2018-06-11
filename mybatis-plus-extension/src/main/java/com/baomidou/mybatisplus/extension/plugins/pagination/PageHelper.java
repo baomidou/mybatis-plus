@@ -13,9 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.core.pagination;
+package com.baomidou.mybatisplus.extension.plugins.pagination;
 
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.pagination.Pagination;
 
 
 /**

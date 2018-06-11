@@ -19,6 +19,8 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
+
 /**
  * <p>
  * 查询条件封装
@@ -77,6 +79,9 @@ public interface Func<This, R> extends Serializable {
      * 字段 IN (v0, v1, ...)
      */
     default This in(boolean condition, R column, Object... values) {
+        if (ArrayUtils.isEmpty(values)) {
+            return (This) this;
+        }
         return this.in(condition, column, Arrays.asList(values));
     }
 

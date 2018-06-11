@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.core.pagination.dialect;
+package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
 /**
  * <p>
@@ -33,5 +33,5 @@ public interface IDialect {
      * @param limit       界限
      * @return 分页语句
      */
-    String buildPaginationSql(String originalSql, int offset, int limit);
+    String buildPaginationSql(String originalSql, long offset, long limit);
 }

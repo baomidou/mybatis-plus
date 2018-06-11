@@ -15,9 +15,6 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
-
-import com.baomidou.mybatisplus.core.pagination.dialect.IDialect;
-
 /**
  * <p>
  * DB2 数据库分页方言
@@ -44,7 +41,7 @@ public class DB2Dialect implements IDialect {
     }
 
     @Override
-    public String buildPaginationSql(String originalSql, int offset, int limit) {
+    public String buildPaginationSql(String originalSql, long offset, long limit) {
         int startOfSelect = originalSql.toLowerCase().indexOf("select");
         StringBuilder pagingSelect = new StringBuilder(originalSql.length() + 100)
             .append(originalSql.substring(0, startOfSelect)).append("select * from ( select ")
