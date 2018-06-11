@@ -147,6 +147,15 @@ public interface IPage<T> {
 
     /**
      * <p>
+     * 设置当前分页总页数
+     * </p>
+     *
+     * @return
+     */
+    IPage setSize(long size);
+
+    /**
+     * <p>
      * 当前页，默认 1
      * </p>
      *

@@ -127,9 +127,9 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
             if (localPage) {
                 // 采用ThreadLocal变量处理的分页
 //                page = PageHelper.getPagination();
-//                if (page == null) {
-//                    return invocation.proceed();
-//                }
+                if (page == null) {
+                    return invocation.proceed();
+                }
             } else {
                 // 无需分页
                 return invocation.proceed();

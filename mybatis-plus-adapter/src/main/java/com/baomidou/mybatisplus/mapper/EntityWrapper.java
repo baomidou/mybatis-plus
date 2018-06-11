@@ -1,7 +1,5 @@
 package com.baomidou.mybatisplus.mapper;
 
-import com.baomidou.mybatisplus.core.metadata.Column;
-import com.baomidou.mybatisplus.core.metadata.Columns;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
@@ -49,6 +47,7 @@ public class EntityWrapper<T> extends Wrapper<T> {
         return StringUtils.isEmpty(sqlSelect) ? null : SqlUtils.stripSqlInjection(sqlSelect);
     }
 
+    @Override
     public Wrapper<T> setSqlSelect(String sqlSelect) {
         if (StringUtils.isNotEmpty(sqlSelect)) {
             this.sqlSelect = sqlSelect;
@@ -65,19 +64,19 @@ public class EntityWrapper<T> extends Wrapper<T> {
      * @param columns 字段
      * @return
      */
-    public Wrapper<T> setSqlSelect(String... columns) {
-        StringBuilder builder = new StringBuilder();
-        for (String column : columns) {
-            if (StringUtils.isNotEmpty(column)) {
-                if (builder.length() > 0) {
-                    builder.append(",");
-                }
-                builder.append(column);
-            }
-        }
-        this.sqlSelect = builder.toString();
-        return this;
-    }
+//    public Wrapper<T> setSqlSelect(String... columns) {
+//        StringBuilder builder = new StringBuilder();
+//        for (String column : columns) {
+//            if (StringUtils.isNotEmpty(column)) {
+//                if (builder.length() > 0) {
+//                    builder.append(",");
+//                }
+//                builder.append(column);
+//            }
+//        }
+//        this.sqlSelect = builder.toString();
+//        return this;
+//    }
 
     /**
      * <p>
@@ -87,26 +86,26 @@ public class EntityWrapper<T> extends Wrapper<T> {
      * @param column 字段
      * @return
      */
-    public Wrapper<T> setSqlSelect(Column... column) {
-        if (ArrayUtils.isNotEmpty(column)) {
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < column.length; i++) {
-                if (column[i] != null) {
-                    String col = column[i].getColumn();
-                    String as = column[i].getAs();
-                    if (StringUtils.isEmpty(col)) {
-                        continue;
-                    }
-                    builder.append(col).append(as);
-                    if (i < column.length - 1) {
-                        builder.append(",");
-                    }
-                }
-            }
-            this.sqlSelect = builder.toString();
-        }
-        return this;
-    }
+//    public Wrapper<T> setSqlSelect(Column... column) {
+//        if (ArrayUtils.isNotEmpty(column)) {
+//            StringBuilder builder = new StringBuilder();
+//            for (int i = 0; i < column.length; i++) {
+//                if (column[i] != null) {
+//                    String col = column[i].getColumn();
+//                    String as = column[i].getAs();
+//                    if (StringUtils.isEmpty(col)) {
+//                        continue;
+//                    }
+//                    builder.append(col).append(as);
+//                    if (i < column.length - 1) {
+//                        builder.append(",");
+//                    }
+//                }
+//            }
+//            this.sqlSelect = builder.toString();
+//        }
+//        return this;
+//    }
 
     /**
      * <p>
@@ -116,13 +115,13 @@ public class EntityWrapper<T> extends Wrapper<T> {
      * @param columns 字段
      * @return
      */
-    public Wrapper<T> setSqlSelect(Columns columns) {
-        Column[] columnArray = columns.getColumns();
-        if (ArrayUtils.isNotEmpty(columnArray)) {
-            setSqlSelect(columnArray);
-        }
-        return this;
-    }
+//    public Wrapper<T> setSqlSelect(Columns columns) {
+//        Column[] columnArray = columns.getColumns();
+//        if (ArrayUtils.isNotEmpty(columnArray)) {
+//            setSqlSelect(columnArray);
+//        }
+//        return this;
+//    }
 
     /**
      * SQL 片段

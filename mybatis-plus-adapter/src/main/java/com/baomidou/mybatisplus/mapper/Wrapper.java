@@ -25,8 +25,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.baomidou.mybatisplus.core.conditions.SqlPlus;
 import com.baomidou.mybatisplus.core.enums.SqlLike;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.metadata.Column;
-import com.baomidou.mybatisplus.core.metadata.Columns;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.MapUtils;
@@ -153,26 +151,26 @@ public class Wrapper<T> extends com.baomidou.mybatisplus.core.conditions.Wrapper
      * @param column 字段
      * @return
      */
-    public Wrapper<T> setSqlSelect(Column... column) {
-        if (ArrayUtils.isNotEmpty(column)) {
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < column.length; i++) {
-                if (column[i] != null) {
-                    String col = column[i].getColumn();
-                    String as = column[i].getAs();
-                    if (StringUtils.isEmpty(col)) {
-                        continue;
-                    }
-                    builder.append(col).append(as);
-                    if (i < column.length - 1) {
-                        builder.append(",");
-                    }
-                }
-            }
-            this.sqlSelect = builder.toString();
-        }
-        return this;
-    }
+//    public Wrapper<T> setSqlSelect(Column... column) {
+//        if (ArrayUtils.isNotEmpty(column)) {
+//            StringBuilder builder = new StringBuilder();
+//            for (int i = 0; i < column.length; i++) {
+//                if (column[i] != null) {
+//                    String col = column[i].getColumn();
+//                    String as = column[i].getAs();
+//                    if (StringUtils.isEmpty(col)) {
+//                        continue;
+//                    }
+//                    builder.append(col).append(as);
+//                    if (i < column.length - 1) {
+//                        builder.append(",");
+//                    }
+//                }
+//            }
+//            this.sqlSelect = builder.toString();
+//        }
+//        return this;
+//    }
 
     /**
      * <p>
@@ -182,13 +180,13 @@ public class Wrapper<T> extends com.baomidou.mybatisplus.core.conditions.Wrapper
      * @param columns 字段
      * @return
      */
-    public Wrapper<T> setSqlSelect(Columns columns) {
-        Column[] columnArray = columns.getColumns();
-        if (ArrayUtils.isNotEmpty(columnArray)) {
-            setSqlSelect(columnArray);
-        }
-        return this;
-    }
+//    public Wrapper<T> setSqlSelect(Columns columns) {
+//        Column[] columnArray = columns.getColumns();
+//        if (ArrayUtils.isNotEmpty(columnArray)) {
+//            setSqlSelect(columnArray);
+//        }
+//        return this;
+//    }
 
     @Override
     public String toString() {

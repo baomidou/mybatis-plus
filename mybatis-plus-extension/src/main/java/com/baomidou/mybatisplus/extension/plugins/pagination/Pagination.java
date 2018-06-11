@@ -31,7 +31,7 @@ import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
  * @author hubin
  * @since 2018-06-09
  */
-public class Pagination<T> implements IPage, Serializable {
+public class Pagination<T> implements IPage<T>, Serializable {
 
     /**
      * 查询数据列表
@@ -139,8 +139,10 @@ public class Pagination<T> implements IPage, Serializable {
         return this.total;
     }
 
-    public void setSize(long size) {
+    @Override
+    public Pagination setSize(long size) {
         this.size = size;
+        return this;
     }
 
     @Override
