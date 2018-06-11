@@ -24,7 +24,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.pagination.Page;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 
 /**
  * <p>
@@ -217,11 +217,11 @@ public interface BaseMapper<T> {
      * 根据 entity 条件，查询全部记录（并翻页）
      * </p>
      *
-     * @param rowBounds    分页查询条件（可以为 RowBounds.DEFAULT）
+     * @param page         分页查询条件（可以为 RowBounds.DEFAULT）
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      * @return List<T>
      */
-    Page<T> selectPage(RowBounds rowBounds, @Param("ew") Wrapper<T> queryWrapper);
+    IPage<T> selectPage(IPage<T> page, @Param("ew") Wrapper<T> queryWrapper);
 
     /**
      * <p>
@@ -230,7 +230,7 @@ public interface BaseMapper<T> {
      *
      * @param rowBounds    分页查询条件（可以为 RowBounds.DEFAULT）
      * @param queryWrapper 实体对象封装操作类
-     * @return List<Map<String,Object>>
+     * @return List<Map < String , Object>>
      */
     List<Map<String, Object>> selectMapsPage(RowBounds rowBounds, @Param("ew") Wrapper<T> queryWrapper);
 

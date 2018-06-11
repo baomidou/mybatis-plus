@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.extension.plugins.pagination;
 
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.pagination.Pagination;
 
 
 /**
@@ -56,7 +55,7 @@ public class PageHelper {
      * @param size    每页显示数量
      * @return
      */
-    public static int offsetCurrent(int current, int size) {
+    public static long offsetCurrent(long current, long size) {
         if (current > 0) {
             return (current - 1) * size;
         }
@@ -68,7 +67,7 @@ public class PageHelper {
      * Pagination 分页偏移量
      * </p>
      */
-    public static int offsetCurrent(Pagination pagination) {
+    public static long offsetCurrent(Pagination pagination) {
         if (null == pagination) {
             return 0;
         }

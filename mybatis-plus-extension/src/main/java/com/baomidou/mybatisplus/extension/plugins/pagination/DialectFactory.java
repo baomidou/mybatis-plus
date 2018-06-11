@@ -22,6 +22,7 @@ import org.apache.ibatis.session.RowBounds;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.DB2Dialect;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.H2Dialect;

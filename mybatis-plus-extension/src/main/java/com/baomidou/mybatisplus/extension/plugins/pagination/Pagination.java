@@ -17,8 +17,10 @@ package com.baomidou.mybatisplus.extension.plugins.pagination;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 
 /**
@@ -30,6 +32,11 @@ import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
  * @since 2018-06-09
  */
 public class Pagination<T> implements IPage, Serializable {
+
+    /**
+     * 查询数据列表
+     */
+    private List<T> records = Collections.emptyList();
 
     /**
      * 总数
@@ -108,6 +115,17 @@ public class Pagination<T> implements IPage, Serializable {
      */
     public boolean hasNext() {
         return this.current < this.getPages();
+    }
+
+    @Override
+    public List getRecords() {
+        return this.records;
+    }
+
+    @Override
+    public IPage setRecords(List records) {
+        this.records = records;
+        return this;
     }
 
     @Override

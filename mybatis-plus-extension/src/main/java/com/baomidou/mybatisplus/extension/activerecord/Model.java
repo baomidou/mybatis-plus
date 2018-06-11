@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.pagination.Page;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlRunner;
@@ -247,12 +247,13 @@ public abstract class Model<T extends Model> implements Serializable {
      * @param wrapper
      * @return
      */
-    public Page<T> selectPage(Page<T> page, Wrapper<T> wrapper) {
+    public IPage<T> selectPage(IPage<T> page, Wrapper<T> wrapper) {
         Map<String, Object> map = new HashMap<>();
         wrapper = (Wrapper<T>) SqlHelper.fillWrapper(page, wrapper);
         map.put("ew", wrapper);
-        List<T> tl = sqlSession().selectList(sqlStatement(SqlMethod.SELECT_PAGE), map, page);
-        page.setRecords(tl);
+        // TODO 待完成
+//        List<T> tl = sqlSession().selectList(sqlStatement(SqlMethod.SELECT_PAGE), map, page);
+//        page.setRecords(tl);
         return page;
     }
 

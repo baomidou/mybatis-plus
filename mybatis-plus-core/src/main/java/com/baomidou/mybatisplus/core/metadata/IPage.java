@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.extension.plugins.pagination;
+package com.baomidou.mybatisplus.core.metadata;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ import java.util.List;
  * @author hubin
  * @since 2018-06-09
  */
-public interface IPage {
+public interface IPage<T> {
 
     /**
      * <p>
@@ -99,6 +99,24 @@ public interface IPage {
         }
         return pages;
     }
+
+    /**
+     * <p>
+     * 分页记录列表
+     * </p>
+     *
+     * @return 分页对象记录列表
+     */
+    List<T> getRecords();
+
+    /**
+     * <p>
+     * 设置分页记录列表
+     * </p>
+     *
+     * @return 当前对象
+     */
+    IPage setRecords(List<T> records);
 
     /**
      * <p>

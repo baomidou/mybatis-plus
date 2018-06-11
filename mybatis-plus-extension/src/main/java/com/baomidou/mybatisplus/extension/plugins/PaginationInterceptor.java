@@ -40,6 +40,7 @@ import org.apache.ibatis.session.RowBounds;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.MybatisDefaultParameterHandler;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.parser.ISqlParser;
 import com.baomidou.mybatisplus.core.parser.SqlInfo;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
@@ -48,7 +49,6 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import com.baomidou.mybatisplus.extension.handlers.SqlParserHandler;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
-import com.baomidou.mybatisplus.extension.plugins.pagination.IPage;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 
 /**
