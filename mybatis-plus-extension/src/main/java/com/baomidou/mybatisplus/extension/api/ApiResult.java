@@ -15,8 +15,12 @@
  */
 package com.baomidou.mybatisplus.extension.api;
 
+import java.util.Optional;
+
 import com.baomidou.mybatisplus.extension.enums.ApiErrorCode;
 import com.baomidou.mybatisplus.extension.exceptions.ApiException;
+
+import lombok.Data;
 
 /**
  * <p>
@@ -26,6 +30,7 @@ import com.baomidou.mybatisplus.extension.exceptions.ApiException;
  * @author hubin
  * @since 2018-06-05
  */
+@Data
 public class ApiResult<T> {
 
     /**
@@ -46,9 +51,7 @@ public class ApiResult<T> {
     }
 
     public ApiResult(IErrorCode errorCode) {
-        if (errorCode == null) {
-            errorCode = ApiErrorCode.FAILED;
-        }
+        errorCode = Optional.ofNullable(errorCode).orElse(ApiErrorCode.FAILED);
         this.code = errorCode.getCode();
         this.msg = errorCode.getMsg();
     }
@@ -89,29 +92,5 @@ public class ApiResult<T> {
             throw new ApiException(this.msg);
         }
         return data;
-    }
-
-    public T getData() {
-        return data;
-    }
-
-    public void setData(T data) {
-        this.data = data;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
     }
 }
