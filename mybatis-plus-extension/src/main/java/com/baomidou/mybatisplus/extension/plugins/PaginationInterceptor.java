@@ -49,6 +49,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import com.baomidou.mybatisplus.extension.handlers.SqlParserHandler;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
+import com.baomidou.mybatisplus.extension.plugins.pagination.PageHelper;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 
 /**
@@ -121,13 +122,14 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
             }
         }
 
-        /* 不需要分页的场合 */
-        if (page == null) {
-            // 本地线程分页
+        /**
+         * 不需要分页的场合
+         */
+        if (null == page) {
             if (localPage) {
                 // 采用ThreadLocal变量处理的分页
-//                page = PageHelper.getPagination();
-                if (page == null) {
+                page = PageHelper.getPage();
+                if (null == page) {
                     return invocation.proceed();
                 }
             } else {
@@ -141,7 +143,7 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
         DbType dbType = StringUtils.isNotEmpty(dialectType) ? DbType.getDbType(dialectType) : JdbcUtils.getDbType(connection.getMetaData().getURL());
 
         boolean orderBy = true;
-        if (page.searchCount()) {
+        if (null != page.getTotal() && page.getTotal().equals(0L)) {
             SqlInfo sqlInfo = SqlUtils.getOptimizeCountSql(page.optimizeCountSql(), sqlParser, originalSql);
             orderBy = sqlInfo.isOrderBy();
             this.queryTotal(overflow, sqlInfo.getSql(), mappedStatement, boundSql, page, connection);
@@ -222,10 +224,10 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             DefaultParameterHandler parameterHandler = new MybatisDefaultParameterHandler(mappedStatement, boundSql.getParameterObject(), boundSql);
             parameterHandler.setParameters(statement);
-            int total = 0;
+            long total = 0;
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    total = resultSet.getInt(1);
+                    total = resultSet.getLong(1);
                 }
             }
             page.setTotal(total);

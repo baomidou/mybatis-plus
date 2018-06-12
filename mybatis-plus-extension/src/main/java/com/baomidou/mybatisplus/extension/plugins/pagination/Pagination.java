@@ -37,26 +37,18 @@ public class Pagination<T> implements IPage<T>, Serializable {
      * 查询数据列表
      */
     private List<T> records = Collections.emptyList();
-
     /**
-     * 总数
+     * 总数，当 total 为 null 或者大于 0 分页插件不在查询总数
      */
-    private long total;
-
+    private Long total = 0L;
     /**
      * 每页显示条数，默认 10
      */
     private long size = 10;
-
     /**
      * 当前页
      */
     private long current = 1;
-
-    /**
-     * 查询总记录数（默认 true）
-     */
-    private boolean searchCount = true;
     /**
      * <p>
      * SQL 排序 ASC 集合
@@ -84,15 +76,15 @@ public class Pagination<T> implements IPage<T>, Serializable {
      * @param size    每页显示条数
      */
     public Pagination(long current, long size) {
-        this(current, size, true);
+        this(current, size, 0L);
     }
 
-    public Pagination(long current, long size, boolean searchCount) {
+    public Pagination(long current, long size, Long total) {
         if (current > 1) {
             this.current = current;
         }
         this.size = size;
-        this.searchCount = searchCount;
+        this.total = total;
     }
 
     /**
@@ -123,24 +115,24 @@ public class Pagination<T> implements IPage<T>, Serializable {
     }
 
     @Override
-    public IPage setRecords(List records) {
+    public IPage<T> setRecords(List records) {
         this.records = records;
         return this;
     }
 
     @Override
-    public Pagination setTotal(long total) {
+    public Pagination<T> setTotal(Long total) {
         this.total = total;
         return this;
     }
 
     @Override
-    public long getTotal() {
+    public Long getTotal() {
         return this.total;
     }
 
     @Override
-    public Pagination setSize(long size) {
+    public Pagination<T> setSize(long size) {
         this.size = size;
         return this;
     }
@@ -151,7 +143,7 @@ public class Pagination<T> implements IPage<T>, Serializable {
     }
 
     @Override
-    public Pagination setCurrent(long current) {
+    public Pagination<T> setCurrent(long current) {
         this.current = current;
         return this;
     }
@@ -162,25 +154,16 @@ public class Pagination<T> implements IPage<T>, Serializable {
     }
 
     @Override
-    public boolean searchCount() {
-        return searchCount;
-    }
-
-    public void setSearchCount(boolean searchCount) {
-        this.searchCount = searchCount;
-    }
-
-    @Override
     public List<String> ascs() {
         return ascs;
     }
 
-    public Pagination setAscs(List<String> ascs) {
+    public Pagination<T> setAscs(List<String> ascs) {
         this.ascs = ascs;
         return this;
     }
 
-    public Pagination setAscs(String... ascs) {
+    public Pagination<T> setAscs(String... ascs) {
         if (ArrayUtils.isNotEmpty(ascs)) {
             this.ascs = Arrays.asList(ascs);
         }
@@ -192,12 +175,12 @@ public class Pagination<T> implements IPage<T>, Serializable {
         return descs;
     }
 
-    public Pagination setDescs(List<String> descs) {
+    public Pagination<T> setDescs(List<String> descs) {
         this.descs = descs;
         return this;
     }
 
-    public Pagination setDescs(String... descs) {
+    public Pagination<T> setDescs(String... descs) {
         if (ArrayUtils.isNotEmpty(descs)) {
             this.descs = Arrays.asList(descs);
         }

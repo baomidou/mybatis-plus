@@ -29,17 +29,6 @@ public interface IPage<T> {
 
     /**
      * <p>
-     * 查询总页数
-     * </p>
-     *
-     * @return true 是 / false 否
-     */
-    default boolean searchCount() {
-        return true;
-    }
-
-    /**
-     * <p>
      * 降序字段集合
      * </p>
      *
@@ -116,25 +105,31 @@ public interface IPage<T> {
      *
      * @return 当前对象
      */
-    IPage setRecords(List<T> records);
+    IPage<T> setRecords(List<T> records);
 
     /**
      * <p>
      * 当前满足条件总行数
      * </p>
+     * <p>
+     * 当 total 为 null 或者大于 0 分页插件不在查询总数
+     * </p>
      *
      * @return
      */
-    long getTotal();
+    Long getTotal();
 
     /**
      * <p>
      * 设置当前满足条件总行数
      * </p>
+     * <p>
+     * 当 total 为 null 或者大于 0 分页插件不在查询总数
+     * </p>
      *
      * @return 当前对象
      */
-    IPage setTotal(long total);
+    IPage<T> setTotal(Long total);
 
     /**
      * <p>
@@ -152,7 +147,7 @@ public interface IPage<T> {
      *
      * @return
      */
-    IPage setSize(long size);
+    IPage<T> setSize(long size);
 
     /**
      * <p>
@@ -170,6 +165,6 @@ public interface IPage<T> {
      *
      * @return 当前对象
      */
-    IPage setCurrent(long current);
+    IPage<T> setCurrent(long current);
 
 }
