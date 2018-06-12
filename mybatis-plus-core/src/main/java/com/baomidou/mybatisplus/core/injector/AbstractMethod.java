@@ -165,6 +165,34 @@ public abstract class AbstractMethod {
 
     /**
      * <p>
+     * SQL 更新 set 语句
+     * </p>
+     *
+     * @param table 表信息
+     * @return sql set 片段
+     */
+    protected String sqlLogicSet(TableInfo table) {
+        List<TableFieldInfo> fieldList = table.getFieldList();
+        StringBuilder set = new StringBuilder("SET ");
+        int i = 0;
+        for (TableFieldInfo fieldInfo : fieldList) {
+            if (fieldInfo.isLogicDelete()) {
+                if (++i > 1) {
+                    set.append(",");
+                }
+                set.append(fieldInfo.getColumn()).append("=");
+                if (StringUtils.isCharSequence(fieldInfo.getPropertyType())) {
+                    set.append("'").append(fieldInfo.getLogicDeleteValue()).append("'");
+                } else {
+                    set.append(fieldInfo.getLogicDeleteValue());
+                }
+            }
+        }
+        return set.toString();
+    }
+
+    /**
+     * <p>
      * 获取需要转义的SQL字段
      * </p>
      *

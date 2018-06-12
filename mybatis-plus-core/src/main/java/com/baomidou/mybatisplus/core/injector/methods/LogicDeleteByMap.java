@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.core.injector.methods;
 
+import java.util.Map;
+
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
 
@@ -34,9 +36,10 @@ public class LogicDeleteByMap extends AbstractMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
-        SqlMethod sqlMethod = SqlMethod.DELETE_BY_ID;
-        SqlSource sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(),
-            tableInfo.getTableName(), tableInfo.getKeyColumn(), tableInfo.getKeyProperty()), modelClass);
-        return this.addDeleteMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource);
+        SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE_BY_MAP;
+        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), this.sqlLogicSet(tableInfo),
+            sqlWhereByMap(tableInfo));
+        SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Map.class);
+        return this.addUpdateMappedStatement(mapperClass, Map.class, sqlMethod.getMethod(), sqlSource);
     }
 }

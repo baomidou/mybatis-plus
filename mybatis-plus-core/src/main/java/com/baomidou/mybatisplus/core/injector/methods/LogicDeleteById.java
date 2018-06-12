@@ -34,9 +34,10 @@ public class LogicDeleteById extends AbstractMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
-        SqlMethod sqlMethod = SqlMethod.DELETE_BY_ID;
-        SqlSource sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(),
-            tableInfo.getTableName(), tableInfo.getKeyColumn(), tableInfo.getKeyProperty()), modelClass);
-        return this.addDeleteMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource);
+        SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE_BY_ID;
+        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), this.sqlLogicSet(tableInfo),
+            tableInfo.getKeyColumn(), tableInfo.getKeyProperty());
+        SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+        return this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
     }
 }

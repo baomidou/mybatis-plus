@@ -60,11 +60,6 @@ public class TableInfoHelper {
      * 缓存反射类表信息
      */
     private static final Map<String, TableInfo> TABLE_INFO_CACHE = new ConcurrentHashMap<>();
-
-    /**
-     * lambda 字段缓存
-     */
-    private static final Map<String, String> LAMBDA_COLUMN_CACHE = new ConcurrentHashMap<>();
     /**
      * 默认表主键
      */
@@ -218,10 +213,15 @@ public class TableInfoHelper {
         if (StringUtils.isEmpty(tableInfo.getKeyColumn())) {
             logger.warn(String.format("Warn: Could not find @TableId in Class: %s.", clazz.getName()));
         }
+
         /*
          * 注入
          */
         TABLE_INFO_CACHE.put(clazz.getName(), tableInfo);
+
+        /*
+         * 缓存 Lambda 映射关系
+         */
         LambdaUtils.createCache(clazz.getName(), tableInfo);
         return tableInfo;
     }

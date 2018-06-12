@@ -38,11 +38,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class LambdaUtils {
 
     private static final Map<String, Map<String, String>> LAMBDA_CACHE = new ConcurrentHashMap<>();
-    // 做个小小的缓存
-    private static final Map<Class, WeakReference<SerializedLambda>> CACHE = new WeakHashMap<>();
+    private static final Map<Class, WeakReference<SerializedLambda>> FUNC_CACHE = new WeakHashMap<>();
 
     /**
+     * <p>
      * 解析 lambda 表达式
+     * </p>
      *
      * @param func 需要解析的 lambda 对象
      * @param <T>  类型，被调用的 Function 对象的目标类型
@@ -50,21 +51,37 @@ public final class LambdaUtils {
      */
     public static <T> SerializedLambda resolve(Property<T, ?> func) {
         Class clazz = func.getClass();
-        return Optional.ofNullable(CACHE.get(clazz))
+        return Optional.ofNullable(FUNC_CACHE.get(clazz))
             .map(WeakReference::get)
             .orElseGet(() -> {
                 SerializedLambda lambda = SerializedLambda.convert(func);
-                CACHE.put(clazz, new WeakReference<>(lambda));
+                FUNC_CACHE.put(clazz, new WeakReference<>(lambda));
                 return lambda;
             });
     }
 
+    /**
+     * <p>
+     * 缓存实体类名与表字段映射关系
+     * </p>
+     *
+     * @param className 实体类名
+     * @param tableInfo 表信息
+     */
     public static void createCache(String className, TableInfo tableInfo) {
         LAMBDA_CACHE.put(className, createLambdaMap(tableInfo));
     }
 
+    /**
+     * <p>
+     * 缓存实体字段 MAP 信息
+     * </p>
+     *
+     * @param tableInfo 表信息
+     * @return
+     */
     private static Map<String, String> createLambdaMap(TableInfo tableInfo) {
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>(16);
         if (StringUtils.isNotEmpty(tableInfo.getKeyProperty())) {
             map.put(tableInfo.getKeyProperty(), tableInfo.getKeyColumn());
         }
@@ -72,6 +89,14 @@ public final class LambdaUtils {
         return map;
     }
 
+    /**
+     * <p>
+     * 获取实体对应字段 MAP
+     * </p>
+     *
+     * @param entityClassName 实体类名
+     * @return
+     */
     public static Map<String, String> getColumnMap(String entityClassName) {
         return LAMBDA_CACHE.get(entityClassName);
     }

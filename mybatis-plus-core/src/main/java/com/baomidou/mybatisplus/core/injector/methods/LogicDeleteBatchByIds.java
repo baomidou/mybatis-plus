@@ -34,13 +34,10 @@ public class LogicDeleteBatchByIds extends AbstractMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
-        SqlMethod sqlMethod = SqlMethod.DELETE_BATCH_BY_IDS;
-        StringBuilder ids = new StringBuilder();
-        ids.append("\n<foreach item=\"item\" index=\"index\" collection=\"coll\" separator=\",\">");
-        ids.append("#{item}");
-        ids.append("\n</foreach>");
-        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), tableInfo.getKeyColumn(), ids.toString());
+        SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE_BATCH_BY_IDS;
+        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), this.sqlLogicSet(tableInfo), tableInfo.getKeyColumn(),
+            "<foreach item=\"item\" collection=\"coll\" separator=\",\">#{item}</foreach>");
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return this.addDeleteMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource);
+        return this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
     }
 }
