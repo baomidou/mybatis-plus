@@ -17,6 +17,9 @@ package com.baomidou.mybatisplus.generator.config;
 
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 
+import lombok.Data;
+import lombok.experimental.Accessors;
+
 /**
  * <p>
  * 输出文件配置
@@ -25,6 +28,8 @@ import com.baomidou.mybatisplus.generator.config.po.TableInfo;
  * @author hubin
  * @since 2017-01-18
  */
+@Data
+@Accessors(chain = true)
 public abstract class FileOutConfig {
 
     /**
@@ -44,14 +49,4 @@ public abstract class FileOutConfig {
      * 输出文件
      */
     public abstract String outputFile(TableInfo tableInfo);
-
-    public String getTemplatePath() {
-        return templatePath;
-    }
-
-    public FileOutConfig setTemplatePath(String templatePath) {
-        this.templatePath = templatePath;
-        return this;
-    }
-
 }

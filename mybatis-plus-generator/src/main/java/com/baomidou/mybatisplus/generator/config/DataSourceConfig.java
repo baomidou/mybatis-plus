@@ -21,11 +21,19 @@ import java.sql.SQLException;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.generator.config.converts.*;
-import com.baomidou.mybatisplus.generator.config.querys.*;
+import com.baomidou.mybatisplus.generator.config.converts.DB2TypeConvert;
+import com.baomidou.mybatisplus.generator.config.converts.MySqlTypeConvert;
+import com.baomidou.mybatisplus.generator.config.converts.OracleTypeConvert;
+import com.baomidou.mybatisplus.generator.config.converts.PostgreSqlTypeConvert;
+import com.baomidou.mybatisplus.generator.config.converts.SqlServerTypeConvert;
+import com.baomidou.mybatisplus.generator.config.querys.DB2Query;
+import com.baomidou.mybatisplus.generator.config.querys.MariadbQuery;
+import com.baomidou.mybatisplus.generator.config.querys.MySqlQuery;
+import com.baomidou.mybatisplus.generator.config.querys.OracleQuery;
+import com.baomidou.mybatisplus.generator.config.querys.PostgreSqlQuery;
+import com.baomidou.mybatisplus.generator.config.querys.SqlServerQuery;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
@@ -37,7 +45,6 @@ import lombok.experimental.Accessors;
  * @since 2016/8/30
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 public class DataSourceConfig {
 

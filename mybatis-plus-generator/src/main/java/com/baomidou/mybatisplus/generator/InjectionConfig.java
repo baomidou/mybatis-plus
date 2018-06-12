@@ -21,6 +21,9 @@ import java.util.Map;
 import com.baomidou.mybatisplus.generator.config.FileOutConfig;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 
+import lombok.Data;
+import lombok.experimental.Accessors;
+
 /**
  * <p>
  * 抽象的对外接口
@@ -29,6 +32,8 @@ import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
  * @author hubin
  * @since 2016-12-07
  */
+@Data
+@Accessors(chain = true)
 public abstract class InjectionConfig {
 
     /**
@@ -50,32 +55,4 @@ public abstract class InjectionConfig {
      * 注入自定义 Map 对象
      */
     public abstract void initMap();
-
-    public ConfigBuilder getConfig() {
-        return config;
-    }
-
-    public InjectionConfig setConfig(ConfigBuilder config) {
-        this.config = config;
-        return this;
-    }
-
-    public Map<String, Object> getMap() {
-        return map;
-    }
-
-    public InjectionConfig setMap(Map<String, Object> map) {
-        this.map = map;
-        return this;
-    }
-
-    public List<FileOutConfig> getFileOutConfigList() {
-        return fileOutConfigList;
-    }
-
-    public InjectionConfig setFileOutConfigList(List<FileOutConfig> fileOutConfigList) {
-        this.fileOutConfigList = fileOutConfigList;
-        return this;
-    }
-
 }
