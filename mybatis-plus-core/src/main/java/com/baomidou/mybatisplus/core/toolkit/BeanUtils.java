@@ -71,7 +71,7 @@ public class BeanUtils {
         if (CollectionUtils.isEmpty(beanList)) {
             return null;
         }
-        return beanList.stream().map(e -> beanToMap(e)).collect(toList());
+        return beanList.stream().map(BeanUtils::beanToMap).collect(toList());
     }
 
     /**
