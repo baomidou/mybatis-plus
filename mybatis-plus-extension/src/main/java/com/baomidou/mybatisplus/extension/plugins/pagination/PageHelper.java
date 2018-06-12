@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.extension.plugins.pagination;
 
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 
 
 /**
@@ -32,18 +33,30 @@ public class PageHelper {
     /**
      * 分页本地线程变量
      */
-    private static final ThreadLocal<Pagination> LOCAL_PAGE = new ThreadLocal<>();
+    private static final ThreadLocal<IPage> LOCAL_PAGE = new ThreadLocal<>();
 
     /**
      * <p>
      * 获取总条数
      * </p>
      */
-    public static long getTotal() {
+    public static Long getTotal() {
         if (isPageable()) {
             return LOCAL_PAGE.get().getTotal();
         }
         throw new MybatisPlusException("The current thread does not start paging. Please call before PageHelper.startPage");
+    }
+
+    /**
+     * <p>
+     * 释放资源并获取总条数
+     * </p>
+     */
+    public static Long freeTotal() {
+        Long total = getTotal();
+        // 释放资源
+        remove();
+        return total;
     }
 
     /**
@@ -67,23 +80,11 @@ public class PageHelper {
      * Pagination 分页偏移量
      * </p>
      */
-    public static long offsetCurrent(Pagination pagination) {
-        if (null == pagination) {
+    public static long offsetCurrent(IPage page) {
+        if (null == page) {
             return 0;
         }
-        return offsetCurrent(pagination.getCurrent(), pagination.getSize());
-    }
-
-    /**
-     * <p>
-     * 释放资源并获取总条数
-     * </p>
-     */
-    public static long freeTotal() {
-        long total = getTotal();
-        // 释放资源
-        remove();
-        return total;
+        return offsetCurrent(page.getCurrent(), page.getSize());
     }
 
     /**
@@ -91,7 +92,7 @@ public class PageHelper {
      * 获取分页
      * </p>
      */
-    public static Pagination getPagination() {
+    public static IPage getPage() {
         return LOCAL_PAGE.get();
     }
 
@@ -100,7 +101,7 @@ public class PageHelper {
      * 设置分页
      * </p>
      */
-    public static void setPagination(Pagination page) {
+    public static void setPage(IPage page) {
         LOCAL_PAGE.set(page);
     }
 
@@ -112,7 +113,7 @@ public class PageHelper {
      * @param current 当前页
      * @param size    页大小
      */
-    public static void startPage(int current, int size) {
+    public static void startPage(long current, long size) {
         LOCAL_PAGE.set(new Pagination(current, size));
     }
 
