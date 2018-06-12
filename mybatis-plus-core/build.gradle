@@ -7,6 +7,8 @@ dependencies {
     compile rootProject.ext.dependencies["mybatis"]
     compile rootProject.ext.dependencies["jsqlparser"]
 
+    provided rootProject.ext.dependencies["cglib"]
+
     testCompile rootProject.ext.dependencies["mybatis-ehcache"]
     testCompile rootProject.ext.dependencies["logback-classic"]
     testCompile(rootProject.ext.dependencies["commons-dbcp2"]) {

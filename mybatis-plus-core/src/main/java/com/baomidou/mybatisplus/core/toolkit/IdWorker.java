@@ -17,7 +17,6 @@ package com.baomidou.mybatisplus.core.toolkit;
 
 import java.util.UUID;
 
-
 /**
  * <p>
  * 高效GUID产生算法(sequence),基于Snowflake实现64位自增ID算法。 <br>
