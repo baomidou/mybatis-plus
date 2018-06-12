@@ -35,7 +35,8 @@ import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
  * @author hubin miemie HCL
  * @since 2017-05-26
  */
-public abstract class AbstractLambdaWrapper<T, This extends AbstractLambdaWrapper<T, This>> extends AbstractWrapper<T, Property<T, ?>, This> implements Serializable {
+public abstract class AbstractLambdaWrapper<T, This extends AbstractLambdaWrapper<T, This>>
+    extends AbstractWrapper<T, Property<T, ?>, This> implements Serializable {
 
     private Map<String, String> columnMap = null;
     private boolean initColumnMap = false;
