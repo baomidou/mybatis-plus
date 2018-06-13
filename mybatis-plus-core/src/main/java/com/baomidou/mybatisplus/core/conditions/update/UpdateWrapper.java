@@ -43,6 +43,7 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
     private List<String> sqlSet = new ArrayList<>();
 
     public UpdateWrapper() {
+        // 如果无参构造函数，请注意实体 NULL 情况 SET 必须有否则 SQL 异常
         this(null);
     }
 

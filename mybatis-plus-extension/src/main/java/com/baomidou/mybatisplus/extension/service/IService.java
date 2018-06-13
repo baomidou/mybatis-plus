@@ -140,10 +140,11 @@ public interface IService<T> {
      * 根据 whereEntity 条件，更新记录
      * </p>
      *
+     * @param entity 实体对象
      * @param wrapper 实体包装类 {@link Wrapper}
      * @return boolean
      */
-    boolean update(Wrapper<T> wrapper);
+    boolean update(T entity, Wrapper<T> wrapper);
 
     /**
      * <p>

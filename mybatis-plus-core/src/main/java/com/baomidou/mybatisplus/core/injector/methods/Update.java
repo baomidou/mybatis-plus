@@ -35,8 +35,7 @@ public class Update extends AbstractMethod {
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.UPDATE;
-        // TODO 这里有个  前缀判断的问题
-        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), this.sqlSet(true, true, tableInfo, "ew.entity"),
+        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), this.sqlSet(true, true, tableInfo, "et."),
             this.sqlWhereEntityWrapper(tableInfo));
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
         return this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);

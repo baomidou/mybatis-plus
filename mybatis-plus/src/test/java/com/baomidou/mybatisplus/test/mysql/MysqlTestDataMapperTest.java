@@ -64,8 +64,8 @@ public class MysqlTestDataMapperTest {
 
     @Test
     public void update() {
-        TestData data = new TestData().setId(1L).setTestStr("123123");
-        testDataMapper.update(data, new UpdateWrapper<TestData>().eq("id", 1L));
+        testDataMapper.update(new TestData().setId(1L).setTestStr("123123"),
+            new UpdateWrapper<TestData>().eq("id", 1L));
     }
 
     @Test

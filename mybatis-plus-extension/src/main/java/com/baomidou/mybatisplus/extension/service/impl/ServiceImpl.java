@@ -241,8 +241,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean update(Wrapper<T> wrapper) {
-        return retBool(baseMapper.update(wrapper));
+    public boolean update(T entity, Wrapper<T> wrapper) {
+        return retBool(baseMapper.update(entity, wrapper));
     }
 
     @Transactional(rollbackFor = Exception.class)

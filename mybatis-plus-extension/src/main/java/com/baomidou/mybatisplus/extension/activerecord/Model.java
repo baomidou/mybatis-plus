@@ -56,16 +56,6 @@ public abstract class Model<T extends Model> implements Serializable {
 
     /**
      * <p>
-     * 插入（所有字段插入）
-     * </p>
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public boolean insertAllColumn() {
-        return SqlHelper.retBool(sqlSession().insert(sqlStatement(SqlMethod.INSERT_ONE_ALL_COLUMN), this));
-    }
-
-    /**
-     * <p>
      * 插入 OR 更新
      * </p>
      */
@@ -139,22 +129,6 @@ public abstract class Model<T extends Model> implements Serializable {
         Map<String, Object> map = new HashMap<>();
         map.put("et", this);
         return SqlHelper.retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE_BY_ID), map));
-    }
-
-    /**
-     * <p>
-     * 更新（所有字段更新）
-     * </p>
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public boolean updateAllColumnById() {
-        if (StringUtils.checkValNull(pkVal())) {
-            throw new MybatisPlusException("updateAllColumnById primaryKey is null.");
-        }
-        // updateAllColumnById
-        Map<String, Object> map = new HashMap<>();
-        map.put("et", this);
-        return SqlHelper.retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE_ALL_COLUMN_BY_ID), map));
     }
 
     /**
