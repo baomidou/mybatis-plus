@@ -45,16 +45,6 @@ public interface IService<T> {
 
     /**
      * <p>
-     * 插入一条记录（全部字段）
-     * </p>
-     *
-     * @param entity 实体对象
-     * @return boolean
-     */
-    boolean insertAllColumn(T entity);
-
-    /**
-     * <p>
      * 插入（批量），该方法不适合 Oracle
      * </p>
      *
@@ -94,25 +84,6 @@ public interface IService<T> {
      * @return boolean
      */
     boolean insertOrUpdateBatch(List<T> entityList, int batchSize);
-
-    /**
-     * <p>
-     * 批量修改或插入全部字段
-     * </p>
-     *
-     * @param entityList 实体对象列表
-     * @return boolean
-     */
-    boolean insertOrUpdateAllColumnBatch(List<T> entityList);
-
-    /**
-     * 批量修改或插入全部字段
-     *
-     * @param entityList 实体对象列表
-     * @param batchSize
-     * @return boolean
-     */
-    boolean insertOrUpdateAllColumnBatch(List<T> entityList, int batchSize);
 
     /**
      * <p>
@@ -166,24 +137,13 @@ public interface IService<T> {
 
     /**
      * <p>
-     * 根据 ID 修改全部字段
-     * </p>
-     *
-     * @param entity 实体对象
-     * @return boolean
-     */
-    boolean updateAllColumnById(T entity);
-
-    /**
-     * <p>
      * 根据 whereEntity 条件，更新记录
      * </p>
      *
-     * @param entity  实体对象
      * @param wrapper 实体包装类 {@link Wrapper}
      * @return boolean
      */
-    boolean update(T entity, Wrapper<T> wrapper);
+    boolean update(Wrapper<T> wrapper);
 
     /**
      * <p>
@@ -208,27 +168,6 @@ public interface IService<T> {
 
     /**
      * <p>
-     * 根据ID 批量更新全部字段
-     * </p>
-     *
-     * @param entityList 实体对象列表
-     * @return boolean
-     */
-    boolean updateAllColumnBatchById(List<T> entityList);
-
-    /**
-     * <p>
-     * 根据ID 批量更新全部字段
-     * </p>
-     *
-     * @param entityList 实体对象列表
-     * @param batchSize  更新批次数量
-     * @return boolean
-     */
-    boolean updateAllColumnBatchById(List<T> entityList, int batchSize);
-
-    /**
-     * <p>
      * TableId 注解存在更新记录，否插入一条记录
      * </p>
      *
@@ -236,14 +175,6 @@ public interface IService<T> {
      * @return boolean
      */
     boolean insertOrUpdate(T entity);
-
-    /**
-     * 插入或修改一条记录的全部字段
-     *
-     * @param entity 实体对象
-     * @return boolean
-     */
-    boolean insertOrUpdateAllColumn(T entity);
 
     /**
      * <p>
@@ -291,7 +222,7 @@ public interface IService<T> {
      * </p>
      *
      * @param wrapper {@link Wrapper}
-     * @return Map<String   ,   Object>
+     * @return Map<String       ,       Object>
      */
     Map<String, Object> selectMap(Wrapper<T> wrapper);
 

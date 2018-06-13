@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.core.injector;
+package com.baomidou.mybatisplus.extension.injector;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,8 +21,10 @@ import java.util.stream.Stream;
 
 import org.apache.ibatis.session.Configuration;
 
+import com.baomidou.mybatisplus.core.injector.AbstractMethod;
+import com.baomidou.mybatisplus.core.injector.AbstractSqlInjector;
+import com.baomidou.mybatisplus.core.injector.SqlRunnerInjector;
 import com.baomidou.mybatisplus.core.injector.methods.Insert;
-import com.baomidou.mybatisplus.core.injector.methods.InsertAllColumn;
 import com.baomidou.mybatisplus.core.injector.methods.LogicDelete;
 import com.baomidou.mybatisplus.core.injector.methods.LogicDeleteBatchByIds;
 import com.baomidou.mybatisplus.core.injector.methods.LogicDeleteById;
@@ -38,7 +40,6 @@ import com.baomidou.mybatisplus.core.injector.methods.SelectObjs;
 import com.baomidou.mybatisplus.core.injector.methods.SelectOne;
 import com.baomidou.mybatisplus.core.injector.methods.SelectPage;
 import com.baomidou.mybatisplus.core.injector.methods.Update;
-import com.baomidou.mybatisplus.core.injector.methods.UpdateAllColumnById;
 import com.baomidou.mybatisplus.core.injector.methods.UpdateById;
 
 
@@ -57,14 +58,12 @@ public class LogicSqlInjector extends AbstractSqlInjector {
     public List<AbstractMethod> getMethodList() {
         return Stream.of(
             new Insert(),
-            new InsertAllColumn(),
             new LogicDelete(),
             new LogicDeleteByMap(),
             new LogicDeleteById(),
             new LogicDeleteBatchByIds(),
             new Update(),
             new UpdateById(),
-            new UpdateAllColumnById(),
             new SelectById(),
             new SelectBatchByIds(),
             new SelectByMap(),

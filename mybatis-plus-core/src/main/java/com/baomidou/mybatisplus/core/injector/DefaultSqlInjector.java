@@ -38,14 +38,12 @@ public class DefaultSqlInjector extends AbstractSqlInjector {
     public List<AbstractMethod> getMethodList() {
         return Stream.of(
             new Insert(),
-            new InsertAllColumn(),
             new Delete(),
             new DeleteByMap(),
             new DeleteById(),
             new DeleteBatchByIds(),
             new Update(),
             new UpdateById(),
-            new UpdateAllColumnById(),
             new SelectById(),
             new SelectBatchByIds(),
             new SelectByMap(),

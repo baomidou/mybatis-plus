@@ -99,12 +99,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean insertAllColumn(T entity) {
-        return retBool(baseMapper.insertAllColumn(entity));
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    @Override
     public boolean insertBatch(List<T> entityList) {
         return insertBatch(entityList, 30);
     }
@@ -171,29 +165,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean insertOrUpdateAllColumn(T entity) {
-        if (null != entity) {
-            Class<?> cls = entity.getClass();
-            TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
-            if (null != tableInfo && StringUtils.isNotEmpty(tableInfo.getKeyProperty())) {
-                Object idVal = ReflectionKit.getMethodValue(cls, entity, tableInfo.getKeyProperty());
-                if (StringUtils.checkValNull(idVal)) {
-                    return insertAllColumn(entity);
-                } else {
-                    /*
-                     * 更新成功直接返回，失败执行插入逻辑
-                     */
-                    return updateAllColumnById(entity) || insertAllColumn(entity);
-                }
-            } else {
-                throw new MybatisPlusException("Error:  Can not execute. Could not find @TableId.");
-            }
-        }
-        return false;
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    @Override
     public boolean insertOrUpdateBatch(List<T> entityList) {
         return insertOrUpdateBatch(entityList, 30);
     }
@@ -202,18 +173,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Override
     public boolean insertOrUpdateBatch(List<T> entityList, int batchSize) {
         return insertOrUpdateBatch(entityList, batchSize, true);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public boolean insertOrUpdateAllColumnBatch(List<T> entityList) {
-        return insertOrUpdateBatch(entityList, 30, false);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public boolean insertOrUpdateAllColumnBatch(List<T> entityList, int batchSize) {
-        return insertOrUpdateBatch(entityList, batchSize, false);
     }
 
     /**
@@ -234,7 +193,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 if (selective) {
                     insertOrUpdate(entityList.get(i));
                 } else {
-                    insertOrUpdateAllColumn(entityList.get(i));
+                    //insertOrUpdateAllColumn(entityList.get(i));
                 }
                 if (i >= 1 && i % batchSize == 0) {
                     batchSqlSession.flushStatements();
@@ -282,14 +241,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean updateAllColumnById(T entity) {
-        return retBool(baseMapper.updateAllColumnById(entity));
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public boolean update(T entity, Wrapper<T> wrapper) {
-        return retBool(baseMapper.update(entity, wrapper));
+    public boolean update(Wrapper<T> wrapper) {
+        return retBool(baseMapper.update(wrapper));
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -301,37 +254,12 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean updateBatchById(List<T> entityList, int batchSize) {
-        return updateBatchById(entityList, batchSize, true);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public boolean updateAllColumnBatchById(List<T> entityList) {
-        return updateAllColumnBatchById(entityList, 30);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public boolean updateAllColumnBatchById(List<T> entityList, int batchSize) {
-        return updateBatchById(entityList, batchSize, false);
-    }
-
-    /**
-     * 根据主键ID进行批量修改
-     *
-     * @param entityList 实体对象列表
-     * @param batchSize  批量刷新个数
-     * @param selective  是否滤掉空字段
-     * @return boolean
-     */
-    private boolean updateBatchById(List<T> entityList, int batchSize, boolean selective) {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
         try (SqlSession batchSqlSession = sqlSessionBatch()) {
             int size = entityList.size();
-            SqlMethod sqlMethod = selective ? SqlMethod.UPDATE_BY_ID : SqlMethod.UPDATE_ALL_COLUMN_BY_ID;
-            String sqlStatement = sqlStatement(sqlMethod);
+            String sqlStatement = sqlStatement(SqlMethod.UPDATE_BY_ID);
             for (int i = 0; i < size; i++) {
                 MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
                 param.put("et", entityList.get(i));
