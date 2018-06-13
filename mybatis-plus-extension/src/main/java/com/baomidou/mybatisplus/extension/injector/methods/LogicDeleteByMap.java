@@ -13,7 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.core.injector.methods;
+package com.baomidou.mybatisplus.extension.injector.methods;
+
+import java.util.Map;
 
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
@@ -24,20 +26,20 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
 
 /**
  * <p>
- * 根据 ID 集合删除
+ * 根据 ID 删除
  * </p>
  *
  * @author hubin
  * @since 2018-04-06
  */
-public class LogicDeleteBatchByIds extends AbstractMethod {
+public class LogicDeleteByMap extends AbstractMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
-        SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE_BATCH_BY_IDS;
-        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), this.sqlLogicSet(tableInfo), tableInfo.getKeyColumn(),
-            "<foreach item=\"item\" collection=\"coll\" separator=\",\">#{item}</foreach>");
-        SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
+        SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE_BY_MAP;
+        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), this.sqlLogicSet(tableInfo),
+            sqlWhereByMap(tableInfo));
+        SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Map.class);
+        return this.addUpdateMappedStatement(mapperClass, Map.class, sqlMethod.getMethod(), sqlSource);
     }
 }

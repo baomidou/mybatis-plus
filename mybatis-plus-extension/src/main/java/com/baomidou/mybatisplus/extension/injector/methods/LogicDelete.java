@@ -13,9 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.core.injector.methods;
-
-import java.util.Map;
+package com.baomidou.mybatisplus.extension.injector.methods;
 
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
@@ -32,14 +30,14 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
  * @author hubin
  * @since 2018-04-06
  */
-public class LogicDeleteByMap extends AbstractMethod {
+public class LogicDelete extends AbstractMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
-        SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE_BY_MAP;
+        SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE;
         String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), this.sqlLogicSet(tableInfo),
-            sqlWhereByMap(tableInfo));
-        SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Map.class);
-        return this.addUpdateMappedStatement(mapperClass, Map.class, sqlMethod.getMethod(), sqlSource);
+            this.sqlWhereEntityWrapper(tableInfo));
+        SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+        return this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
     }
 }
