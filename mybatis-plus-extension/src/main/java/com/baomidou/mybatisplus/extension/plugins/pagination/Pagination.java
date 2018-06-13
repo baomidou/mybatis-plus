@@ -33,6 +33,8 @@ import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
  */
 public class Pagination<T> implements IPage<T>, Serializable {
 
+    private static final long serialVersionUID = 8545996863226528798L;
+
     /**
      * 查询数据列表
      */
@@ -110,12 +112,12 @@ public class Pagination<T> implements IPage<T>, Serializable {
     }
 
     @Override
-    public List getRecords() {
+    public List<T> getRecords() {
         return this.records;
     }
 
     @Override
-    public IPage<T> setRecords(List records) {
+    public IPage<T> setRecords(List<T> records) {
         this.records = records;
         return this;
     }
