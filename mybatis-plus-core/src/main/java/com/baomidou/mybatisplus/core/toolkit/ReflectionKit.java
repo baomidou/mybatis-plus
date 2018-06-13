@@ -15,15 +15,25 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 
 /**
  * <p>
@@ -64,7 +74,7 @@ public class ReflectionKit {
     public static Object getMethodValue(Class<?> cls, Object entity, String str) {
         Map<String, Field> fieldMaps = getFieldMap(cls);
         try {
-            if (MapUtils.isEmpty(fieldMaps)) {
+            if (CollectionUtils.isEmpty(fieldMaps)) {
                 throw new MybatisPlusException(
                     String.format("Error: NoSuchField in %s for %s.  Cause:", cls.getSimpleName(), str));
             }

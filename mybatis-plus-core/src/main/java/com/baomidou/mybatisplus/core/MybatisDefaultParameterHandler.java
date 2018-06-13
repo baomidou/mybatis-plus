@@ -41,9 +41,9 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
-import com.baomidou.mybatisplus.core.toolkit.MapUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 
@@ -261,7 +261,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                     } else {
                         MetaObject metaObject = configuration.newMetaObject(parameterObject);
                         value = metaObject.getValue(propertyName);
-                        if (value == null && MapUtils.isNotEmpty(additionalParameters)) {
+                        if (value == null && CollectionUtils.isNotEmpty(additionalParameters)) {
                             // issue #138
                             value = additionalParameters.get(propertyName);
                         }
