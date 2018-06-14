@@ -27,10 +27,10 @@ import com.baomidou.mybatisplus.core.enums.SqlLike;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.MapUtils;
 import com.baomidou.mybatisplus.core.toolkit.SerializationUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
+import com.baomidou.mybatisplus.extension.toolkit.ObjectUtils;
 
 
 /**
@@ -341,7 +341,7 @@ public class Wrapper<T> extends com.baomidou.mybatisplus.core.conditions.Wrapper
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     public Wrapper<T> allEq(boolean condition, Map<String, Object> params) {
-        if (condition && MapUtils.isNotEmpty(params)) {
+        if (condition && ObjectUtils.isNotEmpty(params)) {
             Iterator iterator = params.entrySet().iterator();
             while (iterator.hasNext()) {
                 Map.Entry<String, Object> entry = (Map.Entry<String, Object>) iterator.next();
