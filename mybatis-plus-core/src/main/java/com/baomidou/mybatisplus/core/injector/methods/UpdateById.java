@@ -35,13 +35,13 @@ public class UpdateById extends AbstractMethod {
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.UPDATE_BY_ID;
-        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), this.sqlSet(true, false, tableInfo, "et."),
+        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlSet(true, false, tableInfo, "et."),
             tableInfo.getKeyColumn(), new StringBuilder("et.").append(tableInfo.getKeyProperty()).toString(),
             new StringBuilder("<if test=\"et instanceof java.util.Map\">")
                 .append("<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">")
-                .append("  AND ${et.MP_OPTLOCK_VERSION_COLUMN}=#{et.MP_OPTLOCK_VERSION_ORIGINAL}")
+                .append(" AND ${et.MP_OPTLOCK_VERSION_COLUMN}=#{et.MP_OPTLOCK_VERSION_ORIGINAL}")
                 .append("</if></if>"));
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
+        return addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
     }
 }

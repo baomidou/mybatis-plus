@@ -67,7 +67,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return SqlHelper.retBool(result);
     }
 
-    @SuppressWarnings("unchecked")
     protected Class<T> currentModelClass() {
         return ReflectionKit.getSuperClassGenricType(getClass(), 1);
     }
@@ -94,7 +93,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean insert(T entity) {
-        return retBool(baseMapper.insert(entity));
+        return ServiceImpl.retBool(baseMapper.insert(entity));
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -236,13 +235,13 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean updateById(T entity) {
-        return retBool(baseMapper.updateById(entity));
+        return ServiceImpl.retBool(baseMapper.updateById(entity));
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean update(T entity, Wrapper<T> wrapper) {
-        return retBool(baseMapper.update(entity, wrapper));
+        return ServiceImpl.retBool(baseMapper.update(entity, wrapper));
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -335,7 +334,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Override
     public IPage<Map<String, Object>> selectMapsPage(IPage page, Wrapper<T> wrapper) {
         wrapper = (Wrapper<T>) SqlHelper.fillWrapper(page, wrapper);
-        return page.setRecords(baseMapper.selectMapsPage(page, wrapper));
+        return baseMapper.selectMapsPage(page, wrapper);
     }
 
     @Override

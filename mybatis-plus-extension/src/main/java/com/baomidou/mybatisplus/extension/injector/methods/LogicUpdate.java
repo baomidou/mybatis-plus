@@ -28,15 +28,15 @@ import com.baomidou.mybatisplus.extension.injector.LogicAbstractMethod;
  * </p>
  *
  * @author hubin
- * @since 2018-06-13
+ * @since 2018-04-06
  */
-public class LogicDeleteById extends LogicAbstractMethod {
+public class LogicUpdate extends LogicAbstractMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
-        SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE_BY_ID;
-        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlLogicSet(tableInfo),
-            tableInfo.getKeyColumn(), tableInfo.getKeyProperty());
+        SqlMethod sqlMethod = SqlMethod.UPDATE;
+        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlSet(true, true, tableInfo, "et."),
+            sqlWhereEntityWrapper(tableInfo));
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
         return addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
     }

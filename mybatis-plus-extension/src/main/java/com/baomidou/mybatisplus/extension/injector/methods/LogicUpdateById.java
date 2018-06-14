@@ -24,19 +24,23 @@ import com.baomidou.mybatisplus.extension.injector.LogicAbstractMethod;
 
 /**
  * <p>
- * 根据 ID 删除
+ * 根据 ID 更新有值字段
  * </p>
  *
  * @author hubin
- * @since 2018-06-13
+ * @since 2018-04-06
  */
-public class LogicDeleteById extends LogicAbstractMethod {
+public class LogicUpdateById extends LogicAbstractMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
-        SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE_BY_ID;
-        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlLogicSet(tableInfo),
-            tableInfo.getKeyColumn(), tableInfo.getKeyProperty());
+        SqlMethod sqlMethod = SqlMethod.UPDATE_BY_ID;
+        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlSet(true, false, tableInfo, "et."),
+            tableInfo.getKeyColumn(), new StringBuilder("et.").append(tableInfo.getKeyProperty()).toString(),
+            new StringBuilder("<if test=\"et instanceof java.util.Map\">")
+                .append("<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">")
+                .append(" AND ${et.MP_OPTLOCK_VERSION_COLUMN}=#{et.MP_OPTLOCK_VERSION_ORIGINAL}")
+                .append("</if></if>").append(getLogicDeleteSql(tableInfo)));
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
         return addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
     }

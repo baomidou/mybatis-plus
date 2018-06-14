@@ -240,6 +240,6 @@ public interface BaseMapper<T> {
      * @param page         分页查询条件
      * @param queryWrapper 实体对象封装操作类
      */
-    List<Map<String, Object>> selectMapsPage(IPage page, @Param("ew") Wrapper<T> queryWrapper);
+    IPage<Map<String, Object>> selectMapsPage(IPage<T> page, @Param("ew") Wrapper<T> queryWrapper);
 
 }

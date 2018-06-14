@@ -82,22 +82,22 @@ public enum SqlMethod {
     private final String desc;
     private final String sql;
 
-    SqlMethod(final String method, final String desc, final String sql) {
+    SqlMethod(String method, String desc, String sql) {
         this.method = method;
         this.desc = desc;
         this.sql = sql;
     }
 
     public String getMethod() {
-        return this.method;
+        return method;
     }
 
     public String getDesc() {
-        return this.desc;
+        return desc;
     }
 
     public String getSql() {
-        return this.sql;
+        return sql;
     }
 
 }

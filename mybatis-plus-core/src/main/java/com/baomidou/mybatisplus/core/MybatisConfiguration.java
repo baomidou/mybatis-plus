@@ -48,10 +48,10 @@ public class MybatisConfiguration extends Configuration {
      * 初始化调用
      */
     public MybatisConfiguration() {
-        this.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
+        setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
         System.out.println("  _ _     /_ _ _/_. ____  /    _");
         System.out.println(" / / //_//_//_|/ /_\\  /_///_/_\\ ");
-        System.out.println("      _/             /             init success.");
+        System.out.println("      _/             /             V.3");
     }
 
     /**
@@ -66,18 +66,18 @@ public class MybatisConfiguration extends Configuration {
      */
     @Override
     public void addMappedStatement(MappedStatement ms) {
-        logger.debug("addMappedStatement: " + ms.getId());
+        MybatisConfiguration.logger.debug("addMappedStatement: " + ms.getId());
         if (GlobalConfigUtils.isRefresh(ms.getConfiguration())) {
             /*
              * 支持是否自动刷新 XML 变更内容，开发环境使用【 注：生产环境勿用！】
              */
-            this.mappedStatements.remove(ms.getId());
+            mappedStatements.remove(ms.getId());
         } else {
-            if (this.mappedStatements.containsKey(ms.getId())) {
+            if (mappedStatements.containsKey(ms.getId())) {
                 /*
                  * 说明已加载了xml中的节点； 忽略mapper中的SqlProvider数据
                  */
-                logger.error("mapper[" + ms.getId() + "] is ignored, because it's exists, maybe from xml file");
+                MybatisConfiguration.logger.error("mapper[" + ms.getId() + "] is ignored, because it's exists, maybe from xml file");
                 return;
             }
         }

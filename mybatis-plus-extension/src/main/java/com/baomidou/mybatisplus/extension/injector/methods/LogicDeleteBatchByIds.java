@@ -20,6 +20,7 @@ import org.apache.ibatis.mapping.SqlSource;
 
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.extension.injector.LogicAbstractMethod;
 
 /**
  * <p>
@@ -27,9 +28,9 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
  * </p>
  *
  * @author hubin
- * @since 2018-04-06
+ * @since 2018-06-13
  */
-public class LogicDeleteBatchByIds extends LogicMethod {
+public class LogicDeleteBatchByIds extends LogicAbstractMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {

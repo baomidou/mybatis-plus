@@ -30,14 +30,15 @@ import com.baomidou.mybatisplus.extension.injector.LogicAbstractMethod;
  * @author hubin
  * @since 2018-06-13
  */
-public class LogicDeleteById extends LogicAbstractMethod {
+public class LogicSelectBatchByIds extends LogicAbstractMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
-        SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE_BY_ID;
-        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlLogicSet(tableInfo),
-            tableInfo.getKeyColumn(), tableInfo.getKeyProperty());
-        SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
+        SqlMethod sqlMethod = SqlMethod.LOGIC_SELECT_BATCH_BY_IDS;
+        SqlSource sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(),
+            sqlSelectColumns(tableInfo, false), tableInfo.getTableName(), tableInfo.getKeyColumn(),
+            new StringBuilder("<foreach item=\"item\" collection=\"coll\" separator=\",\">#{item}</foreach>").toString(),
+            getLogicDeleteSql(tableInfo)), modelClass);
+        return addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, tableInfo);
     }
 }
