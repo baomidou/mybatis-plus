@@ -49,7 +49,9 @@ public class MybatisConfiguration extends Configuration {
      */
     public MybatisConfiguration() {
         this.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
-        logger.debug("Mybatis-plus init success.");
+        System.out.println("  _ _     /_ _ _/_. ____  /    _");
+        System.out.println(" / / //_//_//_|/ /_\\  /_///_/_\\ ");
+        System.out.println("      _/             /             init success.");
     }
 
     /**

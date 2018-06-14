@@ -18,9 +18,7 @@ package com.baomidou.mybatisplus.extension.api;
 import java.util.Collection;
 import java.util.Map;
 
-
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.MapUtils;
 import com.baomidou.mybatisplus.extension.exceptions.ApiException;
 import com.baomidou.mybatisplus.extension.toolkit.ObjectUtils;
 
@@ -158,7 +156,7 @@ public class ApiAssert {
     }
 
     public static void notEmpty(Map<?, ?> map, IErrorCode errorCode) {
-        if (MapUtils.isEmpty(map)) {
+        if (ObjectUtils.isEmpty(map)) {
             fail(errorCode);
         }
     }

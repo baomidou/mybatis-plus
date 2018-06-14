@@ -38,6 +38,13 @@ public class ObjectUtils {
     /**
      * 对象非空判断
      */
+    public static boolean isNotEmpty(Object obj) {
+        return !isEmpty(obj);
+    }
+
+    /**
+     * 对象空判断
+     */
     public static boolean isEmpty(Object obj) {
         if (obj == null) {
             return true;

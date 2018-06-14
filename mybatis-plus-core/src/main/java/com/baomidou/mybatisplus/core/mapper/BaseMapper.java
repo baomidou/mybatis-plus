@@ -25,6 +25,53 @@ import org.apache.ibatis.annotations.Param;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 
+/*
+
+               :`
+                    .:,
+                     :::,,.
+             ::      `::::::
+             ::`    `,:,` .:`
+             `:: `::::::::.:`      `:';,`
+              ::::,     .:::`   `@++++++++:
+               ``        :::`  @+++++++++++#
+                         :::, #++++++++++++++`
+                 ,:      `::::::;'##++++++++++
+                 .@#@;`   ::::::::::::::::::::;
+                  #@####@, :::::::::::::::+#;::.
+                  @@######+@:::::::::::::.  #@:;
+           ,      @@########':::::::::::: .#''':`
+           ;##@@@+:##########@::::::::::: @#;.,:.
+            #@@@######++++#####'::::::::: .##+,:#`
+            @@@@@#####+++++'#####+::::::::` ,`::@#:`
+            `@@@@#####++++++'#####+#':::::::::::@.
+             @@@@######+++++''#######+##';::::;':,`
+              @@@@#####+++++'''#######++++++++++`
+               #@@#####++++++''########++++++++'
+               `#@######+++++''+########+++++++;
+                `@@#####+++++''##########++++++,
+                 @@######+++++'##########+++++#`
+                @@@@#####+++++############++++;
+              ;#@@@@@####++++##############+++,
+             @@@@@@@@@@@###@###############++'
+           @#@@@@@@@@@@@@###################+:
+        `@#@@@@@@@@@@@@@@###################'`
+      :@#@@@@@@@@@@@@@@@@@##################,
+      ,@@@@@@@@@@@@@@@@@@@@################;
+       ,#@@@@@@@@@@@@@@@@@@@##############+`
+        .#@@@@@@@@@@@@@@@@@@#############@,
+          @@@@@@@@@@@@@@@@@@@###########@,
+           :#@@@@@@@@@@@@@@@@##########@,
+            `##@@@@@@@@@@@@@@@########+,
+              `+@@@@@@@@@@@@@@@#####@:`
+                `:@@@@@@@@@@@@@@##@;.
+                   `,'@@@@##@@@+;,`
+                        ``...``
+
+ _ _     /_ _ _/_. ____  /    _
+/ / //_//_//_|/ /_\  /_///_/_\      Talk is cheap. Show me the code.
+     _/             /
+ */
 /**
  * <p>
  * Mapper 继承该接口后，无需编写 mapper.xml 文件，即可获得CRUD功能
@@ -44,7 +91,6 @@ public interface BaseMapper<T> {
      * </p>
      *
      * @param entity 实体对象
-     * @return int
      */
     Integer insert(T entity);
 
@@ -54,7 +100,6 @@ public interface BaseMapper<T> {
      * </p>
      *
      * @param id 主键ID
-     * @return int
      */
     Integer deleteById(Serializable id);
 
@@ -64,7 +109,6 @@ public interface BaseMapper<T> {
      * </p>
      *
      * @param columnMap 表字段 map 对象
-     * @return int
      */
     Integer deleteByMap(@Param("cm") Map<String, Object> columnMap);
 
@@ -74,7 +118,6 @@ public interface BaseMapper<T> {
      * </p>
      *
      * @param queryWrapper 实体对象封装操作类（可以为 null）
-     * @return int
      */
     Integer delete(@Param("ew") Wrapper<T> queryWrapper);
 
@@ -84,7 +127,6 @@ public interface BaseMapper<T> {
      * </p>
      *
      * @param idList 主键ID列表
-     * @return int
      */
     Integer deleteBatchIds(@Param("coll") Collection<? extends Serializable> idList);
 
@@ -94,7 +136,6 @@ public interface BaseMapper<T> {
      * </p>
      *
      * @param entity 实体对象
-     * @return int
      */
     Integer updateById(@Param("et") T entity);
 
@@ -105,7 +146,6 @@ public interface BaseMapper<T> {
      *
      * @param entity        实体对象 (set 条件值)
      * @param updateWrapper 实体对象封装操作类（可以为 null）
-     * @return int
      */
     Integer update(@Param("et") T entity, @Param("ew") Wrapper<T> updateWrapper);
 
@@ -115,7 +155,6 @@ public interface BaseMapper<T> {
      * </p>
      *
      * @param id 主键ID
-     * @return T
      */
     T selectById(Serializable id);
 
@@ -125,7 +164,6 @@ public interface BaseMapper<T> {
      * </p>
      *
      * @param idList 主键ID列表
-     * @return List<T>
      */
     List<T> selectBatchIds(@Param("coll") Collection<? extends Serializable> idList);
 
@@ -135,7 +173,6 @@ public interface BaseMapper<T> {
      * </p>
      *
      * @param columnMap 表字段 map 对象
-     * @return List<T>
      */
     List<T> selectByMap(@Param("cm") Map<String, Object> columnMap);
 
@@ -145,7 +182,6 @@ public interface BaseMapper<T> {
      * </p>
      *
      * @param entity 实体对象
-     * @return T
      */
     T selectOne(@Param("ew") T entity);
 
@@ -155,7 +191,6 @@ public interface BaseMapper<T> {
      * </p>
      *
      * @param queryWrapper 实体对象
-     * @return int
      */
     Integer selectCount(@Param("ew") Wrapper<T> queryWrapper);
 
@@ -165,7 +200,6 @@ public interface BaseMapper<T> {
      * </p>
      *
      * @param queryWrapper 实体对象封装操作类（可以为 null）
-     * @return List<T>
      */
     List<T> selectList(@Param("ew") Wrapper<T> queryWrapper);
 
@@ -175,7 +209,6 @@ public interface BaseMapper<T> {
      * </p>
      *
      * @param queryWrapper 实体对象封装操作类（可以为 null）
-     * @return List<T>
      */
     List<Map<String, Object>> selectMaps(@Param("ew") Wrapper<T> queryWrapper);
 
@@ -186,7 +219,6 @@ public interface BaseMapper<T> {
      * </p>
      *
      * @param queryWrapper 实体对象封装操作类（可以为 null）
-     * @return List<Object>
      */
     List<Object> selectObjs(@Param("ew") Wrapper<T> queryWrapper);
 
@@ -197,7 +229,6 @@ public interface BaseMapper<T> {
      *
      * @param page         分页查询条件（可以为 RowBounds.DEFAULT）
      * @param queryWrapper 实体对象封装操作类（可以为 null）
-     * @return List<T>
      */
     IPage<T> selectPage(IPage<T> page, @Param("ew") Wrapper<T> queryWrapper);
 
@@ -208,7 +239,6 @@ public interface BaseMapper<T> {
      *
      * @param page         分页查询条件
      * @param queryWrapper 实体对象封装操作类
-     * @return
      */
     List<Map<String, Object>> selectMapsPage(IPage page, @Param("ew") Wrapper<T> queryWrapper);
 
