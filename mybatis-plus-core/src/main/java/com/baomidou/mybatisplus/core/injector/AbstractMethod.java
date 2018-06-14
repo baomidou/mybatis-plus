@@ -61,14 +61,14 @@ public abstract class AbstractMethod {
      * 注入自定义方法
      */
     public void inject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
-        this.configuration = builderAssistant.getConfiguration();
+        configuration = builderAssistant.getConfiguration();
         this.builderAssistant = builderAssistant;
-        this.languageDriver = configuration.getDefaultScriptingLanguageInstance();
+        languageDriver = configuration.getDefaultScriptingLanguageInstance();
         Class<?> modelClass = extractModelClass(mapperClass);
         if (null != modelClass) {
             // 注入自定义方法
             TableInfo tableInfo = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
-            this.injectMappedStatement(mapperClass, modelClass, tableInfo);
+            injectMappedStatement(mapperClass, modelClass, tableInfo);
         }
     }
 
@@ -172,8 +172,8 @@ public abstract class AbstractMethod {
      * @return
      */
     protected String sqlWordConvert(String column) {
-        return this.getGlobalConfig().getDbConfig().getReservedWordsHandler()
-            .convert(this.getGlobalConfig().getDbConfig().getDbType(), column);
+        return getGlobalConfig().getDbConfig().getReservedWordsHandler()
+            .convert(getGlobalConfig().getDbConfig().getDbType(), column);
     }
 
     /**
@@ -227,7 +227,7 @@ public abstract class AbstractMethod {
             if (size >= 1) {
                 // 字段处理
                 columns.append(fieldList.stream().map(i -> {
-                    String v = this.sqlWordConvert(i.getColumn());
+                    String v = sqlWordConvert(i.getColumn());
                     if (i.isRelated()) {
                         v += (" AS " + i.getProperty());
                     }
@@ -300,7 +300,7 @@ public abstract class AbstractMethod {
         List<TableFieldInfo> fieldList = table.getFieldList();
         for (TableFieldInfo fieldInfo : fieldList) {
             where.append(convertIfTag(fieldInfo, "ew.", false))
-                .append(" AND ").append(this.sqlCondition(fieldInfo.getCondition(),
+                .append(" AND ").append(sqlCondition(fieldInfo.getCondition(),
                 fieldInfo.getColumn(), "ew." + fieldInfo.getEl()))
                 .append(convertIfTag(fieldInfo, true));
         }
@@ -344,7 +344,7 @@ public abstract class AbstractMethod {
                 return "";
             }
             // 查询策略，使用全局策略
-            fieldStrategy = this.getGlobalConfig().getDbConfig().getFieldStrategy();
+            fieldStrategy = getGlobalConfig().getDbConfig().getFieldStrategy();
         }
 
         // 关闭标签
@@ -414,15 +414,14 @@ public abstract class AbstractMethod {
         List<TableFieldInfo> fieldList = table.getFieldList();
         for (TableFieldInfo fieldInfo : fieldList) {
             where.append(convertIfTag(fieldInfo, "ew.entity.", false));
-            where.append(" AND ").append(this.sqlCondition(fieldInfo.getCondition(),
+            where.append(" AND ").append(sqlCondition(fieldInfo.getCondition(),
                 fieldInfo.getColumn(), "ew.entity." + fieldInfo.getEl()));
             where.append(convertIfTag(fieldInfo, true));
         }
         where.append("</if>");
-        where.append("<if test=\"ew!=null and ew.sqlSegment!=null and ew.notEmptyOfWhere\">${ew.sqlSegment}</if>");
+        where.append("<if test=\"ew.sqlSegment!=null\"> AND ${ew.sqlSegment}</if>");
         where.append("</if>");
         where.append("</where>");
-        where.append("<if test=\"ew!=null and ew.sqlSegment!=null and ew.emptyOfWhere\">${ew.sqlSegment}</if>");
         return where.toString();
     }
 
@@ -435,13 +434,13 @@ public abstract class AbstractMethod {
             String resultMap = table.getResultMap();
             if (null != resultMap) {
                 /** 返回 resultMap 映射结果集 */
-                return this.addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.SELECT, null, resultMap, null,
+                return addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.SELECT, null, resultMap, null,
                     new NoKeyGenerator(), null, null);
             }
         }
 
         /** 普通查询 */
-        return this.addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.SELECT, null, null, resultType,
+        return addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.SELECT, null, null, resultType,
             new NoKeyGenerator(), null, null);
     }
 
@@ -450,7 +449,7 @@ public abstract class AbstractMethod {
      */
     protected MappedStatement addInsertMappedStatement(Class<?> mapperClass, Class<?> modelClass, String id, SqlSource sqlSource,
                                                        KeyGenerator keyGenerator, String keyProperty, String keyColumn) {
-        return this.addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.INSERT, modelClass, null, Integer.class,
+        return addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.INSERT, modelClass, null, Integer.class,
             keyGenerator, keyProperty, keyColumn);
     }
 
@@ -458,7 +457,7 @@ public abstract class AbstractMethod {
      * 删除
      */
     protected MappedStatement addDeleteMappedStatement(Class<?> mapperClass, String id, SqlSource sqlSource) {
-        return this.addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.DELETE, null, null, Integer.class,
+        return addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.DELETE, null, null, Integer.class,
             new NoKeyGenerator(), null, null);
     }
 
@@ -466,7 +465,7 @@ public abstract class AbstractMethod {
      * 更新
      */
     public MappedStatement addUpdateMappedStatement(Class<?> mapperClass, Class<?> modelClass, String id, SqlSource sqlSource) {
-        return this.addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.UPDATE, modelClass, null, Integer.class,
+        return addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.UPDATE, modelClass, null, Integer.class,
             new NoKeyGenerator(), null, null);
     }
 

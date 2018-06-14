@@ -119,7 +119,7 @@ public class H2UserMapperTest extends BaseTest {
         log(h2User.toString());
 
         // 分页查询
-        IPage<H2User> h2UserPage = userMapper.selectPage(new Pagination<H2User>(1, 10), null);
+        IPage<H2User> h2UserPage = userMapper.selectPage(new Pagination<>(1, 10), null);
         if (null != h2UserPage) {
             System.out.println(h2UserPage.getTotal());
             System.out.println(h2UserPage.getSize());
@@ -132,6 +132,8 @@ public class H2UserMapperTest extends BaseTest {
                 System.out.println(m);
             }
         }
+        Assert.assertTrue(CollectionUtils.isNotEmpty(userMapper.selectMaps(
+            new QueryWrapper<>(new H2User().setAge(3)).eq("name", NQQ))));
     }
 
 }

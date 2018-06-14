@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.core.conditions;
+package com.baomidou.mybatisplus.mapper;
 
 import java.util.Arrays;
 
@@ -28,7 +28,6 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  * @since 2016-08-22
  */
 @Deprecated
-@SuppressWarnings("serial")
 public class SqlPlus extends MybatisAbstractSQL<SqlPlus> {
 
     private final String IS_NOT_NULL = " IS NOT NULL";

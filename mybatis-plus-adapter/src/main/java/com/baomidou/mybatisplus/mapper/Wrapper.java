@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.baomidou.mybatisplus.core.conditions.SqlPlus;
 import com.baomidou.mybatisplus.core.enums.SqlLike;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
@@ -90,24 +89,6 @@ public class Wrapper<T> extends com.baomidou.mybatisplus.core.conditions.Wrapper
         return null;
     }
 
-    /**
-     * 查看where构造是否为空
-     *
-     * @return
-     */
-    public boolean isEmptyOfWhere() {
-        return sql.isEmptyOfWhere();
-    }
-
-    /**
-     * 查看where构造是否不为空
-     *
-     * @return
-     */
-    public boolean isNotEmptyOfWhere() {
-        return !isEmptyOfWhere();
-    }
-
     @Override
     public String getSqlSelect() {
         return StringUtils.isEmpty(sqlSelect) ? null : SqlUtils.stripSqlInjection(sqlSelect);
@@ -139,7 +120,7 @@ public class Wrapper<T> extends com.baomidou.mybatisplus.core.conditions.Wrapper
                 builder.append(column);
             }
         }
-        this.sqlSelect = builder.toString();
+        sqlSelect = builder.toString();
         return this;
     }
 
@@ -339,7 +320,6 @@ public class Wrapper<T> extends com.baomidou.mybatisplus.core.conditions.Wrapper
      * @param params
      * @return
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
     public Wrapper<T> allEq(boolean condition, Map<String, Object> params) {
         if (condition && ObjectUtils.isNotEmpty(params)) {
             Iterator iterator = params.entrySet().iterator();
@@ -364,7 +344,6 @@ public class Wrapper<T> extends com.baomidou.mybatisplus.core.conditions.Wrapper
      * @param params
      * @return
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
     public Wrapper<T> allEq(Map<String, Object> params) {
         return allEq(true, params);
     }
@@ -1393,7 +1372,7 @@ public class Wrapper<T> extends com.baomidou.mybatisplus.core.conditions.Wrapper
             inSql.append("(");
             int size = value.size();
             for (int i = 0; i < size; i++) {
-                inSql.append(String.format(PLACE_HOLDER, i));
+                inSql.append(String.format(Wrapper.PLACE_HOLDER, i));
                 if (i + 1 < size) {
                     inSql.append(",");
                 }
@@ -1540,9 +1519,9 @@ public class Wrapper<T> extends com.baomidou.mybatisplus.core.conditions.Wrapper
         // #200
         if (ArrayUtils.isNotEmpty(params)) {
             for (int i = 0; i < params.length; ++i) {
-                String genParamName = MP_GENERAL_PARAMNAME + paramNameSeq.incrementAndGet();
-                sqlStr = sqlStr.replace(String.format(PLACE_HOLDER, i),
-                    String.format(MYBATIS_PLUS_TOKEN, getParamAlias(), genParamName));
+                String genParamName = Wrapper.MP_GENERAL_PARAMNAME + paramNameSeq.incrementAndGet();
+                sqlStr = sqlStr.replace(String.format(Wrapper.PLACE_HOLDER, i),
+                    String.format(Wrapper.MYBATIS_PLUS_TOKEN, getParamAlias(), genParamName));
                 paramNameValuePairs.put(genParamName, params[i]);
             }
         }
@@ -1558,7 +1537,7 @@ public class Wrapper<T> extends com.baomidou.mybatisplus.core.conditions.Wrapper
      * @return this
      */
     public Wrapper<T> isWhere(Boolean bool) {
-        this.isWhere = bool;
+        isWhere = bool;
         return this;
     }
 
@@ -1586,7 +1565,7 @@ public class Wrapper<T> extends com.baomidou.mybatisplus.core.conditions.Wrapper
     }
 
     public String getParamAlias() {
-        return StringUtils.isEmpty(paramAlias) ? DEFAULT_PARAM_ALIAS : paramAlias;
+        return StringUtils.isEmpty(paramAlias) ? Wrapper.DEFAULT_PARAM_ALIAS : paramAlias;
     }
 
     /**

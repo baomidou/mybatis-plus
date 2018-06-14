@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.core.conditions;
+package com.baomidou.mybatisplus.mapper;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 /**
@@ -34,7 +33,6 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  * @since 2016-08-22
  */
 @Deprecated
-@SuppressWarnings("serial")
 public abstract class MybatisAbstractSQL<T> implements Serializable {
 
     private static final String AND = " AND ";
@@ -63,17 +61,17 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
     }
 
     public T OR() {
-        sql().lastList.add(OR);
+        sql().lastList.add(MybatisAbstractSQL.OR);
         return getSelf();
     }
 
     public T OR_NEW() {
-        sql().lastList.add(OR_NEW);
+        sql().lastList.add(MybatisAbstractSQL.OR_NEW);
         return getSelf();
     }
 
     public T AND() {
-        sql().lastList.add(AND);
+        sql().lastList.add(MybatisAbstractSQL.AND);
         return getSelf();
     }
 
@@ -92,7 +90,7 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
     }
 
     public T AND_NEW() {
-        sql().lastList.add(AND_NEW);
+        sql().lastList.add(MybatisAbstractSQL.AND_NEW);
         return getSelf();
     }
 
@@ -126,15 +124,6 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
         StringBuilder sb = new StringBuilder();
         sql().sql(sb);
         return sb.toString();
-    }
-
-    /**
-     * 查看构造器where是否为空
-     *
-     * @return
-     */
-    public boolean isEmptyOfWhere() {
-        return CollectionUtils.isEmpty(sql().where);
     }
 
     /**
@@ -182,10 +171,10 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
         List<String> lastList = new ArrayList<>();
 
         public SQLCondition() {
-            andOr.add(AND);
-            andOr.add(OR);
-            andOr.add(AND_NEW);
-            andOr.add(OR_NEW);
+            andOr.add(MybatisAbstractSQL.AND);
+            andOr.add(MybatisAbstractSQL.OR);
+            andOr.add(MybatisAbstractSQL.AND_NEW);
+            andOr.add(MybatisAbstractSQL.OR_NEW);
         }
 
         /**
@@ -248,9 +237,9 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
          * @return
          */
         private String buildSQL(SafeAppendable builder) {
-            sqlClause(builder, "WHERE", where, "(", ")", AND);
+            sqlClause(builder, "WHERE", where, "(", ")", MybatisAbstractSQL.AND);
             sqlClause(builder, "GROUP BY", groupBy, "", "", ", ");
-            sqlClause(builder, "HAVING", having, "(", ")", AND);
+            sqlClause(builder, "HAVING", having, "(", ")", MybatisAbstractSQL.AND);
             sqlClause(builder, "ORDER BY", orderBy, "", "", ", ");
             if (StringUtils.isNotEmpty(last)) {
                 builder.append(" ");
@@ -270,7 +259,7 @@ public abstract class MybatisAbstractSQL<T> implements Serializable {
          * @return true 嵌套
          */
         private boolean checkNest(String args) {
-            return PATTERN.matcher(args).matches();
+            return MybatisAbstractSQL.PATTERN.matcher(args).matches();
         }
     }
 }

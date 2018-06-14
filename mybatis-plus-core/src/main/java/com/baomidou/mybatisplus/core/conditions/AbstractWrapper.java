@@ -15,6 +15,38 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.AND;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ASC;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.BETWEEN;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.DESC;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.EQ;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.EXISTS;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GE;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GROUP_BY;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GT;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.HAVING;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IN;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IS_NOT_NULL;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IS_NULL;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LE;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LIKE;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LT;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NE;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NOT;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.OR;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ORDER_BY;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import com.baomidou.mybatisplus.core.conditions.interfaces.Compare;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Func;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Join;
@@ -23,14 +55,6 @@ import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-
-import java.io.Serializable;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.*;
 
 
 /**
@@ -53,7 +77,6 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      */
     private static final String PLACE_HOLDER = "{%s}";
     private static final String MYBATIS_PLUS_TOKEN = "#{%s.paramNameValuePairs.%s}";
-    @SuppressWarnings("unchecked")
     protected final This typedThis = (This) this;
     /**
      * 必要度量
@@ -68,23 +91,9 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     private List<ISqlSegment> expression = new ArrayList<>();
     private boolean didOrderBy = false;
 
-    /**
-     * 判断构造条件不为空
-     */
-    public boolean isNotEmptyOfWhere() {
-        return CollectionUtils.isNotEmpty(expression);
-    }
-
-    /**
-     * 判断构造条件为空
-     */
-    public boolean isEmptyOfWhere() {
-        return CollectionUtils.isEmpty(expression);
-    }
-
     @Override
     public T getEntity() {
-        return this.entity;
+        return entity;
     }
 
     public This setEntity(T entity) {
@@ -360,7 +369,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * @return this
      */
     protected This addCondition(boolean condition, R column, SqlKeyword sqlKeyword, Object val) {
-        return doIt(condition, () -> columnToString(column), sqlKeyword, () -> this.formatSql("{0}", val));
+        return doIt(condition, () -> columnToString(column), sqlKeyword, () -> formatSql("{0}", val));
     }
 
     /**
@@ -373,7 +382,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * @return this
      */
     protected This addNestedCondition(boolean condition, String val, SqlKeyword sqlKeyword) {
-        return doIt(condition, sqlKeyword, () -> this.formatSql("({0})", val));
+        return doIt(condition, sqlKeyword, () -> formatSql("({0})", val));
     }
 
     /**
@@ -431,9 +440,9 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
         }
         if (ArrayUtils.isNotEmpty(params)) {
             for (int i = 0; i < params.length; ++i) {
-                String genParamName = MP_GENERAL_PARAMNAME + paramNameSeq.incrementAndGet();
-                sqlStr = sqlStr.replace(String.format(PLACE_HOLDER, i),
-                    String.format(MYBATIS_PLUS_TOKEN, getParamAlias(), genParamName));
+                String genParamName = AbstractWrapper.MP_GENERAL_PARAMNAME + paramNameSeq.incrementAndGet();
+                sqlStr = sqlStr.replace(String.format(AbstractWrapper.PLACE_HOLDER, i),
+                    String.format(AbstractWrapper.MYBATIS_PLUS_TOKEN, getParamAlias(), genParamName));
                 paramNameValuePairs.put(genParamName, params[i]);
             }
         }
@@ -456,8 +465,8 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * 必要的初始化
      */
     protected void initNeed() {
-        this.paramNameSeq = new AtomicInteger(0);
-        this.paramNameValuePairs = new HashMap<>();
+        paramNameSeq = new AtomicInteger(0);
+        paramNameValuePairs = new HashMap<>();
     }
 
     /**
@@ -477,7 +486,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     public String getParamAlias() {
-        return StringUtils.isEmpty(paramAlias) ? DEFAULT_PARAM_ALIAS : paramAlias;
+        return StringUtils.isEmpty(paramAlias) ? AbstractWrapper.DEFAULT_PARAM_ALIAS : paramAlias;
     }
 
     @Override
