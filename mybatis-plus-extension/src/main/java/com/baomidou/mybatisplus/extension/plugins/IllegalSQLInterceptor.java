@@ -111,7 +111,7 @@ public class IllegalSQLInterceptor implements Interceptor {
 		} else if (statement instanceof Update) {
 			Update update = (Update) statement;
 			where = update.getWhere();
-			table = (Table)update.getFromItem();
+			table = update.getTables().get(0);
 			joins = update.getJoins();
 		} else if (statement instanceof Delete) {
 			Delete delete = (Delete)statement;
