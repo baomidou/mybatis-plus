@@ -520,8 +520,9 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
 
     @Override
     public String getSqlSegment() {
-        String temp = String.join(" ", expression.stream().map(ISqlSegment::getSqlSegment).collect(Collectors.toList()));
-        if (null != temp && temp.indexOf(SqlKeyword.ORDER_BY.getSqlSegment()) == 0) {
+        String temp = String.join(" ", expression.stream().map(ISqlSegment::getSqlSegment)
+            .collect(Collectors.toList()));
+        if (temp.startsWith(SqlKeyword.ORDER_BY.getSqlSegment())) {
             return " 1=1 " + temp;
         }
         return temp;
