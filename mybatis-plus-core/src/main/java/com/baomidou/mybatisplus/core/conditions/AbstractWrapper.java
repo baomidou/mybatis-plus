@@ -36,6 +36,7 @@ import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NOT;
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.OR;
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ORDER_BY;
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -46,7 +47,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.interfaces.Compare;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Func;
@@ -520,8 +520,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
 
     @Override
     public String getSqlSegment() {
-        String temp = String.join(" ", expression.stream().map(ISqlSegment::getSqlSegment)
-            .collect(Collectors.toList()));
+        String temp = String.join(" ", expression.stream().map(ISqlSegment::getSqlSegment).collect(toList()));
         if (temp.startsWith(SqlKeyword.ORDER_BY.getSqlSegment())) {
             return " 1=1 " + temp;
         }
