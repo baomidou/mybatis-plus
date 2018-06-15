@@ -35,12 +35,14 @@ import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NE;
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NOT;
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.OR;
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ORDER_BY;
+import static java.util.stream.Collectors.joining;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -54,6 +56,7 @@ import com.baomidou.mybatisplus.core.conditions.interfaces.Nested;
 import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 
@@ -67,6 +70,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  */
 public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, This>> extends Wrapper<T>
     implements Compare<This, R>, Nested<This>, Join<This>, Func<This, R>, Serializable {
+
     /**
      * 前缀
      */
@@ -98,6 +102,21 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
 
     public This setEntity(T entity) {
         this.entity = entity;
+        return typedThis;
+    }
+
+    @Override
+    public This allEq(boolean condition, Map<R, Object> params) {
+        if (condition && ObjectUtils.isNotEmpty(params)) {
+            Iterator iterator = params.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<R, Object> entry = (Map.Entry<R, Object>) iterator.next();
+                Object value = entry.getValue();
+                if (StringUtils.checkValNotNull(value)) {
+                    and().eq(entry.getKey(), value);
+                }
+            }
+        }
         return typedThis;
     }
 
@@ -329,17 +348,36 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     @Override
-    public This groupBy(boolean condition, R column) {
-        return doIt(condition, GROUP_BY, () -> columnToString(column));
+    public This groupBy(boolean condition, R... columns) {
+        if (ArrayUtils.isEmpty(columns)) {
+            return typedThis;
+        }
+        return doIt(condition, GROUP_BY, () -> columnsToString(columns));
     }
 
     @Override
-    public This orderBy(boolean condition, R column, boolean isAsc) {
+    public This orderBy(boolean condition, boolean isAsc, R... columns) {
+        if (ArrayUtils.isEmpty(columns)) {
+            return typedThis;
+        }
         if (condition && !didOrderBy) {
             didOrderBy = true;
-            return doIt(true, ORDER_BY, () -> columnToString(column), isAsc ? ASC : DESC);
+            return doIt(true, ORDER_BY, () -> columnsToString(columns), isAsc ? ASC : DESC);
         }
-        return doIt(condition, () -> ",", () -> columnToString(column), isAsc ? ASC : DESC);
+        return doIt(condition, () -> ",", () -> columnsToString(columns), isAsc ? ASC : DESC);
+    }
+
+    /**
+     * <p>
+     * 多字段转换为逗号 "," 分割字符串
+     * </p>
+     *
+     * @param columns 多字段
+     * @return
+     */
+    protected String columnsToString(R... columns) {
+        return Arrays.stream(columns).map(c -> columnsToString(columns))
+            .collect(joining(","));
     }
 
     /**
@@ -458,7 +496,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      */
     private ISqlSegment inExpression(Collection<?> value) {
         return () -> value.stream().map(i -> formatSql("{0}", i))
-            .collect(Collectors.joining(",", "(", ")"));
+            .collect(joining(",", "(", ")"));
     }
 
     /**

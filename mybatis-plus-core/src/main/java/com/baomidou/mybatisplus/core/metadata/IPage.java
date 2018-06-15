@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core.metadata;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -51,6 +52,17 @@ public interface IPage<T> {
 
     /**
      * <p>
+     * KEY/VALUE 条件
+     * </p>
+     *
+     * @return
+     */
+    default Map<Object, Object> condition() {
+        return null;
+    }
+
+    /**
+     * <p>
      * 自动优化 COUNT SQL
      * </p>
      *
@@ -68,7 +80,7 @@ public interface IPage<T> {
      * @return
      */
     default long offset() {
-        return this.getCurrent() > 0 ? (this.getCurrent() - 1) * this.getSize() : 0;
+        return getCurrent() > 0 ? (getCurrent() - 1) * getSize() : 0;
     }
 
     /**
@@ -79,11 +91,11 @@ public interface IPage<T> {
      * @return
      */
     default long getPages() {
-        if (this.getSize() == 0) {
+        if (getSize() == 0) {
             return 0L;
         }
-        long pages = this.getTotal() / this.getSize();
-        if (this.getTotal() % this.getSize() != 0) {
+        long pages = getTotal() / getSize();
+        if (getTotal() % getSize() != 0) {
             pages++;
         }
         return pages;

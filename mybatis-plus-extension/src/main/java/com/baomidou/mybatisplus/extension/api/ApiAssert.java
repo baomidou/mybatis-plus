@@ -19,8 +19,8 @@ import java.util.Collection;
 import java.util.Map;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.extension.exceptions.ApiException;
-import com.baomidou.mybatisplus.extension.toolkit.ObjectUtils;
 
 /**
  * <p>
@@ -42,7 +42,7 @@ public class ApiAssert {
      */
     public static void gtZero(Integer num, IErrorCode errorCode) {
         if (num == null || num <= 0) {
-            fail(errorCode);
+            ApiAssert.fail(errorCode);
         }
     }
 
@@ -51,7 +51,7 @@ public class ApiAssert {
      */
     public static void geZero(Integer num, IErrorCode errorCode) {
         if (num == null || num < 0) {
-            fail(errorCode);
+            ApiAssert.fail(errorCode);
         }
     }
 
@@ -60,7 +60,7 @@ public class ApiAssert {
      */
     public static void gt(Integer num1, Integer num2, IErrorCode errorCode) {
         if (num1 <= num2) {
-            fail(errorCode);
+            ApiAssert.fail(errorCode);
         }
     }
 
@@ -69,7 +69,7 @@ public class ApiAssert {
      */
     public static void ge(Integer num1, Integer num2, IErrorCode errorCode) {
         if (num1 < num2) {
-            fail(errorCode);
+            ApiAssert.fail(errorCode);
         }
     }
 
@@ -78,31 +78,31 @@ public class ApiAssert {
      */
     public static void eq(Object obj1, Object obj2, IErrorCode errorCode) {
         if (!obj1.equals(obj2)) {
-            fail(errorCode);
+            ApiAssert.fail(errorCode);
         }
     }
 
     public static void isTrue(boolean condition, IErrorCode errorCode) {
         if (!condition) {
-            fail(errorCode);
+            ApiAssert.fail(errorCode);
         }
     }
 
     public static void isFalse(boolean condition, IErrorCode errorCode) {
         if (condition) {
-            fail(errorCode);
+            ApiAssert.fail(errorCode);
         }
     }
 
     public static void isNull(IErrorCode errorCode, Object... conditions) {
         if (ObjectUtils.isNotNull(conditions)) {
-            fail(errorCode);
+            ApiAssert.fail(errorCode);
         }
     }
 
     public static void notNull(IErrorCode errorCode, Object... conditions) {
         if (ObjectUtils.isNull(conditions)) {
-            fail(errorCode);
+            ApiAssert.fail(errorCode);
         }
     }
 
@@ -119,7 +119,7 @@ public class ApiAssert {
 
     public static void fail(boolean condition, IErrorCode errorCode) {
         if (condition) {
-            fail(errorCode);
+            ApiAssert.fail(errorCode);
         }
     }
 
@@ -129,13 +129,13 @@ public class ApiAssert {
 
     public static void fail(boolean condition, String message) {
         if (condition) {
-            fail(message);
+            ApiAssert.fail(message);
         }
     }
 
     public static void notEmpty(Object[] array, IErrorCode errorCode) {
         if (ObjectUtils.isEmpty(array)) {
-            fail(errorCode);
+            ApiAssert.fail(errorCode);
         }
     }
 
@@ -143,7 +143,7 @@ public class ApiAssert {
         if (array != null) {
             for (Object element : array) {
                 if (element == null) {
-                    fail(errorCode);
+                    ApiAssert.fail(errorCode);
                 }
             }
         }
@@ -151,27 +151,27 @@ public class ApiAssert {
 
     public static void notEmpty(Collection<?> collection, IErrorCode errorCode) {
         if (CollectionUtils.isNotEmpty(collection)) {
-            fail(errorCode);
+            ApiAssert.fail(errorCode);
         }
     }
 
     public static void notEmpty(Map<?, ?> map, IErrorCode errorCode) {
         if (ObjectUtils.isEmpty(map)) {
-            fail(errorCode);
+            ApiAssert.fail(errorCode);
         }
     }
 
     public static void isInstanceOf(Class<?> type, Object obj, IErrorCode errorCode) {
-        notNull(errorCode, type);
+        ApiAssert.notNull(errorCode, type);
         if (!type.isInstance(obj)) {
-            fail(errorCode);
+            ApiAssert.fail(errorCode);
         }
     }
 
     public static void isAssignable(Class<?> superType, Class<?> subType, IErrorCode errorCode) {
-        notNull(errorCode, superType);
+        ApiAssert.notNull(errorCode, superType);
         if (subType == null || !superType.isAssignableFrom(subType)) {
-            fail(errorCode);
+            ApiAssert.fail(errorCode);
         }
     }
 

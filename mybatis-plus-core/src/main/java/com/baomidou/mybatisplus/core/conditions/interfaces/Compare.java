@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core.conditions.interfaces;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * <p>
@@ -27,6 +28,13 @@ import java.io.Serializable;
  * @since 2017-05-26
  */
 public interface Compare<This, R> extends Serializable {
+
+
+    default This allEq(Map<R, Object> params) {
+        return allEq(true, params);
+    }
+
+    This allEq(boolean condition, Map<R, Object> params);
 
     /**
      * 等于 =

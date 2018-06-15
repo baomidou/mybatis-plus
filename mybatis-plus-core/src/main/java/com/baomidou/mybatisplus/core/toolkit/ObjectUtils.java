@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.extension.toolkit;
+package com.baomidou.mybatisplus.core.toolkit;
 
 import java.lang.reflect.Array;
 import java.util.Collection;
@@ -20,7 +20,7 @@ public class ObjectUtils {
      */
     public static boolean isNull(Object... objs) {
         for (Object obj : objs) {
-            if (isEmpty(obj)) {
+            if (ObjectUtils.isEmpty(obj)) {
                 return true;
             }
         }
@@ -32,14 +32,14 @@ public class ObjectUtils {
      * 判断object是否不为空,集合会校验size
      */
     public static boolean isNotNull(Object... obj) {
-        return !isNull(obj);
+        return !ObjectUtils.isNull(obj);
     }
 
     /**
      * 对象非空判断
      */
     public static boolean isNotEmpty(Object obj) {
-        return !isEmpty(obj);
+        return !ObjectUtils.isEmpty(obj);
     }
 
     /**

@@ -31,6 +31,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 
 /**
@@ -58,7 +59,7 @@ public class SqlHelper {
      * @return SqlSession
      */
     public static SqlSession sqlSession(Class<?> clazz) {
-        return sqlSession(clazz, true);
+        return SqlHelper.sqlSession(clazz, true);
     }
 
     /**
@@ -103,7 +104,7 @@ public class SqlHelper {
      * @return SqlSession
      */
     public static SqlSession sqlSession(Class<?> clazz, boolean autoCommit) {
-        SqlSession sqlSession = getSqlSession(clazz);
+        SqlSession sqlSession = SqlHelper.getSqlSession(clazz);
         return (sqlSession != null) ? sqlSession : GlobalConfigUtils.currentSessionFactory(clazz).openSession(autoCommit);
     }
 
@@ -172,7 +173,7 @@ public class SqlHelper {
         if (CollectionUtils.isNotEmpty(list)) {
             int size = list.size();
             if (size > 1) {
-                logger.warn(String.format("Warn: execute Method There are  %s results.", size));
+                SqlHelper.logger.warn(String.format("Warn: execute Method There are  %s results.", size));
             }
             return list.get(0);
         }
@@ -192,42 +193,16 @@ public class SqlHelper {
             return wrapper;
         }
         // wrapper 不存创建一个 Condition
-        if (isEmptyOfWrapper(wrapper)) {
-            wrapper = new QueryWrapper<>();
+        QueryWrapper qw = new QueryWrapper<>();
+        // 排序
+        if (CollectionUtils.isNotEmpty(page.ascs())) {
+            qw.orderByAsc(page.ascs());
+            qw.orderByDesc(page.descs());
         }
-        // 排序 fixed gitee issues/IHF7N
-//        if (page.isOpenSort() && page.isSearchCount()) {
-//            wrapper.orderAsc(page.getAscs());
-//            wrapper.orderDesc(page.getDescs());
-//        }
-//        // MAP 参数查询
-//        if (MapUtils.isNotEmpty(page.getCondition())) {
-//            wrapper.allEq(page.getCondition());
-//        }
-        return wrapper;
-    }
-
-    /**
-     * <p>
-     * 判断Wrapper为空
-     * </p>
-     *
-     * @param wrapper SQL包装对象
-     * @return
-     */
-    public static boolean isEmptyOfWrapper(Wrapper<?> wrapper) {
-        return null == wrapper;// || wrapper.isEmpty();
-    }
-
-    /**
-     * <p>
-     * 判断Wrapper不为空
-     * </p>
-     *
-     * @param wrapper SQL包装对象
-     * @return
-     */
-    public static boolean isNotEmptyOfWrapper(Wrapper<?> wrapper) {
-        return !isEmptyOfWrapper(wrapper);
+        // MAP 参数查询
+        if (ObjectUtils.isNotEmpty(page.condition())) {
+            qw.allEq(page.condition());
+        }
+        return qw;
     }
 }

@@ -111,42 +111,72 @@ public interface Func<This, R> extends Serializable {
     }
 
     /**
+     * <p>
      * 分组：GROUP BY 字段, ...
+     * </p>
+     *
+     * @param columns 分组字段【可多个】
+     * @return
      */
-    default This groupBy(R column) {
-        return groupBy(true, column);
+    default This groupBy(R... columns) {
+        return groupBy(true, columns);
     }
 
     /**
+     * <p>
      * 分组：GROUP BY 字段, ...
+     * </p>
+     *
+     * @param condition 执行条件
+     * @param columns   分组字段【可多个】
+     * @return
      */
-    This groupBy(boolean condition, R column);
+    This groupBy(boolean condition, R... columns);
 
     /**
-     * 排序：ORDER BY 字段, ...
+     * <p>
+     * 排序：ORDER BY 字段, ... ASC
+     * </p>
+     *
+     * @param condition 执行条件
+     * @param columns   排序字段【可多个】
+     * @return
      */
-    default This orderBy(R column) {
-        return orderBy(true, column);
+    default This orderByAsc(boolean condition, R... columns) {
+        return orderBy(condition, true, columns);
+    }
+
+    /**
+     * <p>
+     * 排序：ORDER BY 字段, ... DESC
+     * </p>
+     *
+     * @param condition 执行条件
+     * @param columns   排序字段【可多个】
+     * @return
+     */
+    default This orderByDesc(boolean condition, R... columns) {
+        return orderBy(condition, false, columns);
     }
 
     /**
      * 排序：ORDER BY 字段, ...
      */
-    default This orderBy(boolean condition, R column) {
-        return orderBy(condition, column, true);
+    default This orderByAsc(R... columns) {
+        return orderBy(true, true, columns);
     }
 
     /**
      * 排序：ORDER BY 字段, ...
      */
-    default This orderBy(R column, boolean isAsc) {
-        return orderBy(true, column, isAsc);
+    default This orderByDesc(R... columns) {
+        return orderBy(true, false, columns);
     }
 
     /**
      * 排序：ORDER BY 字段, ...
      */
-    This orderBy(boolean condition, R column, boolean isAsc);
+    This orderBy(boolean condition, boolean isAsc, R... columns);
 
     /**
      * HAVING ( sql 语句 )

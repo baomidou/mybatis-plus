@@ -403,8 +403,8 @@ public abstract class AbstractMethod {
      */
     protected String sqlWhereEntityWrapper(TableInfo table) {
         StringBuilder where = new StringBuilder(128);
-        where.append("<where>");
         where.append("<if test=\"ew!=null\">");
+        where.append("<trim prefix=\"WHERE\" prefixOverrides=\"AND|OR\">");
         where.append("<if test=\"ew.entity!=null\">");
         if (StringUtils.isNotEmpty(table.getKeyProperty())) {
             where.append("<if test=\"ew.entity.").append(table.getKeyProperty()).append("!=null\">");
@@ -420,8 +420,8 @@ public abstract class AbstractMethod {
         }
         where.append("</if>");
         where.append("<if test=\"ew.sqlSegment!=null\"> AND ${ew.sqlSegment}</if>");
+        where.append("</trim>");
         where.append("</if>");
-        where.append("</where>");
         return where.toString();
     }
 
