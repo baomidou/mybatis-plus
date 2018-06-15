@@ -376,8 +376,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * @return
      */
     protected String columnsToString(R... columns) {
-        return Arrays.stream(columns).map(c -> columnsToString(columns))
-            .collect(joining(","));
+        return Arrays.stream(columns).map(this::columnToString).collect(joining(","));
     }
 
     /**
