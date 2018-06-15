@@ -66,7 +66,7 @@ public class GlobalConfig {
     /**
      * 开启 ActiveRecord 模式
      */
-    private boolean activeRecord = true;
+    private boolean activeRecord = false;
 
     /**
      * 开启 BaseResultMap
