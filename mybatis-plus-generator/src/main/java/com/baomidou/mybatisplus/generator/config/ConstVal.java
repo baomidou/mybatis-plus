@@ -60,9 +60,9 @@ public class ConstVal {
     public static final String VM_LOADPATH_KEY = "file.resource.loader.class";
     public static final String VM_LOADPATH_VALUE = "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader";
 
-    public static final String SUPERD_MAPPER_CLASS = "com.baomidou.mybatisplus.mapper.BaseMapper";
-    public static final String SUPERD_SERVICE_CLASS = "com.baomidou.mybatisplus.service.IService";
-    public static final String SUPERD_SERVICEIMPL_CLASS = "com.baomidou.mybatisplus.service.impl.ServiceImpl";
+    public static final String SUPERD_MAPPER_CLASS = "com.baomidou.mybatisplus.core.mapper.BaseMapper";
+    public static final String SUPERD_SERVICE_CLASS = "com.baomidou.mybatisplus.extension.service.IService";
+    public static final String SUPERD_SERVICEIMPL_CLASS = "com.baomidou.mybatisplus.extension.service.impl.ServiceImpl";
 
     /**
      * 输出相关常量
