@@ -66,6 +66,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  * @author hubin miemie HCL
  * @since 2017-05-26
  */
+@SuppressWarnings("unchecked,serial")
 public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, This>> extends Wrapper<T>
     implements Compare<This, R>, Nested<This>, Join<This>, Func<This, R>, Serializable {
 
@@ -350,7 +351,6 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
         return doIt(condition, GROUP_BY, () -> columnsToString(columns));
     }
 
-    @SuppressWarnings("all")
     @Override
     public This orderBy(boolean condition, boolean isAsc, R... columns) {
         if (ArrayUtils.isEmpty(columns)) {
@@ -369,9 +369,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * </p>
      *
      * @param columns 多字段
-     * @return
      */
-    @SuppressWarnings("all")
     protected String columnsToString(R... columns) {
         return Arrays.stream(columns).map(this::columnToString).collect(joining(","));
     }
@@ -400,7 +398,6 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * @param column     属性
      * @param sqlKeyword SQL 关键词
      * @param val        条件值
-     * @return this
      */
     protected This addCondition(boolean condition, R column, SqlKeyword sqlKeyword, Object val) {
         return doIt(condition, () -> columnToString(column), sqlKeyword, () -> formatSql("{0}", val));
@@ -413,7 +410,6 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      *
      * @param val        查询条件值
      * @param sqlKeyword SQL 关键词
-     * @return this
      */
     protected This addNestedCondition(boolean condition, String val, SqlKeyword sqlKeyword) {
         return doIt(condition, sqlKeyword, () -> formatSql("({0})", val));
@@ -425,7 +421,6 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * </p>
      *
      * @param condition 查询条件值
-     * @return this
      */
     protected This addNestedCondition(boolean condition, Function<This, This> func) {
         return doIt(condition, () -> "(",
