@@ -171,32 +171,13 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean insertOrUpdateBatch(List<T> entityList, int batchSize) {
-        return insertOrUpdateBatch(entityList, batchSize, true);
-    }
-
-    /**
-     * 批量插入修改
-     *
-     * @param entityList 实体对象列表
-     * @param batchSize  批量刷新个数
-     * @param selective  是否滤掉空字段
-     * @return boolean
-     */
-    private boolean insertOrUpdateBatch(List<T> entityList, int batchSize, boolean selective) {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
         try (SqlSession batchSqlSession = sqlSessionBatch()) {
             int size = entityList.size();
             for (int i = 0; i < size; i++) {
-                if (selective) {
-                    insertOrUpdate(entityList.get(i));
-                } else {
-                    //insertOrUpdateAllColumn(entityList.get(i));
-                }
-                if (i >= 1 && i % batchSize == 0) {
-                    batchSqlSession.flushStatements();
-                }
+                insertOrUpdate(entityList.get(i));
             }
             batchSqlSession.flushStatements();
         } catch (Throwable e) {
@@ -315,10 +296,9 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     @Override
-    public IPage<T> selectPage(IPage<T> page) {
-        //TODO 3.0
-
-        return null;//selectPage(page, Wrapper.<T>getInstance());
+    public IPage<T> selectPage(IPage<T> page, Wrapper<T> wrapper) {
+        wrapper = (Wrapper<T>) SqlHelper.fillWrapper(page, wrapper);
+        return baseMapper.selectPage(page, wrapper);
     }
 
     @Override
@@ -335,11 +315,5 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     public IPage<Map<String, Object>> selectMapsPage(IPage page, Wrapper<T> wrapper) {
         wrapper = (Wrapper<T>) SqlHelper.fillWrapper(page, wrapper);
         return baseMapper.selectMapsPage(page, wrapper);
-    }
-
-    @Override
-    public IPage<T> selectPage(IPage<T> page, Wrapper<T> wrapper) {
-        wrapper = (Wrapper<T>) SqlHelper.fillWrapper(page, wrapper);
-        return baseMapper.selectPage(page, wrapper);
     }
 }

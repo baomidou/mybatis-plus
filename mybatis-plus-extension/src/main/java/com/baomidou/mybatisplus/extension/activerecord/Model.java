@@ -97,7 +97,7 @@ public abstract class Model<T extends Model> implements Serializable {
         if (StringUtils.checkValNull(pkVal())) {
             throw new MybatisPlusException("deleteById primaryKey is null.");
         }
-        return deleteById(this.pkVal());
+        return deleteById(pkVal());
     }
 
     /**
@@ -126,7 +126,7 @@ public abstract class Model<T extends Model> implements Serializable {
             throw new MybatisPlusException("updateById primaryKey is null.");
         }
         // updateById
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(1);
         map.put("et", this);
         return SqlHelper.retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE_BY_ID), map));
     }
@@ -141,7 +141,7 @@ public abstract class Model<T extends Model> implements Serializable {
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean update(Wrapper wrapper) {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(2);
         map.put("et", this);
         map.put("ew", wrapper);
         // update
@@ -182,7 +182,7 @@ public abstract class Model<T extends Model> implements Serializable {
         if (StringUtils.checkValNull(pkVal())) {
             throw new MybatisPlusException("selectById primaryKey is null.");
         }
-        return selectById(this.pkVal());
+        return selectById(pkVal());
     }
 
     /**
@@ -195,7 +195,7 @@ public abstract class Model<T extends Model> implements Serializable {
      */
 
     public List<T> selectList(Wrapper wrapper) {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(1);
         map.put("ew", wrapper);
         return sqlSession().selectList(sqlStatement(SqlMethod.SELECT_LIST), map);
     }
@@ -222,12 +222,9 @@ public abstract class Model<T extends Model> implements Serializable {
      * @return
      */
     public IPage<T> selectPage(IPage<T> page, Wrapper<T> wrapper) {
-        Map<String, Object> map = new HashMap<>();
-        wrapper = (Wrapper<T>) SqlHelper.fillWrapper(page, wrapper);
-        map.put("ew", wrapper);
-        // TODO 待完成
-//        List<T> tl = sqlSession().selectList(sqlStatement(SqlMethod.SELECT_PAGE), map, page);
-//        page.setRecords(tl);
+        Map<String, Object> map = new HashMap<>(1);
+        map.put("ew", SqlHelper.fillWrapper(page, wrapper));
+        page.setRecords(sqlSession().selectList(sqlStatement(SqlMethod.SELECT_PAGE), map));
         return page;
     }
 
@@ -240,7 +237,7 @@ public abstract class Model<T extends Model> implements Serializable {
      * @return
      */
     public int selectCount(Wrapper wrapper) {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(1);
         map.put("ew", wrapper);
         return SqlHelper.retCount(sqlSession().<Integer>selectOne(sqlStatement(SqlMethod.SELECT_COUNT), map));
     }

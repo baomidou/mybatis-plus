@@ -262,10 +262,11 @@ public interface IService<T> {
      * 翻页查询
      * </p>
      *
-     * @param page 翻页对象
+     * @param page    翻页对象
+     * @param wrapper 实体包装类 {@link Wrapper}
      * @return
      */
-    IPage<T> selectPage(IPage<T> page);
+    IPage<T> selectPage(IPage<T> page, Wrapper<T> wrapper);
 
     /**
      * <p>
@@ -296,18 +297,6 @@ public interface IService<T> {
      * @param wrapper {@link Wrapper}
      * @return
      */
-    @SuppressWarnings("rawtypes")
     IPage<Map<String, Object>> selectMapsPage(IPage page, Wrapper<T> wrapper);
-
-    /**
-     * <p>
-     * 翻页查询
-     * </p>
-     *
-     * @param page    翻页对象
-     * @param wrapper 实体包装类 {@link Wrapper}
-     * @return
-     */
-    IPage<T> selectPage(IPage<T> page, Wrapper<T> wrapper);
 
 }
