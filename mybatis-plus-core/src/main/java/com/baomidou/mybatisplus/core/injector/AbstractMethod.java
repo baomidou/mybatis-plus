@@ -403,7 +403,7 @@ public abstract class AbstractMethod {
      */
     protected String sqlWhereEntityWrapper(TableInfo table) {
         StringBuilder where = new StringBuilder(128);
-        where.append("<if test=\"ew!=null\">");
+        where.append("<if test=\"ew!=null and !ew.emptyOfWhere\">");
         where.append("<trim prefix=\"WHERE\" prefixOverrides=\"AND|OR\">");
         where.append("<if test=\"ew.entity!=null\">");
         if (StringUtils.isNotEmpty(table.getKeyProperty())) {

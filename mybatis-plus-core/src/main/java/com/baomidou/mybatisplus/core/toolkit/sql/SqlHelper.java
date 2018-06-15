@@ -189,20 +189,18 @@ public class SqlHelper {
      * @param wrapper SQL包装对象
      */
     public static Wrapper<?> fillWrapper(IPage<?> page, Wrapper<?> wrapper) {
-        if (null == page) {
+        if (null == page || (CollectionUtils.isEmpty(page.ascs())
+            && CollectionUtils.isEmpty(page.ascs())
+            && ObjectUtils.isEmpty(page.condition()))) {
             return wrapper;
         }
         // wrapper 不存创建一个 Condition
         QueryWrapper qw = new QueryWrapper<>();
         // 排序
-        if (CollectionUtils.isNotEmpty(page.ascs())) {
-            qw.orderByAsc(page.ascs());
-            qw.orderByDesc(page.descs());
-        }
+        qw.orderByAsc(page.ascs());
+        qw.orderByDesc(page.descs());
         // MAP 参数查询
-        if (ObjectUtils.isNotEmpty(page.condition())) {
-            qw.allEq(page.condition());
-        }
+        qw.allEq(page.condition());
         return qw;
     }
 }

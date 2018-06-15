@@ -124,6 +124,8 @@ public class H2UserMapperTest extends BaseTest {
             System.out.println(h2UserPage.getTotal());
             System.out.println(h2UserPage.getSize());
         }
+        Assert.assertTrue(null != userMapper.selectPage(new Pagination<>(1, 10),
+            new QueryWrapper<H2User>().orderByAsc("name")));
 
         // 查询结果集
         List<Map<String, Object>> mapList = userMapper.selectMaps(new QueryWrapper<H2User>().lambda().eq(H2User::getName, NQQ));

@@ -504,7 +504,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      */
     protected void initNeed() {
         paramNameSeq = new AtomicInteger(0);
-        paramNameValuePairs = new HashMap<>();
+        paramNameValuePairs = new HashMap<>(16);
     }
 
     /**
@@ -529,9 +529,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
 
     @Override
     public String getSqlSegment() {
-        return String.join(" ", expression.stream()
-            .map(ISqlSegment::getSqlSegment)
-            .collect(Collectors.toList()));
+        return String.join(" ", expression.stream().map(ISqlSegment::getSqlSegment).collect(Collectors.toList()));
     }
 
     public Map<String, Object> getParamNameValuePairs() {

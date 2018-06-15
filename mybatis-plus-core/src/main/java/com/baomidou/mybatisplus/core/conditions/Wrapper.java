@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.core.conditions;
 import java.io.Serializable;
 
 import com.baomidou.mybatisplus.core.toolkit.SerializationUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 /**
  * <p>
@@ -50,6 +51,13 @@ public abstract class Wrapper<T> implements ISqlSegment, Serializable {
      */
     public String getSqlSet() {
         return null;
+    }
+
+    /**
+     * 查询条件为空
+     */
+    public boolean isEmptyOfWhere() {
+        return StringUtils.isEmpty(getSqlSegment()) && null == getEntity();
     }
 
     @Override
