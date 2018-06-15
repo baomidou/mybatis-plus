@@ -51,7 +51,7 @@ public class GlobalConfig {
     /**
      * 是否在xml中添加二级缓存配置
      */
-    private boolean enableCache = true;
+    private boolean enableCache = false;
 
     /**
      * 开发人员
