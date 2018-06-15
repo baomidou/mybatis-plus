@@ -355,6 +355,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
         return doIt(condition, GROUP_BY, () -> columnsToString(columns));
     }
 
+    @SuppressWarnings("all")
     @Override
     public This orderBy(boolean condition, boolean isAsc, R... columns) {
         if (ArrayUtils.isEmpty(columns)) {
@@ -375,6 +376,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * @param columns 多字段
      * @return
      */
+    @SuppressWarnings("all")
     protected String columnsToString(R... columns) {
         return Arrays.stream(columns).map(this::columnToString).collect(joining(","));
     }

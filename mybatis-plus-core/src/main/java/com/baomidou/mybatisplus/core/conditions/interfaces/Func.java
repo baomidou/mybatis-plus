@@ -118,6 +118,7 @@ public interface Func<This, R> extends Serializable {
      * @param columns 分组字段【可多个】
      * @return
      */
+    @SuppressWarnings("all")
     default This groupBy(R... columns) {
         return groupBy(true, columns);
     }
@@ -131,7 +132,16 @@ public interface Func<This, R> extends Serializable {
      * @param columns   分组字段【可多个】
      * @return
      */
+    @SuppressWarnings("all")
     This groupBy(boolean condition, R... columns);
+
+    /**
+     * 排序：ORDER BY 字段, ...
+     */
+    @SuppressWarnings("all")
+    default This orderByAsc(R... columns) {
+        return orderByAsc(true, columns);
+    }
 
     /**
      * <p>
@@ -142,8 +152,17 @@ public interface Func<This, R> extends Serializable {
      * @param columns   排序字段【可多个】
      * @return
      */
+    @SuppressWarnings("all")
     default This orderByAsc(boolean condition, R... columns) {
         return orderBy(condition, true, columns);
+    }
+
+    /**
+     * 排序：ORDER BY 字段, ...
+     */
+    @SuppressWarnings("all")
+    default This orderByDesc(R... columns) {
+        return orderByDesc(true, columns);
     }
 
     /**
@@ -155,6 +174,7 @@ public interface Func<This, R> extends Serializable {
      * @param columns   排序字段【可多个】
      * @return
      */
+    @SuppressWarnings("all")
     default This orderByDesc(boolean condition, R... columns) {
         return orderBy(condition, false, columns);
     }
@@ -162,20 +182,7 @@ public interface Func<This, R> extends Serializable {
     /**
      * 排序：ORDER BY 字段, ...
      */
-    default This orderByAsc(R... columns) {
-        return orderBy(true, true, columns);
-    }
-
-    /**
-     * 排序：ORDER BY 字段, ...
-     */
-    default This orderByDesc(R... columns) {
-        return orderBy(true, false, columns);
-    }
-
-    /**
-     * 排序：ORDER BY 字段, ...
-     */
+    @SuppressWarnings("all")
     This orderBy(boolean condition, boolean isAsc, R... columns);
 
     /**
