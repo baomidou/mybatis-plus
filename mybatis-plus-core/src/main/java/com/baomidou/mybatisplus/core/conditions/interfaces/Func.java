@@ -117,7 +117,6 @@ public interface Func<This, R> extends Serializable {
      * </p>
      *
      * @param columns 分组字段【可多个】
-     * @return
      */
     default This groupBy(R... columns) {
         return groupBy(true, columns);
@@ -130,7 +129,6 @@ public interface Func<This, R> extends Serializable {
      *
      * @param condition 执行条件
      * @param columns   分组字段【可多个】
-     * @return
      */
     This groupBy(boolean condition, R... columns);
 
@@ -148,7 +146,6 @@ public interface Func<This, R> extends Serializable {
      *
      * @param condition 执行条件
      * @param columns   排序字段【可多个】
-     * @return
      */
     default This orderByAsc(boolean condition, R... columns) {
         return orderBy(condition, true, columns);
@@ -168,7 +165,6 @@ public interface Func<This, R> extends Serializable {
      *
      * @param condition 执行条件
      * @param columns   排序字段【可多个】
-     * @return
      */
     default This orderByDesc(boolean condition, R... columns) {
         return orderBy(condition, false, columns);
