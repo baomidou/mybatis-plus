@@ -30,10 +30,16 @@ import java.util.Map;
 public interface Compare<This, R> extends Serializable {
 
 
+    /**
+     * map 所有非空属性等于 =
+     */
     default This allEq(Map<R, Object> params) {
         return allEq(true, params);
     }
 
+    /**
+     * map 所有非空属性等于 =
+     */
     This allEq(boolean condition, Map<R, Object> params);
 
     /**
