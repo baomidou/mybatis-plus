@@ -42,7 +42,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -56,7 +55,6 @@ import com.baomidou.mybatisplus.core.conditions.interfaces.Nested;
 import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 
@@ -107,15 +105,12 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
 
     @Override
     public This allEq(boolean condition, Map<R, Object> params) {
-        if (condition && ObjectUtils.isNotEmpty(params)) {
-            Iterator iterator = params.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry<R, Object> entry = (Map.Entry<R, Object>) iterator.next();
-                Object value = entry.getValue();
-                if (StringUtils.checkValNotNull(value)) {
-                    and().eq(entry.getKey(), value);
+        if (condition && CollectionUtils.isNotEmpty(params)) {
+            params.forEach((k, v) -> {
+                if (StringUtils.checkValNotNull(v)) {
+                    and().eq(k, v);
                 }
-            }
+            });
         }
         return typedThis;
     }
