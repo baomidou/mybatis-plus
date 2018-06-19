@@ -15,12 +15,8 @@
  */
 package com.baomidou.mybatisplus.extension.api;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * <p>
@@ -32,12 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class ApiController {
 
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @Autowired
-    protected HttpServletRequest request;
-    @Autowired
-    protected HttpServletResponse response;
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 
     /**

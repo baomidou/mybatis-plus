@@ -21,7 +21,7 @@ ext {
         "spring-web"            : "org.springframework:spring-web:${springVersion}",
         "cglib"                 : "cglib:cglib:3.2.6",
 
-        "javax.servlet-api"     : "javax.servlet:javax.servlet-api:3.1.0",
+        "javax.servlet-api"     : "javax.servlet:javax.servlet-api:4.0.1",
         "aspectjweaver"         : "org.aspectj:aspectjweaver:1.8.9",
         "mockito"               : "org.mockito:mockito-core:2.13.0",
         "mybatis-ehcache"       : "org.mybatis.caches:mybatis-ehcache:1.1.0",
