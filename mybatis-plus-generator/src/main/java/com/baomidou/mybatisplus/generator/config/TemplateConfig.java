@@ -29,7 +29,7 @@ public class TemplateConfig {
 
     private String service = ConstVal.TEMPLATE_SERVICE;
 
-    private String serviceImpl = ConstVal.TEMPLATE_SERVICEIMPL;
+    private String serviceImpl = ConstVal.TEMPLATE_SERVICE_IMPL;
 
     private String mapper = ConstVal.TEMPLATE_MAPPER;
 

@@ -79,17 +79,17 @@ public class StrategyConfig {
     /**
      * 自定义继承的Mapper类全称，带包名
      */
-    private String superMapperClass = ConstVal.SUPERD_MAPPER_CLASS;
+    private String superMapperClass = ConstVal.SUPER_MAPPER_CLASS;
 
     /**
      * 自定义继承的Service类全称，带包名
      */
-    private String superServiceClass = ConstVal.SUPERD_SERVICE_CLASS;
+    private String superServiceClass = ConstVal.SUPER_SERVICE_CLASS;
 
     /**
      * 自定义继承的ServiceImpl类全称，带包名
      */
-    private String superServiceImplClass = ConstVal.SUPERD_SERVICEIMPL_CLASS;
+    private String superServiceImplClass = ConstVal.SUPER_SERVICE_IMPL_CLASS;
 
     /**
      * 自定义继承的Controller类全称，带包名
@@ -447,7 +447,7 @@ public class StrategyConfig {
     }
 
     public StrategyConfig entityTableFieldAnnotationEnable(boolean isEnableAnnotation) {
-        this.entityTableFieldAnnotationEnable = isEnableAnnotation;
+        entityTableFieldAnnotationEnable = isEnableAnnotation;
         return this;
     }
 

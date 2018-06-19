@@ -18,55 +18,50 @@ package com.baomidou.mybatisplus.generator.config;
 import java.nio.charset.Charset;
 
 /**
+ * <p>
  * 定义常量
+ * </p>
  *
- * @author YangHu, tangguo
- * @since 2016/8/31
+ * @author YangHu, tangguo, hubin
+ * @since 2016-08-31
  */
-public class ConstVal {
+public interface ConstVal {
 
-    public static final String MODULENAME = "ModuleName";
+    String ENTITY = "Entity";
+    String SERVICE = "Service";
+    String SERVICE_IMPL = "ServiceImpl";
+    String MAPPER = "Mapper";
+    String XML = "Xml";
+    String CONTROLLER = "Controller";
 
-    public static final String ENTITY = "Entity";
-    public static final String SERVICE = "Service";
-    public static final String SERVICEIMPL = "ServiceImpl";
-    public static final String MAPPER = "Mapper";
-    public static final String XML = "Xml";
-    public static final String CONTROLLER = "Controller";
+    String ENTITY_PATH = "entity_path";
+    String SERVICE_PATH = "service_path";
+    String SERVICE_IMPL_PATH = "service_impl_path";
+    String MAPPER_PATH = "mapper_path";
+    String XML_PATH = "xml_path";
+    String CONTROLLER_PATH = "controller_path";
 
-    public static final String ENTITY_PATH = "entity_path";
-    public static final String SERVICE_PATH = "service_path";
-    public static final String SERVICEIMPL_PATH = "serviceimpl_path";
-    public static final String MAPPER_PATH = "mapper_path";
-    public static final String XML_PATH = "xml_path";
-    public static final String CONTROLLER_PATH = "controller_path";
+    String JAVA_TMPDIR = "java.io.tmpdir";
+    String UTF8 = Charset.forName("UTF-8").name();
+    String UNDERLINE = "_";
 
-    public static final String JAVA_TMPDIR = "java.io.tmpdir";
-    public static final String UTF8 = Charset.forName("UTF-8").name();
-    public static final String UNDERLINE = "_";
+    String JAVA_SUFFIX = ".java";
+    String KT_SUFFIX = ".kt";
+    String XML_SUFFIX = ".xml";
 
-    public static final String JAVA_SUFFIX = ".java";
-    public static final String KT_SUFFIX = ".kt";
-    public static final String XML_SUFFIX = ".xml";
+    String TEMPLATE_ENTITY_JAVA = "/templates/entity.java";
+    String TEMPLATE_ENTITY_KT = "/templates/entity.kt";
+    String TEMPLATE_MAPPER = "/templates/mapper.java";
+    String TEMPLATE_XML = "/templates/mapper.xml";
+    String TEMPLATE_SERVICE = "/templates/service.java";
+    String TEMPLATE_SERVICE_IMPL = "/templates/serviceImpl.java";
+    String TEMPLATE_CONTROLLER = "/templates/controller.java";
 
-    public static final String TEMPLATE_ENTITY_JAVA = "/templates/entity.java";
-    public static final String TEMPLATE_ENTITY_KT = "/templates/entity.kt";
-    public static final String TEMPLATE_MAPPER = "/templates/mapper.java";
-    public static final String TEMPLATE_XML = "/templates/mapper.xml";
-    public static final String TEMPLATE_SERVICE = "/templates/service.java";
-    public static final String TEMPLATE_SERVICEIMPL = "/templates/serviceImpl.java";
-    public static final String TEMPLATE_CONTROLLER = "/templates/controller.java";
+    String VM_LOAD_PATH_KEY = "file.resource.loader.class";
+    String VM_LOAD_PATH_VALUE = "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader";
 
-    public static final String VM_LOADPATH_KEY = "file.resource.loader.class";
-    public static final String VM_LOADPATH_VALUE = "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader";
-
-    public static final String SUPERD_MAPPER_CLASS = "com.baomidou.mybatisplus.core.mapper.BaseMapper";
-    public static final String SUPERD_SERVICE_CLASS = "com.baomidou.mybatisplus.extension.service.IService";
-    public static final String SUPERD_SERVICEIMPL_CLASS = "com.baomidou.mybatisplus.extension.service.impl.ServiceImpl";
-
-    /**
-     * 输出相关常量
-     */
-    public static final String OUT_CONFIG = "config";
+    String SUPER_MAPPER_CLASS = "com.baomidou.mybatisplus.core.mapper.BaseMapper";
+    String SUPER_SERVICE_CLASS = "com.baomidou.mybatisplus.extension.service.IService";
+    String SUPER_SERVICE_IMPL_CLASS = "com.baomidou.mybatisplus.extension.service.impl.ServiceImpl";
 
 }

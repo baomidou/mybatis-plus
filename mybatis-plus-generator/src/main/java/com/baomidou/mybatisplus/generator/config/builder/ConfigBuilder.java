@@ -171,6 +171,12 @@ public class ConfigBuilder {
     }
 
 
+    public ConfigBuilder setPathInfo(Map<String, String> pathInfo) {
+        this.pathInfo = pathInfo;
+        return this;
+    }
+
+
     public String getSuperEntityClass() {
         return superEntityClass;
     }
@@ -243,34 +249,36 @@ public class ConfigBuilder {
      * @param config    PackageConfig
      */
     private void handlerPackage(TemplateConfig template, String outputDir, PackageConfig config) {
-        packageInfo = new HashMap<>(8);
-        packageInfo.put(ConstVal.MODULENAME, config.getModuleName());
-        packageInfo.put(ConstVal.ENTITY, joinPackage(config.getParent(), config.getEntity()));
-        packageInfo.put(ConstVal.MAPPER, joinPackage(config.getParent(), config.getMapper()));
-        packageInfo.put(ConstVal.XML, joinPackage(config.getParent(), config.getXml()));
-        packageInfo.put(ConstVal.SERVICE, joinPackage(config.getParent(), config.getService()));
-        packageInfo.put(ConstVal.SERVICEIMPL, joinPackage(config.getParent(), config.getServiceImpl()));
-        packageInfo.put(ConstVal.CONTROLLER, joinPackage(config.getParent(), config.getController()));
+        if (null == pathInfo) {
+            // 包信息
+            packageInfo = new HashMap<>(6);
+            packageInfo.put(ConstVal.ENTITY, joinPackage(config.getParent(), config.getEntity()));
+            packageInfo.put(ConstVal.MAPPER, joinPackage(config.getParent(), config.getMapper()));
+            packageInfo.put(ConstVal.XML, joinPackage(config.getParent(), config.getXml()));
+            packageInfo.put(ConstVal.SERVICE, joinPackage(config.getParent(), config.getService()));
+            packageInfo.put(ConstVal.SERVICE_IMPL, joinPackage(config.getParent(), config.getServiceImpl()));
+            packageInfo.put(ConstVal.CONTROLLER, joinPackage(config.getParent(), config.getController()));
 
-        // 生成路径信息
-        pathInfo = new HashMap<>(6);
-        if (StringUtils.isNotEmpty(template.getEntity(getGlobalConfig().isKotlin()))) {
-            pathInfo.put(ConstVal.ENTITY_PATH, joinPath(outputDir, packageInfo.get(ConstVal.ENTITY)));
-        }
-        if (StringUtils.isNotEmpty(template.getMapper())) {
-            pathInfo.put(ConstVal.MAPPER_PATH, joinPath(outputDir, packageInfo.get(ConstVal.MAPPER)));
-        }
-        if (StringUtils.isNotEmpty(template.getXml())) {
-            pathInfo.put(ConstVal.XML_PATH, joinPath(outputDir, packageInfo.get(ConstVal.XML)));
-        }
-        if (StringUtils.isNotEmpty(template.getService())) {
-            pathInfo.put(ConstVal.SERVICE_PATH, joinPath(outputDir, packageInfo.get(ConstVal.SERVICE)));
-        }
-        if (StringUtils.isNotEmpty(template.getServiceImpl())) {
-            pathInfo.put(ConstVal.SERVICEIMPL_PATH, joinPath(outputDir, packageInfo.get(ConstVal.SERVICEIMPL)));
-        }
-        if (StringUtils.isNotEmpty(template.getController())) {
-            pathInfo.put(ConstVal.CONTROLLER_PATH, joinPath(outputDir, packageInfo.get(ConstVal.CONTROLLER)));
+            // 生成路径信息
+            pathInfo = new HashMap<>(6);
+            if (StringUtils.isNotEmpty(template.getEntity(getGlobalConfig().isKotlin()))) {
+                pathInfo.put(ConstVal.ENTITY_PATH, joinPath(outputDir, packageInfo.get(ConstVal.ENTITY)));
+            }
+            if (StringUtils.isNotEmpty(template.getMapper())) {
+                pathInfo.put(ConstVal.MAPPER_PATH, joinPath(outputDir, packageInfo.get(ConstVal.MAPPER)));
+            }
+            if (StringUtils.isNotEmpty(template.getXml())) {
+                pathInfo.put(ConstVal.XML_PATH, joinPath(outputDir, packageInfo.get(ConstVal.XML)));
+            }
+            if (StringUtils.isNotEmpty(template.getService())) {
+                pathInfo.put(ConstVal.SERVICE_PATH, joinPath(outputDir, packageInfo.get(ConstVal.SERVICE)));
+            }
+            if (StringUtils.isNotEmpty(template.getServiceImpl())) {
+                pathInfo.put(ConstVal.SERVICE_IMPL_PATH, joinPath(outputDir, packageInfo.get(ConstVal.SERVICE_IMPL)));
+            }
+            if (StringUtils.isNotEmpty(template.getController())) {
+                pathInfo.put(ConstVal.CONTROLLER_PATH, joinPath(outputDir, packageInfo.get(ConstVal.CONTROLLER)));
+            }
         }
     }
 
@@ -310,17 +318,17 @@ public class ConfigBuilder {
      */
     private void processTypes(StrategyConfig config) {
         if (StringUtils.isEmpty(config.getSuperServiceClass())) {
-            superServiceClass = ConstVal.SUPERD_SERVICE_CLASS;
+            superServiceClass = ConstVal.SUPER_SERVICE_CLASS;
         } else {
             superServiceClass = config.getSuperServiceClass();
         }
         if (StringUtils.isEmpty(config.getSuperServiceImplClass())) {
-            superServiceImplClass = ConstVal.SUPERD_SERVICEIMPL_CLASS;
+            superServiceImplClass = ConstVal.SUPER_SERVICE_IMPL_CLASS;
         } else {
             superServiceImplClass = config.getSuperServiceImplClass();
         }
         if (StringUtils.isEmpty(config.getSuperMapperClass())) {
-            superMapperClass = ConstVal.SUPERD_MAPPER_CLASS;
+            superMapperClass = ConstVal.SUPER_MAPPER_CLASS;
         } else {
             superMapperClass = config.getSuperMapperClass();
         }
@@ -362,7 +370,7 @@ public class ConfigBuilder {
             if (StringUtils.isNotEmpty(globalConfig.getServiceImplName())) {
                 tableInfo.setServiceImplName(String.format(globalConfig.getServiceImplName(), tableInfo.getEntityName()));
             } else {
-                tableInfo.setServiceImplName(tableInfo.getEntityName() + ConstVal.SERVICEIMPL);
+                tableInfo.setServiceImplName(tableInfo.getEntityName() + ConstVal.SERVICE_IMPL);
             }
             if (StringUtils.isNotEmpty(globalConfig.getControllerName())) {
                 tableInfo.setControllerName(String.format(globalConfig.getControllerName(), tableInfo.getEntityName()));
@@ -521,7 +529,7 @@ public class ConfigBuilder {
             /**
              * 性能优化，只处理需执行表字段 github issues/219
              */
-            includeTableList.forEach(ti -> this.convertTableFields(ti, config.getColumnNaming()));
+            includeTableList.forEach(ti -> convertTableFields(ti, config.getColumnNaming()));
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -604,7 +612,7 @@ public class ConfigBuilder {
                     continue;
                 }
                 // 填充逻辑判断
-                List<TableFill> tableFillList = this.getStrategyConfig().getTableFillList();
+                List<TableFill> tableFillList = getStrategyConfig().getTableFillList();
                 if (null != tableFillList) {
                     tableFillList.stream().filter(tf -> tf.getFieldName().equals(field.getName()))
                         .findFirst().ifPresent(tf -> field.setFill(tf.getFieldFill().name()));
@@ -666,7 +674,7 @@ public class ConfigBuilder {
      * @return 根据策略返回处理后的名称
      */
     private String processName(String name, NamingStrategy strategy) {
-        return processName(name, strategy, this.strategyConfig.getFieldPrefix());
+        return processName(name, strategy, strategyConfig.getFieldPrefix());
     }
 
 

@@ -48,7 +48,7 @@ public class VelocityTemplateEngine extends AbstractTemplateEngine {
         super.init(configBuilder);
         if (null == velocityEngine) {
             Properties p = new Properties();
-            p.setProperty(ConstVal.VM_LOADPATH_KEY, ConstVal.VM_LOADPATH_VALUE);
+            p.setProperty(ConstVal.VM_LOAD_PATH_KEY, ConstVal.VM_LOAD_PATH_VALUE);
             p.setProperty(Velocity.FILE_RESOURCE_LOADER_PATH, "");
             p.setProperty(Velocity.ENCODING_DEFAULT, ConstVal.UTF8);
             p.setProperty(Velocity.INPUT_ENCODING, ConstVal.UTF8);

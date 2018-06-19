@@ -72,21 +72,21 @@ public abstract class AbstractTemplateEngine {
      */
     public AbstractTemplateEngine batchOutput() {
         try {
-            List<TableInfo> tableInfoList = this.getConfigBuilder().getTableInfoList();
+            List<TableInfo> tableInfoList = getConfigBuilder().getTableInfoList();
             for (TableInfo tableInfo : tableInfoList) {
-                Map<String, Object> objectMap = this.getObjectMap(tableInfo);
-                Map<String, String> pathInfo = this.getConfigBuilder().getPathInfo();
-                TemplateConfig template = this.getConfigBuilder().getTemplate();
+                Map<String, Object> objectMap = getObjectMap(tableInfo);
+                Map<String, String> pathInfo = getConfigBuilder().getPathInfo();
+                TemplateConfig template = getConfigBuilder().getTemplate();
                 // 自定义内容
-                InjectionConfig injectionConfig = this.getConfigBuilder().getInjectionConfig();
+                InjectionConfig injectionConfig = getConfigBuilder().getInjectionConfig();
                 if (null != injectionConfig) {
                     injectionConfig.initMap();
                     objectMap.put("cfg", injectionConfig.getMap());
                     List<FileOutConfig> focList = injectionConfig.getFileOutConfigList();
                     if (CollectionUtils.isNotEmpty(focList)) {
                         for (FileOutConfig foc : focList) {
-                            if (this.isCreate(foc.outputFile(tableInfo))) {
-                                this.writer(objectMap, foc.getTemplatePath(), foc.outputFile(tableInfo));
+                            if (isCreate(foc.outputFile(tableInfo))) {
+                                writer(objectMap, foc.getTemplatePath(), foc.outputFile(tableInfo));
                             }
                         }
                     }
@@ -94,44 +94,44 @@ public abstract class AbstractTemplateEngine {
                 // Mp.java
                 String entityName = tableInfo.getEntityName();
                 if (null != entityName && null != pathInfo.get(ConstVal.ENTITY_PATH)) {
-                    String entityFile = String.format((pathInfo.get(ConstVal.ENTITY_PATH) + File.separator + "%s" + this.suffixJavaOrKt()), entityName);
-                    if (this.isCreate(entityFile)) {
-                        this.writer(objectMap, this.templateFilePath(template.getEntity(this.getConfigBuilder().getGlobalConfig().isKotlin())), entityFile);
+                    String entityFile = String.format((pathInfo.get(ConstVal.ENTITY_PATH) + File.separator + "%s" + suffixJavaOrKt()), entityName);
+                    if (isCreate(entityFile)) {
+                        writer(objectMap, templateFilePath(template.getEntity(getConfigBuilder().getGlobalConfig().isKotlin())), entityFile);
                     }
                 }
                 // MpMapper.java
                 if (null != tableInfo.getMapperName() && null != pathInfo.get(ConstVal.MAPPER_PATH)) {
-                    String mapperFile = String.format((pathInfo.get(ConstVal.MAPPER_PATH) + File.separator + tableInfo.getMapperName() + this.suffixJavaOrKt()), entityName);
-                    if (this.isCreate(mapperFile)) {
-                        this.writer(objectMap, this.templateFilePath(template.getMapper()), mapperFile);
+                    String mapperFile = String.format((pathInfo.get(ConstVal.MAPPER_PATH) + File.separator + tableInfo.getMapperName() + suffixJavaOrKt()), entityName);
+                    if (isCreate(mapperFile)) {
+                        writer(objectMap, templateFilePath(template.getMapper()), mapperFile);
                     }
                 }
                 // MpMapper.xml
                 if (null != tableInfo.getXmlName() && null != pathInfo.get(ConstVal.XML_PATH)) {
                     String xmlFile = String.format((pathInfo.get(ConstVal.XML_PATH) + File.separator + tableInfo.getXmlName() + ConstVal.XML_SUFFIX), entityName);
-                    if (this.isCreate(xmlFile)) {
-                        this.writer(objectMap, this.templateFilePath(template.getXml()), xmlFile);
+                    if (isCreate(xmlFile)) {
+                        writer(objectMap, templateFilePath(template.getXml()), xmlFile);
                     }
                 }
                 // IMpService.java
                 if (null != tableInfo.getServiceName() && null != pathInfo.get(ConstVal.SERVICE_PATH)) {
-                    String serviceFile = String.format((pathInfo.get(ConstVal.SERVICE_PATH) + File.separator + tableInfo.getServiceName() + this.suffixJavaOrKt()), entityName);
-                    if (this.isCreate(serviceFile)) {
-                        this.writer(objectMap, this.templateFilePath(template.getService()), serviceFile);
+                    String serviceFile = String.format((pathInfo.get(ConstVal.SERVICE_PATH) + File.separator + tableInfo.getServiceName() + suffixJavaOrKt()), entityName);
+                    if (isCreate(serviceFile)) {
+                        writer(objectMap, templateFilePath(template.getService()), serviceFile);
                     }
                 }
                 // MpServiceImpl.java
-                if (null != tableInfo.getServiceImplName() && null != pathInfo.get(ConstVal.SERVICEIMPL_PATH)) {
-                    String implFile = String.format((pathInfo.get(ConstVal.SERVICEIMPL_PATH) + File.separator + tableInfo.getServiceImplName() + this.suffixJavaOrKt()), entityName);
-                    if (this.isCreate(implFile)) {
-                        this.writer(objectMap, this.templateFilePath(template.getServiceImpl()), implFile);
+                if (null != tableInfo.getServiceImplName() && null != pathInfo.get(ConstVal.SERVICE_IMPL_PATH)) {
+                    String implFile = String.format((pathInfo.get(ConstVal.SERVICE_IMPL_PATH) + File.separator + tableInfo.getServiceImplName() + suffixJavaOrKt()), entityName);
+                    if (isCreate(implFile)) {
+                        writer(objectMap, templateFilePath(template.getServiceImpl()), implFile);
                     }
                 }
                 // MpController.java
                 if (null != tableInfo.getControllerName() && null != pathInfo.get(ConstVal.CONTROLLER_PATH)) {
-                    String controllerFile = String.format((pathInfo.get(ConstVal.CONTROLLER_PATH) + File.separator + tableInfo.getControllerName() + this.suffixJavaOrKt()), entityName);
-                    if (this.isCreate(controllerFile)) {
-                        this.writer(objectMap, this.templateFilePath(template.getController()), controllerFile);
+                    String controllerFile = String.format((pathInfo.get(ConstVal.CONTROLLER_PATH) + File.separator + tableInfo.getControllerName() + suffixJavaOrKt()), entityName);
+                    if (isCreate(controllerFile)) {
+                        writer(objectMap, templateFilePath(template.getController()), controllerFile);
                     }
                 }
             }
@@ -159,7 +159,7 @@ public abstract class AbstractTemplateEngine {
      * </p>
      */
     public AbstractTemplateEngine mkdirs() {
-        this.getConfigBuilder().getPathInfo().forEach((key, value) -> {
+        getConfigBuilder().getPathInfo().forEach((key, value) -> {
             File dir = new File(value);
             if (!dir.exists()) {
                 boolean result = dir.mkdirs();
@@ -178,16 +178,18 @@ public abstract class AbstractTemplateEngine {
      * </p>
      */
     public void open() {
-        if (this.getConfigBuilder().getGlobalConfig().isOpen()) {
+        String outDir = getConfigBuilder().getGlobalConfig().getOutputDir();
+        if (getConfigBuilder().getGlobalConfig().isOpen()
+            && StringUtils.isNotEmpty(outDir)) {
             try {
                 String osName = System.getProperty("os.name");
                 if (osName != null) {
                     if (osName.contains("Mac")) {
-                        Runtime.getRuntime().exec("open " + this.getConfigBuilder().getGlobalConfig().getOutputDir());
+                        Runtime.getRuntime().exec("open " + outDir);
                     } else if (osName.contains("Windows")) {
-                        Runtime.getRuntime().exec("cmd /c start " + this.getConfigBuilder().getGlobalConfig().getOutputDir());
+                        Runtime.getRuntime().exec("cmd /c start " + outDir);
                     } else {
-                        logger.debug("文件输出目录:" + this.getConfigBuilder().getGlobalConfig().getOutputDir());
+                        logger.debug("文件输出目录:" + outDir);
                     }
                 }
             } catch (IOException e) {
@@ -206,8 +208,8 @@ public abstract class AbstractTemplateEngine {
      * @return
      */
     public Map<String, Object> getObjectMap(TableInfo tableInfo) {
-        Map<String, Object> objectMap = new HashMap<>();
-        ConfigBuilder config = this.getConfigBuilder();
+        Map<String, Object> objectMap = new HashMap<>(30);
+        ConfigBuilder config = getConfigBuilder();
         if (config.getStrategyConfig().isControllerMappingHyphenStyle()) {
             objectMap.put("controllerMappingHyphenStyle", config.getStrategyConfig().isControllerMappingHyphenStyle());
             objectMap.put("controllerMappingHyphen", StringUtils.camelToHyphen(tableInfo.getEntityPath()));
@@ -231,15 +233,15 @@ public abstract class AbstractTemplateEngine {
         objectMap.put("entityBuilderModel", config.getStrategyConfig().isEntityBuilderModel());
         objectMap.put("entityLombokModel", config.getStrategyConfig().isEntityLombokModel());
         objectMap.put("entityBooleanColumnRemoveIsPrefix", config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix());
-        objectMap.put("superEntityClass", this.getSuperClassName(config.getSuperEntityClass()));
+        objectMap.put("superEntityClass", getSuperClassName(config.getSuperEntityClass()));
         objectMap.put("superMapperClassPackage", config.getSuperMapperClass());
-        objectMap.put("superMapperClass", this.getSuperClassName(config.getSuperMapperClass()));
+        objectMap.put("superMapperClass", getSuperClassName(config.getSuperMapperClass()));
         objectMap.put("superServiceClassPackage", config.getSuperServiceClass());
-        objectMap.put("superServiceClass", this.getSuperClassName(config.getSuperServiceClass()));
+        objectMap.put("superServiceClass", getSuperClassName(config.getSuperServiceClass()));
         objectMap.put("superServiceImplClassPackage", config.getSuperServiceImplClass());
-        objectMap.put("superServiceImplClass", this.getSuperClassName(config.getSuperServiceImplClass()));
+        objectMap.put("superServiceImplClass", getSuperClassName(config.getSuperServiceImplClass()));
         objectMap.put("superControllerClassPackage", config.getSuperControllerClass());
-        objectMap.put("superControllerClass", this.getSuperClassName(config.getSuperControllerClass()));
+        objectMap.put("superControllerClass", getSuperClassName(config.getSuperControllerClass()));
         return objectMap;
     }
 
@@ -278,9 +280,9 @@ public abstract class AbstractTemplateEngine {
         File file = new File(filePath);
         boolean exist = file.exists();
         if (!exist) {
-            this.mkDir(file.getParentFile());
+            mkDir(file.getParentFile());
         }
-        return !exist || this.getConfigBuilder().getGlobalConfig().isFileOverride();
+        return !exist || getConfigBuilder().getGlobalConfig().isFileOverride();
     }
 
     protected void mkDir(File file) {
@@ -296,7 +298,7 @@ public abstract class AbstractTemplateEngine {
      * 文件后缀
      */
     protected String suffixJavaOrKt() {
-        return this.getConfigBuilder().getGlobalConfig().isKotlin() ? ConstVal.KT_SUFFIX : ConstVal.JAVA_SUFFIX;
+        return getConfigBuilder().getGlobalConfig().isKotlin() ? ConstVal.KT_SUFFIX : ConstVal.JAVA_SUFFIX;
     }
 
 
