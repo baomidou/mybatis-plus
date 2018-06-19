@@ -171,12 +171,6 @@ public class ConfigBuilder {
     }
 
 
-    public ConfigBuilder setPathInfo(Map<String, String> pathInfo) {
-        this.pathInfo = pathInfo;
-        return this;
-    }
-
-
     public String getSuperEntityClass() {
         return superEntityClass;
     }
@@ -249,39 +243,38 @@ public class ConfigBuilder {
      * @param config    PackageConfig
      */
     private void handlerPackage(TemplateConfig template, String outputDir, PackageConfig config) {
-        if (null == pathInfo) {
-            // 包信息
-            packageInfo = new HashMap<>(6);
-            packageInfo.put(ConstVal.ENTITY, joinPackage(config.getParent(), config.getEntity()));
-            packageInfo.put(ConstVal.MAPPER, joinPackage(config.getParent(), config.getMapper()));
-            packageInfo.put(ConstVal.XML, joinPackage(config.getParent(), config.getXml()));
-            packageInfo.put(ConstVal.SERVICE, joinPackage(config.getParent(), config.getService()));
-            packageInfo.put(ConstVal.SERVICE_IMPL, joinPackage(config.getParent(), config.getServiceImpl()));
-            packageInfo.put(ConstVal.CONTROLLER, joinPackage(config.getParent(), config.getController()));
+        // 包信息
+        packageInfo = new HashMap<>(6);
+        packageInfo.put(ConstVal.ENTITY, joinPackage(config.getParent(), config.getEntity()));
+        packageInfo.put(ConstVal.MAPPER, joinPackage(config.getParent(), config.getMapper()));
+        packageInfo.put(ConstVal.XML, joinPackage(config.getParent(), config.getXml()));
+        packageInfo.put(ConstVal.SERVICE, joinPackage(config.getParent(), config.getService()));
+        packageInfo.put(ConstVal.SERVICE_IMPL, joinPackage(config.getParent(), config.getServiceImpl()));
+        packageInfo.put(ConstVal.CONTROLLER, joinPackage(config.getParent(), config.getController()));
 
-            // 生成路径信息
-            pathInfo = new HashMap<>(6);
-            if (StringUtils.isNotEmpty(template.getEntity(getGlobalConfig().isKotlin()))) {
-                pathInfo.put(ConstVal.ENTITY_PATH, joinPath(outputDir, packageInfo.get(ConstVal.ENTITY)));
-            }
-            if (StringUtils.isNotEmpty(template.getMapper())) {
-                pathInfo.put(ConstVal.MAPPER_PATH, joinPath(outputDir, packageInfo.get(ConstVal.MAPPER)));
-            }
-            if (StringUtils.isNotEmpty(template.getXml())) {
-                pathInfo.put(ConstVal.XML_PATH, joinPath(outputDir, packageInfo.get(ConstVal.XML)));
-            }
-            if (StringUtils.isNotEmpty(template.getService())) {
-                pathInfo.put(ConstVal.SERVICE_PATH, joinPath(outputDir, packageInfo.get(ConstVal.SERVICE)));
-            }
-            if (StringUtils.isNotEmpty(template.getServiceImpl())) {
-                pathInfo.put(ConstVal.SERVICE_IMPL_PATH, joinPath(outputDir, packageInfo.get(ConstVal.SERVICE_IMPL)));
-            }
-            if (StringUtils.isNotEmpty(template.getController())) {
-                pathInfo.put(ConstVal.CONTROLLER_PATH, joinPath(outputDir, packageInfo.get(ConstVal.CONTROLLER)));
-            }
-        }
+        // 自定义路径
+        Map<String, String> configPathInfo = config.getPathInfo();
+
+        // 生成路径信息
+        pathInfo = new HashMap<>(6);
+        setPathInfo(pathInfo, template.getEntity(getGlobalConfig().isKotlin()), configPathInfo, outputDir, ConstVal.ENTITY_PATH, ConstVal.ENTITY);
+        setPathInfo(pathInfo, template.getMapper(), configPathInfo, outputDir, ConstVal.MAPPER_PATH, ConstVal.MAPPER);
+        setPathInfo(pathInfo, template.getXml(), configPathInfo, outputDir, ConstVal.XML_PATH, ConstVal.XML);
+        setPathInfo(pathInfo, template.getService(), configPathInfo, outputDir, ConstVal.SERVICE_PATH, ConstVal.SERVICE);
+        setPathInfo(pathInfo, template.getServiceImpl(), configPathInfo, outputDir, ConstVal.SERVICE_IMPL_PATH, ConstVal.SERVICE_IMPL);
+        setPathInfo(pathInfo, template.getController(), configPathInfo, outputDir, ConstVal.CONTROLLER_PATH, ConstVal.CONTROLLER);
     }
 
+    private void setPathInfo(Map<String, String> pathInfo, String template, Map<String, String> configPathInfo,
+                             String outputDir, String path, String module) {
+        if (StringUtils.isNotEmpty(template)) {
+            String outPath = outputDir;
+            if (null != configPathInfo && null != configPathInfo.get(path)) {
+                outPath = configPathInfo.get(path);
+            }
+            pathInfo.put(path, joinPath(outPath, packageInfo.get(module)));
+        }
+    }
 
     /**
      * <p>
