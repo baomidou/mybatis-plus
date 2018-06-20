@@ -254,25 +254,23 @@ public class ConfigBuilder {
 
         // 自定义路径
         Map<String, String> configPathInfo = config.getPathInfo();
-
-        // 生成路径信息
-        pathInfo = new HashMap<>(6);
-        setPathInfo(pathInfo, template.getEntity(getGlobalConfig().isKotlin()), configPathInfo, outputDir, ConstVal.ENTITY_PATH, ConstVal.ENTITY);
-        setPathInfo(pathInfo, template.getMapper(), configPathInfo, outputDir, ConstVal.MAPPER_PATH, ConstVal.MAPPER);
-        setPathInfo(pathInfo, template.getXml(), configPathInfo, outputDir, ConstVal.XML_PATH, ConstVal.XML);
-        setPathInfo(pathInfo, template.getService(), configPathInfo, outputDir, ConstVal.SERVICE_PATH, ConstVal.SERVICE);
-        setPathInfo(pathInfo, template.getServiceImpl(), configPathInfo, outputDir, ConstVal.SERVICE_IMPL_PATH, ConstVal.SERVICE_IMPL);
-        setPathInfo(pathInfo, template.getController(), configPathInfo, outputDir, ConstVal.CONTROLLER_PATH, ConstVal.CONTROLLER);
+        if (null != configPathInfo) {
+            pathInfo = configPathInfo;
+        } else {
+            // 生成路径信息
+            pathInfo = new HashMap<>(6);
+            setPathInfo(pathInfo, template.getEntity(getGlobalConfig().isKotlin()), outputDir, ConstVal.ENTITY_PATH, ConstVal.ENTITY);
+            setPathInfo(pathInfo, template.getMapper(), outputDir, ConstVal.MAPPER_PATH, ConstVal.MAPPER);
+            setPathInfo(pathInfo, template.getXml(), outputDir, ConstVal.XML_PATH, ConstVal.XML);
+            setPathInfo(pathInfo, template.getService(), outputDir, ConstVal.SERVICE_PATH, ConstVal.SERVICE);
+            setPathInfo(pathInfo, template.getServiceImpl(), outputDir, ConstVal.SERVICE_IMPL_PATH, ConstVal.SERVICE_IMPL);
+            setPathInfo(pathInfo, template.getController(), outputDir, ConstVal.CONTROLLER_PATH, ConstVal.CONTROLLER);
+        }
     }
 
-    private void setPathInfo(Map<String, String> pathInfo, String template, Map<String, String> configPathInfo,
-                             String outputDir, String path, String module) {
+    private void setPathInfo(Map<String, String> pathInfo, String template, String outputDir, String path, String module) {
         if (StringUtils.isNotEmpty(template)) {
-            String outPath = outputDir;
-            if (null != configPathInfo && null != configPathInfo.get(path)) {
-                outPath = configPathInfo.get(path);
-            }
-            pathInfo.put(path, joinPath(outPath, packageInfo.get(module)));
+            pathInfo.put(path, joinPath(outputDir, packageInfo.get(module)));
         }
     }
 
