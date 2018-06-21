@@ -1,7 +1,6 @@
 package com.baomidou.mybatisplus.test.mysql;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +14,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.test.base.entity.TestData;
 import com.baomidou.mybatisplus.test.base.mapper.TestDataMapper;
 
@@ -78,24 +79,13 @@ public class MysqlTestDataMapperTest {
 
     @Test
     public void selectPage() {
-//        IPage<TestData> page = new Page<>();
-//        page.setSize(5).setCurrent(1);
-//        Page<TestData> dataPage = testDataMapper.selectPage(page, new QueryWrapper<TestData>().lambda()
-//            .eq(TestData::getTestInt, 1));
-//        System.out.println(dataPage.getTotal());
-//        System.out.println(dataPage.getRecords().size());
-//        println(page.getRecords());
-    }
-
-    @Test
-    public void mm() {
-        ArrayList<TestData> list = new ArrayList<>();
-        Pages<TestData> a = (Pages<TestData>) list;
-        System.out.println(a);
-    }
-
-    private class Pages<T> extends ArrayList<T> {
-
+        IPage<TestData> page = new Pagination<>();
+        page.setSize(5).setCurrent(1);
+        IPage<TestData> dataPage = testDataMapper.selectPage(page, new QueryWrapper<TestData>().lambda()
+            .eq(TestData::getTestInt, 1));
+        System.out.println(dataPage.getTotal());
+        System.out.println(dataPage.getRecords().size());
+        println(page.getRecords());
     }
 
     private void println(List<TestData> list) {
