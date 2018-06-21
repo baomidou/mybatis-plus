@@ -85,9 +85,8 @@ public abstract class AbstractMethod {
             if (type instanceof ParameterizedType) {
                 Type[] typeArray = ((ParameterizedType) type).getActualTypeArguments();
                 if (ArrayUtils.isNotEmpty(typeArray)) {
-                    for (Type t : typeArray) {
+                    for (Type t : typeArray) {//todo 报黄了,不改一下?
                         if (t instanceof TypeVariable || t instanceof WildcardType) {
-                            target = null;
                             break;
                         } else {
                             target = (ParameterizedType) type;
