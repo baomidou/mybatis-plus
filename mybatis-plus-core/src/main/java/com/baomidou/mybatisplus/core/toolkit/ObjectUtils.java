@@ -14,7 +14,6 @@ import java.util.Map;
  */
 public class ObjectUtils {
 
-
     /**
      * 判断object是否为空,集合会校验size
      */
@@ -26,7 +25,6 @@ public class ObjectUtils {
         }
         return false;
     }
-
 
     /**
      * 判断object是否不为空,集合会校验size
@@ -65,5 +63,4 @@ public class ObjectUtils {
         // else
         return false;
     }
-
 }
