@@ -1,11 +1,11 @@
 package com.baomidou.mybatisplus.test.base.entity;
 
-import lombok.Data;
-import lombok.experimental.Accessors;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * @author meimie
