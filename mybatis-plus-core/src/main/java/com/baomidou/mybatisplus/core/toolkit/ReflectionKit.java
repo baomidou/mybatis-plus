@@ -15,6 +15,10 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toCollection;
+import static java.util.stream.Collectors.toMap;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -26,8 +30,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.ibatis.logging.Log;
@@ -84,8 +86,7 @@ public class ReflectionKit {
             throw new MybatisPlusException(String.format("Error: NoSuchMethod in %s.  Cause:", cls.getSimpleName()) + e);
         } catch (IllegalAccessException e) {
             throw new MybatisPlusException(String.format("Error: Cannot execute a private method. in %s.  Cause:",
-                cls.getSimpleName())
-                + e);
+                cls.getSimpleName()) + e);
         } catch (InvocationTargetException e) {
             throw new MybatisPlusException("Error: InvocationTargetException on getMethodValue.  Cause:" + e);
         }
@@ -116,7 +117,6 @@ public class ReflectionKit {
      * @param index 泛型所在位置
      * @return Class
      */
-    @SuppressWarnings("rawtypes")
     public static Class getSuperClassGenricType(final Class clazz, final int index) {
         Type genType = clazz.getGenericSuperclass();
         if (!(genType instanceof ParameterizedType)) {
@@ -125,12 +125,13 @@ public class ReflectionKit {
         }
         Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
         if (index >= params.length || index < 0) {
-            logger.warn(String.format("Warn: Index: %s, Size of %s's Parameterized Type: %s .", index, clazz.getSimpleName(),
-                params.length));
+            logger.warn(String.format("Warn: Index: %s, Size of %s's Parameterized Type: %s .", index,
+                clazz.getSimpleName(), params.length));
             return Object.class;
         }
         if (!(params[index] instanceof Class)) {
-            logger.warn(String.format("Warn: %s not set the actual class on superclass generic parameter", clazz.getSimpleName()));
+            logger.warn(String.format("Warn: %s not set the actual class on superclass generic parameter",
+                clazz.getSimpleName()));
             return Object.class;
         }
         return (Class) params[index];
@@ -167,7 +168,7 @@ public class ReflectionKit {
         List<Field> fieldList = Stream.of(clazz.getDeclaredFields())
             .filter(field -> !Modifier.isStatic(field.getModifiers())/* 过滤静态属性 */)
             .filter(field -> !Modifier.isTransient(field.getModifiers())/* 过滤 transient关键字修饰的属性 */)
-            .collect(Collectors.toCollection(LinkedList::new));
+            .collect(toCollection(LinkedList::new));
         /* 处理父类字段 */
         Class<?> superClass = clazz.getSuperclass();
         if (superClass.equals(Object.class)) {
@@ -187,7 +188,7 @@ public class ReflectionKit {
      */
     public static List<Field> excludeOverrideSuperField(List<Field> fieldList, List<Field> superFieldList) {
         // 子类属性
-        Map<String, Field> fieldMap = fieldList.stream().collect(Collectors.toMap(Field::getName, Function.identity()));
+        Map<String, Field> fieldMap = fieldList.stream().collect(toMap(Field::getName, identity()));
         superFieldList.stream().filter(field -> fieldMap.get(field.getName()) == null).forEach(fieldList::add);
         return fieldList;
     }
