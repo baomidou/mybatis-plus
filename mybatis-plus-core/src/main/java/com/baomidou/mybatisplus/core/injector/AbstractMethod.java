@@ -286,28 +286,6 @@ public abstract class AbstractMethod {
 
     /**
      * <p>
-     * SQL 查询条件
-     * </p>
-     */
-    protected String sqlWhere(TableInfo table) {
-        StringBuilder where = new StringBuilder("<where>");
-        if (StringUtils.isNotEmpty(table.getKeyProperty())) {
-            where.append("<if test=\"ew.").append(table.getKeyProperty()).append("!=null\">")
-                .append(table.getKeyColumn()).append("=#{ew.").append(table.getKeyProperty()).append("}")
-                .append("</if>");
-        }
-        List<TableFieldInfo> fieldList = table.getFieldList();
-        for (TableFieldInfo fieldInfo : fieldList) {
-            where.append(convertIfTag(fieldInfo, "ew.", false))
-                .append(" AND ").append(sqlCondition(fieldInfo.getCondition(),
-                fieldInfo.getColumn(), "ew." + fieldInfo.getEl()))
-                .append(convertIfTag(fieldInfo, true));
-        }
-        return where.append("</where>").toString();
-    }
-
-    /**
-     * <p>
      * SQL map 查询条件
      * </p>
      */
@@ -413,8 +391,8 @@ public abstract class AbstractMethod {
         List<TableFieldInfo> fieldList = table.getFieldList();
         for (TableFieldInfo fieldInfo : fieldList) {
             where.append(convertIfTag(fieldInfo, "ew.entity.", false));
-            where.append(" AND ").append(sqlCondition(fieldInfo.getCondition(),
-                fieldInfo.getColumn(), "ew.entity." + fieldInfo.getEl()));
+            where.append(" AND ").append(sqlCondition(fieldInfo.getCondition(), fieldInfo.getColumn(),
+                "ew.entity." + fieldInfo.getEl()));
             where.append(convertIfTag(fieldInfo, true));
         }
         where.append("</if>");

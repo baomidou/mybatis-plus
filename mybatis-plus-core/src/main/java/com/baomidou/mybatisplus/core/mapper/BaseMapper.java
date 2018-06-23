@@ -178,15 +178,6 @@ public interface BaseMapper<T> {
 
     /**
      * <p>
-     * 根据 entity 条件，查询一条记录
-     * </p>
-     *
-     * @param entity 实体对象
-     */
-    T selectOne(@Param("ew") T entity);
-
-    /**
-     * <p>
      * 根据 Wrapper 条件，查询总记录数
      * </p>
      *

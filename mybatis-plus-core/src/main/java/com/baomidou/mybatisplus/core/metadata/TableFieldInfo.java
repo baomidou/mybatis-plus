@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.core.metadata;
 
 import java.lang.reflect.Field;
 
+import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.SqlCondition;
@@ -131,6 +132,7 @@ public class TableFieldInfo {
         tableInfo.setLogicDelete(this.initLogicDelete(dbConfig, field));
         this.update = tableField.update();
         this.condition = tableField.condition();
+        this.setCondition(dbConfig.getDbType());
         /*
          * 保存当前字段的填充策略
          */
@@ -152,6 +154,7 @@ public class TableFieldInfo {
         this.el = field.getName();
         this.fieldStrategy = dbConfig.getFieldStrategy();
         this.propertyType = field.getType();
+        this.setCondition(dbConfig.getDbType());
         tableInfo.setLogicDelete(this.initLogicDelete(dbConfig, field));
     }
 
@@ -272,6 +275,12 @@ public class TableFieldInfo {
 
     public String getCondition() {
         return condition;
+    }
+
+    public void setCondition(DbType dbType) {
+        if (null == this.condition && StringUtils.isCharSequence(this.propertyType)) {
+            this.condition = dbType.getLike();
+        }
     }
 
     public void setCondition(String condition) {

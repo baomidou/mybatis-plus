@@ -87,34 +87,6 @@ public abstract class LogicAbstractMethod extends AbstractMethod {
     // ------------ 处理逻辑删除条件过滤 ------------
 
     @Override
-    protected String sqlWhere(TableInfo table) {
-        if (table.isLogicDelete()) {
-            StringBuilder where = new StringBuilder("<where>");
-            // 过滤逻辑
-            List<TableFieldInfo> fieldList = table.getFieldList();
-            // EW 逻辑
-            if (StringUtils.isNotEmpty(table.getKeyProperty())) {
-                where.append("<if test=\"ew.").append(table.getKeyProperty()).append("!=null\">");
-                where.append(" AND ").append(table.getKeyColumn()).append("=#{ew.");
-                where.append(table.getKeyProperty()).append("}");
-                where.append("</if>");
-            }
-            for (TableFieldInfo fieldInfo : fieldList) {
-                where.append(convertIfTag(fieldInfo, "ew.", false));
-                where.append(" AND ").append(sqlCondition(fieldInfo.getCondition(),
-                    fieldInfo.getColumn(), "ew." + fieldInfo.getEl()));
-                where.append(convertIfTag(fieldInfo, true));
-            }
-            // 过滤逻辑
-            where.append(getLogicDeleteSql(table));
-            where.append("</where>");
-            return where.toString();
-        }
-        // 正常逻辑
-        return super.sqlWhere(table);
-    }
-
-    @Override
     protected String sqlWhereEntityWrapper(TableInfo table) {
         if (table.isLogicDelete()) {
             StringBuilder where = new StringBuilder(128);

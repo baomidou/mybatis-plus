@@ -37,7 +37,6 @@ import com.baomidou.mybatisplus.extension.injector.methods.LogicSelectList;
 import com.baomidou.mybatisplus.extension.injector.methods.LogicSelectMaps;
 import com.baomidou.mybatisplus.extension.injector.methods.LogicSelectMapsPage;
 import com.baomidou.mybatisplus.extension.injector.methods.LogicSelectObjs;
-import com.baomidou.mybatisplus.extension.injector.methods.LogicSelectOne;
 import com.baomidou.mybatisplus.extension.injector.methods.LogicSelectPage;
 import com.baomidou.mybatisplus.extension.injector.methods.LogicUpdate;
 import com.baomidou.mybatisplus.extension.injector.methods.LogicUpdateById;
