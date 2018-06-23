@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.extension.service.impl;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +46,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * </p>
  *
  * @author hubin
- * @since 2016-04-20
+ * @since 2018-06-23
  */
 public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
@@ -98,7 +99,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean insertBatch(List<T> entityList) {
+    public boolean insertBatch(Collection<T> entityList) {
         return insertBatch(entityList, 30);
     }
 
@@ -111,18 +112,20 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean insertBatch(List<T> entityList, int batchSize) {
+    public boolean insertBatch(Collection<T> entityList, int batchSize) {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
         try (SqlSession batchSqlSession = sqlSessionBatch()) {
-            int size = entityList.size();
+            int i = 0;
             String sqlStatement = sqlStatement(SqlMethod.INSERT_ONE);
-            for (int i = 0; i < size; i++) {
-                batchSqlSession.insert(sqlStatement, entityList.get(i));
+            Iterator<T> iterator = entityList.iterator();
+            while (iterator.hasNext()) {
+                batchSqlSession.insert(sqlStatement, iterator.next());
                 if (i >= 1 && i % batchSize == 0) {
                     batchSqlSession.flushStatements();
                 }
+                i++;
             }
             batchSqlSession.flushStatements();
         } catch (Throwable e) {
@@ -164,20 +167,20 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean insertOrUpdateBatch(List<T> entityList) {
+    public boolean insertOrUpdateBatch(Collection<T> entityList) {
         return insertOrUpdateBatch(entityList, 30);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean insertOrUpdateBatch(List<T> entityList, int batchSize) {
+    public boolean insertOrUpdateBatch(Collection<T> entityList, int batchSize) {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
         try (SqlSession batchSqlSession = sqlSessionBatch()) {
-            int size = entityList.size();
-            for (int i = 0; i < size; i++) {
-                insertOrUpdate(entityList.get(i));
+            Iterator<T> iterator = entityList.iterator();
+            while (iterator.hasNext()) {
+                insertOrUpdate(iterator.next());
             }
             batchSqlSession.flushStatements();
         } catch (Throwable e) {
@@ -227,26 +230,28 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean updateBatchById(List<T> entityList) {
+    public boolean updateBatchById(Collection<T> entityList) {
         return updateBatchById(entityList, 30);
     }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean updateBatchById(List<T> entityList, int batchSize) {
+    public boolean updateBatchById(Collection<T> entityList, int batchSize) {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
         try (SqlSession batchSqlSession = sqlSessionBatch()) {
-            int size = entityList.size();
+            int i = 0;
             String sqlStatement = sqlStatement(SqlMethod.UPDATE_BY_ID);
-            for (int i = 0; i < size; i++) {
+            Iterator<T> iterator = entityList.iterator();
+            while (iterator.hasNext()) {
                 MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
-                param.put("et", entityList.get(i));
+                param.put("et", iterator.next());
                 batchSqlSession.update(sqlStatement, param);
                 if (i >= 1 && i % batchSize == 0) {
                     batchSqlSession.flushStatements();
                 }
+                i++;
             }
             batchSqlSession.flushStatements();
         } catch (Throwable e) {
@@ -261,12 +266,12 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     @Override
-    public List<T> selectBatchIds(Collection<? extends Serializable> idList) {
+    public Collection<T> selectBatchIds(Collection<? extends Serializable> idList) {
         return baseMapper.selectBatchIds(idList);
     }
 
     @Override
-    public List<T> selectByMap(Map<String, Object> columnMap) {
+    public Collection<T> selectByMap(Map<String, Object> columnMap) {
         return baseMapper.selectByMap(columnMap);
     }
 
@@ -291,7 +296,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     @Override
-    public List<T> selectList(Wrapper<T> wrapper) {
+    public Collection<T> selectList(Wrapper<T> wrapper) {
         return baseMapper.selectList(wrapper);
     }
 

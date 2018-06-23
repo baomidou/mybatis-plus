@@ -80,7 +80,7 @@ public class ApiResult<T> {
         return apiResult;
     }
 
-    public boolean isSuccess() {
+    public boolean ok() {
         return ApiErrorCode.SUCCESS.getCode().equals(this.code);
     }
 
@@ -88,7 +88,7 @@ public class ApiResult<T> {
      * 服务间调用非业务正常，异常直接释放
      */
     public T serviceData() {
-        if (!isSuccess()) {
+        if (!ok()) {
             throw new ApiException(this.msg);
         }
         return data;

@@ -29,7 +29,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
  * </p>
  *
  * @author hubin
- * @since 2016-04-20
+ * @since 2018-06-23
  */
 public interface IService<T> {
 
@@ -48,42 +48,42 @@ public interface IService<T> {
      * 插入（批量），该方法不适合 Oracle
      * </p>
      *
-     * @param entityList 实体对象列表
+     * @param entityList 实体对象集合
      * @return boolean
      */
-    boolean insertBatch(List<T> entityList);
+    boolean insertBatch(Collection<T> entityList);
 
     /**
      * <p>
      * 插入（批量）
      * </p>
      *
-     * @param entityList 实体对象列表
+     * @param entityList 实体对象集合
      * @param batchSize  插入批次数量
      * @return boolean
      */
-    boolean insertBatch(List<T> entityList, int batchSize);
+    boolean insertBatch(Collection<T> entityList, int batchSize);
 
     /**
      * <p>
      * 批量修改插入
      * </p>
      *
-     * @param entityList 实体对象列表
+     * @param entityList 实体对象集合
      * @return boolean
      */
-    boolean insertOrUpdateBatch(List<T> entityList);
+    boolean insertOrUpdateBatch(Collection<T> entityList);
 
     /**
      * <p>
      * 批量修改插入
      * </p>
      *
-     * @param entityList 实体对象列表
+     * @param entityList 实体对象集合
      * @param batchSize
      * @return boolean
      */
-    boolean insertOrUpdateBatch(List<T> entityList, int batchSize);
+    boolean insertOrUpdateBatch(Collection<T> entityList, int batchSize);
 
     /**
      * <p>
@@ -151,21 +151,21 @@ public interface IService<T> {
      * 根据ID 批量更新
      * </p>
      *
-     * @param entityList 实体对象列表
+     * @param entityList 实体对象集合
      * @return boolean
      */
-    boolean updateBatchById(List<T> entityList);
+    boolean updateBatchById(Collection<T> entityList);
 
     /**
      * <p>
      * 根据ID 批量更新
      * </p>
      *
-     * @param entityList 实体对象列表
+     * @param entityList 实体对象集合
      * @param batchSize  更新批次数量
      * @return boolean
      */
-    boolean updateBatchById(List<T> entityList, int batchSize);
+    boolean updateBatchById(Collection<T> entityList, int batchSize);
 
     /**
      * <p>
@@ -193,9 +193,9 @@ public interface IService<T> {
      * </p>
      *
      * @param idList 主键ID列表
-     * @return List<T>
+     * @return Collection<T>
      */
-    List<T> selectBatchIds(Collection<? extends Serializable> idList);
+    Collection<T> selectBatchIds(Collection<? extends Serializable> idList);
 
     /**
      * <p>
@@ -203,9 +203,9 @@ public interface IService<T> {
      * </p>
      *
      * @param columnMap 表字段 map 对象
-     * @return List<T>
+     * @return Collection<T>
      */
-    List<T> selectByMap(Map<String, Object> columnMap);
+    Collection<T> selectByMap(Map<String, Object> columnMap);
 
     /**
      * <p>
@@ -255,7 +255,7 @@ public interface IService<T> {
      * @param wrapper 实体包装类 {@link Wrapper}
      * @return
      */
-    List<T> selectList(Wrapper<T> wrapper);
+    Collection<T> selectList(Wrapper<T> wrapper);
 
     /**
      * <p>
