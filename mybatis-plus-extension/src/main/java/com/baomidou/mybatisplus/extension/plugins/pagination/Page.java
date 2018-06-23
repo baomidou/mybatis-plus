@@ -31,7 +31,7 @@ import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
  * @author hubin
  * @since 2018-06-09
  */
-public class Pagination<T> implements IPage<T>, Serializable {
+public class Page<T> implements IPage<T>, Serializable {
 
     private static final long serialVersionUID = 8545996863226528798L;
 
@@ -65,7 +65,7 @@ public class Pagination<T> implements IPage<T>, Serializable {
     private List<String> descs;
 
 
-    public Pagination() {
+    public Page() {
         // to do nothing
     }
 
@@ -77,11 +77,11 @@ public class Pagination<T> implements IPage<T>, Serializable {
      * @param current 当前页
      * @param size    每页显示条数
      */
-    public Pagination(long current, long size) {
+    public Page(long current, long size) {
         this(current, size, 0L);
     }
 
-    public Pagination(long current, long size, Long total) {
+    public Page(long current, long size, Long total) {
         if (current > 1) {
             this.current = current;
         }
@@ -123,7 +123,7 @@ public class Pagination<T> implements IPage<T>, Serializable {
     }
 
     @Override
-    public Pagination<T> setTotal(Long total) {
+    public Page<T> setTotal(Long total) {
         this.total = total;
         return this;
     }
@@ -134,7 +134,7 @@ public class Pagination<T> implements IPage<T>, Serializable {
     }
 
     @Override
-    public Pagination<T> setSize(long size) {
+    public Page<T> setSize(long size) {
         this.size = size;
         return this;
     }
@@ -145,7 +145,7 @@ public class Pagination<T> implements IPage<T>, Serializable {
     }
 
     @Override
-    public Pagination<T> setCurrent(long current) {
+    public Page<T> setCurrent(long current) {
         this.current = current;
         return this;
     }
@@ -160,12 +160,12 @@ public class Pagination<T> implements IPage<T>, Serializable {
         return ascs;
     }
 
-    public Pagination<T> setAscs(List<String> ascs) {
+    public Page<T> setAscs(List<String> ascs) {
         this.ascs = ascs;
         return this;
     }
 
-    public Pagination<T> setAscs(String... ascs) {
+    public Page<T> setAscs(String... ascs) {
         if (ArrayUtils.isNotEmpty(ascs)) {
             this.ascs = Arrays.asList(ascs);
         }
@@ -177,12 +177,12 @@ public class Pagination<T> implements IPage<T>, Serializable {
         return descs;
     }
 
-    public Pagination<T> setDescs(List<String> descs) {
+    public Page<T> setDescs(List<String> descs) {
         this.descs = descs;
         return this;
     }
 
-    public Pagination<T> setDescs(String... descs) {
+    public Page<T> setDescs(String... descs) {
         if (ArrayUtils.isNotEmpty(descs)) {
             this.descs = Arrays.asList(descs);
         }

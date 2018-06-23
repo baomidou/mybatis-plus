@@ -89,7 +89,7 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
     private boolean localPage = false;
 
     /**
-     * Physical Pagination Interceptor for all the queries with parameter {@link RowBounds}
+     * Physical Page Interceptor for all the queries with parameter {@link RowBounds}
      */
     @Override
     public Object intercept(Invocation invocation) throws Throwable {

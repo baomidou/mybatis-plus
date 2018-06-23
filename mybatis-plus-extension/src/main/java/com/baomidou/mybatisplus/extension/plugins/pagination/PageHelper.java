@@ -77,7 +77,7 @@ public class PageHelper {
 
     /**
      * <p>
-     * Pagination 分页偏移量
+     * Page 分页偏移量
      * </p>
      */
     public static long offsetCurrent(IPage page) {
@@ -114,7 +114,7 @@ public class PageHelper {
      * @param size    页大小
      */
     public static void startPage(long current, long size) {
-        LOCAL_PAGE.set(new Pagination(current, size));
+        LOCAL_PAGE.set(new Page(current, size));
     }
 
     /**

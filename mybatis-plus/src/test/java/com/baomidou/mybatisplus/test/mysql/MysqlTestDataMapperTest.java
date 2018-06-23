@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Pagination;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.base.entity.TestData;
 import com.baomidou.mybatisplus.test.base.mapper.TestDataMapper;
 
@@ -79,7 +79,7 @@ public class MysqlTestDataMapperTest {
 
     @Test
     public void selectPage() {
-        IPage<TestData> page = new Pagination<>();
+        IPage<TestData> page = new Page<>();
         page.setSize(5).setCurrent(1);
         IPage<TestData> dataPage = testDataMapper.selectPage(page, new QueryWrapper<TestData>().lambda()
             .eq(TestData::getTestInt, 1));

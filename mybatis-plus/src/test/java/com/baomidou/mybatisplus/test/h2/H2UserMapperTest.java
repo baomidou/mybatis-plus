@@ -21,7 +21,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Pagination;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.h2.config.H2Db;
 import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserMapper;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
@@ -119,12 +119,12 @@ public class H2UserMapperTest extends BaseTest {
         log(h2User.toString());
 
         // 分页查询
-        IPage<H2User> h2UserPage = userMapper.selectPage(new Pagination<>(1, 10), null);
+        IPage<H2User> h2UserPage = userMapper.selectPage(new Page<>(1, 10), null);
         if (null != h2UserPage) {
             System.out.println(h2UserPage.getTotal());
             System.out.println(h2UserPage.getSize());
         }
-        Assert.assertTrue(null != userMapper.selectPage(new Pagination<>(1, 10),
+        Assert.assertTrue(null != userMapper.selectPage(new Page<>(1, 10),
             new QueryWrapper<H2User>().orderByAsc("name")));
 
         // 查询结果集

@@ -64,14 +64,14 @@ public class DialectFactory {
      * @return
      * @throws Exception
      */
-    public static String buildPaginationSql(Pagination page, String buildSql, DbType dbType, String dialectClazz)
+    public static String buildPaginationSql(Page page, String buildSql, DbType dbType, String dialectClazz)
         throws Exception {
         // fix #172, 196
         return getDialect(dbType, dialectClazz).buildPaginationSql(buildSql, PageHelper.offsetCurrent(page), page.getSize());
     }
 
     /**
-     * Physical Pagination Interceptor for all the queries with parameter
+     * Physical Page Interceptor for all the queries with parameter
      * {@link RowBounds}
      *
      * @param page         翻页对象
