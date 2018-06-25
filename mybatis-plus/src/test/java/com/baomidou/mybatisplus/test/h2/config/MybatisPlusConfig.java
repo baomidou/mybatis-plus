@@ -2,6 +2,7 @@ package com.baomidou.mybatisplus.test.h2.config;
 
 import javax.sql.DataSource;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.JdbcType;
@@ -11,7 +12,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.config.DbConfig;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
@@ -65,7 +65,7 @@ public class MybatisPlusConfig {
 //        LogicSqlInjector logicSqlInjector = new LogicSqlInjector();
 //        conf.setLogicDeleteValue("-1");
 //        conf.setLogicNotDeleteValue("1");
-        conf.setDbConfig(new DbConfig().setIdType(2));
+        conf.setDbConfig(new GlobalConfig.DbConfig().setIdType(IdType.ID_WORKER));
         return conf;
     }
 }
