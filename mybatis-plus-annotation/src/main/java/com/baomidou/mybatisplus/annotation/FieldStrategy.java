@@ -27,8 +27,17 @@ import lombok.Getter;
  */
 @Getter
 public enum FieldStrategy {
+    /**
+     * 忽略判断
+     */
     IGNORED(0, "忽略判断"),
+    /**
+     * 非NULL判断
+     */
     NOT_NULL(1, "非 NULL 判断"),
+    /**
+     * 非空判断
+     */
     NOT_EMPTY(2, "非空判断");
 
     /**
@@ -44,16 +53,6 @@ public enum FieldStrategy {
     FieldStrategy(final int key, final String desc) {
         this.key = key;
         this.desc = desc;
-    }
-
-    public static FieldStrategy getFieldStrategy(int key) {
-        FieldStrategy[] fss = FieldStrategy.values();
-        for (FieldStrategy fs : fss) {
-            if (fs.getKey() == key) {
-                return fs;
-            }
-        }
-        return FieldStrategy.NOT_NULL;
     }
 
 }
