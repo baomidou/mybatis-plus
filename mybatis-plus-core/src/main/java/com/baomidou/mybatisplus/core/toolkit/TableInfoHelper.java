@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
 import com.baomidou.mybatisplus.annotation.*;
-import com.baomidou.mybatisplus.core.config.DbConfig;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
@@ -137,7 +136,7 @@ public class TableInfoHelper {
         boolean underCamel = builderAssistant.getConfiguration().isMapUnderscoreToCamelCase();
 
         /* 数据库全局配置 */
-        DbConfig dbConfig = globalConfig.getDbConfig();
+        GlobalConfig.DbConfig dbConfig = globalConfig.getDbConfig();
 
         // 表名
         TableName table = clazz.getAnnotation(TableName.class);
@@ -257,7 +256,7 @@ public class TableInfoHelper {
      * @param clazz      实体类
      * @return true 继续下一个属性判断，返回 continue;
      */
-    private static boolean initTableId(boolean underCamel, DbConfig dbConfig, TableInfo tableInfo,
+    private static boolean initTableId(boolean underCamel, GlobalConfig.DbConfig dbConfig, TableInfo tableInfo,
                                        Field field, Class<?> clazz) {
         TableId tableId = field.getAnnotation(TableId.class);
         if (tableId != null) {
@@ -311,7 +310,7 @@ public class TableInfoHelper {
      * @param clazz     实体类
      * @return true 继续下一个属性判断，返回 continue;
      */
-    private static boolean initFieldId(DbConfig dbConfig, TableInfo tableInfo,
+    private static boolean initFieldId(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo,
                                        Field field, Class<?> clazz) {
         String column = field.getName();
         if (dbConfig.isCapitalMode()) {
@@ -354,7 +353,7 @@ public class TableInfoHelper {
      * @param clazz      当前表对象类
      * @return true 继续下一个属性判断，返回 continue;
      */
-    private static boolean initTableField(boolean underCamel, DbConfig dbConfig, TableInfo tableInfo,
+    private static boolean initTableField(boolean underCamel, GlobalConfig.DbConfig dbConfig, TableInfo tableInfo,
                                           List<TableFieldInfo> fieldList, Field field, Class<?> clazz) {
         /* 获取注解属性，自定义字段 */
         TableField tableField = field.getAnnotation(TableField.class);

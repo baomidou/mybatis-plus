@@ -23,7 +23,7 @@ import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.SqlCondition;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.core.config.DbConfig;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 /**
@@ -98,7 +98,7 @@ public class TableFieldInfo {
      * 存在 TableField 注解构造函数
      * </p>
      */
-    public TableFieldInfo(boolean underCamel, DbConfig dbConfig, TableInfo tableInfo,
+    public TableFieldInfo(boolean underCamel, GlobalConfig.DbConfig dbConfig, TableInfo tableInfo,
                           String column, String el, Field field, TableField tableField) {
         this.property = field.getName();
         this.propertyType = field.getType();
@@ -139,7 +139,7 @@ public class TableFieldInfo {
         this.fieldFill = tableField.fill();
     }
 
-    public TableFieldInfo(boolean underCamel, DbConfig dbConfig, TableInfo tableInfo, Field field) {
+    public TableFieldInfo(boolean underCamel, GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field) {
         if (dbConfig.isColumnUnderline()) {
             /* 开启字段下划线申明 */
             this.setColumn(dbConfig, StringUtils.camelToUnderline(field.getName()));
@@ -166,7 +166,7 @@ public class TableFieldInfo {
      * @param dbConfig 数据库全局配置
      * @param field    字段属性对象
      */
-    private boolean initLogicDelete(DbConfig dbConfig, Field field) {
+    private boolean initLogicDelete(GlobalConfig.DbConfig dbConfig, Field field) {
         if (null == dbConfig.getLogicDeleteValue()) {
             // 未设置逻辑删除值不进行
             return false;
@@ -201,7 +201,7 @@ public class TableFieldInfo {
         return column;
     }
 
-    public void setColumn(DbConfig dbConfig, String column) {
+    public void setColumn(GlobalConfig.DbConfig dbConfig, String column) {
         String temp = dbConfig.getReservedWordsHandler().convert(dbConfig.getDbType(), column);
         if (dbConfig.isCapitalMode() && !isRelated()) {
             // 全局大写，非注解指定

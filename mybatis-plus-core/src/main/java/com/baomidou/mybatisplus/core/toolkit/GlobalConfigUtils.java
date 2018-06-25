@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.core.config.DbConfig;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.Configuration;
@@ -86,7 +85,7 @@ public class GlobalConfigUtils {
      */
     public static GlobalConfig defaults() {
         GlobalConfig config = new GlobalConfig();
-        config.setDbConfig(new DbConfig());
+        config.setDbConfig(new GlobalConfig.DbConfig());
         return config;
     }
 

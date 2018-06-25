@@ -1,7 +1,7 @@
 {
     "hints": [
         {
-            "sourceType": "com.baomidou.mybatisplus.core.config.DbConfig",
+            "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig$DbConfig",
             "name": "mybatis-plus.global-config.db-config.id-type",
             "type": "java.lang.Integer",
             "description": "主键类型",
@@ -25,7 +25,7 @@
             ]
         },
         {
-            "sourceType": "com.baomidou.mybatisplus.core.config.DbConfig",
+            "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig$DbConfig",
             "name": "mybatis-plus.global-config.db-config.field-strategy",
             "type": "java.lang.Integer",
             "description": "字段验证策略",
@@ -64,66 +64,13 @@
             "type": "com.baomidou.mybatisplus.core.config.GlobalConfig"
         },
         {
-            "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig",
+            "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig$DbConfig",
             "name": "mybatis-plus.global-config.db-config",
             "sourceMethod": "getDbConfig()",
-            "type": "com.baomidou.mybatisplus.core.config.DbConfig"
+            "type": "com.baomidou.mybatisplus.core.config.GlobalConfig$DbConfig"
         }
     ],
     "properties": [
-        {
-            "sourceType": "com.baomidou.mybatisplus.core.config.DbConfig",
-            "name": "mybatis-plus.global-config.db-config.capital-mode",
-            "type": "java.lang.Boolean",
-            "description": "是否大写命名"
-        },
-        {
-            "sourceType": "com.baomidou.mybatisplus.core.config.DbConfig",
-            "name": "mybatis-plus.global-config.db-config.db-column-underline",
-            "type": "java.lang.Boolean",
-            "description": "是否使用下划线命名"
-        },
-        {
-            "sourceType": "com.baomidou.mybatisplus.core.config.DbConfig",
-            "name": "mybatis-plus.global-config.logic-delete-value",
-            "type": "java.lang.String",
-            "description": "逻辑删除全局值"
-        },
-        {
-            "sourceType": "com.baomidou.mybatisplus.core.config.DbConfig",
-            "name": "mybatis-plus.global-config.db-config.logic-not-delete-value",
-            "type": "java.lang.String",
-            "description": "逻辑未删除全局值"
-        },
-        {
-            "sourceType": "com.baomidou.mybatisplus.core.config.DbConfig",
-            "name": "mybatis-plus.global-config.db-config.key-generator",
-            "type": "java.lang.String",
-            "description": "表关键词 key 生成器"
-        },
-        {
-            "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig",
-            "name": "mybatis-plus.global-config.meta-object-handler",
-            "type": "java.lang.String",
-            "description": "元对象字段填充控制器"
-        },
-        {
-            "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig",
-            "name": "mybatis-plus.global-config.refresh-mapper",
-            "type": "java.lang.Boolean",
-            "description": "是否动态刷新mapper"
-        },
-        {
-            "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig",
-            "name": "mybatis-plus.global-config.sql-injector",
-            "type": "java.lang.String",
-            "description": "SQL注入器"
-        },
-        {
-            "sourceType": "com.baomidou.mybatisplus.autoconfigure.MybatisPlusProperties",
-            "name": "mybatis-plus.type-enums-package",
-            "type": "java.lang.String",
-            "description": "自定义枚举包"
-        }
+
     ]
 }
