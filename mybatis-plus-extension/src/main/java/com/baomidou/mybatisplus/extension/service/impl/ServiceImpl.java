@@ -296,7 +296,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     @Override
-    public Collection<T> selectList(Wrapper<T> wrapper) {
+    public List<T> selectList(Wrapper<T> wrapper) {
         return baseMapper.selectList(wrapper);
     }
 

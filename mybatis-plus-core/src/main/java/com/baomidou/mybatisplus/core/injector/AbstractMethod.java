@@ -396,7 +396,7 @@ public abstract class AbstractMethod {
             where.append(convertIfTag(fieldInfo, true));
         }
         where.append("</if>");
-        where.append("<if test=\"ew.sqlSegment!=null\"> AND ${ew.sqlSegment}</if>");
+        where.append("<if test=\"ew.sqlSegment!=null and ew.sqlSegment!=''\"> AND ${ew.sqlSegment}</if>");
         where.append("</trim>");
         where.append("</if>");
         return where.toString();

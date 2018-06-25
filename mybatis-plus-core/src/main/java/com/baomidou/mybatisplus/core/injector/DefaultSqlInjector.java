@@ -34,6 +34,7 @@ import com.baomidou.mybatisplus.core.injector.methods.SelectList;
 import com.baomidou.mybatisplus.core.injector.methods.SelectMaps;
 import com.baomidou.mybatisplus.core.injector.methods.SelectMapsPage;
 import com.baomidou.mybatisplus.core.injector.methods.SelectObjs;
+import com.baomidou.mybatisplus.core.injector.methods.SelectOne;
 import com.baomidou.mybatisplus.core.injector.methods.SelectPage;
 import com.baomidou.mybatisplus.core.injector.methods.Update;
 import com.baomidou.mybatisplus.core.injector.methods.UpdateById;

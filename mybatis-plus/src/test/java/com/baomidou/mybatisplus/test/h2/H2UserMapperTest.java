@@ -98,7 +98,7 @@ public class H2UserMapperTest extends BaseTest {
         Assert.assertTrue(1 == userMapper.update(h2User,
             new QueryWrapper<H2User>().eq("name", NQQ)));
 
-        log(userMapper.selectOne(new H2User().setName(NQQ).setAge(2)));
+        log(userMapper.selectOne(new QueryWrapper<>(new H2User().setName(NQQ).setAge(2))));
 
         h2User.setAge(3);
         h2User.setDesc(null);
@@ -107,14 +107,14 @@ public class H2UserMapperTest extends BaseTest {
                 .set(H2User::getDesc, "")
                 .eq(H2User::getName, NQQ)));
 
-        log(userMapper.selectOne(new H2User().setName(NQQ).setAge(3)));
+        log(userMapper.selectOne(new QueryWrapper<>(new H2User().setName(NQQ).setAge(3))));
 
         // 根据主键更新 age = 18
         h2User.setAge(18);
         Assert.assertNotNull(1 == userMapper.updateById(h2User));
 
         // 查询一条记录
-        Assert.assertNotNull(userMapper.selectOne(new H2User().setName(NQQ)));
+        Assert.assertNotNull(userMapper.selectOne(new QueryWrapper<>(new H2User().setName(NQQ))));
 
         log(h2User.toString());
 

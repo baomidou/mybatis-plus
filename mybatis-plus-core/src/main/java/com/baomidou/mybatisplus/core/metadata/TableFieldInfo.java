@@ -278,8 +278,10 @@ public class TableFieldInfo {
     }
 
     public void setCondition(DbType dbType) {
-        if (null == this.condition && StringUtils.isCharSequence(this.propertyType)) {
-            this.condition = dbType.getLike();
+        if (StringUtils.isCharSequence(this.propertyType)) {
+            if (null == this.condition || SqlCondition.EQUAL.equals(this.condition)) {
+                this.condition = dbType.getLike();
+            }
         }
     }
 
