@@ -21,17 +21,17 @@ public class ISqlSegmentList extends ArrayList<ISqlSegment> {
 
     private static final long serialVersionUID = 8205969915086959490L;
     //验证策略 只验证 group by
-    private final Predicate<ISqlSegment> predicateGroupBy = i -> i == GROUP_BY;
+    private static final Predicate<ISqlSegment> predicateGroupBy = i -> i == GROUP_BY;
     //验证策略 只验证 order by
-    private final Predicate<ISqlSegment> predicateOrderBy = i -> i == ORDER_BY;
+    private static final Predicate<ISqlSegment> predicateOrderBy = i -> i == ORDER_BY;
     //验证策略 只验证 and
-    private final Predicate<ISqlSegment> predicateNot = i -> i == NOT;
+    private static final Predicate<ISqlSegment> predicateNot = i -> i == NOT;
     //验证策略 只验证 and
-    private final Predicate<ISqlSegment> predicateAnd = i -> i == AND;
+    private static final Predicate<ISqlSegment> predicateAnd = i -> i == AND;
     //验证策略 只验证 or
-    private final Predicate<ISqlSegment> predicateOr = i -> i == OR;
+    private static final Predicate<ISqlSegment> predicateOr = i -> i == OR;
     //验证策略 全部验证 and 和 or
-    private final Predicate<ISqlSegment> predicateAll = i -> i == AND || i == OR;
+    private static final Predicate<ISqlSegment> predicateAll = i -> i == AND || i == OR;
     //开启优化 and
     private boolean automaticAnd = true;
     //最后一个值
