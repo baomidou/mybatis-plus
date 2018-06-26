@@ -52,7 +52,20 @@ public interface Compare<This, R> extends Serializable {
      * @param <V>    参数的value类型
      * @return 返回自身
      */
-    <V> This allEq(BiPredicate<R, V> filter, Map<R, V> params);
+    default <V> This allEq(BiPredicate<R, V> filter, Map<R, V> params) {
+        return allEq(true, filter, params);
+    }
+
+    /**
+     * TODO 待确定的多参数字段过滤
+     * 字段过滤接口，传入多参数时允许对参数进行过滤
+     *
+     * @param filter 返回 true 来允许字段传入 条件中
+     * @param params 参数
+     * @param <V>    参数的value类型
+     * @return 返回自身
+     */
+    <V> This allEq(boolean condition, BiPredicate<R, V> filter, Map<R, V> params);
 
     /**
      * 等于 =

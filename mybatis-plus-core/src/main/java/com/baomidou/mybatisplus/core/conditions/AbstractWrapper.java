@@ -109,8 +109,11 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     public This allEq(boolean condition, Map<R, Object> params) {
         if (condition && CollectionUtils.isNotEmpty(params)) {
             params.forEach((k, v) -> {
+                and();
                 if (StringUtils.checkValNotNull(v)) {
-                    and().eq(k, v);
+                    eq(k, v);
+                } else {
+                    isNull(k);
                 }
             });
         }
@@ -141,10 +144,11 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * @return 返回自身
      */
     @Override
-    public <V> This allEq(BiPredicate<R, V> filter, Map<R, V> params) {
-        if (null != params) {
+    public <V> This allEq(boolean condition, BiPredicate<R, V> filter, Map<R, V> params) {
+        if (condition && CollectionUtils.isNotEmpty(params)) {
             params.forEach((key, value) -> {
                 if (filter.test(key, value)) {
+                    and();
                     if (null == value) {
                         isNull(key);
                     } else {
