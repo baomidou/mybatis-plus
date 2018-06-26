@@ -28,6 +28,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  * @author hubin
  * @since 2018-05-25
  */
+@SuppressWarnings("serial")
 public abstract class Wrapper<T> implements ISqlSegment, Serializable {
 
     /**
@@ -64,6 +65,5 @@ public abstract class Wrapper<T> implements ISqlSegment, Serializable {
     public Wrapper<T> clone() {
         return SerializationUtils.clone(this);
     }
-
 }
 

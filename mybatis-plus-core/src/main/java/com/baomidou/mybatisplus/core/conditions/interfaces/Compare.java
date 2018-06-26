@@ -30,7 +30,6 @@ import java.util.function.BiPredicate;
  */
 public interface Compare<This, R> extends Serializable {
 
-
     /**
      * map 所有非空属性等于 =
      */

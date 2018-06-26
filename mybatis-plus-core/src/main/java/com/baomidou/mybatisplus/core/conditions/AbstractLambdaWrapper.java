@@ -35,6 +35,7 @@ import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
  * @author hubin miemie HCL
  * @since 2017-05-26
  */
+@SuppressWarnings("serial")
 public abstract class AbstractLambdaWrapper<T, This extends AbstractLambdaWrapper<T, This>>
     extends AbstractWrapper<T, Property<T, ?>, This> implements Serializable {
 

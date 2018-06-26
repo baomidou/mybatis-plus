@@ -15,9 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.conditions.update;
 
-import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
+import static java.util.stream.Collectors.joining;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -25,7 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static java.util.stream.Collectors.joining;
+import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 
 /**
  * <p>
@@ -35,6 +35,7 @@ import static java.util.stream.Collectors.joining;
  * @author hubin miemie HCL
  * @since 2018-05-30
  */
+@SuppressWarnings("serial")
 public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T>> implements Serializable {
 
     /**
