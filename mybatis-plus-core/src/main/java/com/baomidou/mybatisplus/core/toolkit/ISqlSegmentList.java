@@ -1,10 +1,19 @@
+/*
+ * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.baomidou.mybatisplus.core.toolkit;
-
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.AND;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GROUP_BY;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NOT;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.OR;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ORDER_BY;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,26 +21,19 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
+import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 
 /**
+ * <p>
+ * ISqlSegment List
+ * </p>
+ *
  * @author miemie
  * @since 2018-06-26
  */
 public class ISqlSegmentList extends ArrayList<ISqlSegment> {
 
     private static final long serialVersionUID = 8205969915086959490L;
-    //验证策略 只验证 group by
-    private static final Predicate<ISqlSegment> predicateGroupBy = i -> i == GROUP_BY;
-    //验证策略 只验证 order by
-    private static final Predicate<ISqlSegment> predicateOrderBy = i -> i == ORDER_BY;
-    //验证策略 只验证 and
-    private static final Predicate<ISqlSegment> predicateNot = i -> i == NOT;
-    //验证策略 只验证 and
-    private static final Predicate<ISqlSegment> predicateAnd = i -> i == AND;
-    //验证策略 只验证 or
-    private static final Predicate<ISqlSegment> predicateOr = i -> i == OR;
-    //验证策略 全部验证 and 和 or
-    private static final Predicate<ISqlSegment> predicateAll = i -> i == AND || i == OR;
     //开启优化 and
     private boolean automaticAnd = true;
     //最后一个值
@@ -48,31 +50,35 @@ public class ISqlSegmentList extends ArrayList<ISqlSegment> {
     public boolean addAll(Collection<? extends ISqlSegment> c) {
         if (automaticAnd) {
             ArrayList<? extends ISqlSegment> list = new ArrayList<>(c);
-            if (list.size() == 1) {//只有一个元素
+            //只有一个元素
+            if (list.size() == 1) {
                 /**
                  * 只有 and() 以及 or() 以及 not() 会进入
                  */
                 ISqlSegment sqlSegment = list.get(0);
-                if (!match(predicateNot, sqlSegment)) {//不是 not
-                    if (isEmpty()) { //sqlSegment是 and 或者 or 并且在第一位,不继续执行
+                if (!match(PredicateStrategy.NOT, sqlSegment)) {
+                    //不是 not
+                    if (isEmpty()) {
+                        //sqlSegment是 and 或者 or 并且在第一位,不继续执行
                         return false;
                     }
-                    boolean matchLastAnd = match(predicateAnd, lastValue);
-                    boolean matchLastOr = match(predicateOr, lastValue);
-                    if (matchLastAnd || matchLastOr) {//上次最后一个值是 and 或者 or
-                        if (matchLastAnd && match(predicateAnd, sqlSegment)) {
+                    boolean matchLastAnd = match(PredicateStrategy.AND, lastValue);
+                    boolean matchLastOr = match(PredicateStrategy.OR, lastValue);
+                    if (matchLastAnd || matchLastOr) {
+                        //上次最后一个值是 and 或者 or
+                        if (matchLastAnd && match(PredicateStrategy.AND, sqlSegment)) {
                             return false;
-                        } else if (matchLastOr && match(predicateOr, sqlSegment)) {
+                        } else if (matchLastOr && match(PredicateStrategy.OR, sqlSegment)) {
                             return false;
-                        } else {//和上次的不一样
+                        } else {
+                            //和上次的不一样
                             removeLast();
                         }
                     }
                 }
-            } else {//多个元素
-                if (!match(predicateAll, lastValue) && !isEmpty()) {
-                    add(AND);
-                }
+            } else if (!match(PredicateStrategy.AND_OR, lastValue) && !isEmpty()) {
+                //多个元素
+                add(SqlKeyword.AND);
             }
             //后置处理
             this.flushLastValue(list);
@@ -86,11 +92,33 @@ public class ISqlSegmentList extends ArrayList<ISqlSegment> {
         lastValue = list.get(list.size() - 1);
     }
 
-    private boolean match(Predicate<ISqlSegment> predicate, ISqlSegment value) {
-        return predicate.test(value);
+    private boolean match(PredicateStrategy predicateStrategy, ISqlSegment value) {
+        return predicateStrategy.getPredicate().test(value);
     }
 
     private void removeLast() {//todo
         remove(size() - 1);
+    }
+
+    /**
+     * 验证策略
+     */
+    private enum PredicateStrategy {
+        GROUP_BY(i -> i == SqlKeyword.GROUP_BY),
+        ORDER_BY(i -> i == SqlKeyword.ORDER_BY),
+        NOT(i -> i == SqlKeyword.NOT),
+        AND(i -> i == SqlKeyword.AND),
+        OR(i -> i == SqlKeyword.OR),
+        AND_OR(i -> i == SqlKeyword.AND || i == SqlKeyword.OR);
+
+        private Predicate<ISqlSegment> predicate;
+
+        PredicateStrategy(Predicate<ISqlSegment> predicate) {
+            this.predicate = predicate;
+        }
+
+        public Predicate<ISqlSegment> getPredicate() {
+            return predicate;
+        }
     }
 }
