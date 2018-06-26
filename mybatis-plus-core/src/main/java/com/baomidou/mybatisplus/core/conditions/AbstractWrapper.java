@@ -39,11 +39,9 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiPredicate;
@@ -56,6 +54,7 @@ import com.baomidou.mybatisplus.core.conditions.interfaces.Nested;
 import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.ISqlSegmentList;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 
@@ -92,7 +91,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * 数据库表映射实体类
      */
     protected T entity;
-    private List<ISqlSegment> expression = new ArrayList<>();
+    private ISqlSegmentList expression = new ISqlSegmentList();
     private boolean didOrderBy = false;
 
     @Override
