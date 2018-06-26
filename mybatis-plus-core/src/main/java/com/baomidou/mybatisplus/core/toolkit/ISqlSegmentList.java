@@ -62,7 +62,7 @@ public class ISqlSegmentList extends ArrayList<ISqlSegment> {
                     if (matchLastAnd || matchLastOr) {//上次最后一个值是 and 或者 or
                         if (matchLastAnd && match(predicateAnd, sqlSegment)) {
                             return false;
-                        } else if (matchLastOr || match(predicateOr, sqlSegment)) {
+                        } else if (matchLastOr && match(predicateOr, sqlSegment)) {
                             return false;
                         } else {//和上次的不一样
                             removeLast();
