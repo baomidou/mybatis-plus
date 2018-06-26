@@ -46,6 +46,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 import com.baomidou.mybatisplus.core.conditions.interfaces.Compare;
@@ -110,6 +111,45 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
             params.forEach((k, v) -> {
                 if (StringUtils.checkValNotNull(v)) {
                     and().eq(k, v);
+                }
+            });
+        }
+        return typedThis;
+    }
+
+    /**
+     * TODO 待确定的多参数字段过滤
+     * 条件过滤器，该方法是一个 NullSafe 的方法
+     * 参数中的 null 值在拼接的时候会被自动转换成 IS NULL
+     * 示例：
+     * Map<String, String> params = new HashMap<String, String>(){{
+     * put("id", "123");
+     * put("name", "baomidou");
+     * put("address", null);
+     * }};
+     *
+     * 去除值为null的元素，可以这么写：
+     * allEq((key,value)-> null!= value, params);
+     * 只加入id ,name：
+     * allEq((key,value)-> "id".equals(key) || "name".equals(key), params);
+     * 根据无关的条件判断：
+     * allEq((key,value)-> IntStream.rangeClosed(1,10).limit(1).findFirst().getAsInt() > 5, params);
+     *
+     * @param filter 返回 true 来允许字段传入 条件中
+     * @param params 参数
+     * @param <V>    参数中值的类型
+     * @return 返回自身
+     */
+    @Override
+    public <V> This allEq(BiPredicate<R, V> filter, Map<R, V> params) {
+        if (null != params) {
+            params.forEach((key, value) -> {
+                if (filter.test(key, value)) {
+                    if (null == value) {
+                        isNull(key);
+                    } else {
+                        eq(key, value);
+                    }
                 }
             });
         }
