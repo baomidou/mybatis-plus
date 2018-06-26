@@ -57,10 +57,12 @@ public class ISqlSegmentList extends ArrayList<ISqlSegment> {
                     if (isEmpty()) { //sqlSegment是 and 或者 or 并且在第一位,不继续执行
                         return false;
                     }
-                    if (match(predicateAll, lastValue)) {//上次最后一个值是 and 或者 or
-                        if (match(predicateAnd, lastValue) && match(predicateAnd, sqlSegment)) {
+                    boolean matchLastAnd = match(predicateAnd, lastValue);
+                    boolean matchLastOr = match(predicateOr, lastValue);
+                    if (matchLastAnd || matchLastOr) {//上次最后一个值是 and 或者 or
+                        if (matchLastAnd && match(predicateAnd, sqlSegment)) {
                             return false;
-                        } else if (match(predicateOr, sqlSegment) && match(predicateOr, lastValue)) {
+                        } else if (matchLastOr || match(predicateOr, sqlSegment)) {
                             return false;
                         } else {//和上次的不一样
                             removeLast();
