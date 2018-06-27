@@ -93,6 +93,9 @@ public class WrapperTest {
 
         logSqlSegment("嵌套测试,套内外手动拼接 or,去除套内第一个 or", new QueryWrapper<User>()
             .eq("id", 11).or(i -> i.or().eq("id", 1)).or().eq("id", 1));
+
+        logSqlSegment("多个 order by 拼接,", new QueryWrapper<User>()
+            .eq("id", 11).orderByAsc("id", "name", "sex").orderByAsc("age", "txl"));
     }
 
 //    public void test() {

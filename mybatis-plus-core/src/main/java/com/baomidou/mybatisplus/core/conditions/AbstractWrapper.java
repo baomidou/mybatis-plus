@@ -92,7 +92,6 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      */
     protected T entity;
     private ISqlSegmentList expression = new ISqlSegmentList();
-    private boolean didOrderBy = false;
 
     @Override
     public T getEntity() {
@@ -389,11 +388,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
         if (ArrayUtils.isEmpty(columns)) {
             return typedThis;
         }
-        if (condition && !didOrderBy) {
-            didOrderBy = true;
-            return doIt(true, ORDER_BY, () -> columnsToString(columns), isAsc ? ASC : DESC);
-        }
-        return doIt(condition, () -> ",", () -> columnsToString(columns), isAsc ? ASC : DESC);
+        return doIt(condition, ORDER_BY, () -> columnsToString(columns), isAsc ? ASC : DESC);
     }
 
     /**

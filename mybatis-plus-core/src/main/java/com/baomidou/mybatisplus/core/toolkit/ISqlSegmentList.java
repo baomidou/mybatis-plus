@@ -38,6 +38,8 @@ public class ISqlSegmentList extends ArrayList<ISqlSegment> {
     private boolean automaticAnd = true;
     //最后一个值
     private ISqlSegment lastValue = null;
+    //是否启动过 order by
+    private boolean didOrderBy = false;
 
     public ISqlSegmentList() {
     }
@@ -50,12 +52,12 @@ public class ISqlSegmentList extends ArrayList<ISqlSegment> {
     public boolean addAll(Collection<? extends ISqlSegment> c) {
         if (automaticAnd) {
             ArrayList<? extends ISqlSegment> list = new ArrayList<>(c);
+            ISqlSegment sqlSegment = list.get(0);
             //只有一个元素
             if (list.size() == 1) {
                 /**
                  * 只有 and() 以及 or() 以及 not() 会进入
                  */
-                ISqlSegment sqlSegment = list.get(0);
                 if (!match(PredicateStrategy.NOT, sqlSegment)) {
                     //不是 not
                     if (isEmpty()) {
@@ -78,7 +80,17 @@ public class ISqlSegmentList extends ArrayList<ISqlSegment> {
                 }
             } else if (!match(PredicateStrategy.AND_OR, lastValue) && !isEmpty()) {
                 //多个元素
-                add(SqlKeyword.AND);
+                if (match(PredicateStrategy.ORDER_BY, sqlSegment)) {
+                    //处理 order by
+                    if (!didOrderBy) {
+                        didOrderBy = true;
+                    } else {
+                        list.remove(0);
+                        super.add(() -> ",");
+                    }
+                } else {
+                    add(SqlKeyword.AND);
+                }
             }
             //后置处理
             this.flushLastValue(list);
