@@ -15,12 +15,13 @@
  */
 package com.baomidou.mybatisplus.core.toolkit.sql.segments;
 
+import static com.baomidou.mybatisplus.core.toolkit.sql.segments.MatchSegment.GROUP_BY;
+import static com.baomidou.mybatisplus.core.toolkit.sql.segments.MatchSegment.ORDER_BY;
+
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Predicate;
 
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
-import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 
 /**
  * @author miemie
@@ -37,43 +38,17 @@ public class JoinSegment implements ISqlSegment {
     public void add(ISqlSegment... iSqlSegments) {
         List<ISqlSegment> list = Arrays.asList(iSqlSegments);
         ISqlSegment sqlSegment = list.get(0);
-        if (match(PredicateStrategy.ORDER_BY, sqlSegment)) {
+        if (MatchSegment.match(ORDER_BY, sqlSegment)) {
             orderBySegment.addAll(list);
-        } else if (match(PredicateStrategy.GROUP_BY, sqlSegment)) {
+        } else if (MatchSegment.match(GROUP_BY, sqlSegment)) {
             groupBySegment.addAll(list);
         } else {
             normalSegment.addAll(list);
         }
     }
 
-    private boolean match(PredicateStrategy predicateStrategy, ISqlSegment value) {
-        return predicateStrategy.getPredicate().test(value);
-    }
-
     @Override
     public String getSqlSegment() {
         return normalSegment.getSqlSegment() + groupBySegment.getSqlSegment() + orderBySegment.getSqlSegment();
-    }
-
-    /**
-     * 验证策略
-     */
-    private enum PredicateStrategy {
-        GROUP_BY(i -> i == SqlKeyword.GROUP_BY),
-        ORDER_BY(i -> i == SqlKeyword.ORDER_BY),
-        NOT(i -> i == SqlKeyword.NOT),
-        AND(i -> i == SqlKeyword.AND),
-        OR(i -> i == SqlKeyword.OR),
-        AND_OR(i -> i == SqlKeyword.AND || i == SqlKeyword.OR);
-
-        private Predicate<ISqlSegment> predicate;
-
-        PredicateStrategy(Predicate<ISqlSegment> predicate) {
-            this.predicate = predicate;
-        }
-
-        public Predicate<ISqlSegment> getPredicate() {
-            return predicate;
-        }
     }
 }

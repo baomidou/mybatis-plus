@@ -36,7 +36,6 @@ import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NOT;
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.OR;
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ORDER_BY;
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -55,7 +54,7 @@ import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlSegmentList;
+import com.baomidou.mybatisplus.core.toolkit.sql.segments.JoinSegment;
 
 
 /**
@@ -66,6 +65,7 @@ import com.baomidou.mybatisplus.core.toolkit.sql.SqlSegmentList;
  * @author hubin miemie HCL
  * @since 2017-05-26
  */
+@SuppressWarnings("unchecked,serial")
 public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, This>> extends Wrapper<T>
     implements Compare<This, R>, Nested<This>, Join<This>, Func<This, R>, Serializable {
 
@@ -90,7 +90,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * 数据库表映射实体类
      */
     protected T entity;
-    private SqlSegmentList expression = new SqlSegmentList();
+    private JoinSegment expression = new JoinSegment();
 
     @Override
     public T getEntity() {
@@ -549,7 +549,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      */
     protected This doIt(boolean condition, ISqlSegment... sqlSegments) {
         if (condition) {
-            expression.addAll(Arrays.asList(sqlSegments));
+            expression.add(sqlSegments);
         }
         return typedThis;
     }
@@ -560,11 +560,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
 
     @Override
     public String getSqlSegment() {
-        String temp = String.join(" ", expression.stream().map(ISqlSegment::getSqlSegment).collect(toList()));
-        if (temp.startsWith(ORDER_BY.getSqlSegment()) || temp.startsWith(AND.getSqlSegment())) {
-            return " 1=1 " + temp;
-        }
-        return temp;
+        return expression.getSqlSegment();
     }
 
     public Map<String, Object> getParamNameValuePairs() {

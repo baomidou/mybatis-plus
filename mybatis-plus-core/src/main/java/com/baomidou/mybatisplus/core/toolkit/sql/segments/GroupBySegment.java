@@ -15,6 +15,9 @@
  */
 package com.baomidou.mybatisplus.core.toolkit.sql.segments;
 
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GROUP_BY;
+import static java.util.stream.Collectors.joining;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -32,14 +35,16 @@ public class GroupBySegment extends ArrayList<ISqlSegment> implements ISqlSegmen
     @Override
     public boolean addAll(Collection<? extends ISqlSegment> c) {
         List<ISqlSegment> list = new ArrayList<>(c);
-        if (!isEmpty()) {
-            list.remove(0);
-        }
+        list.remove(0);
         return super.addAll(list);
     }
 
     @Override
     public String getSqlSegment() {
-        return null;
+        if (isEmpty()) {
+            return "";
+        }
+        return this.stream().map(ISqlSegment::getSqlSegment).collect(joining(",",
+            " " + GROUP_BY.getSqlSegment() + " ", ""));
     }
 }
