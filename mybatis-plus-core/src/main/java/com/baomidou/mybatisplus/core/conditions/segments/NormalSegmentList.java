@@ -31,7 +31,7 @@ import com.baomidou.mybatisplus.core.enums.SqlKeyword;
  * @author miemie
  * @since 2018-06-27
  */
-public class NormalSegment extends ArrayList<ISqlSegment> implements ISqlSegment {
+public class NormalSegmentList extends ArrayList<ISqlSegment> implements ISqlSegment {
 
     private static final long serialVersionUID = -1991374407733611565L;
     /**

@@ -15,41 +15,40 @@
  */
 package com.baomidou.mybatisplus.core.conditions.segments;
 
-import java.util.Arrays;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GROUP_BY;
+import static java.util.stream.Collectors.joining;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 
 /**
  * <p>
- * 合并 SQL 片段
+ * Group By SQL 片段
  * </p>
  *
  * @author miemie
  * @since 2018-06-27
  */
-public class JoinSegment implements ISqlSegment {
+public class GroupBySegmentList extends ArrayList<ISqlSegment> implements ISqlSegment {
 
-    private static final long serialVersionUID = 8401728865419013555L;
+    private static final long serialVersionUID = -4135938724727477310L;
 
-    private NormalSegment normalSegment = new NormalSegment();
-    private GroupBySegment groupBySegment = new GroupBySegment();
-    private OrderBySegment orderBySegment = new OrderBySegment();
-
-    public void add(ISqlSegment... iSqlSegments) {
-        List<ISqlSegment> list = Arrays.asList(iSqlSegments);
-        ISqlSegment sqlSegment = list.get(0);
-        if (MatchSegment.ORDER_BY.match(sqlSegment)) {
-            orderBySegment.addAll(list);
-        } else if (MatchSegment.GROUP_BY.match(sqlSegment)) {
-            groupBySegment.addAll(list);
-        } else {
-            normalSegment.addAll(list);
-        }
+    @Override
+    public boolean addAll(Collection<? extends ISqlSegment> c) {
+        List<ISqlSegment> list = new ArrayList<>(c);
+        list.remove(0);
+        return super.addAll(list);
     }
 
     @Override
     public String getSqlSegment() {
-        return normalSegment.getSqlSegment() + groupBySegment.getSqlSegment() + orderBySegment.getSqlSegment();
+        if (isEmpty()) {
+            return "";
+        }
+        return this.stream().map(ISqlSegment::getSqlSegment).collect(joining(",",
+            " " + GROUP_BY.getSqlSegment() + " ", ""));
     }
 }

@@ -50,7 +50,7 @@ import com.baomidou.mybatisplus.core.conditions.interfaces.Compare;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Func;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Join;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Nested;
-import com.baomidou.mybatisplus.core.conditions.segments.JoinSegment;
+import com.baomidou.mybatisplus.core.conditions.segments.MergeSegment;
 import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
@@ -86,11 +86,12 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     protected AtomicInteger paramNameSeq;
     protected Map<String, Object> paramNameValuePairs;
     protected String paramAlias = null;
+    protected String lastSql = "";
     /**
      * 数据库表映射实体类
      */
     protected T entity;
-    private JoinSegment expression = new JoinSegment();
+    private MergeSegment expression = new MergeSegment();
 
     @Override
     public T getEntity() {
@@ -318,6 +319,12 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     @Override
     public This apply(boolean condition, String applySql, Object... value) {
         return doIt(condition, () -> formatSql(applySql, value));
+    }
+
+    @Override
+    public This last(boolean condition, String lastSql) {
+        this.lastSql = " " + lastSql;
+        return typedThis;
     }
 
     /**
@@ -560,7 +567,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
 
     @Override
     public String getSqlSegment() {
-        return expression.getSqlSegment();
+        return expression.getSqlSegment() + lastSql;
     }
 
     public Map<String, Object> getParamNameValuePairs() {
