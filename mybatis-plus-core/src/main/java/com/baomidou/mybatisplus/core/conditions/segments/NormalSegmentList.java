@@ -38,6 +38,7 @@ public class NormalSegmentList extends ArrayList<ISqlSegment> implements ISqlSeg
      * 最后一个值
      */
     private ISqlSegment lastValue = null;
+    private boolean executeNot = true;
 
     @Override
     public boolean addAll(Collection<? extends ISqlSegment> c) {
@@ -66,9 +67,18 @@ public class NormalSegmentList extends ArrayList<ISqlSegment> implements ISqlSeg
                         removeLast();
                     }
                 }
+            } else {
+                executeNot = false;
+                return false;
             }
-        } else if (!MatchSegment.AND_OR.match(lastValue) && !isEmpty()) {
-            add(SqlKeyword.AND);
+        } else {
+            if (!executeNot) {
+                list.add(1, SqlKeyword.NOT);
+                executeNot = true;
+            }
+            if (!MatchSegment.AND_OR.match(lastValue) && !isEmpty()) {
+                add(SqlKeyword.AND);
+            }
         }
         //后置处理
         this.flushLastValue(list);
@@ -79,12 +89,15 @@ public class NormalSegmentList extends ArrayList<ISqlSegment> implements ISqlSeg
         lastValue = list.get(list.size() - 1);
     }
 
-    private void removeLast() {//todo
+    private void removeLast() {
         remove(size() - 1);
     }
 
     @Override
     public String getSqlSegment() {
+        if (MatchSegment.AND_OR.match(lastValue)) {
+            removeLast();
+        }
         return this.stream().map(ISqlSegment::getSqlSegment).collect(Collectors.joining(" "));
     }
 }

@@ -215,16 +215,6 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     @Override
-    public This in(boolean condition, String sql) {
-        return addNestedCondition(condition, sql, IN);
-    }
-
-    @Override
-    public This notIn(boolean condition, String sql) {
-        return not(condition).in(condition, sql);
-    }
-
-    @Override
     public This apply(boolean condition, String applySql) {
         return doIt(condition, () -> applySql);
     }

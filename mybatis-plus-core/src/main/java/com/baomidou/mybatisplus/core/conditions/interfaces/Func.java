@@ -15,11 +15,13 @@
  */
 package com.baomidou.mybatisplus.core.conditions.interfaces;
 
+import static java.util.stream.Collectors.toList;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -81,7 +83,7 @@ public interface Func<This, R> extends Serializable {
      */
     default This in(boolean condition, R column, Object... values) {
         return in(condition, column, Arrays.stream(Optional.ofNullable(values).orElseGet(() -> new Object[]{}))
-            .collect(Collectors.toList()));
+            .collect(toList()));
     }
 
     /**
@@ -108,7 +110,39 @@ public interface Func<This, R> extends Serializable {
      */
     default This notIn(boolean condition, R column, Object... values) {
         return notIn(condition, column, Arrays.stream(Optional.ofNullable(values).orElseGet(() -> new Object[]{}))
-            .collect(Collectors.toList()));
+            .collect(toList()));
+    }
+
+    /**
+     * 拼接 IN ( sql 语句 )
+     * 例: in("id", "1,2,3,4,5,6")
+     */
+    default This in(R column, String inValue) {
+        return in(true, column, inValue);
+    }
+
+    /**
+     * 拼接 IN ( sql 语句 )
+     * 例: in("id", "1,2,3,4,5,6")
+     */
+    default This in(boolean condition, R column, String inValue) {
+        return in(condition, column, Collections.singleton(inValue));
+    }
+
+    /**
+     * 拼接 NOT IN ( sql 语句 )
+     * 例: notIn("id", "1,2,3,4,5,6")
+     */
+    default This notIn(R column, String inValue) {
+        return notIn(true, column, inValue);
+    }
+
+    /**
+     * 拼接 NOT IN ( sql 语句 )
+     * 例: notIn("id", "1,2,3,4,5,6")
+     */
+    default This notIn(boolean condition, R column, String inValue) {
+        return notIn(condition, column, Collections.singleton(inValue));
     }
 
     /**

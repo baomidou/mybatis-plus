@@ -41,34 +41,6 @@ public interface Join<This> extends Serializable {
     This or(boolean condition);
 
     /**
-     * 拼接 IN ( sql 语句 )
-     * 例: in("1,2,3,4,5,6")
-     */
-    default This in(String sql) {
-        return in(true, sql);
-    }
-
-    /**
-     * 拼接 IN ( sql 语句 )
-     * 例: in("1,2,3,4,5,6")
-     */
-    This in(boolean condition, String sql);
-
-    /**
-     * 拼接 NOT IN ( sql 语句 )
-     * 例: notIn("1,2,3,4,5,6")
-     */
-    default This notIn(String sql) {
-        return notIn(true, sql);
-    }
-
-    /**
-     * 拼接 NOT IN ( sql 语句 )
-     * 例: notIn("1,2,3,4,5,6")
-     */
-    This notIn(boolean condition, String sql);
-
-    /**
      * 拼接 sql
      * 例: apply("date_format(column,'%Y-%m-%d') = '2008-08-08'")
      */
