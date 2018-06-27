@@ -79,6 +79,15 @@ public class WrapperTest {
         logSqlSegment("多个 or 相连接,去除多余的 or", new QueryWrapper<User>()
             .ge("age", 3).or().or().or().ge("age", 3).or().or().ge("age", 3));
 
+        logSqlSegment("嵌套测试,第一个套外的 and 自动消除", new QueryWrapper<User>()
+            .and(i -> i.eq("id", 1)).eq("id", 1));
+
+        logSqlSegment("嵌套测试,多层嵌套", new QueryWrapper<User>()
+            .and(i -> i.eq("id", 1).and(j -> j.eq("id", 1))));
+
+        logSqlSegment("嵌套测试,第一个套外的 or 自动消除", new QueryWrapper<User>()
+            .or(i -> i.eq("id", 1)).eq("id", 1));
+
         logSqlSegment("嵌套测试,套内外自动拼接 and", new QueryWrapper<User>()
             .eq("id", 11).and(i -> i.eq("id", 1)).eq("id", 1));
 
