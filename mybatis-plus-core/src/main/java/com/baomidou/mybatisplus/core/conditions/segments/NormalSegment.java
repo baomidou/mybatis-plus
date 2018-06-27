@@ -13,12 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.core.toolkit.sql.segments;
-
-import static com.baomidou.mybatisplus.core.toolkit.sql.segments.MatchSegment.AND;
-import static com.baomidou.mybatisplus.core.toolkit.sql.segments.MatchSegment.AND_OR;
-import static com.baomidou.mybatisplus.core.toolkit.sql.segments.MatchSegment.NOT;
-import static com.baomidou.mybatisplus.core.toolkit.sql.segments.MatchSegment.OR;
+package com.baomidou.mybatisplus.core.conditions.segments;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,6 +24,10 @@ import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 
 /**
+ * <p>
+ * 普通片段
+ * </p>
+ *
  * @author miemie
  * @since 2018-06-27
  */
@@ -48,19 +47,19 @@ public class NormalSegment extends ArrayList<ISqlSegment> implements ISqlSegment
             /**
              * 只有 and() 以及 or() 以及 not() 会进入
              */
-            if (!MatchSegment.match(NOT, sqlSegment)) {
+            if (!MatchSegment.NOT.match(sqlSegment)) {
                 //不是 not
                 if (isEmpty()) {
                     //sqlSegment是 and 或者 or 并且在第一位,不继续执行
                     return false;
                 }
-                boolean matchLastAnd = MatchSegment.match(AND, lastValue);
-                boolean matchLastOr = MatchSegment.match(OR, lastValue);
+                boolean matchLastAnd = MatchSegment.AND.match(lastValue);
+                boolean matchLastOr = MatchSegment.OR.match(lastValue);
                 if (matchLastAnd || matchLastOr) {
                     //上次最后一个值是 and 或者 or
-                    if (matchLastAnd && MatchSegment.match(AND, sqlSegment)) {
+                    if (matchLastAnd && MatchSegment.AND.match(sqlSegment)) {
                         return false;
-                    } else if (matchLastOr && MatchSegment.match(OR, sqlSegment)) {
+                    } else if (matchLastOr && MatchSegment.OR.match(sqlSegment)) {
                         return false;
                     } else {
                         //和上次的不一样
@@ -68,7 +67,7 @@ public class NormalSegment extends ArrayList<ISqlSegment> implements ISqlSegment
                     }
                 }
             }
-        } else if (!MatchSegment.match(AND_OR, lastValue) && !isEmpty()) {
+        } else if (!MatchSegment.AND_OR.match(lastValue) && !isEmpty()) {
             add(SqlKeyword.AND);
         }
         //后置处理

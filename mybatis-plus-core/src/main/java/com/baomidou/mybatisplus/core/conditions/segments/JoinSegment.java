@@ -13,10 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.core.toolkit.sql.segments;
-
-import static com.baomidou.mybatisplus.core.toolkit.sql.segments.MatchSegment.GROUP_BY;
-import static com.baomidou.mybatisplus.core.toolkit.sql.segments.MatchSegment.ORDER_BY;
+package com.baomidou.mybatisplus.core.conditions.segments;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,6 +21,10 @@ import java.util.List;
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 
 /**
+ * <p>
+ * 合并 SQL 片段
+ * </p>
+ *
  * @author miemie
  * @since 2018-06-27
  */
@@ -38,9 +39,9 @@ public class JoinSegment implements ISqlSegment {
     public void add(ISqlSegment... iSqlSegments) {
         List<ISqlSegment> list = Arrays.asList(iSqlSegments);
         ISqlSegment sqlSegment = list.get(0);
-        if (MatchSegment.match(ORDER_BY, sqlSegment)) {
+        if (MatchSegment.ORDER_BY.match(sqlSegment)) {
             orderBySegment.addAll(list);
-        } else if (MatchSegment.match(GROUP_BY, sqlSegment)) {
+        } else if (MatchSegment.GROUP_BY.match(sqlSegment)) {
             groupBySegment.addAll(list);
         } else {
             normalSegment.addAll(list);

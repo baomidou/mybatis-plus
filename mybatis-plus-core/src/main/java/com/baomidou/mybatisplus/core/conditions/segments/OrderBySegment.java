@@ -13,9 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.core.toolkit.sql.segments;
+package com.baomidou.mybatisplus.core.conditions.segments;
 
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GROUP_BY;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ORDER_BY;
 import static java.util.stream.Collectors.joining;
 
 import java.util.ArrayList;
@@ -25,17 +25,24 @@ import java.util.List;
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 
 /**
+ * <p>
+ * Order By SQL 片段
+ * </p>
+ *
  * @author miemie
  * @since 2018-06-27
  */
-public class GroupBySegment extends ArrayList<ISqlSegment> implements ISqlSegment {
+public class OrderBySegment extends ArrayList<ISqlSegment> implements ISqlSegment {
 
-    private static final long serialVersionUID = -4135938724727477310L;
+    private static final long serialVersionUID = -294655105160779712L;
 
     @Override
     public boolean addAll(Collection<? extends ISqlSegment> c) {
         List<ISqlSegment> list = new ArrayList<>(c);
         list.remove(0);
+        if (!isEmpty()) {
+            super.add(() -> ",");
+        }
         return super.addAll(list);
     }
 
@@ -44,7 +51,7 @@ public class GroupBySegment extends ArrayList<ISqlSegment> implements ISqlSegmen
         if (isEmpty()) {
             return "";
         }
-        return this.stream().map(ISqlSegment::getSqlSegment).collect(joining(",",
-            " " + GROUP_BY.getSqlSegment() + " ", ""));
+        return this.stream().map(ISqlSegment::getSqlSegment).collect(joining(" ",
+            " " + ORDER_BY.getSqlSegment() + " ", ""));
     }
 }

@@ -50,11 +50,11 @@ import com.baomidou.mybatisplus.core.conditions.interfaces.Compare;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Func;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Join;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Nested;
+import com.baomidou.mybatisplus.core.conditions.segments.JoinSegment;
 import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.sql.segments.JoinSegment;
 
 
 /**
@@ -65,7 +65,6 @@ import com.baomidou.mybatisplus.core.toolkit.sql.segments.JoinSegment;
  * @author hubin miemie HCL
  * @since 2017-05-26
  */
-@SuppressWarnings("unchecked,serial")
 public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, This>> extends Wrapper<T>
     implements Compare<This, R>, Nested<This>, Join<This>, Func<This, R>, Serializable {
 
