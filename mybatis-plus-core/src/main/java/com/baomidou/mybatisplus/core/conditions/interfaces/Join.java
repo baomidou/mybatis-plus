@@ -97,7 +97,7 @@ public interface Join<This> extends Serializable {
     This apply(boolean condition, String applySql, Object... value);
 
     /**
-     * 无视优化规则直接拼接到 sql 的最后
+     * 无视优化规则直接拼接到 sql 的最后(有sql注入的风险,请谨慎使用)
      * 例: last("limit 1")
      */
     default This last(String lastSql) {
@@ -105,7 +105,7 @@ public interface Join<This> extends Serializable {
     }
 
     /**
-     * 无视优化规则直接拼接到 sql 的最后
+     * 无视优化规则直接拼接到 sql 的最后(有sql注入的风险,请谨慎使用)
      * 例: last("limit 1")
      */
     This last(boolean condition, String lastSql);
