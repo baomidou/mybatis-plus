@@ -29,18 +29,6 @@ import java.io.Serializable;
 public interface Join<This> extends Serializable {
 
     /**
-     * 拼接 AND
-     */
-    default This and() {
-        return and(true);
-    }
-
-    /**
-     * 拼接 AND
-     */
-    This and(boolean condition);
-
-    /**
      * 拼接 OR
      */
     default This or() {

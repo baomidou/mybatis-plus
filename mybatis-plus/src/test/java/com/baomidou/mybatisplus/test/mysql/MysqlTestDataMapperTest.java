@@ -43,9 +43,7 @@ public class MysqlTestDataMapperTest {
     public void commonSelectList() {
         println(testDataMapper.selectList(new QueryWrapper<TestData>()
             .eq("id", 1L)
-            .and()
             .like("test_str", 1)
-            .and()
             .between("test_double", 1L, 2L)));
     }
 
@@ -57,9 +55,9 @@ public class MysqlTestDataMapperTest {
             .or(i -> i.eq(TestData::getTestInt, 1)
                 .or().eq(TestData::getTestDate, 1)
             )
-            .and().eq(TestData::getTestBoolean, true)
-            .and().eq(TestData::getTestDate, LocalDate.of(2008, 8, 8))
-            .and().between(TestData::getTestDate, LocalDate.of(2008, 1, 1),
+            .eq(TestData::getTestBoolean, true)
+            .eq(TestData::getTestDate, LocalDate.of(2008, 8, 8))
+            .between(TestData::getTestDate, LocalDate.of(2008, 1, 1),
                 LocalDate.of(2008, 12, 12))));
     }
 

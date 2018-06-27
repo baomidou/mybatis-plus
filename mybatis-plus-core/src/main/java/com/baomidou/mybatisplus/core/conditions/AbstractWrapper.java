@@ -108,7 +108,6 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     public This allEq(boolean condition, Map<R, Object> params) {
         if (condition && CollectionUtils.isNotEmpty(params)) {
             params.forEach((k, v) -> {
-                and();
                 if (StringUtils.checkValNotNull(v)) {
                     eq(k, v);
                 } else {
@@ -129,7 +128,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * put("name", "baomidou");
      * put("address", null);
      * }};
-     *
+     * <p>
      * 去除值为null的元素，可以这么写：
      * allEq((key,value)-> null!= value, params);
      * 只加入id ,name：
@@ -147,7 +146,6 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
         if (condition && CollectionUtils.isNotEmpty(params)) {
             params.forEach((key, value) -> {
                 if (filter.test(key, value)) {
-                    and();
                     if (null == value) {
                         isNull(key);
                     } else {
@@ -278,14 +276,6 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     @Override
     public This nested(boolean condition, Function<This, This> func) {
         return addNestedCondition(condition, func);
-    }
-
-    /**
-     * 拼接 AND
-     */
-    @Override
-    public This and(boolean condition) {
-        return doIt(condition, AND);
     }
 
     /**
@@ -426,10 +416,23 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     /**
+     * <p>
+     * 内部自用
+     * </p>
      * NOT 关键词
      */
     protected This not(boolean condition) {
         return doIt(condition, NOT);
+    }
+
+    /**
+     * <p>
+     * 内部自用
+     * </p>
+     * 拼接 AND
+     */
+    protected This and(boolean condition) {
+        return doIt(condition, AND);
     }
 
     /**
