@@ -50,7 +50,7 @@ import com.baomidou.mybatisplus.core.conditions.interfaces.Compare;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Func;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Join;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Nested;
-import com.baomidou.mybatisplus.core.conditions.segments.MergeSegment;
+import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
@@ -91,7 +91,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * 数据库表映射实体类
      */
     protected T entity;
-    private MergeSegment expression = new MergeSegment();
+    private MergeSegments expression = new MergeSegments();
 
     @Override
     public T getEntity() {

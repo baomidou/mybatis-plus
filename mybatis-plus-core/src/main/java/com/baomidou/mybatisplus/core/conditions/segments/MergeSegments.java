@@ -28,7 +28,7 @@ import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
  * @author miemie
  * @since 2018-06-27
  */
-public class MergeSegment implements ISqlSegment {
+public class MergeSegments implements ISqlSegment {
 
     private static final long serialVersionUID = 8401728865419013555L;
 
@@ -50,6 +50,17 @@ public class MergeSegment implements ISqlSegment {
 
     @Override
     public String getSqlSegment() {
-        return normal.getSqlSegment() + groupBy.getSqlSegment() + orderBy.getSqlSegment();
+        boolean isNullNormal = normal.isEmpty();
+        boolean isNullGroupBy = groupBy.isEmpty();
+        boolean isNullOrderBy = orderBy.isEmpty();
+        if (isNullNormal) {
+            if (!isNullGroupBy || !isNullOrderBy) {
+                return "1=1" + groupBy.getSqlSegment() + orderBy.getSqlSegment();
+            } else {
+                return "";
+            }
+        } else {
+            return normal.getSqlSegment() + groupBy.getSqlSegment() + orderBy.getSqlSegment();
+        }
     }
 }

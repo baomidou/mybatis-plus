@@ -102,6 +102,12 @@ public class WrapperTest {
             .last("limit 1")
             .orderByAsc("id", "name", "sex").orderByDesc("age", "txl")
             .groupBy("id", "name", "sex").groupBy("id", "name"));
+
+        logSqlSegment("只存在 order by", new QueryWrapper<User>()
+            .orderByAsc("id", "name", "sex").orderByDesc("age", "txl"));
+
+        logSqlSegment("只存在 group by", new QueryWrapper<User>()
+            .groupBy("id", "name", "sex").groupBy("id", "name"));
     }
 
 //    public void test() {
