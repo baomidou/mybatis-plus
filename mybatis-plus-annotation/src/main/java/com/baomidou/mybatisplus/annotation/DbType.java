@@ -38,7 +38,7 @@ public enum DbType {
     /**
      * ORACLE
      */
-    ORACLE("oracle", null, "%s LIKE CONCAT('%%',#{%s},'%%')", " ROWNUM <= %s", "Oracle数据库"),
+    ORACLE("oracle", null, "%s LIKE CONCAT('%%',#{%s},'%%')", null, "Oracle数据库"),
     /**
      * DB2
      */
