@@ -65,6 +65,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  * @author hubin miemie HCL
  * @since 2017-05-26
  */
+@SuppressWarnings("unchecked,serial")
 public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, This>> extends Wrapper<T>
     implements Compare<This, R>, Nested<This>, Join<This>, Func<This, R>, Serializable {
 
