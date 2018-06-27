@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.core.toolkit;
+package com.baomidou.mybatisplus.core.toolkit.sql;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,20 +31,26 @@ import com.baomidou.mybatisplus.core.enums.SqlKeyword;
  * @author miemie
  * @since 2018-06-26
  */
-public class ISqlSegmentList extends ArrayList<ISqlSegment> {
+public class SqlSegmentList extends ArrayList<ISqlSegment> {
 
     private static final long serialVersionUID = 8205969915086959490L;
-    //开启优化 and
+    /**
+     * 开启优化 and
+     */
     private boolean automaticAnd = true;
-    //最后一个值
+    /**
+     * 最后一个值
+     */
     private ISqlSegment lastValue = null;
-    //是否启动过 order by
+    /**
+     * 是否启动过 order by
+     */
     private boolean didOrderBy = false;
 
-    public ISqlSegmentList() {
+    public SqlSegmentList() {
     }
 
-    public ISqlSegmentList(boolean automaticAnd) {
+    public SqlSegmentList(boolean automaticAnd) {
         this.automaticAnd = automaticAnd;
     }
 

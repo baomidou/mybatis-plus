@@ -54,8 +54,8 @@ import com.baomidou.mybatisplus.core.conditions.interfaces.Nested;
 import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.ISqlSegmentList;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlSegmentList;
 
 
 /**
@@ -66,7 +66,6 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  * @author hubin miemie HCL
  * @since 2017-05-26
  */
-@SuppressWarnings("unchecked,serial")
 public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, This>> extends Wrapper<T>
     implements Compare<This, R>, Nested<This>, Join<This>, Func<This, R>, Serializable {
 
@@ -91,7 +90,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * 数据库表映射实体类
      */
     protected T entity;
-    private ISqlSegmentList expression = new ISqlSegmentList();
+    private SqlSegmentList expression = new SqlSegmentList();
 
     @Override
     public T getEntity() {
