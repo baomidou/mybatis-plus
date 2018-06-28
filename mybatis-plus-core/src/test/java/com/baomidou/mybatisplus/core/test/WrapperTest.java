@@ -139,9 +139,12 @@ public class WrapperTest {
     public void testFunc() {
         QueryWrapper<User> queryWrapper = new QueryWrapper<User>()//todo in 方法是不是各个加个后缀好点
             .isNull("nullColumn").or().isNotNull("notNullColumn")
+            .orderByAsc("id").orderByDesc("name")
+            .groupBy("id", "name").groupBy("id2", "name2")
             .in("inColl", getList()).or().notIn("notInColl", getList())
             .in("inArray", 1, 2, 3).notIn("notInArray", 1, 2, 3)
-            .in("inSql", "1,2,3,4,5").notIn("inSql", "1,2,3,4,5");
+            .in("inSql", "1,2,3,4,5").notIn("inSql", "1,2,3,4,5")
+            .having("sum(age) > {0}", 1);
         logSqlSegment("测试 Func 下的方法", queryWrapper);
         logParams(queryWrapper);
     }
