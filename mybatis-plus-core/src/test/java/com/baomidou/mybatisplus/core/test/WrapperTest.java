@@ -15,7 +15,10 @@
  */
 package com.baomidou.mybatisplus.core.test;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -128,8 +131,39 @@ public class WrapperTest {
             .or().between("id", 1, 2).notBetween("id", 1, 3)
             .like("id", 1).notLike("id", 1)
             .or().likeLeft("id", 1).likeRight("id", 1);
-        logSqlSegment("allEq 1号", queryWrapper);
+        logSqlSegment("测试 Compare 下的方法", queryWrapper);
         logParams(queryWrapper);
+    }
+
+    @Test
+    public void testFunc() {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<User>()//todo in 方法是不是各个加个后缀好点
+            .isNull("nullColumn").or().isNotNull("notNullColumn")
+            .in("inColl", getList()).or().notIn("notInColl", getList())
+            .in("inArray", 1, 2, 3).notIn("notInArray", 1, 2, 3)
+            .in("inSql", "1,2,3,4,5").notIn("inSql", "1,2,3,4,5");
+        logSqlSegment("测试 Func 下的方法", queryWrapper);
+        logParams(queryWrapper);
+    }
+
+    @Test
+    public void testJoin() {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<User>()
+            .last("limit 1").or()
+            .apply("date_format(column,'%Y-%m-%d') = '2008-08-08'")
+            .apply("date_format(column,'%Y-%m-%d') = {0}", LocalDate.now())
+            .or().exists("select id from table where age = 1")
+            .or().notExists("select id from table where age = 1");
+        logSqlSegment("测试 Join 下的方法", queryWrapper);
+        logParams(queryWrapper);
+    }
+
+    private List<Object> getList() {
+        List<Object> list = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            list.add(i);
+        }
+        return list;
     }
 
     private Map<String, Object> getMap() {

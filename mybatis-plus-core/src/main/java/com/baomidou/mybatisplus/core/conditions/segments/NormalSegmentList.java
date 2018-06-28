@@ -76,6 +76,9 @@ public class NormalSegmentList extends AbstractISegmentList {
             if (!MatchSegment.AND_OR.match(lastValue) && !isEmpty()) {
                 add(SqlKeyword.AND);
             }
+            if (MatchSegment.APPLY.match(firstSegment)) {
+                list.remove(0);
+            }
         }
         return true;
     }

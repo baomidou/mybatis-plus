@@ -44,6 +44,7 @@ public enum SqlKeyword implements ISqlSegment {
     HAVING("HAVING"),
     ORDER_BY("ORDER BY"),
     EXISTS("EXISTS"),
+    APPLY(null),//只用作于辨识,不用于其他
     BETWEEN("BETWEEN"),
     ASC("ASC"),
     DESC("DESC");

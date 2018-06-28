@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core.conditions;
 
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.AND;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.APPLY;
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ASC;
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.BETWEEN;
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.DESC;
@@ -216,12 +217,12 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
 
     @Override
     public This apply(boolean condition, String applySql) {
-        return doIt(condition, () -> applySql);
+        return doIt(condition, APPLY, () -> applySql);
     }
 
     @Override
     public This apply(boolean condition, String applySql, Object... value) {
-        return doIt(condition, () -> formatSql(applySql, value));
+        return doIt(condition, APPLY, () -> formatSql(applySql, value));
     }
 
     @Override
