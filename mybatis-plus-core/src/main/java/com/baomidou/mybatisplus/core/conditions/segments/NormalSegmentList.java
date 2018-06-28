@@ -31,24 +31,33 @@ import com.baomidou.mybatisplus.core.enums.SqlKeyword;
  * @author miemie
  * @since 2018-06-27
  */
-public class NormalSegmentList extends ArrayList<ISqlSegment> implements ISqlSegment {
+@SuppressWarnings("serial")
+public class NormalSegmentList extends AbstractISegmentList {
 
-    private static final long serialVersionUID = -1991374407733611565L;
     /**
-     * 最后一个值
+     * 是否处理了的上个 not
      */
-    private ISqlSegment lastValue = null;
     private boolean executeNot = true;
+
+    NormalSegmentList() {
+        this.flushLastValue = true;
+    }
 
     @Override
     public boolean addAll(Collection<? extends ISqlSegment> c) {
         List<ISqlSegment> list = new ArrayList<>(c);
         ISqlSegment sqlSegment = list.get(0);
+
+        //后置处理
+        this.flushLastValue(list);
+        return super.addAll(list);
+    }
+
+    @Override
+    protected boolean transformList(List<ISqlSegment> list, ISqlSegment firstSegment) {
         if (list.size() == 1) {
-            /**
-             * 只有 and() 以及 or() 以及 not() 会进入
-             */
-            if (!MatchSegment.NOT.match(sqlSegment)) {
+            /* 只有 and() 以及 or() 以及 not() 会进入 */
+            if (!MatchSegment.NOT.match(firstSegment)) {
                 //不是 not
                 if (isEmpty()) {
                     //sqlSegment是 and 或者 or 并且在第一位,不继续执行
@@ -58,9 +67,9 @@ public class NormalSegmentList extends ArrayList<ISqlSegment> implements ISqlSeg
                 boolean matchLastOr = MatchSegment.OR.match(lastValue);
                 if (matchLastAnd || matchLastOr) {
                     //上次最后一个值是 and 或者 or
-                    if (matchLastAnd && MatchSegment.AND.match(sqlSegment)) {
+                    if (matchLastAnd && MatchSegment.AND.match(firstSegment)) {
                         return false;
-                    } else if (matchLastOr && MatchSegment.OR.match(sqlSegment)) {
+                    } else if (matchLastOr && MatchSegment.OR.match(firstSegment)) {
                         return false;
                     } else {
                         //和上次的不一样
@@ -73,24 +82,14 @@ public class NormalSegmentList extends ArrayList<ISqlSegment> implements ISqlSeg
             }
         } else {
             if (!executeNot) {
-                list.add(1, SqlKeyword.NOT);
+                list.add(MatchSegment.EXISTS.match(firstSegment) ? 0 : 1, SqlKeyword.NOT);
                 executeNot = true;
             }
             if (!MatchSegment.AND_OR.match(lastValue) && !isEmpty()) {
                 add(SqlKeyword.AND);
             }
         }
-        //后置处理
-        this.flushLastValue(list);
-        return super.addAll(list);
-    }
-
-    private void flushLastValue(List<? extends ISqlSegment> list) {
-        lastValue = list.get(list.size() - 1);
-    }
-
-    private void removeLast() {
-        remove(size() - 1);
+        return true;
     }
 
     @Override

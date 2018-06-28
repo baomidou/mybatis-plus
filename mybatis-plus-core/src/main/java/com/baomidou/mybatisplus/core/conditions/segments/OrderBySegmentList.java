@@ -18,8 +18,6 @@ package com.baomidou.mybatisplus.core.conditions.segments;
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ORDER_BY;
 import static java.util.stream.Collectors.joining;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
@@ -32,18 +30,16 @@ import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
  * @author miemie
  * @since 2018-06-27
  */
-public class OrderBySegmentList extends ArrayList<ISqlSegment> implements ISqlSegment {
-
-    private static final long serialVersionUID = -294655105160779712L;
+@SuppressWarnings("serial")
+public class OrderBySegmentList extends AbstractISegmentList {
 
     @Override
-    public boolean addAll(Collection<? extends ISqlSegment> c) {
-        List<ISqlSegment> list = new ArrayList<>(c);
+    protected boolean transformList(List<ISqlSegment> list, ISqlSegment firstSegment) {
         list.remove(0);
         if (!isEmpty()) {
             super.add(() -> ",");
         }
-        return super.addAll(list);
+        return true;
     }
 
     @Override
