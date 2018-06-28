@@ -15,6 +15,9 @@
  */
 package com.baomidou.mybatisplus.core.test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Test;
 
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
@@ -31,6 +34,11 @@ public class WrapperTest {
     private void logSqlSegment(String explain, ISqlSegment sqlSegment) {
         System.out.println(String.format(" ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓   ->(%s)<-   ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓", explain));
         System.out.println(sqlSegment.getSqlSegment());
+    }
+
+    private <T> void logParams(QueryWrapper<T> wrapper) {
+        wrapper.getParamNameValuePairs().forEach((k, v) ->
+            System.out.println("key: '" + k + "'\t\tvalue: '" + v + "'"));
     }
 
     @Test
@@ -108,9 +116,29 @@ public class WrapperTest {
 
         logSqlSegment("只存在 group by", new QueryWrapper<User>()
             .groupBy("id", "name", "sex").groupBy("id", "name"));
+    }
 
-        logSqlSegment("not... 自动拼接 and,手动拼接 or", new QueryWrapper<User>()
-            .notBetween("id", 1, 6).or().notIn("id", "1,2,3,4,5,6"));
+    @Test
+    public void testCompare() {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<User>()
+            .allEq(getMap()).allEq((k, v) -> true, getMap())
+            .eq("id", 1).ne("id", 1)
+            .or().gt("id", 1).ge("id", 1)
+            .lt("id", 1).le("id", 1)
+            .or().between("id", 1, 2).notBetween("id", 1, 3)
+            .like("id", 1).notLike("id", 1)
+            .or().likeLeft("id", 1).likeRight("id", 1);
+        logSqlSegment("allEq 1号", queryWrapper);
+        logParams(queryWrapper);
+    }
+
+    private Map<String, Object> getMap() {
+        Map<String, Object> map = new HashMap<>();
+        for (int i = 0; i < 2; i++) {
+            map.put("column" + i, i);
+        }
+        map.put("nullColumn", null);
+        return map;
     }
 
 //    public void test() {

@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.conditions.segments;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,16 +39,6 @@ public class NormalSegmentList extends AbstractISegmentList {
 
     NormalSegmentList() {
         this.flushLastValue = true;
-    }
-
-    @Override
-    public boolean addAll(Collection<? extends ISqlSegment> c) {
-        List<ISqlSegment> list = new ArrayList<>(c);
-        ISqlSegment sqlSegment = list.get(0);
-
-        //后置处理
-        this.flushLastValue(list);
-        return super.addAll(list);
     }
 
     @Override
