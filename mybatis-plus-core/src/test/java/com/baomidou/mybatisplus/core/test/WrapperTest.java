@@ -144,7 +144,7 @@ public class WrapperTest {
             .in("inColl", getList()).or().notIn("notInColl", getList())
             .in("inArray", 1, 2, 3).notIn("notInArray", 1, 2, 3)
             .in("inSql", "1,2,3,4,5").notIn("inSql", "1,2,3,4,5")
-            .having("sum(age) > {0}", 1);
+            .having("sum(age) > {0}", 1).having("id is not null");
         logSqlSegment("测试 Func 下的方法", queryWrapper);
         logParams(queryWrapper);
     }

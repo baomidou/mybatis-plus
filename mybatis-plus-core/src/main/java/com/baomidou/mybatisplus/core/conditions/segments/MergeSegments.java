@@ -34,6 +34,7 @@ public class MergeSegments implements ISqlSegment {
 
     private NormalSegmentList normal = new NormalSegmentList();
     private GroupBySegmentList groupBy = new GroupBySegmentList();
+    private HavingSegmentList having = new HavingSegmentList();
     private OrderBySegmentList orderBy = new OrderBySegmentList();
 
     public void add(ISqlSegment... iSqlSegments) {
@@ -43,6 +44,8 @@ public class MergeSegments implements ISqlSegment {
             orderBy.addAll(list);
         } else if (MatchSegment.GROUP_BY.match(sqlSegment)) {
             groupBy.addAll(list);
+        } else if (MatchSegment.HAVING.match(sqlSegment)) {
+            having.addAll(list);
         } else {
             normal.addAll(list);
         }
@@ -52,12 +55,12 @@ public class MergeSegments implements ISqlSegment {
     public String getSqlSegment() {
         if (normal.isEmpty()) {
             if (!groupBy.isEmpty() || !orderBy.isEmpty()) {
-                return "1=1" + groupBy.getSqlSegment() + orderBy.getSqlSegment();
+                return "1=1" + groupBy.getSqlSegment() + having.getSqlSegment() + orderBy.getSqlSegment();
             } else {
                 return "";
             }
         } else {
-            return normal.getSqlSegment() + groupBy.getSqlSegment() + orderBy.getSqlSegment();
+            return normal.getSqlSegment() + groupBy.getSqlSegment() + having.getSqlSegment() + orderBy.getSqlSegment();
         }
     }
 }
