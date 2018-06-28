@@ -1,7 +1,6 @@
 dependencies {
     compile project(":mybatis-plus-extension")
     compile project(":mybatis-plus-generator")
-    compile project(":mybatis-plus-adapter")
 
     testCompile 'org.springframework:spring-web:4.3.5.RELEASE'
     testCompile 'javax.servlet:servlet-api:2.5'
