@@ -158,6 +158,16 @@ public class WrapperTest {
         logParams(queryWrapper);
     }
 
+    @Test
+    public void testNested() {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<User>()
+            .and(i -> i.eq("id", 1).nested(j -> j.ne("id", 2)))
+            .or(i -> i.eq("id", 1).and(j -> j.ne("id", 2)))
+            .nested(i -> i.eq("id", 1).or(j -> j.ne("id", 2)));
+        logSqlSegment("测试 Nested 下的方法", queryWrapper);
+        logParams(queryWrapper);
+    }
+
     private List<Object> getList() {
         List<Object> list = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
