@@ -117,8 +117,11 @@ public class MysqlTestDataMapperTest {
     @Test
     public void testExists() {
         println(testDataMapper.selectList(new QueryWrapper<TestData>()
-            .exists("select * from test_data")
+            .exists("select * from test_data")//ok
+            .or()
+            .notExists("select * from test_data")//ok
         ));
+        /* exists 连着用是可行的 */
     }
 
     private void println(List<TestData> list) {
