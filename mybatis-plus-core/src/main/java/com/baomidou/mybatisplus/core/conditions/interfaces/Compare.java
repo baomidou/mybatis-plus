@@ -34,30 +34,48 @@ public interface Compare<This, R> extends Serializable {
      * ignore
      */
     default This allEq(Map<R, Object> params) {
-        return allEq(true, params);
+        return allEq(params, true);
+    }
+
+    /**
+     * ignore
+     */
+    default This allEq(Map<R, Object> params, boolean null2IsNull) {
+        return allEq(true, params, null2IsNull);
     }
 
     /**
      * map 所有非空属性等于 =
+     *
+     * @param condition   执行条件
+     * @param params      map 类型的参数, key 是字段名, value 是字段值
+     * @param null2IsNull 是否参数为 null 自动执行 isNull 方法, false 则忽略这个字段
      */
-    This allEq(boolean condition, Map<R, Object> params);
+    This allEq(boolean condition, Map<R, Object> params, boolean null2IsNull);
 
     /**
      * ignore
      */
     default <V> This allEq(BiPredicate<R, V> filter, Map<R, V> params) {
-        return allEq(true, filter, params);
+        return allEq(filter, params, true);
+    }
+
+    /**
+     * ignore
+     */
+    default <V> This allEq(BiPredicate<R, V> filter, Map<R, V> params, boolean null2IsNull) {
+        return allEq(true, filter, params, null2IsNull);
     }
 
     /**
      * 字段过滤接口，传入多参数时允许对参数进行过滤
      *
-     * @param filter 返回 true 来允许字段传入 条件中
-     * @param params 参数
-     * @param <V>    参数的value类型
-     * @return 返回自身
+     * @param condition   执行条件
+     * @param filter      返回 true 来允许字段传入比对条件中
+     * @param params      map 类型的参数, key 是字段名, value 是字段值
+     * @param null2IsNull 是否参数为 null 自动执行 isNull 方法, false 则忽略这个字段
      */
-    <V> This allEq(boolean condition, BiPredicate<R, V> filter, Map<R, V> params);
+    <V> This allEq(boolean condition, BiPredicate<R, V> filter, Map<R, V> params, boolean null2IsNull);
 
     /**
      * ignore
@@ -68,6 +86,8 @@ public interface Compare<This, R> extends Serializable {
 
     /**
      * 等于 =
+     *
+     * @param condition 执行条件
      */
     This eq(boolean condition, R column, Object val);
 
@@ -80,6 +100,8 @@ public interface Compare<This, R> extends Serializable {
 
     /**
      * 不等于 <>
+     *
+     * @param condition 执行条件
      */
     This ne(boolean condition, R column, Object val);
 
@@ -92,6 +114,8 @@ public interface Compare<This, R> extends Serializable {
 
     /**
      * 大于 >
+     *
+     * @param condition 执行条件
      */
     This gt(boolean condition, R column, Object val);
 
@@ -104,6 +128,8 @@ public interface Compare<This, R> extends Serializable {
 
     /**
      * 大于等于 >=
+     *
+     * @param condition 执行条件
      */
     This ge(boolean condition, R column, Object val);
 
@@ -116,6 +142,8 @@ public interface Compare<This, R> extends Serializable {
 
     /**
      * 小于 <
+     *
+     * @param condition 执行条件
      */
     This lt(boolean condition, R column, Object val);
 
@@ -128,6 +156,8 @@ public interface Compare<This, R> extends Serializable {
 
     /**
      * 小于等于 <=
+     *
+     * @param condition 执行条件
      */
     This le(boolean condition, R column, Object val);
 
@@ -140,6 +170,8 @@ public interface Compare<This, R> extends Serializable {
 
     /**
      * BETWEEN 值1 AND 值2
+     *
+     * @param condition 执行条件
      */
     This between(boolean condition, R column, Object val1, Object val2);
 
@@ -152,6 +184,8 @@ public interface Compare<This, R> extends Serializable {
 
     /**
      * NOT BETWEEN 值1 AND 值2
+     *
+     * @param condition 执行条件
      */
     This notBetween(boolean condition, R column, Object val1, Object val2);
 
@@ -164,6 +198,8 @@ public interface Compare<This, R> extends Serializable {
 
     /**
      * LIKE '%值%'
+     *
+     * @param condition 执行条件
      */
     This like(boolean condition, R column, Object val);
 
@@ -176,6 +212,8 @@ public interface Compare<This, R> extends Serializable {
 
     /**
      * NOT LIKE '%值%'
+     *
+     * @param condition 执行条件
      */
     This notLike(boolean condition, R column, Object val);
 
@@ -188,6 +226,8 @@ public interface Compare<This, R> extends Serializable {
 
     /**
      * LIKE '%值'
+     *
+     * @param condition 执行条件
      */
     This likeLeft(boolean condition, R column, Object val);
 
@@ -200,6 +240,8 @@ public interface Compare<This, R> extends Serializable {
 
     /**
      * LIKE '值%'
+     *
+     * @param condition 执行条件
      */
     This likeRight(boolean condition, R column, Object val);
 }

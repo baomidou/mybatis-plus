@@ -105,13 +105,15 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     @Override
-    public This allEq(boolean condition, Map<R, Object> params) {
+    public This allEq(boolean condition, Map<R, Object> params, boolean null2IsNull) {
         if (condition && CollectionUtils.isNotEmpty(params)) {
             params.forEach((k, v) -> {
                 if (StringUtils.checkValNotNull(v)) {
                     eq(k, v);
                 } else {
-                    isNull(k);
+                    if (null2IsNull) {
+                        isNull(k);
+                    }
                 }
             });
         }
@@ -119,14 +121,16 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     @Override
-    public <V> This allEq(boolean condition, BiPredicate<R, V> filter, Map<R, V> params) {
+    public <V> This allEq(boolean condition, BiPredicate<R, V> filter, Map<R, V> params, boolean null2IsNull) {
         if (condition && CollectionUtils.isNotEmpty(params)) {
-            params.forEach((key, value) -> {
-                if (filter.test(key, value)) {
-                    if (null == value) {
-                        isNull(key);
+            params.forEach((k, v) -> {
+                if (filter.test(k, v)) {
+                    if (StringUtils.checkValNotNull(v)) {
+                        eq(k, v);
                     } else {
-                        eq(key, value);
+                        if (null2IsNull) {
+                            isNull(k);
+                        }
                     }
                 }
             });

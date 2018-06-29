@@ -38,8 +38,10 @@ public interface Nested<This> extends Serializable {
 
     /**
      * AND 嵌套
+     * 例: and(i -> i.eq("name", "李白").ne("state", "活着"))
      *
-     * @param func 函数 ---> 例: i -> i.eq("name", "李白").ne("state", "活着")
+     * @param condition 执行条件
+     * @param func      函数
      */
     This and(boolean condition, Function<This, This> func);
 
@@ -52,8 +54,10 @@ public interface Nested<This> extends Serializable {
 
     /**
      * OR 嵌套
+     * 例: or(i -> i.eq("name", "李白").ne("state", "活着"))
      *
-     * @param func 函数 ---> 例: i -> i.eq("name", "李白").ne("state", "活着")
+     * @param condition 执行条件
+     * @param func      函数
      */
     This or(boolean condition, Function<This, This> func);
 
@@ -66,8 +70,10 @@ public interface Nested<This> extends Serializable {
 
     /**
      * 正常嵌套 不带 AND 或者 OR
+     * 例: nested(i -> i.eq("name", "李白").ne("state", "活着"))
      *
-     * @param func 函数 ---> 例: i -> i.eq("name", "李白").ne("state", "活着")
+     * @param condition 执行条件
+     * @param func      函数
      */
     This nested(boolean condition, Function<This, This> func);
 }
