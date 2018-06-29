@@ -105,9 +105,19 @@ public class MysqlTestDataMapperTest {
     @Test
     public void testIn() {
         println(testDataMapper.selectList(new QueryWrapper<TestData>()
-//            .in("test_int", Arrays.asList(1, 2, 3))  ok
-//                .in("test_int", 1, 2, 3)  ok
-                .inSql("test_int", "1,2,3")
+//            .in("test_int", Arrays.asList(1, 2, 3))//ok
+//                .notIn("test_int", Arrays.asList(1, 2, 3)//ok
+//                .in("test_int", 1, 2, 3)//ok
+//                .notIn("test_int", 1, 2, 3)//ok
+//                .inSql("test_int", "1,2,3")//ok
+                .notInSql("test_int", "1,2,3")//ok
+        ));
+    }
+
+    @Test
+    public void testExists() {
+        println(testDataMapper.selectList(new QueryWrapper<TestData>()
+            .exists("select * from test_data")
         ));
     }
 

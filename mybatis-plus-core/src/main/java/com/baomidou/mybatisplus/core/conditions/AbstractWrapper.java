@@ -233,7 +233,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
 
     @Override
     public This exists(boolean condition, String existsSql) {
-        return addNestedCondition(condition, existsSql, EXISTS);
+        return doIt(condition, EXISTS, () -> String.format("(%s)", existsSql));
     }
 
     @Override
@@ -269,7 +269,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
 
     @Override
     public This inSql(boolean condition, R column, String inValue) {
-        return doIt(condition, () -> columnToString(column), IN, () -> "(" + inValue + ")");
+        return doIt(condition, () -> columnToString(column), IN, () -> String.format("(%s)", inValue));
     }
 
     @Override
@@ -330,18 +330,6 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      */
     protected This addCondition(boolean condition, R column, SqlKeyword sqlKeyword, Object val) {
         return doIt(condition, () -> columnToString(column), sqlKeyword, () -> formatSql("{0}", val));
-    }
-
-    /**
-     * <p>
-     * 嵌套查询条件
-     * </p>
-     *
-     * @param val        查询条件值
-     * @param sqlKeyword SQL 关键词
-     */
-    protected This addNestedCondition(boolean condition, String val, SqlKeyword sqlKeyword) {
-        return doIt(condition, sqlKeyword, () -> formatSql("({0})", val));
     }
 
     /**
