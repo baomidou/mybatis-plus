@@ -43,6 +43,10 @@ public interface Func<This, R> extends Serializable {
 
     /**
      * 字段 IS NULL
+     * 例: isNull("name")
+     *
+     * @param condition 执行条件
+     * @param column    字段
      */
     This isNull(boolean condition, R column);
 
@@ -55,6 +59,10 @@ public interface Func<This, R> extends Serializable {
 
     /**
      * 字段 IS NOT NULL
+     * 例: isNotNull("name")
+     *
+     * @param condition 执行条件
+     * @param column    字段
      */
     This isNotNull(boolean condition, R column);
 
@@ -67,6 +75,11 @@ public interface Func<This, R> extends Serializable {
 
     /**
      * 字段 IN (value.get(0), value.get(1), ...)
+     * 例: in("id", Arrays.asList(1,2,3,4,5))
+     *
+     * @param condition 执行条件
+     * @param column    字段
+     * @param value     数据集合
      */
     This in(boolean condition, R column, Collection<?> value);
 
@@ -79,6 +92,11 @@ public interface Func<This, R> extends Serializable {
 
     /**
      * 字段 IN (v0, v1, ...)
+     * 例: in("id", 1, 2, 3, 4, 5)
+     *
+     * @param condition 执行条件
+     * @param column    字段
+     * @param values    数据数组
      */
     default This in(boolean condition, R column, Object... values) {
         return in(condition, column, Arrays.stream(Optional.ofNullable(values).orElseGet(() -> new Object[]{}))
@@ -94,6 +112,11 @@ public interface Func<This, R> extends Serializable {
 
     /**
      * 字段 NOT IN (value.get(0), value.get(1), ...)
+     * 例: notIn("id", Arrays.asList(1,2,3,4,5))
+     *
+     * @param condition 执行条件
+     * @param column    字段
+     * @param value     数据集合
      */
     This notIn(boolean condition, R column, Collection<?> value);
 
@@ -106,6 +129,11 @@ public interface Func<This, R> extends Serializable {
 
     /**
      * 字段 NOT IN (v0, v1, ...)
+     * 例: notIn("id", 1, 2, 3, 4, 5)
+     *
+     * @param condition 执行条件
+     * @param column    字段
+     * @param values    数据数组
      */
     default This notIn(boolean condition, R column, Object... values) {
         return notIn(condition, column, Arrays.stream(Optional.ofNullable(values).orElseGet(() -> new Object[]{}))
@@ -120,12 +148,14 @@ public interface Func<This, R> extends Serializable {
     }
 
     /**
-     * <p>
+     * 字段 IN ( sql语句 )
      * !! sql 注入方式的 in 方法 !!
-     * </p>
-     * 拼接 IN ( sql 语句 )
-     * 例1: in("id", "1,2,3,4,5,6")
-     * 例2: in("id", "select id from table where id < 3")
+     * 例1: inSql("id", "1,2,3,4,5,6")
+     * 例2: inSql("id", "select id from table where id < 3")
+     *
+     * @param condition 执行条件
+     * @param column    字段
+     * @param inValue   sql语句
      */
     This inSql(boolean condition, R column, String inValue);
 
@@ -137,8 +167,14 @@ public interface Func<This, R> extends Serializable {
     }
 
     /**
-     * 拼接 NOT IN ( sql 语句 )
-     * 例: notIn("id", "1,2,3,4,5,6")
+     * 字段 NOT IN ( sql语句 )
+     * !! sql 注入方式的 not in 方法 !!
+     * 例1: notInSql("id", "1,2,3,4,5,6")
+     * 例2: notInSql("id", "select id from table where id < 3")
+     *
+     * @param condition 执行条件
+     * @param column    字段
+     * @param inValue   sql语句 ---> 1,2,3,4,5,6 或者 select id from table where id < 3
      */
     This notInSql(boolean condition, R column, String inValue);
 
@@ -150,12 +186,11 @@ public interface Func<This, R> extends Serializable {
     }
 
     /**
-     * <p>
      * 分组：GROUP BY 字段, ...
-     * </p>
+     * 例: groupBy("id", "name")
      *
      * @param condition 执行条件
-     * @param columns   分组字段【可多个】
+     * @param columns   字段数组
      */
     This groupBy(boolean condition, R... columns);
 
@@ -167,12 +202,11 @@ public interface Func<This, R> extends Serializable {
     }
 
     /**
-     * <p>
      * 排序：ORDER BY 字段, ... ASC
-     * </p>
+     * 例: orderByAsc("id", "name")
      *
      * @param condition 执行条件
-     * @param columns   排序字段【可多个】
+     * @param columns   字段数组
      */
     default This orderByAsc(boolean condition, R... columns) {
         return orderBy(condition, true, columns);
@@ -186,12 +220,11 @@ public interface Func<This, R> extends Serializable {
     }
 
     /**
-     * <p>
      * 排序：ORDER BY 字段, ... DESC
-     * </p>
+     * 例: orderByDesc("id", "name")
      *
      * @param condition 执行条件
-     * @param columns   排序字段【可多个】
+     * @param columns   字段数组
      */
     default This orderByDesc(boolean condition, R... columns) {
         return orderBy(condition, false, columns);
@@ -199,6 +232,11 @@ public interface Func<This, R> extends Serializable {
 
     /**
      * 排序：ORDER BY 字段, ...
+     * 例: orderBy(true, "id", "name")
+     *
+     * @param condition 执行条件
+     * @param isAsc     是否是 ASC 排序
+     * @param columns   字段数组
      */
     This orderBy(boolean condition, boolean isAsc, R... columns);
 
@@ -210,7 +248,13 @@ public interface Func<This, R> extends Serializable {
     }
 
     /**
-     * HAVING ( sql 语句 )
+     * HAVING ( sql语句 )
+     * 例1: having("sum(age) > 10")
+     * 例2: having("sum(age) > {0}", 10)
+     *
+     * @param condition 执行条件
+     * @param sqlHaving sql 语句
+     * @param params    参数数组
      */
     This having(boolean condition, String sqlHaving, Object... params);
 }

@@ -37,21 +37,10 @@ public interface Join<This> extends Serializable {
 
     /**
      * 拼接 OR
+     *
+     * @param condition 执行条件
      */
     This or(boolean condition);
-
-    /**
-     * ignore
-     */
-    default This apply(String applySql) {
-        return apply(true, applySql);
-    }
-
-    /**
-     * 拼接 sql
-     * 例: apply("date_format(column,'%Y-%m-%d') = '2008-08-08'")
-     */
-    This apply(boolean condition, String applySql);
 
     /**
      * ignore
@@ -61,8 +50,13 @@ public interface Join<This> extends Serializable {
     }
 
     /**
+     * !! 会有 sql 注入风险 !!
      * 拼接 sql
-     * 例: apply("date_format(column,'%Y-%m-%d') = {0}", LocalDate.now())
+     * 例1: apply("id = 1")
+     * 例2: apply("date_format(dateColumn,'%Y-%m-%d') = '2008-08-08'")
+     * 例3: apply("date_format(dateColumn,'%Y-%m-%d') = {0}", LocalDate.now())
+     *
+     * @param condition 执行条件
      */
     This apply(boolean condition, String applySql, Object... value);
 
@@ -76,6 +70,10 @@ public interface Join<This> extends Serializable {
     /**
      * 无视优化规则直接拼接到 sql 的最后(有sql注入的风险,请谨慎使用)
      * 例: last("limit 1")
+     * 注意只能调用一次,多次调用以最后一次为准
+     *
+     * @param condition 执行条件
+     * @param lastSql   sql语句
      */
     This last(boolean condition, String lastSql);
 
@@ -87,8 +85,12 @@ public interface Join<This> extends Serializable {
     }
 
     /**
-     * EXISTS ( sql 语句 )
+     * !! sql 注入方法 !!
+     * 拼接 EXISTS ( sql语句 )
      * 例: exists("select id from table where age = 1")
+     *
+     * @param condition 执行条件
+     * @param existsSql sql语句
      */
     This exists(boolean condition, String existsSql);
 
@@ -100,8 +102,12 @@ public interface Join<This> extends Serializable {
     }
 
     /**
-     * NOT EXISTS ( sql 语句 )
+     * !! sql 注入方法 !!
+     * 拼接 NOT EXISTS ( sql语句 )
      * 例: notExists("select id from table where age = 1")
+     *
+     * @param condition    执行条件
+     * @param notExistsSql sql语句
      */
     This notExists(boolean condition, String notExistsSql);
 }

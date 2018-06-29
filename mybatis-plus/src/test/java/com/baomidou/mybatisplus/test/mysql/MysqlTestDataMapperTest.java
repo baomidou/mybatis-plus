@@ -109,8 +109,8 @@ public class MysqlTestDataMapperTest {
 //                .notIn("test_int", Arrays.asList(1, 2, 3)//ok
 //                .in("test_int", 1, 2, 3)//ok
 //                .notIn("test_int", 1, 2, 3)//ok
-//                .inSql("test_int", "1,2,3")//ok
-                .notInSql("test_int", "1,2,3")//ok
+                .inSql("test_int", "1,2,3")//ok
+                .notInSql("test_int", "2,3")//ok
         ));
     }
 
@@ -122,6 +122,13 @@ public class MysqlTestDataMapperTest {
             .notExists("select * from test_data")//ok
         ));
         /* exists 连着用是可行的 */
+    }
+
+    @Test
+    public void testApply() {
+        println(testDataMapper.selectList(new QueryWrapper<TestData>()
+            .apply("test_int = 1")
+        ));
     }
 
     private void println(List<TestData> list) {
