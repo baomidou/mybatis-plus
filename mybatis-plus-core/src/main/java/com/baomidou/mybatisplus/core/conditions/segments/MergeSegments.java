@@ -28,9 +28,8 @@ import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
  * @author miemie
  * @since 2018-06-27
  */
+@SuppressWarnings("serial")
 public class MergeSegments implements ISqlSegment {
-
-    private static final long serialVersionUID = 8401728865419013555L;
 
     private NormalSegmentList normal = new NormalSegmentList();
     private GroupBySegmentList groupBy = new GroupBySegmentList();

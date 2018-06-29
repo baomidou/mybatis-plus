@@ -36,6 +36,9 @@ public abstract class AbstractISegmentList extends ArrayList<ISqlSegment> implem
      * 最后一个值
      */
     protected ISqlSegment lastValue = null;
+    /**
+     * 刷新 lastValue
+     */
     protected boolean flushLastValue = false;
 
     @Override
@@ -53,14 +56,12 @@ public abstract class AbstractISegmentList extends ArrayList<ISqlSegment> implem
 
     /**
      * <p>
-     * 判断是否改变了 list
-     * true 改变了,就继续执行
-     * false 不再向下执行
+     * 在其中对值进行判断以及更改 list 的内部元素
      * </P>
      *
      * @param list         传入进来的 ISqlSegment 集合
      * @param firstSegment ISqlSegment 集合里第一个值
-     * @return 是否继续向下执行
+     * @return true 是否继续向下执行; false 不再向下执行
      */
     protected abstract boolean transformList(List<ISqlSegment> list, ISqlSegment firstSegment);
 
