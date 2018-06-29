@@ -268,6 +268,16 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     @Override
+    public This inSql(boolean condition, R column, String inValue) {
+        return doIt(condition, () -> columnToString(column), IN, () -> "(" + inValue + ")");
+    }
+
+    @Override
+    public This notInSql(boolean condition, R column, String inValue) {
+        return not(condition).inSql(condition, column, inValue);
+    }
+
+    @Override
     public This groupBy(boolean condition, R... columns) {
         if (ArrayUtils.isEmpty(columns)) {
             return typedThis;

@@ -20,7 +20,6 @@ import static java.util.stream.Collectors.toList;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Optional;
 
 /**
@@ -36,7 +35,7 @@ import java.util.Optional;
 public interface Func<This, R> extends Serializable {
 
     /**
-     * 字段 IS NULL
+     * ignore
      */
     default This isNull(R column) {
         return isNull(true, column);
@@ -48,7 +47,7 @@ public interface Func<This, R> extends Serializable {
     This isNull(boolean condition, R column);
 
     /**
-     * 字段 IS NOT NULL
+     * ignore
      */
     default This isNotNull(R column) {
         return isNotNull(true, column);
@@ -60,7 +59,7 @@ public interface Func<This, R> extends Serializable {
     This isNotNull(boolean condition, R column);
 
     /**
-     * 字段 IN (value.get(0), value.get(1), ...)
+     * ignore
      */
     default This in(R column, Collection<?> value) {
         return in(true, column, value);
@@ -72,7 +71,7 @@ public interface Func<This, R> extends Serializable {
     This in(boolean condition, R column, Collection<?> value);
 
     /**
-     * 字段 IN (v0, v1, ...)
+     * ignore
      */
     default This in(R column, Object... values) {
         return in(true, column, values);
@@ -87,7 +86,7 @@ public interface Func<This, R> extends Serializable {
     }
 
     /**
-     * 字段 NOT IN (value.get(0), value.get(1), ...)
+     * ignore
      */
     default This notIn(R column, Collection<?> values) {
         return notIn(true, column, values);
@@ -99,7 +98,7 @@ public interface Func<This, R> extends Serializable {
     This notIn(boolean condition, R column, Collection<?> value);
 
     /**
-     * 字段 NOT IN (v0, v1, ...)
+     * ignore
      */
     default This notIn(R column, Object... value) {
         return notIn(true, column, value);
@@ -114,43 +113,37 @@ public interface Func<This, R> extends Serializable {
     }
 
     /**
-     * 拼接 IN ( sql 语句 )
-     * 例: in("id", "1,2,3,4,5,6")
+     * ignore
      */
-    default This in(R column, String inValue) {
-        return in(true, column, inValue);
-    }
-
-    /**
-     * 拼接 IN ( sql 语句 )
-     * 例: in("id", "1,2,3,4,5,6")
-     */
-    default This in(boolean condition, R column, String inValue) {
-        return in(condition, column, Collections.singleton(inValue));
-    }
-
-    /**
-     * 拼接 NOT IN ( sql 语句 )
-     * 例: notIn("id", "1,2,3,4,5,6")
-     */
-    default This notIn(R column, String inValue) {
-        return notIn(true, column, inValue);
-    }
-
-    /**
-     * 拼接 NOT IN ( sql 语句 )
-     * 例: notIn("id", "1,2,3,4,5,6")
-     */
-    default This notIn(boolean condition, R column, String inValue) {
-        return notIn(condition, column, Collections.singleton(inValue));
+    default This inSql(R column, String inValue) {
+        return inSql(true, column, inValue);
     }
 
     /**
      * <p>
-     * 分组：GROUP BY 字段, ...
+     * !! sql 注入方式的 in 方法 !!
      * </p>
-     *
-     * @param columns 分组字段【可多个】
+     * 拼接 IN ( sql 语句 )
+     * 例1: in("id", "1,2,3,4,5,6")
+     * 例2: in("id", "select id from table where id < 3")
+     */
+    This inSql(boolean condition, R column, String inValue);
+
+    /**
+     * ignore
+     */
+    default This notInSql(R column, String inValue) {
+        return notInSql(true, column, inValue);
+    }
+
+    /**
+     * 拼接 NOT IN ( sql 语句 )
+     * 例: notIn("id", "1,2,3,4,5,6")
+     */
+    This notInSql(boolean condition, R column, String inValue);
+
+    /**
+     * ignore
      */
     default This groupBy(R... columns) {
         return groupBy(true, columns);
@@ -167,7 +160,7 @@ public interface Func<This, R> extends Serializable {
     This groupBy(boolean condition, R... columns);
 
     /**
-     * 排序：ORDER BY 字段, ...
+     * ignore
      */
     default This orderByAsc(R... columns) {
         return orderByAsc(true, columns);
@@ -186,7 +179,7 @@ public interface Func<This, R> extends Serializable {
     }
 
     /**
-     * 排序：ORDER BY 字段, ...
+     * ignore
      */
     default This orderByDesc(R... columns) {
         return orderByDesc(true, columns);
@@ -210,8 +203,7 @@ public interface Func<This, R> extends Serializable {
     This orderBy(boolean condition, boolean isAsc, R... columns);
 
     /**
-     * HAVING ( sql 语句 )
-     * 例: having("sum(age) > {0}", 1)
+     * ignore
      */
     default This having(String sqlHaving, Object... params) {
         return having(true, sqlHaving, params);

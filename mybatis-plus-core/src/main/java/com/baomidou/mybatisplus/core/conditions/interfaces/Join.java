@@ -29,7 +29,7 @@ import java.io.Serializable;
 public interface Join<This> extends Serializable {
 
     /**
-     * 拼接 OR
+     * ignore
      */
     default This or() {
         return or(true);
@@ -41,8 +41,7 @@ public interface Join<This> extends Serializable {
     This or(boolean condition);
 
     /**
-     * 拼接 sql
-     * 例: apply("date_format(column,'%Y-%m-%d') = '2008-08-08'")
+     * ignore
      */
     default This apply(String applySql) {
         return apply(true, applySql);
@@ -55,8 +54,7 @@ public interface Join<This> extends Serializable {
     This apply(boolean condition, String applySql);
 
     /**
-     * 拼接 sql
-     * 例: apply("date_format(column,'%Y-%m-%d') = {0}", LocalDate.now())
+     * ignore
      */
     default This apply(String applySql, Object... value) {
         return apply(true, applySql, value);
@@ -69,8 +67,7 @@ public interface Join<This> extends Serializable {
     This apply(boolean condition, String applySql, Object... value);
 
     /**
-     * 无视优化规则直接拼接到 sql 的最后(有sql注入的风险,请谨慎使用)
-     * 例: last("limit 1")
+     * ignore
      */
     default This last(String lastSql) {
         return last(true, lastSql);
@@ -83,8 +80,7 @@ public interface Join<This> extends Serializable {
     This last(boolean condition, String lastSql);
 
     /**
-     * EXISTS ( sql 语句 )
-     * 例: exists("select id from table where age = 1")
+     * ignore
      */
     default This exists(String existsSql) {
         return exists(true, existsSql);
@@ -92,12 +88,12 @@ public interface Join<This> extends Serializable {
 
     /**
      * EXISTS ( sql 语句 )
+     * 例: exists("select id from table where age = 1")
      */
     This exists(boolean condition, String existsSql);
 
     /**
-     * NOT EXISTS ( sql 语句 )
-     * 例: notExists("select id from table where age = 1")
+     * ignore
      */
     default This notExists(String notExistsSql) {
         return notExists(true, notExistsSql);
@@ -105,6 +101,7 @@ public interface Join<This> extends Serializable {
 
     /**
      * NOT EXISTS ( sql 语句 )
+     * 例: notExists("select id from table where age = 1")
      */
     This notExists(boolean condition, String notExistsSql);
 }

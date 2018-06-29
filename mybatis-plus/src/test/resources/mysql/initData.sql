@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS test_data (
-    id             BIGINT (20) primary key,
+    id             BIGINT primary key,
     test_int       integer,
     test_str       varchar(50),
     test_double    double,
@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS test_data (
     test_time      time,
     test_date_time datetime,
     test_timestamp timestamp
-);
+)ENGINE = innodb DEFAULT CHARSET = utf8;
 
 insert into test_data
 values (1, 1, '1', 1.1, 1, '2008-08-08', '12:12:12', '2008-08-08 12:12:12', '2008-08-08 12:12:12');

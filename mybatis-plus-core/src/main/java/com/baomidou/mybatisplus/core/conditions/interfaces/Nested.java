@@ -30,7 +30,7 @@ import java.util.function.Function;
 public interface Nested<This> extends Serializable {
 
     /**
-     * AND 嵌套
+     * ignore
      */
     default This and(Function<This, This> func) {
         return and(true, func);
@@ -42,7 +42,7 @@ public interface Nested<This> extends Serializable {
     This and(boolean condition, Function<This, This> func);
 
     /**
-     * OR 嵌套
+     * ignore
      */
     default This or(Function<This, This> func) {
         return or(true, func);
@@ -54,7 +54,7 @@ public interface Nested<This> extends Serializable {
     This or(boolean condition, Function<This, This> func);
 
     /**
-     * 正常嵌套 不带 AND 或者 OR
+     * ignore
      */
     default This nested(Function<This, This> func) {
         return nested(true, func);

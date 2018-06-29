@@ -31,7 +31,7 @@ import java.util.function.BiPredicate;
 public interface Compare<This, R> extends Serializable {
 
     /**
-     * map 所有非空属性等于 =
+     * ignore
      */
     default This allEq(Map<R, Object> params) {
         return allEq(true, params);
@@ -43,20 +43,13 @@ public interface Compare<This, R> extends Serializable {
     This allEq(boolean condition, Map<R, Object> params);
 
     /**
-     * TODO 待确定的多参数字段过滤
-     * 字段过滤接口，传入多参数时允许对参数进行过滤
-     *
-     * @param filter 返回 true 来允许字段传入 条件中
-     * @param params 参数
-     * @param <V>    参数的value类型
-     * @return 返回自身
+     * ignore
      */
     default <V> This allEq(BiPredicate<R, V> filter, Map<R, V> params) {
         return allEq(true, filter, params);
     }
 
     /**
-     * TODO 待确定的多参数字段过滤
      * 字段过滤接口，传入多参数时允许对参数进行过滤
      *
      * @param filter 返回 true 来允许字段传入 条件中
@@ -67,7 +60,7 @@ public interface Compare<This, R> extends Serializable {
     <V> This allEq(boolean condition, BiPredicate<R, V> filter, Map<R, V> params);
 
     /**
-     * 等于 =
+     * ignore
      */
     default This eq(R column, Object val) {
         return eq(true, column, val);
@@ -79,7 +72,7 @@ public interface Compare<This, R> extends Serializable {
     This eq(boolean condition, R column, Object val);
 
     /**
-     * 不等于 <>
+     * ignore
      */
     default This ne(R column, Object val) {
         return ne(true, column, val);
@@ -91,7 +84,7 @@ public interface Compare<This, R> extends Serializable {
     This ne(boolean condition, R column, Object val);
 
     /**
-     * 大于 >
+     * ignore
      */
     default This gt(R column, Object val) {
         return gt(true, column, val);
@@ -103,7 +96,7 @@ public interface Compare<This, R> extends Serializable {
     This gt(boolean condition, R column, Object val);
 
     /**
-     * 大于等于 >=
+     * ignore
      */
     default This ge(R column, Object val) {
         return ge(true, column, val);
@@ -115,7 +108,7 @@ public interface Compare<This, R> extends Serializable {
     This ge(boolean condition, R column, Object val);
 
     /**
-     * 小于 <
+     * ignore
      */
     default This lt(R column, Object val) {
         return lt(true, column, val);
@@ -127,7 +120,7 @@ public interface Compare<This, R> extends Serializable {
     This lt(boolean condition, R column, Object val);
 
     /**
-     * 小于等于 <=
+     * ignore
      */
     default This le(R column, Object val) {
         return le(true, column, val);
@@ -139,7 +132,7 @@ public interface Compare<This, R> extends Serializable {
     This le(boolean condition, R column, Object val);
 
     /**
-     * BETWEEN 值1 AND 值2
+     * ignore
      */
     default This between(R column, Object val1, Object val2) {
         return between(true, column, val1, val2);
@@ -151,7 +144,7 @@ public interface Compare<This, R> extends Serializable {
     This between(boolean condition, R column, Object val1, Object val2);
 
     /**
-     * NOT BETWEEN 值1 AND 值2
+     * ignore
      */
     default This notBetween(R column, Object val1, Object val2) {
         return notBetween(true, column, val1, val2);
@@ -163,7 +156,7 @@ public interface Compare<This, R> extends Serializable {
     This notBetween(boolean condition, R column, Object val1, Object val2);
 
     /**
-     * LIKE '%值%'
+     * ignore
      */
     default This like(R column, Object val) {
         return like(true, column, val);
@@ -175,7 +168,7 @@ public interface Compare<This, R> extends Serializable {
     This like(boolean condition, R column, Object val);
 
     /**
-     * NOT LIKE '%值%'
+     * ignore
      */
     default This notLike(R column, Object val) {
         return notLike(true, column, val);
@@ -187,7 +180,7 @@ public interface Compare<This, R> extends Serializable {
     This notLike(boolean condition, R column, Object val);
 
     /**
-     * LIKE '%值'
+     * ignore
      */
     default This likeLeft(R column, Object val) {
         return likeLeft(true, column, val);
@@ -199,7 +192,7 @@ public interface Compare<This, R> extends Serializable {
     This likeLeft(boolean condition, R column, Object val);
 
     /**
-     * LIKE '值%'
+     * ignore
      */
     default This likeRight(R column, Object val) {
         return likeRight(true, column, val);

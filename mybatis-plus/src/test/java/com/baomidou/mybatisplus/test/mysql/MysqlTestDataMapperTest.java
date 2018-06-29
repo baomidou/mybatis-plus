@@ -1,6 +1,9 @@
 package com.baomidou.mybatisplus.test.mysql;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +36,19 @@ public class MysqlTestDataMapperTest {
 
     @Resource
     protected TestDataMapper testDataMapper;
+
+    @Test
+    public void insertForeach() {
+        LocalDateTime nowDateTime = LocalDateTime.now();
+        LocalDate nowDate = nowDateTime.toLocalDate();
+        LocalTime nowTime = nowDateTime.toLocalTime();
+        for (int i = 0; i < 20; i++) {
+            testDataMapper.insert(new TestData().setTestInt(i).setTestStr(String.format("第%s条数据", i))
+                .setTestDouble(BigDecimal.valueOf(3.3).multiply(BigDecimal.valueOf(i)).doubleValue())
+                .setTestBoolean((i + 3) % 2 == 0).setTestDate(nowDate)
+                .setTestTime(nowTime).setTestDateTime(nowDateTime));
+        }
+    }
 
     @Test
     public void selectById() {
@@ -84,6 +100,15 @@ public class MysqlTestDataMapperTest {
         System.out.println(dataPage.getTotal());
         System.out.println(dataPage.getRecords().size());
         println(page.getRecords());
+    }
+
+    @Test
+    public void testIn() {
+        println(testDataMapper.selectList(new QueryWrapper<TestData>()
+//            .in("test_int", Arrays.asList(1, 2, 3))  ok
+//                .in("test_int", 1, 2, 3)  ok
+                .inSql("test_int", "1,2,3")
+        ));
     }
 
     private void println(List<TestData> list) {
