@@ -64,7 +64,6 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
      * </p>
      *
      * @param columns 查询字段
-     * @return
      */
     @SafeVarargs
     public final LambdaQueryWrapper<T> select(Property<T, ?>... columns) {

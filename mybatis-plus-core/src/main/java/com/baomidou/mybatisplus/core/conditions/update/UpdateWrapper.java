@@ -78,7 +78,6 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
      *
      * @param column 字段
      * @param val    值
-     * @return
      */
     public UpdateWrapper<T> set(String column, Object val) {
         return this.set(true, column, val);
@@ -92,7 +91,6 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
      * @param condition 操作条件
      * @param column    字段
      * @param val       值
-     * @return
      */
     public UpdateWrapper<T> set(boolean condition, String column, Object val) {
         if (condition) {
@@ -107,7 +105,6 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
      * </p>
      *
      * @param sql SET 部分内容
-     * @return
      */
     public UpdateWrapper<T> setSql(String sql) {
         sqlSet.add(sql);
