@@ -184,7 +184,6 @@ public class WrapperTest {
         for (int i = 0; i < 2; i++) {
             map.put("column" + i, i);
         }
-
         map.put("nullColumn", null);
         return map;
     }

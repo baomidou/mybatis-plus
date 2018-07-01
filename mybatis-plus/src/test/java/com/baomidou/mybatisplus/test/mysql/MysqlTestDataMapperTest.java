@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -97,6 +98,7 @@ public class MysqlTestDataMapperTest {
         page.setSize(5).setCurrent(1);
         IPage<TestData> dataPage = testDataMapper.selectPage(page, new QueryWrapper<TestData>().lambda()
             .eq(TestData::getTestInt, 1));
+        Assert.assertSame(dataPage, page);
         System.out.println(dataPage.getTotal());
         System.out.println(dataPage.getRecords().size());
         println(page.getRecords());
