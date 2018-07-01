@@ -1,5 +1,21 @@
 ﻿# CHANGELOG
 
+
+## [v3.0-alpha] 2018.07.01 代号：超级棒棒糖 🍭
+- 升级 JDK 8 + 优化性能 Wrapper 支持 lambda 语法
+- 模块化 MP 合理的分配各个包结构
+- 重构注入方法，支持任意方法精简注入模式
+- 全局配置下划线转换消灭注入 AS 语句
+- 改造 Wrapper 更改为 QueryWrapper UpdateWrapper
+- 重构 分页插件 消灭固定分页模型，支持 Mapper 直接返回 IPage 接口
+- 新增 Rest Api 通过 Controller 层
+- 实体 String 类型字段默认使用 LIKE 查询 SelectOne 默认 LIMIT 1
+- 辅助支持 selectMaps 新增 bean map 互转工具类
+- 增加 db2 支持 starter 改为 Spring boot 2+ 支持
+- 重构生成器提供自定义 DB 多种模板引擎支持
+- 相关 BUG 修复
+
+
 ## [v2.1.9] 2018.01.28 代号：怀念（纪念 2017 baomidou 组织小伙伴 MP 共同成长之路，奔向 2018 旺旺旺）
 - page 分页新增控制是否优化 Count Sql 设置
 ```
