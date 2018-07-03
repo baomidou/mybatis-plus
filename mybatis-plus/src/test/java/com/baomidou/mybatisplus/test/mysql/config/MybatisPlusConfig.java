@@ -11,9 +11,11 @@ import org.springframework.context.annotation.Configuration;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.extension.injector.LogicSqlInjector;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.baomidou.mybatisplus.test.h2.H2MetaObjectHandler;
+import com.baomidou.mybatisplus.test.mysql.MysqlMetaObjectHandler;
 
 /**
  * <p>
@@ -30,16 +32,18 @@ public class MybatisPlusConfig {
     @Bean("mybatisSqlSession")
     public SqlSessionFactory sqlSessionFactory(DataSource dataSource, GlobalConfig globalConfig) throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
+        /* 数据源 */
         sqlSessionFactory.setDataSource(dataSource);
-//        sqlSessionFactory.setConfigLocation(resourceLoader.getResource("classpath:mybatis-config.xml"));
-//        sqlSessionFactory.setTypeAliasesPackage("com.baomidou.mybatisplus.test.h2.entity.persistent");
+        /* entity扫描,mybatis的Alias功能 */
+        sqlSessionFactory.setTypeAliasesPackage("com.baomidou.mybatisplus.test.base.entity");
         MybatisConfiguration configuration = new MybatisConfiguration();
-//        configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
-//        org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
         configuration.setJdbcTypeForNull(JdbcType.NULL);
+        /* 驼峰转下划线 */
         configuration.setMapUnderscoreToCamelCase(true);
+        /* 分页插件 */
         PaginationInterceptor pagination = new PaginationInterceptor();
         configuration.addInterceptor(pagination);
+
         sqlSessionFactory.setConfiguration(configuration);
 //        pagination.setLocalPage(true);
 //        OptimisticLockerInterceptor optLock = new OptimisticLockerInterceptor();
@@ -48,7 +52,7 @@ public class MybatisPlusConfig {
 //            optLock,
 //            new PerformanceInterceptor()
 //        });
-        globalConfig.setMetaObjectHandler(new H2MetaObjectHandler());
+        globalConfig.setMetaObjectHandler(new MysqlMetaObjectHandler());
         sqlSessionFactory.setGlobalConfig(globalConfig);
         return sqlSessionFactory.getObject();
     }
@@ -56,10 +60,14 @@ public class MybatisPlusConfig {
     @Bean
     public GlobalConfig globalConfig() {
         GlobalConfig conf = new GlobalConfig();
-//        LogicSqlInjector logicSqlInjector = new LogicSqlInjector();
-//        conf.setLogicDeleteValue("-1");
-//        conf.setLogicNotDeleteValue("1");
-        conf.setDbConfig(new GlobalConfig.DbConfig().setIdType(IdType.ID_WORKER));
+        conf.setDbConfig(new GlobalConfig.DbConfig());
+        /* 逻辑删除注入器 */
+        LogicSqlInjector logicSqlInjector = new LogicSqlInjector();
+        conf.setSqlInjector(logicSqlInjector);
+        conf.setDbConfig(new GlobalConfig.DbConfig()
+            .setIdType(IdType.ID_WORKER)
+            .setLogicDeleteValue("1")
+            .setLogicNotDeleteValue("0"));
         return conf;
     }
 }

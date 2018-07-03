@@ -36,7 +36,7 @@ import com.baomidou.mybatisplus.test.base.mapper.TestDataMapper;
 public class MysqlTestDataMapperTest {
 
     @Resource
-    protected TestDataMapper testDataMapper;
+    protected TestDataMapper mapper;
 
     @Test
     public void insertForeach() {
@@ -44,7 +44,7 @@ public class MysqlTestDataMapperTest {
         LocalDate nowDate = nowDateTime.toLocalDate();
         LocalTime nowTime = nowDateTime.toLocalTime();
         for (int i = 0; i < 20; i++) {
-            testDataMapper.insert(new TestData().setTestInt(i).setTestStr(String.format("第%s条数据", i))
+            mapper.insert(new TestData().setTestInt(i).setTestStr(String.format("第%s条数据", i))
                 .setTestDouble(BigDecimal.valueOf(3.3).multiply(BigDecimal.valueOf(i)).doubleValue())
                 .setTestBoolean((i + 3) % 2 == 0).setTestDate(nowDate)
                 .setTestTime(nowTime).setTestDateTime(nowDateTime));
@@ -52,13 +52,24 @@ public class MysqlTestDataMapperTest {
     }
 
     @Test
+    public void updateByIdTest() {
+        mapper.updateById(new TestData().setId(1014132604940615682L).setTestInt(1111111111));
+    }
+
+    @Test
+    public void updateTest() {
+        mapper.update(new TestData().setTestInt(222222222), new UpdateWrapper<TestData>()
+            .set("test_str", "我佛慈悲2").eq("id",1014132605058056193L));//todo 发现一个bug
+    }
+
+    @Test
     public void selectById() {
-        System.out.println(testDataMapper.selectById(1L));
+        System.out.println(mapper.selectById(1L));
     }
 
     @Test
     public void commonSelectList() {
-        println(testDataMapper.selectList(new QueryWrapper<TestData>()
+        println(mapper.selectList(new QueryWrapper<TestData>()
             .eq("id", 1L)
             .like("test_str", 1)
             .between("test_double", 1L, 2L)));
@@ -66,7 +77,7 @@ public class MysqlTestDataMapperTest {
 
     @Test
     public void specialSelectList() {
-        println(testDataMapper.selectList(new QueryWrapper<TestData>().lambda()
+        println(mapper.selectList(new QueryWrapper<TestData>().lambda()
             .nested(i -> i.eq(TestData::getId, 1L))
             .or(i -> i.between(TestData::getTestDouble, 1L, 2L))
             .or(i -> i.eq(TestData::getTestInt, 1)
@@ -80,7 +91,7 @@ public class MysqlTestDataMapperTest {
 
     @Test
     public void update() {
-        testDataMapper.update(new TestData().setId(1L).setTestStr("123123"),
+        mapper.update(new TestData().setId(1L).setTestStr("123123"),
             new UpdateWrapper<TestData>().eq("id", 1L));
     }
 
@@ -89,14 +100,14 @@ public class MysqlTestDataMapperTest {
         Map<String, Object> map = new HashMap<>();
         map.put("id", 1L);
         map.put("test_int", 1);
-        println(testDataMapper.selectByMap(map));
+        println(mapper.selectByMap(map));
     }
 
     @Test
     public void selectPage() {
         IPage<TestData> page = new Page<>();
         page.setSize(5).setCurrent(1);
-        IPage<TestData> dataPage = testDataMapper.selectPage(page, new QueryWrapper<TestData>().lambda()
+        IPage<TestData> dataPage = mapper.selectPage(page, new QueryWrapper<TestData>().lambda()
             .eq(TestData::getTestInt, 1));
         Assert.assertSame(dataPage, page);
         System.out.println(dataPage.getTotal());
@@ -106,7 +117,7 @@ public class MysqlTestDataMapperTest {
 
     @Test
     public void testIn() {
-        println(testDataMapper.selectList(new QueryWrapper<TestData>()
+        println(mapper.selectList(new QueryWrapper<TestData>()
 //            .in("test_int", Arrays.asList(1, 2, 3))//ok
 //                .notIn("test_int", Arrays.asList(1, 2, 3)//ok
 //                .in("test_int", 1, 2, 3)//ok
@@ -118,7 +129,7 @@ public class MysqlTestDataMapperTest {
 
     @Test
     public void testExists() {
-        println(testDataMapper.selectList(new QueryWrapper<TestData>()
+        println(mapper.selectList(new QueryWrapper<TestData>()
             .exists("select * from test_data")//ok
             .or()
             .notExists("select * from test_data")//ok
@@ -128,7 +139,7 @@ public class MysqlTestDataMapperTest {
 
     @Test
     public void testApply() {
-        println(testDataMapper.selectList(new QueryWrapper<TestData>()
+        println(mapper.selectList(new QueryWrapper<TestData>()
             .apply("test_int = 1")
         ));
     }

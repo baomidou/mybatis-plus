@@ -23,10 +23,10 @@ public class DBConfig {
     public DataSource dataSource() throws SQLException {
         SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
         dataSource.setDriver(new Driver());
-        dataSource.setUrl("jdbc:mysql://localhost:3306/mybatis_plus?useUnicode=true&characterEncoding=UTF-8");
+        dataSource.setUrl("jdbc:mysql://localhost:3306/mybatis_plus?useSSL=false&useUnicode=true&characterEncoding=UTF-8");
         dataSource.setDriverClass(com.mysql.jdbc.Driver.class);
         dataSource.setUsername("root");
-        dataSource.setPassword("123456");
+        dataSource.setPassword("123123");
         return dataSource;
     }
 

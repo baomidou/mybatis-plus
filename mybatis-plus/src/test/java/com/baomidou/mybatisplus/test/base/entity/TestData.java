@@ -4,6 +4,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.TableName;
+
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -13,6 +18,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
+@TableName(value = "tb_test_data")
 public class TestData {
 
     private Long id;
@@ -24,4 +30,10 @@ public class TestData {
     private LocalTime testTime;
     private LocalDateTime testDateTime;
     private LocalDateTime testTimestamp;
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime createDatetime;
+    @TableField(fill = FieldFill.UPDATE)
+    private LocalDateTime updateDatetime;
+    @TableLogic
+    private Boolean deleted;
 }
