@@ -30,47 +30,47 @@ public enum DbType {
     /**
      * MYSQL
      */
-    MYSQL("mysql", "`%s`", "%s LIKE CONCAT('%%',#{%s},'%%')", " LIMIT %s", "MySql数据库"),
+    MYSQL("mysql", "`%s`", "%s LIKE CONCAT('%%',#{%s},'%%')", "MySql数据库"),
     /**
      * MARIADB
      */
-    MARIADB("mariadb", "`%s`", "%s LIKE CONCAT('%%',#{%s},'%%')", " LIMIT %s", "MariaDB数据库"),
+    MARIADB("mariadb", "`%s`", "%s LIKE CONCAT('%%',#{%s},'%%')", "MariaDB数据库"),
     /**
      * ORACLE
      */
-    ORACLE("oracle", null, "%s LIKE CONCAT('%%',#{%s},'%%')", null, "Oracle数据库"),
+    ORACLE("oracle", null, "%s LIKE CONCAT('%%',#{%s},'%%')", "Oracle数据库"),
     /**
      * DB2
      */
-    DB2("db2", null, "%s LIKE CONCAT('%%',#{%s},'%%')", " FETCH FIRST %s ROWS ONLY", "DB2数据库"),
+    DB2("db2", null, "%s LIKE CONCAT('%%',#{%s},'%%')", "DB2数据库"),
     /**
      * H2
      */
-    H2("h2", null, "%s LIKE CONCAT('%%',#{%s},'%%')", " LIMIT %s", "H2数据库"),
+    H2("h2", null, "%s LIKE CONCAT('%%',#{%s},'%%')", "H2数据库"),
     /**
      * HSQL
      */
-    HSQL("hsql", null, "%s LIKE CONCAT('%%',#{%s},'%%')", " LIMIT %s", "HSQL数据库"),
+    HSQL("hsql", null, "%s LIKE CONCAT('%%',#{%s},'%%')", "HSQL数据库"),
     /**
      * SQLITE
      */
-    SQLITE("sqlite", "`%s`", "%s LIKE CONCAT('%%',#{%s},'%%')", " LIMIT %s", "SQLite数据库"),
+    SQLITE("sqlite", "`%s`", "%s LIKE CONCAT('%%',#{%s},'%%')", "SQLite数据库"),
     /**
      * POSTGRE
      */
-    POSTGRE_SQL("postgresql", "\"%s\"", "%s LIKE CONCAT('%%',#{%s},'%%')", " LIMIT %s", "Postgre数据库"),
+    POSTGRE_SQL("postgresql", "\"%s\"", "%s LIKE CONCAT('%%',#{%s},'%%')", "Postgre数据库"),
     /**
      * SQLSERVER2005
      */
-    SQL_SERVER2005("sqlserver2005", null, "%s LIKE '%%'+#{%s}+'%%'", null, "SQLServer2005数据库"),
+    SQL_SERVER2005("sqlserver2005", null, "%s LIKE '%%'+#{%s}+'%%'", "SQLServer2005数据库"),
     /**
      * SQLSERVER
      */
-    SQL_SERVER("sqlserver", null, "%s LIKE '%%'+#{%s}+'%%'", null, "SQLServer数据库"),
+    SQL_SERVER("sqlserver", null, "%s LIKE '%%'+#{%s}+'%%'", "SQLServer数据库"),
     /**
      * UNKONWN DB
      */
-    OTHER("other", null, null, null, "其他数据库");
+    OTHER("other", null, null, "其他数据库");
 
     /**
      * 数据库名称
@@ -85,20 +85,15 @@ public enum DbType {
      */
     private final String like;
     /**
-     * LIMIT 记录
-     */
-    private final String limit;
-    /**
      * 描述
      */
     private final String desc;
 
 
-    DbType(String db, String quote, String like, String limit, String desc) {
+    DbType(String db, String quote, String like, String desc) {
         this.db = db;
         this.quote = quote;
         this.like = like;
-        this.limit = limit;
         this.desc = desc;
     }
 
@@ -118,9 +113,5 @@ public enum DbType {
             }
         }
         return OTHER;
-    }
-
-    public String getLimit(int row) {
-        return null == limit ? "" : String.format(limit, row);
     }
 }
