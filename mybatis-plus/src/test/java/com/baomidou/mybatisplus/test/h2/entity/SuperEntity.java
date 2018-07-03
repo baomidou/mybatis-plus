@@ -19,6 +19,9 @@ import java.io.Serializable;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 
+import lombok.Data;
+import lombok.experimental.Accessors;
+
 /**
  * <p>
  * 测试父类情况
@@ -27,18 +30,13 @@ import com.baomidou.mybatisplus.annotation.TableId;
  * @author hubin
  * @since 2016-06-26
  */
+@Data
+@Accessors(chain = true)
 public class SuperEntity extends SuSuperEntity implements Serializable {
 
     /* 主键ID 注解，value 字段名，type 用户输入ID */
     @TableId(value = "test_id")
     private Long id;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 }
 

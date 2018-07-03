@@ -59,7 +59,7 @@ public class MysqlTestDataMapperTest {
     @Test
     public void updateTest() {
         mapper.update(new TestData().setTestInt(222222222), new UpdateWrapper<TestData>()
-            .set("test_str", "我佛慈悲2").eq("id",1014132605058056193L));//todo 发现一个bug
+            .set("test_str", "我佛慈悲2").eq("id",1014132605058056193L));
     }
 
     @Test

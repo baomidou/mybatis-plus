@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS  h2user (
 	desc VARCHAR(30) NULL DEFAULT NULL ,
 	version INT(5) NULL DEFAULT NULL,
 	last_updated_dt TIMESTAMP NULL,
+	deleted INT(1) NULL DEFAULT 0 ,
 	PRIMARY KEY (test_id)
 )
 

@@ -13,6 +13,7 @@ import org.springframework.core.io.ResourceLoader;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.extension.injector.LogicSqlInjector;
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
@@ -62,10 +63,11 @@ public class MybatisPlusConfig {
     @Bean
     public GlobalConfig globalConfiguration() {
         GlobalConfig conf = new GlobalConfig();
-//        LogicSqlInjector logicSqlInjector = new LogicSqlInjector();
-//        conf.setLogicDeleteValue("-1");
-//        conf.setLogicNotDeleteValue("1");
-        conf.setDbConfig(new GlobalConfig.DbConfig().setIdType(IdType.ID_WORKER));
+        conf.setSqlInjector(new LogicSqlInjector());
+        conf.setDbConfig(new GlobalConfig.DbConfig()
+            .setLogicDeleteValue("1")
+            .setLogicNotDeleteValue("0")
+            .setIdType(IdType.ID_WORKER));
         return conf;
     }
 }

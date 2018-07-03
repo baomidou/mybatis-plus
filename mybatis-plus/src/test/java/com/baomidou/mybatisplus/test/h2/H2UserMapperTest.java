@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.test.base.entity.TestData;
 import com.baomidou.mybatisplus.test.h2.config.H2Db;
 import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserMapper;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
@@ -138,4 +139,12 @@ public class H2UserMapperTest extends BaseTest {
             new QueryWrapper<>(new H2User().setAge(3)).eq("name", NQQ))));
     }
 
+
+    @Test
+    public void update() {
+        UpdateWrapper uw = new UpdateWrapper<TestData>();
+        uw.set("age", 1);
+        uw.eq("test_id", 101L);
+        userMapper.update(new H2User().setName("咩咩"), uw);
+    }
 }

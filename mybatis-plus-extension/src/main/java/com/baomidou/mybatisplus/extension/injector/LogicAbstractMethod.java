@@ -90,8 +90,8 @@ public abstract class LogicAbstractMethod extends AbstractMethod {
     protected String sqlWhereEntityWrapper(TableInfo table) {
         if (table.isLogicDelete()) {
             StringBuilder where = new StringBuilder(128);
-            where.append("<where>");
-            where.append("<choose><when test=\"ew!=null\">");
+            where.append("<if test=\"ew!=null and !ew.emptyOfWhere\">");
+            where.append("<trim prefix=\"WHERE\" prefixOverrides=\"AND|OR\">");
             where.append("<if test=\"ew.entity!=null\">");
             if (StringUtils.isNotEmpty(table.getKeyProperty())) {
                 where.append("<if test=\"ew.entity.").append(table.getKeyProperty()).append("!=null\">");
@@ -107,12 +107,12 @@ public abstract class LogicAbstractMethod extends AbstractMethod {
                 where.append(convertIfTag(fieldInfo, true));
             }
             where.append("</if>");
+            // 删除逻辑
             where.append(getLogicDeleteSql(table));
-            where.append("<if test=\"ew.sqlSegment!=null\">${ew.sqlSegment}</if>");
-            where.append("</when><otherwise>");
-            where.append(getLogicDeleteSql(table));
-            where.append("</otherwise></choose>");
-            where.append("</where>");
+            // SQL 片段
+            where.append("<if test=\"ew.sqlSegment!=null and ew.sqlSegment!=''\"> AND ${ew.sqlSegment}</if>");
+            where.append("</trim>");
+            where.append("</if>");
             return where.toString();
         }
         // 正常逻辑
@@ -122,20 +122,17 @@ public abstract class LogicAbstractMethod extends AbstractMethod {
     @Override
     protected String sqlWhereByMap(TableInfo table) {
         if (table.isLogicDelete()) {
-            StringBuilder where = new StringBuilder();
-            where.append("<where>");
-            // MAP 逻辑
-            where.append("<if test=\"cm!=null and !cm.isEmpty\">");
-            where.append("<foreach collection=\"cm.keys\" item=\"k\" separator=\"AND\">");
-            where.append("<if test=\"cm[k] != null\">");
-            where.append("${k} = #{cm[${k}]}");
-            where.append("</if>");
-            where.append("</foreach>");
-            where.append("</if>");
-            // 过滤逻辑
-            where.append(getLogicDeleteSql(table));
-            where.append("</where>");
-            return where.toString();
+            return new StringBuilder()
+                .append("<if test=\"cm!=null and !cm.isEmpty\">")
+                .append("<where>")
+                .append("<foreach collection=\"cm\" index=\"k\" item=\"v\" separator=\"AND\">")
+                .append("<choose><when test=\"v==null\"> ${k} IS NULL </when>")
+                .append("<otherwise> ${k}=#{v} </otherwise></choose>")
+                .append("</foreach>")
+                .append(getLogicDeleteSql(table))
+                .append("</where>")
+                .append("</if>")
+                .toString();
         }
         // 正常逻辑
         return super.sqlWhereByMap(table);

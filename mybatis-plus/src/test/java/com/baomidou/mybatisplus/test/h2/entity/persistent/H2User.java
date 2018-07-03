@@ -20,6 +20,7 @@ import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.Version;
 import com.baomidou.mybatisplus.test.h2.entity.SuperEntity;
@@ -59,6 +60,9 @@ public class H2User extends SuperEntity {
 
     @Version
     private Integer version;
+
+    @TableLogic
+    private Integer deleted;
 
 
     public H2User() {
