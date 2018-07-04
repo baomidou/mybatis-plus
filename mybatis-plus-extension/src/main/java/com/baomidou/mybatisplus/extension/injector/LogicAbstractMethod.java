@@ -90,29 +90,35 @@ public abstract class LogicAbstractMethod extends AbstractMethod {
     protected String sqlWhereEntityWrapper(TableInfo table) {
         if (table.isLogicDelete()) {
             StringBuilder where = new StringBuilder(128);
-            where.append("<if test=\"ew!=null and !ew.emptyOfWhere\">");
-            where.append("<trim prefix=\"WHERE\" prefixOverrides=\"AND|OR\">");
-            where.append("<if test=\"ew.entity!=null\">");
+            where.append("<trim prefix=\"WHERE\" prefixOverrides=\"AND|OR\">")
+                .append("<if test=\"ew==null\">")
+                .append(getLogicDeleteSql(table))
+                .append("</if>")
+                .append("<if test=\"ew!=null\">")
+                .append("<if test=\"ew.emptyOfWhere\">")
+                .append(getLogicDeleteSql(table))
+                .append("</if>")
+                .append("<if test=\"!ew.emptyOfWhere\">")
+                .append("<if test=\"ew.entity!=null\">");
             if (StringUtils.isNotEmpty(table.getKeyProperty())) {
-                where.append("<if test=\"ew.entity.").append(table.getKeyProperty()).append("!=null\">");
-                where.append(" AND ").append(table.getKeyColumn()).append("=#{ew.entity.");
-                where.append(table.getKeyProperty()).append("}");
-                where.append("</if>");
+                where.append("<if test=\"ew.entity.").append(table.getKeyProperty()).append("!=null\">")
+                    .append(" AND ").append(table.getKeyColumn()).append("=#{ew.entity.")
+                    .append(table.getKeyProperty()).append("}")
+                    .append("</if>");
             }
             List<TableFieldInfo> fieldList = table.getFieldList();
             for (TableFieldInfo fieldInfo : fieldList) {
-                where.append(convertIfTag(fieldInfo, "ew.entity.", false));
-                where.append(" AND ").append(sqlCondition(fieldInfo.getCondition(),
-                    fieldInfo.getColumn(), "ew.entity." + fieldInfo.getEl()));
-                where.append(convertIfTag(fieldInfo, true));
+                where.append(convertIfTag(fieldInfo, "ew.entity.", false))
+                    .append(" AND ").append(sqlCondition(fieldInfo.getCondition(),
+                    fieldInfo.getColumn(), "ew.entity." + fieldInfo.getEl()))
+                    .append(convertIfTag(fieldInfo, true));
             }
-            where.append("</if>");
-            // 删除逻辑
-            where.append(getLogicDeleteSql(table));
-            // SQL 片段
-            where.append("<if test=\"ew.sqlSegment!=null and ew.sqlSegment!=''\"> AND ${ew.sqlSegment}</if>");
-            where.append("</trim>");
-            where.append("</if>");
+            where.append("</if>")
+                // 删除逻辑
+                .append(getLogicDeleteSql(table))
+                // SQL 片段
+                .append("<if test=\"ew.sqlSegment!=null and ew.sqlSegment!=''\"> AND ${ew.sqlSegment}</if>")
+                .append("</if>").append("</if>").append("</trim>");
             return where.toString();
         }
         // 正常逻辑
