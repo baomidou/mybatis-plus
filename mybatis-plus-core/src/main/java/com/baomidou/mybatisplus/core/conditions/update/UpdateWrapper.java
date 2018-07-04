@@ -59,6 +59,11 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
         this.paramNameValuePairs = paramNameValuePairs;
     }
 
+    /**
+     * <p>
+     * 只可调用一次,多次会出问题
+     * </p>
+     */
     public LambdaUpdateWrapper<T> lambda() {
         return new LambdaUpdateWrapper<>(entity, paramNameSeq, paramNameValuePairs);
     }
