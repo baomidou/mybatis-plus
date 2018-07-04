@@ -42,7 +42,7 @@ public enum DbType {
     /**
      * DB2
      */
-    DB2("db2", null, "%s LIKE CONCAT('%%',#{%s},'%%')", "DB2数据库"),
+    DB2("db2", null, "%s LIKE CONCAT(CONCAT('%%',#{%s}),'%%')", "DB2数据库"),
     /**
      * H2
      */
