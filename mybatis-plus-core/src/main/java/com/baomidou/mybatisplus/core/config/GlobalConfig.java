@@ -117,6 +117,10 @@ public class GlobalConfig implements Serializable {
          */
         private boolean columnUnderline = true;
         /**
+         * String 类型字段 LIKE
+         */
+        private boolean columnLike = true;
+        /**
          * 大写命名
          */
         private boolean capitalMode = false;
