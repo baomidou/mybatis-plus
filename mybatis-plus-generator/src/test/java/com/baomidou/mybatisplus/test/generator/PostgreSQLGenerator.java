@@ -45,6 +45,7 @@ public class PostgreSQLGenerator extends GeneratorTest {
         gc.setAuthor("hubin");
 
         // 自定义文件命名，注意 %s 会自动填充表实体属性！
+        // gc.setEntityName("%sEntity");
         // gc.setMapperName("%sDao");
         // gc.setXmlName("%sDao");
         // gc.setServiceName("MP%sService");

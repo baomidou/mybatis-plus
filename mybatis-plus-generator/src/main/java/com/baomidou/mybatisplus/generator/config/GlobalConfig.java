@@ -85,6 +85,7 @@ public class GlobalConfig {
     /**
      * 各层文件名称方式，例如： %Action 生成 UserAction
      */
+    private String entityName;
     private String mapperName;
     private String xmlName;
     private String serviceName;

@@ -342,31 +342,36 @@ public class ConfigBuilder {
         String[] tablePrefix = config.getTablePrefix();
         String[] fieldPrefix = config.getFieldPrefix();
         for (TableInfo tableInfo : tableList) {
-            tableInfo.setEntityName(strategyConfig, NamingStrategy.capitalFirst(processName(tableInfo.getName(), strategy, tablePrefix)));
-            if (StringUtils.isNotEmpty(globalConfig.getMapperName())) {
-                tableInfo.setMapperName(String.format(globalConfig.getMapperName(), tableInfo.getEntityName()));
+            String entityName = NamingStrategy.capitalFirst(processName(tableInfo.getName(), strategy, tablePrefix));
+            if (StringUtils.isNotEmpty(globalConfig.getEntityName())) {
+                tableInfo.setEntityName(strategyConfig, String.format(globalConfig.getEntityName(), entityName));
             } else {
-                tableInfo.setMapperName(tableInfo.getEntityName() + ConstVal.MAPPER);
+                tableInfo.setEntityName(strategyConfig, entityName);
+            }
+            if (StringUtils.isNotEmpty(globalConfig.getMapperName())) {
+                tableInfo.setMapperName(String.format(globalConfig.getMapperName(), entityName));
+            } else {
+                tableInfo.setMapperName(entityName + ConstVal.MAPPER);
             }
             if (StringUtils.isNotEmpty(globalConfig.getXmlName())) {
-                tableInfo.setXmlName(String.format(globalConfig.getXmlName(), tableInfo.getEntityName()));
+                tableInfo.setXmlName(String.format(globalConfig.getXmlName(), entityName));
             } else {
-                tableInfo.setXmlName(tableInfo.getEntityName() + ConstVal.MAPPER);
+                tableInfo.setXmlName(entityName + ConstVal.MAPPER);
             }
             if (StringUtils.isNotEmpty(globalConfig.getServiceName())) {
-                tableInfo.setServiceName(String.format(globalConfig.getServiceName(), tableInfo.getEntityName()));
+                tableInfo.setServiceName(String.format(globalConfig.getServiceName(), entityName));
             } else {
-                tableInfo.setServiceName("I" + tableInfo.getEntityName() + ConstVal.SERVICE);
+                tableInfo.setServiceName("I" + entityName + ConstVal.SERVICE);
             }
             if (StringUtils.isNotEmpty(globalConfig.getServiceImplName())) {
-                tableInfo.setServiceImplName(String.format(globalConfig.getServiceImplName(), tableInfo.getEntityName()));
+                tableInfo.setServiceImplName(String.format(globalConfig.getServiceImplName(), entityName));
             } else {
-                tableInfo.setServiceImplName(tableInfo.getEntityName() + ConstVal.SERVICE_IMPL);
+                tableInfo.setServiceImplName(entityName + ConstVal.SERVICE_IMPL);
             }
             if (StringUtils.isNotEmpty(globalConfig.getControllerName())) {
-                tableInfo.setControllerName(String.format(globalConfig.getControllerName(), tableInfo.getEntityName()));
+                tableInfo.setControllerName(String.format(globalConfig.getControllerName(), entityName));
             } else {
-                tableInfo.setControllerName(tableInfo.getEntityName() + ConstVal.CONTROLLER);
+                tableInfo.setControllerName(entityName + ConstVal.CONTROLLER);
             }
             //强制开启字段注解
             checkTableIdTableFieldAnnotation(config, tableInfo, fieldPrefix);

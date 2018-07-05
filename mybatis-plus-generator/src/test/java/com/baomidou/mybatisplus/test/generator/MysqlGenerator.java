@@ -72,6 +72,7 @@ public class MysqlGenerator extends GeneratorTest {
                 //.setKotlin(true) 是否生成 kotlin 代码
                 .setAuthor("Yanghu")
             // 自定义文件命名，注意 %s 会自动填充表实体属性！
+            // .setEntityName("%sEntity");
             // .setMapperName("%sDao")
             // .setXmlName("%sDao")
             // .setServiceName("MP%sService")
