@@ -55,10 +55,10 @@ public class H2UserMapperTest extends BaseTest {
         h2User.setDesc("这是一个不错的小伙子");
         Assert.assertTrue(1 == userMapper.insert(h2User));
 
-        log(h2User.getId());
+        log(h2User.getTestId());
 
         // 新增一条自定义 ID = 1 的测试删除数据
-        h2User.setId(1L);
+        h2User.setTestId(1L);
         h2User.setName("测试");
         userMapper.insert(h2User);
         for (int i = 0; i < 10; i++) {
@@ -90,7 +90,7 @@ public class H2UserMapperTest extends BaseTest {
 
         // 批量删除
         Assert.assertTrue(count == userMapper.deleteBatchIds(h2UserList
-            .stream().map(u -> u.getId()).collect(toList())));
+            .stream().map(u -> u.getTestId()).collect(toList())));
 
         // 更新
         h2User = new H2User();

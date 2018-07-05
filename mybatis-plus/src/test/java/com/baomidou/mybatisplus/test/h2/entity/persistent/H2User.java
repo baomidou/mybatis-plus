@@ -83,17 +83,17 @@ public class H2User extends SuperEntity {
     }
 
     public H2User(Long id, String name) {
-        this.setId(id);
+        this.setTestId(id);
         this.name = name;
     }
 
     public H2User(Long id, Integer age) {
-        this.setId(id);
+        this.setTestId(id);
         this.age = age;
     }
 
     public H2User(Long id, String name, Integer age, Integer testType) {
-        this.setId(id);
+        this.setTestId(id);
         this.name = name;
         this.age = age;
         this.testType = testType;

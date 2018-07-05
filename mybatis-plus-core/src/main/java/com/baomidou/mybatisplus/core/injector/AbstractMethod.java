@@ -222,7 +222,7 @@ public abstract class AbstractMethod {
                 if (table.isKeyRelated()) {
                     columns.append(table.getKeyColumn()).append(" AS ").append(sqlWordConvert(table.getKeyProperty()));
                 } else {
-                    columns.append(sqlWordConvert(table.getKeyProperty()));
+                    columns.append(sqlWordConvert(table.getKeyColumn()));
                 }
                 if (size >= 1) {
                     // 判断其余字段是否存在

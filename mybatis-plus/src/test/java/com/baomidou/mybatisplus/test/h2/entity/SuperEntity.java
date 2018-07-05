@@ -35,8 +35,8 @@ import lombok.experimental.Accessors;
 public class SuperEntity extends SuSuperEntity implements Serializable {
 
     /* 主键ID 注解，value 字段名，type 用户输入ID */
-    @TableId(value = "test_id")
-    private Long id;
+    @TableId
+    private Long testId;
 
 }
 

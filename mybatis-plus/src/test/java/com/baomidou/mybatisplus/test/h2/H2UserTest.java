@@ -69,7 +69,7 @@ public class H2UserTest extends BaseTest {
         ew.select("test_id as id, name, age");
         List<H2User> list = userService.selectList(ew);
         for (H2User u : list) {
-            Assert.assertNotNull(u.getId());
+            Assert.assertNotNull(u.getTestId());
             Assert.assertNotNull(u.getName());
             Assert.assertNull(u.getPrice());
         }
@@ -86,7 +86,7 @@ public class H2UserTest extends BaseTest {
         Assert.assertNotNull(list);
         for (H2User u : list) {
             Assert.assertEquals(nameParam, u.getName());
-            Assert.assertNotNull(u.getId());
+            Assert.assertNotNull(u.getTestId());
         }
     }
 
