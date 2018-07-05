@@ -34,13 +34,26 @@ public class LogicUpdateById extends LogicAbstractMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
+        String sql;
         SqlMethod sqlMethod = SqlMethod.UPDATE_BY_ID;
-        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlSet(true, false, tableInfo, "et."),
-            tableInfo.getKeyColumn(), new StringBuilder("et.").append(tableInfo.getKeyProperty()).toString(),
-            new StringBuilder("<if test=\"et instanceof java.util.Map\">")
-                .append("<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">")
-                .append(" AND ${et.MP_OPTLOCK_VERSION_COLUMN}=#{et.MP_OPTLOCK_VERSION_ORIGINAL}")
-                .append("</if></if> AND ").append(getLogicDeleteSql(tableInfo)));
+        if (tableInfo.isLogicDelete()) {
+
+            sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlSet(true, false, tableInfo, "et."),
+                tableInfo.getKeyColumn(), new StringBuilder("et.").append(tableInfo.getKeyProperty()).toString(),
+                new StringBuilder("<if test=\"et instanceof java.util.Map\">")
+                    .append("<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">")
+                    .append(" AND ${et.MP_OPTLOCK_VERSION_COLUMN}=#{et.MP_OPTLOCK_VERSION_ORIGINAL}")
+                    .append("</if></if> AND ").append(getLogicDeleteSql(tableInfo)));
+        } else {
+            sqlMethod = SqlMethod.UPDATE_BY_ID;
+            sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(),
+                sqlSet(false, false, tableInfo, "et."),
+                tableInfo.getKeyColumn(), "et." + tableInfo.getKeyProperty(),
+                new StringBuilder("<if test=\"et instanceof java.util.Map\">")
+                    .append("<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">")
+                    .append(" AND ${et.MP_OPTLOCK_VERSION_COLUMN}=#{et.MP_OPTLOCK_VERSION_ORIGINAL}")
+                    .append("</if></if>"));
+        }
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
         return addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
     }

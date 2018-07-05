@@ -169,20 +169,20 @@ public class TableInfo {
                 if (field.isKeyFlag()) {
                     // 主键
                     if (field.isConvert() || field.isKeyIdentityFlag()) {
-                        pkgSet.add("com.baomidou.mybatisplus.annotations.TableId");
+                        pkgSet.add(com.baomidou.mybatisplus.annotation.TableId.class.getCanonicalName());
                     }
                     // 自增
                     if (field.isKeyIdentityFlag()) {
-                        pkgSet.add("com.baomidou.mybatisplus.enums.IdType");
+                        pkgSet.add(com.baomidou.mybatisplus.annotation.IdType.class.getCanonicalName());
                     }
                 } else if (field.isConvert()) {
                     // 普通字段
-                    pkgSet.add("com.baomidou.mybatisplus.annotations.TableField");
+                    pkgSet.add(com.baomidou.mybatisplus.annotation.TableField.class.getCanonicalName());
                 }
                 if (null != field.getFill()) {
                     // 填充字段
-                    pkgSet.add("com.baomidou.mybatisplus.annotations.TableField");
-                    pkgSet.add("com.baomidou.mybatisplus.enums.FieldFill");
+                    pkgSet.add(com.baomidou.mybatisplus.annotation.TableField.class.getCanonicalName());
+                    pkgSet.add(com.baomidou.mybatisplus.annotation.FieldFill.class.getCanonicalName());
                 }
             }
             if (!pkgSet.isEmpty()) {
