@@ -72,6 +72,11 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
         return typedThis;
     }
 
+    /**
+     * <p>
+     * 只可调用一次,多次会出问题
+     * </p>
+     */
     public LambdaQueryWrapper<T> lambda() {
         return new LambdaQueryWrapper<>(entity, paramNameSeq, paramNameValuePairs);
     }
