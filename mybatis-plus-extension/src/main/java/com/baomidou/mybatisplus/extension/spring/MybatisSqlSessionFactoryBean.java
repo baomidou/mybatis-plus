@@ -58,6 +58,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.NestedIOException;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
+import org.springframework.util.StringUtils;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.MybatisXMLConfigBuilder;
@@ -205,13 +206,35 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
     }
 
     /**
-     * Packages to search for type aliases.
-     *
-     * @param typeAliasesPackage package to scan for domain objects
-     * @since 1.0.1
+     * 支持 typeAliasesPackage 多项每项都有通配符 com.a.b.*.po, com.c.*.po
+     * ISSUE https://gitee.com/baomidou/mybatis-plus/issues/IKJ48
      */
     public void setTypeAliasesPackage(String typeAliasesPackage) {
-        this.typeAliasesPackage = typeAliasesPackage;
+        if (StringUtils.hasLength(typeAliasesPackage)
+            && typeAliasesPackage.contains("*")
+            && typeAliasesPackage.contains(",")) {
+            StringBuilder builder = new StringBuilder();
+            String[] array = StringUtils.tokenizeToStringArray(typeAliasesPackage, ",; \t\n");
+            for (String one : array) {
+                if (one.contains("*")) {
+                    this.appendArrayToBuilder(builder, PackageHelper.convertTypeAliasesPackage(one));
+                } else {
+                    builder.append(one).append(",");
+                }
+            }
+            builder.deleteCharAt(builder.length() - 1);
+            this.typeAliasesPackage = builder.toString();
+        } else {
+            this.typeAliasesPackage = typeAliasesPackage;
+        }
+    }
+
+    private void appendArrayToBuilder(StringBuilder builder, String[] array) {
+        if (builder != null && array != null && array.length > 0) {
+            for (String item : array) {
+                builder.append(item).append(",");
+            }
+        }
     }
 
     public void setTypeEnumsPackage(String typeEnumsPackage) {
