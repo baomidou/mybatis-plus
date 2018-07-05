@@ -103,10 +103,10 @@ public class H2UserMapperTest extends BaseTest {
 
         h2User.setAge(3);
         h2User.setDesc(null);
-        Assert.assertTrue(1 == userMapper.update(h2User,
+        Assert.assertTrue(userMapper.update(h2User,
             new UpdateWrapper<H2User>().lambda()
                 .set(H2User::getDesc, "")
-                .eq(H2User::getName, NQQ)));
+                .eq(H2User::getName, "Jerry")) > 0);
 
         log(userMapper.selectOne(new QueryWrapper<>(new H2User().setName(NQQ).setAge(3))));
 
@@ -135,8 +135,7 @@ public class H2UserMapperTest extends BaseTest {
                 System.out.println(m);
             }
         }
-        Assert.assertTrue(CollectionUtils.isNotEmpty(userMapper.selectMaps(
-            new QueryWrapper<>(new H2User().setAge(3)).eq("name", NQQ))));
+        Assert.assertTrue(CollectionUtils.isNotEmpty(userMapper.selectMaps(new QueryWrapper<>(new H2User().setAge(18)))));
     }
 
 

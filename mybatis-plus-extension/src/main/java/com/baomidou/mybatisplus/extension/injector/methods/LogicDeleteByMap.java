@@ -36,9 +36,14 @@ public class LogicDeleteByMap extends LogicAbstractMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
+        String sql;
         SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE_BY_MAP;
-        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlLogicSet(tableInfo),
-            sqlWhereByMap(tableInfo));
+        if (tableInfo.isLogicDelete()) {
+            sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlLogicSet(tableInfo), sqlWhereByMap(tableInfo));
+        } else {
+            sqlMethod = SqlMethod.DELETE_BY_MAP;
+            sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), this.sqlWhereByMap(tableInfo));
+        }
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Map.class);
         return addUpdateMappedStatement(mapperClass, Map.class, sqlMethod.getMethod(), sqlSource);
     }

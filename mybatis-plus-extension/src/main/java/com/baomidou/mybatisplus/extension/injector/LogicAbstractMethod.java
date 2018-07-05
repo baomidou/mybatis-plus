@@ -32,6 +32,10 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  */
 public abstract class LogicAbstractMethod extends AbstractMethod {
 
+    public LogicAbstractMethod() {
+        // TO DO NOTHING
+    }
+
     /**
      * <p>
      * SQL 更新 set 语句
@@ -43,9 +47,13 @@ public abstract class LogicAbstractMethod extends AbstractMethod {
     public String getLogicDeleteSql(TableInfo table) {
         StringBuilder sql = new StringBuilder();
         List<TableFieldInfo> fieldList = table.getFieldList();
+        int i = 0;
         for (TableFieldInfo fieldInfo : fieldList) {
             if (fieldInfo.isLogicDelete()) {
-                sql.append(" AND ").append(fieldInfo.getColumn());
+                if (++i > 1) {
+                    sql.append(" AND ");
+                }
+                sql.append(fieldInfo.getColumn());
                 if (StringUtils.isCharSequence(fieldInfo.getPropertyType())) {
                     sql.append("='").append(fieldInfo.getLogicNotDeleteValue()).append("'");
                 } else {
@@ -90,7 +98,7 @@ public abstract class LogicAbstractMethod extends AbstractMethod {
     protected String sqlWhereEntityWrapper(TableInfo table) {
         if (table.isLogicDelete()) {
             StringBuilder where = new StringBuilder(128);
-            where.append("<if test=\"ew!=null and !ew.emptyOfWhere\">");
+            where.append("<choose><when test=\"ew!=null and !ew.emptyOfWhere\">");
             where.append("<trim prefix=\"WHERE\" prefixOverrides=\"AND|OR\">");
             where.append("<if test=\"ew.entity!=null\">");
             if (StringUtils.isNotEmpty(table.getKeyProperty())) {
@@ -106,13 +114,16 @@ public abstract class LogicAbstractMethod extends AbstractMethod {
                     fieldInfo.getColumn(), "ew.entity." + fieldInfo.getEl()));
                 where.append(convertIfTag(fieldInfo, true));
             }
-            where.append("</if>");
+            where.append("</if> AND ");
             // 删除逻辑
             where.append(getLogicDeleteSql(table));
             // SQL 片段
             where.append("<if test=\"ew.sqlSegment!=null and ew.sqlSegment!=''\"> AND ${ew.sqlSegment}</if>");
             where.append("</trim>");
-            where.append("</if>");
+            where.append("</when><otherwise>WHERE ");
+            // 删除逻辑
+            where.append(getLogicDeleteSql(table));
+            where.append("</otherwise></choose>");
             return where.toString();
         }
         // 正常逻辑
@@ -123,15 +134,15 @@ public abstract class LogicAbstractMethod extends AbstractMethod {
     protected String sqlWhereByMap(TableInfo table) {
         if (table.isLogicDelete()) {
             return new StringBuilder()
+                .append("<trim prefix=\"WHERE\" prefixOverrides=\"AND\">")
                 .append("<if test=\"cm!=null and !cm.isEmpty\">")
-                .append("<where>")
                 .append("<foreach collection=\"cm\" index=\"k\" item=\"v\" separator=\"AND\">")
                 .append("<choose><when test=\"v==null\"> ${k} IS NULL </when>")
                 .append("<otherwise> ${k}=#{v} </otherwise></choose>")
                 .append("</foreach>")
+                .append("</if> AND ")
                 .append(getLogicDeleteSql(table))
-                .append("</where>")
-                .append("</if>")
+                .append("</trim>")
                 .toString();
         }
         // 正常逻辑

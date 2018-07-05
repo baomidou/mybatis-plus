@@ -115,13 +115,13 @@ public abstract class AbstractMethod {
      * SQL 更新 set 语句
      * </p>
      *
-     * @param selective 是否选择判断
-     * @param ew        是否存在 UpdateWrapper 条件
-     * @param table     表信息
-     * @param prefix    前缀
+     * @param logic  是否逻辑删除注入器
+     * @param ew     是否存在 UpdateWrapper 条件
+     * @param table  表信息
+     * @param prefix 前缀
      * @return
      */
-    protected String sqlSet(boolean selective, boolean ew, TableInfo table, String prefix) {
+    protected String sqlSet(boolean logic, boolean ew, TableInfo table, String prefix) {
         StringBuilder set = new StringBuilder();
         set.append("<trim prefix=\"SET\" suffixOverrides=\",\">");
 
@@ -129,10 +129,24 @@ public abstract class AbstractMethod {
         boolean ifTag;
         List<TableFieldInfo> fieldList = table.getFieldList();
         for (TableFieldInfo fieldInfo : fieldList) {
+            // 逻辑删除逻辑
+            if (logic && fieldInfo.isLogicDelete()) {
+                if (null != prefix) {
+                    // 更新排除逻辑删除字段
+                    continue;
+                }
+                set.append(fieldInfo.getColumn()).append("=");
+                if (StringUtils.isCharSequence(fieldInfo.getPropertyType())) {
+                    set.append("'").append(fieldInfo.getLogicDeleteValue()).append("',");
+                } else {
+                    set.append(fieldInfo.getLogicDeleteValue()).append(",");
+                }
+                continue;
+            }
             // 判断是否更新忽略,在FieldIgnore,UPDATE,INSERT_UPDATE设置为false
             ifTag = !(FieldFill.UPDATE == fieldInfo.getFieldFill()
                 || FieldFill.INSERT_UPDATE == fieldInfo.getFieldFill());
-            if (selective && ifTag) {
+            if (ifTag) {
                 if (StringUtils.isNotEmpty(fieldInfo.getUpdate())) {
                     set.append(fieldInfo.getColumn()).append("=")
                         .append(String.format(fieldInfo.getUpdate(), fieldInfo.getColumn())).append(",");
@@ -145,13 +159,6 @@ public abstract class AbstractMethod {
                     set.append(fieldInfo.getEl()).append("},")
                         .append(convertIfTag(true, fieldInfo, null, true));
                 }
-            } else if (FieldFill.INSERT != fieldInfo.getFieldFill()) {
-                // 排除填充注解字段
-                set.append(fieldInfo.getColumn()).append("=#{");
-                if (null != prefix) {
-                    set.append(prefix);
-                }
-                set.append(fieldInfo.getEl()).append("},");
             }
         }
         // UpdateWrapper SqlSet 部分
