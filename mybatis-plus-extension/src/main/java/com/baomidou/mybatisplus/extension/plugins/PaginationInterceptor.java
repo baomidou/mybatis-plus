@@ -237,7 +237,7 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
                 page.setCurrent(1);
             }
         } catch (Exception e) {
-            throw new MybatisPlusException(e);
+            throw new MybatisPlusException("Error: Method queryTotal execution error.", e);
         }
     }
 
