@@ -1,6 +1,19 @@
 ﻿# CHANGELOG
 
 
+## [v3.0-beta] 2018.07.07 代号：超级棒棒糖 🍭 贝塔
+- 新增字段 LIKE 查询注入全局配置，默认 true 开启
+- 修改 dbtype 的 oracle db2 修改 CONCAT 方式
+- 修正无论 update 的入参 updateWrapper 如何变化,逻辑删除下依然存在限制条件
+- 注释加上告警，完善注释
+- 修复 github issues/377 378 389
+- 解决逻辑删除同时存在非逻辑删除逻辑
+- 逻辑删除支持 delete set 其他字段，update 排除逻辑删除字段
+- 支持 typeAliasesPackage 多项每项都有通配符 com.a.b.*.po, com.c.*.po
+- 修复 gitee issues/IKJ48 IL0B2
+- 其他完善
+
+
 ## [v3.0-alpha] 2018.07.01 代号：超级棒棒糖 🍭
 - 升级 JDK 8 + 优化性能 Wrapper 支持 lambda 语法
 - 模块化 MP 合理的分配各个包结构
