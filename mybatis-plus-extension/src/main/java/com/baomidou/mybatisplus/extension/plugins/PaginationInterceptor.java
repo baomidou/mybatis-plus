@@ -40,6 +40,7 @@ import org.apache.ibatis.session.RowBounds;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.MybatisDefaultParameterHandler;
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.parser.ISqlParser;
 import com.baomidou.mybatisplus.core.parser.SqlInfo;
@@ -63,10 +64,6 @@ import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 public class PaginationInterceptor extends SqlParserHandler implements Interceptor {
 
-    /**
-     * 日志
-     */
-    private static final Log logger = LogFactory.getLog(PaginationInterceptor.class);
     /**
      * COUNT SQL 解析
      */
@@ -240,7 +237,7 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
                 page.setCurrent(1);
             }
         } catch (Exception e) {
-            logger.error("Error: Method queryTotal execution error !", e);
+            throw new MybatisPlusException(e);
         }
     }
 
