@@ -222,8 +222,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
                     builder.append(one).append(",");
                 }
             }
-            builder.deleteCharAt(builder.length() - 1);
-            this.typeAliasesPackage = builder.toString();
+            this.typeAliasesPackage = builder.deleteCharAt(builder.length() - 1).toString();
         } else {
             this.typeAliasesPackage = typeAliasesPackage;
         }
