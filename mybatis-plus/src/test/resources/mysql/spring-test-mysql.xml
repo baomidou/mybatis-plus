@@ -5,7 +5,7 @@
 
     <!--<context:component-scan base-package="com.baomidou.mybatisplus.test.h2.service"/>-->
 
-    <bean name="dbConfig" class="com.baomidou.mybatisplus.test.mysql.config.DBConfig"/>
-    <bean name="mybatisPlusConfig" class="com.baomidou.mybatisplus.test.mysql.config.MybatisPlusConfig"/>
+    <bean name="/DBConfig" class="com.baomidou.mybatisplus.test.mysql.config.DBConfig"/>
+    <bean name="/MybatisPlusConfig" class="com.baomidou.mybatisplus.test.mysql.config.MybatisPlusConfig"/>
 
 </beans>

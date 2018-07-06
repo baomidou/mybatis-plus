@@ -6,6 +6,6 @@ public class SqlTest {
 
     @Test
     public void test(){
-        System.out.println(1);
+        System.out.println(String.format("%s LIKE CONCAT('%%',#{%s},'%%')", "column", "value"));
     }
 }

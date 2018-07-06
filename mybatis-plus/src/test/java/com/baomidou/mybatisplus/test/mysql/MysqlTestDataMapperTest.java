@@ -1,9 +1,12 @@
 package com.baomidou.mybatisplus.test.mysql;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +14,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -20,8 +24,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.test.base.entity.LogicTestData;
 import com.baomidou.mybatisplus.test.base.entity.TestData;
+import com.baomidou.mybatisplus.test.base.mapper.LogicTestDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.TestDataMapper;
+import com.baomidou.mybatisplus.test.mysql.config.MysqlDb;
 
 /**
  * <p>
@@ -36,7 +43,14 @@ import com.baomidou.mybatisplus.test.base.mapper.TestDataMapper;
 public class MysqlTestDataMapperTest {
 
     @Resource
-    protected TestDataMapper mapper;
+    private TestDataMapper mapper;
+    @Resource
+    private LogicTestDataMapper logicMapper;
+
+    @BeforeClass
+    public static void init() throws IOException, SQLException {
+        MysqlDb.initMysqlData();
+    }
 
     @Test
     public void insertForeach() {
@@ -48,7 +62,36 @@ public class MysqlTestDataMapperTest {
                 .setTestDouble(BigDecimal.valueOf(3.3).multiply(BigDecimal.valueOf(i)).doubleValue())
                 .setTestBoolean((i + 3) % 2 == 0).setTestDate(nowDate)
                 .setTestTime(nowTime).setTestDateTime(nowDateTime));
+            logicMapper.insert(new LogicTestData().setTestInt(i).setTestStr(String.format("第%s条数据", i))
+                .setTestDouble(BigDecimal.valueOf(3.3).multiply(BigDecimal.valueOf(i)).doubleValue())
+                .setTestBoolean((i + 3) % 2 == 0).setTestDate(nowDate)
+                .setTestTime(nowTime).setTestDateTime(nowDateTime));
         }
+    }
+
+    @Test
+    public void deleteById() {
+        mapper.deleteById(1014132604940615682L);
+    }
+
+    @Test
+    public void deleteByMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", 1014361515785568258L);
+        map.put("test_int", 5);
+        mapper.deleteByMap(map);
+    }
+
+    @Test
+    public void delete() {
+        mapper.delete(new QueryWrapper<TestData>().lambda()
+            .eq(TestData::getId, 1014132604940615682L)
+            .eq(TestData::getTestInt, 1));
+    }
+
+    @Test
+    public void deleteBatchIds() {
+        mapper.deleteBatchIds(Arrays.asList(1014132604940615682L, 1014132604940615652L));
     }
 
     @Test
@@ -58,13 +101,39 @@ public class MysqlTestDataMapperTest {
 
     @Test
     public void updateTest() {
-        mapper.update(new TestData().setTestInt(222222222), new UpdateWrapper<TestData>()
-            .set("test_str", "我佛慈悲2").eq("id",1014132605058056193L));
+        // type 1
+        mapper.update(new TestData(), null);
+        // type 2
+        mapper.update(new TestData(), new UpdateWrapper<TestData>()
+            .set("test_int", 5));
+        // type 3
+        mapper.update(new TestData(), new UpdateWrapper<TestData>()
+            .set("test_int", 5).eq("id", 1014361515554881538L));
+        // type 4
+        mapper.update(new TestData(), new UpdateWrapper<TestData>()
+            .eq("id", 1014361515554881538L));
+        // type 5
+        mapper.update(new TestData(), new UpdateWrapper<TestData>()
+            .setEntity(new TestData().setTestInt(1)));
+        // type 6
+        mapper.update(new TestData(), new UpdateWrapper<TestData>()
+            .setEntity(new TestData().setTestInt(1))
+            .eq("id", 1014361515554881538L));
+        // type 7
+        mapper.update(new TestData(), new UpdateWrapper<TestData>()
+            .setEntity(new TestData().setTestInt(1))
+            .set("test_int", 55555)
+            .eq("id", 1014361515554881538L));
     }
 
     @Test
     public void selectById() {
-        System.out.println(mapper.selectById(1L));
+        mapper.selectById(1L);
+    }
+
+    @Test
+    public void selectBatchIds() {
+        mapper.selectBatchIds(Arrays.asList(1014132604940615682L, 1014132604940615652L));
     }
 
     @Test

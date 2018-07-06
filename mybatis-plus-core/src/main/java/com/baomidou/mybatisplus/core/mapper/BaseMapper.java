@@ -72,6 +72,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 / / //_//_//_|/ /_\  /_///_/_\      Talk is cheap. Show me the code.
      _/             /
  */
+
 /**
  * <p>
  * Mapper 继承该接口后，无需编写 mapper.xml 文件，即可获得CRUD功能
@@ -126,7 +127,7 @@ public interface BaseMapper<T> {
      * 删除（根据ID 批量删除）
      * </p>
      *
-     * @param idList 主键ID列表
+     * @param idList 主键ID列表(不能为 null 以及 empty)
      */
     Integer deleteBatchIds(@Param("coll") Collection<? extends Serializable> idList);
 
@@ -163,7 +164,7 @@ public interface BaseMapper<T> {
      * 查询（根据ID 批量查询）
      * </p>
      *
-     * @param idList 主键ID列表
+     * @param idList 主键ID列表(不能为 null 以及 empty)
      */
     List<T> selectBatchIds(@Param("coll") Collection<? extends Serializable> idList);
 
@@ -241,5 +242,4 @@ public interface BaseMapper<T> {
      * @param queryWrapper 实体对象封装操作类
      */
     IPage<Map<String, Object>> selectMapsPage(IPage<T> page, @Param("ew") Wrapper<T> queryWrapper);
-
 }
