@@ -38,7 +38,7 @@ public class LogicDeleteById extends LogicAbstractMethod {
         SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE_BY_ID;
         if (tableInfo.isLogicDelete()) {
             sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlLogicSet(tableInfo),
-                tableInfo.getKeyColumn(), tableInfo.getKeyProperty());
+                tableInfo.getKeyColumn(), tableInfo.getKeyProperty(), getLogicDeleteSql(true, tableInfo));
         } else {
             sqlMethod = SqlMethod.DELETE_BY_ID;
             sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), tableInfo.getKeyColumn(),

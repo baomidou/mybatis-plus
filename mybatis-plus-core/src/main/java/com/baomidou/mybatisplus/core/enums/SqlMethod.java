@@ -40,10 +40,10 @@ public enum SqlMethod {
     /**
      * 逻辑删除
      */
-    LOGIC_DELETE_BY_ID("deleteById", "根据ID 逻辑删除一条数据", "<script>UPDATE %s %s WHERE %s=#{%s}</script>"),
+    LOGIC_DELETE_BY_ID("deleteById", "根据ID 逻辑删除一条数据", "<script>UPDATE %s %s WHERE %s=#{%s} %s</script>"),
     LOGIC_DELETE_BY_MAP("deleteByMap", "根据columnMap 条件逻辑删除记录", "<script>UPDATE %s %s %s</script>"),
     LOGIC_DELETE("delete", "根据 entity 条件逻辑删除记录", "<script>UPDATE %s %s %s</script>"),
-    LOGIC_DELETE_BATCH_BY_IDS("deleteBatchIds", "根据ID集合，批量逻辑删除数据", "<script>UPDATE %s %s WHERE %s IN (%s)</script>"),
+    LOGIC_DELETE_BATCH_BY_IDS("deleteBatchIds", "根据ID集合，批量逻辑删除数据", "<script>UPDATE %s %s WHERE %s IN (%s) %s</script>"),
 
     /**
      * 修改

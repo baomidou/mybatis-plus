@@ -37,8 +37,8 @@ public class LogicSelectBatchByIds extends LogicAbstractMethod {
         SqlMethod sqlMethod = SqlMethod.LOGIC_SELECT_BATCH_BY_IDS;
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(),
             sqlSelectColumns(tableInfo, false), tableInfo.getTableName(), tableInfo.getKeyColumn(),
-            new StringBuilder("<foreach item=\"item\" collection=\"coll\" separator=\",\">#{item}</foreach>").toString(),
-            getLogicDeleteSql(tableInfo)), modelClass);
+            "<foreach item=\"item\" collection=\"coll\" separator=\",\">#{item}</foreach>",
+            getLogicDeleteSql(true, tableInfo)), modelClass);
         return addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, tableInfo);
     }
 }

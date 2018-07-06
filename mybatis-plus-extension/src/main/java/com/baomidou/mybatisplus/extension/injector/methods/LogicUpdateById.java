@@ -43,7 +43,7 @@ public class LogicUpdateById extends LogicAbstractMethod {
                 new StringBuilder("<if test=\"et instanceof java.util.Map\">")
                     .append("<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">")
                     .append(" AND ${et.MP_OPTLOCK_VERSION_COLUMN}=#{et.MP_OPTLOCK_VERSION_ORIGINAL}")
-                    .append("</if></if> AND ").append(getLogicDeleteSql(tableInfo)));
+                    .append("</if></if>").append(getLogicDeleteSql(true,tableInfo)));
         } else {
             sqlMethod = SqlMethod.UPDATE_BY_ID;
             sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(),

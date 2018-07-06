@@ -44,13 +44,12 @@ public abstract class LogicAbstractMethod extends AbstractMethod {
      * @param table 表信息
      * @return sql and 片段
      */
-    public String getLogicDeleteSql(TableInfo table) {
+    public String getLogicDeleteSql(boolean startWithAnd, TableInfo table) {
         StringBuilder sql = new StringBuilder();
         List<TableFieldInfo> fieldList = table.getFieldList();
-        int i = 0;
         for (TableFieldInfo fieldInfo : fieldList) {
             if (fieldInfo.isLogicDelete()) {
-                if (++i > 1) {
+                if (startWithAnd) {
                     sql.append(" AND ");
                 }
                 sql.append(fieldInfo.getColumn());
@@ -114,15 +113,15 @@ public abstract class LogicAbstractMethod extends AbstractMethod {
                     fieldInfo.getColumn(), "ew.entity." + fieldInfo.getEl()));
                 where.append(convertIfTag(fieldInfo, true));
             }
-            where.append("</if> AND ");
+            where.append("</if>");
             // 删除逻辑
-            where.append(getLogicDeleteSql(table));
+            where.append(getLogicDeleteSql(true, table));
             // SQL 片段
             where.append("<if test=\"ew.sqlSegment!=null and ew.sqlSegment!=''\"> AND ${ew.sqlSegment}</if>");
             where.append("</trim>");
             where.append("</when><otherwise>WHERE ");
             // 删除逻辑
-            where.append(getLogicDeleteSql(table));
+            where.append(getLogicDeleteSql(false, table));
             where.append("</otherwise></choose>");
             return where.toString();
         }
@@ -140,8 +139,8 @@ public abstract class LogicAbstractMethod extends AbstractMethod {
                 .append("<choose><when test=\"v==null\"> ${k} IS NULL </when>")
                 .append("<otherwise> ${k}=#{v} </otherwise></choose>")
                 .append("</foreach>")
-                .append("</if> AND ")
-                .append(getLogicDeleteSql(table))
+                .append("</if>")
+                .append(getLogicDeleteSql(true, table))
                 .append("</trim>")
                 .toString();
         }

@@ -37,8 +37,10 @@ public class LogicDeleteBatchByIds extends LogicAbstractMethod {
         String sql;
         SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE_BATCH_BY_IDS;
         if (tableInfo.isLogicDelete()) {
-            sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlLogicSet(tableInfo), tableInfo.getKeyColumn(),
-                "<foreach item=\"item\" collection=\"coll\" separator=\",\">#{item}</foreach>");
+            sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlLogicSet(tableInfo),
+                tableInfo.getKeyColumn(),
+                "<foreach item=\"item\" collection=\"coll\" separator=\",\">#{item}</foreach>",
+                getLogicDeleteSql(true, tableInfo));
         } else {
             sqlMethod = SqlMethod.DELETE_BATCH_BY_IDS;
             sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), tableInfo.getKeyColumn(),

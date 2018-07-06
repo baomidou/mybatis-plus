@@ -98,7 +98,9 @@ public class MysqlTestDataMapperTest {
     @Test
     @Transactional
     public void deleteBatchIds() {
-        mapper.deleteBatchIds(Arrays.asList(1014132604940615682L, 1014132604940615652L));
+        List<Long> ids = Arrays.asList(1014132604940615682L, 1014132604940615652L);
+        mapper.deleteBatchIds(ids);
+        logicMapper.deleteBatchIds(ids);
     }
 
     @Test
