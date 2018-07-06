@@ -15,21 +15,16 @@
  */
 package com.baomidou.mybatisplus.extension.spring;
 
-import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.Assert.state;
-import static org.springframework.util.ObjectUtils.isEmpty;
-import static org.springframework.util.StringUtils.hasLength;
-import static org.springframework.util.StringUtils.tokenizeToStringArray;
-
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
-
-import javax.sql.DataSource;
-
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.MybatisXMLConfigBuilder;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.enums.IEnum;
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
+import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
+import com.baomidou.mybatisplus.extension.toolkit.PackageHelper;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.ErrorContext;
@@ -58,18 +53,18 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.NestedIOException;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
-import org.springframework.util.StringUtils;
 
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.MybatisXMLConfigBuilder;
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.enums.IEnum;
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
-import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
-import com.baomidou.mybatisplus.extension.toolkit.PackageHelper;
-import com.baomidou.mybatisplus.extension.toolkit.SqlRunner;
+import javax.sql.DataSource;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.*;
+
+import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.Assert.state;
+import static org.springframework.util.ObjectUtils.isEmpty;
+import static org.springframework.util.StringUtils.hasLength;
+import static org.springframework.util.StringUtils.tokenizeToStringArray;
 
 /**
  * <p>
@@ -210,30 +205,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
      * ISSUE https://gitee.com/baomidou/mybatis-plus/issues/IKJ48
      */
     public void setTypeAliasesPackage(String typeAliasesPackage) {
-        if (StringUtils.hasLength(typeAliasesPackage)
-            && typeAliasesPackage.contains("*")
-            && typeAliasesPackage.contains(",")) {
-            StringBuilder builder = new StringBuilder();
-            String[] array = StringUtils.tokenizeToStringArray(typeAliasesPackage, ",; \t\n");
-            for (String one : array) {
-                if (one.contains("*")) {
-                    this.appendArrayToBuilder(builder, PackageHelper.convertTypeAliasesPackage(one));
-                } else {
-                    builder.append(one).append(",");
-                }
-            }
-            this.typeAliasesPackage = builder.deleteCharAt(builder.length() - 1).toString();
-        } else {
-            this.typeAliasesPackage = typeAliasesPackage;
-        }
-    }
-
-    private void appendArrayToBuilder(StringBuilder builder, String[] array) {
-        if (builder != null && array != null && array.length > 0) {
-            for (String item : array) {
-                builder.append(item).append(",");
-            }
-        }
+        this.typeAliasesPackage = typeAliasesPackage;
     }
 
     public void setTypeEnumsPackage(String typeEnumsPackage) {
@@ -462,18 +434,23 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
         if (hasLength(this.typeAliasesPackage)) {
             // TODO 支持自定义通配符
-            String[] typeAliasPackageArray;
-            if (typeAliasesPackage.contains("*") && !typeAliasesPackage.contains(",")
-                && !typeAliasesPackage.contains(";")) {
-                typeAliasPackageArray = PackageHelper.convertTypeAliasesPackage(typeAliasesPackage);
+            List<String> typeAliasPackageList = new ArrayList<>();
+            if (typeAliasesPackage.contains("*") && !typeAliasesPackage.contains(",") && !typeAliasesPackage.contains(";")) {
+                typeAliasPackageList.addAll(Arrays.asList(PackageHelper.convertTypeAliasesPackage(typeAliasesPackage)));
             } else {
-                typeAliasPackageArray = tokenizeToStringArray(this.typeAliasesPackage,
-                    ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
+                String[] typeAliasPackageArray = tokenizeToStringArray(this.typeAliasesPackage, ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
+                for (String one : typeAliasPackageArray) {
+                    if (one.contains("*")) {
+                        typeAliasPackageList.addAll(Arrays.asList(PackageHelper.convertTypeAliasesPackage(one)));
+                    } else {
+                        typeAliasPackageList.add(one);
+                    }
+                }
             }
-            if (typeAliasPackageArray == null) {
+            if (CollectionUtils.isEmpty(typeAliasPackageList)) {
                 throw new MybatisPlusException("not find typeAliasesPackage:" + typeAliasesPackage);
             }
-            for (String packageToScan : typeAliasPackageArray) {
+            for (String packageToScan : typeAliasPackageList) {
                 configuration.getTypeAliasRegistry().registerAliases(packageToScan,
                     typeAliasesSuperType == null ? Object.class : typeAliasesSuperType);
                 if (LOGGER.isDebugEnabled()) {
