@@ -68,7 +68,7 @@ public class MySqlTypeConvert implements ITypeConvert {
                             return DbColumnType.DATE_SQL;
                         case "time":
                             return DbColumnType.TIME;
-                        case "year"://todo 这个year可能有bug
+                        case "year":
                             return DbColumnType.DATE_SQL;
                         default:
                             return DbColumnType.TIMESTAMP;

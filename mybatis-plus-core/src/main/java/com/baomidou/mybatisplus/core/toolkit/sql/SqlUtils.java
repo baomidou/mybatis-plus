@@ -78,7 +78,8 @@ public class SqlUtils {
             } else {
                 // 默认 JsqlParser 优化 COUNT
                 try {
-                    if (DEFAULT_CLASS == null) {//plus-extension not included
+                    if (DEFAULT_CLASS == null) {
+                        //plus-extension not included
                         return SqlInfo.newInstance().setSql(getOriginalCountSql(originalSql));
                     }
                     // TODO 3.0 changed

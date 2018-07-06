@@ -131,7 +131,7 @@ public class TableFieldInfo {
         }
         tableInfo.setLogicDelete(this.initLogicDelete(dbConfig, field));
         this.update = tableField.update();
-        if (null != tableField.condition()) {
+        if (StringUtils.isNotEmpty(tableField.condition())) {
             // 细粒度条件控制
             this.condition = tableField.condition();
         } else {

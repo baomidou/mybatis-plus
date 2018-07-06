@@ -77,7 +77,7 @@ public class GlobalConfig implements Serializable {
     /**
      * 元对象字段填充控制器
      */
-    private MetaObjectHandler metaObjectHandler = MetaObjectHandler.getInstance();
+    private MetaObjectHandler metaObjectHandler;
 
     /**
      * <p>

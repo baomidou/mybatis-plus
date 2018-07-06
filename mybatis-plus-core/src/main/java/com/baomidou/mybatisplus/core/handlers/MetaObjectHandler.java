@@ -112,18 +112,4 @@ public abstract class MetaObjectHandler {
         return true;
     }
 
-    public static MetaObjectHandler getInstance() {
-        return new MetaObjectHandler() {
-
-            @Override
-            public void insertFill(MetaObject metaObject) {
-                //default do nothing
-            }
-
-            @Override
-            public void updateFill(MetaObject metaObject) {
-                //default do nothing
-            }
-        };
-    }
 }

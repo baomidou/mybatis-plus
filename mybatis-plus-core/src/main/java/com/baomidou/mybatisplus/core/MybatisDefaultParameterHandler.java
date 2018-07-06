@@ -104,13 +104,16 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
      * @return
      */
     protected static Object processBatch(MappedStatement ms, Object parameterObject) {
-        //检查parameterObject
+        //检查 parameterObject
         if (null == parameterObject) {
             return null;
         }
-        boolean isFill = false;
         // 全局配置是否配置填充器
         MetaObjectHandler metaObjectHandler = GlobalConfigUtils.getMetaObjectHandler(ms.getConfiguration());
+        if (null == metaObjectHandler) {
+            return parameterObject;
+        }
+        boolean isFill = false;
         /* 只处理插入或更新操作 */
         if (ms.getSqlCommandType() == SqlCommandType.INSERT) {
             isFill = true;
@@ -143,7 +146,8 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                         if (et != null) {
                             if (et instanceof Map) {
                                 Map realEtMap = (Map) et;
-                                if (realEtMap.containsKey("MP_OPTLOCK_ET_ORIGINAL")) {//refer to OptimisticLockerInterceptor.MP_OPTLOCK_ET_ORIGINAL
+                                if (realEtMap.containsKey("MP_OPTLOCK_ET_ORIGINAL")) {
+                                    //refer to OptimisticLockerInterceptor.MP_OPTLOCK_ET_ORIGINAL
                                     tableInfo = TableInfoHelper.getTableInfo(realEtMap.get("MP_OPTLOCK_ET_ORIGINAL").getClass());
                                 }
                             } else {
@@ -252,7 +256,8 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                 if (parameterMapping.getMode() != ParameterMode.OUT) {
                     Object value;
                     String propertyName = parameterMapping.getProperty();
-                    if (boundSql.hasAdditionalParameter(propertyName)) {//issue#448 ask first for additional params
+                    if (boundSql.hasAdditionalParameter(propertyName)) {
+                        //issue#448 ask first for additional params
                         value = boundSql.getAdditionalParameter(propertyName);
                     } else if (parameterObject == null) {
                         value = null;

@@ -71,7 +71,7 @@ public @interface TableField {
      * 默认 `=` 等值
      * </p>
      */
-    String condition();
+    String condition() default "";
 
     /**
      * <p>

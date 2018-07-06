@@ -461,7 +461,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
         // TODO 自定义枚举类扫描处理
         if (hasLength(this.typeEnumsPackage)) {
-            Set<Class> classes = null;
+            Set<Class> classes;
             if (typeEnumsPackage.contains("*") && !typeEnumsPackage.contains(",")
                 && !typeEnumsPackage.contains(";")) {
                 classes = PackageHelper.scanTypePackage(typeEnumsPackage);
