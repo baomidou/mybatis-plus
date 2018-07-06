@@ -131,8 +131,13 @@ public class TableFieldInfo {
         }
         tableInfo.setLogicDelete(this.initLogicDelete(dbConfig, field));
         this.update = tableField.update();
-        this.condition = tableField.condition();
-        this.setCondition(dbConfig);
+        if (null != tableField.condition()) {
+            // 细粒度条件控制
+            this.condition = tableField.condition();
+        } else {
+            // 全局配置
+            this.setCondition(dbConfig);
+        }
         /*
          * 保存当前字段的填充策略
          */
@@ -282,8 +287,8 @@ public class TableFieldInfo {
          * 全局配置开启字段 LIKE 并且为字符串类型字段
          * 注入 LIKE 查询！！！
          */
-        if (dbConfig.isColumnLike() && StringUtils.isCharSequence(this.propertyType)) {
-            if (null == this.condition || SqlCondition.EQUAL.equals(this.condition)) {
+        if (null == this.condition || SqlCondition.EQUAL.equals(this.condition)) {
+            if (dbConfig.isColumnLike() && StringUtils.isCharSequence(this.propertyType)) {
                 this.condition = dbConfig.getDbType().getLike();
             }
         }
