@@ -19,21 +19,19 @@ public class MysqlDb extends BaseDb {
         ApplicationContext context = new ClassPathXmlApplicationContext("classpath:mysql/spring-test-mysql.xml");
         DataSource ds = context.getBean("dataSource", DataSource.class);
         try (Connection conn = ds.getConnection()) {
-            initData(conn, "/mysql/", "test_data.ddl.sql", "test_data.insert.sql");
+            initData(conn, "/mysql/", "test_data.ddl.sql");
         }
     }
 
-    public static void initData(Connection conn, String path, String ddlFileName, String insertFileName)
+    public static void initData(Connection conn, String path, String ddlFileName)
         throws SQLException, IOException {
         String createTableSql = readFile(path, ddlFileName);
         String[] sqls = createTableSql.split(";");
         Statement stmt = conn.createStatement();
         for (String sql : sqls) {
             if (StringUtils.isNotEmpty(sql)) {
-                stmt.execute(createTableSql);
+                stmt.execute(sql);
             }
         }
-        executeSql(stmt, path, insertFileName);
-        conn.commit();
     }
 }

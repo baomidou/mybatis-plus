@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS tb_test_data_logic (
 )
     ENGINE = innodb
     DEFAULT CHARSET = utf8;
+
 CREATE TABLE IF NOT EXISTS tb_test_data (
     id              BIGINT primary key,
     test_int        integer,

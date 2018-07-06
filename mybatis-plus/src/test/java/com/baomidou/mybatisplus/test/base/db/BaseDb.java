@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.baomidou.mybatisplus.test.h2.H2UserTest;
-
 /**
  * @author miemie
  * @since 2018-07-06
@@ -40,6 +38,6 @@ public class BaseDb {
     }
 
     private static String filePath(String path, String fileName) {
-        return H2UserTest.class.getResource(path + fileName).getPath();
+        return BaseDb.class.getResource(path + fileName).getPath();
     }
 }
