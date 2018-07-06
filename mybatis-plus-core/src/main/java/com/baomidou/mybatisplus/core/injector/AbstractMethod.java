@@ -159,6 +159,12 @@ public abstract class AbstractMethod {
                     set.append(fieldInfo.getEl()).append("},")
                         .append(convertIfTag(true, fieldInfo, null, true));
                 }
+            }else {
+                set.append(fieldInfo.getColumn()).append("=#{");
+                if (null != prefix) {
+                    set.append(prefix);
+                }
+                set.append(fieldInfo.getEl()).append("},");
             }
         }
         // UpdateWrapper SqlSet 部分

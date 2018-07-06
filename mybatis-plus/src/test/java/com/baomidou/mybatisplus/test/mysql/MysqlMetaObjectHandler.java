@@ -15,7 +15,6 @@ package com.baomidou.mybatisplus.test.mysql;
  * the License.
  */
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 import org.apache.ibatis.reflection.MetaObject;
@@ -41,7 +40,6 @@ public class MysqlMetaObjectHandler extends MetaObjectHandler {
         System.out.println("*************************");
         System.out.println("insert fill");
         System.out.println("*************************");
-
         // 测试下划线
         Object createDatetime = this.getFieldValByName("createDatetime", metaObject);
         System.out.println("createDatetime=" + createDatetime);
@@ -58,7 +56,7 @@ public class MysqlMetaObjectHandler extends MetaObjectHandler {
         System.out.println("update fill");
         System.out.println("*************************");
         //测试实体没有的字段，配置在公共填充，不应该set到实体里面
-        this.setFieldValByName("updateDatetime", LocalDateTime.now(), metaObject);
+        this.setFieldValByName("updateDatetime1", LocalDateTime.now(), metaObject);
         this.setFieldValByName("updateDatetime", LocalDateTime.now(), metaObject);
     }
 }
