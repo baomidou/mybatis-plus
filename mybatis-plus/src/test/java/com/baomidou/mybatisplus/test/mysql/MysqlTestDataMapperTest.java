@@ -175,17 +175,17 @@ public class MysqlTestDataMapperTest {
     @Test
     public void selectOne() {
         mapper.selectOne(new QueryWrapper<TestData>().lambda()
-            .eq(TestData::getId,1L).eq(TestData::getTestInt,1));
+            .eq(TestData::getId, 1L).eq(TestData::getTestInt, 1));
         logicMapper.selectOne(new QueryWrapper<LogicTestData>().lambda()
-            .eq(LogicTestData::getId,1L).eq(LogicTestData::getTestInt,1));
+            .eq(LogicTestData::getId, 1L).eq(LogicTestData::getTestInt, 1));
     }
 
     @Test
     public void selectList() {
         mapper.selectList(new QueryWrapper<TestData>().lambda()
-            .eq(TestData::getId,1L).eq(TestData::getTestInt,1));
+            .eq(TestData::getId, 1L).eq(TestData::getTestInt, 1));
         logicMapper.selectList(new QueryWrapper<LogicTestData>().lambda()
-            .eq(LogicTestData::getId,1L).eq(LogicTestData::getTestInt,1));
+            .eq(LogicTestData::getId, 1L).eq(LogicTestData::getTestInt, 1));
         logicMapper.selectList(null);
     }
 
@@ -216,11 +216,21 @@ public class MysqlTestDataMapperTest {
         IPage<TestData> page = new Page<>();
         page.setSize(5).setCurrent(1);
         IPage<TestData> dataPage = mapper.selectPage(page, new QueryWrapper<TestData>().lambda()
-            .eq(TestData::getTestInt, 1));
+            .eq(TestData::getTestInt, 5));
         Assert.assertSame(dataPage, page);
-        System.out.println(dataPage.getTotal());
-        System.out.println(dataPage.getRecords().size());
+        System.out.println(String.format("total = {%s}", dataPage.getTotal()));
+        System.out.println(String.format("data.size = {%s}", dataPage.getRecords().size()));
         println(page.getRecords());
+
+        IPage<LogicTestData> logicPage = new Page<>();
+        logicPage.setSize(5).setCurrent(1);
+        IPage<LogicTestData> logicDataPage = logicMapper.selectPage(logicPage, new QueryWrapper<LogicTestData>().lambda()
+            .eq(LogicTestData::getTestInt, 5));
+        Assert.assertSame(logicDataPage, logicPage);
+        System.out.println(String.format("total = {%s}", logicDataPage.getTotal()));
+        System.out.println(String.format("data.size = {%s}", logicDataPage.getRecords().size()));
+        println(logicDataPage.getRecords());
+
     }
 
     @Test
@@ -252,7 +262,7 @@ public class MysqlTestDataMapperTest {
         ));
     }
 
-    private void println(List<TestData> list) {
+    private <T> void println(List<T> list) {
         list.forEach(System.out::println);
     }
 }
