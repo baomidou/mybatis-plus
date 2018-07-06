@@ -146,4 +146,11 @@ public class H2UserMapperTest extends BaseTest {
         uw.eq("test_id", 101L);
         userMapper.update(new H2User().setName("咩咩"), uw);
     }
+
+
+    @Test
+    public void delete() {
+        userMapper.delete(new QueryWrapper<>(new H2User().setAge(2))
+            .eq("name", "Tony"));
+    }
 }

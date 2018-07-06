@@ -37,11 +37,12 @@ public class LogicDelete extends LogicAbstractMethod {
         String sql;
         SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE;
         if (tableInfo.isLogicDelete()) {
-            sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlSet(true, true, tableInfo, null),
+            sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlLogicSet(tableInfo),
                 sqlWhereEntityWrapper(tableInfo));
         } else {
             sqlMethod = SqlMethod.DELETE;
-            sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), this.sqlWhereEntityWrapper(tableInfo));
+            sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(),
+                sqlWhereEntityWrapper(tableInfo));
         }
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
         return addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
