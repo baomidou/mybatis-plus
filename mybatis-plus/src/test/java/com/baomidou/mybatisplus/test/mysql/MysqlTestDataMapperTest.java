@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -70,19 +71,24 @@ public class MysqlTestDataMapperTest {
     }
 
     @Test
+    @Transactional
     public void deleteById() {
         mapper.deleteById(1014132604940615682L);
+        logicMapper.deleteById(1014132604940615682L);
     }
 
     @Test
+    @Transactional
     public void deleteByMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("id", 1014361515785568258L);
         map.put("test_int", 5);
         mapper.deleteByMap(map);
+        logicMapper.deleteByMap(map);
     }
 
     @Test
+    @Transactional
     public void delete() {
         mapper.delete(new QueryWrapper<TestData>().lambda()
             .eq(TestData::getId, 1014132604940615682L)
@@ -90,16 +96,19 @@ public class MysqlTestDataMapperTest {
     }
 
     @Test
+    @Transactional
     public void deleteBatchIds() {
         mapper.deleteBatchIds(Arrays.asList(1014132604940615682L, 1014132604940615652L));
     }
 
     @Test
+    @Transactional
     public void updateByIdTest() {
         mapper.updateById(new TestData().setId(1014132604940615682L).setTestInt(1111111111));
     }
 
     @Test
+    @Transactional
     public void updateTest() {
         // type 1
         mapper.update(new TestData(), null);
@@ -127,16 +136,19 @@ public class MysqlTestDataMapperTest {
     }
 
     @Test
+    @Transactional
     public void selectById() {
         mapper.selectById(1L);
     }
 
     @Test
+    @Transactional
     public void selectBatchIds() {
         mapper.selectBatchIds(Arrays.asList(1014132604940615682L, 1014132604940615652L));
     }
 
     @Test
+    @Transactional
     public void commonSelectList() {
         println(mapper.selectList(new QueryWrapper<TestData>()
             .eq("id", 1L)
@@ -145,6 +157,7 @@ public class MysqlTestDataMapperTest {
     }
 
     @Test
+    @Transactional
     public void specialSelectList() {
         println(mapper.selectList(new QueryWrapper<TestData>().lambda()
             .nested(i -> i.eq(TestData::getId, 1L))
@@ -159,12 +172,14 @@ public class MysqlTestDataMapperTest {
     }
 
     @Test
+    @Transactional
     public void update() {
         mapper.update(new TestData().setId(1L).setTestStr("123123"),
             new UpdateWrapper<TestData>().eq("id", 1L));
     }
 
     @Test
+    @Transactional
     public void selectByMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("id", 1L);
@@ -173,6 +188,7 @@ public class MysqlTestDataMapperTest {
     }
 
     @Test
+    @Transactional
     public void selectPage() {
         IPage<TestData> page = new Page<>();
         page.setSize(5).setCurrent(1);
