@@ -15,16 +15,16 @@
  */
 package com.baomidou.mybatisplus.extension.plugins;
 
+import static java.util.stream.Collectors.joining;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
 
 import org.apache.ibatis.executor.statement.StatementHandler;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
@@ -44,7 +44,7 @@ import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.parser.ISqlParser;
 import com.baomidou.mybatisplus.core.parser.SqlInfo;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
@@ -170,8 +170,8 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
      * @return
      */
     public static String concatOrderBy(String originalSql, IPage page, boolean orderBy) {
-        if (orderBy && (CollectionUtils.isNotEmpty(page.ascs())
-            || CollectionUtils.isNotEmpty(page.descs()))) {
+        if (orderBy && (ArrayUtils.isNotEmpty(page.ascs())
+            || ArrayUtils.isNotEmpty(page.descs()))) {
             StringBuilder buildSql = new StringBuilder(originalSql);
             String ascStr = concatOrderBuilder(page.ascs(), " ASC");
             String descStr = concatOrderBuilder(page.descs(), " DESC");
@@ -192,19 +192,10 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
      * @param columns
      * @param orderWord
      */
-    private static String concatOrderBuilder(List<String> columns, String orderWord) {
-        if (CollectionUtils.isNotEmpty(columns)) {
-            StringBuilder builder = new StringBuilder(16);
-            for (int i = 0; i < columns.size(); ) {
-                String cs = columns.get(i);
-                if (StringUtils.isNotEmpty(cs)) {
-                    builder.append(cs).append(orderWord);
-                }
-                if (++i != columns.size() && StringUtils.isNotEmpty(cs)) {
-                    builder.append(", ");
-                }
-            }
-            return builder.toString();
+    private static String concatOrderBuilder(String[] columns, String orderWord) {
+        if (ArrayUtils.isNotEmpty(columns)) {
+            return Arrays.stream(columns).filter(c -> StringUtils.isNotEmpty(c))
+                .collect(joining(",", "", orderWord));
         }
         return StringUtils.EMPTY;
     }
