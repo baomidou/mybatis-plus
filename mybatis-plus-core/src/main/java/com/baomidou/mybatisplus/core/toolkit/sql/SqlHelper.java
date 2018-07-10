@@ -29,6 +29,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
@@ -189,13 +190,20 @@ public class SqlHelper {
      * @param wrapper SQL包装对象
      */
     public static Wrapper<?> fillWrapper(IPage<?> page, Wrapper<?> wrapper) {
-        if (null == page || (CollectionUtils.isEmpty(page.ascs())
-            && CollectionUtils.isEmpty(page.ascs())
-            && ObjectUtils.isEmpty(page.condition()))) {
+        if (null == page) {
             return wrapper;
         }
-        // wrapper 不存创建一个 Condition
-        QueryWrapper qw = new QueryWrapper<>();
+        if (ArrayUtils.isEmpty(page.ascs())
+            && ArrayUtils.isEmpty(page.ascs())
+            && ObjectUtils.isEmpty(page.condition())) {
+            return wrapper;
+        }
+        QueryWrapper qw;
+        if (null == wrapper) {
+            qw = new QueryWrapper<>();
+        } else {
+            qw = (QueryWrapper) wrapper;
+        }
         // 排序
         qw.orderByAsc(page.ascs());
         qw.orderByDesc(page.descs());

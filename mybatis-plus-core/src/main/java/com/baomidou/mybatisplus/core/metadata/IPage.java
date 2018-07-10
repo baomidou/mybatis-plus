@@ -30,23 +30,23 @@ public interface IPage<T> {
 
     /**
      * <p>
-     * 降序字段集合
+     * 降序字段数组
      * </p>
      *
      * @return
      */
-    default List<String> descs() {
+    default String[] descs() {
         return null;
     }
 
     /**
      * <p>
-     * 升序字段集合
+     * 升序字段数组
      * </p>
      *
      * @return
      */
-    default List<String> ascs() {
+    default String[] ascs() {
         return null;
     }
 

@@ -16,12 +16,11 @@
 package com.baomidou.mybatisplus.extension.plugins.pagination;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 
 /**
  * <p>
@@ -53,16 +52,16 @@ public class Page<T> implements IPage<T>, Serializable {
     private long current = 1;
     /**
      * <p>
-     * SQL 排序 ASC 集合
+     * SQL 排序 ASC 数组
      * </p>
      */
-    private List<String> ascs;
+    private String[] ascs;
     /**
      * <p>
-     * SQL 排序 DESC 集合
+     * SQL 排序 DESC 数组
      * </p>
      */
-    private List<String> descs;
+    private String[] descs;
 
 
     public Page() {
@@ -156,36 +155,36 @@ public class Page<T> implements IPage<T>, Serializable {
     }
 
     @Override
-    public List<String> ascs() {
+    public String[] ascs() {
         return ascs;
     }
 
     public Page<T> setAscs(List<String> ascs) {
-        this.ascs = ascs;
+        if (CollectionUtils.isNotEmpty(ascs)) {
+            this.ascs = (String[]) ascs.toArray();
+        }
         return this;
     }
 
     public Page<T> setAscs(String... ascs) {
-        if (ArrayUtils.isNotEmpty(ascs)) {
-            this.ascs = Arrays.asList(ascs);
-        }
+        this.ascs = ascs;
         return this;
     }
 
     @Override
-    public List<String> descs() {
+    public String[] descs() {
         return descs;
     }
 
     public Page<T> setDescs(List<String> descs) {
-        this.descs = descs;
+        if (CollectionUtils.isNotEmpty(descs)) {
+            this.descs = (String[]) descs.toArray();
+        }
         return this;
     }
 
     public Page<T> setDescs(String... descs) {
-        if (ArrayUtils.isNotEmpty(descs)) {
-            this.descs = Arrays.asList(descs);
-        }
+        this.descs = descs;
         return this;
     }
 
