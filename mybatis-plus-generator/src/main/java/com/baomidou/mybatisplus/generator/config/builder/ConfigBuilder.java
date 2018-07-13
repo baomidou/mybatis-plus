@@ -340,7 +340,6 @@ public class ConfigBuilder {
      */
     private List<TableInfo> processTable(List<TableInfo> tableList, NamingStrategy strategy, StrategyConfig config) {
         String[] tablePrefix = config.getTablePrefix();
-        String[] fieldPrefix = config.getFieldPrefix();
         for (TableInfo tableInfo : tableList) {
             String entityName = NamingStrategy.capitalFirst(processName(tableInfo.getName(), strategy, tablePrefix));
             if (StringUtils.isNotEmpty(globalConfig.getEntityName())) {
@@ -373,56 +372,33 @@ public class ConfigBuilder {
             } else {
                 tableInfo.setControllerName(entityName + ConstVal.CONTROLLER);
             }
-            //强制开启字段注解
-            checkTableIdTableFieldAnnotation(config, tableInfo, fieldPrefix);
+            // 检测导入包
+            checkImportPackages(tableInfo);
         }
         return tableList;
     }
 
-
     /**
      * <p>
-     * 检查是否有
-     * {@link com.baomidou.mybatisplus.annotation.TableId}
-     * {@link com.baomidou.mybatisplus.annotation.TableField}
-     * 注解
+     * 检测导入包
      * </p>
      *
-     * @param config
      * @param tableInfo
-     * @param fieldPrefix
      */
-    private void checkTableIdTableFieldAnnotation(StrategyConfig config, TableInfo tableInfo, String[] fieldPrefix) {
-        boolean importTableFieldAnnotaion = false;
-        boolean importTableIdAnnotaion = false;
-        if (config.isEntityTableFieldAnnotationEnable()) {
-            for (TableField tf : tableInfo.getFields()) {
-                tf.setConvert(true);
-                importTableFieldAnnotaion = true;
-                importTableIdAnnotaion = true;
-            }
-        } else if (fieldPrefix != null && fieldPrefix.length != 0) {
-            for (TableField tf : tableInfo.getFields()) {
-                if (NamingStrategy.isPrefixContained(tf.getName(), fieldPrefix)) {
-                    if (tf.isKeyFlag()) {
-                        importTableIdAnnotaion = true;
-                    }
-                    tf.setConvert(true);
-                    importTableFieldAnnotaion = true;
+    private void checkImportPackages(TableInfo tableInfo) {
+        if (StringUtils.isNotEmpty(strategyConfig.getSuperEntityClass())) {
+            // 自定义父类
+            tableInfo.getImportPackages().add(strategyConfig.getSuperEntityClass());
+        } else if (globalConfig.isActiveRecord()) {
+            // 无父类开启 AR 模式
+            tableInfo.getImportPackages().add(com.baomidou.mybatisplus.extension.activerecord.Model.class.getCanonicalName());
+        }
+        if (StringUtils.isNotEmpty(strategyConfig.getVersionFieldName())) {
+            tableInfo.getFields().forEach(f -> {
+                if (strategyConfig.getVersionFieldName().equals(f.getName())) {
+                    tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotation.Version.class.getCanonicalName());
                 }
-            }
-        }
-        if (importTableFieldAnnotaion) {
-            tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotation.TableField.class.getCanonicalName());
-        }
-        if (importTableIdAnnotaion) {
-            tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotation.TableId.class.getCanonicalName());
-        }
-        if (globalConfig.getIdType() != null) {
-            if (!importTableIdAnnotaion) {
-                tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotation.TableId.class.getCanonicalName());
-            }
-            tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotation.IdType.class.getCanonicalName());
+            });
         }
     }
 

@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.generator.config.po;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -50,7 +48,7 @@ public class TableInfo {
     private List<TableField> fields;
     // 公共字段
     private List<TableField> commonFields;
-    private List<String> importPackages = new ArrayList<>();
+    private Set<String> importPackages = new HashSet<>();
     private String fieldNames;
 
     public boolean isConvert() {
@@ -161,32 +159,28 @@ public class TableInfo {
         if (CollectionUtils.isNotEmpty(fields)) {
             this.fields = fields;
             // 收集导入包信息
-            Set<String> pkgSet = new HashSet<>();
             for (TableField field : fields) {
                 if (null != field.getColumnType() && null != field.getColumnType().getPkg()) {
-                    pkgSet.add(field.getColumnType().getPkg());
+                    importPackages.add(field.getColumnType().getPkg());
                 }
                 if (field.isKeyFlag()) {
                     // 主键
                     if (field.isConvert() || field.isKeyIdentityFlag()) {
-                        pkgSet.add(com.baomidou.mybatisplus.annotation.TableId.class.getCanonicalName());
+                        importPackages.add(com.baomidou.mybatisplus.annotation.TableId.class.getCanonicalName());
                     }
                     // 自增
                     if (field.isKeyIdentityFlag()) {
-                        pkgSet.add(com.baomidou.mybatisplus.annotation.IdType.class.getCanonicalName());
+                        importPackages.add(com.baomidou.mybatisplus.annotation.IdType.class.getCanonicalName());
                     }
                 } else if (field.isConvert()) {
                     // 普通字段
-                    pkgSet.add(com.baomidou.mybatisplus.annotation.TableField.class.getCanonicalName());
+                    importPackages.add(com.baomidou.mybatisplus.annotation.TableField.class.getCanonicalName());
                 }
                 if (null != field.getFill()) {
                     // 填充字段
-                    pkgSet.add(com.baomidou.mybatisplus.annotation.TableField.class.getCanonicalName());
-                    pkgSet.add(com.baomidou.mybatisplus.annotation.FieldFill.class.getCanonicalName());
+                    importPackages.add(com.baomidou.mybatisplus.annotation.TableField.class.getCanonicalName());
+                    importPackages.add(com.baomidou.mybatisplus.annotation.FieldFill.class.getCanonicalName());
                 }
-            }
-            if (!pkgSet.isEmpty()) {
-                this.importPackages = new ArrayList<>(Arrays.asList(pkgSet.toArray(new String[]{})));
             }
         }
     }
@@ -199,7 +193,7 @@ public class TableInfo {
         this.commonFields = commonFields;
     }
 
-    public List<String> getImportPackages() {
+    public Set<String> getImportPackages() {
         return importPackages;
     }
 
