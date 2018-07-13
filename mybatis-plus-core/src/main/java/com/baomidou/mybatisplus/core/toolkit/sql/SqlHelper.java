@@ -194,7 +194,7 @@ public class SqlHelper {
             return wrapper;
         }
         if (ArrayUtils.isEmpty(page.ascs())
-            && ArrayUtils.isEmpty(page.ascs())
+            && ArrayUtils.isEmpty(page.descs())
             && ObjectUtils.isEmpty(page.condition())) {
             return wrapper;
         }
@@ -205,10 +205,16 @@ public class SqlHelper {
             qw = (QueryWrapper) wrapper;
         }
         // 排序
-        qw.orderByAsc(page.ascs());
-        qw.orderByDesc(page.descs());
+        if (ArrayUtils.isNotEmpty(page.ascs())) {
+            qw.orderByAsc(page.ascs());
+        }
+        if (ArrayUtils.isNotEmpty(page.descs())) {
+            qw.orderByDesc(page.descs());
+        }
         // MAP 参数查询
-        qw.allEq(page.condition());
+        if (ObjectUtils.isEmpty(page.condition())) {
+            qw.allEq(page.condition());
+        }
         return qw;
     }
 }
