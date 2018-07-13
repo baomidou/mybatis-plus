@@ -17,7 +17,7 @@ package com.baomidou.mybatisplus.annotation;
 
 /**
  * <p>
- * SQL 比较条件枚举类
+ * SQL 比较条件常量定义类
  * </p>
  *
  * @author hubin
