@@ -212,7 +212,7 @@ public class SqlHelper {
             qw.orderByDesc(page.descs());
         }
         // MAP 参数查询
-        if (ObjectUtils.isEmpty(page.condition())) {
+        if (ObjectUtils.isNotEmpty(page.condition())) {
             qw.allEq(page.condition());
         }
         return qw;
