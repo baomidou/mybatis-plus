@@ -1,6 +1,18 @@
 ﻿# CHANGELOG
 
 
+## [v3.0-gamma] 2018.07.15 代号：超级棒棒糖 🍭 伽玛
+- IPage 新增 listMode 集合模式
+- fixd gitee issues/IL7W4
+- fixed gitee issues/IL7W4
+- 优化生成器包导入
+- 解决 Page ascs，descs 异常
+- 逻辑删除无法 set where entity 一个参数并存逻辑
+- 合并 PR 修改typeAliasesPackage扫描多维度
+- 完善 3.0 测试用例
+- 代码性能优化及其他
+
+
 ## [v3.0-beta] 2018.07.07 代号：超级棒棒糖 🍭 贝塔
 - 新增字段 LIKE 查询注入全局配置，默认 true 开启
 - 修改 dbtype 的 oracle db2 修改 CONCAT 方式

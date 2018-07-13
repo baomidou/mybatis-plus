@@ -135,6 +135,13 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
             }
         }
 
+        /**
+         * 集合模式无需分页返回结果集
+         */
+        if (null != page && page.listMode()) {
+            return invocation.proceed();
+        }
+
         String originalSql = boundSql.getSql();
         Connection connection = (Connection) invocation.getArgs()[0];
         DbType dbType = StringUtils.isNotEmpty(dialectType) ? DbType.getDbType(dialectType) : JdbcUtils.getDbType(connection.getMetaData().getURL());

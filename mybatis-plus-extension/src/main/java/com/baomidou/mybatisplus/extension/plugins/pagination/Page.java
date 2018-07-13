@@ -62,6 +62,18 @@ public class Page<T> implements IPage<T>, Serializable {
      * </p>
      */
     private String[] descs;
+    /**
+     * <p>
+     * 自动优化 COUNT SQL
+     * </p>
+     */
+    private boolean optimizeCountSql = true;
+    /**
+     * <p>
+     * 集合模式，不分页返回集合结果
+     * </p>
+     */
+    private boolean listMode = false;
 
 
     public Page() {
@@ -188,4 +200,21 @@ public class Page<T> implements IPage<T>, Serializable {
         return this;
     }
 
+    @Override
+    public boolean optimizeCountSql() {
+        return optimizeCountSql;
+    }
+
+    public void setOptimizeCountSql(boolean optimizeCountSql) {
+        this.optimizeCountSql = optimizeCountSql;
+    }
+
+    @Override
+    public boolean listMode() {
+        return listMode;
+    }
+
+    public void setListMode(boolean listMode) {
+        this.listMode = listMode;
+    }
 }

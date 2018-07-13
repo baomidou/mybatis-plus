@@ -63,13 +63,24 @@ public interface IPage<T> {
 
     /**
      * <p>
-     * 自动优化 COUNT SQL
+     * 自动优化 COUNT SQL【 默认：true 】
      * </p>
      *
      * @return true 是 / false 否
      */
     default boolean optimizeCountSql() {
         return true;
+    }
+
+    /**
+     * <p>
+     * 集合模式，不分页返回集合结果【 默认：false 】
+     * </p>
+     *
+     * @return true 是 / false 否
+     */
+    default boolean listMode() {
+        return false;
     }
 
     /**
