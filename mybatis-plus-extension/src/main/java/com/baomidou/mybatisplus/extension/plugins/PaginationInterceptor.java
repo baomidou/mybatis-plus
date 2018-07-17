@@ -120,25 +120,18 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
         }
 
         /**
-         * 不需要分页的场合
+         * 非参数模式 ThreadLocal 变量处理的分页
          */
         if (null == page) {
             if (localPage) {
-                // 采用ThreadLocal变量处理的分页
                 page = PageHelper.getPage();
-                if (null == page) {
-                    return invocation.proceed();
-                }
-            } else {
-                // 无需分页
-                return invocation.proceed();
             }
         }
 
         /**
-         * 集合模式无需分页返回结果集
+         * 不需要分页的场合，如果 size 小于 0 返回结果集
          */
-        if (null != page && page.listMode()) {
+        if (null == page || page.getSize() < 0) {
             return invocation.proceed();
         }
 
@@ -147,7 +140,7 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
         DbType dbType = StringUtils.isNotEmpty(dialectType) ? DbType.getDbType(dialectType) : JdbcUtils.getDbType(connection.getMetaData().getURL());
 
         boolean orderBy = true;
-        if (null != page.getTotal() && page.getTotal().equals(0L)) {
+        if (page.getTotal() == 0) {
             SqlInfo sqlInfo = SqlUtils.getOptimizeCountSql(page.optimizeCountSql(), sqlParser, originalSql);
             orderBy = sqlInfo.isOrderBy();
             this.queryTotal(overflow, sqlInfo.getSql(), mappedStatement, boundSql, page, connection);

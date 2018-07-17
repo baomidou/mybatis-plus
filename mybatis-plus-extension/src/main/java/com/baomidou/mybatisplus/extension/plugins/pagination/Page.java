@@ -41,7 +41,7 @@ public class Page<T> implements IPage<T>, Serializable {
     /**
      * 总数，当 total 为 null 或者大于 0 分页插件不在查询总数
      */
-    private Long total = 0L;
+    private long total = 0;
     /**
      * 每页显示条数，默认 10
      */
@@ -68,13 +68,6 @@ public class Page<T> implements IPage<T>, Serializable {
      * </p>
      */
     private boolean optimizeCountSql = true;
-    /**
-     * <p>
-     * 集合模式，不分页返回集合结果
-     * </p>
-     */
-    private boolean listMode = false;
-
 
     public Page() {
         // to do nothing
@@ -134,13 +127,13 @@ public class Page<T> implements IPage<T>, Serializable {
     }
 
     @Override
-    public Page<T> setTotal(Long total) {
+    public Page<T> setTotal(long total) {
         this.total = total;
         return this;
     }
 
     @Override
-    public Long getTotal() {
+    public long getTotal() {
         return this.total;
     }
 
@@ -209,12 +202,4 @@ public class Page<T> implements IPage<T>, Serializable {
         this.optimizeCountSql = optimizeCountSql;
     }
 
-    @Override
-    public boolean listMode() {
-        return listMode;
-    }
-
-    public void setListMode(boolean listMode) {
-        this.listMode = listMode;
-    }
 }

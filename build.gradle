@@ -56,7 +56,7 @@ ext {
 
 allprojects {
     group = 'com.baomidou'
-    version = '3.0-gamma'
+    version = '3.0.0-RELEASE'
 }
 
 description = "Mybatis 增强工具包 - 只做增强不做改变，简化CRUD操作"
@@ -117,7 +117,7 @@ subprojects {
             author true
             version true
             failOnError false
-            links "http://docs.oracle.com/javase/7/docs/api"
+            links "http://docs.oracle.com/javase/8/docs/api"
         }
     }
 

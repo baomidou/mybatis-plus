@@ -74,17 +74,6 @@ public interface IPage<T> {
 
     /**
      * <p>
-     * 集合模式，不分页返回集合结果【 默认：false 】
-     * </p>
-     *
-     * @return true 是 / false 否
-     */
-    default boolean listMode() {
-        return false;
-    }
-
-    /**
-     * <p>
      * 计算当前分页偏移量
      * </p>
      *
@@ -140,7 +129,7 @@ public interface IPage<T> {
      *
      * @return
      */
-    Long getTotal();
+    long getTotal();
 
     /**
      * <p>
@@ -152,7 +141,7 @@ public interface IPage<T> {
      *
      * @return 当前对象
      */
-    IPage<T> setTotal(Long total);
+    IPage<T> setTotal(long total);
 
     /**
      * <p>
