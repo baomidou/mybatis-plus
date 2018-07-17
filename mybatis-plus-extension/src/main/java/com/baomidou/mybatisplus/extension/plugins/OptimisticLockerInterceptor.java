@@ -1,25 +1,5 @@
 package com.baomidou.mybatisplus.extension.plugins;
 
-import java.lang.reflect.Field;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.ibatis.binding.MapperMethod;
-import org.apache.ibatis.executor.Executor;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.SqlCommandType;
-import org.apache.ibatis.plugin.Interceptor;
-import org.apache.ibatis.plugin.Intercepts;
-import org.apache.ibatis.plugin.Invocation;
-import org.apache.ibatis.plugin.Plugin;
-import org.apache.ibatis.plugin.Signature;
-
 import com.baomidou.mybatisplus.annotation.Version;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
@@ -27,6 +7,17 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
+import org.apache.ibatis.binding.MapperMethod;
+import org.apache.ibatis.executor.Executor;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.plugin.*;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.sql.Timestamp;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <p>
@@ -72,9 +63,21 @@ public class OptimisticLockerInterceptor implements Interceptor {
             return invocation.proceed();
         }
         Object param = args[1];
+        // JavaBean class
+        Class<?> entityClass = null;
+        // optimistic, Version Field
+        Field versionField = null;
+        // optimistic field annotated by Version
+        String versionColumnName = null;
+        // new version value, Long, Integer ...
+        Object updatedVersionVal = null;
+
+        // wrapper = ew
+        Wrapper ew = null;
+        // entity = et
+        Object et = null;
         if (param instanceof MapperMethod.ParamMap) {
             MapperMethod.ParamMap map = (MapperMethod.ParamMap) param;
-            Wrapper ew = null;
             if (map.containsKey(NAME_ENTITY_WRAPPER)) {
                 // mapper.update(updEntity, QueryWrapper<>(whereEntity);
                 ew = (Wrapper) map.get(NAME_ENTITY_WRAPPER);
@@ -86,33 +89,33 @@ public class OptimisticLockerInterceptor implements Interceptor {
             //if(!map.containsKey(NAME_ENTITY)) {
             //    return invocation.proceed();
             //}
-            Object et = null;
             if (map.containsKey(NAME_ENTITY)) {
                 et = map.get(NAME_ENTITY);
             }
-            if (ew != null) {
+            if (ew != null) { // entityWrapper
                 Object entity = ew.getEntity();
                 if (entity != null) {
-                    Class<?> entityClass = ClassUtils.getUserClass(entity.getClass());
+                    entityClass = ClassUtils.getUserClass(entity.getClass());
                     EntityField ef = getVersionField(entityClass);
-                    Field versionField = ef == null ? null : ef.getField();
+                    versionField = ef == null ? null : ef.getField();
                     if (versionField != null) {
                         Object originalVersionVal = versionField.get(entity);
                         if (originalVersionVal != null) {
-                            versionField.set(et, getUpdatedVersionVal(originalVersionVal));
+                            updatedVersionVal = getUpdatedVersionVal(originalVersionVal);
+                            versionField.set(et, updatedVersionVal);
                         }
                     }
                 }
-            } else if (et != null) {
+            } else if (et != null) { // entity
                 String methodId = ms.getId();
                 String updateMethodName = methodId.substring(ms.getId().lastIndexOf(".") + 1);
                 if (PARAM_UPDATE_METHOD_NAME.equals(updateMethodName)) {
                     // update(entityClass, null) -->> update all. ignore version
                     return invocation.proceed();
                 }
-                Class<?> entityClass = ClassUtils.getUserClass(et.getClass());
+                entityClass = ClassUtils.getUserClass(et.getClass());
                 EntityField entityField = this.getVersionField(entityClass);
-                Field versionField = entityField == null ? null : entityField.getField();
+                versionField = entityField == null ? null : entityField.getField();
                 Object originalVersionVal;
                 if (versionField != null && (originalVersionVal = versionField.get(et)) != null) {
                     TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
@@ -134,7 +137,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
                     }
                     String versionPropertyName = versionField.getName();
                     List<TableFieldInfo> fieldList = tableInfo.getFieldList();
-                    String versionColumnName = entityField.getColumnName();
+                    versionColumnName = entityField.getColumnName();
                     if (versionColumnName == null) {
                         for (TableFieldInfo tf : fieldList) {
                             if (versionPropertyName.equals(tf.getProperty())) {
@@ -144,7 +147,8 @@ public class OptimisticLockerInterceptor implements Interceptor {
                     }
                     if (versionColumnName != null) {
                         entityField.setColumnName(versionColumnName);
-                        entityMap.put(versionField.getName(), getUpdatedVersionVal(originalVersionVal));
+                        updatedVersionVal = getUpdatedVersionVal(originalVersionVal);
+                        entityMap.put(versionField.getName(), updatedVersionVal);
                         entityMap.put(MP_OPTLOCK_VERSION_ORIGINAL, originalVersionVal);
                         entityMap.put(MP_OPTLOCK_VERSION_COLUMN, versionColumnName);
                         entityMap.put(MP_OPTLOCK_ET_ORIGINAL, et);
@@ -153,7 +157,21 @@ public class OptimisticLockerInterceptor implements Interceptor {
                 }
             }
         }
-        return invocation.proceed();
+
+        Object resultObj = invocation.proceed();
+        if (Objects.equals(1, resultObj)) {
+            // setVersion, Long.class
+            String _setterMethodName = ReflectionKit.setMethodCapitalize(versionField, versionColumnName);
+            Class<?> _fieldType = versionField.getType();
+            if (ew != null) {
+                Method md = ew.getClass().getMethod(_setterMethodName, _fieldType);
+                Object o = md.invoke(ew, updatedVersionVal);
+            } else if (et != null) {
+                Method md = et.getClass().getMethod(_setterMethodName, _fieldType);
+                Object o = md.invoke(et, updatedVersionVal);
+            }
+        }
+        return resultObj;
     }
 
     /**

@@ -1,20 +1,21 @@
 package com.baomidou.mybatisplus.test.mysql.config;
 
-import javax.sql.DataSource;
-
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.extension.injector.LogicSqlInjector;
+import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
+import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
+import com.baomidou.mybatisplus.test.mysql.MysqlMetaObjectHandler;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.JdbcType;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.extension.injector.LogicSqlInjector;
-import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
-import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
-import com.baomidou.mybatisplus.test.mysql.MysqlMetaObjectHandler;
+import javax.sql.DataSource;
 
 /**
  * <p>
@@ -43,6 +44,9 @@ public class MybatisPlusConfig {
         PaginationInterceptor pagination = new PaginationInterceptor();
         configuration.addInterceptor(pagination);
 
+        /** 乐观锁插件 */
+        configuration.addInterceptor(new OptimisticLockerInterceptor());
+
         sqlSessionFactory.setConfiguration(configuration);
 //        pagination.setLocalPage(true);
 //        OptimisticLockerInterceptor optLock = new OptimisticLockerInterceptor();
@@ -55,6 +59,16 @@ public class MybatisPlusConfig {
         sqlSessionFactory.setGlobalConfig(globalConfig);
         return sqlSessionFactory.getObject();
     }
+
+//    /**
+//     * 无效配置 --
+//     * 乐观锁插件
+//     * @return OptimisticLockerInterceptor
+//     */
+//    @Bean
+//    public OptimisticLockerInterceptor optimisticLockerInterceptor() {
+//        return new OptimisticLockerInterceptor();
+//    }
 
     @Bean
     public GlobalConfig globalConfig() {

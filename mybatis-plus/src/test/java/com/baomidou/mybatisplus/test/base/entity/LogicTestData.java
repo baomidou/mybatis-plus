@@ -1,16 +1,12 @@
 package com.baomidou.mybatisplus.test.base.entity;
 
+import com.baomidou.mybatisplus.annotation.*;
+import lombok.Data;
+import lombok.experimental.Accessors;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
-
-import lombok.Data;
-import lombok.experimental.Accessors;
 
 /**
  * @author meimie
@@ -36,4 +32,7 @@ public class LogicTestData {
     private LocalDateTime updateDatetime;
     @TableLogic
     private Boolean deleted;
+
+    @Version
+    private Long version;
 }

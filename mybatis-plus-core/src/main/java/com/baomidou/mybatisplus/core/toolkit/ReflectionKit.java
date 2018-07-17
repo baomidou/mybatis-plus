@@ -15,27 +15,17 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toCollection;
-import static java.util.stream.Collectors.toMap;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
-
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.stream.Stream;
+
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toCollection;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * <p>
@@ -61,6 +51,21 @@ public class ReflectionKit {
         Class<?> fieldType = field.getType();
         // fix #176
         return StringUtils.concatCapitalize(boolean.class.equals(fieldType) ? "is" : "get", str);
+    }
+
+    /**
+     * <p>
+     * 反射 method 方法名，例如 setVersion
+     * </p>
+     *
+     * @param field Field
+     * @param str   属性的setter方法名称，e.g. setVersion
+     */
+    public static String setMethodCapitalize(Field field, final String str) {
+        Class<?> fieldType = field.getType();
+        // type of boolean's field, getter methodname is isGood(),
+        // setter methodname is setGood(boolean)
+        return StringUtils.concatCapitalize("set", str);
     }
 
     /**

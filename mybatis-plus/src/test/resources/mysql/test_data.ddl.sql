@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS tb_test_data_logic (
     test_timestamp  timestamp,
     create_datetime datetime,
     update_datetime datetime,
-    deleted         tinyint(1) default 0
+    deleted         tinyint(1) default 0,
+    version        BIGINT default 0
 )
     ENGINE = innodb
     DEFAULT CHARSET = utf8;
@@ -26,7 +27,8 @@ CREATE TABLE IF NOT EXISTS tb_test_data (
     test_date_time  datetime,
     test_timestamp  timestamp,
     create_datetime datetime,
-    update_datetime datetime
+    update_datetime datetime,
+    version        BIGINT default 0
 )
     ENGINE = innodb
     DEFAULT CHARSET = utf8;

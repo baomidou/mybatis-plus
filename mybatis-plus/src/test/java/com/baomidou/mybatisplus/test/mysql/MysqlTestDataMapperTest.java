@@ -1,5 +1,23 @@
 package com.baomidou.mybatisplus.test.mysql;
 
+import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.test.base.entity.LogicTestData;
+import com.baomidou.mybatisplus.test.base.entity.TestData;
+import com.baomidou.mybatisplus.test.base.mapper.LogicTestDataMapper;
+import com.baomidou.mybatisplus.test.base.mapper.TestDataMapper;
+import com.baomidou.mybatisplus.test.mysql.config.MysqlDb;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -10,25 +28,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Resource;
-
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.test.base.entity.LogicTestData;
-import com.baomidou.mybatisplus.test.base.entity.TestData;
-import com.baomidou.mybatisplus.test.base.mapper.LogicTestDataMapper;
-import com.baomidou.mybatisplus.test.base.mapper.TestDataMapper;
-import com.baomidou.mybatisplus.test.mysql.config.MysqlDb;
 
 /**
  * <p>
@@ -99,6 +98,19 @@ public class MysqlTestDataMapperTest {
         List<Long> ids = Arrays.asList(1014132604940615682L, 1014132604940615652L);
         mapper.deleteBatchIds(ids);
         logicMapper.deleteBatchIds(ids);
+    }
+
+    @Test
+    public void optimisticUpdateById() {
+//        mapper.updateById(new TestData().setId(1014132604940615682L).setTestInt(1111111111));
+        LogicTestData et = new LogicTestData()
+            .setId(1019248035919613954L)
+            .setTestInt(999)
+            .setVersion(17L);
+        System.out.println("====1=====>>>" + JSON.toJSONString(et, true));
+        int r = logicMapper.updateById(et);
+        System.out.println("====2-1==r==>>>" + r);
+        System.out.println("====2-2=====>>>" + JSON.toJSONString(et, true));
     }
 
     @Test
