@@ -19,15 +19,15 @@ import java.io.Serializable;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
-import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.core.handlers.SqlReservedWordsHandler;
-import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
+import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import com.baomidou.mybatisplus.core.handlers.SqlReservedWordsHandler;
+import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 
@@ -95,11 +95,12 @@ public class GlobalConfig implements Serializable {
     }
 
     @Data
-    public static class DbConfig{
+    public static class DbConfig {
+
         /**
          * 数据库类型
          */
-        private DbType dbType;
+        private DbType dbType = DbType.MYSQL;
         /**
          * 主键类型（默认 ID_WORKER）
          */

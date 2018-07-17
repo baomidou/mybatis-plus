@@ -82,7 +82,7 @@ public class GlobalConfigUtils {
      */
     public static GlobalConfig defaults() {
         GlobalConfig config = new GlobalConfig();
-        GlobalConfig.DbConfig dbConfig = new GlobalConfig.DbConfig().setDbType(DbType.MYSQL);
+        GlobalConfig.DbConfig dbConfig = new GlobalConfig.DbConfig();
         config.setDbConfig(dbConfig);
         return config;
     }
