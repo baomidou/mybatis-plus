@@ -40,7 +40,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-public abstract class SqlParserHandler {
+public abstract class AbstractSqlParserHandler {
 
     private List<ISqlParser> sqlParserList;
     private ISqlParserFilter sqlParserFilter;

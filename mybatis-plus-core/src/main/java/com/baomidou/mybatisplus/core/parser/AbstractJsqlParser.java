@@ -19,7 +19,6 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.reflection.MetaObject;
 
-
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 
 import net.sf.jsqlparser.JSQLParserException;
@@ -106,16 +105,24 @@ public abstract class AbstractJsqlParser implements ISqlParser {
         return SqlInfo.newInstance().setSql(statement.toString());
     }
 
-    // 新增
+    /**
+     * 新增
+     */
     public abstract void processInsert(Insert insert);
 
-    // 删除
+    /**
+     * 删除
+     */
     public abstract void processDelete(Delete delete);
 
-    // 更新
+    /**
+     * 更新
+     */
     public abstract void processUpdate(Update update);
 
-    // 查询
+    /**
+     * 查询
+     */
     public abstract void processSelectBody(SelectBody selectBody);
 
     /**

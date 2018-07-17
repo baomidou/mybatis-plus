@@ -48,7 +48,7 @@ import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
-import com.baomidou.mybatisplus.extension.handlers.SqlParserHandler;
+import com.baomidou.mybatisplus.extension.handlers.AbstractSqlParserHandler;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.extension.plugins.pagination.PageHelper;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
@@ -62,7 +62,7 @@ import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
  * @since 2016-01-23
  */
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
-public class PaginationInterceptor extends SqlParserHandler implements Interceptor {
+public class PaginationInterceptor extends AbstractSqlParserHandler implements Interceptor {
 
     /**
      * COUNT SQL 解析
