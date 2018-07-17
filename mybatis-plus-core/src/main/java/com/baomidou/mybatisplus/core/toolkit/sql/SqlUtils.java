@@ -89,7 +89,7 @@ public class SqlUtils {
                 }
             }
         }
-        return COUNT_SQL_PARSER.optimizeSql(null, originalSql);
+        return COUNT_SQL_PARSER.parser(null, originalSql);
     }
 
     /**

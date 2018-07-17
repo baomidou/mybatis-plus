@@ -8,11 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -39,7 +40,7 @@ import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
 public class H2UserMapperTest extends BaseTest {
 
-    @Autowired
+    @Resource
     protected H2UserMapper userMapper;
 
     @BeforeClass
@@ -128,8 +129,10 @@ public class H2UserMapperTest extends BaseTest {
         Assert.assertTrue(null != userMapper.selectPage(new Page<>(1, 10),
             new QueryWrapper<H2User>().orderByAsc("name")));
 
-        // 查询结果集
-        List<Map<String, Object>> mapList = userMapper.selectMaps(new QueryWrapper<H2User>().lambda().eq(H2User::getName, NQQ));
+        // 查询结果集，测试 lambda 对象后 QueryWrapper 是否参数继续传递
+        QueryWrapper<H2User> qw = new QueryWrapper<>();
+        qw.lambda().eq(H2User::getName, NQQ);
+        List<Map<String, Object>> mapList = userMapper.selectMaps(qw);
         if (CollectionUtils.isNotEmpty(mapList)) {
             for (Map m : mapList) {
                 System.out.println(m);

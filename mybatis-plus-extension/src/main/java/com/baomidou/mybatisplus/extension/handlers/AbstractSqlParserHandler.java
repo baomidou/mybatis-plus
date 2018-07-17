@@ -64,7 +64,7 @@ public abstract class AbstractSqlParserHandler {
                 int flag = 0;
                 String originalSql = (String) metaObject.getValue(PluginUtils.DELEGATE_BOUNDSQL_SQL);
                 for (ISqlParser sqlParser : this.sqlParserList) {
-                    SqlInfo sqlInfo = sqlParser.optimizeSql(metaObject, originalSql);
+                    SqlInfo sqlInfo = sqlParser.parser(metaObject, originalSql);
                     if (null != sqlInfo) {
                         originalSql = sqlInfo.getSql();
                         ++flag;

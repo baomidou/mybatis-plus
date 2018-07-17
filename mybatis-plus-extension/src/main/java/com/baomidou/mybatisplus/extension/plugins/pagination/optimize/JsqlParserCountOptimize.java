@@ -56,7 +56,7 @@ public class JsqlParserCountOptimize implements ISqlParser {
     private static final List<SelectItem> COUNT_SELECT_ITEM = countSelectItem();
 
     @Override
-    public SqlInfo optimizeSql(MetaObject metaObject, String sql) {
+    public SqlInfo parser(MetaObject metaObject, String sql) {
         if (logger.isDebugEnabled()) {
             logger.debug(" JsqlParserCountOptimize sql=" + sql);
         }
