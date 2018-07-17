@@ -64,7 +64,7 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
 
     /**
      * <p>
-     * 只可调用一次,多次会出问题
+     * 返回一个支持 lambda 函数写法的 wrapper
      * </p>
      */
     public LambdaUpdateWrapper<T> lambda() {

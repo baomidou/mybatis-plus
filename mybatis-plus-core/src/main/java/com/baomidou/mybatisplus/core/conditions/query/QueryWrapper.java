@@ -77,7 +77,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
 
     /**
      * <p>
-     * 只可调用一次,多次会出问题
+     * 返回一个支持 lambda 函数写法的 wrapper
      * </p>
      */
     public LambdaQueryWrapper<T> lambda() {
