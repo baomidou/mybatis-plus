@@ -29,14 +29,13 @@ public interface ISqlParser {
 
     /**
      * <p>
-     * 获取优化 SQL 方法
+     * 解析 SQL 方法
      * </p>
      *
      * @param metaObject 元对象
      * @param sql        SQL 语句
      * @return SQL 信息
      */
-    //TODO 3.0 change name
-    SqlInfo optimizeSql(MetaObject metaObject, String sql);
+    SqlInfo parser(MetaObject metaObject, String sql);
 
 }

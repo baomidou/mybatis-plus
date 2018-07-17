@@ -48,7 +48,7 @@ public abstract class AbstractJsqlParser implements ISqlParser {
 
     /**
      * <p>
-     * 获取优化 SQL 方法
+     * 解析 SQL 方法
      * </p>
      *
      * @param metaObject 元对象
@@ -57,7 +57,7 @@ public abstract class AbstractJsqlParser implements ISqlParser {
      */
 
     @Override
-    public SqlInfo optimizeSql(MetaObject metaObject, String sql) {
+    public SqlInfo parser(MetaObject metaObject, String sql) {
         if (this.allowProcess(metaObject)) {
             try {
                 logger.debug("Original SQL: " + sql);
