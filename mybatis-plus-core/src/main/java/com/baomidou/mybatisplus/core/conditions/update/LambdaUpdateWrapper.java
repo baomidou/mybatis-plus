@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper;
+import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.Property;
@@ -44,10 +45,12 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
      */
     private List<String> sqlSet = new ArrayList<>();
 
-    LambdaUpdateWrapper(T entity, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
+    LambdaUpdateWrapper(T entity, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs,
+                        MergeSegments mergeSegments) {
         this.entity = entity;
         this.paramNameSeq = paramNameSeq;
         this.paramNameValuePairs = paramNameValuePairs;
+        this.expression = mergeSegments;
     }
 
     @Override
@@ -71,6 +74,6 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
 
     @Override
     protected LambdaUpdateWrapper<T> instance(AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
-        return new LambdaUpdateWrapper<>(entity, paramNameSeq, paramNameValuePairs);
+        return new LambdaUpdateWrapper<>(entity, paramNameSeq, paramNameValuePairs, new MergeSegments());
     }
 }

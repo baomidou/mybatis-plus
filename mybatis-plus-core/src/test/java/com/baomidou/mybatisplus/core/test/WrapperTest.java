@@ -27,6 +27,7 @@ import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 
 public class WrapperTest {
 
@@ -168,6 +169,16 @@ public class WrapperTest {
             .or(i -> i.eq("id", 1).and(j -> j.ne("id", 2)))
             .nested(i -> i.eq("id", 1).or(j -> j.ne("id", 2)));
         logSqlSegment("测试 Nested 下的方法", queryWrapper);
+        logParams(queryWrapper);
+    }
+
+    @Test
+    public void testPluralLambda() {
+        TableInfoHelper.initTableInfo(null, User.class);
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.lambda().eq(User::getName,"sss");
+        queryWrapper.lambda().eq(User::getName,"sss2");
+        logSqlSegment("测试 PluralLambda", queryWrapper);
         logParams(queryWrapper);
     }
 

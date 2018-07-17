@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
+import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 
@@ -53,11 +54,13 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
         this.initNeed();
     }
 
-    private QueryWrapper(T entity, String sqlSelect, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
+    private QueryWrapper(T entity, String sqlSelect, AtomicInteger paramNameSeq,
+                         Map<String, Object> paramNameValuePairs, MergeSegments mergeSegments) {
         this.entity = entity;
         this.sqlSelect = sqlSelect;
         this.paramNameSeq = paramNameSeq;
         this.paramNameValuePairs = paramNameValuePairs;
+        this.expression = mergeSegments;
     }
 
     @Override
@@ -78,7 +81,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
      * </p>
      */
     public LambdaQueryWrapper<T> lambda() {
-        return new LambdaQueryWrapper<>(entity, paramNameSeq, paramNameValuePairs);
+        return new LambdaQueryWrapper<>(entity, paramNameSeq, paramNameValuePairs, expression);
     }
 
     @Override
@@ -88,6 +91,6 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
 
     @Override
     protected QueryWrapper<T> instance(AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
-        return new QueryWrapper<>(entity, sqlSelect, paramNameSeq, paramNameValuePairs);
+        return new QueryWrapper<>(entity, sqlSelect, paramNameSeq, paramNameValuePairs, new MergeSegments());
     }
 }

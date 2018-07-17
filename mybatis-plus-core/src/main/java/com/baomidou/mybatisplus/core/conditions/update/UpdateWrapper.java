@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
+import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 
@@ -53,10 +54,12 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
         this.initNeed();
     }
 
-    private UpdateWrapper(T entity, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
+    private UpdateWrapper(T entity, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs,
+                          MergeSegments mergeSegments) {
         this.entity = entity;
         this.paramNameSeq = paramNameSeq;
         this.paramNameValuePairs = paramNameValuePairs;
+        this.expression = mergeSegments;
     }
 
     /**
@@ -65,7 +68,7 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
      * </p>
      */
     public LambdaUpdateWrapper<T> lambda() {
-        return new LambdaUpdateWrapper<>(entity, paramNameSeq, paramNameValuePairs);
+        return new LambdaUpdateWrapper<>(entity, paramNameSeq, paramNameValuePairs, expression);
     }
 
     @Override
@@ -123,6 +126,6 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
 
     @Override
     protected UpdateWrapper<T> instance(AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
-        return new UpdateWrapper<>(entity, paramNameSeq, paramNameValuePairs);
+        return new UpdateWrapper<>(entity, paramNameSeq, paramNameValuePairs, new MergeSegments());
     }
 }

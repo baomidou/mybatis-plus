@@ -20,13 +20,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.baomidou.mybatisplus.annotation.DbType;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
+import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
@@ -46,13 +46,13 @@ import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 public class GlobalConfigUtils {
 
     /**
-     * 日志
-     */
-    private static final Log logger = LogFactory.getLog(GlobalConfigUtils.class);
-    /**
      * 默认参数
      */
     public static final GlobalConfig DEFAULT = defaults();
+    /**
+     * 日志
+     */
+    private static final Log logger = LogFactory.getLog(GlobalConfigUtils.class);
     /**
      * 缓存全局信息
      */
@@ -68,7 +68,6 @@ public class GlobalConfigUtils {
      * </p>
      *
      * @param clazz 实体类
-     * @return
      */
     public static SqlSessionFactory currentSessionFactory(Class<?> clazz) {
         String configMark = TableInfoHelper.getTableInfo(clazz).getConfigMark();
@@ -78,14 +77,13 @@ public class GlobalConfigUtils {
 
     /**
      * <p>
-     * 获取默认MybatisGlobalConfig
+     * 获取默认 MybatisGlobalConfig
      * </p>
-     *
-     * @return
      */
     public static GlobalConfig defaults() {
         GlobalConfig config = new GlobalConfig();
-        config.setDbConfig(new GlobalConfig.DbConfig());
+        GlobalConfig.DbConfig dbConfig = new GlobalConfig.DbConfig().setDbType(DbType.MYSQL);
+        config.setDbConfig(dbConfig);
         return config;
     }
 
@@ -96,7 +94,6 @@ public class GlobalConfigUtils {
      *
      * @param configuration       Mybatis 容器配置对象
      * @param mybatisGlobalConfig 全局配置
-     * @return
      */
     public static void setGlobalConfig(Configuration configuration, GlobalConfig mybatisGlobalConfig) {
         if (configuration == null || mybatisGlobalConfig == null) {
@@ -112,7 +109,6 @@ public class GlobalConfigUtils {
      * </p>
      *
      * @param configuration Mybatis 容器配置对象
-     * @return
      */
     public static GlobalConfig getGlobalConfig(Configuration configuration) {
         if (configuration == null) {
@@ -127,7 +123,6 @@ public class GlobalConfigUtils {
      * </p>
      *
      * @param configMark 配置标记
-     * @return
      */
     public static GlobalConfig getGlobalConfig(String configMark) {
         GlobalConfig cache = GLOBAL_CONFIG.get(configMark);

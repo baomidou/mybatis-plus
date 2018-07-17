@@ -92,7 +92,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * 数据库表映射实体类
      */
     protected T entity;
-    private MergeSegments expression = new MergeSegments();
+    protected MergeSegments expression;
 
     @Override
     public T getEntity() {
@@ -412,6 +412,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     protected void initNeed() {
         paramNameSeq = new AtomicInteger(0);
         paramNameValuePairs = new HashMap<>(16);
+        expression = new MergeSegments();
     }
 
     /**
@@ -421,7 +422,6 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      *
      * @param condition   是否执行
      * @param sqlSegments sql片段数组
-     * @return this
      */
     protected This doIt(boolean condition, ISqlSegment... sqlSegments) {
         if (condition) {
