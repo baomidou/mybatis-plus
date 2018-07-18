@@ -91,7 +91,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return SqlHelper.table(currentModelClass()).getSqlStatement(sqlMethod.getMethod());
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean save(T entity) {
         return ServiceImpl.retBool(baseMapper.insert(entity));
@@ -142,7 +141,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      * @param entity 实体对象
      * @return boolean
      */
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean saveOrUpdate(T entity) {
         if (null != entity) {
@@ -189,13 +187,11 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return true;
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean removeById(Serializable id) {
         return SqlHelper.delBool(baseMapper.deleteById(id));
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean removeByMap(Map<String, Object> columnMap) {
         if (ObjectUtils.isEmpty(columnMap)) {
@@ -204,25 +200,21 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return SqlHelper.delBool(baseMapper.deleteByMap(columnMap));
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean remove(Wrapper<T> wrapper) {
         return SqlHelper.delBool(baseMapper.delete(wrapper));
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
-    public boolean removeBatchIds(Collection<? extends Serializable> idList) {
+    public boolean removeByIds(Collection<? extends Serializable> idList) {
         return SqlHelper.delBool(baseMapper.deleteBatchIds(idList));
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean updateById(T entity) {
         return ServiceImpl.retBool(baseMapper.updateById(entity));
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean update(T entity, Wrapper<T> wrapper) {
         return ServiceImpl.retBool(baseMapper.update(entity, wrapper));
