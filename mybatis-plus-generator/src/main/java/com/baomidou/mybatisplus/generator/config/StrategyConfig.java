@@ -97,12 +97,12 @@ public class StrategyConfig {
     private String superControllerClass;
 
     /**
-     * 需要包含的表名（与exclude二选一配置）
+     * 需要包含的表名，允许正则表达式（与exclude二选一配置）
      */
     private String[] include = null;
 
     /**
-     * 需要排除的表名
+     * 需要排除的表名，允许正则表达式
      */
     private String[] exclude = null;
     /**

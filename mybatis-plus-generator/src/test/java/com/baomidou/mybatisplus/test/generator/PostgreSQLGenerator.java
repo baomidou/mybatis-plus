@@ -81,8 +81,8 @@ public class PostgreSQLGenerator extends GeneratorTest {
         strategy.setFieldPrefix(new String[]{"A_"});
         strategy.setNaming(NamingStrategy.underline_to_camel);// 表名生成策略
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);// 允许字段策略独立设置，默认为 naming 策略
-        // strategy.setInclude(new String[] { "user" }); // 需要生成的表
-        // strategy.setExclude(new String[]{"test"}); // 排除生成的表
+        strategy.setInclude("sys_user", "^mp.*", "ok"); // 需要生成的表，支持正则表达式
+        // strategy.setExclude("test"); // 排除生成的表，支持正则表达式
         // 自定义实体父类
         // strategy.setSuperEntityClass("com.baomidou.demo.TestEntity");
         // 自定义实体，公共字段
