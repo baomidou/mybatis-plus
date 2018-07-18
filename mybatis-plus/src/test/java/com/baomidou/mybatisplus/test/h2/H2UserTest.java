@@ -1,11 +1,9 @@
 package com.baomidou.mybatisplus.test.h2;
 
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.test.h2.config.H2Db;
+import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
+import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -14,10 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.test.h2.config.H2Db;
-import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
-import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -67,7 +66,7 @@ public class H2UserTest extends BaseTest {
     public void testEntityWrapperSelectSql() {
         QueryWrapper<H2User> ew = new QueryWrapper<>();
         ew.select("test_id as id, name, age");
-        List<H2User> list = userService.selectList(ew);
+        List<H2User> list = userService.list(ew);
         for (H2User u : list) {
             Assert.assertNotNull(u.getTestId());
             Assert.assertNotNull(u.getName());
