@@ -59,7 +59,8 @@ public class ReflectionKit {
      * </p>
      *
      * @param field Field
-     * @param str   属性的setter方法名称，e.g. setVersion
+     * @param str String JavaBean类的version属性名
+     * @return  str  属性的setter方法名称，e.g. setVersion
      */
     public static String setMethodCapitalize(Field field, final String str) {
         Class<?> fieldType = field.getType();
