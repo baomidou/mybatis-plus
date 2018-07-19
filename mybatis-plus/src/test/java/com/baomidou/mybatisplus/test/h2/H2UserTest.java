@@ -68,7 +68,7 @@ public class H2UserTest extends BaseTest {
     public void testEntityWrapperSelectSql() {
         QueryWrapper<H2User> ew = new QueryWrapper<>();
         ew.select("test_id as id, name, age");
-        List<H2User> list = userService.selectList(ew);
+        List<H2User> list = userService.list(ew);
         for (H2User u : list) {
             Assert.assertNotNull(u.getTestId());
             Assert.assertNotNull(u.getName());
@@ -129,16 +129,16 @@ public class H2UserTest extends BaseTest {
         user.setDesc("asdf");
         user.setTestType(1);
         user.setVersion(1);
-        userService.insert(user);
+        userService.save(user);
 
-        H2User userDB = userService.selectById(id);
+        H2User userDB = userService.getById(id);
         Assert.assertEquals(1, userDB.getVersion().intValue());
 
         userDB.setName("992");
         userService.updateById(userDB);
         Assert.assertEquals("updated version value should be updated to entity",2, userDB.getVersion().intValue());
 
-        userDB = userService.selectById(id);
+        userDB = userService.getById(id);
         Assert.assertEquals(2, userDB.getVersion().intValue());
         Assert.assertEquals("992", userDB.getName());
     }
@@ -147,11 +147,11 @@ public class H2UserTest extends BaseTest {
     public void testUpdateByEwWithOptLock(){
         QueryWrapper<H2User> ew = new QueryWrapper<>();
         ew.gt("age",13);
-        for(H2User u: userService.selectList(ew)){
+        for(H2User u: userService.list(ew)){
             System.out.println(u.getName()+","+u.getAge()+","+u.getVersion());
         }
         userService.update(new H2User().setPrice(BigDecimal.TEN), ew);
-        for(H2User u: userService.selectList(ew)){
+        for(H2User u: userService.list(ew)){
             System.out.println(u.getName()+","+u.getAge()+","+u.getVersion());
         }
     }
