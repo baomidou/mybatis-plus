@@ -71,6 +71,9 @@ public class OptimisticLockerInterceptor implements Interceptor {
             return invocation.proceed();
         }
         Object param = args[1];
+        Object et = null;
+        Field versionField = null;
+        Object updatedVersionVal = null;
         if (param instanceof HashMap) {
             HashMap map = (HashMap) param;
             Wrapper ew = null;
@@ -80,12 +83,6 @@ public class OptimisticLockerInterceptor implements Interceptor {
             }
             //else updateById(entity) -->> change updateById(entity) to updateById(@Param("et") entity)
 
-            // TODO 待验证逻辑
-            // if mannual sql or updagteById(entity),unsupport OCC,proceed as usual unless use updateById(@Param("et") entity)
-            //if(!map.containsKey(NAME_ENTITY)) {
-            //    return invocation.proceed();
-            //}
-            Object et = null;
             if (map.containsKey(NAME_ENTITY)) {
                 et = map.get(NAME_ENTITY);
             }
@@ -94,11 +91,11 @@ public class OptimisticLockerInterceptor implements Interceptor {
                 if (entity != null) {
                     Class<?> entityClass = ClassUtils.getUserClass(entity.getClass());
                     EntityField ef = getVersionField(entityClass);
-                    Field versionField = ef == null ? null : ef.getField();
+                    versionField = ef == null ? null : ef.getField();
                     if (versionField != null) {
                         Object originalVersionVal = versionField.get(entity);
                         if (originalVersionVal != null) {
-                            versionField.set(et, getUpdatedVersionVal(originalVersionVal));
+                            versionField.set(et, updatedVersionVal = getUpdatedVersionVal(originalVersionVal));
                         }
                     }
                 }
@@ -111,7 +108,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
                 }
                 Class<?> entityClass = ClassUtils.getUserClass(et.getClass());
                 EntityField entityField = this.getVersionField(entityClass);
-                Field versionField = entityField == null ? null : entityField.getField();
+                versionField = entityField == null ? null : entityField.getField();
                 Object originalVersionVal;
                 if (versionField != null && (originalVersionVal = versionField.get(et)) != null) {
                     TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
@@ -143,7 +140,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
                     }
                     if (versionColumnName != null) {
                         entityField.setColumnName(versionColumnName);
-                        entityMap.put(versionField.getName(), getUpdatedVersionVal(originalVersionVal));
+                        entityMap.put(versionField.getName(), updatedVersionVal = getUpdatedVersionVal(originalVersionVal));
                         entityMap.put(MP_OPTLOCK_VERSION_ORIGINAL, originalVersionVal);
                         entityMap.put(MP_OPTLOCK_VERSION_COLUMN, versionColumnName);
                         entityMap.put(MP_OPTLOCK_ET_ORIGINAL, et);
@@ -152,7 +149,15 @@ public class OptimisticLockerInterceptor implements Interceptor {
                 }
             }
         }
-        return invocation.proceed();
+        Object resultObj = invocation.proceed();
+        if (resultObj instanceof Integer) {
+            Integer effRow = (Integer) resultObj;
+            if (effRow != 0 && et != null && versionField != null && updatedVersionVal != null) {
+                //updated version value set to entity.
+                versionField.set(et, updatedVersionVal);
+            }
+        }
+        return resultObj;
     }
 
     /**
