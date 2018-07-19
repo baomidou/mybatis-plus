@@ -54,7 +54,7 @@ public class DataSourceConfig {
     /**
      * PostgreSQL schemaname
      */
-    private String schemaname = "public";
+    private String schemaname;
     /**
      * 类型转换
      */
