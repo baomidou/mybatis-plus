@@ -460,19 +460,21 @@ public class ConfigBuilder {
                     tableInfo.setName(tableName);
                     tableInfo.setComment(tableComment);
                     if (isInclude) {
-                        for (String includeTab : config.getInclude()) {
-                            if (includeTab.equalsIgnoreCase(tableName)) {
+                        for (String includeTable : config.getInclude()) {
+                            // 忽略大小写等于 或 正则 true
+                            if (tableNameMatches(includeTable, tableName)) {
                                 includeTableList.add(tableInfo);
                             } else {
-                                notExistTables.add(includeTab);
+                                notExistTables.add(includeTable);
                             }
                         }
                     } else if (isExclude) {
-                        for (String excludeTab : config.getExclude()) {
-                            if (excludeTab.equalsIgnoreCase(tableName)) {
+                        for (String excludeTable : config.getExclude()) {
+                            // 忽略大小写等于 或 正则 true
+                            if (tableNameMatches(excludeTable, tableName)) {
                                 excludeTableList.add(tableInfo);
                             } else {
-                                notExistTables.add(excludeTab);
+                                notExistTables.add(excludeTable);
                             }
                         }
                     }
@@ -481,11 +483,11 @@ public class ConfigBuilder {
                     System.err.println("当前数据库为空！！！");
                 }
             }
+
             // 将已经存在的表移除，获取配置中数据库不存在的表
             for (TableInfo tabInfo : tableList) {
                 notExistTables.remove(tabInfo.getName());
             }
-
             if (notExistTables.size() > 0) {
                 System.err.println("表 " + notExistTables + " 在数据库中不存在！！！");
             }
@@ -520,6 +522,20 @@ public class ConfigBuilder {
         return processTable(includeTableList, config.getNaming(), config);
     }
 
+
+    /**
+     * <p>
+     * 表名匹配
+     * </p>
+     *
+     * @param setTableName 设置表名
+     * @param dbTableName  数据库表单
+     * @return
+     */
+    private boolean tableNameMatches(String setTableName, String dbTableName) {
+        return setTableName.equalsIgnoreCase(dbTableName)
+            || StringUtils.matches(setTableName, dbTableName);
+    }
 
     /**
      * <p>

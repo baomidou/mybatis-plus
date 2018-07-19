@@ -15,17 +15,16 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
-
 import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
 
 /**
  * <p>
@@ -60,15 +59,10 @@ public class StringUtils {
      * 占位符
      */
     public static final String PLACE_HOLDER = "{%s}";
-    private static final Pattern PATTERN_ONE = Pattern.compile(".*[A-Z]+.*");
-    private static final Pattern PATTERN_TWO = Pattern.compile(".*[/_]+.*");
-    private static boolean separatorBeforeDigit = false;
-    private static boolean separatorAfterDigit = true;
-
 
     private StringUtils() {
+        // to do nothing
     }
-
 
     /**
      * <p>
@@ -220,7 +214,7 @@ public class StringUtils {
      * @return
      */
     public static boolean isUpperCase(String str) {
-        return match("^[A-Z]+$", str);
+        return matches("^[A-Z]+$", str);
     }
 
     /**
@@ -229,13 +223,14 @@ public class StringUtils {
      * </p>
      *
      * @param regex 正则表达式字符串
-     * @param str   要匹配的字符串
-     * @return 如果str 符合 regex的正则表达式格式,返回true, 否则返回 false;
+     * @param input 要匹配的字符串
+     * @return 如果 input 符合 regex 正则表达式格式, 返回true, 否则返回 false;
      */
-    public static boolean match(String regex, String str) {
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(str);
-        return matcher.matches();
+    public static boolean matches(String regex, String input) {
+        if (null == regex || null == input) {
+            return false;
+        }
+        return Pattern.matches(regex, input);
     }
 
     /**
@@ -418,7 +413,7 @@ public class StringUtils {
      * @return
      */
     public static boolean isMixedMode(String word) {
-        return PATTERN_ONE.matcher(word).matches() && PATTERN_TWO.matcher(word).matches();
+        return matches(".*[A-Z]+.*", word) && matches(".*[/_]+.*", word);
     }
 
     /**
@@ -776,17 +771,16 @@ public class StringUtils {
             boolean previousIsWhitespace = Character.isWhitespace(previousChar);
             boolean lastOneIsNotUnderscore = (buf.length() > 0) && (buf.charAt(buf.length() - 1) != '_');
             boolean isNotUnderscore = c != '_';
-            if ((lastOneIsNotUnderscore) && ((isUpperCaseAndPreviousIsLowerCase) || (previousIsWhitespace) || ((betweenUpperCases)
-                && (containsLowerCase) && (isUpperCaseAndPreviousIsUpperCase)))) {
+            if (lastOneIsNotUnderscore && (isUpperCaseAndPreviousIsLowerCase || previousIsWhitespace
+                || (betweenUpperCases && containsLowerCase && isUpperCaseAndPreviousIsUpperCase))) {
                 buf.append("_");
-            } else if (((separatorAfterDigit) && (Character.isDigit(previousChar))
-                && (Character.isLetter(c))) || ((separatorBeforeDigit) && (Character
-                .isDigit(c)) && (Character.isLetter(previousChar)))) {
+            } else if ((Character.isDigit(previousChar) && Character.isLetter(c))
+                || (false && Character.isDigit(c) && Character.isLetter(previousChar))) {
                 buf.append('_');
             }
             if ((shouldReplace(c)) && (lastOneIsNotUnderscore)) {
                 buf.append('_');
-            } else if ((!Character.isWhitespace(c)) && ((isNotUnderscore) || (lastOneIsNotUnderscore))) {
+            } else if (!Character.isWhitespace(c) && (isNotUnderscore || lastOneIsNotUnderscore)) {
                 buf.append(Character.toUpperCase(c));
             }
             previousChar = c;

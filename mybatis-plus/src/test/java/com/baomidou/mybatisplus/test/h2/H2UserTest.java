@@ -4,6 +4,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.test.h2.config.H2Db;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
 import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -11,12 +18,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -115,5 +116,44 @@ public class H2UserTest extends BaseTest {
         int count = userService.selectCountWithParamInSelectItems(param);
         Assert.assertNotEquals(0, count);
     }
+
+    @Test
+    public void testUpdateByIdWitiOptLock(){
+        Long id = 991L;
+        H2User user = new H2User();
+        user.setTestId(id);
+        user.setName("991");
+        user.setAge(91);
+        user.setPrice(BigDecimal.TEN);
+        user.setDesc("asdf");
+        user.setTestType(1);
+        user.setVersion(1);
+        userService.save(user);
+
+        H2User userDB = userService.getById(id);
+        Assert.assertEquals(1, userDB.getVersion().intValue());
+
+        userDB.setName("992");
+        userService.updateById(userDB);
+        Assert.assertEquals("updated version value should be updated to entity",2, userDB.getVersion().intValue());
+
+        userDB = userService.getById(id);
+        Assert.assertEquals(2, userDB.getVersion().intValue());
+        Assert.assertEquals("992", userDB.getName());
+    }
+
+    @Test
+    public void testUpdateByEwWithOptLock(){
+        QueryWrapper<H2User> ew = new QueryWrapper<>();
+        ew.gt("age",13);
+        for(H2User u: userService.list(ew)){
+            System.out.println(u.getName()+","+u.getAge()+","+u.getVersion());
+        }
+        userService.update(new H2User().setPrice(BigDecimal.TEN), ew);
+        for(H2User u: userService.list(ew)){
+            System.out.println(u.getName()+","+u.getAge()+","+u.getVersion());
+        }
+    }
+
 
 }

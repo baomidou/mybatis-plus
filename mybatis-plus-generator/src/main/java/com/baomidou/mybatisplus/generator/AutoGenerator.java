@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.generator;
 import java.io.Serializable;
 import java.util.List;
 
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -135,8 +136,7 @@ public class AutoGenerator {
             /* ---------- 添加导入包 ---------- */
             if (config.getGlobalConfig().isActiveRecord()) {
                 // 开启 ActiveRecord 模式
-                // todo
-              //  tableInfo.setImportPackages(Model.class.getCanonicalName());
+                tableInfo.setImportPackages(Model.class.getCanonicalName());
             }
             if (tableInfo.isConvert()) {
                 // 表注解

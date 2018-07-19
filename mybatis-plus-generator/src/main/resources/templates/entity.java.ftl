@@ -12,7 +12,7 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * ${table.comment}
+ * ${table.comment!}
  * </p>
  *
  * @author ${author}
