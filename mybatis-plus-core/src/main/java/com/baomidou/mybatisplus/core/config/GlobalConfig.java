@@ -44,6 +44,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
+@SuppressWarnings("serial")
 public class GlobalConfig implements Serializable {
 
     /**
