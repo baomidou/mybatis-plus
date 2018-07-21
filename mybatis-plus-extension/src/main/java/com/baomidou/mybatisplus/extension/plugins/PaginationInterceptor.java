@@ -53,6 +53,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.extension.plugins.pagination.PageHelper;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 /**
  * <p>
  * 分页拦截器
@@ -61,6 +64,8 @@ import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
  * @author hubin
  * @since 2016-01-23
  */
+@Setter
+@Accessors(chain = true)
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 public class PaginationInterceptor extends AbstractSqlParserHandler implements Interceptor {
 
@@ -84,6 +89,45 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
      * 是否开启 PageHelper localPage 模式
      */
     private boolean localPage = false;
+
+    /**
+     * 查询SQL拼接Order By
+     *
+     * @param originalSql 需要拼接的SQL
+     * @param page        page对象
+     * @param orderBy     是否需要拼接Order By
+     * @return
+     */
+    public static String concatOrderBy(String originalSql, IPage page, boolean orderBy) {
+        if (orderBy && (ArrayUtils.isNotEmpty(page.ascs())
+            || ArrayUtils.isNotEmpty(page.descs()))) {
+            StringBuilder buildSql = new StringBuilder(originalSql);
+            String ascStr = concatOrderBuilder(page.ascs(), " ASC");
+            String descStr = concatOrderBuilder(page.descs(), " DESC");
+            if (StringUtils.isNotEmpty(ascStr) && StringUtils.isNotEmpty(descStr)) {
+                ascStr += ", ";
+            }
+            if (StringUtils.isNotEmpty(ascStr) || StringUtils.isNotEmpty(descStr)) {
+                buildSql.append(" ORDER BY ").append(ascStr).append(descStr);
+            }
+            return buildSql.toString();
+        }
+        return originalSql;
+    }
+
+    /**
+     * 拼接多个排序方法
+     *
+     * @param columns
+     * @param orderWord
+     */
+    private static String concatOrderBuilder(String[] columns, String orderWord) {
+        if (ArrayUtils.isNotEmpty(columns)) {
+            return Arrays.stream(columns).filter(c -> StringUtils.isNotEmpty(c))
+                .collect(joining(",", "", orderWord));
+        }
+        return StringUtils.EMPTY;
+    }
 
     /**
      * Physical Page Interceptor for all the queries with parameter {@link RowBounds}
@@ -162,45 +206,6 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
     }
 
     /**
-     * 查询SQL拼接Order By
-     *
-     * @param originalSql 需要拼接的SQL
-     * @param page        page对象
-     * @param orderBy     是否需要拼接Order By
-     * @return
-     */
-    public static String concatOrderBy(String originalSql, IPage page, boolean orderBy) {
-        if (orderBy && (ArrayUtils.isNotEmpty(page.ascs())
-            || ArrayUtils.isNotEmpty(page.descs()))) {
-            StringBuilder buildSql = new StringBuilder(originalSql);
-            String ascStr = concatOrderBuilder(page.ascs(), " ASC");
-            String descStr = concatOrderBuilder(page.descs(), " DESC");
-            if (StringUtils.isNotEmpty(ascStr) && StringUtils.isNotEmpty(descStr)) {
-                ascStr += ", ";
-            }
-            if (StringUtils.isNotEmpty(ascStr) || StringUtils.isNotEmpty(descStr)) {
-                buildSql.append(" ORDER BY ").append(ascStr).append(descStr);
-            }
-            return buildSql.toString();
-        }
-        return originalSql;
-    }
-
-    /**
-     * 拼接多个排序方法
-     *
-     * @param columns
-     * @param orderWord
-     */
-    private static String concatOrderBuilder(String[] columns, String orderWord) {
-        if (ArrayUtils.isNotEmpty(columns)) {
-            return Arrays.stream(columns).filter(c -> StringUtils.isNotEmpty(c))
-                .collect(joining(",", "", orderWord));
-        }
-        return StringUtils.EMPTY;
-    }
-
-    /**
      * 查询总记录条数
      *
      * @param sql
@@ -255,30 +260,5 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
         if (StringUtils.isNotEmpty(localPage)) {
             this.localPage = Boolean.valueOf(localPage);
         }
-    }
-
-    public PaginationInterceptor setDialectType(String dialectType) {
-        this.dialectType = dialectType;
-        return this;
-    }
-
-    public PaginationInterceptor setDialectClazz(String dialectClazz) {
-        this.dialectClazz = dialectClazz;
-        return this;
-    }
-
-    public PaginationInterceptor setOverflow(boolean overflow) {
-        this.overflow = overflow;
-        return this;
-    }
-
-    public PaginationInterceptor setSqlParser(ISqlParser sqlParser) {
-        this.sqlParser = sqlParser;
-        return this;
-    }
-
-    public PaginationInterceptor setLocalPage(boolean localPage) {
-        this.localPage = localPage;
-        return this;
     }
 }

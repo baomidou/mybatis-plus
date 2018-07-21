@@ -110,15 +110,12 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         }
         // 全局配置是否配置填充器
         MetaObjectHandler metaObjectHandler = GlobalConfigUtils.getMetaObjectHandler(ms.getConfiguration());
-        if (null == metaObjectHandler) {
-            return parameterObject;
-        }
         boolean isFill = false;
         /* 只处理插入或更新操作 */
         if (ms.getSqlCommandType() == SqlCommandType.INSERT) {
             isFill = true;
         } else if (ms.getSqlCommandType() == SqlCommandType.UPDATE
-            && metaObjectHandler.openUpdateFill()) {
+            && metaObjectHandler != null && metaObjectHandler.openUpdateFill()) {
             isFill = true;
         }
         if (isFill) {
@@ -207,33 +204,36 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
      */
     protected static Object populateKeys(MetaObjectHandler metaObjectHandler, TableInfo tableInfo,
                                          MappedStatement ms, Object parameterObject) {
-        if (null == tableInfo || StringUtils.isEmpty(tableInfo.getKeyProperty()) || null == tableInfo.getIdType()) {
+        if (null == tableInfo) {
             /* 不处理 */
             return parameterObject;
         }
+        SqlCommandType sqlType = ms.getSqlCommandType();
         /* 自定义元对象填充控制器 */
         MetaObject metaObject = ms.getConfiguration().newMetaObject(parameterObject);
-        if (ms.getSqlCommandType() == SqlCommandType.INSERT) {
-            if (tableInfo.getIdType().getKey() >= 2) {
-                Object idValue = metaObject.getValue(tableInfo.getKeyProperty());
-                /* 自定义 ID */
-                if (StringUtils.checkValNull(idValue)) {
-                    if (tableInfo.getIdType() == IdType.ID_WORKER) {
-                        metaObject.setValue(tableInfo.getKeyProperty(), IdWorker.getId());
-                    } else if (tableInfo.getIdType() == IdType.ID_WORKER_STR) {
-                        metaObject.setValue(tableInfo.getKeyProperty(), IdWorker.getIdStr());
-                    } else if (tableInfo.getIdType() == IdType.UUID) {
-                        metaObject.setValue(tableInfo.getKeyProperty(), IdWorker.get32UUID());
-                    }
+        // 填充主键
+        if (sqlType == SqlCommandType.INSERT && !StringUtils.isEmpty(tableInfo.getKeyProperty())
+            && null != tableInfo.getIdType() && tableInfo.getIdType().getKey() >= 2) {
+            Object idValue = metaObject.getValue(tableInfo.getKeyProperty());
+            /* 自定义 ID */
+            if (StringUtils.checkValNull(idValue)) {
+                if (tableInfo.getIdType() == IdType.ID_WORKER) {
+                    metaObject.setValue(tableInfo.getKeyProperty(), IdWorker.getId());
+                } else if (tableInfo.getIdType() == IdType.ID_WORKER_STR) {
+                    metaObject.setValue(tableInfo.getKeyProperty(), IdWorker.getIdStr());
+                } else if (tableInfo.getIdType() == IdType.UUID) {
+                    metaObject.setValue(tableInfo.getKeyProperty(), IdWorker.get32UUID());
                 }
             }
-            // 插入填充
-            if (metaObjectHandler.openInsertFill()) {
+        }
+        if (metaObjectHandler != null) {
+            if (sqlType == SqlCommandType.INSERT && metaObjectHandler.openInsertFill()) {
+                // 插入填充
                 metaObjectHandler.insertFill(metaObject);
+            } else {
+                // 更新填充
+                metaObjectHandler.updateFill(metaObject);
             }
-        } else if (ms.getSqlCommandType() == SqlCommandType.UPDATE && metaObjectHandler.openUpdateFill()) {
-            // 更新填充
-            metaObjectHandler.updateFill(metaObject);
         }
         return metaObject.getOriginalObject();
     }
