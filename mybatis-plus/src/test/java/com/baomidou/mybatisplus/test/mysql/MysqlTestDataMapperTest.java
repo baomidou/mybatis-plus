@@ -10,6 +10,7 @@ import com.baomidou.mybatisplus.test.base.entity.TestData;
 import com.baomidou.mybatisplus.test.base.mapper.LogicTestDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.TestDataMapper;
 import com.baomidou.mybatisplus.test.mysql.config.MysqlDb;
+import com.baomidou.mybatisplus.test.mysql.service.ILogicTestDataService;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -24,10 +25,7 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -45,6 +43,9 @@ public class MysqlTestDataMapperTest {
     private TestDataMapper mapper;
     @Resource
     private LogicTestDataMapper logicMapper;
+
+    @Resource
+    private ILogicTestDataService logicTestDataService;
 
     @BeforeClass
     public static void init() throws IOException, SQLException {
@@ -98,6 +99,19 @@ public class MysqlTestDataMapperTest {
         List<Long> ids = Arrays.asList(1014132604940615682L, 1014132604940615652L);
         mapper.deleteBatchIds(ids);
         logicMapper.deleteBatchIds(ids);
+    }
+
+    @Test
+    public void updateTimeIssue() {
+//        mapper.updateById(new TestData().setId(1014132604940615682L).setTestInt(1111111111));
+        LogicTestData et = new LogicTestData()
+            .setId(1019248035919613954L)
+            .setTestInt(9991122)
+            .setVersion(19L);
+        System.out.println("====1=====>>>" + JSON.toJSONString(et, true));
+        boolean r = logicTestDataService.saveOrUpdate(et);
+        System.out.println("====2-1==r==>>>" + r);
+        System.out.println("====2-2=====>>>" + JSON.toJSONString(et, true));
     }
 
     @Test
