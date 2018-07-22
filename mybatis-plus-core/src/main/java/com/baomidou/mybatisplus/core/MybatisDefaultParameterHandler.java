@@ -111,9 +111,11 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         // 全局配置是否配置填充器
         MetaObjectHandler metaObjectHandler = GlobalConfigUtils.getMetaObjectHandler(ms.getConfiguration());
         boolean isFill = false;
+        boolean isInsert = false;
         /* 只处理插入或更新操作 */
         if (ms.getSqlCommandType() == SqlCommandType.INSERT) {
             isFill = true;
+            isInsert = true;
         } else if (ms.getSqlCommandType() == SqlCommandType.UPDATE
             && metaObjectHandler != null && metaObjectHandler.openUpdateFill()) {
             isFill = true;
@@ -125,7 +127,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                 for (Object parameter : parameters) {
                     TableInfo tableInfo = TableInfoHelper.getTableInfo(parameter.getClass());
                     if (null != tableInfo) {
-                        objList.add(populateKeys(metaObjectHandler, tableInfo, ms, parameter));
+                        objList.add(populateKeys(metaObjectHandler, tableInfo, ms, parameter, isInsert));
                     } else {
                         /*
                          * 非表映射类不处理
@@ -155,7 +157,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                 } else {
                     tableInfo = TableInfoHelper.getTableInfo(parameterObject.getClass());
                 }
-                return populateKeys(metaObjectHandler, tableInfo, ms, parameterObject);
+                return populateKeys(metaObjectHandler, tableInfo, ms, parameterObject, isInsert);
             }
         }
         return parameterObject;
@@ -203,16 +205,15 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
      * @return Object
      */
     protected static Object populateKeys(MetaObjectHandler metaObjectHandler, TableInfo tableInfo,
-                                         MappedStatement ms, Object parameterObject) {
+                                         MappedStatement ms, Object parameterObject, boolean isInsert) {
         if (null == tableInfo) {
             /* 不处理 */
             return parameterObject;
         }
-        SqlCommandType sqlType = ms.getSqlCommandType();
         /* 自定义元对象填充控制器 */
         MetaObject metaObject = ms.getConfiguration().newMetaObject(parameterObject);
         // 填充主键
-        if (sqlType == SqlCommandType.INSERT && !StringUtils.isEmpty(tableInfo.getKeyProperty())
+        if (isInsert && !StringUtils.isEmpty(tableInfo.getKeyProperty())
             && null != tableInfo.getIdType() && tableInfo.getIdType().getKey() >= 2) {
             Object idValue = metaObject.getValue(tableInfo.getKeyProperty());
             /* 自定义 ID */
@@ -227,10 +228,10 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
             }
         }
         if (metaObjectHandler != null) {
-            if (sqlType == SqlCommandType.INSERT && metaObjectHandler.openInsertFill()) {
+            if (isInsert && metaObjectHandler.openInsertFill()) {
                 // 插入填充
                 metaObjectHandler.insertFill(metaObject);
-            } else {
+            } else if (!isInsert) {
                 // 更新填充
                 metaObjectHandler.updateFill(metaObject);
             }
