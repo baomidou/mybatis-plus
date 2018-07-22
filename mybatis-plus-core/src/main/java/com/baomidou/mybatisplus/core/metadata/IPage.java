@@ -33,7 +33,7 @@ public interface IPage<T> {
      * 降序字段数组
      * </p>
      *
-     * @return
+     * @return order by desc 的字段数组
      */
     default String[] descs() {
         return null;
@@ -44,7 +44,7 @@ public interface IPage<T> {
      * 升序字段数组
      * </p>
      *
-     * @return
+     * @return order by asc 的字段数组
      */
     default String[] ascs() {
         return null;
@@ -76,8 +76,6 @@ public interface IPage<T> {
      * <p>
      * 计算当前分页偏移量
      * </p>
-     *
-     * @return
      */
     default long offset() {
         return getCurrent() > 0 ? (getCurrent() - 1) * getSize() : 0;
@@ -87,8 +85,6 @@ public interface IPage<T> {
      * <p>
      * 当前分页总页数
      * </p>
-     *
-     * @return
      */
     default long getPages() {
         if (getSize() == 0) {
@@ -114,10 +110,8 @@ public interface IPage<T> {
      * <p>
      * 设置分页记录列表
      * </p>
-     *
-     * @return 当前对象
      */
-    IPage<T> setRecords(List<T> records);
+    void setRecords(List<T> records);
 
     /**
      * <p>
@@ -127,7 +121,7 @@ public interface IPage<T> {
      * 当 total 为 null 或者大于 0 分页插件不在查询总数
      * </p>
      *
-     * @return
+     * @return 总条数
      */
     long getTotal();
 
@@ -138,17 +132,15 @@ public interface IPage<T> {
      * <p>
      * 当 total 为 null 或者大于 0 分页插件不在查询总数
      * </p>
-     *
-     * @return 当前对象
      */
-    IPage<T> setTotal(long total);
+    void setTotal(long total);
 
     /**
      * <p>
      * 当前分页总页数
      * </p>
      *
-     * @return
+     * @return 总页数
      */
     long getSize();
 
@@ -156,17 +148,15 @@ public interface IPage<T> {
      * <p>
      * 设置当前分页总页数
      * </p>
-     *
-     * @return
      */
-    IPage<T> setSize(long size);
+    void setSize(long size);
 
     /**
      * <p>
      * 当前页，默认 1
      * </p>
      *
-     * @return
+     * @return 当然页
      */
     long getCurrent();
 
@@ -174,9 +164,6 @@ public interface IPage<T> {
      * <p>
      * 设置当前页
      * </p>
-     *
-     * @return 当前对象
      */
-    IPage<T> setCurrent(long current);
-
+    void setCurrent(long current);
 }
