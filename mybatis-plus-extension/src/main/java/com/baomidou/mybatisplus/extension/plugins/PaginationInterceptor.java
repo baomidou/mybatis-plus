@@ -47,11 +47,11 @@ import com.baomidou.mybatisplus.core.parser.SqlInfo;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import com.baomidou.mybatisplus.extension.handlers.AbstractSqlParserHandler;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.extension.plugins.pagination.PageHelper;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
+import com.baomidou.mybatisplus.extension.toolkit.SqlParserUtils;
 
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -185,7 +185,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
 
         boolean orderBy = true;
         if (page.getTotal() == 0) {
-            SqlInfo sqlInfo = SqlUtils.getOptimizeCountSql(page.optimizeCountSql(), sqlParser, originalSql);
+            SqlInfo sqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), sqlParser, originalSql);
             orderBy = sqlInfo.isOrderBy();
             this.queryTotal(overflow, sqlInfo.getSql(), mappedStatement, boundSql, page, connection);
             if (page.getTotal() <= 0) {
