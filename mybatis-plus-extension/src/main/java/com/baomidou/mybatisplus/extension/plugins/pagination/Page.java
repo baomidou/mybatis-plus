@@ -100,7 +100,7 @@ public class Page<T> implements IPage<T>, Serializable {
      *
      * @return true / false
      */
-    public boolean isHasPrevious() {
+    public boolean hasPrevious() {
         return this.current > 1;
     }
 
@@ -111,7 +111,7 @@ public class Page<T> implements IPage<T>, Serializable {
      *
      * @return true / false
      */
-    public boolean isHasNext() {
+    public boolean hasNext() {
         return this.current < this.getPages();
     }
 
@@ -121,8 +121,9 @@ public class Page<T> implements IPage<T>, Serializable {
     }
 
     @Override
-    public void setRecords(List<T> records) {
+    public IPage<T> setRecords(List<T> records) {
         this.records = records;
+        return this;
     }
 
     @Override
@@ -131,8 +132,9 @@ public class Page<T> implements IPage<T>, Serializable {
     }
 
     @Override
-    public void setTotal(long total) {
+    public IPage<T> setTotal(long total) {
         this.total = total;
+        return this;
     }
 
     @Override
@@ -141,8 +143,9 @@ public class Page<T> implements IPage<T>, Serializable {
     }
 
     @Override
-    public void setSize(long size) {
+    public IPage<T> setSize(long size) {
         this.size = size;
+        return this;
     }
 
     @Override
@@ -151,8 +154,9 @@ public class Page<T> implements IPage<T>, Serializable {
     }
 
     @Override
-    public void setCurrent(long current) {
+    public IPage<T> setCurrent(long current) {
         this.current = current;
+        return this;
     }
 
     @Override
@@ -160,14 +164,16 @@ public class Page<T> implements IPage<T>, Serializable {
         return ascs;
     }
 
-    public void setAscs(List<String> ascs) {
+    public IPage<T> setAscs(List<String> ascs) {
         if (CollectionUtils.isNotEmpty(ascs)) {
             this.ascs = (String[]) ascs.toArray();
         }
+        return this;
     }
 
-    public void setAscs(String... ascs) {
+    public IPage<T> setAscs(String... ascs) {
         this.ascs = ascs;
+        return this;
     }
 
     @Override
@@ -175,14 +181,16 @@ public class Page<T> implements IPage<T>, Serializable {
         return descs;
     }
 
-    public void setDescs(List<String> descs) {
+    public IPage<T> setDescs(List<String> descs) {
         if (CollectionUtils.isNotEmpty(descs)) {
             this.descs = (String[]) descs.toArray();
         }
+        return this;
     }
 
-    public void setDescs(String... descs) {
+    public IPage<T> setDescs(String... descs) {
         this.descs = descs;
+        return this;
     }
 
     @Override
@@ -190,7 +198,8 @@ public class Page<T> implements IPage<T>, Serializable {
         return optimizeCountSql;
     }
 
-    public void setOptimizeCountSql(boolean optimizeCountSql) {
+    public IPage<T> setOptimizeCountSql(boolean optimizeCountSql) {
         this.optimizeCountSql = optimizeCountSql;
+        return this;
     }
 }

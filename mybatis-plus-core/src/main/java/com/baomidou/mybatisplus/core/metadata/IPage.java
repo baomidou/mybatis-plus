@@ -111,7 +111,7 @@ public interface IPage<T> {
      * 设置分页记录列表
      * </p>
      */
-    void setRecords(List<T> records);
+    IPage<T> setRecords(List<T> records);
 
     /**
      * <p>
@@ -133,7 +133,7 @@ public interface IPage<T> {
      * 当 total 为 null 或者大于 0 分页插件不在查询总数
      * </p>
      */
-    void setTotal(long total);
+    IPage<T> setTotal(long total);
 
     /**
      * <p>
@@ -149,7 +149,7 @@ public interface IPage<T> {
      * 设置当前分页总页数
      * </p>
      */
-    void setSize(long size);
+    IPage<T> setSize(long size);
 
     /**
      * <p>
@@ -165,5 +165,5 @@ public interface IPage<T> {
      * 设置当前页
      * </p>
      */
-    void setCurrent(long current);
+    IPage<T> setCurrent(long current);
 }
