@@ -11,6 +11,8 @@
 - Github #385:查询动态表名能利用Wrapper
 - 修复 Gitee issues/ILEYD
 - Page 的序列化接口挪到 IPage 接口
+- 解决了 gamma 不能自动赋值 ID
+- 代码改个常量引用优化
 
 
 ## [v3.0-gamma] 2018.07.15 代号：超级棒棒糖 🍭 伽玛
