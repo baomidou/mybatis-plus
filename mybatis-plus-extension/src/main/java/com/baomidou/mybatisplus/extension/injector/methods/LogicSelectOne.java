@@ -18,14 +18,13 @@ package com.baomidou.mybatisplus.extension.injector.methods;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
 
-import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.extension.injector.LogicAbstractMethod;
 
 /**
  * <p>
- * 根据 ID 删除
+ * 根据 queryWrapper 条件查询一条数据
  * </p>
  *
  * @author hubin
@@ -36,7 +35,6 @@ public class LogicSelectOne extends LogicAbstractMethod {
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.SELECT_ONE;
-        DbType dbType = getGlobalConfig().getDbConfig().getDbType();
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(),
             this.sqlSelectColumns(tableInfo, false), tableInfo.getTableName(),
             this.sqlWhereEntityWrapper(tableInfo)), modelClass);

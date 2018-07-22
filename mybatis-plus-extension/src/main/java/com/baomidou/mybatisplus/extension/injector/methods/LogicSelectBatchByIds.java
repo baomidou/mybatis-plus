@@ -24,7 +24,7 @@ import com.baomidou.mybatisplus.extension.injector.LogicAbstractMethod;
 
 /**
  * <p>
- * 根据 ID 删除
+ * 根据 ID 集合查询
  * </p>
  *
  * @author hubin

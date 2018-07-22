@@ -24,7 +24,7 @@ import com.baomidou.mybatisplus.extension.injector.LogicAbstractMethod;
 
 /**
  * <p>
- * 根据 ID 删除
+ * 根据 entity 有值字段 以及 updateWrapper 的条件更新
  * </p>
  *
  * @author hubin
