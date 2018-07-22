@@ -37,6 +37,7 @@ import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
@@ -66,7 +67,15 @@ public abstract class AbstractMethod {
         languageDriver = configuration.getDefaultScriptingLanguageInstance();
         Class<?> modelClass = extractModelClass(mapperClass);
         if (null != modelClass) {
-            // 注入自定义方法
+            /**
+             * 初始化 SQL 解析
+             */
+            if (this.getGlobalConfig().isSqlParserCache()) {
+                SqlParserHelper.initSqlParserInfoCache(mapperClass);
+            }
+            /**
+             * 注入自定义方法
+             */
             TableInfo tableInfo = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
             injectMappedStatement(mapperClass, modelClass, tableInfo);
         }
