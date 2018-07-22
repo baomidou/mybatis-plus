@@ -1,6 +1,18 @@
 ﻿# CHANGELOG
 
 
+## [v3.0-RC] 2018.07.23 代号：超级棒棒糖 🍭 RC
+- 优化 page 当 size 小于 0 自动调整为 list 模式
+- 新增 攻击 SQL 阻断解析器
+- 优化解析核心方法名，新增 querywrapper lambda 转换参数测试
+- 调整通用 service 层方法命名为阿里规范 （ 小白鼠，对不起，请唾弃我们吧！然后修改下您的项目。）
+- 代码生成器允许正则表达式匹配表名
+- 乐观锁 回写更新后的version到实体
+- Github #385:查询动态表名能利用Wrapper
+- 修复 Gitee issues/ILEYD
+- Page 的序列化接口挪到 IPage 接口
+
+
 ## [v3.0-gamma] 2018.07.15 代号：超级棒棒糖 🍭 伽玛
 - IPage 新增 listMode 集合模式
 - fixd gitee issues/IL7W4

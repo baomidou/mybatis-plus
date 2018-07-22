@@ -51,7 +51,7 @@ public class MybatisConfiguration extends Configuration {
         setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
         System.out.println("  _ _     /_ _ _/_. ____  /    _");
         System.out.println(" / / //_//_//_|/ /_\\  /_///_/_\\ ");
-        System.out.println("      _/             /             V.3");
+        System.out.println("      _/             /             V.3.0-RC");
     }
 
     /**
