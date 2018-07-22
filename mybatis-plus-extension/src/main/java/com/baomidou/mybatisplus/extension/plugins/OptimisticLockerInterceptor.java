@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 
@@ -58,7 +59,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
     public static final String MP_OPTLOCK_VERSION_ORIGINAL = "MP_OPTLOCK_VERSION_ORIGINAL";
     public static final String MP_OPTLOCK_VERSION_COLUMN = "MP_OPTLOCK_VERSION_COLUMN";
     public static final String MP_OPTLOCK_ET_ORIGINAL = "MP_OPTLOCK_ET_ORIGINAL";
-    private static final String NAME_ENTITY = "et";
+    private static final String NAME_ENTITY = Constants.META_OBJ_PREFIX;
     private static final String NAME_ENTITY_WRAPPER = "ew";
     private static final String PARAM_UPDATE_METHOD_NAME = "update";
 
