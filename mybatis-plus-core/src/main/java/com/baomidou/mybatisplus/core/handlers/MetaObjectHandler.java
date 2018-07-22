@@ -26,9 +26,9 @@ import org.apache.ibatis.reflection.SystemMetaObject;
  * @author hubin
  * @since 2016-08-28
  */
-public abstract class MetaObjectHandler {
+public interface MetaObjectHandler {
 
-    protected static final String META_OBJ_PREFIX = "et";
+    String META_OBJ_PREFIX = "et";
 
     /**
      * <p>
@@ -37,7 +37,7 @@ public abstract class MetaObjectHandler {
      *
      * @param metaObject 元对象
      */
-    public abstract void insertFill(MetaObject metaObject);
+    void insertFill(MetaObject metaObject);
 
     /**
      * 更新元对象字段填充（用于更新时对公共字段的填充）
@@ -48,7 +48,7 @@ public abstract class MetaObjectHandler {
      *
      * @param metaObject 元对象
      */
-    public abstract void updateFill(MetaObject metaObject);
+    void updateFill(MetaObject metaObject);
 
     /**
      * <p>
@@ -62,7 +62,7 @@ public abstract class MetaObjectHandler {
      * @param fieldVal   java bean property value
      * @param metaObject meta object parameter
      */
-    protected MetaObjectHandler setFieldValByName(String fieldName, Object fieldVal, MetaObject metaObject) {
+    default MetaObjectHandler setFieldValByName(String fieldName, Object fieldVal, MetaObject metaObject) {
         if (metaObject.hasSetter(fieldName) && metaObject.hasGetter(fieldName)) {
             metaObject.setValue(fieldName, fieldVal);
         } else if (metaObject.hasGetter(META_OBJ_PREFIX)) {
@@ -89,7 +89,7 @@ public abstract class MetaObjectHandler {
      * @param metaObject parameter wrapper
      * @return
      */
-    protected Object getFieldValByName(String fieldName, MetaObject metaObject) {
+    default Object getFieldValByName(String fieldName, MetaObject metaObject) {
         if (metaObject.hasGetter(fieldName)) {
             return metaObject.getValue(fieldName);
         } else if (metaObject.hasGetter(META_OBJ_PREFIX + "." + fieldName)) {
@@ -101,14 +101,14 @@ public abstract class MetaObjectHandler {
     /**
      * 开启插入填充
      */
-    public boolean openInsertFill() {
+    default boolean openInsertFill() {
         return true;
     }
 
     /**
      * 开启更新填充
      */
-    public boolean openUpdateFill() {
+    default boolean openUpdateFill() {
         return true;
     }
 }

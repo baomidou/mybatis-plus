@@ -1,5 +1,25 @@
 package com.baomidou.mybatisplus.test.mysql;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -11,21 +31,6 @@ import com.baomidou.mybatisplus.test.base.mapper.LogicTestDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.TestDataMapper;
 import com.baomidou.mybatisplus.test.mysql.config.MysqlDb;
 import com.baomidou.mybatisplus.test.mysql.service.ILogicTestDataService;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.annotation.Resource;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.*;
 
 /**
  * <p>
@@ -57,7 +62,7 @@ public class MysqlTestDataMapperTest {
         LocalDateTime nowDateTime = LocalDateTime.now();
         LocalDate nowDate = nowDateTime.toLocalDate();
         LocalTime nowTime = nowDateTime.toLocalTime();
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 1; i++) {
             mapper.insert(new TestData().setTestInt(i).setTestStr(String.format("第%s条数据", i))
                 .setTestDouble(BigDecimal.valueOf(3.3).multiply(BigDecimal.valueOf(i)).doubleValue())
                 .setTestBoolean((i + 3) % 2 == 0).setTestDate(nowDate)

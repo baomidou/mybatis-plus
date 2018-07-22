@@ -357,7 +357,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * @param params 参数集
      * @return this
      */
-    protected String formatSql(String sqlStr, Object... params) {
+    protected final String formatSql(String sqlStr, Object... params) {
         return formatSqlIfNeed(true, sqlStr, params);
     }
 
@@ -379,15 +379,15 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * @param params 参数集
      * @return this
      */
-    protected String formatSqlIfNeed(boolean need, String sqlStr, Object... params) {
+    protected final String formatSqlIfNeed(boolean need, String sqlStr, Object... params) {
         if (!need || StringUtils.isEmpty(sqlStr)) {
             return null;
         }
         if (ArrayUtils.isNotEmpty(params)) {
             for (int i = 0; i < params.length; ++i) {
-                String genParamName = AbstractWrapper.MP_GENERAL_PARAMNAME + paramNameSeq.incrementAndGet();
-                sqlStr = sqlStr.replace(String.format(AbstractWrapper.PLACE_HOLDER, i),
-                    String.format(AbstractWrapper.MYBATIS_PLUS_TOKEN, getParamAlias(), genParamName));
+                String genParamName = MP_GENERAL_PARAMNAME + paramNameSeq.incrementAndGet();
+                sqlStr = sqlStr.replace(String.format(PLACE_HOLDER, i),
+                    String.format(MYBATIS_PLUS_TOKEN, getParamAlias(), genParamName));
                 paramNameValuePairs.put(genParamName, params[i]);
             }
         }
@@ -409,7 +409,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     /**
      * 必要的初始化
      */
-    protected void initNeed() {
+    protected final void initNeed() {
         paramNameSeq = new AtomicInteger(0);
         paramNameValuePairs = new HashMap<>(16);
         expression = new MergeSegments();
@@ -431,7 +431,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     public String getParamAlias() {
-        return StringUtils.isEmpty(paramAlias) ? AbstractWrapper.DEFAULT_PARAM_ALIAS : paramAlias;
+        return StringUtils.isEmpty(paramAlias) ? DEFAULT_PARAM_ALIAS : paramAlias;
     }
 
     @Override

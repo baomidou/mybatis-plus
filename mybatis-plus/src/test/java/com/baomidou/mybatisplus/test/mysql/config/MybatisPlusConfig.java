@@ -1,21 +1,20 @@
 package com.baomidou.mybatisplus.test.mysql.config;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.extension.injector.LogicSqlInjector;
-import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
-import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
-import com.baomidou.mybatisplus.test.mysql.MysqlMetaObjectHandler;
+import javax.sql.DataSource;
+
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.JdbcType;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.sql.DataSource;
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.extension.injector.LogicSqlInjector;
+import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
+import com.baomidou.mybatisplus.test.mysql.MysqlMetaObjectHandler;
 
 /**
  * <p>
@@ -60,16 +59,6 @@ public class MybatisPlusConfig {
         return sqlSessionFactory.getObject();
     }
 
-//    /**
-//     * 无效配置 --
-//     * 乐观锁插件
-//     * @return OptimisticLockerInterceptor
-//     */
-//    @Bean
-//    public OptimisticLockerInterceptor optimisticLockerInterceptor() {
-//        return new OptimisticLockerInterceptor();
-//    }
-
     @Bean
     public GlobalConfig globalConfig() {
         GlobalConfig conf = new GlobalConfig();
@@ -77,10 +66,7 @@ public class MybatisPlusConfig {
         /* 逻辑删除注入器 */
         LogicSqlInjector logicSqlInjector = new LogicSqlInjector();
         conf.setSqlInjector(logicSqlInjector);
-        conf.setDbConfig(new GlobalConfig.DbConfig()
-            .setIdType(IdType.ID_WORKER)
-            .setLogicDeleteValue("1")
-            .setLogicNotDeleteValue("0"));
+        conf.setDbConfig(new GlobalConfig.DbConfig());
         return conf;
     }
 }

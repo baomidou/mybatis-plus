@@ -6,5 +6,5 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <context:component-scan
-        base-package="com.baomidou.mybatisplus.test.mysql.config,com.baomidou.mybatisplus.test.mysql.service" />
+        base-package="com.baomidou.mybatisplus.test.mysql.config;com.baomidou.mybatisplus.test.mysql.service"/>
 </beans>

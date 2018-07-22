@@ -30,7 +30,7 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
  * @author hubin
  * @since 2017-06-25
  */
-public class MysqlMetaObjectHandler extends MetaObjectHandler {
+public class MysqlMetaObjectHandler implements MetaObjectHandler {
 
     /**
      * 测试 user 表 name 字段为空自动填充
