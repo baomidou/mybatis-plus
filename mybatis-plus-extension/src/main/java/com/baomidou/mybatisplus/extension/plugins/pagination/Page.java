@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
@@ -30,7 +29,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
  * @author hubin
  * @since 2018-06-09
  */
-public class Page<T> implements IPage<T>, Serializable {
+public class Page<T> implements IPage<T> {
 
     private static final long serialVersionUID = 8545996863226528798L;
 

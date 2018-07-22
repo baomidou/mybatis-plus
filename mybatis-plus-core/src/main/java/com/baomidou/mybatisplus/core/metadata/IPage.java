@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +27,7 @@ import java.util.Map;
  * @author hubin
  * @since 2018-06-09
  */
-public interface IPage<T> {
+public interface IPage<T> extends Serializable {
 
     /**
      * <p>
