@@ -42,18 +42,10 @@ public class MybatisPlusConfig {
         /* 分页插件 */
         PaginationInterceptor pagination = new PaginationInterceptor();
         configuration.addInterceptor(pagination);
-
-        /** 乐观锁插件 */
+        /* 乐观锁插件 */
         configuration.addInterceptor(new OptimisticLockerInterceptor());
-
         sqlSessionFactory.setConfiguration(configuration);
-//        pagination.setLocalPage(true);
-//        OptimisticLockerInterceptor optLock = new OptimisticLockerInterceptor();
-//        sqlSessionFactory.setPlugins(new Interceptor[]{
-//            pagination,
-//            optLock,
-//            new PerformanceInterceptor()
-//        });
+        /* 自动填充插件 */
         globalConfig.setMetaObjectHandler(new MysqlMetaObjectHandler());
         sqlSessionFactory.setGlobalConfig(globalConfig);
         return sqlSessionFactory.getObject();

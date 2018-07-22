@@ -21,6 +21,7 @@ import org.apache.ibatis.mapping.SqlSource;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.extension.injector.LogicAbstractMethod;
+import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 
 /**
  * <p>
@@ -35,25 +36,20 @@ public class LogicUpdateById extends LogicAbstractMethod {
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         String sql;
+        boolean logicDelete = tableInfo.isLogicDelete();
         SqlMethod sqlMethod = SqlMethod.UPDATE_BY_ID;
-        if (tableInfo.isLogicDelete()) {
-
-            sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlSet(true, false, tableInfo, "et."),
-                tableInfo.getKeyColumn(), new StringBuilder("et.").append(tableInfo.getKeyProperty()).toString(),
-                new StringBuilder("<if test=\"et instanceof java.util.Map\">")
-                    .append("<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">")
-                    .append(" AND ${et.MP_OPTLOCK_VERSION_COLUMN}=#{et.MP_OPTLOCK_VERSION_ORIGINAL}")
-                    .append("</if></if>").append(getLogicDeleteSql(true,tableInfo)));
-        } else {
-            sqlMethod = SqlMethod.UPDATE_BY_ID;
-            sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(),
-                sqlSet(false, false, tableInfo, "et."),
-                tableInfo.getKeyColumn(), "et." + tableInfo.getKeyProperty(),
-                new StringBuilder("<if test=\"et instanceof java.util.Map\">")
-                    .append("<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">")
-                    .append(" AND ${et.MP_OPTLOCK_VERSION_COLUMN}=#{et.MP_OPTLOCK_VERSION_ORIGINAL}")
-                    .append("</if></if>"));
+        StringBuilder append = new StringBuilder("<if test=\"et instanceof java.util.Map\">")
+            .append("<if test=\"et.").append(OptimisticLockerInterceptor.MP_OPTLOCK_VERSION_ORIGINAL).append("!=null\">")
+            .append(" AND ${et.").append(OptimisticLockerInterceptor.MP_OPTLOCK_VERSION_COLUMN)
+            .append("}=#{et.").append(OptimisticLockerInterceptor.MP_OPTLOCK_VERSION_ORIGINAL).append("}")
+            .append("</if></if>");
+        if (logicDelete) {
+            append.append(getLogicDeleteSql(true, tableInfo));
         }
+        sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(),
+            sqlSet(logicDelete, false, tableInfo, "et."),
+            tableInfo.getKeyColumn(), "et." + tableInfo.getKeyProperty(),
+            append);
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
         return addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
     }
