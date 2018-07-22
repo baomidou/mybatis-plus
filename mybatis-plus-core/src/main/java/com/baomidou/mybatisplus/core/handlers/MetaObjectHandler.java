@@ -18,6 +18,8 @@ package com.baomidou.mybatisplus.core.handlers;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+
 /**
  * <p>
  * 元对象字段填充控制器抽象类，实现公共字段自动写入
@@ -27,8 +29,6 @@ import org.apache.ibatis.reflection.SystemMetaObject;
  * @since 2016-08-28
  */
 public interface MetaObjectHandler {
-
-    String META_OBJ_PREFIX = "et";
 
     /**
      * <p>
@@ -65,8 +65,8 @@ public interface MetaObjectHandler {
     default MetaObjectHandler setFieldValByName(String fieldName, Object fieldVal, MetaObject metaObject) {
         if (metaObject.hasSetter(fieldName) && metaObject.hasGetter(fieldName)) {
             metaObject.setValue(fieldName, fieldVal);
-        } else if (metaObject.hasGetter(META_OBJ_PREFIX)) {
-            Object et = metaObject.getValue(META_OBJ_PREFIX);
+        } else if (metaObject.hasGetter(Constants.META_OBJ_PREFIX)) {
+            Object et = metaObject.getValue(Constants.META_OBJ_PREFIX);
             if (et != null) {
                 MetaObject etMeta = SystemMetaObject.forObject(et);
                 if (etMeta.hasSetter(fieldName)) {
@@ -92,8 +92,8 @@ public interface MetaObjectHandler {
     default Object getFieldValByName(String fieldName, MetaObject metaObject) {
         if (metaObject.hasGetter(fieldName)) {
             return metaObject.getValue(fieldName);
-        } else if (metaObject.hasGetter(META_OBJ_PREFIX + "." + fieldName)) {
-            return metaObject.getValue(META_OBJ_PREFIX + "." + fieldName);
+        } else if (metaObject.hasGetter(Constants.META_OBJ_PREFIX + "." + fieldName)) {
+            return metaObject.getValue(Constants.META_OBJ_PREFIX + "." + fieldName);
         }
         return null;
     }

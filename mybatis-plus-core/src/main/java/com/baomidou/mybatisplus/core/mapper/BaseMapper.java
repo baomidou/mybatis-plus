@@ -23,8 +23,8 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 
 /*
 
@@ -139,7 +139,7 @@ public interface BaseMapper<T> {
      *
      * @param entity 实体对象
      */
-    Integer updateById(@Param(MetaObjectHandler.META_OBJ_PREFIX) T entity);
+    Integer updateById(@Param(Constants.META_OBJ_PREFIX) T entity);
 
     /**
      * <p>
@@ -149,7 +149,7 @@ public interface BaseMapper<T> {
      * @param entity        实体对象 (set 条件值,不能为 null)
      * @param updateWrapper 实体对象封装操作类（可以为 null,里面的 entity 用于生成 where 语句）
      */
-    Integer update(@Param(MetaObjectHandler.META_OBJ_PREFIX) T entity, @Param("ew") Wrapper<T> updateWrapper);
+    Integer update(@Param(Constants.META_OBJ_PREFIX) T entity, @Param("ew") Wrapper<T> updateWrapper);
 
     /**
      * <p>
