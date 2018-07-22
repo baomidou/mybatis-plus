@@ -95,7 +95,9 @@ public class PageMapperMethod {
                     if (IPage.class.isAssignableFrom(method.getReturnType()) && args != null
                         && IPage.class.isAssignableFrom(args[0].getClass())) {
                         List<Object> o = (List<Object>) executeForMany2(sqlSession, args);
-                        result = ((IPage) args[0]).setRecords(o);
+                        IPage page = (IPage) args[0];
+                        page.setRecords(o);
+                        result = page;
                     } else {
                         result = sqlSession.selectOne(command.getName(), param);
                     }
