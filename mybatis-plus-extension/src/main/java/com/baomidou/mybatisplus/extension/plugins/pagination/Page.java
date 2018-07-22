@@ -95,23 +95,23 @@ public class Page<T> implements IPage<T>, Serializable {
 
     /**
      * <p>
-     * 存在上一页
+     * 是否存在上一页
      * </p>
      *
      * @return true / false
      */
-    public boolean hasPrevious() {
+    public boolean isHasPrevious() {
         return this.current > 1;
     }
 
     /**
      * <p>
-     * 存在下一页
+     * 是否存在下一页
      * </p>
      *
      * @return true / false
      */
-    public boolean hasNext() {
+    public boolean isHasNext() {
         return this.current < this.getPages();
     }
 
@@ -127,19 +127,13 @@ public class Page<T> implements IPage<T>, Serializable {
     }
 
     @Override
-    public Page<T> setTotal(long total) {
-        this.total = total;
-        return this;
-    }
-
-    @Override
     public long getTotal() {
         return this.total;
     }
 
     @Override
-    public Page<T> setSize(long size) {
-        this.size = size;
+    public Page<T> setTotal(long total) {
+        this.total = total;
         return this;
     }
 
@@ -149,14 +143,20 @@ public class Page<T> implements IPage<T>, Serializable {
     }
 
     @Override
-    public Page<T> setCurrent(long current) {
-        this.current = current;
+    public Page<T> setSize(long size) {
+        this.size = size;
         return this;
     }
 
     @Override
     public long getCurrent() {
         return this.current;
+    }
+
+    @Override
+    public Page<T> setCurrent(long current) {
+        this.current = current;
+        return this;
     }
 
     @Override

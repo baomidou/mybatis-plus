@@ -62,7 +62,7 @@ public class MysqlTestDataMapperTest {
         LocalDateTime nowDateTime = LocalDateTime.now();
         LocalDate nowDate = nowDateTime.toLocalDate();
         LocalTime nowTime = nowDateTime.toLocalTime();
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 20; i++) {
             mapper.insert(new TestData().setTestInt(i).setTestStr(String.format("第%s条数据", i))
                 .setTestDouble(BigDecimal.valueOf(3.3).multiply(BigDecimal.valueOf(i)).doubleValue())
                 .setTestBoolean((i + 3) % 2 == 0).setTestDate(nowDate)
@@ -112,7 +112,7 @@ public class MysqlTestDataMapperTest {
         LogicTestData et = new LogicTestData()
             .setId(1019248035919613954L)
             .setTestInt(9991122)
-            .setVersion(19L);
+            .setVersion(19);
         System.out.println("====1=====>>>" + JSON.toJSONString(et, true));
         boolean r = logicTestDataService.saveOrUpdate(et);
         System.out.println("====2-1==r==>>>" + r);
@@ -125,7 +125,7 @@ public class MysqlTestDataMapperTest {
         LogicTestData et = new LogicTestData()
             .setId(1019248035919613954L)
             .setTestInt(999)
-            .setVersion(17L);
+            .setVersion(17);
         System.out.println("====1=====>>>" + JSON.toJSONString(et, true));
         int r = logicMapper.updateById(et);
         System.out.println("====2-1==r==>>>" + r);
@@ -246,21 +246,21 @@ public class MysqlTestDataMapperTest {
     public void selectPage() {
         IPage<TestData> page = new Page<>();
         page.setSize(5).setCurrent(1);
-        IPage<TestData> dataPage = mapper.selectPage(page, new QueryWrapper<TestData>().lambda()
-            .eq(TestData::getTestInt, 5));
+        IPage<TestData> dataPage = mapper.selectPage(page, null);
         Assert.assertSame(dataPage, page);
         System.out.println(String.format("total = {%s}", dataPage.getTotal()));
         System.out.println(String.format("data.size = {%s}", dataPage.getRecords().size()));
         println(page.getRecords());
+        System.out.println(JSON.toJSONString(page));
 
         IPage<LogicTestData> logicPage = new Page<>();
         logicPage.setSize(5).setCurrent(1);
-        IPage<LogicTestData> logicDataPage = logicMapper.selectPage(logicPage, new QueryWrapper<LogicTestData>().lambda()
-            .eq(LogicTestData::getTestInt, 5));
+        IPage<LogicTestData> logicDataPage = logicMapper.selectPage(logicPage, null);
         Assert.assertSame(logicDataPage, logicPage);
         System.out.println(String.format("total = {%s}", logicDataPage.getTotal()));
         System.out.println(String.format("data.size = {%s}", logicDataPage.getRecords().size()));
         println(logicDataPage.getRecords());
+        System.out.println(JSON.toJSONString(logicDataPage));
 
     }
 

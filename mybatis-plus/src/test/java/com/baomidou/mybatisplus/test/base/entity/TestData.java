@@ -7,6 +7,7 @@ import java.time.LocalTime;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.Version;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -33,4 +34,7 @@ public class TestData {
     private LocalDateTime createDatetime;
     @TableField(fill = FieldFill.UPDATE)
     private LocalDateTime updateDatetime;
+
+    @Version
+    private Integer version;
 }

@@ -131,13 +131,13 @@ public class GlobalConfig implements Serializable {
          */
         private IKeyGenerator keyGenerator;
         /**
-         * 逻辑删除全局值（默认 0、否）
+         * 逻辑删除全局值（默认 1、表示已删除）
          */
-        private String logicDeleteValue = "0";
+        private String logicDeleteValue = "1";
         /**
-         * 逻辑未删除全局值（默认 1、是）
+         * 逻辑未删除全局值（默认 0、表示未删除）
          */
-        private String logicNotDeleteValue = "1";
+        private String logicNotDeleteValue = "0";
         /**
          * 字段验证策略
          */
@@ -146,6 +146,5 @@ public class GlobalConfig implements Serializable {
          * Sql 保留字处理器
          */
         private SqlReservedWordsHandler reservedWordsHandler = SqlReservedWordsHandler.getInstance();
-
     }
 }
