@@ -3,8 +3,11 @@ package ${package.Entity};
 #foreach($pkg in ${table.importPackages})
 import ${pkg};
 #end
+#if(${swagger2})
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+#end
 #if(${entityLombokModel})
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -30,6 +33,9 @@ import lombok.experimental.Accessors;
 #if(${table.convert})
 @TableName("${table.name}")
 #end
+#if(${swagger2})
+@ApiModel(value="${entity}对象", description="$!{table.comment}")
+#end
 #if(${superEntityClass})
 public class ${entity} extends ${superEntityClass}#if(${activeRecord})<${entity}>#end {
 #elseif(${activeRecord})
@@ -39,16 +45,20 @@ public class ${entity} implements Serializable {
 #end
 
     private static final long serialVersionUID = 1L;
-
 ## ----------  BEGIN 字段循环遍历  ----------
 #foreach($field in ${table.fields})
+
 #if(${field.keyFlag})
 #set($keyPropertyName=${field.propertyName})
 #end
 #if("$!field.comment" != "")
+    #if(${swagger2})
+    @ApiModelProperty(value = "${field.comment}")
+    #else
     /**
      * ${field.comment}
      */
+     #end
 #end
 #if(${field.keyFlag})
 ## 主键

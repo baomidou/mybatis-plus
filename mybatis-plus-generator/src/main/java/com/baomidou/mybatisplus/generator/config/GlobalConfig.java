@@ -64,6 +64,11 @@ public class GlobalConfig {
     private boolean kotlin = false;
 
     /**
+     * 开启 swagger2 模式
+     */
+    private boolean swagger2 = false;
+
+    /**
      * 开启 ActiveRecord 模式
      */
     private boolean activeRecord = false;
