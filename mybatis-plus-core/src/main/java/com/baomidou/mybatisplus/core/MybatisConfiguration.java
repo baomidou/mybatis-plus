@@ -77,7 +77,7 @@ public class MybatisConfiguration extends Configuration {
                 /*
                  * 说明已加载了xml中的节点； 忽略mapper中的SqlProvider数据
                  */
-                MybatisConfiguration.logger.error("mapper[" + ms.getId() + "] is ignored, because it's exists, maybe from xml file");
+                MybatisConfiguration.logger.error("mapper[" + ms.getId() + "] is ignored, because it exists, maybe from xml file");
                 return;
             }
         }

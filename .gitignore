@@ -6,6 +6,8 @@
 *.iml
 **/out
 html
+*.ipr
+*.iws
 
 # Eclipse project files
 **/.classpath
