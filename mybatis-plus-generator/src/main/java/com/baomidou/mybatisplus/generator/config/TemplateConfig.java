@@ -27,6 +27,8 @@ public class TemplateConfig {
 
     private String entity = ConstVal.TEMPLATE_ENTITY_JAVA;
 
+    private String entityKt = ConstVal.TEMPLATE_ENTITY_KT;
+
     private String service = ConstVal.TEMPLATE_SERVICE;
 
     private String serviceImpl = ConstVal.TEMPLATE_SERVICE_IMPL;
@@ -38,7 +40,12 @@ public class TemplateConfig {
     private String controller = ConstVal.TEMPLATE_CONTROLLER;
 
     public String getEntity(boolean kotlin) {
-        return kotlin ? ConstVal.TEMPLATE_ENTITY_KT : entity;
+        return kotlin ? entityKt : entity;
+    }
+
+    public TemplateConfig setEntityKt(String entityKt) {
+        this.entityKt = entityKt;
+        return this;
     }
 
     public TemplateConfig setEntity(String entity) {
