@@ -41,7 +41,8 @@ public class PostgreSQLGenerator extends GeneratorTest {
         gc.setEnableCache(false);// XML 二级缓存
         gc.setBaseResultMap(true);// XML ResultMap
         gc.setBaseColumnList(false);// XML columList
-        //gc.setKotlin(true) 是否生成 kotlin 代码
+        //gc.setKotlin(true); // 是否生成 kotlin 代码
+        //gc.setSwagger2(true); // 是否生成 Swagger2 注解
         gc.setAuthor("hubin");
 
         // 自定义文件命名，注意 %s 会自动填充表实体属性！

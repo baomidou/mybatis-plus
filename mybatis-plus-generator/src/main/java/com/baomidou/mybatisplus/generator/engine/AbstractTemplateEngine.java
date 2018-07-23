@@ -223,6 +223,7 @@ public abstract class AbstractTemplateEngine {
         objectMap.put("versionFieldName", config.getStrategyConfig().getVersionFieldName());
         objectMap.put("activeRecord", globalConfig.isActiveRecord());
         objectMap.put("kotlin", globalConfig.isKotlin());
+        objectMap.put("swagger2", globalConfig.isSwagger2());
         objectMap.put("date", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
         objectMap.put("table", tableInfo);
         objectMap.put("enableCache", globalConfig.isEnableCache());
