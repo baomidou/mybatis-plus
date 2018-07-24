@@ -84,10 +84,6 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
      * 方言实现类
      */
     private String dialectClazz;
-    /**
-     * 是否开启 PageHelper localPage 模式
-     */
-    private boolean localPage = false;
 
     /**
      * 查询SQL拼接Order By
@@ -246,9 +242,6 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
         }
         if (StringUtils.isNotEmpty(dialectClazz)) {
             this.dialectClazz = dialectClazz;
-        }
-        if (StringUtils.isNotEmpty(localPage)) {
-            this.localPage = Boolean.valueOf(localPage);
         }
     }
 }
