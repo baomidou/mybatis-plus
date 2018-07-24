@@ -59,7 +59,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
     public static final String MP_OPTLOCK_VERSION_ORIGINAL = "MP_OPTLOCK_VERSION_ORIGINAL";
     public static final String MP_OPTLOCK_VERSION_COLUMN = "MP_OPTLOCK_VERSION_COLUMN";
     public static final String MP_OPTLOCK_ET_ORIGINAL = "MP_OPTLOCK_ET_ORIGINAL";
-    private static final String NAME_ENTITY = Constants.META_OBJ_PREFIX;
+    private static final String NAME_ENTITY = Constants.ENTITY;
     private static final String NAME_ENTITY_WRAPPER = "ew";
     private static final String PARAM_UPDATE_METHOD_NAME = "update";
 

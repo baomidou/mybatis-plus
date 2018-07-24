@@ -112,7 +112,7 @@ public interface BaseMapper<T> {
      *
      * @param columnMap 表字段 map 对象
      */
-    Integer deleteByMap(@Param("cm") Map<String, Object> columnMap);
+    Integer deleteByMap(@Param(Constants.COLUMN_MAP) Map<String, Object> columnMap);
 
     /**
      * <p>
@@ -121,7 +121,7 @@ public interface BaseMapper<T> {
      *
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
-    Integer delete(@Param("ew") Wrapper<T> queryWrapper);
+    Integer delete(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
 
     /**
      * <p>
@@ -130,7 +130,7 @@ public interface BaseMapper<T> {
      *
      * @param idList 主键ID列表(不能为 null 以及 empty)
      */
-    Integer deleteBatchIds(@Param("coll") Collection<? extends Serializable> idList);
+    Integer deleteBatchIds(@Param(Constants.COLLECTION) Collection<? extends Serializable> idList);
 
     /**
      * <p>
@@ -139,7 +139,7 @@ public interface BaseMapper<T> {
      *
      * @param entity 实体对象
      */
-    Integer updateById(@Param(Constants.META_OBJ_PREFIX) T entity);
+    Integer updateById(@Param(Constants.ENTITY) T entity);
 
     /**
      * <p>
@@ -149,7 +149,7 @@ public interface BaseMapper<T> {
      * @param entity        实体对象 (set 条件值,不能为 null)
      * @param updateWrapper 实体对象封装操作类（可以为 null,里面的 entity 用于生成 where 语句）
      */
-    Integer update(@Param(Constants.META_OBJ_PREFIX) T entity, @Param("ew") Wrapper<T> updateWrapper);
+    Integer update(@Param(Constants.ENTITY) T entity, @Param(Constants.WRAPPER) Wrapper<T> updateWrapper);
 
     /**
      * <p>
@@ -167,7 +167,7 @@ public interface BaseMapper<T> {
      *
      * @param idList 主键ID列表(不能为 null 以及 empty)
      */
-    List<T> selectBatchIds(@Param("coll") Collection<? extends Serializable> idList);
+    List<T> selectBatchIds(@Param(Constants.COLLECTION) Collection<? extends Serializable> idList);
 
     /**
      * <p>
@@ -176,7 +176,7 @@ public interface BaseMapper<T> {
      *
      * @param columnMap 表字段 map 对象
      */
-    List<T> selectByMap(@Param("cm") Map<String, Object> columnMap);
+    List<T> selectByMap(@Param(Constants.COLUMN_MAP) Map<String, Object> columnMap);
 
     /**
      * <p>
@@ -185,7 +185,7 @@ public interface BaseMapper<T> {
      *
      * @param queryWrapper 实体对象
      */
-    T selectOne(@Param("ew") Wrapper<T> queryWrapper);
+    T selectOne(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
 
     /**
      * <p>
@@ -194,7 +194,7 @@ public interface BaseMapper<T> {
      *
      * @param queryWrapper 实体对象
      */
-    Integer selectCount(@Param("ew") Wrapper<T> queryWrapper);
+    Integer selectCount(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
 
     /**
      * <p>
@@ -203,7 +203,7 @@ public interface BaseMapper<T> {
      *
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
-    List<T> selectList(@Param("ew") Wrapper<T> queryWrapper);
+    List<T> selectList(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
 
     /**
      * <p>
@@ -212,7 +212,7 @@ public interface BaseMapper<T> {
      *
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
-    List<Map<String, Object>> selectMaps(@Param("ew") Wrapper<T> queryWrapper);
+    List<Map<String, Object>> selectMaps(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
 
     /**
      * <p>
@@ -222,7 +222,7 @@ public interface BaseMapper<T> {
      *
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
-    List<Object> selectObjs(@Param("ew") Wrapper<T> queryWrapper);
+    List<Object> selectObjs(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
 
     /**
      * <p>
@@ -232,7 +232,7 @@ public interface BaseMapper<T> {
      * @param page         分页查询条件（可以为 RowBounds.DEFAULT）
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
-    IPage<T> selectPage(IPage<T> page, @Param("ew") Wrapper<T> queryWrapper);
+    IPage<T> selectPage(IPage<T> page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
 
     /**
      * <p>
@@ -242,5 +242,5 @@ public interface BaseMapper<T> {
      * @param page         分页查询条件
      * @param queryWrapper 实体对象封装操作类
      */
-    IPage<Map<String, Object>> selectMapsPage(IPage<T> page, @Param("ew") Wrapper<T> queryWrapper);
+    IPage<Map<String, Object>> selectMapsPage(IPage<T> page, @Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
 }

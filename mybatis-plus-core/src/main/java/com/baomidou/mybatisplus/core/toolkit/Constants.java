@@ -27,8 +27,31 @@ package com.baomidou.mybatisplus.core.toolkit;
 public interface Constants {
 
     /**
-     * 实体类前缀
+     * 一个点
      */
-    String META_OBJ_PREFIX = "et";
-
+    String SPOT = ".";
+    /**
+     * 实体类
+     */
+    String ENTITY = "et";
+    /**
+     * 实体类 带后缀 ==> .
+     */
+    String ENTITY_SPOT = ENTITY + SPOT;
+    /**
+     * wrapper类
+     */
+    String WRAPPER = "ew";
+    /**
+     * wrapper类 带后缀 ==> .
+     */
+    String WRAPPER_SPOT = WRAPPER + SPOT;
+    /**
+     * columnMap
+     */
+    String COLUMN_MAP = "cm";
+    /**
+     * collection
+     */
+    String COLLECTION = "coll";
 }

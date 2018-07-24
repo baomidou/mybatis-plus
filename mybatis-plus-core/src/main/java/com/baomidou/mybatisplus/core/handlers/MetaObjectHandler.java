@@ -65,8 +65,8 @@ public interface MetaObjectHandler {
     default MetaObjectHandler setFieldValByName(String fieldName, Object fieldVal, MetaObject metaObject) {
         if (metaObject.hasSetter(fieldName) && metaObject.hasGetter(fieldName)) {
             metaObject.setValue(fieldName, fieldVal);
-        } else if (metaObject.hasGetter(Constants.META_OBJ_PREFIX)) {
-            Object et = metaObject.getValue(Constants.META_OBJ_PREFIX);
+        } else if (metaObject.hasGetter(Constants.ENTITY)) {
+            Object et = metaObject.getValue(Constants.ENTITY);
             if (et != null) {
                 MetaObject etMeta = SystemMetaObject.forObject(et);
                 if (etMeta.hasSetter(fieldName)) {
@@ -87,26 +87,26 @@ public interface MetaObjectHandler {
      *
      * @param fieldName  java bean property name
      * @param metaObject parameter wrapper
-     * @return
+     * @return 字段值
      */
     default Object getFieldValByName(String fieldName, MetaObject metaObject) {
         if (metaObject.hasGetter(fieldName)) {
             return metaObject.getValue(fieldName);
-        } else if (metaObject.hasGetter(Constants.META_OBJ_PREFIX + "." + fieldName)) {
-            return metaObject.getValue(Constants.META_OBJ_PREFIX + "." + fieldName);
+        } else if (metaObject.hasGetter(Constants.ENTITY_SPOT + fieldName)) {
+            return metaObject.getValue(Constants.ENTITY_SPOT + fieldName);
         }
         return null;
     }
 
     /**
-     * 开启插入填充
+     * 是否开启了插入填充
      */
     default boolean openInsertFill() {
         return true;
     }
 
     /**
-     * 开启更新填充
+     * 是否开启了更新填充
      */
     default boolean openUpdateFill() {
         return true;
