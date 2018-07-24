@@ -49,7 +49,6 @@ import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.handlers.AbstractSqlParserHandler;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
-import com.baomidou.mybatisplus.extension.plugins.pagination.PageHelper;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.extension.toolkit.SqlParserUtils;
 
@@ -160,15 +159,6 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
                     page = (IPage) arg;
                     break;
                 }
-            }
-        }
-
-        /**
-         * 非参数模式 ThreadLocal 变量处理的分页
-         */
-        if (null == page) {
-            if (localPage) {
-                page = PageHelper.getPage();
             }
         }
 

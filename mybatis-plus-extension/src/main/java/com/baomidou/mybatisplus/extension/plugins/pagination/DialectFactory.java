@@ -67,7 +67,36 @@ public class DialectFactory {
     public static String buildPaginationSql(Page page, String buildSql, DbType dbType, String dialectClazz)
         throws Exception {
         // fix #172, 196
-        return getDialect(dbType, dialectClazz).buildPaginationSql(buildSql, PageHelper.offsetCurrent(page), page.getSize());
+        return getDialect(dbType, dialectClazz).buildPaginationSql(buildSql, offsetCurrent(page), page.getSize());
+    }
+
+
+    /**
+     * <p>
+     * Page 分页偏移量
+     * </p>
+     */
+    public static long offsetCurrent(IPage page) {
+        if (null == page) {
+            return 0;
+        }
+        return offsetCurrent(page.getCurrent(), page.getSize());
+    }
+
+    /**
+     * <p>
+     * 计算当前分页偏移量
+     * </p>
+     *
+     * @param current 当前页
+     * @param size    每页显示数量
+     * @return
+     */
+    public static long offsetCurrent(long current, long size) {
+        if (current > 0) {
+            return (current - 1) * size;
+        }
+        return 0;
     }
 
     /**
