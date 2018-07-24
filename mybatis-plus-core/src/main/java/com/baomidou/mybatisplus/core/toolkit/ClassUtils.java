@@ -27,9 +27,6 @@ import java.util.List;
  */
 public final class ClassUtils {
 
-    private ClassUtils() {
-    }
-
     /**
      * 代理 class 的名称
      */
@@ -39,6 +36,9 @@ public final class ClassUtils {
         , "javassist.util.proxy.ProxyObject"
         // javassist
         , "org.apache.ibatis.javassist.util.proxy.ProxyObject");
+
+    private ClassUtils() {
+    }
 
     /**
      * 判断是否为代理对象
@@ -75,9 +75,7 @@ public final class ClassUtils {
      * @throws com.baomidou.mybatisplus.core.exceptions.MybatisPlusException 传入对象为 null 是抛出异常
      */
     public static Class<?> getUserClass(Object object) {
-        if (object == null) {
-            throw ExceptionUtils.mpe("Error: Instance must not be null");
-        }
+        Assert.notNull(object, "Error: Instance must not be null");
         return getUserClass(object.getClass());
     }
 

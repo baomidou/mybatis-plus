@@ -19,8 +19,8 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Optional;
 
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.Property;
@@ -51,12 +51,10 @@ public abstract class AbstractLambdaWrapper<T, This extends AbstractLambdaWrappe
         if (!initColumnMap) {
             String entityClassName = lambda.getImplClass().replace("/", ".");
             columnMap = LambdaUtils.getColumnMap(entityClassName);
-            if (CollectionUtils.isEmpty(columnMap)) {
-                throw new MybatisPlusException("该模式不能应用于非 baseMapper 的泛型 entity 之外的 entity!");
-            }
+            Assert.notEmpty(columnMap, "该模式不能应用于非 baseMapper 的泛型 entity 之外的 entity!");
             initColumnMap = true;
         }
         return Optional.ofNullable(columnMap.get(StringUtils.resolveFieldName(lambda.getImplMethodName())))
-            .orElseThrow(() -> new MybatisPlusException("该模式不能应用于非数据库字段!"));
+            .orElseThrow(() -> ExceptionUtils.mpe("该模式不能应用于非数据库字段!"));
     }
 }
