@@ -147,5 +147,4 @@ public abstract class LogicAbstractMethod extends AbstractMethod {
         // 正常逻辑
         return super.sqlWhereByMap(table);
     }
-
 }

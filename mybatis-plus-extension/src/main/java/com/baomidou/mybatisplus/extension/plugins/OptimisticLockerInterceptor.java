@@ -28,6 +28,8 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 
+import lombok.Data;
+
 /**
  * <p>
  * Optimistic Lock Light version<BR>
@@ -53,15 +55,14 @@ import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 @Intercepts({@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})})
 public class OptimisticLockerInterceptor implements Interceptor {
 
-    private final Map<Class<?>, EntityField> versionFieldCache = new ConcurrentHashMap<>();
-    private final Map<Class<?>, List<EntityField>> entityFieldsCache = new ConcurrentHashMap<>();
-
     public static final String MP_OPTLOCK_VERSION_ORIGINAL = "MP_OPTLOCK_VERSION_ORIGINAL";
     public static final String MP_OPTLOCK_VERSION_COLUMN = "MP_OPTLOCK_VERSION_COLUMN";
     public static final String MP_OPTLOCK_ET_ORIGINAL = "MP_OPTLOCK_ET_ORIGINAL";
     private static final String NAME_ENTITY = Constants.ENTITY;
-    private static final String NAME_ENTITY_WRAPPER = "ew";
+    private static final String NAME_ENTITY_WRAPPER = Constants.WRAPPER;
     private static final String PARAM_UPDATE_METHOD_NAME = "update";
+    private final Map<Class<?>, EntityField> versionFieldCache = new ConcurrentHashMap<>();
+    private final Map<Class<?>, List<EntityField>> entityFieldsCache = new ConcurrentHashMap<>();
 
     @Override
     @SuppressWarnings("unchecked")
@@ -278,41 +279,17 @@ public class OptimisticLockerInterceptor implements Interceptor {
         }
         return fieldList;
     }
-}
 
-class EntityField {
+    @Data
+    private class EntityField {
 
-    private Field field;
-    private boolean version;
-    private String columnName;
+        private Field field;
+        private boolean version;
+        private String columnName;
 
-    public EntityField(Field field, boolean version) {
-        this.field = field;
-        this.version = version;
-    }
-
-    public Field getField() {
-        return field;
-    }
-
-    public void setField(Field field) {
-        this.field = field;
-    }
-
-    public boolean isVersion() {
-        return version;
-    }
-
-    public void setVersion(boolean version) {
-        this.version = version;
-    }
-
-    public String getColumnName() {
-        return columnName;
-    }
-
-    public void setColumnName(String columnName) {
-        this.columnName = columnName;
+        EntityField(Field field, boolean version) {
+            this.field = field;
+            this.version = version;
+        }
     }
 }
-
