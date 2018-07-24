@@ -15,13 +15,15 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
+import static java.util.stream.Collectors.joining;
+
 import java.sql.Blob;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
@@ -277,6 +279,18 @@ public class StringUtils {
 
     /**
      * <p>
+     * 字符串拼接
+     * </p>
+     *
+     * @param strings 需要拼接的字符串
+     * @return 拼接后的字符串
+     */
+    public static String appends(String... strings) {
+        return Arrays.stream(strings).collect(joining(""));
+    }
+
+    /**
+     * <p>
      * 使用单引号包含字符串
      * </p>
      *
@@ -301,7 +315,7 @@ public class StringUtils {
      * @return 单引号包含的原字符串的集合形式
      */
     public static String quotaMarkList(Collection<?> coll) {
-        return coll.stream().map(StringUtils::quotaMark).collect(Collectors.joining(",", "(", ")"));
+        return coll.stream().map(StringUtils::quotaMark).collect(joining(",", "(", ")"));
     }
 
     /**
