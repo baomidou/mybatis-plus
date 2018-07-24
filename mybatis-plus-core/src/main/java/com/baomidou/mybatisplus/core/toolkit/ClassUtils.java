@@ -16,7 +16,8 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * ClassUtils
@@ -24,22 +25,31 @@ import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
  * @author Caratacus
  * @since 2017/07/08
  */
-public class ClassUtils {
+public final class ClassUtils {
+
+    private ClassUtils() {
+    }
+
+    /**
+     * 代理 class 的名称
+     */
+    private static final List<String> PROXY_CLASS_NAMES = Arrays.asList("net.sf.cglib.proxy.Factory"
+        // cglib
+        , "org.springframework.cglib.proxy.Factory"
+        , "javassist.util.proxy.ProxyObject"
+        // javassist
+        , "org.apache.ibatis.javassist.util.proxy.ProxyObject");
 
     /**
      * 判断是否为代理对象
      *
-     * @param clazz
-     * @return
+     * @param clazz 传入 class 对象
+     * @return 如果对象class是代理 class，返回 true
      */
     public static boolean isProxy(Class<?> clazz) {
         if (clazz != null) {
             for (Class<?> cls : clazz.getInterfaces()) {
-                String interfaceName = cls.getName();
-                if ("net.sf.cglib.proxy.Factory".equals(interfaceName) //cglib
-                    || "org.springframework.cglib.proxy.Factory".equals(interfaceName)
-                    || "javassist.util.proxy.ProxyObject".equals(interfaceName) //javassist
-                    || "org.apache.ibatis.javassist.util.proxy.ProxyObject".equals(interfaceName)) {
+                if (PROXY_CLASS_NAMES.contains(cls.getName())) {
                     return true;
                 }
             }
@@ -48,10 +58,10 @@ public class ClassUtils {
     }
 
     /**
-     * 获取当前对象的class
+     * 获取当前对象的 class
      *
-     * @param clazz
-     * @return
+     * @param clazz 传入
+     * @return 如果是代理的class，返回父 class，否则返回自身
      */
     public static Class<?> getUserClass(Class<?> clazz) {
         return isProxy(clazz) ? clazz.getSuperclass() : clazz;
@@ -60,12 +70,13 @@ public class ClassUtils {
     /**
      * 获取当前对象的class
      *
-     * @param object
-     * @return
+     * @param object 对象
+     * @return 返回对象的 user class
+     * @throws com.baomidou.mybatisplus.core.exceptions.MybatisPlusException 传入对象为 null 是抛出异常
      */
     public static Class<?> getUserClass(Object object) {
         if (object == null) {
-            throw new MybatisPlusException("Error: Instance must not be null");
+            throw ExceptionUtils.mpe("Error: Instance must not be null");
         }
         return getUserClass(object.getClass());
     }

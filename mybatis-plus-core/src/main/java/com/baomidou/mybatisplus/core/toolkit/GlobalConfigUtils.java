@@ -53,14 +53,11 @@ public class GlobalConfigUtils {
      * 日志
      */
     private static final Log logger = LogFactory.getLog(GlobalConfigUtils.class);
+
     /**
      * 缓存全局信息
      */
     private static final Map<String, GlobalConfig> GLOBAL_CONFIG = new ConcurrentHashMap<>();
-
-    public GlobalConfigUtils() {
-        // 构造方法
-    }
 
     /**
      * <p>
@@ -78,6 +75,8 @@ public class GlobalConfigUtils {
     /**
      * <p>
      * 获取默认 MybatisGlobalConfig
+     * <p>
+     * FIXME 这可能是一个伪装成单例模式的原型模式，暂时不确定
      * </p>
      */
     public static GlobalConfig defaults() {

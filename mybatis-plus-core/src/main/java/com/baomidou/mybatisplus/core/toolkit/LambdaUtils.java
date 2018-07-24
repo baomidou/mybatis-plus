@@ -16,16 +16,15 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.support.Property;
-import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
-
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
+
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.support.Property;
+import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 
 /**
  * <p>
@@ -38,7 +37,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class LambdaUtils {
 
     private static final Map<String, Map<String, String>> LAMBDA_CACHE = new ConcurrentHashMap<>();
-    private static final Map<Class, WeakReference<SerializedLambda>> FUNC_CACHE = new WeakHashMap<>();
+
+    private static final Map<Class, WeakReference<SerializedLambda>> FUNC_CACHE = new ConcurrentHashMap<>();
 
     /**
      * <p>
