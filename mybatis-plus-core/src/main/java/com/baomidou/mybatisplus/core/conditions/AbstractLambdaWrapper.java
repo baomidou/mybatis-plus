@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
-import java.io.Serializable;
 import java.util.Map;
 import java.util.Optional;
 
@@ -37,7 +36,7 @@ import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
  */
 @SuppressWarnings("serial")
 public abstract class AbstractLambdaWrapper<T, This extends AbstractLambdaWrapper<T, This>>
-    extends AbstractWrapper<T, Property<T, ?>, This> implements Serializable {
+    extends AbstractWrapper<T, Property<T, ?>, This> {
 
     private Map<String, String> columnMap = null;
     private boolean initColumnMap = false;

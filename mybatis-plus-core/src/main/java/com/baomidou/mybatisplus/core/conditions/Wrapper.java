@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
-import java.io.Serializable;
-
 import com.baomidou.mybatisplus.core.toolkit.SerializationUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
@@ -29,7 +27,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  * @since 2018-05-25
  */
 @SuppressWarnings("serial")
-public abstract class Wrapper<T> implements ISqlSegment, Serializable {
+public abstract class Wrapper<T> implements ISqlSegment {
 
     /**
      * <p>

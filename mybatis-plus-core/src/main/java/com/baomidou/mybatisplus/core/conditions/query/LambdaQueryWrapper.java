@@ -17,7 +17,6 @@ package com.baomidou.mybatisplus.core.conditions.query;
 
 import static java.util.stream.Collectors.joining;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +37,7 @@ import com.baomidou.mybatisplus.core.toolkit.support.Property;
  * @since 2017-05-26
  */
 @SuppressWarnings("serial")
-public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryWrapper<T>> implements Serializable {
+public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryWrapper<T>> {
 
     /**
      * SQL 查询字段内容，例如：id,name,age

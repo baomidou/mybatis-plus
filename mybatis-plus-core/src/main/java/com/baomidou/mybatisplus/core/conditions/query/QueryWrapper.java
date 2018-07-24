@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.conditions.query;
 
-import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -33,7 +32,7 @@ import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
  * @since 2018-05-25
  */
 @SuppressWarnings("serial")
-public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>> implements Serializable {
+public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>> {
 
     /**
      * SQL 查询字段内容，例如：id,name,age

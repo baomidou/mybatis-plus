@@ -17,7 +17,6 @@ package com.baomidou.mybatisplus.core.conditions.update;
 
 import static java.util.stream.Collectors.joining;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +36,7 @@ import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
  * @since 2018-05-30
  */
 @SuppressWarnings("serial")
-public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T>> implements Serializable {
+public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T>> {
 
     /**
      * SQL 更新字段内容，例如：name='1',age=2

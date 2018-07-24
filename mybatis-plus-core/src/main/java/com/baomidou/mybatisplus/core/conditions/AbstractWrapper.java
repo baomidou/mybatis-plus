@@ -38,7 +38,6 @@ import static com.baomidou.mybatisplus.core.enums.SqlKeyword.OR;
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ORDER_BY;
 import static java.util.stream.Collectors.joining;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -68,7 +67,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  */
 @SuppressWarnings("unchecked,serial")
 public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, This>> extends Wrapper<T>
-    implements Compare<This, R>, Nested<This>, Join<This>, Func<This, R>, Serializable {
+    implements Compare<This, R>, Nested<This>, Join<This>, Func<This, R> {
 
     /**
      * 前缀
