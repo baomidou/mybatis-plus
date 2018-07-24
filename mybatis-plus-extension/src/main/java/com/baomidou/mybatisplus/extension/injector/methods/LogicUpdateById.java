@@ -20,6 +20,7 @@ import org.apache.ibatis.mapping.SqlSource;
 
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.injector.LogicAbstractMethod;
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 
@@ -47,8 +48,8 @@ public class LogicUpdateById extends LogicAbstractMethod {
             append.append(getLogicDeleteSql(true, tableInfo));
         }
         sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(),
-            sqlSet(logicDelete, false, tableInfo, "et."),
-            tableInfo.getKeyColumn(), "et." + tableInfo.getKeyProperty(),
+            sqlSet(logicDelete, false, tableInfo, Constants.ENTITY_SPOT),
+            tableInfo.getKeyColumn(), Constants.ENTITY_SPOT + tableInfo.getKeyProperty(),
             append);
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
         return addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);

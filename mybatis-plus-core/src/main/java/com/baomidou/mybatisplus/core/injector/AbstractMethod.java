@@ -128,7 +128,7 @@ public abstract class AbstractMethod {
      * @param ew     是否存在 UpdateWrapper 条件
      * @param table  表信息
      * @param prefix 前缀
-     * @return
+     * @return sql
      */
     protected String sqlSet(boolean logic, boolean ew, TableInfo table, String prefix) {
         StringBuilder set = new StringBuilder();
