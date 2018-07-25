@@ -54,6 +54,7 @@ import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 
@@ -73,7 +74,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * 前缀
      */
     private static final String MP_GENERAL_PARAMNAME = "MPGENVAL";
-    private static final String DEFAULT_PARAM_ALIAS = "ew";
+    private static final String DEFAULT_PARAM_ALIAS = Constants.WRAPPER;
     /**
      * 占位符
      */

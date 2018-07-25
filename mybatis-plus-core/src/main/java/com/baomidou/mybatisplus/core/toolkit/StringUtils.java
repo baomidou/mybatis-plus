@@ -282,11 +282,12 @@ public class StringUtils {
      * 字符串拼接
      * </p>
      *
-     * @param strings 需要拼接的字符串
+     * @param delimiter 中间的分隔符
+     * @param strings   需要拼接的字符串
      * @return 拼接后的字符串
      */
-    public static String appends(String... strings) {
-        return Arrays.stream(strings).collect(joining(""));
+    public static String appends(String delimiter, String... strings) {
+        return Arrays.stream(strings).collect(joining(delimiter == null ? "" : delimiter));
     }
 
     /**
@@ -851,6 +852,6 @@ public class StringUtils {
      */
     public static String removeWordWithComma(String s, String p) {
         String match = "\\s*" + p + "\\s*,{0,1}";
-        return s.replaceAll(match,"");
+        return s.replaceAll(match, "");
     }
 }
