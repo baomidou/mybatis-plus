@@ -235,8 +235,6 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
     public void setProperties(Properties prop) {
         String dialectType = prop.getProperty("dialectType");
         String dialectClazz = prop.getProperty("dialectClazz");
-        String localPage = prop.getProperty("localPage");
-
         if (StringUtils.isNotEmpty(dialectType)) {
             this.dialectType = dialectType;
         }

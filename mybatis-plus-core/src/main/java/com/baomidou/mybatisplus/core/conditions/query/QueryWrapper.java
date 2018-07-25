@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 
 /**
@@ -74,10 +75,8 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
         return typedThis;
     }
 
-    public QueryWrapper<T> exclude(String column) {
-        if(StringUtils.isNotEmpty(sqlSelect)){
-            this.sqlSelect = StringUtils.removeWordWithComma(this.sqlSelect, column);
-        }
+    public QueryWrapper<T> select(Class<T> clazz, String... excludeColumns) {
+        this.sqlSelect = TableInfoHelper.getTableColumns(clazz, excludeColumns);
         return typedThis;
     }
 

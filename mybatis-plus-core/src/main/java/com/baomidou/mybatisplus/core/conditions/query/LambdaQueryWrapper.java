@@ -75,6 +75,21 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
         return typedThis;
     }
 
+    /**
+     * <p>
+     * SELECT 部分 SQL 设置
+     * </p>
+     *
+     * @param excludeColumns 排除的查询字段
+     */
+    public LambdaQueryWrapper<T> select(Class<T> clazz, Property<T, ?>... excludeColumns) {
+        // TODO 待定
+//        if(StringUtils.isNotEmpty(sqlSelect)){
+//            Class clazz = ReflectionKit.getSuperClassGenricType(getClass(), 1);
+//            this.sqlSelect = TableInfoHelper.getTableColumns(clazz, excludeColumns);
+//        }
+        return typedThis;
+    }
 
     @Override
     protected LambdaQueryWrapper<T> instance(AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {

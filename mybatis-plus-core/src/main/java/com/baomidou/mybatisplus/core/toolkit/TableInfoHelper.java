@@ -15,13 +15,14 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import com.baomidou.mybatisplus.annotation.*;
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
-import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
+import static java.util.stream.Collectors.joining;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -37,12 +38,17 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.KeySequence;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
+import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
 
 /**
  * <p>
@@ -90,6 +96,41 @@ public class TableInfoHelper {
             TABLE_INFO_CACHE.put(ClassUtils.getUserClass(clazz).getName(), tableInfo);
         }
         return tableInfo;
+    }
+
+    /**
+     * <p>
+     * 获取表字段
+     * </p>
+     *
+     * @param clazz          表对应实体类 Class
+     * @param excludeColumns 排除字段
+     * @return
+     */
+    public static String getTableColumns(Class<?> clazz, String... excludeColumns) {
+        if (null == clazz || ArrayUtils.isEmpty(excludeColumns)) {
+            return null;
+        }
+
+        TableInfo tableInfo = getTableInfo(clazz);
+        Assert.notNull(tableInfo, "Undiscovered table info . " + clazz.getName());
+
+        // 添加表字段
+        List<String> columns = new ArrayList<>();
+        if (null != tableInfo.getKeyColumn()) {
+            columns.add(tableInfo.getKeyColumn());
+        }
+        for (TableFieldInfo tableFieldInfo : tableInfo.getFieldList()) {
+            columns.add(tableFieldInfo.getColumn());
+        }
+
+        // 移除不需要的字段
+        for (String ec : excludeColumns) {
+            if (null != ec) {
+                columns.remove(ec);
+            }
+        }
+        return CollectionUtils.isEmpty(columns) ? null : columns.stream().collect(joining(","));
     }
 
     /**

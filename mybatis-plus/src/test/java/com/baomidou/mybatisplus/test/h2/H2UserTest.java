@@ -159,8 +159,7 @@ public class H2UserTest extends BaseTest {
     @Test
     public void testEntityWrapperSelectSqlExcludeColumn() {
         QueryWrapper<H2User> ew = new QueryWrapper<>();
-        ew.select("test_id as id, name, age");
-        ew.exclude("name");
+        ew.select(H2User.class, "age", "price", null);
         List<H2User> list = userService.list(ew);
         for (H2User u : list) {
             Assert.assertNotNull(u.getTestId());
