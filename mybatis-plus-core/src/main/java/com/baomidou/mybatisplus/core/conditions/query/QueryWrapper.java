@@ -15,12 +15,18 @@
  */
 package com.baomidou.mybatisplus.core.conditions.query;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 
 /**
@@ -74,8 +80,27 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
         return typedThis;
     }
 
-    public QueryWrapper<T> exclude(String column) {
-        if(StringUtils.isNotEmpty(sqlSelect)){
+    public QueryWrapper<T> selectWithout(String column) {
+        if(null == getEntity()){
+            throw new MybatisPlusException("Entity has not been set");
+        }
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(getEntity().getClass());
+        List<TableFieldInfo> fieldList = tableInfo.getFieldList();
+        String keyColumn = tableInfo.getKeyColumn();
+        StringBuilder sb = new StringBuilder();
+        sb.append(keyColumn).append(", ");
+        Iterator<TableFieldInfo> it = fieldList.iterator();
+        while (it.hasNext()) {
+            TableFieldInfo next = it.next();
+            String s = next.getColumn();
+            sb.append(s);
+            if (it.hasNext()) {
+                sb.append(", ");
+            }
+        }
+
+        this.sqlSelect = sb.toString();
+        if (StringUtils.isNotEmpty(sqlSelect)) {
             this.sqlSelect = StringUtils.removeWordWithComma(this.sqlSelect, column);
         }
         return typedThis;
