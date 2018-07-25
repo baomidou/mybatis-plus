@@ -16,12 +16,15 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.ibatis.builder.MapperBuilderAssistant;
@@ -116,20 +119,13 @@ public class TableInfoHelper {
         Assert.notNull(tableInfo, "Undiscovered table info . " + clazz.getName());
 
         // 添加表字段
-        List<String> columns = new ArrayList<>();
+        List<String> columns = tableInfo.getFieldList().stream().map(TableFieldInfo::getColumn).collect(toList());
         if (null != tableInfo.getKeyColumn()) {
             columns.add(tableInfo.getKeyColumn());
         }
-        for (TableFieldInfo tableFieldInfo : tableInfo.getFieldList()) {
-            columns.add(tableFieldInfo.getColumn());
-        }
-
+        List<String> excludes = Arrays.stream(excludeColumns).filter(Objects::nonNull).collect(toList());
         // 移除不需要的字段
-        for (String ec : excludeColumns) {
-            if (null != ec) {
-                columns.remove(ec);
-            }
-        }
+        columns = columns.stream().filter(i -> !excludes.contains(i)).collect(toList());
         return CollectionUtils.isEmpty(columns) ? null : columns.stream().collect(joining(","));
     }
 
