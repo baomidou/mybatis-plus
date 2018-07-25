@@ -841,4 +841,16 @@ public class StringUtils {
         }
         return buf.toString();
     }
+
+    /**
+     * 从字符串中移除一个单词及随后的一个逗号
+     *
+     * @param s 原字符串
+     * @param p 移除的单词
+     * @return
+     */
+    public static String removeWordWithComma(String s, String p) {
+        String match = "\\s*" + p + "\\s*,{0,1}";
+        return s.replaceAll(match,"");
+    }
 }

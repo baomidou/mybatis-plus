@@ -74,6 +74,13 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
         return typedThis;
     }
 
+    public QueryWrapper<T> exclude(String column) {
+        if(StringUtils.isNotEmpty(sqlSelect)){
+            this.sqlSelect = StringUtils.removeWordWithComma(this.sqlSelect, column);
+        }
+        return typedThis;
+    }
+
     /**
      * <p>
      * 返回一个支持 lambda 函数写法的 wrapper
