@@ -47,7 +47,6 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
@@ -372,10 +371,8 @@ public class TableInfoHelper {
      * </p>
      */
     private static void throwExceptionId(Class<?> clazz) {
-        StringBuilder errorMsg = new StringBuilder();
-        errorMsg.append("There must be only one, Discover multiple @TableId annotation in ");
-        errorMsg.append(clazz.getName());
-        throw new MybatisPlusException(errorMsg.toString());
+        throw ExceptionUtils.mpe("There must be only one, Discover multiple @TableId annotation in " +
+            clazz.getName());
     }
 
     /**
@@ -417,7 +414,7 @@ public class TableInfoHelper {
             }
             return true;
         }
-        throw new MybatisPlusException(String.format("Class: %s, Field: %s, 'value' 'el' Length must be consistent.",
+        throw ExceptionUtils.mpe(String.format("Class: %s, Field: %s, 'value' 'el' Length must be consistent.",
             clazz.getName(), field.getName()));
     }
 
