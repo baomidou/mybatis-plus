@@ -39,7 +39,6 @@ public interface IService<T> {
      * </p>
      *
      * @param entity 实体对象
-     * @return boolean
      */
     boolean save(T entity);
 
@@ -49,7 +48,6 @@ public interface IService<T> {
      * </p>
      *
      * @param entityList 实体对象集合
-     * @return boolean
      */
     boolean saveBatch(Collection<T> entityList);
 
@@ -60,7 +58,6 @@ public interface IService<T> {
      *
      * @param entityList 实体对象集合
      * @param batchSize  插入批次数量
-     * @return boolean
      */
     boolean saveBatch(Collection<T> entityList, int batchSize);
 
@@ -70,7 +67,6 @@ public interface IService<T> {
      * </p>
      *
      * @param entityList 实体对象集合
-     * @return boolean
      */
     boolean saveOrUpdateBatch(Collection<T> entityList);
 
@@ -80,8 +76,7 @@ public interface IService<T> {
      * </p>
      *
      * @param entityList 实体对象集合
-     * @param batchSize
-     * @return boolean
+     * @param batchSize  每次的数量
      */
     boolean saveOrUpdateBatch(Collection<T> entityList, int batchSize);
 
@@ -91,7 +86,6 @@ public interface IService<T> {
      * </p>
      *
      * @param id 主键ID
-     * @return boolean
      */
     boolean removeById(Serializable id);
 
@@ -101,7 +95,6 @@ public interface IService<T> {
      * </p>
      *
      * @param columnMap 表字段 map 对象
-     * @return boolean
      */
     boolean removeByMap(Map<String, Object> columnMap);
 
@@ -110,10 +103,9 @@ public interface IService<T> {
      * 根据 entity 条件，删除记录
      * </p>
      *
-     * @param wrapper 实体包装类 {@link Wrapper}
-     * @return boolean
+     * @param queryWrapper 实体包装类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
-    boolean remove(Wrapper<T> wrapper);
+    boolean remove(Wrapper<T> queryWrapper);
 
     /**
      * <p>
@@ -121,7 +113,6 @@ public interface IService<T> {
      * </p>
      *
      * @param idList 主键ID列表
-     * @return boolean
      */
     boolean removeByIds(Collection<? extends Serializable> idList);
 
@@ -131,7 +122,6 @@ public interface IService<T> {
      * </p>
      *
      * @param entity 实体对象
-     * @return boolean
      */
     boolean updateById(T entity);
 
@@ -140,11 +130,10 @@ public interface IService<T> {
      * 根据 whereEntity 条件，更新记录
      * </p>
      *
-     * @param entity  实体对象
-     * @param wrapper 实体包装类 {@link Wrapper}
-     * @return boolean
+     * @param entity        实体对象
+     * @param updateWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper}
      */
-    boolean update(T entity, Wrapper<T> wrapper);
+    boolean update(T entity, Wrapper<T> updateWrapper);
 
     /**
      * <p>
@@ -152,7 +141,6 @@ public interface IService<T> {
      * </p>
      *
      * @param entityList 实体对象集合
-     * @return boolean
      */
     boolean updateBatchById(Collection<T> entityList);
 
@@ -163,7 +151,6 @@ public interface IService<T> {
      *
      * @param entityList 实体对象集合
      * @param batchSize  更新批次数量
-     * @return boolean
      */
     boolean updateBatchById(Collection<T> entityList, int batchSize);
 
@@ -173,7 +160,6 @@ public interface IService<T> {
      * </p>
      *
      * @param entity 实体对象
-     * @return boolean
      */
     boolean saveOrUpdate(T entity);
 
@@ -183,7 +169,6 @@ public interface IService<T> {
      * </p>
      *
      * @param id 主键ID
-     * @return T
      */
     T getById(Serializable id);
 
@@ -193,7 +178,6 @@ public interface IService<T> {
      * </p>
      *
      * @param idList 主键ID列表
-     * @return Collection<T>
      */
     Collection<T> listByIds(Collection<? extends Serializable> idList);
 
@@ -203,7 +187,6 @@ public interface IService<T> {
      * </p>
      *
      * @param columnMap 表字段 map 对象
-     * @return Collection<T>
      */
     Collection<T> listByMap(Map<String, Object> columnMap);
 
@@ -212,91 +195,81 @@ public interface IService<T> {
      * 根据 Wrapper，查询一条记录
      * </p>
      *
-     * @param wrapper 实体对象
-     * @return T
+     * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
-    T getOne(Wrapper<T> wrapper);
+    T getOne(Wrapper<T> queryWrapper);
 
     /**
      * <p>
      * 根据 Wrapper，查询一条记录
      * </p>
      *
-     * @param wrapper {@link Wrapper}
-     * @return
+     * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
-    Map<String, Object> getMap(Wrapper<T> wrapper);
+    Map<String, Object> getMap(Wrapper<T> queryWrapper);
 
     /**
      * <p>
      * 根据 Wrapper，查询一条记录
      * </p>
      *
-     * @param wrapper {@link Wrapper}
-     * @return Object
+     * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
-    Object getObj(Wrapper<T> wrapper);
+    Object getObj(Wrapper<T> queryWrapper);
 
     /**
      * <p>
      * 根据 Wrapper 条件，查询总记录数
      * </p>
      *
-     * @param wrapper 实体对象
-     * @return int
+     * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
-    int count(Wrapper<T> wrapper);
+    int count(Wrapper<T> queryWrapper);
 
     /**
      * <p>
      * 查询列表
      * </p>
      *
-     * @param wrapper 实体包装类 {@link Wrapper}
-     * @return
+     * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
-    List<T> list(Wrapper<T> wrapper);
+    List<T> list(Wrapper<T> queryWrapper);
 
     /**
      * <p>
      * 翻页查询
      * </p>
      *
-     * @param page    翻页对象
-     * @param wrapper 实体包装类 {@link Wrapper}
-     * @return
+     * @param page         翻页对象
+     * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
-    IPage<T> page(IPage<T> page, Wrapper<T> wrapper);
+    IPage<T> page(IPage<T> page, Wrapper<T> queryWrapper);
 
     /**
      * <p>
      * 查询列表
      * </p>
      *
-     * @param wrapper {@link Wrapper}
-     * @return
+     * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
-    List<Map<String, Object>> listMaps(Wrapper<T> wrapper);
+    List<Map<String, Object>> listMaps(Wrapper<T> queryWrapper);
 
     /**
      * <p>
      * 根据 Wrapper 条件，查询全部记录
      * </p>
      *
-     * @param wrapper 实体对象封装操作类（可以为 null）
-     * @return List<Object>
+     * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
-    List<Object> listObjs(Wrapper<T> wrapper);
+    List<Object> listObjs(Wrapper<T> queryWrapper);
 
     /**
      * <p>
      * 翻页查询
      * </p>
      *
-     * @param page    翻页对象
-     * @param wrapper {@link Wrapper}
-     * @return
+     * @param page         翻页对象
+     * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
-    IPage<Map<String, Object>> pageMaps(IPage page, Wrapper<T> wrapper);
-
+    IPage<Map<String, Object>> pageMaps(IPage<T> page, Wrapper<T> queryWrapper);
 }

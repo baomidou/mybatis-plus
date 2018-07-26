@@ -17,22 +17,23 @@ package com.baomidou.mybatisplus.extension.service.impl;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.session.SqlSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -48,9 +49,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author hubin
  * @since 2018-06-23
  */
+@SuppressWarnings("unchecked")
 public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
-    @Autowired
+    @Resource
     protected M baseMapper;
 
     /**
@@ -118,9 +120,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         try (SqlSession batchSqlSession = sqlSessionBatch()) {
             int i = 0;
             String sqlStatement = sqlStatement(SqlMethod.INSERT_ONE);
-            Iterator<T> iterator = entityList.iterator();
-            while (iterator.hasNext()) {
-                batchSqlSession.insert(sqlStatement, iterator.next());
+            for (T anEntityList : entityList) {
+                batchSqlSession.insert(sqlStatement, anEntityList);
                 if (i >= 1 && i % batchSize == 0) {
                     batchSqlSession.flushStatements();
                 }
@@ -128,7 +129,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
             }
             batchSqlSession.flushStatements();
         } catch (Throwable e) {
-            throw new MybatisPlusException("Error: Cannot execute saveBatch Method. Cause", e);
+            throw ExceptionUtils.mpe("Error: Cannot execute saveBatch Method. Cause", e);
         }
         return true;
     }
@@ -157,7 +158,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                     return updateById(entity) || save(entity);
                 }
             } else {
-                throw new MybatisPlusException("Error:  Can not execute. Could not find @TableId.");
+                throw ExceptionUtils.mpe("Error:  Can not execute. Could not find @TableId.");
             }
         }
         return false;
@@ -176,13 +177,12 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
         try (SqlSession batchSqlSession = sqlSessionBatch()) {
-            Iterator<T> iterator = entityList.iterator();
-            while (iterator.hasNext()) {
-                saveOrUpdate(iterator.next());
+            for (T anEntityList : entityList) {
+                saveOrUpdate(anEntityList);
             }
             batchSqlSession.flushStatements();
         } catch (Throwable e) {
-            throw new MybatisPlusException("Error: Cannot execute saveOrUpdateBatch Method. Cause", e);
+            throw ExceptionUtils.mpe("Error: Cannot execute saveOrUpdateBatch Method. Cause", e);
         }
         return true;
     }
@@ -195,7 +195,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Override
     public boolean removeByMap(Map<String, Object> columnMap) {
         if (ObjectUtils.isEmpty(columnMap)) {
-            throw new MybatisPlusException("removeByMap columnMap is empty.");
+            throw ExceptionUtils.mpe("removeByMap columnMap is empty.");
         }
         return SqlHelper.delBool(baseMapper.deleteByMap(columnMap));
     }
@@ -216,8 +216,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     @Override
-    public boolean update(T entity, Wrapper<T> wrapper) {
-        return ServiceImpl.retBool(baseMapper.update(entity, wrapper));
+    public boolean update(T entity, Wrapper<T> updateWrapper) {
+        return ServiceImpl.retBool(baseMapper.update(entity, updateWrapper));
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -235,10 +235,9 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         try (SqlSession batchSqlSession = sqlSessionBatch()) {
             int i = 0;
             String sqlStatement = sqlStatement(SqlMethod.UPDATE_BY_ID);
-            Iterator<T> iterator = entityList.iterator();
-            while (iterator.hasNext()) {
+            for (T anEntityList : entityList) {
                 MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
-                param.put("et", iterator.next());
+                param.put(Constants.ENTITY, anEntityList);
                 batchSqlSession.update(sqlStatement, param);
                 if (i >= 1 && i % batchSize == 0) {
                     batchSqlSession.flushStatements();
@@ -247,7 +246,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
             }
             batchSqlSession.flushStatements();
         } catch (Throwable e) {
-            throw new MybatisPlusException("Error: Cannot execute updateBatchById Method. Cause", e);
+            throw ExceptionUtils.mpe("Error: Cannot execute updateBatchById Method. Cause", e);
         }
         return true;
     }
@@ -268,49 +267,49 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     @Override
-    public T getOne(Wrapper<T> wrapper) {
-        return SqlHelper.getObject(baseMapper.selectList(wrapper));
+    public T getOne(Wrapper<T> queryWrapper) {
+        return SqlHelper.getObject(baseMapper.selectList(queryWrapper));
     }
 
     @Override
-    public Map<String, Object> getMap(Wrapper<T> wrapper) {
-        return SqlHelper.getObject(baseMapper.selectMaps(wrapper));
+    public Map<String, Object> getMap(Wrapper<T> queryWrapper) {
+        return SqlHelper.getObject(baseMapper.selectMaps(queryWrapper));
     }
 
     @Override
-    public Object getObj(Wrapper<T> wrapper) {
-        return SqlHelper.getObject(baseMapper.selectObjs(wrapper));
+    public Object getObj(Wrapper<T> queryWrapper) {
+        return SqlHelper.getObject(baseMapper.selectObjs(queryWrapper));
     }
 
     @Override
-    public int count(Wrapper<T> wrapper) {
-        return SqlHelper.retCount(baseMapper.selectCount(wrapper));
+    public int count(Wrapper<T> queryWrapper) {
+        return SqlHelper.retCount(baseMapper.selectCount(queryWrapper));
     }
 
     @Override
-    public List<T> list(Wrapper<T> wrapper) {
-        return baseMapper.selectList(wrapper);
+    public List<T> list(Wrapper<T> queryWrapper) {
+        return baseMapper.selectList(queryWrapper);
     }
 
     @Override
-    public IPage<T> page(IPage<T> page, Wrapper<T> wrapper) {
-        wrapper = (Wrapper<T>) SqlHelper.fillWrapper(page, wrapper);
-        return baseMapper.selectPage(page, wrapper);
+    public IPage<T> page(IPage<T> page, Wrapper<T> queryWrapper) {
+        queryWrapper = (Wrapper<T>) SqlHelper.fillWrapper(page, queryWrapper);
+        return baseMapper.selectPage(page, queryWrapper);
     }
 
     @Override
-    public List<Map<String, Object>> listMaps(Wrapper<T> wrapper) {
-        return baseMapper.selectMaps(wrapper);
+    public List<Map<String, Object>> listMaps(Wrapper<T> queryWrapper) {
+        return baseMapper.selectMaps(queryWrapper);
     }
 
     @Override
-    public List<Object> listObjs(Wrapper<T> wrapper) {
-        return baseMapper.selectObjs(wrapper);
+    public List<Object> listObjs(Wrapper<T> queryWrapper) {
+        return baseMapper.selectObjs(queryWrapper);
     }
 
     @Override
-    public IPage<Map<String, Object>> pageMaps(IPage page, Wrapper<T> wrapper) {
-        wrapper = (Wrapper<T>) SqlHelper.fillWrapper(page, wrapper);
-        return baseMapper.selectMapsPage(page, wrapper);
+    public IPage<Map<String, Object>> pageMaps(IPage<T> page, Wrapper<T> queryWrapper) {
+        queryWrapper = (Wrapper<T>) SqlHelper.fillWrapper(page, queryWrapper);
+        return baseMapper.selectMapsPage(page, queryWrapper);
     }
 }
