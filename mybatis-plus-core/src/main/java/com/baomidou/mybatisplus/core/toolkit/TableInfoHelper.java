@@ -163,7 +163,7 @@ public class TableInfoHelper {
             globalConfig = GlobalConfigUtils.getGlobalConfig(builderAssistant.getConfiguration());
         } else {
             // 兼容测试场景
-            globalConfig = GlobalConfigUtils.DEFAULT;
+            globalConfig = GlobalConfigUtils.defaults();
         }
 
         /***

@@ -44,11 +44,6 @@ import com.baomidou.mybatisplus.core.injector.ISqlInjector;
  * @since 2017-06-15
  */
 public class GlobalConfigUtils {
-
-    /**
-     * 默认参数
-     */
-    public static final GlobalConfig DEFAULT = defaults();
     /**
      * 日志
      */
@@ -68,7 +63,7 @@ public class GlobalConfigUtils {
      */
     public static SqlSessionFactory currentSessionFactory(Class<?> clazz) {
         String configMark = TableInfoHelper.getTableInfo(clazz).getConfigMark();
-        GlobalConfig mybatisGlobalConfig = GlobalConfigUtils.getGlobalConfig(configMark);
+        GlobalConfig mybatisGlobalConfig = getGlobalConfig(configMark);
         return mybatisGlobalConfig.getSqlSessionFactory();
     }
 
@@ -128,8 +123,9 @@ public class GlobalConfigUtils {
         if (cache == null) {
             // 没有获取全局配置初始全局配置
             logger.debug("DeBug: MyBatis Plus Global configuration Initializing !");
-            GLOBAL_CONFIG.put(configMark, DEFAULT);
-            return DEFAULT;
+            GlobalConfig globalConfig = defaults();
+            GLOBAL_CONFIG.put(configMark, globalConfig);
+            return globalConfig;
         }
         return cache;
     }

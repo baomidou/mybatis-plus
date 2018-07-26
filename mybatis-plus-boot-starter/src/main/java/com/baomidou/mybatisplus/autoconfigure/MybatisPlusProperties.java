@@ -14,6 +14,7 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 
 /**
  * Configuration properties for MyBatis.
@@ -184,6 +185,9 @@ public class MybatisPlusProperties {
     }
 
     public GlobalConfig getGlobalConfig() {
+        if (null == globalConfig) {
+            return GlobalConfigUtils.defaults();
+        }
         return globalConfig;
     }
 
