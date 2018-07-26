@@ -84,6 +84,8 @@ public final class ClassUtils {
 
     /**
      * 根据指定的 class ， 实例化一个对象，根据构造参数来实例化
+     * <p>
+     * 在 java9 及其之后的版本 Class.newInstance() 方法已被废弃
      *
      * @param clazz 需要实例化的对象
      * @param <T>   类型，由输入类型决定
