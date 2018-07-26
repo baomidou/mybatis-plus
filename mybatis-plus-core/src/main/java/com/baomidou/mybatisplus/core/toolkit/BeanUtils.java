@@ -43,13 +43,9 @@ public final class BeanUtils {
      * @return 返回 bean 对象
      */
     public static <T> T mapToBean(Map<String, Object> map, Class<T> clazz) {
-        try {
-            T bean = clazz.newInstance();
-            BeanMap.create(bean).putAll(map);
-            return bean;
-        } catch (IllegalAccessException | InstantiationException e) {
-            throw ExceptionUtils.mpe(e);
-        }
+        T bean = ClassUtils.newInstance(clazz);
+        BeanMap.create(bean).putAll(map);
+        return bean;
     }
 
     /**
