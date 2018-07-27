@@ -436,7 +436,11 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
 
     @Override
     public String getSqlSegment() {
-        return expression.getSqlSegment() + lastSql;
+        String sqlSegment = expression.getSqlSegment();
+        if (StringUtils.isNotEmpty(sqlSegment)) {
+            return sqlSegment + lastSql;
+        }
+        return "1=1" + lastSql;
     }
 
     public Map<String, Object> getParamNameValuePairs() {
