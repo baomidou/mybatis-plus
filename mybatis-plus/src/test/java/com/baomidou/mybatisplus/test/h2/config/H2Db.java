@@ -22,6 +22,14 @@ public class H2Db extends BaseDb {
         }
     }
 
+    public static void initH2Student() throws SQLException, IOException {
+        ApplicationContext context = new ClassPathXmlApplicationContext("classpath:h2/spring-test-h2.xml");
+        DataSource ds = context.getBean("dataSource", DataSource.class);
+        try (Connection conn = ds.getConnection()) {
+            H2Db.initData(conn, "/h2/", "student.ddl.sql", "student.insert.sql", "h2Student");
+        }
+    }
+
     public static void initData(Connection conn, String path, String ddlFileName, String insertFileName, String tableName)
         throws SQLException, IOException {
         String createTableSql = readFile(path, ddlFileName);
