@@ -9,6 +9,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.internal.matchers.GreaterThan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
@@ -43,13 +44,16 @@ public class ActiveRecordTest {
     public void testUpdate(){
         H2Student student = new H2Student(1L,"Tom长大了",2);
         Assert.assertTrue(student.updateById());
+        student.setName("不听话的学生");
+        Assert.assertTrue(student.update(new QueryWrapper<>().gt("id",10)));
     }
 
     @Test
     public void testSelect(){
         H2Student student = new H2Student();
         student.setId(1L);
-        LOGGER.info("student:{}",student.selectById());
+        Assert.assertNotNull(student.selectById());
+        Assert.assertNotNull(student.selectById(1L));
     }
 
     @Test
@@ -57,21 +61,56 @@ public class ActiveRecordTest {
         H2Student student = new H2Student();
         student.setId(2L);
         Assert.assertTrue(student.deleteById());
+        Assert.assertTrue(student.deleteById(12L));
+        Assert.assertTrue(student.delete(new QueryWrapper<>().gt("id",10)));
     }
 
     @Test
     public void testSelectList(){
-        H2Student h2Student = new H2Student();
-        h2Student.selectList(new QueryWrapper<>(h2Student)).forEach(student -> LOGGER.info("用户信息:{}",student));
+        H2Student student = new H2Student();
+        List<H2Student> students = student.selectList(new QueryWrapper<>(student));
+        students.forEach($this -> LOGGER.info("用户信息:{}",$this));
+        Assert.assertThat(students.size(),new GreaterThan<>(1));
     }
 
     @Test
     public void testSelectPage(){
         IPage<H2Student> page = new Page<>(1,10);
-        H2Student h2Student = new H2Student();
-        page = h2Student.selectPage(page, new QueryWrapper<>(h2Student));
+        H2Student student = new H2Student();
+        page = student.selectPage(page, new QueryWrapper<>(student));
         List<H2Student> records = page.getRecords();
         LOGGER.info("总数:{}",page.getTotal());
-        records.forEach(student -> LOGGER.info("用户信息:{}",student));
+        records.forEach($this -> LOGGER.info("用户信息:{}",$this));
+        Assert.assertThat(page.getTotal(),new GreaterThan<>(1L));
+    }
+
+    @Test
+    public void testSelectCount(){
+        H2Student student = new H2Student();
+        int count = new H2Student().selectCount(new QueryWrapper<>(student));
+        LOGGER.info("count:{}",count);
+        Assert.assertThat(count,new GreaterThan<>(1));
+    }
+
+    @Test
+    public void testInsertOrUpdate(){
+        H2Student student = new H2Student(2L,"Jerry也长大了",2);
+        Assert.assertTrue(student.insertOrUpdate());
+        student.setId(null);
+        Assert.assertTrue(student.insertOrUpdate());
+    }
+
+    @Test
+    public void testSelectAll(){
+        H2Student student = new H2Student();
+        List<H2Student> students = student.selectAll();
+        Assert.assertNotNull(students);
+        students.forEach($this -> LOGGER.info("用户信息:{}",$this));
+    }
+
+    @Test
+    public void testSelectOne(){
+        H2Student student = new H2Student();
+        Assert.assertNotNull(student.selectOne(new QueryWrapper<>()));
     }
 }
