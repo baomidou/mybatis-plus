@@ -121,7 +121,7 @@ public class GlobalConfig implements Serializable {
         /**
          * String 类型字段 LIKE
          */
-        private boolean columnLike = true;
+        private boolean columnLike = false;
         /**
          * 大写命名
          */
