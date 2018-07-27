@@ -36,7 +36,7 @@ public class LogicSelectOne extends LogicAbstractMethod {
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.SELECT_ONE;
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(),
-            this.sqlSelectColumns(tableInfo, false), tableInfo.getTableName(),
+            this.sqlSelectColumns(tableInfo, true), tableInfo.getTableName(),
             this.sqlWhereEntityWrapper(tableInfo)), modelClass);
         return addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, tableInfo);
     }
