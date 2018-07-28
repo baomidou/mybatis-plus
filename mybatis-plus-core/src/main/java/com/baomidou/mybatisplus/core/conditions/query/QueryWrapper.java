@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core.conditions.query;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -78,7 +79,8 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     public String getSqlSelect() {
         //TODO 这里看要不要兼容下原来的sqlSelect，进行切割
         if(ArrayUtils.isNotEmpty(sqlSelect)){
-            sqlSelect = Arrays.stream(sqlSelect).filter($this->!Arrays.asList(excludeColumns).contains($this)).toArray(String[]::new);
+            List<String> excludeColumnList = Arrays.asList(excludeColumns);
+            sqlSelect = Arrays.stream(sqlSelect).filter($this->!excludeColumnList.contains($this)).toArray(String[]::new);
         }else{
             if(entityClass!=null){
                 sqlSelect = TableInfoHelper.getTableColumns(entityClass, excludeColumns);

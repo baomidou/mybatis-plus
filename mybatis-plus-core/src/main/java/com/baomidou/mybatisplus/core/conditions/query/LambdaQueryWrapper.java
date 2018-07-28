@@ -67,7 +67,7 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     public String getSqlSelect() {
         if (CollectionUtils.isEmpty(queryColumn)) {
             if(entityClass!=null) {
-                queryColumn = Arrays.asList(TableInfoHelper.getTableColumns(entityClass, new String[excludeColumn.size()]));
+                queryColumn = Arrays.asList(TableInfoHelper.getTableColumns(entityClass,excludeColumn.toArray(new String[0])));
             }
         }else{
             return SqlUtils.stripSqlInjection(queryColumn.stream().filter($this -> !excludeColumn.contains($this)).collect(Collectors.joining(",")));
