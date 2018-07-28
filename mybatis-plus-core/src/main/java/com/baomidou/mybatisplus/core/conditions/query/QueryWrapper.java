@@ -43,7 +43,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     /**
      * 排除字段
      */
-    private String[] excludeColumns;
+    private String[] excludeColumns = new String[]{};
 
     /**
      * 实体类型
