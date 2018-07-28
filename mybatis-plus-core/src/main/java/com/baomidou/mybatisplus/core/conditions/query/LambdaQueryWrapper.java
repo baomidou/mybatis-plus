@@ -15,16 +15,17 @@
  */
 package com.baomidou.mybatisplus.core.conditions.query;
 
-import static java.util.stream.Collectors.joining;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.Property;
 
@@ -40,9 +41,19 @@ import com.baomidou.mybatisplus.core.toolkit.support.Property;
 public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryWrapper<T>> {
 
     /**
-     * SQL 查询字段内容，例如：id,name,age
+     * 查询字段
      */
-    private List<String> sqlSelect = new ArrayList<>();
+    private List<String> queryColumn = new ArrayList<>();
+
+    /**
+     * 排除字段
+     */
+    private List<String> excludeColumn = new ArrayList<>();
+
+    /**
+     * 实体类型
+     */
+    private Class<?> entityClass;
 
     LambdaQueryWrapper(T entity, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs,
                        MergeSegments mergeSegments) {
@@ -54,10 +65,14 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
 
     @Override
     public String getSqlSelect() {
-        if (CollectionUtils.isEmpty(sqlSelect)) {
-            return null;
+        if (CollectionUtils.isEmpty(queryColumn)) {
+            if(entityClass!=null) {
+                queryColumn = Arrays.asList(TableInfoHelper.getTableColumns(entityClass, new String[excludeColumn.size()]));
+            }
+        }else{
+            return SqlUtils.stripSqlInjection(queryColumn.stream().filter($this -> !excludeColumn.contains($this)).collect(Collectors.joining(",")));
         }
-        return SqlUtils.stripSqlInjection(sqlSelect.stream().collect(joining(",")));
+        return CollectionUtils.isEmpty(queryColumn) ? null:queryColumn.stream().collect(Collectors.joining(","));
     }
 
     /**
@@ -70,7 +85,7 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     @SafeVarargs
     public final LambdaQueryWrapper<T> select(Property<T, ?>... columns) {
         for (Property<T, ?> column : columns) {
-            sqlSelect.add(this.columnToString(column));
+            queryColumn.add(this.columnToString(column));
         }
         return typedThis;
     }
@@ -82,12 +97,12 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
      *
      * @param excludeColumns 排除的查询字段
      */
-    public LambdaQueryWrapper<T> select(Class<T> clazz, Property<T, ?>... excludeColumns) {
-        // TODO 待定
-//        if(StringUtils.isNotEmpty(sqlSelect)){
-//            Class clazz = ReflectionKit.getSuperClassGenricType(getClass(), 1);
-//            this.sqlSelect = TableInfoHelper.getTableColumns(clazz, excludeColumns);
-//        }
+    @SafeVarargs
+    public final LambdaQueryWrapper<T> excludeColumns(Class<T> clazz, Property<T, ?>... excludeColumns) {
+        this.entityClass = clazz;
+        for (Property<T, ?> column : excludeColumns) {
+            excludeColumn.add(this.columnToString(column));
+        }
         return typedThis;
     }
 

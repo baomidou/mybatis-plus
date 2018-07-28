@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -119,7 +121,7 @@ public class H2UserTest extends BaseTest {
     }
 
     @Test
-    public void testUpdateByIdWitiOptLock(){
+    public void testUpdateByIdWithOptLock(){
         Long id = 991L;
         H2User user = new H2User();
         user.setTestId(id);
@@ -162,6 +164,13 @@ public class H2UserTest extends BaseTest {
         ew.excludeColumns(H2User.class, "age", "price", null);
         List<H2User> list = userService.list(ew);
         for (H2User u : list) {
+            Assert.assertNotNull(u.getTestId());
+            Assert.assertNotNull(u.getName());
+            Assert.assertNull(u.getPrice());
+        }
+        Wrapper<H2User> wrapper = new QueryWrapper<H2User>().lambda().select().excludeColumns(H2User.class,H2User::getAge,H2User::getPrice);
+        List<H2User> list2  = userService.list(wrapper);
+        for (H2User u : list2) {
             Assert.assertNotNull(u.getTestId());
             Assert.assertNotNull(u.getName());
             Assert.assertNull(u.getPrice());
