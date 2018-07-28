@@ -168,10 +168,24 @@ public class H2UserTest extends BaseTest {
             Assert.assertNotNull(u.getName());
             Assert.assertNull(u.getPrice());
         }
+        ew = new QueryWrapper<>(null,"test_id","name","age","price");
+        ew.excludeColumns(H2User.class, "age", "price", null);
+        list = userService.list(ew);
+        for (H2User u : list) {
+            Assert.assertNotNull(u.getTestId());
+            Assert.assertNotNull(u.getName());
+            Assert.assertNull(u.getPrice());
+        }
         Wrapper<H2User> wrapper = new QueryWrapper<H2User>().lambda().select().excludeColumns(H2User.class,H2User::getAge,H2User::getPrice);
         List<H2User> list2  = userService.list(wrapper);
         for (H2User u : list2) {
             Assert.assertNotNull(u.getTestId());
+            Assert.assertNotNull(u.getName());
+            Assert.assertNull(u.getPrice());
+        }
+        wrapper = new QueryWrapper<H2User>().lambda().select(H2User::getTestId,H2User::getName,H2User::getTestDate,H2User::getPrice,H2User::getAge).excludeColumns(H2User.class,H2User::getAge,H2User::getTestDate,H2User::getVersion,H2User::getPrice);
+        list2 = userService.list(wrapper);
+        for (H2User u : list2) {
             Assert.assertNotNull(u.getName());
             Assert.assertNull(u.getPrice());
         }

@@ -17,6 +17,8 @@ package com.baomidou.mybatisplus.core.metadata;
 
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.ibatis.session.Configuration;
 
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -89,6 +91,10 @@ public class TableInfo {
      * 是否开启逻辑删除
      */
     private boolean logicDelete = false;
+
+    @Getter
+    @Setter
+    private Class<?> parentClass;
 
     /**
      * <p>

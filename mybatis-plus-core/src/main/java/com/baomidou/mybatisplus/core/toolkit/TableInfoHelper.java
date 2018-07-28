@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 import java.lang.reflect.Field;
@@ -236,7 +235,7 @@ public class TableInfoHelper {
             /*
              * 字段, 使用 camelToUnderline 转换驼峰写法为下划线分割法, 如果已指定 TableField , 便不会执行这里
              */
-            fieldList.add(new TableFieldInfo(underCamel, dbConfig, tableInfo, field));
+            fieldList.add(new TableFieldInfo(underCamel, dbConfig, tableInfo, field, field.getDeclaringClass()));
         }
 
         /* 字段列表 */
@@ -256,7 +255,7 @@ public class TableInfoHelper {
         /*
          * 缓存 Lambda 映射关系
          */
-        LambdaUtils.createCache(clazz.getName(), tableInfo);
+        LambdaUtils.createCache(clazz, tableInfo);
         return tableInfo;
     }
 
@@ -325,6 +324,7 @@ public class TableInfoHelper {
                         column = column.toUpperCase();
                     }
                 }
+                tableInfo.setParentClass(field.getDeclaringClass());
                 tableInfo.setKeyColumn(column);
                 tableInfo.setKeyProperty(field.getName());
                 return true;
@@ -409,7 +409,7 @@ public class TableInfoHelper {
         if (columns.length == els.length) {
             for (int i = 0; i < columns.length; i++) {
                 fieldList.add(new TableFieldInfo(underCamel, dbConfig, tableInfo,
-                    columns[i], els[i], field, tableField));
+                    columns[i], els[i], field, tableField,field.getDeclaringClass()));
             }
             return true;
         }

@@ -47,13 +47,14 @@ public abstract class AbstractLambdaWrapper<T, This extends AbstractLambdaWrappe
     }
 
     private String getColumn(SerializedLambda lambda) {
-        if (!initColumnMap) {
+        String fieldName = StringUtils.resolveFieldName(lambda.getImplMethodName());
+        if (!initColumnMap || columnMap.get(fieldName) == null) {
             String entityClassName = lambda.getImplClass().replace("/", ".");
             columnMap = LambdaUtils.getColumnMap(entityClassName);
             Assert.notEmpty(columnMap, "该模式不能应用于非 baseMapper 的泛型 entity 之外的 entity!");
             initColumnMap = true;
         }
-        return Optional.ofNullable(columnMap.get(StringUtils.resolveFieldName(lambda.getImplMethodName())))
+        return Optional.ofNullable(columnMap.get(fieldName))
             .orElseThrow(() -> ExceptionUtils.mpe("该模式不能应用于非数据库字段!"));
     }
 }

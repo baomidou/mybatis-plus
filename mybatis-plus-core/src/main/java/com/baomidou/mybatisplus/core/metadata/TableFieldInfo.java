@@ -17,7 +17,6 @@ package com.baomidou.mybatisplus.core.metadata;
 
 import java.lang.reflect.Field;
 
-import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.SqlCondition;
@@ -25,6 +24,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * <p>
@@ -93,13 +94,18 @@ public class TableFieldInfo {
      */
     private FieldFill fieldFill = FieldFill.DEFAULT;
 
+
+    @Getter
+    @Setter
+    private Class<?> parentClass;
+
     /**
      * <p>
      * 存在 TableField 注解构造函数
      * </p>
      */
     public TableFieldInfo(boolean underCamel, GlobalConfig.DbConfig dbConfig, TableInfo tableInfo,
-                          String column, String el, Field field, TableField tableField) {
+                          String column, String el, Field field, TableField tableField,Class<?> parentClass) {
         this.property = field.getName();
         this.propertyType = field.getType();
         /*
@@ -142,9 +148,10 @@ public class TableFieldInfo {
          * 保存当前字段的填充策略
          */
         this.fieldFill = tableField.fill();
+        this.parentClass = parentClass;
     }
 
-    public TableFieldInfo(boolean underCamel, GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field) {
+    public TableFieldInfo(boolean underCamel, GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field,Class<?> parentClass) {
         if (dbConfig.isColumnUnderline()) {
             /* 开启字段下划线申明 */
             this.setColumn(dbConfig, StringUtils.camelToUnderline(field.getName()));
@@ -160,6 +167,7 @@ public class TableFieldInfo {
         this.fieldStrategy = dbConfig.getFieldStrategy();
         this.propertyType = field.getType();
         this.setCondition(dbConfig);
+        this.parentClass = parentClass;
         tableInfo.setLogicDelete(this.initLogicDelete(dbConfig, field));
     }
 
