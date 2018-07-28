@@ -109,7 +109,7 @@ public class TableInfoHelper {
      * @param excludeColumns 排除字段
      * @return
      */
-    public static String getTableColumns(Class<?> clazz, String... excludeColumns) {
+    public static String[] getTableColumns(Class<?> clazz, String... excludeColumns) {
         if (null == clazz || ArrayUtils.isEmpty(excludeColumns)) {
             return null;
         }
@@ -124,8 +124,7 @@ public class TableInfoHelper {
         }
         List<String> excludes = Arrays.stream(excludeColumns).filter(Objects::nonNull).collect(toList());
         // 移除不需要的字段
-        columns = columns.stream().filter(i -> !excludes.contains(i)).collect(toList());
-        return CollectionUtils.isEmpty(columns) ? null : columns.stream().collect(joining(","));
+        return columns.stream().filter(i -> !excludes.contains(i)).toArray(String[]::new);
     }
 
     /**

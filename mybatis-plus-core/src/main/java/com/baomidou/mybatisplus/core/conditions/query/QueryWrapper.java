@@ -15,14 +15,14 @@
  */
 package com.baomidou.mybatisplus.core.conditions.query;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-
+import java.util.stream.Collectors;
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 
 /**
  * <p>
@@ -36,25 +36,35 @@ import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>> {
 
     /**
-     * SQL 查询字段内容，例如：id,name,age
+     * 查询字段
      */
-    private String sqlSelect;
+    private String[] sqlSelect;
+
+    /**
+     * 排除字段
+     */
+    private String[] excludeColumns;
+
+    /**
+     * 实体类型
+     */
+    private Class<?> entityClass;
 
     public QueryWrapper() {
-        this(null, null);
+        this(null,  null);
     }
 
     public QueryWrapper(T entity) {
         this(entity, null);
     }
 
-    public QueryWrapper(T entity, String sqlSelect) {
-        this.sqlSelect = sqlSelect;
+    public QueryWrapper(T entity, String... column) {
+        this.sqlSelect = column;
         this.entity = entity;
         this.initNeed();
     }
 
-    private QueryWrapper(T entity, String sqlSelect, AtomicInteger paramNameSeq,
+    private QueryWrapper(T entity, String sqlSelect[], AtomicInteger paramNameSeq,
                          Map<String, Object> paramNameValuePairs, MergeSegments mergeSegments) {
         this.entity = entity;
         this.sqlSelect = sqlSelect;
@@ -65,18 +75,27 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
 
     @Override
     public String getSqlSelect() {
-        return StringUtils.isEmpty(sqlSelect) ? null : SqlUtils.stripSqlInjection(sqlSelect);
+        //TODO 这里看要不要兼容下原来的sqlSelect，进行切割
+        if(ArrayUtils.isNotEmpty(sqlSelect)){
+            sqlSelect = Arrays.stream(sqlSelect).filter($this->!Arrays.asList(excludeColumns).contains($this)).toArray(String[]::new);
+        }else{
+            if(entityClass!=null){
+                sqlSelect = TableInfoHelper.getTableColumns(entityClass, excludeColumns);
+            }
+        }
+        return ArrayUtils.isNotEmpty(sqlSelect) ? Arrays.stream(sqlSelect).collect(Collectors.joining(",")) : null;
     }
 
-    public QueryWrapper<T> select(String sqlSelect) {
-        if (StringUtils.isNotEmpty(sqlSelect)) {
+    public QueryWrapper<T> select(String... sqlSelect) {
+        if (ArrayUtils.isNotEmpty(sqlSelect)) {
             this.sqlSelect = sqlSelect;
         }
         return typedThis;
     }
 
-    public QueryWrapper<T> select(Class<T> clazz, String... excludeColumns) {
-        this.sqlSelect = TableInfoHelper.getTableColumns(clazz, excludeColumns);
+    public QueryWrapper<T> excludeColumns(Class<?> clazz,String... excludeColumns) {
+        this.excludeColumns = excludeColumns;
+        this.entityClass = clazz;
         return typedThis;
     }
 
