@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
@@ -100,6 +101,16 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     @SafeVarargs
     public final LambdaQueryWrapper<T> excludeColumns(Class<T> clazz, Property<T, ?>... excludeColumns) {
         this.entityClass = clazz;
+        for (Property<T, ?> column : excludeColumns) {
+            excludeColumn.add(this.columnToString(column));
+        }
+        return typedThis;
+    }
+    
+    @SafeVarargs
+    public final LambdaQueryWrapper<T> excludeColumns(Property<T, ?>... excludeColumns) {
+        Assert.notNull(entity,"entity not null");
+        this.entityClass = entity.getClass();
         for (Property<T, ?> column : excludeColumns) {
             excludeColumn.add(this.columnToString(column));
         }

@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 
@@ -99,6 +100,13 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     public QueryWrapper<T> excludeColumns(Class<?> clazz,String... excludeColumns) {
         this.excludeColumns = excludeColumns;
         this.entityClass = clazz;
+        return typedThis;
+    }
+    
+    public QueryWrapper<T> excludeColumns(String... excludeColumns) {
+        this.excludeColumns = excludeColumns;
+        Assert.notNull(entity,"entity not null");
+        this.entityClass = entity.getClass();
         return typedThis;
     }
 
