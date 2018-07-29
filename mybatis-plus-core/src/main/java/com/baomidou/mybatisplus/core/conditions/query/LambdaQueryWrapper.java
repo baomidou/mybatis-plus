@@ -99,22 +99,24 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
      * @param excludeColumns 排除的查询字段
      */
     @SafeVarargs
-    public final LambdaQueryWrapper<T> excludeColumns(Class<T> clazz, Property<T, ?>... excludeColumns) {
-        this.entityClass = clazz;
+    public final LambdaQueryWrapper<T> excludeColumns(Class<?> entityClass, Property<T, ?>... excludeColumns) {
+        Assert.notNull(entityClass,"entityClass is not null");
+        Assert.notEmpty(excludeColumns,"excludeColumns is not null");
+        this.entityClass = entityClass;
         for (Property<T, ?> column : excludeColumns) {
             excludeColumn.add(this.columnToString(column));
         }
         return typedThis;
     }
     
+    /**
+     * 排除字段
+     * @param excludeColumns 排除字段列表
+     */
     @SafeVarargs
     public final LambdaQueryWrapper<T> excludeColumns(Property<T, ?>... excludeColumns) {
-        Assert.notNull(entity,"entity not null");
-        this.entityClass = entity.getClass();
-        for (Property<T, ?> column : excludeColumns) {
-            excludeColumn.add(this.columnToString(column));
-        }
-        return typedThis;
+        Assert.notNull(entity,"entity is not null");
+        return excludeColumns(entity.getClass(),excludeColumns);
     }
 
     @Override

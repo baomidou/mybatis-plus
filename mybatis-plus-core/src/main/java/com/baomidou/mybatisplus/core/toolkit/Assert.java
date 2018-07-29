@@ -90,4 +90,13 @@ public final class Assert {
     public static void notEmpty(Map<?, ?> map, String message) {
         isTrue(CollectionUtils.isNotEmpty(map), message);
     }
+    
+    /**
+     * 断言数组不能为空
+     * @param array 数组
+     * @param message 消息
+     */
+    public static void notEmpty(Object[] array, String message) {
+        isTrue(ArrayUtils.isNotEmpty(array), message);
+    }
 }

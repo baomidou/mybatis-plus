@@ -96,18 +96,27 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
         }
         return typedThis;
     }
-
-    public QueryWrapper<T> excludeColumns(Class<?> clazz,String... excludeColumns) {
+    
+    /**
+     * 排除字段
+     * @param entityClass 实体类
+     * @param excludeColumns 排除字段列表
+     */
+    public QueryWrapper<T> excludeColumns(Class<?> entityClass,String... excludeColumns) {
+        Assert.notNull(entityClass,"entityClass is not null");
+        Assert.notEmpty(excludeColumns,"excludeColumns is not null");
         this.excludeColumns = excludeColumns;
-        this.entityClass = clazz;
+        this.entityClass = entityClass;
         return typedThis;
     }
     
+    /**
+     * 排除字段
+     * @param excludeColumns 排除字段列表
+     */
     public QueryWrapper<T> excludeColumns(String... excludeColumns) {
-        this.excludeColumns = excludeColumns;
-        Assert.notNull(entity,"entity not null");
-        this.entityClass = entity.getClass();
-        return typedThis;
+        Assert.notNull(entity,"entity is not null");
+        return excludeColumns(entity.getClass(),excludeColumns);
     }
 
     /**
