@@ -51,14 +51,13 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
      */
     private List<String> excludeColumn = new ArrayList<>();
 
-    /**
-     * 实体类型
-     */
-    private Class<?> entityClass;
-
+    @SuppressWarnings(value = "unchecked")
     LambdaQueryWrapper(T entity, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs,
                        MergeSegments mergeSegments) {
         this.entity = entity;
+        if(entity!=null){
+            this.entityClass = (Class<T>) entity.getClass();
+        }
         this.paramNameSeq = paramNameSeq;
         this.paramNameValuePairs = paramNameValuePairs;
         this.expression = mergeSegments;
@@ -99,7 +98,7 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
      * @param excludeColumns 排除的查询字段
      */
     @SafeVarargs
-    public final LambdaQueryWrapper<T> excludeColumns(Class<?> entityClass, Property<T, ?>... excludeColumns) {
+    public final LambdaQueryWrapper<T> excludeColumns(Class<T> entityClass, Property<T, ?>... excludeColumns) {
         Assert.notNull(entityClass,"entityClass is not null");
         Assert.notEmpty(excludeColumns,"excludeColumns is not empty");
         this.entityClass = entityClass;
@@ -108,15 +107,16 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
         }
         return typedThis;
     }
-    
+
     /**
      * 排除字段
      * @param excludeColumns 排除字段列表
      */
     @SafeVarargs
+    @SuppressWarnings(value = "unchecked")
     public final LambdaQueryWrapper<T> excludeColumns(Property<T, ?>... excludeColumns) {
         Assert.notNull(entity,"entity is not null");
-        return excludeColumns(entity.getClass(),excludeColumns);
+        return excludeColumns((Class<T>) entity.getClass(),excludeColumns);
     }
 
     @Override

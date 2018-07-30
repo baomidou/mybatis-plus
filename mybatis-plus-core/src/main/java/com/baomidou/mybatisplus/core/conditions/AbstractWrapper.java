@@ -53,6 +53,7 @@ import com.baomidou.mybatisplus.core.conditions.interfaces.Nested;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -93,6 +94,10 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      */
     protected T entity;
     protected MergeSegments expression;
+    /**
+     * 实体类型
+     */
+    protected Class<T> entityClass;
 
     @Override
     public T getEntity() {
@@ -100,7 +105,9 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     public This setEntity(T entity) {
+        Assert.notNull(entity,"entity is not null");
         this.entity = entity;
+        this.entityClass = (Class<T>) entity.getClass();
         return typedThis;
     }
 
