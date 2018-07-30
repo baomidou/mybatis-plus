@@ -27,6 +27,7 @@ import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 
 public class WrapperTest {
@@ -42,7 +43,7 @@ public class WrapperTest {
 
     private <T> void logParams(QueryWrapper<T> wrapper) {
         wrapper.getParamNameValuePairs().forEach((k, v) ->
-            System.out.println("key: '" + k + "'\t\tvalue: '" + v + "'"));
+            System.out.println("key: '" + k + "'\t\tvalue: '" + v + StringPool.SINGLE_QUOTE));
     }
 
     @Test

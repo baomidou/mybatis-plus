@@ -287,7 +287,7 @@ public class StringUtils {
      * @return 拼接后的字符串
      */
     public static String appends(String delimiter, String... strings) {
-        return Arrays.stream(strings).collect(joining(delimiter == null ? "" : delimiter));
+        return Arrays.stream(strings).collect(joining(delimiter == null ? StringPool.EMPTY : delimiter));
     }
 
     /**
@@ -316,7 +316,7 @@ public class StringUtils {
      * @return 单引号包含的原字符串的集合形式
      */
     public static String quotaMarkList(Collection<?> coll) {
-        return coll.stream().map(StringUtils::quotaMark).collect(joining(",", "(", ")"));
+        return coll.stream().map(StringUtils::quotaMark).collect(joining(StringPool.COMMA, StringPool.LEFT_BRACKET, StringPool.RIGHT_BRACKET));
     }
 
     /**
@@ -788,7 +788,7 @@ public class StringUtils {
             boolean isNotUnderscore = c != '_';
             if (lastOneIsNotUnderscore && (isUpperCaseAndPreviousIsLowerCase || previousIsWhitespace
                 || (betweenUpperCases && containsLowerCase && isUpperCaseAndPreviousIsUpperCase))) {
-                buf.append("_");
+                buf.append(StringPool.UNDERSCORE);
             } else if ((Character.isDigit(previousChar) && Character.isLetter(c))
                 || (false && Character.isDigit(c) && Character.isLetter(previousChar))) {
                 buf.append('_');
@@ -801,7 +801,7 @@ public class StringUtils {
             previousChar = c;
         }
         if (Character.isWhitespace(previousChar)) {
-            buf.append("_");
+            buf.append(StringPool.UNDERSCORE);
         }
         return buf.toString();
     }
@@ -826,7 +826,7 @@ public class StringUtils {
             if ((Character.isWhitespace(lastChar)) && (!Character.isWhitespace(c))
                 && ('-' != c) && (buf.length() > 0)
                 && (buf.charAt(buf.length() - 1) != '-')) {
-                buf.append("-");
+                buf.append(StringPool.DASH);
             }
             if ('_' == c) {
                 buf.append('-');
@@ -838,7 +838,7 @@ public class StringUtils {
             lastChar = c;
         }
         if (Character.isWhitespace(lastChar)) {
-            buf.append("-");
+            buf.append(StringPool.DASH);
         }
         return buf.toString();
     }

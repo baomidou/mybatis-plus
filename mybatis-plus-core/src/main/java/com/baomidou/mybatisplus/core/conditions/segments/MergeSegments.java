@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 
 /**
  * <p>
@@ -56,7 +57,7 @@ public class MergeSegments implements ISqlSegment {
             if (!groupBy.isEmpty() || !orderBy.isEmpty()) {
                 return "1=1" + groupBy.getSqlSegment() + having.getSqlSegment() + orderBy.getSqlSegment();
             } else {
-                return "";
+                return StringPool.EMPTY;
             }
         } else {
             return normal.getSqlSegment() + groupBy.getSqlSegment() + having.getSqlSegment() + orderBy.getSqlSegment();

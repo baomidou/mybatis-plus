@@ -22,6 +22,7 @@ import static java.util.stream.Collectors.joining;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 
 /**
  * <p>
@@ -46,9 +47,9 @@ public class HavingSegmentList extends AbstractISegmentList {
     @Override
     public String getSqlSegment() {
         if (isEmpty()) {
-            return "";
+            return StringPool.EMPTY;
         }
-        return this.stream().map(ISqlSegment::getSqlSegment).collect(joining(" ",
-            " " + HAVING.getSqlSegment() + " ", ""));
+        return this.stream().map(ISqlSegment::getSqlSegment).collect(joining(StringPool.SPACE,
+            StringPool.SPACE + HAVING.getSqlSegment() + StringPool.SPACE, StringPool.EMPTY));
     }
 }

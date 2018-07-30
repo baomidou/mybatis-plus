@@ -20,6 +20,7 @@ import java.util.List;
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 /**
@@ -54,9 +55,9 @@ public abstract class LogicAbstractMethod extends AbstractMethod {
                 }
                 sql.append(fieldInfo.getColumn());
                 if (StringUtils.isCharSequence(fieldInfo.getPropertyType())) {
-                    sql.append("='").append(fieldInfo.getLogicNotDeleteValue()).append("'");
-                } else {
-                    sql.append("=").append(fieldInfo.getLogicNotDeleteValue());
+                    sql.append("='").append(fieldInfo.getLogicNotDeleteValue()).append(StringPool.SINGLE_QUOTE);
+                    } else {
+                    sql.append(StringPool.EQUALS).append(fieldInfo.getLogicNotDeleteValue());
                 }
             }
         }
@@ -78,11 +79,11 @@ public abstract class LogicAbstractMethod extends AbstractMethod {
         for (TableFieldInfo fieldInfo : fieldList) {
             if (fieldInfo.isLogicDelete()) {
                 if (++i > 1) {
-                    set.append(",");
+                    set.append(StringPool.COMMA);
                 }
-                set.append(fieldInfo.getColumn()).append("=");
+                set.append(fieldInfo.getColumn()).append(StringPool.EQUALS);
                 if (StringUtils.isCharSequence(fieldInfo.getPropertyType())) {
-                    set.append("'").append(fieldInfo.getLogicDeleteValue()).append("'");
+                    set.append(StringPool.SINGLE_QUOTE).append(fieldInfo.getLogicDeleteValue()).append(StringPool.SINGLE_QUOTE);
                 } else {
                     set.append(fieldInfo.getLogicDeleteValue());
                 }
@@ -103,7 +104,7 @@ public abstract class LogicAbstractMethod extends AbstractMethod {
             if (StringUtils.isNotEmpty(table.getKeyProperty())) {
                 where.append("<if test=\"ew.entity.").append(table.getKeyProperty()).append("!=null\">");
                 where.append(" AND ").append(table.getKeyColumn()).append("=#{ew.entity.");
-                where.append(table.getKeyProperty()).append("}");
+                where.append(table.getKeyProperty()).append(StringPool.RIGHT_BRACE);
                 where.append("</if>");
             }
             List<TableFieldInfo> fieldList = table.getFieldList();

@@ -56,6 +56,7 @@ import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 
@@ -88,7 +89,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     protected AtomicInteger paramNameSeq;
     protected Map<String, Object> paramNameValuePairs;
     protected String paramAlias = null;
-    protected String lastSql = "";
+    protected String lastSql = StringPool.EMPTY;
     /**
      * 数据库表映射实体类
      */
@@ -177,7 +178,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
 
     @Override
     public This like(boolean condition, R column, Object val) {
-        return doIt(condition, () -> columnToString(column), LIKE, () -> formatSql("{0}", "%" + val + "%"));
+        return doIt(condition, () -> columnToString(column), LIKE, () -> formatSql("{0}", StringPool.PERCENT + val + StringPool.PERCENT));
     }
 
     @Override
@@ -187,12 +188,12 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
 
     @Override
     public This likeLeft(boolean condition, R column, Object val) {
-        return doIt(condition, () -> columnToString(column), LIKE, () -> formatSql("{0}", "%" + val));
+        return doIt(condition, () -> columnToString(column), LIKE, () -> formatSql("{0}", StringPool.PERCENT + val));
     }
 
     @Override
     public This likeRight(boolean condition, R column, Object val) {
-        return doIt(condition, () -> columnToString(column), LIKE, () -> formatSql("{0}", val + "%"));
+        return doIt(condition, () -> columnToString(column), LIKE, () -> formatSql("{0}", val + StringPool.PERCENT));
     }
 
     @Override
@@ -233,7 +234,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
 
     @Override
     public This last(boolean condition, String lastSql) {
-        this.lastSql = " " + lastSql;
+        this.lastSql = StringPool.SPACE + lastSql;
         return typedThis;
     }
 
@@ -346,8 +347,8 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * @param condition 查询条件值
      */
     protected This addNestedCondition(boolean condition, Function<This, This> func) {
-        return doIt(condition, () -> "(",
-            func.apply(instance(paramNameSeq, paramNameValuePairs)), () -> ")");
+        return doIt(condition, () -> StringPool.LEFT_BRACKET,
+            func.apply(instance(paramNameSeq, paramNameValuePairs)), () -> StringPool.RIGHT_BRACKET);
     }
 
     /**
@@ -410,7 +411,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      */
     private ISqlSegment inExpression(Collection<?> value) {
         return () -> value.stream().map(i -> formatSql("{0}", i))
-            .collect(joining(",", "(", ")"));
+            .collect(joining(StringPool.COMMA, StringPool.LEFT_BRACKET, StringPool.RIGHT_BRACKET));
     }
 
     /**
@@ -462,7 +463,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * @param columns 多字段
      */
     protected String columnsToString(R... columns) {
-        return Arrays.stream(columns).map(this::columnToString).collect(joining(","));
+        return Arrays.stream(columns).map(this::columnToString).collect(joining(StringPool.COMMA));
     }
 
     /**

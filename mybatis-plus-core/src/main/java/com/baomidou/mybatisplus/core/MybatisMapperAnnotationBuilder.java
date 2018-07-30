@@ -94,6 +94,7 @@ import org.apache.ibatis.type.UnknownTypeHandler;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.override.PageMapperMethod;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 
 
 /**
@@ -246,17 +247,17 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
     private String generateResultMapName(Method method) {
         Results results = method.getAnnotation(Results.class);
         if (results != null && !results.id().isEmpty()) {
-            return type.getName() + "." + results.id();
+            return type.getName() + StringPool.DOT + results.id();
         }
         StringBuilder suffix = new StringBuilder();
         for (Class<?> c : method.getParameterTypes()) {
-            suffix.append("-");
+            suffix.append(StringPool.DASH);
             suffix.append(c.getSimpleName());
         }
         if (suffix.length() < 1) {
             suffix.append("-void");
         }
-        return type.getName() + "." + method.getName() + suffix;
+        return type.getName() + StringPool.DOT + method.getName() + suffix;
     }
 
     private void applyResultMap(String resultMapId, Class<?> returnType, Arg[] args, Result[] results,
@@ -273,7 +274,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
     private void createDiscriminatorResultMaps(String resultMapId, Class<?> resultType, TypeDiscriminator discriminator) {
         if (discriminator != null) {
             for (Case c : discriminator.cases()) {
-                String caseResultMapId = resultMapId + "-" + c.value();
+                String caseResultMapId = resultMapId + StringPool.DASH + c.value();
                 List<ResultMapping> resultMappings = new ArrayList<>();
                 // issue #136
                 applyConstructorArgs(c.constructArgs(), resultType, resultMappings);
@@ -296,7 +297,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
             Map<String, String> discriminatorMap = new HashMap<>();
             for (Case c : cases) {
                 String value = c.value();
-                String caseResultMapId = resultMapId + "-" + value;
+                String caseResultMapId = resultMapId + StringPool.DASH + value;
                 discriminatorMap.put(value, caseResultMapId);
             }
             return assistant.buildDiscriminator(resultType, column, javaType, jdbcType, typeHandler, discriminatorMap);
@@ -310,7 +311,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
         SqlSource sqlSource = getSqlSourceFromAnnotations(method, parameterTypeClass, languageDriver);
         if (sqlSource != null) {
             Options options = method.getAnnotation(Options.class);
-            final String mappedStatementId = type.getName() + "." + method.getName();
+            final String mappedStatementId = type.getName() + StringPool.DOT + method.getName();
             Integer fetchSize = null;
             Integer timeout = null;
             StatementType statementType = StatementType.PREPARED;
@@ -360,7 +361,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                 StringBuilder sb = new StringBuilder();
                 for (String resultMap : resultMaps) {
                     if (sb.length() > 0) {
-                        sb.append(",");
+                        sb.append(StringPool.COMMA);
                     }
                     sb.append(resultMap);
                 }
@@ -499,7 +500,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
         final StringBuilder sql = new StringBuilder();
         for (String fragment : strings) {
             sql.append(fragment);
-            sql.append(" ");
+            sql.append(StringPool.SPACE);
         }
         return languageDriver.createSqlSource(configuration, sql.toString().trim(), parameterTypeClass);
     }
@@ -579,8 +580,8 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
         if (nestedSelect.length() < 1) {
             nestedSelect = result.many().select();
         }
-        if (!nestedSelect.contains(".")) {
-            nestedSelect = type.getName() + "." + nestedSelect;
+        if (!nestedSelect.contains(StringPool.DOT)) {
+            nestedSelect = type.getName() + StringPool.DOT + nestedSelect;
         }
         return nestedSelect;
     }

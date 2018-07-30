@@ -25,6 +25,7 @@ import org.apache.ibatis.reflection.MetaObject;
 import com.baomidou.mybatisplus.core.parser.ISqlParser;
 import com.baomidou.mybatisplus.core.parser.SqlInfo;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.toolkit.SqlParserUtils;
 
 import net.sf.jsqlparser.expression.Expression;
@@ -75,7 +76,7 @@ public class JsqlParserCountOptimize implements ISqlParser {
             }
             //#95 Github, selectItems contains #{} ${}, which will be translated to ?, and it may be in a function: power(#{myInt},2)
             for (SelectItem item : plainSelect.getSelectItems()) {
-                if (item.toString().contains("?")) {
+                if (item.toString().contains(StringPool.QUESTION_MARK)) {
                     return sqlInfo.setSql(SqlParserUtils.getOriginalCountSql(selectStatement.toString()));
                 }
             }

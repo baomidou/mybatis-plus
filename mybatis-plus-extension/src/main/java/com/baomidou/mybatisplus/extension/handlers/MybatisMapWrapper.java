@@ -5,6 +5,7 @@ import java.util.Map;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.wrapper.MapWrapper;
 
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 /**
@@ -25,7 +26,7 @@ public class MybatisMapWrapper extends MapWrapper {
     public String findProperty(String name, boolean useCamelCaseMapping) {
         if (useCamelCaseMapping
             && ((name.charAt(0) >= 'A' && name.charAt(0) <= 'Z')
-            || name.contains("_"))) {
+            || name.contains(StringPool.UNDERSCORE))) {
             return StringUtils.underlineToCamel(name);
         }
         return name;

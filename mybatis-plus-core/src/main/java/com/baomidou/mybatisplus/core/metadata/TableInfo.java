@@ -25,6 +25,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 
 /**
  * <p>
@@ -107,7 +108,7 @@ public class TableInfo {
     public String getSqlStatement(String sqlMethod) {
         StringBuilder statement = new StringBuilder();
         statement.append(currentNamespace);
-        statement.append(".");
+        statement.append(StringPool.DOT);
         statement.append(sqlMethod);
         return statement.toString();
     }

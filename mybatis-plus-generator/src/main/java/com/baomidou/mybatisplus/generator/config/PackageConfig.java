@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.generator.config;
 
 import java.util.Map;
 
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 import lombok.Data;
@@ -81,7 +82,7 @@ public class PackageConfig {
 
     public String getParent() {
         if (StringUtils.isNotEmpty(moduleName)) {
-            return parent + "." + moduleName;
+            return parent + StringPool.DOT + moduleName;
         }
         return parent;
     }

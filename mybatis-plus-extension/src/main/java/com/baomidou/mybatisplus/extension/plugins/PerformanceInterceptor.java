@@ -41,6 +41,7 @@ import org.apache.ibatis.session.ResultHandler;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.SystemClock;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
@@ -147,7 +148,7 @@ public class PerformanceInterceptor implements Interceptor {
         if (originalSql == null) {
             originalSql = statement.toString();
         }
-        originalSql = originalSql.replaceAll("[\\s]+", " ");
+        originalSql = originalSql.replaceAll("[\\s]+", StringPool.SPACE);
         int index = indexOfSqlStart(originalSql);
         if (index > 0) {
             originalSql = originalSql.substring(index, originalSql.length());
@@ -165,7 +166,7 @@ public class PerformanceInterceptor implements Interceptor {
         StringBuilder formatSql = new StringBuilder();
         formatSql.append(" Time：").append(timing);
         formatSql.append(" ms - ID：").append(ms.getId());
-        formatSql.append("\n Execute SQL：").append(SqlUtils.sqlFormat(originalSql, format)).append("\n");
+        formatSql.append(StringPool.NEWLINE).append("Execute SQL：").append(SqlUtils.sqlFormat(originalSql, format)).append(StringPool.NEWLINE);
         if (this.isWriteInLog()) {
             if (this.getMaxTime() >= 1 && timing > this.getMaxTime()) {
                 logger.error(formatSql.toString());

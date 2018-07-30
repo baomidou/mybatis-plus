@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.Property;
 
@@ -57,7 +58,7 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
         if (CollectionUtils.isEmpty(sqlSet)) {
             return null;
         }
-        return SqlUtils.stripSqlInjection(sqlSet.stream().collect(joining(",")));
+        return SqlUtils.stripSqlInjection(sqlSet.stream().collect(joining(StringPool.COMMA)));
     }
 
     public LambdaUpdateWrapper<T> set(Property<T, ?> column, Object val) {

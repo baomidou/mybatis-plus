@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.ConstVal;
@@ -445,14 +446,14 @@ public class ConfigBuilder {
                 if (isInclude) {
                     StringBuilder sb = new StringBuilder(tablesSql);
                     sb.append(" AND ").append(dbQuery.tableName()).append(" IN (");
-                    Arrays.stream(config.getInclude()).forEach(tbname -> sb.append("'").append(tbname.toUpperCase()).append("',"));
-                    sb.replace(sb.length() - 1, sb.length(), ")");
+                    Arrays.stream(config.getInclude()).forEach(tbname -> sb.append(StringPool.SINGLE_QUOTE).append(tbname.toUpperCase()).append("',"));
+                    sb.replace(sb.length() - 1, sb.length(), StringPool.RIGHT_BRACKET);
                     tablesSql = sb.toString();
                 } else if (isExclude) {
                     StringBuilder sb = new StringBuilder(tablesSql);
                     sb.append(" AND ").append(dbQuery.tableName()).append(" NOT IN (");
-                    Arrays.stream(config.getExclude()).forEach(tbname -> sb.append("'").append(tbname.toUpperCase()).append("',"));
-                    sb.replace(sb.length() - 1, sb.length(), ")");
+                    Arrays.stream(config.getExclude()).forEach(tbname -> sb.append(StringPool.SINGLE_QUOTE).append(tbname.toUpperCase()).append("',"));
+                    sb.replace(sb.length() - 1, sb.length(), StringPool.RIGHT_BRACKET);
                     tablesSql = sb.toString();
                 }
             }
@@ -645,7 +646,7 @@ public class ConfigBuilder {
         if (!StringUtils.endsWith(parentDir, File.separator)) {
             parentDir += File.separator;
         }
-        packageName = packageName.replaceAll("\\.", "\\" + File.separator);
+        packageName = packageName.replaceAll("\\.", StringPool.BACK_SLASH + File.separator);
         return parentDir + packageName;
     }
 
@@ -663,7 +664,7 @@ public class ConfigBuilder {
         if (StringUtils.isEmpty(parent)) {
             return subPackage;
         }
-        return parent + "." + subPackage;
+        return parent + StringPool.DOT + subPackage;
     }
 
 

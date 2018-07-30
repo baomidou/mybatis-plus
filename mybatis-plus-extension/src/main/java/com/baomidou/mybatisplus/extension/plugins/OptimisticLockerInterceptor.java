@@ -26,6 +26,7 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 
 import lombok.Data;
@@ -118,7 +119,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
                 }
             } else if (et != null) { // entity
                 String methodId = ms.getId();
-                String updateMethodName = methodId.substring(ms.getId().lastIndexOf(".") + 1);
+                String updateMethodName = methodId.substring(ms.getId().lastIndexOf(StringPool.DOT) + 1);
                 if (PARAM_UPDATE_METHOD_NAME.equals(updateMethodName)) {
                     // update(entityClass, null) -->> update all. ignore version
                     return invocation.proceed();

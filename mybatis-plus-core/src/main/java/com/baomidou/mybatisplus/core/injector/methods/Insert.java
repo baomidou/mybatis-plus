@@ -29,6 +29,7 @@ import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 
@@ -66,11 +67,11 @@ public class Insert extends AbstractMethod {
                     keyGenerator = TableInfoHelper.genKeyGenerator(tableInfo, builderAssistant, sqlMethod.getMethod(), languageDriver);
                     keyProperty = tableInfo.getKeyProperty();
                     keyColumn = tableInfo.getKeyColumn();
-                    fieldBuilder.append(tableInfo.getKeyColumn()).append(",");
+                    fieldBuilder.append(tableInfo.getKeyColumn()).append(StringPool.COMMA);
                     placeholderBuilder.append("#{").append(tableInfo.getKeyProperty()).append("},");
                 } else {
                     /** 用户输入自定义ID */
-                    fieldBuilder.append(tableInfo.getKeyColumn()).append(",");
+                    fieldBuilder.append(tableInfo.getKeyColumn()).append(StringPool.COMMA);
                     // 正常自定义主键策略
                     placeholderBuilder.append("#{").append(tableInfo.getKeyProperty()).append("},");
                 }
@@ -83,11 +84,11 @@ public class Insert extends AbstractMethod {
             // 在FieldIgnore,INSERT_UPDATE,INSERT 时设置为false
             if (FieldFill.INSERT == fieldInfo.getFieldFill()
                 || FieldFill.INSERT_UPDATE == fieldInfo.getFieldFill()) {
-                fieldBuilder.append(fieldInfo.getColumn()).append(",");
+                fieldBuilder.append(fieldInfo.getColumn()).append(StringPool.COMMA);
                 placeholderBuilder.append("#{").append(fieldInfo.getEl()).append("},");
             } else {
                 fieldBuilder.append(convertIfTagIgnored(fieldInfo, false));
-                fieldBuilder.append(fieldInfo.getColumn()).append(",");
+                fieldBuilder.append(fieldInfo.getColumn()).append(StringPool.COMMA);
                 fieldBuilder.append(convertIfTagIgnored(fieldInfo, true));
                 placeholderBuilder.append(convertIfTagIgnored(fieldInfo, false));
                 placeholderBuilder.append("#{").append(fieldInfo.getEl()).append("},");

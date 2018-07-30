@@ -39,6 +39,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 
 /**
  * <p>
@@ -257,7 +258,7 @@ public class PageMapperMethod {
                     type = SqlCommandType.FLUSH;
                 } else {
                     throw new BindingException("Invalid bound statement (not found): "
-                        + mapperInterface.getName() + "." + methodName);
+                        + mapperInterface.getName() + StringPool.DOT + methodName);
                 }
             } else {
                 name = ms.getId();
@@ -278,7 +279,7 @@ public class PageMapperMethod {
 
         private MappedStatement resolveMappedStatement(Class<?> mapperInterface, String methodName,
                                                        Class<?> declaringClass, Configuration configuration) {
-            String statementId = mapperInterface.getName() + "." + methodName;
+            String statementId = mapperInterface.getName() + StringPool.DOT + methodName;
             if (configuration.hasStatement(statementId)) {
                 return configuration.getMappedStatement(statementId);
             } else if (mapperInterface.equals(declaringClass)) {

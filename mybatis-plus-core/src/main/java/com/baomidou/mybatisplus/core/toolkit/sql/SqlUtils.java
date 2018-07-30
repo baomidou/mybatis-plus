@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.core.toolkit.sql;
 
 import com.baomidou.mybatisplus.core.enums.SqlLike;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 
 /**
  * <p>
@@ -60,16 +61,16 @@ public class SqlUtils {
         StringBuilder builder = new StringBuilder(str.length() + 3);
         switch (type) {
             case LEFT:
-                builder.append("%").append(str);
+                builder.append(StringPool.PERCENT).append(str);
                 break;
             case RIGHT:
-                builder.append(str).append("%");
+                builder.append(str).append(StringPool.PERCENT);
                 break;
             case CUSTOM:
                 builder.append(str);
                 break;
             default:
-                builder.append("%").append(str).append("%");
+                builder.append(StringPool.PERCENT).append(str).append(StringPool.PERCENT);
         }
         return builder.toString();
     }
@@ -87,6 +88,6 @@ public class SqlUtils {
         if (null == sql) {
             throw new MybatisPlusException("strip sql is null.");
         }
-        return sql.replaceAll("('.+--)|(--)|(\\|)|(%7C)", "");
+        return sql.replaceAll("('.+--)|(--)|(\\|)|(%7C)", StringPool.EMPTY);
     }
 }

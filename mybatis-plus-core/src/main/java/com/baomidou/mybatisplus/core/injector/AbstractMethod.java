@@ -41,6 +41,7 @@ import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 
@@ -144,11 +145,11 @@ public abstract class AbstractMethod {
                     // 更新排除逻辑删除字段
                     continue;
                 }
-                set.append(fieldInfo.getColumn()).append("=");
+                set.append(fieldInfo.getColumn()).append(StringPool.EQUALS);
                 if (StringUtils.isCharSequence(fieldInfo.getPropertyType())) {
-                    set.append("'").append(fieldInfo.getLogicDeleteValue()).append("',");
+                    set.append(StringPool.SINGLE_QUOTE).append(fieldInfo.getLogicDeleteValue()).append("',");
                 } else {
-                    set.append(fieldInfo.getLogicDeleteValue()).append(",");
+                    set.append(fieldInfo.getLogicDeleteValue()).append(StringPool.COMMA);
                 }
                 continue;
             }
@@ -157,8 +158,8 @@ public abstract class AbstractMethod {
                 || FieldFill.INSERT_UPDATE == fieldInfo.getFieldFill());
             if (ifTag) {
                 if (StringUtils.isNotEmpty(fieldInfo.getUpdate())) {
-                    set.append(fieldInfo.getColumn()).append("=")
-                        .append(String.format(fieldInfo.getUpdate(), fieldInfo.getColumn())).append(",");
+                    set.append(fieldInfo.getColumn()).append(StringPool.EQUALS)
+                        .append(String.format(fieldInfo.getUpdate(), fieldInfo.getColumn())).append(StringPool.COMMA);
                 } else {
                     set.append(convertIfTag(true, fieldInfo, prefix, false))
                         .append(fieldInfo.getColumn()).append("=#{");
@@ -215,7 +216,7 @@ public abstract class AbstractMethod {
             if (entityWrapper) {
                 columns.append("<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>");
             }
-            columns.append("*");
+            columns.append(StringPool.ASTERISK);
             if (entityWrapper) {
                 columns.append("</otherwise></choose>");
             }
@@ -241,7 +242,7 @@ public abstract class AbstractMethod {
                 }
                 if (size >= 1) {
                     // 判断其余字段是否存在
-                    columns.append(",");
+                    columns.append(StringPool.COMMA);
                 }
             }
 
@@ -253,7 +254,7 @@ public abstract class AbstractMethod {
                         v += (" AS " + i.getProperty());
                     }
                     return v;
-                }).collect(Collectors.joining(",")));
+                }).collect(Collectors.joining(StringPool.COMMA)));
             }
             if (entityWrapper) {
                 columns.append("</otherwise></choose>");
@@ -340,7 +341,7 @@ public abstract class AbstractMethod {
         FieldStrategy fieldStrategy = fieldInfo.getFieldStrategy();
         if (fieldStrategy == FieldStrategy.IGNORED) {
             if (ignored) {
-                return "";
+                return StringPool.EMPTY;
             }
             // 查询策略，使用全局策略
             fieldStrategy = getGlobalConfig().getDbConfig().getFieldStrategy();
@@ -407,7 +408,7 @@ public abstract class AbstractMethod {
         where.append("<if test=\"ew.entity!=null\">");
         if (StringUtils.isNotEmpty(table.getKeyProperty())) {
             where.append("<if test=\"ew.entity.").append(table.getKeyProperty()).append("!=null\">");
-            where.append(table.getKeyColumn()).append("=#{ew.entity.").append(table.getKeyProperty()).append("}");
+            where.append(table.getKeyColumn()).append("=#{ew.entity.").append(table.getKeyProperty()).append(StringPool.RIGHT_BRACE);
             where.append("</if>");
         }
         List<TableFieldInfo> fieldList = table.getFieldList();
@@ -474,9 +475,9 @@ public abstract class AbstractMethod {
     protected MappedStatement addMappedStatement(Class<?> mapperClass, String id, SqlSource sqlSource,
                                                  SqlCommandType sqlCommandType, Class<?> parameterClass, String resultMap, Class<?> resultType,
                                                  KeyGenerator keyGenerator, String keyProperty, String keyColumn) {
-        String statementName = mapperClass.getName() + "." + id;
+        String statementName = mapperClass.getName() + StringPool.DOT + id;
         if (hasMappedStatement(statementName)) {
-            System.err.println("{" + statementName + "} Has been loaded by XML or SqlProvider, ignoring the injection of the SQL.");
+            System.err.println(StringPool.LEFT_BRACE + statementName + "} Has been loaded by XML or SqlProvider, ignoring the injection of the SQL.");
             return null;
         }
         /** 缓存逻辑处理 */

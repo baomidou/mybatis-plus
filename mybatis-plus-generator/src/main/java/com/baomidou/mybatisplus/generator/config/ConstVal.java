@@ -17,6 +17,8 @@ package com.baomidou.mybatisplus.generator.config;
 
 import java.nio.charset.Charset;
 
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
+
 /**
  * <p>
  * 定义常量
@@ -45,7 +47,7 @@ public interface ConstVal {
     String UTF8 = Charset.forName("UTF-8").name();
     String UNDERLINE = "_";
 
-    String JAVA_SUFFIX = ".java";
+    String JAVA_SUFFIX = StringPool.DOT_JAVA;
     String KT_SUFFIX = ".kt";
     String XML_SUFFIX = ".xml";
 

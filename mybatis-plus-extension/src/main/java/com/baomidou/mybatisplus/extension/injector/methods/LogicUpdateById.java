@@ -21,6 +21,7 @@ import org.apache.ibatis.mapping.SqlSource;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.injector.LogicAbstractMethod;
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 
@@ -42,7 +43,7 @@ public class LogicUpdateById extends LogicAbstractMethod {
         StringBuilder append = new StringBuilder("<if test=\"et instanceof java.util.Map\">")
             .append("<if test=\"et.").append(OptimisticLockerInterceptor.MP_OPTLOCK_VERSION_ORIGINAL).append("!=null\">")
             .append(" AND ${et.").append(OptimisticLockerInterceptor.MP_OPTLOCK_VERSION_COLUMN)
-            .append("}=#{et.").append(OptimisticLockerInterceptor.MP_OPTLOCK_VERSION_ORIGINAL).append("}")
+            .append("}=#{et.").append(OptimisticLockerInterceptor.MP_OPTLOCK_VERSION_ORIGINAL).append(StringPool.RIGHT_BRACE)
             .append("</if></if>");
         if (logicDelete) {
             append.append(getLogicDeleteSql(true, tableInfo));

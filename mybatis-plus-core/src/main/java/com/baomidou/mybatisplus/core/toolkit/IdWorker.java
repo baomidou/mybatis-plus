@@ -47,7 +47,7 @@ public class IdWorker {
      * </p>
      */
     public static synchronized String get32UUID() {
-        return UUID.randomUUID().toString().replace("-", "");
+        return UUID.randomUUID().toString().replace(StringPool.DASH, StringPool.EMPTY);
     }
 
 }

@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 /**
@@ -34,7 +35,7 @@ public class SQLServer2005Dialect implements IDialect {
         if (orderByIndex != -1) {
             return sql.substring(orderByIndex);
         } else {
-            return "";
+            return StringPool.EMPTY;
         }
     }
 
@@ -42,7 +43,7 @@ public class SQLServer2005Dialect implements IDialect {
     public String buildPaginationSql(String originalSql, long offset, long limit) {
         StringBuilder pagingBuilder = new StringBuilder();
         String orderby = getOrderByPart(originalSql);
-        String distinctStr = "";
+        String distinctStr = StringPool.EMPTY;
 
         String loweredString = originalSql.toLowerCase();
         String sqlPartString = originalSql;

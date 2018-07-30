@@ -12,6 +12,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 /**
@@ -125,22 +126,22 @@ public class SqlFormatter {
                     }
                     // cannot handle single quotes
                     while (!"'".equals(t) && tokens.hasMoreTokens());
-                } else if ("\"".equals(token)) {
+                } else if (StringPool.QUOTE.equals(token)) {
                     String t;
                     do {
                         t = tokens.nextToken();
                         token += t;
                     }
-                    while (!"\"".equals(t));
+                    while (!StringPool.QUOTE.equals(t));
                 }
 
-                if (afterByOrSetOrFromOrSelect && ",".equals(token)) {
+                if (afterByOrSetOrFromOrSelect && StringPool.COMMA.equals(token)) {
                     commaAfterByOrFromOrSelect();
-                } else if (afterOn && ",".equals(token)) {
+                } else if (afterOn && StringPool.COMMA.equals(token)) {
                     commaAfterOn();
-                } else if ("(".equals(token)) {
+                } else if (StringPool.LEFT_BRACKET.equals(token)) {
                     openParen();
-                } else if (")".equals(token)) {
+                } else if (StringPool.RIGHT_BRACKET.equals(token)) {
                     closeParen();
                 } else if (BEGIN_CLAUSES.contains(lcToken)) {
                     beginNewClause();
@@ -221,7 +222,7 @@ public class SqlFormatter {
 
         private void white() {
             if (!beginLine) {
-                result.append(" ");
+                result.append(StringPool.SPACE);
             }
         }
 
@@ -348,7 +349,7 @@ public class SqlFormatter {
         }
 
         private void newline() {
-            result.append("\n");
+            result.append(StringPool.NEWLINE);
             for (int i = 0; i < indent; i++) {
                 result.append(INDENT_STRING);
             }

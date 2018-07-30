@@ -69,6 +69,7 @@ import com.baomidou.mybatisplus.core.enums.IEnum;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.extension.toolkit.PackageHelper;
@@ -442,12 +443,12 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         if (hasLength(this.typeAliasesPackage)) {
             // TODO 支持自定义通配符
             List<String> typeAliasPackageList = new ArrayList<>();
-            if (typeAliasesPackage.contains("*") && !typeAliasesPackage.contains(",") && !typeAliasesPackage.contains(";")) {
+            if (typeAliasesPackage.contains(StringPool.ASTERISK) && !typeAliasesPackage.contains(StringPool.COMMA) && !typeAliasesPackage.contains(StringPool.SEMICOLON)) {
                 typeAliasPackageList.addAll(Arrays.asList(PackageHelper.convertTypeAliasesPackage(typeAliasesPackage)));
             } else {
                 String[] typeAliasPackageArray = tokenizeToStringArray(this.typeAliasesPackage, ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
                 for (String one : typeAliasPackageArray) {
-                    if (one.contains("*")) {
+                    if (one.contains(StringPool.ASTERISK)) {
                         typeAliasPackageList.addAll(Arrays.asList(PackageHelper.convertTypeAliasesPackage(one)));
                     } else {
                         typeAliasPackageList.add(one);
@@ -469,8 +470,8 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         // TODO 自定义枚举类扫描处理
         if (hasLength(this.typeEnumsPackage)) {
             Set<Class> classes;
-            if (typeEnumsPackage.contains("*") && !typeEnumsPackage.contains(",")
-                && !typeEnumsPackage.contains(";")) {
+            if (typeEnumsPackage.contains(StringPool.STAR) && !typeEnumsPackage.contains(StringPool.COMMA)
+                && !typeEnumsPackage.contains(StringPool.SEMICOLON)) {
                 classes = PackageHelper.scanTypePackage(typeEnumsPackage);
             } else {
                 String[] typeEnumsPackageArray = tokenizeToStringArray(this.typeEnumsPackage,

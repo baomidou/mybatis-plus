@@ -26,6 +26,7 @@ import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.Property;
@@ -70,9 +71,9 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
                 queryColumn = Arrays.asList(TableInfoHelper.getTableColumns(entityClass,excludeColumn.toArray(new String[0])));
             }
         }else{
-            return SqlUtils.stripSqlInjection(queryColumn.stream().filter($this -> !excludeColumn.contains($this)).collect(Collectors.joining(",")));
+            return SqlUtils.stripSqlInjection(queryColumn.stream().filter($this -> !excludeColumn.contains($this)).collect(Collectors.joining(StringPool.COMMA)));
         }
-        return CollectionUtils.isEmpty(queryColumn) ? null:queryColumn.stream().collect(Collectors.joining(","));
+        return CollectionUtils.isEmpty(queryColumn) ? null:queryColumn.stream().collect(Collectors.joining(StringPool.COMMA));
     }
 
     /**

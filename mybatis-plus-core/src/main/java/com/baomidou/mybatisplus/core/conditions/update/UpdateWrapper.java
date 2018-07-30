@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 
 /**
@@ -75,7 +76,7 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
         if (CollectionUtils.isEmpty(sqlSet)) {
             return null;
         }
-        return SqlUtils.stripSqlInjection(sqlSet.stream().collect(joining(",")));
+        return SqlUtils.stripSqlInjection(sqlSet.stream().collect(joining(StringPool.COMMA)));
     }
 
     /**

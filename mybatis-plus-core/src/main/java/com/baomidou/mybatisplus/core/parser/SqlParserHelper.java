@@ -23,6 +23,7 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.reflection.MetaObject;
 
 import com.baomidou.mybatisplus.annotation.SqlParser;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 
 /**
  * <p>
@@ -54,7 +55,7 @@ public class SqlParserHelper {
             SqlParser sqlParser = method.getAnnotation(SqlParser.class);
             if (null != sqlParser) {
                 StringBuilder sid = new StringBuilder();
-                sid.append(mapperClass.getName()).append(".").append(method.getName());
+                sid.append(mapperClass.getName()).append(StringPool.DOT).append(method.getName());
                 SQL_PARSER_INFO_CACHE.put(sid.toString(), new SqlParserInfo(sqlParser));
             }
         }

@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 
@@ -83,7 +84,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
                 sqlSelect = TableInfoHelper.getTableColumns(entityClass, excludeColumns);
             }
         }
-        return ArrayUtils.isNotEmpty(sqlSelect) ? SqlUtils.stripSqlInjection(Arrays.stream(sqlSelect).collect(Collectors.joining(","))) : null;
+        return ArrayUtils.isNotEmpty(sqlSelect) ? SqlUtils.stripSqlInjection(Arrays.stream(sqlSelect).collect(Collectors.joining(StringPool.COMMA))) : null;
     }
 
     public QueryWrapper<T> select(String... sqlSelect) {

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
@@ -125,7 +126,7 @@ public class PostgreSQLGenerator extends GeneratorTest {
             @Override
             public String outputFile(TableInfo tableInfo) {
                 // 自定义输入文件名称
-                return "D://test/my_" + tableInfo.getEntityName() + ".java";
+                return "D://test/my_" + tableInfo.getEntityName() + StringPool.DOT_JAVA;
             }
         });
         cfg.setFileOutConfigList(focList);

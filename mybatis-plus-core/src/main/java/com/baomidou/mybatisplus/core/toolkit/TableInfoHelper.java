@@ -404,8 +404,8 @@ public class TableInfoHelper {
         if (StringUtils.isNotEmpty(tableField.el())) {
             el = tableField.el();
         }
-        String[] columns = columnName.split(";");
-        String[] els = el.split(";");
+        String[] columns = columnName.split(StringPool.SEMICOLON);
+        String[] els = el.split(StringPool.SEMICOLON);
         if (columns.length == els.length) {
             for (int i = 0; i < columns.length; i++) {
                 fieldList.add(new TableFieldInfo(underCamel, dbConfig, tableInfo,

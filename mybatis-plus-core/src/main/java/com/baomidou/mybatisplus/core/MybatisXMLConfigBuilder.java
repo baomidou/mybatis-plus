@@ -52,6 +52,8 @@ import org.apache.ibatis.session.LocalCacheScope;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.type.JdbcType;
 
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
+
 /**
  * <p>
  * Copy from XMLConfigBuilder in Mybatis and replace default Configuration class
@@ -151,7 +153,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
     private void loadCustomVfs(Properties props) throws ClassNotFoundException {
         String value = props.getProperty("vfsImpl");
         if (value != null) {
-            String[] clazzes = value.split(",");
+            String[] clazzes = value.split(StringPool.COMMA);
             for (String clazz : clazzes) {
                 if (!clazz.isEmpty()) {
                     @SuppressWarnings("unchecked")

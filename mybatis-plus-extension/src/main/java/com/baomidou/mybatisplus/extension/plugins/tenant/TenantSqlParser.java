@@ -19,6 +19,7 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.parser.AbstractJsqlParser;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
@@ -278,7 +279,7 @@ public class TenantSqlParser extends AbstractJsqlParser {
         } else {
             column.append(table.getAlias().getName());
         }
-        column.append(".");
+        column.append(StringPool.DOT);
         column.append(this.tenantHandler.getTenantIdColumn());
         return new Column(column.toString());
     }

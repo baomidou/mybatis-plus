@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
+
 /**
  * <p>
  * DB2 数据库分页方言
@@ -55,7 +57,7 @@ public class DB2Dialect implements IDialect {
 
         // add the restriction to the outer select
         if (offset > 0) {
-            String endString = offset + "+" + limit;
+            String endString = offset + StringPool.PLUS + limit;
             pagingSelect.append("between ").append(offset).append("+1 and ").append(endString);
         } else {
             pagingSelect.append("<= ").append(limit);

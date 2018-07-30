@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.generator.config.rules;
 
 import java.util.Arrays;
 
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.config.ConstVal;
 
@@ -40,7 +41,7 @@ public enum NamingStrategy {
         // 快速检查
         if (StringUtils.isEmpty(name)) {
             // 没必要转换
-            return "";
+            return StringPool.EMPTY;
         }
         String tempName = name;
         // 大写数字下划线组成转为小写 , 允许混合模式转为小写
@@ -75,13 +76,13 @@ public enum NamingStrategy {
      */
     public static String removePrefix(String name, String... prefix) {
         if (StringUtils.isEmpty(name)) {
-            return "";
+            return StringPool.EMPTY;
         }
         if (null != prefix) {
             // 判断是否有匹配的前缀，然后截取前缀
             // 删除前缀
             return Arrays.stream(prefix).filter(pf -> name.toLowerCase()
-                .matches("^" + pf.toLowerCase() + ".*"))
+                .matches(StringPool.HAT + pf.toLowerCase() + ".*"))
                 .findFirst().map(pf -> name.substring(pf.length())).orElse(name);
         }
         return name;
@@ -100,7 +101,7 @@ public enum NamingStrategy {
         if (null == prefix || StringUtils.isEmpty(name)) {
             return false;
         }
-        return Arrays.stream(prefix).anyMatch(pf -> name.toLowerCase().matches("^" + pf.toLowerCase() + ".*"));
+        return Arrays.stream(prefix).anyMatch(pf -> name.toLowerCase().matches(StringPool.HAT + pf.toLowerCase() + ".*"));
     }
 
     /**
@@ -128,7 +129,7 @@ public enum NamingStrategy {
         if (StringUtils.isNotEmpty(name)) {
             return name.substring(0, 1).toUpperCase() + name.substring(1);
         }
-        return "";
+        return StringPool.EMPTY;
     }
 
 }

@@ -46,6 +46,7 @@ import com.baomidou.mybatisplus.core.parser.ISqlParser;
 import com.baomidou.mybatisplus.core.parser.SqlInfo;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.handlers.AbstractSqlParserHandler;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
@@ -119,7 +120,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
     private static String concatOrderBuilder(String[] columns, String orderWord) {
         if (ArrayUtils.isNotEmpty(columns)) {
             return Arrays.stream(columns).filter(c -> StringUtils.isNotEmpty(c))
-                .collect(joining(",", "", orderWord));
+                .collect(joining(StringPool.COMMA, StringPool.EMPTY, orderWord));
         }
         return StringUtils.EMPTY;
     }

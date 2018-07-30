@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.enums.SqlKeyword;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 
 /**
  * <p>
@@ -88,6 +89,6 @@ public class NormalSegmentList extends AbstractISegmentList {
         if (MatchSegment.AND_OR.match(lastValue)) {
             removeLast();
         }
-        return this.stream().map(ISqlSegment::getSqlSegment).collect(Collectors.joining(" "));
+        return this.stream().map(ISqlSegment::getSqlSegment).collect(Collectors.joining(StringPool.SPACE));
     }
 }

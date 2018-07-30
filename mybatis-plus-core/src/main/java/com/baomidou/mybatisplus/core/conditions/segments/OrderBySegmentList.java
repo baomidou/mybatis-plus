@@ -21,6 +21,7 @@ import static java.util.stream.Collectors.joining;
 import java.util.List;
 
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 
 /**
  * <p>
@@ -37,7 +38,7 @@ public class OrderBySegmentList extends AbstractISegmentList {
     protected boolean transformList(List<ISqlSegment> list, ISqlSegment firstSegment) {
         list.remove(0);
         if (!isEmpty()) {
-            super.add(() -> ",");
+            super.add(() -> StringPool.COMMA);
         }
         return true;
     }
@@ -45,9 +46,9 @@ public class OrderBySegmentList extends AbstractISegmentList {
     @Override
     public String getSqlSegment() {
         if (isEmpty()) {
-            return "";
+            return StringPool.EMPTY;
         }
-        return this.stream().map(ISqlSegment::getSqlSegment).collect(joining(" ",
-            " " + ORDER_BY.getSqlSegment() + " ", ""));
+        return this.stream().map(ISqlSegment::getSqlSegment).collect(joining(StringPool.SPACE,
+            StringPool.SPACE + ORDER_BY.getSqlSegment() + StringPool.SPACE, StringPool.EMPTY));
     }
 }

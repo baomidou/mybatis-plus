@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.core.enums;
 
 
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 
 /**
  * <p>
@@ -32,11 +33,11 @@ public enum SqlKeyword implements ISqlSegment {
     IN("IN"),
     NOT("NOT"),
     LIKE("LIKE"),
-    EQ("="),
+    EQ(StringPool.EQUALS),
     NE("<>"),
-    GT(">"),
+    GT(StringPool.RIGHT_CHEV),
     GE(">="),
-    LT("<"),
+    LT(StringPool.LEFT_CHEV),
     LE("<="),
     IS_NULL("IS NULL"),
     IS_NOT_NULL("IS NOT NULL"),

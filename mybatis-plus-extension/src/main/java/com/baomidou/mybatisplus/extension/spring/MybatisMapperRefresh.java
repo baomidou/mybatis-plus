@@ -44,6 +44,7 @@ import org.springframework.util.ResourceUtils;
 
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.SystemClock;
 
 
@@ -231,7 +232,7 @@ public class MybatisMapperRefresh implements Runnable {
     private void cleanParameterMap(List<XNode> list, String namespace) {
         for (XNode parameterMapNode : list) {
             String id = parameterMapNode.getStringAttribute("id");
-            configuration.getParameterMaps().remove(namespace + "." + id);
+            configuration.getParameterMaps().remove(namespace + StringPool.DOT + id);
         }
     }
 
@@ -245,7 +246,7 @@ public class MybatisMapperRefresh implements Runnable {
         for (XNode resultMapNode : list) {
             String id = resultMapNode.getStringAttribute("id", resultMapNode.getValueBasedIdentifier());
             configuration.getResultMapNames().remove(id);
-            configuration.getResultMapNames().remove(namespace + "." + id);
+            configuration.getResultMapNames().remove(namespace + StringPool.DOT + id);
             clearResultMap(resultMapNode, namespace);
         }
     }
@@ -258,7 +259,7 @@ public class MybatisMapperRefresh implements Runnable {
                     configuration.getResultMapNames().remove(
                         resultChild.getStringAttribute("id", resultChild.getValueBasedIdentifier()));
                     configuration.getResultMapNames().remove(
-                        namespace + "." + resultChild.getStringAttribute("id", resultChild.getValueBasedIdentifier()));
+                        namespace + StringPool.DOT + resultChild.getStringAttribute("id", resultChild.getValueBasedIdentifier()));
                     if (resultChild.getChildren() != null && !resultChild.getChildren().isEmpty()) {
                         clearResultMap(resultChild, namespace);
                     }
@@ -277,7 +278,7 @@ public class MybatisMapperRefresh implements Runnable {
         for (XNode context : list) {
             String id = context.getStringAttribute("id");
             configuration.getKeyGeneratorNames().remove(id + SelectKeyGenerator.SELECT_KEY_SUFFIX);
-            configuration.getKeyGeneratorNames().remove(namespace + "." + id + SelectKeyGenerator.SELECT_KEY_SUFFIX);
+            configuration.getKeyGeneratorNames().remove(namespace + StringPool.DOT + id + SelectKeyGenerator.SELECT_KEY_SUFFIX);
         }
     }
 
@@ -291,7 +292,7 @@ public class MybatisMapperRefresh implements Runnable {
         for (XNode context : list) {
             String id = context.getStringAttribute("id");
             configuration.getSqlFragments().remove(id);
-            configuration.getSqlFragments().remove(namespace + "." + id);
+            configuration.getSqlFragments().remove(namespace + StringPool.DOT + id);
         }
     }
 

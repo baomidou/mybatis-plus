@@ -8,6 +8,7 @@ import java.io.Serializable;
 
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.SerializationUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 
 import lombok.Getter;
 
@@ -59,7 +60,7 @@ public class SerializedLambda implements Serializable {
     @Override
     public String toString() {
         return new StringBuilder(super.toString())
-            .append(implClass.replace("/", "."))
-            .append("#").append(implMethodName).toString();
+            .append(implClass.replace(StringPool.SLASH, StringPool.DOT))
+            .append(StringPool.HASH).append(implMethodName).toString();
     }
 }
