@@ -19,6 +19,7 @@ import java.util.function.Predicate;
 
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.enums.SqlKeyword;
+import com.baomidou.mybatisplus.core.enums.WrapperKeyword;
 
 /**
  * <p>
@@ -37,7 +38,7 @@ public enum MatchSegment {
     AND_OR(i -> i == SqlKeyword.AND || i == SqlKeyword.OR),
     EXISTS(i -> i == SqlKeyword.EXISTS),
     HAVING(i -> i == SqlKeyword.HAVING),
-    APPLY(i -> i == SqlKeyword.APPLY);
+    APPLY(i -> i == WrapperKeyword.APPLY);
 
     private final Predicate<ISqlSegment> predicate;
 

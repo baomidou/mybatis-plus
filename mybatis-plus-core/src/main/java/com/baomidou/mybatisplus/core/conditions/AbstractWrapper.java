@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.core.conditions;
 
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.AND;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.APPLY;
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ASC;
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.BETWEEN;
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.DESC;
@@ -36,6 +35,9 @@ import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NE;
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NOT;
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.OR;
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ORDER_BY;
+import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.APPLY;
+import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.LEFT_BRACKET;
+import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.RIGHT_BRACKET;
 import static java.util.stream.Collectors.joining;
 
 import java.util.Arrays;
@@ -106,7 +108,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     public This setEntity(T entity) {
-        Assert.notNull(entity,"entity is not null");
+        Assert.notNull(entity, "entity is not null");
         this.entity = entity;
         this.entityClass = (Class<T>) entity.getClass();
         return typedThis;
@@ -347,8 +349,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * @param condition 查询条件值
      */
     protected This addNestedCondition(boolean condition, Function<This, This> func) {
-        return doIt(condition, () -> StringPool.LEFT_BRACKET,
-            func.apply(instance(paramNameSeq, paramNameValuePairs)), () -> StringPool.RIGHT_BRACKET);
+        return doIt(condition, LEFT_BRACKET, func.apply(instance(paramNameSeq, paramNameValuePairs)), RIGHT_BRACKET);
     }
 
     /**
