@@ -25,6 +25,29 @@
         }
     ],
     "properties": [
-
+        {
+            "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig",
+            "name": "mybatis-plus.global-config.meta-object-handler",
+            "deprecation": {
+                "level": "error",
+                "reason": "3.0开始废除此属性，请使用@Bean的方式注入至Spring容器."
+            }
+        },
+        {
+            "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig$DbConfig",
+            "name": "mybatis-plus.global-config.db-config.key-generator",
+            "deprecation": {
+                "level": "error",
+                "reason": "3.0开始废除此属性，请使用@Bean的方式注入至Spring容器."
+            }
+        },
+        {
+            "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig",
+            "name": "mybatis-plus.global-config.sql-injector",
+            "deprecation": {
+                "level": "error",
+                "reason": "3.0开始废除此属性，请使用@Bean的方式注入至Spring容器."
+            }
+        }
     ]
 }
