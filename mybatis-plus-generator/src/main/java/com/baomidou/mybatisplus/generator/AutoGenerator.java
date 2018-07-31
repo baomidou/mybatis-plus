@@ -15,26 +15,19 @@
  */
 package com.baomidou.mybatisplus.generator;
 
-import java.io.Serializable;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.Version;
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
-import com.baomidou.mybatisplus.generator.config.GlobalConfig;
-import com.baomidou.mybatisplus.generator.config.PackageConfig;
-import com.baomidou.mybatisplus.generator.config.StrategyConfig;
-import com.baomidou.mybatisplus.generator.config.TemplateConfig;
+import com.baomidou.mybatisplus.generator.config.*;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.engine.AbstractTemplateEngine;
 import com.baomidou.mybatisplus.generator.engine.VelocityTemplateEngine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * 生成文件
@@ -161,6 +154,12 @@ public class AutoGenerator {
                     .filter(field -> field.getPropertyName().startsWith("is"))
                     .forEach(field -> field.setPropertyName(config.getStrategyConfig(),
                         StringUtils.removePrefixAfterPrefixToLower(field.getPropertyName(), 2)));
+            }
+
+            // 如果指定了ID策略则自动import相关注解
+            if (config.getGlobalConfig().getIdType() != null) {
+                tableInfo.setImportPackages(TableId.class.getCanonicalName());
+                tableInfo.setImportPackages(IdType.class.getCanonicalName());
             }
         }
         return config.setTableInfoList(tableList);
