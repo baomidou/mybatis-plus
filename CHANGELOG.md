@@ -1,6 +1,25 @@
 ﻿# CHANGELOG
 
 
+## [v3.0-RC1] 2018.08.01 代号：超级棒棒糖 🍭 RC1
+- 优化工具类部分代码，并修复一个在多线程环境下可能会引发死锁的BUG
+- 新增断言类,顺便修改几处地方的判断抛异常为使用断言
+- 去掉多余的 "implements Serializable"
+- 魔法值都改为全局常量模式
+- 咩咩说了 MP 3.0 分页已经飘飘欲仙了，不在需要迁就使用 PageHelper 模式
+- issue #384 QueryWrapper 支持排除指定字段模式
+- 全新 banner，全新感觉
+- 再优化一下抛异常的过程
+- 修改 class 实例化对象的方式，现在可以实例化私有 class
+- 支持无配置可启动使用 Gitee issues/ILJQA
+- 释放sqlSession,待优化 ActiveRecord单元测试
+- 解决只调用 last 产生的 sql 会出的问题
+- 修复Lambda首位属性为基类属性时错误.
+- 增加泛型限制,格式化下代码.
+- 优化一下 AbstractWrapper 使用的 ISqlSegment
+- 其他
+
+
 ## [v3.0-RC] 2018.07.23 代号：超级棒棒糖 🍭 RC
 - 优化 page 当 size 小于 0 自动调整为 list 模式
 - 新增 攻击 SQL 阻断解析器
