@@ -40,11 +40,11 @@ import org.apache.ibatis.session.RowBounds;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.MybatisDefaultParameterHandler;
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.parser.ISqlParser;
 import com.baomidou.mybatisplus.core.parser.SqlInfo;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -221,7 +221,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
                 page.setCurrent(1);
             }
         } catch (Exception e) {
-            throw new MybatisPlusException("Error: Method queryTotal execution error.", e);
+            throw ExceptionUtils.mpe("Error: Method queryTotal execution error.", e);
         }
     }
 
