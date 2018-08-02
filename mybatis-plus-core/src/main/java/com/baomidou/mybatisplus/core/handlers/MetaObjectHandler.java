@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.core.handlers;
 
+import java.util.function.Supplier;
+
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 
@@ -31,9 +33,7 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 public interface MetaObjectHandler {
 
     /**
-     * <p>
-     * 插入元对象字段填充
-     * </p>
+     * 插入元对象字段填充（用于插入时对公共字段的填充）
      *
      * @param metaObject 元对象
      */
@@ -41,10 +41,6 @@ public interface MetaObjectHandler {
 
     /**
      * 更新元对象字段填充（用于更新时对公共字段的填充）
-     * Created with IntelliJ IDEA.
-     * Author:  Wu Yujie
-     * Email:  coffee377@dingtalk.com
-     * Time:  2017/04/16 15:03
      *
      * @param metaObject 元对象
      */
@@ -57,20 +53,42 @@ public interface MetaObjectHandler {
      * <p>
      * 如果包含前缀 et 使用该方法，否则可以直接 metaObject.setValue(fieldName, fieldVal);
      * </p>
+     * <p>
+     * 以后会删除这个方法,请转用下面的方法
+     * </p>
      *
      * @param fieldName  java bean property name
      * @param fieldVal   java bean property value
      * @param metaObject meta object parameter
      */
+    @Deprecated
     default MetaObjectHandler setFieldValByName(String fieldName, Object fieldVal, MetaObject metaObject) {
-        if (metaObject.hasSetter(fieldName) && metaObject.hasGetter(fieldName)) {
-            metaObject.setValue(fieldName, fieldVal);
-        } else if (metaObject.hasGetter(Constants.ENTITY)) {
-            Object et = metaObject.getValue(Constants.ENTITY);
-            if (et != null) {
-                MetaObject etMeta = SystemMetaObject.forObject(et);
-                if (etMeta.hasSetter(fieldName)) {
-                    etMeta.setValue(fieldName, fieldVal);
+        return setFieldValByName(() -> fieldVal, metaObject, fieldName);
+    }
+
+    /**
+     * <p>
+     * Common method to set value for java bean.
+     * </p>
+     * <p>
+     * 如果包含前缀 et 使用该方法，否则可以直接 metaObject.setValue(fieldName, fieldVal);
+     * </p>
+     *
+     * @param fieldVal   java bean property value
+     * @param metaObject meta object parameter
+     * @param fieldNames java bean property names
+     */
+    default MetaObjectHandler setFieldValByName(Supplier<Object> fieldVal, MetaObject metaObject, String... fieldNames) {
+        for (String fieldName : fieldNames) {
+            if (metaObject.hasSetter(fieldName) && metaObject.hasGetter(fieldName)) {
+                metaObject.setValue(fieldName, fieldVal.get());
+            } else if (metaObject.hasGetter(Constants.ENTITY)) {
+                Object et = metaObject.getValue(Constants.ENTITY);
+                if (et != null) {
+                    MetaObject etMeta = SystemMetaObject.forObject(et);
+                    if (etMeta.hasSetter(fieldName)) {
+                        etMeta.setValue(fieldName, fieldVal.get());
+                    }
                 }
             }
         }
