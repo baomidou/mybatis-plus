@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -105,7 +106,7 @@ public class TableFieldInfo {
      * </p>
      */
     public TableFieldInfo(boolean underCamel, GlobalConfig.DbConfig dbConfig, TableInfo tableInfo,
-                          String column, String el, Field field, TableField tableField,Class<?> parentClass) {
+                          String column, String el, Field field, TableField tableField, Class<?> parentClass) {
         this.property = field.getName();
         this.propertyType = field.getType();
         /*
@@ -151,7 +152,7 @@ public class TableFieldInfo {
         this.parentClass = parentClass;
     }
 
-    public TableFieldInfo(boolean underCamel, GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field,Class<?> parentClass) {
+    public TableFieldInfo(boolean underCamel, GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field, Class<?> parentClass) {
         if (dbConfig.isColumnUnderline()) {
             /* 开启字段下划线申明 */
             this.setColumn(dbConfig, StringUtils.camelToUnderline(field.getName()));
@@ -290,6 +291,10 @@ public class TableFieldInfo {
         return condition;
     }
 
+    public void setCondition(String condition) {
+        this.condition = condition;
+    }
+
     public void setCondition(GlobalConfig.DbConfig dbConfig) {
         /**
          * 全局配置开启字段 LIKE 并且为字符串类型字段
@@ -300,10 +305,6 @@ public class TableFieldInfo {
                 this.condition = dbConfig.getDbType().getLike();
             }
         }
-    }
-
-    public void setCondition(String condition) {
-        this.condition = condition;
     }
 
     public FieldFill getFieldFill() {

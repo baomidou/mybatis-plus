@@ -17,8 +17,6 @@ package com.baomidou.mybatisplus.core.metadata;
 
 import java.util.List;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.apache.ibatis.session.Configuration;
 
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -26,6 +24,9 @@ import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * <p>

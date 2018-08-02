@@ -65,27 +65,28 @@ public final class LambdaUtils {
      * 缓存实体类名与表字段映射关系
      * </p>
      *
-     * @param clazz 实体
+     * @param clazz     实体
      * @param tableInfo 表信息
      */
     public static void createCache(Class clazz, TableInfo tableInfo) {
-        LAMBDA_CACHE.put(clazz.getName(), createLambdaMap(tableInfo,clazz));
+        LAMBDA_CACHE.put(clazz.getName(), createLambdaMap(tableInfo, clazz));
 
     }
 
     /**
      * 保存缓存信息
+     *
      * @param className 类名
-     * @param property 属性
-     * @param column 字段
+     * @param property  属性
+     * @param column    字段
      */
-    private static void saveCache(String className,String property,String column){
+    private static void saveCache(String className, String property, String column) {
         Map<String, String> cacheMap = LAMBDA_CACHE.get(className);
-        if(cacheMap==null){
+        if (cacheMap == null) {
             cacheMap = new HashMap<>();
         }
-        cacheMap.put(property,column);
-        LAMBDA_CACHE.put(className,cacheMap);
+        cacheMap.put(property, column);
+        LAMBDA_CACHE.put(className, cacheMap);
     }
 
     /**
@@ -96,17 +97,17 @@ public final class LambdaUtils {
      * @param tableInfo 表信息
      * @return
      */
-    private static Map<String, String> createLambdaMap(TableInfo tableInfo,Class clazz) {
+    private static Map<String, String> createLambdaMap(TableInfo tableInfo, Class clazz) {
         Map<String, String> map = new HashMap<>(16);
         if (StringUtils.isNotEmpty(tableInfo.getKeyProperty())) {
-            if(tableInfo.getParentClass()!=clazz){
-                saveCache(tableInfo.getParentClass().getName(),tableInfo.getKeyProperty(), tableInfo.getKeyColumn());
+            if (tableInfo.getParentClass() != clazz) {
+                saveCache(tableInfo.getParentClass().getName(), tableInfo.getKeyProperty(), tableInfo.getKeyColumn());
             }
             map.put(tableInfo.getKeyProperty(), tableInfo.getKeyColumn());
         }
         tableInfo.getFieldList().forEach(i -> {
-            if(i.getParentClass()!=clazz){
-                saveCache(i.getParentClass().getName(),i.getProperty(), i.getColumn());
+            if (i.getParentClass() != clazz) {
+                saveCache(i.getParentClass().getName(), i.getProperty(), i.getColumn());
             }
             map.put(i.getProperty(), i.getColumn());
         });

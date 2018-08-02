@@ -410,7 +410,7 @@ public class TableInfoHelper {
         if (columns.length == els.length) {
             for (int i = 0; i < columns.length; i++) {
                 fieldList.add(new TableFieldInfo(underCamel, dbConfig, tableInfo,
-                    columns[i], els[i], field, tableField,field.getDeclaringClass()));
+                    columns[i], els[i], field, tableField, field.getDeclaringClass()));
             }
             return true;
         }
