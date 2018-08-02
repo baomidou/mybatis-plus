@@ -104,14 +104,10 @@ public class TableInfo {
      * </p>
      *
      * @param sqlMethod MybatisPlus 支持 SQL 方法
-     * @return
+     * @return SQL Statement
      */
     public String getSqlStatement(String sqlMethod) {
-        StringBuilder statement = new StringBuilder();
-        statement.append(currentNamespace);
-        statement.append(StringPool.DOT);
-        statement.append(sqlMethod);
-        return statement.toString();
+        return currentNamespace + StringPool.DOT + sqlMethod;
     }
 
     public IdType getIdType() {
