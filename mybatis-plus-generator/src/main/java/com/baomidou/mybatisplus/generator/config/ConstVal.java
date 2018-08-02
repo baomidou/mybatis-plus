@@ -29,6 +29,8 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
  */
 public interface ConstVal {
 
+    String MODULE_NAME = "ModuleName";
+
     String ENTITY = "Entity";
     String SERVICE = "Service";
     String SERVICE_IMPL = "ServiceImpl";
