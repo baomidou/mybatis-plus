@@ -1,4 +1,3 @@
-package com.baomidou.mybatisplus.test.mysql;
 /*
  * Copyright (c) 2011-2020, hubin (jobob@qq.com).
  * <p>
@@ -14,13 +13,13 @@ package com.baomidou.mybatisplus.test.mysql;
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+package com.baomidou.mybatisplus.test.mysql;
 
 import java.time.LocalDateTime;
 
 import org.apache.ibatis.reflection.MetaObject;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-
 
 /**
  * <p>
@@ -45,8 +44,8 @@ public class MysqlMetaObjectHandler implements MetaObjectHandler {
         System.out.println("createDatetime=" + createDatetime);
         if (createDatetime == null) {
             //测试实体没有的字段，配置在公共填充，不应该set到实体里面
-            this.setFieldValByName("createDatetime1", LocalDateTime.now(), metaObject);
-            this.setFieldValByName("createDatetime", LocalDateTime.now(), metaObject);
+            this.setFieldValByName("createDatetime1", LocalDateTime.now(), metaObject)
+                .setFieldValByName("createDatetime", LocalDateTime.now(), metaObject);
         }
     }
 
@@ -56,8 +55,8 @@ public class MysqlMetaObjectHandler implements MetaObjectHandler {
         System.out.println("update fill");
         System.out.println("*************************");
         //测试实体没有的字段，配置在公共填充，不应该set到实体里面
-        this.setFieldValByName("updateDatetime1", LocalDateTime.now(), metaObject);
-        this.setFieldValByName("updateDatetime", LocalDateTime.now(), metaObject);
+        this.setFieldValByName("updateDatetime1", LocalDateTime.now(), metaObject)
+            .setFieldValByName("updateDatetime", LocalDateTime.now(), metaObject);
     }
 }
 
