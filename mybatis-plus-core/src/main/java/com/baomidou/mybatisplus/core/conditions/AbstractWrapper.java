@@ -449,7 +449,10 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
         if (StringUtils.isNotEmpty(sqlSegment)) {
             return sqlSegment + lastSql;
         }
-        return "1=1" + lastSql;
+        if (StringUtils.isNotEmpty(lastSql)) {
+            return "1=1" + lastSql;
+        }
+        return null;
     }
 
     public Map<String, Object> getParamNameValuePairs() {
