@@ -119,7 +119,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
      */
     private static String concatOrderBuilder(String[] columns, String orderWord) {
         if (ArrayUtils.isNotEmpty(columns)) {
-            return Arrays.stream(columns).filter(c -> StringUtils.isNotEmpty(c))
+            return Arrays.stream(columns).filter(StringUtils::isNotEmpty)
                 .collect(joining(StringPool.COMMA, StringPool.EMPTY, orderWord));
         }
         return StringUtils.EMPTY;
@@ -168,7 +168,8 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
 
         String originalSql = boundSql.getSql();
         Connection connection = (Connection) invocation.getArgs()[0];
-        DbType dbType = StringUtils.isNotEmpty(dialectType) ? DbType.getDbType(dialectType) : JdbcUtils.getDbType(connection.getMetaData().getURL());
+        DbType dbType = StringUtils.isNotEmpty(dialectType) ? DbType.getDbType(dialectType)
+            : JdbcUtils.getDbType(connection.getMetaData().getURL());
 
         boolean orderBy = true;
         if (page.getTotal() == 0) {
@@ -215,7 +216,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
              * 溢出总页数，设置第一页
              */
             long pages = page.getPages();
-            if (overflowCurrent && Long.valueOf(page.getCurrent()).compareTo(pages) > 0) {
+            if (overflowCurrent && page.getCurrent() > pages) {
                 // 设置为第一条
                 page.setCurrent(1);
             }
