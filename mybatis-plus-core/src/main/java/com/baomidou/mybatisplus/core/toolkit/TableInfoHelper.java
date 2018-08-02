@@ -356,6 +356,7 @@ public class TableInfoHelper {
                 tableInfo.setIdType(dbConfig.getIdType());
                 tableInfo.setKeyColumn(column);
                 tableInfo.setKeyProperty(field.getName());
+                tableInfo.setParentClass(field.getDeclaringClass());
                 return true;
             } else {
                 throwExceptionId(clazz);
