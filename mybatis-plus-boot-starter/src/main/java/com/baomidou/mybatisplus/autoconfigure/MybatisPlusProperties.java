@@ -84,7 +84,7 @@ public class MybatisPlusProperties {
      * TODO 全局枚举
      */
     @NestedConfigurationProperty
-    private GlobalConfig globalConfig;
+    private GlobalConfig globalConfig = GlobalConfigUtils.defaults();
 
     /**
      * @since 1.1.0
@@ -185,9 +185,6 @@ public class MybatisPlusProperties {
     }
 
     public GlobalConfig getGlobalConfig() {
-        if (null == globalConfig) {
-            return GlobalConfigUtils.defaults();
-        }
         return globalConfig;
     }
 
