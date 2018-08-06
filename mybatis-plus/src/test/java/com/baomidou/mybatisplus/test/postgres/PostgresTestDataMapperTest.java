@@ -10,18 +10,14 @@ import com.baomidou.mybatisplus.test.base.entity.TestData;
 import com.baomidou.mybatisplus.test.base.mapper.LogicTestDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.TestDataMapper;
 import com.baomidou.mybatisplus.test.base.service.ILogicTestDataService;
-import com.baomidou.mybatisplus.test.mysql.config.MysqlDb;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -50,10 +46,10 @@ public class PostgresTestDataMapperTest {
     @Resource
     private ILogicTestDataService logicTestDataService;
 
-    @BeforeClass
-    public static void init() throws IOException, SQLException {
-        MysqlDb.initMysqlData();
-    }
+//    @BeforeClass
+//    public static void init() throws IOException, SQLException {
+//        PostgresDb.initMysqlData();
+//    }
 
     @Test
     public void insertForeach() {

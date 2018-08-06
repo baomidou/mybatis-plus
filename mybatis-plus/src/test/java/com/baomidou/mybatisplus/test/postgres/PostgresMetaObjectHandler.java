@@ -36,7 +36,7 @@ public class PostgresMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
         System.out.println("*************************");
-        System.out.println("insert fill");
+        System.out.println("insert of postgres fill");
         System.out.println("*************************");
         // 测试下划线
         Object createDatetime = this.getFieldValByName("createDatetime", metaObject);
@@ -51,7 +51,7 @@ public class PostgresMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void updateFill(MetaObject metaObject) {
         System.out.println("*************************");
-        System.out.println("update fill");
+        System.out.println("update of postgres fill");
         System.out.println("*************************");
         //测试实体没有的字段，配置在公共填充，不应该set到实体里面
         this.setFieldValByName("updateDatetime1", LocalDateTime.now(), metaObject)

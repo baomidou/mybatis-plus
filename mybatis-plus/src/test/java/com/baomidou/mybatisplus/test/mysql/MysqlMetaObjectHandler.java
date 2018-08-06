@@ -15,11 +15,10 @@
  */
 package com.baomidou.mybatisplus.test.mysql;
 
-import java.time.LocalDateTime;
-
+import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import org.apache.ibatis.reflection.MetaObject;
 
-import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -37,7 +36,7 @@ public class MysqlMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void insertFill(MetaObject metaObject) {
         System.out.println("*************************");
-        System.out.println("insert fill");
+        System.out.println("insert of mysql fill");
         System.out.println("*************************");
         // 测试下划线
         Object createDatetime = this.getFieldValByName("createDatetime", metaObject);
@@ -52,7 +51,7 @@ public class MysqlMetaObjectHandler implements MetaObjectHandler {
     @Override
     public void updateFill(MetaObject metaObject) {
         System.out.println("*************************");
-        System.out.println("update fill");
+        System.out.println("update of mysql fill");
         System.out.println("*************************");
         //测试实体没有的字段，配置在公共填充，不应该set到实体里面
         this.setFieldValByName("updateDatetime1", LocalDateTime.now(), metaObject)
