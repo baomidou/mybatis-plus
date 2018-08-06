@@ -44,50 +44,39 @@ public class TableInfo {
      * 表主键ID 类型
      */
     private IdType idType = IdType.NONE;
-
     /**
      * 数据库类型
      */
     private DbType dbType;
-
     /**
      * 表名称
      */
     private String tableName;
-
     /**
      * 表映射结果集
      */
     private String resultMap;
-
     /**
-     * <p>
      * 主键是否有存在字段名与属性名关联
-     * </p>
-     * true , false
+     * true: 表示要进行 as
      */
     private boolean keyRelated = false;
-
     /**
      * 表主键ID 属性名
      */
     private String keyProperty;
-
     /**
      * 表主键ID 字段名
      */
     private String keyColumn;
     /**
-     * <p>
      * 表主键ID Sequence
-     * </p>
      */
     private KeySequence keySequence;
     /**
      * 表字段信息列表
      */
     private List<TableFieldInfo> fieldList;
-
     /**
      * 命名空间
      */
@@ -100,7 +89,6 @@ public class TableInfo {
      * 是否开启逻辑删除
      */
     private boolean logicDelete = false;
-
     /**
      * todo 秋秋来把注释写上
      */

@@ -36,23 +36,18 @@ import java.lang.reflect.Field;
 public class TableFieldInfo {
 
     /**
-     * <p>
      * 是否有存在字段名与属性名关联
-     * </p>
-     * true , false
+     * true: 表示要进行 as
      */
     private boolean related = false;
-
     /**
      * 字段名
      */
     private String column;
-
     /**
      * 属性名
      */
     private String property;
-
     /**
      * 属性表达式#{property}, 可以指定jdbcType, typeHandler等
      */
@@ -61,37 +56,30 @@ public class TableFieldInfo {
      * 属性类型
      */
     private Class<?> propertyType;
-
     /**
      * 字段策略【 默认，自判断 null 】
      */
     private FieldStrategy fieldStrategy;
-
     /**
      * 逻辑删除值
      */
     private String logicDeleteValue;
-
     /**
      * 逻辑未删除值
      */
     private String logicNotDeleteValue;
-
     /**
      * 字段 update set 部分注入
      */
     private String update;
-
     /**
      * where 字段比较条件
      */
     private String condition = SqlCondition.EQUAL;
-
     /**
      * 字段填充策略
      */
     private FieldFill fieldFill = FieldFill.DEFAULT;
-
     /**
      * todo 秋秋来把注释写上
      */
