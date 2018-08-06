@@ -15,9 +15,9 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
 
+import java.nio.charset.StandardCharsets;
 import java.sql.Blob;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -33,11 +33,6 @@ import static java.util.stream.Collectors.joining;
  * @since 2016-08-18
  */
 public class StringUtils {
-
-    /**
-     * UTF-8 编码格式
-     */
-    public static final String UTF8 = "UTF-8";
 
     /**
      * 空字符
@@ -74,9 +69,9 @@ public class StringUtils {
         if (null != blob) {
             try {
                 byte[] returnValue = blob.getBytes(1, (int) blob.length());
-                return new String(returnValue, UTF8);
+                return new String(returnValue, StandardCharsets.UTF_8);
             } catch (Exception e) {
-                throw new MybatisPlusException("Blob Convert To String Error!");
+                throw ExceptionUtils.mpe("Blob Convert To String Error!");
             }
         }
         return null;

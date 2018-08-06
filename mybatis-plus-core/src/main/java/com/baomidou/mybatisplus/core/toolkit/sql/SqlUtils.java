@@ -16,7 +16,7 @@
 package com.baomidou.mybatisplus.core.toolkit.sql;
 
 import com.baomidou.mybatisplus.core.enums.SqlLike;
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 
 /**
@@ -85,9 +85,7 @@ public class SqlUtils {
      * @return this
      */
     public static String stripSqlInjection(String sql) {
-        if (null == sql) {
-            throw new MybatisPlusException("strip sql is null.");
-        }
+        Assert.notNull(sql, "strip sql is null.");
         return sql.replaceAll("('.+--)|(--)|(\\|)|(%7C)", StringPool.EMPTY);
     }
 }

@@ -1,6 +1,6 @@
 package com.baomidou.mybatisplus.extension.toolkit;
 
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 /**
@@ -21,9 +21,8 @@ public class VersionUtils {
      * @return
      */
     public static int compareVersion(String version1, String version2) {
-        if (StringUtils.isEmpty(version1) || StringUtils.isEmpty(version2)) {
-            throw new MybatisPlusException("Error: CompareVersion Error: Illegal Argument !");
-        }
+        Assert.isTrue(!StringUtils.isEmpty(version1) && !StringUtils.isEmpty(version2),
+            "Error: CompareVersion Error: Illegal Argument !");
         // 切割点 "."；
         String[] versionArray1 = version1.split("\\.");
         String[] versionArray2 = version2.split("\\.");

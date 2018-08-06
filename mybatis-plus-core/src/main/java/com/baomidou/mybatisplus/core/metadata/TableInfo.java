@@ -19,7 +19,7 @@ import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import lombok.Data;
@@ -138,9 +138,7 @@ public class TableInfo {
     }
 
     public void setConfigMark(Configuration configuration) {
-        if (configuration == null) {
-            throw new MybatisPlusException("Error: You need Initialize MybatisConfiguration !");
-        }
+        Assert.notNull(configuration, "Error: You need Initialize MybatisConfiguration !");
         this.configMark = configuration.toString();
     }
 

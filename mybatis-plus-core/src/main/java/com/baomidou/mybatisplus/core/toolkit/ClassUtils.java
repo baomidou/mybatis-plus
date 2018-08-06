@@ -75,7 +75,6 @@ public final class ClassUtils {
      *
      * @param object 对象
      * @return 返回对象的 user class
-     * @throws com.baomidou.mybatisplus.core.exceptions.MybatisPlusException 传入对象为 null 是抛出异常
      */
     public static Class<?> getUserClass(Object object) {
         Assert.notNull(object, "Error: Instance must not be null");

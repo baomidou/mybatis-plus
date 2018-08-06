@@ -15,12 +15,10 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.tenant;
 
-import java.util.List;
-
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.parser.AbstractJsqlParser;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
-
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
@@ -32,18 +30,10 @@ import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.insert.Insert;
-import net.sf.jsqlparser.statement.select.FromItem;
-import net.sf.jsqlparser.statement.select.Join;
-import net.sf.jsqlparser.statement.select.LateralSubSelect;
-import net.sf.jsqlparser.statement.select.PlainSelect;
-import net.sf.jsqlparser.statement.select.SelectBody;
-import net.sf.jsqlparser.statement.select.SelectExpressionItem;
-import net.sf.jsqlparser.statement.select.SetOperationList;
-import net.sf.jsqlparser.statement.select.SubJoin;
-import net.sf.jsqlparser.statement.select.SubSelect;
-import net.sf.jsqlparser.statement.select.ValuesList;
-import net.sf.jsqlparser.statement.select.WithItem;
+import net.sf.jsqlparser.statement.select.*;
 import net.sf.jsqlparser.statement.update.Update;
+
+import java.util.List;
 
 /**
  * <p>
@@ -100,7 +90,7 @@ public class TenantSqlParser extends AbstractJsqlParser {
                 ((ExpressionList) insert.getItemsList()).getExpressions().add(tenantHandler.getTenantId());
             }
         } else {
-            throw new MybatisPlusException("Failed to process multiple-table update, please exclude the tableName or statementId");
+            throw ExceptionUtils.mpe("Failed to process multiple-table update, please exclude the tableName or statementId");
         }
     }
 
@@ -112,9 +102,8 @@ public class TenantSqlParser extends AbstractJsqlParser {
     @Override
     public void processUpdate(Update update) {
         List<Table> tableList = update.getTables();
-        if (null == tableList || tableList.size() >= 2) {
-            throw new MybatisPlusException("Failed to process multiple-table update, please exclude the statementId");
-        }
+        Assert.isTrue(null != tableList && tableList.size() < 2,
+            "Failed to process multiple-table update, please exclude the statementId");
         Table table = tableList.get(0);
         if (this.tenantHandler.doTableFilter(table.getName())) {
             // 过滤退出执行
