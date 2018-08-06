@@ -15,21 +15,12 @@
  */
 package com.baomidou.mybatisplus.core;
 
-import java.lang.reflect.Field;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.*;
 import org.apache.ibatis.executor.ErrorContext;
-import org.apache.ibatis.mapping.BoundSql;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.ParameterMapping;
-import org.apache.ibatis.mapping.ParameterMode;
-import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.Configuration;
@@ -38,24 +29,20 @@ import org.apache.ibatis.type.TypeException;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.core.toolkit.IdWorker;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
+import java.lang.reflect.Field;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.*;
 
 /**
  * <p>
  * 自定义 ParameterHandler 重装构造函数，填充插入方法主键 ID
  * </p>
+ * TODO: 3.0 优化注解填充 ?   怎么优化?
  *
  * @author hubin
  * @since 2016-03-11
  */
-//TODO: 3.0 优化注解填充
 public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 
     /**
@@ -116,8 +103,8 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         if (ms.getSqlCommandType() == SqlCommandType.INSERT) {
             isFill = true;
             isInsert = true;
-        } else if (ms.getSqlCommandType() == SqlCommandType.UPDATE
-            && metaObjectHandler != null && metaObjectHandler.openUpdateFill()) {
+        } else if (ms.getSqlCommandType() == SqlCommandType.UPDATE &&
+            metaObjectHandler != null && metaObjectHandler.openUpdateFill()) {
             isFill = true;
         }
         if (isFill) {
@@ -140,8 +127,8 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                 TableInfo tableInfo = null;
                 if (parameterObject instanceof Map) {
                     Map map = (Map) parameterObject;
-                    if (map.containsKey("et")) {
-                        Object et = map.get("et");
+                    if (map.containsKey(Constants.ENTITY)) {
+                        Object et = map.get(Constants.ENTITY);
                         if (et != null) {
                             if (et instanceof Map) {
                                 Map realEtMap = (Map) et;
@@ -214,7 +201,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         MetaObject metaObject = ms.getConfiguration().newMetaObject(parameterObject);
         // 填充主键
         if (isInsert && !StringUtils.isEmpty(tableInfo.getKeyProperty())
-            && null != tableInfo.getIdType() && tableInfo.getIdType().getKey() >= 2) {
+            && null != tableInfo.getIdType() && tableInfo.getIdType().getKey() >= 3) {
             Object idValue = metaObject.getValue(tableInfo.getKeyProperty());
             /* 自定义 ID */
             if (StringUtils.checkValNull(idValue)) {
@@ -286,5 +273,4 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
             }
         }
     }
-
 }

@@ -30,42 +30,33 @@ public enum IdType {
     /**
      * 数据库ID自增
      */
-    AUTO(0, "数据库ID自增"),
+    AUTO(0),
     /**
      * 用户输入ID
      */
-    INPUT(1, "用户输入ID"),
-
-    /* 以下2种类型、只有当插入对象ID 为空，才自动填充。 */
-    /**
-     * 全局唯一ID
-     */
-    ID_WORKER(2, "全局唯一ID"),
-    /**
-     * 全局唯一ID
-     */
-    UUID(3, "全局唯一ID"),
+    INPUT(1),
     /**
      * 该类型为未设置主键类型
      */
-    NONE(4, "该类型为未设置主键类型"),
-    /**
-     * 字符串全局唯一ID
-     */
-    ID_WORKER_STR(5, "字符串全局唯一ID");
+    NONE(2),
 
+    /* 以下3种类型、只有当插入对象ID 为空，才自动填充。 */
     /**
-     * 主键
+     * 全局唯一ID (idWorker)
      */
-    private final int key;
-
+    ID_WORKER(3),
     /**
-     * 描述
+     * 全局唯一ID (UUID)
      */
-    private final String desc;
+    UUID(4),
+    /**
+     * 字符串全局唯一ID (idWorker 的字符串表示)
+     */
+    ID_WORKER_STR(5);
 
-    IdType(final int key, final String desc) {
+    private int key;
+
+    IdType(int key) {
         this.key = key;
-        this.desc = desc;
     }
 }

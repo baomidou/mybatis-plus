@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.annotation;
 
-import lombok.Getter;
-
 /**
  * <p>
  * 字段策略枚举类
@@ -25,34 +23,17 @@ import lombok.Getter;
  * @author hubin
  * @since 2016-09-09
  */
-@Getter
 public enum FieldStrategy {
     /**
      * 忽略判断
      */
-    IGNORED(0, "忽略判断"),
+    IGNORED,
     /**
      * 非NULL判断
      */
-    NOT_NULL(1, "非 NULL 判断"),
+    NOT_NULL,
     /**
      * 非空判断
      */
-    NOT_EMPTY(2, "非空判断");
-
-    /**
-     * 主键
-     */
-    private final int key;
-
-    /**
-     * 描述
-     */
-    private final String desc;
-
-    FieldStrategy(final int key, final String desc) {
-        this.key = key;
-        this.desc = desc;
-    }
-
+    NOT_EMPTY
 }
