@@ -455,6 +455,10 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
         return null;
     }
 
+    public MergeSegments getExpression() {
+        return expression;
+    }
+
     public Map<String, Object> getParamNameValuePairs() {
         return paramNameValuePairs;
     }
