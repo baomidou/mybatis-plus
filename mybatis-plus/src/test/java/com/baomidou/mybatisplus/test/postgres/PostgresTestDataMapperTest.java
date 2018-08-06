@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.test.mysql;
+package com.baomidou.mybatisplus.test.postgres;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -39,8 +39,8 @@ import java.util.Map;
  * @since 2018-06-05
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:mysql/spring-test-mysql.xml"})
-public class MysqlTestDataMapperTest {
+@ContextConfiguration(locations = {"classpath:postgres/spring-test-postgres.xml"})
+public class PostgresTestDataMapperTest {
 
     @Resource
     private TestDataMapper mapper;

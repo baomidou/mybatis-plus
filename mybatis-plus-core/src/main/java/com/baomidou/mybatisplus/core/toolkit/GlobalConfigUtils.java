@@ -16,24 +16,22 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
+import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
+import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
-import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
-import com.baomidou.mybatisplus.core.injector.ISqlInjector;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <p>
@@ -90,9 +88,8 @@ public class GlobalConfigUtils {
      * @param mybatisGlobalConfig 全局配置
      */
     public static void setGlobalConfig(Configuration configuration, GlobalConfig mybatisGlobalConfig) {
-        if (configuration == null || mybatisGlobalConfig == null) {
-            throw new MybatisPlusException("Error: Could not setGlobalConfig");
-        }
+        Assert.isTrue(configuration != null && mybatisGlobalConfig != null,
+            "Error: Could not setGlobalConfig !");
         // 设置全局设置
         GLOBAL_CONFIG.put(configuration.toString(), mybatisGlobalConfig);
     }
@@ -105,9 +102,7 @@ public class GlobalConfigUtils {
      * @param configuration Mybatis 容器配置对象
      */
     public static GlobalConfig getGlobalConfig(Configuration configuration) {
-        if (configuration == null) {
-            throw new MybatisPlusException("Error: You need Initialize MybatisConfiguration !");
-        }
+        Assert.notNull(configuration, "Error: You need Initialize MybatisConfiguration !");
         return getGlobalConfig(configuration.toString());
     }
 
