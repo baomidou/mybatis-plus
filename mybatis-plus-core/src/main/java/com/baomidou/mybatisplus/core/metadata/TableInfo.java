@@ -15,18 +15,17 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
-import java.util.List;
-
-import org.apache.ibatis.session.Configuration;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import lombok.Data;
+import lombok.experimental.Accessors;
+import org.apache.ibatis.session.Configuration;
 
-import lombok.Getter;
-import lombok.Setter;
+import java.util.List;
 
 /**
  * <p>
@@ -36,6 +35,8 @@ import lombok.Setter;
  * @author hubin
  * @since 2016-01-23
  */
+@Data
+@Accessors(chain = true)
 public class TableInfo {
 
     /**
@@ -94,8 +95,9 @@ public class TableInfo {
      */
     private boolean logicDelete = false;
 
-    @Getter
-    @Setter
+    /**
+     * todo 秋秋来把注释写上
+     */
     private Class<?> parentClass;
 
     /**
@@ -108,66 +110,6 @@ public class TableInfo {
      */
     public String getSqlStatement(String sqlMethod) {
         return currentNamespace + StringPool.DOT + sqlMethod;
-    }
-
-    public IdType getIdType() {
-        return idType;
-    }
-
-    public void setIdType(IdType idType) {
-        this.idType = idType;
-    }
-
-    public String getTableName() {
-        return tableName;
-    }
-
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
-    }
-
-    public String getResultMap() {
-        return resultMap;
-    }
-
-    public void setResultMap(String resultMap) {
-        this.resultMap = resultMap;
-    }
-
-    public boolean isKeyRelated() {
-        return keyRelated;
-    }
-
-    public void setKeyRelated(boolean keyRelated) {
-        this.keyRelated = keyRelated;
-    }
-
-    public String getKeyProperty() {
-        return keyProperty;
-    }
-
-    public void setKeyProperty(String keyProperty) {
-        this.keyProperty = keyProperty;
-    }
-
-    public String getKeyColumn() {
-        return keyColumn;
-    }
-
-    public void setKeyColumn(String keyColumn) {
-        this.keyColumn = keyColumn;
-    }
-
-    public KeySequence getKeySequence() {
-        return keySequence;
-    }
-
-    public void setKeySequence(KeySequence keySequence) {
-        this.keySequence = keySequence;
-    }
-
-    public List<TableFieldInfo> getFieldList() {
-        return fieldList;
     }
 
     public void setFieldList(GlobalConfig globalConfig, List<TableFieldInfo> fieldList) {
@@ -185,16 +127,8 @@ public class TableInfo {
         }
     }
 
-    public String getCurrentNamespace() {
-        return currentNamespace;
-    }
-
-    public void setCurrentNamespace(String currentNamespace) {
-        this.currentNamespace = currentNamespace;
-    }
-
-    public String getConfigMark() {
-        return configMark;
+    public void setFieldList(List<TableFieldInfo> fieldList) {
+        throw ExceptionUtils.mpe("you can't use this method to set fieldList !");
     }
 
     public void setConfigMark(Configuration configuration) {
@@ -206,9 +140,5 @@ public class TableInfo {
 
     public boolean isLogicDelete() {
         return logicDelete;
-    }
-
-    public void setLogicDelete(boolean logicDelete) {
-        this.logicDelete = logicDelete;
     }
 }

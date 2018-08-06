@@ -15,18 +15,14 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
-import java.lang.reflect.Field;
-
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
-import com.baomidou.mybatisplus.annotation.SqlCondition;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import lombok.Data;
+import lombok.experimental.Accessors;
 
-import lombok.Getter;
-import lombok.Setter;
+import java.lang.reflect.Field;
 
 /**
  * <p>
@@ -36,6 +32,8 @@ import lombok.Setter;
  * @author hubin sjy willenfoo tantan
  * @since 2016-09-09
  */
+@Data
+@Accessors(chain = true)
 public class TableFieldInfo {
 
     /**
@@ -68,7 +66,7 @@ public class TableFieldInfo {
     /**
      * 字段策略【 默认，自判断 null 】
      */
-    private FieldStrategy fieldStrategy = FieldStrategy.NOT_NULL;
+    private FieldStrategy fieldStrategy;
 
     /**
      * 逻辑删除值
@@ -95,9 +93,9 @@ public class TableFieldInfo {
      */
     private FieldFill fieldFill = FieldFill.DEFAULT;
 
-
-    @Getter
-    @Setter
+    /**
+     * todo 秋秋来把注释写上
+     */
     private Class<?> parentClass;
 
     /**
@@ -207,14 +205,6 @@ public class TableFieldInfo {
         return related;
     }
 
-    public void setRelated(boolean related) {
-        this.related = related;
-    }
-
-    public String getColumn() {
-        return column;
-    }
-
     public void setColumn(GlobalConfig.DbConfig dbConfig, String column) {
         String temp = dbConfig.getReservedWordsHandler().convert(dbConfig.getDbType(), column);
         if (dbConfig.isCapitalMode() && !isRelated()) {
@@ -224,36 +214,8 @@ public class TableFieldInfo {
         this.column = temp;
     }
 
-    public String getProperty() {
-        return property;
-    }
-
-    public void setProperty(String property) {
-        this.property = property;
-    }
-
-    public String getEl() {
-        return el;
-    }
-
-    public void setEl(String el) {
-        this.el = el;
-    }
-
-    public FieldStrategy getFieldStrategy() {
-        return fieldStrategy;
-    }
-
-    public void setFieldStrategy(FieldStrategy fieldStrategy) {
-        this.fieldStrategy = fieldStrategy;
-    }
-
-    public Class<?> getPropertyType() {
-        return propertyType;
-    }
-
-    public void setPropertyType(Class<?> propertyType) {
-        this.propertyType = propertyType;
+    public void setColumn(String column) {
+        throw ExceptionUtils.mpe("you can't use this method to set column !");
     }
 
     /**
@@ -261,34 +223,6 @@ public class TableFieldInfo {
      */
     public boolean isLogicDelete() {
         return StringUtils.isNotEmpty(logicDeleteValue);
-    }
-
-    public String getLogicDeleteValue() {
-        return logicDeleteValue;
-    }
-
-    public void setLogicDeleteValue(String logicDeleteValue) {
-        this.logicDeleteValue = logicDeleteValue;
-    }
-
-    public String getLogicNotDeleteValue() {
-        return logicNotDeleteValue;
-    }
-
-    public void setLogicNotDeleteValue(String logicNotDeleteValue) {
-        this.logicNotDeleteValue = logicNotDeleteValue;
-    }
-
-    public String getUpdate() {
-        return update;
-    }
-
-    public void setUpdate(String update) {
-        this.update = update;
-    }
-
-    public String getCondition() {
-        return condition;
     }
 
     public void setCondition(String condition) {
@@ -305,13 +239,5 @@ public class TableFieldInfo {
                 this.condition = dbConfig.getDbType().getLike();
             }
         }
-    }
-
-    public FieldFill getFieldFill() {
-        return fieldFill;
-    }
-
-    public void setFieldFill(FieldFill fieldFill) {
-        this.fieldFill = fieldFill;
     }
 }
