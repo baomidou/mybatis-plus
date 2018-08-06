@@ -58,9 +58,9 @@ public abstract class AbstractMethod {
      * 注入自定义方法
      */
     public void inject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
-        configuration = builderAssistant.getConfiguration();
+        this.configuration = builderAssistant.getConfiguration();
         this.builderAssistant = builderAssistant;
-        languageDriver = configuration.getDefaultScriptingLanguageInstance();
+        this.languageDriver = configuration.getDefaultScriptingLanguageInstance();
         Class<?> modelClass = extractModelClass(mapperClass);
         if (null != modelClass) {
             /**

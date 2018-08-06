@@ -15,10 +15,9 @@
  */
 package com.baomidou.mybatisplus.core.injector;
 
+import com.baomidou.mybatisplus.core.assist.ISqlRunner;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.session.Configuration;
-
-import com.baomidou.mybatisplus.core.assist.ISqlRunner;
 
 /**
  * <p>
@@ -35,8 +34,8 @@ public interface ISqlInjector {
      * 检查SQL是否注入(已经注入过不再注入)
      * </p>
      *
-     * @param builderAssistant
-     * @param mapperClass
+     * @param builderAssistant mapper 信息
+     * @param mapperClass      mapper 接口的 class 对象
      */
     void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass);
 
@@ -45,9 +44,8 @@ public interface ISqlInjector {
      * 注入 SqlRunner 相关
      * </p>
      *
-     * @param configuration
+     * @param configuration 全局配置
      * @see ISqlRunner
      */
     void injectSqlRunner(Configuration configuration);
-
 }

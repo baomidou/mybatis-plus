@@ -17,6 +17,9 @@ package com.baomidou.mybatisplus.core.parser;
 
 
 import com.baomidou.mybatisplus.annotation.SqlParser;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 /**
  * <p>
@@ -26,6 +29,9 @@ import com.baomidou.mybatisplus.annotation.SqlParser;
  * @author hubin
  * @since 2018-01-13
  */
+@Data
+@Accessors(chain = true)
+@NoArgsConstructor
 public class SqlParserInfo {
 
     /**
@@ -33,19 +39,7 @@ public class SqlParserInfo {
      */
     private boolean filter;
 
-    public SqlParserInfo() {
-
-    }
-
     public SqlParserInfo(SqlParser sqlParser) {
         this.filter = sqlParser.filter();
-    }
-
-    public boolean getFilter() {
-        return filter;
-    }
-
-    public void setFilter(boolean filter) {
-        this.filter = filter;
     }
 }

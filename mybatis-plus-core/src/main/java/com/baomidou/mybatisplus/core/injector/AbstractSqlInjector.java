@@ -15,8 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.injector;
 
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.session.Configuration;
@@ -35,23 +34,13 @@ import java.util.Set;
  */
 public abstract class AbstractSqlInjector implements ISqlInjector {
 
-    /**
-     * <p>
-     * CRUD 注入后给予标识 注入过后不再注入
-     * </p>
-     *
-     * @param builderAssistant
-     * @param mapperClass
-     */
     @Override
     public void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
         String className = mapperClass.toString();
         Set<String> mapperRegistryCache = GlobalConfigUtils.getMapperRegistryCache(builderAssistant.getConfiguration());
         if (!mapperRegistryCache.contains(className)) {
             List<AbstractMethod> methodList = this.getMethodList();
-            if (CollectionUtils.isEmpty(methodList)) {
-                throw new MybatisPlusException("No effective injection method was found.");
-            }
+            Assert.notEmpty(methodList, "No effective injection method was found.");
             // 循环注入自定义方法
             methodList.forEach(m -> m.inject(builderAssistant, mapperClass));
             mapperRegistryCache.add(className);
@@ -63,5 +52,12 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
         // to do nothing
     }
 
+    /**
+     * <p>
+     * 获取 注入的方法
+     * </p>
+     *
+     * @return 注入的方法集合
+     */
     public abstract List<AbstractMethod> getMethodList();
 }

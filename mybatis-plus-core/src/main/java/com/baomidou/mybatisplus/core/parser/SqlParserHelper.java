@@ -15,15 +15,14 @@
  */
 package com.baomidou.mybatisplus.core.parser;
 
-import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.baomidou.mybatisplus.annotation.SqlParser;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.reflection.MetaObject;
 
-import com.baomidou.mybatisplus.annotation.SqlParser;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <p>
@@ -54,9 +53,8 @@ public class SqlParserHelper {
         for (Method method : methods) {
             SqlParser sqlParser = method.getAnnotation(SqlParser.class);
             if (null != sqlParser) {
-                StringBuilder sid = new StringBuilder();
-                sid.append(mapperClass.getName()).append(StringPool.DOT).append(method.getName());
-                SQL_PARSER_INFO_CACHE.put(sid.toString(), new SqlParserInfo(sqlParser));
+                String sid = mapperClass.getName() + StringPool.DOT + method.getName();
+                SQL_PARSER_INFO_CACHE.put(sid, new SqlParserInfo(sqlParser));
             }
         }
     }
@@ -68,7 +66,6 @@ public class SqlParserHelper {
      * </p>
      *
      * @param metaObject 元数据对象
-     * @return
      */
     public static SqlParserInfo getSqlParserInfo(MetaObject metaObject) {
         return SQL_PARSER_INFO_CACHE.get(getMappedStatement(metaObject).getId());
@@ -81,7 +78,6 @@ public class SqlParserHelper {
      * </p>
      *
      * @param metaObject 元对象
-     * @return
      */
     public static MappedStatement getMappedStatement(MetaObject metaObject) {
         return (MappedStatement) metaObject.getValue(DELEGATE_MAPPED_STATEMENT);

@@ -15,18 +15,17 @@
  */
 package com.baomidou.mybatisplus.core;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.baomidou.mybatisplus.core.override.PageMapperProxyFactory;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import org.apache.ibatis.binding.BindingException;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
-import com.baomidou.mybatisplus.core.override.PageMapperProxyFactory;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <p>
@@ -44,10 +43,11 @@ public class MybatisMapperRegistry extends MapperRegistry {
     public MybatisMapperRegistry(Configuration config) {
         super(config);
         this.config = config;
-        //TODO: 注入SqlRunner
+        // 注入SqlRunner
         GlobalConfigUtils.getSqlInjector(config).injectSqlRunner(config);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
         final PageMapperProxyFactory<T> mapperProxyFactory = (PageMapperProxyFactory<T>) knownMappers.get(type);
@@ -100,5 +100,4 @@ public class MybatisMapperRegistry extends MapperRegistry {
     public Collection<Class<?>> getMappers() {
         return Collections.unmodifiableCollection(knownMappers.keySet());
     }
-
 }
