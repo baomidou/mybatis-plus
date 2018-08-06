@@ -104,7 +104,6 @@ public class MysqlTestDataMapperTest {
     public void updateTimeIssue() {
 //        mapper.updateById(new TestData().setId(1014132604940615682L).setTestInt(1111111111));
         LogicTestData et = new LogicTestData()
-            .setId(1019248035919613954L)
             .setTestInt(9991122)
             .setVersion(19);
         System.out.println("====1=====>>>" + JSON.toJSONString(et, true));
@@ -117,7 +116,6 @@ public class MysqlTestDataMapperTest {
     public void optimisticUpdateById() {
 //        mapper.updateById(new TestData().setId(1014132604940615682L).setTestInt(1111111111));
         LogicTestData et = new LogicTestData()
-            .setId(1019248035919613954L)
             .setTestInt(999)
             .setVersion(17);
         System.out.println("====1=====>>>" + JSON.toJSONString(et, true));
@@ -128,8 +126,8 @@ public class MysqlTestDataMapperTest {
 
     @Test
     public void updateById() {
-        mapper.updateById(new TestData().setId(1014132604940615682L).setTestInt(1111111111));
-        logicMapper.updateById(new LogicTestData().setId(1014132604940615682L).setTestInt(1111111111));
+        mapper.updateById(new TestData().setTestInt(1111111111));
+        logicMapper.updateById(new LogicTestData().setTestInt(1111111111));
     }
 
     @Test

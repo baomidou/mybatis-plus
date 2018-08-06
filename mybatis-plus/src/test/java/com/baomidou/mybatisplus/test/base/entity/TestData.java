@@ -1,27 +1,27 @@
 package com.baomidou.mybatisplus.test.base.entity;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.Version;
-
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 /**
  * @author meimie
  * @since 2018/6/7
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 @TableName(value = "tb_test_data")
-public class TestData {
+public class TestData extends BaseEntity {
 
-    private Long id;
     private Integer testInt;
     private String testStr;
     private Double testDouble;

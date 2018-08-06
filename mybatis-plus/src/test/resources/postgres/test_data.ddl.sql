@@ -28,3 +28,10 @@ CREATE TABLE IF NOT EXISTS tb_test_data (
     update_datetime timestamp,
     version         integer default 0
 );
+
+CREATE TABLE IF NOT EXISTS tb_only_pg_test_data (
+    id         BIGINT primary key,
+    age        integer,
+    c_datetime timestamp,
+    u_datetime timestamp
+);

@@ -6,8 +6,10 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.base.entity.LogicTestData;
+import com.baomidou.mybatisplus.test.base.entity.PgTestData;
 import com.baomidou.mybatisplus.test.base.entity.TestData;
 import com.baomidou.mybatisplus.test.base.mapper.LogicTestDataMapper;
+import com.baomidou.mybatisplus.test.base.mapper.PgTestDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.TestDataMapper;
 import com.baomidou.mybatisplus.test.base.service.ILogicTestDataService;
 import org.junit.Assert;
@@ -42,6 +44,8 @@ public class PostgresTestDataMapperTest {
     private TestDataMapper mapper;
     @Resource
     private LogicTestDataMapper logicMapper;
+    @Resource
+    private PgTestDataMapper pgMapper;
 
     @Resource
     private ILogicTestDataService logicTestDataService;
@@ -65,6 +69,7 @@ public class PostgresTestDataMapperTest {
                 .setTestDouble(BigDecimal.valueOf(3.3).multiply(BigDecimal.valueOf(i)).doubleValue())
                 .setTestBoolean((i + 3) % 2 == 0).setTestDate(nowDate)
                 .setTestTime(nowTime).setTestDateTime(nowDateTime));
+            pgMapper.insert(new PgTestData().setDataAge(i));
         }
     }
 
@@ -104,7 +109,6 @@ public class PostgresTestDataMapperTest {
     public void updateTimeIssue() {
 //        mapper.updateById(new TestData().setId(1014132604940615682L).setTestInt(1111111111));
         LogicTestData et = new LogicTestData()
-            .setId(1019248035919613954L)
             .setTestInt(9991122)
             .setVersion(19);
         System.out.println("====1=====>>>" + JSON.toJSONString(et, true));
@@ -117,7 +121,6 @@ public class PostgresTestDataMapperTest {
     public void optimisticUpdateById() {
 //        mapper.updateById(new TestData().setId(1014132604940615682L).setTestInt(1111111111));
         LogicTestData et = new LogicTestData()
-            .setId(1019248035919613954L)
             .setTestInt(999)
             .setVersion(17);
         System.out.println("====1=====>>>" + JSON.toJSONString(et, true));
@@ -128,8 +131,8 @@ public class PostgresTestDataMapperTest {
 
     @Test
     public void updateById() {
-        mapper.updateById(new TestData().setId(1014132604940615682L).setTestInt(1111111111));
-        logicMapper.updateById(new LogicTestData().setId(1014132604940615682L).setTestInt(1111111111));
+        mapper.updateById(new TestData().setTestInt(1111111111));
+        logicMapper.updateById(new LogicTestData().setTestInt(1111111111));
     }
 
     @Test
@@ -179,6 +182,7 @@ public class PostgresTestDataMapperTest {
     public void selectById() {
         mapper.selectById(1L);
         logicMapper.selectById(1L);
+        pgMapper.selectById(1L);
     }
 
     @Test
