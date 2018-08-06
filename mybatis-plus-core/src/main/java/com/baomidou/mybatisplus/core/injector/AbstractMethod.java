@@ -15,13 +15,14 @@
  */
 package com.baomidou.mybatisplus.core.injector;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.lang.reflect.WildcardType;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
+import com.baomidou.mybatisplus.core.toolkit.*;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
@@ -32,18 +33,12 @@ import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
-import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -169,7 +164,7 @@ public abstract class AbstractMethod {
                     set.append(fieldInfo.getEl()).append("},")
                         .append(convertIfTag(true, fieldInfo, null, true));
                 }
-            }else {
+            } else {
                 set.append(fieldInfo.getColumn()).append("=#{");
                 if (null != prefix) {
                     set.append(prefix);
@@ -190,12 +185,18 @@ public abstract class AbstractMethod {
      * 获取需要转义的SQL字段
      * </p>
      *
-     * @param column 字段
-     * @return
+     * @param dbType   数据库类型
+     * @param val      值
+     * @param isColumn val 是否是数据库字段
      */
-    protected String sqlWordConvert(String column) {
-        return getGlobalConfig().getDbConfig().getReservedWordsHandler()
-            .convert(getGlobalConfig().getDbConfig().getDbType(), column);
+    protected String sqlWordConvert(DbType dbType, String val, boolean isColumn) {
+        if (dbType == DbType.POSTGRE_SQL) {
+            if (isColumn && val.toLowerCase().equals(val)) {
+                return val;
+            }
+            return String.format("\"%s\"", val);
+        }
+        return val;
     }
 
     /**
@@ -209,6 +210,7 @@ public abstract class AbstractMethod {
      */
     protected String sqlSelectColumns(TableInfo table, boolean entityWrapper) {
         StringBuilder columns = new StringBuilder();
+        DbType dbType = table.getDbType();
         if (null != table.getResultMap()) {
             /*
              * 存在 resultMap 映射返回
@@ -236,9 +238,10 @@ public abstract class AbstractMethod {
             // 主键处理
             if (StringUtils.isNotEmpty(table.getKeyProperty())) {
                 if (table.isKeyRelated()) {
-                    columns.append(table.getKeyColumn()).append(" AS ").append(sqlWordConvert(table.getKeyProperty()));
+                    columns.append(sqlWordConvert(dbType, table.getKeyColumn(), true))
+                        .append(" AS ").append(sqlWordConvert(dbType, table.getKeyProperty(), false));
                 } else {
-                    columns.append(sqlWordConvert(table.getKeyColumn()));
+                    columns.append(sqlWordConvert(dbType, table.getKeyColumn(), true));
                 }
                 if (size >= 1) {
                     // 判断其余字段是否存在
@@ -249,9 +252,9 @@ public abstract class AbstractMethod {
             if (size >= 1) {
                 // 字段处理
                 columns.append(fieldList.stream().map(i -> {
-                    String v = sqlWordConvert(i.getColumn());
+                    String v = sqlWordConvert(dbType, i.getColumn(), true);
                     if (i.isRelated()) {
-                        v += (" AS " + i.getProperty());
+                        v += (" AS " + sqlWordConvert(dbType, i.getProperty(), false));
                     }
                     return v;
                 }).collect(Collectors.joining(StringPool.COMMA)));
@@ -277,6 +280,7 @@ public abstract class AbstractMethod {
      */
     protected String sqlSelectObjsColumns(TableInfo table) {
         StringBuilder columns = new StringBuilder();
+        DbType dbType = table.getDbType();
         /*
          * 普通查询
          */
@@ -284,9 +288,11 @@ public abstract class AbstractMethod {
         // 主键处理
         if (StringUtils.isNotEmpty(table.getKeyProperty())) {
             if (table.isKeyRelated()) {
-                columns.append(table.getKeyColumn()).append(" AS ").append(sqlWordConvert(table.getKeyProperty()));
+                columns.append(sqlWordConvert(dbType, table.getKeyColumn(), true))
+                    .append(" AS ").append(sqlWordConvert(dbType, table.getKeyProperty(), false));
             } else {
-                columns.append(sqlWordConvert(table.getKeyProperty()));
+                //todo getKeyColumn ???
+                columns.append(sqlWordConvert(dbType, table.getKeyColumn(), true));
             }
         } else {
             // 表字段处理
@@ -294,12 +300,13 @@ public abstract class AbstractMethod {
             if (CollectionUtils.isNotEmpty(fieldList)) {
                 TableFieldInfo fieldInfo = fieldList.get(0);
                 // 匹配转换内容
-                String wordConvert = sqlWordConvert(fieldInfo.getProperty());
+                String wordConvert = sqlWordConvert(dbType, fieldInfo.getProperty(), false);
                 if (fieldInfo.getColumn().equals(wordConvert)) {
                     columns.append(wordConvert);
                 } else {
                     // 字段属性不一致
-                    columns.append(fieldInfo.getColumn()).append(" AS ").append(wordConvert);
+                    columns.append(sqlWordConvert(dbType, fieldInfo.getColumn(), true))
+                        .append(" AS ").append(wordConvert);
                 }
             }
         }
@@ -313,16 +320,14 @@ public abstract class AbstractMethod {
      * </p>
      */
     protected String sqlWhereByMap(TableInfo table) {
-        return new StringBuilder()
-            .append("<if test=\"cm!=null and !cm.isEmpty\">")
-            .append("<where>")
-            .append("<foreach collection=\"cm\" index=\"k\" item=\"v\" separator=\"AND\">")
-            .append("<choose><when test=\"v==null\"> ${k} IS NULL </when>")
-            .append("<otherwise> ${k}=#{v} </otherwise></choose>")
-            .append("</foreach>")
-            .append("</where>")
-            .append("</if>")
-            .toString();
+        return "<if test=\"cm!=null and !cm.isEmpty\">" +
+            "<where>" +
+            "<foreach collection=\"cm\" index=\"k\" item=\"v\" separator=\"AND\">" +
+            "<choose><when test=\"v==null\"> ${k} IS NULL </when>" +
+            "<otherwise> ${k}=#{v} </otherwise></choose>" +
+            "</foreach>" +
+            "</where>" +
+            "</if>";
     }
 
     /**

@@ -15,24 +15,21 @@
  */
 package com.baomidou.mybatisplus.core.config;
 
-import java.io.Serializable;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
-
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.baomidou.mybatisplus.core.handlers.SqlReservedWordsHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+
+import java.io.Serializable;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * <p>
@@ -84,9 +81,6 @@ public class GlobalConfig implements Serializable {
      * <p>
      * 标记全局设置 (统一所有入口)
      * </p>
-     *
-     * @param sqlSessionFactory
-     * @return
      */
     public SqlSessionFactory signGlobalConfig(SqlSessionFactory sqlSessionFactory) {
         if (null != sqlSessionFactory) {
@@ -142,9 +136,5 @@ public class GlobalConfig implements Serializable {
          * 字段验证策略
          */
         private FieldStrategy fieldStrategy = FieldStrategy.NOT_NULL;
-        /**
-         * Sql 保留字处理器
-         */
-        private SqlReservedWordsHandler reservedWordsHandler = SqlReservedWordsHandler.getInstance();
     }
 }

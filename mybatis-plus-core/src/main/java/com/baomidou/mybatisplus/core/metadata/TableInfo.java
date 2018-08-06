@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
+import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
@@ -43,6 +44,11 @@ public class TableInfo {
      * 表主键ID 类型
      */
     private IdType idType = IdType.NONE;
+
+    /**
+     * 数据库类型
+     */
+    private DbType dbType;
 
     /**
      * 表名称

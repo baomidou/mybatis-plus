@@ -30,56 +30,52 @@ public enum DbType {
     /**
      * MYSQL
      */
-    MYSQL("mysql", "`%s`", "%s LIKE CONCAT('%%',#{%s},'%%')", "MySql数据库"),
+    MYSQL("mysql", "%s LIKE CONCAT('%%',#{%s},'%%')", "MySql数据库"),
     /**
      * MARIADB
      */
-    MARIADB("mariadb", "`%s`", "%s LIKE CONCAT('%%',#{%s},'%%')", "MariaDB数据库"),
+    MARIADB("mariadb", "%s LIKE CONCAT('%%',#{%s},'%%')", "MariaDB数据库"),
     /**
      * ORACLE
      */
-    ORACLE("oracle", null, "%s LIKE CONCAT(CONCAT('%%',#{%s}),'%%')", "Oracle数据库"),
+    ORACLE("oracle", "%s LIKE CONCAT(CONCAT('%%',#{%s}),'%%')", "Oracle数据库"),
     /**
      * DB2
      */
-    DB2("db2", null, "%s LIKE CONCAT(CONCAT('%%',#{%s}),'%%')", "DB2数据库"),
+    DB2("db2", "%s LIKE CONCAT(CONCAT('%%',#{%s}),'%%')", "DB2数据库"),
     /**
      * H2
      */
-    H2("h2", null, "%s LIKE CONCAT('%%',#{%s},'%%')", "H2数据库"),
+    H2("h2", "%s LIKE CONCAT('%%',#{%s},'%%')", "H2数据库"),
     /**
      * HSQL
      */
-    HSQL("hsql", null, "%s LIKE CONCAT('%%',#{%s},'%%')", "HSQL数据库"),
+    HSQL("hsql", "%s LIKE CONCAT('%%',#{%s},'%%')", "HSQL数据库"),
     /**
      * SQLITE
      */
-    SQLITE("sqlite", "`%s`", "%s LIKE CONCAT('%%',#{%s},'%%')", "SQLite数据库"),
+    SQLITE("sqlite", "%s LIKE CONCAT('%%',#{%s},'%%')", "SQLite数据库"),
     /**
      * POSTGRE
      */
-    POSTGRE_SQL("postgresql", "\"%s\"", "%s LIKE CONCAT('%%',#{%s},'%%')", "Postgre数据库"),
+    POSTGRE_SQL("postgresql", "%s LIKE CONCAT('%%',#{%s},'%%')", "Postgre数据库"),
     /**
      * SQLSERVER2005
      */
-    SQL_SERVER2005("sqlserver2005", null, "%s LIKE '%%'+#{%s}+'%%'", "SQLServer2005数据库"),
+    SQL_SERVER2005("sqlserver2005", "%s LIKE '%%'+#{%s}+'%%'", "SQLServer2005数据库"),
     /**
      * SQLSERVER
      */
-    SQL_SERVER("sqlserver", null, "%s LIKE '%%'+#{%s}+'%%'", "SQLServer数据库"),
+    SQL_SERVER("sqlserver", "%s LIKE '%%'+#{%s}+'%%'", "SQLServer数据库"),
     /**
      * UNKONWN DB
      */
-    OTHER("other", null, null, "其他数据库");
+    OTHER("other", null, "其他数据库");
 
     /**
      * 数据库名称
      */
     private final String db;
-    /**
-     * 转移符
-     */
-    private final String quote;
     /**
      * LIKE 拼接模式
      */
@@ -90,9 +86,8 @@ public enum DbType {
     private final String desc;
 
 
-    DbType(String db, String quote, String like, String desc) {
+    DbType(String db, String like, String desc) {
         this.db = db;
-        this.quote = quote;
         this.like = like;
         this.desc = desc;
     }
@@ -103,7 +98,6 @@ public enum DbType {
      * </p>
      *
      * @param dbType 数据库类型字符串
-     * @return
      */
     public static DbType getDbType(String dbType) {
         DbType[] dts = DbType.values();

@@ -17,7 +17,6 @@ package com.baomidou.mybatisplus.core.metadata;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -124,7 +123,7 @@ public class TableFieldInfo {
         } else if (!column.equals(this.property)) {
             this.related = true;
         }
-        this.setColumn(dbConfig, column);
+        this.column = column;
         this.el = el;
         /*
          * 优先使用单个字段注解，否则使用全局配置
@@ -153,13 +152,13 @@ public class TableFieldInfo {
     public TableFieldInfo(boolean underCamel, GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field, Class<?> parentClass) {
         if (dbConfig.isColumnUnderline()) {
             /* 开启字段下划线申明 */
-            this.setColumn(dbConfig, StringUtils.camelToUnderline(field.getName()));
+            this.column = StringUtils.camelToUnderline(field.getName());
             /* 未开启下划线转驼峰模式 AS 转换 */
             if (!underCamel) {
                 this.related = true;
             }
         } else {
-            this.setColumn(dbConfig, field.getName());
+            this.column = field.getName();
         }
         this.property = field.getName();
         this.el = field.getName();
@@ -203,19 +202,6 @@ public class TableFieldInfo {
 
     public boolean isRelated() {
         return related;
-    }
-
-    public void setColumn(GlobalConfig.DbConfig dbConfig, String column) {
-        String temp = dbConfig.getReservedWordsHandler().convert(dbConfig.getDbType(), column);
-        if (dbConfig.isCapitalMode() && !isRelated()) {
-            // 全局大写，非注解指定
-            temp = temp.toUpperCase();
-        }
-        this.column = temp;
-    }
-
-    public void setColumn(String column) {
-        throw ExceptionUtils.mpe("you can't use this method to set column !");
     }
 
     /**
