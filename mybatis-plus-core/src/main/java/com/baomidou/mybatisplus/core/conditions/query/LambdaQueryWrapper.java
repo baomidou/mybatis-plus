@@ -15,13 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.conditions.query;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-
 import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
@@ -30,6 +23,14 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.Property;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * <p>
@@ -56,7 +57,7 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     LambdaQueryWrapper(T entity, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs,
                        MergeSegments mergeSegments) {
         this.entity = entity;
-        if(entity!=null){
+        if (entity != null) {
             this.entityClass = (Class<T>) entity.getClass();
         }
         this.paramNameSeq = paramNameSeq;
@@ -67,13 +68,14 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     @Override
     public String getSqlSelect() {
         if (CollectionUtils.isEmpty(queryColumn)) {
-            if(entityClass!=null) {
-                queryColumn = Arrays.asList(TableInfoHelper.getTableColumns(entityClass,excludeColumn.toArray(new String[0])));
+            if (entityClass != null) {
+                queryColumn = Arrays.asList(TableInfoHelper.getTableColumns(entityClass, excludeColumn.toArray(new String[0])));
             }
-        }else{
-            return SqlUtils.stripSqlInjection(queryColumn.stream().filter($this -> !excludeColumn.contains($this)).collect(Collectors.joining(StringPool.COMMA)));
+        } else {
+            return SqlUtils.stripSqlInjection(queryColumn.stream()
+                .filter(i -> !excludeColumn.contains(i)).collect(joining(StringPool.COMMA)));
         }
-        return CollectionUtils.isEmpty(queryColumn) ? null:queryColumn.stream().collect(Collectors.joining(StringPool.COMMA));
+        return CollectionUtils.isEmpty(queryColumn) ? null : String.join(StringPool.COMMA, queryColumn);
     }
 
     /**
@@ -100,8 +102,8 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
      */
     @SafeVarargs
     public final LambdaQueryWrapper<T> excludeColumns(Class<T> entityClass, Property<T, ?>... excludeColumns) {
-        Assert.notNull(entityClass,"entityClass is not null");
-        Assert.notEmpty(excludeColumns,"excludeColumns is not empty");
+        Assert.notNull(entityClass, "entityClass is not null");
+        Assert.notEmpty(excludeColumns, "excludeColumns is not empty");
         this.entityClass = entityClass;
         for (Property<T, ?> column : excludeColumns) {
             excludeColumn.add(this.columnToString(column));
@@ -111,13 +113,14 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
 
     /**
      * 排除字段
+     *
      * @param excludeColumns 排除字段列表
      */
     @SafeVarargs
     @SuppressWarnings(value = "unchecked")
     public final LambdaQueryWrapper<T> excludeColumns(Property<T, ?>... excludeColumns) {
-        Assert.notNull(entity,"entity is not null");
-        return excludeColumns((Class<T>) entity.getClass(),excludeColumns);
+        Assert.notNull(entity, "entity is not null");
+        return excludeColumns((Class<T>) entity.getClass(), excludeColumns);
     }
 
     @Override

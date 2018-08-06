@@ -15,11 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.conditions.query;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
@@ -27,6 +22,11 @@ import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * <p>
@@ -51,7 +51,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
 
 
     public QueryWrapper() {
-        this(null,  null);
+        this(null, null);
     }
 
     public QueryWrapper(T entity) {
@@ -76,15 +76,16 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     @Override
     public String getSqlSelect() {
         //TODO 这里看要不要兼容下原来的sqlSelect，进行切割
-        if(ArrayUtils.isNotEmpty(sqlSelect)){
+        if (ArrayUtils.isNotEmpty(sqlSelect)) {
             List<String> excludeColumnList = Arrays.asList(excludeColumns);
-            sqlSelect = Arrays.stream(sqlSelect).filter($this->!excludeColumnList.contains($this)).toArray(String[]::new);
-        }else{
-            if(entityClass!=null){
+            sqlSelect = Arrays.stream(sqlSelect).filter(i -> !excludeColumnList.contains(i)).toArray(String[]::new);
+        } else {
+            if (entityClass != null) {
                 sqlSelect = TableInfoHelper.getTableColumns(entityClass, excludeColumns);
             }
         }
-        return ArrayUtils.isNotEmpty(sqlSelect) ? SqlUtils.stripSqlInjection(Arrays.stream(sqlSelect).collect(Collectors.joining(StringPool.COMMA))) : null;
+        return ArrayUtils.isNotEmpty(sqlSelect) ?
+            SqlUtils.stripSqlInjection(String.join(StringPool.COMMA, sqlSelect)) : null;
     }
 
     public QueryWrapper<T> select(String... sqlSelect) {
@@ -96,12 +97,13 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
 
     /**
      * 排除字段
-     * @param entityClass 实体类
+     *
+     * @param entityClass    实体类
      * @param excludeColumns 排除字段列表
      */
-    public QueryWrapper<T> excludeColumns(Class<T> entityClass,String... excludeColumns) {
-        Assert.notNull(entityClass,"entityClass is not null");
-        Assert.notEmpty(excludeColumns,"excludeColumns is not empty");
+    public QueryWrapper<T> excludeColumns(Class<T> entityClass, String... excludeColumns) {
+        Assert.notNull(entityClass, "entityClass is not null");
+        Assert.notEmpty(excludeColumns, "excludeColumns is not empty");
         this.excludeColumns = excludeColumns;
         this.entityClass = entityClass;
         return typedThis;
@@ -109,12 +111,13 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
 
     /**
      * 排除字段
+     *
      * @param excludeColumns 排除字段列表
      */
     @SuppressWarnings(value = "unchecked")
     public QueryWrapper<T> excludeColumns(String... excludeColumns) {
-        Assert.notNull(entity,"entity is not null");
-        return excludeColumns((Class<T>) entity.getClass(),excludeColumns);
+        Assert.notNull(entity, "entity is not null");
+        return excludeColumns((Class<T>) entity.getClass(), excludeColumns);
     }
 
     /**
