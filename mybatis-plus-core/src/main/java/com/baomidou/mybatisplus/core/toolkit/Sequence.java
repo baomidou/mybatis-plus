@@ -15,15 +15,13 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.concurrent.ThreadLocalRandom;
-
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 
 /**
  * <p>
@@ -89,13 +87,10 @@ public class Sequence {
      * @param datacenterId 序列号
      */
     public Sequence(long workerId, long datacenterId) {
-        if (workerId > maxWorkerId || workerId < 0) {
-            throw new MybatisPlusException(String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
-        }
-        if (datacenterId > maxDatacenterId || datacenterId < 0) {
-            throw new MybatisPlusException(
-                String.format("datacenter Id can't be greater than %d or less than 0", maxDatacenterId));
-        }
+        Assert.isFalse(workerId > maxWorkerId || workerId < 0,
+            String.format("worker Id can't be greater than %d or less than 0", maxWorkerId));
+        Assert.isFalse(datacenterId > maxDatacenterId || datacenterId < 0,
+            String.format("datacenter Id can't be greater than %d or less than 0", maxDatacenterId));
         this.workerId = workerId;
         this.datacenterId = datacenterId;
     }

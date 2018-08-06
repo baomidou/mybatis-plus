@@ -15,12 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.parser;
 
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.reflection.MetaObject;
-
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.Statement;
@@ -30,6 +25,9 @@ import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectBody;
 import net.sf.jsqlparser.statement.update.Update;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.reflection.MetaObject;
 
 /**
  * <p>
@@ -77,7 +75,7 @@ public abstract class AbstractJsqlParser implements ISqlParser {
                     return SqlInfo.newInstance().setSql(sqlStringBuilder.toString());
                 }
             } catch (JSQLParserException e) {
-                throw new MybatisPlusException("Failed to process, please exclude the tableName or statementId.\n Error SQL: " + sql, e);
+                throw ExceptionUtils.mpe("Failed to process, please exclude the tableName or statementId.\n Error SQL: " + sql, e);
             }
         }
         return null;

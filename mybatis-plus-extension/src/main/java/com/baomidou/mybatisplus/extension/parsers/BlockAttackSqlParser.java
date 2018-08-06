@@ -15,9 +15,8 @@
  */
 package com.baomidou.mybatisplus.extension.parsers;
 
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.parser.AbstractJsqlParser;
-
+import com.baomidou.mybatisplus.core.toolkit.Assert;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.select.SelectBody;
@@ -40,16 +39,12 @@ public class BlockAttackSqlParser extends AbstractJsqlParser {
 
     @Override
     public void processDelete(Delete delete) {
-        if (null == delete.getWhere()) {
-            throw new MybatisPlusException("Prohibition of full table deletion");
-        }
+        Assert.notNull(delete.getWhere(), "Prohibition of full table deletion");
     }
 
     @Override
     public void processUpdate(Update update) {
-        if (null == update.getWhere()) {
-            throw new MybatisPlusException("Prohibition of table update operation");
-        }
+        Assert.notNull(update.getWhere(), "Prohibition of table update operation");
     }
 
     @Override

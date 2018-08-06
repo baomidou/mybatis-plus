@@ -16,19 +16,11 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.ObjectStreamClass;
-import java.io.OutputStream;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 
 
 /**
@@ -100,9 +92,9 @@ public class SerializationUtils {
             return readObject;
 
         } catch (final ClassNotFoundException ex) {
-            throw new MybatisPlusException("ClassNotFoundException while reading cloned object data", ex);
+            throw ExceptionUtils.mpe("ClassNotFoundException while reading cloned object data", ex);
         } catch (final IOException ex) {
-            throw new MybatisPlusException("IOException while reading or closing cloned object data", ex);
+            throw ExceptionUtils.mpe("IOException while reading or closing cloned object data", ex);
         }
     }
 
@@ -143,7 +135,7 @@ public class SerializationUtils {
         try (ObjectOutputStream out = new ObjectOutputStream(outputStream)) {
             out.writeObject(obj);
         } catch (final IOException ex) {
-            throw new MybatisPlusException(ex);
+            throw ExceptionUtils.mpe(ex);
         }
     }
 
@@ -197,7 +189,7 @@ public class SerializationUtils {
             @SuppressWarnings("unchecked") final T obj = (T) in.readObject();
             return obj;
         } catch (final ClassNotFoundException | IOException ex) {
-            throw new MybatisPlusException(ex);
+            throw ExceptionUtils.mpe(ex);
         }
     }
 
@@ -221,6 +213,12 @@ public class SerializationUtils {
     public static <T> T deserialize(final byte[] objectData) {
         isTrue(objectData != null, "The byte[] must not be null");
         return SerializationUtils.deserialize(new ByteArrayInputStream(objectData));
+    }
+
+    public static void isTrue(final boolean expression, final String message, final Object... values) {
+        if (!expression) {
+            throw new IllegalArgumentException(String.format(message, values));
+        }
     }
 
     /**
@@ -293,13 +291,6 @@ public class SerializationUtils {
                     throw cnfe;
                 }
             }
-        }
-
-    }
-
-    public static void isTrue(final boolean expression, final String message, final Object... values) {
-        if (!expression) {
-            throw new IllegalArgumentException(String.format(message, values));
         }
     }
 }

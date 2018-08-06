@@ -31,6 +31,7 @@ public final class Assert {
 
     /**
      * 断言这个 boolean 为 true
+     * 为 false 则抛出异常
      *
      * @param expression boolean 值
      * @param message    消息
@@ -43,6 +44,7 @@ public final class Assert {
 
     /**
      * 断言这个 boolean 为 false
+     * 为 true 则抛出异常
      *
      * @param expression boolean 值
      * @param message    消息
@@ -90,10 +92,11 @@ public final class Assert {
     public static void notEmpty(Map<?, ?> map, String message) {
         isTrue(CollectionUtils.isNotEmpty(map), message);
     }
-    
+
     /**
      * 断言数组不能为空
-     * @param array 数组
+     *
+     * @param array   数组
      * @param message 消息
      */
     public static void notEmpty(Object[] array, String message) {

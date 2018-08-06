@@ -15,24 +15,17 @@
  */
 package com.baomidou.mybatisplus.extension.spring;
 
-import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.Assert.state;
-import static org.springframework.util.ObjectUtils.isEmpty;
-import static org.springframework.util.StringUtils.hasLength;
-import static org.springframework.util.StringUtils.tokenizeToStringArray;
-
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-
-import javax.sql.DataSource;
-
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.MybatisXMLConfigBuilder;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.enums.IEnum;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
+import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
+import com.baomidou.mybatisplus.extension.toolkit.PackageHelper;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.ErrorContext;
@@ -62,17 +55,17 @@ import org.springframework.core.NestedIOException;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.MybatisXMLConfigBuilder;
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.enums.IEnum;
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
-import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
-import com.baomidou.mybatisplus.extension.toolkit.PackageHelper;
+import javax.sql.DataSource;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.*;
+
+import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.Assert.state;
+import static org.springframework.util.ObjectUtils.isEmpty;
+import static org.springframework.util.StringUtils.hasLength;
+import static org.springframework.util.StringUtils.tokenizeToStringArray;
 
 /**
  * <p>
@@ -455,9 +448,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
                     }
                 }
             }
-            if (CollectionUtils.isEmpty(typeAliasPackageList)) {
-                throw new MybatisPlusException("not find typeAliasesPackage:" + typeAliasesPackage);
-            }
+            Assert.notEmpty(typeAliasPackageList, "not find typeAliasesPackage:" + typeAliasesPackage);
             for (String packageToScan : typeAliasPackageList) {
                 configuration.getTypeAliasRegistry().registerAliases(packageToScan,
                     typeAliasesSuperType == null ? Object.class : typeAliasesSuperType);
@@ -476,10 +467,8 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             } else {
                 String[] typeEnumsPackageArray = tokenizeToStringArray(this.typeEnumsPackage,
                     ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
-                if (typeEnumsPackageArray == null) {
-                    throw new MybatisPlusException("not find typeEnumsPackage:" + typeEnumsPackage);
-                }
-                classes = new HashSet<Class>();
+                Assert.notNull(typeEnumsPackageArray, "not find typeEnumsPackage:" + typeEnumsPackage);
+                classes = new HashSet<>();
                 for (String typePackage : typeEnumsPackageArray) {
                     classes.addAll(PackageHelper.scanTypePackage(typePackage));
                 }
@@ -568,7 +557,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
         configuration.setEnvironment(new Environment(this.environment, this.transactionFactory, this.dataSource));
         // 设置默认值
-        if(null == globalConfig) {
+        if (null == globalConfig) {
             globalConfig = GlobalConfigUtils.defaults();
         }
         // 设置元数据相关
@@ -578,7 +567,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             //globalConfig.getDbConfig().setSqlKeywords(connection.getMetaData().getSQLKeywords());
             globalConfig.getDbConfig().setDbType(JdbcUtils.getDbType(connection.getMetaData().getURL()));
         } catch (Exception e) {
-            throw new MybatisPlusException("Error: GlobalConfigUtils setMetaData Fail !  Cause:" + e);
+            throw ExceptionUtils.mpe("Error: GlobalConfigUtils setMetaData Fail !  Cause:" + e);
         }
         SqlSessionFactory sqlSessionFactory = this.sqlSessionFactoryBuilder.build(configuration);
         // TODO SqlRunner

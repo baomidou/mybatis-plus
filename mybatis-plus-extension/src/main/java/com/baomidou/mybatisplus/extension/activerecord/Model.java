@@ -15,21 +15,21 @@
  */
 package com.baomidou.mybatisplus.extension.activerecord;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.enums.SqlMethod;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
+import com.baomidou.mybatisplus.extension.toolkit.SqlRunner;
+import org.apache.ibatis.session.SqlSession;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.ibatis.session.SqlSession;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.enums.SqlMethod;
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
-import com.baomidou.mybatisplus.extension.toolkit.SqlRunner;
 
 /**
  * <p>
@@ -51,7 +51,7 @@ public abstract class Model<T extends Model> implements Serializable {
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean insert() {
-        try(SqlSession session = sqlSession()) {
+        try (SqlSession session = sqlSession()) {
             return SqlHelper.retBool(session.insert(sqlStatement(SqlMethod.INSERT_ONE), this));
         }
     }
@@ -84,7 +84,7 @@ public abstract class Model<T extends Model> implements Serializable {
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteById(Serializable id) {
-        try(SqlSession session = sqlSession()) {
+        try (SqlSession session = sqlSession()) {
             return SqlHelper.delBool(session.delete(sqlStatement(SqlMethod.DELETE_BY_ID), id));
         }
     }
@@ -98,9 +98,7 @@ public abstract class Model<T extends Model> implements Serializable {
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteById() {
-        if (StringUtils.checkValNull(pkVal())) {
-            throw new MybatisPlusException("deleteById primaryKey is null.");
-        }
+        Assert.isFalse(StringUtils.checkValNull(pkVal()), "deleteById primaryKey is null.");
         return deleteById(pkVal());
     }
 
@@ -115,8 +113,8 @@ public abstract class Model<T extends Model> implements Serializable {
     @Transactional(rollbackFor = Exception.class)
     public boolean delete(Wrapper wrapper) {
         Map<String, Object> map = new HashMap<>(1);
-        map.put("ew", wrapper);
-        try(SqlSession session = sqlSession()) {
+        map.put(Constants.WRAPPER, wrapper);
+        try (SqlSession session = sqlSession()) {
             return SqlHelper.delBool(session.delete(sqlStatement(SqlMethod.DELETE), map));
         }
     }
@@ -128,12 +126,10 @@ public abstract class Model<T extends Model> implements Serializable {
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean updateById() {
-        if (StringUtils.checkValNull(pkVal())) {
-            throw new MybatisPlusException("updateById primaryKey is null.");
-        }
+        Assert.isFalse(StringUtils.checkValNull(pkVal()), "updateById primaryKey is null.");
         // updateById
         Map<String, Object> map = new HashMap<>(1);
-        map.put("et", this);
+        map.put(Constants.ENTITY, this);
         return SqlHelper.retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE_BY_ID), map));
     }
 
@@ -148,10 +144,10 @@ public abstract class Model<T extends Model> implements Serializable {
     @Transactional(rollbackFor = Exception.class)
     public boolean update(Wrapper wrapper) {
         Map<String, Object> map = new HashMap<>(2);
-        map.put("et", this);
-        map.put("ew", wrapper);
+        map.put(Constants.ENTITY, this);
+        map.put(Constants.WRAPPER, wrapper);
         // update
-        try(SqlSession session = sqlSession()) {
+        try (SqlSession session = sqlSession()) {
             return SqlHelper.retBool(session.update(sqlStatement(SqlMethod.UPDATE), map));
         }
     }
@@ -164,7 +160,7 @@ public abstract class Model<T extends Model> implements Serializable {
      * @return
      */
     public List<T> selectAll() {
-        try(SqlSession session = sqlSession()) {
+        try (SqlSession session = sqlSession()) {
             return session.selectList(sqlStatement(SqlMethod.SELECT_LIST));
         }
     }
@@ -178,7 +174,7 @@ public abstract class Model<T extends Model> implements Serializable {
      * @return
      */
     public T selectById(Serializable id) {
-        try(SqlSession session = sqlSession()) {
+        try (SqlSession session = sqlSession()) {
             return session.selectOne(sqlStatement(SqlMethod.SELECT_BY_ID), id);
         }
     }
@@ -191,9 +187,7 @@ public abstract class Model<T extends Model> implements Serializable {
      * @return
      */
     public T selectById() {
-        if (StringUtils.checkValNull(pkVal())) {
-            throw new MybatisPlusException("selectById primaryKey is null.");
-        }
+        Assert.isFalse(StringUtils.checkValNull(pkVal()), "selectById primaryKey is null.");
         return selectById(pkVal());
     }
 
@@ -208,8 +202,8 @@ public abstract class Model<T extends Model> implements Serializable {
 
     public List<T> selectList(Wrapper wrapper) {
         Map<String, Object> map = new HashMap<>(1);
-        map.put("ew", wrapper);
-        try(SqlSession session = sqlSession()) {
+        map.put(Constants.WRAPPER, wrapper);
+        try (SqlSession session = sqlSession()) {
             return session.selectList(sqlStatement(SqlMethod.SELECT_LIST), map);
         }
     }
@@ -237,9 +231,9 @@ public abstract class Model<T extends Model> implements Serializable {
      */
     public IPage<T> selectPage(IPage<T> page, Wrapper<T> wrapper) {
         Map<String, Object> map = new HashMap<>(2);
-        map.put("ew", SqlHelper.fillWrapper(page, wrapper));
-        map.put("page",page);
-        try(SqlSession session = sqlSession()) {
+        map.put(Constants.WRAPPER, SqlHelper.fillWrapper(page, wrapper));
+        map.put("page", page);
+        try (SqlSession session = sqlSession()) {
             page.setRecords(session.selectList(sqlStatement(SqlMethod.SELECT_PAGE), map));
         }
         return page;
@@ -255,8 +249,8 @@ public abstract class Model<T extends Model> implements Serializable {
      */
     public int selectCount(Wrapper wrapper) {
         Map<String, Object> map = new HashMap<>(1);
-        map.put("ew", wrapper);
-        try(SqlSession session = sqlSession()) {
+        map.put(Constants.WRAPPER, wrapper);
+        try (SqlSession session = sqlSession()) {
             return SqlHelper.retCount(session.<Integer>selectOne(sqlStatement(SqlMethod.SELECT_COUNT), map));
         }
     }
@@ -303,5 +297,4 @@ public abstract class Model<T extends Model> implements Serializable {
      * 主键值
      */
     protected abstract Serializable pkVal();
-
 }

@@ -15,7 +15,14 @@
  */
 package com.baomidou.mybatisplus.extension;
 
-import static java.lang.reflect.Proxy.newProxyInstance;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import org.apache.ibatis.cursor.Cursor;
+import org.apache.ibatis.executor.BatchResult;
+import org.apache.ibatis.session.*;
+import org.mybatis.spring.MyBatisExceptionTranslator;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.dao.support.PersistenceExceptionTranslator;
+import org.springframework.util.Assert;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -23,20 +30,7 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.cursor.Cursor;
-import org.apache.ibatis.executor.BatchResult;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.ExecutorType;
-import org.apache.ibatis.session.ResultHandler;
-import org.apache.ibatis.session.RowBounds;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.mybatis.spring.MyBatisExceptionTranslator;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.dao.support.PersistenceExceptionTranslator;
-import org.springframework.util.Assert;
-
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import static java.lang.reflect.Proxy.newProxyInstance;
 
 /**
  * Copy SqlSessionTemplate
@@ -402,7 +396,7 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
                 sqlSession.commit(true);
                 return result;
             } catch (Throwable t) {
-                throw new MybatisPlusException(t);
+                throw ExceptionUtils.mpe(t);
             } finally {
                 if (sqlSession != null) {
                     sqlSession.close();

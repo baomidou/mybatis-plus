@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
@@ -58,9 +57,9 @@ public class ReflectionKit {
      * 反射 method 方法名，例如 setVersion
      * </p>
      *
-     * @param   field Field
-     * @param   str String JavaBean类的version属性名
-     * @return  version属性的setter方法名称，e.g. setVersion
+     * @param field Field
+     * @param str   String JavaBean类的version属性名
+     * @return version属性的setter方法名称，e.g. setVersion
      */
     public static String setMethodCapitalize(Field field, final String str) {
         Class<?> fieldType = field.getType();
@@ -83,18 +82,17 @@ public class ReflectionKit {
         Map<String, Field> fieldMaps = getFieldMap(cls);
         try {
             if (CollectionUtils.isEmpty(fieldMaps)) {
-                throw new MybatisPlusException(
-                    String.format("Error: NoSuchField in %s for %s.  Cause:", cls.getSimpleName(), str));
+                throw ExceptionUtils.mpe(String.format("Error: NoSuchField in %s for %s.  Cause:", cls.getSimpleName(), str));
             }
             Method method = cls.getMethod(getMethodCapitalize(fieldMaps.get(str), str));
             return method.invoke(entity);
         } catch (NoSuchMethodException e) {
-            throw new MybatisPlusException(String.format("Error: NoSuchMethod in %s.  Cause:", cls.getSimpleName()) + e);
+            throw ExceptionUtils.mpe(String.format("Error: NoSuchMethod in %s.  Cause:", cls.getSimpleName()) + e);
         } catch (IllegalAccessException e) {
-            throw new MybatisPlusException(String.format("Error: Cannot execute a private method. in %s.  Cause:",
+            throw ExceptionUtils.mpe(String.format("Error: Cannot execute a private method. in %s.  Cause:",
                 cls.getSimpleName()) + e);
         } catch (InvocationTargetException e) {
-            throw new MybatisPlusException("Error: InvocationTargetException on getMethodValue.  Cause:" + e);
+            throw ExceptionUtils.mpe("Error: InvocationTargetException on getMethodValue.  Cause:" + e);
         }
     }
 

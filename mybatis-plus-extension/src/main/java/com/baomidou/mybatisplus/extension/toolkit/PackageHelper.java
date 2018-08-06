@@ -15,9 +15,8 @@
  */
 package com.baomidou.mybatisplus.extension.toolkit;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -26,7 +25,8 @@ import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.util.ClassUtils;
 
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * <p>
@@ -73,10 +73,10 @@ public class PackageHelper {
             if (!set.isEmpty()) {
                 return set.toArray(new String[]{});
             } else {
-                throw new MybatisPlusException("not find typeAliasesPackage:" + pkg);
+                throw ExceptionUtils.mpe("not find typeAliasesPackage:" + pkg);
             }
         } catch (Exception e) {
-            throw new MybatisPlusException("not find typeAliasesPackage:" + pkg, e);
+            throw ExceptionUtils.mpe("not find typeAliasesPackage:" + pkg, e);
         }
     }
 
@@ -110,13 +110,10 @@ public class PackageHelper {
                     }
                 }
             }
-            if (set.isEmpty()) {
-                throw new MybatisPlusException("not find scanTypePackage:" + pkg);
-            } else {
-                return set;
-            }
+            Assert.isFalse(set.isEmpty(), "not find scanTypePackage:" + pkg);
+            return set;
         } catch (Exception e) {
-            throw new MybatisPlusException("not find scanTypePackage:" + pkg, e);
+            throw ExceptionUtils.mpe("not find scanTypePackage:" + pkg, e);
         }
     }
 }

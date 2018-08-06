@@ -15,26 +15,16 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.*;
 import org.apache.ibatis.session.RowBounds;
 
-import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.DB2Dialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.H2Dialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.HSQLDialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.MariaDBDialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.MySqlDialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.OracleDialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.PostgreDialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.SQLServer2005Dialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.SQLServerDialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.SQLiteDialect;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -142,7 +132,7 @@ public class DialectFactory {
                         DIALECT_CACHE.put(dialectClazz, dialect);
                     }
                 } catch (ClassNotFoundException e) {
-                    throw new MybatisPlusException("Class :" + dialectClazz + " is not found");
+                    throw ExceptionUtils.mpe("Class :" + dialectClazz + " is not found");
                 }
             } else {
                 // 缓存方言
@@ -150,9 +140,7 @@ public class DialectFactory {
                 DIALECT_CACHE.put(dbType.getDb(), dialect);
             }
             /* 未配置方言则抛出异常 */
-            if (dialect == null) {
-                throw new MybatisPlusException("The value of the dialect property in mybatis configuration.xml is not defined.");
-            }
+            Assert.notNull(dialect, "The value of the dialect property in mybatis configuration.xml is not defined.");
         }
         return dialect;
     }
@@ -197,7 +185,6 @@ public class DialectFactory {
         if (dbType == DbType.SQLITE) {
             return new SQLiteDialect();
         }
-        throw new MybatisPlusException("The Database's Not Supported! DBType:" + dbType);
+        throw ExceptionUtils.mpe("The Database's Not Supported! DBType:" + dbType);
     }
-
 }

@@ -38,5 +38,4 @@ public class MybatisPlusException extends RuntimeException {
     public MybatisPlusException(String message, Throwable throwable) {
         super(message, throwable);
     }
-
 }

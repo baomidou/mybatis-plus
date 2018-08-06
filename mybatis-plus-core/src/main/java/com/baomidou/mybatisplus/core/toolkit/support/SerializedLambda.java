@@ -1,16 +1,11 @@
 package com.baomidou.mybatisplus.core.toolkit.support;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectStreamClass;
-import java.io.Serializable;
-
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.SerializationUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
-
 import lombok.Getter;
+
+import java.io.*;
 
 /**
  * 这个类是从 {@link java.lang.invoke.SerializedLambda} 里面 copy 过来的
@@ -53,14 +48,14 @@ public class SerializedLambda implements Serializable {
         }) {
             return (SerializedLambda) objIn.readObject();
         } catch (ClassNotFoundException | IOException e) {
-            throw new MybatisPlusException("This is impossible to happen", e);
+            throw ExceptionUtils.mpe("This is impossible to happen", e);
         }
     }
 
     @Override
     public String toString() {
-        return new StringBuilder(super.toString())
-            .append(implClass.replace(StringPool.SLASH, StringPool.DOT))
-            .append(StringPool.HASH).append(implMethodName).toString();
+        return super.toString() +
+            implClass.replace(StringPool.SLASH, StringPool.DOT) +
+            StringPool.HASH + implMethodName;
     }
 }

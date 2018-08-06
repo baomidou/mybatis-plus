@@ -15,12 +15,11 @@
  */
 package com.baomidou.mybatisplus.extension.toolkit;
 
+import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
-
-import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 /**
  * <p>
@@ -43,9 +42,7 @@ public class JdbcUtils {
      * @return
      */
     public static DbType getDbType(String jdbcUrl) {
-        if (StringUtils.isEmpty(jdbcUrl)) {
-            throw new MybatisPlusException("Error: The jdbcUrl is Null, Cannot read database type");
-        }
+        Assert.isFalse(StringUtils.isEmpty(jdbcUrl), "Error: The jdbcUrl is Null, Cannot read database type");
         if (jdbcUrl.startsWith("jdbc:mysql:") || jdbcUrl.startsWith("jdbc:cobar:")
             || jdbcUrl.startsWith("jdbc:log4jdbc:mysql:")) {
             return DbType.MYSQL;

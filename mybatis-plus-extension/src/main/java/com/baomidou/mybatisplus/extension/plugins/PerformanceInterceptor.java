@@ -15,36 +15,21 @@
  */
 package com.baomidou.mybatisplus.extension.plugins;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-
+import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.plugin.Interceptor;
-import org.apache.ibatis.plugin.Intercepts;
-import org.apache.ibatis.plugin.Invocation;
-import org.apache.ibatis.plugin.Plugin;
-import org.apache.ibatis.plugin.Signature;
+import org.apache.ibatis.plugin.*;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.session.ResultHandler;
 
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.SystemClock;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.sql.Statement;
+import java.util.*;
 
 /**
  * <p>
@@ -175,9 +160,8 @@ public class PerformanceInterceptor implements Interceptor {
             }
         } else {
             System.err.println(formatSql.toString());
-            if (this.getMaxTime() >= 1 && timing > this.getMaxTime()) {
-                throw new MybatisPlusException(" The SQL execution time is too large, please optimize ! ");
-            }
+            Assert.isFalse(this.getMaxTime() >= 1 && timing > this.getMaxTime(),
+                " The SQL execution time is too large, please optimize ! ");
         }
         return result;
     }
