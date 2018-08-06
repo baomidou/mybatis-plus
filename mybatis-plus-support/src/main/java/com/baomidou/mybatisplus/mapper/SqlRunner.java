@@ -90,12 +90,16 @@ public class SqlRunner {
 
     @Transactional
     public boolean insert(String sql, Object... args) {
-        return SqlHelper.retBool(sqlSession().insert(INSERT, sqlMap(sql, args)));
+        try (SqlSession session = sqlSession()) {
+            return SqlHelper.retBool(session.insert(INSERT, sqlMap(sql, args)));
+        }
     }
 
     @Transactional
     public boolean delete(String sql, Object... args) {
-        return SqlHelper.retBool(sqlSession().delete(DELETE, sqlMap(sql, args)));
+        try (SqlSession session = sqlSession()) {
+            return SqlHelper.retBool(session.delete(DELETE, sqlMap(sql, args)));
+        }
     }
 
     /**
@@ -113,7 +117,9 @@ public class SqlRunner {
 
     @Transactional
     public boolean update(String sql, Object... args) {
-        return SqlHelper.retBool(sqlSession().update(UPDATE, sqlMap(sql, args)));
+        try (SqlSession session = sqlSession()) {
+            return SqlHelper.retBool(session.update(UPDATE, sqlMap(sql, args)));
+        }
     }
 
     /**
@@ -125,7 +131,9 @@ public class SqlRunner {
      * @return
      */
     public List<Map<String, Object>> selectList(String sql, Object... args) {
-        return sqlSession().selectList(SELECT_LIST, sqlMap(sql, args));
+        try (SqlSession session = sqlSession()) {
+            return session.selectList(SELECT_LIST, sqlMap(sql, args));
+        }
     }
 
     /**
@@ -137,7 +145,9 @@ public class SqlRunner {
      * @return
      */
     public List<Object> selectObjs(String sql, Object... args) {
-        return sqlSession().selectList(SELECT_OBJS, sqlMap(sql, args));
+        try (SqlSession session = sqlSession()) {
+            return session.selectList(SELECT_OBJS, sqlMap(sql, args));
+        }
     }
 
     /**
@@ -153,7 +163,9 @@ public class SqlRunner {
     }
 
     public int selectCount(String sql, Object... args) {
-        return SqlHelper.retCount(sqlSession().<Integer>selectOne(COUNT, sqlMap(sql, args)));
+        try (SqlSession session = sqlSession()) {
+            return SqlHelper.retCount(session.<Integer>selectOne(COUNT, sqlMap(sql, args)));
+        }
     }
 
     public Map<String, Object> selectOne(String sql, Object... args) {
@@ -165,8 +177,10 @@ public class SqlRunner {
         if (null == page) {
             return null;
         }
-        page.setRecords(sqlSession().selectList(SELECT_LIST, sqlMap(sql, args), page));
-        return page;
+        try (SqlSession session = sqlSession()) {
+            page.setRecords(session.selectList(SELECT_LIST, sqlMap(sql, args), page));
+            return page;
+        }
     }
 
     /**
