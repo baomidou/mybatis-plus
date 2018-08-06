@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.annotation;
 
-import lombok.Getter;
-
 /**
  * <p>
  * 字段填充策略枚举类
@@ -25,36 +23,21 @@ import lombok.Getter;
  * @author hubin
  * @since 2017-06-27
  */
-@Getter
 public enum FieldFill {
-    DEFAULT(0, "默认不处理"),
-    INSERT(1, "插入填充字段"),
-    UPDATE(2, "更新填充字段"),
-    INSERT_UPDATE(3, "插入和更新填充字段");
-
     /**
-     * 主键
+     * 默认不处理
      */
-    private final int key;
-
+    DEFAULT,
     /**
-     * 描述
+     * 插入填充字段
      */
-    private final String desc;
-
-    FieldFill(final int key, final String desc) {
-        this.key = key;
-        this.desc = desc;
-    }
-
-    public static FieldFill getIgnore(int key) {
-        FieldFill[] fis = FieldFill.values();
-        for (FieldFill fi : fis) {
-            if (fi.getKey() == key) {
-                return fi;
-            }
-        }
-        return FieldFill.DEFAULT;
-    }
-
+    INSERT,
+    /**
+     * 更新填充字段
+     */
+    UPDATE,
+    /**
+     * 插入和更新填充字段
+     */
+    INSERT_UPDATE
 }

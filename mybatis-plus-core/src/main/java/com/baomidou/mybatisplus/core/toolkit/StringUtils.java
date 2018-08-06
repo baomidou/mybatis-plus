@@ -15,18 +15,14 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import static java.util.stream.Collectors.joining;
-
-import java.sql.Blob;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Pattern;
-
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
+
+import java.sql.Blob;
+import java.util.*;
+import java.util.regex.Pattern;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * <p>
@@ -287,7 +283,7 @@ public class StringUtils {
      * @return 拼接后的字符串
      */
     public static String appends(String delimiter, String... strings) {
-        return Arrays.stream(strings).collect(joining(delimiter == null ? StringPool.EMPTY : delimiter));
+        return String.join(delimiter == null ? StringPool.EMPTY : delimiter, Arrays.asList(strings));
     }
 
     /**

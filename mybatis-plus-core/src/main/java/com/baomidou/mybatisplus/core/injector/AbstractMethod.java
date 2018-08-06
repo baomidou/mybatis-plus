@@ -201,6 +201,15 @@ public abstract class AbstractMethod {
 
     /**
      * <p>
+     * 拼接字符串
+     * </p>
+     */
+    protected String joinStr(String... strings) {
+        return StringUtils.appends(null, strings);
+    }
+
+    /**
+     * <p>
      * SQL 查询所有表字段
      * </p>
      *

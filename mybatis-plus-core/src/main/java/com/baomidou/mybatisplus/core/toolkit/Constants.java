@@ -47,13 +47,33 @@ public interface Constants {
      */
     String ENTITY_SPOT = ENTITY + SPOT;
     /**
-     * wrapper类
+     * wrapper 类
      */
     String WRAPPER = "ew";
     /**
-     * wrapper类 带后缀 ==> .
+     * wrapper 类 带后缀 ==> .
      */
     String WRAPPER_SPOT = WRAPPER + SPOT;
+    /**
+     * wrapper 类的属性 entity
+     */
+    String WRAPPER_ENTITY = WRAPPER_SPOT + "entity";
+    /**
+     * wrapper 类的属性 sqlSegment
+     */
+    String WRAPPER_SQLSEGMENT = WRAPPER_SPOT + "sqlSegment";
+    /**
+     * wrapper 类的属性 entity 带后缀 ==> .
+     */
+    String WRAPPER_ENTITY_SPOT = WRAPPER_SPOT + "entity" + SPOT;
+    /**
+     * UpdateWrapper 类的属性 sqlSet
+     */
+    String U_WRAPPER_SQL_SET = WRAPPER_SPOT + "sqlSet";
+    /**
+     * QueryWrapper 类的属性 sqlSelect
+     */
+    String Q_WRAPPER_SQL_SELECT = WRAPPER_SPOT + "sqlSelect";
     /**
      * columnMap
      */
