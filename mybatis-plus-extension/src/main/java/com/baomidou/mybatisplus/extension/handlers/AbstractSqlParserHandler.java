@@ -15,20 +15,14 @@
  */
 package com.baomidou.mybatisplus.extension.handlers;
 
-import java.util.List;
-
-import org.apache.ibatis.reflection.MetaObject;
-
-import com.baomidou.mybatisplus.core.parser.ISqlParser;
-import com.baomidou.mybatisplus.core.parser.ISqlParserFilter;
-import com.baomidou.mybatisplus.core.parser.SqlInfo;
-import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
-import com.baomidou.mybatisplus.core.parser.SqlParserInfo;
+import com.baomidou.mybatisplus.core.parser.*;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
-
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.apache.ibatis.reflection.MetaObject;
+
+import java.util.List;
 
 /**
  * <p>
@@ -57,7 +51,7 @@ public abstract class AbstractSqlParserHandler {
             if (CollectionUtils.isNotEmpty(this.sqlParserList)) {
                 // @SqlParser(filter = true) 跳过该方法解析
                 SqlParserInfo sqlParserInfo = SqlParserHelper.getSqlParserInfo(metaObject);
-                if (null != sqlParserInfo && sqlParserInfo.getFilter()) {
+                if (null != sqlParserInfo && sqlParserInfo.isFilter()) {
                     return;
                 }
                 // 标记是否修改过 SQL
