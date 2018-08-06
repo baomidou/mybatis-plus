@@ -15,11 +15,12 @@
  */
 package com.baomidou.mybatisplus.extension.plugins;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.Properties;
-
+import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.toolkit.VersionUtils;
 import org.apache.ibatis.builder.StaticSqlSource;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.logging.Log;
@@ -27,19 +28,14 @@ import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
-import org.apache.ibatis.plugin.Interceptor;
-import org.apache.ibatis.plugin.Intercepts;
-import org.apache.ibatis.plugin.Invocation;
-import org.apache.ibatis.plugin.Plugin;
-import org.apache.ibatis.plugin.Signature;
+import org.apache.ibatis.plugin.*;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.Configuration;
 
-import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.extension.toolkit.VersionUtils;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.Properties;
 
 /**
  * <p>
@@ -118,9 +114,8 @@ public class SqlExplainInterceptor implements Interceptor {
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     if (!"Using where".equals(rs.getString("Extra"))) {
-                        if (this.isStopProceed()) {
-                            throw new MybatisPlusException("Error: Full table operation is prohibited. SQL: " + boundSql.getSql());
-                        }
+                        Assert.isFalse(this.isStopProceed(),
+                            "Error: Full table operation is prohibited. SQL: " + boundSql.getSql());
                         break;
                     }
                 }
@@ -128,7 +123,7 @@ public class SqlExplainInterceptor implements Interceptor {
 
 
         } catch (Exception e) {
-            throw new MybatisPlusException(e);
+            throw ExceptionUtils.mpe(e);
         }
     }
 

@@ -55,6 +55,7 @@ public final class Assert {
 
     /**
      * 断言这个 object 为 null
+     * 不为 null 则抛异常
      *
      * @param object  对象
      * @param message 消息
@@ -65,6 +66,7 @@ public final class Assert {
 
     /**
      * 断言这个 object 不为 null
+     * 为 null 则抛异常
      *
      * @param object  对象
      * @param message 消息
@@ -74,7 +76,8 @@ public final class Assert {
     }
 
     /**
-     * 断言这个 collection 不为空
+     * 断言这个 collection 不为 empty
+     * 为 empty 则抛异常
      *
      * @param collection 集合
      * @param message    消息
@@ -84,7 +87,8 @@ public final class Assert {
     }
 
     /**
-     * 断言这个 map 不为空
+     * 断言这个 map 不为 empty
+     * 为 empty 则抛异常
      *
      * @param map     集合
      * @param message 消息
@@ -94,7 +98,8 @@ public final class Assert {
     }
 
     /**
-     * 断言数组不能为空
+     * 断言这个 数组 不为 empty
+     * 为 empty 则抛异常
      *
      * @param array   数组
      * @param message 消息

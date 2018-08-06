@@ -17,7 +17,6 @@ package com.baomidou.mybatisplus.core.toolkit.sql;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.*;
@@ -114,9 +113,7 @@ public class SqlHelper {
      */
     public static TableInfo table(Class<?> clazz) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
-        if (null == tableInfo) {
-            throw new MybatisPlusException("Error: Cannot execute table Method, ClassGenricType not found .");
-        }
+        Assert.notNull(tableInfo, "Error: Cannot execute table Method, ClassGenricType not found .");
         return tableInfo;
     }
 
