@@ -156,14 +156,11 @@ public class TableInfoHelper {
             globalConfig = GlobalConfigUtils.defaults();
         }
 
-        /* 是否开启下划线转驼峰模式(开启后数据库不管大小写都能自动映射) */
-        boolean underCamel = globalConfig.getDbConfig().isColumnUnderline();
-
         /* 初始化表名相关 */
         initTableName(clazz, globalConfig, tableInfo);
 
         /* 初始化字段相关 */
-        initTableFields(clazz, underCamel, globalConfig, tableInfo);
+        initTableFields(clazz, globalConfig, tableInfo);
 
         /* 放入缓存 */
         TABLE_INFO_CACHE.put(clazz.getName(), tableInfo);
@@ -178,7 +175,7 @@ public class TableInfoHelper {
      * 初始化 表数据库类型,表名,resultMap
      * </p>
      *
-     * @param clazz        class of entity
+     * @param clazz        实体类
      * @param globalConfig 全局配置
      * @param tableInfo    数据库表反射信息
      */
@@ -228,18 +225,17 @@ public class TableInfoHelper {
      * 初始化 表主键,表字段
      * </p>
      *
-     * @param clazz        class of entity
-     * @param underCamel   下划线转驼峰
+     * @param clazz        实体类
      * @param globalConfig 全局配置
      * @param tableInfo    数据库表反射信息
      */
-    public static void initTableFields(Class<?> clazz, boolean underCamel, GlobalConfig globalConfig,
-                                       TableInfo tableInfo) {
+    public static void initTableFields(Class<?> clazz, GlobalConfig globalConfig, TableInfo tableInfo) {
         /* 数据库全局配置 */
         GlobalConfig.DbConfig dbConfig = globalConfig.getDbConfig();
         List<Field> list = getAllFields(clazz);
         // 标记是否读取到主键
         boolean isReadPK = false;
+        // 是否存在 @TableId 注解
         boolean existTableId = isExistTableId(list);
 
         List<TableFieldInfo> fieldList = new ArrayList<>();
@@ -249,24 +245,21 @@ public class TableInfoHelper {
              */
             if (!isReadPK) {
                 if (existTableId) {
-                    isReadPK = initTableId(underCamel, dbConfig, tableInfo, field, clazz);
+                    isReadPK = initTableIdWithAnnotation(dbConfig, tableInfo, field, clazz);
                 } else {
-                    isReadPK = initFieldId(dbConfig, tableInfo, field, clazz);
+                    isReadPK = initTableIdWithoutAnnotation(dbConfig, tableInfo, field, clazz);
                 }
                 if (isReadPK) {
                     continue;
                 }
             }
-            /*
-             * 字段初始化
-             */
-            if (initTableField(underCamel, dbConfig, tableInfo, fieldList, field, clazz)) {
+            /* 有 @TableField 注解的字段初始化 */
+            if (initTableFieldWithAnnotation(dbConfig, tableInfo, fieldList, field, clazz)) {
                 continue;
             }
-            /*
-             * 字段, 使用 camelToUnderline 转换驼峰写法为下划线分割法, 如果已指定 TableField , 便不会执行这里
-             */
-            fieldList.add(new TableFieldInfo(underCamel, dbConfig, tableInfo, field, field.getDeclaringClass()));
+
+            /* 无 @TableField 注解的字段初始化 */
+            fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field));
         }
 
         /* 字段列表 */
@@ -302,49 +295,44 @@ public class TableInfoHelper {
      * 主键属性初始化
      * </p>
      *
-     * @param underCamel 下划线转驼峰模式
-     * @param tableInfo  表信息
-     * @param field      字段
-     * @param clazz      实体类
+     * @param dbConfig  全局配置信息
+     * @param tableInfo 表信息
+     * @param field     字段
+     * @param clazz     实体类
      * @return true 继续下一个属性判断，返回 continue;
      */
-    private static boolean initTableId(boolean underCamel, GlobalConfig.DbConfig dbConfig, TableInfo tableInfo,
-                                       Field field, Class<?> clazz) {
+    private static boolean initTableIdWithAnnotation(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo,
+                                                     Field field, Class<?> clazz) {
         TableId tableId = field.getAnnotation(TableId.class);
+        boolean underCamel = dbConfig.isColumnUnderline();
         if (tableId != null) {
             if (StringUtils.isEmpty(tableInfo.getKeyColumn())) {
-                /*
-                 * 主键策略（ 注解 > 全局 > 默认 ）
-                 */
+                /* 主键策略（ 注解 > 全局 ） */
                 // 设置 Sequence 其他策略无效
-                if (IdType.NONE != tableId.type()) {
-                    tableInfo.setIdType(tableId.type());
-                } else {
+                if (IdType.NONE == tableId.type()) {
                     tableInfo.setIdType(dbConfig.getIdType());
+                } else {
+                    tableInfo.setIdType(tableId.type());
                 }
 
                 /* 字段 */
                 String column = field.getName();
                 if (StringUtils.isNotEmpty(tableId.value())) {
                     column = tableId.value();
-                    tableInfo.setKeyRelated(true);
                 } else {
                     // 开启字段下划线申明
-                    if (dbConfig.isColumnUnderline()) {
+                    if (underCamel) {
                         column = StringUtils.camelToUnderline(column);
-                        // 未开启下户线转驼峰 AS 转换
-                        if (!underCamel) {
-                            tableInfo.setKeyRelated(true);
-                        }
                     }
                     // 全局大写命名
                     if (dbConfig.isCapitalMode()) {
                         column = column.toUpperCase();
                     }
                 }
-                tableInfo.setClazz(field.getDeclaringClass());
-                tableInfo.setKeyColumn(column);
-                tableInfo.setKeyProperty(field.getName());
+                tableInfo.setKeyRelated(checkRelated(underCamel, field.getName(), column))
+                    .setClazz(field.getDeclaringClass())
+                    .setKeyColumn(column)
+                    .setKeyProperty(field.getName());
                 return true;
             } else {
                 throwExceptionId(clazz);
@@ -363,18 +351,19 @@ public class TableInfoHelper {
      * @param clazz     实体类
      * @return true 继续下一个属性判断，返回 continue;
      */
-    private static boolean initFieldId(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo,
-                                       Field field, Class<?> clazz) {
+    private static boolean initTableIdWithoutAnnotation(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo,
+                                                        Field field, Class<?> clazz) {
         String column = field.getName();
         if (dbConfig.isCapitalMode()) {
             column = column.toUpperCase();
         }
         if (DEFAULT_ID_NAME.equalsIgnoreCase(column)) {
             if (StringUtils.isEmpty(tableInfo.getKeyColumn())) {
-                tableInfo.setIdType(dbConfig.getIdType());
-                tableInfo.setKeyColumn(column);
-                tableInfo.setKeyProperty(field.getName());
-                tableInfo.setClazz(field.getDeclaringClass());
+                tableInfo.setKeyRelated(checkRelated(dbConfig.isColumnUnderline(), field.getName(), column))
+                    .setIdType(dbConfig.getIdType())
+                    .setKeyColumn(column)
+                    .setKeyProperty(field.getName())
+                    .setClazz(field.getDeclaringClass());
                 return true;
             } else {
                 throwExceptionId(clazz);
@@ -385,28 +374,17 @@ public class TableInfoHelper {
 
     /**
      * <p>
-     * 发现设置多个主键注解抛出异常
-     * </p>
-     */
-    private static void throwExceptionId(Class<?> clazz) {
-        throw ExceptionUtils.mpe("There must be only one, Discover multiple @TableId annotation in " +
-            clazz.getName());
-    }
-
-    /**
-     * <p>
      * 字段属性初始化
      * </p>
      *
-     * @param underCamel 下划线转驼峰模式
-     * @param dbConfig   数据库全局配置
-     * @param tableInfo  表信息
-     * @param fieldList  字段列表
-     * @param clazz      当前表对象类
+     * @param dbConfig  数据库全局配置
+     * @param tableInfo 表信息
+     * @param fieldList 字段列表
+     * @param clazz     当前表对象类
      * @return true 继续下一个属性判断，返回 continue;
      */
-    private static boolean initTableField(boolean underCamel, GlobalConfig.DbConfig dbConfig, TableInfo tableInfo,
-                                          List<TableFieldInfo> fieldList, Field field, Class<?> clazz) {
+    private static boolean initTableFieldWithAnnotation(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo,
+                                                        List<TableFieldInfo> fieldList, Field field, Class<?> clazz) {
         /* 获取注解属性，自定义字段 */
         TableField tableField = field.getAnnotation(TableField.class);
         if (null == tableField) {
@@ -427,13 +405,48 @@ public class TableInfoHelper {
         String[] els = el.split(StringPool.SEMICOLON);
         if (columns.length == els.length) {
             for (int i = 0; i < columns.length; i++) {
-                fieldList.add(new TableFieldInfo(underCamel, dbConfig, tableInfo,
-                    columns[i], els[i], field, tableField, field.getDeclaringClass()));
+                fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, columns[i], els[i], tableField));
             }
             return true;
         }
         throw ExceptionUtils.mpe(String.format("Class: %s, Field: %s, 'value' 'el' Length must be consistent.",
             clazz.getName(), field.getName()));
+    }
+
+    /**
+     * <p>
+     * 判定 related 的值
+     * </p>
+     *
+     * @param underCamel 驼峰命名
+     * @param property   属性名
+     * @param column     字段名
+     * @return related
+     */
+    public static boolean checkRelated(boolean underCamel, String property, String column) {
+        if (underCamel) {
+            /**
+             * 开启了驼峰,判断 property 下划线后是否与 column 相同 (全部转为小写)
+             * 相同则不需要 as ,则 related 为 false
+             */
+            return !StringUtils.underlineToCamel(property).equals(column.toLowerCase());
+        } else {
+            /**
+             * 未开启驼峰,判断 property 是否与 column 相同
+             * 相同则不需要 as ,则 related 为 false
+             */
+            return !property.equals(column);
+        }
+    }
+
+    /**
+     * <p>
+     * 发现设置多个主键注解抛出异常
+     * </p>
+     */
+    private static void throwExceptionId(Class<?> clazz) {
+        throw ExceptionUtils.mpe("There must be only one, Discover multiple @TableId annotation in " +
+            clazz.getName());
     }
 
     /**

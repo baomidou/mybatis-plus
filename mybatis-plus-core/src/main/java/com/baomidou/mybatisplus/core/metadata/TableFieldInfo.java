@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.core.metadata;
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -90,29 +91,24 @@ public class TableFieldInfo {
      * 存在 TableField 注解构造函数
      * </p>
      */
-    public TableFieldInfo(boolean underCamel, GlobalConfig.DbConfig dbConfig, TableInfo tableInfo,
-                          String column, String el, Field field, TableField tableField, Class<?> clazz) {
+    public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field,
+                          String column, String el, TableField tableField) {
         this.property = field.getName();
         this.propertyType = field.getType();
-        /*
-         * 1、注解 value 不存在，开启字段下划线申明<br>
-         * 2、没有开启下划线申明，但是column与property不等的情况<br>
-         * 设置 related 为 true
-         */
+        this.fieldFill = tableField.fill();
+        this.clazz = field.getDeclaringClass();
+        this.update = tableField.update();
+        this.el = el;
+        tableInfo.setLogicDelete(this.initLogicDelete(dbConfig, field));
+
         if (StringUtils.isEmpty(tableField.value())) {
-            /* 开启字段下划线申明 */
             if (dbConfig.isColumnUnderline()) {
                 column = StringUtils.camelToUnderline(column);
             }
-            /* 未开启下划线转驼峰模式 AS 转换 */
-            if (!underCamel) {
-                this.related = true;
-            }
-        } else if (!column.equals(this.property)) {
-            this.related = true;
         }
         this.column = column;
-        this.el = el;
+        this.related = TableInfoHelper.checkRelated(dbConfig.isColumnUnderline(), this.property, this.column);
+
         /*
          * 优先使用单个字段注解，否则使用全局配置
          */
@@ -121,8 +117,7 @@ public class TableFieldInfo {
         } else {
             this.fieldStrategy = dbConfig.getFieldStrategy();
         }
-        tableInfo.setLogicDelete(this.initLogicDelete(dbConfig, field));
-        this.update = tableField.update();
+
         if (StringUtils.isNotEmpty(tableField.condition())) {
             // 细粒度条件控制
             this.condition = tableField.condition();
@@ -130,31 +125,28 @@ public class TableFieldInfo {
             // 全局配置
             this.setCondition(dbConfig);
         }
-        /*
-         * 保存当前字段的填充策略
-         */
-        this.fieldFill = tableField.fill();
-        this.clazz = clazz;
     }
 
-    public TableFieldInfo(boolean underCamel, GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field, Class<?> clazz) {
-        if (dbConfig.isColumnUnderline()) {
-            /* 开启字段下划线申明 */
-            this.column = StringUtils.camelToUnderline(field.getName());
-            /* 未开启下划线转驼峰模式 AS 转换 */
-            if (!underCamel) {
-                this.related = true;
-            }
-        } else {
-            this.column = field.getName();
-        }
+    public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field) {
         this.property = field.getName();
         this.el = field.getName();
         this.fieldStrategy = dbConfig.getFieldStrategy();
         this.propertyType = field.getType();
         this.setCondition(dbConfig);
-        this.clazz = clazz;
+        this.clazz = field.getDeclaringClass();
         tableInfo.setLogicDelete(this.initLogicDelete(dbConfig, field));
+
+        String column = field.getName();
+        if (dbConfig.isColumnUnderline()) {
+            /* 开启字段下划线申明 */
+            column = StringUtils.camelToUnderline(column);
+        }
+        if (dbConfig.isCapitalMode()) {
+            /* 开启字段全大写申明 */
+            column = column.toUpperCase();
+        }
+        this.column = column;
+        this.related = TableInfoHelper.checkRelated(dbConfig.isColumnUnderline(), this.property, this.column);
     }
 
     /**

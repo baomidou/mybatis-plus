@@ -110,6 +110,7 @@ public class GlobalConfig implements Serializable {
         private boolean tableUnderline = true;
         /**
          * 字段名、是否使用下划线命名（默认 true:默认数据库字段下划线命名）
+         * 与 Mybatis 的属性 mapUnderscoreToCamelCase 意义一致,并会设置到 configuration
          */
         private boolean columnUnderline = true;
         /**
