@@ -14,9 +14,6 @@ public class DB2KeyGenerator implements IKeyGenerator {
 
     @Override
     public String executeSql(String incrementerName) {
-        StringBuilder sql = new StringBuilder();
-        sql.append("values nextval for ");
-        sql.append(incrementerName);
-        return sql.toString();
+        return "values nextval for " + incrementerName;
     }
 }
