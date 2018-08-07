@@ -170,7 +170,16 @@ public class Page<T> implements IPage<T> {
         return this;
     }
 
-    public IPage<T> setAscs(String... ascs) {
+
+    /**
+     * <p>
+     * 升序
+     * </p>
+     *
+     * @param ascs 多个升序字段
+     * @return
+     */
+    public IPage<T> setAsc(String... ascs) {
         this.ascs = ascs;
         return this;
     }
@@ -187,7 +196,15 @@ public class Page<T> implements IPage<T> {
         return this;
     }
 
-    public IPage<T> setDescs(String... descs) {
+    /**
+     * <p>
+     * 降序
+     * </p>
+     *
+     * @param descs 多个降序字段
+     * @return
+     */
+    public IPage<T> setDesc(String... descs) {
         this.descs = descs;
         return this;
     }
