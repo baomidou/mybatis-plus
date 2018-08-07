@@ -170,8 +170,10 @@ public class ReflectionKit {
             return null;
         }
         List<Field> fieldList = Stream.of(clazz.getDeclaredFields())
-            .filter(field -> !Modifier.isStatic(field.getModifiers())/* 过滤静态属性 */)
-            .filter(field -> !Modifier.isTransient(field.getModifiers())/* 过滤 transient关键字修饰的属性 */)
+            /* 过滤静态属性 */
+            .filter(field -> !Modifier.isStatic(field.getModifiers()))
+            /* 过滤 transient关键字修饰的属性 */
+            .filter(field -> !Modifier.isTransient(field.getModifiers()))
             .collect(toCollection(LinkedList::new));
         /* 处理父类字段 */
         Class<?> superClass = clazz.getSuperclass();
