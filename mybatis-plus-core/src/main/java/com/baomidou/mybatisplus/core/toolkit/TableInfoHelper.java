@@ -135,6 +135,7 @@ public class TableInfoHelper {
      * @param clazz 反射实体类
      * @return
      */
+    @SuppressWarnings("all")
     public synchronized static TableInfo initTableInfo(MapperBuilderAssistant builderAssistant, Class<?> clazz) {
         TableInfo tableInfo = TABLE_INFO_CACHE.get(clazz.getName());
         if (StringUtils.checkValNotNull(tableInfo)) {
@@ -154,52 +155,24 @@ public class TableInfoHelper {
             globalConfig = GlobalConfigUtils.defaults();
         }
 
-        /**
-         * 是否开启下划线转驼峰模式
-         */
+        /* 是否开启下划线转驼峰模式 */
         boolean underCamel = builderAssistant.getConfiguration().isMapUnderscoreToCamelCase();
-
         /* 数据库全局配置 */
         GlobalConfig.DbConfig dbConfig = globalConfig.getDbConfig();
-        tableInfo.setDbType(dbConfig.getDbType());
-        // 表名
-        TableName table = clazz.getAnnotation(TableName.class);
-        String tableName = clazz.getSimpleName();
-        if (table != null && StringUtils.isNotEmpty(table.value())) {
-            tableName = table.value();
-        } else {
-            // 开启表名下划线申明
-            if (dbConfig.isTableUnderline()) {
-                tableName = StringUtils.camelToUnderline(tableName);
-            }
-            // 大写命名判断
-            if (dbConfig.isCapitalMode()) {
-                tableName = tableName.toUpperCase();
-            } else {
-                // 首字母小写
-                tableName = StringUtils.firstToLowerCase(tableName);
-            }
-            // 存在表名前缀
-            if (null != dbConfig.getTablePrefix()) {
-                tableName = dbConfig.getTablePrefix() + tableName;
-            }
-        }
-        tableInfo.setTableName(tableName);
+        /* 初始化表名相关 */
+        initTableName(clazz, dbConfig, tableInfo);
 
         // 开启了自定义 KEY 生成器
         if (null != dbConfig.getKeyGenerator()) {
             tableInfo.setKeySequence(clazz.getAnnotation(KeySequence.class));
         }
 
-        /* 表结果集映射 */
-        if (table != null && StringUtils.isNotEmpty(table.resultMap())) {
-            tableInfo.setResultMap(table.resultMap());
-        }
+
         List<TableFieldInfo> fieldList = new ArrayList<>();
         List<Field> list = getAllFields(clazz);
         // 标记是否读取到主键
         boolean isReadPK = false;
-        boolean existTableId = existTableId(list);
+        boolean existTableId = isExistTableId(list);
         for (Field field : list) {
             /*
              * 主键ID 初始化
@@ -249,13 +222,55 @@ public class TableInfoHelper {
 
     /**
      * <p>
+     * 初始化 表数据库类型,表名,resultMap
+     * </p>
+     *
+     * @param clazz     class of entity
+     * @param dbConfig  数据库全局配置
+     * @param tableInfo 数据库表反射信息
+     */
+    public static void initTableName(Class<?> clazz, GlobalConfig.DbConfig dbConfig, TableInfo tableInfo) {
+        /* 设置数据库类型 */
+        tableInfo.setDbType(dbConfig.getDbType());
+        /* 设置表名 */
+        TableName table = clazz.getAnnotation(TableName.class);
+        String tableName = clazz.getSimpleName();
+        if (table != null && StringUtils.isNotEmpty(table.value())) {
+            tableName = table.value();
+        } else {
+            // 开启表名下划线申明
+            if (dbConfig.isTableUnderline()) {
+                tableName = StringUtils.camelToUnderline(tableName);
+            }
+            // 大写命名判断
+            if (dbConfig.isCapitalMode()) {
+                tableName = tableName.toUpperCase();
+            } else {
+                // 首字母小写
+                tableName = StringUtils.firstToLowerCase(tableName);
+            }
+            // 存在表名前缀
+            if (null != dbConfig.getTablePrefix()) {
+                tableName = dbConfig.getTablePrefix() + tableName;
+            }
+        }
+        tableInfo.setTableName(tableName);
+
+        /* 表结果集映射 */
+        if (table != null && StringUtils.isNotEmpty(table.resultMap())) {
+            tableInfo.setResultMap(table.resultMap());
+        }
+    }
+
+    /**
+     * <p>
      * 判断主键注解是否存在
      * </p>
      *
      * @param list 字段列表
-     * @return
+     * @return true 为存在 @TableId 注解;
      */
-    public static boolean existTableId(List<Field> list) {
+    public static boolean isExistTableId(List<Field> list) {
         for (Field field : list) {
             TableId tableId = field.getAnnotation(TableId.class);
             if (tableId != null) {
