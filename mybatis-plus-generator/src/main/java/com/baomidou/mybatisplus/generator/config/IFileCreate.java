@@ -17,7 +17,7 @@ package com.baomidou.mybatisplus.generator.config;
 
 
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
-import com.baomidou.mybatisplus.generator.config.po.FileType;
+import com.baomidou.mybatisplus.generator.config.rules.FileType;
 
 /**
  * <p>
