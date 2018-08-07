@@ -154,7 +154,7 @@ public class TableInfoHelper {
             globalConfig = GlobalConfigUtils.defaults();
         }
 
-        /***
+        /**
          * 是否开启下划线转驼峰模式
          */
         boolean underCamel = builderAssistant.getConfiguration().isMapUnderscoreToCamelCase();
@@ -213,7 +213,6 @@ public class TableInfoHelper {
                 if (isReadPK) {
                     continue;
                 }
-
             }
             /*
              * 字段初始化
@@ -221,7 +220,6 @@ public class TableInfoHelper {
             if (initTableField(underCamel, dbConfig, tableInfo, fieldList, field, clazz)) {
                 continue;
             }
-
             /*
              * 字段, 使用 camelToUnderline 转换驼峰写法为下划线分割法, 如果已指定 TableField , 便不会执行这里
              */
@@ -258,15 +256,13 @@ public class TableInfoHelper {
      * @return
      */
     public static boolean existTableId(List<Field> list) {
-        boolean exist = false;
         for (Field field : list) {
             TableId tableId = field.getAnnotation(TableId.class);
             if (tableId != null) {
-                exist = true;
-                break;
+                return true;
             }
         }
-        return exist;
+        return false;
     }
 
     /**
