@@ -144,6 +144,8 @@ public class TableInfoHelper {
             }
             return tableInfo;
         }
+
+        /* 没有获取到缓存信息,则初始化 */
         tableInfo = new TableInfo();
         GlobalConfig globalConfig;
         if (null != builderAssistant) {
@@ -155,24 +157,93 @@ public class TableInfoHelper {
             globalConfig = GlobalConfigUtils.defaults();
         }
 
-        /* 是否开启下划线转驼峰模式 */
+        /* 是否开启下划线转驼峰模式(开启后数据库不管大小写都能自动映射) */
         boolean underCamel = builderAssistant.getConfiguration().isMapUnderscoreToCamelCase();
+
+        /* 初始化表名相关 */
+        initTableName(clazz, globalConfig, tableInfo);
+
+        /* 初始化字段相关 */
+        initTableFields(clazz, underCamel, globalConfig, tableInfo);
+
+        /* 放入缓存 */
+        TABLE_INFO_CACHE.put(clazz.getName(), tableInfo);
+
+        /* 缓存 Lambda 映射关系 */
+        LambdaUtils.createCache(clazz, tableInfo);
+        return tableInfo;
+    }
+
+    /**
+     * <p>
+     * 初始化 表数据库类型,表名,resultMap
+     * </p>
+     *
+     * @param clazz        class of entity
+     * @param globalConfig 全局配置
+     * @param tableInfo    数据库表反射信息
+     */
+    public static void initTableName(Class<?> clazz, GlobalConfig globalConfig, TableInfo tableInfo) {
         /* 数据库全局配置 */
         GlobalConfig.DbConfig dbConfig = globalConfig.getDbConfig();
-        /* 初始化表名相关 */
-        initTableName(clazz, dbConfig, tableInfo);
+        /* 设置数据库类型 */
+        tableInfo.setDbType(dbConfig.getDbType());
 
-        // 开启了自定义 KEY 生成器
+        /* 设置表名 */
+        TableName table = clazz.getAnnotation(TableName.class);
+        String tableName = clazz.getSimpleName();
+        if (table != null && StringUtils.isNotEmpty(table.value())) {
+            tableName = table.value();
+        } else {
+            // 开启表名下划线申明
+            if (dbConfig.isTableUnderline()) {
+                tableName = StringUtils.camelToUnderline(tableName);
+            }
+            // 大写命名判断
+            if (dbConfig.isCapitalMode()) {
+                tableName = tableName.toUpperCase();
+            } else {
+                // 首字母小写
+                tableName = StringUtils.firstToLowerCase(tableName);
+            }
+            // 存在表名前缀
+            if (null != dbConfig.getTablePrefix()) {
+                tableName = dbConfig.getTablePrefix() + tableName;
+            }
+        }
+        tableInfo.setTableName(tableName);
+
+        /* 表结果集映射 */
+        if (table != null && StringUtils.isNotEmpty(table.resultMap())) {
+            tableInfo.setResultMap(table.resultMap());
+        }
+
+        /* 开启了自定义 KEY 生成器 */
         if (null != dbConfig.getKeyGenerator()) {
             tableInfo.setKeySequence(clazz.getAnnotation(KeySequence.class));
         }
+    }
 
-
-        List<TableFieldInfo> fieldList = new ArrayList<>();
+    /**
+     * <p>
+     * 初始化 表主键,表字段
+     * </p>
+     *
+     * @param clazz        class of entity
+     * @param underCamel   下划线转驼峰
+     * @param globalConfig 全局配置
+     * @param tableInfo    数据库表反射信息
+     */
+    public static void initTableFields(Class<?> clazz, boolean underCamel, GlobalConfig globalConfig,
+                                       TableInfo tableInfo) {
+        /* 数据库全局配置 */
+        GlobalConfig.DbConfig dbConfig = globalConfig.getDbConfig();
         List<Field> list = getAllFields(clazz);
         // 标记是否读取到主键
         boolean isReadPK = false;
         boolean existTableId = isExistTableId(list);
+
+        List<TableFieldInfo> fieldList = new ArrayList<>();
         for (Field field : list) {
             /*
              * 主键ID 初始化
@@ -206,59 +277,6 @@ public class TableInfoHelper {
          */
         if (StringUtils.isEmpty(tableInfo.getKeyColumn())) {
             logger.warn(String.format("Warn: Could not find @TableId in Class: %s.", clazz.getName()));
-        }
-
-        /*
-         * 注入
-         */
-        TABLE_INFO_CACHE.put(clazz.getName(), tableInfo);
-
-        /*
-         * 缓存 Lambda 映射关系
-         */
-        LambdaUtils.createCache(clazz, tableInfo);
-        return tableInfo;
-    }
-
-    /**
-     * <p>
-     * 初始化 表数据库类型,表名,resultMap
-     * </p>
-     *
-     * @param clazz     class of entity
-     * @param dbConfig  数据库全局配置
-     * @param tableInfo 数据库表反射信息
-     */
-    public static void initTableName(Class<?> clazz, GlobalConfig.DbConfig dbConfig, TableInfo tableInfo) {
-        /* 设置数据库类型 */
-        tableInfo.setDbType(dbConfig.getDbType());
-        /* 设置表名 */
-        TableName table = clazz.getAnnotation(TableName.class);
-        String tableName = clazz.getSimpleName();
-        if (table != null && StringUtils.isNotEmpty(table.value())) {
-            tableName = table.value();
-        } else {
-            // 开启表名下划线申明
-            if (dbConfig.isTableUnderline()) {
-                tableName = StringUtils.camelToUnderline(tableName);
-            }
-            // 大写命名判断
-            if (dbConfig.isCapitalMode()) {
-                tableName = tableName.toUpperCase();
-            } else {
-                // 首字母小写
-                tableName = StringUtils.firstToLowerCase(tableName);
-            }
-            // 存在表名前缀
-            if (null != dbConfig.getTablePrefix()) {
-                tableName = dbConfig.getTablePrefix() + tableName;
-            }
-        }
-        tableInfo.setTableName(tableName);
-
-        /* 表结果集映射 */
-        if (table != null && StringUtils.isNotEmpty(table.resultMap())) {
-            tableInfo.setResultMap(table.resultMap());
         }
     }
 
