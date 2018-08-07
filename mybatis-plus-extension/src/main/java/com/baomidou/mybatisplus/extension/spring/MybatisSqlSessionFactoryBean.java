@@ -560,7 +560,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         if (null == globalConfig) {
             globalConfig = GlobalConfigUtils.defaults();
         }
-        // 设置元数据相关
+        // 设置元数据相关 todo 是否加上 dbType 的自动识别
         // GlobalConfigUtils.setMetaData(dataSource, globalConfig);
         try (Connection connection = dataSource.getConnection()) {
             // 设置全局关键字
@@ -576,6 +576,8 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         globalConfig.setSqlSessionFactory(sqlSessionFactory);
         // TODO 设置全局参数属性
         globalConfig.signGlobalConfig(sqlSessionFactory);
+        /* 设置下划线转驼峰到 configuration */
+        configuration.setMapUnderscoreToCamelCase(globalConfig.getDbConfig().isColumnUnderline());
         if (!isEmpty(this.mapperLocations)) {
             if (globalConfig.isRefresh()) {
                 //TODO 设置自动刷新配置 减少配置
