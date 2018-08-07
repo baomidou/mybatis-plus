@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.extension.spring;
 
+import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
@@ -560,14 +561,13 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         if (null == globalConfig) {
             globalConfig = GlobalConfigUtils.defaults();
         }
-        // 设置元数据相关 todo 是否加上 dbType 的自动识别
-        // GlobalConfigUtils.setMetaData(dataSource, globalConfig);
-        try (Connection connection = dataSource.getConnection()) {
-            // 设置全局关键字
-            //globalConfig.getDbConfig().setSqlKeywords(connection.getMetaData().getSQLKeywords());
-            globalConfig.getDbConfig().setDbType(JdbcUtils.getDbType(connection.getMetaData().getURL()));
-        } catch (Exception e) {
-            throw ExceptionUtils.mpe("Error: GlobalConfigUtils setMetaData Fail !  Cause:" + e);
+        // 设置元数据相关 如果用户没有配置 dbType 则自动获取
+        if (globalConfig.getDbConfig().getDbType() == DbType.OTHER) {
+            try (Connection connection = dataSource.getConnection()) {
+                globalConfig.getDbConfig().setDbType(JdbcUtils.getDbType(connection.getMetaData().getURL()));
+            } catch (Exception e) {
+                throw ExceptionUtils.mpe("Error: GlobalConfigUtils setMetaData Fail !  Cause:" + e);
+            }
         }
         SqlSessionFactory sqlSessionFactory = this.sqlSessionFactoryBuilder.build(configuration);
         // TODO SqlRunner

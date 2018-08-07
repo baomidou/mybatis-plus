@@ -95,7 +95,7 @@ public class GlobalConfig implements Serializable {
         /**
          * 数据库类型
          */
-        private DbType dbType = DbType.MYSQL;
+        private DbType dbType = DbType.OTHER;
         /**
          * 主键类型（默认 ID_WORKER）
          */
