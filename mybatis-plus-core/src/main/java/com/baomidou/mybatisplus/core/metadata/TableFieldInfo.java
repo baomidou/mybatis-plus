@@ -81,9 +81,9 @@ public class TableFieldInfo {
      */
     private FieldFill fieldFill = FieldFill.DEFAULT;
     /**
-     * todo 秋秋来把注释写上
+     * 标记该字段属于哪个类
      */
-    private Class<?> parentClass;
+    private Class<?> clazz;
 
     /**
      * <p>
@@ -91,7 +91,7 @@ public class TableFieldInfo {
      * </p>
      */
     public TableFieldInfo(boolean underCamel, GlobalConfig.DbConfig dbConfig, TableInfo tableInfo,
-                          String column, String el, Field field, TableField tableField, Class<?> parentClass) {
+                          String column, String el, Field field, TableField tableField, Class<?> clazz) {
         this.property = field.getName();
         this.propertyType = field.getType();
         /*
@@ -134,10 +134,10 @@ public class TableFieldInfo {
          * 保存当前字段的填充策略
          */
         this.fieldFill = tableField.fill();
-        this.parentClass = parentClass;
+        this.clazz = clazz;
     }
 
-    public TableFieldInfo(boolean underCamel, GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field, Class<?> parentClass) {
+    public TableFieldInfo(boolean underCamel, GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field, Class<?> clazz) {
         if (dbConfig.isColumnUnderline()) {
             /* 开启字段下划线申明 */
             this.column = StringUtils.camelToUnderline(field.getName());
@@ -153,7 +153,7 @@ public class TableFieldInfo {
         this.fieldStrategy = dbConfig.getFieldStrategy();
         this.propertyType = field.getType();
         this.setCondition(dbConfig);
-        this.parentClass = parentClass;
+        this.clazz = clazz;
         tableInfo.setLogicDelete(this.initLogicDelete(dbConfig, field));
     }
 

@@ -90,9 +90,9 @@ public class TableInfo {
      */
     private boolean logicDelete = false;
     /**
-     * todo 秋秋来把注释写上
+     * 标记该字段属于哪个类
      */
-    private Class<?> parentClass;
+    private Class<?> clazz;
 
     /**
      * <p>

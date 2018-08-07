@@ -314,7 +314,7 @@ public class TableInfoHelper {
                         column = column.toUpperCase();
                     }
                 }
-                tableInfo.setParentClass(field.getDeclaringClass());
+                tableInfo.setClazz(field.getDeclaringClass());
                 tableInfo.setKeyColumn(column);
                 tableInfo.setKeyProperty(field.getName());
                 return true;
@@ -346,7 +346,7 @@ public class TableInfoHelper {
                 tableInfo.setIdType(dbConfig.getIdType());
                 tableInfo.setKeyColumn(column);
                 tableInfo.setKeyProperty(field.getName());
-                tableInfo.setParentClass(field.getDeclaringClass());
+                tableInfo.setClazz(field.getDeclaringClass());
                 return true;
             } else {
                 throwExceptionId(clazz);

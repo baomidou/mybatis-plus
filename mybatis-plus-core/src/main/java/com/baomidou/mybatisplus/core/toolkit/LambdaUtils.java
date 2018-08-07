@@ -100,14 +100,14 @@ public final class LambdaUtils {
     private static Map<String, String> createLambdaMap(TableInfo tableInfo, Class clazz) {
         Map<String, String> map = new HashMap<>(16);
         if (StringUtils.isNotEmpty(tableInfo.getKeyProperty())) {
-            if (tableInfo.getParentClass() != clazz) {
-                saveCache(tableInfo.getParentClass().getName(), tableInfo.getKeyProperty(), tableInfo.getKeyColumn());
+            if (tableInfo.getClazz() != clazz) {
+                saveCache(tableInfo.getClazz().getName(), tableInfo.getKeyProperty(), tableInfo.getKeyColumn());
             }
             map.put(tableInfo.getKeyProperty(), tableInfo.getKeyColumn());
         }
         tableInfo.getFieldList().forEach(i -> {
-            if (i.getParentClass() != clazz) {
-                saveCache(i.getParentClass().getName(), i.getProperty(), i.getColumn());
+            if (i.getClazz() != clazz) {
+                saveCache(i.getClazz().getName(), i.getProperty(), i.getColumn());
             }
             map.put(i.getProperty(), i.getColumn());
         });
