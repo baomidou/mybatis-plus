@@ -135,7 +135,6 @@ public class TableInfoHelper {
      * @param clazz 反射实体类
      * @return
      */
-    @SuppressWarnings("all")
     public synchronized static TableInfo initTableInfo(MapperBuilderAssistant builderAssistant, Class<?> clazz) {
         TableInfo tableInfo = TABLE_INFO_CACHE.get(clazz.getName());
         if (StringUtils.checkValNotNull(tableInfo)) {
@@ -158,7 +157,7 @@ public class TableInfoHelper {
         }
 
         /* 是否开启下划线转驼峰模式(开启后数据库不管大小写都能自动映射) */
-        boolean underCamel = builderAssistant.getConfiguration().isMapUnderscoreToCamelCase();
+        boolean underCamel = globalConfig.getDbConfig().isColumnUnderline();
 
         /* 初始化表名相关 */
         initTableName(clazz, globalConfig, tableInfo);
@@ -441,7 +440,7 @@ public class TableInfoHelper {
      * 获取该类的所有属性列表
      *
      * @param clazz 反射类
-     * @return
+     * @return 属性集合
      */
     public static List<Field> getAllFields(Class<?> clazz) {
         List<Field> fieldList = ReflectionKit.getFieldList(ClassUtils.getUserClass(clazz));
@@ -463,7 +462,6 @@ public class TableInfoHelper {
      * 初始化SqlSessionFactory (供Mybatis原生调用)
      *
      * @param sqlSessionFactory
-     * @return
      */
     public static void initSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
         Configuration configuration = sqlSessionFactory.getConfiguration();
