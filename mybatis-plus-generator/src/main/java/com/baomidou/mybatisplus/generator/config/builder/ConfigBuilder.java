@@ -548,7 +548,7 @@ public class ConfigBuilder {
      * @return
      */
     private boolean tableNameMatches(String setTableName, String dbTableName) {
-        return setTableName.equalsIgnoreCase(dbTableName)
+        return setTableName.equals(dbTableName)
             || StringUtils.matches(setTableName, dbTableName);
     }
 
