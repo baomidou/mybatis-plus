@@ -1,6 +1,5 @@
 package com.baomidou.mybatisplus.test.postgres.config;
 
-import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.extension.injector.LogicSqlInjector;
@@ -54,7 +53,7 @@ public class MybatisPlusConfig {
     @Bean
     public GlobalConfig globalConfig() {
         GlobalConfig conf = new GlobalConfig();
-        conf.setDbConfig(new GlobalConfig.DbConfig().setDbType(DbType.POSTGRE_SQL));
+        conf.setDbConfig(new GlobalConfig.DbConfig());
         /* 逻辑删除注入器 */
         LogicSqlInjector logicSqlInjector = new LogicSqlInjector();
         conf.setSqlInjector(logicSqlInjector);
