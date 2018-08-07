@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.baomidou.mybatisplus.generator.config.FileOutConfig;
+import com.baomidou.mybatisplus.generator.config.IFileCreate;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 
 import lombok.Data;
@@ -50,6 +51,11 @@ public abstract class InjectionConfig {
      * 自定义输出文件
      */
     private List<FileOutConfig> fileOutConfigList;
+
+    /**
+     * 自定义判断是否创建文件
+     */
+    private IFileCreate fileCreate;
 
     /**
      * 注入自定义 Map 对象

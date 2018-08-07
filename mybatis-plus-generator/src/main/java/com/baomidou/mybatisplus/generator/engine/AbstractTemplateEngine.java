@@ -35,6 +35,7 @@ import com.baomidou.mybatisplus.generator.config.FileOutConfig;
 import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.TemplateConfig;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
+import com.baomidou.mybatisplus.generator.config.po.FileType;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 
 
@@ -86,7 +87,7 @@ public abstract class AbstractTemplateEngine {
                     List<FileOutConfig> focList = injectionConfig.getFileOutConfigList();
                     if (CollectionUtils.isNotEmpty(focList)) {
                         for (FileOutConfig foc : focList) {
-                            if (isCreate(foc.outputFile(tableInfo))) {
+                            if (isCreate(FileType.OTHER, foc.outputFile(tableInfo))) {
                                 writer(objectMap, foc.getTemplatePath(), foc.outputFile(tableInfo));
                             }
                         }
@@ -96,42 +97,42 @@ public abstract class AbstractTemplateEngine {
                 String entityName = tableInfo.getEntityName();
                 if (null != entityName && null != pathInfo.get(ConstVal.ENTITY_PATH)) {
                     String entityFile = String.format((pathInfo.get(ConstVal.ENTITY_PATH) + File.separator + "%s" + suffixJavaOrKt()), entityName);
-                    if (isCreate(entityFile)) {
+                    if (isCreate(FileType.ENTITY, entityFile)) {
                         writer(objectMap, templateFilePath(template.getEntity(getConfigBuilder().getGlobalConfig().isKotlin())), entityFile);
                     }
                 }
                 // MpMapper.java
                 if (null != tableInfo.getMapperName() && null != pathInfo.get(ConstVal.MAPPER_PATH)) {
                     String mapperFile = String.format((pathInfo.get(ConstVal.MAPPER_PATH) + File.separator + tableInfo.getMapperName() + suffixJavaOrKt()), entityName);
-                    if (isCreate(mapperFile)) {
+                    if (isCreate(FileType.MAPPER, mapperFile)) {
                         writer(objectMap, templateFilePath(template.getMapper()), mapperFile);
                     }
                 }
                 // MpMapper.xml
                 if (null != tableInfo.getXmlName() && null != pathInfo.get(ConstVal.XML_PATH)) {
                     String xmlFile = String.format((pathInfo.get(ConstVal.XML_PATH) + File.separator + tableInfo.getXmlName() + ConstVal.XML_SUFFIX), entityName);
-                    if (isCreate(xmlFile)) {
+                    if (isCreate(FileType.XML, xmlFile)) {
                         writer(objectMap, templateFilePath(template.getXml()), xmlFile);
                     }
                 }
                 // IMpService.java
                 if (null != tableInfo.getServiceName() && null != pathInfo.get(ConstVal.SERVICE_PATH)) {
                     String serviceFile = String.format((pathInfo.get(ConstVal.SERVICE_PATH) + File.separator + tableInfo.getServiceName() + suffixJavaOrKt()), entityName);
-                    if (isCreate(serviceFile)) {
+                    if (isCreate(FileType.SERVICE, serviceFile)) {
                         writer(objectMap, templateFilePath(template.getService()), serviceFile);
                     }
                 }
                 // MpServiceImpl.java
                 if (null != tableInfo.getServiceImplName() && null != pathInfo.get(ConstVal.SERVICE_IMPL_PATH)) {
                     String implFile = String.format((pathInfo.get(ConstVal.SERVICE_IMPL_PATH) + File.separator + tableInfo.getServiceImplName() + suffixJavaOrKt()), entityName);
-                    if (isCreate(implFile)) {
+                    if (isCreate(FileType.SERVICE_IMPL, implFile)) {
                         writer(objectMap, templateFilePath(template.getServiceImpl()), implFile);
                     }
                 }
                 // MpController.java
                 if (null != tableInfo.getControllerName() && null != pathInfo.get(ConstVal.CONTROLLER_PATH)) {
                     String controllerFile = String.format((pathInfo.get(ConstVal.CONTROLLER_PATH) + File.separator + tableInfo.getControllerName() + suffixJavaOrKt()), entityName);
-                    if (isCreate(controllerFile)) {
+                    if (isCreate(FileType.CONTROLLER, controllerFile)) {
                         writer(objectMap, templateFilePath(template.getController()), controllerFile);
                     }
                 }
@@ -279,7 +280,14 @@ public abstract class AbstractTemplateEngine {
      *
      * @return 是否
      */
-    protected boolean isCreate(String filePath) {
+    protected boolean isCreate(FileType fileType, String filePath) {
+        ConfigBuilder cb = getConfigBuilder();
+        // 自定义判断
+        InjectionConfig ic = cb.getInjectionConfig();
+        if (null != ic && null != ic.getFileCreate()) {
+            return ic.getFileCreate().isCreate(cb, fileType, filePath);
+        }
+        // 全局判断【默认】
         File file = new File(filePath);
         boolean exist = file.exists();
         if (!exist) {

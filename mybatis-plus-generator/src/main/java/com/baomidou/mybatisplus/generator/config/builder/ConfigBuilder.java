@@ -431,7 +431,8 @@ public class ConfigBuilder {
             if (DbType.POSTGRE_SQL == dbQuery.dbType()) {
                 String schema = dataSourceConfig.getSchemaname();
                 if (schema == null) {
-                    schema = "public";//pg默认schema=public
+                    //pg默认schema=public
+                    schema = "public";
                     dataSourceConfig.setSchemaname(schema);
                 }
                 tablesSql = String.format(tablesSql, schema);
@@ -439,7 +440,8 @@ public class ConfigBuilder {
             //oracle数据库表太多，出现最大游标错误
             else if (DbType.ORACLE == dbQuery.dbType()) {
                 String schema = dataSourceConfig.getSchemaname();
-                if (schema == null) {//oracle默认用户的schema=username
+                //oracle默认用户的schema=username
+                if (schema == null) {
                     schema = dataSourceConfig.getUsername().toUpperCase();
                     dataSourceConfig.setSchemaname(schema);
                 }
