@@ -165,7 +165,7 @@ public class Page<T> implements IPage<T> {
 
     public IPage<T> setAscs(List<String> ascs) {
         if (CollectionUtils.isNotEmpty(ascs)) {
-            this.ascs = (String[]) ascs.toArray();
+            this.ascs = ascs.toArray(new String[ascs.size()]);
         }
         return this;
     }
@@ -191,7 +191,7 @@ public class Page<T> implements IPage<T> {
 
     public IPage<T> setDescs(List<String> descs) {
         if (CollectionUtils.isNotEmpty(descs)) {
-            this.descs = (String[]) descs.toArray();
+            this.descs = descs.toArray(new String[descs.size()]);
         }
         return this;
     }
