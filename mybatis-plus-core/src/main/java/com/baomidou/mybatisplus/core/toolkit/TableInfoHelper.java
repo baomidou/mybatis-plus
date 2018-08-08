@@ -264,9 +264,8 @@ public class TableInfoHelper {
 
         /* 字段列表 */
         tableInfo.setFieldList(globalConfig, fieldList);
-        /*
-         * 未发现主键注解，提示警告信息
-         */
+
+        /* 未发现主键注解，提示警告信息 */
         if (StringUtils.isEmpty(tableInfo.getKeyColumn())) {
             logger.warn(String.format("Warn: Could not find @TableId in Class: %s.", clazz.getName()));
         }
@@ -429,7 +428,7 @@ public class TableInfoHelper {
              * 开启了驼峰,判断 property 下划线后是否与 column 相同 (全部转为小写)
              * 相同则不需要 as ,则 related 为 false
              */
-            return !StringUtils.underlineToCamel(property).equals(column.toLowerCase());
+            return !StringUtils.camelToUnderline(property).equals(column.toLowerCase());
         } else {
             /**
              * 未开启驼峰,判断 property 是否与 column 相同
