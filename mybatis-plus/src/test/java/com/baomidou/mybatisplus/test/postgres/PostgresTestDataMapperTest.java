@@ -216,6 +216,7 @@ public class PostgresTestDataMapperTest {
         logicMapper.selectList(new QueryWrapper<LogicTestData>().lambda()
             .eq(LogicTestData::getId, 1L).eq(LogicTestData::getTestInt, 1));
         logicMapper.selectList(null);
+        println(pgMapper.selectList(null));
     }
 
     @Test
