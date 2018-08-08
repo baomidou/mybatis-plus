@@ -27,9 +27,25 @@ import net.sf.jsqlparser.expression.Expression;
  */
 public interface TenantHandler {
 
+    /**
+     * 获取租户值
+     *
+     * @return 租户值
+     */
     Expression getTenantId();
 
+    /**
+     * 获取租户字段名
+     *
+     * @return 租户字段名
+     */
     String getTenantIdColumn();
 
+    /**
+     * 根据表名判断是否进行过滤
+     *
+     * @param tableName 表名
+     * @return 是否进行过滤
+     */
     boolean doTableFilter(String tableName);
 }
