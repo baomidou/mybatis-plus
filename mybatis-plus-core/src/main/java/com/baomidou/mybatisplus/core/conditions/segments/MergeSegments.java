@@ -63,4 +63,20 @@ public class MergeSegments implements ISqlSegment {
             return normal.getSqlSegment() + groupBy.getSqlSegment() + having.getSqlSegment() + orderBy.getSqlSegment();
         }
     }
+
+    public NormalSegmentList getNormal() {
+        return normal;
+    }
+
+    public GroupBySegmentList getGroupBy() {
+        return groupBy;
+    }
+
+    public HavingSegmentList getHaving() {
+        return having;
+    }
+
+    public OrderBySegmentList getOrderBy() {
+        return orderBy;
+    }
 }
