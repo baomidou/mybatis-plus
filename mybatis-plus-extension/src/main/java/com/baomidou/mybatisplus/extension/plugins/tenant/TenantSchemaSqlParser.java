@@ -18,6 +18,9 @@ package com.baomidou.mybatisplus.extension.plugins.tenant;
 
 import com.baomidou.mybatisplus.core.parser.AbstractJsqlParser;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.select.SelectBody;
@@ -31,6 +34,9 @@ import net.sf.jsqlparser.statement.update.Update;
  * @author hubin
  * @since 2017-09-01
  */
+@Data
+@Accessors(chain = true)
+@EqualsAndHashCode(callSuper = true)
 public class TenantSchemaSqlParser extends AbstractJsqlParser {
 
     private TenantSchemaHandler tenantSchemaHandler;
@@ -53,13 +59,5 @@ public class TenantSchemaSqlParser extends AbstractJsqlParser {
     @Override
     public void processSelectBody(SelectBody selectBody) {
 
-    }
-
-    public TenantSchemaHandler getTenantSchemaHandler() {
-        return tenantSchemaHandler;
-    }
-
-    public void setTenantSchemaHandler(TenantSchemaHandler tenantSchemaHandler) {
-        this.tenantSchemaHandler = tenantSchemaHandler;
     }
 }

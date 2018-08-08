@@ -15,10 +15,16 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.tenant;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.core.parser.AbstractJsqlParser;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
@@ -30,10 +36,18 @@ import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.insert.Insert;
-import net.sf.jsqlparser.statement.select.*;
+import net.sf.jsqlparser.statement.select.FromItem;
+import net.sf.jsqlparser.statement.select.Join;
+import net.sf.jsqlparser.statement.select.LateralSubSelect;
+import net.sf.jsqlparser.statement.select.PlainSelect;
+import net.sf.jsqlparser.statement.select.SelectBody;
+import net.sf.jsqlparser.statement.select.SelectExpressionItem;
+import net.sf.jsqlparser.statement.select.SetOperationList;
+import net.sf.jsqlparser.statement.select.SubJoin;
+import net.sf.jsqlparser.statement.select.SubSelect;
+import net.sf.jsqlparser.statement.select.ValuesList;
+import net.sf.jsqlparser.statement.select.WithItem;
 import net.sf.jsqlparser.statement.update.Update;
-
-import java.util.List;
 
 /**
  * <p>
@@ -43,6 +57,9 @@ import java.util.List;
  * @author hubin
  * @since 2017-09-01
  */
+@Data
+@Accessors(chain = true)
+@EqualsAndHashCode(callSuper = true)
 public class TenantSqlParser extends AbstractJsqlParser {
 
     private TenantHandler tenantHandler;
@@ -271,13 +288,5 @@ public class TenantSqlParser extends AbstractJsqlParser {
         column.append(StringPool.DOT);
         column.append(this.tenantHandler.getTenantIdColumn());
         return new Column(column.toString());
-    }
-
-    public TenantHandler getTenantHandler() {
-        return tenantHandler;
-    }
-
-    public void setTenantHandler(TenantHandler tenantHandler) {
-        this.tenantHandler = tenantHandler;
     }
 }

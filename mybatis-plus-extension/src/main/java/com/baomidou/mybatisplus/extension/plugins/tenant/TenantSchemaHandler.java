@@ -17,7 +17,7 @@ package com.baomidou.mybatisplus.extension.plugins.tenant;
 
 /**
  * <p>
- * 租户处理器（ Schema 表级 ）
+ * 租户处理器（ schema 级 ）
  * </p>
  *
  * @author hubin
@@ -25,7 +25,18 @@ package com.baomidou.mybatisplus.extension.plugins.tenant;
  */
 public interface TenantSchemaHandler {
 
+    /**
+     * 获取 schema 名
+     *
+     * @return schema 名
+     */
     String getTenantSchema();
 
+    /**
+     * 根据表名判断是否进行过滤
+     *
+     * @param tableName 表名
+     * @return 是否进行过滤
+     */
     boolean doTableFilter(String tableName);
 }
