@@ -300,7 +300,6 @@ public abstract class AbstractMethod {
                 columns.append(sqlWordConvert(dbType, table.getKeyColumn(), true))
                     .append(" AS ").append(sqlWordConvert(dbType, table.getKeyProperty(), false));
             } else {
-                //todo getKeyColumn ???
                 columns.append(sqlWordConvert(dbType, table.getKeyColumn(), true));
             }
         } else {

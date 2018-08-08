@@ -15,20 +15,19 @@
  */
 package com.baomidou.mybatisplus.core.test;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.junit.Test;
-
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
+import org.junit.Test;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class WrapperTest {
 
@@ -139,7 +138,7 @@ public class WrapperTest {
 
     @Test
     public void testFunc() {
-        QueryWrapper<User> queryWrapper = new QueryWrapper<User>()//todo in 方法是不是各个加个后缀好点
+        QueryWrapper<User> queryWrapper = new QueryWrapper<User>()
             .isNull("nullColumn").or().isNotNull("notNullColumn")
             .orderByAsc("id").orderByDesc("name")
             .groupBy("id", "name").groupBy("id2", "name2")
