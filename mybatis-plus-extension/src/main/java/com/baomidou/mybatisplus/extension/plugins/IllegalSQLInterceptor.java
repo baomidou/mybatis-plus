@@ -1,9 +1,37 @@
 package com.baomidou.mybatisplus.extension.plugins;
 
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.ibatis.executor.statement.StatementHandler;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.plugin.Interceptor;
+import org.apache.ibatis.plugin.Intercepts;
+import org.apache.ibatis.plugin.Invocation;
+import org.apache.ibatis.plugin.Plugin;
+import org.apache.ibatis.plugin.Signature;
+import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.reflection.SystemMetaObject;
+
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.EncryptUtils;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+
 import lombok.Data;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
@@ -21,22 +49,6 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SubSelect;
 import net.sf.jsqlparser.statement.update.Update;
-import org.apache.ibatis.executor.statement.StatementHandler;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.mapping.BoundSql;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.SqlCommandType;
-import org.apache.ibatis.plugin.*;
-import org.apache.ibatis.reflection.MetaObject;
-import org.apache.ibatis.reflection.SystemMetaObject;
-
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author willenfoo
@@ -123,9 +135,6 @@ public class IllegalSQLInterceptor implements Interceptor {
      * @param connection
      */
     private static void validJoins(List<Join> joins, Table table, Connection connection) {
-        if (joins != null) {
-            throw new MybatisPlusException("非法SQL，请把SQL打成单表执行，错误子查询join信息：" + joins);
-        }
         //允许执行join，验证jion是否使用索引等等
         if (joins != null) {
             for (Join join : joins) {
@@ -152,7 +161,6 @@ public class IllegalSQLInterceptor implements Interceptor {
         String dbName = null;
         String tableName = null;
         String[] tableArray = tableInfo.split("\\.");
-        ;
         if (tableArray.length == 1) {
             tableName = tableArray[0];
         } else {
