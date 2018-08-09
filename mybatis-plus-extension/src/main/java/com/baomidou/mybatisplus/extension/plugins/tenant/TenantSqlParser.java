@@ -15,10 +15,16 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.tenant;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.core.parser.AbstractJsqlParser;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
@@ -30,10 +36,18 @@ import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.insert.Insert;
-import net.sf.jsqlparser.statement.select.*;
+import net.sf.jsqlparser.statement.select.FromItem;
+import net.sf.jsqlparser.statement.select.Join;
+import net.sf.jsqlparser.statement.select.LateralSubSelect;
+import net.sf.jsqlparser.statement.select.PlainSelect;
+import net.sf.jsqlparser.statement.select.SelectBody;
+import net.sf.jsqlparser.statement.select.SelectExpressionItem;
+import net.sf.jsqlparser.statement.select.SetOperationList;
+import net.sf.jsqlparser.statement.select.SubJoin;
+import net.sf.jsqlparser.statement.select.SubSelect;
+import net.sf.jsqlparser.statement.select.ValuesList;
+import net.sf.jsqlparser.statement.select.WithItem;
 import net.sf.jsqlparser.statement.update.Update;
-
-import java.util.List;
 
 /**
  * <p>
@@ -43,6 +57,9 @@ import java.util.List;
  * @author hubin
  * @since 2017-09-01
  */
+@Data
+@Accessors(chain = true)
+@EqualsAndHashCode(callSuper = true)
 public class TenantSqlParser extends AbstractJsqlParser {
 
     private TenantHandler tenantHandler;
@@ -74,11 +91,11 @@ public class TenantSqlParser extends AbstractJsqlParser {
      */
     @Override
     public void processInsert(Insert insert) {
-        if (this.tenantHandler.doTableFilter(insert.getTable().getName())) {
+        if (tenantHandler.doTableFilter(insert.getTable().getName())) {
             // 过滤退出执行
             return;
         }
-        insert.getColumns().add(new Column(this.tenantHandler.getTenantIdColumn()));
+        insert.getColumns().add(new Column(tenantHandler.getTenantIdColumn()));
         if (insert.getSelect() != null) {
             processPlainSelect((PlainSelect) insert.getSelect().getSelectBody(), true);
         } else if (insert.getItemsList() != null) {
@@ -105,7 +122,7 @@ public class TenantSqlParser extends AbstractJsqlParser {
         Assert.isTrue(null != tableList && tableList.size() < 2,
             "Failed to process multiple-table update, please exclude the statementId");
         Table table = tableList.get(0);
-        if (this.tenantHandler.doTableFilter(table.getName())) {
+        if (tenantHandler.doTableFilter(table.getName())) {
             // 过滤退出执行
             return;
         }
@@ -119,7 +136,7 @@ public class TenantSqlParser extends AbstractJsqlParser {
      */
     @Override
     public void processDelete(Delete delete) {
-        if (this.tenantHandler.doTableFilter(delete.getTable().getName())) {
+        if (tenantHandler.doTableFilter(delete.getTable().getName())) {
             // 过滤退出执行
             return;
         }
@@ -163,13 +180,13 @@ public class TenantSqlParser extends AbstractJsqlParser {
         FromItem fromItem = plainSelect.getFromItem();
         if (fromItem instanceof Table) {
             Table fromTable = (Table) fromItem;
-            if (this.tenantHandler.doTableFilter(fromTable.getName())) {
+            if (tenantHandler.doTableFilter(fromTable.getName())) {
                 // 过滤退出执行
                 return;
             }
             plainSelect.setWhere(builderExpression(plainSelect.getWhere(), fromTable));
             if (addColumn) {
-                plainSelect.getSelectItems().add(new SelectExpressionItem(new Column(this.tenantHandler.getTenantIdColumn())));
+                plainSelect.getSelectItems().add(new SelectExpressionItem(new Column(tenantHandler.getTenantIdColumn())));
             }
         } else {
             processFromItem(fromItem);
@@ -190,7 +207,7 @@ public class TenantSqlParser extends AbstractJsqlParser {
         if (fromItem instanceof SubJoin) {
             SubJoin subJoin = (SubJoin) fromItem;
             if (subJoin.getJoinList() != null) {
-                subJoin.getJoinList().forEach(j -> processJoin(j));
+                subJoin.getJoinList().forEach(this::processJoin);
             }
             if (subJoin.getLeft() != null) {
                 processFromItem(subJoin.getLeft());
@@ -269,15 +286,7 @@ public class TenantSqlParser extends AbstractJsqlParser {
             column.append(table.getAlias().getName());
         }
         column.append(StringPool.DOT);
-        column.append(this.tenantHandler.getTenantIdColumn());
+        column.append(tenantHandler.getTenantIdColumn());
         return new Column(column.toString());
-    }
-
-    public TenantHandler getTenantHandler() {
-        return tenantHandler;
-    }
-
-    public void setTenantHandler(TenantHandler tenantHandler) {
-        this.tenantHandler = tenantHandler;
     }
 }

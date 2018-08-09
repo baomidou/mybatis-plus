@@ -11,10 +11,10 @@ CREATE TABLE IF NOT EXISTS tb_test_data_logic (
     create_datetime datetime,
     update_datetime datetime,
     deleted         tinyint(1) default 0,
-    version        integer default 0
+    version         integer    default 0
 )
     ENGINE = innodb
-    DEFAULT CHARSET = utf8;
+DEFAULT CHARSET = utf8;
 
 CREATE TABLE IF NOT EXISTS tb_test_data (
     id              BIGINT primary key,
@@ -28,7 +28,8 @@ CREATE TABLE IF NOT EXISTS tb_test_data (
     test_timestamp  timestamp,
     create_datetime datetime,
     update_datetime datetime,
-    version        integer default 0
+    version         integer default 0,
+    tenant_id       bigint
 )
     ENGINE = innodb
-    DEFAULT CHARSET = utf8;
+DEFAULT CHARSET = utf8;

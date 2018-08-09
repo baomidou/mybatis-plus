@@ -10,6 +10,12 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 /**
+ * 包含功能:
+ * 1.继承父类字段     验证无误
+ * 2.自动填充        验证无误
+ * 3.逻辑删除        验证无误
+ * 4.乐观锁          验证无误
+ *
  * @author meimie
  * @since 2018/6/7
  */

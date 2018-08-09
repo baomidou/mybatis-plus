@@ -10,7 +10,9 @@ import com.baomidou.mybatisplus.test.base.entity.TestData;
 import com.baomidou.mybatisplus.test.base.mapper.LogicTestDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.TestDataMapper;
 import com.baomidou.mybatisplus.test.base.service.ILogicTestDataService;
+import com.baomidou.mybatisplus.test.mysql.config.MysqlDb;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -46,10 +48,10 @@ public class MysqlTestDataMapperTest {
     @Resource
     private ILogicTestDataService logicTestDataService;
 
-//    @BeforeClass
-//    public static void init() throws IOException, SQLException {
-//        MysqlDb.initMysqlData();
-//    }
+    @BeforeClass
+    public static void init() throws Exception {
+        MysqlDb.initMysqlData();
+    }
 
     @Test
     public void insertForeach() {
@@ -171,6 +173,11 @@ public class MysqlTestDataMapperTest {
             .setEntity(new LogicTestData().setTestInt(1))
             .set("test_int", 55555)
             .eq("id", 1014361515554881538L));
+    }
+
+    @Test
+    public void getAllNoTenant() {
+        mapper.getAllNoTenant();
     }
 
     @Test

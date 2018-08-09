@@ -15,21 +15,40 @@
  */
 package com.baomidou.mybatisplus.extension.plugins;
 
-import com.baomidou.mybatisplus.core.toolkit.*;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.plugin.*;
+import org.apache.ibatis.plugin.Interceptor;
+import org.apache.ibatis.plugin.Intercepts;
+import org.apache.ibatis.plugin.Invocation;
+import org.apache.ibatis.plugin.Plugin;
+import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.session.ResultHandler;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.sql.Statement;
-import java.util.*;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.SystemClock;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * <p>
@@ -39,9 +58,11 @@ import java.util.*;
  * @author hubin nieqiurong TaoYu
  * @since 2016-07-07
  */
-@Intercepts({@Signature(type = StatementHandler.class, method = "query", args = {Statement.class, ResultHandler.class}),
+@Intercepts({
+    @Signature(type = StatementHandler.class, method = "query", args = {Statement.class, ResultHandler.class}),
     @Signature(type = StatementHandler.class, method = "update", args = {Statement.class}),
-    @Signature(type = StatementHandler.class, method = "batch", args = {Statement.class})})
+    @Signature(type = StatementHandler.class, method = "batch", args = {Statement.class})
+})
 public class PerformanceInterceptor implements Interceptor {
 
     private static final Log logger = LogFactory.getLog(PerformanceInterceptor.class);
@@ -51,16 +72,25 @@ public class PerformanceInterceptor implements Interceptor {
     /**
      * SQL 执行最大时长，超过自动停止运行，有助于发现问题。
      */
+    @Setter
+    @Getter
+    @Accessors(chain = true)
     private long maxTime = 0;
     /**
      * SQL 是否格式化
      */
+    @Setter
+    @Getter
+    @Accessors(chain = true)
     private boolean format = false;
     /**
      * 是否写入日志文件<br>
      * true 写入日志文件，不阻断程序执行！<br>
      * 超过设定的最大执行时长异常提示！
      */
+    @Setter
+    @Getter
+    @Accessors(chain = true)
     private boolean writeInLog = false;
     private Method oracleGetOriginalSqlMethod;
     private Method druidGetSQLMethod;
@@ -98,18 +128,18 @@ public class PerformanceInterceptor implements Interceptor {
                     druidGetSQLMethod = clazz.getMethod("getSql");
                 }
                 Object stmtSql = druidGetSQLMethod.invoke(statement);
-                if (stmtSql != null && stmtSql instanceof String) {
+                if (stmtSql instanceof String) {
                     originalSql = (String) stmtSql;
                 }
-            } catch (Exception ignored) {
-                ignored.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         } else if (T4CPreparedStatement.equals(stmtClassName)
             || OraclePreparedStatementWrapper.equals(stmtClassName)) {
             try {
                 if (oracleGetOriginalSqlMethod != null) {
                     Object stmtSql = oracleGetOriginalSqlMethod.invoke(statement);
-                    if (stmtSql != null && stmtSql instanceof String) {
+                    if (stmtSql instanceof String) {
                         originalSql = (String) stmtSql;
                     }
                 } else {
@@ -120,7 +150,7 @@ public class PerformanceInterceptor implements Interceptor {
                         oracleGetOriginalSqlMethod.setAccessible(true);
                         if (null != oracleGetOriginalSqlMethod) {
                             Object stmtSql = oracleGetOriginalSqlMethod.invoke(statement);
-                            if (stmtSql != null && stmtSql instanceof String) {
+                            if (stmtSql instanceof String) {
                                 originalSql = (String) stmtSql;
                             }
                         }
@@ -136,7 +166,7 @@ public class PerformanceInterceptor implements Interceptor {
         originalSql = originalSql.replaceAll("[\\s]+", StringPool.SPACE);
         int index = indexOfSqlStart(originalSql);
         if (index > 0) {
-            originalSql = originalSql.substring(index, originalSql.length());
+            originalSql = originalSql.substring(index);
         }
 
         // 计算执行 SQL 耗时
@@ -148,10 +178,11 @@ public class PerformanceInterceptor implements Interceptor {
         Object target = PluginUtils.realTarget(invocation.getTarget());
         MetaObject metaObject = SystemMetaObject.forObject(target);
         MappedStatement ms = (MappedStatement) metaObject.getValue("delegate.mappedStatement");
-        StringBuilder formatSql = new StringBuilder();
-        formatSql.append(" Time：").append(timing);
-        formatSql.append(" ms - ID：").append(ms.getId());
-        formatSql.append(StringPool.NEWLINE).append("Execute SQL：").append(SqlUtils.sqlFormat(originalSql, format)).append(StringPool.NEWLINE);
+        StringBuilder formatSql = new StringBuilder()
+            .append(" Time：").append(timing)
+            .append(" ms - ID：").append(ms.getId())
+            .append(StringPool.NEWLINE).append("Execute SQL：")
+            .append(SqlUtils.sqlFormat(originalSql, format)).append(StringPool.NEWLINE);
         if (this.isWriteInLog()) {
             if (this.getMaxTime() >= 1 && timing > this.getMaxTime()) {
                 logger.error(formatSql.toString());
@@ -186,33 +217,13 @@ public class PerformanceInterceptor implements Interceptor {
         }
     }
 
-    public long getMaxTime() {
-        return maxTime;
-    }
-
-    public PerformanceInterceptor setMaxTime(long maxTime) {
-        this.maxTime = maxTime;
-        return this;
-    }
-
-    public boolean isFormat() {
-        return format;
-    }
-
-    public PerformanceInterceptor setFormat(boolean format) {
-        this.format = format;
-        return this;
-    }
-
-    public boolean isWriteInLog() {
-        return writeInLog;
-    }
-
-    public PerformanceInterceptor setWriteInLog(boolean writeInLog) {
-        this.writeInLog = writeInLog;
-        return this;
-    }
-
+    /**
+     * 获取此方法名的具体 Method
+     *
+     * @param clazz      class 对象
+     * @param methodName 方法名
+     * @return 方法
+     */
     public Method getMethodRegular(Class<?> clazz, String methodName) {
         if (Object.class.equals(clazz)) {
             return null;

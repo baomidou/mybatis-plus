@@ -13,6 +13,12 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 /**
+ * 包含功能:
+ * 1.继承父类字段     验证无误
+ * 2.自动填充        验证无误
+ * 3.乐观锁          验证无误
+ * 4.多租户          验证无误
+ *
  * @author meimie
  * @since 2018/6/7
  */
@@ -37,4 +43,8 @@ public class TestData extends BaseEntity {
 
     @Version
     private Integer version;
+    /**
+     * 多租户
+     */
+    private Long tenantId;
 }
