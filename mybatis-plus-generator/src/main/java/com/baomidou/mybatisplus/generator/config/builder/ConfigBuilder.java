@@ -395,6 +395,10 @@ public class ConfigBuilder {
             // 无父类开启 AR 模式
             tableInfo.getImportPackages().add(com.baomidou.mybatisplus.extension.activerecord.Model.class.getCanonicalName());
         }
+        if (null != globalConfig.getIdType()) {
+            // 指定需要 IdType 场景
+            tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotation.IdType.class.getCanonicalName());
+        }
         if (StringUtils.isNotEmpty(strategyConfig.getVersionFieldName())) {
             tableInfo.getFields().forEach(f -> {
                 if (strategyConfig.getVersionFieldName().equals(f.getName())) {

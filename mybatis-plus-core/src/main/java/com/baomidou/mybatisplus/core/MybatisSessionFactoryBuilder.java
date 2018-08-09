@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core;
 
+import java.io.Closeable;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.Properties;
@@ -42,33 +43,29 @@ public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 
     @Override
     public SqlSessionFactory build(Reader reader, String environment, Properties properties) {
-        try {
-            MybatisXMLConfigBuilder parser = new MybatisXMLConfigBuilder(reader, environment, properties);
-            GlobalConfigUtils.setGlobalConfig(parser.getConfiguration(), this.globalConfig);
-            return build(parser.parse());
-        } catch (Exception e) {
-            throw ExceptionFactory.wrapException("Error building SqlSession.", e);
-        } finally {
-            ErrorContext.instance().reset();
-            IOUtils.closeQuietly(reader);
-        }
+        return build(new MybatisXMLConfigBuilder(reader, environment, properties), reader);
     }
 
     @Override
     public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
+        return build(new MybatisXMLConfigBuilder(inputStream, environment, properties), inputStream);
+    }
+
+    protected SqlSessionFactory build(MybatisXMLConfigBuilder parser, Closeable closeable) {
         try {
-            MybatisXMLConfigBuilder parser = new MybatisXMLConfigBuilder(inputStream, environment, properties);
             GlobalConfigUtils.setGlobalConfig(parser.getConfiguration(), this.globalConfig);
             return build(parser.parse());
         } catch (Exception e) {
             throw ExceptionFactory.wrapException("Error building SqlSession.", e);
         } finally {
             ErrorContext.instance().reset();
-            IOUtils.closeQuietly(inputStream);
+            IOUtils.closeQuietly(closeable);
         }
     }
 
-    // TODO 注入全局配置
+    /**
+     * 注入全局配置
+     */
     public void setGlobalConfig(GlobalConfig globalConfig) {
         this.globalConfig = globalConfig;
     }
