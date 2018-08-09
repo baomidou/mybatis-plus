@@ -561,7 +561,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         if (null == globalConfig) {
             globalConfig = GlobalConfigUtils.defaults();
         }
-        // 设置元数据相关 如果用户没有配置 dbType 则自动获取
+        // TODO 设置元数据相关 如果用户没有配置 dbType 则自动获取
         if (globalConfig.getDbConfig().getDbType() == DbType.OTHER) {
             try (Connection connection = dataSource.getConnection()) {
                 globalConfig.getDbConfig().setDbType(JdbcUtils.getDbType(connection.getMetaData().getURL()));
@@ -576,7 +576,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         globalConfig.setSqlSessionFactory(sqlSessionFactory);
         // TODO 设置全局参数属性
         globalConfig.signGlobalConfig(sqlSessionFactory);
-        /* 设置下划线转驼峰到 configuration */
+        // TODO 设置下划线转驼峰配置到 configuration
         configuration.setMapUnderscoreToCamelCase(globalConfig.getDbConfig().isColumnUnderline());
         if (!isEmpty(this.mapperLocations)) {
             if (globalConfig.isRefresh()) {
