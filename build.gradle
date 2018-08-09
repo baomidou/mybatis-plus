@@ -32,7 +32,8 @@ ext {
         "junit"                             : "junit:junit:4.12",
         "mockito-all"                       : "org.mockito:mockito-all:1.10.19",
         "lombok"                            : "org.projectlombok:lombok:1.16.20",
-        "fastjson"                          : "com.alibaba:fastjson:1.2.37",
+        "fastjson"                          : "com.alibaba:fastjson:1.2.49",
+        "jackson"                           : "com.fasterxml.jackson.core:jackson-databind:2.9.6",
         "tomcatjdbc"                        : "org.apache.tomcat:tomcat-jdbc:9.0.2",
         //datasource
         "hikaricp"                          : "com.zaxxer:HikariCP:2.7.0",
