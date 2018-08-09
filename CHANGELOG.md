@@ -1,5 +1,20 @@
 ﻿# CHANGELOG
 
+## [v3.0-RC2] 2018.08.10 代号：超级棒棒糖 🍭 RC2
+- 生成器加回 MODULE_NAME 开放配置 config
+- 修复setting - defaultEnumTypeHandler属性配置无效
+- 兼容 Spring boot 1.x 启动.
+- 日常优化 , 测试用例 , 优化抛出异常的过程
+- 新增 Gitee Github issue,pull_request模板
+- 移除数据库关键字转义, 只支持注解模式转义
+- 优化掉抛异常为使用 assert 或者 exceptionUtils
+- 设置下划线转驼峰到 configuration 优化 ColumnUnderline
+- 解决 page 序列化 asc desc 多态序列化异常
+- 默认的 dbType 改为 other, 如果用户没有配置才会自动获取 dbType
+- 优化,ColumnUnderline与MapUnderscoreToCamelCase意义相同
+- fixed ILY8C 生成器指定 IdType 场景导入包
+- 补充注释新增大量测试用例
+
 
 ## [v3.0-RC1] 2018.08.01 代号：超级棒棒糖 🍭 RC1
 - 优化工具类部分代码，并修复一个在多线程环境下可能会引发死锁的BUG

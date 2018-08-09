@@ -23,13 +23,13 @@ import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
 public interface H2UserMapper extends SuperMapper<H2User> {
 
     @Select(
-        "query a.addr_id as addrId, a.addr_name as addrName from h2address a" +
+        "select a.addr_id as addrId, a.addr_name as addrName from h2address a" +
             " join h2user u on u.test_id=a.test_id and u.test_id=#{userId}"
     )
     List<H2Addr> getAddrListByUserId(@Param("userId") Long userId);
 
     @Select(
-        "query a.addr_id as addrId, a.addr_name as addrName from h2address a" +
+        "select a.addr_id as addrId, a.addr_name as addrName from h2address a" +
             " join h2user u on u.test_id=a.test_id and u.test_id=#{userId}"
     )
     List<H2Addr> getAddrListByUserIdPage(@Param("userId") Long userId, IPage<H2Addr> page);
@@ -56,29 +56,29 @@ public interface H2UserMapper extends SuperMapper<H2User> {
     int myInsertWithoutParam(H2User user1);
 
 
-    @Select(" query test_id as id, power(#{ageFrom},2), 'abc?zhazha', CAST(#{nameParam} AS VARCHAR) as name " +
+    @Select(" select test_id as id, power(#{ageFrom},2), 'abc?zhazha', CAST(#{nameParam} AS VARCHAR) as name " +
         " from h2user " +
         " where age>#{ageFrom} and age<#{ageTo} ")
     List<H2User> selectUserWithParamInSelectStatememt(Map<String, Object> param);
 
-//    @Select(" query test_id as id, power(#{ageFrom},2), 'abc?zhazha', CAST(#{nameParam} AS VARCHAR) as name " +
+//    @Select(" select test_id as id, power(#{ageFrom},2), 'abc?zhazha', CAST(#{nameParam} AS VARCHAR) as name " +
 //        " from h2user " +
 //        " where age>#{ageFrom} and age<#{ageTo} ")
 //    List<H2User> selectUserWithParamInSelectStatememt4Page(Map<String, Object> param, Page<H2User> page);
 //
-//    @Select(" query test_id as id, power(${ageFrom},2) as age, '${nameParam}' as name " +
+//    @Select(" select test_id as id, power(${ageFrom},2) as age, '${nameParam}' as name " +
 //        " from h2user " +
 //        " where age>#{ageFrom} and age<#{ageTo} ")
 //    List<H2User> selectUserWithDollarParamInSelectStatememt4Page(Map<String, Object> param, Page<H2User> page);
 
 
-    @Select("query count(1) from (" +
-        "query test_id as id, CAST(#{nameParam} AS VARCHAR) as name" +
+    @Select("select count(1) from (" +
+        "select test_id as id, CAST(#{nameParam} AS VARCHAR) as name" +
         " from h2user " +
         " where age>#{ageFrom} and age<#{ageTo} " +
         ") a")
     int selectCountWithParamInSelectItems(Map<String, Object> param);
 
-    @Select("query * from h2user")
+    @Select("select * from h2user")
     List<Map> mySelectMaps();
 }

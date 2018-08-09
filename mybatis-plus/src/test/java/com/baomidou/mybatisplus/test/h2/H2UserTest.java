@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -16,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.test.h2.config.H2Db;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
@@ -68,7 +68,7 @@ public class H2UserTest extends BaseTest {
     @Test
     public void testEntityWrapperSelectSql() {
         QueryWrapper<H2User> ew = new QueryWrapper<>();
-        ew.select("test_id as id, name, age");
+        ew.select("test_id as testId, name, age");
         List<H2User> list = userService.list(ew);
         for (H2User u : list) {
             Assert.assertNotNull(u.getTestId());
@@ -120,7 +120,7 @@ public class H2UserTest extends BaseTest {
     }
 
     @Test
-    public void testUpdateByIdWithOptLock(){
+    public void testUpdateByIdWithOptLock() {
         Long id = 991L;
         H2User user = new H2User();
         user.setTestId(id);
@@ -137,7 +137,7 @@ public class H2UserTest extends BaseTest {
 
         userDB.setName("992");
         userService.updateById(userDB);
-        Assert.assertEquals("updated version value should be updated to entity",2, userDB.getVersion().intValue());
+        Assert.assertEquals("updated version value should be updated to entity", 2, userDB.getVersion().intValue());
 
         userDB = userService.getById(id);
         Assert.assertEquals(2, userDB.getVersion().intValue());
@@ -145,15 +145,15 @@ public class H2UserTest extends BaseTest {
     }
 
     @Test
-    public void testUpdateByEwWithOptLock(){
+    public void testUpdateByEwWithOptLock() {
         QueryWrapper<H2User> ew = new QueryWrapper<>();
-        ew.gt("age",13);
-        for(H2User u: userService.list(ew)){
-            System.out.println(u.getName()+","+u.getAge()+","+u.getVersion());
+        ew.gt("age", 13);
+        for (H2User u : userService.list(ew)) {
+            System.out.println(u.getName() + "," + u.getAge() + "," + u.getVersion());
         }
         userService.update(new H2User().setPrice(BigDecimal.TEN), ew);
-        for(H2User u: userService.list(ew)){
-            System.out.println(u.getName()+","+u.getAge()+","+u.getVersion());
+        for (H2User u : userService.list(ew)) {
+            System.out.println(u.getName() + "," + u.getAge() + "," + u.getVersion());
         }
     }
 
@@ -167,7 +167,7 @@ public class H2UserTest extends BaseTest {
             Assert.assertNotNull(u.getName());
             Assert.assertNull(u.getPrice());
         }
-        ew = new QueryWrapper<>(null,"test_id","name","age","price");
+        ew = new QueryWrapper<>(null, "test_id", "name", "age", "price");
         ew.excludeColumns(H2User.class, "age", "price", null);
         list = userService.list(ew);
         for (H2User u : list) {
@@ -182,21 +182,21 @@ public class H2UserTest extends BaseTest {
             Assert.assertNotNull(u.getName());
             Assert.assertNull(u.getPrice());
         }
-        Wrapper<H2User> wrapper = new QueryWrapper<H2User>().lambda().select().excludeColumns(H2User.class,H2User::getAge,H2User::getPrice);
-        List<H2User> list2  = userService.list(wrapper);
+        Wrapper<H2User> wrapper = new QueryWrapper<H2User>().lambda().select().excludeColumns(H2User.class, H2User::getAge, H2User::getPrice);
+        List<H2User> list2 = userService.list(wrapper);
         for (H2User u : list2) {
             Assert.assertNotNull(u.getTestId());
             Assert.assertNotNull(u.getName());
             Assert.assertNull(u.getPrice());
         }
-        wrapper = new QueryWrapper<>(new H2User()).lambda().select().excludeColumns(H2User::getAge,H2User::getPrice);
-        list2  = userService.list(wrapper);
+        wrapper = new QueryWrapper<>(new H2User()).lambda().select().excludeColumns(H2User::getAge, H2User::getPrice);
+        list2 = userService.list(wrapper);
         for (H2User u : list2) {
             Assert.assertNotNull(u.getTestId());
             Assert.assertNotNull(u.getName());
             Assert.assertNull(u.getPrice());
         }
-        wrapper = new QueryWrapper<H2User>().lambda().select(H2User::getTestId,H2User::getName,H2User::getTestDate,H2User::getPrice,H2User::getAge).excludeColumns(H2User.class,H2User::getAge,H2User::getTestDate,H2User::getVersion,H2User::getPrice);
+        wrapper = new QueryWrapper<H2User>().lambda().select(H2User::getTestId, H2User::getName, H2User::getTestDate, H2User::getPrice, H2User::getAge).excludeColumns(H2User.class, H2User::getAge, H2User::getTestDate, H2User::getVersion, H2User::getPrice);
         list2 = userService.list(wrapper);
         for (H2User u : list2) {
             Assert.assertNotNull(u.getName());

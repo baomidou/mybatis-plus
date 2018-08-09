@@ -56,7 +56,7 @@ public class MybatisConfiguration extends Configuration {
         System.out.println("| |  | || |_| || |_/ /| (_| || |_ | |\\__ \\  | |    | || |_| |\\__ \\");
         System.out.println("\\_|  |_/ \\__, |\\____/  \\__,_| \\__||_||___/  \\_|    |_| \\__,_||___/");
         System.out.println("          __/ |                                                   ");
-        System.out.println("         |___/                                             3.0-RC1");
+        System.out.println("         |___/                                              3.0-RC2");
         System.out.println();
     }
 

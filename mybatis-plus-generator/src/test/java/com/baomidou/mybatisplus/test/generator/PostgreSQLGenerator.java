@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
@@ -45,6 +46,7 @@ public class PostgreSQLGenerator extends GeneratorTest {
         //gc.setKotlin(true); // 是否生成 kotlin 代码
         //gc.setSwagger2(true); // 是否生成 Swagger2 注解
         gc.setAuthor("hubin");
+        gc.setIdType(IdType.AUTO);
 
         // 自定义文件命名，注意 %s 会自动填充表实体属性！
         // gc.setEntityName("%sEntity");

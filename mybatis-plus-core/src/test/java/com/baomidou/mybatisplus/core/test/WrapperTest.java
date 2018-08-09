@@ -15,19 +15,20 @@
  */
 package com.baomidou.mybatisplus.core.test;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Test;
+
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
-import org.junit.Test;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class WrapperTest {
 
@@ -47,10 +48,14 @@ public class WrapperTest {
 
     @Test
     public void test() {
-        Wrapper<User> wrapper = new QueryWrapper<User>().lambda().eq(User::getName, 123)
-            .or(c -> c.eq(User::getRoleId, 1).eq(User::getId, 2))
-            .eq(User::getId, 1);
-        log(wrapper.getSqlSegment());
+        try {
+            Wrapper<User> wrapper = new QueryWrapper<User>().lambda().eq(User::getName, 123)
+                .or(c -> c.eq(User::getRoleId, 1).eq(User::getId, 2))
+                .eq(User::getId, 1);
+            log(wrapper.getSqlSegment());
+        } catch (Exception e) {
+            log(e.getMessage());
+        }
 
     }
 
@@ -176,8 +181,8 @@ public class WrapperTest {
     public void testPluralLambda() {
         TableInfoHelper.initTableInfo(null, User.class);
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.lambda().eq(User::getName,"sss");
-        queryWrapper.lambda().eq(User::getName,"sss2");
+        queryWrapper.lambda().eq(User::getName, "sss");
+        queryWrapper.lambda().eq(User::getName, "sss2");
         logSqlSegment("测试 PluralLambda", queryWrapper);
         logParams(queryWrapper);
     }
