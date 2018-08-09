@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @TableName(value = "tb_only_pg_test_data")
 public class PgTestData extends BaseEntity {
 
-    @TableField(value = "age", el = "age, jdbcType=integer")
+    @TableField(value = "age", el = "dataAge, jdbcType=INTEGER")
     private Integer dataAge;
     @TableField(value = "c_datetime", fill = FieldFill.INSERT)
     private LocalDateTime createDatetime;

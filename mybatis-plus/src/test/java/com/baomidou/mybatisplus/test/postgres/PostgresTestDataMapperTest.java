@@ -233,7 +233,7 @@ public class PostgresTestDataMapperTest {
             .nested(i -> i.eq(TestData::getId, 1L))
             .or(i -> i.between(TestData::getTestDouble, 1L, 2L))
             .or(i -> i.eq(TestData::getTestInt, 1)
-                .or().eq(TestData::getTestDate, 1)
+                .or().eq(TestData::getTestDate, LocalDate.now())
             )
             .eq(TestData::getTestBoolean, true)
             .eq(TestData::getTestDate, LocalDate.of(2008, 8, 8))
@@ -278,9 +278,9 @@ public class PostgresTestDataMapperTest {
     @Test
     public void testExists() {
         println(mapper.selectList(new QueryWrapper<TestData>()
-            .exists("select * from test_data")//ok
+            .exists("select * from tb_test_data")//ok
             .or()
-            .notExists("select * from test_data")//ok
+            .notExists("select * from tb_test_data")//ok
         ));
         /* exists 连着用是可行的 */
     }
