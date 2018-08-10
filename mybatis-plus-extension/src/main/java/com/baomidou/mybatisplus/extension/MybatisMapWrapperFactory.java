@@ -27,9 +27,13 @@ import com.baomidou.mybatisplus.extension.handlers.MybatisMapWrapper;
  * <p>
  * 开启返回map结果集的下划线转驼峰
  * </p>
+ * <p>
+ * //使用注册 Map 下划线转驼峰
+ * configuration.setObjectWrapperFactory(new MybatisMapWrapperFactory());
+ * </p>
  *
  * @author yuxiaobin
- * @since 2017/12/19
+ * @since 2017-12-19
  */
 public class MybatisMapWrapperFactory implements ObjectWrapperFactory {
 
