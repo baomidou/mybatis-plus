@@ -56,7 +56,7 @@ public interface H2UserMapper extends SuperMapper<H2User> {
     int myInsertWithoutParam(H2User user1);
 
 
-    @Select(" select test_id as id, power(#{ageFrom},2), 'abc?zhazha', CAST(#{nameParam} AS VARCHAR) as name " +
+    @Select(" select test_id as testId, power(#{ageFrom},2), 'abc?zhazha', CAST(#{nameParam} AS VARCHAR) as name " +
         " from h2user " +
         " where age>#{ageFrom} and age<#{ageTo} ")
     List<H2User> selectUserWithParamInSelectStatememt(Map<String, Object> param);

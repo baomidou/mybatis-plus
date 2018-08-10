@@ -15,14 +15,19 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
-import com.baomidou.mybatisplus.annotation.*;
+import java.lang.reflect.Field;
+
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.SqlCondition;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
+
 import lombok.Data;
 import lombok.experimental.Accessors;
-
-import java.lang.reflect.Field;
 
 /**
  * <p>
@@ -40,7 +45,12 @@ public class TableFieldInfo {
      * 是否有存在字段名与属性名关联
      * true: 表示要进行 as
      */
-    private boolean related = false;
+    private boolean related;
+    /**
+     * 是否进行 select 查询
+     * 大字段可设置为 false 不加入 select 查询范围
+     */
+    private boolean select = true;
     /**
      * 字段名
      */
@@ -125,6 +135,9 @@ public class TableFieldInfo {
             // 全局配置
             this.setCondition(dbConfig);
         }
+
+        // 字段是否注入查询
+        this.select = tableField.select();
     }
 
     public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field) {

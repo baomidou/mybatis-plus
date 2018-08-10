@@ -55,7 +55,10 @@ public class H2User extends SuperEntity {
 
     private String desc;
 
-    @TableField
+    /**
+     * 该注解 select 默认不注入 select 查询
+     */
+    @TableField(select = false)
     private Date testDate;
 
     @Version

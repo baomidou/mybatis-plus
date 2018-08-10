@@ -104,4 +104,11 @@ public @interface TableField {
      * </p>
      */
     FieldFill fill() default FieldFill.DEFAULT;
+
+    /**
+     * 是否进行 select 查询
+     * 大字段可设置为 false 不加入 select 查询范围
+     */
+    boolean select() default true;
+
 }
