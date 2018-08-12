@@ -100,6 +100,17 @@ public interface IPage<T> extends Serializable {
 
     /**
      * <p>
+     * 内部什么也不干
+     * 只是为了 json 反序列化时不报错
+     * </p>
+     */
+    default IPage<T> setPages(long pages) {
+        // to do nothing
+        return this;
+    }
+
+    /**
+     * <p>
      * 分页记录列表
      * </p>
      *
