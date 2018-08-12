@@ -121,7 +121,7 @@ public class ReflectionKit {
      * @param index 泛型所在位置
      * @return Class
      */
-    public static Class getSuperClassGenricType(final Class clazz, final int index) {
+    public static Class getSuperClassGenericType(final Class clazz, final int index) {
         Type genType = clazz.getGenericSuperclass();
         if (!(genType instanceof ParameterizedType)) {
             logger.warn(String.format("Warn: %s's superclass not ParameterizedType", clazz.getSimpleName()));

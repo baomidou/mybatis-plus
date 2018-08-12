@@ -70,7 +70,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     protected Class<T> currentModelClass() {
-        return ReflectionKit.getSuperClassGenricType(getClass(), 1);
+        return ReflectionKit.getSuperClassGenericType(getClass(), 1);
     }
 
     /**
