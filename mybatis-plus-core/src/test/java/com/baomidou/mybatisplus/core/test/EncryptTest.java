@@ -22,6 +22,8 @@ public class EncryptTest {
     @Test
     public void other() {
         System.out.println(TableInfoHelper.checkRelated(true, "order", "'order'"));
+        System.out.println(TableInfoHelper.checkRelated(true, "order", "order"));
+        System.out.println(TableInfoHelper.checkRelated(true, "orderFile", "'order_file'"));
     }
 
     @Test
