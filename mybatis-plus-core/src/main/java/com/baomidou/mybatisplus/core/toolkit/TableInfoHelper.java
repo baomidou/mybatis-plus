@@ -38,6 +38,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 
 import static java.util.stream.Collectors.toList;
 
@@ -60,6 +61,10 @@ public class TableInfoHelper {
      * 默认表主键
      */
     private static final String DEFAULT_ID_NAME = "id";
+    /**
+     * 验证字符串是否是数据库字段
+     */
+    private static final Pattern P = Pattern.compile("^\\w\\S*[\\w\\d]*$");
 
     /**
      * <p>
@@ -423,6 +428,10 @@ public class TableInfoHelper {
      * @return related
      */
     public static boolean checkRelated(boolean underCamel, String property, String column) {
+        if (!P.matcher(column).matches()) {
+            //首尾有转义符
+            column = column.substring(1, column.length() - 1);
+        }
         if (underCamel) {
             /**
              * 开启了驼峰,判断 property 下划线后是否与 column 相同 (全部转为小写)

@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Base64;
 
@@ -27,7 +28,6 @@ import java.util.Base64;
  * @since 2018-08-02
  */
 public class EncryptUtils {
-
 
     /**
      * <p>
@@ -42,11 +42,10 @@ public class EncryptUtils {
         try {
             MessageDigest md5 = MessageDigest.getInstance(Constants.MD5);
             //加密后的字符串
-            byte[] src = md5.digest(str.getBytes(Constants.UTF8));
+            byte[] src = md5.digest(str.getBytes(StandardCharsets.UTF_8));
             return Base64.getEncoder().encodeToString(src);
         } catch (Exception e) {
-            ExceptionUtils.mpe(e);
+            throw ExceptionUtils.mpe(e);
         }
-        return null;
     }
 }
