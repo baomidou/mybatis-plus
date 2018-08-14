@@ -20,13 +20,16 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.ibatis.session.Configuration;
 
 import java.util.List;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * <p>
@@ -76,6 +79,7 @@ public class TableInfo {
     /**
      * 表字段信息列表
      */
+    @Setter(AccessLevel.NONE)
     private List<TableFieldInfo> fieldList;
     /**
      * 命名空间
@@ -93,6 +97,11 @@ public class TableInfo {
      * 标记该字段属于哪个类
      */
     private Class<?> clazz;
+    /**
+     * 缓存 sql select
+     */
+    @Setter(AccessLevel.NONE)
+    private String sqlSelect;
 
     /**
      * <p>
@@ -121,10 +130,6 @@ public class TableInfo {
         }
     }
 
-    public void setFieldList(List<TableFieldInfo> fieldList) {
-        throw ExceptionUtils.mpe("you can't use this method to set fieldList !");
-    }
-
     public void setConfigMark(Configuration configuration) {
         Assert.notNull(configuration, "Error: You need Initialize MybatisConfiguration !");
         this.configMark = configuration.toString();
@@ -132,5 +137,19 @@ public class TableInfo {
 
     public boolean isLogicDelete() {
         return logicDelete;
+    }
+
+    /**
+     * 获取 select sql 片段
+     *
+     * @return sql 片段
+     */
+    public String getSqlSelect() {
+        if (sqlSelect != null) {
+            return sqlSelect;
+        }
+        sqlSelect = getFieldList().stream().filter(TableFieldInfo::isSelect)
+            .map(i -> i.getSqlSelect(getDbType())).collect(joining(","));
+        return sqlSelect;
     }
 }
