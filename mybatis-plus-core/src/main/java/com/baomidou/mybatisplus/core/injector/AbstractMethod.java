@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.injector;
 
-import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
@@ -38,7 +37,6 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -182,26 +180,7 @@ public abstract class AbstractMethod {
 
     /**
      * <p>
-     * 获取需要转义的SQL字段
-     * </p>
-     *
-     * @param dbType   数据库类型
-     * @param val      值
-     * @param isColumn val 是否是数据库字段
-     */
-    protected String sqlWordConvert(DbType dbType, String val, boolean isColumn) {
-        if (dbType == DbType.POSTGRE_SQL) {
-            if (isColumn && val.toLowerCase().equals(val)) {
-                return val;
-            }
-            return String.format("\"%s\"", val);
-        }
-        return val;
-    }
-
-    /**
-     * <p>
-     * 拼接字符串
+     * 拼接字符串 todo 看以后不需要就删了
      * </p>
      */
     protected String joinStr(String... strings) {
@@ -219,7 +198,6 @@ public abstract class AbstractMethod {
      */
     protected String sqlSelectColumns(TableInfo table, boolean entityWrapper) {
         StringBuilder columns = new StringBuilder();
-        DbType dbType = table.getDbType();
         if (null != table.getResultMap()) {
             /*
              * 存在 resultMap 映射返回
@@ -238,36 +216,7 @@ public abstract class AbstractMethod {
             if (entityWrapper) {
                 columns.append("<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>");
             }
-            List<TableFieldInfo> fieldList = table.getFieldList();
-            int size = 0;
-            if (null != fieldList) {
-                size = fieldList.size();
-            }
-
-            // 主键处理
-            if (StringUtils.isNotEmpty(table.getKeyProperty())) {
-                if (table.isKeyRelated()) {
-                    columns.append(sqlWordConvert(dbType, table.getKeyColumn(), true))
-                        .append(" AS ").append(sqlWordConvert(dbType, table.getKeyProperty(), false));
-                } else {
-                    columns.append(sqlWordConvert(dbType, table.getKeyColumn(), true));
-                }
-                if (size >= 1) {
-                    // 判断其余字段是否存在
-                    columns.append(StringPool.COMMA);
-                }
-            }
-
-            if (size >= 1) {
-                // 字段处理
-                columns.append(fieldList.stream().filter(TableFieldInfo::isSelect).map(i -> {
-                    String v = sqlWordConvert(dbType, i.getColumn(), true);
-                    if (i.isRelated()) {
-                        v += (" AS " + sqlWordConvert(dbType, i.getProperty(), false));
-                    }
-                    return v;
-                }).collect(Collectors.joining(StringPool.COMMA)));
-            }
+            columns.append(table.getAllSqlSelect());
             if (entityWrapper) {
                 columns.append("</otherwise></choose>");
             }
@@ -281,45 +230,14 @@ public abstract class AbstractMethod {
 
     /**
      * <p>
-     * SQL 设置selectObj sqlselect
+     * SQL 设置selectObj sql select
      * </p>
      *
-     * @param table 是否为包装类型查询
-     * @return
+     * @param table 表信息
      */
     protected String sqlSelectObjsColumns(TableInfo table) {
-        StringBuilder columns = new StringBuilder();
-        DbType dbType = table.getDbType();
-        /*
-         * 普通查询
-         */
-        columns.append("<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>");
-        // 主键处理
-        if (StringUtils.isNotEmpty(table.getKeyProperty())) {
-            if (table.isKeyRelated()) {
-                columns.append(sqlWordConvert(dbType, table.getKeyColumn(), true))
-                    .append(" AS ").append(sqlWordConvert(dbType, table.getKeyProperty(), false));
-            } else {
-                columns.append(sqlWordConvert(dbType, table.getKeyColumn(), true));
-            }
-        } else {
-            // 表字段处理
-            List<TableFieldInfo> fieldList = table.getFieldList();
-            if (CollectionUtils.isNotEmpty(fieldList)) {
-                TableFieldInfo fieldInfo = fieldList.get(0);
-                // 匹配转换内容
-                String wordConvert = sqlWordConvert(dbType, fieldInfo.getProperty(), false);
-                if (fieldInfo.getColumn().equals(wordConvert)) {
-                    columns.append(wordConvert);
-                } else {
-                    // 字段属性不一致
-                    columns.append(sqlWordConvert(dbType, fieldInfo.getColumn(), true))
-                        .append(" AS ").append(wordConvert);
-                }
-            }
-        }
-        columns.append("</otherwise></choose>");
-        return columns.toString();
+        return "<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>" +
+            table.getAllSqlSelect() + "</otherwise></choose>";
     }
 
     /**

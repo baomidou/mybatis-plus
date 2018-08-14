@@ -180,11 +180,10 @@ public class TableInfo {
         String sqlSelect = getSqlSelect();
         String fieldsSqlSelect = fieldList.stream().filter(TableFieldInfo::isSelect)
             .map(i -> i.getSqlSelect(dbType)).collect(joining(","));
-        if (StringUtils.isNotEmpty(sqlSelect)) {
-            sqlSelect += StringPool.COMMA;
-        }
-        if (StringUtils.isNotEmpty(fieldsSqlSelect)) {
-            allSqlSelect = sqlSelect + fieldsSqlSelect;
+        if (StringUtils.isNotEmpty(sqlSelect) && StringUtils.isNotEmpty(fieldsSqlSelect)) {
+            allSqlSelect = sqlSelect + StringPool.COMMA + fieldsSqlSelect;
+        } else if (StringUtils.isNotEmpty(fieldsSqlSelect)) {
+            allSqlSelect = fieldsSqlSelect;
         } else {
             allSqlSelect = sqlSelect;
         }
