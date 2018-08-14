@@ -218,11 +218,11 @@ public class TableFieldInfo {
         this.condition = condition;
     }
 
+    /**
+     * 全局配置开启字段 LIKE 并且为字符串类型字段
+     * 注入 LIKE 查询！！！
+     */
     public void setCondition(GlobalConfig.DbConfig dbConfig) {
-        /**
-         * 全局配置开启字段 LIKE 并且为字符串类型字段
-         * 注入 LIKE 查询！！！
-         */
         if (null == this.condition || SqlCondition.EQUAL.equals(this.condition)) {
             if (dbConfig.isColumnLike() && StringUtils.isCharSequence(this.propertyType)) {
                 this.condition = dbConfig.getDbType().getLike();
