@@ -21,6 +21,8 @@ import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
@@ -98,7 +100,12 @@ public class TableInfo {
      */
     private Class<?> clazz;
     /**
-     * 缓存 sql select
+     * 缓存包含主键及字段的 sql select
+     */
+    @Setter(AccessLevel.NONE)
+    private String allSqlSelect;
+    /**
+     * 缓存主键字段的 sql select
      */
     @Setter(AccessLevel.NONE)
     private String sqlSelect;
@@ -140,7 +147,7 @@ public class TableInfo {
     }
 
     /**
-     * 获取 select sql 片段
+     * 获取主键的 select sql 片段
      *
      * @return sql 片段
      */
@@ -148,8 +155,39 @@ public class TableInfo {
         if (sqlSelect != null) {
             return sqlSelect;
         }
-        sqlSelect = getFieldList().stream().filter(TableFieldInfo::isSelect)
-            .map(i -> i.getSqlSelect(getDbType())).collect(joining(","));
+        if (StringUtils.isNotEmpty(keyProperty)) {
+            if (isKeyRelated()) {
+                sqlSelect = SqlUtils.sqlWordConvert(dbType, keyColumn, true) + " AS " +
+                    SqlUtils.sqlWordConvert(dbType, keyProperty, false);
+            } else {
+                sqlSelect = SqlUtils.sqlWordConvert(dbType, keyColumn, true);
+            }
+            return sqlSelect;
+        }
+        sqlSelect = "";
         return sqlSelect;
+    }
+
+    /**
+     * 获取包含主键及字段的 select sql 片段
+     *
+     * @return sql 片段
+     */
+    public String getAllSqlSelect() {
+        if (allSqlSelect != null) {
+            return allSqlSelect;
+        }
+        String sqlSelect = getSqlSelect();
+        String fieldsSqlSelect = fieldList.stream().filter(TableFieldInfo::isSelect)
+            .map(i -> i.getSqlSelect(dbType)).collect(joining(","));
+        if (StringUtils.isNotEmpty(sqlSelect)) {
+            sqlSelect += StringPool.COMMA;
+        }
+        if (StringUtils.isNotEmpty(fieldsSqlSelect)) {
+            allSqlSelect = sqlSelect + fieldsSqlSelect;
+        } else {
+            allSqlSelect = sqlSelect;
+        }
+        return allSqlSelect;
     }
 }

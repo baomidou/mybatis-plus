@@ -16,15 +16,15 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.support.Property;
+import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
+
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.support.Property;
-import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 
 /**
  * <p>
@@ -78,14 +78,11 @@ public final class LambdaUtils {
      *
      * @param className 类名
      * @param property  属性
-     * @param column    字段
+     * @param sqlSelect 字段搜索
      */
-    private static void saveCache(String className, String property, String column) {
-        Map<String, String> cacheMap = LAMBDA_CACHE.get(className);
-        if (cacheMap == null) {
-            cacheMap = new HashMap<>();
-        }
-        cacheMap.put(property, column);
+    private static void saveCache(String className, String property, String sqlSelect) {
+        Map<String, String> cacheMap = LAMBDA_CACHE.getOrDefault(className, new HashMap<>());
+        cacheMap.put(property, sqlSelect);
         LAMBDA_CACHE.put(className, cacheMap);
     }
 
@@ -95,21 +92,21 @@ public final class LambdaUtils {
      * </p>
      *
      * @param tableInfo 表信息
-     * @return
+     * @return 缓存 map
      */
     private static Map<String, String> createLambdaMap(TableInfo tableInfo, Class clazz) {
-        Map<String, String> map = new HashMap<>(16);
+        Map<String, String> map = new HashMap<>();
         if (StringUtils.isNotEmpty(tableInfo.getKeyProperty())) {
             if (tableInfo.getClazz() != clazz) {
                 saveCache(tableInfo.getClazz().getName(), tableInfo.getKeyProperty(), tableInfo.getKeyColumn());
             }
-            map.put(tableInfo.getKeyProperty(), tableInfo.getKeyColumn());
+            map.put(tableInfo.getKeyProperty(), tableInfo.getSqlSelect());
         }
         tableInfo.getFieldList().forEach(i -> {
             if (i.getClazz() != clazz) {
-                saveCache(i.getClazz().getName(), i.getProperty(), i.getColumn());
+                saveCache(i.getClazz().getName(), i.getProperty(), i.getSqlSelect(tableInfo.getDbType()));
             }
-            map.put(i.getProperty(), i.getColumn());
+            map.put(i.getProperty(), i.getSqlSelect(tableInfo.getDbType()));
         });
         return map;
     }
@@ -120,7 +117,7 @@ public final class LambdaUtils {
      * </p>
      *
      * @param entityClassName 实体类名
-     * @return
+     * @return 缓存 map
      */
     public static Map<String, String> getColumnMap(String entityClassName) {
         return LAMBDA_CACHE.get(entityClassName);

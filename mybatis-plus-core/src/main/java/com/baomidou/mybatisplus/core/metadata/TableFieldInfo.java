@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
@@ -97,6 +98,7 @@ public class TableFieldInfo {
      * 缓存 sql select
      */
     @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
     private String sqlSelect;
 
     /**
