@@ -156,15 +156,15 @@ public class TableInfo {
             return sqlSelect;
         }
         if (StringUtils.isNotEmpty(keyProperty)) {
-            if (isKeyRelated()) {
+            if (keyRelated) {
                 sqlSelect = SqlUtils.sqlWordConvert(dbType, keyColumn, true) + " AS " +
                     SqlUtils.sqlWordConvert(dbType, keyProperty, false);
             } else {
                 sqlSelect = SqlUtils.sqlWordConvert(dbType, keyColumn, true);
             }
-            return sqlSelect;
+        } else {
+            sqlSelect = "";
         }
-        sqlSelect = "";
         return sqlSelect;
     }
 

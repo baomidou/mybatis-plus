@@ -214,10 +214,6 @@ public class TableFieldInfo {
         return StringUtils.isNotEmpty(logicDeleteValue);
     }
 
-    public void setCondition(String condition) {
-        this.condition = condition;
-    }
-
     /**
      * 全局配置开启字段 LIKE 并且为字符串类型字段
      * 注入 LIKE 查询！！！
@@ -240,7 +236,7 @@ public class TableFieldInfo {
         if (sqlSelect != null) {
             return sqlSelect;
         }
-        if (isRelated()) {
+        if (related) {
             sqlSelect = SqlUtils.sqlWordConvert(dbType, getColumn(), true) + " AS " +
                 SqlUtils.sqlWordConvert(dbType, getProperty(), false);
         } else {
