@@ -15,6 +15,14 @@
  */
 package com.baomidou.mybatisplus.core.conditions.query;
 
+import static java.util.stream.Collectors.joining;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
@@ -23,14 +31,6 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.Property;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static java.util.stream.Collectors.joining;
 
 /**
  * <p>
@@ -112,14 +112,16 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     }
 
     /**
-     * 排除字段
+     * <p>
+     * 排除字段，该方法请在  setEntity 之后使用，否则无法获知表实体类型
+     * </p>
      *
      * @param excludeColumns 排除字段列表
      */
     @SafeVarargs
     @SuppressWarnings(value = "unchecked")
     public final LambdaQueryWrapper<T> excludeColumns(Property<T, ?>... excludeColumns) {
-        Assert.notNull(entity, "entity is not null");
+        Assert.notNull(entity, "Unable to find entity type, please use method `excludeColumns(Class<T> entityClass, String... excludeColumns)`");
         return excludeColumns((Class<T>) entity.getClass(), excludeColumns);
     }
 
