@@ -163,7 +163,7 @@ public class TableInfo {
                 sqlSelect = SqlUtils.sqlWordConvert(dbType, keyColumn, true);
             }
         } else {
-            sqlSelect = "";
+            sqlSelect = StringPool.EMPTY;
         }
         return sqlSelect;
     }
@@ -179,7 +179,7 @@ public class TableInfo {
         }
         String sqlSelect = getSqlSelect();
         String fieldsSqlSelect = fieldList.stream().filter(TableFieldInfo::isSelect)
-            .map(i -> i.getSqlSelect(dbType)).collect(joining(","));
+            .map(i -> i.getSqlSelect(dbType)).collect(joining(StringPool.COMMA));
         if (StringUtils.isNotEmpty(sqlSelect) && StringUtils.isNotEmpty(fieldsSqlSelect)) {
             allSqlSelect = sqlSelect + StringPool.COMMA + fieldsSqlSelect;
         } else if (StringUtils.isNotEmpty(fieldsSqlSelect)) {
