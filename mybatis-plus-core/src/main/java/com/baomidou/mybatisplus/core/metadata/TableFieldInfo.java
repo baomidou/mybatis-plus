@@ -17,14 +17,13 @@ package com.baomidou.mybatisplus.core.metadata;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import lombok.AccessLevel;
-import lombok.Data;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
 
 import java.lang.reflect.Field;
 
@@ -36,8 +35,7 @@ import java.lang.reflect.Field;
  * @author hubin sjy willenfoo tantan
  * @since 2016-09-09
  */
-@Data
-@Accessors(chain = true)
+@Getter
 public class TableFieldInfo {
 
     /**
@@ -66,6 +64,10 @@ public class TableFieldInfo {
      * 属性类型
      */
     private Class<?> propertyType;
+    /**
+     * 属性是否是 CharSequence 类型
+     */
+    private boolean isCharSequence;
     /**
      * 字段策略【 默认，自判断 null 】
      */
@@ -97,7 +99,6 @@ public class TableFieldInfo {
     /**
      * 缓存 sql select
      */
-    @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
     private String sqlSelect;
 
@@ -110,6 +111,7 @@ public class TableFieldInfo {
                           String column, String el, TableField tableField) {
         this.property = field.getName();
         this.propertyType = field.getType();
+        this.isCharSequence = StringUtils.isCharSequence(this.propertyType);
         this.fieldFill = tableField.fill();
         this.clazz = field.getDeclaringClass();
         this.update = tableField.update();
@@ -152,9 +154,10 @@ public class TableFieldInfo {
      */
     public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field) {
         this.property = field.getName();
+        this.propertyType = field.getType();
+        this.isCharSequence = StringUtils.isCharSequence(this.propertyType);
         this.el = field.getName();
         this.fieldStrategy = dbConfig.getFieldStrategy();
-        this.propertyType = field.getType();
         this.setCondition(dbConfig);
         this.clazz = field.getDeclaringClass();
         tableInfo.setLogicDelete(this.initLogicDelete(dbConfig, field));
@@ -203,10 +206,6 @@ public class TableFieldInfo {
         return false;
     }
 
-    public boolean isRelated() {
-        return related;
-    }
-
     /**
      * 是否开启逻辑删除
      */
@@ -218,10 +217,10 @@ public class TableFieldInfo {
      * 全局配置开启字段 LIKE 并且为字符串类型字段
      * 注入 LIKE 查询！！！
      */
-    public void setCondition(GlobalConfig.DbConfig dbConfig) {
-        if (null == this.condition || SqlCondition.EQUAL.equals(this.condition)) {
-            if (dbConfig.isColumnLike() && StringUtils.isCharSequence(this.propertyType)) {
-                this.condition = dbConfig.getDbType().getLike();
+    private void setCondition(GlobalConfig.DbConfig dbConfig) {
+        if (null == condition || SqlCondition.EQUAL.equals(condition)) {
+            if (dbConfig.isColumnLike() && isCharSequence) {
+                condition = dbConfig.getDbType().getLike();
             }
         }
     }
@@ -243,5 +242,26 @@ public class TableFieldInfo {
             sqlSelect = SqlUtils.sqlWordConvert(dbType, getColumn(), true);
         }
         return sqlSelect;
+    }
+
+    /**
+     * 获取 set sql 片段
+     *
+     * @param isInsert 是 insert sql 否
+     * @param prefix   前缀
+     * @return sql 脚本片段
+     */
+    public String getSqlSet(boolean isInsert, String prefix) {
+        prefix = StringUtils.isEmpty(prefix) ? StringPool.EMPTY : prefix;
+        // 默认判断 update 语句
+        boolean existIf = fieldFill != FieldFill.UPDATE && fieldFill != FieldFill.INSERT_UPDATE;
+        if (isInsert) {
+            existIf = fieldFill != FieldFill.INSERT && fieldFill != FieldFill.INSERT_UPDATE;
+        }
+        String sqlSet = column + StringPool.EQUALS + "#{" + prefix + el + "}" + StringPool.COMMA;
+        if (existIf) {
+            sqlSet = SqlScriptUtils.convertIf(sqlSet, prefix + property, isCharSequence, fieldStrategy);
+        }
+        return sqlSet;
     }
 }

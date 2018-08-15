@@ -37,7 +37,7 @@ import java.util.List;
  * @author hubin
  * @since 2016-11-06
  */
-public class SqlHelper {
+public final class SqlHelper {
 
     private static final Log logger = LogFactory.getLog(SqlHelper.class);
     public static SqlSessionFactory FACTORY;

@@ -189,4 +189,37 @@ public class TableInfo {
         }
         return allSqlSelect;
     }
+
+    /**
+     * 获取主键的 sql set 片段
+     *
+     * @param prefix 前缀
+     * @return sql 脚本片段
+     */
+    public String getSqlSet(String prefix) {
+        if (StringUtils.isNotEmpty(keyProperty)) {
+            return keyColumn + StringPool.EQUALS + "#{" + prefix + keyProperty + "}" + StringPool.COMMA;
+        }
+        return "";
+    }
+
+    /**
+     * 获取所有的 sql set 片段
+     *
+     * @param isInsert 是否 insert 语句
+     * @param prefix   前缀
+     * @return sql 脚本片段
+     */
+    public String getAllSqlSet(boolean isInsert, String prefix) {
+        String newPrefix = StringUtils.isEmpty(prefix) ? StringPool.EMPTY : prefix;
+        String allSqlSet = fieldList.stream().map(i -> i.getSqlSet(isInsert, newPrefix)).collect(joining(""));
+        if (!isInsert) {
+            return allSqlSet;
+        }
+        if (idType.getKey() > 1) {
+            // 可带有填充功能
+            allSqlSet = getSqlSet(newPrefix) + allSqlSet;
+        }
+        return allSqlSet;
+    }
 }

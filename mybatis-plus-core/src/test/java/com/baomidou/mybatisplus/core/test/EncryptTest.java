@@ -28,12 +28,13 @@ public class EncryptTest {
 
     @Test
     public void testTableInfoHelper() {
-        TableInfo tableInfo = TableInfoHelper.initTableInfo(null, Xx.class);
-        System.out.println(tableInfo);
+        TableInfo info = TableInfoHelper.initTableInfo(null, Xx.class);
+        System.out.println(info.getAllSqlSet(false, null));
     }
 
     @Data
     public static class Xx {
+        private Long id;
         @TableField(exist = false)
         private String x1;
         private String x2;
