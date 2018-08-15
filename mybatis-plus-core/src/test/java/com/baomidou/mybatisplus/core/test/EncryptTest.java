@@ -36,7 +36,7 @@ public class EncryptTest {
         System.out.println("----------- AllInsertSqlProperty -----------");
         System.out.println(info.getAllInsertSqlProperty());
         System.out.println("----------- AllSqlSet -----------");
-        System.out.println(info.getAllSqlSet(null));
+        System.out.println(info.getAllSqlSet("ew.entity."));
     }
 
     @Data
@@ -50,7 +50,7 @@ public class EncryptTest {
         private String x3;
         @TableField(strategy = FieldStrategy.NOT_EMPTY)
         private String x4;
-        @TableField(strategy = FieldStrategy.IGNORED)
+        @TableField(value = "xx5", strategy = FieldStrategy.IGNORED, update = "%s+1")
         private String x5;
     }
 }
