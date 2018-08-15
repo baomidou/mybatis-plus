@@ -49,10 +49,15 @@ import lombok.experimental.Accessors;
  * <p>
  * SQL 执行分析拦截器【 目前只支持 MYSQL-5.6.3 以上版本 】
  * </p>
+ * <p>
+ * 使用解析器来替代该功能
+ * com.baomidou.mybatisplus.extension.parsers.BlockAttackSqlParser
+ * </p>
  *
  * @author hubin
  * @since 2016-08-16
  */
+@Deprecated
 @Data
 @Accessors(chain = true)
 @Intercepts({@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})})

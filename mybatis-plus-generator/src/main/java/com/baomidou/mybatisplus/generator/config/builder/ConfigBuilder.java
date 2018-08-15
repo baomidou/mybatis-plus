@@ -433,21 +433,21 @@ public class ConfigBuilder {
         try {
             String tablesSql = dbQuery.tablesSql();
             if (DbType.POSTGRE_SQL == dbQuery.dbType()) {
-                String schema = dataSourceConfig.getSchemaname();
+                String schema = dataSourceConfig.getSchemaName();
                 if (schema == null) {
                     //pg默认schema=public
                     schema = "public";
-                    dataSourceConfig.setSchemaname(schema);
+                    dataSourceConfig.setSchemaName(schema);
                 }
                 tablesSql = String.format(tablesSql, schema);
             }
             //oracle数据库表太多，出现最大游标错误
             else if (DbType.ORACLE == dbQuery.dbType()) {
-                String schema = dataSourceConfig.getSchemaname();
+                String schema = dataSourceConfig.getSchemaName();
                 //oracle默认用户的schema=username
                 if (schema == null) {
                     schema = dataSourceConfig.getUsername().toUpperCase();
-                    dataSourceConfig.setSchemaname(schema);
+                    dataSourceConfig.setSchemaName(schema);
                 }
                 tablesSql = String.format(tablesSql, schema);
                 if (isInclude) {
@@ -572,9 +572,9 @@ public class ConfigBuilder {
         try {
             String tableFieldsSql = dbQuery.tableFieldsSql();
             if (DbType.POSTGRE_SQL == dbQuery.dbType()) {
-                tableFieldsSql = String.format(tableFieldsSql, dataSourceConfig.getSchemaname(), tableInfo.getName());
+                tableFieldsSql = String.format(tableFieldsSql, dataSourceConfig.getSchemaName(), tableInfo.getName());
             } else if (DbType.ORACLE == dbQuery.dbType()) {
-                tableFieldsSql = String.format(tableFieldsSql.replace("#schema", dataSourceConfig.getSchemaname()), tableInfo.getName());
+                tableFieldsSql = String.format(tableFieldsSql.replace("#schema", dataSourceConfig.getSchemaName()), tableInfo.getName());
             } else {
                 tableFieldsSql = String.format(tableFieldsSql, tableInfo.getName());
             }
