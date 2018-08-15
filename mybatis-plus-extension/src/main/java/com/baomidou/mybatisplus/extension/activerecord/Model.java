@@ -130,7 +130,9 @@ public abstract class Model<T extends Model> implements Serializable {
         // updateById
         Map<String, Object> map = new HashMap<>(1);
         map.put(Constants.ENTITY, this);
-        return SqlHelper.retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE_BY_ID), map));
+        try(SqlSession sqlSession = sqlSession()) {
+            return SqlHelper.retBool(sqlSession.update(sqlStatement(SqlMethod.UPDATE_BY_ID), map));
+        }
     }
 
     /**
