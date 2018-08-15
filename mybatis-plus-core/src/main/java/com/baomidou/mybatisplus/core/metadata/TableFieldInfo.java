@@ -253,12 +253,23 @@ public class TableFieldInfo {
      */
     public String getSqlSet(boolean isInsert, String prefix) {
         prefix = StringUtils.isEmpty(prefix) ? StringPool.EMPTY : prefix;
+        // column = ?
+        String sqlSet = column + StringPool.EQUALS;
         // 默认判断 update 语句
         boolean existIf = fieldFill != FieldFill.UPDATE && fieldFill != FieldFill.INSERT_UPDATE;
         if (isInsert) {
+            // insert 语句
             existIf = fieldFill != FieldFill.INSERT && fieldFill != FieldFill.INSERT_UPDATE;
+            sqlSet += ("#{" + prefix + el + "}");
+        } else {
+            if (StringUtils.isNotEmpty(update)) {
+                sqlSet += String.format(update, column);
+            } else {
+                sqlSet += ("#{" + prefix + el + "}");
+            }
         }
-        String sqlSet = column + StringPool.EQUALS + "#{" + prefix + el + "}" + StringPool.COMMA;
+        // 逗号结尾
+        sqlSet += StringPool.COMMA;
         if (existIf) {
             sqlSet = SqlScriptUtils.convertIf(sqlSet, prefix + property, isCharSequence, fieldStrategy);
         }
