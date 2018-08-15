@@ -66,17 +66,17 @@ public final class SqlScriptUtils {
         StringBuilder sb = new StringBuilder();
         sb.append("<trim");
         if (StringUtils.isNotEmpty(prefix)) {
-            sb.append(StringPool.SPACE).append("prefix=\"").append(prefix).append("\"");
+            sb.append(StringPool.SPACE).append("prefix=\"").append(prefix).append(StringPool.QUOTE);
         }
         if (StringUtils.isNotEmpty(suffix)) {
-            sb.append(StringPool.SPACE).append("suffix=\"").append(suffix).append("\"");
+            sb.append(StringPool.SPACE).append("suffix=\"").append(suffix).append(StringPool.QUOTE);
         }
         if (StringUtils.isNotEmpty(prefixOverride)) {
-            sb.append(StringPool.SPACE).append("prefixOverride=\"").append(prefixOverride).append("\"");
+            sb.append(StringPool.SPACE).append("prefixOverride=\"").append(prefixOverride).append(StringPool.QUOTE);
         }
         if (StringUtils.isNotEmpty(suffixOverrides)) {
-            sb.append(StringPool.SPACE).append("suffixOverrides=\"").append(suffixOverrides).append("\"");
+            sb.append(StringPool.SPACE).append("suffixOverrides=\"").append(suffixOverrides).append(StringPool.QUOTE);
         }
-        return sb.append(">").append(sqlScript).append("</trim>").toString();
+        return sb.append(StringPool.RIGHT_CHEV).append(sqlScript).append("</trim>").toString();
     }
 }
