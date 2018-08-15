@@ -29,7 +29,7 @@ public class EncryptTest {
     @Test
     public void testTableInfoHelper() {
         TableInfo info = TableInfoHelper.initTableInfo(null, Xx.class);
-        System.out.println(info.getAllSqlSet(false, null));
+        System.out.println(info.getAllSqlSet(true, null));
     }
 
     @Data
