@@ -42,16 +42,18 @@ public class StringUtils {
      * 字符串 is
      */
     public static final String IS = "is";
-
     /**
      * 下划线字符
      */
     public static final char UNDERLINE = '_';
-
     /**
      * 占位符
      */
     public static final String PLACE_HOLDER = "{%s}";
+    /**
+     * 验证字符串是否是数据库字段
+     */
+    private static final Pattern P_IS_CLOMUN = Pattern.compile("^\\w\\S*[\\w\\d]*$");
 
     private StringUtils() {
         // to do nothing
@@ -108,6 +110,18 @@ public class StringUtils {
      */
     public static boolean isNotEmpty(final CharSequence cs) {
         return !isEmpty(cs);
+    }
+
+    /**
+     * <p>
+     * 判断字符串是否符合数据库字段的命名
+     * </p>
+     *
+     * @param str 字符串
+     * @return 判断结果
+     */
+    public static boolean isColumnName(String str) {
+        return P_IS_CLOMUN.matcher(str).matches();
     }
 
     /**
