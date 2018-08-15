@@ -192,40 +192,22 @@ public abstract class AbstractMethod {
      * SQL 查询所有表字段
      * </p>
      *
-     * @param table
-     * @param entityWrapper 是否为包装类型查询
-     * @return
+     * @param table        表信息
+     * @param queryWrapper 是否为使用 queryWrapper 查询
+     * @return sql 脚本
      */
-    protected String sqlSelectColumns(TableInfo table, boolean entityWrapper) {
-        StringBuilder columns = new StringBuilder();
-        if (null != table.getResultMap()) {
-            /*
-             * 存在 resultMap 映射返回
-             */
-            if (entityWrapper) {
-                columns.append("<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>");
-            }
-            columns.append(StringPool.ASTERISK);
-            if (entityWrapper) {
-                columns.append("</otherwise></choose>");
-            }
-        } else {
-            /*
-             * 普通查询
-             */
-            if (entityWrapper) {
-                columns.append("<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>");
-            }
-            columns.append(table.getAllSqlSelect());
-            if (entityWrapper) {
-                columns.append("</otherwise></choose>");
-            }
+    protected String sqlSelectColumns(TableInfo table, boolean queryWrapper) {
+        /* 假设存在 resultMap 映射返回 */
+        String selectColumns = StringPool.ASTERISK;
+        if (table.getResultMap() == null) {
+            /* 普通查询 */
+            selectColumns = table.getAllSqlSelect();
         }
-
-        /*
-         * 返回所有查询字段内容
-         */
-        return columns.toString();
+        if (!queryWrapper) {
+            return selectColumns;
+        }
+        return "<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>" +
+            selectColumns + "</otherwise></choose>";
     }
 
     /**
