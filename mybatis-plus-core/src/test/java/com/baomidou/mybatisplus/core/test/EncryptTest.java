@@ -1,5 +1,7 @@
 package com.baomidou.mybatisplus.core.test;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.EncryptUtils;
@@ -29,17 +31,26 @@ public class EncryptTest {
     @Test
     public void testTableInfoHelper() {
         TableInfo info = TableInfoHelper.initTableInfo(null, Xx.class);
-        System.out.println(info.getAllSqlSet(true, null));
+        System.out.println("----------- AllInsertSqlColumn -----------");
+        System.out.println(info.getAllInsertSqlColumn());
+        System.out.println("----------- AllInsertSqlProperty -----------");
+        System.out.println(info.getAllInsertSqlProperty());
+        System.out.println("----------- AllSqlSet -----------");
+        System.out.println(info.getAllSqlSet(null));
     }
 
     @Data
     public static class Xx {
         private Long id;
-        @TableField(exist = false)
+        @TableField(fill = FieldFill.INSERT)
         private String x1;
+        @TableField(fill = FieldFill.INSERT_UPDATE, strategy = FieldStrategy.NOT_EMPTY)
         private String x2;
+        @TableField(fill = FieldFill.UPDATE)
         private String x3;
+        @TableField(strategy = FieldStrategy.NOT_EMPTY)
         private String x4;
+        @TableField(strategy = FieldStrategy.IGNORED)
         private String x5;
     }
 }

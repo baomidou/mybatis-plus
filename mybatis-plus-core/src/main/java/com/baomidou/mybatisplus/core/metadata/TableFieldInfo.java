@@ -245,34 +245,55 @@ public class TableFieldInfo {
     }
 
     /**
-     * 获取 set sql 片段
+     * 获取 inset 时候插入值 sql 脚本片段
+     * insert into table (字段) values (值)
+     * 位于 "值" 部位
      *
-     * @param isInsert 是 insert sql 否
-     * @param prefix   前缀
      * @return sql 脚本片段
      */
-    public String getSqlSet(boolean isInsert, String prefix) {
+    public String getInsertSqlProperty() {
+        String sqlScript = SqlScriptUtils.HASH_LEFT_BRACE + el + StringPool.RIGHT_BRACE + StringPool.COMMA;
+        if (fieldFill == FieldFill.INSERT || fieldFill == FieldFill.INSERT_UPDATE) {
+            return sqlScript;
+        }
+        return SqlScriptUtils.convertIf(sqlScript, property, isCharSequence, fieldStrategy);
+    }
+
+    /**
+     * 获取 inset 时候字段 sql 脚本片段
+     * insert into table (字段) values (值)
+     * 位于 "字段" 部位
+     *
+     * @return sql 脚本片段
+     */
+    public String getInsertSqlColumn() {
+        String sqlScript = column + StringPool.COMMA;
+        if (fieldFill == FieldFill.INSERT || fieldFill == FieldFill.INSERT_UPDATE) {
+            return sqlScript;
+        }
+        return SqlScriptUtils.convertIf(sqlScript, property, isCharSequence, fieldStrategy);
+    }
+
+    /**
+     * 获取 set sql 片段
+     *
+     * @param prefix 前缀
+     * @return sql 脚本片段
+     */
+    public String getSqlSet(String prefix) {
         prefix = StringUtils.isEmpty(prefix) ? StringPool.EMPTY : prefix;
-        // column = ?
+        // 默认: column=
         String sqlSet = column + StringPool.EQUALS;
-        // 默认判断 update 语句
-        boolean existIf = fieldFill != FieldFill.UPDATE && fieldFill != FieldFill.INSERT_UPDATE;
-        if (isInsert) {
-            // insert 语句
-            existIf = fieldFill != FieldFill.INSERT && fieldFill != FieldFill.INSERT_UPDATE;
-            sqlSet += ("#{" + prefix + el + "}");
+        if (StringUtils.isNotEmpty(update)) {
+            sqlSet += String.format(update, column);
         } else {
-            if (StringUtils.isNotEmpty(update)) {
-                sqlSet += String.format(update, column);
-            } else {
-                sqlSet += ("#{" + prefix + el + "}");
-            }
+            sqlSet += ("#{" + prefix + el + "}");
         }
-        // 逗号结尾
         sqlSet += StringPool.COMMA;
-        if (existIf) {
-            sqlSet = SqlScriptUtils.convertIf(sqlSet, prefix + property, isCharSequence, fieldStrategy);
+        if (fieldFill == FieldFill.UPDATE || fieldFill == FieldFill.INSERT_UPDATE) {
+            // 不进行 if 包裹
+            return sqlSet;
         }
-        return sqlSet;
+        return SqlScriptUtils.convertIf(sqlSet, prefix + property, isCharSequence, fieldStrategy);
     }
 }

@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core.toolkit.sql;
 
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 
 /**
  * <p>
@@ -28,26 +29,32 @@ import com.baomidou.mybatisplus.annotation.FieldStrategy;
 public final class SqlScriptUtils {
 
     /**
+     * 脚本符号: #{
+     */
+    public static final String HASH_LEFT_BRACE = StringPool.HASH + StringPool.LEFT_BRACE;
+
+    private SqlScriptUtils() {
+        // ignore
+    }
+
+    /**
      * <p>
      * 获取 带 if 标签的 sql
      * </p>
      *
-     * @param sqlSet         set sql 片段
+     * @param sqlScript      sql 脚本片段
      * @param property       entity 属性
      * @param isCharSequence 是 CharSequence 类型否
      * @param fieldStrategy  验证逻辑
      * @return if 脚本
      */
-    public static String convertIf(String sqlSet, String property, boolean isCharSequence, FieldStrategy fieldStrategy) {
+    public static String convertIf(String sqlScript, String property, boolean isCharSequence, FieldStrategy fieldStrategy) {
         if (fieldStrategy == FieldStrategy.IGNORED) {
-            return sqlSet;
+            return sqlScript;
         }
-        if (fieldStrategy == FieldStrategy.NOT_NULL) {
-            return String.format("<if test=\"%s != null\">%s</if>", property, sqlSet);
+        if (fieldStrategy == FieldStrategy.NOT_EMPTY && isCharSequence) {
+            return String.format("<if test=\"%s != null and %s != ''\">%s</if>", property, property, sqlScript);
         }
-        if (isCharSequence) {
-            return String.format("<if test=\"%s != null and %s != ''\">%s</if>", property, property, sqlSet);
-        }
-        return String.format("<if test=\"%s != null\">%s</if>", property, sqlSet);
+        return String.format("<if test=\"%s != null\">%s</if>", property, sqlScript);
     }
 }

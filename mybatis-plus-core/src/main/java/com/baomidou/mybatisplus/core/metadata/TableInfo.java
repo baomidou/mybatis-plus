@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -151,7 +152,7 @@ public class TableInfo {
      *
      * @return sql 片段
      */
-    public String getSqlSelect() {
+    public String getKeySqlSelect() {
         if (sqlSelect != null) {
             return sqlSelect;
         }
@@ -177,7 +178,7 @@ public class TableInfo {
         if (allSqlSelect != null) {
             return allSqlSelect;
         }
-        String sqlSelect = getSqlSelect();
+        String sqlSelect = getKeySqlSelect();
         String fieldsSqlSelect = fieldList.stream().filter(TableFieldInfo::isSelect)
             .map(i -> i.getSqlSelect(dbType)).collect(joining(StringPool.COMMA));
         if (StringUtils.isNotEmpty(sqlSelect) && StringUtils.isNotEmpty(fieldsSqlSelect)) {
@@ -191,37 +192,72 @@ public class TableInfo {
     }
 
     /**
-     * 获取主键的 sql set 片段
+     * 获取 inset 时候主键 sql 脚本片段
+     * insert into table (字段) values (值)
+     * 位于 "值" 部位
      *
-     * @param prefix 前缀
      * @return sql 脚本片段
      */
-    public String getSqlSet(String prefix) {
+    public String getKeyInsertSqlProperty() {
         if (StringUtils.isNotEmpty(keyProperty)) {
-            return keyColumn + StringPool.EQUALS + "#{" + prefix + keyProperty + "}" + StringPool.COMMA +
-                StringPool.NEWLINE;
+            if (idType.getKey() == 0) {
+                return "";
+            }
+            return SqlScriptUtils.HASH_LEFT_BRACE + keyProperty + StringPool.RIGHT_BRACE + StringPool.COMMA;
         }
         return "";
     }
 
     /**
-     * 获取所有的 sql set 片段
+     * 获取 inset 时候主键 sql 脚本片段
+     * insert into table (字段) values (值)
+     * 位于 "字段" 部位
      *
-     * @param isInsert 是否 insert 语句
-     * @param prefix   前缀
      * @return sql 脚本片段
      */
-    public String getAllSqlSet(boolean isInsert, String prefix) {
+    public String getKeyInsertSqlColumn() {
+        if (StringUtils.isNotEmpty(keyColumn)) {
+            if (idType.getKey() == 0) {
+                return "";
+            }
+            return keyColumn + StringPool.COMMA;
+        }
+        return "";
+    }
+
+
+    /**
+     * 获取所有 inset 时候插入值 sql 脚本片段
+     * insert into table (字段) values (值)
+     * 位于 "值" 部位
+     *
+     * @return sql 脚本片段
+     */
+    public String getAllInsertSqlProperty() {
+        return getKeyInsertSqlProperty() + fieldList.stream().map(TableFieldInfo::getInsertSqlProperty)
+            .collect(joining(StringPool.EMPTY));
+    }
+
+    /**
+     * 获取 inset 时候字段 sql 脚本片段
+     * insert into table (字段) values (值)
+     * 位于 "字段" 部位
+     *
+     * @return sql 脚本片段
+     */
+    public String getAllInsertSqlColumn() {
+        return getKeyInsertSqlColumn() + fieldList.stream().map(TableFieldInfo::getInsertSqlColumn)
+            .collect(joining(StringPool.EMPTY));
+    }
+
+    /**
+     * 获取所有的 sql set 片段
+     *
+     * @param prefix 前缀
+     * @return sql 脚本片段
+     */
+    public String getAllSqlSet(String prefix) {
         String newPrefix = StringUtils.isEmpty(prefix) ? StringPool.EMPTY : prefix;
-        String allSqlSet = fieldList.stream().map(i -> i.getSqlSet(isInsert, newPrefix))
-            .collect(joining(StringPool.NEWLINE));
-        if (!isInsert) {
-            return allSqlSet;
-        }
-        if (idType.getKey() > 1) {
-            // 可带有填充功能
-            allSqlSet = getSqlSet(newPrefix) + allSqlSet;
-        }
-        return allSqlSet;
+        return fieldList.stream().map(i -> i.getSqlSet(newPrefix)).collect(joining(StringPool.NEWLINE));
     }
 }
