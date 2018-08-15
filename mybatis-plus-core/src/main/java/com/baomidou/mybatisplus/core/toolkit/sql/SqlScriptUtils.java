@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.toolkit.sql;
 
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
@@ -43,20 +42,11 @@ public final class SqlScriptUtils {
      * 获取 带 if 标签的脚本
      * </p>
      *
-     * @param sqlScript      sql 脚本片段
-     * @param property       entity 属性
-     * @param isCharSequence 是 CharSequence 类型否
-     * @param fieldStrategy  验证逻辑
+     * @param sqlScript sql 脚本片段
      * @return if 脚本
      */
-    public static String convertIf(String sqlScript, String property, boolean isCharSequence, FieldStrategy fieldStrategy) {
-        if (fieldStrategy == FieldStrategy.IGNORED) {
-            return sqlScript;
-        }
-        if (fieldStrategy == FieldStrategy.NOT_EMPTY && isCharSequence) {
-            return String.format("<if test=\"%s != null and %s != ''\">%s</if>", property, property, sqlScript);
-        }
-        return String.format("<if test=\"%s != null\">%s</if>", property, sqlScript);
+    public static String convertIf(String sqlScript, String testInValue) {
+        return String.format("<if test=\"%s\">%s</if>", testInValue, sqlScript);
     }
 
     /**

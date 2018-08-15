@@ -256,7 +256,7 @@ public class TableFieldInfo {
         if (fieldFill == FieldFill.INSERT || fieldFill == FieldFill.INSERT_UPDATE) {
             return sqlScript;
         }
-        return SqlScriptUtils.convertIf(sqlScript, property, isCharSequence, fieldStrategy);
+        return convertIf(sqlScript, property);
     }
 
     /**
@@ -271,7 +271,7 @@ public class TableFieldInfo {
         if (fieldFill == FieldFill.INSERT || fieldFill == FieldFill.INSERT_UPDATE) {
             return sqlScript;
         }
-        return SqlScriptUtils.convertIf(sqlScript, property, isCharSequence, fieldStrategy);
+        return convertIf(sqlScript, property);
     }
 
     /**
@@ -294,6 +294,23 @@ public class TableFieldInfo {
             // 不进行 if 包裹
             return sqlSet;
         }
-        return SqlScriptUtils.convertIf(sqlSet, prefix + property, isCharSequence, fieldStrategy);
+        return convertIf(sqlSet, prefix + property);
+    }
+
+    /**
+     * 转换成 if 标签的脚本片段
+     *
+     * @param sqlScript sql 脚本片段
+     * @param property  字段名
+     * @return if 脚本片段
+     */
+    private String convertIf(String sqlScript, String property) {
+        if (fieldStrategy == FieldStrategy.IGNORED) {
+            return sqlScript;
+        }
+        if (fieldStrategy == FieldStrategy.NOT_EMPTY && isCharSequence) {
+            return SqlScriptUtils.convertIf(sqlScript, String.format("%s != null and %s != ''", property, property));
+        }
+        return SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", property));
     }
 }
