@@ -198,7 +198,8 @@ public class TableInfo {
      */
     public String getSqlSet(String prefix) {
         if (StringUtils.isNotEmpty(keyProperty)) {
-            return keyColumn + StringPool.EQUALS + "#{" + prefix + keyProperty + "}" + StringPool.COMMA + "\n";
+            return keyColumn + StringPool.EQUALS + "#{" + prefix + keyProperty + "}" + StringPool.COMMA +
+                StringPool.NEWLINE;
         }
         return "";
     }
@@ -212,7 +213,8 @@ public class TableInfo {
      */
     public String getAllSqlSet(boolean isInsert, String prefix) {
         String newPrefix = StringUtils.isEmpty(prefix) ? StringPool.EMPTY : prefix;
-        String allSqlSet = fieldList.stream().map(i -> i.getSqlSet(isInsert, newPrefix)).collect(joining("\n"));
+        String allSqlSet = fieldList.stream().map(i -> i.getSqlSet(isInsert, newPrefix))
+            .collect(joining(StringPool.NEWLINE));
         if (!isInsert) {
             return allSqlSet;
         }
