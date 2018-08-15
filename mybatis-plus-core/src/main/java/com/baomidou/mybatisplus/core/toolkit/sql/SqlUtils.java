@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.toolkit.sql;
 
+import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.enums.SqlLike;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
@@ -75,6 +76,24 @@ public class SqlUtils {
         return builder.toString();
     }
 
+    /**
+     * <p>
+     * 获取需要转义的SQL字段
+     * </p>
+     *
+     * @param dbType   数据库类型
+     * @param val      值
+     * @param isColumn val 是否是数据库字段
+     */
+    public static String sqlWordConvert(DbType dbType, String val, boolean isColumn) {
+        if (dbType == DbType.POSTGRE_SQL) {
+            if (isColumn && val.toLowerCase().equals(val)) {
+                return val;
+            }
+            return String.format("\"%s\"", val);
+        }
+        return val;
+    }
 
     /**
      * <p>

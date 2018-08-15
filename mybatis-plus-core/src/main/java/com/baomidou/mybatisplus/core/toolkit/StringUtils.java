@@ -42,16 +42,18 @@ public class StringUtils {
      * 字符串 is
      */
     public static final String IS = "is";
-
     /**
      * 下划线字符
      */
     public static final char UNDERLINE = '_';
-
     /**
      * 占位符
      */
     public static final String PLACE_HOLDER = "{%s}";
+    /**
+     * 验证字符串是否是数据库字段
+     */
+    private static final Pattern P_IS_CLOMUN = Pattern.compile("^\\w\\S*[\\w\\d]*$");
 
     private StringUtils() {
         // to do nothing
@@ -112,6 +114,18 @@ public class StringUtils {
 
     /**
      * <p>
+     * 判断字符串是否符合数据库字段的命名
+     * </p>
+     *
+     * @param str 字符串
+     * @return 判断结果
+     */
+    public static boolean isColumnName(String str) {
+        return P_IS_CLOMUN.matcher(str).matches();
+    }
+
+    /**
+     * <p>
      * 字符串驼峰转下划线格式
      * </p>
      *
@@ -144,9 +158,9 @@ public class StringUtils {
      */
     public static String resolveFieldName(String getMethodName) {
         if (getMethodName.startsWith("get")) {
-            getMethodName = getMethodName.substring(3, getMethodName.length());
-        } else if (getMethodName.startsWith("is")) {
-            getMethodName = getMethodName.substring(2, getMethodName.length());
+            getMethodName = getMethodName.substring(3);
+        } else if (getMethodName.startsWith(IS)) {
+            getMethodName = getMethodName.substring(2);
         }
         // 小写第一个字母
         return StringUtils.firstToLowerCase(getMethodName);
@@ -192,10 +206,7 @@ public class StringUtils {
         if (isEmpty(param)) {
             return EMPTY;
         }
-        StringBuilder sb = new StringBuilder(param.length());
-        sb.append(param.substring(0, 1).toLowerCase());
-        sb.append(param.substring(1));
-        return sb.toString();
+        return param.substring(0, 1).toLowerCase() + param.substring(1);
     }
 
     /**
@@ -307,7 +318,8 @@ public class StringUtils {
      * @return 单引号包含的原字符串的集合形式
      */
     public static String quotaMarkList(Collection<?> coll) {
-        return coll.stream().map(StringUtils::quotaMark).collect(joining(StringPool.COMMA, StringPool.LEFT_BRACKET, StringPool.RIGHT_BRACKET));
+        return coll.stream().map(StringUtils::quotaMark)
+            .collect(joining(StringPool.COMMA, StringPool.LEFT_BRACKET, StringPool.RIGHT_BRACKET));
     }
 
     /**
@@ -334,11 +346,7 @@ public class StringUtils {
             return str;
         }
 
-        StringBuilder sb = new StringBuilder(strLen);
-        sb.append(concatStr);
-        sb.append(Character.toTitleCase(firstChar));
-        sb.append(str.substring(1));
-        return sb.toString();
+        return concatStr + Character.toTitleCase(firstChar) + str.substring(1);
     }
 
     /**
@@ -647,11 +655,11 @@ public class StringUtils {
      * 是否为CharSequence类型
      * </p>
      *
-     * @param cls
-     * @return
+     * @param clazz class
+     * @return true 为是 CharSequence 类型
      */
-    public static Boolean isCharSequence(Class<?> cls) {
-        return cls != null && CharSequence.class.isAssignableFrom(cls);
+    public static boolean isCharSequence(Class<?> clazz) {
+        return clazz != null && CharSequence.class.isAssignableFrom(clazz);
     }
 
     /**
@@ -700,7 +708,7 @@ public class StringUtils {
      * @param propertyCls
      * @return
      */
-    public static Boolean isBoolean(Class<?> propertyCls) {
+    public static boolean isBoolean(Class<?> propertyCls) {
         return propertyCls != null && (boolean.class.isAssignableFrom(propertyCls) || Boolean.class.isAssignableFrom(propertyCls));
     }
 

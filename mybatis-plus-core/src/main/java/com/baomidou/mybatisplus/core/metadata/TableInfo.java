@@ -20,13 +20,18 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.ibatis.session.Configuration;
 
 import java.util.List;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * <p>
@@ -76,6 +81,7 @@ public class TableInfo {
     /**
      * 表字段信息列表
      */
+    @Setter(AccessLevel.NONE)
     private List<TableFieldInfo> fieldList;
     /**
      * 命名空间
@@ -93,6 +99,16 @@ public class TableInfo {
      * 标记该字段属于哪个类
      */
     private Class<?> clazz;
+    /**
+     * 缓存包含主键及字段的 sql select
+     */
+    @Setter(AccessLevel.NONE)
+    private String allSqlSelect;
+    /**
+     * 缓存主键字段的 sql select
+     */
+    @Setter(AccessLevel.NONE)
+    private String sqlSelect;
 
     /**
      * <p>
@@ -121,10 +137,6 @@ public class TableInfo {
         }
     }
 
-    public void setFieldList(List<TableFieldInfo> fieldList) {
-        throw ExceptionUtils.mpe("you can't use this method to set fieldList !");
-    }
-
     public void setConfigMark(Configuration configuration) {
         Assert.notNull(configuration, "Error: You need Initialize MybatisConfiguration !");
         this.configMark = configuration.toString();
@@ -132,5 +144,49 @@ public class TableInfo {
 
     public boolean isLogicDelete() {
         return logicDelete;
+    }
+
+    /**
+     * 获取主键的 select sql 片段
+     *
+     * @return sql 片段
+     */
+    public String getSqlSelect() {
+        if (sqlSelect != null) {
+            return sqlSelect;
+        }
+        if (StringUtils.isNotEmpty(keyProperty)) {
+            if (keyRelated) {
+                sqlSelect = SqlUtils.sqlWordConvert(dbType, keyColumn, true) + " AS " +
+                    SqlUtils.sqlWordConvert(dbType, keyProperty, false);
+            } else {
+                sqlSelect = SqlUtils.sqlWordConvert(dbType, keyColumn, true);
+            }
+        } else {
+            sqlSelect = StringPool.EMPTY;
+        }
+        return sqlSelect;
+    }
+
+    /**
+     * 获取包含主键及字段的 select sql 片段
+     *
+     * @return sql 片段
+     */
+    public String getAllSqlSelect() {
+        if (allSqlSelect != null) {
+            return allSqlSelect;
+        }
+        String sqlSelect = getSqlSelect();
+        String fieldsSqlSelect = fieldList.stream().filter(TableFieldInfo::isSelect)
+            .map(i -> i.getSqlSelect(dbType)).collect(joining(StringPool.COMMA));
+        if (StringUtils.isNotEmpty(sqlSelect) && StringUtils.isNotEmpty(fieldsSqlSelect)) {
+            allSqlSelect = sqlSelect + StringPool.COMMA + fieldsSqlSelect;
+        } else if (StringUtils.isNotEmpty(fieldsSqlSelect)) {
+            allSqlSelect = fieldsSqlSelect;
+        } else {
+            allSqlSelect = sqlSelect;
+        }
+        return allSqlSelect;
     }
 }

@@ -15,19 +15,18 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
-import java.lang.reflect.Field;
-
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
-import com.baomidou.mybatisplus.annotation.SqlCondition;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
-
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
+
+import java.lang.reflect.Field;
 
 /**
  * <p>
@@ -95,10 +94,16 @@ public class TableFieldInfo {
      * 标记该字段属于哪个类
      */
     private Class<?> clazz;
+    /**
+     * 缓存 sql select
+     */
+    @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
+    private String sqlSelect;
 
     /**
      * <p>
-     * 存在 TableField 注解构造函数
+     * 存在 TableField 注解时, 使用的构造函数
      * </p>
      */
     public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field,
@@ -140,6 +145,11 @@ public class TableFieldInfo {
         this.select = tableField.select();
     }
 
+    /**
+     * <p>
+     * 不存在 TableField 注解时, 使用的构造函数
+     * </p>
+     */
     public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field) {
         this.property = field.getName();
         this.el = field.getName();
@@ -204,19 +214,34 @@ public class TableFieldInfo {
         return StringUtils.isNotEmpty(logicDeleteValue);
     }
 
-    public void setCondition(String condition) {
-        this.condition = condition;
-    }
-
+    /**
+     * 全局配置开启字段 LIKE 并且为字符串类型字段
+     * 注入 LIKE 查询！！！
+     */
     public void setCondition(GlobalConfig.DbConfig dbConfig) {
-        /**
-         * 全局配置开启字段 LIKE 并且为字符串类型字段
-         * 注入 LIKE 查询！！！
-         */
         if (null == this.condition || SqlCondition.EQUAL.equals(this.condition)) {
             if (dbConfig.isColumnLike() && StringUtils.isCharSequence(this.propertyType)) {
                 this.condition = dbConfig.getDbType().getLike();
             }
         }
+    }
+
+    /**
+     * 获取 select sql 片段
+     *
+     * @param dbType 数据库类型
+     * @return sql 片段
+     */
+    public String getSqlSelect(DbType dbType) {
+        if (sqlSelect != null) {
+            return sqlSelect;
+        }
+        if (related) {
+            sqlSelect = SqlUtils.sqlWordConvert(dbType, getColumn(), true) + " AS " +
+                SqlUtils.sqlWordConvert(dbType, getProperty(), false);
+        } else {
+            sqlSelect = SqlUtils.sqlWordConvert(dbType, getColumn(), true);
+        }
+        return sqlSelect;
     }
 }
