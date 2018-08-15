@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.EncryptUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import lombok.Data;
 import org.junit.Assert;
 import org.junit.Test;
@@ -37,6 +38,12 @@ public class EncryptTest {
         System.out.println(info.getAllInsertSqlProperty());
         System.out.println("----------- AllSqlSet -----------");
         System.out.println(info.getAllSqlSet("ew.entity."));
+        System.out.println("----------- insert sql -----------");
+        String sql = "insert into table ";
+        sql += SqlScriptUtils.convertTrim(info.getAllInsertSqlColumn(), "(", ")", null, ",");
+        sql += " VALUES ";
+        sql += SqlScriptUtils.convertTrim(info.getAllInsertSqlProperty(), "(", ")", null, ",");
+        System.out.println(sql);
     }
 
     @Data

@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.core.toolkit.sql;
 
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 /**
  * <p>
@@ -39,7 +40,7 @@ public final class SqlScriptUtils {
 
     /**
      * <p>
-     * 获取 带 if 标签的 sql
+     * 获取 带 if 标签的脚本
      * </p>
      *
      * @param sqlScript      sql 脚本片段
@@ -56,5 +57,36 @@ public final class SqlScriptUtils {
             return String.format("<if test=\"%s != null and %s != ''\">%s</if>", property, property, sqlScript);
         }
         return String.format("<if test=\"%s != null\">%s</if>", property, sqlScript);
+    }
+
+    /**
+     * <p>
+     * 获取 带 trim 标签的脚本
+     * </p>
+     *
+     * @param sqlScript       sql 脚本片段
+     * @param prefix          以...开头
+     * @param suffix          以...结尾
+     * @param prefixOverride  干掉最前一个...
+     * @param suffixOverrides 干掉最后一个...
+     * @return trim 脚本
+     */
+    public static String convertTrim(String sqlScript, String prefix, String suffix, String prefixOverride,
+                                     String suffixOverrides) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<trim");
+        if (StringUtils.isNotEmpty(prefix)) {
+            sb.append(StringPool.SPACE).append("prefix=\"").append(prefix).append("\"");
+        }
+        if (StringUtils.isNotEmpty(suffix)) {
+            sb.append(StringPool.SPACE).append("suffix=\"").append(suffix).append("\"");
+        }
+        if (StringUtils.isNotEmpty(prefixOverride)) {
+            sb.append(StringPool.SPACE).append("prefixOverride=\"").append(prefixOverride).append("\"");
+        }
+        if (StringUtils.isNotEmpty(suffixOverrides)) {
+            sb.append(StringPool.SPACE).append("suffixOverrides=\"").append(suffixOverrides).append("\"");
+        }
+        return sb.append(">").append(sqlScript).append("</trim>").toString();
     }
 }
