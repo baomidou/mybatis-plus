@@ -184,6 +184,7 @@ public class GlobalConfigUtils {
      * @param globalConfig 全局配置
      */
     public static void setMetaData(DataSource dataSource, GlobalConfiguration globalConfig) {
+        dataSource = AopUtils.getTargetObject(dataSource);
         try (Connection connection = dataSource.getConnection()) {
             String jdbcUrl = connection.getMetaData().getURL();
             // 设置全局关键字
