@@ -15,15 +15,14 @@
  */
 package com.baomidou.mybatisplus.extension.injector.methods;
 
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.SqlSource;
-
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.extension.injector.LogicAbstractMethod;
+import com.baomidou.mybatisplus.extension.injector.AbstractLogicMethod;
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.SqlSource;
 
 /**
  * <p>
@@ -33,7 +32,7 @@ import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
  * @author hubin
  * @since 2018-04-06
  */
-public class LogicUpdateById extends LogicAbstractMethod {
+public class LogicUpdateById extends AbstractLogicMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
@@ -46,7 +45,7 @@ public class LogicUpdateById extends LogicAbstractMethod {
             .append("}=#{et.").append(OptimisticLockerInterceptor.MP_OPTLOCK_VERSION_ORIGINAL).append(StringPool.RIGHT_BRACE)
             .append("</if></if>");
         if (logicDelete) {
-            append.append(getLogicDeleteSql(true, tableInfo));
+            append.append(tableInfo.getLogicDeleteSql(true, false));
         }
         sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(),
             sqlSet(logicDelete, false, tableInfo, Constants.ENTITY_SPOT),

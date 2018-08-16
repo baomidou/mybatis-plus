@@ -15,13 +15,12 @@
  */
 package com.baomidou.mybatisplus.extension.injector.methods;
 
+import com.baomidou.mybatisplus.core.enums.SqlMethod;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.extension.injector.AbstractLogicMethod;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.scripting.defaults.RawSqlSource;
-
-import com.baomidou.mybatisplus.core.enums.SqlMethod;
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.extension.injector.LogicAbstractMethod;
 
 /**
  * <p>
@@ -31,13 +30,14 @@ import com.baomidou.mybatisplus.extension.injector.LogicAbstractMethod;
  * @author hubin
  * @since 2018-06-13
  */
-public class LogicSelectById extends LogicAbstractMethod {
+public class LogicSelectById extends AbstractLogicMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.LOGIC_SELECT_BY_ID;
         SqlSource sqlSource = new RawSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(tableInfo, false),
-            tableInfo.getTableName(), tableInfo.getKeyColumn(), tableInfo.getKeyProperty(), getLogicDeleteSql(true, tableInfo)), Object.class);
+            tableInfo.getTableName(), tableInfo.getKeyColumn(), tableInfo.getKeyProperty(),
+            tableInfo.getLogicDeleteSql(true, false)), Object.class);
         return addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, tableInfo);
     }
 }

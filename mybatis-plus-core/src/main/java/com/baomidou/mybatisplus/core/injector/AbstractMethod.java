@@ -15,10 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.injector;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
 import com.baomidou.mybatisplus.core.toolkit.*;
@@ -38,7 +35,6 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.text.MessageFormat;
-import java.util.List;
 
 /**
  * <p>
@@ -127,57 +123,14 @@ public abstract class AbstractMethod {
      * @return sql
      */
     protected String sqlSet(boolean logic, boolean ew, TableInfo table, String prefix) {
-        StringBuilder set = new StringBuilder();
-        set.append("<trim prefix=\"SET\" suffixOverrides=\",\">");
-
-        // 是否 IF 标签判断
-        boolean ifTag;
-        List<TableFieldInfo> fieldList = table.getFieldList();
-        for (TableFieldInfo fieldInfo : fieldList) {
-            // 逻辑删除逻辑
-            if (logic && fieldInfo.isLogicDelete()) {
-                if (null != prefix) {
-                    // 更新排除逻辑删除字段
-                    continue;
-                }
-                set.append(fieldInfo.getColumn()).append(StringPool.EQUALS);
-                if (StringUtils.isCharSequence(fieldInfo.getPropertyType())) {
-                    set.append(StringPool.SINGLE_QUOTE).append(fieldInfo.getLogicDeleteValue()).append("',");
-                } else {
-                    set.append(fieldInfo.getLogicDeleteValue()).append(StringPool.COMMA);
-                }
-                continue;
-            }
-            // 判断是否更新忽略,在FieldIgnore,UPDATE,INSERT_UPDATE设置为false
-            ifTag = !(FieldFill.UPDATE == fieldInfo.getFieldFill()
-                || FieldFill.INSERT_UPDATE == fieldInfo.getFieldFill());
-            if (ifTag) {
-                if (StringUtils.isNotEmpty(fieldInfo.getUpdate())) {
-                    set.append(fieldInfo.getColumn()).append(StringPool.EQUALS)
-                        .append(String.format(fieldInfo.getUpdate(), fieldInfo.getColumn())).append(StringPool.COMMA);
-                } else {
-                    set.append(convertIfTag(true, fieldInfo, prefix, false))
-                        .append(fieldInfo.getColumn()).append("=#{");
-                    if (null != prefix) {
-                        set.append(prefix);
-                    }
-                    set.append(fieldInfo.getEl()).append("},")
-                        .append(convertIfTag(true, fieldInfo, null, true));
-                }
-            } else {
-                set.append(fieldInfo.getColumn()).append("=#{");
-                if (null != prefix) {
-                    set.append(prefix);
-                }
-                set.append(fieldInfo.getEl()).append("},");
-            }
-        }
-        // UpdateWrapper SqlSet 部分
+        String sqlScript = table.getAllSqlSet(logic, prefix);
         if (ew) {
-            set.append("<if test=\"ew != null and ew.sqlSet != null\">${ew.sqlSet}</if>");
+            sqlScript += StringPool.NEWLINE;
+            sqlScript += SqlScriptUtils.convertIf(String.format("${%s}", Constants.U_WRAPPER_SQL_SET),
+                String.format("%s != null and %s != null", Constants.WRAPPER, Constants.U_WRAPPER_SQL_SET));
         }
-        set.append("</trim>");
-        return set.toString();
+        sqlScript = SqlScriptUtils.convertTrim(sqlScript, "SET", null, null, ",");
+        return sqlScript;
     }
 
     /**
@@ -229,74 +182,6 @@ public abstract class AbstractMethod {
         sqlScript = StringPool.NEWLINE + sqlScript + StringPool.NEWLINE;
         sqlScript = SqlScriptUtils.convertIf(sqlScript, "cm != null and !cm.isEmpty");
         return sqlScript;
-    }
-
-    /**
-     * <p>
-     * IF 条件转换方法
-     * </p>
-     *
-     * @param ignored   允许忽略
-     * @param fieldInfo 字段信息
-     * @param prefix    条件前缀
-     * @param close     是否闭合标签
-     * @return
-     */
-    protected String convertIfTag(boolean ignored, TableFieldInfo fieldInfo, String prefix, boolean close) {
-        /** 忽略策略 */
-        FieldStrategy fieldStrategy = fieldInfo.getFieldStrategy();
-        if (fieldStrategy == FieldStrategy.IGNORED) {
-            if (ignored) {
-                return StringPool.EMPTY;
-            }
-            // 查询策略，使用全局策略
-            fieldStrategy = getGlobalConfig().getDbConfig().getFieldStrategy();
-        }
-
-        // 关闭标签
-        if (close) {
-            return "</if>";
-        }
-
-        /** 前缀处理 */
-        String property = fieldInfo.getProperty();
-        Class propertyType = fieldInfo.getPropertyType();
-        property = StringUtils.removeIsPrefixIfBoolean(property, propertyType);
-        if (null != prefix) {
-            property = prefix + property;
-        }
-        // 验证逻辑
-        if (fieldStrategy == FieldStrategy.NOT_EMPTY) {
-            if (StringUtils.isCharSequence(propertyType)) {
-                return String.format("<if test=\"%s!=null and %s!=''\">", property, property);
-            } else {
-                return String.format("<if test=\"%s!=null \">", property);
-            }
-        } else {
-            // FieldStrategy.NOT_NULL
-            return String.format("<if test=\"%s!=null\">", property);
-        }
-    }
-
-    protected String convertIfTagIgnored(TableFieldInfo fieldInfo, boolean close) {
-        return convertIfTag(true, fieldInfo, null, close);
-    }
-
-    protected String convertIfTag(TableFieldInfo fieldInfo, String prefix, boolean close) {
-        return convertIfTag(false, fieldInfo, prefix, close);
-    }
-
-    protected String convertIfTag(TableFieldInfo fieldInfo, boolean close) {
-        return convertIfTag(fieldInfo, null, close);
-    }
-
-    /**
-     * <p>
-     * Sql 运算条件
-     * </p>
-     */
-    protected String sqlCondition(String condition, String column, String property) {
-        return String.format(condition, column, property);
     }
 
     /**

@@ -16,15 +16,12 @@
 package com.baomidou.mybatisplus.extension.injector;
 
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
-import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 
 import java.text.MessageFormat;
-import java.util.List;
 
 /**
  * <p>
@@ -34,37 +31,10 @@ import java.util.List;
  * @author hubin
  * @since 2018-04-06
  */
-public abstract class LogicAbstractMethod extends AbstractMethod {
+public abstract class AbstractLogicMethod extends AbstractMethod {
 
-    public LogicAbstractMethod() {
+    public AbstractLogicMethod() {
         // TO DO NOTHING
-    }
-
-    /**
-     * <p>
-     * SQL 更新 set 语句
-     * </p>
-     *
-     * @param table 表信息
-     * @return sql and 片段
-     */
-    public String getLogicDeleteSql(boolean startWithAnd, TableInfo table) {
-        StringBuilder sql = new StringBuilder();
-        List<TableFieldInfo> fieldList = table.getFieldList();
-        for (TableFieldInfo fieldInfo : fieldList) {
-            if (fieldInfo.isLogicDelete()) {
-                if (startWithAnd) {
-                    sql.append(" AND ");
-                }
-                sql.append(fieldInfo.getColumn());
-                if (StringUtils.isCharSequence(fieldInfo.getPropertyType())) {
-                    sql.append("='").append(fieldInfo.getLogicNotDeleteValue()).append(StringPool.SINGLE_QUOTE);
-                } else {
-                    sql.append(StringPool.EQUALS).append(fieldInfo.getLogicNotDeleteValue());
-                }
-            }
-        }
-        return sql.toString();
     }
 
     /**
@@ -76,23 +46,7 @@ public abstract class LogicAbstractMethod extends AbstractMethod {
      * @return sql set 片段
      */
     protected String sqlLogicSet(TableInfo table) {
-        List<TableFieldInfo> fieldList = table.getFieldList();
-        StringBuilder set = new StringBuilder("SET ");
-        int i = 0;
-        for (TableFieldInfo fieldInfo : fieldList) {
-            if (fieldInfo.isLogicDelete()) {
-                if (++i > 1) {
-                    set.append(StringPool.COMMA);
-                }
-                set.append(fieldInfo.getColumn()).append(StringPool.EQUALS);
-                if (StringUtils.isCharSequence(fieldInfo.getPropertyType())) {
-                    set.append(StringPool.SINGLE_QUOTE).append(fieldInfo.getLogicDeleteValue()).append(StringPool.SINGLE_QUOTE);
-                } else {
-                    set.append(fieldInfo.getLogicDeleteValue());
-                }
-            }
-        }
-        return set.toString();
+        return "SET " + table.getLogicDeleteSql(false, true);
     }
 
     // ------------ 处理逻辑删除条件过滤 ------------

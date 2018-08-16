@@ -15,12 +15,11 @@
  */
 package com.baomidou.mybatisplus.extension.injector.methods;
 
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.SqlSource;
-
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.extension.injector.LogicAbstractMethod;
+import com.baomidou.mybatisplus.extension.injector.AbstractLogicMethod;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.SqlSource;
 
 /**
  * <p>
@@ -30,7 +29,7 @@ import com.baomidou.mybatisplus.extension.injector.LogicAbstractMethod;
  * @author hubin
  * @since 2018-06-13
  */
-public class LogicSelectPage extends LogicAbstractMethod {
+public class LogicSelectPage extends AbstractLogicMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {

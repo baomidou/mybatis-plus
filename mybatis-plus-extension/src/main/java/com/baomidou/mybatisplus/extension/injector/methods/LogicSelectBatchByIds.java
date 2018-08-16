@@ -15,12 +15,11 @@
  */
 package com.baomidou.mybatisplus.extension.injector.methods;
 
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.SqlSource;
-
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.extension.injector.LogicAbstractMethod;
+import com.baomidou.mybatisplus.extension.injector.AbstractLogicMethod;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.SqlSource;
 
 /**
  * <p>
@@ -30,7 +29,7 @@ import com.baomidou.mybatisplus.extension.injector.LogicAbstractMethod;
  * @author hubin
  * @since 2018-06-13
  */
-public class LogicSelectBatchByIds extends LogicAbstractMethod {
+public class LogicSelectBatchByIds extends AbstractLogicMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
@@ -38,7 +37,7 @@ public class LogicSelectBatchByIds extends LogicAbstractMethod {
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(),
             sqlSelectColumns(tableInfo, false), tableInfo.getTableName(), tableInfo.getKeyColumn(),
             "<foreach item=\"item\" collection=\"coll\" separator=\",\">#{item}</foreach>",
-            getLogicDeleteSql(true, tableInfo)), modelClass);
+            tableInfo.getLogicDeleteSql(true, false)), modelClass);
         return addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, tableInfo);
     }
 }
