@@ -113,4 +113,8 @@ public final class SqlScriptUtils {
         return sb.append(StringPool.RIGHT_CHEV).append(StringPool.NEWLINE).append(sqlScript)
             .append(StringPool.NEWLINE).append("</foreach>").toString();
     }
+
+    public static String convertWhere(String sqlScript) {
+        return "<where>" + StringPool.NEWLINE + sqlScript + StringPool.NEWLINE + "</where>";
+    }
 }

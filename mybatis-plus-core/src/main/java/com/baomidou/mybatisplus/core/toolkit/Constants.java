@@ -79,6 +79,10 @@ public interface Constants {
      */
     String COLUMN_MAP = "cm";
     /**
+     * columnMap.isEmpty
+     */
+    String COLUMN_MAP_IS_EMPTY = COLUMN_MAP + SPOT + "isEmpty";
+    /**
      * collection
      */
     String COLLECTION = "coll";

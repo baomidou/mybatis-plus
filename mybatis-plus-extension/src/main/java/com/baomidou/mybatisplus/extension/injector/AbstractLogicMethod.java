@@ -21,8 +21,6 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 
-import java.text.MessageFormat;
-
 /**
  * <p>
  * 抽象的注入方法类
@@ -57,10 +55,10 @@ public abstract class AbstractLogicMethod extends AbstractMethod {
             String sqlScript = table.getAllSqlWhere(true, true, Constants.WRAPPER_ENTITY_SPOT);
             sqlScript = StringPool.NEWLINE + sqlScript + StringPool.NEWLINE;
             sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", Constants.WRAPPER_ENTITY));
-            sqlScript += (StringPool.NEWLINE + table.getLogicDeleteSql(true, true));
+            sqlScript += (StringPool.NEWLINE + table.getLogicDeleteSql(true, false));
             sqlScript += StringPool.NEWLINE;
             sqlScript += SqlScriptUtils.convertIf(String.format(" AND ${%s}", Constants.WRAPPER_SQLSEGMENT),
-                MessageFormat.format("{0} != null and {0} != ''", Constants.WRAPPER_SQLSEGMENT));
+                String.format("%s!=null and %s!=''", Constants.WRAPPER_SQLSEGMENT, Constants.WRAPPER_SQLSEGMENT));
             sqlScript = SqlScriptUtils.convertTrim(sqlScript, "WHERE", null, "AND|OR", null);
             sqlScript = SqlScriptUtils.convertChoose("ew!=null and !ew.emptyOfWhere", sqlScript,
                 "WHERE " + table.getLogicDeleteSql(false, false));
@@ -72,12 +70,17 @@ public abstract class AbstractLogicMethod extends AbstractMethod {
 
     @Override
     protected String sqlWhereByMap(TableInfo table) {
-        String sqlScript = super.sqlWhereByMap(table);
         if (table.isLogicDelete()) {
             // 逻辑删除
+            String sqlScript = SqlScriptUtils.convertChoose("v == null", " ${k} IS NULL ",
+                " ${k} = #{v} ");
+            sqlScript = SqlScriptUtils.convertForeach(sqlScript, "cm", "k", "v", "AND");
+            sqlScript = StringPool.NEWLINE + sqlScript + StringPool.NEWLINE;
+            sqlScript = SqlScriptUtils.convertIf(sqlScript, "cm != null and !cm.isEmpty");
             sqlScript += (StringPool.NEWLINE + table.getLogicDeleteSql(true, false));
             sqlScript = SqlScriptUtils.convertTrim(sqlScript, "WHERE", null, "AND", null);
+            return sqlScript;
         }
-        return sqlScript;
+        return super.sqlWhereByMap(table);
     }
 }

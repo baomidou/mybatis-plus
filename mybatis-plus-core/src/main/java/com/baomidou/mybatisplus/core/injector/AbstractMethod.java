@@ -34,7 +34,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
-import java.text.MessageFormat;
 
 /**
  * <p>
@@ -178,9 +177,11 @@ public abstract class AbstractMethod {
     protected String sqlWhereByMap(TableInfo table) {
         String sqlScript = SqlScriptUtils.convertChoose("v == null", " ${k} IS NULL ",
             " ${k} = #{v} ");
-        sqlScript = SqlScriptUtils.convertForeach(sqlScript, "cm", "k", "v", "AND");
+        sqlScript = SqlScriptUtils.convertForeach(sqlScript, Constants.COLUMN_MAP, "k", "v", "AND");
+        sqlScript = SqlScriptUtils.convertWhere(sqlScript);
         sqlScript = StringPool.NEWLINE + sqlScript + StringPool.NEWLINE;
-        sqlScript = SqlScriptUtils.convertIf(sqlScript, "cm != null and !cm.isEmpty");
+        sqlScript = SqlScriptUtils.convertIf(sqlScript,
+            String.format("%s != null and !%s", Constants.COLUMN_MAP, Constants.COLUMN_MAP_IS_EMPTY));
         return sqlScript;
     }
 
@@ -198,9 +199,9 @@ public abstract class AbstractMethod {
         sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", Constants.WRAPPER_ENTITY));
         sqlScript += StringPool.NEWLINE;
         sqlScript += SqlScriptUtils.convertIf(String.format(" AND ${%s}", Constants.WRAPPER_SQLSEGMENT),
-            MessageFormat.format("{0} != null and {0} != ''", Constants.WRAPPER_SQLSEGMENT));
+            String.format("%s != null and %s != ''", Constants.WRAPPER_SQLSEGMENT, Constants.WRAPPER_SQLSEGMENT));
         sqlScript = SqlScriptUtils.convertTrim(sqlScript, "WHERE", null, "AND|OR", null);
-        sqlScript = SqlScriptUtils.convertIf(sqlScript, "ew!=null and !ew.emptyOfWhere");
+        sqlScript = SqlScriptUtils.convertIf(sqlScript, "ew != null and !ew.emptyOfWhere");
         return sqlScript;
     }
 
