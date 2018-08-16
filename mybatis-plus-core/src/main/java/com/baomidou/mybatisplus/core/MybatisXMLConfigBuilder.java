@@ -436,10 +436,9 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
             throw new BuilderException("No environment specified.");
         } else if (id == null) {
             throw new BuilderException("Environment requires an id attribute.");
-        } else if (environment.equals(id)) {
-            return true;
+        } else{
+            return environment.equals(id);
         }
-        return false;
     }
 
 }

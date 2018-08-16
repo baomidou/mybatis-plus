@@ -15,14 +15,18 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
+import static java.util.stream.Collectors.joining;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.Blob;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Pattern;
 
-import static java.util.stream.Collectors.joining;
+import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
 
 /**
  * <p>
@@ -547,7 +551,7 @@ public class StringUtils {
      */
     public static String[] split(final String str, final String separatorChars) {
         List<String> strings = splitWorker(str, separatorChars, -1, false);
-        return strings.toArray(new String[strings.size()]);
+        return strings.toArray(new String[0]);
     }
 
     /**
@@ -788,8 +792,7 @@ public class StringUtils {
             if (lastOneIsNotUnderscore && (isUpperCaseAndPreviousIsLowerCase || previousIsWhitespace
                 || (betweenUpperCases && containsLowerCase && isUpperCaseAndPreviousIsUpperCase))) {
                 buf.append(StringPool.UNDERSCORE);
-            } else if ((Character.isDigit(previousChar) && Character.isLetter(c))
-                || (false && Character.isDigit(c) && Character.isLetter(previousChar))) {
+            } else if ((Character.isDigit(previousChar) && Character.isLetter(c))) {
                 buf.append('_');
             }
             if ((shouldReplace(c)) && (lastOneIsNotUnderscore)) {

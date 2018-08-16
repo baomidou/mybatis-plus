@@ -46,7 +46,7 @@ public class DB2Dialect implements IDialect {
     public String buildPaginationSql(String originalSql, long offset, long limit) {
         int startOfSelect = originalSql.toLowerCase().indexOf("select");
         StringBuilder pagingSelect = new StringBuilder(originalSql.length() + 100)
-            .append(originalSql.substring(0, startOfSelect)).append("select * from ( select ")
+            .append(originalSql, 0, startOfSelect).append("select * from ( select ")
             .append(getRowNumber(originalSql));
         if (hasDistinct(originalSql)) {
             pagingSelect.append(" row_.* from ( ").append(originalSql.substring(startOfSelect)).append(" ) as row_");
