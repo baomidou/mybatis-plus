@@ -63,7 +63,7 @@ public final class SqlScriptUtils {
      */
     public static String convertTrim(String sqlScript, String prefix, String suffix, String prefixOverride,
                                      String suffixOverrides) {
-        StringBuilder sb = new StringBuilder("<trim");
+        StringBuilder sb = new StringBuilder(StringPool.NEWLINE).append("<trim");
         if (StringUtils.isNotEmpty(prefix)) {
             sb.append(StringPool.SPACE).append("prefix=\"").append(prefix).append(StringPool.QUOTE);
         }
@@ -77,6 +77,6 @@ public final class SqlScriptUtils {
             sb.append(StringPool.SPACE).append("suffixOverrides=\"").append(suffixOverrides).append(StringPool.QUOTE);
         }
         return sb.append(StringPool.RIGHT_CHEV).append(StringPool.NEWLINE).append(sqlScript)
-            .append(StringPool.NEWLINE).append("</trim>").toString();
+            .append(StringPool.NEWLINE).append("</trim>").append(StringPool.NEWLINE).toString();
     }
 }

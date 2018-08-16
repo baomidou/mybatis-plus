@@ -15,12 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
-import static java.util.stream.Collectors.joining;
-
-import java.util.List;
-
-import org.apache.ibatis.session.Configuration;
-
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
@@ -30,11 +24,15 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
-
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.apache.ibatis.session.Configuration;
+
+import java.util.List;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * <p>
@@ -209,7 +207,8 @@ public class TableInfo {
             if (idType == IdType.AUTO) {
                 return "";
             }
-            return SqlScriptUtils.HASH_LEFT_BRACE + keyProperty + StringPool.RIGHT_BRACE + StringPool.COMMA;
+            return SqlScriptUtils.HASH_LEFT_BRACE + keyProperty + StringPool.RIGHT_BRACE +
+                StringPool.COMMA + StringPool.NEWLINE;
         }
         return "";
     }
@@ -226,7 +225,7 @@ public class TableInfo {
             if (idType == IdType.AUTO) {
                 return "";
             }
-            return keyColumn + StringPool.COMMA;
+            return keyColumn + StringPool.COMMA + StringPool.NEWLINE;
         }
         return "";
     }
@@ -241,7 +240,7 @@ public class TableInfo {
      */
     public String getAllInsertSqlProperty() {
         return getKeyInsertSqlProperty() + fieldList.stream().map(TableFieldInfo::getInsertSqlProperty)
-            .collect(joining(StringPool.EMPTY));
+            .collect(joining(StringPool.NEWLINE));
     }
 
     /**
@@ -253,7 +252,7 @@ public class TableInfo {
      */
     public String getAllInsertSqlColumn() {
         return getKeyInsertSqlColumn() + fieldList.stream().map(TableFieldInfo::getInsertSqlColumn)
-            .collect(joining(StringPool.EMPTY));
+            .collect(joining(StringPool.NEWLINE));
     }
 
     /**
