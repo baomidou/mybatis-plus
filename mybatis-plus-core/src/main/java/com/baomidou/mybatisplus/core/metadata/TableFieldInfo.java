@@ -307,7 +307,8 @@ public class TableFieldInfo {
         prefix = StringUtils.isEmpty(prefix) ? StringPool.EMPTY : prefix;
         // 默认:  AND column=#{prefix + el}
         String sqlScript = " AND " + String.format(condition, column, prefix + el);
-        return convertIf(sqlScript, prefix + property);
+        // 查询的时候只判非空
+        return SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", prefix + property));
     }
 
     /**
