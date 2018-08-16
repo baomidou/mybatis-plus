@@ -101,7 +101,7 @@ public class TableInfo {
     /**
      * 是否开启下划线转驼峰
      */
-    private boolean underCamel;
+    private boolean underCamel = true;
     /**
      * 标记该字段属于哪个类
      */

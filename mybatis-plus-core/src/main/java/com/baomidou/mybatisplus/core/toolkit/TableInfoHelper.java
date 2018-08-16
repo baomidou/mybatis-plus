@@ -159,6 +159,7 @@ public class TableInfoHelper {
         if (null != builderAssistant) {
             tableInfo.setCurrentNamespace(builderAssistant.getCurrentNamespace());
             tableInfo.setConfigMark(builderAssistant.getConfiguration());
+            tableInfo.setUnderCamel(builderAssistant.getConfiguration().isMapUnderscoreToCamelCase());
             globalConfig = GlobalConfigUtils.getGlobalConfig(builderAssistant.getConfiguration());
         } else {
             // 兼容测试场景
