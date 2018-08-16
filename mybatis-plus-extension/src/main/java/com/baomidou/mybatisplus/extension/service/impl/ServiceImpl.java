@@ -19,6 +19,8 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.session.SqlSession;
@@ -303,7 +305,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
     @Override
     public List<Object> listObjs(Wrapper<T> queryWrapper) {
-        return baseMapper.selectObjs(queryWrapper);
+        return baseMapper.selectObjs(queryWrapper).stream().filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     @Override
