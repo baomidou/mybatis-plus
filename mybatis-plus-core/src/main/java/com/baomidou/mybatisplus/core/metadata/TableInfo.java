@@ -307,15 +307,16 @@ public class TableInfo {
      * 获取逻辑删除字段的 sql 脚本
      *
      * @param startWithAnd 是否以 and 开头
+     * @param deleteValue  是否需要的是逻辑删除值
      * @return sql 脚本
      */
-    public String getLogicDeleteSql(boolean startWithAnd) {
+    public String getLogicDeleteSql(boolean startWithAnd, boolean deleteValue) {
         if (isLogicDelete()) {
-            TableFieldInfo fieldInfo = fieldList.stream().filter(TableFieldInfo::isLogicDelete).findFirst()
+            TableFieldInfo field = fieldList.stream().filter(TableFieldInfo::isLogicDelete).findFirst()
                 .orElseThrow(() -> ExceptionUtils.mpe(String.format("can't find the logicFiled from table {%s}", tableName)));
-            String formatStr = fieldInfo.isCharSequence() ? "'%s'" : "%s";
-            String logicDeleteSql = fieldInfo.getColumn() + StringPool.EQUALS +
-                String.format(formatStr, fieldInfo.getLogicNotDeleteValue());
+            String formatStr = field.isCharSequence() ? "'%s'" : "%s";
+            String logicDeleteSql = field.getColumn() + StringPool.EQUALS +
+                String.format(formatStr, deleteValue ? field.getLogicDeleteValue() : field.getLogicNotDeleteValue());
             if (startWithAnd) {
                 logicDeleteSql = " AND " + logicDeleteSql;
             }
