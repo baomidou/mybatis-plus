@@ -15,13 +15,16 @@
  */
 package com.baomidou.mybatisplus.extension.injector;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
+
+import java.text.MessageFormat;
+import java.util.List;
 
 /**
  * <p>
@@ -56,7 +59,7 @@ public abstract class LogicAbstractMethod extends AbstractMethod {
                 sql.append(fieldInfo.getColumn());
                 if (StringUtils.isCharSequence(fieldInfo.getPropertyType())) {
                     sql.append("='").append(fieldInfo.getLogicNotDeleteValue()).append(StringPool.SINGLE_QUOTE);
-                    } else {
+                } else {
                     sql.append(StringPool.EQUALS).append(fieldInfo.getLogicNotDeleteValue());
                 }
             }
@@ -97,34 +100,17 @@ public abstract class LogicAbstractMethod extends AbstractMethod {
     @Override
     protected String sqlWhereEntityWrapper(TableInfo table) {
         if (table.isLogicDelete()) {
-            StringBuilder where = new StringBuilder(128);
-            where.append("<choose><when test=\"ew!=null and !ew.emptyOfWhere\">");
-            where.append("<trim prefix=\"WHERE\" prefixOverrides=\"AND|OR\">");
-            where.append("<if test=\"ew.entity!=null\">");
-            if (StringUtils.isNotEmpty(table.getKeyProperty())) {
-                where.append("<if test=\"ew.entity.").append(table.getKeyProperty()).append("!=null\">");
-                where.append(" AND ").append(table.getKeyColumn()).append("=#{ew.entity.");
-                where.append(table.getKeyProperty()).append(StringPool.RIGHT_BRACE);
-                where.append("</if>");
-            }
-            List<TableFieldInfo> fieldList = table.getFieldList();
-            for (TableFieldInfo fieldInfo : fieldList) {
-                where.append(convertIfTag(fieldInfo, "ew.entity.", false));
-                where.append(" AND ").append(sqlCondition(fieldInfo.getCondition(),
-                    fieldInfo.getColumn(), "ew.entity." + fieldInfo.getEl()));
-                where.append(convertIfTag(fieldInfo, true));
-            }
-            where.append("</if>");
-            // 删除逻辑
-            where.append(getLogicDeleteSql(true, table));
-            // SQL 片段
-            where.append("<if test=\"ew.sqlSegment!=null and ew.sqlSegment!=''\"> AND ${ew.sqlSegment}</if>");
-            where.append("</trim>");
-            where.append("</when><otherwise>WHERE ");
-            // 删除逻辑
-            where.append(getLogicDeleteSql(false, table));
-            where.append("</otherwise></choose>");
-            return where.toString();
+            String sqlScript = table.getAllSqlWhere(true, true, Constants.WRAPPER_ENTITY_SPOT);
+            sqlScript = StringPool.NEWLINE + sqlScript + StringPool.NEWLINE;
+            sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", Constants.WRAPPER_ENTITY));
+            sqlScript += (StringPool.NEWLINE + table.getLogicDeleteSql(true, true));
+            sqlScript += (StringPool.NEWLINE + SqlScriptUtils.convertIf(String.format(" AND ${%s}",
+                Constants.WRAPPER_SQLSEGMENT),
+                MessageFormat.format("{0} != null and {0} != ''", Constants.WRAPPER_SQLSEGMENT)));
+            sqlScript = SqlScriptUtils.convertTrim(sqlScript, "WHERE", null, "AND|OR", null);
+            sqlScript = SqlScriptUtils.convertChoose("ew!=null and !ew.emptyOfWhere", sqlScript,
+                "WHERE " + table.getLogicDeleteSql(false, false));
+            return sqlScript;
         }
         // 正常逻辑
         return super.sqlWhereEntityWrapper(table);

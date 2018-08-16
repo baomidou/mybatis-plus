@@ -87,8 +87,11 @@ public final class SqlScriptUtils {
      * @param otherwise otherwise 内容
      * @return choose 脚本
      */
-    public static String convertChoose(String whenTest, String otherwise) {
-        return StringPool.NEWLINE + "<when test=\"" + whenTest + StringPool.QUOTE + StringPool.RIGHT_CHEV +
-            "</when>" + StringPool.NEWLINE + "<otherwise>" + otherwise + "</otherwise>" + "</choose>";
+    public static String convertChoose(String whenTest, String whenSqlScript, String otherwise) {
+        return StringPool.NEWLINE + "<choose>" + StringPool.NEWLINE +
+            "<when test=\"" + whenTest + StringPool.QUOTE + StringPool.RIGHT_CHEV +
+            whenSqlScript + "</when>" + StringPool.NEWLINE +
+            "<otherwise>" + otherwise + "</otherwise>" + StringPool.NEWLINE +
+            "</choose>" + StringPool.NEWLINE;
     }
 }
