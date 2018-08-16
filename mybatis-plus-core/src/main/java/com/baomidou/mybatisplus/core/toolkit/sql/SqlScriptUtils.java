@@ -45,8 +45,8 @@ public final class SqlScriptUtils {
      * @param sqlScript sql 脚本片段
      * @return if 脚本
      */
-    public static String convertIf(String sqlScript, String testInValue) {
-        return String.format("<if test=\"%s\">%s</if>", testInValue, sqlScript);
+    public static String convertIf(String sqlScript, String ifTest) {
+        return String.format("<if test=\"%s\">%s</if>", ifTest, sqlScript);
     }
 
     /**
@@ -57,11 +57,11 @@ public final class SqlScriptUtils {
      * @param sqlScript       sql 脚本片段
      * @param prefix          以...开头
      * @param suffix          以...结尾
-     * @param prefixOverride  干掉最前一个...
+     * @param prefixOverrides 干掉最前一个...
      * @param suffixOverrides 干掉最后一个...
      * @return trim 脚本
      */
-    public static String convertTrim(String sqlScript, String prefix, String suffix, String prefixOverride,
+    public static String convertTrim(String sqlScript, String prefix, String suffix, String prefixOverrides,
                                      String suffixOverrides) {
         StringBuilder sb = new StringBuilder(StringPool.NEWLINE).append("<trim");
         if (StringUtils.isNotEmpty(prefix)) {
@@ -70,8 +70,8 @@ public final class SqlScriptUtils {
         if (StringUtils.isNotEmpty(suffix)) {
             sb.append(StringPool.SPACE).append("suffix=\"").append(suffix).append(StringPool.QUOTE);
         }
-        if (StringUtils.isNotEmpty(prefixOverride)) {
-            sb.append(StringPool.SPACE).append("prefixOverride=\"").append(prefixOverride).append(StringPool.QUOTE);
+        if (StringUtils.isNotEmpty(prefixOverrides)) {
+            sb.append(StringPool.SPACE).append("prefixOverrides=\"").append(prefixOverrides).append(StringPool.QUOTE);
         }
         if (StringUtils.isNotEmpty(suffixOverrides)) {
             sb.append(StringPool.SPACE).append("suffixOverrides=\"").append(suffixOverrides).append(StringPool.QUOTE);

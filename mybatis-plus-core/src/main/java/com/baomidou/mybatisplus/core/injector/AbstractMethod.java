@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
 import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
@@ -36,6 +37,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
+import java.text.MessageFormat;
 import java.util.List;
 
 /**
@@ -315,27 +317,15 @@ public abstract class AbstractMethod {
      * @return String
      */
     protected String sqlWhereEntityWrapper(TableInfo table) {
-        StringBuilder where = new StringBuilder(128);
-        where.append("<if test=\"ew!=null and !ew.emptyOfWhere\">");
-        where.append("<trim prefix=\"WHERE\" prefixOverrides=\"AND|OR\">");
-        where.append("<if test=\"ew.entity!=null\">");
-        if (StringUtils.isNotEmpty(table.getKeyProperty())) {
-            where.append("<if test=\"ew.entity.").append(table.getKeyProperty()).append("!=null\">");
-            where.append(table.getKeyColumn()).append("=#{ew.entity.").append(table.getKeyProperty()).append(StringPool.RIGHT_BRACE);
-            where.append("</if>");
-        }
-        List<TableFieldInfo> fieldList = table.getFieldList();
-        for (TableFieldInfo fieldInfo : fieldList) {
-            where.append(convertIfTag(fieldInfo, "ew.entity.", false));
-            where.append(" AND ").append(sqlCondition(fieldInfo.getCondition(), fieldInfo.getColumn(),
-                "ew.entity." + fieldInfo.getEl()));
-            where.append(convertIfTag(fieldInfo, true));
-        }
-        where.append("</if>");
-        where.append("<if test=\"ew.sqlSegment!=null and ew.sqlSegment!=''\"> AND ${ew.sqlSegment}</if>");
-        where.append("</trim>");
-        where.append("</if>");
-        return where.toString();
+        String sqlScript = table.getAllSqlWhere(false, true, Constants.WRAPPER_ENTITY_SPOT);
+        sqlScript = StringPool.NEWLINE + sqlScript + StringPool.NEWLINE;
+        sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", Constants.WRAPPER_ENTITY));
+        sqlScript += (StringPool.NEWLINE + SqlScriptUtils.convertIf(String.format(" AND ${%s}",
+            Constants.WRAPPER_SQLSEGMENT),
+            MessageFormat.format("{0} != null and {0} != ''", Constants.WRAPPER_SQLSEGMENT)));
+        sqlScript = SqlScriptUtils.convertTrim(sqlScript, "WHERE", null, "AND|OR", null);
+        sqlScript = SqlScriptUtils.convertIf(sqlScript, "ew!=null and !ew.emptyOfWhere");
+        return sqlScript;
     }
 
     /**
