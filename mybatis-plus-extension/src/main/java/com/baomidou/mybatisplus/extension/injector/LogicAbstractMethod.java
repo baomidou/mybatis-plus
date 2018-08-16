@@ -104,9 +104,9 @@ public abstract class LogicAbstractMethod extends AbstractMethod {
             sqlScript = StringPool.NEWLINE + sqlScript + StringPool.NEWLINE;
             sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", Constants.WRAPPER_ENTITY));
             sqlScript += (StringPool.NEWLINE + table.getLogicDeleteSql(true, true));
-            sqlScript += (StringPool.NEWLINE + SqlScriptUtils.convertIf(String.format(" AND ${%s}",
-                Constants.WRAPPER_SQLSEGMENT),
-                MessageFormat.format("{0} != null and {0} != ''", Constants.WRAPPER_SQLSEGMENT)));
+            sqlScript += StringPool.NEWLINE;
+            sqlScript += SqlScriptUtils.convertIf(String.format(" AND ${%s}", Constants.WRAPPER_SQLSEGMENT),
+                MessageFormat.format("{0} != null and {0} != ''", Constants.WRAPPER_SQLSEGMENT));
             sqlScript = SqlScriptUtils.convertTrim(sqlScript, "WHERE", null, "AND|OR", null);
             sqlScript = SqlScriptUtils.convertChoose("ew!=null and !ew.emptyOfWhere", sqlScript,
                 "WHERE " + table.getLogicDeleteSql(false, false));

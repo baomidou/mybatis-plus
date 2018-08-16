@@ -89,8 +89,8 @@ public final class SqlScriptUtils {
      */
     public static String convertChoose(String whenTest, String whenSqlScript, String otherwise) {
         return "<choose>" + StringPool.NEWLINE +
-            "<when test=\"" + whenTest + StringPool.QUOTE + StringPool.RIGHT_CHEV +
-            whenSqlScript + "</when>" + StringPool.NEWLINE +
+            "<when test=\"" + whenTest + StringPool.QUOTE + StringPool.RIGHT_CHEV + StringPool.NEWLINE +
+            whenSqlScript + StringPool.NEWLINE + "</when>" + StringPool.NEWLINE +
             "<otherwise>" + otherwise + "</otherwise>" + StringPool.NEWLINE +
             "</choose>";
     }

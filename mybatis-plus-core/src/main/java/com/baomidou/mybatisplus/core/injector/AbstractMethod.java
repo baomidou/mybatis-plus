@@ -182,15 +182,6 @@ public abstract class AbstractMethod {
 
     /**
      * <p>
-     * 拼接字符串 todo 看以后不需要就删了
-     * </p>
-     */
-    protected String joinStr(String... strings) {
-        return StringUtils.appends(null, strings);
-    }
-
-    /**
-     * <p>
      * SQL 查询所有表字段
      * </p>
      *
@@ -208,8 +199,9 @@ public abstract class AbstractMethod {
         if (!queryWrapper) {
             return selectColumns;
         }
-        return "<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>" +
-            selectColumns + "</otherwise></choose>";
+        return SqlScriptUtils.convertChoose(String.format("%s != null and %s != null",
+            Constants.WRAPPER, Constants.Q_WRAPPER_SQL_SELECT),
+            String.format("${%s}", Constants.Q_WRAPPER_SQL_SELECT), selectColumns);
     }
 
     /**
@@ -220,8 +212,9 @@ public abstract class AbstractMethod {
      * @param table 表信息
      */
     protected String sqlSelectObjsColumns(TableInfo table) {
-        return "<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>" +
-            table.getAllSqlSelect() + "</otherwise></choose>";
+        return SqlScriptUtils.convertChoose(String.format("%s != null and %s != null",
+            Constants.WRAPPER, Constants.Q_WRAPPER_SQL_SELECT),
+            String.format("${%s}", Constants.Q_WRAPPER_SQL_SELECT), table.getAllSqlSelect());
     }
 
     /**
@@ -318,9 +311,9 @@ public abstract class AbstractMethod {
         String sqlScript = table.getAllSqlWhere(false, true, Constants.WRAPPER_ENTITY_SPOT);
         sqlScript = StringPool.NEWLINE + sqlScript + StringPool.NEWLINE;
         sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", Constants.WRAPPER_ENTITY));
-        sqlScript += (StringPool.NEWLINE + SqlScriptUtils.convertIf(String.format(" AND ${%s}",
-            Constants.WRAPPER_SQLSEGMENT),
-            MessageFormat.format("{0} != null and {0} != ''", Constants.WRAPPER_SQLSEGMENT)));
+        sqlScript += StringPool.NEWLINE;
+        sqlScript += SqlScriptUtils.convertIf(String.format(" AND ${%s}", Constants.WRAPPER_SQLSEGMENT),
+            MessageFormat.format("{0} != null and {0} != ''", Constants.WRAPPER_SQLSEGMENT));
         sqlScript = SqlScriptUtils.convertTrim(sqlScript, "WHERE", null, "AND|OR", null);
         sqlScript = SqlScriptUtils.convertIf(sqlScript, "ew!=null and !ew.emptyOfWhere");
         return sqlScript;
