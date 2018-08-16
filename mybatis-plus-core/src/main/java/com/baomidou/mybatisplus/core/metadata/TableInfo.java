@@ -200,7 +200,7 @@ public class TableInfo {
      */
     public String getKeyInsertSqlProperty() {
         if (StringUtils.isNotEmpty(keyProperty)) {
-            if (idType.getKey() == 0) {
+            if (idType == IdType.AUTO) {
                 return "";
             }
             return SqlScriptUtils.HASH_LEFT_BRACE + keyProperty + StringPool.RIGHT_BRACE + StringPool.COMMA;
@@ -217,7 +217,7 @@ public class TableInfo {
      */
     public String getKeyInsertSqlColumn() {
         if (StringUtils.isNotEmpty(keyColumn)) {
-            if (idType.getKey() == 0) {
+            if (idType == IdType.AUTO) {
                 return "";
             }
             return keyColumn + StringPool.COMMA;
