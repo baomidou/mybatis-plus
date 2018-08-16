@@ -95,6 +95,16 @@ public final class SqlScriptUtils {
             "</choose>";
     }
 
+    /**
+     * 生成 foreach 标签的脚本
+     *
+     * @param sqlScript  foreach 内部的 sql 脚本
+     * @param collection collection
+     * @param index      index
+     * @param item       item
+     * @param separator  separator
+     * @return foreach 脚本
+     */
     public static String convertForeach(String sqlScript, String collection, String index, String item,
                                         String separator) {
         StringBuilder sb = new StringBuilder("<foreach");
@@ -114,6 +124,12 @@ public final class SqlScriptUtils {
             .append(StringPool.NEWLINE).append("</foreach>").toString();
     }
 
+    /**
+     * 生成 where 标签的脚本
+     *
+     * @param sqlScript where 内部的 sql 脚本
+     * @return where 脚本
+     */
     public static String convertWhere(String sqlScript) {
         return "<where>" + StringPool.NEWLINE + sqlScript + StringPool.NEWLINE + "</where>";
     }
