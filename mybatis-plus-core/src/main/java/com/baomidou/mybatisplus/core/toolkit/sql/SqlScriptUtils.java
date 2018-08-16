@@ -63,7 +63,7 @@ public final class SqlScriptUtils {
      */
     public static String convertTrim(String sqlScript, String prefix, String suffix, String prefixOverrides,
                                      String suffixOverrides) {
-        StringBuilder sb = new StringBuilder(StringPool.NEWLINE).append("<trim");
+        StringBuilder sb = new StringBuilder("<trim");
         if (StringUtils.isNotEmpty(prefix)) {
             sb.append(StringPool.SPACE).append("prefix=\"").append(prefix).append(StringPool.QUOTE);
         }
@@ -77,7 +77,7 @@ public final class SqlScriptUtils {
             sb.append(StringPool.SPACE).append("suffixOverrides=\"").append(suffixOverrides).append(StringPool.QUOTE);
         }
         return sb.append(StringPool.RIGHT_CHEV).append(StringPool.NEWLINE).append(sqlScript)
-            .append(StringPool.NEWLINE).append("</trim>").append(StringPool.NEWLINE).toString();
+            .append(StringPool.NEWLINE).append("</trim>").toString();
     }
 
     /**
@@ -88,10 +88,29 @@ public final class SqlScriptUtils {
      * @return choose 脚本
      */
     public static String convertChoose(String whenTest, String whenSqlScript, String otherwise) {
-        return StringPool.NEWLINE + "<choose>" + StringPool.NEWLINE +
+        return "<choose>" + StringPool.NEWLINE +
             "<when test=\"" + whenTest + StringPool.QUOTE + StringPool.RIGHT_CHEV +
             whenSqlScript + "</when>" + StringPool.NEWLINE +
             "<otherwise>" + otherwise + "</otherwise>" + StringPool.NEWLINE +
-            "</choose>" + StringPool.NEWLINE;
+            "</choose>";
+    }
+
+    public static String convertForeach(String sqlScript, String collection, String index, String item,
+                                        String separator) {
+        StringBuilder sb = new StringBuilder("<foreach");
+        if (StringUtils.isNotEmpty(collection)) {
+            sb.append(StringPool.SPACE).append("collection=\"").append(collection).append(StringPool.QUOTE);
+        }
+        if (StringUtils.isNotEmpty(index)) {
+            sb.append(StringPool.SPACE).append("index=\"").append(index).append(StringPool.QUOTE);
+        }
+        if (StringUtils.isNotEmpty(item)) {
+            sb.append(StringPool.SPACE).append("item=\"").append(item).append(StringPool.QUOTE);
+        }
+        if (StringUtils.isNotEmpty(separator)) {
+            sb.append(StringPool.SPACE).append("separator=\"").append(separator).append(StringPool.QUOTE);
+        }
+        return sb.append(StringPool.RIGHT_CHEV).append(StringPool.NEWLINE).append(sqlScript)
+            .append(StringPool.NEWLINE).append("</foreach>").toString();
     }
 }

@@ -230,14 +230,12 @@ public abstract class AbstractMethod {
      * </p>
      */
     protected String sqlWhereByMap(TableInfo table) {
-        return "<if test=\"cm!=null and !cm.isEmpty\">" +
-            "<where>" +
-            "<foreach collection=\"cm\" index=\"k\" item=\"v\" separator=\"AND\">" +
-            "<choose><when test=\"v==null\"> ${k} IS NULL </when>" +
-            "<otherwise> ${k}=#{v} </otherwise></choose>" +
-            "</foreach>" +
-            "</where>" +
-            "</if>";
+        String sqlScript = SqlScriptUtils.convertChoose("v == null", " ${k} IS NULL ",
+            " ${k} = #{v} ");
+        sqlScript = SqlScriptUtils.convertForeach(sqlScript, "cm", "k", "v", "AND");
+        sqlScript = StringPool.NEWLINE + sqlScript + StringPool.NEWLINE;
+        sqlScript = SqlScriptUtils.convertIf(sqlScript, "cm != null and !cm.isEmpty");
+        return sqlScript;
     }
 
     /**

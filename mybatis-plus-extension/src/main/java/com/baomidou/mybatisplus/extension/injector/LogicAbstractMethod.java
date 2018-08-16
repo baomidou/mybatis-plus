@@ -118,20 +118,12 @@ public abstract class LogicAbstractMethod extends AbstractMethod {
 
     @Override
     protected String sqlWhereByMap(TableInfo table) {
+        String sqlScript = super.sqlWhereByMap(table);
         if (table.isLogicDelete()) {
-            return new StringBuilder()
-                .append("<trim prefix=\"WHERE\" prefixOverrides=\"AND\">")
-                .append("<if test=\"cm!=null and !cm.isEmpty\">")
-                .append("<foreach collection=\"cm\" index=\"k\" item=\"v\" separator=\"AND\">")
-                .append("<choose><when test=\"v==null\"> ${k} IS NULL </when>")
-                .append("<otherwise> ${k}=#{v} </otherwise></choose>")
-                .append("</foreach>")
-                .append("</if>")
-                .append(getLogicDeleteSql(true, table))
-                .append("</trim>")
-                .toString();
+            // 逻辑删除
+            sqlScript += (StringPool.NEWLINE + table.getLogicDeleteSql(true, false));
+            sqlScript = SqlScriptUtils.convertTrim(sqlScript, "WHERE", null, "AND", null);
         }
-        // 正常逻辑
-        return super.sqlWhereByMap(table);
+        return sqlScript;
     }
 }
