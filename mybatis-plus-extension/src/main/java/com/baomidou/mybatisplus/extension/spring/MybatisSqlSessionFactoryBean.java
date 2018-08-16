@@ -67,6 +67,7 @@ import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.enums.IEnum;
+import com.baomidou.mybatisplus.core.toolkit.AopUtils;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
@@ -570,7 +571,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         }
         // TODO 设置元数据相关 如果用户没有配置 dbType 则自动获取
         if (globalConfig.getDbConfig().getDbType() == DbType.OTHER) {
-            try (Connection connection = dataSource.getConnection()) {
+            try (Connection connection = AopUtils.getTargetObject(this.dataSource).getConnection()) {
                 globalConfig.getDbConfig().setDbType(JdbcUtils.getDbType(connection.getMetaData().getURL()));
             } catch (Exception e) {
                 throw ExceptionUtils.mpe("Error: GlobalConfigUtils setMetaData Fail !  Cause:" + e);
