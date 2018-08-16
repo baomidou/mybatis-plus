@@ -15,131 +15,54 @@
  */
 package com.baomidou.mybatisplus.extension.plugins;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.Properties;
-
-import org.apache.ibatis.builder.StaticSqlSource;
 import org.apache.ibatis.executor.Executor;
+import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
-import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
+import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.session.Configuration;
-
-import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.extension.toolkit.VersionUtils;
-
+import org.apache.ibatis.session.RowBounds;
+import com.baomidou.mybatisplus.extension.handlers.AbstractSqlParserHandler;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
  * <p>
- * SQL 执行分析拦截器【 目前只支持 MYSQL-5.6.3 以上版本 】
- * </p>
- * <p>
- * 使用解析器来替代该功能
- * com.baomidou.mybatisplus.extension.parsers.BlockAttackSqlParser
+ * //todo 苗神来改个名
+ * 防止全表更新与删除
  * </p>
  *
  * @author hubin
  * @since 2016-08-16
  */
-@Deprecated
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Accessors(chain = true)
 @Intercepts({@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})})
-public class SqlExplainInterceptor implements Interceptor {
+public class SqlExplainInterceptor extends AbstractSqlParserHandler implements Interceptor {
 
     private static final Log logger = LogFactory.getLog(SqlExplainInterceptor.class);
-    /**
-     * Mysql支持分析SQL的最小版本
-     */
-    private final String minMySQLVersion = "5.6.3";
-    /**
-     * 发现执行全表 delete update 语句是否停止执行
-     */
-    private boolean stopProceed = false;
+
+    private Properties properties;
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
-        /**
-         * 处理 DELETE UPDATE 语句
-         */
-        MappedStatement ms = (MappedStatement) invocation.getArgs()[0];
-        if (ms.getSqlCommandType() == SqlCommandType.DELETE || ms.getSqlCommandType() == SqlCommandType.UPDATE) {
-            Executor executor = (Executor) invocation.getTarget();
-            Configuration configuration = ms.getConfiguration();
-            Object parameter = invocation.getArgs()[1];
-            BoundSql boundSql = ms.getBoundSql(parameter);
-            Connection connection = executor.getTransaction().getConnection();
-            String databaseVersion = connection.getMetaData().getDatabaseProductVersion();
-            if (GlobalConfigUtils.getDbType(configuration).equals(DbType.MYSQL)
-                && VersionUtils.compare(minMySQLVersion, databaseVersion)) {
-                logger.warn("Warn: Your mysql version needs to be greater than '5.6.3' to execute of Sql Explain!");
-                return invocation.proceed();
-            }
-            /**
-             * 执行 SQL 分析
-             */
-            sqlExplain(configuration, ms, boundSql, connection, parameter);
-        }
+        Object[] args = invocation.getArgs();
+        MappedStatement ms = (MappedStatement) args[0];
+        Object parameter = args[1];
+        Configuration configuration = ms.getConfiguration();
+        Object target = invocation.getTarget();
+        StatementHandler handler = configuration.newStatementHandler((Executor) target, ms, parameter, RowBounds.DEFAULT, null, null);
+        this.sqlParser(SystemMetaObject.forObject(handler));
         return invocation.proceed();
-    }
-
-    /**
-     * <p>
-     * 判断是否执行 SQL
-     * </p>
-     *
-     * @param configuration
-     * @param mappedStatement
-     * @param boundSql
-     * @param connection
-     * @param parameter
-     * @return
-     * @throws Exception
-     */
-    protected void sqlExplain(Configuration configuration, MappedStatement mappedStatement, BoundSql boundSql,
-                              Connection connection, Object parameter) {
-        StringBuilder explain = new StringBuilder("EXPLAIN ");
-        explain.append(boundSql.getSql());
-        String sqlExplain = explain.toString();
-        StaticSqlSource sqlsource = new StaticSqlSource(configuration, sqlExplain, boundSql.getParameterMappings());
-        MappedStatement.Builder builder = new MappedStatement.Builder(configuration, "explain_sql", sqlsource,
-            SqlCommandType.SELECT);
-        builder.resultMaps(mappedStatement.getResultMaps()).resultSetType(mappedStatement.getResultSetType())
-            .statementType(mappedStatement.getStatementType());
-        MappedStatement queryStatement = builder.build();
-        DefaultParameterHandler handler = new DefaultParameterHandler(queryStatement, parameter, boundSql);
-        try (PreparedStatement stmt = connection.prepareStatement(sqlExplain)) {
-            handler.setParameters(stmt);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    if (!"Using where".equals(rs.getString("Extra"))) {
-                        Assert.isFalse(this.isStopProceed(),
-                            "Error: Full table operation is prohibited. SQL: " + boundSql.getSql());
-                        break;
-                    }
-                }
-            }
-
-
-        } catch (Exception e) {
-            throw ExceptionUtils.mpe(e);
-        }
     }
 
     @Override
@@ -152,9 +75,6 @@ public class SqlExplainInterceptor implements Interceptor {
 
     @Override
     public void setProperties(Properties prop) {
-        String stopProceed = prop.getProperty("stopProceed");
-        if (StringUtils.isNotEmpty(stopProceed)) {
-            this.stopProceed = Boolean.valueOf(stopProceed);
-        }
+        this.properties = prop;
     }
 }
