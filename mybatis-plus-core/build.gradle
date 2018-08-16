@@ -8,6 +8,7 @@ dependencies {
     compile rootProject.ext.dependencies["jsqlparser"]
 
     provided rootProject.ext.dependencies["cglib"]
+    provided rootProject.ext.dependencies["spring-aop"]
 
     testCompile rootProject.ext.dependencies["mybatis-ehcache"]
     testCompile rootProject.ext.dependencies["logback-classic"]
