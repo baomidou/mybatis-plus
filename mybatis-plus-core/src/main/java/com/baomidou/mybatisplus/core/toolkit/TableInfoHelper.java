@@ -15,12 +15,16 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import com.baomidou.mybatisplus.annotation.*;
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
-import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
+import static java.util.stream.Collectors.toList;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
@@ -35,11 +39,16 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import java.lang.reflect.Field;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static java.util.stream.Collectors.toList;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.KeySequence;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
+import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
 
 /**
  * <p>
@@ -303,7 +312,7 @@ public class TableInfoHelper {
     private static boolean initTableIdWithAnnotation(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo,
                                                      Field field, Class<?> clazz) {
         TableId tableId = field.getAnnotation(TableId.class);
-        boolean underCamel = dbConfig.isColumnUnderline();
+        boolean underCamel = tableInfo.isUnderCamel();
         if (tableId != null) {
             if (StringUtils.isEmpty(tableInfo.getKeyColumn())) {
                 /* 主键策略（ 注解 > 全局 ） */
@@ -358,7 +367,7 @@ public class TableInfoHelper {
         }
         if (DEFAULT_ID_NAME.equalsIgnoreCase(column)) {
             if (StringUtils.isEmpty(tableInfo.getKeyColumn())) {
-                tableInfo.setKeyRelated(checkRelated(dbConfig.isColumnUnderline(), field.getName(), column))
+                tableInfo.setKeyRelated(checkRelated(tableInfo.isUnderCamel(), field.getName(), column))
                     .setIdType(dbConfig.getIdType())
                     .setKeyColumn(column)
                     .setKeyProperty(field.getName())

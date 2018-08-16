@@ -39,6 +39,8 @@ public class MybatisConfiguration extends Configuration {
 
     private static final Log logger = LogFactory.getLog(MybatisConfiguration.class);
 
+    protected boolean mapUnderscoreToCamelCase = true;
+
     /**
      * Mapper 注册
      */
@@ -129,4 +131,14 @@ public class MybatisConfiguration extends Configuration {
         return mybatisMapperRegistry.hasMapper(type);
     }
 
+    @Override
+    public boolean isMapUnderscoreToCamelCase() {
+        return mapUnderscoreToCamelCase;
+    }
+
+    @Override
+    public void setMapUnderscoreToCamelCase(boolean mapUnderscoreToCamelCase) {
+        super.setMapUnderscoreToCamelCase(mapUnderscoreToCamelCase);
+        this.mapUnderscoreToCamelCase = mapUnderscoreToCamelCase;
+    }
 }

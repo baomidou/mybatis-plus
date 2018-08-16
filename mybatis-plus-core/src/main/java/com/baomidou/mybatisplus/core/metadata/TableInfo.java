@@ -15,6 +15,12 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
+import static java.util.stream.Collectors.joining;
+
+import java.util.List;
+
+import org.apache.ibatis.session.Configuration;
+
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
@@ -24,15 +30,11 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
+
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.apache.ibatis.session.Configuration;
-
-import java.util.List;
-
-import static java.util.stream.Collectors.joining;
 
 /**
  * <p>
@@ -96,6 +98,10 @@ public class TableInfo {
      * 是否开启逻辑删除
      */
     private boolean logicDelete = false;
+    /**
+     * 是否开启下划线转驼峰
+     */
+    private boolean underCamel;
     /**
      * 标记该字段属于哪个类
      */

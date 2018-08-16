@@ -15,17 +15,23 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
-import com.baomidou.mybatisplus.annotation.*;
+import java.lang.reflect.Field;
+
+import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.SqlCondition;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
+
 import lombok.AccessLevel;
 import lombok.Getter;
-
-import java.lang.reflect.Field;
 
 /**
  * <p>
@@ -119,12 +125,12 @@ public class TableFieldInfo {
         tableInfo.setLogicDelete(this.initLogicDelete(dbConfig, field));
 
         if (StringUtils.isEmpty(tableField.value())) {
-            if (dbConfig.isColumnUnderline()) {
+            if (tableInfo.isUnderCamel()) {
                 column = StringUtils.camelToUnderline(column);
             }
         }
         this.column = column;
-        this.related = TableInfoHelper.checkRelated(dbConfig.isColumnUnderline(), this.property, this.column);
+        this.related = TableInfoHelper.checkRelated(tableInfo.isUnderCamel(), this.property, this.column);
 
         /*
          * 优先使用单个字段注解，否则使用全局配置
@@ -163,7 +169,7 @@ public class TableFieldInfo {
         tableInfo.setLogicDelete(this.initLogicDelete(dbConfig, field));
 
         String column = field.getName();
-        if (dbConfig.isColumnUnderline()) {
+        if (tableInfo.isUnderCamel()) {
             /* 开启字段下划线申明 */
             column = StringUtils.camelToUnderline(column);
         }
@@ -172,7 +178,7 @@ public class TableFieldInfo {
             column = column.toUpperCase();
         }
         this.column = column;
-        this.related = TableInfoHelper.checkRelated(dbConfig.isColumnUnderline(), this.property, this.column);
+        this.related = TableInfoHelper.checkRelated(tableInfo.isUnderCamel(), this.property, this.column);
     }
 
     /**

@@ -15,6 +15,13 @@
  */
 package com.baomidou.mybatisplus.core.config;
 
+import java.io.Serializable;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
+
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -22,14 +29,9 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-
-import java.io.Serializable;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * <p>
@@ -108,11 +110,6 @@ public class GlobalConfig implements Serializable {
          * 表名、是否使用下划线命名（默认 true:默认数据库表下划线命名）
          */
         private boolean tableUnderline = true;
-        /**
-         * 字段名、是否使用下划线命名（默认 true:默认数据库字段下划线命名）
-         * 与 Mybatis 的属性 mapUnderscoreToCamelCase 意义一致,并会设置到 configuration
-         */
-        private boolean columnUnderline = true;
         /**
          * String 类型字段 LIKE
          */
