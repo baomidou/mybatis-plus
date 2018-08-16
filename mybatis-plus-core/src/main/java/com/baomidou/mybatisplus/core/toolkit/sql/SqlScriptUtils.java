@@ -79,4 +79,16 @@ public final class SqlScriptUtils {
         return sb.append(StringPool.RIGHT_CHEV).append(StringPool.NEWLINE).append(sqlScript)
             .append(StringPool.NEWLINE).append("</trim>").append(StringPool.NEWLINE).toString();
     }
+
+    /**
+     * 生成 choose 标签的脚本
+     *
+     * @param whenTest  when 内 test 的内容
+     * @param otherwise otherwise 内容
+     * @return choose 脚本
+     */
+    public static String convertChoose(String whenTest, String otherwise) {
+        return StringPool.NEWLINE + "<when test=\"" + whenTest + StringPool.QUOTE + StringPool.RIGHT_CHEV +
+            "</when>" + StringPool.NEWLINE + "<otherwise>" + otherwise + "</otherwise>" + "</choose>";
+    }
 }

@@ -1,21 +1,26 @@
 package com.baomidou.mybatisplus.test;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
+import com.baomidou.mybatisplus.test.base.entity.LogicTestData;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.Assert;
 import org.junit.Test;
 
 public class SampleTest {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
+
     @Test
-    public void testPageJsonDecode() throws Exception {
-        String json = "{\"current\":2,\"pages\":1222,\"total\":10,\"size\":5,\"ascs\":[\"name\",\"age\",\"qiuqiu\"]}";
-        Page page = mapper.readValue(json, Page.class);
-        Assert.assertEquals(2, page.getCurrent());
-        Assert.assertEquals(5, page.getSize());
-        Assert.assertEquals(3, page.ascs().length);
-        Assert.assertEquals(2, page.getPages());
+    public void testTableInfoHelper2() {
+        TableInfo info = TableInfoHelper.initTableInfo(null, LogicTestData.class);
+//        System.out.println("----------- AllInsertSqlColumn -----------");
+//        System.out.println(info.getAllInsertSqlColumn());
+//        System.out.println("----------- AllInsertSqlProperty -----------");
+//        System.out.println(info.getAllInsertSqlProperty());
+        System.out.println("----------- AllSqlSet -----------");
+        System.out.println(info.getAllSqlSet(true, "ew.entity."));
+        System.out.println("----------- AllSqlWhere -----------");
+        System.out.println(info.getAllSqlWhere(false, true, "ew.entity."));
     }
 }

@@ -298,6 +298,19 @@ public class TableFieldInfo {
     }
 
     /**
+     * 获取 查询的 sql 片段
+     *
+     * @param prefix 前缀
+     * @return sql 脚本片段
+     */
+    public String getSqlWhere(String prefix) {
+        prefix = StringUtils.isEmpty(prefix) ? StringPool.EMPTY : prefix;
+        // 默认:  AND column=#{prefix + el}
+        String sqlScript = " AND " + String.format(condition, column, prefix + el);
+        return convertIf(sqlScript, prefix + property);
+    }
+
+    /**
      * 转换成 if 标签的脚本片段
      *
      * @param sqlScript sql 脚本片段

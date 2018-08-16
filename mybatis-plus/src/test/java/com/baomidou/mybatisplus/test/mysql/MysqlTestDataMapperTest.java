@@ -86,6 +86,11 @@ public class MysqlTestDataMapperTest {
     }
 
     @Test
+    public void other() {
+        logicMapper.update(new LogicTestData().setDeleted(true), null);
+    }
+
+    @Test
     public void delete() {
         mapper.delete(new QueryWrapper<TestData>().lambda()
             .eq(TestData::getId, 1014132604940615682L)

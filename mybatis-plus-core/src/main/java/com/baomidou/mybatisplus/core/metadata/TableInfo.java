@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
@@ -256,13 +257,70 @@ public class TableInfo {
     }
 
     /**
-     * 获取所有的 sql set 片段
+     * 获取所有的查询的 sql 片段
      *
-     * @param prefix 前缀
+     * @param ignoreLogicDelFiled 是否过滤掉逻辑删除字段
+     * @param withId              是否包含 id 项
+     * @param prefix              前缀
      * @return sql 脚本片段
      */
-    public String getAllSqlSet(String prefix) {
+    public String getAllSqlWhere(boolean ignoreLogicDelFiled, boolean withId, String prefix) {
         String newPrefix = StringUtils.isEmpty(prefix) ? StringPool.EMPTY : prefix;
-        return fieldList.stream().map(i -> i.getSqlSet(newPrefix)).collect(joining(StringPool.NEWLINE));
+        String filedSqlScript = fieldList.stream()
+            .filter(i -> {
+                if (ignoreLogicDelFiled) {
+                    return !(isLogicDelete() && i.isLogicDelete());
+                }
+                return true;
+            })
+            .map(i -> i.getSqlWhere(newPrefix)).collect(joining(StringPool.NEWLINE));
+        if (!withId) {
+            return filedSqlScript;
+        }
+        String newKeyProperty = newPrefix + keyProperty;
+        String keySqlScript = keyColumn + StringPool.EQUALS +
+            SqlScriptUtils.HASH_LEFT_BRACE + newKeyProperty + StringPool.RIGHT_BRACE;
+        return SqlScriptUtils.convertIf(keySqlScript, String.format("%s != null", newKeyProperty)) +
+            StringPool.NEWLINE + filedSqlScript;
+    }
+
+    /**
+     * 获取所有的 sql set 片段
+     *
+     * @param ignoreLogicDelFiled 是否过滤掉逻辑删除字段
+     * @param prefix              前缀
+     * @return sql 脚本片段
+     */
+    public String getAllSqlSet(boolean ignoreLogicDelFiled, String prefix) {
+        String newPrefix = StringUtils.isEmpty(prefix) ? StringPool.EMPTY : prefix;
+        return fieldList.stream()
+            .filter(i -> {
+                if (ignoreLogicDelFiled) {
+                    return !(isLogicDelete() && i.isLogicDelete());
+                }
+                return true;
+            })
+            .map(i -> i.getSqlSet(newPrefix)).collect(joining(StringPool.NEWLINE));
+    }
+
+    /**
+     * 获取逻辑删除字段的 sql 脚本
+     *
+     * @param startWithAnd 是否以 and 开头
+     * @return sql 脚本
+     */
+    public String getLogicDeleteSql(boolean startWithAnd) {
+        if (isLogicDelete()) {
+            TableFieldInfo fieldInfo = fieldList.stream().filter(TableFieldInfo::isLogicDelete).findFirst()
+                .orElseThrow(() -> ExceptionUtils.mpe(String.format("can't find the logicFiled from table {%s}", tableName)));
+            String formatStr = fieldInfo.isCharSequence() ? "'%s'" : "%s";
+            String logicDeleteSql = fieldInfo.getColumn() + StringPool.EQUALS +
+                String.format(formatStr, fieldInfo.getLogicNotDeleteValue());
+            if (startWithAnd) {
+                logicDeleteSql = " AND " + logicDeleteSql;
+            }
+            return logicDeleteSql;
+        }
+        return "";
     }
 }
