@@ -45,8 +45,12 @@ public final class SqlScriptUtils {
      * @param sqlScript sql 脚本片段
      * @return if 脚本
      */
-    public static String convertIf(String sqlScript, String ifTest) {
-        return String.format("<if test=\"%s\">%s</if>", ifTest, sqlScript);
+    public static String convertIf(final String sqlScript, final String ifTest, boolean newLine) {
+        String newSqlScript = sqlScript;
+        if (newLine) {
+            newSqlScript = StringPool.NEWLINE + newSqlScript + StringPool.NEWLINE;
+        }
+        return String.format("<if test=\"%s\">%s</if>", ifTest, newSqlScript);
     }
 
     /**

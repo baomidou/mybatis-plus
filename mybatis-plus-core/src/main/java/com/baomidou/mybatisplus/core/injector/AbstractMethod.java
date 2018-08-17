@@ -126,7 +126,7 @@ public abstract class AbstractMethod {
         if (ew) {
             sqlScript += StringPool.NEWLINE;
             sqlScript += SqlScriptUtils.convertIf(String.format("${%s}", Constants.U_WRAPPER_SQL_SET),
-                String.format("%s != null and %s != null", Constants.WRAPPER, Constants.U_WRAPPER_SQL_SET));
+                String.format("%s != null and %s != null", Constants.WRAPPER, Constants.U_WRAPPER_SQL_SET), false);
         }
         sqlScript = SqlScriptUtils.convertTrim(sqlScript, "SET", null, null, ",");
         return sqlScript;
@@ -179,9 +179,8 @@ public abstract class AbstractMethod {
             " ${k} = #{v} ");
         sqlScript = SqlScriptUtils.convertForeach(sqlScript, Constants.COLUMN_MAP, "k", "v", "AND");
         sqlScript = SqlScriptUtils.convertWhere(sqlScript);
-        sqlScript = StringPool.NEWLINE + sqlScript + StringPool.NEWLINE;
         sqlScript = SqlScriptUtils.convertIf(sqlScript,
-            String.format("%s != null and !%s", Constants.COLUMN_MAP, Constants.COLUMN_MAP_IS_EMPTY));
+            String.format("%s != null and !%s", Constants.COLUMN_MAP, Constants.COLUMN_MAP_IS_EMPTY), true);
         return sqlScript;
     }
 
@@ -195,13 +194,13 @@ public abstract class AbstractMethod {
      */
     protected String sqlWhereEntityWrapper(TableInfo table) {
         String sqlScript = table.getAllSqlWhere(false, true, Constants.WRAPPER_ENTITY_SPOT);
-        sqlScript = StringPool.NEWLINE + sqlScript + StringPool.NEWLINE;
-        sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", Constants.WRAPPER_ENTITY));
+        sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", Constants.WRAPPER_ENTITY), true);
         sqlScript += StringPool.NEWLINE;
         sqlScript += SqlScriptUtils.convertIf(String.format(" AND ${%s}", Constants.WRAPPER_SQLSEGMENT),
-            String.format("%s != null and %s != ''", Constants.WRAPPER_SQLSEGMENT, Constants.WRAPPER_SQLSEGMENT));
+            String.format("%s != null and %s != ''", Constants.WRAPPER_SQLSEGMENT, Constants.WRAPPER_SQLSEGMENT),
+            false);
         sqlScript = SqlScriptUtils.convertTrim(sqlScript, "WHERE", null, "AND|OR", null);
-        sqlScript = SqlScriptUtils.convertIf(sqlScript, "ew != null and !ew.emptyOfWhere");
+        sqlScript = SqlScriptUtils.convertIf(sqlScript, "ew != null and !ew.emptyOfWhere", false);
         return sqlScript;
     }
 

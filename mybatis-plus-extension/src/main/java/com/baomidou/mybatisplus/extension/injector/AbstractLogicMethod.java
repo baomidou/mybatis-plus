@@ -53,13 +53,15 @@ public abstract class AbstractLogicMethod extends AbstractMethod {
     protected String sqlWhereEntityWrapper(TableInfo table) {
         if (table.isLogicDelete()) {
             String sqlScript = table.getAllSqlWhere(true, true, Constants.WRAPPER_ENTITY_SPOT);
-            sqlScript = StringPool.NEWLINE + sqlScript + StringPool.NEWLINE;
-            sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", Constants.WRAPPER_ENTITY));
-            sqlScript += (StringPool.NEWLINE + table.getLogicDeleteSql(true, false));
-            sqlScript += StringPool.NEWLINE;
+            sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", Constants.WRAPPER_ENTITY),
+                true);
+            sqlScript += (StringPool.NEWLINE + table.getLogicDeleteSql(true, false) +
+                StringPool.NEWLINE);
             sqlScript += SqlScriptUtils.convertIf(String.format(" AND ${%s}", Constants.WRAPPER_SQLSEGMENT),
-                String.format("%s!=null and %s!=''", Constants.WRAPPER_SQLSEGMENT, Constants.WRAPPER_SQLSEGMENT));
-            sqlScript = SqlScriptUtils.convertTrim(sqlScript, "WHERE", null, "AND|OR", null);
+                String.format("%s!=null and %s!=''", Constants.WRAPPER_SQLSEGMENT, Constants.WRAPPER_SQLSEGMENT),
+                false);
+            sqlScript = SqlScriptUtils.convertTrim(sqlScript, "WHERE", null, "AND|OR",
+                null);
             sqlScript = SqlScriptUtils.convertChoose("ew!=null and !ew.emptyOfWhere", sqlScript,
                 "WHERE " + table.getLogicDeleteSql(false, false));
             return sqlScript;
@@ -75,8 +77,7 @@ public abstract class AbstractLogicMethod extends AbstractMethod {
             String sqlScript = SqlScriptUtils.convertChoose("v == null", " ${k} IS NULL ",
                 " ${k} = #{v} ");
             sqlScript = SqlScriptUtils.convertForeach(sqlScript, "cm", "k", "v", "AND");
-            sqlScript = StringPool.NEWLINE + sqlScript + StringPool.NEWLINE;
-            sqlScript = SqlScriptUtils.convertIf(sqlScript, "cm != null and !cm.isEmpty");
+            sqlScript = SqlScriptUtils.convertIf(sqlScript, "cm != null and !cm.isEmpty", true);
             sqlScript += (StringPool.NEWLINE + table.getLogicDeleteSql(true, false));
             sqlScript = SqlScriptUtils.convertTrim(sqlScript, "WHERE", null, "AND", null);
             return sqlScript;

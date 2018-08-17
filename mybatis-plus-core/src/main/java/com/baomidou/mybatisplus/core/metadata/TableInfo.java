@@ -280,7 +280,7 @@ public class TableInfo {
         String newKeyProperty = newPrefix + keyProperty;
         String keySqlScript = keyColumn + StringPool.EQUALS +
             SqlScriptUtils.HASH_LEFT_BRACE + newKeyProperty + StringPool.RIGHT_BRACE;
-        return SqlScriptUtils.convertIf(keySqlScript, String.format("%s != null", newKeyProperty)) +
+        return SqlScriptUtils.convertIf(keySqlScript, String.format("%s != null", newKeyProperty), false) +
             StringPool.NEWLINE + filedSqlScript;
     }
 

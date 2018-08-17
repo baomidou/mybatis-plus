@@ -308,7 +308,7 @@ public class TableFieldInfo {
         // 默认:  AND column=#{prefix + el}
         String sqlScript = " AND " + String.format(condition, column, prefix + el);
         // 查询的时候只判非空
-        return SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", prefix + property));
+        return SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", prefix + property), false);
     }
 
     /**
@@ -323,8 +323,9 @@ public class TableFieldInfo {
             return sqlScript;
         }
         if (fieldStrategy == FieldStrategy.NOT_EMPTY && isCharSequence) {
-            return SqlScriptUtils.convertIf(sqlScript, String.format("%s != null and %s != ''", property, property));
+            return SqlScriptUtils.convertIf(sqlScript, String.format("%s != null and %s != ''", property, property),
+                false);
         }
-        return SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", property));
+        return SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", property), false);
     }
 }
