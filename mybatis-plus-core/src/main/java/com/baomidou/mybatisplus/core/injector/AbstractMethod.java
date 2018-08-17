@@ -125,7 +125,7 @@ public abstract class AbstractMethod {
         String sqlScript = table.getAllSqlSet(logic, prefix);
         if (ew) {
             sqlScript += StringPool.NEWLINE;
-            sqlScript += SqlScriptUtils.convertIf(String.format("${%s}", Constants.U_WRAPPER_SQL_SET),
+            sqlScript += SqlScriptUtils.convertIf(SqlScriptUtils.unSafeParam(Constants.U_WRAPPER_SQL_SET),
                 String.format("%s != null and %s != null", Constants.WRAPPER, Constants.U_WRAPPER_SQL_SET), false);
         }
         sqlScript = SqlScriptUtils.convertTrim(sqlScript, "SET", null, null, ",");
@@ -153,7 +153,7 @@ public abstract class AbstractMethod {
         }
         return SqlScriptUtils.convertChoose(String.format("%s != null and %s != null",
             Constants.WRAPPER, Constants.Q_WRAPPER_SQL_SELECT),
-            String.format("${%s}", Constants.Q_WRAPPER_SQL_SELECT), selectColumns);
+            SqlScriptUtils.unSafeParam(Constants.Q_WRAPPER_SQL_SELECT), selectColumns);
     }
 
     /**
@@ -166,7 +166,7 @@ public abstract class AbstractMethod {
     protected String sqlSelectObjsColumns(TableInfo table) {
         return SqlScriptUtils.convertChoose(String.format("%s != null and %s != null",
             Constants.WRAPPER, Constants.Q_WRAPPER_SQL_SELECT),
-            String.format("${%s}", Constants.Q_WRAPPER_SQL_SELECT), table.getAllSqlSelect());
+            SqlScriptUtils.unSafeParam(Constants.Q_WRAPPER_SQL_SELECT), table.getAllSqlSelect());
     }
 
     /**

@@ -28,11 +28,6 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  */
 public final class SqlScriptUtils {
 
-    /**
-     * 脚本符号: #{
-     */
-    private static final String HASH_LEFT_BRACE = StringPool.HASH + StringPool.LEFT_BRACE;
-
     private SqlScriptUtils() {
         // ignore
     }
@@ -145,7 +140,7 @@ public final class SqlScriptUtils {
      * @return 脚本
      */
     public static String safeParam(final String param) {
-        return HASH_LEFT_BRACE + param + StringPool.RIGHT_BRACE;
+        return StringPool.HASH_LEFT_BRACE + param + StringPool.RIGHT_BRACE;
     }
 
     /**
