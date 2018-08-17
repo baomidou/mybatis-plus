@@ -264,8 +264,8 @@ public class TableInfo {
      * @param prefix              前缀
      * @return sql 脚本片段
      */
-    public String getAllSqlWhere(boolean ignoreLogicDelFiled, boolean withId, String prefix) {
-        String newPrefix = StringUtils.isEmpty(prefix) ? StringPool.EMPTY : prefix;
+    public String getAllSqlWhere(boolean ignoreLogicDelFiled, boolean withId, final String prefix) {
+        String newPrefix = prefix == null ? StringPool.EMPTY : prefix;
         String filedSqlScript = fieldList.stream()
             .filter(i -> {
                 if (ignoreLogicDelFiled) {
@@ -291,8 +291,8 @@ public class TableInfo {
      * @param prefix              前缀
      * @return sql 脚本片段
      */
-    public String getAllSqlSet(boolean ignoreLogicDelFiled, String prefix) {
-        String newPrefix = StringUtils.isEmpty(prefix) ? StringPool.EMPTY : prefix;
+    public String getAllSqlSet(boolean ignoreLogicDelFiled, final String prefix) {
+        String newPrefix = prefix == null ? StringPool.EMPTY : prefix;
         return fieldList.stream()
             .filter(i -> {
                 if (ignoreLogicDelFiled) {

@@ -280,21 +280,21 @@ public class TableFieldInfo {
      * @param prefix 前缀
      * @return sql 脚本片段
      */
-    public String getSqlSet(String prefix) {
-        prefix = StringUtils.isEmpty(prefix) ? StringPool.EMPTY : prefix;
+    public String getSqlSet(final String prefix) {
+        String newPrefix = prefix == null ? StringPool.EMPTY : prefix;
         // 默认: column=
         String sqlSet = column + StringPool.EQUALS;
         if (StringUtils.isNotEmpty(update)) {
             sqlSet += String.format(update, column);
         } else {
-            sqlSet += ("#{" + prefix + el + "}");
+            sqlSet += ("#{" + newPrefix + el + "}");
         }
         sqlSet += StringPool.COMMA;
         if (fieldFill == FieldFill.UPDATE || fieldFill == FieldFill.INSERT_UPDATE) {
             // 不进行 if 包裹
             return sqlSet;
         }
-        return convertIf(sqlSet, prefix + property);
+        return convertIf(sqlSet, newPrefix + property);
     }
 
     /**
@@ -303,12 +303,12 @@ public class TableFieldInfo {
      * @param prefix 前缀
      * @return sql 脚本片段
      */
-    public String getSqlWhere(String prefix) {
-        prefix = StringUtils.isEmpty(prefix) ? StringPool.EMPTY : prefix;
+    public String getSqlWhere(final String prefix) {
+        String newPrefix = prefix == null ? StringPool.EMPTY : prefix;
         // 默认:  AND column=#{prefix + el}
-        String sqlScript = " AND " + String.format(condition, column, prefix + el);
+        String sqlScript = " AND " + String.format(condition, column, newPrefix + el);
         // 查询的时候只判非空
-        return SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", prefix + property), false);
+        return SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", newPrefix + property), false);
     }
 
     /**
