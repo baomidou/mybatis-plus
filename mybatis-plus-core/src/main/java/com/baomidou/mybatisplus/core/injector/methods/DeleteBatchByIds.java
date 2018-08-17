@@ -15,12 +15,14 @@
  */
 package com.baomidou.mybatisplus.core.injector.methods;
 
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.SqlSource;
-
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.SqlSource;
 
 /**
  * <p>
@@ -36,7 +38,7 @@ public class DeleteBatchByIds extends AbstractMethod {
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.DELETE_BATCH_BY_IDS;
         String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), tableInfo.getKeyColumn(),
-            "<foreach item=\"item\" collection=\"coll\" separator=\",\">#{item}</foreach>");
+            SqlScriptUtils.convertForeach("#{item}", Constants.COLLECTION, null, "item", StringPool.COMMA));
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
         return this.addDeleteMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource);
     }

@@ -15,12 +15,14 @@
  */
 package com.baomidou.mybatisplus.core.injector.methods;
 
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.SqlSource;
-
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.SqlSource;
 
 /**
  * <p>
@@ -37,7 +39,7 @@ public class SelectBatchByIds extends AbstractMethod {
         SqlMethod sqlMethod = SqlMethod.SELECT_BATCH_BY_IDS;
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(),
             sqlSelectColumns(tableInfo, false), tableInfo.getTableName(), tableInfo.getKeyColumn(),
-            new StringBuilder("<foreach item=\"item\" collection=\"coll\" separator=\",\">#{item}</foreach>").toString()),
+            SqlScriptUtils.convertForeach("#{item}", Constants.COLLECTION, null, "item", StringPool.COMMA)),
             modelClass);
         return addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, tableInfo);
     }

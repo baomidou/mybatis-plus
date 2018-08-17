@@ -17,6 +17,9 @@ package com.baomidou.mybatisplus.extension.injector.methods;
 
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import com.baomidou.mybatisplus.extension.injector.AbstractLogicMethod;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
@@ -38,12 +41,12 @@ public class LogicDeleteBatchByIds extends AbstractLogicMethod {
         if (tableInfo.isLogicDelete()) {
             sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlLogicSet(tableInfo),
                 tableInfo.getKeyColumn(),
-                "<foreach item=\"item\" collection=\"coll\" separator=\",\">#{item}</foreach>",
+                SqlScriptUtils.convertForeach("#{item}", Constants.COLLECTION, null, "item", StringPool.COMMA),
                 tableInfo.getLogicDeleteSql(true, false));
         } else {
             sqlMethod = SqlMethod.DELETE_BATCH_BY_IDS;
             sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), tableInfo.getKeyColumn(),
-                "<foreach item=\"item\" collection=\"coll\" separator=\",\">#{item}</foreach>");
+                SqlScriptUtils.convertForeach("#{item}", Constants.COLLECTION, null, "item", StringPool.COMMA));
         }
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
         return addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
