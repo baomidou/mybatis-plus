@@ -31,7 +31,7 @@ public final class SqlScriptUtils {
     /**
      * 脚本符号: #{
      */
-    public static final String HASH_LEFT_BRACE = StringPool.HASH + StringPool.LEFT_BRACE;
+    private static final String HASH_LEFT_BRACE = StringPool.HASH + StringPool.LEFT_BRACE;
 
     private SqlScriptUtils() {
         // ignore
@@ -65,8 +65,8 @@ public final class SqlScriptUtils {
      * @param suffixOverrides 干掉最后一个...
      * @return trim 脚本
      */
-    public static String convertTrim(String sqlScript, String prefix, String suffix, String prefixOverrides,
-                                     String suffixOverrides) {
+    public static String convertTrim(final String sqlScript, final String prefix, final String suffix,
+                                     final String prefixOverrides, final String suffixOverrides) {
         StringBuilder sb = new StringBuilder("<trim");
         if (StringUtils.isNotEmpty(prefix)) {
             sb.append(StringPool.SPACE).append("prefix=\"").append(prefix).append(StringPool.QUOTE);
@@ -91,7 +91,7 @@ public final class SqlScriptUtils {
      * @param otherwise otherwise 内容
      * @return choose 脚本
      */
-    public static String convertChoose(String whenTest, String whenSqlScript, String otherwise) {
+    public static String convertChoose(final String whenTest, final String whenSqlScript, final String otherwise) {
         return "<choose>" + StringPool.NEWLINE +
             "<when test=\"" + whenTest + StringPool.QUOTE + StringPool.RIGHT_CHEV + StringPool.NEWLINE +
             whenSqlScript + StringPool.NEWLINE + "</when>" + StringPool.NEWLINE +
@@ -109,8 +109,8 @@ public final class SqlScriptUtils {
      * @param separator  separator
      * @return foreach 脚本
      */
-    public static String convertForeach(String sqlScript, String collection, String index, String item,
-                                        String separator) {
+    public static String convertForeach(final String sqlScript, final String collection, final String index,
+                                        final String item, final String separator) {
         StringBuilder sb = new StringBuilder("<foreach");
         if (StringUtils.isNotEmpty(collection)) {
             sb.append(StringPool.SPACE).append("collection=\"").append(collection).append(StringPool.QUOTE);
@@ -134,7 +134,27 @@ public final class SqlScriptUtils {
      * @param sqlScript where 内部的 sql 脚本
      * @return where 脚本
      */
-    public static String convertWhere(String sqlScript) {
+    public static String convertWhere(final String sqlScript) {
         return "<where>" + StringPool.NEWLINE + sqlScript + StringPool.NEWLINE + "</where>";
+    }
+
+    /**
+     * 安全入参:  #{入参}
+     *
+     * @param param 入参
+     * @return 脚本
+     */
+    public static String safeParam(final String param) {
+        return HASH_LEFT_BRACE + param + StringPool.RIGHT_BRACE;
+    }
+
+    /**
+     * 非安全入参:  ${入参}
+     *
+     * @param param 入参
+     * @return 脚本
+     */
+    public static String unSafeParam(final String param) {
+        return StringPool.DOLLAR_LEFT_BRACE + param + StringPool.RIGHT_BRACE;
     }
 }

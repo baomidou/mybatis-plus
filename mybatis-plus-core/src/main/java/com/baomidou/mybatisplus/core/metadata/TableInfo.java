@@ -208,8 +208,7 @@ public class TableInfo {
             if (idType == IdType.AUTO) {
                 return "";
             }
-            return SqlScriptUtils.HASH_LEFT_BRACE + keyProperty + StringPool.RIGHT_BRACE +
-                StringPool.COMMA + StringPool.NEWLINE;
+            return SqlScriptUtils.safeParam(keyProperty) + StringPool.COMMA + StringPool.NEWLINE;
         }
         return "";
     }
@@ -278,8 +277,7 @@ public class TableInfo {
             return filedSqlScript;
         }
         String newKeyProperty = newPrefix + keyProperty;
-        String keySqlScript = keyColumn + StringPool.EQUALS +
-            SqlScriptUtils.HASH_LEFT_BRACE + newKeyProperty + StringPool.RIGHT_BRACE;
+        String keySqlScript = keyColumn + StringPool.EQUALS + SqlScriptUtils.safeParam(newKeyProperty);
         return SqlScriptUtils.convertIf(keySqlScript, String.format("%s != null", newKeyProperty), false) +
             StringPool.NEWLINE + filedSqlScript;
     }

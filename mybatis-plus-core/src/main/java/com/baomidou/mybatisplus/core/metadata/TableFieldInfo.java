@@ -252,7 +252,7 @@ public class TableFieldInfo {
      * @return sql 脚本片段
      */
     public String getInsertSqlProperty() {
-        String sqlScript = SqlScriptUtils.HASH_LEFT_BRACE + el + StringPool.RIGHT_BRACE + StringPool.COMMA;
+        String sqlScript = SqlScriptUtils.safeParam(el) + StringPool.COMMA;
         if (fieldFill == FieldFill.INSERT || fieldFill == FieldFill.INSERT_UPDATE) {
             return sqlScript;
         }
@@ -287,7 +287,7 @@ public class TableFieldInfo {
         if (StringUtils.isNotEmpty(update)) {
             sqlSet += String.format(update, column);
         } else {
-            sqlSet += ("#{" + newPrefix + el + "}");
+            sqlSet += SqlScriptUtils.safeParam(newPrefix + el);
         }
         sqlSet += StringPool.COMMA;
         if (fieldFill == FieldFill.UPDATE || fieldFill == FieldFill.INSERT_UPDATE) {
@@ -318,7 +318,7 @@ public class TableFieldInfo {
      * @param property  字段名
      * @return if 脚本片段
      */
-    private String convertIf(String sqlScript, String property) {
+    private String convertIf(final String sqlScript, final String property) {
         if (fieldStrategy == FieldStrategy.IGNORED) {
             return sqlScript;
         }
