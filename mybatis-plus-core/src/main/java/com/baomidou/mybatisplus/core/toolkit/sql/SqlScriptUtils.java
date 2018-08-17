@@ -64,16 +64,16 @@ public final class SqlScriptUtils {
                                      final String prefixOverrides, final String suffixOverrides) {
         StringBuilder sb = new StringBuilder("<trim");
         if (StringUtils.isNotEmpty(prefix)) {
-            sb.append(StringPool.SPACE).append("prefix=\"").append(prefix).append(StringPool.QUOTE);
+            sb.append(" prefix=\"").append(prefix).append(StringPool.QUOTE);
         }
         if (StringUtils.isNotEmpty(suffix)) {
-            sb.append(StringPool.SPACE).append("suffix=\"").append(suffix).append(StringPool.QUOTE);
+            sb.append(" suffix=\"").append(suffix).append(StringPool.QUOTE);
         }
         if (StringUtils.isNotEmpty(prefixOverrides)) {
-            sb.append(StringPool.SPACE).append("prefixOverrides=\"").append(prefixOverrides).append(StringPool.QUOTE);
+            sb.append(" prefixOverrides=\"").append(prefixOverrides).append(StringPool.QUOTE);
         }
         if (StringUtils.isNotEmpty(suffixOverrides)) {
-            sb.append(StringPool.SPACE).append("suffixOverrides=\"").append(suffixOverrides).append(StringPool.QUOTE);
+            sb.append(" suffixOverrides=\"").append(suffixOverrides).append(StringPool.QUOTE);
         }
         return sb.append(StringPool.RIGHT_CHEV).append(StringPool.NEWLINE).append(sqlScript)
             .append(StringPool.NEWLINE).append("</trim>").toString();
@@ -108,16 +108,16 @@ public final class SqlScriptUtils {
                                         final String item, final String separator) {
         StringBuilder sb = new StringBuilder("<foreach");
         if (StringUtils.isNotEmpty(collection)) {
-            sb.append(StringPool.SPACE).append("collection=\"").append(collection).append(StringPool.QUOTE);
+            sb.append(" collection=\"").append(collection).append(StringPool.QUOTE);
         }
         if (StringUtils.isNotEmpty(index)) {
-            sb.append(StringPool.SPACE).append("index=\"").append(index).append(StringPool.QUOTE);
+            sb.append(" index=\"").append(index).append(StringPool.QUOTE);
         }
         if (StringUtils.isNotEmpty(item)) {
-            sb.append(StringPool.SPACE).append("item=\"").append(item).append(StringPool.QUOTE);
+            sb.append(" item=\"").append(item).append(StringPool.QUOTE);
         }
         if (StringUtils.isNotEmpty(separator)) {
-            sb.append(StringPool.SPACE).append("separator=\"").append(separator).append(StringPool.QUOTE);
+            sb.append(" separator=\"").append(separator).append(StringPool.QUOTE);
         }
         return sb.append(StringPool.RIGHT_CHEV).append(StringPool.NEWLINE).append(sqlScript)
             .append(StringPool.NEWLINE).append("</foreach>").toString();
