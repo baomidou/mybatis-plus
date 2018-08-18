@@ -51,6 +51,7 @@ public class PostgresTestDataMapperTest {
     @BeforeClass
     public static void init() throws Exception {
         PostgresDb.initPgData();
+        System.out.println("init success");
     }
 
     @Test

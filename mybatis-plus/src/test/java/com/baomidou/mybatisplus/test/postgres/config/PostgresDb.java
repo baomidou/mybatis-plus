@@ -6,14 +6,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import javax.sql.DataSource;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 public class PostgresDb extends BaseDb {
 
-    public static void initPgData() throws SQLException, IOException {
+    public static void initPgData() throws SQLException {
         ApplicationContext context = new ClassPathXmlApplicationContext("classpath:postgres/spring-test-postgres.xml");
         DataSource ds = context.getBean("dataSource", DataSource.class);
         try (Connection conn = ds.getConnection()) {
@@ -22,7 +21,7 @@ public class PostgresDb extends BaseDb {
     }
 
     public static void initData(Connection conn, String path, String ddlFileName)
-        throws SQLException, IOException {
+        throws SQLException {
         String createTableSql = readFile(path, ddlFileName);
         String[] sqls = createTableSql.split(";");
         Statement stmt = conn.createStatement();

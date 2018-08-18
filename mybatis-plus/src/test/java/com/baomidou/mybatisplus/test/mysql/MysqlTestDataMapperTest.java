@@ -52,6 +52,7 @@ public class MysqlTestDataMapperTest {
     @BeforeClass
     public static void init() throws Exception {
         MysqlDb.initMysqlData();
+        System.out.println("init success");
     }
 
     @Test
