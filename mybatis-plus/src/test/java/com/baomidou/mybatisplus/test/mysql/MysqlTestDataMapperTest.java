@@ -56,7 +56,7 @@ public class MysqlTestDataMapperTest {
             Long id = (long) i;
             commonMapper.insert(new CommonData().setTestInt(i).setTestStr(String.format("第%s条数据", i)).setId(id));
             commonLogicMapper.insert(new CommonLogicData().setTestInt(i).setTestStr(String.format("第%s条数据", i)).setId(id));
-            mysqlMapper.insert(new MysqlData().setOrder(1).setGroup(2).setId(id));
+            mysqlMapper.insert(new MysqlData().setOrder(i).setGroup(i).setId(id));
         }
     }
 
@@ -155,7 +155,10 @@ public class MysqlTestDataMapperTest {
         map.put("test_int", 9);
         Assert.assertTrue(CollectionUtils.isNotEmpty(commonMapper.selectByMap(map)));
         Assert.assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectByMap(map)));
-        Assert.assertTrue(CollectionUtils.isNotEmpty(mysqlMapper.selectByMap(map)));
+        Map<String, Object> map2 = new HashMap<>();
+        map2.put("id", 9L);
+        map2.put("`order`", 9);
+        Assert.assertTrue(CollectionUtils.isNotEmpty(mysqlMapper.selectByMap(map2)));
     }
 
     @Test
