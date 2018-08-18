@@ -1,35 +1,34 @@
-CREATE TABLE IF NOT EXISTS tb_test_data_logic (
-    id              BIGINT primary key,
-    test_int        integer,
-    test_str        varchar(50),
-    test_double     double,
-    test_boolean    tinyint(1),
-    test_date       date,
-    test_time       time,
-    test_date_time  datetime,
-    test_timestamp  timestamp,
-    create_datetime datetime,
-    update_datetime datetime,
-    deleted         tinyint(1) default 0,
-    version         integer    default 0
+drop table if exists common_data;
+drop table if exists common_logic_data;
+drop table if exists mysql_data;
+CREATE TABLE common_data (
+    id        BIGINT primary key,
+    test_int  integer,
+    test_str  varchar(50),
+    c_time    datetime,
+    u_time    datetime,
+    version   integer default 0,
+    tenant_id bigint
 )
     ENGINE = innodb
 DEFAULT CHARSET = utf8;
 
-CREATE TABLE IF NOT EXISTS tb_test_data (
-    id              BIGINT primary key,
-    test_int        integer,
-    test_str        varchar(50),
-    test_double     double,
-    test_boolean    tinyint(1),
-    test_date       date,
-    test_time       time,
-    test_date_time  datetime,
-    test_timestamp  timestamp,
-    create_datetime datetime,
-    update_datetime datetime,
-    version         integer default 0,
-    tenant_id       bigint
+CREATE TABLE common_logic_data (
+    id       BIGINT primary key,
+    test_int integer,
+    test_str varchar(50),
+    c_time   datetime,
+    u_time   datetime,
+    deleted  tinyint default 0,
+    version  integer default 0
+)
+    ENGINE = innodb
+DEFAULT CHARSET = utf8;
+
+CREATE TABLE mysql_data (
+    id BIGINT primary key,
+    ` order ` integer,
+    ` group ` integer
 )
     ENGINE = innodb
 DEFAULT CHARSET = utf8;

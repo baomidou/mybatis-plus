@@ -31,7 +31,7 @@ import java.util.List;
  * @since 2017/4/1
  */
 @Configuration
-@MapperScan("com.baomidou.mybatisplus.test.base.mapper")
+@MapperScan({"com.baomidou.mybatisplus.test.base.mapper.commons", "com.baomidou.mybatisplus.test.base.mapper.mysql"})
 public class MybatisPlusConfig {
 
     @Bean("mybatisSqlSession")
@@ -41,7 +41,6 @@ public class MybatisPlusConfig {
         /* 数据源 */
         sqlSessionFactory.setDataSource(dataSource);
         /* entity扫描,mybatis的Alias功能 */
-        sqlSessionFactory.setTypeAliasesPackage("com.baomidou.mybatisplus.test.base.entity");
         MybatisConfiguration configuration = new MybatisConfiguration();
         configuration.setJdbcTypeForNull(JdbcType.NULL);
         /* 驼峰转下划线 */
@@ -90,7 +89,7 @@ public class MybatisPlusConfig {
             @Override
             public boolean doTableFilter(String tableName) {
                 // 这里可以判断是否过滤表
-                return "tb_test_data_logic".equals(tableName);
+                return "common_logic_data".equals(tableName) || "mysql_data".equals(tableName);
             }
         });
         sqlParserList.add(tenantSqlParser);

@@ -2,7 +2,7 @@ package com.baomidou.mybatisplus.test;
 
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
-import com.baomidou.mybatisplus.test.base.entity.LogicTestData;
+import com.baomidou.mybatisplus.test.base.entity.CommonLogicData;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 
@@ -13,7 +13,7 @@ public class SampleTest {
 
     @Test
     public void testTableInfoHelper2() {
-        TableInfo info = TableInfoHelper.initTableInfo(null, LogicTestData.class);
+        TableInfo info = TableInfoHelper.initTableInfo(null, CommonLogicData.class);
 //        System.out.println("----------- AllInsertSqlColumn -----------");
 //        System.out.println(info.getAllInsertSqlColumn());
 //        System.out.println("----------- AllInsertSqlProperty -----------");

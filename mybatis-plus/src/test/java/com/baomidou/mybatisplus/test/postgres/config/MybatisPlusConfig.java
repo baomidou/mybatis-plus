@@ -24,7 +24,7 @@ import javax.sql.DataSource;
  * @since 2017/4/1
  */
 @Configuration
-@MapperScan("com.baomidou.mybatisplus.test.base.mapper")
+@MapperScan({"com.baomidou.mybatisplus.test.base.mapper.commons", "com.baomidou.mybatisplus.test.base.mapper.ps"})
 public class MybatisPlusConfig {
 
     @Bean("mybatisSqlSession")
@@ -33,7 +33,6 @@ public class MybatisPlusConfig {
         /* 数据源 */
         sqlSessionFactory.setDataSource(dataSource);
         /* entity扫描,mybatis的Alias功能 */
-        sqlSessionFactory.setTypeAliasesPackage("com.baomidou.mybatisplus.test.base.entity");
         MybatisConfiguration configuration = new MybatisConfiguration();
         configuration.setJdbcTypeForNull(JdbcType.NULL);
         /* 驼峰转下划线 */
