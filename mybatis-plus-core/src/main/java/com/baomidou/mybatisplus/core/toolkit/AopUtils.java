@@ -21,17 +21,21 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
 /**
+ * <p>
  * AopUtils Aop工具类
+ * </p>
  *
  * @author Caratacus
- * @date 2018/08/02
+ * @date 2018-08-02
  */
 public class AopUtils {
 
     private static final Log logger = LogFactory.getLog(AopUtils.class);
 
     /**
+     * <p>
      * 获取源目标对象
+     * </p>
      *
      * @param proxy
      * @param <T>
@@ -56,7 +60,9 @@ public class AopUtils {
     }
 
     /**
+     * <p>
      * 获取Cglib源目标对象
+     * </p>
      *
      * @param proxy
      * @param <T>
@@ -73,7 +79,9 @@ public class AopUtils {
     }
 
     /**
+     * <p>
      * 获取JdkDynamic源目标对象
+     * </p>
      *
      * @param proxy
      * @param <T>
