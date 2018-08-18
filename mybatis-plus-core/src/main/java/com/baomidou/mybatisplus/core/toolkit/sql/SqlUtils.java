@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.enums.SqlLike;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 /**
  * <p>
@@ -88,6 +89,11 @@ public class SqlUtils {
     public static String sqlWordConvert(DbType dbType, String val, boolean isColumn) {
         if (dbType == DbType.POSTGRE_SQL) {
             if (isColumn && val.toLowerCase().equals(val)) {
+                // 是数据库字段,并且全小写之后和原值一样,直接返回
+                return val;
+            }
+            if (isColumn && !StringUtils.isColumnName(val)) {
+                // 是数据库字段,并且手动加了转义符,直接返回
                 return val;
             }
             return String.format("\"%s\"", val);

@@ -60,7 +60,7 @@ public class PostgresTestDataMapperTest {
             Long id = (long) i;
             commonMapper.insert(new CommonData().setTestInt(i).setTestStr(String.format("第%s条数据", i)).setId(id));
             commonLogicMapper.insert(new CommonLogicData().setTestInt(i).setTestStr(String.format("第%s条数据", i)).setId(id));
-            pgMapper.insert(new PgData().setGroup(i).setId(id));
+            pgMapper.insert(new PgData().setGroup(i).setId(id).setPgInt(i).setPgInt2(i));
         }
     }
 
@@ -165,8 +165,8 @@ public class PostgresTestDataMapperTest {
         Assert.assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectByMap(map)));
         Map<String, Object> map2 = new HashMap<>();
         map2.put("id", 9L);
-        map2.put("group", 9);
-        map2.put("pgInt", 9);
+        map2.put("\"group\"", 9);
+        map2.put("\"pgInt\"", 9);
         Assert.assertTrue(CollectionUtils.isNotEmpty(pgMapper.selectByMap(map2)));
     }
 
@@ -225,6 +225,6 @@ public class PostgresTestDataMapperTest {
         Assert.assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectList(new QueryWrapper<CommonLogicData>()
             .apply("test_int = 12"))));
         Assert.assertTrue(CollectionUtils.isNotEmpty(pgMapper.selectList(new QueryWrapper<PgData>()
-            .apply("group = 12").apply("pgInt = 12"))));
+            .apply("\"group\" = 12").apply("\"pgInt\" = 12"))));
     }
 }
