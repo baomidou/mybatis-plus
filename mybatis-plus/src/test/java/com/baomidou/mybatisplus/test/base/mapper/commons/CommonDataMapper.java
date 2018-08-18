@@ -16,6 +16,6 @@ public interface CommonDataMapper extends BaseMapper<CommonData> {
 
     @SqlParser(filter = true)
     @ResultType(CommonData.class)
-    @Select("select * from tb_test_data")
+    @Select("select * from common_data")
     List<CommonData> getAllNoTenant();
 }

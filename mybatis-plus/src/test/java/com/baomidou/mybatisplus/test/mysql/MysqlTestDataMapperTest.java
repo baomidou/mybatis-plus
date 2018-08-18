@@ -56,7 +56,7 @@ public class MysqlTestDataMapperTest {
 
     @Test
     public void a_insertForeach() {
-        for (int i = 1; i < 30; i++) {
+        for (int i = 1; i < 20; i++) {
             Long id = (long) i;
             commonMapper.insert(new CommonData().setTestInt(i).setTestStr(String.format("第%s条数据", i)).setId(id));
             commonLogicMapper.insert(new CommonLogicData().setTestInt(i).setTestStr(String.format("第%s条数据", i)).setId(id));
@@ -74,11 +74,14 @@ public class MysqlTestDataMapperTest {
     @Test
     public void c_deleteByMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("id", 2);
-        map.put("test_int", 2);
+        map.put("id", 2L);
+        map.put("test_int", 5);
         Assert.assertEquals(0, commonMapper.deleteByMap(map));
         Assert.assertEquals(0, commonLogicMapper.deleteByMap(map));
-        Assert.assertEquals(0, mysqlMapper.deleteByMap(map));
+        Map<String, Object> map2 = new HashMap<>();
+        map2.put("id", 2L);
+        map2.put("`order`", 5);
+        Assert.assertEquals(0, mysqlMapper.deleteByMap(map2));
     }
 
     @Test
@@ -198,7 +201,7 @@ public class MysqlTestDataMapperTest {
 
         IPage<CommonData> logicPage = new Page<>();
         page.setSize(5).setCurrent(1);
-        IPage<CommonData> logicDataPage = commonMapper.selectPage(page, null);
+        IPage<CommonData> logicDataPage = commonMapper.selectPage(logicPage, null);
         Assert.assertSame(logicDataPage, logicPage);
         Assert.assertNotEquals(0L, logicDataPage.getTotal());
         Assert.assertNotEquals(0, logicDataPage.getRecords().size());
@@ -207,7 +210,7 @@ public class MysqlTestDataMapperTest {
 
         IPage<CommonData> mysqlPage = new Page<>();
         page.setSize(5).setCurrent(1);
-        IPage<CommonData> mysqlDataPage = commonMapper.selectPage(page, null);
+        IPage<CommonData> mysqlDataPage = commonMapper.selectPage(mysqlPage, null);
         Assert.assertSame(mysqlDataPage, mysqlPage);
         Assert.assertNotEquals(0L, mysqlDataPage.getTotal());
         Assert.assertNotEquals(0, mysqlDataPage.getRecords().size());
@@ -222,6 +225,6 @@ public class MysqlTestDataMapperTest {
         Assert.assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectList(new QueryWrapper<CommonLogicData>()
             .apply("test_int = 12"))));
         Assert.assertTrue(CollectionUtils.isNotEmpty(mysqlMapper.selectList(new QueryWrapper<MysqlData>()
-            .apply("order = 12"))));
+            .apply("`order` = 12"))));
     }
 }
