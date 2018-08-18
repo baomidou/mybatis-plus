@@ -80,8 +80,8 @@ public class PostgresTestDataMapperTest {
         Assert.assertEquals(0, commonLogicMapper.deleteByMap(map));
         Map<String, Object> map2 = new HashMap<>();
         map2.put("id", 2L);
-        map2.put("group", 5);
-        map2.put("pgInt", 5);
+        map2.put("\"group\"", 5);
+        map2.put("\"pgInt\"", 5);
         Assert.assertEquals(0, pgMapper.deleteByMap(map2));
     }
 

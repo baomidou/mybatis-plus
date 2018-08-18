@@ -13,8 +13,9 @@ import lombok.experimental.Accessors;
 public class PgData {
 
     private Long id;
-    @TableField("pgInt")
+    @TableField("\"pgInt\"")
     private Integer pgInt;
     private Integer pgInt2;
+    @TableField("\"group\"")
     private Integer group;
 }
