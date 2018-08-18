@@ -71,7 +71,7 @@ public class MysqlTestDataMapperTest {
     public void deleteByMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("id", 2);
-        map.put("test_int", 5);
+        map.put("test_int", 2);
         Assert.assertEquals(0, commonMapper.deleteByMap(map));
         Assert.assertEquals(0, commonLogicMapper.deleteByMap(map));
         Assert.assertEquals(0, mysqlMapper.deleteByMap(map));
