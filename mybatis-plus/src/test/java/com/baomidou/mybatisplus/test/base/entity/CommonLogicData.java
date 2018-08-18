@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
  * 1.自动填充        验证无误
  * 2.逻辑删除        验证无误
  * 3.乐观锁          验证无误
+ * 4.不搜索指定字段   验证无误
  *
  * @author meimie
  * @since 2018/6/7
@@ -30,6 +31,7 @@ public class CommonLogicData {
     @TableField(value = "u_time", fill = FieldFill.UPDATE)
     private LocalDateTime updateDatetime;
     @TableLogic
+    @TableField(select = false)
     private Integer deleted;
 
     @Version
