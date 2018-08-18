@@ -13,7 +13,7 @@ import java.sql.Statement;
 
 public class PostgresDb extends BaseDb {
 
-    public static void initMysqlData() throws SQLException, IOException {
+    public static void initPgData() throws SQLException, IOException {
         ApplicationContext context = new ClassPathXmlApplicationContext("classpath:postgres/spring-test-postgres.xml");
         DataSource ds = context.getBean("dataSource", DataSource.class);
         try (Connection conn = ds.getConnection()) {

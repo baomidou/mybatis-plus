@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 public class CommonData {
 
     private Long id;
+    @TableField(el = "testInt, jdbcType=INTEGER")
     private Integer testInt;
     private String testStr;
     @TableField(value = "c_time", fill = FieldFill.INSERT)

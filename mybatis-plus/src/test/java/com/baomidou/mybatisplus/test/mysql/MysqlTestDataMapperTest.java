@@ -38,8 +38,8 @@ import java.util.Map;
  * @since 2018-06-05
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:mysql/spring-test-mysql.xml"})
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@ContextConfiguration(locations = {"classpath:mysql/spring-test-mysql.xml"})
 public class MysqlTestDataMapperTest {
 
     @Resource
@@ -190,8 +190,7 @@ public class MysqlTestDataMapperTest {
 
     @Test
     public void o_selectPage() {
-        IPage<CommonData> page = new Page<>();
-        page.setSize(5).setCurrent(1);
+        IPage<CommonData> page = new Page<>(1, 5);
         IPage<CommonData> dataPage = commonMapper.selectPage(page, null);
         Assert.assertSame(dataPage, page);
         Assert.assertNotEquals(0L, dataPage.getTotal());
@@ -199,18 +198,16 @@ public class MysqlTestDataMapperTest {
         Assert.assertTrue(CollectionUtils.isNotEmpty(dataPage.getRecords()));
         System.out.println(JSON.toJSONString(dataPage));
 
-        IPage<CommonData> logicPage = new Page<>();
-        page.setSize(5).setCurrent(1);
-        IPage<CommonData> logicDataPage = commonMapper.selectPage(logicPage, null);
+        IPage<CommonLogicData> logicPage = new Page<>(1, 5);
+        IPage<CommonLogicData> logicDataPage = commonLogicMapper.selectPage(logicPage, null);
         Assert.assertSame(logicDataPage, logicPage);
         Assert.assertNotEquals(0L, logicDataPage.getTotal());
         Assert.assertNotEquals(0, logicDataPage.getRecords().size());
         Assert.assertTrue(CollectionUtils.isNotEmpty(logicDataPage.getRecords()));
         System.out.println(JSON.toJSONString(logicDataPage));
 
-        IPage<CommonData> mysqlPage = new Page<>();
-        page.setSize(5).setCurrent(1);
-        IPage<CommonData> mysqlDataPage = commonMapper.selectPage(mysqlPage, null);
+        IPage<MysqlData> mysqlPage = new Page<>(1, 5);
+        IPage<MysqlData> mysqlDataPage = mysqlMapper.selectPage(mysqlPage, null);
         Assert.assertSame(mysqlDataPage, mysqlPage);
         Assert.assertNotEquals(0L, mysqlDataPage.getTotal());
         Assert.assertNotEquals(0, mysqlDataPage.getRecords().size());

@@ -1,37 +1,29 @@
-CREATE TABLE IF NOT EXISTS tb_test_data_logic (
-    id              BIGINT primary key,
-    test_int        integer,
-    test_str        varchar(50),
-    test_double     double precision,
-    test_boolean    smallint,
-    test_date       date,
-    test_time       time,
-    test_date_time  timestamp,
-    test_timestamp  timestamp,
-    create_datetime timestamp,
-    update_datetime timestamp,
-    deleted         smallint default 0,
-    version         integer  default 0
+drop table if exists common_data;
+drop table if exists common_logic_data;
+drop table if exists pg_data;
+CREATE TABLE common_data (
+    id        BIGINT primary key,
+    test_int  integer,
+    test_str  varchar(50),
+    c_time    timestamp,
+    u_time    timestamp,
+    version   integer default 0,
+    tenant_id bigint
 );
 
-CREATE TABLE IF NOT EXISTS tb_test_data (
-    id              BIGINT primary key,
-    test_int        integer,
-    test_str        varchar(50),
-    test_double     double precision,
-    test_boolean    smallint,
-    test_date       date,
-    test_time       time,
-    test_date_time  timestamp,
-    test_timestamp  timestamp,
-    create_datetime timestamp,
-    update_datetime timestamp,
-    version         integer default 0
+CREATE TABLE common_logic_data (
+    id       BIGINT primary key,
+    test_int integer,
+    test_str varchar(50),
+    c_time   timestamp,
+    u_time   timestamp,
+    deleted  smallint default 0,
+    version  integer  default 0
 );
 
-CREATE TABLE IF NOT EXISTS tb_only_pg_test_data (
-    id         BIGINT primary key,
-    age        integer,
-    c_datetime timestamp,
-    u_datetime timestamp
+CREATE TABLE pg_data (
+    id      BIGINT primary key,
+    "pgInt" integer,
+    pg_int2 integer,
+    "group" integer
 );
