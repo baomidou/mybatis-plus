@@ -425,22 +425,20 @@ public class TableInfoHelper {
      */
     public static boolean checkRelated(boolean underCamel, String property, String column) {
         boolean existEscape = false;
-        if (!StringUtils.isColumnName(column)) {
+        if (StringUtils.isNotColumnName(column)) {
             // 首尾有转义符,手动在注解里设置了转义符
             column = column.substring(1, column.length() - 1);
             existEscape = true;
         }
-        if (underCamel && !existEscape) {
-            /**
-             * 开启了驼峰并且没使用注解里弄上转义符,判断 property 下划线后是否与 column 相同 (全部转为小写)
-             * 相同则不需要 as ,则 related 为 false
-             */
+        if (underCamel) {
+            if (existEscape && property.toLowerCase().equals(property)) {
+                // 注解里手动加了转义符,而且字段全是小写,判断 property 与 column 转小写后是否相同
+                return !property.equals(column.toLowerCase());
+            }
+            // 开启了驼峰并且没有注解里手动加转义符,判断 property 下划线后是否与 column 相同 (全部转为小写)
             return !StringUtils.camelToUnderline(property).equals(column.toLowerCase());
         } else {
-            /**
-             * 未开启驼峰或者手动设置了转义符,判断 property 是否与 column 相同
-             * 相同则不需要 as ,则 related 为 false
-             */
+            // 未开启驼峰或者手动设置了转义符,直接判断 property 是否与 column 相同
             return !property.equals(column);
         }
     }

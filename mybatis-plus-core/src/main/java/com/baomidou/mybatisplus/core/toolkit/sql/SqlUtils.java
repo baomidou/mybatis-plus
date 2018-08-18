@@ -88,12 +88,11 @@ public class SqlUtils {
      */
     public static String sqlWordConvert(DbType dbType, String val, boolean isColumn) {
         if (dbType == DbType.POSTGRE_SQL) {
-            if (isColumn && val.toLowerCase().equals(val)) {
-                // 是数据库字段,并且全小写之后和原值一样,直接返回
-                return val;
-            }
-            if (isColumn && !StringUtils.isColumnName(val)) {
-                // 是数据库字段,并且手动加了转义符,直接返回
+            if (isColumn && (StringUtils.isNotColumnName(val) || val.toLowerCase().equals(val))) {
+                // 都是数据库字段的情况下
+                // 1.手动加了转义符
+                // 2.全小写之后和原值一样
+                // 都直接返回
                 return val;
             }
             return String.format("\"%s\"", val);

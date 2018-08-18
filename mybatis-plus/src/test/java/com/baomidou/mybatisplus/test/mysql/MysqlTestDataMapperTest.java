@@ -66,14 +66,14 @@ public class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void b_deleteById() {
+    public void b1_deleteById() {
         Assert.assertEquals(1, commonMapper.deleteById(1L));
         Assert.assertEquals(1, commonLogicMapper.deleteById(1L));
         Assert.assertEquals(1, mysqlMapper.deleteById(1L));
     }
 
     @Test
-    public void c_deleteByMap() {
+    public void b2_deleteByMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("id", 2L);
         map.put("test_int", 5);
@@ -86,7 +86,7 @@ public class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void d_delete() {
+    public void b3_delete() {
         Assert.assertEquals(1, commonMapper.delete(new QueryWrapper<CommonData>().lambda()
             .eq(CommonData::getId, 2L)
             .eq(CommonData::getTestInt, 2)));
@@ -99,7 +99,7 @@ public class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void e_deleteBatchIds() {
+    public void b4_deleteBatchIds() {
         List<Long> ids = Arrays.asList(3L, 4L);
         Assert.assertEquals(2, commonMapper.deleteBatchIds(ids));
         Assert.assertEquals(2, commonLogicMapper.deleteBatchIds(ids));
@@ -107,20 +107,20 @@ public class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void f_updateById() {
-        Assert.assertEquals(1, commonMapper.updateById(new CommonData().setId(5L).setTestInt(555)));
+    public void c1_updateById() {
+        Assert.assertEquals(1, commonMapper.updateById(new CommonData().setId(5L).setTestInt(555).setVersion(0)));
         Assert.assertEquals(1, commonLogicMapper.updateById(new CommonLogicData().setId(5L).setTestInt(555)));
         Assert.assertEquals(1, mysqlMapper.updateById(new MysqlData().setId(5L).setOrder(555)));
     }
 
     @Test
-    public void g_optimisticUpdateById() {
+    public void c2_optimisticUpdateById() {
         Assert.assertEquals(1, commonMapper.updateById(new CommonData().setId(5L).setTestInt(556)
             .setVersion(0)));
     }
 
     @Test
-    public void h_update() {
+    public void c3_update() {
         Assert.assertEquals(1, commonMapper.update(
             new CommonData().setTestInt(666),
             new UpdateWrapper<CommonData>().lambda().eq(CommonData::getId, 6L)
@@ -136,12 +136,12 @@ public class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void i_getAllNoTenant() {
+    public void d1_getAllNoTenant() {
         commonMapper.getAllNoTenant();
     }
 
     @Test
-    public void j_selectById() {
+    public void d2_selectById() {
         long id = 6L;
         Assert.assertNotNull(commonMapper.selectById(id));
         Assert.assertNotNull(commonLogicMapper.selectById(id));
@@ -149,7 +149,7 @@ public class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void k_selectBatchIds() {
+    public void d3_selectBatchIds() {
         List<Long> ids = Arrays.asList(7L, 8L);
         Assert.assertTrue(CollectionUtils.isNotEmpty(commonMapper.selectBatchIds(ids)));
         Assert.assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectBatchIds(ids)));
@@ -157,7 +157,7 @@ public class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void l_selectByMap() {
+    public void d4_selectByMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("id", 9L);
         map.put("test_int", 9);
@@ -170,7 +170,7 @@ public class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void m_selectOne() {
+    public void d5_selectOne() {
         Assert.assertNotNull(commonMapper.selectOne(new QueryWrapper<CommonData>().lambda()
             .eq(CommonData::getId, 10L).eq(CommonData::getTestInt, 10)));
         Assert.assertNotNull(commonLogicMapper.selectOne(new QueryWrapper<CommonLogicData>().lambda()
@@ -180,7 +180,7 @@ public class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void n_selectList() {
+    public void d6_selectList() {
         Assert.assertTrue(CollectionUtils.isNotEmpty(commonMapper.selectList(new QueryWrapper<CommonData>()
             .lambda().eq(CommonData::getTestInt, 10))));
         Assert.assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectList(new QueryWrapper<CommonLogicData>()
@@ -190,7 +190,7 @@ public class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void o_selectPage() {
+    public void d7_selectPage() {
         IPage<CommonData> page = new Page<>(1, 5);
         IPage<CommonData> dataPage = commonMapper.selectPage(page, null);
         Assert.assertSame(dataPage, page);
@@ -217,7 +217,7 @@ public class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void p_testApply() {
+    public void d8_testApply() {
         Assert.assertTrue(CollectionUtils.isNotEmpty(commonMapper.selectList(new QueryWrapper<CommonData>()
             .apply("test_int = 12"))));
         Assert.assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectList(new QueryWrapper<CommonLogicData>()

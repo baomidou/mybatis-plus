@@ -15,18 +15,14 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import static java.util.stream.Collectors.joining;
+import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.Blob;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
-import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
+import static java.util.stream.Collectors.joining;
 
 /**
  * <p>
@@ -124,8 +120,8 @@ public class StringUtils {
      * @param str 字符串
      * @return 判断结果
      */
-    public static boolean isColumnName(String str) {
-        return P_IS_CLOMUN.matcher(str).matches();
+    public static boolean isNotColumnName(String str) {
+        return !P_IS_CLOMUN.matcher(str).matches();
     }
 
     /**
