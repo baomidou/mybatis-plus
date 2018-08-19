@@ -623,7 +623,8 @@ public class ConfigBuilder {
                 // 填充逻辑判断
                 List<TableFill> tableFillList = getStrategyConfig().getTableFillList();
                 if (null != tableFillList) {
-                    tableFillList.stream().filter(tf -> tf.getFieldName().equals(field.getName()))
+                    // 忽略大写字段问题
+                    tableFillList.stream().filter(tf -> tf.getFieldName().equalsIgnoreCase(field.getName()))
                         .findFirst().ifPresent(tf -> field.setFill(tf.getFieldFill().name()));
                 }
                 fieldList.add(field);
