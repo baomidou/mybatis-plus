@@ -40,6 +40,8 @@ public class MybatisPlusConfig {
         MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
         /* 数据源 */
         sqlSessionFactory.setDataSource(dataSource);
+        /* 枚举扫描 */
+        sqlSessionFactory.setTypeEnumsPackage("com.baomidou.mybatisplus.test.base.enums");
         /* entity扫描,mybatis的Alias功能 */
         MybatisConfiguration configuration = new MybatisConfiguration();
         configuration.setJdbcTypeForNull(JdbcType.NULL);

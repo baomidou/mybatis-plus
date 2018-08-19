@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.base.entity.CommonData;
 import com.baomidou.mybatisplus.test.base.entity.CommonLogicData;
 import com.baomidou.mybatisplus.test.base.entity.mysql.MysqlData;
+import com.baomidou.mybatisplus.test.base.enums.TestEnum;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonLogicDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.mysql.MysqlDataMapper;
@@ -59,7 +60,8 @@ public class MysqlTestDataMapperTest {
     public void a_insertForeach() {
         for (int i = 1; i < 20; i++) {
             Long id = (long) i;
-            commonMapper.insert(new CommonData().setTestInt(i).setTestStr(String.format("第%s条数据", i)).setId(id));
+            commonMapper.insert(new CommonData().setTestInt(i).setTestStr(String.format("第%s条数据", i)).setId(id)
+                .setTestEnum(TestEnum.ONE));
             commonLogicMapper.insert(new CommonLogicData().setTestInt(i).setTestStr(String.format("第%s条数据", i)).setId(id));
             mysqlMapper.insert(new MysqlData().setOrder(i).setGroup(i).setId(id));
         }
@@ -143,7 +145,7 @@ public class MysqlTestDataMapperTest {
     @Test
     public void d2_selectById() {
         long id = 6L;
-        Assert.assertNotNull(commonMapper.selectById(id));
+        Assert.assertNotNull(commonMapper.selectById(id).getTestEnum());
         Assert.assertNotNull(commonLogicMapper.selectById(id));
         Assert.assertNotNull(mysqlMapper.selectById(id));
     }
