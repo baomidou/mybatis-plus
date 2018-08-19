@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.Version;
 import com.baomidou.mybatisplus.test.h2.entity.SuperEntity;
+import com.baomidou.mybatisplus.test.h2.entity.enums.AgeEnum;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -44,7 +45,7 @@ public class H2User extends SuperEntity {
     /* 测试忽略验证 */
     private String name;
 
-    private Integer age;
+    private AgeEnum age;
 
     /*BigDecimal 测试*/
     private BigDecimal price;
@@ -80,7 +81,7 @@ public class H2User extends SuperEntity {
         this.testType = testType;
     }
 
-    public H2User(String name, Integer age) {
+    public H2User(String name, AgeEnum age) {
         this.name = name;
         this.age = age;
     }
@@ -90,19 +91,19 @@ public class H2User extends SuperEntity {
         this.name = name;
     }
 
-    public H2User(Long id, Integer age) {
+    public H2User(Long id, AgeEnum age) {
         this.setTestId(id);
         this.age = age;
     }
 
-    public H2User(Long id, String name, Integer age, Integer testType) {
+    public H2User(Long id, String name, AgeEnum age, Integer testType) {
         this.setTestId(id);
         this.name = name;
         this.age = age;
         this.testType = testType;
     }
 
-    public H2User(String name, Integer age, Integer testType) {
+    public H2User(String name, AgeEnum age, Integer testType) {
         this.name = name;
         this.age = age;
         this.testType = testType;

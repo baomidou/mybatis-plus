@@ -18,6 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.test.h2.config.H2Db;
+import com.baomidou.mybatisplus.test.h2.entity.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
 import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
 
@@ -125,7 +126,7 @@ public class H2UserTest extends BaseTest {
         H2User user = new H2User();
         user.setTestId(id);
         user.setName("991");
-        user.setAge(91);
+        user.setAge(AgeEnum.ONE);
         user.setPrice(BigDecimal.TEN);
         user.setDesc("asdf");
         user.setTestType(1);

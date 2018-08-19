@@ -56,6 +56,7 @@ public class MybatisPlusConfig {
         });
         globalConfiguration.setMetaObjectHandler(new H2MetaObjectHandler());
         sqlSessionFactory.setGlobalConfig(globalConfiguration);
+        sqlSessionFactory.setTypeEnumsPackage("com.baomidou.mybatisplus.test.h2.entity.enums");
         return sqlSessionFactory.getObject();
     }
 

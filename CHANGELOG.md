@@ -1,5 +1,16 @@
 ﻿# CHANGELOG
 
+## [v3.0-RC3] 2018.08.19 代号：超级棒棒糖 🍭 RC3
+- 支持 TableField select 属性 false 排除默认注入大字段查询
+- 解决 page 反序列化 pages 属性报错
+- 合并2.x dataSource被代理处理
+- 去除DbConfig.columnUnderline属性
+- 过滤掉selectObjs查询结果集为空的情况
+- baseMapper 的 insert 和 update 返回值不再使用包装类
+- fixed Gitee issues/IM3NW
+- 优化代码完善注释等
+
+
 ## [v3.0-RC2] 2018.08.10 代号：超级棒棒糖 🍭 RC2
 - 生成器加回 MODULE_NAME 开放配置 config
 - 修复setting - defaultEnumTypeHandler属性配置无效
