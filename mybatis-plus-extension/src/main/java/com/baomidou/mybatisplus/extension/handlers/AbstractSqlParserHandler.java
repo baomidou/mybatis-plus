@@ -15,7 +15,10 @@
  */
 package com.baomidou.mybatisplus.extension.handlers;
 
-import com.baomidou.mybatisplus.core.parser.*;
+import com.baomidou.mybatisplus.core.parser.ISqlParser;
+import com.baomidou.mybatisplus.core.parser.ISqlParserFilter;
+import com.baomidou.mybatisplus.core.parser.SqlInfo;
+import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import lombok.Data;
@@ -50,8 +53,7 @@ public abstract class AbstractSqlParserHandler {
             // SQL 解析
             if (CollectionUtils.isNotEmpty(this.sqlParserList)) {
                 // @SqlParser(filter = true) 跳过该方法解析
-                SqlParserInfo sqlParserInfo = SqlParserHelper.getSqlParserInfo(metaObject);
-                if (null != sqlParserInfo && sqlParserInfo.isFilter()) {
+                if (SqlParserHelper.getSqlParserInfo(metaObject)) {
                     return;
                 }
                 // 标记是否修改过 SQL

@@ -38,7 +38,7 @@ public class SqlParserHelper {
     /**
      * SQL 解析缓存
      */
-    private static final Map<String, SqlParserInfo> SQL_PARSER_INFO_CACHE = new ConcurrentHashMap<>();
+    private static final Map<String, Boolean> SQL_PARSER_INFO_CACHE = new ConcurrentHashMap<>();
 
 
     /**
@@ -54,7 +54,7 @@ public class SqlParserHelper {
             SqlParser sqlParser = method.getAnnotation(SqlParser.class);
             if (null != sqlParser) {
                 String sid = mapperClass.getName() + StringPool.DOT + method.getName();
-                SQL_PARSER_INFO_CACHE.put(sid, new SqlParserInfo(sqlParser));
+                SQL_PARSER_INFO_CACHE.put(sid, sqlParser.filter());
             }
         }
     }
@@ -67,8 +67,8 @@ public class SqlParserHelper {
      *
      * @param metaObject 元数据对象
      */
-    public static SqlParserInfo getSqlParserInfo(MetaObject metaObject) {
-        return SQL_PARSER_INFO_CACHE.get(getMappedStatement(metaObject).getId());
+    public static boolean getSqlParserInfo(MetaObject metaObject) {
+        return SQL_PARSER_INFO_CACHE.getOrDefault(getMappedStatement(metaObject).getId(), false);
     }
 
 
