@@ -115,7 +115,7 @@ public class MysqlTestDataMapperTest {
 
     @Test
     public void c2_optimisticUpdateById() {
-        Assert.assertEquals(1, commonMapper.updateById(new CommonData().setId(5L).setTestInt(556)
+        Assert.assertEquals(1, commonMapper.updateById(new CommonData().setId(7L).setTestInt(778)
             .setVersion(0)));
     }
 
