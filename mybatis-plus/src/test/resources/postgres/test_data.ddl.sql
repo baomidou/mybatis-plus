@@ -8,6 +8,7 @@ CREATE TABLE public.common_data (
     c_time    timestamp,
     u_time    timestamp,
     version   integer default 0,
+    test_enum integer,
     tenant_id bigint
 );
 
