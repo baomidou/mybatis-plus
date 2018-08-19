@@ -3,6 +3,7 @@ package com.baomidou.mybatisplus.test.base.entity;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.Version;
+import com.baomidou.mybatisplus.test.base.enums.TestEnum;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
  * 1.自动填充        验证无误
  * 2.乐观锁          验证无误
  * 3.多租户          验证无误
+ * 4.枚举            验证无误
  *
  * @author meimie
  * @since 2018/6/7
@@ -29,6 +31,7 @@ public class CommonData {
     private LocalDateTime createDatetime;
     @TableField(value = "u_time", fill = FieldFill.UPDATE)
     private LocalDateTime updateDatetime;
+    private TestEnum testEnum;
 
     @Version
     private Integer version;

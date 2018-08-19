@@ -8,6 +8,7 @@ CREATE TABLE common_data (
     c_time    datetime,
     u_time    datetime,
     version   integer default 0,
+    test_enum integer,
     tenant_id bigint
 )
     ENGINE = innodb
