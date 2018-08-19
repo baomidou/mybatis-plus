@@ -22,7 +22,9 @@ import org.apache.ibatis.reflection.MetaObject;
 
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * <p>
@@ -39,6 +41,10 @@ public class SqlParserHelper {
      * SQL 解析缓存
      */
     private static final Map<String, Boolean> SQL_PARSER_INFO_CACHE = new ConcurrentHashMap<>();
+    /**
+     * 缓存解析过的 mapperClass
+     */
+    private static final Set<String> CACHE_INIT_MAPPER = new ConcurrentSkipListSet<>();
 
 
     /**
@@ -49,14 +55,19 @@ public class SqlParserHelper {
      * @param mapperClass Mapper Class
      */
     public synchronized static void initSqlParserInfoCache(Class<?> mapperClass) {
+        String mapperClassName = mapperClass.getName();
+        if (CACHE_INIT_MAPPER.contains(mapperClassName)) {
+            return;
+        }
         Method[] methods = mapperClass.getDeclaredMethods();
         for (Method method : methods) {
             SqlParser sqlParser = method.getAnnotation(SqlParser.class);
             if (null != sqlParser) {
-                String sid = mapperClass.getName() + StringPool.DOT + method.getName();
+                String sid = mapperClassName + StringPool.DOT + method.getName();
                 SQL_PARSER_INFO_CACHE.put(sid, sqlParser.filter());
             }
         }
+        CACHE_INIT_MAPPER.add(mapperClassName);
     }
 
 
