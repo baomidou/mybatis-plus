@@ -58,8 +58,8 @@ public class MybatisPlusConfig {
 
     @Bean
     public GlobalConfig globalConfig() {
-        GlobalConfig conf = new GlobalConfig().setSqlParserCache(true);
-        conf.setDbConfig(new GlobalConfig.DbConfig());
+        GlobalConfig conf = new GlobalConfig();
+        conf.setDbConfig(new GlobalConfig.DbConfig()).setSqlParserCache(true);
         /* 逻辑删除注入器 */
         LogicSqlInjector logicSqlInjector = new LogicSqlInjector();
         conf.setSqlInjector(logicSqlInjector);
