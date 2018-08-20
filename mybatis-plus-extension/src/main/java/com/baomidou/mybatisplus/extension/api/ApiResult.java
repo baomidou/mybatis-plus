@@ -15,82 +15,15 @@
  */
 package com.baomidou.mybatisplus.extension.api;
 
-import java.util.Optional;
-
-import com.baomidou.mybatisplus.extension.enums.ApiErrorCode;
-import com.baomidou.mybatisplus.extension.exceptions.ApiException;
-
-import lombok.Data;
-
 /**
  * <p>
- * REST API 返回结果
+ * REST API 返回结果 , 简化为类 com.baomidou.mybatisplus.extension.api.R
  * </p>
  *
  * @author hubin
  * @since 2018-06-05
  */
-@Data
-public class ApiResult<T> {
+@Deprecated
+public class ApiResult<T> extends R<T> {
 
-    /**
-     * 业务错误码
-     */
-    private String code;
-    /**
-     * 结果集
-     */
-    private T data;
-    /**
-     * 描述
-     */
-    private String msg;
-
-    public ApiResult() {
-        // to do nothing
-    }
-
-    public ApiResult(IErrorCode errorCode) {
-        errorCode = Optional.ofNullable(errorCode).orElse(ApiErrorCode.FAILED);
-        this.code = errorCode.getCode();
-        this.msg = errorCode.getMsg();
-    }
-
-    public static <T> ApiResult<T> ok(T data) {
-        return restResult(data, ApiErrorCode.SUCCESS);
-    }
-
-    public static <T> ApiResult<T> failed(String msg) {
-        return restResult(null, ApiErrorCode.FAILED.getCode(), msg);
-    }
-
-    public static <T> ApiResult<T> failed(IErrorCode errorCode) {
-        return restResult(null, errorCode);
-    }
-
-    public static <T> ApiResult<T> restResult(T data, IErrorCode errorCode) {
-        return restResult(data, errorCode.getCode(), errorCode.getMsg());
-    }
-
-    private static <T> ApiResult<T> restResult(T data, String code, String msg) {
-        ApiResult<T> apiResult = new ApiResult<>();
-        apiResult.setCode(code);
-        apiResult.setData(data);
-        apiResult.setMsg(msg);
-        return apiResult;
-    }
-
-    public boolean ok() {
-        return ApiErrorCode.SUCCESS.getCode().equals(this.code);
-    }
-
-    /**
-     * 服务间调用非业务正常，异常直接释放
-     */
-    public T serviceData() {
-        if (!ok()) {
-            throw new ApiException(this.msg);
-        }
-        return data;
-    }
 }

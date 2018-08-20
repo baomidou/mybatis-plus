@@ -29,11 +29,11 @@ public enum ApiErrorCode implements IErrorCode {
     /**
      * 失败
      */
-    FAILED("0", "失败"),
+    FAILED("-1", "失败"),
     /**
      * 成功
      */
-    SUCCESS("1", "成功");
+    SUCCESS("0", "成功");
 
     private final String code;
     private final String msg;
