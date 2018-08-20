@@ -40,8 +40,8 @@ public class ApiController {
      * @param <T>  对象泛型
      * @return
      */
-    protected <T> ApiResult<T> success(T data) {
-        return ApiResult.ok(data);
+    protected <T> R<T> success(T data) {
+        return R.ok(data);
     }
 
     /**
@@ -52,8 +52,8 @@ public class ApiController {
      * @param msg 提示内容
      * @return
      */
-    protected ApiResult<Object> failed(String msg) {
-        return ApiResult.failed(msg);
+    protected R<Object> failed(String msg) {
+        return R.failed(msg);
     }
 
     /**
@@ -64,8 +64,8 @@ public class ApiController {
      * @param errorCode 请求错误码
      * @return
      */
-    protected ApiResult<Object> failed(IErrorCode errorCode) {
-        return ApiResult.failed(errorCode);
+    protected R<Object> failed(IErrorCode errorCode) {
+        return R.failed(errorCode);
     }
 
 }
