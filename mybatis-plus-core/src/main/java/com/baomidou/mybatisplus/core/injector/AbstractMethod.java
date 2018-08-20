@@ -15,10 +15,11 @@
  */
 package com.baomidou.mybatisplus.core.injector;
 
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
-import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -58,12 +59,6 @@ public abstract class AbstractMethod {
         this.languageDriver = configuration.getDefaultScriptingLanguageInstance();
         Class<?> modelClass = extractModelClass(mapperClass);
         if (null != modelClass) {
-            /**
-             * 初始化 SQL 解析
-             */
-            if (this.getGlobalConfig().isSqlParserCache()) {
-                SqlParserHelper.initSqlParserInfoCache(mapperClass);
-            }
             /**
              * 注入自定义方法
              */
@@ -267,15 +262,6 @@ public abstract class AbstractMethod {
         return builderAssistant.addMappedStatement(id, sqlSource, StatementType.PREPARED, sqlCommandType, null, null, null,
             parameterClass, resultMap, resultType, null, !isSelect, isSelect, false, keyGenerator, keyProperty, keyColumn,
             configuration.getDatabaseId(), languageDriver, null);
-    }
-
-    /**
-     * <p>
-     * 全局配置
-     * </p>
-     */
-    protected GlobalConfig getGlobalConfig() {
-        return GlobalConfigUtils.getGlobalConfig(configuration);
     }
 
     /**
