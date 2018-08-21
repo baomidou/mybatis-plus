@@ -68,6 +68,10 @@ public enum DbType {
      */
     SQL_SERVER("sqlserver", "%s LIKE '%%'+#{%s}+'%%'", "SQLServer数据库"),
     /**
+     * DM
+     */
+    DM("dm", null, "达梦数据库"),
+    /**
      * UNKONWN DB
      */
     OTHER("other", null, "其他数据库");
