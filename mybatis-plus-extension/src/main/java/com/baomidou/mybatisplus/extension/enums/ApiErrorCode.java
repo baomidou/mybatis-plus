@@ -29,24 +29,24 @@ public enum ApiErrorCode implements IErrorCode {
     /**
      * 失败
      */
-    FAILED("-1", "失败"),
+    FAILED(-1, "失败"),
     /**
      * 成功
      */
-    SUCCESS("0", "成功");
+    SUCCESS(0, "成功");
 
-    private final String code;
+    private final long code;
     private final String msg;
 
-    ApiErrorCode(final String code, final String msg) {
+    ApiErrorCode(final long code, final String msg) {
         this.code = code;
         this.msg = msg;
     }
 
-    public static ApiErrorCode fromCode(String code) {
+    public static ApiErrorCode fromCode(long code) {
         ApiErrorCode[] ecs = ApiErrorCode.values();
         for (ApiErrorCode ec : ecs) {
-            if (ec.getCode().equalsIgnoreCase(code)) {
+            if (ec.getCode() == code) {
                 return ec;
             }
         }
@@ -54,7 +54,7 @@ public enum ApiErrorCode implements IErrorCode {
     }
 
     @Override
-    public String getCode() {
+    public long getCode() {
         return code;
     }
 

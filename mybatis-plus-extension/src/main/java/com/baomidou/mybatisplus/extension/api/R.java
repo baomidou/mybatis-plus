@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.extension.api;
 
+import java.io.Serializable;
 import java.util.Optional;
 
 import com.baomidou.mybatisplus.extension.enums.ApiErrorCode;
@@ -31,12 +32,12 @@ import lombok.Data;
  * @since 2018-06-05
  */
 @Data
-public class R<T> {
+public class R<T> implements Serializable {
 
     /**
      * 业务错误码
      */
-    private String code;
+    private long code;
     /**
      * 结果集
      */
@@ -72,7 +73,7 @@ public class R<T> {
         return restResult(data, errorCode.getCode(), errorCode.getMsg());
     }
 
-    private static <T> R<T> restResult(T data, String code, String msg) {
+    private static <T> R<T> restResult(T data, long code, String msg) {
         R<T> apiResult = new R<>();
         apiResult.setCode(code);
         apiResult.setData(data);
@@ -81,7 +82,7 @@ public class R<T> {
     }
 
     public boolean ok() {
-        return ApiErrorCode.SUCCESS.getCode().equals(this.code);
+        return ApiErrorCode.SUCCESS.getCode() == code;
     }
 
     /**
