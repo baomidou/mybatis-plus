@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.injector;
 
+import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
@@ -44,6 +45,12 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
             // 循环注入自定义方法
             methodList.forEach(m -> m.inject(builderAssistant, mapperClass));
             mapperRegistryCache.add(className);
+            /**
+             * 初始化 SQL 解析
+             */
+            if (GlobalConfigUtils.getGlobalConfig(builderAssistant.getConfiguration()).isSqlParserCache()) {
+                SqlParserHelper.initSqlParserInfoCache(mapperClass);
+            }
         }
     }
 

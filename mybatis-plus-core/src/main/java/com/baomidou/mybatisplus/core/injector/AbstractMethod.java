@@ -15,10 +15,11 @@
  */
 package com.baomidou.mybatisplus.core.injector;
 
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
-import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -59,12 +60,6 @@ public abstract class AbstractMethod {
         Class<?> modelClass = extractModelClass(mapperClass);
         if (null != modelClass) {
             /**
-             * 初始化 SQL 解析
-             */
-            if (this.getGlobalConfig().isSqlParserCache()) {
-                SqlParserHelper.initSqlParserInfoCache(mapperClass);
-            }
-            /**
              * 注入自定义方法
              */
             TableInfo tableInfo = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
@@ -75,8 +70,8 @@ public abstract class AbstractMethod {
     /**
      * 提取泛型模型,多泛型的时候请将泛型T放在第一位
      *
-     * @param mapperClass
-     * @return
+     * @param mapperClass mapper 接口
+     * @return mapper 泛型
      */
     protected Class<?> extractModelClass(Class<?> mapperClass) {
         Type[] types = mapperClass.getGenericInterfaces();
@@ -103,8 +98,8 @@ public abstract class AbstractMethod {
     /**
      * 是否已经存在MappedStatement
      *
-     * @param mappedStatement
-     * @return
+     * @param mappedStatement MappedStatement
+     * @return true or false
      */
     private boolean hasMappedStatement(String mappedStatement) {
         return configuration.hasStatement(mappedStatement, false);
@@ -212,13 +207,13 @@ public abstract class AbstractMethod {
         if (null != table) {
             String resultMap = table.getResultMap();
             if (null != resultMap) {
-                /** 返回 resultMap 映射结果集 */
+                /* 返回 resultMap 映射结果集 */
                 return addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.SELECT, null, resultMap, null,
                     new NoKeyGenerator(), null, null);
             }
         }
 
-        /** 普通查询 */
+        /* 普通查询 */
         return addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.SELECT, null, null, resultType,
             new NoKeyGenerator(), null, null);
     }
@@ -243,7 +238,7 @@ public abstract class AbstractMethod {
     /**
      * 更新
      */
-    public MappedStatement addUpdateMappedStatement(Class<?> mapperClass, Class<?> modelClass, String id, SqlSource sqlSource) {
+    protected MappedStatement addUpdateMappedStatement(Class<?> mapperClass, Class<?> modelClass, String id, SqlSource sqlSource) {
         return addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.UPDATE, modelClass, null, Integer.class,
             new NoKeyGenerator(), null, null);
     }
@@ -252,14 +247,15 @@ public abstract class AbstractMethod {
      * 添加 MappedStatement 到 Mybatis 容器
      */
     protected MappedStatement addMappedStatement(Class<?> mapperClass, String id, SqlSource sqlSource,
-                                                 SqlCommandType sqlCommandType, Class<?> parameterClass, String resultMap, Class<?> resultType,
-                                                 KeyGenerator keyGenerator, String keyProperty, String keyColumn) {
+                                                 SqlCommandType sqlCommandType, Class<?> parameterClass,
+                                                 String resultMap, Class<?> resultType, KeyGenerator keyGenerator,
+                                                 String keyProperty, String keyColumn) {
         String statementName = mapperClass.getName() + StringPool.DOT + id;
         if (hasMappedStatement(statementName)) {
             System.err.println(StringPool.LEFT_BRACE + statementName + "} Has been loaded by XML or SqlProvider, ignoring the injection of the SQL.");
             return null;
         }
-        /** 缓存逻辑处理 */
+        /* 缓存逻辑处理 */
         boolean isSelect = false;
         if (sqlCommandType == SqlCommandType.SELECT) {
             isSelect = true;
@@ -270,16 +266,12 @@ public abstract class AbstractMethod {
     }
 
     /**
-     * <p>
-     * 全局配置
-     * </p>
-     */
-    protected GlobalConfig getGlobalConfig() {
-        return GlobalConfigUtils.getGlobalConfig(configuration);
-    }
-
-    /**
      * 注入自定义 MappedStatement
+     *
+     * @param mapperClass mapper 接口
+     * @param modelClass  mapper 泛型
+     * @param tableInfo   数据库表反射信息
+     * @return MappedStatement
      */
     public abstract MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo);
 }
