@@ -100,7 +100,7 @@ public final class LambdaUtils {
             if (tableInfo.getClazz() != clazz) {
                 saveCache(tableInfo.getClazz().getName(), tableInfo.getKeyProperty(), tableInfo.getKeyColumn());
             }
-            map.put(tableInfo.getKeyProperty(), tableInfo.getKeySqlSelect());
+            map.put(tableInfo.getKeyProperty(), tableInfo.getKeyColumn());
         }
         tableInfo.getFieldList().forEach(i -> {
             if (i.getClazz() != clazz) {
