@@ -235,11 +235,9 @@ public class TableFieldInfo {
         if (sqlSelect != null) {
             return sqlSelect;
         }
+        sqlSelect = SqlUtils.sqlWordConvert(dbType, getColumn(), true);
         if (related) {
-            sqlSelect = SqlUtils.sqlWordConvert(dbType, getColumn(), true) + " AS " +
-                SqlUtils.sqlWordConvert(dbType, getProperty(), false);
-        } else {
-            sqlSelect = SqlUtils.sqlWordConvert(dbType, getColumn(), true);
+            sqlSelect += (" AS " + SqlUtils.sqlWordConvert(dbType, getProperty(), false));
         }
         return sqlSelect;
     }
