@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.generator.config.rules;
 
-import lombok.Getter;
-
 /**
  * <p>
  * 表字段类型
@@ -25,8 +23,7 @@ import lombok.Getter;
  * @author hubin
  * @since 2017-01-11
  */
-@Getter
-public enum DbColumnType {
+public enum DbColumnType implements PropertyInfo {
     // 基本类型
     BASE_BYTE("byte", null),
     BASE_SHORT("short", null),
@@ -82,5 +79,15 @@ public enum DbColumnType {
     DbColumnType(final String type, final String pkg) {
         this.type = type;
         this.pkg = pkg;
+    }
+
+    @Override
+    public String getType() {
+        return type;
+    }
+
+    @Override
+    public String getPkg() {
+        return pkg;
     }
 }

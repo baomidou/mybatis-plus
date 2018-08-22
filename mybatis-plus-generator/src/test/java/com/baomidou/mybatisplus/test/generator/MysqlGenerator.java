@@ -15,28 +15,19 @@
  */
 package com.baomidou.mybatisplus.test.generator;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
-import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
-import com.baomidou.mybatisplus.generator.config.FileOutConfig;
-import com.baomidou.mybatisplus.generator.config.GlobalConfig;
-import com.baomidou.mybatisplus.generator.config.PackageConfig;
-import com.baomidou.mybatisplus.generator.config.StrategyConfig;
-import com.baomidou.mybatisplus.generator.config.TemplateConfig;
+import com.baomidou.mybatisplus.generator.config.*;
 import com.baomidou.mybatisplus.generator.config.converts.MySqlTypeConvert;
 import com.baomidou.mybatisplus.generator.config.po.TableFill;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
-import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
+import com.baomidou.mybatisplus.generator.config.rules.PropertyInfo;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
+
+import java.util.*;
 
 /**
  * <p>
@@ -85,7 +76,7 @@ public class MysqlGenerator extends GeneratorTest {
                 .setTypeConvert(new MySqlTypeConvert() {
                     // 自定义数据库表字段类型转换【可选】
                     @Override
-                    public DbColumnType processTypeConvert(GlobalConfig globalConfig, String fieldType) {
+                    public PropertyInfo processTypeConvert(GlobalConfig globalConfig, String fieldType) {
                         System.out.println("转换类型：" + fieldType);
                         // if ( fieldType.toLowerCase().contains( "tinyint" ) ) {
                         //    return DbColumnType.BOOLEAN;

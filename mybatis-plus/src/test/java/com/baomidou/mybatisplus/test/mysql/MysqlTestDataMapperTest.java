@@ -124,7 +124,7 @@ public class MysqlTestDataMapperTest {
     @Test
     public void c3_update() {
         Assert.assertEquals(1, commonMapper.update(
-            new CommonData().setTestInt(666),
+            new CommonData().setTestInt(666).setVersion(0),
             new UpdateWrapper<CommonData>().lambda().eq(CommonData::getId, 6L)
                 .eq(CommonData::getTestInt, 6)));
         Assert.assertEquals(1, commonLogicMapper.update(

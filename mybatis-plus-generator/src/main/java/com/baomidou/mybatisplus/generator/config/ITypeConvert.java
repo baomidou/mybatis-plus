@@ -15,7 +15,7 @@
  */
 package com.baomidou.mybatisplus.generator.config;
 
-import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
+import com.baomidou.mybatisplus.generator.config.rules.PropertyInfo;
 
 /**
  * <p>
@@ -37,6 +37,5 @@ public interface ITypeConvert {
      * @param fieldType    字段类型
      * @return
      */
-    DbColumnType processTypeConvert(GlobalConfig globalConfig, String fieldType);
-
+    PropertyInfo processTypeConvert(GlobalConfig globalConfig, String fieldType);
 }

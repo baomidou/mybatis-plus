@@ -15,11 +15,12 @@
  */
 package com.baomidou.mybatisplus.generator.config.po;
 
-import java.util.Map;
-
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
+import com.baomidou.mybatisplus.generator.config.rules.PropertyInfo;
+
+import java.util.Map;
 
 /**
  * <p>
@@ -40,7 +41,7 @@ public class TableField {
     private String name;
     private String type;
     private String propertyName;
-    private DbColumnType columnType;
+    private PropertyInfo columnType;
     private String comment;
     private String fill;
     /**
@@ -50,6 +51,10 @@ public class TableField {
 
     public boolean isConvert() {
         return convert;
+    }
+
+    public void setConvert(boolean convert) {
+        this.convert = convert;
     }
 
     protected void setConvert(StrategyConfig strategyConfig) {
@@ -66,10 +71,6 @@ public class TableField {
                 this.convert = true;
             }
         }
-    }
-
-    public void setConvert(boolean convert) {
-        this.convert = convert;
     }
 
     public boolean isKeyFlag() {
@@ -113,11 +114,11 @@ public class TableField {
         this.setConvert(strategyConfig);
     }
 
-    public DbColumnType getColumnType() {
+    public PropertyInfo getColumnType() {
         return columnType;
     }
 
-    public void setColumnType(DbColumnType columnType) {
+    public void setColumnType(PropertyInfo columnType) {
         this.columnType = columnType;
     }
 
