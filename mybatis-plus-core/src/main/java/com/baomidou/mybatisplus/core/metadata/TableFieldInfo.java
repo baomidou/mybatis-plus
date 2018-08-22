@@ -256,7 +256,7 @@ public class TableFieldInfo {
         if (fieldFill == FieldFill.INSERT || fieldFill == FieldFill.INSERT_UPDATE) {
             return sqlScript;
         }
-        return convertIf(sqlScript, property);
+        return convertIf(sqlScript, property, this.fieldStrategy);
     }
 
     /**
@@ -271,7 +271,7 @@ public class TableFieldInfo {
         if (fieldFill == FieldFill.INSERT || fieldFill == FieldFill.INSERT_UPDATE) {
             return sqlScript;
         }
-        return convertIf(sqlScript, property);
+        return convertIf(sqlScript, property, this.fieldStrategy);
     }
 
     /**
@@ -294,7 +294,7 @@ public class TableFieldInfo {
             // 不进行 if 包裹
             return sqlSet;
         }
-        return convertIf(sqlSet, newPrefix + property);
+        return convertIf(sqlSet, newPrefix + property, this.fieldStrategy);
     }
 
     /**
@@ -308,7 +308,7 @@ public class TableFieldInfo {
         // 默认:  AND column=#{prefix + el}
         String sqlScript = " AND " + String.format(condition, column, newPrefix + el);
         // 查询的时候只判非空
-        return SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", newPrefix + property), false);
+        return convertIf(sqlScript, newPrefix + property, FieldStrategy.NOT_NULL);
     }
 
     /**
@@ -318,7 +318,7 @@ public class TableFieldInfo {
      * @param property  字段名
      * @return if 脚本片段
      */
-    private String convertIf(final String sqlScript, final String property) {
+    private String convertIf(final String sqlScript, final String property, final FieldStrategy fieldStrategy) {
         if (fieldStrategy == FieldStrategy.IGNORED) {
             return sqlScript;
         }
