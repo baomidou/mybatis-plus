@@ -206,11 +206,11 @@ public class TableInfo {
     public String getKeyInsertSqlProperty() {
         if (StringUtils.isNotEmpty(keyProperty)) {
             if (idType == IdType.AUTO) {
-                return "";
+                return StringPool.EMPTY;
             }
             return SqlScriptUtils.safeParam(keyProperty) + StringPool.COMMA + StringPool.NEWLINE;
         }
-        return "";
+        return StringPool.EMPTY;
     }
 
     /**
@@ -223,11 +223,11 @@ public class TableInfo {
     public String getKeyInsertSqlColumn() {
         if (StringUtils.isNotEmpty(keyColumn)) {
             if (idType == IdType.AUTO) {
-                return "";
+                return StringPool.EMPTY;
             }
             return keyColumn + StringPool.COMMA + StringPool.NEWLINE;
         }
-        return "";
+        return StringPool.EMPTY;
     }
 
 
@@ -320,6 +320,6 @@ public class TableInfo {
             }
             return logicDeleteSql;
         }
-        return "";
+        return StringPool.EMPTY;
     }
 }
