@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.extension.enums.ApiErrorCode;
 import com.baomidou.mybatisplus.extension.exceptions.ApiException;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * <p>
@@ -32,6 +33,7 @@ import lombok.Data;
  * @since 2018-06-05
  */
 @Data
+@Accessors(chain = true)
 public class R<T> implements Serializable {
 
     /**
