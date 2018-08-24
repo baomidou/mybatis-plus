@@ -184,10 +184,6 @@ public class TableFieldInfo {
      * @param field    字段属性对象
      */
     private boolean initLogicDelete(GlobalConfig.DbConfig dbConfig, Field field) {
-        if (null == dbConfig.getLogicDeleteValue()) {
-            // 未设置逻辑删除值不进行
-            return false;
-        }
         /* 获取注解属性，逻辑处理字段 */
         TableLogic tableLogic = field.getAnnotation(TableLogic.class);
         if (null != tableLogic) {

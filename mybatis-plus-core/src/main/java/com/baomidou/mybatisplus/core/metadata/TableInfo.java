@@ -18,7 +18,6 @@ package com.baomidou.mybatisplus.core.metadata;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
@@ -83,7 +82,6 @@ public class TableInfo {
     /**
      * 表字段信息列表
      */
-    @Setter(AccessLevel.NONE)
     private List<TableFieldInfo> fieldList;
     /**
      * 命名空间
@@ -128,28 +126,9 @@ public class TableInfo {
         return currentNamespace + StringPool.DOT + sqlMethod;
     }
 
-    public void setFieldList(GlobalConfig globalConfig, List<TableFieldInfo> fieldList) {
-        this.fieldList = fieldList;
-        /*
-         * 启动逻辑删除注入、判断该表是否启动
-         */
-        if (null != globalConfig.getDbConfig().getLogicDeleteValue()) {
-            for (TableFieldInfo tfi : fieldList) {
-                if (tfi.isLogicDelete()) {
-                    this.setLogicDelete(true);
-                    break;
-                }
-            }
-        }
-    }
-
     public void setConfigMark(Configuration configuration) {
         Assert.notNull(configuration, "Error: You need Initialize MybatisConfiguration !");
         this.configMark = configuration.toString();
-    }
-
-    public boolean isLogicDelete() {
-        return logicDelete;
     }
 
     /**

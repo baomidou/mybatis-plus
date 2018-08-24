@@ -260,8 +260,12 @@ public class TableInfoHelper {
             fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field));
         }
 
+        /* 检查逻辑删除字段只能有最多一个 */
+        Assert.isTrue(fieldList.stream().filter(TableFieldInfo::isLogicDelete).count() < 2L,
+            String.format("annotation of @TableLogic can't more than one in class : %s.", clazz.getName()));
+
         /* 字段列表 */
-        tableInfo.setFieldList(globalConfig, fieldList);
+        tableInfo.setFieldList(fieldList);
 
         /* 未发现主键注解，提示警告信息 */
         if (StringUtils.isEmpty(tableInfo.getKeyColumn())) {
