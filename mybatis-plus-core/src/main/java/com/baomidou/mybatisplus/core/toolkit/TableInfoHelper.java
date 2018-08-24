@@ -134,8 +134,8 @@ public class TableInfoHelper {
      */
     public synchronized static TableInfo initTableInfo(MapperBuilderAssistant builderAssistant, Class<?> clazz) {
         TableInfo tableInfo = TABLE_INFO_CACHE.get(clazz.getName());
-        if (StringUtils.checkValNotNull(tableInfo)) {
-            if (StringUtils.checkValNotNull(builderAssistant)) {
+        if (tableInfo != null) {
+            if (tableInfo.getConfigMark() == null && builderAssistant != null) {
                 tableInfo.setConfigMark(builderAssistant.getConfiguration());
             }
             return tableInfo;
