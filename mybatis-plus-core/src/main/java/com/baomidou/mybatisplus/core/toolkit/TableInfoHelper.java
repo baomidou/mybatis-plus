@@ -67,7 +67,7 @@ public class TableInfoHelper {
      * <p>
      *
      * @param clazz 反射实体类
-     * @return
+     * @return 数据库表反射信息
      */
     public static TableInfo getTableInfo(Class<?> clazz) {
         TableInfo tableInfo = TABLE_INFO_CACHE.get(ClassUtils.getUserClass(clazz).getName());
@@ -96,7 +96,7 @@ public class TableInfoHelper {
      *
      * @param clazz          表对应实体类 Class
      * @param excludeColumns 排除字段
-     * @return
+     * @return 字段信息数组
      */
     public static String[] getTableColumns(Class<?> clazz, String... excludeColumns) {
         Assert.notNull(clazz, "clazz is not null");
@@ -118,7 +118,7 @@ public class TableInfoHelper {
      * 获取所有实体映射表信息
      * <p>
      *
-     * @return
+     * @return 数据库表反射信息集合
      */
     public static List<TableInfo> getTableInfos() {
         return new ArrayList<>(TABLE_INFO_CACHE.values());
@@ -130,7 +130,7 @@ public class TableInfoHelper {
      * <p>
      *
      * @param clazz 反射实体类
-     * @return
+     * @return 数据库表反射信息
      */
     public synchronized static TableInfo initTableInfo(MapperBuilderAssistant builderAssistant, Class<?> clazz) {
         TableInfo tableInfo = TABLE_INFO_CACHE.get(clazz.getName());
@@ -519,5 +519,4 @@ public class TableInfoHelper {
         builderAssistant.getConfiguration().addKeyGenerator(id, selectKeyGenerator);
         return selectKeyGenerator;
     }
-
 }
