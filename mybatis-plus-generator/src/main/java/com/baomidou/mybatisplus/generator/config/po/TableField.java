@@ -15,12 +15,13 @@
  */
 package com.baomidou.mybatisplus.generator.config.po;
 
+import java.util.Map;
+
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
+import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.config.rules.PropertyInfo;
-
-import java.util.Map;
 
 /**
  * <p>
@@ -62,7 +63,7 @@ public class TableField {
             this.convert = false;
         } else {
             // 转换字段
-            if (strategyConfig.isDbColumnUnderline()) {
+            if (NamingStrategy.underline_to_camel == strategyConfig.getColumnNaming()) {
                 // 包含大写处理
                 if (StringUtils.containsUpperCase(name)) {
                     this.convert = true;

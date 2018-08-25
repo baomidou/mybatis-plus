@@ -15,6 +15,9 @@
  */
 package com.baomidou.mybatisplus.generator.config;
 
+import java.io.File;
+
+import com.baomidou.mybatisplus.extension.toolkit.PackageHelper;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 
 import lombok.Data;
@@ -49,4 +52,19 @@ public abstract class FileOutConfig {
      * 输出文件
      */
     public abstract String outputFile(TableInfo tableInfo);
+
+    /**
+     * <p>
+     * 检查文件目录，不存在自动递归创建
+     * </p>
+     *
+     * @param filePath 文件路径
+     */
+    public void checkDir(String filePath) {
+        File file = new File(filePath);
+        boolean exist = file.exists();
+        if (!exist) {
+            PackageHelper.mkDir(file.getParentFile());
+        }
+    }
 }

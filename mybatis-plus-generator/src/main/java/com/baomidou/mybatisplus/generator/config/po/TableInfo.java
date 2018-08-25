@@ -23,6 +23,7 @@ import java.util.stream.IntStream;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
+import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 
 /**
  * <p>
@@ -64,7 +65,7 @@ public class TableInfo {
             this.convert = false;
         } else {
             // 转换字段
-            if (strategyConfig.isDbColumnUnderline()) {
+            if (NamingStrategy.underline_to_camel == strategyConfig.getColumnNaming()) {
                 // 包含大写处理
                 if (StringUtils.containsUpperCase(name)) {
                     this.convert = true;

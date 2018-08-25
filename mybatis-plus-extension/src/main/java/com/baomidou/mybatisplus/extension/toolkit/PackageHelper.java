@@ -15,7 +15,10 @@
  */
 package com.baomidou.mybatisplus.extension.toolkit;
 
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -23,8 +26,8 @@ import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.util.ClassUtils;
-import java.util.HashSet;
-import java.util.Set;
+
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 
 /**
  * <p>
@@ -110,6 +113,22 @@ public class PackageHelper {
             return set;
         } catch (Exception e) {
             throw ExceptionUtils.mpe("not find scanTypePackage:" + pkg, e);
+        }
+    }
+
+    /**
+     * <p>
+     * 新建文件目录
+     * </p>
+     *
+     * @param file 文件
+     */
+    public static void mkDir(File file) {
+        if (file.getParentFile().exists()) {
+            file.mkdir();
+        } else {
+            mkDir(file.getParentFile());
+            file.mkdir();
         }
     }
 }

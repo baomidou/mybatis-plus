@@ -32,11 +32,6 @@ import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 public class StrategyConfig {
 
     /**
-     * 表名、字段名、是否使用下划线命名（默认 false）
-     */
-    private boolean dbColumnUnderline = false;
-
-    /**
      * 是否大写命名
      */
     private boolean isCapitalMode = false;
@@ -163,15 +158,6 @@ public class StrategyConfig {
      * 表填充字段
      */
     private List<TableFill> tableFillList = null;
-
-    public boolean isDbColumnUnderline() {
-        return dbColumnUnderline;
-    }
-
-    public StrategyConfig setDbColumnUnderline(boolean dbColumnUnderline) {
-        this.dbColumnUnderline = dbColumnUnderline;
-        return this;
-    }
 
     /**
      * <p>
