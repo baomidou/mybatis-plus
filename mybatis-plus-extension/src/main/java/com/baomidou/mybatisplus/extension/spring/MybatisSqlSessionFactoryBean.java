@@ -68,6 +68,7 @@ import com.baomidou.mybatisplus.core.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.enums.IEnum;
 import com.baomidou.mybatisplus.core.toolkit.AopUtils;
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
@@ -446,18 +447,27 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             // TODO 支持自定义通配符
             List<String> typeAliasPackageList = new ArrayList<>();
             if (typeAliasesPackage.contains(StringPool.ASTERISK) && !typeAliasesPackage.contains(StringPool.COMMA) && !typeAliasesPackage.contains(StringPool.SEMICOLON)) {
-                typeAliasPackageList.addAll(Arrays.asList(PackageHelper.convertTypeAliasesPackage(typeAliasesPackage)));
+                String[] convertTypeAliasesPackages = PackageHelper.convertTypeAliasesPackage(this.typeAliasesPackage);
+                if(ArrayUtils.isEmpty(convertTypeAliasesPackages)){
+                    LOGGER.warn("Can't find class in '["+this.typeAliasesPackage+"]' package. Please check your configuration.");
+                }else{
+                    typeAliasPackageList.addAll(Arrays.asList(convertTypeAliasesPackages));
+                }
             } else {
                 String[] typeAliasPackageArray = tokenizeToStringArray(this.typeAliasesPackage, ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
                 for (String one : typeAliasPackageArray) {
                     if (one.contains(StringPool.ASTERISK)) {
-                        typeAliasPackageList.addAll(Arrays.asList(PackageHelper.convertTypeAliasesPackage(one)));
+                        String[] convertTypeAliasesPackages = PackageHelper.convertTypeAliasesPackage(one);
+                        if(ArrayUtils.isEmpty(convertTypeAliasesPackages)){
+                            LOGGER.warn("Can't find class in '["+one+"]' package. Please check your configuration.");
+                        }else {
+                            typeAliasPackageList.addAll(Arrays.asList(convertTypeAliasesPackages));
+                        }
                     } else {
                         typeAliasPackageList.add(one);
                     }
                 }
             }
-            Assert.notEmpty(typeAliasPackageList, "not find typeAliasesPackage:" + typeAliasesPackage);
             for (String packageToScan : typeAliasPackageList) {
                 configuration.getTypeAliasRegistry().registerAliases(packageToScan,
                     typeAliasesSuperType == null ? Object.class : typeAliasesSuperType);
@@ -473,13 +483,21 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             if (typeEnumsPackage.contains(StringPool.STAR) && !typeEnumsPackage.contains(StringPool.COMMA)
                 && !typeEnumsPackage.contains(StringPool.SEMICOLON)) {
                 classes = PackageHelper.scanTypePackage(typeEnumsPackage);
+                if(classes.isEmpty()){
+                    LOGGER.warn("Can't find class in '["+typeEnumsPackage+"]' package. Please check your configuration.");
+                }
             } else {
                 String[] typeEnumsPackageArray = tokenizeToStringArray(this.typeEnumsPackage,
                     ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
                 Assert.notNull(typeEnumsPackageArray, "not find typeEnumsPackage:" + typeEnumsPackage);
                 classes = new HashSet<>();
                 for (String typePackage : typeEnumsPackageArray) {
-                    classes.addAll(PackageHelper.scanTypePackage(typePackage));
+                    Set<Class> scanTypePackage = PackageHelper.scanTypePackage(typePackage);
+                    if(scanTypePackage.isEmpty()){
+                        LOGGER.warn("Can't find class in '["+typePackage+"]' package. Please check your configuration.");
+                    }else{
+                        classes.addAll(PackageHelper.scanTypePackage(typePackage));
+                    }
                 }
             }
             // 取得类型转换注册器
