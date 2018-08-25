@@ -16,6 +16,9 @@
 package com.baomidou.mybatisplus.generator.config;
 
 
+import java.io.File;
+
+import com.baomidou.mybatisplus.extension.toolkit.PackageHelper;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 import com.baomidou.mybatisplus.generator.config.rules.FileType;
 
@@ -41,4 +44,18 @@ public interface IFileCreate {
      */
     boolean isCreate(ConfigBuilder configBuilder, FileType fileType, String filePath);
 
+    /**
+     * <p>
+     * 检查文件目录，不存在自动递归创建
+     * </p>
+     *
+     * @param filePath 文件路径
+     */
+    default void checkDir(String filePath) {
+        File file = new File(filePath);
+        boolean exist = file.exists();
+        if (!exist) {
+            PackageHelper.mkDir(file.getParentFile());
+        }
+    }
 }

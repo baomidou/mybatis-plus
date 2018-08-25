@@ -91,7 +91,7 @@ public class CodeGeneratorTest {
             .setNaming(NamingStrategy.underline_to_camel)
             .setColumnNaming(NamingStrategy.underline_to_camel)
             .entityTableFieldAnnotationEnable(enableTableFieldAnnotation)
-            .fieldPrefix(fieldPrefix)//test_id -> id, test_type -> type
+            .setFieldPrefix(fieldPrefix)//test_id -> id, test_type -> type
             .setInclude(tableNames);//修改替换成你需要的表名，多个表名传数组
         config.setActiveRecord(false)
             .setIdType(tableIdType)

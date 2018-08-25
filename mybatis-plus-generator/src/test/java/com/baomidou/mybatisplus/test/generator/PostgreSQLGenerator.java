@@ -80,9 +80,9 @@ public class PostgreSQLGenerator extends GeneratorTest {
         // 策略配置
         StrategyConfig strategy = new StrategyConfig();
         // strategy.setCapitalMode(true);// 全局大写命名
-        // strategy.setDbColumnUnderline(true);//全局下划线命名
-        strategy.setTablePrefix(new String[]{"bmd_", "mp_"});// 此处可以修改为您的表前缀
-        strategy.setFieldPrefix(new String[]{"A_"});
+        // strategy.setDbColumnUnderline(true);// 全局下划线命名
+        strategy.setTablePrefix("bmd_", "mp_");// 表前缀
+        strategy.setFieldPrefix("A_");
         strategy.setNaming(NamingStrategy.underline_to_camel);// 表名生成策略
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);// 允许字段策略独立设置，默认为 naming 策略
         strategy.setInclude("sys_user", "^mp.*", "ok"); // 需要生成的表，支持正则表达式
