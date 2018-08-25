@@ -23,7 +23,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.baomidou.mybatisplus.annotation.DbType;
@@ -160,9 +159,5 @@ public class GlobalConfigUtils {
 
     public static Set<String> getMapperRegistryCache(Configuration configuration) {
         return getGlobalConfig(configuration).getMapperRegistryCache();
-    }
-
-    public static SqlSession getSqlSession(Configuration configuration) {
-        return getGlobalConfig(configuration).getSqlSession();
     }
 }

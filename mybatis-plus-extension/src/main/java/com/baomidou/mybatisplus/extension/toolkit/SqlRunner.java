@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.assist.ISqlRunner;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
 
@@ -191,7 +190,7 @@ public class SqlRunner implements ISqlRunner {
      * <p/>
      */
     private SqlSession sqlSession() {
-        return (clazz != null) ? SqlHelper.sqlSession(clazz) : GlobalConfigUtils.getSqlSession(SqlHelper.FACTORY.getConfiguration());
+        return (clazz != null) ? SqlHelper.sqlSession(clazz) : SqlHelper.FACTORY.openSession(true);
     }
 
 }

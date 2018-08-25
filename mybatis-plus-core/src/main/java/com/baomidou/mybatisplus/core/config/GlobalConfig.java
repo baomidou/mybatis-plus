@@ -63,10 +63,6 @@ public class GlobalConfig implements Serializable {
      */
     private ISqlInjector sqlInjector;
     /**
-     * 单例重用SqlSession
-     */
-    private SqlSession sqlSession;
-    /**
      * 缓存当前Configuration的SqlSessionFactory
      */
     private SqlSessionFactory sqlSessionFactory;
