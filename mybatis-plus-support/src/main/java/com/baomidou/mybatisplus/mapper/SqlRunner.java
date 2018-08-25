@@ -24,7 +24,6 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
@@ -189,7 +188,7 @@ public class SqlRunner {
      * <p/>
      */
     private SqlSession sqlSession() {
-        return (clazz != null) ? SqlHelper.sqlSession(clazz) : GlobalConfigUtils.getSqlSession(FACTORY.getConfiguration());
+        return (clazz != null) ? SqlHelper.sqlSession(clazz) : FACTORY.openSession(true);
     }
 
 }

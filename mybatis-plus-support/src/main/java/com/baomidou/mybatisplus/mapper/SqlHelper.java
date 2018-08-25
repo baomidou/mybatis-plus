@@ -19,10 +19,8 @@ import java.util.List;
 
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
@@ -72,26 +70,6 @@ public class SqlHelper {
 
     /**
      * <p>
-     * 获取sqlSession
-     * </p>
-     *
-     * @param clazz 对象类
-     * @return
-     */
-    private static SqlSession getSqlSession(Class<?> clazz) {
-        SqlSession session = null;
-        try {
-            SqlSessionFactory sqlSessionFactory = GlobalConfigUtils.currentSessionFactory(clazz);
-            Configuration configuration = sqlSessionFactory.getConfiguration();
-            session = GlobalConfigUtils.getGlobalConfig(configuration).getSqlSession();
-        } catch (Exception e) {
-            // ignored
-        }
-        return session;
-    }
-
-    /**
-     * <p>
      * 获取Session
      * </p>
      *
@@ -100,8 +78,7 @@ public class SqlHelper {
      * @return SqlSession
      */
     public static SqlSession sqlSession(Class<?> clazz, boolean autoCommit) {
-        SqlSession sqlSession = getSqlSession(clazz);
-        return (sqlSession != null) ? sqlSession : GlobalConfigUtils.currentSessionFactory(clazz).openSession(autoCommit);
+        return GlobalConfigUtils.currentSessionFactory(clazz).openSession(autoCommit);
     }
 
     /**

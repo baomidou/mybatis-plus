@@ -10,7 +10,6 @@ import javax.sql.DataSource;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
@@ -169,10 +168,6 @@ public class GlobalConfigUtils {
 
     public static String getIdentifierQuote(Configuration configuration) {
         return getGlobalConfig(configuration).getIdentifierQuote();
-    }
-
-    public static SqlSession getSqlSession(Configuration configuration) {
-        return getGlobalConfig(configuration).getSqlSession();
     }
 
     /**
