@@ -264,7 +264,7 @@ public class TableInfoHelper {
         }
 
         /* 检查逻辑删除字段只能有最多一个 */
-        Assert.isTrue(fieldList.stream().filter(TableFieldInfo::isLogicDelete).count() < 2L,
+        Assert.isTrue(fieldList.parallelStream().filter(TableFieldInfo::isLogicDelete).count() < 2L,
             String.format("annotation of @TableLogic can't more than one in class : %s.", clazz.getName()));
 
         /* 字段列表 */
