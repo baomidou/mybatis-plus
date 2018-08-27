@@ -89,7 +89,7 @@ class ${entity} : Serializable {
     override fun toString(): String {
         return "${entity}{" +
 #foreach($field in ${table.fields})
-#if($!{velocityCount}==1)
+#if($!{foreach.index}==0)
         "${field.propertyName}=" + ${field.propertyName} +
 #else
         ", ${field.propertyName}=" + ${field.propertyName} +
