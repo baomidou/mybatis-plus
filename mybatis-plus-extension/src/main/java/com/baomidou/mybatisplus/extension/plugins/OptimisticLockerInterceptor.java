@@ -84,13 +84,15 @@ public class OptimisticLockerInterceptor implements Interceptor {
         if (param instanceof Map) {
             Map map = (Map) param;
             if (map.containsKey(NAME_ENTITY)) {
-                et = map.get(NAME_ENTITY);//updateById(et), update(et, wrapper);
+                //updateById(et), update(et, wrapper);
+                et = map.get(NAME_ENTITY);
             }
             if (map.containsKey(NAME_ENTITY_WRAPPER)) {
                 // mapper.update(updEntity, QueryWrapper<>(whereEntity);
                 ew = (Wrapper) map.get(NAME_ENTITY_WRAPPER);
             }
-            if (et != null) { // entity
+            if (et != null) {
+                // entity
                 String methodId = ms.getId();
                 String updateMethodName = methodId.substring(ms.getId().lastIndexOf(StringPool.DOT) + 1);
                 Class<?> entityClass = et.getClass();
@@ -111,7 +113,11 @@ public class OptimisticLockerInterceptor implements Interceptor {
                     // update(entity, wrapper)
                     if (ew instanceof AbstractWrapper) {
                         AbstractWrapper aw = (AbstractWrapper) ew;
-                        aw.eq(entityVersionField.getColumnName(), originalVersionVal);
+                        if (null == originalVersionVal) {
+                            aw.isNull(entityVersionField.getColumnName());
+                        } else {
+                            aw.eq(entityVersionField.getColumnName(), originalVersionVal);
+                        }
                         versionField.set(et, updatedVersionVal);
                         //TODO: should remove version=oldval condition from aw; 0827
                     }
@@ -153,7 +159,8 @@ public class OptimisticLockerInterceptor implements Interceptor {
         }
         Field versionField = entityVersionField.getField();
         String versionColumnName = entityVersionField.getColumnName();
-        entityVersionField.setColumnName(versionColumnName);//update to cache
+        //update to cache
+        entityVersionField.setColumnName(versionColumnName);
         entityMap.put(versionField.getName(), updatedVersionVal);
         entityMap.put(MP_OPTLOCK_VERSION_ORIGINAL, originalVersionVal);
         entityMap.put(MP_OPTLOCK_VERSION_COLUMN, versionColumnName);
@@ -169,6 +176,9 @@ public class OptimisticLockerInterceptor implements Interceptor {
      * @return updated version val
      */
     protected Object getUpdatedVersionVal(Object originalVersionVal) {
+        if (null == originalVersionVal) {
+            return null;
+        }
         Class<?> versionValClass = originalVersionVal.getClass();
         if (long.class.equals(versionValClass)) {
             return ((long) originalVersionVal) + 1;
@@ -185,7 +195,8 @@ public class OptimisticLockerInterceptor implements Interceptor {
         } else if (LocalDateTime.class.equals(versionValClass)) {
             return LocalDateTime.now();
         }
-        return originalVersionVal;//not supported type, return original val.
+        //not supported type, return original val.
+        return originalVersionVal;
     }
 
     @Override

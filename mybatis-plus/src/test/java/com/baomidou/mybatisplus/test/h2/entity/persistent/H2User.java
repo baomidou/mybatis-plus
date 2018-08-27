@@ -54,6 +54,10 @@ public class H2User extends SuperEntity {
     @TableField(strategy = FieldStrategy.IGNORED)
     private Integer testType;
 
+    /**
+     * 转义关键字测试
+     */
+    @TableField("`desc`")
     private String desc;
 
     /**
