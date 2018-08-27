@@ -45,9 +45,10 @@ public class TableInfo {
     private String serviceName;
     private String serviceImplName;
     private String controllerName;
-
     private List<TableField> fields;
-    // 公共字段
+    /**
+     * 公共字段
+     */
     private List<TableField> commonFields;
     private Set<String> importPackages = new HashSet<>();
     private String fieldNames;

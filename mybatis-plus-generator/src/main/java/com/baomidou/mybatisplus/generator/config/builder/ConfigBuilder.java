@@ -398,6 +398,7 @@ public class ConfigBuilder {
         if (null != globalConfig.getIdType()) {
             // 指定需要 IdType 场景
             tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotation.IdType.class.getCanonicalName());
+            tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotation.TableId.class.getCanonicalName());
         }
         if (StringUtils.isNotEmpty(strategyConfig.getVersionFieldName())) {
             tableInfo.getFields().forEach(f -> {
