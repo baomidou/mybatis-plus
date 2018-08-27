@@ -102,7 +102,7 @@ public class TableInfoHelper {
      * @return 字段信息数组
      */
     public static String[] getTableColumns(Class<?> clazz, String... excludeColumns) {
-        Assert.notNull(clazz, "clazz is not null");
+        Assert.notNull(clazz, "clazz must be not null");
         TableInfo tableInfo = getTableInfo(clazz);
         Assert.notNull(tableInfo, "Undiscovered table info . " + clazz.getName());
 
