@@ -147,14 +147,33 @@ public class H2UserTest extends BaseTest {
 
     @Test
     public void testUpdateByEwWithOptLock() {
+        H2User userInsert = new H2User();
+        userInsert.setName("optLockerTest");
+        userInsert.setAge(AgeEnum.THREE);
+        userInsert.setPrice(BigDecimal.TEN);
+        userInsert.setDesc("asdf");
+        userInsert.setTestType(1);
+        userInsert.setVersion(99);
+        userService.save(userInsert);
+
         QueryWrapper<H2User> ew = new QueryWrapper<>();
-        ew.gt("age", 13);
+        ew.ge("age", AgeEnum.TWO.getValue());
+        Long id99 = null;
         for (H2User u : userService.list(ew)) {
             System.out.println(u.getName() + "," + u.getAge() + "," + u.getVersion());
+            if (u.getVersion() != null && u.getVersion() == 99) {
+                id99 = u.getTestId();
+            }
         }
-        userService.update(new H2User().setPrice(BigDecimal.TEN), ew);
+        userService.update(new H2User().setPrice(BigDecimal.TEN).setVersion(99), ew);
+        System.out.println("============after update");
+        ew = new QueryWrapper<>();
+        ew.ge("age", AgeEnum.TWO.getValue());
         for (H2User u : userService.list(ew)) {
             System.out.println(u.getName() + "," + u.getAge() + "," + u.getVersion());
+            if (id99 != null && u.getTestId().equals(id99)) {
+                Assert.assertEquals("optLocker should update version+=1", 100, u.getVersion().intValue());
+            }
         }
     }
 
