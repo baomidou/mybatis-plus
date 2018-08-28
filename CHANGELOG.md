@@ -1,5 +1,19 @@
 ﻿# CHANGELOG
 
+## [v3.0-RELEASE] 2018.08.28 代号：超级棒棒糖 🍭 
+- 乐观锁 update(et,ew)方法 et带上 version 注解字段回写
+- 优化改进优化代码生成器
+- 包扫描为空时不抛出异常(枚举,别名）
+- 去除 SqlSession
+- 修改 issue 模板,完善注释
+- 优化初始化过程,添加逻辑删除注解次数检测
+- SQL检查允许跳过检查
+- 支持达梦数据库
+- 修改 code 为数值型严谨限制简化 api 层命名及初始值规则
+- 初始化 SQL 解析移至 SqlInjector
+- 其他代码优化
+
+
 ## [v3.0-RC3] 2018.08.19 代号：超级棒棒糖 🍭 RC3
 - 支持 TableField select 属性 false 排除默认注入大字段查询
 - 解决 page 反序列化 pages 属性报错
