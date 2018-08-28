@@ -302,7 +302,9 @@ public class H2UserExtendsTest extends H2Test {
         list = userService.selectList(new EntityWrapper<H2UserIntVersionExtendTO>());
         for (H2UserIntVersionExtendTO u : list) {
             Assert.assertEquals(u.getName(), nameExpect.get(u.getId()));
-            Assert.assertEquals(versionBefore.get(u.getId()) + 1, u.getVersion().intValue());
+            if (u.getVersion() != null) {
+                Assert.assertEquals(versionBefore.get(u.getId()) + 1, u.getVersion().intValue());
+            }
         }
     }
 }
