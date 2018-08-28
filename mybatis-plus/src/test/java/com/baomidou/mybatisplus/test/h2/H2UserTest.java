@@ -2,6 +2,7 @@ package com.baomidou.mybatisplus.test.h2;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -175,6 +176,48 @@ public class H2UserTest extends BaseTest {
                 Assert.assertEquals("optLocker should update version+=1", 100, u.getVersion().intValue());
             }
         }
+    }
+
+    @Test
+    public void testOptLocker4WrapperIsNull() {
+        H2User userInsert = new H2User();
+        userInsert.setName("optLockerTest");
+        userInsert.setAge(AgeEnum.THREE);
+        userInsert.setPrice(BigDecimal.TEN);
+        userInsert.setDesc("asdf");
+        userInsert.setTestType(1);
+        userInsert.setVersion(99);
+        userService.save(userInsert);
+
+        QueryWrapper<H2User> ew = new QueryWrapper<>();
+        ew.ge("age", AgeEnum.TWO.getValue());
+        Long id99 = null;
+        Map<Long, BigDecimal> idPriceMap = new HashMap<>();
+        for (H2User u : userService.list(ew)) {
+            System.out.println(u.getName() + "," + u.getAge() + "," + u.getVersion());
+            idPriceMap.put(u.getTestId(), u.getPrice());
+            if (u.getVersion() != null && u.getVersion() == 99) {
+                id99 = u.getTestId();
+            }
+        }
+        userService.update(new H2User().setPrice(BigDecimal.TEN).setVersion(99), null);
+        System.out.println("============after update");
+        ew = new QueryWrapper<>();
+        ew.ge("age", AgeEnum.TWO.getValue());
+        for (H2User u : userService.list(ew)) {
+            System.out.println(u.getName() + "," + u.getAge() + "," + u.getVersion());
+            if (id99 != null && u.getTestId().equals(id99)) {
+                Assert.assertEquals("optLocker should update version+=1", 100, u.getVersion().intValue());
+            } else {
+                Assert.assertEquals("other records should not be updated", idPriceMap.get(u.getTestId()), u.getPrice());
+            }
+        }
+        userService.update(new H2User().setPrice(BigDecimal.ZERO), null);
+        for (H2User u : userService.list(new QueryWrapper<>())) {
+            System.out.println(u.getName() + "," + u.getAge() + "," + u.getVersion());
+            Assert.assertEquals("all records should be updated", u.getPrice().setScale(2, RoundingMode.HALF_UP).intValue(), BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP).intValue());
+        }
+
     }
 
     @Test

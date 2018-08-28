@@ -23,6 +23,7 @@ import org.apache.ibatis.plugin.Signature;
 import com.baomidou.mybatisplus.annotation.Version;
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
@@ -111,15 +112,18 @@ public class OptimisticLockerInterceptor implements Interceptor {
                 Object updatedVersionVal = getUpdatedVersionVal(originalVersionVal);
                 if (PARAM_UPDATE_METHOD_NAME.equals(updateMethodName)) {
                     // update(entity, wrapper)
-                    if (ew != null && ew instanceof AbstractWrapper) {
-                        AbstractWrapper aw = (AbstractWrapper) ew;
-                        if (null == originalVersionVal) {
-                            aw.isNull(entityVersionField.getColumnName());
-                        } else {
+                    if (originalVersionVal != null) {
+                        if (ew == null) {
+                            AbstractWrapper aw = new QueryWrapper();
                             aw.eq(entityVersionField.getColumnName(), originalVersionVal);
+                            map.put(NAME_ENTITY_WRAPPER, aw);
+                            versionField.set(et, updatedVersionVal);
+                        } else if (ew instanceof AbstractWrapper) {
+                            AbstractWrapper aw = (AbstractWrapper) ew;
+                            aw.eq(entityVersionField.getColumnName(), originalVersionVal);
+                            versionField.set(et, updatedVersionVal);
+                            //TODO: should remove version=oldval condition from aw; 0827
                         }
-                        versionField.set(et, updatedVersionVal);
-                        //TODO: should remove version=oldval condition from aw; 0827
                     }
                     return invocation.proceed();
                 } else {
@@ -127,7 +131,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
                     Object resultObj = invocation.proceed();
                     if (resultObj instanceof Integer) {
                         Integer effRow = (Integer) resultObj;
-                        if (effRow != 0 && versionField != null && updatedVersionVal != null) {
+                        if (updatedVersionVal != null && effRow != 0 && versionField != null) {
                             //updated version value set to entity.
                             versionField.set(et, updatedVersionVal);
                         }
@@ -151,6 +155,9 @@ public class OptimisticLockerInterceptor implements Interceptor {
      */
     private void dealUpdateById(Class<?> entityClass, Object et, EntityField entityVersionField,
                                 Object originalVersionVal, Object updatedVersionVal, Map map) throws IllegalAccessException {
+        if (originalVersionVal == null) {
+            return;
+        }
         List<EntityField> fields = getEntityFields(entityClass);
         Map<String, Object> entityMap = new HashMap<>();
         for (EntityField ef : fields) {
