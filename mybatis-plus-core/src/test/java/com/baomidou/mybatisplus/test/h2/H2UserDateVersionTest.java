@@ -150,15 +150,17 @@ public class H2UserDateVersionTest extends H2Test {
         user.setVersion(1);
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DAY_OF_MONTH, -1);
-        user.setTestDate(cal.getTime());
+
+        Date oldDateVersion = cal.getTime();
+        user.setTestDate(oldDateVersion);
         userMapper.insertAllColumn(user);
 
         H2UserDateVersion userDB = userMapper.selectById(id);
 
         H2UserDateVersion updUser = new H2UserDateVersion();
         updUser.setName("999");
-        userDB.setVersion(null);
-        userMapper.update(updUser, new EntityWrapper<>(userDB));
+        updUser.setTestDate(oldDateVersion);
+        userMapper.update(updUser, new EntityWrapper<H2UserDateVersion>());
 
         System.out.println("before update: testDate=" + userDB.getTestDate());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH");

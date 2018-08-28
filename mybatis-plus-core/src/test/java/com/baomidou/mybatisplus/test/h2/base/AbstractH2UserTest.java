@@ -169,19 +169,21 @@ public abstract class AbstractH2UserTest extends H2Test {
         user.setPrice(BigDecimal.TEN);
         user.setDesc("asdf");
         user.setTestType(1);
-        user.setVersion(1);
+        int version = 99;
+        user.setVersion(version);
         userService.insertAllColumn(user);
 
         H2User userDB = userService.selectById(id);
-        Assert.assertEquals(1, userDB.getVersion().intValue());
+        Assert.assertEquals(version, userDB.getVersion().intValue());
 
         H2User updUser = new H2User();
         updUser.setName("999");
+        updUser.setVersion(version);
 
-        userService.update(updUser, new EntityWrapper<>(userDB));
+        userService.update(updUser, null);
 
         userDB = userService.selectById(id);
-        Assert.assertEquals(2, userDB.getVersion().intValue());
+        Assert.assertEquals(version + 1, userDB.getVersion().intValue());
         Assert.assertEquals("999", userDB.getName());
     }
 
@@ -245,18 +247,23 @@ public abstract class AbstractH2UserTest extends H2Test {
         user.setPrice(BigDecimal.TEN);
         user.setDesc("asdf");
         user.setTestType(1);
-        user.setVersion(1);
+        int version = 1;
+        user.setVersion(version);
         userService.insertAllColumn(user);
 
+        EntityWrapper<H2User> ew = new EntityWrapper<>();
+        ew.eq("version", version);
+        int count1 = userService.selectCount(ew);
+
         H2User userDB = userService.selectById(id);
-        Assert.assertEquals(1, userDB.getVersion().intValue());
+        Assert.assertEquals(version, userDB.getVersion().intValue());
         H2User updateUser = new H2User();
         updateUser.setName("918");
-        updateUser.setVersion(1);
+        updateUser.setVersion(version);
         Assert.assertTrue(userService.update(updateUser, null));
-        EntityWrapper<H2User> ew = new EntityWrapper<>();
-        int count1 = userService.selectCount(ew);
-        ew.eq("name", "918").eq("version", 1);
+
+        ew = new EntityWrapper<>();
+        ew.eq("name", "918").eq("version", version + 1);
         int count2 = userService.selectCount(ew);
         List<H2User> userList = userService.selectList(new EntityWrapper<H2User>());
         for (H2User u : userList) {
@@ -305,12 +312,14 @@ public abstract class AbstractH2UserTest extends H2Test {
 
     protected void updateAllColumnInLoop() {
         List<H2User> list = userService.selectList(new EntityWrapper<H2User>());
-        Map<Long, Integer> versionBefore = new HashMap<>();
+        Map<Long, Integer> versionExpect = new HashMap<>();
         Map<Long, String> nameExpect = new HashMap<>();
         for (H2User h2User : list) {
             Long id = h2User.getId();
             Integer versionVal = h2User.getVersion();
-            versionBefore.put(id, versionVal);
+            if (versionVal != null) {
+                versionExpect.put(id, versionVal + 1);
+            }
             String randomName = h2User.getName() + "_" + new Random().nextInt(10);
             nameExpect.put(id, randomName);
             h2User.setName(randomName);
@@ -319,8 +328,10 @@ public abstract class AbstractH2UserTest extends H2Test {
 
         list = userService.selectList(new EntityWrapper<H2User>());
         for (H2User u : list) {
-            Assert.assertEquals(u.getName(), nameExpect.get(u.getId()));
-            Assert.assertEquals(versionBefore.get(u.getId()) + 1, u.getVersion().intValue());
+            Long id = u.getId();
+            Assert.assertEquals(u.getName(), nameExpect.get(id));
+            if (versionExpect.containsKey(id))
+                Assert.assertEquals(versionExpect.get(id).intValue(), u.getVersion().intValue());
         }
     }
 

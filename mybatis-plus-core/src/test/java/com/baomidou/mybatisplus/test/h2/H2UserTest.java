@@ -255,6 +255,7 @@ public class H2UserTest extends AbstractH2UserTest {
     public void testDistinctColumn() {
         EntityWrapper<H2User> ew = new EntityWrapper<>();
         ew.setSqlSelect(Column.create().column("distinct test_type"));//setMapUnderscoreToCamelCase(true)
+        ew.isNotNull("test_type");
         List<H2User> list = userService.selectList(ew);
         for (H2User u : list) {
             System.out.println("getTestType=" + u.getTestType());
