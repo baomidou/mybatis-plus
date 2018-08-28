@@ -111,7 +111,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
                 Object updatedVersionVal = getUpdatedVersionVal(originalVersionVal);
                 if (PARAM_UPDATE_METHOD_NAME.equals(updateMethodName)) {
                     // update(entity, wrapper)
-                    if (ew instanceof AbstractWrapper) {
+                    if (ew != null && ew instanceof AbstractWrapper) {
                         AbstractWrapper aw = (AbstractWrapper) ew;
                         if (null == originalVersionVal) {
                             aw.isNull(entityVersionField.getColumnName());
