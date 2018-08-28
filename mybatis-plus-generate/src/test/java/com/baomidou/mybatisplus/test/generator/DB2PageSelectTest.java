@@ -7,7 +7,6 @@ import java.sql.Statement;
 
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
 import com.baomidou.mybatisplus.generator.config.rules.DbType;
-import com.ibm.db2.jcc.am.DatabaseMetaData;
 
 public class DB2PageSelectTest {
 	public static void main(String[] args) {
@@ -25,7 +24,7 @@ public class DB2PageSelectTest {
 	        Statement stmt;
 			try {
 				stmt = conn.createStatement();
-				DatabaseMetaData dbmd=(DatabaseMetaData) conn.getMetaData();
+//				DatabaseMetaData dbmd=(DatabaseMetaData) conn.getMetaData();
 				stmt.execute(page1);
 				ResultSet rs = stmt.getResultSet();
 				while(rs.next()){
