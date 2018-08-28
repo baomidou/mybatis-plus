@@ -178,7 +178,9 @@ public class H2UserExtendsTest extends H2Test {
         H2UserIntVersionExtendTO updUser = new H2UserIntVersionExtendTO();
         updUser.setName("999");
         userDB.setVersion(null);
-        userService.update(updUser, new EntityWrapper<>(userDB));
+        EntityWrapper<H2UserIntVersionExtendTO> ew = new EntityWrapper<>();
+        ew.eq("test_id", id);
+        userService.update(updUser, ew);
 
         userDB = userService.selectById(id);
         Assert.assertEquals(1, userDB.getVersion().intValue());
