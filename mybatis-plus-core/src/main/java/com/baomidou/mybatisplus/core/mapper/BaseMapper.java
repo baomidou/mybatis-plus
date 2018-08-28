@@ -15,15 +15,16 @@
  */
 package com.baomidou.mybatisplus.core.mapper;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import org.apache.ibatis.annotations.Param;
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 
 /*
 
@@ -193,7 +194,7 @@ public interface BaseMapper<T> {
      *
      * @param queryWrapper 实体对象
      */
-    Integer selectCount(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
+    int selectCount(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
 
     /**
      * <p>
