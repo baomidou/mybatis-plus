@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.h2.config.H2Db;
+import com.baomidou.mybatisplus.test.h2.entity.SuperEntity;
 import com.baomidou.mybatisplus.test.h2.entity.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserMapper;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
@@ -92,7 +93,7 @@ public class H2UserMapperTest extends BaseTest {
 
         // 批量删除
         Assert.assertTrue(count == userMapper.deleteBatchIds(h2UserList
-            .stream().map(u -> u.getTestId()).collect(toList())));
+            .stream().map(SuperEntity::getTestId).collect(toList())));
 
         // 更新
         h2User = new H2User();
@@ -114,7 +115,7 @@ public class H2UserMapperTest extends BaseTest {
 
         // 根据主键更新 age = 18
         h2User.setAge(AgeEnum.TWO);
-        Assert.assertNotNull(1 == userMapper.updateById(h2User));
+        Assert.assertEquals(1, userMapper.updateById(h2User));
 
         // 查询一条记录
         Assert.assertNotNull(userMapper.selectOne(new QueryWrapper<>(new H2User().setName(NQQ))));
