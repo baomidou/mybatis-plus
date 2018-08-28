@@ -56,6 +56,7 @@ public class H2UserMapperTest extends BaseTest {
         h2User.setAge(AgeEnum.ONE);
         h2User.setDeleted(0);
         h2User.setDesc("这是一个不错的小伙子");
+        h2User.setTestType(1);
         Assert.assertTrue(1 == userMapper.insert(h2User));
 
         log(h2User.getTestId());
@@ -113,12 +114,13 @@ public class H2UserMapperTest extends BaseTest {
 
         log(userMapper.selectOne(new QueryWrapper<>(new H2User().setName(NQQ).setAge(AgeEnum.THREE))));
 
+        Assert.assertEquals(1, userMapper.insert(h2User));
         // 根据主键更新 age = 18
         h2User.setAge(AgeEnum.TWO);
         Assert.assertEquals(1, userMapper.updateById(h2User));
 
         // 查询一条记录
-        Assert.assertNotNull(userMapper.selectOne(new QueryWrapper<>(new H2User().setName(NQQ))));
+        Assert.assertNotNull(userMapper.selectOne(new QueryWrapper<>(new H2User().setName("Joe").setTestType(1))));
 
         log(h2User.toString());
 
@@ -140,7 +142,7 @@ public class H2UserMapperTest extends BaseTest {
                 System.out.println(m);
             }
         }
-        Assert.assertTrue(CollectionUtils.isNotEmpty(userMapper.selectMaps(new QueryWrapper<>(new H2User().setAge(AgeEnum.TWO)))));
+        Assert.assertTrue(CollectionUtils.isNotEmpty(userMapper.selectMaps(new QueryWrapper<>(new H2User().setAge(AgeEnum.TWO).setTestType(3)))));
     }
 
     @Test
