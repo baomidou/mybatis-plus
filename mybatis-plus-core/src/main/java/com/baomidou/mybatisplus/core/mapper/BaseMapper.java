@@ -194,7 +194,7 @@ public interface BaseMapper<T> {
      *
      * @param queryWrapper 实体对象
      */
-    int selectCount(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
+    Integer selectCount(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
 
     /**
      * <p>
