@@ -131,6 +131,12 @@ public class TableInfo {
         this.configMark = configuration.toString();
     }
 
+    public void setLogicDelete(boolean logicDelete) {
+        if (logicDelete) {
+            this.logicDelete = true;
+        }
+    }
+
     /**
      * 获取主键的 select sql 片段
      *
