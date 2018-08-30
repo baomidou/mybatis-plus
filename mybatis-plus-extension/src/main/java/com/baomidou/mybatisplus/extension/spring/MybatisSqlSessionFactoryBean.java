@@ -22,6 +22,7 @@ import static org.springframework.util.StringUtils.hasLength;
 import static org.springframework.util.StringUtils.tokenizeToStringArray;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -63,6 +64,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.annotation.TableFieldEnumValue;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
@@ -74,6 +76,8 @@ import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
+import com.baomidou.mybatisplus.extension.handlers.EnumAnnotationTypeHandler;
+import com.baomidou.mybatisplus.extension.handlers.EnumTypeHandler;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.extension.toolkit.PackageHelper;
 
@@ -448,9 +452,9 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             List<String> typeAliasPackageList = new ArrayList<>();
             if (typeAliasesPackage.contains(StringPool.ASTERISK) && !typeAliasesPackage.contains(StringPool.COMMA) && !typeAliasesPackage.contains(StringPool.SEMICOLON)) {
                 String[] convertTypeAliasesPackages = PackageHelper.convertTypeAliasesPackage(this.typeAliasesPackage);
-                if(ArrayUtils.isEmpty(convertTypeAliasesPackages)){
-                    LOGGER.warn("Can't find class in '["+this.typeAliasesPackage+"]' package. Please check your configuration.");
-                }else{
+                if (ArrayUtils.isEmpty(convertTypeAliasesPackages)) {
+                    LOGGER.warn("Can't find class in '[" + this.typeAliasesPackage + "]' package. Please check your configuration.");
+                } else {
                     typeAliasPackageList.addAll(Arrays.asList(convertTypeAliasesPackages));
                 }
             } else {
@@ -458,9 +462,9 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
                 for (String one : typeAliasPackageArray) {
                     if (one.contains(StringPool.ASTERISK)) {
                         String[] convertTypeAliasesPackages = PackageHelper.convertTypeAliasesPackage(one);
-                        if(ArrayUtils.isEmpty(convertTypeAliasesPackages)){
-                            LOGGER.warn("Can't find class in '["+one+"]' package. Please check your configuration.");
-                        }else {
+                        if (ArrayUtils.isEmpty(convertTypeAliasesPackages)) {
+                            LOGGER.warn("Can't find class in '[" + one + "]' package. Please check your configuration.");
+                        } else {
                             typeAliasPackageList.addAll(Arrays.asList(convertTypeAliasesPackages));
                         }
                     } else {
@@ -483,8 +487,8 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             if (typeEnumsPackage.contains(StringPool.STAR) && !typeEnumsPackage.contains(StringPool.COMMA)
                 && !typeEnumsPackage.contains(StringPool.SEMICOLON)) {
                 classes = PackageHelper.scanTypePackage(typeEnumsPackage);
-                if(classes.isEmpty()){
-                    LOGGER.warn("Can't find class in '["+typeEnumsPackage+"]' package. Please check your configuration.");
+                if (classes.isEmpty()) {
+                    LOGGER.warn("Can't find class in '[" + typeEnumsPackage + "]' package. Please check your configuration.");
                 }
             } else {
                 String[] typeEnumsPackageArray = tokenizeToStringArray(this.typeEnumsPackage,
@@ -493,9 +497,9 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
                 classes = new HashSet<>();
                 for (String typePackage : typeEnumsPackageArray) {
                     Set<Class> scanTypePackage = PackageHelper.scanTypePackage(typePackage);
-                    if(scanTypePackage.isEmpty()){
-                        LOGGER.warn("Can't find class in '["+typePackage+"]' package. Please check your configuration.");
-                    }else{
+                    if (scanTypePackage.isEmpty()) {
+                        LOGGER.warn("Can't find class in '[" + typePackage + "]' package. Please check your configuration.");
+                    } else {
                         classes.addAll(PackageHelper.scanTypePackage(typePackage));
                     }
                 }
@@ -505,10 +509,11 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             for (Class cls : classes) {
                 if (cls.isEnum()) {
                     if (IEnum.class.isAssignableFrom(cls)) {
-                        typeHandlerRegistry.register(cls.getName(), com.baomidou.mybatisplus.extension.handlers.EnumTypeHandler.class.getCanonicalName());
+                        typeHandlerRegistry.register(cls, EnumTypeHandler.class);
                     } else {
-                        // 使用原生 EnumOrdinalTypeHandler
-                        typeHandlerRegistry.register(cls.getName(), org.apache.ibatis.type.EnumOrdinalTypeHandler.class.getCanonicalName());
+                        //使用原生 EnumOrdinalTypeHandler
+                        dealEnumType(cls);
+                        typeHandlerRegistry.register(cls, EnumAnnotationTypeHandler.class);
                     }
                 }
             }
@@ -634,6 +639,25 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             }
         }
         return sqlSessionFactory;
+    }
+
+    /**
+     * 处理普通枚举
+     * 把带{@link TableFieldEnumValue}的field注册到处理器中
+     *
+     * @param clazz
+     */
+    protected void dealEnumType(Class<?> clazz) {
+        if (clazz.isEnum()) {
+            Field[] fields = clazz.getDeclaredFields();
+            for (Field f : fields) {
+                if (f.isAnnotationPresent(TableFieldEnumValue.class)) {
+                    f.setAccessible(true);
+                    EnumAnnotationTypeHandler.addEnumType(clazz, f);
+                    return;
+                }
+            }
+        }
     }
 
     /**

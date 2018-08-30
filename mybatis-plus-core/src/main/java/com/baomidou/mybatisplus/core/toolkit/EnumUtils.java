@@ -16,6 +16,9 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
 
+import java.lang.reflect.Field;
+import java.util.Objects;
+
 import com.baomidou.mybatisplus.core.enums.IEnum;
 
 /**
@@ -41,16 +44,22 @@ public class EnumUtils {
     public static <E extends Enum<?> & IEnum> E valueOf(Class<E> enumClass, Object value) {
         E[] es = enumClass.getEnumConstants();
         for (E e : es) {
-            if (e.getValue() == value) {
-                // 基本类型
+            if (Objects.equals(e.getValue(), value)) {
                 return e;
-            } else if (value instanceof Number) {
-                if (e.getValue() instanceof Number &&
-                    ((Number) value).doubleValue() == ((Number) e.getValue()).doubleValue()) {
+            }
+        }
+        return null;
+    }
+
+    public static <E extends Enum<?>> E valueOf(Class<E> enumClass, Object value, Field enumField) {
+        E[] es = enumClass.getEnumConstants();
+        for (E e : es) {
+            try {
+                if (Objects.equals(enumField.get(e), value)) {
                     return e;
                 }
-            } else if (String.valueOf(value).equals(String.valueOf(e.getValue()))) {
-                return e;
+            } catch (IllegalAccessException e1) {
+
             }
         }
         return null;
