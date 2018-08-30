@@ -49,6 +49,7 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.TransactionFactory;
+import org.apache.ibatis.type.EnumOrdinalTypeHandler;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -64,7 +65,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
 import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.annotation.TableFieldEnumValue;
+import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
@@ -509,11 +510,17 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             for (Class cls : classes) {
                 if (cls.isEnum()) {
                     if (IEnum.class.isAssignableFrom(cls)) {
+                        // 接口方式
                         typeHandlerRegistry.register(cls, EnumTypeHandler.class);
                     } else {
-                        //使用原生 EnumOrdinalTypeHandler
-                        dealEnumType(cls);
-                        typeHandlerRegistry.register(cls, EnumAnnotationTypeHandler.class);
+                        // 注解方式
+                        Class<?> clazz = dealEnumType(cls);
+                        if (null != clazz) {
+                            typeHandlerRegistry.register(cls, EnumAnnotationTypeHandler.class);
+                        } else {
+                            // 原生方式
+                            typeHandlerRegistry.register(cls, EnumOrdinalTypeHandler.class);
+                        }
                     }
                 }
             }
@@ -643,21 +650,22 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
     /**
      * 处理普通枚举
-     * 把带{@link TableFieldEnumValue}的field注册到处理器中
+     * 把带{@link EnumValue}的field注册到处理器中
      *
      * @param clazz
      */
-    protected void dealEnumType(Class<?> clazz) {
+    protected Class<?> dealEnumType(Class<?> clazz) {
         if (clazz.isEnum()) {
             Field[] fields = clazz.getDeclaredFields();
             for (Field f : fields) {
-                if (f.isAnnotationPresent(TableFieldEnumValue.class)) {
+                if (f.isAnnotationPresent(EnumValue.class)) {
                     f.setAccessible(true);
                     EnumAnnotationTypeHandler.addEnumType(clazz, f);
-                    return;
+                    return clazz;
                 }
             }
         }
+        return null;
     }
 
     /**

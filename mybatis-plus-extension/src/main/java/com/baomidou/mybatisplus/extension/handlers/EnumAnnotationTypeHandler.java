@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.baomidou.mybatisplus.extension.handlers;
 
 import java.lang.reflect.Field;
@@ -17,11 +32,11 @@ import com.baomidou.mybatisplus.core.toolkit.EnumUtils;
 
 /**
  * <p>
- * 支持
+ * EnumValue 注解自定义枚举属性转换器
  * </p>
  *
  * @author yuxiaobin
- * @date 2018/8/30
+ * @date 2018-08-30
  */
 public class EnumAnnotationTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
 
@@ -50,7 +65,8 @@ public class EnumAnnotationTypeHandler<E extends Enum<E>> extends BaseTypeHandle
             if (jdbcType == null) {
                 ps.setObject(i, tableEnumField == null ? parameter.name() : tableEnumField.get(parameter));
             } else {
-                ps.setObject(i, tableEnumField == null ? parameter.name() : tableEnumField.get(parameter), jdbcType.TYPE_CODE); // see r3589
+                // see r3589
+                ps.setObject(i, tableEnumField == null ? parameter.name() : tableEnumField.get(parameter), jdbcType.TYPE_CODE);
             }
         } catch (IllegalAccessException e) {
             LOGGER.error("unrecognized jdbcType, failed to set StringValue for type=" + parameter);

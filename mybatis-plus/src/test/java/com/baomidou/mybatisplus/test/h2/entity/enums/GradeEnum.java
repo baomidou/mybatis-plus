@@ -1,6 +1,6 @@
 package com.baomidou.mybatisplus.test.h2.entity.enums;
 
-import com.baomidou.mybatisplus.annotation.TableFieldEnumValue;
+import com.baomidou.mybatisplus.annotation.EnumValue;
 
 /**
  * <p>
@@ -20,7 +20,7 @@ public enum GradeEnum {
         this.descp = descp;
     }
 
-    @TableFieldEnumValue
+    @EnumValue
     private final int code;
 
     private final String descp;

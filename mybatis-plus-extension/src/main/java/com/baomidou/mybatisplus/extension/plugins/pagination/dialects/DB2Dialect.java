@@ -55,12 +55,14 @@ public class DB2Dialect implements IDialect {
         }
         pagingSelect.append(" ) as temp_ where rownumber_ ");
 
-        // add the restriction to the outer select
+        // 20180829 modify by hepengju
+        // https://github.com/baomidou/mybatis-plus/issues/450
         if (offset > 0) {
             String endString = offset + StringPool.PLUS + limit;
-            pagingSelect.append("between ").append(offset).append("+1 and ").append(endString);
+            pagingSelect.append(" fetch first ").append(endString).append(" rows only) as temp_ where rownumber_ ")
+                .append("> ").append(offset);
         } else {
-            pagingSelect.append("<= ").append(limit);
+            pagingSelect.append(" fetch first ").append(limit).append(" rows only) as temp_ ");
         }
         return pagingSelect.toString();
     }
