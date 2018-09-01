@@ -28,6 +28,23 @@ import java.lang.annotation.Target;
  * </p>
  * <p>
  * 使用方式参考 com.baomidou.mybatisplus.test.h2.H2StudentMapperTest
+ *
+ * &#64;TableName("student")
+ * class Student {
+ *     private Integer id;
+ *     private String name;
+ *     private GradeEnum grade;//数据库grade字段类型为int
+ * }
+ *
+ * public enum GradeEnum {
+ *     PRIMARY(1,"小学"),
+ *     SECONDORY("2", "中学"),
+ *     HIGH(3, "高中");
+ *
+ *     &#64;EnumValue
+ *     private final int code;
+ *     private final String descp;
+ * }
  * </p>
  *
  * @author yuxiaobin

@@ -59,6 +59,10 @@ public class TableField {
     }
 
     protected void setConvert(StrategyConfig strategyConfig) {
+        if (strategyConfig.isEntityTableFieldAnnotationEnable()) {
+            this.convert = true;
+            return;
+        }
         if (strategyConfig.isCapitalModeNaming(name)) {
             this.convert = false;
         } else {
