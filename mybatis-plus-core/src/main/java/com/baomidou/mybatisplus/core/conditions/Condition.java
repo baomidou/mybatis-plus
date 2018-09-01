@@ -40,6 +40,10 @@ public class Condition {
         return new QueryWrapper<>();
     }
 
+    public static <T> QueryWrapper<T> create(T entity) {
+        return new QueryWrapper<>(entity);
+    }
+
     /**
      * <p>
      * 获取 LambdaQueryWrapper 实例
@@ -50,5 +54,9 @@ public class Condition {
      */
     public static <T> LambdaQueryWrapper<T> lambda() {
         return new LambdaQueryWrapper<>();
+    }
+
+    public static <T> LambdaQueryWrapper<T> lambda(T entity) {
+        return new LambdaQueryWrapper<>(entity);
     }
 }
