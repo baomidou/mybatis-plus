@@ -17,7 +17,6 @@ import org.mybatis.spring.mapper.ClassPathMapperScanner;
 import org.mybatis.spring.mapper.MapperFactoryBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -176,7 +175,7 @@ public class MybatisPlusAutoConfiguration {
     private void applyConfiguration(MybatisSqlSessionFactoryBean factory) {
         MybatisConfiguration configuration = this.properties.getConfiguration();
         if (configuration == null && !StringUtils.hasText(this.properties.getConfigLocation())) {
-            configuration = new MybatisConfiguration().printLogo(this.properties.getGlobalConfig().isLogo());
+            configuration = new MybatisConfiguration();
         }
         if (configuration != null && !CollectionUtils.isEmpty(this.configurationCustomizers)) {
             for (ConfigurationCustomizer customizer : this.configurationCustomizers) {
@@ -187,7 +186,7 @@ public class MybatisPlusAutoConfiguration {
         if (null != configuration) {
             configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
         }
-        factory.setConfiguration(configuration);
+        factory.setConfiguration(configuration.printLogo(this.properties.getGlobalConfig().isLogo()));
     }
 
     @Bean
