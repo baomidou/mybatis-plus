@@ -176,7 +176,7 @@ public class MybatisPlusAutoConfiguration {
     private void applyConfiguration(MybatisSqlSessionFactoryBean factory) {
         MybatisConfiguration configuration = this.properties.getConfiguration();
         if (configuration == null && !StringUtils.hasText(this.properties.getConfigLocation())) {
-            configuration = new MybatisConfiguration();
+            configuration = new MybatisConfiguration().printLogo(this.properties.getGlobalConfig().isLogo());
         }
         if (configuration != null && !CollectionUtils.isEmpty(this.configurationCustomizers)) {
             for (ConfigurationCustomizer customizer : this.configurationCustomizers) {

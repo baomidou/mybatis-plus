@@ -47,6 +47,10 @@ import lombok.experimental.Accessors;
 public class GlobalConfig implements Serializable {
 
     /**
+     * 是否开启 LOGO
+     */
+    private boolean logo = true;
+    /**
      * 是否刷新 mapper
      */
     private boolean refresh = false;
