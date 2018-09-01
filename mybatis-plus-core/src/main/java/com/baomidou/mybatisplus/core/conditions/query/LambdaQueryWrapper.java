@@ -53,9 +53,17 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
      */
     private List<String> excludeColumn = new ArrayList<>();
 
+    public LambdaQueryWrapper() {
+        // TO DO NOTHING
+    }
+
+    public LambdaQueryWrapper(T entity) {
+        this.entity = entity;
+    }
+
     @SuppressWarnings(value = "unchecked")
-    LambdaQueryWrapper(T entity, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs,
-                       MergeSegments mergeSegments) {
+    public LambdaQueryWrapper(T entity, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs,
+                              MergeSegments mergeSegments) {
         this.entity = entity;
         if (entity != null) {
             this.entityClass = (Class<T>) entity.getClass();
