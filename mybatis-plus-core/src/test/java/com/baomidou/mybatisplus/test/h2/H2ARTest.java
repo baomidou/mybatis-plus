@@ -18,6 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.baomidou.mybatisplus.test.h2.base.AbstractH2UserTest;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2UserIntVersionAR;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * <p>
@@ -42,6 +43,7 @@ public class H2ARTest extends AbstractH2UserTest {
     }
 
     @Test
+    @Transactional
     public void testAROptimisticLock() {
         H2UserIntVersionAR user = new H2UserIntVersionAR();
         user = user.selectById(105);

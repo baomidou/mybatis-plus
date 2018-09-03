@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.MybatisSqlSessionTemplate;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +50,7 @@ public class SqlRunner {
     // 默认FACTORY
     public static SqlSessionFactory FACTORY;
     private SqlSessionFactory sqlSessionFactory;
+    private static SqlSession SQL_SESSION;
 
     private Class<?> clazz;
 
@@ -71,6 +73,7 @@ public class SqlRunner {
         // 初始化的静态变量 还是有前后加载的问题 该判断只会执行一次
         if (DEFAULT.sqlSessionFactory == null) {
             DEFAULT.sqlSessionFactory = FACTORY;
+            SQL_SESSION = new MybatisSqlSessionTemplate(FACTORY);
         }
         return DEFAULT;
     }
@@ -89,16 +92,12 @@ public class SqlRunner {
 
     @Transactional
     public boolean insert(String sql, Object... args) {
-        try (SqlSession session = sqlSession()) {
-            return SqlHelper.retBool(session.insert(INSERT, sqlMap(sql, args)));
-        }
+        return SqlHelper.retBool(sqlSession().insert(INSERT, sqlMap(sql, args)));
     }
 
     @Transactional
     public boolean delete(String sql, Object... args) {
-        try (SqlSession session = sqlSession()) {
-            return SqlHelper.retBool(session.delete(DELETE, sqlMap(sql, args)));
-        }
+        return SqlHelper.retBool(sqlSession().delete(DELETE, sqlMap(sql, args)));
     }
 
     /**
@@ -116,9 +115,7 @@ public class SqlRunner {
 
     @Transactional
     public boolean update(String sql, Object... args) {
-        try (SqlSession session = sqlSession()) {
-            return SqlHelper.retBool(session.update(UPDATE, sqlMap(sql, args)));
-        }
+        return SqlHelper.retBool(sqlSession().update(UPDATE, sqlMap(sql, args)));
     }
 
     /**
@@ -130,9 +127,7 @@ public class SqlRunner {
      * @return
      */
     public List<Map<String, Object>> selectList(String sql, Object... args) {
-        try (SqlSession session = sqlSession()) {
-            return session.selectList(SELECT_LIST, sqlMap(sql, args));
-        }
+        return sqlSession().selectList(SELECT_LIST, sqlMap(sql, args));
     }
 
     /**
@@ -144,9 +139,7 @@ public class SqlRunner {
      * @return
      */
     public List<Object> selectObjs(String sql, Object... args) {
-        try (SqlSession session = sqlSession()) {
-            return session.selectList(SELECT_OBJS, sqlMap(sql, args));
-        }
+        return sqlSession().selectList(SELECT_OBJS, sqlMap(sql, args));
     }
 
     /**
@@ -162,9 +155,7 @@ public class SqlRunner {
     }
 
     public int selectCount(String sql, Object... args) {
-        try (SqlSession session = sqlSession()) {
-            return SqlHelper.retCount(session.<Integer>selectOne(COUNT, sqlMap(sql, args)));
-        }
+        return SqlHelper.retCount(sqlSession().<Integer>selectOne(COUNT, sqlMap(sql, args)));
     }
 
     public Map<String, Object> selectOne(String sql, Object... args) {
@@ -176,10 +167,8 @@ public class SqlRunner {
         if (null == page) {
             return null;
         }
-        try (SqlSession session = sqlSession()) {
-            page.setRecords(session.selectList(SELECT_LIST, sqlMap(sql, args), page));
-            return page;
-        }
+        page.setRecords(sqlSession().selectList(SELECT_LIST, sqlMap(sql, args), page));
+        return page;
     }
 
     /**
@@ -188,7 +177,7 @@ public class SqlRunner {
      * <p/>
      */
     private SqlSession sqlSession() {
-        return (clazz != null) ? SqlHelper.sqlSession(clazz) : FACTORY.openSession(true);
+        return (clazz != null) ? SqlHelper.sqlSession(clazz) : SQL_SESSION;
     }
 
 }

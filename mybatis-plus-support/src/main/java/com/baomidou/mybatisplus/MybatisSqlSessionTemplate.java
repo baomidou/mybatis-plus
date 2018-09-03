@@ -16,6 +16,10 @@
 package com.baomidou.mybatisplus;
 
 import static java.lang.reflect.Proxy.newProxyInstance;
+import static org.apache.ibatis.reflection.ExceptionUtil.unwrapThrowable;
+import static org.mybatis.spring.SqlSessionUtils.closeSqlSession;
+import static org.mybatis.spring.SqlSessionUtils.getSqlSession;
+import static org.mybatis.spring.SqlSessionUtils.isSqlSessionTransactional;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -24,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.cursor.Cursor;
+import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ExecutorType;
@@ -36,7 +41,6 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.dao.support.PersistenceExceptionTranslator;
 import org.springframework.util.Assert;
 
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
 
 /**
  * Copy SqlSessionTemplate
@@ -395,17 +399,33 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
 
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            SqlSession sqlSession = MybatisSqlSessionTemplate.this.sqlSessionFactory
-                .openSession(MybatisSqlSessionTemplate.this.executorType);
+            SqlSession sqlSession = getSqlSession(
+                MybatisSqlSessionTemplate.this.sqlSessionFactory,
+                MybatisSqlSessionTemplate.this.executorType,
+                MybatisSqlSessionTemplate.this.exceptionTranslator);
             try {
                 Object result = method.invoke(sqlSession, args);
-                sqlSession.commit(true);
+                if (!isSqlSessionTransactional(sqlSession, MybatisSqlSessionTemplate.this.sqlSessionFactory)) {
+                    // force commit even on non-dirty sessions because some databases require
+                    // a commit/rollback before calling close()
+                    sqlSession.commit(true);
+                }
                 return result;
             } catch (Throwable t) {
-                throw new MybatisPlusException(t);
+                Throwable unwrapped = unwrapThrowable(t);
+                if (MybatisSqlSessionTemplate.this.exceptionTranslator != null && unwrapped instanceof PersistenceException) {
+                    // release the connection to avoid a deadlock if the translator is no loaded. See issue #22
+                    closeSqlSession(sqlSession, MybatisSqlSessionTemplate.this.sqlSessionFactory);
+                    sqlSession = null;
+                    Throwable translated = MybatisSqlSessionTemplate.this.exceptionTranslator.translateExceptionIfPossible((PersistenceException) unwrapped);
+                    if (translated != null) {
+                        unwrapped = translated;
+                    }
+                }
+                throw unwrapped;
             } finally {
                 if (sqlSession != null) {
-                    sqlSession.close();
+                    closeSqlSession(sqlSession, MybatisSqlSessionTemplate.this.sqlSessionFactory);
                 }
             }
         }

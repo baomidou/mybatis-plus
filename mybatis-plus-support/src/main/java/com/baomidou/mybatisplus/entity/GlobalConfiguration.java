@@ -105,6 +105,10 @@ public class GlobalConfiguration implements Serializable {
      */
     private Set<String> mapperRegistryCache = new ConcurrentSkipListSet<>();
     /**
+     * 单例重用SqlSession
+     */
+    private SqlSession sqlSession;
+    /**
      * 缓存 Sql 解析初始化
      */
     private boolean sqlParserCache = false;
@@ -224,6 +228,7 @@ public class GlobalConfiguration implements Serializable {
 
     public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
         this.sqlSessionFactory = sqlSessionFactory;
+        this.sqlSession = new MybatisSqlSessionTemplate(sqlSessionFactory);
     }
 
     public boolean isCapitalMode() {
@@ -258,7 +263,11 @@ public class GlobalConfiguration implements Serializable {
             SqlReservedWords.RESERVED_WORDS.addAll(StringUtils.splitWorker(sqlKeywords.toUpperCase(), ",", -1, false));
         }
     }
-
+    
+    public SqlSession getSqlSession() {
+        return sqlSession;
+    }
+    
     public boolean isSqlParserCache() {
         return sqlParserCache;
     }

@@ -2,6 +2,7 @@ package com.baomidou.mybatisplus.test.h2.config;
 
 import javax.sql.DataSource;
 
+import com.baomidou.mybatisplus.MybatisSqlSessionTemplate;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.JdbcType;
@@ -63,5 +64,10 @@ public class MybatisPlusConfig {
         conf.setLogicNotDeleteValue("1");
         conf.setIdType(2);
         return conf;
+    }
+    
+    @Bean
+    public MybatisSqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory){
+        return new MybatisSqlSessionTemplate(sqlSessionFactory);
     }
 }
