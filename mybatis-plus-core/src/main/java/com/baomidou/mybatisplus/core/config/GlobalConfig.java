@@ -48,7 +48,7 @@ public class GlobalConfig implements Serializable {
     /**
      * 是否开启 LOGO
      */
-    private boolean logo = true;
+    private boolean banner = true;
     /**
      * 是否刷新 mapper
      */

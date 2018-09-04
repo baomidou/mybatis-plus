@@ -430,7 +430,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
                 LOGGER.debug("Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration");
             }
             // TODO 使用自定义配置
-            configuration = new MybatisConfiguration().printLogo(this.globalConfig.isLogo());
+            configuration = new MybatisConfiguration().printBanner(this.globalConfig.isBanner());
             if (this.configurationProperties != null) {
                 configuration.setVariables(this.configurationProperties);
             }

@@ -56,7 +56,7 @@ public class MybatisConfiguration extends Configuration {
     /**
      * 打印 LOGO
      */
-    public MybatisConfiguration printLogo(boolean print) {
+    public MybatisConfiguration printBanner(boolean print) {
         if (print) {
             System.out.println("___  ___       ______         _    _        ______  _             ");
             System.out.println("|  \\/  |       | ___ \\       | |  (_)       | ___ \\| |            ");

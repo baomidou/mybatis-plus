@@ -186,7 +186,7 @@ public class MybatisPlusAutoConfiguration {
         if (null != configuration) {
             configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
         }
-        factory.setConfiguration(configuration.printLogo(this.properties.getGlobalConfig().isLogo()));
+        factory.setConfiguration(configuration.printBanner(this.properties.getGlobalConfig().isBanner()));
     }
 
     @Bean
