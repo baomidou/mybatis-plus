@@ -8,10 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.internal.matchers.GreaterThan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -264,6 +266,26 @@ public class H2UserTest extends BaseTest {
         for (H2User u : list2) {
             Assert.assertNotNull(u.getName());
             Assert.assertNull(u.getPrice());
+        }
+    }
+    
+    @Test
+    public void testBatchTransactional(){
+        try {
+            userService.testBatchTransactional();
+        }catch (Exception e){
+            List<H2User> list = userService.list(new QueryWrapper<H2User>().like("name", "batch"));
+            Assert.assertTrue(CollectionUtils.isEmpty(list));
+        }
+    }
+    
+    @Test
+    public void testSimpleTransactional(){
+        try {
+            userService.testSimpleTransactional();
+        }catch (Exception e){
+            List<H2User> list = userService.list(new QueryWrapper<H2User>().like("name", "simple"));
+            Assert.assertTrue(CollectionUtils.isEmpty(list));
         }
     }
 }

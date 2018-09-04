@@ -15,9 +15,12 @@
  */
 package com.baomidou.mybatisplus.test.h2.service.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +29,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserMapper;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
 import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * <p>
@@ -87,5 +91,21 @@ public class H2UserServiceImpl extends ServiceImpl<H2UserMapper, H2User> impleme
     @Override
     public List<Map> mySelectMaps() {
         return userMapper.mySelectMaps();
+    }
+    
+    @Override
+    @Transactional
+    public void testBatchTransactional() {
+        saveBatch(Arrays.asList(new H2User("batch1"),new H2User("batch2"),new H2User("batch3")));
+        saveBatch(Arrays.asList(new H2User("batch4"),new H2User("batch5"),new H2User("batch6")));
+        throw new MybatisPlusException("测试批量插入事务回滚");
+    }
+    
+    @Override
+    @Transactional
+    public void testSimpleTransactional() {
+        save(new H2User("simple1"));
+        save(new H2User("simple2"));
+        throw new MybatisPlusException("测试普通插入事务回滚");
     }
 }
