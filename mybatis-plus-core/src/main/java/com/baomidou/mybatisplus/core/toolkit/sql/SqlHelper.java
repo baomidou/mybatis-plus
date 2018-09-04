@@ -22,9 +22,11 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionTemplate;
 
 import java.util.List;
 
@@ -41,21 +43,7 @@ public final class SqlHelper {
     private static final Log logger = LogFactory.getLog(SqlHelper.class);
     public static SqlSessionFactory FACTORY;
 
-
-    /**
-     * <p>
-     * 获取Session 默认自动提交
-     * </p>
-     * <p>
-     * 特别说明:这里获取SqlSession时这里虽然设置了自动提交但是如果事务托管了的话 是不起作用的 切记!!
-     * </p>
-     *
-     * @return SqlSession
-     */
-    public static SqlSession sqlSession(Class<?> clazz) {
-        return SqlHelper.sqlSession(clazz, true);
-    }
-
+    
     /**
      * <p>
      * 批量操作 SqlSession
@@ -67,18 +55,33 @@ public final class SqlHelper {
     public static SqlSession sqlSessionBatch(Class<?> clazz) {
         return GlobalConfigUtils.currentSessionFactory(clazz).openSession(ExecutorType.BATCH);
     }
-
+    
+    /**
+     * <p>
+     * 获取sqlSession
+     * </p>
+     *
+     * @param clazz 对象类
+     * @return
+     */
+    private static SqlSession getSqlSession(Class<?> clazz) {
+        SqlSession session;
+        SqlSessionFactory sqlSessionFactory = GlobalConfigUtils.currentSessionFactory(clazz);
+        Configuration configuration = sqlSessionFactory.getConfiguration();
+        session = GlobalConfigUtils.getGlobalConfig(configuration).getSqlSession();
+        return session !=null ? session : new SqlSessionTemplate(sqlSessionFactory);
+    }
+    
     /**
      * <p>
      * 获取Session
      * </p>
      *
      * @param clazz      实体类
-     * @param autoCommit true自动提交false则相反
      * @return SqlSession
      */
-    public static SqlSession sqlSession(Class<?> clazz, boolean autoCommit) {
-        return GlobalConfigUtils.currentSessionFactory(clazz).openSession(autoCommit);
+    public static SqlSession sqlSession(Class<?> clazz) {
+        return SqlHelper.getSqlSession(clazz);
     }
 
     /**

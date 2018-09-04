@@ -14,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -35,8 +37,10 @@ public class ActiveRecordTest {
     }
 
     @Test
+    @Transactional
     public void testInsert() {
         H2Student student = new H2Student(null, "测试学生", 2);
+        Assert.assertTrue(student.insert());
         Assert.assertTrue(student.insert());
     }
 

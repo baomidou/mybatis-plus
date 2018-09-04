@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
+import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.baomidou.mybatisplus.annotation.DbType;
@@ -31,6 +32,7 @@ import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.mybatis.spring.SqlSessionTemplate;
 
 /**
  * <p>
@@ -66,6 +68,10 @@ public class GlobalConfig implements Serializable {
      */
     private ISqlInjector sqlInjector;
     /**
+     * 单例重用SqlSession
+     */
+    private SqlSession sqlSession;
+    /**
      * 缓存当前Configuration的SqlSessionFactory
      */
     private SqlSessionFactory sqlSessionFactory;
@@ -85,6 +91,7 @@ public class GlobalConfig implements Serializable {
      */
     public SqlSessionFactory signGlobalConfig(SqlSessionFactory sqlSessionFactory) {
         if (null != sqlSessionFactory) {
+            this.sqlSession = new SqlSessionTemplate(sqlSessionFactory);
             GlobalConfigUtils.setGlobalConfig(sqlSessionFactory.getConfiguration(), this);
         }
         return sqlSessionFactory;

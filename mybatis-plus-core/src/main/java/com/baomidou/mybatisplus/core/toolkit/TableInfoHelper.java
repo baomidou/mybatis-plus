@@ -78,14 +78,14 @@ public class TableInfoHelper {
             return tableInfo;
         }
         //尝试获取父类缓存
-        Class c = clazz;
-        while (null == tableInfo && Object.class != c) {
-            c = c.getSuperclass();
-            tableInfo = TABLE_INFO_CACHE.get(ClassUtils.getUserClass(c).getName());
+        Class currentClass = clazz;
+        while (null == tableInfo && Object.class != currentClass) {
+            currentClass = currentClass.getSuperclass();
+            tableInfo = TABLE_INFO_CACHE.get(ClassUtils.getUserClass(currentClass).getName());
         }
         if (null == tableInfo) {
             //找不到了,我也很绝望呀
-            logger.warn(ClassUtils.getUserClass(clazz).getName() + "Not Found TableInfoCache.");
+            throw ExceptionUtils.mpe(ClassUtils.getUserClass(clazz).getName() + "Not Found TableInfoCache.");
         } else {
             TABLE_INFO_CACHE.put(ClassUtils.getUserClass(clazz).getName(), tableInfo);
         }

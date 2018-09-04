@@ -51,9 +51,7 @@ public abstract class Model<T extends Model> implements Serializable {
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean insert() {
-        try (SqlSession session = sqlSession()) {
-            return SqlHelper.retBool(session.insert(sqlStatement(SqlMethod.INSERT_ONE), this));
-        }
+        return SqlHelper.retBool(sqlSession().insert(sqlStatement(SqlMethod.INSERT_ONE), this));
     }
 
     /**
@@ -84,9 +82,7 @@ public abstract class Model<T extends Model> implements Serializable {
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteById(Serializable id) {
-        try (SqlSession session = sqlSession()) {
-            return SqlHelper.delBool(session.delete(sqlStatement(SqlMethod.DELETE_BY_ID), id));
-        }
+        return SqlHelper.delBool(sqlSession().delete(sqlStatement(SqlMethod.DELETE_BY_ID), id));
     }
 
     /**
@@ -114,9 +110,7 @@ public abstract class Model<T extends Model> implements Serializable {
     public boolean delete(Wrapper wrapper) {
         Map<String, Object> map = new HashMap<>(1);
         map.put(Constants.WRAPPER, wrapper);
-        try (SqlSession session = sqlSession()) {
-            return SqlHelper.delBool(session.delete(sqlStatement(SqlMethod.DELETE), map));
-        }
+        return SqlHelper.delBool(sqlSession().delete(sqlStatement(SqlMethod.DELETE), map));
     }
 
     /**
@@ -130,9 +124,7 @@ public abstract class Model<T extends Model> implements Serializable {
         // updateById
         Map<String, Object> map = new HashMap<>(1);
         map.put(Constants.ENTITY, this);
-        try(SqlSession sqlSession = sqlSession()) {
-            return SqlHelper.retBool(sqlSession.update(sqlStatement(SqlMethod.UPDATE_BY_ID), map));
-        }
+        return SqlHelper.retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE_BY_ID), map));
     }
 
     /**
@@ -149,9 +141,7 @@ public abstract class Model<T extends Model> implements Serializable {
         map.put(Constants.ENTITY, this);
         map.put(Constants.WRAPPER, wrapper);
         // update
-        try (SqlSession session = sqlSession()) {
-            return SqlHelper.retBool(session.update(sqlStatement(SqlMethod.UPDATE), map));
-        }
+        return SqlHelper.retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE), map));
     }
 
     /**
@@ -162,9 +152,7 @@ public abstract class Model<T extends Model> implements Serializable {
      * @return
      */
     public List<T> selectAll() {
-        try (SqlSession session = sqlSession()) {
-            return session.selectList(sqlStatement(SqlMethod.SELECT_LIST));
-        }
+        return sqlSession().selectList(sqlStatement(SqlMethod.SELECT_LIST));
     }
 
     /**
@@ -176,9 +164,7 @@ public abstract class Model<T extends Model> implements Serializable {
      * @return
      */
     public T selectById(Serializable id) {
-        try (SqlSession session = sqlSession()) {
-            return session.selectOne(sqlStatement(SqlMethod.SELECT_BY_ID), id);
-        }
+        return sqlSession().selectOne(sqlStatement(SqlMethod.SELECT_BY_ID), id);
     }
 
     /**
@@ -205,9 +191,7 @@ public abstract class Model<T extends Model> implements Serializable {
     public List<T> selectList(Wrapper wrapper) {
         Map<String, Object> map = new HashMap<>(1);
         map.put(Constants.WRAPPER, wrapper);
-        try (SqlSession session = sqlSession()) {
-            return session.selectList(sqlStatement(SqlMethod.SELECT_LIST), map);
-        }
+        return sqlSession().selectList(sqlStatement(SqlMethod.SELECT_LIST), map);
     }
 
     /**
@@ -235,9 +219,7 @@ public abstract class Model<T extends Model> implements Serializable {
         Map<String, Object> map = new HashMap<>(2);
         map.put(Constants.WRAPPER, SqlHelper.fillWrapper(page, wrapper));
         map.put("page", page);
-        try (SqlSession session = sqlSession()) {
-            page.setRecords(session.selectList(sqlStatement(SqlMethod.SELECT_PAGE), map));
-        }
+        page.setRecords(sqlSession().selectList(sqlStatement(SqlMethod.SELECT_PAGE), map));
         return page;
     }
 
@@ -252,9 +234,7 @@ public abstract class Model<T extends Model> implements Serializable {
     public int selectCount(Wrapper wrapper) {
         Map<String, Object> map = new HashMap<>(1);
         map.put(Constants.WRAPPER, wrapper);
-        try (SqlSession session = sqlSession()) {
-            return SqlHelper.retCount(session.<Integer>selectOne(sqlStatement(SqlMethod.SELECT_COUNT), map));
-        }
+        return SqlHelper.retCount(sqlSession().<Integer>selectOne(sqlStatement(SqlMethod.SELECT_COUNT), map));
     }
 
     /**
