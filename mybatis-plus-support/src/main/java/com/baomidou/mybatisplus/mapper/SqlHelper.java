@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.mapper;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.MybatisSqlSessionTemplate;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.Configuration;
@@ -31,7 +32,6 @@ import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.toolkit.MapUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
-import org.mybatis.spring.SqlSessionUtils;
 
 /**
  * <p>
@@ -66,15 +66,11 @@ public class SqlHelper {
      * @return
      */
     private static SqlSession getSqlSession(Class<?> clazz) {
-        SqlSession session = null;
-        try {
-            SqlSessionFactory sqlSessionFactory = GlobalConfigUtils.currentSessionFactory(clazz);
-            Configuration configuration = sqlSessionFactory.getConfiguration();
-            session = GlobalConfigUtils.getGlobalConfig(configuration).getSqlSession();
-        } catch (Exception e) {
-            // ignored
-        }
-        return session;
+        SqlSessionFactory sqlSessionFactory = GlobalConfigUtils.currentSessionFactory(clazz);
+        Configuration configuration = sqlSessionFactory.getConfiguration();
+        SqlSession sqlSession = GlobalConfigUtils.getGlobalConfig(configuration).getSqlSession();
+        //感觉也不可能为空了,后面那个做保险把.
+        return sqlSession !=null ? sqlSession : new MybatisSqlSessionTemplate(sqlSessionFactory);
     }
 
     /**
@@ -86,8 +82,7 @@ public class SqlHelper {
      * @return SqlSession
      */
     public static SqlSession sqlSession(Class<?> clazz) {
-        SqlSession sqlSession = getSqlSession(clazz);
-        return sqlSession !=null ? sqlSession:SqlSessionUtils.getSqlSession(GlobalConfigUtils.currentSessionFactory(clazz));
+        return getSqlSession(clazz);
     }
 
     /**

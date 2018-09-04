@@ -82,16 +82,16 @@ public class TableInfoHelper {
             return tableInfo;
         }else{
             //尝试获取父类缓存
-            Class c = clazz;
-            while (tableInfo==null && Object.class!=c){
-                c = c.getSuperclass();
-                tableInfo = tableInfoCache.get(ClassUtils.getUserClass(c).getName());
+            Class currentClass = clazz;
+            while (tableInfo==null && Object.class!=currentClass){
+                currentClass = currentClass.getSuperclass();
+                tableInfo = tableInfoCache.get(ClassUtils.getUserClass(currentClass).getName());
             }
             if(tableInfo!=null){
                 tableInfoCache.put(ClassUtils.getUserClass(clazz).getName(),tableInfo);
             }else{
                 //找不到了,我也很绝望呀
-                logger.warn(ClassUtils.getUserClass(clazz).getName() + "Not Found TableInfoCache.");
+                throw new MybatisPlusException(ClassUtils.getUserClass(clazz).getName() + "Not Found TableInfoCache.");
             }
         }
         return tableInfo;

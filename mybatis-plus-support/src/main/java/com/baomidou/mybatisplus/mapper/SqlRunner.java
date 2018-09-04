@@ -50,7 +50,7 @@ public class SqlRunner {
     // 默认FACTORY
     public static SqlSessionFactory FACTORY;
     private SqlSessionFactory sqlSessionFactory;
-    private static SqlSession SQL_SESSION;
+    private SqlSession sqlSession;
 
     private Class<?> clazz;
 
@@ -73,7 +73,6 @@ public class SqlRunner {
         // 初始化的静态变量 还是有前后加载的问题 该判断只会执行一次
         if (DEFAULT.sqlSessionFactory == null) {
             DEFAULT.sqlSessionFactory = FACTORY;
-            SQL_SESSION = new MybatisSqlSessionTemplate(FACTORY);
         }
         return DEFAULT;
     }
@@ -177,7 +176,10 @@ public class SqlRunner {
      * <p/>
      */
     private SqlSession sqlSession() {
-        return (clazz != null) ? SqlHelper.sqlSession(clazz) : SQL_SESSION;
+        if(sqlSession == null){
+            this.sqlSession = new MybatisSqlSessionTemplate(FACTORY);
+        }
+        return (clazz != null) ? SqlHelper.sqlSession(clazz):sqlSession;
     }
 
 }
