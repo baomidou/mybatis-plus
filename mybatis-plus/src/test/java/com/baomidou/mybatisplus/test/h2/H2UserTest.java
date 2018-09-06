@@ -268,7 +268,7 @@ public class H2UserTest extends BaseTest {
             Assert.assertNull(u.getPrice());
         }
     }
-    
+
     @Test
     public void testBatchTransactional(){
         try {
@@ -278,7 +278,7 @@ public class H2UserTest extends BaseTest {
             Assert.assertTrue(CollectionUtils.isEmpty(list));
         }
     }
-    
+
     @Test
     public void testSimpleTransactional(){
         try {

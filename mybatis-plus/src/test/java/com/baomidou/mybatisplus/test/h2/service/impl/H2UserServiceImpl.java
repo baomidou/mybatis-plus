@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.test.h2.service.impl;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -92,20 +91,20 @@ public class H2UserServiceImpl extends ServiceImpl<H2UserMapper, H2User> impleme
     public List<Map> mySelectMaps() {
         return userMapper.mySelectMaps();
     }
-    
+
     @Override
     @Transactional
     public void testBatchTransactional() {
-        saveBatch(Arrays.asList(new H2User("batch1"),new H2User("batch2"),new H2User("batch3")));
-        saveBatch(Arrays.asList(new H2User("batch4"),new H2User("batch5"),new H2User("batch6")));
+        saveBatch(Arrays.asList(new H2User("batch1",0),new H2User("batch2",0),new H2User("batch3",0)));
+        saveBatch(Arrays.asList(new H2User("batch4",0),new H2User("batch5",0),new H2User("batch6",0)));
         throw new MybatisPlusException("测试批量插入事务回滚");
     }
-    
+
     @Override
     @Transactional
     public void testSimpleTransactional() {
-        save(new H2User("simple1"));
-        save(new H2User("simple2"));
+        save(new H2User("simple1",0));
+        save(new H2User("simple2",0));
         throw new MybatisPlusException("测试普通插入事务回滚");
     }
 }

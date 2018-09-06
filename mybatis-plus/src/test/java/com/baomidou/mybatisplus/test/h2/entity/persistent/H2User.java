@@ -113,6 +113,11 @@ public class H2User extends SuperEntity {
         this.testType = testType;
     }
 
+    public H2User(String name, Integer deleted) {
+        this.name = name;
+        this.deleted = deleted;
+    }
+
     @Override
     public String toString() {
         return null == this ? "h2user is null." : new StringBuilder()
