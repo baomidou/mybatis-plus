@@ -2,9 +2,11 @@ package com.baomidou.mybatisplus.test.h2;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.h2.config.H2Db;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2Student;
+import com.baomidou.mybatisplus.test.h2.service.IH2StudentService;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -12,6 +14,7 @@ import org.junit.runner.RunWith;
 import org.mockito.internal.matchers.GreaterThan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +33,9 @@ import java.util.List;
 public class ActiveRecordTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ActiveRecordTest.class);
+
+    @Autowired
+    private IH2StudentService h2StudentService;
 
     @BeforeClass
     public static void InitDB() throws SQLException, IOException {
@@ -116,5 +122,15 @@ public class ActiveRecordTest {
     public void testSelectOne(){
         H2Student student = new H2Student();
         Assert.assertNotNull(student.selectOne(new QueryWrapper<>()));
+    }
+
+    @Test
+    public void testTransactional(){
+        try {
+            h2StudentService.testTransactional();
+        }catch (Exception e){
+            List<H2Student> students = new H2Student().selectList(new QueryWrapper<H2Student>().lambda().like(H2Student::getName, "tx"));
+            Assert.assertTrue(CollectionUtils.isEmpty(students));
+        }
     }
 }
