@@ -126,8 +126,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         try (SqlSession batchSqlSession = sqlSessionBatch()) {
             int size = entityList.size();
             String sqlStatement = sqlStatement(SqlMethod.INSERT_ONE);
-            for (int i = 0; i < size; i++) {
-                batchSqlSession.insert(sqlStatement, entityList.get(i));
+            for (int i = 1; i <= size; i++) {
+                batchSqlSession.insert(sqlStatement, entityList.get(i - 1));
                 if (i >= 1 && i % batchSize == 0) {
                     batchSqlSession.flushStatements();
                 }
@@ -231,11 +231,11 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         }
         try (SqlSession batchSqlSession = sqlSessionBatch()) {
             int size = entityList.size();
-            for (int i = 0; i < size; i++) {
+            for (int i = 1; i <= size; i++) {
                 if (selective) {
-                    insertOrUpdate(entityList.get(i));
+                    insertOrUpdate(entityList.get(i - 1));
                 } else {
-                    insertOrUpdateAllColumn(entityList.get(i));
+                    insertOrUpdateAllColumn(entityList.get(i - 1));
                 }
                 if (i >= 1 && i % batchSize == 0) {
                     batchSqlSession.flushStatements();
@@ -339,9 +339,9 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
             int size = entityList.size();
             SqlMethod sqlMethod = selective ? SqlMethod.UPDATE_BY_ID : SqlMethod.UPDATE_ALL_COLUMN_BY_ID;
             String sqlStatement = sqlStatement(sqlMethod);
-            for (int i = 0; i < size; i++) {
+            for (int i = 1; i <= size; i++) {
                 MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
-                param.put("et", entityList.get(i));
+                param.put("et", entityList.get(i - 1));
                 batchSqlSession.update(sqlStatement, param);
                 if (i >= 1 && i % batchSize == 0) {
                     batchSqlSession.flushStatements();
