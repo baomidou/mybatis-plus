@@ -93,7 +93,7 @@ public class H2UserServiceImpl extends ServiceImpl<H2UserMapper, H2User> impleme
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = RuntimeException.class)
     public void testBatchTransactional() {
         saveBatch(Arrays.asList(new H2User("batch1",0),new H2User("batch2",0),new H2User("batch3",0)));
         saveBatch(Arrays.asList(new H2User("batch4",0),new H2User("batch5",0),new H2User("batch6",0)));
@@ -101,7 +101,7 @@ public class H2UserServiceImpl extends ServiceImpl<H2UserMapper, H2User> impleme
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = RuntimeException.class)
     public void testSimpleTransactional() {
         save(new H2User("simple1",0));
         save(new H2User("simple2",0));

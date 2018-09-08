@@ -3,17 +3,22 @@ package com.baomidou.mybatisplus.test.h2;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.internal.matchers.GreaterThan;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.toolkit.SqlRunner;
 import com.baomidou.mybatisplus.test.h2.config.H2Db;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2Student;
+import com.baomidou.mybatisplus.test.h2.service.IH2StudentService;
 import org.springframework.transaction.annotation.Transactional;
 
 
@@ -24,6 +29,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
 public class SqlRunnerTest {
+
+    @Autowired
+    private IH2StudentService studentService;
 
     @BeforeClass
     public static void InitDB() throws SQLException, IOException {
@@ -47,5 +55,15 @@ public class SqlRunnerTest {
     public void testInsert(){
         Assert.assertTrue(SqlRunner.db().insert("INSERT INTO h2student ( name, age ) VALUES ( {0}, {1} )","测试学生",2));
         Assert.assertTrue(SqlRunner.db(H2Student.class).insert("INSERT INTO h2student ( name, age ) VALUES ( {0}, {1} )","测试学生2",3));
+    }
+
+    @Test
+    public void testTransactional(){
+        try {
+            studentService.testSqlRunnerTransactional();
+        } catch (Exception e){
+            List<H2Student> list = studentService.list(new QueryWrapper<H2Student>().like("name", "sqlRunnerTx"));
+            Assert.assertTrue(CollectionUtils.isEmpty(list));
+        }
     }
 }
