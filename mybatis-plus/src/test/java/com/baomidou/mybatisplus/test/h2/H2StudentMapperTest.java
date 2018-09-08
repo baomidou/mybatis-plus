@@ -1,21 +1,15 @@
 package com.baomidou.mybatisplus.test.h2;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.Resource;
-
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.test.h2.config.H2Db;
 import com.baomidou.mybatisplus.test.h2.entity.enums.GenderEnum;
 import com.baomidou.mybatisplus.test.h2.entity.enums.GradeEnum;
 import com.baomidou.mybatisplus.test.h2.entity.mapper.H2StudentMapper;
@@ -35,11 +29,6 @@ public class H2StudentMapperTest extends BaseTest {
 
     @Resource
     protected H2StudentMapper studentMapper;
-
-    @BeforeClass
-    public static void InitDB() throws SQLException, IOException {
-        H2Db.initH2Student();
-    }
 
     @Test
     public void crudTest() {

@@ -5,5 +5,5 @@ CREATE TABLE IF NOT EXISTS  h2student (
 	gender VARCHAR(10) NULL,
 	age INT(11) NULL DEFAULT NULL ,
 	PRIMARY KEY (id)
-)
+);
 

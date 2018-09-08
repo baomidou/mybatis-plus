@@ -22,11 +22,10 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.mybatis.spring.SqlSessionTemplate;
+import org.mybatis.spring.SqlSessionUtils;
 
 import java.util.List;
 
@@ -65,11 +64,7 @@ public final class SqlHelper {
      * @return
      */
     private static SqlSession getSqlSession(Class<?> clazz) {
-        SqlSession session;
-        SqlSessionFactory sqlSessionFactory = GlobalConfigUtils.currentSessionFactory(clazz);
-        Configuration configuration = sqlSessionFactory.getConfiguration();
-        session = GlobalConfigUtils.getGlobalConfig(configuration).getSqlSession();
-        return session !=null ? session : new SqlSessionTemplate(sqlSessionFactory);
+        return SqlSessionUtils.getSqlSession(GlobalConfigUtils.currentSessionFactory(clazz));
     }
     
     /**

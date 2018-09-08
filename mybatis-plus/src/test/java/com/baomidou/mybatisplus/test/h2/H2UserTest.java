@@ -1,26 +1,21 @@
 package com.baomidou.mybatisplus.test.h2;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.internal.matchers.GreaterThan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.test.h2.config.H2Db;
 import com.baomidou.mybatisplus.test.h2.entity.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
 import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
@@ -39,11 +34,6 @@ public class H2UserTest extends BaseTest {
 
     @Autowired
     protected IH2UserService userService;
-
-    @BeforeClass
-    public static void initDB() throws SQLException, IOException {
-        H2Db.initH2User();
-    }
 
     @Test
     public void testInsertMy() {

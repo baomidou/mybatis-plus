@@ -1,12 +1,9 @@
 package com.baomidou.mybatisplus.test.h2;
 
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.internal.matchers.GreaterThan;
@@ -16,7 +13,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.toolkit.SqlRunner;
-import com.baomidou.mybatisplus.test.h2.config.H2Db;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2Student;
 import com.baomidou.mybatisplus.test.h2.service.IH2StudentService;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,11 +28,6 @@ public class SqlRunnerTest {
 
     @Autowired
     private IH2StudentService studentService;
-
-    @BeforeClass
-    public static void InitDB() throws SQLException, IOException {
-        H2Db.initH2Student();
-    }
 
     @Test
     public void testSelectCount(){

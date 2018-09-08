@@ -10,5 +10,5 @@ CREATE TABLE IF NOT EXISTS  h2user (
 	last_updated_dt TIMESTAMP NULL,
 	deleted INT(1) NULL DEFAULT 0 ,
 	PRIMARY KEY (test_id)
-)
+);
 

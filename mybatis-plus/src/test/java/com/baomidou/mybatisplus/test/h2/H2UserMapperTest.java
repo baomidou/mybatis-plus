@@ -2,8 +2,6 @@ package com.baomidou.mybatisplus.test.h2;
 
 import static java.util.stream.Collectors.toList;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +9,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -23,7 +20,6 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.test.h2.config.H2Db;
 import com.baomidou.mybatisplus.test.h2.entity.SuperEntity;
 import com.baomidou.mybatisplus.test.h2.entity.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserMapper;
@@ -43,11 +39,6 @@ public class H2UserMapperTest extends BaseTest {
 
     @Resource
     protected H2UserMapper userMapper;
-
-    @BeforeClass
-    public static void InitDB() throws SQLException, IOException {
-        H2Db.initH2User();
-    }
 
     @Test
     public void crudTest() {
