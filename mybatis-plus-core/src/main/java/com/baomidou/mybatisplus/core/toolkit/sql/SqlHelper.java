@@ -52,7 +52,7 @@ public final class SqlHelper {
      * @return SqlSession
      */
     public static SqlSession sqlSessionBatch(Class<?> clazz) {
-        return GlobalConfigUtils.currentSessionFactory(clazz).openSession(ExecutorType.BATCH);
+        return SqlSessionUtils.getSqlSession(GlobalConfigUtils.currentSessionFactory(clazz),ExecutorType.BATCH,null);
     }
     
     /**

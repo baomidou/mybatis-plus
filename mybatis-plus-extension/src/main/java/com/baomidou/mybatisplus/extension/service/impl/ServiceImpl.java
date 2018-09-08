@@ -115,23 +115,17 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean saveBatch(Collection<T> entityList, int batchSize) {
-        if (CollectionUtils.isEmpty(entityList)) {
-            throw new IllegalArgumentException("Error: entityList must not be empty");
-        }
-        try (SqlSession batchSqlSession = sqlSessionBatch()) {
-            int i = 0;
-            String sqlStatement = sqlStatement(SqlMethod.INSERT_ONE);
-            for (T anEntityList : entityList) {
-                batchSqlSession.insert(sqlStatement, anEntityList);
-                if (i >= 1 && i % batchSize == 0) {
-                    batchSqlSession.flushStatements();
-                }
-                i++;
+        SqlSession batchSqlSession = sqlSessionBatch();
+        int i = 0;
+        String sqlStatement = sqlStatement(SqlMethod.INSERT_ONE);
+        for (T anEntityList : entityList) {
+            batchSqlSession.insert(sqlStatement, anEntityList);
+            if (i >= 1 && i % batchSize == 0) {
+                batchSqlSession.flushStatements();
             }
-            batchSqlSession.flushStatements();
-        } catch (Throwable e) {
-            throw ExceptionUtils.mpe("Error: Cannot execute saveBatch Method. Cause", e);
+            i++;
         }
+        batchSqlSession.flushStatements();
         return true;
     }
 
@@ -177,14 +171,11 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
-        try (SqlSession batchSqlSession = sqlSessionBatch()) {
-            for (T anEntityList : entityList) {
-                saveOrUpdate(anEntityList);
-            }
-            batchSqlSession.flushStatements();
-        } catch (Throwable e) {
-            throw ExceptionUtils.mpe("Error: Cannot execute saveOrUpdateBatch Method. Cause", e);
+        SqlSession batchSqlSession = sqlSessionBatch();
+        for (T anEntityList : entityList) {
+            saveOrUpdate(anEntityList);
         }
+        batchSqlSession.flushStatements();
         return true;
     }
 
@@ -233,22 +224,19 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
-        try (SqlSession batchSqlSession = sqlSessionBatch()) {
-            int i = 0;
-            String sqlStatement = sqlStatement(SqlMethod.UPDATE_BY_ID);
-            for (T anEntityList : entityList) {
-                MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
-                param.put(Constants.ENTITY, anEntityList);
-                batchSqlSession.update(sqlStatement, param);
-                if (i >= 1 && i % batchSize == 0) {
-                    batchSqlSession.flushStatements();
-                }
-                i++;
+        SqlSession batchSqlSession = sqlSessionBatch();
+        int i = 0;
+        String sqlStatement = sqlStatement(SqlMethod.UPDATE_BY_ID);
+        for (T anEntityList : entityList) {
+            MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
+            param.put(Constants.ENTITY, anEntityList);
+            batchSqlSession.update(sqlStatement, param);
+            if (i >= 1 && i % batchSize == 0) {
+                batchSqlSession.flushStatements();
             }
-            batchSqlSession.flushStatements();
-        } catch (Throwable e) {
-            throw ExceptionUtils.mpe("Error: Cannot execute updateBatchById Method. Cause", e);
+            i++;
         }
+        batchSqlSession.flushStatements();
         return true;
     }
 

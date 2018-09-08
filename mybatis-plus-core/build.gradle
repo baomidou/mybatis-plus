@@ -10,6 +10,7 @@ dependencies {
 
     provided rootProject.ext.dependencies["cglib"]
     provided rootProject.ext.dependencies["spring-aop"]
+    provided rootProject.ext.dependencies["spring-tx"]
 
     testCompile rootProject.ext.dependencies["mybatis-ehcache"]
     testCompile rootProject.ext.dependencies["logback-classic"]
