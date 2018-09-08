@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.Configuration;
@@ -60,7 +61,9 @@ public class GlobalConfigUtils {
      * @param clazz 实体类
      */
     public static SqlSessionFactory currentSessionFactory(Class<?> clazz) {
-        String configMark = TableInfoHelper.getTableInfo(clazz).getConfigMark();
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
+        Assert.notNull(tableInfo, ClassUtils.getUserClass(clazz).getName() + "Not Found TableInfoCache.");
+        String configMark = tableInfo.getConfigMark();
         GlobalConfig mybatisGlobalConfig = getGlobalConfig(configMark);
         return mybatisGlobalConfig.getSqlSessionFactory();
     }

@@ -85,7 +85,7 @@ public class TableInfoHelper {
         }
         if (null == tableInfo) {
             //找不到了,我也很绝望呀
-            throw ExceptionUtils.mpe(ClassUtils.getUserClass(clazz).getName() + "Not Found TableInfoCache.");
+            logger.warn(ClassUtils.getUserClass(clazz).getName() + "Not Found TableInfoCache.");
         } else {
             TABLE_INFO_CACHE.put(ClassUtils.getUserClass(clazz).getName(), tableInfo);
         }

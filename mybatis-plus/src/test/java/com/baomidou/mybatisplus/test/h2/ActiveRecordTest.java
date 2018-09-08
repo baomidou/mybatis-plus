@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.test.h2.config.H2Db;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2Student;
 import com.baomidou.mybatisplus.test.h2.service.IH2StudentService;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.internal.matchers.GreaterThan;
@@ -37,8 +37,8 @@ public class ActiveRecordTest {
     @Autowired
     private IH2StudentService h2StudentService;
 
-    @BeforeClass
-    public static void InitDB() throws SQLException, IOException {
+    @Before
+    public void initDB() throws SQLException, IOException {
         H2Db.initH2Student();
     }
 
