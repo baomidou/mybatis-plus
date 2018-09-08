@@ -72,9 +72,4 @@ public class MybatisPlusConfig {
             .setIdType(IdType.ID_WORKER));
         return conf;
     }
-
-    @Bean
-    public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory){
-        return new SqlSessionTemplate(sqlSessionFactory, ExecutorType.BATCH);
-    }
 }

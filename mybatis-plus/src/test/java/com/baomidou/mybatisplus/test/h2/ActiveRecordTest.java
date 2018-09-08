@@ -7,8 +7,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2Student;
 import com.baomidou.mybatisplus.test.h2.service.IH2StudentService;
 import org.junit.Assert;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.mockito.internal.matchers.GreaterThan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +25,7 @@ import java.util.List;
  *  ActiveRecord 测试
  * @author nieqiurong 2018/7/27.
  */
+@FixMethodOrder(MethodSorters.JVM)
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
 public class ActiveRecordTest {
@@ -54,15 +57,6 @@ public class ActiveRecordTest {
         student.setId(1L);
         Assert.assertNotNull(student.selectById());
         Assert.assertNotNull(student.selectById(1L));
-    }
-
-    @Test
-    public void testDelete(){
-        H2Student student = new H2Student();
-        student.setId(2L);
-        Assert.assertTrue(student.deleteById());
-        Assert.assertTrue(student.deleteById(12L));
-        Assert.assertTrue(student.delete(new QueryWrapper<>().gt("id",10)));
     }
 
     @Test
@@ -122,5 +116,14 @@ public class ActiveRecordTest {
             List<H2Student> students = new H2Student().selectList(new QueryWrapper<H2Student>().lambda().like(H2Student::getName, "tx"));
             Assert.assertTrue(CollectionUtils.isEmpty(students));
         }
+    }
+    
+    @Test
+    public void testDelete(){
+        H2Student student = new H2Student();
+        student.setId(2L);
+        Assert.assertTrue(student.deleteById());
+        Assert.assertTrue(student.deleteById(12L));
+        Assert.assertTrue(student.delete(new QueryWrapper<>().gt("id",10)));
     }
 }
