@@ -19,9 +19,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.mybatis.spring.SqlSessionTemplate;
+import org.mybatis.spring.SqlSessionUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.assist.ISqlRunner;
@@ -45,8 +46,6 @@ public class SqlRunner implements ISqlRunner {
 //    public static SqlSessionFactory FACTORY;
     private SqlSessionFactory sqlSessionFactory;
     
-    private SqlSession sqlSession;
-
     private Class<?> clazz;
 
     public SqlRunner() {
@@ -87,13 +86,23 @@ public class SqlRunner implements ISqlRunner {
     @Transactional
     @Override
     public boolean insert(String sql, Object... args) {
-        return SqlHelper.retBool(sqlSession().insert(INSERT, sqlMap(sql, args)));
+        SqlSession sqlSession = sqlSession();
+        try {
+            return SqlHelper.retBool(sqlSession.insert(INSERT, sqlMap(sql, args)));
+        }finally {
+            closeSqlSession(sqlSession);
+        }
     }
     
     @Transactional
     @Override
     public boolean delete(String sql, Object... args) {
-        return SqlHelper.retBool(sqlSession().delete(DELETE, sqlMap(sql, args)));
+        SqlSession sqlSession = sqlSession();
+        try {
+            return SqlHelper.retBool(sqlSession.delete(DELETE, sqlMap(sql, args)));
+        }finally {
+            closeSqlSession(sqlSession);
+        }
     }
 
     /**
@@ -112,7 +121,12 @@ public class SqlRunner implements ISqlRunner {
     @Transactional
     @Override
     public boolean update(String sql, Object... args) {
-        return SqlHelper.retBool(sqlSession().update(UPDATE, sqlMap(sql, args)));
+        SqlSession sqlSession = sqlSession();
+        try {
+            return SqlHelper.retBool(sqlSession.update(UPDATE, sqlMap(sql, args)));
+        }finally {
+            closeSqlSession(sqlSession);
+        }
     }
 
     /**
@@ -125,7 +139,12 @@ public class SqlRunner implements ISqlRunner {
      */
     @Override
     public List<Map<String, Object>> selectList(String sql, Object... args) {
-        return sqlSession().selectList(SELECT_LIST, sqlMap(sql, args));
+        SqlSession sqlSession = sqlSession();
+        try {
+            return sqlSession().selectList(SELECT_LIST, sqlMap(sql, args));
+        }finally {
+            closeSqlSession(sqlSession);
+        }
     }
 
     /**
@@ -138,7 +157,12 @@ public class SqlRunner implements ISqlRunner {
      */
     @Override
     public List<Object> selectObjs(String sql, Object... args) {
-        return sqlSession().selectList(SELECT_OBJS, sqlMap(sql, args));
+        SqlSession sqlSession = sqlSession();
+        try {
+            return sqlSession.selectList(SELECT_OBJS, sqlMap(sql, args));
+        }finally {
+            closeSqlSession(sqlSession);
+        }
     }
 
     /**
@@ -156,7 +180,12 @@ public class SqlRunner implements ISqlRunner {
     
     @Override
     public int selectCount(String sql, Object... args) {
-        return SqlHelper.retCount(sqlSession().<Integer>selectOne(COUNT, sqlMap(sql, args)));
+        SqlSession sqlSession = sqlSession();
+        try {
+            return SqlHelper.retCount(sqlSession.<Integer>selectOne(COUNT, sqlMap(sql, args)));
+        }finally {
+            closeSqlSession(sqlSession);
+        }
     }
 
     @Override
@@ -181,10 +210,21 @@ public class SqlRunner implements ISqlRunner {
      * <p/>
      */
     private SqlSession sqlSession() {
-        if(sqlSession == null){
-            this.sqlSession = new SqlSessionTemplate(DEFAULT.sqlSessionFactory);
+        return (clazz != null) ? SqlSessionUtils.getSqlSession(GlobalConfigUtils.currentSessionFactory(clazz)) : SqlSessionUtils.getSqlSession(sqlSessionFactory);
+    }
+    
+    /**
+     * 释放sqlSession
+     * @param sqlSession session
+     */
+    private void closeSqlSession(SqlSession sqlSession){
+        SqlSessionFactory sqlSessionFactory;
+        if(clazz!=null){
+            sqlSessionFactory = GlobalConfigUtils.currentSessionFactory(clazz);
+        }else {
+            sqlSessionFactory = DEFAULT.sqlSessionFactory;
         }
-        return (clazz != null) ? SqlHelper.sqlSession(clazz) : sqlSession;
+        SqlSessionUtils.closeSqlSession(sqlSession,sqlSessionFactory);
     }
 
 }
