@@ -2,9 +2,7 @@ package com.baomidou.mybatisplus.extension.plugins;
 
 import java.lang.reflect.Field;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,9 +22,7 @@ import org.apache.ibatis.plugin.Signature;
 
 import com.baomidou.mybatisplus.annotation.Version;
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
-import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
@@ -68,7 +64,6 @@ public class OptimisticLockerInterceptor implements Interceptor {
     private static final String NAME_ENTITY = Constants.ENTITY;
     private static final String NAME_ENTITY_WRAPPER = Constants.WRAPPER;
     private static final String PARAM_UPDATE_METHOD_NAME = "update";
-    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private final Map<Class<?>, EntityField> versionFieldCache = new ConcurrentHashMap<>();
     private final Map<Class<?>, List<EntityField>> entityFieldsCache = new ConcurrentHashMap<>();
 
@@ -123,7 +118,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
                             map.put(NAME_ENTITY_WRAPPER, uw);
                             field.set(et, updatedVersionVal);
                         } else {
-                            ew.getExpression().add(versionField::getColumnName, SqlKeyword.EQ, formatOriginalVal(originalVersionVal));
+                            ew.apply(versionField.getColumnName() + " = {0}", originalVersionVal);
                             field.set(et, updatedVersionVal);
                             //TODO: should remove version=oldval condition from aw; 0827 by k神
                         }
@@ -177,26 +172,6 @@ public class OptimisticLockerInterceptor implements Interceptor {
         entityMap.put(MP_OPTLOCK_VERSION_COLUMN, versionColumnName);
         entityMap.put(MP_OPTLOCK_ET_ORIGINAL, et);
         map.put(NAME_ENTITY, entityMap);
-    }
-
-    /**
-     * 把旧 version 值进行格式化为 ISqlSegment
-     *
-     * @param originalVersionVal 旧 version 值
-     * @return ISqlSegment
-     */
-    protected ISqlSegment formatOriginalVal(Object originalVersionVal) {
-        String value = originalVersionVal.toString();
-        Class<?> versionValClass = originalVersionVal.getClass();
-        if (Date.class.equals(versionValClass)) {
-            value = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format((Date) originalVersionVal);
-        } else if (Timestamp.class.equals(versionValClass)) {
-            value = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format((Timestamp) originalVersionVal);
-        } else if (LocalDateTime.class.equals(versionValClass)) {
-            value = formatter.format((LocalDateTime) originalVersionVal);
-        }
-        String finalVal = value;
-        return () -> "'" + finalVal + "'";
     }
 
     /**
