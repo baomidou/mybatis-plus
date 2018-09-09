@@ -22,8 +22,8 @@ import org.apache.ibatis.plugin.Signature;
 
 import com.baomidou.mybatisplus.annotation.Version;
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
@@ -79,7 +79,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
         Object param = args[1];
 
         // wrapper = ew
-        Wrapper ew = null;
+        AbstractWrapper ew = null;
         // entity = et
         Object et = null;
         if (param instanceof Map) {
@@ -90,7 +90,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
             }
             if (map.containsKey(NAME_ENTITY_WRAPPER)) {
                 // mapper.update(updEntity, QueryWrapper<>(whereEntity);
-                ew = (Wrapper) map.get(NAME_ENTITY_WRAPPER);
+                ew = (AbstractWrapper) map.get(NAME_ENTITY_WRAPPER);
             }
             if (et != null) {
                 // entity
@@ -103,37 +103,36 @@ public class OptimisticLockerInterceptor implements Interceptor {
                     entityClass = ClassUtils.getUserClass(entityClass.getSuperclass());
                     tableInfo = TableInfoHelper.getTableInfo(entityClass);
                 }
-                EntityField entityVersionField = this.getVersionField(entityClass, tableInfo);
-                if (entityVersionField == null) {
+                EntityField versionField = this.getVersionField(entityClass, tableInfo);
+                if (versionField == null) {
                     return invocation.proceed();
                 }
-                Field versionField = entityVersionField.getField();
-                Object originalVersionVal = entityVersionField.getField().get(et);
+                Field field = versionField.getField();
+                Object originalVersionVal = versionField.getField().get(et);
                 Object updatedVersionVal = getUpdatedVersionVal(originalVersionVal);
                 if (PARAM_UPDATE_METHOD_NAME.equals(methodName)) {
                     // update(entity, wrapper)
                     if (originalVersionVal != null) {
                         if (ew == null) {
-                            AbstractWrapper aw = new QueryWrapper();
-                            aw.eq(entityVersionField.getColumnName(), originalVersionVal);
-                            map.put(NAME_ENTITY_WRAPPER, aw);
-                            versionField.set(et, updatedVersionVal);
-                        } else if (ew instanceof AbstractWrapper) {
-                            AbstractWrapper aw = (AbstractWrapper) ew;
-                            aw.eq(entityVersionField.getColumnName(), originalVersionVal);
-                            versionField.set(et, updatedVersionVal);
-                            //TODO: should remove version=oldval condition from aw; 0827
+                            UpdateWrapper uw = new UpdateWrapper();
+                            uw.eq(versionField.getColumnName(), originalVersionVal);
+                            map.put(NAME_ENTITY_WRAPPER, uw);
+                            field.set(et, updatedVersionVal);
+                        } else {
+                            ew.getExpression().add(versionField::getColumnName, SqlKeyword.EQ, () -> "'" + originalVersionVal + "'");
+                            field.set(et, updatedVersionVal);
+                            //TODO: should remove version=oldval condition from aw; 0827 by k神
                         }
                     }
                     return invocation.proceed();
                 } else {
-                    dealUpdateById(entityClass, et, entityVersionField, originalVersionVal, updatedVersionVal, map);
+                    dealUpdateById(entityClass, et, versionField, originalVersionVal, updatedVersionVal, map);
                     Object resultObj = invocation.proceed();
                     if (resultObj instanceof Integer) {
                         Integer effRow = (Integer) resultObj;
-                        if (updatedVersionVal != null && effRow != 0 && versionField != null) {
+                        if (updatedVersionVal != null && effRow != 0 && field != null) {
                             //updated version value set to entity.
-                            versionField.set(et, updatedVersionVal);
+                            field.set(et, updatedVersionVal);
                         }
                     }
                     return resultObj;
