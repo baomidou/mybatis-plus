@@ -95,7 +95,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
             if (et != null) {
                 // entity
                 String methodId = ms.getId();
-                String updateMethodName = methodId.substring(ms.getId().lastIndexOf(StringPool.DOT) + 1);
+                String methodName = methodId.substring(methodId.lastIndexOf(StringPool.DOT) + 1);
                 Class<?> entityClass = et.getClass();
                 TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
                 // fixed github 299
@@ -110,7 +110,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
                 Field versionField = entityVersionField.getField();
                 Object originalVersionVal = entityVersionField.getField().get(et);
                 Object updatedVersionVal = getUpdatedVersionVal(originalVersionVal);
-                if (PARAM_UPDATE_METHOD_NAME.equals(updateMethodName)) {
+                if (PARAM_UPDATE_METHOD_NAME.equals(methodName)) {
                     // update(entity, wrapper)
                     if (originalVersionVal != null) {
                         if (ew == null) {
