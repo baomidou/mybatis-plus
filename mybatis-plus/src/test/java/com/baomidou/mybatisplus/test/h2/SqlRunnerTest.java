@@ -4,8 +4,10 @@ package com.baomidou.mybatisplus.test.h2;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.mockito.internal.matchers.GreaterThan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
  *  SqlRunner测试
  * @author nieqiurong 2018/8/25 11:05.
  */
+@FixMethodOrder(MethodSorters.JVM)
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
 public class SqlRunnerTest {
@@ -52,7 +55,7 @@ public class SqlRunnerTest {
     public void testTransactional(){
         try {
             studentService.testSqlRunnerTransactional();
-        } catch (Exception e){
+        } catch (RuntimeException e){
             List<H2Student> list = studentService.list(new QueryWrapper<H2Student>().like("name", "sqlRunnerTx"));
             Assert.assertTrue(CollectionUtils.isEmpty(list));
         }

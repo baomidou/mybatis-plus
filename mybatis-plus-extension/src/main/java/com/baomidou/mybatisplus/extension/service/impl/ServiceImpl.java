@@ -22,8 +22,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.session.SqlSession;
+import org.mybatis.spring.SqlSessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -83,7 +85,15 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     protected SqlSession sqlSessionBatch() {
         return SqlHelper.sqlSessionBatch(currentModelClass());
     }
-
+    
+    /**
+     * 释放sqlSession
+     * @param sqlSession session
+     */
+    private void closeSqlSession(SqlSession sqlSession){
+        SqlSessionUtils.closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(currentModelClass()));
+    }
+    
     /**
      * 获取SqlStatement
      *
@@ -118,14 +128,18 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         SqlSession batchSqlSession = sqlSessionBatch();
         int i = 0;
         String sqlStatement = sqlStatement(SqlMethod.INSERT_ONE);
-        for (T anEntityList : entityList) {
-            batchSqlSession.insert(sqlStatement, anEntityList);
-            if (i >= 1 && i % batchSize == 0) {
-                batchSqlSession.flushStatements();
+        try {
+            for (T anEntityList : entityList) {
+                batchSqlSession.insert(sqlStatement, anEntityList);
+                if (i >= 1 && i % batchSize == 0) {
+                    batchSqlSession.flushStatements();
+                }
+                i++;
             }
-            i++;
+            batchSqlSession.flushStatements();
+        }finally {
+            closeSqlSession(batchSqlSession);
         }
-        batchSqlSession.flushStatements();
         return true;
     }
 
@@ -172,10 +186,14 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
         SqlSession batchSqlSession = sqlSessionBatch();
-        for (T anEntityList : entityList) {
-            saveOrUpdate(anEntityList);
+        try {
+            for (T anEntityList : entityList) {
+                saveOrUpdate(anEntityList);
+            }
+            batchSqlSession.flushStatements();
+        }finally {
+            closeSqlSession(batchSqlSession);
         }
-        batchSqlSession.flushStatements();
         return true;
     }
 
@@ -227,16 +245,20 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         SqlSession batchSqlSession = sqlSessionBatch();
         int i = 0;
         String sqlStatement = sqlStatement(SqlMethod.UPDATE_BY_ID);
-        for (T anEntityList : entityList) {
-            MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
-            param.put(Constants.ENTITY, anEntityList);
-            batchSqlSession.update(sqlStatement, param);
-            if (i >= 1 && i % batchSize == 0) {
-                batchSqlSession.flushStatements();
+        try {
+            for (T anEntityList : entityList) {
+                MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
+                param.put(Constants.ENTITY, anEntityList);
+                batchSqlSession.update(sqlStatement, param);
+                if (i >= 1 && i % batchSize == 0) {
+                    batchSqlSession.flushStatements();
+                }
+                i++;
             }
-            i++;
+            batchSqlSession.flushStatements();
+        }finally {
+            closeSqlSession(batchSqlSession);
         }
-        batchSqlSession.flushStatements();
         return true;
     }
 

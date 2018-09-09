@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.test.h2;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -112,7 +113,7 @@ public class ActiveRecordTest {
     public void testTransactional(){
         try {
             h2StudentService.testTransactional();
-        }catch (Exception e){
+        }catch (MybatisPlusException e){
             List<H2Student> students = new H2Student().selectList(new QueryWrapper<H2Student>().lambda().like(H2Student::getName, "tx"));
             Assert.assertTrue(CollectionUtils.isEmpty(students));
         }

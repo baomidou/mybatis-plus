@@ -21,7 +21,7 @@ public class H2StudentServiceImpl extends ServiceImpl<H2StudentMapper,H2Student>
         new H2Student(null, "tx1", 2).insert();
         new H2Student(null, "tx2", 2).insert();
         new H2Student(null, "tx3", 2).insert();
-        throw new RuntimeException("测试AR事务回滚");
+        throw new MybatisPlusException("测试AR事务回滚");
     }
 
     @Override

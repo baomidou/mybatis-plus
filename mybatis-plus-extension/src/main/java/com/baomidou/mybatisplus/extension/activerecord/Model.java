@@ -20,10 +20,12 @@ import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlRunner;
 import org.apache.ibatis.session.SqlSession;
+import org.mybatis.spring.SqlSessionUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
@@ -51,7 +53,13 @@ public abstract class Model<T extends Model> implements Serializable {
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean insert() {
-        return SqlHelper.retBool(sqlSession().insert(sqlStatement(SqlMethod.INSERT_ONE), this));
+        SqlSession sqlSession = sqlSession();
+        try {
+            return SqlHelper.retBool(sqlSession.insert(sqlStatement(SqlMethod.INSERT_ONE), this));
+        }finally {
+            closeSqlSession(sqlSession);
+        }
+        
     }
 
     /**
@@ -82,7 +90,12 @@ public abstract class Model<T extends Model> implements Serializable {
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteById(Serializable id) {
-        return SqlHelper.delBool(sqlSession().delete(sqlStatement(SqlMethod.DELETE_BY_ID), id));
+        SqlSession sqlSession = sqlSession();
+        try {
+            return SqlHelper.delBool(sqlSession.delete(sqlStatement(SqlMethod.DELETE_BY_ID), id));
+        }finally {
+            closeSqlSession(sqlSession);
+        }
     }
 
     /**
@@ -110,7 +123,13 @@ public abstract class Model<T extends Model> implements Serializable {
     public boolean delete(Wrapper wrapper) {
         Map<String, Object> map = new HashMap<>(1);
         map.put(Constants.WRAPPER, wrapper);
-        return SqlHelper.delBool(sqlSession().delete(sqlStatement(SqlMethod.DELETE), map));
+        SqlSession sqlSession = sqlSession();
+        try {
+            return SqlHelper.delBool(sqlSession.delete(sqlStatement(SqlMethod.DELETE), map));
+        }finally {
+            closeSqlSession(sqlSession);
+        }
+        
     }
 
     /**
@@ -124,7 +143,13 @@ public abstract class Model<T extends Model> implements Serializable {
         // updateById
         Map<String, Object> map = new HashMap<>(1);
         map.put(Constants.ENTITY, this);
-        return SqlHelper.retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE_BY_ID), map));
+        SqlSession sqlSession = sqlSession();
+        try {
+            return SqlHelper.retBool(sqlSession.update(sqlStatement(SqlMethod.UPDATE_BY_ID), map));
+        }finally {
+            closeSqlSession(sqlSession);
+        }
+        
     }
 
     /**
@@ -141,7 +166,12 @@ public abstract class Model<T extends Model> implements Serializable {
         map.put(Constants.ENTITY, this);
         map.put(Constants.WRAPPER, wrapper);
         // update
-        return SqlHelper.retBool(sqlSession().update(sqlStatement(SqlMethod.UPDATE), map));
+        SqlSession sqlSession = sqlSession();
+        try {
+            return SqlHelper.retBool(sqlSession.update(sqlStatement(SqlMethod.UPDATE), map));
+        }finally {
+            closeSqlSession(sqlSession);
+        }
     }
 
     /**
@@ -152,7 +182,13 @@ public abstract class Model<T extends Model> implements Serializable {
      * @return
      */
     public List<T> selectAll() {
-        return sqlSession().selectList(sqlStatement(SqlMethod.SELECT_LIST));
+        SqlSession sqlSession = sqlSession();
+        try {
+            return sqlSession.selectList(sqlStatement(SqlMethod.SELECT_LIST));
+        }finally {
+            closeSqlSession(sqlSession);
+        }
+        
     }
 
     /**
@@ -164,7 +200,13 @@ public abstract class Model<T extends Model> implements Serializable {
      * @return
      */
     public T selectById(Serializable id) {
-        return sqlSession().selectOne(sqlStatement(SqlMethod.SELECT_BY_ID), id);
+        SqlSession sqlSession = sqlSession();
+        try {
+            return sqlSession.selectOne(sqlStatement(SqlMethod.SELECT_BY_ID), id);
+        }finally {
+            closeSqlSession(sqlSession);
+        }
+        
     }
 
     /**
@@ -191,7 +233,12 @@ public abstract class Model<T extends Model> implements Serializable {
     public List<T> selectList(Wrapper wrapper) {
         Map<String, Object> map = new HashMap<>(1);
         map.put(Constants.WRAPPER, wrapper);
-        return sqlSession().selectList(sqlStatement(SqlMethod.SELECT_LIST), map);
+        SqlSession sqlSession = sqlSession();
+        try {
+            return sqlSession.selectList(sqlStatement(SqlMethod.SELECT_LIST), map);
+        }finally {
+            closeSqlSession(sqlSession);
+        }
     }
 
     /**
@@ -219,7 +266,12 @@ public abstract class Model<T extends Model> implements Serializable {
         Map<String, Object> map = new HashMap<>(2);
         map.put(Constants.WRAPPER, SqlHelper.fillWrapper(page, wrapper));
         map.put("page", page);
-        page.setRecords(sqlSession().selectList(sqlStatement(SqlMethod.SELECT_PAGE), map));
+        SqlSession sqlSession = sqlSession();
+        try {
+            page.setRecords(sqlSession.selectList(sqlStatement(SqlMethod.SELECT_PAGE), map));
+        }finally {
+            closeSqlSession(sqlSession);
+        }
         return page;
     }
 
@@ -234,7 +286,12 @@ public abstract class Model<T extends Model> implements Serializable {
     public int selectCount(Wrapper wrapper) {
         Map<String, Object> map = new HashMap<>(1);
         map.put(Constants.WRAPPER, wrapper);
-        return SqlHelper.retCount(sqlSession().<Integer>selectOne(sqlStatement(SqlMethod.SELECT_COUNT), map));
+        SqlSession sqlSession = sqlSession();
+        try {
+            return SqlHelper.retCount(sqlSession.<Integer>selectOne(sqlStatement(SqlMethod.SELECT_COUNT), map));
+        }finally {
+            closeSqlSession(sqlSession);
+        }
     }
 
     /**
@@ -279,4 +336,12 @@ public abstract class Model<T extends Model> implements Serializable {
      * 主键值
      */
     protected abstract Serializable pkVal();
+    
+    /**
+     * 释放sqlSession
+     * @param sqlSession session
+     */
+    private void closeSqlSession(SqlSession sqlSession){
+        SqlSessionUtils.closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(getClass()));
+    }
 }

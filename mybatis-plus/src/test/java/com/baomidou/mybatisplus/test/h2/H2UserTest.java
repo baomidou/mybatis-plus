@@ -6,10 +6,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import org.junit.Assert;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -28,6 +31,7 @@ import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
  * @author Caratacus
  * @since 2017/4/1
  */
+@FixMethodOrder(MethodSorters.JVM)
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
 public class H2UserTest extends BaseTest {
@@ -263,7 +267,7 @@ public class H2UserTest extends BaseTest {
     public void testBatchTransactional(){
         try {
             userService.testBatchTransactional();
-        }catch (Exception e){
+        }catch (MybatisPlusException e){
             List<H2User> list = userService.list(new QueryWrapper<H2User>().like("name", "batch"));
             Assert.assertTrue(CollectionUtils.isEmpty(list));
         }
@@ -273,7 +277,7 @@ public class H2UserTest extends BaseTest {
     public void testSimpleTransactional(){
         try {
             userService.testSimpleTransactional();
-        }catch (Exception e){
+        }catch (MybatisPlusException e){
             List<H2User> list = userService.list(new QueryWrapper<H2User>().like("name", "simple"));
             Assert.assertTrue(CollectionUtils.isEmpty(list));
         }
