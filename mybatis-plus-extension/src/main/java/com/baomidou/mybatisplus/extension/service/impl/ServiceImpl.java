@@ -90,7 +90,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      * 释放sqlSession
      * @param sqlSession session
      */
-    private void closeSqlSession(SqlSession sqlSession){
+    protected void closeSqlSession(SqlSession sqlSession){
         SqlSessionUtils.closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(currentModelClass()));
     }
     

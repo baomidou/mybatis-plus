@@ -341,7 +341,7 @@ public abstract class Model<T extends Model> implements Serializable {
      * 释放sqlSession
      * @param sqlSession session
      */
-    private void closeSqlSession(SqlSession sqlSession){
+    protected void closeSqlSession(SqlSession sqlSession){
         SqlSessionUtils.closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(getClass()));
     }
 }
