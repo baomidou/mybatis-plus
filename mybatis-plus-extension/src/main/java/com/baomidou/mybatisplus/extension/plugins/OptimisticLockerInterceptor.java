@@ -153,6 +153,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
      * @param updatedVersionVal  乐观锁自动更新的新value
      * @param map
      */
+    @SuppressWarnings("unchecked")
     private void dealUpdateById(Class<?> entityClass, Object et, EntityField entityVersionField,
                                 Object originalVersionVal, Object updatedVersionVal, Map map) throws IllegalAccessException {
         if (originalVersionVal == null) {
