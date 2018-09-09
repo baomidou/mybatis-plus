@@ -89,9 +89,6 @@ public class TableInfoHelper {
             }
             if(tableInfo!=null){
                 tableInfoCache.put(ClassUtils.getUserClass(clazz).getName(),tableInfo);
-            }else{
-                //找不到了,我也很绝望呀
-                throw new MybatisPlusException(ClassUtils.getUserClass(clazz).getName() + "Not Found TableInfoCache.");
             }
         }
         return tableInfo;

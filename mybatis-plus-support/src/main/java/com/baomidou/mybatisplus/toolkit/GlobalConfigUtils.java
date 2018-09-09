@@ -13,6 +13,7 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
+import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.enums.DBType;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.enums.IdType;
@@ -56,9 +57,13 @@ public class GlobalConfigUtils {
      * @return
      */
     public static SqlSessionFactory currentSessionFactory(Class<?> clazz) {
-        String configMark = TableInfoHelper.getTableInfo(clazz).getConfigMark();
-        GlobalConfiguration mybatisGlobalConfig = GlobalConfigUtils.getGlobalConfig(configMark);
-        return mybatisGlobalConfig.getSqlSessionFactory();
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
+        if(tableInfo != null){
+            String configMark = tableInfo.getConfigMark();
+            GlobalConfiguration mybatisGlobalConfig = GlobalConfigUtils.getGlobalConfig(configMark);
+            return mybatisGlobalConfig.getSqlSessionFactory();
+        }
+       throw new MybatisPlusException(ClassUtils.getUserClass(clazz).getName() + " Not Found TableInfoCache.");
     }
 
     /**
