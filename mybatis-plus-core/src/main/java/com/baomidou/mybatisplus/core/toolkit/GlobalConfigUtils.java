@@ -62,7 +62,7 @@ public class GlobalConfigUtils {
      */
     public static SqlSessionFactory currentSessionFactory(Class<?> clazz) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
-        Assert.notNull(tableInfo, ClassUtils.getUserClass(clazz).getName() + "Not Found TableInfoCache.");
+        Assert.notNull(tableInfo, ClassUtils.getUserClass(clazz).getName() + " Not Found TableInfoCache.");
         String configMark = tableInfo.getConfigMark();
         GlobalConfig mybatisGlobalConfig = getGlobalConfig(configMark);
         return mybatisGlobalConfig.getSqlSessionFactory();

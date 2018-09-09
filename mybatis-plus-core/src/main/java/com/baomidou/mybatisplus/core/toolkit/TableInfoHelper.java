@@ -83,10 +83,7 @@ public class TableInfoHelper {
             currentClass = currentClass.getSuperclass();
             tableInfo = TABLE_INFO_CACHE.get(ClassUtils.getUserClass(currentClass).getName());
         }
-        if (null == tableInfo) {
-            //找不到了,我也很绝望呀
-            logger.warn(ClassUtils.getUserClass(clazz).getName() + " Not Found TableInfoCache.");
-        } else {
+        if (tableInfo != null) {
             TABLE_INFO_CACHE.put(ClassUtils.getUserClass(clazz).getName(), tableInfo);
         }
         return tableInfo;
