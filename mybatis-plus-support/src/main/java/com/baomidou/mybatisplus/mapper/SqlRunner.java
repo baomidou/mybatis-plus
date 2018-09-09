@@ -19,9 +19,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.baomidou.mybatisplus.MybatisSqlSessionTemplate;
+import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.plugins.Page;
@@ -50,7 +51,6 @@ public class SqlRunner {
     // 默认FACTORY
     public static SqlSessionFactory FACTORY;
     private SqlSessionFactory sqlSessionFactory;
-    private SqlSession sqlSession;
 
     private Class<?> clazz;
 
@@ -91,12 +91,22 @@ public class SqlRunner {
 
     @Transactional
     public boolean insert(String sql, Object... args) {
-        return SqlHelper.retBool(sqlSession().insert(INSERT, sqlMap(sql, args)));
+        SqlSession sqlSession = sqlSession();
+        try {
+            return SqlHelper.retBool(sqlSession.insert(INSERT, sqlMap(sql, args)));
+        }finally {
+            closeSqlSession(sqlSession);
+        }
     }
 
     @Transactional
     public boolean delete(String sql, Object... args) {
-        return SqlHelper.retBool(sqlSession().delete(DELETE, sqlMap(sql, args)));
+        SqlSession sqlSession = sqlSession();
+        try {
+            return SqlHelper.retBool(sqlSession.delete(DELETE, sqlMap(sql, args)));
+        }finally {
+            closeSqlSession(sqlSession);
+        }
     }
 
     /**
@@ -114,7 +124,12 @@ public class SqlRunner {
 
     @Transactional
     public boolean update(String sql, Object... args) {
-        return SqlHelper.retBool(sqlSession().update(UPDATE, sqlMap(sql, args)));
+        SqlSession sqlSession = sqlSession();
+        try {
+            return SqlHelper.retBool(sqlSession.update(UPDATE, sqlMap(sql, args)));
+        }finally {
+            closeSqlSession(sqlSession);
+        }
     }
 
     /**
@@ -126,7 +141,12 @@ public class SqlRunner {
      * @return
      */
     public List<Map<String, Object>> selectList(String sql, Object... args) {
-        return sqlSession().selectList(SELECT_LIST, sqlMap(sql, args));
+        SqlSession sqlSession = sqlSession();
+        try {
+            return sqlSession.selectList(SELECT_LIST, sqlMap(sql, args));
+        }finally {
+            closeSqlSession(sqlSession);
+        }
     }
 
     /**
@@ -138,7 +158,12 @@ public class SqlRunner {
      * @return
      */
     public List<Object> selectObjs(String sql, Object... args) {
-        return sqlSession().selectList(SELECT_OBJS, sqlMap(sql, args));
+        SqlSession sqlSession = sqlSession();
+        try {
+            return sqlSession.selectList(SELECT_OBJS, sqlMap(sql, args));
+        }finally {
+            closeSqlSession(sqlSession);
+        }
     }
 
     /**
@@ -154,7 +179,12 @@ public class SqlRunner {
     }
 
     public int selectCount(String sql, Object... args) {
-        return SqlHelper.retCount(sqlSession().<Integer>selectOne(COUNT, sqlMap(sql, args)));
+        SqlSession sqlSession = sqlSession();
+        try {
+            return SqlHelper.retCount(sqlSession.<Integer>selectOne(COUNT, sqlMap(sql, args)));
+        }finally {
+            closeSqlSession(sqlSession);
+        }
     }
 
     public Map<String, Object> selectOne(String sql, Object... args) {
@@ -166,20 +196,36 @@ public class SqlRunner {
         if (null == page) {
             return null;
         }
-        page.setRecords(sqlSession().selectList(SELECT_LIST, sqlMap(sql, args), page));
+        SqlSession sqlSession = sqlSession();
+        try {
+            page.setRecords(sqlSession.selectList(SELECT_LIST, sqlMap(sql, args), page));
+        }finally {
+            closeSqlSession(sqlSession);
+        }
         return page;
     }
-
+    
     /**
      * <p>
      * 获取Session 默认自动提交
      * <p/>
      */
     private SqlSession sqlSession() {
-        if(sqlSession == null){
-            this.sqlSession = new MybatisSqlSessionTemplate(FACTORY);
+        return (clazz != null) ? SqlSessionUtils.getSqlSession(GlobalConfigUtils.currentSessionFactory(clazz)) : SqlSessionUtils.getSqlSession(sqlSessionFactory);
+    }
+    
+    /**
+     * 释放sqlSession
+     * @param sqlSession session
+     */
+    private void closeSqlSession(SqlSession sqlSession){
+        SqlSessionFactory sqlSessionFactory;
+        if(clazz!=null){
+            sqlSessionFactory = GlobalConfigUtils.currentSessionFactory(clazz);
+        }else {
+            sqlSessionFactory = DEFAULT.sqlSessionFactory;
         }
-        return (clazz != null) ? SqlHelper.sqlSession(clazz):sqlSession;
+        SqlSessionUtils.closeSqlSession(sqlSession,sqlSessionFactory);
     }
 
 }

@@ -19,10 +19,8 @@ import java.io.Serializable;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
-import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import com.baomidou.mybatisplus.MybatisSqlSessionTemplate;
 import com.baomidou.mybatisplus.enums.DBType;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.enums.IdType;
@@ -104,10 +102,6 @@ public class GlobalConfiguration implements Serializable {
      * 缓存已注入CRUD的Mapper信息
      */
     private Set<String> mapperRegistryCache = new ConcurrentSkipListSet<>();
-    /**
-     * 单例重用SqlSession
-     */
-    private SqlSession sqlSession;
     /**
      * 缓存 Sql 解析初始化
      */
@@ -228,7 +222,6 @@ public class GlobalConfiguration implements Serializable {
 
     public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
         this.sqlSessionFactory = sqlSessionFactory;
-        this.sqlSession = new MybatisSqlSessionTemplate(sqlSessionFactory);
     }
 
     public boolean isCapitalMode() {
@@ -262,10 +255,6 @@ public class GlobalConfiguration implements Serializable {
         if (StringUtils.isNotEmpty(sqlKeywords)) {
             SqlReservedWords.RESERVED_WORDS.addAll(StringUtils.splitWorker(sqlKeywords.toUpperCase(), ",", -1, false));
         }
-    }
-    
-    public SqlSession getSqlSession() {
-        return sqlSession;
     }
     
     public boolean isSqlParserCache() {

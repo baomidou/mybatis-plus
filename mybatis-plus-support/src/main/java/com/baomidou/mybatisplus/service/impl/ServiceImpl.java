@@ -20,8 +20,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.session.SqlSession;
+import org.mybatis.spring.SqlSessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -81,7 +83,15 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     protected SqlSession sqlSessionBatch() {
         return SqlHelper.sqlSessionBatch(currentModelClass());
     }
-
+    
+    /**
+     * 释放sqlSession
+     * @param sqlSession session
+     */
+    protected void closeSqlSession(SqlSession sqlSession){
+        SqlSessionUtils.closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(currentModelClass()));
+    }
+    
     /**
      * 获取SqlStatement
      *
@@ -123,7 +133,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
-        try (SqlSession batchSqlSession = sqlSessionBatch()) {
+        SqlSession batchSqlSession = sqlSessionBatch();
+        try {
             int size = entityList.size();
             String sqlStatement = sqlStatement(SqlMethod.INSERT_ONE);
             for (int i = 0; i < size; i++) {
@@ -135,6 +146,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
             batchSqlSession.flushStatements();
         } catch (Throwable e) {
             throw new MybatisPlusException("Error: Cannot execute insertBatch Method. Cause", e);
+        } finally {
+            closeSqlSession(batchSqlSession);
         }
         return true;
     }
@@ -229,7 +242,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
-        try (SqlSession batchSqlSession = sqlSessionBatch()) {
+        SqlSession batchSqlSession = sqlSessionBatch();
+        try {
             int size = entityList.size();
             for (int i = 0; i < size; i++) {
                 if (selective) {
@@ -244,6 +258,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
             batchSqlSession.flushStatements();
         } catch (Throwable e) {
             throw new MybatisPlusException("Error: Cannot execute insertOrUpdateBatch Method. Cause", e);
+        }finally {
+            closeSqlSession(batchSqlSession);
         }
         return true;
     }
@@ -335,7 +351,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
-        try (SqlSession batchSqlSession = sqlSessionBatch()) {
+        SqlSession batchSqlSession = sqlSessionBatch();
+        try {
             int size = entityList.size();
             SqlMethod sqlMethod = selective ? SqlMethod.UPDATE_BY_ID : SqlMethod.UPDATE_ALL_COLUMN_BY_ID;
             String sqlStatement = sqlStatement(sqlMethod);
@@ -350,6 +367,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
             batchSqlSession.flushStatements();
         } catch (Throwable e) {
             throw new MybatisPlusException("Error: Cannot execute updateBatchById Method. Cause", e);
+        }finally {
+            closeSqlSession(batchSqlSession);
         }
         return true;
     }
