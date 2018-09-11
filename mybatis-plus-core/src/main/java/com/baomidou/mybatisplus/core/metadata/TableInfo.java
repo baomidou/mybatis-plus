@@ -15,6 +15,13 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
+import static java.util.stream.Collectors.joining;
+
+import java.util.List;
+import java.util.function.Predicate;
+
+import org.apache.ibatis.session.Configuration;
+
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
@@ -24,15 +31,11 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
+
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.apache.ibatis.session.Configuration;
-
-import java.util.List;
-
-import static java.util.stream.Collectors.joining;
 
 /**
  * <p>
@@ -165,11 +168,21 @@ public class TableInfo {
      * @return sql 片段
      */
     public String getAllSqlSelect() {
+        return chooseSelect(TableFieldInfo::isSelect);
+    }
+
+    /**
+     * 获取需要进行查询的 select sql 片段
+     *
+     * @param predicate 过滤条件
+     * @return sql 片段
+     */
+    public String chooseSelect(Predicate<TableFieldInfo> predicate) {
         if (allSqlSelect != null) {
             return allSqlSelect;
         }
         String sqlSelect = getKeySqlSelect();
-        String fieldsSqlSelect = fieldList.stream().filter(TableFieldInfo::isSelect)
+        String fieldsSqlSelect = fieldList.stream().filter(predicate)
             .map(i -> i.getSqlSelect(dbType)).collect(joining(StringPool.COMMA));
         if (StringUtils.isNotEmpty(sqlSelect) && StringUtils.isNotEmpty(fieldsSqlSelect)) {
             allSqlSelect = sqlSelect + StringPool.COMMA + fieldsSqlSelect;
