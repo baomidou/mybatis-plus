@@ -519,7 +519,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
                             typeHandlerRegistry.register(cls, EnumAnnotationTypeHandler.class);
                         } else {
                             // 原生方式
-                            typeHandlerRegistry.register(cls, EnumOrdinalTypeHandler.class);
+                            registerOriginalEnumTypeHandler(typeHandlerRegistry, cls);
                         }
                     }
                 }
@@ -666,6 +666,16 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             }
         }
         return null;
+    }
+
+    /**
+     * 对原生枚举的处理类，默认{@link EnumOrdinalTypeHandler}
+     *
+     * @param typeHandlerRegistry
+     * @param enumClazz
+     */
+    protected void registerOriginalEnumTypeHandler(TypeHandlerRegistry typeHandlerRegistry, Class<?> enumClazz) {
+        typeHandlerRegistry.register(enumClazz, EnumOrdinalTypeHandler.class);
     }
 
     /**
