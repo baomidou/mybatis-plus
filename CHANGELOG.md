@@ -1,5 +1,17 @@
 ﻿# CHANGELOG
 
+
+## [v3.0.2] 2018.09.11 
+- 新增 Wrapper 条件辅助类
+- 新增 banner 属性控制是否打印
+- 修复 gitee #IMMF4:批量插入(AR)事务无效
+- fix: entity 无主键,生成 ew 的 where 条件的 bug
+- 处理SqlRunner的sqlSession获取与释放
+- 去除全局缓存sqlSession,增加Model,通用service层sqlSession释放
+- ext: 抽象原生枚举处理类注册，方便扩展
+- 优化扩展性其他
+
+
 ## [v3.0.1] 2018.08.31 
 - 修复代码生成器设置表前缀异常
 - 新增 EnumValue 注解方式扫描通用枚举处理

@@ -58,14 +58,10 @@ public class MybatisConfiguration extends Configuration {
      */
     public MybatisConfiguration printBanner(boolean print) {
         if (print) {
-            System.out.println("___  ___       ______         _    _        ______  _             ");
-            System.out.println("|  \\/  |       | ___ \\       | |  (_)       | ___ \\| |            ");
-            System.out.println("| .  . | _   _ | |_/ /  __ _ | |_  _  ___   | |_/ /| | _   _  ___ ");
-            System.out.println("| |\\/| || | | || ___ \\ / _` || __|| |/ __|  |  __/ | || | | |/ __|");
-            System.out.println("| |  | || |_| || |_/ /| (_| || |_ | |\\__ \\  | |    | || |_| |\\__ \\");
-            System.out.println("\\_|  |_/ \\__, |\\____/  \\__,_| \\__||_||___/  \\_|    |_| \\__,_||___/");
-            System.out.println("          __/ |                                                   ");
-            System.out.println("         |___/                                              3.0.1\n");
+            System.out.println(" _ _   |_  _ _|_. ___ _ |    _ ");
+            System.out.println("| | |\\/|_)(_| | |_\\  |_)||_|_\\ ");
+            System.out.println("     /               |         ");
+            System.out.println("                        3.0.2  ");
         }
         return this;
     }
