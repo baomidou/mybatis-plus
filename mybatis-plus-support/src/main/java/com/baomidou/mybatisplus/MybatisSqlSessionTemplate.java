@@ -44,9 +44,10 @@ import org.springframework.util.Assert;
 
 /**
  * Copy SqlSessionTemplate
- *
- * @see org.mybatis.spring.SqlSessionTemplate
+ * @deprecated 请使用 {@link org.mybatis.spring.SqlSessionTemplate}
+ * @since 2.3.2
  */
+@Deprecated
 public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
 
     private final SqlSessionFactory sqlSessionFactory;
