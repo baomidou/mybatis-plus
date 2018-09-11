@@ -168,7 +168,11 @@ public class TableInfo {
      * @return sql 片段
      */
     public String getAllSqlSelect() {
-        return chooseSelect(TableFieldInfo::isSelect);
+        if (allSqlSelect != null) {
+            return allSqlSelect;
+        }
+        allSqlSelect = chooseSelect(TableFieldInfo::isSelect);
+        return allSqlSelect;
     }
 
     /**
@@ -178,20 +182,15 @@ public class TableInfo {
      * @return sql 片段
      */
     public String chooseSelect(Predicate<TableFieldInfo> predicate) {
-        if (allSqlSelect != null) {
-            return allSqlSelect;
-        }
         String sqlSelect = getKeySqlSelect();
         String fieldsSqlSelect = fieldList.stream().filter(predicate)
             .map(i -> i.getSqlSelect(dbType)).collect(joining(StringPool.COMMA));
         if (StringUtils.isNotEmpty(sqlSelect) && StringUtils.isNotEmpty(fieldsSqlSelect)) {
-            allSqlSelect = sqlSelect + StringPool.COMMA + fieldsSqlSelect;
+            return sqlSelect + StringPool.COMMA + fieldsSqlSelect;
         } else if (StringUtils.isNotEmpty(fieldsSqlSelect)) {
-            allSqlSelect = fieldsSqlSelect;
-        } else {
-            allSqlSelect = sqlSelect;
+            return fieldsSqlSelect;
         }
-        return allSqlSelect;
+        return sqlSelect;
     }
 
     /**
