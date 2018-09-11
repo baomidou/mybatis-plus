@@ -258,7 +258,7 @@ public class TableInfo {
                 return true;
             })
             .map(i -> i.getSqlWhere(newPrefix)).collect(joining(StringPool.NEWLINE));
-        if (!withId && StringUtils.isEmpty(keyProperty)) {
+        if (!withId || StringUtils.isEmpty(keyProperty)) {
             return filedSqlScript;
         }
         String newKeyProperty = newPrefix + keyProperty;
