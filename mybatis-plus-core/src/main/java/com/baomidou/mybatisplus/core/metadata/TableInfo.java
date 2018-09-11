@@ -294,7 +294,7 @@ public class TableInfo {
      * @return sql 脚本
      */
     public String getLogicDeleteSql(boolean startWithAnd, boolean deleteValue) {
-        if (isLogicDelete()) {
+        if (logicDelete) {
             TableFieldInfo field = fieldList.stream().filter(TableFieldInfo::isLogicDelete).findFirst()
                 .orElseThrow(() -> ExceptionUtils.mpe(String.format("can't find the logicFiled from table {%s}", tableName)));
             String formatStr = field.isCharSequence() ? "'%s'" : "%s";
