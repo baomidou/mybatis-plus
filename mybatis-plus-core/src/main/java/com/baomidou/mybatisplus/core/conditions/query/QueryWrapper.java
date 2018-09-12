@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.core.conditions.query;
 
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
+import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
@@ -27,6 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 
 /**
  * <p>
@@ -94,6 +96,12 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
         if (ArrayUtils.isNotEmpty(sqlSelect)) {
             this.sqlSelect = sqlSelect;
         }
+        return typedThis;
+    }
+
+    public QueryWrapper<T> select(Predicate<TableFieldInfo> predicate) {
+        this.checkEntityClass();
+        this.sqlSelect = new String[]{TableInfoHelper.getTableInfo(entityClass).chooseSelect(predicate)};
         return typedThis;
     }
 
