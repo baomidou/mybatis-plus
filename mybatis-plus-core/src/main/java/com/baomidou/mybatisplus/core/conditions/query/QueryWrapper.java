@@ -15,11 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.conditions.query;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
@@ -27,6 +22,11 @@ import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * <p>
@@ -51,7 +51,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
 
 
     public QueryWrapper() {
-        this(null, null);
+        this(null);
     }
 
     public QueryWrapper(T entity) {
@@ -61,6 +61,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     public QueryWrapper(T entity, String... column) {
         this.sqlSelect = column;
         this.entity = entity;
+        this.initEntityClass();
         this.initNeed();
     }
 
@@ -71,6 +72,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
         this.paramNameSeq = paramNameSeq;
         this.paramNameValuePairs = paramNameValuePairs;
         this.expression = mergeSegments;
+        this.initEntityClass();
     }
 
     @Override
@@ -102,7 +104,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
      * @param excludeColumns 排除字段列表
      */
     public QueryWrapper<T> excludeColumns(Class<T> entityClass, String... excludeColumns) {
-        Assert.notNull(entityClass, "entityClass is not null");
+        this.checkEntityClass();
         Assert.notEmpty(excludeColumns, "excludeColumns is not empty");
         this.excludeColumns = excludeColumns;
         this.entityClass = entityClass;

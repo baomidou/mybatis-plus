@@ -15,14 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.conditions.query;
 
-import static java.util.stream.Collectors.joining;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
@@ -31,6 +23,14 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.Property;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * <p>
@@ -54,23 +54,23 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     private List<String> excludeColumn = new ArrayList<>();
 
     public LambdaQueryWrapper() {
-        // TO DO NOTHING
+        this(null);
     }
 
     public LambdaQueryWrapper(T entity) {
         this.entity = entity;
+        this.initEntityClass();
+        this.initNeed();
     }
 
     @SuppressWarnings(value = "unchecked")
-    public LambdaQueryWrapper(T entity, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs,
-                              MergeSegments mergeSegments) {
+    LambdaQueryWrapper(T entity, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs,
+                       MergeSegments mergeSegments) {
         this.entity = entity;
-        if (entity != null) {
-            this.entityClass = (Class<T>) entity.getClass();
-        }
         this.paramNameSeq = paramNameSeq;
         this.paramNameValuePairs = paramNameValuePairs;
         this.expression = mergeSegments;
+        this.initEntityClass();
     }
 
     @Override
@@ -110,9 +110,10 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
      */
     @SafeVarargs
     public final LambdaQueryWrapper<T> excludeColumns(Class<T> entityClass, Property<T, ?>... excludeColumns) {
-        Assert.notNull(entityClass, "entityClass is not null");
+        this.checkEntityClass();
         Assert.notEmpty(excludeColumns, "excludeColumns is not empty");
         this.entityClass = entityClass;
+        //todo
         for (Property<T, ?> column : excludeColumns) {
             excludeColumn.add(this.columnToString(column));
         }
@@ -129,8 +130,8 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     @SafeVarargs
     @SuppressWarnings(value = "unchecked")
     public final LambdaQueryWrapper<T> excludeColumns(Property<T, ?>... excludeColumns) {
-        Assert.notNull(entity, "Unable to find entity type, please use method `excludeColumns(Class<T> entityClass, String... excludeColumns)`");
-        return excludeColumns((Class<T>) entity.getClass(), excludeColumns);
+        Assert.notNull(entityClass, "Unable to find entity type, please use method `excludeColumns(Class<T> entityClass, String... excludeColumns)`");
+        return excludeColumns(entityClass, excludeColumns);
     }
 
     @Override
