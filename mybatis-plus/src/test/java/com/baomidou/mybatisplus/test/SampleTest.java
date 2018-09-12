@@ -1,13 +1,15 @@
 package com.baomidou.mybatisplus.test;
 
+import org.apache.ibatis.reflection.DefaultReflectorFactory;
+import org.apache.ibatis.reflection.MetaClass;
+import org.junit.Test;
+
+import com.baomidou.mybatisplus.core.conditions.Condition;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.test.base.entity.CommonData;
 import com.baomidou.mybatisplus.test.base.entity.CommonLogicData;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.ibatis.reflection.DefaultReflectorFactory;
-import org.apache.ibatis.reflection.MetaClass;
-import org.junit.Test;
 
 public class SampleTest {
 
@@ -32,5 +34,11 @@ public class SampleTest {
         MetaClass metaClass = MetaClass.forClass(CommonData.class, new DefaultReflectorFactory());
         String property = metaClass.findProperty("TESTINT", true);
         System.out.println(property);
+    }
+
+    @Test
+    public void testWrapperOrderBy() {
+        System.out.println(Condition.create().orderByAsc("1", "2", "3", "4").getSqlSegment());
+        System.out.println(Condition.create().orderByDesc("1", "2", "3", "4").getSqlSegment());
     }
 }
