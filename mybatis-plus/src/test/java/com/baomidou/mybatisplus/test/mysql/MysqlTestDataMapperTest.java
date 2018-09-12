@@ -227,4 +227,9 @@ public class MysqlTestDataMapperTest {
         Assert.assertTrue(CollectionUtils.isNotEmpty(mysqlMapper.selectList(new QueryWrapper<MysqlData>()
             .apply("`order` = 12"))));
     }
+
+    @Test
+    public void d9_testSetSelect() {
+        commonMapper.selectList(new QueryWrapper<>(new CommonData()).select(i -> i.getProperty().startsWith("test")));
+    }
 }
