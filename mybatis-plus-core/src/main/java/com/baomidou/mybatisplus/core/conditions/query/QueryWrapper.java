@@ -99,6 +99,19 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
         return typedThis;
     }
 
+    /**
+     * <p>
+     * 过滤查询的字段信息(主键除外!)
+     * </p>
+     * <p>
+     * 例1: 只要 java 字段名以 "test" 开头的              -> select(i -> i.getProperty().startsWith("test"))
+     * 例2: 只要 java 字段属性是 CharSequence 类型的       -> select(TableFieldInfo::isCharSequence)
+     * 例3: 只要 java 字段没有填充策略的                   -> select(i -> i.getFieldFill == FieldFill.DEFAULT)
+     * </p>
+     *
+     * @param predicate 过滤方式
+     * @return this
+     */
     public QueryWrapper<T> select(Predicate<TableFieldInfo> predicate) {
         this.checkEntityClass();
         this.sqlSelect = new String[]{TableInfoHelper.getTableInfo(entityClass).chooseSelect(predicate)};
@@ -110,7 +123,9 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
      *
      * @param entityClass    实体类
      * @param excludeColumns 排除字段列表
+     * @deprecated begin 3.0.3,建议使用 {@link #select(Predicate)}
      */
+    @Deprecated
     public QueryWrapper<T> excludeColumns(Class<T> entityClass, String... excludeColumns) {
         this.checkEntityClass();
         Assert.notEmpty(excludeColumns, "excludeColumns is not empty");
@@ -125,7 +140,9 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
      * </p>
      *
      * @param excludeColumns 排除字段列表
+     * @deprecated begin 3.0.3,建议使用 {@link #select(Predicate)}
      */
+    @Deprecated
     @SuppressWarnings(value = "unchecked")
     public QueryWrapper<T> excludeColumns(String... excludeColumns) {
         Assert.notNull(entity, "Unable to find entity type, please use method `excludeColumns(Class<T> entityClass, String... excludeColumns)`");
