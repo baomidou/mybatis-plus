@@ -345,7 +345,8 @@ public class ConfigBuilder {
         for (TableInfo tableInfo : tableList) {
             String entityName = NamingStrategy.capitalFirst(processName(tableInfo.getName(), strategy, tablePrefix));
             if (StringUtils.isNotEmpty(globalConfig.getEntityName())) {
-                tableInfo.setEntityName(strategyConfig, String.format(globalConfig.getEntityName(), entityName));
+                tableInfo.setConvert(true);
+                tableInfo.setEntityName(String.format(globalConfig.getEntityName(), entityName));
             } else {
                 tableInfo.setEntityName(strategyConfig, entityName);
             }

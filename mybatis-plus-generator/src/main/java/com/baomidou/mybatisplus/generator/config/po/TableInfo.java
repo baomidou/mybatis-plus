@@ -108,6 +108,10 @@ public class TableInfo {
         return entityName;
     }
 
+    public void setEntityName(String entityName) {
+        this.entityName = entityName;
+    }
+
     public void setEntityName(StrategyConfig strategyConfig, String entityName) {
         this.entityName = entityName;
         this.setConvert(strategyConfig);
