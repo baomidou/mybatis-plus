@@ -28,6 +28,7 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -56,6 +57,14 @@ public class GlobalConfig implements Serializable {
      * 缓存 Sql 解析初始化
      */
     private boolean sqlParserCache = false;
+    /**
+     * 机器 ID 部分
+     */
+    private Long workerId;
+    /**
+     * 数据标识 ID 部分
+     */
+    private Long datacenterId;
     /**
      * 数据库相关配置
      */

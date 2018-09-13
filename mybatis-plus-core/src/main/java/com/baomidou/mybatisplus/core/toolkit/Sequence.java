@@ -15,13 +15,13 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.concurrent.ThreadLocalRandom;
+
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 
 /**
  * <p>
@@ -83,7 +83,7 @@ public class Sequence {
      * 有参构造器
      * </p>
      *
-     * @param workerId     工作机器ID
+     * @param workerId     工作机器 ID
      * @param datacenterId 序列号
      */
     public Sequence(long workerId, long datacenterId) {

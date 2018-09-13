@@ -22,7 +22,9 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 
 /**
  * <p>
@@ -54,10 +56,16 @@ public class MybatisConfiguration extends Configuration {
     }
 
     /**
-     * 打印 LOGO
+     * 配置初始化
      */
-    public MybatisConfiguration printBanner(boolean print) {
-        if (print) {
+    public MybatisConfiguration init(GlobalConfig globalConfig) {
+        // 初始化 Sequence
+        if (null != globalConfig.getWorkerId()
+            && null != globalConfig.getDatacenterId()) {
+            IdWorker.initSequence(globalConfig.getWorkerId(), globalConfig.getDatacenterId());
+        }
+        // 打印 Banner
+        if (globalConfig.isBanner()) {
             System.out.println(" _ _   |_  _ _|_. ___ _ |    _ ");
             System.out.println("| | |\\/|_)(_| | |_\\  |_)||_|_\\ ");
             System.out.println("     /               |         ");
