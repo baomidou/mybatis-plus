@@ -15,22 +15,25 @@
  */
 package com.baomidou.mybatisplus.core.conditions.query;
 
-import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper;
-import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
-import com.baomidou.mybatisplus.core.toolkit.support.Property;
+import static java.util.stream.Collectors.joining;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 
-import static java.util.stream.Collectors.joining;
+import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper;
+import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
+import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
+import com.baomidou.mybatisplus.core.toolkit.support.Property;
 
 /**
  * <p>
@@ -44,6 +47,11 @@ import static java.util.stream.Collectors.joining;
 public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryWrapper<T>> {
 
     /**
+     * 过滤的字段
+     */
+    private String predicateSelect;
+
+    /**
      * 查询字段
      */
     private List<String> queryColumn = new ArrayList<>();
@@ -51,6 +59,7 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     /**
      * 排除字段
      */
+    @Deprecated
     private List<String> excludeColumn = new ArrayList<>();
 
     public LambdaQueryWrapper() {
@@ -75,6 +84,9 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
 
     @Override
     public String getSqlSelect() {
+        if (StringUtils.isNotEmpty(predicateSelect)) {
+            return predicateSelect;
+        }
         if (CollectionUtils.isEmpty(queryColumn)) {
             if (entityClass != null) {
                 queryColumn = Arrays.asList(TableInfoHelper.getTableColumns(entityClass, excludeColumn.toArray(new String[0])));
@@ -103,11 +115,35 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
 
     /**
      * <p>
+     * 过滤查询的字段信息(主键除外!)
+     * 目前该方法优先级最高,一旦使用其他的设置select的方法将失效!!!
+     * </p>
+     * <p>
+     * 例1: 只要 java 字段名以 "test" 开头的              -> select(i -> i.getProperty().startsWith("test"))
+     * 例2: 只要 java 字段属性是 CharSequence 类型的       -> select(TableFieldInfo::isCharSequence)
+     * 例3: 只要 java 字段没有填充策略的                   -> select(i -> i.getFieldFill == FieldFill.DEFAULT)
+     * 例4: 要全部字段                                   -> select(i -> true)
+     * 例5: 只要主键字段                                 -> select(i -> false)
+     * </p>
+     *
+     * @param predicate 过滤方式
+     * @return this
+     */
+    public LambdaQueryWrapper<T> select(Predicate<TableFieldInfo> predicate) {
+        this.checkEntityClass();
+        this.predicateSelect = TableInfoHelper.getTableInfo(entityClass).chooseSelect(predicate);
+        return typedThis;
+    }
+
+    /**
+     * <p>
      * SELECT 部分 SQL 设置
      * </p>
      *
      * @param excludeColumns 排除的查询字段
+     * @deprecated begin 3.0.3,建议使用 {@link #select(Predicate)}
      */
+    @Deprecated
     @SafeVarargs
     public final LambdaQueryWrapper<T> excludeColumns(Class<T> entityClass, Property<T, ?>... excludeColumns) {
         this.checkEntityClass();
@@ -126,8 +162,10 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
      * </p>
      *
      * @param excludeColumns 排除字段列表
+     * @deprecated begin 3.0.3,建议使用 {@link #select(Predicate)}
      */
     @SafeVarargs
+    @Deprecated
     @SuppressWarnings(value = "unchecked")
     public final LambdaQueryWrapper<T> excludeColumns(Property<T, ?>... excludeColumns) {
         Assert.notNull(entityClass, "Unable to find entity type, please use method `excludeColumns(Class<T> entityClass, String... excludeColumns)`");

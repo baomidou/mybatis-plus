@@ -43,15 +43,14 @@ import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>> {
 
     /**
-     * 查询字段
-     */
-    @Deprecated
-    private String[] sqlSelect;
-
-    /**
      * 过滤的字段
      */
     private String predicateSelect;
+
+    /**
+     * 查询字段
+     */
+    private String[] sqlSelect;
 
     /**
      * 排除字段
@@ -113,7 +112,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     /**
      * <p>
      * 过滤查询的字段信息(主键除外!)
-     * 该方法优先级最高,一旦使用其他的设置select的方法将失效!!!
+     * 目前该方法优先级最高,一旦使用其他的设置select的方法将失效!!!
      * </p>
      * <p>
      * 例1: 只要 java 字段名以 "test" 开头的              -> select(i -> i.getProperty().startsWith("test"))
@@ -157,10 +156,10 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
      * @deprecated begin 3.0.3,建议使用 {@link #select(Predicate)}
      */
     @Deprecated
-    @SuppressWarnings(value = "unchecked")
+    @SuppressWarnings("unchecked")
     public QueryWrapper<T> excludeColumns(String... excludeColumns) {
-        Assert.notNull(entity, "Unable to find entity type, please use method `excludeColumns(Class<T> entityClass, String... excludeColumns)`");
-        return excludeColumns((Class<T>) entity.getClass(), excludeColumns);
+        this.checkEntityClass();
+        return excludeColumns(entityClass, excludeColumns);
     }
 
     /**
