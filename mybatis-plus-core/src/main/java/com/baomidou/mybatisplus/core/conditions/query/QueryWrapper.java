@@ -15,20 +15,21 @@
  */
 package com.baomidou.mybatisplus.core.conditions.query;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
+
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Predicate;
 
 /**
  * <p>
@@ -44,11 +45,18 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     /**
      * 查询字段
      */
+    @Deprecated
     private String[] sqlSelect;
+
+    /**
+     * 过滤的字段
+     */
+    private String predicateSelect;
 
     /**
      * 排除字段
      */
+    @Deprecated
     private String[] excludeColumns = new String[]{};
 
 
@@ -79,6 +87,9 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
 
     @Override
     public String getSqlSelect() {
+        if (StringUtils.isNotEmpty(predicateSelect)) {
+            return predicateSelect;
+        }
         //TODO 这里看要不要兼容下原来的sqlSelect，进行切割
         if (ArrayUtils.isNotEmpty(sqlSelect)) {
             List<String> excludeColumnList = Arrays.asList(excludeColumns);
@@ -102,6 +113,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     /**
      * <p>
      * 过滤查询的字段信息(主键除外!)
+     * 该方法优先级最高,一旦使用其他的设置select的方法将失效!!!
      * </p>
      * <p>
      * 例1: 只要 java 字段名以 "test" 开头的              -> select(i -> i.getProperty().startsWith("test"))
@@ -116,7 +128,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
      */
     public QueryWrapper<T> select(Predicate<TableFieldInfo> predicate) {
         this.checkEntityClass();
-        this.sqlSelect = new String[]{TableInfoHelper.getTableInfo(entityClass).chooseSelect(predicate)};
+        this.predicateSelect = TableInfoHelper.getTableInfo(entityClass).chooseSelect(predicate);
         return typedThis;
     }
 
