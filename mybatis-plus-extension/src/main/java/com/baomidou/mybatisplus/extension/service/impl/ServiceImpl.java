@@ -185,14 +185,9 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
-        SqlSession batchSqlSession = sqlSessionBatch();
-        try {
-            for (T anEntityList : entityList) {
-                saveOrUpdate(anEntityList);
-            }
-            batchSqlSession.flushStatements();
-        }finally {
-            closeSqlSession(batchSqlSession);
+        //todo 这里需要处理下,应该区分两个集合,分别执行insert和update操作,而不是直接调用saveOrUpdate
+        for (T anEntityList : entityList) {
+            saveOrUpdate(anEntityList);
         }
         return true;
     }

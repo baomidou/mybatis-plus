@@ -2,6 +2,7 @@ package com.baomidou.mybatisplus.test.h2;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -281,5 +282,34 @@ public class H2UserTest extends BaseTest {
             List<H2User> list = userService.list(new QueryWrapper<H2User>().like("name", "simple"));
             Assert.assertTrue(CollectionUtils.isEmpty(list));
         }
+    }
+    
+    @Test
+    public void testSaveOrUpdateBatchTransactional(){
+        try {
+            userService.testSaveOrUpdateBatchTransactional();
+        }catch (MybatisPlusException e){
+            List<H2User> list = userService.list(new QueryWrapper<H2User>().like("name", "savOrUpdate"));
+            Assert.assertTrue(CollectionUtils.isEmpty(list));
+        }
+    }
+    
+    @Test
+    public void testSaveBatch(){
+        Assert.assertTrue(userService.saveBatch(Arrays.asList(new H2User("saveBatch1"),new H2User("saveBatch2"),new H2User("saveBatch3"),new H2User("saveBatch4"))));
+        Assert.assertTrue(userService.saveBatch(Arrays.asList(new H2User("saveBatch5"),new H2User("saveBatch6"),new H2User("saveBatch7"),new H2User("saveBatch8")),2));
+        
+    }
+    
+    @Test
+    public void testUpdateBatch(){
+        Assert.assertTrue(userService.updateBatchById(Arrays.asList(new H2User(1010L,"batch1010"),new H2User(1011L,"batch1011"),new H2User(1010L,"batch1010"),new H2User(1012L,"batch1012"))));
+        Assert.assertTrue(userService.updateBatchById(Arrays.asList(new H2User(1010L,"batch1010A"),new H2User(1011L,"batch1011A"),new H2User(1010L,"batch1010"),new H2User(1012L,"batch1012")),1));
+    }
+    
+    @Test
+    public void testSaveOrUpdateBatch(){
+        Assert.assertTrue(userService.saveOrUpdateBatch(Arrays.asList(new H2User(1010L,"batch1010"),new H2User(1011L,"batch1011"),new H2User(1010L,"batch1010"),new H2User(1015L,"batch1015"))));
+        Assert.assertTrue(userService.saveOrUpdateBatch(Arrays.asList(new H2User(1010L,"batch1010A"),new H2User(1011L,"batch1011A"),new H2User(1010L,"batch1010"),new H2User(1016L,"batch1016")),1));
     }
 }
