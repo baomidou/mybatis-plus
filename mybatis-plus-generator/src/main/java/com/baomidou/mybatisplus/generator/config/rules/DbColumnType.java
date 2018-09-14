@@ -23,7 +23,7 @@ package com.baomidou.mybatisplus.generator.config.rules;
  * @author hubin
  * @since 2017-01-11
  */
-public enum DbColumnType implements PropertyInfo {
+public enum DbColumnType implements IColumnType {
     // 基本类型
     BASE_BYTE("byte", null),
     BASE_SHORT("short", null),

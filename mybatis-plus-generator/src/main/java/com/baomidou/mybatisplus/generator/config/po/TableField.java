@@ -20,8 +20,8 @@ import java.util.Map;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
+import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
-import com.baomidou.mybatisplus.generator.config.rules.PropertyInfo;
 
 /**
  * <p>
@@ -42,7 +42,7 @@ public class TableField {
     private String name;
     private String type;
     private String propertyName;
-    private PropertyInfo columnType;
+    private IColumnType columnType;
     private String comment;
     private String fill;
     /**
@@ -119,11 +119,11 @@ public class TableField {
         this.setConvert(strategyConfig);
     }
 
-    public PropertyInfo getColumnType() {
+    public IColumnType getColumnType() {
         return columnType;
     }
 
-    public void setColumnType(PropertyInfo columnType) {
+    public void setColumnType(IColumnType columnType) {
         this.columnType = columnType;
     }
 

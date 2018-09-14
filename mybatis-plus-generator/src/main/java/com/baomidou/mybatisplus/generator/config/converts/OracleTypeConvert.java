@@ -18,7 +18,7 @@ package com.baomidou.mybatisplus.generator.config.converts;
 import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.ITypeConvert;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
-import com.baomidou.mybatisplus.generator.config.rules.PropertyInfo;
+import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
 
 /**
  * <p>
@@ -31,7 +31,7 @@ import com.baomidou.mybatisplus.generator.config.rules.PropertyInfo;
 public class OracleTypeConvert implements ITypeConvert {
 
     @Override
-    public PropertyInfo processTypeConvert(GlobalConfig globalConfig, String fieldType) {
+    public IColumnType processTypeConvert(GlobalConfig globalConfig, String fieldType) {
         String t = fieldType.toLowerCase();
         if (t.contains("char")) {
             return DbColumnType.STRING;
