@@ -309,7 +309,7 @@ public class H2UserTest extends BaseTest {
     
     @Test
     public void testSaveOrUpdateBatch(){
-        Assert.assertTrue(userService.saveOrUpdateBatch(Arrays.asList(new H2User(1010L,"batch1010"),new H2User(1011L,"batch1011"),new H2User(1010L,"batch1010"),new H2User(1015L,"batch1015"))));
-        Assert.assertTrue(userService.saveOrUpdateBatch(Arrays.asList(new H2User(1010L,"batch1010A"),new H2User(1011L,"batch1011A"),new H2User(1010L,"batch1010"),new H2User(1016L,"batch1016")),1));
+        Assert.assertTrue(userService.saveOrUpdateBatch(Arrays.asList(new H2User(1010L,"batch1010"),new H2User("batch1011"),new H2User(1010L,"batch1010"),new H2User("batch1015"))));
+        Assert.assertTrue(userService.saveOrUpdateBatch(Arrays.asList(new H2User(1010L,"batch1010A"),new H2User("batch1011A"),new H2User(1010L,"batch1010"),new H2User("batch1016")),1));
     }
 }

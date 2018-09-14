@@ -185,9 +185,38 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
-        //todo 这里需要处理下,应该区分两个集合,分别执行insert和update操作,而不是直接调用saveOrUpdate
-        for (T anEntityList : entityList) {
-            saveOrUpdate(anEntityList);
+        SqlSession batchSqlSession = sqlSessionBatch();
+        Class<?> cls = null;
+        TableInfo tableInfo = null;
+        int i = 0;
+        try {
+            for (T anEntityList : entityList) {
+                if(i == 0){
+                    cls = anEntityList.getClass();
+                    tableInfo = TableInfoHelper.getTableInfo(cls);
+                }
+                if (null != tableInfo && StringUtils.isNotEmpty(tableInfo.getKeyProperty())) {
+                    Object idVal = ReflectionKit.getMethodValue(cls, anEntityList, tableInfo.getKeyProperty());
+                    if (StringUtils.checkValNull(idVal)) {
+                        String sqlStatement = sqlStatement(SqlMethod.INSERT_ONE);
+                        batchSqlSession.insert(sqlStatement,anEntityList);
+                    }else{
+                        String sqlStatement = sqlStatement(SqlMethod.UPDATE_BY_ID);
+                        MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
+                        param.put(Constants.ENTITY, anEntityList);
+                        batchSqlSession.update(sqlStatement, param);
+                        //不知道以后会不会有人说更新失败了还要执行插入 😂😂😂
+                    }
+                    if (i >= 1 && i % batchSize == 0) {
+                        batchSqlSession.flushStatements();
+                    }
+                    i++;
+                }else {
+                    throw ExceptionUtils.mpe("Error:  Can not execute. Could not find @TableId.");
+                }
+            }
+        }finally {
+            closeSqlSession(batchSqlSession);
         }
         return true;
     }
