@@ -242,7 +242,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
-        SqlSession batchSqlSession = sqlSessionBatch();
+        //todo 这里获取到sqlSessionBatch并无作用,先屏蔽,正确处理方式应该将entityList切割为insert,update两个集合,分别执行批量插入与批量更新.
+//        SqlSession batchSqlSession = sqlSessionBatch();
         try {
             int size = entityList.size();
             for (int i = 0; i < size; i++) {
@@ -251,15 +252,15 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 } else {
                     insertOrUpdateAllColumn(entityList.get(i));
                 }
-                if (i >= 1 && i % batchSize == 0) {
-                    batchSqlSession.flushStatements();
-                }
+//                if (i >= 1 && i % batchSize == 0) {
+//                    batchSqlSession.flushStatements();
+//                }
             }
-            batchSqlSession.flushStatements();
+//            batchSqlSession.flushStatements();
         } catch (Throwable e) {
             throw new MybatisPlusException("Error: Cannot execute insertOrUpdateBatch Method. Cause", e);
         }finally {
-            closeSqlSession(batchSqlSession);
+//            closeSqlSession(batchSqlSession);
         }
         return true;
     }
