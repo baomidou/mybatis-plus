@@ -33,14 +33,14 @@ public interface Compare<This, R> extends Serializable {
     /**
      * ignore
      */
-    default This allEq(Map<R, Object> params) {
+    default <V> This allEq(Map<R, V> params) {
         return allEq(params, true);
     }
 
     /**
      * ignore
      */
-    default This allEq(Map<R, Object> params, boolean null2IsNull) {
+    default <V> This allEq(Map<R, V> params, boolean null2IsNull) {
         return allEq(true, params, null2IsNull);
     }
 
@@ -51,7 +51,7 @@ public interface Compare<This, R> extends Serializable {
      * @param params      map 类型的参数, key 是字段名, value 是字段值
      * @param null2IsNull 是否参数为 null 自动执行 isNull 方法, false 则忽略这个字段
      */
-    This allEq(boolean condition, Map<R, Object> params, boolean null2IsNull);
+    <V> This allEq(boolean condition, Map<R, V> params, boolean null2IsNull);
 
     /**
      * ignore
