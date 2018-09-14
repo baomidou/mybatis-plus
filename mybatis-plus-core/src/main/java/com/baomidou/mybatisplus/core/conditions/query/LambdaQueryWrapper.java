@@ -146,9 +146,9 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     @Deprecated
     @SafeVarargs
     public final LambdaQueryWrapper<T> excludeColumns(Class<T> entityClass, Property<T, ?>... excludeColumns) {
-        this.checkEntityClass();
         Assert.notEmpty(excludeColumns, "excludeColumns is not empty");
         this.entityClass = entityClass;
+        this.checkEntityClass();
         //todo
         for (Property<T, ?> column : excludeColumns) {
             excludeColumn.add(this.columnToString(column));
@@ -168,7 +168,7 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     @Deprecated
     @SuppressWarnings(value = "unchecked")
     public final LambdaQueryWrapper<T> excludeColumns(Property<T, ?>... excludeColumns) {
-        Assert.notNull(entityClass, "Unable to find entity type, please use method `excludeColumns(Class<T> entityClass, String... excludeColumns)`");
+        this.checkEntityClass();
         return excludeColumns(entityClass, excludeColumns);
     }
 
