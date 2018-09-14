@@ -144,8 +144,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 }
             }
             batchSqlSession.flushStatements();
-        } catch (Throwable e) {
-            throw new MybatisPlusException("Error: Cannot execute insertBatch Method. Cause", e);
         } finally {
             closeSqlSession(batchSqlSession);
         }
@@ -242,25 +240,38 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
-        //todo 这里获取到sqlSessionBatch并无作用,先屏蔽,正确处理方式应该将entityList切割为insert,update两个集合,分别执行批量插入与批量更新.
-//        SqlSession batchSqlSession = sqlSessionBatch();
+        SqlSession batchSqlSession = sqlSessionBatch();
         try {
             int size = entityList.size();
+            Class<?> cls = null;
+            TableInfo tableInfo = null;
             for (int i = 0; i < size; i++) {
-                if (selective) {
-                    insertOrUpdate(entityList.get(i));
-                } else {
-                    insertOrUpdateAllColumn(entityList.get(i));
+                T entity = entityList.get(i);
+                if(i == 0){
+                    cls = entity.getClass();
+                    tableInfo = TableInfoHelper.getTableInfo(cls);
                 }
-//                if (i >= 1 && i % batchSize == 0) {
-//                    batchSqlSession.flushStatements();
-//                }
+                if (null != tableInfo && StringUtils.isNotEmpty(tableInfo.getKeyProperty())) {
+                    Object idVal = ReflectionKit.getMethodValue(cls, entity, tableInfo.getKeyProperty());
+                    if (StringUtils.checkValNull(idVal)) {
+                        String sqlStatement = sqlStatement(selective ? SqlMethod.INSERT_ONE : SqlMethod.INSERT_ONE_ALL_COLUMN);
+                        batchSqlSession.insert(sqlStatement,entity);
+                    } else {
+                        String sqlStatement = sqlStatement(selective ? SqlMethod.UPDATE_BY_ID : SqlMethod.UPDATE_ALL_COLUMN_BY_ID);
+                        MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
+                        param.put("et", entity);
+                        batchSqlSession.update(sqlStatement, param);
+                    }
+                } else {
+                    throw new MybatisPlusException("Error:  Can not execute. Could not find @TableId.");
+                }
+                if (i >= 1 && i % batchSize == 0) {
+                    batchSqlSession.flushStatements();
+                }
             }
-//            batchSqlSession.flushStatements();
-        } catch (Throwable e) {
-            throw new MybatisPlusException("Error: Cannot execute insertOrUpdateBatch Method. Cause", e);
-        }finally {
-//            closeSqlSession(batchSqlSession);
+            batchSqlSession.flushStatements();
+        } finally {
+            closeSqlSession(batchSqlSession);
         }
         return true;
     }
@@ -366,9 +377,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 }
             }
             batchSqlSession.flushStatements();
-        } catch (Throwable e) {
-            throw new MybatisPlusException("Error: Cannot execute updateBatchById Method. Cause", e);
-        }finally {
+        } finally {
             closeSqlSession(batchSqlSession);
         }
         return true;

@@ -372,4 +372,17 @@ public abstract class AbstractH2UserTest extends H2Test {
         }
         System.out.println(pageResult.getTotal());
     }
+    
+    protected void insertOrUpdateBatchSimpleCase() {
+        List<H2User> h2Users = new ArrayList<>();
+        H2User user;
+        for (int i = 0; i < 10; i++) {
+            user = new H2User();
+            user.setAge(1);
+            user.setPrice(new BigDecimal("6" + i));
+            user.setDesc("insertOrUpdateBatch" + i);
+            h2Users.add(user);
+        }
+        Assert.assertTrue(userService.insertOrUpdateBatch(h2Users));
+    }
 }

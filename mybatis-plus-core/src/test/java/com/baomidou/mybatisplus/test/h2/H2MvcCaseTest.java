@@ -254,4 +254,8 @@ public class H2MvcCaseTest extends AbstractH2UserTest {
         userMapper.selectMaps(new EntityWrapper<H2User>());
     }
 
+    @Test
+    public void testInsertOrUpdateBatch(){
+        insertOrUpdateBatchSimpleCase();
+    }
 }
