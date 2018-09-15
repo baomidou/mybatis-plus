@@ -15,12 +15,8 @@
  */
 package com.baomidou.mybatisplus.core.toolkit.sql;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.*;
-import org.apache.ibatis.exceptions.TooManyResultsException;
+import java.util.List;
+
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.ExecutorType;
@@ -28,7 +24,16 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionUtils;
 
-import java.util.List;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 
 /**
  * <p>
@@ -73,7 +78,7 @@ public final class SqlHelper {
      * 获取Session
      * </p>
      *
-     * @param clazz 实体类
+     * @param clazz      实体类
      * @return SqlSession
      */
     public static SqlSession sqlSession(Class<?> clazz) {
@@ -140,13 +145,14 @@ public final class SqlHelper {
      * @return
      */
     public static <E> E getObject(List<E> list) {
-        if (list.size() == 1) {
+        if (CollectionUtils.isNotEmpty(list)) {
+            int size = list.size();
+            if (size > 1) {
+                SqlHelper.logger.warn(String.format("Warn: execute Method There are  %s results.", size));
+            }
             return list.get(0);
-        } else if (list.size() > 1) {
-            throw new TooManyResultsException("Expected one result (or null) to be returned by selectOne(), but found: " + list.size());
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**

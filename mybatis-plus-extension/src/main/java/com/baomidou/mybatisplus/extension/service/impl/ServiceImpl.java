@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.SqlSessionUtils;
@@ -37,6 +36,7 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -85,15 +85,16 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     protected SqlSession sqlSessionBatch() {
         return SqlHelper.sqlSessionBatch(currentModelClass());
     }
-    
+
     /**
      * 释放sqlSession
+     *
      * @param sqlSession session
      */
-    protected void closeSqlSession(SqlSession sqlSession){
+    protected void closeSqlSession(SqlSession sqlSession) {
         SqlSessionUtils.closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(currentModelClass()));
     }
-    
+
     /**
      * 获取SqlStatement
      *
@@ -137,7 +138,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 i++;
             }
             batchSqlSession.flushStatements();
-        }finally {
+        } finally {
             closeSqlSession(batchSqlSession);
         }
         return true;
@@ -191,7 +192,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         int i = 0;
         try {
             for (T anEntityList : entityList) {
-                if(i == 0){
+                if (i == 0) {
                     cls = anEntityList.getClass();
                     tableInfo = TableInfoHelper.getTableInfo(cls);
                 }
@@ -199,8 +200,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                     Object idVal = ReflectionKit.getMethodValue(cls, anEntityList, tableInfo.getKeyProperty());
                     if (StringUtils.checkValNull(idVal)) {
                         String sqlStatement = sqlStatement(SqlMethod.INSERT_ONE);
-                        batchSqlSession.insert(sqlStatement,anEntityList);
-                    }else{
+                        batchSqlSession.insert(sqlStatement, anEntityList);
+                    } else {
                         String sqlStatement = sqlStatement(SqlMethod.UPDATE_BY_ID);
                         MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
                         param.put(Constants.ENTITY, anEntityList);
@@ -211,11 +212,11 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                         batchSqlSession.flushStatements();
                     }
                     i++;
-                }else {
+                } else {
                     throw ExceptionUtils.mpe("Error:  Can not execute. Could not find @TableId.");
                 }
             }
-        }finally {
+        } finally {
             closeSqlSession(batchSqlSession);
         }
         return true;
@@ -280,7 +281,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 i++;
             }
             batchSqlSession.flushStatements();
-        }finally {
+        } finally {
             closeSqlSession(batchSqlSession);
         }
         return true;
@@ -302,7 +303,10 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     @Override
-    public T getOne(Wrapper<T> queryWrapper) {
+    public T getOne(Wrapper<T> queryWrapper, boolean throwEx) {
+        if (throwEx) {
+            return baseMapper.selectOne(queryWrapper);
+        }
         return SqlHelper.getObject(baseMapper.selectList(queryWrapper));
     }
 

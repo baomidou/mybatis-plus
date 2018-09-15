@@ -197,7 +197,19 @@ public interface IService<T> {
      *
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
-    T getOne(Wrapper<T> queryWrapper);
+    default T getOne(Wrapper<T> queryWrapper) {
+        return getOne(queryWrapper, false);
+    }
+
+    /**
+     * <p>
+     * 根据 Wrapper，查询一条记录
+     * </p>
+     *
+     * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
+     * @param throwEx      有多个 result 是否抛出异常
+     */
+    T getOne(Wrapper<T> queryWrapper, boolean throwEx);
 
     /**
      * <p>
