@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.*;
+import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.ExecutorType;
@@ -42,7 +43,7 @@ public final class SqlHelper {
     private static final Log logger = LogFactory.getLog(SqlHelper.class);
     public static SqlSessionFactory FACTORY;
 
-    
+
     /**
      * <p>
      * 批量操作 SqlSession
@@ -52,9 +53,9 @@ public final class SqlHelper {
      * @return SqlSession
      */
     public static SqlSession sqlSessionBatch(Class<?> clazz) {
-        return SqlSessionUtils.getSqlSession(GlobalConfigUtils.currentSessionFactory(clazz),ExecutorType.BATCH,null);
+        return SqlSessionUtils.getSqlSession(GlobalConfigUtils.currentSessionFactory(clazz), ExecutorType.BATCH, null);
     }
-    
+
     /**
      * <p>
      * 获取sqlSession
@@ -66,13 +67,13 @@ public final class SqlHelper {
     private static SqlSession getSqlSession(Class<?> clazz) {
         return SqlSessionUtils.getSqlSession(GlobalConfigUtils.currentSessionFactory(clazz));
     }
-    
+
     /**
      * <p>
      * 获取Session
      * </p>
      *
-     * @param clazz      实体类
+     * @param clazz 实体类
      * @return SqlSession
      */
     public static SqlSession sqlSession(Class<?> clazz) {
@@ -139,14 +140,13 @@ public final class SqlHelper {
      * @return
      */
     public static <E> E getObject(List<E> list) {
-        if (CollectionUtils.isNotEmpty(list)) {
-            int size = list.size();
-            if (size > 1) {
-                SqlHelper.logger.warn(String.format("Warn: execute Method There are  %s results.", size));
-            }
+        if (list.size() == 1) {
             return list.get(0);
+        } else if (list.size() > 1) {
+            throw new TooManyResultsException("Expected one result (or null) to be returned by selectOne(), but found: " + list.size());
+        } else {
+            return null;
         }
-        return null;
     }
 
     /**
