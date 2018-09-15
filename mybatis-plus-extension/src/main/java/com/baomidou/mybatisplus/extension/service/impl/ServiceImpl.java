@@ -62,14 +62,11 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      * <p>
      * 判断数据库操作是否成功
      * </p>
-     * <p>
-     * 注意！！ 该方法为 Integer 判断，不可传入 int 基本类型
-     * </p>
      *
      * @param result 数据库操作返回影响条数
      * @return boolean
      */
-    protected static boolean retBool(Integer result) {
+    protected boolean retBool(Integer result) {
         return SqlHelper.retBool(result);
     }
 
@@ -107,13 +104,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
     @Override
     public boolean save(T entity) {
-        return ServiceImpl.retBool(baseMapper.insert(entity));
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public boolean saveBatch(Collection<T> entityList) {
-        return saveBatch(entityList, 30);
+        return retBool(baseMapper.insert(entity));
     }
 
     /**
@@ -247,18 +238,12 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
     @Override
     public boolean updateById(T entity) {
-        return ServiceImpl.retBool(baseMapper.updateById(entity));
+        return retBool(baseMapper.updateById(entity));
     }
 
     @Override
     public boolean update(T entity, Wrapper<T> updateWrapper) {
-        return ServiceImpl.retBool(baseMapper.update(entity, updateWrapper));
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    @Override
-    public boolean updateBatchById(Collection<T> entityList) {
-        return updateBatchById(entityList, 30);
+        return retBool(baseMapper.update(entity, updateWrapper));
     }
 
     @Transactional(rollbackFor = Exception.class)
