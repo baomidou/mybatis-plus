@@ -1,15 +1,15 @@
 package com.baomidou.mybatisplus.test;
 
-import org.apache.ibatis.reflection.DefaultReflectorFactory;
-import org.apache.ibatis.reflection.MetaClass;
-import org.junit.Test;
-
 import com.baomidou.mybatisplus.core.conditions.Condition;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.test.base.entity.CommonData;
 import com.baomidou.mybatisplus.test.base.entity.CommonLogicData;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.ibatis.reflection.DefaultReflectorFactory;
+import org.apache.ibatis.reflection.MetaClass;
+import org.junit.Test;
 
 public class SampleTest {
 
@@ -40,5 +40,13 @@ public class SampleTest {
     public void testWrapperOrderBy() {
         System.out.println(Condition.create().orderByAsc("1", "2", "3", "4").getSqlSegment());
         System.out.println(Condition.create().orderByDesc("1", "2", "3", "4").getSqlSegment());
+    }
+
+    @Test
+    public void testClone() {
+        QueryWrapper<Object> wrapper = Condition.create().orderByAsc("1", "2", "3", "4");
+        QueryWrapper<Object> clone = ((QueryWrapper<Object>) wrapper.clone()).orderByDesc("5", "6", "7");
+        System.out.println(wrapper.getSqlSegment());
+        System.out.println(clone.getSqlSegment());
     }
 }

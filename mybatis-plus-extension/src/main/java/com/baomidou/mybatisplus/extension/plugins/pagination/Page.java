@@ -15,11 +15,11 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * <p>
@@ -38,7 +38,7 @@ public class Page<T> implements IPage<T> {
      */
     private List<T> records = Collections.emptyList();
     /**
-     * 总数，当 total 为 null 或者大于 0 分页插件不在查询总数
+     * 总数，当 total 不为 0 时分页插件不会进行 count 查询
      */
     private long total = 0;
     /**
@@ -81,10 +81,10 @@ public class Page<T> implements IPage<T> {
      * @param size    每页显示条数
      */
     public Page(long current, long size) {
-        this(current, size, 0L);
+        this(current, size, 0);
     }
 
-    public Page(long current, long size, Long total) {
+    public Page(long current, long size, long total) {
         if (current > 1) {
             this.current = current;
         }
@@ -120,7 +120,7 @@ public class Page<T> implements IPage<T> {
     }
 
     @Override
-    public IPage<T> setRecords(List<T> records) {
+    public Page<T> setRecords(List<T> records) {
         this.records = records;
         return this;
     }
@@ -131,7 +131,7 @@ public class Page<T> implements IPage<T> {
     }
 
     @Override
-    public IPage<T> setTotal(long total) {
+    public Page<T> setTotal(long total) {
         this.total = total;
         return this;
     }
@@ -142,7 +142,7 @@ public class Page<T> implements IPage<T> {
     }
 
     @Override
-    public IPage<T> setSize(long size) {
+    public Page<T> setSize(long size) {
         this.size = size;
         return this;
     }
@@ -153,7 +153,7 @@ public class Page<T> implements IPage<T> {
     }
 
     @Override
-    public IPage<T> setCurrent(long current) {
+    public Page<T> setCurrent(long current) {
         this.current = current;
         return this;
     }
@@ -163,7 +163,7 @@ public class Page<T> implements IPage<T> {
         return ascs;
     }
 
-    public IPage<T> setAscs(List<String> ascs) {
+    public Page<T> setAscs(List<String> ascs) {
         if (CollectionUtils.isNotEmpty(ascs)) {
             this.ascs = ascs.toArray(new String[0]);
         }
@@ -177,9 +177,8 @@ public class Page<T> implements IPage<T> {
      * </p>
      *
      * @param ascs 多个升序字段
-     * @return
      */
-    public IPage<T> setAsc(String... ascs) {
+    public Page<T> setAsc(String... ascs) {
         this.ascs = ascs;
         return this;
     }
@@ -189,7 +188,7 @@ public class Page<T> implements IPage<T> {
         return descs;
     }
 
-    public IPage<T> setDescs(List<String> descs) {
+    public Page<T> setDescs(List<String> descs) {
         if (CollectionUtils.isNotEmpty(descs)) {
             this.descs = descs.toArray(new String[0]);
         }
@@ -202,9 +201,8 @@ public class Page<T> implements IPage<T> {
      * </p>
      *
      * @param descs 多个降序字段
-     * @return
      */
-    public IPage<T> setDesc(String... descs) {
+    public Page<T> setDesc(String... descs) {
         this.descs = descs;
         return this;
     }
@@ -214,7 +212,7 @@ public class Page<T> implements IPage<T> {
         return optimizeCountSql;
     }
 
-    public IPage<T> setOptimizeCountSql(boolean optimizeCountSql) {
+    public Page<T> setOptimizeCountSql(boolean optimizeCountSql) {
         this.optimizeCountSql = optimizeCountSql;
         return this;
     }
