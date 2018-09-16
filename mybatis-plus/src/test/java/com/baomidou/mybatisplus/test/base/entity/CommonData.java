@@ -3,10 +3,13 @@ package com.baomidou.mybatisplus.test.base.entity;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.Version;
+import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.test.base.enums.TestEnum;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -21,7 +24,8 @@ import java.time.LocalDateTime;
  */
 @Data
 @Accessors(chain = true)
-public class CommonData {
+@EqualsAndHashCode(callSuper = true)
+public class CommonData extends Model<CommonData> {
 
     private Long id;
     @TableField(el = "testInt, jdbcType=INTEGER")
@@ -40,4 +44,12 @@ public class CommonData {
      * 不用配置实体字段,但是数据库需要该字段
      */
 //    private Long tenantId;
+
+    /**
+     * 主键值
+     */
+    @Override
+    protected Serializable pkVal() {
+        return id;
+    }
 }

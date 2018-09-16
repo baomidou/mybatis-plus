@@ -15,8 +15,11 @@
  */
 package com.baomidou.mybatisplus.core.toolkit.sql;
 
-import java.util.List;
-
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.ExecutorType;
@@ -24,16 +27,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionUtils;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
+import java.util.List;
 
 /**
  * <p>
@@ -78,7 +72,7 @@ public final class SqlHelper {
      * 获取Session
      * </p>
      *
-     * @param clazz      实体类
+     * @param clazz 实体类
      * @return SqlSession
      */
     public static SqlSession sqlSession(Class<?> clazz) {
@@ -153,43 +147,5 @@ public final class SqlHelper {
             return list.get(0);
         }
         return null;
-    }
-
-    /**
-     * <p>
-     * 填充Wrapper
-     * </p>
-     *
-     * @param page    分页对象
-     * @param wrapper SQL包装对象
-     */
-    @SuppressWarnings("unchecked")
-    public static Wrapper<?> fillWrapper(IPage<?> page, Wrapper<?> wrapper) {
-        if (null == page) {
-            return wrapper;
-        }
-        if (ArrayUtils.isEmpty(page.ascs())
-            && ArrayUtils.isEmpty(page.descs())
-            && ObjectUtils.isEmpty(page.condition())) {
-            return wrapper;
-        }
-        QueryWrapper qw;
-        if (null == wrapper) {
-            qw = new QueryWrapper<>();
-        } else {
-            qw = (QueryWrapper) wrapper;
-        }
-        // 排序
-        if (ArrayUtils.isNotEmpty(page.ascs())) {
-            qw.orderByAsc(page.ascs());
-        }
-        if (ArrayUtils.isNotEmpty(page.descs())) {
-            qw.orderByDesc(page.descs());
-        }
-        // MAP 参数查询
-        if (ObjectUtils.isNotEmpty(page.condition())) {
-            qw.allEq(page.condition());
-        }
-        return qw;
     }
 }

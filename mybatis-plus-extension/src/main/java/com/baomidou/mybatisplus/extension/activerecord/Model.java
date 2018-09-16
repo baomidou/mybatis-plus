@@ -264,7 +264,7 @@ public abstract class Model<T extends Model> implements Serializable {
      */
     public IPage<T> selectPage(IPage<T> page, Wrapper<T> wrapper) {
         Map<String, Object> map = new HashMap<>(2);
-        map.put(Constants.WRAPPER, SqlHelper.fillWrapper(page, wrapper));
+        map.put(Constants.WRAPPER, wrapper);
         map.put("page", page);
         SqlSession sqlSession = sqlSession();
         try {

@@ -241,6 +241,18 @@ public class MysqlTestDataMapperTest {
     }
 
     @Test
+    public void d7_arLambdaSelectPage() {
+        Page<CommonData> page = new Page<>(1, 5);
+        page.setDesc("c_time", "u_time");
+        IPage<CommonData> dataPage = new CommonData().selectPage(page, new QueryWrapper<CommonData>().lambda());
+        Assert.assertSame(dataPage, page);
+        Assert.assertNotEquals(0L, dataPage.getTotal());
+        Assert.assertNotEquals(0, dataPage.getRecords().size());
+        Assert.assertTrue(CollectionUtils.isNotEmpty(dataPage.getRecords()));
+        System.out.println(JSON.toJSONString(dataPage));
+    }
+
+    @Test
     public void d8_testApply() {
         Assert.assertTrue(CollectionUtils.isNotEmpty(commonMapper.selectList(new QueryWrapper<CommonData>()
             .apply("test_int = 12"))));
