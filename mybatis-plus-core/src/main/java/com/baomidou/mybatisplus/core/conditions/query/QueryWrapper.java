@@ -140,7 +140,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
      */
     @Deprecated
     public QueryWrapper<T> excludeColumns(Class<T> entityClass, String... excludeColumns) {
-        Assert.notEmpty(excludeColumns, "excludeColumns is not empty");
+        Assert.notEmpty(excludeColumns, "excludeColumns must not empty");
         this.excludeColumns = excludeColumns;
         this.entityClass = entityClass;
         this.checkEntityClass();

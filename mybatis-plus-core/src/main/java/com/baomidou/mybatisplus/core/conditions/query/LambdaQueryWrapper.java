@@ -146,7 +146,7 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     @Deprecated
     @SafeVarargs
     public final LambdaQueryWrapper<T> excludeColumns(Class<T> entityClass, Property<T, ?>... excludeColumns) {
-        Assert.notEmpty(excludeColumns, "excludeColumns is not empty");
+        Assert.notEmpty(excludeColumns, "excludeColumns must not empty");
         this.entityClass = entityClass;
         this.checkEntityClass();
         //todo
