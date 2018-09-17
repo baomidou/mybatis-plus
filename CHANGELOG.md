@@ -1,5 +1,14 @@
 ﻿# CHANGELOG
 
+## [v2.3.2] 2018.09-17
+- 去除SqlSession
+- 乐观锁优化 > update(et,ew) > 支持乐观锁：et带上version
+- 优化 db2 方言
+- 去除日志警告打印.
+- fix: saveOrUpdateBatch使用BatchExecutor.
+- 开放 IdWorker 雪花算法自定义机器 ID
+
+
 ## [v2.3.1] 2018.08-19
 - 支持 Mariadb db2 代码自动生成
 - 修复获取实体类缓存信息
