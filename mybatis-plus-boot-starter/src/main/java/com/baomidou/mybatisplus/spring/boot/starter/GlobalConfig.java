@@ -86,6 +86,14 @@ public class GlobalConfig {
      * 缓存 Sql 解析初始化
      */
     private Boolean sqlParserCache;
+    /**
+     * 机器 ID 部分
+     */
+    private Long workerId;
+    /**
+     * 数据标识 ID 部分
+     */
+    private Long datacenterId;
 
     public Integer getIdType() {
         return idType;
@@ -191,6 +199,22 @@ public class GlobalConfig {
         this.sqlParserCache = sqlParserCache;
     }
 
+    public Long getWorkerId() {
+        return workerId;
+    }
+
+    public void setWorkerId(Long workerId) {
+        this.workerId = workerId;
+    }
+
+    public Long getDatacenterId() {
+        return datacenterId;
+    }
+
+    public void setDatacenterId(Long datacenterId) {
+        this.datacenterId = datacenterId;
+    }
+
     public GlobalConfiguration convertGlobalConfiguration() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         GlobalConfiguration globalConfiguration = new GlobalConfiguration();
         if (StringUtils.isNotEmpty(this.getIdentifierQuote())) {
@@ -228,6 +252,12 @@ public class GlobalConfig {
         }
         if (StringUtils.checkValNotNull(this.getCapitalMode())) {
             globalConfiguration.setCapitalMode(this.getCapitalMode());
+        }
+        if (StringUtils.checkValNotNull(this.getWorkerId())) {
+            globalConfiguration.setWorkerId(this.getWorkerId());
+        }
+        if (StringUtils.checkValNotNull(this.getDatacenterId())) {
+            globalConfiguration.setDatacenterId(this.getDatacenterId());
         }
         if (null != this.getSqlParserCache()) {
             globalConfiguration.setSqlParserCache(this.getSqlParserCache());

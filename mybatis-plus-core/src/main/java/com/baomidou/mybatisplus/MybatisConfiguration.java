@@ -23,6 +23,7 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
 import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.toolkit.IdWorker;
 
 /**
  * <p>
@@ -53,6 +54,17 @@ public class MybatisConfiguration extends Configuration {
     }
 
     /**
+     * 配置初始化
+     */
+    public MybatisConfiguration init(Long workerId, Long datacenterId) {
+        // 初始化 Sequence
+        if (null != workerId && null != datacenterId) {
+            IdWorker.initSequence(workerId, datacenterId);
+        }
+        return this;
+    }
+
+    /**
      * <p>
      * MybatisPlus 加载 SQL 顺序：
      * </p>
@@ -68,13 +80,13 @@ public class MybatisConfiguration extends Configuration {
         if (GlobalConfigUtils.isRefresh(ms.getConfiguration())) {
             /*
              * 支持是否自动刷新 XML 变更内容，开发环境使用【 注：生产环境勿用！】
-			 */
+             */
             this.mappedStatements.remove(ms.getId());
         } else {
             if (this.mappedStatements.containsKey(ms.getId())) {
                 /*
                  * 说明已加载了xml中的节点； 忽略mapper中的SqlProvider数据
-				 */
+                 */
                 logger.error("mapper[" + ms.getId() + "] is ignored, because it's exists, maybe from xml file");
                 return;
             }

@@ -43,6 +43,14 @@ import com.baomidou.mybatisplus.toolkit.StringUtils;
 public class GlobalConfiguration implements Serializable {
 
     /**
+     * 机器 ID 部分
+     */
+    private Long workerId;
+    /**
+     * 数据标识 ID 部分
+     */
+    private Long datacenterId;
+    /**
      * 逻辑删除全局值
      */
     private String logicDeleteValue = null;
@@ -117,6 +125,21 @@ public class GlobalConfiguration implements Serializable {
         this.sqlInjector = sqlInjector;
     }
 
+    public Long getWorkerId() {
+        return workerId;
+    }
+
+    public void setWorkerId(Long workerId) {
+        this.workerId = workerId;
+    }
+
+    public Long getDatacenterId() {
+        return datacenterId;
+    }
+
+    public void setDatacenterId(Long datacenterId) {
+        this.datacenterId = datacenterId;
+    }
 
     public IKeyGenerator getKeyGenerator() {
         return keyGenerator;

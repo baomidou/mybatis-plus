@@ -116,9 +116,16 @@ public class MybatisPlusAutoConfiguration {
         if (StringUtils.hasText(this.properties.getConfigLocation())) {
             factory.setConfigLocation(this.resourceLoader.getResource(this.properties.getConfigLocation()));
         }
+        GlobalConfiguration globalConfig;
+        if (!ObjectUtils.isEmpty(this.properties.getGlobalConfig())) {
+            globalConfig = this.properties.getGlobalConfig().convertGlobalConfiguration();
+        } else {
+            globalConfig = new GlobalConfiguration();
+        }
         MybatisConfiguration configuration = this.properties.getConfiguration();
         if (configuration == null && !StringUtils.hasText(this.properties.getConfigLocation())) {
             configuration = new MybatisConfiguration();
+            configuration.init(globalConfig.getWorkerId(), globalConfig.getDatacenterId());
         }
         if (configuration != null && !CollectionUtils.isEmpty(this.configurationCustomizers)) {
             for (ConfigurationCustomizer customizer : this.configurationCustomizers) {
@@ -151,12 +158,6 @@ public class MybatisPlusAutoConfiguration {
         }
         if (!ObjectUtils.isEmpty(this.properties.resolveMapperLocations())) {
             factory.setMapperLocations(this.properties.resolveMapperLocations());
-        }
-        GlobalConfiguration globalConfig;
-        if (!ObjectUtils.isEmpty(this.properties.getGlobalConfig())) {
-            globalConfig = this.properties.getGlobalConfig().convertGlobalConfiguration();
-        } else {
-            globalConfig = new GlobalConfiguration();
         }
         //注入填充器
         if (this.applicationContext.getBeanNamesForType(MetaObjectHandler.class, false,
