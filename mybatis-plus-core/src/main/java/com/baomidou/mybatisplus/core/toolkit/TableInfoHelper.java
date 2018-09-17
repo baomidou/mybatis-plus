@@ -40,7 +40,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 
 /**
  * <p>
@@ -73,19 +72,23 @@ public class TableInfoHelper {
      * @return 数据库表反射信息
      */
     public static TableInfo getTableInfo(Class<?> clazz) {
-        return Optional.ofNullable(clazz).map(c -> TABLE_INFO_CACHE.get(ClassUtils.getUserClass(clazz)))
-            .orElseGet(() -> {
-                Class<?> current = clazz;
-                if (null != current) {
-                    for (TableInfo tableInfo; current != Object.class; current = current.getSuperclass()) {
-                        if ((tableInfo = TABLE_INFO_CACHE.get(ClassUtils.getUserClass(current))) != null) {
-                            TABLE_INFO_CACHE.put(ClassUtils.getUserClass(clazz), tableInfo);
-                            return tableInfo;
-                        }
-                    }
-                }
-                return null;
-            });
+        if (clazz == null) {
+            return null;
+        }
+        TableInfo tableInfo = TABLE_INFO_CACHE.get(ClassUtils.getUserClass(clazz));
+        if (null != tableInfo) {
+            return tableInfo;
+        }
+        //尝试获取父类缓存
+        Class currentClass = clazz;
+        while (null == tableInfo && Object.class != currentClass) {
+            currentClass = currentClass.getSuperclass();
+            tableInfo = TABLE_INFO_CACHE.get(ClassUtils.getUserClass(currentClass));
+        }
+        if (tableInfo != null) {
+            TABLE_INFO_CACHE.put(ClassUtils.getUserClass(clazz), tableInfo);
+        }
+        return tableInfo;
     }
 
     /**
@@ -103,14 +106,13 @@ public class TableInfoHelper {
         Assert.notNull(tableInfo, "Undiscovered table info . " + clazz.getName());
 
         // 添加表字段
-        Set<String> columns = tableInfo.getFieldList().stream().map(TableFieldInfo::getColumn).collect(toSet());
+        List<String> columns = tableInfo.getFieldList().stream().map(TableFieldInfo::getColumn).collect(toList());
         if (null != tableInfo.getKeyColumn()) {
             columns.add(tableInfo.getKeyColumn());
         }
-
-        List<String> excludes = Arrays.asList(excludeColumns);
+        List<String> excludes = Arrays.stream(excludeColumns).filter(Objects::nonNull).collect(toList());
         // 移除不需要的字段
-        return columns.stream().filter(excludes::contains).toArray(String[]::new);
+        return columns.stream().filter(i -> !excludes.contains(i)).toArray(String[]::new);
     }
 
     /**
