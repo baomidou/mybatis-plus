@@ -40,6 +40,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * <p>
@@ -52,12 +53,14 @@ import static java.util.stream.Collectors.toList;
 public class TableInfoHelper {
 
     private static final Log logger = LogFactory.getLog(TableInfoHelper.class);
+
     /**
-     * 缓存反射类表信息
+     * 储存反射类表信息
      */
-    private static final Map<String, TableInfo> TABLE_INFO_CACHE = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, TableInfo> TABLE_INFO_CACHE = new ConcurrentHashMap<>();
+
     /**
-     * 默认表主键
+     * 默认表主键名称
      */
     private static final String DEFAULT_ID_NAME = "id";
 
@@ -70,23 +73,19 @@ public class TableInfoHelper {
      * @return 数据库表反射信息
      */
     public static TableInfo getTableInfo(Class<?> clazz) {
-        if (clazz == null) {
-            return null;
-        }
-        TableInfo tableInfo = TABLE_INFO_CACHE.get(ClassUtils.getUserClass(clazz).getName());
-        if (null != tableInfo) {
-            return tableInfo;
-        }
-        //尝试获取父类缓存
-        Class currentClass = clazz;
-        while (null == tableInfo && Object.class != currentClass) {
-            currentClass = currentClass.getSuperclass();
-            tableInfo = TABLE_INFO_CACHE.get(ClassUtils.getUserClass(currentClass).getName());
-        }
-        if (tableInfo != null) {
-            TABLE_INFO_CACHE.put(ClassUtils.getUserClass(clazz).getName(), tableInfo);
-        }
-        return tableInfo;
+        return Optional.ofNullable(clazz).map(c -> TABLE_INFO_CACHE.get(ClassUtils.getUserClass(clazz)))
+            .orElseGet(() -> {
+                Class<?> current = clazz;
+                if (null != current) {
+                    for (TableInfo tableInfo; current != Object.class; current = current.getSuperclass()) {
+                        if ((tableInfo = TABLE_INFO_CACHE.get(ClassUtils.getUserClass(current))) != null) {
+                            TABLE_INFO_CACHE.put(ClassUtils.getUserClass(clazz), tableInfo);
+                            return tableInfo;
+                        }
+                    }
+                }
+                return null;
+            });
     }
 
     /**
@@ -104,13 +103,14 @@ public class TableInfoHelper {
         Assert.notNull(tableInfo, "Undiscovered table info . " + clazz.getName());
 
         // 添加表字段
-        List<String> columns = tableInfo.getFieldList().stream().map(TableFieldInfo::getColumn).collect(toList());
+        Set<String> columns = tableInfo.getFieldList().stream().map(TableFieldInfo::getColumn).collect(toSet());
         if (null != tableInfo.getKeyColumn()) {
             columns.add(tableInfo.getKeyColumn());
         }
-        List<String> excludes = Arrays.stream(excludeColumns).filter(Objects::nonNull).collect(toList());
+
+        List<String> excludes = Arrays.asList(excludeColumns);
         // 移除不需要的字段
-        return columns.stream().filter(i -> !excludes.contains(i)).toArray(String[]::new);
+        return columns.stream().filter(excludes::contains).toArray(String[]::new);
     }
 
     /**
@@ -133,7 +133,7 @@ public class TableInfoHelper {
      * @return 数据库表反射信息
      */
     public synchronized static TableInfo initTableInfo(MapperBuilderAssistant builderAssistant, Class<?> clazz) {
-        TableInfo tableInfo = TABLE_INFO_CACHE.get(clazz.getName());
+        TableInfo tableInfo = TABLE_INFO_CACHE.get(clazz);
         if (tableInfo != null) {
             if (tableInfo.getConfigMark() == null && builderAssistant != null) {
                 tableInfo.setConfigMark(builderAssistant.getConfiguration());
@@ -161,7 +161,7 @@ public class TableInfoHelper {
         initTableFields(clazz, globalConfig, tableInfo);
 
         /* 放入缓存 */
-        TABLE_INFO_CACHE.put(clazz.getName(), tableInfo);
+        TABLE_INFO_CACHE.put(clazz, tableInfo);
 
         /* 缓存 Lambda 映射关系 */
         LambdaUtils.createCache(clazz, tableInfo);
