@@ -17,19 +17,13 @@ package com.baomidou.mybatisplus.core.toolkit;
 
 import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
 
-import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collector;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
 
@@ -47,23 +41,25 @@ public class StringUtils {
      * 空字符
      */
     public static final String EMPTY = "";
-
     /**
      * 字符串 is
      */
     public static final String IS = "is";
-
     /**
      * 下划线字符
      */
-    private static final char UNDERLINE = '_';
-
+    public static final char UNDERLINE = '_';
+    /**
+     * 占位符
+     */
+    public static final String PLACE_HOLDER = "{%s}";
     /**
      * 验证字符串是否是数据库字段
      */
     private static final Pattern P_IS_COLUMN = Pattern.compile("^\\w\\S*[\\w\\d]*$");
 
     private StringUtils() {
+        // to do nothing
     }
 
     /**
@@ -87,16 +83,6 @@ public class StringUtils {
     }
 
     /**
-     * 判断字符串是否存在长度
-     *
-     * @param cs 字符序列
-     * @return 如果为 null 或者长度为 0 ，返回 true
-     */
-    public static boolean hasLength(CharSequence cs) {
-        return null == cs || 0 == cs.length();
-    }
-
-    /**
      * <p>
      * 判断字符串是否为空
      * </p>
@@ -105,7 +91,16 @@ public class StringUtils {
      * @return 判断结果
      */
     public static boolean isEmpty(final CharSequence cs) {
-        return hasLength(cs) || cs.chars().allMatch(Character::isWhitespace);
+        int strLen;
+        if (cs == null || (strLen = cs.length()) == 0) {
+            return true;
+        }
+        for (int i = 0; i < strLen; i++) {
+            if (!Character.isWhitespace(cs.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -141,44 +136,17 @@ public class StringUtils {
      * @return 转换好的字符串
      */
     public static String camelToUnderline(String param) {
-        if (hasLength(param)) {
-            char[] chars = param.toCharArray();
-            StringBuilder sb = new StringBuilder();
-            sb.append(Character.toLowerCase(chars[0]));
-            char c;
-            for (int i = 1, len = chars.length; i < len; i++) {
-                c = chars[i];
-                sb.append(Character.isUpperCase(c) ? "_" + Character.toLowerCase(c) : c);
-            }
-            return sb.toString();
-        }
-        return param;
-    }
-
-    /**
-     * <p>
-     * 字符串下划线转驼峰格式
-     * </p>
-     *
-     * @param param 需要转换的字符串
-     * @return 转换好的字符串
-     */
-    public static String underlineToCamel(String param) {
         if (isEmpty(param)) {
             return EMPTY;
         }
-        String temp = param.toLowerCase();
-        int len = temp.length();
+        int len = param.length();
         StringBuilder sb = new StringBuilder(len);
-        // 标记下一个字符是否需要大写
-        boolean upper = false;
-        for (char c : temp.toCharArray()) {
-            if (c == UNDERLINE) {
-                upper = true;
-            } else {
-                sb.append(upper ? Character.toUpperCase(c) : c);
-                upper = false;
+        for (int i = 0; i < len; i++) {
+            char c = param.charAt(i);
+            if (Character.isUpperCase(c) && i > 0) {
+                sb.append(UNDERLINE);
             }
+            sb.append(Character.toLowerCase(c));
         }
         return sb.toString();
     }
@@ -203,6 +171,34 @@ public class StringUtils {
 
     /**
      * <p>
+     * 字符串下划线转驼峰格式
+     * </p>
+     *
+     * @param param 需要转换的字符串
+     * @return 转换好的字符串
+     */
+    public static String underlineToCamel(String param) {
+        if (isEmpty(param)) {
+            return EMPTY;
+        }
+        String temp = param.toLowerCase();
+        int len = temp.length();
+        StringBuilder sb = new StringBuilder(len);
+        for (int i = 0; i < len; i++) {
+            char c = temp.charAt(i);
+            if (c == UNDERLINE) {
+                if (++i < len) {
+                    sb.append(Character.toUpperCase(temp.charAt(i)));
+                }
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * <p>
      * 首字母转换小写
      * </p>
      *
@@ -214,6 +210,18 @@ public class StringUtils {
             return EMPTY;
         }
         return param.substring(0, 1).toLowerCase() + param.substring(1);
+    }
+
+    /**
+     * <p>
+     * 判断字符串是否为纯大写字母
+     * </p>
+     *
+     * @param str 要匹配的字符串
+     * @return
+     */
+    public static boolean isUpperCase(String str) {
+        return matches("^[A-Z]+$", str);
     }
 
     /**
@@ -233,26 +241,27 @@ public class StringUtils {
     }
 
     /**
-     * SQL 参数占位符 预编译的正则表达式，匹配配型 {1} , {10} ...
-     * 因为字符串中储存的是索引，所以可以在匹配的 Matcher 使用 m.group("idx") 获取匹配的结果 1，2，3，4，5。。。
-     */
-    private static final Pattern SQL_ARG_PLACE_HOLDER_PATTERN = Pattern.compile("\\{(?<idx>[\\d]+)}");
-
-    /**
      * <p>
-     * SQL 参数填充，未填充的 SQL 语句的样子类似：
-     * SELECT * FROM TEST WHERE id = {1} AND NAME = {2}
+     * SQL 参数填充
      * </p>
      *
-     * @param outerSql 不含有参数的 SQL 语句
-     * @param args     填充参数列表
-     * @return 返回填充后的字符串
+     * @param content 填充内容
+     * @param args    填充参数
+     * @return
      */
-    public static String sqlArgsFill(String outerSql, Object... args) {
-        if (StringUtils.isEmpty(outerSql) || null == args) {
-            return outerSql;
+    public static String sqlArgsFill(String content, Object... args) {
+        if (StringUtils.isEmpty(content)) {
+            return null;
         }
-        return replace(outerSql, SQL_ARG_PLACE_HOLDER_PATTERN, m -> sqlParam(args[Integer.valueOf(m.group("idx"))])).toString();
+        if (args != null) {
+            int length = args.length;
+            if (length >= 1) {
+                for (int i = 0; i < length; i++) {
+                    content = content.replace(String.format(PLACE_HOLDER, i), sqlParam(args[i]));
+                }
+            }
+        }
+        return content;
     }
 
     /**
@@ -260,39 +269,17 @@ public class StringUtils {
      * 获取SQL PARAMS字符串
      * </p>
      *
-     * @param obj 参数对象
-     * @return 返回处理后的 SQL 参数字符串
+     * @param obj
+     * @return
      */
-    private static String sqlParam(Object obj) {
-        if (null == obj) {
-            return "null";
-        }
+    public static String sqlParam(Object obj) {
+        String repStr;
         if (obj instanceof Collection) {
-            return StringUtils.quotaMarkList((Collection<?>) obj);
-        } else if (obj.getClass().isArray()) {
-            return arrayToSqlString(obj);
+            repStr = StringUtils.quotaMarkList((Collection<?>) obj);
+        } else {
+            repStr = StringUtils.quotaMark(obj);
         }
-        return StringUtils.quotaMark(obj);
-    }
-
-    /**
-     * 数组转转为 SQL 语句中的字符串形式
-     *
-     * @param obj 数组对象
-     * @return 返回处理后的字符串
-     */
-    private static String arrayToSqlString(Object obj) {
-        return Stream.iterate(0, i -> i + 1).limit(Array.getLength(obj)).map(StringUtils::quotaMark)
-            .collect(sqlJoinCollector());
-    }
-
-    /**
-     * 适用于 SQL 的结果收集器，这里不能写成常量，因为收集器不是可复用的，必须产生新的实例
-     *
-     * @return 返回结果收集器
-     */
-    private static Collector<CharSequence, ?, String> sqlJoinCollector() {
-        return joining(StringPool.COMMA, StringPool.LEFT_BRACKET, StringPool.RIGHT_BRACKET);
+        return repStr;
     }
 
     /**
@@ -303,9 +290,10 @@ public class StringUtils {
      * @param obj 原字符串
      * @return 单引号包含的原字符串
      */
-    private static String quotaMark(Object obj) {
+    public static String quotaMark(Object obj) {
         String srcStr = String.valueOf(obj);
         if (obj instanceof CharSequence) {
+            // fix #79
             return StringEscape.escapeString(srcStr);
         }
         return srcStr;
@@ -319,61 +307,43 @@ public class StringUtils {
      * @param coll 集合
      * @return 单引号包含的原字符串的集合形式
      */
-    private static String quotaMarkList(Collection<?> coll) {
-        return coll.stream().map(StringUtils::quotaMark).collect(sqlJoinCollector());
-    }
-
-    /**
-     * 替换字符序列中满足条件的部分，参数为 匹配的 matcher，返回值需要是字符序列
-     * 所有的参数都不能为 null，否则会抛出 NPE 错误，这是来自 JAVA 的错误！
-     *
-     * @param origin   原字符串
-     * @param pattern  用于匹配的正则表达式
-     * @param replacer 替换函数
-     * @return 返回 StringBuilder
-     * @see #replace(CharSequence, Pattern, BiFunction)
-     */
-    public static StringBuilder replace(CharSequence origin, Pattern pattern, Function<Matcher, CharSequence> replacer) {
-        return replace(origin, pattern, (m, i) -> replacer.apply(m));
-    }
-
-    /**
-     * 替换字符序列中满足条件的部分，参数为 匹配的 matcher，和匹配的索引序号，序号从 0 开始
-     * 返回值需要是字符序列
-     *
-     * @param origin   原字符串
-     * @param pattern  用于匹配的正则表达式
-     * @param replacer 替换函数
-     * @return 返回 StringBuilder
-     */
-    public static StringBuilder replace(CharSequence origin, Pattern pattern, BiFunction<Matcher, Integer, CharSequence> replacer) {
-        StringBuilder builder = new StringBuilder();
-        Matcher matcher = pattern.matcher(origin);
-        int last = 0, idx = 0;
-        while (matcher.find()) {
-            builder.append(origin, last, matcher.start()).append(replacer.apply(matcher, idx++));
-            last = matcher.end();
-        }
-        // 如果匹配没有达到结尾，需要追加后面的字符序列;如果没有匹配到任何字符串，该判断同样用于保证字符的完整性
-        int length = origin.length();
-        if (last < length) {
-            builder.append(origin, last, length);
-        }
-        return builder;
+    public static String quotaMarkList(Collection<?> coll) {
+        return coll.stream().map(StringUtils::quotaMark)
+            .collect(joining(StringPool.COMMA, StringPool.LEFT_BRACKET, StringPool.RIGHT_BRACKET));
     }
 
     /**
      * <p>
-     * 拼接字符串,第二个字符串第一个字母大写
+     * 拼接字符串第二个字符串第一个字母大写
      * </p>
-     * example : concatCapitalize("is", "male") 返回 isMale
-     *
-     * @param first 第一个字符串
-     * @param str   第二个字符串
-     * @return 返回拼接后的字符串
      */
-    public static String concatCapitalize(String first, String str) {
-        return first + Character.toTitleCase(str.charAt(0)) + str.substring(1);
+    public static String concatCapitalize(String concatStr, final String str) {
+        if (isEmpty(concatStr)) {
+            concatStr = EMPTY;
+        }
+        if (str == null || str.length() == 0) {
+            return str;
+        }
+
+        final char firstChar = str.charAt(0);
+        if (Character.isTitleCase(firstChar)) {
+            // already capitalized
+            return str;
+        }
+
+        return concatStr + Character.toTitleCase(firstChar) + str.substring(1);
+    }
+
+    /**
+     * <p>
+     * 字符串第一个字母大写
+     * </p>
+     *
+     * @param str
+     * @return
+     */
+    public static String capitalize(final String str) {
+        return concatCapitalize(null, str);
     }
 
     /**
@@ -684,7 +654,6 @@ public class StringUtils {
      *
      * @param propertyName 字段名
      * @param propertyType 字段类型
-     * @return
      */
     public static String removeIsPrefixIfBoolean(String propertyName, Class<?> propertyType) {
         if (isBoolean(propertyType) && propertyName.startsWith(IS)) {
@@ -697,22 +666,6 @@ public class StringUtils {
             }
         }
         return propertyName;
-    }
-
-    /**
-     * <p>
-     * 是否为CharSequence类型
-     * </p>
-     *
-     * @param propertyType
-     * @return
-     */
-    public static Boolean isCharSequence(String propertyType) {
-        try {
-            return isCharSequence(Class.forName(propertyType));
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
     }
 
     /**
@@ -752,7 +705,7 @@ public class StringUtils {
      */
     public static String prefixToLower(String rawString, int index) {
         String beforeChar = rawString.substring(0, index).toLowerCase();
-        String afterChar = rawString.substring(index, rawString.length());
+        String afterChar = rawString.substring(index);
         return beforeChar + afterChar;
     }
 
@@ -768,7 +721,7 @@ public class StringUtils {
      * @return
      */
     public static String removePrefixAfterPrefixToLower(String rawString, int index) {
-        return prefixToLower(rawString.substring(index, rawString.length()), 1);
+        return prefixToLower(rawString.substring(index), 1);
     }
 
     /**
