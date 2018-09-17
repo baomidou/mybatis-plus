@@ -1,20 +1,6 @@
 package com.baomidou.mybatisplus.test.h2;
 
-import static java.util.stream.Collectors.toList;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -24,6 +10,18 @@ import com.baomidou.mybatisplus.test.h2.entity.SuperEntity;
 import com.baomidou.mybatisplus.test.h2.entity.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserMapper;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * <p>
@@ -73,7 +71,7 @@ public class H2UserMapperTest extends BaseTest {
         Assert.assertTrue(1 == userMapper.deleteByMap(map));
 
         // 查询列表
-        Wrapper<H2User> wrapper = new QueryWrapper<H2User>().lambda().like(H2User::getName, "mp");
+        LambdaQueryWrapper<H2User> wrapper = new QueryWrapper<H2User>().lambda().like(H2User::getName, "mp");
         log(wrapper.getSqlSegment());
 
         List<H2User> h2UserList = userMapper.selectList(wrapper);

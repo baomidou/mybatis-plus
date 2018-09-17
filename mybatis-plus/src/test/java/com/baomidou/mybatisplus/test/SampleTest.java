@@ -45,7 +45,7 @@ public class SampleTest {
     @Test
     public void testClone() {
         QueryWrapper<Object> wrapper = Condition.create().orderByAsc("1", "2", "3", "4");
-        QueryWrapper<Object> clone = ((QueryWrapper<Object>) wrapper.clone()).orderByDesc("5", "6", "7");
+        QueryWrapper<Object> clone = wrapper.clone().orderByDesc("5", "6", "7");
         System.out.println(wrapper.getSqlSegment());
         System.out.println(clone.getSqlSegment());
     }

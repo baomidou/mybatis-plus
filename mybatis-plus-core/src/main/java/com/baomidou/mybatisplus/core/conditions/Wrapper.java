@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
-import com.baomidou.mybatisplus.core.toolkit.SerializationUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 /**
@@ -57,11 +56,6 @@ public abstract class Wrapper<T> implements ISqlSegment {
      */
     public boolean isEmptyOfWhere() {
         return StringUtils.isEmpty(getSqlSegment()) && null == getEntity();
-    }
-
-    @Override
-    public Wrapper<T> clone() {
-        return SerializationUtils.clone(this);
     }
 }
 
