@@ -1,6 +1,24 @@
 ﻿# CHANGELOG
 
 
+## [v3.0.3] 2018.09.17
+- 新增筛选查询字段方法
+- fixed orderBy多入参的bug
+- 新增 LogicDeleteByIdWithFill 组件
+- fixed github issues/476 issues/473
+- fixed github issues/360 gitee issues/IMIHN IM6GM
+- 改进 allEq入参的value改用泛型
+- fixed saveOrUpdateBatch使用BatchExecutor
+- fixed 修正getOne获取多条数据为抛出异常
+- 修正service 的getOne 方法
+- 修正service 的个别方法为default方法
+- 修复了page在set了desc下,sql有bug的问题
+- 去除不再需要的方法
+- 解决 generator 的 optional 的俩 jar 问题
+- 重载 select(Predicate<TableFieldInfo> predicate)
+- 其他优化
+
+
 ## [v3.0.2] 2018.09.11 
 - 新增 Wrapper 条件辅助类
 - 新增 banner 属性控制是否打印
