@@ -69,6 +69,7 @@ buildscript {
     }
     dependencies {
         classpath("org.springframework.build.gradle:propdeps-plugin:0.0.7")
+        classpath("com.netflix.nebula:gradle-extra-configurations-plugin:4.0.1")
     }
 }
 
@@ -83,6 +84,7 @@ subprojects {
 
     apply plugin: 'java'
     apply plugin: 'signing'
+    apply plugin: 'nebula.optional-base'
 
     sourceCompatibility = "${javaVersion}"
     targetCompatibility = "${javaVersion}"
