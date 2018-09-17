@@ -15,21 +15,17 @@
  */
 package com.baomidou.mybatisplus.core.conditions.query;
 
+import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
+import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
+import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
+import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
-
-import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
-import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
-import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
-import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 
 /**
  * <p>
@@ -109,6 +105,10 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
         return typedThis;
     }
 
+    public QueryWrapper<T> select(Predicate<TableFieldInfo> predicate) {
+        return select(entityClass, predicate);
+    }
+
     /**
      * <p>
      * 过滤查询的字段信息(主键除外!)
@@ -125,7 +125,8 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
      * @param predicate 过滤方式
      * @return this
      */
-    public QueryWrapper<T> select(Predicate<TableFieldInfo> predicate) {
+    public QueryWrapper<T> select(Class<T> entityClass, Predicate<TableFieldInfo> predicate) {
+        this.entityClass = entityClass;
         this.checkEntityClass();
         this.predicateSelect = TableInfoHelper.getTableInfo(entityClass).chooseSelect(predicate);
         return typedThis;

@@ -15,7 +15,12 @@
  */
 package com.baomidou.mybatisplus.core.conditions.query;
 
-import static java.util.stream.Collectors.joining;
+import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper;
+import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
+import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
+import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
+import com.baomidou.mybatisplus.core.toolkit.support.Property;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,16 +29,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
-import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper;
-import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
-import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
-import com.baomidou.mybatisplus.core.toolkit.support.Property;
+import static java.util.stream.Collectors.joining;
 
 /**
  * <p>
@@ -113,6 +109,10 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
         return typedThis;
     }
 
+    public LambdaQueryWrapper<T> select(Predicate<TableFieldInfo> predicate) {
+        return select(entityClass, predicate);
+    }
+
     /**
      * <p>
      * 过滤查询的字段信息(主键除外!)
@@ -129,7 +129,8 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
      * @param predicate 过滤方式
      * @return this
      */
-    public LambdaQueryWrapper<T> select(Predicate<TableFieldInfo> predicate) {
+    public LambdaQueryWrapper<T> select(Class<T> entityClass, Predicate<TableFieldInfo> predicate) {
+        this.entityClass = entityClass;
         this.checkEntityClass();
         this.predicateSelect = TableInfoHelper.getTableInfo(entityClass).chooseSelect(predicate);
         return typedThis;
