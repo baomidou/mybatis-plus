@@ -138,6 +138,6 @@ public class GlobalConfig implements Serializable {
         /**
          * 字段验证策略
          */
-        private FieldStrategy fieldStrategy = FieldStrategy.DEFAULT;
+        private FieldStrategy fieldStrategy = FieldStrategy.NOT_NULL;
     }
 }
