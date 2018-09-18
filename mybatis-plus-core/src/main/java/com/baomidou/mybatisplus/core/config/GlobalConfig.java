@@ -15,12 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.config;
 
-import java.io.Serializable;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
-
-import org.apache.ibatis.session.SqlSessionFactory;
-
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -28,9 +22,13 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.apache.ibatis.session.SqlSessionFactory;
+
+import java.io.Serializable;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * <p>
@@ -140,6 +138,6 @@ public class GlobalConfig implements Serializable {
         /**
          * 字段验证策略
          */
-        private FieldStrategy fieldStrategy = FieldStrategy.NOT_NULL;
+        private FieldStrategy fieldStrategy = FieldStrategy.DEFAULT;
     }
 }

@@ -35,5 +35,11 @@ public enum FieldStrategy {
     /**
      * 非空判断
      */
-    NOT_EMPTY
+    NOT_EMPTY,
+    /**
+     * 默认的
+     * 1. 在全局里代表 NOT_NULL
+     * 2. 在注解里代表 跟随全局
+     */
+    DEFAULT
 }

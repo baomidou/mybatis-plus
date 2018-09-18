@@ -15,11 +15,7 @@
  */
 package com.baomidou.mybatisplus.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 
 /**
@@ -93,10 +89,10 @@ public @interface TableField {
      * 字段验证策略
      * </p>
      * <p>
-     * 默认 非 null 判断
+     * 默认追随全局配置
      * </p>
      */
-    FieldStrategy strategy() default FieldStrategy.NOT_NULL;
+    FieldStrategy strategy() default FieldStrategy.DEFAULT;
 
     /**
      * <p>

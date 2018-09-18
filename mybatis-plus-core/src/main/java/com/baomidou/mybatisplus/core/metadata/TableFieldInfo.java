@@ -129,10 +129,10 @@ public class TableFieldInfo {
         /*
          * 优先使用单个字段注解，否则使用全局配置
          */
-        if (dbConfig.getFieldStrategy() != tableField.strategy()) {
-            this.fieldStrategy = tableField.strategy();
-        } else {
+        if (tableField.strategy() == FieldStrategy.DEFAULT) {
             this.fieldStrategy = dbConfig.getFieldStrategy();
+        } else {
+            this.fieldStrategy = tableField.strategy();
         }
 
         if (StringUtils.isNotEmpty(tableField.condition())) {
