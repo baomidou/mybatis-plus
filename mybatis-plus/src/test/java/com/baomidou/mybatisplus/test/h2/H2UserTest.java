@@ -312,4 +312,20 @@ public class H2UserTest extends BaseTest {
         Assert.assertTrue(userService.saveOrUpdateBatch(Arrays.asList(new H2User(1010L,"batch1010"),new H2User("batch1011"),new H2User(1010L,"batch1010"),new H2User("batch1015"))));
         Assert.assertTrue(userService.saveOrUpdateBatch(Arrays.asList(new H2User(1010L,"batch1010A"),new H2User("batch1011A"),new H2User(1010L,"batch1010"),new H2User("batch1016")),1));
     }
+    
+    @Test
+    public void testSimpleAndBatch(){
+        Assert.assertTrue(userService.save(new H2User("testSimpleAndBatch1",0)));
+        Assert.assertTrue(userService.saveOrUpdateBatch(Arrays.asList(new H2User("testSimpleAndBatch2"),new H2User("testSimpleAndBatch3"),new H2User("testSimpleAndBatch4")),1));
+    }
+    
+    @Test
+    public void testSimpleAndBatchTransactional(){
+        try {
+            userService.testSimpleAndBatchTransactional();
+        }catch (MybatisPlusException e){
+            List<H2User> list = userService.list(new QueryWrapper<H2User>().like("name", "simpleAndBatchTx"));
+            Assert.assertTrue(CollectionUtils.isEmpty(list));
+        }
+    }
 }

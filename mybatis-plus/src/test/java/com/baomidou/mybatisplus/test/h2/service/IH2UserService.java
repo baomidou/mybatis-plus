@@ -53,4 +53,6 @@ public interface IH2UserService extends IService<H2User> {
     void testSimpleTransactional();
     
     void testSaveOrUpdateBatchTransactional();
+    
+    void testSimpleAndBatchTransactional();
 }

@@ -116,4 +116,13 @@ public class H2UserServiceImpl extends ServiceImpl<H2UserMapper, H2User> impleme
         saveOrUpdateBatch(Arrays.asList(new H2User("savOrUpdate4"),new H2User("savOrUpdate5"),new H2User("savOrUpdate6")),1);
         throw new MybatisPlusException("测试普通插入事务回滚");
     }
+    
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public void testSimpleAndBatchTransactional() {
+        save(new H2User("simpleAndBatchTx1",0));
+        saveBatch(Arrays.asList(new H2User("simpleAndBatchTx2"),new H2User("simpleAndBatchTx3"),new H2User("simpleAndBatchTx4")),1);
+        saveOrUpdateBatch(Arrays.asList(new H2User("simpleAndBatchTx5"),new H2User("simpleAndBatchTx6"),new H2User("simpleAndBatchTx7")),1);
+        throw new MybatisPlusException("测试事务回滚");
+    }
 }

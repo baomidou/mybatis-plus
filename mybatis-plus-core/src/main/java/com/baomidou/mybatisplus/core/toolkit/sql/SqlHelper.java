@@ -52,7 +52,8 @@ public final class SqlHelper {
      * @return SqlSession
      */
     public static SqlSession sqlSessionBatch(Class<?> clazz) {
-        return SqlSessionUtils.getSqlSession(GlobalConfigUtils.currentSessionFactory(clazz), ExecutorType.BATCH, null);
+        //todo 暂时让能用先,但日志会显示Closing non transactional SqlSession,因为这个并没有绑定.
+        return GlobalConfigUtils.currentSessionFactory(clazz).openSession(ExecutorType.BATCH);
     }
 
     /**
