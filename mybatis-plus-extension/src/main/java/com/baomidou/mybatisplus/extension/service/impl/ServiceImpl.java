@@ -109,10 +109,9 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean saveBatch(Collection<T> entityList, int batchSize) {
-        SqlSession batchSqlSession = sqlSessionBatch();
         int i = 0;
         String sqlStatement = sqlStatement(SqlMethod.INSERT_ONE);
-        try {
+        try(SqlSession batchSqlSession = sqlSessionBatch()) {
             for (T anEntityList : entityList) {
                 batchSqlSession.insert(sqlStatement, anEntityList);
                 if (i >= 1 && i % batchSize == 0) {
@@ -121,8 +120,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 i++;
             }
             batchSqlSession.flushStatements();
-        } finally {
-            closeSqlSession(batchSqlSession);
         }
         return true;
     }
@@ -169,11 +166,10 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
-        SqlSession batchSqlSession = sqlSessionBatch();
         Class<?> cls = null;
         TableInfo tableInfo = null;
         int i = 0;
-        try {
+        try(SqlSession batchSqlSession = sqlSessionBatch()){
             for (T anEntityList : entityList) {
                 if (i == 0) {
                     cls = anEntityList.getClass();
@@ -199,8 +195,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                     throw ExceptionUtils.mpe("Error:  Can not execute. Could not find @TableId.");
                 }
             }
-        } finally {
-            closeSqlSession(batchSqlSession);
         }
         return true;
     }
@@ -244,10 +238,9 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
-        SqlSession batchSqlSession = sqlSessionBatch();
         int i = 0;
         String sqlStatement = sqlStatement(SqlMethod.UPDATE_BY_ID);
-        try {
+        try(SqlSession batchSqlSession = sqlSessionBatch()) {
             for (T anEntityList : entityList) {
                 MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
                 param.put(Constants.ENTITY, anEntityList);
@@ -258,8 +251,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 i++;
             }
             batchSqlSession.flushStatements();
-        } finally {
-            closeSqlSession(batchSqlSession);
         }
         return true;
     }
