@@ -133,8 +133,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
-        SqlSession batchSqlSession = sqlSessionBatch();
-        try {
+        try(SqlSession batchSqlSession = sqlSessionBatch()) {
             int size = entityList.size();
             String sqlStatement = sqlStatement(SqlMethod.INSERT_ONE);
             for (int i = 0; i < size; i++) {
@@ -144,8 +143,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 }
             }
             batchSqlSession.flushStatements();
-        } finally {
-            closeSqlSession(batchSqlSession);
         }
         return true;
     }
@@ -240,8 +237,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
-        SqlSession batchSqlSession = sqlSessionBatch();
-        try {
+        try(SqlSession batchSqlSession = sqlSessionBatch()) {
             int size = entityList.size();
             Class<?> cls = null;
             TableInfo tableInfo = null;
@@ -270,8 +266,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 }
             }
             batchSqlSession.flushStatements();
-        } finally {
-            closeSqlSession(batchSqlSession);
         }
         return true;
     }
@@ -363,8 +357,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
-        SqlSession batchSqlSession = sqlSessionBatch();
-        try {
+        try(SqlSession batchSqlSession = sqlSessionBatch()) {
             int size = entityList.size();
             SqlMethod sqlMethod = selective ? SqlMethod.UPDATE_BY_ID : SqlMethod.UPDATE_ALL_COLUMN_BY_ID;
             String sqlStatement = sqlStatement(sqlMethod);
@@ -377,8 +370,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 }
             }
             batchSqlSession.flushStatements();
-        } finally {
-            closeSqlSession(batchSqlSession);
         }
         return true;
     }
