@@ -60,7 +60,11 @@ public class R<T> implements Serializable {
     }
 
     public static <T> R<T> ok(T data) {
-        return restResult(data, ApiErrorCode.SUCCESS);
+        ApiErrorCode aec = ApiErrorCode.SUCCESS;
+        if (data instanceof Boolean && Boolean.FALSE.equals(data)) {
+            aec = ApiErrorCode.FAILED;
+        }
+        return restResult(data, aec);
     }
 
     public static <T> R<T> failed(String msg) {
