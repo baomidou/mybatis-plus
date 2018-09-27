@@ -88,7 +88,8 @@ public class GlobalConfig {
      */
     private boolean baseColumnList = false;
     /**
-     * 各层文件名称方式，例如： %Action 生成 UserAction
+     * 各层文件名称方式，例如： %sAction 生成 UserAction
+     * %s 为占位符
      */
     private String entityName;
     private String mapperName;
