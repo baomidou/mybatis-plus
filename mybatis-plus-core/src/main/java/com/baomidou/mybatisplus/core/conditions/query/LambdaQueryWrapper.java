@@ -142,7 +142,7 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
      * </p>
      *
      * @param excludeColumns 排除的查询字段
-     * @deprecated begin 3.0.3,建议使用 {@link #select(Predicate)}
+     * @deprecated begin 3.0.3,建议使用 {@link #select(Predicate)},请尽快使用新方法,预计 3.0.5 开始移除此方法
      */
     @Deprecated
     @SafeVarargs
@@ -163,7 +163,7 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
      * </p>
      *
      * @param excludeColumns 排除字段列表
-     * @deprecated begin 3.0.3,建议使用 {@link #select(Predicate)}
+     * @deprecated begin 3.0.3,建议使用 {@link #select(Predicate)},请尽快使用新方法,预计 3.0.5 开始移除此方法
      */
     @SafeVarargs
     @Deprecated

@@ -137,7 +137,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
      *
      * @param entityClass    实体类
      * @param excludeColumns 排除字段列表
-     * @deprecated begin 3.0.3,建议使用 {@link #select(Predicate)}
+     * @deprecated begin 3.0.3,建议使用 {@link #select(Predicate)},请尽快使用新方法,预计 3.0.5 开始移除此方法
      */
     @Deprecated
     public QueryWrapper<T> excludeColumns(Class<T> entityClass, String... excludeColumns) {
@@ -154,7 +154,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
      * </p>
      *
      * @param excludeColumns 排除字段列表
-     * @deprecated begin 3.0.3,建议使用 {@link #select(Predicate)}
+     * @deprecated begin 3.0.3,建议使用 {@link #select(Predicate)},请尽快使用新方法,预计 3.0.5 开始移除此方法
      */
     @Deprecated
     @SuppressWarnings("unchecked")
