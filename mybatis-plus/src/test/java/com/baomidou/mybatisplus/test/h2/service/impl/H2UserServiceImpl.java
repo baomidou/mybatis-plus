@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.test.h2.entity.persistent.H2Student;
-import com.baomidou.mybatisplus.test.h2.service.IH2StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,9 +44,6 @@ public class H2UserServiceImpl extends ServiceImpl<H2UserMapper, H2User> impleme
     @Autowired
     private H2UserMapper userMapper;
     
-    @Autowired
-    private IH2StudentService h2StudentService;
-
     @Override
     public int myInsert(String name, int version) {
         return userMapper.myInsertWithNameVersion(name, version);
@@ -126,7 +121,6 @@ public class H2UserServiceImpl extends ServiceImpl<H2UserMapper, H2User> impleme
     @Transactional(rollbackFor = RuntimeException.class)
     public void testSimpleAndBatchTransactional() {
         save(new H2User("simpleAndBatchTx1",0));
-        h2StudentService.saveBatch(Arrays.asList(new H2Student(null, "tx1", 2),new H2Student(null, "tx1", 2),new H2Student(null, "tx1", 2)));
         saveBatch(Arrays.asList(new H2User("simpleAndBatchTx2",0),new H2User("simpleAndBatchTx3",0),new H2User("simpleAndBatchTx4",0)),1);
         saveOrUpdateBatch(Arrays.asList(new H2User("simpleAndBatchTx5",0),new H2User("simpleAndBatchTx6",0),new H2User("simpleAndBatchTx7",0)),1);
         throw new MybatisPlusException("测试事务回滚");
