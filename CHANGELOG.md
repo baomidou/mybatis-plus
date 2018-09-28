@@ -1,5 +1,10 @@
 ﻿# CHANGELOG
 
+## [v2.3.2] 2018.09-28
+- 修复批量事务问题
+- 其他
+
+
 ## [v2.3.2] 2018.09-17
 - 去除SqlSession
 - 乐观锁优化 > update(et,ew) > 支持乐观锁：et带上version
