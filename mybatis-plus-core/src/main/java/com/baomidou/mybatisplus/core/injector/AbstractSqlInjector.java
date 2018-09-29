@@ -15,14 +15,15 @@
  */
 package com.baomidou.mybatisplus.core.injector;
 
-import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.session.Configuration;
 
-import java.util.List;
-import java.util.Set;
+import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 
 
 /**
@@ -56,7 +57,9 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
 
     @Override
     public void injectSqlRunner(Configuration configuration) {
-        // to do nothing
+        if (isInjectSqlRunner()) {
+            new SqlRunnerInjector().inject(configuration);
+        }
     }
 
     /**
@@ -67,4 +70,15 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
      * @return 注入的方法集合
      */
     public abstract List<AbstractMethod> getMethodList();
+
+    /**
+     * <p>
+     * 是否注入SqlRunner,抽象类默认注入,如果不需要重写该方法
+     * </p>
+     *
+     * @return 注入的方法集合
+     */
+    public boolean isInjectSqlRunner() {
+        return true;
+    }
 }

@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.ibatis.session.Configuration;
-
 import com.baomidou.mybatisplus.core.injector.methods.Delete;
 import com.baomidou.mybatisplus.core.injector.methods.DeleteBatchByIds;
 import com.baomidou.mybatisplus.core.injector.methods.DeleteById;
@@ -74,9 +72,4 @@ public class DefaultSqlInjector extends AbstractSqlInjector {
         ).collect(Collectors.toList());
     }
 
-
-    @Override
-    public void injectSqlRunner(Configuration configuration) {
-        new SqlRunnerInjector().inject(configuration);
-    }
 }
