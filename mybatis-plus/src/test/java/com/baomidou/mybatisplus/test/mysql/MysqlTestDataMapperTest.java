@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.test.mysql;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.Condition;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -265,5 +266,13 @@ public class MysqlTestDataMapperTest {
     @Test
     public void d9_testSetSelect() {
         commonMapper.selectList(new QueryWrapper<>(new CommonData()).select(TableFieldInfo::isCharSequence));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void d10_testDel1eq1Then() {
+        mysqlMapper.selectList(Condition.lambda(new MysqlData()).select(i -> true).orderByAsc(MysqlData::getId));
+        commonMapper.selectList(Condition.lambda(new CommonData()).orderByAsc(CommonData::getCreateDatetime));
+        commonLogicMapper.selectList(Condition.lambda(new CommonLogicData()).orderByAsc(CommonLogicData::getCreateDatetime));
     }
 }
