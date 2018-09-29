@@ -220,7 +220,9 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
 
     @Override
     public This last(boolean condition, String lastSql) {
-        this.lastSql = StringPool.SPACE + lastSql;
+        if (condition) {
+            this.lastSql = StringPool.SPACE + lastSql;
+        }
         return typedThis;
     }
 
