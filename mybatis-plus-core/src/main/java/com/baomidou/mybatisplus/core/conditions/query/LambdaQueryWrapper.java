@@ -18,18 +18,13 @@ package com.baomidou.mybatisplus.core.conditions.query;
 import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
-import com.baomidou.mybatisplus.core.toolkit.*;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.support.Property;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
-
-import static java.util.stream.Collectors.joining;
 
 /**
  * <p>
@@ -43,20 +38,9 @@ import static java.util.stream.Collectors.joining;
 public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryWrapper<T>> {
 
     /**
-     * 过滤的字段
-     */
-    private String predicateSelect;
-
-    /**
      * 查询字段
      */
-    private List<String> queryColumn = new ArrayList<>();
-
-    /**
-     * 排除字段
-     */
-    @Deprecated
-    private List<String> excludeColumn = new ArrayList<>();
+    private String sqlSelect;
 
     public LambdaQueryWrapper() {
         this(null);
@@ -68,30 +52,14 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
         this.initNeed();
     }
 
-    @SuppressWarnings(value = "unchecked")
-    LambdaQueryWrapper(T entity, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs,
+    LambdaQueryWrapper(T entity, Class<T> entityClass, String sqlSelect, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs,
                        MergeSegments mergeSegments) {
         this.entity = entity;
         this.paramNameSeq = paramNameSeq;
         this.paramNameValuePairs = paramNameValuePairs;
         this.expression = mergeSegments;
-        this.initEntityClass();
-    }
-
-    @Override
-    public String getSqlSelect() {
-        if (StringUtils.isNotEmpty(predicateSelect)) {
-            return predicateSelect;
-        }
-        if (CollectionUtils.isEmpty(queryColumn)) {
-            if (entityClass != null) {
-                queryColumn = Arrays.asList(TableInfoHelper.getTableColumns(entityClass, excludeColumn.toArray(new String[0])));
-            }
-        } else {
-            return SqlUtils.stripSqlInjection(queryColumn.stream()
-                .filter(i -> !excludeColumn.contains(i)).collect(joining(StringPool.COMMA)));
-        }
-        return CollectionUtils.isEmpty(queryColumn) ? null : String.join(StringPool.COMMA, queryColumn);
+        this.sqlSelect = sqlSelect;
+        this.entityClass = entityClass;
     }
 
     /**
@@ -103,8 +71,8 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
      */
     @SafeVarargs
     public final LambdaQueryWrapper<T> select(Property<T, ?>... columns) {
-        for (Property<T, ?> column : columns) {
-            queryColumn.add(this.columnToString(column));
+        if (ArrayUtils.isNotEmpty(columns)) {
+            this.sqlSelect = this.columnsToString(columns);
         }
         return typedThis;
     }
@@ -116,7 +84,6 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     /**
      * <p>
      * 过滤查询的字段信息(主键除外!)
-     * 目前该方法优先级最高,一旦使用其他的设置select的方法将失效!!!
      * </p>
      * <p>
      * 例1: 只要 java 字段名以 "test" 开头的              -> select(i -> i.getProperty().startsWith("test"))
@@ -131,50 +98,23 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
      */
     public LambdaQueryWrapper<T> select(Class<T> entityClass, Predicate<TableFieldInfo> predicate) {
         this.entityClass = entityClass;
-        this.checkEntityClass();
-        this.predicateSelect = TableInfoHelper.getTableInfo(entityClass).chooseSelect(predicate);
+        this.sqlSelect = TableInfoHelper.getTableInfo(getCheckEntityClass()).chooseSelect(predicate);
         return typedThis;
-    }
-
-    /**
-     * <p>
-     * SELECT 部分 SQL 设置
-     * </p>
-     *
-     * @param excludeColumns 排除的查询字段
-     * @deprecated begin 3.0.3,建议使用 {@link #select(Predicate)},请尽快使用新方法,预计 3.0.5 开始移除此方法
-     */
-    @Deprecated
-    @SafeVarargs
-    public final LambdaQueryWrapper<T> excludeColumns(Class<T> entityClass, Property<T, ?>... excludeColumns) {
-        Assert.notEmpty(excludeColumns, "excludeColumns must not empty");
-        this.entityClass = entityClass;
-        this.checkEntityClass();
-        //todo
-        for (Property<T, ?> column : excludeColumns) {
-            excludeColumn.add(this.columnToString(column));
-        }
-        return typedThis;
-    }
-
-    /**
-     * <p>
-     * 排除字段，该方法请在  setEntity 之后使用，否则无法获知表实体类型
-     * </p>
-     *
-     * @param excludeColumns 排除字段列表
-     * @deprecated begin 3.0.3,建议使用 {@link #select(Predicate)},请尽快使用新方法,预计 3.0.5 开始移除此方法
-     */
-    @SafeVarargs
-    @Deprecated
-    @SuppressWarnings(value = "unchecked")
-    public final LambdaQueryWrapper<T> excludeColumns(Property<T, ?>... excludeColumns) {
-        this.checkEntityClass();
-        return excludeColumns(entityClass, excludeColumns);
     }
 
     @Override
+    public String getSqlSelect() {
+        return sqlSelect;
+    }
+
+    /**
+     * <p>
+     * 用于生成嵌套 sql
+     * 故 sqlSelect 不向下传递
+     * </p>
+     */
+    @Override
     protected LambdaQueryWrapper<T> instance(AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
-        return new LambdaQueryWrapper<>(entity, paramNameSeq, paramNameValuePairs, new MergeSegments());
+        return new LambdaQueryWrapper<>(entity, entityClass, null, paramNameSeq, paramNameValuePairs, new MergeSegments());
     }
 }

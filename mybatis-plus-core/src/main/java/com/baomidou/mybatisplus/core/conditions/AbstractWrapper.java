@@ -82,7 +82,6 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     public This setEntity(T entity) {
-        Assert.notNull(entity, "entity must not null");
         this.entity = entity;
         this.initEntityClass();
         return typedThis;
@@ -94,8 +93,9 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
         }
     }
 
-    protected void checkEntityClass() {
+    protected Class<T> getCheckEntityClass() {
         Assert.notNull(entityClass, "entityClass must not null,please set entity before use this method!");
+        return entityClass;
     }
 
     @Override
