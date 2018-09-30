@@ -15,12 +15,12 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
-import java.util.Objects;
-
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
+
+import java.util.Objects;
 
 /**
  * <p>
@@ -57,9 +57,7 @@ public abstract class Wrapper<T> implements ISqlSegment {
     }
 
     /**
-     * 获取MergeSegments
-     *
-     * @return
+     * 获取 MergeSegments
      */
     public abstract MergeSegments getExpression();
 
@@ -77,7 +75,8 @@ public abstract class Wrapper<T> implements ISqlSegment {
      */
     private boolean nonEntityNull() {
         T entity = getEntity();
-        return Objects.nonNull(getEntity()) && TableInfoHelper.getTableInfo(entity.getClass()).getFieldList().stream().anyMatch(e -> Objects.nonNull(ReflectionKit.getMethodValue(entity, e.getProperty())));
+        return Objects.nonNull(getEntity()) && TableInfoHelper.getTableInfo(entity.getClass()).getFieldList().stream()
+            .anyMatch(e -> Objects.nonNull(ReflectionKit.getMethodValue(entity, e.getProperty())));
     }
 
     /**
