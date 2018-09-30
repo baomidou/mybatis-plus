@@ -15,16 +15,26 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-
-import java.lang.reflect.*;
-import java.util.*;
-import java.util.stream.Stream;
-
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toMap;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
+
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 
 /**
  * <p>
@@ -37,6 +47,7 @@ import static java.util.stream.Collectors.toMap;
 public class ReflectionKit {
 
     private static final Log logger = LogFactory.getLog(ReflectionKit.class);
+    private static final Map<Class, List<Field>> fieldMapCache = new ConcurrentHashMap<>();
 
     /**
      * <p>
@@ -169,6 +180,24 @@ public class ReflectionKit {
         if (null == clazz) {
             return null;
         }
+        List<Field> fields = fieldMapCache.get(clazz);
+        if (CollectionUtils.isEmpty(fields)) {
+            synchronized (fieldMapCache) {
+                fields = doGetFieldList(clazz);
+                fieldMapCache.put(clazz, fields);
+            }
+        }
+        return fields;
+    }
+
+    /**
+     * <p>
+     * 获取该类的所有属性列表
+     * </p>
+     *
+     * @param clazz 反射类
+     */
+    public static List<Field> doGetFieldList(Class<?> clazz) {
         List<Field> fieldList = Stream.of(clazz.getDeclaredFields())
             /* 过滤静态属性 */
             .filter(field -> !Modifier.isStatic(field.getModifiers()))
@@ -198,4 +227,5 @@ public class ReflectionKit {
         superFieldList.stream().filter(field -> fieldMap.get(field.getName()) == null).forEach(fieldList::add);
         return fieldList;
     }
+
 }
