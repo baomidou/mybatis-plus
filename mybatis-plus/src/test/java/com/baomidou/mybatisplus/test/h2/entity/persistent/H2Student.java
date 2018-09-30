@@ -1,7 +1,5 @@
 package com.baomidou.mybatisplus.test.h2.entity.persistent;
 
-import java.io.Serializable;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -44,8 +42,4 @@ public class H2Student extends Model<H2Student> {
 
     private Integer age;
 
-    @Override
-    protected Serializable pkVal() {
-        return this.id;
-    }
 }

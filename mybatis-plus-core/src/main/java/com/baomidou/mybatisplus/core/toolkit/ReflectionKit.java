@@ -47,7 +47,10 @@ import org.apache.ibatis.logging.LogFactory;
 public class ReflectionKit {
 
     private static final Log logger = LogFactory.getLog(ReflectionKit.class);
-    private static final Map<Class, List<Field>> fieldMapCache = new ConcurrentHashMap<>();
+    /**
+     * class field cache
+     */
+    private static final Map<Class, List<Field>> classFieldCache = new ConcurrentHashMap<>();
 
     /**
      * <p>
@@ -180,11 +183,11 @@ public class ReflectionKit {
         if (null == clazz) {
             return null;
         }
-        List<Field> fields = fieldMapCache.get(clazz);
+        List<Field> fields = classFieldCache.get(clazz);
         if (CollectionUtils.isEmpty(fields)) {
-            synchronized (fieldMapCache) {
+            synchronized (classFieldCache) {
                 fields = doGetFieldList(clazz);
-                fieldMapCache.put(clazz, fields);
+                classFieldCache.put(clazz, fields);
             }
         }
         return fields;
