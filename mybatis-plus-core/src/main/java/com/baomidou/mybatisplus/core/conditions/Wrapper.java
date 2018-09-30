@@ -15,8 +15,12 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
+import java.util.Objects;
+
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 
 /**
  * <p>
@@ -54,6 +58,7 @@ public abstract class Wrapper<T> implements ISqlSegment {
 
     /**
      * 获取MergeSegments
+     *
      * @return
      */
     public abstract MergeSegments getExpression();
@@ -62,7 +67,17 @@ public abstract class Wrapper<T> implements ISqlSegment {
      * 查询条件为空
      */
     public boolean isEmptyOfWhere() {
-        return CollectionUtils.isEmpty(getExpression().getNormal()) && null == getEntity();
+        return CollectionUtils.isEmpty(getExpression().getNormal()) && !nonEntityNull();
+    }
+
+    /**
+     * 深层实体判断属性
+     *
+     * @return true 不为空
+     */
+    private boolean nonEntityNull() {
+        T entity = getEntity();
+        return Objects.nonNull(getEntity()) && TableInfoHelper.getTableInfo(entity.getClass()).getFieldList().stream().anyMatch(e -> Objects.nonNull(ReflectionKit.getMethodValue(entity, e.getProperty())));
     }
 
     /**
