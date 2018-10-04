@@ -15,16 +15,15 @@
  */
 package com.baomidou.mybatisplus.core;
 
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
-
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 
 /**
  * <p>
@@ -52,13 +51,13 @@ public class MybatisConfiguration extends Configuration {
      * 初始化调用
      */
     public MybatisConfiguration() {
-        setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
+        this.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
     }
 
     /**
      * 配置初始化
      */
-    public MybatisConfiguration init(GlobalConfig globalConfig) {
+    public void init(GlobalConfig globalConfig) {
         // 初始化 Sequence
         if (null != globalConfig.getWorkerId()
             && null != globalConfig.getDatacenterId()) {
@@ -71,7 +70,6 @@ public class MybatisConfiguration extends Configuration {
             System.out.println("     /               |         ");
             System.out.println("                        3.0.3  ");
         }
-        return this;
     }
 
     /**

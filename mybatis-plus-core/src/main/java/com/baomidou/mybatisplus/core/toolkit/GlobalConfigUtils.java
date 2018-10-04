@@ -16,16 +16,6 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSessionFactory;
-
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
@@ -33,6 +23,15 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSessionFactory;
+
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <p>
@@ -137,7 +136,7 @@ public class GlobalConfigUtils {
         return getGlobalConfig(configuration).getDbConfig().getIdType();
     }
 
-    public static boolean isDbColumnUnderline(Configuration configuration) {
+    public static boolean isMapUnderscoreToCamelCase(Configuration configuration) {
         return configuration.isMapUnderscoreToCamelCase();
     }
 

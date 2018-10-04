@@ -15,19 +15,18 @@
  */
 package com.baomidou.mybatisplus.core;
 
-import java.io.Closeable;
-import java.io.InputStream;
-import java.io.Reader;
-import java.util.Properties;
-
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.IOUtils;
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.core.toolkit.IOUtils;
+import java.io.Closeable;
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.Properties;
 
 /**
  * <p>
@@ -37,6 +36,7 @@ import com.baomidou.mybatisplus.core.toolkit.IOUtils;
  * @author hubin
  * @since 2016-01-23
  */
+@Deprecated
 public class MybatisSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 
     private GlobalConfig globalConfig = GlobalConfigUtils.defaults();

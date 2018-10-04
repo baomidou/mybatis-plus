@@ -1,11 +1,12 @@
 package com.baomidou.mybatisplus.autoconfigure;
 
 
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-import javax.sql.DataSource;
-
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
+import com.baomidou.mybatisplus.core.injector.ISqlInjector;
+import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.apache.ibatis.plugin.Interceptor;
@@ -43,13 +44,9 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.MybatisXMLLanguageDriver;
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
-import com.baomidou.mybatisplus.core.injector.ISqlInjector;
-import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
+import javax.annotation.PostConstruct;
+import javax.sql.DataSource;
+import java.util.List;
 
 /**
  * {@link EnableAutoConfiguration Auto-Configuration} for Mybatis. Contributes a
@@ -144,12 +141,8 @@ public class MybatisPlusAutoConfiguration {
         if (!ObjectUtils.isEmpty(this.properties.resolveMapperLocations())) {
             factory.setMapperLocations(this.properties.resolveMapperLocations());
         }
-        GlobalConfig globalConfig;
-        if (!ObjectUtils.isEmpty(this.properties.getGlobalConfig())) {
-            globalConfig = this.properties.getGlobalConfig();
-        } else {
-            globalConfig = new GlobalConfig();
-        }
+        // TODO 此处必为非 NULL
+        GlobalConfig globalConfig = this.properties.getGlobalConfig();
         //注入填充器
         if (this.applicationContext.getBeanNamesForType(MetaObjectHandler.class,
             false, false).length > 0) {
@@ -182,11 +175,7 @@ public class MybatisPlusAutoConfiguration {
                 customizer.customize(configuration);
             }
         }
-        // TODO 自定义配置
-        if (null != configuration) {
-            configuration.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
-        }
-        factory.setConfiguration(configuration.init(this.properties.getGlobalConfig()));
+        factory.setConfiguration(configuration);
     }
 
     @Bean

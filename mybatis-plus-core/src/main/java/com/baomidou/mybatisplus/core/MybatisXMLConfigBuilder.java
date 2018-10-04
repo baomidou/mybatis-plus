@@ -15,14 +15,7 @@
  */
 package com.baomidou.mybatisplus.core;
 
-import java.io.InputStream;
-import java.io.Reader;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
-
-import javax.sql.DataSource;
-
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import org.apache.ibatis.builder.BaseBuilder;
 import org.apache.ibatis.builder.BuilderException;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
@@ -44,16 +37,17 @@ import org.apache.ibatis.reflection.MetaClass;
 import org.apache.ibatis.reflection.ReflectorFactory;
 import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
-import org.apache.ibatis.session.AutoMappingBehavior;
-import org.apache.ibatis.session.AutoMappingUnknownColumnBehavior;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.ExecutorType;
-import org.apache.ibatis.session.LocalCacheScope;
+import org.apache.ibatis.session.*;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import javax.sql.DataSource;
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * <p>
@@ -112,6 +106,11 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
         parsed = true;
         parseConfiguration(parser.evalNode("/configuration"));
         return configuration;
+    }
+
+    @Override
+    public MybatisConfiguration getConfiguration() {
+        return (MybatisConfiguration) this.configuration;
     }
 
     private void parseConfiguration(XNode root) {
@@ -272,7 +271,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
         configuration.setCallSettersOnNulls(booleanValueOf(props.getProperty("callSettersOnNulls"), false));
         configuration.setUseActualParamName(booleanValueOf(props.getProperty("useActualParamName"), true));
         @SuppressWarnings("unchecked")
-        Class<? extends TypeHandler> typeHandler = (Class<? extends TypeHandler>)resolveClass(props.getProperty("defaultEnumTypeHandler"));
+        Class<? extends TypeHandler> typeHandler = (Class<? extends TypeHandler>) resolveClass(props.getProperty("defaultEnumTypeHandler"));
         configuration.setDefaultEnumTypeHandler(typeHandler);
         configuration.setReturnInstanceForEmptyRow(booleanValueOf(props.getProperty("returnInstanceForEmptyRow"), false));
         configuration.setLogPrefix(props.getProperty("logPrefix"));
@@ -436,7 +435,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
             throw new BuilderException("No environment specified.");
         } else if (id == null) {
             throw new BuilderException("Environment requires an id attribute.");
-        } else{
+        } else {
             return environment.equals(id);
         }
     }

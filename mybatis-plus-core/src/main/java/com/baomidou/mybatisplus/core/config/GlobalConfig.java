@@ -22,7 +22,9 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.ibatis.session.SqlSessionFactory;
 
@@ -74,6 +76,7 @@ public class GlobalConfig implements Serializable {
     /**
      * 缓存当前Configuration的SqlSessionFactory
      */
+    @Setter(value = AccessLevel.NONE)
     private SqlSessionFactory sqlSessionFactory;
     /**
      * 缓存已注入CRUD的Mapper信息
@@ -93,6 +96,7 @@ public class GlobalConfig implements Serializable {
         if (null != sqlSessionFactory) {
             GlobalConfigUtils.setGlobalConfig(sqlSessionFactory.getConfiguration(), this);
         }
+        this.sqlSessionFactory = sqlSessionFactory;
         return sqlSessionFactory;
     }
 

@@ -20,7 +20,6 @@ import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
@@ -32,8 +31,6 @@ import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.scripting.LanguageDriver;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -447,25 +444,6 @@ public class TableInfoHelper {
                 }).collect(toList());
         }
         return fieldList;
-    }
-
-    /**
-     * 初始化SqlSessionFactory (供Mybatis原生调用)
-     *
-     * @param sqlSessionFactory
-     */
-    public static void initSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
-        Configuration configuration = sqlSessionFactory.getConfiguration();
-        GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
-        // SqlRunner
-        SqlHelper.FACTORY = sqlSessionFactory;
-        if (globalConfig == null) {
-            GlobalConfig defaultCache = GlobalConfigUtils.defaults();
-            defaultCache.setSqlSessionFactory(sqlSessionFactory);
-            GlobalConfigUtils.setGlobalConfig(configuration, defaultCache);
-        } else {
-            globalConfig.setSqlSessionFactory(sqlSessionFactory);
-        }
     }
 
     /**

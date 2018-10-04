@@ -15,25 +15,18 @@
  */
 package com.baomidou.mybatisplus.extension.spring;
 
-import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.Assert.state;
-import static org.springframework.util.ObjectUtils.isEmpty;
-import static org.springframework.util.StringUtils.hasLength;
-import static org.springframework.util.StringUtils.tokenizeToStringArray;
-
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-
-import javax.sql.DataSource;
-
+import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.annotation.EnumValue;
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.MybatisXMLConfigBuilder;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.enums.IEnum;
+import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
+import com.baomidou.mybatisplus.extension.handlers.EnumAnnotationTypeHandler;
+import com.baomidou.mybatisplus.extension.handlers.EnumTypeHandler;
+import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
+import com.baomidou.mybatisplus.extension.toolkit.PackageHelper;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.ErrorContext;
@@ -64,23 +57,18 @@ import org.springframework.core.NestedIOException;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
-import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.annotation.EnumValue;
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.MybatisXMLConfigBuilder;
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.enums.IEnum;
-import com.baomidou.mybatisplus.core.toolkit.AopUtils;
-import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
-import com.baomidou.mybatisplus.extension.handlers.EnumAnnotationTypeHandler;
-import com.baomidou.mybatisplus.extension.handlers.EnumTypeHandler;
-import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
-import com.baomidou.mybatisplus.extension.toolkit.PackageHelper;
+import javax.sql.DataSource;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.*;
+
+import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.Assert.state;
+import static org.springframework.util.ObjectUtils.isEmpty;
+import static org.springframework.util.StringUtils.hasLength;
+import static org.springframework.util.StringUtils.tokenizeToStringArray;
 
 /**
  * <p>
@@ -97,7 +85,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
     private Resource configLocation;
 
-    private Configuration configuration;
+    private MybatisConfiguration configuration;
 
     private Resource[] mapperLocations;
 
@@ -295,7 +283,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
      * @param configuration MyBatis configuration
      * @since 1.3.0
      */
-    public void setConfiguration(Configuration configuration) {
+    public void setConfiguration(MybatisConfiguration configuration) {
         this.configuration = configuration;
     }
 
@@ -411,7 +399,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
      */
     protected SqlSessionFactory buildSqlSessionFactory() throws Exception {
 
-        Configuration configuration;
+        MybatisConfiguration configuration;
 
         // TODO 加载自定义 MybatisXmlConfigBuilder
         MybatisXMLConfigBuilder xmlConfigBuilder = null;
@@ -430,11 +418,21 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
                 LOGGER.debug("Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration");
             }
             // TODO 使用自定义配置
-            configuration = new MybatisConfiguration().init(this.globalConfig);
+            configuration = new MybatisConfiguration();
             if (this.configurationProperties != null) {
                 configuration.setVariables(this.configurationProperties);
             }
         }
+
+        if (this.globalConfig == null) {
+            this.globalConfig = GlobalConfigUtils.defaults();
+        }
+        if (this.globalConfig.getDbConfig() == null) {
+            this.globalConfig.setDbConfig(new GlobalConfig.DbConfig());
+        }
+
+        // TODO 初始化 id-work 以及 打印骚东西
+        configuration.init(this.globalConfig);
 
         if (this.objectFactory != null) {
             configuration.setObjectFactory(this.objectFactory);
@@ -595,10 +593,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         }
 
         configuration.setEnvironment(new Environment(this.environment, this.transactionFactory, this.dataSource));
-        // 设置默认值
-        if (null == globalConfig) {
-            globalConfig = GlobalConfigUtils.defaults();
-        }
+
         // TODO 设置元数据相关 如果用户没有配置 dbType 则自动获取
         if (globalConfig.getDbConfig().getDbType() == DbType.OTHER) {
             try (Connection connection = AopUtils.getTargetObject(this.dataSource).getConnection()) {
@@ -608,12 +603,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             }
         }
         SqlSessionFactory sqlSessionFactory = this.sqlSessionFactoryBuilder.build(configuration);
-        // TODO SqlRunner
-        SqlHelper.FACTORY = sqlSessionFactory;
-        // TODO 缓存 sqlSessionFactory
-        globalConfig.setSqlSessionFactory(sqlSessionFactory);
-        // TODO 设置全局参数属性
-        globalConfig.signGlobalConfig(sqlSessionFactory);
+
         if (!isEmpty(this.mapperLocations)) {
             if (globalConfig.isRefresh()) {
                 //TODO 设置自动刷新配置 减少配置
@@ -645,7 +635,12 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
                 LOGGER.debug("Property 'mapperLocations' was not specified or no matching resources found");
             }
         }
-        return sqlSessionFactory;
+
+        // TODO SqlRunner
+        SqlHelper.FACTORY = sqlSessionFactory;
+
+        // TODO 设置全局参数属性 以及 缓存 sqlSessionFactory
+        return globalConfig.signGlobalConfig(sqlSessionFactory);
     }
 
     /**
