@@ -194,6 +194,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 } else {
                     throw ExceptionUtils.mpe("Error:  Can not execute. Could not find @TableId.");
                 }
+                batchSqlSession.flushStatements();
             }
         }
         return true;
