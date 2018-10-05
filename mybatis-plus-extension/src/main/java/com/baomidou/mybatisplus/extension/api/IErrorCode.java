@@ -26,7 +26,7 @@ package com.baomidou.mybatisplus.extension.api;
 public interface IErrorCode {
 
     /**
-     * 错误编码 0、失败 1、正常
+     * 错误编码 -1、失败 0、成功
      */
     long getCode();
 
