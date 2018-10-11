@@ -53,7 +53,6 @@ public class DB2Dialect implements IDialect {
         } else {
             pagingSelect.append(originalSql.substring(startOfSelect + 6));
         }
-        pagingSelect.append(" ) as temp_ where rownumber_ ");
 
         // 20180829 modify by hepengju
         // https://github.com/baomidou/mybatis-plus/issues/450
