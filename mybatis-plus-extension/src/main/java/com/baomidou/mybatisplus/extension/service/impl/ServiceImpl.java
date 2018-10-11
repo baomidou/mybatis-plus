@@ -15,26 +15,34 @@
  */
 package com.baomidou.mybatisplus.extension.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.enums.SqlMethod;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.*;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
-import com.baomidou.mybatisplus.extension.service.IService;
-import org.apache.ibatis.binding.MapperMethod;
-import org.apache.ibatis.session.SqlSession;
-import org.mybatis.spring.SqlSessionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import org.apache.ibatis.binding.MapperMethod;
+import org.apache.ibatis.session.SqlSession;
+import org.mybatis.spring.SqlSessionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.enums.SqlMethod;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
  * <p>
@@ -94,6 +102,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return SqlHelper.table(currentModelClass()).getSqlStatement(sqlMethod.getMethod());
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean save(T entity) {
         return retBool(baseMapper.insert(entity));
@@ -111,7 +120,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     public boolean saveBatch(Collection<T> entityList, int batchSize) {
         int i = 0;
         String sqlStatement = sqlStatement(SqlMethod.INSERT_ONE);
-        try(SqlSession batchSqlSession = sqlSessionBatch()) {
+        try (SqlSession batchSqlSession = sqlSessionBatch()) {
             for (T anEntityList : entityList) {
                 batchSqlSession.insert(sqlStatement, anEntityList);
                 if (i >= 1 && i % batchSize == 0) {
@@ -132,6 +141,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      * @param entity 实体对象
      * @return boolean
      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean saveOrUpdate(T entity) {
         if (null != entity) {
@@ -169,7 +179,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         Class<?> cls = null;
         TableInfo tableInfo = null;
         int i = 0;
-        try(SqlSession batchSqlSession = sqlSessionBatch()){
+        try (SqlSession batchSqlSession = sqlSessionBatch()) {
             for (T anEntityList : entityList) {
                 if (i == 0) {
                     cls = anEntityList.getClass();
@@ -200,11 +210,13 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return true;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean removeById(Serializable id) {
         return SqlHelper.delBool(baseMapper.deleteById(id));
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean removeByMap(Map<String, Object> columnMap) {
         if (ObjectUtils.isEmpty(columnMap)) {
@@ -213,21 +225,25 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return SqlHelper.delBool(baseMapper.deleteByMap(columnMap));
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean remove(Wrapper<T> wrapper) {
         return SqlHelper.delBool(baseMapper.delete(wrapper));
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean removeByIds(Collection<? extends Serializable> idList) {
         return SqlHelper.delBool(baseMapper.deleteBatchIds(idList));
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean updateById(T entity) {
         return retBool(baseMapper.updateById(entity));
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean update(T entity, Wrapper<T> updateWrapper) {
         return retBool(baseMapper.update(entity, updateWrapper));
@@ -241,7 +257,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         }
         int i = 0;
         String sqlStatement = sqlStatement(SqlMethod.UPDATE_BY_ID);
-        try(SqlSession batchSqlSession = sqlSessionBatch()) {
+        try (SqlSession batchSqlSession = sqlSessionBatch()) {
             for (T anEntityList : entityList) {
                 MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
                 param.put(Constants.ENTITY, anEntityList);
