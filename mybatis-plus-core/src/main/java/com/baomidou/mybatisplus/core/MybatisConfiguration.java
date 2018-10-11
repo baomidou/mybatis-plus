@@ -69,7 +69,7 @@ public class MybatisConfiguration extends Configuration {
             System.out.println(" _ _   |_  _ _|_. ___ _ |    _ ");
             System.out.println("| | |\\/|_)(_| | |_\\  |_)||_|_\\ ");
             System.out.println("     /               |         ");
-            System.out.println("                        3.0.5-SNAPSHOT");
+            System.out.println("                        3.0.5 ");
         }
     }
 

@@ -1,6 +1,24 @@
 ﻿# CHANGELOG
 
 
+
+## [v3.0.5] 2018.10.11
+- 移除 ApiAssert 改为 Assert
+- 移除 ApiResult 改为 R
+- SQL 注入器优化
+- 移除 excludeColumns 方法
+- 修复 last 方法的 condition 入参不生效的问题
+- 修复去除1=1 BUG
+- 移除对 spring-devtools 的支持
+- 修复实体属性都为null时Sql拼接出错问题
+- 缓存Class反射信息,提升效率
+- 继承Model类的实体中,现在无需重写pkVal()方法
+- 解决在设置了config-location的情况下报mpe的bug,以及优化初始化逻辑
+- 修复存在 mapper.xml 情况下逻辑删除失效
+- 调整 关于ServiceImpl中的事务问题 gitee issue/IN8T8
+- 修复 DB2分页方言 github issues/526
+
+
 ## [v3.0.4] 2018.09.28
 - 修正全局配置 FieldStrategy 为非默认值
 - 修正批量事务异常问题
