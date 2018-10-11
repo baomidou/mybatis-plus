@@ -604,6 +604,12 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         }
         SqlSessionFactory sqlSessionFactory = this.sqlSessionFactoryBuilder.build(configuration);
 
+        // TODO SqlRunner
+        SqlHelper.FACTORY = sqlSessionFactory;
+
+        // TODO 设置全局参数属性 以及 缓存 sqlSessionFactory
+        globalConfig.signGlobalConfig(sqlSessionFactory);
+
         if (!isEmpty(this.mapperLocations)) {
             if (globalConfig.isRefresh()) {
                 //TODO 设置自动刷新配置 减少配置
@@ -635,12 +641,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
                 LOGGER.debug("Property 'mapperLocations' was not specified or no matching resources found");
             }
         }
-
-        // TODO SqlRunner
-        SqlHelper.FACTORY = sqlSessionFactory;
-
-        // TODO 设置全局参数属性 以及 缓存 sqlSessionFactory
-        return globalConfig.signGlobalConfig(sqlSessionFactory);
+        return sqlSessionFactory;
     }
 
     /**

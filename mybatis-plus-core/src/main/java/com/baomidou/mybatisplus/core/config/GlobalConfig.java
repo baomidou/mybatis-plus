@@ -92,12 +92,11 @@ public class GlobalConfig implements Serializable {
      * 标记全局设置 (统一所有入口)
      * </p>
      */
-    public SqlSessionFactory signGlobalConfig(SqlSessionFactory sqlSessionFactory) {
+    public void signGlobalConfig(SqlSessionFactory sqlSessionFactory) {
         if (null != sqlSessionFactory) {
             GlobalConfigUtils.setGlobalConfig(sqlSessionFactory.getConfiguration(), this);
         }
         this.sqlSessionFactory = sqlSessionFactory;
-        return sqlSessionFactory;
     }
 
     @Data
