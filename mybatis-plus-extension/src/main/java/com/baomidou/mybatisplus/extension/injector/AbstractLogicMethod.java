@@ -57,7 +57,7 @@ public abstract class AbstractLogicMethod extends AbstractMethod {
                 true);
             sqlScript += (StringPool.NEWLINE + table.getLogicDeleteSql(true, false) +
                 StringPool.NEWLINE);
-            sqlScript += SqlScriptUtils.convertIf(String.format(" AND ${%s}", Constants.WRAPPER_SQLSEGMENT),
+            sqlScript += SqlScriptUtils.convertIf(String.format(" ${%s}", Constants.WRAPPER_SQLSEGMENT),
                 String.format("%s != null and %s != '' and ew.notEmptyOfWhere", Constants.WRAPPER_SQLSEGMENT,
                     Constants.WRAPPER_SQLSEGMENT), true);
             sqlScript += StringPool.NEWLINE;

@@ -38,12 +38,23 @@ public class H2Delete1Eq1Test extends BaseTest {
         }
         log(logicDeleteMapper.selectList(new QueryWrapper<H2User>().orderByAsc("`desc`")));
         log(logicDeleteMapper.selectOne(new QueryWrapper<H2User>().last("limit 1")));
+
+        H2User h2User = new H2User();
+        h2User.setDesc("1");
+        h2User.setName("2");
+        log(logicDeleteMapper.selectList(new QueryWrapper<>(h2User).orderByAsc("name")));
+
         for (long i = 0; i < 10L; i++) {
             defaultMapper.insert(new H2Student(i, "Tom长大了", 1));
         }
         log(defaultMapper.selectList(new QueryWrapper<H2Student>().orderByAsc("id")));
         log(defaultMapper.selectOne(new QueryWrapper<H2Student>().last("limit 1")));
 
+
+        H2Student h2Student = new H2Student();
+        h2Student.setId(1L);
+        h2Student.setAge(2);
+        log(defaultMapper.selectList(new QueryWrapper<>(h2Student).orderByAsc("id")));
     }
 
     @Test
