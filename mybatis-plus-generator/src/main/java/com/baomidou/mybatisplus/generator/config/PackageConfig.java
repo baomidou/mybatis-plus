@@ -42,7 +42,7 @@ public class PackageConfig {
     private String parent = "com.baomidou";
 
     /**
-     * 父包模块名。
+     * 父包模块名
      */
     private String moduleName = null;
 
@@ -80,11 +80,14 @@ public class PackageConfig {
      */
     private Map<String, String> pathInfo;
 
+
+    /**
+     * 父包名
+     */
     public String getParent() {
         if (StringUtils.isNotEmpty(moduleName)) {
             return parent + StringPool.DOT + moduleName;
         }
         return parent;
     }
-
 }
