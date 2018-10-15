@@ -44,7 +44,7 @@ public interface IService<T> {
 
     /**
      * <p>
-     * 插入（批量），该方法不适合 Oracle
+     * 插入（批量）
      * </p>
      *
      * @param entityList 实体对象集合
