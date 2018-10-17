@@ -14,16 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.baomidou.mybatisplus.core.toolkit.support;
+package com.baomidou.mybatisplus.core.toolkit.support.lambda;
 
-import java.io.Serializable;
+import java.util.function.Function;
 
 /**
+ * 支持序列化的 Function
+ *
  * @author miemie
  * @since 2018-05-12
  */
-@FunctionalInterface
-public interface Property<T, R> extends Serializable {
-
-    R apply(T t);
+public interface SFunction<T, R> extends SerializableLambda, Function<T, R> {
 }

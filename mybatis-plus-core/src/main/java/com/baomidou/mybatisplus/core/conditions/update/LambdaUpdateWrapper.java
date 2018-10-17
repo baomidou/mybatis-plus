@@ -15,19 +15,19 @@
  */
 package com.baomidou.mybatisplus.core.conditions.update;
 
-import static java.util.stream.Collectors.joining;
+import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper;
+import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
+import com.baomidou.mybatisplus.core.toolkit.support.lambda.SFunction;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper;
-import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
-import com.baomidou.mybatisplus.core.toolkit.support.Property;
+import static java.util.stream.Collectors.joining;
 
 /**
  * <p>
@@ -61,11 +61,11 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
         return SqlUtils.stripSqlInjection(sqlSet.stream().collect(joining(StringPool.COMMA)));
     }
 
-    public LambdaUpdateWrapper<T> set(Property<T, ?> column, Object val) {
+    public LambdaUpdateWrapper<T> set(SFunction<T, ?> column, Object val) {
         return this.set(true, column, val);
     }
 
-    public LambdaUpdateWrapper<T> set(boolean condition, Property<T, ?> column, Object val) {
+    public LambdaUpdateWrapper<T> set(boolean condition, SFunction<T, ?> column, Object val) {
         if (condition) {
             sqlSet.add(String.format("%s=%s", columnToString(column), formatSql("{0}", val)));
         }

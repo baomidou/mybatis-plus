@@ -19,8 +19,8 @@ import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.support.Property;
-import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
+import com.baomidou.mybatisplus.core.toolkit.support.lambda.SFunction;
+import com.baomidou.mybatisplus.core.toolkit.support.lambda.SerializedLambda;
 
 import java.util.Map;
 import java.util.Optional;
@@ -36,13 +36,13 @@ import java.util.Optional;
  */
 @SuppressWarnings("serial")
 public abstract class AbstractLambdaWrapper<T, This extends AbstractLambdaWrapper<T, This>>
-    extends AbstractWrapper<T, Property<T, ?>, This> {
+    extends AbstractWrapper<T, SFunction<T, ?>, This> {
 
     private Map<String, String> columnMap = null;
     private boolean initColumnMap = false;
 
     @Override
-    protected String columnToString(Property<T, ?> column) {
+    protected String columnToString(SFunction<T, ?> column) {
         return getColumn(LambdaUtils.resolve(column));
     }
 

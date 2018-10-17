@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.baomidou.mybatisplus.core.toolkit.support;
+package com.baomidou.mybatisplus.core.toolkit.support.lambda;
 
 import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
@@ -48,12 +48,15 @@ public class SerializedLambda implements Serializable {
     private Object[] capturedArgs;
 
     /**
-     * 通过反序列化转换 class
+     * 通过反序列化转换 lambda 表达式，该方法只能序列化 lambda 表达式，不能序列化接口实现或者正常非 lambda 写法的对象
      *
      * @param lambda lambda对象
      * @return 返回解析后的 SerializedLambda
      */
-    public static SerializedLambda resolve(Property lambda) {
+    public static SerializedLambda resolve(SerializableLambda lambda) {
+        if (!lambda.getClass().isSynthetic()) {
+            throw ExceptionUtils.mpe("该方法仅能传入 lambda 表达式产生的合成类");
+        }
         try (ObjectInputStream objIn = new ObjectInputStream(new ByteArrayInputStream(SerializationUtils.serialize(lambda))) {
             @Override
             protected Class<?> resolveClass(ObjectStreamClass objectStreamClass) throws IOException, ClassNotFoundException {

@@ -17,8 +17,8 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.support.Property;
-import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
+import com.baomidou.mybatisplus.core.toolkit.support.lambda.SFunction;
+import com.baomidou.mybatisplus.core.toolkit.support.lambda.SerializedLambda;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
@@ -52,7 +52,7 @@ public final class LambdaUtils {
      * @param <T>  类型，被调用的 Function 对象的目标类型
      * @return 返回解析后的结果
      */
-    public static <T> SerializedLambda resolve(Property<T, ?> func) {
+    public static <T> SerializedLambda resolve(SFunction<T, ?> func) {
         Class clazz = func.getClass();
         return Optional.ofNullable(FUNC_CACHE.get(clazz))
             .map(WeakReference::get)
