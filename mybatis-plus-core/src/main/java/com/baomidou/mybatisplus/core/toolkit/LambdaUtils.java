@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <p>
- * Lambda 工具类
+ * Lambda 解析工具类
  * </p>
  *
  * @author HCL
@@ -38,6 +38,9 @@ public final class LambdaUtils {
 
     private static final Map<String, Map<String, String>> LAMBDA_CACHE = new ConcurrentHashMap<>();
 
+    /**
+     * SerializedLambda 反序列化缓存
+     */
     private static final Map<Class, WeakReference<SerializedLambda>> FUNC_CACHE = new ConcurrentHashMap<>();
 
     /**
@@ -54,7 +57,7 @@ public final class LambdaUtils {
         return Optional.ofNullable(FUNC_CACHE.get(clazz))
             .map(WeakReference::get)
             .orElseGet(() -> {
-                SerializedLambda lambda = SerializedLambda.convert(func);
+                SerializedLambda lambda = SerializedLambda.resolve(func);
                 FUNC_CACHE.put(clazz, new WeakReference<>(lambda));
                 return lambda;
             });
@@ -70,7 +73,6 @@ public final class LambdaUtils {
      */
     public static void createCache(Class clazz, TableInfo tableInfo) {
         LAMBDA_CACHE.put(clazz.getName(), createLambdaMap(tableInfo, clazz));
-
     }
 
     /**

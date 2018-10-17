@@ -100,4 +100,18 @@ public final class ClassUtils {
         }
     }
 
+    /**
+     * 请仅在确定类存在的情况下调用该方法
+     *
+     * @param name 类名称
+     * @return 返回转换后的 Class
+     */
+    public static Class<?> toClassConfident(String name) {
+        try {
+            return Class.forName(name);
+        } catch (ClassNotFoundException e) {
+            throw ExceptionUtils.mpe("找不到指定的class！请仅在明确确定会有 class 的时候，调用该方法", e);
+        }
+    }
+
 }

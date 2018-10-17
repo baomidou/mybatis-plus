@@ -11,7 +11,7 @@ public class LambdaUtilsTest {
     @Test
     public void testResolve() {
         SerializedLambda lambda = LambdaUtils.resolve(TestPojo::getId);
-        Assert.assertEquals(TestPojo.class.getName(), lambda.getImplClass().replace("/", "."));
+        Assert.assertEquals(TestPojo.class.getName(), lambda.getImplClassName());
         Assert.assertEquals("getId", lambda.getImplMethodName());
         Assert.assertEquals("id", StringUtils.resolveFieldName(lambda.getImplMethodName()));
 
