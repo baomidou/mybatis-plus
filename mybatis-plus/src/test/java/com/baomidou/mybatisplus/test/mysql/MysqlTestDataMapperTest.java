@@ -271,8 +271,13 @@ public class MysqlTestDataMapperTest {
     @Test
     @SuppressWarnings("unchecked")
     public void d10_testDel1eq1Then() {
+        // 有空对象,有 order by
         mysqlMapper.selectList(Condition.lambda(new MysqlData()).select(i -> true).orderByAsc(MysqlData::getId));
         commonMapper.selectList(Condition.lambda(new CommonData()).orderByAsc(CommonData::getCreateDatetime));
         commonLogicMapper.selectList(Condition.lambda(new CommonLogicData()).orderByAsc(CommonLogicData::getCreateDatetime));
+        // 对象有值,有 order by
+        mysqlMapper.selectList(Condition.lambda(new MysqlData().setOrder(12)).select(i -> true).orderByAsc(MysqlData::getId));
+        commonMapper.selectList(Condition.lambda(new CommonData().setTestInt(12)).orderByAsc(CommonData::getCreateDatetime));
+        commonLogicMapper.selectList(Condition.lambda(new CommonLogicData().setTestInt(12)).orderByAsc(CommonLogicData::getCreateDatetime));
     }
 }
