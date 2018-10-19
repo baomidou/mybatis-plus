@@ -1,7 +1,7 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
-import com.baomidou.mybatisplus.core.toolkit.support.lambda.SFunction;
-import com.baomidou.mybatisplus.core.toolkit.support.lambda.SerializedLambda;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 import lombok.Getter;
 import org.junit.Assert;
 import org.junit.Test;

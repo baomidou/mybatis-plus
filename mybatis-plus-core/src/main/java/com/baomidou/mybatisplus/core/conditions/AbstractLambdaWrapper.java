@@ -19,8 +19,8 @@ import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.support.lambda.SFunction;
-import com.baomidou.mybatisplus.core.toolkit.support.lambda.SerializedLambda;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 
 import java.util.Map;
 import java.util.Optional;

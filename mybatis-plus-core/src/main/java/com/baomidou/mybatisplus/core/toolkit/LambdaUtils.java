@@ -17,8 +17,8 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.support.lambda.SFunction;
-import com.baomidou.mybatisplus.core.toolkit.support.lambda.SerializedLambda;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;

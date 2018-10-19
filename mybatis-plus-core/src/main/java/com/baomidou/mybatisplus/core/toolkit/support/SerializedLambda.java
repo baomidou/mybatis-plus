@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.baomidou.mybatisplus.core.toolkit.support.lambda;
+package com.baomidou.mybatisplus.core.toolkit.support;
 
 import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
@@ -53,7 +53,7 @@ public class SerializedLambda implements Serializable {
      * @param lambda lambda对象
      * @return 返回解析后的 SerializedLambda
      */
-    public static SerializedLambda resolve(SerializableLambda lambda) {
+    public static SerializedLambda resolve(SFunction lambda) {
         if (!lambda.getClass().isSynthetic()) {
             throw ExceptionUtils.mpe("该方法仅能传入 lambda 表达式产生的合成类");
         }

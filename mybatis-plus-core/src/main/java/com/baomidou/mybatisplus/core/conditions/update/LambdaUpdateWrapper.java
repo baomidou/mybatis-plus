@@ -20,7 +20,7 @@ import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
-import com.baomidou.mybatisplus.core.toolkit.support.lambda.SFunction;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 
 import java.util.ArrayList;
 import java.util.List;
