@@ -57,13 +57,14 @@ public abstract class AbstractLogicMethod extends AbstractMethod {
                 true);
             sqlScript += (StringPool.NEWLINE + table.getLogicDeleteSql(true, false) +
                 StringPool.NEWLINE);
-            sqlScript += SqlScriptUtils.convertIf(String.format(" ${%s}", Constants.WRAPPER_SQLSEGMENT),
-                String.format("%s != null and %s != '' and ew.notEmptyOfWhere", Constants.WRAPPER_SQLSEGMENT,
+            String normalsqlScript = SqlScriptUtils.convertIf(String.format("AND ${%s}", Constants.WRAPPER_SQLSEGMENT),
+                String.format("%s != null and %s != '' and ew.nonEmptyOfNormal", Constants.WRAPPER_SQLSEGMENT,
                     Constants.WRAPPER_SQLSEGMENT), true);
-            sqlScript += StringPool.NEWLINE;
-            sqlScript += SqlScriptUtils.convertIf(String.format(" ${%s}", Constants.WRAPPER_SQLSEGMENT),
-                String.format("%s != null and %s != '' and ew.emptyOfWhere", Constants.WRAPPER_SQLSEGMENT,
+            normalsqlScript += StringPool.NEWLINE;
+            normalsqlScript += SqlScriptUtils.convertIf(String.format(" ${%s}", Constants.WRAPPER_SQLSEGMENT),
+                String.format("%s != null and %s != '' and ew.emptyOfNormal", Constants.WRAPPER_SQLSEGMENT,
                     Constants.WRAPPER_SQLSEGMENT), true);
+            sqlScript += normalsqlScript;
             sqlScript = SqlScriptUtils.convertChoose("ew!=null", sqlScript,
                 table.getLogicDeleteSql(true, false));
             sqlScript = SqlScriptUtils.convertTrim(sqlScript, "WHERE", null, "AND|OR",

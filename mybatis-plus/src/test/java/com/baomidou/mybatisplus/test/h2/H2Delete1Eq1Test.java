@@ -47,9 +47,9 @@ public class H2Delete1Eq1Test extends BaseTest {
         for (long i = 0; i < 10L; i++) {
             defaultMapper.insert(new H2Student(i, "Tom长大了", 1));
         }
+        log(logicDeleteMapper.selectList(new QueryWrapper<>(h2User).eq("name","2").orderByAsc("name")));
         log(defaultMapper.selectList(new QueryWrapper<H2Student>().orderByAsc("id")));
         log(defaultMapper.selectOne(new QueryWrapper<H2Student>().last("limit 1")));
-
 
         H2Student h2Student = new H2Student();
         h2Student.setId(1L);

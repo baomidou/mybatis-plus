@@ -193,7 +193,7 @@ public abstract class AbstractMethod {
         sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", Constants.WRAPPER_ENTITY), true);
         sqlScript += StringPool.NEWLINE;
         sqlScript += SqlScriptUtils.convertIf(String.format(" ${%s}", Constants.WRAPPER_SQLSEGMENT),
-            String.format("%s != null and %s != '' and ew.notEmptyOfWhere", Constants.WRAPPER_SQLSEGMENT, Constants.WRAPPER_SQLSEGMENT),
+            String.format("%s != null and %s != '' and ew.nonEmptyOfWhere", Constants.WRAPPER_SQLSEGMENT, Constants.WRAPPER_SQLSEGMENT),
             true);
         sqlScript = SqlScriptUtils.convertTrim(sqlScript, "WHERE", null, "AND|OR", null);
         sqlScript += StringPool.NEWLINE;

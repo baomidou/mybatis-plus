@@ -15,12 +15,12 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
+import java.util.Objects;
+
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
-
-import java.util.Objects;
 
 /**
  * <p>
@@ -62,10 +62,29 @@ public abstract class Wrapper<T> implements ISqlSegment {
     public abstract MergeSegments getExpression();
 
     /**
-     * 查询条件为空
+     * 查询条件为空(包含entity)
      */
     public boolean isEmptyOfWhere() {
-        return CollectionUtils.isEmpty(getExpression().getNormal()) && !nonEntityNull();
+        return isEmptyOfNormal() && isEmptyOfEntity();
+    }
+    /**
+     * 查询条件不为空(包含entity)
+     */
+    public boolean nonEmptyOfWhere() {
+        return !isEmptyOfWhere();
+    }
+
+    /**
+     * 查询条件为空(不包含entity)
+     */
+    public boolean isEmptyOfNormal() {
+        return CollectionUtils.isEmpty(getExpression().getNormal());
+    }
+    /**
+     * 查询条件为空(不包含entity)
+     */
+    public boolean nonEmptyOfNormal() {
+        return !isEmptyOfNormal();
     }
 
     /**
@@ -73,17 +92,19 @@ public abstract class Wrapper<T> implements ISqlSegment {
      *
      * @return true 不为空
      */
-    private boolean nonEntityNull() {
+    public boolean nonEmptyOfEntity() {
         T entity = getEntity();
         return Objects.nonNull(getEntity()) && TableInfoHelper.getTableInfo(entity.getClass()).getFieldList().stream()
             .anyMatch(e -> Objects.nonNull(ReflectionKit.getMethodValue(entity, e.getProperty())));
     }
-
     /**
-     * 查询条件不为空
+     * 深层实体判断属性
+     *
+     * @return true 为空
      */
-    public boolean notEmptyOfWhere() {
-        return !isEmptyOfWhere();
+    public boolean isEmptyOfEntity() {
+        return !nonEmptyOfEntity();
     }
+
 }
 
