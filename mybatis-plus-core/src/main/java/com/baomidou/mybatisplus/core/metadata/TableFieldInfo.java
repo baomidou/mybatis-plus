@@ -160,7 +160,9 @@ public class TableFieldInfo {
         this.fieldStrategy = dbConfig.getFieldStrategy();
         this.setCondition(dbConfig);
         this.clazz = field.getDeclaringClass();
-        tableInfo.setLogicDelete(this.initLogicDelete(dbConfig, field));
+        if (!isLogicDelete()) {
+            tableInfo.setLogicDelete(this.initLogicDelete(dbConfig, field));
+        }
 
         String column = field.getName();
         if (tableInfo.isUnderCamel()) {
