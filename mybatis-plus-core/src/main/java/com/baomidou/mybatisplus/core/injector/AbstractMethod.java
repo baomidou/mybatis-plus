@@ -124,7 +124,7 @@ public abstract class AbstractMethod {
             sqlScript += SqlScriptUtils.convertIf(SqlScriptUtils.unSafeParam(Constants.U_WRAPPER_SQL_SET),
                 String.format("%s != null and %s != null", Constants.WRAPPER, Constants.U_WRAPPER_SQL_SET), false);
         }
-        sqlScript = SqlScriptUtils.convertTrim(sqlScript, "SET", null, null, ",");
+        sqlScript = SqlScriptUtils.convertSet(sqlScript);
         return sqlScript;
     }
 
@@ -195,7 +195,7 @@ public abstract class AbstractMethod {
         sqlScript += SqlScriptUtils.convertIf(String.format(" ${%s}", Constants.WRAPPER_SQLSEGMENT),
             String.format("%s != null and %s != '' and ew.nonEmptyOfWhere", Constants.WRAPPER_SQLSEGMENT, Constants.WRAPPER_SQLSEGMENT),
             true);
-        sqlScript = SqlScriptUtils.convertTrim(sqlScript, "WHERE", null, "AND|OR", null);
+        sqlScript = SqlScriptUtils.convertWhere(sqlScript);
         sqlScript += StringPool.NEWLINE;
         sqlScript += SqlScriptUtils.convertIf(String.format(" ${%s}", Constants.WRAPPER_SQLSEGMENT),
             String.format("%s != null and %s != '' and ew.emptyOfWhere", Constants.WRAPPER_SQLSEGMENT, Constants.WRAPPER_SQLSEGMENT),

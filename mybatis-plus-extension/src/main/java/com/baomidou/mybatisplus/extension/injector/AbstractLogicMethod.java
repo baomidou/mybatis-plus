@@ -67,8 +67,8 @@ public abstract class AbstractLogicMethod extends AbstractMethod {
             sqlScript += normalsqlScript;
             sqlScript = SqlScriptUtils.convertChoose("ew!=null", sqlScript,
                 table.getLogicDeleteSql(true, false));
-            sqlScript = SqlScriptUtils.convertTrim(sqlScript, "WHERE", null, "AND|OR",
-                null);
+            sqlScript = SqlScriptUtils.convertWhere(sqlScript);
+
             return sqlScript;
         }
         // 正常逻辑
@@ -84,7 +84,7 @@ public abstract class AbstractLogicMethod extends AbstractMethod {
             sqlScript = SqlScriptUtils.convertForeach(sqlScript, "cm", "k", "v", "AND");
             sqlScript = SqlScriptUtils.convertIf(sqlScript, "cm != null and !cm.isEmpty", true);
             sqlScript += (StringPool.NEWLINE + table.getLogicDeleteSql(true, false));
-            sqlScript = SqlScriptUtils.convertTrim(sqlScript, "WHERE", null, "AND", null);
+            sqlScript = SqlScriptUtils.convertWhere(sqlScript);
             return sqlScript;
         }
         return super.sqlWhereByMap(table);
