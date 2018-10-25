@@ -15,11 +15,12 @@
  */
 package com.baomidou.mybatisplus.core.injector;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.lang.reflect.WildcardType;
-
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
@@ -30,12 +31,10 @@ import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
 
 /**
  * <p>
@@ -185,10 +184,11 @@ public abstract class AbstractMethod {
      * EntityWrapper方式获取select where
      * </p>
      *
-     * @param table 表信息
+     * @param newLine 是否提到下一行
+     * @param table   表信息
      * @return String
      */
-    protected String sqlWhereEntityWrapper(TableInfo table) {
+    protected String sqlWhereEntityWrapper(boolean newLine, TableInfo table) {
         String sqlScript = table.getAllSqlWhere(false, true, Constants.WRAPPER_ENTITY_SPOT);
         sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", Constants.WRAPPER_ENTITY), true);
         sqlScript += StringPool.NEWLINE;
@@ -201,7 +201,7 @@ public abstract class AbstractMethod {
             String.format("%s != null and %s != '' and ew.emptyOfWhere", Constants.WRAPPER_SQLSEGMENT, Constants.WRAPPER_SQLSEGMENT),
             true);
         sqlScript = SqlScriptUtils.convertIf(sqlScript, "ew != null", true);
-        return sqlScript;
+        return newLine ? StringPool.NEWLINE + sqlScript : sqlScript;
     }
 
     /**

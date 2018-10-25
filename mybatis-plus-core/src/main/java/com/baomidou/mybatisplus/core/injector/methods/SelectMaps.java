@@ -15,14 +15,13 @@
  */
 package com.baomidou.mybatisplus.core.injector.methods;
 
-import java.util.Map;
-
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.SqlSource;
-
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.SqlSource;
+
+import java.util.Map;
 
 /**
  * <p>
@@ -38,7 +37,7 @@ public class SelectMaps extends AbstractMethod {
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.SELECT_MAPS;
         String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(tableInfo, true),
-            tableInfo.getTableName(), this.sqlWhereEntityWrapper(tableInfo));
+            tableInfo.getTableName(), this.sqlWhereEntityWrapper(true, tableInfo));
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
         return this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, Map.class, tableInfo);
     }
