@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.test.base.entity.mysql;
 
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -17,4 +18,6 @@ public class MysqlData {
     private Integer order;
     @TableField("`group`")
     private Integer group;
+    @TableField(strategy = FieldStrategy.NOT_EMPTY)
+    private String testStr;
 }

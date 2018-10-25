@@ -65,7 +65,7 @@ public class MysqlTestDataMapperTest {
             commonMapper.insert(new CommonData().setTestInt(i).setTestStr(String.format("第%s条数据", i)).setId(id)
                 .setTestEnum(TestEnum.ONE));
             commonLogicMapper.insert(new CommonLogicData().setTestInt(i).setTestStr(String.format("第%s条数据", i)).setId(id));
-            mysqlMapper.insert(new MysqlData().setOrder(i).setGroup(i).setId(id));
+            mysqlMapper.insert(new MysqlData().setOrder(i).setGroup(i).setId(id).setTestStr(String.format("第%s条数据", i)));
         }
     }
 
@@ -266,6 +266,13 @@ public class MysqlTestDataMapperTest {
     @Test
     public void d9_testSetSelect() {
         commonMapper.selectList(new QueryWrapper<>(new CommonData()).select(TableFieldInfo::isCharSequence));
+        commonMapper.selectList(new QueryWrapper<>(new CommonData().setTestStr("")));
+        commonMapper.selectList(new QueryWrapper<>(new CommonData().setTestStr("")).orderByAsc("test_int"));
+        commonMapper.selectList(new QueryWrapper<>(new CommonData().setTestStr("").setTestInt(12)).orderByAsc("test_int"));
+
+        mysqlMapper.selectList(Condition.create(new MysqlData().setTestStr("")));
+        mysqlMapper.selectList(Condition.create(new MysqlData().setTestStr("")).orderByAsc("`group`"));
+        mysqlMapper.selectList(Condition.create(new MysqlData().setTestStr("").setGroup(1)).orderByAsc("`group`"));
     }
 
     @Test
