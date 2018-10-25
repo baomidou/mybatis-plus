@@ -91,7 +91,6 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.UnknownTypeHandler;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.override.PageMapperMethod;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
@@ -145,7 +144,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
             parseCacheRef();
             Method[] methods = type.getMethods();
             // TODO 注入 CURD 动态 SQL (应该在注解之前注入)
-            if (BaseMapper.class.isAssignableFrom(type)) {
+            if (GlobalConfigUtils.getSuperMapperClass(configuration).isAssignableFrom(type)) {
                 GlobalConfigUtils.getSqlInjector(configuration).inspectInject(assistant, type);
             }
             for (Method method : methods) {
