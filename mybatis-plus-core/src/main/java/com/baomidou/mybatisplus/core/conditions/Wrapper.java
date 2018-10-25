@@ -101,10 +101,8 @@ public abstract class Wrapper<T> implements ISqlSegment {
      */
     public boolean nonEmptyOfEntity() {
         T entity = getEntity();
-        Class<?> entityClass = entity.getClass();
-        TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(entity.getClass());
         return Objects.nonNull(getEntity()) && tableInfo.getFieldList().stream().anyMatch(e -> fieldStrategyMatch(entity, tableInfo, e, true));
-
     }
 
     /**
