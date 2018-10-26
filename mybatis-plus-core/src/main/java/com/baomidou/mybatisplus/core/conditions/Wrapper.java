@@ -15,17 +15,15 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
-import java.util.Objects;
-
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
+
+import java.util.Objects;
 
 /**
  * <p>
@@ -35,7 +33,7 @@ import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
  * @author hubin
  * @since 2018-05-25
  */
-@SuppressWarnings("serial")
+@SuppressWarnings("all")
 public abstract class Wrapper<T> implements ISqlSegment {
 
     /**
@@ -101,32 +99,34 @@ public abstract class Wrapper<T> implements ISqlSegment {
      */
     public boolean nonEmptyOfEntity() {
         T entity = getEntity();
+        if (entity == null) {
+            return false;
+        }
         TableInfo tableInfo = TableInfoHelper.getTableInfo(entity.getClass());
-        return Objects.nonNull(getEntity()) && tableInfo.getFieldList().stream().anyMatch(e -> fieldStrategyMatch(entity, tableInfo, e, true));
+        if (tableInfo == null) {
+            return false;
+        }
+        if (StringUtils.isNotEmpty(tableInfo.getKeyProperty())) {
+            // 有主键
+            return Objects.nonNull(ReflectionKit.getMethodValue(entity, tableInfo.getKeyProperty())) &&
+                tableInfo.getFieldList().stream().anyMatch(e -> fieldStrategyMatch(entity, e));
+        } else {
+            // 无主键
+            return tableInfo.getFieldList().stream().anyMatch(e -> fieldStrategyMatch(entity, e));
+        }
     }
 
     /**
      * 根据实体FieldStrategy属性来决定判断逻辑
-     *
-     * @param entity
-     * @param tableInfo
-     * @param e
-     * @param isFirst
-     * @return
-     * @see FieldStrategy
      */
-    private boolean fieldStrategyMatch(T entity, TableInfo tableInfo, TableFieldInfo e, boolean isFirst) {
-        FieldStrategy fieldStrategy = e.getFieldStrategy();
-        switch (fieldStrategy) {
+    private boolean fieldStrategyMatch(T entity, TableFieldInfo e) {
+        switch (e.getFieldStrategy()) {
             case NOT_EMPTY:
                 return StringUtils.checkValNotNull(ReflectionKit.getMethodValue(entity, e.getProperty()));
             case NOT_NULL:
                 return Objects.nonNull(ReflectionKit.getMethodValue(entity, e.getProperty()));
             case DEFAULT:
-                if (!isFirst) {
-                    throw new MybatisPlusException("Error: Recursive nesting Exception! ");
-                }
-                return fieldStrategyMatch(entity, tableInfo, e, false);
+                return Objects.nonNull(ReflectionKit.getMethodValue(entity, e.getProperty()));
             case IGNORED:
                 return true;
             default:
@@ -143,6 +143,4 @@ public abstract class Wrapper<T> implements ISqlSegment {
     public boolean isEmptyOfEntity() {
         return !nonEmptyOfEntity();
     }
-
 }
-
