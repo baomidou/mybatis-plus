@@ -63,12 +63,30 @@ public class StringUtils {
     }
 
     /**
+     * 安全的进行字符串 format
+     *
+     * @param mustDo 肯定能 format
+     * @param target 目标字符串
+     * @param params format 参数
+     * @return format 后的
+     */
+    public static String format(boolean mustDo, String target, Object... params) {
+        if (mustDo) {
+            return String.format(target, params);
+        }
+        if (target.contains("%s") && ArrayUtils.isNotEmpty(params)) {
+            return String.format(target, params);
+        }
+        return target;
+    }
+
+    /**
      * <p>
      * Blob 转为 String 格式
      * </p>
      *
      * @param blob Blob 对象
-     * @return
+     * @return 转换后的
      */
     public static String blob2String(Blob blob) {
         if (null != blob) {

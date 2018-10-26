@@ -37,8 +37,8 @@ public final class ExceptionUtils {
      * @param t   异常信息
      * @return 返回异常
      */
-    public static MybatisPlusException mpe(String msg, Throwable t) {
-        return new MybatisPlusException(msg, t);
+    public static MybatisPlusException mpe(String msg, Throwable t, Object... params) {
+        return new MybatisPlusException(StringUtils.format(false, msg, params), t);
     }
 
     /**
@@ -47,8 +47,8 @@ public final class ExceptionUtils {
      * @param msg 消息
      * @return 返回异常
      */
-    public static MybatisPlusException mpe(String msg) {
-        return new MybatisPlusException(msg);
+    public static MybatisPlusException mpe(String msg, Object... params) {
+        return new MybatisPlusException(StringUtils.format(false, msg, params));
     }
 
     /**

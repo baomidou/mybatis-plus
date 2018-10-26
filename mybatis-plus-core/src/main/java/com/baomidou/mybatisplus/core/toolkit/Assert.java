@@ -36,9 +36,9 @@ public final class Assert {
      * @param expression boolean 值
      * @param message    消息
      */
-    public static void isTrue(boolean expression, String message) {
+    public static void isTrue(boolean expression, String message, Object... params) {
         if (!expression) {
-            throw ExceptionUtils.mpe(message);
+            throw ExceptionUtils.mpe(message, params);
         }
     }
 
@@ -49,8 +49,8 @@ public final class Assert {
      * @param expression boolean 值
      * @param message    消息
      */
-    public static void isFalse(boolean expression, String message) {
-        isTrue(!expression, message);
+    public static void isFalse(boolean expression, String message, Object... params) {
+        isTrue(!expression, message, params);
     }
 
     /**
@@ -60,8 +60,8 @@ public final class Assert {
      * @param object  对象
      * @param message 消息
      */
-    public static void isNull(Object object, String message) {
-        isTrue(object == null, message);
+    public static void isNull(Object object, String message, Object... params) {
+        isTrue(object == null, message, params);
     }
 
     /**
@@ -71,8 +71,8 @@ public final class Assert {
      * @param object  对象
      * @param message 消息
      */
-    public static void notNull(Object object, String message) {
-        isTrue(object != null, message);
+    public static void notNull(Object object, String message, Object... params) {
+        isTrue(object != null, message, params);
     }
 
     /**
@@ -82,8 +82,8 @@ public final class Assert {
      * @param collection 集合
      * @param message    消息
      */
-    public static void notEmpty(Collection<?> collection, String message) {
-        isTrue(CollectionUtils.isNotEmpty(collection), message);
+    public static void notEmpty(Collection<?> collection, String message, Object... params) {
+        isTrue(CollectionUtils.isNotEmpty(collection), message, params);
     }
 
     /**
@@ -93,8 +93,8 @@ public final class Assert {
      * @param map     集合
      * @param message 消息
      */
-    public static void notEmpty(Map<?, ?> map, String message) {
-        isTrue(CollectionUtils.isNotEmpty(map), message);
+    public static void notEmpty(Map<?, ?> map, String message, Object... params) {
+        isTrue(CollectionUtils.isNotEmpty(map), message, params);
     }
 
     /**
@@ -104,7 +104,7 @@ public final class Assert {
      * @param array   数组
      * @param message 消息
      */
-    public static void notEmpty(Object[] array, String message) {
-        isTrue(ArrayUtils.isNotEmpty(array), message);
+    public static void notEmpty(Object[] array, String message, Object... params) {
+        isTrue(ArrayUtils.isNotEmpty(array), message, params);
     }
 }

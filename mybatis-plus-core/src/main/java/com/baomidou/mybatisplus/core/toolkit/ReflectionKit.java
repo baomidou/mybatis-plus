@@ -15,26 +15,17 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toCollection;
-import static java.util.stream.Collectors.toMap;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.*;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toCollection;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * <p>
@@ -95,16 +86,13 @@ public class ReflectionKit {
     public static Object getMethodValue(Class<?> cls, Object entity, String str) {
         Map<String, Field> fieldMaps = getFieldMap(cls);
         try {
-            if (CollectionUtils.isEmpty(fieldMaps)) {
-                throw ExceptionUtils.mpe(String.format("Error: NoSuchField in %s for %s.  Cause:", cls.getSimpleName(), str));
-            }
+            Assert.notEmpty(fieldMaps, "Error: NoSuchField in %s for %s.  Cause:", cls.getSimpleName(), str);
             Method method = cls.getMethod(getMethodCapitalize(fieldMaps.get(str), str));
             return method.invoke(entity);
         } catch (NoSuchMethodException e) {
-            throw ExceptionUtils.mpe(String.format("Error: NoSuchMethod in %s.  Cause:", cls.getSimpleName()) + e);
+            throw ExceptionUtils.mpe("Error: NoSuchMethod in %s.  Cause:", e, cls.getSimpleName());
         } catch (IllegalAccessException e) {
-            throw ExceptionUtils.mpe(String.format("Error: Cannot execute a private method. in %s.  Cause:",
-                cls.getSimpleName()) + e);
+            throw ExceptionUtils.mpe("Error: Cannot execute a private method. in %s.  Cause:", e, cls.getSimpleName());
         } catch (InvocationTargetException e) {
             throw ExceptionUtils.mpe("Error: InvocationTargetException on getMethodValue.  Cause:" + e);
         }
@@ -230,5 +218,4 @@ public class ReflectionKit {
         superFieldList.stream().filter(field -> fieldMap.get(field.getName()) == null).forEach(fieldList::add);
         return fieldList;
     }
-
 }
