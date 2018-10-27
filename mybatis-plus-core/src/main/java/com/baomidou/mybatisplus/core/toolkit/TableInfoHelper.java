@@ -407,13 +407,15 @@ public class TableInfoHelper {
             // 首尾有转义符,手动在注解里设置了转义符,去除掉转义符
             column = column.substring(1, column.length() - 1);
         }
-        if (underCamel && column.contains(StringPool.UNDERSCORE)) {
+        String propertyUpper = property.toUpperCase(Locale.ENGLISH);
+        String columnUpper = column.toUpperCase(Locale.ENGLISH);
+        if (underCamel) {
             // 开启了驼峰并且 column 包含下划线
-            return !property.toUpperCase(Locale.ENGLISH).equals(
-                column.replace(StringPool.UNDERSCORE, StringPool.EMPTY).toUpperCase(Locale.ENGLISH));
+            return !(propertyUpper.equals(columnUpper) ||
+                propertyUpper.equals(columnUpper.replace(StringPool.UNDERSCORE, StringPool.EMPTY)));
         } else {
             // 未开启驼峰,直接判断 property 是否与 column 相同(全大写)
-            return !property.toUpperCase(Locale.ENGLISH).equals(column.toUpperCase(Locale.ENGLISH));
+            return !propertyUpper.equals(columnUpper);
         }
     }
 
