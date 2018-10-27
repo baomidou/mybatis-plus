@@ -15,13 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
-import static java.util.stream.Collectors.joining;
-
-import java.util.List;
-import java.util.function.Predicate;
-
-import org.apache.ibatis.session.Configuration;
-
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
@@ -31,11 +24,16 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
-
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.apache.ibatis.session.Configuration;
+
+import java.util.List;
+import java.util.function.Predicate;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * <p>
@@ -308,7 +306,7 @@ public class TableInfo {
     public String getLogicDeleteSql(boolean startWithAnd, boolean deleteValue) {
         if (logicDelete) {
             TableFieldInfo field = fieldList.stream().filter(TableFieldInfo::isLogicDelete).findFirst()
-                .orElseThrow(() -> ExceptionUtils.mpe(String.format("can't find the logicFiled from table {%s}", tableName)));
+                .orElseThrow(() -> ExceptionUtils.mpe("can't find the logicFiled from table {%s}", tableName));
             String formatStr = field.isCharSequence() ? "'%s'" : "%s";
             String logicDeleteSql = field.getColumn() + StringPool.EQUALS +
                 String.format(formatStr, deleteValue ? field.getLogicDeleteValue() : field.getLogicNotDeleteValue());

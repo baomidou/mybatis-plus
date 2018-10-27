@@ -75,7 +75,7 @@ public abstract class AbstractJsqlParser implements ISqlParser {
                     return SqlInfo.newInstance().setSql(sqlStringBuilder.toString());
                 }
             } catch (JSQLParserException e) {
-                throw ExceptionUtils.mpe("Failed to process, please exclude the tableName or statementId.\n Error SQL: " + sql, e);
+                throw ExceptionUtils.mpe("Failed to process, please exclude the tableName or statementId.\n Error SQL: %s", e, sql);
             }
         }
         return null;

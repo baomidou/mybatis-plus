@@ -96,7 +96,7 @@ public final class ClassUtils {
             constructor.setAccessible(true);
             return constructor.newInstance();
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw ExceptionUtils.mpe("实例化对象时出现错误,请尝试给 " + clazz.getName() + "添加无参的构造方法", e);
+            throw ExceptionUtils.mpe("实例化对象时出现错误,请尝试给 %s 添加无参的构造方法", e, clazz.getName());
         }
     }
 

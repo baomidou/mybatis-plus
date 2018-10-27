@@ -65,15 +65,11 @@ public class StringUtils {
     /**
      * 安全的进行字符串 format
      *
-     * @param mustDo 肯定能 format
      * @param target 目标字符串
      * @param params format 参数
      * @return format 后的
      */
-    public static String format(boolean mustDo, String target, Object... params) {
-        if (mustDo) {
-            return String.format(target, params);
-        }
+    public static String format(String target, Object... params) {
         if (target.contains("%s") && ArrayUtils.isNotEmpty(params)) {
             return String.format(target, params);
         }

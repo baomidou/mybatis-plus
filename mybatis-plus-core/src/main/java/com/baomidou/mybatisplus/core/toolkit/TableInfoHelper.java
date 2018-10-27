@@ -388,8 +388,8 @@ public class TableInfoHelper {
             }
             return true;
         }
-        throw ExceptionUtils.mpe(String.format("Class: %s, Field: %s, 'value' 'el' Length must be consistent.",
-            clazz.getName(), field.getName()));
+        throw ExceptionUtils.mpe("Class: %s, Field: %s, 'value' 'el' Length must be consistent.",
+            clazz.getName(), field.getName());
     }
 
     /**
@@ -425,8 +425,7 @@ public class TableInfoHelper {
      * </p>
      */
     private static void throwExceptionId(Class<?> clazz) {
-        throw ExceptionUtils.mpe("There must be only one, Discover multiple @TableId annotation in " +
-            clazz.getName());
+        throw ExceptionUtils.mpe("There must be only one, Discover multiple @TableId annotation in %s", clazz.getName());
     }
 
     /**
