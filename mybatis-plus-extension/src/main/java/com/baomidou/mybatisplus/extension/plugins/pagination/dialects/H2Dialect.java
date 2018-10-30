@@ -25,7 +25,6 @@ package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
  */
 public class H2Dialect implements IDialect {
 
-
     @Override
     public String buildPaginationSql(String originalSql, long offset, long limit) {
         StringBuilder sql = new StringBuilder(originalSql);

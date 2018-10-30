@@ -27,7 +27,6 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
  */
 public class DB2Dialect implements IDialect {
 
-
     private static String getRowNumber(String originalSql) {
         StringBuilder rownumber = new StringBuilder(50).append("rownumber() over(");
         int orderByIndex = originalSql.toLowerCase().indexOf("order by");

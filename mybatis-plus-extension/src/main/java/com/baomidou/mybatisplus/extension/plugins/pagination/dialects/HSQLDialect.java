@@ -27,11 +27,8 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
  */
 public class HSQLDialect implements IDialect {
 
-
     @Override
     public String buildPaginationSql(String originalSql, long offset, long limit) {
-        StringBuilder sql = new StringBuilder(originalSql);
-        sql.append(" limit ").append(offset).append(StringPool.COMMA).append(limit);
-        return sql.toString();
+        return originalSql + " limit " + offset + StringPool.COMMA + limit;
     }
 }
