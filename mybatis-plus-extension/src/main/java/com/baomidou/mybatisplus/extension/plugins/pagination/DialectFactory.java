@@ -26,7 +26,6 @@ import org.apache.ibatis.session.RowBounds;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-
 /**
  * <p>
  * 分页方言工厂类
@@ -43,53 +42,6 @@ public class DialectFactory {
     private static final Map<String, IDialect> DIALECT_CACHE = new ConcurrentHashMap<>();
 
     /**
-     * <p>
-     * 生成翻页执行 SQL
-     * </p>
-     *
-     * @param page         翻页对象
-     * @param buildSql     执行 SQL
-     * @param dbType       数据库类型
-     * @param dialectClazz 自定义方言实现类
-     * @return
-     * @throws Exception
-     */
-    public static String buildPaginationSql(Page page, String buildSql, DbType dbType, String dialectClazz)
-        throws Exception {
-        // fix #172, 196
-        return getDialect(dbType, dialectClazz).buildPaginationSql(buildSql, offsetCurrent(page), page.getSize());
-    }
-
-
-    /**
-     * <p>
-     * Page 分页偏移量
-     * </p>
-     */
-    public static long offsetCurrent(IPage page) {
-        if (null == page) {
-            return 0;
-        }
-        return offsetCurrent(page.getCurrent(), page.getSize());
-    }
-
-    /**
-     * <p>
-     * 计算当前分页偏移量
-     * </p>
-     *
-     * @param current 当前页
-     * @param size    每页显示数量
-     * @return
-     */
-    public static long offsetCurrent(long current, long size) {
-        if (current > 0) {
-            return (current - 1) * size;
-        }
-        return 0;
-    }
-
-    /**
      * Physical Page Interceptor for all the queries with parameter
      * {@link RowBounds}
      *
@@ -98,10 +50,8 @@ public class DialectFactory {
      * @param dbType       数据类型
      * @param dialectClazz 数据库方言
      * @return
-     * @throws Exception
      */
-    public static String buildPaginationSql(IPage page, String buildSql, DbType dbType, String dialectClazz)
-        throws Exception {
+    public static String buildPaginationSql(IPage page, String buildSql, DbType dbType, String dialectClazz) {
         // fix #196
         return getDialect(dbType, dialectClazz).buildPaginationSql(buildSql, page.offset(), page.getSize());
     }
@@ -114,9 +64,8 @@ public class DialectFactory {
      * @param dbType       数据库类型
      * @param dialectClazz 自定义方言实现类
      * @return
-     * @throws Exception
      */
-    private static IDialect getDialect(DbType dbType, String dialectClazz) throws Exception {
+    private static IDialect getDialect(DbType dbType, String dialectClazz) {
         IDialect dialect = DIALECT_CACHE.get(dbType.getDb());
         if (null == dialect) {
             // 自定义方言
@@ -133,6 +82,8 @@ public class DialectFactory {
                     }
                 } catch (ClassNotFoundException e) {
                     throw ExceptionUtils.mpe("Class : %s is not found", dialectClazz);
+                } catch (IllegalAccessException | InstantiationException e) {
+                    throw ExceptionUtils.mpe("Class : %s can not be instance", dialectClazz);
                 }
             } else {
                 // 缓存方言
