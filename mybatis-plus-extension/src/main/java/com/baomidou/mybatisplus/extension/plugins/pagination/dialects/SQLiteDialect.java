@@ -30,7 +30,6 @@ public class SQLiteDialect implements IDialect {
     @Override
     public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
         String sql = originalSql + " limit " + LIMIT + " offset " + OFFSET;
-        DialectModel model = new DialectModel(sql, limit, offset);
-        return model.setConsumerChain();
+        return new DialectModel(sql, limit, offset).setConsumerChain();
     }
 }

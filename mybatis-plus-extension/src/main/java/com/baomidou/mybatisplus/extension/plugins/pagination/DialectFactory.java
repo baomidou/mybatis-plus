@@ -122,8 +122,8 @@ public class DialectFactory {
 //                return new SQLServer2005Dialect();
             case POSTGRE_SQL:
                 return new PostgreDialect();
-//            case HSQL:
-//                return new HSQLDialect();
+            case HSQL:
+                return new HSQLDialect();
             case SQLITE:
                 return new SQLiteDialect();
             case DM:

@@ -30,7 +30,6 @@ public class SQLServerDialect implements IDialect {
     @Override
     public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
         String sql = originalSql + " OFFSET " + OFFSET + " ROWS FETCH NEXT " + LIMIT + " ROWS ONLY";
-        DialectModel model = new DialectModel(sql, offset, limit);
-        return model.setConsumerChain();
+        return new DialectModel(sql, offset, limit).setConsumerChain();
     }
 }

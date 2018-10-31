@@ -33,7 +33,6 @@ public class OracleDialect implements IDialect {
         String sql = "SELECT * FROM ( SELECT TMP.*, ROWNUM ROW_ID FROM ( " +
             originalSql + " ) TMP WHERE ROWNUM <=" + limit +
             ") WHERE ROW_ID > " + OFFSET;
-        DialectModel model = new DialectModel(sql, limit, offset);
-        return model.setConsumerChain();
+        return new DialectModel(sql, limit, offset).setConsumerChain();
     }
 }
