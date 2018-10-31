@@ -120,7 +120,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
      */
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
-        StatementHandler statementHandler = (StatementHandler) PluginUtils.realTarget(invocation.getTarget());
+        StatementHandler statementHandler = PluginUtils.realTarget(invocation.getTarget());
         MetaObject metaObject = SystemMetaObject.forObject(statementHandler);
 
         // SQL 解析

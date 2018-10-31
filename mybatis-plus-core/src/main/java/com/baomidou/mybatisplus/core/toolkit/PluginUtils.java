@@ -15,11 +15,11 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import java.lang.reflect.Proxy;
-import java.util.Properties;
-
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
+
+import java.lang.reflect.Proxy;
+import java.util.Properties;
 
 /**
  * <p>
@@ -29,29 +29,26 @@ import org.apache.ibatis.reflection.SystemMetaObject;
  * @author TaoYu , hubin
  * @since 2017-06-20
  */
-public abstract class PluginUtils {
-
+public final class PluginUtils {
     public static final String DELEGATE_BOUNDSQL_SQL = "delegate.boundSql.sql";
-
 
     private PluginUtils() {
         // to do nothing
     }
-
 
     /**
      * <p>
      * 获得真正的处理对象,可能多层代理.
      * </p>
      */
-    public static Object realTarget(Object target) {
+    @SuppressWarnings("unchecked")
+    public static <T> T realTarget(Object target) {
         if (Proxy.isProxyClass(target.getClass())) {
             MetaObject metaObject = SystemMetaObject.forObject(target);
             return realTarget(metaObject.getValue("h.target"));
         }
-        return target;
+        return (T) target;
     }
-
 
     /**
      * <p>
