@@ -1,6 +1,8 @@
 package com.baomidou.mybatisplus.extension.plugins.pagination;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.ibatis.mapping.ParameterMapping;
 
@@ -38,6 +40,7 @@ public class DialectModel {
     /**
      * 分页数据参数 map
      */
+    @Setter(value = AccessLevel.NONE)
     private Map<String, Long> dialectMap = new HashMap<>(2);
 
     public DialectModel putToDialectMap(long offset, long limit) {
