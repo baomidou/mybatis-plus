@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
+import java.util.Objects;
+
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
@@ -22,8 +24,6 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
-
-import java.util.Objects;
 
 /**
  * <p>
@@ -121,17 +121,14 @@ public abstract class Wrapper<T> implements ISqlSegment {
      */
     private boolean fieldStrategyMatch(T entity, TableFieldInfo e) {
         switch (e.getFieldStrategy()) {
-            case NOT_EMPTY:
-                return StringUtils.checkValNotNull(ReflectionKit.getMethodValue(entity, e.getProperty()));
             case NOT_NULL:
-                return Objects.nonNull(ReflectionKit.getMethodValue(entity, e.getProperty()));
-            case DEFAULT:
                 return Objects.nonNull(ReflectionKit.getMethodValue(entity, e.getProperty()));
             case IGNORED:
                 return true;
+            case NOT_EMPTY:
+                return StringUtils.checkValNotNull(ReflectionKit.getMethodValue(entity, e.getProperty()));
             default:
                 return Objects.nonNull(ReflectionKit.getMethodValue(entity, e.getProperty()));
-
         }
     }
 
