@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
+
 /**
  * <p>
  * 数据库 分页语句组装接口
@@ -31,7 +33,7 @@ public interface IDialect {
      * @param originalSql 原始语句
      * @param offset      偏移量
      * @param limit       界限
-     * @return 分页语句
+     * @return 分页模型
      */
-    String buildPaginationSql(String originalSql, long offset, long limit);
+    DialectModel buildPaginationSql(String originalSql, long offset, long limit);
 }

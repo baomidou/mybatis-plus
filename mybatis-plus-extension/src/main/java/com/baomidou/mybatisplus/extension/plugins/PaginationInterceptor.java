@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.core.parser.SqlInfo;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.extension.handlers.AbstractSqlParserHandler;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
+import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.extension.toolkit.SqlParserUtils;
 import lombok.Setter;
@@ -30,19 +31,19 @@ import lombok.experimental.Accessors;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.plugin.*;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.RowBounds;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 import static java.util.stream.Collectors.joining;
 
@@ -171,13 +172,18 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
             }
         }
         String buildSql = concatOrderBy(originalSql, page, orderBy);
-        originalSql = DialectFactory.buildPaginationSql(page, buildSql, dbType, dialectClazz);
+        DialectModel model = DialectFactory.buildPaginationSql(page, buildSql, dbType, dialectClazz);
 
+        Configuration configuration = mappedStatement.getConfiguration();
+        List<ParameterMapping> mappings = new ArrayList<>(boundSql.getParameterMappings());
+        model.consumers(mappings, configuration);
+        metaObject.setValue("delegate.boundSql.parameterMappings", mappings);
+        metaObject.setValue("delegate.boundSql.additionalParameters", model.getDialectMap());
         /*
          * <p> 禁用内存分页 </p>
          * <p> 内存分页会查询所有结果出来处理（这个很吓人的），如果结果变化频繁这个数据还会不准。</p>
          */
-        metaObject.setValue("delegate.boundSql.sql", originalSql);
+        metaObject.setValue("delegate.boundSql.sql", model.getDialectSql());
         metaObject.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
         metaObject.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
         return invocation.proceed();

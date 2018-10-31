@@ -20,7 +20,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.*;
+import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect;
+import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.MySqlDialect;
 import org.apache.ibatis.session.RowBounds;
 
 import java.util.Map;
@@ -49,9 +50,9 @@ public class DialectFactory {
      * @param buildSql     编译 SQL
      * @param dbType       数据类型
      * @param dialectClazz 数据库方言
-     * @return
+     * @return 分页模型
      */
-    public static String buildPaginationSql(IPage page, String buildSql, DbType dbType, String dialectClazz) {
+    public static DialectModel buildPaginationSql(IPage page, String buildSql, DbType dbType, String dialectClazz) {
         // fix #196
         return getDialect(dbType, dialectClazz).buildPaginationSql(buildSql, page.offset(), page.getSize());
     }
@@ -108,26 +109,26 @@ public class DialectFactory {
         switch (dbType) {
             case MYSQL:
                 return new MySqlDialect();
-            case MARIADB:
-                return new MariaDBDialect();
-            case ORACLE:
-                return new OracleDialect();
-            case DB2:
-                return new DB2Dialect();
-            case H2:
-                return new H2Dialect();
-            case SQL_SERVER:
-                return new SQLServerDialect();
-            case SQL_SERVER2005:
-                return new SQLServer2005Dialect();
-            case POSTGRE_SQL:
-                return new PostgreDialect();
-            case HSQL:
-                return new HSQLDialect();
-            case SQLITE:
-                return new SQLiteDialect();
-            case DM:
-                return new DmDialect();
+//            case MARIADB:
+//                return new MariaDBDialect();
+//            case ORACLE:
+//                return new OracleDialect();
+//            case DB2:
+//                return new DB2Dialect();
+//            case H2:
+//                return new H2Dialect();
+//            case SQL_SERVER:
+//                return new SQLServerDialect();
+//            case SQL_SERVER2005:
+//                return new SQLServer2005Dialect();
+//            case POSTGRE_SQL:
+//                return new PostgreDialect();
+//            case HSQL:
+//                return new HSQLDialect();
+//            case SQLITE:
+//                return new SQLiteDialect();
+//            case DM:
+//                return new DmDialect();
             default:
                 throw ExceptionUtils.mpe("The Database's IDialect Not Supported!");
         }

@@ -56,7 +56,12 @@ public class DialectModel {
      * 分页数据参数 map
      */
     @Setter(value = AccessLevel.NONE)
-    private Map<String, Long> dialectMap = new HashMap<>(2);
+    private Map<String, Long> dialectMap;
+
+    public DialectModel(String dialectSql, long offset, long limit) {
+        this.dialectSql = dialectSql;
+        this.putToDialectMap(offset, limit);
+    }
 
     /**
      * 设置消费
@@ -117,11 +122,10 @@ public class DialectModel {
      *
      * @param offset 偏移量
      * @param limit  范围量
-     * @return this
      */
-    public DialectModel putToDialectMap(long offset, long limit) {
+    private void putToDialectMap(long offset, long limit) {
+        dialectMap = new HashMap<>(2);
         dialectMap.put(OFFSET_NAME, offset);
         dialectMap.put(LIMIT_NAME, limit);
-        return this;
     }
 }
