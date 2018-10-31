@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
 
 /**
@@ -30,11 +29,11 @@ public class OracleDialect implements IDialect {
 
     @Override
     public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
-        long firstParam = (offset >= 1) ? (offset + limit) : limit;
+        limit = (offset >= 1) ? (offset + limit) : limit;
         String sql = "SELECT * FROM ( SELECT TMP.*, ROWNUM ROW_ID FROM ( " +
-            originalSql + " ) TMP WHERE ROWNUM <=" + StringPool.QUESTION_MARK +
-            ") WHERE ROW_ID > " + StringPool.QUESTION_MARK;
-        DialectModel model = new DialectModel(sql, firstParam, offset);
-        return model.setConsumer(true).setConsumer(false);
+            originalSql + " ) TMP WHERE ROWNUM <=" + limit +
+            ") WHERE ROW_ID > " + OFFSET;
+        DialectModel model = new DialectModel(sql, limit, offset);
+        return model.setConsumerChain();
     }
 }

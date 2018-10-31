@@ -30,16 +30,7 @@ public class MySqlDialect implements IDialect {
 
     @Override
     public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
-        String sql;
-        boolean existOffset = true;
-        if (offset == 0) {
-            existOffset = false;
-            sql = originalSql + " LIMIT " + StringPool.QUESTION_MARK;
-        } else {
-            sql = originalSql + " LIMIT " + StringPool.QUESTION_MARK + StringPool.COMMA + StringPool.QUESTION_MARK;
-        }
-        DialectModel model = new DialectModel(sql, offset, limit);
-        model.setConsumer(false);
-        return existOffset ? model.setConsumer(true) : model;
+        String sql = originalSql + " LIMIT " + OFFSET + StringPool.COMMA + LIMIT;
+        return new DialectModel(sql, offset, limit).setConsumerChain();
     }
 }

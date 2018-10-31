@@ -24,8 +24,8 @@ import java.util.function.Supplier;
 @Getter
 @Accessors(chain = true)
 public class DialectModel {
-    public static final String OFFSET_NAME = "mybatis_plus_first";
-    public static final String LIMIT_NAME = "mybatis_plus_second";
+    public static final String FIRST_PARAM_NAME = "mybatis_plus_first";
+    public static final String SECOND_PARAM_NAME = "mybatis_plus_second";
 
     /**
      * 分页方言 sql
@@ -73,10 +73,10 @@ public class DialectModel {
     public DialectModel setConsumer(boolean isFirstParam, Function<List<ParameterMapping>, Integer> function) {
         if (isFirstParam) {
             firstParamConsumer = i -> i.add(function.apply(mappingsSupplier.get()),
-                new ParameterMapping.Builder(configurationSupplier.get(), OFFSET_NAME, long.class).build());
+                new ParameterMapping.Builder(configurationSupplier.get(), FIRST_PARAM_NAME, long.class).build());
         } else {
             secondParamConsumer = i -> i.add(function.apply(mappingsSupplier.get()),
-                new ParameterMapping.Builder(configurationSupplier.get(), LIMIT_NAME, long.class).build());
+                new ParameterMapping.Builder(configurationSupplier.get(), SECOND_PARAM_NAME, long.class).build());
         }
         return this;
     }
@@ -91,12 +91,23 @@ public class DialectModel {
     public DialectModel setConsumer(boolean isFirstParam) {
         if (isFirstParam) {
             firstParamConsumer = i -> i.add(new ParameterMapping.Builder(configurationSupplier.get(),
-                OFFSET_NAME, long.class).build());
+                FIRST_PARAM_NAME, long.class).build());
         } else {
             secondParamConsumer = i -> i.add(new ParameterMapping.Builder(configurationSupplier.get(),
-                LIMIT_NAME, long.class).build());
+                SECOND_PARAM_NAME, long.class).build());
         }
         return this;
+    }
+
+    /**
+     * 设置消费
+     * <p>
+     * 不带下标的,两个值都有
+     *
+     * @return this
+     */
+    public DialectModel setConsumerChain() {
+        return setConsumer(true).setConsumer(false);
     }
 
     /**
@@ -119,7 +130,7 @@ public class DialectModel {
      */
     private void putToDialectMap(long firstParam, long secondParam) {
         dialectMap = new HashMap<>(2);
-        dialectMap.put(OFFSET_NAME, firstParam);
-        dialectMap.put(LIMIT_NAME, secondParam);
+        dialectMap.put(FIRST_PARAM_NAME, firstParam);
+        dialectMap.put(SECOND_PARAM_NAME, secondParam);
     }
 }
