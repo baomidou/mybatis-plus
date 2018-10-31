@@ -67,7 +67,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
     /**
      * 反射获取BoundSql中additionalParameters参数字段
      *
-     * @return
+     * @return additionalParameters 字段
      * @see BoundSql
      */
     private static Field getAdditionalParametersField() {
@@ -86,7 +86,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
      * 批量（填充主键 ID）
      * </p>
      *
-     * @param ms
+     * @param ms MappedStatement
      * @param parameterObject 插入数据库对象
      * @return
      */
@@ -226,11 +226,11 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         return metaObject.getOriginalObject();
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public void setParameters(PreparedStatement ps) {
         // 反射获取动态参数
-        Map<String, Object> additionalParameters = null;
+        Map<String, Object> additionalParameters = Collections.emptyMap();
         try {
             additionalParameters = (Map<String, Object>) ADDITIONAL_PARAMETERS_FIELD.get(boundSql);
         } catch (IllegalAccessException e) {
@@ -245,8 +245,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                     Object value;
                     String propertyName = parameterMapping.getProperty();
                     if (boundSql.hasAdditionalParameter(propertyName)) {
-                        //issue#448 ask first for additional params
-                        value = boundSql.getAdditionalParameter(propertyName);
+                        value = additionalParameters.get(propertyName);
                     } else if (parameterObject == null) {
                         value = null;
                     } else if (typeHandlerRegistry.hasTypeHandler(parameterObject.getClass())) {
@@ -254,10 +253,6 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                     } else {
                         MetaObject metaObject = configuration.newMetaObject(parameterObject);
                         value = metaObject.getValue(propertyName);
-                        if (value == null && CollectionUtils.isNotEmpty(additionalParameters)) {
-                            // issue #138
-                            value = additionalParameters.get(propertyName);
-                        }
                     }
                     TypeHandler typeHandler = parameterMapping.getTypeHandler();
                     JdbcType jdbcType = parameterMapping.getJdbcType();
