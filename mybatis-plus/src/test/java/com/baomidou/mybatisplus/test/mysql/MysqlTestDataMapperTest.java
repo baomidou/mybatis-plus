@@ -287,4 +287,10 @@ public class MysqlTestDataMapperTest {
         commonMapper.selectList(Condition.lambda(new CommonData().setTestInt(12)).orderByAsc(CommonData::getCreateDatetime));
         commonLogicMapper.selectList(Condition.lambda(new CommonLogicData().setTestInt(12)).orderByAsc(CommonLogicData::getCreateDatetime));
     }
+
+    @Test
+    public void xxx() {
+        mysqlMapper.selectPage(new Page<>(1, 5),
+            Condition.<MysqlData>create().gt("`order`", 1).gt("`group`", 2));
+    }
 }
