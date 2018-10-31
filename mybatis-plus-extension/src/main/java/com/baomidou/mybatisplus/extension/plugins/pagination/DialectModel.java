@@ -24,8 +24,8 @@ import java.util.function.Supplier;
 @Getter
 @Accessors(chain = true)
 public class DialectModel {
-    public static final String OFFSET_NAME = "mybatis_plus_offset";
-    public static final String LIMIT_NAME = "mybatis_plus_limit";
+    public static final String OFFSET_NAME = "mybatis_plus_first";
+    public static final String LIMIT_NAME = "mybatis_plus_second";
 
     /**
      * 分页方言 sql
@@ -45,12 +45,12 @@ public class DialectModel {
     /**
      * 消费偏移量
      */
-    private Consumer<List<ParameterMapping>> offsetConsumer = i -> {
+    private Consumer<List<ParameterMapping>> firstParamConsumer = i -> {
     };
     /**
      * 消费范围量
      */
-    private Consumer<List<ParameterMapping>> limitConsumer = i -> {
+    private Consumer<List<ParameterMapping>> secondParamConsumer = i -> {
     };
     /**
      * 分页数据参数 map
@@ -58,9 +58,9 @@ public class DialectModel {
     @Setter(value = AccessLevel.NONE)
     private Map<String, Long> dialectMap;
 
-    public DialectModel(String dialectSql, long offset, long limit) {
+    public DialectModel(String dialectSql, long firstParam, long secondParam) {
         this.dialectSql = dialectSql;
-        this.putToDialectMap(offset, limit);
+        this.putToDialectMap(firstParam, secondParam);
     }
 
     /**
@@ -68,16 +68,14 @@ public class DialectModel {
      * <p>
      * 带下标的
      *
-     * @param isOffset 是否是 offset
-     * @param function 提供 index
      * @return this
      */
-    public DialectModel setConsumer(boolean isOffset, Function<List<ParameterMapping>, Integer> function) {
-        if (isOffset) {
-            offsetConsumer = i -> i.add(function.apply(mappingsSupplier.get()),
+    public DialectModel setConsumer(boolean isFirstParam, Function<List<ParameterMapping>, Integer> function) {
+        if (isFirstParam) {
+            firstParamConsumer = i -> i.add(function.apply(mappingsSupplier.get()),
                 new ParameterMapping.Builder(configurationSupplier.get(), OFFSET_NAME, long.class).build());
         } else {
-            limitConsumer = i -> i.add(function.apply(mappingsSupplier.get()),
+            secondParamConsumer = i -> i.add(function.apply(mappingsSupplier.get()),
                 new ParameterMapping.Builder(configurationSupplier.get(), LIMIT_NAME, long.class).build());
         }
         return this;
@@ -88,15 +86,14 @@ public class DialectModel {
      * <p>
      * 不带下标的
      *
-     * @param isOffset 是否是 offset
      * @return this
      */
-    public DialectModel setConsumer(boolean isOffset) {
-        if (isOffset) {
-            offsetConsumer = i -> i.add(new ParameterMapping.Builder(configurationSupplier.get(),
+    public DialectModel setConsumer(boolean isFirstParam) {
+        if (isFirstParam) {
+            firstParamConsumer = i -> i.add(new ParameterMapping.Builder(configurationSupplier.get(),
                 OFFSET_NAME, long.class).build());
         } else {
-            limitConsumer = i -> i.add(new ParameterMapping.Builder(configurationSupplier.get(),
+            secondParamConsumer = i -> i.add(new ParameterMapping.Builder(configurationSupplier.get(),
                 LIMIT_NAME, long.class).build());
         }
         return this;
@@ -113,19 +110,16 @@ public class DialectModel {
         Assert.notNull(configuration, "configuration must not be null!");
         configurationSupplier = () -> configuration;
         mappingsSupplier = () -> mappings;
-        offsetConsumer.accept(mappings);
-        limitConsumer.accept(mappings);
+        firstParamConsumer.accept(mappings);
+        secondParamConsumer.accept(mappings);
     }
 
     /**
      * 存储 offset 和 limit
-     *
-     * @param offset 偏移量
-     * @param limit  范围量
      */
-    private void putToDialectMap(long offset, long limit) {
+    private void putToDialectMap(long firstParam, long secondParam) {
         dialectMap = new HashMap<>(2);
-        dialectMap.put(OFFSET_NAME, offset);
-        dialectMap.put(LIMIT_NAME, limit);
+        dialectMap.put(OFFSET_NAME, firstParam);
+        dialectMap.put(LIMIT_NAME, secondParam);
     }
 }
