@@ -29,11 +29,11 @@ public class H2Dialect implements IDialect {
 
     @Override
     public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
-        String sql = originalSql + " limit " + LIMIT;
+        String sql = originalSql + " limit " + FIRST_MARK;
         boolean existOffset = false;
         if (offset > 0) {
             existOffset = true;
-            sql += (" offset " + OFFSET);
+            sql += (" offset " + SECOND_MARK);
         }
         DialectModel model = new DialectModel(sql, limit, offset);
         return existOffset ? model.setConsumerChain() : model.setConsumer(true);

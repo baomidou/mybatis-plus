@@ -31,8 +31,8 @@ public interface IDialect {
      * 这俩没什么特殊意义
      * 只是为了实现类方便使用,以及区分分页 sql 的参数
      */
-    String LIMIT = StringPool.QUESTION_MARK;
-    String OFFSET = StringPool.QUESTION_MARK;
+    String FIRST_MARK = StringPool.QUESTION_MARK;
+    String SECOND_MARK = StringPool.QUESTION_MARK;
 
     /**
      * 组装分页语句

@@ -29,7 +29,7 @@ public class PostgreDialect implements IDialect {
 
     @Override
     public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
-        String sql = originalSql + " limit " + LIMIT + " offset " + OFFSET;
+        String sql = originalSql + " limit " + FIRST_MARK + " offset " + SECOND_MARK;
         return new DialectModel(sql, limit, offset).setConsumerChain();
     }
 }

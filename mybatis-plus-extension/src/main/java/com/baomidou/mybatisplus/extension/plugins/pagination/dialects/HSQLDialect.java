@@ -30,7 +30,7 @@ public class HSQLDialect implements IDialect {
 
     @Override
     public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
-        String sql = originalSql + " limit " + OFFSET + StringPool.COMMA + LIMIT;
+        String sql = originalSql + " limit " + FIRST_MARK + StringPool.COMMA + SECOND_MARK;
         return new DialectModel(sql, offset, limit).setConsumerChain();
     }
 }

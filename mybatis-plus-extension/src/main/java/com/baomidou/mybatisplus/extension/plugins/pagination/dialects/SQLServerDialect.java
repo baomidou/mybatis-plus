@@ -29,7 +29,7 @@ public class SQLServerDialect implements IDialect {
 
     @Override
     public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
-        String sql = originalSql + " OFFSET " + OFFSET + " ROWS FETCH NEXT " + LIMIT + " ROWS ONLY";
+        String sql = originalSql + " OFFSET " + FIRST_MARK + " ROWS FETCH NEXT " + SECOND_MARK + " ROWS ONLY";
         return new DialectModel(sql, offset, limit).setConsumerChain();
     }
 }
