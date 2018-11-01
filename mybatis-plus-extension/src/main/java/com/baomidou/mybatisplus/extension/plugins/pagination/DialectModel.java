@@ -38,11 +38,6 @@ public class DialectModel {
     @Getter(AccessLevel.NONE)
     private Supplier<Configuration> configurationSupplier = () -> null;
     /**
-     * 提供 List<ParameterMapping>
-     */
-    @Getter(AccessLevel.NONE)
-    private Supplier<List<ParameterMapping>> mappingsSupplier = () -> null;
-    /**
      * 消费偏移量
      */
     private Consumer<List<ParameterMapping>> firstParamConsumer = i -> {
@@ -72,11 +67,11 @@ public class DialectModel {
      */
     public DialectModel setConsumer(boolean isFirstParam, Function<List<ParameterMapping>, Integer> function) {
         if (isFirstParam) {
-            firstParamConsumer = i -> i.add(function.apply(mappingsSupplier.get()),
-                new ParameterMapping.Builder(configurationSupplier.get(), FIRST_PARAM_NAME, long.class).build());
+            firstParamConsumer = i -> i.add(function.apply(i), new ParameterMapping
+                .Builder(configurationSupplier.get(), FIRST_PARAM_NAME, long.class).build());
         } else {
-            secondParamConsumer = i -> i.add(function.apply(mappingsSupplier.get()),
-                new ParameterMapping.Builder(configurationSupplier.get(), SECOND_PARAM_NAME, long.class).build());
+            secondParamConsumer = i -> i.add(function.apply(i), new ParameterMapping
+                .Builder(configurationSupplier.get(), SECOND_PARAM_NAME, long.class).build());
         }
         return this;
     }
@@ -120,7 +115,6 @@ public class DialectModel {
         Assert.notNull(mappings, "List<ParameterMapping> must not be null!");
         Assert.notNull(configuration, "configuration must not be null!");
         configurationSupplier = () -> configuration;
-        mappingsSupplier = () -> mappings;
         firstParamConsumer.accept(mappings);
         secondParamConsumer.accept(mappings);
     }
