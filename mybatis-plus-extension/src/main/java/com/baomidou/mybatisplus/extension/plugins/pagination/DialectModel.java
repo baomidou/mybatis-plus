@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * 分页参数动态化所需 model
@@ -36,7 +35,7 @@ public class DialectModel {
      * 提供 Configuration
      */
     @Getter(AccessLevel.NONE)
-    private Supplier<Configuration> configurationSupplier = () -> null;
+    private Configuration configuration;
     /**
      * 消费偏移量
      */
@@ -62,16 +61,20 @@ public class DialectModel {
      * 设置消费
      * <p>
      * 带下标的
+     * <p>
+     * mark: 标记一下,暂时没看到哪个数据库的分页方言会存在使用该方法
+     * </p>
      *
      * @return this
      */
+    @SuppressWarnings("unused")
     public DialectModel setConsumer(boolean isFirstParam, Function<List<ParameterMapping>, Integer> function) {
         if (isFirstParam) {
             firstParamConsumer = i -> i.add(function.apply(i), new ParameterMapping
-                .Builder(configurationSupplier.get(), FIRST_PARAM_NAME, long.class).build());
+                .Builder(configuration, FIRST_PARAM_NAME, long.class).build());
         } else {
             secondParamConsumer = i -> i.add(function.apply(i), new ParameterMapping
-                .Builder(configurationSupplier.get(), SECOND_PARAM_NAME, long.class).build());
+                .Builder(configuration, SECOND_PARAM_NAME, long.class).build());
         }
         return this;
     }
@@ -85,11 +88,9 @@ public class DialectModel {
      */
     public DialectModel setConsumer(boolean isFirstParam) {
         if (isFirstParam) {
-            firstParamConsumer = i -> i.add(new ParameterMapping.Builder(configurationSupplier.get(),
-                FIRST_PARAM_NAME, long.class).build());
+            firstParamConsumer = i -> i.add(new ParameterMapping.Builder(configuration, FIRST_PARAM_NAME, long.class).build());
         } else {
-            secondParamConsumer = i -> i.add(new ParameterMapping.Builder(configurationSupplier.get(),
-                SECOND_PARAM_NAME, long.class).build());
+            secondParamConsumer = i -> i.add(new ParameterMapping.Builder(configuration, SECOND_PARAM_NAME, long.class).build());
         }
         return this;
     }
@@ -114,7 +115,7 @@ public class DialectModel {
     public void consumers(List<ParameterMapping> mappings, Configuration configuration) {
         Assert.notNull(mappings, "List<ParameterMapping> must not be null!");
         Assert.notNull(configuration, "configuration must not be null!");
-        configurationSupplier = () -> configuration;
+        this.configuration = configuration;
         firstParamConsumer.accept(mappings);
         secondParamConsumer.accept(mappings);
     }

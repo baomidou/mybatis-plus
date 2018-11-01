@@ -112,8 +112,8 @@ public class DialectFactory {
                 return new MariaDBDialect();
             case ORACLE:
                 return new OracleDialect();
-//            case DB2:
-//                return new DB2Dialect();
+            case DB2:
+                return new DB2Dialect();
             case H2:
                 return new H2Dialect();
             case SQL_SERVER:
