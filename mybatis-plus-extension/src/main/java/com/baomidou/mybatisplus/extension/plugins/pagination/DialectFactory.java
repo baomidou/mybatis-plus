@@ -118,8 +118,8 @@ public class DialectFactory {
                 return new H2Dialect();
             case SQL_SERVER:
                 return new SQLServerDialect();
-//            case SQL_SERVER2005:
-//                return new SQLServer2005Dialect();
+            case SQL_SERVER2005:
+                return new SQLServer2005Dialect();
             case POSTGRE_SQL:
                 return new PostgreDialect();
             case HSQL:
