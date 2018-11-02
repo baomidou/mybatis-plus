@@ -33,8 +33,8 @@ import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
  * Update 条件封装
  * </p>
  *
- * @author hubin miemie HCL
- * @since 2018-05-30
+ * @author yangyuhan
+ * @since 2018-11-02
  */
 @SuppressWarnings("serial")
 public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T>> {
@@ -69,6 +69,11 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
      */
     public LambdaUpdateWrapper<T> lambda() {
         return new LambdaUpdateWrapper<>(entity, paramNameSeq, paramNameValuePairs, expression);
+    }
+
+
+    public LambdaUpdateWrapperKt<T> lambdaKt() {
+        return new LambdaUpdateWrapperKt<>(entity, paramNameSeq, paramNameValuePairs, expression);
     }
 
     @Override
