@@ -15,18 +15,18 @@
  */
 package com.baomidou.mybatisplus.core.conditions.update;
 
-import static java.util.stream.Collectors.joining;
+import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
+import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
-import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
+import static java.util.stream.Collectors.joining;
 
 /**
  * <p>
@@ -69,6 +69,15 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
      */
     public LambdaUpdateWrapper<T> lambda() {
         return new LambdaUpdateWrapper<>(entity, paramNameSeq, paramNameValuePairs, expression);
+    }
+
+    /**
+     * <p>
+     * 返回一个支持 kotlin  lambda 函数写法的 wrapper
+     * </p>
+     */
+    public LambdaUpdateWrapperKt<T> lambdaKt() {
+        return new LambdaUpdateWrapperKt<>(entity, paramNameSeq, paramNameValuePairs, expression);
     }
 
     @Override
