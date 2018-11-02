@@ -69,8 +69,9 @@ public final class LambdaUtils {
      * @param tableInfo 表信息
      */
     public static void createCache(Class clazz, TableInfo tableInfo) {
-        LAMBDA_CACHE.put(clazz.getName(), createLambdaMap(tableInfo, clazz));
-
+        Map<String, String> lambdaMap = createLambdaMap(tableInfo, clazz);
+        LAMBDA_CACHE.put(clazz.getName(), lambdaMap);
+        LambdaUtilsKt.createCatch(clazz,lambdaMap);
     }
 
     /**
@@ -122,4 +123,8 @@ public final class LambdaUtils {
     public static Map<String, String> getColumnMap(String entityClassName) {
         return LAMBDA_CACHE.get(entityClassName);
     }
+
+
+
+
 }
