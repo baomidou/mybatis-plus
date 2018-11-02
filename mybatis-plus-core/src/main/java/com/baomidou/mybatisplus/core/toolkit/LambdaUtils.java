@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 
 import java.lang.ref.WeakReference;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -122,6 +123,6 @@ public final class LambdaUtils {
      * @return 缓存 map
      */
     public static Map<String, String> getColumnMap(String entityClassName) {
-        return LAMBDA_CACHE.get(entityClassName);
+        return LAMBDA_CACHE.getOrDefault(entityClassName, Collections.emptyMap());
     }
 }

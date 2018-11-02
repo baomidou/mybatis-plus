@@ -47,14 +47,13 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     }
 
     public LambdaQueryWrapper(T entity) {
-        this.entity = entity;
-        this.initEntityClass();
+        this.setEntity(entity);
         this.initNeed();
     }
 
     LambdaQueryWrapper(T entity, Class<T> entityClass, String sqlSelect, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs,
                        MergeSegments mergeSegments) {
-        this.entity = entity;
+        this.setEntity(entity);
         this.paramNameSeq = paramNameSeq;
         this.paramNameValuePairs = paramNameValuePairs;
         this.expression = mergeSegments;

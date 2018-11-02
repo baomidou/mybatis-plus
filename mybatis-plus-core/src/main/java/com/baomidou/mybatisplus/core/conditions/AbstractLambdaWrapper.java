@@ -42,19 +42,29 @@ public abstract class AbstractLambdaWrapper<T, This extends AbstractLambdaWrappe
     private boolean initColumnMap = false;
 
     @Override
+    protected void initEntityClass() {
+        super.initEntityClass();
+        if (entityClass != null) {
+            columnMap = LambdaUtils.getColumnMap(entityClass.getName());
+            initColumnMap = true;
+        }
+    }
+
+    @Override
     protected String columnToString(SFunction<T, ?> column) {
         return getColumn(LambdaUtils.resolve(column));
     }
 
     private String getColumn(SerializedLambda lambda) {
         String fieldName = StringUtils.resolveFieldName(lambda.getImplMethodName());
-        if (!initColumnMap || columnMap.get(fieldName) == null) {
+        if (!initColumnMap || !columnMap.containsKey(fieldName)) {
             String entityClassName = lambda.getImplClassName();
             columnMap = LambdaUtils.getColumnMap(entityClassName);
-            Assert.notEmpty(columnMap, "该模式不能应用于非 baseMapper 的泛型 entity 之外的 entity!");
+            Assert.notEmpty(columnMap, "cannot find column's cache for %s, so you cannot used %s!",
+                entityClassName, typedThis.getClass());
             initColumnMap = true;
         }
         return Optional.ofNullable(columnMap.get(fieldName))
-            .orElseThrow(() -> ExceptionUtils.mpe("该模式不能应用于非数据库字段!"));
+            .orElseThrow(() -> ExceptionUtils.mpe("your property named %s cannot find the corresponding database column name!", fieldName));
     }
 }
