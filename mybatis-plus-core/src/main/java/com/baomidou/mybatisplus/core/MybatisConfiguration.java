@@ -15,16 +15,15 @@
  */
 package com.baomidou.mybatisplus.core;
 
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
-
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 
 /**
  * <p>
@@ -85,7 +84,7 @@ public class MybatisConfiguration extends Configuration {
      */
     @Override
     public void addMappedStatement(MappedStatement ms) {
-        MybatisConfiguration.logger.debug("addMappedStatement: " + ms.getId());
+        logger.debug("addMappedStatement: " + ms.getId());
         if (GlobalConfigUtils.isRefresh(ms.getConfiguration())) {
             /*
              * 支持是否自动刷新 XML 变更内容，开发环境使用【 注：生产环境勿用！】
@@ -96,7 +95,7 @@ public class MybatisConfiguration extends Configuration {
                 /*
                  * 说明已加载了xml中的节点； 忽略mapper中的SqlProvider数据
                  */
-                MybatisConfiguration.logger.error("mapper[" + ms.getId() + "] is ignored, because it exists, maybe from xml file");
+                logger.error("mapper[" + ms.getId() + "] is ignored, because it exists, maybe from xml file");
                 return;
             }
         }
