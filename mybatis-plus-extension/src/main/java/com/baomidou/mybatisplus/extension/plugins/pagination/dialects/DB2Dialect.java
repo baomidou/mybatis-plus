@@ -27,42 +27,12 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
  */
 public class DB2Dialect implements IDialect {
 
-    private static String getRowNumber(String originalSql) {
-        StringBuilder rownumber = new StringBuilder(50).append("rownumber() over(");
-        int orderByIndex = originalSql.toLowerCase().indexOf("order by");
-        if (orderByIndex > 0 && !hasDistinct(originalSql)) {
-            rownumber.append(originalSql.substring(orderByIndex));
-        }
-        rownumber.append(") as rownumber_,");
-        return rownumber.toString();
-    }
-
-    private static boolean hasDistinct(String originalSql) {
-        return originalSql.toLowerCase().contains("select distinct");
-    }
-
     @Override
     public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
-        int startOfSelect = originalSql.toLowerCase().indexOf("select");
-        StringBuilder pagingSelect = new StringBuilder(originalSql.length() + 100)
-            .append(originalSql, 0, startOfSelect).append("select * from ( select ")
-            .append(getRowNumber(originalSql));
-        if (hasDistinct(originalSql)) {
-            pagingSelect.append(" row_.* from ( ").append(originalSql.substring(startOfSelect)).append(" ) as row_");
-        } else {
-            pagingSelect.append(originalSql.substring(startOfSelect + 6));
-        }
-
-        // 20180829 modify by hepengju
-        // https://github.com/baomidou/mybatis-plus/issues/450
-        if (offset > 0) {
-            long firstParam = offset + limit;
-            pagingSelect.append(" fetch first ").append(FIRST_MARK).append(" rows only) as temp_ where rownumber_ ")
-                .append("> ").append(SECOND_MARK);
-            return new DialectModel(pagingSelect.toString(), firstParam, offset).setConsumerChain();
-        } else {
-            pagingSelect.append(" fetch first ").append(FIRST_MARK).append(" rows only) as temp_ ");
-            return new DialectModel(pagingSelect.toString(), limit, offset).setConsumer(true);
-        }
+        long firstParam = offset + 1;
+        long secondParam = offset + limit;
+        String sql = "SELECT * FROM (SELECT TMP_PAGE.*,ROWNUMBER() OVER() AS ROW_ID FROM ( " + originalSql +
+            " ) AS TMP_PAGE) TMP_PAGE WHERE ROW_ID BETWEEN " + FIRST_MARK + " AND " + SECOND_MARK;
+        return new DialectModel(sql, firstParam, secondParam).setConsumerChain();
     }
 }
