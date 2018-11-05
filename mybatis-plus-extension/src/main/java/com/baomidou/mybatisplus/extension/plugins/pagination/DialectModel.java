@@ -1,14 +1,10 @@
 package com.baomidou.mybatisplus.extension.plugins.pagination;
 
 import com.baomidou.mybatisplus.core.toolkit.Assert;
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
 import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.session.Configuration;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -20,41 +16,52 @@ import java.util.function.Function;
  * @author miemie
  * @since 2018-10-31
  */
-@Getter
-@Accessors(chain = true)
 public class DialectModel {
-    public static final String FIRST_PARAM_NAME = "mybatis_plus_first";
-    public static final String SECOND_PARAM_NAME = "mybatis_plus_second";
+    private static final String FIRST_PARAM_NAME = "mybatis_plus_first";
+    private static final String SECOND_PARAM_NAME = "mybatis_plus_second";
 
     /**
      * 分页方言 sql
      */
-    @Setter
+    @Getter
     private String dialectSql;
     /**
      * 提供 Configuration
      */
-    @Getter(AccessLevel.NONE)
     private Configuration configuration;
     /**
-     * 消费偏移量
+     * 用 List<ParameterMapping> 消费第一个值
      */
     private Consumer<List<ParameterMapping>> firstParamConsumer = i -> {
     };
     /**
-     * 消费范围量
+     * 用 Map<String, Object> 消费第一个值
+     */
+    private Consumer<Map<String, Object>> firstParamMapConsumer = i -> {
+    };
+    /**
+     * 用 List<ParameterMapping> 消费第二个值
      */
     private Consumer<List<ParameterMapping>> secondParamConsumer = i -> {
     };
     /**
-     * 分页数据参数 map
+     * 用 Map<String, Object> 消费第二个值
      */
-    @Setter(value = AccessLevel.NONE)
-    private Map<String, Long> dialectMap;
+    private Consumer<Map<String, Object>> secondParamMapConsumer = i -> {
+    };
+    /**
+     * 提供 第一个值
+     */
+    private long firstParam;
+    /**
+     * 提供 第二个值
+     */
+    private long secondParam;
 
     public DialectModel(String dialectSql, long firstParam, long secondParam) {
         this.dialectSql = dialectSql;
-        this.putToDialectMap(firstParam, secondParam);
+        this.firstParam = firstParam;
+        this.secondParam = secondParam;
     }
 
     /**
@@ -70,12 +77,13 @@ public class DialectModel {
     @SuppressWarnings("unused")
     public DialectModel setConsumer(boolean isFirstParam, Function<List<ParameterMapping>, Integer> function) {
         if (isFirstParam) {
-            firstParamConsumer = i -> i.add(function.apply(i), new ParameterMapping
+            this.firstParamConsumer = i -> i.add(function.apply(i), new ParameterMapping
                 .Builder(configuration, FIRST_PARAM_NAME, long.class).build());
         } else {
-            secondParamConsumer = i -> i.add(function.apply(i), new ParameterMapping
+            this.secondParamConsumer = i -> i.add(function.apply(i), new ParameterMapping
                 .Builder(configuration, SECOND_PARAM_NAME, long.class).build());
         }
+        this.setParamMapConsumer(isFirstParam);
         return this;
     }
 
@@ -88,10 +96,11 @@ public class DialectModel {
      */
     public DialectModel setConsumer(boolean isFirstParam) {
         if (isFirstParam) {
-            firstParamConsumer = i -> i.add(new ParameterMapping.Builder(configuration, FIRST_PARAM_NAME, long.class).build());
+            this.firstParamConsumer = i -> i.add(new ParameterMapping.Builder(configuration, FIRST_PARAM_NAME, long.class).build());
         } else {
-            secondParamConsumer = i -> i.add(new ParameterMapping.Builder(configuration, SECOND_PARAM_NAME, long.class).build());
+            this.secondParamConsumer = i -> i.add(new ParameterMapping.Builder(configuration, SECOND_PARAM_NAME, long.class).build());
         }
+        this.setParamMapConsumer(isFirstParam);
         return this;
     }
 
@@ -109,23 +118,29 @@ public class DialectModel {
     /**
      * 消费掉
      *
-     * @param mappings      ParameterMapping 集合
-     * @param configuration Configuration
+     * @param parameterMappings ParameterMapping 集合
+     * @param configuration     Configuration
      */
-    public void consumers(List<ParameterMapping> mappings, Configuration configuration) {
-        Assert.notNull(mappings, "List<ParameterMapping> must not be null!");
-        Assert.notNull(configuration, "configuration must not be null!");
+    public void consumers(List<ParameterMapping> parameterMappings, Configuration configuration,
+                          Map<String, Object> additionalParameters) {
+        Assert.notNull(configuration, "configuration must notNull !");
+        Assert.notNull(parameterMappings, "parameterMappings must notNull !");
+        Assert.notNull(additionalParameters, "additionalParameters must notNull !");
         this.configuration = configuration;
-        firstParamConsumer.accept(mappings);
-        secondParamConsumer.accept(mappings);
+        this.firstParamConsumer.accept(parameterMappings);
+        this.secondParamConsumer.accept(parameterMappings);
+        this.firstParamMapConsumer.accept(additionalParameters);
+        this.secondParamMapConsumer.accept(additionalParameters);
     }
 
     /**
-     * 存储 offset 和 limit
+     * 定义 map 的消费
      */
-    private void putToDialectMap(long firstParam, long secondParam) {
-        dialectMap = new HashMap<>(2);
-        dialectMap.put(FIRST_PARAM_NAME, firstParam);
-        dialectMap.put(SECOND_PARAM_NAME, secondParam);
+    private void setParamMapConsumer(boolean isFirstParam) {
+        if (isFirstParam) {
+            this.firstParamMapConsumer = i -> i.put(FIRST_PARAM_NAME, firstParam);
+        } else {
+            this.secondParamMapConsumer = i -> i.put(SECOND_PARAM_NAME, secondParam);
+        }
     }
 }

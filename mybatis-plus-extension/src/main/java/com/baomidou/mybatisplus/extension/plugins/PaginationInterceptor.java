@@ -119,6 +119,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
     /**
      * Physical Page Interceptor for all the queries with parameter {@link RowBounds}
      */
+    @SuppressWarnings("unchecked")
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
         StatementHandler statementHandler = PluginUtils.realTarget(invocation.getTarget());
@@ -176,10 +177,10 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
         DialectModel model = DialectFactory.buildPaginationSql(page, buildSql, dbType, dialectClazz);
         Configuration configuration = mappedStatement.getConfiguration();
         List<ParameterMapping> mappings = new ArrayList<>(boundSql.getParameterMappings());
-        model.consumers(mappings, configuration);
+        Map<String, Object> additionalParameters = (Map<String, Object>) metaObject.getValue("delegate.boundSql.additionalParameters");
+        model.consumers(mappings, configuration, additionalParameters);
         metaObject.setValue("delegate.boundSql.sql", model.getDialectSql());
         metaObject.setValue("delegate.boundSql.parameterMappings", mappings);
-        metaObject.setValue("delegate.boundSql.additionalParameters", model.getDialectMap());
 
         /*
          * <p> 禁用内存分页 </p>
