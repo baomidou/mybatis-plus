@@ -65,7 +65,7 @@ public class DialectModel {
     }
 
     /**
-     * 设置消费
+     * 设置消费 List<ParameterMapping> 的方式
      * <p>
      * 带下标的
      * <p>
@@ -88,7 +88,7 @@ public class DialectModel {
     }
 
     /**
-     * 设置消费
+     * 设置消费 List<ParameterMapping> 的方式
      * <p>
      * 不带下标的
      *
@@ -105,7 +105,7 @@ public class DialectModel {
     }
 
     /**
-     * 设置消费
+     * 设置消费 List<ParameterMapping> 的方式
      * <p>
      * 不带下标的,两个值都有
      *
@@ -116,10 +116,11 @@ public class DialectModel {
     }
 
     /**
-     * 消费掉
+     * 把内部所有需要消费的都消费掉
      *
-     * @param parameterMappings ParameterMapping 集合
-     * @param configuration     Configuration
+     * @param parameterMappings    ParameterMapping 集合
+     * @param configuration        Configuration
+     * @param additionalParameters additionalParameters map
      */
     public void consumers(List<ParameterMapping> parameterMappings, Configuration configuration,
                           Map<String, Object> additionalParameters) {
@@ -134,7 +135,7 @@ public class DialectModel {
     }
 
     /**
-     * 定义 map 的消费
+     * 设置消费 Map<String, Object> 的方式
      */
     private void setParamMapConsumer(boolean isFirstParam) {
         if (isFirstParam) {
