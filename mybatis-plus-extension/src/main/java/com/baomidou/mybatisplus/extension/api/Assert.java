@@ -18,6 +18,9 @@ package com.baomidou.mybatisplus.extension.api;
 import java.util.Collection;
 import java.util.Map;
 
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.extension.exceptions.ApiException;
@@ -42,7 +45,7 @@ public class Assert {
      */
     public static void gtZero(Integer num, IErrorCode errorCode) {
         if (num == null || num <= 0) {
-            Assert.fail(errorCode);
+            fail(errorCode);
         }
     }
 
@@ -51,7 +54,7 @@ public class Assert {
      */
     public static void geZero(Integer num, IErrorCode errorCode) {
         if (num == null || num < 0) {
-            Assert.fail(errorCode);
+            fail(errorCode);
         }
     }
 
@@ -60,7 +63,7 @@ public class Assert {
      */
     public static void gt(Integer num1, Integer num2, IErrorCode errorCode) {
         if (num1 <= num2) {
-            Assert.fail(errorCode);
+            fail(errorCode);
         }
     }
 
@@ -69,7 +72,7 @@ public class Assert {
      */
     public static void ge(Integer num1, Integer num2, IErrorCode errorCode) {
         if (num1 < num2) {
-            Assert.fail(errorCode);
+            fail(errorCode);
         }
     }
 
@@ -78,31 +81,31 @@ public class Assert {
      */
     public static void eq(Object obj1, Object obj2, IErrorCode errorCode) {
         if (!obj1.equals(obj2)) {
-            Assert.fail(errorCode);
+            fail(errorCode);
         }
     }
 
     public static void isTrue(boolean condition, IErrorCode errorCode) {
         if (!condition) {
-            Assert.fail(errorCode);
+            fail(errorCode);
         }
     }
 
     public static void isFalse(boolean condition, IErrorCode errorCode) {
         if (condition) {
-            Assert.fail(errorCode);
+            fail(errorCode);
         }
     }
 
     public static void isNull(IErrorCode errorCode, Object... conditions) {
         if (ObjectUtils.isNotNull(conditions)) {
-            Assert.fail(errorCode);
+            fail(errorCode);
         }
     }
 
     public static void notNull(IErrorCode errorCode, Object... conditions) {
         if (ObjectUtils.isNull(conditions)) {
-            Assert.fail(errorCode);
+            fail(errorCode);
         }
     }
 
@@ -119,7 +122,7 @@ public class Assert {
 
     public static void fail(boolean condition, IErrorCode errorCode) {
         if (condition) {
-            Assert.fail(errorCode);
+            fail(errorCode);
         }
     }
 
@@ -129,13 +132,45 @@ public class Assert {
 
     public static void fail(boolean condition, String message) {
         if (condition) {
-            Assert.fail(message);
+            fail(message);
+        }
+    }
+
+
+    /**
+     * <p>
+     * 返回多语言异常消息
+     * </p>
+     *
+     * @param message       多语言消息 KEY
+     * @param args          多语言提示默认参数数组对象
+     * @param messageSource 多语言资源对象
+     */
+    public static void fail(String message, Object[] args, MessageSource messageSource) {
+        throw new ApiException(messageSource.getMessage(message,
+            args, LocaleContextHolder.getLocale()));
+    }
+
+    public static void fail(boolean condition, String message, Object[] args, MessageSource messageSource) {
+        if (condition) {
+            fail(message, args, messageSource);
+        }
+    }
+
+    public static void fail(String message, MessageSource messageSource) {
+        throw new ApiException(messageSource.getMessage(message,
+            null, LocaleContextHolder.getLocale()));
+    }
+
+    public static void fail(boolean condition, String message, MessageSource messageSource) {
+        if (condition) {
+            fail(message, messageSource);
         }
     }
 
     public static void notEmpty(Object[] array, IErrorCode errorCode) {
         if (ObjectUtils.isEmpty(array)) {
-            Assert.fail(errorCode);
+            fail(errorCode);
         }
     }
 
@@ -143,7 +178,7 @@ public class Assert {
         if (array != null) {
             for (Object element : array) {
                 if (element == null) {
-                    Assert.fail(errorCode);
+                    fail(errorCode);
                 }
             }
         }
@@ -151,28 +186,27 @@ public class Assert {
 
     public static void notEmpty(Collection<?> collection, IErrorCode errorCode) {
         if (CollectionUtils.isNotEmpty(collection)) {
-            Assert.fail(errorCode);
+            fail(errorCode);
         }
     }
 
     public static void notEmpty(Map<?, ?> map, IErrorCode errorCode) {
         if (ObjectUtils.isEmpty(map)) {
-            Assert.fail(errorCode);
+            fail(errorCode);
         }
     }
 
     public static void isInstanceOf(Class<?> type, Object obj, IErrorCode errorCode) {
-        Assert.notNull(errorCode, type);
+        notNull(errorCode, type);
         if (!type.isInstance(obj)) {
-            Assert.fail(errorCode);
+            fail(errorCode);
         }
     }
 
     public static void isAssignable(Class<?> superType, Class<?> subType, IErrorCode errorCode) {
-        Assert.notNull(errorCode, superType);
+        notNull(errorCode, superType);
         if (subType == null || !superType.isAssignableFrom(subType)) {
-            Assert.fail(errorCode);
+            fail(errorCode);
         }
     }
-
 }
