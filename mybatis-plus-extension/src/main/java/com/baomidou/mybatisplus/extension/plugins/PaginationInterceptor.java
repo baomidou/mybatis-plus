@@ -180,7 +180,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
 
         LongSupplier supplier = page.getSupplier();
         boolean orderBy = true;
-        if (page.getTotal() < 0) {
+        if (page.getTotal() == 0) {
             // total 为0 才进行 count
             SqlInfo sqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), sqlParser, originalSql);
             orderBy = sqlInfo.isOrderBy();
