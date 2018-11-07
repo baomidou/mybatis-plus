@@ -31,7 +31,7 @@ import java.util.function.Predicate;
  * Entity 对象封装操作类
  * </p>
  *
- * @author hubin miemie HCL
+ * @author hubin miemie HCL yyh
  * @since 2018-05-25
  */
 @SuppressWarnings("serial")
@@ -111,6 +111,17 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     public LambdaQueryWrapper<T> lambda() {
         return new LambdaQueryWrapper<>(entity, entityClass, sqlSelect, paramNameSeq, paramNameValuePairs, expression);
     }
+
+
+    /**
+     * <p>
+     * 返回一个支持 Kotlin lambda 函数写法的 wrapper
+     * </p>
+     */
+    public LambdaQueryWrapperkt<T> lambdaKt() {
+        return new LambdaQueryWrapperkt<>(entity, entityClass, sqlSelect, paramNameSeq, paramNameValuePairs, expression);
+    }
+
 
     @Override
     public String getSqlSelect() {

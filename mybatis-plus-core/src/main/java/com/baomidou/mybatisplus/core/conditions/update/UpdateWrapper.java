@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Update 条件封装
  * </p>
  *
- * @author hubin miemie HCL
+ * @author hubin miemie HCL yyh
  * @since 2018-05-30
  */
 @SuppressWarnings("serial")
@@ -68,6 +68,16 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
      */
     public LambdaUpdateWrapper<T> lambda() {
         return new LambdaUpdateWrapper<>(entity, sqlSet, paramNameSeq, paramNameValuePairs, expression);
+    }
+
+
+    /**
+     * <p>
+     * 返回一个支持 kotlin  lambda 函数写法的 wrapper
+     * </p>
+     */
+    public LambdaUpdateWrapperKt<T> lambdaKt() {
+        return new LambdaUpdateWrapperKt<>(entity, paramNameSeq, paramNameValuePairs, expression);
     }
 
     @Override
