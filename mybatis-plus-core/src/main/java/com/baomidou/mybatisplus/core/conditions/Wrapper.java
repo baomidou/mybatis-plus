@@ -15,12 +15,15 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
+import java.util.Objects;
+
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
+import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
-
-import java.util.Objects;
 
 /**
  * <p>
@@ -30,7 +33,7 @@ import java.util.Objects;
  * @author hubin
  * @since 2018-05-25
  */
-@SuppressWarnings("serial")
+@SuppressWarnings("all")
 public abstract class Wrapper<T> implements ISqlSegment {
 
     /**
@@ -62,10 +65,31 @@ public abstract class Wrapper<T> implements ISqlSegment {
     public abstract MergeSegments getExpression();
 
     /**
-     * 查询条件为空
+     * 查询条件为空(包含entity)
      */
     public boolean isEmptyOfWhere() {
-        return CollectionUtils.isEmpty(getExpression().getNormal()) && !nonEntityNull();
+        return isEmptyOfNormal() && isEmptyOfEntity();
+    }
+
+    /**
+     * 查询条件不为空(包含entity)
+     */
+    public boolean nonEmptyOfWhere() {
+        return !isEmptyOfWhere();
+    }
+
+    /**
+     * 查询条件为空(不包含entity)
+     */
+    public boolean isEmptyOfNormal() {
+        return CollectionUtils.isEmpty(getExpression().getNormal());
+    }
+
+    /**
+     * 查询条件为空(不包含entity)
+     */
+    public boolean nonEmptyOfNormal() {
+        return !isEmptyOfNormal();
     }
 
     /**
@@ -73,17 +97,47 @@ public abstract class Wrapper<T> implements ISqlSegment {
      *
      * @return true 不为空
      */
-    private boolean nonEntityNull() {
+    public boolean nonEmptyOfEntity() {
         T entity = getEntity();
-        return Objects.nonNull(getEntity()) && TableInfoHelper.getTableInfo(entity.getClass()).getFieldList().stream()
-            .anyMatch(e -> Objects.nonNull(ReflectionKit.getMethodValue(entity, e.getProperty())));
+        if (entity == null) {
+            return false;
+        }
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(entity.getClass());
+        if (tableInfo == null) {
+            return false;
+        }
+        if (StringUtils.isNotEmpty(tableInfo.getKeyProperty())) {
+            // 有主键
+            return Objects.nonNull(ReflectionKit.getMethodValue(entity, tableInfo.getKeyProperty())) &&
+                tableInfo.getFieldList().stream().anyMatch(e -> fieldStrategyMatch(entity, e));
+        } else {
+            // 无主键
+            return tableInfo.getFieldList().stream().anyMatch(e -> fieldStrategyMatch(entity, e));
+        }
     }
 
     /**
-     * 查询条件不为空
+     * 根据实体FieldStrategy属性来决定判断逻辑
      */
-    public boolean notEmptyOfWhere() {
-        return !isEmptyOfWhere();
+    private boolean fieldStrategyMatch(T entity, TableFieldInfo e) {
+        switch (e.getFieldStrategy()) {
+            case NOT_NULL:
+                return Objects.nonNull(ReflectionKit.getMethodValue(entity, e.getProperty()));
+            case IGNORED:
+                return true;
+            case NOT_EMPTY:
+                return StringUtils.checkValNotNull(ReflectionKit.getMethodValue(entity, e.getProperty()));
+            default:
+                return Objects.nonNull(ReflectionKit.getMethodValue(entity, e.getProperty()));
+        }
+    }
+
+    /**
+     * 深层实体判断属性
+     *
+     * @return true 为空
+     */
+    public boolean isEmptyOfEntity() {
+        return !nonEmptyOfEntity();
     }
 }
-

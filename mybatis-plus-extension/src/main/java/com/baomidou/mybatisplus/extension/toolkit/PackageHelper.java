@@ -15,10 +15,7 @@
  */
 package com.baomidou.mybatisplus.extension.toolkit;
 
-import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
-
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -27,7 +24,9 @@ import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.util.ClassUtils;
 
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * <p>
@@ -76,7 +75,7 @@ public class PackageHelper {
             }
             return new String[0];
         } catch (Exception e) {
-            throw ExceptionUtils.mpe("not find typeAliasesPackage:" + pkg, e);
+            throw ExceptionUtils.mpe("not find typeAliasesPackage: %s", e, pkg);
         }
     }
 
@@ -112,7 +111,7 @@ public class PackageHelper {
             }
             return set;
         } catch (Exception e) {
-            throw ExceptionUtils.mpe("not find scanTypePackage:" + pkg, e);
+            throw ExceptionUtils.mpe("not find scanTypePackage: %s", e, pkg);
         }
     }
 

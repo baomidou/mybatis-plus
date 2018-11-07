@@ -378,10 +378,10 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        notNull(dataSource, "Property 'dataSource' is required");
-        notNull(sqlSessionFactoryBuilder, "Property 'sqlSessionFactoryBuilder' is required");
+        notNull(dataSource, "SFunction 'dataSource' is required");
+        notNull(sqlSessionFactoryBuilder, "SFunction 'sqlSessionFactoryBuilder' is required");
         state((configuration == null && configLocation == null) || !(configuration != null && configLocation != null),
-            "Property 'configuration' and 'configLocation' can not specified with together");
+            "SFunction 'configuration' and 'configLocation' can not specified with together");
 
         this.sqlSessionFactory = buildSqlSessionFactory();
         //TODO: 3.0 注入到globalConfig
@@ -415,7 +415,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             configuration = xmlConfigBuilder.getConfiguration();
         } else {
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration");
+                LOGGER.debug("SFunction 'configuration' or 'configLocation' not specified, using default MyBatis Configuration");
             }
             // TODO 使用自定义配置
             configuration = new MybatisConfiguration();
@@ -638,7 +638,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             }
         } else {
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Property 'mapperLocations' was not specified or no matching resources found");
+                LOGGER.debug("SFunction 'mapperLocations' was not specified or no matching resources found");
             }
         }
         return sqlSessionFactory;

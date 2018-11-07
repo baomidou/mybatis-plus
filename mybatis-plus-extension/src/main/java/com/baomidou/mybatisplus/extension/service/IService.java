@@ -22,6 +22,7 @@ import java.util.Map;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
 
 /**
  * <p>
@@ -44,7 +45,7 @@ public interface IService<T> {
 
     /**
      * <p>
-     * 插入（批量），该方法不适合 Oracle
+     * 插入（批量）
      * </p>
      *
      * @param entityList 实体对象集合
@@ -231,7 +232,9 @@ public interface IService<T> {
      *
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
-    Object getObj(Wrapper<T> queryWrapper);
+    default Object getObj(Wrapper<T> queryWrapper) {
+        return SqlHelper.getObject(listObjs(queryWrapper));
+    }
 
     /**
      * <p>

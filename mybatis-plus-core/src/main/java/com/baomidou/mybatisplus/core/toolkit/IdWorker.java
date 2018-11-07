@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * <p>
@@ -55,11 +56,12 @@ public class IdWorker {
 
     /**
      * <p>
-     * 获取去掉"-" UUID
+     * 使用ThreadLocalRandom获取UUID获取更优的效果 去掉"-"
      * </p>
      */
-    public static synchronized String get32UUID() {
-        return UUID.randomUUID().toString().replace(StringPool.DASH, StringPool.EMPTY);
+    public static String get32UUID() {
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        return new UUID(random.nextLong(), random.nextLong()).toString().replace(StringPool.DASH, StringPool.EMPTY);
     }
 
 }

@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
 
 /**
  * <p>
@@ -27,11 +28,9 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
  */
 public class HSQLDialect implements IDialect {
 
-
     @Override
-    public String buildPaginationSql(String originalSql, long offset, long limit) {
-        StringBuilder sql = new StringBuilder(originalSql);
-        sql.append(" limit ").append(offset).append(StringPool.COMMA).append(limit);
-        return sql.toString();
+    public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
+        String sql = originalSql + " limit " + FIRST_MARK + StringPool.COMMA + SECOND_MARK;
+        return new DialectModel(sql, offset, limit).setConsumerChain();
     }
 }

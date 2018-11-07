@@ -19,22 +19,19 @@ import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static java.util.stream.Collectors.joining;
-
 /**
  * <p>
  * Update 条件封装
  * </p>
  *
- * @author hubin miemie HCL
- * @since 2018-05-30
+ * @author yangyuhan
+ * @since 2018-11-02
  */
 @SuppressWarnings("serial")
 public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T>> {
@@ -42,7 +39,7 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
     /**
      * SQL 更新字段内容，例如：name='1',age=2
      */
-    private List<String> sqlSet = new ArrayList<>();
+    private List<String> sqlSet;
 
     public UpdateWrapper() {
         // 如果无参构造函数，请注意实体 NULL 情况 SET 必须有否则 SQL 异常
@@ -50,13 +47,15 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
     }
 
     public UpdateWrapper(T entity) {
-        this.entity = entity;
+        super.setEntity(entity);
+        this.sqlSet = new ArrayList<>();
         this.initNeed();
     }
 
-    private UpdateWrapper(T entity, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs,
-                          MergeSegments mergeSegments) {
-        this.entity = entity;
+    private UpdateWrapper(T entity, List<String> sqlSet, AtomicInteger paramNameSeq,
+                          Map<String, Object> paramNameValuePairs, MergeSegments mergeSegments) {
+        super.setEntity(entity);
+        this.sqlSet = sqlSet;
         this.paramNameSeq = paramNameSeq;
         this.paramNameValuePairs = paramNameValuePairs;
         this.expression = mergeSegments;
@@ -68,8 +67,10 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
      * </p>
      */
     public LambdaUpdateWrapper<T> lambda() {
-        return new LambdaUpdateWrapper<>(entity, paramNameSeq, paramNameValuePairs, expression);
+        return new LambdaUpdateWrapper<>(entity, sqlSet, paramNameSeq, paramNameValuePairs, expression);
     }
+
+
 
     /**
      * <p>
@@ -85,7 +86,7 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
         if (CollectionUtils.isEmpty(sqlSet)) {
             return null;
         }
-        return SqlUtils.stripSqlInjection(sqlSet.stream().collect(joining(StringPool.COMMA)));
+        return String.join(StringPool.COMMA, sqlSet);
     }
 
     /**
@@ -135,6 +136,6 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
 
     @Override
     protected UpdateWrapper<T> instance(AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
-        return new UpdateWrapper<>(entity, paramNameSeq, paramNameValuePairs, new MergeSegments());
+        return new UpdateWrapper<>(entity, sqlSet, paramNameSeq, paramNameValuePairs, new MergeSegments());
     }
 }

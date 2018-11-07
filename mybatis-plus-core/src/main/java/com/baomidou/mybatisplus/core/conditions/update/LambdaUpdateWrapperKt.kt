@@ -20,10 +20,10 @@ import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils
 import com.baomidou.mybatisplus.core.toolkit.StringPool
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils
-import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.stream.Collectors.joining
 import kotlin.reflect.KProperty
+
 
 /**
  *

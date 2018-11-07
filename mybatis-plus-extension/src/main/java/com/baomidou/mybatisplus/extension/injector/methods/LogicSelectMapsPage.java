@@ -37,7 +37,7 @@ public class LogicSelectMapsPage extends AbstractLogicMethod {
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.SELECT_MAPS_PAGE;
         String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(tableInfo, true),
-            tableInfo.getTableName(), sqlWhereEntityWrapper(tableInfo));
+            tableInfo.getTableName(), sqlWhereEntityWrapper(true, tableInfo));
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
         return addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, Map.class, tableInfo);
     }

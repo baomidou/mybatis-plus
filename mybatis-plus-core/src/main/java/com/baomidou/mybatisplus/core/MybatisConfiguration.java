@@ -69,7 +69,7 @@ public class MybatisConfiguration extends Configuration {
             System.out.println(" _ _   |_  _ _|_. ___ _ |    _ ");
             System.out.println("| | |\\/|_)(_| | |_\\  |_)||_|_\\ ");
             System.out.println("     /               |         ");
-            System.out.println("                        3.0.5 ");
+            System.out.println("                        3.0.6.3-SNAPSHOT ");
         }
     }
 
@@ -85,7 +85,7 @@ public class MybatisConfiguration extends Configuration {
      */
     @Override
     public void addMappedStatement(MappedStatement ms) {
-        MybatisConfiguration.logger.debug("addMappedStatement: " + ms.getId());
+        logger.debug("addMappedStatement: " + ms.getId());
         if (GlobalConfigUtils.isRefresh(ms.getConfiguration())) {
             /*
              * 支持是否自动刷新 XML 变更内容，开发环境使用【 注：生产环境勿用！】
@@ -96,7 +96,7 @@ public class MybatisConfiguration extends Configuration {
                 /*
                  * 说明已加载了xml中的节点； 忽略mapper中的SqlProvider数据
                  */
-                MybatisConfiguration.logger.error("mapper[" + ms.getId() + "] is ignored, because it exists, maybe from xml file");
+                logger.error("mapper[" + ms.getId() + "] is ignored, because it exists, maybe from xml file");
                 return;
             }
         }

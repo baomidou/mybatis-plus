@@ -17,10 +17,11 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.support.Property;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 
 import java.lang.ref.WeakReference;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -28,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <p>
- * Lambda 工具类
+ * Lambda 解析工具类
  * </p>
  *
  * @author HCL
@@ -38,6 +39,9 @@ public final class LambdaUtils {
 
     private static final Map<String, Map<String, String>> LAMBDA_CACHE = new ConcurrentHashMap<>();
 
+    /**
+     * SerializedLambda 反序列化缓存
+     */
     private static final Map<Class, WeakReference<SerializedLambda>> FUNC_CACHE = new ConcurrentHashMap<>();
 
     /**
@@ -49,12 +53,12 @@ public final class LambdaUtils {
      * @param <T>  类型，被调用的 Function 对象的目标类型
      * @return 返回解析后的结果
      */
-    public static <T> SerializedLambda resolve(Property<T, ?> func) {
+    public static <T> SerializedLambda resolve(SFunction<T, ?> func) {
         Class clazz = func.getClass();
         return Optional.ofNullable(FUNC_CACHE.get(clazz))
             .map(WeakReference::get)
             .orElseGet(() -> {
-                SerializedLambda lambda = SerializedLambda.convert(func);
+                SerializedLambda lambda = SerializedLambda.resolve(func);
                 FUNC_CACHE.put(clazz, new WeakReference<>(lambda));
                 return lambda;
             });
@@ -121,7 +125,7 @@ public final class LambdaUtils {
      * @return 缓存 map
      */
     public static Map<String, String> getColumnMap(String entityClassName) {
-        return LAMBDA_CACHE.get(entityClassName);
+        return LAMBDA_CACHE.getOrDefault(entityClassName, Collections.emptyMap());
     }
 
 

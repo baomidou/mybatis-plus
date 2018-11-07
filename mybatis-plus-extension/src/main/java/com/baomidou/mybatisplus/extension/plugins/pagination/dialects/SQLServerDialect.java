@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
+
 /**
  * <p>
  * SQLServer 数据库分页语句组装实现
@@ -25,12 +27,9 @@ package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
  */
 public class SQLServerDialect implements IDialect {
 
-
     @Override
-    public String buildPaginationSql(String originalSql, long offset, long limit) {
-        StringBuilder sql = new StringBuilder(originalSql);
-        sql.append(" OFFSET ").append(offset).append(" ROWS FETCH NEXT ");
-        sql.append(limit).append(" ROWS ONLY");
-        return sql.toString();
+    public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
+        String sql = originalSql + " OFFSET " + FIRST_MARK + " ROWS FETCH NEXT " + SECOND_MARK + " ROWS ONLY";
+        return new DialectModel(sql, offset, limit).setConsumerChain();
     }
 }
