@@ -16,13 +16,12 @@
 package com.baomidou.mybatisplus.generator.config;
 
 
-import java.util.Map;
-
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-
 import lombok.Data;
 import lombok.experimental.Accessors;
+
+import java.util.Map;
 
 /**
  * <p>

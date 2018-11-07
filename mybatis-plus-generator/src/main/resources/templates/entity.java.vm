@@ -1,16 +1,17 @@
-package ${package.Entity};
-
-#foreach($pkg in ${table.importPackages})
-import ${pkg};
-#end
-#if(${swagger2})
-import io.swagger.annotations.ApiModel;
+package ${package.Entity}import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-#end
-#if(${entityLombokModel})
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+;
+#foreach($pkg in ${table.importPackages})
+    ${pkg}
+    ;
+#end
+#if(${swagger2})
+#end
+#if(${entityLombokModel})
 #end
 
 /**
