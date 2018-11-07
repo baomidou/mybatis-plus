@@ -15,12 +15,12 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.function.LongSupplier;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 
 /**
  * <p>
@@ -39,9 +39,9 @@ public class Page<T> implements IPage<T> {
      */
     private List<T> records = Collections.emptyList();
     /**
-     * 总数，当 total 不为 0 时分页插件不会进行 count 查询
+     * 总数，当 total 大于等于 0 时分页插件不会进行 count 查询
      */
-    private long total = 0;
+    private long total = -1;
     /**
      * 每页显示条数，默认 10
      */
