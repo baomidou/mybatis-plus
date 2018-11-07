@@ -49,4 +49,9 @@ public class SampleTest {
         System.out.println(wrapper.getSqlSegment());
         System.out.println(clone.getSqlSegment());
     }
+
+    @Test
+    public void testPrefixOrder() {
+        System.out.println(Condition.create().eq("order_id", 1).getSqlSegment());
+    }
 }

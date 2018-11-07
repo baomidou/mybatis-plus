@@ -37,7 +37,7 @@ public enum FieldStrategy {
      */
     NOT_EMPTY,
     /**
-     * 默认的
+     * 默认的,一般只用于注解里
      * 1. 在全局里代表 NOT_NULL
      * 2. 在注解里代表 跟随全局
      */

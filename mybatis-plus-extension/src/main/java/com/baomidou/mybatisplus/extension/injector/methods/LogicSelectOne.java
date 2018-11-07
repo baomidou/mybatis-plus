@@ -36,7 +36,7 @@ public class LogicSelectOne extends AbstractLogicMethod {
         SqlMethod sqlMethod = SqlMethod.SELECT_ONE;
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(),
             this.sqlSelectColumns(tableInfo, true), tableInfo.getTableName(),
-            this.sqlWhereEntityWrapper(tableInfo)), modelClass);
+            this.sqlWhereEntityWrapper(true, tableInfo)), modelClass);
         return addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, tableInfo);
     }
 }

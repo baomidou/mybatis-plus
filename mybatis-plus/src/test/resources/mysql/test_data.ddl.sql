@@ -27,9 +27,10 @@ CREATE TABLE common_logic_data (
 DEFAULT CHARSET = utf8;
 
 CREATE TABLE mysql_data (
-    id      BIGINT primary key,
-    `order` integer,
-    `group` integer
+    id       BIGINT primary key,
+    `order`  integer,
+    `group`  integer,
+    test_str varchar(255)
 )
     ENGINE = innodb
 DEFAULT CHARSET = utf8;

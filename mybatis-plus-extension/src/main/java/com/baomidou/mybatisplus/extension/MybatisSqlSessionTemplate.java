@@ -87,8 +87,8 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
     public MybatisSqlSessionTemplate(SqlSessionFactory sqlSessionFactory, ExecutorType executorType,
                                      PersistenceExceptionTranslator exceptionTranslator) {
 
-        Assert.notNull(sqlSessionFactory, "Property 'sqlSessionFactory' is required");
-        Assert.notNull(executorType, "Property 'executorType' is required");
+        Assert.notNull(sqlSessionFactory, "SFunction 'sqlSessionFactory' is required");
+        Assert.notNull(executorType, "SFunction 'executorType' is required");
 
         this.sqlSessionFactory = sqlSessionFactory;
         this.executorType = executorType;

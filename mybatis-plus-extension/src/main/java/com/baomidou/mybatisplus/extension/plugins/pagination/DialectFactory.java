@@ -15,29 +15,16 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.ibatis.session.RowBounds;
-
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.DB2Dialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.DmDialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.H2Dialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.HSQLDialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.MariaDBDialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.MySqlDialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.OracleDialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.PostgreDialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.SQLServer2005Dialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.SQLServerDialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.SQLiteDialect;
+import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.*;
+import org.apache.ibatis.session.RowBounds;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <p>
@@ -55,53 +42,6 @@ public class DialectFactory {
     private static final Map<String, IDialect> DIALECT_CACHE = new ConcurrentHashMap<>();
 
     /**
-     * <p>
-     * 生成翻页执行 SQL
-     * </p>
-     *
-     * @param page         翻页对象
-     * @param buildSql     执行 SQL
-     * @param dbType       数据库类型
-     * @param dialectClazz 自定义方言实现类
-     * @return
-     * @throws Exception
-     */
-    public static String buildPaginationSql(Page page, String buildSql, DbType dbType, String dialectClazz)
-        throws Exception {
-        // fix #172, 196
-        return getDialect(dbType, dialectClazz).buildPaginationSql(buildSql, offsetCurrent(page), page.getSize());
-    }
-
-
-    /**
-     * <p>
-     * Page 分页偏移量
-     * </p>
-     */
-    public static long offsetCurrent(IPage page) {
-        if (null == page) {
-            return 0;
-        }
-        return offsetCurrent(page.getCurrent(), page.getSize());
-    }
-
-    /**
-     * <p>
-     * 计算当前分页偏移量
-     * </p>
-     *
-     * @param current 当前页
-     * @param size    每页显示数量
-     * @return
-     */
-    public static long offsetCurrent(long current, long size) {
-        if (current > 0) {
-            return (current - 1) * size;
-        }
-        return 0;
-    }
-
-    /**
      * Physical Page Interceptor for all the queries with parameter
      * {@link RowBounds}
      *
@@ -109,11 +49,9 @@ public class DialectFactory {
      * @param buildSql     编译 SQL
      * @param dbType       数据类型
      * @param dialectClazz 数据库方言
-     * @return
-     * @throws Exception
+     * @return 分页模型
      */
-    public static String buildPaginationSql(IPage page, String buildSql, DbType dbType, String dialectClazz)
-        throws Exception {
+    public static DialectModel buildPaginationSql(IPage page, String buildSql, DbType dbType, String dialectClazz) {
         // fix #196
         return getDialect(dbType, dialectClazz).buildPaginationSql(buildSql, page.offset(), page.getSize());
     }
@@ -126,9 +64,8 @@ public class DialectFactory {
      * @param dbType       数据库类型
      * @param dialectClazz 自定义方言实现类
      * @return
-     * @throws Exception
      */
-    private static IDialect getDialect(DbType dbType, String dialectClazz) throws Exception {
+    private static IDialect getDialect(DbType dbType, String dialectClazz) {
         IDialect dialect = DIALECT_CACHE.get(dbType.getDb());
         if (null == dialect) {
             // 自定义方言
@@ -144,7 +81,9 @@ public class DialectFactory {
                         DIALECT_CACHE.put(dialectClazz, dialect);
                     }
                 } catch (ClassNotFoundException e) {
-                    throw ExceptionUtils.mpe("Class :" + dialectClazz + " is not found");
+                    throw ExceptionUtils.mpe("Class : %s is not found", dialectClazz);
+                } catch (IllegalAccessException | InstantiationException e) {
+                    throw ExceptionUtils.mpe("Class : %s can not be instance", dialectClazz);
                 }
             } else {
                 // 缓存方言
@@ -163,43 +102,34 @@ public class DialectFactory {
      * </p>
      *
      * @param dbType 数据库类型
-     * @return
-     * @throws Exception
+     * @return 分页语句组装类
      */
     private static IDialect getDialectByDbType(DbType dbType) {
-        if (dbType == DbType.MYSQL) {
-            return new MySqlDialect();
+        switch (dbType) {
+            case MYSQL:
+                return new MySqlDialect();
+            case MARIADB:
+                return new MariaDBDialect();
+            case ORACLE:
+                return new OracleDialect();
+            case DB2:
+                return new DB2Dialect();
+            case H2:
+                return new H2Dialect();
+            case SQL_SERVER:
+                return new SQLServerDialect();
+            case SQL_SERVER2005:
+                return new SQLServer2005Dialect();
+            case POSTGRE_SQL:
+                return new PostgreDialect();
+            case HSQL:
+                return new HSQLDialect();
+            case SQLITE:
+                return new SQLiteDialect();
+            case DM:
+                return new DmDialect();
+            default:
+                throw ExceptionUtils.mpe("The Database's IDialect Not Supported!");
         }
-        if (dbType == DbType.MARIADB) {
-            return new MariaDBDialect();
-        }
-        if (dbType == DbType.ORACLE) {
-            return new OracleDialect();
-        }
-        if (dbType == DbType.DB2) {
-            return new DB2Dialect();
-        }
-        if (dbType == DbType.H2) {
-            return new H2Dialect();
-        }
-        if (dbType == DbType.SQL_SERVER) {
-            return new SQLServerDialect();
-        }
-        if (dbType == DbType.SQL_SERVER2005) {
-            return new SQLServer2005Dialect();
-        }
-        if (dbType == DbType.POSTGRE_SQL) {
-            return new PostgreDialect();
-        }
-        if (dbType == DbType.HSQL) {
-            return new HSQLDialect();
-        }
-        if (dbType == DbType.SQLITE) {
-            return new SQLiteDialect();
-        }
-        if (dbType == DbType.DM) {
-            return new DmDialect();
-        }
-        throw ExceptionUtils.mpe("The Database's Not Supported! DBType:" + dbType);
     }
 }

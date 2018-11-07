@@ -15,19 +15,15 @@
  */
 package com.baomidou.mybatisplus.core.conditions.update;
 
-import static java.util.stream.Collectors.joining;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
-import com.baomidou.mybatisplus.core.toolkit.support.Property;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * <p>
@@ -43,11 +39,12 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
     /**
      * SQL 更新字段内容，例如：name='1',age=2
      */
-    private List<String> sqlSet = new ArrayList<>();
+    private List<String> sqlSet;
 
-    LambdaUpdateWrapper(T entity, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs,
-                        MergeSegments mergeSegments) {
-        this.entity = entity;
+    LambdaUpdateWrapper(T entity, List<String> sqlSet, AtomicInteger paramNameSeq,
+                        Map<String, Object> paramNameValuePairs, MergeSegments mergeSegments) {
+        super.setEntity(entity);
+        this.sqlSet = sqlSet;
         this.paramNameSeq = paramNameSeq;
         this.paramNameValuePairs = paramNameValuePairs;
         this.expression = mergeSegments;
@@ -58,14 +55,14 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
         if (CollectionUtils.isEmpty(sqlSet)) {
             return null;
         }
-        return SqlUtils.stripSqlInjection(sqlSet.stream().collect(joining(StringPool.COMMA)));
+        return String.join(StringPool.COMMA, sqlSet);
     }
 
-    public LambdaUpdateWrapper<T> set(Property<T, ?> column, Object val) {
+    public LambdaUpdateWrapper<T> set(SFunction<T, ?> column, Object val) {
         return this.set(true, column, val);
     }
 
-    public LambdaUpdateWrapper<T> set(boolean condition, Property<T, ?> column, Object val) {
+    public LambdaUpdateWrapper<T> set(boolean condition, SFunction<T, ?> column, Object val) {
         if (condition) {
             sqlSet.add(String.format("%s=%s", columnToString(column), formatSql("{0}", val)));
         }
@@ -74,6 +71,6 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
 
     @Override
     protected LambdaUpdateWrapper<T> instance(AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
-        return new LambdaUpdateWrapper<>(entity, paramNameSeq, paramNameValuePairs, new MergeSegments());
+        return new LambdaUpdateWrapper<>(entity, sqlSet, paramNameSeq, paramNameValuePairs, new MergeSegments());
     }
 }

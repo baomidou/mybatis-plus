@@ -138,6 +138,17 @@ public final class SqlScriptUtils {
     public static String convertWhere(final String sqlScript) {
         return "<where>" + StringPool.NEWLINE + sqlScript + StringPool.NEWLINE + "</where>";
     }
+    /**
+     * <p>
+     * 生成 set 标签的脚本
+     * </p>
+     *
+     * @param sqlScript set 内部的 sql 脚本
+     * @return set 脚本
+     */
+    public static String convertSet(final String sqlScript) {
+        return "<set>" + StringPool.NEWLINE + sqlScript + StringPool.NEWLINE + "</set>";
+    }
 
     /**
      * <p>

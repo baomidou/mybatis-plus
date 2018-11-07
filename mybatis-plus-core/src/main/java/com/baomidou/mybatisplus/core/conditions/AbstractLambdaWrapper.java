@@ -15,16 +15,15 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
-import java.util.Map;
-import java.util.Optional;
-
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.support.Property;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
+
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * <p>
@@ -37,25 +36,35 @@ import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
  */
 @SuppressWarnings("serial")
 public abstract class AbstractLambdaWrapper<T, This extends AbstractLambdaWrapper<T, This>>
-    extends AbstractWrapper<T, Property<T, ?>, This> {
+    extends AbstractWrapper<T, SFunction<T, ?>, This> {
 
     private Map<String, String> columnMap = null;
     private boolean initColumnMap = false;
 
     @Override
-    protected String columnToString(Property<T, ?> column) {
+    protected void initEntityClass() {
+        super.initEntityClass();
+        if (entityClass != null) {
+            columnMap = LambdaUtils.getColumnMap(entityClass.getName());
+            initColumnMap = true;
+        }
+    }
+
+    @Override
+    protected String columnToString(SFunction<T, ?> column) {
         return getColumn(LambdaUtils.resolve(column));
     }
 
     private String getColumn(SerializedLambda lambda) {
         String fieldName = StringUtils.resolveFieldName(lambda.getImplMethodName());
-        if (!initColumnMap || columnMap.get(fieldName) == null) {
-            String entityClassName = lambda.getImplClass().replace(StringPool.SLASH, StringPool.DOT);
+        if (!initColumnMap || !columnMap.containsKey(fieldName)) {
+            String entityClassName = lambda.getImplClassName();
             columnMap = LambdaUtils.getColumnMap(entityClassName);
-            Assert.notEmpty(columnMap, "该模式不能应用于非 baseMapper 的泛型 entity 之外的 entity!");
+            Assert.notEmpty(columnMap, "cannot find column's cache for %s, so you cannot used %s!",
+                entityClassName, typedThis.getClass());
             initColumnMap = true;
         }
         return Optional.ofNullable(columnMap.get(fieldName))
-            .orElseThrow(() -> ExceptionUtils.mpe("该模式不能应用于非数据库字段!"));
+            .orElseThrow(() -> ExceptionUtils.mpe("your property named %s cannot find the corresponding database column name!", fieldName));
     }
 }

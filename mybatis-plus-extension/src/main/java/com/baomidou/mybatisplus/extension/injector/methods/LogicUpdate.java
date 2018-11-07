@@ -37,7 +37,7 @@ public class LogicUpdate extends AbstractLogicMethod {
         SqlMethod sqlMethod = SqlMethod.UPDATE;
         String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(),
             sqlSet(true, true, tableInfo, Constants.ENTITY_SPOT),
-            sqlWhereEntityWrapper(tableInfo));
+            sqlWhereEntityWrapper(true, tableInfo));
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
         return addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
     }

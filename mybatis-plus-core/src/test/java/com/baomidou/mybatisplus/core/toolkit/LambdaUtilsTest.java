@@ -1,6 +1,6 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
-import com.baomidou.mybatisplus.core.toolkit.support.Property;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 import lombok.Getter;
 import org.junit.Assert;
@@ -11,7 +11,7 @@ public class LambdaUtilsTest {
     @Test
     public void testResolve() {
         SerializedLambda lambda = LambdaUtils.resolve(TestPojo::getId);
-        Assert.assertEquals(TestPojo.class.getName(), lambda.getImplClass().replace("/", "."));
+        Assert.assertEquals(TestPojo.class.getName(), lambda.getImplClassName());
         Assert.assertEquals("getId", lambda.getImplMethodName());
         Assert.assertEquals("id", StringUtils.resolveFieldName(lambda.getImplMethodName()));
 
@@ -42,7 +42,7 @@ public class LambdaUtilsTest {
 
         // 这个 TYPE 类型和 T 就没有关系了 ；
         // 如果有需要的话，使用 extends 来建立关系，保证class一致，稍微做点编写检查
-        <TYPE extends T> Cond<T> eq(Property<TYPE, ?> prop, Object val) {
+        <TYPE extends T> Cond<T> eq(SFunction<TYPE, ?> prop, Object val) {
             SerializedLambda lambda = LambdaUtils.resolve(prop);
             this.sb.append(lambda.getImplMethodName()).append(" = ").append(val);
             return this;

@@ -1,16 +1,16 @@
 package com.baomidou.mybatisplus.test.base.entity;
 
-import java.time.LocalDateTime;
-
 import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.Version;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.test.base.enums.TestEnum;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.time.LocalDateTime;
 
 /**
  * 包含功能:
@@ -30,6 +30,7 @@ public class CommonData extends Model<CommonData> {
     private Long id;
     @TableField(el = "testInt, jdbcType=INTEGER")
     private Integer testInt;
+    @TableField(strategy = FieldStrategy.DEFAULT)
     private String testStr;
     @TableField(value = "c_time", fill = FieldFill.INSERT)
     private LocalDateTime createDatetime;

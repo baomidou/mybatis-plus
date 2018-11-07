@@ -47,15 +47,13 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     }
 
     public QueryWrapper(T entity) {
-        this.entity = entity;
-        this.initEntityClass();
+        this.setEntity(entity);
         this.initNeed();
     }
 
     public QueryWrapper(T entity, String... columns) {
-        this.entity = entity;
+        this.setEntity(entity);
         this.select(columns);
-        this.initEntityClass();
         this.initNeed();
     }
 
@@ -66,7 +64,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
      */
     private QueryWrapper(T entity, Class<T> entityClass, AtomicInteger paramNameSeq,
                          Map<String, Object> paramNameValuePairs, MergeSegments mergeSegments) {
-        this.entity = entity;
+        this.setEntity(entity);
         this.entityClass = entityClass;
         this.paramNameSeq = paramNameSeq;
         this.paramNameValuePairs = paramNameValuePairs;

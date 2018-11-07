@@ -52,7 +52,7 @@ public class ApiController {
      * @param msg 提示内容
      * @return
      */
-    protected R<Object> failed(String msg) {
+    protected <T> R<T> failed(String msg) {
         return R.failed(msg);
     }
 
@@ -64,7 +64,7 @@ public class ApiController {
      * @param errorCode 请求错误码
      * @return
      */
-    protected R<Object> failed(IErrorCode errorCode) {
+    protected <T> R<T> failed(IErrorCode errorCode) {
         return R.failed(errorCode);
     }
 

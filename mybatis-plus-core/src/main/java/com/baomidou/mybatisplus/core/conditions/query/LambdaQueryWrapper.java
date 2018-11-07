@@ -20,7 +20,7 @@ import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.support.Property;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -47,14 +47,13 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     }
 
     public LambdaQueryWrapper(T entity) {
-        this.entity = entity;
-        this.initEntityClass();
+        this.setEntity(entity);
         this.initNeed();
     }
 
     LambdaQueryWrapper(T entity, Class<T> entityClass, String sqlSelect, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs,
                        MergeSegments mergeSegments) {
-        this.entity = entity;
+        this.setEntity(entity);
         this.paramNameSeq = paramNameSeq;
         this.paramNameValuePairs = paramNameValuePairs;
         this.expression = mergeSegments;
@@ -70,7 +69,7 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
      * @param columns 查询字段
      */
     @SafeVarargs
-    public final LambdaQueryWrapper<T> select(Property<T, ?>... columns) {
+    public final LambdaQueryWrapper<T> select(SFunction<T, ?>... columns) {
         if (ArrayUtils.isNotEmpty(columns)) {
             this.sqlSelect = this.columnsToString(columns);
         }

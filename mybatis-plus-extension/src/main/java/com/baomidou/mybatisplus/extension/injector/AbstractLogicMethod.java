@@ -50,28 +50,28 @@ public abstract class AbstractLogicMethod extends AbstractMethod {
     // ------------ 处理逻辑删除条件过滤 ------------
 
     @Override
-    protected String sqlWhereEntityWrapper(TableInfo table) {
+    protected String sqlWhereEntityWrapper(boolean newLine, TableInfo table) {
         if (table.isLogicDelete()) {
             String sqlScript = table.getAllSqlWhere(true, true, Constants.WRAPPER_ENTITY_SPOT);
             sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", Constants.WRAPPER_ENTITY),
                 true);
             sqlScript += (StringPool.NEWLINE + table.getLogicDeleteSql(true, false) +
                 StringPool.NEWLINE);
-            sqlScript += SqlScriptUtils.convertIf(String.format(" AND ${%s}", Constants.WRAPPER_SQLSEGMENT),
-                String.format("%s != null and %s != '' and ew.notEmptyOfWhere", Constants.WRAPPER_SQLSEGMENT,
+            String normalSqlScript = SqlScriptUtils.convertIf(String.format("AND ${%s}", Constants.WRAPPER_SQLSEGMENT),
+                String.format("%s != null and %s != '' and ew.nonEmptyOfNormal", Constants.WRAPPER_SQLSEGMENT,
                     Constants.WRAPPER_SQLSEGMENT), true);
-            sqlScript += StringPool.NEWLINE;
-            sqlScript += SqlScriptUtils.convertIf(String.format(" ${%s}", Constants.WRAPPER_SQLSEGMENT),
-                String.format("%s != null and %s != '' and ew.emptyOfWhere", Constants.WRAPPER_SQLSEGMENT,
+            normalSqlScript += StringPool.NEWLINE;
+            normalSqlScript += SqlScriptUtils.convertIf(String.format(" ${%s}", Constants.WRAPPER_SQLSEGMENT),
+                String.format("%s != null and %s != '' and ew.emptyOfNormal", Constants.WRAPPER_SQLSEGMENT,
                     Constants.WRAPPER_SQLSEGMENT), true);
+            sqlScript += normalSqlScript;
             sqlScript = SqlScriptUtils.convertChoose("ew!=null", sqlScript,
                 table.getLogicDeleteSql(true, false));
-            sqlScript = SqlScriptUtils.convertTrim(sqlScript, "WHERE", null, "AND|OR",
-                null);
-            return sqlScript;
+            sqlScript = SqlScriptUtils.convertWhere(sqlScript);
+            return newLine ? StringPool.NEWLINE + sqlScript : sqlScript;
         }
         // 正常逻辑
-        return super.sqlWhereEntityWrapper(table);
+        return super.sqlWhereEntityWrapper(newLine, table);
     }
 
     @Override
@@ -83,7 +83,7 @@ public abstract class AbstractLogicMethod extends AbstractMethod {
             sqlScript = SqlScriptUtils.convertForeach(sqlScript, "cm", "k", "v", "AND");
             sqlScript = SqlScriptUtils.convertIf(sqlScript, "cm != null and !cm.isEmpty", true);
             sqlScript += (StringPool.NEWLINE + table.getLogicDeleteSql(true, false));
-            sqlScript = SqlScriptUtils.convertTrim(sqlScript, "WHERE", null, "AND", null);
+            sqlScript = SqlScriptUtils.convertWhere(sqlScript);
             return sqlScript;
         }
         return super.sqlWhereByMap(table);

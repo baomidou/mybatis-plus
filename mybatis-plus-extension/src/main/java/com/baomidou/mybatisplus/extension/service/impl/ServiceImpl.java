@@ -301,11 +301,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     @Override
-    public Object getObj(Wrapper<T> queryWrapper) {
-        return SqlHelper.getObject(baseMapper.selectObjs(queryWrapper));
-    }
-
-    @Override
     public int count(Wrapper<T> queryWrapper) {
         return SqlHelper.retCount(baseMapper.selectCount(queryWrapper));
     }

@@ -65,7 +65,7 @@ public class MysqlTestDataMapperTest {
             commonMapper.insert(new CommonData().setTestInt(i).setTestStr(String.format("第%s条数据", i)).setId(id)
                 .setTestEnum(TestEnum.ONE));
             commonLogicMapper.insert(new CommonLogicData().setTestInt(i).setTestStr(String.format("第%s条数据", i)).setId(id));
-            mysqlMapper.insert(new MysqlData().setOrder(i).setGroup(i).setId(id));
+            mysqlMapper.insert(new MysqlData().setOrder(i).setGroup(i).setId(id).setTestStr(String.format("第%s条数据", i)));
         }
     }
 
@@ -266,13 +266,31 @@ public class MysqlTestDataMapperTest {
     @Test
     public void d9_testSetSelect() {
         commonMapper.selectList(new QueryWrapper<>(new CommonData()).select(TableFieldInfo::isCharSequence));
+        commonMapper.selectList(new QueryWrapper<>(new CommonData().setTestStr("")));
+        commonMapper.selectList(new QueryWrapper<>(new CommonData().setTestStr("")).orderByAsc("test_int"));
+        commonMapper.selectList(new QueryWrapper<>(new CommonData().setTestStr("").setTestInt(12)).orderByAsc("test_int"));
+
+        mysqlMapper.selectList(Condition.create(new MysqlData().setTestStr("")));
+        mysqlMapper.selectList(Condition.create(new MysqlData().setTestStr("")).orderByAsc("`group`"));
+        mysqlMapper.selectList(Condition.create(new MysqlData().setTestStr("").setGroup(1)).orderByAsc("`group`"));
     }
 
     @Test
     @SuppressWarnings("unchecked")
     public void d10_testDel1eq1Then() {
+        // 有空对象,有 order by
         mysqlMapper.selectList(Condition.lambda(new MysqlData()).select(i -> true).orderByAsc(MysqlData::getId));
         commonMapper.selectList(Condition.lambda(new CommonData()).orderByAsc(CommonData::getCreateDatetime));
         commonLogicMapper.selectList(Condition.lambda(new CommonLogicData()).orderByAsc(CommonLogicData::getCreateDatetime));
+        // 对象有值,有 order by
+        mysqlMapper.selectList(Condition.lambda(new MysqlData().setOrder(12)).select(i -> true).orderByAsc(MysqlData::getId));
+        commonMapper.selectList(Condition.lambda(new CommonData().setTestInt(12)).orderByAsc(CommonData::getCreateDatetime));
+        commonLogicMapper.selectList(Condition.lambda(new CommonLogicData().setTestInt(12)).orderByAsc(CommonLogicData::getCreateDatetime));
+    }
+
+    @Test
+    public void xxx() {
+        mysqlMapper.selectPage(new Page<>(1, 5),
+            Condition.<MysqlData>create().gt("`order`", 1).gt("`group`", 2));
     }
 }

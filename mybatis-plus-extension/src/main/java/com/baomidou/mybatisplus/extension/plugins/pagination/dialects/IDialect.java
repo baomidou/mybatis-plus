@@ -15,6 +15,9 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
+
 /**
  * <p>
  * 数据库 分页语句组装接口
@@ -24,6 +27,12 @@ package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
  * @since 2016-01-23
  */
 public interface IDialect {
+    /**
+     * 这俩没什么特殊意义
+     * 只是为了实现类方便使用,以及区分分页 sql 的参数
+     */
+    String FIRST_MARK = StringPool.QUESTION_MARK;
+    String SECOND_MARK = StringPool.QUESTION_MARK;
 
     /**
      * 组装分页语句
@@ -31,7 +40,7 @@ public interface IDialect {
      * @param originalSql 原始语句
      * @param offset      偏移量
      * @param limit       界限
-     * @return 分页语句
+     * @return 分页模型
      */
-    String buildPaginationSql(String originalSql, long offset, long limit);
+    DialectModel buildPaginationSql(String originalSql, long offset, long limit);
 }

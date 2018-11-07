@@ -15,31 +15,26 @@
  */
 package com.baomidou.mybatisplus.extension.activerecord;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.enums.SqlMethod;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
+import com.baomidou.mybatisplus.extension.toolkit.SqlRunner;
+import org.apache.ibatis.session.SqlSession;
+import org.mybatis.spring.SqlSessionUtils;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ibatis.session.SqlSession;
-import org.mybatis.spring.SqlSessionUtils;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.enums.SqlMethod;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
-import com.baomidou.mybatisplus.extension.toolkit.SqlRunner;
-
 /**
- * <p>
  * ActiveRecord 模式 CRUD
- * </p>
+ * <p>
+ * 必须存在对应的原始mapper并继承baseMapper并且可以使用的前提下
+ * 才能使用此 AR 模式 !!!
  *
  * @param <T>
  * @author hubin
@@ -62,7 +57,6 @@ public abstract class Model<T extends Model> implements Serializable {
         } finally {
             closeSqlSession(sqlSession);
         }
-
     }
 
     /**
@@ -89,7 +83,6 @@ public abstract class Model<T extends Model> implements Serializable {
      * </p>
      *
      * @param id 主键ID
-     * @return
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteById(Serializable id) {
@@ -105,8 +98,6 @@ public abstract class Model<T extends Model> implements Serializable {
      * <p>
      * 根据主键删除
      * </p>
-     *
-     * @return
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteById() {
@@ -119,20 +110,18 @@ public abstract class Model<T extends Model> implements Serializable {
      * 删除记录
      * </p>
      *
-     * @param wrapper
-     * @return
+     * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
     @Transactional(rollbackFor = Exception.class)
-    public boolean delete(Wrapper wrapper) {
+    public boolean delete(Wrapper<T> queryWrapper) {
         Map<String, Object> map = new HashMap<>(1);
-        map.put(Constants.WRAPPER, wrapper);
+        map.put(Constants.WRAPPER, queryWrapper);
         SqlSession sqlSession = sqlSession();
         try {
             return SqlHelper.delBool(sqlSession.delete(sqlStatement(SqlMethod.DELETE), map));
         } finally {
             closeSqlSession(sqlSession);
         }
-
     }
 
     /**
@@ -152,7 +141,6 @@ public abstract class Model<T extends Model> implements Serializable {
         } finally {
             closeSqlSession(sqlSession);
         }
-
     }
 
     /**
@@ -160,14 +148,13 @@ public abstract class Model<T extends Model> implements Serializable {
      * 执行 SQL 更新
      * </p>
      *
-     * @param wrapper
-     * @return
+     * @param updateWrapper 实体对象封装操作类（可以为 null,里面的 entity 用于生成 where 语句）
      */
     @Transactional(rollbackFor = Exception.class)
-    public boolean update(Wrapper wrapper) {
+    public boolean update(Wrapper<T> updateWrapper) {
         Map<String, Object> map = new HashMap<>(2);
         map.put(Constants.ENTITY, this);
-        map.put(Constants.WRAPPER, wrapper);
+        map.put(Constants.WRAPPER, updateWrapper);
         // update
         SqlSession sqlSession = sqlSession();
         try {
@@ -181,8 +168,6 @@ public abstract class Model<T extends Model> implements Serializable {
      * <p>
      * 查询所有
      * </p>
-     *
-     * @return
      */
     public List<T> selectAll() {
         SqlSession sqlSession = sqlSession();
@@ -191,7 +176,6 @@ public abstract class Model<T extends Model> implements Serializable {
         } finally {
             closeSqlSession(sqlSession);
         }
-
     }
 
     /**
@@ -200,7 +184,6 @@ public abstract class Model<T extends Model> implements Serializable {
      * </p>
      *
      * @param id 主键ID
-     * @return
      */
     public T selectById(Serializable id) {
         SqlSession sqlSession = sqlSession();
@@ -209,15 +192,12 @@ public abstract class Model<T extends Model> implements Serializable {
         } finally {
             closeSqlSession(sqlSession);
         }
-
     }
 
     /**
      * <p>
      * 根据主键查询
      * </p>
-     *
-     * @return
      */
     public T selectById() {
         Assert.isFalse(StringUtils.checkValNull(pkVal()), "selectById primaryKey is null.");
@@ -229,13 +209,12 @@ public abstract class Model<T extends Model> implements Serializable {
      * 查询总记录数
      * </p>
      *
-     * @param wrapper
-     * @return
+     * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
 
-    public List<T> selectList(Wrapper wrapper) {
+    public List<T> selectList(Wrapper<T> queryWrapper) {
         Map<String, Object> map = new HashMap<>(1);
-        map.put(Constants.WRAPPER, wrapper);
+        map.put(Constants.WRAPPER, queryWrapper);
         SqlSession sqlSession = sqlSession();
         try {
             return sqlSession.selectList(sqlStatement(SqlMethod.SELECT_LIST), map);
@@ -249,11 +228,10 @@ public abstract class Model<T extends Model> implements Serializable {
      * 查询一条记录
      * </p>
      *
-     * @param wrapper
-     * @return
+     * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
-    public T selectOne(Wrapper wrapper) {
-        return SqlHelper.getObject(selectList(wrapper));
+    public T selectOne(Wrapper<T> queryWrapper) {
+        return SqlHelper.getObject(selectList(queryWrapper));
     }
 
     /**
@@ -261,13 +239,12 @@ public abstract class Model<T extends Model> implements Serializable {
      * 翻页查询
      * </p>
      *
-     * @param page    翻页查询条件
-     * @param wrapper
-     * @return
+     * @param page         翻页查询条件
+     * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
-    public IPage<T> selectPage(IPage<T> page, Wrapper<T> wrapper) {
+    public IPage<T> selectPage(IPage<T> page, Wrapper<T> queryWrapper) {
         Map<String, Object> map = new HashMap<>(2);
-        map.put(Constants.WRAPPER, wrapper);
+        map.put(Constants.WRAPPER, queryWrapper);
         map.put("page", page);
         SqlSession sqlSession = sqlSession();
         try {
@@ -283,12 +260,11 @@ public abstract class Model<T extends Model> implements Serializable {
      * 查询总数
      * </p>
      *
-     * @param wrapper
-     * @return
+     * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
-    public int selectCount(Wrapper wrapper) {
+    public Integer selectCount(Wrapper<T> queryWrapper) {
         Map<String, Object> map = new HashMap<>(1);
-        map.put(Constants.WRAPPER, wrapper);
+        map.put(Constants.WRAPPER, queryWrapper);
         SqlSession sqlSession = sqlSession();
         try {
             return SqlHelper.retCount(sqlSession.<Integer>selectOne(sqlStatement(SqlMethod.SELECT_COUNT), map));
@@ -318,8 +294,7 @@ public abstract class Model<T extends Model> implements Serializable {
     /**
      * 获取SqlStatement
      *
-     * @param sqlMethod
-     * @return
+     * @param sqlMethod sqlMethod
      */
     protected String sqlStatement(SqlMethod sqlMethod) {
         return sqlStatement(sqlMethod.getMethod());
@@ -328,8 +303,7 @@ public abstract class Model<T extends Model> implements Serializable {
     /**
      * 获取SqlStatement
      *
-     * @param sqlMethod
-     * @return
+     * @param sqlMethod sqlMethod
      */
     protected String sqlStatement(String sqlMethod) {
         return SqlHelper.table(getClass()).getSqlStatement(sqlMethod);
