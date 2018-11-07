@@ -44,6 +44,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.*;
+import java.util.function.LongSupplier;
 
 import static java.util.stream.Collectors.joining;
 
@@ -163,14 +164,18 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
         DbType dbType = StringUtils.isNotEmpty(dialectType) ? DbType.getDbType(dialectType)
             : JdbcUtils.getDbType(connection.getMetaData().getURL());
 
+        LongSupplier supplier = page.getSupplier();
         boolean orderBy = true;
         if (page.getTotal() == 0) {
+            // total 为0 才进行 count
             SqlInfo sqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), sqlParser, originalSql);
             orderBy = sqlInfo.isOrderBy();
             this.queryTotal(overflow, sqlInfo.getSql(), mappedStatement, boundSql, page, connection);
             if (page.getTotal() <= 0) {
                 return invocation.proceed();
             }
+        } else if (supplier != null) {
+            page.setTotal(supplier.getAsLong());
         }
 
         String buildSql = concatOrderBy(originalSql, page, orderBy);

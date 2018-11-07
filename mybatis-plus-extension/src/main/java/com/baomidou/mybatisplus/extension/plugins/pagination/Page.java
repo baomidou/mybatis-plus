@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.LongSupplier;
 
 /**
  * <p>
@@ -67,6 +68,12 @@ public class Page<T> implements IPage<T> {
      * </p>
      */
     private boolean optimizeCountSql = true;
+    /**
+     * <p>
+     * 自定义获取 count 的提供方
+     * </p>
+     */
+    private transient LongSupplier supplier = null;
 
     public Page() {
         // to do nothing
@@ -90,6 +97,14 @@ public class Page<T> implements IPage<T> {
         }
         this.size = size;
         this.total = total;
+    }
+
+    /**
+     * 后台使用的构造函数
+     */
+    public Page(long current, long size, LongSupplier supplier) {
+        this(current, size, -1);
+        this.supplier = supplier;
     }
 
     /**
@@ -215,5 +230,10 @@ public class Page<T> implements IPage<T> {
     public Page<T> setOptimizeCountSql(boolean optimizeCountSql) {
         this.optimizeCountSql = optimizeCountSql;
         return this;
+    }
+
+    @Override
+    public LongSupplier getSupplier() {
+        return this.supplier;
     }
 }

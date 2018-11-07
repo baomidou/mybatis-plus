@@ -15,9 +15,7 @@ import com.baomidou.mybatisplus.test.base.enums.TestEnum;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonLogicDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.mysql.MysqlDataMapper;
-import com.baomidou.mybatisplus.test.mysql.config.MysqlDb;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,11 +50,11 @@ public class MysqlTestDataMapperTest {
     @Resource
     private MysqlDataMapper mysqlMapper;
 
-    @BeforeClass
-    public static void init() throws Exception {
-        MysqlDb.initMysqlData();
-        System.out.println("init success");
-    }
+//    @BeforeClass
+//    public static void init() throws Exception {
+//        MysqlDb.initMysqlData();
+//        System.out.println("init success");
+//    }
 
     @Test
     public void a_insertForeach() {
@@ -290,7 +288,9 @@ public class MysqlTestDataMapperTest {
 
     @Test
     public void xxx() {
-        mysqlMapper.selectPage(new Page<>(1, 5),
+        IPage<MysqlData> page = mysqlMapper.selectPage(new Page<>(2, 5, mysqlMapper.selectCount(null)),
             Condition.<MysqlData>create().gt("`order`", 1).gt("`group`", 2));
+        System.out.println(page.getTotal());
+        System.out.println(page.getRecords().size());
     }
 }

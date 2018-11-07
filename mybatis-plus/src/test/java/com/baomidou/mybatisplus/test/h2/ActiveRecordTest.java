@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 
@@ -49,7 +50,7 @@ public class ActiveRecordTest {
         H2Student student = new H2Student(1L,"Tom长大了",2);
         Assert.assertTrue(student.updateById());
         student.setName("不听话的学生");
-        Assert.assertTrue(student.update(new QueryWrapper<>().gt("id",10)));
+        Assert.assertTrue(student.update(new QueryWrapper<H2Student>().gt("id", 10)));
     }
 
     @Test
@@ -125,6 +126,6 @@ public class ActiveRecordTest {
         student.setId(2L);
         Assert.assertTrue(student.deleteById());
         Assert.assertTrue(student.deleteById(12L));
-        Assert.assertTrue(student.delete(new QueryWrapper<>().gt("id",10)));
+        Assert.assertTrue(student.delete(new QueryWrapper<H2Student>().gt("id", 10)));
     }
 }

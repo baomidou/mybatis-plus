@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.core.metadata;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.function.LongSupplier;
 
 /**
  * <p>
@@ -28,6 +29,17 @@ import java.util.Map;
  * @since 2018-06-09
  */
 public interface IPage<T> extends Serializable {
+
+    /**
+     * <p>
+     * 自定义获取 count 的提供方
+     * </p>
+     *
+     * @return LongSupplier
+     */
+    default LongSupplier getSupplier() {
+        return null;
+    }
 
     /**
      * <p>
