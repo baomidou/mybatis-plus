@@ -56,12 +56,11 @@ public class MybatisConfiguration extends Configuration {
     /**
      * 配置初始化
      */
-    public MybatisConfiguration init(Long workerId, Long datacenterId) {
+    public void init(Long workerId, Long datacenterId) {
         // 初始化 Sequence
         if (null != workerId && null != datacenterId) {
             IdWorker.initSequence(workerId, datacenterId);
         }
-        return this;
     }
 
     /**

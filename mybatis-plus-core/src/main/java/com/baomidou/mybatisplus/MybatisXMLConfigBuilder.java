@@ -436,4 +436,8 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
         return false;
     }
 
+    @Override
+    public MybatisConfiguration getConfiguration() {
+        return (MybatisConfiguration) super.getConfiguration();
+    }
 }

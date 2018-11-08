@@ -82,7 +82,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
     private Resource configLocation;
 
-    private Configuration configuration;
+    private MybatisConfiguration configuration;
 
     private Resource[] mapperLocations;
 
@@ -282,7 +282,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
      * @param configuration MyBatis configuration
      * @since 1.3.0
      */
-    public void setConfiguration(Configuration configuration) {
+    public void setConfiguration(MybatisConfiguration configuration) {
         this.configuration = configuration;
     }
 
@@ -397,7 +397,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
      */
     protected SqlSessionFactory buildSqlSessionFactory() throws Exception {
 
-        Configuration configuration;
+        MybatisConfiguration configuration;
 
         // TODO 加载自定义 MybatisXmlConfigBuilder
         MybatisXMLConfigBuilder xmlConfigBuilder = null;
@@ -416,11 +416,14 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
                 LOGGER.debug("Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration");
             }
             // TODO 使用自定义配置
-            configuration = new MybatisConfiguration().init(globalConfig.getWorkerId(), globalConfig.getDatacenterId());
+            configuration = new MybatisConfiguration();
             if (this.configurationProperties != null) {
                 configuration.setVariables(this.configurationProperties);
             }
         }
+
+        // TODO 初始化 idWorker
+        configuration.init(globalConfig.getWorkerId(), globalConfig.getDatacenterId());
 
         if (this.objectFactory != null) {
             configuration.setObjectFactory(this.objectFactory);

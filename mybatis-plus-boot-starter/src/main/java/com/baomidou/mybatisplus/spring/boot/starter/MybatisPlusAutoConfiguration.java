@@ -125,7 +125,6 @@ public class MybatisPlusAutoConfiguration {
         MybatisConfiguration configuration = this.properties.getConfiguration();
         if (configuration == null && !StringUtils.hasText(this.properties.getConfigLocation())) {
             configuration = new MybatisConfiguration();
-            configuration.init(globalConfig.getWorkerId(), globalConfig.getDatacenterId());
         }
         if (configuration != null && !CollectionUtils.isEmpty(this.configurationCustomizers)) {
             for (ConfigurationCustomizer customizer : this.configurationCustomizers) {
