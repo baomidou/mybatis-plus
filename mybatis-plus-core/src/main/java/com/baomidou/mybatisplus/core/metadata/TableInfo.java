@@ -56,6 +56,10 @@ public class TableInfo {
      */
     private DbType dbType;
     /**
+     * java类型
+     */
+    private Class<?> keyType = Object.class;
+    /**
      * 表名称
      */
     private String tableName;
