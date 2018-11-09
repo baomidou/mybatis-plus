@@ -239,30 +239,31 @@ public class TableFieldInfo {
     }
 
     /**
-     * 获取 inset 时候插入值 sql 脚本片段
+     * 获取 insert 时候插入值 sql 脚本片段
      * insert into table (字段) values (值)
      * 位于 "值" 部位
      *
      * @return sql 脚本片段
      */
-    public String getInsertSqlProperty() {
-        String sqlScript = SqlScriptUtils.safeParam(el) + StringPool.COMMA;
-        if (fieldFill == FieldFill.INSERT || fieldFill == FieldFill.INSERT_UPDATE) {
+    public String getInsertSqlProperty(boolean isAll, final String prefix) {
+        final String newPrefix = prefix == null ? StringPool.EMPTY : prefix;
+        String sqlScript = SqlScriptUtils.safeParam(newPrefix + el) + StringPool.COMMA;
+        if (isAll || fieldFill == FieldFill.INSERT || fieldFill == FieldFill.INSERT_UPDATE) {
             return sqlScript;
         }
         return convertIf(sqlScript, property);
     }
 
     /**
-     * 获取 inset 时候字段 sql 脚本片段
+     * 获取 insert 时候字段 sql 脚本片段
      * insert into table (字段) values (值)
      * 位于 "字段" 部位
      *
      * @return sql 脚本片段
      */
-    public String getInsertSqlColumn() {
-        String sqlScript = column + StringPool.COMMA;
-        if (fieldFill == FieldFill.INSERT || fieldFill == FieldFill.INSERT_UPDATE) {
+    public String getInsertSqlColumn(boolean isAll) {
+        final String sqlScript = column + StringPool.COMMA;
+        if (isAll || fieldFill == FieldFill.INSERT || fieldFill == FieldFill.INSERT_UPDATE) {
             return sqlScript;
         }
         return convertIf(sqlScript, property);
@@ -275,7 +276,7 @@ public class TableFieldInfo {
      * @return sql 脚本片段
      */
     public String getSqlSet(final String prefix) {
-        String newPrefix = prefix == null ? StringPool.EMPTY : prefix;
+        final String newPrefix = prefix == null ? StringPool.EMPTY : prefix;
         // 默认: column=
         String sqlSet = column + StringPool.EQUALS;
         if (StringUtils.isNotEmpty(update)) {
@@ -298,7 +299,7 @@ public class TableFieldInfo {
      * @return sql 脚本片段
      */
     public String getSqlWhere(final String prefix) {
-        String newPrefix = prefix == null ? StringPool.EMPTY : prefix;
+        final String newPrefix = prefix == null ? StringPool.EMPTY : prefix;
         // 默认:  AND column=#{prefix + el}
         String sqlScript = " AND " + String.format(condition, column, newPrefix + el);
         // 查询的时候只判非空

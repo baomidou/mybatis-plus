@@ -29,7 +29,6 @@ import org.apache.ibatis.type.TypeException;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
-import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
@@ -45,10 +44,6 @@ import java.util.*;
  */
 public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
 
-    /**
-     * @see BoundSql
-     */
-    private static final Field ADDITIONAL_PARAMETERS_FIELD = getAdditionalParametersField();
     private final TypeHandlerRegistry typeHandlerRegistry;
     private final MappedStatement mappedStatement;
     private final Object parameterObject;
@@ -65,28 +60,11 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
     }
 
     /**
-     * 反射获取BoundSql中additionalParameters参数字段
-     *
-     * @return additionalParameters 字段
-     * @see BoundSql
-     */
-    private static Field getAdditionalParametersField() {
-        try {
-            Field additionalParametersField = BoundSql.class.getDeclaredField("additionalParameters");
-            additionalParametersField.setAccessible(true);
-            return additionalParametersField;
-        } catch (NoSuchFieldException e) {
-            // ignored, Because it will never happen.
-        }
-        return null;
-    }
-
-    /**
      * <p>
      * 批量（填充主键 ID）
      * </p>
      *
-     * @param ms MappedStatement
+     * @param ms              MappedStatement
      * @param parameterObject 插入数据库对象
      * @return
      */
@@ -227,15 +205,8 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
     }
 
     @Override
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings("unchecked")
     public void setParameters(PreparedStatement ps) {
-        // 反射获取动态参数
-        Map<String, Object> additionalParameters = Collections.emptyMap();
-        try {
-            additionalParameters = (Map<String, Object>) ADDITIONAL_PARAMETERS_FIELD.get(boundSql);
-        } catch (IllegalAccessException e) {
-            // ignored, Because it will never happen.
-        }
         ErrorContext.instance().activity("setting parameters").object(mappedStatement.getParameterMap().getId());
         List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
         if (parameterMappings != null) {
@@ -244,8 +215,8 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                 if (parameterMapping.getMode() != ParameterMode.OUT) {
                     Object value;
                     String propertyName = parameterMapping.getProperty();
-                    if (boundSql.hasAdditionalParameter(propertyName)) {
-                        value = additionalParameters.get(propertyName);
+                    if (boundSql.hasAdditionalParameter(propertyName)) { // issue #448 ask first for additional params
+                        value = boundSql.getAdditionalParameter(propertyName);
                     } else if (parameterObject == null) {
                         value = null;
                     } else if (typeHandlerRegistry.hasTypeHandler(parameterObject.getClass())) {

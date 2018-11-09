@@ -24,10 +24,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -292,5 +289,14 @@ public class MysqlTestDataMapperTest {
             Condition.<MysqlData>create().gt("`order`", 1).gt("`group`", 2));
         System.out.println(page.getTotal());
         System.out.println(page.getRecords().size());
+    }
+
+    @Test
+    public void insertBatch() {
+        List<MysqlData> list = new ArrayList<>();
+        for (int i = 0; i < 9; i++) {
+            list.add(new MysqlData().setOrder(i).setGroup(i).setTestStr(i + "条"));
+        }
+        System.out.println(mysqlMapper.insertBatch(list));
     }
 }

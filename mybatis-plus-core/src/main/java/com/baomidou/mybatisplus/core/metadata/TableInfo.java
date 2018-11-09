@@ -198,12 +198,13 @@ public class TableInfo {
      *
      * @return sql 脚本片段
      */
-    public String getKeyInsertSqlProperty() {
+    public String getKeyInsertSqlProperty(final String prefix, final String delimiter) {
+        final String newPrefix = prefix == null ? StringPool.EMPTY : prefix;
         if (StringUtils.isNotEmpty(keyProperty)) {
             if (idType == IdType.AUTO) {
                 return StringPool.EMPTY;
             }
-            return SqlScriptUtils.safeParam(keyProperty) + StringPool.COMMA + StringPool.NEWLINE;
+            return SqlScriptUtils.safeParam(newPrefix + keyProperty) + StringPool.COMMA + delimiter;
         }
         return StringPool.EMPTY;
     }
@@ -215,12 +216,12 @@ public class TableInfo {
      *
      * @return sql 脚本片段
      */
-    public String getKeyInsertSqlColumn() {
+    public String getKeyInsertSqlColumn(final String delimiter) {
         if (StringUtils.isNotEmpty(keyColumn)) {
             if (idType == IdType.AUTO) {
                 return StringPool.EMPTY;
             }
-            return keyColumn + StringPool.COMMA + StringPool.NEWLINE;
+            return keyColumn + StringPool.COMMA + delimiter;
         }
         return StringPool.EMPTY;
     }
@@ -233,9 +234,11 @@ public class TableInfo {
      *
      * @return sql 脚本片段
      */
-    public String getAllInsertSqlProperty() {
-        return getKeyInsertSqlProperty() + fieldList.stream().map(TableFieldInfo::getInsertSqlProperty)
-            .collect(joining(StringPool.NEWLINE));
+    public String getAllInsertSqlProperty(boolean isAll, final String prefix) {
+        final String newPrefix = prefix == null ? StringPool.EMPTY : prefix;
+        final String delimiter = isAll ? StringPool.EMPTY : StringPool.NEWLINE;
+        return getKeyInsertSqlProperty(newPrefix, delimiter) + fieldList.stream()
+            .map(i -> i.getInsertSqlProperty(isAll, newPrefix)).collect(joining(delimiter));
     }
 
     /**
@@ -245,9 +248,10 @@ public class TableInfo {
      *
      * @return sql 脚本片段
      */
-    public String getAllInsertSqlColumn() {
-        return getKeyInsertSqlColumn() + fieldList.stream().map(TableFieldInfo::getInsertSqlColumn)
-            .collect(joining(StringPool.NEWLINE));
+    public String getAllInsertSqlColumn(boolean isAll) {
+        final String delimiter = isAll ? StringPool.EMPTY : StringPool.NEWLINE;
+        return getKeyInsertSqlColumn(delimiter) + fieldList.stream().map(i -> i.getInsertSqlColumn(isAll))
+            .collect(joining(delimiter));
     }
 
     /**
@@ -259,7 +263,7 @@ public class TableInfo {
      * @return sql 脚本片段
      */
     public String getAllSqlWhere(boolean ignoreLogicDelFiled, boolean withId, final String prefix) {
-        String newPrefix = prefix == null ? StringPool.EMPTY : prefix;
+        final String newPrefix = prefix == null ? StringPool.EMPTY : prefix;
         String filedSqlScript = fieldList.stream()
             .filter(i -> {
                 if (ignoreLogicDelFiled) {
@@ -285,7 +289,7 @@ public class TableInfo {
      * @return sql 脚本片段
      */
     public String getAllSqlSet(boolean ignoreLogicDelFiled, final String prefix) {
-        String newPrefix = prefix == null ? StringPool.EMPTY : prefix;
+        final String newPrefix = prefix == null ? StringPool.EMPTY : prefix;
         return fieldList.stream()
             .filter(i -> {
                 if (ignoreLogicDelFiled) {
