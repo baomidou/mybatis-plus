@@ -316,7 +316,6 @@ public class TableInfoHelper {
             } else {
                 throwExceptionId(clazz);
             }
-            tableInfo.setKeyType(field.getType());
         }
         return false;
     }
@@ -343,8 +342,7 @@ public class TableInfoHelper {
                     .setIdType(dbConfig.getIdType())
                     .setKeyColumn(column)
                     .setKeyProperty(field.getName())
-                    .setClazz(field.getDeclaringClass())
-                    .setKeyType(field.getType());
+                    .setClazz(field.getDeclaringClass());
                 return true;
             } else {
                 throwExceptionId(clazz);

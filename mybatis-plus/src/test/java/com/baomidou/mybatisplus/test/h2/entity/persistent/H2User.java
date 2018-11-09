@@ -15,19 +15,15 @@
  */
 package com.baomidou.mybatisplus.test.h2.entity.persistent;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.Version;
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.test.h2.entity.SuperEntity;
 import com.baomidou.mybatisplus.test.h2.entity.enums.AgeEnum;
-
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * <p>
@@ -40,6 +36,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @TableName("h2user")
+@EqualsAndHashCode(callSuper = true)
 public class H2User extends SuperEntity {
 
     /* 测试忽略验证 */

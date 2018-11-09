@@ -15,12 +15,12 @@
  */
 package com.baomidou.mybatisplus.test.h2.entity;
 
-import java.io.Serializable;
-
 import com.baomidou.mybatisplus.annotation.TableId;
-
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
 
 /**
  * <p>
@@ -32,6 +32,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
+@EqualsAndHashCode(callSuper = true)
 public class SuperEntity extends SuSuperEntity implements Serializable {
 
     /* 主键ID 注解，value 字段名，type 用户输入ID */
