@@ -196,7 +196,7 @@ public class TableInfo {
     }
 
     /**
-     * 获取 inset 时候主键 sql 脚本片段
+     * 获取 insert 时候主键 sql 脚本片段
      * insert into table (字段) values (值)
      * 位于 "值" 部位
      *
@@ -213,7 +213,7 @@ public class TableInfo {
     }
 
     /**
-     * 获取 inset 时候主键 sql 脚本片段
+     * 获取 insert 时候主键 sql 脚本片段
      * insert into table (字段) values (值)
      * 位于 "字段" 部位
      *
@@ -231,7 +231,7 @@ public class TableInfo {
 
 
     /**
-     * 获取所有 inset 时候插入值 sql 脚本片段
+     * 获取所有 insert 时候插入值 sql 脚本片段
      * insert into table (字段) values (值)
      * 位于 "值" 部位
      *
@@ -243,7 +243,7 @@ public class TableInfo {
     }
 
     /**
-     * 获取 inset 时候字段 sql 脚本片段
+     * 获取 insert 时候字段 sql 脚本片段
      * insert into table (字段) values (值)
      * 位于 "字段" 部位
      *
