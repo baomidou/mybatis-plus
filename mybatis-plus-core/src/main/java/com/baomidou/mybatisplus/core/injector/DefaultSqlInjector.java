@@ -17,8 +17,10 @@ package com.baomidou.mybatisplus.core.injector;
 
 import com.baomidou.mybatisplus.core.injector.methods.*;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 
 /**
@@ -33,7 +35,7 @@ public class DefaultSqlInjector extends AbstractSqlInjector {
 
     @Override
     public List<AbstractMethod> getMethodList() {
-        return Arrays.asList(
+        return Stream.of(
             new Insert(),
             new Delete(),
             new DeleteByMap(),
@@ -51,6 +53,6 @@ public class DefaultSqlInjector extends AbstractSqlInjector {
             new SelectObjs(),
             new SelectList(),
             new SelectPage()
-        );
+        ).collect(toList());
     }
 }
