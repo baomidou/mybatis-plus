@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionUtils;
@@ -27,8 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.core.assist.ISqlRunner;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlHelper;
 
 /**
  * <p>
@@ -45,7 +44,7 @@ public class SqlRunner implements ISqlRunner {
     // 默认FACTORY
 //    public static SqlSessionFactory FACTORY;
     private SqlSessionFactory sqlSessionFactory;
-    
+
     private Class<?> clazz;
 
     public SqlRunner() {
@@ -82,7 +81,7 @@ public class SqlRunner implements ISqlRunner {
     public static SqlRunner db(Class<?> clazz) {
         return new SqlRunner(clazz);
     }
-    
+
     @Transactional
     @Override
     public boolean insert(String sql, Object... args) {
@@ -93,7 +92,7 @@ public class SqlRunner implements ISqlRunner {
             closeSqlSession(sqlSession);
         }
     }
-    
+
     @Transactional
     @Override
     public boolean delete(String sql, Object... args) {
@@ -117,7 +116,7 @@ public class SqlRunner implements ISqlRunner {
         sqlMap.put(SQL, StringUtils.sqlArgsFill(sql, args));
         return sqlMap;
     }
-    
+
     @Transactional
     @Override
     public boolean update(String sql, Object... args) {
@@ -177,7 +176,7 @@ public class SqlRunner implements ISqlRunner {
     public Object selectObj(String sql, Object... args) {
         return SqlHelper.getObject(selectObjs(sql, args));
     }
-    
+
     @Override
     public int selectCount(String sql, Object... args) {
         SqlSession sqlSession = sqlSession();
@@ -212,7 +211,7 @@ public class SqlRunner implements ISqlRunner {
     private SqlSession sqlSession() {
         return (clazz != null) ? SqlSessionUtils.getSqlSession(GlobalConfigUtils.currentSessionFactory(clazz)) : SqlSessionUtils.getSqlSession(sqlSessionFactory);
     }
-    
+
     /**
      * 释放sqlSession
      * @param sqlSession session

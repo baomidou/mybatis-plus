@@ -42,7 +42,7 @@ ext {
         "commons-dbcp2"                     : "org.apache.commons:commons-dbcp2:2.1.1",
         "sqlserver"                         : "com.microsoft.sqlserver:sqljdbc4:4.0",
         "postgresql"                        : "org.postgresql:postgresql:9.4.1212",
-        "oracle"                            : "com.oracle:ojdbc14:10.2.0.5.0",
+        "oracle"                            : "com.oracle:ojdbc:11.2.0.3",
         "h2"                                : "com.h2database:h2:1.4.194",
         "mysql"                             : "mysql:mysql-connector-java:5.1.38",
         //code generator

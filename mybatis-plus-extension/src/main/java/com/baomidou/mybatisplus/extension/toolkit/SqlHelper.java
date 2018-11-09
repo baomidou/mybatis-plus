@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.core.toolkit.sql;
+package com.baomidou.mybatisplus.extension.toolkit;
 
 import java.util.List;
 
