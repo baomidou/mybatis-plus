@@ -340,7 +340,7 @@ public class AutoSqlInjector implements ISqlInjector {
             idStr = ids.toString();
         }
         String sql = String.format(sqlMethod.getSql(), table.getTableName(), table.getKeyColumn(), idStr);
-        sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+        sqlSource = languageDriver.createSqlSource(configuration, sql, Object.class);
         this.addDeleteMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource);
     }
 
@@ -422,7 +422,7 @@ public class AutoSqlInjector implements ISqlInjector {
                 sqlSelectColumns(table, false), table.getTableName(), table.getKeyColumn(), ids.toString()), modelClass);
         } else {
             sqlSource = new RawSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false),
-                table.getTableName(), table.getKeyColumn(), table.getKeyProperty()), modelClass);
+                table.getTableName(), table.getKeyColumn(), table.getKeyProperty()), Object.class);
         }
         this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, table);
     }

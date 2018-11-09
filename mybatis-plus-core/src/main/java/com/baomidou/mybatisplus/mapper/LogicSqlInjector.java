@@ -58,7 +58,7 @@ public class LogicSqlInjector extends AutoSqlInjector {
             }
             String sql = String.format(sqlMethod.getSql(), table.getTableName(), sqlLogicSet(table),
                 table.getKeyColumn(), idStr);
-            sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+            sqlSource = languageDriver.createSqlSource(configuration, sql, Object.class);
             this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
         } else {
             // 正常删除
@@ -127,7 +127,7 @@ public class LogicSqlInjector extends AutoSqlInjector {
                     table.getTableName(), table.getKeyColumn(), ids.toString(), getLogicDeleteSql(table)), modelClass);
             } else {
                 sqlSource = new RawSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false), table.getTableName(),
-                    table.getKeyColumn(), table.getKeyProperty(), getLogicDeleteSql(table)), modelClass);
+                    table.getKeyColumn(), table.getKeyProperty(), getLogicDeleteSql(table)), Object.class);
             }
             this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, table);
         } else {
