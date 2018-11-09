@@ -13,9 +13,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.core.conditions.query
+package com.baomidou.mybatisplus.extension.kotlin
 
-import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapperKt
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils
@@ -33,14 +32,15 @@ import kotlin.reflect.KProperty
  * @author yangyuhan
  * @since 2018-11-02
  */
-class LambdaQueryWrapperkt<T> : AbstractLambdaWrapperKt<T, LambdaQueryWrapperkt<T>> {
+class LambdaQueryWrapperkt<T : Any> : AbstractLambdaWrapperKt<T, LambdaQueryWrapperkt<T>> {
 
     /**
      * 查询字段
      */
     private var sqlSelect: String? = null
 
-    @JvmOverloads constructor(entity: T? = null) {
+
+    constructor(entity: T) {
         this.entity = entity
         this.initEntityClass()
         this.initNeed()
@@ -113,4 +113,9 @@ class LambdaQueryWrapperkt<T> : AbstractLambdaWrapperKt<T, LambdaQueryWrapperkt<
     override fun instance(paramNameSeq: AtomicInteger, paramNameValuePairs: Map<String, Any>): LambdaQueryWrapperkt<T> {
         return LambdaQueryWrapperkt(entity, entityClass, null, paramNameSeq, paramNameValuePairs, MergeSegments())
     }
+
+
+
+
 }
+

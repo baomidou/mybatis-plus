@@ -42,7 +42,6 @@ ext {
     ]
 
     dependencies = [
-        "commons-collections"               : "commons-collections:commons-collections:3.2.2",
         "kotlin-reflect"                    : "org.jetbrains.kotlin:kotlin-reflect:1.2.71",
         "jsqlparser"                        : "com.github.jsqlparser:jsqlparser:${jsqlparserVersion}",
         "mybatis-spring"                    : "org.mybatis:mybatis-spring:${mybatisSpringVersion}",

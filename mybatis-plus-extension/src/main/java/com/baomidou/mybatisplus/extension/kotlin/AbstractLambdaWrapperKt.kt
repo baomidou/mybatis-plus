@@ -13,9 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.core.conditions
+package com.baomidou.mybatisplus.extension.kotlin
 
-import com.baomidou.mybatisplus.core.toolkit.LAMBDA_KT_CACHE
+import com.baomidou.mybatisplus.core.conditions.AbstractWrapper
+import com.baomidou.mybatisplus.core.toolkit.LambdaUtils
 import kotlin.reflect.KProperty
 
 /**
@@ -30,9 +31,14 @@ import kotlin.reflect.KProperty
  */
 abstract class AbstractLambdaWrapperKt<T, This : AbstractLambdaWrapperKt<T, This>> : AbstractWrapper<T, KProperty<*>, This>() {
 
+    private var columnMap: Map<String, String>? = null
 
-    override fun columnToString(kProperty: KProperty<*>): String {
-      return  LAMBDA_KT_CACHE[kProperty]!!
+
+    override fun columnToString(kProperty: KProperty<*>): String? {
+        if (columnMap == null) {
+            columnMap = LambdaUtils.getColumnMap(this.entityClass.name)
+        }
+        return columnMap?.get(kProperty.name)
     }
 
 }

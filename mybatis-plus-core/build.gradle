@@ -1,6 +1,3 @@
-plugins {
-    id "org.jetbrains.kotlin.jvm"
-}
 apply plugin: 'java'
 
 sourceCompatibility = 1.8
@@ -10,8 +7,6 @@ dependencies {
     compile rootProject.ext.dependencies["mybatis"]
     compile rootProject.ext.dependencies["jsqlparser"]
     compile rootProject.ext.dependencies["mybatis-spring"]
-    compile rootProject.ext.dependencies["kotlin-reflect"]
-    compile rootProject.ext.dependencies["commons-collections"]
 
     provided rootProject.ext.dependencies["cglib"]
     provided rootProject.ext.dependencies["spring-aop"]

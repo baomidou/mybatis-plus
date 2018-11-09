@@ -13,9 +13,8 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.core.conditions.update
+package com.baomidou.mybatisplus.extension.kotlin
 
-import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapperKt
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils
 import com.baomidou.mybatisplus.core.toolkit.StringPool
@@ -34,19 +33,28 @@ import kotlin.reflect.KProperty
  * @author yangyuhan
  * @since 2018-11-02
  */
-class LambdaUpdateWrapperKt<T> internal constructor(entity: T, paramNameSeq: AtomicInteger, paramNameValuePairs: Map<String, Any>,
-                                                    mergeSegments: MergeSegments) : AbstractLambdaWrapperKt<T, LambdaUpdateWrapperKt<T>>() {
+class LambdaUpdateWrapperKt<T:Any>: AbstractLambdaWrapperKt<T, LambdaUpdateWrapperKt<T>>   {
 
     /**
      * SQL 更新字段内容，例如：name='1',age=2
      */
     private val sqlSet = ArrayList<String>()
 
-    init {
+
+    constructor(entity: T) {
+        this.entity = entity
+        this.initEntityClass()
+        this.initNeed()
+    }
+
+
+    constructor(entity: T, paramNameSeq: AtomicInteger, paramNameValuePairs: Map<String, Any>,
+                mergeSegments: MergeSegments) {
         this.entity = entity
         this.paramNameSeq = paramNameSeq
         this.paramNameValuePairs = paramNameValuePairs
         this.expression = mergeSegments
+
     }
 
     override fun getSqlSet(): String? {
