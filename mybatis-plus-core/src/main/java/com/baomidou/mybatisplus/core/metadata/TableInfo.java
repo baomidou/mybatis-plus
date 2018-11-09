@@ -198,13 +198,13 @@ public class TableInfo {
      *
      * @return sql 脚本片段
      */
-    public String getKeyInsertSqlProperty(final String prefix, final String delimiter) {
+    public String getKeyInsertSqlProperty(final String prefix) {
         final String newPrefix = prefix == null ? StringPool.EMPTY : prefix;
         if (StringUtils.isNotEmpty(keyProperty)) {
             if (idType == IdType.AUTO) {
                 return StringPool.EMPTY;
             }
-            return SqlScriptUtils.safeParam(newPrefix + keyProperty) + StringPool.COMMA + delimiter;
+            return SqlScriptUtils.safeParam(newPrefix + keyProperty) + StringPool.COMMA + StringPool.NEWLINE;
         }
         return StringPool.EMPTY;
     }
@@ -216,12 +216,12 @@ public class TableInfo {
      *
      * @return sql 脚本片段
      */
-    public String getKeyInsertSqlColumn(final String delimiter) {
+    public String getKeyInsertSqlColumn() {
         if (StringUtils.isNotEmpty(keyColumn)) {
             if (idType == IdType.AUTO) {
                 return StringPool.EMPTY;
             }
-            return keyColumn + StringPool.COMMA + delimiter;
+            return keyColumn + StringPool.COMMA + StringPool.NEWLINE;
         }
         return StringPool.EMPTY;
     }
@@ -236,9 +236,8 @@ public class TableInfo {
      */
     public String getAllInsertSqlProperty(boolean isAll, final String prefix) {
         final String newPrefix = prefix == null ? StringPool.EMPTY : prefix;
-        final String delimiter = isAll ? StringPool.EMPTY : StringPool.NEWLINE;
-        return getKeyInsertSqlProperty(newPrefix, delimiter) + fieldList.stream()
-            .map(i -> i.getInsertSqlProperty(isAll, newPrefix)).collect(joining(delimiter));
+        return getKeyInsertSqlProperty(newPrefix) + fieldList.stream()
+            .map(i -> i.getInsertSqlProperty(isAll, newPrefix)).collect(joining(StringPool.NEWLINE));
     }
 
     /**
@@ -249,9 +248,8 @@ public class TableInfo {
      * @return sql 脚本片段
      */
     public String getAllInsertSqlColumn(boolean isAll) {
-        final String delimiter = isAll ? StringPool.EMPTY : StringPool.NEWLINE;
-        return getKeyInsertSqlColumn(delimiter) + fieldList.stream().map(i -> i.getInsertSqlColumn(isAll))
-            .collect(joining(delimiter));
+        return getKeyInsertSqlColumn() + fieldList.stream().map(i -> i.getInsertSqlColumn(isAll))
+            .collect(joining(StringPool.NEWLINE));
     }
 
     /**
