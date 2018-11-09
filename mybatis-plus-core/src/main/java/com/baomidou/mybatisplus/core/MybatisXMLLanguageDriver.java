@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.core;
 
-import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
