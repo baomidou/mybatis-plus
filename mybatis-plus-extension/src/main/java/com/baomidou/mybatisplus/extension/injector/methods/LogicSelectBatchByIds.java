@@ -40,7 +40,7 @@ public class LogicSelectBatchByIds extends AbstractLogicMethod {
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(),
             sqlSelectColumns(tableInfo, false), tableInfo.getTableName(), tableInfo.getKeyColumn(),
             SqlScriptUtils.convertForeach("#{item}", Constants.COLLECTION, null, "item", StringPool.COMMA),
-            tableInfo.getLogicDeleteSql(true, false)), modelClass);
+            tableInfo.getLogicDeleteSql(true, false)), Object.class);
         return addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, tableInfo);
     }
 }

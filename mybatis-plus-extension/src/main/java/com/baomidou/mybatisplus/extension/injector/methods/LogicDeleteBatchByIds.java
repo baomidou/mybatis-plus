@@ -48,7 +48,7 @@ public class LogicDeleteBatchByIds extends AbstractLogicMethod {
             sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), tableInfo.getKeyColumn(),
                 SqlScriptUtils.convertForeach("#{item}", Constants.COLLECTION, null, "item", StringPool.COMMA));
         }
-        SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+        SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Object.class);
         return addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
     }
 }

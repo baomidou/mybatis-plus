@@ -31,7 +31,7 @@ import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
 public class MybatisXMLLanguageDriver extends XMLLanguageDriver {
 
     @Override
-    public ParameterHandler createParameterHandler(MappedStatement mappedStatement, Object parameterObject,
+    public MybatisDefaultParameterHandler createParameterHandler(MappedStatement mappedStatement, Object parameterObject,
                                                    BoundSql boundSql) {
         /* 使用自定义 ParameterHandler */
         return new MybatisDefaultParameterHandler(mappedStatement, parameterObject, boundSql);

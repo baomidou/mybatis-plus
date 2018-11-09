@@ -37,7 +37,7 @@ public class LogicSelectById extends AbstractLogicMethod {
         SqlMethod sqlMethod = SqlMethod.LOGIC_SELECT_BY_ID;
         SqlSource sqlSource = new RawSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(tableInfo, false),
             tableInfo.getTableName(), tableInfo.getKeyColumn(), tableInfo.getKeyProperty(),
-            tableInfo.getLogicDeleteSql(true, false)), modelClass);
+            tableInfo.getLogicDeleteSql(true, false)), Object.class);
         return addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, tableInfo);
     }
 }
