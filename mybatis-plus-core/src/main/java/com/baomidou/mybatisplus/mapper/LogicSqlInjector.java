@@ -127,7 +127,7 @@ public class LogicSqlInjector extends AutoSqlInjector {
                     table.getTableName(), table.getKeyColumn(), ids.toString(), getLogicDeleteSql(table)), modelClass);
             } else {
                 sqlSource = new RawSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false), table.getTableName(),
-                    table.getKeyColumn(), table.getKeyProperty(), getLogicDeleteSql(table)), Object.class);
+                    table.getKeyColumn(), table.getKeyProperty(), getLogicDeleteSql(table)), modelClass);
             }
             this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, table);
         } else {

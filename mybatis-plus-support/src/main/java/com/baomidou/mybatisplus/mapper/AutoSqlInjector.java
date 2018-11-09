@@ -422,7 +422,7 @@ public class AutoSqlInjector implements ISqlInjector {
                 sqlSelectColumns(table, false), table.getTableName(), table.getKeyColumn(), ids.toString()), modelClass);
         } else {
             sqlSource = new RawSqlSource(configuration, String.format(sqlMethod.getSql(), sqlSelectColumns(table, false),
-                table.getTableName(), table.getKeyColumn(), table.getKeyProperty()), Object.class);
+                table.getTableName(), table.getKeyColumn(), table.getKeyProperty()), modelClass);
         }
         this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, table);
     }
