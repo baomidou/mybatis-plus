@@ -38,7 +38,7 @@ public class Page<T> implements IPage<T> {
      */
     private List<T> records = Collections.emptyList();
     /**
-     * 总数，当 total 不为 0 时分页插件不会进行 count 查询
+     * 总数，当 total 为 0 时,分页插件才会进行 count 查询
      */
     private long total = 0;
     /**
@@ -89,12 +89,7 @@ public class Page<T> implements IPage<T> {
             this.current = current;
         }
         this.size = size;
-        if (0 == total) {
-            // 通过构造函数自定义 count sql 的值为 0 设置 -1 不查询分页总数
-            this.total = -1;
-        } else {
-            this.total = total;
-        }
+        this.total = total;
     }
 
     /**
