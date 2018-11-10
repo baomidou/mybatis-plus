@@ -19,8 +19,8 @@ import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
@@ -45,7 +45,7 @@ import static java.util.stream.Collectors.joining;
  */
 @Data
 @Accessors(chain = true)
-public class TableInfo {
+public class TableInfo implements Constants {
 
     /**
      * 表主键ID 类型
@@ -124,7 +124,7 @@ public class TableInfo {
      * @return SQL Statement
      */
     public String getSqlStatement(String sqlMethod) {
-        return currentNamespace + StringPool.DOT + sqlMethod;
+        return currentNamespace + DOT + sqlMethod;
     }
 
     public void setConfigMark(Configuration configuration) {
@@ -155,7 +155,7 @@ public class TableInfo {
                 sqlSelect = SqlUtils.sqlWordConvert(dbType, keyColumn, true);
             }
         } else {
-            sqlSelect = StringPool.EMPTY;
+            sqlSelect = EMPTY;
         }
         return sqlSelect;
     }
@@ -182,9 +182,9 @@ public class TableInfo {
     public String chooseSelect(Predicate<TableFieldInfo> predicate) {
         String sqlSelect = getKeySqlSelect();
         String fieldsSqlSelect = fieldList.stream().filter(predicate)
-            .map(i -> i.getSqlSelect(dbType)).collect(joining(StringPool.COMMA));
+            .map(i -> i.getSqlSelect(dbType)).collect(joining(COMMA));
         if (StringUtils.isNotEmpty(sqlSelect) && StringUtils.isNotEmpty(fieldsSqlSelect)) {
-            return sqlSelect + StringPool.COMMA + fieldsSqlSelect;
+            return sqlSelect + COMMA + fieldsSqlSelect;
         } else if (StringUtils.isNotEmpty(fieldsSqlSelect)) {
             return fieldsSqlSelect;
         }
@@ -199,14 +199,14 @@ public class TableInfo {
      * @return sql 脚本片段
      */
     public String getKeyInsertSqlProperty(final String prefix) {
-        final String newPrefix = prefix == null ? StringPool.EMPTY : prefix;
+        final String newPrefix = prefix == null ? EMPTY : prefix;
         if (StringUtils.isNotEmpty(keyProperty)) {
             if (idType == IdType.AUTO) {
-                return StringPool.EMPTY;
+                return EMPTY;
             }
-            return SqlScriptUtils.safeParam(newPrefix + keyProperty) + StringPool.COMMA + StringPool.NEWLINE;
+            return SqlScriptUtils.safeParam(newPrefix + keyProperty) + COMMA + NEWLINE;
         }
-        return StringPool.EMPTY;
+        return EMPTY;
     }
 
     /**
@@ -219,11 +219,11 @@ public class TableInfo {
     public String getKeyInsertSqlColumn() {
         if (StringUtils.isNotEmpty(keyColumn)) {
             if (idType == IdType.AUTO) {
-                return StringPool.EMPTY;
+                return EMPTY;
             }
-            return keyColumn + StringPool.COMMA + StringPool.NEWLINE;
+            return keyColumn + COMMA + NEWLINE;
         }
-        return StringPool.EMPTY;
+        return EMPTY;
     }
 
 
@@ -235,9 +235,9 @@ public class TableInfo {
      * @return sql 脚本片段
      */
     public String getAllInsertSqlProperty(boolean isAll, final String prefix) {
-        final String newPrefix = prefix == null ? StringPool.EMPTY : prefix;
+        final String newPrefix = prefix == null ? EMPTY : prefix;
         return getKeyInsertSqlProperty(newPrefix) + fieldList.stream()
-            .map(i -> i.getInsertSqlProperty(isAll, newPrefix)).collect(joining(StringPool.NEWLINE));
+            .map(i -> i.getInsertSqlProperty(isAll, newPrefix)).collect(joining(NEWLINE));
     }
 
     /**
@@ -249,7 +249,7 @@ public class TableInfo {
      */
     public String getAllInsertSqlColumn(boolean isAll) {
         return getKeyInsertSqlColumn() + fieldList.stream().map(i -> i.getInsertSqlColumn(isAll))
-            .collect(joining(StringPool.NEWLINE));
+            .collect(joining(NEWLINE));
     }
 
     /**
@@ -261,7 +261,7 @@ public class TableInfo {
      * @return sql 脚本片段
      */
     public String getAllSqlWhere(boolean ignoreLogicDelFiled, boolean withId, final String prefix) {
-        final String newPrefix = prefix == null ? StringPool.EMPTY : prefix;
+        final String newPrefix = prefix == null ? EMPTY : prefix;
         String filedSqlScript = fieldList.stream()
             .filter(i -> {
                 if (ignoreLogicDelFiled) {
@@ -269,14 +269,14 @@ public class TableInfo {
                 }
                 return true;
             })
-            .map(i -> i.getSqlWhere(newPrefix)).collect(joining(StringPool.NEWLINE));
+            .map(i -> i.getSqlWhere(newPrefix)).collect(joining(NEWLINE));
         if (!withId || StringUtils.isEmpty(keyProperty)) {
             return filedSqlScript;
         }
         String newKeyProperty = newPrefix + keyProperty;
-        String keySqlScript = keyColumn + StringPool.EQUALS + SqlScriptUtils.safeParam(newKeyProperty);
-        return SqlScriptUtils.convertIf(keySqlScript, String.format("%s != null", newKeyProperty), false) +
-            StringPool.NEWLINE + filedSqlScript;
+        String keySqlScript = keyColumn + EQUALS + SqlScriptUtils.safeParam(newKeyProperty);
+        return SqlScriptUtils.convertIf(keySqlScript, String.format("%s != null", newKeyProperty), false)
+            + NEWLINE + filedSqlScript;
     }
 
     /**
@@ -287,15 +287,14 @@ public class TableInfo {
      * @return sql 脚本片段
      */
     public String getAllSqlSet(boolean ignoreLogicDelFiled, final String prefix) {
-        final String newPrefix = prefix == null ? StringPool.EMPTY : prefix;
+        final String newPrefix = prefix == null ? EMPTY : prefix;
         return fieldList.stream()
             .filter(i -> {
                 if (ignoreLogicDelFiled) {
                     return !(isLogicDelete() && i.isLogicDelete());
                 }
                 return true;
-            })
-            .map(i -> i.getSqlSet(newPrefix)).collect(joining(StringPool.NEWLINE));
+            }).map(i -> i.getSqlSet(newPrefix)).collect(joining(NEWLINE));
     }
 
     /**
@@ -310,13 +309,13 @@ public class TableInfo {
             TableFieldInfo field = fieldList.stream().filter(TableFieldInfo::isLogicDelete).findFirst()
                 .orElseThrow(() -> ExceptionUtils.mpe("can't find the logicFiled from table {%s}", tableName));
             String formatStr = field.isCharSequence() ? "'%s'" : "%s";
-            String logicDeleteSql = field.getColumn() + StringPool.EQUALS +
+            String logicDeleteSql = field.getColumn() + EQUALS +
                 String.format(formatStr, deleteValue ? field.getLogicDeleteValue() : field.getLogicNotDeleteValue());
             if (startWithAnd) {
                 logicDeleteSql = " AND " + logicDeleteSql;
             }
             return logicDeleteSql;
         }
-        return StringPool.EMPTY;
+        return EMPTY;
     }
 }

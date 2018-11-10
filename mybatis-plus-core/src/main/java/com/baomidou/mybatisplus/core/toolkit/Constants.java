@@ -24,20 +24,12 @@ package com.baomidou.mybatisplus.core.toolkit;
  * @author miemie
  * @since 2018-07-22
  */
-public interface Constants {
+public interface Constants extends StringPool {
 
-    /**
-     * UTF-8
-     */
-    String UTF8 = "UTF-8";
     /**
      * MD5
      */
     String MD5 = "MD5";
-    /**
-     * 一个点
-     */
-    String SPOT = ".";
     /**
      * 实体类
      */
@@ -45,7 +37,7 @@ public interface Constants {
     /**
      * 实体类 带后缀 ==> .
      */
-    String ENTITY_SPOT = ENTITY + SPOT;
+    String ENTITY_SPOT = ENTITY + DOT;
     /**
      * wrapper 类
      */
@@ -53,7 +45,7 @@ public interface Constants {
     /**
      * wrapper 类 带后缀 ==> .
      */
-    String WRAPPER_SPOT = WRAPPER + SPOT;
+    String WRAPPER_SPOT = WRAPPER + DOT;
     /**
      * wrapper 类的属性 entity
      */
@@ -63,9 +55,25 @@ public interface Constants {
      */
     String WRAPPER_SQLSEGMENT = WRAPPER_SPOT + "sqlSegment";
     /**
+     * wrapper 类的属性 emptyOfNormal
+     */
+    String WRAPPER_EMPTYOFNORMAL = WRAPPER_SPOT + "emptyOfNormal";
+    /**
+     * wrapper 类的属性 nonEmptyOfNormal
+     */
+    String WRAPPER_NONEMPTYOFNORMAL = WRAPPER_SPOT + "nonEmptyOfNormal";
+    /**
+     * wrapper 类的属性 emptyOfWhere
+     */
+    String WRAPPER_EMPTYOFWHERE = WRAPPER_SPOT + "emptyOfWhere";
+    /**
+     * wrapper 类的判断属性 nonEmptyOfWhere
+     */
+    String WRAPPER_NONEMPTYOFWHERE = WRAPPER_SPOT + "nonEmptyOfWhere";
+    /**
      * wrapper 类的属性 entity 带后缀 ==> .
      */
-    String WRAPPER_ENTITY_SPOT = WRAPPER_SPOT + "entity" + SPOT;
+    String WRAPPER_ENTITY_SPOT = WRAPPER_SPOT + "entity" + DOT;
     /**
      * UpdateWrapper 类的属性 sqlSet
      */
@@ -81,7 +89,7 @@ public interface Constants {
     /**
      * columnMap.isEmpty
      */
-    String COLUMN_MAP_IS_EMPTY = COLUMN_MAP + SPOT + "isEmpty";
+    String COLUMN_MAP_IS_EMPTY = COLUMN_MAP + DOT + "isEmpty";
     /**
      * collection
      */

@@ -15,7 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.toolkit.sql;
 
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 /**
@@ -26,7 +26,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  * @author miemie
  * @since 2018-08-15
  */
-public final class SqlScriptUtils {
+public final class SqlScriptUtils implements Constants {
 
     private SqlScriptUtils() {
         // ignore
@@ -43,7 +43,7 @@ public final class SqlScriptUtils {
     public static String convertIf(final String sqlScript, final String ifTest, boolean newLine) {
         String newSqlScript = sqlScript;
         if (newLine) {
-            newSqlScript = StringPool.NEWLINE + newSqlScript + StringPool.NEWLINE;
+            newSqlScript = NEWLINE + newSqlScript + NEWLINE;
         }
         return String.format("<if test=\"%s\">%s</if>", ifTest, newSqlScript);
     }
@@ -64,19 +64,18 @@ public final class SqlScriptUtils {
                                      final String prefixOverrides, final String suffixOverrides) {
         StringBuilder sb = new StringBuilder("<trim");
         if (StringUtils.isNotEmpty(prefix)) {
-            sb.append(" prefix=\"").append(prefix).append(StringPool.QUOTE);
+            sb.append(" prefix=\"").append(prefix).append(QUOTE);
         }
         if (StringUtils.isNotEmpty(suffix)) {
-            sb.append(" suffix=\"").append(suffix).append(StringPool.QUOTE);
+            sb.append(" suffix=\"").append(suffix).append(QUOTE);
         }
         if (StringUtils.isNotEmpty(prefixOverrides)) {
-            sb.append(" prefixOverrides=\"").append(prefixOverrides).append(StringPool.QUOTE);
+            sb.append(" prefixOverrides=\"").append(prefixOverrides).append(QUOTE);
         }
         if (StringUtils.isNotEmpty(suffixOverrides)) {
-            sb.append(" suffixOverrides=\"").append(suffixOverrides).append(StringPool.QUOTE);
+            sb.append(" suffixOverrides=\"").append(suffixOverrides).append(QUOTE);
         }
-        return sb.append(StringPool.RIGHT_CHEV).append(StringPool.NEWLINE).append(sqlScript)
-            .append(StringPool.NEWLINE).append("</trim>").toString();
+        return sb.append(RIGHT_CHEV).append(NEWLINE).append(sqlScript).append(NEWLINE).append("</trim>").toString();
     }
 
     /**
@@ -89,11 +88,11 @@ public final class SqlScriptUtils {
      * @return choose 脚本
      */
     public static String convertChoose(final String whenTest, final String whenSqlScript, final String otherwise) {
-        return "<choose>" + StringPool.NEWLINE +
-            "<when test=\"" + whenTest + StringPool.QUOTE + StringPool.RIGHT_CHEV + StringPool.NEWLINE +
-            whenSqlScript + StringPool.NEWLINE + "</when>" + StringPool.NEWLINE +
-            "<otherwise>" + otherwise + "</otherwise>" + StringPool.NEWLINE +
-            "</choose>";
+        return "<choose>" + NEWLINE
+            + "<when test=\"" + whenTest + QUOTE + RIGHT_CHEV + NEWLINE
+            + whenSqlScript + NEWLINE + "</when>" + NEWLINE
+            + "<otherwise>" + otherwise + "</otherwise>" + NEWLINE
+            + "</choose>";
     }
 
     /**
@@ -112,19 +111,18 @@ public final class SqlScriptUtils {
                                         final String item, final String separator) {
         StringBuilder sb = new StringBuilder("<foreach");
         if (StringUtils.isNotEmpty(collection)) {
-            sb.append(" collection=\"").append(collection).append(StringPool.QUOTE);
+            sb.append(" collection=\"").append(collection).append(QUOTE);
         }
         if (StringUtils.isNotEmpty(index)) {
-            sb.append(" index=\"").append(index).append(StringPool.QUOTE);
+            sb.append(" index=\"").append(index).append(QUOTE);
         }
         if (StringUtils.isNotEmpty(item)) {
-            sb.append(" item=\"").append(item).append(StringPool.QUOTE);
+            sb.append(" item=\"").append(item).append(QUOTE);
         }
         if (StringUtils.isNotEmpty(separator)) {
-            sb.append(" separator=\"").append(separator).append(StringPool.QUOTE);
+            sb.append(" separator=\"").append(separator).append(QUOTE);
         }
-        return sb.append(StringPool.RIGHT_CHEV).append(StringPool.NEWLINE).append(sqlScript)
-            .append(StringPool.NEWLINE).append("</foreach>").toString();
+        return sb.append(RIGHT_CHEV).append(NEWLINE).append(sqlScript).append(NEWLINE).append("</foreach>").toString();
     }
 
     /**
@@ -136,8 +134,9 @@ public final class SqlScriptUtils {
      * @return where 脚本
      */
     public static String convertWhere(final String sqlScript) {
-        return "<where>" + StringPool.NEWLINE + sqlScript + StringPool.NEWLINE + "</where>";
+        return "<where>" + NEWLINE + sqlScript + NEWLINE + "</where>";
     }
+
     /**
      * <p>
      * 生成 set 标签的脚本
@@ -147,7 +146,7 @@ public final class SqlScriptUtils {
      * @return set 脚本
      */
     public static String convertSet(final String sqlScript) {
-        return "<set>" + StringPool.NEWLINE + sqlScript + StringPool.NEWLINE + "</set>";
+        return "<set>" + NEWLINE + sqlScript + NEWLINE + "</set>";
     }
 
     /**
@@ -159,7 +158,7 @@ public final class SqlScriptUtils {
      * @return 脚本
      */
     public static String safeParam(final String param) {
-        return StringPool.HASH_LEFT_BRACE + param + StringPool.RIGHT_BRACE;
+        return HASH_LEFT_BRACE + param + RIGHT_BRACE;
     }
 
     /**
@@ -171,6 +170,6 @@ public final class SqlScriptUtils {
      * @return 脚本
      */
     public static String unSafeParam(final String param) {
-        return StringPool.DOLLAR_LEFT_BRACE + param + StringPool.RIGHT_BRACE;
+        return DOLLAR_LEFT_BRACE + param + RIGHT_BRACE;
     }
 }

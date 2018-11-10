@@ -17,8 +17,6 @@ package com.baomidou.mybatisplus.extension.injector;
 
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 
 /**
@@ -52,23 +50,22 @@ public abstract class AbstractLogicMethod extends AbstractMethod {
     @Override
     protected String sqlWhereEntityWrapper(boolean newLine, TableInfo table) {
         if (table.isLogicDelete()) {
-            String sqlScript = table.getAllSqlWhere(true, true, Constants.WRAPPER_ENTITY_SPOT);
-            sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", Constants.WRAPPER_ENTITY),
+            String sqlScript = table.getAllSqlWhere(true, true, WRAPPER_ENTITY_SPOT);
+            sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", WRAPPER_ENTITY),
                 true);
-            sqlScript += (StringPool.NEWLINE + table.getLogicDeleteSql(true, false) +
-                StringPool.NEWLINE);
-            String normalSqlScript = SqlScriptUtils.convertIf(String.format("AND ${%s}", Constants.WRAPPER_SQLSEGMENT),
-                String.format("%s != null and %s != '' and ew.nonEmptyOfNormal", Constants.WRAPPER_SQLSEGMENT,
-                    Constants.WRAPPER_SQLSEGMENT), true);
-            normalSqlScript += StringPool.NEWLINE;
-            normalSqlScript += SqlScriptUtils.convertIf(String.format(" ${%s}", Constants.WRAPPER_SQLSEGMENT),
-                String.format("%s != null and %s != '' and ew.emptyOfNormal", Constants.WRAPPER_SQLSEGMENT,
-                    Constants.WRAPPER_SQLSEGMENT), true);
+            sqlScript += (NEWLINE + table.getLogicDeleteSql(true, false) + NEWLINE);
+            String normalSqlScript = SqlScriptUtils.convertIf(String.format("AND ${%s}", WRAPPER_SQLSEGMENT),
+                String.format("%s != null and %s != '' and %s", WRAPPER_SQLSEGMENT, WRAPPER_SQLSEGMENT,
+                    WRAPPER_NONEMPTYOFNORMAL), true);
+            normalSqlScript += NEWLINE;
+            normalSqlScript += SqlScriptUtils.convertIf(String.format(" ${%s}", WRAPPER_SQLSEGMENT),
+                String.format("%s != null and %s != '' and %s", WRAPPER_SQLSEGMENT, WRAPPER_SQLSEGMENT,
+                    WRAPPER_EMPTYOFNORMAL), true);
             sqlScript += normalSqlScript;
-            sqlScript = SqlScriptUtils.convertChoose("ew!=null", sqlScript,
-                table.getLogicDeleteSql(true, false));
+            sqlScript = SqlScriptUtils.convertChoose(String.format("%s != null", WRAPPER), sqlScript,
+                table.getLogicDeleteSql(false, false));
             sqlScript = SqlScriptUtils.convertWhere(sqlScript);
-            return newLine ? StringPool.NEWLINE + sqlScript : sqlScript;
+            return newLine ? NEWLINE + sqlScript : sqlScript;
         }
         // 正常逻辑
         return super.sqlWhereEntityWrapper(newLine, table);
@@ -82,7 +79,7 @@ public abstract class AbstractLogicMethod extends AbstractMethod {
                 " ${k} = #{v} ");
             sqlScript = SqlScriptUtils.convertForeach(sqlScript, "cm", "k", "v", "AND");
             sqlScript = SqlScriptUtils.convertIf(sqlScript, "cm != null and !cm.isEmpty", true);
-            sqlScript += (StringPool.NEWLINE + table.getLogicDeleteSql(true, false));
+            sqlScript += (NEWLINE + table.getLogicDeleteSql(true, false));
             sqlScript = SqlScriptUtils.convertWhere(sqlScript);
             return sqlScript;
         }

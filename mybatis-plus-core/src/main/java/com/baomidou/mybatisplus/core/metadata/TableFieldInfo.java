@@ -17,7 +17,7 @@ package com.baomidou.mybatisplus.core.metadata;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
@@ -36,7 +36,7 @@ import java.lang.reflect.Field;
  * @since 2016-09-09
  */
 @Getter
-public class TableFieldInfo {
+public class TableFieldInfo implements Constants {
 
     /**
      * 是否有存在字段名与属性名关联
@@ -246,8 +246,8 @@ public class TableFieldInfo {
      * @return sql 脚本片段
      */
     public String getInsertSqlProperty(boolean isAll, final String prefix) {
-        final String newPrefix = prefix == null ? StringPool.EMPTY : prefix;
-        String sqlScript = SqlScriptUtils.safeParam(newPrefix + el) + StringPool.COMMA;
+        final String newPrefix = prefix == null ? EMPTY : prefix;
+        String sqlScript = SqlScriptUtils.safeParam(newPrefix + el) + COMMA;
         if (isAll || fieldFill == FieldFill.INSERT || fieldFill == FieldFill.INSERT_UPDATE) {
             return sqlScript;
         }
@@ -262,7 +262,7 @@ public class TableFieldInfo {
      * @return sql 脚本片段
      */
     public String getInsertSqlColumn(boolean isAll) {
-        final String sqlScript = column + StringPool.COMMA;
+        final String sqlScript = column + COMMA;
         if (isAll || fieldFill == FieldFill.INSERT || fieldFill == FieldFill.INSERT_UPDATE) {
             return sqlScript;
         }
@@ -276,15 +276,15 @@ public class TableFieldInfo {
      * @return sql 脚本片段
      */
     public String getSqlSet(final String prefix) {
-        final String newPrefix = prefix == null ? StringPool.EMPTY : prefix;
+        final String newPrefix = prefix == null ? EMPTY : prefix;
         // 默认: column=
-        String sqlSet = column + StringPool.EQUALS;
+        String sqlSet = column + EQUALS;
         if (StringUtils.isNotEmpty(update)) {
             sqlSet += String.format(update, column);
         } else {
             sqlSet += SqlScriptUtils.safeParam(newPrefix + el);
         }
-        sqlSet += StringPool.COMMA;
+        sqlSet += COMMA;
         if (fieldFill == FieldFill.UPDATE || fieldFill == FieldFill.INSERT_UPDATE) {
             // 不进行 if 包裹
             return sqlSet;
@@ -299,7 +299,7 @@ public class TableFieldInfo {
      * @return sql 脚本片段
      */
     public String getSqlWhere(final String prefix) {
-        final String newPrefix = prefix == null ? StringPool.EMPTY : prefix;
+        final String newPrefix = prefix == null ? EMPTY : prefix;
         // 默认:  AND column=#{prefix + el}
         String sqlScript = " AND " + String.format(condition, column, newPrefix + el);
         // 查询的时候只判非空
