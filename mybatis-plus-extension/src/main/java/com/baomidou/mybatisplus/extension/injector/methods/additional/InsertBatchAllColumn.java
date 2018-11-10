@@ -57,8 +57,7 @@ public class InsertBatchAllColumn extends AbstractMethod {
         KeyGenerator keyGenerator = new NoKeyGenerator();
         SqlMethod sqlMethod = SqlMethod.INSERT_ONE;
         String insertSqlColumn = tableInfo.getAllInsertSqlColumn(true);
-        String columnScript = LEFT_BRACKET + insertSqlColumn.substring(0, insertSqlColumn.length() - 1)
-            + RIGHT_BRACKET;
+        String columnScript = LEFT_BRACKET + insertSqlColumn.substring(0, insertSqlColumn.length() - 1) + RIGHT_BRACKET;
         String insertSqlProperty = tableInfo.getAllInsertSqlProperty(true, ENTITY_DOT);
         insertSqlProperty = LEFT_BRACKET + insertSqlProperty.substring(0, insertSqlProperty.length() - 1) + RIGHT_BRACKET;
         String valuesScript = SqlScriptUtils.convertForeach(insertSqlProperty, "list", null, ENTITY, COMMA);
