@@ -297,6 +297,6 @@ public class MysqlTestDataMapperTest {
         for (int i = 0; i < 9; i++) {
             list.add(new MysqlData().setOrder(i).setGroup(i).setTestStr(i + "条"));
         }
-        System.out.println(mysqlMapper.insertBatch(list));
+        System.out.println(mysqlMapper.insertBatchAllColumn(list));
     }
 }

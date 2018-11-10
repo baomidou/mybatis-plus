@@ -22,7 +22,7 @@ import org.apache.ibatis.mapping.SqlSource;
  * <p> 如果你使用自增有报错或主键值无法回写到entity,就不要跑来问为什么了,因为我也不知道!!! </p>
  * <p>
  * 自己的通用 mapper 如下使用:
- * int insertBatch(List<T> entityList);
+ * int insertBatchAllColumn(List<T> entityList);
  * 注意: 不要加任何注解!!!
  * </p>
  *
@@ -30,12 +30,12 @@ import org.apache.ibatis.mapping.SqlSource;
  * @since 2018-11-09
  */
 @SuppressWarnings("all")
-public class InsertBatch extends AbstractMethod {
+public class InsertBatchAllColumn extends AbstractMethod {
 
     /**
      * mapper 对应的方法名
      */
-    private static final String MAPPER_METHOD = "insertBatch";
+    private static final String MAPPER_METHOD = "insertBatchAllColumn";
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
