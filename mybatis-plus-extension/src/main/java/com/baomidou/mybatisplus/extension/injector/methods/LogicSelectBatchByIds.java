@@ -17,8 +17,6 @@ package com.baomidou.mybatisplus.extension.injector.methods;
 
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import com.baomidou.mybatisplus.extension.injector.AbstractLogicMethod;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -39,7 +37,7 @@ public class LogicSelectBatchByIds extends AbstractLogicMethod {
         SqlMethod sqlMethod = SqlMethod.LOGIC_SELECT_BATCH_BY_IDS;
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(),
             sqlSelectColumns(tableInfo, false), tableInfo.getTableName(), tableInfo.getKeyColumn(),
-            SqlScriptUtils.convertForeach("#{item}", Constants.COLLECTION, null, "item", StringPool.COMMA),
+            SqlScriptUtils.convertForeach("#{item}", COLLECTION, null, "item", COMMA),
             tableInfo.getLogicDeleteSql(true, false)), Object.class);
         return addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, tableInfo);
     }

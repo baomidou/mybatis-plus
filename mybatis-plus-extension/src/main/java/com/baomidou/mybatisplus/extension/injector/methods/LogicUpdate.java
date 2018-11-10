@@ -17,7 +17,6 @@ package com.baomidou.mybatisplus.extension.injector.methods;
 
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.injector.AbstractLogicMethod;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
@@ -36,7 +35,7 @@ public class LogicUpdate extends AbstractLogicMethod {
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.UPDATE;
         String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(),
-            sqlSet(true, true, tableInfo, Constants.ENTITY_SPOT),
+            sqlSet(true, true, tableInfo, ENTITY_DOT),
             sqlWhereEntityWrapper(true, tableInfo));
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
         return addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);

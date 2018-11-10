@@ -186,7 +186,7 @@ public abstract class AbstractMethod implements Constants {
      * @return String
      */
     protected String sqlWhereEntityWrapper(boolean newLine, TableInfo table) {
-        String sqlScript = table.getAllSqlWhere(false, true, WRAPPER_ENTITY_SPOT);
+        String sqlScript = table.getAllSqlWhere(false, true, WRAPPER_ENTITY_DOT);
         sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", WRAPPER_ENTITY), true);
         sqlScript += NEWLINE;
         sqlScript += SqlScriptUtils.convertIf(String.format("AND ${%s}", WRAPPER_SQLSEGMENT),

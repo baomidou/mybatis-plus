@@ -48,8 +48,8 @@ public class LogicUpdateById extends AbstractLogicMethod {
             append.append(tableInfo.getLogicDeleteSql(true, false));
         }
         sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(),
-            sqlSet(logicDelete, false, tableInfo, Constants.ENTITY_SPOT),
-            tableInfo.getKeyColumn(), Constants.ENTITY_SPOT + tableInfo.getKeyProperty(),
+            sqlSet(logicDelete, false, tableInfo, Constants.ENTITY_DOT),
+            tableInfo.getKeyColumn(), Constants.ENTITY_DOT + tableInfo.getKeyProperty(),
             append);
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
         return addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);

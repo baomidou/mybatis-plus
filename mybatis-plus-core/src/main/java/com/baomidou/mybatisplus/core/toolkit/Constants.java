@@ -37,7 +37,7 @@ public interface Constants extends StringPool {
     /**
      * 实体类 带后缀 ==> .
      */
-    String ENTITY_SPOT = ENTITY + DOT;
+    String ENTITY_DOT = ENTITY + DOT;
     /**
      * wrapper 类
      */
@@ -45,43 +45,43 @@ public interface Constants extends StringPool {
     /**
      * wrapper 类 带后缀 ==> .
      */
-    String WRAPPER_SPOT = WRAPPER + DOT;
+    String WRAPPER_DOT = WRAPPER + DOT;
     /**
      * wrapper 类的属性 entity
      */
-    String WRAPPER_ENTITY = WRAPPER_SPOT + "entity";
+    String WRAPPER_ENTITY = WRAPPER_DOT + "entity";
     /**
      * wrapper 类的属性 sqlSegment
      */
-    String WRAPPER_SQLSEGMENT = WRAPPER_SPOT + "sqlSegment";
+    String WRAPPER_SQLSEGMENT = WRAPPER_DOT + "sqlSegment";
     /**
      * wrapper 类的属性 emptyOfNormal
      */
-    String WRAPPER_EMPTYOFNORMAL = WRAPPER_SPOT + "emptyOfNormal";
+    String WRAPPER_EMPTYOFNORMAL = WRAPPER_DOT + "emptyOfNormal";
     /**
      * wrapper 类的属性 nonEmptyOfNormal
      */
-    String WRAPPER_NONEMPTYOFNORMAL = WRAPPER_SPOT + "nonEmptyOfNormal";
+    String WRAPPER_NONEMPTYOFNORMAL = WRAPPER_DOT + "nonEmptyOfNormal";
     /**
      * wrapper 类的属性 emptyOfWhere
      */
-    String WRAPPER_EMPTYOFWHERE = WRAPPER_SPOT + "emptyOfWhere";
+    String WRAPPER_EMPTYOFWHERE = WRAPPER_DOT + "emptyOfWhere";
     /**
      * wrapper 类的判断属性 nonEmptyOfWhere
      */
-    String WRAPPER_NONEMPTYOFWHERE = WRAPPER_SPOT + "nonEmptyOfWhere";
+    String WRAPPER_NONEMPTYOFWHERE = WRAPPER_DOT + "nonEmptyOfWhere";
     /**
      * wrapper 类的属性 entity 带后缀 ==> .
      */
-    String WRAPPER_ENTITY_SPOT = WRAPPER_SPOT + "entity" + DOT;
+    String WRAPPER_ENTITY_DOT = WRAPPER_DOT + "entity" + DOT;
     /**
      * UpdateWrapper 类的属性 sqlSet
      */
-    String U_WRAPPER_SQL_SET = WRAPPER_SPOT + "sqlSet";
+    String U_WRAPPER_SQL_SET = WRAPPER_DOT + "sqlSet";
     /**
      * QueryWrapper 类的属性 sqlSelect
      */
-    String Q_WRAPPER_SQL_SELECT = WRAPPER_SPOT + "sqlSelect";
+    String Q_WRAPPER_SQL_SELECT = WRAPPER_DOT + "sqlSelect";
     /**
      * columnMap
      */

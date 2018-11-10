@@ -50,7 +50,7 @@ public abstract class AbstractLogicMethod extends AbstractMethod {
     @Override
     protected String sqlWhereEntityWrapper(boolean newLine, TableInfo table) {
         if (table.isLogicDelete()) {
-            String sqlScript = table.getAllSqlWhere(true, true, WRAPPER_ENTITY_SPOT);
+            String sqlScript = table.getAllSqlWhere(true, true, WRAPPER_ENTITY_DOT);
             sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", WRAPPER_ENTITY),
                 true);
             sqlScript += (NEWLINE + table.getLogicDeleteSql(true, false) + NEWLINE);

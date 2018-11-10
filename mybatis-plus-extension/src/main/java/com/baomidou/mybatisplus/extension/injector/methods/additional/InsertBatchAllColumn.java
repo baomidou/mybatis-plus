@@ -1,11 +1,24 @@
+/*
+ * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.baomidou.mybatisplus.extension.injector.methods.additional;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
@@ -23,7 +36,9 @@ import org.apache.ibatis.mapping.SqlSource;
  * <p>
  * 自己的通用 mapper 如下使用:
  * int insertBatchAllColumn(List<T> entityList);
- * 注意: 不要加任何注解!!!
+ *
+ * <li> 注意1: 不要加任何注解!!! </li>
+ * <li> 注意2: 是所有字段insert,如果个别字段在entity里为null但是数据库中有配置默认值,insert后数据库字段是为null而不是默认值 </li>
  * </p>
  *
  * @author miemie
@@ -42,11 +57,11 @@ public class InsertBatchAllColumn extends AbstractMethod {
         KeyGenerator keyGenerator = new NoKeyGenerator();
         SqlMethod sqlMethod = SqlMethod.INSERT_ONE;
         String insertSqlColumn = tableInfo.getAllInsertSqlColumn(true);
-        String columnScript = StringPool.LEFT_BRACKET + insertSqlColumn.substring(0, insertSqlColumn.length() - 1)
-            + StringPool.RIGHT_BRACKET;
-        String insertSqlProperty = tableInfo.getAllInsertSqlProperty(true, Constants.ENTITY_SPOT);
-        insertSqlProperty = StringPool.LEFT_BRACKET + insertSqlProperty.substring(0, insertSqlProperty.length() - 1) + StringPool.RIGHT_BRACKET;
-        String valuesScript = SqlScriptUtils.convertForeach(insertSqlProperty, "list", null, Constants.ENTITY, StringPool.COMMA);
+        String columnScript = LEFT_BRACKET + insertSqlColumn.substring(0, insertSqlColumn.length() - 1)
+            + RIGHT_BRACKET;
+        String insertSqlProperty = tableInfo.getAllInsertSqlProperty(true, ENTITY_DOT);
+        insertSqlProperty = LEFT_BRACKET + insertSqlProperty.substring(0, insertSqlProperty.length() - 1) + RIGHT_BRACKET;
+        String valuesScript = SqlScriptUtils.convertForeach(insertSqlProperty, "list", null, ENTITY, COMMA);
         String keyProperty = null;
         String keyColumn = null;
         // 表包含主键处理逻辑,如果不包含主键当普通字段处理

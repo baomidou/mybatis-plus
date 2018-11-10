@@ -85,8 +85,8 @@ public interface MetaObjectHandler {
     default Object getFieldValByName(String fieldName, MetaObject metaObject) {
         if (metaObject.hasGetter(fieldName)) {
             return metaObject.getValue(fieldName);
-        } else if (metaObject.hasGetter(Constants.ENTITY_SPOT + fieldName)) {
-            return metaObject.getValue(Constants.ENTITY_SPOT + fieldName);
+        } else if (metaObject.hasGetter(Constants.ENTITY_DOT + fieldName)) {
+            return metaObject.getValue(Constants.ENTITY_DOT + fieldName);
         }
         return null;
     }
