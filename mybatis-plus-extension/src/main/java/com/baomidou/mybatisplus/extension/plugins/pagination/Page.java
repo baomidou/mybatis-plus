@@ -38,7 +38,7 @@ public class Page<T> implements IPage<T> {
      */
     private List<T> records = Collections.emptyList();
     /**
-     * 总数，当 total 为 0 时,分页插件才会进行 count 查询
+     * 总数
      */
     private long total = 0;
     /**
@@ -67,6 +67,12 @@ public class Page<T> implements IPage<T> {
      * </p>
      */
     private boolean optimizeCountSql = true;
+    /**
+     * <p>
+     * 是否进行 count 查询
+     * </p>
+     */
+    private boolean isSearchCount = true;
 
     public Page() {
         // to do nothing
@@ -85,11 +91,23 @@ public class Page<T> implements IPage<T> {
     }
 
     public Page(long current, long size, long total) {
+        this(current, size, total, true);
+    }
+
+    public Page(long current, long size, boolean isSearchCount) {
+        this(current, size, 0, isSearchCount);
+    }
+
+    public Page(long current, long size, long total, boolean isSearchCount) {
         if (current > 1) {
             this.current = current;
         }
         this.size = size;
         this.total = total;
+        this.isSearchCount = isSearchCount;
+        if (total < 0) {
+            this.isSearchCount = false;
+        }
     }
 
     /**
@@ -210,6 +228,16 @@ public class Page<T> implements IPage<T> {
     @Override
     public boolean optimizeCountSql() {
         return optimizeCountSql;
+    }
+
+    @Override
+    public boolean isSearchCount() {
+        return isSearchCount;
+    }
+
+    Page<T> setSearchCount(boolean isSearchCount) {
+        this.isSearchCount = isSearchCount;
+        return this;
     }
 
     public Page<T> setOptimizeCountSql(boolean optimizeCountSql) {

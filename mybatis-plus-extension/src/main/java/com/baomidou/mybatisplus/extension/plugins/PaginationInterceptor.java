@@ -164,7 +164,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
             : JdbcUtils.getDbType(connection.getMetaData().getURL());
 
         boolean orderBy = true;
-        if (page.getTotal() == 0) {
+        if (page.isSearchCount()) {
             // total 为0 才进行 count
             SqlInfo sqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), sqlParser, originalSql);
             orderBy = sqlInfo.isOrderBy();

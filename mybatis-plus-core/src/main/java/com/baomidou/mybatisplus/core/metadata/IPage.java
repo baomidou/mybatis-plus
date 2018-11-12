@@ -78,6 +78,17 @@ public interface IPage<T> extends Serializable {
 
     /**
      * <p>
+     * 进行 count 查询 【 默认: true 】
+     * </p>
+     *
+     * @return true 是 / false 否
+     */
+    default boolean isSearchCount() {
+        return true;
+    }
+
+    /**
+     * <p>
      * 计算当前分页偏移量
      * </p>
      */
