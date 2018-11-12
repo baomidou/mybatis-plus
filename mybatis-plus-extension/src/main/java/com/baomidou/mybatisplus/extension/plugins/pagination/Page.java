@@ -15,11 +15,11 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-
 import java.util.Collections;
 import java.util.List;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 
 /**
  * <p>
@@ -40,7 +40,7 @@ public class Page<T> implements IPage<T> {
     /**
      * 总数
      */
-    private long total = 0;
+    private Long total;
     /**
      * 每页显示条数，默认 10
      */
@@ -144,12 +144,12 @@ public class Page<T> implements IPage<T> {
     }
 
     @Override
-    public long getTotal() {
+    public Long getTotal() {
         return this.total;
     }
 
     @Override
-    public Page<T> setTotal(long total) {
+    public Page<T> setTotal(Long total) {
         this.total = total;
         return this;
     }

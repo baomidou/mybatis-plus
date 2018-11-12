@@ -1,5 +1,21 @@
 package com.baomidou.mybatisplus.test.postgres;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -14,20 +30,6 @@ import com.baomidou.mybatisplus.test.base.mapper.commons.CommonDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonLogicDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.pg.PgDataMapper;
 import com.baomidou.mybatisplus.test.postgres.config.PostgresDb;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.annotation.Resource;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * <p>
@@ -197,7 +199,7 @@ public class PostgresTestDataMapperTest {
         IPage<CommonData> page = new Page<>(1, 5);
         IPage<CommonData> dataPage = commonMapper.selectPage(page, null);
         Assert.assertSame(dataPage, page);
-        Assert.assertNotEquals(0L, dataPage.getTotal());
+        Assert.assertNotEquals(null, dataPage.getTotal());
         Assert.assertNotEquals(0, dataPage.getRecords().size());
         Assert.assertTrue(CollectionUtils.isNotEmpty(dataPage.getRecords()));
         System.out.println(JSON.toJSONString(dataPage));
@@ -205,7 +207,7 @@ public class PostgresTestDataMapperTest {
         IPage<CommonLogicData> logicPage = new Page<>(1, 5);
         IPage<CommonLogicData> logicDataPage = commonLogicMapper.selectPage(logicPage, null);
         Assert.assertSame(logicDataPage, logicPage);
-        Assert.assertNotEquals(0L, logicDataPage.getTotal());
+        Assert.assertNotEquals(null, logicDataPage.getTotal());
         Assert.assertNotEquals(0, logicDataPage.getRecords().size());
         Assert.assertTrue(CollectionUtils.isNotEmpty(logicDataPage.getRecords()));
         System.out.println(JSON.toJSONString(logicDataPage));
@@ -214,7 +216,7 @@ public class PostgresTestDataMapperTest {
         page.setSize(5).setCurrent(1);
         IPage<PgData> pgDataPage = pgMapper.selectPage(pgPage, null);
         Assert.assertSame(pgDataPage, pgPage);
-        Assert.assertNotEquals(0L, pgDataPage.getTotal());
+        Assert.assertNotEquals(null, pgDataPage.getTotal());
         Assert.assertNotEquals(0, pgDataPage.getRecords().size());
         Assert.assertTrue(CollectionUtils.isNotEmpty(pgDataPage.getRecords()));
         System.out.println(JSON.toJSONString(pgDataPage));

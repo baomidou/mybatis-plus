@@ -1,5 +1,22 @@
 package com.baomidou.mybatisplus.test.mysql;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.Condition;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -16,17 +33,6 @@ import com.baomidou.mybatisplus.test.base.mapper.commons.CommonDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonLogicDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.mysql.MysqlDataMapper;
 import com.baomidou.mybatisplus.test.mysql.config.MysqlDb;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.annotation.Resource;
-import java.util.*;
 
 
 /**
@@ -271,7 +277,7 @@ public class MysqlTestDataMapperTest {
         page.setDesc("c_time", "u_time");
         IPage<CommonData> dataPage = commonMapper.selectPage(page, null);
         Assert.assertSame(dataPage, page);
-        Assert.assertNotEquals(0L, dataPage.getTotal());
+        Assert.assertNotEquals(null, dataPage.getTotal());
         Assert.assertNotEquals(0, dataPage.getRecords().size());
         Assert.assertTrue(CollectionUtils.isNotEmpty(dataPage.getRecords()));
         System.out.println(JSON.toJSONString(dataPage));
@@ -280,7 +286,7 @@ public class MysqlTestDataMapperTest {
         Page<CommonLogicData> logicPage = new Page<>(1, 5);
         IPage<CommonLogicData> logicDataPage = commonLogicMapper.selectPage(logicPage, null);
         Assert.assertSame(logicDataPage, logicPage);
-        Assert.assertNotEquals(0L, logicDataPage.getTotal());
+        Assert.assertNotEquals(null, logicDataPage.getTotal());
         Assert.assertNotEquals(0, logicDataPage.getRecords().size());
         Assert.assertTrue(CollectionUtils.isNotEmpty(logicDataPage.getRecords()));
         System.out.println(JSON.toJSONString(logicDataPage));
@@ -288,7 +294,7 @@ public class MysqlTestDataMapperTest {
         Page<MysqlData> mysqlPage = new Page<>(1, 5);
         IPage<MysqlData> mysqlDataPage = mysqlMapper.selectPage(mysqlPage, null);
         Assert.assertSame(mysqlDataPage, mysqlPage);
-        Assert.assertNotEquals(0L, mysqlDataPage.getTotal());
+        Assert.assertNotEquals(null, mysqlDataPage.getTotal());
         Assert.assertNotEquals(0, mysqlDataPage.getRecords().size());
         Assert.assertTrue(CollectionUtils.isNotEmpty(mysqlDataPage.getRecords()));
         System.out.println(JSON.toJSONString(mysqlDataPage));
@@ -300,7 +306,7 @@ public class MysqlTestDataMapperTest {
         page.setDesc("c_time", "u_time");
         IPage<CommonData> dataPage = new CommonData().selectPage(page, new QueryWrapper<CommonData>().lambda());
         Assert.assertSame(dataPage, page);
-        Assert.assertNotEquals(0L, dataPage.getTotal());
+        Assert.assertNotEquals(null, dataPage.getTotal());
         Assert.assertNotEquals(0, dataPage.getRecords().size());
         Assert.assertTrue(CollectionUtils.isNotEmpty(dataPage.getRecords()));
         System.out.println(JSON.toJSONString(dataPage));

@@ -15,12 +15,12 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
+import static java.util.stream.Collectors.toList;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * <p>
@@ -149,17 +149,16 @@ public interface IPage<T> extends Serializable {
      *
      * @return 总条数
      */
-    long getTotal();
+    Long getTotal();
 
     /**
      * <p>
      * 设置当前满足条件总行数
      * </p>
      * <p>
-     * 当 total 为 null 或者大于 0 分页插件不在查询总数
      * </p>
      */
-    IPage<T> setTotal(long total);
+    IPage<T> setTotal(Long total);
 
     /**
      * <p>
