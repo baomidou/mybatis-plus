@@ -275,6 +275,7 @@ public class MysqlTestDataMapperTest {
         Assert.assertNotEquals(0, dataPage.getRecords().size());
         Assert.assertTrue(CollectionUtils.isNotEmpty(dataPage.getRecords()));
         System.out.println(JSON.toJSONString(dataPage));
+        System.out.println(JSON.toJSON(dataPage.convert(CommonData::getId)));
 
         Page<CommonLogicData> logicPage = new Page<>(1, 5);
         IPage<CommonLogicData> logicDataPage = commonLogicMapper.selectPage(logicPage, null);
