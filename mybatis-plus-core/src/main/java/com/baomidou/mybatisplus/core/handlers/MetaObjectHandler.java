@@ -15,9 +15,12 @@
  */
 package com.baomidou.mybatisplus.core.handlers;
 
-import com.baomidou.mybatisplus.core.toolkit.Constants;
+import java.util.Objects;
+
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
+
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 
 /**
  * <p>
@@ -56,14 +59,16 @@ public interface MetaObjectHandler {
      * @param metaObject meta object parameter
      */
     default MetaObjectHandler setFieldValByName(String fieldName, Object fieldVal, MetaObject metaObject) {
-        if (metaObject.hasSetter(fieldName) && metaObject.hasGetter(fieldName)) {
-            metaObject.setValue(fieldName, fieldVal);
-        } else if (metaObject.hasGetter(Constants.ENTITY)) {
-            Object et = metaObject.getValue(Constants.ENTITY);
-            if (et != null) {
-                MetaObject etMeta = SystemMetaObject.forObject(et);
-                if (etMeta.hasSetter(fieldName)) {
-                    etMeta.setValue(fieldName, fieldVal);
+        if(Objects.nonNull(fieldVal)){
+            if (metaObject.hasSetter(fieldName) && metaObject.hasGetter(fieldName)) {
+                metaObject.setValue(fieldName, fieldVal);
+            } else if (metaObject.hasGetter(Constants.ENTITY)) {
+                Object et = metaObject.getValue(Constants.ENTITY);
+                if (et != null) {
+                    MetaObject etMeta = SystemMetaObject.forObject(et);
+                    if (etMeta.hasSetter(fieldName)) {
+                        etMeta.setValue(fieldName, fieldVal);
+                    }
                 }
             }
         }
