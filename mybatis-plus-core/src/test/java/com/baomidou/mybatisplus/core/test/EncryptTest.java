@@ -33,9 +33,9 @@ public class EncryptTest {
     public void testTableInfoHelper() {
         TableInfo info = TableInfoHelper.initTableInfo(null, Xx.class);
         System.out.println("----------- AllInsertSqlColumn -----------");
-        System.out.println(info.getAllInsertSqlColumn());
+        System.out.println(info.getAllInsertSqlColumn(false));
         System.out.println("----------- AllInsertSqlProperty -----------");
-        System.out.println(info.getAllInsertSqlProperty());
+        System.out.println(info.getAllInsertSqlProperty(false, null));
         System.out.println("----------- AllSqlSet -----------");
         System.out.println(info.getAllSqlSet(true, "ew.entity."));
         System.out.println("----------- AllSqlWhere -----------");

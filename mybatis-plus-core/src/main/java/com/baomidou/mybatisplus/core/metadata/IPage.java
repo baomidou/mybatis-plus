@@ -18,6 +18,9 @@ package com.baomidou.mybatisplus.core.metadata;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * <p>
@@ -178,4 +181,19 @@ public interface IPage<T> extends Serializable {
      * </p>
      */
     IPage<T> setCurrent(long current);
+
+    /**
+     * <p>
+     * IPage 的泛型转换
+     * </p>
+     *
+     * @param mapper 转换函数
+     * @param <R>    转换后的泛型
+     * @return 转换泛型后的 IPage
+     */
+    @SuppressWarnings("unchecked")
+    default <R> IPage<R> convert(Function<? super T, ? extends R> mapper) {
+        List<R> collect = this.getRecords().stream().map(mapper).collect(toList());
+        return ((IPage<R>) this).setRecords(collect);
+    }
 }
