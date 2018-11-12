@@ -51,7 +51,7 @@ public interface IService<T> {
      * @param entityList 实体对象集合
      */
     default boolean saveBatch(Collection<T> entityList) {
-        return saveBatch(entityList, 30);
+        return saveBatch(entityList, 1000);
     }
 
     /**
@@ -71,7 +71,9 @@ public interface IService<T> {
      *
      * @param entityList 实体对象集合
      */
-    boolean saveOrUpdateBatch(Collection<T> entityList);
+    default boolean saveOrUpdateBatch(Collection<T> entityList) {
+        return saveOrUpdateBatch(entityList, 1000);
+    }
 
     /**
      * <p>
@@ -146,7 +148,7 @@ public interface IService<T> {
      * @param entityList 实体对象集合
      */
     default boolean updateBatchById(Collection<T> entityList) {
-        return updateBatchById(entityList, 30);
+        return updateBatchById(entityList, 1000);
     }
 
     /**
