@@ -61,7 +61,7 @@ public class EmptyWrapper<T> extends QueryWrapper<T> implements Serializable {
     }
 
     public EmptyWrapper<T> setEntity(T entity) {
-        throw new UnsupportedOperationException();
+        return this;
     }
 
     protected void initEntityClass() {
