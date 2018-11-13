@@ -15,11 +15,11 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * <p>
@@ -87,25 +87,25 @@ public class Page<T> implements IPage<T> {
      * @param size    每页显示条数
      */
     public Page(long current, long size) {
-        this(current, size, 0);
+        this(current, size, 0L);
     }
 
-    public Page(long current, long size, long total) {
+    public Page(long current, long size, Long total) {
         this(current, size, total, true);
     }
 
     public Page(long current, long size, boolean isSearchCount) {
-        this(current, size, 0, isSearchCount);
+        this(current, size, 0L, isSearchCount);
     }
 
-    public Page(long current, long size, long total, boolean isSearchCount) {
+    public Page(long current, long size, Long total, boolean isSearchCount) {
         if (current > 1) {
             this.current = current;
         }
         this.size = size;
         this.total = total;
         this.isSearchCount = isSearchCount;
-        if (total < 0) {
+        if (total == null || total != 0) {
             this.isSearchCount = false;
         }
     }
@@ -144,8 +144,8 @@ public class Page<T> implements IPage<T> {
     }
 
     @Override
-    public Long getTotal() {
-        return this.total;
+    public long getTotal() {
+        return this.total != null ? this.total : 0;
     }
 
     @Override
