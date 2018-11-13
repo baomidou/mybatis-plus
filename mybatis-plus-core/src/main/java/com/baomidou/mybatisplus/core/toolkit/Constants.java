@@ -63,6 +63,10 @@ public interface Constants extends StringPool {
      */
     String WRAPPER_NONEMPTYOFNORMAL = WRAPPER_DOT + "nonEmptyOfNormal";
     /**
+     * wrapper 类的属性 nonEmptyOfEntity
+     */
+    String WRAPPER_NONEMPTYOFENTITY = WRAPPER_DOT + "nonEmptyOfEntity";
+    /**
      * wrapper 类的属性 emptyOfWhere
      */
     String WRAPPER_EMPTYOFWHERE = WRAPPER_DOT + "emptyOfWhere";
