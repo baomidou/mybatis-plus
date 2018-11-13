@@ -91,10 +91,6 @@ public class GlobalConfiguration implements Serializable {
      */
     private FieldStrategy fieldStrategy = FieldStrategy.NOT_NULL;
     /**
-     * 是否刷新mapper
-     */
-    private boolean isRefresh = false;
-    /**
      * 是否大写命名
      */
     private boolean isCapitalMode = false;
@@ -221,14 +217,6 @@ public class GlobalConfiguration implements Serializable {
 
     public void setFieldStrategy(int fieldStrategy) {
         this.fieldStrategy = FieldStrategy.getFieldStrategy(fieldStrategy);
-    }
-
-    public boolean isRefresh() {
-        return isRefresh;
-    }
-
-    public void setRefresh(boolean refresh) {
-        this.isRefresh = refresh;
     }
 
     public Set<String> getMapperRegistryCache() {

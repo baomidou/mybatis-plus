@@ -247,9 +247,6 @@ public class GlobalConfig {
         if (StringUtils.checkValNotNull(this.getFieldStrategy())) {
             globalConfiguration.setFieldStrategy(this.getFieldStrategy());
         }
-        if (StringUtils.checkValNotNull(this.getRefreshMapper())) {
-            globalConfiguration.setRefresh(this.getRefreshMapper());
-        }
         if (StringUtils.checkValNotNull(this.getCapitalMode())) {
             globalConfiguration.setCapitalMode(this.getCapitalMode());
         }
