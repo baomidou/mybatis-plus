@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.core;
 
-import org.springframework.lang.Nullable;
-
 /**
  * 获取Mybatis-Plus版本
  *
@@ -27,7 +25,6 @@ public class MybatisPlusVersion {
     private MybatisPlusVersion() {
     }
 
-    @Nullable
     public static String getVersion() {
         Package pkg = MybatisPlusVersion.class.getPackage();
         return (pkg != null ? pkg.getImplementationVersion() : null);
