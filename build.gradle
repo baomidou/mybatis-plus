@@ -94,6 +94,12 @@ subprojects {
         options.encoding = 'UTF-8'
     }
 
+    jar {
+        manifest {
+            attributes 'Implementation-Version': version
+        }
+    }
+
     repositories {
         mavenLocal()
         maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
