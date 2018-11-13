@@ -106,14 +106,10 @@ public abstract class Wrapper<T> implements ISqlSegment {
         if (tableInfo == null) {
             return false;
         }
-        if (StringUtils.isNotEmpty(tableInfo.getKeyProperty())) {
-            // 有主键
-            return Objects.nonNull(ReflectionKit.getMethodValue(entity, tableInfo.getKeyProperty())) &&
-                tableInfo.getFieldList().stream().anyMatch(e -> fieldStrategyMatch(entity, e));
-        } else {
-            // 无主键
-            return tableInfo.getFieldList().stream().anyMatch(e -> fieldStrategyMatch(entity, e));
+        if (tableInfo.getFieldList().stream().anyMatch(e -> fieldStrategyMatch(entity, e))) {
+            return true;
         }
+        return StringUtils.isNotEmpty(tableInfo.getKeyProperty()) ? Objects.nonNull(ReflectionKit.getMethodValue(entity, tableInfo.getKeyProperty())) : false;
     }
 
     /**

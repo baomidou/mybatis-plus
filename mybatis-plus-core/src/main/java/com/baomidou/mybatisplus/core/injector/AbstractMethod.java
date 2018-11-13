@@ -190,7 +190,7 @@ public abstract class AbstractMethod implements Constants {
         String sqlScript = table.getAllSqlWhere(false, true, WRAPPER_ENTITY_DOT);
         sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", WRAPPER_ENTITY), true);
         sqlScript += NEWLINE;
-        sqlScript += SqlScriptUtils.convertIf(String.format("AND ${%s}", WRAPPER_SQLSEGMENT),
+        sqlScript += SqlScriptUtils.convertIf(String.format(SqlScriptUtils.convertIf(" AND", "ew.nonEmptyOfEntity and ew.nonEmptyOfNormal", false) + " ${%s}", WRAPPER_SQLSEGMENT),
             String.format("%s != null and %s != '' and %s", WRAPPER_SQLSEGMENT, WRAPPER_SQLSEGMENT,
                 WRAPPER_NONEMPTYOFWHERE), true);
         sqlScript = SqlScriptUtils.convertWhere(sqlScript) + NEWLINE;
@@ -279,4 +279,6 @@ public abstract class AbstractMethod implements Constants {
      * @return MappedStatement
      */
     public abstract MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo);
+
+
 }

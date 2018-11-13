@@ -234,8 +234,8 @@ public class MysqlTestDataMapperTest {
     @Test
     @SuppressWarnings("unchecked")
     public void d7_1_selectListForNoLogic() {
-        // 1. 只有 entity
         MysqlData data = new MysqlData().setOrder(1);
+        // 1. 只有 entity
         Assert.assertTrue(CollectionUtils.isNotEmpty(mysqlMapper.selectList(Wrappers.query(data))));
         // 2. 有 entity 也有 where 条件
         Assert.assertTrue(CollectionUtils.isNotEmpty(mysqlMapper.selectList(Wrappers.query(data).eq(MysqlData::getGroup, 1))));
@@ -247,6 +247,12 @@ public class MysqlTestDataMapperTest {
         // 5. 只有 order by 或者 last
         Assert.assertTrue(CollectionUtils.isNotEmpty(mysqlMapper.selectList(Wrappers.<MysqlData>query()
             .lambda().orderByDesc(MysqlData::getOrder).last("limit 1"))));
+        // 6. 什么都没有情况
+        Assert.assertTrue(CollectionUtils.isNotEmpty(mysqlMapper.selectList(Wrappers.emptyWrapper())));
+        // 7. 只有 where 条件
+        Assert.assertTrue(CollectionUtils.isNotEmpty(mysqlMapper.selectList(Wrappers.query(new MysqlData()).eq(MysqlData::getGroup, 1))));
+        // 8. 有 where 条件 也有 last 条件
+        Assert.assertTrue(CollectionUtils.isNotEmpty(mysqlMapper.selectList(Wrappers.query(new MysqlData()).eq(MysqlData::getGroup, 1).last("limit 1"))));
     }
 
     @Test
@@ -265,6 +271,12 @@ public class MysqlTestDataMapperTest {
         // 5. 只有 order by 或者 last
         Assert.assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectList(Wrappers.<CommonLogicData>query()
             .lambda().orderByAsc(CommonLogicData::getTestInt).last("limit 1"))));
+        // 6. 什么都没有情况
+        Assert.assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectList(Wrappers.emptyWrapper())));
+        // 7. 只有 where 条件
+        Assert.assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectList(Wrappers.query(new CommonLogicData()).eq(CommonLogicData::getId, 11))));
+        // 8. 有 where 条件 也有 last 条件
+        Assert.assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectList(Wrappers.query(new CommonLogicData()).eq(CommonLogicData::getId, 11).last("limit 1"))));
     }
 
     @Test
