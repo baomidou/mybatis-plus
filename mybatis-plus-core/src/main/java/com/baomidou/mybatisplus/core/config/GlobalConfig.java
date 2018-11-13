@@ -53,10 +53,6 @@ public class GlobalConfig implements Serializable {
      */
     private boolean banner = true;
     /**
-     * 是否刷新 mapper
-     */
-    private boolean refresh = false;
-    /**
      * 缓存 Sql 解析初始化
      */
     private boolean sqlParserCache = false;

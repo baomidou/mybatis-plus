@@ -623,11 +623,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         globalConfig.signGlobalConfig(sqlSessionFactory);
 
         if (!isEmpty(this.mapperLocations)) {
-            if (globalConfig.isRefresh()) {
-                //TODO 设置自动刷新配置 减少配置
-                new MybatisMapperRefresh(this.mapperLocations, sqlSessionFactory, 2,
-                    2, true);
-            }
             for (Resource mapperLocation : this.mapperLocations) {
                 if (mapperLocation == null) {
                     continue;
