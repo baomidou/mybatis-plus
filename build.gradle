@@ -42,7 +42,7 @@ ext {
         "commons-dbcp2"                     : "org.apache.commons:commons-dbcp2:2.1.1",
         "sqlserver"                         : "com.microsoft.sqlserver:sqljdbc4:4.0",
         "postgresql"                        : "org.postgresql:postgresql:9.4.1212",
-        "oracle"                            : "com.oracle:ojdbc:11.2.0.3",
+        "oracle"                            : fileTree(dir:'libs',includes:['ojdbc-11.2.0.3-jdk16.jar']),
         "h2"                                : "com.h2database:h2:1.4.194",
         "mysql"                             : "mysql:mysql-connector-java:5.1.38",
         //code generator
@@ -65,6 +65,7 @@ description = "Mybatis 增强工具包 - 只做增强不做改变，简化CRUD�
 
 buildscript {
     repositories {
+        flatDir {  dirs 'libs' }
         maven { url "https://repo.spring.io/plugins-release" }
     }
     dependencies {
