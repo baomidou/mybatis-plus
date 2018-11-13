@@ -65,7 +65,6 @@ description = "Mybatis 增强工具包 - 只做增强不做改变，简化CRUD�
 
 buildscript {
     repositories {
-        flatDir {  dirs 'libs' }
         maven { url "https://repo.spring.io/plugins-release" }
     }
     dependencies {
