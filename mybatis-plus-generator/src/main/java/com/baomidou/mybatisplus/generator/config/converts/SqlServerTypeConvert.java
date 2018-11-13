@@ -33,7 +33,7 @@ public class SqlServerTypeConvert implements ITypeConvert {
     @Override
     public IColumnType processTypeConvert(GlobalConfig globalConfig, String fieldType) {
         String t = fieldType.toLowerCase();
-        if (t.contains("char") || t.contains("text") || t.contains("xml")) {
+        if (t.contains("char") || t.contains("xml")) {
             return DbColumnType.STRING;
         } else if (t.contains("bigint")) {
             return DbColumnType.LONG;

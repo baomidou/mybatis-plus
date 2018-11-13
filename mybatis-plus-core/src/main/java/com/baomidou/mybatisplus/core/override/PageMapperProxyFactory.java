@@ -54,7 +54,7 @@ public class PageMapperProxyFactory<T> {
     }
 
     public T newInstance(SqlSession sqlSession) {
-        final PageMapperProxy<T> mapperProxy = new PageMapperProxy<T>(sqlSession, mapperInterface, methodCache);
+        final PageMapperProxy<T> mapperProxy = new PageMapperProxy<>(sqlSession, mapperInterface, methodCache);
         return newInstance(mapperProxy);
     }
 }

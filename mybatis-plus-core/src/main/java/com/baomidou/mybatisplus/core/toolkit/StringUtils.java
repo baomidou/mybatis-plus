@@ -15,7 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
+import static java.util.stream.Collectors.joining;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.Blob;
@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static java.util.stream.Collectors.joining;
+import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
 
 /**
  * <p>
@@ -759,8 +759,7 @@ public class StringUtils {
         StringBuilder buf = new StringBuilder();
         char previousChar = ' ';
         char[] chars = input.toCharArray();
-        for (int i = 0; i < chars.length; i++) {
-            char c = chars[i];
+        for (char c : chars) {
             boolean isUpperCaseAndPreviousIsUpperCase = (Character.isUpperCase(previousChar)) && (Character.isUpperCase(c));
             boolean isUpperCaseAndPreviousIsLowerCase = (Character.isLowerCase(previousChar)) && (Character.isUpperCase(c));
 

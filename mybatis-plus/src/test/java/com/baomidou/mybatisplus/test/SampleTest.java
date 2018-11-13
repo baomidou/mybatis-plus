@@ -1,15 +1,16 @@
 package com.baomidou.mybatisplus.test;
 
-import com.baomidou.mybatisplus.core.conditions.Condition;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
-import com.baomidou.mybatisplus.test.base.entity.CommonData;
-import com.baomidou.mybatisplus.test.base.entity.CommonLogicData;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.ibatis.reflection.DefaultReflectorFactory;
 import org.apache.ibatis.reflection.MetaClass;
 import org.junit.Test;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.test.base.entity.CommonData;
+import com.baomidou.mybatisplus.test.base.entity.CommonLogicData;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class SampleTest {
 
@@ -38,13 +39,13 @@ public class SampleTest {
 
     @Test
     public void testWrapperOrderBy() {
-        System.out.println(Condition.create().orderByAsc("1", "2", "3", "4").getSqlSegment());
-        System.out.println(Condition.create().orderByDesc("1", "2", "3", "4").getSqlSegment());
+        System.out.println(Wrappers.query().orderByAsc("1", "2", "3", "4").getSqlSegment());
+        System.out.println(Wrappers.query().orderByDesc("1", "2", "3", "4").getSqlSegment());
     }
 
     @Test
     public void testClone() {
-        QueryWrapper<Object> wrapper = Condition.create().orderByAsc("1", "2", "3", "4");
+        QueryWrapper<Object> wrapper = Wrappers.query().orderByAsc("1", "2", "3", "4");
         QueryWrapper<Object> clone = wrapper.clone().orderByDesc("5", "6", "7");
         System.out.println(wrapper.getSqlSegment());
         System.out.println(clone.getSqlSegment());
@@ -52,6 +53,6 @@ public class SampleTest {
 
     @Test
     public void testPrefixOrder() {
-        System.out.println(Condition.create().eq("order_id", 1).getSqlSegment());
+        System.out.println(Wrappers.query().eq("order_id", 1).getSqlSegment());
     }
 }

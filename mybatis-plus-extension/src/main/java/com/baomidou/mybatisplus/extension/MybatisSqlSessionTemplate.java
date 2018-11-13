@@ -15,14 +15,7 @@
  */
 package com.baomidou.mybatisplus.extension;
 
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
-import org.apache.ibatis.cursor.Cursor;
-import org.apache.ibatis.executor.BatchResult;
-import org.apache.ibatis.session.*;
-import org.mybatis.spring.MyBatisExceptionTranslator;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.dao.support.PersistenceExceptionTranslator;
-import org.springframework.util.Assert;
+import static java.lang.reflect.Proxy.newProxyInstance;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -30,7 +23,20 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 
-import static java.lang.reflect.Proxy.newProxyInstance;
+import org.apache.ibatis.cursor.Cursor;
+import org.apache.ibatis.executor.BatchResult;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.ResultHandler;
+import org.apache.ibatis.session.RowBounds;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.MyBatisExceptionTranslator;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.dao.support.PersistenceExceptionTranslator;
+import org.springframework.util.Assert;
+
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 
 /**
  * Copy SqlSessionTemplate
@@ -373,7 +379,7 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
      * @see org.springframework.beans.factory.support.DisposableBeanAdapter#CLOSE_METHOD_NAME
      */
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         // This method forces spring disposer to avoid call of
         // SqlSessionTemplate.close() which gives UnsupportedOperationException
     }
@@ -388,19 +394,14 @@ public class MybatisSqlSessionTemplate implements SqlSession, DisposableBean {
     private class SqlSessionInterceptor implements InvocationHandler {
 
         @Override
-        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            SqlSession sqlSession = MybatisSqlSessionTemplate.this.sqlSessionFactory
-                .openSession(MybatisSqlSessionTemplate.this.executorType);
-            try {
+        public Object invoke(Object proxy, Method method, Object[] args) {
+            try (SqlSession sqlSession = MybatisSqlSessionTemplate.this.sqlSessionFactory
+                .openSession(MybatisSqlSessionTemplate.this.executorType)) {
                 Object result = method.invoke(sqlSession, args);
                 sqlSession.commit(true);
                 return result;
             } catch (Throwable t) {
                 throw ExceptionUtils.mpe(t);
-            } finally {
-                if (sqlSession != null) {
-                    sqlSession.close();
-                }
             }
         }
     }

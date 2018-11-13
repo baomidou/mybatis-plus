@@ -1,11 +1,12 @@
 package com.baomidou.mybatisplus.test.h2;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.test.h2.entity.enums.AgeEnum;
-import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
-import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -15,12 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.test.h2.entity.enums.AgeEnum;
+import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
+import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
 
 /**
  * <p>
@@ -167,7 +168,7 @@ public class H2UserTest extends BaseTest {
         ew.ge("age", AgeEnum.TWO.getValue());
         for (H2User u : userService.list(ew)) {
             System.out.println(u.getName() + "," + u.getAge() + "," + u.getVersion());
-            if (id99 != null && u.getTestId().equals(id99)) {
+            if (u.getTestId().equals(id99)) {
                 Assert.assertEquals("optLocker should update version+=1", 100, u.getVersion().intValue());
             }
         }
@@ -201,7 +202,7 @@ public class H2UserTest extends BaseTest {
         ew.ge("age", AgeEnum.TWO.getValue());
         for (H2User u : userService.list(ew)) {
             System.out.println(u.getName() + "," + u.getAge() + "," + u.getVersion());
-            if (id99 != null && u.getTestId().equals(id99)) {
+            if (u.getTestId().equals(id99)) {
                 Assert.assertEquals("optLocker should update version+=1", 100, u.getVersion().intValue());
             } else {
                 Assert.assertEquals("other records should not be updated", idPriceMap.get(u.getTestId()), u.getPrice());

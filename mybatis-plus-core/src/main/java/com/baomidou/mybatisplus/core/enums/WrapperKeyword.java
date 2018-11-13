@@ -19,7 +19,7 @@ public enum WrapperKeyword implements ISqlSegment {
     LEFT_BRACKET(StringPool.LEFT_BRACKET),
     RIGHT_BRACKET(StringPool.RIGHT_BRACKET);
 
-    private String keyword;
+    private final String keyword;
 
     WrapperKeyword(final String keyword) {
         this.keyword = keyword;

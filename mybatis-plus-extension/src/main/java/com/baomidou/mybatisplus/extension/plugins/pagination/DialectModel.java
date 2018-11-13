@@ -1,14 +1,16 @@
 package com.baomidou.mybatisplus.extension.plugins.pagination;
 
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import lombok.Getter;
-import org.apache.ibatis.mapping.ParameterMapping;
-import org.apache.ibatis.session.Configuration;
-
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
+import org.apache.ibatis.mapping.ParameterMapping;
+import org.apache.ibatis.session.Configuration;
+
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+
+import lombok.Getter;
 
 /**
  * 分页参数动态化所需 model
@@ -24,7 +26,7 @@ public class DialectModel {
      * 分页方言 sql
      */
     @Getter
-    private String dialectSql;
+    private final String dialectSql;
     /**
      * 提供 Configuration
      */
@@ -52,11 +54,11 @@ public class DialectModel {
     /**
      * 提供 第一个值
      */
-    private long firstParam;
+    private final long firstParam;
     /**
      * 提供 第二个值
      */
-    private long secondParam;
+    private final long secondParam;
 
     public DialectModel(String dialectSql, long firstParam, long secondParam) {
         this.dialectSql = dialectSql;

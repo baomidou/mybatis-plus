@@ -10,5 +10,5 @@ package com.baomidou.mybatisplus.test.h2.entity.enums;
 public enum GenderEnum {
 
     MALE,
-    FEMALE;
+    FEMALE
 }

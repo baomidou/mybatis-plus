@@ -50,7 +50,7 @@ public class TableInfo {
      * 公共字段
      */
     private List<TableField> commonFields;
-    private Set<String> importPackages = new HashSet<>();
+    private final Set<String> importPackages = new HashSet<>();
     private String fieldNames;
 
     public boolean isConvert() {

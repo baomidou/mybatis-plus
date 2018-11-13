@@ -9,7 +9,7 @@ package com.baomidou.mybatisplus.core.toolkit.condition;
 public abstract class AbstractCondition<This, CLASS, COLUMN>
     implements ICondition<This, CLASS, COLUMN> {
 
-    private StringBuilder sb = new StringBuilder();
+    private final StringBuilder sb = new StringBuilder();
 
     @Override
     public This eq(COLUMN column, Object value) {

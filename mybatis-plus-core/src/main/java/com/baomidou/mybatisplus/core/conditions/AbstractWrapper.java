@@ -91,7 +91,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      */
     protected AtomicInteger paramNameSeq;
     protected Map<String, Object> paramNameValuePairs;
-    protected String paramAlias = null;
+    protected final String paramAlias = null;
     protected String lastSql = StringPool.EMPTY;
     /**
      * 数据库表映射实体类

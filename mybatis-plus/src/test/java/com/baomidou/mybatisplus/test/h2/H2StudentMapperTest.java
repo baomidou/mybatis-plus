@@ -10,10 +10,10 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.baomidou.mybatisplus.core.conditions.Condition;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.h2.entity.enums.GenderEnum;
 import com.baomidou.mybatisplus.test.h2.entity.enums.GradeEnum;
@@ -69,7 +69,7 @@ public class H2StudentMapperTest extends BaseTest {
 
     @Test
     public void pageCountZeroTest() {
-        IPage page = studentMapper.selectPage(new Page<>(), Condition.<H2Student>create().eq("name", "无"));
+        IPage page = studentMapper.selectPage(new Page<>(), Wrappers.<H2Student>query().eq("name", "无"));
         if (null != page) {
             System.out.println("total: " + page.getTotal());
         }

@@ -49,7 +49,7 @@ public enum SqlKeyword implements ISqlSegment {
     ASC("ASC"),
     DESC("DESC");
 
-    private String keyword;
+    private final String keyword;
 
     SqlKeyword(final String keyword) {
         this.keyword = keyword;

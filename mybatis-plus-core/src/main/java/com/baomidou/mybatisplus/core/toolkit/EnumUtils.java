@@ -58,7 +58,7 @@ public class EnumUtils {
                 if (Objects.equals(enumField.get(e), value)) {
                     return e;
                 }
-            } catch (IllegalAccessException e1) {
+            } catch (IllegalAccessException ignored) {
 
             }
         }

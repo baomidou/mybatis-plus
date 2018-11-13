@@ -33,7 +33,7 @@ public class MySqlTypeConvert implements ITypeConvert {
     @Override
     public IColumnType processTypeConvert(GlobalConfig globalConfig, String fieldType) {
         String t = fieldType.toLowerCase();
-        if (t.contains("char") || t.contains("text")) {
+        if (t.contains("char")) {
             return DbColumnType.STRING;
         } else if (t.contains("bigint")) {
             return DbColumnType.LONG;

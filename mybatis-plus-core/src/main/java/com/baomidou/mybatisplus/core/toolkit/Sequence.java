@@ -58,12 +58,12 @@ public class Sequence {
     private final long timestampLeftShift = sequenceBits + workerIdBits + datacenterIdBits;
     private final long sequenceMask = -1L ^ (-1L << sequenceBits);
 
-    private long workerId;
+    private final long workerId;
 
     /**
      * 数据标识 ID 部分
      */
-    private long datacenterId;
+    private final long datacenterId;
     /**
      * 并发控制
      */

@@ -82,6 +82,7 @@ public class EmptyWrapper<T> extends QueryWrapper<T> implements Serializable {
 
     }
 
+    @SuppressWarnings("EmptyMethod")
     @Override
     public String getParamAlias() {
         return super.getParamAlias();

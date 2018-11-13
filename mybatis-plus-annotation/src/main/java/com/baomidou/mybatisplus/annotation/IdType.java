@@ -55,7 +55,7 @@ public enum IdType {
      */
     ID_WORKER_STR(5);
 
-    private int key;
+    private final int key;
 
     IdType(int key) {
         this.key = key;

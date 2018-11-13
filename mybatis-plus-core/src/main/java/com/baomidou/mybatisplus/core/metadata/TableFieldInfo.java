@@ -15,17 +15,23 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
-import com.baomidou.mybatisplus.annotation.*;
+import java.lang.reflect.Field;
+
+import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.SqlCondition;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
+
 import lombok.AccessLevel;
 import lombok.Getter;
-
-import java.lang.reflect.Field;
 
 /**
  * <p>
@@ -42,7 +48,7 @@ public class TableFieldInfo implements Constants {
      * 是否有存在字段名与属性名关联
      * true: 表示要进行 as
      */
-    private boolean related;
+    private final boolean related;
     /**
      * 是否进行 select 查询
      * 大字段可设置为 false 不加入 select 查询范围
@@ -51,27 +57,27 @@ public class TableFieldInfo implements Constants {
     /**
      * 字段名
      */
-    private String column;
+    private final String column;
     /**
      * 属性名
      */
-    private String property;
+    private final String property;
     /**
      * 属性表达式#{property}, 可以指定jdbcType, typeHandler等
      */
-    private String el;
+    private final String el;
     /**
      * 属性类型
      */
-    private Class<?> propertyType;
+    private final Class<?> propertyType;
     /**
      * 属性是否是 CharSequence 类型
      */
-    private boolean isCharSequence;
+    private final boolean isCharSequence;
     /**
      * 字段策略【 默认，自判断 null 】
      */
-    private FieldStrategy fieldStrategy;
+    private final FieldStrategy fieldStrategy;
     /**
      * 逻辑删除值
      */
@@ -95,7 +101,7 @@ public class TableFieldInfo implements Constants {
     /**
      * 标记该字段属于哪个类
      */
-    private Class<?> clazz;
+    private final Class<?> clazz;
     /**
      * 缓存 sql select
      */
