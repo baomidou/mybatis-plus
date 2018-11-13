@@ -1,7 +1,8 @@
-package com.baomidou.mybatisplus.core.conditions;
+package com.baomidou.mybatisplus.core.toolkit;
 
 import java.io.Serializable;
 
+import com.baomidou.mybatisplus.core.conditions.query.EmptyWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -66,7 +67,7 @@ public class Wrappers implements Serializable {
      * @param <T>
      * @return
      */
-    public static <T> QueryWrapper<T> emptyQueryWrapper() {
+    public static <T> QueryWrapper<T> emptyWrapper() {
         return (QueryWrapper<T>) emptyWrapper;
     }
 }

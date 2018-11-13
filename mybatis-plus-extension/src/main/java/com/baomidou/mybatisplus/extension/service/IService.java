@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 
@@ -249,12 +250,34 @@ public interface IService<T> {
 
     /**
      * <p>
+     * 查询总记录数
+     * </p>
+     *
+     * @see Wrappers#emptyWrapper()
+     */
+    default int count() {
+        return count(Wrappers.<T>emptyWrapper());
+    }
+
+    /**
+     * <p>
      * 查询列表
      * </p>
      *
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     List<T> list(Wrapper<T> queryWrapper);
+
+    /**
+     * <p>
+     * 查询所有
+     * </p>
+     *
+     * @see Wrappers#emptyWrapper()
+     */
+    default List<T> list() {
+        return list(Wrappers.<T>emptyWrapper());
+    }
 
     /**
      * <p>
@@ -268,12 +291,35 @@ public interface IService<T> {
 
     /**
      * <p>
+     * 无条件翻页查询
+     * </p>
+     *
+     * @param page 翻页对象
+     * @see Wrappers#emptyWrapper()
+     */
+    default IPage<T> page(IPage<T> page) {
+        return page(page, Wrappers.<T>emptyWrapper());
+    }
+
+    /**
+     * <p>
      * 查询列表
      * </p>
      *
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     List<Map<String, Object>> listMaps(Wrapper<T> queryWrapper);
+
+    /**
+     * <p>
+     * 查询所有列表
+     * </p>
+     *
+     * @see Wrappers#emptyWrapper()
+     */
+    default List<Map<String, Object>> listMaps() {
+        return listMaps(Wrappers.<T>emptyWrapper());
+    }
 
     /**
      * <p>
@@ -286,6 +332,17 @@ public interface IService<T> {
 
     /**
      * <p>
+     * 查询全部记录
+     * </p>
+     *
+     * @see Wrappers#emptyWrapper()
+     */
+    default List<Object> listObjs() {
+        return listObjs(Wrappers.<T>emptyWrapper());
+    }
+
+    /**
+     * <p>
      * 翻页查询
      * </p>
      *
@@ -293,4 +350,16 @@ public interface IService<T> {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     IPage<Map<String, Object>> pageMaps(IPage<T> page, Wrapper<T> queryWrapper);
+
+    /**
+     * <p>
+     * 无条件翻页查询
+     * </p>
+     *
+     * @param page 翻页对象
+     * @see Wrappers#emptyWrapper()
+     */
+    default IPage<Map<String, Object>> pageMaps(IPage<T> page) {
+        return pageMaps(page, Wrappers.<T>emptyWrapper());
+    }
 }
