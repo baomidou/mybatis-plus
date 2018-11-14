@@ -40,7 +40,7 @@ public class Page<T> implements IPage<T> {
     /**
      * 总数
      */
-    private Long total;
+    private long total = 0;
     /**
      * 每页显示条数，默认 10
      */
@@ -87,27 +87,24 @@ public class Page<T> implements IPage<T> {
      * @param size    每页显示条数
      */
     public Page(long current, long size) {
-        this(current, size, 0L);
+        this(current, size, 0);
     }
 
-    public Page(long current, long size, Long total) {
+    public Page(long current, long size, long total) {
         this(current, size, total, true);
     }
 
     public Page(long current, long size, boolean isSearchCount) {
-        this(current, size, 0L, isSearchCount);
+        this(current, size, 0, isSearchCount);
     }
 
-    public Page(long current, long size, Long total, boolean isSearchCount) {
+    public Page(long current, long size, long total, boolean isSearchCount) {
         if (current > 1) {
             this.current = current;
         }
         this.size = size;
         this.total = total;
         this.isSearchCount = isSearchCount;
-        if (total == null || total != 0) {
-            this.isSearchCount = false;
-        }
     }
 
     /**
@@ -145,7 +142,7 @@ public class Page<T> implements IPage<T> {
 
     @Override
     public long getTotal() {
-        return this.total != null ? this.total : 0;
+        return this.total;
     }
 
     @Override
@@ -232,6 +229,9 @@ public class Page<T> implements IPage<T> {
 
     @Override
     public boolean isSearchCount() {
+        if (total < 0) {
+            return false;
+        }
         return isSearchCount;
     }
 
