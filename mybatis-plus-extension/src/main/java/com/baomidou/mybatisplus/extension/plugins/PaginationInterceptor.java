@@ -165,7 +165,6 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
 
         boolean orderBy = true;
         if (page.isSearchCount()) {
-            // total 为0 才进行 count
             SqlInfo sqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), sqlParser, originalSql);
             orderBy = sqlInfo.isOrderBy();
             this.queryTotal(overflow, sqlInfo.getSql(), mappedStatement, boundSql, page, connection);
