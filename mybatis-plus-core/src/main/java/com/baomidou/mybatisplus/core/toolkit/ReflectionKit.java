@@ -15,17 +15,27 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-
-import java.lang.reflect.*;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Stream;
-
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toMap;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
+
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 
 /**
  * <p>
@@ -168,8 +178,8 @@ public class ReflectionKit {
      * @param clazz 反射类
      */
     public static List<Field> getFieldList(Class<?> clazz) {
-        if (null == clazz) {
-            return null;
+        if (Objects.isNull(clazz)) {
+            return Collections.emptyList();
         }
         List<Field> fields = classFieldCache.get(clazz);
         if (CollectionUtils.isEmpty(fields)) {
@@ -189,6 +199,9 @@ public class ReflectionKit {
      * @param clazz 反射类
      */
     public static List<Field> doGetFieldList(Class<?> clazz) {
+        if (Object.class.equals(clazz)) {
+            return Collections.emptyList();
+        }
         List<Field> fieldList = Stream.of(clazz.getDeclaredFields())
             /* 过滤静态属性 */
             .filter(field -> !Modifier.isStatic(field.getModifiers()))

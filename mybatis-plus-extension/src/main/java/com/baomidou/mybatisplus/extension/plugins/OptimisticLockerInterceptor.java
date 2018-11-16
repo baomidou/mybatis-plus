@@ -3,13 +3,13 @@ package com.baomidou.mybatisplus.extension.plugins;
 import java.lang.reflect.Field;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -243,24 +243,10 @@ public class OptimisticLockerInterceptor implements Interceptor {
      * @return
      */
     private EntityField getVersionFieldRegular(Class<?> parameterClass, TableInfo tableInfo) {
-        if (parameterClass != Object.class) {
-            for (Field field : parameterClass.getDeclaredFields()) {
-                if (field.isAnnotationPresent(Version.class)) {
-                    field.setAccessible(true);
-                    String versionPropertyName = field.getName();
-                    String versionColumnName = null;
-                    for (TableFieldInfo fieldInfo : tableInfo.getFieldList()) {
-                        if (versionPropertyName.equals(fieldInfo.getProperty())) {
-                            versionColumnName = fieldInfo.getColumn();
-                        }
-                    }
-                    return new EntityField(field, true, versionColumnName);
-                }
-            }
-            // 递归父类
-            return this.getVersionFieldRegular(parameterClass.getSuperclass(), tableInfo);
-        }
-        return null;
+        return Object.class.equals(parameterClass) ? null : ReflectionKit.getFieldList(parameterClass).stream().filter(e -> e.isAnnotationPresent(Version.class)).map(field -> {
+            field.setAccessible(true);
+            return new EntityField(field, true, tableInfo.getFieldList().stream().filter(e -> field.getName().equals(e.getProperty())).map(TableFieldInfo::getColumn).findFirst().orElse(null));
+        }).findFirst().orElseGet(() -> this.getVersionFieldRegular(parameterClass.getSuperclass(), tableInfo));
     }
 
     /**
@@ -273,25 +259,16 @@ public class OptimisticLockerInterceptor implements Interceptor {
         if (entityFieldsCache.containsKey(parameterClass)) {
             return entityFieldsCache.get(parameterClass);
         }
-        List<EntityField> fields = this.getFieldsFromClazz(parameterClass, null);
+        List<EntityField> fields = this.getFieldsFromClazz(parameterClass);
         entityFieldsCache.put(parameterClass, fields);
         return fields;
     }
 
-    private List<EntityField> getFieldsFromClazz(Class<?> parameterClass, List<EntityField> fieldList) {
-        if (fieldList == null) {
-            fieldList = new ArrayList<>();
-        }
-        List<Field> fields = ReflectionKit.getFieldList(parameterClass);
-        for (Field field : fields) {
+    private List<EntityField> getFieldsFromClazz(Class<?> parameterClass) {
+        return ReflectionKit.getFieldList(parameterClass).stream().map(field -> {
             field.setAccessible(true);
-            if (field.isAnnotationPresent(Version.class)) {
-                fieldList.add(new EntityField(field, true));
-            } else {
-                fieldList.add(new EntityField(field, false));
-            }
-        }
-        return fieldList;
+            return field.isAnnotationPresent(Version.class) ? new EntityField(field, true) : new EntityField(field, false);
+        }).collect(Collectors.toList());
     }
 
     @Data
