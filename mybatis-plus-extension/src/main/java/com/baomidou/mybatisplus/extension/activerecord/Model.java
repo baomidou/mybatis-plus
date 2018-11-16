@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.SqlSessionUtils;
@@ -72,15 +73,7 @@ public abstract class Model<T extends Model> implements Serializable {
      */
     @Transactional(rollbackFor = Exception.class)
     public boolean insertOrUpdate() {
-        if (StringUtils.checkValNull(pkVal())) {
-            // insert
-            return insert();
-        } else {
-            /*
-             * 更新成功直接返回，失败执行插入逻辑
-             */
-            return updateById() || insert();
-        }
+        return StringUtils.checkValNull(pkVal()) || Objects.isNull(selectById(pkVal())) ? insert() : updateById();
     }
 
     /**

@@ -41,8 +41,8 @@ import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
-import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 
 /**
  * <p>
@@ -149,14 +149,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
             TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
             if (null != tableInfo && StringUtils.isNotEmpty(tableInfo.getKeyProperty())) {
                 Object idVal = ReflectionKit.getMethodValue(cls, entity, tableInfo.getKeyProperty());
-                if (StringUtils.checkValNull(idVal)) {
-                    return save(entity);
-                } else {
-                    /*
-                     * 更新成功直接返回，失败执行插入逻辑
-                     */
-                    return updateById(entity) || save(entity);
-                }
+                return StringUtils.checkValNull(idVal) || Objects.isNull(getById((Serializable) idVal)) ? save(entity) : updateById(entity);
             } else {
                 throw ExceptionUtils.mpe("Error:  Can not execute. Could not find @TableId.");
             }
@@ -181,16 +174,14 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 }
                 if (null != tableInfo && StringUtils.isNotEmpty(tableInfo.getKeyProperty())) {
                     Object idVal = ReflectionKit.getMethodValue(cls, anEntityList, tableInfo.getKeyProperty());
-                    if (StringUtils.checkValNull(idVal)) {
-                        String sqlStatement = sqlStatement(SqlMethod.INSERT_ONE);
-                        batchSqlSession.insert(sqlStatement, anEntityList);
+                    if (StringUtils.checkValNull(idVal) || Objects.isNull(getById((Serializable) idVal))) {
+                        batchSqlSession.insert(sqlStatement(SqlMethod.INSERT_ONE), anEntityList);
                     } else {
-                        String sqlStatement = sqlStatement(SqlMethod.UPDATE_BY_ID);
                         MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
                         param.put(Constants.ENTITY, anEntityList);
-                        batchSqlSession.update(sqlStatement, param);
-                        //不知道以后会不会有人说更新失败了还要执行插入 😂😂😂
+                        batchSqlSession.update(sqlStatement(SqlMethod.UPDATE_BY_ID), param);
                     }
+                    //不知道以后会不会有人说更新失败了还要执行插入 😂😂😂
                     if (i >= 1 && i % batchSize == 0) {
                         batchSqlSession.flushStatements();
                     }
