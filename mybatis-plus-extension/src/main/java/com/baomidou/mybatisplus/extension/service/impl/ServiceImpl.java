@@ -163,15 +163,11 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         if (CollectionUtils.isEmpty(entityList)) {
             throw new IllegalArgumentException("Error: entityList must not be empty");
         }
-        Class<?> cls = null;
-        TableInfo tableInfo = null;
+        Class<?> cls = currentModelClass();
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
         int i = 0;
         try (SqlSession batchSqlSession = sqlSessionBatch()) {
             for (T anEntityList : entityList) {
-                if (i == 0) {
-                    cls = anEntityList.getClass();
-                    tableInfo = TableInfoHelper.getTableInfo(cls);
-                }
                 if (null != tableInfo && StringUtils.isNotEmpty(tableInfo.getKeyProperty())) {
                     Object idVal = ReflectionKit.getMethodValue(cls, anEntityList, tableInfo.getKeyProperty());
                     if (StringUtils.checkValNull(idVal) || Objects.isNull(getById((Serializable) idVal))) {
