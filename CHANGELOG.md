@@ -1,6 +1,28 @@
 ﻿# CHANGELOG
 
 
+## [v3.0.6] 2018.11.18
+- 修复entity中2个以上条件并且拼接ODER BY 或 GROUP BY 产生的 WHERE X1 =? AND X2
+- refactor(SerializedLambda.java):重构方法增加反序列化安全性，优化命名
+- 基础Mapper优化支持自定义父类Mapper构造自己需要的注入方法
+- 使用<where><set>代替<trim>
+- 部分优化: 直到抛出异常时才进行字符串 format
+- 优化 IdWorker 生成UUID使用并发性能
+- feat: 动态分页模型、优化分页方言重新修正db2分页语句
+- Assert 支持 i18n 多语言错误提示
+- 支持 total 控制是否 count sql 新增 isSearchCount 方法
+- feat: move spring dependency from core module to extension
+- fix: Junit.assertTrue
+- 强制使用自定义ParameterHandler,去除byId类型限制.
+- 新增选装件的 InsertBatch 通用方法,以及相应测试,以及代码和性能的优化
+- IPage 新增功能,泛型转换
+- 自动填充判断填充值是否为空,为空时跳过填充逻辑
+- batchsize 阈值设 30 修改为 1000 提升效率
+- 修复在极端情况下saveOrUpdate执行错误
+- 移除 MybatisSqlSessionTemplate
+- 优化 xml 热加载
+- 其他优化
+
 
 ## [v3.0.5] 2018.10.11
 - 移除 ApiAssert 改为 Assert
