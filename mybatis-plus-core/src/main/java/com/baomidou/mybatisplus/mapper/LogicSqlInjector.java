@@ -15,17 +15,15 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import java.util.List;
-import java.util.Map;
-
-import org.apache.ibatis.mapping.SqlSource;
-import org.apache.ibatis.scripting.defaults.RawSqlSource;
-
 import com.baomidou.mybatisplus.entity.TableFieldInfo;
 import com.baomidou.mybatisplus.entity.TableInfo;
 import com.baomidou.mybatisplus.enums.SqlMethod;
-import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
+import org.apache.ibatis.mapping.SqlSource;
+import org.apache.ibatis.scripting.defaults.RawSqlSource;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -284,20 +282,19 @@ public class LogicSqlInjector extends AutoSqlInjector {
     @Override
     protected String sqlWhereByMap(TableInfo table) {
         if (table.isLogicDelete()) {
-            StringBuilder where = new StringBuilder();
-            where.append("\n<where>");
-            // MAP 逻辑
-            where.append("\n<if test=\"cm!=null and !cm.isEmpty\">");
-            where.append("\n<foreach collection=\"cm.keys\" item=\"k\" separator=\"AND\">");
-            where.append("\n<if test=\"cm[k] != null\">");
-            where.append(SqlReservedWords.convert(getGlobalConfig(), "\n${k}")).append(" = #{cm[${k}]}");
-            where.append("</if>");
-            where.append("\n</foreach>");
-            where.append("\n</if>");
-            // 过滤逻辑
-            where.append("\n").append(getLogicDeleteSql(table));
-            where.append("\n</where>");
-            return where.toString();
+            return "<where>\n" +
+                "<if test=\"cm != null and !cm.isEmpty\">\n" +
+                "<foreach collection=\"cm\" index=\"k\" item=\"v\" separator=\"AND\">\n" +
+                "<choose>\n" +
+                "<when test=\"v == null\">\n" +
+                " ${k} IS NULL \n" +
+                "</when>\n" +
+                "<otherwise> ${k} = #{v} </otherwise>\n" +
+                "</choose>\n" +
+                "</foreach>\n" +
+                "</if>\n" +
+                " AND \n" + getLogicDeleteSql(table) +
+                "</where>";
         }
         // 正常逻辑
         return super.sqlWhereByMap(table);

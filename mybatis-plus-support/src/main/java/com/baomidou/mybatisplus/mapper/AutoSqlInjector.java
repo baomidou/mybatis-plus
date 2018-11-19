@@ -15,32 +15,6 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.lang.reflect.WildcardType;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
-import org.apache.ibatis.executor.keygen.KeyGenerator;
-import org.apache.ibatis.executor.keygen.NoKeyGenerator;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.ResultMap;
-import org.apache.ibatis.mapping.ResultMapping;
-import org.apache.ibatis.mapping.SqlCommandType;
-import org.apache.ibatis.mapping.SqlSource;
-import org.apache.ibatis.mapping.StatementType;
-import org.apache.ibatis.scripting.LanguageDriver;
-import org.apache.ibatis.scripting.defaults.RawSqlSource;
-import org.apache.ibatis.session.Configuration;
-
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.entity.TableFieldInfo;
 import com.baomidou.mybatisplus.entity.TableInfo;
@@ -48,13 +22,23 @@ import com.baomidou.mybatisplus.enums.FieldFill;
 import com.baomidou.mybatisplus.enums.FieldStrategy;
 import com.baomidou.mybatisplus.enums.IdType;
 import com.baomidou.mybatisplus.enums.SqlMethod;
-import com.baomidou.mybatisplus.toolkit.ArrayUtils;
-import com.baomidou.mybatisplus.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.toolkit.PluginUtils;
-import com.baomidou.mybatisplus.toolkit.SqlReservedWords;
-import com.baomidou.mybatisplus.toolkit.StringUtils;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import com.baomidou.mybatisplus.toolkit.*;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
+import org.apache.ibatis.executor.keygen.KeyGenerator;
+import org.apache.ibatis.executor.keygen.NoKeyGenerator;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.mapping.*;
+import org.apache.ibatis.scripting.LanguageDriver;
+import org.apache.ibatis.scripting.defaults.RawSqlSource;
+import org.apache.ibatis.session.Configuration;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
+import java.util.*;
 
 /**
  * <p>
@@ -221,10 +205,10 @@ public class AutoSqlInjector implements ISqlInjector {
     protected void injectInsertOneSql(boolean selective, Class<?> mapperClass, Class<?> modelClass, TableInfo table) {
         /*
          * INSERT INTO table <trim prefix="(" suffix=")" suffixOverrides=",">
-		 * <if test="xx != null">xx,</if> </trim> <trim prefix="values ("
-		 * suffix=")" suffixOverrides=","> <if test="xx != null">#{xx},</if>
-		 * </trim>
-		 */
+         * <if test="xx != null">xx,</if> </trim> <trim prefix="values ("
+         * suffix=")" suffixOverrides=","> <if test="xx != null">#{xx},</if>
+         * </trim>
+         */
         KeyGenerator keyGenerator = new NoKeyGenerator();
         StringBuilder fieldBuilder = new StringBuilder();
         StringBuilder placeholderBuilder = new StringBuilder();
@@ -657,7 +641,7 @@ public class AutoSqlInjector implements ISqlInjector {
         if (null != table.getResultMap()) {
             /*
              * 存在 resultMap 映射返回
-			 */
+             */
             if (entityWrapper) {
                 columns.append("<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>");
             }
@@ -668,7 +652,7 @@ public class AutoSqlInjector implements ISqlInjector {
         } else {
             /*
              * 普通查询
-			 */
+             */
             if (entityWrapper) {
                 columns.append("<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>");
             }
@@ -717,9 +701,9 @@ public class AutoSqlInjector implements ISqlInjector {
             }
         }
 
-		/*
+        /*
          * 返回所有查询字段内容
-		 */
+         */
         return columns.toString();
     }
 
@@ -735,7 +719,7 @@ public class AutoSqlInjector implements ISqlInjector {
         StringBuilder columns = new StringBuilder();
         /*
          * 普通查询
-		 */
+         */
         columns.append("<choose><when test=\"ew != null and ew.sqlSelect != null\">${ew.sqlSelect}</when><otherwise>");
         // 主键处理
         if (StringUtils.isNotEmpty(table.getKeyProperty())) {
@@ -794,17 +778,18 @@ public class AutoSqlInjector implements ISqlInjector {
      * </p>
      */
     protected String sqlWhereByMap(TableInfo table) {
-        StringBuilder where = new StringBuilder();
-        where.append("\n<if test=\"cm!=null and !cm.isEmpty\">");
-        where.append("\n<where>");
-        where.append("\n<foreach collection=\"cm.keys\" item=\"k\" separator=\"AND\">");
-        where.append("\n<if test=\"cm[k] != null\">");
-        where.append("\n").append(SqlReservedWords.convert(getGlobalConfig(), "${k}")).append(" = #{cm[${k}]}");
-        where.append("\n</if>");
-        where.append("\n</foreach>");
-        where.append("\n</where>");
-        where.append("\n</if>");
-        return where.toString();
+        return "<if test=\"cm != null and !cm.isEmpty\">\n" +
+            "<where>\n" +
+            "<foreach collection=\"cm\" index=\"k\" item=\"v\" separator=\"AND\">\n" +
+            "<choose>\n" +
+            "<when test=\"v == null\">\n" +
+            " ${k} IS NULL \n" +
+            "</when>\n" +
+            "<otherwise> ${k} = #{v} </otherwise>\n" +
+            "</choose>\n" +
+            "</foreach>\n" +
+            "</where>\n" +
+            "</if>";
     }
 
     /**
