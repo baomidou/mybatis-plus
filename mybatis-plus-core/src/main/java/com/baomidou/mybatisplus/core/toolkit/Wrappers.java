@@ -1,7 +1,5 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
-import java.io.Serializable;
-
 import com.baomidou.mybatisplus.core.conditions.query.EmptyWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -15,15 +13,15 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
  *
  * @author Caratacus
  */
-public class Wrappers implements Serializable {
+public final class Wrappers {
 
     private static final QueryWrapper emptyWrapper = new EmptyWrapper<>();
 
     /**
      * 获取QueryWrapper
      *
-     * @param <T>
-     * @return
+     * @param <T> 实体类泛型
+     * @return QueryWrapper
      */
     public static <T> QueryWrapper<T> query() {
         return new QueryWrapper<>();
@@ -32,8 +30,8 @@ public class Wrappers implements Serializable {
     /**
      * 获取UpdateWrapper
      *
-     * @param <T>
-     * @return
+     * @param <T> 实体类泛型
+     * @return UpdateWrapper
      */
     public static <T> UpdateWrapper<T> update() {
         return new UpdateWrapper<>();
@@ -42,31 +40,32 @@ public class Wrappers implements Serializable {
     /**
      * 获取LambdaQueryWrapper
      *
-     * @param entity
-     * @param <T>
-     * @return
+     * @param entity 实体类
+     * @param <T>    实体类泛型
+     * @return LambdaQueryWrapper
      */
     public static <T> LambdaQueryWrapper<T> query(T entity) {
-        return new LambdaQueryWrapper(entity);
+        return new LambdaQueryWrapper<>(entity);
     }
 
     /**
      * 获取LambdaUpdateWrapper
      *
-     * @param entity
-     * @param <T>
-     * @return
+     * @param entity 实体类
+     * @param <T>    实体类泛型
+     * @return LambdaUpdateWrapper
      */
     public static <T> LambdaUpdateWrapper<T> update(T entity) {
         return new UpdateWrapper<>(entity).lambda();
     }
 
     /**
-     * 获取EmptyWrapper
+     * 获取 EmptyWrapper
      *
-     * @param <T>
-     * @return
+     * @param <T> 任意泛型
+     * @return EmptyWrapper
      */
+    @SuppressWarnings("unchecked")
     public static <T> QueryWrapper<T> emptyWrapper() {
         return (QueryWrapper<T>) emptyWrapper;
     }
