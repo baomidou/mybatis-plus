@@ -76,6 +76,17 @@ public final class Assert {
     }
 
     /**
+     * 断言这个 value 不为 empty
+     * 为 empty 则抛异常
+     *
+     * @param value   字符串
+     * @param message 消息
+     */
+    public static void notEmpty(String value, String message, Object... params) {
+        isTrue(StringUtils.isNotEmpty(value), message, params);
+    }
+
+    /**
      * 断言这个 collection 不为 empty
      * 为 empty 则抛异常
      *
