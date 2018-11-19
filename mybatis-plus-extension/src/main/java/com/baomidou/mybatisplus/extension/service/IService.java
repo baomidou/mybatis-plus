@@ -19,10 +19,11 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 
 /**
@@ -234,9 +235,10 @@ public interface IService<T> {
      * </p>
      *
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
+     * @param mapper       转换函数
      */
-    default Object getObj(Wrapper<T> queryWrapper) {
-        return SqlHelper.getObject(listObjs(queryWrapper));
+    default <V> V getObj(Wrapper<T> queryWrapper, Function<? super Object, V> mapper) {
+        return SqlHelper.getObject(listObjs(queryWrapper, mapper));
     }
 
     /**
@@ -327,18 +329,20 @@ public interface IService<T> {
      * </p>
      *
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
+     * @param mapper       转换函数
      */
-    List<Object> listObjs(Wrapper<T> queryWrapper);
+    <V> List<V> listObjs(Wrapper<T> queryWrapper, Function<? super Object, V> mapper);
 
     /**
      * <p>
      * 查询全部记录
      * </p>
      *
+     * @param mapper 转换函数
      * @see Wrappers#emptyWrapper()
      */
-    default List<Object> listObjs() {
-        return listObjs(Wrappers.<T>emptyWrapper());
+    default <V> List<V> listObjs(Function<? super Object, V> mapper) {
+        return listObjs(Wrappers.<T>emptyWrapper(), mapper);
     }
 
     /**
