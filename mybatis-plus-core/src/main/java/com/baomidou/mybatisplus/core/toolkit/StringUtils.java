@@ -269,7 +269,7 @@ public class StringUtils {
         }
         if (args != null) {
             int length = args.length;
-            if (length >= 1) {
+            if (length != 0) {
                 for (int i = 0; i < length; i++) {
                     content = content.replace(String.format(PLACE_HOLDER, i), sqlParam(args[i]));
                 }
