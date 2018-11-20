@@ -40,7 +40,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     /**
      * 查询字段
      */
-    private String sqlSelect;
+    private SharedSqlSelect sqlSelect = new SharedSqlSelect();
 
     public QueryWrapper() {
         this(null);
@@ -73,7 +73,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
 
     public QueryWrapper<T> select(String... columns) {
         if (ArrayUtils.isNotEmpty(columns)) {
-            this.sqlSelect = String.join(StringPool.COMMA, columns);
+            this.sqlSelect.setSqlSelect(String.join(StringPool.COMMA, columns));
         }
         return typedThis;
     }
@@ -99,7 +99,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
      */
     public QueryWrapper<T> select(Class<T> entityClass, Predicate<TableFieldInfo> predicate) {
         this.entityClass = entityClass;
-        this.sqlSelect = TableInfoHelper.getTableInfo(getCheckEntityClass()).chooseSelect(predicate);
+        this.sqlSelect.setSqlSelect(TableInfoHelper.getTableInfo(getCheckEntityClass()).chooseSelect(predicate));
         return typedThis;
     }
 
@@ -114,7 +114,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
 
     @Override
     public String getSqlSelect() {
-        return sqlSelect;
+        return sqlSelect.getSqlSelect();
     }
 
     @Override

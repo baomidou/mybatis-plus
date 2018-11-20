@@ -40,7 +40,7 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     /**
      * 查询字段
      */
-    private String sqlSelect;
+    private SharedSqlSelect sqlSelect = new SharedSqlSelect();
 
     public LambdaQueryWrapper() {
         this(null);
@@ -51,8 +51,8 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
         super.initNeed();
     }
 
-    LambdaQueryWrapper(T entity, Class<T> entityClass, String sqlSelect, AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs,
-                       MergeSegments mergeSegments) {
+    LambdaQueryWrapper(T entity, Class<T> entityClass, SharedSqlSelect sqlSelect, AtomicInteger paramNameSeq,
+                       Map<String, Object> paramNameValuePairs, MergeSegments mergeSegments) {
         super.setEntity(entity);
         this.paramNameSeq = paramNameSeq;
         this.paramNameValuePairs = paramNameValuePairs;
@@ -71,7 +71,7 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     @SafeVarargs
     public final LambdaQueryWrapper<T> select(SFunction<T, ?>... columns) {
         if (ArrayUtils.isNotEmpty(columns)) {
-            this.sqlSelect = this.columnsToString(columns);
+            this.sqlSelect.setSqlSelect(this.columnsToString(columns));
         }
         return typedThis;
     }
@@ -97,13 +97,13 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
      */
     public LambdaQueryWrapper<T> select(Class<T> entityClass, Predicate<TableFieldInfo> predicate) {
         this.entityClass = entityClass;
-        this.sqlSelect = TableInfoHelper.getTableInfo(getCheckEntityClass()).chooseSelect(predicate);
+        this.sqlSelect.setSqlSelect(TableInfoHelper.getTableInfo(getCheckEntityClass()).chooseSelect(predicate));
         return typedThis;
     }
 
     @Override
     public String getSqlSelect() {
-        return sqlSelect;
+        return sqlSelect.getSqlSelect();
     }
 
     /**
