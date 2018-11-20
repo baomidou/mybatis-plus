@@ -15,15 +15,15 @@
  */
 package com.baomidou.mybatisplus.core.conditions.update;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * <p>
@@ -48,8 +48,8 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
 
     public UpdateWrapper(T entity) {
         super.setEntity(entity);
+        super.initNeed();
         this.sqlSet = new ArrayList<>();
-        this.initNeed();
     }
 
     private UpdateWrapper(T entity, List<String> sqlSet, AtomicInteger paramNameSeq,

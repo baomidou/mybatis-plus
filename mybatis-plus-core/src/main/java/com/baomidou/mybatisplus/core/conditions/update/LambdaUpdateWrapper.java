@@ -15,15 +15,16 @@
  */
 package com.baomidou.mybatisplus.core.conditions.update;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * <p>
@@ -40,6 +41,17 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
      * SQL 更新字段内容，例如：name='1',age=2
      */
     private final List<String> sqlSet;
+
+    public LambdaUpdateWrapper() {
+        // 如果无参构造函数，请注意实体 NULL 情况 SET 必须有否则 SQL 异常
+        this(null);
+    }
+
+    public LambdaUpdateWrapper(T entity) {
+        super.setEntity(entity);
+        super.initNeed();
+        this.sqlSet = new ArrayList<>();
+    }
 
     LambdaUpdateWrapper(T entity, List<String> sqlSet, AtomicInteger paramNameSeq,
                         Map<String, Object> paramNameValuePairs, MergeSegments mergeSegments) {
