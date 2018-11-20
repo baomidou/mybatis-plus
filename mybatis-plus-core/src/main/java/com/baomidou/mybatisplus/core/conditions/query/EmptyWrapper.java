@@ -1,12 +1,11 @@
 package com.baomidou.mybatisplus.core.conditions.query;
 
-import java.io.Serializable;
+import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
+import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
-import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 
 /**
  * <p>
@@ -15,14 +14,19 @@ import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
  *
  * @author Caratacus
  */
-@SuppressWarnings("serial")
-public class EmptyWrapper<T> extends QueryWrapper<T> implements Serializable {
+public class EmptyWrapper<T> extends QueryWrapper<T> {
+    private static final long serialVersionUID = -2515957613998092272L;
 
-    private static final long serialVersionUID = 1L;
+    public EmptyWrapper() {
+    }
 
     @Override
     public T getEntity() {
         return null;
+    }
+
+    public EmptyWrapper<T> setEntity(T entity) {
+        return this;
     }
 
     @Override
@@ -60,10 +64,6 @@ public class EmptyWrapper<T> extends QueryWrapper<T> implements Serializable {
         return true;
     }
 
-    public EmptyWrapper<T> setEntity(T entity) {
-        return this;
-    }
-
     protected void initEntityClass() {
     }
 
@@ -79,7 +79,6 @@ public class EmptyWrapper<T> extends QueryWrapper<T> implements Serializable {
     @Override
     protected EmptyWrapper<T> doIt(boolean condition, ISqlSegment... sqlSegments) {
         throw new UnsupportedOperationException();
-
     }
 
     @SuppressWarnings("EmptyMethod")
@@ -93,7 +92,6 @@ public class EmptyWrapper<T> extends QueryWrapper<T> implements Serializable {
         return null;
     }
 
-
     @Override
     public Map<String, Object> getParamNameValuePairs() {
         return Collections.emptyMap();
@@ -102,9 +100,6 @@ public class EmptyWrapper<T> extends QueryWrapper<T> implements Serializable {
     @Override
     protected String columnsToString(String... columns) {
         return null;
-    }
-
-    public EmptyWrapper() {
     }
 
     @Override
@@ -116,5 +111,4 @@ public class EmptyWrapper<T> extends QueryWrapper<T> implements Serializable {
     protected EmptyWrapper<T> instance(AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
         throw new UnsupportedOperationException();
     }
-
 }
