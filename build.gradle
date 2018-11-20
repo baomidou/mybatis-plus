@@ -1,3 +1,33 @@
+buildscript {
+    repositories {
+        maven { url "https://repo.spring.io/plugins-release" }
+    }
+    dependencies {
+        classpath("org.springframework.build.gradle:propdeps-plugin:0.0.7")
+        classpath("com.netflix.nebula:gradle-extra-configurations-plugin:4.0.1")
+    }
+}
+
+plugins {
+    id "org.jetbrains.kotlin.jvm" version "1.3.0"
+}
+repositories {
+    mavenCentral()
+}
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+}
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
 ext {
     configuration = [
         javaVersion = JavaVersion.VERSION_1_8
@@ -12,6 +42,7 @@ ext {
     ]
 
     dependencies = [
+        "kotlin-reflect"                    : "org.jetbrains.kotlin:kotlin-reflect:1.2.71",
         "jsqlparser"                        : "com.github.jsqlparser:jsqlparser:${jsqlparserVersion}",
         "mybatis-spring"                    : "org.mybatis:mybatis-spring:${mybatisSpringVersion}",
         "mybatis"                           : "org.mybatis:mybatis:${mybatisVersion}",
@@ -63,15 +94,6 @@ allprojects {
 
 description = "Mybatis 增强工具包 - 只做增强不做改变，简化CRUD操作"
 
-buildscript {
-    repositories {
-        maven { url "https://repo.spring.io/plugins-release" }
-    }
-    dependencies {
-        classpath("org.springframework.build.gradle:propdeps-plugin:0.0.7")
-        classpath("com.netflix.nebula:gradle-extra-configurations-plugin:4.0.1")
-    }
-}
 
 configure(subprojects) {
     apply plugin: 'propdeps'
