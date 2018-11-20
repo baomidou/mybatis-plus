@@ -15,16 +15,16 @@
  */
 package com.baomidou.mybatisplus.extension.service;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 
 /**
  * <p>
@@ -258,7 +258,7 @@ public interface IService<T> {
      * @see Wrappers#emptyWrapper()
      */
     default int count() {
-        return count(Wrappers.<T>emptyWrapper());
+        return count(Wrappers.emptyWrapper());
     }
 
     /**
@@ -278,7 +278,7 @@ public interface IService<T> {
      * @see Wrappers#emptyWrapper()
      */
     default List<T> list() {
-        return list(Wrappers.<T>emptyWrapper());
+        return list(Wrappers.emptyWrapper());
     }
 
     /**
@@ -300,7 +300,7 @@ public interface IService<T> {
      * @see Wrappers#emptyWrapper()
      */
     default IPage<T> page(IPage<T> page) {
-        return page(page, Wrappers.<T>emptyWrapper());
+        return page(page, Wrappers.emptyWrapper());
     }
 
     /**
@@ -320,7 +320,38 @@ public interface IService<T> {
      * @see Wrappers#emptyWrapper()
      */
     default List<Map<String, Object>> listMaps() {
-        return listMaps(Wrappers.<T>emptyWrapper());
+        return listMaps(Wrappers.emptyWrapper());
+    }
+
+    /**
+     * <p>
+     * 查询全部记录
+     * </p>
+     */
+    default List<Object> listObjs() {
+        return listObjs(Function.identity());
+    }
+
+    /**
+     * <p>
+     * 查询全部记录
+     * </p>
+     *
+     * @param mapper 转换函数
+     */
+    default <V> List<V> listObjs(Function<? super Object, V> mapper) {
+        return listObjs(Wrappers.emptyWrapper(), mapper);
+    }
+
+    /**
+     * <p>
+     * 根据 Wrapper 条件，查询全部记录
+     * </p>
+     *
+     * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
+     */
+    default List<Object> listObjs(Wrapper<T> queryWrapper) {
+        return listObjs(Wrappers.emptyWrapper(), Function.identity());
     }
 
     /**
@@ -332,18 +363,6 @@ public interface IService<T> {
      * @param mapper       转换函数
      */
     <V> List<V> listObjs(Wrapper<T> queryWrapper, Function<? super Object, V> mapper);
-
-    /**
-     * <p>
-     * 查询全部记录
-     * </p>
-     *
-     * @param mapper 转换函数
-     * @see Wrappers#emptyWrapper()
-     */
-    default <V> List<V> listObjs(Function<? super Object, V> mapper) {
-        return listObjs(Wrappers.<T>emptyWrapper(), mapper);
-    }
 
     /**
      * <p>
@@ -364,6 +383,6 @@ public interface IService<T> {
      * @see Wrappers#emptyWrapper()
      */
     default IPage<Map<String, Object>> pageMaps(IPage<T> page) {
-        return pageMaps(page, Wrappers.<T>emptyWrapper());
+        return pageMaps(page, Wrappers.emptyWrapper());
     }
 }
