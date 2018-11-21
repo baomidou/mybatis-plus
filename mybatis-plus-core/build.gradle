@@ -1,7 +1,3 @@
-apply plugin: 'java'
-
-sourceCompatibility = 1.8
-
 dependencies {
     compile project(":mybatis-plus-annotation")
     compile rootProject.ext.dependencies["mybatis"]
@@ -22,5 +18,4 @@ dependencies {
     testCompile rootProject.ext.dependencies["druid"]
     testCompile rootProject.ext.dependencies["fastjson"]
     testCompile rootProject.ext.dependencies["tomcatjdbc"]
-
 }

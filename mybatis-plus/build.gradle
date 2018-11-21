@@ -2,8 +2,8 @@ dependencies {
     compile project(":mybatis-plus-extension")
     compile project(":mybatis-plus-generator")
 
-    testCompile 'org.springframework:spring-web:4.3.5.RELEASE'
-    testCompile 'javax.servlet:servlet-api:2.5'
+    testCompile rootProject.ext.dependencies["spring-web"]
+    testCompile rootProject.ext.dependencies["javax.servlet-api"]
 
     testCompile rootProject.ext.dependencies["spring-test"]
     testCompile rootProject.ext.dependencies["fastjson"]
@@ -19,5 +19,5 @@ dependencies {
     testCompile rootProject.ext.dependencies["oracle"]
     testCompile rootProject.ext.dependencies["mysql"]
     testCompile rootProject.ext.dependencies["jackson"]
-    testCompile 'ch.qos.logback:logback-classic:1.2.3'
+    testCompile rootProject.ext.dependencies["logback-classic"]
 }
