@@ -69,7 +69,6 @@ public interface MetaObjectHandler {
      * @param metaObject meta object parameter
      * @see MetaObjectHandler#setInsertFieldValByName(String, Object, MetaObject)  替代之前版本insert填充
      * @see MetaObjectHandler#setUpdateFieldValByName(String, Object, MetaObject)  替代之前版本update填充
-     * @since 3.0.7
      */
     @Deprecated
     default MetaObjectHandler setFieldValByName(String fieldName, Object fieldVal, MetaObject metaObject) {
