@@ -152,6 +152,19 @@ subprojects {
         sign configurations.archives
     }
 
+    install {
+        repositories.mavenInstaller {
+            pom.whenConfigured { generatedPom ->
+                generatedPom.dependencies.removeAll { dep ->
+                    dep.scope == "test"
+                }
+                generatedPom.dependencies = generatedPom.dependencies.sort { dep ->
+                    "$dep.scope:$dep.groupId:$dep.artifactId"
+                }
+            }
+        }
+    }
+    
     // gradle clean build uploadArchives -Dun=用户名 -Dps=密码 -x test
     uploadArchives {
         repositories {
