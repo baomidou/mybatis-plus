@@ -15,10 +15,12 @@
  */
 package com.baomidou.mybatisplus.test.postgres;
 
-import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import java.time.LocalDateTime;
+
 import org.apache.ibatis.reflection.MetaObject;
 
-import java.time.LocalDateTime;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 
 /**
  * <p>
@@ -34,7 +36,7 @@ public class PostgresMetaObjectHandler implements MetaObjectHandler {
      * 测试 user 表 name 字段为空自动填充
      */
     @Override
-    public void insertFill(MetaObject metaObject) {
+    public void insertFill(MetaObject metaObject, FieldFill fieldFill) {
         System.out.println("*************************");
         System.out.println("insert of postgres fill");
         System.out.println("*************************");
@@ -43,19 +45,19 @@ public class PostgresMetaObjectHandler implements MetaObjectHandler {
         System.out.println("createDatetime=" + createDatetime);
         if (createDatetime == null) {
             //测试实体没有的字段，配置在公共填充，不应该set到实体里面
-            this.setFieldValByName("createDatetime1", LocalDateTime.now(), metaObject)
-                .setFieldValByName("createDatetime", LocalDateTime.now(), metaObject);
+            this.setFieldValByName("createDatetime1", LocalDateTime.now(), metaObject, fieldFill)
+                .setFieldValByName("createDatetime", LocalDateTime.now(), metaObject, fieldFill);
         }
     }
 
     @Override
-    public void updateFill(MetaObject metaObject) {
+    public void updateFill(MetaObject metaObject, FieldFill fieldFill) {
         System.out.println("*************************");
         System.out.println("update of postgres fill");
         System.out.println("*************************");
         //测试实体没有的字段，配置在公共填充，不应该set到实体里面
-        this.setFieldValByName("updateDatetime1", LocalDateTime.now(), metaObject)
-            .setFieldValByName("updateDatetime", LocalDateTime.now(), metaObject);
+        this.setFieldValByName("updateDatetime1", LocalDateTime.now(), metaObject, fieldFill)
+            .setFieldValByName("updateDatetime", LocalDateTime.now(), metaObject, fieldFill);
     }
 }
 

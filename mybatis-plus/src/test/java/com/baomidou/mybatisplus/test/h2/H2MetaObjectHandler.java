@@ -19,6 +19,7 @@ import java.sql.Timestamp;
 
 import org.apache.ibatis.reflection.MetaObject;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 
 
@@ -36,7 +37,7 @@ public class H2MetaObjectHandler implements MetaObjectHandler {
      * 测试 user 表 name 字段为空自动填充
      */
     @Override
-    public void insertFill(MetaObject metaObject) {
+    public void insertFill(MetaObject metaObject, FieldFill fieldFill) {
         System.out.println("*************************");
         System.out.println("insert fill");
         System.out.println("*************************");
@@ -46,19 +47,19 @@ public class H2MetaObjectHandler implements MetaObjectHandler {
         System.out.println("testType=" + testType);
         if (testType == null) {
             //测试实体没有的字段，配置在公共填充，不应该set到实体里面
-            this.setFieldValByName("testType1", 3, metaObject);
-            this.setFieldValByName("testType", 3, metaObject);
+            this.setFieldValByName("testType1", 3, metaObject, fieldFill);
+            this.setFieldValByName("testType", 3, metaObject, fieldFill);
         }
     }
 
     @Override
-    public void updateFill(MetaObject metaObject) {
+    public void updateFill(MetaObject metaObject, FieldFill fieldFill) {
         System.out.println("*************************");
         System.out.println("update fill");
         System.out.println("*************************");
         //测试实体没有的字段，配置在公共填充，不应该set到实体里面
-        this.setFieldValByName("lastUpdatedDt1", new Timestamp(System.currentTimeMillis()), metaObject);
-        this.setFieldValByName("lastUpdatedDt", new Timestamp(System.currentTimeMillis()), metaObject);
+        this.setFieldValByName("lastUpdatedDt1", new Timestamp(System.currentTimeMillis()), metaObject, fieldFill);
+        this.setFieldValByName("lastUpdatedDt", new Timestamp(System.currentTimeMillis()), metaObject, fieldFill);
     }
 }
 

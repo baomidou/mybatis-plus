@@ -15,12 +15,20 @@
  */
 package com.baomidou.mybatisplus.core;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.*;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.executor.ErrorContext;
-import org.apache.ibatis.mapping.*;
+import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ParameterMapping;
+import org.apache.ibatis.mapping.ParameterMode;
+import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.Configuration;
@@ -29,9 +37,15 @@ import org.apache.ibatis.type.TypeException;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.*;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 
 /**
  * <p>
@@ -195,10 +209,10 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         if (metaObjectHandler != null) {
             if (isInsert && metaObjectHandler.openInsertFill()) {
                 // 插入填充
-                metaObjectHandler.insertFill(metaObject);
+                metaObjectHandler.insertFill(metaObject, FieldFill.INSERT);
             } else if (!isInsert) {
                 // 更新填充
-                metaObjectHandler.updateFill(metaObject);
+                metaObjectHandler.updateFill(metaObject, FieldFill.UPDATE);
             }
         }
         return metaObject.getOriginalObject();

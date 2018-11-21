@@ -16,11 +16,16 @@
 package com.baomidou.mybatisplus.core.handlers;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 
 /**
  * <p>
@@ -33,18 +38,29 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 public interface MetaObjectHandler {
 
     /**
+     * 乐观锁常量
+     */
+    String MP_OPTLOCK_ET_ORIGINAL = "MP_OPTLOCK_ET_ORIGINAL";
+
+    /**
      * 插入元对象字段填充（用于插入时对公共字段的填充）
      *
      * @param metaObject 元对象
+     * @param fieldFill  填充策略枚举 3.0.7添加,之前版本升级传递该参数至MetaObjectHandler#setFieldValByName
+     * @see com.baomidou.mybatisplus.core.handlers.MetaObjectHandler#setFieldValByName
+     * @since 3.0.7
      */
-    void insertFill(MetaObject metaObject);
+    void insertFill(MetaObject metaObject, FieldFill fieldFill);
 
     /**
      * 更新元对象字段填充（用于更新时对公共字段的填充）
      *
      * @param metaObject 元对象
+     * @param fieldFill  填充策略枚举 3.0.7添加,之前版本升级传递该参数至MetaObjectHandler#setFieldValByName
+     * @see com.baomidou.mybatisplus.core.handlers.MetaObjectHandler#setFieldValByName
+     * @since 3.0.7
      */
-    void updateFill(MetaObject metaObject);
+    void updateFill(MetaObject metaObject, FieldFill fieldFill);
 
     /**
      * <p>
@@ -57,16 +73,18 @@ public interface MetaObjectHandler {
      * @param fieldName  java bean property name
      * @param fieldVal   java bean property value
      * @param metaObject meta object parameter
+     * @param fieldFill  填充策略枚举
+     * @since 3.0.7
      */
-    default MetaObjectHandler setFieldValByName(String fieldName, Object fieldVal, MetaObject metaObject) {
-        if(Objects.nonNull(fieldVal)){
-            if (metaObject.hasSetter(fieldName) && metaObject.hasGetter(fieldName)) {
+    default MetaObjectHandler setFieldValByName(String fieldName, Object fieldVal, MetaObject metaObject, FieldFill fieldFill) {
+        if (Objects.nonNull(fieldVal)) {
+            if (metaObject.hasSetter(fieldName) && metaObject.hasGetter(fieldName) && isFill(fieldName, metaObject, fieldFill)) {
                 metaObject.setValue(fieldName, fieldVal);
             } else if (metaObject.hasGetter(Constants.ENTITY)) {
                 Object et = metaObject.getValue(Constants.ENTITY);
                 if (et != null) {
                     MetaObject etMeta = SystemMetaObject.forObject(et);
-                    if (etMeta.hasSetter(fieldName)) {
+                    if (etMeta.hasSetter(fieldName) && isFill(fieldName, etMeta, fieldFill)) {
                         etMeta.setValue(fieldName, fieldVal);
                     }
                 }
@@ -94,6 +112,26 @@ public interface MetaObjectHandler {
             return metaObject.getValue(Constants.ENTITY_DOT + fieldName);
         }
         return null;
+    }
+
+    /**
+     * 是否填充
+     *
+     * @param fieldName  字段名
+     * @param metaObject
+     * @param fieldFill  填充策略
+     * @return
+     */
+    default boolean isFill(String fieldName, MetaObject metaObject, FieldFill fieldFill) {
+        TableInfo tableInfo = metaObject.hasGetter(MP_OPTLOCK_ET_ORIGINAL) ? TableInfoHelper.getTableInfo(metaObject.getValue(MP_OPTLOCK_ET_ORIGINAL).getClass()) : TableInfoHelper.getTableInfo(metaObject.getOriginalObject().getClass());
+        if (Objects.nonNull(tableInfo)) {
+            Optional<TableFieldInfo> first = tableInfo.getFieldList().stream().filter(e -> e.getProperty().equals(fieldName)).findFirst();
+            if (first.isPresent()) {
+                FieldFill fill = first.get().getFieldFill();
+                return fill.equals(fieldFill) || FieldFill.INSERT_UPDATE.equals(fill);
+            }
+        }
+        return false;
     }
 
     /**
