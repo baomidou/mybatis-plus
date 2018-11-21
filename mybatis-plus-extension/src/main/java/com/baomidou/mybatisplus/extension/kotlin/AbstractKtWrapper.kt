@@ -29,7 +29,7 @@ import kotlin.reflect.KProperty
  * @author yangyuhan
  * @since 2018-11-07
  */
-abstract class AbstractLambdaWrapperKt<T, This : AbstractLambdaWrapperKt<T, This>> : AbstractWrapper<T, KProperty<*>, This>() {
+abstract class AbstractKtWrapper<T, This : AbstractKtWrapper<T, This>> : AbstractWrapper<T, KProperty<*>, This>() {
 
     private var columnMap: Map<String, String>? = null
 

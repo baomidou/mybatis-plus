@@ -30,7 +30,7 @@ import kotlin.reflect.KProperty
  * @author yangyuhan
  * @since 2018-11-02
  */
-class LambdaUpdateWrapperKt<T : Any> : AbstractLambdaWrapperKt<T, LambdaUpdateWrapperKt<T>> {
+class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>> {
 
     /**
      * SQL 更新字段内容，例如：name='1',age=2
@@ -58,18 +58,18 @@ class LambdaUpdateWrapperKt<T : Any> : AbstractLambdaWrapperKt<T, LambdaUpdateWr
         } else SqlUtils.stripSqlInjection(sqlSet.stream().collect(joining(StringPool.COMMA)))
     }
 
-    operator fun set(column: KProperty<*>, `val`: Any): LambdaUpdateWrapperKt<T> {
+    operator fun set(column: KProperty<*>, `val`: Any): KtUpdateWrapper<T> {
         return this.set(true, column, `val`)
     }
 
-    operator fun set(condition: Boolean, column: KProperty<*>, `val`: Any): LambdaUpdateWrapperKt<T> {
+    operator fun set(condition: Boolean, column: KProperty<*>, `val`: Any): KtUpdateWrapper<T> {
         if (condition) {
             sqlSet.add(String.format("%s=%s", columnToString(column), formatSql("{0}", `val`)))
         }
         return typedThis
     }
 
-    override fun instance(paramNameSeq: AtomicInteger, paramNameValuePairs: Map<String, Any>): LambdaUpdateWrapperKt<T> {
-        return LambdaUpdateWrapperKt(entity, paramNameSeq, paramNameValuePairs, MergeSegments())
+    override fun instance(paramNameSeq: AtomicInteger, paramNameValuePairs: Map<String, Any>): KtUpdateWrapper<T> {
+        return KtUpdateWrapper(entity, paramNameSeq, paramNameValuePairs, MergeSegments())
     }
 }

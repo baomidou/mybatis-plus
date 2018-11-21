@@ -29,7 +29,7 @@ import kotlin.reflect.KProperty
  * @author yangyuhan
  * @since 2018-11-02
  */
-class LambdaQueryWrapperkt<T : Any> : AbstractLambdaWrapperKt<T, LambdaQueryWrapperkt<T>> {
+class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>> {
 
     /**
      * 查询字段
@@ -58,14 +58,14 @@ class LambdaQueryWrapperkt<T : Any> : AbstractLambdaWrapperKt<T, LambdaQueryWrap
      * @param columns 查询字段
      */
     @SafeVarargs
-    fun select(vararg columns: KProperty<*>): LambdaQueryWrapperkt<T> {
+    fun select(vararg columns: KProperty<*>): KtQueryWrapper<T> {
         if (ArrayUtils.isNotEmpty(columns)) {
             this.sqlSelect = this.columnsToString(*columns)
         }
         return typedThis
     }
 
-    fun select(predicate: Predicate<TableFieldInfo>): LambdaQueryWrapperkt<T> {
+    fun select(predicate: Predicate<TableFieldInfo>): KtQueryWrapper<T> {
         return select(entityClass, predicate)
     }
 
@@ -82,7 +82,7 @@ class LambdaQueryWrapperkt<T : Any> : AbstractLambdaWrapperKt<T, LambdaQueryWrap
      * @param predicate 过滤方式
      * @return this
      */
-    fun select(entityClass: Class<T>, predicate: Predicate<TableFieldInfo>): LambdaQueryWrapperkt<T> {
+    fun select(entityClass: Class<T>, predicate: Predicate<TableFieldInfo>): KtQueryWrapper<T> {
         this.entityClass = entityClass
         this.sqlSelect = TableInfoHelper.getTableInfo(checkEntityClass).chooseSelect(predicate)
         return typedThis
@@ -96,7 +96,7 @@ class LambdaQueryWrapperkt<T : Any> : AbstractLambdaWrapperKt<T, LambdaQueryWrap
      * 用于生成嵌套 sql
      * 故 sqlSelect 不向下传递
      */
-    override fun instance(paramNameSeq: AtomicInteger, paramNameValuePairs: Map<String, Any>): LambdaQueryWrapperkt<T> {
-        return LambdaQueryWrapperkt(entity, entityClass, null, paramNameSeq, paramNameValuePairs, MergeSegments())
+    override fun instance(paramNameSeq: AtomicInteger, paramNameValuePairs: Map<String, Any>): KtQueryWrapper<T> {
+        return KtQueryWrapper(entity, entityClass, null, paramNameSeq, paramNameValuePairs, MergeSegments())
     }
 }
