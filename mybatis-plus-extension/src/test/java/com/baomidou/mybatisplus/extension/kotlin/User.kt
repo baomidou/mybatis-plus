@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.extension.plugins.pagination.dialects
+package com.baomidou.mybatisplus.extension.kotlin
 
 import com.baomidou.mybatisplus.annotation.TableField
 import com.baomidou.mybatisplus.annotation.TableName

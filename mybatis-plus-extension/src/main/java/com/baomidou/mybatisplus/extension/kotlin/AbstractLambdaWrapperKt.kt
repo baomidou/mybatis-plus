@@ -33,12 +33,10 @@ abstract class AbstractLambdaWrapperKt<T, This : AbstractLambdaWrapperKt<T, This
 
     private var columnMap: Map<String, String>? = null
 
-
     override fun columnToString(kProperty: KProperty<*>): String? {
         if (columnMap == null) {
             columnMap = LambdaUtils.getColumnMap(this.entityClass.name)
         }
         return columnMap?.get(kProperty.name)
     }
-
 }

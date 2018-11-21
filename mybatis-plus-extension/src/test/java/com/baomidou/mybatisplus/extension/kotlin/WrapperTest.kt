@@ -13,12 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.extension.plugins.pagination.dialects
+package com.baomidou.mybatisplus.extension.kotlin
 
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper
-import com.baomidou.mybatisplus.extension.kotlin.LambdaQueryWrapperkt
-import com.baomidou.mybatisplus.extension.kotlin.LambdaUpdateWrapperKt
 import org.junit.Test
 
 class WrapperTest {
@@ -27,7 +25,6 @@ class WrapperTest {
         println(String.format(" ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓   ->(%s)<-   ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓", explain))
         println(sqlSegment.sqlSegment)
     }
-
 
     @Test
     fun testLambdaQuery() {
@@ -38,7 +35,6 @@ class WrapperTest {
         logSqlSegment("测试 LambdaKt", queryWrapper)
     }
 
-
     @Test
     fun testLambdaUpdate() {
         TableInfoHelper.initTableInfo(null, User::class.java)
@@ -47,6 +43,4 @@ class WrapperTest {
         updateWrapperKt.eq(User::roleId, "sss2")
         logSqlSegment("测试 LambdaKt", updateWrapperKt)
     }
-
-
 }
