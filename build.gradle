@@ -105,9 +105,8 @@ subprojects {
     }
 
     dependencies {
-        compileOnly rootProject.ext.dependencies["lombok"]
+        provided rootProject.ext.dependencies["lombok"]
         testCompile rootProject.ext.dependencies["mockito-all"]
-        testCompile rootProject.ext.dependencies["lombok"]
         testCompile rootProject.ext.dependencies["junit"]
     }
 
