@@ -29,18 +29,14 @@ class WrapperTest {
     @Test
     fun testLambdaQuery() {
         TableInfoHelper.initTableInfo(null, User::class.java)
-        val queryWrapper = LambdaQueryWrapperkt(User())
-        queryWrapper.eq(User::name, "sss")
-        queryWrapper.eq(User::roleId, "sss2")
+        val queryWrapper = LambdaQueryWrapperkt(User()).eq(User::name, "sss").eq(User::roleId, "sss2")
         logSqlSegment("测试 LambdaKt", queryWrapper)
     }
 
     @Test
     fun testLambdaUpdate() {
         TableInfoHelper.initTableInfo(null, User::class.java)
-        val updateWrapperKt = LambdaUpdateWrapperKt(User())
-        updateWrapperKt.eq(User::name, "sss")
-        updateWrapperKt.eq(User::roleId, "sss2")
+        val updateWrapperKt = LambdaUpdateWrapperKt(User()).eq(User::name, "sss").eq(User::roleId, "sss2")
         logSqlSegment("测试 LambdaKt", updateWrapperKt)
     }
 }
