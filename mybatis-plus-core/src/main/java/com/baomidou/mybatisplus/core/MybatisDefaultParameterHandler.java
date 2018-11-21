@@ -37,7 +37,6 @@ import org.apache.ibatis.type.TypeException;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
@@ -209,10 +208,10 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         if (metaObjectHandler != null) {
             if (isInsert && metaObjectHandler.openInsertFill()) {
                 // 插入填充
-                metaObjectHandler.insertFill(metaObject, FieldFill.INSERT);
+                metaObjectHandler.insertFill(metaObject);
             } else if (!isInsert) {
                 // 更新填充
-                metaObjectHandler.updateFill(metaObject, FieldFill.UPDATE);
+                metaObjectHandler.updateFill(metaObject);
             }
         }
         return metaObject.getOriginalObject();
