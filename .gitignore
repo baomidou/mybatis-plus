@@ -21,3 +21,6 @@ html
 .DS_Store
 
 /repo/
+/gradle/
+/gradlew
+/gradlew.bat

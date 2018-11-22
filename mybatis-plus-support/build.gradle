@@ -1,6 +1,6 @@
 dependencies {
-	optional rootProject.ext.dependencies["mybatis-spring"]
-	optional rootProject.ext.dependencies["mybatis"]
-	optional rootProject.ext.dependencies["spring-context-support"]
-	optional rootProject.ext.dependencies["spring-jdbc"]
+    compile rootProject.ext.dependencies["mybatis-spring"], optional
+    compile rootProject.ext.dependencies["mybatis"], optional
+    compile rootProject.ext.dependencies["spring-context-support"], optional
+    compile rootProject.ext.dependencies["spring-jdbc"], optional
 }

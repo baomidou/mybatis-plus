@@ -1,12 +1,12 @@
 dependencies {
-	compile project(":mybatis-plus-support")
-	optional rootProject.ext.dependencies["velocity"]
-    optional rootProject.ext.dependencies["freemarker"]
-	testCompile rootProject.ext.dependencies["sqlserver"]
-	testCompile rootProject.ext.dependencies["postgresql"]
-	testCompile rootProject.ext.dependencies["oracle"]
-	testCompile rootProject.ext.dependencies["h2"]
-	testCompile rootProject.ext.dependencies["mysql"]
-	testCompile rootProject.ext.dependencies["logback-classic"]
-	testCompile rootProject.ext.dependencies["junit"]
+    compile project(":mybatis-plus-support")
+    compile rootProject.ext.dependencies["velocity"], optional
+    compile rootProject.ext.dependencies["freemarker"], optional
+    testCompile rootProject.ext.dependencies["sqlserver"]
+    testCompile rootProject.ext.dependencies["postgresql"]
+    testCompile rootProject.ext.dependencies["oracle"]
+    testCompile rootProject.ext.dependencies["h2"]
+    testCompile rootProject.ext.dependencies["mysql"]
+    testCompile rootProject.ext.dependencies["logback-classic"]
+    testCompile rootProject.ext.dependencies["junit"]
 }

@@ -4,5 +4,4 @@ include 'mybatis-plus-support'
 include 'mybatis-plus-core'
 include 'mybatis-plus-generate'
 include 'mybatis-plus-boot-starter'
-include 'buildSrc'
 

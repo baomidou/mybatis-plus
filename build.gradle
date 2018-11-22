@@ -49,7 +49,7 @@ ext {
 
 allprojects{
     group = 'com.baomidou'
-    version = '2.3.3'
+    version = '2.3.4-SNAPSHOT'
 }
 
 
@@ -57,31 +57,32 @@ description = "Mybatis 增强工具包 - 只做增强不做改变，简化CRUD�
 
 buildscript {
     repositories {
-        maven { url "https://repo.spring.io/plugins-release" }
+        maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
-        classpath("org.springframework.build.gradle:propdeps-plugin:0.0.7")
+        classpath 'com.netflix.nebula:gradle-extra-configurations-plugin:3.0.3'
     }
-}
-
-configure(subprojects) {
-    apply plugin: 'propdeps'
-    apply plugin: 'propdeps-idea'
-    apply plugin: 'propdeps-eclipse'
 }
 
 subprojects{
 
     apply plugin: 'java'
     apply plugin: 'signing'
-    apply plugin: 'maven-deploy'
+    apply plugin: 'maven-publish'
+    apply plugin: 'nebula.optional-base'
+    apply plugin: 'nebula.provided-base'
 
     sourceCompatibility = "${javaVersion}"
     targetCompatibility = "${javaVersion}"
 
-    //noinspection GroovyAssignabilityCheck
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
+    }
+
+    jar {
+        manifest {
+            attributes 'Implementation-Version': version
+        }
     }
 
     repositories {
@@ -118,62 +119,81 @@ subprojects{
         archives javadocJar
     }
 
-    // gradle clean build uploadArchives -Dun=用户名 -Dps=密码 -x test
-    uploadArchives {
-        repositories {
-            mavenDeployer {
-                def isLocal = Boolean.valueOf(project.properties.get("local"))
-                if(isLocal){
-                    repository(url: uri('../repo'))
-                }else {
-                    signing {
-                        sign configurations.archives
-                    }
-                    beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-                    def userName = System.getProperty("un")
-                    def passWord = System.getProperty("ps")
-                    pom.version = "$project.version"
-                    pom.artifactId = "$project.name"
-                    pom.groupId = "$project.group"
-                    repository(url: pom.version.endsWith('SNAPSHOT') ? 'https://oss.sonatype.org/content/repositories/snapshots/'
-                        :'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
-                        //noinspection GroovyAssignabilityCheck
-                        authentication(userName: userName, password: passWord)
-                    }
-                }
-                pom.project {
-                    //noinspection GroovyAssignabilityCheck
-                    name 'mybatis-plus'
-                    packaging 'jar'
-                    description 'An enhanced toolkit of Mybatis to simplify development.'
-                    url 'https://github.com/baomidou/mybatis-plus'
+    tasks.whenTaskAdded { task ->
+        if (task.name.contains('signMavenJavaPublication')) {
+            task.enabled = new File(project.property('signing.secretKeyRingFile') as String).isFile()
+        }
+    }
 
+    /*
+     * 1.修改 gradle.properties 中 signing.secretKeyRingFile的路径
+     * 2.执行 gradle clean build publish -Dun=用户名 -Dps=密码 -x test
+     * ---------------------------wrapper------------------------------------------
+     * win: gradlew.bat clean build publish -Dun=用户名 -Dps=密码 -x test
+     * mac: gradlew clean build publish -Dun=用户名 -Dps=密码 -x test
+     */
+    publishing {
+
+        repositories {
+            maven {
+                def userName = System.getProperty("un")
+                def passWord = System.getProperty("ps")
+                def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+                def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+
+                credentials {
+                    username userName
+                    password passWord
+                }
+            }
+        }
+
+        publications {
+
+            mavenJava(MavenPublication) {
+                from components.java
+
+                artifact sourcesJar
+                artifact javadocJar
+
+                pom {
+                    name = 'mybatis-plus'
+                    packaging 'jar'
+                    description = 'An enhanced toolkit of Mybatis to simplify development.'
+                    url = 'https://github.com/baomidou/mybatis-plus'
+                    licenses {
+                        license {
+                            name = 'The Apache License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
                     scm {
-                        connection 'scm:git@github.com:Codearte/gradle-nexus-staging-plugin.git'
-                        developerConnection 'scm:git@github.com:Codearte/gradle-nexus-staging-plugin.git'
-                        url 'https://github.com/baomidou/mybatis-plus'
+                        connection = 'scm:git@github.com:Codearte/gradle-nexus-staging-plugin.git'
+                        developerConnection = 'scm:git@github.com:Codearte/gradle-nexus-staging-plugin.git'
+                        url = 'https://github.com/baomidou/mybatis-plus'
                     }
 
                     licenses {
                         license {
-                            //noinspection GroovyAssignabilityCheck
-                            name 'The Apache License, Version 2.0'
-                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                            name = 'The Apache License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
                         }
                     }
 
                     developers {
                         developer {
-                            id 'baomidou'
-                            //noinspection GroovyAssignabilityCheck
-                            name 'hubin'
-                            email 'jobob@qq.com'
+                            id = 'baomidou'
+                            name = 'hubin'
+                            email = 'jobob@qq.com'
                         }
                     }
                 }
             }
         }
-    }
 
-    compileJava.dependsOn(processResources)
+        signing {
+            sign publishing.publications.mavenJava
+        }
+    }
 }
