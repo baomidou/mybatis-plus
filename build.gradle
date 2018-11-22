@@ -142,9 +142,32 @@ subprojects {
         }
     }
 
-
+    /*
+     * 1.修改 gradle.properties 中 signing.secretKeyRingFile的路径
+     * 2.执行 gradle clean build publish -Dun=用户名 -Dps=密码 -x test
+     * ---------------------------wrapper------------------------------------------
+     * win: gradlew.bat clean build publish -Dun=用户名 -Dps=密码 -x test
+     * mac: gradlew clean build publish -Dun=用户名 -Dps=密码 -x test
+     */
     publishing {
+
+        repositories {
+            maven {
+                def userName = System.getProperty("un")
+                def passWord = System.getProperty("ps")
+                def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+                def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+
+                credentials {
+                    username userName
+                    password passWord
+                }
+            }
+        }
+
         publications {
+
             mavenJava(MavenPublication) {
                 from components.java
 
