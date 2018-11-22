@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core;
 
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.logging.Log;
@@ -84,12 +85,19 @@ public class MybatisConfiguration extends Configuration {
     @Override
     public void addMappedStatement(MappedStatement ms) {
         logger.debug("addMappedStatement: " + ms.getId());
-        if (mappedStatements.containsKey(ms.getId())) {
+        if (GlobalConfigUtils.isRefresh(ms.getConfiguration())) {
             /*
-             * 说明已加载了xml中的节点； 忽略mapper中的SqlProvider数据
+             * 支持是否自动刷新 XML 变更内容，开发环境使用【 注：生产环境勿用！】
              */
-            logger.error("mapper[" + ms.getId() + "] is ignored, because it exists, maybe from xml file");
-            return;
+            mappedStatements.remove(ms.getId());
+        } else {
+            if (mappedStatements.containsKey(ms.getId())) {
+                /*
+                 * 说明已加载了xml中的节点； 忽略mapper中的SqlProvider数据
+                 */
+                logger.error("mapper[" + ms.getId() + "] is ignored, because it exists, maybe from xml file");
+                return;
+            }
         }
         super.addMappedStatement(ms);
     }
