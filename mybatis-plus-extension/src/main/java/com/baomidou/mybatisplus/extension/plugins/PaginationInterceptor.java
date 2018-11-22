@@ -194,10 +194,11 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
     /**
      * 查询总记录条数
      *
-     * @param sql
-     * @param mappedStatement
-     * @param boundSql
-     * @param page
+     * @param sql             count sql
+     * @param mappedStatement MappedStatement
+     * @param boundSql        BoundSql
+     * @param page            IPage
+     * @param connection      Connection
      */
     protected void queryTotal(boolean overflowCurrent, String sql, MappedStatement mappedStatement, BoundSql boundSql, IPage page, Connection connection) {
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -219,7 +220,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
                 page.setCurrent(1);
             }
         } catch (Exception e) {
-            throw ExceptionUtils.mpe("Error: Method queryTotal execution error.", e);
+            throw ExceptionUtils.mpe("Error: Method queryTotal execution error of sql for %s.", e, sql);
         }
     }
 
