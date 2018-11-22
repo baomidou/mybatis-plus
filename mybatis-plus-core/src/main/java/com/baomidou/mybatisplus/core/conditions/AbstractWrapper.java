@@ -15,30 +15,13 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.AND;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ASC;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.BETWEEN;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.DESC;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.EQ;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.EXISTS;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GE;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GROUP_BY;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GT;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.HAVING;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IN;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IS_NOT_NULL;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IS_NULL;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LE;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LIKE;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LT;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NE;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NOT;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.OR;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ORDER_BY;
-import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.APPLY;
-import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.LEFT_BRACKET;
-import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.RIGHT_BRACKET;
-import static java.util.stream.Collectors.joining;
+import com.baomidou.mybatisplus.core.conditions.interfaces.Compare;
+import com.baomidou.mybatisplus.core.conditions.interfaces.Func;
+import com.baomidou.mybatisplus.core.conditions.interfaces.Join;
+import com.baomidou.mybatisplus.core.conditions.interfaces.Nested;
+import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
+import com.baomidou.mybatisplus.core.enums.SqlKeyword;
+import com.baomidou.mybatisplus.core.toolkit.*;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -48,19 +31,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
-import com.baomidou.mybatisplus.core.conditions.interfaces.Compare;
-import com.baomidou.mybatisplus.core.conditions.interfaces.Func;
-import com.baomidou.mybatisplus.core.conditions.interfaces.Join;
-import com.baomidou.mybatisplus.core.conditions.interfaces.Nested;
-import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
-import com.baomidou.mybatisplus.core.enums.SqlKeyword;
-import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.SerializationUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.*;
+import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.*;
+import static java.util.stream.Collectors.joining;
 
 
 /**
@@ -86,12 +59,12 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     private static final String PLACE_HOLDER = "{%s}";
     private static final String MYBATIS_PLUS_TOKEN = "#{%s.paramNameValuePairs.%s}";
     protected final This typedThis = (This) this;
+    protected final String paramAlias = null;
     /**
      * 必要度量
      */
     protected AtomicInteger paramNameSeq;
     protected Map<String, Object> paramNameValuePairs;
-    protected final String paramAlias = null;
     protected String lastSql = StringPool.EMPTY;
     /**
      * 数据库表映射实体类
@@ -274,19 +247,19 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     @Override
-    public This in(boolean condition, R column, Collection<?> value) {
-        if (CollectionUtils.isEmpty(value)) {
+    public This in(boolean condition, R column, Collection<?> coll) {
+        if (CollectionUtils.isEmpty(coll)) {
             return typedThis;
         }
-        return doIt(condition, () -> columnToString(column), IN, inExpression(value));
+        return doIt(condition, () -> columnToString(column), IN, inExpression(coll));
     }
 
     @Override
-    public This notIn(boolean condition, R column, Collection<?> value) {
-        if (CollectionUtils.isEmpty(value)) {
+    public This notIn(boolean condition, R column, Collection<?> coll) {
+        if (CollectionUtils.isEmpty(coll)) {
             return typedThis;
         }
-        return not(condition).in(condition, column, value);
+        return not(condition).in(condition, column, coll);
     }
 
     @Override

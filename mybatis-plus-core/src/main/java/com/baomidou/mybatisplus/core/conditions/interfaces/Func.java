@@ -15,12 +15,14 @@
  */
 package com.baomidou.mybatisplus.core.conditions.interfaces;
 
-import static java.util.stream.Collectors.toList;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
 
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * <p>
@@ -69,19 +71,65 @@ public interface Func<This, R> extends Serializable {
     /**
      * ignore
      */
-    default This in(R column, Collection<?> value) {
-        return in(true, column, value);
+    default This in(R column, Collection<?> coll) {
+        return in(true, column, coll);
+    }
+
+    /**
+     * ignore
+     */
+    default This inOrThrow(R column, Collection<?> value) {
+        return inOrThrow(true, column, value);
     }
 
     /**
      * 字段 IN (value.get(0), value.get(1), ...)
      * 例: in("id", Arrays.asList(1,2,3,4,5))
      *
+     * <li> 如果集合为 empty 则直接抛出异常 </li>
+     *
      * @param condition 执行条件
      * @param column    字段
-     * @param value     数据集合
+     * @param coll      数据集合
      */
-    This in(boolean condition, R column, Collection<?> value);
+    default This inOrThrow(boolean condition, R column, Collection<?> coll) {
+        Assert.notEmpty(coll, "coll could not be empty!");
+        return in(condition, column, coll);
+    }
+
+    /**
+     * 字段 IN (value.get(0), value.get(1), ...)
+     * 例: in("id", Arrays.asList(1,2,3,4,5))
+     *
+     * <li> 如果集合为 empty 则不会进行 sql 拼接 </li>
+     *
+     * @param condition 执行条件
+     * @param column    字段
+     * @param coll      数据集合
+     */
+    This in(boolean condition, R column, Collection<?> coll);
+
+    /**
+     * ignore
+     */
+    default This inOrThrow(R column, Object... values) {
+        return inOrThrow(true, column, values);
+    }
+
+    /**
+     * 字段 IN (value.get(0), value.get(1), ...)
+     * 例: in("id", Arrays.asList(1,2,3,4,5))
+     *
+     * <li> 如果数组为 empty 则直接抛出异常 </li>
+     *
+     * @param condition 执行条件
+     * @param column    字段
+     * @param values    数据数组
+     */
+    default This inOrThrow(boolean condition, R column, Object... values) {
+        Assert.notEmpty(values, "values could not be empty!");
+        return in(condition, column, Arrays.stream(values).collect(toList()));
+    }
 
     /**
      * ignore
@@ -93,6 +141,8 @@ public interface Func<This, R> extends Serializable {
     /**
      * 字段 IN (v0, v1, ...)
      * 例: in("id", 1, 2, 3, 4, 5)
+     *
+     * <li> 如果动态数组为 empty 则不会进行 sql 拼接 </li>
      *
      * @param condition 执行条件
      * @param column    字段
@@ -106,8 +156,30 @@ public interface Func<This, R> extends Serializable {
     /**
      * ignore
      */
-    default This notIn(R column, Collection<?> values) {
-        return notIn(true, column, values);
+    default This notIn(R column, Collection<?> coll) {
+        return notIn(true, column, coll);
+    }
+
+    /**
+     * ignore
+     */
+    default This notInOrThrow(R column, Collection<?> value) {
+        return notInOrThrow(true, column, value);
+    }
+
+    /**
+     * 字段 IN (value.get(0), value.get(1), ...)
+     * 例: in("id", Arrays.asList(1,2,3,4,5))
+     *
+     * <li> 如果集合为 empty 则直接抛出异常 </li>
+     *
+     * @param condition 执行条件
+     * @param column    字段
+     * @param coll      数据集合
+     */
+    default This notInOrThrow(boolean condition, R column, Collection<?> coll) {
+        Assert.notEmpty(coll, "coll could not be empty!");
+        return notIn(condition, column, coll);
     }
 
     /**
@@ -116,15 +188,37 @@ public interface Func<This, R> extends Serializable {
      *
      * @param condition 执行条件
      * @param column    字段
-     * @param value     数据集合
+     * @param coll      数据集合
      */
-    This notIn(boolean condition, R column, Collection<?> value);
+    This notIn(boolean condition, R column, Collection<?> coll);
 
     /**
      * ignore
      */
     default This notIn(R column, Object... value) {
         return notIn(true, column, value);
+    }
+
+    /**
+     * ignore
+     */
+    default This notInOrThrow(R column, Object... values) {
+        return notInOrThrow(true, column, values);
+    }
+
+    /**
+     * 字段 IN (value.get(0), value.get(1), ...)
+     * 例: in("id", Arrays.asList(1,2,3,4,5))
+     *
+     * <li> 如果数组为 empty 则直接抛出异常 </li>
+     *
+     * @param condition 执行条件
+     * @param column    字段
+     * @param values    数据数组
+     */
+    default This notInOrThrow(boolean condition, R column, Object... values) {
+        Assert.notEmpty(values, "values could not be empty!");
+        return notIn(condition, column, Arrays.stream(values).collect(toList()));
     }
 
     /**
