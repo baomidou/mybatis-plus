@@ -1,6 +1,5 @@
 buildscript {
     repositories {
-        maven { url "https://repo.spring.io/plugins-release" }
         maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
@@ -80,10 +79,9 @@ subprojects {
 
     apply plugin: 'java'
     apply plugin: 'signing'
-    apply plugin: 'war'
     apply plugin: 'maven-publish'
     apply plugin: 'nebula.optional-base'
-    apply plugin: 'nebula.provided-base'
+
     sourceCompatibility = "${javaVersion}"
     targetCompatibility = "${javaVersion}"
 
@@ -91,10 +89,14 @@ subprojects {
         options.encoding = 'UTF-8'
     }
 
-    jar {
-        manifest {
-            attributes 'Implementation-Version': version
-        }
+    configurations {
+        provided
+    }
+
+    sourceSets {
+        main.compileClasspath += configurations.provided
+        test.compileClasspath += configurations.provided
+        test.runtimeClasspath += configurations.provided
     }
 
     repositories {
@@ -106,7 +108,7 @@ subprojects {
     }
 
     dependencies {
-        compile rootProject.ext.dependencies["lombok"], optional
+        provided rootProject.ext.dependencies["lombok"]
         testCompile rootProject.ext.dependencies["mockito-all"]
         testCompile rootProject.ext.dependencies["junit"]
     }
@@ -203,16 +205,6 @@ subprojects {
                             id = 'baomidou'
                             name = 'hubin'
                             email = 'jobob@qq.com'
-                        }
-                    }
-
-                    withXml {
-                        asNode().dependencies.'*'.findAll() {
-                            it.scope.text() == 'compile' && project.configurations.providedCompile.allDependencies.find { dep ->
-                                dep.name == it.artifactId.text()
-                            }
-                        }.each() {
-                            it.scope*.value = 'provided'
                         }
                     }
                 }
