@@ -163,6 +163,10 @@ public class GlobalConfigUtils {
         return getGlobalConfig(configuration).getFieldStrategy();
     }
 
+    public static boolean isRefresh(Configuration configuration) {
+        return getGlobalConfig(configuration).isRefresh();
+    }
+
     public static Set<String> getMapperRegistryCache(Configuration configuration) {
         return getGlobalConfig(configuration).getMapperRegistryCache();
     }
