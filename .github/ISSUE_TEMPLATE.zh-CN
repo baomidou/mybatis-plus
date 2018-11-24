@@ -2,7 +2,7 @@
 
 
 
-### 该问题是怎么引起的？**(注意!!!请使用最新版(具体版本查看CHANGELOG.md),如还有该问题再提 issue!,否则直接拒绝,毫不商量!!!)**
+### 该问题是怎么引起的？**([最新版](https://search.maven.org/search?q=mybatis-plus)上已修复的会直接**close**掉)**
 
 
 
