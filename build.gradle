@@ -82,6 +82,7 @@ subprojects {
     apply plugin: 'maven-publish'
     apply plugin: 'nebula.optional-base'
     apply plugin: 'nebula.provided-base'
+
     sourceCompatibility = "${javaVersion}"
     targetCompatibility = "${javaVersion}"
 
@@ -177,12 +178,7 @@ subprojects {
                     packaging 'jar'
                     description = 'An enhanced toolkit of Mybatis to simplify development.'
                     url = 'https://github.com/baomidou/mybatis-plus'
-                    licenses {
-                        license {
-                            name = 'The Apache License, Version 2.0'
-                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                        }
-                    }
+
                     scm {
                         connection = 'scm:git@github.com:Codearte/gradle-nexus-staging-plugin.git'
                         developerConnection = 'scm:git@github.com:Codearte/gradle-nexus-staging-plugin.git'
