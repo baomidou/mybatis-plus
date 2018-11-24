@@ -79,7 +79,6 @@ subprojects {
 
     apply plugin: 'java'
     apply plugin: 'signing'
-    apply plugin: 'war'
     apply plugin: 'maven-publish'
     apply plugin: 'nebula.optional-base'
     apply plugin: 'nebula.provided-base'
