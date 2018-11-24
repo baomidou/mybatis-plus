@@ -79,9 +79,10 @@ subprojects {
 
     apply plugin: 'java'
     apply plugin: 'signing'
+    apply plugin: 'war'
     apply plugin: 'maven-publish'
     apply plugin: 'nebula.optional-base'
-
+    apply plugin: 'nebula.provided-base'
     sourceCompatibility = "${javaVersion}"
     targetCompatibility = "${javaVersion}"
 
@@ -89,14 +90,10 @@ subprojects {
         options.encoding = 'UTF-8'
     }
 
-    configurations {
-        provided
-    }
-
-    sourceSets {
-        main.compileClasspath += configurations.provided
-        test.compileClasspath += configurations.provided
-        test.runtimeClasspath += configurations.provided
+    jar {
+        manifest {
+            attributes 'Implementation-Version': version
+        }
     }
 
     repositories {
@@ -108,7 +105,7 @@ subprojects {
     }
 
     dependencies {
-        provided rootProject.ext.dependencies["lombok"]
+        compile rootProject.ext.dependencies["lombok"], optional
         testCompile rootProject.ext.dependencies["mockito-all"]
         testCompile rootProject.ext.dependencies["junit"]
     }
@@ -205,6 +202,16 @@ subprojects {
                             id = 'baomidou'
                             name = 'hubin'
                             email = 'jobob@qq.com'
+                        }
+                    }
+
+                    withXml {
+                        asNode().dependencies.'*'.findAll() {
+                            it.scope.text() == 'compile' && project.configurations.provided.allDependencies.find { dep ->
+                                dep.name == it.artifactId.text()
+                            }
+                        }.each() {
+                            it.scope*.value = 'provided'
                         }
                     }
                 }

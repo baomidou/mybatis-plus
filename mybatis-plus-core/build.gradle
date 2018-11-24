@@ -4,8 +4,8 @@ dependencies {
     compile rootProject.ext.dependencies["jsqlparser"]
 //    compile rootProject.ext.dependencies["mybatis-spring"]
 
-    provided rootProject.ext.dependencies["cglib"]
-    provided rootProject.ext.dependencies["spring-aop"]
+    compile rootProject.ext.dependencies["cglib"], optional
+    compile rootProject.ext.dependencies["spring-aop"], optional
 //    provided rootProject.ext.dependencies["spring-tx"]
 
     testCompile rootProject.ext.dependencies["mybatis-ehcache"]

@@ -4,11 +4,7 @@ dependencies {
 
     testCompile rootProject.ext.dependencies["spring-web"]
     testCompile rootProject.ext.dependencies["javax.servlet-api"]
-    
-    testCompile rootProject.ext.dependencies["spring-aop"]
-    testCompile rootProject.ext.dependencies["spring-context-support"]
-    testCompile rootProject.ext.dependencies["spring-tx"]
-    testCompile rootProject.ext.dependencies["spring-jdbc"]
+
     testCompile rootProject.ext.dependencies["spring-test"]
     testCompile rootProject.ext.dependencies["fastjson"]
 
