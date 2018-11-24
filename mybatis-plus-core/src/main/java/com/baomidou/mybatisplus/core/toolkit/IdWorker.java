@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -34,12 +36,35 @@ public class IdWorker {
      */
     private static Sequence WORKER = new Sequence();
 
+    /**
+     * 毫秒格式化时间
+     */
+    public static final DateTimeFormatter MILLISECOND = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
+
     public static long getId() {
         return WORKER.nextId();
     }
 
     public static String getIdStr() {
         return String.valueOf(WORKER.nextId());
+    }
+
+    /**
+     * <p>
+     * 格式化的毫秒时间
+     * </p>
+     */
+    public static String getMillisecond() {
+        return LocalDateTime.now().format(MILLISECOND);
+    }
+
+    /**
+     * <p>
+     * 时间 ID = Time + ID
+     * </p>
+     */
+    public static String geTimeId() {
+        return getMillisecond() + getId();
     }
 
     /**
