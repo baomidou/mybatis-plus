@@ -62,6 +62,9 @@ public class IdWorker {
      * <p>
      * 时间 ID = Time + ID
      * </p>
+     * <p>
+     * 例如：可用于商品订单 ID
+     * </p>
      */
     public static String geTimeId() {
         return getMillisecond() + getId();
