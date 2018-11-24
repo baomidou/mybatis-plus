@@ -66,7 +66,7 @@ public class IdWorker {
      * 例如：可用于商品订单 ID
      * </p>
      */
-    public static String geTimeId() {
+    public static String getTimeId() {
         return getMillisecond() + getId();
     }
 
