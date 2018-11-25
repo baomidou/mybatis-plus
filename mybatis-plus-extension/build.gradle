@@ -4,8 +4,8 @@ dependencies {
     compile rootProject.ext.dependencies["mybatis-spring"]
     compile rootProject.ext.dependencies["mybatis"]
 
-    compile rootProject.ext.dependencies["kotlin-stdlib-jdk8"], optional
-    compile rootProject.ext.dependencies["kotlin-reflect"], optional
+    provided rootProject.ext.dependencies["kotlin-stdlib-jdk8"]
+    provided rootProject.ext.dependencies["kotlin-reflect"]
     compile rootProject.ext.dependencies["spring-context-support"], optional
     compile rootProject.ext.dependencies["spring-jdbc"], optional
     provided rootProject.ext.dependencies["javax.servlet-api"]
