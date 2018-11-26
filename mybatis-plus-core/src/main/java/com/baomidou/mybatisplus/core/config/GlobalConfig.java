@@ -15,12 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.config;
 
-import java.io.Serializable;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
-
-import org.apache.ibatis.session.SqlSessionFactory;
-
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -29,11 +23,15 @@ import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.apache.ibatis.session.SqlSessionFactory;
+
+import java.io.Serializable;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * <p>
@@ -54,7 +52,9 @@ public class GlobalConfig implements Serializable {
     private boolean banner = true;
     /**
      * 是否刷新 mapper
+     * @deprecated since 2018-11-26
      */
+    @Deprecated
     private boolean refresh = false;
     /**
      * 缓存 Sql 解析初始化

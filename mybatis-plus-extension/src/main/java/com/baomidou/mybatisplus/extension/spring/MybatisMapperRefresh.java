@@ -51,7 +51,9 @@ import java.util.*;
  *
  * @author nieqiurong
  * @since 2016-08-25
+ * @deprecated 2018-11-26
  */
+@Deprecated
 public class MybatisMapperRefresh implements Runnable {
 
     private static final Log logger = LogFactory.getLog(MybatisMapperRefresh.class);
