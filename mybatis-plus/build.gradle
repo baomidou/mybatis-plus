@@ -1,6 +1,6 @@
 dependencies {
     compile project(":mybatis-plus-extension")
-    testCompile project(":mybatis-plus-generator")
+    compile project(":mybatis-plus-generator"), optional
 
     testCompile rootProject.ext.dependencies["spring-web"]
     testCompile rootProject.ext.dependencies["javax.servlet-api"]
