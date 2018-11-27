@@ -146,8 +146,9 @@ subprojects {
      * 1.修改 gradle.properties 中 signing.secretKeyRingFile的路径
      * 2.执行 gradle clean build publish -Dun=用户名 -Dps=密码 -x test
      * ---------------------------wrapper------------------------------------------
+     * 先执行 gradle wrapper 生成 gradlew 和 gradlew.bat
      * win: gradlew.bat clean build publish -Dun=用户名 -Dps=密码 -x test
-     * mac: gradlew clean build publish -Dun=用户名 -Dps=密码 -x test
+     * mac: ./gradlew clean build publish -Dun=用户名 -Dps=密码 -x test
      */
     publishing {
 
