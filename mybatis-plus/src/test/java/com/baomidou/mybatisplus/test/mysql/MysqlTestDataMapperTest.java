@@ -76,9 +76,9 @@ public class MysqlTestDataMapperTest {
             commonDataList.add(new CommonData().setTestInt(i).setTestEnum(TestEnum.TWO).setTestStr(i + "条"));
             commonLogicDataList.add(new CommonLogicData().setTestInt(i).setTestStr(i + "条"));
         }
-        Assert.assertEquals(9, mysqlMapper.insertBatchAllColumn(mysqlDataList));
-        Assert.assertEquals(9, commonMapper.insertBatchAllColumn(commonDataList));
-        Assert.assertEquals(9, commonLogicMapper.insertBatchAllColumn(commonLogicDataList));
+        Assert.assertEquals(9, mysqlMapper.insertBatchSomeColumn(mysqlDataList));
+        Assert.assertEquals(9, commonMapper.insertBatchSomeColumn(commonDataList));
+        Assert.assertEquals(9, commonLogicMapper.insertBatchSomeColumn(commonLogicDataList));
     }
 
     @Test

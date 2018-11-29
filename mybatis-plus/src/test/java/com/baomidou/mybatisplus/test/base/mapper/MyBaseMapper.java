@@ -12,5 +12,5 @@ public interface MyBaseMapper<T> extends BaseMapper<T> {
 
     int deleteByIdWithFill(T entity);
 
-    int insertBatchAllColumn(List<T> entityList);
+    int insertBatchSomeColumn(List<T> entityList);
 }

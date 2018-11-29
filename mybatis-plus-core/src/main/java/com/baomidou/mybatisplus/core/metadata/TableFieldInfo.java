@@ -15,23 +15,17 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
-import java.lang.reflect.Field;
-
-import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
-import com.baomidou.mybatisplus.annotation.SqlCondition;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
-
 import lombok.AccessLevel;
 import lombok.Getter;
+
+import java.lang.reflect.Field;
 
 /**
  * <p>
@@ -49,11 +43,6 @@ public class TableFieldInfo implements Constants {
      * true: 表示要进行 as
      */
     private final boolean related;
-    /**
-     * 是否进行 select 查询
-     * 大字段可设置为 false 不加入 select 查询范围
-     */
-    private boolean select = true;
     /**
      * 字段名
      */
@@ -79,6 +68,15 @@ public class TableFieldInfo implements Constants {
      */
     private final FieldStrategy fieldStrategy;
     /**
+     * 标记该字段属于哪个类
+     */
+    private final Class<?> clazz;
+    /**
+     * 是否进行 select 查询
+     * 大字段可设置为 false 不加入 select 查询范围
+     */
+    private boolean select = true;
+    /**
      * 逻辑删除值
      */
     private String logicDeleteValue;
@@ -98,10 +96,6 @@ public class TableFieldInfo implements Constants {
      * 字段填充策略
      */
     private FieldFill fieldFill = FieldFill.DEFAULT;
-    /**
-     * 标记该字段属于哪个类
-     */
-    private final Class<?> clazz;
     /**
      * 缓存 sql select
      */
@@ -249,12 +243,27 @@ public class TableFieldInfo implements Constants {
      * insert into table (字段) values (值)
      * 位于 "值" 部位
      *
+     * <li> 不生成 if 标签 </li>
+     *
      * @return sql 脚本片段
      */
-    public String getInsertSqlProperty(boolean isAll, final String prefix) {
+    public String getInsertSqlProperty(final String prefix) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
-        String sqlScript = SqlScriptUtils.safeParam(newPrefix + el) + COMMA;
-        if (isAll || fieldFill == FieldFill.INSERT || fieldFill == FieldFill.INSERT_UPDATE) {
+        return SqlScriptUtils.safeParam(newPrefix + el) + COMMA;
+    }
+
+    /**
+     * 获取 insert 时候插入值 sql 脚本片段
+     * insert into table (字段) values (值)
+     * 位于 "值" 部位
+     *
+     * <li> 根据规则会生成 if 标签 </li>
+     *
+     * @return sql 脚本片段
+     */
+    public String getInsertSqlPropertyMaybeIf(final String prefix) {
+        String sqlScript = getInsertSqlProperty(prefix);
+        if (fieldFill == FieldFill.INSERT || fieldFill == FieldFill.INSERT_UPDATE) {
             return sqlScript;
         }
         return convertIf(sqlScript, property);
@@ -265,11 +274,26 @@ public class TableFieldInfo implements Constants {
      * insert into table (字段) values (值)
      * 位于 "字段" 部位
      *
+     * <li> 不生成 if 标签 </li>
+     *
      * @return sql 脚本片段
      */
-    public String getInsertSqlColumn(boolean isAll) {
-        final String sqlScript = column + COMMA;
-        if (isAll || fieldFill == FieldFill.INSERT || fieldFill == FieldFill.INSERT_UPDATE) {
+    public String getInsertSqlColumn() {
+        return column + COMMA;
+    }
+
+    /**
+     * 获取 insert 时候字段 sql 脚本片段
+     * insert into table (字段) values (值)
+     * 位于 "字段" 部位
+     *
+     * <li> 根据规则会生成 if 标签 </li>
+     *
+     * @return sql 脚本片段
+     */
+    public String getInsertSqlColumnMaybeIf() {
+        final String sqlScript = getInsertSqlColumn();
+        if (fieldFill == FieldFill.INSERT || fieldFill == FieldFill.INSERT_UPDATE) {
             return sqlScript;
         }
         return convertIf(sqlScript, property);

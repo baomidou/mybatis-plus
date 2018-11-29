@@ -1,11 +1,12 @@
 package com.baomidou.mybatisplus.test.mysql.config;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.parser.ISqlParser;
 import com.baomidou.mybatisplus.extension.injector.LogicSqlInjector;
-import com.baomidou.mybatisplus.extension.injector.methods.additional.InsertBatchAllColumn;
+import com.baomidou.mybatisplus.extension.injector.methods.additional.InsertBatchSomeColumn;
 import com.baomidou.mybatisplus.extension.injector.methods.additional.LogicDeleteByIdWithFill;
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
@@ -74,7 +75,8 @@ public class MybatisPlusConfig {
             public List<AbstractMethod> getMethodList() {
                 List<AbstractMethod> methodList = super.getMethodList();
                 methodList.add(new LogicDeleteByIdWithFill());
-                methodList.add(new InsertBatchAllColumn());
+                methodList.add(new InsertBatchSomeColumn(t -> !(t.getFieldFill() == FieldFill.UPDATE
+                    || t.isLogicDelete() || t.getProperty().equals("version"))));
                 return methodList;
             }
         };

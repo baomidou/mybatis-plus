@@ -198,13 +198,13 @@ public class TableInfo implements Constants {
      *
      * @return sql 脚本片段
      */
-    public String getKeyInsertSqlProperty(final String prefix) {
+    public String getKeyInsertSqlProperty(final String prefix, final boolean newLine) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
         if (StringUtils.isNotEmpty(keyProperty)) {
             if (idType == IdType.AUTO) {
                 return EMPTY;
             }
-            return SqlScriptUtils.safeParam(newPrefix + keyProperty) + COMMA + NEWLINE;
+            return SqlScriptUtils.safeParam(newPrefix + keyProperty) + COMMA + (newLine ? NEWLINE : EMPTY);
         }
         return EMPTY;
     }
@@ -216,14 +216,44 @@ public class TableInfo implements Constants {
      *
      * @return sql 脚本片段
      */
-    public String getKeyInsertSqlColumn() {
+    public String getKeyInsertSqlColumn(final boolean newLine) {
         if (StringUtils.isNotEmpty(keyColumn)) {
             if (idType == IdType.AUTO) {
                 return EMPTY;
             }
-            return keyColumn + COMMA + NEWLINE;
+            return keyColumn + COMMA + (newLine ? NEWLINE : EMPTY);
         }
         return EMPTY;
+    }
+
+
+    /**
+     * 根据 predicate 过滤后获取 insert 时候插入值 sql 脚本片段
+     * insert into table (字段) values (值)
+     * 位于 "值" 部位
+     *
+     * <li> 自选部位,不生成 if 标签 </li>
+     *
+     * @return sql 脚本片段
+     */
+    public String getSomeInsertSqlProperty(final String prefix, Predicate<TableFieldInfo> predicate) {
+        final String newPrefix = prefix == null ? EMPTY : prefix;
+        return getKeyInsertSqlProperty(newPrefix, false) + fieldList.stream()
+            .filter(predicate).map(i -> i.getInsertSqlProperty(newPrefix)).collect(joining(EMPTY));
+    }
+
+    /**
+     * 根据 predicate 过滤后获取 insert 时候字段 sql 脚本片段
+     * insert into table (字段) values (值)
+     * 位于 "字段" 部位
+     *
+     * <li> 自选部位,不生成 if 标签 </li>
+     *
+     * @return sql 脚本片段
+     */
+    public String getSomeInsertSqlColumn(Predicate<TableFieldInfo> predicate) {
+        return getKeyInsertSqlColumn(false) + fieldList.stream().filter(predicate)
+            .map(TableFieldInfo::getInsertSqlColumn).collect(joining(EMPTY));
     }
 
 
@@ -232,12 +262,14 @@ public class TableInfo implements Constants {
      * insert into table (字段) values (值)
      * 位于 "值" 部位
      *
+     * <li> 自动选部位,根据规则会生成 if 标签 </li>
+     *
      * @return sql 脚本片段
      */
-    public String getAllInsertSqlProperty(boolean isAll, final String prefix) {
+    public String getAllInsertSqlPropertyMaybeIf(final String prefix) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
-        return getKeyInsertSqlProperty(newPrefix) + fieldList.stream()
-            .map(i -> i.getInsertSqlProperty(isAll, newPrefix)).collect(joining(NEWLINE));
+        return getKeyInsertSqlProperty(newPrefix, true) + fieldList.stream()
+            .map(i -> i.getInsertSqlPropertyMaybeIf(newPrefix)).collect(joining(NEWLINE));
     }
 
     /**
@@ -245,10 +277,12 @@ public class TableInfo implements Constants {
      * insert into table (字段) values (值)
      * 位于 "字段" 部位
      *
+     * <li> 自动选部位,根据规则会生成 if 标签 </li>
+     *
      * @return sql 脚本片段
      */
-    public String getAllInsertSqlColumn(boolean isAll) {
-        return getKeyInsertSqlColumn() + fieldList.stream().map(i -> i.getInsertSqlColumn(isAll))
+    public String getAllInsertSqlColumnMaybeIf() {
+        return getKeyInsertSqlColumn(true) + fieldList.stream().map(TableFieldInfo::getInsertSqlColumnMaybeIf)
             .collect(joining(NEWLINE));
     }
 
