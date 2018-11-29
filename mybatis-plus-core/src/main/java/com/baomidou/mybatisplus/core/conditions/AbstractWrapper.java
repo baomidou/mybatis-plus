@@ -44,7 +44,7 @@ import static java.util.stream.Collectors.joining;
  * @author hubin miemie HCL
  * @since 2017-05-26
  */
-@SuppressWarnings("unchecked,serial")
+@SuppressWarnings({"serial", "unchecked"})
 public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, This>> extends Wrapper<T>
     implements Compare<This, R>, Nested<This>, Join<This>, Func<This, R> {
 
@@ -429,6 +429,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
         return typedThis;
     }
 
+    @SuppressWarnings("all")
     public String getParamAlias() {
         return StringUtils.isEmpty(paramAlias) ? DEFAULT_PARAM_ALIAS : paramAlias;
     }
@@ -471,6 +472,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     protected abstract String columnToString(R column);
 
     @Override
+    @SuppressWarnings("all")
     public This clone() {
         return SerializationUtils.clone(typedThis);
     }
