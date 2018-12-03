@@ -18,11 +18,9 @@ package com.baomidou.mybatisplus.extension.kotlin
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils
 import com.baomidou.mybatisplus.core.toolkit.StringPool
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.stream.Collectors.joining
 import kotlin.reflect.KProperty
-
 
 /**
  * Kotlin Lambda 更新封装
@@ -43,19 +41,18 @@ class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>> {
         this.initNeed()
     }
 
-    constructor(entity: T, paramNameSeq: AtomicInteger, paramNameValuePairs: Map<String, Any>,
-                mergeSegments: MergeSegments) {
+    internal constructor(entity: T, paramNameSeq: AtomicInteger, paramNameValuePairs: Map<String, Any>,
+                         mergeSegments: MergeSegments) {
         this.entity = entity
         this.paramNameSeq = paramNameSeq
         this.paramNameValuePairs = paramNameValuePairs
         this.expression = mergeSegments
-
     }
 
     override fun getSqlSet(): String? {
         return if (CollectionUtils.isEmpty(sqlSet)) {
             null
-        } else SqlUtils.stripSqlInjection(sqlSet.stream().collect(joining(StringPool.COMMA)))
+        } else sqlSet.stream().collect(joining(StringPool.COMMA))
     }
 
     operator fun set(column: KProperty<*>, `val`: Any): KtUpdateWrapper<T> {
