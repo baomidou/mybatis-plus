@@ -28,6 +28,7 @@ import lombok.experimental.Accessors;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
+import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.ItemsList;
@@ -154,7 +155,11 @@ public class TenantSqlParser extends AbstractJsqlParser {
         equalsTo.setLeftExpression(this.getAliasColumn(table));
         equalsTo.setRightExpression(tenantHandler.getTenantId());
         if (null != where) {
-            return new AndExpression(equalsTo, where);
+            if (where instanceof OrExpression) {
+                return new AndExpression(equalsTo, new Parenthesis(where));
+            } else {
+                return new AndExpression(equalsTo, where);
+            }
         }
         return equalsTo;
     }
@@ -265,7 +270,11 @@ public class TenantSqlParser extends AbstractJsqlParser {
                     processFromItem((FromItem) binaryExpression.getRightExpression());
                 }
             }
-            return new AndExpression(equalsTo, expression);
+            if (expression instanceof OrExpression) {
+                return new AndExpression(equalsTo, new Parenthesis(expression));
+            } else {
+                return new AndExpression(equalsTo, expression);
+            }
         }
     }
 
