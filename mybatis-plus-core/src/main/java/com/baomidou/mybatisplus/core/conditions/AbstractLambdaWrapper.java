@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -56,7 +57,7 @@ public abstract class AbstractLambdaWrapper<T, This extends AbstractLambdaWrappe
     }
 
     private String getColumn(SerializedLambda lambda) {
-        String fieldName = StringUtils.resolveFieldName(lambda.getImplMethodName());
+        String fieldName = StringUtils.resolveFieldName(lambda.getImplMethodName()).toUpperCase(Locale.ENGLISH);
         if (!initColumnMap || !columnMap.containsKey(fieldName)) {
             String entityClassName = lambda.getImplClassName();
             columnMap = LambdaUtils.getColumnMap(entityClassName);

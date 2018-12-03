@@ -27,6 +27,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static java.util.Locale.ENGLISH;
+
 /**
  * <p>
  * Lambda 解析工具类
@@ -99,17 +101,22 @@ public final class LambdaUtils {
      */
     private static Map<String, String> createLambdaMap(TableInfo tableInfo, Class clazz) {
         Map<String, String> map = new HashMap<>();
-        if (StringUtils.isNotEmpty(tableInfo.getKeyProperty())) {
+        String keyProperty = tableInfo.getKeyProperty();
+        if (StringUtils.isNotEmpty(keyProperty)) {
+            keyProperty = keyProperty.toUpperCase(ENGLISH);
+            String keyColumn = tableInfo.getKeyColumn();
             if (tableInfo.getClazz() != clazz) {
-                saveCache(tableInfo.getClazz().getName(), tableInfo.getKeyProperty(), tableInfo.getKeyColumn());
+                saveCache(tableInfo.getClazz().getName(), keyProperty, keyColumn);
             }
-            map.put(tableInfo.getKeyProperty(), tableInfo.getKeyColumn());
+            map.put(keyProperty, keyColumn);
         }
         tableInfo.getFieldList().forEach(i -> {
+            String property = i.getProperty().toUpperCase(ENGLISH);
+            String column = i.getColumn();
             if (i.getClazz() != clazz) {
-                saveCache(i.getClazz().getName(), i.getProperty(), i.getColumn());
+                saveCache(i.getClazz().getName(), property, column);
             }
-            map.put(i.getProperty(), i.getColumn());
+            map.put(property, column);
         });
         return map;
     }

@@ -17,14 +17,12 @@ package com.baomidou.mybatisplus.extension.kotlin
 
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils
+import java.util.*
 import kotlin.reflect.KProperty
 
 /**
- *
- *
  * Lambda 语法使用 Wrapper
  * 统一处理解析 lambda 获取 column
- *
  *
  * @author yangyuhan
  * @since 2018-11-07
@@ -33,10 +31,12 @@ abstract class AbstractKtWrapper<T, This : AbstractKtWrapper<T, This>> : Abstrac
 
     private var columnMap: Map<String, String>? = null
 
+    override fun initEntityClass() {
+        super.initEntityClass()
+        columnMap = LambdaUtils.getColumnMap(this.entityClass.name)
+    }
+
     override fun columnToString(kProperty: KProperty<*>): String? {
-        if (columnMap == null) {
-            columnMap = LambdaUtils.getColumnMap(this.entityClass.name)
-        }
-        return columnMap?.get(kProperty.name)
+        return columnMap?.get(kProperty.name.toUpperCase(Locale.ENGLISH))
     }
 }
