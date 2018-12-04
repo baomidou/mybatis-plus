@@ -220,7 +220,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
                 page.setCurrent(1);
             }
         } catch (Exception e) {
-            throw ExceptionUtils.mpe("Error: Method queryTotal execution error of sql for %s.", e, sql);
+            throw ExceptionUtils.mpe("Error: Method queryTotal execution error of sql : \n %s \n", e, sql);
         }
     }
 
