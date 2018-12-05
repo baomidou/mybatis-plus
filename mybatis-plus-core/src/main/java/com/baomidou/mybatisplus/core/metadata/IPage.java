@@ -152,10 +152,8 @@ public interface IPage<T> extends Serializable {
      * <p>
      * 设置当前满足条件总行数
      * </p>
-     * <p>
-     * </p>
      */
-    IPage<T> setTotal(Long total);
+    IPage<T> setTotal(long total);
 
     /**
      * <p>
