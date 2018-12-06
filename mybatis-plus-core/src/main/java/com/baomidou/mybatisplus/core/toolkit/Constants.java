@@ -98,4 +98,8 @@ public interface Constants extends StringPool {
      * collection
      */
     String COLLECTION = "coll";
+    /**
+     * where
+     */
+    String WHERE = "WHERE";
 }
