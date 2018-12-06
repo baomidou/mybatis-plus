@@ -44,6 +44,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -475,13 +476,20 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     @Override
-    public String getCustomSql() {
-        NormalSegmentList normal = getExpression().getNormal();
-        if (normal.isEmpty()) {
-            return getSqlSegment();
-        } else {
-            return concatWhere(getSqlSegment());
+    public String getCustomSqlSegment() {
+        MergeSegments expression = getExpression();
+        if (Objects.nonNull(expression)) {
+            NormalSegmentList normal = expression.getNormal();
+            String sqlSegment = getSqlSegment();
+            if (StringUtils.isNotEmpty(sqlSegment)) {
+                if (normal.isEmpty()) {
+                    return sqlSegment;
+                } else {
+                    return concatWhere(sqlSegment);
+                }
+            }
         }
+        return StringUtils.EMPTY;
     }
 
     /**
