@@ -18,6 +18,6 @@ import com.baomidou.mybatisplus.test.base.mapper.MyBaseMapper;
 public interface MysqlDataMapper extends MyBaseMapper<MysqlData> {
 
     @ResultType(MysqlData.class)
-    @Select("select * from mysql_data ${ew.customSql}")
+    @Select("select * from mysql_data ${ew.customSqlSegment}")
     List<MysqlData> getAll(@Param(Constants.WRAPPER) Wrapper wrapper);
 }
