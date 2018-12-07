@@ -15,25 +15,54 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
-import com.baomidou.mybatisplus.core.conditions.interfaces.Compare;
-import com.baomidou.mybatisplus.core.conditions.interfaces.Func;
-import com.baomidou.mybatisplus.core.conditions.interfaces.Join;
-import com.baomidou.mybatisplus.core.conditions.interfaces.Nested;
-import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
-import com.baomidou.mybatisplus.core.enums.SqlKeyword;
-import com.baomidou.mybatisplus.core.toolkit.*;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.AND;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ASC;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.BETWEEN;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.DESC;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.EQ;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.EXISTS;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GE;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GROUP_BY;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GT;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.HAVING;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IN;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IS_NOT_NULL;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IS_NULL;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LE;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LIKE;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LT;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NE;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NOT;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.OR;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ORDER_BY;
+import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.APPLY;
+import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.LEFT_BRACKET;
+import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.RIGHT_BRACKET;
+import static java.util.stream.Collectors.joining;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.*;
-import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.*;
-import static java.util.stream.Collectors.joining;
+import com.baomidou.mybatisplus.core.conditions.interfaces.Compare;
+import com.baomidou.mybatisplus.core.conditions.interfaces.Func;
+import com.baomidou.mybatisplus.core.conditions.interfaces.Join;
+import com.baomidou.mybatisplus.core.conditions.interfaces.Nested;
+import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
+import com.baomidou.mybatisplus.core.conditions.segments.NormalSegmentList;
+import com.baomidou.mybatisplus.core.enums.SqlKeyword;
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.SerializationUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 
 /**
@@ -445,6 +474,34 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
         }
         return null;
     }
+
+    @Override
+    public String getCustomSqlSegment() {
+        MergeSegments expression = getExpression();
+        if (Objects.nonNull(expression)) {
+            NormalSegmentList normal = expression.getNormal();
+            String sqlSegment = getSqlSegment();
+            if (StringUtils.isNotEmpty(sqlSegment)) {
+                if (normal.isEmpty()) {
+                    return sqlSegment;
+                } else {
+                    return concatWhere(sqlSegment);
+                }
+            }
+        }
+        return StringUtils.EMPTY;
+    }
+
+    /**
+     * 拼接`WHERE`至SQL前
+     *
+     * @param sql
+     * @return
+     */
+    private String concatWhere(String sql) {
+        return Constants.WHERE + " " + sql;
+    }
+
 
     @Override
     public MergeSegments getExpression() {

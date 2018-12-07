@@ -146,7 +146,7 @@ public class Page<T> implements IPage<T> {
     }
 
     @Override
-    public Page<T> setTotal(Long total) {
+    public Page<T> setTotal(long total) {
         this.total = total;
         return this;
     }

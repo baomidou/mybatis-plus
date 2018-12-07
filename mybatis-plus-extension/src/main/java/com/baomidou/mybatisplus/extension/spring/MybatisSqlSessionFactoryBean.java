@@ -15,25 +15,19 @@
  */
 package com.baomidou.mybatisplus.extension.spring;
 
-import static org.springframework.util.Assert.notNull;
-import static org.springframework.util.Assert.state;
-import static org.springframework.util.ObjectUtils.isEmpty;
-import static org.springframework.util.StringUtils.hasLength;
-import static org.springframework.util.StringUtils.tokenizeToStringArray;
-
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-
-import javax.sql.DataSource;
-
+import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.annotation.EnumValue;
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.MybatisXMLConfigBuilder;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.enums.IEnum;
+import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.extension.handlers.EnumAnnotationTypeHandler;
+import com.baomidou.mybatisplus.extension.handlers.EnumTypeHandler;
+import com.baomidou.mybatisplus.extension.toolkit.AopUtils;
+import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
+import com.baomidou.mybatisplus.extension.toolkit.PackageHelper;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.ErrorContext;
@@ -64,23 +58,18 @@ import org.springframework.core.NestedIOException;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
-import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.annotation.EnumValue;
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.MybatisXMLConfigBuilder;
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.enums.IEnum;
-import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.extension.handlers.EnumAnnotationTypeHandler;
-import com.baomidou.mybatisplus.extension.handlers.EnumTypeHandler;
-import com.baomidou.mybatisplus.extension.toolkit.AopUtils;
-import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
-import com.baomidou.mybatisplus.extension.toolkit.PackageHelper;
-import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import javax.sql.DataSource;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.*;
+
+import static org.springframework.util.Assert.notNull;
+import static org.springframework.util.Assert.state;
+import static org.springframework.util.ObjectUtils.isEmpty;
+import static org.springframework.util.StringUtils.hasLength;
+import static org.springframework.util.StringUtils.tokenizeToStringArray;
 
 /**
  * <p>
@@ -390,10 +379,10 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        notNull(dataSource, "SFunction 'dataSource' is required");
-        notNull(sqlSessionFactoryBuilder, "SFunction 'sqlSessionFactoryBuilder' is required");
+        notNull(dataSource, "Property 'dataSource' is required");
+        notNull(sqlSessionFactoryBuilder, "Property 'sqlSessionFactoryBuilder' is required");
         state((configuration == null && configLocation == null) || !(configuration != null && configLocation != null),
-            "SFunction 'configuration' and 'configLocation' can not specified with together");
+            "Property 'configuration' and 'configLocation' can not specified with together");
 
         this.sqlSessionFactory = buildSqlSessionFactory();
         //TODO: 3.0 注入到globalConfig
@@ -427,7 +416,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             configuration = xmlConfigBuilder.getConfiguration();
         } else {
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("SFunction 'configuration' or 'configLocation' not specified, using default MyBatis Configuration");
+                LOGGER.debug("Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration");
             }
             // TODO 使用自定义配置
             configuration = new MybatisConfiguration();
@@ -650,7 +639,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             }
         } else {
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("SFunction 'mapperLocations' was not specified or no matching resources found");
+                LOGGER.debug("Property 'mapperLocations' was not specified or no matching resources found");
             }
         }
         return sqlSessionFactory;
@@ -694,7 +683,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         if (this.sqlSessionFactory == null) {
             afterPropertiesSet();
         }
-
         return this.sqlSessionFactory;
     }
 

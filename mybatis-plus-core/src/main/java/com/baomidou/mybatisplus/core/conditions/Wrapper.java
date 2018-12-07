@@ -65,6 +65,17 @@ public abstract class Wrapper<T> implements ISqlSegment {
     public abstract MergeSegments getExpression();
 
     /**
+     * 获取自定义SQL 简化自定义XML复杂情况
+     * 使用方法
+     * `自定义sql` + ${ew.customSqlSegment}
+     * <p>1.逻辑删除需要自己拼接条件 (之前自定义也同样)</p>
+     * <p>2.不支持wrapper中附带实体的情况 (wrapper自带实体会更麻烦)</p>
+     * <p>3.用法 ${ew.customSqlSegment} (不需要where标签包裹,切记!)</>
+     * <p>4.ew是wrapper定义别名,可自行替换</>
+     */
+    public abstract String getCustomSqlSegment();
+
+    /**
      * 查询条件为空(包含entity)
      */
     public boolean isEmptyOfWhere() {
