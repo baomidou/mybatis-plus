@@ -87,7 +87,7 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
      * <p>
      * 例1: 只要 java 字段名以 "test" 开头的              -> select(i -> i.getProperty().startsWith("test"))
      * 例2: 只要 java 字段属性是 CharSequence 类型的       -> select(TableFieldInfo::isCharSequence)
-     * 例3: 只要 java 字段没有填充策略的                   -> select(i -> i.getFieldFill == FieldFill.DEFAULT)
+     * 例3: 只要 java 字段没有填充策略的                   -> select(i -> i.getFieldFill() == FieldFill.DEFAULT)
      * 例4: 要全部字段                                   -> select(i -> true)
      * 例5: 只要主键字段                                 -> select(i -> false)
      * </p>
