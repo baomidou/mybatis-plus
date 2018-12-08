@@ -57,9 +57,7 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
 
     @Override
     public void injectSqlRunner(Configuration configuration) {
-        if (isInjectSqlRunner()) {
-            new SqlRunnerInjector().inject(configuration);
-        }
+        new SqlRunnerInjector().inject(configuration);
     }
 
     /**
@@ -71,14 +69,4 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
      */
     public abstract List<AbstractMethod> getMethodList();
 
-    /**
-     * <p>
-     * 是否注入SqlRunner,抽象类默认注入,如果不需要重写该方法
-     * </p>
-     *
-     * @return 注入的方法集合
-     */
-    public boolean isInjectSqlRunner() {
-        return true;
-    }
 }
