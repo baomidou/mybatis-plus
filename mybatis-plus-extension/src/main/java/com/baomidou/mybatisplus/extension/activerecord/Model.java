@@ -15,27 +15,20 @@
  */
 package com.baomidou.mybatisplus.extension.activerecord;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.enums.SqlMethod;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import com.baomidou.mybatisplus.extension.toolkit.SqlRunner;
+import org.apache.ibatis.session.SqlSession;
+import org.mybatis.spring.SqlSessionUtils;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import org.apache.ibatis.session.SqlSession;
-import org.mybatis.spring.SqlSessionUtils;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.enums.SqlMethod;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
-import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
-import com.baomidou.mybatisplus.extension.toolkit.SqlRunner;
 
 /**
  * ActiveRecord 模式 CRUD
@@ -56,7 +49,6 @@ public abstract class Model<T extends Model> implements Serializable {
      * 插入（字段选择插入）
      * </p>
      */
-    @Transactional(rollbackFor = Exception.class)
     public boolean insert() {
         SqlSession sqlSession = sqlSession();
         try {
@@ -71,7 +63,6 @@ public abstract class Model<T extends Model> implements Serializable {
      * 插入 OR 更新
      * </p>
      */
-    @Transactional(rollbackFor = Exception.class)
     public boolean insertOrUpdate() {
         return StringUtils.checkValNull(pkVal()) || Objects.isNull(selectById(pkVal())) ? insert() : updateById();
     }
@@ -83,7 +74,6 @@ public abstract class Model<T extends Model> implements Serializable {
      *
      * @param id 主键ID
      */
-    @Transactional(rollbackFor = Exception.class)
     public boolean deleteById(Serializable id) {
         SqlSession sqlSession = sqlSession();
         try {
@@ -98,7 +88,6 @@ public abstract class Model<T extends Model> implements Serializable {
      * 根据主键删除
      * </p>
      */
-    @Transactional(rollbackFor = Exception.class)
     public boolean deleteById() {
         Assert.isFalse(StringUtils.checkValNull(pkVal()), "deleteById primaryKey is null.");
         return deleteById(pkVal());
@@ -111,7 +100,6 @@ public abstract class Model<T extends Model> implements Serializable {
      *
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
-    @Transactional(rollbackFor = Exception.class)
     public boolean delete(Wrapper<T> queryWrapper) {
         Map<String, Object> map = new HashMap<>(1);
         map.put(Constants.WRAPPER, queryWrapper);
@@ -128,7 +116,6 @@ public abstract class Model<T extends Model> implements Serializable {
      * 更新（字段选择更新）
      * </p>
      */
-    @Transactional(rollbackFor = Exception.class)
     public boolean updateById() {
         Assert.isFalse(StringUtils.checkValNull(pkVal()), "updateById primaryKey is null.");
         // updateById
@@ -149,7 +136,6 @@ public abstract class Model<T extends Model> implements Serializable {
      *
      * @param updateWrapper 实体对象封装操作类（可以为 null,里面的 entity 用于生成 where 语句）
      */
-    @Transactional(rollbackFor = Exception.class)
     public boolean update(Wrapper<T> updateWrapper) {
         Map<String, Object> map = new HashMap<>(2);
         map.put(Constants.ENTITY, this);
