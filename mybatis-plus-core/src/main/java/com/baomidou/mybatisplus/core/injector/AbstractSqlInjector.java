@@ -15,15 +15,19 @@
  */
 package com.baomidou.mybatisplus.core.injector;
 
-import java.util.List;
-import java.util.Set;
-
+import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.session.Configuration;
 
-import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
+import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -44,7 +48,8 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
             List<AbstractMethod> methodList = this.getMethodList();
             Assert.notEmpty(methodList, "No effective injection method was found.");
             // 循环注入自定义方法
-            methodList.forEach(m -> m.inject(builderAssistant, mapperClass));
+            Class<?> modelClass = extractModelClass(mapperClass);
+            methodList.forEach(m -> m.inject(builderAssistant, mapperClass, modelClass));
             mapperRegistryCache.add(className);
             /**
              * 初始化 SQL 解析
@@ -69,4 +74,31 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
      */
     public abstract List<AbstractMethod> getMethodList();
 
+    /**
+     * 提取泛型模型,多泛型的时候请将泛型T放在第一位
+     *
+     * @param mapperClass mapper 接口
+     * @return mapper 泛型
+     */
+    protected Class<?> extractModelClass(Class<?> mapperClass) {
+        Type[] types = mapperClass.getGenericInterfaces();
+        ParameterizedType target = null;
+        for (Type type : types) {
+            if (type instanceof ParameterizedType) {
+                Type[] typeArray = ((ParameterizedType) type).getActualTypeArguments();
+                if (ArrayUtils.isNotEmpty(typeArray)) {
+                    for (Type t : typeArray) {
+                        if (t instanceof TypeVariable || t instanceof WildcardType) {
+                            break;
+                        } else {
+                            target = (ParameterizedType) type;
+                            break;
+                        }
+                    }
+                }
+                break;
+            }
+        }
+        return target == null ? null : (Class<?>) target.getActualTypeArguments()[0];
+    }
 }

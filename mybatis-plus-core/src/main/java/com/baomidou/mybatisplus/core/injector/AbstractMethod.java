@@ -15,11 +15,10 @@
  */
 package com.baomidou.mybatisplus.core.injector;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.lang.reflect.WildcardType;
-
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
@@ -29,12 +28,6 @@ import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
-
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 
 /**
  * <p>
@@ -53,11 +46,10 @@ public abstract class AbstractMethod implements Constants {
     /**
      * 注入自定义方法
      */
-    public void inject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
+    public void inject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass, Class<?> modelClass) {
         this.configuration = builderAssistant.getConfiguration();
         this.builderAssistant = builderAssistant;
         this.languageDriver = configuration.getDefaultScriptingLanguageInstance();
-        Class<?> modelClass = extractModelClass(mapperClass);
         if (null != modelClass) {
             /**
              * 注入自定义方法
@@ -65,34 +57,6 @@ public abstract class AbstractMethod implements Constants {
             TableInfo tableInfo = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
             injectMappedStatement(mapperClass, modelClass, tableInfo);
         }
-    }
-
-    /**
-     * 提取泛型模型,多泛型的时候请将泛型T放在第一位
-     *
-     * @param mapperClass mapper 接口
-     * @return mapper 泛型
-     */
-    protected Class<?> extractModelClass(Class<?> mapperClass) {
-        Type[] types = mapperClass.getGenericInterfaces();
-        ParameterizedType target = null;
-        for (Type type : types) {
-            if (type instanceof ParameterizedType) {
-                Type[] typeArray = ((ParameterizedType) type).getActualTypeArguments();
-                if (ArrayUtils.isNotEmpty(typeArray)) {
-                    for (Type t : typeArray) {
-                        if (t instanceof TypeVariable || t instanceof WildcardType) {
-                            break;
-                        } else {
-                            target = (ParameterizedType) type;
-                            break;
-                        }
-                    }
-                }
-                break;
-            }
-        }
-        return target == null ? null : (Class<?>) target.getActualTypeArguments()[0];
     }
 
     /**
