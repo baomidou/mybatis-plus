@@ -95,7 +95,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return SqlHelper.table(currentModelClass()).getSqlStatement(sqlMethod.getMethod());
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean save(T entity) {
         return retBool(baseMapper.insert(entity));
@@ -180,38 +179,32 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return true;
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean removeById(Serializable id) {
         return SqlHelper.delBool(baseMapper.deleteById(id));
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean removeByMap(Map<String, Object> columnMap) {
         Assert.notEmpty(columnMap, "error: columnMap must not be empty");
         return SqlHelper.delBool(baseMapper.deleteByMap(columnMap));
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean remove(Wrapper<T> wrapper) {
         return SqlHelper.delBool(baseMapper.delete(wrapper));
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean removeByIds(Collection<? extends Serializable> idList) {
         return SqlHelper.delBool(baseMapper.deleteBatchIds(idList));
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean updateById(T entity) {
         return retBool(baseMapper.updateById(entity));
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean update(T entity, Wrapper<T> updateWrapper) {
         return retBool(baseMapper.update(entity, updateWrapper));
