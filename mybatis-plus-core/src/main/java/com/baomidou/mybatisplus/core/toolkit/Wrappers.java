@@ -1,15 +1,15 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * <p>
@@ -150,11 +150,6 @@ public final class Wrappers {
         }
 
         @Override
-        public String getSqlSet() {
-            return null;
-        }
-
-        @Override
         public MergeSegments getExpression() {
             return null;
         }
@@ -227,5 +222,4 @@ public final class Wrappers {
             throw new UnsupportedOperationException();
         }
     }
-
 }

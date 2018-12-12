@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.extension.kotlin
 
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments
+import com.baomidou.mybatisplus.core.conditions.update.Update
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils
 import com.baomidou.mybatisplus.core.toolkit.StringPool
 import java.util.concurrent.atomic.AtomicInteger
@@ -28,7 +29,7 @@ import kotlin.reflect.KProperty
  * @author yangyuhan
  * @since 2018-11-02
  */
-class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>> {
+class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, Update<KtUpdateWrapper<T>, KProperty<*>> {
 
     /**
      * SQL 更新字段内容，例如：name='1',age=2
@@ -50,18 +51,18 @@ class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>> {
     }
 
     override fun getSqlSet(): String? {
-        return if (CollectionUtils.isEmpty(sqlSet)) {
-            null
-        } else sqlSet.stream().collect(joining(StringPool.COMMA))
+        return if (CollectionUtils.isEmpty(sqlSet)) null
+        else sqlSet.stream().collect(joining(StringPool.COMMA))
     }
 
-    operator fun set(column: KProperty<*>, `val`: Any): KtUpdateWrapper<T> {
-        return this.set(true, column, `val`)
+    override fun setSql(sql: String): KtUpdateWrapper<T> {
+        sqlSet.add(sql)
+        return typedThis
     }
 
-    operator fun set(condition: Boolean, column: KProperty<*>, `val`: Any): KtUpdateWrapper<T> {
+    override fun set(condition: Boolean, column: KProperty<*>, value: Any): KtUpdateWrapper<T> {
         if (condition) {
-            sqlSet.add(String.format("%s=%s", columnToString(column), formatSql("{0}", `val`)))
+            sqlSet.add(String.format("%s=%s", columnToString(column), formatSql("{0}", value)))
         }
         return typedThis
     }

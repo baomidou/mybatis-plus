@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.extension.kotlin
 
+import com.baomidou.mybatisplus.core.conditions.query.Query
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils
@@ -29,7 +30,7 @@ import kotlin.reflect.KProperty
  * @author yangyuhan
  * @since 2018-11-02
  */
-class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>> {
+class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Query<KtQueryWrapper<T>, T, KProperty<*>> {
 
     /**
      * 查询字段
@@ -58,14 +59,14 @@ class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>> {
      * @param columns 查询字段
      */
     @SafeVarargs
-    fun select(vararg columns: KProperty<*>): KtQueryWrapper<T> {
+    override fun select(vararg columns: KProperty<*>): KtQueryWrapper<T> {
         if (ArrayUtils.isNotEmpty(columns)) {
             this.sqlSelect = this.columnsToString(*columns)
         }
         return typedThis
     }
 
-    fun select(predicate: Predicate<TableFieldInfo>): KtQueryWrapper<T> {
+    override fun select(predicate: Predicate<TableFieldInfo>): KtQueryWrapper<T> {
         return select(entityClass, predicate)
     }
 
@@ -82,7 +83,7 @@ class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>> {
      * @param predicate 过滤方式
      * @return this
      */
-    fun select(entityClass: Class<T>, predicate: Predicate<TableFieldInfo>): KtQueryWrapper<T> {
+    override fun select(entityClass: Class<T>, predicate: Predicate<TableFieldInfo>): KtQueryWrapper<T> {
         this.entityClass = entityClass
         this.sqlSelect = TableInfoHelper.getTableInfo(checkEntityClass).chooseSelect(predicate)
         return typedThis
