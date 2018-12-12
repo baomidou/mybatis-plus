@@ -86,35 +86,11 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
         return select(entityClass, predicate);
     }
 
-    /**
-     * <p>
-     * 过滤查询的字段信息(主键除外!)
-     * </p>
-     * <p>
-     * 例1: 只要 java 字段名以 "test" 开头的              -> select(i -> i.getProperty().startsWith("test"))
-     * 例2: 只要 java 字段属性是 CharSequence 类型的       -> select(TableFieldInfo::isCharSequence)
-     * 例3: 只要 java 字段没有填充策略的                   -> select(i -> i.getFieldFill() == FieldFill.DEFAULT)
-     * 例4: 要全部字段                                   -> select(i -> true)
-     * 例5: 只要主键字段                                 -> select(i -> false)
-     * </p>
-     *
-     * @param predicate 过滤方式
-     * @return this
-     */
     @Override
     public QueryWrapper<T> select(Class<T> entityClass, Predicate<TableFieldInfo> predicate) {
         this.entityClass = entityClass;
         this.sqlSelect.setStringValue(TableInfoHelper.getTableInfo(getCheckEntityClass()).chooseSelect(predicate));
         return typedThis;
-    }
-
-    /**
-     * <p>
-     * 返回一个支持 lambda 函数写法的 wrapper
-     * </p>
-     */
-    public LambdaQueryWrapper<T> lambda() {
-        return new LambdaQueryWrapper<>(entity, entityClass, sqlSelect, paramNameSeq, paramNameValuePairs, expression);
     }
 
     @Override
@@ -125,6 +101,15 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     @Override
     protected String columnToString(String column) {
         return column;
+    }
+
+    /**
+     * <p>
+     * 返回一个支持 lambda 函数写法的 wrapper
+     * </p>
+     */
+    public LambdaQueryWrapper<T> lambda() {
+        return new LambdaQueryWrapper<>(entity, entityClass, sqlSelect, paramNameSeq, paramNameValuePairs, expression);
     }
 
     /**

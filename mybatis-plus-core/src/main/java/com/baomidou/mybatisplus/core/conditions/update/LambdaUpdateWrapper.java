@@ -35,7 +35,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 2018-05-30
  */
 @SuppressWarnings("serial")
-public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdateWrapper<T>> {
+public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdateWrapper<T>>
+    implements Update<LambdaUpdateWrapper<T>, SFunction<T, ?>> {
 
     /**
      * SQL 更新字段内容，例如：name='1',age=2
@@ -63,22 +64,25 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
     }
 
     @Override
-    public String getSqlSet() {
-        if (CollectionUtils.isEmpty(sqlSet)) {
-            return null;
-        }
-        return String.join(StringPool.COMMA, sqlSet);
-    }
-
-    public LambdaUpdateWrapper<T> set(SFunction<T, ?> column, Object val) {
-        return this.set(true, column, val);
-    }
-
     public LambdaUpdateWrapper<T> set(boolean condition, SFunction<T, ?> column, Object val) {
         if (condition) {
             sqlSet.add(String.format("%s=%s", columnToString(column), formatSql("{0}", val)));
         }
         return typedThis;
+    }
+
+    @Override
+    public LambdaUpdateWrapper<T> setSql(String sql) {
+        sqlSet.add(sql);
+        return typedThis;
+    }
+
+    @Override
+    public String getSqlSet() {
+        if (CollectionUtils.isEmpty(sqlSet)) {
+            return null;
+        }
+        return String.join(StringPool.COMMA, sqlSet);
     }
 
     @Override

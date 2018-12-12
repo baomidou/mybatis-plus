@@ -34,7 +34,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 2018-05-30
  */
 @SuppressWarnings("serial")
-public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T>> {
+public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T>>
+    implements Update<UpdateWrapper<T>, String> {
 
     /**
      * SQL 更新字段内容，例如：name='1',age=2
@@ -61,15 +62,6 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
         this.expression = mergeSegments;
     }
 
-    /**
-     * <p>
-     * 返回一个支持 lambda 函数写法的 wrapper
-     * </p>
-     */
-    public LambdaUpdateWrapper<T> lambda() {
-        return new LambdaUpdateWrapper<>(entity, sqlSet, paramNameSeq, paramNameValuePairs, expression);
-    }
-
     @Override
     public String getSqlSet() {
         if (CollectionUtils.isEmpty(sqlSet)) {
@@ -78,27 +70,7 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
         return String.join(StringPool.COMMA, sqlSet);
     }
 
-    /**
-     * <p>
-     * SQL SET 字段
-     * </p>
-     *
-     * @param column 字段
-     * @param val    值
-     */
-    public UpdateWrapper<T> set(String column, Object val) {
-        return this.set(true, column, val);
-    }
-
-    /**
-     * <p>
-     * SQL SET 字段
-     * </p>
-     *
-     * @param condition 操作条件
-     * @param column    字段
-     * @param val       值
-     */
+    @Override
     public UpdateWrapper<T> set(boolean condition, String column, Object val) {
         if (condition) {
             sqlSet.add(String.format("%s=%s", column, formatSql("{0}", val)));
@@ -106,13 +78,7 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
         return typedThis;
     }
 
-    /**
-     * <p>
-     * SET 部分 SQL
-     * </p>
-     *
-     * @param sql SET 部分内容
-     */
+    @Override
     public UpdateWrapper<T> setSql(String sql) {
         sqlSet.add(sql);
         return typedThis;
@@ -121,6 +87,13 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
     @Override
     protected String columnToString(String column) {
         return column;
+    }
+
+    /**
+     * 返回一个支持 lambda 函数写法的 wrapper
+     */
+    public LambdaUpdateWrapper<T> lambda() {
+        return new LambdaUpdateWrapper<>(entity, sqlSet, paramNameSeq, paramNameValuePairs, expression);
     }
 
     @Override
