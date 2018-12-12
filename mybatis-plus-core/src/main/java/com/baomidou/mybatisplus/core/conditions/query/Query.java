@@ -53,7 +53,7 @@ public interface Query<This, T, R> extends Serializable {
      * </p>
      *
      * @param predicate 过滤方式
-     * @return this
+     * @return children
      */
     This select(Class<T> entityClass, Predicate<TableFieldInfo> predicate);
 

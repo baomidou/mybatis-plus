@@ -49,6 +49,7 @@ public interface Func<This, R> extends Serializable {
      *
      * @param condition 执行条件
      * @param column    字段
+     * @return children
      */
     This isNull(boolean condition, R column);
 
@@ -65,6 +66,7 @@ public interface Func<This, R> extends Serializable {
      *
      * @param condition 执行条件
      * @param column    字段
+     * @return children
      */
     This isNotNull(boolean condition, R column);
 
@@ -91,6 +93,7 @@ public interface Func<This, R> extends Serializable {
      * @param condition 执行条件
      * @param column    字段
      * @param coll      数据集合
+     * @return children
      */
     default This inOrThrow(boolean condition, R column, Collection<?> coll) {
         Assert.notEmpty(coll, "coll could not be empty!");
@@ -106,6 +109,7 @@ public interface Func<This, R> extends Serializable {
      * @param condition 执行条件
      * @param column    字段
      * @param coll      数据集合
+     * @return children
      */
     This in(boolean condition, R column, Collection<?> coll);
 
@@ -125,6 +129,7 @@ public interface Func<This, R> extends Serializable {
      * @param condition 执行条件
      * @param column    字段
      * @param values    数据数组
+     * @return children
      */
     default This inOrThrow(boolean condition, R column, Object... values) {
         Assert.notEmpty(values, "values could not be empty!");
@@ -147,6 +152,7 @@ public interface Func<This, R> extends Serializable {
      * @param condition 执行条件
      * @param column    字段
      * @param values    数据数组
+     * @return children
      */
     default This in(boolean condition, R column, Object... values) {
         return in(condition, column, Arrays.stream(Optional.ofNullable(values).orElseGet(() -> new Object[]{}))
@@ -176,6 +182,7 @@ public interface Func<This, R> extends Serializable {
      * @param condition 执行条件
      * @param column    字段
      * @param coll      数据集合
+     * @return children
      */
     default This notInOrThrow(boolean condition, R column, Collection<?> coll) {
         Assert.notEmpty(coll, "coll could not be empty!");
@@ -189,6 +196,7 @@ public interface Func<This, R> extends Serializable {
      * @param condition 执行条件
      * @param column    字段
      * @param coll      数据集合
+     * @return children
      */
     This notIn(boolean condition, R column, Collection<?> coll);
 
@@ -215,6 +223,7 @@ public interface Func<This, R> extends Serializable {
      * @param condition 执行条件
      * @param column    字段
      * @param values    数据数组
+     * @return children
      */
     default This notInOrThrow(boolean condition, R column, Object... values) {
         Assert.notEmpty(values, "values could not be empty!");
@@ -228,6 +237,7 @@ public interface Func<This, R> extends Serializable {
      * @param condition 执行条件
      * @param column    字段
      * @param values    数据数组
+     * @return children
      */
     default This notIn(boolean condition, R column, Object... values) {
         return notIn(condition, column, Arrays.stream(Optional.ofNullable(values).orElseGet(() -> new Object[]{}))
@@ -250,6 +260,7 @@ public interface Func<This, R> extends Serializable {
      * @param condition 执行条件
      * @param column    字段
      * @param inValue   sql语句
+     * @return children
      */
     This inSql(boolean condition, R column, String inValue);
 
@@ -269,6 +280,7 @@ public interface Func<This, R> extends Serializable {
      * @param condition 执行条件
      * @param column    字段
      * @param inValue   sql语句 ---> 1,2,3,4,5,6 或者 select id from table where id < 3
+     * @return children
      */
     This notInSql(boolean condition, R column, String inValue);
 
@@ -285,6 +297,7 @@ public interface Func<This, R> extends Serializable {
      *
      * @param condition 执行条件
      * @param columns   字段数组
+     * @return children
      */
     This groupBy(boolean condition, R... columns);
 
@@ -301,6 +314,7 @@ public interface Func<This, R> extends Serializable {
      *
      * @param condition 执行条件
      * @param columns   字段数组
+     * @return children
      */
     default This orderByAsc(boolean condition, R... columns) {
         return orderBy(condition, true, columns);
@@ -319,6 +333,7 @@ public interface Func<This, R> extends Serializable {
      *
      * @param condition 执行条件
      * @param columns   字段数组
+     * @return children
      */
     default This orderByDesc(boolean condition, R... columns) {
         return orderBy(condition, false, columns);
@@ -331,6 +346,7 @@ public interface Func<This, R> extends Serializable {
      * @param condition 执行条件
      * @param isAsc     是否是 ASC 排序
      * @param columns   字段数组
+     * @return children
      */
     This orderBy(boolean condition, boolean isAsc, R... columns);
 
@@ -349,6 +365,7 @@ public interface Func<This, R> extends Serializable {
      * @param condition 执行条件
      * @param sqlHaving sql 语句
      * @param params    参数数组
+     * @return children
      */
     This having(boolean condition, String sqlHaving, Object... params);
 }

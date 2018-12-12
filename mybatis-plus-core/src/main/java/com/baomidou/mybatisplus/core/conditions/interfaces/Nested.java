@@ -42,6 +42,7 @@ public interface Nested<This> extends Serializable {
      *
      * @param condition 执行条件
      * @param func      函数
+     * @return children
      */
     This and(boolean condition, Function<This, This> func);
 
@@ -58,6 +59,7 @@ public interface Nested<This> extends Serializable {
      *
      * @param condition 执行条件
      * @param func      函数
+     * @return children
      */
     This or(boolean condition, Function<This, This> func);
 
@@ -74,6 +76,7 @@ public interface Nested<This> extends Serializable {
      *
      * @param condition 执行条件
      * @param func      函数
+     * @return children
      */
     This nested(boolean condition, Function<This, This> func);
 }

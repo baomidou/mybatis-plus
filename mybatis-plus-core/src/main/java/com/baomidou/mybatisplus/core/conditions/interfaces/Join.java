@@ -39,6 +39,7 @@ public interface Join<This> extends Serializable {
      * 拼接 OR
      *
      * @param condition 执行条件
+     * @return children
      */
     This or(boolean condition);
 
@@ -57,6 +58,7 @@ public interface Join<This> extends Serializable {
      * 例3: apply("date_format(dateColumn,'%Y-%m-%d') = {0}", LocalDate.now())
      *
      * @param condition 执行条件
+     * @return children
      */
     This apply(boolean condition, String applySql, Object... value);
 
@@ -74,6 +76,7 @@ public interface Join<This> extends Serializable {
      *
      * @param condition 执行条件
      * @param lastSql   sql语句
+     * @return children
      */
     This last(boolean condition, String lastSql);
 
@@ -91,6 +94,7 @@ public interface Join<This> extends Serializable {
      *
      * @param condition 执行条件
      * @param existsSql sql语句
+     * @return children
      */
     This exists(boolean condition, String existsSql);
 
@@ -108,6 +112,7 @@ public interface Join<This> extends Serializable {
      *
      * @param condition    执行条件
      * @param notExistsSql sql语句
+     * @return children
      */
     This notExists(boolean condition, String notExistsSql);
 }

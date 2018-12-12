@@ -15,40 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.AND;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ASC;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.BETWEEN;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.DESC;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.EQ;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.EXISTS;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GE;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GROUP_BY;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GT;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.HAVING;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IN;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IS_NOT_NULL;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IS_NULL;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LE;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LIKE;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LT;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NE;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NOT;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.OR;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ORDER_BY;
-import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.APPLY;
-import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.LEFT_BRACKET;
-import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.RIGHT_BRACKET;
-import static java.util.stream.Collectors.joining;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BiPredicate;
-import java.util.function.Function;
-
 import com.baomidou.mybatisplus.core.conditions.interfaces.Compare;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Func;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Join;
@@ -56,14 +22,16 @@ import com.baomidou.mybatisplus.core.conditions.interfaces.Nested;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.conditions.segments.NormalSegmentList;
 import com.baomidou.mybatisplus.core.enums.SqlKeyword;
-import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.SerializationUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.*;
 
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiPredicate;
+import java.util.function.Function;
+
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.*;
+import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.*;
+import static java.util.stream.Collectors.joining;
 
 /**
  * <p>
@@ -327,9 +295,8 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     /**
-     * <p>
      * 内部自用
-     * </p>
+     * <p>
      * NOT 关键词
      */
     protected This not(boolean condition) {
@@ -337,9 +304,8 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     /**
-     * <p>
      * 内部自用
-     * </p>
+     * <p>
      * 拼接 AND
      */
     protected This and(boolean condition) {
@@ -347,9 +313,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     /**
-     * <p>
      * 普通查询条件
-     * </p>
      *
      * @param condition  是否执行
      * @param column     属性
@@ -361,9 +325,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     /**
-     * <p>
      * 多重嵌套查询条件
-     * </p>
      *
      * @param condition 查询条件值
      */
@@ -377,13 +339,11 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     protected abstract This instance(AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs);
 
     /**
-     * <p>
      * 格式化SQL
-     * </p>
      *
      * @param sqlStr SQL语句部分
      * @param params 参数集
-     * @return this
+     * @return sql
      */
     protected final String formatSql(String sqlStr, Object... params) {
         return formatSqlIfNeed(true, sqlStr, params);
@@ -405,7 +365,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * @param need   是否需要格式化
      * @param sqlStr SQL语句部分
      * @param params 参数集
-     * @return this
+     * @return sql
      */
     protected final String formatSqlIfNeed(boolean need, String sqlStr, Object... params) {
         if (!need || StringUtils.isEmpty(sqlStr)) {
@@ -423,9 +383,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     /**
-     * <p>
      * 获取in表达式 包含括号
-     * </p>
      *
      * @param value 集合
      */
@@ -444,12 +402,11 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     /**
-     * <p>
      * 对sql片段进行组装
-     * </p>
      *
      * @param condition   是否执行
      * @param sqlSegments sql片段数组
+     * @return children
      */
     protected This doIt(boolean condition, ISqlSegment... sqlSegments) {
         if (condition) {
@@ -495,8 +452,8 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     /**
      * 拼接`WHERE`至SQL前
      *
-     * @param sql
-     * @return
+     * @param sql sql
+     * @return 带 where 的 sql
      */
     private String concatWhere(String sql) {
         return Constants.WHERE + " " + sql;
@@ -513,9 +470,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     /**
-     * <p>
      * 多字段转换为逗号 "," 分割字符串
-     * </p>
      *
      * @param columns 多字段
      */
