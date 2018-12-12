@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
-import java.util.Objects;
-
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
@@ -24,6 +22,8 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
+
+import java.util.Objects;
 
 /**
  * <p>
@@ -44,13 +44,6 @@ public abstract class Wrapper<T> implements ISqlSegment {
      * @return 泛型 T
      */
     public abstract T getEntity();
-
-    /**
-     * 查询条件 SQL 片段（子类实现）
-     */
-    public String getSqlSelect() {
-        return null;
-    }
 
     /**
      * 更新 SQL 片段（子类实现）

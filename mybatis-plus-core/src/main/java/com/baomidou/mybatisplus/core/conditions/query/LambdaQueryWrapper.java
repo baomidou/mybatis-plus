@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core.conditions.query;
 
 import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper;
+import com.baomidou.mybatisplus.core.conditions.SharedString;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
@@ -35,12 +36,13 @@ import java.util.function.Predicate;
  * @since 2017-05-26
  */
 @SuppressWarnings("serial")
-public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryWrapper<T>> {
+public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryWrapper<T>>
+    implements Query<LambdaQueryWrapper<T>, T, SFunction<T, ?>> {
 
     /**
      * 查询字段
      */
-    private SharedSqlSelect sqlSelect = new SharedSqlSelect();
+    private SharedString sqlSelect = new SharedString();
 
     public LambdaQueryWrapper() {
         this(null);
@@ -51,7 +53,7 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
         super.initNeed();
     }
 
-    LambdaQueryWrapper(T entity, Class<T> entityClass, SharedSqlSelect sqlSelect, AtomicInteger paramNameSeq,
+    LambdaQueryWrapper(T entity, Class<T> entityClass, SharedString sqlSelect, AtomicInteger paramNameSeq,
                        Map<String, Object> paramNameValuePairs, MergeSegments mergeSegments) {
         super.setEntity(entity);
         this.paramNameSeq = paramNameSeq;
@@ -69,13 +71,15 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
      * @param columns 查询字段
      */
     @SafeVarargs
+    @Override
     public final LambdaQueryWrapper<T> select(SFunction<T, ?>... columns) {
         if (ArrayUtils.isNotEmpty(columns)) {
-            this.sqlSelect.setSqlSelect(this.columnsToString(columns));
+            this.sqlSelect.setStringValue(this.columnsToString(columns));
         }
         return typedThis;
     }
 
+    @Override
     public LambdaQueryWrapper<T> select(Predicate<TableFieldInfo> predicate) {
         return select(entityClass, predicate);
     }
@@ -95,15 +99,16 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
      * @param predicate 过滤方式
      * @return this
      */
+    @Override
     public LambdaQueryWrapper<T> select(Class<T> entityClass, Predicate<TableFieldInfo> predicate) {
         this.entityClass = entityClass;
-        this.sqlSelect.setSqlSelect(TableInfoHelper.getTableInfo(getCheckEntityClass()).chooseSelect(predicate));
+        this.sqlSelect.setStringValue(TableInfoHelper.getTableInfo(getCheckEntityClass()).chooseSelect(predicate));
         return typedThis;
     }
 
     @Override
     public String getSqlSelect() {
-        return sqlSelect.getSqlSelect();
+        return sqlSelect.getStringValue();
     }
 
     /**

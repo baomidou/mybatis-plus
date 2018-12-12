@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core.conditions.query;
 
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
+import com.baomidou.mybatisplus.core.conditions.SharedString;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
@@ -35,12 +36,13 @@ import java.util.function.Predicate;
  * @since 2018-05-25
  */
 @SuppressWarnings("serial")
-public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>> {
+public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
+    implements Query<QueryWrapper<T>, T, String> {
 
     /**
      * 查询字段
      */
-    private SharedSqlSelect sqlSelect = new SharedSqlSelect();
+    private SharedString sqlSelect = new SharedString();
 
     public QueryWrapper() {
         this(null);
@@ -71,13 +73,15 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
         this.expression = mergeSegments;
     }
 
+    @Override
     public QueryWrapper<T> select(String... columns) {
         if (ArrayUtils.isNotEmpty(columns)) {
-            this.sqlSelect.setSqlSelect(String.join(StringPool.COMMA, columns));
+            this.sqlSelect.setStringValue(String.join(StringPool.COMMA, columns));
         }
         return typedThis;
     }
 
+    @Override
     public QueryWrapper<T> select(Predicate<TableFieldInfo> predicate) {
         return select(entityClass, predicate);
     }
@@ -97,9 +101,10 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
      * @param predicate 过滤方式
      * @return this
      */
+    @Override
     public QueryWrapper<T> select(Class<T> entityClass, Predicate<TableFieldInfo> predicate) {
         this.entityClass = entityClass;
-        this.sqlSelect.setSqlSelect(TableInfoHelper.getTableInfo(getCheckEntityClass()).chooseSelect(predicate));
+        this.sqlSelect.setStringValue(TableInfoHelper.getTableInfo(getCheckEntityClass()).chooseSelect(predicate));
         return typedThis;
     }
 
@@ -114,7 +119,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
 
     @Override
     public String getSqlSelect() {
-        return sqlSelect.getSqlSelect();
+        return sqlSelect.getStringValue();
     }
 
     @Override
