@@ -98,11 +98,6 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
         return sqlSelect.getStringValue();
     }
 
-    @Override
-    protected String columnToString(String column) {
-        return column;
-    }
-
     /**
      * <p>
      * 返回一个支持 lambda 函数写法的 wrapper

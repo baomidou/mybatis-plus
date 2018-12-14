@@ -481,7 +481,12 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     /**
      * 获取 columnName
      */
-    protected abstract String columnToString(R column);
+    protected String columnToString(R column) {
+        if (column instanceof String) {
+            return (String) column;
+        }
+        throw ExceptionUtils.mpe("not support this column !");
+    }
 
     @Override
     @SuppressWarnings("all")

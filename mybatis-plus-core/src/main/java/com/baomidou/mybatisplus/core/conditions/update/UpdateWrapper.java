@@ -84,11 +84,6 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
         return typedThis;
     }
 
-    @Override
-    protected String columnToString(String column) {
-        return column;
-    }
-
     /**
      * 返回一个支持 lambda 函数写法的 wrapper
      */
