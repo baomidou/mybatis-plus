@@ -60,6 +60,7 @@ ext {
         //code generator
         "velocity"                          : "org.apache.velocity:velocity-engine-core:2.0",
         "freemarker"                        : "org.freemarker:freemarker:2.3.9",
+        "beetl"                             : "com.ibeetl:beetl:2.9.6",
 
         // spring boot
         "springboot-autoconfigure"          : "org.springframework.boot:spring-boot-autoconfigure:${springBootVersion}",

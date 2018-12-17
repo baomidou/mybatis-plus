@@ -3,6 +3,7 @@ dependencies {
 
     compile rootProject.ext.dependencies["velocity"], optional
     compile rootProject.ext.dependencies["freemarker"], optional
+    compile rootProject.ext.dependencies["beetl"], optional
 
     testCompile rootProject.ext.dependencies["sqlserver"]
     testCompile rootProject.ext.dependencies["postgresql"]
