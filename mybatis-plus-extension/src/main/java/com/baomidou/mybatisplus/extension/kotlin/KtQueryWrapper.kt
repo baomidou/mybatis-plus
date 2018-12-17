@@ -97,7 +97,7 @@ class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Query<K
      * 用于生成嵌套 sql
      * 故 sqlSelect 不向下传递
      */
-    override fun instance(paramNameSeq: AtomicInteger, paramNameValuePairs: Map<String, Any>): KtQueryWrapper<T> {
+    override fun instance(): KtQueryWrapper<T> {
         return KtQueryWrapper(entity, entityClass, null, paramNameSeq, paramNameValuePairs, MergeSegments())
     }
 }

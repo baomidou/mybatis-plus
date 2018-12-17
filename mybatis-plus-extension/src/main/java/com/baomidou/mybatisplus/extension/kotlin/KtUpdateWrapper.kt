@@ -67,7 +67,7 @@ class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, Updat
         return typedThis
     }
 
-    override fun instance(paramNameSeq: AtomicInteger, paramNameValuePairs: Map<String, Any>): KtUpdateWrapper<T> {
+    override fun instance(): KtUpdateWrapper<T> {
         return KtUpdateWrapper(entity, paramNameSeq, paramNameValuePairs, MergeSegments())
     }
 }

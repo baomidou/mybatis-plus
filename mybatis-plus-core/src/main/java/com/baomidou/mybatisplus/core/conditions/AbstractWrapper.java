@@ -330,13 +330,13 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * @param condition 查询条件值
      */
     protected This addNestedCondition(boolean condition, Function<This, This> func) {
-        return doIt(condition, LEFT_BRACKET, func.apply(instance(paramNameSeq, paramNameValuePairs)), RIGHT_BRACKET);
+        return doIt(condition, LEFT_BRACKET, func.apply(instance()), RIGHT_BRACKET);
     }
 
     /**
      * 子类返回一个自己的新对象
      */
-    protected abstract This instance(AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs);
+    protected abstract This instance();
 
     /**
      * 格式化SQL
