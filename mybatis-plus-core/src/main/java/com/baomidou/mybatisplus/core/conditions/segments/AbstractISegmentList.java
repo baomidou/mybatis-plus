@@ -15,11 +15,11 @@
  */
 package com.baomidou.mybatisplus.core.conditions.segments;
 
+import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 
 /**
  * <p>
@@ -75,7 +75,8 @@ public abstract class AbstractISegmentList extends ArrayList<ISqlSegment> implem
     /**
      * 删除元素里最后一个值
      */
-    protected void removeLast() {
+    protected void removeAndFlushLast() {
         remove(size() - 1);
+        flushLastValue(this);
     }
 }

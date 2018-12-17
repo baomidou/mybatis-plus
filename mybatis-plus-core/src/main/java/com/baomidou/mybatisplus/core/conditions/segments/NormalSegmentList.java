@@ -15,12 +15,12 @@
  */
 package com.baomidou.mybatisplus.core.conditions.segments;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -62,7 +62,7 @@ public class NormalSegmentList extends AbstractISegmentList {
                         return false;
                     } else {
                         //和上次的不一样
-                        removeLast();
+                        removeAndFlushLast();
                     }
                 }
             } else {
@@ -87,7 +87,7 @@ public class NormalSegmentList extends AbstractISegmentList {
     @Override
     public String getSqlSegment() {
         if (MatchSegment.AND_OR.match(lastValue)) {
-            removeLast();
+            removeAndFlushLast();
         }
         return this.stream().map(ISqlSegment::getSqlSegment).collect(Collectors.joining(StringPool.SPACE));
     }

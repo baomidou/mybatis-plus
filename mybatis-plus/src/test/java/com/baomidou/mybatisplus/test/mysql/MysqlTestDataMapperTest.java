@@ -1,23 +1,7 @@
 package com.baomidou.mybatisplus.test.mysql;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -32,7 +16,16 @@ import com.baomidou.mybatisplus.test.base.enums.TestEnum;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonLogicDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.mysql.MysqlDataMapper;
-import com.baomidou.mybatisplus.test.mysql.config.MysqlDb;
+import org.junit.Assert;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.annotation.Resource;
+import java.util.*;
 
 
 /**
@@ -55,11 +48,11 @@ public class MysqlTestDataMapperTest {
     @Resource
     private MysqlDataMapper mysqlMapper;
 
-    @BeforeClass
-    public static void init() throws Exception {
-        MysqlDb.initMysqlData();
-        System.out.println("init success");
-    }
+//    @BeforeClass
+//    public static void init() throws Exception {
+//        MysqlDb.initMysqlData();
+//        System.out.println("init success");
+//    }
 
     @Test
     public void a1_insertForeach() {
@@ -367,5 +360,20 @@ public class MysqlTestDataMapperTest {
         mysqlMapper.getAll(Wrappers.lambdaQuery(new MysqlData()).eq(MysqlData::getGroup, 1));
         // 4. 有 where 条件 也有 last 条件
         mysqlMapper.getAll(Wrappers.lambdaQuery(new MysqlData()).eq(MysqlData::getGroup, 1).last("limit 1"));
+    }
+
+    @Test
+    public void testNestPage() {
+        ArrayList<Object> list = new ArrayList<>();
+        LambdaQueryWrapper<CommonData> wrapper = Wrappers.<CommonData>lambdaQuery()
+            .isNotNull(CommonData::getId).and(i -> i.eq(CommonData::getId, 1)
+                .or().in(CommonData::getTestInt, list));
+        System.out.println(wrapper.getSqlSegment());
+        System.out.println(wrapper.getSqlSegment());
+        System.out.println(wrapper.getSqlSegment());
+        System.out.println(wrapper.getSqlSegment());
+        System.out.println(wrapper.getSqlSegment());
+        commonMapper.selectList(wrapper);
+//        commonMapper.selectPage(new Page<>(1, 10), wrapper);
     }
 }
