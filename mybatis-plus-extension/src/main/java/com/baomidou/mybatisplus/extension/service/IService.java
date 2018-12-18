@@ -15,16 +15,19 @@
  */
 package com.baomidou.mybatisplus.extension.service;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
+
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 
 /**
  * <p>
@@ -384,5 +387,422 @@ public interface IService<T> {
      */
     default IPage<Map<String, Object>> pageMaps(IPage<T> page) {
         return pageMaps(page, Wrappers.emptyWrapper());
+    }
+
+
+    default InnerLambdaQuery<T> lambdaQuery() {
+        return new InnerLambdaQuery<>(this);
+    }
+
+    class InnerLambdaQuery<T> extends LambdaQueryWrapper<T> {
+
+        private IService<T> iService;
+
+        private InnerLambdaQuery() {
+        }
+
+        protected InnerLambdaQuery(IService iService) {
+            this.iService = iService;
+        }
+
+
+        /**
+         * <p>
+         * 根据 entity 条件，删除记录
+         * </p>
+         */
+        public boolean remove() {
+            return iService.remove(this);
+        }
+
+
+        /**
+         * <p>
+         * 根据 Wrapper，查询一条记录
+         * </p>
+         */
+        public T getOne() {
+            return getOne(false);
+        }
+
+        /**
+         * <p>
+         * 根据 Wrapper，查询一条记录
+         * </p>
+         *
+         * @param throwEx 有多个 result 是否抛出异常
+         */
+        public T getOne(boolean throwEx) {
+            return iService.getOne(this, throwEx);
+        }
+
+        /**
+         * <p>
+         * 根据 Wrapper，查询一条记录
+         * </p>
+         */
+        public Map<String, Object> getMap() {
+            return iService.getMap(this);
+        }
+
+
+        /**
+         * <p>
+         * 根据 Wrapper 条件，查询总记录数
+         * </p>
+         */
+        public int count() {
+            return iService.count(this);
+        }
+
+        /**
+         * <p>
+         * 查询列表
+         * </p>
+         */
+        public List<T> list() {
+            return iService.list(this);
+        }
+
+        /**
+         * <p>
+         * 翻页查询
+         * </p>
+         *
+         * @param page 翻页对象
+         */
+        public IPage<T> page(IPage<T> page) {
+            return iService.page(page, this);
+        }
+
+        /**
+         * <p>
+         * 查询列表
+         * </p>
+         */
+        public List<Map<String, Object>> listMaps() {
+            return iService.listMaps(this);
+        }
+
+        /**
+         * <p>
+         * 查询全部记录
+         * </p>
+         *
+         * @param mapper 转换函数
+         */
+        public <V> List<V> listObjs(Function<? super Object, V> mapper) {
+            return iService.listObjs(this, mapper);
+        }
+
+        /**
+         * <p>
+         * 根据 Wrapper 条件，查询全部记录
+         * </p>
+         */
+        public List<Object> listObjs() {
+            return listObjs(Function.identity());
+        }
+
+        /**
+         * <p>
+         * 翻页查询
+         * </p>
+         *
+         * @param page 翻页对象
+         */
+        public IPage<Map<String, Object>> pageMaps(IPage<T> page) {
+            return iService.pageMaps(page, this);
+        }
+
+        @Override
+        public InnerLambdaQuery<T> setEntity(T entity) {
+            super.setEntity(entity);
+            return this;
+        }
+
+
+        @Override
+        public <V> InnerLambdaQuery<T> allEq(Map<SFunction<T, ?>, V> params) {
+            super.allEq(params);
+            return this;
+        }
+
+        @Override
+        public <V> InnerLambdaQuery<T> allEq(Map<SFunction<T, ?>, V> params, boolean null2IsNull) {
+            super.allEq(params, null2IsNull);
+            return this;
+        }
+
+        @Override
+        public <V> InnerLambdaQuery<T> allEq(BiPredicate<SFunction<T, ?>, V> filter, Map<SFunction<T, ?>, V> params) {
+            super.allEq(filter, params);
+            return this;
+        }
+
+        @Override
+        public <V> InnerLambdaQuery<T> allEq(BiPredicate<SFunction<T, ?>, V> filter, Map<SFunction<T, ?>, V> params, boolean null2IsNull) {
+            super.allEq(filter, params, null2IsNull);
+            return this;
+        }
+
+        @Override
+        public <V> InnerLambdaQuery<T> allEq(boolean condition, Map<SFunction<T, ?>, V> params, boolean null2IsNull) {
+            super.allEq(condition, params, null2IsNull);
+            return this;
+        }
+
+        @Override
+        public <V> InnerLambdaQuery<T> allEq(boolean condition, BiPredicate<SFunction<T, ?>, V> filter, Map<SFunction<T, ?>, V> params, boolean null2IsNull) {
+            super.allEq(condition, filter, params, null2IsNull);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> eq(SFunction<T, ?> column, Object val) {
+            super.eq(column, val);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> ne(SFunction<T, ?> column, Object val) {
+            super.ne(column, val);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> gt(SFunction<T, ?> column, Object val) {
+            super.gt(column, val);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> ge(SFunction<T, ?> column, Object val) {
+            super.ge(column, val);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> lt(SFunction<T, ?> column, Object val) {
+            super.lt(column, val);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> le(SFunction<T, ?> column, Object val) {
+            super.le(column, val);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> between(SFunction<T, ?> column, Object val1, Object val2) {
+            super.between(column, val1, val2);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> notBetween(SFunction<T, ?> column, Object val1, Object val2) {
+            super.notBetween(column, val1, val2);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> like(SFunction<T, ?> column, Object val) {
+            super.like(column, val);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> notLike(SFunction<T, ?> column, Object val) {
+            super.notLike(column, val);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> likeLeft(SFunction<T, ?> column, Object val) {
+            super.likeLeft(column, val);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> likeRight(SFunction<T, ?> column, Object val) {
+            super.likeRight(column, val);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> eq(boolean condition, SFunction<T, ?> column, Object val) {
+            super.eq(condition, column, val);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> ne(boolean condition, SFunction<T, ?> column, Object val) {
+            super.ne(condition, column, val);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> gt(boolean condition, SFunction<T, ?> column, Object val) {
+            super.gt(condition, column, val);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> ge(boolean condition, SFunction<T, ?> column, Object val) {
+            super.ge(condition, column, val);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> lt(boolean condition, SFunction<T, ?> column, Object val) {
+            super.lt(condition, column, val);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> le(boolean condition, SFunction<T, ?> column, Object val) {
+            super.le(condition, column, val);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> like(boolean condition, SFunction<T, ?> column, Object val) {
+            super.like(condition, column, val);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> notLike(boolean condition, SFunction<T, ?> column, Object val) {
+            super.notLike(condition, column, val);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> likeLeft(boolean condition, SFunction<T, ?> column, Object val) {
+            super.likeLeft(condition, column, val);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> likeRight(boolean condition, SFunction<T, ?> column, Object val) {
+            super.likeRight(condition, column, val);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> between(boolean condition, SFunction<T, ?> column, Object val1, Object val2) {
+            super.between(condition, column, val1, val2);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> notBetween(boolean condition, SFunction<T, ?> column, Object val1, Object val2) {
+            super.notBetween(condition, column, val1, val2);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> and(boolean condition, Function<LambdaQueryWrapper<T>, LambdaQueryWrapper<T>> func) {
+            super.and(condition, func);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> or(boolean condition, Function<LambdaQueryWrapper<T>, LambdaQueryWrapper<T>> func) {
+            super.or(condition, func);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> nested(boolean condition, Function<LambdaQueryWrapper<T>, LambdaQueryWrapper<T>> func) {
+            super.nested(condition, func);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> or(boolean condition) {
+            super.or(condition);
+            return this;
+
+        }
+
+        @Override
+        public InnerLambdaQuery<T> apply(boolean condition, String applySql, Object... value) {
+            super.apply(condition, applySql, value);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> last(boolean condition, String lastSql) {
+            super.last(condition, lastSql);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> exists(boolean condition, String existsSql) {
+            super.exists(condition, existsSql);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> notExists(boolean condition, String notExistsSql) {
+            super.notExists(condition, notExistsSql);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> isNull(boolean condition, SFunction<T, ?> column) {
+            super.isNull(condition, column);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> isNotNull(boolean condition, SFunction<T, ?> column) {
+            super.isNotNull(condition, column);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> in(boolean condition, SFunction<T, ?> column, Collection<?> coll) {
+            super.in(condition, column, coll);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> notIn(boolean condition, SFunction<T, ?> column, Collection<?> coll) {
+            super.notIn(condition, column, coll);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> inSql(boolean condition, SFunction<T, ?> column, String inValue) {
+            super.inSql(condition, column, inValue);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> notInSql(boolean condition, SFunction<T, ?> column, String inValue) {
+            super.notInSql(condition, column, inValue);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> groupBy(boolean condition, SFunction<T, ?>... columns) {
+            super.groupBy(condition, columns);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> orderBy(boolean condition, boolean isAsc, SFunction<T, ?>... columns) {
+            super.orderBy(condition, isAsc, columns);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> having(boolean condition, String sqlHaving, Object... params) {
+            super.having(condition, sqlHaving, params);
+            return this;
+        }
     }
 }
