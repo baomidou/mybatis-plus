@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.service.additional.AbstractChainWrapper;
-import com.baomidou.mybatisplus.extension.service.additional.update.Updates;
+import com.baomidou.mybatisplus.extension.service.additional.update.ChainUpdate;
 
 /**
  * @author miemie
@@ -14,7 +14,7 @@ import com.baomidou.mybatisplus.extension.service.additional.update.Updates;
  */
 @SuppressWarnings("serial")
 public class LambdaUpdateChainWrapper<T> extends AbstractChainWrapper<T, SFunction<T, ?>, LambdaUpdateChainWrapper<T>, LambdaUpdateWrapper<T>>
-    implements Updates<T>, Update<LambdaUpdateChainWrapper<T>, SFunction<T, ?>> {
+    implements ChainUpdate<T>, Update<LambdaUpdateChainWrapper<T>, SFunction<T, ?>> {
 
     public LambdaUpdateChainWrapper(BaseMapper<T> baseMapper) {
         super(baseMapper);

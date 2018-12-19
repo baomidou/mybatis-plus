@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.extension.service.additional.AbstractChainWrapper;
-import com.baomidou.mybatisplus.extension.service.additional.update.Updates;
+import com.baomidou.mybatisplus.extension.service.additional.update.ChainUpdate;
 
 /**
  * @author miemie
@@ -13,7 +13,7 @@ import com.baomidou.mybatisplus.extension.service.additional.update.Updates;
  */
 @SuppressWarnings("serial")
 public class UpdateChainWrapper<T> extends AbstractChainWrapper<T, String, UpdateChainWrapper<T>, UpdateWrapper<T>>
-    implements Updates<T>, Update<UpdateChainWrapper<T>, String> {
+    implements ChainUpdate<T>, Update<UpdateChainWrapper<T>, String> {
 
     public UpdateChainWrapper(BaseMapper<T> baseMapper) {
         super(baseMapper);

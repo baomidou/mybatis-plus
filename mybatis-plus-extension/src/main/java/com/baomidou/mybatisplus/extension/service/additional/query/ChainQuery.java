@@ -9,7 +9,7 @@ import java.util.List;
  * @author miemie
  * @since 2018-12-19
  */
-public interface Querys<T> extends ChainWrapper<T> {
+public interface ChainQuery<T> extends ChainWrapper<T> {
 
     default List<T> list() {
         return getBaseMapper().selectList(getWrapper());

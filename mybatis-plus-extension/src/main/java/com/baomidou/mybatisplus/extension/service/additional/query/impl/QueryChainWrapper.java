@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.extension.service.additional.AbstractChainWrapper;
-import com.baomidou.mybatisplus.extension.service.additional.query.Querys;
+import com.baomidou.mybatisplus.extension.service.additional.query.ChainQuery;
 
 import java.util.function.Predicate;
 
@@ -16,7 +16,7 @@ import java.util.function.Predicate;
  */
 @SuppressWarnings("serial")
 public class QueryChainWrapper<T> extends AbstractChainWrapper<T, String, QueryChainWrapper<T>, QueryWrapper<T>>
-    implements Querys<T>, Query<QueryChainWrapper<T>, T, String> {
+    implements ChainQuery<T>, Query<QueryChainWrapper<T>, T, String> {
 
     public QueryChainWrapper(BaseMapper<T> baseMapper) {
         super(baseMapper);
