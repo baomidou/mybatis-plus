@@ -15,19 +15,21 @@
  */
 package com.baomidou.mybatisplus.extension.service;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+import com.baomidou.mybatisplus.extension.service.additional.query.QueryChainWrapper;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
-
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
-import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 
 /**
  * <p>
@@ -389,6 +391,11 @@ public interface IService<T> {
         return pageMaps(page, Wrappers.emptyWrapper());
     }
 
+    BaseMapper<T> getBaseMapper();
+
+    default QueryChainWrapper<T> query() {
+        return new QueryChainWrapper<>(getBaseMapper());
+    }
 
     default InnerLambdaQuery<T> lambdaQuery() {
         return new InnerLambdaQuery<>(this);
