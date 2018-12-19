@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2011-2016, hubin (jobob@qq.com).
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
 package com.baomidou.mybatisplus.extension.service.additional;
 
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
@@ -16,6 +31,10 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 /**
+ * 所有包装类都继承此抽象类,此抽象类代理了大部分生成 where 条件的方法
+ * <li> 泛型: Children ,表示子类 </li>
+ * <li> 泛型: Param ,表示子类所包装的具体 Wrapper 类型 </li>
+ *
  * @author miemie
  * @since 2018-12-19
  */
@@ -24,9 +43,18 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     extends Wrapper<T> implements Compare<Children, R>, Func<Children, R>, Join<Children>, Nested<Param, Children>,
     ChainWrapper<T> {
     protected final Children typedThis = (Children) this;
-    protected BaseMapper<T> baseMapper;
+    /**
+     * 子类所包装的具体 Wrapper 类型
+     */
     protected Param wrapperChildren;
+    private BaseMapper<T> baseMapper;
 
+    /**
+     * 必须的构造函数
+     * 子类必须给 wrapperChildren 赋值
+     *
+     * @param baseMapper BaseMapper
+     */
     public AbstractChainWrapper(BaseMapper<T> baseMapper) {
         this.baseMapper = baseMapper;
     }
@@ -41,7 +69,7 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
         return (Wrapper<T>) wrapperChildren;
     }
 
-    protected AbstractWrapper getAbstractWrapper() {
+    private AbstractWrapper getAbstractWrapper() {
         return (AbstractWrapper) wrapperChildren;
     }
 
