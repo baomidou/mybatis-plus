@@ -12,7 +12,7 @@ import com.baomidou.mybatisplus.extension.service.additional.update.Updates;
  * @since 2018-12-19
  */
 @SuppressWarnings("serial")
-public class LambdaUpdateChainWrapper<T> extends AbstractChainWrapper<T, String, LambdaUpdateChainWrapper<T>, LambdaUpdateWrapper<T>>
+public class LambdaUpdateChainWrapper<T> extends AbstractChainWrapper<T, SFunction<T, ?>, LambdaUpdateChainWrapper<T>, LambdaUpdateWrapper<T>>
     implements Updates<T>, Update<LambdaUpdateChainWrapper<T>, SFunction<T, ?>> {
 
     public LambdaUpdateChainWrapper(BaseMapper<T> baseMapper) {
