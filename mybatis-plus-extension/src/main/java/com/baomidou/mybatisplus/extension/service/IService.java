@@ -724,7 +724,6 @@ public interface IService<T> {
         public InnerLambdaQuery<T> or(boolean condition) {
             super.or(condition);
             return this;
-
         }
 
         @Override
@@ -746,6 +745,173 @@ public interface IService<T> {
         }
 
         @Override
+        public InnerLambdaQuery<T> isNotNull(SFunction<T, ?> column) {
+            super.isNotNull(column);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> in(SFunction<T, ?> column, Collection<?> coll) {
+            super.in(column, coll);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> inOrThrow(SFunction<T, ?> column, Collection<?> value) {
+            super.inOrThrow(column, value);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> inOrThrow(boolean condition, SFunction<T, ?> column, Collection<?> coll) {
+            super.inOrThrow(condition, column, coll);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> inOrThrow(SFunction<T, ?> column, Object... values) {
+            super.inOrThrow(column, values);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> inOrThrow(boolean condition, SFunction<T, ?> column, Object... values) {
+            super.inOrThrow(condition, column, values);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> in(SFunction<T, ?> column, Object... values) {
+            super.in(column, values);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> in(boolean condition, SFunction<T, ?> column, Object... values) {
+            super.in(condition, column, values);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> notIn(SFunction<T, ?> column, Collection<?> coll) {
+            super.notIn(column, coll);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> notInOrThrow(SFunction<T, ?> column, Collection<?> value) {
+            super.notInOrThrow(column, value);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> notInOrThrow(boolean condition, SFunction<T, ?> column, Collection<?> coll) {
+            super.notInOrThrow(condition, column, coll);
+            return this;
+        }
+        @Override
+        public InnerLambdaQuery<T> notInOrThrow(SFunction<T, ?> column, Object... values) {
+            super.notInOrThrow(column, values);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> notInOrThrow(boolean condition, SFunction<T, ?> column, Object... values) {
+            super.notInOrThrow(condition, column, values);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> notIn(SFunction<T, ?> column, Object... value) {
+            super.notIn(column, value);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> notIn(boolean condition, SFunction<T, ?> column, Object... values) {
+            super.notIn(condition, column, values);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> orderByAsc(SFunction<T, ?>... columns) {
+            super.orderByAsc(columns);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> orderByAsc(boolean condition, SFunction<T, ?>... columns) {
+            super.orderByAsc(condition, columns);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> orderByDesc(SFunction<T, ?>... columns) {
+            super.orderByDesc(columns);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> orderByDesc(boolean condition, SFunction<T, ?>... columns) {
+            super.orderByDesc(condition, columns);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> having(String sqlHaving, Object... params) {
+            super.having(sqlHaving, params);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> or() {
+            super.or();
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> apply(String applySql, Object... value) {
+            super.apply(applySql, value);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> last(String lastSql) {
+            super.last(lastSql);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> exists(String existsSql) {
+            super.exists(existsSql);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> notExists(String notExistsSql) {
+            super.notExists(notExistsSql);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> and(Function<LambdaQueryWrapper<T>, LambdaQueryWrapper<T>> func) {
+            super.and(func);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> or(Function<LambdaQueryWrapper<T>, LambdaQueryWrapper<T>> func) {
+            super.or(func);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> nested(Function<LambdaQueryWrapper<T>, LambdaQueryWrapper<T>> func) {
+            super.nested(func);
+            return this;
+        }
+
+        @Override
         public InnerLambdaQuery<T> notExists(boolean condition, String notExistsSql) {
             super.notExists(condition, notExistsSql);
             return this;
@@ -754,6 +920,12 @@ public interface IService<T> {
         @Override
         public InnerLambdaQuery<T> isNull(boolean condition, SFunction<T, ?> column) {
             super.isNull(condition, column);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> isNull(SFunction<T, ?> column) {
+            super.isNull(column);
             return this;
         }
 
@@ -776,14 +948,33 @@ public interface IService<T> {
         }
 
         @Override
+        public InnerLambdaQuery<T> inSql(SFunction<T, ?> column, String inValue) {
+            super.inSql(column, inValue);
+            return this;
+        }
+
+
+        @Override
         public InnerLambdaQuery<T> inSql(boolean condition, SFunction<T, ?> column, String inValue) {
             super.inSql(condition, column, inValue);
             return this;
         }
 
         @Override
+        public InnerLambdaQuery<T> notInSql(SFunction<T, ?> column, String inValue) {
+            super.notInSql(column, inValue);
+            return this;
+        }
+
+        @Override
         public InnerLambdaQuery<T> notInSql(boolean condition, SFunction<T, ?> column, String inValue) {
             super.notInSql(condition, column, inValue);
+            return this;
+        }
+
+        @Override
+        public InnerLambdaQuery<T> groupBy(SFunction<T, ?>... columns) {
+            super.groupBy(columns);
             return this;
         }
 

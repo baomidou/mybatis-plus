@@ -286,6 +286,11 @@ public class H2UserTest extends BaseTest {
     public void testServiceImplInnerLambdaQuery() {
         H2User tomcat = userService.lambdaQuery().eq(H2User::getName, "Tomcat").getOne();
         Assert.assertNotNull("tomcat should not be null", tomcat);
-        Assert.assertNotEquals("", 0, userService.lambdaQuery().like(H2User::getName, "a").count());
+        Assert.assertNotEquals("count should not be zero", 0, userService.lambdaQuery().like(H2User::getName, "a").count());
+        userService.lambdaQuery().like(H2User::getName,"T")
+            .ne(H2User::getAge, AgeEnum.TWO)
+            .ge(H2User::getVersion, 1)
+            .isNull(H2User::getPrice)
+            .list();
     }
 }
