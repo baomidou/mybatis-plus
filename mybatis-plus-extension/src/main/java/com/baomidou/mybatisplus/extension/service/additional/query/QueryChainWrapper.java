@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
-import com.baomidou.mybatisplus.extension.service.additional.ChainWrapper;
+import com.baomidou.mybatisplus.extension.service.additional.AbstractChainWrapper;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -16,7 +16,7 @@ import java.util.function.Predicate;
  * @since 2018-12-19
  */
 @SuppressWarnings("serial")
-public class QueryChainWrapper<T> extends ChainWrapper<T, String, QueryChainWrapper<T>>
+public class QueryChainWrapper<T> extends AbstractChainWrapper<T, String, QueryChainWrapper<T>>
     implements Querys<T>, Query<QueryChainWrapper<T>, T, String> {
 
     private QueryWrapper<T> queryWrapper;
