@@ -286,7 +286,7 @@ public class H2UserTest extends BaseTest {
         H2User tomcat = userService.lambdaQuery().eq(H2User::getName, "Tomcat").getOne();
         Assert.assertNotNull("tomcat should not be null", tomcat);
         Assert.assertNotEquals("count should not be zero", 0, userService.lambdaQuery().like(H2User::getName, "a").count());
-        userService.lambdaQuery().like(H2User::getName,"T")
+        userService.lambdaQuery().like(H2User::getName, "T")
             .ne(H2User::getAge, AgeEnum.TWO)
             .ge(H2User::getVersion, 1)
             .isNull(H2User::getPrice)
@@ -297,5 +297,6 @@ public class H2UserTest extends BaseTest {
     public void testServiceChainQuery() {
         H2User tomcat = userService.query().eq("name", "Tomcat").one();
         Assert.assertNotNull("tomcat should not be null", tomcat);
+        userService.query().nested(i -> i.eq("name", "Tomcat")).list();
     }
 }

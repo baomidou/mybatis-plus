@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,8 +80,10 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
     }
 
     @Override
-    public UpdateWrapper<T> setSql(String sql) {
-        sqlSet.add(sql);
+    public UpdateWrapper<T> setSql(boolean condition, String sql) {
+        if (condition && StringUtils.isNotEmpty(sql)) {
+            sqlSet.add(sql);
+        }
         return typedThis;
     }
 

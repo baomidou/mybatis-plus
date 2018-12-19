@@ -21,12 +21,12 @@ import java.io.Serializable;
  * @author miemie
  * @since 2018-12-12
  */
-public interface Update<This, R> extends Serializable {
+public interface Update<Children, R> extends Serializable {
 
     /**
      * ignore
      */
-    default This set(R column, Object val) {
+    default Children set(R column, Object val) {
         return set(true, column, val);
     }
 
@@ -38,7 +38,14 @@ public interface Update<This, R> extends Serializable {
      * @param val       值
      * @return children
      */
-    This set(boolean condition, R column, Object val);
+    Children set(boolean condition, R column, Object val);
+
+    /**
+     * ignore
+     */
+    default Children setSql(String sql) {
+        return setSql(true, sql);
+    }
 
     /**
      * 设置 更新 SQL 的 SET 片段
@@ -46,7 +53,7 @@ public interface Update<This, R> extends Serializable {
      * @param sql set sql
      * @return children
      */
-    This setSql(String sql);
+    Children setSql(boolean condition, String sql);
 
     /**
      * 获取 更新 SQL 的 SET 片段

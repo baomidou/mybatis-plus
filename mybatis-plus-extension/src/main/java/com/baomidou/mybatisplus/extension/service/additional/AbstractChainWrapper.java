@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.interfaces.Func;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Join;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Nested;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import java.util.Collection;
 import java.util.Map;
@@ -14,17 +15,23 @@ import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 /**
- * , Func<This, R>, Join<This>, Nested<This>
- *
  * @author miemie
  * @since 2018-12-19
  */
 @SuppressWarnings({"serial", "unchecked"})
-public abstract class AbstractChainWrapper<T, R, This extends AbstractChainWrapper<T, R, This>> extends Wrapper<T>
-    implements Compare<This, R>, Func<This, R>, Join<This>, Nested<This> {
-    protected final This typedThis = (This) this;
+public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainWrapper<T, R, Children, Param>, Param>
+    extends Wrapper<T> implements Compare<Children, R>, Func<Children, R>, Join<Children>, Nested<Param, Children> {
+    protected final Children typedThis = (Children) this;
+    protected BaseMapper<T> baseMapper;
+    protected Param wrapperChildren;
 
-    protected abstract AbstractWrapper getWrapper();
+    public AbstractChainWrapper(BaseMapper<T> baseMapper) {
+        this.baseMapper = baseMapper;
+    }
+
+    protected AbstractWrapper getWrapper() {
+        return (AbstractWrapper) wrapperChildren;
+    }
 
     @Override
     public T getEntity() {
@@ -42,187 +49,187 @@ public abstract class AbstractChainWrapper<T, R, This extends AbstractChainWrapp
     }
 
     @Override
-    public <V> This allEq(boolean condition, Map<R, V> params, boolean null2IsNull) {
+    public <V> Children allEq(boolean condition, Map<R, V> params, boolean null2IsNull) {
         getWrapper().allEq(condition, params, null2IsNull);
         return typedThis;
     }
 
     @Override
-    public <V> This allEq(boolean condition, BiPredicate<R, V> filter, Map<R, V> params, boolean null2IsNull) {
+    public <V> Children allEq(boolean condition, BiPredicate<R, V> filter, Map<R, V> params, boolean null2IsNull) {
         getWrapper().allEq(condition, filter, params, null2IsNull);
         return typedThis;
     }
 
     @Override
-    public This eq(boolean condition, R column, Object val) {
+    public Children eq(boolean condition, R column, Object val) {
         getWrapper().eq(condition, column, val);
         return typedThis;
     }
 
     @Override
-    public This ne(boolean condition, R column, Object val) {
+    public Children ne(boolean condition, R column, Object val) {
         getWrapper().ne(condition, column, val);
         return typedThis;
     }
 
     @Override
-    public This gt(boolean condition, R column, Object val) {
+    public Children gt(boolean condition, R column, Object val) {
         getWrapper().gt(condition, column, val);
         return typedThis;
     }
 
     @Override
-    public This ge(boolean condition, R column, Object val) {
+    public Children ge(boolean condition, R column, Object val) {
         getWrapper().ge(condition, column, val);
         return typedThis;
     }
 
     @Override
-    public This lt(boolean condition, R column, Object val) {
+    public Children lt(boolean condition, R column, Object val) {
         getWrapper().lt(condition, column, val);
         return typedThis;
     }
 
     @Override
-    public This le(boolean condition, R column, Object val) {
+    public Children le(boolean condition, R column, Object val) {
         getWrapper().le(condition, column, val);
         return typedThis;
     }
 
     @Override
-    public This between(boolean condition, R column, Object val1, Object val2) {
+    public Children between(boolean condition, R column, Object val1, Object val2) {
         getWrapper().between(condition, column, val1, val2);
         return typedThis;
     }
 
     @Override
-    public This notBetween(boolean condition, R column, Object val1, Object val2) {
+    public Children notBetween(boolean condition, R column, Object val1, Object val2) {
         getWrapper().notBetween(condition, column, val1, val2);
         return typedThis;
     }
 
     @Override
-    public This like(boolean condition, R column, Object val) {
+    public Children like(boolean condition, R column, Object val) {
         getWrapper().like(condition, column, val);
         return typedThis;
     }
 
     @Override
-    public This notLike(boolean condition, R column, Object val) {
+    public Children notLike(boolean condition, R column, Object val) {
         getWrapper().notLike(condition, column, val);
         return typedThis;
     }
 
     @Override
-    public This likeLeft(boolean condition, R column, Object val) {
+    public Children likeLeft(boolean condition, R column, Object val) {
         getWrapper().likeLeft(condition, column, val);
         return typedThis;
     }
 
     @Override
-    public This likeRight(boolean condition, R column, Object val) {
+    public Children likeRight(boolean condition, R column, Object val) {
         getWrapper().likeRight(condition, column, val);
         return typedThis;
     }
 
     @Override
-    public This isNull(boolean condition, R column) {
+    public Children isNull(boolean condition, R column) {
         getWrapper().isNull(condition, column);
         return typedThis;
     }
 
     @Override
-    public This isNotNull(boolean condition, R column) {
+    public Children isNotNull(boolean condition, R column) {
         getWrapper().isNotNull(condition, column);
         return typedThis;
     }
 
     @Override
-    public This in(boolean condition, R column, Collection<?> coll) {
+    public Children in(boolean condition, R column, Collection<?> coll) {
         getWrapper().in(condition, column, coll);
         return typedThis;
     }
 
     @Override
-    public This notIn(boolean condition, R column, Collection<?> coll) {
+    public Children notIn(boolean condition, R column, Collection<?> coll) {
         getWrapper().notIn(condition, column, coll);
         return typedThis;
     }
 
     @Override
-    public This inSql(boolean condition, R column, String inValue) {
+    public Children inSql(boolean condition, R column, String inValue) {
         getWrapper().inSql(condition, column, inValue);
         return typedThis;
     }
 
     @Override
-    public This notInSql(boolean condition, R column, String inValue) {
+    public Children notInSql(boolean condition, R column, String inValue) {
         getWrapper().notInSql(condition, column, inValue);
         return typedThis;
     }
 
     @Override
-    public This groupBy(boolean condition, R... columns) {
+    public Children groupBy(boolean condition, R... columns) {
         getWrapper().groupBy(condition, columns);
         return typedThis;
     }
 
     @Override
-    public This orderBy(boolean condition, boolean isAsc, R... columns) {
+    public Children orderBy(boolean condition, boolean isAsc, R... columns) {
         getWrapper().orderBy(condition, isAsc, columns);
         return typedThis;
     }
 
     @Override
-    public This having(boolean condition, String sqlHaving, Object... params) {
+    public Children having(boolean condition, String sqlHaving, Object... params) {
         getWrapper().having(condition, sqlHaving, params);
         return typedThis;
     }
 
     @Override
-    public This or(boolean condition) {
+    public Children or(boolean condition) {
         getWrapper().or(condition);
         return typedThis;
     }
 
     @Override
-    public This apply(boolean condition, String applySql, Object... value) {
+    public Children apply(boolean condition, String applySql, Object... value) {
         getWrapper().apply(condition, applySql, value);
         return typedThis;
     }
 
     @Override
-    public This last(boolean condition, String lastSql) {
+    public Children last(boolean condition, String lastSql) {
         getWrapper().last(condition, lastSql);
         return typedThis;
     }
 
     @Override
-    public This exists(boolean condition, String existsSql) {
+    public Children exists(boolean condition, String existsSql) {
         getWrapper().exists(condition, existsSql);
         return typedThis;
     }
 
     @Override
-    public This notExists(boolean condition, String notExistsSql) {
+    public Children notExists(boolean condition, String notExistsSql) {
         getWrapper().notExists(condition, notExistsSql);
         return typedThis;
     }
 
     @Override
-    public This and(boolean condition, Function<This, This> func) {
+    public Children and(boolean condition, Function<Param, Param> func) {
         getWrapper().and(condition, func);
         return typedThis;
     }
 
     @Override
-    public This or(boolean condition, Function<This, This> func) {
+    public Children or(boolean condition, Function<Param, Param> func) {
         getWrapper().or(condition, func);
         return typedThis;
     }
 
     @Override
-    public This nested(boolean condition, Function<This, This> func) {
+    public Children nested(boolean condition, Function<Param, Param> func) {
         getWrapper().nested(condition, func);
         return typedThis;
     }

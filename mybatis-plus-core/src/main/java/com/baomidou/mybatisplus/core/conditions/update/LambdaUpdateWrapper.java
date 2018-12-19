@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 
 import java.util.ArrayList;
@@ -72,8 +73,10 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
     }
 
     @Override
-    public LambdaUpdateWrapper<T> setSql(String sql) {
-        sqlSet.add(sql);
+    public LambdaUpdateWrapper<T> setSql(boolean condition, String sql) {
+        if (condition && StringUtils.isNotEmpty(sql)) {
+            sqlSet.add(sql);
+        }
         return typedThis;
     }
 

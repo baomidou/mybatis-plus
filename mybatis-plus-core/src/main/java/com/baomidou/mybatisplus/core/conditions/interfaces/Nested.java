@@ -27,12 +27,12 @@ import java.util.function.Function;
  * @author hubin miemie HCL
  * @since 2017-05-26
  */
-public interface Nested<This> extends Serializable {
+public interface Nested<Param, Children> extends Serializable {
 
     /**
      * ignore
      */
-    default This and(Function<This, This> func) {
+    default Children and(Function<Param, Param> func) {
         return and(true, func);
     }
 
@@ -44,12 +44,12 @@ public interface Nested<This> extends Serializable {
      * @param func      函数
      * @return children
      */
-    This and(boolean condition, Function<This, This> func);
+    Children and(boolean condition, Function<Param, Param> func);
 
     /**
      * ignore
      */
-    default This or(Function<This, This> func) {
+    default Children or(Function<Param, Param> func) {
         return or(true, func);
     }
 
@@ -61,12 +61,12 @@ public interface Nested<This> extends Serializable {
      * @param func      函数
      * @return children
      */
-    This or(boolean condition, Function<This, This> func);
+    Children or(boolean condition, Function<Param, Param> func);
 
     /**
      * ignore
      */
-    default This nested(Function<This, This> func) {
+    default Children nested(Function<Param, Param> func) {
         return nested(true, func);
     }
 
@@ -78,5 +78,5 @@ public interface Nested<This> extends Serializable {
      * @param func      函数
      * @return children
      */
-    This nested(boolean condition, Function<This, This> func);
+    Children nested(boolean condition, Function<Param, Param> func);
 }

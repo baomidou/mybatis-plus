@@ -42,8 +42,8 @@ import static java.util.stream.Collectors.joining;
  * @since 2017-05-26
  */
 @SuppressWarnings({"serial", "unchecked"})
-public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, This>> extends Wrapper<T>
-    implements Compare<This, R>, Nested<This>, Join<This>, Func<This, R> {
+public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, R, Children>> extends Wrapper<T>
+    implements Compare<Children, R>, Nested<Children, Children>, Join<Children>, Func<Children, R> {
 
     /**
      * 前缀
@@ -55,7 +55,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      */
     private static final String PLACE_HOLDER = "{%s}";
     private static final String MYBATIS_PLUS_TOKEN = "#{%s.paramNameValuePairs.%s}";
-    protected final This typedThis = (This) this;
+    protected final Children typedThis = (Children) this;
     protected final String paramAlias = null;
     /**
      * 必要度量
@@ -78,7 +78,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
         return entity;
     }
 
-    public This setEntity(T entity) {
+    public Children setEntity(T entity) {
         this.entity = entity;
         this.initEntityClass();
         return typedThis;
@@ -96,7 +96,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     @Override
-    public <V> This allEq(boolean condition, Map<R, V> params, boolean null2IsNull) {
+    public <V> Children allEq(boolean condition, Map<R, V> params, boolean null2IsNull) {
         if (condition && CollectionUtils.isNotEmpty(params)) {
             params.forEach((k, v) -> {
                 if (StringUtils.checkValNotNull(v)) {
@@ -112,7 +112,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     @Override
-    public <V> This allEq(boolean condition, BiPredicate<R, V> filter, Map<R, V> params, boolean null2IsNull) {
+    public <V> Children allEq(boolean condition, BiPredicate<R, V> filter, Map<R, V> params, boolean null2IsNull) {
         if (condition && CollectionUtils.isNotEmpty(params)) {
             params.forEach((k, v) -> {
                 if (filter.test(k, v)) {
@@ -130,93 +130,93 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     @Override
-    public This eq(boolean condition, R column, Object val) {
+    public Children eq(boolean condition, R column, Object val) {
         return addCondition(condition, column, EQ, val);
     }
 
     @Override
-    public This ne(boolean condition, R column, Object val) {
+    public Children ne(boolean condition, R column, Object val) {
         return addCondition(condition, column, NE, val);
     }
 
     @Override
-    public This gt(boolean condition, R column, Object val) {
+    public Children gt(boolean condition, R column, Object val) {
         return addCondition(condition, column, GT, val);
     }
 
     @Override
-    public This ge(boolean condition, R column, Object val) {
+    public Children ge(boolean condition, R column, Object val) {
         return addCondition(condition, column, GE, val);
     }
 
     @Override
-    public This lt(boolean condition, R column, Object val) {
+    public Children lt(boolean condition, R column, Object val) {
         return addCondition(condition, column, LT, val);
     }
 
     @Override
-    public This le(boolean condition, R column, Object val) {
+    public Children le(boolean condition, R column, Object val) {
         return addCondition(condition, column, LE, val);
     }
 
     @Override
-    public This like(boolean condition, R column, Object val) {
+    public Children like(boolean condition, R column, Object val) {
         return doIt(condition, () -> columnToString(column), LIKE, () -> formatSql("{0}", StringPool.PERCENT + val + StringPool.PERCENT));
     }
 
     @Override
-    public This notLike(boolean condition, R column, Object val) {
+    public Children notLike(boolean condition, R column, Object val) {
         return not(condition).like(condition, column, val);
     }
 
     @Override
-    public This likeLeft(boolean condition, R column, Object val) {
+    public Children likeLeft(boolean condition, R column, Object val) {
         return doIt(condition, () -> columnToString(column), LIKE, () -> formatSql("{0}", StringPool.PERCENT + val));
     }
 
     @Override
-    public This likeRight(boolean condition, R column, Object val) {
+    public Children likeRight(boolean condition, R column, Object val) {
         return doIt(condition, () -> columnToString(column), LIKE, () -> formatSql("{0}", val + StringPool.PERCENT));
     }
 
     @Override
-    public This between(boolean condition, R column, Object val1, Object val2) {
+    public Children between(boolean condition, R column, Object val1, Object val2) {
         return doIt(condition, () -> columnToString(column), BETWEEN, () -> formatSql("{0}", val1), AND,
             () -> formatSql("{0}", val2));
     }
 
     @Override
-    public This notBetween(boolean condition, R column, Object val1, Object val2) {
+    public Children notBetween(boolean condition, R column, Object val1, Object val2) {
         return not(condition).between(condition, column, val1, val2);
     }
 
     @Override
-    public This and(boolean condition, Function<This, This> func) {
+    public Children and(boolean condition, Function<Children, Children> func) {
         return and(condition).addNestedCondition(condition, func);
     }
 
     @Override
-    public This or(boolean condition, Function<This, This> func) {
+    public Children or(boolean condition, Function<Children, Children> func) {
         return or(condition).addNestedCondition(condition, func);
     }
 
     @Override
-    public This nested(boolean condition, Function<This, This> func) {
+    public Children nested(boolean condition, Function<Children, Children> func) {
         return addNestedCondition(condition, func);
     }
 
     @Override
-    public This or(boolean condition) {
+    public Children or(boolean condition) {
         return doIt(condition, OR);
     }
 
     @Override
-    public This apply(boolean condition, String applySql, Object... value) {
+    public Children apply(boolean condition, String applySql, Object... value) {
         return doIt(condition, APPLY, () -> formatSql(applySql, value));
     }
 
     @Override
-    public This last(boolean condition, String lastSql) {
+    public Children last(boolean condition, String lastSql) {
         if (condition) {
             this.lastSql = StringPool.SPACE + lastSql;
         }
@@ -224,27 +224,27 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     @Override
-    public This exists(boolean condition, String existsSql) {
+    public Children exists(boolean condition, String existsSql) {
         return doIt(condition, EXISTS, () -> String.format("(%s)", existsSql));
     }
 
     @Override
-    public This notExists(boolean condition, String notExistsSql) {
+    public Children notExists(boolean condition, String notExistsSql) {
         return not(condition).exists(condition, notExistsSql);
     }
 
     @Override
-    public This isNull(boolean condition, R column) {
+    public Children isNull(boolean condition, R column) {
         return doIt(condition, () -> columnToString(column), IS_NULL);
     }
 
     @Override
-    public This isNotNull(boolean condition, R column) {
+    public Children isNotNull(boolean condition, R column) {
         return doIt(condition, () -> columnToString(column), IS_NOT_NULL);
     }
 
     @Override
-    public This in(boolean condition, R column, Collection<?> coll) {
+    public Children in(boolean condition, R column, Collection<?> coll) {
         if (CollectionUtils.isEmpty(coll)) {
             return typedThis;
         }
@@ -252,7 +252,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     @Override
-    public This notIn(boolean condition, R column, Collection<?> coll) {
+    public Children notIn(boolean condition, R column, Collection<?> coll) {
         if (CollectionUtils.isEmpty(coll)) {
             return typedThis;
         }
@@ -260,17 +260,17 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     @Override
-    public This inSql(boolean condition, R column, String inValue) {
+    public Children inSql(boolean condition, R column, String inValue) {
         return doIt(condition, () -> columnToString(column), IN, () -> String.format("(%s)", inValue));
     }
 
     @Override
-    public This notInSql(boolean condition, R column, String inValue) {
+    public Children notInSql(boolean condition, R column, String inValue) {
         return not(condition).inSql(condition, column, inValue);
     }
 
     @Override
-    public This groupBy(boolean condition, R... columns) {
+    public Children groupBy(boolean condition, R... columns) {
         if (ArrayUtils.isEmpty(columns)) {
             return typedThis;
         }
@@ -278,7 +278,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     @Override
-    public This orderBy(boolean condition, boolean isAsc, R... columns) {
+    public Children orderBy(boolean condition, boolean isAsc, R... columns) {
         if (ArrayUtils.isEmpty(columns)) {
             return typedThis;
         }
@@ -290,7 +290,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     }
 
     @Override
-    public This having(boolean condition, String sqlHaving, Object... params) {
+    public Children having(boolean condition, String sqlHaving, Object... params) {
         return doIt(condition, HAVING, () -> formatSqlIfNeed(condition, sqlHaving, params));
     }
 
@@ -299,7 +299,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * <p>
      * NOT 关键词
      */
-    protected This not(boolean condition) {
+    protected Children not(boolean condition) {
         return doIt(condition, NOT);
     }
 
@@ -308,7 +308,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * <p>
      * 拼接 AND
      */
-    protected This and(boolean condition) {
+    protected Children and(boolean condition) {
         return doIt(condition, AND);
     }
 
@@ -320,7 +320,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * @param sqlKeyword SQL 关键词
      * @param val        条件值
      */
-    protected This addCondition(boolean condition, R column, SqlKeyword sqlKeyword, Object val) {
+    protected Children addCondition(boolean condition, R column, SqlKeyword sqlKeyword, Object val) {
         return doIt(condition, () -> columnToString(column), sqlKeyword, () -> formatSql("{0}", val));
     }
 
@@ -329,14 +329,14 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      *
      * @param condition 查询条件值
      */
-    protected This addNestedCondition(boolean condition, Function<This, This> func) {
+    protected Children addNestedCondition(boolean condition, Function<Children, Children> func) {
         return doIt(condition, LEFT_BRACKET, func.apply(instance()), RIGHT_BRACKET);
     }
 
     /**
      * 子类返回一个自己的新对象
      */
-    protected abstract This instance();
+    protected abstract Children instance();
 
     /**
      * 格式化SQL
@@ -408,7 +408,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * @param sqlSegments sql片段数组
      * @return children
      */
-    protected This doIt(boolean condition, ISqlSegment... sqlSegments) {
+    protected Children doIt(boolean condition, ISqlSegment... sqlSegments) {
         if (condition) {
             expression.add(sqlSegments);
         }
@@ -490,7 +490,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
 
     @Override
     @SuppressWarnings("all")
-    public This clone() {
+    public Children clone() {
         return SerializationUtils.clone(typedThis);
     }
 }
