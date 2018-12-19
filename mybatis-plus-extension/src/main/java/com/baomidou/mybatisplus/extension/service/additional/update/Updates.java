@@ -1,10 +1,14 @@
 package com.baomidou.mybatisplus.extension.service.additional.update;
 
+import com.baomidou.mybatisplus.extension.service.additional.ChainWrapper;
+
 /**
  * @author miemie
  * @since 2018-12-19
  */
-public interface Updates<T> {
+public interface Updates<T> extends ChainWrapper<T> {
 
-    int update(T entity);
+    default int update(T entity) {
+        return getBaseMapper().update(entity, getWrapper());
+    }
 }

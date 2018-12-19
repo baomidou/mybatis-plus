@@ -3,12 +3,11 @@ package com.baomidou.mybatisplus.extension.service.additional.query.impl;
 import com.baomidou.mybatisplus.core.conditions.query.Query;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.extension.service.additional.AbstractChainWrapper;
 import com.baomidou.mybatisplus.extension.service.additional.query.Querys;
 
-import java.util.List;
 import java.util.function.Predicate;
 
 /**
@@ -22,26 +21,6 @@ public class QueryChainWrapper<T> extends AbstractChainWrapper<T, String, QueryC
     public QueryChainWrapper(BaseMapper<T> baseMapper) {
         super(baseMapper);
         wrapperChildren = new QueryWrapper<>();
-    }
-
-    @Override
-    public List<T> list() {
-        return baseMapper.selectList(wrapperChildren);
-    }
-
-    @Override
-    public T one() {
-        return baseMapper.selectOne(wrapperChildren);
-    }
-
-    @Override
-    public Integer count() {
-        return baseMapper.selectCount(wrapperChildren);
-    }
-
-    @Override
-    public IPage<T> page(IPage<T> page) {
-        return baseMapper.selectPage(page, wrapperChildren);
     }
 
     @Override
@@ -64,6 +43,6 @@ public class QueryChainWrapper<T> extends AbstractChainWrapper<T, String, QueryC
 
     @Override
     public String getSqlSelect() {
-        return wrapperChildren.getSqlSelect();
+        throw ExceptionUtils.mpe("can not use this method for \"%s\"", "getSqlSelect");
     }
 }

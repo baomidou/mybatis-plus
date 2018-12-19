@@ -3,6 +3,7 @@ package com.baomidou.mybatisplus.extension.service.additional.update.impl;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.Update;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.service.additional.AbstractChainWrapper;
 import com.baomidou.mybatisplus.extension.service.additional.update.Updates;
@@ -34,11 +35,6 @@ public class LambdaUpdateChainWrapper<T> extends AbstractChainWrapper<T, SFuncti
 
     @Override
     public String getSqlSet() {
-        return wrapperChildren.getSqlSet();
-    }
-
-    @Override
-    public int update(T entity) {
-        return baseMapper.update(entity, wrapperChildren);
+        throw ExceptionUtils.mpe("can not use this method for \"%s\"", "getSqlSet");
     }
 }

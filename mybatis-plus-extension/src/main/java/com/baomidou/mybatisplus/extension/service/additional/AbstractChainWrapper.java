@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.conditions.interfaces.Join;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Nested;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 
 import java.util.Collection;
 import java.util.Map;
@@ -20,7 +21,8 @@ import java.util.function.Function;
  */
 @SuppressWarnings({"serial", "unchecked"})
 public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainWrapper<T, R, Children, Param>, Param>
-    extends Wrapper<T> implements Compare<Children, R>, Func<Children, R>, Join<Children>, Nested<Param, Children> {
+    extends Wrapper<T> implements Compare<Children, R>, Func<Children, R>, Join<Children>, Nested<Param, Children>,
+    ChainWrapper<T> {
     protected final Children typedThis = (Children) this;
     protected BaseMapper<T> baseMapper;
     protected Param wrapperChildren;
@@ -29,213 +31,223 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
         this.baseMapper = baseMapper;
     }
 
-    protected AbstractWrapper getWrapper() {
+    @Override
+    public BaseMapper<T> getBaseMapper() {
+        return baseMapper;
+    }
+
+    @Override
+    public Wrapper<T> getWrapper() {
+        return (Wrapper<T>) wrapperChildren;
+    }
+
+    protected AbstractWrapper getAbstractWrapper() {
         return (AbstractWrapper) wrapperChildren;
     }
 
     @Override
     public T getEntity() {
-        return (T) getWrapper().getEntity();
+        throw ExceptionUtils.mpe("can not use this method for \"%s\"", "getEntity");
     }
 
     @Override
     public MergeSegments getExpression() {
-        return getWrapper().getExpression();
+        throw ExceptionUtils.mpe("can not use this method for \"%s\"", "getExpression");
     }
 
     @Override
     public String getCustomSqlSegment() {
-        return getWrapper().getCustomSqlSegment();
+        throw ExceptionUtils.mpe("can not use this method for \"%s\"", "getCustomSqlSegment");
     }
 
     @Override
     public <V> Children allEq(boolean condition, Map<R, V> params, boolean null2IsNull) {
-        getWrapper().allEq(condition, params, null2IsNull);
+        getAbstractWrapper().allEq(condition, params, null2IsNull);
         return typedThis;
     }
 
     @Override
     public <V> Children allEq(boolean condition, BiPredicate<R, V> filter, Map<R, V> params, boolean null2IsNull) {
-        getWrapper().allEq(condition, filter, params, null2IsNull);
+        getAbstractWrapper().allEq(condition, filter, params, null2IsNull);
         return typedThis;
     }
 
     @Override
     public Children eq(boolean condition, R column, Object val) {
-        getWrapper().eq(condition, column, val);
+        getAbstractWrapper().eq(condition, column, val);
         return typedThis;
     }
 
     @Override
     public Children ne(boolean condition, R column, Object val) {
-        getWrapper().ne(condition, column, val);
+        getAbstractWrapper().ne(condition, column, val);
         return typedThis;
     }
 
     @Override
     public Children gt(boolean condition, R column, Object val) {
-        getWrapper().gt(condition, column, val);
+        getAbstractWrapper().gt(condition, column, val);
         return typedThis;
     }
 
     @Override
     public Children ge(boolean condition, R column, Object val) {
-        getWrapper().ge(condition, column, val);
+        getAbstractWrapper().ge(condition, column, val);
         return typedThis;
     }
 
     @Override
     public Children lt(boolean condition, R column, Object val) {
-        getWrapper().lt(condition, column, val);
+        getAbstractWrapper().lt(condition, column, val);
         return typedThis;
     }
 
     @Override
     public Children le(boolean condition, R column, Object val) {
-        getWrapper().le(condition, column, val);
+        getAbstractWrapper().le(condition, column, val);
         return typedThis;
     }
 
     @Override
     public Children between(boolean condition, R column, Object val1, Object val2) {
-        getWrapper().between(condition, column, val1, val2);
+        getAbstractWrapper().between(condition, column, val1, val2);
         return typedThis;
     }
 
     @Override
     public Children notBetween(boolean condition, R column, Object val1, Object val2) {
-        getWrapper().notBetween(condition, column, val1, val2);
+        getAbstractWrapper().notBetween(condition, column, val1, val2);
         return typedThis;
     }
 
     @Override
     public Children like(boolean condition, R column, Object val) {
-        getWrapper().like(condition, column, val);
+        getAbstractWrapper().like(condition, column, val);
         return typedThis;
     }
 
     @Override
     public Children notLike(boolean condition, R column, Object val) {
-        getWrapper().notLike(condition, column, val);
+        getAbstractWrapper().notLike(condition, column, val);
         return typedThis;
     }
 
     @Override
     public Children likeLeft(boolean condition, R column, Object val) {
-        getWrapper().likeLeft(condition, column, val);
+        getAbstractWrapper().likeLeft(condition, column, val);
         return typedThis;
     }
 
     @Override
     public Children likeRight(boolean condition, R column, Object val) {
-        getWrapper().likeRight(condition, column, val);
+        getAbstractWrapper().likeRight(condition, column, val);
         return typedThis;
     }
 
     @Override
     public Children isNull(boolean condition, R column) {
-        getWrapper().isNull(condition, column);
+        getAbstractWrapper().isNull(condition, column);
         return typedThis;
     }
 
     @Override
     public Children isNotNull(boolean condition, R column) {
-        getWrapper().isNotNull(condition, column);
+        getAbstractWrapper().isNotNull(condition, column);
         return typedThis;
     }
 
     @Override
     public Children in(boolean condition, R column, Collection<?> coll) {
-        getWrapper().in(condition, column, coll);
+        getAbstractWrapper().in(condition, column, coll);
         return typedThis;
     }
 
     @Override
     public Children notIn(boolean condition, R column, Collection<?> coll) {
-        getWrapper().notIn(condition, column, coll);
+        getAbstractWrapper().notIn(condition, column, coll);
         return typedThis;
     }
 
     @Override
     public Children inSql(boolean condition, R column, String inValue) {
-        getWrapper().inSql(condition, column, inValue);
+        getAbstractWrapper().inSql(condition, column, inValue);
         return typedThis;
     }
 
     @Override
     public Children notInSql(boolean condition, R column, String inValue) {
-        getWrapper().notInSql(condition, column, inValue);
+        getAbstractWrapper().notInSql(condition, column, inValue);
         return typedThis;
     }
 
     @Override
     public Children groupBy(boolean condition, R... columns) {
-        getWrapper().groupBy(condition, columns);
+        getAbstractWrapper().groupBy(condition, columns);
         return typedThis;
     }
 
     @Override
     public Children orderBy(boolean condition, boolean isAsc, R... columns) {
-        getWrapper().orderBy(condition, isAsc, columns);
+        getAbstractWrapper().orderBy(condition, isAsc, columns);
         return typedThis;
     }
 
     @Override
     public Children having(boolean condition, String sqlHaving, Object... params) {
-        getWrapper().having(condition, sqlHaving, params);
+        getAbstractWrapper().having(condition, sqlHaving, params);
         return typedThis;
     }
 
     @Override
     public Children or(boolean condition) {
-        getWrapper().or(condition);
+        getAbstractWrapper().or(condition);
         return typedThis;
     }
 
     @Override
     public Children apply(boolean condition, String applySql, Object... value) {
-        getWrapper().apply(condition, applySql, value);
+        getAbstractWrapper().apply(condition, applySql, value);
         return typedThis;
     }
 
     @Override
     public Children last(boolean condition, String lastSql) {
-        getWrapper().last(condition, lastSql);
+        getAbstractWrapper().last(condition, lastSql);
         return typedThis;
     }
 
     @Override
     public Children exists(boolean condition, String existsSql) {
-        getWrapper().exists(condition, existsSql);
+        getAbstractWrapper().exists(condition, existsSql);
         return typedThis;
     }
 
     @Override
     public Children notExists(boolean condition, String notExistsSql) {
-        getWrapper().notExists(condition, notExistsSql);
+        getAbstractWrapper().notExists(condition, notExistsSql);
         return typedThis;
     }
 
     @Override
     public Children and(boolean condition, Function<Param, Param> func) {
-        getWrapper().and(condition, func);
+        getAbstractWrapper().and(condition, func);
         return typedThis;
     }
 
     @Override
     public Children or(boolean condition, Function<Param, Param> func) {
-        getWrapper().or(condition, func);
+        getAbstractWrapper().or(condition, func);
         return typedThis;
     }
 
     @Override
     public Children nested(boolean condition, Function<Param, Param> func) {
-        getWrapper().nested(condition, func);
+        getAbstractWrapper().nested(condition, func);
         return typedThis;
     }
 
     @Override
     public String getSqlSegment() {
-        return getWrapper().getSqlSegment();
+        throw ExceptionUtils.mpe("can not use this method for \"%s\"", "getSqlSegment");
     }
 }

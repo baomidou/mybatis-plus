@@ -3,13 +3,12 @@ package com.baomidou.mybatisplus.extension.service.additional.query.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.Query;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.service.additional.AbstractChainWrapper;
 import com.baomidou.mybatisplus.extension.service.additional.query.Querys;
 
-import java.util.List;
 import java.util.function.Predicate;
 
 /**
@@ -46,26 +45,6 @@ public class LambdaQueryChainWrapper<T> extends AbstractChainWrapper<T, SFunctio
 
     @Override
     public String getSqlSelect() {
-        return wrapperChildren.getSqlSelect();
-    }
-
-    @Override
-    public List<T> list() {
-        return baseMapper.selectList(wrapperChildren);
-    }
-
-    @Override
-    public T one() {
-        return baseMapper.selectOne(wrapperChildren);
-    }
-
-    @Override
-    public Integer count() {
-        return baseMapper.selectCount(wrapperChildren);
-    }
-
-    @Override
-    public IPage<T> page(IPage<T> page) {
-        return baseMapper.selectPage(page, wrapperChildren);
+        throw ExceptionUtils.mpe("can not use this method for \"%s\"", "getSqlSelect");
     }
 }
