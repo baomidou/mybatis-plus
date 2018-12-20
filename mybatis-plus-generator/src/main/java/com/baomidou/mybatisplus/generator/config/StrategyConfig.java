@@ -227,4 +227,13 @@ public class StrategyConfig {
         this.fieldPrefix = fieldPrefixs;
         return this;
     }
+
+    /**
+     * @deprecated please use `setEntityTableFieldAnnotationEnable`
+     */
+    @Deprecated
+    public StrategyConfig entityTableFieldAnnotationEnable(boolean isEnableAnnotation) {
+        entityTableFieldAnnotationEnable = isEnableAnnotation;
+        return this;
+    }
 }
