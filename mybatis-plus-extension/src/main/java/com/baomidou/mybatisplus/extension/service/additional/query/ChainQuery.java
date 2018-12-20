@@ -43,4 +43,8 @@ public interface ChainQuery<T> extends ChainWrapper<T> {
     default IPage<T> page(IPage<T> page) {
         return getBaseMapper().selectPage(page, getWrapper());
     }
+
+    default int delete() {
+        return getBaseMapper().delete(getWrapper());
+    }
 }
