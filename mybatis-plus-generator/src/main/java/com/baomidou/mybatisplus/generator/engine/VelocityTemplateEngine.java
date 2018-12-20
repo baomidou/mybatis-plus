@@ -15,21 +15,20 @@
  */
 package com.baomidou.mybatisplus.generator.engine;
 
-import java.io.BufferedWriter;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.util.Map;
-import java.util.Properties;
-
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.generator.config.ConstVal;
+import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.generator.config.ConstVal;
-import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * <p>
@@ -66,10 +65,11 @@ public class VelocityTemplateEngine extends AbstractTemplateEngine {
             return;
         }
         Template template = velocityEngine.getTemplate(templatePath, ConstVal.UTF8);
-        FileOutputStream fos = new FileOutputStream(outputFile);
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(fos, ConstVal.UTF8));
-        template.merge(new VelocityContext(objectMap), writer);
-        writer.close();
+        try (FileOutputStream fos = new FileOutputStream(outputFile);
+             OutputStreamWriter ow = new OutputStreamWriter(fos, ConstVal.UTF8);
+             BufferedWriter writer = new BufferedWriter(ow)) {
+            template.merge(new VelocityContext(objectMap), writer);
+        }
         logger.debug("模板:" + templatePath + ";  文件:" + outputFile);
     }
 
@@ -79,8 +79,6 @@ public class VelocityTemplateEngine extends AbstractTemplateEngine {
         if (null == filePath || filePath.contains(DOT_VM)) {
             return filePath;
         }
-        StringBuilder fp = new StringBuilder();
-        fp.append(filePath).append(DOT_VM);
-        return fp.toString();
+        return filePath + DOT_VM;
     }
 }

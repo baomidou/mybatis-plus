@@ -1,16 +1,14 @@
 package com.baomidou.mybatisplus.generator.engine;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Map;
-
+import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 import org.beetl.core.Configuration;
 import org.beetl.core.GroupTemplate;
 import org.beetl.core.Template;
 import org.beetl.core.resource.ClasspathResourceLoader;
 
-import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * <p>
@@ -39,10 +37,10 @@ public class BeetlTemplateEngine extends AbstractTemplateEngine {
     @Override
     public void writer(Map<String, Object> objectMap, String templatePath, String outputFile) throws Exception {
         Template template = groupTemplate.getTemplate(templatePath);
-        FileOutputStream fileOutputStream = new FileOutputStream(new File(outputFile));
-        template.binding(objectMap);
-        template.renderTo(fileOutputStream);
-        fileOutputStream.close();
+        try (FileOutputStream fileOutputStream = new FileOutputStream(outputFile)) {
+            template.binding(objectMap);
+            template.renderTo(fileOutputStream);
+        }
         logger.debug("模板:" + templatePath + ";  文件:" + outputFile);
     }
 
