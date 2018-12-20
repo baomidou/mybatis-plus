@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.generator.config.po;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
-
 import lombok.Data;
 
 /**
@@ -38,10 +37,6 @@ public class TableFill {
      * 忽略类型
      */
     private FieldFill fieldFill;
-
-    private TableFill() {
-        // to do nothing
-    }
 
     public TableFill(String fieldName, FieldFill ignore) {
         this.fieldName = fieldName;

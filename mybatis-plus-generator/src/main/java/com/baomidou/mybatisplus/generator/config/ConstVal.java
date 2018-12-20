@@ -15,9 +15,9 @@
  */
 package com.baomidou.mybatisplus.generator.config;
 
-import java.nio.charset.Charset;
-
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+
+import java.nio.charset.StandardCharsets;
 
 /**
  * <p>
@@ -46,7 +46,7 @@ public interface ConstVal {
     String CONTROLLER_PATH = "controller_path";
 
     String JAVA_TMPDIR = "java.io.tmpdir";
-    String UTF8 = Charset.forName("UTF-8").name();
+    String UTF8 = StandardCharsets.UTF_8.name();
     String UNDERLINE = "_";
 
     String JAVA_SUFFIX = StringPool.DOT_JAVA;
