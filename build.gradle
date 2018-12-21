@@ -93,8 +93,10 @@ subprojects {
     }
 
     jar {
-        manifest {
-            attributes 'Implementation-Version': version
+        afterEvaluate {
+            manifest {
+                attributes 'Implementation-Version': version
+            }
         }
     }
 
@@ -107,7 +109,10 @@ subprojects {
     }
 
     dependencies {
+        annotationProcessor rootProject.ext.dependencies["lombok"]
         provided rootProject.ext.dependencies["lombok"]
+        testAnnotationProcessor rootProject.ext.dependencies["lombok"]
+        testCompileOnly rootProject.ext.dependencies["lombok"]
         testCompile rootProject.ext.dependencies["mockito-all"]
         testCompile rootProject.ext.dependencies["junit"]
     }
@@ -118,13 +123,15 @@ subprojects {
     }
 
     javadoc {
-        options {
-            encoding "UTF-8"
-            charSet 'UTF-8'
-            author true
-            version true
-            failOnError false
-            links "http://docs.oracle.com/javase/8/docs/api"
+        afterEvaluate {
+            configure(options) {
+                encoding "UTF-8"
+                charSet 'UTF-8'
+                author true
+                version true
+                failOnError false
+                links "http://docs.oracle.com/javase/8/docs/api"
+            }
         }
     }
 
