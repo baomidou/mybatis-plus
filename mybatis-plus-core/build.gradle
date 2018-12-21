@@ -1,19 +1,21 @@
 dependencies {
     api project(":mybatis-plus-annotation")
-    api rootProject.ext.dependencies["mybatis"]
-    api rootProject.ext.dependencies["jsqlparser"]
+    api lib.mybatis as String
+    api lib.jsqlparser as String
 
-    implementation rootProject.ext.dependencies["cglib"]
-    implementation rootProject.ext.dependencies["spring-aop"]
 
-    testCompile rootProject.ext.dependencies["mybatis-ehcache"]
-    testCompile rootProject.ext.dependencies["logback-classic"]
-    testCompile(rootProject.ext.dependencies["commons-dbcp2"]) {
+    implementation lib.cglib as String
+    implementation lib."spring-aop" as String
+
+    testCompile lib."mybatis-ehcache" as String
+    testCompile lib."logback-classic" as String
+    //noinspection GroovyAssignabilityCheck
+    testCompile(lib.'commons-dbcp2') {
         exclude module: "commons-logging"
     }
-    testCompile rootProject.ext.dependencies["aspectjweaver"]
-    testCompile rootProject.ext.dependencies["hikaricp"]
-    testCompile rootProject.ext.dependencies["druid"]
-    testCompile rootProject.ext.dependencies["fastjson"]
-    testCompile rootProject.ext.dependencies["tomcatjdbc"]
+    testCompile lib.aspectjweaver as String
+    testCompile lib.hikaricp as String
+    testCompile lib.druid as String
+    testCompile lib.fastjson as String
+    testCompile lib.tomcatjdbc as String
 }
