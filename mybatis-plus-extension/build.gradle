@@ -1,14 +1,14 @@
 apply plugin: 'org.jetbrains.kotlin.jvm'
 dependencies {
-    compile project(":mybatis-plus-core")
-    compile rootProject.ext.dependencies["mybatis-spring"]
-    compile rootProject.ext.dependencies["mybatis"]
+    api project(":mybatis-plus-core")
+    api rootProject.ext.dependencies["mybatis-spring"]
+    api rootProject.ext.dependencies["mybatis"]
 
-    compile rootProject.ext.dependencies["kotlin-stdlib-jdk8"], optional
-    compile rootProject.ext.dependencies["kotlin-reflect"], optional
-    compile rootProject.ext.dependencies["spring-context-support"], optional
-    compile rootProject.ext.dependencies["spring-jdbc"], optional
-    compile rootProject.ext.dependencies["slf4j-api"], optional
+    implementation rootProject.ext.dependencies["kotlin-stdlib-jdk8"]
+    implementation rootProject.ext.dependencies["kotlin-reflect"]
+    implementation rootProject.ext.dependencies["spring-context-support"]
+    implementation rootProject.ext.dependencies["spring-jdbc"]
+    implementation rootProject.ext.dependencies["slf4j-api"]
 
     testCompile rootProject.ext.dependencies["spring-web"]
     testCompile rootProject.ext.dependencies["javax.servlet-api"]

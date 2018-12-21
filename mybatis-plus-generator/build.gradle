@@ -1,9 +1,9 @@
 dependencies {
-    compile project(":mybatis-plus-extension")
+    api project(":mybatis-plus-extension")
 
-    compile rootProject.ext.dependencies["velocity"], optional
-    compile rootProject.ext.dependencies["freemarker"], optional
-    compile rootProject.ext.dependencies["beetl"], optional
+    implementation rootProject.ext.dependencies["velocity"]
+    implementation rootProject.ext.dependencies["freemarker"]
+    implementation rootProject.ext.dependencies["beetl"]
 
     testCompile rootProject.ext.dependencies["sqlserver"]
     testCompile rootProject.ext.dependencies["postgresql"]

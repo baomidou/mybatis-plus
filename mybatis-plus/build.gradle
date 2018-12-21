@@ -1,6 +1,6 @@
 dependencies {
-    compile project(":mybatis-plus-extension")
-    compile project(":mybatis-plus-generator"), optional
+    api project(":mybatis-plus-extension")
+    implementation project(":mybatis-plus-generator")
 
     testCompile rootProject.ext.dependencies["spring-web"]
     testCompile rootProject.ext.dependencies["javax.servlet-api"]
@@ -20,4 +20,7 @@ dependencies {
     testCompile rootProject.ext.dependencies["mysql"]
     testCompile rootProject.ext.dependencies["jackson"]
     testCompile rootProject.ext.dependencies["logback-classic"]
+
+    testCompile rootProject.ext.dependencies["spring-context-support"]
+    testCompile rootProject.ext.dependencies["spring-jdbc"]
 }

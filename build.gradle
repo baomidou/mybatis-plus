@@ -79,11 +79,9 @@ description = "Mybatis 增强工具包 - 只做增强不做改变，简化CRUD�
 
 subprojects {
 
-    apply plugin: 'java'
+    apply plugin: 'java-library'
     apply plugin: 'signing'
     apply plugin: 'maven-publish'
-    apply plugin: 'nebula.optional-base'
-    apply plugin: 'nebula.provided-base'
 
     sourceCompatibility = "${javaVersion}"
     targetCompatibility = "${javaVersion}"
@@ -110,7 +108,7 @@ subprojects {
 
     dependencies {
         annotationProcessor rootProject.ext.dependencies["lombok"]
-        provided rootProject.ext.dependencies["lombok"]
+        implementation rootProject.ext.dependencies["lombok"]
         testAnnotationProcessor rootProject.ext.dependencies["lombok"]
         testCompileOnly rootProject.ext.dependencies["lombok"]
         testCompile rootProject.ext.dependencies["mockito-all"]
@@ -211,12 +209,17 @@ subprojects {
                     }
 
                     withXml {
-                        asNode().dependencies.'*'.findAll() {
-                            it.scope.text() == 'compile' && project.configurations.provided.allDependencies.find { dep ->
+                        def root = asNode()
+                        root.dependencies.'*'.findAll {
+                            def d = it
+                            d.scope.text() == 'runtime' && project.configurations.findByName("implementation").allDependencies.find { dep ->
                                 dep.name == it.artifactId.text()
+                            }.each() {
+                                d.scope*.value = 'provided'
+                                if(d.artifactId.text() != 'lombok'){
+                                    d.appendNode('optional', true)
+                                }
                             }
-                        }.each() {
-                            it.scope*.value = 'provided'
                         }
                     }
                 }
