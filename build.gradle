@@ -95,19 +95,19 @@ subprojects {
 
     repositories {
         mavenLocal()
-        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+        maven { url "http://maven.aliyun.com/nexus/contencommons-dbcpt/groups/public/" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "http://www.cameliatk.jp/maven2/repository/thirdparty" }
         jcenter()
     }
 
     dependencies {
-        annotationProcessor lib.lombok as String
-        implementation lib.lombok as String
-        testAnnotationProcessor lib.lombok as String
-        testCompileOnly lib.lombok as String
-        testCompile lib."mockito-all" as String
-        testCompile lib.junit as String
+        annotationProcessor "${lib.lombok}"
+        implementation "${lib.lombok}"
+        testAnnotationProcessor "${lib.lombok}"
+        testCompileOnly "${lib.lombok}"
+        testCompileOnly "${lib.'mockito-all'}"
+        testCompile "${lib.junit}"
     }
 
     task sourcesJar(type: Jar, dependsOn: classes) {

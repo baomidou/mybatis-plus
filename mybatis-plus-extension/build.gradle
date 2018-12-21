@@ -1,28 +1,28 @@
 apply plugin: 'org.jetbrains.kotlin.jvm'
 dependencies {
     api project(":mybatis-plus-core")
-    api lib."mybatis-spring" as String
-    api lib.mybatis as String
+    api "${lib.'mybatis-spring'}"
+    api "${lib.mybatis}"
 
-    implementation lib."kotlin-stdlib-jdk8" as String
-    implementation lib."kotlin-reflect" as String
-    implementation lib."spring-context-support" as String
-    implementation lib."spring-jdbc" as String
-    implementation lib."slf4j-api" as String
+    implementation "${lib.'kotlin-stdlib-jdk8'}"
+    implementation "${lib.'kotlin-reflect'}"
+    implementation "${lib.'spring-context-support'}"
+    implementation "${lib.'spring-jdbc'}"
+    implementation "${lib.'slf4j-api'}"
 
-    testCompile lib."spring-web" as String
-    testCompile lib."javax.servlet-api" as String
-    testCompile lib."spring-test" as String
-    testCompile lib.fastjson as String
+    testCompile "${lib.'spring-web'}"
+    testCompile "${lib.'javax.servlet-api'}"
+    testCompile "${lib.'spring-test'}"
+    testCompile "${lib.fastjson}"
 
-    testCompile lib.hikaricp as String
-    testCompile lib."commons-dbcp2" as String
-    testCompile lib.druid as String
-    testCompile lib.tomcatjdbc as String
+    testCompile "${lib.hikaricp}"
+    testCompile "${lib.'commons-dbcp2'}"
+    testCompile "${lib.druid}"
+    testCompile "${lib.tomcatjdbc}"
 
-    testCompile lib.h2 as String
-    testCompile lib.sqlserver as String
-    testCompile lib.postgresql as String
+    testCompile "${lib.h2}"
+    testCompile "${lib.sqlserver}"
+    testCompile "${lib.postgresql}"
     testCompile lib.oracle as ConfigurableFileTree
-    testCompile lib.mysql as String
+    testCompile "${lib.mysql}"
 }

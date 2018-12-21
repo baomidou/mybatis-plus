@@ -1,14 +1,14 @@
 dependencies {
     api project(":mybatis-plus-extension")
 
-    implementation lib.velocity as String
-    implementation lib.freemarker as String
-    implementation lib.beetl as String
+    implementation "${lib.velocity}"
+    implementation "${lib.freemarker}"
+    implementation "${lib.beetl}"
 
-    testCompile lib.sqlserver as String
-    testCompile lib.postgresql as String
+    testCompile "${lib.sqlserver}"
+    testCompile "${lib.postgresql}"
     testCompile lib.oracle as ConfigurableFileTree
-    testCompile lib.h2 as String
-    testCompile lib.mysql as String
-    testCompile lib."logback-classic" as String
+    testCompile "${lib.h2}"
+    testCompile "${lib.mysql}"
+    testCompile "${lib.'logback-classic'}"
 }
