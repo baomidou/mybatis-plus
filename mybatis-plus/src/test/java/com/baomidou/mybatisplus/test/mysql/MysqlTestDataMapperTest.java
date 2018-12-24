@@ -225,7 +225,6 @@ public class MysqlTestDataMapperTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void d7_1_selectListForNoLogic() {
         MysqlData data = new MysqlData().setOrder(1);
         // 1. 只有 entity
@@ -249,7 +248,6 @@ public class MysqlTestDataMapperTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void d7_2_selectListForLogic() {
         // 1. 只有 entity
         CommonLogicData data = new CommonLogicData().setTestInt(11);
@@ -337,7 +335,6 @@ public class MysqlTestDataMapperTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void d10_testDel1eq1Then() {
         // 有空对象,有 order by
         mysqlMapper.selectList(Wrappers.lambdaQuery(new MysqlData()).select(i -> true).orderByAsc(MysqlData::getId));
@@ -350,7 +347,6 @@ public class MysqlTestDataMapperTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void d11_testWrapperCustomSql() {
         // 1. 只有 order by 或者 last
         mysqlMapper.getAll(Wrappers.<MysqlData>query().lambda().orderByDesc(MysqlData::getOrder).last("limit 1"));
