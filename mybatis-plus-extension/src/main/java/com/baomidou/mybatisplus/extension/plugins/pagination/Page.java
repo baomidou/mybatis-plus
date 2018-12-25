@@ -235,7 +235,7 @@ public class Page<T> implements IPage<T> {
         return isSearchCount;
     }
 
-    Page<T> setSearchCount(boolean isSearchCount) {
+    public Page<T> setSearchCount(boolean isSearchCount) {
         this.isSearchCount = isSearchCount;
         return this;
     }
