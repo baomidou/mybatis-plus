@@ -116,6 +116,18 @@ public abstract class AbstractMethod implements Constants {
 
     /**
      * <p>
+     * SQL 查询记录行数
+     * </p>
+     *
+     * @return sql select script
+     */
+    protected String sqlCount() {
+        return SqlScriptUtils.convertChoose(String.format("%s != null and %s != null", WRAPPER, Q_WRAPPER_SQL_SELECT),
+            SqlScriptUtils.unSafeParam(Q_WRAPPER_SQL_SELECT), ONE);
+    };
+
+    /**
+     * <p>
      * SQL 设置selectObj sql select
      * </p>
      *
