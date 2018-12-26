@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.test.mysql;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.test.base.entity.CommonData;
 import com.baomidou.mybatisplus.test.base.entity.CommonLogicData;
@@ -59,6 +60,24 @@ public class SelectCountTest {
         queryWrapper.eq("test_int", 25).or().eq("test_str", "test");
         int count = commonLogicMapper.selectCount(queryWrapper);
         Assert.assertEquals(1, count);
+    }
+
+    @Test
+    public void testLogicCountAndDistinctWithSelectUserLambda() {
+        // 目前LambdaQueryWrapper还不能支持distinct，后期应该在AbstractWrapper实现一个distinct方法
+        LambdaQueryWrapper<CommonLogicData> lambdaQueryWrapper = new QueryWrapper<CommonLogicData>().lambda();
+        lambdaQueryWrapper.select(CommonLogicData::getTestInt);
+        int count = commonLogicMapper.selectCount(lambdaQueryWrapper);
+        Assert.assertEquals(2, count);
+    }
+
+    @Test
+    public void testCountAndDistinctWithSelectUserLambda() {
+        // 目前LambdaQueryWrapper还不能支持distinct，后期应该在AbstractWrapper实现一个distinct方法
+        LambdaQueryWrapper<CommonData> lambdaQueryWrapper = new QueryWrapper<CommonData>().lambda();
+        lambdaQueryWrapper.select(CommonData::getTestInt);
+        int count = commonDataMapper.selectCount(lambdaQueryWrapper);
+        Assert.assertEquals(2, count);
     }
 
     @Test
