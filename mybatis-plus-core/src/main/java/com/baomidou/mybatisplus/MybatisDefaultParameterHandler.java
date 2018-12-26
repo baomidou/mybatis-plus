@@ -128,7 +128,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                     } else {
                         /*
                          * 非表映射类不处理
-						 */
+                         */
                         objList.add(parameter);
                     }
                 }
@@ -202,12 +202,13 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
      */
     protected static Object populateKeys(MetaObjectHandler metaObjectHandler, TableInfo tableInfo,
                                          MappedStatement ms, Object parameterObject) {
+        MetaObject metaObject = ms.getConfiguration().newMetaObject(parameterObject);
         if (null == tableInfo || StringUtils.isEmpty(tableInfo.getKeyProperty()) || null == tableInfo.getIdType()) {
             /* 不处理 */
+            autoFill(ms.getSqlCommandType(), metaObjectHandler, metaObject);
             return parameterObject;
         }
         /* 自定义元对象填充控制器 */
-        MetaObject metaObject = ms.getConfiguration().newMetaObject(parameterObject);
         if (ms.getSqlCommandType() == SqlCommandType.INSERT) {
             if (tableInfo.getIdType().getKey() >= 2) {
                 Object idValue = metaObject.getValue(tableInfo.getKeyProperty());
@@ -222,15 +223,21 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                     }
                 }
             }
-            // 插入填充
+        }
+        autoFill(ms.getSqlCommandType(), metaObjectHandler, metaObject);
+        return metaObject.getOriginalObject();
+    }
+
+    private static void autoFill(SqlCommandType commandType, MetaObjectHandler metaObjectHandler, MetaObject metaObject) {
+        if (commandType == SqlCommandType.INSERT) {
             if (metaObjectHandler.openInsertFill()) {
                 metaObjectHandler.insertFill(metaObject);
             }
-        } else if (ms.getSqlCommandType() == SqlCommandType.UPDATE && metaObjectHandler.openUpdateFill()) {
-            // 更新填充
-            metaObjectHandler.updateFill(metaObject);
+        } else if (commandType == SqlCommandType.UPDATE) {
+            if (metaObjectHandler.openUpdateFill()) {
+                metaObjectHandler.updateFill(metaObject);
+            }
         }
-        return metaObject.getOriginalObject();
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

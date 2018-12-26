@@ -18,9 +18,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.test.h2.base.H2Test;
 import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserMetaobjMapper;
+import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserMetaobjNoPkMapper;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2UserMetaObj;
+import com.baomidou.mybatisplus.test.h2.entity.persistent.H2UserMetaObjNoPk;
 
 /**
  * <p>
@@ -36,6 +39,8 @@ public class H2MetaObjectHandlerTest extends H2Test {
 
     @Autowired
     private H2UserMetaobjMapper userMapper;
+    @Autowired
+    H2UserMetaobjNoPkMapper userMetaobjNoPkMapper;
 
     @BeforeClass
     public static void initDB() throws SQLException, IOException {
@@ -68,6 +73,29 @@ public class H2MetaObjectHandlerTest extends H2Test {
         Assert.assertEquals(3, userDB.getTestType().intValue());
         Assert.assertEquals("999", userDB.getName());
         assertUpdateFill(userDB.getLastUpdatedDt());
+    }
+
+    @Test
+    public void testAutoFill4NoPk() {
+        Long id = 10098L;
+        H2UserMetaObjNoPk user = new H2UserMetaObjNoPk();
+        user.setTestId(id);
+        user.setName("NO_PK").setAge(18);
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_MONTH, -1);
+        user.setLastUpdatedDt(cal.getTime());
+        userMetaobjNoPkMapper.insert(user);
+
+        H2UserMetaObjNoPk dbUser = userMetaobjNoPkMapper.selectOne(new H2UserMetaObjNoPk().setTestId(id));
+        Assert.assertNotNull("should auto fill INSERT column", dbUser.getTestType());
+        EntityWrapper<H2UserMetaObjNoPk> ew = new EntityWrapper<>();
+        ew.eq("test_id", id);
+        H2UserMetaObjNoPk updateUser = new H2UserMetaObjNoPk().setName("TOMCAT");
+        userMetaobjNoPkMapper.update(updateUser, ew);
+        dbUser = userMetaobjNoPkMapper.selectOne(new H2UserMetaObjNoPk().setTestId(id));
+        Assert.assertEquals("name should be updated", "TOMCAT", dbUser.getName());
+        Assert.assertTrue("last update time should be current sysdate time", Math.abs(System.currentTimeMillis() - dbUser.getLastUpdatedDt().getTime()) < 1000);
+
     }
 
     @Test
