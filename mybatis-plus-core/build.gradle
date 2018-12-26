@@ -1,3 +1,9 @@
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
 dependencies {
     compile project(":mybatis-plus-support")
     compile rootProject.ext.dependencies["jsqlparser"]
@@ -14,7 +20,7 @@ dependencies {
     }
     testCompile rootProject.ext.dependencies["sqlserver"]
     testCompile rootProject.ext.dependencies["postgresql"]
-    testCompile rootProject.ext.dependencies["oracle"]
+//    testCompile rootProject.ext.dependencies["oracle"]
     testCompile rootProject.ext.dependencies["h2"]
     testCompile rootProject.ext.dependencies["mysql"]
     testCompile rootProject.ext.dependencies["slf4j-api"]
@@ -27,4 +33,5 @@ dependencies {
     testCompile rootProject.ext.dependencies["druid"]
     testCompile rootProject.ext.dependencies["fastjson"]
     testCompile rootProject.ext.dependencies["tomcatjdbc"]
+    testCompile name: 'ojdbc-11.2.0.3-jdk16'
 }
