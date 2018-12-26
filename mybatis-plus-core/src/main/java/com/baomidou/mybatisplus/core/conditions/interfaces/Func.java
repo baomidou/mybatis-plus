@@ -335,6 +335,15 @@ public interface Func<This, R> extends Serializable {
     This orderBy(boolean condition, boolean isAsc, R... columns);
 
     /**
+     * 排序：ORDER BY 字段 ASC/DESC
+     * 例：orderBy("user").asc()
+     * @param columns 字段
+     */
+    default OrderBy<This, R> orderBy(R columns) {
+        return new OrderBy<>((This) this, columns);
+    }
+
+    /**
      * ignore
      */
     default This having(String sqlHaving, Object... params) {
