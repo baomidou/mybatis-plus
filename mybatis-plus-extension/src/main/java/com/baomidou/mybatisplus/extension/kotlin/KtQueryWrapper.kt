@@ -17,8 +17,10 @@ package com.baomidou.mybatisplus.extension.kotlin
 
 import com.baomidou.mybatisplus.core.conditions.query.Query
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments
+import com.baomidou.mybatisplus.core.enums.SqlKeyword
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils
+import com.baomidou.mybatisplus.core.toolkit.StringPool
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Predicate
@@ -90,7 +92,13 @@ class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Query<K
     }
 
     override fun getSqlSelect(): String? {
-        return sqlSelect
+        val stringBuilder = StringBuilder()
+        if (distinct) {
+            stringBuilder.append(SqlKeyword.DISTINCT)
+            stringBuilder.append(StringPool.SPACE)
+        }
+        stringBuilder.append(sqlSelect)
+        return stringBuilder.toString()
     }
 
     /**

@@ -18,8 +18,10 @@ package com.baomidou.mybatisplus.core.conditions.query;
 import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper;
 import com.baomidou.mybatisplus.core.conditions.SharedString;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
+import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 
@@ -109,7 +111,13 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
 
     @Override
     public String getSqlSelect() {
-        return sqlSelect.getStringValue();
+        StringBuilder stringBuilder = new StringBuilder();
+        if (distinct) {
+            stringBuilder.append(SqlKeyword.DISTINCT);
+            stringBuilder.append(StringPool.SPACE);
+        }
+        stringBuilder.append(sqlSelect.getStringValue());
+        return stringBuilder.toString();
     }
 
     /**
