@@ -72,6 +72,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * 实体类型
      */
     protected Class<T> entityClass;
+    protected boolean distinct;
 
     @Override
     public T getEntity() {
@@ -492,5 +493,14 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
     @SuppressWarnings("all")
     public This clone() {
         return SerializationUtils.clone(typedThis);
+    }
+
+    public boolean getDistinct() {
+        return distinct;
+    }
+
+    public This distinct() {
+        distinct = true;
+        return typedThis;
     }
 }

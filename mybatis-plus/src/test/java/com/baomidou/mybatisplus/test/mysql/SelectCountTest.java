@@ -7,7 +7,10 @@ import com.baomidou.mybatisplus.test.base.entity.CommonLogicData;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonLogicDataMapper;
 import com.baomidou.mybatisplus.test.mysql.config.MysqlDb;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.springframework.test.context.ContextConfiguration;
@@ -15,6 +18,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 import java.sql.SQLException;
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -46,20 +50,34 @@ public class SelectCountTest {
 
     @Test
     public void testCountAndDistinctWithSelect() {
-        QueryWrapper<CommonData> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("distinct test_int");
-        queryWrapper.eq("test_int", 25).or().eq("test_str", "test");
-        int count = commonDataMapper.selectCount(queryWrapper);
+        QueryWrapper<CommonData> distinct = new QueryWrapper<>();
+        distinct.select("test_int").distinct();
+        distinct.eq("test_int", 25).or().eq("test_str", "test");
+        int count = commonDataMapper.selectCount(distinct);
         Assert.assertEquals(1, count);
+        QueryWrapper<CommonData> commonQuery = new QueryWrapper<>();
+        commonQuery.select("test_int", "test_str");
+        commonQuery.eq("test_int", 25).or().eq("test_str", "test");
+        count = commonDataMapper.selectCount(commonQuery);
+        Assert.assertEquals(2, count);
     }
 
     @Test
     public void testLogicCountAndDistinctWithSelect() {
-        QueryWrapper<CommonLogicData> queryWrapper = new QueryWrapper<>();
-        queryWrapper.select("distinct test_int");
-        queryWrapper.eq("test_int", 25).or().eq("test_str", "test");
-        int count = commonLogicMapper.selectCount(queryWrapper);
+        QueryWrapper<CommonLogicData> distinct = new QueryWrapper<>();
+        distinct.select("test_int").distinct();
+        distinct.eq("test_int", 25).or().eq("test_str", "test");
+        int count = commonLogicMapper.selectCount(distinct);
         Assert.assertEquals(1, count);
+        QueryWrapper<CommonLogicData> commonQuery = new QueryWrapper<>();
+        commonQuery.select("test_int", "test_str");
+        commonQuery.eq("test_int", 25).or().eq("test_str", "test");
+        count = commonLogicMapper.selectCount(commonQuery);
+        Assert.assertEquals(2, count);
+        List<CommonLogicData> commonLogicDataList = commonLogicMapper.selectList(commonQuery);
+        CommonLogicData commonLogicData = commonLogicDataList.get(0);
+        Assert.assertEquals(25, commonLogicData.getTestInt().intValue());
+        Assert.assertEquals("test", commonLogicData.getTestStr());
     }
 
     @Test

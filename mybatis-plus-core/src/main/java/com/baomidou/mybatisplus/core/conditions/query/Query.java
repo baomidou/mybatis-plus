@@ -61,4 +61,14 @@ public interface Query<This, T, R> extends Serializable {
      * 查询条件 SQL 片段
      */
     String getSqlSelect();
+
+    /**
+     * 支持Select_Count中DISTINCT的判断
+     */
+    boolean getDistinct();
+
+    /**
+     * 支持DISTINCT查询
+     */
+    This distinct();
 }

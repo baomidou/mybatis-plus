@@ -87,6 +87,10 @@ public interface Constants extends StringPool {
      */
     String Q_WRAPPER_SQL_SELECT = WRAPPER_DOT + "sqlSelect";
     /**
+     * AbstractWrapper 类的属性 distinct
+     */
+    String A_WRAPPER_DISTINCT = WRAPPER_DOT + "distinct";
+    /**
      * columnMap
      */
     String COLUMN_MAP = "cm";
