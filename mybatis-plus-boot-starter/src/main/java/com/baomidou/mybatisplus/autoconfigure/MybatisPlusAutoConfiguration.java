@@ -34,6 +34,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.io.Resource;
@@ -62,7 +63,7 @@ import java.util.List;
  * @author Kazuki Shimizu
  * @author Eduardo Macarrón
  */
-@org.springframework.context.annotation.Configuration
+@Configuration
 @ConditionalOnClass({SqlSessionFactory.class, SqlSessionFactoryBean.class})
 @ConditionalOnSingleCandidate(DataSource.class)
 @EnableConfigurationProperties(MybatisPlusProperties.class)
@@ -247,7 +248,7 @@ public class MybatisPlusAutoConfiguration {
      * will bring in a bean registrar and automatically register components based
      * on the same component-scanning path as Spring Boot itself.
      */
-    @org.springframework.context.annotation.Configuration
+    @Configuration
     @Import({AutoConfiguredMapperScannerRegistrar.class})
     @ConditionalOnMissingBean(MapperFactoryBean.class)
     public static class MapperScannerRegistrarNotFoundConfiguration {
