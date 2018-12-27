@@ -15,11 +15,12 @@
  */
 package com.baomidou.mybatisplus.core.injector.methods;
 
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.SqlSource;
+
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.SqlSource;
 
 /**
  * <p>
@@ -35,7 +36,7 @@ public class UpdateById extends AbstractMethod {
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.UPDATE_BY_ID;
         String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(),
-            sqlSet(false, false, tableInfo, ENTITY_DOT),
+            sqlSet(false, false, tableInfo, ENTITY, ENTITY_DOT),
             tableInfo.getKeyColumn(), ENTITY_DOT + tableInfo.getKeyProperty(),
             new StringBuilder("<if test=\"et instanceof java.util.Map\">")
                 .append("<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">")
