@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
+import com.baomidou.mybatisplus.core.enums.SqlKeyword;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -33,4 +35,12 @@ public class SharedString implements Serializable {
      * 共享的 string 值
      */
     private String stringValue;
+    /**
+     * 是否DISTINCT
+     */
+    private boolean distinct;
+
+    public String getSelectString() {
+        return distinct ? SqlKeyword.DISTINCT + StringPool.SPACE + stringValue : stringValue;
+    }
 }

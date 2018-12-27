@@ -18,10 +18,8 @@ package com.baomidou.mybatisplus.core.conditions.query;
 import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper;
 import com.baomidou.mybatisplus.core.conditions.SharedString;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
-import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 
@@ -55,14 +53,13 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
         super.initNeed();
     }
 
-    LambdaQueryWrapper(T entity, Class<T> entityClass, boolean distinct, SharedString sqlSelect, AtomicInteger paramNameSeq,
+    LambdaQueryWrapper(T entity, Class<T> entityClass, SharedString sqlSelect, AtomicInteger paramNameSeq,
                        Map<String, Object> paramNameValuePairs, MergeSegments mergeSegments) {
         super.setEntity(entity);
         this.paramNameSeq = paramNameSeq;
         this.paramNameValuePairs = paramNameValuePairs;
         this.expression = mergeSegments;
         this.sqlSelect = sqlSelect;
-        this.distinct = distinct;
         this.entityClass = entityClass;
     }
 
@@ -111,14 +108,20 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
 
     @Override
     public String getSqlSelect() {
-        StringBuilder stringBuilder = new StringBuilder();
-        if (distinct) {
-            stringBuilder.append(SqlKeyword.DISTINCT);
-            stringBuilder.append(StringPool.SPACE);
-        }
-        stringBuilder.append(sqlSelect.getStringValue());
-        return stringBuilder.toString();
+        return sqlSelect.getSelectString();
     }
+
+    @Override
+    public boolean getDistinct() {
+        return sqlSelect.isDistinct();
+    }
+
+    @Override
+    public LambdaQueryWrapper<T> distinct() {
+        sqlSelect.setDistinct(true);
+        return typedThis;
+    }
+
 
     /**
      * <p>
@@ -128,6 +131,6 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
      */
     @Override
     protected LambdaQueryWrapper<T> instance(AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
-        return new LambdaQueryWrapper<>(entity, entityClass, false, null, paramNameSeq, paramNameValuePairs, new MergeSegments());
+        return new LambdaQueryWrapper<>(entity, entityClass, null, paramNameSeq, paramNameValuePairs, new MergeSegments());
     }
 }

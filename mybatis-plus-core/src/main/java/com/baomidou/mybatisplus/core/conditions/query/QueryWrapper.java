@@ -18,7 +18,6 @@ package com.baomidou.mybatisplus.core.conditions.query;
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.SharedString;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
-import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
@@ -96,13 +95,18 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
 
     @Override
     public String getSqlSelect() {
-        StringBuilder stringBuilder = new StringBuilder();
-        if (distinct) {
-            stringBuilder.append(SqlKeyword.DISTINCT);
-            stringBuilder.append(StringPool.SPACE);
-        }
-        stringBuilder.append(sqlSelect.getStringValue());
-        return stringBuilder.toString();
+        return sqlSelect.getSelectString();
+    }
+
+    @Override
+    public boolean getDistinct() {
+        return sqlSelect.isDistinct();
+    }
+
+    @Override
+    public QueryWrapper<T> distinct() {
+        sqlSelect.setDistinct(true);
+        return typedThis;
     }
 
     /**
@@ -111,7 +115,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
      * </p>
      */
     public LambdaQueryWrapper<T> lambda() {
-        return new LambdaQueryWrapper<>(entity, entityClass, distinct, sqlSelect, paramNameSeq, paramNameValuePairs, expression);
+        return new LambdaQueryWrapper<>(entity, entityClass, sqlSelect, paramNameSeq, paramNameValuePairs, expression);
     }
 
     /**

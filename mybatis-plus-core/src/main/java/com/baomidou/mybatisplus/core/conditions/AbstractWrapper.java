@@ -72,7 +72,6 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
      * 实体类型
      */
     protected Class<T> entityClass;
-    protected boolean distinct;
 
     @Override
     public T getEntity() {
@@ -495,12 +494,7 @@ public abstract class AbstractWrapper<T, R, This extends AbstractWrapper<T, R, T
         return SerializationUtils.clone(typedThis);
     }
 
-    public boolean getDistinct() {
-        return distinct;
-    }
-
     public This distinct() {
-        distinct = true;
-        return typedThis;
+        throw new UnsupportedOperationException("Distinct method not support for current wrapper (only support query wrapper) ");
     }
 }
