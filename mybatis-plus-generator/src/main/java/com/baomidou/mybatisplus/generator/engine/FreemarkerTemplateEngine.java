@@ -18,11 +18,9 @@ package com.baomidou.mybatisplus.generator.engine;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.generator.config.ConstVal;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
-
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Map;
@@ -52,17 +50,15 @@ public class FreemarkerTemplateEngine extends AbstractTemplateEngine {
     @Override
     public void writer(Map<String, Object> objectMap, String templatePath, String outputFile) throws Exception {
         Template template = configuration.getTemplate(templatePath);
-        FileOutputStream fileOutputStream = new FileOutputStream(new File(outputFile));
-        template.process(objectMap, new OutputStreamWriter(fileOutputStream, ConstVal.UTF8));
-        fileOutputStream.close();
+        try (FileOutputStream fileOutputStream = new FileOutputStream(outputFile)) {
+            template.process(objectMap, new OutputStreamWriter(fileOutputStream, ConstVal.UTF8));
+        }
         logger.debug("模板:" + templatePath + ";  文件:" + outputFile);
     }
 
 
     @Override
     public String templateFilePath(String filePath) {
-        StringBuilder fp = new StringBuilder();
-        fp.append(filePath).append(".ftl");
-        return fp.toString();
+        return filePath + ".ftl";
     }
 }

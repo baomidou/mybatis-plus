@@ -16,8 +16,11 @@
 package com.baomidou.mybatisplus.extension.service;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.service.additional.query.impl.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.service.additional.query.impl.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 
 import java.io.Serializable;
@@ -384,5 +387,15 @@ public interface IService<T> {
      */
     default IPage<Map<String, Object>> pageMaps(IPage<T> page) {
         return pageMaps(page, Wrappers.emptyWrapper());
+    }
+
+    BaseMapper<T> getBaseMapper();
+
+    default QueryChainWrapper<T> query() {
+        return new QueryChainWrapper<>(getBaseMapper());
+    }
+
+    default LambdaQueryChainWrapper<T> lambdaQuery() {
+        return new LambdaQueryChainWrapper<>(getBaseMapper());
     }
 }

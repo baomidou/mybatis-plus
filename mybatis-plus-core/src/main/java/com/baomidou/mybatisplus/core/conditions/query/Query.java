@@ -24,7 +24,7 @@ import java.util.function.Predicate;
  * @author miemie
  * @since 2018-12-12
  */
-public interface Query<This, T, R> extends Serializable {
+public interface Query<Children, T, R> extends Serializable {
 
     /**
      * 设置查询字段
@@ -32,13 +32,13 @@ public interface Query<This, T, R> extends Serializable {
      * @param columns 字段数组
      * @return children
      */
-    This select(R... columns);
+    Children select(R... columns);
 
     /**
      * ignore
      * <li> 注意只有内部有 entity 才能使用该方法 </li>
      */
-    This select(Predicate<TableFieldInfo> predicate);
+    Children select(Predicate<TableFieldInfo> predicate);
 
     /**
      * <p>
@@ -55,7 +55,7 @@ public interface Query<This, T, R> extends Serializable {
      * @param predicate 过滤方式
      * @return children
      */
-    This select(Class<T> entityClass, Predicate<TableFieldInfo> predicate);
+    Children select(Class<T> entityClass, Predicate<TableFieldInfo> predicate);
 
     /**
      * 查询条件 SQL 片段
@@ -70,5 +70,5 @@ public interface Query<This, T, R> extends Serializable {
     /**
      * 支持DISTINCT查询
      */
-    This distinct();
+    Children distinct();
 }

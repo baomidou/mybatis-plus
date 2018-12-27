@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.core.toolkit;
 
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.Objects;
 
 import com.baomidou.mybatisplus.core.enums.IEnum;
@@ -44,7 +45,12 @@ public class EnumUtils {
     public static <E extends Enum<?> & IEnum> E valueOf(Class<E> enumClass, Object value) {
         E[] es = enumClass.getEnumConstants();
         for (E e : es) {
-            if (Objects.equals(e.getValue(), value)) {
+            Object evalue = e.getValue();
+            if (value instanceof Number && evalue instanceof Number
+                && new BigDecimal(String.valueOf(value)).compareTo(new BigDecimal(String.valueOf(evalue))) == 0) {
+                return e;
+            }
+            if (Objects.equals(evalue, value)) {
                 return e;
             }
         }
@@ -55,7 +61,12 @@ public class EnumUtils {
         E[] es = enumClass.getEnumConstants();
         for (E e : es) {
             try {
-                if (Objects.equals(enumField.get(e), value)) {
+                Object evalue = enumField.get(e);
+                if (value instanceof Number && evalue instanceof Number
+                    && new BigDecimal(String.valueOf(value)).compareTo(new BigDecimal(String.valueOf(evalue))) == 0) {
+                    return e;
+                }
+                if (Objects.equals(evalue, value)) {
                     return e;
                 }
             } catch (IllegalAccessException ignored) {

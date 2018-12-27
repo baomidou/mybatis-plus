@@ -51,6 +51,11 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Autowired
     protected M baseMapper;
 
+    @Override
+    public M getBaseMapper() {
+        return baseMapper;
+    }
+
     /**
      * <p>
      * 判断数据库操作是否成功

@@ -1,12 +1,11 @@
 package com.baomidou.mybatisplus.test.h2;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.test.h2.entity.enums.AgeEnum;
+import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
+import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
 import org.junit.Assert;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -16,12 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.test.h2.entity.enums.AgeEnum;
-import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
-import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -38,6 +37,7 @@ public class H2UserTest extends BaseTest {
 
     @Autowired
     protected IH2UserService userService;
+
 
     @Test
     public void testInsertMy() {
@@ -217,67 +217,86 @@ public class H2UserTest extends BaseTest {
     }
 
     @Test
-    public void testBatchTransactional(){
+    public void testBatchTransactional() {
         try {
             userService.testBatchTransactional();
-        }catch (MybatisPlusException e){
+        } catch (MybatisPlusException e) {
             List<H2User> list = userService.list(new QueryWrapper<H2User>().like("name", "batch"));
             Assert.assertTrue(CollectionUtils.isEmpty(list));
         }
     }
 
     @Test
-    public void testSimpleTransactional(){
+    public void testSimpleTransactional() {
         try {
             userService.testSimpleTransactional();
-        }catch (MybatisPlusException e){
+        } catch (MybatisPlusException e) {
             List<H2User> list = userService.list(new QueryWrapper<H2User>().like("name", "simple"));
             Assert.assertTrue(CollectionUtils.isEmpty(list));
         }
     }
-    
+
     @Test
-    public void testSaveOrUpdateBatchTransactional(){
+    public void testSaveOrUpdateBatchTransactional() {
         try {
             userService.testSaveOrUpdateBatchTransactional();
-        }catch (MybatisPlusException e){
+        } catch (MybatisPlusException e) {
             List<H2User> list = userService.list(new QueryWrapper<H2User>().like("name", "savOrUpdate"));
             Assert.assertTrue(CollectionUtils.isEmpty(list));
         }
     }
-    
+
     @Test
-    public void testSaveBatch(){
-        Assert.assertTrue(userService.saveBatch(Arrays.asList(new H2User("saveBatch1"),new H2User("saveBatch2"),new H2User("saveBatch3"),new H2User("saveBatch4"))));
-        Assert.assertTrue(userService.saveBatch(Arrays.asList(new H2User("saveBatch5"),new H2User("saveBatch6"),new H2User("saveBatch7"),new H2User("saveBatch8")),2));
-        
+    public void testSaveBatch() {
+        Assert.assertTrue(userService.saveBatch(Arrays.asList(new H2User("saveBatch1"), new H2User("saveBatch2"), new H2User("saveBatch3"), new H2User("saveBatch4"))));
+        Assert.assertTrue(userService.saveBatch(Arrays.asList(new H2User("saveBatch5"), new H2User("saveBatch6"), new H2User("saveBatch7"), new H2User("saveBatch8")), 2));
+
     }
-    
+
     @Test
-    public void testUpdateBatch(){
-        Assert.assertTrue(userService.updateBatchById(Arrays.asList(new H2User(1010L,"batch1010"),new H2User(1011L,"batch1011"),new H2User(1010L,"batch1010"),new H2User(1012L,"batch1012"))));
-        Assert.assertTrue(userService.updateBatchById(Arrays.asList(new H2User(1010L,"batch1010A"),new H2User(1011L,"batch1011A"),new H2User(1010L,"batch1010"),new H2User(1012L,"batch1012")),1));
+    public void testUpdateBatch() {
+        Assert.assertTrue(userService.updateBatchById(Arrays.asList(new H2User(1010L, "batch1010"), new H2User(1011L, "batch1011"), new H2User(1010L, "batch1010"), new H2User(1012L, "batch1012"))));
+        Assert.assertTrue(userService.updateBatchById(Arrays.asList(new H2User(1010L, "batch1010A"), new H2User(1011L, "batch1011A"), new H2User(1010L, "batch1010"), new H2User(1012L, "batch1012")), 1));
     }
-    
+
     @Test
-    public void testSaveOrUpdateBatch(){
-        Assert.assertTrue(userService.saveOrUpdateBatch(Arrays.asList(new H2User(1010L,"batch1010"),new H2User("batch1011"),new H2User(1010L,"batch1010"),new H2User("batch1015"))));
-        Assert.assertTrue(userService.saveOrUpdateBatch(Arrays.asList(new H2User(1010L,"batch1010A"),new H2User("batch1011A"),new H2User(1010L,"batch1010"),new H2User("batch1016")),1));
+    public void testSaveOrUpdateBatch() {
+        Assert.assertTrue(userService.saveOrUpdateBatch(Arrays.asList(new H2User(1010L, "batch1010"), new H2User("batch1011"), new H2User(1010L, "batch1010"), new H2User("batch1015"))));
+        Assert.assertTrue(userService.saveOrUpdateBatch(Arrays.asList(new H2User(1010L, "batch1010A"), new H2User("batch1011A"), new H2User(1010L, "batch1010"), new H2User("batch1016")), 1));
     }
-    
+
     @Test
-    public void testSimpleAndBatch(){
-        Assert.assertTrue(userService.save(new H2User("testSimpleAndBatch1",0)));
-        Assert.assertTrue(userService.saveOrUpdateBatch(Arrays.asList(new H2User("testSimpleAndBatch2"),new H2User("testSimpleAndBatch3"),new H2User("testSimpleAndBatch4")),1));
+    public void testSimpleAndBatch() {
+        Assert.assertTrue(userService.save(new H2User("testSimpleAndBatch1", 0)));
+        Assert.assertTrue(userService.saveOrUpdateBatch(Arrays.asList(new H2User("testSimpleAndBatch2"), new H2User("testSimpleAndBatch3"), new H2User("testSimpleAndBatch4")), 1));
     }
-    
+
     @Test
-    public void testSimpleAndBatchTransactional(){
+    public void testSimpleAndBatchTransactional() {
         try {
             userService.testSimpleAndBatchTransactional();
-        }catch (MybatisPlusException e){
+        } catch (MybatisPlusException e) {
             List<H2User> list = userService.list(new QueryWrapper<H2User>().like("name", "simpleAndBatchTx"));
             Assert.assertTrue(CollectionUtils.isEmpty(list));
         }
+    }
+
+    @Test
+    public void testServiceImplInnerLambdaQuery() {
+        H2User tomcat = userService.lambdaQuery().eq(H2User::getName, "Tomcat").one();
+        Assert.assertNotNull(tomcat);
+        Assert.assertNotEquals(0L, userService.lambdaQuery().like(H2User::getName, "a").count().longValue());
+        userService.lambdaQuery().like(H2User::getName, "T")
+            .ne(H2User::getAge, AgeEnum.TWO)
+            .ge(H2User::getVersion, 1)
+            .isNull(H2User::getPrice)
+            .list();
+    }
+
+    @Test
+    public void testServiceChainQuery() {
+        H2User tomcat = userService.query().eq("name", "Tomcat").one();
+        Assert.assertNotNull("tomcat should not be null", tomcat);
+        userService.query().nested(i -> i.eq("name", "Tomcat")).list();
     }
 }

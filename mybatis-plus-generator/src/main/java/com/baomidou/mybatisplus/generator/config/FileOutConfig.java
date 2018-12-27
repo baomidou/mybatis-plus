@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.generator.config;
 
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
-
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -49,5 +48,4 @@ public abstract class FileOutConfig {
      * 输出文件
      */
     public abstract String outputFile(TableInfo tableInfo);
-
 }

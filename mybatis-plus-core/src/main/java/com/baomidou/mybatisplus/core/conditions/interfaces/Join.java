@@ -26,12 +26,12 @@ import java.io.Serializable;
  * @author hubin miemie HCL
  * @since 2017-05-26
  */
-public interface Join<This> extends Serializable {
+public interface Join<Children> extends Serializable {
 
     /**
      * ignore
      */
-    default This or() {
+    default Children or() {
         return or(true);
     }
 
@@ -41,12 +41,12 @@ public interface Join<This> extends Serializable {
      * @param condition 执行条件
      * @return children
      */
-    This or(boolean condition);
+    Children or(boolean condition);
 
     /**
      * ignore
      */
-    default This apply(String applySql, Object... value) {
+    default Children apply(String applySql, Object... value) {
         return apply(true, applySql, value);
     }
 
@@ -60,12 +60,12 @@ public interface Join<This> extends Serializable {
      * @param condition 执行条件
      * @return children
      */
-    This apply(boolean condition, String applySql, Object... value);
+    Children apply(boolean condition, String applySql, Object... value);
 
     /**
      * ignore
      */
-    default This last(String lastSql) {
+    default Children last(String lastSql) {
         return last(true, lastSql);
     }
 
@@ -78,12 +78,12 @@ public interface Join<This> extends Serializable {
      * @param lastSql   sql语句
      * @return children
      */
-    This last(boolean condition, String lastSql);
+    Children last(boolean condition, String lastSql);
 
     /**
      * ignore
      */
-    default This exists(String existsSql) {
+    default Children exists(String existsSql) {
         return exists(true, existsSql);
     }
 
@@ -96,12 +96,12 @@ public interface Join<This> extends Serializable {
      * @param existsSql sql语句
      * @return children
      */
-    This exists(boolean condition, String existsSql);
+    Children exists(boolean condition, String existsSql);
 
     /**
      * ignore
      */
-    default This notExists(String notExistsSql) {
+    default Children notExists(String notExistsSql) {
         return notExists(true, notExistsSql);
     }
 
@@ -114,5 +114,5 @@ public interface Join<This> extends Serializable {
      * @param notExistsSql sql语句
      * @return children
      */
-    This notExists(boolean condition, String notExistsSql);
+    Children notExists(boolean condition, String notExistsSql);
 }

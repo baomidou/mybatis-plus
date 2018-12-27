@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2020, hubin (jobob@qq.com).
+ * Copyright (c) 2011-2016, hubin (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,33 +13,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.generator.config.po;
+package com.baomidou.mybatisplus.extension.service.additional.update;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import lombok.Data;
+import com.baomidou.mybatisplus.extension.service.additional.ChainWrapper;
 
 /**
- * <p>
- * 字段填充
- * </p>
+ * 具有更新方法的定义
  *
- * @author hubin
- * @since 2017-06-26
+ * @author miemie
+ * @since 2018-12-19
  */
-@Data
-public class TableFill {
+public interface ChainUpdate<T> extends ChainWrapper<T> {
 
-    /**
-     * 字段名称
-     */
-    private String fieldName;
-    /**
-     * 忽略类型
-     */
-    private FieldFill fieldFill;
-
-    public TableFill(String fieldName, FieldFill ignore) {
-        this.fieldName = fieldName;
-        this.fieldFill = ignore;
+    default int update(T entity) {
+        return getBaseMapper().update(entity, getWrapper());
     }
 }

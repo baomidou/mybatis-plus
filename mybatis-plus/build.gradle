@@ -1,23 +1,26 @@
 dependencies {
-    compile project(":mybatis-plus-extension")
-    compile project(":mybatis-plus-generator"), optional
+    api project(":mybatis-plus-extension")
+    implementation project(":mybatis-plus-generator")
 
-    testCompile rootProject.ext.dependencies["spring-web"]
-    testCompile rootProject.ext.dependencies["javax.servlet-api"]
+    testCompile "${lib.'spring-web'}"
+    testCompile "${lib.'javax.servlet-api'}"
 
-    testCompile rootProject.ext.dependencies["spring-test"]
-    testCompile rootProject.ext.dependencies["fastjson"]
+    testCompile "${lib.'spring-test'}"
+    testCompile "${lib.fastjson}"
 
-    testCompile rootProject.ext.dependencies["hikaricp"]
-    testCompile rootProject.ext.dependencies["commons-dbcp2"]
-    testCompile rootProject.ext.dependencies["druid"]
-    testCompile rootProject.ext.dependencies["tomcatjdbc"]
+    testCompile "${lib.hikaricp}"
+    testCompile "${lib.'commons-dbcp2'}"
+    testCompile "${lib.druid}"
+    testCompile "${lib.tomcatjdbc}"
 
-    testCompile rootProject.ext.dependencies["h2"]
-    testCompile rootProject.ext.dependencies["sqlserver"]
-    testCompile rootProject.ext.dependencies["postgresql"]
-    testCompile rootProject.ext.dependencies["oracle"]
-    testCompile rootProject.ext.dependencies["mysql"]
-    testCompile rootProject.ext.dependencies["jackson"]
-    testCompile rootProject.ext.dependencies["logback-classic"]
+    testCompile "${lib.h2}"
+    testCompile "${lib.sqlserver}"
+    testCompile "${lib.postgresql}"
+    testCompile lib.oracle as ConfigurableFileTree
+    testCompile "${lib.mysql}"
+    testCompile "${lib.jackson}"
+    testCompile "${lib.'logback-classic'}"
+
+    testCompile "${lib.'spring-context-support'}"
+    testCompile "${lib.'spring-jdbc'}"
 }

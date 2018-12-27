@@ -40,7 +40,30 @@ public class SqlServerTypeConvert implements ITypeConvert {
         } else if (t.contains("int")) {
             return DbColumnType.INTEGER;
         } else if (t.contains("date") || t.contains("time")) {
-            return DbColumnType.DATE;
+            switch (globalConfig.getDateType()) {
+                case ONLY_DATE:
+                    return DbColumnType.DATE;
+                case SQL_PACK:
+                    switch (t) {
+                        case "date":
+                            return DbColumnType.DATE_SQL;
+                        case "time":
+                            return DbColumnType.TIME;
+                        default:
+                            return DbColumnType.TIMESTAMP;
+                    }
+                case TIME_PACK:
+                    switch (t) {
+                        case "date":
+                            return DbColumnType.LOCAL_DATE;
+                        case "time":
+                            return DbColumnType.LOCAL_TIME;
+                        default:
+                            return DbColumnType.LOCAL_DATE_TIME;
+                    }
+                default:
+                    return DbColumnType.DATE;
+            }
         } else if (t.contains("text")) {
             return DbColumnType.STRING;
         } else if (t.contains("bit")) {

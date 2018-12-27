@@ -15,13 +15,12 @@
  */
 package com.baomidou.mybatisplus.core.conditions.segments;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
-
 import lombok.Getter;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * <p>
@@ -40,6 +39,9 @@ public class MergeSegments implements ISqlSegment {
     private final HavingSegmentList having = new HavingSegmentList();
     private final OrderBySegmentList orderBy = new OrderBySegmentList();
 
+    private String sqlSegment = StringPool.EMPTY;
+    private boolean cacheSqlSegment = true;
+
     public void add(ISqlSegment... iSqlSegments) {
         List<ISqlSegment> list = Arrays.asList(iSqlSegments);
         ISqlSegment sqlSegment = list.get(0);
@@ -52,19 +54,22 @@ public class MergeSegments implements ISqlSegment {
         } else {
             normal.addAll(list);
         }
+        cacheSqlSegment = false;
     }
 
     @Override
     public String getSqlSegment() {
+        if (cacheSqlSegment) {
+            return sqlSegment;
+        }
+        cacheSqlSegment = true;
         if (normal.isEmpty()) {
             if (!groupBy.isEmpty() || !orderBy.isEmpty()) {
-                return groupBy.getSqlSegment() + having.getSqlSegment() + orderBy.getSqlSegment();
-            } else {
-                return StringPool.EMPTY;
+                sqlSegment = groupBy.getSqlSegment() + having.getSqlSegment() + orderBy.getSqlSegment();
             }
         } else {
-            return normal.getSqlSegment() + groupBy.getSqlSegment() + having.getSqlSegment() + orderBy.getSqlSegment();
+            sqlSegment = normal.getSqlSegment() + groupBy.getSqlSegment() + having.getSqlSegment() + orderBy.getSqlSegment();
         }
+        return sqlSegment;
     }
-
 }

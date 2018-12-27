@@ -1,28 +1,28 @@
 apply plugin: 'org.jetbrains.kotlin.jvm'
 dependencies {
-    compile project(":mybatis-plus-core")
-    compile rootProject.ext.dependencies["mybatis-spring"]
-    compile rootProject.ext.dependencies["mybatis"]
+    api project(":mybatis-plus-core")
+    api "${lib.'mybatis-spring'}"
+    api "${lib.mybatis}"
 
-    compile rootProject.ext.dependencies["kotlin-stdlib-jdk8"], optional
-    compile rootProject.ext.dependencies["kotlin-reflect"], optional
-    compile rootProject.ext.dependencies["spring-context-support"], optional
-    compile rootProject.ext.dependencies["spring-jdbc"], optional
-    compile rootProject.ext.dependencies["slf4j-api"], optional
+    implementation "${lib.'kotlin-stdlib-jdk8'}"
+    implementation "${lib.'kotlin-reflect'}"
+    implementation "${lib.'spring-context-support'}"
+    implementation "${lib.'spring-jdbc'}"
+    implementation "${lib.'slf4j-api'}"
 
-    testCompile rootProject.ext.dependencies["spring-web"]
-    testCompile rootProject.ext.dependencies["javax.servlet-api"]
-    testCompile rootProject.ext.dependencies["spring-test"]
-    testCompile rootProject.ext.dependencies["fastjson"]
+    testCompile "${lib.'spring-web'}"
+    testCompile "${lib.'javax.servlet-api'}"
+    testCompile "${lib.'spring-test'}"
+    testCompile "${lib.fastjson}"
 
-    testCompile rootProject.ext.dependencies["hikaricp"]
-    testCompile rootProject.ext.dependencies["commons-dbcp2"]
-    testCompile rootProject.ext.dependencies["druid"]
-    testCompile rootProject.ext.dependencies["tomcatjdbc"]
+    testCompile "${lib.hikaricp}"
+    testCompile "${lib.'commons-dbcp2'}"
+    testCompile "${lib.druid}"
+    testCompile "${lib.tomcatjdbc}"
 
-    testCompile rootProject.ext.dependencies["h2"]
-    testCompile rootProject.ext.dependencies["sqlserver"]
-    testCompile rootProject.ext.dependencies["postgresql"]
-    testCompile rootProject.ext.dependencies["oracle"]
-    testCompile rootProject.ext.dependencies["mysql"]
+    testCompile "${lib.h2}"
+    testCompile "${lib.sqlserver}"
+    testCompile "${lib.postgresql}"
+    testCompile lib.oracle as ConfigurableFileTree
+    testCompile "${lib.mysql}"
 }

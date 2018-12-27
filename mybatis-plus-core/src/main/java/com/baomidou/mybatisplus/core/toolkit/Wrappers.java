@@ -9,7 +9,6 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * <p>
@@ -218,7 +217,7 @@ public final class Wrappers {
         }
 
         @Override
-        protected EmptyWrapper<T> instance(AtomicInteger paramNameSeq, Map<String, Object> paramNameValuePairs) {
+        protected EmptyWrapper<T> instance() {
             throw new UnsupportedOperationException();
         }
     }

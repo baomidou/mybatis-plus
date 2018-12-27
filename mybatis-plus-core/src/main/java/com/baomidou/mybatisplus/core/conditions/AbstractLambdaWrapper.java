@@ -36,8 +36,8 @@ import java.util.Optional;
  * @since 2017-05-26
  */
 @SuppressWarnings("serial")
-public abstract class AbstractLambdaWrapper<T, This extends AbstractLambdaWrapper<T, This>>
-    extends AbstractWrapper<T, SFunction<T, ?>, This> {
+public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWrapper<T, Children>>
+    extends AbstractWrapper<T, SFunction<T, ?>, Children> {
 
     private Map<String, String> columnMap = null;
     private boolean initColumnMap = false;

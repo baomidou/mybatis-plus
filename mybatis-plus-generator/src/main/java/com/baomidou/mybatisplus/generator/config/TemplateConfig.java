@@ -15,6 +15,11 @@
  */
 package com.baomidou.mybatisplus.generator.config;
 
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Getter;
+import lombok.experimental.Accessors;
+
 /**
  * <p>
  * 模板路径配置项
@@ -23,8 +28,11 @@ package com.baomidou.mybatisplus.generator.config;
  * @author tzg hubin
  * @since 2017-06-17
  */
+@Data
+@Accessors(chain = true)
 public class TemplateConfig {
 
+    @Getter(AccessLevel.NONE)
     private String entity = ConstVal.TEMPLATE_ENTITY_JAVA;
 
     private String entityKt = ConstVal.TEMPLATE_ENTITY_KT;
@@ -42,60 +50,4 @@ public class TemplateConfig {
     public String getEntity(boolean kotlin) {
         return kotlin ? entityKt : entity;
     }
-
-    public TemplateConfig setEntityKt(String entityKt) {
-        this.entityKt = entityKt;
-        return this;
-    }
-
-    public TemplateConfig setEntity(String entity) {
-        this.entity = entity;
-        return this;
-    }
-
-    public String getService() {
-        return service;
-    }
-
-    public TemplateConfig setService(String service) {
-        this.service = service;
-        return this;
-    }
-
-    public String getServiceImpl() {
-        return serviceImpl;
-    }
-
-    public TemplateConfig setServiceImpl(String serviceImpl) {
-        this.serviceImpl = serviceImpl;
-        return this;
-    }
-
-    public String getMapper() {
-        return mapper;
-    }
-
-    public TemplateConfig setMapper(String mapper) {
-        this.mapper = mapper;
-        return this;
-    }
-
-    public String getXml() {
-        return xml;
-    }
-
-    public TemplateConfig setXml(String xml) {
-        this.xml = xml;
-        return this;
-    }
-
-    public String getController() {
-        return controller;
-    }
-
-    public TemplateConfig setController(String controller) {
-        this.controller = controller;
-        return this;
-    }
-
 }
