@@ -30,9 +30,12 @@ import com.baomidou.mybatisplus.extension.service.additional.update.ChainUpdate;
 public class UpdateChainWrapper<T> extends AbstractChainWrapper<T, String, UpdateChainWrapper<T>, UpdateWrapper<T>>
     implements ChainUpdate<T>, Update<UpdateChainWrapper<T>, String> {
 
+    private BaseMapper<T> baseMapper;
+
     public UpdateChainWrapper(BaseMapper<T> baseMapper) {
-        super(baseMapper);
-        wrapperChildren = new UpdateWrapper<>();
+        super();
+        this.baseMapper = baseMapper;
+        super.wrapperChildren = new UpdateWrapper<>();
     }
 
     @Override
@@ -51,4 +54,10 @@ public class UpdateChainWrapper<T> extends AbstractChainWrapper<T, String, Updat
     public String getSqlSet() {
         throw ExceptionUtils.mpe("can not use this method for \"%s\"", "getSqlSet");
     }
+
+    @Override
+    public BaseMapper<T> getBaseMapper() {
+        return baseMapper;
+    }
+
 }

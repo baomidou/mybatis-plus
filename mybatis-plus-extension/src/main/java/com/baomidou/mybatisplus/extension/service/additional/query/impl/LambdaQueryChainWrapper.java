@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.extension.service.additional.query.impl;
 
+import java.util.function.Predicate;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.Query;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -24,8 +26,6 @@ import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.extension.service.additional.AbstractChainWrapper;
 import com.baomidou.mybatisplus.extension.service.additional.query.ChainQuery;
 
-import java.util.function.Predicate;
-
 /**
  * @author miemie
  * @since 2018-12-19
@@ -34,9 +34,12 @@ import java.util.function.Predicate;
 public class LambdaQueryChainWrapper<T> extends AbstractChainWrapper<T, SFunction<T, ?>, LambdaQueryChainWrapper<T>, LambdaQueryWrapper<T>>
     implements ChainQuery<T>, Query<LambdaQueryChainWrapper<T>, T, SFunction<T, ?>> {
 
+    private BaseMapper<T> baseMapper;
+
     public LambdaQueryChainWrapper(BaseMapper<T> baseMapper) {
-        super(baseMapper);
-        wrapperChildren = new LambdaQueryWrapper<>();
+        super();
+        this.baseMapper = baseMapper;
+        super.wrapperChildren = new LambdaQueryWrapper<>();
     }
 
     @SafeVarargs
@@ -62,4 +65,10 @@ public class LambdaQueryChainWrapper<T> extends AbstractChainWrapper<T, SFunctio
     public String getSqlSelect() {
         throw ExceptionUtils.mpe("can not use this method for \"%s\"", "getSqlSelect");
     }
+
+    @Override
+    public BaseMapper<T> getBaseMapper() {
+        return baseMapper;
+    }
+
 }
