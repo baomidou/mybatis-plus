@@ -28,4 +28,8 @@ public interface ChainUpdate<T> extends ChainWrapper<T> {
     default int update(T entity) {
         return getBaseMapper().update(entity, getWrapper());
     }
+
+    default int update() {
+        return getBaseMapper().update(null, getWrapper());
+    }
 }

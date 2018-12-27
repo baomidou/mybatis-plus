@@ -27,6 +27,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.additional.query.impl.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.additional.query.impl.QueryChainWrapper;
+import com.baomidou.mybatisplus.extension.service.additional.update.impl.LambdaUpdateChainWrapper;
+import com.baomidou.mybatisplus.extension.service.additional.update.impl.UpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 
 /**
@@ -365,7 +367,7 @@ public interface IService<T> {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
     default List<Object> listObjs(Wrapper<T> queryWrapper) {
-        return listObjs(Wrappers.emptyWrapper(), Function.identity());
+        return listObjs(queryWrapper, Function.identity());
     }
 
     /**
@@ -408,5 +410,13 @@ public interface IService<T> {
 
     default LambdaQueryChainWrapper<T> lambdaQuery() {
         return new LambdaQueryChainWrapper<>(getBaseMapper());
+    }
+
+    default UpdateChainWrapper<T> update() {
+        return new UpdateChainWrapper<>(getBaseMapper());
+    }
+
+    default LambdaUpdateChainWrapper<T> lambdaUpdate() {
+        return new LambdaUpdateChainWrapper<>(getBaseMapper());
     }
 }
