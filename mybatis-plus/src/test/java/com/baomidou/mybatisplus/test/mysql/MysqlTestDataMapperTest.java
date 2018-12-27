@@ -1,5 +1,21 @@
 package com.baomidou.mybatisplus.test.mysql;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.junit.Assert;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -16,16 +32,6 @@ import com.baomidou.mybatisplus.test.base.enums.TestEnum;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonLogicDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.mysql.MysqlDataMapper;
-import org.junit.Assert;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.annotation.Resource;
-import java.util.*;
 
 
 /**
@@ -371,5 +377,11 @@ public class MysqlTestDataMapperTest {
         System.out.println(wrapper.getSqlSegment());
         commonMapper.selectList(wrapper);
 //        commonMapper.selectPage(new Page<>(1, 10), wrapper);
+    }
+
+    @Test
+    public void testUpdateNotEntity() {
+        mysqlMapper.update(null, Wrappers.<MysqlData>lambdaUpdate().set(MysqlData::getOrder, 1));
+        commonLogicMapper.update(null, Wrappers.<CommonLogicData>lambdaUpdate().set(CommonLogicData::getTestInt, 1));
     }
 }

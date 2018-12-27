@@ -15,6 +15,12 @@
  */
 package com.baomidou.mybatisplus.extension.service;
 
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -22,12 +28,6 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.additional.query.impl.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.service.additional.query.impl.QueryChainWrapper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
-
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 
 /**
  * <p>
@@ -144,6 +144,17 @@ public interface IService<T> {
      * @param updateWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper}
      */
     boolean update(T entity, Wrapper<T> updateWrapper);
+
+    /**
+     * <p>
+     * 根据 UpdateWrapper 条件，更新记录 需要设置sqlset
+     * </p>
+     *
+     * @param updateWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper}
+     */
+    default boolean update(Wrapper<T> updateWrapper) {
+        return update(null, updateWrapper);
+    }
 
     /**
      * <p>
