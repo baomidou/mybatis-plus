@@ -18,7 +18,6 @@ ext {
         mybatisSpringVersion = '1.3.2',
         mybatisVersion = '3.4.6',
         springVersion = '5.1.2.RELEASE',
-        springBootVersion = '2.1.0.RELEASE',
         jsqlparserVersion = '1.3',
     ]
 
@@ -204,9 +203,11 @@ subprojects {
                             d.scope.text() == 'runtime' && project.configurations.findByName("implementation").allDependencies.find { dep ->
                                 dep.name == it.artifactId.text()
                             }.each() {
-                                d.scope*.value = 'provided'
                                 if(d.artifactId.text() != 'lombok'){
+                                    d.scope*.value = 'compile'
                                     d.appendNode('optional', true)
+                                }else {
+                                    d.scope*.value = 'provided'
                                 }
                             }
                         }
