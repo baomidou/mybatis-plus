@@ -1,4 +1,4 @@
-rootProject.name = 'mybatis-plus'
+rootProject.name = 'mybatis-plus-root'
 include 'mybatis-plus'
 include 'mybatis-plus-core'
 include 'mybatis-plus-annotation'
