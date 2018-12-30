@@ -16,8 +16,12 @@
 package com.baomidou.mybatisplus.extension.kotlin
 
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils
+import com.baomidou.mybatisplus.core.toolkit.StringPool
+import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache
 import java.util.*
+import java.util.stream.Collectors.joining
 import kotlin.reflect.KProperty
 
 /**
@@ -29,14 +33,28 @@ import kotlin.reflect.KProperty
  */
 abstract class AbstractKtWrapper<T, This : AbstractKtWrapper<T, This>> : AbstractWrapper<T, KProperty<*>, This>() {
 
-    private var columnMap: Map<String, String>? = null
+    private var columnMap: Map<String, ColumnCache>? = null
 
     override fun initEntityClass() {
         super.initEntityClass()
         columnMap = LambdaUtils.getColumnMap(this.entityClass.name)
     }
 
+    override fun columnsToString(vararg columns: KProperty<*>): String {
+        return columnsToString(true, *columns)
+    }
+
+    fun columnsToString(onlyColumn: Boolean, vararg columns: KProperty<*>): String {
+        return Arrays.stream(columns).map { i -> columnToString(i, onlyColumn) }.collect(joining(StringPool.COMMA))
+    }
+
     override fun columnToString(kProperty: KProperty<*>): String? {
-        return columnMap?.get(kProperty.name.toUpperCase(Locale.ENGLISH))
+        return columnToString(kProperty, true)
+    }
+
+    fun columnToString(kProperty: KProperty<*>, onlyColumn: Boolean): String? {
+        return Optional.ofNullable(columnMap?.get(kProperty.name.toUpperCase(Locale.ENGLISH)))
+            .map(if (onlyColumn) ColumnCache::getColumn else ColumnCache::getColumnSelect)
+            .orElseThrow { ExceptionUtils.mpe("your property named %s cannot find the corresponding database column name!", kProperty.name) }
     }
 }

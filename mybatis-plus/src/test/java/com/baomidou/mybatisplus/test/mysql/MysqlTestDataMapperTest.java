@@ -1,21 +1,5 @@
 package com.baomidou.mybatisplus.test.mysql;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import org.junit.Assert;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -32,6 +16,18 @@ import com.baomidou.mybatisplus.test.base.enums.TestEnum;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonLogicDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.mysql.MysqlDataMapper;
+import com.baomidou.mybatisplus.test.mysql.config.MysqlDb;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.annotation.Resource;
+import java.util.*;
 
 
 /**
@@ -54,20 +50,21 @@ public class MysqlTestDataMapperTest {
     @Resource
     private MysqlDataMapper mysqlMapper;
 
-//    @BeforeClass
-//    public static void init() throws Exception {
-//        MysqlDb.initMysqlData();
-//        System.out.println("init success");
-//    }
+    @BeforeClass
+    public static void init() throws Exception {
+        MysqlDb.initMysqlData();
+        System.out.println("init success");
+    }
 
     @Test
     public void a1_insertForeach() {
         for (int i = 1; i < 20; i++) {
             Long id = (long) i;
-            commonMapper.insert(new CommonData().setTestInt(i).setTestStr(String.format("第%s条数据", i)).setId(id)
+            String str = String.format("第%s条数据", i);
+            commonMapper.insert(new CommonData().setTestInt(i).setTestStr(str).setId(id)
                 .setTestEnum(TestEnum.ONE));
-            commonLogicMapper.insert(new CommonLogicData().setTestInt(i).setTestStr(String.format("第%s条数据", i)).setId(id));
-            mysqlMapper.insert(new MysqlData().setOrder(i).setGroup(i).setId(id).setTestStr(String.format("第%s条数据", i)));
+            commonLogicMapper.insert(new CommonLogicData().setTestInt(i).setTestStr(str).setId(id));
+            mysqlMapper.insert(new MysqlData().setOrder(i).setGroup(i).setId(id).setTestStr(str).setYaHoStr(str));
         }
     }
 
@@ -77,9 +74,10 @@ public class MysqlTestDataMapperTest {
         List<CommonData> commonDataList = new ArrayList<>();
         List<CommonLogicData> commonLogicDataList = new ArrayList<>();
         for (int i = 0; i < 9; i++) {
-            mysqlDataList.add(new MysqlData().setOrder(i).setGroup(i).setTestStr(i + "条"));
-            commonDataList.add(new CommonData().setTestInt(i).setTestEnum(TestEnum.TWO).setTestStr(i + "条"));
-            commonLogicDataList.add(new CommonLogicData().setTestInt(i).setTestStr(i + "条"));
+            String str = i + "条";
+            mysqlDataList.add(new MysqlData().setOrder(i).setGroup(i).setTestStr(str).setYaHoStr(str));
+            commonDataList.add(new CommonData().setTestInt(i).setTestEnum(TestEnum.TWO).setTestStr(str));
+            commonLogicDataList.add(new CommonLogicData().setTestInt(i).setTestStr(str));
         }
         Assert.assertEquals(9, mysqlMapper.insertBatchSomeColumn(mysqlDataList));
         Assert.assertEquals(9, commonMapper.insertBatchSomeColumn(commonDataList));
@@ -355,7 +353,7 @@ public class MysqlTestDataMapperTest {
     @Test
     public void d11_testWrapperCustomSql() {
         // 1. 只有 order by 或者 last
-        mysqlMapper.getAll(Wrappers.<MysqlData>query().lambda().orderByDesc(MysqlData::getOrder).last("limit 1"));
+        mysqlMapper.getAll(Wrappers.<MysqlData>lambdaQuery().orderByDesc(MysqlData::getOrder).last("limit 1"));
         // 2. 什么都没有情况
         mysqlMapper.getAll(Wrappers.emptyWrapper());
         // 3. 只有 where 条件
@@ -377,6 +375,11 @@ public class MysqlTestDataMapperTest {
         System.out.println(wrapper.getSqlSegment());
         commonMapper.selectList(wrapper);
 //        commonMapper.selectPage(new Page<>(1, 10), wrapper);
+    }
+
+    @Test
+    public void testLambdaColumnCache() {
+        mysqlMapper.selectList(Wrappers.<MysqlData>lambdaQuery().select(MysqlData::getYaHoStr)).forEach(System.out::print);
     }
 
     @Test

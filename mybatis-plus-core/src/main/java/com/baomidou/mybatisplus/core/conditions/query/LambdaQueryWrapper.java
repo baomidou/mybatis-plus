@@ -74,7 +74,7 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     @Override
     public final LambdaQueryWrapper<T> select(SFunction<T, ?>... columns) {
         if (ArrayUtils.isNotEmpty(columns)) {
-            this.sqlSelect.setStringValue(this.columnsToString(columns));
+            this.sqlSelect.setStringValue(columnsToString(false, columns));
         }
         return typedThis;
     }

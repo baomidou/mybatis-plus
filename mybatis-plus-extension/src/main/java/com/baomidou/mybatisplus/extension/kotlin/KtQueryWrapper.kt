@@ -43,8 +43,8 @@ class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Query<K
         this.initNeed()
     }
 
-    internal constructor(entity: T, entityClass: Class<T>?, sqlSelect: String?, paramNameSeq: AtomicInteger, paramNameValuePairs: Map<String, Any>,
-                         mergeSegments: MergeSegments) {
+    internal constructor(entity: T, entityClass: Class<T>?, sqlSelect: String?, paramNameSeq: AtomicInteger,
+                         paramNameValuePairs: Map<String, Any>, mergeSegments: MergeSegments) {
         this.entity = entity
         this.paramNameSeq = paramNameSeq
         this.paramNameValuePairs = paramNameValuePairs
@@ -61,7 +61,7 @@ class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Query<K
     @SafeVarargs
     override fun select(vararg columns: KProperty<*>): KtQueryWrapper<T> {
         if (ArrayUtils.isNotEmpty(columns)) {
-            this.sqlSelect = this.columnsToString(*columns)
+            this.sqlSelect = this.columnsToString(false, *columns)
         }
         return typedThis
     }

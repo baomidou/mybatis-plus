@@ -20,4 +20,6 @@ public class MysqlData {
     private Integer group;
     @TableField(strategy = FieldStrategy.NOT_EMPTY)
     private String testStr;
+    @TableField("lambda_str")
+    private String yaHoStr;
 }

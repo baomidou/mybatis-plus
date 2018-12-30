@@ -15,16 +15,17 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
-import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * <p>
@@ -39,7 +40,7 @@ import java.util.Optional;
 public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWrapper<T, Children>>
     extends AbstractWrapper<T, SFunction<T, ?>, Children> {
 
-    private Map<String, String> columnMap = null;
+    private Map<String, ColumnCache> columnMap = null;
     private boolean initColumnMap = false;
 
     @Override
@@ -52,11 +53,24 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
     }
 
     @Override
-    protected String columnToString(SFunction<T, ?> column) {
-        return getColumn(LambdaUtils.resolve(column));
+    protected String columnsToString(SFunction<T, ?>... columns) {
+        return columnsToString(true, columns);
     }
 
-    private String getColumn(SerializedLambda lambda) {
+    protected String columnsToString(boolean onlyColumn, SFunction<T, ?>... columns) {
+        return Arrays.stream(columns).map(i -> columnToString(i, onlyColumn)).collect(joining(StringPool.COMMA));
+    }
+
+    @Override
+    protected String columnToString(SFunction<T, ?> column) {
+        return columnToString(column, true);
+    }
+
+    protected String columnToString(SFunction<T, ?> column, boolean onlyColumn) {
+        return getColumn(LambdaUtils.resolve(column), onlyColumn);
+    }
+
+    private String getColumn(SerializedLambda lambda, boolean onlyColumn) {
         String fieldName = StringUtils.resolveFieldName(lambda.getImplMethodName());
         if (!initColumnMap || !columnMap.containsKey(fieldName.toUpperCase(Locale.ENGLISH))) {
             String entityClassName = lambda.getImplClassName();
@@ -66,6 +80,7 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
             initColumnMap = true;
         }
         return Optional.ofNullable(columnMap.get(fieldName.toUpperCase(Locale.ENGLISH)))
+            .map(onlyColumn ? ColumnCache::getColumn : ColumnCache::getColumnSelect)
             .orElseThrow(() -> ExceptionUtils.mpe("your property named %s cannot find the corresponding database column name!", fieldName));
     }
 }
