@@ -45,6 +45,14 @@ public abstract class Wrapper<T> implements ISqlSegment {
      */
     public abstract T getEntity();
 
+    public String getSqlSelect() {
+        return null;
+    }
+
+    public String getSqlSet() {
+        return null;
+    }
+
     /**
      * 获取 MergeSegments
      */
