@@ -1,6 +1,38 @@
 ﻿# CHANGELOG
 
 
+## [v3.0.7] 2019.01.01
+- 优化 generator 的 postgresSql 数据库支持生成 java8 时间类型
+- 优化 generator 的 sqlServer 数据库支持生成 java8 时间类型
+- 优化 LambdaWrapper 反射获取字段信息支持首字母大写的字段
+- 优化 仅 LambdaWrapper 的 select 优化(支持字段对不上数据库时自动 as)
+- 优化 重复扫描 `BaseMapper` 子类时,`TableInfo` 缓存的 `Configuration` 只保留最后一个
+- 优化 `MergeSegments` 获取 `getSqlSegment` 方式
+- 优化 SQL 自动注入器的初始化 modelClass 过程,提高初始化速度
+- 新增 `IService` 增加4个链式调用方法
+- 新增 代码生成器增加 `beetl` 模板
+- 新增 `IdWorker` 增加毫秒时间 ID 可用于订单 ID
+- 新增 wrapper 新增 `inOrThrow` 方法,入参为 empty 则抛出 `MybatisPlusExcuption` 异常
+- 新增 `MetaObjectHandler` 新提供几个能根据注解才插入值的 `default` 方法
+- 新增 kotlin 下 lambda 的支持,`KtQueryWrapper` 和 `KtUpdateWrapper`类
+- 新增 简化MP自定义SQL使用方法,现在可以使用 `自定义sql` + ${ew.customSqlSegment} 方式
+- 新增 提供新的 `InsertBatchSomeColumn` 选装件
+- 修复 Page` 的 `setTotal(Long total)` -> `setTotal(long total)`
+- 修复 `Page` 的 `setSearchCount` 为 `public`
+- 修复 `TenantSqlParser` 如果 where 条件的开头是一个 `orExpression`，直接在左边用and拼接租户信息会造成逻辑不符合预期的问题
+- 修复 wrapper 的 `lambda` 方法会向下传递 sqlSelect
+- 修复 `ServiceImpl` 个别 batch 操作 `flushStatements` 问题
+- 修复 selectObjs 泛型错误问题
+- 移除 `InsertBatchAllColumn` 选装件
+- 移除 `ServiceImpl` 的 batch 操作之外的事务注解
+- 移除 `Model` 的事务注解
+- 移除 `AbstractSqlInjector` 的 `isInjectSqlRunner` 方法(SqlRunner初始化较早，目前isInjectSqlRunner无法控制)
+- 移除 `MybatisSessionFactoryBuilder`
+- 还原 xml 热加载,打上过时标识
+- 升级 jsqlparser 依赖到 1.3
+- 日常优化
+
+
 ## [v3.0.6] 2018.11.18
 - 修复entity中2个以上条件并且拼接ODER BY 或 GROUP BY 产生的 WHERE X1 =? AND X2
 - refactor(SerializedLambda.java):重构方法增加反序列化安全性，优化命名
@@ -20,7 +52,7 @@
 - batchsize 阈值设 30 修改为 1000 提升效率
 - 修复在极端情况下saveOrUpdate执行错误
 - 移除 MybatisSqlSessionTemplate
-- 优化 xml 热加载
+- 移除 xml 热加载
 - 其他优化
 
 
