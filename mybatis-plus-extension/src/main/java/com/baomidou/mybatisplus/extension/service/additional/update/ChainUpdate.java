@@ -25,11 +25,31 @@ import com.baomidou.mybatisplus.extension.service.additional.ChainWrapper;
  */
 public interface ChainUpdate<T> extends ChainWrapper<T> {
 
-    default int update(T entity) {
-        return getBaseMapper().update(entity, getWrapper());
+    /**
+     * 更新数据
+     *
+     * @return 是否成功
+     */
+    default boolean update() {
+        return update(null);
     }
 
-    default int update() {
-        return getBaseMapper().update(null, getWrapper());
+    /**
+     * 更新数据
+     *
+     * @param entity 实体类
+     * @return 是否成功
+     */
+    default boolean update(T entity) {
+        return getBaseMapper().update(entity, getWrapper()) > 0;
+    }
+
+    /**
+     * 删除数据
+     *
+     * @return 是否成功
+     */
+    default boolean remove() {
+        return getBaseMapper().delete(getWrapper()) > 0;
     }
 }

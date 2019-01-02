@@ -425,6 +425,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             }
         }
 
+        // TODO 无配置启动所必须的
         if (this.globalConfig == null) {
             this.globalConfig = GlobalConfigUtils.defaults();
         }

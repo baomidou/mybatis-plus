@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.extension.service.additional.query;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.service.additional.ChainWrapper;
 
 import java.util.List;
@@ -28,22 +29,47 @@ import java.util.List;
  */
 public interface ChainQuery<T> extends ChainWrapper<T> {
 
+    /**
+     * 获取集合
+     *
+     * @return 集合
+     */
     default List<T> list() {
         return getBaseMapper().selectList(getWrapper());
     }
 
+    /**
+     * 获取单个
+     *
+     * @return 单个
+     */
     default T one() {
         return getBaseMapper().selectOne(getWrapper());
     }
 
+    /**
+     * 获取 count
+     *
+     * @return count
+     */
     default Integer count() {
         return getBaseMapper().selectCount(getWrapper());
     }
 
+    /**
+     * 获取分页数据
+     *
+     * @param page 分页条件
+     * @return 分页数据
+     */
     default IPage<T> page(IPage<T> page) {
         return getBaseMapper().selectPage(page, getWrapper());
     }
 
+    /**
+     * use {@link IService#update()} or {@link IService#lambdaUpdate()}
+     */
+    @Deprecated
     default int delete() {
         return getBaseMapper().delete(getWrapper());
     }

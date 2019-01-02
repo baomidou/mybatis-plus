@@ -118,9 +118,9 @@ public interface BaseMapper<T> {
      * 根据 entity 条件，删除记录
      * </p>
      *
-     * @param queryWrapper 实体对象封装操作类（可以为 null）
+     * @param wrapper 实体对象封装操作类（可以为 null）
      */
-    int delete(@Param(Constants.WRAPPER) Wrapper<T> queryWrapper);
+    int delete(@Param(Constants.WRAPPER) Wrapper<T> wrapper);
 
     /**
      * <p>
@@ -145,7 +145,7 @@ public interface BaseMapper<T> {
      * 根据 whereEntity 条件，更新记录
      * </p>
      *
-     * @param entity        实体对象 (set 条件值,不能为 null)
+     * @param entity        实体对象 (set 条件值,可以为 null)
      * @param updateWrapper 实体对象封装操作类（可以为 null,里面的 entity 用于生成 where 语句）
      */
     int update(@Param(Constants.ENTITY) T entity, @Param(Constants.WRAPPER) Wrapper<T> updateWrapper);

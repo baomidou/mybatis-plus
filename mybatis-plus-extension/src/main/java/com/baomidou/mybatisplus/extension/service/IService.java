@@ -15,12 +15,6 @@
  */
 package com.baomidou.mybatisplus.extension.service;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -30,8 +24,13 @@ import com.baomidou.mybatisplus.extension.service.additional.query.impl.QueryCha
 import com.baomidou.mybatisplus.extension.service.additional.update.impl.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.service.additional.update.impl.UpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
-
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * <p>
@@ -407,20 +406,45 @@ public interface IService<T> {
         return pageMaps(page, Wrappers.emptyWrapper());
     }
 
+    /**
+     * 获取对应 entity 的 BaseMapper
+     *
+     * @return BaseMapper
+     */
     BaseMapper<T> getBaseMapper();
 
+    /**
+     * 链式查询 普通
+     *
+     * @return QueryWrapper 的包装类
+     */
     default QueryChainWrapper<T> query() {
         return new QueryChainWrapper<>(getBaseMapper());
     }
 
+    /**
+     * 链式查询 lambda 式
+     *
+     * @return LambdaQueryWrapper 的包装类
+     */
     default LambdaQueryChainWrapper<T> lambdaQuery() {
         return new LambdaQueryChainWrapper<>(getBaseMapper());
     }
 
+    /**
+     * 链式更改 普通
+     *
+     * @return UpdateWrapper 的包装类
+     */
     default UpdateChainWrapper<T> update() {
         return new UpdateChainWrapper<>(getBaseMapper());
     }
 
+    /**
+     * 链式更改 lambda 式
+     *
+     * @return LambdaUpdateWrapper 的包装类
+     */
     default LambdaUpdateChainWrapper<T> lambdaUpdate() {
         return new LambdaUpdateChainWrapper<>(getBaseMapper());
     }
