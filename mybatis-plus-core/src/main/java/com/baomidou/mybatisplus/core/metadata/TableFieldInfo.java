@@ -23,7 +23,9 @@ import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.lang.reflect.Field;
 
@@ -36,6 +38,8 @@ import java.lang.reflect.Field;
  * @since 2016-09-09
  */
 @Getter
+@ToString
+@EqualsAndHashCode
 public class TableFieldInfo implements Constants {
 
     /**
