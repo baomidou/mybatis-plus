@@ -75,12 +75,12 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
         if (!initColumnMap || !columnMap.containsKey(fieldName.toUpperCase(Locale.ENGLISH))) {
             String entityClassName = lambda.getImplClassName();
             columnMap = LambdaUtils.getColumnMap(entityClassName);
-            Assert.notEmpty(columnMap, "cannot find column's cache for %s, so you cannot used %s!",
+            Assert.notEmpty(columnMap, "cannot find column's cache for \"%s\", so you cannot used \"%s\"!",
                 entityClassName, typedThis.getClass());
             initColumnMap = true;
         }
         return Optional.ofNullable(columnMap.get(fieldName.toUpperCase(Locale.ENGLISH)))
             .map(onlyColumn ? ColumnCache::getColumn : ColumnCache::getColumnSelect)
-            .orElseThrow(() -> ExceptionUtils.mpe("your property named %s cannot find the corresponding database column name!", fieldName));
+            .orElseThrow(() -> ExceptionUtils.mpe("your property named \"%s\" cannot find the corresponding database column name!", fieldName));
     }
 }
