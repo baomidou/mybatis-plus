@@ -26,6 +26,7 @@ import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.ibatis.session.Configuration;
@@ -108,11 +109,13 @@ public class TableInfo implements Constants {
      * 缓存包含主键及字段的 sql select
      */
     @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
     private String allSqlSelect;
     /**
      * 缓存主键字段的 sql select
      */
     @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
     private String sqlSelect;
 
     /**

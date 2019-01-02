@@ -91,7 +91,7 @@ public final class LambdaUtils {
         Map<String, ColumnCache> map = new HashMap<>();
         String keyProperty = tableInfo.getKeyProperty();
         if (StringUtils.isNotEmpty(keyProperty)) {
-            saveCacheAndPut(tableInfo.getKeyColumn(), tableInfo.getSqlSelect(), keyProperty.toUpperCase(ENGLISH),
+            saveCacheAndPut(tableInfo.getKeyColumn(), tableInfo.getKeySqlSelect(), keyProperty.toUpperCase(ENGLISH),
                 clazz, tableInfo.getClazz(), map);
         }
         tableInfo.getFieldList().forEach(i -> saveCacheAndPut(i.getColumn(), i.getSqlSelect(tableInfo.getDbType()),
