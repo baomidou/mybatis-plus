@@ -80,19 +80,6 @@ public final class LambdaUtils {
     }
 
     /**
-     * 保存缓存信息
-     *
-     * @param className   类名
-     * @param property    属性
-     * @param columnCache 字段信息
-     */
-    private static void saveCache(String className, String property, ColumnCache columnCache) {
-        Map<String, ColumnCache> cacheMap = LAMBDA_CACHE.getOrDefault(className, new HashMap<>());
-        cacheMap.put(property, columnCache);
-        LAMBDA_CACHE.put(className, cacheMap);
-    }
-
-    /**
      * <p>
      * 缓存实体字段 MAP 信息
      * </p>
@@ -104,26 +91,34 @@ public final class LambdaUtils {
         Map<String, ColumnCache> map = new HashMap<>();
         String keyProperty = tableInfo.getKeyProperty();
         if (StringUtils.isNotEmpty(keyProperty)) {
-            keyProperty = keyProperty.toUpperCase(ENGLISH);
-            String keyColumn = tableInfo.getKeyColumn();
-            String keySelect = tableInfo.getSqlSelect();
-            ColumnCache cache = new ColumnCache(keyColumn, keySelect);
-            if (tableInfo.getClazz() != clazz) {
-                saveCache(tableInfo.getClazz().getName(), keyProperty, cache);
-            }
-            map.put(keyProperty, cache);
+            saveCacheAndPut(tableInfo.getKeyColumn(), tableInfo.getSqlSelect(), keyProperty.toUpperCase(ENGLISH),
+                clazz, tableInfo.getClazz(), map);
         }
-        tableInfo.getFieldList().forEach(i -> {
-            String property = i.getProperty().toUpperCase(ENGLISH);
-            String column = i.getColumn();
-            String columnSelect = i.getSqlSelect(tableInfo.getDbType());
-            ColumnCache cache = new ColumnCache(column, columnSelect);
-            if (i.getClazz() != clazz) {
-                saveCache(i.getClazz().getName(), property, cache);
-            }
-            map.put(property, cache);
-        });
+        tableInfo.getFieldList().forEach(i -> saveCacheAndPut(i.getColumn(), i.getSqlSelect(tableInfo.getDbType()),
+            i.getProperty().toUpperCase(ENGLISH), clazz, i.getClazz(), map));
         return map;
+    }
+
+    private static void saveCacheAndPut(String column, String select, String property, Class<?> entityClass,
+                                        Class<?> propertyAffiliationClass, Map<String, ColumnCache> map) {
+        ColumnCache cache = new ColumnCache(column, select);
+        if (propertyAffiliationClass != entityClass) {
+            saveCache(propertyAffiliationClass.getName(), property, cache);
+        }
+        map.put(property, cache);
+    }
+
+    /**
+     * 保存缓存信息
+     *
+     * @param className   类名
+     * @param property    属性
+     * @param columnCache 字段信息
+     */
+    private static void saveCache(String className, String property, ColumnCache columnCache) {
+        Map<String, ColumnCache> cacheMap = LAMBDA_CACHE.getOrDefault(className, new HashMap<>());
+        cacheMap.put(property, columnCache);
+        LAMBDA_CACHE.put(className, cacheMap);
     }
 
     /**
