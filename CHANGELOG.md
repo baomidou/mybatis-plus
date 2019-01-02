@@ -1,6 +1,13 @@
 ﻿# CHANGELOG
 
 
+## [v3.0.7.1] 2019.01.02
+- 修复 lambdaWrapper 的获取不到主键缓存的问题
+- 优化 `IService` 新增的 `update` 链式调用支持 `remove` 操作
+- 移除 `IService` 新增的 `query` 链式调用的 `delete` 操作
+- 日常优化
+
+
 ## [v3.0.7] 2019.01.01
 - 优化 generator 的 postgresSql 数据库支持生成 java8 时间类型
 - 优化 generator 的 sqlServer 数据库支持生成 java8 时间类型
