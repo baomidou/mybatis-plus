@@ -9,6 +9,8 @@ import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.additional.query.impl.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.service.additional.update.impl.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.test.base.entity.CommonData;
 import com.baomidou.mybatisplus.test.base.entity.CommonLogicData;
 import com.baomidou.mybatisplus.test.base.entity.mysql.MysqlData;
@@ -363,7 +365,7 @@ public class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void testNestPage() {
+    public void e_1testNestPage() {
         ArrayList<Object> list = new ArrayList<>();
         LambdaQueryWrapper<CommonData> wrapper = Wrappers.<CommonData>lambdaQuery()
             .isNotNull(CommonData::getId).and(i -> i.eq(CommonData::getId, 1)
@@ -378,13 +380,25 @@ public class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void testLambdaColumnCache() {
-        mysqlMapper.selectList(Wrappers.<MysqlData>lambdaQuery().select(MysqlData::getYaHoStr)).forEach(System.out::print);
+    public void e_2testLambdaColumnCache() {
+        mysqlMapper.selectList(Wrappers.<MysqlData>lambdaQuery().select(MysqlData::getId, MysqlData::getYaHoStr))
+            .forEach(System.out::println);
     }
 
     @Test
-    public void testUpdateNotEntity() {
+    public void e_3testUpdateNotEntity() {
         mysqlMapper.update(null, Wrappers.<MysqlData>lambdaUpdate().set(MysqlData::getOrder, 1));
         commonLogicMapper.update(null, Wrappers.<CommonLogicData>lambdaUpdate().set(CommonLogicData::getTestInt, 1));
+    }
+
+    @Test
+    public void e_4testChain() {
+        new LambdaQueryChainWrapper<>(mysqlMapper).select(MysqlData::getId, MysqlData::getYaHoStr)
+            .list().forEach(System.out::println);
+
+        new LambdaUpdateChainWrapper<>(mysqlMapper).set(MysqlData::getYaHoStr, "123456").update();
+
+        new LambdaQueryChainWrapper<>(mysqlMapper).select(MysqlData::getId, MysqlData::getYaHoStr)
+            .list().forEach(System.out::println);
     }
 }
