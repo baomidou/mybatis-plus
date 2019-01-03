@@ -35,6 +35,7 @@
 - 移除 `Model` 的事务注解
 - 移除 `AbstractSqlInjector` 的 `isInjectSqlRunner` 方法(SqlRunner初始化较早，目前isInjectSqlRunner无法控制)
 - 移除 `MybatisSessionFactoryBuilder`
+- 移除 对 `mybatis-plus-generator` 包的依赖,自己按需引入
 - 还原 xml 热加载,打上过时标识
 - 升级 jsqlparser 依赖到 1.3
 - 日常优化
