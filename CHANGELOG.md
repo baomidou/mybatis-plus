@@ -16,6 +16,7 @@
 - 优化 重复扫描 `BaseMapper` 子类时,`TableInfo` 缓存的 `Configuration` 只保留最后一个
 - 优化 `MergeSegments` 获取 `getSqlSegment` 方式
 - 优化 SQL 自动注入器的初始化 modelClass 过程,提高初始化速度
+- 优化 `BaseMapper` 的 `update` 方法的第一个入参支持为 `null`
 - 新增 `IService` 增加4个链式调用方法
 - 新增 代码生成器增加 `beetl` 模板
 - 新增 `IdWorker` 增加毫秒时间 ID 可用于订单 ID
