@@ -4,8 +4,6 @@
   </a>
 </p>
 
-<h2 align="center">MyBatis-Plus</h2>
-
 <p align="center">
   Born To Simplify Development
 </p>
@@ -19,8 +17,6 @@
     <img alt="code style" src="https://img.shields.io/badge/license-Apache%202-4EB1BA.svg?style=flat-square">
   </a>
 </p>
-
----
 
 ## What is MyBatis-Plus?
 
@@ -45,11 +41,10 @@ MyBatis-Plus is an powerful enhanced toolkit of MyBatis for simplify development
 -   SQL Injection defense
 -   Support active record
 -   Support pluggable custom interface
--   Build-in many extensions
+-   Build-in many useful extensions
 
 ## Getting started
 
--   Create a basic Maven or Gradle spring boot project
 -   Add MyBatis-Plus dependency
     -   Maven:
         ```xml
@@ -64,11 +59,13 @@ MyBatis-Plus is an powerful enhanced toolkit of MyBatis for simplify development
         compile group: 'com.baomidou', name: 'mybatis-plus-boot-starter', version: '3.0.6'
         ```
 -   Modify mapper file extends BaseMapper interface
+
     ```java
     public interface UserMapper extends BaseMapper<User> {
 
     }
     ```
+
 -   Use it
     ```java
     List<User> userList = userMapper.selectList(
@@ -81,9 +78,6 @@ MyBatis-Plus is an powerful enhanced toolkit of MyBatis for simplify development
     ```sql
     SELECT * FROM user WHERE age >= 18
     ```
-
-## Reporting bugs
-
 
 ## License
 
