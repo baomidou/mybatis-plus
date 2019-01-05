@@ -30,7 +30,7 @@ import org.apache.ibatis.mapping.SqlSource;
 
 /**
  * <p>
- * 根据 ID 删除
+ * 插入一条数据（选择字段插入）
  * </p>
  *
  * @author hubin

@@ -25,7 +25,7 @@ import java.util.Map;
 
 /**
  * <p>
- * 根据 ID 删除
+ * 查询满足条件所有数据
  * </p>
  *
  * @author hubin

@@ -24,7 +24,7 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
 
 /**
  * <p>
- * 根据 ID 删除
+ * 根据 whereEntity 条件，更新记录
  * </p>
  *
  * @author hubin

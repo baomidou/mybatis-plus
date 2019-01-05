@@ -15,18 +15,17 @@
  */
 package com.baomidou.mybatisplus.core.injector.methods;
 
-import java.util.Map;
-
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.SqlSource;
-
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.SqlSource;
+
+import java.util.Map;
 
 /**
  * <p>
- * 根据 ID 删除
+ * 根据columnMap 查询一条数据
  * </p>
  *
  * @author hubin

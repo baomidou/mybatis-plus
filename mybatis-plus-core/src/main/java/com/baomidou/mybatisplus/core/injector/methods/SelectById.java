@@ -24,7 +24,7 @@ import org.apache.ibatis.scripting.defaults.RawSqlSource;
 
 /**
  * <p>
- * 根据 ID 删除
+ * 根据ID 查询一条数据
  * </p>
  *
  * @author hubin
