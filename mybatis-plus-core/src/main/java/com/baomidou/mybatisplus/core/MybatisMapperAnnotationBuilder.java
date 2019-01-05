@@ -15,50 +15,12 @@
  */
 package com.baomidou.mybatisplus.core;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
-import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-
-import org.apache.ibatis.annotations.Arg;
-import org.apache.ibatis.annotations.CacheNamespace;
-import org.apache.ibatis.annotations.CacheNamespaceRef;
-import org.apache.ibatis.annotations.Case;
-import org.apache.ibatis.annotations.ConstructorArgs;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.DeleteProvider;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.InsertProvider;
-import org.apache.ibatis.annotations.Lang;
-import org.apache.ibatis.annotations.MapKey;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Options.FlushCachePolicy;
-import org.apache.ibatis.annotations.Property;
-import org.apache.ibatis.annotations.Result;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.annotations.ResultMap;
-import org.apache.ibatis.annotations.ResultType;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.SelectKey;
-import org.apache.ibatis.annotations.SelectProvider;
-import org.apache.ibatis.annotations.TypeDiscriminator;
-import org.apache.ibatis.annotations.Update;
-import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.annotations.Options.FlushCachePolicy;
 import org.apache.ibatis.binding.BindingException;
+import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.builder.BuilderException;
 import org.apache.ibatis.builder.IncompleteElementException;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
@@ -72,15 +34,7 @@ import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
 import org.apache.ibatis.executor.keygen.SelectKeyGenerator;
 import org.apache.ibatis.io.Resources;
-import org.apache.ibatis.mapping.Discriminator;
-import org.apache.ibatis.mapping.FetchType;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.ResultFlag;
-import org.apache.ibatis.mapping.ResultMapping;
-import org.apache.ibatis.mapping.ResultSetType;
-import org.apache.ibatis.mapping.SqlCommandType;
-import org.apache.ibatis.mapping.SqlSource;
-import org.apache.ibatis.mapping.StatementType;
+import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.parsing.PropertyParser;
 import org.apache.ibatis.reflection.TypeParameterResolver;
 import org.apache.ibatis.scripting.LanguageDriver;
@@ -91,14 +45,18 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.UnknownTypeHandler;
 
-import com.baomidou.mybatisplus.core.override.PageMapperMethod;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.*;
+import java.util.*;
 
 
 /**
  * <p>
- * 继承 MapperAnnotationBuilder 没有XML配置文件注入基础CRUD方法
+ * 继承
+ * 只重写了 {@link MapperAnnotationBuilder#parse}
+ * 没有XML配置文件注入基础CRUD方法
  * </p>
  *
  * @author Caratacus
@@ -134,6 +92,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void parse() {
         String resource = type.toString();
         if (!configuration.isResourceLoaded(resource)) {
@@ -154,7 +113,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                         parseStatement(method);
                     }
                 } catch (IncompleteElementException e) {
-                    configuration.addIncompleteMethod(new MethodResolver(this, method));
+                    configuration.addIncompleteMethod(new MybatisMethodResolver(this, method));
                 }
             }
         }
@@ -201,8 +160,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
             Integer size = cacheDomain.size() == 0 ? null : cacheDomain.size();
             Long flushInterval = cacheDomain.flushInterval() == 0 ? null : cacheDomain.flushInterval();
             Properties props = convertToProperties(cacheDomain.properties());
-            assistant.useNewCache(cacheDomain.implementation(), cacheDomain.eviction(), flushInterval, size,
-                cacheDomain.readWrite(), cacheDomain.blocking(), props);
+            assistant.useNewCache(cacheDomain.implementation(), cacheDomain.eviction(), flushInterval, size, cacheDomain.readWrite(), cacheDomain.blocking(), props);
         }
     }
 
@@ -212,7 +170,8 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
         }
         Properties props = new Properties();
         for (Property property : properties) {
-            props.setProperty(property.name(), PropertyParser.parse(property.value(), configuration.getVariables()));
+            props.setProperty(property.name(),
+                PropertyParser.parse(property.value(), configuration.getVariables()));
         }
         return props;
     }
@@ -246,22 +205,21 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
     private String generateResultMapName(Method method) {
         Results results = method.getAnnotation(Results.class);
         if (results != null && !results.id().isEmpty()) {
-            return type.getName() + StringPool.DOT + results.id();
+            return type.getName() + "." + results.id();
         }
         StringBuilder suffix = new StringBuilder();
         for (Class<?> c : method.getParameterTypes()) {
-            suffix.append(StringPool.DASH);
+            suffix.append("-");
             suffix.append(c.getSimpleName());
         }
         if (suffix.length() < 1) {
             suffix.append("-void");
         }
-        return type.getName() + StringPool.DOT + method.getName() + suffix;
+        return type.getName() + "." + method.getName() + suffix;
     }
 
-    private void applyResultMap(String resultMapId, Class<?> returnType, Arg[] args, Result[] results,
-                                TypeDiscriminator discriminator) {
-        List<ResultMapping> resultMappings = new ArrayList<>();
+    private void applyResultMap(String resultMapId, Class<?> returnType, Arg[] args, Result[] results, TypeDiscriminator discriminator) {
+        List<ResultMapping> resultMappings = new ArrayList<ResultMapping>();
         applyConstructorArgs(args, returnType, resultMappings);
         applyResults(results, returnType, resultMappings);
         Discriminator disc = applyDiscriminator(resultMapId, returnType, discriminator);
@@ -273,8 +231,8 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
     private void createDiscriminatorResultMaps(String resultMapId, Class<?> resultType, TypeDiscriminator discriminator) {
         if (discriminator != null) {
             for (Case c : discriminator.cases()) {
-                String caseResultMapId = resultMapId + StringPool.DASH + c.value();
-                List<ResultMapping> resultMappings = new ArrayList<>();
+                String caseResultMapId = resultMapId + "-" + c.value();
+                List<ResultMapping> resultMappings = new ArrayList<ResultMapping>();
                 // issue #136
                 applyConstructorArgs(c.constructArgs(), resultType, resultMappings);
                 applyResults(c.results(), resultType, resultMappings);
@@ -290,13 +248,13 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
             Class<?> javaType = discriminator.javaType() == void.class ? String.class : discriminator.javaType();
             JdbcType jdbcType = discriminator.jdbcType() == JdbcType.UNDEFINED ? null : discriminator.jdbcType();
             @SuppressWarnings("unchecked")
-            Class<? extends TypeHandler<?>> typeHandler = (Class<? extends TypeHandler<?>>) (discriminator.typeHandler() == UnknownTypeHandler.class ? null
-                : discriminator.typeHandler());
+            Class<? extends TypeHandler<?>> typeHandler = (Class<? extends TypeHandler<?>>)
+                (discriminator.typeHandler() == UnknownTypeHandler.class ? null : discriminator.typeHandler());
             Case[] cases = discriminator.cases();
-            Map<String, String> discriminatorMap = new HashMap<>();
+            Map<String, String> discriminatorMap = new HashMap<String, String>();
             for (Case c : cases) {
                 String value = c.value();
-                String caseResultMapId = resultMapId + StringPool.DASH + value;
+                String caseResultMapId = resultMapId + "-" + value;
                 discriminatorMap.put(value, caseResultMapId);
             }
             return assistant.buildDiscriminator(resultType, column, javaType, jdbcType, typeHandler, discriminatorMap);
@@ -310,7 +268,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
         SqlSource sqlSource = getSqlSourceFromAnnotations(method, parameterTypeClass, languageDriver);
         if (sqlSource != null) {
             Options options = method.getAnnotation(Options.class);
-            final String mappedStatementId = type.getName() + StringPool.DOT + method.getName();
+            final String mappedStatementId = type.getName() + "." + method.getName();
             Integer fetchSize = null;
             Integer timeout = null;
             StatementType statementType = StatementType.PREPARED;
@@ -360,7 +318,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                 StringBuilder sb = new StringBuilder();
                 for (String resultMap : resultMaps) {
                     if (sb.length() > 0) {
-                        sb.append(StringPool.COMMA);
+                        sb.append(",");
                     }
                     sb.append(resultMap);
                 }
@@ -410,13 +368,12 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
         Class<?> parameterType = null;
         Class<?>[] parameterTypes = method.getParameterTypes();
         for (Class<?> currentParameterType : parameterTypes) {
-            if (!RowBounds.class.isAssignableFrom(currentParameterType)
-                && !ResultHandler.class.isAssignableFrom(currentParameterType)) {
+            if (!RowBounds.class.isAssignableFrom(currentParameterType) && !ResultHandler.class.isAssignableFrom(currentParameterType)) {
                 if (parameterType == null) {
                     parameterType = currentParameterType;
                 } else {
                     // issue #135
-                    parameterType = PageMapperMethod.ParamMap.class;
+                    parameterType = MapperMethod.ParamMap.class;
                 }
             }
         }
@@ -499,7 +456,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
         final StringBuilder sql = new StringBuilder();
         for (String fragment : strings) {
             sql.append(fragment);
-            sql.append(StringPool.SPACE);
+            sql.append(" ");
         }
         return languageDriver.createSqlSource(configuration, sql.toString().trim(), parameterTypeClass);
     }
@@ -548,7 +505,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
 
     private void applyResults(Result[] results, Class<?> resultType, List<ResultMapping> resultMappings) {
         for (Result result : results) {
-            List<ResultFlag> flags = new ArrayList<>();
+            List<ResultFlag> flags = new ArrayList<ResultFlag>();
             if (result.id()) {
                 flags.add(ResultFlag.ID);
             }
@@ -579,8 +536,8 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
         if (nestedSelect.length() < 1) {
             nestedSelect = result.many().select();
         }
-        if (!nestedSelect.contains(StringPool.DOT)) {
-            nestedSelect = type.getName() + StringPool.DOT + nestedSelect;
+        if (!nestedSelect.contains(".")) {
+            nestedSelect = type.getName() + "." + nestedSelect;
         }
         return nestedSelect;
     }
@@ -588,23 +545,23 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
     private boolean isLazy(Result result) {
         boolean isLazy = configuration.isLazyLoadingEnabled();
         if (result.one().select().length() > 0 && FetchType.DEFAULT != result.one().fetchType()) {
-            isLazy = (result.one().fetchType() == FetchType.LAZY);
+            isLazy = result.one().fetchType() == FetchType.LAZY;
         } else if (result.many().select().length() > 0 && FetchType.DEFAULT != result.many().fetchType()) {
-            isLazy = (result.many().fetchType() == FetchType.LAZY);
+            isLazy = result.many().fetchType() == FetchType.LAZY;
         }
         return isLazy;
     }
 
     private boolean hasNestedSelect(Result result) {
         if (result.one().select().length() > 0 && result.many().select().length() > 0) {
-            throw new BuilderException("Cannot use both @One and @Many annotation in the same @Result");
+            throw new BuilderException("Cannot use both @One and @Many annotations in the same @Result");
         }
         return result.one().select().length() > 0 || result.many().select().length() > 0;
     }
 
     private void applyConstructorArgs(Arg[] args, Class<?> resultType, List<ResultMapping> resultMappings) {
         for (Arg arg : args) {
-            List<ResultFlag> flags = new ArrayList<>();
+            List<ResultFlag> flags = new ArrayList<ResultFlag>();
             flags.add(ResultFlag.CONSTRUCTOR);
             if (arg.id()) {
                 flags.add(ResultFlag.ID);
@@ -675,5 +632,4 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
         configuration.addKeyGenerator(id, answer);
         return answer;
     }
-
 }
