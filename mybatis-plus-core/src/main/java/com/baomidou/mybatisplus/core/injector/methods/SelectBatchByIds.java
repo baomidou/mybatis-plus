@@ -24,7 +24,7 @@ import org.apache.ibatis.mapping.SqlSource;
 
 /**
  * <p>
- * 根据 ID 删除
+ * 根据ID集合，批量查询数据
  * </p>
  *
  * @author hubin

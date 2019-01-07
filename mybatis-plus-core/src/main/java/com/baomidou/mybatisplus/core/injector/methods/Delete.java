@@ -23,7 +23,7 @@ import org.apache.ibatis.mapping.SqlSource;
 
 /**
  * <p>
- * 根据 ID 删除
+ * 根据 entity 条件删除记录
  * </p>
  *
  * @author hubin
