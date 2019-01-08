@@ -22,7 +22,7 @@ import com.baomidou.mybatisplus.annotation.DbType;
 
 /**
  * <p>
- * MySql 表数据查询
+ * H2Database 表数据查询
  * </p>
  *
  * @author yuxiaobin

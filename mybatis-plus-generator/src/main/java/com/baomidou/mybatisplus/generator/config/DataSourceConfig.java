@@ -124,6 +124,8 @@ public class DataSourceConfig {
                 dbType = DbType.ORACLE;
             } else if (driverName.contains("postgresql")) {
                 dbType = DbType.POSTGRE_SQL;
+            } else if (driverName.contains("sqlserver")) {
+                dbType = DbType.SQL_SERVER;
             } else if (driverName.contains("db2")) {
                 dbType = DbType.DB2;
             } else if (driverName.contains("mariadb")) {
