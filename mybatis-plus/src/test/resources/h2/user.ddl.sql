@@ -11,4 +11,7 @@ CREATE TABLE IF NOT EXISTS  h2user (
 	deleted INT(1) NULL DEFAULT 0 ,
 	PRIMARY KEY (test_id)
 );
+COMMENT ON COLUMN h2user.test_id IS 'PK';
+COMMENT ON COLUMN h2user.name IS 'USERNAME';
+
 

@@ -42,6 +42,7 @@ import com.baomidou.mybatisplus.generator.config.TemplateConfig;
 import com.baomidou.mybatisplus.generator.config.po.TableField;
 import com.baomidou.mybatisplus.generator.config.po.TableFill;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
+import com.baomidou.mybatisplus.generator.config.querys.H2Query;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 
 /**
@@ -571,31 +572,54 @@ public class ConfigBuilder {
         boolean haveId = false;
         List<TableField> fieldList = new ArrayList<>();
         List<TableField> commonFieldList = new ArrayList<>();
+        DbType dbType = dbQuery.dbType();
+        String tableName = tableInfo.getName();
         try {
             String tableFieldsSql = dbQuery.tableFieldsSql();
-            if (DbType.POSTGRE_SQL == dbQuery.dbType()) {
-                tableFieldsSql = String.format(tableFieldsSql, dataSourceConfig.getSchemaName(), tableInfo.getName());
-            } else if (DbType.ORACLE == dbQuery.dbType()) {
-                tableFieldsSql = String.format(tableFieldsSql.replace("#schema", dataSourceConfig.getSchemaName()), tableInfo.getName());
+            Set<String> h2PkColumns = new HashSet<>();
+            if (DbType.POSTGRE_SQL == dbType) {
+                tableFieldsSql = String.format(tableFieldsSql, dataSourceConfig.getSchemaName(), tableName);
+            } else if (DbType.ORACLE == dbType) {
+                tableName = tableName.toUpperCase();
+                tableFieldsSql = String.format(tableFieldsSql.replace("#schema", dataSourceConfig.getSchemaName()), tableName);
+            } else if (DbType.H2 == dbType) {
+                tableName = tableName.toUpperCase();
+                PreparedStatement pkQueryStmt = connection.prepareStatement(String.format(H2Query.PK_QUERY_SQL, tableName));
+                ResultSet pkResults = pkQueryStmt.executeQuery();
+                while (pkResults.next()) {
+                    String primaryKey = pkResults.getString(dbQuery.fieldKey());
+                    if ("TRUE".equalsIgnoreCase(primaryKey)) {
+                        h2PkColumns.add(pkResults.getString(dbQuery.fieldName()));
+                    }
+                }
+                pkResults.close();
+                pkQueryStmt.close();
+                tableFieldsSql = String.format(tableFieldsSql, tableName);
             } else {
-                tableFieldsSql = String.format(tableFieldsSql, tableInfo.getName());
+                tableFieldsSql = String.format(tableFieldsSql, tableName);
             }
             PreparedStatement preparedStatement = connection.prepareStatement(tableFieldsSql);
             ResultSet results = preparedStatement.executeQuery();
             while (results.next()) {
                 TableField field = new TableField();
-                String key = results.getString(dbQuery.fieldKey());
+                String columnName = results.getString(dbQuery.fieldName());
                 // 避免多重主键设置，目前只取第一个找到ID，并放到list中的索引为0的位置
                 boolean isId;
-                if (DbType.DB2 == dbQuery.dbType()) {
-                    isId = StringUtils.isNotEmpty(key) && "1".equals(key);
-                } else {
-                    isId = StringUtils.isNotEmpty(key) && "PRI".equals(key.toUpperCase());
+                if(DbType.H2 == dbType){
+                    isId = h2PkColumns.contains(columnName);
+                }else{
+                    String key = results.getString(dbQuery.fieldKey());
+                    if (DbType.DB2 == dbType) {
+                        isId = StringUtils.isNotEmpty(key) && "1".equals(key);
+                    } else {
+                        isId = StringUtils.isNotEmpty(key) && "PRI".equals(key.toUpperCase());
+                    }
                 }
+
                 // 处理ID
                 if (isId && !haveId) {
                     field.setKeyFlag(true);
-                    if (dbQuery.isKeyIdentity(results)) {
+                    if (DbType.H2 == dbType || dbQuery.isKeyIdentity(results)) {
                         field.setKeyIdentityFlag(true);
                     }
                     haveId = true;
@@ -612,7 +636,7 @@ public class ConfigBuilder {
                     field.setCustomMap(customMap);
                 }
                 // 处理其它信息
-                field.setName(results.getString(dbQuery.fieldName()));
+                field.setName(columnName);
                 field.setType(results.getString(dbQuery.fieldType()));
                 field.setPropertyName(strategyConfig, processName(field.getName(), strategy));
                 field.setColumnType(dataSourceConfig.getTypeConvert().processTypeConvert(globalConfig, field.getType()));
@@ -631,6 +655,8 @@ public class ConfigBuilder {
                 }
                 fieldList.add(field);
             }
+            results.close();
+            preparedStatement.close();
         } catch (SQLException e) {
             System.err.println("SQL Exception：" + e.getMessage());
         }

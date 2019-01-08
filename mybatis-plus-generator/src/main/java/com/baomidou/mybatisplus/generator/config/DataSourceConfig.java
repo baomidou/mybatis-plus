@@ -15,16 +15,27 @@
  */
 package com.baomidou.mybatisplus.generator.config;
 
-import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
-import com.baomidou.mybatisplus.generator.config.converts.*;
-import com.baomidou.mybatisplus.generator.config.querys.*;
-import lombok.Data;
-import lombok.experimental.Accessors;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+
+import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import com.baomidou.mybatisplus.generator.config.converts.DB2TypeConvert;
+import com.baomidou.mybatisplus.generator.config.converts.MySqlTypeConvert;
+import com.baomidou.mybatisplus.generator.config.converts.OracleTypeConvert;
+import com.baomidou.mybatisplus.generator.config.converts.PostgreSqlTypeConvert;
+import com.baomidou.mybatisplus.generator.config.converts.SqlServerTypeConvert;
+import com.baomidou.mybatisplus.generator.config.querys.DB2Query;
+import com.baomidou.mybatisplus.generator.config.querys.H2Query;
+import com.baomidou.mybatisplus.generator.config.querys.MariadbQuery;
+import com.baomidou.mybatisplus.generator.config.querys.MySqlQuery;
+import com.baomidou.mybatisplus.generator.config.querys.OracleQuery;
+import com.baomidou.mybatisplus.generator.config.querys.PostgreSqlQuery;
+import com.baomidou.mybatisplus.generator.config.querys.SqlServerQuery;
+
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * <p>
@@ -89,6 +100,8 @@ public class DataSourceConfig {
                 case MARIADB:
                     dbQuery = new MariadbQuery();
                     break;
+                case H2:
+                    dbQuery = new H2Query();
                 default:
                     // 默认 MYSQL
                     dbQuery = new MySqlQuery();
@@ -111,13 +124,13 @@ public class DataSourceConfig {
                 dbType = DbType.ORACLE;
             } else if (driverName.contains("postgresql")) {
                 dbType = DbType.POSTGRE_SQL;
-            } else if (driverName.contains("sqlserver")) {
-                dbType = DbType.SQL_SERVER;
             } else if (driverName.contains("db2")) {
                 dbType = DbType.DB2;
             } else if (driverName.contains("mariadb")) {
                 dbType = DbType.MARIADB;
-            } else {
+            } else if(driverName.contains("h2")){
+                dbType = DbType.H2;
+            }else {
                 throw ExceptionUtils.mpe("Unknown type of database!");
             }
         }
