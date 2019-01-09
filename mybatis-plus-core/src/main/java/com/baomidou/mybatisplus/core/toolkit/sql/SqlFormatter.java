@@ -85,8 +85,8 @@ public class SqlFormatter {
         StringTokenizer tokens;
 
         int indent = 1;
-        private LinkedList<Integer> parenCounts = new LinkedList<Integer>();
-        private LinkedList<Boolean> afterByOrFromOrSelects = new LinkedList<Boolean>();
+        private LinkedList<Integer> parenCounts = new LinkedList<>();
+        private LinkedList<Boolean> afterByOrFromOrSelects = new LinkedList<>();
         String lastToken;
         String token;
         String lcToken;
