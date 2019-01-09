@@ -106,14 +106,13 @@ subprojects {
         annotationProcessor "${lib.lombok}"
         implementation "${lib.lombok}"
         testAnnotationProcessor "${lib.lombok}"
-        testCompileOnly "${lib.lombok}"
         testCompileOnly "${lib.'mockito-all'}"
         testCompile "${lib.junit}"
     }
 
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        classifier = 'sources'
-        from sourceSets.main.allSource
+    task sourcesJar(type: Jar) {
+        archiveClassifier.set('sources')
+        from sourceSets.main.allJava
     }
 
     javadoc {
@@ -129,9 +128,9 @@ subprojects {
         }
     }
 
-    task javadocJar(type: Jar, dependsOn: javadoc) {
-        classifier = 'javadoc'
-        from 'build/docs/javadoc'
+    task javadocJar(type: Jar) {
+        archiveClassifier.set('javadoc')
+        from javadoc
     }
 
     artifacts {
