@@ -75,7 +75,9 @@ public class ReflectionKit {
      * @param field Field
      * @param str   String JavaBean类的version属性名
      * @return version属性的setter方法名称，e.g. setVersion
+     * @deprecated 3.0.8
      */
+    @Deprecated
     public static String setMethodCapitalize(Field field, final String str) {
         Class<?> fieldType = field.getType();
         // type of boolean's field, getter methodname is isGood(),

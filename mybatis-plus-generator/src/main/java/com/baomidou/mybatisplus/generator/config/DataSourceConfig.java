@@ -102,6 +102,7 @@ public class DataSourceConfig {
                     break;
                 case H2:
                     dbQuery = new H2Query();
+                    break;
                 default:
                     // 默认 MYSQL
                     dbQuery = new MySqlQuery();
