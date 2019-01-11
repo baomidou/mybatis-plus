@@ -83,6 +83,24 @@ public interface Join<Children> extends Serializable {
     /**
      * ignore
      */
+    default Children first(String firstSql) {
+        return first(true, firstSql);
+    }
+
+    /**
+     * 无视优化规则直接拼接到 sql 的最后(有sql注入的风险,请谨慎使用)
+     * 例: first("limit 1")
+     * 注意只能调用一次,多次调用以最后一次为准
+     *
+     * @param condition 执行条件
+     * @param firstSql  sql语句
+     * @return children
+     */
+    Children first(boolean condition, String firstSql);
+
+    /**
+     * ignore
+     */
     default Children exists(String existsSql) {
         return exists(true, existsSql);
     }

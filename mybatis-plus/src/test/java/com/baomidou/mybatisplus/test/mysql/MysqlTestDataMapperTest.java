@@ -242,14 +242,20 @@ public class MysqlTestDataMapperTest {
         // 4. 有 entity 也有 last 条件
         Assert.assertTrue(CollectionUtils.isNotEmpty(mysqlMapper.selectList(Wrappers.query(data)
             .last("limit 1"))));
-        // 5. 只有 order by 或者 last
+        // 5. 有 entity 也有 first 条件
+        Assert.assertTrue(CollectionUtils.isNotEmpty(mysqlMapper.selectList(Wrappers.query(data)
+            .first("limit 1"))));
+        // 6. 只有 order by 或者 last
         Assert.assertTrue(CollectionUtils.isNotEmpty(mysqlMapper.selectList(Wrappers.<MysqlData>query()
             .lambda().orderByDesc(MysqlData::getOrder).last("limit 1"))));
-        // 6. 什么都没有情况
+        // 7. 只有 order by 或者 first
+        Assert.assertTrue(CollectionUtils.isNotEmpty(mysqlMapper.selectList(Wrappers.<MysqlData>query()
+            .lambda().orderByDesc(MysqlData::getOrder).first("limit 1"))));
+        // 8. 什么都没有情况
         Assert.assertTrue(CollectionUtils.isNotEmpty(mysqlMapper.selectList(Wrappers.emptyWrapper())));
-        // 7. 只有 where 条件
+        // 9. 只有 where 条件
         Assert.assertTrue(CollectionUtils.isNotEmpty(mysqlMapper.selectList(Wrappers.lambdaQuery(new MysqlData()).eq(MysqlData::getGroup, 1))));
-        // 8. 有 where 条件 也有 last 条件
+        // 10. 有 where 条件 也有 last 条件
         Assert.assertTrue(CollectionUtils.isNotEmpty(mysqlMapper.selectList(Wrappers.lambdaQuery(new MysqlData()).eq(MysqlData::getGroup, 1).last("limit 1"))));
     }
 
@@ -265,14 +271,20 @@ public class MysqlTestDataMapperTest {
         // 4. 有 entity 也有 last 条件
         Assert.assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectList(Wrappers.query(data)
             .last("limit 1"))));
-        // 5. 只有 order by 或者 last
+        // 5. 有 entity 也有 first 条件
+        Assert.assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectList(Wrappers.query(data)
+            .first("limit 1"))));
+        // 6. 只有 order by 或者 last
         Assert.assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectList(Wrappers.<CommonLogicData>query()
             .lambda().orderByAsc(CommonLogicData::getTestInt).last("limit 1"))));
-        // 6. 什么都没有情况
+        // 7. 只有 order by 或者 first
+        Assert.assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectList(Wrappers.<CommonLogicData>query()
+            .lambda().orderByAsc(CommonLogicData::getTestInt).first("limit 1"))));
+        // 8. 什么都没有情况
         Assert.assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectList(Wrappers.emptyWrapper())));
-        // 7. 只有 where 条件
+        // 9. 只有 where 条件
         Assert.assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectList(Wrappers.lambdaQuery(new CommonLogicData()).eq(CommonLogicData::getId, 11))));
-        // 8. 有 where 条件 也有 last 条件
+        // 10. 有 where 条件 也有 last 条件
         Assert.assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectList(Wrappers.lambdaQuery(new CommonLogicData()).eq(CommonLogicData::getId, 11).last("limit 1"))));
     }
 
@@ -356,12 +368,16 @@ public class MysqlTestDataMapperTest {
     public void d11_testWrapperCustomSql() {
         // 1. 只有 order by 或者 last
         mysqlMapper.getAll(Wrappers.<MysqlData>lambdaQuery().orderByDesc(MysqlData::getOrder).last("limit 1"));
-        // 2. 什么都没有情况
+        // 2. 只有 order by 或者 first
+        mysqlMapper.getAll(Wrappers.<MysqlData>lambdaQuery().orderByDesc(MysqlData::getOrder).first("limit 1"));
+        // 3. 什么都没有情况
         mysqlMapper.getAll(Wrappers.emptyWrapper());
-        // 3. 只有 where 条件
+        // 4. 只有 where 条件
         mysqlMapper.getAll(Wrappers.lambdaQuery(new MysqlData()).eq(MysqlData::getGroup, 1));
-        // 4. 有 where 条件 也有 last 条件
+        // 5. 有 where 条件 也有 last 条件
         mysqlMapper.getAll(Wrappers.lambdaQuery(new MysqlData()).eq(MysqlData::getGroup, 1).last("limit 1"));
+        // 6. 有 where 条件 也有 first 条件
+        mysqlMapper.getAll(Wrappers.lambdaQuery(new MysqlData()).eq(MysqlData::getGroup, 1).first("limit 1"));
     }
 
     @Test
