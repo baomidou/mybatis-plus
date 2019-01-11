@@ -131,7 +131,7 @@ public class H2UserMapperTest extends BaseTest {
                 System.out.println(m);
             }
         }
-        Assert.assertTrue(CollectionUtils.isNotEmpty(userMapper.selectMaps(new QueryWrapper<>(new H2User().setAge(AgeEnum.TWO).setTestType(3)))));
+        Assert.assertTrue(CollectionUtils.isNotEmpty(userMapper.selectMaps(new QueryWrapper<>(new H2User().setTestType(3)))));
     }
 
     @Test

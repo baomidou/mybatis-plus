@@ -15,9 +15,8 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toCollection;
-import static java.util.stream.Collectors.toMap;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -26,16 +25,17 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toCollection;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * <p>
@@ -164,12 +164,7 @@ public class ReflectionKit {
      */
     public static Map<String, Field> getFieldMap(Class<?> clazz) {
         List<Field> fieldList = getFieldList(clazz);
-        if (CollectionUtils.isNotEmpty(fieldList)) {
-            Map<String, Field> fieldMap = new LinkedHashMap<>();
-            fieldList.forEach(field -> fieldMap.put(field.getName(), field));
-            return fieldMap;
-        }
-        return Collections.emptyMap();
+        return CollectionUtils.isNotEmpty(fieldList) ? fieldList.stream().collect(Collectors.toMap(Field::getName, field -> field)) : Collections.emptyMap();
     }
 
     /**
@@ -201,9 +196,6 @@ public class ReflectionKit {
      * @param clazz 反射类
      */
     public static List<Field> doGetFieldList(Class<?> clazz) {
-        if (Object.class.equals(clazz)) {
-            return Collections.emptyList();
-        }
         List<Field> fieldList = Stream.of(clazz.getDeclaredFields())
             /* 过滤静态属性 */
             .filter(field -> !Modifier.isStatic(field.getModifiers()))
@@ -212,7 +204,7 @@ public class ReflectionKit {
             .collect(toCollection(LinkedList::new));
         /* 处理父类字段 */
         Class<?> superClass = clazz.getSuperclass();
-        if (superClass.equals(Object.class)) {
+        if (superClass == null) {
             return fieldList;
         }
         /* 排除重载属性 */
