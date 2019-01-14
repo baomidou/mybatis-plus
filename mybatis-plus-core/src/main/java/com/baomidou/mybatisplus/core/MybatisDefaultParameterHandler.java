@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core;
 
+import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -23,6 +24,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
+import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -223,6 +226,36 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         ErrorContext.instance().activity("setting parameters").object(mappedStatement.getParameterMap().getId());
         List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
         if (parameterMappings != null) {
+            // 解决update无法正确获取到参数类型问题
+            if (parameterObject instanceof MapperMethod.ParamMap) {
+                Object entity = ((MapperMethod.ParamMap) parameterObject).get("et");
+                TableInfo tableInfo = TableInfoHelper.getTableInfo(entity.getClass());
+                for (ParameterMapping parameterMapping : parameterMappings) {
+                    // 判断是否已经处理
+                    if (!Object.class.equals(parameterMapping.getJavaType())) {
+                        continue;
+                    }
+                    String property = parameterMapping.getProperty();
+                    if (property.startsWith("et.")) {
+                        for (TableFieldInfo tableFieldInfo : tableInfo.getFieldList()) {
+                            if (tableFieldInfo.getProperty().equals(property.substring(3))) {
+                                // 将真实类型与类型处理器注入到ParameterMapping
+                                try {
+                                    Field javaTypeField = ParameterMapping.class.getDeclaredField("javaType");
+                                    javaTypeField.setAccessible(true);
+                                    javaTypeField.set(parameterMapping, tableFieldInfo.getPropertyType());
+                                    Field typeHandlerField = ParameterMapping.class.getDeclaredField("typeHandler");
+                                    typeHandlerField.setAccessible(true);
+                                    typeHandlerField.set(parameterMapping, typeHandlerRegistry.getTypeHandler(parameterMapping.getJavaType(), parameterMapping.getJdbcType()));
+                                } catch (NoSuchFieldException | IllegalAccessException e) {
+                                    e.printStackTrace();
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
             for (int i = 0; i < parameterMappings.size(); i++) {
                 ParameterMapping parameterMapping = parameterMappings.get(i);
                 if (parameterMapping.getMode() != ParameterMode.OUT) {
