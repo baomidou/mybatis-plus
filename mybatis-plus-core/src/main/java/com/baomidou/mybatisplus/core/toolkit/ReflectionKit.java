@@ -196,19 +196,20 @@ public class ReflectionKit {
      * @param clazz 反射类
      */
     public static List<Field> doGetFieldList(Class<?> clazz) {
-        List<Field> fieldList = Stream.of(clazz.getDeclaredFields())
-            /* 过滤静态属性 */
-            .filter(field -> !Modifier.isStatic(field.getModifiers()))
-            /* 过滤 transient关键字修饰的属性 */
-            .filter(field -> !Modifier.isTransient(field.getModifiers()))
-            .collect(toCollection(LinkedList::new));
-        /* 处理父类字段 */
-        Class<?> superClass = clazz.getSuperclass();
-        if (superClass == null) {
-            return fieldList;
+        if (clazz.getSuperclass() != null) {
+            List<Field> fieldList = Stream.of(clazz.getDeclaredFields())
+                /* 过滤静态属性 */
+                .filter(field -> !Modifier.isStatic(field.getModifiers()))
+                /* 过滤 transient关键字修饰的属性 */
+                .filter(field -> !Modifier.isTransient(field.getModifiers()))
+                .collect(toCollection(LinkedList::new));
+            /* 处理父类字段 */
+            Class<?> superClass = clazz.getSuperclass();
+            /* 排除重载属性 */
+            return excludeOverrideSuperField(fieldList, getFieldList(superClass));
+        } else {
+            return Collections.emptyList();
         }
-        /* 排除重载属性 */
-        return excludeOverrideSuperField(fieldList, getFieldList(superClass));
     }
 
     /**
@@ -222,7 +223,7 @@ public class ReflectionKit {
     public static List<Field> excludeOverrideSuperField(List<Field> fieldList, List<Field> superFieldList) {
         // 子类属性
         Map<String, Field> fieldMap = fieldList.stream().collect(toMap(Field::getName, identity()));
-        superFieldList.stream().filter(field -> fieldMap.get(field.getName()) == null).forEach(fieldList::add);
+        superFieldList.stream().filter(field -> !fieldMap.containsKey(field.getName())).forEach(fieldList::add);
         return fieldList;
     }
 }
