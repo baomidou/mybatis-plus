@@ -119,19 +119,19 @@ public class DataSourceConfig {
      */
     public DbType getDbType() {
         if (null == dbType) {
-            if (driverName.contains("mysql")) {
+            if (url.contains("mysql")) {
                 dbType = DbType.MYSQL;
-            } else if (driverName.contains("oracle")) {
+            } else if (url.contains("oracle")) {
                 dbType = DbType.ORACLE;
-            } else if (driverName.contains("postgresql")) {
+            } else if (url.contains("postgresql")) {
                 dbType = DbType.POSTGRE_SQL;
-            } else if (driverName.contains("sqlserver")) {
+            } else if (url.contains("sqlserver")) {
                 dbType = DbType.SQL_SERVER;
-            } else if (driverName.contains("db2")) {
+            } else if (url.contains("db2")) {
                 dbType = DbType.DB2;
-            } else if (driverName.contains("mariadb")) {
+            } else if (url.contains("mariadb")) {
                 dbType = DbType.MARIADB;
-            } else if(driverName.contains("h2")){
+            } else if(url.contains("h2")){
                 dbType = DbType.H2;
             }else {
                 throw ExceptionUtils.mpe("Unknown type of database!");
