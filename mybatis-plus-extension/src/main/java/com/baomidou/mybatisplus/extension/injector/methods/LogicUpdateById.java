@@ -15,14 +15,13 @@
  */
 package com.baomidou.mybatisplus.extension.injector.methods;
 
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.SqlSource;
-
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.injector.AbstractLogicMethod;
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.SqlSource;
 
 /**
  * <p>
@@ -48,7 +47,7 @@ public class LogicUpdateById extends AbstractLogicMethod {
             append.append(tableInfo.getLogicDeleteSql(true, false));
         }
         sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(),
-            sqlSet(logicDelete, false, tableInfo, ENTITY, ENTITY_DOT),
+            sqlSet(logicDelete, false, tableInfo, false, ENTITY, ENTITY_DOT),
             tableInfo.getKeyColumn(), ENTITY_DOT + tableInfo.getKeyProperty(),
             append);
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);

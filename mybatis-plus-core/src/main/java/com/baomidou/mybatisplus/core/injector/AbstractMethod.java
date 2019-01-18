@@ -15,6 +15,10 @@
  */
 package com.baomidou.mybatisplus.core.injector;
 
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
@@ -24,11 +28,6 @@ import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
-
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 
 /**
  * <p>
@@ -82,8 +81,11 @@ public abstract class AbstractMethod implements Constants {
      * @param prefix 前缀
      * @return sql
      */
-    protected String sqlSet(boolean logic, boolean ew, TableInfo table, String alias, String prefix) {
-        String sqlScript = SqlScriptUtils.convertIf(table.getAllSqlSet(logic, prefix), String.format("%s != null", alias), true);
+    protected String sqlSet(boolean logic, boolean ew, TableInfo table, boolean judgeAliasNull, String alias, String prefix) {
+        String sqlScript = table.getAllSqlSet(logic, prefix);
+        if (judgeAliasNull) {
+            sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", alias), true);
+        }
         if (ew) {
             sqlScript += NEWLINE;
             sqlScript += SqlScriptUtils.convertIf(SqlScriptUtils.unSafeParam(U_WRAPPER_SQL_SET),
