@@ -21,6 +21,7 @@ import org.apache.ibatis.type.JdbcType;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
@@ -46,6 +47,9 @@ public class MybatisPlusConfig {
         sqlSessionFactory.setDataSource(dataSource);
         /* 枚举扫描 */
         sqlSessionFactory.setTypeEnumsPackage("com.baomidou.mybatisplus.test.base.enums");
+        /* xml扫描 */
+        sqlSessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver()
+            .getResources("classpath:/mapper/*.xml"));
         /* entity扫描,mybatis的Alias功能 */
         MybatisConfiguration configuration = new MybatisConfiguration();
         configuration.setJdbcTypeForNull(JdbcType.NULL);
@@ -107,7 +111,8 @@ public class MybatisPlusConfig {
             @Override
             public boolean doTableFilter(String tableName) {
                 // 这里可以判断是否过滤表
-                return "common_logic_data".equals(tableName) || "mysql_data".equals(tableName);
+                return "common_logic_data".equals(tableName) || "mysql_data".equals(tableName)
+                    || "result_map_entity".equals(tableName);
             }
         });
         sqlParserList.add(tenantSqlParser);

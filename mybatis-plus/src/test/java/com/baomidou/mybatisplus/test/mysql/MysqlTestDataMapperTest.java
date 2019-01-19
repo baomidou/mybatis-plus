@@ -13,10 +13,12 @@ import com.baomidou.mybatisplus.extension.service.additional.query.impl.LambdaQu
 import com.baomidou.mybatisplus.extension.service.additional.update.impl.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.test.base.entity.CommonData;
 import com.baomidou.mybatisplus.test.base.entity.CommonLogicData;
+import com.baomidou.mybatisplus.test.base.entity.ResultMapEntity;
 import com.baomidou.mybatisplus.test.base.entity.mysql.MysqlData;
 import com.baomidou.mybatisplus.test.base.enums.TestEnum;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonLogicDataMapper;
+import com.baomidou.mybatisplus.test.base.mapper.commons.ResultMapEntityMapper;
 import com.baomidou.mybatisplus.test.base.mapper.mysql.MysqlDataMapper;
 import com.baomidou.mybatisplus.test.mysql.config.MysqlDb;
 import org.junit.Assert;
@@ -51,6 +53,8 @@ public class MysqlTestDataMapperTest {
     private CommonLogicDataMapper commonLogicMapper;
     @Resource
     private MysqlDataMapper mysqlMapper;
+    @Resource
+    private ResultMapEntityMapper resultMapEntityMapper;
 
     @BeforeClass
     public static void init() throws Exception {
@@ -67,6 +71,7 @@ public class MysqlTestDataMapperTest {
                 .setTestEnum(TestEnum.ONE));
             commonLogicMapper.insert(new CommonLogicData().setTestInt(i).setTestStr(str).setId(id));
             mysqlMapper.insert(new MysqlData().setOrder(i).setGroup(i).setId(id).setTestStr(str).setYaHoStr(str));
+            resultMapEntityMapper.insert(new ResultMapEntity().setId(id));
         }
     }
 
@@ -184,6 +189,7 @@ public class MysqlTestDataMapperTest {
         Assert.assertNotNull(commonMapper.selectById(id).getTestEnum());
         Assert.assertNotNull(commonLogicMapper.selectById(id));
         Assert.assertNotNull(mysqlMapper.selectById(id));
+        Assert.assertNotNull(resultMapEntityMapper.selectById(id));
     }
 
     @Test
@@ -192,6 +198,7 @@ public class MysqlTestDataMapperTest {
         Assert.assertTrue(CollectionUtils.isNotEmpty(commonMapper.selectBatchIds(ids)));
         Assert.assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectBatchIds(ids)));
         Assert.assertTrue(CollectionUtils.isNotEmpty(mysqlMapper.selectBatchIds(ids)));
+        Assert.assertTrue(CollectionUtils.isNotEmpty(resultMapEntityMapper.selectBatchIds(ids)));
     }
 
     @Test
@@ -303,6 +310,14 @@ public class MysqlTestDataMapperTest {
         Assert.assertNotEquals(0, mysqlDataPage.getRecords().size());
         Assert.assertTrue(CollectionUtils.isNotEmpty(mysqlDataPage.getRecords()));
         System.out.println(JSON.toJSONString(mysqlDataPage));
+
+        Page<ResultMapEntity> resultMapEntityPage = new Page<>(1, 5);
+        IPage<ResultMapEntity> resultMapEntityDataPage = resultMapEntityMapper.selectPage(resultMapEntityPage, null);
+        Assert.assertSame(resultMapEntityDataPage, resultMapEntityPage);
+        Assert.assertNotEquals(null, resultMapEntityDataPage.getTotal());
+        Assert.assertNotEquals(0, resultMapEntityDataPage.getRecords().size());
+        Assert.assertTrue(CollectionUtils.isNotEmpty(resultMapEntityDataPage.getRecords()));
+        System.out.println(JSON.toJSONString(resultMapEntityDataPage));
     }
 
     @Test

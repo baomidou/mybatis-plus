@@ -1,6 +1,8 @@
 drop table if exists common_data;
 drop table if exists common_logic_data;
 drop table if exists mysql_data;
+drop table if exists result_map_entity;
+
 CREATE TABLE common_data (
     id        BIGINT primary key,
     test_int  integer,
@@ -30,5 +32,14 @@ CREATE TABLE mysql_data (
     `group`    integer,
     test_str   varchar(255),
     lambda_str varchar(255) default ''
+)ENGINE = innodb
+DEFAULT CHARSET = utf8;
+
+CREATE TABLE result_map_entity (
+    id         BIGINT primary key,
+    column1    varchar(200) default '1',
+    column2    varchar(200) default '2',
+    column3    varchar(200) default '3',
+    column4    varchar(200) default '4'
 )ENGINE = innodb
 DEFAULT CHARSET = utf8;
