@@ -19,18 +19,13 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.*;
-import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.type.JdbcType;
-import org.apache.ibatis.type.TypeException;
-import org.apache.ibatis.type.TypeHandler;
-import org.apache.ibatis.type.TypeHandlerRegistry;
+import org.apache.ibatis.type.*;
 
-import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
@@ -212,55 +207,50 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
         if (parameterMappings != null) {
             // 解决update无法正确获取到参数类型问题
-            if (parameterObject instanceof MapperMethod.ParamMap && ((MapperMethod.ParamMap) parameterObject).containsKey("et")) {
-                Object entity = ((MapperMethod.ParamMap) parameterObject).get("et");
-                Map<String, Class<?>> propClsMap = null;
-                if (entity instanceof HashMap) {
-                    HashMap<?, ?> entityMap = (HashMap) entity;
-                    if (CollectionUtils.isNotEmpty(entityMap)) {
-                        propClsMap = new HashMap<>(entityMap.size());
-                        for (Map.Entry entry : entityMap.entrySet()) {
-                            propClsMap.put(String.valueOf(entry.getKey()), entry.getValue() == null ? Object.class : entry.getValue().getClass());
-                        }
-                    }
-                } else if (entity != null) {
-                    Map<String, Field> fieldMap = ReflectionKit.getFieldMap(entity.getClass());
-                    if (CollectionUtils.isNotEmpty(fieldMap)) {
-                        propClsMap = new HashMap<>(fieldMap.size());
-                        for (Map.Entry<String, Field> entry : fieldMap.entrySet()) {
-                            propClsMap.put(entry.getKey(), entry.getValue().getType());
-                        }
-                    }
-                }
-                if (propClsMap != null) {
-                    for (ParameterMapping parameterMapping : parameterMappings) {
-                        // 判断是否已经处理
-                        if (!Object.class.equals(parameterMapping.getJavaType())) {
-                            continue;
-                        }
-                        String property = parameterMapping.getProperty();
-                        if (!property.startsWith("et.")) {
-                            continue;
-                        }
-                        String propName = property.substring(3);
-                        if (!propClsMap.containsKey(propName)) {
-                            continue;
-                        }
-                        Class<?> cls = propClsMap.get(propName);
-                        // 将真实类型与类型处理器注入到ParameterMapping
-                        try {
-                            Field javaTypeField = ParameterMapping.class.getDeclaredField("javaType");
-                            javaTypeField.setAccessible(true);
-                            javaTypeField.set(parameterMapping, cls);
-                            Field typeHandlerField = ParameterMapping.class.getDeclaredField("typeHandler");
-                            typeHandlerField.setAccessible(true);
-                            typeHandlerField.set(parameterMapping, typeHandlerRegistry.getTypeHandler(cls, parameterMapping.getJdbcType()));
-                        } catch (NoSuchFieldException | IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
+//            if (parameterObject instanceof MapperMethod.ParamMap && ((MapperMethod.ParamMap) parameterObject).containsKey(Constants.ENTITY)) {
+//                Object entity = ((MapperMethod.ParamMap) parameterObject).get(Constants.ENTITY);
+//                final Map<String, Class<?>> propClsMap = new HashMap<>();
+//                if (entity instanceof HashMap) {
+//                    HashMap<String, Object> entityMap = (HashMap) entity;
+//                    if (CollectionUtils.isNotEmpty(entityMap)) {
+//                        entityMap.forEach((k, v) -> {
+//                            if (v != null) {
+//                                propClsMap.put(k, v.getClass());
+//                            }
+//                        });
+//                    }
+//                } else if (entity != null) {
+//                    ReflectionKit.getFieldMap(entity.getClass()).forEach((k, v) -> propClsMap.put(k, v.getType()));
+//                }
+//                if (CollectionUtils.isNotEmpty(propClsMap)) {
+//                    for (ParameterMapping parameterMapping : parameterMappings) {
+//                        // 判断是否已经处理
+//                        if (!Object.class.equals(parameterMapping.getJavaType())) {
+//                            continue;
+//                        }
+//                        String property = parameterMapping.getProperty();
+//                        if (!property.startsWith(Constants.ENTITY_DOT)) {
+//                            continue;
+//                        }
+//                        String propName = property.substring(3);
+//                        if (!propClsMap.containsKey(propName)) {
+//                            continue;
+//                        }
+//                        Class<?> cls = propClsMap.get(propName);
+//                        // 将真实类型与类型处理器注入到ParameterMapping
+//                        try {
+//                            Field javaTypeField = ParameterMapping.class.getDeclaredField("javaType");
+//                            javaTypeField.setAccessible(true);
+//                            javaTypeField.set(parameterMapping, cls);
+//                            Field typeHandlerField = ParameterMapping.class.getDeclaredField("typeHandler");
+//                            typeHandlerField.setAccessible(true);
+//                            typeHandlerField.set(parameterMapping, typeHandlerRegistry.getTypeHandler(cls, parameterMapping.getJdbcType()));
+//                        } catch (NoSuchFieldException | IllegalAccessException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }
+//            }
             for (int i = 0; i < parameterMappings.size(); i++) {
                 ParameterMapping parameterMapping = parameterMappings.get(i);
                 if (parameterMapping.getMode() != ParameterMode.OUT) {
@@ -278,6 +268,10 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                     }
                     TypeHandler typeHandler = parameterMapping.getTypeHandler();
                     JdbcType jdbcType = parameterMapping.getJdbcType();
+                    if (value != null && typeHandler.getClass() == UnknownTypeHandler.class) {
+                        typeHandler = Optional.ofNullable(typeHandlerRegistry
+                            .getTypeHandler(value.getClass(), jdbcType)).orElse(typeHandler);
+                    }
                     if (value == null && jdbcType == null) {
                         jdbcType = configuration.getJdbcTypeForNull();
                     }
