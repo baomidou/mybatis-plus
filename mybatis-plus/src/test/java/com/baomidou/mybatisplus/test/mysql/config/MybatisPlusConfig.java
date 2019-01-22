@@ -50,7 +50,8 @@ public class MybatisPlusConfig {
         /* xml扫描 */
         sqlSessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver()
             .getResources("classpath:/mapper/*.xml"));
-        /* entity扫描,mybatis的Alias功能 */
+        /* 扫描 typeHandler */
+        sqlSessionFactory.setTypeHandlersPackage("com.baomidou.mybatisplus.test.base.type");
         MybatisConfiguration configuration = new MybatisConfiguration();
         configuration.setJdbcTypeForNull(JdbcType.NULL);
         /* 驼峰转下划线 */

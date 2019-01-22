@@ -1,5 +1,6 @@
 package com.baomidou.mybatisplus.test.base.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -22,6 +23,8 @@ public class ResultMapEntity {
     private String column2;
     private String column3;
     private String column4;
+    @TableField(el = "list, typeHandler=com.baomidou.mybatisplus.test.base.type.ListTypeHandler")
     private List<String> list;
-    private Map<String, String> map;
+    @TableField(el = "map, typeHandler=com.baomidou.mybatisplus.test.base.type.MapTypeHandler")
+    private Map<String, Object> map;
 }

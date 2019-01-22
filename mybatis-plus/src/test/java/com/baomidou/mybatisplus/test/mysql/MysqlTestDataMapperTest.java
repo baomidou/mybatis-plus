@@ -33,6 +33,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.annotation.Resource;
 import java.util.*;
 
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
+
 
 /**
  * <p>
@@ -56,6 +59,9 @@ public class MysqlTestDataMapperTest {
     @Resource
     private ResultMapEntityMapper resultMapEntityMapper;
 
+    private final List<String> list = Arrays.asList("1", "2", "3");
+    private final Map<String, Object> map = list.parallelStream().collect(toMap(identity(), identity()));
+
     @BeforeClass
     public static void init() throws Exception {
         MysqlDb.initMysqlData();
@@ -71,7 +77,7 @@ public class MysqlTestDataMapperTest {
                 .setTestEnum(TestEnum.ONE));
             commonLogicMapper.insert(new CommonLogicData().setTestInt(i).setTestStr(str).setId(id));
             mysqlMapper.insert(new MysqlData().setOrder(i).setGroup(i).setId(id).setTestStr(str).setYaHoStr(str));
-            resultMapEntityMapper.insert(new ResultMapEntity().setId(id));
+            resultMapEntityMapper.insert(new ResultMapEntity().setId(id).setList(list).setMap(map));
         }
     }
 
@@ -149,9 +155,11 @@ public class MysqlTestDataMapperTest {
     @Test
     public void c1_updateById() {
         long id = 6L;
-        Assert.assertEquals(1, commonMapper.updateById(new CommonData().setId(id).setTestInt(555).setVersion(0)));
+        Assert.assertEquals(1, commonMapper.updateById(new CommonData().setId(id).setTestInt(555).setVersion(0)
+            .setTestEnum(TestEnum.TWO)));
         Assert.assertEquals(1, commonLogicMapper.updateById(new CommonLogicData().setId(id).setTestInt(555)));
         Assert.assertEquals(1, mysqlMapper.updateById(new MysqlData().setId(id).setOrder(555)));
+        Assert.assertEquals(1, resultMapEntityMapper.updateById(new ResultMapEntity().setId(id).setList(list).setMap(map)));
     }
 
     @Test
@@ -189,7 +197,10 @@ public class MysqlTestDataMapperTest {
         Assert.assertNotNull(commonMapper.selectById(id).getTestEnum());
         Assert.assertNotNull(commonLogicMapper.selectById(id));
         Assert.assertNotNull(mysqlMapper.selectById(id));
-        Assert.assertNotNull(resultMapEntityMapper.selectById(id));
+        ResultMapEntity resultMapEntity = resultMapEntityMapper.selectById(id);
+        Assert.assertNotNull(resultMapEntity);
+        Assert.assertTrue(CollectionUtils.isNotEmpty(resultMapEntity.getMap()));
+        Assert.assertTrue(CollectionUtils.isNotEmpty(resultMapEntity.getList()));
     }
 
     @Test

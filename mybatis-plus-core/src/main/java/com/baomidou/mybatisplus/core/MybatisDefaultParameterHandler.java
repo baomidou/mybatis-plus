@@ -24,7 +24,10 @@ import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.type.*;
+import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.TypeException;
+import org.apache.ibatis.type.TypeHandler;
+import org.apache.ibatis.type.TypeHandlerRegistry;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -268,10 +271,6 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                     }
                     TypeHandler typeHandler = parameterMapping.getTypeHandler();
                     JdbcType jdbcType = parameterMapping.getJdbcType();
-                    if (value != null && typeHandler.getClass() == UnknownTypeHandler.class) {
-                        typeHandler = Optional.ofNullable(typeHandlerRegistry
-                            .getTypeHandler(value.getClass(), jdbcType)).orElse(typeHandler);
-                    }
                     if (value == null && jdbcType == null) {
                         jdbcType = configuration.getJdbcTypeForNull();
                     }
