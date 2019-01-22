@@ -22,6 +22,7 @@ import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
@@ -103,7 +104,7 @@ public class MybatisConfiguration extends Configuration {
     }
 
     @Override
-    public void setDefaultScriptingLanguage(Class<?> driver) {
+    public void setDefaultScriptingLanguage(Class<? extends LanguageDriver> driver) {
         if (driver == null) {
             /* 设置自定义 driver */
             driver = MybatisXMLLanguageDriver.class;
