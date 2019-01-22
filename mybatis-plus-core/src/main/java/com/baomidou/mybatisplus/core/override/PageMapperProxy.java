@@ -15,6 +15,9 @@
  */
 package com.baomidou.mybatisplus.core.override;
 
+import org.apache.ibatis.reflection.ExceptionUtil;
+import org.apache.ibatis.session.SqlSession;
+
 import java.io.Serializable;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Constructor;
@@ -22,10 +25,6 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Map;
-
-import org.apache.ibatis.lang.UsesJava7;
-import org.apache.ibatis.reflection.ExceptionUtil;
-import org.apache.ibatis.session.SqlSession;
 
 /**
  * <p>
@@ -65,15 +64,9 @@ public class PageMapperProxy<T> implements InvocationHandler, Serializable {
     }
 
     private PageMapperMethod cachedMapperMethod(Method method) {
-        PageMapperMethod mapperMethod = methodCache.get(method);
-        if (mapperMethod == null) {
-            mapperMethod = new PageMapperMethod(mapperInterface, method, sqlSession.getConfiguration());
-            methodCache.put(method, mapperMethod);
-        }
-        return mapperMethod;
+        return methodCache.computeIfAbsent(method, k -> new PageMapperMethod(mapperInterface, method, sqlSession.getConfiguration()));
     }
 
-    @UsesJava7
     private Object invokeDefaultMethod(Object proxy, Method method, Object[] args)
         throws Throwable {
         final Constructor<MethodHandles.Lookup> constructor = MethodHandles.Lookup.class

@@ -15,14 +15,6 @@
  */
 package com.baomidou.mybatisplus.core;
 
-import java.io.InputStream;
-import java.io.Reader;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
-
-import javax.sql.DataSource;
-
 import org.apache.ibatis.builder.BaseBuilder;
 import org.apache.ibatis.builder.BuilderException;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
@@ -44,16 +36,16 @@ import org.apache.ibatis.reflection.MetaClass;
 import org.apache.ibatis.reflection.ReflectorFactory;
 import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
-import org.apache.ibatis.session.AutoMappingBehavior;
-import org.apache.ibatis.session.AutoMappingUnknownColumnBehavior;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.ExecutorType;
-import org.apache.ibatis.session.LocalCacheScope;
+import org.apache.ibatis.session.*;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.type.JdbcType;
-import org.apache.ibatis.type.TypeHandler;
 
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import javax.sql.DataSource;
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * <p>
@@ -66,10 +58,10 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
  */
 public class MybatisXMLConfigBuilder extends BaseBuilder {
 
-    private boolean parsed;
     private final XPathParser parser;
-    private String environment;
     private final ReflectorFactory localReflectorFactory = new DefaultReflectorFactory();
+    private boolean parsed;
+    private String environment;
 
     public MybatisXMLConfigBuilder(Reader reader) {
         this(reader, null, null);
@@ -95,8 +87,10 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
         this(new XPathParser(inputStream, true, props, new XMLMapperEntityResolver()), environment, props);
     }
 
+    /**
+     * 使用自己的 MybatisConfiguration
+     */
     private MybatisXMLConfigBuilder(XPathParser parser, String environment, Properties props) {
-        //TODO 自定义 Configuration
         super(new MybatisConfiguration());
         ErrorContext.instance().resource("SQL Mapper Configuration");
         this.configuration.setVariables(props);
@@ -125,6 +119,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
             propertiesElement(root.evalNode("properties"));
             Properties settings = settingsAsProperties(root.evalNode("settings"));
             loadCustomVfs(settings);
+            loadCustomLogImpl(settings);
             typeAliasesElement(root.evalNode("typeAliases"));
             pluginElement(root.evalNode("plugins"));
             objectFactoryElement(root.evalNode("objectFactory"));
@@ -159,7 +154,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
     private void loadCustomVfs(Properties props) throws ClassNotFoundException {
         String value = props.getProperty("vfsImpl");
         if (value != null) {
-            String[] clazzes = value.split(StringPool.COMMA);
+            String[] clazzes = value.split(",");
             for (String clazz : clazzes) {
                 if (!clazz.isEmpty()) {
                     @SuppressWarnings("unchecked")
@@ -168,6 +163,11 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
                 }
             }
         }
+    }
+
+    private void loadCustomLogImpl(Properties props) {
+        Class<? extends Log> logImpl = resolveClass(props.getProperty("logImpl"));
+        configuration.setLogImpl(logImpl);
     }
 
     private void typeAliasesElement(XNode parent) {
@@ -274,16 +274,11 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
         configuration.setLazyLoadTriggerMethods(stringSetValueOf(props.getProperty("lazyLoadTriggerMethods"), "equals,clone,hashCode,toString"));
         configuration.setSafeResultHandlerEnabled(booleanValueOf(props.getProperty("safeResultHandlerEnabled"), true));
         configuration.setDefaultScriptingLanguage(resolveClass(props.getProperty("defaultScriptingLanguage")));
+        configuration.setDefaultEnumTypeHandler(resolveClass(props.getProperty("defaultEnumTypeHandler")));
         configuration.setCallSettersOnNulls(booleanValueOf(props.getProperty("callSettersOnNulls"), false));
         configuration.setUseActualParamName(booleanValueOf(props.getProperty("useActualParamName"), true));
-        @SuppressWarnings("unchecked")
-        Class<? extends TypeHandler> typeHandler = (Class<? extends TypeHandler>) resolveClass(props.getProperty("defaultEnumTypeHandler"));
-        configuration.setDefaultEnumTypeHandler(typeHandler);
         configuration.setReturnInstanceForEmptyRow(booleanValueOf(props.getProperty("returnInstanceForEmptyRow"), false));
         configuration.setLogPrefix(props.getProperty("logPrefix"));
-        @SuppressWarnings("unchecked")
-        Class<? extends Log> logImpl = (Class<? extends Log>) resolveClass(props.getProperty("logImpl"));
-        configuration.setLogImpl(logImpl);
         configuration.setConfigurationFactory(resolveClass(props.getProperty("configurationFactory")));
     }
 
@@ -445,5 +440,4 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
             return environment.equals(id);
         }
     }
-
 }

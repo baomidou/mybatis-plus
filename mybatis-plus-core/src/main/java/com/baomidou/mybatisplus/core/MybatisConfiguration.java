@@ -44,6 +44,11 @@ public class MybatisConfiguration extends Configuration {
      */
     protected final MybatisMapperRegistry mybatisMapperRegistry = new MybatisMapperRegistry(this);
 
+//    public MybatisConfiguration(Environment environment) {
+//        this();
+//        this.environment = environment;
+//    }
+
     /**
      * 初始化调用
      */

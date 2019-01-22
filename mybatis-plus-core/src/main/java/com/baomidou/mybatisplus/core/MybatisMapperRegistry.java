@@ -94,7 +94,7 @@ public class MybatisMapperRegistry extends MapperRegistry {
     }
 
     /**
-     * @since 3.2.2
+     * 使用自己的 knownMappers
      */
     @Override
     public Collection<Class<?>> getMappers() {

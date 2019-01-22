@@ -15,14 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.override;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.apache.ibatis.annotations.Flush;
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.binding.BindingException;
@@ -38,8 +31,14 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import java.lang.reflect.Array;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * <p>
@@ -50,13 +49,12 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
  * @since 2018-06-09
  */
 public class PageMapperMethod {
-
-    private final PageMapperMethod.SqlCommand command;
-    private final PageMapperMethod.MethodSignature method;
+    private final SqlCommand command;
+    private final MethodSignature method;
 
     public PageMapperMethod(Class<?> mapperInterface, Method method, Configuration config) {
-        this.command = new PageMapperMethod.SqlCommand(config, mapperInterface, method);
-        this.method = new PageMapperMethod.MethodSignature(config, mapperInterface, method);
+        this.command = new SqlCommand(config, mapperInterface, method);
+        this.method = new MethodSignature(config, mapperInterface, method);
     }
 
     @SuppressWarnings("unchecked")
@@ -95,14 +93,17 @@ public class PageMapperMethod {
                      */
                     if (IPage.class.isAssignableFrom(method.getReturnType()) && args != null
                         && IPage.class.isAssignableFrom(args[0].getClass())) {
-                        List<Object> o = (List<Object>) executeForMany2(sqlSession, args);
-                        result = ((IPage) args[0]).setRecords(o);
+                        result = ((IPage) args[0]).setRecords(executeForIPage(sqlSession, args));
+                        /**
+                         * 这上面
+                         */
                     } else {
                         result = sqlSession.selectOne(command.getName(), param);
+                        if (method.returnsOptional() &&
+                            (result == null || !method.getReturnType().equals(result.getClass()))) {
+                            result = Optional.ofNullable(result);
+                        }
                     }
-                    /**
-                     * 这上面
-                     */
                 }
                 break;
             case FLUSH:
@@ -118,16 +119,12 @@ public class PageMapperMethod {
         return result;
     }
 
-    private <E> Object executeForMany2(SqlSession sqlSession, Object[] args) {
-        List<E> result;
+    /**
+     * IPage 专用
+     */
+    private <E> List<E> executeForIPage(SqlSession sqlSession, Object[] args) {
         Object param = method.convertArgsToSqlCommandParam(args);
-        if (method.hasRowBounds()) {
-            RowBounds rowBounds = method.extractRowBounds(args);
-            result = sqlSession.<E>selectList(command.getName(), param, rowBounds);
-        } else {
-            result = sqlSession.<E>selectList(command.getName(), param);
-        }
-        return result;
+        return sqlSession.selectList(command.getName(), param);
     }
 
     private Object rowCountResult(int rowCount) {
@@ -168,9 +165,9 @@ public class PageMapperMethod {
         Object param = method.convertArgsToSqlCommandParam(args);
         if (method.hasRowBounds()) {
             RowBounds rowBounds = method.extractRowBounds(args);
-            result = sqlSession.<E>selectList(command.getName(), param, rowBounds);
+            result = sqlSession.selectList(command.getName(), param, rowBounds);
         } else {
-            result = sqlSession.<E>selectList(command.getName(), param);
+            result = sqlSession.selectList(command.getName(), param);
         }
         // issue #510 Collections & arrays support
         if (!method.getReturnType().isAssignableFrom(result.getClass())) {
@@ -188,9 +185,9 @@ public class PageMapperMethod {
         Object param = method.convertArgsToSqlCommandParam(args);
         if (method.hasRowBounds()) {
             RowBounds rowBounds = method.extractRowBounds(args);
-            result = sqlSession.<T>selectCursor(command.getName(), param, rowBounds);
+            result = sqlSession.selectCursor(command.getName(), param, rowBounds);
         } else {
-            result = sqlSession.<T>selectCursor(command.getName(), param);
+            result = sqlSession.selectCursor(command.getName(), param);
         }
         return result;
     }
@@ -221,9 +218,9 @@ public class PageMapperMethod {
         Object param = method.convertArgsToSqlCommandParam(args);
         if (method.hasRowBounds()) {
             RowBounds rowBounds = method.extractRowBounds(args);
-            result = sqlSession.<K, V>selectMap(command.getName(), param, method.getMapKey(), rowBounds);
+            result = sqlSession.selectMap(command.getName(), param, method.getMapKey(), rowBounds);
         } else {
-            result = sqlSession.<K, V>selectMap(command.getName(), param, method.getMapKey());
+            result = sqlSession.selectMap(command.getName(), param, method.getMapKey());
         }
         return result;
     }
@@ -258,7 +255,7 @@ public class PageMapperMethod {
                     type = SqlCommandType.FLUSH;
                 } else {
                     throw new BindingException("Invalid bound statement (not found): "
-                        + mapperInterface.getName() + StringPool.DOT + methodName);
+                        + mapperInterface.getName() + "." + methodName);
                 }
             } else {
                 name = ms.getId();
@@ -279,7 +276,7 @@ public class PageMapperMethod {
 
         private MappedStatement resolveMappedStatement(Class<?> mapperInterface, String methodName,
                                                        Class<?> declaringClass, Configuration configuration) {
-            String statementId = mapperInterface.getName() + StringPool.DOT + methodName;
+            String statementId = mapperInterface.getName() + "." + methodName;
             if (configuration.hasStatement(statementId)) {
                 return configuration.getMappedStatement(statementId);
             } else if (mapperInterface.equals(declaringClass)) {
@@ -304,6 +301,7 @@ public class PageMapperMethod {
         private final boolean returnsMap;
         private final boolean returnsVoid;
         private final boolean returnsCursor;
+        private final boolean returnsOptional;
         private final Class<?> returnType;
         private final String mapKey;
         private final Integer resultHandlerIndex;
@@ -322,6 +320,7 @@ public class PageMapperMethod {
             this.returnsVoid = void.class.equals(this.returnType);
             this.returnsMany = configuration.getObjectFactory().isCollection(this.returnType) || this.returnType.isArray();
             this.returnsCursor = Cursor.class.equals(this.returnType);
+            this.returnsOptional = Optional.class.equals(this.returnType);
             this.mapKey = getMapKey(method);
             this.returnsMap = this.mapKey != null;
             this.rowBoundsIndex = getUniqueParamIndex(method, RowBounds.class);
@@ -371,6 +370,16 @@ public class PageMapperMethod {
 
         public boolean returnsCursor() {
             return returnsCursor;
+        }
+
+        /**
+         * return whether return type is {@code java.util.Optional}
+         *
+         * @return return {@code true}, if return type is {@code java.util.Optional}
+         * @since 3.5.0
+         */
+        public boolean returnsOptional() {
+            return returnsOptional;
         }
 
         private Integer getUniqueParamIndex(Method method, Class<?> paramType) {

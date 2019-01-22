@@ -181,13 +181,6 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
         model.consumers(mappings, configuration, additionalParameters);
         metaObject.setValue("delegate.boundSql.sql", model.getDialectSql());
         metaObject.setValue("delegate.boundSql.parameterMappings", mappings);
-
-        /*
-         * <p> 禁用内存分页 </p>
-         * <p> 内存分页会查询所有结果出来处理（这个很吓人的），如果结果变化频繁这个数据还会不准。</p>
-         */
-        metaObject.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
-        metaObject.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
         return invocation.proceed();
     }
 
