@@ -22,7 +22,6 @@ import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
@@ -38,21 +37,20 @@ import org.apache.ibatis.session.SqlSession;
  * @since 2016-01-23
  */
 public class MybatisConfiguration extends Configuration {
-
     private static final Log logger = LogFactory.getLog(MybatisConfiguration.class);
-
-    protected boolean mapUnderscoreToCamelCase = true;
 
     /**
      * Mapper 注册
      */
-    public final MybatisMapperRegistry mybatisMapperRegistry = new MybatisMapperRegistry(this);
+    protected final MybatisMapperRegistry mybatisMapperRegistry = new MybatisMapperRegistry(this);
 
     /**
      * 初始化调用
      */
     public MybatisConfiguration() {
-        this.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
+        super();
+        this.mapUnderscoreToCamelCase = true;
+        languageRegistry.setDefaultDriverClass(MybatisXMLLanguageDriver.class);
     }
 
     /**
@@ -103,53 +101,51 @@ public class MybatisConfiguration extends Configuration {
         super.addMappedStatement(ms);
     }
 
-    @Override
-    public void setDefaultScriptingLanguage(Class<? extends LanguageDriver> driver) {
-        if (driver == null) {
-            /* 设置自定义 driver */
-            driver = MybatisXMLLanguageDriver.class;
-        }
-        super.setDefaultScriptingLanguage(driver);
-    }
-
+    /**
+     * 使用自己的 MybatisMapperRegistry
+     */
     @Override
     public MapperRegistry getMapperRegistry() {
         return mybatisMapperRegistry;
     }
 
+    /**
+     * 使用自己的 MybatisMapperRegistry
+     */
     @Override
     public <T> void addMapper(Class<T> type) {
         mybatisMapperRegistry.addMapper(type);
     }
 
+    /**
+     * 使用自己的 MybatisMapperRegistry
+     */
     @Override
     public void addMappers(String packageName, Class<?> superType) {
         mybatisMapperRegistry.addMappers(packageName, superType);
     }
 
+    /**
+     * 使用自己的 MybatisMapperRegistry
+     */
     @Override
     public void addMappers(String packageName) {
         mybatisMapperRegistry.addMappers(packageName);
     }
 
+    /**
+     * 使用自己的 MybatisMapperRegistry
+     */
     @Override
     public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
         return mybatisMapperRegistry.getMapper(type, sqlSession);
     }
 
+    /**
+     * 使用自己的 MybatisMapperRegistry
+     */
     @Override
     public boolean hasMapper(Class<?> type) {
         return mybatisMapperRegistry.hasMapper(type);
-    }
-
-    @Override
-    public boolean isMapUnderscoreToCamelCase() {
-        return mapUnderscoreToCamelCase;
-    }
-
-    @Override
-    public void setMapUnderscoreToCamelCase(boolean mapUnderscoreToCamelCase) {
-        super.setMapUnderscoreToCamelCase(mapUnderscoreToCamelCase);
-        this.mapUnderscoreToCamelCase = mapUnderscoreToCamelCase;
     }
 }
