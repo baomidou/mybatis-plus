@@ -21,13 +21,18 @@ import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.enums.IEnum;
-import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.handlers.EnumAnnotationTypeHandler;
 import com.baomidou.mybatisplus.extension.handlers.EnumTypeHandler;
 import com.baomidou.mybatisplus.extension.toolkit.AopUtils;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.extension.toolkit.PackageHelper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.ErrorContext;
@@ -58,13 +63,20 @@ import org.springframework.core.NestedIOException;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.Set;
 import java.util.stream.Stream;
+
+import javax.sql.DataSource;
 
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.Assert.state;
@@ -456,19 +468,11 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
 
         // TODO 无配置启动所必须的
-        if (this.globalConfig == null) {
-            this.globalConfig = GlobalConfigUtils.defaults();
-        }
-        if (this.globalConfig.getDbConfig() == null) {
-            this.globalConfig.setDbConfig(new GlobalConfig.DbConfig());
-        }
+        this.globalConfig = Optional.ofNullable(this.globalConfig).orElseGet(GlobalConfigUtils::defaults);
+        this.globalConfig.setDbConfig(Optional.ofNullable(this.globalConfig.getDbConfig()).orElseGet(GlobalConfig.DbConfig::new));
 
         // TODO 初始化 id-work 以及 打印骚东西
         configuration.init(this.globalConfig);
-
-        if (this.objectFactory != null) {
-            configuration.setObjectFactory(this.objectFactory);
-        }
 
         Optional.ofNullable(this.objectFactory).ifPresent(configuration::setObjectFactory);
         Optional.ofNullable(this.objectWrapperFactory).ifPresent(configuration::setObjectWrapperFactory);
@@ -531,15 +535,18 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             }
             // 取得类型转换注册器
             TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
-            for (Class cls : classes) {
+            classes.forEach(cls ->{
                 if (cls.isEnum()) {
                     if (IEnum.class.isAssignableFrom(cls)) {
                         // 接口方式
                         typeHandlerRegistry.register(cls, EnumTypeHandler.class);
                     } else {
                         // 注解方式
-                        Class<?> clazz = dealEnumType(cls);
-                        if (null != clazz) {
+                        Optional<Field> optional = dealEnumType(cls);
+                        if (optional.isPresent()) {
+                            Field field = optional.get();
+                            field.setAccessible(true);
+                            EnumAnnotationTypeHandler.addEnumType(cls, field);
                             typeHandlerRegistry.register(cls, EnumAnnotationTypeHandler.class);
                         } else {
                             // 原生方式
@@ -547,7 +554,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
                         }
                     }
                 }
-            }
+            });
         }
 
         if (!isEmpty(this.typeAliases)) {
@@ -601,11 +608,9 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             }
         }
 
-        if (this.transactionFactory == null) {
-            this.transactionFactory = new SpringManagedTransactionFactory();
-        }
-
-        configuration.setEnvironment(new Environment(this.environment, this.transactionFactory, this.dataSource));
+        configuration.setEnvironment(new Environment(this.environment,
+            this.transactionFactory == null ? new SpringManagedTransactionFactory() : this.transactionFactory,
+            this.dataSource));
 
         // TODO 设置元数据相关 如果用户没有配置 dbType 则自动获取
         if (globalConfig.getDbConfig().getDbType() == DbType.OTHER) {
@@ -656,18 +661,8 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
     /**
      * 处理普通枚举 把带{@link EnumValue}的field注册到处理器中
      */
-    protected Class<?> dealEnumType(Class<?> clazz) {
-        if (clazz.isEnum()) {
-            Field[] fields = clazz.getDeclaredFields();
-            for (Field f : fields) {
-                if (f.isAnnotationPresent(EnumValue.class)) {
-                    f.setAccessible(true);
-                    EnumAnnotationTypeHandler.addEnumType(clazz, f);
-                    return clazz;
-                }
-            }
-        }
-        return null;
+    protected Optional<Field> dealEnumType(Class<?> clazz) {
+        return clazz.isEnum() ? Arrays.stream(clazz.getDeclaredFields()).filter(field -> field.isAnnotationPresent(EnumValue.class)).findFirst() : Optional.empty();
     }
 
     /**
