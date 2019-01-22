@@ -31,12 +31,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author miemie
  * @since 2018-06-09
  */
-public class PageMapperProxyFactory<T> {
+public class MybatisMapperProxyFactory<T> {
 
     private final Class<T> mapperInterface;
-    private final Map<Method, PageMapperMethod> methodCache = new ConcurrentHashMap<>();
+    private final Map<Method, MybatisMapperMethod> methodCache = new ConcurrentHashMap<>();
 
-    public PageMapperProxyFactory(Class<T> mapperInterface) {
+    public MybatisMapperProxyFactory(Class<T> mapperInterface) {
         this.mapperInterface = mapperInterface;
     }
 
@@ -44,17 +44,17 @@ public class PageMapperProxyFactory<T> {
         return mapperInterface;
     }
 
-    public Map<Method, PageMapperMethod> getMethodCache() {
+    public Map<Method, MybatisMapperMethod> getMethodCache() {
         return methodCache;
     }
 
     @SuppressWarnings("unchecked")
-    protected T newInstance(PageMapperProxy<T> mapperProxy) {
+    protected T newInstance(MybatisMapperProxy<T> mapperProxy) {
         return (T) Proxy.newProxyInstance(mapperInterface.getClassLoader(), new Class[]{mapperInterface}, mapperProxy);
     }
 
     public T newInstance(SqlSession sqlSession) {
-        final PageMapperProxy<T> mapperProxy = new PageMapperProxy<>(sqlSession, mapperInterface, methodCache);
+        final MybatisMapperProxy<T> mapperProxy = new MybatisMapperProxy<>(sqlSession, mapperInterface, methodCache);
         return newInstance(mapperProxy);
     }
 }

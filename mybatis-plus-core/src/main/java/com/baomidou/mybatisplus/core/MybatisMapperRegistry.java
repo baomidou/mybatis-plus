@@ -15,7 +15,7 @@
  */
 package com.baomidou.mybatisplus.core;
 
-import com.baomidou.mybatisplus.core.override.PageMapperProxyFactory;
+import com.baomidou.mybatisplus.core.override.MybatisMapperProxyFactory;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import org.apache.ibatis.binding.BindingException;
 import org.apache.ibatis.binding.MapperRegistry;
@@ -37,7 +37,7 @@ import java.util.Map;
  */
 public class MybatisMapperRegistry extends MapperRegistry {
 
-    private final Map<Class<?>, PageMapperProxyFactory<?>> knownMappers = new HashMap<>();
+    private final Map<Class<?>, MybatisMapperProxyFactory<?>> knownMappers = new HashMap<>();
     private final Configuration config;
 
     public MybatisMapperRegistry(Configuration config) {
@@ -50,7 +50,7 @@ public class MybatisMapperRegistry extends MapperRegistry {
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
-        final PageMapperProxyFactory<T> mapperProxyFactory = (PageMapperProxyFactory<T>) knownMappers.get(type);
+        final MybatisMapperProxyFactory<T> mapperProxyFactory = (MybatisMapperProxyFactory<T>) knownMappers.get(type);
         if (mapperProxyFactory == null) {
             throw new BindingException("Type " + type + " is not known to the MybatisPlusMapperRegistry.");
         }
@@ -77,7 +77,7 @@ public class MybatisMapperRegistry extends MapperRegistry {
             }
             boolean loadCompleted = false;
             try {
-                knownMappers.put(type, new PageMapperProxyFactory<>(type));
+                knownMappers.put(type, new MybatisMapperProxyFactory<>(type));
                 // It's important that the type is added before the parser is run
                 // otherwise the binding may automatically be attempted by the
                 // mapper parser. If the type is already known, it won't try.

@@ -35,14 +35,14 @@ import java.util.Map;
  * @author miemie
  * @since 2018-06-09
  */
-public class PageMapperProxy<T> implements InvocationHandler, Serializable {
+public class MybatisMapperProxy<T> implements InvocationHandler, Serializable {
 
     private static final long serialVersionUID = -6424540398559729838L;
     private final SqlSession sqlSession;
     private final Class<T> mapperInterface;
-    private final Map<Method, PageMapperMethod> methodCache;
+    private final Map<Method, MybatisMapperMethod> methodCache;
 
-    public PageMapperProxy(SqlSession sqlSession, Class<T> mapperInterface, Map<Method, PageMapperMethod> methodCache) {
+    public MybatisMapperProxy(SqlSession sqlSession, Class<T> mapperInterface, Map<Method, MybatisMapperMethod> methodCache) {
         this.sqlSession = sqlSession;
         this.mapperInterface = mapperInterface;
         this.methodCache = methodCache;
@@ -59,12 +59,12 @@ public class PageMapperProxy<T> implements InvocationHandler, Serializable {
         } catch (Throwable t) {
             throw ExceptionUtil.unwrapThrowable(t);
         }
-        final PageMapperMethod mapperMethod = cachedMapperMethod(method);
+        final MybatisMapperMethod mapperMethod = cachedMapperMethod(method);
         return mapperMethod.execute(sqlSession, args);
     }
 
-    private PageMapperMethod cachedMapperMethod(Method method) {
-        return methodCache.computeIfAbsent(method, k -> new PageMapperMethod(mapperInterface, method, sqlSession.getConfiguration()));
+    private MybatisMapperMethod cachedMapperMethod(Method method) {
+        return methodCache.computeIfAbsent(method, k -> new MybatisMapperMethod(mapperInterface, method, sqlSession.getConfiguration()));
     }
 
     private Object invokeDefaultMethod(Object proxy, Method method, Object[] args)

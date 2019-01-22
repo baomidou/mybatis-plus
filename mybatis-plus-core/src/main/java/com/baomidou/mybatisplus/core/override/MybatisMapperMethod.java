@@ -48,11 +48,11 @@ import java.util.Optional;
  * @author miemie
  * @since 2018-06-09
  */
-public class PageMapperMethod {
+public class MybatisMapperMethod {
     private final SqlCommand command;
     private final MethodSignature method;
 
-    public PageMapperMethod(Class<?> mapperInterface, Method method, Configuration config) {
+    public MybatisMapperMethod(Class<?> mapperInterface, Method method, Configuration config) {
         this.command = new SqlCommand(config, mapperInterface, method);
         this.method = new MethodSignature(config, mapperInterface, method);
     }
