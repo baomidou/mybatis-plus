@@ -21,18 +21,13 @@ import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.enums.IEnum;
-import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.extension.handlers.EnumAnnotationTypeHandler;
 import com.baomidou.mybatisplus.extension.handlers.EnumTypeHandler;
 import com.baomidou.mybatisplus.extension.toolkit.AopUtils;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.extension.toolkit.PackageHelper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
-
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.ErrorContext;
@@ -63,20 +58,13 @@ import org.springframework.core.NestedIOException;
 import org.springframework.core.io.Resource;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
-
-import javax.sql.DataSource;
 
 import static org.springframework.util.Assert.notNull;
 import static org.springframework.util.Assert.state;
@@ -154,173 +142,167 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
     /**
      * Sets the ObjectFactory.
      *
-     * @since 1.1.2
      * @param objectFactory a custom ObjectFactory
+     * @since 1.1.2
      */
     public void setObjectFactory(ObjectFactory objectFactory) {
         this.objectFactory = objectFactory;
     }
 
-  /**
-   * Sets the ObjectWrapperFactory.
-   *
-   * @since 1.1.2
-   * @param objectWrapperFactory a specified ObjectWrapperFactory
-   */
-  public void setObjectWrapperFactory(ObjectWrapperFactory objectWrapperFactory) {
-    this.objectWrapperFactory = objectWrapperFactory;
-  }
+    /**
+     * Sets the ObjectWrapperFactory.
+     *
+     * @param objectWrapperFactory a specified ObjectWrapperFactory
+     * @since 1.1.2
+     */
+    public void setObjectWrapperFactory(ObjectWrapperFactory objectWrapperFactory) {
+        this.objectWrapperFactory = objectWrapperFactory;
+    }
 
-  /**
-   * Gets the DatabaseIdProvider
-   *
-   * @since 1.1.0
-   * @return a specified DatabaseIdProvider
-   */
-  public DatabaseIdProvider getDatabaseIdProvider() {
-    return databaseIdProvider;
-  }
+    /**
+     * Gets the DatabaseIdProvider
+     *
+     * @return a specified DatabaseIdProvider
+     * @since 1.1.0
+     */
+    public DatabaseIdProvider getDatabaseIdProvider() {
+        return databaseIdProvider;
+    }
 
-  /**
-   * Sets the DatabaseIdProvider.
-   * As of version 1.2.2 this variable is not initialized by default.
-   *
-   * @since 1.1.0
-   * @param databaseIdProvider a DatabaseIdProvider
-   */
-  public void setDatabaseIdProvider(DatabaseIdProvider databaseIdProvider) {
-    this.databaseIdProvider = databaseIdProvider;
-  }
+    /**
+     * Sets the DatabaseIdProvider.
+     * As of version 1.2.2 this variable is not initialized by default.
+     *
+     * @param databaseIdProvider a DatabaseIdProvider
+     * @since 1.1.0
+     */
+    public void setDatabaseIdProvider(DatabaseIdProvider databaseIdProvider) {
+        this.databaseIdProvider = databaseIdProvider;
+    }
 
-  /**
-   * Gets the VFS.
-   * @return a specified VFS
-   */
-  public Class<? extends VFS> getVfs() {
-    return this.vfs;
-  }
+    /**
+     * Gets the VFS.
+     *
+     * @return a specified VFS
+     */
+    public Class<? extends VFS> getVfs() {
+        return this.vfs;
+    }
 
-  /**
-   * Sets the VFS.
-   * @param vfs a VFS
-   */
-  public void setVfs(Class<? extends VFS> vfs) {
-    this.vfs = vfs;
-  }
+    /**
+     * Sets the VFS.
+     *
+     * @param vfs a VFS
+     */
+    public void setVfs(Class<? extends VFS> vfs) {
+        this.vfs = vfs;
+    }
 
-  /**
-   * Gets the Cache.
-   * @return a specified Cache
-   */
-  public Cache getCache() {
-    return this.cache;
-  }
+    /**
+     * Gets the Cache.
+     *
+     * @return a specified Cache
+     */
+    public Cache getCache() {
+        return this.cache;
+    }
 
-  /**
-   * Sets the Cache.
-   * @param cache a Cache
-   */
-  public void setCache(Cache cache) {
-    this.cache = cache;
-  }
+    /**
+     * Sets the Cache.
+     *
+     * @param cache a Cache
+     */
+    public void setCache(Cache cache) {
+        this.cache = cache;
+    }
 
-  /**
-   * Mybatis plugin list.
-   *
-   * @since 1.0.1
-   *
-   * @param plugins list of plugins
-   *
-   */
-  public void setPlugins(Interceptor[] plugins) {
-    this.plugins = plugins;
-  }
+    /**
+     * Mybatis plugin list.
+     *
+     * @param plugins list of plugins
+     * @since 1.0.1
+     */
+    public void setPlugins(Interceptor[] plugins) {
+        this.plugins = plugins;
+    }
 
-  /**
-   * Packages to search for type aliases.
-   * 支持 typeAliasesPackage 多项每项都有通配符 com.a.b.*.po, com.c.*.po ISSUE https://gitee.com/baomidou/mybatis-plus/issues/IKJ48
-   * @since 1.0.1
-   *
-   * @param typeAliasesPackage package to scan for domain objects
-   *
-   */
-  public void setTypeAliasesPackage(String typeAliasesPackage) {
-    this.typeAliasesPackage = typeAliasesPackage;
-  }
+    /**
+     * Packages to search for type aliases.
+     * 支持 typeAliasesPackage 多项每项都有通配符 com.a.b.*.po, com.c.*.po ISSUE https://gitee.com/baomidou/mybatis-plus/issues/IKJ48
+     *
+     * @param typeAliasesPackage package to scan for domain objects
+     * @since 1.0.1
+     */
+    public void setTypeAliasesPackage(String typeAliasesPackage) {
+        this.typeAliasesPackage = typeAliasesPackage;
+    }
 
     public void setTypeEnumsPackage(String typeEnumsPackage) {
         this.typeEnumsPackage = typeEnumsPackage;
     }
 
-  /**
-   * Super class which domain objects have to extend to have a type alias created.
-   * No effect if there is no package to scan configured.
-   *
-   * @since 1.1.2
-   *
-   * @param typeAliasesSuperType super class for domain objects
-   *
-   */
-  public void setTypeAliasesSuperType(Class<?> typeAliasesSuperType) {
-    this.typeAliasesSuperType = typeAliasesSuperType;
-  }
+    /**
+     * Super class which domain objects have to extend to have a type alias created.
+     * No effect if there is no package to scan configured.
+     *
+     * @param typeAliasesSuperType super class for domain objects
+     * @since 1.1.2
+     */
+    public void setTypeAliasesSuperType(Class<?> typeAliasesSuperType) {
+        this.typeAliasesSuperType = typeAliasesSuperType;
+    }
 
-  /**
-   * Packages to search for type handlers.
-   *
-   * @since 1.0.1
-   *
-   * @param typeHandlersPackage package to scan for type handlers
-   *
-   */
-  public void setTypeHandlersPackage(String typeHandlersPackage) {
-    this.typeHandlersPackage = typeHandlersPackage;
-  }
+    /**
+     * Packages to search for type handlers.
+     *
+     * @param typeHandlersPackage package to scan for type handlers
+     * @since 1.0.1
+     */
+    public void setTypeHandlersPackage(String typeHandlersPackage) {
+        this.typeHandlersPackage = typeHandlersPackage;
+    }
 
-  /**
-   * Set type handlers. They must be annotated with {@code MappedTypes} and optionally with {@code MappedJdbcTypes}
-   *
-   * @since 1.0.1
-   *
-   * @param typeHandlers Type handler list
-   */
-  public void setTypeHandlers(TypeHandler<?>[] typeHandlers) {
-    this.typeHandlers = typeHandlers;
-  }
+    /**
+     * Set type handlers. They must be annotated with {@code MappedTypes} and optionally with {@code MappedJdbcTypes}
+     *
+     * @param typeHandlers Type handler list
+     * @since 1.0.1
+     */
+    public void setTypeHandlers(TypeHandler<?>[] typeHandlers) {
+        this.typeHandlers = typeHandlers;
+    }
 
-  /**
-   * List of type aliases to register. They can be annotated with {@code Alias}
-   *
-   * @since 1.0.1
-   *
-   * @param typeAliases Type aliases list
-   */
-  public void setTypeAliases(Class<?>[] typeAliases) {
-    this.typeAliases = typeAliases;
-  }
+    /**
+     * List of type aliases to register. They can be annotated with {@code Alias}
+     *
+     * @param typeAliases Type aliases list
+     * @since 1.0.1
+     */
+    public void setTypeAliases(Class<?>[] typeAliases) {
+        this.typeAliases = typeAliases;
+    }
 
-  /**
-   * If true, a final check is done on Configuration to assure that all mapped
-   * statements are fully loaded and there is no one still pending to resolve
-   * includes. Defaults to false.
-   *
-   * @since 1.0.1
-   *
-   * @param failFast enable failFast
-   */
-  public void setFailFast(boolean failFast) {
-    this.failFast = failFast;
-  }
+    /**
+     * If true, a final check is done on Configuration to assure that all mapped
+     * statements are fully loaded and there is no one still pending to resolve
+     * includes. Defaults to false.
+     *
+     * @param failFast enable failFast
+     * @since 1.0.1
+     */
+    public void setFailFast(boolean failFast) {
+        this.failFast = failFast;
+    }
 
-  /**
-   * Set the location of the MyBatis {@code SqlSessionFactory} config file. A typical value is
-   * "WEB-INF/mybatis-configuration.xml".
-   *
-   * @param configLocation a location the MyBatis config file
-   */
-  public void setConfigLocation(Resource configLocation) {
-    this.configLocation = configLocation;
-  }
+    /**
+     * Set the location of the MyBatis {@code SqlSessionFactory} config file. A typical value is
+     * "WEB-INF/mybatis-configuration.xml".
+     *
+     * @param configLocation a location the MyBatis config file
+     */
+    public void setConfigLocation(Resource configLocation) {
+        this.configLocation = configLocation;
+    }
 
     /**
      * Set a customized MyBatis configuration.
@@ -332,114 +314,112 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         this.configuration = configuration;
     }
 
-  /**
-   * Set locations of MyBatis mapper files that are going to be merged into the {@code SqlSessionFactory}
-   * configuration at runtime.
-   *
-   * This is an alternative to specifying "&lt;sqlmapper&gt;" entries in an MyBatis config file.
-   * This property being based on Spring's resource abstraction also allows for specifying
-   * resource patterns here: e.g. "classpath*:sqlmap/*-mapper.xml".
-   *
-   * @param mapperLocations location of MyBatis mapper files
-   */
-  public void setMapperLocations(Resource[] mapperLocations) {
-    this.mapperLocations = mapperLocations;
-  }
-
-  /**
-   * Set optional properties to be passed into the SqlSession configuration, as alternative to a
-   * {@code &lt;properties&gt;} tag in the configuration xml file. This will be used to
-   * resolve placeholders in the config file.
-   *
-   * @param  sqlSessionFactoryProperties optional properties for the SqlSessionFactory
-   */
-  public void setConfigurationProperties(Properties sqlSessionFactoryProperties) {
-    this.configurationProperties = sqlSessionFactoryProperties;
-  }
-
-  /**
-   * Set the JDBC {@code DataSource} that this instance should manage transactions for. The {@code DataSource}
-   * should match the one used by the {@code SqlSessionFactory}: for example, you could specify the same
-   * JNDI DataSource for both.
-   *
-   * A transactional JDBC {@code Connection} for this {@code DataSource} will be provided to application code
-   * accessing this {@code DataSource} directly via {@code DataSourceUtils} or {@code DataSourceTransactionManager}.
-   *
-   * The {@code DataSource} specified here should be the target {@code DataSource} to manage transactions for, not
-   * a {@code TransactionAwareDataSourceProxy}. Only data access code may work with
-   * {@code TransactionAwareDataSourceProxy}, while the transaction manager needs to work on the
-   * underlying target {@code DataSource}. If there's nevertheless a {@code TransactionAwareDataSourceProxy}
-   * passed in, it will be unwrapped to extract its target {@code DataSource}.
-   *
-   * @param dataSource a JDBC {@code DataSource}
-   *
-   */
-  public void setDataSource(DataSource dataSource) {
-    if (dataSource instanceof TransactionAwareDataSourceProxy) {
-      // If we got a TransactionAwareDataSourceProxy, we need to perform
-      // transactions for its underlying target DataSource, else data
-      // access code won't see properly exposed transactions (i.e.
-      // transactions for the target DataSource).
-      this.dataSource = ((TransactionAwareDataSourceProxy) dataSource).getTargetDataSource();
-    } else {
-      this.dataSource = dataSource;
+    /**
+     * Set locations of MyBatis mapper files that are going to be merged into the {@code SqlSessionFactory}
+     * configuration at runtime.
+     * <p>
+     * This is an alternative to specifying "&lt;sqlmapper&gt;" entries in an MyBatis config file.
+     * This property being based on Spring's resource abstraction also allows for specifying
+     * resource patterns here: e.g. "classpath*:sqlmap/*-mapper.xml".
+     *
+     * @param mapperLocations location of MyBatis mapper files
+     */
+    public void setMapperLocations(Resource[] mapperLocations) {
+        this.mapperLocations = mapperLocations;
     }
-  }
 
-  /**
-   * Sets the {@code SqlSessionFactoryBuilder} to use when creating the {@code SqlSessionFactory}.
-   *
-   * This is mainly meant for testing so that mock SqlSessionFactory classes can be injected. By
-   * default, {@code SqlSessionFactoryBuilder} creates {@code DefaultSqlSessionFactory} instances.
-   *
-   * @param sqlSessionFactoryBuilder a SqlSessionFactoryBuilder
-   *
-   */
-  public void setSqlSessionFactoryBuilder(SqlSessionFactoryBuilder sqlSessionFactoryBuilder) {
-    this.sqlSessionFactoryBuilder = sqlSessionFactoryBuilder;
-  }
+    /**
+     * Set optional properties to be passed into the SqlSession configuration, as alternative to a
+     * {@code &lt;properties&gt;} tag in the configuration xml file. This will be used to
+     * resolve placeholders in the config file.
+     *
+     * @param sqlSessionFactoryProperties optional properties for the SqlSessionFactory
+     */
+    public void setConfigurationProperties(Properties sqlSessionFactoryProperties) {
+        this.configurationProperties = sqlSessionFactoryProperties;
+    }
 
-  /**
-   * Set the MyBatis TransactionFactory to use. Default is {@code SpringManagedTransactionFactory}
-   *
-   * The default {@code SpringManagedTransactionFactory} should be appropriate for all cases:
-   * be it Spring transaction management, EJB CMT or plain JTA. If there is no active transaction,
-   * SqlSession operations will execute SQL statements non-transactionally.
-   *
-   * <b>It is strongly recommended to use the default {@code TransactionFactory}.</b> If not used, any
-   * attempt at getting an SqlSession through Spring's MyBatis framework will throw an exception if
-   * a transaction is active.
-   *
-   * @see SpringManagedTransactionFactory
-   * @param transactionFactory the MyBatis TransactionFactory
-   */
-  public void setTransactionFactory(TransactionFactory transactionFactory) {
-    this.transactionFactory = transactionFactory;
-  }
+    /**
+     * Set the JDBC {@code DataSource} that this instance should manage transactions for. The {@code DataSource}
+     * should match the one used by the {@code SqlSessionFactory}: for example, you could specify the same
+     * JNDI DataSource for both.
+     * <p>
+     * A transactional JDBC {@code Connection} for this {@code DataSource} will be provided to application code
+     * accessing this {@code DataSource} directly via {@code DataSourceUtils} or {@code DataSourceTransactionManager}.
+     * <p>
+     * The {@code DataSource} specified here should be the target {@code DataSource} to manage transactions for, not
+     * a {@code TransactionAwareDataSourceProxy}. Only data access code may work with
+     * {@code TransactionAwareDataSourceProxy}, while the transaction manager needs to work on the
+     * underlying target {@code DataSource}. If there's nevertheless a {@code TransactionAwareDataSourceProxy}
+     * passed in, it will be unwrapped to extract its target {@code DataSource}.
+     *
+     * @param dataSource a JDBC {@code DataSource}
+     */
+    public void setDataSource(DataSource dataSource) {
+        if (dataSource instanceof TransactionAwareDataSourceProxy) {
+            // If we got a TransactionAwareDataSourceProxy, we need to perform
+            // transactions for its underlying target DataSource, else data
+            // access code won't see properly exposed transactions (i.e.
+            // transactions for the target DataSource).
+            this.dataSource = ((TransactionAwareDataSourceProxy) dataSource).getTargetDataSource();
+        } else {
+            this.dataSource = dataSource;
+        }
+    }
 
-  /**
-   * <b>NOTE:</b> This class <em>overrides</em> any {@code Environment} you have set in the MyBatis
-   * config file. This is used only as a placeholder name. The default value is
-   * {@code SqlSessionFactoryBean.class.getSimpleName()}.
-   *
-   * @param environment the environment name
-   */
-  public void setEnvironment(String environment) {
-    this.environment = environment;
-  }
+    /**
+     * Sets the {@code SqlSessionFactoryBuilder} to use when creating the {@code SqlSessionFactory}.
+     * <p>
+     * This is mainly meant for testing so that mock SqlSessionFactory classes can be injected. By
+     * default, {@code SqlSessionFactoryBuilder} creates {@code DefaultSqlSessionFactory} instances.
+     *
+     * @param sqlSessionFactoryBuilder a SqlSessionFactoryBuilder
+     */
+    public void setSqlSessionFactoryBuilder(SqlSessionFactoryBuilder sqlSessionFactoryBuilder) {
+        this.sqlSessionFactoryBuilder = sqlSessionFactoryBuilder;
+    }
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    notNull(dataSource, "Property 'dataSource' is required");
-    notNull(sqlSessionFactoryBuilder, "Property 'sqlSessionFactoryBuilder' is required");
-    state((configuration == null && configLocation == null) || !(configuration != null && configLocation != null),
-              "Property 'configuration' and 'configLocation' can not specified with together");
+    /**
+     * Set the MyBatis TransactionFactory to use. Default is {@code SpringManagedTransactionFactory}
+     * <p>
+     * The default {@code SpringManagedTransactionFactory} should be appropriate for all cases:
+     * be it Spring transaction management, EJB CMT or plain JTA. If there is no active transaction,
+     * SqlSession operations will execute SQL statements non-transactionally.
+     *
+     * <b>It is strongly recommended to use the default {@code TransactionFactory}.</b> If not used, any
+     * attempt at getting an SqlSession through Spring's MyBatis framework will throw an exception if
+     * a transaction is active.
+     *
+     * @param transactionFactory the MyBatis TransactionFactory
+     * @see SpringManagedTransactionFactory
+     */
+    public void setTransactionFactory(TransactionFactory transactionFactory) {
+        this.transactionFactory = transactionFactory;
+    }
 
-    this.sqlSessionFactory = buildSqlSessionFactory();
-  }
+    /**
+     * <b>NOTE:</b> This class <em>overrides</em> any {@code Environment} you have set in the MyBatis
+     * config file. This is used only as a placeholder name. The default value is
+     * {@code SqlSessionFactoryBean.class.getSimpleName()}.
+     *
+     * @param environment the environment name
+     */
+    public void setEnvironment(String environment) {
+        this.environment = environment;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        notNull(dataSource, "Property 'dataSource' is required");
+        notNull(sqlSessionFactoryBuilder, "Property 'sqlSessionFactoryBuilder' is required");
+        state((configuration == null && configLocation == null) || !(configuration != null && configLocation != null),
+            "Property 'configuration' and 'configLocation' can not specified with together");
+
+        this.sqlSessionFactory = buildSqlSessionFactory();
+    }
 
     /**
      * Build a {@code SqlSessionFactory} instance.
@@ -570,56 +550,56 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             }
         }
 
-    if (!isEmpty(this.typeAliases)) {
-      Stream.of(this.typeAliases).forEach(typeAlias -> {
-        configuration.getTypeAliasRegistry().registerAlias(typeAlias);
-        LOGGER.debug(() -> "Registered type alias: '" + typeAlias + "'");
-      });
-    }
+        if (!isEmpty(this.typeAliases)) {
+            Stream.of(this.typeAliases).forEach(typeAlias -> {
+                configuration.getTypeAliasRegistry().registerAlias(typeAlias);
+                LOGGER.debug(() -> "Registered type alias: '" + typeAlias + "'");
+            });
+        }
 
-    if (!isEmpty(this.plugins)) {
-      Stream.of(this.plugins).forEach(plugin -> {
-          configuration.addInterceptor(plugin);
-        LOGGER.debug(() -> "Registered plugin: '" + plugin + "'");
-      });
-    }
+        if (!isEmpty(this.plugins)) {
+            Stream.of(this.plugins).forEach(plugin -> {
+                configuration.addInterceptor(plugin);
+                LOGGER.debug(() -> "Registered plugin: '" + plugin + "'");
+            });
+        }
 
-    if (hasLength(this.typeHandlersPackage)) {
-      String[] typeHandlersPackageArray = tokenizeToStringArray(this.typeHandlersPackage,
-          ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
-      Stream.of(typeHandlersPackageArray).forEach(packageToScan -> {
-          configuration.getTypeHandlerRegistry().register(packageToScan);
-        LOGGER.debug(() -> "Scanned package: '" + packageToScan + "' for type handlers");
-      });
-    }
+        if (hasLength(this.typeHandlersPackage)) {
+            String[] typeHandlersPackageArray = tokenizeToStringArray(this.typeHandlersPackage,
+                ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
+            Stream.of(typeHandlersPackageArray).forEach(packageToScan -> {
+                configuration.getTypeHandlerRegistry().register(packageToScan);
+                LOGGER.debug(() -> "Scanned package: '" + packageToScan + "' for type handlers");
+            });
+        }
 
-    if (!isEmpty(this.typeHandlers)) {
-      Stream.of(this.typeHandlers).forEach(typeHandler -> {
-          configuration.getTypeHandlerRegistry().register(typeHandler);
-        LOGGER.debug(() -> "Registered type handler: '" + typeHandler + "'");
-      });
-    }
+        if (!isEmpty(this.typeHandlers)) {
+            Stream.of(this.typeHandlers).forEach(typeHandler -> {
+                configuration.getTypeHandlerRegistry().register(typeHandler);
+                LOGGER.debug(() -> "Registered type handler: '" + typeHandler + "'");
+            });
+        }
 
-    if (this.databaseIdProvider != null) {//fix #64 set databaseId before parse mapper xmls
-      try {
-          configuration.setDatabaseId(this.databaseIdProvider.getDatabaseId(this.dataSource));
-      } catch (SQLException e) {
-        throw new NestedIOException("Failed getting a databaseId", e);
-      }
-    }
+        if (this.databaseIdProvider != null) {//fix #64 set databaseId before parse mapper xmls
+            try {
+                configuration.setDatabaseId(this.databaseIdProvider.getDatabaseId(this.dataSource));
+            } catch (SQLException e) {
+                throw new NestedIOException("Failed getting a databaseId", e);
+            }
+        }
 
-    Optional.ofNullable(this.cache).ifPresent(configuration::addCache);
+        Optional.ofNullable(this.cache).ifPresent(configuration::addCache);
 
-    if (xmlConfigBuilder != null) {
-      try {
-        xmlConfigBuilder.parse();
-        LOGGER.debug(() -> "Parsed configuration file: '" + this.configLocation + "'");
-      } catch (Exception ex) {
-        throw new NestedIOException("Failed to parse config resource: " + this.configLocation, ex);
-      } finally {
-        ErrorContext.instance().reset();
-      }
-    }
+        if (xmlConfigBuilder != null) {
+            try {
+                xmlConfigBuilder.parse();
+                LOGGER.debug(() -> "Parsed configuration file: '" + this.configLocation + "'");
+            } catch (Exception ex) {
+                throw new NestedIOException("Failed to parse config resource: " + this.configLocation, ex);
+            } finally {
+                ErrorContext.instance().reset();
+            }
+        }
 
         if (this.transactionFactory == null) {
             this.transactionFactory = new SpringManagedTransactionFactory();
@@ -697,43 +677,41 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         typeHandlerRegistry.register(enumClazz, EnumOrdinalTypeHandler.class);
     }
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public SqlSessionFactory getObject() throws Exception {
-    if (this.sqlSessionFactory == null) {
-      afterPropertiesSet();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SqlSessionFactory getObject() throws Exception {
+        if (this.sqlSessionFactory == null) {
+            afterPropertiesSet();
+        }
+        return this.sqlSessionFactory;
     }
 
-    return this.sqlSessionFactory;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public Class<? extends SqlSessionFactory> getObjectType() {
-    return this.sqlSessionFactory == null ? SqlSessionFactory.class : this.sqlSessionFactory.getClass();
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public boolean isSingleton() {
-    return true;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public void onApplicationEvent(ApplicationEvent event) {
-    if (failFast && event instanceof ContextRefreshedEvent) {
-      // fail-fast -> check all statements are completed
-      this.sqlSessionFactory.getConfiguration().getMappedStatementNames();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<? extends SqlSessionFactory> getObjectType() {
+        return this.sqlSessionFactory == null ? SqlSessionFactory.class : this.sqlSessionFactory.getClass();
     }
-  }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onApplicationEvent(ApplicationEvent event) {
+        if (failFast && event instanceof ContextRefreshedEvent) {
+            // fail-fast -> check all statements are completed
+            this.sqlSessionFactory.getConfiguration().getMappedStatementNames();
+        }
+    }
 }
