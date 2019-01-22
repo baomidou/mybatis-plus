@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
@@ -44,10 +45,10 @@ public class MybatisConfiguration extends Configuration {
      */
     protected final MybatisMapperRegistry mybatisMapperRegistry = new MybatisMapperRegistry(this);
 
-//    public MybatisConfiguration(Environment environment) {
-//        this();
-//        this.environment = environment;
-//    }
+    public MybatisConfiguration(Environment environment) {
+        this();
+        this.environment = environment;
+    }
 
     /**
      * 初始化调用
