@@ -50,6 +50,8 @@ import static java.util.stream.Collectors.toMap;
 @ContextConfiguration(locations = {"classpath:mysql/spring-test-mysql.xml"})
 public class MysqlTestDataMapperTest {
 
+    private final List<String> list = Arrays.asList("1", "2", "3");
+    private final Map<String, Object> map = list.parallelStream().collect(toMap(identity(), identity()));
     @Resource
     private CommonDataMapper commonMapper;
     @Resource
@@ -58,9 +60,6 @@ public class MysqlTestDataMapperTest {
     private MysqlDataMapper mysqlMapper;
     @Resource
     private ResultMapEntityMapper resultMapEntityMapper;
-
-    private final List<String> list = Arrays.asList("1", "2", "3");
-    private final Map<String, Object> map = list.parallelStream().collect(toMap(identity(), identity()));
 
     @BeforeClass
     public static void init() throws Exception {
@@ -195,6 +194,7 @@ public class MysqlTestDataMapperTest {
     public void d2_selectById() {
         long id = 6L;
         Assert.assertNotNull(commonMapper.selectById(id).getTestEnum());
+        Assert.assertTrue(commonMapper.getById(id).isPresent());
         Assert.assertNotNull(commonLogicMapper.selectById(id));
         Assert.assertNotNull(mysqlMapper.selectById(id));
         ResultMapEntity resultMapEntity = resultMapEntityMapper.selectById(id);

@@ -86,7 +86,7 @@ public class TableInfo implements Constants {
      */
     private List<TableFieldInfo> fieldList;
     /**
-     * 命名空间
+     * 命名空间 (对应的 mapper 接口的全类名)
      */
     private String currentNamespace;
     /**

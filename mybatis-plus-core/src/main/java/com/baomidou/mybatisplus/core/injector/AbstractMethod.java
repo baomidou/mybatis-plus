@@ -17,7 +17,6 @@ package com.baomidou.mybatisplus.core.injector;
 
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -46,17 +45,12 @@ public abstract class AbstractMethod implements Constants {
     /**
      * 注入自定义方法
      */
-    public void inject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass, Class<?> modelClass) {
+    public void inject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         this.configuration = builderAssistant.getConfiguration();
         this.builderAssistant = builderAssistant;
         this.languageDriver = configuration.getDefaultScriptingLanguageInstance();
-        if (null != modelClass) {
-            /**
-             * 注入自定义方法
-             */
-            TableInfo tableInfo = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
-            injectMappedStatement(mapperClass, modelClass, tableInfo);
-        }
+        /* 注入自定义方法 */
+        injectMappedStatement(mapperClass, modelClass, tableInfo);
     }
 
     /**
