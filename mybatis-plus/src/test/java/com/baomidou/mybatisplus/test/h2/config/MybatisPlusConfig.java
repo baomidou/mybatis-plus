@@ -4,6 +4,7 @@ import javax.sql.DataSource;
 
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.type.EnumOrdinalTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
@@ -46,6 +47,7 @@ public class MybatisPlusConfig {
          * 下划线转驼峰开启
          */
         configuration.setMapUnderscoreToCamelCase(true);
+        configuration.setDefaultEnumTypeHandler(EnumOrdinalTypeHandler.class);  //默认枚举处理
         sqlSessionFactory.setConfiguration(configuration);
         PaginationInterceptor pagination = new PaginationInterceptor();
         OptimisticLockerInterceptor optLock = new OptimisticLockerInterceptor();

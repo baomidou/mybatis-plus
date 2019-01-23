@@ -548,9 +548,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
                             field.setAccessible(true);
                             EnumAnnotationTypeHandler.addEnumType(cls, field);
                             typeHandlerRegistry.register(cls, EnumAnnotationTypeHandler.class);
-                        } else {
-                            // 原生方式
-                            registerOriginalEnumTypeHandler(typeHandlerRegistry, cls);
                         }
                     }
                 }
@@ -663,13 +660,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
      */
     protected Optional<Field> dealEnumType(Class<?> clazz) {
         return clazz.isEnum() ? Arrays.stream(clazz.getDeclaredFields()).filter(field -> field.isAnnotationPresent(EnumValue.class)).findFirst() : Optional.empty();
-    }
-
-    /**
-     * 对原生枚举的处理类，默认{@link EnumOrdinalTypeHandler}
-     */
-    protected void registerOriginalEnumTypeHandler(TypeHandlerRegistry typeHandlerRegistry, Class<?> enumClazz) {
-        typeHandlerRegistry.register(enumClazz, EnumOrdinalTypeHandler.class);
     }
 
     /**
