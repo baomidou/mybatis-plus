@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
@@ -45,7 +46,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import java.util.List;
 
@@ -68,7 +68,7 @@ import java.util.List;
 @ConditionalOnSingleCandidate(DataSource.class)
 @EnableConfigurationProperties(MybatisPlusProperties.class)
 @AutoConfigureAfter(DataSourceAutoConfiguration.class)
-public class MybatisPlusAutoConfiguration {
+public class MybatisPlusAutoConfiguration implements InitializingBean {
 
     private static final Logger logger = LoggerFactory.getLogger(MybatisPlusAutoConfiguration.class);
 
@@ -81,8 +81,9 @@ public class MybatisPlusAutoConfiguration {
     private final DatabaseIdProvider databaseIdProvider;
 
     private final List<ConfigurationCustomizer> configurationCustomizers;
-
+    
     private final ApplicationContext applicationContext;
+    
 
     public MybatisPlusAutoConfiguration(MybatisPlusProperties properties,
                                         ObjectProvider<Interceptor[]> interceptorsProvider,
@@ -97,9 +98,13 @@ public class MybatisPlusAutoConfiguration {
         this.configurationCustomizers = configurationCustomizersProvider.getIfAvailable();
         this.applicationContext = applicationContext;
     }
-
-    @PostConstruct
-    public void checkConfigFileExists() {
+    
+    @Override
+    public void afterPropertiesSet() {
+        checkConfigFileExists();
+    }
+    
+    private void checkConfigFileExists() {
         if (this.properties.isCheckConfigLocation() && StringUtils.hasText(this.properties.getConfigLocation())) {
             Resource resource = this.resourceLoader.getResource(this.properties.getConfigLocation());
             Assert.state(resource.exists(), "Cannot find config location: " + resource
@@ -206,27 +211,26 @@ public class MybatisPlusAutoConfiguration {
 
         @Override
         public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-
-            logger.debug("Searching for mappers annotated with @Mapper");
-
-            ClassPathMapperScanner scanner = new ClassPathMapperScanner(registry);
-
-            try {
-                if (this.resourceLoader != null) {
-                    scanner.setResourceLoader(this.resourceLoader);
-                }
-
-                List<String> packages = AutoConfigurationPackages.get(this.beanFactory);
-                if (logger.isDebugEnabled()) {
-                    packages.forEach(pkg -> logger.debug("Using auto-configuration base package '{}'", pkg));
-                }
-
-                scanner.setAnnotationClass(Mapper.class);
-                scanner.registerFilters();
-                scanner.doScan(StringUtils.toStringArray(packages));
-            } catch (IllegalStateException ex) {
-                logger.debug("Could not determine auto-configuration package, automatic mapper scanning disabled.", ex);
+        
+            if (!AutoConfigurationPackages.has(this.beanFactory)) {
+                logger.debug("Could not determine auto-configuration package, automatic mapper scanning disabled.");
+                return;
             }
+        
+            logger.debug("Searching for mappers annotated with @Mapper");
+        
+            List<String> packages = AutoConfigurationPackages.get(this.beanFactory);
+            if (logger.isDebugEnabled()) {
+                packages.forEach(pkg -> logger.debug("Using auto-configuration base package '{}'", pkg));
+            }
+        
+            ClassPathMapperScanner scanner = new ClassPathMapperScanner(registry);
+            if (this.resourceLoader != null) {
+                scanner.setResourceLoader(this.resourceLoader);
+            }
+            scanner.setAnnotationClass(Mapper.class);
+            scanner.registerFilters();
+            scanner.doScan(StringUtils.toStringArray(packages));
         }
 
         @Override
@@ -251,9 +255,9 @@ public class MybatisPlusAutoConfiguration {
     @Configuration
     @Import({AutoConfiguredMapperScannerRegistrar.class})
     @ConditionalOnMissingBean(MapperFactoryBean.class)
-    public static class MapperScannerRegistrarNotFoundConfiguration {
-
-        @PostConstruct
+    public static class MapperScannerRegistrarNotFoundConfiguration implements InitializingBean {
+    
+        @Override
         public void afterPropertiesSet() {
             logger.debug("No {} found.", MapperFactoryBean.class.getName());
         }
