@@ -54,7 +54,7 @@ public class MybatisPlusProperties {
     private String typeHandlersPackage;
 
     /**
-     * TODO 枚举包
+     * 枚举包扫描
      */
     private String typeEnumsPackage;
 
@@ -81,7 +81,7 @@ public class MybatisPlusProperties {
     private MybatisConfiguration configuration;
 
     /**
-     * TODO 全局枚举
+     * 全局配置
      */
     @NestedConfigurationProperty
     private GlobalConfig globalConfig = GlobalConfigUtils.defaults();

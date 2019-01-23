@@ -48,6 +48,20 @@
                 "level": "error",
                 "reason": "3.0开始废除此属性，请使用@Bean的方式注入至Spring容器."
             }
+        },
+        {
+            "sourceType": "org.apache.ibatis.session.Configuration",
+            "defaultValue": "org.apache.ibatis.scripting.xmltags.XMLLanguageDriver",
+            "name": "mybatis-plus.configuration.default-scripting-language",
+            "description": "A default LanguageDriver class.",
+            "type": "java.lang.Class<? extends org.apache.ibatis.scripting.LanguageDriver>"
+        },
+        {
+            "sourceType": "com.baomidou.mybatisplus.core.MybatisConfiguration",
+            "defaultValue": "org.apache.ibatis.type.EnumTypeHandler",
+            "name": "mybatis-plus.configuration.default-enum-type-handler",
+            "description": "A default TypeHandler class for Enum.",
+            "type": "java.lang.Class<? extends org.apache.ibatis.type.TypeHandler>"
         }
     ]
 }
