@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.annotations.ResultMap;
@@ -395,6 +396,16 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
     private Class<?> getReturnType(Method method) {
         Class<?> returnType = method.getReturnType();
         Type resolvedReturnType = TypeParameterResolver.resolveReturnType(method, type);
+        /**
+         * 新加入下面 4 行,有 ResultType 注解则以注解优先
+         */
+        ResultType resultType = method.getAnnotation(ResultType.class);
+        if (resultType != null) {
+            return resultType.value();
+        }
+        /**
+         * 新加入上面 4 行,有 ResultType 注解则以注解优先
+         */
         if (resolvedReturnType instanceof Class) {
             returnType = (Class<?>) resolvedReturnType;
             if (returnType.isArray()) {
@@ -444,6 +455,19 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                     returnType = (Class<?>) returnTypeParameter;
                 }
             }
+            /**
+             * 新加入下面 7 行
+             */
+            else if (IPage.class.equals(rawType)) {
+                Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+                Type returnTypeParameter = actualTypeArguments[0];
+                if (returnTypeParameter instanceof Class<?>) {
+                    returnType = (Class<?>) returnTypeParameter;
+                }
+            }
+            /**
+             * 新加入上面 7 行
+             */
         }
 
         return returnType;

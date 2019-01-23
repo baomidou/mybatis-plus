@@ -306,6 +306,16 @@ public class MysqlTestDataMapperTest {
         System.out.println(JSON.toJSONString(dataPage));
         System.out.println(JSON.toJSON(dataPage.convert(CommonData::getId)));
 
+        Page<CommonData> commonDataPage = new Page<>(1, 5);
+        commonDataPage.setDesc("c_time", "u_time");
+        IPage<CommonData> commonDataDataPage = commonMapper.myPage(commonDataPage);
+        Assert.assertSame(commonDataDataPage, commonDataPage);
+        Assert.assertNotEquals(null, commonDataDataPage.getTotal());
+        Assert.assertNotEquals(0, commonDataDataPage.getRecords().size());
+        Assert.assertTrue(CollectionUtils.isNotEmpty(commonDataDataPage.getRecords()));
+        System.out.println(JSON.toJSONString(commonDataDataPage));
+        System.out.println(JSON.toJSON(commonDataDataPage.convert(CommonData::getId)));
+
         Page<CommonLogicData> logicPage = new Page<>(1, 5);
         IPage<CommonLogicData> logicDataPage = commonLogicMapper.selectPage(logicPage, null);
         Assert.assertSame(logicDataPage, logicPage);
