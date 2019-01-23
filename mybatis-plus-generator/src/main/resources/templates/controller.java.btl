@@ -25,7 +25,7 @@ import ${superControllerClassPackage};
 <% }else{ %>
 @Controller
 <% } %>
-@RequestMapping("<% if(isNotEmpty(package.ModuleName)){ %>/package.ModuleName<% } %><% if(isNotEmpty(controllerMappingHyphenStyle)){ %>${controllerMappingHyphen}<% }else{ %>${table.entityPath}<% } %>")
+@RequestMapping("<% if(isNotEmpty(package.ModuleName)){ %>/${package.ModuleName}<% } %>/<% if(isNotEmpty(controllerMappingHyphenStyle)){ %>${controllerMappingHyphen}<% }else{ %>${table.entityPath}<% } %>")
 <% if(kotlin){ %>
 class ${table.controllerName}<% if(isNotEmpty(superControllerClass)){ %> : ${superControllerClass}()<% } %>
 <% }else{ %>
