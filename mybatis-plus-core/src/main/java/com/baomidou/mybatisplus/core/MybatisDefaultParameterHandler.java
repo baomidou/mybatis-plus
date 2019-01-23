@@ -209,51 +209,6 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         ErrorContext.instance().activity("setting parameters").object(mappedStatement.getParameterMap().getId());
         List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
         if (parameterMappings != null) {
-            // 解决update无法正确获取到参数类型问题
-//            if (parameterObject instanceof MapperMethod.ParamMap && ((MapperMethod.ParamMap) parameterObject).containsKey(Constants.ENTITY)) {
-//                Object entity = ((MapperMethod.ParamMap) parameterObject).get(Constants.ENTITY);
-//                final Map<String, Class<?>> propClsMap = new HashMap<>();
-//                if (entity instanceof HashMap) {
-//                    HashMap<String, Object> entityMap = (HashMap) entity;
-//                    if (CollectionUtils.isNotEmpty(entityMap)) {
-//                        entityMap.forEach((k, v) -> {
-//                            if (v != null) {
-//                                propClsMap.put(k, v.getClass());
-//                            }
-//                        });
-//                    }
-//                } else if (entity != null) {
-//                    ReflectionKit.getFieldMap(entity.getClass()).forEach((k, v) -> propClsMap.put(k, v.getType()));
-//                }
-//                if (CollectionUtils.isNotEmpty(propClsMap)) {
-//                    for (ParameterMapping parameterMapping : parameterMappings) {
-//                        // 判断是否已经处理
-//                        if (!Object.class.equals(parameterMapping.getJavaType())) {
-//                            continue;
-//                        }
-//                        String property = parameterMapping.getProperty();
-//                        if (!property.startsWith(Constants.ENTITY_DOT)) {
-//                            continue;
-//                        }
-//                        String propName = property.substring(3);
-//                        if (!propClsMap.containsKey(propName)) {
-//                            continue;
-//                        }
-//                        Class<?> cls = propClsMap.get(propName);
-//                        // 将真实类型与类型处理器注入到ParameterMapping
-//                        try {
-//                            Field javaTypeField = ParameterMapping.class.getDeclaredField("javaType");
-//                            javaTypeField.setAccessible(true);
-//                            javaTypeField.set(parameterMapping, cls);
-//                            Field typeHandlerField = ParameterMapping.class.getDeclaredField("typeHandler");
-//                            typeHandlerField.setAccessible(true);
-//                            typeHandlerField.set(parameterMapping, typeHandlerRegistry.getTypeHandler(cls, parameterMapping.getJdbcType()));
-//                        } catch (NoSuchFieldException | IllegalAccessException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }
-//            }
             for (int i = 0; i < parameterMappings.size(); i++) {
                 ParameterMapping parameterMapping = parameterMappings.get(i);
                 if (parameterMapping.getMode() != ParameterMode.OUT) {
