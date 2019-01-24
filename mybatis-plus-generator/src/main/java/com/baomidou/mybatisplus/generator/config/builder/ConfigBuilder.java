@@ -246,7 +246,7 @@ public class ConfigBuilder {
      */
     private void handlerPackage(TemplateConfig template, String outputDir, PackageConfig config) {
         // 包信息
-        packageInfo = new HashMap<>(6);
+        packageInfo = new HashMap<>(8);
         packageInfo.put(ConstVal.MODULE_NAME, config.getModuleName());
         packageInfo.put(ConstVal.ENTITY, joinPackage(config.getParent(), config.getEntity()));
         packageInfo.put(ConstVal.MAPPER, joinPackage(config.getParent(), config.getMapper()));
@@ -545,6 +545,7 @@ public class ConfigBuilder {
         return setTableName.equals(dbTableName)
             || StringUtils.matches(setTableName, dbTableName);
     }
+
     /**
      * <p>
      * 将字段信息与表信息关联
@@ -601,7 +602,7 @@ public class ConfigBuilder {
                             isId = StringUtils.isNotEmpty(key) && "PRI".equals(key.toUpperCase());
                         }
                     }
-            
+
                     // 处理ID
                     if (isId && !haveId) {
                         field.setKeyFlag(true);
@@ -713,7 +714,7 @@ public class ConfigBuilder {
      */
     private String processName(String name, NamingStrategy strategy, String[] prefix) {
         boolean removePrefix = false;
-        if (prefix != null && prefix.length >= 1) {
+        if (prefix != null && prefix.length != 0) {
             removePrefix = true;
         }
         String propertyName;
