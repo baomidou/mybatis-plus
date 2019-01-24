@@ -396,16 +396,6 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
     private Class<?> getReturnType(Method method) {
         Class<?> returnType = method.getReturnType();
         Type resolvedReturnType = TypeParameterResolver.resolveReturnType(method, type);
-        /**
-         * 新加入下面 4 行,有 ResultType 注解则以注解优先
-         */
-        ResultType resultType = method.getAnnotation(ResultType.class);
-        if (resultType != null) {
-            return resultType.value();
-        }
-        /**
-         * 新加入上面 4 行,有 ResultType 注解则以注解优先
-         */
         if (resolvedReturnType instanceof Class) {
             returnType = (Class<?>) resolvedReturnType;
             if (returnType.isArray()) {
