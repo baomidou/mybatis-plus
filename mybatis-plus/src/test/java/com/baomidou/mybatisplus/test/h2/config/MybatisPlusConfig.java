@@ -2,6 +2,9 @@ package com.baomidou.mybatisplus.test.h2.config;
 
 import javax.sql.DataSource;
 
+import com.baomidou.mybatisplus.core.parser.ISqlParser;
+import com.baomidou.mybatisplus.extension.parsers.BlockAttackSqlParser;
+import com.baomidou.mybatisplus.extension.plugins.SqlExplainInterceptor;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.EnumOrdinalTypeHandler;
@@ -20,6 +23,9 @@ import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.baomidou.mybatisplus.test.h2.H2MetaObjectHandler;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>
@@ -50,10 +56,15 @@ public class MybatisPlusConfig {
         configuration.setDefaultEnumTypeHandler(EnumOrdinalTypeHandler.class);  //默认枚举处理
         sqlSessionFactory.setConfiguration(configuration);
         PaginationInterceptor pagination = new PaginationInterceptor();
+        SqlExplainInterceptor sqlExplainInterceptor = new SqlExplainInterceptor();
+        List<ISqlParser> sqlParserList = new ArrayList<>();
+        sqlParserList.add(new BlockAttackSqlParser());
+        sqlExplainInterceptor.setSqlParserList(sqlParserList);
         OptimisticLockerInterceptor optLock = new OptimisticLockerInterceptor();
         sqlSessionFactory.setPlugins(new Interceptor[]{
             pagination,
             optLock,
+            sqlExplainInterceptor,
             new PerformanceInterceptor()
         });
         globalConfiguration.setMetaObjectHandler(new H2MetaObjectHandler());
