@@ -23,7 +23,9 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.apache.ibatis.executor.statement.RoutingStatementHandler;
 import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.reflection.SystemMetaObject;
 
 import java.util.List;
 
@@ -46,6 +48,9 @@ public abstract class AbstractSqlParserHandler {
      * 拦截 SQL 解析执行
      */
     protected void sqlParser(MetaObject metaObject) {
+        Object originalObject = metaObject.getOriginalObject();
+        RoutingStatementHandler statementHandler = PluginUtils.realTarget(originalObject);
+        metaObject = SystemMetaObject.forObject(statementHandler);
         if (null != metaObject) {
             if (null != this.sqlParserFilter && this.sqlParserFilter.doFilter(metaObject)) {
                 return;
