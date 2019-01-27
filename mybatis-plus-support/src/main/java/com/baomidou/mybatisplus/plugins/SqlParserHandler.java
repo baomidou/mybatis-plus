@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.plugins;
 
 import java.util.List;
 
+import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.reflection.MetaObject;
 
 import com.baomidou.mybatisplus.entity.SqlParserInfo;
@@ -25,6 +26,7 @@ import com.baomidou.mybatisplus.plugins.parser.ISqlParserFilter;
 import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
 import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.PluginUtils;
+import org.apache.ibatis.reflection.SystemMetaObject;
 
 /**
  * <p>
@@ -43,6 +45,9 @@ public abstract class SqlParserHandler {
      * 拦截 SQL 解析执行
      */
     protected void sqlParser(MetaObject metaObject) {
+        Object originalObject = metaObject.getOriginalObject();
+        StatementHandler statementHandler = (StatementHandler) PluginUtils.realTarget(originalObject);
+        metaObject = SystemMetaObject.forObject(statementHandler);
         if (null != metaObject) {
             if (null != this.sqlParserFilter && this.sqlParserFilter.doFilter(metaObject)) {
                 return;

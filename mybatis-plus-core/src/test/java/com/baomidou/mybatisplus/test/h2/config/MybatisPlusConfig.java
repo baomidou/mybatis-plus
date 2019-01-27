@@ -2,6 +2,9 @@ package com.baomidou.mybatisplus.test.h2.config;
 
 import javax.sql.DataSource;
 
+import com.baomidou.mybatisplus.plugins.pagination.optimize.JsqlParserCountOptimize;
+import com.baomidou.mybatisplus.plugins.parser.ISqlParser;
+import com.baomidou.mybatisplus.test.plugins.CustomInterceptor;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.JdbcType;
@@ -18,6 +21,9 @@ import com.baomidou.mybatisplus.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.plugins.PerformanceInterceptor;
 import com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean;
 import com.baomidou.mybatisplus.test.h2.H2MetaObjectHandler;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>
@@ -46,9 +52,14 @@ public class MybatisPlusConfig {
         PaginationInterceptor pagination = new PaginationInterceptor();
         pagination.setLocalPage(true);
         OptimisticLockerInterceptor optLock = new OptimisticLockerInterceptor();
+        List<ISqlParser> sqlParserList = new ArrayList<>();
+        sqlParserList.add(new JsqlParserCountOptimize());
+        CustomInterceptor customInterceptor = new CustomInterceptor();
+        customInterceptor.setSqlParserList(sqlParserList);
         sqlSessionFactory.setPlugins(new Interceptor[]{
             pagination,
             optLock,
+            customInterceptor,
             new PerformanceInterceptor()
         });
         globalConfiguration.setMetaObjectHandler(new H2MetaObjectHandler());
