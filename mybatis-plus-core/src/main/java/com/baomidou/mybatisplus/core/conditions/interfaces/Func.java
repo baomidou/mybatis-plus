@@ -301,6 +301,13 @@ public interface Func<Children, R> extends Serializable {
     /**
      * ignore
      */
+    default Children orderByAsc(R column) {
+        return orderByAsc(true, column);
+    }
+
+    /**
+     * ignore
+     */
     default Children orderByAsc(R... columns) {
         return orderByAsc(true, columns);
     }
@@ -315,6 +322,13 @@ public interface Func<Children, R> extends Serializable {
      */
     default Children orderByAsc(boolean condition, R... columns) {
         return orderBy(condition, true, columns);
+    }
+
+    /**
+     * ignore
+     */
+    default Children orderByDesc(R column) {
+        return orderByDesc(true, column);
     }
 
     /**
