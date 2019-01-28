@@ -23,9 +23,7 @@ import java.util.Objects;
 import com.baomidou.mybatisplus.core.enums.IEnum;
 
 /**
- * <p>
  * 枚举处理工具类
- * </p>
  *
  * @author hubin
  * @since 2017-10-11
@@ -33,9 +31,7 @@ import com.baomidou.mybatisplus.core.enums.IEnum;
 public class EnumUtils {
 
     /**
-     * <p>
      * 值映射为枚举
-     * </p>
      *
      * @param enumClass 枚举类
      * @param value     枚举值

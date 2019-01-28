@@ -37,9 +37,7 @@ import java.util.function.Predicate;
 import static java.util.stream.Collectors.joining;
 
 /**
- * <p>
  * 数据库表反射信息
- * </p>
  *
  * @author hubin
  * @since 2016-01-23
@@ -66,7 +64,7 @@ public class TableInfo implements Constants {
     private String resultMap;
     /**
      * 主键是否有存在字段名与属性名关联
-     * true: 表示要进行 as
+     * <p>true: 表示要进行 as</p>
      */
     private boolean keyRelated = false;
     /**
@@ -119,9 +117,7 @@ public class TableInfo implements Constants {
     private String sqlSelect;
 
     /**
-     * <p>
      * 获得注入的 SQL Statement
-     * </p>
      *
      * @param sqlMethod MybatisPlus 支持 SQL 方法
      * @return SQL Statement
@@ -196,8 +192,8 @@ public class TableInfo implements Constants {
 
     /**
      * 获取 insert 时候主键 sql 脚本片段
-     * insert into table (字段) values (值)
-     * 位于 "值" 部位
+     * <p>insert into table (字段) values (值)</p>
+     * <p>位于 "值" 部位</p>
      *
      * @return sql 脚本片段
      */
@@ -214,8 +210,8 @@ public class TableInfo implements Constants {
 
     /**
      * 获取 insert 时候主键 sql 脚本片段
-     * insert into table (字段) values (值)
-     * 位于 "字段" 部位
+     * <p>insert into table (字段) values (值)</p>
+     * <p>位于 "字段" 部位</p>
      *
      * @return sql 脚本片段
      */
@@ -232,8 +228,8 @@ public class TableInfo implements Constants {
 
     /**
      * 根据 predicate 过滤后获取 insert 时候插入值 sql 脚本片段
-     * insert into table (字段) values (值)
-     * 位于 "值" 部位
+     * <p>insert into table (字段) values (值)</p>
+     * <p>位于 "值" 部位</p>
      *
      * <li> 自选部位,不生成 if 标签 </li>
      *
@@ -247,8 +243,8 @@ public class TableInfo implements Constants {
 
     /**
      * 根据 predicate 过滤后获取 insert 时候字段 sql 脚本片段
-     * insert into table (字段) values (值)
-     * 位于 "字段" 部位
+     * <p>insert into table (字段) values (值)</p>
+     * <p>位于 "字段" 部位</p>
      *
      * <li> 自选部位,不生成 if 标签 </li>
      *
@@ -262,8 +258,8 @@ public class TableInfo implements Constants {
 
     /**
      * 获取所有 insert 时候插入值 sql 脚本片段
-     * insert into table (字段) values (值)
-     * 位于 "值" 部位
+     * <p>insert into table (字段) values (值)</p>
+     * <p>位于 "值" 部位</p>
      *
      * <li> 自动选部位,根据规则会生成 if 标签 </li>
      *
@@ -277,8 +273,8 @@ public class TableInfo implements Constants {
 
     /**
      * 获取 insert 时候字段 sql 脚本片段
-     * insert into table (字段) values (值)
-     * 位于 "字段" 部位
+     * <p>insert into table (字段) values (值)</p>
+     * <p>位于 "字段" 部位</p>
      *
      * <li> 自动选部位,根据规则会生成 if 标签 </li>
      *

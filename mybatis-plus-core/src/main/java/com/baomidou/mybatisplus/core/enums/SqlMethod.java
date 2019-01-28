@@ -16,9 +16,7 @@
 package com.baomidou.mybatisplus.core.enums;
 
 /**
- * <p>
  * MybatisPlus 支持 SQL 方法
- * </p>
  *
  * @author hubin
  * @since 2016-01-23

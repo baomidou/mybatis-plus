@@ -27,12 +27,8 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
 /**
- * <p>
  * replace default Configuration class
- * </p>
- * <p>
- * Caratacus 2016/9/25 replace mapperRegistry
- * </p>
+ * <p>Caratacus 2016/9/25 replace mapperRegistry</p>
  *
  * @author hubin
  * @since 2016-01-23
@@ -78,14 +74,11 @@ public class MybatisConfiguration extends Configuration {
     }
 
     /**
-     * <p>
      * MybatisPlus 加载 SQL 顺序：
-     * </p>
-     * 1、加载XML中的SQL<br>
-     * 2、加载sqlProvider中的SQL<br>
-     * 3、xmlSql 与 sqlProvider不能包含相同的SQL<br>
-     * <br>
-     * 调整后的SQL优先级：xmlSql > sqlProvider > curdSql <br>
+     * <p>1、加载XML中的SQL</p>
+     * <p>2、加载sqlProvider中的SQL</p>
+     * <p>3、xmlSql 与 sqlProvider不能包含相同的SQL</p>
+     * <p>调整后的SQL优先级：xmlSql > sqlProvider > curdSql</p>
      */
     @Override
     public void addMappedStatement(MappedStatement ms) {

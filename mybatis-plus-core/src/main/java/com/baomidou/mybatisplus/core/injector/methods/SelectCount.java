@@ -22,9 +22,7 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
 
 /**
- * <p>
  * 查询满足条件总记录数
- * </p>
  *
  * @author hubin
  * @since 2018-04-08

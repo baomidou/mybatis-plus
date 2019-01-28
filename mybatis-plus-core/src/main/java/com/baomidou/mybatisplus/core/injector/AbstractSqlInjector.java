@@ -33,9 +33,7 @@ import java.util.Set;
 
 
 /**
- * <p>
  * SQL 自动注入器
- * </p>
  *
  * @author hubin
  * @since 2018-04-07
@@ -71,9 +69,7 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
     }
 
     /**
-     * <p>
      * 获取 注入的方法
-     * </p>
      *
      * @return 注入的方法集合
      */

@@ -9,10 +9,8 @@ import java.util.Map;
 import net.sf.cglib.beans.BeanMap;
 
 /**
- * <p>
- * Bean 转换工具类<br/>
- * 使用请依赖 cglib 包
- * </p>
+ * Bean 转换工具类
+ * <p>使用请依赖 cglib 包</p>
  *
  * @author hubin HCL
  * @since 2018-06-12
@@ -34,9 +32,7 @@ public final class BeanUtils {
     }
 
     /**
-     * <p>
      * map 装换为 java bean 对象
-     * </p>
      *
      * @param map   转换 MAP
      * @param clazz 对象 Class
@@ -49,9 +45,7 @@ public final class BeanUtils {
     }
 
     /**
-     * <p>
-     * List<T> 转换为 List<Map<String, Object>>
-     * </p>
+     * List&lt;T&gt; 转换为 List&lt;Map&lt;String, Object&gt;&gt;
      *
      * @param beans 转换对象集合
      * @return 返回转换后的 bean 列表
@@ -64,9 +58,7 @@ public final class BeanUtils {
     }
 
     /**
-     * <p>
-     * List<Map<String,Object>> 转换为 List<T>
-     * </p>
+     * List&lt;Map&lt;String, Object&gt;&gt; 转换为 List&lt;T&gt;
      *
      * @param maps  转换 MAP 集合
      * @param clazz 对象 Class

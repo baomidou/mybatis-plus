@@ -17,9 +17,7 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
 /**
- * <p>
  * mybatis_plus 自用常量集中管理
- * </p>
  *
  * @author miemie
  * @since 2018-07-22

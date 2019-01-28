@@ -17,9 +17,7 @@ package com.baomidou.mybatisplus.core.incrementer;
 
 
 /**
- * <p>
  * 表主键生成器接口 (sql)
- * </p>
  *
  * @author hubin
  * @since 2017-05-08
@@ -27,9 +25,7 @@ package com.baomidou.mybatisplus.core.incrementer;
 public interface IKeyGenerator {
 
     /**
-     * <p>
      * 执行 key 生成 SQL
-     * </p>
      *
      * @param incrementerName 序列名称
      * @return sql

@@ -16,9 +16,7 @@
 package com.baomidou.mybatisplus.core.enums;
 
 /**
- * <p>
  * SQL like 枚举
- * </p>
  *
  * @author Caratacus
  * @since 2016-12-4

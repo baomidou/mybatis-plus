@@ -28,9 +28,7 @@ import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 
 /**
- * <p>
  * Lambda 语法使用 Wrapper
- * </p>
  *
  * @author hubin miemie HCL
  * @since 2017-05-26
@@ -40,25 +38,19 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     implements Query<LambdaQueryWrapper<T>, T, SFunction<T, ?>> {
 
     /**
-     * <p>
      * 查询字段
-     * </p>
      */
     private SharedString sqlSelect = new SharedString();
 
     /**
-     * <p>
      * 不建议直接 new 该实例，使用 Wrappers.lambdaQuery(entity)
-     * </p>
      */
     public LambdaQueryWrapper() {
         this(null);
     }
 
     /**
-     * <p>
      * 不建议直接 new 该实例，使用 Wrappers.lambdaQuery(entity)
-     * </p>
      */
     public LambdaQueryWrapper(T entity) {
         super.setEntity(entity);
@@ -66,9 +58,7 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     }
 
     /**
-     * <p>
      * 不建议直接 new 该实例，使用 Wrappers.lambdaQuery(...)
-     * </p>
      */
     LambdaQueryWrapper(T entity, Class<T> entityClass, SharedString sqlSelect, AtomicInteger paramNameSeq,
                        Map<String, Object> paramNameValuePairs, MergeSegments mergeSegments) {
@@ -81,9 +71,7 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     }
 
     /**
-     * <p>
      * SELECT 部分 SQL 设置
-     * </p>
      *
      * @param columns 查询字段
      */
@@ -102,16 +90,12 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     }
 
     /**
-     * <p>
      * 过滤查询的字段信息(主键除外!)
-     * </p>
-     * <p>
-     * 例1: 只要 java 字段名以 "test" 开头的              -> select(i -> i.getProperty().startsWith("test")) <br/>
-     * 例2: 只要 java 字段属性是 CharSequence 类型的       -> select(TableFieldInfo::isCharSequence) <br/>
-     * 例3: 只要 java 字段没有填充策略的                   -> select(i -> i.getFieldFill() == FieldFill.DEFAULT) <br/>
-     * 例4: 要全部字段                                   -> select(i -> true) <br/>
-     * 例5: 只要主键字段                                 -> select(i -> false) <br/>
-     * </p>
+     * <p>例1: 只要 java 字段名以 "test" 开头的             -> select(i -&gt; i.getProperty().startsWith("test"))</p>
+     * <p>例2: 只要 java 字段属性是 CharSequence 类型的     -> select(TableFieldInfo::isCharSequence)</p>
+     * <p>例3: 只要 java 字段没有填充策略的                 -> select(i -&gt; i.getFieldFill() == FieldFill.DEFAULT)</p>
+     * <p>例4: 要全部字段                                   -> select(i -&gt; true)</p>
+     * <p>例5: 只要主键字段                                 -> select(i -&gt; false)</p>
      *
      * @param predicate 过滤方式
      * @return this
@@ -129,10 +113,8 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     }
 
     /**
-     * <p>
-     * 用于生成嵌套 sql <br/>
-     * 故 sqlSelect 不向下传递
-     * </p>
+     * 用于生成嵌套 sql
+     * <p>故 sqlSelect 不向下传递</p>
      */
     @Override
     protected LambdaQueryWrapper<T> instance() {

@@ -34,9 +34,7 @@ import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.*;
 import static java.util.stream.Collectors.joining;
 
 /**
- * <p>
  * 查询条件封装
- * </p>
  *
  * @author hubin miemie HCL
  * @since 2017-05-26
@@ -296,8 +294,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
 
     /**
      * 内部自用
-     * <p>
-     * NOT 关键词
+     * <p>NOT 关键词</p>
      */
     protected Children not(boolean condition) {
         return doIt(condition, NOT);
@@ -305,8 +302,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
 
     /**
      * 内部自用
-     * <p>
-     * 拼接 AND
+     * <p>拼接 AND</p>
      */
     protected Children and(boolean condition) {
         return doIt(condition, AND);
@@ -351,15 +347,15 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
 
     /**
      * <p>
-     * 根据需要格式化SQL<BR>
-     * <BR>
+     * 根据需要格式化SQL<br>
+     * <br>
      * Format SQL for methods: EntityQ<T>.where/and/or...("name={0}", value);
-     * ALL the {<b>i</b>} will be replaced with #{MPGENVAL<b>i</b>}<BR>
-     * <BR>
+     * ALL the {<b>i</b>} will be replaced with #{MPGENVAL<b>i</b>}<br>
+     * <br>
      * ew.where("sample_name=<b>{0}</b>", "haha").and("sample_age &gt;<b>{0}</b>
      * and sample_age&lt;<b>{1}</b>", 18, 30) <b>TO</b>
      * sample_name=<b>#{MPGENVAL1}</b> and sample_age&gt;#<b>{MPGENVAL2}</b> and
-     * sample_age&lt;<b>#{MPGENVAL3}</b><BR>
+     * sample_age&lt;<b>#{MPGENVAL3}</b><br>
      * </p>
      *
      * @param need   是否需要格式化

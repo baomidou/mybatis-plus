@@ -23,9 +23,7 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
 
 /**
- * <p>
  * 根据ID集合，批量查询数据
- * </p>
  *
  * @author hubin
  * @since 2018-04-06

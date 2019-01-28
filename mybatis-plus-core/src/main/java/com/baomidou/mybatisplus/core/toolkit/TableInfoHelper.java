@@ -42,9 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static java.util.stream.Collectors.toList;
 
 /**
- * <p>
  * 实体类反射表辅助类
- * </p>
  *
  * @author hubin sjy
  * @since 2016-09-09
@@ -64,9 +62,7 @@ public class TableInfoHelper {
     private static final String DEFAULT_ID_NAME = "id";
 
     /**
-     * <p>
      * 获取实体映射表信息
-     * <p>
      *
      * @param clazz 反射实体类
      * @return 数据库表反射信息
@@ -92,9 +88,7 @@ public class TableInfoHelper {
     }
 
     /**
-     * <p>
      * 获取所有实体映射表信息
-     * <p>
      *
      * @return 数据库表反射信息集合
      */
@@ -103,9 +97,7 @@ public class TableInfoHelper {
     }
 
     /**
-     * <p>
      * 实体类反射获取表信息【初始化】
-     * <p>
      *
      * @param clazz 反射实体类
      * @return 数据库表反射信息
@@ -147,9 +139,7 @@ public class TableInfoHelper {
     }
 
     /**
-     * <p>
      * 初始化 表数据库类型,表名,resultMap
-     * </p>
      *
      * @param clazz        实体类
      * @param globalConfig 全局配置
@@ -197,9 +187,7 @@ public class TableInfoHelper {
     }
 
     /**
-     * <p>
      * 初始化 表主键,表字段
-     * </p>
      *
      * @param clazz        实体类
      * @param globalConfig 全局配置
@@ -252,9 +240,7 @@ public class TableInfoHelper {
     }
 
     /**
-     * <p>
      * 判断主键注解是否存在
-     * </p>
      *
      * @param list 字段列表
      * @return true 为存在 @TableId 注解;
@@ -270,9 +256,7 @@ public class TableInfoHelper {
     }
 
     /**
-     * <p>
      * 主键属性初始化
-     * </p>
      *
      * @param dbConfig  全局配置信息
      * @param tableInfo 表信息
@@ -321,9 +305,7 @@ public class TableInfoHelper {
     }
 
     /**
-     * <p>
      * 主键属性初始化
-     * </p>
      *
      * @param tableInfo 表信息
      * @param field     字段
@@ -352,9 +334,7 @@ public class TableInfoHelper {
     }
 
     /**
-     * <p>
      * 字段属性初始化
-     * </p>
      *
      * @param dbConfig  数据库全局配置
      * @param tableInfo 表信息
@@ -393,9 +373,7 @@ public class TableInfoHelper {
     }
 
     /**
-     * <p>
      * 判定 related 的值
-     * </p>
      *
      * @param underCamel 驼峰命名
      * @param property   属性名
@@ -420,9 +398,7 @@ public class TableInfoHelper {
     }
 
     /**
-     * <p>
      * 发现设置多个主键注解抛出异常
-     * </p>
      */
     private static void throwExceptionId(Class<?> clazz) {
         throw ExceptionUtils.mpe("There must be only one, Discover multiple @TableId annotation in %s", clazz.getName());
@@ -448,9 +424,7 @@ public class TableInfoHelper {
     }
 
     /**
-     * <p>
      * 自定义 KEY 生成器
-     * </p>
      */
     public static KeyGenerator genKeyGenerator(TableInfo tableInfo, MapperBuilderAssistant builderAssistant,
                                                String baseStatementId, LanguageDriver languageDriver) {

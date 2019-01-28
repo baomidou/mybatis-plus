@@ -23,9 +23,7 @@ import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 
 /**
- * <p>
  * 根据 ID 删除
- * </p>
  *
  * @author hubin
  * @since 2018-04-06

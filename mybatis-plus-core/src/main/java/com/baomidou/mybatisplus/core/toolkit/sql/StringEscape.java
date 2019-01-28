@@ -1,9 +1,7 @@
 package com.baomidou.mybatisplus.core.toolkit.sql;
 
 /**
- * <p>
  * StringEscape ，数据库字符串转义
- * </p>
  *
  * @author Caratacus
  * @since 2016-10-16
@@ -11,13 +9,11 @@ package com.baomidou.mybatisplus.core.toolkit.sql;
 public class StringEscape {
 
     /**
-     * <p>
      * 字符串是否需要转义
-     * </p>
      *
-     * @param str
-     * @param len
-     * @return
+     * @param str ignore
+     * @param len ignore
+     * @return 是否需要转义
      */
     private static boolean isEscapeNeededForString(String str, int len) {
         boolean needsHexEscape = false;
@@ -63,8 +59,8 @@ public class StringEscape {
     /**
      * 转义字符串
      *
-     * @param escapeStr
-     * @return
+     * @param escapeStr 被转义的字符串
+     * @return 转义后的字符串
      */
     public static String escapeString(String escapeStr) {
         if (escapeStr.matches("\'(.+)\'")) {

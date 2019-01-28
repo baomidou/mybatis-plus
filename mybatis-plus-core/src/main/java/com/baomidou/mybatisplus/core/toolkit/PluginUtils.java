@@ -22,9 +22,7 @@ import java.lang.reflect.Proxy;
 import java.util.Properties;
 
 /**
- * <p>
  * 插件工具类
- * </p>
  *
  * @author TaoYu , hubin
  * @since 2017-06-20
@@ -37,9 +35,7 @@ public final class PluginUtils {
     }
 
     /**
-     * <p>
      * 获得真正的处理对象,可能多层代理.
-     * </p>
      */
     @SuppressWarnings("unchecked")
     public static <T> T realTarget(Object target) {
@@ -51,9 +47,7 @@ public final class PluginUtils {
     }
 
     /**
-     * <p>
      * 根据 key 获取 Properties 的值
-     * </p>
      */
     public static String getProperty(Properties properties, String key) {
         String value = properties.getProperty(key);

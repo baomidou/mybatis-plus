@@ -18,9 +18,7 @@ package com.baomidou.mybatisplus.core.enums;
 import java.io.Serializable;
 
 /**
- * <p>
  * 自定义枚举接口
- * </p>
  *
  * @author hubin
  * @since 2017-10-11

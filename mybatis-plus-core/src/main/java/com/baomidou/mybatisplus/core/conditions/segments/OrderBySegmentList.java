@@ -24,9 +24,7 @@ import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 
 /**
- * <p>
  * Order By SQL 片段
- * </p>
  *
  * @author miemie
  * @since 2018-06-27

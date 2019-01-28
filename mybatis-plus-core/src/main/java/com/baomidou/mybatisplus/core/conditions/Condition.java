@@ -20,9 +20,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 
 /**
- * <p>
  * Wrapper 条件辅助类
- * </p>
  *
  * @author hubin
  * @see Wrappers
@@ -32,12 +30,8 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 public class Condition {
 
     /**
-     * <p>
      * 获取 QueryWrapper 实例
-     * </p>
-     * <p>
-     * 示例：Condition.<User>create().eq("id", 1)
-     * </p>
+     * <p>示例：Condition.<User>create().eq("id", 1)</p>
      *
      * @see Wrappers#query()
      */
@@ -47,9 +41,9 @@ public class Condition {
     }
 
     /**
-     * @param entity
-     * @param <T>
-     * @return
+     * @param entity ignore
+     * @param <T> ignore
+     * @return ignore
      * @see Wrappers#query()
      */
     @Deprecated
@@ -58,12 +52,8 @@ public class Condition {
     }
 
     /**
-     * <p>
      * 获取 LambdaQueryWrapper 实例
-     * </p>
-     * <p>
-     * 示例：Condition.<User>lambda().eq(User::getId, 1)
-     * </p>
+     * <p>示例：Condition.<User>lambda().eq(User::getId, 1)</p>
      *
      * @see Wrappers#query(Object)
      */
@@ -73,9 +63,9 @@ public class Condition {
     }
 
     /**
-     * @param entity
-     * @param <T>
-     * @return
+     * @param entity ignore
+     * @param <T> ignore
+     * @return ignore
      * @see Wrappers#query(Object)
      */
     @Deprecated

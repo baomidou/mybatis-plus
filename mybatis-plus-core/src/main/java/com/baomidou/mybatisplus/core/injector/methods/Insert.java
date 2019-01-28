@@ -29,9 +29,7 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
 
 /**
- * <p>
  * 插入一条数据（选择字段插入）
- * </p>
  *
  * @author hubin
  * @since 2018-04-06

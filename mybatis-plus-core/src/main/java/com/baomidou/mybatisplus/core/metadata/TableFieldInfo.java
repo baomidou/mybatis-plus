@@ -30,9 +30,7 @@ import lombok.ToString;
 import java.lang.reflect.Field;
 
 /**
- * <p>
  * 数据库表字段反射信息
- * </p>
  *
  * @author hubin sjy willenfoo tantan
  * @since 2016-09-09
@@ -44,7 +42,7 @@ public class TableFieldInfo implements Constants {
 
     /**
      * 是否有存在字段名与属性名关联
-     * true: 表示要进行 as
+     * <p>true: 表示要进行 as</p>
      */
     private final boolean related;
     /**
@@ -77,7 +75,7 @@ public class TableFieldInfo implements Constants {
     private final Class<?> clazz;
     /**
      * 是否进行 select 查询
-     * 大字段可设置为 false 不加入 select 查询范围
+     * <p>大字段可设置为 false 不加入 select 查询范围</p>
      */
     private boolean select = true;
     /**
@@ -107,9 +105,7 @@ public class TableFieldInfo implements Constants {
     private String sqlSelect;
 
     /**
-     * <p>
      * 存在 TableField 注解时, 使用的构造函数
-     * </p>
      */
     public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field,
                           String column, String el, TableField tableField) {
@@ -152,9 +148,7 @@ public class TableFieldInfo implements Constants {
     }
 
     /**
-     * <p>
      * 不存在 TableField 注解时, 使用的构造函数
-     * </p>
      */
     public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field) {
         this.property = field.getName();
@@ -180,9 +174,7 @@ public class TableFieldInfo implements Constants {
     }
 
     /**
-     * <p>
      * 逻辑删除初始化
-     * </p>
      *
      * @param dbConfig 数据库全局配置
      * @param field    字段属性对象
@@ -215,7 +207,7 @@ public class TableFieldInfo implements Constants {
 
     /**
      * 全局配置开启字段 LIKE 并且为字符串类型字段
-     * 注入 LIKE 查询！！！
+     * <p>注入 LIKE 查询！！！</p>
      */
     private void setCondition(GlobalConfig.DbConfig dbConfig) {
         if (null == condition || SqlCondition.EQUAL.equals(condition)) {
@@ -244,8 +236,8 @@ public class TableFieldInfo implements Constants {
 
     /**
      * 获取 insert 时候插入值 sql 脚本片段
-     * insert into table (字段) values (值)
-     * 位于 "值" 部位
+     * <p>insert into table (字段) values (值)</p>
+     * <p>位于 "值" 部位</p>
      *
      * <li> 不生成 if 标签 </li>
      *
@@ -258,8 +250,8 @@ public class TableFieldInfo implements Constants {
 
     /**
      * 获取 insert 时候插入值 sql 脚本片段
-     * insert into table (字段) values (值)
-     * 位于 "值" 部位
+     * <p>insert into table (字段) values (值)</p>
+     * <p>位于 "值" 部位</p>
      *
      * <li> 根据规则会生成 if 标签 </li>
      *
@@ -275,8 +267,8 @@ public class TableFieldInfo implements Constants {
 
     /**
      * 获取 insert 时候字段 sql 脚本片段
-     * insert into table (字段) values (值)
-     * 位于 "字段" 部位
+     * <p>insert into table (字段) values (值)</p>
+     * <p>位于 "字段" 部位</p>
      *
      * <li> 不生成 if 标签 </li>
      *
@@ -288,8 +280,8 @@ public class TableFieldInfo implements Constants {
 
     /**
      * 获取 insert 时候字段 sql 脚本片段
-     * insert into table (字段) values (值)
-     * 位于 "字段" 部位
+     * <p>insert into table (字段) values (值)</p>
+     * <p>位于 "字段" 部位</p>
      *
      * <li> 根据规则会生成 if 标签 </li>
      *

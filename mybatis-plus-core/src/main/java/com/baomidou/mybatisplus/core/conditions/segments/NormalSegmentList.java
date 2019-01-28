@@ -23,9 +23,7 @@ import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 
 /**
- * <p>
  * 普通片段
- * </p>
  *
  * @author miemie
  * @since 2018-06-27
@@ -34,9 +32,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
 public class NormalSegmentList extends AbstractISegmentList {
 
     /**
-     * <p>
      * 是否处理了的上个 not
-     * </p>
      */
     private boolean executeNot = true;
 

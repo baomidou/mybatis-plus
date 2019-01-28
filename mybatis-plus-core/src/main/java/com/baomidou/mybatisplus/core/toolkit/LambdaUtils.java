@@ -31,9 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static java.util.Locale.ENGLISH;
 
 /**
- * <p>
  * Lambda 解析工具类
- * </p>
  *
  * @author HCL
  * @since 2018-05-10
@@ -48,9 +46,7 @@ public final class LambdaUtils {
     private static final Map<Class, WeakReference<SerializedLambda>> FUNC_CACHE = new ConcurrentHashMap<>();
 
     /**
-     * <p>
      * 解析 lambda 表达式
-     * </p>
      *
      * @param func 需要解析的 lambda 对象
      * @param <T>  类型，被调用的 Function 对象的目标类型
@@ -68,9 +64,7 @@ public final class LambdaUtils {
     }
 
     /**
-     * <p>
      * 缓存实体类名与表字段映射关系
-     * </p>
      *
      * @param clazz     实体
      * @param tableInfo 表信息
@@ -80,9 +74,7 @@ public final class LambdaUtils {
     }
 
     /**
-     * <p>
      * 缓存实体字段 MAP 信息
-     * </p>
      *
      * @param tableInfo 表信息
      * @return 缓存 map
@@ -122,9 +114,7 @@ public final class LambdaUtils {
     }
 
     /**
-     * <p>
      * 获取实体对应字段 MAP
-     * </p>
      *
      * @param entityClassName 实体类名
      * @return 缓存 map

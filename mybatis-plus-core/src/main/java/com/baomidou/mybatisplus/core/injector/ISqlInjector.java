@@ -20,9 +20,7 @@ import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.session.Configuration;
 
 /**
- * <p>
  * SQL 自动注入器接口
- * </p>
  *
  * @author hubin
  * @since 2016-07-24
@@ -30,9 +28,7 @@ import org.apache.ibatis.session.Configuration;
 public interface ISqlInjector {
 
     /**
-     * <p>
      * 检查SQL是否注入(已经注入过不再注入)
-     * </p>
      *
      * @param builderAssistant mapper 信息
      * @param mapperClass      mapper 接口的 class 对象
@@ -40,9 +36,7 @@ public interface ISqlInjector {
     void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass);
 
     /**
-     * <p>
      * 注入 SqlRunner 相关
-     * </p>
      *
      * @param configuration 全局配置
      * @see ISqlRunner

@@ -30,9 +30,7 @@ import org.apache.ibatis.session.Configuration;
 import com.baomidou.mybatisplus.core.assist.ISqlRunner;
 
 /**
- * <p>
  * SqlRunner 注入器
- * </p>
  *
  * @author hubin
  * @since 2018-04-08

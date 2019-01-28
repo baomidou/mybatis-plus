@@ -23,9 +23,7 @@ import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 
 /**
- * <p>
  * 查询满足条件所有数据
- * </p>
  *
  * @author hubin
  * @since 2018-04-06

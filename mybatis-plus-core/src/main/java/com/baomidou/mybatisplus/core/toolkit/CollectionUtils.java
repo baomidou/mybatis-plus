@@ -19,9 +19,7 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * <p>
  * Collection工具类
- * </p>
  *
  * @author Caratacus
  * @since 2016-09-19
@@ -29,9 +27,7 @@ import java.util.Map;
 public class CollectionUtils {
 
     /**
-     * <p>
      * 校验集合是否为空
-     * </p>
      *
      * @param coll 入参
      * @return boolean
@@ -41,9 +37,7 @@ public class CollectionUtils {
     }
 
     /**
-     * <p>
      * 校验集合是否不为空
-     * </p>
      *
      * @param coll 入参
      * @return boolean

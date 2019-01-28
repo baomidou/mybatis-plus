@@ -16,9 +16,7 @@
 package com.baomidou.mybatisplus.core.exceptions;
 
 /**
- * <p>
  * MybatisPlus 异常类
- * </p>
  *
  * @author hubin
  * @since 2016-01-23

@@ -55,8 +55,8 @@ import java.util.*;
 
 
 /**
- * <p>
  * 继承
+ * <p>
  * 只重写了 {@link MapperAnnotationBuilder#parse}
  * 没有XML配置文件注入基础CRUD方法
  * </p>

@@ -20,9 +20,7 @@ import java.security.MessageDigest;
 import java.util.Base64;
 
 /**
- * <p>
  * 枚举处理工具类
- * </p>
  *
  * @author hubin
  * @since 2018-08-02
@@ -30,9 +28,7 @@ import java.util.Base64;
 public class EncryptUtils {
 
     /**
-     * <p>
      * MD5 Base64 加密
-     * </p>
      *
      * @param str 待加密的字符串
      * @return 加密后的字符串

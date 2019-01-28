@@ -30,9 +30,7 @@ import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.reflection.MetaObject;
 
 /**
- * <p>
  * 抽象 SQL 解析类
- * </p>
  *
  * @author hubin
  * @since 2017-06-20
@@ -45,9 +43,7 @@ public abstract class AbstractJsqlParser implements ISqlParser {
     protected final Log logger = LogFactory.getLog(this.getClass());
 
     /**
-     * <p>
      * 解析 SQL 方法
-     * </p>
      *
      * @param metaObject 元对象
      * @param sql        SQL 语句
@@ -82,9 +78,7 @@ public abstract class AbstractJsqlParser implements ISqlParser {
     }
 
     /**
-     * <p>
      * 执行 SQL 解析
-     * </p>
      *
      * @param statement JsqlParser Statement
      * @return
@@ -124,10 +118,8 @@ public abstract class AbstractJsqlParser implements ISqlParser {
     public abstract void processSelectBody(SelectBody selectBody);
 
     /**
-     * <p>
-     * 判断是否允许执行<br>
-     * 例如：逻辑删除只解析 delete , update 操作
-     * </p>
+     * 判断是否允许执行
+     * <p>例如：逻辑删除只解析 delete , update 操作</p>
      *
      * @param metaObject 元对象
      * @return true

@@ -40,10 +40,8 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * <p>
  * 重写类： org.apache.ibatis.binding.MapperMethod</br>
- * 不要 ParamMap 该内部类
- * </p>
+ * <p>不要 ParamMap 该内部类</p>
  *
  * @author miemie
  * @since 2018-06-09

@@ -10,10 +10,8 @@ import java.util.*;
 
 /**
  * Performs formatting of basic SQL statements (DML + query).
- * <p>
- * Copy Hibernate BasicFormatterImpl
- * last commit on 2018-03-15
- * </P>
+ * <p>Copy Hibernate BasicFormatterImpl</p>
+ * <p>last commit on 2018-03-15</p>
  *
  * @author Gavin King
  * @author Steve Ebersole

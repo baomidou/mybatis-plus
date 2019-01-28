@@ -4,9 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 
 /**
- * <p>
  * wrapper 内部使用枚举
- * </p>
  *
  * @author miemie
  * @since 2018-07-30

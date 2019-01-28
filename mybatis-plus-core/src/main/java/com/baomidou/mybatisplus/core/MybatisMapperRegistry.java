@@ -28,9 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * <p>
  * 继承至MapperRegistry
- * </p>
  *
  * @author Caratacus hubin
  * @since 2017-04-19

@@ -19,9 +19,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * <p>
  * Sql Info
- * </p>
  *
  * @author hubin
  * @since 2017-06-20

@@ -20,9 +20,7 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
 
 /**
- * <p>
  * 继承 XMLLanguageDriver 重装构造函数，使用自定义 ParameterHandler
- * </p>
  *
  * @author hubin
  * @since 2016-03-11

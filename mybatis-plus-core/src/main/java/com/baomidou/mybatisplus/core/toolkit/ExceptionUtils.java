@@ -18,9 +18,7 @@ package com.baomidou.mybatisplus.core.toolkit;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 
 /**
- * <p>
  * 异常辅助工具类
- * </p>
  *
  * @author HCL
  * @since 2018-07-24

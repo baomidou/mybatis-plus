@@ -30,9 +30,7 @@ import java.util.regex.Pattern;
 import static java.util.stream.Collectors.joining;
 
 /**
- * <p>
  * String 工具类
- * </p>
  *
  * @author D.Yang
  * @since 2016-08-18
@@ -79,9 +77,7 @@ public class StringUtils {
     }
 
     /**
-     * <p>
      * Blob 转为 String 格式
-     * </p>
      *
      * @param blob Blob 对象
      * @return 转换后的
@@ -99,9 +95,7 @@ public class StringUtils {
     }
 
     /**
-     * <p>
      * 判断字符串是否为空
-     * </p>
      *
      * @param cs 需要判断字符串
      * @return 判断结果
@@ -120,9 +114,7 @@ public class StringUtils {
     }
 
     /**
-     * <p>
      * 判断字符串是否不为空
-     * </p>
      *
      * @param cs 需要判断字符串
      * @return 判断结果
@@ -132,9 +124,7 @@ public class StringUtils {
     }
 
     /**
-     * <p>
      * 判断字符串是否符合数据库字段的命名
-     * </p>
      *
      * @param str 字符串
      * @return 判断结果
@@ -144,9 +134,7 @@ public class StringUtils {
     }
 
     /**
-     * <p>
      * 字符串驼峰转下划线格式
-     * </p>
      *
      * @param param 需要转换的字符串
      * @return 转换好的字符串
@@ -168,9 +156,7 @@ public class StringUtils {
     }
 
     /**
-     * <p>
      * 解析 getMethodName -> propertyName
-     * </p>
      *
      * @param getMethodName 需要解析的
      * @return 返回解析后的字段名称
@@ -186,9 +172,7 @@ public class StringUtils {
     }
 
     /**
-     * <p>
      * 字符串下划线转驼峰格式
-     * </p>
      *
      * @param param 需要转换的字符串
      * @return 转换好的字符串
@@ -214,9 +198,7 @@ public class StringUtils {
     }
 
     /**
-     * <p>
      * 首字母转换小写
-     * </p>
      *
      * @param param 需要转换的字符串
      * @return 转换好的字符串
@@ -229,9 +211,7 @@ public class StringUtils {
     }
 
     /**
-     * <p>
      * 判断字符串是否为纯大写字母
-     * </p>
      *
      * @param str 要匹配的字符串
      * @return
@@ -241,9 +221,7 @@ public class StringUtils {
     }
 
     /**
-     * <p>
      * 正则表达式匹配
-     * </p>
      *
      * @param regex 正则表达式字符串
      * @param input 要匹配的字符串
@@ -266,6 +244,7 @@ public class StringUtils {
      * SELECT * FROM test WHERE id = 1 AND name = 'MP'
      * <p>
      * 当数组中参数不足时，该方法会抛出错误：数组下标越界{@link ArrayIndexOutOfBoundsException}
+     * </p>
      *
      * @param content 填充内容
      * @param args    填充参数
@@ -282,6 +261,7 @@ public class StringUtils {
      * 根据指定的表达式替换字符串中指定格式的部分
      * <p>
      * BiIntFunction 中的 第二个 参数将传递 参数在字符串中的索引
+     * </p>
      *
      * @param src      源字符串
      * @param ptn      需要替换部分的正则表达式
@@ -307,9 +287,7 @@ public class StringUtils {
     }
 
     /**
-     * <p>
      * 获取SQL PARAMS字符串
-     * </p>
      *
      * @param obj
      * @return
@@ -325,9 +303,7 @@ public class StringUtils {
     }
 
     /**
-     * <p>
      * 使用单引号包含字符串
-     * </p>
      *
      * @param obj 原字符串
      * @return 单引号包含的原字符串
@@ -342,9 +318,7 @@ public class StringUtils {
     }
 
     /**
-     * <p>
      * 使用单引号包含字符串
-     * </p>
      *
      * @param coll 集合
      * @return 单引号包含的原字符串的集合形式
@@ -355,9 +329,7 @@ public class StringUtils {
     }
 
     /**
-     * <p>
      * 拼接字符串第二个字符串第一个字母大写
-     * </p>
      */
     public static String concatCapitalize(String concatStr, final String str) {
         if (isEmpty(concatStr)) {
@@ -377,24 +349,20 @@ public class StringUtils {
     }
 
     /**
-     * <p>
      * 字符串第一个字母大写
-     * </p>
      *
-     * @param str
-     * @return
+     * @param str 被处理的字符串
+     * @return 首字母大写后的字符串
      */
     public static String capitalize(final String str) {
         return concatCapitalize(null, str);
     }
 
     /**
-     * <p>
      * 判断对象是否为空
-     * </p>
      *
-     * @param object
-     * @return
+     * @param object ignore
+     * @return ignore
      */
     public static boolean checkValNotNull(Object object) {
         if (object instanceof CharSequence) {
@@ -404,24 +372,20 @@ public class StringUtils {
     }
 
     /**
-     * <p>
      * 判断对象是否为空
-     * </p>
      *
-     * @param object
-     * @return
+     * @param object ignore
+     * @return ignore
      */
     public static boolean checkValNull(Object object) {
         return !checkValNotNull(object);
     }
 
     /**
-     * <p>
      * 包含大写字母
-     * </p>
      *
      * @param word 待判断字符串
-     * @return
+     * @return ignore
      */
     public static boolean containsUpperCase(String word) {
         for (int i = 0; i < word.length(); i++) {
@@ -434,34 +398,27 @@ public class StringUtils {
     }
 
     /**
-     * <p>
      * 是否为大写命名
-     * </p>
      *
      * @param word 待判断字符串
-     * @return
+     * @return ignore
      */
     public static boolean isCapitalMode(String word) {
         return null != word && word.matches("^[0-9A-Z/_]+$");
     }
 
     /**
-     * <p>
      * 是否为驼峰下划线混合命名
-     * </p>
      *
      * @param word 待判断字符串
-     * @return
+     * @return ignore
      */
     public static boolean isMixedMode(String word) {
         return matches(".*[A-Z]+.*", word) && matches(".*[/_]+.*", word);
     }
 
     /**
-     * <p>
      * Check if a String ends with a specified suffix.
-     * </p>
-     * <p>
      * <p>
      * <code>null</code>s are handled without exceptions. Two <code>null</code>
      * references are considered to be equal. The comparison is case sensitive.
@@ -474,6 +431,7 @@ public class StringUtils {
      * StringUtils.endsWith("def", "abcdef") = true
      * StringUtils.endsWith("def", "ABCDEF") = false
      * </pre>
+     * </p>
      *
      * @param str    the String to check, may be null
      * @param suffix the suffix to find, may be null
@@ -487,10 +445,7 @@ public class StringUtils {
     }
 
     /**
-     * <p>
      * Case insensitive check if a String ends with a specified suffix.
-     * </p>
-     * <p>
      * <p>
      * <code>null</code>s are handled without exceptions. Two <code>null</code>
      * references are considered to be equal. The comparison is case
@@ -504,6 +459,7 @@ public class StringUtils {
      * StringUtils.endsWithIgnoreCase("def", "abcdef") = true
      * StringUtils.endsWithIgnoreCase("def", "ABCDEF") = false
      * </pre>
+     * </p>
      *
      * @param str    the String to check, may be null
      * @param suffix the suffix to find, may be null
@@ -517,10 +473,8 @@ public class StringUtils {
     }
 
     /**
-     * <p>
      * Check if a String ends with a specified suffix (optionally case
      * insensitive).
-     * </p>
      *
      * @param str        the String to check, may be null
      * @param suffix     the suffix to find, may be null
@@ -542,17 +496,13 @@ public class StringUtils {
     }
 
     /**
-     * <p>
      * Splits the provided text into an array, separators specified. This is an
      * alternative to using StringTokenizer.
-     * </p>
-     * <p>
      * <p>
      * The separator is not included in the returned String array. Adjacent
      * separators are treated as one separator. For more control over the split
      * use the StrTokenizer class.
      * </p>
-     * <p>
      * <p>
      * A {@code null} input String returns {@code null}. A {@code null}
      * separatorChars splits on whitespace.
@@ -566,6 +516,7 @@ public class StringUtils {
      * StringUtils.split("abc  def", " ") = ["abc", "def"]
      * StringUtils.split("ab:cd:ef", ":") = ["ab", "cd", "ef"]
      * </pre>
+     * </p>
      *
      * @param str            the String to parse, may be null
      * @param separatorChars the characters used as the delimiters, {@code null} splits on
@@ -678,9 +629,7 @@ public class StringUtils {
     }
 
     /**
-     * <p>
      * 是否为CharSequence类型
-     * </p>
      *
      * @param clazz class
      * @return true 为是 CharSequence 类型
@@ -690,9 +639,7 @@ public class StringUtils {
     }
 
     /**
-     * <p>
      * 去除boolean类型is开头的字符串
-     * </p>
      *
      * @param propertyName 字段名
      * @param propertyType 字段类型
@@ -711,39 +658,33 @@ public class StringUtils {
     }
 
     /**
-     * <p>
      * 是否为Boolean类型(包含普通类型)
-     * </p>
      *
-     * @param propertyCls
-     * @return
+     * @param propertyCls ignore
+     * @return ignore
      */
     public static boolean isBoolean(Class<?> propertyCls) {
         return propertyCls != null && (boolean.class.isAssignableFrom(propertyCls) || Boolean.class.isAssignableFrom(propertyCls));
     }
 
     /**
-     * <p>
-     * 第一个首字母小写,之后字符大小写的不变<br>
-     * StringUtils.firstCharToLower( "UserService" )     = userService
-     * StringUtils.firstCharToLower( "UserServiceImpl" ) = userServiceImpl
-     * </p>
+     * 第一个首字母小写，之后字符大小写的不变
+     * <p>StringUtils.firstCharToLower( "UserService" )     = userService</p>
+     * <p>StringUtils.firstCharToLower( "UserServiceImpl" ) = userServiceImpl</p>
      *
      * @param rawString 需要处理的字符串
-     * @return
+     * @return ignore
      */
     public static String firstCharToLower(String rawString) {
         return prefixToLower(rawString, 1);
     }
 
     /**
-     * <p>
      * 前n个首字母小写,之后字符大小写的不变
-     * </p>
      *
      * @param rawString 需要处理的字符串
      * @param index     多少个字符(从左至右)
-     * @return
+     * @return ignore
      */
     public static String prefixToLower(String rawString, int index) {
         String beforeChar = rawString.substring(0, index).toLowerCase();
@@ -752,27 +693,25 @@ public class StringUtils {
     }
 
     /**
-     * <p>
-     * 删除字符前缀之后,首字母小写,之后字符大小写的不变<br>
-     * StringUtils.removePrefixAfterPrefixToLower( "isUser", 2 )     = user
-     * StringUtils.removePrefixAfterPrefixToLower( "isUserInfo", 2 ) = userInfo
-     * </p>
+     *
+     * 删除字符前缀之后,首字母小写,之后字符大小写的不变
+     * <p>StringUtils.removePrefixAfterPrefixToLower( "isUser", 2 )     = user</p>
+     * <p>StringUtils.removePrefixAfterPrefixToLower( "isUserInfo", 2 ) = userInfo</p>
      *
      * @param rawString 需要处理的字符串
      * @param index     删除多少个字符(从左至右)
-     * @return
+     * @return ignore
      */
     public static String removePrefixAfterPrefixToLower(String rawString, int index) {
         return prefixToLower(rawString.substring(index), 1);
     }
 
     /**
-     * <p>
-     * 驼峰转连字符<br>
-     * StringUtils.camelToHyphen( "managerAdminUserService" ) = manager-admin-user-service
-     * </p>
      *
-     * @param input
+     * 驼峰转连字符
+     * <p>StringUtils.camelToHyphen( "managerAdminUserService" ) = manager-admin-user-service</p>
+     *
+     * @param input ignore
      * @return 以'-'分隔
      * @see <a href="https://github.com/krasa/StringManipulation">document</a>
      */
@@ -855,7 +794,7 @@ public class StringUtils {
      *
      * @param s 原字符串
      * @param p 移除的单词
-     * @return
+     * @return ignore
      */
     public static String removeWordWithComma(String s, String p) {
         String match = "\\s*" + p + "\\s*,{0,1}";

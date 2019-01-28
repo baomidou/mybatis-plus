@@ -38,9 +38,7 @@ import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toMap;
 
 /**
- * <p>
  * 反射工具类
- * </p>
  *
  * @author Caratacus
  * @since 2016-09-22
@@ -54,9 +52,7 @@ public class ReflectionKit {
     private static final Map<Class, List<Field>> classFieldCache = new ConcurrentHashMap<>();
 
     /**
-     * <p>
      * 反射 method 方法名，例如 getId
-     * </p>
      *
      * @param field
      * @param str   属性字符串内容
@@ -68,9 +64,7 @@ public class ReflectionKit {
     }
 
     /**
-     * <p>
      * 反射 method 方法名，例如 setVersion
-     * </p>
      *
      * @param field Field
      * @param str   String JavaBean类的version属性名
@@ -86,11 +80,9 @@ public class ReflectionKit {
     }
 
     /**
-     * <p>
      * 获取 public get方法的值
-     * </p>
      *
-     * @param cls
+     * @param cls ignore
      * @param entity 实体
      * @param str    属性字符串内容
      * @return Object
@@ -111,9 +103,7 @@ public class ReflectionKit {
     }
 
     /**
-     * <p>
      * 获取 public get方法的值
-     * </p>
      *
      * @param entity 实体
      * @param str    属性字符串内容
@@ -127,9 +117,7 @@ public class ReflectionKit {
     }
 
     /**
-     * <p>
      * 反射对象获取泛型
-     * </p>
      *
      * @param clazz 对象
      * @param index 泛型所在位置
@@ -156,9 +144,7 @@ public class ReflectionKit {
     }
 
     /**
-     * <p>
      * 获取该类的所有属性列表
-     * </p>
      *
      * @param clazz 反射类
      */
@@ -168,9 +154,7 @@ public class ReflectionKit {
     }
 
     /**
-     * <p>
      * 获取该类的所有属性列表
-     * </p>
      *
      * @param clazz 反射类
      */
@@ -189,9 +173,7 @@ public class ReflectionKit {
     }
 
     /**
-     * <p>
      * 获取该类的所有属性列表
-     * </p>
      *
      * @param clazz 反射类
      */
@@ -213,9 +195,7 @@ public class ReflectionKit {
     }
 
     /**
-     * <p>
      * 排序重置父类属性
-     * </p>
      *
      * @param fieldList      子类属性
      * @param superFieldList 父类属性

@@ -48,10 +48,8 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * <p>
  * Copy from XMLConfigBuilder in Mybatis and replace default Configuration class
  * by MybatisConfiguration class
- * </p>
  *
  * @author hubin
  * @since 2017-01-04

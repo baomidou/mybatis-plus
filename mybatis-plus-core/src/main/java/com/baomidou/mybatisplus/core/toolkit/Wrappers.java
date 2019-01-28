@@ -11,9 +11,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * <p>
  * Wrapper 条件构造
- * </p>
  *
  * @author Caratacus
  */
@@ -29,94 +27,94 @@ public final class Wrappers {
     }
 
     /**
-     * 获取 QueryWrapper<T>
+     * 获取 QueryWrapper&lt;T&gt;
      *
      * @param <T> 实体类泛型
-     * @return QueryWrapper<T>
+     * @return QueryWrapper&lt;T&gt;
      */
     public static <T> QueryWrapper<T> query() {
         return new QueryWrapper<>();
     }
 
     /**
-     * 获取 QueryWrapper<T>
+     * 获取 QueryWrapper&lt;T&gt;
      *
      * @param entity 实体类
      * @param <T>    实体类泛型
-     * @return QueryWrapper<T>
+     * @return QueryWrapper&lt;T&gt;
      */
     public static <T> QueryWrapper<T> query(T entity) {
         return new QueryWrapper<>(entity);
     }
 
     /**
-     * 获取 LambdaQueryWrapper<T>
+     * 获取 LambdaQueryWrapper&lt;T&gt;
      *
      * @param <T> 实体类泛型
-     * @return LambdaQueryWrapper<T>
+     * @return LambdaQueryWrapper&lt;T&gt;
      */
     public static <T> LambdaQueryWrapper<T> lambdaQuery() {
         return new LambdaQueryWrapper<>();
     }
 
     /**
-     * 获取 LambdaQueryWrapper<T>
+     * 获取 LambdaQueryWrapper&lt;T&gt;
      *
      * @param entity 实体类
      * @param <T>    实体类泛型
-     * @return LambdaQueryWrapper<T>
+     * @return LambdaQueryWrapper&lt;T&gt;
      */
     public static <T> LambdaQueryWrapper<T> lambdaQuery(T entity) {
         return new LambdaQueryWrapper<>(entity);
     }
 
     /**
-     * 获取 UpdateWrapper<T>
+     * 获取 UpdateWrapper&lt;T&gt;
      *
      * @param <T> 实体类泛型
-     * @return UpdateWrapper<T>
+     * @return UpdateWrapper&lt;T&gt;
      */
     public static <T> UpdateWrapper<T> update() {
         return new UpdateWrapper<>();
     }
 
     /**
-     * 获取 UpdateWrapper<T>
+     * 获取 UpdateWrapper&lt;T&gt;
      *
      * @param entity 实体类
      * @param <T>    实体类泛型
-     * @return UpdateWrapper<T>
+     * @return UpdateWrapper&lt;T&gt;
      */
     public static <T> UpdateWrapper<T> update(T entity) {
         return new UpdateWrapper<>(entity);
     }
 
     /**
-     * 获取 LambdaUpdateWrapper<T>
+     * 获取 LambdaUpdateWrapper&lt;T&gt;
      *
      * @param <T> 实体类泛型
-     * @return LambdaUpdateWrapper<T>
+     * @return LambdaUpdateWrapper&lt;T&gt;
      */
     public static <T> LambdaUpdateWrapper<T> lambdaUpdate() {
         return new LambdaUpdateWrapper<>();
     }
 
     /**
-     * 获取 LambdaUpdateWrapper<T>
+     * 获取 LambdaUpdateWrapper&lt;T&gt;
      *
      * @param entity 实体类
      * @param <T>    实体类泛型
-     * @return LambdaUpdateWrapper<T>
+     * @return LambdaUpdateWrapper&lt;T&gt;
      */
     public static <T> LambdaUpdateWrapper<T> lambdaUpdate(T entity) {
         return new LambdaUpdateWrapper<>(entity);
     }
 
     /**
-     * 获取 EmptyWrapper<T>
+     * 获取 EmptyWrapper&lt;T&gt;
      *
      * @param <T> 任意泛型
-     * @return EmptyWrapper<T>
+     * @return EmptyWrapper&lt;T&gt;
      * @see EmptyWrapper
      */
     @SuppressWarnings("unchecked")

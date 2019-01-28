@@ -28,9 +28,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 
 /**
- * <p>
  * Lambda 更新封装
- * </p>
  *
  * @author hubin miemie HCL
  * @since 2018-05-30
@@ -40,14 +38,12 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
     implements Update<LambdaUpdateWrapper<T>, SFunction<T, ?>> {
 
     /**
-     * SQL 更新字段内容，例如：name='1',age=2
+     * SQL 更新字段内容，例如：name='1', age=2
      */
     private final List<String> sqlSet;
 
     /**
-     * <p>
      * 不建议直接 new 该实例，使用 Wrappers.lambdaUpdate()
-     * </p>
      */
     public LambdaUpdateWrapper() {
         // 如果无参构造函数，请注意实体 NULL 情况 SET 必须有否则 SQL 异常
@@ -55,9 +51,7 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
     }
 
     /**
-     * <p>
      * 不建议直接 new 该实例，使用 Wrappers.lambdaUpdate(entity)
-     * </p>
      */
     public LambdaUpdateWrapper(T entity) {
         super.setEntity(entity);
@@ -66,9 +60,7 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
     }
 
     /**
-     * <p>
      * 不建议直接 new 该实例，使用 Wrappers.lambdaUpdate(...)
-     * </p>
      */
     LambdaUpdateWrapper(T entity, List<String> sqlSet, AtomicInteger paramNameSeq,
                         Map<String, Object> paramNameValuePairs, MergeSegments mergeSegments) {

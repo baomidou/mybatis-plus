@@ -24,9 +24,7 @@ import org.apache.ibatis.mapping.SqlSource;
 import java.util.Map;
 
 /**
- * <p>
  * 根据columnMap 查询一条数据
- * </p>
  *
  * @author hubin
  * @since 2018-04-06

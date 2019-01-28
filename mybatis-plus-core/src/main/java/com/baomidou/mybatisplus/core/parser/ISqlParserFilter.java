@@ -18,9 +18,7 @@ package com.baomidou.mybatisplus.core.parser;
 import org.apache.ibatis.reflection.MetaObject;
 
 /**
- * <p>
  * SQL 解析过滤器
- * </p>
  *
  * @author hubin
  * @since 2017-09-02

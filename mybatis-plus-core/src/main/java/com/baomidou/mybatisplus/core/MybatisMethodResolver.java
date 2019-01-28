@@ -21,9 +21,7 @@ import org.apache.ibatis.builder.annotation.MethodResolver;
 import java.lang.reflect.Method;
 
 /**
- * <p>
  * 继承 {@link MethodResolver}
- * </p>
  *
  * @author miemie
  * @since 2019-01-05

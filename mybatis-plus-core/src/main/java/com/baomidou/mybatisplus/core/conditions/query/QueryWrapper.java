@@ -28,9 +28,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 
 /**
- * <p>
  * Entity 对象封装操作类
- * </p>
  *
  * @author hubin miemie HCL
  * @since 2018-05-25
@@ -60,9 +58,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     }
 
     /**
-     * <p>
      * 非对外公开的构造方法,只用于生产嵌套 sql
-     * </p>
      *
      * @param entityClass 本不应该需要的
      */
@@ -101,17 +97,15 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     }
 
     /**
-     * <p>
      * 返回一个支持 lambda 函数写法的 wrapper
-     * </p>
      */
     public LambdaQueryWrapper<T> lambda() {
         return new LambdaQueryWrapper<>(entity, entityClass, sqlSelect, paramNameSeq, paramNameValuePairs, expression);
     }
 
     /**
+     * 用于生成嵌套 sql
      * <p>
-     * 用于生成嵌套 sql <br/>
      * 故 sqlSelect 不向下传递
      * </p>
      */

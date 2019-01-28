@@ -27,8 +27,7 @@ import java.io.*;
 public class SerializationUtils {
 
     /**
-     * <p>Deep clone an {@code Object} using serialization.</p>
-     * <p>
+     * Deep clone an {@code Object} using serialization.
      * <p>This is many times slower than writing clone methods by hand
      * on all objects in your object graph. However, for complex object
      * graphs, or for those that don't support deep cloning this can

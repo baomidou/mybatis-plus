@@ -23,9 +23,7 @@ import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.scripting.defaults.RawSqlSource;
 
 /**
- * <p>
  * 根据ID 查询一条数据
- * </p>
  *
  * @author hubin
  * @since 2018-04-06

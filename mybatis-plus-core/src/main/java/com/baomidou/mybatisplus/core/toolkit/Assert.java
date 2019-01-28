@@ -20,9 +20,7 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * <p>
  * 断言类
- * </p>
  *
  * @author miemie
  * @since 2018-07-24
@@ -31,7 +29,7 @@ public final class Assert {
 
     /**
      * 断言这个 boolean 为 true
-     * 为 false 则抛出异常
+     * <p>为 false 则抛出异常</p>
      *
      * @param expression boolean 值
      * @param message    消息
@@ -44,7 +42,7 @@ public final class Assert {
 
     /**
      * 断言这个 boolean 为 false
-     * 为 true 则抛出异常
+     * <p>为 true 则抛出异常</p>
      *
      * @param expression boolean 值
      * @param message    消息
@@ -55,7 +53,7 @@ public final class Assert {
 
     /**
      * 断言这个 object 为 null
-     * 不为 null 则抛异常
+     * <p>不为 null 则抛异常</p>
      *
      * @param object  对象
      * @param message 消息
@@ -66,7 +64,7 @@ public final class Assert {
 
     /**
      * 断言这个 object 不为 null
-     * 为 null 则抛异常
+     * <p>为 null 则抛异常</p>
      *
      * @param object  对象
      * @param message 消息
@@ -77,7 +75,7 @@ public final class Assert {
 
     /**
      * 断言这个 value 不为 empty
-     * 为 empty 则抛异常
+     * <p>为 empty 则抛异常</p>
      *
      * @param value   字符串
      * @param message 消息
@@ -88,7 +86,7 @@ public final class Assert {
 
     /**
      * 断言这个 collection 不为 empty
-     * 为 empty 则抛异常
+     * <p>为 empty 则抛异常</p>
      *
      * @param collection 集合
      * @param message    消息
@@ -99,7 +97,7 @@ public final class Assert {
 
     /**
      * 断言这个 map 不为 empty
-     * 为 empty 则抛异常
+     * <p>为 empty 则抛异常</p>
      *
      * @param map     集合
      * @param message 消息
@@ -110,7 +108,7 @@ public final class Assert {
 
     /**
      * 断言这个 数组 不为 empty
-     * 为 empty 则抛异常
+     * <p>为 empty 则抛异常</p>
      *
      * @param array   数组
      * @param message 消息

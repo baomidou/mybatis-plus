@@ -35,9 +35,7 @@ import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 
 /**
- * <p>
  * Mybatis全局缓存工具类
- * </p>
  *
  * @author Caratacus
  * @since 2017-06-15
@@ -54,9 +52,7 @@ public class GlobalConfigUtils {
     private static final Map<String, GlobalConfig> GLOBAL_CONFIG = new ConcurrentHashMap<>();
 
     /**
-     * <p>
      * 获取当前的SqlSessionFactory
-     * </p>
      *
      * @param clazz 实体类
      */
@@ -69,20 +65,15 @@ public class GlobalConfigUtils {
     }
 
     /**
-     * <p>
      * 获取默认 MybatisGlobalConfig
-     * <p>
-     * FIXME 这可能是一个伪装成单例模式的原型模式，暂时不确定
-     * </p>
+     * <p>FIXME 这可能是一个伪装成单例模式的原型模式，暂时不确定</p>
      */
     public static GlobalConfig defaults() {
         return new GlobalConfig().setDbConfig(new GlobalConfig.DbConfig());
     }
 
     /**
-     * <p>
      * 设置全局设置(以configuration地址值作为Key)
-     * <p/>
      *
      * @param configuration       Mybatis 容器配置对象
      * @param mybatisGlobalConfig 全局配置
@@ -95,9 +86,7 @@ public class GlobalConfigUtils {
     }
 
     /**
-     * <p>
      * 获取MybatisGlobalConfig (统一所有入口)
-     * </p>
      *
      * @param configuration Mybatis 容器配置对象
      */
@@ -107,9 +96,7 @@ public class GlobalConfigUtils {
     }
 
     /**
-     * <p>
      * 获取MybatisGlobalConfig (统一所有入口)
-     * </p>
      *
      * @param configMark 配置标记
      */

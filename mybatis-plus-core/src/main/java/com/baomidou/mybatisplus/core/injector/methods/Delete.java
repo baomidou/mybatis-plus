@@ -22,9 +22,7 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
 
 /**
- * <p>
  * 根据 entity 条件删除记录
- * </p>
  *
  * @author hubin
  * @since 2018-04-06

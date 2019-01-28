@@ -29,9 +29,7 @@ import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 
 /**
- * <p>
  * 抽象的注入方法类
- * </p>
  *
  * @author hubin
  * @since 2018-04-06
@@ -64,9 +62,7 @@ public abstract class AbstractMethod implements Constants {
     }
 
     /**
-     * <p>
      * SQL 更新 set 语句
-     * </p>
      *
      * @param logic  是否逻辑删除注入器
      * @param ew     是否存在 UpdateWrapper 条件
@@ -90,9 +86,7 @@ public abstract class AbstractMethod implements Constants {
     }
 
     /**
-     * <p>
      * SQL 查询所有表字段
-     * </p>
      *
      * @param table        表信息
      * @param queryWrapper 是否为使用 queryWrapper 查询
@@ -113,9 +107,7 @@ public abstract class AbstractMethod implements Constants {
     }
 
     /**
-     * <p>
      * SQL 查询记录行数
-     * </p>
      *
      * @return count sql 脚本
      */
@@ -125,9 +117,7 @@ public abstract class AbstractMethod implements Constants {
     }
 
     /**
-     * <p>
      * SQL 设置selectObj sql select
-     * </p>
      *
      * @param table 表信息
      */
@@ -137,9 +127,7 @@ public abstract class AbstractMethod implements Constants {
     }
 
     /**
-     * <p>
      * SQL map 查询条件
-     * </p>
      */
     protected String sqlWhereByMap(TableInfo table) {
         String sqlScript = SqlScriptUtils.convertChoose("v == null", " ${k} IS NULL ",
@@ -152,9 +140,7 @@ public abstract class AbstractMethod implements Constants {
     }
 
     /**
-     * <p>
      * EntityWrapper方式获取select where
-     * </p>
      *
      * @param newLine 是否提到下一行
      * @param table   表信息

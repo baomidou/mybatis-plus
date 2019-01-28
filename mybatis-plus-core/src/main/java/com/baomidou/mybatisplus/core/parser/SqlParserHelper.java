@@ -25,9 +25,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * <p>
  * SQL 解析辅助类
- * </p>
  *
  * @author hubin
  * @since 2018-07-22
@@ -42,9 +40,7 @@ public class SqlParserHelper {
 
 
     /**
-     * <p>
      * 初始化缓存 SqlParser 注解信息
-     * </p>
      *
      * @param mapperClass Mapper Class
      */
@@ -61,9 +57,7 @@ public class SqlParserHelper {
 
 
     /**
-     * <p>
      * 获取 SqlParser 注解信息
-     * </p>
      *
      * @param metaObject 元数据对象
      */
@@ -73,9 +67,7 @@ public class SqlParserHelper {
 
 
     /**
-     * <p>
      * 获取当前执行 MappedStatement
-     * </p>
      *
      * @param metaObject 元对象
      */

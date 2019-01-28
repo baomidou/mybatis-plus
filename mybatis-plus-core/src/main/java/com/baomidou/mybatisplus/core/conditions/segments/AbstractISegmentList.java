@@ -22,9 +22,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * <p>
  * SQL 片段集合 处理的抽象类
- * </p>
  *
  * @author miemie
  * @since 2018-06-27
@@ -55,9 +53,7 @@ public abstract class AbstractISegmentList extends ArrayList<ISqlSegment> implem
     }
 
     /**
-     * <p>
      * 在其中对值进行判断以及更改 list 的内部元素
-     * </P>
      *
      * @param list         传入进来的 ISqlSegment 集合
      * @param firstSegment ISqlSegment 集合里第一个值

@@ -34,9 +34,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
- * <p>
  * Mybatis 全局缓存
- * </p>
  *
  * @author Caratacus
  * @since 2016-12-06
@@ -95,9 +93,7 @@ public class GlobalConfig implements Serializable {
     private MetaObjectHandler metaObjectHandler;
 
     /**
-     * <p>
      * 标记全局设置 (统一所有入口)
-     * </p>
      */
     public void signGlobalConfig(SqlSessionFactory sqlSessionFactory) {
         if (null != sqlSessionFactory) {

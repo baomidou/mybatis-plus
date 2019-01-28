@@ -5,9 +5,7 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * <p>
  * 对象工具类
- * <p>
  *
  * @author hubin
  * @since 2018-06-05

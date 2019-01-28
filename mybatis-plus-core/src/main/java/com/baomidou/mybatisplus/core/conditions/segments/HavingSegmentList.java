@@ -25,9 +25,7 @@ import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 
 /**
- * <p>
  * Having SQL 片段
- * </p>
  *
  * @author miemie
  * @since 2018-06-27

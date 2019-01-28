@@ -34,9 +34,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 /**
- * <p>
  * 自定义 ParameterHandler 重装构造函数，填充插入方法主键 ID
- * </p>
  *
  * @author hubin
  * @since 2016-03-11
@@ -59,13 +57,11 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
     }
 
     /**
-     * <p>
      * 批量（填充主键 ID）
-     * </p>
      *
      * @param ms              MappedStatement
      * @param parameterObject 插入数据库对象
-     * @return
+     * @return ignore
      */
     protected static Object processBatch(MappedStatement ms, Object parameterObject) {
         //检查 parameterObject
@@ -128,9 +124,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
     }
 
     /**
-     * <p>
      * 处理正常批量插入逻辑
-     * </p>
      * <p>
      * org.apache.ibatis.session.defaults.DefaultSqlSession$StrictMap 该类方法
      * wrapCollection 实现 StrictMap 封装逻辑
@@ -158,9 +152,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
     }
 
     /**
-     * <p>
      * 自定义元对象填充控制器
-     * </p>
      *
      * @param metaObjectHandler 元数据填充处理器
      * @param tableInfo         数据库表反射信息

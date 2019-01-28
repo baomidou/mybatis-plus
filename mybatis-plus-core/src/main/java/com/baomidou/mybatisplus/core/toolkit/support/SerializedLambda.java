@@ -23,10 +23,9 @@ import com.baomidou.mybatisplus.core.toolkit.SerializationUtils;
 import java.io.*;
 
 /**
- * 这个类是从 {@link java.lang.invoke.SerializedLambda} 里面 copy 过来的
+ * 这个类是从 {@link java.lang.invoke.SerializedLambda} 里面 copy 过来的，
  * 字段信息完全一样
- * <p>
- * 负责将一个支持序列的 Function 序列化为 SerializedLambda
+ * <p>负责将一个支持序列的 Function 序列化为 SerializedLambda</p>
  *
  * @author HCL
  * @since 2018/05/10

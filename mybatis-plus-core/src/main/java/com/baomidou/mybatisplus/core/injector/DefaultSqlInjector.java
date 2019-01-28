@@ -24,9 +24,7 @@ import static java.util.stream.Collectors.toList;
 
 
 /**
- * <p>
  * SQL 默认注入器
- * </p>
  *
  * @author hubin
  * @since 2018-04-10

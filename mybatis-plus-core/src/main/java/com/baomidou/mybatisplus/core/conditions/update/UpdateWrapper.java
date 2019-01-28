@@ -27,9 +27,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * <p>
  * Update 条件封装
- * </p>
  *
  * @author hubin miemie HCL
  * @since 2018-05-30
@@ -39,7 +37,7 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
     implements Update<UpdateWrapper<T>, String> {
 
     /**
-     * SQL 更新字段内容，例如：name='1',age=2
+     * SQL 更新字段内容，例如：name='1', age=2
      */
     private final List<String> sqlSet;
 

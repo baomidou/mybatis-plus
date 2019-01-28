@@ -19,9 +19,7 @@ package com.baomidou.mybatisplus.core.conditions;
 import java.io.Serializable;
 
 /**
- * <p>
  * SQL 片段接口
- * </p>
  *
  * @author hubin miemie HCL
  * @since 2018-05-28
@@ -32,5 +30,5 @@ public interface ISqlSegment extends Serializable {
     /**
      * SQL 片段
      */
-   String getSqlSegment();
+    String getSqlSegment();
 }

@@ -24,10 +24,8 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
 /**
- * <p>
- * 分布式高效有序ID生产黑科技(sequence) <br>
- * 优化开源项目：http://git.oschina.net/yu120/sequence
- * </p>
+ * 分布式高效有序ID生产黑科技(sequence)
+ * <p>优化开源项目：http://git.oschina.net/yu120/sequence</p>
  *
  * @author hubin
  * @since 2016-08-18
@@ -79,9 +77,7 @@ public class Sequence {
     }
 
     /**
-     * <p>
      * 有参构造器
-     * </p>
      *
      * @param workerId     工作机器 ID
      * @param datacenterId 序列号
@@ -96,9 +92,7 @@ public class Sequence {
     }
 
     /**
-     * <p>
      * 获取 maxWorkerId
-     * </p>
      */
     protected static long getMaxWorkerId(long datacenterId, long maxWorkerId) {
         StringBuilder mpid = new StringBuilder();
@@ -117,9 +111,7 @@ public class Sequence {
     }
 
     /**
-     * <p>
      * 数据标识id部分
-     * </p>
      */
     protected static long getDatacenterId(long maxDatacenterId) {
         long id = 0L;
@@ -142,9 +134,9 @@ public class Sequence {
     }
 
     /**
-     * 获取下一个ID
+     * 获取下一个 ID
      *
-     * @return
+     * @return 下一个 ID
      */
     public synchronized long nextId() {
         long timestamp = timeGen();

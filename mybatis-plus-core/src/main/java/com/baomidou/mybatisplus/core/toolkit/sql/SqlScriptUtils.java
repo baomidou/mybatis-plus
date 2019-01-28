@@ -19,9 +19,7 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 /**
- * <p>
  * sql 脚本工具类
- * </p>
  *
  * @author miemie
  * @since 2018-08-15
@@ -33,9 +31,7 @@ public final class SqlScriptUtils implements Constants {
     }
 
     /**
-     * <p>
      * 获取 带 if 标签的脚本
-     * </p>
      *
      * @param sqlScript sql 脚本片段
      * @return if 脚本
@@ -49,9 +45,7 @@ public final class SqlScriptUtils implements Constants {
     }
 
     /**
-     * <p>
      * 获取 带 trim 标签的脚本
-     * </p>
      *
      * @param sqlScript       sql 脚本片段
      * @param prefix          以...开头
@@ -79,9 +73,7 @@ public final class SqlScriptUtils implements Constants {
     }
 
     /**
-     * <p>
      * 生成 choose 标签的脚本
-     * </p>
      *
      * @param whenTest  when 内 test 的内容
      * @param otherwise otherwise 内容
@@ -96,9 +88,7 @@ public final class SqlScriptUtils implements Constants {
     }
 
     /**
-     * <p>
      * 生成 foreach 标签的脚本
-     * </p>
      *
      * @param sqlScript  foreach 内部的 sql 脚本
      * @param collection collection
@@ -126,9 +116,7 @@ public final class SqlScriptUtils implements Constants {
     }
 
     /**
-     * <p>
      * 生成 where 标签的脚本
-     * </p>
      *
      * @param sqlScript where 内部的 sql 脚本
      * @return where 脚本
@@ -138,9 +126,7 @@ public final class SqlScriptUtils implements Constants {
     }
 
     /**
-     * <p>
      * 生成 set 标签的脚本
-     * </p>
      *
      * @param sqlScript set 内部的 sql 脚本
      * @return set 脚本
@@ -150,9 +136,7 @@ public final class SqlScriptUtils implements Constants {
     }
 
     /**
-     * <p>
      * 安全入参:  #{入参}
-     * </p>
      *
      * @param param 入参
      * @return 脚本
@@ -162,9 +146,7 @@ public final class SqlScriptUtils implements Constants {
     }
 
     /**
-     * <p>
      * 非安全入参:  ${入参}
-     * </p>
      *
      * @param param 入参
      * @return 脚本

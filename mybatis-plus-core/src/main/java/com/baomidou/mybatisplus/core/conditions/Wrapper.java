@@ -26,9 +26,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 
 /**
- * <p>
  * 条件构造抽象类
- * </p>
  *
  * @author hubin
  * @since 2018-05-25
@@ -37,9 +35,7 @@ import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 public abstract class Wrapper<T> implements ISqlSegment {
 
     /**
-     * <p>
      * 实体对象（子类实现）
-     * </p>
      *
      * @return 泛型 T
      */
@@ -59,9 +55,9 @@ public abstract class Wrapper<T> implements ISqlSegment {
     public abstract MergeSegments getExpression();
 
     /**
-     * 获取自定义SQL 简化自定义XML复杂情况<br/>
-     * 使用方法<br/>
-     * `自定义sql` + ${ew.customSqlSegment}<br/>
+     * 获取自定义SQL 简化自定义XML复杂情况
+     * <p>使用方法</p>
+     * <p>`自定义sql` + ${ew.customSqlSegment}</p>
      * <p>1.逻辑删除需要自己拼接条件 (之前自定义也同样)</p>
      * <p>2.不支持wrapper中附带实体的情况 (wrapper自带实体会更麻烦)</p>
      * <p>3.用法 ${ew.customSqlSegment} (不需要where标签包裹,切记!)</p>

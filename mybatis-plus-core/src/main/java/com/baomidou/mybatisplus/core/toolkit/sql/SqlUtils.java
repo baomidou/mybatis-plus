@@ -22,9 +22,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 /**
- * <p>
  * SqlUtils工具类
- * </p>
  *
  * @author Caratacus
  * @since 2016-11-13
@@ -52,9 +50,7 @@ public class SqlUtils {
     }
 
     /**
-     * <p>
      * 用%连接like
-     * </p>
      *
      * @param str 原字符串
      * @return
@@ -78,9 +74,7 @@ public class SqlUtils {
     }
 
     /**
-     * <p>
      * 获取需要转义的SQL字段
-     * </p>
      *
      * @param dbType   数据库类型
      * @param val      值
@@ -101,9 +95,7 @@ public class SqlUtils {
     }
 
     /**
-     * <p>
      * SQL注入内容剥离
-     * </p>
      *
      * @param sql 待处理 SQL 内容
      * @return this

@@ -28,10 +28,8 @@ import java.util.Optional;
 import static java.util.stream.Collectors.joining;
 
 /**
- * <p>
  * Lambda 语法使用 Wrapper
- * 统一处理解析 lambda 获取 column
- * </p>
+ * <p>统一处理解析 lambda 获取 column</p>
  *
  * @author hubin miemie HCL
  * @since 2017-05-26

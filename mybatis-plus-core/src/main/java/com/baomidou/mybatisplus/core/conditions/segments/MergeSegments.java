@@ -23,9 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * <p>
  * 合并 SQL 片段
- * </p>
  *
  * @author miemie
  * @since 2018-06-27

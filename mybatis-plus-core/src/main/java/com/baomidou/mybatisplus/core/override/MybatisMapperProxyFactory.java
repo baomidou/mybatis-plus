@@ -23,10 +23,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * <p>
- * 替换掉引用<br/>
- * 重写类： org.apache.ibatis.binding.MapperProxyFactory
- * </p>
+ * 替换掉引用
+ * <p>重写类： org.apache.ibatis.binding.MapperProxyFactory</p>
  *
  * @author miemie
  * @since 2018-06-09

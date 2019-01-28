@@ -27,9 +27,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * <p>
  * 元对象字段填充控制器抽象类，实现公共字段自动写入
- * </p>
  *
  * @author hubin
  * @since 2016-08-28
@@ -56,9 +54,7 @@ public interface MetaObjectHandler {
     void updateFill(MetaObject metaObject);
 
     /**
-     * <p>
      * 通用填充
-     * </p>
      *
      * @param fieldName  java bean property name
      * @param fieldVal   java bean property value
@@ -82,9 +78,7 @@ public interface MetaObjectHandler {
     }
 
     /**
-     * <p>
      * insert 时填充,只会填充 fill 被标识为 INSERT 与 INSERT_UPDATE 的字段
-     * </p>
      *
      * @param fieldName  java bean property name
      * @param fieldVal   java bean property value
@@ -96,9 +90,7 @@ public interface MetaObjectHandler {
     }
 
     /**
-     * <p>
      * update 时填充,只会填充 fill 被标识为 UPDATE 与 INSERT_UPDATE 的字段
-     * </p>
      *
      * @param fieldName  java bean property name
      * @param fieldVal   java bean property value
@@ -110,12 +102,8 @@ public interface MetaObjectHandler {
     }
 
     /**
-     * <p>
      * Common method to set value for java bean.
-     * </p>
-     * <p>
-     * 如果包含前缀 et 使用该方法，否则可以直接 metaObject.setValue(fieldName, fieldVal);
-     * </p>
+     * <p>如果包含前缀 et 使用该方法，否则可以直接 metaObject.setValue(fieldName, fieldVal);</p>
      *
      * @param fieldName  java bean property name
      * @param fieldVal   java bean property value
@@ -142,12 +130,8 @@ public interface MetaObjectHandler {
     }
 
     /**
-     * <p>
      * get value from java bean by propertyName
-     * </p>
-     * <p>
-     * 如果包含前缀 et 使用该方法，否则可以直接 metaObject.setValue(fieldName, fieldVal);
-     * </p>
+     * <p>如果包含前缀 et 使用该方法，否则可以直接 metaObject.setValue(fieldName, fieldVal);</p>
      *
      * @param fieldName  java bean property name
      * @param metaObject parameter wrapper
@@ -163,9 +147,7 @@ public interface MetaObjectHandler {
     }
 
     /**
-     * <p>
      * 填充判断
-     * </p>
      * <li> 如果是主键,不填充 </li>
      * <li> 根据字段名找不到字段,不填充 </li>
      * <li> 字段类型与填充值类型不匹配,不填充 </li>

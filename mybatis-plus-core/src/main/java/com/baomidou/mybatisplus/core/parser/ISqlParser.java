@@ -18,9 +18,7 @@ package com.baomidou.mybatisplus.core.parser;
 import org.apache.ibatis.reflection.MetaObject;
 
 /**
- * <p>
  * SQL 解析接口
- * </p>
  *
  * @author hubin
  * @since 2017-09-01
@@ -28,9 +26,7 @@ import org.apache.ibatis.reflection.MetaObject;
 public interface ISqlParser {
 
     /**
-     * <p>
      * 解析 SQL 方法
-     * </p>
      *
      * @param metaObject 元对象
      * @param sql        SQL 语句

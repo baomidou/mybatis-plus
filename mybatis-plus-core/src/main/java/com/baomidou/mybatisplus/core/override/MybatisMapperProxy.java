@@ -27,10 +27,8 @@ import java.lang.reflect.Modifier;
 import java.util.Map;
 
 /**
- * <p>
- * 替换掉引用<br/>
- * 重写类： org.apache.ibatis.binding.MapperProxy
- * </p>
+ * 替换掉引用
+ * <p>重写类： org.apache.ibatis.binding.MapperProxy</p>
  *
  * @author miemie
  * @since 2018-06-09

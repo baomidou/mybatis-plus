@@ -20,9 +20,7 @@ import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 
 /**
- * <p>
  * SQL 保留关键字枚举
- * </p>
  *
  * @author hubin
  * @since 2018-05-28
