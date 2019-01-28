@@ -25,10 +25,7 @@ import java.util.Optional;
 import static java.util.stream.Collectors.toList;
 
 /**
- * <p>
  * 查询条件封装
- * 比较值
- * </p>
  *
  * @author hubin miemie HCL
  * @since 2017-05-26
@@ -45,7 +42,7 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 IS NULL
-     * 例: isNull("name")
+     * <p>例: isNull("name")</p>
      *
      * @param condition 执行条件
      * @param column    字段
@@ -62,7 +59,7 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 IS NOT NULL
-     * 例: isNotNull("name")
+     * <p>例: isNotNull("name")</p>
      *
      * @param condition 执行条件
      * @param column    字段
@@ -86,7 +83,7 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 IN (value.get(0), value.get(1), ...)
-     * 例: in("id", Arrays.asList(1,2,3,4,5))
+     * <p>例: in("id", Arrays.asList(1, 2, 3, 4, 5))</p>
      *
      * <li> 如果集合为 empty 则直接抛出异常 </li>
      *
@@ -102,7 +99,7 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 IN (value.get(0), value.get(1), ...)
-     * 例: in("id", Arrays.asList(1,2,3,4,5))
+     * <p>例: in("id", Arrays.asList(1, 2, 3, 4, 5))</p>
      *
      * <li> 如果集合为 empty 则不会进行 sql 拼接 </li>
      *
@@ -122,7 +119,7 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 IN (value.get(0), value.get(1), ...)
-     * 例: in("id", Arrays.asList(1,2,3,4,5))
+     * <p>例: in("id", Arrays.asList(1, 2, 3, 4, 5))</p>
      *
      * <li> 如果数组为 empty 则直接抛出异常 </li>
      *
@@ -145,7 +142,7 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 IN (v0, v1, ...)
-     * 例: in("id", 1, 2, 3, 4, 5)
+     * <p>例: in("id", 1, 2, 3, 4, 5)</p>
      *
      * <li> 如果动态数组为 empty 则不会进行 sql 拼接 </li>
      *
@@ -175,7 +172,7 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 IN (value.get(0), value.get(1), ...)
-     * 例: in("id", Arrays.asList(1,2,3,4,5))
+     * <p>例: in("id", Arrays.asList(1, 2, 3, 4, 5))</p>
      *
      * <li> 如果集合为 empty 则直接抛出异常 </li>
      *
@@ -191,7 +188,7 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 NOT IN (value.get(0), value.get(1), ...)
-     * 例: notIn("id", Arrays.asList(1,2,3,4,5))
+     * <p>例: notIn("id", Arrays.asList(1, 2, 3, 4, 5))</p>
      *
      * @param condition 执行条件
      * @param column    字段
@@ -216,7 +213,7 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 IN (value.get(0), value.get(1), ...)
-     * 例: in("id", Arrays.asList(1,2,3,4,5))
+     * <p>例: in("id", Arrays.asList(1, 2, 3, 4, 5))</p>
      *
      * <li> 如果数组为 empty 则直接抛出异常 </li>
      *
@@ -232,7 +229,7 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 NOT IN (v0, v1, ...)
-     * 例: notIn("id", 1, 2, 3, 4, 5)
+     * <p>例: notIn("id", 1, 2, 3, 4, 5)</p>
      *
      * @param condition 执行条件
      * @param column    字段
@@ -253,9 +250,9 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 IN ( sql语句 )
-     * !! sql 注入方式的 in 方法 !!
-     * 例1: inSql("id", "1,2,3,4,5,6")
-     * 例2: inSql("id", "select id from table where id < 3")
+     * <p>!! sql 注入方式的 in 方法 !!</p>
+     * <p>例1: inSql("id", "1, 2, 3, 4, 5, 6")</p>
+     * <p>例2: inSql("id", "select id from table where id &lt; 3")</p>
      *
      * @param condition 执行条件
      * @param column    字段
@@ -273,13 +270,13 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 字段 NOT IN ( sql语句 )
-     * !! sql 注入方式的 not in 方法 !!
-     * 例1: notInSql("id", "1,2,3,4,5,6")
-     * 例2: notInSql("id", "select id from table where id < 3")
+     * <p>!! sql 注入方式的 not in 方法 !!</p>
+     * <p>例1: notInSql("id", "1, 2, 3, 4, 5, 6")</p>
+     * <p>例2: notInSql("id", "select id from table where id &lt; 3")</p>
      *
      * @param condition 执行条件
      * @param column    字段
-     * @param inValue   sql语句 ---> 1,2,3,4,5,6 或者 select id from table where id < 3
+     * @param inValue   sql语句 ---&gt; 1,2,3,4,5,6 或者 select id from table where id &lt; 3
      * @return children
      */
     Children notInSql(boolean condition, R column, String inValue);
@@ -293,7 +290,7 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 分组：GROUP BY 字段, ...
-     * 例: groupBy("id", "name")
+     * <p>例: groupBy("id", "name")</p>
      *
      * @param condition 执行条件
      * @param columns   字段数组
@@ -310,7 +307,7 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 排序：ORDER BY 字段, ... ASC
-     * 例: orderByAsc("id", "name")
+     * <p>例: orderByAsc("id", "name")</p>
      *
      * @param condition 执行条件
      * @param columns   字段数组
@@ -329,7 +326,7 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 排序：ORDER BY 字段, ... DESC
-     * 例: orderByDesc("id", "name")
+     * <p>例: orderByDesc("id", "name")</p>
      *
      * @param condition 执行条件
      * @param columns   字段数组
@@ -341,7 +338,7 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * 排序：ORDER BY 字段, ...
-     * 例: orderBy(true, "id", "name")
+     * <p>例: orderBy(true, "id", "name")</p>
      *
      * @param condition 执行条件
      * @param isAsc     是否是 ASC 排序
@@ -359,8 +356,8 @@ public interface Func<Children, R> extends Serializable {
 
     /**
      * HAVING ( sql语句 )
-     * 例1: having("sum(age) > 10")
-     * 例2: having("sum(age) > {0}", 10)
+     * <p>例1: having("sum(age) &gt; 10")</p>
+     * <p>例2: having("sum(age) &gt; {0}", 10)</p>
      *
      * @param condition 执行条件
      * @param sqlHaving sql 语句

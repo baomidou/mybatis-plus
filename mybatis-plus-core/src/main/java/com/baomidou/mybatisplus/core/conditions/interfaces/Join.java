@@ -18,10 +18,8 @@ package com.baomidou.mybatisplus.core.conditions.interfaces;
 import java.io.Serializable;
 
 /**
- * <p>
  * 查询条件封装
- * 拼接
- * </p>
+ * <p>拼接</p>
  *
  * @author hubin miemie HCL
  * @since 2017-05-26
@@ -51,11 +49,11 @@ public interface Join<Children> extends Serializable {
     }
 
     /**
-     * !! 会有 sql 注入风险 !!
      * 拼接 sql
-     * 例1: apply("id = 1")
-     * 例2: apply("date_format(dateColumn,'%Y-%m-%d') = '2008-08-08'")
-     * 例3: apply("date_format(dateColumn,'%Y-%m-%d') = {0}", LocalDate.now())
+     * <p>!! 会有 sql 注入风险 !!</p>
+     * <p>例1: apply("id = 1")</p>
+     * <p>例2: apply("date_format(dateColumn,'%Y-%m-%d') = '2008-08-08'")</p>
+     * <p>例3: apply("date_format(dateColumn,'%Y-%m-%d') = {0}", LocalDate.now())</p>
      *
      * @param condition 执行条件
      * @return children
@@ -71,8 +69,8 @@ public interface Join<Children> extends Serializable {
 
     /**
      * 无视优化规则直接拼接到 sql 的最后(有sql注入的风险,请谨慎使用)
-     * 例: last("limit 1")
-     * 注意只能调用一次,多次调用以最后一次为准
+     * <p>例: last("limit 1")</p>
+     * <p>注意只能调用一次,多次调用以最后一次为准</p>
      *
      * @param condition 执行条件
      * @param lastSql   sql语句
@@ -88,9 +86,9 @@ public interface Join<Children> extends Serializable {
     }
 
     /**
-     * !! sql 注入方法 !!
      * 拼接 EXISTS ( sql语句 )
-     * 例: exists("select id from table where age = 1")
+     * <p>!! sql 注入方法 !!</p>
+     * <p>例: exists("select id from table where age = 1")</p>
      *
      * @param condition 执行条件
      * @param existsSql sql语句
@@ -106,9 +104,9 @@ public interface Join<Children> extends Serializable {
     }
 
     /**
-     * !! sql 注入方法 !!
      * 拼接 NOT EXISTS ( sql语句 )
-     * 例: notExists("select id from table where age = 1")
+     * <p>!! sql 注入方法 !!</p>
+     * <p>例: notExists("select id from table where age = 1")</p>
      *
      * @param condition    执行条件
      * @param notExistsSql sql语句

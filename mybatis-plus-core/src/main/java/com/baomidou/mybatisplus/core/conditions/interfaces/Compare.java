@@ -20,10 +20,8 @@ import java.util.Map;
 import java.util.function.BiPredicate;
 
 /**
- * <p>
  * 查询条件封装
- * 比较值
- * </p>
+ * <p>比较值</p>
  *
  * @author hubin miemie HCL
  * @since 2017-05-26
@@ -45,9 +43,7 @@ public interface Compare<Children, R> extends Serializable {
     }
 
     /**
-     * <p>
      * map 所有非空属性等于 =
-     * </p>
      *
      * @param condition   执行条件
      * @param params      map 类型的参数, key 是字段名, value 是字段值
@@ -71,9 +67,7 @@ public interface Compare<Children, R> extends Serializable {
     }
 
     /**
-     * <p>
-     * 字段过滤接口，传入多参数时允许对参数进行过滤<br/>
-     * </p>
+     * 字段过滤接口，传入多参数时允许对参数进行过滤
      *
      * @param condition   执行条件
      * @param filter      返回 true 来允许字段传入比对条件中
@@ -91,9 +85,7 @@ public interface Compare<Children, R> extends Serializable {
     }
 
     /**
-     * <p>
      * 等于 =
-     * </p>
      *
      * @param condition 执行条件
      * @param column    字段
@@ -110,9 +102,7 @@ public interface Compare<Children, R> extends Serializable {
     }
 
     /**
-     * <p>
-     * 不等于 <>
-     * </p>
+     * 不等于 &lt;&gt;
      *
      * @param condition 执行条件
      * @param column    字段
@@ -129,9 +119,7 @@ public interface Compare<Children, R> extends Serializable {
     }
 
     /**
-     * <p>
-     * 大于 >
-     * </p>
+     * 大于 &gt;
      *
      * @param condition 执行条件
      * @param column    字段
@@ -148,9 +136,7 @@ public interface Compare<Children, R> extends Serializable {
     }
 
     /**
-     * <p>
-     * 大于等于 >=
-     * </p>
+     * 大于等于 &gt;=
      *
      * @param condition 执行条件
      * @param column    字段
@@ -167,9 +153,7 @@ public interface Compare<Children, R> extends Serializable {
     }
 
     /**
-     * <p>
-     * 小于 <
-     * </p>
+     * 小于 &lt;
      *
      * @param condition 执行条件
      * @param column    字段
@@ -186,9 +170,7 @@ public interface Compare<Children, R> extends Serializable {
     }
 
     /**
-     * <p>
-     * 小于等于 <=
-     * </p>
+     * 小于等于 &lt;=
      *
      * @param condition 执行条件
      * @param column    字段
@@ -205,9 +187,7 @@ public interface Compare<Children, R> extends Serializable {
     }
 
     /**
-     * <p>
      * BETWEEN 值1 AND 值2
-     * </p>
      *
      * @param condition 执行条件
      * @param column    字段
@@ -225,9 +205,7 @@ public interface Compare<Children, R> extends Serializable {
     }
 
     /**
-     * <p>
      * NOT BETWEEN 值1 AND 值2
-     * </p>
      *
      * @param condition 执行条件
      * @param column    字段
@@ -245,9 +223,7 @@ public interface Compare<Children, R> extends Serializable {
     }
 
     /**
-     * <p>
      * LIKE '%值%'
-     * </p>
      *
      * @param condition 执行条件
      * @param column    字段
@@ -264,9 +240,7 @@ public interface Compare<Children, R> extends Serializable {
     }
 
     /**
-     * <p>
      * NOT LIKE '%值%'
-     * </p>
      *
      * @param condition 执行条件
      * @param column    字段
@@ -283,9 +257,7 @@ public interface Compare<Children, R> extends Serializable {
     }
 
     /**
-     * <p>
      * LIKE '%值'
-     * </p>
      *
      * @param condition 执行条件
      * @param column    字段
@@ -302,9 +274,7 @@ public interface Compare<Children, R> extends Serializable {
     }
 
     /**
-     * <p>
      * LIKE '值%'
-     * </p>
      *
      * @param condition 执行条件
      * @param column    字段

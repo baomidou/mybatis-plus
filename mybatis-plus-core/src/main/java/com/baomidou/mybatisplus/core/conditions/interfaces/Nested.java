@@ -19,10 +19,8 @@ import java.io.Serializable;
 import java.util.function.Function;
 
 /**
- * <p>
  * 查询条件封装
- * 嵌套
- * </p>
+ * <p>嵌套</p>
  *
  * @author hubin miemie HCL
  * @since 2017-05-26
@@ -37,9 +35,9 @@ public interface Nested<Param, Children> extends Serializable {
     }
 
     /**
+     * AND 嵌套
      * <p>
-     * AND 嵌套<br/>
-     * 例: and(i -> i.eq("name", "李白").ne("status", "活着"))<br/>
+     * 例: and(i -&gt; i.eq("name", "李白").ne("status", "活着"))
      * </p>
      *
      * @param condition 执行条件
@@ -56,9 +54,9 @@ public interface Nested<Param, Children> extends Serializable {
     }
 
     /**
+     * OR 嵌套
      * <p>
-     * OR 嵌套<br/>
-     * 例: or(i -> i.eq("name", "李白").ne("status", "活着"))<br/>
+     * 例: or(i -&gt; i.eq("name", "李白").ne("status", "活着"))
      * </p>
      *
      * @param condition 执行条件
@@ -75,9 +73,9 @@ public interface Nested<Param, Children> extends Serializable {
     }
 
     /**
+     * 正常嵌套 不带 AND 或者 OR
      * <p>
-     * 正常嵌套 不带 AND 或者 OR<br/>
-     * 例: nested(i -> i.eq("name", "李白").ne("status", "活着"))
+     * 例: nested(i -&gt; i.eq("name", "李白").ne("status", "活着"))
      * </p>
      *
      * @param condition 执行条件
