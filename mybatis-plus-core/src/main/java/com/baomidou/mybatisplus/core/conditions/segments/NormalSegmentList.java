@@ -15,12 +15,12 @@
  */
 package com.baomidou.mybatisplus.core.conditions.segments;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -34,7 +34,9 @@ import java.util.stream.Collectors;
 public class NormalSegmentList extends AbstractISegmentList {
 
     /**
+     * <p>
      * 是否处理了的上个 not
+     * </p>
      */
     private boolean executeNot = true;
 

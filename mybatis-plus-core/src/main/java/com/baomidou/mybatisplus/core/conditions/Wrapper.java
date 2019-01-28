@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
+import java.util.Objects;
+
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
@@ -22,8 +24,6 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
-
-import java.util.Objects;
 
 /**
  * <p>
@@ -59,13 +59,13 @@ public abstract class Wrapper<T> implements ISqlSegment {
     public abstract MergeSegments getExpression();
 
     /**
-     * 获取自定义SQL 简化自定义XML复杂情况
-     * 使用方法
-     * `自定义sql` + ${ew.customSqlSegment}
+     * 获取自定义SQL 简化自定义XML复杂情况<br/>
+     * 使用方法<br/>
+     * `自定义sql` + ${ew.customSqlSegment}<br/>
      * <p>1.逻辑删除需要自己拼接条件 (之前自定义也同样)</p>
      * <p>2.不支持wrapper中附带实体的情况 (wrapper自带实体会更麻烦)</p>
-     * <p>3.用法 ${ew.customSqlSegment} (不需要where标签包裹,切记!)</>
-     * <p>4.ew是wrapper定义别名,可自行替换</>
+     * <p>3.用法 ${ew.customSqlSegment} (不需要where标签包裹,切记!)</p>
+     * <p>4.ew是wrapper定义别名,可自行替换</p>
      */
     public abstract String getCustomSqlSegment();
 

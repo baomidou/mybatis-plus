@@ -43,12 +43,16 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
 
     protected final Children typedThis = (Children) this;
     /**
+     * <p>
      * 子类所包装的具体 Wrapper 类型
+     * </p>
      */
     protected Param wrapperChildren;
 
     /**
+     * <p>
      * 必须的构造函数
+     * </p>
      */
     public AbstractChainWrapper() {
     }

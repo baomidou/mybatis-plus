@@ -28,14 +28,18 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 public interface ChainWrapper<T> {
 
     /**
+     * <p>
      * 获取 BaseMapper
+     * </p>
      *
      * @return BaseMapper
      */
     BaseMapper<T> getBaseMapper();
 
     /**
+     * <p>
      * 获取最终拿去执行的 Wrapper
+     * </p>
      *
      * @return Wrapper
      */

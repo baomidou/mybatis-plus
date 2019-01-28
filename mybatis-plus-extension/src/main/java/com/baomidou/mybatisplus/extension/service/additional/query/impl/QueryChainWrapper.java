@@ -26,6 +26,10 @@ import com.baomidou.mybatisplus.extension.service.additional.AbstractChainWrappe
 import com.baomidou.mybatisplus.extension.service.additional.query.ChainQuery;
 
 /**
+ * <p>
+ * Query Chain Wrapper
+ * </p>
+ *
  * @author miemie
  * @since 2018-12-19
  */

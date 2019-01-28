@@ -15,11 +15,11 @@
  */
 package com.baomidou.mybatisplus.extension.service.additional.query;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.service.additional.ChainWrapper;
-
-import java.util.List;
 
 /**
  * 具有查询方法的定义
@@ -30,7 +30,9 @@ import java.util.List;
 public interface ChainQuery<T> extends ChainWrapper<T> {
 
     /**
+     * <p>
      * 获取集合
+     * </p>
      *
      * @return 集合
      */
@@ -39,7 +41,9 @@ public interface ChainQuery<T> extends ChainWrapper<T> {
     }
 
     /**
+     * <p>
      * 获取单个
+     * </p>
      *
      * @return 单个
      */
@@ -48,7 +52,9 @@ public interface ChainQuery<T> extends ChainWrapper<T> {
     }
 
     /**
+     * <p>
      * 获取 count
+     * </p>
      *
      * @return count
      */
@@ -57,7 +63,9 @@ public interface ChainQuery<T> extends ChainWrapper<T> {
     }
 
     /**
+     * <p>
      * 获取分页数据
+     * </p>
      *
      * @param page 分页条件
      * @return 分页数据

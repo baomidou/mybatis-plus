@@ -18,7 +18,9 @@ package com.baomidou.mybatisplus.extension.service.additional.update;
 import com.baomidou.mybatisplus.extension.service.additional.ChainWrapper;
 
 /**
+ * <p>
  * 具有更新方法的定义
+ * </p>
  *
  * @author miemie
  * @since 2018-12-19
@@ -26,7 +28,9 @@ import com.baomidou.mybatisplus.extension.service.additional.ChainWrapper;
 public interface ChainUpdate<T> extends ChainWrapper<T> {
 
     /**
+     * <p>
      * 更新数据
+     * </p>
      *
      * @return 是否成功
      */
@@ -35,7 +39,9 @@ public interface ChainUpdate<T> extends ChainWrapper<T> {
     }
 
     /**
+     * <p>
      * 更新数据
+     * </p>
      *
      * @param entity 实体类
      * @return 是否成功
@@ -45,7 +51,9 @@ public interface ChainUpdate<T> extends ChainWrapper<T> {
     }
 
     /**
+     * <p>
      * 删除数据
+     * </p>
      *
      * @return 是否成功
      */

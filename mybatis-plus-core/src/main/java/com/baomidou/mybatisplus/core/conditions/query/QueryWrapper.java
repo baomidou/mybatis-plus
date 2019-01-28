@@ -15,6 +15,10 @@
  */
 package com.baomidou.mybatisplus.core.conditions.query;
 
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
+
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.SharedString;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
@@ -22,10 +26,6 @@ import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
-
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Predicate;
 
 /**
  * <p>
@@ -60,7 +60,9 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     }
 
     /**
+     * <p>
      * 非对外公开的构造方法,只用于生产嵌套 sql
+     * </p>
      *
      * @param entityClass 本不应该需要的
      */
@@ -109,7 +111,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
 
     /**
      * <p>
-     * 用于生成嵌套 sql
+     * 用于生成嵌套 sql <br/>
      * 故 sqlSelect 不向下传递
      * </p>
      */
