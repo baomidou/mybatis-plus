@@ -122,7 +122,7 @@ subprojects {
                 charSet 'UTF-8'
                 author true
                 version true
-                failOnError true // TODO false
+                failOnError false
                 links "http://docs.oracle.com/javase/8/docs/api"
             }
         }
