@@ -22,9 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p>
  * 表主键标识
- * </p>
  *
  * @author hubin
  * @since 2016-01-23
@@ -35,16 +33,12 @@ import java.lang.annotation.Target;
 public @interface TableId {
 
     /**
-     * <p>
      * 字段值（驼峰命名方式，该值可无）
-     * </p>
      */
     String value() default "";
 
     /**
-     * <p>
      * 主键ID
-     * </p>
      * {@link IdType}
      */
     IdType type() default IdType.NONE;

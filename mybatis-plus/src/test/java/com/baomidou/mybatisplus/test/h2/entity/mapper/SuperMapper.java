@@ -1,9 +1,7 @@
 package com.baomidou.mybatisplus.test.h2.entity.mapper;
 
 /**
- * <p>
  * 自定义父类 SuperMapper
- * </p>
  *
  * @author hubin
  * @since 2017-06-26

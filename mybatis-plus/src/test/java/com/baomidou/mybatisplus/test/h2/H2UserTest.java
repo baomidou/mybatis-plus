@@ -24,9 +24,7 @@ import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
 import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
 
 /**
- * <p>
  * Mybatis Plus H2 Junit Test
- * </p>
  *
  * @author Caratacus
  * @since 2017/4/1

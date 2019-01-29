@@ -16,7 +16,7 @@ public class ExampleObjectFactory extends DefaultObjectFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExampleObjectFactory.class);
 
-    public Object create(Class type) {
+    public <T> T create(Class<T> type) {
         LOGGER.debug("生成一个对象 type = [" + type + "]");
         return super.create(type);
     }

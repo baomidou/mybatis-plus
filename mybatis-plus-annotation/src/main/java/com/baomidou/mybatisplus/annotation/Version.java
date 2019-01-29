@@ -22,9 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * <p>
  * 乐观锁注解、标记 @Verison 在字段上
- * </p>
  *
  * @author TaoYu
  * @since 2016-01-23
@@ -32,6 +30,4 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
-public @interface Version {
-
-}
+public @interface Version {}

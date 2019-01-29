@@ -23,9 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <p>
  * Mybatis Plus Config
- * </p>
  *
  * @author Caratacus
  * @since 2017/4/1

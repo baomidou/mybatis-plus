@@ -14,9 +14,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class SampleTest {
 
-    private final ObjectMapper mapper = new ObjectMapper();
-
-
     @Test
     public void testTableInfoHelper2() {
         TableInfo info = TableInfoHelper.initTableInfo(null, CommonLogicData.class);

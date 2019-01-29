@@ -14,9 +14,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import java.io.IOException;
 
 /**
- * <p>
  * H2 Memory Database config
- * </p>
  *
  * @author Caratacus
  * @since 2017/4/1
@@ -39,7 +37,7 @@ public class DBConfig {
     public DataSourceTransactionManager transactionManager(DataSource ds) {
         return new DataSourceTransactionManager(ds);
     }
-    
+
     @Bean
     public DataSourceInitializer dataSourceInitializer(DataSource dataSource) throws IOException {
         final DataSourceInitializer initializer = new DataSourceInitializer();
@@ -48,7 +46,7 @@ public class DBConfig {
         initializer.setEnabled(true);
         return initializer;
     }
-    
+
     private DatabasePopulator databasePopulator() throws IOException {
         ResourceDatabasePopulator resourceDatabasePopulator = new ResourceDatabasePopulator();
         resourceDatabasePopulator.setContinueOnError(false);
@@ -57,5 +55,5 @@ public class DBConfig {
         );
         return resourceDatabasePopulator;
     }
-    
+
 }

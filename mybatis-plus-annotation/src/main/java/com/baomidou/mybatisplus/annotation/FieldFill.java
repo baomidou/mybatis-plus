@@ -16,9 +16,7 @@
 package com.baomidou.mybatisplus.annotation;
 
 /**
- * <p>
  * 字段填充策略枚举类
- * </p>
  *
  * @author hubin
  * @since 2017-06-27

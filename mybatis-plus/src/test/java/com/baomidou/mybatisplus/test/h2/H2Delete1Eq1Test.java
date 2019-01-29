@@ -15,9 +15,7 @@ import com.baomidou.mybatisplus.test.h2.entity.persistent.H2Student;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
 
 /**
- * <p>
  * Mybatis Plus H2 Junit Test
- * </p>
  *
  * @author hubin
  * @since 2018-06-05

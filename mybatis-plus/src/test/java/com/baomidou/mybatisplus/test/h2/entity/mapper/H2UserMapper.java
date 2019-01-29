@@ -13,9 +13,7 @@ import com.baomidou.mybatisplus.test.h2.entity.persistent.H2Addr;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
 
 /**
- * <p>
  * 这里继承自定义父类 SuperMapper
- * </p>
  *
  * @author Caratacus
  * @since 2017/4/1

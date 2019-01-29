@@ -38,9 +38,7 @@ import static java.util.stream.Collectors.toMap;
 
 
 /**
- * <p>
  * Mybatis Plus mysql Junit Test
- * </p>
  *
  * @author hubin
  * @since 2018-06-05

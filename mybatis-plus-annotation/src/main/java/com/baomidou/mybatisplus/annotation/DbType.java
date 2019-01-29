@@ -18,9 +18,7 @@ package com.baomidou.mybatisplus.annotation;
 import lombok.Getter;
 
 /**
- * <p>
  * MybatisPlus 数据库类型
- * </p>
  *
  * @author hubin
  * @since 2018-06-23
@@ -97,9 +95,7 @@ public enum DbType {
     }
 
     /**
-     * <p>
      * 获取数据库类型（默认 MySql）
-     * </p>
      *
      * @param dbType 数据库类型字符串
      */

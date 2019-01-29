@@ -24,9 +24,7 @@ import java.util.Map;
 import static java.util.stream.Collectors.toList;
 
 /**
- * <p>
  * Mybatis Plus H2 Junit Test
- * </p>
  *
  * @author hubin
  * @since 2018-06-05

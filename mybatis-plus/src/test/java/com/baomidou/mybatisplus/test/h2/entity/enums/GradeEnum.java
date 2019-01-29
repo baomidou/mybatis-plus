@@ -3,8 +3,7 @@ package com.baomidou.mybatisplus.test.h2.entity.enums;
 import com.baomidou.mybatisplus.annotation.EnumValue;
 
 /**
- * <p>
- * </p>
+ * <p></p>
  *
  * @author yuxiaobin
  * @date 2018/8/30

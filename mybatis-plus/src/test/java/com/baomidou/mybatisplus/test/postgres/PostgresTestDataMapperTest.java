@@ -32,9 +32,7 @@ import com.baomidou.mybatisplus.test.base.mapper.pg.PgDataMapper;
 import com.baomidou.mybatisplus.test.postgres.config.PostgresDb;
 
 /**
- * <p>
  * Mybatis Plus mysql Junit Test
- * </p>
  *
  * @author hubin
  * @since 2018-06-05

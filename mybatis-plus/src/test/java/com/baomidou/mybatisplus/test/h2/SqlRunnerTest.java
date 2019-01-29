@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 /**
- *  SqlRunner测试
+ * SqlRunner测试
  * @author nieqiurong 2018/8/25 11:05.
  */
 @FixMethodOrder(MethodSorters.JVM)

@@ -7,10 +7,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 
 
 /**
- * <p>
  * 多层集成测试
- * github #170
- * </p>
+ * <p>github #170</p>
  *
  * @author yuxiaobin
  * @since 2017/12/7

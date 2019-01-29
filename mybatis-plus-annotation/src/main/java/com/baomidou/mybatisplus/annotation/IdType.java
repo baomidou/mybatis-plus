@@ -18,9 +18,7 @@ package com.baomidou.mybatisplus.annotation;
 import lombok.Getter;
 
 /**
- * <p>
  * 生成ID类型枚举类
- * </p>
  *
  * @author hubin
  * @since 2015-11-10
@@ -37,7 +35,7 @@ public enum IdType {
     NONE(1),
     /**
      * 用户输入ID
-     * 该类型可以通过自己注册自动填充插件进行填充
+     * <p>该类型可以通过自己注册自动填充插件进行填充</p>
      */
     INPUT(2),
 

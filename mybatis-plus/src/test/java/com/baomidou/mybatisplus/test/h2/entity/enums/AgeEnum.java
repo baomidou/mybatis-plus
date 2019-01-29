@@ -3,9 +3,7 @@ package com.baomidou.mybatisplus.test.h2.entity.enums;
 import com.baomidou.mybatisplus.core.enums.IEnum;
 
 /**
- * <p>
  * 通用枚举注入演示，注意需要实现 IEnums 也需要扫描枚举包
- * </p>
  *
  * @author hubin
  * @since 2018-08-15

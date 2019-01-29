@@ -16,9 +16,7 @@
 package com.baomidou.mybatisplus.annotation;
 
 /**
- * <p>
  * 字段策略枚举类
- * </p>
  *
  * @author hubin
  * @since 2016-09-09
@@ -38,8 +36,8 @@ public enum FieldStrategy {
     NOT_EMPTY,
     /**
      * 默认的,一般只用于注解里
-     * 1. 在全局里代表 NOT_NULL
-     * 2. 在注解里代表 跟随全局
+     * <p>1. 在全局里代表 NOT_NULL</p>
+     * <p>2. 在注解里代表 跟随全局</p>
      */
     DEFAULT
 }

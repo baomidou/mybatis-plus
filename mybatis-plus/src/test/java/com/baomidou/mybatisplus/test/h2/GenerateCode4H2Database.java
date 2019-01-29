@@ -17,8 +17,7 @@ import com.baomidou.mybatisplus.generator.config.querys.H2Query;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 
 /**
- * <p>
- * </p>
+ * <p></p>
  *
  * @author yuxiaobin
  * @date 2019/1/8

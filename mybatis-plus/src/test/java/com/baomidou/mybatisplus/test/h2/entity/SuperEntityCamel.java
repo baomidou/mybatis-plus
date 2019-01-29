@@ -21,9 +21,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 
 
 /**
- * <p>
  * 测试父类情况
- * </p>
  *
  * @author hubin
  * @since 2016-06-26

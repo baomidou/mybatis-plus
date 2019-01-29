@@ -8,9 +8,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * <p>
  * h2address entity.
- * </p>
  *
  * @author yuxiaobin
  * @since 2017/5/25

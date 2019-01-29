@@ -57,6 +57,7 @@ import java.util.List;
  * configuration file is specified as a property, those will be considered,
  * otherwise this auto-configuration will attempt to register mappers based on
  * the interface definitions in or under the root auto-configuration package.
+ * </p>
  *
  * @author Eddú Meléndez
  * @author Josh Long
@@ -81,9 +82,9 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
     private final DatabaseIdProvider databaseIdProvider;
 
     private final List<ConfigurationCustomizer> configurationCustomizers;
-    
+
     private final ApplicationContext applicationContext;
-    
+
 
     public MybatisPlusAutoConfiguration(MybatisPlusProperties properties,
                                         ObjectProvider<Interceptor[]> interceptorsProvider,
@@ -98,12 +99,12 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
         this.configurationCustomizers = configurationCustomizersProvider.getIfAvailable();
         this.applicationContext = applicationContext;
     }
-    
+
     @Override
     public void afterPropertiesSet() {
         checkConfigFileExists();
     }
-    
+
     private void checkConfigFileExists() {
         if (this.properties.isCheckConfigLocation() && StringUtils.hasText(this.properties.getConfigLocation())) {
             Resource resource = this.resourceLoader.getResource(this.properties.getConfigLocation());
@@ -211,19 +212,19 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
 
         @Override
         public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-        
+
             if (!AutoConfigurationPackages.has(this.beanFactory)) {
                 logger.debug("Could not determine auto-configuration package, automatic mapper scanning disabled.");
                 return;
             }
-        
+
             logger.debug("Searching for mappers annotated with @Mapper");
-        
+
             List<String> packages = AutoConfigurationPackages.get(this.beanFactory);
             if (logger.isDebugEnabled()) {
                 packages.forEach(pkg -> logger.debug("Using auto-configuration base package '{}'", pkg));
             }
-        
+
             ClassPathMapperScanner scanner = new ClassPathMapperScanner(registry);
             if (this.resourceLoader != null) {
                 scanner.setResourceLoader(this.resourceLoader);
@@ -256,7 +257,7 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
     @Import({AutoConfiguredMapperScannerRegistrar.class})
     @ConditionalOnMissingBean(MapperFactoryBean.class)
     public static class MapperScannerRegistrarNotFoundConfiguration implements InitializingBean {
-    
+
         @Override
         public void afterPropertiesSet() {
             logger.debug("No {} found.", MapperFactoryBean.class.getName());
