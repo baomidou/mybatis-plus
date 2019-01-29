@@ -20,9 +20,12 @@ import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.type.BaseTypeHandler;
@@ -52,19 +55,20 @@ public class EnumAnnotationTypeHandler<E extends Enum<E>> extends BaseTypeHandle
     private static final Map<Class<?>, Field> TABLE_FIELD_OF_ENUM_TYPES = new ConcurrentHashMap<>();
 
     public static void addEnumType(Class<?> clazz, Field tableFieldOfEnumType) {
+        tableFieldOfEnumType.setAccessible(true);
         TABLE_FIELD_OF_ENUM_TYPES.put(clazz, tableFieldOfEnumType);
     }
 
 
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, Enum parameter, JdbcType jdbcType) throws SQLException {
-        Field tableEnumField = TABLE_FIELD_OF_ENUM_TYPES.get(type);
+        Field tableEnumField = getFiled(type);
         try {
             if (jdbcType == null) {
-                ps.setObject(i, tableEnumField == null ? parameter.name() : tableEnumField.get(parameter));
+                ps.setObject(i, tableEnumField.get(parameter));
             } else {
                 // see r3589
-                ps.setObject(i, tableEnumField == null ? parameter.name() : tableEnumField.get(parameter), jdbcType.TYPE_CODE);
+                ps.setObject(i, tableEnumField.get(parameter), jdbcType.TYPE_CODE);
             }
         } catch (IllegalAccessException e) {
             LOGGER.error("unrecognized jdbcType, failed to set StringValue for type=" + parameter);
@@ -75,16 +79,13 @@ public class EnumAnnotationTypeHandler<E extends Enum<E>> extends BaseTypeHandle
     public E getNullableResult(ResultSet rs, String columnName) throws SQLException {
         return getEnumResult(rs.getObject(columnName));
     }
-
+    
     private E getEnumResult(Object s) {
         if (s == null) {
             return null;
         }
-        Field tableEnumField = TABLE_FIELD_OF_ENUM_TYPES.get(type);
-        if (tableEnumField != null) {
-            return EnumUtils.valueOf(type, s, tableEnumField);
-        }
-        return Enum.valueOf(type, s.toString());
+        Field tableEnumField = getFiled(type);
+        return EnumUtils.valueOf(type, s, tableEnumField);
     }
 
     @Override
@@ -96,5 +97,16 @@ public class EnumAnnotationTypeHandler<E extends Enum<E>> extends BaseTypeHandle
     public E getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
         return getEnumResult(cs.getString(columnIndex));
     }
-
+    
+    public static Optional<Field> dealEnumType(Class<?> clazz) {
+        return clazz.isEnum() ? Arrays.stream(clazz.getDeclaredFields()).filter(field -> field.isAnnotationPresent(EnumValue.class)).findFirst() : Optional.empty();
+    }
+    
+    private Field getFiled(Class<?> clazz) {
+        return Optional.ofNullable(TABLE_FIELD_OF_ENUM_TYPES.get(type)).orElseGet(() -> {
+            Field field = dealEnumType(clazz).orElseThrow(() -> new IllegalArgumentException("当前[" + type.getName() + "]枚举类未找到标有@EnumValue注解的字段"));
+            addEnumType(clazz, field);
+            return field;
+        });
+    }
 }

@@ -534,11 +534,9 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
                         typeHandlerRegistry.register(cls, EnumTypeHandler.class);
                     } else {
                         // 注解方式
-                        Optional<Field> optional = dealEnumType(cls);
+                        Optional<Field> optional = EnumAnnotationTypeHandler.dealEnumType(cls);
                         if (optional.isPresent()) {
-                            Field field = optional.get();
-                            field.setAccessible(true);
-                            EnumAnnotationTypeHandler.addEnumType(cls, field);
+                            EnumAnnotationTypeHandler.addEnumType(cls, optional.get());
                             typeHandlerRegistry.register(cls, EnumAnnotationTypeHandler.class);
                         }
                     }
@@ -645,13 +643,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             LOGGER.debug(() -> "Property 'mapperLocations' was not specified or no matching resources found");
         }
         return sqlSessionFactory;
-    }
-
-    /**
-     * 处理普通枚举 把带{@link EnumValue}的field注册到处理器中
-     */
-    protected Optional<Field> dealEnumType(Class<?> clazz) {
-        return clazz.isEnum() ? Arrays.stream(clazz.getDeclaredFields()).filter(field -> field.isAnnotationPresent(EnumValue.class)).findFirst() : Optional.empty();
     }
 
     /**

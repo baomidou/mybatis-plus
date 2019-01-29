@@ -40,6 +40,9 @@ public class EnumTypeHandler<E extends Enum<?> & IEnum> extends BaseTypeHandler<
         if (type == null) {
             throw new IllegalArgumentException("Type argument cannot be null");
         }
+        if (!IEnum.class.isAssignableFrom(type)) {
+            throw new IllegalArgumentException("当前[" + type.getName() + "]枚举类未实现" + IEnum.class.getName() + "接口");
+        }
         this.type = type;
     }
 
