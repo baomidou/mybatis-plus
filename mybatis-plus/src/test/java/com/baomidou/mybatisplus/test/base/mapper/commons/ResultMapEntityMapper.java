@@ -7,5 +7,4 @@ import com.baomidou.mybatisplus.test.base.mapper.MyBaseMapper;
  * @author miemie
  * @since 2019-01-19
  */
-public interface ResultMapEntityMapper extends MyBaseMapper<ResultMapEntity> {
-}
+public interface ResultMapEntityMapper extends MyBaseMapper<ResultMapEntity> {}

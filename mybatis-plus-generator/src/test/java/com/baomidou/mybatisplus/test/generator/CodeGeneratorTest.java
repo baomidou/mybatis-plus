@@ -1,7 +1,5 @@
 package com.baomidou.mybatisplus.test.generator;
 
-import org.junit.Test;
-
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
@@ -10,6 +8,7 @@ import com.baomidou.mybatisplus.generator.config.GlobalConfig;
 import com.baomidou.mybatisplus.generator.config.PackageConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
+import org.junit.jupiter.api.Test;
 
 /**
  * 代码生成器 示例
@@ -17,29 +16,29 @@ import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
  * @author K神
  * @since 2017/12/29
  */
-public class CodeGeneratorTest {
+class CodeGeneratorTest {
 
     /**
      * 是否强制带上注解
      */
-    boolean enableTableFieldAnnotation = false;
+    private boolean enableTableFieldAnnotation = false;
     /**
      * 生成的注解带上IdType类型
      */
-    IdType tableIdType = null;
+    private IdType tableIdType = null;
     /**
      * 是否去掉生成实体的属性名前缀
      */
-    String[] fieldPrefix = null;
+    private String[] fieldPrefix = null;
     /**
      * 生成的Service 接口类名是否以I开头
      * <p>默认是以I开头</p>
      * <p>user表 -> IUserService, UserServiceImpl</p>
      */
-    boolean serviceClassNameStartWithI = true;
+    private boolean serviceClassNameStartWithI = true;
 
     @Test
-    public void generateCode() {
+    void generateCode() {
         String packageName = "com.baomidou.springboot";
         enableTableFieldAnnotation = false;
         tableIdType = null;

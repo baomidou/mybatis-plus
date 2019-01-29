@@ -10,6 +10,4 @@ public class WrapperImpl<T> extends IStrConditionImpl<T, Wrapper<T>> implements 
         return super.toString();
     }
 
-
-
 }

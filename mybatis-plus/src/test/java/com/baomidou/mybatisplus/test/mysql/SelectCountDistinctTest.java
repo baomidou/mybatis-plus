@@ -9,43 +9,42 @@ import com.baomidou.mybatisplus.test.base.entity.CommonLogicData;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonLogicDataMapper;
 import com.baomidou.mybatisplus.test.mysql.config.MysqlDb;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.annotation.Resource;
 import java.sql.SQLException;
 import java.util.List;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+// TODO junit 5.4 开始提供支持，预计 2019-02-06 发布，等这之后升级版本并使用 @TestMethodOrder 代替 @FixMethodOrder
+// @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:mysql/spring-test-mysql.xml"})
-public class SelectCountDistinctTest {
+class SelectCountDistinctTest {
 
     @Resource
     private CommonLogicDataMapper commonLogicMapper;
     @Resource
     private CommonDataMapper commonDataMapper;
 
-    @Before
-    public void init() throws SQLException {
+    @BeforeAll
+    static void init() throws SQLException {
         MysqlDb.initMysqlData();
         insertLogic();
         insertCommon();
         System.out.println("init table and data success");
     }
 
-    private void insertLogic() {
+    private static void insertLogic() {
         commonLogicMapper.insert(new CommonLogicData().setTestInt(25).setTestStr("test"));
         commonLogicMapper.insert(new CommonLogicData().setTestInt(25).setTestStr("test"));
     }
 
-    private void insertCommon() {
+    private static void insertCommon() {
         commonDataMapper.insert(new CommonData().setTestInt(25).setTestStr("test"));
         commonDataMapper.insert(new CommonData().setTestInt(25).setTestStr("test"));
     }
@@ -56,7 +55,7 @@ public class SelectCountDistinctTest {
         distinct.select("distinct test_int");
         distinct.eq("test_int", 25).or().eq("test_str", "test");
         int count = commonDataMapper.selectCount(distinct);
-        Assert.assertEquals(1, count);
+        Assertions.assertEquals(1, count);
     }
 
     @Test
@@ -65,7 +64,7 @@ public class SelectCountDistinctTest {
         distinct.select("distinct test_int, test_str");
         distinct.eq("test_int", 25).or().eq("test_str", "test");
         int count = commonDataMapper.selectCount(distinct);
-        Assert.assertEquals(1, count);
+        Assertions.assertEquals(1, count);
     }
 
     @Test
@@ -74,7 +73,7 @@ public class SelectCountDistinctTest {
         distinct.select("distinct test_int");
         distinct.eq("test_int", 25).or().eq("test_str", "test");
         int count = commonLogicMapper.selectCount(distinct);
-        Assert.assertEquals(1, count);
+        Assertions.assertEquals(1, count);
     }
 
     @Test
@@ -82,8 +81,8 @@ public class SelectCountDistinctTest {
         QueryWrapper<CommonLogicData> commonQuery = new QueryWrapper<>();
         List<CommonLogicData> commonLogicDataList = commonLogicMapper.selectList(commonQuery);
         CommonLogicData commonLogicData = commonLogicDataList.get(0);
-        Assert.assertEquals(25, commonLogicData.getTestInt().intValue());
-        Assert.assertEquals("test", commonLogicData.getTestStr());
+        Assertions.assertEquals(25, commonLogicData.getTestInt().intValue());
+        Assertions.assertEquals("test", commonLogicData.getTestStr());
     }
 
     @Test
@@ -91,7 +90,7 @@ public class SelectCountDistinctTest {
         LambdaQueryWrapper<CommonLogicData> lambdaQueryWrapper =
             new QueryWrapper<CommonLogicData>().select("distinct test_int").lambda();
         int count = commonLogicMapper.selectCount(lambdaQueryWrapper);
-        Assert.assertEquals(1, count);
+        Assertions.assertEquals(1, count);
     }
 
     @Test
@@ -99,7 +98,7 @@ public class SelectCountDistinctTest {
         LambdaQueryWrapper<CommonData> lambdaQueryWrapper =
             new QueryWrapper<CommonData>().select("distinct test_int, test_str").lambda();
         int count = commonDataMapper.selectCount(lambdaQueryWrapper);
-        Assert.assertEquals(1, count);
+        Assertions.assertEquals(1, count);
     }
 
     @Test
@@ -107,7 +106,7 @@ public class SelectCountDistinctTest {
         QueryWrapper<CommonLogicData> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("test_int", 25).or().eq("test_str", "test");
         int count = commonLogicMapper.selectCount(queryWrapper);
-        Assert.assertEquals(2, count);
+        Assertions.assertEquals(2, count);
     }
 
     @Test
@@ -115,7 +114,7 @@ public class SelectCountDistinctTest {
         QueryWrapper<CommonData> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("test_int", 25).or().eq("test_str", "test");
         int count = commonDataMapper.selectCount(queryWrapper);
-        Assert.assertEquals(2, count);
+        Assertions.assertEquals(2, count);
     }
 
     @Test
@@ -123,9 +122,9 @@ public class SelectCountDistinctTest {
         QueryWrapper<CommonData> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("test_int", 25).or().eq("test_str", "test");
         IPage<CommonData> page = commonDataMapper.selectPage(new Page<CommonData>(1, 10), queryWrapper);
-        Assert.assertEquals(2, page.getTotal());
-        Assert.assertNotNull(page.getRecords().get(0));
-        Assert.assertNotNull(page.getRecords().get(1));
+        Assertions.assertEquals(2, page.getTotal());
+        Assertions.assertNotNull(page.getRecords().get(0));
+        Assertions.assertNotNull(page.getRecords().get(1));
     }
 
     @Test
@@ -134,8 +133,8 @@ public class SelectCountDistinctTest {
         queryWrapper.select("distinct test_int, test_str");
         queryWrapper.eq("test_int", 25).or().eq("test_str", "test");
         IPage<CommonData> page = commonDataMapper.selectPage(new Page<CommonData>(1, 10), queryWrapper);
-        Assert.assertEquals(1, page.getTotal());
-        Assert.assertNotNull(page.getRecords().get(0));
+        Assertions.assertEquals(1, page.getTotal());
+        Assertions.assertNotNull(page.getRecords().get(0));
     }
 
 }

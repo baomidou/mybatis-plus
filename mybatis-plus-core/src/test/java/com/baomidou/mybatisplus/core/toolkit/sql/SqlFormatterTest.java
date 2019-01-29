@@ -1,15 +1,15 @@
 package com.baomidou.mybatisplus.core.toolkit.sql;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author miemie
  * @since 2019-01-09
  */
-public class SqlFormatterTest {
+class SqlFormatterTest {
 
     @Test
-    public void format() {
+    void format() {
         String format = new SqlFormatter().format(" INSERT INTO bianla_easemob_chat_record \n" +
             " ( msg_id,\n" +
             "\tmsg_send_time,\n" +

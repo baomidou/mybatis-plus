@@ -7,6 +7,4 @@ import com.baomidou.mybatisplus.test.base.mapper.MyBaseMapper;
  * @author miemie
  * @since 2018-08-06
  */
-public interface PgDataMapper extends MyBaseMapper<PgData> {
-
-}
+public interface PgDataMapper extends MyBaseMapper<PgData> {}

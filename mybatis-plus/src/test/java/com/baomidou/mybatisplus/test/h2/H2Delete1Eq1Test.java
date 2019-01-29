@@ -2,10 +2,10 @@ package com.baomidou.mybatisplus.test.h2;
 
 import javax.annotation.Resource;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.test.h2.entity.enums.AgeEnum;
@@ -20,9 +20,11 @@ import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
  * @author hubin
  * @since 2018-06-05
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+// TODO junit 5.4 开始提供支持，预计 2019-02-06 发布，等这之后升级版本并使用 @TestMethodOrder 代替 @FixMethodOrder
+// @FixMethodOrder(MethodSorters.JVM)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
-public class H2Delete1Eq1Test extends BaseTest {
+class H2Delete1Eq1Test extends BaseTest {
 
     @Resource
     protected H2UserMapper logicDeleteMapper;
@@ -30,7 +32,7 @@ public class H2Delete1Eq1Test extends BaseTest {
     protected H2StudentMapper defaultMapper;
 
     @Test
-    public void crudTest() {
+    void crudTest() {
         for (int i = 0; i < 10; i++) {
             logicDeleteMapper.insert(new H2User("mp" + i, AgeEnum.ONE));
         }
@@ -56,7 +58,7 @@ public class H2Delete1Eq1Test extends BaseTest {
     }
 
     @Test
-    public void delete() {
+    void delete() {
         logicDeleteMapper.delete(new QueryWrapper<>());
         defaultMapper.delete(new QueryWrapper<>());
     }

@@ -1,13 +1,12 @@
 package com.baomidou.mybatisplus.core.toolkit.condition;
 
-import org.junit.Test;
-
 import lombok.Getter;
+import org.junit.jupiter.api.Test;
 
-public class WrapperTest {
+class WrapperTest {
 
     @Test
-    public void name() {
+    void name() {
         Wrapper<User> wrapper = new WrapperImpl<>();
         wrapper.eq("id", 123);
         System.out.println(wrapper.getSqlSeq());

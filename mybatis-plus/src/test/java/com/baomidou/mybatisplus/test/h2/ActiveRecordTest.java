@@ -1,20 +1,5 @@
 package com.baomidou.mybatisplus.test.h2;
 
-import java.util.List;
-
-import org.junit.Assert;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
-import org.mockito.internal.matchers.GreaterThan;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -22,6 +7,17 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2Student;
 import com.baomidou.mybatisplus.test.h2.service.IH2StudentService;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 
 /**
@@ -29,8 +25,9 @@ import com.baomidou.mybatisplus.test.h2.service.IH2StudentService;
  *
  * @author nieqiurong 2018/7/27.
  */
-@FixMethodOrder(MethodSorters.JVM)
-@RunWith(SpringJUnit4ClassRunner.class)
+// TODO junit 5.4 开始提供支持，预计 2019-02-06 发布，等这之后升级版本并使用 @TestMethodOrder 代替 @FixMethodOrder
+// @FixMethodOrder(MethodSorters.JVM)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
 public class ActiveRecordTest {
 
@@ -43,24 +40,24 @@ public class ActiveRecordTest {
     @Transactional
     public void testInsert() {
         H2Student student = new H2Student(null, "测试学生", 2);
-        Assert.assertTrue(student.insert());
-        Assert.assertTrue(student.insert());
+        Assertions.assertTrue(student.insert());
+        Assertions.assertTrue(student.insert());
     }
 
     @Test
     public void testUpdate() {
         H2Student student = new H2Student(1L, "Tom长大了", 2);
-        Assert.assertTrue(student.updateById());
+        Assertions.assertTrue(student.updateById());
         student.setName("不听话的学生");
-        Assert.assertTrue(student.update(new QueryWrapper<H2Student>().gt("id", 10)));
+        Assertions.assertTrue(student.update(new QueryWrapper<H2Student>().gt("id", 10)));
     }
 
     @Test
     public void testSelect() {
         H2Student student = new H2Student();
         student.setId(1L);
-        Assert.assertNotNull(student.selectById());
-        Assert.assertNotNull(student.selectById(1L));
+        Assertions.assertNotNull(student.selectById());
+        Assertions.assertNotNull(student.selectById(1L));
     }
 
     @Test
@@ -68,7 +65,7 @@ public class ActiveRecordTest {
         H2Student student = new H2Student();
         List<H2Student> students = student.selectList(new QueryWrapper<>(student));
         students.forEach($this -> LOGGER.info("用户信息:{}", $this));
-        Assert.assertThat(students.size(), new GreaterThan<>(1));
+        Assertions.assertTrue(students.size() > 1);
     }
 
     @Test
@@ -79,7 +76,7 @@ public class ActiveRecordTest {
         List<H2Student> records = page.getRecords();
         LOGGER.info("总数:{}", page.getTotal());
         records.forEach($this -> LOGGER.info("用户信息:{}", $this));
-        Assert.assertTrue(page.getTotal() > 1);
+        Assertions.assertTrue(page.getTotal() > 1);
     }
 
     @Test
@@ -87,29 +84,29 @@ public class ActiveRecordTest {
         H2Student student = new H2Student();
         int count = new H2Student().selectCount(new QueryWrapper<>(student));
         LOGGER.info("count:{}", count);
-        Assert.assertTrue(count > 1);
+        Assertions.assertTrue(count > 1);
     }
 
     @Test
     public void testInsertOrUpdate() {
         H2Student student = new H2Student(2L, "Jerry也长大了", 2);
-        Assert.assertTrue(student.insertOrUpdate());
+        Assertions.assertTrue(student.insertOrUpdate());
         student.setId(null);
-        Assert.assertTrue(student.insertOrUpdate());
+        Assertions.assertTrue(student.insertOrUpdate());
     }
 
     @Test
     public void testSelectAll() {
         H2Student student = new H2Student();
         List<H2Student> students = student.selectAll();
-        Assert.assertNotNull(students);
+        Assertions.assertNotNull(students);
         students.forEach($this -> LOGGER.info("用户信息:{}", $this));
     }
 
     @Test
     public void testSelectOne() {
         H2Student student = new H2Student();
-        Assert.assertNotNull(student.selectOne(new QueryWrapper<>()));
+        Assertions.assertNotNull(student.selectOne(new QueryWrapper<>()));
     }
 
     @Test
@@ -118,7 +115,7 @@ public class ActiveRecordTest {
             h2StudentService.testTransactional();
         } catch (MybatisPlusException e) {
             List<H2Student> students = new H2Student().selectList(new QueryWrapper<H2Student>().lambda().like(H2Student::getName, "tx"));
-            Assert.assertTrue(CollectionUtils.isEmpty(students));
+            Assertions.assertTrue(CollectionUtils.isEmpty(students));
         }
     }
 
@@ -126,8 +123,8 @@ public class ActiveRecordTest {
     public void testDelete() {
         H2Student student = new H2Student();
         student.setId(2L);
-        Assert.assertTrue(student.deleteById());
-        Assert.assertTrue(student.deleteById(12L));
-        Assert.assertTrue(student.delete(new QueryWrapper<H2Student>().gt("id", 10)));
+        Assertions.assertTrue(student.deleteById());
+        Assertions.assertTrue(student.deleteById(12L));
+        Assertions.assertTrue(student.delete(new QueryWrapper<H2Student>().gt("id", 10)));
     }
 }

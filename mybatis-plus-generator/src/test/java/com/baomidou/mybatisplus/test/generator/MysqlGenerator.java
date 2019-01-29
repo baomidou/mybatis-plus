@@ -142,7 +142,7 @@ public class MysqlGenerator extends GeneratorTest {
                     map.put("abc", this.getConfig().getGlobalConfig().getAuthor() + "-mp");
                     this.setMap(map);
                 }
-            }.setFileOutConfigList(Collections.<FileOutConfig>singletonList(new FileOutConfig(
+            }.setFileOutConfigList(Collections.singletonList(new FileOutConfig(
                 "/templates/mapper.xml" + ((1 == result) ? ".ftl" : ".vm")) {
                 // 自定义输出文件目录
                 @Override

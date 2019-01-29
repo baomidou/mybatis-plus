@@ -1,4 +1,3 @@
-package com.baomidou.mybatisplus.test.h2;
 /*
  * Copyright (c) 2011-2020, hubin (jobob@qq.com).
  * <p>
@@ -14,6 +13,7 @@ package com.baomidou.mybatisplus.test.h2;
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+package com.baomidou.mybatisplus.test.h2;
 
 import java.sql.Timestamp;
 

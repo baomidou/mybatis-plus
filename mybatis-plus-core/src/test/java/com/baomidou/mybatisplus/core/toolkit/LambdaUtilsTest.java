@@ -3,17 +3,17 @@ package com.baomidou.mybatisplus.core.toolkit;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 import lombok.Getter;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-public class LambdaUtilsTest {
+class LambdaUtilsTest {
 
     @Test
-    public void testResolve() {
+    void testResolve() {
         SerializedLambda lambda = LambdaUtils.resolve(TestPojo::getId);
-        Assert.assertEquals(TestPojo.class.getName(), lambda.getImplClassName());
-        Assert.assertEquals("getId", lambda.getImplMethodName());
-        Assert.assertEquals("id", StringUtils.resolveFieldName(lambda.getImplMethodName()));
+        Assertions.assertEquals(TestPojo.class.getName(), lambda.getImplClassName());
+        Assertions.assertEquals("getId", lambda.getImplMethodName());
+        Assertions.assertEquals("id", StringUtils.resolveFieldName(lambda.getImplMethodName()));
 
         Cond<TestPojo> cond = new Cond<>();
         System.out.println(cond.eq(TestPojo::getId, 123).toString());

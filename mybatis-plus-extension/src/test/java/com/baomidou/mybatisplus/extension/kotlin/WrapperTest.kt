@@ -17,7 +17,7 @@ package com.baomidou.mybatisplus.extension.kotlin
 
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class WrapperTest {
 

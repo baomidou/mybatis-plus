@@ -7,5 +7,4 @@ import com.baomidou.mybatisplus.test.base.mapper.MyBaseMapper;
  * @author miemie
  * @since 2018-07-06
  */
-public interface CommonLogicDataMapper extends MyBaseMapper<CommonLogicData> {
-}
+public interface CommonLogicDataMapper extends MyBaseMapper<CommonLogicData> {}

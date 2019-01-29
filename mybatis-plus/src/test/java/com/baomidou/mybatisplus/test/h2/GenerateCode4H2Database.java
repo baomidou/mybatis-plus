@@ -1,12 +1,5 @@
 package com.baomidou.mybatisplus.test.h2;
 
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.MethodSorters;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
@@ -15,6 +8,10 @@ import com.baomidou.mybatisplus.generator.config.PackageConfig;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.querys.H2Query;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
  * <p></p>
@@ -22,13 +19,12 @@ import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
  * @author yuxiaobin
  * @date 2019/1/8
  */
-@FixMethodOrder(MethodSorters.JVM)
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
-public class GenerateCode4H2Database extends BaseTest{
+class GenerateCode4H2Database extends BaseTest{
 
     @Test
-    public void test() {
+    void test() {
         String dbUrl = "jdbc:h2:mem:test;MODE=mysql";
         DataSourceConfig dataSourceConfig = new DataSourceConfig();
         dataSourceConfig.setDbType(DbType.H2)
@@ -40,7 +36,7 @@ public class GenerateCode4H2Database extends BaseTest{
         generate("com.baomidou.mp.h2", dataSourceConfig, "h2user");
     }
 
-    public void generate(String packageName, DataSourceConfig dataSourceConfig, String tableNames) {
+    void generate(String packageName, DataSourceConfig dataSourceConfig, String tableNames) {
         boolean serviceClassNameStartWithI = false;
         boolean enableTableFieldAnnotation = true;
         GlobalConfig config = new GlobalConfig();

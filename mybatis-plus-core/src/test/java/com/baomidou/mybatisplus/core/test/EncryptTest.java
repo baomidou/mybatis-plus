@@ -8,29 +8,29 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.EncryptUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import lombok.Data;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * 加密测试
  */
-public class EncryptTest {
+class EncryptTest {
 
     @Test
-    public void md5Base64() {
-        Assert.assertEquals("Jgmg8jeuq9EyB1ybYtj1fg==",
+    void md5Base64() {
+        Assertions.assertEquals("Jgmg8jeuq9EyB1ybYtj1fg==",
             EncryptUtils.md5Base64("犯我中华者虽远必诛"));
     }
 
     @Test
-    public void other() {
+    void other() {
         System.out.println(TableInfoHelper.checkRelated(true, "order", "'order'"));
         System.out.println(TableInfoHelper.checkRelated(true, "order", "order"));
         System.out.println(TableInfoHelper.checkRelated(true, "orderFile", "'ORDER_FILE'"));
     }
 
     @Test
-    public void testTableInfoHelper() {
+    void testTableInfoHelper() {
         TableInfo info = TableInfoHelper.initTableInfo(null, Xx.class);
         System.out.println("----------- AllInsertSqlColumn -----------");
         System.out.println(info.getAllInsertSqlColumnMaybeIf());

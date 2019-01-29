@@ -1,15 +1,5 @@
 package com.baomidou.mybatisplus.test.h2;
 
-import java.util.List;
-import java.util.Objects;
-
-import javax.annotation.Resource;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
@@ -19,6 +9,14 @@ import com.baomidou.mybatisplus.test.h2.entity.enums.GenderEnum;
 import com.baomidou.mybatisplus.test.h2.entity.enums.GradeEnum;
 import com.baomidou.mybatisplus.test.h2.entity.mapper.H2StudentMapper;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2Student;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Mybatis Plus H2 Junit Test
@@ -26,15 +24,17 @@ import com.baomidou.mybatisplus.test.h2.entity.persistent.H2Student;
  * @author hubin
  * @since 2018-06-05
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+// TODO junit 5.4 开始提供支持，预计 2019-02-06 发布，等这之后升级版本并使用 @TestMethodOrder 代替 @FixMethodOrder
+// @FixMethodOrder(MethodSorters.JVM)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
-public class H2StudentMapperTest extends BaseTest {
+class H2StudentMapperTest extends BaseTest {
 
     @Resource
     protected H2StudentMapper studentMapper;
 
     @Test
-    public void crudTest() {
+    void crudTest() {
 //        H2Student stu = new H2Student();
 //        stu.setGrade(GradeEnum.HIGH);
 //        studentMapper.update(stu, null);
@@ -66,7 +66,7 @@ public class H2StudentMapperTest extends BaseTest {
     }
 
     @Test
-    public void pageCountZeroTest() {
+    void pageCountZeroTest() {
         IPage page = studentMapper.selectPage(new Page<>(), Wrappers.<H2Student>query().eq("name", "无"));
         if (null != page) {
             System.out.println("total: " + page.getTotal());

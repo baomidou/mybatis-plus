@@ -21,16 +21,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
-
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
+import org.junit.jupiter.api.Test;
 
-public class WrapperTest {
+class WrapperTest {
 
     private void log(String message) {
         System.out.println(message);
@@ -47,7 +46,7 @@ public class WrapperTest {
     }
 
     @Test
-    public void test() {
+    void test() {
         try {
             Wrapper<User> wrapper = new QueryWrapper<User>().lambda().eq(User::getName, 123)
                 .or(c -> c.eq(User::getRoleId, 1).eq(User::getId, 2))
@@ -60,7 +59,7 @@ public class WrapperTest {
     }
 
     @Test
-    public void test1() {
+    void test1() {
         QueryWrapper<User> ew = new QueryWrapper<User>()
             .eq("xxx", 123)
             .and(i -> i.eq("andx", 65444).le("ande", 66666))
@@ -70,7 +69,7 @@ public class WrapperTest {
     }
 
     @Test
-    public void test2() {
+    void test2() {
         UpdateWrapper<User> ew = new UpdateWrapper<User>()
             .set("name", "三毛").set("id", 1)
             .eq("xxx", 123)
@@ -81,7 +80,7 @@ public class WrapperTest {
     }
 
     @Test
-    public void test3() {
+    void test3() {
         UpdateWrapper<User> ew = new UpdateWrapper<User>()
             .setSql("abc=1,def=2").eq("id", 1).ge("age", 3);
         log(ew.getSqlSet());
@@ -89,7 +88,7 @@ public class WrapperTest {
     }
 
     @Test
-    public void testQueryWrapper() {
+    void testQueryWrapper() {
         logSqlSegment("去除第一个 or,以及自动拼接 and,以及手动拼接 or,以及去除最后的多个or", new QueryWrapper<User>().or()
             .ge("age", 3).or().ge("age", 3).ge("age", 3).or().or().or().or());
 
@@ -128,7 +127,7 @@ public class WrapperTest {
     }
 
     @Test
-    public void testCompare() {
+    void testCompare() {
         QueryWrapper<User> queryWrapper = new QueryWrapper<User>()
             .allEq(getMap()).allEq((k, v) -> true, getMap())
             .eq("id", 1).ne("id", 1)
@@ -142,7 +141,7 @@ public class WrapperTest {
     }
 
     @Test
-    public void testFunc() {
+    void testFunc() {
         QueryWrapper<User> queryWrapper = new QueryWrapper<User>()
             .isNull("nullColumn").or().isNotNull("notNullColumn")
             .orderByAsc("id").orderByDesc("name")
@@ -156,7 +155,7 @@ public class WrapperTest {
     }
 
     @Test
-    public void testJoin() {
+    void testJoin() {
         QueryWrapper<User> queryWrapper = new QueryWrapper<User>()
             .last("limit 1").or()
             .apply("date_format(column,'%Y-%m-%d') = '2008-08-08'")
@@ -168,7 +167,7 @@ public class WrapperTest {
     }
 
     @Test
-    public void testNested() {
+    void testNested() {
         QueryWrapper<User> queryWrapper = new QueryWrapper<User>()
             .and(i -> i.eq("id", 1).nested(j -> j.ne("id", 2)))
             .or(i -> i.eq("id", 1).and(j -> j.ne("id", 2)))
@@ -178,7 +177,7 @@ public class WrapperTest {
     }
 
     @Test
-    public void testPluralLambda() {
+    void testPluralLambda() {
         TableInfoHelper.initTableInfo(null, User.class);
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(User::getName, "sss");

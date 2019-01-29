@@ -1,13 +1,11 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.Map;
-
-import org.junit.Test;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * 测试 bean utils
@@ -15,24 +13,24 @@ import lombok.Setter;
  * @author HCL
  * 2018/7/24 17:44
  */
-public class BeanUtilsTest {
+class BeanUtilsTest {
 
     /**
      * 测试 beanToMap
      */
     @Test
-    public void beanMapConvertTest() {
+    void beanMapConvertTest() {
         Map<String, Object> map = BeanUtils.beanToMap(new User() {{
             setId(123);
             setName("baomidou");
         }});
-        assertEquals(2, map.keySet().size());
-        assertEquals(123, map.get("id"));
-        assertEquals("baomidou", map.get("name"));
+        Assertions.assertEquals(2, map.keySet().size());
+        Assertions.assertEquals(123, map.get("id"));
+        Assertions.assertEquals("baomidou", map.get("name"));
         // 测试反向转换过程
         User user = BeanUtils.mapToBean(map, User.class);
-        assertEquals(123, user.getId());
-        assertEquals("baomidou", user.getName());
+        Assertions.assertEquals(123, user.getId());
+        Assertions.assertEquals("baomidou", user.getName());
 
     }
 
@@ -42,7 +40,6 @@ public class BeanUtilsTest {
     @Getter
     @Setter
     public static class User {
-
         private String name;
         private int id;
     }
