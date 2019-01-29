@@ -33,7 +33,7 @@ import kotlin.reflect.KProperty
 class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, Update<KtUpdateWrapper<T>, KProperty<*>> {
 
     /**
-     * SQL 更新字段内容，例如：name='1',age=2
+     * SQL 更新字段内容，例如：name='1', age=2
      */
     private val sqlSet = ArrayList<String>()
 

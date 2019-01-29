@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2011-2016, hubin (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -21,9 +21,7 @@ import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
 
 /**
- * <p>
  * DB2 字段类型转换
- * </p>
  *
  * @author zhanyao
  * @since 2018-05-16

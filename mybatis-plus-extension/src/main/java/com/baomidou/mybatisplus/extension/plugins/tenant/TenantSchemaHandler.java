@@ -16,9 +16,7 @@
 package com.baomidou.mybatisplus.extension.plugins.tenant;
 
 /**
- * <p>
  * 租户处理器（ schema 级 ）
- * </p>
  *
  * @author hubin
  * @since 2017-08-31

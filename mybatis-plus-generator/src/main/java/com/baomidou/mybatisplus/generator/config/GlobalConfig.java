@@ -22,9 +22,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * <p>
  * 全局配置
- * </p>
  *
  * @author hubin
  * @since 2016-12-02

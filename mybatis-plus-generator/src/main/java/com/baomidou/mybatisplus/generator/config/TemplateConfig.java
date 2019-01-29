@@ -21,9 +21,7 @@ import lombok.Getter;
 import lombok.experimental.Accessors;
 
 /**
- * <p>
  * 模板路径配置项
- * </p>
  *
  * @author tzg hubin
  * @since 2017-06-17

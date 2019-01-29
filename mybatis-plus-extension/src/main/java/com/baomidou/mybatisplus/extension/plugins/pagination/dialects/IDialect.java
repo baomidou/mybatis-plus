@@ -19,9 +19,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
 
 /**
- * <p>
  * 数据库 分页语句组装接口
- * </p>
  *
  * @author hubin
  * @since 2016-01-23

@@ -23,9 +23,7 @@ import net.sf.jsqlparser.statement.select.SelectBody;
 import net.sf.jsqlparser.statement.update.Update;
 
 /**
- * <p>
  * 攻击 SQL 阻断解析器
- * </p>
  *
  * @author hubin
  * @since 2018-07-17

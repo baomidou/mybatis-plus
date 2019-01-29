@@ -30,9 +30,7 @@ import org.apache.ibatis.reflection.SystemMetaObject;
 import java.util.List;
 
 /**
- * <p>
  * SQL 解析处理器
- * </p>
  *
  * @author hubin
  * @since 2016-08-31

@@ -26,9 +26,7 @@ import lombok.experimental.Accessors;
 import java.util.Map;
 
 /**
- * <p>
  * 表字段信息
- * </p>
  *
  * @author YangHu
  * @since 2016-12-03

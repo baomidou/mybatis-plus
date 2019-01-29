@@ -44,9 +44,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 
 /**
- * <p>
  * IService 实现类（ 泛型：M 是 mapper 对象，T 是实体 ， PK 是主键泛型 ）
- * </p>
  *
  * @author hubin
  * @since 2018-06-23
@@ -63,9 +61,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     /**
-     * <p>
      * 判断数据库操作是否成功
-     * </p>
      *
      * @param result 数据库操作返回影响条数
      * @return boolean
@@ -79,18 +75,14 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     /**
-     * <p>
      * 批量操作 SqlSession
-     * </p>
      */
     protected SqlSession sqlSessionBatch() {
         return SqlHelper.sqlSessionBatch(currentModelClass());
     }
 
     /**
-     * <p>
      * 释放sqlSession
-     * </p>
      *
      * @param sqlSession session
      */
@@ -99,12 +91,10 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     /**
-     * <p>
      * 获取 SqlStatement
-     * </p>
      *
-     * @param sqlMethod
-     * @return
+     * @param sqlMethod ignore
+     * @return ignore
      */
     protected String sqlStatement(SqlMethod sqlMethod) {
         return SqlHelper.table(currentModelClass()).getSqlStatement(sqlMethod.getMethod());
@@ -116,13 +106,11 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     /**
-     * <p>
      * 批量插入
-     * </p>
      *
-     * @param entityList
-     * @param batchSize
-     * @return
+     * @param entityList ignore
+     * @param batchSize ignore
+     * @return ignore
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -143,9 +131,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     /**
-     * <p>
      * TableId 注解存在更新记录，否插入一条记录
-     * </p>
      *
      * @param entity 实体对象
      * @return boolean
@@ -185,7 +171,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                     param.put(Constants.ENTITY, entity);
                     batchSqlSession.update(sqlStatement(SqlMethod.UPDATE_BY_ID), param);
                 }
-                //不知道以后会不会有人说更新失败了还要执行插入 😂😂😂
+                // 不知道以后会不会有人说更新失败了还要执行插入 😂😂😂
                 if (i >= 1 && i % batchSize == 0) {
                     batchSqlSession.flushStatements();
                 }

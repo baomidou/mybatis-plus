@@ -18,9 +18,7 @@ package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
 
 /**
- * <p>
  * DB2 数据库分页方言
- * </p>
  *
  * @author hubin
  * @since 2016-11-10

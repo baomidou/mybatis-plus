@@ -85,10 +85,8 @@ import static org.springframework.util.StringUtils.hasLength;
 import static org.springframework.util.StringUtils.tokenizeToStringArray;
 
 /**
- * <p>
  * 拷贝类 org.mybatis.spring.SqlSessionFactoryBean 修改方法 buildSqlSessionFactory() 加载自定义
- * MybatisXmlConfigBuilder
- * </p>
+ * <p>MybatisXmlConfigBuilder</p>
  *
  * @author hubin
  * @since 2017-01-04
@@ -240,7 +238,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
     /**
      * Packages to search for type aliases.
-     * 支持 typeAliasesPackage 多项每项都有通配符 com.a.b.*.po, com.c.*.po ISSUE https://gitee.com/baomidou/mybatis-plus/issues/IKJ48
+     * <p>支持 typeAliasesPackage 多项每项都有通配符 com.a.b.*.po, com.c.*.po ISSUE https://gitee.com/baomidou/mybatis-plus/issues/IKJ48</p>
      *
      * @param typeAliasesPackage package to scan for domain objects
      * @since 1.0.1
@@ -255,7 +253,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
     /**
      * Super class which domain objects have to extend to have a type alias created.
-     * No effect if there is no package to scan configured.
+     * <p>No effect if there is no package to scan configured.</p>
      *
      * @param typeAliasesSuperType super class for domain objects
      * @since 1.1.2
@@ -333,6 +331,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
      * This is an alternative to specifying "&lt;sqlmapper&gt;" entries in an MyBatis config file.
      * This property being based on Spring's resource abstraction also allows for specifying
      * resource patterns here: e.g. "classpath*:sqlmap/*-mapper.xml".
+     * </p>
      *
      * @param mapperLocations location of MyBatis mapper files
      */
@@ -358,12 +357,14 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
      * <p>
      * A transactional JDBC {@code Connection} for this {@code DataSource} will be provided to application code
      * accessing this {@code DataSource} directly via {@code DataSourceUtils} or {@code DataSourceTransactionManager}.
+     * </p>
      * <p>
      * The {@code DataSource} specified here should be the target {@code DataSource} to manage transactions for, not
      * a {@code TransactionAwareDataSourceProxy}. Only data access code may work with
      * {@code TransactionAwareDataSourceProxy}, while the transaction manager needs to work on the
      * underlying target {@code DataSource}. If there's nevertheless a {@code TransactionAwareDataSourceProxy}
      * passed in, it will be unwrapped to extract its target {@code DataSource}.
+     * </p>
      *
      * @param dataSource a JDBC {@code DataSource}
      */
@@ -384,6 +385,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
      * <p>
      * This is mainly meant for testing so that mock SqlSessionFactory classes can be injected. By
      * default, {@code SqlSessionFactoryBuilder} creates {@code DefaultSqlSessionFactory} instances.
+     * </p>
      *
      * @param sqlSessionFactoryBuilder a SqlSessionFactoryBuilder
      */
@@ -397,10 +399,12 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
      * The default {@code SpringManagedTransactionFactory} should be appropriate for all cases:
      * be it Spring transaction management, EJB CMT or plain JTA. If there is no active transaction,
      * SqlSession operations will execute SQL statements non-transactionally.
-     *
+     * </p>
+     * <p>
      * <b>It is strongly recommended to use the default {@code TransactionFactory}.</b> If not used, any
      * attempt at getting an SqlSession through Spring's MyBatis framework will throw an exception if
      * a transaction is active.
+     * </p>
      *
      * @param transactionFactory the MyBatis TransactionFactory
      * @see SpringManagedTransactionFactory
@@ -439,6 +443,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
      * The default implementation uses the standard MyBatis {@code XMLConfigBuilder} API to build a
      * {@code SqlSessionFactory} instance based on an Reader. Since 1.3.0, it can be specified a
      * {@link Configuration} instance directly(without config file).
+     * </p>
      *
      * @return SqlSessionFactory
      * @throws IOException if loading the config file failed

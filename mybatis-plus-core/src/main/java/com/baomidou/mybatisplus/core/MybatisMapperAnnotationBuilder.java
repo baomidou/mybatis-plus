@@ -115,7 +115,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                         parseStatement(method);
                     }
                 } catch (IncompleteElementException e) {
-                    /**
+                    /*
                      * 使用 MybatisMethodResolver 而不是 MethodResolver
                      */
                     configuration.addIncompleteMethod(new MybatisMethodResolver(this, method));
@@ -445,7 +445,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                     returnType = (Class<?>) returnTypeParameter;
                 }
             }
-            /**
+            /*
              * 新加入下面 7 行
              */
             else if (IPage.class.equals(rawType)) {
@@ -455,7 +455,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                     returnType = (Class<?>) returnTypeParameter;
                 }
             }
-            /**
+            /*
              * 新加入上面 7 行
              */
         }

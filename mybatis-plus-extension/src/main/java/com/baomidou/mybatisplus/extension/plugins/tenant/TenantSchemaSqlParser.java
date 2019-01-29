@@ -27,9 +27,7 @@ import net.sf.jsqlparser.statement.select.SelectBody;
 import net.sf.jsqlparser.statement.update.Update;
 
 /**
- * <p>
  * 租户 SQL 解析（ Schema 表级 ）
- * </p>
  *
  * @author hubin
  * @since 2017-09-01

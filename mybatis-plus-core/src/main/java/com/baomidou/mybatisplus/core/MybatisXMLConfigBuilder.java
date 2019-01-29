@@ -369,7 +369,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
     }
 
     private void mapperElement(XNode parent) throws Exception {
-        /**
+        /*
          * 定义集合 用来分类放置mybatis的Mapper与XML 按顺序依次遍历
          */
         if (parent != null) {

@@ -26,9 +26,7 @@ import lombok.experimental.Accessors;
 import java.util.List;
 
 /**
- * <p>
  * 策略配置项
- * </p>
  *
  * @author YangHu, tangguo, hubin
  * @since 2016/8/30
@@ -50,8 +48,8 @@ public class StrategyConfig {
      */
     private NamingStrategy naming = NamingStrategy.nochange;
     /**
-     * 数据库表字段映射到实体的命名策略<br/>
-     * 未指定按照 naming 执行
+     * 数据库表字段映射到实体的命名策略
+     * <p>未指定按照 naming 执行</p>
      */
     private NamingStrategy columnNaming = null;
     /**
@@ -153,9 +151,7 @@ public class StrategyConfig {
     private List<TableFill> tableFillList = null;
 
     /**
-     * <p>
      * 大写命名、字段符合大写字母数字下划线命名
-     * </p>
      *
      * @param word 待判断字符串
      */
@@ -164,9 +160,7 @@ public class StrategyConfig {
     }
 
     /**
-     * <p>
      * 表名称包含指定前缀
-     * </p>
      *
      * @param tableName 表名称
      */

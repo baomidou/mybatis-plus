@@ -46,9 +46,7 @@ import com.baomidou.mybatisplus.generator.config.querys.H2Query;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 
 /**
- * <p>
  * 配置汇总 传递给文件生成工具
- * </p>
  *
  * @author YangHu, tangguo, hubin
  * @since 2016-08-30
@@ -106,9 +104,7 @@ public class ConfigBuilder {
 
 
     /**
-     * <p>
      * 在构造器中处理配置
-     * </p>
      *
      * @param packageConfig    包配置
      * @param dataSourceConfig 数据源配置
@@ -150,9 +146,7 @@ public class ConfigBuilder {
     // ************************ 曝露方法 BEGIN*****************************
 
     /**
-     * <p>
      * 所有包配置信息
-     * </p>
      *
      * @return 包配置
      */
@@ -162,9 +156,7 @@ public class ConfigBuilder {
 
 
     /**
-     * <p>
      * 所有路径配置
-     * </p>
      *
      * @return 路径配置
      */
@@ -184,9 +176,7 @@ public class ConfigBuilder {
 
 
     /**
-     * <p>
      * 获取超类定义
-     * </p>
      *
      * @return 完整超类名称
      */
@@ -206,9 +196,7 @@ public class ConfigBuilder {
 
 
     /**
-     * <p>
      * 表信息
-     * </p>
      *
      * @return 所有表信息
      */
@@ -223,9 +211,7 @@ public class ConfigBuilder {
 
 
     /**
-     * <p>
      * 模板路径配置信息
-     * </p>
      *
      * @return 所以模板路径配置信息
      */
@@ -236,9 +222,7 @@ public class ConfigBuilder {
     // ****************************** 曝露方法 END**********************************
 
     /**
-     * <p>
      * 处理包配置
-     * </p>
      *
      * @param template  TemplateConfig
      * @param outputDir
@@ -278,9 +262,7 @@ public class ConfigBuilder {
     }
 
     /**
-     * <p>
      * 处理数据源配置
-     * </p>
      *
      * @param config DataSourceConfig
      */
@@ -291,9 +273,7 @@ public class ConfigBuilder {
 
 
     /**
-     * <p>
      * 处理数据库表 加载数据库表、列、注释相关数据集
-     * </p>
      *
      * @param config StrategyConfig
      */
@@ -304,9 +284,7 @@ public class ConfigBuilder {
 
 
     /**
-     * <p>
      * 处理superClassName,IdClassType,IdStrategy配置
-     * </p>
      *
      * @param config 策略配置
      */
@@ -332,9 +310,7 @@ public class ConfigBuilder {
 
 
     /**
-     * <p>
      * 处理表对应的类名称
-     * </P>
      *
      * @param tableList 表名称
      * @param strategy  命名策略
@@ -383,11 +359,9 @@ public class ConfigBuilder {
     }
 
     /**
-     * <p>
      * 检测导入包
-     * </p>
      *
-     * @param tableInfo
+     * @param tableInfo ignore
      */
     private void checkImportPackages(TableInfo tableInfo) {
         if (StringUtils.isNotEmpty(strategyConfig.getSuperEntityClass())) {
@@ -413,9 +387,7 @@ public class ConfigBuilder {
 
 
     /**
-     * <p>
      * 获取所有的数据库表信息
-     * </p>
      */
     private List<TableInfo> getTablesInfo(StrategyConfig config) {
         boolean isInclude = (null != config.getInclude() && config.getInclude().length > 0);
@@ -521,9 +493,7 @@ public class ConfigBuilder {
             if (!isInclude && !isExclude) {
                 includeTableList = tableList;
             }
-            /**
-             * 性能优化，只处理需执行表字段 github issues/219
-             */
+            // 性能优化，只处理需执行表字段 github issues/219
             includeTableList.forEach(ti -> convertTableFields(ti, config.getColumnNaming()));
         } catch (SQLException e) {
             e.printStackTrace();
@@ -533,13 +503,11 @@ public class ConfigBuilder {
 
 
     /**
-     * <p>
      * 表名匹配
-     * </p>
      *
      * @param setTableName 设置表名
      * @param dbTableName  数据库表单
-     * @return
+     * @return ignore
      */
     private boolean tableNameMatches(String setTableName, String dbTableName) {
         return setTableName.equals(dbTableName)
@@ -547,13 +515,11 @@ public class ConfigBuilder {
     }
 
     /**
-     * <p>
      * 将字段信息与表信息关联
-     * </p>
      *
      * @param tableInfo 表信息
      * @param strategy  命名策略
-     * @return
+     * @return ignore
      */
     private TableInfo convertTableFields(TableInfo tableInfo, NamingStrategy strategy) {
         boolean haveId = false;
@@ -653,9 +619,7 @@ public class ConfigBuilder {
 
 
     /**
-     * <p>
      * 连接路径字符串
-     * </p>
      *
      * @param parentDir   路径常量字符串
      * @param packageName 包名
@@ -674,9 +638,7 @@ public class ConfigBuilder {
 
 
     /**
-     * <p>
      * 连接父子包名
-     * </p>
      *
      * @param parent     父包名
      * @param subPackage 子包名
@@ -691,9 +653,7 @@ public class ConfigBuilder {
 
 
     /**
-     * <p>
      * 处理字段名称
-     * </p>
      *
      * @return 根据策略返回处理后的名称
      */
@@ -703,13 +663,11 @@ public class ConfigBuilder {
 
 
     /**
-     * <p>
      * 处理表/字段名称
-     * </p>
      *
-     * @param name
-     * @param strategy
-     * @param prefix
+     * @param name ignore
+     * @param strategy ignore
+     * @param prefix ignore
      * @return 根据策略返回处理后的名称
      */
     private String processName(String name, NamingStrategy strategy, String[] prefix) {

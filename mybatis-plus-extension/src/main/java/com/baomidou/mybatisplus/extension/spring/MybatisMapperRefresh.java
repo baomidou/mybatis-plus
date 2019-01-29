@@ -43,11 +43,9 @@ import java.util.*;
 
 
 /**
- * <p>
- * 切莫用于生产环境（后果自负）<br>
- * Mybatis 映射文件热加载（发生变动后自动重新加载）.<br>
- * 方便开发时使用，不用每次修改xml文件后都要去重启应用.<br>
- * </p>
+ * 切莫用于生产环境（后果自负）
+ * <p>Mybatis 映射文件热加载（发生变动后自动重新加载）.</p>
+ * <p>方便开发时使用，不用每次修改xml文件后都要去重启应用.</p>
  *
  * @author nieqiurong
  * @since 2016-08-25
@@ -177,8 +175,6 @@ public class MybatisMapperRefresh implements Runnable {
 
     /**
      * 刷新mapper
-     *
-     * @throws Exception
      */
     @SuppressWarnings("rawtypes")
     private void refresh(Resource resource) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
@@ -218,8 +214,8 @@ public class MybatisMapperRefresh implements Runnable {
     /**
      * 清理parameterMap
      *
-     * @param list
-     * @param namespace
+     * @param list ignore
+     * @param namespace ignore
      */
     private void cleanParameterMap(List<XNode> list, String namespace) {
         for (XNode parameterMapNode : list) {
@@ -231,8 +227,8 @@ public class MybatisMapperRefresh implements Runnable {
     /**
      * 清理resultMap
      *
-     * @param list
-     * @param namespace
+     * @param list ignore
+     * @param namespace ignore
      */
     private void cleanResultMap(List<XNode> list, String namespace) {
         for (XNode resultMapNode : list) {
@@ -263,8 +259,8 @@ public class MybatisMapperRefresh implements Runnable {
     /**
      * 清理selectKey
      *
-     * @param list
-     * @param namespace
+     * @param list ignore
+     * @param namespace ignore
      */
     private void cleanKeyGenerators(List<XNode> list, String namespace) {
         for (XNode context : list) {
@@ -277,8 +273,8 @@ public class MybatisMapperRefresh implements Runnable {
     /**
      * 清理sql节点缓存
      *
-     * @param list
-     * @param namespace
+     * @param list ignore
+     * @param namespace ignore
      */
     private void cleanSqlElement(List<XNode> list, String namespace) {
         for (XNode context : list) {

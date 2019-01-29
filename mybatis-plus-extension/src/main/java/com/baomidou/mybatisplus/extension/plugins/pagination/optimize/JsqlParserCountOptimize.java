@@ -41,9 +41,7 @@ import net.sf.jsqlparser.statement.select.SelectExpressionItem;
 import net.sf.jsqlparser.statement.select.SelectItem;
 
 /**
- * <p>
  * JsqlParser Count Optimize
- * </p>
  *
  * @author hubin
  * @since 2017-06-20
@@ -95,9 +93,7 @@ public class JsqlParserCountOptimize implements ISqlParser {
 
 
     /**
-     * <p>
      * 获取jsqlparser中count的SelectItem
-     * </p>
      */
     private static List<SelectItem> countSelectItem() {
         Function function = new Function();

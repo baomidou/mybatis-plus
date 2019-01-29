@@ -23,9 +23,7 @@ import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 import com.baomidou.mybatisplus.generator.config.rules.FileType;
 
 /**
- * <p>
  * 文件覆盖接口
- * </p>
  *
  * @author hubin
  * @since 2018-08-07
@@ -33,21 +31,17 @@ import com.baomidou.mybatisplus.generator.config.rules.FileType;
 public interface IFileCreate {
 
     /**
-     * <p>
      * 自定义判断是否创建文件
-     * </p>
      *
      * @param configBuilder 配置构建器
      * @param fileType      文件类型
      * @param filePath      文件路径
-     * @return
+     * @return ignore
      */
     boolean isCreate(ConfigBuilder configBuilder, FileType fileType, String filePath);
 
     /**
-     * <p>
      * 检查文件目录，不存在自动递归创建
-     * </p>
      *
      * @param filePath 文件路径
      */

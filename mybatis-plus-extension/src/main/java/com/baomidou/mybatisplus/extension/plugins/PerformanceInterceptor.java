@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2011-2014, hubin (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -51,9 +51,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
- * <p>
  * 性能分析拦截器，用于输出每条 SQL 语句及其执行时间
- * </p>
  *
  * @author hubin nieqiurong TaoYu
  * @since 2016-07-07
@@ -84,9 +82,9 @@ public class PerformanceInterceptor implements Interceptor {
     @Accessors(chain = true)
     private boolean format = false;
     /**
-     * 是否写入日志文件<br>
-     * true 写入日志文件，不阻断程序执行！<br>
-     * 超过设定的最大执行时长异常提示！
+     * 是否写入日志文件
+     * <p>true 写入日志文件，不阻断程序执行！</p>
+     * <p>超过设定的最大执行时长异常提示！</p>
      */
     @Setter
     @Getter
@@ -239,8 +237,8 @@ public class PerformanceInterceptor implements Interceptor {
     /**
      * 获取sql语句开头部分
      *
-     * @param sql
-     * @return
+     * @param sql ignore
+     * @return ignore
      */
     private int indexOfSqlStart(String sql) {
         String upperCaseSql = sql.toUpperCase();

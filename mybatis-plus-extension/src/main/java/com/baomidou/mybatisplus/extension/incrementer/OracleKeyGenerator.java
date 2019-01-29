@@ -18,9 +18,7 @@ package com.baomidou.mybatisplus.extension.incrementer;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 
 /**
- * <p>
  * Oracle Key Sequence 生成器
- * </p>
  *
  * @author hubin
  * @since 2017-05-08

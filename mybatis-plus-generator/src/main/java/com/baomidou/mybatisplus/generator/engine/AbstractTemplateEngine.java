@@ -41,9 +41,7 @@ import com.baomidou.mybatisplus.generator.config.rules.FileType;
 
 
 /**
- * <p>
  * 模板引擎抽象类
- * </p>
  *
  * @author hubin
  * @since 2018-01-10
@@ -58,9 +56,7 @@ public abstract class AbstractTemplateEngine {
 
 
     /**
-     * <p>
      * 模板引擎初始化
-     * </p>
      */
     public AbstractTemplateEngine init(ConfigBuilder configBuilder) {
         this.configBuilder = configBuilder;
@@ -69,9 +65,7 @@ public abstract class AbstractTemplateEngine {
 
 
     /**
-     * <p>
      * 输出 java xml 文件
-     * </p>
      */
     public AbstractTemplateEngine batchOutput() {
         try {
@@ -146,9 +140,7 @@ public abstract class AbstractTemplateEngine {
 
 
     /**
-     * <p>
      * 将模板转化成为文件
-     * </p>
      *
      * @param objectMap    渲染对象 MAP 信息
      * @param templatePath 模板文件
@@ -157,9 +149,7 @@ public abstract class AbstractTemplateEngine {
     public abstract void writer(Map<String, Object> objectMap, String templatePath, String outputFile) throws Exception;
 
     /**
-     * <p>
      * 处理输出目录
-     * </p>
      */
     public AbstractTemplateEngine mkdirs() {
         getConfigBuilder().getPathInfo().forEach((key, value) -> {
@@ -176,9 +166,7 @@ public abstract class AbstractTemplateEngine {
 
 
     /**
-     * <p>
      * 打开输出目录
-     * </p>
      */
     public void open() {
         String outDir = getConfigBuilder().getGlobalConfig().getOutputDir();
@@ -203,12 +191,10 @@ public abstract class AbstractTemplateEngine {
 
 
     /**
-     * <p>
      * 渲染对象 MAP 信息
-     * </p>
      *
      * @param tableInfo 表信息对象
-     * @return
+     * @return ignore
      */
     public Map<String, Object> getObjectMap(TableInfo tableInfo) {
         Map<String, Object> objectMap = new HashMap<>(30);
@@ -254,8 +240,8 @@ public abstract class AbstractTemplateEngine {
     /**
      * 获取类名
      *
-     * @param classPath
-     * @return
+     * @param classPath ignore
+     * @return ignore
      */
     private String getSuperClassName(String classPath) {
         if (StringUtils.isEmpty(classPath)) {
@@ -266,12 +252,10 @@ public abstract class AbstractTemplateEngine {
 
 
     /**
-     * <p>
      * 模板真实文件路径
-     * </p>
      *
      * @param filePath 文件路径
-     * @return
+     * @return ignore
      */
     public abstract String templateFilePath(String filePath);
 
@@ -279,7 +263,7 @@ public abstract class AbstractTemplateEngine {
     /**
      * 检测文件是否存在
      *
-     * @return 是否
+     * @return 文件是否存在
      */
     protected boolean isCreate(FileType fileType, String filePath) {
         ConfigBuilder cb = getConfigBuilder();

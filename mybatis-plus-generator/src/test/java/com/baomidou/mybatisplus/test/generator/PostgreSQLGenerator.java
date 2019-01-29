@@ -22,9 +22,7 @@ import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 
 /**
- * <p>
  * PostgreSQLGenerator
- * </p>
  *
  * @author nieqiurong
  * @since 2016/12/25

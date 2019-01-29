@@ -24,9 +24,7 @@ import com.baomidou.mybatisplus.extension.service.additional.AbstractChainWrappe
 import com.baomidou.mybatisplus.extension.service.additional.update.ChainUpdate;
 
 /**
- * <p>
  * Lambda Update Chain Wrapper
- * </p>
  *
  * @author miemie
  * @since 2018-12-19

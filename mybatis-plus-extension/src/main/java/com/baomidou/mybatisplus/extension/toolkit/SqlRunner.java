@@ -30,9 +30,7 @@ import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 /**
- * <p>
  * SqlRunner 执行 SQL
- * </p>
  *
  * @author Caratacus
  * @since 2016-12-11
@@ -56,11 +54,9 @@ public class SqlRunner implements ISqlRunner {
     }
 
     /**
-     * <p>
      * 获取默认的SqlQuery(适用于单库)
-     * </p>
      *
-     * @return
+     * @return ignore
      */
     public static SqlRunner db() {
         // 初始化的静态变量 还是有前后加载的问题 该判断只会执行一次
@@ -71,12 +67,10 @@ public class SqlRunner implements ISqlRunner {
     }
 
     /**
-     * <p>
      * 根据当前class对象获取SqlQuery(适用于多库)
-     * </p>
      *
-     * @param clazz
-     * @return
+     * @param clazz ignore
+     * @return ignore
      */
     public static SqlRunner db(Class<?> clazz) {
         return new SqlRunner(clazz);
@@ -109,7 +103,7 @@ public class SqlRunner implements ISqlRunner {
      *
      * @param sql  指定参数的格式: {0}, {1}
      * @param args 仅支持String
-     * @return
+     * @return ignore
      */
     private Map<String, String> sqlMap(String sql, Object... args) {
         Map<String, String> sqlMap = new HashMap<>();
@@ -130,11 +124,11 @@ public class SqlRunner implements ISqlRunner {
 
     /**
      * 根据sql查询Map结果集
-     * SqlRunner.db().selectList("select * from tbl_user where name={0}", "Caratacus")
+     * <p>SqlRunner.db().selectList("select * from tbl_user where name={0}", "Caratacus")</p>
      *
      * @param sql  sql语句，可添加参数，格式：{0},{1}
      * @param args 只接受String格式
-     * @return
+     * @return ignore
      */
     @Override
     public List<Map<String, Object>> selectList(String sql, Object... args) {
@@ -148,11 +142,11 @@ public class SqlRunner implements ISqlRunner {
 
     /**
      * 根据sql查询一个字段值的结果集
-     * 注意：该方法只会返回一个字段的值， 如果需要多字段，请参考{@code selectList()}
+     * <p>注意：该方法只会返回一个字段的值， 如果需要多字段，请参考{@code selectList()}</p>
      *
      * @param sql  sql语句，可添加参数，格式：{0},{1}
      * @param args 只接受String格式
-     * @return
+     * @return ignore
      */
     @Override
     public List<Object> selectObjs(String sql, Object... args) {
@@ -166,11 +160,11 @@ public class SqlRunner implements ISqlRunner {
 
     /**
      * 根据sql查询一个字段值的一条结果
-     * 注意：该方法只会返回一个字段的值， 如果需要多字段，请参考{@code selectOne()}
+     * <p>注意：该方法只会返回一个字段的值， 如果需要多字段，请参考{@code selectOne()}</p>
      *
      * @param sql  sql语句，可添加参数，格式：{0},{1}
      * @param args 只接受String格式
-     * @return
+     * @return ignore
      */
     @Override
     public Object selectObj(String sql, Object... args) {
@@ -204,9 +198,7 @@ public class SqlRunner implements ISqlRunner {
     }
 
     /**
-     * <p>
      * 获取Session 默认自动提交
-     * <p/>
      */
     private SqlSession sqlSession() {
         return (clazz != null) ? SqlSessionUtils.getSqlSession(GlobalConfigUtils.currentSessionFactory(clazz)) : SqlSessionUtils.getSqlSession(sqlSessionFactory);

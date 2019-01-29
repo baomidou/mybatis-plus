@@ -48,9 +48,7 @@ import java.util.*;
 import static java.util.stream.Collectors.joining;
 
 /**
- * <p>
  * 分页拦截器
- * </p>
  *
  * @author hubin
  * @since 2016-01-23
@@ -83,7 +81,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
      * @param originalSql 需要拼接的SQL
      * @param page        page对象
      * @param orderBy     是否需要拼接Order By
-     * @return
+     * @return ignore
      */
     public static String concatOrderBy(String originalSql, IPage page, boolean orderBy) {
         if (orderBy && (ArrayUtils.isNotEmpty(page.ascs())
@@ -105,8 +103,8 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
     /**
      * 拼接多个排序方法
      *
-     * @param columns
-     * @param orderWord
+     * @param columns ignore
+     * @param orderWord ignore
      */
     private static String concatOrderBuilder(String[] columns, String orderWord) {
         if (ArrayUtils.isNotEmpty(columns)) {
@@ -151,7 +149,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
             }
         }
 
-        /**
+        /*
          * 不需要分页的场合，如果 size 小于 0 返回结果集
          */
         if (null == page || page.getSize() < 0) {

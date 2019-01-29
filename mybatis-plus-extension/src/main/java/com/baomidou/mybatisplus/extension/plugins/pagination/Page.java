@@ -22,9 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * <p>
  * 简单分页模型
- * </p>
  *
  * @author hubin
  * @since 2018-06-09
@@ -50,27 +48,19 @@ public class Page<T> implements IPage<T> {
      */
     private long current = 1;
     /**
-     * <p>
      * SQL 排序 ASC 数组
-     * </p>
      */
     private String[] ascs;
     /**
-     * <p>
      * SQL 排序 DESC 数组
-     * </p>
      */
     private String[] descs;
     /**
-     * <p>
      * 自动优化 COUNT SQL
-     * </p>
      */
     private boolean optimizeCountSql = true;
     /**
-     * <p>
      * 是否进行 count 查询
-     * </p>
      */
     private boolean isSearchCount = true;
 
@@ -79,9 +69,7 @@ public class Page<T> implements IPage<T> {
     }
 
     /**
-     * <p>
      * 分页构造函数
-     * </p>
      *
      * @param current 当前页
      * @param size    每页显示条数
@@ -108,9 +96,7 @@ public class Page<T> implements IPage<T> {
     }
 
     /**
-     * <p>
      * 是否存在上一页
-     * </p>
      *
      * @return true / false
      */
@@ -119,9 +105,7 @@ public class Page<T> implements IPage<T> {
     }
 
     /**
-     * <p>
      * 是否存在下一页
-     * </p>
      *
      * @return true / false
      */
@@ -187,9 +171,7 @@ public class Page<T> implements IPage<T> {
 
 
     /**
-     * <p>
      * 升序
-     * </p>
      *
      * @param ascs 多个升序字段
      */
@@ -211,9 +193,7 @@ public class Page<T> implements IPage<T> {
     }
 
     /**
-     * <p>
      * 降序
-     * </p>
      *
      * @param descs 多个降序字段
      */

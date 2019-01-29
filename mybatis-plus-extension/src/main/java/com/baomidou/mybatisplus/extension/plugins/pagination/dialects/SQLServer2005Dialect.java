@@ -20,9 +20,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
 
 /**
- * <p>
  * SQLServer 2005 数据库分页方言
- * </p>
  *
  * @author hubin
  * @since 2016-11-10

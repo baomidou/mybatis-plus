@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2011-2020, hubin (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -18,9 +18,7 @@ package com.baomidou.mybatisplus.generator.config.querys;
 import com.baomidou.mybatisplus.annotation.DbType;
 
 /**
- * <p>
  * DB2 表数据查询
- * </p>
  *
  * @author zhanyao
  * @since 2018-05-16

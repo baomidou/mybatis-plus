@@ -28,9 +28,7 @@ import java.util.Set;
 import java.util.stream.IntStream;
 
 /**
- * <p>
  * 表信息，关联到当前字段信息
- * </p>
  *
  * @author YangHu
  * @since 2016/8/30

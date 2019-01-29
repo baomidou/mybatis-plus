@@ -54,7 +54,7 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
                 methodList.forEach(m -> m.inject(builderAssistant, mapperClass, modelClass, tableInfo));
             }
             mapperRegistryCache.add(className);
-            /**
+            /*
              * 初始化 SQL 解析
              */
             if (GlobalConfigUtils.getGlobalConfig(builderAssistant.getConfiguration()).isSqlParserCache()) {

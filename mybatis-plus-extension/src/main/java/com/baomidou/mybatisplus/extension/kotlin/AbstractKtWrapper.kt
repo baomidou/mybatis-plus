@@ -26,6 +26,7 @@ import kotlin.reflect.KProperty
 
 /**
  * Lambda 语法使用 Wrapper
+ *
  * 统一处理解析 lambda 获取 column
  *
  * @author yangyuhan

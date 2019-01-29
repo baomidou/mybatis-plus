@@ -100,34 +100,30 @@ public class AutoGenerator {
     }
 
     /**
-     * <p>
      * 开放表信息、预留子类重写
-     * </p>
      *
      * @param config 配置信息
-     * @return
+     * @return ignore
      */
     protected List<TableInfo> getAllTableInfoList(ConfigBuilder config) {
         return config.getTableInfoList();
     }
 
     /**
-     * <p>
      * 预处理配置
-     * </p>
      *
      * @param config 总配置信息
      * @return 解析数据结果集
      */
     protected ConfigBuilder pretreatmentConfigBuilder(ConfigBuilder config) {
-        /**
+        /*
          * 注入自定义配置
          */
         if (null != injectionConfig) {
             injectionConfig.initMap();
             config.setInjectionConfig(injectionConfig);
         }
-        /**
+        /*
          * 表信息列表
          */
         List<TableInfo> tableList = this.getAllTableInfoList(config);

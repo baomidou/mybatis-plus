@@ -1,9 +1,7 @@
 package com.baomidou.mybatisplus.generator.config.rules;
 
 /**
- * <p>
  * 数据库时间类型 到 实体类时间类型 对应策略
- * </p>
  *
  * @author miemie
  * @since 2018/5/22
@@ -19,7 +17,7 @@ public enum DateType {
     SQL_PACK,
     /**
      * 使用 java.time 包下的
-     * java8 新的时间类型
+     * <p>java8 新的时间类型</p>
      */
     TIME_PACK
 }

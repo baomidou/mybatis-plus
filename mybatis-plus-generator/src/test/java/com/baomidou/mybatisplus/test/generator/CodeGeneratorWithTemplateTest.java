@@ -17,9 +17,7 @@ import com.baomidou.mybatisplus.generator.config.TemplateConfig;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 
 /**
- * <p>
  * 代码生成器 示例
- * </p>
  *
  * @author K神
  * @since 2017/12/29
@@ -40,8 +38,8 @@ public class CodeGeneratorWithTemplateTest {
     String[] fieldPrefix = null;
     /**
      * 生成的Service 接口类名是否以I开头
-     * 默认是以I开头
-     * user表 -> IUserService, UserServiceImpl
+     * <p>默认是以I开头</p>
+     * <p>user表 -> IUserService, UserServiceImpl</p>
      */
     boolean serviceClassNameStartWithI = true;
 

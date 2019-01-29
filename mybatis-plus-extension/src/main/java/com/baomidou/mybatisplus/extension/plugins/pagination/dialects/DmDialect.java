@@ -16,13 +16,9 @@
 package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
 /**
- * <p>
  * 达梦数据库完全继承 Oracle
- * </p>
  *
  * @author hubin
  * @since 2018-08-21
  */
-public class DmDialect extends OracleDialect {
-
-}
+public class DmDialect extends OracleDialect {}

@@ -52,29 +52,29 @@ import net.sf.jsqlparser.statement.select.SubSelect;
 import net.sf.jsqlparser.statement.update.Update;
 
 /**
- * @author willenfoo
  * 由于开发人员水平参差不齐，即使订了开发规范很多人也不遵守
- * SQL是影响系统性能最重要的因素，所以拦截掉垃圾SQL语句
- * <p>
- * 拦截SQL类型的场景
- * 1.必须使用到索引，包含left jion连接字段，符合索引最左原则
- * 必须使用索引好处，
- * 1.1 如果因为动态SQL，bug导致update的where条件没有带上，全表更新上万条数据
- * 1.2 如果检查到使用了索引，SQL性能基本不会太差
- * <p>
- * 2.SQL尽量单表执行，有查询left jion的语句，必须在注释里面允许该SQL运行，否则会被拦截，有left jion的语句，如果不能拆成单表执行的SQL，请leader商量在做
- * http://gaoxianglong.github.io/shark/
- * SQL尽量单表执行的好处
- * 2.1 查询条件简单、易于开理解和维护；
- * 2.2 扩展性极强；（可为分库分表做准备）
- * 2.3 缓存利用率高；
- * <p>
- * 2.在字段上使用函数
- * 3.where条件为空
- * 4.where条件使用了 !=
- * 5.where条件使用了 not 关键字
- * 6.where条件使用了 or 关键字
- * 7.where条件使用了 使用子查询
+ * <p>SQL是影响系统性能最重要的因素，所以拦截掉垃圾SQL语句</p>
+ * <br>
+ * <p>拦截SQL类型的场景</p>
+ * <p>1.必须使用到索引，包含left jion连接字段，符合索引最左原则</p>
+ * <p>必须使用索引好处，</p>
+ * <p>1.1 如果因为动态SQL，bug导致update的where条件没有带上，全表更新上万条数据</p>
+ * <p>1.2 如果检查到使用了索引，SQL性能基本不会太差</p>
+ * <br>
+ * <p>2.SQL尽量单表执行，有查询left jion的语句，必须在注释里面允许该SQL运行，否则会被拦截，有left jion的语句，如果不能拆成单表执行的SQL，请leader商量在做</p>
+ * <p>http://gaoxianglong.github.io/shark/</p>
+ * <p>SQL尽量单表执行的好处</p>
+ * <p>2.1 查询条件简单、易于开理解和维护；</p>
+ * <p>2.2 扩展性极强；（可为分库分表做准备）</p>
+ * <p>2.3 缓存利用率高；</p>
+ * <p>2.在字段上使用函数</p>
+ * <br>
+ * <p>3.where条件为空</p>
+ * <p>4.where条件使用了 !=</p>
+ * <p>5.where条件使用了 not 关键字</p>
+ * <p>6.where条件使用了 or 关键字</p>
+ * <p>7.where条件使用了 使用子查询</p>
+ * @author willenfoo
  * @date 2018-03-22
  */
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
@@ -95,7 +95,7 @@ public class IllegalSQLInterceptor implements Interceptor {
     /**
      * 验证expression对象是不是 or、not等等
      *
-     * @param expression
+     * @param expression ignore
      */
     private static void validExpression(Expression expression) {
         //where条件使用了 or 关键字
@@ -131,9 +131,9 @@ public class IllegalSQLInterceptor implements Interceptor {
     /**
      * 如果SQL用了 left Join，验证是否有or、not等等，并且验证是否使用了索引
      *
-     * @param joins
-     * @param table
-     * @param connection
+     * @param joins ignore
+     * @param table ignore
+     * @param connection ignore
      */
     private static void validJoins(List<Join> joins, Table table, Connection connection) {
         //允许执行join，验证jion是否使用索引等等
@@ -149,9 +149,9 @@ public class IllegalSQLInterceptor implements Interceptor {
     /**
      * 检查是否使用索引
      *
-     * @param table
-     * @param columnName
-     * @param connection
+     * @param table ignore
+     * @param columnName ignore
+     * @param connection ignore
      */
     private static void validUseIndex(Table table, String columnName, Connection connection) {
         //是否使用索引
@@ -183,9 +183,9 @@ public class IllegalSQLInterceptor implements Interceptor {
     /**
      * 验证where条件的字段，是否有not、or等等，并且where的第一个字段，必须使用索引
      *
-     * @param expression
-     * @param table
-     * @param connection
+     * @param expression ignore
+     * @param table ignore
+     * @param connection ignore
      */
     private static void validWhere(Expression expression, Table table, Connection connection) {
         validWhere(expression, table, null, connection);
@@ -194,10 +194,10 @@ public class IllegalSQLInterceptor implements Interceptor {
     /**
      * 验证where条件的字段，是否有not、or等等，并且where的第一个字段，必须使用索引
      *
-     * @param expression
-     * @param table
-     * @param joinTable
-     * @param connection
+     * @param expression ignore
+     * @param table ignore
+     * @param joinTable ignore
+     * @param connection ignore
      */
     private static void validWhere(Expression expression, Table table, Table joinTable, Connection connection) {
         validExpression(expression);
@@ -236,10 +236,10 @@ public class IllegalSQLInterceptor implements Interceptor {
     /**
      * 得到表的索引信息
      *
-     * @param dbName
-     * @param tableName
-     * @param conn
-     * @return
+     * @param dbName ignore
+     * @param tableName ignore
+     * @param conn ignore
+     * @return ignore
      */
     public static List<IndexInfo> getIndexInfos(String dbName, String tableName, Connection conn) {
         return getIndexInfos(null, dbName, tableName, conn);
@@ -248,11 +248,11 @@ public class IllegalSQLInterceptor implements Interceptor {
     /**
      * 得到表的索引信息
      *
-     * @param key
-     * @param dbName
-     * @param tableName
-     * @param conn
-     * @return
+     * @param key ignore
+     * @param dbName ignore
+     * @param tableName ignore
+     * @param conn ignore
+     * @return ignore
      */
     public static List<IndexInfo> getIndexInfos(String key, String dbName, String tableName, Connection conn) {
         List<IndexInfo> indexInfos = null;

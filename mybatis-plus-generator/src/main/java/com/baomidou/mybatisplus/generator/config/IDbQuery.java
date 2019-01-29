@@ -21,9 +21,7 @@ import java.sql.SQLException;
 import com.baomidou.mybatisplus.annotation.DbType;
 
 /**
- * <p>
  * 表数据查询接口
- * </p>
  *
  * @author hubin
  * @since 2018-01-16
@@ -86,13 +84,11 @@ public interface IDbQuery {
 
 
     /**
-     * <p>
      * 判断主键是否为identity，目前仅对mysql进行检查
-     * </p>
      *
      * @param results ResultSet
      * @return 主键是否为identity
-     * @throws SQLException
+     * @throws SQLException ignore
      */
     boolean isKeyIdentity(ResultSet results) throws SQLException;
 

@@ -38,9 +38,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * <p>
  * 数据库配置
- * </p>
  *
  * @author YangHu
  * @since 2016/8/30

@@ -24,9 +24,7 @@ import org.apache.ibatis.mapping.SqlSource;
 import java.util.Map;
 
 /**
- * <p>
  * 根据 map 条件查询多条数据
- * </p>
  *
  * @author hubin
  * @since 2018-06-13

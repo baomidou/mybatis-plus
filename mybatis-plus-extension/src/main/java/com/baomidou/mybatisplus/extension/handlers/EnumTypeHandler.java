@@ -27,9 +27,7 @@ import com.baomidou.mybatisplus.core.enums.IEnum;
 import com.baomidou.mybatisplus.core.toolkit.EnumUtils;
 
 /**
- * <p>
  * 自定义枚举属性转换器
- * </p>
  *
  * @author hubin
  * @since 2017-10-11

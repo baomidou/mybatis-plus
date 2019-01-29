@@ -25,9 +25,7 @@ import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 
 /**
- * <p>
  * AopUtils Aop工具类
- * </p>
  *
  * @author Caratacus
  * @date 2018-08-02
@@ -37,13 +35,11 @@ public class AopUtils {
     private static final Log logger = LogFactory.getLog(AopUtils.class);
 
     /**
-     * <p>
      * 获取源目标对象
-     * </p>
      *
-     * @param proxy
-     * @param <T>
-     * @return
+     * @param proxy ignore
+     * @param <T> ignore
+     * @return ignore
      */
     public static <T> T getTargetObject(T proxy) {
         if (!ClassUtils.isProxy(proxy.getClass())) {
@@ -64,13 +60,11 @@ public class AopUtils {
     }
 
     /**
-     * <p>
      * 获取Cglib源目标对象
-     * </p>
      *
-     * @param proxy
-     * @param <T>
-     * @return
+     * @param proxy ignore
+     * @param <T> ignore
+     * @return ignore
      */
     private static <T> T getCglibProxyTargetObject(T proxy) throws Exception {
         Field cglibField = proxy.getClass().getDeclaredField("CGLIB$CALLBACK_0");
@@ -83,13 +77,11 @@ public class AopUtils {
     }
 
     /**
-     * <p>
      * 获取JdkDynamic源目标对象
-     * </p>
      *
-     * @param proxy
-     * @param <T>
-     * @return
+     * @param proxy ignore
+     * @param <T> ignore
+     * @return ignore
      */
     private static <T> T getJdkDynamicProxyTargetObject(T proxy) throws Exception {
         Field jdkDynamicField = proxy.getClass().getSuperclass().getDeclaredField("jdkDynamicField");

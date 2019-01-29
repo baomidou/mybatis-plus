@@ -20,9 +20,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import java.nio.charset.StandardCharsets;
 
 /**
- * <p>
  * 定义常量
- * </p>
  *
  * @author YangHu, tangguo, hubin
  * @since 2016-08-31

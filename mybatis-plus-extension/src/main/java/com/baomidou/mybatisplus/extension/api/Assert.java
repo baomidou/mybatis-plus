@@ -26,10 +26,8 @@ import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.extension.exceptions.ApiException;
 
 /**
- * <p>
- * REST API 业务断言<br>
- * 参考：org.junit.Assert
- * </p>
+ * REST API 业务断言
+ * <p>参考：org.junit.Assert</p>
  *
  * @author hubin
  * @since 2018-06-05
@@ -110,9 +108,7 @@ public class Assert {
     }
 
     /**
-     * <p>
      * 失败结果
-     * </p>
      *
      * @param errorCode 异常错误码
      */
@@ -138,9 +134,7 @@ public class Assert {
 
 
     /**
-     * <p>
      * 返回多语言异常消息
-     * </p>
      *
      * @param message       多语言消息 KEY
      * @param args          多语言提示默认参数数组对象

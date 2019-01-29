@@ -9,9 +9,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 /**
- * <p>
  * 返回Map结果集，下划线转驼峰
- * </p>
  *
  * @author yuxiaobin
  * @since 2017/12/19

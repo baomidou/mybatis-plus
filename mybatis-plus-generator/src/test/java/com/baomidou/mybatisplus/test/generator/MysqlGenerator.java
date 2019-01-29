@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2011-2016, hubin (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -39,9 +39,7 @@ import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 
 /**
- * <p>
  * 代码生成器演示
- * </p>
  *
  * @author hubin
  * @since 2016-12-01
@@ -49,9 +47,7 @@ import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 public class MysqlGenerator extends GeneratorTest {
 
     /**
-     * <p>
      * MySQL 生成演示
-     * </p>
      */
     public static void main(String[] args) {
         int result = scanner();

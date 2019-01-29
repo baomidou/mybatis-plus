@@ -30,9 +30,7 @@ import com.baomidou.mybatisplus.extension.service.additional.ChainWrapper;
 public interface ChainQuery<T> extends ChainWrapper<T> {
 
     /**
-     * <p>
      * 获取集合
-     * </p>
      *
      * @return 集合
      */
@@ -41,9 +39,7 @@ public interface ChainQuery<T> extends ChainWrapper<T> {
     }
 
     /**
-     * <p>
      * 获取单个
-     * </p>
      *
      * @return 单个
      */
@@ -52,9 +48,7 @@ public interface ChainQuery<T> extends ChainWrapper<T> {
     }
 
     /**
-     * <p>
      * 获取 count
-     * </p>
      *
      * @return count
      */
@@ -63,9 +57,7 @@ public interface ChainQuery<T> extends ChainWrapper<T> {
     }
 
     /**
-     * <p>
      * 获取分页数据
-     * </p>
      *
      * @param page 分页条件
      * @return 分页数据

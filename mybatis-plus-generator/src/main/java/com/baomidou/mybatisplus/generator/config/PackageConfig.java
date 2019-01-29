@@ -24,7 +24,6 @@ import lombok.experimental.Accessors;
 import java.util.Map;
 
 /**
- * <p>
  * 跟包相关的配置项
  *
  * @author YangHu, tangguo, hubin

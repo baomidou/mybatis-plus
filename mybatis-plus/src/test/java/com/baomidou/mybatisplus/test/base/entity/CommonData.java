@@ -40,10 +40,10 @@ public class CommonData extends Model<CommonData> {
 
     @Version
     private Integer version;
-    /**
-     * 多租户
-     * 不用配置实体字段,但是数据库需要该字段
-     */
+//    /**
+//     * 多租户
+//     * 不用配置实体字段,但是数据库需要该字段
+//     */
 //    private Long tenantId;
 
 }

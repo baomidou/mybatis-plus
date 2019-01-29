@@ -22,9 +22,7 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
 
 /**
- * <p>
  * 根据 queryWrapper 条件查询一条数据
- * </p>
  *
  * @author hubin
  * @since 2018-06-13

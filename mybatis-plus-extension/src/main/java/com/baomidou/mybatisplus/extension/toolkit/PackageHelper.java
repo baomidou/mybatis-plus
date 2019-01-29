@@ -29,9 +29,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * <p>
  * 包扫描辅助类
- * </p>
  *
  * @author hubin
  * @since 2016-06-16
@@ -39,11 +37,9 @@ import java.util.Set;
 public class PackageHelper {
 
     /**
-     * <p>
      * 别名通配符设置
-     * </p>
      * <p>
-     * <property name="typeAliasesPackage" value="com.baomidou.*.entity"/>
+     * &lt;property name="typeAliasesPackage" value="com.baomidou.*.entity"/&gt;
      * </p>
      *
      * @param typeAliasesPackage 类别名包路径
@@ -81,12 +77,10 @@ public class PackageHelper {
 
 
     /**
-     * <p>
      * 扫描获取指定包路径所有类
-     * </p>
      *
      * @param typePackage 扫描类包路径
-     * @return
+     * @return ignore
      */
     public static Set<Class> scanTypePackage(String typePackage) {
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
@@ -116,18 +110,11 @@ public class PackageHelper {
     }
 
     /**
-     * <p>
      * 新建文件目录
-     * </p>
      *
      * @param file 文件
      */
     public static void mkDir(File file) {
-        if (file.getParentFile().exists()) {
-            file.mkdir();
-        } else {
-            mkDir(file.getParentFile());
-            file.mkdir();
-        }
+        file.mkdirs();
     }
 }

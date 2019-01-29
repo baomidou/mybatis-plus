@@ -19,9 +19,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import lombok.Data;
 
 /**
- * <p>
  * 字段填充
- * </p>
  *
  * @author hubin
  * @since 2017-06-26

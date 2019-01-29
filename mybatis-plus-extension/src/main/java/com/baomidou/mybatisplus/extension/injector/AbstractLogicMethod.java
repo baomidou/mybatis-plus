@@ -20,9 +20,7 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 
 /**
- * <p>
  * 抽象的注入方法类
- * </p>
  *
  * @author hubin
  * @since 2018-04-06
@@ -34,9 +32,7 @@ public abstract class AbstractLogicMethod extends AbstractMethod {
     }
 
     /**
-     * <p>
      * SQL 更新 set 语句
-     * </p>
      *
      * @param table 表信息
      * @return sql set 片段

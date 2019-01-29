@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2011-2014, hubin (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -16,9 +16,7 @@
 package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
 /**
- * <p>
  * MariaDB 数据库分页语句组装实现
- * </p>
  *
  * @author Caratacus
  * @since 2018-04-24

@@ -26,9 +26,7 @@ import java.util.stream.Stream;
 import static java.util.stream.Collectors.toList;
 
 /**
- * <p>
  * SQL 逻辑删除注入器
- * </p>
  *
  * @author hubin
  * @since 2018-06-12

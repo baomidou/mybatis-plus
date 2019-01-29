@@ -21,9 +21,7 @@ import java.sql.SQLException;
 import com.baomidou.mybatisplus.generator.config.IDbQuery;
 
 /**
- * <p>
  * 表数据查询抽象类
- * </p>
  *
  * @author hubin
  * @since 2018-01-16

@@ -23,9 +23,7 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.extension.injector.AbstractLogicMethod;
 
 /**
- * <p>
  * 根据 queryWrapper 条件查询多条数据
- * </p>
  *
  * @author hubin
  * @since 2018-06-13

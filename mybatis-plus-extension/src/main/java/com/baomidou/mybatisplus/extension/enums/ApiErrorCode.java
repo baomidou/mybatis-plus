@@ -18,9 +18,7 @@ package com.baomidou.mybatisplus.extension.enums;
 import com.baomidou.mybatisplus.extension.api.IErrorCode;
 
 /**
- * <p>
  * REST API 错误码
- * </p>
  *
  * @author hubin
  * @since 2017-06-26

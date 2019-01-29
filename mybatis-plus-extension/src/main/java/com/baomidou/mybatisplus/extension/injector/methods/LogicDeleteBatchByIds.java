@@ -23,9 +23,7 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
 
 /**
- * <p>
  * 根据 ID 集合删除
- * </p>
  *
  * @author hubin
  * @since 2018-06-13

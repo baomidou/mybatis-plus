@@ -34,23 +34,21 @@ import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import lombok.Data;
 
 /**
- * <p>
- * Optimistic Lock Light version<BR>
- * Intercept on {@link Executor}.update;<BR>
- * Support version types: int/Integer, long/Long, java.util.Date, java.sql.Timestamp<BR>
- * For extra types, please define a subclass and override {@code getUpdatedVersionVal}() method.<BR>
- * <BR>
- * How to use?<BR>
- * (1) Define an Entity and add {@link Version} annotation on one entity field.<BR>
- * (2) Add {@link OptimisticLockerInterceptor} into mybatis plugin.
- * <p>
- * How to work?<BR>
- * if update entity with version column=1:<BR>
- * (1) no {@link OptimisticLockerInterceptor}:<BR>
- * SQL: update tbl_test set name='abc' where id=100001;<BR>
- * (2) add {@link OptimisticLockerInterceptor}:<BR>
- * SQL: update tbl_test set name='abc',version=2 where id=100001 and version=1;
- * </p>
+ * Optimistic Lock Light version
+ * <p>Intercept on {@link Executor}.update;</p>
+ * <p>Support version types: int/Integer, long/Long, java.util.Date, java.sql.Timestamp</p>
+ * <p>For extra types, please define a subclass and override {@code getUpdatedVersionVal}() method.</p>
+ * <br>
+ * <p>How to use?</p>
+ * <p>(1) Define an Entity and add {@link Version} annotation on one entity field.</p>
+ * <p>(2) Add {@link OptimisticLockerInterceptor} into mybatis plugin.</p>
+ * <br>
+ * <p>How to work?</p>
+ * <p>if update entity with version column=1:</p>
+ * <p>(1) no {@link OptimisticLockerInterceptor}:</p>
+ * <p>SQL: update tbl_test set name='abc' where id=100001;</p>
+ * <p>(2) add {@link OptimisticLockerInterceptor}:</p>
+ * <p>SQL: update tbl_test set name='abc',version=2 where id=100001 and version=1;</p>
  *
  * @author yuxiaobin
  * @since 2017/5/24
@@ -146,7 +144,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
      *
      * @param entityClass        实体类
      * @param et                 参数entity
-     * @param entityVersionField
+     * @param entityVersionField ignore
      * @param originalVersionVal 原来版本的value
      * @param updatedVersionVal  乐观锁自动更新的新value
      * @param map
@@ -178,7 +176,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
      * This method provides the control for version value.<BR>
      * Returned value type must be the same as original one.
      *
-     * @param originalVersionVal
+     * @param originalVersionVal ignore
      * @return updated version val
      */
     protected Object getUpdatedVersionVal(Object originalVersionVal) {
@@ -234,13 +232,11 @@ public class OptimisticLockerInterceptor implements Interceptor {
     }
 
     /**
-     * <p>
      * 反射检查参数类是否启动乐观锁
-     * </p>
      *
      * @param parameterClass 实体类
      * @param tableInfo      实体数据库反射信息
-     * @return
+     * @return ignore
      */
     private EntityField getVersionFieldRegular(Class<?> parameterClass, TableInfo tableInfo) {
         return Object.class.equals(parameterClass) ? null : ReflectionKit.getFieldList(parameterClass).stream().filter(e -> e.isAnnotationPresent(Version.class)).map(field -> {
@@ -252,8 +248,8 @@ public class OptimisticLockerInterceptor implements Interceptor {
     /**
      * 获取实体的反射属性(类似getter)
      *
-     * @param parameterClass
-     * @return
+     * @param parameterClass ignore
+     * @return ignore
      */
     private List<EntityField> getEntityFields(Class<?> parameterClass) {
         if (entityFieldsCache.containsKey(parameterClass)) {

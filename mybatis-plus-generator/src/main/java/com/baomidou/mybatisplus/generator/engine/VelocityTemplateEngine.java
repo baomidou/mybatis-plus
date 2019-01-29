@@ -31,9 +31,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * <p>
  * Velocity 模板引擎实现文件输出
- * </p>
  *
  * @author hubin
  * @since 2018-01-10

@@ -24,9 +24,7 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
 
 /**
- * <p>
  * 根据 ID 更新有值字段
- * </p>
  *
  * @author hubin
  * @since 2018-04-06

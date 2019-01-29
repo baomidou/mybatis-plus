@@ -68,11 +68,8 @@ public class DialectModel {
 
     /**
      * 设置消费 List<ParameterMapping> 的方式
-     * <p>
-     * 带下标的
-     * <p>
-     * mark: 标记一下,暂时没看到哪个数据库的分页方言会存在使用该方法
-     * </p>
+     * <p>带下标的</p>
+     * <p>mark: 标记一下,暂时没看到哪个数据库的分页方言会存在使用该方法</p>
      *
      * @return this
      */
@@ -91,8 +88,7 @@ public class DialectModel {
 
     /**
      * 设置消费 List<ParameterMapping> 的方式
-     * <p>
-     * 不带下标的
+     * <p>不带下标的</p>
      *
      * @return this
      */
@@ -108,8 +104,7 @@ public class DialectModel {
 
     /**
      * 设置消费 List<ParameterMapping> 的方式
-     * <p>
-     * 不带下标的,两个值都有
+     * <p>不带下标的,两个值都有</p>
      *
      * @return this
      */

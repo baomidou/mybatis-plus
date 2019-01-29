@@ -52,9 +52,7 @@ import net.sf.jsqlparser.statement.select.WithItem;
 import net.sf.jsqlparser.statement.update.Update;
 
 /**
- * <p>
  * 租户 SQL 解析器（ TenantId 行级 ）
- * </p>
  *
  * @author hubin
  * @since 2017-09-01
@@ -87,9 +85,7 @@ public class TenantSqlParser extends AbstractJsqlParser {
     }
 
     /**
-     * <p>
      * insert 语句处理
-     * </p>
      */
     @Override
     public void processInsert(Insert insert) {
@@ -114,9 +110,7 @@ public class TenantSqlParser extends AbstractJsqlParser {
     }
 
     /**
-     * <p>
      * update 语句处理
-     * </p>
      */
     @Override
     public void processUpdate(Update update) {
@@ -132,9 +126,7 @@ public class TenantSqlParser extends AbstractJsqlParser {
     }
 
     /**
-     * <p>
      * delete 语句处理
-     * </p>
      */
     @Override
     public void processDelete(Delete delete) {
@@ -146,9 +138,7 @@ public class TenantSqlParser extends AbstractJsqlParser {
     }
 
     /**
-     * <p>
      * delete update 语句 where 处理
-     * </p>
      */
     protected BinaryExpression andExpression(Table table, Expression where) {
         //获得where条件表达式
@@ -166,20 +156,16 @@ public class TenantSqlParser extends AbstractJsqlParser {
     }
 
     /**
-     * <p>
      * 处理 PlainSelect
-     * </p>
      */
     protected void processPlainSelect(PlainSelect plainSelect) {
         processPlainSelect(plainSelect, false);
     }
 
     /**
-     * <p>
      * 处理 PlainSelect
-     * </p>
      *
-     * @param plainSelect
+     * @param plainSelect ignore
      * @param addColumn   是否添加租户列,insert into select语句中需要
      */
     protected void processPlainSelect(PlainSelect plainSelect, boolean addColumn) {
@@ -280,10 +266,8 @@ public class TenantSqlParser extends AbstractJsqlParser {
     }
 
     /**
-     * <p>
-     * 租户字段别名设置<br>
-     * tableName.tenantId 或 tableAlias.tenantId
-     * </p>
+     * 租户字段别名设置
+     * <p>tableName.tenantId 或 tableAlias.tenantId</p>
      *
      * @param table 表对象
      * @return 字段

@@ -26,9 +26,7 @@ import java.io.OutputStreamWriter;
 import java.util.Map;
 
 /**
- * <p>
  * Freemarker 模板引擎实现文件输出
- * </p>
  *
  * @author nieqiurong
  * @since 2018-01-11

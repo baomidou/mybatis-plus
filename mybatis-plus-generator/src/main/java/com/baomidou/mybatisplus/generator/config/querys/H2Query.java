@@ -21,9 +21,7 @@ import java.sql.SQLException;
 import com.baomidou.mybatisplus.annotation.DbType;
 
 /**
- * <p>
  * H2Database 表数据查询
- * </p>
  *
  * @author yuxiaobin
  * @since 2019-01-8

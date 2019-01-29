@@ -21,9 +21,7 @@ import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
 
 /**
- * <p>
  * SQLServer 字段类型转换
- * </p>
  *
  * @author hubin
  * @since 2017-01-20

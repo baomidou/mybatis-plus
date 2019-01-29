@@ -23,9 +23,7 @@ import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 /**
- * <p>
  * JDBC 工具类
- * </p>
  *
  * @author nieqiurong
  * @since 2016-12-05
@@ -35,12 +33,10 @@ public class JdbcUtils {
     private static final Log logger = LogFactory.getLog(JdbcUtils.class);
 
     /**
-     * <p>
      * 根据连接地址判断数据库类型
-     * </p>
      *
      * @param jdbcUrl 连接地址
-     * @return
+     * @return ignore
      */
     public static DbType getDbType(String jdbcUrl) {
         Assert.isFalse(StringUtils.isEmpty(jdbcUrl), "Error: The jdbcUrl is Null, Cannot read database type");

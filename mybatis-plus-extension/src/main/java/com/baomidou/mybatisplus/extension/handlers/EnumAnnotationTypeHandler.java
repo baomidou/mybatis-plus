@@ -31,9 +31,7 @@ import org.apache.ibatis.type.JdbcType;
 import com.baomidou.mybatisplus.core.toolkit.EnumUtils;
 
 /**
- * <p>
  * EnumValue 注解自定义枚举属性转换器
- * </p>
  *
  * @author yuxiaobin
  * @date 2018-08-30

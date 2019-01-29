@@ -16,9 +16,7 @@
 package com.baomidou.mybatisplus.generator.config.rules;
 
 /**
- * <p>
  * 表字段类型
- * </p>
  *
  * @author hubin
  * @since 2017-01-11

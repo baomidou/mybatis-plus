@@ -16,9 +16,7 @@
 package com.baomidou.mybatisplus.extension.api;
 
 /**
- * <p>
  * REST API 错误码接口
- * </p>
  *
  * @author hubin
  * @since 2018-06-05

@@ -20,7 +20,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
  * 此接口没特殊意义,只是为了减少实现类的代码量,主要在 AbstractChainWrapper 抽象类上实现
- * 以及 继承该接口的子接口能直接获取到 BaseMapper 和相应的 Wrapper
+ * <p>以及 继承该接口的子接口能直接获取到 BaseMapper 和相应的 Wrapper</p>
  *
  * @author miemie
  * @since 2018-12-19
@@ -28,18 +28,14 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 public interface ChainWrapper<T> {
 
     /**
-     * <p>
      * 获取 BaseMapper
-     * </p>
      *
      * @return BaseMapper
      */
     BaseMapper<T> getBaseMapper();
 
     /**
-     * <p>
      * 获取最终拿去执行的 Wrapper
-     * </p>
      *
      * @return Wrapper
      */

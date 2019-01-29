@@ -18,9 +18,7 @@ package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
 
 /**
- * <p>
  * ORACLE 数据库分页语句组装实现
- * </p>
  *
  * @author hubin
  * @since 2016-01-23

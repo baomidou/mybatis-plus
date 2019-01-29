@@ -31,9 +31,7 @@ import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 
 /**
- * <p>
  * SQL 辅助类
- * </p>
  *
  * @author hubin
  * @since 2016-11-06
@@ -45,34 +43,28 @@ public final class SqlHelper {
 
 
     /**
-     * <p>
      * 批量操作 SqlSession
-     * </p>
      *
      * @param clazz 实体类
      * @return SqlSession
      */
     public static SqlSession sqlSessionBatch(Class<?> clazz) {
-        //todo 暂时让能用先,但日志会显示Closing non transactional SqlSession,因为这个并没有绑定.
+        // TODO 暂时让能用先,但日志会显示Closing non transactional SqlSession,因为这个并没有绑定.
         return GlobalConfigUtils.currentSessionFactory(clazz).openSession(ExecutorType.BATCH);
     }
 
     /**
-     * <p>
      * 获取sqlSession
-     * </p>
      *
      * @param clazz 对象类
-     * @return
+     * @return ignore
      */
     private static SqlSession getSqlSession(Class<?> clazz) {
         return SqlSessionUtils.getSqlSession(GlobalConfigUtils.currentSessionFactory(clazz));
     }
 
     /**
-     * <p>
      * 获取Session
-     * </p>
      *
      * @param clazz 实体类
      * @return SqlSession
@@ -82,9 +74,7 @@ public final class SqlHelper {
     }
 
     /**
-     * <p>
      * 获取TableInfo
-     * </p>
      *
      * @param clazz 对象类
      * @return TableInfo 对象表信息
@@ -96,9 +86,7 @@ public final class SqlHelper {
     }
 
     /**
-     * <p>
      * 判断数据库操作是否成功
-     * </p>
      *
      * @param result 数据库操作返回影响条数
      * @return boolean
@@ -108,9 +96,7 @@ public final class SqlHelper {
     }
 
     /**
-     * <p>
      * 删除不存在的逻辑上属于成功
-     * </p>
      *
      * @param result 数据库操作返回影响条数
      * @return boolean
@@ -120,11 +106,9 @@ public final class SqlHelper {
     }
 
     /**
-     * <p>
      * 返回SelectCount执行结果
-     * </p>
      *
-     * @param result
+     * @param result ignore
      * @return int
      */
     public static int retCount(Integer result) {
@@ -132,13 +116,11 @@ public final class SqlHelper {
     }
 
     /**
-     * <p>
      * 从list中取第一条数据返回对应List中泛型的单个结果
-     * </p>
      *
-     * @param list
-     * @param <E>
-     * @return
+     * @param list ignore
+     * @param <E> ignore
+     * @return ignore
      */
     public static <E> E getObject(List<E> list) {
         if (CollectionUtils.isNotEmpty(list)) {

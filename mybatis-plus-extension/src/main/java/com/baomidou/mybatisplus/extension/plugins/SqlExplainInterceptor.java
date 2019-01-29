@@ -34,11 +34,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+// TODO 苗神来改个名
 /**
- * <p>
- * //todo 苗神来改个名
  * 防止全表更新与删除
- * </p>
  *
  * @author hubin
  * @since 2016-08-16

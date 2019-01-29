@@ -25,9 +25,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * <p>
  * REST API 返回结果
- * </p>
  *
  * @author hubin
  * @since 2018-06-05

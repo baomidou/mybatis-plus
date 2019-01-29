@@ -18,9 +18,7 @@ package com.baomidou.mybatisplus.generator.config.querys;
 import com.baomidou.mybatisplus.annotation.DbType;
 
 /**
- * <p>
  * Oracle 表数据查询
- * </p>
  *
  * @author hubin
  * @since 2018-01-16

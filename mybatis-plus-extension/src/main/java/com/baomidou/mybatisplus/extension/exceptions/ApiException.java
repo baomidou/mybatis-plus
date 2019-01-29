@@ -18,9 +18,7 @@ package com.baomidou.mybatisplus.extension.exceptions;
 import com.baomidou.mybatisplus.extension.api.IErrorCode;
 
 /**
- * <p>
  * REST API 请求异常类
- * </p>
  *
  * @author hubin
  * @since 2017-06-26

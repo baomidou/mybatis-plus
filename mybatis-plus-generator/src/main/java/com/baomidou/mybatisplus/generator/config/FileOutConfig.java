@@ -20,9 +20,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * <p>
  * 输出文件配置
- * </p>
  *
  * @author hubin
  * @since 2017-01-18

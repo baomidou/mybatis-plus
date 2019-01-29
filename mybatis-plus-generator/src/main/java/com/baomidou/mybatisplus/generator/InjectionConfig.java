@@ -26,9 +26,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * <p>
  * 抽象的对外接口
- * </p>
  *
  * @author hubin
  * @since 2016-12-07

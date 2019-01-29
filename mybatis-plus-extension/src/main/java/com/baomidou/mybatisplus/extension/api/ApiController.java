@@ -19,9 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * <p>
  * REST API 通用控制器
- * </p>
  *
  * @author hubin
  * @since 2018-06-08
@@ -32,37 +30,31 @@ public class ApiController {
 
 
     /**
-     * <p>
      * 请求成功
-     * </p>
      *
      * @param data 数据内容
      * @param <T>  对象泛型
-     * @return
+     * @return ignore
      */
     protected <T> R<T> success(T data) {
         return R.ok(data);
     }
 
     /**
-     * <p>
      * 请求失败
-     * </p>
      *
      * @param msg 提示内容
-     * @return
+     * @return ignore
      */
     protected <T> R<T> failed(String msg) {
         return R.failed(msg);
     }
 
     /**
-     * <p>
      * 请求失败
-     * </p>
      *
      * @param errorCode 请求错误码
-     * @return
+     * @return ignore
      */
     protected <T> R<T> failed(IErrorCode errorCode) {
         return R.failed(errorCode);

@@ -86,13 +86,13 @@ public class MybatisMapperMethod {
                     result = executeForCursor(sqlSession, args);
                 } else {
                     Object param = method.convertArgsToSqlCommandParam(args);
-                    /**
+                    /*
                      * 这下面
                      */
                     if (IPage.class.isAssignableFrom(method.getReturnType()) && args != null
                         && IPage.class.isAssignableFrom(args[0].getClass())) {
                         result = ((IPage) args[0]).setRecords(executeForIPage(sqlSession, args));
-                        /**
+                        /*
                          * 这上面
                          */
                     } else {
