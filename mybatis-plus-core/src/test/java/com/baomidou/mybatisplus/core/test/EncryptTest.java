@@ -44,7 +44,7 @@ public class EncryptTest {
     }
 
     @Data
-    public static class Xx {
+    private static class Xx {
         private Long id;
         @TableField(fill = FieldFill.INSERT)
         private String x1;

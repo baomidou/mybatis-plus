@@ -2,9 +2,8 @@ package com.baomidou.mybatisplus.core.toolkit.condition;
 
 /**
  * 谨慎的传递泛型
- * 主要的条件拼接都是这货干活
- * <p>
- * Create by HCL at 2018/05/29
+ * <p>主要的条件拼接都是这货干活</p>
+ * <p>Create by HCL at 2018/05/29</p>
  */
 public abstract class AbstractCondition<This, CLASS, COLUMN>
     implements ICondition<This, CLASS, COLUMN> {

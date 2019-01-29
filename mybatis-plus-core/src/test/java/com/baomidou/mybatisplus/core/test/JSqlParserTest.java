@@ -33,13 +33,13 @@ public class JSqlParserTest {
     @Test
     public void updateWhereParser() throws Exception {
         Update update = (Update) CCJSqlParserUtil.parse("Update tableName t SET t.a=(select c from tn where tn.id=t.id),b=2,c=3 ");
-        Assert.assertTrue(null == update.getWhere());
+        Assert.assertNull(update.getWhere());
     }
 
 
     @Test
     public void deleteWhereParser() throws Exception {
         Delete delete = (Delete) CCJSqlParserUtil.parse("delete from tableName t");
-        Assert.assertTrue(null == delete.getWhere());
+        Assert.assertNull(delete.getWhere());
     }
 }

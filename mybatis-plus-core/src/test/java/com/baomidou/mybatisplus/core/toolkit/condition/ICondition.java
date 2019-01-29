@@ -3,7 +3,7 @@ package com.baomidou.mybatisplus.core.toolkit.condition;
 /**
  * 条件定义，只提需求
  *
- * Create by HCL at 2018/05/29
+ * <p>Create by HCL at 2018/05/29</p>
  */
 public interface ICondition<This, CLASS, COLUMN> {
 
