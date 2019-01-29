@@ -6,8 +6,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.test.h2.entity.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
 import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -26,17 +25,17 @@ import java.util.Map;
  * @author Caratacus
  * @since 2017/4/1
  */
-// TODO junit 5.4 开始提供支持，预计 2019-02-06 发布，等这之后升级版本并使用 @TestMethodOrder 代替 @FixMethodOrder
-// @FixMethodOrder(MethodSorters.JVM)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
-public class H2UserTest extends BaseTest {
+class H2UserTest extends BaseTest {
 
     @Autowired
     protected IH2UserService userService;
 
 
     @Test
+    @Order(1)
     void testInsertMy() {
         String name = "自定义insert";
         int version = 1;
@@ -45,6 +44,7 @@ public class H2UserTest extends BaseTest {
     }
 
     @Test
+    @Order(2)
     void testInsertObjectWithParam() {
         String name = "自定义insert带Param注解";
         int version = 1;
@@ -53,6 +53,7 @@ public class H2UserTest extends BaseTest {
     }
 
     @Test
+    @Order(3)
     void testInsertObjectWithoutParam() {
         String name = "自定义insert带Param注解";
         int version = 1;
@@ -61,6 +62,7 @@ public class H2UserTest extends BaseTest {
     }
 
     @Test
+    @Order(10)
     void testEntityWrapperSelectSql() {
         QueryWrapper<H2User> ew = new QueryWrapper<>();
         ew.select("test_id as testId, name, age");
@@ -73,6 +75,7 @@ public class H2UserTest extends BaseTest {
     }
 
     @Test
+    @Order(10)
     void testQueryWithParamInSelectStatement() {
         Map<String, Object> param = new HashMap<>();
         String nameParam = "selectStmtParam";
@@ -104,6 +107,7 @@ public class H2UserTest extends BaseTest {
 //    }
 
     @Test
+    @Order(10)
     void testSelectCountWithParamInSelectItems() {
         Map<String, Object> param = new HashMap<>();
         String nameParam = "selectStmtParam";
@@ -115,6 +119,7 @@ public class H2UserTest extends BaseTest {
     }
 
     @Test
+    @Order(15)
     void testUpdateByIdWithOptLock() {
         Long id = 991L;
         H2User user = new H2User();
@@ -140,6 +145,7 @@ public class H2UserTest extends BaseTest {
     }
 
     @Test
+    @Order(16)
     void testUpdateByEwWithOptLock() {
         H2User userInsert = new H2User();
         userInsert.setName("optLockerTest");
@@ -172,6 +178,7 @@ public class H2UserTest extends BaseTest {
     }
 
     @Test
+    @Order(17)
     void testOptLocker4WrapperIsNull() {
         H2User userInsert = new H2User();
         userInsert.setName("optLockerTest");
@@ -214,6 +221,7 @@ public class H2UserTest extends BaseTest {
     }
 
     @Test
+    @Order(18)
     void testBatchTransactional() {
         try {
             userService.testBatchTransactional();
@@ -224,6 +232,7 @@ public class H2UserTest extends BaseTest {
     }
 
     @Test
+    @Order(19)
     void testSimpleTransactional() {
         try {
             userService.testSimpleTransactional();
@@ -234,6 +243,7 @@ public class H2UserTest extends BaseTest {
     }
 
     @Test
+    @Order(20)
     void testSaveOrUpdateBatchTransactional() {
         try {
             userService.testSaveOrUpdateBatchTransactional();
@@ -244,30 +254,35 @@ public class H2UserTest extends BaseTest {
     }
 
     @Test
+    @Order(21)
     void testSaveBatch() {
         Assertions.assertTrue(userService.saveBatch(Arrays.asList(new H2User("saveBatch1"), new H2User("saveBatch2"), new H2User("saveBatch3"), new H2User("saveBatch4"))));
         Assertions.assertTrue(userService.saveBatch(Arrays.asList(new H2User("saveBatch5"), new H2User("saveBatch6"), new H2User("saveBatch7"), new H2User("saveBatch8")), 2));
     }
 
     @Test
+    @Order(22)
     void testUpdateBatch() {
         Assertions.assertTrue(userService.updateBatchById(Arrays.asList(new H2User(1010L, "batch1010"), new H2User(1011L, "batch1011"), new H2User(1010L, "batch1010"), new H2User(1012L, "batch1012"))));
         Assertions.assertTrue(userService.updateBatchById(Arrays.asList(new H2User(1010L, "batch1010A"), new H2User(1011L, "batch1011A"), new H2User(1010L, "batch1010"), new H2User(1012L, "batch1012")), 1));
     }
 
     @Test
+    @Order(23)
     void testSaveOrUpdateBatch() {
         Assertions.assertTrue(userService.saveOrUpdateBatch(Arrays.asList(new H2User(1010L, "batch1010"), new H2User("batch1011"), new H2User(1010L, "batch1010"), new H2User("batch1015"))));
         Assertions.assertTrue(userService.saveOrUpdateBatch(Arrays.asList(new H2User(1010L, "batch1010A"), new H2User("batch1011A"), new H2User(1010L, "batch1010"), new H2User("batch1016")), 1));
     }
 
     @Test
+    @Order(24)
     void testSimpleAndBatch() {
         Assertions.assertTrue(userService.save(new H2User("testSimpleAndBatch1", 0)));
         Assertions.assertTrue(userService.saveOrUpdateBatch(Arrays.asList(new H2User("testSimpleAndBatch2"), new H2User("testSimpleAndBatch3"), new H2User("testSimpleAndBatch4")), 1));
     }
 
     @Test
+    @Order(25)
     void testSimpleAndBatchTransactional() {
         try {
             userService.testSimpleAndBatchTransactional();
@@ -278,6 +293,7 @@ public class H2UserTest extends BaseTest {
     }
 
     @Test
+    @Order(26)
     void testServiceImplInnerLambdaQuery() {
         H2User tomcat = userService.lambdaQuery().eq(H2User::getName, "Tomcat").one();
         Assertions.assertNotNull(tomcat);
@@ -290,6 +306,7 @@ public class H2UserTest extends BaseTest {
     }
 
     @Test
+    @Order(27)
     void testServiceChainQuery() {
         H2User tomcat = userService.query().eq("name", "Tomcat").one();
         Assertions.assertNotNull(tomcat, "tomcat should not be null");

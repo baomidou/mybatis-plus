@@ -21,9 +21,7 @@ import com.baomidou.mybatisplus.test.base.mapper.commons.CommonLogicDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.commons.ResultMapEntityMapper;
 import com.baomidou.mybatisplus.test.base.mapper.mysql.MysqlDataMapper;
 import com.baomidou.mybatisplus.test.mysql.config.MysqlDb;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -41,8 +39,7 @@ import static java.util.stream.Collectors.toMap;
  * @author hubin
  * @since 2018-06-05
  */
-// TODO junit 5.4 开始提供支持，预计 2019-02-06 发布，等这之后升级版本并使用 @TestMethodOrder 代替 @FixMethodOrder
-// @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:mysql/spring-test-mysql.xml"})
 class MysqlTestDataMapperTest {
@@ -65,6 +62,7 @@ class MysqlTestDataMapperTest {
     }
 
     @Test
+    @Order(1)
     void a1_insertForeach() {
         for (int i = 1; i < 20; i++) {
             Long id = (long) i;
@@ -78,6 +76,7 @@ class MysqlTestDataMapperTest {
     }
 
     @Test
+    @Order(2)
     void a2_insertBatch() {
         List<MysqlData> mysqlDataList = new ArrayList<>();
         List<CommonData> commonDataList = new ArrayList<>();
@@ -94,6 +93,7 @@ class MysqlTestDataMapperTest {
     }
 
     @Test
+    @Order(3)
     void b1_deleteById() {
         long id = 1L;
         Assertions.assertEquals(1, commonMapper.deleteById(id));
@@ -102,6 +102,7 @@ class MysqlTestDataMapperTest {
     }
 
     @Test
+    @Order(4)
     void b2_deleteByMap() {
         long id = 2L;
         Map<String, Object> map = new HashMap<>();
@@ -116,7 +117,8 @@ class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void b3_delete() {
+    @Order(5)
+    void b3_delete() {
         long id = 2L;
         Assertions.assertEquals(1, commonMapper.delete(new QueryWrapper<CommonData>().lambda()
             .eq(CommonData::getId, id)
@@ -130,7 +132,8 @@ class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void b4_deleteBatchIds() {
+    @Order(6)
+    void b4_deleteBatchIds() {
         List<Long> ids = Arrays.asList(3L, 4L);
         Assertions.assertEquals(2, commonMapper.deleteBatchIds(ids));
         Assertions.assertEquals(2, commonLogicMapper.deleteBatchIds(ids));
@@ -138,7 +141,8 @@ class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void b5_deleteByIdWithFill() {
+    @Order(7)
+    void b5_deleteByIdWithFill() {
         long id = 5L;
         // 真删
         Assertions.assertEquals(1, commonMapper.deleteByIdWithFill(new CommonData().setId(id)));
@@ -149,7 +153,8 @@ class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void c1_updateById() {
+    @Order(8)
+    void c1_updateById() {
         long id = 6L;
         Assertions.assertEquals(1, commonMapper.updateById(new CommonData().setId(id).setTestInt(555).setVersion(0)
             .setTestEnum(TestEnum.TWO)));
@@ -159,14 +164,16 @@ class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void c2_optimisticUpdateById() {
+    @Order(9)
+    void c2_optimisticUpdateById() {
         long id = 7L;
         Assertions.assertEquals(1, commonMapper.updateById(new CommonData().setId(id).setTestInt(778)
             .setVersion(0)));
     }
 
     @Test
-    public void c3_update() {
+    @Order(10)
+    void c3_update() {
         long id = 8L;
         Assertions.assertEquals(1, commonMapper.update(
             new CommonData().setTestInt(888).setVersion(0),
@@ -183,12 +190,14 @@ class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void d1_getAllNoTenant() {
+    @Order(11)
+    void d1_getAllNoTenant() {
         commonMapper.getAllNoTenant();
     }
 
     @Test
-    public void d2_selectById() {
+    @Order(12)
+    void d2_selectById() {
         long id = 6L;
         Assertions.assertNotNull(commonMapper.selectById(id).getTestEnum());
         Assertions.assertTrue(commonMapper.getById(id).isPresent());
@@ -201,7 +210,8 @@ class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void d3_selectBatchIds() {
+    @Order(13)
+    void d3_selectBatchIds() {
         List<Long> ids = Arrays.asList(7L, 8L);
         Assertions.assertTrue(CollectionUtils.isNotEmpty(commonMapper.selectBatchIds(ids)));
         Assertions.assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectBatchIds(ids)));
@@ -210,7 +220,8 @@ class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void d4_selectByMap() {
+    @Order(14)
+    void d4_selectByMap() {
         long id = 9L;
         Map<String, Object> map = new HashMap<>();
         map.put("id", id);
@@ -224,7 +235,8 @@ class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void d5_selectOne() {
+    @Order(15)
+    void d5_selectOne() {
         long id = 10L;
         Assertions.assertNotNull(commonMapper.selectOne(new QueryWrapper<CommonData>().lambda()
             .eq(CommonData::getId, id).eq(CommonData::getTestInt, 10)));
@@ -235,7 +247,8 @@ class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void d6_selectList() {
+    @Order(16)
+    void d6_selectList() {
         long id = 10L;
         Assertions.assertTrue(CollectionUtils.isNotEmpty(commonMapper.selectList(new QueryWrapper<CommonData>()
             .lambda().eq(CommonData::getTestInt, 10))));
@@ -246,7 +259,8 @@ class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void d7_1_selectListForNoLogic() {
+    @Order(17)
+    void d7_1_selectListForNoLogic() {
         MysqlData data = new MysqlData().setOrder(1);
         // 1. 只有 entity
         Assertions.assertTrue(CollectionUtils.isNotEmpty(mysqlMapper.selectList(Wrappers.query(data))));
@@ -269,7 +283,8 @@ class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void d7_2_selectListForLogic() {
+    @Order(18)
+    void d7_2_selectListForLogic() {
         // 1. 只有 entity
         CommonLogicData data = new CommonLogicData().setTestInt(11);
         Assertions.assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectList(Wrappers.query(data))));
@@ -292,12 +307,12 @@ class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void d7_selectPage() {
+    @Order(19)
+    void d7_selectPage() {
         Page<CommonData> page = new Page<>(1, 5);
         page.setDesc("c_time", "u_time");
         IPage<CommonData> dataPage = commonMapper.selectPage(page, null);
         Assertions.assertSame(dataPage, page);
-        Assertions.assertNotEquals(null, dataPage.getTotal());
         Assertions.assertNotEquals(0, dataPage.getRecords().size());
         Assertions.assertTrue(CollectionUtils.isNotEmpty(dataPage.getRecords()));
         System.out.println(JSON.toJSONString(dataPage));
@@ -307,7 +322,6 @@ class MysqlTestDataMapperTest {
         commonDataPage.setDesc("c_time", "u_time");
         IPage<CommonData> commonDataDataPage = commonMapper.myPage(commonDataPage);
         Assertions.assertSame(commonDataDataPage, commonDataPage);
-        Assertions.assertNotEquals(null, commonDataDataPage.getTotal());
         Assertions.assertNotEquals(0, commonDataDataPage.getRecords().size());
         Assertions.assertTrue(CollectionUtils.isNotEmpty(commonDataDataPage.getRecords()));
         System.out.println(JSON.toJSONString(commonDataDataPage));
@@ -316,7 +330,6 @@ class MysqlTestDataMapperTest {
         Page<CommonLogicData> logicPage = new Page<>(1, 5);
         IPage<CommonLogicData> logicDataPage = commonLogicMapper.selectPage(logicPage, null);
         Assertions.assertSame(logicDataPage, logicPage);
-        Assertions.assertNotEquals(null, logicDataPage.getTotal());
         Assertions.assertNotEquals(0, logicDataPage.getRecords().size());
         Assertions.assertTrue(CollectionUtils.isNotEmpty(logicDataPage.getRecords()));
         System.out.println(JSON.toJSONString(logicDataPage));
@@ -324,7 +337,6 @@ class MysqlTestDataMapperTest {
         Page<MysqlData> mysqlPage = new Page<>(1, 5);
         IPage<MysqlData> mysqlDataPage = mysqlMapper.selectPage(mysqlPage, null);
         Assertions.assertSame(mysqlDataPage, mysqlPage);
-        Assertions.assertNotEquals(null, mysqlDataPage.getTotal());
         Assertions.assertNotEquals(0, mysqlDataPage.getRecords().size());
         Assertions.assertTrue(CollectionUtils.isNotEmpty(mysqlDataPage.getRecords()));
         System.out.println(JSON.toJSONString(mysqlDataPage));
@@ -332,26 +344,26 @@ class MysqlTestDataMapperTest {
         Page<ResultMapEntity> resultMapEntityPage = new Page<>(1, 5);
         IPage<ResultMapEntity> resultMapEntityDataPage = resultMapEntityMapper.selectPage(resultMapEntityPage, null);
         Assertions.assertSame(resultMapEntityDataPage, resultMapEntityPage);
-        Assertions.assertNotEquals(null, resultMapEntityDataPage.getTotal());
         Assertions.assertNotEquals(0, resultMapEntityDataPage.getRecords().size());
         Assertions.assertTrue(CollectionUtils.isNotEmpty(resultMapEntityDataPage.getRecords()));
         System.out.println(JSON.toJSONString(resultMapEntityDataPage));
     }
 
     @Test
-    public void d7_arLambdaSelectPage() {
+    @Order(20)
+    void d7_arLambdaSelectPage() {
         Page<CommonData> page = new Page<>(1, 5);
         page.setDesc("c_time", "u_time");
         IPage<CommonData> dataPage = new CommonData().selectPage(page, new QueryWrapper<CommonData>().lambda());
         Assertions.assertSame(dataPage, page);
-        Assertions.assertNotEquals(null, dataPage.getTotal());
         Assertions.assertNotEquals(0, dataPage.getRecords().size());
         Assertions.assertTrue(CollectionUtils.isNotEmpty(dataPage.getRecords()));
         System.out.println(JSON.toJSONString(dataPage));
     }
 
     @Test
-    public void d8_testApply() {
+    @Order(21)
+    void d8_testApply() {
         Assertions.assertTrue(CollectionUtils.isNotEmpty(commonMapper.selectList(new QueryWrapper<CommonData>()
             .apply("test_int = 12"))));
         Assertions.assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectList(new QueryWrapper<CommonLogicData>()
@@ -361,7 +373,8 @@ class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void d9_testSetSelect() {
+    @Order(22)
+    void d9_testSetSelect() {
         commonMapper.selectList(new QueryWrapper<>(new CommonData()).select(TableFieldInfo::isCharSequence));
         commonMapper.selectList(new QueryWrapper<>(new CommonData().setTestStr("")));
         commonMapper.selectList(new QueryWrapper<>(new CommonData().setTestStr("")).orderByAsc("test_int"));
@@ -374,7 +387,8 @@ class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void d10_testDel1eq1Then() {
+    @Order(23)
+    void d10_testDel1eq1Then() {
         // 有空对象,有 order by
         mysqlMapper.selectList(Wrappers.lambdaQuery(new MysqlData()).select(i -> true).orderByAsc(MysqlData::getId));
         commonMapper.selectList(Wrappers.lambdaQuery(new CommonData()).orderByAsc(CommonData::getCreateDatetime));
@@ -386,7 +400,8 @@ class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void d11_testWrapperCustomSql() {
+    @Order(24)
+    void d11_testWrapperCustomSql() {
         // 1. 只有 order by 或者 last
         mysqlMapper.getAll(Wrappers.<MysqlData>lambdaQuery().orderByDesc(MysqlData::getOrder).last("limit 1"));
         // 2. 什么都没有情况
@@ -398,7 +413,8 @@ class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void e_1testNestPage() {
+    @Order(25)
+    void e_1testNestPage() {
         ArrayList<Object> list = new ArrayList<>();
         LambdaQueryWrapper<CommonData> wrapper = Wrappers.<CommonData>lambdaQuery()
             .isNotNull(CommonData::getId).and(i -> i.eq(CommonData::getId, 1)
@@ -413,19 +429,22 @@ class MysqlTestDataMapperTest {
     }
 
     @Test
-    public void e_2testLambdaColumnCache() {
+    @Order(26)
+    void e_2testLambdaColumnCache() {
         mysqlMapper.selectList(Wrappers.<MysqlData>lambdaQuery().select(MysqlData::getId, MysqlData::getYaHoStr))
             .forEach(System.out::println);
     }
 
     @Test
-    public void e_3testUpdateNotEntity() {
+    @Order(27)
+    void e_3testUpdateNotEntity() {
         mysqlMapper.update(null, Wrappers.<MysqlData>lambdaUpdate().set(MysqlData::getOrder, 1));
         commonLogicMapper.update(null, Wrappers.<CommonLogicData>lambdaUpdate().set(CommonLogicData::getTestInt, 1));
     }
 
     @Test
-    public void e_4testChain() {
+    @Order(28)
+    void e_4testChain() {
         new LambdaQueryChainWrapper<>(mysqlMapper).select(MysqlData::getId, MysqlData::getYaHoStr)
             .list().forEach(System.out::println);
 

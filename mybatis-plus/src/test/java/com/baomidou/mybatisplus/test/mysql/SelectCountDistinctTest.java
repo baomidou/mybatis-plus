@@ -9,9 +9,7 @@ import com.baomidou.mybatisplus.test.base.entity.CommonLogicData;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonLogicDataMapper;
 import com.baomidou.mybatisplus.test.mysql.config.MysqlDb;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -20,8 +18,7 @@ import javax.annotation.Resource;
 import java.sql.SQLException;
 import java.util.List;
 
-// TODO junit 5.4 开始提供支持，预计 2019-02-06 发布，等这之后升级版本并使用 @TestMethodOrder 代替 @FixMethodOrder
-// @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:mysql/spring-test-mysql.xml"})
 class SelectCountDistinctTest {
@@ -38,6 +35,7 @@ class SelectCountDistinctTest {
     }
 
     @Test
+    @Order(1)
     void testCountDistinct() {
         QueryWrapper<CommonData> distinct = new QueryWrapper<>();
         distinct.select("distinct test_int");
@@ -47,6 +45,7 @@ class SelectCountDistinctTest {
     }
 
     @Test
+    @Order(2)
     void testCountDistinctTwoColumn() {
         QueryWrapper<CommonData> distinct = new QueryWrapper<>();
         distinct.select("distinct test_int, test_str");
@@ -56,6 +55,7 @@ class SelectCountDistinctTest {
     }
 
     @Test
+    @Order(3)
     void testLogicCountDistinct() {
         QueryWrapper<CommonLogicData> distinct = new QueryWrapper<>();
         distinct.select("distinct test_int");
@@ -65,6 +65,7 @@ class SelectCountDistinctTest {
     }
 
     @Test
+    @Order(4)
     void testLogicSelectList() {
         QueryWrapper<CommonLogicData> commonQuery = new QueryWrapper<>();
         List<CommonLogicData> commonLogicDataList = commonLogicMapper.selectList(commonQuery);
@@ -74,6 +75,7 @@ class SelectCountDistinctTest {
     }
 
     @Test
+    @Order(5)
     void testLogicCountDistinctUseLambda() {
         LambdaQueryWrapper<CommonLogicData> lambdaQueryWrapper =
             new QueryWrapper<CommonLogicData>().select("distinct test_int").lambda();
@@ -82,6 +84,7 @@ class SelectCountDistinctTest {
     }
 
     @Test
+    @Order(6)
     void testCountDistinctUseLambda() {
         LambdaQueryWrapper<CommonData> lambdaQueryWrapper =
             new QueryWrapper<CommonData>().select("distinct test_int, test_str").lambda();
@@ -90,6 +93,7 @@ class SelectCountDistinctTest {
     }
 
     @Test
+    @Order(7)
     void testLogicSelectCountWithoutDistinct() {
         QueryWrapper<CommonLogicData> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("test_int", 25).or().eq("test_str", "test");
@@ -98,6 +102,7 @@ class SelectCountDistinctTest {
     }
 
     @Test
+    @Order(8)
     void testCountDistinctWithoutDistinct() {
         QueryWrapper<CommonData> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("test_int", 25).or().eq("test_str", "test");
@@ -106,6 +111,7 @@ class SelectCountDistinctTest {
     }
 
     @Test
+    @Order(9)
     void testSelectPageWithoutDistinct() {
         QueryWrapper<CommonData> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("test_int", 25).or().eq("test_str", "test");
@@ -116,6 +122,7 @@ class SelectCountDistinctTest {
     }
 
     @Test
+    @Order(10)
     void testSelectPageWithDistinct() {
         QueryWrapper<CommonData> queryWrapper = new QueryWrapper<>();
         queryWrapper.select("distinct test_int, test_str");

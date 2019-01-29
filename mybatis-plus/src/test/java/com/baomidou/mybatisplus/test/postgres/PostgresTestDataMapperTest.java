@@ -14,9 +14,7 @@ import com.baomidou.mybatisplus.test.base.mapper.commons.CommonDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonLogicDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.pg.PgDataMapper;
 import com.baomidou.mybatisplus.test.postgres.config.PostgresDb;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -33,8 +31,7 @@ import java.util.Map;
  * @author hubin
  * @since 2018-06-05
  */
-// TODO junit 5.4 开始提供支持，预计 2019-02-06 发布，等这之后升级版本并使用 @TestMethodOrder 代替 @FixMethodOrder
-// @FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:postgres/spring-test-postgres.xml"})
 class PostgresTestDataMapperTest {
@@ -53,6 +50,7 @@ class PostgresTestDataMapperTest {
     }
 
     @Test
+    @Order(1)
     void a_insertForeach() {
         for (int i = 1; i < 20; i++) {
             Long id = (long) i;
@@ -64,6 +62,7 @@ class PostgresTestDataMapperTest {
     }
 
     @Test
+    @Order(2)
     void b1_deleteById() {
         Assertions.assertEquals(1, commonMapper.deleteById(1L));
         Assertions.assertEquals(1, commonLogicMapper.deleteById(1L));
@@ -71,6 +70,7 @@ class PostgresTestDataMapperTest {
     }
 
     @Test
+    @Order(3)
     void b2_deleteByMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("id", 2L);
@@ -85,6 +85,7 @@ class PostgresTestDataMapperTest {
     }
 
     @Test
+    @Order(4)
     void b3_delete() {
         Assertions.assertEquals(1, commonMapper.delete(new QueryWrapper<CommonData>().lambda()
             .eq(CommonData::getId, 2L)
@@ -98,6 +99,7 @@ class PostgresTestDataMapperTest {
     }
 
     @Test
+    @Order(5)
     void b4_deleteBatchIds() {
         List<Long> ids = Arrays.asList(3L, 4L);
         Assertions.assertEquals(2, commonMapper.deleteBatchIds(ids));
@@ -106,6 +108,7 @@ class PostgresTestDataMapperTest {
     }
 
     @Test
+    @Order(6)
     void c1_updateById() {
         Assertions.assertEquals(1, commonMapper.updateById(new CommonData().setId(5L).setTestInt(555)));
         Assertions.assertEquals(1, commonLogicMapper.updateById(new CommonLogicData().setId(5L).setTestInt(555)));
@@ -113,12 +116,14 @@ class PostgresTestDataMapperTest {
     }
 
     @Test
+    @Order(7)
     void c2_optimisticUpdateById() {
         Assertions.assertEquals(1, commonMapper.updateById(new CommonData().setId(5L).setTestInt(556)
             .setVersion(0)));
     }
 
     @Test
+    @Order(8)
     void c3_update() {
         Assertions.assertEquals(1, commonMapper.update(
             new CommonData().setTestInt(666),
@@ -135,11 +140,13 @@ class PostgresTestDataMapperTest {
     }
 
     @Test
+    @Order(9)
     void d1_getAllNoTenant() {
         commonMapper.getAllNoTenant();
     }
 
     @Test
+    @Order(10)
     void d2_selectById() {
         long id = 6L;
         Assertions.assertNotNull(commonMapper.selectById(id).getTestEnum());
@@ -148,6 +155,7 @@ class PostgresTestDataMapperTest {
     }
 
     @Test
+    @Order(11)
     void d3_selectBatchIds() {
         List<Long> ids = Arrays.asList(7L, 8L);
         Assertions.assertTrue(CollectionUtils.isNotEmpty(commonMapper.selectBatchIds(ids)));
@@ -156,6 +164,7 @@ class PostgresTestDataMapperTest {
     }
 
     @Test
+    @Order(12)
     void d4_selectByMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("id", 9L);
@@ -170,6 +179,7 @@ class PostgresTestDataMapperTest {
     }
 
     @Test
+    @Order(13)
     void d5_selectOne() {
         Assertions.assertNotNull(commonMapper.selectOne(new QueryWrapper<CommonData>().lambda()
             .eq(CommonData::getId, 10L).eq(CommonData::getTestInt, 10)));
@@ -180,6 +190,7 @@ class PostgresTestDataMapperTest {
     }
 
     @Test
+    @Order(14)
     void d6_selectList() {
         Assertions.assertTrue(CollectionUtils.isNotEmpty(commonMapper.selectList(new QueryWrapper<CommonData>()
             .lambda().eq(CommonData::getTestInt, 10))));
@@ -190,11 +201,11 @@ class PostgresTestDataMapperTest {
     }
 
     @Test
+    @Order(15)
     void d7_selectPage() {
         IPage<CommonData> page = new Page<>(1, 5);
         IPage<CommonData> dataPage = commonMapper.selectPage(page, null);
         Assertions.assertSame(dataPage, page);
-        Assertions.assertNotEquals(null, dataPage.getTotal());
         Assertions.assertNotEquals(0, dataPage.getRecords().size());
         Assertions.assertTrue(CollectionUtils.isNotEmpty(dataPage.getRecords()));
         System.out.println(JSON.toJSONString(dataPage));
@@ -202,7 +213,6 @@ class PostgresTestDataMapperTest {
         IPage<CommonLogicData> logicPage = new Page<>(1, 5);
         IPage<CommonLogicData> logicDataPage = commonLogicMapper.selectPage(logicPage, null);
         Assertions.assertSame(logicDataPage, logicPage);
-        Assertions.assertNotEquals(null, logicDataPage.getTotal());
         Assertions.assertNotEquals(0, logicDataPage.getRecords().size());
         Assertions.assertTrue(CollectionUtils.isNotEmpty(logicDataPage.getRecords()));
         System.out.println(JSON.toJSONString(logicDataPage));
@@ -211,13 +221,13 @@ class PostgresTestDataMapperTest {
         page.setSize(5).setCurrent(1);
         IPage<PgData> pgDataPage = pgMapper.selectPage(pgPage, null);
         Assertions.assertSame(pgDataPage, pgPage);
-        Assertions.assertNotEquals(null, pgDataPage.getTotal());
         Assertions.assertNotEquals(0, pgDataPage.getRecords().size());
         Assertions.assertTrue(CollectionUtils.isNotEmpty(pgDataPage.getRecords()));
         System.out.println(JSON.toJSONString(pgDataPage));
     }
 
     @Test
+    @Order(16)
     void d8_testApply() {
         Assertions.assertTrue(CollectionUtils.isNotEmpty(commonMapper.selectList(new QueryWrapper<CommonData>()
             .apply("test_int = 12"))));

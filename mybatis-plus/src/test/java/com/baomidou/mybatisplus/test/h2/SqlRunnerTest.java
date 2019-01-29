@@ -5,8 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.toolkit.SqlRunner;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2Student;
 import com.baomidou.mybatisplus.test.h2.service.IH2StudentService;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -19,16 +18,16 @@ import java.util.List;
  * SqlRunner测试
  * @author nieqiurong 2018/8/25 11:05.
  */
-// TODO junit 5.4 开始提供支持，预计 2019-02-06 发布，等这之后升级版本并使用 @TestMethodOrder 代替 @FixMethodOrder
-// @FixMethodOrder(MethodSorters.JVM)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
-public class SqlRunnerTest {
+class SqlRunnerTest {
 
     @Autowired
     private IH2StudentService studentService;
 
     @Test
+    @Order(1)
     void testSelectCount(){
         int count = SqlRunner.db().selectCount("select count(1) from h2student");
         Assertions.assertTrue(count > 0);
@@ -42,12 +41,14 @@ public class SqlRunnerTest {
 
     @Test
     @Transactional
+    @Order(2)
     void testInsert(){
         Assertions.assertTrue(SqlRunner.db().insert("INSERT INTO h2student ( name, age ) VALUES ( {0}, {1} )","测试学生",2));
         Assertions.assertTrue(SqlRunner.db(H2Student.class).insert("INSERT INTO h2student ( name, age ) VALUES ( {0}, {1} )","测试学生2",3));
     }
 
     @Test
+    @Order(3)
     void testTransactional(){
         try {
             studentService.testSqlRunnerTransactional();

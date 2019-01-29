@@ -10,8 +10,7 @@ import com.baomidou.mybatisplus.test.h2.entity.SuperEntity;
 import com.baomidou.mybatisplus.test.h2.entity.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserMapper;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -29,8 +28,7 @@ import static java.util.stream.Collectors.toList;
  * @author hubin
  * @since 2018-06-05
  */
-// TODO junit 5.4 开始提供支持，预计 2019-02-06 发布，等这之后升级版本并使用 @TestMethodOrder 代替 @FixMethodOrder
-// @FixMethodOrder(MethodSorters.JVM)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
 class H2UserMapperTest extends BaseTest {
@@ -39,6 +37,7 @@ class H2UserMapperTest extends BaseTest {
     protected H2UserMapper userMapper;
 
     @Test
+    @Order(1)
     void crudTest() {
         H2User h2User = new H2User();
         h2User.setName(NQQ);
@@ -132,6 +131,7 @@ class H2UserMapperTest extends BaseTest {
     }
 
     @Test
+    @Order(Integer.MAX_VALUE)
     void delete() {
         userMapper.delete(new QueryWrapper<>(new H2User().setAge(AgeEnum.TWO))
             .eq("name", "Tony"));

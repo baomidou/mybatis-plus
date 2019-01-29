@@ -7,8 +7,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2Student;
 import com.baomidou.mybatisplus.test.h2.service.IH2StudentService;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,11 +24,10 @@ import java.util.List;
  *
  * @author nieqiurong 2018/7/27.
  */
-// TODO junit 5.4 开始提供支持，预计 2019-02-06 发布，等这之后升级版本并使用 @TestMethodOrder 代替 @FixMethodOrder
-// @FixMethodOrder(MethodSorters.JVM)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
-public class ActiveRecordTest {
+class ActiveRecordTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ActiveRecordTest.class);
 
@@ -38,14 +36,16 @@ public class ActiveRecordTest {
 
     @Test
     @Transactional
-    public void testInsert() {
+    @Order(1)
+    void testInsert() {
         H2Student student = new H2Student(null, "测试学生", 2);
         Assertions.assertTrue(student.insert());
         Assertions.assertTrue(student.insert());
     }
 
     @Test
-    public void testUpdate() {
+    @Order(2)
+    void testUpdate() {
         H2Student student = new H2Student(1L, "Tom长大了", 2);
         Assertions.assertTrue(student.updateById());
         student.setName("不听话的学生");
@@ -53,7 +53,8 @@ public class ActiveRecordTest {
     }
 
     @Test
-    public void testSelect() {
+    @Order(10)
+    void testSelect() {
         H2Student student = new H2Student();
         student.setId(1L);
         Assertions.assertNotNull(student.selectById());
@@ -61,7 +62,8 @@ public class ActiveRecordTest {
     }
 
     @Test
-    public void testSelectList() {
+    @Order(10)
+    void testSelectList() {
         H2Student student = new H2Student();
         List<H2Student> students = student.selectList(new QueryWrapper<>(student));
         students.forEach($this -> LOGGER.info("用户信息:{}", $this));
@@ -69,7 +71,8 @@ public class ActiveRecordTest {
     }
 
     @Test
-    public void testSelectPage() {
+    @Order(10)
+    void testSelectPage() {
         IPage<H2Student> page = new Page<>(1, 10);
         H2Student student = new H2Student();
         page = student.selectPage(page, new QueryWrapper<>(student));
@@ -80,7 +83,8 @@ public class ActiveRecordTest {
     }
 
     @Test
-    public void testSelectCount() {
+    @Order(10)
+    void testSelectCount() {
         H2Student student = new H2Student();
         int count = new H2Student().selectCount(new QueryWrapper<>(student));
         LOGGER.info("count:{}", count);
@@ -88,7 +92,8 @@ public class ActiveRecordTest {
     }
 
     @Test
-    public void testInsertOrUpdate() {
+    @Order(20)
+    void testInsertOrUpdate() {
         H2Student student = new H2Student(2L, "Jerry也长大了", 2);
         Assertions.assertTrue(student.insertOrUpdate());
         student.setId(null);
@@ -96,7 +101,8 @@ public class ActiveRecordTest {
     }
 
     @Test
-    public void testSelectAll() {
+    @Order(21)
+    void testSelectAll() {
         H2Student student = new H2Student();
         List<H2Student> students = student.selectAll();
         Assertions.assertNotNull(students);
@@ -104,13 +110,15 @@ public class ActiveRecordTest {
     }
 
     @Test
-    public void testSelectOne() {
+    @Order(21)
+    void testSelectOne() {
         H2Student student = new H2Student();
         Assertions.assertNotNull(student.selectOne(new QueryWrapper<>()));
     }
 
     @Test
-    public void testTransactional() {
+    @Order(21)
+    void testTransactional() {
         try {
             h2StudentService.testTransactional();
         } catch (MybatisPlusException e) {
@@ -120,7 +128,8 @@ public class ActiveRecordTest {
     }
 
     @Test
-    public void testDelete() {
+    @Order(Integer.MAX_VALUE)
+    void testDelete() {
         H2Student student = new H2Student();
         student.setId(2L);
         Assertions.assertTrue(student.deleteById());

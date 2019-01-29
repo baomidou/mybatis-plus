@@ -1,18 +1,20 @@
 package com.baomidou.mybatisplus.test.h2;
 
-import javax.annotation.Resource;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.test.h2.entity.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.entity.mapper.H2StudentMapper;
 import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserMapper;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2Student;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import javax.annotation.Resource;
 
 /**
  * Mybatis Plus H2 Junit Test
@@ -20,8 +22,7 @@ import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
  * @author hubin
  * @since 2018-06-05
  */
-// TODO junit 5.4 开始提供支持，预计 2019-02-06 发布，等这之后升级版本并使用 @TestMethodOrder 代替 @FixMethodOrder
-// @FixMethodOrder(MethodSorters.JVM)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
 class H2Delete1Eq1Test extends BaseTest {
@@ -32,6 +33,7 @@ class H2Delete1Eq1Test extends BaseTest {
     protected H2StudentMapper defaultMapper;
 
     @Test
+    @Order(1)
     void crudTest() {
         for (int i = 0; i < 10; i++) {
             logicDeleteMapper.insert(new H2User("mp" + i, AgeEnum.ONE));
@@ -58,6 +60,7 @@ class H2Delete1Eq1Test extends BaseTest {
     }
 
     @Test
+    @Order(Integer.MAX_VALUE)
     void delete() {
         logicDeleteMapper.delete(new QueryWrapper<>());
         defaultMapper.delete(new QueryWrapper<>());

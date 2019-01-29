@@ -9,7 +9,10 @@ import com.baomidou.mybatisplus.test.h2.entity.enums.GenderEnum;
 import com.baomidou.mybatisplus.test.h2.entity.enums.GradeEnum;
 import com.baomidou.mybatisplus.test.h2.entity.mapper.H2StudentMapper;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2Student;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -24,8 +27,7 @@ import java.util.Objects;
  * @author hubin
  * @since 2018-06-05
  */
-// TODO junit 5.4 开始提供支持，预计 2019-02-06 发布，等这之后升级版本并使用 @TestMethodOrder 代替 @FixMethodOrder
-// @FixMethodOrder(MethodSorters.JVM)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
 class H2StudentMapperTest extends BaseTest {
@@ -34,6 +36,7 @@ class H2StudentMapperTest extends BaseTest {
     protected H2StudentMapper studentMapper;
 
     @Test
+    @Order(1)
     void crudTest() {
 //        H2Student stu = new H2Student();
 //        stu.setGrade(GradeEnum.HIGH);
@@ -66,6 +69,7 @@ class H2StudentMapperTest extends BaseTest {
     }
 
     @Test
+    @Order(Integer.MAX_VALUE)
     void pageCountZeroTest() {
         IPage page = studentMapper.selectPage(new Page<>(), Wrappers.<H2Student>query().eq("name", "无"));
         if (null != page) {
