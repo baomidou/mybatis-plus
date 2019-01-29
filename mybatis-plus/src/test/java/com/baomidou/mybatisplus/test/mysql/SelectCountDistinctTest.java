@@ -34,23 +34,11 @@ class SelectCountDistinctTest {
     @BeforeAll
     static void init() throws SQLException {
         MysqlDb.initMysqlData();
-        insertLogic();
-        insertCommon();
         System.out.println("init table and data success");
     }
 
-    private static void insertLogic() {
-        commonLogicMapper.insert(new CommonLogicData().setTestInt(25).setTestStr("test"));
-        commonLogicMapper.insert(new CommonLogicData().setTestInt(25).setTestStr("test"));
-    }
-
-    private static void insertCommon() {
-        commonDataMapper.insert(new CommonData().setTestInt(25).setTestStr("test"));
-        commonDataMapper.insert(new CommonData().setTestInt(25).setTestStr("test"));
-    }
-
     @Test
-    public void testCountDistinct() {
+    void testCountDistinct() {
         QueryWrapper<CommonData> distinct = new QueryWrapper<>();
         distinct.select("distinct test_int");
         distinct.eq("test_int", 25).or().eq("test_str", "test");
@@ -59,7 +47,7 @@ class SelectCountDistinctTest {
     }
 
     @Test
-    public void testCountDistinctTwoColumn() {
+    void testCountDistinctTwoColumn() {
         QueryWrapper<CommonData> distinct = new QueryWrapper<>();
         distinct.select("distinct test_int, test_str");
         distinct.eq("test_int", 25).or().eq("test_str", "test");
@@ -68,7 +56,7 @@ class SelectCountDistinctTest {
     }
 
     @Test
-    public void testLogicCountDistinct() {
+    void testLogicCountDistinct() {
         QueryWrapper<CommonLogicData> distinct = new QueryWrapper<>();
         distinct.select("distinct test_int");
         distinct.eq("test_int", 25).or().eq("test_str", "test");
@@ -77,7 +65,7 @@ class SelectCountDistinctTest {
     }
 
     @Test
-    public void testLogicSelectList() {
+    void testLogicSelectList() {
         QueryWrapper<CommonLogicData> commonQuery = new QueryWrapper<>();
         List<CommonLogicData> commonLogicDataList = commonLogicMapper.selectList(commonQuery);
         CommonLogicData commonLogicData = commonLogicDataList.get(0);
@@ -86,7 +74,7 @@ class SelectCountDistinctTest {
     }
 
     @Test
-    public void testLogicCountDistinctUseLambda() {
+    void testLogicCountDistinctUseLambda() {
         LambdaQueryWrapper<CommonLogicData> lambdaQueryWrapper =
             new QueryWrapper<CommonLogicData>().select("distinct test_int").lambda();
         int count = commonLogicMapper.selectCount(lambdaQueryWrapper);
@@ -94,7 +82,7 @@ class SelectCountDistinctTest {
     }
 
     @Test
-    public void testCountDistinctUseLambda() {
+    void testCountDistinctUseLambda() {
         LambdaQueryWrapper<CommonData> lambdaQueryWrapper =
             new QueryWrapper<CommonData>().select("distinct test_int, test_str").lambda();
         int count = commonDataMapper.selectCount(lambdaQueryWrapper);
@@ -102,7 +90,7 @@ class SelectCountDistinctTest {
     }
 
     @Test
-    public void testLogicSelectCountWithoutDistinct() {
+    void testLogicSelectCountWithoutDistinct() {
         QueryWrapper<CommonLogicData> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("test_int", 25).or().eq("test_str", "test");
         int count = commonLogicMapper.selectCount(queryWrapper);
@@ -110,7 +98,7 @@ class SelectCountDistinctTest {
     }
 
     @Test
-    public void testCountDistinctWithoutDistinct() {
+    void testCountDistinctWithoutDistinct() {
         QueryWrapper<CommonData> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("test_int", 25).or().eq("test_str", "test");
         int count = commonDataMapper.selectCount(queryWrapper);
@@ -118,21 +106,21 @@ class SelectCountDistinctTest {
     }
 
     @Test
-    public void testSelectPageWithoutDistinct() {
+    void testSelectPageWithoutDistinct() {
         QueryWrapper<CommonData> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("test_int", 25).or().eq("test_str", "test");
-        IPage<CommonData> page = commonDataMapper.selectPage(new Page<CommonData>(1, 10), queryWrapper);
+        IPage<CommonData> page = commonDataMapper.selectPage(new Page<>(1, 10), queryWrapper);
         Assertions.assertEquals(2, page.getTotal());
         Assertions.assertNotNull(page.getRecords().get(0));
         Assertions.assertNotNull(page.getRecords().get(1));
     }
 
     @Test
-    public void testSelectPageWithDistinct() {
+    void testSelectPageWithDistinct() {
         QueryWrapper<CommonData> queryWrapper = new QueryWrapper<>();
         queryWrapper.select("distinct test_int, test_str");
         queryWrapper.eq("test_int", 25).or().eq("test_str", "test");
-        IPage<CommonData> page = commonDataMapper.selectPage(new Page<CommonData>(1, 10), queryWrapper);
+        IPage<CommonData> page = commonDataMapper.selectPage(new Page<>(1, 10), queryWrapper);
         Assertions.assertEquals(1, page.getTotal());
         Assertions.assertNotNull(page.getRecords().get(0));
     }

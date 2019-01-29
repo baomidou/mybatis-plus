@@ -46,3 +46,11 @@ CREATE TABLE result_map_entity (
     map        varchar(200)
 )ENGINE = innodb
 DEFAULT CHARSET = utf8;
+
+INSERT INTO `common_data` (`id`, `test_int`, `test_str`) VALUES
+  (1, 25, 'test'),
+  (2, 25, 'test');
+
+INSERT INTO `common_logic_data` (`id`, `test_int`, `test_str`) VALUES
+  (1, 25, 'test'),
+  (2, 25, 'test');
