@@ -62,7 +62,7 @@ public class EnumAnnotationTypeHandler<E extends Enum<E>> extends BaseTypeHandle
 
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, Enum parameter, JdbcType jdbcType) throws SQLException {
-        Field tableEnumField = getFiled(type);
+        Field tableEnumField = getField(type);
         try {
             if (jdbcType == null) {
                 ps.setObject(i, tableEnumField.get(parameter));
@@ -84,7 +84,7 @@ public class EnumAnnotationTypeHandler<E extends Enum<E>> extends BaseTypeHandle
         if (s == null) {
             return null;
         }
-        Field tableEnumField = getFiled(type);
+        Field tableEnumField = getField(type);
         return EnumUtils.valueOf(type, s, tableEnumField);
     }
 
@@ -102,7 +102,7 @@ public class EnumAnnotationTypeHandler<E extends Enum<E>> extends BaseTypeHandle
         return clazz.isEnum() ? Arrays.stream(clazz.getDeclaredFields()).filter(field -> field.isAnnotationPresent(EnumValue.class)).findFirst() : Optional.empty();
     }
     
-    private Field getFiled(Class<?> clazz) {
+    private Field getField(Class<?> clazz) {
         return Optional.ofNullable(TABLE_FIELD_OF_ENUM_TYPES.get(type)).orElseGet(() -> {
             Field field = dealEnumType(clazz).orElseThrow(() -> new IllegalArgumentException("当前[" + type.getName() + "]枚举类未找到标有@EnumValue注解的字段"));
             addEnumType(clazz, field);
