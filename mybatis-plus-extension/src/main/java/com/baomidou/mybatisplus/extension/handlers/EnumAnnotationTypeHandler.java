@@ -95,7 +95,7 @@ public class EnumAnnotationTypeHandler<E extends Enum<E>> extends BaseTypeHandle
 
     @Override
     public E getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
-        return getEnumResult(cs.getString(columnIndex));
+        return getEnumResult(cs.getObject(columnIndex));
     }
     
     public static Optional<Field> dealEnumType(Class<?> clazz) {
