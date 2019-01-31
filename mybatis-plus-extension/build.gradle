@@ -25,4 +25,5 @@ dependencies {
     testCompile "${lib.postgresql}"
     testCompile lib.oracle as ConfigurableFileTree
     testCompile "${lib.mysql}"
+    testCompile "${lib.'logback-classic'}"
 }

@@ -111,6 +111,7 @@ subprojects {
         testCompileOnly "${lib.'mockito-all'}"
         testCompile "${lib.'junit-jupiter-api'}"
         testRuntime "${lib.'junit-jupiter-engine'}"
+        testCompile 'org.mockito:mockito-junit-jupiter:2.23.4'
     }
 
     task sourcesJar(type: Jar) {
