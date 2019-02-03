@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.core.conditions.segments;
 
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import lombok.AccessLevel;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -37,17 +38,19 @@ public class MergeSegments implements ISqlSegment {
     private final HavingSegmentList having = new HavingSegmentList();
     private final OrderBySegmentList orderBy = new OrderBySegmentList();
 
+    @Getter(AccessLevel.NONE)
     private String sqlSegment = StringPool.EMPTY;
+    @Getter(AccessLevel.NONE)
     private boolean cacheSqlSegment = true;
 
     public void add(ISqlSegment... iSqlSegments) {
         List<ISqlSegment> list = Arrays.asList(iSqlSegments);
-        ISqlSegment sqlSegment = list.get(0);
-        if (MatchSegment.ORDER_BY.match(sqlSegment)) {
+        ISqlSegment firstSqlSegment = list.get(0);
+        if (MatchSegment.ORDER_BY.match(firstSqlSegment)) {
             orderBy.addAll(list);
-        } else if (MatchSegment.GROUP_BY.match(sqlSegment)) {
+        } else if (MatchSegment.GROUP_BY.match(firstSqlSegment)) {
             groupBy.addAll(list);
-        } else if (MatchSegment.HAVING.match(sqlSegment)) {
+        } else if (MatchSegment.HAVING.match(firstSqlSegment)) {
             having.addAll(list);
         } else {
             normal.addAll(list);

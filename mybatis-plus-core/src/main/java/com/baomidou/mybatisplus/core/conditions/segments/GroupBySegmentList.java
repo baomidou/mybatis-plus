@@ -15,13 +15,12 @@
  */
 package com.baomidou.mybatisplus.core.conditions.segments;
 
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GROUP_BY;
-import static java.util.stream.Collectors.joining;
+import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 
 import java.util.List;
 
-import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GROUP_BY;
+import static java.util.stream.Collectors.joining;
 
 /**
  * Group By SQL 片段
@@ -39,11 +38,10 @@ public class GroupBySegmentList extends AbstractISegmentList {
     }
 
     @Override
-    public String getSqlSegment() {
+    protected String childrenSqlSegment() {
         if (isEmpty()) {
-            return StringPool.EMPTY;
+            return EMPTY;
         }
-        return this.stream().map(ISqlSegment::getSqlSegment).collect(joining(StringPool.COMMA,
-            StringPool.SPACE + GROUP_BY.getSqlSegment() + StringPool.SPACE, StringPool.EMPTY));
+        return this.stream().map(ISqlSegment::getSqlSegment).collect(joining(COMMA, SPACE + GROUP_BY.getSqlSegment() + SPACE, EMPTY));
     }
 }

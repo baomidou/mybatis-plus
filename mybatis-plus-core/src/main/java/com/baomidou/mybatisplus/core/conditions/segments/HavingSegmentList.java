@@ -15,14 +15,13 @@
  */
 package com.baomidou.mybatisplus.core.conditions.segments;
 
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.AND;
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.HAVING;
-import static java.util.stream.Collectors.joining;
+import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
+import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 
 import java.util.List;
 
-import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.HAVING;
+import static java.util.stream.Collectors.joining;
 
 /**
  * Having SQL 片段
@@ -36,18 +35,17 @@ public class HavingSegmentList extends AbstractISegmentList {
     @Override
     protected boolean transformList(List<ISqlSegment> list, ISqlSegment firstSegment) {
         if (!isEmpty()) {
-            this.add(AND);
+            this.add(SqlKeyword.AND);
         }
         list.remove(0);
         return true;
     }
 
     @Override
-    public String getSqlSegment() {
+    protected String childrenSqlSegment() {
         if (isEmpty()) {
-            return StringPool.EMPTY;
+            return EMPTY;
         }
-        return this.stream().map(ISqlSegment::getSqlSegment).collect(joining(StringPool.SPACE,
-            StringPool.SPACE + HAVING.getSqlSegment() + StringPool.SPACE, StringPool.EMPTY));
+        return this.stream().map(ISqlSegment::getSqlSegment).collect(joining(SPACE, SPACE + HAVING.getSqlSegment() + SPACE, EMPTY));
     }
 }

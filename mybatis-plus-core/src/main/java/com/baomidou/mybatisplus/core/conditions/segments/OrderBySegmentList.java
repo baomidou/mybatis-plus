@@ -15,13 +15,12 @@
  */
 package com.baomidou.mybatisplus.core.conditions.segments;
 
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ORDER_BY;
-import static java.util.stream.Collectors.joining;
+import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 
 import java.util.List;
 
-import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ORDER_BY;
+import static java.util.stream.Collectors.joining;
 
 /**
  * Order By SQL 片段
@@ -36,17 +35,16 @@ public class OrderBySegmentList extends AbstractISegmentList {
     protected boolean transformList(List<ISqlSegment> list, ISqlSegment firstSegment) {
         list.remove(0);
         if (!isEmpty()) {
-            super.add(() -> StringPool.COMMA);
+            super.add(() -> COMMA);
         }
         return true;
     }
 
     @Override
-    public String getSqlSegment() {
+    protected String childrenSqlSegment() {
         if (isEmpty()) {
-            return StringPool.EMPTY;
+            return EMPTY;
         }
-        return this.stream().map(ISqlSegment::getSqlSegment).collect(joining(StringPool.SPACE,
-            StringPool.SPACE + ORDER_BY.getSqlSegment() + StringPool.SPACE, StringPool.EMPTY));
+        return this.stream().map(ISqlSegment::getSqlSegment).collect(joining(SPACE, SPACE + ORDER_BY.getSqlSegment() + SPACE, EMPTY));
     }
 }

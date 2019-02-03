@@ -15,11 +15,11 @@
  */
 package com.baomidou.mybatisplus.core.conditions.segments;
 
-import java.util.function.Predicate;
-
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.enums.WrapperKeyword;
+
+import java.util.function.Predicate;
 
 /**
  * 匹配片段

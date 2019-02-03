@@ -15,12 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.test;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -28,6 +22,12 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 class WrapperTest {
 
@@ -55,7 +55,6 @@ class WrapperTest {
         } catch (Exception e) {
             log(e.getMessage());
         }
-
     }
 
     @Test
@@ -64,6 +63,13 @@ class WrapperTest {
             .eq("xxx", 123)
             .and(i -> i.eq("andx", 65444).le("ande", 66666))
             .ne("xxx", 222);
+        log(ew.getSqlSegment());
+        log(ew.getSqlSegment());
+        ew.gt("x22", 333);
+        log(ew.getSqlSegment());
+        log(ew.getSqlSegment());
+        ew.orderByAsc("orderBy");
+        log(ew.getSqlSegment());
         log(ew.getSqlSegment());
         ew.getParamNameValuePairs().forEach((k, v) -> System.out.println("key = " + k + " ; value = " + v));
     }
@@ -82,7 +88,7 @@ class WrapperTest {
     @Test
     void test3() {
         UpdateWrapper<User> ew = new UpdateWrapper<User>()
-            .setSql("abc=1,def=2").eq("id", 1).ge("age", 3);
+            .setSql("abc=1,def=2").set("sets", 1111).eq("id", 1).ge("age", 3);
         log(ew.getSqlSet());
         log(ew.getSqlSegment());
     }

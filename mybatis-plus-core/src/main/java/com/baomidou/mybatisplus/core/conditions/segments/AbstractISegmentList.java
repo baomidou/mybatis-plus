@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core.conditions.segments;
 
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,22 +29,31 @@ import java.util.List;
  * @since 2018-06-27
  */
 @SuppressWarnings("serial")
-public abstract class AbstractISegmentList extends ArrayList<ISqlSegment> implements ISqlSegment {
+public abstract class AbstractISegmentList extends ArrayList<ISqlSegment> implements ISqlSegment, StringPool {
 
     /**
      * 最后一个值
      */
-    protected ISqlSegment lastValue = null;
+    ISqlSegment lastValue = null;
     /**
      * 刷新 lastValue
      */
-    protected boolean flushLastValue = false;
+    boolean flushLastValue = false;
+    /**
+     * 结果集缓存
+     */
+    private String sqlSegment = EMPTY;
+    /**
+     * 是否缓存过结果集
+     */
+    private boolean cacheSqlSegment = true;
 
     @Override
     public boolean addAll(Collection<? extends ISqlSegment> c) {
         List<ISqlSegment> list = new ArrayList<>(c);
         boolean goon = transformList(list, list.get(0));
         if (goon) {
+            cacheSqlSegment = false;
             if (flushLastValue) {
                 this.flushLastValue(list);
             }
@@ -64,15 +74,28 @@ public abstract class AbstractISegmentList extends ArrayList<ISqlSegment> implem
     /**
      * 刷新属性 lastValue
      */
-    protected void flushLastValue(List<? extends ISqlSegment> list) {
+    private void flushLastValue(List<? extends ISqlSegment> list) {
         lastValue = list.get(list.size() - 1);
     }
 
     /**
-     * 删除元素里最后一个值
+     * 删除元素里最后一个值</br>
+     * 并刷新属性 lastValue
      */
-    protected void removeAndFlushLast() {
+    void removeAndFlushLast() {
         remove(size() - 1);
         flushLastValue(this);
     }
+
+    @Override
+    public String getSqlSegment() {
+        if (cacheSqlSegment) {
+            return sqlSegment;
+        }
+        cacheSqlSegment = true;
+        sqlSegment = childrenSqlSegment();
+        return sqlSegment;
+    }
+
+    protected abstract String childrenSqlSegment();
 }
