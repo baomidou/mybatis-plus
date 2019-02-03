@@ -38,7 +38,7 @@ abstract class AbstractKtWrapper<T, This : AbstractKtWrapper<T, This>> : Abstrac
 
     override fun initEntityClass() {
         super.initEntityClass()
-        columnMap = LambdaUtils.getColumnMap(this.entityClass.name)
+        columnMap = LambdaUtils.getColumnMap(this.checkEntityClass.name)
     }
 
     override fun columnsToString(vararg columns: KProperty<*>): String {

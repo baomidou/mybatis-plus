@@ -38,7 +38,12 @@ class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, Updat
     private val sqlSet = ArrayList<String>()
 
     constructor(entity: T) {
-        this.entity = entity
+        this.setEntity(entity)
+        this.initNeed()
+    }
+
+    constructor(entityClass: Class<T>) {
+        this.entityClass = entityClass
         this.initEntityClass()
         this.initNeed()
     }

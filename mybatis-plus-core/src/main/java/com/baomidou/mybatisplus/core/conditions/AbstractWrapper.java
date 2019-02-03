@@ -83,7 +83,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     protected void initEntityClass() {
-        if (this.entity != null) {
+        if (this.entityClass == null && this.entity != null) {
             this.entityClass = (Class<T>) entity.getClass();
         }
     }

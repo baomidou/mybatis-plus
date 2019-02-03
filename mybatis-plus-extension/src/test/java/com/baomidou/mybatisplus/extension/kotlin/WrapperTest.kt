@@ -17,9 +17,15 @@ package com.baomidou.mybatisplus.extension.kotlin
 
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class WrapperTest {
+
+    @BeforeEach
+    fun beforeInit() {
+        TableInfoHelper.initTableInfo(null, User::class.java)
+    }
 
     private fun logSqlSegment(explain: String, sqlSegment: ISqlSegment) {
         println(String.format(" ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓   ->(%s)<-   ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓", explain))
@@ -28,15 +34,13 @@ class WrapperTest {
 
     @Test
     fun testLambdaQuery() {
-        TableInfoHelper.initTableInfo(null, User::class.java)
-        val queryWrapper = KtQueryWrapper(User()).eq(User::name, "sss").eq(User::roleId, "sss2")
-        logSqlSegment("测试 LambdaKt", queryWrapper)
+        logSqlSegment("测试1.1 LambdaKt", KtQueryWrapper(User()).eq(User::name, "sss").eq(User::roleId, "sss2"))
+        logSqlSegment("测试1.2 LambdaKt", KtQueryWrapper(User::class.java).eq(User::name, "sss").eq(User::roleId, "sss2"))
     }
 
     @Test
     fun testLambdaUpdate() {
-        TableInfoHelper.initTableInfo(null, User::class.java)
-        val updateWrapperKt = KtUpdateWrapper(User()).eq(User::name, "sss").eq(User::roleId, "sss2")
-        logSqlSegment("测试 LambdaKt", updateWrapperKt)
+        logSqlSegment("测试2.1 LambdaKt", KtUpdateWrapper(User()).eq(User::name, "sss").eq(User::roleId, "sss2"))
+        logSqlSegment("测试2.2 LambdaKt", KtUpdateWrapper(User::class.java).eq(User::name, "sss").eq(User::roleId, "sss2"))
     }
 }

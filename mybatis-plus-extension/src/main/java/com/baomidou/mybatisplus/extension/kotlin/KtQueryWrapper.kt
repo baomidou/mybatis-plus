@@ -38,7 +38,12 @@ class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Query<K
     private var sqlSelect: String? = null
 
     constructor(entity: T) {
-        this.entity = entity
+        this.setEntity(entity)
+        this.initNeed()
+    }
+
+    constructor(entityClass: Class<T>) {
+        this.entityClass = entityClass
         this.initEntityClass()
         this.initNeed()
     }
@@ -46,11 +51,11 @@ class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Query<K
     internal constructor(entity: T, entityClass: Class<T>?, sqlSelect: String?, paramNameSeq: AtomicInteger,
                          paramNameValuePairs: Map<String, Any>, mergeSegments: MergeSegments) {
         this.entity = entity
+        this.entityClass = entityClass
         this.paramNameSeq = paramNameSeq
         this.paramNameValuePairs = paramNameValuePairs
         this.expression = mergeSegments
         this.sqlSelect = sqlSelect
-        this.entityClass = entityClass
     }
 
     /**
