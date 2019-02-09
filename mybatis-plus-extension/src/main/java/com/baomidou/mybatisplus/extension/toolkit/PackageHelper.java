@@ -67,7 +67,7 @@ public class PackageHelper {
                 }
             }
             if (!set.isEmpty()) {
-                return set.toArray(new String[]{});
+                return set.toArray(new String[] {});
             }
             return new String[0];
         } catch (Exception e) {

@@ -69,7 +69,7 @@ public class MysqlGenerator extends GeneratorTest {
         ).setDataSource(
             // 数据源配置
             new DataSourceConfig()
-                .setDbType(DbType.MYSQL)// 数据库类型
+                .setDbType(DbType.MYSQL) // 数据库类型
                 .setTypeConvert(new MySqlTypeConvert() {
                     // 自定义数据库表字段类型转换【可选】
                     @Override

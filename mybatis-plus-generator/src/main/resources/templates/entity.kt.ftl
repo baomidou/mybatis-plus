@@ -82,7 +82,7 @@ class ${entity} : Serializable {
 
 </#if>
 <#if activeRecord>
-    override fun pkVal(): Serializable {
+    override fun pkVal(): Serializable? {
 <#if keyPropertyName??>
         return ${keyPropertyName}
 <#else>

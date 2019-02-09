@@ -77,11 +77,11 @@ class ${entity} : Serializable {
 
 #end
 #if(${activeRecord})
-    override fun pkVal(): Serializable {
+    override fun pkVal(): Serializable? {
 #if(${keyPropertyName})
-        return ${keyPropertyName}!!
+        return ${keyPropertyName}
 #else
-        return id!!
+        return null
 #end
     }
 
