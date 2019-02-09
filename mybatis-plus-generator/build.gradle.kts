@@ -7,10 +7,10 @@ dependencies {
     implementation("${lib["freemarker"]}")
     implementation("${lib["beetl"]}")
 
-    testCompile("${lib["sqlserver"]}")
-    testCompile("${lib["postgresql"]}")
-    testCompile(lib["oracle"] as ConfigurableFileTree)
-    testCompile("${lib["h2"]}")
-    testCompile("${lib["mysql"]}")
-    testCompile("${lib["logback-classic"]}")
+    testImplementation("${lib["sqlserver"]}")
+    testImplementation("${lib["postgresql"]}")
+    testImplementation(lib["oracle"] as ConfigurableFileTree)
+    testImplementation("${lib["h2"]}")
+    testImplementation("${lib["mysql"]}")
+    testImplementation("${lib["logback-classic"]}")
 }

@@ -8,14 +8,14 @@ dependencies {
     implementation("${lib["cglib"]}")
     implementation("${lib["spring-aop"]}")
 
-    testCompile("${lib["mybatis-ehcache"]}")
-    testCompile("${lib["logback-classic"]}")
-    testCompile("${lib["commons-dbcp2"]}") {
+    testImplementation("${lib["mybatis-ehcache"]}")
+    testImplementation("${lib["logback-classic"]}")
+    testImplementation("${lib["commons-dbcp2"]}") {
         exclude(module = "commons-logging")
     }
-    testCompile("${lib["aspectjweaver"]}")
-    testCompile("${lib["hikaricp"]}")
-    testCompile("${lib["druid"]}")
-    testCompile("${lib["fastjson"]}")
-    testCompile("${lib["tomcatjdbc"]}")
+    testImplementation("${lib["aspectjweaver"]}")
+    testImplementation("${lib["hikaricp"]}")
+    testImplementation("${lib["druid"]}")
+    testImplementation("${lib["fastjson"]}")
+    testImplementation("${lib["tomcatjdbc"]}")
 }

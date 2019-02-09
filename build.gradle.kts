@@ -1,3 +1,6 @@
+import groovy.util.Node
+import groovy.util.NodeList
+
 buildscript {
     repositories {
         maven("https://plugins.gradle.org/m2/")
@@ -118,10 +121,11 @@ subprojects {
         compileOnly("${lib["lombok"]}")
 
         testAnnotationProcessor("${lib["lombok"]}")
+        testCompileOnly("${lib["lombok"]}")
         testCompileOnly("${lib["mockito-all"]}")
-        testCompile("${lib["junit-jupiter-api"]}")
-        testRuntime("${lib["junit-jupiter-engine"]}")
-        testCompile("org.mockito:mockito-junit-jupiter:2.23.4")
+        testImplementation("${lib["junit-jupiter-api"]}")
+        testRuntimeOnly("${lib["junit-jupiter-engine"]}")
+        testImplementation("org.mockito:mockito-junit-jupiter:2.23.4")
     }
 
     val sourcesJar by tasks.registering(Jar::class) {
@@ -208,6 +212,21 @@ subprojects {
                             email.set("jobob@qq.com")
                         }
                     }
+
+                    withXml {
+                        val root = asNode()
+                        root["dependencies"].asNodeList().getAt("*").forEach {
+                            val dependency = it.asNode()
+                            if (dependency["scope"].asNodeList().text() == "runtime") {
+                                if (project.configurations.findByName("implementation")?.allDependencies?.none { dep ->
+                                        dep.name == dependency["artifactId"].asNodeList().text()
+                                    } == false) {
+                                    dependency["scope"].asNodeList().forEach { it.asNode().setValue("compile") }
+                                    dependency.appendNode("optional", true)
+                                }
+                            }
+                        }
+                    }
                 }
 
                 from(components["java"])
@@ -221,3 +240,6 @@ subprojects {
         sign(publishing.publications.getByName("mavenJava"))
     }
 }
+
+fun Any?.asNode() = this as Node
+fun Any?.asNodeList() = this as NodeList
