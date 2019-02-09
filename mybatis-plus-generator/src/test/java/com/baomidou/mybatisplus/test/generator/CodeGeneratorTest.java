@@ -87,7 +87,7 @@ class CodeGeneratorTest {
             // .setDbColumnUnderline(true) 改为如下 2 个配置
             .setNaming(NamingStrategy.underline_to_camel)
             .setColumnNaming(NamingStrategy.underline_to_camel)
-            .entityTableFieldAnnotationEnable(enableTableFieldAnnotation)
+            .setEntityTableFieldAnnotationEnable(enableTableFieldAnnotation)
             .setFieldPrefix(fieldPrefix)//test_id -> id, test_type -> type
             .setInclude(tableNames);//修改替换成你需要的表名，多个表名传数组
         config.setActiveRecord(false)

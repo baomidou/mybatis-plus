@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.extension.spring;
 
 import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
@@ -616,8 +615,8 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         globalConfig.signGlobalConfig(sqlSessionFactory);
 
         if (!isEmpty(this.mapperLocations)) {
-            if (globalConfig.isRefresh()) {
-                //TODO 设置自动刷新配置 减少配置
+            if (GlobalConfigUtils.isRefresh(configuration)) {
+                // TODO 设置自动刷新配置 减少配置
                 new MybatisMapperRefresh(this.mapperLocations, sqlSessionFactory, 2,
                     2, true);
             }

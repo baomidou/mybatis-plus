@@ -32,7 +32,7 @@ public class DB2Generator {
             // .setDbColumnUnderline(true) 改为如下 2 个配置
             .setNaming(NamingStrategy.underline_to_camel)
             .setColumnNaming(NamingStrategy.underline_to_camel)
-            .entityTableFieldAnnotationEnable(true)//实体属性上添加表字段映射
+            .setEntityTableFieldAnnotationEnable(true)//实体属性上添加表字段映射
             .setInclude(tableNames);//修改替换成你需要的表名，多个表名传数组
         config.setActiveRecord(true)
             .setEnableCache(false)// XML 二级缓存
