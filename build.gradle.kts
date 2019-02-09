@@ -69,7 +69,8 @@ val lib = mapOf(
     // code generator
     "velocity"                   to "org.apache.velocity:velocity-engine-core:2.0",
     "freemarker"                 to "org.freemarker:freemarker:2.3.28",
-    "beetl"                      to "com.ibeetl:beetl:2.9.8"
+    "beetl"                      to "com.ibeetl:beetl:2.9.8",
+    "lagarto"                    to "org.jodd:jodd-lagarto:5.0.7"
 )
 // ext
 extra["lib"] = lib
@@ -126,6 +127,7 @@ subprojects {
         testRuntimeOnly("${lib["junit-jupiter-engine"]}")
         testCompileOnly("${lib["mockito-all"]}")
         testImplementation("org.mockito:mockito-junit-jupiter:2.24.0")
+        testImplementation("${lib["lagarto"]}")
     }
 
     val sourcesJar by tasks.registering(Jar::class) {
@@ -149,7 +151,11 @@ subprojects {
     }
 
     tasks.withType<Test> {
+        dependsOn("generatePomFileForMavenJavaPublication")
         useJUnitPlatform()
+        exclude("**/generator/**")
+        exclude("**/postgres/**")
+        exclude("**/mysql/**")
     }
 
     val javadocJar by tasks.registering(Jar::class) {

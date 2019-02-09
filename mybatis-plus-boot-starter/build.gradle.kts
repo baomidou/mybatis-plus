@@ -9,6 +9,7 @@ dependencies {
     api("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("org.springframework.boot:spring-boot-configuration-processor")
     implementation("org.springframework.boot:spring-boot-autoconfigure-processor")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
 tasks.withType<JavaCompile> {

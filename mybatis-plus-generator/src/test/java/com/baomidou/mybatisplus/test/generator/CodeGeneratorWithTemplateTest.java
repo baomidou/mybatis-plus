@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.*;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
+import com.mysql.cj.jdbc.Driver;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -55,7 +56,7 @@ class CodeGeneratorWithTemplateTest {
             .setUrl(dbUrl)
             .setUsername("root")
             .setPassword("")
-            .setDriverName("com.mysql.cj.jdbc.Driver");
+            .setDriverName(Driver.class.getName());
         StrategyConfig strategyConfig = new StrategyConfig();
         strategyConfig
             .setCapitalMode(true)

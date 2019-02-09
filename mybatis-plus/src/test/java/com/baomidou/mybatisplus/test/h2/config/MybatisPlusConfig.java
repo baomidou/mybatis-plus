@@ -2,9 +2,14 @@ package com.baomidou.mybatisplus.test.h2.config;
 
 import javax.sql.DataSource;
 
+import com.baomidou.mybatisplus.core.parser.AbstractJsqlParser;
 import com.baomidou.mybatisplus.core.parser.ISqlParser;
 import com.baomidou.mybatisplus.extension.parsers.BlockAttackSqlParser;
 import com.baomidou.mybatisplus.extension.plugins.SqlExplainInterceptor;
+import net.sf.jsqlparser.statement.delete.Delete;
+import net.sf.jsqlparser.statement.insert.Insert;
+import net.sf.jsqlparser.statement.select.SelectBody;
+import net.sf.jsqlparser.statement.update.Update;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.EnumOrdinalTypeHandler;
@@ -56,7 +61,28 @@ public class MybatisPlusConfig {
         PaginationInterceptor pagination = new PaginationInterceptor();
         SqlExplainInterceptor sqlExplainInterceptor = new SqlExplainInterceptor();
         List<ISqlParser> sqlParserList = new ArrayList<>();
-        sqlParserList.add(new BlockAttackSqlParser());
+        sqlParserList.add(new AbstractJsqlParser(){
+    
+            @Override
+            public void processInsert(Insert insert) {
+        
+            }
+    
+            @Override
+            public void processDelete(Delete delete) {
+        
+            }
+    
+            @Override
+            public void processUpdate(Update update) {
+        
+            }
+    
+            @Override
+            public void processSelectBody(SelectBody selectBody) {
+        
+            }
+        });
         sqlExplainInterceptor.setSqlParserList(sqlParserList);
         OptimisticLockerInterceptor optLock = new OptimisticLockerInterceptor();
         sqlSessionFactory.setPlugins(new Interceptor[]{

@@ -26,6 +26,7 @@ import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
+import com.mysql.cj.jdbc.Driver;
 
 import java.util.*;
 
@@ -80,7 +81,7 @@ public class MysqlGenerator extends GeneratorTest {
                         return super.processTypeConvert(globalConfig, fieldType);
                     }
                 })
-                .setDriverName("com.mysql.cj.jdbc.Driver")
+                .setDriverName(Driver.class.getName())
                 .setUsername("root")
                 .setPassword("123456")
                 .setUrl("jdbc:mysql://127.0.0.1:3306/mybatis-plus?characterEncoding=utf8")
