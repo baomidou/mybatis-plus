@@ -52,7 +52,8 @@ class GenerateCode4H2Database extends BaseTest{
         config.setActiveRecord(false)
             .setAuthor("K神带你飞")
             .setOutputDir("d:\\codeGen")
-            .setFileOverride(true);
+            .setFileOverride(true)
+            .setOpen(false);//禁掉弹窗
         if (!serviceClassNameStartWithI) {
             config.setServiceName("%sService");
         }

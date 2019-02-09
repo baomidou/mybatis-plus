@@ -148,6 +148,10 @@ subprojects {
         }
     }
 
+    tasks.withType<Test> {
+        useJUnitPlatform()
+    }
+
     val javadocJar by tasks.registering(Jar::class) {
         dependsOn(JavaPlugin.JAVADOC_TASK_NAME)
         archiveClassifier.set("javadoc")

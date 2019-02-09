@@ -1,6 +1,7 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -31,6 +32,7 @@ class ReflectionKitTest {
     }
 
     @Data
+    @EqualsAndHashCode(callSuper = true)
     private static class B extends A {
 
         private Integer age;
@@ -38,6 +40,7 @@ class ReflectionKitTest {
     }
 
     @Data
+    @EqualsAndHashCode(callSuper = true)
     private static class C extends B {
 
         private String sex;
