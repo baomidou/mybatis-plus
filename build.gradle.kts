@@ -7,7 +7,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.10")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.21")
         classpath("com.netflix.nebula:gradle-extra-configurations-plugin:3.0.3")
     }
 }
@@ -23,15 +23,15 @@ val javaVersion = JavaVersion.VERSION_1_8
 val mybatisSpringVersion = "2.0.0"
 val mybatisVersion = "3.5.0"
 val springVersion = "5.1.4.RELEASE"
-val jsqlparserVersion = "1.3"
-val junitVersion = "5.4.0-RC1" // TODO 5.4.0 预计将与 2019-02-06 发布，届时应替换成正式版本
+val jsqlparserVersion = "1.4"
+val junitVersion = "5.4.0"
 val lombokVersion = "1.18.4"
-val cglibVersion = "3.2.6"
+val cglibVersion = "3.2.10"
 
 // libs
 val lib = mapOf(
-    "kotlin-reflect"             to "org.jetbrains.kotlin:kotlin-reflect:1.3.10",
-    "kotlin-stdlib-jdk8"         to "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.10",
+    "kotlin-reflect"             to "org.jetbrains.kotlin:kotlin-reflect:1.3.21",
+    "kotlin-stdlib-jdk8"         to "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.21",
     "jsqlparser"                 to "com.github.jsqlparser:jsqlparser:$jsqlparserVersion",
     "mybatis-spring"             to "org.mybatis:mybatis-spring:$mybatisSpringVersion",
     "mybatis"                    to "org.mybatis:mybatis:$mybatisVersion",
@@ -44,8 +44,8 @@ val lib = mapOf(
     "lombok"                     to "org.projectlombok:lombok:$lombokVersion",
 
     "javax.servlet-api"          to "javax.servlet:javax.servlet-api:4.0.1",
-    "aspectjweaver"              to "org.aspectj:aspectjweaver:1.8.9",
-    "mockito"                    to "org.mockito:mockito-core:2.13.0",
+    "aspectjweaver"              to "org.aspectj:aspectjweaver:1.9.2",
+    "mockito"                    to "org.mockito:mockito-core:2.24.0",
     "mybatis-ehcache"            to "org.mybatis.caches:mybatis-ehcache:1.1.0",
     "slf4j-api"                  to "org.slf4j:slf4j-api:1.7.25",
     "logback-classic"            to "ch.qos.logback:logback-classic:1.2.3",
@@ -54,22 +54,22 @@ val lib = mapOf(
     "junit-jupiter-api"          to "org.junit.jupiter:junit-jupiter-api:$junitVersion",
     "junit-jupiter-engine"       to "org.junit.jupiter:junit-jupiter-engine:$junitVersion",
     "mockito-all"                to "org.mockito:mockito-all:1.10.19",
-    "fastjson"                   to "com.alibaba:fastjson:1.2.49",
+    "fastjson"                   to "com.alibaba:fastjson:1.2.56",
     "jackson"                    to "com.fasterxml.jackson.core:jackson-databind:2.9.6",
-    "tomcatjdbc"                 to "org.apache.tomcat:tomcat-jdbc:9.0.2",
+    "tomcatjdbc"                 to "org.apache.tomcat:tomcat-jdbc:9.0.16",
     // datasource
-    "hikaricp"                   to "com.zaxxer:HikariCP:2.7.0",
-    "druid"                      to "com.alibaba:druid:1.0.29",
-    "commons-dbcp2"              to "org.apache.commons:commons-dbcp2:2.1.1",
+    "hikaricp"                   to "com.zaxxer:HikariCP:3.3.0",
+    "druid"                      to "com.alibaba:druid:1.1.13",
+    "commons-dbcp2"              to "org.apache.commons:commons-dbcp2:2.5.0",
     "sqlserver"                  to "com.microsoft.sqlserver:sqljdbc4:4.0",
-    "postgresql"                 to "org.postgresql:postgresql:9.4.1212",
+    "postgresql"                 to "org.postgresql:postgresql:42.2.5",
     "oracle"                     to fileTree("libs/ojdbc-11.2.0.3-jdk16.jar"),
-    "h2"                         to "com.h2database:h2:1.4.194",
-    "mysql"                      to "mysql:mysql-connector-java:5.1.38",
+    "h2"                         to "com.h2database:h2:1.4.197",
+    "mysql"                      to "mysql:mysql-connector-java:6.0.6",
     // code generator
     "velocity"                   to "org.apache.velocity:velocity-engine-core:2.0",
-    "freemarker"                 to "org.freemarker:freemarker:2.3.9",
-    "beetl"                      to "com.ibeetl:beetl:2.9.6"
+    "freemarker"                 to "org.freemarker:freemarker:2.3.28",
+    "beetl"                      to "com.ibeetl:beetl:2.9.8"
 )
 // ext
 extra["lib"] = lib
@@ -122,10 +122,10 @@ subprojects {
 
         testAnnotationProcessor("${lib["lombok"]}")
         testCompileOnly("${lib["lombok"]}")
-        testCompileOnly("${lib["mockito-all"]}")
         testImplementation("${lib["junit-jupiter-api"]}")
         testRuntimeOnly("${lib["junit-jupiter-engine"]}")
-        testImplementation("org.mockito:mockito-junit-jupiter:2.23.4")
+        testCompileOnly("${lib["mockito-all"]}")
+        testImplementation("org.mockito:mockito-junit-jupiter:2.24.0")
     }
 
     val sourcesJar by tasks.registering(Jar::class) {
@@ -218,6 +218,9 @@ subprojects {
                     }
 
                     withXml {
+                        fun Any?.asNode() = this as Node
+                        fun Any?.asNodeList() = this as NodeList
+
                         val root = asNode()
                         root["dependencies"].asNodeList().getAt("*").forEach {
                             val dependency = it.asNode()
@@ -244,6 +247,3 @@ subprojects {
         sign(publishing.publications.getByName("mavenJava"))
     }
 }
-
-fun Any?.asNode() = this as Node
-fun Any?.asNodeList() = this as NodeList

@@ -79,7 +79,7 @@ class CodeGeneratorTest {
             .setUrl(dbUrl)
             .setUsername("root")
             .setPassword("")
-            .setDriverName("com.mysql.jdbc.Driver");
+            .setDriverName("com.mysql.cj.jdbc.Driver");
         StrategyConfig strategyConfig = new StrategyConfig();
         strategyConfig
             .setCapitalMode(true)
