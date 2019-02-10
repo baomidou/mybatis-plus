@@ -42,7 +42,7 @@ MyBatis-Plus is an powerful enhanced toolkit of MyBatis for simplify development
 -   Support active record
 -   Support pluggable custom interface
 -   Build-in many useful extensions
-
+-   Thanks for download
 ## Getting started
 
 -   Add MyBatis-Plus dependency
