@@ -48,7 +48,7 @@ class SqlRunnerTest {
     }
 
     @Test
-    @Order(3)
+    @Order(2)
     void testTransactional(){
         try {
             studentService.testSqlRunnerTransactional();

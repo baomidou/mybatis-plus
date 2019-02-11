@@ -1,6 +1,8 @@
 package com.baomidou.mybatisplus.test.h2;
 
+import org.springframework.test.annotation.DirtiesContext;
 
+@DirtiesContext
 public class BaseTest {
 
     protected final String NQQ = "聂秋秋";
