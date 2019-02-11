@@ -1,3 +1,4 @@
+delete from h2student;
 insert into h2student (id, name, age)values (1, 'Tom', 1);
 insert into h2student (id, name, age)values (2, 'Jerry', 1);
 insert into h2student (id, name, age)values (12, '要开除的学生', 1);

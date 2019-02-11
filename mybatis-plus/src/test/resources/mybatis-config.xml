@@ -6,6 +6,7 @@
 
     <settings>
         <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="defaultEnumTypeHandler" value="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
     </settings>
 
     <objectFactory type="com.baomidou.mybatisplus.test.reflection.ExampleObjectFactory">

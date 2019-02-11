@@ -481,24 +481,24 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
                 }
             } else {
                 String[] typeAliasPackageArray = tokenizeToStringArray(this.typeAliasesPackage, ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
-                for (String one : typeAliasPackageArray) {
-                    if (one.contains(StringPool.ASTERISK)) {
-                        String[] convertTypeAliasesPackages = PackageHelper.convertTypeAliasesPackage(one);
+                Stream.of(typeAliasPackageArray).forEach(pkg -> {
+                    if (pkg.contains(StringPool.ASTERISK)) {
+                        String[] convertTypeAliasesPackages = PackageHelper.convertTypeAliasesPackage(pkg);
                         if (ArrayUtils.isEmpty(convertTypeAliasesPackages)) {
-                            LOGGER.warn(() -> "Can't find class in '[" + one + "]' package. Please check your configuration.");
+                            LOGGER.warn(() -> "Can't find class in '[" + pkg + "]' package. Please check your configuration.");
                         } else {
                             typeAliasPackageList.addAll(Arrays.asList(convertTypeAliasesPackages));
                         }
                     } else {
-                        typeAliasPackageList.add(one);
+                        typeAliasPackageList.add(pkg);
                     }
-                }
+                });
             }
-            for (String packageToScan : typeAliasPackageList) {
+            typeAliasPackageList.forEach(packageToScan -> {
                 configuration.getTypeAliasRegistry().registerAliases(packageToScan,
                     typeAliasesSuperType == null ? Object.class : typeAliasesSuperType);
                 LOGGER.debug(() -> "Scanned package: '" + packageToScan + "' for aliases");
-            }
+            });
         }
 
         // TODO 自定义枚举类扫描处理
@@ -515,14 +515,14 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
                     ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
                 Assert.notNull(typeEnumsPackageArray, "not find typeEnumsPackage:" + typeEnumsPackage);
                 classes = new HashSet<>();
-                for (String typePackage : typeEnumsPackageArray) {
+                Stream.of(typeEnumsPackageArray).forEach(typePackage -> {
                     Set<Class> scanTypePackage = PackageHelper.scanTypePackage(typePackage);
                     if (scanTypePackage.isEmpty()) {
                         LOGGER.warn(() -> "Can't find class in '[" + typePackage + "]' package. Please check your configuration.");
                     } else {
                         classes.addAll(PackageHelper.scanTypePackage(typePackage));
                     }
-                }
+                });
             }
             // 取得类型转换注册器
             TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();

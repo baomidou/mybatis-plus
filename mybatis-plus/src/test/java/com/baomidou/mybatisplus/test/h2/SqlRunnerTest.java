@@ -27,7 +27,7 @@ class SqlRunnerTest {
     private IH2StudentService studentService;
 
     @Test
-    @Order(1)
+    @Order(3)
     void testSelectCount(){
         int count = SqlRunner.db().selectCount("select count(1) from h2student");
         Assertions.assertTrue(count > 0);
@@ -41,7 +41,7 @@ class SqlRunnerTest {
 
     @Test
     @Transactional
-    @Order(2)
+    @Order(1)
     void testInsert(){
         Assertions.assertTrue(SqlRunner.db().insert("INSERT INTO h2student ( name, age ) VALUES ( {0}, {1} )","测试学生",2));
         Assertions.assertTrue(SqlRunner.db(H2Student.class).insert("INSERT INTO h2student ( name, age ) VALUES ( {0}, {1} )","测试学生2",3));
