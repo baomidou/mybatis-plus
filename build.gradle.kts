@@ -111,7 +111,7 @@ subprojects {
 
     repositories {
         mavenLocal()
-        maven("http://maven.aliyun.com/nexus/contencommons-dbcpt/groups/public/")
+        maven("https://maven.aliyun.com/nexus/contencommons-dbcpt/groups/public/")
         maven("https://oss.sonatype.org/content/repositories/snapshots/")
         maven("http://www.cameliatk.jp/maven2/repository/thirdparty")
         jcenter()
@@ -211,7 +211,7 @@ subprojects {
                     licenses {
                         license {
                             name.set("The Apache License, Version 2.0")
-                            url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                            url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
                         }
                     }
 

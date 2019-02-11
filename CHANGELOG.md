@@ -599,7 +599,7 @@ mybatis-plus:
 - Wrapper增加ne方法
 - 修复Mybatis动态参数无法生成totalCount问题
 - 代码结构优化，生成器模板优化
-- 解决issus[138,140,142,148,151,152,153,156,157]，具体请查看里程碑[mybatis-plus 2.0.1 计划](http://git.oschina.net/baomidou/mybatis-plus/milestones/2)中所有issus
+- 解决issus[138,140,142,148,151,152,153,156,157]，具体请查看里程碑[mybatis-plus 2.0.1 计划](https://gitee.com/baomidou/mybatis-plus/milestones/2)中所有issus
 
 ## [v2.0.0] 2016.12.11
 
@@ -627,7 +627,7 @@ mybatis-plus:
 - 精简底层Service、Mapper继承结构
 - 不喜欢在XML中写SQL的福音，新增执行SQL方式，具体请查看SqlQuery
 - 优化代码结构
-- 解决issus[95,96,98,100,103,104,108,114,119,121,123,124,125,126,127,128,131,133,134,135]，具体请查看里程碑[mybatis-plus 2.0 计划](http://git.oschina.net/baomidou/mybatis-plus/milestones/1)中所有issus
+- 解决issus[95,96,98,100,103,104,108,114,119,121,123,124,125,126,127,128,131,133,134,135]，具体请查看里程碑[mybatis-plus 2.0 计划](https://gitee.com/baomidou/mybatis-plus/milestones/1)中所有issus
 
 ## [v1.4.9] 2016.10.28
 

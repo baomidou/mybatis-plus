@@ -5,7 +5,7 @@
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -79,7 +79,7 @@ public class EnumAnnotationTypeHandler<E extends Enum<E>> extends BaseTypeHandle
     public E getNullableResult(ResultSet rs, String columnName) throws SQLException {
         return getEnumResult(rs.getObject(columnName));
     }
-    
+
     private E getEnumResult(Object s) {
         if (s == null) {
             return null;
@@ -97,11 +97,11 @@ public class EnumAnnotationTypeHandler<E extends Enum<E>> extends BaseTypeHandle
     public E getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
         return getEnumResult(cs.getObject(columnIndex));
     }
-    
+
     public static Optional<Field> dealEnumType(Class<?> clazz) {
         return clazz.isEnum() ? Arrays.stream(clazz.getDeclaredFields()).filter(field -> field.isAnnotationPresent(EnumValue.class)).findFirst() : Optional.empty();
     }
-    
+
     private Field getField(Class<?> clazz) {
         return Optional.ofNullable(TABLE_FIELD_OF_ENUM_TYPES.get(type)).orElseGet(() -> {
             Field field = dealEnumType(clazz).orElseThrow(() -> new IllegalArgumentException("当前[" + type.getName() + "]枚举类未找到标有@EnumValue注解的字段"));

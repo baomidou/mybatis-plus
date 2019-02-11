@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,12 +16,10 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -30,9 +28,6 @@ import java.nio.channels.Selector;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
 
 /**
  * IOUtils Copy org.apache.commons.io.IOUtils
@@ -300,7 +295,7 @@ public class IOUtils {
      * <pre>
      * Socket socket = null;
      * try {
-     * 	socket = new Socket(&quot;http://www.foo.com/&quot;, 80);
+     * 	socket = new Socket(&quot;https://www.foo.com/&quot;, 443);
      * 	// process socket
      * 	socket.close();
      * } catch (Exception e) {

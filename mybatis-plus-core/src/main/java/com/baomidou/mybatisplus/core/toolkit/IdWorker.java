@@ -5,7 +5,7 @@
  * use this file except in compliance with the License. You may obtain a copy of
  * the License at
  * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
+ * https://www.apache.org/licenses/LICENSE-2.0
  * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
@@ -22,7 +22,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * 高效GUID产生算法(sequence),基于Snowflake实现64位自增ID算法。
- * <p>优化开源项目 http://git.oschina.net/yu120/sequence</p>
+ * <p>优化开源项目 https://gitee.com/yu120/sequence</p>
  *
  * @author hubin
  * @since 2016-08-01
