@@ -535,7 +535,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
                         // 注解方式
                         Optional<Field> optional = EnumAnnotationTypeHandler.dealEnumType(cls);
                         if (optional.isPresent()) {
-                            EnumAnnotationTypeHandler.addEnumType(cls, optional.get());
+                            EnumAnnotationTypeHandler.addEnumType(cls, ReflectionKit.getMethod(cls, optional.get()));
                             typeHandlerRegistry.register(cls, EnumAnnotationTypeHandler.class);
                         }
                     }
