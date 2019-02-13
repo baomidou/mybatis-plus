@@ -7,8 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.FileSystemResource;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -31,7 +31,7 @@ class GeneratePomTest {
     
     @Test
     void test() throws IOException {
-        InputStream inputStream = new FileSystemResource("build/publications/mavenJava/pom-default.xml").getInputStream();
+        InputStream inputStream = new FileInputStream("build/publications/mavenJava/pom-default.xml");
         Jerry.JerryParser jerryParser = new Jerry.JerryParser(new LagartoDOMBuilder().enableXmlMode());
         Jerry doc = jerryParser.parse(FileUtil.readUTFString(inputStream));
         Jerry dependencies = doc.$("dependencies dependency");

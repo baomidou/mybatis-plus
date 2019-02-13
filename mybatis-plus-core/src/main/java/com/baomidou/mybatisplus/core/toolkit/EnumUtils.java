@@ -16,11 +16,11 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
 
-import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-import com.baomidou.mybatisplus.core.enums.IEnum;
 
 /**
  * 枚举处理工具类
@@ -35,38 +35,26 @@ public class EnumUtils {
      *
      * @param enumClass 枚举类
      * @param value     枚举值
+     * @param method    取值方法
      * @param <E>       对应枚举
      * @return
      */
-    public static <E extends Enum<?> & IEnum> E valueOf(Class<E> enumClass, Object value) {
+    public static <E extends Enum<?>> E valueOf(Class<E> enumClass, Object value, Method method) {
         E[] es = enumClass.getEnumConstants();
         for (E e : es) {
-            Object evalue = e.getValue();
+            Object evalue;
+            try {
+                method.setAccessible(true);
+                evalue = method.invoke(e);
+            } catch (IllegalAccessException | InvocationTargetException e1) {
+                throw ExceptionUtils.mpe("Error: NoSuchMethod in %s.  Cause:", e, enumClass.getName());
+            }
             if (value instanceof Number && evalue instanceof Number
                 && new BigDecimal(String.valueOf(value)).compareTo(new BigDecimal(String.valueOf(evalue))) == 0) {
                 return e;
             }
             if (Objects.equals(evalue, value)) {
                 return e;
-            }
-        }
-        return null;
-    }
-
-    public static <E extends Enum<?>> E valueOf(Class<E> enumClass, Object value, Field enumField) {
-        E[] es = enumClass.getEnumConstants();
-        for (E e : es) {
-            try {
-                Object evalue = enumField.get(e);
-                if (value instanceof Number && evalue instanceof Number
-                    && new BigDecimal(String.valueOf(value)).compareTo(new BigDecimal(String.valueOf(evalue))) == 0) {
-                    return e;
-                }
-                if (Objects.equals(evalue, value)) {
-                    return e;
-                }
-            } catch (IllegalAccessException ignored) {
-
             }
         }
         return null;

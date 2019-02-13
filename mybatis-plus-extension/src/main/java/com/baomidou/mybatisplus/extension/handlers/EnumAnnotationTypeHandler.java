@@ -15,6 +15,15 @@
  */
 package com.baomidou.mybatisplus.extension.handlers;
 
+import com.baomidou.mybatisplus.annotation.EnumValue;
+import com.baomidou.mybatisplus.core.toolkit.EnumUtils;
+import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.type.BaseTypeHandler;
+import org.apache.ibatis.type.JdbcType;
+
 import java.lang.reflect.Field;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
@@ -24,14 +33,6 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-
-import com.baomidou.mybatisplus.annotation.EnumValue;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.type.BaseTypeHandler;
-import org.apache.ibatis.type.JdbcType;
-
-import com.baomidou.mybatisplus.core.toolkit.EnumUtils;
 
 /**
  * EnumValue 注解自定义枚举属性转换器
@@ -54,9 +55,9 @@ public class EnumAnnotationTypeHandler<E extends Enum<E>> extends BaseTypeHandle
 
     private static final Map<Class<?>, Field> TABLE_FIELD_OF_ENUM_TYPES = new ConcurrentHashMap<>();
 
-    public static void addEnumType(Class<?> clazz, Field tableFieldOfEnumType) {
-        tableFieldOfEnumType.setAccessible(true);
-        TABLE_FIELD_OF_ENUM_TYPES.put(clazz, tableFieldOfEnumType);
+    public static void addEnumType(Class<?> clazz, Field field) {
+        field.setAccessible(true);
+        TABLE_FIELD_OF_ENUM_TYPES.put(clazz, field);
     }
 
 
@@ -84,8 +85,7 @@ public class EnumAnnotationTypeHandler<E extends Enum<E>> extends BaseTypeHandle
         if (s == null) {
             return null;
         }
-        Field tableEnumField = getField(type);
-        return EnumUtils.valueOf(type, s, tableEnumField);
+        return EnumUtils.valueOf(type, s, ReflectionKit.getMethod(type, getField(type)));
     }
 
     @Override

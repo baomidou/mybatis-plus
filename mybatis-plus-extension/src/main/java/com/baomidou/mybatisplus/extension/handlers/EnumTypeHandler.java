@@ -15,16 +15,17 @@
  */
 package com.baomidou.mybatisplus.extension.handlers;
 
-import java.sql.CallableStatement;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import com.baomidou.mybatisplus.core.enums.IEnum;
+import com.baomidou.mybatisplus.core.toolkit.EnumUtils;
 
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 
-import com.baomidou.mybatisplus.core.enums.IEnum;
-import com.baomidou.mybatisplus.core.toolkit.EnumUtils;
+import java.lang.reflect.Method;
+import java.sql.CallableStatement;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * 自定义枚举属性转换器
@@ -36,6 +37,8 @@ public class EnumTypeHandler<E extends Enum<?> & IEnum> extends BaseTypeHandler<
 
     private Class<E> type;
 
+    private Method method;
+
     public EnumTypeHandler(Class<E> type) {
         if (type == null) {
             throw new IllegalArgumentException("Type argument cannot be null");
@@ -44,6 +47,11 @@ public class EnumTypeHandler<E extends Enum<?> & IEnum> extends BaseTypeHandler<
             throw new IllegalArgumentException("当前[" + type.getName() + "]枚举类未实现" + IEnum.class.getName() + "接口");
         }
         this.type = type;
+        try {
+            method = type.getMethod("getValue");
+        } catch (NoSuchMethodException e) {
+            throw new IllegalArgumentException("当前[" + type.getName() + "]枚举类未找到getValue方法");
+        }
     }
 
     @Override
@@ -61,7 +69,7 @@ public class EnumTypeHandler<E extends Enum<?> & IEnum> extends BaseTypeHandler<
         if (null == rs.getObject(columnName) && rs.wasNull()) {
             return null;
         }
-        return EnumUtils.valueOf(type, rs.getObject(columnName));
+        return EnumUtils.valueOf(type, rs.getObject(columnName), method);
     }
 
     @Override
@@ -69,7 +77,7 @@ public class EnumTypeHandler<E extends Enum<?> & IEnum> extends BaseTypeHandler<
         if (null == rs.getObject(columnIndex) && rs.wasNull()) {
             return null;
         }
-        return EnumUtils.valueOf(type, rs.getObject(columnIndex));
+        return EnumUtils.valueOf(type, rs.getObject(columnIndex), method);
     }
 
     @Override
@@ -77,6 +85,6 @@ public class EnumTypeHandler<E extends Enum<?> & IEnum> extends BaseTypeHandler<
         if (null == cs.getObject(columnIndex) && cs.wasNull()) {
             return null;
         }
-        return EnumUtils.valueOf(type, cs.getObject(columnIndex));
+        return EnumUtils.valueOf(type, cs.getObject(columnIndex), method);
     }
 }

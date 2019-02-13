@@ -206,4 +206,12 @@ public class ReflectionKit {
         superFieldList.stream().filter(field -> !fieldMap.containsKey(field.getName())).forEach(fieldList::add);
         return fieldList;
     }
+
+    public static Method getMethod(Class<?> cls, Field field) {
+        try {
+            return cls.getDeclaredMethod(ReflectionKit.getMethodCapitalize(field, field.getName()));
+        } catch (NoSuchMethodException e) {
+            throw ExceptionUtils.mpe("Error: NoSuchMethod in %s.  Cause:", e, cls.getName());
+        }
+    }
 }
