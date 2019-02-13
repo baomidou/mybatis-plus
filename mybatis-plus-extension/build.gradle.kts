@@ -15,7 +15,6 @@ dependencies {
 
     testImplementation("${lib["spring-web"]}")
     testImplementation("${lib["javax.servlet-api"]}")
-    testImplementation("${lib["spring-test"]}")
     testImplementation("${lib["fastjson"]}")
 
     testImplementation("${lib["hikaricp"]}")

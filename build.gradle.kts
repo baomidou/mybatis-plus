@@ -121,13 +121,14 @@ subprojects {
         annotationProcessor("${lib["lombok"]}")
         compileOnly("${lib["lombok"]}")
 
-        testAnnotationProcessor("${lib["lombok"]}")
         testCompileOnly("${lib["lombok"]}")
-        testImplementation("${lib["junit-jupiter-api"]}")
-        testRuntimeOnly("${lib["junit-jupiter-engine"]}")
+        testAnnotationProcessor("${lib["lombok"]}")
         testCompileOnly("${lib["mockito-all"]}")
-        testImplementation("org.mockito:mockito-junit-jupiter:2.24.0")
+        testRuntimeOnly("${lib["junit-jupiter-engine"]}")
         testImplementation("${lib["lagarto"]}")
+        testImplementation("${lib["spring-test"]}")
+        testImplementation("${lib["junit-jupiter-api"]}")
+        testImplementation("org.mockito:mockito-junit-jupiter:2.24.0")
     }
 
     val sourcesJar by tasks.registering(Jar::class) {
