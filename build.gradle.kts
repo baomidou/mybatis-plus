@@ -151,7 +151,7 @@ subprojects {
     }
 
     tasks.withType<Test> {
-        dependsOn("generatePomFileForMavenJavaPublication")
+        dependsOn("cleanTest", "generatePomFileForMavenJavaPublication")
         useJUnitPlatform()
         exclude("**/generator/**")
         exclude("**/postgres/**")
