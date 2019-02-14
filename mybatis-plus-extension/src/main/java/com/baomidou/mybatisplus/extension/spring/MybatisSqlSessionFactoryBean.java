@@ -533,10 +533,10 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
                         typeHandlerRegistry.register(cls, EnumTypeHandler.class);
                     } else {
                         // 注解方式
-                        Optional<Field> optional = EnumAnnotationTypeHandler.dealEnumType(cls);
+                        Optional<Field> optional = EnumTypeHandler.dealEnumType(cls);
                         if (optional.isPresent()) {
-                            EnumAnnotationTypeHandler.addEnumType(cls, ReflectionKit.getMethod(cls, optional.get()));
-                            typeHandlerRegistry.register(cls, EnumAnnotationTypeHandler.class);
+                            EnumTypeHandler.addEnumType(cls, ReflectionKit.getMethod(cls, optional.get()));
+                            typeHandlerRegistry.register(cls, EnumTypeHandler.class);
                         }
                     }
                 }

@@ -42,7 +42,9 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author yuxiaobin
  * @date 2018-08-30
+ * @deprecated  3.0.8 {@link com.baomidou.mybatisplus.extension.handlers.EnumTypeHandler}
  */
+@Deprecated
 public class EnumAnnotationTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
 
     private final Class<E> type;
@@ -65,7 +67,7 @@ public class EnumAnnotationTypeHandler<E extends Enum<E>> extends BaseTypeHandle
 
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, Enum parameter, JdbcType jdbcType) throws SQLException {
-        Method method = getField(type);
+        Method method = getMethod(type);
         try {
             method.setAccessible(true);
             if (jdbcType == null) {
@@ -90,7 +92,7 @@ public class EnumAnnotationTypeHandler<E extends Enum<E>> extends BaseTypeHandle
         if (s == null) {
             return null;
         }
-        return EnumUtils.valueOf(type, s, getField(type));
+        return EnumUtils.valueOf(type, s, getMethod(type));
     }
 
     @Override
@@ -107,7 +109,7 @@ public class EnumAnnotationTypeHandler<E extends Enum<E>> extends BaseTypeHandle
         return clazz.isEnum() ? Arrays.stream(clazz.getDeclaredFields()).filter(field -> field.isAnnotationPresent(EnumValue.class)).findFirst() : Optional.empty();
     }
 
-    private Method getField(Class<?> clazz) {
+    private Method getMethod(Class<?> clazz) {
         return Optional.ofNullable(TABLE_FIELD_OF_ENUM_TYPES.get(type)).orElseGet(() -> {
             Field field = dealEnumType(clazz).orElseThrow(() -> new IllegalArgumentException("当前[" + type.getName() + "]枚举类未找到标有@EnumValue注解的字段"));
             Method method = ReflectionKit.getMethod(clazz, field);
