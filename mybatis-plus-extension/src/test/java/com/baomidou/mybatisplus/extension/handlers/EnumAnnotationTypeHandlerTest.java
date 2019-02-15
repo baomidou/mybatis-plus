@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -44,7 +45,7 @@ public class EnumAnnotationTypeHandlerTest extends BaseTypeHandlerTest {
     @Override
     public void getResultFromResultSetByColumnName() throws Exception {
         when(resultSet.getObject("column")).thenReturn(null);
-        assertEquals(null, HANDLER.getResult(resultSet, "column"));
+        assertNull(HANDLER.getResult(resultSet, "column"));
         when(resultSet.getObject("column")).thenReturn(1);
         assertEquals(SexEnum.MAN, HANDLER.getResult(resultSet, "column"));
         when(resultSet.getObject("column")).thenReturn(2);
@@ -59,7 +60,7 @@ public class EnumAnnotationTypeHandlerTest extends BaseTypeHandlerTest {
         when(resultSet.getObject(2)).thenReturn(2);
         assertEquals(SexEnum.WO_MAN, HANDLER.getResult(resultSet, 2));
         when(resultSet.getObject(3)).thenReturn(null);
-        assertEquals(null, HANDLER.getResult(resultSet, 3));
+        assertNull(HANDLER.getResult(resultSet, 3));
     }
 
     @Test
@@ -70,7 +71,7 @@ public class EnumAnnotationTypeHandlerTest extends BaseTypeHandlerTest {
         when(callableStatement.getObject(2)).thenReturn(2);
         assertEquals(SexEnum.WO_MAN, HANDLER.getResult(callableStatement, 2));
         when(callableStatement.getObject(3)).thenReturn(null);
-        assertEquals(null, HANDLER.getResult(callableStatement, 3));
+        assertNull(HANDLER.getResult(callableStatement, 3));
 
     }
 

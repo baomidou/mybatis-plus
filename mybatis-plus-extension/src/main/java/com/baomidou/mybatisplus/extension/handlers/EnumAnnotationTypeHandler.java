@@ -46,28 +46,29 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Deprecated
 public class EnumAnnotationTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
-
+    
+    private static final Log LOGGER = LogFactory.getLog(EnumAnnotationTypeHandler.class);
+    
+    private static final Map<Class<?>, Method> TABLE_METHOD_OF_ENUM_TYPES = new ConcurrentHashMap<>();
+    
     private final Class<E> type;
+    
+    private final Method method;
 
     public EnumAnnotationTypeHandler(Class<E> type) {
         if (type == null) {
             throw new IllegalArgumentException("Type argument cannot be null");
         }
         this.type = type;
+        this.method = TABLE_METHOD_OF_ENUM_TYPES.computeIfAbsent(type, k-> {
+            Field field = dealEnumType(this.type).orElseThrow(() -> new IllegalArgumentException(String.format("Could not find @EnumValue in Class: %s.", type.getName())));
+            return ReflectionKit.getMethod(this.type, field);
+        });
     }
 
-    private static final Log LOGGER = LogFactory.getLog(EnumAnnotationTypeHandler.class);
-
-    private static final Map<Class<?>, Method> TABLE_FIELD_OF_ENUM_TYPES = new ConcurrentHashMap<>();
-
-    public static void addEnumType(Class<?> clazz, Method method) {
-        TABLE_FIELD_OF_ENUM_TYPES.put(clazz, method);
-    }
-
-
+    @SuppressWarnings("Duplicates")
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, Enum parameter, JdbcType jdbcType) throws SQLException {
-        Method method = getMethod(type);
         try {
             method.setAccessible(true);
             if (jdbcType == null) {
@@ -92,7 +93,7 @@ public class EnumAnnotationTypeHandler<E extends Enum<E>> extends BaseTypeHandle
         if (s == null) {
             return null;
         }
-        return EnumUtils.valueOf(type, s, getMethod(type));
+        return EnumUtils.valueOf(type, s, method);
     }
 
     @Override
@@ -108,13 +109,5 @@ public class EnumAnnotationTypeHandler<E extends Enum<E>> extends BaseTypeHandle
     public static Optional<Field> dealEnumType(Class<?> clazz) {
         return clazz.isEnum() ? Arrays.stream(clazz.getDeclaredFields()).filter(field -> field.isAnnotationPresent(EnumValue.class)).findFirst() : Optional.empty();
     }
-
-    private Method getMethod(Class<?> clazz) {
-        return Optional.ofNullable(TABLE_FIELD_OF_ENUM_TYPES.get(type)).orElseGet(() -> {
-            Field field = dealEnumType(clazz).orElseThrow(() -> new IllegalArgumentException("当前[" + type.getName() + "]枚举类未找到标有@EnumValue注解的字段"));
-            Method method = ReflectionKit.getMethod(clazz, field);
-            addEnumType(clazz, method);
-            return method;
-        });
-    }
+    
 }

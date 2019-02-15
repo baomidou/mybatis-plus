@@ -21,7 +21,6 @@ import com.baomidou.mybatisplus.core.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.enums.IEnum;
 import com.baomidou.mybatisplus.core.toolkit.*;
-import com.baomidou.mybatisplus.extension.handlers.EnumAnnotationTypeHandler;
 import com.baomidou.mybatisplus.extension.handlers.EnumTypeHandler;
 import com.baomidou.mybatisplus.extension.toolkit.AopUtils;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
@@ -58,7 +57,6 @@ import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
@@ -526,21 +524,10 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             }
             // 取得类型转换注册器
             TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
-            classes.forEach(cls ->{
-                if (cls.isEnum()) {
-                    if (IEnum.class.isAssignableFrom(cls)) {
-                        // 接口方式
-                        typeHandlerRegistry.register(cls, EnumTypeHandler.class);
-                    } else {
-                        // 注解方式
-                        Optional<Field> optional = EnumTypeHandler.dealEnumType(cls);
-                        if (optional.isPresent()) {
-                            EnumTypeHandler.addEnumType(cls, ReflectionKit.getMethod(cls, optional.get()));
-                            typeHandlerRegistry.register(cls, EnumTypeHandler.class);
-                        }
-                    }
-                }
-            });
+            classes.stream()
+                .filter(Class::isEnum)
+                .filter(cls -> IEnum.class.isAssignableFrom(cls) || EnumTypeHandler.dealEnumType(cls).isPresent())
+                .forEach(cls -> typeHandlerRegistry.register(cls, EnumTypeHandler.class));
         }
 
         if (!isEmpty(this.typeAliases)) {
