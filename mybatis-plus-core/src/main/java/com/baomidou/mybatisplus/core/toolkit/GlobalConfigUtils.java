@@ -52,7 +52,7 @@ public class GlobalConfigUtils {
     private static final Map<String, GlobalConfig> GLOBAL_CONFIG = new ConcurrentHashMap<>();
 
     /**
-     * 获取当前的SqlSessionFactory
+     * 获取当前的 SqlSessionFactory
      *
      * @param clazz 实体类
      */

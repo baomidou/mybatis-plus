@@ -108,9 +108,9 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     /**
      * 批量插入
      *
-     * @param entityList ignore
-     * @param batchSize ignore
-     * @return ignore
+     * @param entityList 被插入的实体列表
+     * @param batchSize 批量大小，每多少个实体向数据库刷写一次
+     * @return 批量插入是否成功
      */
     @Transactional(rollbackFor = Exception.class)
     @Override
