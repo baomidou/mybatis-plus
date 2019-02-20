@@ -15,15 +15,20 @@
  */
 package com.baomidou.mybatisplus.generator.config;
 
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.generator.config.po.TableFill;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
+
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.util.List;
 
 /**
  * 策略配置项
@@ -46,7 +51,7 @@ public class StrategyConfig {
     /**
      * 数据库表映射到实体的命名策略
      */
-    private NamingStrategy naming = NamingStrategy.nochange;
+    private NamingStrategy naming = NamingStrategy.no_change;
     /**
      * 数据库表字段映射到实体的命名策略
      * <p>未指定按照 naming 执行</p>
@@ -65,6 +70,7 @@ public class StrategyConfig {
     /**
      * 自定义继承的Entity类全称，带包名
      */
+    @Setter(AccessLevel.NONE)
     private String superEntityClass;
     /**
      * 自定义基础的Entity类，公共字段
@@ -220,6 +226,66 @@ public class StrategyConfig {
     public StrategyConfig setFieldPrefix(String... fieldPrefixs) {
         this.fieldPrefix = fieldPrefixs;
         return this;
+    }
+
+    public StrategyConfig setSuperEntityClass(String superEntityClass) {
+        this.superEntityClass = superEntityClass;
+        return this;
+    }
+
+
+    /**
+     * <p>
+     * 设置实体父类，该设置自动识别公共字段<br/>
+     * 属性 superEntityColumns 改配置无需再次配置
+     * </p>
+     * <p>
+     * 注意！！字段策略要在设置实体父类之前有效
+     * </p>
+     *
+     * @param clazz 实体父类 Class
+     * @return
+     */
+    public StrategyConfig setSuperEntityClass(Class<?> clazz) {
+        return setSuperEntityClass(clazz, null);
+    }
+
+    /**
+     * <p>
+     * 设置实体父类，该设置自动识别公共字段<br/>
+     * 属性 superEntityColumns 改配置无需再次配置
+     * </p>
+     *
+     * @param clazz        实体父类 Class
+     * @param columnNaming 字段命名策略
+     * @return
+     */
+    public StrategyConfig setSuperEntityClass(Class<?> clazz, NamingStrategy columnNaming) {
+        if (null != columnNaming) {
+            this.columnNaming = columnNaming;
+        }
+        this.superEntityClass = clazz.getSimpleName();
+        convertSuperEntityColumns(clazz);
+        return this;
+    }
+
+    /**
+     * <p>
+     * 父类 Class 反射属性转换为公共字段
+     * </p>
+     *
+     * @param clazz 实体父类 Class
+     */
+    protected void convertSuperEntityColumns(Class<?> clazz) {
+        List<Field> fields = TableInfoHelper.getAllFields(clazz);
+        if (CollectionUtils.isNotEmpty(fields)) {
+            this.superEntityColumns = fields.stream().map(field -> {
+                if (null == columnNaming || columnNaming == NamingStrategy.no_change) {
+                    return field.getName();
+                }
+                return StringUtils.camelToUnderline(field.getName());
+            }).collect(Collectors.toSet()).stream().toArray(String[]::new);
+        }
     }
 
     /**

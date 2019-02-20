@@ -15,8 +15,9 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toCollection;
+import static java.util.stream.Collectors.toMap;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -33,12 +34,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toCollection;
-import static java.util.stream.Collectors.toMap;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 
 /**
+ * <p>
  * 反射工具类
+ * </p>
  *
  * @author Caratacus
  * @since 2016-09-22
@@ -52,7 +54,9 @@ public class ReflectionKit {
     private static final Map<Class, List<Field>> classFieldCache = new ConcurrentHashMap<>();
 
     /**
+     * <p>
      * 反射 method 方法名，例如 getId
+     * </p>
      *
      * @param field
      * @param str   属性字符串内容
@@ -64,7 +68,9 @@ public class ReflectionKit {
     }
 
     /**
+     * <p>
      * 反射 method 方法名，例如 setVersion
+     * </p>
      *
      * @param field Field
      * @param str   String JavaBean类的version属性名
@@ -80,9 +86,11 @@ public class ReflectionKit {
     }
 
     /**
+     * <p>
      * 获取 public get方法的值
+     * </p>
      *
-     * @param cls ignore
+     * @param cls    ignore
      * @param entity 实体
      * @param str    属性字符串内容
      * @return Object
@@ -103,7 +111,9 @@ public class ReflectionKit {
     }
 
     /**
+     * <p>
      * 获取 public get方法的值
+     * </p>
      *
      * @param entity 实体
      * @param str    属性字符串内容
@@ -117,7 +127,9 @@ public class ReflectionKit {
     }
 
     /**
+     * <p>
      * 反射对象获取泛型
+     * </p>
      *
      * @param clazz 对象
      * @param index 泛型所在位置
@@ -144,7 +156,9 @@ public class ReflectionKit {
     }
 
     /**
+     * <p>
      * 获取该类的所有属性列表
+     * </p>
      *
      * @param clazz 反射类
      */
@@ -154,7 +168,9 @@ public class ReflectionKit {
     }
 
     /**
+     * <p>
      * 获取该类的所有属性列表
+     * </p>
      *
      * @param clazz 反射类
      */
@@ -173,7 +189,9 @@ public class ReflectionKit {
     }
 
     /**
+     * <p>
      * 获取该类的所有属性列表
+     * </p>
      *
      * @param clazz 反射类
      */
@@ -195,7 +213,9 @@ public class ReflectionKit {
     }
 
     /**
+     * <p>
      * 排序重置父类属性
+     * </p>
      *
      * @param fieldList      子类属性
      * @param superFieldList 父类属性

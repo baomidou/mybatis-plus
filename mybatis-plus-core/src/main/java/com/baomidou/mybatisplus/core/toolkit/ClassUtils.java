@@ -22,7 +22,9 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * <p>
  * ClassUtils
+ * </p>
  *
  * @author Caratacus
  * @author HCL
@@ -44,7 +46,9 @@ public final class ClassUtils {
     }
 
     /**
+     * <p>
      * 判断是否为代理对象
+     * </p>
      *
      * @param clazz 传入 class 对象
      * @return 如果对象class是代理 class，返回 true
@@ -61,7 +65,9 @@ public final class ClassUtils {
     }
 
     /**
+     * <p>
      * 获取当前对象的 class
+     * </p>
      *
      * @param clazz 传入
      * @return 如果是代理的class，返回父 class，否则返回自身
@@ -71,7 +77,9 @@ public final class ClassUtils {
     }
 
     /**
+     * <p>
      * 获取当前对象的class
+     * </p>
      *
      * @param object 对象
      * @return 返回对象的 user class
@@ -82,9 +90,12 @@ public final class ClassUtils {
     }
 
     /**
+     * <p>
      * 根据指定的 class ， 实例化一个对象，根据构造参数来实例化
+     * </p>
      * <p>
      * 在 java9 及其之后的版本 Class.newInstance() 方法已被废弃
+     * </p>
      *
      * @param clazz 需要实例化的对象
      * @param <T>   类型，由输入类型决定
@@ -101,7 +112,9 @@ public final class ClassUtils {
     }
 
     /**
+     * <p>
      * 请仅在确定类存在的情况下调用该方法
+     * </p>
      *
      * @param name 类名称
      * @return 返回转换后的 Class

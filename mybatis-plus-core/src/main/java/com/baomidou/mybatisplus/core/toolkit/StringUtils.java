@@ -15,8 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
-import com.baomidou.mybatisplus.core.toolkit.support.BiIntFunction;
+import static java.util.stream.Collectors.joining;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.Blob;
@@ -27,10 +26,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.util.stream.Collectors.joining;
+import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
+import com.baomidou.mybatisplus.core.toolkit.support.BiIntFunction;
 
 /**
+ * <p>
  * String 工具类
+ * </p>
  *
  * @author D.Yang
  * @since 2016-08-18
@@ -693,7 +695,6 @@ public class StringUtils {
     }
 
     /**
-     *
      * 删除字符前缀之后,首字母小写,之后字符大小写的不变
      * <p>StringUtils.removePrefixAfterPrefixToLower( "isUser", 2 )     = user</p>
      * <p>StringUtils.removePrefixAfterPrefixToLower( "isUserInfo", 2 ) = userInfo</p>
@@ -707,7 +708,6 @@ public class StringUtils {
     }
 
     /**
-     *
      * 驼峰转连字符
      * <p>StringUtils.camelToHyphen( "managerAdminUserService" ) = manager-admin-user-service</p>
      *

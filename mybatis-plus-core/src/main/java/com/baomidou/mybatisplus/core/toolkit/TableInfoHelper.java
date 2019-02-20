@@ -15,11 +15,15 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import com.baomidou.mybatisplus.annotation.*;
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
-import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import static java.util.stream.Collectors.toList;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
@@ -32,17 +36,20 @@ import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.scripting.LanguageDriver;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static java.util.stream.Collectors.toList;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.KeySequence;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
+import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
 
 /**
+ * <p>
  * 实体类反射表辅助类
+ * </p>
  *
  * @author hubin sjy
  * @since 2016-09-09
@@ -62,7 +69,9 @@ public class TableInfoHelper {
     private static final String DEFAULT_ID_NAME = "id";
 
     /**
+     * <p>
      * 获取实体映射表信息
+     * </p>
      *
      * @param clazz 反射实体类
      * @return 数据库表反射信息
@@ -88,7 +97,9 @@ public class TableInfoHelper {
     }
 
     /**
+     * <p>
      * 获取所有实体映射表信息
+     * </p>
      *
      * @return 数据库表反射信息集合
      */
@@ -97,7 +108,9 @@ public class TableInfoHelper {
     }
 
     /**
+     * <p>
      * 实体类反射获取表信息【初始化】
+     * </p>
      *
      * @param clazz 反射实体类
      * @return 数据库表反射信息
@@ -139,7 +152,9 @@ public class TableInfoHelper {
     }
 
     /**
+     * <p>
      * 初始化 表数据库类型,表名,resultMap
+     * </p>
      *
      * @param clazz        实体类
      * @param globalConfig 全局配置
@@ -187,7 +202,9 @@ public class TableInfoHelper {
     }
 
     /**
+     * <p>
      * 初始化 表主键,表字段
+     * </p>
      *
      * @param clazz        实体类
      * @param globalConfig 全局配置
@@ -240,7 +257,9 @@ public class TableInfoHelper {
     }
 
     /**
+     * <p>
      * 判断主键注解是否存在
+     * </p>
      *
      * @param list 字段列表
      * @return true 为存在 @TableId 注解;
@@ -256,7 +275,9 @@ public class TableInfoHelper {
     }
 
     /**
+     * <p>
      * 主键属性初始化
+     * </p>
      *
      * @param dbConfig  全局配置信息
      * @param tableInfo 表信息
@@ -305,7 +326,9 @@ public class TableInfoHelper {
     }
 
     /**
+     * <p>
      * 主键属性初始化
+     * </p>
      *
      * @param tableInfo 表信息
      * @param field     字段
@@ -334,7 +357,9 @@ public class TableInfoHelper {
     }
 
     /**
+     * <p>
      * 字段属性初始化
+     * </p>
      *
      * @param dbConfig  数据库全局配置
      * @param tableInfo 表信息
@@ -373,7 +398,9 @@ public class TableInfoHelper {
     }
 
     /**
+     * <p>
      * 判定 related 的值
+     * </p>
      *
      * @param underCamel 驼峰命名
      * @param property   属性名
@@ -405,7 +432,9 @@ public class TableInfoHelper {
     }
 
     /**
+     * <p>
      * 获取该类的所有属性列表
+     * </p>
      *
      * @param clazz 反射类
      * @return 属性集合

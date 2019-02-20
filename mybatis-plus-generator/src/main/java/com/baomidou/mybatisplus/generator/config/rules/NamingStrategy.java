@@ -31,7 +31,7 @@ public enum NamingStrategy {
     /**
      * 不做任何改变，原样输出
      */
-    nochange,
+    no_change,
     /**
      * 下划线转驼峰命名
      */
@@ -68,7 +68,7 @@ public enum NamingStrategy {
     /**
      * 去掉指定的前缀
      *
-     * @param name ignore
+     * @param name   ignore
      * @param prefix ignore
      * @return ignore
      */
@@ -89,7 +89,7 @@ public enum NamingStrategy {
     /**
      * 判断是否包含prefix
      *
-     * @param name ignore
+     * @param name   ignore
      * @param prefix ignore
      * @return ignore
      */
@@ -103,7 +103,7 @@ public enum NamingStrategy {
     /**
      * 去掉下划线前缀且将后半部分转成驼峰格式
      *
-     * @param name ignore
+     * @param name        ignore
      * @param tablePrefix ignore
      * @return ignore
      */
