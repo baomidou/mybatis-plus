@@ -80,15 +80,20 @@ class ${entity} : Serializable {
     <% if(logicDeleteFieldName!'' == field.name){ %>
     @TableLogic
     <% } %>
+    <% if(field.propertyType == 'Integer'){ %>
+    var ${field.propertyName}: Int ? = null
+    <% }else{ %>
     var ${field.propertyName}: ${field.propertyType} ? = null
+    <% } %>
 <% } %>
 <% /** -----------END 字段循环遍历----------- **/ %>
 
 <% if(entityColumnConstant){ %>
+    companion object {
    <% for(field in table.fields){ %>
-    public static final String ${strutil.toUpperCase(field.name)} = "${field.name}"
-
+    const val ${strutil.toUpperCase(field.name)} : String = "${field.name}"
    <% } %>
+    }
 <% } %>
 <% if(activeRecord){ %>
     @Override

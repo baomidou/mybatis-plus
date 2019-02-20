@@ -71,7 +71,11 @@ class ${entity} : Serializable {
 #if(${logicDeleteFieldName}==${field.name})
     @TableLogic
 #end
+    #if(${field.propertyType} == "Integer")
+    var ${field.propertyName}: Int? = null
+    #else
     var ${field.propertyName}: ${field.propertyType}? = null
+    #end
 #end
 ## ----------  END 字段循环遍历  ----------
 
