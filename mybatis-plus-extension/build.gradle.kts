@@ -12,6 +12,7 @@ dependencies {
     implementation("${lib["spring-context-support"]}")
     implementation("${lib["spring-jdbc"]}")
     implementation("${lib["slf4j-api"]}")
+    implementation("${lib["p6spy"]}")
 
     testImplementation("${lib["spring-web"]}")
     testImplementation("${lib["javax.servlet-api"]}")
