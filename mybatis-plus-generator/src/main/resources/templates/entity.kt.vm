@@ -3,7 +3,10 @@ package ${package.Entity};
 #foreach($pkg in ${table.importPackages})
 import ${pkg};
 #end
-
+#if(${swagger2})
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+#end
 /**
  * <p>
  * $!{table.comment}
@@ -14,6 +17,9 @@ import ${pkg};
  */
 #if(${table.convert})
 @TableName("${table.name}")
+#end
+#if(${swagger2})
+@ApiModel(value="${entity}对象", description="$!{table.comment}")
 #end
 #if(${superEntityClass})
 class ${entity} : ${superEntityClass}#if(${activeRecord})<${entity}>#end() {
@@ -29,9 +35,13 @@ class ${entity} : Serializable {
 #set($keyPropertyName=${field.propertyName})
 #end
 #if("$!field.comment" != "")
+    #if(${swagger2})
+    @ApiModelProperty(value = "${field.comment}")
+    #else
     /**
      * ${field.comment}
      */
+    #end
 #end
 #if(${field.keyFlag})
 ## 主键
