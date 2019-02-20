@@ -13,4 +13,5 @@ dependencies {
     testImplementation("${lib["h2"]}")
     testImplementation("${lib["mysql"]}")
     testImplementation("${lib["logback-classic"]}")
+    testImplementation("${lib["swagger-annotations"]}")
 }

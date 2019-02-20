@@ -1,15 +1,10 @@
-package ${package.Entity};
+package ${package.Entity}
 <% for(pkg in table.importPackages){ %>
-import ${pkg};
+import ${pkg}
 <% } %>
 <% if(swagger2){ %>
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-<% } %>
-<% if(entityLombokModel){ %>
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
+import io.swagger.annotations.ApiModel
+import io.swagger.annotations.ApiModelProperty
 <% } %>
 /**
  * <p>
@@ -19,15 +14,6 @@ import lombok.experimental.Accessors;
  * @author ${author}
  * @since ${date}
  */
-<% if(entityLombokModel){ %>
-@Data
-    <% if(isNotEmpty(superEntityClass)){ %>
-@EqualsAndHashCode(callSuper = true)
-    <% }else{ %>
-@EqualsAndHashCode(callSuper = false)
-    <% } %>
-@Accessors(chain = true)
-<% } %>
 <% if(table.convert){ %>
 @TableName("${table.name}")
 <% } %>
@@ -35,14 +21,13 @@ import lombok.experimental.Accessors;
 @ApiModel(value="${entity}对象", description="${table.comment!''}")
 <% } %>
 <% if(isNotEmpty(superEntityClass)){ %>
-public class ${entity} extends ${superEntityClass}<% if(activeRecord){ %><${entity}><%}%>{
+class ${entity} : ${superEntityClass}<% if(activeRecord){ %><${entity}><%}%>{
 <% }else if(activeRecord){ %>
-public class ${entity} extends Model<${entity}> {
+class ${entity} : Model<${entity}> {
 <% }else{ %>
-public class ${entity} implements Serializable {
+class ${entity} : Serializable {
 <% } %>
 
-    private static final long serialVersionUID = 1L;
 <% /** -----------BEGIN 字段循环遍历----------- **/ %>
 <% for(field in table.fields){ %>
     <%
@@ -95,57 +80,31 @@ public class ${entity} implements Serializable {
     <% if(logicDeleteFieldName!'' == field.name){ %>
     @TableLogic
     <% } %>
-    private ${field.propertyType} ${field.propertyName};
+    var ${field.propertyName}: ${field.propertyType} ? = null
 <% } %>
 <% /** -----------END 字段循环遍历----------- **/ %>
 
-<% if(!entityLombokModel){ %>
-    <% for(field in table.fields){ %>
-        <%
-        var getprefix ='';
-        if(field.propertyType=='boolean'){
-            getprefix='is';
-        }else{
-            getprefix='get';
-        }
-        %>
-    public ${field.propertyType} ${getprefix}${field.capitalName}() {
-        return ${field.propertyName};
-    }
-
-        <% if(entityBuilderModel){ %>
-    public ${entity} set${field.capitalName}(${field.propertyType} ${field.propertyName}) {
-        <% }else{ %>
-    public void set${field.capitalName}(${field.propertyType} ${field.propertyName}) {
-        <% } %>
-        this.${field.propertyName} = ${field.propertyName};
-        <% if(entityBuilderModel){ %>
-        return this;
-        <% } %>
-    }
-
-    <% } %>
-<% } %>
 <% if(entityColumnConstant){ %>
    <% for(field in table.fields){ %>
-    public static final String ${strutil.toUpperCase(field.name)} = "${field.name}";
+    public static final String ${strutil.toUpperCase(field.name)} = "${field.name}"
 
    <% } %>
 <% } %>
 <% if(activeRecord){ %>
     @Override
-    protected Serializable pkVal() {
+    override fun pkVal(): Serializable? {
     <% if(isNotEmpty(keyPropertyName)){ %>
-        return this.${keyPropertyName};
+        return this.${keyPropertyName}
     <% }else{ %>
         return null;
     <% } %>
     }
 
 <% } %>
+
 <% if(!entityLombokModel){ %>
     @Override
-    public String toString() {
+    override fun toString(): String  {
         return "${entity}{" +
     <% for(field in table.fields){ %>
        <% if(fieldLP.index==0){ %>
@@ -154,7 +113,7 @@ public class ${entity} implements Serializable {
         ", ${field.propertyName}=" + ${field.propertyName} +
        <% } %>
     <% } %>
-        "}";
+        "}"
     }
 <% } %>
 }

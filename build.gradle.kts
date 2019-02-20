@@ -70,7 +70,8 @@ val lib = mapOf(
     "velocity"                   to "org.apache.velocity:velocity-engine-core:2.0",
     "freemarker"                 to "org.freemarker:freemarker:2.3.28",
     "beetl"                      to "com.ibeetl:beetl:2.9.8",
-    "lagarto"                    to "org.jodd:jodd-lagarto:5.0.7"
+    "lagarto"                    to "org.jodd:jodd-lagarto:5.0.7",
+    "swagger-annotations"        to "io.swagger:swagger-annotations:1.5.21"
 )
 // ext
 extra["lib"] = lib
