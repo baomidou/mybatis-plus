@@ -24,10 +24,7 @@ import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 class WrapperTest {
 
@@ -190,6 +187,12 @@ class WrapperTest {
         queryWrapper.lambda().eq(User::getName, "sss2");
         logSqlSegment("测试 PluralLambda", queryWrapper);
         logParams(queryWrapper);
+    }
+
+    @Test
+    void testInEmptyColl() {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<User>().in("xxx", Collections.emptyList());
+        logSqlSegment("测试 empty 的 coll", queryWrapper);
     }
 
     private List<Object> getList() {

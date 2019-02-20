@@ -243,17 +243,11 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
 
     @Override
     public Children in(boolean condition, R column, Collection<?> coll) {
-        if (CollectionUtils.isEmpty(coll)) {
-            return typedThis;
-        }
         return doIt(condition, () -> columnToString(column), IN, inExpression(coll));
     }
 
     @Override
     public Children notIn(boolean condition, R column, Collection<?> coll) {
-        if (CollectionUtils.isEmpty(coll)) {
-            return typedThis;
-        }
         return not(condition).in(condition, column, coll);
     }
 
