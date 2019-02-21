@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.extension.spring;
 
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.SystemClock;
 import org.apache.ibatis.binding.MapperRegistry;
@@ -40,7 +38,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
-
 
 /**
  * 切莫用于生产环境（后果自负）
@@ -101,7 +98,6 @@ public class MybatisMapperRefresh implements Runnable {
 
     @Override
     public void run() {
-        final GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
         /*
          * 启动 XML 热加载
          */
@@ -144,7 +140,6 @@ public class MybatisMapperRefresh implements Runnable {
                         for (String filePath : fileSet) {
                             File file = new File(filePath);
                             if (file.isFile() && file.lastModified() > beforeTime) {
-                                globalConfig.setRefresh(true);
                                 List<Resource> removeList = JAR_MAPPER.get(filePath);
                                 if (removeList != null && !removeList.isEmpty()) {
                                     for (Resource resource : removeList) {
@@ -155,10 +150,7 @@ public class MybatisMapperRefresh implements Runnable {
                                 }
                             }
                         }
-                        if (globalConfig.isRefresh()) {
-                            beforeTime = SystemClock.now();
-                        }
-                        globalConfig.setRefresh(true);
+                        beforeTime = SystemClock.now();
                     } catch (Exception exception) {
                         exception.printStackTrace();
                     }
@@ -214,7 +206,7 @@ public class MybatisMapperRefresh implements Runnable {
     /**
      * 清理parameterMap
      *
-     * @param list ignore
+     * @param list      ignore
      * @param namespace ignore
      */
     private void cleanParameterMap(List<XNode> list, String namespace) {
@@ -227,7 +219,7 @@ public class MybatisMapperRefresh implements Runnable {
     /**
      * 清理resultMap
      *
-     * @param list ignore
+     * @param list      ignore
      * @param namespace ignore
      */
     private void cleanResultMap(List<XNode> list, String namespace) {
@@ -259,7 +251,7 @@ public class MybatisMapperRefresh implements Runnable {
     /**
      * 清理selectKey
      *
-     * @param list ignore
+     * @param list      ignore
      * @param namespace ignore
      */
     private void cleanKeyGenerators(List<XNode> list, String namespace) {
@@ -273,7 +265,7 @@ public class MybatisMapperRefresh implements Runnable {
     /**
      * 清理sql节点缓存
      *
-     * @param list ignore
+     * @param list      ignore
      * @param namespace ignore
      */
     private void cleanSqlElement(List<XNode> list, String namespace) {

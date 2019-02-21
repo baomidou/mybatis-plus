@@ -58,6 +58,7 @@ val lib = mapOf(
     "jackson"                    to "com.fasterxml.jackson.core:jackson-databind:2.9.6",
     "tomcatjdbc"                 to "org.apache.tomcat:tomcat-jdbc:9.0.16",
     // datasource
+    "p6spy"                      to "p6spy:p6spy:3.8.1",
     "hikaricp"                   to "com.zaxxer:HikariCP:3.3.0",
     "druid"                      to "com.alibaba:druid:1.1.13",
     "commons-dbcp2"              to "org.apache.commons:commons-dbcp2:2.5.0",

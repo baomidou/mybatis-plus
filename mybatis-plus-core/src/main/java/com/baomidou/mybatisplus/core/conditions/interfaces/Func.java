@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.conditions.interfaces;
 
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
@@ -75,29 +73,6 @@ public interface Func<Children, R> extends Serializable {
     }
 
     /**
-     * ignore
-     */
-    default Children inOrThrow(R column, Collection<?> value) {
-        return inOrThrow(true, column, value);
-    }
-
-    /**
-     * 字段 IN (value.get(0), value.get(1), ...)
-     * <p>例: in("id", Arrays.asList(1, 2, 3, 4, 5))</p>
-     *
-     * <li> 如果集合为 empty 则直接抛出异常 </li>
-     *
-     * @param condition 执行条件
-     * @param column    字段
-     * @param coll      数据集合
-     * @return children
-     */
-    default Children inOrThrow(boolean condition, R column, Collection<?> coll) {
-        Assert.notEmpty(coll, "coll could not be empty!");
-        return in(condition, column, coll);
-    }
-
-    /**
      * 字段 IN (value.get(0), value.get(1), ...)
      * <p>例: in("id", Arrays.asList(1, 2, 3, 4, 5))</p>
      *
@@ -109,29 +84,6 @@ public interface Func<Children, R> extends Serializable {
      * @return children
      */
     Children in(boolean condition, R column, Collection<?> coll);
-
-    /**
-     * ignore
-     */
-    default Children inOrThrow(R column, Object... values) {
-        return inOrThrow(true, column, values);
-    }
-
-    /**
-     * 字段 IN (value.get(0), value.get(1), ...)
-     * <p>例: in("id", Arrays.asList(1, 2, 3, 4, 5))</p>
-     *
-     * <li> 如果数组为 empty 则直接抛出异常 </li>
-     *
-     * @param condition 执行条件
-     * @param column    字段
-     * @param values    数据数组
-     * @return children
-     */
-    default Children inOrThrow(boolean condition, R column, Object... values) {
-        Assert.notEmpty(values, "values could not be empty!");
-        return in(condition, column, Arrays.stream(values).collect(toList()));
-    }
 
     /**
      * ignore
@@ -164,29 +116,6 @@ public interface Func<Children, R> extends Serializable {
     }
 
     /**
-     * ignore
-     */
-    default Children notInOrThrow(R column, Collection<?> value) {
-        return notInOrThrow(true, column, value);
-    }
-
-    /**
-     * 字段 IN (value.get(0), value.get(1), ...)
-     * <p>例: in("id", Arrays.asList(1, 2, 3, 4, 5))</p>
-     *
-     * <li> 如果集合为 empty 则直接抛出异常 </li>
-     *
-     * @param condition 执行条件
-     * @param column    字段
-     * @param coll      数据集合
-     * @return children
-     */
-    default Children notInOrThrow(boolean condition, R column, Collection<?> coll) {
-        Assert.notEmpty(coll, "coll could not be empty!");
-        return notIn(condition, column, coll);
-    }
-
-    /**
      * 字段 NOT IN (value.get(0), value.get(1), ...)
      * <p>例: notIn("id", Arrays.asList(1, 2, 3, 4, 5))</p>
      *
@@ -202,29 +131,6 @@ public interface Func<Children, R> extends Serializable {
      */
     default Children notIn(R column, Object... value) {
         return notIn(true, column, value);
-    }
-
-    /**
-     * ignore
-     */
-    default Children notInOrThrow(R column, Object... values) {
-        return notInOrThrow(true, column, values);
-    }
-
-    /**
-     * 字段 IN (value.get(0), value.get(1), ...)
-     * <p>例: in("id", Arrays.asList(1, 2, 3, 4, 5))</p>
-     *
-     * <li> 如果数组为 empty 则直接抛出异常 </li>
-     *
-     * @param condition 执行条件
-     * @param column    字段
-     * @param values    数据数组
-     * @return children
-     */
-    default Children notInOrThrow(boolean condition, R column, Object... values) {
-        Assert.notEmpty(values, "values could not be empty!");
-        return notIn(condition, column, Arrays.stream(values).collect(toList()));
     }
 
     /**

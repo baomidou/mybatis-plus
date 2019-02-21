@@ -32,6 +32,8 @@ import java.util.List;
  */
 public final class ClassUtils {
 
+    private static final char PACKAGE_SEPARATOR = '.';
+
     /**
      * 代理 class 的名称
      */
@@ -127,4 +129,31 @@ public final class ClassUtils {
         }
     }
 
+
+    /**
+     * Determine the name of the package of the given class,
+     * e.g. "java.lang" for the {@code java.lang.String} class.
+     *
+     * @param clazz the class
+     * @return the package name, or the empty String if the class
+     * is defined in the default package
+     */
+    public static String getPackageName(Class<?> clazz) {
+        Assert.notNull(clazz, "Class must not be null");
+        return getPackageName(clazz.getName());
+    }
+
+    /**
+     * Determine the name of the package of the given fully-qualified class name,
+     * e.g. "java.lang" for the {@code java.lang.String} class name.
+     *
+     * @param fqClassName the fully-qualified class name
+     * @return the package name, or the empty String if the class
+     * is defined in the default package
+     */
+    public static String getPackageName(String fqClassName) {
+        Assert.notNull(fqClassName, "Class name must not be null");
+        int lastDotIndex = fqClassName.lastIndexOf(PACKAGE_SEPARATOR);
+        return (lastDotIndex != -1 ? fqClassName.substring(0, lastDotIndex) : "");
+    }
 }

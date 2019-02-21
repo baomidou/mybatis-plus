@@ -49,12 +49,6 @@ public class GlobalConfig implements Serializable {
      */
     private boolean banner = true;
     /**
-     * 是否刷新 mapper
-     * @deprecated since 2018-11-26
-     */
-    @Deprecated
-    private boolean refresh = false;
-    /**
      * 缓存 Sql 解析初始化
      */
     private boolean sqlParserCache = false;
