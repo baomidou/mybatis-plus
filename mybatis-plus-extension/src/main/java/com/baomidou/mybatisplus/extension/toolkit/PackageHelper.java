@@ -15,7 +15,10 @@
  */
 package com.baomidou.mybatisplus.extension.toolkit;
 
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -24,9 +27,7 @@ import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.util.ClassUtils;
 
-import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 
 /**
  * 包扫描辅助类
@@ -62,12 +63,12 @@ public class PackageHelper {
                 for (Resource resource : resources) {
                     if (resource.isReadable()) {
                         metadataReader = metadataReaderFactory.getMetadataReader(resource);
-                        set.add(Class.forName(metadataReader.getClassMetadata().getClassName()).getPackage().getName());
+                        set.add(ClassUtils.getPackageName(metadataReader.getClassMetadata().getClassName()));
                     }
                 }
             }
             if (!set.isEmpty()) {
-                return set.toArray(new String[] {});
+                return set.toArray(new String[]{});
             }
             return new String[0];
         } catch (Exception e) {
