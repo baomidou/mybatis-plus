@@ -3,6 +3,7 @@ package com.baomidou.mybatisplus.test.generator.entity;
 import java.util.Date;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * <p>
@@ -13,6 +14,7 @@ import lombok.Data;
  * @since 2019-02-20
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 public class BaseEntity extends SuperEntity {
 
     private Boolean deleted;
