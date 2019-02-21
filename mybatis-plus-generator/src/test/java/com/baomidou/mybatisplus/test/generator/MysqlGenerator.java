@@ -15,11 +15,22 @@
  */
 package com.baomidou.mybatisplus.test.generator;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.generator.AutoGenerator;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
-import com.baomidou.mybatisplus.generator.config.*;
+import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
+import com.baomidou.mybatisplus.generator.config.FileOutConfig;
+import com.baomidou.mybatisplus.generator.config.GlobalConfig;
+import com.baomidou.mybatisplus.generator.config.PackageConfig;
+import com.baomidou.mybatisplus.generator.config.StrategyConfig;
+import com.baomidou.mybatisplus.generator.config.TemplateConfig;
 import com.baomidou.mybatisplus.generator.config.converts.MySqlTypeConvert;
 import com.baomidou.mybatisplus.generator.config.po.TableFill;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
@@ -27,8 +38,6 @@ import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 import com.mysql.cj.jdbc.Driver;
-
-import java.util.*;
 
 /**
  * 代码生成器演示
@@ -51,7 +60,7 @@ public class MysqlGenerator extends GeneratorTest {
         AutoGenerator mpg = new AutoGenerator().setGlobalConfig(
             // 全局配置
             new GlobalConfig()
-                .setOutputDir("/develop/code/")//输出目录
+                .setOutputDir("../")//输出目录
                 .setFileOverride(true)// 是否覆盖文件
                 .setActiveRecord(true)// 开启 activeRecord 模式
                 .setEnableCache(false)// XML 二级缓存
@@ -83,8 +92,8 @@ public class MysqlGenerator extends GeneratorTest {
                 })
                 .setDriverName(Driver.class.getName())
                 .setUsername("root")
-                .setPassword("123456")
-                .setUrl("jdbc:mysql://127.0.0.1:3306/mybatis-plus?characterEncoding=utf8")
+                .setPassword("1q2w3e4r")
+                .setUrl("jdbc:mysql://127.0.0.1:3306/mybatis-plus?useUnicode=true&allowPublicKeyRetrieval=true&useSSL=false&characterEncoding=utf8")
         ).setStrategy(
             // 策略配置
             new StrategyConfig()
@@ -99,6 +108,7 @@ public class MysqlGenerator extends GeneratorTest {
                 // 自定义实体，公共字段
                 .setSuperEntityColumns(new String[]{"test_id"})
                 .setTableFillList(tableFillList)
+                .setEntityBooleanColumnRemoveIsPrefix(true)
             // 自定义 mapper 父类
             // .setSuperMapperClass("com.baomidou.demo.TestMapper")
             // 自定义 service 父类
@@ -139,7 +149,7 @@ public class MysqlGenerator extends GeneratorTest {
                 // 自定义输出文件目录
                 @Override
                 public String outputFile(TableInfo tableInfo) {
-                    return "/develop/code/xml/" + tableInfo.getEntityName() + ".xml";
+                    return "../com/xml/" + tableInfo.getEntityName() + ".xml";
                 }
             }))
         ).setTemplate(

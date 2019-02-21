@@ -66,7 +66,7 @@ val lib = mapOf(
     "postgresql"                 to "org.postgresql:postgresql:42.2.5",
     "oracle"                     to fileTree("libs/ojdbc-11.2.0.3-jdk16.jar"),
     "h2"                         to "com.h2database:h2:1.4.197",
-    "mysql"                      to "mysql:mysql-connector-java:6.0.6",
+    "mysql"                      to "mysql:mysql-connector-java:8.0.15",
     // code generator
     "velocity"                   to "org.apache.velocity:velocity-engine-core:2.0",
     "freemarker"                 to "org.freemarker:freemarker:2.3.28",

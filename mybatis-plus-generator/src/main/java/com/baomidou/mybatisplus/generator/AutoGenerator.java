@@ -161,8 +161,10 @@ public class AutoGenerator {
             if (config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix()) {
                 tableInfo.getFields().stream().filter(field -> "boolean".equalsIgnoreCase(field.getPropertyType()))
                     .filter(field -> field.getPropertyName().startsWith("is"))
-                    .forEach(field -> field.setPropertyName(config.getStrategyConfig(),
-                        StringUtils.removePrefixAfterPrefixToLower(field.getPropertyName(), 2)));
+                    .forEach(field -> {
+                        field.setConvert(true);
+                        field.setPropertyName(StringUtils.removePrefixAfterPrefixToLower(field.getPropertyName(), 2));
+                    });
             }
         }
         return config.setTableInfoList(tableList);
