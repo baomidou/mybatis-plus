@@ -15,26 +15,26 @@
  */
 package com.baomidou.mybatisplus.generator;
 
-import java.io.Serializable;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.Version;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
-import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
-import com.baomidou.mybatisplus.generator.config.GlobalConfig;
-import com.baomidou.mybatisplus.generator.config.PackageConfig;
-import com.baomidou.mybatisplus.generator.config.StrategyConfig;
-import com.baomidou.mybatisplus.generator.config.TemplateConfig;
+import com.baomidou.mybatisplus.generator.config.*;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.engine.AbstractTemplateEngine;
 import com.baomidou.mybatisplus.generator.engine.VelocityTemplateEngine;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * 生成文件
@@ -42,9 +42,11 @@ import com.baomidou.mybatisplus.generator.engine.VelocityTemplateEngine;
  * @author YangHu, tangguo, hubin
  * @since 2016-08-30
  */
+@Data
+@Accessors(chain = true)
 public class AutoGenerator {
-
     private static final Logger logger = LoggerFactory.getLogger(AutoGenerator.class);
+
     /**
      * 配置信息
      */
@@ -52,6 +54,8 @@ public class AutoGenerator {
     /**
      * 注入配置
      */
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     protected InjectionConfig injectionConfig;
     /**
      * 数据源配置
@@ -170,77 +174,12 @@ public class AutoGenerator {
         return config.setTableInfoList(tableList);
     }
 
-    // ==================================  相关配置  ==================================
-
-    public DataSourceConfig getDataSource() {
-        return dataSource;
-    }
-
-    public AutoGenerator setDataSource(DataSourceConfig dataSource) {
-        this.dataSource = dataSource;
-        return this;
-    }
-
-    public StrategyConfig getStrategy() {
-        return strategy;
-    }
-
-    public AutoGenerator setStrategy(StrategyConfig strategy) {
-        this.strategy = strategy;
-        return this;
-    }
-
-    public PackageConfig getPackageInfo() {
-        return packageInfo;
-    }
-
-    public AutoGenerator setPackageInfo(PackageConfig packageInfo) {
-        this.packageInfo = packageInfo;
-        return this;
-    }
-
-    public TemplateConfig getTemplate() {
-        return template;
-    }
-
-    public AutoGenerator setTemplate(TemplateConfig template) {
-        this.template = template;
-        return this;
-    }
-
-    public ConfigBuilder getConfig() {
-        return config;
-    }
-
-    public AutoGenerator setConfig(ConfigBuilder config) {
-        this.config = config;
-        return this;
-    }
-
-    public GlobalConfig getGlobalConfig() {
-        return globalConfig;
-    }
-
-    public AutoGenerator setGlobalConfig(GlobalConfig globalConfig) {
-        this.globalConfig = globalConfig;
-        return this;
-    }
-
     public InjectionConfig getCfg() {
         return injectionConfig;
     }
 
     public AutoGenerator setCfg(InjectionConfig injectionConfig) {
         this.injectionConfig = injectionConfig;
-        return this;
-    }
-
-    public AbstractTemplateEngine getTemplateEngine() {
-        return templateEngine;
-    }
-
-    public AutoGenerator setTemplateEngine(AbstractTemplateEngine templateEngine) {
-        this.templateEngine = templateEngine;
         return this;
     }
 }
