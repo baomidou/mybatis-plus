@@ -22,6 +22,7 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 
@@ -138,5 +139,19 @@ public class MybatisConfiguration extends Configuration {
     @Override
     public boolean hasMapper(Class<?> type) {
         return mybatisMapperRegistry.hasMapper(type);
+    }
+    
+    /**
+     * 指定动态SQL生成的默认语言
+     *
+     * @param driver LanguageDriver
+     */
+    @Override
+    public void setDefaultScriptingLanguage(Class<? extends LanguageDriver> driver) {
+        if (driver == null) {
+            //todo 替换动态SQL生成的默认语言为自己的。
+            driver = MybatisXMLLanguageDriver.class;
+        }
+        getLanguageRegistry().setDefaultDriverClass(driver);
     }
 }
