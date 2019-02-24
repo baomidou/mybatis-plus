@@ -5,7 +5,6 @@ dependencies {
 
     api(project(":mybatis-plus-core"))
     api("${lib["mybatis-spring"]}")
-    api("${lib["mybatis"]}")
 
     implementation("${lib["kotlin-stdlib-jdk8"]}")
     implementation("${lib["kotlin-reflect"]}")
