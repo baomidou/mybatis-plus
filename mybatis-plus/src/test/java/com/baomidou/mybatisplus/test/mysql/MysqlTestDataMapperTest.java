@@ -416,13 +416,23 @@ class MysqlTestDataMapperTest {
     }
 
     @Test
-    void e_4testChain() {
+    void e_4testChainQuery() {
         new LambdaQueryChainWrapper<>(mysqlMapper).select(MysqlData::getId, MysqlData::getYaHoStr)
             .list().forEach(System.out::println);
 
+        new LambdaQueryChainWrapper<>(mysqlMapper).select(MysqlData::getId, MysqlData::getYaHoStr)
+            .eq(MysqlData::getId, 19).one();
+
+        new LambdaQueryChainWrapper<>(mysqlMapper).count();
+
+        new LambdaQueryChainWrapper<>(mysqlMapper).select(MysqlData::getId, MysqlData::getYaHoStr)
+            .page(new Page<>(1, 2));
+    }
+
+    @Test
+    void e_5testChainUpdate() {
         new LambdaUpdateChainWrapper<>(mysqlMapper).set(MysqlData::getYaHoStr, "123456").update();
 
-        new LambdaQueryChainWrapper<>(mysqlMapper).select(MysqlData::getId, MysqlData::getYaHoStr)
-            .list().forEach(System.out::println);
+        new LambdaUpdateChainWrapper<>(mysqlMapper).eq(MysqlData::getYaHoStr, "111").remove();
     }
 }

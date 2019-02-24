@@ -15,11 +15,10 @@
  */
 package com.baomidou.mybatisplus.extension.service.additional.query;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.service.additional.ChainWrapper;
+
+import java.util.List;
 
 /**
  * 具有查询方法的定义
@@ -64,13 +63,5 @@ public interface ChainQuery<T> extends ChainWrapper<T> {
      */
     default IPage<T> page(IPage<T> page) {
         return getBaseMapper().selectPage(page, getWrapper());
-    }
-
-    /**
-     * use {@link IService#update()} or {@link IService#lambdaUpdate()}
-     */
-    @Deprecated
-    default int delete() {
-        return getBaseMapper().delete(getWrapper());
     }
 }
