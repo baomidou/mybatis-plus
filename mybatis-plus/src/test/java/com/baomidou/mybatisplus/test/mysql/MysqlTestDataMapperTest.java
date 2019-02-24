@@ -389,8 +389,9 @@ class MysqlTestDataMapperTest {
     }
 
     @Test
-    void e_1testNestPage() {
+    void e_1testNest() {
         ArrayList<Object> list = new ArrayList<>();
+        list.add(1);
         LambdaQueryWrapper<CommonData> wrapper = Wrappers.<CommonData>lambdaQuery()
             .isNotNull(CommonData::getId).and(i -> i.eq(CommonData::getId, 1)
                 .or().in(CommonData::getTestInt, list));
@@ -400,7 +401,6 @@ class MysqlTestDataMapperTest {
         System.out.println(wrapper.getSqlSegment());
         System.out.println(wrapper.getSqlSegment());
         commonMapper.selectList(wrapper);
-//        commonMapper.selectPage(new Page<>(1, 10), wrapper);
     }
 
     @Test
