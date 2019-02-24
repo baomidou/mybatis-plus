@@ -6,7 +6,6 @@ dependencies {
     api("${lib["jsqlparser"]}")
 
     implementation("${lib["cglib"]}")
-    implementation("${lib["spring-aop"]}")
 
     testImplementation("${lib["mybatis-ehcache"]}")
     testImplementation("${lib["logback-classic"]}")
