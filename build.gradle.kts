@@ -79,7 +79,7 @@ extra["lib"] = lib
 
 allprojects {
     group = "com.baomidou"
-    version = "3.0.8.4-SNAPSHOT"
+    version = "3.1.0"
 }
 
 description = "Mybatis 增强工具包 - 只做增强不做改变，简化CRUD操作"
@@ -179,7 +179,7 @@ subprojects {
                 val passWord = System.getProperty("ps")
                 val releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
                 val snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-                setUrl(if (version.toString().endsWith("RELEASE")) releasesRepoUrl else snapshotsRepoUrl)
+                setUrl(if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl)
 
                 credentials {
                     username = userName
