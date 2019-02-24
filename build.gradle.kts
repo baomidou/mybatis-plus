@@ -134,7 +134,7 @@ subprojects {
 
     val sourcesJar by tasks.registering(Jar::class) {
         dependsOn(JavaPlugin.CLASSES_TASK_NAME)
-        archiveClassifier.set("source")
+        archiveClassifier.set("sources")
         from(sourceSets["main"].allJava)
     }
 
