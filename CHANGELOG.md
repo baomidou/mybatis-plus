@@ -11,7 +11,6 @@
 - 修复 生成器 is 开头字段无法自动注解问题
 - 修复 生成器 Serializable Active 模式继承父类包自动导入异常问题
 - 修复 生成器 支持公共字段自动读取父类 class 属性问题
-- 修复 `generator` 的 kotlin 模式下 swagger 模式无效问题
 - 修复 枚举(注解方式)转换器在存储过程中转换失败
 - 修复 beetl 模板逻辑删除注解错误问题
 - 修复 通过 `mybatis-config.xml` 方式构建的 `Configuration` 的 `mapUnderscoreToCamelCase` 默认值非 `true` 的问题
@@ -19,9 +18,8 @@
 - 修复 `mapper` 使用纯注解下可能触发的重试机制在个别情况下启动报错的问题
 - 优化 支持指定 `defaultEnumTypeHandler` 来进行通用枚举处理
 - 优化 从 hibernate copy 最新代码到 SqlFormatter
-- **移除 `wrapper` 的 `in` 以及 `notIn` 方法内部对入参 `coll` 及 `动态数组` 的非empty判断**
-> 注意: 如果以前有直接使用以上的方法的入参可能为 empty 的现在会产出如下sql: `in ()` 或 `not in ()` 导致报错
-- 移除 `wrapper` 的 `notInOrThrow` 和 `inOrThrow` 方法,使用新版的 `in` 以及 `notIn` 效果一样,异常则为sql异常
+- 移除 `wrapper` 的 `in` 以及 `notIn` 方法内部对入参 `coll` 及 `动态数组` 的非empty判断(**注意: 如果以前有直接使用以上的方法的入参可能为 empty 的现在会产出如下sql: `in ()` 或 `not in ()` 导致报错**)
+- 移除 `wrapper` 的 `notInOrThrow` 和 `inOrThrow` 方法(**使用新版的 `in` 以及 `notIn` 效果一样,异常则为sql异常**)
 - 移除 `IService` 的 `query` 链式调用的 `delete` 操作
 - 移除 xml 热加载相关配置项,只保留`MybatisMapperRefresh`该类并打上过时标志
 - 日常优化
