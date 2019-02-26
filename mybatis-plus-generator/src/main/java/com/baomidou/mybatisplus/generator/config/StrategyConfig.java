@@ -19,6 +19,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
@@ -264,7 +265,13 @@ public class StrategyConfig {
         if (null != columnNaming) {
             this.columnNaming = columnNaming;
         }
-        this.superEntityClass = clazz.getSimpleName();
+        String pkg = ClassUtils.getPackageName(clazz);
+        if (StringUtils.isNotEmpty(pkg)) {
+            pkg += "." + clazz.getSimpleName();
+        } else {
+            pkg = clazz.getSimpleName();
+        }
+        this.superEntityClass = pkg;
         convertSuperEntityColumns(clazz);
         return this;
     }
