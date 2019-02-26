@@ -34,4 +34,17 @@ public interface ISqlParser {
      */
     SqlInfo parser(MetaObject metaObject, String sql);
 
+    /**
+     * <p>
+     * 是否执行 SQL 解析 parser 方法
+     * </p>
+     *
+     * @param metaObject 元对象
+     * @param sql        SQL 语句
+     * @return SQL 信息
+     */
+    default boolean doFilter(MetaObject metaObject, String sql) {
+        // 默认 true 执行 SQL 解析, 可重写实现控制逻辑
+        return true;
+    }
 }

@@ -15,19 +15,21 @@
  */
 package com.baomidou.mybatisplus.extension.handlers;
 
+import java.util.List;
+
+import org.apache.ibatis.executor.statement.StatementHandler;
+import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.reflection.SystemMetaObject;
+
 import com.baomidou.mybatisplus.core.parser.ISqlParser;
 import com.baomidou.mybatisplus.core.parser.ISqlParserFilter;
 import com.baomidou.mybatisplus.core.parser.SqlInfo;
 import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
+
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.apache.ibatis.executor.statement.StatementHandler;
-import org.apache.ibatis.reflection.MetaObject;
-import org.apache.ibatis.reflection.SystemMetaObject;
-
-import java.util.List;
 
 /**
  * SQL 解析处理器
@@ -63,10 +65,12 @@ public abstract class AbstractSqlParserHandler {
                 int flag = 0;
                 String originalSql = (String) metaObject.getValue(PluginUtils.DELEGATE_BOUNDSQL_SQL);
                 for (ISqlParser sqlParser : this.sqlParserList) {
-                    SqlInfo sqlInfo = sqlParser.parser(metaObject, originalSql);
-                    if (null != sqlInfo) {
-                        originalSql = sqlInfo.getSql();
-                        ++flag;
+                    if (sqlParser.doFilter(metaObject, originalSql)) {
+                        SqlInfo sqlInfo = sqlParser.parser(metaObject, originalSql);
+                        if (null != sqlInfo) {
+                            originalSql = sqlInfo.getSql();
+                            ++flag;
+                        }
                     }
                 }
                 if (flag >= 1) {
