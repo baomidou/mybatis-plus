@@ -56,10 +56,11 @@ class WrapperTest {
 
     @Test
     void test1() {
-        QueryWrapper<User> ew = new QueryWrapper<User>()
-            .eq("xxx", 123)
-            .and(i -> i.eq("andx", 65444).le("ande", 66666))
-            .ne("xxx", 222);
+        QueryWrapper<User> ew = new QueryWrapper<User>() {{
+            eq("xxx", 123);
+            and(i -> i.eq("andx", 65444).le("ande", 66666));
+            ne("xxx", 222);
+        }};
         log(ew.getSqlSegment());
         log(ew.getSqlSegment());
         ew.gt("x22", 333);
