@@ -30,7 +30,7 @@ import com.baomidou.mybatisplus.extension.service.additional.query.ChainQuery;
  * @author miemie
  * @since 2018-12-19
  */
-@SuppressWarnings("serial")
+@SuppressWarnings({ "serial", "unchecked" })
 public class LambdaQueryChainWrapper<T> extends AbstractChainWrapper<T, SFunction<T, ?>, LambdaQueryChainWrapper<T>, LambdaQueryWrapper<T>>
     implements ChainQuery<T>, Query<LambdaQueryChainWrapper<T>, T, SFunction<T, ?>> {
 

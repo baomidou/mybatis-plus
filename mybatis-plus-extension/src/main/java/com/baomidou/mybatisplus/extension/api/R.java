@@ -35,6 +35,11 @@ import lombok.experimental.Accessors;
 public class R<T> implements Serializable {
 
     /**
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	/**
      * 业务错误码
      */
     private long code;

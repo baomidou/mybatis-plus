@@ -52,9 +52,6 @@ class GeneratePomTest {
         Dependency cglib = dependenciesMap.get("cglib");
         Assertions.assertEquals("compile", cglib.getScope());
         Assertions.assertTrue(cglib.isOptional());
-        Dependency aop = dependenciesMap.get("spring-aop");
-        Assertions.assertEquals("compile", aop.getScope());
-        Assertions.assertTrue(aop.isOptional());
     }
     
 }

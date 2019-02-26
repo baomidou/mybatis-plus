@@ -25,7 +25,12 @@ import lombok.NoArgsConstructor;
 public class H2Student extends Model<H2Student> {
 
 
-    public H2Student(Long id, String name, Integer age) {
+    /**
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = 1290051894415073936L;
+
+	public H2Student(Long id, String name, Integer age) {
         this.id = id;
         this.name = name;
         this.age = age;

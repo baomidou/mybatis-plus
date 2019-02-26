@@ -14,7 +14,12 @@ import org.slf4j.LoggerFactory;
  */
 public class ExampleObjectFactory extends DefaultObjectFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExampleObjectFactory.class);
+    /**
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = -2878759377109110945L;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ExampleObjectFactory.class);
 
     public <T> T create(Class<T> type) {
         LOGGER.debug("生成一个对象 type = [" + type + "]");

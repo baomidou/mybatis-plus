@@ -19,5 +19,5 @@ public interface MysqlDataMapper extends MyBaseMapper<MysqlData> {
 
     @ResultType(MysqlData.class)
     @Select("select * from mysql_data ${ew.customSqlSegment}")
-    List<MysqlData> getAll(@Param(Constants.WRAPPER) Wrapper wrapper);
+    List<MysqlData> getAll(@Param(Constants.WRAPPER) Wrapper<?> wrapper);
 }

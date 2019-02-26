@@ -91,7 +91,7 @@ public class MybatisMapperMethod {
                      */
                     if (IPage.class.isAssignableFrom(method.getReturnType()) && args != null
                         && IPage.class.isAssignableFrom(args[0].getClass())) {
-                        result = ((IPage) args[0]).setRecords(executeForIPage(sqlSession, args));
+                        result = ((IPage<?>) args[0]).setRecords(executeForIPage(sqlSession, args));
                         /*
                          * 这上面
                          */
@@ -328,8 +328,8 @@ public class MybatisMapperMethod {
             return resultHandlerIndex != null;
         }
 
-        public ResultHandler extractResultHandler(Object[] args) {
-            return hasResultHandler() ? (ResultHandler) args[resultHandlerIndex] : null;
+        public ResultHandler<?> extractResultHandler(Object[] args) {
+            return hasResultHandler() ? (ResultHandler<?>) args[resultHandlerIndex] : null;
         }
 
         public String getMapKey() {

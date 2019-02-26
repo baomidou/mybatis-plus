@@ -21,7 +21,8 @@ class ReflectionKitTest {
 
         private transient String test;
 
-        private static String testStatic;
+        @SuppressWarnings("unused")
+		private static String testStatic;
 
         private String name;
 

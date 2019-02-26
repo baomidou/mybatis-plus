@@ -53,10 +53,10 @@ public class ObjectUtils {
             return ((CharSequence) obj).length() == 0;
         }
         if (obj instanceof Collection) {
-            return ((Collection) obj).isEmpty();
+            return ((Collection<?>) obj).isEmpty();
         }
         if (obj instanceof Map) {
-            return ((Map) obj).isEmpty();
+            return ((Map<?, ?>) obj).isEmpty();
         }
         // else
         return false;

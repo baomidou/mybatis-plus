@@ -44,7 +44,7 @@ public interface IH2UserService extends IService<H2User> {
 
     int selectCountWithParamInSelectItems(Map<String, Object> param);
 
-    List<Map> mySelectMaps();
+    List<Map<?, ?>> mySelectMaps();
 
     void testBatchTransactional();
 

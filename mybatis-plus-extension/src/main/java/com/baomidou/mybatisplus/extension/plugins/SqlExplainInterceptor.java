@@ -47,7 +47,8 @@ import lombok.experimental.Accessors;
 @Intercepts({@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})})
 public class SqlExplainInterceptor extends AbstractSqlParserHandler implements Interceptor {
 
-    private static final Log logger = LogFactory.getLog(SqlExplainInterceptor.class);
+    @SuppressWarnings("unused")
+	private static final Log logger = LogFactory.getLog(SqlExplainInterceptor.class);
 
     private Properties properties;
 

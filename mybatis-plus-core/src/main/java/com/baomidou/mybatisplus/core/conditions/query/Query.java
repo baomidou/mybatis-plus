@@ -32,7 +32,8 @@ public interface Query<Children, T, R> extends Serializable {
      * @param columns 字段数组
      * @return children
      */
-    Children select(R... columns);
+    @SuppressWarnings("unchecked")
+	Children select(R... columns);
 
     /**
      * ignore

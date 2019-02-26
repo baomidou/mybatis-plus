@@ -209,7 +209,8 @@ public class MybatisMapperRefresh implements Runnable {
      * @param list      ignore
      * @param namespace ignore
      */
-    private void cleanParameterMap(List<XNode> list, String namespace) {
+    @SuppressWarnings("unlikely-arg-type")
+	private void cleanParameterMap(List<XNode> list, String namespace) {
         for (XNode parameterMapNode : list) {
             String id = parameterMapNode.getStringAttribute("id");
             configuration.getParameterMaps().remove(namespace + StringPool.DOT + id);

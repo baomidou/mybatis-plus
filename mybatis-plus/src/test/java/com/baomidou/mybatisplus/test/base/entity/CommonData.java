@@ -27,7 +27,12 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 public class CommonData extends Model<CommonData> {
 
-    private Long id;
+    /**
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = 5651603508613034190L;
+	
+	private Long id;
     @TableField(el = "testInt, jdbcType=INTEGER")
     private Integer testInt;
     @TableField(strategy = FieldStrategy.DEFAULT)

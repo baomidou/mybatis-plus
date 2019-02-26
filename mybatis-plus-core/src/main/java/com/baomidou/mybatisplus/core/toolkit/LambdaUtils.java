@@ -43,7 +43,7 @@ public final class LambdaUtils {
     /**
      * SerializedLambda 反序列化缓存
      */
-    private static final Map<Class, WeakReference<SerializedLambda>> FUNC_CACHE = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, WeakReference<SerializedLambda>> FUNC_CACHE = new ConcurrentHashMap<>();
 
     /**
      * 解析 lambda 表达式
@@ -53,7 +53,7 @@ public final class LambdaUtils {
      * @return 返回解析后的结果
      */
     public static <T> SerializedLambda resolve(SFunction<T, ?> func) {
-        Class clazz = func.getClass();
+        Class<?> clazz = func.getClass();
         return Optional.ofNullable(FUNC_CACHE.get(clazz))
             .map(WeakReference::get)
             .orElseGet(() -> {
@@ -69,7 +69,7 @@ public final class LambdaUtils {
      * @param clazz     实体
      * @param tableInfo 表信息
      */
-    public static void createCache(Class clazz, TableInfo tableInfo) {
+    public static void createCache(Class<?> clazz, TableInfo tableInfo) {
         LAMBDA_CACHE.put(clazz.getName(), createLambdaMap(tableInfo, clazz));
     }
 
@@ -79,7 +79,7 @@ public final class LambdaUtils {
      * @param tableInfo 表信息
      * @return 缓存 map
      */
-    private static Map<String, ColumnCache> createLambdaMap(TableInfo tableInfo, Class clazz) {
+    private static Map<String, ColumnCache> createLambdaMap(TableInfo tableInfo, Class<?> clazz) {
         Map<String, ColumnCache> map = new HashMap<>();
         String keyProperty = tableInfo.getKeyProperty();
         if (StringUtils.isNotEmpty(keyProperty)) {

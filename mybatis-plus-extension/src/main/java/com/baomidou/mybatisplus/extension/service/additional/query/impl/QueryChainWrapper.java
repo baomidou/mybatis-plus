@@ -31,7 +31,7 @@ import com.baomidou.mybatisplus.extension.service.additional.query.ChainQuery;
  * @author miemie
  * @since 2018-12-19
  */
-@SuppressWarnings("serial")
+@SuppressWarnings({ "serial", "unchecked" })
 public class QueryChainWrapper<T> extends AbstractChainWrapper<T, String, QueryChainWrapper<T>, QueryWrapper<T>>
     implements ChainQuery<T>, Query<QueryChainWrapper<T>, T, String> {
 

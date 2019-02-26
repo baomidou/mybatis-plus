@@ -14,7 +14,8 @@ public enum AgeEnum implements IEnum<Integer> {
     THREE(3, "三岁");
 
     private final int value;
-    private final String desc;
+    @SuppressWarnings("unused")
+	private final String desc;
 
     AgeEnum(final int value, final String desc) {
         this.value = value;

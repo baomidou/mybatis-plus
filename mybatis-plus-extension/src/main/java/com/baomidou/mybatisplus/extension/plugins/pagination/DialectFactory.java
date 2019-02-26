@@ -49,7 +49,7 @@ public class DialectFactory {
      * @param dialectClazz 数据库方言
      * @return 分页模型
      */
-    public static DialectModel buildPaginationSql(IPage page, String buildSql, DbType dbType, String dialectClazz) {
+    public static DialectModel buildPaginationSql(IPage<?> page, String buildSql, DbType dbType, String dialectClazz) {
         // fix #196
         return getDialect(dbType, dialectClazz).buildPaginationSql(buildSql, page.offset(), page.getSize());
     }

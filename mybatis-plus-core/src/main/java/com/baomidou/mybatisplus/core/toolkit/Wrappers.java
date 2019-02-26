@@ -20,7 +20,7 @@ public final class Wrappers {
     /**
      * 空的 EmptyWrapper
      */
-    private static final QueryWrapper emptyWrapper = new EmptyWrapper<>();
+    private static final QueryWrapper<?> emptyWrapper = new EmptyWrapper<>();
 
     private Wrappers() {
         // ignore

@@ -51,7 +51,7 @@ public class ReflectionKit {
     /**
      * class field cache
      */
-    private static final Map<Class, List<Field>> classFieldCache = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, List<Field>> classFieldCache = new ConcurrentHashMap<>();
 
     /**
      * <p>
@@ -135,7 +135,7 @@ public class ReflectionKit {
      * @param index 泛型所在位置
      * @return Class
      */
-    public static Class getSuperClassGenericType(final Class clazz, final int index) {
+    public static Class<?> getSuperClassGenericType(final Class<?> clazz, final int index) {
         Type genType = clazz.getGenericSuperclass();
         if (!(genType instanceof ParameterizedType)) {
             logger.warn(String.format("Warn: %s's superclass not ParameterizedType", clazz.getSimpleName()));
@@ -152,7 +152,7 @@ public class ReflectionKit {
                 clazz.getSimpleName()));
             return Object.class;
         }
-        return (Class) params[index];
+        return (Class<?>) params[index];
     }
 
     /**

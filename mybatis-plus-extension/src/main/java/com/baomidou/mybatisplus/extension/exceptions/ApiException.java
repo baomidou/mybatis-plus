@@ -26,6 +26,11 @@ import com.baomidou.mybatisplus.extension.api.IErrorCode;
 public class ApiException extends RuntimeException {
 
     /**
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = -5885155226898287919L;
+	
+	/**
      * 错误码
      */
     private IErrorCode errorCode;

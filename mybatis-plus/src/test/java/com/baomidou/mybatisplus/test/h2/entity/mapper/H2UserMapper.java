@@ -78,5 +78,5 @@ public interface H2UserMapper extends SuperMapper<H2User> {
     int selectCountWithParamInSelectItems(Map<String, Object> param);
 
     @Select("select * from h2user")
-    List<Map> mySelectMaps();
+    List<Map<?,?>> mySelectMaps();
 }

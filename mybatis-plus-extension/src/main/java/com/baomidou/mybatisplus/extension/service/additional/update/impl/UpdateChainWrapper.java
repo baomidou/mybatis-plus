@@ -28,7 +28,7 @@ import com.baomidou.mybatisplus.extension.service.additional.update.ChainUpdate;
  * @author miemie
  * @since 2018-12-19
  */
-@SuppressWarnings("serial")
+@SuppressWarnings({ "serial", "unchecked" })
 public class UpdateChainWrapper<T> extends AbstractChainWrapper<T, String, UpdateChainWrapper<T>, UpdateWrapper<T>>
     implements ChainUpdate<T>, Update<UpdateChainWrapper<T>, String> {
 

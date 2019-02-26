@@ -142,7 +142,7 @@ public class GlobalConfigUtils {
         return getGlobalConfig(configuration).getMetaObjectHandler();
     }
 
-    public static Class getSuperMapperClass(Configuration configuration) {
+    public static Class<?> getSuperMapperClass(Configuration configuration) {
         return getGlobalConfig(configuration).getSuperMapperClass();
     }
 

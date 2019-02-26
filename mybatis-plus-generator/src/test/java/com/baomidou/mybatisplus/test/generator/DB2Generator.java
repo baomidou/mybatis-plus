@@ -56,7 +56,8 @@ public class DB2Generator {
             ).execute();
     }
 
-    private void generateByTables(String packageName, String... tableNames) {
+    @SuppressWarnings("unused")
+	private void generateByTables(String packageName, String... tableNames) {
         generateByTables(true, packageName, tableNames);
     }
 

@@ -39,7 +39,8 @@ public class MybatisMapWrapperFactory implements ObjectWrapperFactory {
         return object instanceof Map;
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public ObjectWrapper getWrapperFor(MetaObject metaObject, Object object) {
         return new MybatisMapWrapper(metaObject, (Map<String, Object>) object);
     }

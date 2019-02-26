@@ -52,7 +52,7 @@ public class SerializedLambda implements Serializable {
      * @param lambda lambda对象
      * @return 返回解析后的 SerializedLambda
      */
-    public static SerializedLambda resolve(SFunction lambda) {
+    public static SerializedLambda resolve(SFunction<?, ?> lambda) {
         if (!lambda.getClass().isSynthetic()) {
             throw ExceptionUtils.mpe("该方法仅能传入 lambda 表达式产生的合成类");
         }
@@ -83,7 +83,7 @@ public class SerializedLambda implements Serializable {
      *
      * @return 实现类
      */
-    public Class getImplClass() {
+    public Class<?> getImplClass() {
         return ClassUtils.toClassConfident(getImplClassName());
     }
 

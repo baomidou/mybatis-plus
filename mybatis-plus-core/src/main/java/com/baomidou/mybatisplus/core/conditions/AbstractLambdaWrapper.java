@@ -50,11 +50,13 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
         }
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     protected String columnsToString(SFunction<T, ?>... columns) {
         return columnsToString(true, columns);
     }
 
+    @SuppressWarnings("unchecked")
     protected String columnsToString(boolean onlyColumn, SFunction<T, ?>... columns) {
         return Arrays.stream(columns).map(i -> columnToString(i, onlyColumn)).collect(joining(StringPool.COMMA));
     }

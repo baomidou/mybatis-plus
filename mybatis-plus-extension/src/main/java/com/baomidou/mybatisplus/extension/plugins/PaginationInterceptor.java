@@ -83,7 +83,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
      * @param orderBy     是否需要拼接Order By
      * @return ignore
      */
-    public static String concatOrderBy(String originalSql, IPage page, boolean orderBy) {
+    public static String concatOrderBy(String originalSql, IPage<?> page, boolean orderBy) {
         if (orderBy && (ArrayUtils.isNotEmpty(page.ascs())
             || ArrayUtils.isNotEmpty(page.descs()))) {
             StringBuilder buildSql = new StringBuilder(originalSql);
@@ -137,13 +137,13 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
         Object paramObj = boundSql.getParameterObject();
 
         // 判断参数里是否有page对象
-        IPage page = null;
+        IPage<?> page = null;
         if (paramObj instanceof IPage) {
-            page = (IPage) paramObj;
+            page = (IPage<?>) paramObj;
         } else if (paramObj instanceof Map) {
-            for (Object arg : ((Map) paramObj).values()) {
+            for (Object arg : ((Map<?,?>) paramObj).values()) {
                 if (arg instanceof IPage) {
-                    page = (IPage) arg;
+                    page = (IPage<?>) arg;
                     break;
                 }
             }
@@ -191,7 +191,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
      * @param page            IPage
      * @param connection      Connection
      */
-    protected void queryTotal(boolean overflowCurrent, String sql, MappedStatement mappedStatement, BoundSql boundSql, IPage page, Connection connection) {
+    protected void queryTotal(boolean overflowCurrent, String sql, MappedStatement mappedStatement, BoundSql boundSql, IPage<?> page, Connection connection) {
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             DefaultParameterHandler parameterHandler = new MybatisDefaultParameterHandler(mappedStatement, boundSql.getParameterObject(), boundSql);
             parameterHandler.setParameters(statement);

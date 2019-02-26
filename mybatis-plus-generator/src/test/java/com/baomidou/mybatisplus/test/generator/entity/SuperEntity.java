@@ -15,7 +15,12 @@ import lombok.Data;
 @Data
 public class SuperEntity implements Serializable {
 
-    private Long id;
+    /**
+	 * serialVersionUID
+	 */
+	private static final long serialVersionUID = -4801865210961587582L;
+	
+	private Long id;
     private Boolean deleted;
 
 }

@@ -81,7 +81,7 @@ public class H2UserServiceImpl extends ServiceImpl<H2UserMapper, H2User> impleme
     }
 
     @Override
-    public List<Map> mySelectMaps() {
+    public List<Map<?,?>> mySelectMaps() {
         return baseMapper.mySelectMaps();
     }
 

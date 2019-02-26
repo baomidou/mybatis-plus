@@ -71,7 +71,7 @@ class H2StudentMapperTest extends BaseTest {
     @Test
     @Order(Integer.MAX_VALUE)
     void pageCountZeroTest() {
-        IPage page = studentMapper.selectPage(new Page<>(), Wrappers.<H2Student>query().eq("name", "无"));
+        IPage<H2Student> page = studentMapper.selectPage(new Page<>(), Wrappers.<H2Student>query().eq("name", "无"));
         if (null != page) {
             System.out.println("total: " + page.getTotal());
         }

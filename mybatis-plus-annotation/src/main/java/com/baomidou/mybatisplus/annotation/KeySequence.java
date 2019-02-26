@@ -43,6 +43,6 @@ public @interface KeySequence {
     /**
      * id的类型
      */
-    Class clazz() default Long.class;
+    Class<?> clazz() default Long.class;
 
 }

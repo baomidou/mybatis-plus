@@ -502,7 +502,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
         // TODO 自定义枚举类扫描处理
         if (hasLength(this.typeEnumsPackage)) {
-            Set<Class> classes;
+            Set<Class<?>> classes;
             if (typeEnumsPackage.contains(StringPool.STAR) && !typeEnumsPackage.contains(StringPool.COMMA)
                 && !typeEnumsPackage.contains(StringPool.SEMICOLON)) {
                 classes = PackageHelper.scanTypePackage(typeEnumsPackage);
@@ -515,7 +515,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
                 Assert.notNull(typeEnumsPackageArray, "not find typeEnumsPackage:" + typeEnumsPackage);
                 classes = new HashSet<>();
                 Stream.of(typeEnumsPackageArray).forEach(typePackage -> {
-                    Set<Class> scanTypePackage = PackageHelper.scanTypePackage(typePackage);
+                    Set<Class<?>> scanTypePackage = PackageHelper.scanTypePackage(typePackage);
                     if (scanTypePackage.isEmpty()) {
                         LOGGER.warn(() -> "Can't find class in '[" + typePackage + "]' package. Please check your configuration.");
                     } else {

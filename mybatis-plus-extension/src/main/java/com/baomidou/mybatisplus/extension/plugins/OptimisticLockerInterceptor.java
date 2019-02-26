@@ -76,18 +76,18 @@ public class OptimisticLockerInterceptor implements Interceptor {
         Object param = args[1];
 
         // wrapper = ew
-        AbstractWrapper ew = null;
+        AbstractWrapper<?, ?, ?> ew = null;
         // entity = et
         Object et = null;
         if (param instanceof Map) {
-            Map map = (Map) param;
+			Map map = (Map) param;
             if (map.containsKey(NAME_ENTITY)) {
                 //updateById(et), update(et, wrapper);
                 et = map.get(NAME_ENTITY);
             }
             if (map.containsKey(NAME_ENTITY_WRAPPER)) {
                 // mapper.update(updEntity, QueryWrapper<>(whereEntity);
-                ew = (AbstractWrapper) map.get(NAME_ENTITY_WRAPPER);
+                ew = (AbstractWrapper<?, ?, ?>) map.get(NAME_ENTITY_WRAPPER);
             }
             if (et != null) {
                 // entity
@@ -111,7 +111,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
                     // update(entity, wrapper)
                     if (originalVersionVal != null) {
                         if (ew == null) {
-                            UpdateWrapper uw = new UpdateWrapper();
+                            UpdateWrapper<?> uw = new UpdateWrapper<>();
                             uw.eq(versionField.getColumnName(), originalVersionVal);
                             map.put(NAME_ENTITY_WRAPPER, uw);
                             field.set(et, updatedVersionVal);
@@ -149,7 +149,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
      * @param updatedVersionVal  乐观锁自动更新的新value
      * @param map
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private void dealUpdateById(Class<?> entityClass, Object et, EntityField entityVersionField,
                                 Object originalVersionVal, Object updatedVersionVal, Map map) throws IllegalAccessException {
         if (originalVersionVal == null) {

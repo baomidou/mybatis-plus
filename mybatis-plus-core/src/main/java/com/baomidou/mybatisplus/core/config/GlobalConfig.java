@@ -71,7 +71,7 @@ public class GlobalConfig implements Serializable {
     /**
      * Mapper父类
      */
-    private Class superMapperClass = BaseMapper.class;
+    private Class<?> superMapperClass = BaseMapper.class;
     /**
      * 缓存当前Configuration的SqlSessionFactory
      */

@@ -44,7 +44,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author hubin
  * @since 2017-10-11
  */
-public class EnumTypeHandler<E extends Enum<?>> extends BaseTypeHandler<Enum> {
+public class EnumTypeHandler<E extends Enum<?>> extends BaseTypeHandler<Enum<?>> {
     
     private static final Log LOGGER = LogFactory.getLog(EnumTypeHandler.class);
     
@@ -75,7 +75,7 @@ public class EnumTypeHandler<E extends Enum<?>> extends BaseTypeHandler<Enum> {
     
     @SuppressWarnings("Duplicates")
     @Override
-    public void setNonNullParameter(PreparedStatement ps, int i, Enum parameter, JdbcType jdbcType)
+    public void setNonNullParameter(PreparedStatement ps, int i, Enum<?> parameter, JdbcType jdbcType)
         throws SQLException {
         try {
             this.method.setAccessible(true);

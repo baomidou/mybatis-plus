@@ -99,12 +99,12 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
             } else {
                 TableInfo tableInfo = null;
                 if (parameterObject instanceof Map) {
-                    Map map = (Map) parameterObject;
+                    Map<?, ?> map = (Map<?, ?>) parameterObject;
                     if (map.containsKey(Constants.ENTITY)) {
                         Object et = map.get(Constants.ENTITY);
                         if (et != null) {
                             if (et instanceof Map) {
-                                Map realEtMap = (Map) et;
+                                Map<?, ?> realEtMap = (Map<?, ?>) et;
                                 if (realEtMap.containsKey("MP_OPTLOCK_ET_ORIGINAL")) {
                                     //refer to OptimisticLockerInterceptor.MP_OPTLOCK_ET_ORIGINAL
                                     tableInfo = TableInfoHelper.getTableInfo(realEtMap.get("MP_OPTLOCK_ET_ORIGINAL").getClass());
@@ -216,7 +216,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                         MetaObject metaObject = configuration.newMetaObject(parameterObject);
                         value = metaObject.getValue(propertyName);
                     }
-                    TypeHandler typeHandler = parameterMapping.getTypeHandler();
+                    TypeHandler<Object> typeHandler = (TypeHandler<Object>) parameterMapping.getTypeHandler();
                     JdbcType jdbcType = parameterMapping.getJdbcType();
                     if (value == null && jdbcType == null) {
                         jdbcType = configuration.getJdbcTypeForNull();

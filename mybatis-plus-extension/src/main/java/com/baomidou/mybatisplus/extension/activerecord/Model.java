@@ -41,7 +41,7 @@ import java.util.Objects;
  * @author hubin
  * @since 2016-11-06
  */
-public abstract class Model<T extends Model> implements Serializable {
+public abstract class Model<T extends Model<?>> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

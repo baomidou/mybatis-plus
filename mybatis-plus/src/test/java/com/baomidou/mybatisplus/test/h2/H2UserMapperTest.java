@@ -123,7 +123,7 @@ class H2UserMapperTest extends BaseTest {
         qw.lambda().eq(H2User::getName, NQQ);
         List<Map<String, Object>> mapList = userMapper.selectMaps(qw);
         if (CollectionUtils.isNotEmpty(mapList)) {
-            for (Map m : mapList) {
+            for (Map<String, Object> m : mapList) {
                 System.out.println(m);
             }
         }

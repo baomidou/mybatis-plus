@@ -23,7 +23,7 @@ class ClassUtilsTest {
         Demo demo = ClassUtils.newInstance(Demo.class);
         Assertions.assertNotNull(demo);
 
-        Map map = ClassUtils.newInstance(HashMap.class);
+        Map<?,?> map = ClassUtils.newInstance(HashMap.class);
         Assertions.assertNotNull(map);
     }
 

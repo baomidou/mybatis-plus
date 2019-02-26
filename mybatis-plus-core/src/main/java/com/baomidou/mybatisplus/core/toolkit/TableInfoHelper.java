@@ -85,7 +85,7 @@ public class TableInfoHelper {
             return tableInfo;
         }
         //尝试获取父类缓存
-        Class currentClass = clazz;
+        Class<?> currentClass = clazz;
         while (null == tableInfo && Object.class != currentClass) {
             currentClass = currentClass.getSuperclass();
             tableInfo = TABLE_INFO_CACHE.get(ClassUtils.getUserClass(currentClass));

@@ -53,7 +53,8 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     public AbstractChainWrapper() {
     }
 
-    public AbstractWrapper getWrapper() {
+    @SuppressWarnings("rawtypes")
+	public AbstractWrapper getWrapper() {
         return (AbstractWrapper) wrapperChildren;
     }
 

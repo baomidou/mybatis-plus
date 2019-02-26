@@ -17,12 +17,12 @@ import java.util.Map;
  * @author miemie
  * @since 2019-01-22
  */
-public class MapTypeHandler extends BaseTypeHandler<Map> {
+public class MapTypeHandler extends BaseTypeHandler<Map<?, ?>> {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public void setNonNullParameter(PreparedStatement ps, int i, Map parameter, JdbcType jdbcType) throws SQLException {
+    public void setNonNullParameter(PreparedStatement ps, int i, Map<?, ?> parameter, JdbcType jdbcType) throws SQLException {
         try {
             ps.setString(i, objectMapper.writeValueAsString(parameter));
         } catch (JsonProcessingException e) {
@@ -31,7 +31,7 @@ public class MapTypeHandler extends BaseTypeHandler<Map> {
     }
 
     @Override
-    public Map getNullableResult(ResultSet rs, String columnName) throws SQLException {
+    public Map<?, ?> getNullableResult(ResultSet rs, String columnName) throws SQLException {
         String result = rs.getString(columnName);
         if (StringUtils.isNotEmpty(result)) {
             try {
@@ -44,7 +44,7 @@ public class MapTypeHandler extends BaseTypeHandler<Map> {
     }
 
     @Override
-    public Map getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
+    public Map<?, ?> getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
         String result = rs.getString(columnIndex);
         if (StringUtils.isNotEmpty(result)) {
             try {
@@ -57,7 +57,7 @@ public class MapTypeHandler extends BaseTypeHandler<Map> {
     }
 
     @Override
-    public Map getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
+    public Map<?, ?> getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
         String result = cs.getString(columnIndex);
         if (StringUtils.isNotEmpty(result)) {
             try {
