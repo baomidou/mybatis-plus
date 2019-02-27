@@ -22,7 +22,7 @@ public class MybatisXmlConfig {
         MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
         sqlSessionFactory.setDataSource(dataSource);
         sqlSessionFactory.setTypeAliasesPackage("com.baomidou.mybatisplus.test.h2.entity.persistent");
-        sqlSessionFactory.setConfigLocation(new ClassPathResource("mybatis-config.xml"));
+        sqlSessionFactory.setConfigLocation(new ClassPathResource("mybatis-config-object-factory.xml"));
         sqlSessionFactory.setTypeEnumsPackage("com.baomidou.mybatisplus.test.h2.entity.enums");
         return sqlSessionFactory.getObject();
     }

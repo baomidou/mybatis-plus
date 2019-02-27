@@ -5,11 +5,12 @@
 <configuration>
 
     <settings>
-        <setting name="mapUnderscoreToCamelCase" value="true"/>
-        <setting name="defaultEnumTypeHandler" value="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+        <!-- //todo 设置默认枚举,在使用原生的时候,混合使用原生枚举的方式不是很好设置,暂时建议实体里面不混合使用原生枚举,只使用MP提供的实现接口或注解方式-->
+        <!-- //todo 考虑下将枚举的注册方式提到 MybatisConfiguration ??????-->
+        <setting name="defaultEnumTypeHandler" value="com.baomidou.mybatisplus.extension.handlers.EnumTypeHandler"/>
     </settings>
 
-    <objectFactory type="com.baomidou.mybatisplus.test.reflection.ExampleObjectFactory">
-        <property name="someProperty" value="100"/>
-    </objectFactory>
+    <mappers>
+        <mapper class="com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserMapper"/>
+    </mappers>
 </configuration>
