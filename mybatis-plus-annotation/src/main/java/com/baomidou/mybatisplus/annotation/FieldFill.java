@@ -27,15 +27,15 @@ public enum FieldFill {
      */
     DEFAULT,
     /**
-     * 插入填充字段
+     * 插入时填充字段
      */
     INSERT,
     /**
-     * 更新填充字段
+     * 更新时填充字段
      */
     UPDATE,
     /**
-     * 插入和更新填充字段
+     * 插入和更新时填充字段
      */
     INSERT_UPDATE
 }
