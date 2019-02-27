@@ -4,14 +4,17 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.handlers.EnumTypeHandler;
 import com.baomidou.mybatisplus.test.h2.entity.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.entity.mapper.H2UserMapper;
 import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
 
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.jdbc.ScriptRunner;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.h2.Driver;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -44,6 +47,13 @@ class MybatisTest {
         Reader reader = Resources.getResourceAsReader("mybatis-config.xml");
         SqlSessionFactory factory = new MybatisSqlSessionFactoryBuilder().build(reader);
         SqlSession sqlSession = factory.openSession(dataSource.getConnection());
+        Configuration configuration = factory.getConfiguration();
+        TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
+        /*
+         *  如果是将defaultEnumTypeHandler设置成MP的处理器,
+         *  请自行注册处理非MP枚举处理类的原生枚举类型
+         */
+        typeHandlerRegistry.register(AgeEnum.class, EnumTypeHandler.class);     //这里我举起了个栗子
         Connection connection = dataSource.getConnection();
         ScriptRunner scriptRunner = new ScriptRunner(connection);
         scriptRunner.runScript(Resources.getResourceAsReader("h2/user.ddl.sql"));
@@ -59,7 +69,6 @@ class MybatisTest {
         H2User user = mapper.selectById(66L);
         Assertions.assertNotNull(user);
         Assertions.assertEquals(user.getAge(), AgeEnum.THREE);
-        Assertions.assertEquals(user.getAge().getValue(), AgeEnum.THREE.getValue());
         Assertions.assertNotNull(user.getTestType());
         Assertions.assertEquals(mapper.updateById(new H2User(66L, "777777")), 1);
         Assertions.assertEquals(mapper.deleteById(66L), 1);
