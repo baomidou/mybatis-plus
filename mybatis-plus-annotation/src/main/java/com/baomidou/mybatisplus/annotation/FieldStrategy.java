@@ -31,7 +31,7 @@ public enum FieldStrategy {
      */
     NOT_NULL,
     /**
-     * 非空判断
+     * 非空判断(只对字符串类型字段,其他类型字段依然为非NULL判断)
      */
     NOT_EMPTY,
     /**
