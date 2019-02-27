@@ -20,9 +20,9 @@ import com.baomidou.mybatisplus.test.base.mapper.commons.CommonDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonLogicDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.commons.ResultMapEntityMapper;
 import com.baomidou.mybatisplus.test.base.mapper.mysql.MysqlDataMapper;
-import com.baomidou.mybatisplus.test.mysql.config.MysqlDb;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -39,6 +39,7 @@ import static java.util.stream.Collectors.toMap;
  * @author hubin
  * @since 2018-06-05
  */
+@DirtiesContext
 @TestMethodOrder(MethodOrderer.Alphanumeric.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:mysql/spring-test-mysql.xml"})
@@ -54,12 +55,6 @@ class MysqlTestDataMapperTest {
     private MysqlDataMapper mysqlMapper;
     @Resource
     private ResultMapEntityMapper resultMapEntityMapper;
-
-    @BeforeAll
-    static void init() throws Exception {
-        MysqlDb.initMysqlData();
-        System.out.println("init success");
-    }
 
     @Test
     void a1_insertForeach() {

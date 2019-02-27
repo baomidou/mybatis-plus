@@ -94,7 +94,6 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void parse() {
         String resource = type.toString();
         if (!configuration.isResourceLoaded(resource)) {

@@ -66,7 +66,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
     private final Map<Class<?>, List<EntityField>> entityFieldsCache = new ConcurrentHashMap<>();
 
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public Object intercept(Invocation invocation) throws Throwable {
         Object[] args = invocation.getArgs();
         MappedStatement ms = (MappedStatement) args[0];

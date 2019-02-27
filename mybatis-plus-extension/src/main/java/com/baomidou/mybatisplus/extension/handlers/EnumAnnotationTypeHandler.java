@@ -68,7 +68,7 @@ public class EnumAnnotationTypeHandler<E extends Enum<E>> extends BaseTypeHandle
 
     @SuppressWarnings("Duplicates")
     @Override
-    public void setNonNullParameter(PreparedStatement ps, int i, Enum parameter, JdbcType jdbcType) throws SQLException {
+    public void setNonNullParameter(PreparedStatement ps, int i, E parameter, JdbcType jdbcType) throws SQLException {
         try {
             method.setAccessible(true);
             if (jdbcType == null) {

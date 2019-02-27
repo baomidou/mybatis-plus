@@ -8,16 +8,16 @@ import com.baomidou.mybatisplus.test.base.entity.CommonData;
 import com.baomidou.mybatisplus.test.base.entity.CommonLogicData;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonLogicDataMapper;
-import com.baomidou.mybatisplus.test.mysql.config.MysqlDb;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.annotation.Resource;
-import java.sql.SQLException;
 import java.util.List;
 
+@DirtiesContext
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:mysql/spring-test-mysql.xml"})
@@ -27,12 +27,6 @@ class SelectCountDistinctTest {
     private CommonLogicDataMapper commonLogicMapper;
     @Resource
     private CommonDataMapper commonDataMapper;
-
-    @BeforeAll
-    static void init() throws SQLException {
-        MysqlDb.initMysqlData();
-        System.out.println("init table and data success");
-    }
 
     @Test
     @Order(1)

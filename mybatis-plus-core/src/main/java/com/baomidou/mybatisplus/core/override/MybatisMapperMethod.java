@@ -55,7 +55,6 @@ public class MybatisMapperMethod {
         this.method = new MethodSignature(config, mapperInterface, method);
     }
 
-    @SuppressWarnings("unchecked")
     public Object execute(SqlSession sqlSession, Object[] args) {
         Object result;
         switch (command.getType()) {

@@ -79,9 +79,6 @@ public class ReflectionKit {
      */
     @Deprecated
     public static String setMethodCapitalize(Field field, final String str) {
-        Class<?> fieldType = field.getType();
-        // type of boolean's field, getter methodname is isGood(),
-        // setter methodname is setGood(boolean)
         return StringUtils.concatCapitalize("set", str);
     }
 

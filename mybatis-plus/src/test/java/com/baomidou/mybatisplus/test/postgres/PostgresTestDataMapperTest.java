@@ -13,7 +13,6 @@ import com.baomidou.mybatisplus.test.base.enums.TestEnum;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonLogicDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.pg.PgDataMapper;
-import com.baomidou.mybatisplus.test.postgres.config.PostgresDb;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -42,12 +41,6 @@ class PostgresTestDataMapperTest {
     private CommonLogicDataMapper commonLogicMapper;
     @Resource
     private PgDataMapper pgMapper;
-
-    @BeforeAll
-    static void init() throws Exception {
-        PostgresDb.initPgData();
-        System.out.println("init success");
-    }
 
     @Test
     void a_insertForeach() {

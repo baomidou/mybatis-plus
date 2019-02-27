@@ -56,7 +56,12 @@ class WrapperTest {
 
     @Test
     void test1() {
-        QueryWrapper<User> ew = new QueryWrapper<User>() {{
+        QueryWrapper<User> ew = new QueryWrapper<User>() {
+          /**
+           *  serialVersionUID
+           */
+          private static final long serialVersionUID = 4719966531503901490L;
+        {
             eq("xxx", 123);
             and(i -> i.eq("andx", 65444).le("ande", 66666));
             ne("xxx", 222);

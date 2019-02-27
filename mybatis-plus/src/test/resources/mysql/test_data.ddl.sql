@@ -46,3 +46,9 @@ CREATE TABLE result_map_entity (
     map        varchar(200)
 )ENGINE = innodb
 DEFAULT CHARSET = utf8;
+
+INSERT INTO common_data (id, test_int, test_str, c_time, test_enum, tenant_id) VALUES (666666666, 25, 'test', now(), 1, 1);
+INSERT INTO common_data (id, test_int, test_str, c_time, test_enum, tenant_id) VALUES (777777777, 25, 'test', now(), 1, 1);
+
+INSERT INTO common_logic_data (id, test_int, test_str, c_time) VALUES (666666666, 25, 'test', now());
+INSERT INTO common_logic_data (id, test_int, test_str, c_time) VALUES (777777777, 25, 'test', now());
