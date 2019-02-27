@@ -190,6 +190,13 @@ public interface Func<Children, R> extends Serializable {
     /**
      * ignore
      */
+    default Children groupBy(R column) {
+        return groupBy(true, column);
+    }
+
+    /**
+     * ignore
+     */
     default Children groupBy(R... columns) {
         return groupBy(true, columns);
     }
