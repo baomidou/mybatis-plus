@@ -42,7 +42,7 @@ private fun <T : Any> IService<T>.entityClass() =
         }) as Class<T>
 
 /**
- * Kotlin 用的 Lambda 式链式查询
+ * 构建一个 Kotlin 用的 Query Lambda Wrapper，且这个 Wrapper 支持直接以一些常见的查询结束
  *
  * 使用示例：
  *
@@ -57,11 +57,13 @@ private fun <T : Any> IService<T>.entityClass() =
  *     }
  * }
  * ```
+ *
+ * @return Wrapper 的实例
  */
 fun <T : Any> IService<T>.ktQuery() = KtQueryChainWrapper(this.baseMapper, this.entityClass())
 
 /**
- * Kotlin 用的 Lambda 式链式更改
+ * 构建一个 Kotlin 用的 Update Lambda Wrapper，且这个 Wrapper 支持直接以一些常见的更新结束
  *
  * 使用示例：
  *
@@ -76,5 +78,47 @@ fun <T : Any> IService<T>.ktQuery() = KtQueryChainWrapper(this.baseMapper, this.
  *     }
  * }
  * ```
+ *
+ * @return Wrapper 的实例
  */
 fun <T : Any> IService<T>.ktUpdate() = KtUpdateChainWrapper(this.baseMapper, this.entityClass())
+
+/**
+ * 构建一个给 Kotlin 用的 Query Lambda Wrapper
+ *
+ * 使用示例：
+ *
+ * ```kotlin
+ *
+ * @Service
+ * class UserServiceImpl : ServiceImpl<UserMapper, User>(), IUserService {
+ *     override fun removeByUsername(username: String): User? {
+ *         var wrapper = this.ktQueryWrapper();
+ *         wrapper.eq(User::username, username)
+ *         this.getOne(wrapper)
+ *     }
+ * }
+ * ```
+ * @return Wrapper 的实例
+ */
+fun <T : Any> IService<T>.ktQueryWrapper() = KtQueryWrapper(this.entityClass())
+
+/**
+ * 构建一个给 Kotlin 用的 Update Lambda Wrapper
+ *
+ * 使用示例：
+ *
+ * ```kotlin
+ *
+ * @Service
+ * class UserServiceImpl : ServiceImpl<UserMapper, User>(), IUserService {
+ *     override fun removeByUsername(username: String): User? {
+ *         var wrapper = this.ktUpdateWrapper();
+ *         wrapper.eq(User::username, username)
+ *         this.remove(wrapper)
+ *     }
+ * }
+ * ```
+ * @return Wrapper 的实例
+ */
+fun <T : Any> IService<T>.ktUpdateWrapper() = KtUpdateWrapper(this.entityClass())
