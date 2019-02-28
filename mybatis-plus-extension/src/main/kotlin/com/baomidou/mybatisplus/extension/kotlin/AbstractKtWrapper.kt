@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.conditions.AbstractWrapper
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils
 import com.baomidou.mybatisplus.core.toolkit.StringPool
 import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache
+import java.util.*
 import kotlin.reflect.KProperty
 
 /**
@@ -61,7 +62,7 @@ abstract class AbstractKtWrapper<T, Children : AbstractKtWrapper<T, Children>> :
         if (!::columnMap.isInitialized) {
             columnMap = LambdaUtils.getColumnMap(this.checkEntityClass.name)
         }
-        return columnMap[kProperty.name]?.let { if (onlyColumn) it.column else it.columnSelect }
+        return columnMap[kProperty.name.toUpperCase(Locale.ENGLISH)]?.let { if (onlyColumn) it.column else it.columnSelect }
     }
 
     /**
