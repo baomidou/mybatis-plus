@@ -29,7 +29,7 @@ import kotlin.reflect.KProperty
  * @author yangyuhan,MieMie,HanChunLin
  * @since 2018-11-07
  */
-abstract class AbstractKtWrapper<T, This : AbstractKtWrapper<T, This>> : AbstractWrapper<T, KProperty<*>, This>() {
+abstract class AbstractKtWrapper<T, Children : AbstractKtWrapper<T, Children>> : AbstractWrapper<T, KProperty<*>, Children>() {
 
     /**
      * 列 Map
@@ -72,5 +72,4 @@ abstract class AbstractKtWrapper<T, This : AbstractKtWrapper<T, This>> : Abstrac
     fun columnsToString(onlyColumn: Boolean = true, vararg columns: KProperty<*>): String {
         return columns.mapNotNull { columnToString(it, onlyColumn) }.joinToString(separator = StringPool.COMMA)
     }
-
 }
