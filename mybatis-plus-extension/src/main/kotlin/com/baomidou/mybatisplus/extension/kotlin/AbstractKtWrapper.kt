@@ -16,12 +16,9 @@
 package com.baomidou.mybatisplus.extension.kotlin
 
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils
 import com.baomidou.mybatisplus.core.toolkit.StringPool
 import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache
-import java.util.*
-import java.util.stream.Collectors.joining
 import kotlin.reflect.KProperty
 
 /**
@@ -29,33 +26,51 @@ import kotlin.reflect.KProperty
  *
  * 统一处理解析 lambda 获取 column
  *
- * @author yangyuhan
+ * @author yangyuhan,MieMie,HanChunLin
  * @since 2018-11-07
  */
 abstract class AbstractKtWrapper<T, This : AbstractKtWrapper<T, This>> : AbstractWrapper<T, KProperty<*>, This>() {
 
-    private var columnMap: Map<String, ColumnCache>? = null
+    /**
+     * 列 Map
+     */
+    private lateinit var columnMap: Map<String, ColumnCache>
 
-    override fun initEntityClass() {
-        super.initEntityClass()
-        columnMap = LambdaUtils.getColumnMap(this.checkEntityClass.name)
+    /**
+     * 为了兼容 [AbstractWrapper.columnToString] 的方法,重载该方法
+     * 因为 Java 并不支持参数默认值，这里只能妥协
+     */
+    override fun columnToString(column: KProperty<*>?): String? {
+        return column?.let { columnToString(column) }
     }
 
-    override fun columnsToString(vararg columns: KProperty<*>): String {
-        return columnsToString(true, *columns)
+    /**
+     * 将某一列转换为对应的数据库字符串, 将 DTO 中的字段 [kProperty] 转换为对应 SQL 语句中的形式
+     * 如果 [onlyColumn] 为 true， 则会转换为 select body 的形式
+     *
+     * <pre>
+     *     @TableField("user_id")
+     *     var userId: String? = null
+     *
+     *     assert("user_id" == columnToString(::userId, true))
+     *     assert("user_id AS "userId"" == columnToString(::userId, false))
+     *</pre>
+     *
+     */
+    fun columnToString(kProperty: KProperty<*>, onlyColumn: Boolean = true): String? {
+        if (!::columnMap.isInitialized) {
+            columnMap = LambdaUtils.getColumnMap(this.checkEntityClass.name)
+        }
+        return columnMap[kProperty.name]?.let { if (onlyColumn) it.column else it.columnSelect }
     }
 
-    fun columnsToString(onlyColumn: Boolean, vararg columns: KProperty<*>): String {
-        return Arrays.stream(columns).map { i -> columnToString(i, onlyColumn) }.collect(joining(StringPool.COMMA))
+    /**
+     * 批量处理传入的属性，正常情况下的输出就像：
+     *
+     * "user_id" AS "userId" , "user_name" AS "userName"
+     */
+    fun columnsToString(onlyColumn: Boolean = true, vararg columns: KProperty<*>): String {
+        return columns.mapNotNull { columnToString(it, onlyColumn) }.joinToString(separator = StringPool.COMMA)
     }
 
-    override fun columnToString(kProperty: KProperty<*>): String? {
-        return columnToString(kProperty, true)
-    }
-
-    fun columnToString(kProperty: KProperty<*>, onlyColumn: Boolean): String? {
-        return Optional.ofNullable(columnMap?.get(kProperty.name.toUpperCase(Locale.ENGLISH)))
-            .map(if (onlyColumn) ColumnCache::getColumn else ColumnCache::getColumnSelect)
-            .orElseThrow { ExceptionUtils.mpe("your property named %s cannot find the corresponding database column name!", kProperty.name) }
-    }
 }
