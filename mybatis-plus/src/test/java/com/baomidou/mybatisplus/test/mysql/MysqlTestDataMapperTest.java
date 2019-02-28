@@ -20,7 +20,10 @@ import com.baomidou.mybatisplus.test.base.mapper.commons.CommonDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonLogicDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.commons.ResultMapEntityMapper;
 import com.baomidou.mybatisplus.test.base.mapper.mysql.MysqlDataMapper;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -429,5 +432,11 @@ class MysqlTestDataMapperTest {
         new LambdaUpdateChainWrapper<>(mysqlMapper).set(MysqlData::getYaHoStr, "123456").update();
 
         new LambdaUpdateChainWrapper<>(mysqlMapper).eq(MysqlData::getYaHoStr, "111").remove();
+    }
+
+    @Test
+    void e_6getByWrapper() {
+        commonMapper.getByWrapper(Wrappers.<CommonData>lambdaQuery().isNotNull(CommonData::getId));
+        commonLogicMapper.getByWrapper(Wrappers.<CommonLogicData>lambdaQuery().isNotNull(CommonLogicData::getId));
     }
 }

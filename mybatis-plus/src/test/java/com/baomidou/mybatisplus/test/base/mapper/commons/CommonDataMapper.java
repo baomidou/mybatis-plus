@@ -1,10 +1,13 @@
 package com.baomidou.mybatisplus.test.base.mapper.commons;
 
 import com.baomidou.mybatisplus.annotation.SqlParser;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.base.entity.CommonData;
 import com.baomidou.mybatisplus.test.base.mapper.MyBaseMapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -19,6 +22,9 @@ public interface CommonDataMapper extends MyBaseMapper<CommonData> {
     @SqlParser(filter = true)
     @Select("select * from common_data")
     List<CommonData> getAllNoTenant();
+
+    @Select("select * from common_data ${ew.customSqlSegment}")
+    List<CommonData> getByWrapper(@Param(Constants.WRAPPER) Wrapper wrapper);
 
     @Select("select * from common_data where id = #{ooxx}")
     Optional<CommonData> getById(Long id);
