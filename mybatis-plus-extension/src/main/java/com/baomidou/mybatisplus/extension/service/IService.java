@@ -352,6 +352,8 @@ public interface IService<T> {
 
     /**
      * 链式查询 lambda 式
+     * <p>注意：请勿在 Kotlin 中使用，此实现不支持 Kotlin</p>
+     * <p>Kotlin 中应使用 ktQuery()</p>
      *
      * @return LambdaQueryWrapper 的包装类
      */
@@ -370,6 +372,8 @@ public interface IService<T> {
 
     /**
      * 链式更改 lambda 式
+     * <p>注意：请勿在 Kotlin 中使用，此实现不支持 Kotlin</p>
+     * <p>Kotlin 中应使用 ktUpdate()</p>
      *
      * @return LambdaUpdateWrapper 的包装类
      */
