@@ -22,7 +22,6 @@ import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 
 import java.lang.ref.WeakReference;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -33,12 +32,15 @@ import static java.util.Locale.ENGLISH;
 /**
  * Lambda 解析工具类
  *
- * @author HCL
+ * @author HCL, MieMie
  * @since 2018-05-10
  */
 public final class LambdaUtils {
 
-    private static final Map<String, Map<String, ColumnCache>> LAMBDA_CACHE = new ConcurrentHashMap<>();
+    /**
+     * 字段映射
+     */
+    private static final Map<Class<?>, Map<String, ColumnCache>> LAMBDA_MAP = new ConcurrentHashMap<>();
 
     /**
      * SerializedLambda 反序列化缓存
@@ -64,62 +66,61 @@ public final class LambdaUtils {
     }
 
     /**
-     * 缓存实体类名与表字段映射关系
+     * 将传入的表信息加入缓存
      *
-     * @param clazz     实体
      * @param tableInfo 表信息
      */
-    public static void createCache(Class<?> clazz, TableInfo tableInfo) {
-        LAMBDA_CACHE.put(clazz.getName(), createLambdaMap(tableInfo, clazz));
+    public static void installCache(TableInfo tableInfo) {
+        LAMBDA_MAP.put(tableInfo.getClazz(), createColumnCacheMap(tableInfo));
     }
 
     /**
      * 缓存实体字段 MAP 信息
      *
-     * @param tableInfo 表信息
+     * @param info 表信息
      * @return 缓存 map
      */
-    private static Map<String, ColumnCache> createLambdaMap(TableInfo tableInfo, Class<?> clazz) {
+    private static Map<String, ColumnCache> createColumnCacheMap(TableInfo info) {
         Map<String, ColumnCache> map = new HashMap<>();
-        String keyProperty = tableInfo.getKeyProperty();
-        if (StringUtils.isNotEmpty(keyProperty)) {
-            saveCacheAndPut(tableInfo.getKeyColumn(), tableInfo.getKeySqlSelect(), keyProperty.toUpperCase(ENGLISH),
-                clazz, tableInfo.getClazz(), map);
+
+        String kp = info.getKeyProperty();
+        if (null != kp) {
+            map.put(formatKey(kp), new ColumnCache(info.getKeyColumn(), info.getKeySqlSelect()));
         }
-        tableInfo.getFieldList().forEach(i -> saveCacheAndPut(i.getColumn(), i.getSqlSelect(tableInfo.getDbType()),
-            i.getProperty().toUpperCase(ENGLISH), clazz, i.getClazz(), map));
+
+        info.getFieldList().forEach(i ->
+            map.put(formatKey(i.getProperty()), new ColumnCache(i.getColumn(), i.getSqlSelect(info.getDbType())))
+        );
         return map;
     }
 
-    private static void saveCacheAndPut(String column, String select, String property, Class<?> entityClass,
-                                        Class<?> propertyAffiliationClass, Map<String, ColumnCache> map) {
-        ColumnCache cache = new ColumnCache(column, select);
-        if (propertyAffiliationClass != entityClass) {
-            saveCache(propertyAffiliationClass.getName(), property, cache);
+    /**
+     * 格式化 key 将传入的 key 变更为大写格式
+     *
+     * <pre>
+     *     Assert.assertEquals("USERID", formatKey("userId"))
+     * </pre>
+     *
+     * @param key key
+     * @return 大写的 key
+     */
+    private static String formatKey(String key) {
+        return key.toUpperCase(ENGLISH);
+    }
+
+    /**
+     * 获取 clazz 中某字段对应的列信息
+     *
+     * @param clazz     class 类
+     * @param fieldName 字段名称
+     * @return 如果存在，返回字段信息；否则返回 null
+     */
+    public static ColumnCache getColumnOfProperty(Class<?> clazz, String fieldName) {
+        Map<String, ColumnCache> map = LAMBDA_MAP.get(clazz);
+        if (null != map) {
+            return map.get(formatKey(fieldName));
         }
-        map.put(property, cache);
+        return null;
     }
 
-    /**
-     * 保存缓存信息
-     *
-     * @param className   类名
-     * @param property    属性
-     * @param columnCache 字段信息
-     */
-    private static void saveCache(String className, String property, ColumnCache columnCache) {
-        Map<String, ColumnCache> cacheMap = LAMBDA_CACHE.getOrDefault(className, new HashMap<>());
-        cacheMap.put(property, columnCache);
-        LAMBDA_CACHE.put(className, cacheMap);
-    }
-
-    /**
-     * 获取实体对应字段 MAP
-     *
-     * @param entityClassName 实体类名
-     * @return 缓存 map
-     */
-    public static Map<String, ColumnCache> getColumnMap(String entityClassName) {
-        return LAMBDA_CACHE.getOrDefault(entityClassName, Collections.emptyMap());
-    }
 }
