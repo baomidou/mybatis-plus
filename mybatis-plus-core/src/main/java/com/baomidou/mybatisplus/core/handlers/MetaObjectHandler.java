@@ -15,16 +15,17 @@
  */
 package com.baomidou.mybatisplus.core.handlers;
 
+import java.util.Objects;
+import java.util.Optional;
+
+import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.reflection.SystemMetaObject;
+
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
-import org.apache.ibatis.reflection.MetaObject;
-import org.apache.ibatis.reflection.SystemMetaObject;
-
-import java.util.Objects;
-import java.util.Optional;
 
 /**
  * 元对象字段填充控制器抽象类，实现公共字段自动写入
@@ -151,6 +152,8 @@ public interface MetaObjectHandler {
      * <li> 如果是主键,不填充 </li>
      * <li> 根据字段名找不到字段,不填充 </li>
      * <li> 字段类型与填充值类型不匹配,不填充 </li>
+     * <li> 字段类型需在TableField注解里配置fill: @TableField(value="test_type", fill = FieldFill.INSERT), 没有配置或者不匹配时不填充 </li>
+     * v_3.1.0以后的版本(不包括3.1.0)，子类的值也可以自动填充，Timestamp的值也可以填入到java.util.Date类型里面
      *
      * @param fieldName  java bean property name
      * @param fieldVal   java bean property value
@@ -165,7 +168,7 @@ public interface MetaObjectHandler {
             : TableInfoHelper.getTableInfo(metaObject.getOriginalObject().getClass());
         if (Objects.nonNull(tableInfo)) {
             Optional<TableFieldInfo> first = tableInfo.getFieldList().stream()
-                .filter(e -> e.getProperty().equals(fieldName) && e.getPropertyType().equals(fieldVal.getClass()))
+                .filter(e -> e.getProperty().equals(fieldName) && e.getPropertyType().isAssignableFrom(fieldVal.getClass()))//v_3.1.1+ 设置子类的值也可以通过
                 .findFirst();
             if (first.isPresent()) {
                 FieldFill fill = first.get().getFieldFill();
