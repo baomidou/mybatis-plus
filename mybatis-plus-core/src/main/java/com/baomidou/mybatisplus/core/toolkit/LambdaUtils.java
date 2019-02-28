@@ -48,11 +48,13 @@ public final class LambdaUtils {
     private static final Map<Class<?>, WeakReference<SerializedLambda>> FUNC_CACHE = new ConcurrentHashMap<>();
 
     /**
-     * 解析 lambda 表达式
+     * 解析 lambda 表达式, 该方法只是调用了 {@link SerializedLambda#resolve(SFunction)} 中的方法，在此基础上加了缓存。
+     * 该缓存可能会在任意不定的时间被清除
      *
      * @param func 需要解析的 lambda 对象
      * @param <T>  类型，被调用的 Function 对象的目标类型
      * @return 返回解析后的结果
+     * @see SerializedLambda#resolve(SFunction)
      */
     public static <T> SerializedLambda resolve(SFunction<T, ?> func) {
         Class<?> clazz = func.getClass();
@@ -63,35 +65,6 @@ public final class LambdaUtils {
                 FUNC_CACHE.put(clazz, new WeakReference<>(lambda));
                 return lambda;
             });
-    }
-
-    /**
-     * 将传入的表信息加入缓存
-     *
-     * @param tableInfo 表信息
-     */
-    public static void installCache(TableInfo tableInfo) {
-        LAMBDA_MAP.put(tableInfo.getClazz(), createColumnCacheMap(tableInfo));
-    }
-
-    /**
-     * 缓存实体字段 MAP 信息
-     *
-     * @param info 表信息
-     * @return 缓存 map
-     */
-    private static Map<String, ColumnCache> createColumnCacheMap(TableInfo info) {
-        Map<String, ColumnCache> map = new HashMap<>();
-
-        String kp = info.getKeyProperty();
-        if (null != kp) {
-            map.put(formatKey(kp), new ColumnCache(info.getKeyColumn(), info.getKeySqlSelect()));
-        }
-
-        info.getFieldList().forEach(i ->
-            map.put(formatKey(i.getProperty()), new ColumnCache(i.getColumn(), i.getSqlSelect(info.getDbType())))
-        );
-        return map;
     }
 
     /**
@@ -116,11 +89,31 @@ public final class LambdaUtils {
      * @return 如果存在，返回字段信息；否则返回 null
      */
     public static ColumnCache getColumnOfProperty(Class<?> clazz, String fieldName) {
-        Map<String, ColumnCache> map = LAMBDA_MAP.get(clazz);
-        if (null != map) {
-            return map.get(formatKey(fieldName));
+        Map<String, ColumnCache> map = LAMBDA_MAP.computeIfAbsent(clazz, c -> {
+            TableInfo ti = TableInfoHelper.getTableInfo(c);
+            return null == ti ? null : createColumnCacheMap(ti);
+        });
+        return null == map ? null : map.get(formatKey(fieldName));
+    }
+
+    /**
+     * 缓存实体字段 MAP 信息
+     *
+     * @param info 表信息
+     * @return 缓存 map
+     */
+    private static Map<String, ColumnCache> createColumnCacheMap(TableInfo info) {
+        Map<String, ColumnCache> map = new HashMap<>(info.getFieldList().size() + 1);
+
+        String kp = info.getKeyProperty();
+        if (null != kp) {
+            map.put(formatKey(kp), new ColumnCache(info.getKeyColumn(), info.getKeySqlSelect()));
         }
-        return null;
+
+        info.getFieldList().forEach(i ->
+            map.put(formatKey(i.getProperty()), new ColumnCache(i.getColumn(), i.getSqlSelect(info.getDbType())))
+        );
+        return map;
     }
 
 }

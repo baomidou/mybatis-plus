@@ -141,8 +141,6 @@ public class TableInfoHelper {
         /* 放入缓存 */
         TABLE_INFO_CACHE.put(clazz, tableInfo);
 
-        /* 缓存 Lambda 映射关系 */
-        LambdaUtils.installCache(tableInfo);
         return tableInfo;
     }
 
