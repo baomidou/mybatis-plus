@@ -31,12 +31,6 @@ import kotlin.reflect.KProperty
 abstract class AbstractKtWrapper<T, Children : AbstractKtWrapper<T, Children>> : AbstractWrapper<T, KProperty<*>, Children>() {
 
     /**
-     * 为了兼容 [AbstractWrapper.columnToString] 的方法,重载该方法
-     * 因为 Java 并不支持参数默认值，这里只能妥协
-     */
-    override fun columnToString(column: KProperty<*>?): String? = column?.let { columnToString(column, true) }
-
-    /**
      * 将某一列转换为对应的数据库字符串, 将 DTO 中的字段 [kProperty] 转换为对应 SQL 语句中的形式
      * 如果 [onlyColumn] 为 true， 则会转换为 select body 的形式
      *
@@ -47,8 +41,8 @@ abstract class AbstractKtWrapper<T, Children : AbstractKtWrapper<T, Children>> :
      *     assert("user_id" == columnToString(::userId, true))
      *     assert("user_id AS "userId"" == columnToString(::userId, false))
      *</pre>
-     *
      */
+    @JvmOverloads
     fun columnToString(kProperty: KProperty<*>, onlyColumn: Boolean = true): String? =
         LambdaUtils.getColumnOfProperty(entityClass, kProperty.name)?.let { if (onlyColumn) it.column else it.columnSelect }
 
