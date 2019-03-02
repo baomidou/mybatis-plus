@@ -31,27 +31,28 @@ class GeneratePomTest {
     
     @Test
     void test() throws IOException {
-        InputStream inputStream = new FileInputStream("build/publications/mavenJava/pom-default.xml");
-        Jerry.JerryParser jerryParser = new Jerry.JerryParser(new LagartoDOMBuilder().enableXmlMode());
-        Jerry doc = jerryParser.parse(FileUtil.readUTFString(inputStream));
-        Jerry dependencies = doc.$("dependencies dependency");
-        Map<String, Dependency> dependenciesMap = new HashMap<>();
-        dependencies.forEach($this -> {
-            String artifactId = $this.$("artifactId").text();
-            dependenciesMap.put(artifactId, new Dependency(artifactId, $this.$("scope").text(), Boolean.parseBoolean($this.$("optional").text())));
-        });
-        Dependency extension = dependenciesMap.get("mybatis-plus-extension");
-        Assertions.assertEquals("compile", extension.getScope());
-        Assertions.assertFalse(extension.isOptional());
-        Dependency velocity = dependenciesMap.get("velocity-engine-core");
-        Assertions.assertEquals("compile", velocity.getScope());
-        Assertions.assertTrue(velocity.isOptional());
-        Dependency freemarker = dependenciesMap.get("freemarker");
-        Assertions.assertEquals("compile", freemarker.getScope());
-        Assertions.assertTrue(freemarker.isOptional());
-        Dependency beetl = dependenciesMap.get("beetl");
-        Assertions.assertEquals("compile", beetl.getScope());
-        Assertions.assertTrue(beetl.isOptional());
+        try (InputStream inputStream = new FileInputStream("build/publications/mavenJava/pom-default.xml")) {
+            Jerry.JerryParser jerryParser = new Jerry.JerryParser(new LagartoDOMBuilder().enableXmlMode());
+            Jerry doc = jerryParser.parse(FileUtil.readUTFString(inputStream));
+            Jerry dependencies = doc.$("dependencies dependency");
+            Map<String, Dependency> dependenciesMap = new HashMap<>();
+            dependencies.forEach($this -> {
+                String artifactId = $this.$("artifactId").text();
+                dependenciesMap.put(artifactId, new Dependency(artifactId, $this.$("scope").text(), Boolean.parseBoolean($this.$("optional").text())));
+            });
+            Dependency extension = dependenciesMap.get("mybatis-plus-extension");
+            Assertions.assertEquals("compile", extension.getScope());
+            Assertions.assertFalse(extension.isOptional());
+            Dependency velocity = dependenciesMap.get("velocity-engine-core");
+            Assertions.assertEquals("compile", velocity.getScope());
+            Assertions.assertTrue(velocity.isOptional());
+            Dependency freemarker = dependenciesMap.get("freemarker");
+            Assertions.assertEquals("compile", freemarker.getScope());
+            Assertions.assertTrue(freemarker.isOptional());
+            Dependency beetl = dependenciesMap.get("beetl");
+            Assertions.assertEquals("compile", beetl.getScope());
+            Assertions.assertTrue(beetl.isOptional());
+        }
     }
     
 }

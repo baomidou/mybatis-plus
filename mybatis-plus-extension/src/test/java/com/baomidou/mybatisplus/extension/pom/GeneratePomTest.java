@@ -31,36 +31,37 @@ class GeneratePomTest {
     
     @Test
     void test() throws IOException {
-        InputStream inputStream = new FileInputStream("build/publications/mavenJava/pom-default.xml");
-        Jerry.JerryParser jerryParser = new Jerry.JerryParser(new LagartoDOMBuilder().enableXmlMode());
-        Jerry doc = jerryParser.parse(FileUtil.readUTFString(inputStream));
-        Jerry dependencies = doc.$("dependencies dependency");
-        Map<String, Dependency> dependenciesMap = new HashMap<>();
-        dependencies.forEach($this -> {
-            String artifactId = $this.$("artifactId").text();
-            dependenciesMap.put(artifactId, new Dependency(artifactId, $this.$("scope").text(), Boolean.parseBoolean($this.$("optional").text())));
-        });
-        Dependency core = dependenciesMap.get("mybatis-plus-core");
-        Assertions.assertEquals("compile", core.getScope());
-        Assertions.assertFalse(core.isOptional());
-        Dependency mybatisSpring = dependenciesMap.get("mybatis-spring");
-        Assertions.assertEquals("compile", mybatisSpring.getScope());
-        Assertions.assertFalse(mybatisSpring.isOptional());
-        Dependency kotlinStdlib = dependenciesMap.get("kotlin-stdlib-jdk8");
-        Assertions.assertEquals("compile", kotlinStdlib.getScope());
-        Assertions.assertTrue(kotlinStdlib.isOptional());
-        Dependency kotlinReflect = dependenciesMap.get("kotlin-reflect");
-        Assertions.assertEquals("compile", kotlinReflect.getScope());
-        Assertions.assertTrue(kotlinReflect.isOptional());
-        Dependency support = dependenciesMap.get("spring-context-support");
-        Assertions.assertEquals("compile", support.getScope());
-        Assertions.assertTrue(support.isOptional());
-        Dependency jdbc = dependenciesMap.get("spring-jdbc");
-        Assertions.assertEquals("compile", jdbc.getScope());
-        Assertions.assertTrue(jdbc.isOptional());
-        Dependency slf4jApi = dependenciesMap.get("slf4j-api");
-        Assertions.assertEquals("compile", slf4jApi.getScope());
-        Assertions.assertTrue(slf4jApi.isOptional());
+        try (InputStream inputStream = new FileInputStream("build/publications/mavenJava/pom-default.xml");) {
+            Jerry.JerryParser jerryParser = new Jerry.JerryParser(new LagartoDOMBuilder().enableXmlMode());
+            Jerry doc = jerryParser.parse(FileUtil.readUTFString(inputStream));
+            Jerry dependencies = doc.$("dependencies dependency");
+            Map<String, Dependency> dependenciesMap = new HashMap<>();
+            dependencies.forEach($this -> {
+                String artifactId = $this.$("artifactId").text();
+                dependenciesMap.put(artifactId, new Dependency(artifactId, $this.$("scope").text(), Boolean.parseBoolean($this.$("optional").text())));
+            });
+            Dependency core = dependenciesMap.get("mybatis-plus-core");
+            Assertions.assertEquals("compile", core.getScope());
+            Assertions.assertFalse(core.isOptional());
+            Dependency mybatisSpring = dependenciesMap.get("mybatis-spring");
+            Assertions.assertEquals("compile", mybatisSpring.getScope());
+            Assertions.assertFalse(mybatisSpring.isOptional());
+            Dependency kotlinStdlib = dependenciesMap.get("kotlin-stdlib-jdk8");
+            Assertions.assertEquals("compile", kotlinStdlib.getScope());
+            Assertions.assertTrue(kotlinStdlib.isOptional());
+            Dependency kotlinReflect = dependenciesMap.get("kotlin-reflect");
+            Assertions.assertEquals("compile", kotlinReflect.getScope());
+            Assertions.assertTrue(kotlinReflect.isOptional());
+            Dependency support = dependenciesMap.get("spring-context-support");
+            Assertions.assertEquals("compile", support.getScope());
+            Assertions.assertTrue(support.isOptional());
+            Dependency jdbc = dependenciesMap.get("spring-jdbc");
+            Assertions.assertEquals("compile", jdbc.getScope());
+            Assertions.assertTrue(jdbc.isOptional());
+            Dependency slf4jApi = dependenciesMap.get("slf4j-api");
+            Assertions.assertEquals("compile", slf4jApi.getScope());
+            Assertions.assertTrue(slf4jApi.isOptional());
+        }
     }
     
 }

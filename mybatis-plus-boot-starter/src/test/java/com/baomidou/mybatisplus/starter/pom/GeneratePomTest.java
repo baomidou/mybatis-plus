@@ -31,34 +31,34 @@ class GeneratePomTest {
     
     @Test
     void test() throws IOException {
-        InputStream inputStream = new FileInputStream("build/publications/mavenJava/pom-default.xml");
-        Jerry.JerryParser jerryParser = new Jerry.JerryParser(new LagartoDOMBuilder().enableXmlMode());
-        Jerry doc = jerryParser.parse(FileUtil.readUTFString(inputStream));
-        Jerry dependencies = doc.$("dependencies dependency");
-        Map<String, Dependency> dependenciesMap = new HashMap<>();
-        dependencies.forEach($this -> {
-            String artifactId = $this.$("artifactId").text();
-            dependenciesMap.put(artifactId, new Dependency(artifactId, $this.$("scope").text(), Boolean.parseBoolean($this.$("optional").text())));
-        });
-        Dependency mp = dependenciesMap.get("mybatis-plus");
-        Assertions.assertEquals("compile", mp.getScope());
-        Assertions.assertFalse(mp.isOptional());
-        Dependency autoconfigure = dependenciesMap.get("spring-boot-autoconfigure");
-        Assertions.assertEquals("compile", autoconfigure.getScope());
-        Assertions.assertFalse(autoconfigure.isOptional());
-        Dependency jdbc = dependenciesMap.get("spring-boot-starter-jdbc");
-        Assertions.assertEquals("compile", jdbc.getScope());
-        Assertions.assertFalse(jdbc.isOptional());
-        Dependency configurationProcessor = dependenciesMap.get("spring-boot-configuration-processor");
-        Assertions.assertEquals("compile", configurationProcessor.getScope());
-        Assertions.assertTrue(configurationProcessor.isOptional());
-        Dependency autoconfigureProcessor = dependenciesMap.get("spring-boot-autoconfigure-processor");
-        Assertions.assertEquals("compile", autoconfigureProcessor.getScope());
-        Assertions.assertTrue(autoconfigureProcessor.isOptional());
-        Dependency bom = dependenciesMap.get("spring-boot-dependencies");
-        Assertions.assertEquals("import", bom.getScope());
-        Assertions.assertFalse(bom.isOptional());
-        
+        try (InputStream inputStream = new FileInputStream("build/publications/mavenJava/pom-default.xml")) {
+            Jerry.JerryParser jerryParser = new Jerry.JerryParser(new LagartoDOMBuilder().enableXmlMode());
+            Jerry doc = jerryParser.parse(FileUtil.readUTFString(inputStream));
+            Jerry dependencies = doc.$("dependencies dependency");
+            Map<String, Dependency> dependenciesMap = new HashMap<>();
+            dependencies.forEach($this -> {
+                String artifactId = $this.$("artifactId").text();
+                dependenciesMap.put(artifactId, new Dependency(artifactId, $this.$("scope").text(), Boolean.parseBoolean($this.$("optional").text())));
+            });
+            Dependency mp = dependenciesMap.get("mybatis-plus");
+            Assertions.assertEquals("compile", mp.getScope());
+            Assertions.assertFalse(mp.isOptional());
+            Dependency autoconfigure = dependenciesMap.get("spring-boot-autoconfigure");
+            Assertions.assertEquals("compile", autoconfigure.getScope());
+            Assertions.assertFalse(autoconfigure.isOptional());
+            Dependency jdbc = dependenciesMap.get("spring-boot-starter-jdbc");
+            Assertions.assertEquals("compile", jdbc.getScope());
+            Assertions.assertFalse(jdbc.isOptional());
+            Dependency configurationProcessor = dependenciesMap.get("spring-boot-configuration-processor");
+            Assertions.assertEquals("compile", configurationProcessor.getScope());
+            Assertions.assertTrue(configurationProcessor.isOptional());
+            Dependency autoconfigureProcessor = dependenciesMap.get("spring-boot-autoconfigure-processor");
+            Assertions.assertEquals("compile", autoconfigureProcessor.getScope());
+            Assertions.assertTrue(autoconfigureProcessor.isOptional());
+            Dependency bom = dependenciesMap.get("spring-boot-dependencies");
+            Assertions.assertEquals("import", bom.getScope());
+            Assertions.assertFalse(bom.isOptional());
+        }
     }
     
 }

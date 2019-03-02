@@ -31,27 +31,28 @@ class GeneratePomTest {
     
     @Test
     void test() throws IOException {
-        InputStream inputStream = new FileInputStream("build/publications/mavenJava/pom-default.xml");
-        Jerry.JerryParser jerryParser = new Jerry.JerryParser(new LagartoDOMBuilder().enableXmlMode());
-        Jerry doc = jerryParser.parse(FileUtil.readUTFString(inputStream));
-        Jerry dependencies = doc.$("dependencies dependency");
-        Map<String, Dependency> dependenciesMap = new HashMap<>();
-        dependencies.forEach($this -> {
-            String artifactId = $this.$("artifactId").text();
-            dependenciesMap.put(artifactId, new Dependency(artifactId, $this.$("scope").text(), Boolean.parseBoolean($this.$("optional").text())));
-        });
-        Dependency annotation = dependenciesMap.get("mybatis-plus-annotation");
-        Assertions.assertEquals("compile", annotation.getScope());
-        Assertions.assertFalse(annotation.isOptional());
-        Dependency mybatis = dependenciesMap.get("mybatis");
-        Assertions.assertEquals("compile", mybatis.getScope());
-        Assertions.assertFalse(mybatis.isOptional());
-        Dependency jsqlParser = dependenciesMap.get("jsqlparser");
-        Assertions.assertEquals("compile", jsqlParser.getScope());
-        Assertions.assertFalse(jsqlParser.isOptional());
-        Dependency cglib = dependenciesMap.get("cglib");
-        Assertions.assertEquals("compile", cglib.getScope());
-        Assertions.assertTrue(cglib.isOptional());
+        try (InputStream inputStream = new FileInputStream("build/publications/mavenJava/pom-default.xml");) {
+            Jerry.JerryParser jerryParser = new Jerry.JerryParser(new LagartoDOMBuilder().enableXmlMode());
+            Jerry doc = jerryParser.parse(FileUtil.readUTFString(inputStream));
+            Jerry dependencies = doc.$("dependencies dependency");
+            Map<String, Dependency> dependenciesMap = new HashMap<>();
+            dependencies.forEach($this -> {
+                String artifactId = $this.$("artifactId").text();
+                dependenciesMap.put(artifactId, new Dependency(artifactId, $this.$("scope").text(), Boolean.parseBoolean($this.$("optional").text())));
+            });
+            Dependency annotation = dependenciesMap.get("mybatis-plus-annotation");
+            Assertions.assertEquals("compile", annotation.getScope());
+            Assertions.assertFalse(annotation.isOptional());
+            Dependency mybatis = dependenciesMap.get("mybatis");
+            Assertions.assertEquals("compile", mybatis.getScope());
+            Assertions.assertFalse(mybatis.isOptional());
+            Dependency jsqlParser = dependenciesMap.get("jsqlparser");
+            Assertions.assertEquals("compile", jsqlParser.getScope());
+            Assertions.assertFalse(jsqlParser.isOptional());
+            Dependency cglib = dependenciesMap.get("cglib");
+            Assertions.assertEquals("compile", cglib.getScope());
+            Assertions.assertTrue(cglib.isOptional());
+        }
     }
     
 }

@@ -113,6 +113,7 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
         }
     }
 
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Bean
     @ConditionalOnMissingBean
     public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
