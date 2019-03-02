@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -63,11 +65,26 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
         return getColumn(LambdaUtils.resolve(column), onlyColumn);
     }
 
-    private String getColumn(SerializedLambda lambda, boolean onlyColumn) {
+    /**
+     * 获取 SerializedLambda 对应的列信息，从 lambda 表达式中推测实体类
+     * <p>
+     * 如果获取不到列信息，那么本次条件组装将会失败
+     *
+     * @param lambda     lambda 表达式
+     * @param onlyColumn 如果是，结果: "name", 如果否： "name" as "name"
+     * @return 列
+     * @throws com.baomidou.mybatisplus.core.exceptions.MybatisPlusException 获取不到列信息时抛出异常
+     * @see SerializedLambda#getImplClass()
+     * @see SerializedLambda#getImplMethodName()
+     */
+    private String getColumn(SerializedLambda lambda, boolean onlyColumn) throws MybatisPlusException {
         String fieldName = StringUtils.resolveFieldName(lambda.getImplMethodName());
-        return Optional.ofNullable(LambdaUtils.getColumnOfProperty(entityClass, fieldName))
+
+        return Optional.ofNullable(LambdaUtils.getColumnOfProperty(lambda.getImplClass(), fieldName))
             .map(onlyColumn ? ColumnCache::getColumn : ColumnCache::getColumnSelect)
-            .orElse(null);
+            .orElseThrow(() ->
+                ExceptionUtils.mpe("Your property named \"%s\" cannot find the corresponding database column name!", fieldName)
+            );
     }
 
 }

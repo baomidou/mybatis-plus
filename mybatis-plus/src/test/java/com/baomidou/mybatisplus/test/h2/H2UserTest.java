@@ -298,11 +298,13 @@ class H2UserTest extends BaseTest {
         H2User tomcat = userService.lambdaQuery().eq(H2User::getName, "Tomcat").one();
         Assertions.assertNotNull(tomcat);
         Assertions.assertNotEquals(0L, userService.lambdaQuery().like(H2User::getName, "a").count().longValue());
-        userService.lambdaQuery().like(H2User::getName, "T")
+
+        List<H2User> users = userService.lambdaQuery().like(H2User::getName, "T")
             .ne(H2User::getAge, AgeEnum.TWO)
             .ge(H2User::getVersion, 1)
             .isNull(H2User::getPrice)
             .list();
+        Assertions.assertTrue(users.isEmpty());
     }
 
     @Test
