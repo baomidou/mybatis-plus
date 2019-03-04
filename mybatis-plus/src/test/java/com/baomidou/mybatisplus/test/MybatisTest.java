@@ -58,6 +58,7 @@ class MybatisTest {
         ScriptRunner scriptRunner = new ScriptRunner(connection);
         scriptRunner.runScript(Resources.getResourceAsReader("h2/user.ddl.sql"));
         H2UserMapper mapper = sqlSession.getMapper(H2UserMapper.class);
+        mapper.delete(new QueryWrapper<>());
         Assertions.assertEquals(mapper.myInsertWithNameVersion("test", 2), 1);
         Assertions.assertEquals(mapper.mySelectMaps().size(), 1);
         Assertions.assertEquals(mapper.insert(new H2User("test")), 1);
