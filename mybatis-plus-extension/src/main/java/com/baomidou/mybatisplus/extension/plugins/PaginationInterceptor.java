@@ -177,7 +177,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
         /*
          * 处理单页条数限制
          */
-        if (limit > 0 && limit < page.getSize()) {
+        if (limit > 0 && limit <= page.getSize()) {
             page.setSize(limit);
         }
 
