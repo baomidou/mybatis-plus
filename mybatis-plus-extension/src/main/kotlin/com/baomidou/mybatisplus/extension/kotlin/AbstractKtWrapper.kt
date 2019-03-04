@@ -42,8 +42,18 @@ abstract class AbstractKtWrapper<T, Children : AbstractKtWrapper<T, Children>> :
      *     assert("user_id AS "userId"" == columnToString(::userId, false))
      *</pre>
      */
-    @JvmOverloads
-    fun columnToString(kProperty: KProperty<*>, onlyColumn: Boolean = true): String? =
+    //@JvmOverloads 部分测试框架无法通过测试
+    fun columnToString(kProperty: KProperty<*>, onlyColumn: Boolean): String? = columnToString0(kProperty, onlyColumn)
+
+    /**
+     * 重载方法，默认 onlyColumn = true
+     */
+    override fun columnToString(kProperty: KProperty<*>) = columnToString0(kProperty)
+
+    /**
+     * 核心实现方法，供重载使用
+     */
+    private fun columnToString0(kProperty: KProperty<*>, onlyColumn: Boolean = true): String? =
         LambdaUtils.getColumnOfProperty(entityClass, kProperty.name)?.let { if (onlyColumn) it.column else it.columnSelect }
 
     /**
