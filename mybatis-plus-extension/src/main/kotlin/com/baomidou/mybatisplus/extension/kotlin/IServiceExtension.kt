@@ -38,7 +38,7 @@ private fun <T : Any> IService<T>.entityClass() =
         (entityClassCache.getOrPut(this) {
             // 理论上不可能找不到，除非用户的代码直接就没继承 ServiceImpl
             // 理论上 as 转换时不可能出现异常，除非用的不知道什么鬼家的 JVM？
-            (this::class.supertypes.first { it == ServiceImpl::class }.arguments[1].type?.javaType) as Class<*>
+            (this::class.supertypes.first { it.classifier == ServiceImpl::class }.arguments[1].type?.javaType) as Class<*>
         }) as Class<T>
 
 /**
