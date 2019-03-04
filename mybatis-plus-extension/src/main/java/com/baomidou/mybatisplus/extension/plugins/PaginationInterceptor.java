@@ -81,7 +81,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
      */
     private boolean overflow = false;
     /**
-     * 单页限制 500 条，小于 -1 不受限制
+     * 单页限制 500 条，小于 0 如 -1 不受限制
      */
     private long limit = 500L;
     /**
