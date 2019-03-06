@@ -75,7 +75,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
     /**
      * COUNT SQL 解析
      */
-    private ISqlParser sqlParser;
+    private ISqlParser countSqlParser;
     /**
      * 溢出总页数，设置第一页
      */
@@ -188,7 +188,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
 
         boolean orderBy = true;
         if (page.isSearchCount()) {
-            SqlInfo sqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), sqlParser, originalSql);
+            SqlInfo sqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), countSqlParser, originalSql);
             orderBy = sqlInfo.isOrderBy();
             this.queryTotal(overflow, sqlInfo.getSql(), mappedStatement, boundSql, page, connection);
             if (page.getTotal() <= 0) {
