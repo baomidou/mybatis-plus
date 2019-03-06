@@ -1,5 +1,6 @@
 import groovy.util.Node
 import groovy.util.NodeList
+import nl.javadude.gradle.plugins.license.License
 
 buildscript {
     repositories {
@@ -9,6 +10,7 @@ buildscript {
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.21")
         classpath("com.netflix.nebula:gradle-extra-configurations-plugin:3.0.3")
+        classpath("gradle.plugin.com.hierynomus.gradle.plugins:license-gradle-plugin:0.15.0")
     }
 }
 
@@ -89,6 +91,7 @@ subprojects {
     apply(plugin = "org.gradle.java-library")
     apply(plugin = "org.gradle.maven-publish")
     apply(plugin = "org.gradle.signing")
+    apply(plugin = "com.github.hierynomus.license")
 
     // Java 版本
     configure<JavaPluginConvention> {
@@ -109,6 +112,16 @@ subprojects {
                 attributes["Implementation-Version"] = version
             }
         }
+    }
+    tasks.withType<License> {
+        encoding = "UTF-8"
+        header = rootProject.file("license.txt")
+        include("**/*.java","**/*.kt")
+        mapping("java","SLASHSTAR_STYLE")
+        mapping("kt","SLASHSTAR_STYLE")
+        extra["year"] = 2019
+        extra["name"] = "hubin"
+        extra["email"] = "jobob@qq.com"
     }
 
     repositories {
