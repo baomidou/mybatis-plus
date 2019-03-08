@@ -13,33 +13,16 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test.h2.entity.persistent;
-
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-
-import lombok.Data;
-import lombok.experimental.Accessors;
+package com.baomidou.mybatisplus.test.h2.enums;
 
 /**
- * h2address entity.
+ * <p></p>
  *
  * @author yuxiaobin
- * @since 2017/5/25
+ * @date 2018/8/30
  */
-@Data
-@Accessors(chain = true)
-@TableName("h2address")
-public class H2Addr {
+public enum GenderEnum {
 
-    @TableId("addr_id")
-    private Long addrId;
-
-    @TableField("addr_name")
-    private String addrName;
-
-    @TableField("test_id")
-    private Long testId;
-
+    MALE,
+    FEMALE
 }

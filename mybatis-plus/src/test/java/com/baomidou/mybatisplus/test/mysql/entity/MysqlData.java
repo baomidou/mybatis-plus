@@ -13,12 +13,28 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test.h2.entity.mapper;
+package com.baomidou.mybatisplus.test.mysql.entity;
 
-import com.baomidou.mybatisplus.test.h2.entity.persistent.H2Student;
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.TableField;
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
- * 学生Mapper层
- * @author nieqiurong 2018/7/27.
+ * @author miemie
+ * @since 2018-08-18
  */
-public interface H2StudentMapper extends SuperMapper<H2Student> {}
+@Data
+@Accessors(chain = true)
+public class MysqlData {
+
+    private Long id;
+    @TableField("`order`")
+    private Integer order;
+    @TableField("`group`")
+    private Integer group;
+    @TableField(strategy = FieldStrategy.NOT_EMPTY)
+    private String testStr;
+    @TableField("lambda_str")
+    private String yaHoStr;
+}

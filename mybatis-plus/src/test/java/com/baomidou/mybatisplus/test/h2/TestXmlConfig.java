@@ -15,7 +15,7 @@
  */
 package com.baomidou.mybatisplus.test.h2;
 
-import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
+import com.baomidou.mybatisplus.test.h2.entity.H2User;
 import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -13,11 +13,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test.base.mapper.mysql;
+package com.baomidou.mybatisplus.test.mysql.mapper;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.test.base.entity.mysql.MysqlData;
+import com.baomidou.mybatisplus.test.mysql.entity.MysqlData;
 import com.baomidou.mybatisplus.test.base.mapper.MyBaseMapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;

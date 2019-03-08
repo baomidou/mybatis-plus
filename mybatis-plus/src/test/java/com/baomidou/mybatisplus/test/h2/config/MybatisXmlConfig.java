@@ -28,7 +28,7 @@ import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
  * @author nieqiurong 2018/8/14 13:18.
  */
 @Configuration
-@MapperScan("com.baomidou.mybatisplus.test.h2.entity.mapper")
+@MapperScan("com.baomidou.mybatisplus.test.h2.mapper")
 public class MybatisXmlConfig {
 
 
@@ -38,7 +38,7 @@ public class MybatisXmlConfig {
         sqlSessionFactory.setDataSource(dataSource);
         sqlSessionFactory.setTypeAliasesPackage("com.baomidou.mybatisplus.test.h2.entity.persistent");
         sqlSessionFactory.setConfigLocation(new ClassPathResource("mybatis-config-object-factory.xml"));
-        sqlSessionFactory.setTypeEnumsPackage("com.baomidou.mybatisplus.test.h2.entity.enums");
+        sqlSessionFactory.setTypeEnumsPackage("com.baomidou.mybatisplus.test.h2.enums");
         return sqlSessionFactory.getObject();
     }
 

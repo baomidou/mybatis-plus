@@ -13,24 +13,33 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test.base.entity.pg;
+package com.baomidou.mybatisplus.test.h2.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 /**
- * @author miemie
- * @since 2018-08-06
+ * h2address entity.
+ *
+ * @author yuxiaobin
+ * @since 2017/5/25
  */
 @Data
 @Accessors(chain = true)
-public class PgData {
+@TableName("h2address")
+public class H2Addr {
 
-    private Long id;
-    @TableField("\"pgInt\"")
-    private Integer pgInt;
-    private Integer pgInt2;
-    @TableField("\"group\"")
-    private Integer group;
+    @TableId("addr_id")
+    private Long addrId;
+
+    @TableField("addr_name")
+    private String addrName;
+
+    @TableField("test_id")
+    private Long testId;
+
 }

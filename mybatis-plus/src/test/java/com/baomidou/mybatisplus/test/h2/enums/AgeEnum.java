@@ -13,28 +13,32 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test.base.entity.mysql;
+package com.baomidou.mybatisplus.test.h2.enums;
 
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
-import com.baomidou.mybatisplus.annotation.TableField;
-import lombok.Data;
-import lombok.experimental.Accessors;
+import com.baomidou.mybatisplus.core.enums.IEnum;
 
 /**
- * @author miemie
- * @since 2018-08-18
+ * 通用枚举注入演示，注意需要实现 IEnums 也需要扫描枚举包
+ *
+ * @author hubin
+ * @since 2018-08-15
  */
-@Data
-@Accessors(chain = true)
-public class MysqlData {
+public enum AgeEnum implements IEnum<Integer> {
+    ONE(1, "一岁"),
+    TWO(2, "二岁"),
+    THREE(3, "三岁");
 
-    private Long id;
-    @TableField("`order`")
-    private Integer order;
-    @TableField("`group`")
-    private Integer group;
-    @TableField(strategy = FieldStrategy.NOT_EMPTY)
-    private String testStr;
-    @TableField("lambda_str")
-    private String yaHoStr;
+    private final int value;
+    @SuppressWarnings("unused")
+	private final String desc;
+
+    AgeEnum(final int value, final String desc) {
+        this.value = value;
+        this.desc = desc;
+    }
+
+    @Override
+    public Integer getValue() {
+        return value;
+    }
 }

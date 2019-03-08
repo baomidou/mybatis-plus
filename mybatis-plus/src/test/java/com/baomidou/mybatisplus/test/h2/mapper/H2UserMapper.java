@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test.h2.entity.mapper;
+package com.baomidou.mybatisplus.test.h2.mapper;
 
 import java.util.List;
 import java.util.Map;
@@ -24,8 +24,8 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.test.h2.entity.persistent.H2Addr;
-import com.baomidou.mybatisplus.test.h2.entity.persistent.H2User;
+import com.baomidou.mybatisplus.test.h2.entity.H2Addr;
+import com.baomidou.mybatisplus.test.h2.entity.H2User;
 
 /**
  * 这里继承自定义父类 SuperMapper

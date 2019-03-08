@@ -13,37 +13,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test.h2.entity.enums;
+package com.baomidou.mybatisplus.test.h2.mapper;
 
-import com.baomidou.mybatisplus.annotation.EnumValue;
+import com.baomidou.mybatisplus.test.h2.entity.H2Student;
 
 /**
- * <p></p>
- *
- * @author yuxiaobin
- * @date 2018/8/30
+ * 学生Mapper层
+ * @author nieqiurong 2018/7/27.
  */
-public enum GradeEnum {
-
-    PRIMARY(1, "小学"),
-    SECONDARY(2, "中学"),
-    HIGH(3, "高中");
-
-    GradeEnum(int code, String descp) {
-        this.code = code;
-        this.descp = descp;
-    }
-
-    @EnumValue
-    private final int code;
-
-    private final String descp;
-
-    public int getCode() {
-        return code;
-    }
-
-    public String getDescp() {
-        return descp;
-    }
-}
+public interface H2StudentMapper extends SuperMapper<H2Student> {}

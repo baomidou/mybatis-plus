@@ -19,8 +19,8 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.test.base.BaseDbTest;
 import com.baomidou.mybatisplus.test.base.entity.CommonLogicData;
-import com.baomidou.mybatisplus.test.base.entity.mysql.MysqlData;
-import com.baomidou.mybatisplus.test.base.mapper.mysql.MysqlDataMapper;
+import com.baomidou.mybatisplus.test.mysql.entity.MysqlData;
+import com.baomidou.mybatisplus.test.mysql.mapper.MysqlDataMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
 

@@ -13,32 +13,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test.h2.entity.enums;
-
-import com.baomidou.mybatisplus.core.enums.IEnum;
+package com.baomidou.mybatisplus.test.h2.mapper;
 
 /**
- * 通用枚举注入演示，注意需要实现 IEnums 也需要扫描枚举包
+ * 自定义父类 SuperMapper
  *
  * @author hubin
- * @since 2018-08-15
+ * @since 2017-06-26
  */
-public enum AgeEnum implements IEnum<Integer> {
-    ONE(1, "一岁"),
-    TWO(2, "二岁"),
-    THREE(3, "三岁");
+public interface SuperMapper<T> extends com.baomidou.mybatisplus.core.mapper.BaseMapper<T> {
 
-    private final int value;
-    @SuppressWarnings("unused")
-	private final String desc;
-
-    AgeEnum(final int value, final String desc) {
-        this.value = value;
-        this.desc = desc;
-    }
-
-    @Override
-    public Integer getValue() {
-        return value;
-    }
+    // 这里可以写 mapper 层公共方法、 注意！！ 多泛型的时候请将泛型T放在第一位.
 }

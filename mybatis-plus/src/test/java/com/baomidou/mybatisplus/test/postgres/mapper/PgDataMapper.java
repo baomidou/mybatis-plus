@@ -13,16 +13,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test.h2.entity.enums;
+package com.baomidou.mybatisplus.test.postgres.mapper;
+
+import com.baomidou.mybatisplus.test.postgres.entity.PgData;
+import com.baomidou.mybatisplus.test.base.mapper.MyBaseMapper;
 
 /**
- * <p></p>
- *
- * @author yuxiaobin
- * @date 2018/8/30
+ * @author miemie
+ * @since 2018-08-06
  */
-public enum GenderEnum {
-
-    MALE,
-    FEMALE
-}
+public interface PgDataMapper extends MyBaseMapper<PgData> {}

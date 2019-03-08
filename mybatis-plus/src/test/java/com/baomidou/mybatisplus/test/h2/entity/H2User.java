@@ -13,11 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test.h2.entity.persistent;
+package com.baomidou.mybatisplus.test.h2.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
-import com.baomidou.mybatisplus.test.h2.entity.SuperEntity;
-import com.baomidou.mybatisplus.test.h2.entity.enums.AgeEnum;
+import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;

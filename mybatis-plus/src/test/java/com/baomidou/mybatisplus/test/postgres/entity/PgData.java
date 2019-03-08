@@ -13,15 +13,24 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test.h2.entity.mapper;
+package com.baomidou.mybatisplus.test.postgres.entity;
+
+import com.baomidou.mybatisplus.annotation.TableField;
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
- * 自定义父类 SuperMapper
- *
- * @author hubin
- * @since 2017-06-26
+ * @author miemie
+ * @since 2018-08-06
  */
-public interface SuperMapper<T> extends com.baomidou.mybatisplus.core.mapper.BaseMapper<T> {
+@Data
+@Accessors(chain = true)
+public class PgData {
 
-    // 这里可以写 mapper 层公共方法、 注意！！ 多泛型的时候请将泛型T放在第一位.
+    private Long id;
+    @TableField("\"pgInt\"")
+    private Integer pgInt;
+    private Integer pgInt2;
+    @TableField("\"group\"")
+    private Integer group;
 }
