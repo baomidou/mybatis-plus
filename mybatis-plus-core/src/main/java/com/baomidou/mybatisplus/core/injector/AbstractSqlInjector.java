@@ -15,21 +15,22 @@
  */
 package com.baomidou.mybatisplus.core.injector;
 
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
-import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
-import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.apache.ibatis.session.Configuration;
-
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.List;
 import java.util.Set;
+
+import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.ibatis.session.Configuration;
+
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 
 
 /**
@@ -45,7 +46,7 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
         String className = mapperClass.toString();
         Set<String> mapperRegistryCache = GlobalConfigUtils.getMapperRegistryCache(builderAssistant.getConfiguration());
         if (!mapperRegistryCache.contains(className)) {
-            List<AbstractMethod> methodList = this.getMethodList();
+            List<AbstractMethod> methodList = this.getMethodList(mapperClass);
             Assert.notEmpty(methodList, "No effective injection method was found.");
             // 循环注入自定义方法
             Class<?> modelClass = extractModelClass(mapperClass);
@@ -69,11 +70,14 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
     }
 
     /**
+     * <p>
      * 获取 注入的方法
+     * </p>
      *
+     * @param mapperClass mapper class
      * @return 注入的方法集合
      */
-    public abstract List<AbstractMethod> getMethodList();
+    public abstract List<AbstractMethod> getMethodList(Class<?> mapperClass);
 
     /**
      * 提取泛型模型,多泛型的时候请将泛型T放在第一位
