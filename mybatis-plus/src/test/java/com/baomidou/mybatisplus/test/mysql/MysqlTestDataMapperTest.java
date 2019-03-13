@@ -15,8 +15,11 @@
  */
 package com.baomidou.mybatisplus.test.mysql;
 
+import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.base.BaseDbTest;
 import com.baomidou.mybatisplus.test.base.entity.CommonLogicData;
 import com.baomidou.mybatisplus.test.mysql.entity.MysqlData;
@@ -202,7 +205,17 @@ class MysqlTestDataMapperTest extends BaseDbTest {
         // 8. 有 where 条件 也有 last 条件
         assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectList(Wrappers.lambdaQuery(new CommonLogicData()).eq(CommonLogicData::getId, 11).last("limit 1"))));
     }
-//
+
+    @Override
+    protected void selectPage() {
+        Page<MysqlData> mysqlPage = new Page<>(1, 5);
+        IPage<MysqlData> mysqlDataPage = mysqlMapper.selectPage(mysqlPage, null);
+        assertSame(mysqlDataPage, mysqlPage);
+        assertNotEquals(0, mysqlDataPage.getRecords().size());
+        assertTrue(CollectionUtils.isNotEmpty(mysqlDataPage.getRecords()));
+        System.out.println(JSON.toJSONString(mysqlDataPage));
+    }
+    //
 //    @Test
 //    void d7_selectPage() {
 //        Page<CommonData> page = new Page<>(1, 5);

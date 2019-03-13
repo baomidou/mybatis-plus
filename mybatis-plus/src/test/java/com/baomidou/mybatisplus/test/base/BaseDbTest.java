@@ -1,7 +1,10 @@
 package com.baomidou.mybatisplus.test.base;
 
+import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.base.entity.CommonData;
 import com.baomidou.mybatisplus.test.base.entity.CommonLogicData;
 import com.baomidou.mybatisplus.test.base.entity.ResultMapEntity;
@@ -240,4 +243,46 @@ public abstract class BaseDbTest {
     }
 
     protected abstract void selectList(long id);
+
+    @Test
+    void a15_selectPage() {
+        Page<CommonData> page = new Page<>(1, 5);
+        page.setDesc("c_time", "u_time");
+        IPage<CommonData> dataPage = commonMapper.selectPage(page, null);
+        assertSame(dataPage, page);
+        assertNotEquals(0, dataPage.getRecords().size());
+        assertTrue(CollectionUtils.isNotEmpty(dataPage.getRecords()));
+        System.out.println(JSON.toJSONString(dataPage));
+        System.out.println(JSON.toJSON(dataPage.convert(CommonData::getId)));
+
+
+        Page<CommonLogicData> logicPage = new Page<>(1, 5);
+        IPage<CommonLogicData> logicDataPage = commonLogicMapper.selectPage(logicPage, null);
+        assertSame(logicDataPage, logicPage);
+        assertNotEquals(0, logicDataPage.getRecords().size());
+        assertTrue(CollectionUtils.isNotEmpty(logicDataPage.getRecords()));
+        System.out.println(JSON.toJSONString(logicDataPage));
+
+
+        Page<CommonData> commonDataPage = new Page<>(1, 5);
+        commonDataPage.setDesc("c_time", "u_time");
+        IPage<CommonData> commonDataDataPage = commonMapper.myPage(commonDataPage);
+        assertSame(commonDataDataPage, commonDataPage);
+        assertNotEquals(0, commonDataDataPage.getRecords().size());
+        assertTrue(CollectionUtils.isNotEmpty(commonDataDataPage.getRecords()));
+        System.out.println(JSON.toJSONString(commonDataDataPage));
+        System.out.println(JSON.toJSON(commonDataDataPage.convert(CommonData::getId)));
+
+
+        Page<ResultMapEntity> resultMapEntityPage = new Page<>(1, 5);
+        IPage<ResultMapEntity> resultMapEntityDataPage = resultMapEntityMapper.selectPage(resultMapEntityPage, null);
+        assertSame(resultMapEntityDataPage, resultMapEntityPage);
+        assertNotEquals(0, resultMapEntityDataPage.getRecords().size());
+        assertTrue(CollectionUtils.isNotEmpty(resultMapEntityDataPage.getRecords()));
+        System.out.println(JSON.toJSONString(resultMapEntityDataPage));
+
+        this.selectPage();
+    }
+
+    protected abstract void selectPage();
 }
