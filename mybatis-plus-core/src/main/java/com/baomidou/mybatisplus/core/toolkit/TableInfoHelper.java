@@ -72,7 +72,9 @@ public class TableInfoHelper {
      * @return 数据库表反射信息
      */
     public static TableInfo getTableInfo(Class<?> clazz) {
-        if (clazz == null) {
+        if (clazz == null
+            || ReflectionKit.isPrimitiveOrWrapper(clazz)
+            || clazz == String.class) {
             return null;
         }
         TableInfo tableInfo = TABLE_INFO_CACHE.get(ClassUtils.getUserClass(clazz));

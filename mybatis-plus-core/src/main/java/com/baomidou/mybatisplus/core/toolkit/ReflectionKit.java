@@ -26,6 +26,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +53,19 @@ public class ReflectionKit {
      * class field cache
      */
     private static final Map<Class<?>, List<Field>> classFieldCache = new ConcurrentHashMap<>();
+
+    private static final Map<Class<?>, Class<?>> primitiveWrapperTypeMap = new IdentityHashMap<>(8);
+
+    static {
+        primitiveWrapperTypeMap.put(Boolean.class, boolean.class);
+        primitiveWrapperTypeMap.put(Byte.class, byte.class);
+        primitiveWrapperTypeMap.put(Character.class, char.class);
+        primitiveWrapperTypeMap.put(Double.class, double.class);
+        primitiveWrapperTypeMap.put(Float.class, float.class);
+        primitiveWrapperTypeMap.put(Integer.class, int.class);
+        primitiveWrapperTypeMap.put(Long.class, long.class);
+        primitiveWrapperTypeMap.put(Short.class, short.class);
+    }
 
     /**
      * <p>
@@ -224,11 +238,29 @@ public class ReflectionKit {
         return fieldList;
     }
 
+    /**
+     * 获取字段get方法
+     *
+     * @param cls   class
+     * @param field 字段
+     * @return Get方法
+     */
     public static Method getMethod(Class<?> cls, Field field) {
         try {
             return cls.getDeclaredMethod(ReflectionKit.getMethodCapitalize(field, field.getName()));
         } catch (NoSuchMethodException e) {
             throw ExceptionUtils.mpe("Error: NoSuchMethod in %s.  Cause:", e, cls.getName());
         }
+    }
+
+    /**
+     * 判断是否为基本类型或基本包装类型
+     *
+     * @param clazz class
+     * @return 是否基本类型或基本包装类型
+     */
+    public static boolean isPrimitiveOrWrapper(Class<?> clazz) {
+        Assert.notNull(clazz, "Class must not be null");
+        return (clazz.isPrimitive() || primitiveWrapperTypeMap.containsKey(clazz));
     }
 }

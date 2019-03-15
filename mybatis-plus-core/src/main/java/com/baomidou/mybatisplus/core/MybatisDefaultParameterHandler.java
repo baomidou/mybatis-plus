@@ -65,7 +65,10 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
      */
     protected static Object processBatch(MappedStatement ms, Object parameterObject) {
         //检查 parameterObject
-        if (null == parameterObject) {
+        if (null == parameterObject
+            || ReflectionKit.isPrimitiveOrWrapper(parameterObject.getClass())
+            || parameterObject.getClass() == String.class) {
+            //todo 这里需要处理下类型判断,逻辑删除还会进入这里,但SqlCommandType为UPDATE
             return null;
         }
         // 全局配置是否配置填充器
