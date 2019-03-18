@@ -20,7 +20,7 @@ import java.security.MessageDigest;
 import java.util.Base64;
 
 /**
- * 枚举处理工具类
+ * 加密工具类
  *
  * @author hubin
  * @since 2018-08-02
