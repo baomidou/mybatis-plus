@@ -1,5 +1,6 @@
 import groovy.util.Node
 import groovy.util.NodeList
+import nl.javadude.gradle.plugins.license.License
 
 buildscript {
     repositories {
