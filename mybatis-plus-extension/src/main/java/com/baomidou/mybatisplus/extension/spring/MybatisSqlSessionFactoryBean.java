@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.enums.IEnum;
 import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.extension.MybatisMapWrapperFactory;
 import com.baomidou.mybatisplus.extension.handlers.EnumTypeHandler;
 import com.baomidou.mybatisplus.extension.toolkit.AopUtils;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
@@ -456,7 +457,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             Optional.ofNullable(this.configurationProperties).ifPresent(configuration::setVariables);
         }
 
-
         // TODO 无配置启动所必须的
         this.globalConfig = Optional.ofNullable(this.globalConfig).orElseGet(GlobalConfigUtils::defaults);
         this.globalConfig.setDbConfig(Optional.ofNullable(this.globalConfig.getDbConfig()).orElseGet(GlobalConfig.DbConfig::new));
@@ -467,6 +467,11 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         Optional.ofNullable(this.objectFactory).ifPresent(configuration::setObjectFactory);
         Optional.ofNullable(this.objectWrapperFactory).ifPresent(configuration::setObjectWrapperFactory);
         Optional.ofNullable(this.vfs).ifPresent(configuration::setVfsImpl);
+
+        // TODO 自动注入 map 接收返回结果下是否下划线转驼峰
+        if (configuration.isMapUnderscoreToCamelCase()) {
+            configuration.setObjectWrapperFactory(new MybatisMapWrapperFactory());
+        }
 
         if (hasLength(this.typeAliasesPackage)) {
             // TODO 支持自定义通配符
