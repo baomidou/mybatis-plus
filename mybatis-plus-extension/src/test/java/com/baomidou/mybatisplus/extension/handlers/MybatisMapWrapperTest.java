@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
  * @author miemie
  * @since 2019-03-21
@@ -15,6 +17,6 @@ public class MybatisMapWrapperTest {
     @Test
     public void findPropertyOfTrue() {
         boolean useCamelCaseMapping = true;
-        assertThat(mapWrapper.findProperty("xxx", useCamelCaseMapping)).
+        assertThat(mapWrapper.findProperty("xxx", useCamelCaseMapping));
     }
 }

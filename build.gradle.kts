@@ -53,7 +53,7 @@ val lib = mapOf(
     "logback-classic"            to "ch.qos.logback:logback-classic:1.2.3",
     // test
     "spring-test"                to "org.springframework:spring-test:$springVersion",
-    "assertj-core" to "org.assertj:assertj-core:3.12.2",
+    "assertj-core"               to "org.assertj:assertj-core:3.12.2",
     "junit-jupiter-api"          to "org.junit.jupiter:junit-jupiter-api:$junitVersion",
     "junit-jupiter-engine"       to "org.junit.jupiter:junit-jupiter-engine:$junitVersion",
     "mockito-all"                to "org.mockito:mockito-all:1.10.19",
@@ -127,7 +127,7 @@ subprojects {
 
     repositories {
         mavenLocal()
-        maven("https://maven.aliyun.com/nexus/contencommons-dbcpt/groups/public/")
+        maven("https://maven.aliyun.com/repository/public")
         maven("https://oss.sonatype.org/content/repositories/snapshots/")
         maven("http://www.cameliatk.jp/maven2/repository/thirdparty")
         jcenter()
