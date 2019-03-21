@@ -1,6 +1,5 @@
 import groovy.util.Node
 import groovy.util.NodeList
-import nl.javadude.gradle.plugins.license.License
 
 buildscript {
     repositories {
@@ -53,6 +52,7 @@ val lib = mapOf(
     "logback-classic"            to "ch.qos.logback:logback-classic:1.2.3",
     // test
     "spring-test"                to "org.springframework:spring-test:$springVersion",
+    "assertj-core" to "org.assertj:assertj-core:3.12.2",
     "junit-jupiter-api"          to "org.junit.jupiter:junit-jupiter-api:$junitVersion",
     "junit-jupiter-engine"       to "org.junit.jupiter:junit-jupiter-engine:$junitVersion",
     "mockito-all"                to "org.mockito:mockito-all:1.10.19",
@@ -138,6 +138,7 @@ subprojects {
 
         testAnnotationProcessor("${lib["lombok"]}")
         testCompileOnly("${lib["lombok"]}")
+        testImplementation("${lib["assertj-core"]}")
         testImplementation("${lib["junit-jupiter-api"]}")
         testRuntimeOnly("${lib["junit-jupiter-engine"]}")
         testCompileOnly("${lib["mockito-all"]}")
