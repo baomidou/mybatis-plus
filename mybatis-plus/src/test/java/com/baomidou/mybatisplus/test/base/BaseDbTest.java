@@ -24,6 +24,7 @@ import java.util.*;
 
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -235,17 +236,41 @@ public abstract class BaseDbTest {
     @Test
     void a14_selectList() {
         long id = 10L;
-        assertTrue(CollectionUtils.isNotEmpty(commonMapper.selectList(Wrappers.<CommonData>lambdaQuery()
-            .eq(CommonData::getTestInt, 10))));
-        assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectList(Wrappers.<CommonLogicData>lambdaQuery()
-            .eq(CommonLogicData::getId, id).eq(CommonLogicData::getTestInt, 10))));
+        List<CommonData> commonData = commonMapper.selectList(Wrappers.<CommonData>lambdaQuery()
+            .eq(CommonData::getTestInt, 10));
+        assertThat(commonData).isNotEmpty();
+        assertThat(commonData.get(0)).isNotNull();
+
+        List<CommonLogicData> commonLogicData = commonLogicMapper.selectList(Wrappers.<CommonLogicData>lambdaQuery()
+            .eq(CommonLogicData::getId, id).eq(CommonLogicData::getTestInt, 10));
+        assertThat(commonLogicData).isNotEmpty();
+        assertThat(commonLogicData.get(0)).isNotNull();
+
         this.selectList(id);
     }
 
     protected abstract void selectList(long id);
 
     @Test
-    void a15_selectPage() {
+    void a15_selectMaps() {
+        long id = 10L;
+        List<Map<String, Object>> commonMaps = commonMapper.selectMaps(Wrappers.<CommonData>lambdaQuery()
+            .eq(CommonData::getTestInt, 10));
+        assertThat(commonMaps).isNotEmpty();
+        assertThat(commonMaps.get(0)).isNotEmpty();
+
+        List<Map<String, Object>> commonLogicMaps = commonLogicMapper.selectMaps(Wrappers.<CommonLogicData>lambdaQuery()
+            .eq(CommonLogicData::getId, id).eq(CommonLogicData::getTestInt, 10));
+        assertThat(commonLogicMaps).isNotEmpty();
+        assertThat(commonLogicMaps.get(0)).isNotEmpty();
+
+        this.selectList(id);
+    }
+
+    protected abstract void selectMaps(long id);
+
+    @Test
+    void a16_selectPage() {
         Page<CommonData> page = new Page<>(1, 5);
         page.setDesc("c_time", "u_time");
         IPage<CommonData> dataPage = commonMapper.selectPage(page, null);
