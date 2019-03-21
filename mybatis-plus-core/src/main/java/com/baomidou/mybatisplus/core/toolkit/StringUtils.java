@@ -121,16 +121,18 @@ public class StringUtils {
 
     /**
      * 判断字符串是不是驼峰命名
+     * <li> 包含 '_' 不算 </li>
+     * <li> 首字母大写的不算 </li>
      *
      * @param str 字符串
      * @return 结果
      */
     public static boolean isCamel(String str) {
-        if (str.contains("_")) {
+        if (str.contains(StringPool.UNDERSCORE)) {
             return false;
         }
-        // todo
-        return true;
+        char first = str.charAt(0);
+        return first < 'A' || first > 'Z';
     }
 
     /**
