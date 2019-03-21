@@ -18,6 +18,8 @@ package com.baomidou.mybatisplus.core.toolkit;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 import lombok.Getter;
+
+import org.apache.ibatis.reflection.property.PropertyNamer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +30,7 @@ class LambdaUtilsTest {
         SerializedLambda lambda = LambdaUtils.resolve(TestPojo::getId);
         Assertions.assertEquals(TestPojo.class.getName(), lambda.getImplClassName());
         Assertions.assertEquals("getId", lambda.getImplMethodName());
-        Assertions.assertEquals("id", StringUtils.resolveFieldName(lambda.getImplMethodName()));
+        Assertions.assertEquals("id", PropertyNamer.methodToProperty(lambda.getImplMethodName()));
 
         Cond<TestPojo> cond = new Cond<>();
         System.out.println(cond.eq(TestPojo::getId, 123).toString());

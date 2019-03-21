@@ -19,10 +19,11 @@ import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
+
+import org.apache.ibatis.reflection.property.PropertyNamer;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -78,7 +79,7 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
      * @see SerializedLambda#getImplMethodName()
      */
     private String getColumn(SerializedLambda lambda, boolean onlyColumn) throws MybatisPlusException {
-        String fieldName = StringUtils.resolveFieldName(lambda.getImplMethodName());
+        String fieldName = PropertyNamer.methodToProperty(lambda.getImplMethodName());
 
         return Optional.ofNullable(LambdaUtils.getColumnOfProperty(lambda.getImplClass(), fieldName))
             .map(onlyColumn ? ColumnCache::getColumn : ColumnCache::getColumnSelect)

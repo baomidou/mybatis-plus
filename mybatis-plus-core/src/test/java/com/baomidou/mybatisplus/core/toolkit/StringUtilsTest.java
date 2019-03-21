@@ -30,4 +30,12 @@ class StringUtilsTest {
         String s = "userId";
         Assertions.assertEquals("user_id", StringUtils.camelToUnderline(s));
     }
+
+    @Test
+    void isCapitalModeTest(){
+        Assertions.assertFalse(StringUtils.isCapitalMode("test"));
+        Assertions.assertFalse(StringUtils.isCapitalMode("Test"));
+        Assertions.assertFalse(StringUtils.isCapitalMode("teSt"));
+        Assertions.assertTrue(StringUtils.isCapitalMode("TEST"));
+    }
 }

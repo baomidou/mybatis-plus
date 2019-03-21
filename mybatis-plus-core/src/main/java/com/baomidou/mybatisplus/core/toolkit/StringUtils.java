@@ -64,6 +64,11 @@ public class StringUtils {
      */
     private static final Pattern P_IS_COLUMN = Pattern.compile("^\\w\\S*[\\w\\d]*$");
 
+    /**
+     * 是否为大写命名
+     */
+    private static final Pattern CAPITAL_MODE = Pattern.compile("^[0-9A-Z/_]+$");
+
     private StringUtils() {
         // to do nothing
     }
@@ -131,8 +136,7 @@ public class StringUtils {
         if (str.contains(StringPool.UNDERSCORE)) {
             return false;
         }
-        char first = str.charAt(0);
-        return first < 'A' || first > 'Z';
+        return Character.isLowerCase(str.charAt(0));
     }
 
     /**
@@ -421,7 +425,7 @@ public class StringUtils {
      * @return ignore
      */
     public static boolean isCapitalMode(String word) {
-        return null != word && word.matches("^[0-9A-Z/_]+$");
+        return null != word && CAPITAL_MODE.matcher(word).matches();
     }
 
     /**
@@ -809,8 +813,10 @@ public class StringUtils {
      *
      * @param s 原字符串
      * @param p 移除的单词
+     * @deprecated 3.1.1
      * @return ignore
      */
+    @Deprecated
     public static String removeWordWithComma(String s, String p) {
         String match = "\\s*" + p + "\\s*,{0,1}";
         return s.replaceAll(match, "");
