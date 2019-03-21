@@ -15,13 +15,11 @@
  */
 package com.baomidou.mybatisplus.extension.handlers;
 
-import java.util.Map;
-
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.wrapper.MapWrapper;
 
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import java.util.Map;
 
 /**
  * 返回Map结果集，下划线转驼峰
@@ -37,9 +35,7 @@ public class MybatisMapWrapper extends MapWrapper {
 
     @Override
     public String findProperty(String name, boolean useCamelCaseMapping) {
-        if (useCamelCaseMapping
-            && ((name.charAt(0) >= 'A' && name.charAt(0) <= 'Z')
-            || name.contains(StringPool.UNDERSCORE))) {
+        if (useCamelCaseMapping && !StringUtils.isCamel(name)) {
             return StringUtils.underlineToCamel(name);
         }
         return name;

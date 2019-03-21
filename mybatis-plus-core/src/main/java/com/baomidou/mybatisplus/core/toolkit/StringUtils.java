@@ -15,7 +15,8 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import static java.util.stream.Collectors.joining;
+import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
+import com.baomidou.mybatisplus.core.toolkit.support.BiIntFunction;
 
 import java.nio.charset.StandardCharsets;
 import java.sql.Blob;
@@ -26,8 +27,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
-import com.baomidou.mybatisplus.core.toolkit.support.BiIntFunction;
+import static java.util.stream.Collectors.joining;
 
 /**
  * <p>
@@ -55,6 +55,10 @@ public class StringUtils {
      * 占位符
      */
     public static final String PLACE_HOLDER = "{%s}";
+    /**
+     * MP 内定义的 SQL 占位符表达式，匹配诸如 {0},{1},{2} ... 的形式
+     */
+    public final static Pattern MP_SQL_PLACE_HOLDER = Pattern.compile("[{](?<idx>\\d+)}");
     /**
      * 验证字符串是否是数据库字段
      */
@@ -112,6 +116,20 @@ public class StringUtils {
                 return false;
             }
         }
+        return true;
+    }
+
+    /**
+     * 判断字符串是不是驼峰命名
+     *
+     * @param str 字符串
+     * @return 结果
+     */
+    public static boolean isCamel(String str) {
+        if (str.contains("_")) {
+            return false;
+        }
+        // todo
         return true;
     }
 
@@ -235,11 +253,6 @@ public class StringUtils {
         }
         return Pattern.matches(regex, input);
     }
-
-    /**
-     * MP 内定义的 SQL 占位符表达式，匹配诸如 {0},{1},{2} ... 的形式
-     */
-    public final static Pattern MP_SQL_PLACE_HOLDER = Pattern.compile("[{](?<idx>\\d+)}");
 
     /**
      * 替换 SQL 语句中的占位符，例如输入 SELECT * FROM test WHERE id = {0} AND name = {1} 会被替换为
