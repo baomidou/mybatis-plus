@@ -129,7 +129,6 @@ subprojects {
         mavenLocal()
         maven("https://maven.aliyun.com/repository/public")
         maven("https://oss.sonatype.org/content/repositories/snapshots/")
-        maven("http://www.cameliatk.jp/maven2/repository/thirdparty")
         jcenter()
     }
 
