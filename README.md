@@ -51,12 +51,12 @@ MyBatis-Plus is an powerful enhanced toolkit of MyBatis for simplify development
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.0.6</version>
+            <version>3.1.0</version>
         </dependency>
         ```
     -   Gradle
         ```groovy
-        compile group: 'com.baomidou', name: 'mybatis-plus-boot-starter', version: '3.0.6'
+        compile group: 'com.baomidou', name: 'mybatis-plus-boot-starter', version: '3.1.0'
         ```
 -   Modify mapper file extends BaseMapper interface
 
@@ -67,7 +67,7 @@ MyBatis-Plus is an powerful enhanced toolkit of MyBatis for simplify development
     ```
 
 -   Use it
-    ```java
+    ``` java
     List<User> userList = userMapper.selectList(
             new QueryWrapper<User>()
                     .lambda()
@@ -75,7 +75,7 @@ MyBatis-Plus is an powerful enhanced toolkit of MyBatis for simplify development
     );
     ```
     SQL executed
-    ```sql
+    ``` sql
     SELECT * FROM user WHERE age >= 18
     ```
 
