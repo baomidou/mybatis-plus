@@ -59,9 +59,7 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 
 [SSM-实战 Demo](https://gitee.com/juapk/SpringWind)
 
-# [仓库地址](https://search.maven.org/search?q=g:com.baomidou%20a:mybatis-*)
-
-[点此去](https://search.maven.org/search?q=mybatis-plus)
+# [点此查看仓库](https://search.maven.org/search?q=g:com.baomidou%20a:mybatis-*)
 
 ```xml
 <dependency>
