@@ -253,13 +253,13 @@ public abstract class BaseDbTest {
 
     @Test
     void a15_selectMaps() {
-//        List<Map<String, Object>> commonMaps = commonMapper.selectMaps(Wrappers.query());
-//        assertThat(commonMaps).isNotEmpty();
-//        assertThat(commonMaps.get(0)).isNotEmpty();
-//
-//        List<Map<String, Object>> commonLogicMaps = commonLogicMapper.selectMaps(Wrappers.query());
-//        assertThat(commonLogicMaps).isNotEmpty();
-//        assertThat(commonLogicMaps.get(0)).isNotEmpty();
+        List<Map<String, Object>> commonMaps = commonMapper.selectMaps(Wrappers.query());
+        assertThat(commonMaps).isNotEmpty();
+        assertThat(commonMaps.get(0)).isNotEmpty();
+
+        List<Map<String, Object>> commonLogicMaps = commonLogicMapper.selectMaps(Wrappers.query());
+        assertThat(commonLogicMaps).isNotEmpty();
+        assertThat(commonLogicMaps.get(0)).isNotEmpty();
 
         this.selectMaps();
     }
