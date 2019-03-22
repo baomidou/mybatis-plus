@@ -17,12 +17,14 @@ package com.baomidou.mybatisplus.test.mysql.mapper;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.test.mysql.entity.MysqlData;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.base.mapper.MyBaseMapper;
+import com.baomidou.mybatisplus.test.mysql.entity.MysqlData;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author miemie
@@ -32,4 +34,10 @@ public interface MysqlDataMapper extends MyBaseMapper<MysqlData> {
 
     @Select("select * from mysql_data ${ew.customSqlSegment}")
     List<MysqlData> getAll(@Param(Constants.WRAPPER) Wrapper<?> wrapper);
+
+    @Select("select * from mysql_data")
+    Page<Map<String, Object>> getMaps(Page page);
+
+    @Select("select * from mysql_data limit 1")
+    Map<String, Object> getRandomOne();
 }

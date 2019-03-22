@@ -450,6 +450,8 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                 Type returnTypeParameter = actualTypeArguments[0];
                 if (returnTypeParameter instanceof Class<?>) {
                     returnType = (Class<?>) returnTypeParameter;
+                } else if (returnTypeParameter instanceof ParameterizedType) {
+                    returnType = (Class<?>) ((ParameterizedType) returnTypeParameter).getRawType();
                 }
             }
             // TODO 上面是支援 IPage 及其子类作为返回值的

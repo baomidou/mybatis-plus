@@ -140,9 +140,14 @@ class MysqlTestDataMapperTest extends BaseDbTest {
 
     @Override
     protected void selectMaps() {
-        List<Map<String, Object>> mysqlMaps = mysqlMapper.selectMaps(Wrappers.<MysqlData>query());
-        assertThat(mysqlMaps).isNotEmpty();
-        assertThat(mysqlMaps.get(0)).isNotEmpty();
+//        List<Map<String, Object>> mysqlMaps = mysqlMapper.selectMaps(Wrappers.<MysqlData>query());
+//        assertThat(mysqlMaps).isNotEmpty();
+//        assertThat(mysqlMaps.get(0)).isNotEmpty();
+//
+//        Page<Map<String, Object>> mapPage = mysqlMapper.getMaps(new Page(1, 5));
+//        assertThat(mapPage).isNotNull();
+//        assertThat(mapPage.getRecords()).isNotEmpty();
+//        assertThat(mapPage.getRecords().get(0)).isNotEmpty();
     }
 
     //    @Test
@@ -212,6 +217,12 @@ class MysqlTestDataMapperTest extends BaseDbTest {
         assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectList(Wrappers.lambdaQuery(new CommonLogicData()).eq(CommonLogicData::getId, 11))));
         // 8. 有 where 条件 也有 last 条件
         assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectList(Wrappers.lambdaQuery(new CommonLogicData()).eq(CommonLogicData::getId, 11).last("limit 1"))));
+    }
+
+    @Test
+    void b03_getRandomOne() {
+        Map<String, Object> randomOne = mysqlMapper.getRandomOne();
+        assertThat(randomOne).isNotEmpty();
     }
 
     @Override
