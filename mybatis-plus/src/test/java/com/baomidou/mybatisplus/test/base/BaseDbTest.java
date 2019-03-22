@@ -253,21 +253,18 @@ public abstract class BaseDbTest {
 
     @Test
     void a15_selectMaps() {
-        long id = 10L;
-        List<Map<String, Object>> commonMaps = commonMapper.selectMaps(Wrappers.<CommonData>lambdaQuery()
-            .eq(CommonData::getTestInt, 10));
+        List<Map<String, Object>> commonMaps = commonMapper.selectMaps(Wrappers.<CommonData>query());
         assertThat(commonMaps).isNotEmpty();
         assertThat(commonMaps.get(0)).isNotEmpty();
 
-        List<Map<String, Object>> commonLogicMaps = commonLogicMapper.selectMaps(Wrappers.<CommonLogicData>lambdaQuery()
-            .eq(CommonLogicData::getId, id).eq(CommonLogicData::getTestInt, 10));
+        List<Map<String, Object>> commonLogicMaps = commonLogicMapper.selectMaps(Wrappers.<CommonLogicData>query());
         assertThat(commonLogicMaps).isNotEmpty();
         assertThat(commonLogicMaps.get(0)).isNotEmpty();
 
-        this.selectList(id);
+        this.selectMaps();
     }
 
-    protected abstract void selectMaps(long id);
+    protected abstract void selectMaps();
 
     @Test
     void a16_selectPage() {

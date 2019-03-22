@@ -139,9 +139,8 @@ class MysqlTestDataMapperTest extends BaseDbTest {
     }
 
     @Override
-    protected void selectMaps(long id) {
-        List<Map<String, Object>> mysqlMaps = mysqlMapper.selectMaps(Wrappers.<MysqlData>lambdaQuery()
-            .eq(MysqlData::getId, id).eq(MysqlData::getOrder, 10));
+    protected void selectMaps() {
+        List<Map<String, Object>> mysqlMaps = mysqlMapper.selectMaps(Wrappers.<MysqlData>query());
         assertThat(mysqlMaps).isNotEmpty();
         assertThat(mysqlMaps.get(0)).isNotEmpty();
     }
