@@ -85,15 +85,11 @@ public class MybatisMapperMethod {
                     result = executeForCursor(sqlSession, args);
                 } else {
                     Object param = method.convertArgsToSqlCommandParam(args);
-                    /*
-                     * 这下面
-                     */
+                    // TODO 这里下面改了
                     if (IPage.class.isAssignableFrom(method.getReturnType()) && args != null
                         && IPage.class.isAssignableFrom(args[0].getClass())) {
                         result = ((IPage<?>) args[0]).setRecords(executeForIPage(sqlSession, args));
-                        /*
-                         * 这上面
-                         */
+                        // TODO 这里上面改了
                     } else {
                         result = sqlSession.selectOne(command.getName(), param);
                         if (method.returnsOptional() &&
