@@ -444,19 +444,15 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                     returnType = (Class<?>) returnTypeParameter;
                 }
             }
-            /*
-             * 新加入下面 7 行
-             */
-            else if (IPage.class.equals(rawType)) {
+            // TODO 下面是支援 IPage 及其子类作为返回值的
+            else if (IPage.class.isAssignableFrom(rawType)) {
                 Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
                 Type returnTypeParameter = actualTypeArguments[0];
                 if (returnTypeParameter instanceof Class<?>) {
                     returnType = (Class<?>) returnTypeParameter;
                 }
             }
-            /*
-             * 新加入上面 7 行
-             */
+            // TODO 上面是支援 IPage 及其子类作为返回值的
         }
 
         return returnType;
