@@ -15,16 +15,12 @@
  */
 package com.baomidou.mybatisplus.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * 数据库表相关
  *
- * @author hubin
+ * @author hubin, hanchunlin
  * @since 2016-01-23
  */
 @Documented
@@ -36,6 +32,16 @@ public @interface TableName {
      * 实体对应的表名
      */
     String value() default "";
+
+    /**
+     * 如果您需要为表指定前缀，请在此处指定，默认无前缀
+     * <p>
+     * 1、Mysql 等数据库中该前缀应指向表所在的数据库
+     * 2、PostgreSQL 中应指向表的 Schema
+     *
+     * @return 表前缀
+     */
+    String prefix() default "";
 
     /**
      * 实体映射结果集

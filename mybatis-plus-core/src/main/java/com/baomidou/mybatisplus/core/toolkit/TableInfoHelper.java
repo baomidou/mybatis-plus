@@ -155,40 +155,32 @@ public class TableInfoHelper {
      * @param globalConfig 全局配置
      * @param tableInfo    数据库表反射信息
      */
-    public static void initTableName(Class<?> clazz, GlobalConfig globalConfig, TableInfo tableInfo) {
+    private static void initTableName(Class<?> clazz, GlobalConfig globalConfig, TableInfo tableInfo) {
         /* 数据库全局配置 */
         GlobalConfig.DbConfig dbConfig = globalConfig.getDbConfig();
         /* 设置数据库类型 */
         tableInfo.setDbType(dbConfig.getDbType());
-
-        /* 设置表名 */
         TableName table = clazz.getAnnotation(TableName.class);
+
         String tableName = clazz.getSimpleName();
-        if (table != null && StringUtils.isNotEmpty(table.value())) {
-            tableName = table.value();
+        String prefix = null;
+
+        if (table != null) {
+            if (StringUtils.isNotEmpty(table.value())) tableName = table.value();
+            if (StringUtils.isNotEmpty(table.prefix())) prefix = table.prefix();
+            /* 表结果集映射 */
+            if (StringUtils.isNotEmpty(table.resultMap())) {
+                tableInfo.setResultMap(table.resultMap());
+            }
         } else {
             // 开启表名下划线申明
-            if (dbConfig.isTableUnderline()) {
-                tableName = StringUtils.camelToUnderline(tableName);
-            }
-            // 大写命名判断
-            if (dbConfig.isCapitalMode()) {
-                tableName = tableName.toUpperCase();
-            } else {
-                // 首字母小写
-                tableName = StringUtils.firstToLowerCase(tableName);
-            }
-            // 存在表名前缀
-            if (null != dbConfig.getTablePrefix()) {
-                tableName = dbConfig.getTablePrefix() + tableName;
-            }
+            tableName = dbConfig.isTableUnderline() ? StringUtils.camelToUnderline(tableName) :
+                // 大写命名判断
+                dbConfig.isCapitalMode() ? tableName.toUpperCase() : StringUtils.firstToLowerCase(tableName);
         }
-        tableInfo.setTableName(tableName);
 
-        /* 表结果集映射 */
-        if (table != null && StringUtils.isNotEmpty(table.resultMap())) {
-            tableInfo.setResultMap(table.resultMap());
-        }
+        if (StringUtils.isEmpty(prefix)) prefix = dbConfig.getTablePrefix();
+        tableInfo.setTableName(StringUtils.isEmpty(prefix) ? tableName : String.format("%s.%s", prefix, tableName));
 
         /* 开启了自定义 KEY 生成器 */
         if (null != dbConfig.getKeyGenerator()) {
