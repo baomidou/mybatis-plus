@@ -33,7 +33,8 @@ public class Update extends AbstractMethod {
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.UPDATE;
         String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(),
-            sqlSet(false, true, tableInfo, true, ENTITY, ENTITY_DOT), sqlWhereEntityWrapper(true, tableInfo));
+            sqlSet(true, true, tableInfo, true, ENTITY, ENTITY_DOT),
+            sqlWhereEntityWrapper(true, tableInfo));
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
         return this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
     }

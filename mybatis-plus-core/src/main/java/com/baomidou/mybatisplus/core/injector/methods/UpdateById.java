@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.core.injector.methods;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
 
@@ -31,14 +32,21 @@ public class UpdateById extends AbstractMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
+        String sql;
+        boolean logicDelete = tableInfo.isLogicDelete();
         SqlMethod sqlMethod = SqlMethod.UPDATE_BY_ID;
-        String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(),
-            sqlSet(false, false, tableInfo, false, ENTITY, ENTITY_DOT),
+        StringBuilder append = new StringBuilder("<if test=\"et instanceof java.util.Map\">")
+            .append("<if test=\"et.").append(OptimisticLockerInterceptor.MP_OPTLOCK_VERSION_ORIGINAL).append("!=null\">")
+            .append(" AND ${et.").append(OptimisticLockerInterceptor.MP_OPTLOCK_VERSION_COLUMN)
+            .append("}=#{et.").append(OptimisticLockerInterceptor.MP_OPTLOCK_VERSION_ORIGINAL).append(StringPool.RIGHT_BRACE)
+            .append("</if></if>");
+        if (logicDelete) {
+            append.append(tableInfo.getLogicDeleteSql(true, false));
+        }
+        sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(),
+            sqlSet(logicDelete, false, tableInfo, false, ENTITY, ENTITY_DOT),
             tableInfo.getKeyColumn(), ENTITY_DOT + tableInfo.getKeyProperty(),
-            new StringBuilder("<if test=\"et instanceof java.util.Map\">")
-                .append("<if test=\"et.MP_OPTLOCK_VERSION_ORIGINAL!=null\">")
-                .append(" AND ${et.MP_OPTLOCK_VERSION_COLUMN}=#{et.MP_OPTLOCK_VERSION_ORIGINAL}")
-                .append("</if></if>"));
+            append);
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
         return addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
     }
