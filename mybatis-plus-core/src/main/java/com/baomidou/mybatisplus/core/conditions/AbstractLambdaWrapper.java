@@ -22,7 +22,6 @@ import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
-
 import org.apache.ibatis.reflection.property.PropertyNamer;
 
 import java.util.Arrays;
@@ -87,5 +86,4 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
                 ExceptionUtils.mpe("Your property named \"%s\" cannot find the corresponding database column name!", fieldName)
             );
     }
-
 }

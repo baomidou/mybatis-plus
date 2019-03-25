@@ -15,38 +15,24 @@
  */
 package com.baomidou.mybatisplus.extension.plugins;
 
-import java.lang.reflect.Field;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-
-import org.apache.ibatis.executor.Executor;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.SqlCommandType;
-import org.apache.ibatis.plugin.Interceptor;
-import org.apache.ibatis.plugin.Intercepts;
-import org.apache.ibatis.plugin.Invocation;
-import org.apache.ibatis.plugin.Plugin;
-import org.apache.ibatis.plugin.Signature;
-
 import com.baomidou.mybatisplus.annotation.Version;
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
-
+import com.baomidou.mybatisplus.core.toolkit.*;
 import lombok.Data;
+import org.apache.ibatis.executor.Executor;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.plugin.*;
+
+import java.lang.reflect.Field;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * Optimistic Lock Light version
@@ -73,19 +59,26 @@ public class OptimisticLockerInterceptor implements Interceptor {
 
     /**
      * 乐观锁常量
+     *
      * @deprecated 3.1.1 {@link Constants#MP_OPTLOCK_VERSION_ORIGINAL}
      */
-    public static final String MP_OPTLOCK_VERSION_ORIGINAL = "MP_OPTLOCK_VERSION_ORIGINAL";
+    @Deprecated
+    public static final String MP_OPTLOCK_VERSION_ORIGINAL = Constants.MP_OPTLOCK_VERSION_ORIGINAL;
     /**
      * 乐观锁常量
+     *
      * @deprecated 3.1.1 {@link Constants#MP_OPTLOCK_VERSION_COLUMN}
      */
-    public static final String MP_OPTLOCK_VERSION_COLUMN = "MP_OPTLOCK_VERSION_COLUMN";
+    @Deprecated
+    public static final String MP_OPTLOCK_VERSION_COLUMN = Constants.MP_OPTLOCK_VERSION_COLUMN;
     /**
      * 乐观锁常量
+     *
      * @deprecated 3.1.1 {@link Constants#MP_OPTLOCK_ET_ORIGINAL}
      */
-    public static final String MP_OPTLOCK_ET_ORIGINAL = "MP_OPTLOCK_ET_ORIGINAL";
+    @Deprecated
+    public static final String MP_OPTLOCK_ET_ORIGINAL = Constants.MP_OPTLOCK_ET_ORIGINAL;
+
     private static final String NAME_ENTITY = Constants.ENTITY;
     private static final String NAME_ENTITY_WRAPPER = Constants.WRAPPER;
     private static final String PARAM_UPDATE_METHOD_NAME = "update";
@@ -107,7 +100,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
         // entity = et
         Object et = null;
         if (param instanceof Map) {
-			Map map = (Map) param;
+            Map map = (Map) param;
             if (map.containsKey(NAME_ENTITY)) {
                 //updateById(et), update(et, wrapper);
                 et = map.get(NAME_ENTITY);
@@ -176,7 +169,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
      * @param updatedVersionVal  乐观锁自动更新的新value
      * @param map
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private void dealUpdateById(Class<?> entityClass, Object et, EntityField entityVersionField,
                                 Object originalVersionVal, Object updatedVersionVal, Map map) throws IllegalAccessException {
         if (originalVersionVal == null) {
@@ -297,6 +290,10 @@ public class OptimisticLockerInterceptor implements Interceptor {
     @Data
     private class EntityField {
 
+        private Field field;
+        private boolean version;
+        private String columnName;
+
         EntityField(Field field, boolean version) {
             this.field = field;
             this.version = version;
@@ -307,10 +304,5 @@ public class OptimisticLockerInterceptor implements Interceptor {
             this.version = version;
             this.columnName = columnName;
         }
-
-        private Field field;
-        private boolean version;
-        private String columnName;
-
     }
 }
