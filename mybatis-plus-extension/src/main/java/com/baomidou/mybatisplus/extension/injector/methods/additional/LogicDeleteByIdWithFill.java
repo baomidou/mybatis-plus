@@ -17,10 +17,10 @@ package com.baomidou.mybatisplus.extension.injector.methods.additional;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
+import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.extension.injector.AbstractLogicMethod;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
 
@@ -42,7 +42,7 @@ import static java.util.stream.Collectors.toList;
  * @author miemie
  * @since 2018-11-09
  */
-public class LogicDeleteByIdWithFill extends AbstractLogicMethod {
+public class LogicDeleteByIdWithFill extends AbstractMethod {
 
     /**
      * mapper 对应的方法名
