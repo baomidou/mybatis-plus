@@ -64,7 +64,7 @@ public class MybatisPlusConfig {
         sqlSessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver()
             .getResources("classpath:/mapper/*.xml"));
         /* 扫描 typeHandler */
-        sqlSessionFactory.setTypeHandlersPackage("com.baomidou.mybatisplus.test.base.type");
+//        sqlSessionFactory.setTypeHandlersPackage("com.baomidou.mybatisplus.test.base.type");
         MybatisConfiguration configuration = new MybatisConfiguration();
         configuration.setJdbcTypeForNull(JdbcType.NULL);
         /* 驼峰转下划线 */
