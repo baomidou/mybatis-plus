@@ -19,8 +19,8 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
+import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.core.parser.ISqlParser;
-import com.baomidou.mybatisplus.extension.injector.LogicSqlInjector;
 import com.baomidou.mybatisplus.extension.injector.methods.additional.InsertBatchSomeColumn;
 import com.baomidou.mybatisplus.extension.injector.methods.additional.LogicDeleteByIdWithFill;
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
@@ -84,8 +84,7 @@ public class MybatisPlusConfig {
     public GlobalConfig globalConfig() {
         GlobalConfig conf = new GlobalConfig();
         conf.setDbConfig(new GlobalConfig.DbConfig()).setSqlParserCache(true);
-        /* 逻辑删除注入器 */
-        LogicSqlInjector logicSqlInjector = new LogicSqlInjector() {
+        DefaultSqlInjector logicSqlInjector = new DefaultSqlInjector() {
             /**
              * 注入自定义全局方法
              */

@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.extension.injector;
 
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 
 /**
@@ -22,6 +23,7 @@ import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
  *
  * @author hubin
  * @since 2018-06-12
+ * @deprecated {@link DefaultSqlInjector} 里面已集成逻辑删除功能,entity 内字段注解 {@link TableLogic} 即可开启
  */
 @Deprecated
 public class LogicSqlInjector extends DefaultSqlInjector {
