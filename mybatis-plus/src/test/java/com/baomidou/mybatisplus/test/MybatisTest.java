@@ -73,9 +73,7 @@ class MybatisTest {
         ScriptRunner scriptRunner = new ScriptRunner(connection);
         scriptRunner.runScript(Resources.getResourceAsReader("h2/user.ddl.sql"));
         H2UserMapper mapper = sqlSession.getMapper(H2UserMapper.class);
-        mapper.delete(new QueryWrapper<>());
         Assertions.assertEquals(mapper.myInsertWithNameVersion("test", 2), 1);
-        Assertions.assertEquals(mapper.mySelectMaps().size(), 1);
         Assertions.assertEquals(mapper.insert(new H2User("test")), 1);
         Assertions.assertEquals(mapper.selectCount(new QueryWrapper<H2User>().lambda().eq(H2User::getName, "test")), 2);
         Assertions.assertEquals(mapper.delete(new QueryWrapper<H2User>().lambda().eq(H2User::getName, "test")), 2);
@@ -88,8 +86,7 @@ class MybatisTest {
         Assertions.assertNotNull(user.getTestType());
         Assertions.assertEquals(mapper.updateById(new H2User(66L, "777777")), 1);
         Assertions.assertEquals(mapper.deleteById(66L), 1);
-        Assertions.assertEquals(mapper.insert(h2User), 1);
-        Assertions.assertEquals(mapper.delete(new QueryWrapper<>()), 1);
+        Assertions.assertNull(mapper.selectById(66L));
     }
 
 }

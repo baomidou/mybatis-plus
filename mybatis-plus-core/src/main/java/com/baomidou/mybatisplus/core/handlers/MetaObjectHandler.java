@@ -37,6 +37,7 @@ public interface MetaObjectHandler {
 
     /**
      * 乐观锁常量
+     * @deprecated 3.1.1 {@link Constants#MP_OPTLOCK_ET_ORIGINAL}
      */
     String MP_OPTLOCK_ET_ORIGINAL = "MP_OPTLOCK_ET_ORIGINAL";
 
@@ -163,8 +164,8 @@ public interface MetaObjectHandler {
      * @since 3.0.7
      */
     default boolean isFill(String fieldName, Object fieldVal, MetaObject metaObject, FieldFill fieldFill) {
-        TableInfo tableInfo = metaObject.hasGetter(MP_OPTLOCK_ET_ORIGINAL) ?
-            TableInfoHelper.getTableInfo(metaObject.getValue(MP_OPTLOCK_ET_ORIGINAL).getClass())
+        TableInfo tableInfo = metaObject.hasGetter(Constants.MP_OPTLOCK_ET_ORIGINAL) ?
+            TableInfoHelper.getTableInfo(metaObject.getValue(Constants.MP_OPTLOCK_ET_ORIGINAL).getClass())
             : TableInfoHelper.getTableInfo(metaObject.getOriginalObject().getClass());
         if (Objects.nonNull(tableInfo)) {
             Optional<TableFieldInfo> first = tableInfo.getFieldList().stream()

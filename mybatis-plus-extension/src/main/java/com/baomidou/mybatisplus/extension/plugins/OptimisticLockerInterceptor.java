@@ -71,9 +71,20 @@ import lombok.Data;
 @Intercepts({@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})})
 public class OptimisticLockerInterceptor implements Interceptor {
 
-    //todo 这里需要改动下
+    /**
+     * 乐观锁常量
+     * @deprecated 3.1.1 {@link Constants#MP_OPTLOCK_VERSION_ORIGINAL}
+     */
     public static final String MP_OPTLOCK_VERSION_ORIGINAL = "MP_OPTLOCK_VERSION_ORIGINAL";
+    /**
+     * 乐观锁常量
+     * @deprecated 3.1.1 {@link Constants#MP_OPTLOCK_VERSION_COLUMN}
+     */
     public static final String MP_OPTLOCK_VERSION_COLUMN = "MP_OPTLOCK_VERSION_COLUMN";
+    /**
+     * 乐观锁常量
+     * @deprecated 3.1.1 {@link Constants#MP_OPTLOCK_ET_ORIGINAL}
+     */
     public static final String MP_OPTLOCK_ET_ORIGINAL = "MP_OPTLOCK_ET_ORIGINAL";
     private static final String NAME_ENTITY = Constants.ENTITY;
     private static final String NAME_ENTITY_WRAPPER = Constants.WRAPPER;
@@ -182,9 +193,9 @@ public class OptimisticLockerInterceptor implements Interceptor {
         //update to cache
         entityVersionField.setColumnName(versionColumnName);
         entityMap.put(versionField.getName(), updatedVersionVal);
-        entityMap.put(MP_OPTLOCK_VERSION_ORIGINAL, originalVersionVal);
-        entityMap.put(MP_OPTLOCK_VERSION_COLUMN, versionColumnName);
-        entityMap.put(MP_OPTLOCK_ET_ORIGINAL, et);
+        entityMap.put(Constants.MP_OPTLOCK_VERSION_ORIGINAL, originalVersionVal);
+        entityMap.put(Constants.MP_OPTLOCK_VERSION_COLUMN, versionColumnName);
+        entityMap.put(Constants.MP_OPTLOCK_ET_ORIGINAL, et);
         map.put(NAME_ENTITY, entityMap);
     }
 

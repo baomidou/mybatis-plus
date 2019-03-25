@@ -108,9 +108,8 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                         if (et != null) {
                             if (et instanceof Map) {
                                 Map<?, ?> realEtMap = (Map<?, ?>) et;
-                                if (realEtMap.containsKey("MP_OPTLOCK_ET_ORIGINAL")) {
-                                    //refer to OptimisticLockerInterceptor.MP_OPTLOCK_ET_ORIGINAL
-                                    tableInfo = TableInfoHelper.getTableInfo(realEtMap.get("MP_OPTLOCK_ET_ORIGINAL").getClass());
+                                if (realEtMap.containsKey(Constants.MP_OPTLOCK_ET_ORIGINAL)) {
+                                    tableInfo = TableInfoHelper.getTableInfo(realEtMap.get(Constants.MP_OPTLOCK_ET_ORIGINAL).getClass());
                                 }
                             } else {
                                 tableInfo = TableInfoHelper.getTableInfo(et.getClass());
