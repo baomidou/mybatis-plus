@@ -140,7 +140,7 @@ class MysqlTestDataMapperTest extends BaseDbTest {
 
     @Override
     protected void selectMaps() {
-        List<Map<String, Object>> mysqlMaps = mysqlMapper.selectMaps(Wrappers.<MysqlData>query());
+        List<Map<String, Object>> mysqlMaps = mysqlMapper.selectMaps(Wrappers.query());
         assertThat(mysqlMaps).isNotEmpty();
         assertThat(mysqlMaps.get(0)).isNotEmpty();
 
