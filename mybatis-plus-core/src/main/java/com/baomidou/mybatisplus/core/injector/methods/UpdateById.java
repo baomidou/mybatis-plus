@@ -38,7 +38,7 @@ public class UpdateById extends AbstractMethod {
         StringBuilder append = new StringBuilder("<if test=\"et instanceof java.util.Map\">")
             .append("<if test=\"et.").append("MP_OPTLOCK_VERSION_ORIGINAL").append("!=null\">")
             .append(" AND ${et.").append("MP_OPTLOCK_VERSION_COLUMN")
-            .append("}=#{et.").append("MP_OPTLOCK_ET_ORIGINAL").append(StringPool.RIGHT_BRACE)
+            .append("}=#{et.").append("MP_OPTLOCK_VERSION_ORIGINAL").append(StringPool.RIGHT_BRACE)
             .append("</if></if>");
         if (logicDelete) {
             append.append(tableInfo.getLogicDeleteSql(true, false));
