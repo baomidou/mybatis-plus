@@ -15,23 +15,24 @@
  */
 package com.baomidou.mybatisplus.extension.service;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.service.additional.query.ChainQuery;
+import com.baomidou.mybatisplus.extension.service.additional.query.impl.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.service.additional.query.impl.QueryChainWrapper;
+import com.baomidou.mybatisplus.extension.service.additional.update.ChainUpdate;
+import com.baomidou.mybatisplus.extension.service.additional.update.impl.LambdaUpdateChainWrapper;
+import com.baomidou.mybatisplus.extension.service.additional.update.impl.UpdateChainWrapper;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-
-import org.springframework.transaction.annotation.Transactional;
-
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.service.additional.query.impl.LambdaQueryChainWrapper;
-import com.baomidou.mybatisplus.extension.service.additional.query.impl.QueryChainWrapper;
-import com.baomidou.mybatisplus.extension.service.additional.update.impl.LambdaUpdateChainWrapper;
-import com.baomidou.mybatisplus.extension.service.additional.update.impl.UpdateChainWrapper;
-import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 
 /**
  * 顶级 Service
@@ -343,6 +344,7 @@ public interface IService<T> {
 
     /**
      * 链式查询 普通
+     * 支持 {@link ChainQuery} 内的方法为结尾进行查询
      *
      * @return QueryWrapper 的包装类
      */
@@ -352,8 +354,7 @@ public interface IService<T> {
 
     /**
      * 链式查询 lambda 式
-     * <p>注意：请勿在 Kotlin 中使用，此实现不支持 Kotlin</p>
-     * <p>Kotlin 中应使用 ktQuery()</p>
+     * <p>注意：不支持 Kotlin </p>
      *
      * @return LambdaQueryWrapper 的包装类
      */
@@ -363,6 +364,7 @@ public interface IService<T> {
 
     /**
      * 链式更改 普通
+     * 支持 {@link ChainUpdate} 内的方法为结尾进行数据修改
      *
      * @return UpdateWrapper 的包装类
      */
@@ -372,8 +374,7 @@ public interface IService<T> {
 
     /**
      * 链式更改 lambda 式
-     * <p>注意：请勿在 Kotlin 中使用，此实现不支持 Kotlin</p>
-     * <p>Kotlin 中应使用 ktUpdate()</p>
+     * <p>注意：不支持 Kotlin </p>
      *
      * @return LambdaUpdateWrapper 的包装类
      */
