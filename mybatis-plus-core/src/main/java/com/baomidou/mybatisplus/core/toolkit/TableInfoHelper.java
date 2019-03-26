@@ -174,13 +174,20 @@ public class TableInfoHelper {
             }
         } else {
             // 开启表名下划线申明
-            tableName = dbConfig.isTableUnderline() ? StringUtils.camelToUnderline(tableName) :
-                // 大写命名判断
-                dbConfig.isCapitalMode() ? tableName.toUpperCase() : StringUtils.firstToLowerCase(tableName);
+            if (dbConfig.isTableUnderline()) {
+                tableName = StringUtils.camelToUnderline(tableName);
+            }
+            // 大写命名判断
+            if (dbConfig.isCapitalMode()) {
+                tableName = tableName.toUpperCase();
+            } else {
+                // 首字母小写
+                tableName = StringUtils.firstToLowerCase(tableName);
+            }
         }
 
         if (StringUtils.isEmpty(prefix)) prefix = dbConfig.getTablePrefix();
-        tableInfo.setTableName(StringUtils.isEmpty(prefix) ? tableName : String.format("%s.%s", prefix, tableName));
+        tableInfo.setTableName(StringUtils.isEmpty(prefix) ? tableName : (prefix + StringPool.DOT + tableName));
 
         /* 开启了自定义 KEY 生成器 */
         if (null != dbConfig.getKeyGenerator()) {
