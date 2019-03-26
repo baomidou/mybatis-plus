@@ -18,9 +18,17 @@ package com.baomidou.mybatisplus.extension.activerecord;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlRunner;
+
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.SqlSession;
 import org.mybatis.spring.SqlSessionUtils;
 
@@ -44,6 +52,8 @@ import java.util.Objects;
 public abstract class Model<T extends Model<?>> implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    private transient Log log = LogFactory.getLog(getClass());
 
     /**
      * 插入（字段选择插入）
@@ -193,7 +203,7 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
     public T selectOne(Wrapper<T> queryWrapper) {
-        return SqlHelper.getObject(selectList(queryWrapper));
+        return SqlHelper.getObject(log, selectList(queryWrapper));
     }
 
     /**

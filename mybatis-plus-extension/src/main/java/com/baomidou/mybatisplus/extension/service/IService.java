@@ -25,7 +25,6 @@ import com.baomidou.mybatisplus.extension.service.additional.query.impl.QueryCha
 import com.baomidou.mybatisplus.extension.service.additional.update.ChainUpdate;
 import com.baomidou.mybatisplus.extension.service.additional.update.impl.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.service.additional.update.impl.UpdateChainWrapper;
-import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
@@ -214,9 +213,7 @@ public interface IService<T> {
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      * @param mapper       转换函数
      */
-    default <V> V getObj(Wrapper<T> queryWrapper, Function<? super Object, V> mapper) {
-        return SqlHelper.getObject(listObjs(queryWrapper, mapper));
-    }
+    <V> V getObj(Wrapper<T> queryWrapper, Function<? super Object, V> mapper);
 
     /**
      * 根据 Wrapper 条件，查询总记录数

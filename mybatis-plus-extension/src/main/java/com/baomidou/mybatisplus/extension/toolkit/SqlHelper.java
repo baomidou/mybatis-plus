@@ -15,7 +15,11 @@
  */
 package com.baomidou.mybatisplus.extension.toolkit;
 
-import java.util.List;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
@@ -24,11 +28,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionUtils;
 
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
+import java.util.List;
 
 /**
  * SQL 辅助类
@@ -120,13 +120,26 @@ public final class SqlHelper {
      *
      * @param list ignore
      * @param <E> ignore
+     * @deprecated 3.1.1
      * @return ignore
      */
+    @Deprecated
     public static <E> E getObject(List<E> list) {
+        return getObject(logger, list);
+    }
+
+    /**
+     * 从list中取第一条数据返回对应List中泛型的单个结果
+     *
+     * @param list ignore
+     * @param <E> ignore
+     * @return ignore
+     */
+    public static <E> E getObject(Log log, List<E> list) {
         if (CollectionUtils.isNotEmpty(list)) {
             int size = list.size();
             if (size > 1) {
-                logger.warn(String.format("Warn: execute Method There are  %s results.", size));
+                log.warn(String.format("Warn: execute Method There are  %s results.", size));
             }
             return list.get(0);
         }

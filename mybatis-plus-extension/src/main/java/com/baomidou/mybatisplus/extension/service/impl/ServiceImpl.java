@@ -15,20 +15,6 @@
  */
 package com.baomidou.mybatisplus.extension.service.impl;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import org.apache.ibatis.binding.MapperMethod;
-import org.apache.ibatis.session.SqlSession;
-import org.mybatis.spring.SqlSessionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -43,6 +29,22 @@ import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 
+import org.apache.ibatis.binding.MapperMethod;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.SqlSession;
+import org.mybatis.spring.SqlSessionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 /**
  * IService 实现类（ 泛型：M 是 mapper 对象，T 是实体 ， PK 是主键泛型 ）
  *
@@ -51,6 +53,8 @@ import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
  */
 @SuppressWarnings("unchecked")
 public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
+
+    protected Log log = LogFactory.getLog(getClass());
 
     @Autowired
     protected M baseMapper;
@@ -254,12 +258,12 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         if (throwEx) {
             return baseMapper.selectOne(queryWrapper);
         }
-        return SqlHelper.getObject(baseMapper.selectList(queryWrapper));
+        return SqlHelper.getObject(log, baseMapper.selectList(queryWrapper));
     }
 
     @Override
     public Map<String, Object> getMap(Wrapper<T> queryWrapper) {
-        return SqlHelper.getObject(baseMapper.selectMaps(queryWrapper));
+        return SqlHelper.getObject(log, baseMapper.selectMaps(queryWrapper));
     }
 
     @Override
@@ -290,5 +294,10 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Override
     public IPage<Map<String, Object>> pageMaps(IPage<T> page, Wrapper<T> queryWrapper) {
         return baseMapper.selectMapsPage(page, queryWrapper);
+    }
+
+    @Override
+    public <V> V getObj(Wrapper<T> queryWrapper, Function<? super Object, V> mapper) {
+        return SqlHelper.getObject(log, listObjs(queryWrapper, mapper));
     }
 }

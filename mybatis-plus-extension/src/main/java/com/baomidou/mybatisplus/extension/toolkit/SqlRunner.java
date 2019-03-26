@@ -15,19 +15,21 @@
  */
 package com.baomidou.mybatisplus.extension.toolkit;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.baomidou.mybatisplus.core.assist.ISqlRunner;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionUtils;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.baomidou.mybatisplus.core.assist.ISqlRunner;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * SqlRunner 执行 SQL
@@ -37,6 +39,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
  */
 public class SqlRunner implements ISqlRunner {
 
+    private Log log = LogFactory.getLog(SqlRunner.class);
     // 单例Query
     public static final SqlRunner DEFAULT = new SqlRunner();
     // 默认FACTORY
@@ -168,7 +171,7 @@ public class SqlRunner implements ISqlRunner {
      */
     @Override
     public Object selectObj(String sql, Object... args) {
-        return SqlHelper.getObject(selectObjs(sql, args));
+        return SqlHelper.getObject(log, selectObjs(sql, args));
     }
 
     @Override
@@ -183,7 +186,7 @@ public class SqlRunner implements ISqlRunner {
 
     @Override
     public Map<String, Object> selectOne(String sql, Object... args) {
-        return SqlHelper.getObject(selectList(sql, args));
+        return SqlHelper.getObject(log, selectList(sql, args));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
