@@ -20,6 +20,8 @@
 
 ## What is MyBatis-Plus?
 
+[![Join the chat at https://gitter.im/mybatisplus/community](https://badges.gitter.im/mybatisplus/community.svg)](https://gitter.im/mybatisplus/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 MyBatis-Plus is an powerful enhanced toolkit of MyBatis for simplify development. This toolkit provides some efficient, useful, out-of-the-box features for MyBatis, use it can effectively save your development time.
 
 ## Links
