@@ -1,5 +1,7 @@
+import java.util.Date
 import groovy.util.Node
 import groovy.util.NodeList
+import java.text.SimpleDateFormat
 import nl.javadude.gradle.plugins.license.License
 
 buildscript {
@@ -111,6 +113,12 @@ subprojects {
         afterEvaluate {
             manifest {
                 attributes["Implementation-Version"] = version
+                attributes["Built-Gradle"] = gradle.gradleVersion
+                attributes["Bundle-DocURL"] = "https://mybatis.plus/"
+                attributes["Build-OS"] =  System.getProperty("os.name")
+                attributes["Built-By"] =  System.getProperty("user.name")
+                attributes["Build-Jdk"] =  System.getProperty("java.version")
+                attributes["Build-Timestamp"] =  SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
             }
         }
     }
