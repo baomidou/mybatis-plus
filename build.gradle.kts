@@ -1,6 +1,7 @@
 import java.util.Date
 import groovy.util.Node
 import groovy.util.NodeList
+import java.util.Calendar
 import java.text.SimpleDateFormat
 import nl.javadude.gradle.plugins.license.License
 
@@ -126,9 +127,10 @@ subprojects {
         encoding = "UTF-8"
         header = rootProject.file("license.txt")
         include("**/*.java","**/*.kt")
+        exclude ("**/*Test.java")
         mapping("java","SLASHSTAR_STYLE")
         mapping("kt","SLASHSTAR_STYLE")
-        extra["year"] = 2019
+        extra["year"] = Calendar.getInstance().get(Calendar.YEAR)
         extra["name"] = "hubin"
         extra["email"] = "jobob@qq.com"
     }
