@@ -1,5 +1,8 @@
+import java.util.Date
 import groovy.util.Node
 import groovy.util.NodeList
+import java.util.Calendar
+import java.text.SimpleDateFormat
 import nl.javadude.gradle.plugins.license.License
 
 buildscript {
@@ -111,6 +114,12 @@ subprojects {
         afterEvaluate {
             manifest {
                 attributes["Implementation-Version"] = version
+                attributes["Built-Gradle"] = gradle.gradleVersion
+                attributes["Bundle-DocURL"] = "https://mybatis.plus/"
+                attributes["Build-OS"] =  System.getProperty("os.name")
+                attributes["Built-By"] =  System.getProperty("user.name")
+                attributes["Build-Jdk"] =  System.getProperty("java.version")
+                attributes["Build-Timestamp"] =  SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date())
             }
         }
     }
@@ -118,9 +127,10 @@ subprojects {
         encoding = "UTF-8"
         header = rootProject.file("license.txt")
         include("**/*.java","**/*.kt")
+        exclude ("**/*Test.java")
         mapping("java","SLASHSTAR_STYLE")
         mapping("kt","SLASHSTAR_STYLE")
-        extra["year"] = 2019
+        extra["year"] = Calendar.getInstance().get(Calendar.YEAR)
         extra["name"] = "hubin"
         extra["email"] = "jobob@qq.com"
     }
