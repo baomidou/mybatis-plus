@@ -15,11 +15,18 @@
  */
 package com.baomidou.mybatisplus.test.h2.config;
 
-import javax.sql.DataSource;
-
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.parser.AbstractJsqlParser;
 import com.baomidou.mybatisplus.core.parser.ISqlParser;
+import com.baomidou.mybatisplus.extension.injector.LogicSqlInjector;
+import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.SqlExplainInterceptor;
+import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
+import com.baomidou.mybatisplus.test.h2.H2MetaObjectHandler;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.select.SelectBody;
@@ -33,16 +40,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.extension.injector.LogicSqlInjector;
-import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
-import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
-import com.baomidou.mybatisplus.test.h2.H2MetaObjectHandler;
-
+import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,7 +55,7 @@ import java.util.List;
 public class MybatisPlusConfig {
 
     @Bean("mybatisSqlSession")
-    public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader, GlobalConfig globalConfiguration) throws Exception {
+    public SqlSessionFactory sqlSessionFactory(DataSource dataSource, ResourceLoader resourceLoader, GlobalConfig globalConfig) throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
         sqlSessionFactory.setDataSource(dataSource);
 //        sqlSessionFactory.setConfigLocation(resourceLoader.getResource("classpath:mybatis-config-object-factory.xml"));
@@ -105,8 +103,8 @@ public class MybatisPlusConfig {
             sqlExplainInterceptor,
             new PerformanceInterceptor()
         });
-        globalConfiguration.setMetaObjectHandler(new H2MetaObjectHandler());
-        sqlSessionFactory.setGlobalConfig(globalConfiguration);
+        globalConfig.setMetaObjectHandler(new H2MetaObjectHandler());
+        sqlSessionFactory.setGlobalConfig(globalConfig);
         sqlSessionFactory.setTypeEnumsPackage("com.baomidou.mybatisplus.test.h2.enums");
         return sqlSessionFactory.getObject();
     }
@@ -114,8 +112,9 @@ public class MybatisPlusConfig {
     @Bean
     public GlobalConfig globalConfiguration() {
         GlobalConfig conf = new GlobalConfig();
-        conf.setSqlInjector(new LogicSqlInjector());
-        conf.setDbConfig(new GlobalConfig.DbConfig()
+        conf.setSqlInjector(new LogicSqlInjector())
+            .setEnableSqlRunner(true)
+            .setDbConfig(new GlobalConfig.DbConfig()
             .setLogicDeleteValue("1")
             .setLogicNotDeleteValue("0")
             .setIdType(IdType.ID_WORKER));

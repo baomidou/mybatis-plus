@@ -61,6 +61,10 @@ public class GlobalConfig implements Serializable {
      */
     private Long datacenterId;
     /**
+     * 是否初始化 SqlRunner
+     */
+    private boolean enableSqlRunner = false;
+    /**
      * 数据库相关配置
      */
     private DbConfig dbConfig;

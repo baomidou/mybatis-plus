@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core;
 
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.injector.SqlRunnerInjector;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.logging.Log;
@@ -63,6 +64,9 @@ public class MybatisConfiguration extends Configuration {
         if (null != globalConfig.getWorkerId()
             && null != globalConfig.getDatacenterId()) {
             IdWorker.initSequence(globalConfig.getWorkerId(), globalConfig.getDatacenterId());
+        }
+        if (globalConfig.isEnableSqlRunner()) {
+            new SqlRunnerInjector().inject(this);
         }
         // 打印 Banner
         if (globalConfig.isBanner()) {
@@ -140,7 +144,7 @@ public class MybatisConfiguration extends Configuration {
     public boolean hasMapper(Class<?> type) {
         return mybatisMapperRegistry.hasMapper(type);
     }
-    
+
     /**
      * 指定动态SQL生成的默认语言
      *
