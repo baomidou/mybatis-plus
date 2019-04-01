@@ -114,9 +114,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                         parseStatement(method);
                     }
                 } catch (IncompleteElementException e) {
-                    /*
-                     * 使用 MybatisMethodResolver 而不是 MethodResolver
-                     */
+                    // TODO 使用 MybatisMethodResolver 而不是 MethodResolver
                     configuration.addIncompleteMethod(new MybatisMethodResolver(this, method));
                 }
             }
