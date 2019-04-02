@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.mapper.Mapper;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -71,7 +72,7 @@ public class GlobalConfig implements Serializable {
     /**
      * Mapper父类
      */
-    private Class<?> superMapperClass = BaseMapper.class;
+    private Class<?> superMapperClass = Mapper.class;
     /**
      * 缓存当前Configuration的SqlSessionFactory
      */
