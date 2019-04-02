@@ -1,0 +1,39 @@
+package ${package.Controller};
+
+
+import org.springframework.web.bind.annotation.RequestMapping;
+
+<% if(restControllerStyle){ %>
+import org.springframework.web.bind.annotation.RestController;
+<% }else{ %>
+import org.springframework.stereotype.Controller;
+<% } %>
+<% if(isNotEmpty(superControllerClassPackage)){ %>
+import ${superControllerClassPackage};
+<% } %>
+
+/**
+ * <p>
+ * ${table.comment!} 前端控制器
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+<% if(restControllerStyle){ %>
+@RestController
+<% }else{ %>
+@Controller
+<% } %>
+@RequestMapping("<% if(isNotEmpty(package.ModuleName)){ %>/${package.ModuleName}<% } %>/<% if(isNotEmpty(controllerMappingHyphenStyle)){ %>${controllerMappingHyphen}<% }else{ %>${table.entityPath}<% } %>")
+<% if(kotlin){ %>
+class ${table.controllerName}<% if(isNotEmpty(superControllerClass)){ %> : ${superControllerClass}()<% } %>
+<% }else{ %>
+    <% if(isNotEmpty(superControllerClass)){ %>
+public class ${table.controllerName} extends ${superControllerClass} {
+    <% }else{ %>
+public class ${table.controllerName} {
+    <% } %>
+
+}
+<% } %>

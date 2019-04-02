@@ -1,0 +1,124 @@
+package ${package.Entity}
+<% for(pkg in table.importPackages){ %>
+import ${pkg}
+<% } %>
+<% if(swagger2){ %>
+import io.swagger.annotations.ApiModel
+import io.swagger.annotations.ApiModelProperty
+<% } %>
+/**
+ * <p>
+ * ${table.comment!}
+ * </p>
+ *
+ * @author ${author}
+ * @since ${date}
+ */
+<% if(table.convert){ %>
+@TableName("${table.name}")
+<% } %>
+<% if(swagger2){ %>
+@ApiModel(value="${entity}对象", description="${table.comment!''}")
+<% } %>
+<% if(isNotEmpty(superEntityClass)){ %>
+class ${entity} : ${superEntityClass}<% if(activeRecord){ %><${entity}><%}%>{
+<% }else if(activeRecord){ %>
+class ${entity} : Model<${entity}> {
+<% }else{ %>
+class ${entity} : Serializable {
+<% } %>
+
+<% /** -----------BEGIN 字段循环遍历----------- **/ %>
+<% for(field in table.fields){ %>
+    <%
+    if(field.keyFlag){
+        var keyPropertyName = field.propertyName;
+    }
+    %>
+
+    <% if(isNotEmpty(field.comment)){ %>
+        <% if(swagger2){ %>
+    @ApiModelProperty(value = "${field.comment}")
+        <% }else{ %>
+    /**
+     * ${field.comment}
+     */
+        <% } %>
+    <% } %>
+    <% if(field.keyFlag){ %>
+    <%
+    /*主键*/
+    %>
+        <% if(field.keyIdentityFlag){ %>
+    @TableId(value = "${field.name}", type = IdType.AUTO)
+        <% }else if(isNotEmpty(idType)){ %>
+    @TableId(value = "${field.name}", type = IdType.${idType})
+        <% }else if(field.convert){ %>
+    @TableId("${field.name}")
+         <% } %>
+    <%
+    /*普通字段*/
+    %>
+    <% }else if(isNotEmpty(field.fill)){ %>
+        <% if(field.convert){ %>
+    @TableField(value = "${field.name}", fill = FieldFill.${field.fill})
+        <% }else{ %>
+    @TableField(fill = FieldFill.${field.fill})
+        <% } %>
+    <% }else if(field.convert){ %>
+    @TableField("${field.name}")
+    <% } %>
+    <%
+    /*乐观锁注解*/
+    %>
+    <% if(versionFieldName!'' == field.name){ %>
+    @Version
+    <% } %>
+    <%
+    /*逻辑删除注解*/
+    %>
+    <% if(logicDeleteFieldName!'' == field.name){ %>
+    @TableLogic
+    <% } %>
+    <% if(field.propertyType == 'Integer'){ %>
+    var ${field.propertyName}: Int ? = null
+    <% }else{ %>
+    var ${field.propertyName}: ${field.propertyType} ? = null
+    <% } %>
+<% } %>
+<% /** -----------END 字段循环遍历----------- **/ %>
+
+<% if(entityColumnConstant){ %>
+    companion object {
+   <% for(field in table.fields){ %>
+    const val ${strutil.toUpperCase(field.name)} : String = "${field.name}"
+   <% } %>
+    }
+<% } %>
+<% if(activeRecord){ %>
+    @Override
+    override fun pkVal(): Serializable? {
+    <% if(isNotEmpty(keyPropertyName)){ %>
+        return this.${keyPropertyName}
+    <% }else{ %>
+        return null;
+    <% } %>
+    }
+
+<% } %>
+
+<% if(!entityLombokModel){ %>
+    @Override
+    override fun toString(): String  {
+        return "${entity}{" +
+    <% for(field in table.fields){ %>
+       <% if(fieldLP.index==0){ %>
+        "${field.propertyName}=" + ${field.propertyName} +
+       <% }else{ %>
+        ", ${field.propertyName}=" + ${field.propertyName} +
+       <% } %>
+    <% } %>
+        "}"
+    }
+<% } %>
+}

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <settings>
+        <setting name="defaultEnumTypeHandler" value="com.baomidou.mybatisplus.extension.handlers.EnumTypeHandler"/>
+    </settings>
+
+    <mappers>
+        <mapper class="com.baomidou.mybatisplus.test.h2.mapper.H2UserMapper"/>
+    </mappers>
+</configuration>

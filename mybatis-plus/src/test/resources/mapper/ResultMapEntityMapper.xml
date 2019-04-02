@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.baomidou.mybatisplus.test.base.mapper.commons.ResultMapEntityMapper">
+
+    <resultMap id="baseResult" type="com.baomidou.mybatisplus.test.base.entity.ResultMapEntity">
+        <id column="id" property="id"/>
+        <result column="column1" property="column1"/>
+        <result column="column2" property="column2"/>
+        <result column="column3" property="column3"/>
+    </resultMap>
+
+    <resultMap id="resultChildren1" type="com.baomidou.mybatisplus.test.base.entity.ResultMapEntity"
+               extends="baseResult">
+        <result column="column4" property="column4"/>
+        <result column="list" property="list" typeHandler="com.baomidou.mybatisplus.test.base.type.ListTypeHandler"/>
+        <result column="map" property="map" typeHandler="com.baomidou.mybatisplus.test.base.type.MapTypeHandler"/>
+    </resultMap>
+</mapper>

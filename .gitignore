@@ -1,19 +1,27 @@
-/target/
-/.settings/
-/.project
-/.classpath
+**/target/
 
+**/.gitignore
 # IntelliJ project files
 .idea
 *.iml
-out
+**/out
 html
+*.ipr
+*.iws
+
+# Eclipse project files
+**/.classpath
+**/.project
+**/.settings/
+**/bin/
 
 # gradle
 .gradle
-build
+**/build
 
 # MacOS
 .DS_Store
-/.gradle
-mybatis-plus/target/
+/repo/
+gradle/
+gradlew
+gradlew.bat
