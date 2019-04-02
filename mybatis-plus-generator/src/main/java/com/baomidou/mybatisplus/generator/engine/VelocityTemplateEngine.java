@@ -63,6 +63,7 @@ public class VelocityTemplateEngine extends AbstractTemplateEngine {
             return;
         }
         Template template = velocityEngine.getTemplate(templatePath, ConstVal.UTF8);
+        mkdirs(outputFile);
         try (FileOutputStream fos = new FileOutputStream(outputFile);
              OutputStreamWriter ow = new OutputStreamWriter(fos, ConstVal.UTF8);
              BufferedWriter writer = new BufferedWriter(ow)) {

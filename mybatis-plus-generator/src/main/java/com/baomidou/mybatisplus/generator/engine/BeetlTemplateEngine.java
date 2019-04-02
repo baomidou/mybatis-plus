@@ -50,6 +50,7 @@ public class BeetlTemplateEngine extends AbstractTemplateEngine {
     @Override
     public void writer(Map<String, Object> objectMap, String templatePath, String outputFile) throws Exception {
         Template template = groupTemplate.getTemplate(templatePath);
+        mkdirs(outputFile);
         try (FileOutputStream fileOutputStream = new FileOutputStream(outputFile)) {
             template.binding(objectMap);
             template.renderTo(fileOutputStream);

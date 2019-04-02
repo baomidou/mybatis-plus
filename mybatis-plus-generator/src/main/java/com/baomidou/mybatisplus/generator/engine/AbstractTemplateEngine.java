@@ -153,17 +153,25 @@ public abstract class AbstractTemplateEngine {
      */
     public AbstractTemplateEngine mkdirs() {
         getConfigBuilder().getPathInfo().forEach((key, value) -> {
-            File dir = new File(value);
-            if (!dir.exists()) {
-                boolean result = dir.mkdirs();
-                if (result) {
-                    logger.debug("创建目录： [" + value + "]");
-                }
-            }
+            mkdirs(value)
         });
         return this;
     }
 
+    /**
+     * 处理输出目录
+     *
+     * @param file
+     */
+    public void mkdirs(String file) {
+        File dir = new File(file);
+        if (!dir.exists()) {
+            boolean result = dir.mkdirs();
+            if (result) {
+                logger.debug("创建目录： [" + value + "]");
+            }
+        }
+    }
 
     /**
      * 打开输出目录
