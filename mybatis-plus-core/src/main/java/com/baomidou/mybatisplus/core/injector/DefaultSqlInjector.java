@@ -20,6 +20,8 @@ import static java.util.stream.Collectors.toList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.apache.ibatis.builder.MapperBuilderAssistant;
+
 import com.baomidou.mybatisplus.core.injector.methods.Delete;
 import com.baomidou.mybatisplus.core.injector.methods.DeleteBatchByIds;
 import com.baomidou.mybatisplus.core.injector.methods.DeleteById;
@@ -37,6 +39,8 @@ import com.baomidou.mybatisplus.core.injector.methods.SelectOne;
 import com.baomidou.mybatisplus.core.injector.methods.SelectPage;
 import com.baomidou.mybatisplus.core.injector.methods.Update;
 import com.baomidou.mybatisplus.core.injector.methods.UpdateById;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 
 
 /**
@@ -48,25 +52,28 @@ import com.baomidou.mybatisplus.core.injector.methods.UpdateById;
 public class DefaultSqlInjector extends AbstractSqlInjector {
 
     @Override
-    public List<AbstractMethod> getMethodList(Class<?> mapperClass) {
-        return Stream.of(
-            new Insert(),
-            new Delete(),
-            new DeleteByMap(),
-            new DeleteById(),
-            new DeleteBatchByIds(),
-            new Update(),
-            new UpdateById(),
-            new SelectById(),
-            new SelectBatchByIds(),
-            new SelectByMap(),
-            new SelectOne(),
-            new SelectCount(),
-            new SelectMaps(),
-            new SelectMapsPage(),
-            new SelectObjs(),
-            new SelectList(),
-            new SelectPage()
-        ).collect(toList());
+    public List<AbstractMethod> getMethodList(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
+        if (GlobalConfigUtils.getSuperMapperClass(builderAssistant.getConfiguration()).isAssignableFrom(mapperClass)) {
+            return Stream.of(
+                new Insert(),
+                new Delete(),
+                new DeleteByMap(),
+                new DeleteById(),
+                new DeleteBatchByIds(),
+                new Update(),
+                new UpdateById(),
+                new SelectById(),
+                new SelectBatchByIds(),
+                new SelectByMap(),
+                new SelectOne(),
+                new SelectCount(),
+                new SelectMaps(),
+                new SelectMapsPage(),
+                new SelectObjs(),
+                new SelectList(),
+                new SelectPage()
+            ).collect(toList());
+        }
+        throw ExceptionUtils.mpe(mapperClass.toString() + ", No effective injection method was found.");
     }
 }

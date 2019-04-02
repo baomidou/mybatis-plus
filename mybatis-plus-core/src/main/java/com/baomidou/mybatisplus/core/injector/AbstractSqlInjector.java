@@ -15,21 +15,24 @@
  */
 package com.baomidou.mybatisplus.core.injector;
 
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
-import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
-import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.apache.ibatis.session.Configuration;
-
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.List;
 import java.util.Set;
+
+import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.Configuration;
+
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 
 
 /**
@@ -40,26 +43,31 @@ import java.util.Set;
  */
 public abstract class AbstractSqlInjector implements ISqlInjector {
 
+    private static final Log logger = LogFactory.getLog(AbstractSqlInjector.class);
+
     @Override
     public void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
-        String className = mapperClass.toString();
-        Set<String> mapperRegistryCache = GlobalConfigUtils.getMapperRegistryCache(builderAssistant.getConfiguration());
-        if (!mapperRegistryCache.contains(className)) {
-            List<AbstractMethod> methodList = this.getMethodList(mapperClass);
-            Assert.notEmpty(methodList, "No effective injection method was found.");
-            // 循环注入自定义方法
-            Class<?> modelClass = extractModelClass(mapperClass);
-            if (modelClass != null) {
-                TableInfo tableInfo = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
-                methodList.forEach(m -> m.inject(builderAssistant, mapperClass, modelClass, tableInfo));
+        List<AbstractMethod> methodList = this.getMethodList(builderAssistant, mapperClass);
+        if (CollectionUtils.isNotEmpty(methodList)) {
+            String className = mapperClass.toString();
+            Set<String> mapperRegistryCache = GlobalConfigUtils.getMapperRegistryCache(builderAssistant.getConfiguration());
+            if (!mapperRegistryCache.contains(className)) {
+                // 循环注入自定义方法
+                Class<?> modelClass = extractModelClass(mapperClass);
+                if (modelClass != null) {
+                    TableInfo tableInfo = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
+                    methodList.forEach(m -> m.inject(builderAssistant, mapperClass, modelClass, tableInfo));
+                }
+                mapperRegistryCache.add(className);
+                /*
+                 * 初始化 SQL 解析
+                 */
+                if (GlobalConfigUtils.getGlobalConfig(builderAssistant.getConfiguration()).isSqlParserCache()) {
+                    SqlParserHelper.initSqlParserInfoCache(mapperClass);
+                }
             }
-            mapperRegistryCache.add(className);
-            /*
-             * 初始化 SQL 解析
-             */
-            if (GlobalConfigUtils.getGlobalConfig(builderAssistant.getConfiguration()).isSqlParserCache()) {
-                SqlParserHelper.initSqlParserInfoCache(mapperClass);
-            }
+        } else {
+            logger.debug(mapperClass.toString() + ", No effective injection method was found.");
         }
     }
 
@@ -73,10 +81,11 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
      * 获取 注入的方法
      * </p>
      *
-     * @param mapperClass mapper class
+     * @param builderAssistant mybatis MapperBuilderAssistant
+     * @param mapperClass      mapper class
      * @return 注入的方法集合
      */
-    public abstract List<AbstractMethod> getMethodList(Class<?> mapperClass);
+    public abstract List<AbstractMethod> getMethodList(MapperBuilderAssistant builderAssistant, Class<?> mapperClass);
 
     /**
      * 提取泛型模型,多泛型的时候请将泛型T放在第一位
