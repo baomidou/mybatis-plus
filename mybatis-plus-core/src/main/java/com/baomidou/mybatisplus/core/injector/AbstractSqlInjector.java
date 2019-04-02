@@ -15,24 +15,24 @@
  */
 package com.baomidou.mybatisplus.core.injector;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.lang.reflect.WildcardType;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.Configuration;
-
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
+
+import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.Configuration;
+
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
+import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -47,16 +47,18 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
 
     @Override
     public void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
-        List<AbstractMethod> methodList = this.getMethodList(builderAssistant, mapperClass);
-        if (CollectionUtils.isNotEmpty(methodList)) {
+        Class<?> modelClass = extractModelClass(mapperClass);
+        if (modelClass != null) {
             String className = mapperClass.toString();
             Set<String> mapperRegistryCache = GlobalConfigUtils.getMapperRegistryCache(builderAssistant.getConfiguration());
             if (!mapperRegistryCache.contains(className)) {
-                // 循环注入自定义方法
-                Class<?> modelClass = extractModelClass(mapperClass);
-                if (modelClass != null) {
+                List<AbstractMethod> methodList = this.getMethodList(builderAssistant, mapperClass);
+                if (CollectionUtils.isNotEmpty(methodList)) {
                     TableInfo tableInfo = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
+                    // 循环注入自定义方法
                     methodList.forEach(m -> m.inject(builderAssistant, mapperClass, modelClass, tableInfo));
+                } else {
+                    logger.debug(mapperClass.toString() + ", No effective injection method was found.");
                 }
                 mapperRegistryCache.add(className);
                 /*
@@ -66,8 +68,6 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
                     SqlParserHelper.initSqlParserInfoCache(mapperClass);
                 }
             }
-        } else {
-            logger.debug(mapperClass.toString() + ", No effective injection method was found.");
         }
     }
 
