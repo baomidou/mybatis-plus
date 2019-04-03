@@ -166,33 +166,55 @@ public class TableInfoHelper {
         String prefix = null;
 
         if (table != null) {
-            if (StringUtils.isNotEmpty(table.value())) tableName = table.value();
-            if (StringUtils.isNotEmpty(table.prefix())) prefix = table.prefix();
+            if (StringUtils.isNotEmpty(table.value())) {
+                tableName = table.value();
+            } else {
+                tableName = initTableNameWithDbConfig(tableName, dbConfig);
+            }
+            if (StringUtils.isNotEmpty(table.prefix())) {
+                prefix = table.prefix();
+            }
             /* 表结果集映射 */
             if (StringUtils.isNotEmpty(table.resultMap())) {
                 tableInfo.setResultMap(table.resultMap());
             }
         } else {
-            // 开启表名下划线申明
-            if (dbConfig.isTableUnderline()) {
-                tableName = StringUtils.camelToUnderline(tableName);
-            }
-            // 大写命名判断
-            if (dbConfig.isCapitalMode()) {
-                tableName = tableName.toUpperCase();
-            } else {
-                // 首字母小写
-                tableName = StringUtils.firstToLowerCase(tableName);
-            }
+            tableName = initTableNameWithDbConfig(tableName, dbConfig);
         }
 
-        if (StringUtils.isEmpty(prefix)) prefix = dbConfig.getTablePrefix();
+        if (StringUtils.isEmpty(prefix)) {
+            prefix = dbConfig.getTablePrefix();
+        }
+
         tableInfo.setTableName(StringUtils.isEmpty(prefix) ? tableName : (prefix + StringPool.DOT + tableName));
 
         /* 开启了自定义 KEY 生成器 */
         if (null != dbConfig.getKeyGenerator()) {
             tableInfo.setKeySequence(clazz.getAnnotation(KeySequence.class));
         }
+    }
+
+    /**
+     * 根据 DbConfig 初始化 表名
+     *
+     * @param className 类名
+     * @param dbConfig  DbConfig
+     * @return 表名
+     */
+    private static String initTableNameWithDbConfig(String className, GlobalConfig.DbConfig dbConfig) {
+        String tableName = className;
+        // 开启表名下划线申明
+        if (dbConfig.isTableUnderline()) {
+            tableName = StringUtils.camelToUnderline(tableName);
+        }
+        // 大写命名判断
+        if (dbConfig.isCapitalMode()) {
+            tableName = tableName.toUpperCase();
+        } else {
+            // 首字母小写
+            tableName = StringUtils.firstToLowerCase(tableName);
+        }
+        return tableName;
     }
 
     /**
