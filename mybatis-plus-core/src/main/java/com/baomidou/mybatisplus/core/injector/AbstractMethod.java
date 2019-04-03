@@ -223,10 +223,10 @@ public abstract class AbstractMethod implements Constants {
     /**
      * 插入
      */
-    protected MappedStatement addInsertMappedStatement(Class<?> mapperClass, Class<?> modelClass, String id,
+    protected MappedStatement addInsertMappedStatement(Class<?> mapperClass, Class<?> parameterType, String id,
                                                        SqlSource sqlSource, KeyGenerator keyGenerator,
                                                        String keyProperty, String keyColumn) {
-        return addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.INSERT, modelClass, null,
+        return addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.INSERT, parameterType, null,
             Integer.class, keyGenerator, keyProperty, keyColumn);
     }
 
@@ -241,9 +241,9 @@ public abstract class AbstractMethod implements Constants {
     /**
      * 更新
      */
-    protected MappedStatement addUpdateMappedStatement(Class<?> mapperClass, Class<?> modelClass, String id,
+    protected MappedStatement addUpdateMappedStatement(Class<?> mapperClass, Class<?> parameterType, String id,
                                                        SqlSource sqlSource) {
-        return addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.UPDATE, modelClass, null,
+        return addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.UPDATE, parameterType, null,
             Integer.class, new NoKeyGenerator(), null, null);
     }
 
@@ -251,7 +251,7 @@ public abstract class AbstractMethod implements Constants {
      * 添加 MappedStatement 到 Mybatis 容器
      */
     protected MappedStatement addMappedStatement(Class<?> mapperClass, String id, SqlSource sqlSource,
-                                                 SqlCommandType sqlCommandType, Class<?> parameterClass,
+                                                 SqlCommandType sqlCommandType, Class<?> parameterType,
                                                  String resultMap, Class<?> resultType, KeyGenerator keyGenerator,
                                                  String keyProperty, String keyColumn) {
         String statementName = mapperClass.getName() + DOT + id;
@@ -265,7 +265,7 @@ public abstract class AbstractMethod implements Constants {
             isSelect = true;
         }
         return builderAssistant.addMappedStatement(id, sqlSource, StatementType.PREPARED, sqlCommandType,
-            null, null, null, parameterClass, resultMap, resultType,
+            null, null, null, parameterType, resultMap, resultType,
             null, !isSelect, isSelect, false, keyGenerator, keyProperty, keyColumn,
             configuration.getDatabaseId(), languageDriver, null);
     }

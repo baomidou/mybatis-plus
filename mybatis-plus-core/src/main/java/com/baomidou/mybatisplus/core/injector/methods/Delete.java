@@ -42,6 +42,10 @@ public class Delete extends AbstractMethod {
                 sqlWhereEntityWrapper(true, tableInfo));
         }
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
+        if (tableInfo.isLogicDelete()) {
+            // todo parameterType 应该是 Wrapper.class 吧
+            return this.addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
+        }
         return this.addDeleteMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource);
     }
 }
