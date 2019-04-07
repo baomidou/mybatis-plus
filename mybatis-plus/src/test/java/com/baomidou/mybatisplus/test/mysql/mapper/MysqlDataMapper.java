@@ -39,5 +39,5 @@ public interface MysqlDataMapper extends MyBaseMapper<MysqlData> {
     Page<Map<String, Object>> getMaps(Page page);
 
     @Select("select * from mysql_data limit 1")
-    Map<String, Object> getRandomOne();
+    Map<String, Object> getRandomOne(String xx, String ww);
 }

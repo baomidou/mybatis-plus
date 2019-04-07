@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.test.base;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -27,10 +28,14 @@ import com.baomidou.mybatisplus.test.base.enums.TestEnum;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonLogicDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.commons.ResultMapEntityMapper;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -61,6 +66,16 @@ public abstract class BaseDbTest {
     protected CommonLogicDataMapper commonLogicMapper;
     @Resource
     protected ResultMapEntityMapper resultMapEntityMapper;
+    @Autowired
+    private SqlSessionFactory sqlSessionFactory;
+
+    @Test
+    void a00() {
+        Configuration configuration = sqlSessionFactory.getConfiguration();
+        assertThat(configuration).isInstanceOf(MybatisConfiguration.class);
+        MappedStatement mappedStatement = configuration.getMappedStatement("com.baomidou.mybatisplus.test.mysql.mapper.MysqlDataMapper.getRandomOne");
+        assertThat(mappedStatement).isNotNull();
+    }
 
     @Test
     void a01_insertForeach() {

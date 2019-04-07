@@ -221,7 +221,7 @@ class MysqlTestDataMapperTest extends BaseDbTest {
 
     @Test
     void b03_getRandomOne() {
-        Map<String, Object> randomOne = mysqlMapper.getRandomOne();
+        Map<String, Object> randomOne = mysqlMapper.getRandomOne(null, null);
         assertThat(randomOne).isNotEmpty();
     }
 
