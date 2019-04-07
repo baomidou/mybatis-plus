@@ -21,6 +21,8 @@ import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.mapping.SqlSource;
@@ -35,6 +37,7 @@ import org.apache.ibatis.session.Configuration;
  * @since 2018-04-06
  */
 public abstract class AbstractMethod implements Constants {
+    protected static final Log logger = LogFactory.getLog(AbstractMethod.class);
 
     protected Configuration configuration;
     protected LanguageDriver languageDriver;
@@ -256,7 +259,7 @@ public abstract class AbstractMethod implements Constants {
                                                  String keyProperty, String keyColumn) {
         String statementName = mapperClass.getName() + DOT + id;
         if (hasMappedStatement(statementName)) {
-            System.err.println(LEFT_BRACE + statementName + "} Has been loaded by XML or SqlProvider, ignoring the injection of the SQL.");
+            logger.warn(LEFT_SQ_BRACKET + statementName + "] Has been loaded by XML or SqlProvider or Mybatis's Annotation, so ignoring this injection for [" + getClass() + RIGHT_SQ_BRACKET);
             return null;
         }
         /* 缓存逻辑处理 */
@@ -279,6 +282,4 @@ public abstract class AbstractMethod implements Constants {
      * @return MappedStatement
      */
     public abstract MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo);
-
-
 }

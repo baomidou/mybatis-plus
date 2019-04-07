@@ -55,6 +55,20 @@ public class SqlParserHelper {
         }
     }
 
+    /**
+     * 初始化缓存 SqlParser 注解信息
+     *
+     * @param mapperClassName Mapper Class Name
+     * @param method          Method
+     */
+    public static void initSqlParserInfoCache(String mapperClassName, Method method) {
+        SqlParser sqlParser = method.getAnnotation(SqlParser.class);
+        if (null != sqlParser) {
+            String sid = mapperClassName + StringPool.DOT + method.getName();
+            SQL_PARSER_INFO_CACHE.put(sid, sqlParser.filter());
+        }
+    }
+
 
     /**
      * 获取 SqlParser 注解信息

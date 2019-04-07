@@ -15,11 +15,30 @@
  */
 package com.baomidou.mybatisplus.test.base.mapper.commons;
 
+import com.baomidou.mybatisplus.annotation.SqlParser;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.test.base.entity.ResultMapEntity;
 import com.baomidou.mybatisplus.test.base.mapper.MyBaseMapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.ResultMap;
+import org.apache.ibatis.annotations.Select;
+
+import java.io.Serializable;
 
 /**
  * @author miemie
  * @since 2019-01-19
  */
-public interface ResultMapEntityMapper extends MyBaseMapper<ResultMapEntity> {}
+public interface ResultMapEntityMapper extends MyBaseMapper<ResultMapEntity> {
+
+    @Override
+    @SqlParser
+    @ResultMap("resultChildren1")
+    @Select("select * from result_map_entity where id = #{id}")
+    ResultMapEntity selectById(Serializable id);
+
+    @Override
+    @SqlParser
+    ResultMapEntity selectOne(@Param(Constants.WRAPPER) Wrapper<ResultMapEntity> queryWrapper);
+}

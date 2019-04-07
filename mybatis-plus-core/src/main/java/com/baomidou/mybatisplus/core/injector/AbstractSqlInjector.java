@@ -16,12 +16,10 @@
 package com.baomidou.mybatisplus.core.injector;
 
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
-
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
@@ -61,12 +59,6 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
                     logger.debug(mapperClass.toString() + ", No effective injection method was found.");
                 }
                 mapperRegistryCache.add(className);
-                /*
-                 * 初始化 SQL 解析
-                 */
-                if (GlobalConfigUtils.getGlobalConfig(builderAssistant.getConfiguration()).isSqlParserCache()) {
-                    SqlParserHelper.initSqlParserInfoCache(mapperClass);
-                }
             }
         }
     }
