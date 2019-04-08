@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.core;
 
 import org.apache.ibatis.builder.BaseBuilder;
 import org.apache.ibatis.builder.BuilderException;
+import org.apache.ibatis.builder.xml.XMLConfigBuilder;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.builder.xml.XMLMapperEntityResolver;
 import org.apache.ibatis.datasource.DataSourceFactory;
@@ -48,8 +49,7 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * Copy from XMLConfigBuilder in Mybatis and replace default Configuration class
- * by MybatisConfiguration class
+ * 从 {@link XMLConfigBuilder} copy 过来, 使用自己的 MybatisConfiguration 而不是 Configuration
  *
  * @author hubin
  * @since 2017-01-04
@@ -435,8 +435,9 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
             throw new BuilderException("No environment specified.");
         } else if (id == null) {
             throw new BuilderException("Environment requires an id attribute.");
-        } else {
-            return environment.equals(id);
+        } else if (environment.equals(id)) {
+            return true;
         }
+        return false;
     }
 }
