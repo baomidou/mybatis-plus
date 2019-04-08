@@ -163,16 +163,21 @@ public class TableInfoHelper {
         TableName table = clazz.getAnnotation(TableName.class);
 
         String tableName = clazz.getSimpleName();
-        String prefix = null;
+        String tablePrefix = dbConfig.getTablePrefix();
+        String schema = dbConfig.getSchema();
+        boolean tablePrefixEffect = true;
 
         if (table != null) {
             if (StringUtils.isNotEmpty(table.value())) {
                 tableName = table.value();
+                if (StringUtils.isNotEmpty(tablePrefix) && !table.keepGlobalPrefix()) {
+                    tablePrefixEffect = false;
+                }
             } else {
                 tableName = initTableNameWithDbConfig(tableName, dbConfig);
             }
-            if (StringUtils.isNotEmpty(table.prefix())) {
-                prefix = table.prefix();
+            if (StringUtils.isNotEmpty(table.schema())) {
+                schema = table.schema();
             }
             /* 表结果集映射 */
             if (StringUtils.isNotEmpty(table.resultMap())) {
@@ -182,11 +187,15 @@ public class TableInfoHelper {
             tableName = initTableNameWithDbConfig(tableName, dbConfig);
         }
 
-        if (StringUtils.isEmpty(prefix)) {
-            prefix = dbConfig.getTablePrefix();
+        String targetTableName = tableName;
+        if (StringUtils.isNotEmpty(tablePrefix) && tablePrefixEffect) {
+            targetTableName = tablePrefix + targetTableName;
+        }
+        if (StringUtils.isNotEmpty(schema)) {
+            targetTableName = schema + StringPool.DOT + targetTableName;
         }
 
-        tableInfo.setTableName(StringUtils.isEmpty(prefix) ? tableName : (prefix + StringPool.DOT + tableName));
+        tableInfo.setTableName(targetTableName);
 
         /* 开启了自定义 KEY 生成器 */
         if (null != dbConfig.getKeyGenerator()) {

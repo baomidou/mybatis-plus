@@ -117,6 +117,10 @@ public class GlobalConfig implements Serializable {
          */
         private String tablePrefix;
         /**
+         * schema
+         */
+        private String schema;
+        /**
          * 表名、是否使用下划线命名（默认 true:默认数据库表下划线命名）
          */
         private boolean tableUnderline = true;

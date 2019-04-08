@@ -34,18 +34,19 @@ public @interface TableName {
     String value() default "";
 
     /**
-     * 如果您需要为表指定前缀，请在此处指定，默认无前缀
-     * <p>
-     * 1、Mysql 等数据库中该前缀应指向表所在的数据库
-     * 2、PostgreSQL 中应指向表的 Schema
-     *
-     * @return 表前缀
+     * 是否保持使用全局的 tablePrefix 的值
+     * <p> 只生效于 既设置了全局的 tablePrefix 也设置了上面 value 的值 </p>
+     * <li> 如果是 false , 全局的 tablePrefix 不生效 </li>
      */
-    String prefix() default "";
+    boolean keepGlobalPrefix() default false;
+
+    /**
+     * schema
+     */
+    String schema() default "";
 
     /**
      * 实体映射结果集
      */
     String resultMap() default "";
-
 }
