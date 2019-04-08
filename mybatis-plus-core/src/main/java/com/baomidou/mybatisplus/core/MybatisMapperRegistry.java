@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.core;
 
 import com.baomidou.mybatisplus.core.override.MybatisMapperProxyFactory;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import org.apache.ibatis.binding.BindingException;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.session.SqlSession;
@@ -40,13 +39,12 @@ public class MybatisMapperRegistry extends MapperRegistry {
     public MybatisMapperRegistry(MybatisConfiguration config) {
         super(config);
         this.config = config;
-        // 注入SqlRunner
-        GlobalConfigUtils.getSqlInjector(config).injectSqlRunner(config);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
+        // TODO 这里换成 MybatisMapperProxyFactory 而不是 MapperProxyFactory
         final MybatisMapperProxyFactory<T> mapperProxyFactory = (MybatisMapperProxyFactory<T>) knownMappers.get(type);
         if (mapperProxyFactory == null) {
             throw new BindingException("Type " + type + " is not known to the MybatisPlusMapperRegistry.");
@@ -69,16 +67,17 @@ public class MybatisMapperRegistry extends MapperRegistry {
             if (hasMapper(type)) {
                 // TODO 如果之前注入 直接返回
                 return;
-                // throw new BindingException("Type " + type +
-                // " is already known to the MybatisPlusMapperRegistry.");
+                // TODO 这里就不抛异常了
+//                throw new BindingException("Type " + type + " is already known to the MapperRegistry.");
             }
             boolean loadCompleted = false;
             try {
+                // TODO 这里也换成 MybatisMapperProxyFactory 而不是 MapperProxyFactory
                 knownMappers.put(type, new MybatisMapperProxyFactory<>(type));
                 // It's important that the type is added before the parser is run
                 // otherwise the binding may automatically be attempted by the
                 // mapper parser. If the type is already known, it won't try.
-                // TODO 自定义无 XML 注入
+                // TODO 这里也换成 MybatisMapperAnnotationBuilder 而不是 MapperAnnotationBuilder
                 MybatisMapperAnnotationBuilder parser = new MybatisMapperAnnotationBuilder(config, type);
                 parser.parse();
                 loadCompleted = true;

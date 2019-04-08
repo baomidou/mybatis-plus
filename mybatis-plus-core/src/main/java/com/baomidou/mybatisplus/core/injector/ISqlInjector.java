@@ -15,10 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.injector;
 
-import com.baomidou.mybatisplus.core.assist.ISqlRunner;
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.apache.ibatis.session.Configuration;
 
 /**
  * SQL 自动注入器接口
@@ -35,14 +32,4 @@ public interface ISqlInjector {
      * @param mapperClass      mapper 接口的 class 对象
      */
     void inspectInject(MapperBuilderAssistant builderAssistant, Class<?> mapperClass);
-
-    /**
-     * 注入 SqlRunner 相关
-     *
-     * @param configuration 全局配置
-     * @see ISqlRunner
-     * @deprecated 请使用 {@link GlobalConfig#enableSqlRunner} 属性来控制是否注入 SqlRunner
-     */
-    @Deprecated
-    void injectSqlRunner(Configuration configuration);
 }

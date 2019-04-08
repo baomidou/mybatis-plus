@@ -23,7 +23,6 @@ import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.session.Configuration;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -61,11 +60,6 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
                 mapperRegistryCache.add(className);
             }
         }
-    }
-
-    @Override
-    public void injectSqlRunner(Configuration configuration) {
-        // do nothing
     }
 
     /**
