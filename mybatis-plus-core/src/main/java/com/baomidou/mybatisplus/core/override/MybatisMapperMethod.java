@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * 重写类： org.apache.ibatis.binding.MapperMethod</br>
+ * 从  {@link MapperMethod} copy 过来 </br>
  * <p> 不要内部类 ParamMap </p>
  * <p> 不要内部类 SqlCommand </p>
  * <p> 不要内部类 MethodSignature </p>
@@ -87,8 +87,8 @@ public class MybatisMapperMethod {
                         // TODO 这里上面改了
                     } else {
                         result = sqlSession.selectOne(command.getName(), param);
-                        if (method.returnsOptional() &&
-                            (result == null || !method.getReturnType().equals(result.getClass()))) {
+                        if (method.returnsOptional()
+                            && (result == null || !method.getReturnType().equals(result.getClass()))) {
                             result = Optional.ofNullable(result);
                         }
                     }
@@ -108,7 +108,7 @@ public class MybatisMapperMethod {
     }
 
     /**
-     * IPage 专用
+     * TODO IPage 专用
      */
     private <E> List<E> executeForIPage(SqlSession sqlSession, Object[] args) {
         Object param = method.convertArgsToSqlCommandParam(args);
