@@ -15,11 +15,9 @@
  */
 package com.baomidou.mybatisplus.autoconfigure;
 
-import java.io.IOException;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.stream.Stream;
-
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import org.apache.ibatis.session.ExecutorType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -27,9 +25,10 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import java.io.IOException;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.stream.Stream;
 
 /**
  * Configuration properties for MyBatis.
@@ -37,8 +36,10 @@ import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
  * @author Eddú Meléndez
  * @author Kazuki Shimizu
  */
-@ConfigurationProperties(prefix = "mybatis-plus")
+@ConfigurationProperties(prefix = MybatisPlusProperties.MYBATIS_PREFIX)
 public class MybatisPlusProperties {
+
+    public static final String MYBATIS_PREFIX = "mybatis-plus";
 
     private static final ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
 
@@ -220,5 +221,4 @@ public class MybatisPlusProperties {
             return new Resource[0];
         }
     }
-
 }

@@ -31,5 +31,4 @@ public interface ConfigurationCustomizer {
      * @param configuration the configuration object to customize
      */
     void customize(Configuration configuration);
-
 }
