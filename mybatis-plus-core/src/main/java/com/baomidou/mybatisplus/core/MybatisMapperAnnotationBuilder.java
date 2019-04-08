@@ -324,15 +324,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
             String resultMapId = null;
             ResultMap resultMapAnnotation = method.getAnnotation(ResultMap.class);
             if (resultMapAnnotation != null) {
-                String[] resultMaps = resultMapAnnotation.value();
-                StringBuilder sb = new StringBuilder();
-                for (String resultMap : resultMaps) {
-                    if (sb.length() > 0) {
-                        sb.append(",");
-                    }
-                    sb.append(resultMap);
-                }
-                resultMapId = sb.toString();
+                resultMapId = String.join(",", resultMapAnnotation.value());
             } else if (isSelect) {
                 resultMapId = parseResultMap(method);
             }
@@ -371,7 +363,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
         if (lang != null) {
             langClass = lang.value();
         }
-        return assistant.getLanguageDriver(langClass);
+        return configuration.getLanguageDriver(langClass);
     }
 
     private Class<?> getParameterType(Method method) {
