@@ -1,9 +1,8 @@
-import java.util.Date
 import groovy.util.Node
 import groovy.util.NodeList
-import java.util.Calendar
-import java.text.SimpleDateFormat
 import nl.javadude.gradle.plugins.license.License
+import java.text.SimpleDateFormat
+import java.util.*
 
 buildscript {
     repositories {
@@ -25,12 +24,12 @@ plugins {
 
 // versions
 val javaVersion = JavaVersion.VERSION_1_8
-val mybatisSpringVersion = "2.0.0"
-val mybatisVersion = "3.5.0"
-val springVersion = "5.1.4.RELEASE"
-val jsqlparserVersion = "1.4"
+val mybatisSpringVersion = "2.0.1"
+val mybatisVersion = "3.5.1"
+val springVersion = "5.1.6.RELEASE"
+val jsqlparserVersion = "2.0"
 val junitVersion = "5.4.0"
-val lombokVersion = "1.18.4"
+val lombokVersion = "1.18.6"
 val cglibVersion = "3.2.10"
 
 // libs
