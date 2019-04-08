@@ -39,12 +39,14 @@ public class DeleteBatchByIds extends AbstractMethod {
                 tableInfo.getKeyColumn(),
                 SqlScriptUtils.convertForeach("#{item}", COLLECTION, null, "item", COMMA),
                 tableInfo.getLogicDeleteSql(true, false));
+            SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Object.class);
+            return addUpdateMappedStatement(mapperClass, modelClass, sqlMethod.getMethod(), sqlSource);
         } else {
             sqlMethod = SqlMethod.DELETE_BATCH_BY_IDS;
             sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), tableInfo.getKeyColumn(),
                 SqlScriptUtils.convertForeach("#{item}", COLLECTION, null, "item", COMMA));
+            SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Object.class);
+            return this.addDeleteMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource);
         }
-        SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Object.class);
-        return this.addDeleteMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource);
     }
 }
