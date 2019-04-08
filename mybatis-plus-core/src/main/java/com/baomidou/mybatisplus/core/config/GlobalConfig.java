@@ -51,6 +51,7 @@ public class GlobalConfig implements Serializable {
     /**
      * 缓存 Sql 解析初始化
      */
+    @Deprecated
     private boolean sqlParserCache = false;
     /**
      * 机器 ID 部分
