@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.override;
 
+import org.apache.ibatis.binding.MapperProxyFactory;
 import org.apache.ibatis.session.SqlSession;
 
 import java.lang.reflect.Method;
@@ -23,8 +24,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 替换掉引用
- * <p>重写类： org.apache.ibatis.binding.MapperProxyFactory</p>
+ * <p>从 {@link MapperProxyFactory} copy 过来 </p>
+ * <li> 使用 MybatisMapperMethod </li>
  *
  * @author miemie
  * @since 2018-06-09

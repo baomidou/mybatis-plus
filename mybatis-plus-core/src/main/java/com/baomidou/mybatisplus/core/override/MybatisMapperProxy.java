@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.override;
 
+import org.apache.ibatis.binding.MapperProxy;
 import org.apache.ibatis.reflection.ExceptionUtil;
 import org.apache.ibatis.session.SqlSession;
 
@@ -27,8 +28,8 @@ import java.lang.reflect.Modifier;
 import java.util.Map;
 
 /**
- * 替换掉引用
- * <p>重写类： org.apache.ibatis.binding.MapperProxy</p>
+ * <p> 从 {@link MapperProxy}  copy 过来 </p>
+ * <li> 使用 MybatisMapperMethod </li>
  *
  * @author miemie
  * @since 2018-06-09
