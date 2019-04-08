@@ -21,16 +21,21 @@ import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
 import com.baomidou.mybatisplus.core.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.enums.IEnum;
-import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.MybatisMapWrapperFactory;
 import com.baomidou.mybatisplus.extension.handlers.EnumTypeHandler;
 import com.baomidou.mybatisplus.extension.toolkit.AopUtils;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.extension.toolkit.PackageHelper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
+import lombok.Setter;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.ErrorContext;
+import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.io.VFS;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.apache.ibatis.mapping.Environment;
@@ -55,13 +60,23 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.NestedIOException;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.core.type.ClassMetadata;
+import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
+import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
+import org.springframework.util.ClassUtils;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.springframework.util.Assert.notNull;
@@ -71,7 +86,7 @@ import static org.springframework.util.StringUtils.hasLength;
 import static org.springframework.util.StringUtils.tokenizeToStringArray;
 
 /**
- * 拷贝类 org.mybatis.spring.SqlSessionFactoryBean 修改方法 buildSqlSessionFactory() 加载自定义
+ * 拷贝类 {@link SqlSessionFactoryBean} 修改方法 buildSqlSessionFactory() 加载自定义
  * <p>MybatisXmlConfigBuilder</p>
  *
  * @author hubin
@@ -79,7 +94,10 @@ import static org.springframework.util.StringUtils.tokenizeToStringArray;
  */
 public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, InitializingBean, ApplicationListener<ApplicationEvent> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SqlSessionFactoryBean.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MybatisSqlSessionFactoryBean.class);
+
+    private static final ResourcePatternResolver RESOURCE_PATTERN_RESOLVER = new PathMatchingResourcePatternResolver();
+    private static final MetadataReaderFactory METADATA_READER_FACTORY = new CachingMetadataReaderFactory();
 
     private Resource configLocation;
 
@@ -112,9 +130,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
     private String typeAliasesPackage;
 
-    // TODO 自定义枚举包
-    private String typeEnumsPackage;
-
     private Class<?> typeAliasesSuperType;
 
     //issue #19. No default provider.
@@ -128,12 +143,13 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
     private ObjectWrapperFactory objectWrapperFactory;
 
-    private GlobalConfig globalConfig;
+    // TODO 自定义枚举包
+    @Setter
+    private String typeEnumsPackage;
 
-    // TODO 注入全局配置
-    public void setGlobalConfig(GlobalConfig globalConfig) {
-        this.globalConfig = globalConfig;
-    }
+    // TODO 自定义全局配置
+    @Setter
+    private GlobalConfig globalConfig;
 
     /**
      * Sets the ObjectFactory.
@@ -224,7 +240,8 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
     /**
      * Packages to search for type aliases.
-     * <p>支持 typeAliasesPackage 多项每项都有通配符 com.a.b.*.po, com.c.*.po ISSUE https://gitee.com/baomidou/mybatis-plus/issues/IKJ48</p>
+     *
+     * <p>Since 2.0.1, allow to specify a wildcard such as {@code com.example.*.model}.
      *
      * @param typeAliasesPackage package to scan for domain objects
      * @since 1.0.1
@@ -233,13 +250,9 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         this.typeAliasesPackage = typeAliasesPackage;
     }
 
-    public void setTypeEnumsPackage(String typeEnumsPackage) {
-        this.typeEnumsPackage = typeEnumsPackage;
-    }
-
     /**
      * Super class which domain objects have to extend to have a type alias created.
-     * <p>No effect if there is no package to scan configured.</p>
+     * No effect if there is no package to scan configured.
      *
      * @param typeAliasesSuperType super class for domain objects
      * @since 1.1.2
@@ -250,6 +263,8 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
     /**
      * Packages to search for type handlers.
+     *
+     * <p>Since 2.0.1, allow to specify a wildcard such as {@code com.example.*.typehandler}.
      *
      * @param typeHandlersPackage package to scan for type handlers
      * @since 1.0.1
@@ -302,6 +317,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
     /**
      * Set a customized MyBatis configuration.
+     * TODO 这里的入参使用 MybatisConfiguration 而不是 Configuration
      *
      * @param configuration MyBatis configuration
      * @since 1.3.0
@@ -317,7 +333,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
      * This is an alternative to specifying "&lt;sqlmapper&gt;" entries in an MyBatis config file.
      * This property being based on Spring's resource abstraction also allows for specifying
      * resource patterns here: e.g. "classpath*:sqlmap/*-mapper.xml".
-     * </p>
      *
      * @param mapperLocations location of MyBatis mapper files
      */
@@ -343,14 +358,12 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
      * <p>
      * A transactional JDBC {@code Connection} for this {@code DataSource} will be provided to application code
      * accessing this {@code DataSource} directly via {@code DataSourceUtils} or {@code DataSourceTransactionManager}.
-     * </p>
      * <p>
      * The {@code DataSource} specified here should be the target {@code DataSource} to manage transactions for, not
      * a {@code TransactionAwareDataSourceProxy}. Only data access code may work with
      * {@code TransactionAwareDataSourceProxy}, while the transaction manager needs to work on the
      * underlying target {@code DataSource}. If there's nevertheless a {@code TransactionAwareDataSourceProxy}
      * passed in, it will be unwrapped to extract its target {@code DataSource}.
-     * </p>
      *
      * @param dataSource a JDBC {@code DataSource}
      */
@@ -371,7 +384,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
      * <p>
      * This is mainly meant for testing so that mock SqlSessionFactory classes can be injected. By
      * default, {@code SqlSessionFactoryBuilder} creates {@code DefaultSqlSessionFactory} instances.
-     * </p>
      *
      * @param sqlSessionFactoryBuilder a SqlSessionFactoryBuilder
      */
@@ -385,12 +397,10 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
      * The default {@code SpringManagedTransactionFactory} should be appropriate for all cases:
      * be it Spring transaction management, EJB CMT or plain JTA. If there is no active transaction,
      * SqlSession operations will execute SQL statements non-transactionally.
-     * </p>
-     * <p>
+     *
      * <b>It is strongly recommended to use the default {@code TransactionFactory}.</b> If not used, any
      * attempt at getting an SqlSession through Spring's MyBatis framework will throw an exception if
      * a transaction is active.
-     * </p>
      *
      * @param transactionFactory the MyBatis TransactionFactory
      * @see SpringManagedTransactionFactory
@@ -436,25 +446,26 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
      */
     protected SqlSessionFactory buildSqlSessionFactory() throws Exception {
 
-        final MybatisConfiguration configuration;
+        final MybatisConfiguration targetConfiguration;
 
-        // TODO 加载自定义 MybatisXmlConfigBuilder
+        // TODO 使用 MybatisXmlConfigBuilder 而不是 XMLConfigBuilder
         MybatisXMLConfigBuilder xmlConfigBuilder = null;
         if (this.configuration != null) {
-            configuration = this.configuration;
-            if (configuration.getVariables() == null) {
-                configuration.setVariables(this.configurationProperties);
+            targetConfiguration = this.configuration;
+            if (targetConfiguration.getVariables() == null) {
+                targetConfiguration.setVariables(this.configurationProperties);
             } else if (this.configurationProperties != null) {
-                configuration.getVariables().putAll(this.configurationProperties);
+                targetConfiguration.getVariables().putAll(this.configurationProperties);
             }
         } else if (this.configLocation != null) {
+            // TODO 使用 MybatisXMLConfigBuilder
             xmlConfigBuilder = new MybatisXMLConfigBuilder(this.configLocation.getInputStream(), null, this.configurationProperties);
-            configuration = xmlConfigBuilder.getConfiguration();
+            targetConfiguration = xmlConfigBuilder.getConfiguration();
         } else {
             LOGGER.debug(() -> "Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration");
-            // TODO 使用自定义配置
-            configuration = new MybatisConfiguration();
-            Optional.ofNullable(this.configurationProperties).ifPresent(configuration::setVariables);
+            // TODO 使用 MybatisConfiguration
+            targetConfiguration = new MybatisConfiguration();
+            Optional.ofNullable(this.configurationProperties).ifPresent(targetConfiguration::setVariables);
         }
 
         // TODO 无配置启动所必须的
@@ -462,47 +473,20 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         this.globalConfig.setDbConfig(Optional.ofNullable(this.globalConfig.getDbConfig()).orElseGet(GlobalConfig.DbConfig::new));
 
         // TODO 初始化 id-work 以及 打印骚东西
-        configuration.init(this.globalConfig);
-
-        Optional.ofNullable(this.objectFactory).ifPresent(configuration::setObjectFactory);
-        Optional.ofNullable(this.objectWrapperFactory).ifPresent(configuration::setObjectWrapperFactory);
-        Optional.ofNullable(this.vfs).ifPresent(configuration::setVfsImpl);
+        targetConfiguration.init(this.globalConfig);
 
         // TODO 自动注入 map 接收返回结果下是否下划线转驼峰
-        if (configuration.isMapUnderscoreToCamelCase()) {
-            configuration.setObjectWrapperFactory(new MybatisMapWrapperFactory());
+        if (targetConfiguration.isMapUnderscoreToCamelCase()) {
+            targetConfiguration.setObjectWrapperFactory(new MybatisMapWrapperFactory());
         }
 
-        if (hasLength(this.typeAliasesPackage)) {
-            // TODO 支持自定义通配符
-            List<String> typeAliasPackageList = new ArrayList<>();
-            if (typeAliasesPackage.contains(StringPool.ASTERISK) && !typeAliasesPackage.contains(StringPool.COMMA) && !typeAliasesPackage.contains(StringPool.SEMICOLON)) {
-                String[] convertTypeAliasesPackages = PackageHelper.convertTypeAliasesPackage(this.typeAliasesPackage);
-                if (ArrayUtils.isEmpty(convertTypeAliasesPackages)) {
-                    LOGGER.warn(() -> "Can't find class in '[" + this.typeAliasesPackage + "]' package. Please check your configuration.");
-                } else {
-                    typeAliasPackageList.addAll(Arrays.asList(convertTypeAliasesPackages));
-                }
-            } else {
-                String[] typeAliasPackageArray = tokenizeToStringArray(this.typeAliasesPackage, ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
-                Stream.of(typeAliasPackageArray).forEach(pkg -> {
-                    if (pkg.contains(StringPool.ASTERISK)) {
-                        String[] convertTypeAliasesPackages = PackageHelper.convertTypeAliasesPackage(pkg);
-                        if (ArrayUtils.isEmpty(convertTypeAliasesPackages)) {
-                            LOGGER.warn(() -> "Can't find class in '[" + pkg + "]' package. Please check your configuration.");
-                        } else {
-                            typeAliasPackageList.addAll(Arrays.asList(convertTypeAliasesPackages));
-                        }
-                    } else {
-                        typeAliasPackageList.add(pkg);
-                    }
-                });
+        // TODO 设置元数据相关 如果用户没有配置 dbType 则自动获取
+        if (globalConfig.getDbConfig().getDbType() == DbType.OTHER) {
+            try (Connection connection = AopUtils.getTargetObject(this.dataSource).getConnection()) {
+                globalConfig.getDbConfig().setDbType(JdbcUtils.getDbType(connection.getMetaData().getURL()));
+            } catch (Exception e) {
+                throw ExceptionUtils.mpe("Error: GlobalConfigUtils setMetaData Fail !  Cause:" + e);
             }
-            typeAliasPackageList.forEach(packageToScan -> {
-                configuration.getTypeAliasRegistry().registerAliases(packageToScan,
-                    typeAliasesSuperType == null ? Object.class : typeAliasesSuperType);
-                LOGGER.debug(() -> "Scanned package: '" + packageToScan + "' for aliases");
-            });
         }
 
         // TODO 自定义枚举类扫描处理
@@ -529,52 +513,60 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
                 });
             }
             // 取得类型转换注册器
-            TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
+            TypeHandlerRegistry typeHandlerRegistry = targetConfiguration.getTypeHandlerRegistry();
             classes.stream()
                 .filter(Class::isEnum)
                 .filter(cls -> IEnum.class.isAssignableFrom(cls) || EnumTypeHandler.dealEnumType(cls).isPresent())
                 .forEach(cls -> typeHandlerRegistry.register(cls, EnumTypeHandler.class));
         }
 
+        Optional.ofNullable(this.objectFactory).ifPresent(targetConfiguration::setObjectFactory);
+        Optional.ofNullable(this.objectWrapperFactory).ifPresent(targetConfiguration::setObjectWrapperFactory);
+        Optional.ofNullable(this.vfs).ifPresent(targetConfiguration::setVfsImpl);
+
+        if (hasLength(this.typeAliasesPackage)) {
+            scanClasses(this.typeAliasesPackage, this.typeAliasesSuperType)
+                .forEach(targetConfiguration.getTypeAliasRegistry()::registerAlias);
+        }
+
         if (!isEmpty(this.typeAliases)) {
             Stream.of(this.typeAliases).forEach(typeAlias -> {
-                configuration.getTypeAliasRegistry().registerAlias(typeAlias);
+                targetConfiguration.getTypeAliasRegistry().registerAlias(typeAlias);
                 LOGGER.debug(() -> "Registered type alias: '" + typeAlias + "'");
             });
         }
 
         if (!isEmpty(this.plugins)) {
             Stream.of(this.plugins).forEach(plugin -> {
-                configuration.addInterceptor(plugin);
+                targetConfiguration.addInterceptor(plugin);
                 LOGGER.debug(() -> "Registered plugin: '" + plugin + "'");
             });
         }
 
         if (hasLength(this.typeHandlersPackage)) {
-            String[] typeHandlersPackageArray = tokenizeToStringArray(this.typeHandlersPackage,
-                ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
-            Stream.of(typeHandlersPackageArray).forEach(packageToScan -> {
-                configuration.getTypeHandlerRegistry().register(packageToScan);
-                LOGGER.debug(() -> "Scanned package: '" + packageToScan + "' for type handlers");
-            });
+            scanClasses(this.typeHandlersPackage, TypeHandler.class).stream()
+                .filter(clazz -> !clazz.isInterface())
+                .filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
+                .filter(clazz -> ClassUtils.getConstructorIfAvailable(clazz) != null)
+                .forEach(targetConfiguration.getTypeHandlerRegistry()::register);
         }
 
         if (!isEmpty(this.typeHandlers)) {
             Stream.of(this.typeHandlers).forEach(typeHandler -> {
-                configuration.getTypeHandlerRegistry().register(typeHandler);
+                targetConfiguration.getTypeHandlerRegistry().register(typeHandler);
                 LOGGER.debug(() -> "Registered type handler: '" + typeHandler + "'");
             });
         }
 
         if (this.databaseIdProvider != null) {//fix #64 set databaseId before parse mapper xmls
             try {
-                configuration.setDatabaseId(this.databaseIdProvider.getDatabaseId(this.dataSource));
+                targetConfiguration.setDatabaseId(this.databaseIdProvider.getDatabaseId(this.dataSource));
             } catch (SQLException e) {
                 throw new NestedIOException("Failed getting a databaseId", e);
             }
         }
 
-        Optional.ofNullable(this.cache).ifPresent(configuration::addCache);
+        Optional.ofNullable(this.cache).ifPresent(targetConfiguration::addCache);
 
         if (xmlConfigBuilder != null) {
             try {
@@ -587,19 +579,35 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             }
         }
 
-        configuration.setEnvironment(new Environment(this.environment,
+        targetConfiguration.setEnvironment(new Environment(this.environment,
             this.transactionFactory == null ? new SpringManagedTransactionFactory() : this.transactionFactory,
             this.dataSource));
 
-        // TODO 设置元数据相关 如果用户没有配置 dbType 则自动获取
-        if (globalConfig.getDbConfig().getDbType() == DbType.OTHER) {
-            try (Connection connection = AopUtils.getTargetObject(this.dataSource).getConnection()) {
-                globalConfig.getDbConfig().setDbType(JdbcUtils.getDbType(connection.getMetaData().getURL()));
-            } catch (Exception e) {
-                throw ExceptionUtils.mpe("Error: GlobalConfigUtils setMetaData Fail !  Cause:" + e);
+        if (this.mapperLocations != null) {
+            if (this.mapperLocations.length == 0) {
+                LOGGER.warn(() -> "Property 'mapperLocations' was specified but matching resources are not found.");
+            } else {
+                for (Resource mapperLocation : this.mapperLocations) {
+                    if (mapperLocation == null) {
+                        continue;
+                    }
+                    try {
+                        XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(mapperLocation.getInputStream(),
+                            targetConfiguration, mapperLocation.toString(), targetConfiguration.getSqlFragments());
+                        xmlMapperBuilder.parse();
+                    } catch (Exception e) {
+                        throw new NestedIOException("Failed to parse mapping resource: '" + mapperLocation + "'", e);
+                    } finally {
+                        ErrorContext.instance().reset();
+                    }
+                    LOGGER.debug(() -> "Parsed mapper file: '" + mapperLocation + "'");
+                }
             }
+        } else {
+            LOGGER.debug(() -> "Property 'mapperLocations' was not specified.");
         }
-        SqlSessionFactory sqlSessionFactory = this.sqlSessionFactoryBuilder.build(configuration);
+
+        SqlSessionFactory sqlSessionFactory = this.sqlSessionFactoryBuilder.build(targetConfiguration);
 
         // TODO SqlRunner
         SqlHelper.FACTORY = sqlSessionFactory;
@@ -607,28 +615,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         // TODO 设置全局参数属性 以及 缓存 sqlSessionFactory
         globalConfig.signGlobalConfig(sqlSessionFactory);
 
-        if (!isEmpty(this.mapperLocations)) {
-            for (Resource mapperLocation : this.mapperLocations) {
-                if (mapperLocation == null) {
-                    continue;
-                }
-
-                try {
-                    // TODO  这里也换了噢噢噢噢
-                    XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(mapperLocation.getInputStream(),
-                        configuration, mapperLocation.toString(), configuration.getSqlFragments());
-                    xmlMapperBuilder.parse();
-                } catch (Exception e) {
-                    throw new NestedIOException("Failed to parse mapping resource: '" + mapperLocation + "'", e);
-                } finally {
-                    ErrorContext.instance().reset();
-                }
-
-                LOGGER.debug(() -> "Parsed mapper file: '" + mapperLocation + "'");
-            }
-        } else {
-            LOGGER.debug(() -> "Property 'mapperLocations' was not specified or no matching resources found");
-        }
         return sqlSessionFactory;
     }
 
@@ -640,6 +626,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         if (this.sqlSessionFactory == null) {
             afterPropertiesSet();
         }
+
         return this.sqlSessionFactory;
     }
 
@@ -668,5 +655,28 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             // fail-fast -> check all statements are completed
             this.sqlSessionFactory.getConfiguration().getMappedStatementNames();
         }
+    }
+
+    private Set<Class<?>> scanClasses(String packagePatterns, Class<?> assignableType)
+        throws IOException {
+        Set<Class<?>> classes = new HashSet<>();
+        String[] packagePatternArray = tokenizeToStringArray(packagePatterns,
+            ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
+        for (String packagePattern : packagePatternArray) {
+            Resource[] resources = RESOURCE_PATTERN_RESOLVER.getResources(ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX +
+                org.springframework.util.ClassUtils.convertClassNameToResourcePath(packagePattern) + "/**/*.class");
+            for (Resource resource : resources) {
+                try {
+                    ClassMetadata classMetadata = METADATA_READER_FACTORY.getMetadataReader(resource).getClassMetadata();
+                    Class<?> clazz = Resources.classForName(classMetadata.getClassName());
+                    if (assignableType == null || assignableType.isAssignableFrom(clazz)) {
+                        classes.add(clazz);
+                    }
+                } catch (Throwable e) {
+                    LOGGER.warn(() -> "Cannot load the '" + resource + "'. Cause by " + e.toString());
+                }
+            }
+        }
+        return classes;
     }
 }
