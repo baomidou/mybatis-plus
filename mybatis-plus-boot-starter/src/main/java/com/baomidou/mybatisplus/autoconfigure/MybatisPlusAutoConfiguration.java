@@ -33,7 +33,6 @@ import org.mybatis.spring.mapper.ClassPathMapperScanner;
 import org.mybatis.spring.mapper.MapperFactoryBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
@@ -132,6 +131,7 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
     @Bean
     @ConditionalOnMissingBean
     public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
+        // TODO 使用 MybatisSqlSessionFactoryBean 而不是 SqlSessionFactoryBean
         MybatisSqlSessionFactoryBean factory = new MybatisSqlSessionFactoryBean();
         factory.setDataSource(dataSource);
         factory.setVfs(SpringBootVFS.class);
@@ -151,10 +151,6 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
         if (StringUtils.hasLength(this.properties.getTypeAliasesPackage())) {
             factory.setTypeAliasesPackage(this.properties.getTypeAliasesPackage());
         }
-        // TODO 自定义枚举包
-        if (StringUtils.hasLength(this.properties.getTypeEnumsPackage())) {
-            factory.setTypeEnumsPackage(this.properties.getTypeEnumsPackage());
-        }
         if (this.properties.getTypeAliasesSuperType() != null) {
             factory.setTypeAliasesSuperType(this.properties.getTypeAliasesSuperType());
         }
@@ -164,31 +160,39 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
         if (!ObjectUtils.isEmpty(this.properties.resolveMapperLocations())) {
             factory.setMapperLocations(this.properties.resolveMapperLocations());
         }
+
+        // TODO 自定义枚举包
+        if (StringUtils.hasLength(this.properties.getTypeEnumsPackage())) {
+            factory.setTypeEnumsPackage(this.properties.getTypeEnumsPackage());
+        }
         // TODO 此处必为非 NULL
         GlobalConfig globalConfig = this.properties.getGlobalConfig();
-        //注入填充器
+        // TODO 注入填充器
         if (this.applicationContext.getBeanNamesForType(MetaObjectHandler.class,
             false, false).length > 0) {
             MetaObjectHandler metaObjectHandler = this.applicationContext.getBean(MetaObjectHandler.class);
             globalConfig.setMetaObjectHandler(metaObjectHandler);
         }
-        //注入主键生成器
+        // TODO 注入主键生成器
         if (this.applicationContext.getBeanNamesForType(IKeyGenerator.class, false,
             false).length > 0) {
             IKeyGenerator keyGenerator = this.applicationContext.getBean(IKeyGenerator.class);
             globalConfig.getDbConfig().setKeyGenerator(keyGenerator);
         }
-        //注入sql注入器
+        // TODO 注入sql注入器
         if (this.applicationContext.getBeanNamesForType(ISqlInjector.class, false,
             false).length > 0) {
             ISqlInjector iSqlInjector = this.applicationContext.getBean(ISqlInjector.class);
             globalConfig.setSqlInjector(iSqlInjector);
         }
+        // TODO 设置 GlobalConfig 到 MybatisSqlSessionFactoryBean
         factory.setGlobalConfig(globalConfig);
         return factory.getObject();
     }
 
+    // TODO 入参使用 MybatisSqlSessionFactoryBean
     private void applyConfiguration(MybatisSqlSessionFactoryBean factory) {
+        // TODO 使用 MybatisConfiguration
         MybatisConfiguration configuration = this.properties.getConfiguration();
         if (configuration == null && !StringUtils.hasText(this.properties.getConfigLocation())) {
             configuration = new MybatisConfiguration();
@@ -248,10 +252,11 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
             scanner.setAnnotationClass(Mapper.class);
             scanner.registerFilters();
             scanner.doScan(StringUtils.toStringArray(packages));
+
         }
 
         @Override
-        public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        public void setBeanFactory(BeanFactory beanFactory) {
             this.beanFactory = beanFactory;
         }
 
@@ -279,5 +284,4 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
             logger.debug("No {} found.", MapperFactoryBean.class.getName());
         }
     }
-
 }
