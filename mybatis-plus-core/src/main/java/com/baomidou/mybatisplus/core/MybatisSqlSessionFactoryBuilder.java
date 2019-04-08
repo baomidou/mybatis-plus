@@ -31,12 +31,12 @@ import java.util.Properties;
  * @author nieqiurong 2019/2/23.
  */
 public class MybatisSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
-    
-    @Override
+
     @SuppressWarnings("Duplicates")
+    @Override
     public SqlSessionFactory build(Reader reader, String environment, Properties properties) {
         try {
-            //todo 这里替换成自己的了
+            //TODO 这里换成 MybatisXMLConfigBuilder 而不是 XMLConfigBuilder
             MybatisXMLConfigBuilder parser = new MybatisXMLConfigBuilder(reader, environment, properties);
             return build(parser.parse());
         } catch (Exception e) {
@@ -55,7 +55,7 @@ public class MybatisSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
     @Override
     public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
         try {
-            //todo 这里替换成自己的了
+            //TODO 这里换成 MybatisXMLConfigBuilder 而不是 XMLConfigBuilder
             MybatisXMLConfigBuilder parser = new MybatisXMLConfigBuilder(inputStream, environment, properties);
             return build(parser.parse());
         } catch (Exception e) {
