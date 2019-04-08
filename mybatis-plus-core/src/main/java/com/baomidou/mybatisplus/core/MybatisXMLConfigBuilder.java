@@ -85,16 +85,22 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
         this(new XPathParser(inputStream, true, props, new XMLMapperEntityResolver()), environment, props);
     }
 
-    /**
-     * 使用自己的 MybatisConfiguration
-     */
     private MybatisXMLConfigBuilder(XPathParser parser, String environment, Properties props) {
+        // TODO 使用 MybatisConfiguration 而不是 Configuration
         super(new MybatisConfiguration());
         ErrorContext.instance().resource("SQL Mapper Configuration");
         this.configuration.setVariables(props);
         this.parsed = false;
         this.environment = environment;
         this.parser = parser;
+    }
+
+    /**
+     * TODO 重写改方法,返回值是 MybatisConfiguration 而不是 Configuration
+     */
+    @Override
+    public MybatisConfiguration getConfiguration() {
+        return (MybatisConfiguration) this.configuration;
     }
 
     public Configuration parse() {
@@ -104,11 +110,6 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
         parsed = true;
         parseConfiguration(parser.evalNode("/configuration"));
         return configuration;
-    }
-
-    @Override
-    public MybatisConfiguration getConfiguration() {
-        return (MybatisConfiguration) this.configuration;
     }
 
     private void parseConfiguration(XNode root) {
@@ -265,7 +266,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
         configuration.setDefaultExecutorType(ExecutorType.valueOf(props.getProperty("defaultExecutorType", "SIMPLE")));
         configuration.setDefaultStatementTimeout(integerValueOf(props.getProperty("defaultStatementTimeout"), null));
         configuration.setDefaultFetchSize(integerValueOf(props.getProperty("defaultFetchSize"), null));
-        //todo 统一mapUnderscoreToCamelCase,默认是false
+        // TODO 统一 mapUnderscoreToCamelCase 属性默认值为 true
         configuration.setMapUnderscoreToCamelCase(booleanValueOf(props.getProperty("mapUnderscoreToCamelCase"), true));
         configuration.setSafeRowBoundsEnabled(booleanValueOf(props.getProperty("safeRowBoundsEnabled"), false));
         configuration.setLocalCacheScope(LocalCacheScope.valueOf(props.getProperty("localCacheScope", "SESSION")));
