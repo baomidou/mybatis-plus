@@ -68,15 +68,14 @@ public class JsqlParserCountOptimize implements ISqlParser {
     @Override
     public SqlInfo parser(MetaObject metaObject, String sql) {
         if (logger.isDebugEnabled()) {
-            logger.debug(" JsqlParserCountOptimize sql=" + sql);
+            logger.debug("JsqlParserCountOptimize sql=" + sql);
         }
         SqlInfo sqlInfo = SqlInfo.newInstance();
         try {
             Select selectStatement = (Select) CCJSqlParserUtil.parse(sql);
             PlainSelect plainSelect = (PlainSelect) selectStatement.getSelectBody();
             Distinct distinct = plainSelect.getDistinct();
-            GroupByElement groupByElement = plainSelect.getGroupBy();
-            List<Expression> groupBy = groupByElement.getGroupByExpressions();
+            List<Expression> groupBy = plainSelect.getGroupByColumnReferences();
             List<OrderByElement> orderBy = plainSelect.getOrderByElements();
 
             // 添加包含groupBy 不去除orderBy

@@ -24,11 +24,12 @@ import net.sf.jsqlparser.statement.update.Update;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
  * SQL 解析测试
  */
 class JSqlParserTest {
-
 
     @Test
     void parser() throws Exception {
@@ -41,6 +42,13 @@ class JSqlParserTest {
 
         AndExpression e = (AndExpression) ps.getWhere();
         System.out.println(e.getLeftExpression());
+    }
+
+    @Test
+    void notLikeParser() throws Exception {
+        final String targetSql = "SELECT * FROM tableName WHERE id NOT LIKE ?";
+        Select select = (Select) CCJSqlParserUtil.parse(targetSql);
+        assertThat(select.toString()).isEqualTo(targetSql);
     }
 
 
