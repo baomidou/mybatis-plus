@@ -23,43 +23,15 @@ package com.baomidou.mybatisplus.core.enums;
  */
 public enum SqlLike {
     /**
-     * LEFT
+     * %值
      */
-    LEFT("left", "左边%"),
+    LEFT,
     /**
-     * RIGHT
+     * 值%
      */
-    RIGHT("right", "右边%"),
+    RIGHT,
     /**
-     * CUSTOM
+     * %值%
      */
-    CUSTOM("custom", "定制"),
-    /**
-     * DEFAULT
-     */
-    DEFAULT("default", "两边%");
-
-    /**
-     * 主键
-     */
-    private final String type;
-
-    /**
-     * 描述
-     */
-    private final String desc;
-
-    SqlLike(final String type, final String desc) {
-        this.type = type;
-        this.desc = desc;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
-
+    DEFAULT
 }

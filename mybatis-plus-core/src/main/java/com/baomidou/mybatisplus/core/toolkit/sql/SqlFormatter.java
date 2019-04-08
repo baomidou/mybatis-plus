@@ -31,6 +31,7 @@ import java.util.*;
  * @author Gavin King
  * @author Steve Ebersole
  */
+@Deprecated
 public class SqlFormatter {
 
     private static final String WHITESPACE = " \n\r\f\t";

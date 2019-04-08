@@ -17,7 +17,6 @@ package com.baomidou.mybatisplus.core.toolkit.sql;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.enums.SqlLike;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
@@ -34,11 +33,8 @@ public class SqlUtils {
 
     /**
      * 格式sql
-     *
-     * @param boundSql
-     * @param format
-     * @return
      */
+    @Deprecated
     public static String sqlFormat(String boundSql, boolean format) {
         if (format) {
             try {
@@ -53,24 +49,17 @@ public class SqlUtils {
      * 用%连接like
      *
      * @param str 原字符串
-     * @return
+     * @return like 的值
      */
-    public static String concatLike(String str, SqlLike type) {
-        StringBuilder builder = new StringBuilder(str.length() + 3);
+    public static String concatLike(Object str, SqlLike type) {
         switch (type) {
             case LEFT:
-                builder.append(StringPool.PERCENT).append(str);
-                break;
+                return StringPool.PERCENT + str;
             case RIGHT:
-                builder.append(str).append(StringPool.PERCENT);
-                break;
-            case CUSTOM:
-                builder.append(str);
-                break;
+                return str + StringPool.PERCENT;
             default:
-                builder.append(StringPool.PERCENT).append(str).append(StringPool.PERCENT);
+                return StringPool.PERCENT + str + StringPool.PERCENT;
         }
-        return builder.toString();
     }
 
     /**
@@ -92,16 +81,5 @@ public class SqlUtils {
             return String.format("\"%s\"", val);
         }
         return val;
-    }
-
-    /**
-     * SQL注入内容剥离
-     *
-     * @param sql 待处理 SQL 内容
-     * @return this
-     */
-    public static String stripSqlInjection(String sql) {
-        Assert.notNull(sql, "strip sql is null.");
-        return sql.replaceAll("('.+--)|(--)|(\\|)|(%7C)", StringPool.EMPTY);
     }
 }

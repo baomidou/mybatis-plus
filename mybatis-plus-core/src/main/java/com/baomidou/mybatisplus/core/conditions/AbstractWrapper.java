@@ -22,7 +22,9 @@ import com.baomidou.mybatisplus.core.conditions.interfaces.Nested;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.conditions.segments.NormalSegmentList;
 import com.baomidou.mybatisplus.core.enums.SqlKeyword;
+import com.baomidou.mybatisplus.core.enums.SqlLike;
 import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -159,7 +161,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
 
     @Override
     public Children like(boolean condition, R column, Object val) {
-        return doIt(condition, () -> columnToString(column), LIKE, () -> formatSql("{0}", StringPool.PERCENT + val + StringPool.PERCENT));
+        return likeValue(condition, column, val, SqlLike.DEFAULT);
     }
 
     @Override
@@ -169,12 +171,12 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
 
     @Override
     public Children likeLeft(boolean condition, R column, Object val) {
-        return doIt(condition, () -> columnToString(column), LIKE, () -> formatSql("{0}", StringPool.PERCENT + val));
+        return likeValue(condition, column, val, SqlLike.LEFT);
     }
 
     @Override
     public Children likeRight(boolean condition, R column, Object val) {
-        return doIt(condition, () -> columnToString(column), LIKE, () -> formatSql("{0}", val + StringPool.PERCENT));
+        return likeValue(condition, column, val, SqlLike.RIGHT);
     }
 
     @Override
@@ -300,6 +302,14 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      */
     protected Children and(boolean condition) {
         return doIt(condition, AND);
+    }
+
+    /**
+     * 内部自用
+     * <p>拼接 LIKE 以及 值</p>
+     */
+    protected Children likeValue(boolean condition, R column, Object val, SqlLike sqlLike) {
+        return doIt(condition, () -> columnToString(column), LIKE, () -> formatSql("{0}", SqlUtils.concatLike(val, sqlLike)));
     }
 
     /**
