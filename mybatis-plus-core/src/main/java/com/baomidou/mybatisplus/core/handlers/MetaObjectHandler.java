@@ -37,6 +37,7 @@ public interface MetaObjectHandler {
 
     /**
      * 乐观锁常量
+     *
      * @deprecated 3.1.1 {@link Constants#MP_OPTLOCK_ET_ORIGINAL}
      */
     String MP_OPTLOCK_ET_ORIGINAL = "MP_OPTLOCK_ET_ORIGINAL";
@@ -169,7 +170,8 @@ public interface MetaObjectHandler {
             : TableInfoHelper.getTableInfo(metaObject.getOriginalObject().getClass());
         if (Objects.nonNull(tableInfo)) {
             Optional<TableFieldInfo> first = tableInfo.getFieldList().stream()
-                .filter(e -> e.getProperty().equals(fieldName) && e.getPropertyType().isAssignableFrom(fieldVal.getClass()))//v_3.1.1+ 设置子类的值也可以通过
+                //v_3.1.1+ 设置子类的值也可以通过
+                .filter(e -> e.getProperty().equals(fieldName) && e.getPropertyType().isAssignableFrom(fieldVal.getClass()))
                 .findFirst();
             if (first.isPresent()) {
                 FieldFill fill = first.get().getFieldFill();

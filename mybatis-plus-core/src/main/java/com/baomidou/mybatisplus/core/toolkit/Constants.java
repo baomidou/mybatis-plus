@@ -100,7 +100,9 @@ public interface Constants extends StringPool {
      */
     String WHERE = "WHERE";
 
-    //乐观锁字段
+    /**
+     * 乐观锁字段
+     */
     String MP_OPTLOCK_VERSION_ORIGINAL = "MP_OPTLOCK_VERSION_ORIGINAL";
     String MP_OPTLOCK_VERSION_COLUMN = "MP_OPTLOCK_VERSION_COLUMN";
     String MP_OPTLOCK_ET_ORIGINAL = "MP_OPTLOCK_ET_ORIGINAL";

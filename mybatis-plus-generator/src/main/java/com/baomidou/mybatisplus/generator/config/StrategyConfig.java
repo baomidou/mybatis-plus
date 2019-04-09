@@ -105,6 +105,10 @@ public class StrategyConfig {
     @Setter(AccessLevel.NONE)
     private String[] exclude = null;
     /**
+     * 实体是否生成 serialVersionUID
+     */
+    private boolean entitySerialVersionUID = true;
+    /**
      * 【实体】是否生成字段常量（默认 false）<br>
      * -----------------------------------<br>
      * public static final String ID = "test_id";
