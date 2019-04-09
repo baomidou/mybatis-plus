@@ -31,6 +31,7 @@ import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
@@ -143,10 +144,11 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
 
         // SQL 解析
         this.sqlParser(metaObject);
-
-        // 先判断是不是SELECT操作
+    
+        // 先判断是不是SELECT操作  (2019-04-10 00:37:31 跳过存储过程)
         MappedStatement mappedStatement = (MappedStatement) metaObject.getValue("delegate.mappedStatement");
-        if (!SqlCommandType.SELECT.equals(mappedStatement.getSqlCommandType())) {
+        if (SqlCommandType.SELECT != mappedStatement.getSqlCommandType()
+            || StatementType.CALLABLE == mappedStatement.getStatementType()) {
             return invocation.proceed();
         }
 
