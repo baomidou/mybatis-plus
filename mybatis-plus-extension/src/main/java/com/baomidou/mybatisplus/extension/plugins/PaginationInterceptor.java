@@ -142,9 +142,6 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
         StatementHandler statementHandler = PluginUtils.realTarget(invocation.getTarget());
         MetaObject metaObject = SystemMetaObject.forObject(statementHandler);
 
-        // SQL 解析
-        this.sqlParser(metaObject);
-    
         // 先判断是不是SELECT操作  (2019-04-10 00:37:31 跳过存储过程)
         MappedStatement mappedStatement = (MappedStatement) metaObject.getValue("delegate.mappedStatement");
         if (SqlCommandType.SELECT != mappedStatement.getSqlCommandType()
@@ -152,6 +149,9 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
             return invocation.proceed();
         }
 
+        // SQL 解析
+        this.sqlParser(metaObject);
+    
         // 针对定义了rowBounds，做为mapper接口方法的参数
         BoundSql boundSql = (BoundSql) metaObject.getValue("delegate.boundSql");
         Object paramObj = boundSql.getParameterObject();

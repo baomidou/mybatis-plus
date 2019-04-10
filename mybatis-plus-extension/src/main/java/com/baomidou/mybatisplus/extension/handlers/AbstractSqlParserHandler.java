@@ -53,21 +53,21 @@ public abstract class AbstractSqlParserHandler {
             Object originalObject = metaObject.getOriginalObject();
             StatementHandler statementHandler = PluginUtils.realTarget(originalObject);
             metaObject = SystemMetaObject.forObject(statementHandler);
-            // 好像不用判断也行,为了保险起见,还是加上吧.
-            boolean hasProperty = metaObject.hasGetter("delegate");
-            if (hasProperty) {
-                statementHandler = (StatementHandler) metaObject.getValue("delegate");
+
+            if (null != this.sqlParserFilter && this.sqlParserFilter.doFilter(metaObject)) {
+                return;
             }
-            if (!CallableStatementHandler.class.equals(statementHandler.getClass())) {
-                if (null != this.sqlParserFilter && this.sqlParserFilter.doFilter(metaObject)) {
-                    return;
-                }
-                // SQL 解析
-                if (CollectionUtils.isNotEmpty(this.sqlParserList)) {
-                    // @SqlParser(filter = true) 跳过该方法解析
-                    if (SqlParserHelper.getSqlParserInfo(metaObject)) {
-                        return;
-                    }
+
+            // @SqlParser(filter = true) 跳过该方法解析
+            if (SqlParserHelper.getSqlParserInfo(metaObject)) {
+                return;
+            }
+
+            // SQL 解析
+            if (CollectionUtils.isNotEmpty(this.sqlParserList)) {
+                // 好像不用判断也行,为了保险起见,还是加上吧.
+                statementHandler = metaObject.hasGetter("delegate") ? (StatementHandler) metaObject.getValue("delegate") : statementHandler;
+                if (!(statementHandler instanceof CallableStatementHandler)) {
                     // 标记是否修改过 SQL
                     int flag = 0;
                     String originalSql = (String) metaObject.getValue(PluginUtils.DELEGATE_BOUNDSQL_SQL);

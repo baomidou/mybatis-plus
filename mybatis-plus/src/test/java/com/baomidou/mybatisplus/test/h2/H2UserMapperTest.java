@@ -146,6 +146,11 @@ class H2UserMapperTest extends BaseTest {
     }
 
     @Test
+    void testCall(){
+        Assertions.assertEquals("1",userMapper.testCall());
+    }
+
+    @Test
     @Order(Integer.MAX_VALUE)
     void delete() {
         userMapper.delete(new QueryWrapper<>(new H2User().setAge(AgeEnum.TWO))

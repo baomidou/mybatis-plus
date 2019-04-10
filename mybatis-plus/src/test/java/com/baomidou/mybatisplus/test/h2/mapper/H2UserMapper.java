@@ -19,9 +19,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.mapping.StatementType;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.test.h2.entity.H2Addr;
@@ -94,4 +96,9 @@ public interface H2UserMapper extends SuperMapper<H2User> {
 
     @Select("select * from h2user")
     List<Map<?,?>> mySelectMaps();
+
+    @Select("call 1")
+    @Options(statementType = StatementType.CALLABLE)
+    String testCall();
+
 }
