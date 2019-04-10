@@ -20,7 +20,6 @@ import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
-
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.ExecutorType;
@@ -39,6 +38,9 @@ import java.util.List;
 public final class SqlHelper {
 
     private static final Log logger = LogFactory.getLog(SqlHelper.class);
+    /**
+     * 主要用于 service 和 ar
+     */
     public static SqlSessionFactory FACTORY;
 
 
@@ -119,9 +121,9 @@ public final class SqlHelper {
      * 从list中取第一条数据返回对应List中泛型的单个结果
      *
      * @param list ignore
-     * @param <E> ignore
-     * @deprecated 3.1.1
+     * @param <E>  ignore
      * @return ignore
+     * @deprecated 3.1.1
      */
     @Deprecated
     public static <E> E getObject(List<E> list) {
@@ -132,7 +134,7 @@ public final class SqlHelper {
      * 从list中取第一条数据返回对应List中泛型的单个结果
      *
      * @param list ignore
-     * @param <E> ignore
+     * @param <E>  ignore
      * @return ignore
      */
     public static <E> E getObject(Log log, List<E> list) {
