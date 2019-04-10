@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.core.metadata;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
@@ -90,7 +91,8 @@ public class TableInfo implements Constants {
     /**
      * MybatisConfiguration 标记 (Configuration内存地址值)
      */
-    private String configMark;
+    @Getter
+    private MybatisConfiguration configuration;
     /**
      * 是否开启逻辑删除
      */
@@ -126,12 +128,18 @@ public class TableInfo implements Constants {
         return currentNamespace + DOT + sqlMethod;
     }
 
-    public void setConfigMark(Configuration configuration) {
+    /**
+     * 设置 Configuration
+     */
+    public void setConfiguration(Configuration configuration) {
         Assert.notNull(configuration, "Error: You need Initialize MybatisConfiguration !");
-        this.configMark = configuration.toString();
+        this.configuration = (MybatisConfiguration) configuration;
     }
 
-    public void setLogicDelete(boolean logicDelete) {
+    /**
+     * 设置逻辑删除
+     */
+    void setLogicDelete(boolean logicDelete) {
         if (logicDelete) {
             this.logicDelete = true;
         }

@@ -22,7 +22,6 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
@@ -95,9 +94,6 @@ public class GlobalConfig implements Serializable {
      * 标记全局设置 (统一所有入口)
      */
     public void signGlobalConfig(SqlSessionFactory sqlSessionFactory) {
-        if (null != sqlSessionFactory) {
-            GlobalConfigUtils.setGlobalConfig(sqlSessionFactory.getConfiguration(), this);
-        }
         this.sqlSessionFactory = sqlSessionFactory;
     }
 

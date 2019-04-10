@@ -116,7 +116,7 @@ public class TableInfoHelper {
         TableInfo tableInfo = TABLE_INFO_CACHE.get(clazz);
         if (tableInfo != null) {
             if (builderAssistant != null) {
-                tableInfo.setConfigMark(builderAssistant.getConfiguration());
+                tableInfo.setConfiguration(builderAssistant.getConfiguration());
             }
             return tableInfo;
         }
@@ -126,7 +126,7 @@ public class TableInfoHelper {
         GlobalConfig globalConfig;
         if (null != builderAssistant) {
             tableInfo.setCurrentNamespace(builderAssistant.getCurrentNamespace());
-            tableInfo.setConfigMark(builderAssistant.getConfiguration());
+            tableInfo.setConfiguration(builderAssistant.getConfiguration());
             tableInfo.setUnderCamel(builderAssistant.getConfiguration().isMapUnderscoreToCamelCase());
             globalConfig = GlobalConfigUtils.getGlobalConfig(builderAssistant.getConfiguration());
         } else {
