@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.extension.spring;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.MybatisPlusVersion;
 import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
 import com.baomidou.mybatisplus.core.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
@@ -473,7 +474,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         this.globalConfig.setDbConfig(Optional.ofNullable(this.globalConfig.getDbConfig()).orElseGet(GlobalConfig.DbConfig::new));
 
         // TODO 初始化 id-work 以及 打印骚东西
-        targetConfiguration.init(this.globalConfig);
+        targetConfiguration.setGlobalConfig(this.globalConfig);
 
         // TODO 自动注入 map 接收返回结果下是否下划线转驼峰
         if (targetConfiguration.isMapUnderscoreToCamelCase()) {
@@ -612,8 +613,13 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         // TODO SqlRunner
         SqlHelper.FACTORY = sqlSessionFactory;
 
-        // TODO 设置全局参数属性 以及 缓存 sqlSessionFactory
-        globalConfig.signGlobalConfig(sqlSessionFactory);
+        // TODO 打印骚东西 Banner
+        if (globalConfig.isBanner()) {
+            System.out.println(" _ _   |_  _ _|_. ___ _ |    _ ");
+            System.out.println("| | |\\/|_)(_| | |_\\  |_)||_|_\\ ");
+            System.out.println("     /               |         ");
+            System.out.println("                        " + MybatisPlusVersion.getVersion() + " ");
+        }
 
         return sqlSessionFactory;
     }

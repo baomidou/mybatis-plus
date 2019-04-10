@@ -16,8 +16,9 @@
 package com.baomidou.mybatisplus.core;
 
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.injector.SqlRunnerInjector;
-import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
@@ -36,11 +37,15 @@ import org.apache.ibatis.session.SqlSession;
  */
 public class MybatisConfiguration extends Configuration {
     private static final Log logger = LogFactory.getLog(MybatisConfiguration.class);
-
     /**
      * Mapper 注册
      */
     protected final MybatisMapperRegistry mybatisMapperRegistry = new MybatisMapperRegistry(this);
+
+    // TODO 自己的 GlobalConfig
+    @Setter
+    @Getter
+    private GlobalConfig globalConfig = GlobalConfigUtils.defaults();
 
     public MybatisConfiguration(Environment environment) {
         this();
@@ -54,27 +59,6 @@ public class MybatisConfiguration extends Configuration {
         super();
         this.mapUnderscoreToCamelCase = true;
         languageRegistry.setDefaultDriverClass(MybatisXMLLanguageDriver.class);
-    }
-
-    /**
-     * 配置初始化
-     */
-    public void init(GlobalConfig globalConfig) {
-        // 初始化 Sequence
-        if (null != globalConfig.getWorkerId()
-            && null != globalConfig.getDatacenterId()) {
-            IdWorker.initSequence(globalConfig.getWorkerId(), globalConfig.getDatacenterId());
-        }
-        if (globalConfig.isEnableSqlRunner()) {
-            new SqlRunnerInjector().inject(this);
-        }
-        // 打印 Banner
-        if (globalConfig.isBanner()) {
-            System.out.println(" _ _   |_  _ _|_. ___ _ |    _ ");
-            System.out.println("| | |\\/|_)(_| | |_\\  |_)||_|_\\ ");
-            System.out.println("     /               |         ");
-            System.out.println("                        " + MybatisPlusVersion.getVersion() + " ");
-        }
     }
 
     /**

@@ -15,8 +15,12 @@
  */
 package com.baomidou.mybatisplus.core;
 
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.injector.SqlRunnerInjector;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.ErrorContext;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
@@ -50,7 +54,7 @@ public class MybatisSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
             }
         }
     }
-    
+
     @SuppressWarnings("Duplicates")
     @Override
     public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
@@ -68,5 +72,27 @@ public class MybatisSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
                 // Intentionally ignore. Prefer previous error.
             }
         }
+    }
+
+    // TODO 使用自己的逻辑,注入必须组件
+    @Override
+    public SqlSessionFactory build(Configuration config) {
+        MybatisConfiguration configuration = (MybatisConfiguration) config;
+        GlobalConfig globalConfig = configuration.getGlobalConfig();
+        // 初始化 Sequence
+        if (null != globalConfig.getWorkerId()
+            && null != globalConfig.getDatacenterId()) {
+            IdWorker.initSequence(globalConfig.getWorkerId(), globalConfig.getDatacenterId());
+        }
+        if (globalConfig.isEnableSqlRunner()) {
+            new SqlRunnerInjector().inject(configuration);
+        }
+
+        SqlSessionFactory sqlSessionFactory = super.build(configuration);
+
+        // 设置全局参数属性 以及 缓存 sqlSessionFactory
+        globalConfig.signGlobalConfig(sqlSessionFactory);
+
+        return sqlSessionFactory;
     }
 }
