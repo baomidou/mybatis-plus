@@ -156,7 +156,7 @@ class MysqlTestDataMapperTest extends BaseDbTest {
 //        // 真删
 //        Assertions.assertEquals(1, commonMapper.deleteByIdWithFill(new CommonData().setId(id)));
 //        // 逻辑删除带填充
-//        Assertions.assertEquals(1, commonLogicMapper.deleteByIdWithFill(new CommonLogicData().setId(id)));
+//        Assertions.assertEquals(1, commonLogicDataMapper.deleteByIdWithFill(new CommonLogicData().setId(id)));
 //        // 真删
 //        Assertions.assertEquals(1, mysqlMapper.deleteByIdWithFill(new MysqlData().setId(id)));
 //    }
@@ -200,23 +200,23 @@ class MysqlTestDataMapperTest extends BaseDbTest {
     void b02_selectListForLogic() {
         // 1. 只有 entity
         CommonLogicData data = new CommonLogicData().setTestInt(11);
-        assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectList(Wrappers.query(data))));
+        assertTrue(CollectionUtils.isNotEmpty(commonLogicDataMapper.selectList(Wrappers.query(data))));
         // 2. 有 entity 也有 where 条件
-        assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectList(Wrappers.lambdaQuery(data).eq(CommonLogicData::getId, 11))));
+        assertTrue(CollectionUtils.isNotEmpty(commonLogicDataMapper.selectList(Wrappers.lambdaQuery(data).eq(CommonLogicData::getId, 11))));
         // 3. 有 entity 也有 where 条件 也有 last 条件
-        assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectList(Wrappers.lambdaQuery(data).eq(CommonLogicData::getId, 11).last("limit 1"))));
+        assertTrue(CollectionUtils.isNotEmpty(commonLogicDataMapper.selectList(Wrappers.lambdaQuery(data).eq(CommonLogicData::getId, 11).last("limit 1"))));
         // 4. 有 entity 也有 last 条件
-        assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectList(Wrappers.query(data)
+        assertTrue(CollectionUtils.isNotEmpty(commonLogicDataMapper.selectList(Wrappers.query(data)
             .last("limit 1"))));
         // 5. 只有 order by 或者 last
-        assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectList(Wrappers.<CommonLogicData>query()
+        assertTrue(CollectionUtils.isNotEmpty(commonLogicDataMapper.selectList(Wrappers.<CommonLogicData>query()
             .lambda().orderByAsc(CommonLogicData::getTestInt).last("limit 1"))));
         // 6. 什么都没有情况
-        assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectList(Wrappers.emptyWrapper())));
+        assertTrue(CollectionUtils.isNotEmpty(commonLogicDataMapper.selectList(Wrappers.emptyWrapper())));
         // 7. 只有 where 条件
-        assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectList(Wrappers.lambdaQuery(new CommonLogicData()).eq(CommonLogicData::getId, 11))));
+        assertTrue(CollectionUtils.isNotEmpty(commonLogicDataMapper.selectList(Wrappers.lambdaQuery(new CommonLogicData()).eq(CommonLogicData::getId, 11))));
         // 8. 有 where 条件 也有 last 条件
-        assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectList(Wrappers.lambdaQuery(new CommonLogicData()).eq(CommonLogicData::getId, 11).last("limit 1"))));
+        assertTrue(CollectionUtils.isNotEmpty(commonLogicDataMapper.selectList(Wrappers.lambdaQuery(new CommonLogicData()).eq(CommonLogicData::getId, 11).last("limit 1"))));
     }
 
     @Test
@@ -256,7 +256,7 @@ class MysqlTestDataMapperTest extends BaseDbTest {
 //        System.out.println(JSON.toJSON(commonDataDataPage.convert(CommonData::getId)));
 //
 //        Page<CommonLogicData> logicPage = new Page<>(1, 5);
-//        IPage<CommonLogicData> logicDataPage = commonLogicMapper.selectPage(logicPage, null);
+//        IPage<CommonLogicData> logicDataPage = commonLogicDataMapper.selectPage(logicPage, null);
 //        Assertions.assertSame(logicDataPage, logicPage);
 //        Assertions.assertNotEquals(0, logicDataPage.getRecords().size());
 //        Assertions.assertTrue(CollectionUtils.isNotEmpty(logicDataPage.getRecords()));
@@ -292,7 +292,7 @@ class MysqlTestDataMapperTest extends BaseDbTest {
 //    void d8_testApply() {
 //        Assertions.assertTrue(CollectionUtils.isNotEmpty(commonMapper.selectList(new QueryWrapper<CommonData>()
 //            .apply("test_int = 12"))));
-//        Assertions.assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectList(new QueryWrapper<CommonLogicData>()
+//        Assertions.assertTrue(CollectionUtils.isNotEmpty(commonLogicDataMapper.selectList(new QueryWrapper<CommonLogicData>()
 //            .apply("test_int = 12"))));
 //        Assertions.assertTrue(CollectionUtils.isNotEmpty(mysqlMapper.selectList(new QueryWrapper<MysqlData>()
 //            .apply("`order` = 12"))));
@@ -316,11 +316,11 @@ class MysqlTestDataMapperTest extends BaseDbTest {
 //        // 有空对象,有 order by
 //        mysqlMapper.selectList(Wrappers.lambdaQuery(new MysqlData()).select(i -> true).orderByAsc(MysqlData::getId));
 //        commonMapper.selectList(Wrappers.lambdaQuery(new CommonData()).orderByAsc(CommonData::getCreateDatetime));
-//        commonLogicMapper.selectList(Wrappers.lambdaQuery(new CommonLogicData()).orderByAsc(CommonLogicData::getCreateDatetime));
+//        commonLogicDataMapper.selectList(Wrappers.lambdaQuery(new CommonLogicData()).orderByAsc(CommonLogicData::getCreateDatetime));
 //        // 对象有值,有 order by
 //        mysqlMapper.selectList(Wrappers.lambdaQuery(new MysqlData().setOrder(12)).select(i -> true).orderByAsc(MysqlData::getId));
 //        commonMapper.selectList(Wrappers.lambdaQuery(new CommonData().setTestInt(12)).orderByAsc(CommonData::getCreateDatetime));
-//        commonLogicMapper.selectList(Wrappers.lambdaQuery(new CommonLogicData().setTestInt(12)).orderByAsc(CommonLogicData::getCreateDatetime));
+//        commonLogicDataMapper.selectList(Wrappers.lambdaQuery(new CommonLogicData().setTestInt(12)).orderByAsc(CommonLogicData::getCreateDatetime));
 //    }
 //
 //    @Test
@@ -359,7 +359,7 @@ class MysqlTestDataMapperTest extends BaseDbTest {
 //    @Test
 //    void e_3testUpdateNotEntity() {
 //        mysqlMapper.update(null, Wrappers.<MysqlData>lambdaUpdate().set(MysqlData::getOrder, 1));
-//        commonLogicMapper.update(null, Wrappers.<CommonLogicData>lambdaUpdate().set(CommonLogicData::getTestInt, 1));
+//        commonLogicDataMapper.update(null, Wrappers.<CommonLogicData>lambdaUpdate().set(CommonLogicData::getTestInt, 1));
 //    }
 //
 //    @Test
@@ -386,6 +386,6 @@ class MysqlTestDataMapperTest extends BaseDbTest {
 //    @Test
 //    void e_6getByWrapper() {
 //        commonMapper.getByWrapper(Wrappers.<CommonData>lambdaQuery().isNotNull(CommonData::getId));
-//        commonLogicMapper.getByWrapper(Wrappers.<CommonLogicData>lambdaQuery().isNotNull(CommonLogicData::getId));
+//        commonLogicDataMapper.getByWrapper(Wrappers.<CommonLogicData>lambdaQuery().isNotNull(CommonLogicData::getId));
 //    }
 }

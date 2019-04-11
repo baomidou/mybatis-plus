@@ -25,6 +25,7 @@ import com.baomidou.mybatisplus.test.base.entity.CommonData;
 import com.baomidou.mybatisplus.test.base.entity.CommonLogicData;
 import com.baomidou.mybatisplus.test.base.entity.ResultMapEntity;
 import com.baomidou.mybatisplus.test.base.enums.TestEnum;
+import com.baomidou.mybatisplus.test.base.mapper.commons.CommonDataChildrenMapper;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonLogicDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.commons.ResultMapEntityMapper;
@@ -60,10 +61,12 @@ public abstract class BaseDbTest {
 
     protected final List<String> list = Arrays.asList("1", "2", "3");
     protected final Map<String, Object> map = list.parallelStream().collect(toMap(identity(), identity()));
+    @Resource(name = "commonDataMapper")
+    protected CommonDataMapper commonDataMapper;
+    @Resource(name = "commonDataChildrenMapper")
+    protected CommonDataChildrenMapper commonDataChildrenMapper;
     @Resource
-    protected CommonDataMapper commonMapper;
-    @Resource
-    protected CommonLogicDataMapper commonLogicMapper;
+    protected CommonLogicDataMapper commonLogicDataMapper;
     @Resource
     protected ResultMapEntityMapper resultMapEntityMapper;
     @Autowired
@@ -82,9 +85,9 @@ public abstract class BaseDbTest {
         for (int i = 1; i < 20; i++) {
             Long id = (long) i;
             String str = String.format("第%s条数据", i);
-            commonMapper.insert(new CommonData().setTestInt(i).setTestStr(str).setId(id)
+            commonDataMapper.insert(new CommonData().setTestInt(i).setTestStr(str).setId(id)
                 .setTestEnum(TestEnum.ONE));
-            commonLogicMapper.insert(new CommonLogicData().setTestInt(i).setTestStr(str).setId(id));
+            commonLogicDataMapper.insert(new CommonLogicData().setTestInt(i).setTestStr(str).setId(id));
             resultMapEntityMapper.insert(new ResultMapEntity().setId(id).setList(list).setMap(map));
             this.insertForeach(id, i, str);
         }
@@ -102,8 +105,8 @@ public abstract class BaseDbTest {
             commonDataList.add(new CommonData().setTestInt(i).setTestEnum(TestEnum.TWO).setTestStr(str));
             commonLogicDataList.add(new CommonLogicData().setTestInt(i).setTestStr(str));
         }
-        assertEquals(size, commonMapper.insertBatchSomeColumn(commonDataList));
-        assertEquals(size, commonLogicMapper.insertBatchSomeColumn(commonLogicDataList));
+        assertEquals(size, commonDataMapper.insertBatchSomeColumn(commonDataList));
+        assertEquals(size, commonLogicDataMapper.insertBatchSomeColumn(commonLogicDataList));
         this.insertBatch(size);
     }
 
@@ -112,8 +115,8 @@ public abstract class BaseDbTest {
     @Test
     void a03_deleteById() {
         long id = 1L;
-        assertEquals(success, commonMapper.deleteById(id));
-        assertEquals(success, commonLogicMapper.deleteById(id));
+        assertEquals(success, commonDataMapper.deleteById(id));
+        assertEquals(success, commonLogicDataMapper.deleteById(id));
         this.deleteById(id);
     }
 
@@ -125,8 +128,8 @@ public abstract class BaseDbTest {
         Map<String, Object> map = new HashMap<>();
         map.put("id", id);
         map.put("test_int", 5);
-        assertEquals(fail, commonMapper.deleteByMap(map));
-        assertEquals(fail, commonLogicMapper.deleteByMap(map));
+        assertEquals(fail, commonDataMapper.deleteByMap(map));
+        assertEquals(fail, commonLogicDataMapper.deleteByMap(map));
         this.deleteByMap_fail(id);
     }
 
@@ -135,10 +138,10 @@ public abstract class BaseDbTest {
     @Test
     void a05_delete() {
         long id = 2L;
-        assertEquals(success, commonMapper.delete(Wrappers.<CommonData>lambdaQuery()
+        assertEquals(success, commonDataMapper.delete(Wrappers.<CommonData>lambdaQuery()
             .eq(CommonData::getId, id)
             .eq(CommonData::getTestInt, 2)));
-        assertEquals(success, commonLogicMapper.delete(Wrappers.<CommonLogicData>lambdaQuery()
+        assertEquals(success, commonLogicDataMapper.delete(Wrappers.<CommonLogicData>lambdaQuery()
             .eq(CommonLogicData::getId, id)
             .eq(CommonLogicData::getTestInt, 2)));
         this.delete(id);
@@ -149,8 +152,8 @@ public abstract class BaseDbTest {
     @Test
     void a06_deleteBatchIds() {
         List<Long> ids = Arrays.asList(3L, 4L);
-        assertEquals(ids.size(), commonMapper.deleteBatchIds(ids));
-        assertEquals(ids.size(), commonLogicMapper.deleteBatchIds(ids));
+        assertEquals(ids.size(), commonDataMapper.deleteBatchIds(ids));
+        assertEquals(ids.size(), commonLogicDataMapper.deleteBatchIds(ids));
         this.deleteBatchIds(ids);
     }
 
@@ -160,9 +163,9 @@ public abstract class BaseDbTest {
 //    void b5_deleteByIdWithFill() {
 //        long id = 5L;
 //        // 真删
-//        Assertions.assertEquals(1, commonMapper.deleteByIdWithFill(new CommonData().setId(id)));
+//        Assertions.assertEquals(1, commonDataMapper.deleteByIdWithFill(new CommonData().setId(id)));
 //        // 逻辑删除带填充
-//        Assertions.assertEquals(1, commonLogicMapper.deleteByIdWithFill(new CommonLogicData().setId(id)));
+//        Assertions.assertEquals(1, commonLogicDataMapper.deleteByIdWithFill(new CommonLogicData().setId(id)));
 //        // 真删
 //        Assertions.assertEquals(1, mysqlMapper.deleteByIdWithFill(new MysqlData().setId(id)));
 //    }
@@ -170,9 +173,9 @@ public abstract class BaseDbTest {
     @Test
     void a07_updateById() {
         long id = 6L;
-        assertEquals(success, commonMapper.updateById(new CommonData().setId(id).setTestInt(555).setVersion(0)
+        assertEquals(success, commonDataMapper.updateById(new CommonData().setId(id).setTestInt(555).setVersion(0)
             .setTestEnum(TestEnum.TWO)));
-        assertEquals(success, commonLogicMapper.updateById(new CommonLogicData().setId(id).setTestInt(555)));
+        assertEquals(success, commonLogicDataMapper.updateById(new CommonLogicData().setId(id).setTestInt(555)));
         assertEquals(success, resultMapEntityMapper.updateById(new ResultMapEntity().setId(id).setList(list).setMap(map)));
         this.updateById(id);
     }
@@ -182,9 +185,9 @@ public abstract class BaseDbTest {
     @Test
     void a08_updateWithEntity() {
         long id = 8L;
-        assertEquals(success, commonMapper.update(new CommonData().setTestInt(888).setVersion(0),
+        assertEquals(success, commonDataMapper.update(new CommonData().setTestInt(888).setVersion(0),
             Wrappers.<CommonData>lambdaUpdate().eq(CommonData::getId, id).eq(CommonData::getTestInt, 8)));
-        assertEquals(success, commonLogicMapper.update(new CommonLogicData().setTestInt(888),
+        assertEquals(success, commonLogicDataMapper.update(new CommonLogicData().setTestInt(888),
             Wrappers.<CommonLogicData>lambdaUpdate().eq(CommonLogicData::getId, id)
                 .eq(CommonLogicData::getTestInt, 8)));
         this.updateWithEntity(id);
@@ -204,10 +207,11 @@ public abstract class BaseDbTest {
     @Test
     void a10_selectById() {
         long id = 6L;
-        assertNotNull(commonMapper.selectById(id).getTestEnum());
+        assertNotNull(commonDataMapper.selectById(id).getTestEnum());
         // todo
-        assertTrue(commonMapper.getById(id).isPresent());
-        assertNotNull(commonLogicMapper.selectById(id));
+        assertTrue(commonDataMapper.getById(id).isPresent());
+        assertThat(commonDataChildrenMapper.getByIdChildren(id).isPresent()).isTrue();
+        assertNotNull(commonLogicDataMapper.selectById(id));
         ResultMapEntity resultMapEntity = resultMapEntityMapper.selectById(id);
         assertNotNull(resultMapEntity);
         assertTrue(CollectionUtils.isNotEmpty(resultMapEntity.getMap()));
@@ -221,11 +225,11 @@ public abstract class BaseDbTest {
     void a11_selectBatchIds() {
         List<Long> ids = Arrays.asList(7L, 8L);
 
-        List<CommonData> commonData = commonMapper.selectBatchIds(ids);
+        List<CommonData> commonData = commonDataMapper.selectBatchIds(ids);
         assertTrue(CollectionUtils.isNotEmpty(commonData));
         assertEquals(ids.size(), commonData.size());
 
-        List<CommonLogicData> commonLogicData = commonLogicMapper.selectBatchIds(ids);
+        List<CommonLogicData> commonLogicData = commonLogicDataMapper.selectBatchIds(ids);
         assertTrue(CollectionUtils.isNotEmpty(commonLogicData));
         assertEquals(ids.size(), commonLogicData.size());
 
@@ -244,8 +248,8 @@ public abstract class BaseDbTest {
         Map<String, Object> map = new HashMap<>();
         map.put("id", id);
         map.put("test_int", 9);
-        assertTrue(CollectionUtils.isNotEmpty(commonMapper.selectByMap(map)));
-        assertTrue(CollectionUtils.isNotEmpty(commonLogicMapper.selectByMap(map)));
+        assertTrue(CollectionUtils.isNotEmpty(commonDataMapper.selectByMap(map)));
+        assertTrue(CollectionUtils.isNotEmpty(commonLogicDataMapper.selectByMap(map)));
         this.selectByMap(id);
     }
 
@@ -254,9 +258,9 @@ public abstract class BaseDbTest {
     @Test
     void a13_selectOne() {
         long id = 10L;
-        assertNotNull(commonMapper.selectOne(Wrappers.<CommonData>lambdaQuery()
+        assertNotNull(commonDataMapper.selectOne(Wrappers.<CommonData>lambdaQuery()
             .eq(CommonData::getId, id).eq(CommonData::getTestInt, 10)));
-        assertNotNull(commonLogicMapper.selectOne(Wrappers.<CommonLogicData>lambdaQuery()
+        assertNotNull(commonLogicDataMapper.selectOne(Wrappers.<CommonLogicData>lambdaQuery()
             .eq(CommonLogicData::getId, id).eq(CommonLogicData::getTestInt, 10)));
         this.selectOne(id);
     }
@@ -266,12 +270,12 @@ public abstract class BaseDbTest {
     @Test
     void a14_selectList() {
         long id = 10L;
-        List<CommonData> commonData = commonMapper.selectList(Wrappers.<CommonData>lambdaQuery()
+        List<CommonData> commonData = commonDataMapper.selectList(Wrappers.<CommonData>lambdaQuery()
             .eq(CommonData::getTestInt, 10));
         assertThat(commonData).isNotEmpty();
         assertThat(commonData.get(0)).isNotNull();
 
-        List<CommonLogicData> commonLogicData = commonLogicMapper.selectList(Wrappers.<CommonLogicData>lambdaQuery()
+        List<CommonLogicData> commonLogicData = commonLogicDataMapper.selectList(Wrappers.<CommonLogicData>lambdaQuery()
             .eq(CommonLogicData::getId, id).eq(CommonLogicData::getTestInt, 10));
         assertThat(commonLogicData).isNotEmpty();
         assertThat(commonLogicData.get(0)).isNotNull();
@@ -283,11 +287,11 @@ public abstract class BaseDbTest {
 
     @Test
     void a15_selectMaps() {
-        List<Map<String, Object>> commonMaps = commonMapper.selectMaps(Wrappers.query());
+        List<Map<String, Object>> commonMaps = commonDataMapper.selectMaps(Wrappers.query());
         assertThat(commonMaps).isNotEmpty();
         assertThat(commonMaps.get(0)).isNotEmpty();
 
-        List<Map<String, Object>> commonLogicMaps = commonLogicMapper.selectMaps(Wrappers.query());
+        List<Map<String, Object>> commonLogicMaps = commonLogicDataMapper.selectMaps(Wrappers.query());
         assertThat(commonLogicMaps).isNotEmpty();
         assertThat(commonLogicMaps.get(0)).isNotEmpty();
 
@@ -300,7 +304,7 @@ public abstract class BaseDbTest {
     void a16_selectPage() {
         Page<CommonData> page = new Page<>(1, 5);
         page.setDesc("c_time", "u_time");
-        IPage<CommonData> dataPage = commonMapper.selectPage(page, null);
+        IPage<CommonData> dataPage = commonDataMapper.selectPage(page, null);
         assertSame(dataPage, page);
         assertNotEquals(0, dataPage.getRecords().size());
         assertTrue(CollectionUtils.isNotEmpty(dataPage.getRecords()));
@@ -309,7 +313,7 @@ public abstract class BaseDbTest {
 
 
         Page<CommonLogicData> logicPage = new Page<>(1, 5);
-        IPage<CommonLogicData> logicDataPage = commonLogicMapper.selectPage(logicPage, null);
+        IPage<CommonLogicData> logicDataPage = commonLogicDataMapper.selectPage(logicPage, null);
         assertSame(logicDataPage, logicPage);
         assertNotEquals(0, logicDataPage.getRecords().size());
         assertTrue(CollectionUtils.isNotEmpty(logicDataPage.getRecords()));
@@ -318,7 +322,7 @@ public abstract class BaseDbTest {
 
         Page<CommonData> commonDataPage = new Page<>(1, 5);
         commonDataPage.setDesc("c_time", "u_time");
-        IPage<CommonData> commonDataDataPage = commonMapper.myPage(commonDataPage);
+        IPage<CommonData> commonDataDataPage = commonDataMapper.myPage(commonDataPage);
         assertSame(commonDataDataPage, commonDataPage);
         assertNotEquals(0, commonDataDataPage.getRecords().size());
         assertTrue(CollectionUtils.isNotEmpty(commonDataDataPage.getRecords()));

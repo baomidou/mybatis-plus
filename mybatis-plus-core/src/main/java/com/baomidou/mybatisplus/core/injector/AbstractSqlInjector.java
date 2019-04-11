@@ -98,6 +98,10 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
                 break;
             }
         }
+        Class<?>[] interfaces = mapperClass.getInterfaces();
+        if (target == null && interfaces != null) {
+            return extractModelClass(interfaces[0]);
+        }
         return target == null ? null : (Class<?>) target.getActualTypeArguments()[0];
     }
 }
