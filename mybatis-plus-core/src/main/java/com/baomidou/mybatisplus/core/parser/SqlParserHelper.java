@@ -35,40 +35,45 @@ public class SqlParserHelper {
     public static final String DELEGATE_MAPPED_STATEMENT = "delegate.mappedStatement";
     /**
      * SQL 解析缓存
+     * key 可能是 mappedStatement 的 ID,也可能是 class 的 name
      */
     private static final Map<String, Boolean> SQL_PARSER_INFO_CACHE = new ConcurrentHashMap<>();
 
-
     /**
-     * 初始化缓存 SqlParser 注解信息
+     * 初始化缓存 接口上 SqlParser 注解信息
      *
      * @param mapperClass Mapper Class
      */
     public synchronized static void initSqlParserInfoCache(Class<?> mapperClass) {
-        Method[] methods = mapperClass.getDeclaredMethods();
-        for (Method method : methods) {
-            SqlParser sqlParser = method.getAnnotation(SqlParser.class);
-            if (null != sqlParser) {
-                String sid = mapperClass.getName() + StringPool.DOT + method.getName();
-                SQL_PARSER_INFO_CACHE.put(sid, sqlParser.filter());
-            }
+        SqlParser sqlParser = mapperClass.getAnnotation(SqlParser.class);
+        if (sqlParser != null) {
+            SQL_PARSER_INFO_CACHE.put(mapperClass.getName(), sqlParser.filter());
         }
     }
 
     /**
-     * 初始化缓存 SqlParser 注解信息
+     * 初始化缓存 方法上 SqlParser 注解信息
      *
      * @param mapperClassName Mapper Class Name
      * @param method          Method
      */
     public static void initSqlParserInfoCache(String mapperClassName, Method method) {
         SqlParser sqlParser = method.getAnnotation(SqlParser.class);
-        if (null != sqlParser) {
-            String sid = mapperClassName + StringPool.DOT + method.getName();
-            SQL_PARSER_INFO_CACHE.put(sid, sqlParser.filter());
+        if (sqlParser != null) {
+            if (SQL_PARSER_INFO_CACHE.containsKey(mapperClassName)) {
+                // mapper 接口上有注解
+                Boolean value = SQL_PARSER_INFO_CACHE.get(mapperClassName);
+                if (!value.equals(sqlParser.filter())) {
+                    // 取反,不属于重复注解,放入缓存
+                    String sid = mapperClassName + StringPool.DOT + method.getName();
+                    SQL_PARSER_INFO_CACHE.putIfAbsent(sid, sqlParser.filter());
+                }
+            } else {
+                String sid = mapperClassName + StringPool.DOT + method.getName();
+                SQL_PARSER_INFO_CACHE.putIfAbsent(sid, sqlParser.filter());
+            }
         }
     }
-
 
     /**
      * 获取 SqlParser 注解信息
@@ -76,9 +81,14 @@ public class SqlParserHelper {
      * @param metaObject 元数据对象
      */
     public static boolean getSqlParserInfo(MetaObject metaObject) {
-        return SQL_PARSER_INFO_CACHE.getOrDefault(getMappedStatement(metaObject).getId(), false);
+        String id = getMappedStatement(metaObject).getId();
+        Boolean value = SQL_PARSER_INFO_CACHE.get(id);
+        if (value != null) {
+            return value;
+        }
+        String mapperName = id.substring(0, id.lastIndexOf(StringPool.DOT));
+        return SQL_PARSER_INFO_CACHE.getOrDefault(mapperName, false);
     }
-
 
     /**
      * 获取当前执行 MappedStatement

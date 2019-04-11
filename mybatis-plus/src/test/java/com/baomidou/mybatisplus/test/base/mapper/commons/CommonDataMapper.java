@@ -32,12 +32,14 @@ import java.util.Optional;
  * @author miemie
  * @since 2018/6/7
  */
+@SqlParser
 public interface CommonDataMapper extends MyBaseMapper<CommonData> {
 
     @SqlParser(filter = true)
     @Select("select * from common_data")
     List<CommonData> getAllNoTenant();
 
+    @SqlParser
     @Select("select * from common_data ${ew.customSqlSegment}")
     List<CommonData> getByWrapper(@Param(Constants.WRAPPER) Wrapper wrapper);
 

@@ -103,6 +103,7 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
             assistant.setCurrentNamespace(typeName);
             parseCache();
             parseCacheRef();
+            SqlParserHelper.initSqlParserInfoCache(type);
             Method[] methods = type.getMethods();
             for (Method method : methods) {
                 try {
