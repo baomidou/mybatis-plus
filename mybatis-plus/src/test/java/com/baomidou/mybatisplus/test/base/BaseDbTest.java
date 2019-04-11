@@ -25,10 +25,7 @@ import com.baomidou.mybatisplus.test.base.entity.CommonData;
 import com.baomidou.mybatisplus.test.base.entity.CommonLogicData;
 import com.baomidou.mybatisplus.test.base.entity.ResultMapEntity;
 import com.baomidou.mybatisplus.test.base.enums.TestEnum;
-import com.baomidou.mybatisplus.test.base.mapper.commons.CommonDataChildrenMapper;
-import com.baomidou.mybatisplus.test.base.mapper.commons.CommonDataMapper;
-import com.baomidou.mybatisplus.test.base.mapper.commons.CommonLogicDataMapper;
-import com.baomidou.mybatisplus.test.base.mapper.commons.ResultMapEntityMapper;
+import com.baomidou.mybatisplus.test.base.mapper.commons.*;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -65,6 +62,8 @@ public abstract class BaseDbTest {
     protected CommonDataMapper commonDataMapper;
     @Resource(name = "commonDataChildrenMapper")
     protected CommonDataChildrenMapper commonDataChildrenMapper;
+    @Resource
+    protected CommonDataCopyMapper commonDataCopyMapper;
     @Resource
     protected CommonLogicDataMapper commonLogicDataMapper;
     @Resource
@@ -211,6 +210,7 @@ public abstract class BaseDbTest {
         // todo
         assertTrue(commonDataMapper.getById(id).isPresent());
         assertThat(commonDataChildrenMapper.getByIdChildren(id).isPresent()).isTrue();
+        assertThat(commonDataCopyMapper.selectById(id).isPresent()).isTrue();
         assertNotNull(commonLogicDataMapper.selectById(id));
         ResultMapEntity resultMapEntity = resultMapEntityMapper.selectById(id);
         assertNotNull(resultMapEntity);
