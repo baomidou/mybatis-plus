@@ -15,19 +15,6 @@
  */
 package com.baomidou.mybatisplus.test.mysql.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.sql.DataSource;
-
-import org.apache.ibatis.builder.MapperBuilderAssistant;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.type.JdbcType;
-import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
@@ -42,9 +29,19 @@ import com.baomidou.mybatisplus.extension.plugins.tenant.TenantHandler;
 import com.baomidou.mybatisplus.extension.plugins.tenant.TenantSqlParser;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.baomidou.mybatisplus.test.mysql.MysqlMetaObjectHandler;
-
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.type.JdbcType;
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+
+import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Mybatis Plus Config
@@ -53,7 +50,7 @@ import net.sf.jsqlparser.expression.LongValue;
  * @since 2017/4/1
  */
 @Configuration
-@MapperScan({"com.baomidou.mybatisplus.test.base.mapper.commons", "com.baomidou.mybatisplus.test.mysql.mapper"})
+@MapperScan({"com.baomidou.mybatisplus.test.base.mapper.children", "com.baomidou.mybatisplus.test.base.mapper.commons", "com.baomidou.mybatisplus.test.mysql.mapper"})
 public class MybatisPlusConfig {
 
     @Bean("mybatisSqlSession")

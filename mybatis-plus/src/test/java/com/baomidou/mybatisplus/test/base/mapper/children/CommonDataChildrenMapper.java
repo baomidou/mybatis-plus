@@ -1,6 +1,7 @@
-package com.baomidou.mybatisplus.test.base.mapper.commons;
+package com.baomidou.mybatisplus.test.base.mapper.children;
 
 import com.baomidou.mybatisplus.test.base.entity.CommonData;
+import com.baomidou.mybatisplus.test.base.mapper.commons.CommonDataMapper;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.Optional;
