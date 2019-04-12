@@ -15,19 +15,25 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
-import com.baomidou.mybatisplus.annotation.*;
+import java.lang.reflect.Field;
+
+import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.SqlCondition;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
+
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-
-import java.lang.reflect.Field;
 
 /**
  * 数据库表字段反射信息
@@ -302,6 +308,17 @@ public class TableFieldInfo implements Constants {
      * @return sql 脚本片段
      */
     public String getSqlSet(final String prefix) {
+        return getSqlSet(false, prefix);
+    }
+
+    /**
+     * 获取 set sql 片段
+     *
+     * @param ignoreIf 忽略 IF 包裹
+     * @param prefix   前缀
+     * @return sql 脚本片段
+     */
+    public String getSqlSet(final boolean ignoreIf, final String prefix) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
         // 默认: column=
         String sqlSet = column + EQUALS;
@@ -309,6 +326,12 @@ public class TableFieldInfo implements Constants {
             sqlSet += String.format(update, column);
         } else {
             sqlSet += SqlScriptUtils.safeParam(newPrefix + el);
+        }
+        if (ignoreIf) {
+            /**
+             * 忽略 IF 条件
+             */
+            return sqlSet;
         }
         sqlSet += COMMA;
         if (fieldFill == FieldFill.UPDATE || fieldFill == FieldFill.INSERT_UPDATE) {

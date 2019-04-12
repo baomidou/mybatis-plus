@@ -15,27 +15,34 @@
  */
 package com.baomidou.mybatisplus.test.h2;
 
+import static java.util.stream.Collectors.toList;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.test.h2.entity.H2User;
 import com.baomidou.mybatisplus.test.h2.entity.SuperEntity;
 import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.mapper.H2UserMapper;
-import com.baomidou.mybatisplus.test.h2.entity.H2User;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * Mybatis Plus H2 Junit Test
@@ -143,11 +150,17 @@ class H2UserMapperTest extends BaseTest {
             }
         }
         Assertions.assertTrue(CollectionUtils.isNotEmpty(userMapper.selectMaps(new QueryWrapper<>(new H2User().setTestType(3)))));
+
+        // 测试自定义注入方法
+        h2User.setDesc("");
+        h2User.setTestDate(new Date());
+        Assertions.assertTrue(userMapper.updateAllColumnById(h2User) > 0);
+        Assertions.assertTrue("".equals(userMapper.selectById(h2User.getTestId()).getDesc()));
     }
 
     @Test
-    void testCall(){
-        Assertions.assertEquals("1",userMapper.testCall());
+    void testCall() {
+        Assertions.assertEquals("1", userMapper.testCall());
     }
 
     @Test

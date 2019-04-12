@@ -13,7 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.core.injector.methods;
+package com.baomidou.mybatisplus.extension.injector.methods.additional;
+
+import static java.util.stream.Collectors.joining;
 
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
@@ -25,27 +27,27 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 
 /**
- * 根据 ID 更新有值字段
+ * 根据 ID 更新所有字段
  *
  * @author hubin
- * @since 2018-04-06
+ * @since 2019-04-12
  */
-public class UpdateById extends AbstractMethod {
+public class UpdateAllColumnById extends AbstractMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         boolean logicDelete = tableInfo.isLogicDelete();
-        SqlMethod sqlMethod = SqlMethod.UPDATE_BY_ID;
+        SqlMethod sqlMethod = SqlMethod.UPDATE_ALL_COLUMN_BY_ID;
         StringBuilder append = new StringBuilder("<if test=\"et instanceof java.util.Map\">")
-            .append("<if test=\"et.").append(Constants.MP_OPTLOCK_VERSION_ORIGINAL).append("!=null\">")
             .append(" AND ${et.").append(Constants.MP_OPTLOCK_VERSION_COLUMN)
             .append("}=#{et.").append(Constants.MP_OPTLOCK_VERSION_ORIGINAL).append(StringPool.RIGHT_BRACE)
-            .append("</if></if>");
+            .append("</if>");
         if (logicDelete) {
             append.append(tableInfo.getLogicDeleteSql(true, false));
         }
         String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(),
-            sqlSet(logicDelete, false, tableInfo, false, ENTITY, ENTITY_DOT),
+            tableInfo.getFieldList().stream().filter(i -> !(tableInfo.isLogicDelete() && i.isLogicDelete()))
+                .map(i -> i.getSqlSet(true, ENTITY_DOT)).collect(joining(DOT_NEWLINE)),
             tableInfo.getKeyColumn(), ENTITY_DOT + tableInfo.getKeyProperty(),
             append);
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);

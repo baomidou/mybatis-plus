@@ -15,22 +15,11 @@
  */
 package com.baomidou.mybatisplus.test.h2.config;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.parser.AbstractJsqlParser;
-import com.baomidou.mybatisplus.core.parser.ISqlParser;
-import com.baomidou.mybatisplus.extension.injector.LogicSqlInjector;
-import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.SqlExplainInterceptor;
-import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
-import com.baomidou.mybatisplus.test.h2.H2MetaObjectHandler;
-import net.sf.jsqlparser.statement.delete.Delete;
-import net.sf.jsqlparser.statement.insert.Insert;
-import net.sf.jsqlparser.statement.select.SelectBody;
-import net.sf.jsqlparser.statement.update.Update;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.sql.DataSource;
+
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.EnumOrdinalTypeHandler;
@@ -40,9 +29,29 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
 
-import javax.sql.DataSource;
-import java.util.ArrayList;
-import java.util.List;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.injector.AbstractMethod;
+import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
+import com.baomidou.mybatisplus.core.parser.AbstractJsqlParser;
+import com.baomidou.mybatisplus.core.parser.ISqlParser;
+import com.baomidou.mybatisplus.extension.injector.LogicSqlInjector;
+import com.baomidou.mybatisplus.extension.injector.methods.additional.InsertBatchSomeColumn;
+import com.baomidou.mybatisplus.extension.injector.methods.additional.LogicDeleteByIdWithFill;
+import com.baomidou.mybatisplus.extension.injector.methods.additional.UpdateAllColumnById;
+import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.SqlExplainInterceptor;
+import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
+import com.baomidou.mybatisplus.test.h2.H2MetaObjectHandler;
+
+import net.sf.jsqlparser.statement.delete.Delete;
+import net.sf.jsqlparser.statement.insert.Insert;
+import net.sf.jsqlparser.statement.select.SelectBody;
+import net.sf.jsqlparser.statement.update.Update;
 
 /**
  * Mybatis Plus Config
@@ -73,26 +82,26 @@ public class MybatisPlusConfig {
         PaginationInterceptor pagination = new PaginationInterceptor();
         SqlExplainInterceptor sqlExplainInterceptor = new SqlExplainInterceptor();
         List<ISqlParser> sqlParserList = new ArrayList<>();
-        sqlParserList.add(new AbstractJsqlParser(){
-    
+        sqlParserList.add(new AbstractJsqlParser() {
+
             @Override
             public void processInsert(Insert insert) {
-        
+
             }
-    
+
             @Override
             public void processDelete(Delete delete) {
-        
+
             }
-    
+
             @Override
             public void processUpdate(Update update) {
-        
+
             }
-    
+
             @Override
             public void processSelectBody(SelectBody selectBody) {
-        
+
             }
         });
         sqlExplainInterceptor.setSqlParserList(sqlParserList);
@@ -104,6 +113,21 @@ public class MybatisPlusConfig {
             new PerformanceInterceptor()
         });
         globalConfig.setMetaObjectHandler(new H2MetaObjectHandler());
+        globalConfig.setSqlInjector(new DefaultSqlInjector() {
+
+            /**
+             * 测试注入自定义方法
+             */
+            @Override
+            public List<AbstractMethod> getMethodList() {
+                List<AbstractMethod> methodList = super.getMethodList();
+                methodList.add(new LogicDeleteByIdWithFill());
+                methodList.add(new UpdateAllColumnById());
+                methodList.add(new InsertBatchSomeColumn(t -> !(t.getFieldFill() == FieldFill.UPDATE
+                    || t.isLogicDelete() || t.getProperty().equals("version"))));
+                return methodList;
+            }
+        });
         sqlSessionFactory.setGlobalConfig(globalConfig);
         sqlSessionFactory.setTypeEnumsPackage("com.baomidou.mybatisplus.test.h2.enums");
         return sqlSessionFactory.getObject();
@@ -115,9 +139,9 @@ public class MybatisPlusConfig {
         conf.setSqlInjector(new LogicSqlInjector())
             .setEnableSqlRunner(true)
             .setDbConfig(new GlobalConfig.DbConfig()
-            .setLogicDeleteValue("1")
-            .setLogicNotDeleteValue("0")
-            .setIdType(IdType.ID_WORKER));
+                .setLogicDeleteValue("1")
+                .setLogicNotDeleteValue("0")
+                .setIdType(IdType.ID_WORKER));
         return conf;
     }
 }

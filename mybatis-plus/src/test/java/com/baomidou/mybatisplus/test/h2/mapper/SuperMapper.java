@@ -15,6 +15,10 @@
  */
 package com.baomidou.mybatisplus.test.h2.mapper;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
 /**
  * 自定义父类 SuperMapper
  *
@@ -23,5 +27,13 @@ package com.baomidou.mybatisplus.test.h2.mapper;
  */
 public interface SuperMapper<T> extends com.baomidou.mybatisplus.core.mapper.BaseMapper<T> {
 
-    // 这里可以写 mapper 层公共方法、 注意！！ 多泛型的时候请将泛型T放在第一位.
+    /**
+     * 这里注入自定义的公共方法
+     */
+
+    int updateAllColumnById(@Param("et") T entity);
+
+    int deleteByIdWithFill(T entity);
+
+    int insertBatchSomeColumn(List<T> entityList);
 }

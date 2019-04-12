@@ -59,6 +59,7 @@ public interface StringPool {
     String LEFT_BRACE = "{";
     String LEFT_BRACKET = "(";
     String LEFT_CHEV = "<";
+    String DOT_NEWLINE = ",\n";
     String NEWLINE = "\n";
     String N = "n";
     String NO = "no";
