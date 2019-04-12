@@ -78,10 +78,6 @@ public class GlobalConfigUtils {
         return getGlobalConfig(configuration).getDbConfig().getIdType();
     }
 
-    public static boolean isMapUnderscoreToCamelCase(Configuration configuration) {
-        return configuration.isMapUnderscoreToCamelCase();
-    }
-
     public static ISqlInjector getSqlInjector(Configuration configuration) {
         // fix #140
         GlobalConfig globalConfiguration = getGlobalConfig(configuration);
@@ -102,7 +98,7 @@ public class GlobalConfigUtils {
     }
 
     public static boolean isSupperMapperChildren(Configuration configuration, Class<?> mapperClass) {
-        return getGlobalConfig(configuration).getSuperMapperClass().isAssignableFrom(mapperClass);
+        return getSuperMapperClass(configuration).isAssignableFrom(mapperClass);
     }
 
     public static Set<String> getMapperRegistryCache(Configuration configuration) {
