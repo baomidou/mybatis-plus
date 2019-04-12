@@ -31,7 +31,7 @@ public interface SuperMapper<T> extends com.baomidou.mybatisplus.core.mapper.Bas
      * 这里注入自定义的公共方法
      */
 
-    int updateAllColumnById(@Param("et") T entity);
+    int alwaysUpdateSomeColumnById(@Param("et") T entity);
 
     int deleteByIdWithFill(T entity);
 

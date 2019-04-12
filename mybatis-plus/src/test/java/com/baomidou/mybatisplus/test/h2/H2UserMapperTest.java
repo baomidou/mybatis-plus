@@ -154,8 +154,8 @@ class H2UserMapperTest extends BaseTest {
         // 测试自定义注入方法
         h2User.setDesc("");
         h2User.setTestDate(new Date());
-        Assertions.assertTrue(userMapper.updateAllColumnById(h2User) > 0);
-        Assertions.assertTrue("".equals(userMapper.selectById(h2User.getTestId()).getDesc()));
+        Assertions.assertTrue(userMapper.alwaysUpdateSomeColumnById(h2User) > 0);
+        Assertions.assertEquals("", userMapper.selectById(h2User.getTestId()).getDesc());
     }
 
     @Test
