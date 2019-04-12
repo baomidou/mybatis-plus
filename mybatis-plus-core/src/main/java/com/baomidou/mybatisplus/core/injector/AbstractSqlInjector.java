@@ -49,7 +49,7 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
             String className = mapperClass.toString();
             Set<String> mapperRegistryCache = GlobalConfigUtils.getMapperRegistryCache(builderAssistant.getConfiguration());
             if (!mapperRegistryCache.contains(className)) {
-                List<AbstractMethod> methodList = this.getMethodList(builderAssistant, mapperClass);
+                List<AbstractMethod> methodList = this.getMethodList();
                 if (CollectionUtils.isNotEmpty(methodList)) {
                     TableInfo tableInfo = TableInfoHelper.initTableInfo(builderAssistant, modelClass);
                     // 循环注入自定义方法
@@ -67,11 +67,9 @@ public abstract class AbstractSqlInjector implements ISqlInjector {
      * 获取 注入的方法
      * </p>
      *
-     * @param builderAssistant mybatis MapperBuilderAssistant
-     * @param mapperClass      mapper class
      * @return 注入的方法集合
      */
-    public abstract List<AbstractMethod> getMethodList(MapperBuilderAssistant builderAssistant, Class<?> mapperClass);
+    public abstract List<AbstractMethod> getMethodList();
 
     /**
      * 提取泛型模型,多泛型的时候请将泛型T放在第一位

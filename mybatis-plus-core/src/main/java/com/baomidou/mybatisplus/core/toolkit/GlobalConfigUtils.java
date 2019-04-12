@@ -101,6 +101,10 @@ public class GlobalConfigUtils {
         return getGlobalConfig(configuration).getSuperMapperClass();
     }
 
+    public static boolean isSupperMapperChildren(Configuration configuration, Class<?> mapperClass) {
+        return getGlobalConfig(configuration).getSuperMapperClass().isAssignableFrom(mapperClass);
+    }
+
     public static Set<String> getMapperRegistryCache(Configuration configuration) {
         return getGlobalConfig(configuration).getMapperRegistryCache();
     }

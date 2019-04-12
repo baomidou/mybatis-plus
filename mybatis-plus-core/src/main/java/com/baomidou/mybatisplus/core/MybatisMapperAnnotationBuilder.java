@@ -118,7 +118,9 @@ public class MybatisMapperAnnotationBuilder extends MapperAnnotationBuilder {
                 }
             }
             // TODO 注入 CURD 动态 SQL , 放在在最后, because 可能会有人会用注解重写sql
-            GlobalConfigUtils.getSqlInjector(configuration).inspectInject(assistant, type);
+            if (GlobalConfigUtils.isSupperMapperChildren(configuration, type)) {
+                GlobalConfigUtils.getSqlInjector(configuration).inspectInject(assistant, type);
+            }
         }
         parsePendingMethods();
     }
