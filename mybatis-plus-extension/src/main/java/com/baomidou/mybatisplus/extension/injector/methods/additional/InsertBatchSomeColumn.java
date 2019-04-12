@@ -17,20 +17,23 @@ package com.baomidou.mybatisplus.extension.injector.methods.additional;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
-import com.baomidou.mybatisplus.core.injector.AbstractMethod;
+import com.baomidou.mybatisplus.core.injector.ChooseTableField;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
+import lombok.NoArgsConstructor;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
 
+import java.util.List;
 import java.util.function.Predicate;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * 批量新增数据,自选字段 insert
@@ -44,42 +47,46 @@ import java.util.function.Predicate;
  * </pre>
  * </p>
  *
- * <li> 注意1: 不要加任何注解 !! </li>
- * <li> 注意2: 自选字段 insert !!,如果个别字段在 entity 里为 null 但是数据库中有配置默认值, insert 后数据库字段是为 null 而不是默认值 </li>
+ * <li> 注意: 这是自选字段 insert !!,如果个别字段在 entity 里为 null 但是数据库中有配置默认值, insert 后数据库字段是为 null 而不是默认值 </li>
  *
  * <p>
- * 常用的构造入参:
+ * 常用的 {@link Predicate}:
  * </p>
  *
- * <li> 例1: new InsertBatchSomeColumn(t -> true) , 表示用于全字段 </li>
- * <li> 例2: new InsertBatchSomeColumn(t -> !t.isLogicDelete()) , 表示非逻辑删除字段外全字段 </li>
- * <li> 例3: new InsertBatchSomeColumn(t -> t.getFieldFill() != FieldFill.UPDATE) , 表示填充策略为 UPDATE 外的全字段 </li>
+ * <li> 例1: t -> !t.isLogicDelete() , 表示不要逻辑删除字段 </li>
+ * <li> 例2: t -> !t.getProperty().equals("version") , 表示不要字段名为 version 的字段 </li>
+ * <li> 例3: t -> t.getFieldFill() != FieldFill.UPDATE) , 表示不要填充策略为 UPDATE 的字段 </li>
  *
  * @author miemie
  * @since 2018-11-29
  */
-@SuppressWarnings("all")
-public class InsertBatchSomeColumn extends AbstractMethod {
+@NoArgsConstructor
+public class InsertBatchSomeColumn extends ChooseTableField<InsertBatchSomeColumn> {
 
     /**
      * mapper 对应的方法名
      */
     private static final String MAPPER_METHOD = "insertBatchSomeColumn";
 
-    private Predicate<TableFieldInfo> predicate;
-
+    /**
+     * @deprecated please to use {@link #addPredicate(Predicate)}
+     */
+    @Deprecated
     public InsertBatchSomeColumn(Predicate<TableFieldInfo> predicate) {
-        Assert.notNull(predicate, "this predicate can not be null !");
-        this.predicate = predicate;
+        this.addPredicate(predicate);
     }
 
+    @SuppressWarnings("Duplicates")
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         KeyGenerator keyGenerator = new NoKeyGenerator();
         SqlMethod sqlMethod = SqlMethod.INSERT_ONE;
-        String insertSqlColumn = tableInfo.getSomeInsertSqlColumn(predicate);
+        List<TableFieldInfo> fieldList = tableInfo.getFieldList();
+        String insertSqlColumn = tableInfo.getKeyInsertSqlColumn(false) + this.filters(fieldList)
+            .map(TableFieldInfo::getInsertSqlColumn).collect(joining(EMPTY));
         String columnScript = LEFT_BRACKET + insertSqlColumn.substring(0, insertSqlColumn.length() - 1) + RIGHT_BRACKET;
-        String insertSqlProperty = tableInfo.getSomeInsertSqlProperty(ENTITY_DOT, predicate);
+        String insertSqlProperty = tableInfo.getKeyInsertSqlProperty(ENTITY_DOT, false) + this.filters(fieldList)
+            .map(i -> i.getInsertSqlProperty(ENTITY_DOT)).collect(joining(EMPTY));
         insertSqlProperty = LEFT_BRACKET + insertSqlProperty.substring(0, insertSqlProperty.length() - 1) + RIGHT_BRACKET;
         String valuesScript = SqlScriptUtils.convertForeach(insertSqlProperty, "list", null, ENTITY, COMMA);
         String keyProperty = null;

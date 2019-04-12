@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.core.parser.ISqlParser;
+import com.baomidou.mybatisplus.extension.injector.methods.additional.AlwaysUpdateSomeColumnById;
 import com.baomidou.mybatisplus.extension.injector.methods.additional.InsertBatchSomeColumn;
 import com.baomidou.mybatisplus.extension.injector.methods.additional.LogicDeleteByIdWithFill;
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
@@ -92,8 +93,18 @@ public class MybatisPlusConfig {
             public List<AbstractMethod> getMethodList() {
                 List<AbstractMethod> methodList = super.getMethodList();
                 methodList.add(new LogicDeleteByIdWithFill());
-                methodList.add(new InsertBatchSomeColumn(t -> !(t.getFieldFill() == FieldFill.UPDATE
-                    || t.isLogicDelete() || t.getProperty().equals("version"))));
+                methodList.add(new InsertBatchSomeColumn()
+                    // 不要逻辑删除字段
+                    .addPredicate(t -> !t.isLogicDelete())
+                    // 不要字段名是 version 的字段
+                    .addPredicate(t -> !t.getProperty().equals("version"))
+                    // 不要填充策略是 UPDATE 的字段
+                    .addPredicate(t -> t.getFieldFill() != FieldFill.UPDATE));
+                methodList.add(new AlwaysUpdateSomeColumnById()
+                    // 不要填充策略是 INSERT 的字段
+                    .addPredicate(t -> t.getFieldFill() != FieldFill.INSERT)
+                    // 不要字段名是 column4 的字段
+                    .addPredicate(t -> !t.getProperty().equals("column4")));
                 return methodList;
             }
         };

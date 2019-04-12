@@ -15,20 +15,6 @@
  */
 package com.baomidou.mybatisplus.test.h2.config;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.sql.DataSource;
-
-import org.apache.ibatis.plugin.Interceptor;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.type.EnumOrdinalTypeHandler;
-import org.apache.ibatis.type.JdbcType;
-import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ResourceLoader;
-
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
@@ -38,20 +24,31 @@ import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.core.parser.AbstractJsqlParser;
 import com.baomidou.mybatisplus.core.parser.ISqlParser;
 import com.baomidou.mybatisplus.extension.injector.LogicSqlInjector;
+import com.baomidou.mybatisplus.extension.injector.methods.additional.AlwaysUpdateSomeColumnById;
 import com.baomidou.mybatisplus.extension.injector.methods.additional.InsertBatchSomeColumn;
 import com.baomidou.mybatisplus.extension.injector.methods.additional.LogicDeleteByIdWithFill;
-import com.baomidou.mybatisplus.extension.injector.methods.additional.UpdateAllColumnById;
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.SqlExplainInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.baomidou.mybatisplus.test.h2.H2MetaObjectHandler;
-
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.select.SelectBody;
 import net.sf.jsqlparser.statement.update.Update;
+import org.apache.ibatis.plugin.Interceptor;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.type.EnumOrdinalTypeHandler;
+import org.apache.ibatis.type.JdbcType;
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ResourceLoader;
+
+import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Mybatis Plus Config
@@ -122,7 +119,8 @@ public class MybatisPlusConfig {
             public List<AbstractMethod> getMethodList() {
                 List<AbstractMethod> methodList = super.getMethodList();
                 methodList.add(new LogicDeleteByIdWithFill());
-                methodList.add(new UpdateAllColumnById());
+                methodList.add(new AlwaysUpdateSomeColumnById()
+                    .addPredicate(t -> t.getFieldFill() != FieldFill.INSERT));
                 methodList.add(new InsertBatchSomeColumn(t -> !(t.getFieldFill() == FieldFill.UPDATE
                     || t.isLogicDelete() || t.getProperty().equals("version"))));
                 return methodList;

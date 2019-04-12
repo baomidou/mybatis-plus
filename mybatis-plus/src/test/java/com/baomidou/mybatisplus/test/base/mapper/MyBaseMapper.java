@@ -16,6 +16,8 @@
 package com.baomidou.mybatisplus.test.base.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -28,4 +30,6 @@ public interface MyBaseMapper<T> extends BaseMapper<T> {
     int deleteByIdWithFill(T entity);
 
     int insertBatchSomeColumn(List<T> entityList);
+
+    int alwaysUpdateSomeColumnById(@Param(Constants.ENTITY) T entity);
 }

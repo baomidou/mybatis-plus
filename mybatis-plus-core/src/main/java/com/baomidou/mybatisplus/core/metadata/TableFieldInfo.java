@@ -15,25 +15,19 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
-import java.lang.reflect.Field;
-
-import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
-import com.baomidou.mybatisplus.annotation.SqlCondition;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
-
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+
+import java.lang.reflect.Field;
 
 /**
  * 数据库表字段反射信息
@@ -205,7 +199,7 @@ public class TableFieldInfo implements Constants {
     }
 
     /**
-     * 是否开启逻辑删除
+     * 是否注解了逻辑删除
      */
     public boolean isLogicDelete() {
         return StringUtils.isNotEmpty(logicDeleteValue);
@@ -327,13 +321,10 @@ public class TableFieldInfo implements Constants {
         } else {
             sqlSet += SqlScriptUtils.safeParam(newPrefix + el);
         }
+        sqlSet += COMMA;
         if (ignoreIf) {
-            /**
-             * 忽略 IF 条件
-             */
             return sqlSet;
         }
-        sqlSet += COMMA;
         if (fieldFill == FieldFill.UPDATE || fieldFill == FieldFill.INSERT_UPDATE) {
             // 不进行 if 包裹
             return sqlSet;

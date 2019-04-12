@@ -233,37 +233,6 @@ public class TableInfo implements Constants {
         return EMPTY;
     }
 
-
-    /**
-     * 根据 predicate 过滤后获取 insert 时候插入值 sql 脚本片段
-     * <p>insert into table (字段) values (值)</p>
-     * <p>位于 "值" 部位</p>
-     *
-     * <li> 自选部位,不生成 if 标签 </li>
-     *
-     * @return sql 脚本片段
-     */
-    public String getSomeInsertSqlProperty(final String prefix, Predicate<TableFieldInfo> predicate) {
-        final String newPrefix = prefix == null ? EMPTY : prefix;
-        return getKeyInsertSqlProperty(newPrefix, false) + fieldList.stream()
-            .filter(predicate).map(i -> i.getInsertSqlProperty(newPrefix)).collect(joining(EMPTY));
-    }
-
-    /**
-     * 根据 predicate 过滤后获取 insert 时候字段 sql 脚本片段
-     * <p>insert into table (字段) values (值)</p>
-     * <p>位于 "字段" 部位</p>
-     *
-     * <li> 自选部位,不生成 if 标签 </li>
-     *
-     * @return sql 脚本片段
-     */
-    public String getSomeInsertSqlColumn(Predicate<TableFieldInfo> predicate) {
-        return getKeyInsertSqlColumn(false) + fieldList.stream().filter(predicate)
-            .map(TableFieldInfo::getInsertSqlColumn).collect(joining(EMPTY));
-    }
-
-
     /**
      * 获取所有 insert 时候插入值 sql 脚本片段
      * <p>insert into table (字段) values (值)</p>

@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.core.injector;
 
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -202,6 +203,13 @@ public abstract class AbstractMethod implements Constants {
             sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", WRAPPER), true);
             return newLine ? NEWLINE + sqlScript : sqlScript;
         }
+    }
+
+    protected String optlockVersion() {
+        return "<if test=\"et instanceof java.util.Map\">" +
+            " AND ${et." + Constants.MP_OPTLOCK_VERSION_COLUMN +
+            "}=#{et." + Constants.MP_OPTLOCK_VERSION_ORIGINAL + StringPool.RIGHT_BRACE +
+            "</if>";
     }
 
     /**

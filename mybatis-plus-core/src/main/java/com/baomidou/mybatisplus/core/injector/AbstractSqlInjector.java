@@ -31,7 +31,6 @@ import java.lang.reflect.WildcardType;
 import java.util.List;
 import java.util.Set;
 
-
 /**
  * SQL 自动注入器
  *
