@@ -31,7 +31,6 @@ import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.baomidou.mybatisplus.test.mysql.MysqlMetaObjectHandler;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
-import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.JdbcType;
 import org.mybatis.spring.annotation.MapperScan;
@@ -90,8 +89,8 @@ public class MybatisPlusConfig {
              * 注入自定义全局方法
              */
             @Override
-            public List<AbstractMethod> getMethodList(MapperBuilderAssistant builderAssistant, Class<?> mapperClass) {
-                List<AbstractMethod> methodList = super.getMethodList(builderAssistant, mapperClass);
+            public List<AbstractMethod> getMethodList() {
+                List<AbstractMethod> methodList = super.getMethodList();
                 methodList.add(new LogicDeleteByIdWithFill());
                 methodList.add(new InsertBatchSomeColumn(t -> !(t.getFieldFill() == FieldFill.UPDATE
                     || t.isLogicDelete() || t.getProperty().equals("version"))));
