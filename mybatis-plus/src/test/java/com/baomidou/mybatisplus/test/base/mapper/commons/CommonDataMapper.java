@@ -17,7 +17,6 @@ package com.baomidou.mybatisplus.test.base.mapper.commons;
 
 import com.baomidou.mybatisplus.annotation.SqlParser;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.base.entity.CommonData;
@@ -47,5 +46,5 @@ public interface CommonDataMapper extends MyBaseMapper<CommonData> {
     Optional<CommonData> getById(Long id);
 
     @Select("select * from common_data")
-    IPage<CommonData> myPage(Page<CommonData> page);
+    Page<CommonData> myPage(Page<CommonData> page);
 }
