@@ -96,8 +96,8 @@ public class MybatisPlusConfig {
                 methodList.add(new InsertBatchSomeColumn()
                     // 不要逻辑删除字段
                     .addPredicate(t -> !t.isLogicDelete())
-                    // 不要字段名是 version 的字段
-                    .addPredicate(t -> !t.getProperty().equals("version"))
+                    // 不要乐观锁字段
+                    .addPredicate(t -> !t.isVersion())
                     // 不要填充策略是 UPDATE 的字段
                     .addPredicate(t -> t.getFieldFill() != FieldFill.UPDATE));
                 methodList.add(new AlwaysUpdateSomeColumnById()

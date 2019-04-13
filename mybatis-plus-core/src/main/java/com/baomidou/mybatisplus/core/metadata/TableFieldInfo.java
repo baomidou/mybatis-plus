@@ -79,6 +79,10 @@ public class TableFieldInfo implements Constants {
      */
     private boolean select = true;
     /**
+     * 是否是乐观锁字段
+     */
+    private boolean version;
+    /**
      * 逻辑删除值
      */
     private String logicDeleteValue;
@@ -109,6 +113,7 @@ public class TableFieldInfo implements Constants {
      */
     public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field,
                           String column, String el, TableField tableField) {
+        this.version = field.getAnnotation(Version.class) != null;
         this.property = field.getName();
         this.propertyType = field.getType();
         this.isCharSequence = StringUtils.isCharSequence(this.propertyType);
@@ -151,6 +156,7 @@ public class TableFieldInfo implements Constants {
      * 不存在 TableField 注解时, 使用的构造函数
      */
     public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field) {
+        this.version = field.getAnnotation(Version.class) != null;
         this.property = field.getName();
         this.propertyType = field.getType();
         this.isCharSequence = StringUtils.isCharSequence(this.propertyType);
