@@ -22,7 +22,6 @@ package com.baomidou.mybatisplus.annotation;
  * @since 2018-01-05
  */
 public class SqlCondition {
-
     /**
      * 等于
      */
@@ -43,6 +42,4 @@ public class SqlCondition {
      * 右 %
      */
     public static final String LIKE_RIGHT = "%s LIKE CONCAT(#{%s},'%%')";
-
-
 }
