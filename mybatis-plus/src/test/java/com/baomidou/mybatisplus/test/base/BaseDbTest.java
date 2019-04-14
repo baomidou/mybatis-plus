@@ -26,6 +26,7 @@ import com.baomidou.mybatisplus.test.base.entity.CommonLogicData;
 import com.baomidou.mybatisplus.test.base.entity.ResultMapEntity;
 import com.baomidou.mybatisplus.test.base.enums.TestEnum;
 import com.baomidou.mybatisplus.test.base.mapper.children.CommonDataChildrenMapper;
+import com.baomidou.mybatisplus.test.base.mapper.children.CommonLogicDataChildrenMapper;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonDataCopyMapper;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonLogicDataMapper;
@@ -66,10 +67,12 @@ public abstract class BaseDbTest {
     protected CommonDataMapper commonDataMapper;
     @Resource(name = "commonDataChildrenMapper")
     protected CommonDataChildrenMapper commonDataChildrenMapper;
+    @Resource(name = "commonLogicDataMapper")
+    protected CommonLogicDataMapper commonLogicDataMapper;
+    @Resource(name = "commonLogicDataChildrenMapper")
+    protected CommonLogicDataChildrenMapper commonLogicDataChildrenMapper;
     @Resource
     protected CommonDataCopyMapper commonDataCopyMapper;
-    @Resource
-    protected CommonLogicDataMapper commonLogicDataMapper;
     @Resource
     protected ResultMapEntityMapper resultMapEntityMapper;
     @Autowired
@@ -213,7 +216,6 @@ public abstract class BaseDbTest {
         assertNotNull(commonDataMapper.selectById(id).getTestEnum());
         // todo
         assertTrue(commonDataMapper.getById(id).isPresent());
-        assertThat(commonDataChildrenMapper.getByIdChildren(id).isPresent()).isTrue();
         assertThat(commonDataCopyMapper.selectById(id).isPresent()).isTrue();
         assertNotNull(commonLogicDataMapper.selectById(id));
         ResultMapEntity resultMapEntity = resultMapEntityMapper.selectById(id);
@@ -345,4 +347,15 @@ public abstract class BaseDbTest {
     }
 
     protected abstract void selectPage();
+
+    @Test
+    void a17_fatherAndChildren() {
+        long id = 6;
+        assertThat(commonDataMapper.getById(id).isPresent()).isTrue();
+        assertThat(commonDataChildrenMapper.getByIdChildren(id).isPresent()).isTrue();
+        assertNotNull(commonLogicDataMapper.selectById(id));
+        assertNotNull(commonLogicDataChildrenMapper.selectById(id));
+        commonLogicDataMapper.getByWrapper(Wrappers.lambdaQuery());
+        commonLogicDataChildrenMapper.getByWrapper(Wrappers.lambdaQuery());
+    }
 }

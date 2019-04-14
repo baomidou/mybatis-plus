@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.injector;
 
+import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
@@ -30,6 +31,13 @@ import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
+
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * 抽象的注入方法类
@@ -203,6 +211,18 @@ public abstract class AbstractMethod implements Constants {
             sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", WRAPPER), true);
             return newLine ? NEWLINE + sqlScript : sqlScript;
         }
+    }
+
+    /**
+     * 过滤 TableFieldInfo 集合, join 成字符串
+     */
+    protected String filterTableFieldInfo(List<TableFieldInfo> fieldList, Predicate<TableFieldInfo> predicate,
+                                          Function<TableFieldInfo, String> function, String joiningVal) {
+        Stream<TableFieldInfo> infoStream = fieldList.stream();
+        if (predicate != null) {
+            return infoStream.filter(predicate).map(function).collect(joining(joiningVal));
+        }
+        return infoStream.map(function).collect(joining(joiningVal));
     }
 
     protected String optlockVersion() {

@@ -119,8 +119,7 @@ public class MybatisPlusConfig {
             public List<AbstractMethod> getMethodList() {
                 List<AbstractMethod> methodList = super.getMethodList();
                 methodList.add(new LogicDeleteByIdWithFill());
-                methodList.add(new AlwaysUpdateSomeColumnById()
-                    .addPredicate(t -> t.getFieldFill() != FieldFill.INSERT));
+                methodList.add(new AlwaysUpdateSomeColumnById(t -> t.getFieldFill() != FieldFill.INSERT));
                 methodList.add(new InsertBatchSomeColumn(t -> !(t.getFieldFill() == FieldFill.UPDATE
                     || t.isLogicDelete() || t.getProperty().equals("version"))));
                 return methodList;
