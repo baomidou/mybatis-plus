@@ -16,15 +16,15 @@
 package com.baomidou.mybatisplus.core;
 
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.executor.MybatisBatchExecutor;
+import com.baomidou.mybatisplus.core.executor.MybatisReuseExecutor;
 import com.baomidou.mybatisplus.core.executor.MybatisSimpleExecutor;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.binding.MapperRegistry;
-import org.apache.ibatis.executor.BatchExecutor;
 import org.apache.ibatis.executor.CachingExecutor;
 import org.apache.ibatis.executor.Executor;
-import org.apache.ibatis.executor.ReuseExecutor;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.Environment;
@@ -156,11 +156,10 @@ public class MybatisConfiguration extends Configuration {
         executorType = executorType == null ? ExecutorType.SIMPLE : executorType;
         Executor executor;
         if (ExecutorType.BATCH == executorType) {
-            executor = new BatchExecutor(this, transaction);
+            executor = new MybatisBatchExecutor(this, transaction);
         } else if (ExecutorType.REUSE == executorType) {
-            executor = new ReuseExecutor(this, transaction);
+            executor = new MybatisReuseExecutor(this, transaction);
         } else {
-            //todo 这里我替换了执行器
             executor = new MybatisSimpleExecutor(this, transaction);
         }
         if (cacheEnabled) {
