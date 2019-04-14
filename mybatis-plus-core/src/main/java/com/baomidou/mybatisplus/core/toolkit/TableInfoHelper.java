@@ -100,6 +100,7 @@ public class TableInfoHelper {
      *
      * @return 数据库表反射信息集合
      */
+    @SuppressWarnings("unused")
     public static List<TableInfo> getTableInfos() {
         return new ArrayList<>(TABLE_INFO_CACHE.values());
     }
@@ -158,8 +159,6 @@ public class TableInfoHelper {
     private static void initTableName(Class<?> clazz, GlobalConfig globalConfig, TableInfo tableInfo) {
         /* 数据库全局配置 */
         GlobalConfig.DbConfig dbConfig = globalConfig.getDbConfig();
-        /* 设置数据库类型 */
-        tableInfo.setDbType(dbConfig.getDbType());
         TableName table = clazz.getAnnotation(TableName.class);
 
         String tableName = clazz.getSimpleName();
@@ -400,8 +399,10 @@ public class TableInfoHelper {
             return false;
         }
         String columnName = field.getName();
+        boolean columnNameFromTableField = false;
         if (StringUtils.isNotEmpty(tableField.value())) {
             columnName = tableField.value();
+            columnNameFromTableField = true;
         }
         /*
          * el 语法支持，可以传入多个参数以逗号分开
@@ -411,6 +412,26 @@ public class TableInfoHelper {
             el = tableField.el();
         }
         String[] columns = columnName.split(StringPool.SEMICOLON);
+
+        String columnPrefix = dbConfig.getColumnPrefix();
+        String columnSuffix = dbConfig.getColumnSuffix();
+        boolean hasPrefix = StringUtils.isNotEmpty(columnPrefix);
+        boolean hasSuffix = StringUtils.isNotEmpty(columnSuffix);
+        boolean keepPs = tableField.keepGlobalPrefixSuffix();
+
+        if ((hasPrefix || hasSuffix) && (!columnNameFromTableField || keepPs)) {
+            for (int i = 0; i < columns.length; i++) {
+                String column = columns[i];
+                if (hasPrefix) {
+                    column = columnPrefix + column;
+                }
+                if (hasSuffix) {
+                    column += columnSuffix;
+                }
+                columns[i] = column;
+            }
+        }
+
         String[] els = el.split(StringPool.SEMICOLON);
         if (columns.length == els.length) {
             for (int i = 0; i < columns.length; i++) {

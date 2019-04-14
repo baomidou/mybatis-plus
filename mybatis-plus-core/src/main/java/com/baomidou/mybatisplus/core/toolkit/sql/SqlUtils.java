@@ -15,10 +15,8 @@
  */
 package com.baomidou.mybatisplus.core.toolkit.sql;
 
-import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.enums.SqlLike;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 
 /**
  * SqlUtils工具类
@@ -29,7 +27,6 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 public class SqlUtils {
 
     private final static SqlFormatter SQL_FORMATTER = new SqlFormatter();
-
 
     /**
      * 格式sql
@@ -60,26 +57,5 @@ public class SqlUtils {
             default:
                 return StringPool.PERCENT + str + StringPool.PERCENT;
         }
-    }
-
-    /**
-     * 获取需要转义的SQL字段
-     *
-     * @param dbType   数据库类型
-     * @param val      值
-     * @param isColumn val 是否是数据库字段
-     */
-    public static String sqlWordConvert(DbType dbType, String val, boolean isColumn) {
-        if (dbType == DbType.POSTGRE_SQL) {
-            if (isColumn && (StringUtils.isNotColumnName(val) || val.toLowerCase().equals(val))) {
-                // 都是数据库字段的情况下
-                // 1.手动加了转义符
-                // 2.全小写之后和原值一样
-                // 都直接返回
-                return val;
-            }
-            return String.format("\"%s\"", val);
-        }
-        return val;
     }
 }

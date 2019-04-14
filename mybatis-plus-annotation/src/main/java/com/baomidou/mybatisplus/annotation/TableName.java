@@ -35,7 +35,7 @@ public @interface TableName {
 
     /**
      * 是否保持使用全局的 tablePrefix 的值
-     * <p> 只生效于 既设置了全局的 tablePrefix 也设置了上面 value 的值 </p>
+     * <p> 只生效于 既设置了全局的 tablePrefix 也设置了上面 {@link #value()} 的值 </p>
      * <li> 如果是 false , 全局的 tablePrefix 不生效 </li>
      */
     boolean keepGlobalPrefix() default false;

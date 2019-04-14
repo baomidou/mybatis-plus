@@ -21,7 +21,6 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -175,6 +174,16 @@ public class TableFieldInfo implements Constants {
             /* 开启字段全大写申明 */
             column = column.toUpperCase();
         }
+        String columnPrefix = dbConfig.getColumnPrefix();
+        String columnSuffix = dbConfig.getColumnSuffix();
+
+        if (StringUtils.isNotEmpty(columnPrefix)) {
+            column = columnPrefix + column;
+        }
+        if (StringUtils.isNotEmpty(columnSuffix)) {
+            column += columnSuffix;
+        }
+
         this.column = column;
         this.related = TableInfoHelper.checkRelated(tableInfo.isUnderCamel(), this.property, this.column);
     }
@@ -226,16 +235,15 @@ public class TableFieldInfo implements Constants {
     /**
      * 获取 select sql 片段
      *
-     * @param dbType 数据库类型
      * @return sql 片段
      */
-    public String getSqlSelect(DbType dbType) {
+    public String getSqlSelect() {
         if (sqlSelect != null) {
             return sqlSelect;
         }
-        sqlSelect = SqlUtils.sqlWordConvert(dbType, getColumn(), true);
+        sqlSelect = column;
         if (related) {
-            sqlSelect += (" AS " + SqlUtils.sqlWordConvert(dbType, getProperty(), false));
+            sqlSelect += (" AS " + property);
         }
         return sqlSelect;
     }

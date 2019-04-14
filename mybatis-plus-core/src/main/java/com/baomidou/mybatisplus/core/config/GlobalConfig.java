@@ -49,6 +49,8 @@ public class GlobalConfig implements Serializable {
     private boolean banner = true;
     /**
      * 缓存 Sql 解析初始化
+     *
+     * @deprecated 不再需要这个属性, 现在是全局开启状态
      */
     @Deprecated
     private boolean sqlParserCache = false;
@@ -102,7 +104,10 @@ public class GlobalConfig implements Serializable {
 
         /**
          * 数据库类型
+         *
+         * @deprecated 不再需要, mp不应该也不需要关心数据库类型
          */
+        @Deprecated
         private DbType dbType = DbType.OTHER;
         /**
          * 主键类型（默认 ID_WORKER）
@@ -117,19 +122,30 @@ public class GlobalConfig implements Serializable {
          */
         private String schema;
         /**
+         * 字段前缀
+         */
+        private String columnPrefix;
+        /**
+         * 字段后缀
+         */
+        private String columnSuffix;
+        /**
          * 表名、是否使用下划线命名（默认 true:默认数据库表下划线命名）
          */
         private boolean tableUnderline = true;
         /**
          * String 类型字段 LIKE
+         *
+         * @deprecated 这个属性没什么意思
          */
+        @Deprecated
         private boolean columnLike = false;
         /**
          * 大写命名
          */
         private boolean capitalMode = false;
         /**
-         * 表关键词 key 生成器
+         * 表主键生成器
          */
         private IKeyGenerator keyGenerator;
         /**

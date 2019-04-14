@@ -110,9 +110,8 @@ public final class LambdaUtils {
         }
 
         info.getFieldList().forEach(i ->
-            map.put(formatKey(i.getProperty()), new ColumnCache(i.getColumn(), i.getSqlSelect(info.getDbType())))
+            map.put(formatKey(i.getProperty()), new ColumnCache(i.getColumn(), i.getSqlSelect()))
         );
         return map;
     }
-
 }

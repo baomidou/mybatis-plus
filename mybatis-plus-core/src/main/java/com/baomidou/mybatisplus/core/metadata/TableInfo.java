@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
-import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
@@ -24,7 +23,6 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
@@ -51,10 +49,6 @@ public class TableInfo implements Constants {
      * 表主键ID 类型
      */
     private IdType idType = IdType.NONE;
-    /**
-     * 数据库类型
-     */
-    private DbType dbType;
     /**
      * 表名称
      */
@@ -155,11 +149,9 @@ public class TableInfo implements Constants {
             return sqlSelect;
         }
         if (StringUtils.isNotEmpty(keyProperty)) {
+            sqlSelect = keyColumn;
             if (keyRelated) {
-                sqlSelect = SqlUtils.sqlWordConvert(dbType, keyColumn, true) + " AS " +
-                    SqlUtils.sqlWordConvert(dbType, keyProperty, false);
-            } else {
-                sqlSelect = SqlUtils.sqlWordConvert(dbType, keyColumn, true);
+                sqlSelect += (" AS " + keyProperty);
             }
         } else {
             sqlSelect = EMPTY;
@@ -189,7 +181,7 @@ public class TableInfo implements Constants {
     public String chooseSelect(Predicate<TableFieldInfo> predicate) {
         String sqlSelect = getKeySqlSelect();
         String fieldsSqlSelect = fieldList.stream().filter(predicate)
-            .map(i -> i.getSqlSelect(dbType)).collect(joining(COMMA));
+            .map(TableFieldInfo::getSqlSelect).collect(joining(COMMA));
         if (StringUtils.isNotEmpty(sqlSelect) && StringUtils.isNotEmpty(fieldsSqlSelect)) {
             return sqlSelect + COMMA + fieldsSqlSelect;
         } else if (StringUtils.isNotEmpty(fieldsSqlSelect)) {
