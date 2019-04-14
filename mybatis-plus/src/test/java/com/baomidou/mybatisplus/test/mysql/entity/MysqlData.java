@@ -29,12 +29,10 @@ import lombok.experimental.Accessors;
 public class MysqlData {
 
     private Long id;
-    @TableField("`order`")
     private Integer order;
-    @TableField("`group`")
     private Integer group;
     @TableField(strategy = FieldStrategy.NOT_EMPTY)
     private String testStr;
-    @TableField("lambda_str")
+    @TableField(value = "lambda_str", keepGlobalPrefixSuffix = true)
     private String yaHoStr;
 }

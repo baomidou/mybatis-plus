@@ -84,7 +84,9 @@ public class MybatisPlusConfig {
     @Bean
     public GlobalConfig globalConfig() {
         GlobalConfig conf = new GlobalConfig();
-        conf.setDbConfig(new GlobalConfig.DbConfig()).setSqlParserCache(true);
+        conf.setDbConfig(new GlobalConfig.DbConfig()
+            .setColumnPrefix("`")
+            .setColumnSuffix("`"));
         DefaultSqlInjector logicSqlInjector = new DefaultSqlInjector() {
             /**
              * 注入自定义全局方法
