@@ -38,11 +38,4 @@ public @interface TableId {
      * {@link IdType}
      */
     IdType type() default IdType.NONE;
-
-    /**
-     * 是否保持使用全局的 columnPrefix 以及 columnPrefix 的值
-     * <p> 只生效于 既设置了全局的 columnPrefix 或者 columnSuffix 也设置了上面 {@link #value()} 的值 </p>
-     * <li> 如果是 false , 全局的 columnPrefix 以及 columnSuffix 不生效 </li>
-     */
-    boolean keepGlobalPrefixSuffix() default false;
 }

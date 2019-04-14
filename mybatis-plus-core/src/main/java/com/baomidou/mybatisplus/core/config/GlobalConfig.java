@@ -123,10 +123,12 @@ public class GlobalConfig implements Serializable {
         private String schema;
         /**
          * 字段前缀
+         * <p> 对主键无效 </p>
          */
         private String columnPrefix;
         /**
          * 字段后缀
+         * <p> 对主键无效 </p>
          */
         private String columnSuffix;
         /**
@@ -136,7 +138,7 @@ public class GlobalConfig implements Serializable {
         /**
          * String 类型字段 LIKE
          *
-         * @deprecated 这个属性没什么意思
+         * @deprecated 后续将删除这个属性
          */
         @Deprecated
         private boolean columnLike = false;
