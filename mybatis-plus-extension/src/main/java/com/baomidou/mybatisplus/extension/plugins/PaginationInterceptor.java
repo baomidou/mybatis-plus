@@ -176,7 +176,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
             orderBy = sqlInfo.isOrderBy();
             this.queryTotal(overflow, sqlInfo.getSql(), mappedStatement, boundSql, page, connection);
             if (page.getTotal() <= 0) {
-                return invocation.proceed();
+                return null;
             }
         }
 
