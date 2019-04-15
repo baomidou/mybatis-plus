@@ -122,15 +122,11 @@ public class GlobalConfig implements Serializable {
          */
         private String schema;
         /**
-         * 字段前缀
+         * 字段 format
+         * <li> 例: `%s` </li>
          * <p> 对主键无效 </p>
          */
-        private String columnPrefix;
-        /**
-         * 字段后缀
-         * <p> 对主键无效 </p>
-         */
-        private String columnSuffix;
+        private String columnFormat;
         /**
          * 表名、是否使用下划线命名（默认 true:默认数据库表下划线命名）
          */

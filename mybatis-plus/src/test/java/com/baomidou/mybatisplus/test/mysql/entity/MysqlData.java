@@ -31,8 +31,8 @@ public class MysqlData {
     private Long id;
     private Integer order;
     private Integer group;
-    @TableField(strategy = FieldStrategy.NOT_EMPTY)
+    @TableField(value = "test_str", strategy = FieldStrategy.NOT_EMPTY)
     private String testStr;
-    @TableField(value = "lambda_str", keepGlobalPrefixSuffix = true)
+    @TableField(value = "lambda_str", keepGlobalFormat = true)
     private String yaHoStr;
 }

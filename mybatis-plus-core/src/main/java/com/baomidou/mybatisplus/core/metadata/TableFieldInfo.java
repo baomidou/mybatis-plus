@@ -174,14 +174,10 @@ public class TableFieldInfo implements Constants {
             /* 开启字段全大写申明 */
             column = column.toUpperCase();
         }
-        String columnPrefix = dbConfig.getColumnPrefix();
-        String columnSuffix = dbConfig.getColumnSuffix();
 
-        if (StringUtils.isNotEmpty(columnPrefix)) {
-            column = columnPrefix + column;
-        }
-        if (StringUtils.isNotEmpty(columnSuffix)) {
-            column += columnSuffix;
+        String columnFormat = dbConfig.getColumnFormat();
+        if (StringUtils.isNotEmpty(columnFormat)) {
+            column = String.format(columnFormat, column);
         }
 
         this.column = column;

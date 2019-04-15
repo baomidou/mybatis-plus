@@ -413,21 +413,14 @@ public class TableInfoHelper {
         }
         String[] columns = columnName.split(StringPool.SEMICOLON);
 
-        String columnPrefix = dbConfig.getColumnPrefix();
-        String columnSuffix = dbConfig.getColumnSuffix();
-        boolean hasPrefix = StringUtils.isNotEmpty(columnPrefix);
-        boolean hasSuffix = StringUtils.isNotEmpty(columnSuffix);
-        boolean keepPs = tableField.keepGlobalPrefixSuffix();
+        String columnFormat = dbConfig.getColumnFormat();
+        boolean hasFormat = StringUtils.isNotEmpty(columnFormat);
+        boolean keepFormat = tableField.keepGlobalFormat();
 
-        if ((hasPrefix || hasSuffix) && (!columnNameFromTableField || keepPs)) {
+        if (hasFormat && (!columnNameFromTableField || keepFormat)) {
             for (int i = 0; i < columns.length; i++) {
                 String column = columns[i];
-                if (hasPrefix) {
-                    column = columnPrefix + column;
-                }
-                if (hasSuffix) {
-                    column += columnSuffix;
-                }
+                column = String.format(columnFormat, column);
                 columns[i] = column;
             }
         }
