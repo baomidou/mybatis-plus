@@ -84,7 +84,7 @@ extra["lib"] = lib
 
 allprojects {
     group = "com.baomidou"
-    version = "3.1.0"
+    version = "3.1.1.1-SNAPSHOT"
 }
 
 description = "Mybatis 增强工具包 - 只做增强不做改变，简化CRUD操作"
