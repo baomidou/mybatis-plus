@@ -129,9 +129,6 @@ subprojects {
         exclude ("**/*Test.java")
         mapping("java","SLASHSTAR_STYLE")
         mapping("kt","SLASHSTAR_STYLE")
-        extra["year"] = Calendar.getInstance().get(Calendar.YEAR)
-        extra["name"] = "hubin"
-        extra["email"] = "jobob@qq.com"
     }
 
     repositories {
