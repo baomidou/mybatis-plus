@@ -414,10 +414,7 @@ public class TableInfoHelper {
         String[] columns = columnName.split(StringPool.SEMICOLON);
 
         String columnFormat = dbConfig.getColumnFormat();
-        boolean hasFormat = StringUtils.isNotEmpty(columnFormat);
-        boolean keepFormat = tableField.keepGlobalFormat();
-
-        if (hasFormat && (!columnNameFromTableField || keepFormat)) {
+        if (StringUtils.isNotEmpty(columnFormat) && (!columnNameFromTableField || tableField.keepGlobalFormat())) {
             for (int i = 0; i < columns.length; i++) {
                 String column = columns[i];
                 column = String.format(columnFormat, column);
