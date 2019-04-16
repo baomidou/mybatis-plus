@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core.toolkit.support;
 
 import java.io.Serializable;
+import java.util.function.Function;
 
 /**
  * 支持序列化的 Function
@@ -24,13 +25,5 @@ import java.io.Serializable;
  * @since 2018-05-12
  */
 @FunctionalInterface
-public interface SFunction<T, R> extends Serializable {
-
-    /**
-     * Applies this function to the given argument.
-     *
-     * @param t the function argument
-     * @return the function result
-     */
-    R apply(T t);
+public interface SFunction<T, R> extends Function<T, R>, Serializable {
 }
