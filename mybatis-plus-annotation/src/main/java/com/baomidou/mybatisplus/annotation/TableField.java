@@ -83,6 +83,8 @@ public @interface TableField {
      * 是否保持使用全局的 Format 的值
      * <p> 只生效于 既设置了全局的 Format 也设置了上面 {@link #value()} 的值 </p>
      * <li> 如果是 false , 全局的 Format 不生效 </li>
+     *
+     * @since 3.1.1
      */
     boolean keepGlobalFormat() default false;
 }

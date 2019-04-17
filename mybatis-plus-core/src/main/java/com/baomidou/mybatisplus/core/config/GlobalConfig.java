@@ -50,7 +50,7 @@ public class GlobalConfig implements Serializable {
     /**
      * 缓存 Sql 解析初始化
      *
-     * @deprecated 不再需要这个属性, 现在是全局开启状态
+     * @deprecated 3.1.1 不再需要这个属性, 现在是全局开启状态
      */
     @Deprecated
     private boolean sqlParserCache = false;
@@ -119,12 +119,16 @@ public class GlobalConfig implements Serializable {
         private String tablePrefix;
         /**
          * schema
+         *
+         * @since 3.1.1
          */
         private String schema;
         /**
          * 字段 format
          * <li> 例: `%s` </li>
          * <p> 对主键无效 </p>
+         *
+         * @since 3.1.1
          */
         private String columnFormat;
         /**
@@ -134,7 +138,7 @@ public class GlobalConfig implements Serializable {
         /**
          * String 类型字段 LIKE
          *
-         * @deprecated 后续将删除这个属性
+         * @deprecated 3.1.1 后续将删除这个属性
          */
         @Deprecated
         private boolean columnLike = false;

@@ -15,11 +15,7 @@
  */
 package com.baomidou.mybatisplus.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * 表字段逻辑处理注解（逻辑删除）
@@ -41,5 +37,4 @@ public @interface TableLogic {
      * 默认逻辑删除值（该值可无、会自动获取全局配置）
      */
     String delval() default "";
-
 }
