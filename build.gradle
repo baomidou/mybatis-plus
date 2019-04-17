@@ -109,6 +109,7 @@ subprojects {
             }
         }
     }
+
     license {
         encoding = "UTF-8"
         header = rootProject.file("license.txt")
@@ -117,6 +118,7 @@ subprojects {
         mapping "java", "SLASHSTAR_STYLE"
         mapping "kt", "SLASHSTAR_STYLE"
     }
+
     repositories {
         mavenLocal()
         maven { url "https://maven.aliyun.com/repository/public" }
@@ -138,8 +140,9 @@ subprojects {
         testImplementation("${lib["lagarto"]}")
     }
 
+    //noinspection GroovyAssignabilityCheck
     task sourcesJar(type: Jar) {
-        archiveClassifier.set('sources')
+        archiveClassifier = 'sources'
         from sourceSets.main.allJava
     }
 
@@ -156,7 +159,6 @@ subprojects {
         }
     }
 
-
     test {
         dependsOn("cleanTest", "generatePomFileForMavenJavaPublication")
         useJUnitPlatform()
@@ -165,8 +167,9 @@ subprojects {
         exclude("**/mysql/**")
     }
 
+    //noinspection GroovyAssignabilityCheck
     task javadocJar(type: Jar) {
-        archiveClassifier.set('javadoc')
+        archiveClassifier = 'javadoc'
         from javadoc
     }
 
