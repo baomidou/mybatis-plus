@@ -1,8 +1,4 @@
-apply(plugin = "org.jetbrains.kotlin.jvm")
-
 dependencies {
-    val lib: Map<String, Any> by rootProject.extra
-
     api(project(":mybatis-plus-core"))
     api("${lib["mybatis-spring"]}")
 
