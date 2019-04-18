@@ -1,0 +1,6 @@
+dependencies {
+    implementation "${lib.'spring-rabbit'}"
+    implementation "${lib.'spring-data-redis'}"
+    implementation "${lib.'jackson-databind'}"
+    implementation "${lib.aspectjrt}"
+}

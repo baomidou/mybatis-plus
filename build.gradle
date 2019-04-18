@@ -37,6 +37,10 @@ ext {
         "spring-tx"             : "org.springframework:spring-tx:${springVersion}",
         "spring-web"            : "org.springframework:spring-web:${springVersion}",
         "spring-aop"            : "org.springframework:spring-aop:${springVersion}",
+        "spring-rabbit"         : "org.springframework.amqp:spring-rabbit:2.0.3.RELEASE",
+        "spring-data-redis"     : "org.springframework.data:spring-data-redis:2.0.2.RELEASE",
+        "jackson-databind"      : "com.fasterxml.jackson.core:jackson-databind:2.8.9",
+        "aspectjrt"             : "org.aspectj:aspectjrt:1.8.13",
         "cglib"                 : "cglib:cglib:3.2.6",
         "lombok"                : "org.projectlombok:lombok:1.18.4",
 
