@@ -1,82 +1,78 @@
 package com.baomidou.mybatisplus.rmt.mq;
 
-import com.baomidou.mybatisplus.rmt.coordinator.IRmtCoordinator;
+import com.baomidou.mybatisplus.rmt.RmtConstants;
 import com.baomidou.mybatisplus.rmt.coordinator.RedisRmtCoordinator;
-import com.baomidou.mybatisplus.rmt.parser.IRmtParser;
 import com.baomidou.mybatisplus.rmt.parser.JacksonRmtParser;
 import com.baomidou.mybatisplus.rmt.sender.RabbitRmtSender;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.core.AcknowledgeMode;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.DirectExchange;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.annotation.EnableRabbit;
-import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
-import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.connection.RabbitConnectionFactoryBean;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.transaction.RabbitTransactionManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
 
+import javax.annotation.PostConstruct;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Rabbit MQ 连接工厂配置
+ * Rabbit MQ 可靠消息配置
  *
  * @author jobob
- * @since 2019-04-18
+ * @since 2019-04-19
  */
-@Slf4j
-@EnableRabbit
 @Configuration
+@ConditionalOnClass(EnableRabbit.class)
 public class RabbitConfiguration {
-    @Value("${spring.rabbitmq.host}")
-    String host;
-    @Value("${spring.rabbitmq.port}")
-    int port;
-    @Value("${spring.rabbitmq.username}")
-    String username;
-    @Value("${spring.rabbitmq.password}")
-    String password;
-    @Value("${spring.rabbitmq.virtual.host}")
-    String virtualHost;
-    @Value("${spring.rabbitmq.cache.channel.size}")
-    int cacheSize;
+    @Autowired
+    protected PlatformTransactionManager transactionManager;
+    @Autowired
+    protected RabbitTemplate rabbitTemplate;
+    @Autowired
+    protected RabbitAdmin rabbitAdmin;
 
-    /**
-     * 创建RabbitMQ连接工厂
-     *
-     * @param
-     * @return CachingConnectionFactory
-     * @throws Exception 异常
-     */
     @Bean
-    public CachingConnectionFactory rabbitConnectionFactory() throws Exception {
-        log.debug("custom rabbitmq connection factory");
-        RabbitConnectionFactoryBean factory = new RabbitConnectionFactoryBean();
-        factory.setHost(host);
-        factory.setPort(port);
-        factory.setUsername(username);
-        factory.setPassword(password);
-        factory.setVirtualHost(virtualHost);
-        factory.setConnectionTimeout(60000);
-        factory.setAutomaticRecoveryEnabled(true);
-        factory.afterPropertiesSet();
-        CachingConnectionFactory connectionFactory = new CachingConnectionFactory(factory.getObject());
-        connectionFactory.setPublisherReturns(true);
-        connectionFactory.setPublisherConfirms(true);
-        connectionFactory.setChannelCacheSize(cacheSize);
-        return connectionFactory;
+    public RabbitTransactionManager rabbitTransactionManager(ConnectionFactory connectionFactory) {
+        return new RabbitTransactionManager(connectionFactory);
     }
 
     @Bean
-    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(ConnectionFactory connectionFactory) {
-        log.debug("custom rabbitmq Listener factory: {}", connectionFactory);
-        SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
-        factory.setConnectionFactory(connectionFactory);
-        factory.setConcurrentConsumers(3);
-        factory.setMaxConcurrentConsumers(10);
-        factory.setAcknowledgeMode(AcknowledgeMode.MANUAL);
-        return factory;
+    public RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
+        return new RabbitAdmin(connectionFactory);
+    }
+
+    @PostConstruct
+    protected void init() {
+        /**
+         * make rabbit template to support transactions
+         */
+        rabbitTemplate.setChannelTransacted(true);
+
+        /**
+         * init queue
+         */
+        // define deadletter exchange and queue
+        rabbitAdmin.declareExchange(new DirectExchange(RmtConstants.DL_EXCHANGE, true, false));
+        rabbitAdmin.declareQueue(new Queue(RmtConstants.DL_QUEUE, true, false, false, null));
+        rabbitAdmin.declareBinding(new Binding(RmtConstants.DL_QUEUE, Binding.DestinationType.QUEUE, RmtConstants.DL_EXCHANGE, RmtConstants.DL_ROUTING_KEY, null));
+
+        // define simple exchange, queue with deadletter support and binding
+        rabbitAdmin.declareExchange(new TopicExchange(RmtConstants.EXCHANGE, true, false));
+        Map<String, Object> args = new HashMap<>(2);
+        args.put("x-dead-letter-exchange", RmtConstants.DL_EXCHANGE);
+        args.put("x-dead-letter-routing-key", RmtConstants.DL_ROUTING_KEY);
+        rabbitAdmin.declareQueue(new Queue(RmtConstants.QUEUE, true, false, true, args));
+
+        // declare binding
+        rabbitAdmin.declareBinding(new Binding(RmtConstants.QUEUE, Binding.DestinationType.QUEUE, RmtConstants.EXCHANGE, RmtConstants.ROUTING_KEY, null));
     }
 
     /**
@@ -105,50 +101,4 @@ public class RabbitConfiguration {
     public RabbitRmtSender rmtSender() {
         return new RabbitRmtSender();
     }
-
-    @Autowired
-    private IRmtCoordinator rmtCoordinator;
-
-    @Autowired
-    private IRmtParser rmtParser;
-
-    boolean returnFlag = false;
-
-    @Bean
-    public RabbitTemplate customRabbitTemplate(ConnectionFactory connectionFactory) {
-        log.debug("==> custom rabbitTemplate, connectionFactory:" + connectionFactory);
-        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-        rabbitTemplate.setMessageConverter(rmtParser.getMessageConverter());
-        rabbitTemplate.setMandatory(true);
-        rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
-            if (returnFlag) {
-                log.error("mq发送错误，无对应的的交换机,confirm回掉,ack={},correlationData={} cause={}",
-                        ack, correlationData, cause);
-            }
-
-            log.debug("confirm回调，ack={} correlationData={} cause={}", ack, correlationData, cause);
-            String msgId = correlationData.getId();
-
-            /** 只要消息能投入正确的消息队列，并持久化，就返回ack为true*/
-            if (ack) {
-                log.debug("消息已正确投递到队列, correlationData:{}", correlationData);
-                rmtCoordinator.setSuccess(msgId);
-            } else {
-                log.error("消息投递至交换机失败,业务号:{}，原因:{}", correlationData.getId(), cause);
-            }
-
-        });
-
-        //消息发送到RabbitMQ交换器，但无相应Exchange时的回调
-        rabbitTemplate.setReturnCallback((message, replyCode, replyText, exchange, routingKey) -> {
-            String messageId = message.getMessageProperties().getMessageId();
-            log.error("return回调，没有找到任何匹配的队列！message id:{},replyCode{},replyText:{},"
-                    + "exchange:{},routingKey{}", messageId, replyCode, replyText, exchange, routingKey);
-            returnFlag = true;
-        });
-
-        // rabbitTemplate.waitForConfirms(RmtConstants.TIME_GAP);
-        return rabbitTemplate;
-    }
 }
-

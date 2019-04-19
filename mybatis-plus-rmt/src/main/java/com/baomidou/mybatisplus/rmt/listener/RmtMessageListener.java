@@ -6,7 +6,7 @@ import com.rabbitmq.client.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
-import org.springframework.amqp.rabbit.core.ChannelAwareMessageListener;
+import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -17,7 +17,7 @@ import org.springframework.data.redis.core.RedisTemplate;
  * @since 2019-04-18
  */
 @Slf4j
-public abstract class RmtAbstractMessageListener implements IRmtMessageListener<Message>, ChannelAwareMessageListener {
+public abstract class RmtMessageListener implements IRmtListener<Message>, ChannelAwareMessageListener {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 

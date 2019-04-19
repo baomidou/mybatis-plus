@@ -9,7 +9,24 @@ package com.baomidou.mybatisplus.rmt;
  * @since 2019-04-18
  */
 public interface RmtConstants {
+    /**
+     * 队列配置
+     */
+    String EXCHANGE = "rmt.exchange";
+    String QUEUE = "rmt.queue";
+    String ROUTING_KEY = "rmt.routing.key";
+    /**
+     * 死信队列配置
+     */
+    String DL_EXCHANGE = "rmt.dl.exchange";
+    String DL_QUEUE = "rmt.dl.queue";
+    String DL_ROUTING_KEY = "dlx.routing.key";
 
+
+    /**
+     * 默认 KEY
+     */
+    String KEY = "rmt.key";
     /**
      * 消息重发计数
      */
@@ -40,30 +57,10 @@ public interface RmtConstants {
      */
     Object MQ_MSG_PREPARE = "mq.msg.prepare";
 
-    /**
-     * 默认交换机名称
-     */
-    String EXCHANGE = "rmt.exchange";
-
-    /**
-     * 默认队列名称
-     */
-    String QUEUE = "rmt.queue";
-
-    /**
-     * 默认 KEY
-     */
-    String KEY = "rmt.key";
-
 
     String MQ_PRODUCER_RETRY_KEY = "mq.producer.retry.key";
     String MQ_CONSUMER_RETRY_COUNT_KEY = "mq.consumer.retry.count.key";
-    /**
-     * 死信队列配置
-     */
-    String DLX_EXCHANGE = "dlx.exchange";
-    String DLX_QUEUE = "dlx.queue";
-    String DLX_ROUTING_KEY = "dlx.routing.key";
+
     /**
      * 发送端重试乘数(ms)
      */

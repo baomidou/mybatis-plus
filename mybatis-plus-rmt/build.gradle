@@ -1,6 +1,19 @@
-dependencies {
-    implementation "${lib.'spring-rabbit'}"
-    implementation "${lib.'spring-data-redis'}"
-    implementation "${lib.'jackson-databind'}"
-    implementation "${lib.aspectjrt}"
+ext{
+    springBootVersion = "2.1.2.RELEASE"
 }
+dependencies {
+    implementation(enforcedPlatform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}" as String))
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}"
+    annotationProcessor "org.springframework.boot:spring-boot-autoconfigure-processor:${springBootVersion}"
+    api 'org.springframework.boot:spring-boot-autoconfigure'
+    api 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation "${lib.aspectjrt}"
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-configuration-processor'
+    implementation 'org.springframework.boot:spring-boot-autoconfigure-processor'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+compileJava.dependsOn(processResources)
