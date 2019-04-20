@@ -20,7 +20,6 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
-
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
@@ -238,26 +237,18 @@ public abstract class AbstractMethod implements Constants {
      */
     protected MappedStatement addSelectMappedStatement(Class<?> mapperClass, String id, SqlSource sqlSource,
                                                        Class<?> resultType, TableInfo table) {
-        return this.addSelectMappedStatement(mapperClass, id, sqlSource, resultType, table, true);
-    }
-
-    /**
-     * 查询
-     */
-    protected MappedStatement addSelectMappedStatement(Class<?> mapperClass, String id, SqlSource sqlSource,
-                                                       Class<?> resultType, TableInfo table, boolean useCache) {
         if (null != table) {
             String resultMap = table.getResultMap();
             if (null != resultMap) {
                 /* 返回 resultMap 映射结果集 */
                 return addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.SELECT, null,
-                    resultMap, null, new NoKeyGenerator(), null, null, useCache);
+                    resultMap, null, new NoKeyGenerator(), null, null);
             }
         }
 
         /* 普通查询 */
         return addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.SELECT, null,
-            null, resultType, new NoKeyGenerator(), null, null, useCache);
+            null, resultType, new NoKeyGenerator(), null, null);
     }
 
     /**
@@ -294,24 +285,19 @@ public abstract class AbstractMethod implements Constants {
                                                  SqlCommandType sqlCommandType, Class<?> parameterType,
                                                  String resultMap, Class<?> resultType, KeyGenerator keyGenerator,
                                                  String keyProperty, String keyColumn) {
-        return this.addMappedStatement(mapperClass, id, sqlSource, sqlCommandType, parameterType, resultMap, resultType, keyGenerator, keyProperty, keyColumn, true);
-    }
-
-    /**
-     * 添加 MappedStatement 到 Mybatis 容器
-     */
-    protected MappedStatement addMappedStatement(Class<?> mapperClass, String id, SqlSource sqlSource,
-                                                 SqlCommandType sqlCommandType, Class<?> parameterType,
-                                                 String resultMap, Class<?> resultType, KeyGenerator keyGenerator,
-                                                 String keyProperty, String keyColumn, boolean useCache) {
         String statementName = mapperClass.getName() + DOT + id;
         if (hasMappedStatement(statementName)) {
             logger.warn(LEFT_SQ_BRACKET + statementName + "] Has been loaded by XML or SqlProvider or Mybatis's Annotation, so ignoring this injection for [" + getClass() + RIGHT_SQ_BRACKET);
             return null;
         }
+        /* 缓存逻辑处理 */
+        boolean isSelect = false;
+        if (sqlCommandType == SqlCommandType.SELECT) {
+            isSelect = true;
+        }
         return builderAssistant.addMappedStatement(id, sqlSource, StatementType.PREPARED, sqlCommandType,
             null, null, null, parameterType, resultMap, resultType,
-            null, !useCache, useCache, false, keyGenerator, keyProperty, keyColumn,
+            null, !isSelect, isSelect, false, keyGenerator, keyProperty, keyColumn,
             configuration.getDatabaseId(), languageDriver, null);
     }
 
