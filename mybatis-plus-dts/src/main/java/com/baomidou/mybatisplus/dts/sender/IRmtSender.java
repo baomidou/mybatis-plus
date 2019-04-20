@@ -13,28 +13,27 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.dts;
+package com.baomidou.mybatisplus.dts.sender;
+
+import com.baomidou.mybatisplus.dts.DtsMeta;
 
 /**
  * <p>
- * 常量类
+ * 可靠消息发送者
  * </p>
  *
- * @author hubin
- * @since 2019-04-20
+ * @author jobob
+ * @since 2019-04-17
  */
-public interface DtsConstants {
-    /**
-     * 队列配置
-     */
-    String RABBIT_EXCHANGE = "dts-rmt-exchange";
-    String RABBIT_QUEUE = "dts-rmt-queue";
-    String RABBIT_ROUTINGKEY = "dts-rmt-routingkey";
-    /**
-     * 死信队列配置
-     */
-    String RABBIT_DEADLETTER_EXCHANGE = "dts-rmt-deadletter-exchange";
-    String RABBIT_DEADLETTER_QUEUE = "dts-rmt-deadletter-queue";
-    String RABBIT_DEADLETTER_ROUTINGKEY = "dts-rmt-deadletter-routingkey";
+public interface IRmtSender {
 
+    /**
+     * <p>
+     * 发送消息
+     * </p>
+     *
+     * @param dtsMeta 分布式事务元数据
+     * @return
+     */
+    void send(DtsMeta dtsMeta);
 }

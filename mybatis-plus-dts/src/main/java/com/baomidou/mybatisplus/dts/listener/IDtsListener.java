@@ -13,28 +13,20 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.dts;
+package com.baomidou.mybatisplus.dts.listener;
 
 /**
- * <p>
- * 常量类
- * </p>
+ * 分布式事务监听
  *
- * @author hubin
- * @since 2019-04-20
+ * @author jobob
+ * @since 2019-04-18
  */
-public interface DtsConstants {
-    /**
-     * 队列配置
-     */
-    String RABBIT_EXCHANGE = "dts-rmt-exchange";
-    String RABBIT_QUEUE = "dts-rmt-queue";
-    String RABBIT_ROUTINGKEY = "dts-rmt-routingkey";
-    /**
-     * 死信队列配置
-     */
-    String RABBIT_DEADLETTER_EXCHANGE = "dts-rmt-deadletter-exchange";
-    String RABBIT_DEADLETTER_QUEUE = "dts-rmt-deadletter-queue";
-    String RABBIT_DEADLETTER_ROUTINGKEY = "dts-rmt-deadletter-routingkey";
+public interface IDtsListener<T> {
 
+    /**
+     * 处理对象
+     *
+     * @param object 待处理对象
+     */
+    void process(T object);
 }
