@@ -1,7 +1,8 @@
 package com.baomidou.mybatisplus.dts.rabbit.sender;
 
-import com.baomidou.mybatisplus.dts.rabbit.RmtMeta;
-import com.baomidou.mybatisplus.dts.rabbit.parser.IRmtParser;
+import com.baomidou.mybatisplus.dts.DtsConstants;
+import com.baomidou.mybatisplus.dts.DtsMeta;
+import com.baomidou.mybatisplus.dts.parser.IRmtParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.AmqpException;
@@ -38,7 +39,7 @@ public class RabbitRmtSender implements IRmtSender {
      * @throws JsonProcessingException
      */
     @Override
-    public String send(RmtMeta rmtMeta) {
+    public String send(DtsMeta rmtMeta) {
         final String messageId = UUID.randomUUID().toString();
         MessagePostProcessor messagePostProcessor = message -> {
             message.getMessageProperties().setMessageId(messageId);
@@ -50,7 +51,7 @@ public class RabbitRmtSender implements IRmtSender {
             MessageProperties messageProperties = new MessageProperties();
             messageProperties.setContentType("application/json");
             Message message = new Message(rmtParser.toJSONString(rmtMeta.getPayload()).getBytes(), messageProperties);
-            rabbitTemplate.convertAndSend(rmtMeta.getExchange(), rmtMeta.getRoutingKey(),
+            rabbitTemplate.convertAndSend(DtsConstants.EXCHANGE, DtsConstants.ROUTING_KEY,
                     message, messagePostProcessor, new CorrelationData(messageId));
             log.info("发送消息，消息ID:{}", messageId);
             return messageId;

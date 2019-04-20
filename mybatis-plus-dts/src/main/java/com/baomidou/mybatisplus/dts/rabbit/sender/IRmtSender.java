@@ -1,6 +1,6 @@
 package com.baomidou.mybatisplus.dts.rabbit.sender;
 
-import com.baomidou.mybatisplus.dts.rabbit.RmtMeta;
+import com.baomidou.mybatisplus.dts.DtsMeta;
 
 /**
  * <p>
@@ -20,5 +20,5 @@ public interface IRmtSender {
      * @param rmtMeta         可靠消息元数据
      * @return 消息ID
      */
-    String send(RmtMeta rmtMeta);
+    String send(DtsMeta rmtMeta);
 }

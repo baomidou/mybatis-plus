@@ -1,6 +1,6 @@
-package com.baomidou.mybatisplus.dts.rabbit.mq;
+package com.baomidou.mybatisplus.dts.rabbit;
 
-import com.baomidou.mybatisplus.dts.rabbit.RmtConstants;
+import com.baomidou.mybatisplus.dts.DtsConstants;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
@@ -43,18 +43,18 @@ public class RabbitConfiguration {
         rabbitTemplate.setChannelTransacted(true);
 
         // define deadletter exchange and queue
-        rabbitAdmin.declareExchange(new DirectExchange(RmtConstants.DL_EXCHANGE, true, false));
-        rabbitAdmin.declareQueue(new Queue(RmtConstants.DL_QUEUE, true, false, false, null));
-        rabbitAdmin.declareBinding(new Binding(RmtConstants.DL_QUEUE, Binding.DestinationType.QUEUE, RmtConstants.DL_EXCHANGE, RmtConstants.DL_ROUTING_KEY, null));
+        rabbitAdmin.declareExchange(new DirectExchange(DtsConstants.DL_EXCHANGE, true, false));
+        rabbitAdmin.declareQueue(new Queue(DtsConstants.DL_QUEUE, true, false, false, null));
+        rabbitAdmin.declareBinding(new Binding(DtsConstants.DL_QUEUE, Binding.DestinationType.QUEUE, DtsConstants.DL_EXCHANGE, DtsConstants.DL_ROUTING_KEY, null));
 
         // define simple exchange, queue with deadletter support and binding
-        rabbitAdmin.declareExchange(new TopicExchange(RmtConstants.EXCHANGE, true, false));
+        rabbitAdmin.declareExchange(new TopicExchange(DtsConstants.EXCHANGE, true, false));
         Map<String, Object> args = new HashMap<>(2);
-        args.put("x-dead-letter-exchange", RmtConstants.DL_EXCHANGE);
-        args.put("x-dead-letter-routing-key", RmtConstants.DL_ROUTING_KEY);
-        rabbitAdmin.declareQueue(new Queue(RmtConstants.QUEUE, true, false, true, args));
+        args.put("x-dead-letter-exchange", DtsConstants.DL_EXCHANGE);
+        args.put("x-dead-letter-routing-key", DtsConstants.DL_ROUTING_KEY);
+        rabbitAdmin.declareQueue(new Queue(DtsConstants.QUEUE, true, false, true, args));
 
         // declare binding
-        rabbitAdmin.declareBinding(new Binding(RmtConstants.QUEUE, Binding.DestinationType.QUEUE, RmtConstants.EXCHANGE, RmtConstants.ROUTING_KEY, null));
+        rabbitAdmin.declareBinding(new Binding(DtsConstants.QUEUE, Binding.DestinationType.QUEUE, DtsConstants.EXCHANGE, DtsConstants.ROUTING_KEY, null));
     }
 }
