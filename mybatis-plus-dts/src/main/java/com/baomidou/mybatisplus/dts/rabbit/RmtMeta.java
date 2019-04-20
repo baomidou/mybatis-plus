@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.rmt;
+package com.baomidou.mybatisplus.dts.rabbit;
 
 import lombok.Data;
 

@@ -1,7 +1,7 @@
 
-package com.baomidou.mybatisplus.rmt.listener;
+package com.baomidou.mybatisplus.dts.rabbit.listener;
 
-import com.baomidou.mybatisplus.rmt.RmtConstants;
+import com.baomidou.mybatisplus.dts.rabbit.RmtConstants;
 import com.rabbitmq.client.Channel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;

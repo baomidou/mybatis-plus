@@ -1,7 +1,7 @@
-package com.baomidou.mybatisplus.rmt.sender;
+package com.baomidou.mybatisplus.dts.rabbit.sender;
 
-import com.baomidou.mybatisplus.rmt.RmtMeta;
-import com.baomidou.mybatisplus.rmt.parser.IRmtParser;
+import com.baomidou.mybatisplus.dts.rabbit.RmtMeta;
+import com.baomidou.mybatisplus.dts.rabbit.parser.IRmtParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.AmqpException;

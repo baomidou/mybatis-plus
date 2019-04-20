@@ -1,10 +1,10 @@
-package com.baomidou.mybatisplus.rmt.mq;
+package com.baomidou.mybatisplus.dts.rabbit.mq;
 
-import com.baomidou.mybatisplus.rmt.RmtConstants;
-import com.baomidou.mybatisplus.rmt.RmtMeta;
-import com.baomidou.mybatisplus.rmt.annotation.RmTransactional;
-import com.baomidou.mybatisplus.rmt.coordinator.IRmtCoordinator;
-import com.baomidou.mybatisplus.rmt.sender.IRmtSender;
+import com.baomidou.mybatisplus.dts.rabbit.RmtConstants;
+import com.baomidou.mybatisplus.dts.rabbit.RmtMeta;
+import com.baomidou.mybatisplus.dts.annotation.RmTransactional;
+import com.baomidou.mybatisplus.dts.rabbit.coordinator.IRmtCoordinator;
+import com.baomidou.mybatisplus.dts.rabbit.sender.IRmtSender;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

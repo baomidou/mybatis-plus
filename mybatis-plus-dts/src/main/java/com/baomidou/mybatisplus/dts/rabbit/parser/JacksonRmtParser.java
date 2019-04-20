@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.rmt.parser;
+package com.baomidou.mybatisplus.dts.rabbit.parser;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.rmt.listener;
+package com.baomidou.mybatisplus.dts.rabbit.listener;
 
 /**
  * 可靠消息事务监听

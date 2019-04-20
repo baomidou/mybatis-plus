@@ -1,6 +1,6 @@
-package com.baomidou.mybatisplus.rmt.coordinator;
+package com.baomidou.mybatisplus.dts.rabbit.coordinator;
 
-import com.baomidou.mybatisplus.rmt.RmtMeta;
+import com.baomidou.mybatisplus.dts.rabbit.RmtMeta;
 
 import java.util.Collection;
 

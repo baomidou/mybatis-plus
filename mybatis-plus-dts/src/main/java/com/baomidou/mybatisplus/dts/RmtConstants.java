@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.rmt;
+package com.baomidou.mybatisplus.dts;
 
 /**
  * <p>
@@ -12,21 +12,21 @@ public interface RmtConstants {
     /**
      * 队列配置
      */
-    String EXCHANGE = "rmt.exchange";
-    String QUEUE = "rmt.queue";
-    String ROUTING_KEY = "rmt.routing.key";
+    String EXCHANGE = "rabbit-exchange";
+    String QUEUE = "rabbit-queue";
+    String ROUTING_KEY = "rabbit-routing-key";
     /**
      * 死信队列配置
      */
-    String DL_EXCHANGE = "rmt.dl.exchange";
-    String DL_QUEUE = "rmt.dl.queue";
-    String DL_ROUTING_KEY = "dlx.routing.key";
+    String DL_EXCHANGE = "rabbit-dl-exchange";
+    String DL_QUEUE = "rabbit-dl-queue";
+    String DL_ROUTING_KEY = "rabbit-dl-routing-key";
 
 
     /**
      * 默认 KEY
      */
-    String KEY = "rmt.key";
+    String KEY = "rabbit.key";
     /**
      * 消息重发计数
      */

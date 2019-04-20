@@ -1,6 +1,6 @@
-package com.baomidou.mybatisplus.rmt.sender;
+package com.baomidou.mybatisplus.dts.rabbit.sender;
 
-import com.baomidou.mybatisplus.rmt.RmtMeta;
+import com.baomidou.mybatisplus.dts.rabbit.RmtMeta;
 
 /**
  * <p>

@@ -1,7 +1,7 @@
-package com.baomidou.mybatisplus.rmt.coordinator;
+package com.baomidou.mybatisplus.dts.rabbit.coordinator;
 
-import com.baomidou.mybatisplus.rmt.RmtConstants;
-import com.baomidou.mybatisplus.rmt.RmtMeta;
+import com.baomidou.mybatisplus.dts.rabbit.RmtConstants;
+import com.baomidou.mybatisplus.dts.rabbit.RmtMeta;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;

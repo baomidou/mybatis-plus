@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.rmt.parser;
+package com.baomidou.mybatisplus.dts.rabbit.parser;
 
 import org.springframework.amqp.support.converter.MessageConverter;
 
