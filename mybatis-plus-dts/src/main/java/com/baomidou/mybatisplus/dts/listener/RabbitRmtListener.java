@@ -15,35 +15,45 @@
  */
 package com.baomidou.mybatisplus.dts.listener;
 
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.dts.DtsConstants;
 import com.baomidou.mybatisplus.dts.DtsMeta;
 import com.baomidou.mybatisplus.dts.parser.IDtsParser;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 /**
- * RabbitMQ 抽象消息监听
+ * Rabbit 可靠消息事务监听
  *
  * @author jobob
  * @since 2019-04-18
  */
+@Component
 @RabbitListener(queues = {DtsConstants.RABBIT_QUEUE})
-public abstract class RmtMessageListener implements IDtsListener<String> {
+public class RabbitRmtListener {
     @Autowired
     private IDtsParser dtsParser;
+    @Autowired
+    private List<IDtsListener> dtsListenerList;
 
+    /**
+     * 解析处理，接收消息对象
+     *
+     * @param event rabbit 消息
+     */
     @RabbitHandler
     @Transactional(rollbackFor = Exception.class)
-    @Override
-    public void process(String event) {
+    public void receive(String event) {
         try {
-            receive(dtsParser.readValue(event, DtsMeta.class));
+            DtsMeta dtsMeta = dtsParser.readValue(event, DtsMeta.class);
+            dtsListenerList.forEach(d -> d.process(dtsMeta));
         } catch (Exception e) {
-            e.printStackTrace();
+            ExceptionUtils.mpe("rmt parser error, event: %s", e, event);
         }
     }
-
-    public abstract void receive(DtsMeta dtsMeta);
 }

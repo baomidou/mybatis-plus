@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.dts.config;
 
 import com.baomidou.mybatisplus.dts.parser.JacksonDtsParser;
-import com.baomidou.mybatisplus.dts.sender.RabbitRmtSender;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -32,11 +31,6 @@ public class DtsAutoConfiguration {
     @Bean
     public JacksonDtsParser rmtParser() {
         return new JacksonDtsParser();
-    }
-
-    @Bean
-    public RabbitRmtSender rmtSender() {
-        return new RabbitRmtSender();
     }
 
 }

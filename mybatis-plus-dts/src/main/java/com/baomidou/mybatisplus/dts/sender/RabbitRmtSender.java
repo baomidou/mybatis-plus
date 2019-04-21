@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.dts.sender;
 
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.dts.DtsConstants;
 import com.baomidou.mybatisplus.dts.DtsMeta;
 import com.baomidou.mybatisplus.dts.parser.IDtsParser;
@@ -45,18 +46,18 @@ public class RabbitRmtSender implements IRmtSender {
      * 发送MQ消息
      *
      * @param dtsMeta Rabbit元信息对象，用于存储交换器、队列名、消息体
-     * @return 消息ID
-     * @throws JsonProcessingException
      */
     @Override
     public void send(DtsMeta dtsMeta) {
+        String object = null;
         try {
-            rabbitTemplate.convertAndSend(DtsConstants.RABBIT_EXCHANGE, DtsConstants.RABBIT_ROUTINGKEY,
-                rmtParser.toJSONString(dtsMeta.getPayload()));
+            object = rmtParser.toJSONString(dtsMeta);
+            rabbitTemplate.convertAndSend(DtsConstants.RABBIT_EXCHANGE,
+                DtsConstants.RABBIT_ROUTINGKEY, object);
         } catch (AmqpException e) {
-            throw new RuntimeException("发送RabbitMQ消息失败", e);
+            ExceptionUtils.mpe("rabbit send error, dtsMeta: %s", e, object);
         } catch (Exception e) {
-            throw new RuntimeException("对象解析异常", e);
+            ExceptionUtils.mpe("rmt parser error, dtsMeta.event: %s", e, dtsMeta.getEvent());
         }
     }
 }

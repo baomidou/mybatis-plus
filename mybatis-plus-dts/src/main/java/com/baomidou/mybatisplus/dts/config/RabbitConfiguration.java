@@ -16,6 +16,8 @@
 package com.baomidou.mybatisplus.dts.config;
 
 import com.baomidou.mybatisplus.dts.DtsConstants;
+import com.baomidou.mybatisplus.dts.listener.RabbitRmtListener;
+import com.baomidou.mybatisplus.dts.sender.RabbitRmtSender;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
@@ -27,6 +29,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.transaction.RabbitTransactionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -49,6 +52,17 @@ public class RabbitConfiguration {
     protected RabbitAdmin rabbitAdmin;
 
     @Bean
+    public RabbitRmtSender rmtSender() {
+        return new RabbitRmtSender();
+    }
+
+    @Bean
+    public RabbitRmtListener rabbitRmtListener() {
+        return new RabbitRmtListener();
+    }
+
+    @Bean
+    @ConditionalOnMissingClass("org.springframework.jdbc.datasource.DataSourceTransactionManager")
     public RabbitTransactionManager rabbitTransactionManager(ConnectionFactory connectionFactory) {
         return new RabbitTransactionManager(connectionFactory);
     }

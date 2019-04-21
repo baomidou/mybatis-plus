@@ -15,18 +15,20 @@
  */
 package com.baomidou.mybatisplus.dts.listener;
 
+import com.baomidou.mybatisplus.dts.DtsMeta;
+
 /**
  * 分布式事务监听
  *
  * @author jobob
  * @since 2019-04-18
  */
-public interface IDtsListener<T> {
+public interface IDtsListener {
 
     /**
-     * 处理对象
+     * 监听处理
      *
-     * @param object 待处理对象
+     * @param dtsMeta 分布式元数据对象
      */
-    void process(T object);
+    void process(DtsMeta dtsMeta);
 }
