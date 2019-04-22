@@ -82,7 +82,7 @@ public abstract class Model<T extends Model<?>> implements Serializable {
     public boolean deleteById(Serializable id) {
         SqlSession sqlSession = sqlSession();
         try {
-            return SqlHelper.delBool(sqlSession.delete(sqlStatement(SqlMethod.DELETE_BY_ID), id));
+            return SqlHelper.retBool(sqlSession.delete(sqlStatement(SqlMethod.DELETE_BY_ID), id));
         } finally {
             closeSqlSession(sqlSession);
         }
@@ -106,7 +106,7 @@ public abstract class Model<T extends Model<?>> implements Serializable {
         map.put(Constants.WRAPPER, queryWrapper);
         SqlSession sqlSession = sqlSession();
         try {
-            return SqlHelper.delBool(sqlSession.delete(sqlStatement(SqlMethod.DELETE), map));
+            return SqlHelper.retBool(sqlSession.delete(sqlStatement(SqlMethod.DELETE), map));
         } finally {
             closeSqlSession(sqlSession);
         }

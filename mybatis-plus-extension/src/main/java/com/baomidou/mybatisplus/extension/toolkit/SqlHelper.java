@@ -101,8 +101,10 @@ public final class SqlHelper {
      * 删除不存在的逻辑上属于成功
      *
      * @param result 数据库操作返回影响条数
+     * @deprecated  3.1.1 {@link SqlHelper#retBool(java.lang.Integer)}
      * @return boolean
      */
+    @Deprecated
     public static boolean delBool(Integer result) {
         return null != result && result >= 0;
     }

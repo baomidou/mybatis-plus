@@ -188,23 +188,23 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
     @Override
     public boolean removeById(Serializable id) {
-        return SqlHelper.delBool(baseMapper.deleteById(id));
+        return SqlHelper.retBool(baseMapper.deleteById(id));
     }
 
     @Override
     public boolean removeByMap(Map<String, Object> columnMap) {
         Assert.notEmpty(columnMap, "error: columnMap must not be empty");
-        return SqlHelper.delBool(baseMapper.deleteByMap(columnMap));
+        return SqlHelper.retBool(baseMapper.deleteByMap(columnMap));
     }
 
     @Override
     public boolean remove(Wrapper<T> wrapper) {
-        return SqlHelper.delBool(baseMapper.delete(wrapper));
+        return SqlHelper.retBool(baseMapper.delete(wrapper));
     }
 
     @Override
     public boolean removeByIds(Collection<? extends Serializable> idList) {
-        return SqlHelper.delBool(baseMapper.deleteBatchIds(idList));
+        return SqlHelper.retBool(baseMapper.deleteBatchIds(idList));
     }
 
     @Override
