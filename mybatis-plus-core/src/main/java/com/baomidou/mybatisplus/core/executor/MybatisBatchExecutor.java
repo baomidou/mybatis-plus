@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.core.executor;
 
 import org.apache.ibatis.cursor.Cursor;
-import org.apache.ibatis.executor.BaseExecutor;
 import org.apache.ibatis.executor.BatchExecutorException;
 import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.executor.keygen.Jdbc3KeyGenerator;
@@ -39,23 +38,22 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * 重写执行器
- * {@link org.apache.ibatis.executor.BatchExecutor}
+ * 重写执行器 {@link org.apache.ibatis.executor.BatchExecutor}
  *
  * @author nieqiurong 2019/4/14.
  */
-public class MybatisBatchExecutor extends BaseExecutor {
+public class MybatisBatchExecutor extends MybatisBaseExecutor {
     public static final int BATCH_UPDATE_RETURN_VALUE = Integer.MIN_VALUE + 1002;
-    
+
     private final List<Statement> statementList = new ArrayList<>();
     private final List<BatchResult> batchResultList = new ArrayList<>();
     private String currentSql;
     private MappedStatement currentStatement;
-    
+
     public MybatisBatchExecutor(Configuration configuration, Transaction transaction) {
         super(configuration, transaction);
     }
-    
+
     @Override
     public int doUpdate(MappedStatement ms, Object parameterObject) throws SQLException {
         final Configuration configuration = ms.getConfiguration();
@@ -85,7 +83,7 @@ public class MybatisBatchExecutor extends BaseExecutor {
         handler.batch(stmt);
         return BATCH_UPDATE_RETURN_VALUE;
     }
-    
+
     @Override
     public <E> List<E> doQuery(MappedStatement ms, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql)
         throws SQLException {
@@ -105,7 +103,7 @@ public class MybatisBatchExecutor extends BaseExecutor {
             closeStatement(stmt);
         }
     }
-    
+
     @Override
     protected <E> Cursor<E> doQueryCursor(MappedStatement ms, Object parameter, RowBounds rowBounds, BoundSql boundSql) throws SQLException {
         flushStatements();
@@ -118,7 +116,7 @@ public class MybatisBatchExecutor extends BaseExecutor {
         handler.parameterize(stmt);
         return handler.queryCursor(stmt);
     }
-    
+
     @Override
     public List<BatchResult> doFlushStatements(boolean isRollback) throws SQLException {
         try {

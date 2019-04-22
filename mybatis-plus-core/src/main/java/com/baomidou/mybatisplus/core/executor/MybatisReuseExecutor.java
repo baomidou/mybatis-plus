@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.core.executor;
 
 import org.apache.ibatis.cursor.Cursor;
-import org.apache.ibatis.executor.BaseExecutor;
 import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.logging.Log;
@@ -36,19 +35,18 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 重写执行器
- * {@link org.apache.ibatis.executor.ReuseExecutor}
+ * 重写执行器 {@link org.apache.ibatis.executor.ReuseExecutor}
  *
  * @author nieqiurong 2019/4/14.
  */
-public class MybatisReuseExecutor extends BaseExecutor {
-    
+public class MybatisReuseExecutor extends MybatisBaseExecutor {
+
     private final Map<String, Statement> statementMap = new HashMap<>();
-    
+
     public MybatisReuseExecutor(Configuration configuration, Transaction transaction) {
         super(configuration, transaction);
     }
-    
+
     @Override
     public int doUpdate(MappedStatement ms, Object parameter) throws SQLException {
         Configuration configuration = ms.getConfiguration();
@@ -56,7 +54,7 @@ public class MybatisReuseExecutor extends BaseExecutor {
         Statement stmt = prepareStatement(handler, ms.getStatementLog(), false);
         return stmt == null ? 0 : handler.update(stmt);
     }
-    
+
     @Override
     public <E> List<E> doQuery(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
         Configuration configuration = ms.getConfiguration();
@@ -64,7 +62,7 @@ public class MybatisReuseExecutor extends BaseExecutor {
         Statement stmt = prepareStatement(handler, ms.getStatementLog(), false);
         return stmt == null ? Collections.emptyList() : handler.query(stmt, resultHandler);
     }
-    
+
     @Override
     protected <E> Cursor<E> doQueryCursor(MappedStatement ms, Object parameter, RowBounds rowBounds, BoundSql boundSql) throws SQLException {
         Configuration configuration = ms.getConfiguration();
@@ -72,7 +70,7 @@ public class MybatisReuseExecutor extends BaseExecutor {
         Statement stmt = prepareStatement(handler, ms.getStatementLog(), true);
         return handler.queryCursor(stmt);
     }
-    
+
     @Override
     public List<BatchResult> doFlushStatements(boolean isRollback) {
         for (Statement stmt : statementMap.values()) {
@@ -81,7 +79,7 @@ public class MybatisReuseExecutor extends BaseExecutor {
         statementMap.clear();
         return Collections.emptyList();
     }
-    
+
     private Statement prepareStatement(StatementHandler handler, Log statementLog, boolean isCursor) throws SQLException {
         Statement stmt;
         BoundSql boundSql = handler.getBoundSql();
@@ -101,7 +99,7 @@ public class MybatisReuseExecutor extends BaseExecutor {
         handler.parameterize(stmt);
         return stmt;
     }
-    
+
     private boolean hasStatementFor(String sql) {
         try {
             return statementMap.keySet().contains(sql) && !statementMap.get(sql).getConnection().isClosed();
@@ -109,11 +107,11 @@ public class MybatisReuseExecutor extends BaseExecutor {
             return false;
         }
     }
-    
+
     private Statement getStatement(String s) {
         return statementMap.get(s);
     }
-    
+
     private void putStatement(String sql, Statement stmt) {
         statementMap.put(sql, stmt);
     }
