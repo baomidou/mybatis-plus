@@ -152,6 +152,7 @@ public final class Wrappers {
             return null;
         }
 
+        @Override
         public EmptyWrapper<T> setEntity(T entity) {
             throw new UnsupportedOperationException();
         }
@@ -186,9 +187,11 @@ public final class Wrappers {
             return true;
         }
 
+        @Override
         protected void initEntityClass() {
         }
 
+        @Override
         protected Class<T> getCheckEntityClass() {
             throw new UnsupportedOperationException();
         }

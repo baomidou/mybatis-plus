@@ -52,19 +52,19 @@ public class ReflectionKit {
     /**
      * class field cache
      */
-    private static final Map<Class<?>, List<Field>> classFieldCache = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, List<Field>> CLASS_FIELD_CACHE = new ConcurrentHashMap<>();
 
-    private static final Map<Class<?>, Class<?>> primitiveWrapperTypeMap = new IdentityHashMap<>(8);
+    private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER_TYPE_MAP = new IdentityHashMap<>(8);
 
     static {
-        primitiveWrapperTypeMap.put(Boolean.class, boolean.class);
-        primitiveWrapperTypeMap.put(Byte.class, byte.class);
-        primitiveWrapperTypeMap.put(Character.class, char.class);
-        primitiveWrapperTypeMap.put(Double.class, double.class);
-        primitiveWrapperTypeMap.put(Float.class, float.class);
-        primitiveWrapperTypeMap.put(Integer.class, int.class);
-        primitiveWrapperTypeMap.put(Long.class, long.class);
-        primitiveWrapperTypeMap.put(Short.class, short.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Boolean.class, boolean.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Byte.class, byte.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Character.class, char.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Double.class, double.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Float.class, float.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Integer.class, int.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Long.class, long.class);
+        PRIMITIVE_WRAPPER_TYPE_MAP.put(Short.class, short.class);
     }
 
     /**
@@ -189,11 +189,11 @@ public class ReflectionKit {
         if (Objects.isNull(clazz)) {
             return Collections.emptyList();
         }
-        List<Field> fields = classFieldCache.get(clazz);
+        List<Field> fields = CLASS_FIELD_CACHE.get(clazz);
         if (CollectionUtils.isEmpty(fields)) {
-            synchronized (classFieldCache) {
+            synchronized (CLASS_FIELD_CACHE) {
                 fields = doGetFieldList(clazz);
-                classFieldCache.put(clazz, fields);
+                CLASS_FIELD_CACHE.put(clazz, fields);
             }
         }
         return fields;
@@ -261,6 +261,6 @@ public class ReflectionKit {
      */
     public static boolean isPrimitiveOrWrapper(Class<?> clazz) {
         Assert.notNull(clazz, "Class must not be null");
-        return (clazz.isPrimitive() || primitiveWrapperTypeMap.containsKey(clazz));
+        return (clazz.isPrimitive() || PRIMITIVE_WRAPPER_TYPE_MAP.containsKey(clazz));
     }
 }
