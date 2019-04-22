@@ -24,9 +24,9 @@ import java.util.Optional;
  *
  * @author nieqiurong 2019/4/22.
  */
-public abstract class MybatisBaseExecutor extends BaseExecutor {
+public abstract class AbstractBaseExecutor extends BaseExecutor {
 
-    protected MybatisBaseExecutor(Configuration configuration, Transaction transaction) {
+    protected AbstractBaseExecutor(Configuration configuration, Transaction transaction) {
         super(configuration, transaction);
     }
 

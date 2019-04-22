@@ -39,7 +39,7 @@ import java.util.Map;
  *
  * @author nieqiurong 2019/4/14.
  */
-public class MybatisReuseExecutor extends MybatisBaseExecutor {
+public class MybatisReuseExecutor extends AbstractBaseExecutor {
 
     private final Map<String, Statement> statementMap = new HashMap<>();
 

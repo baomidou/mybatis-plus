@@ -37,7 +37,7 @@ import java.util.List;
  *
  * @author nieqiurong 2019/4/14.
  */
-public class MybatisSimpleExecutor extends MybatisBaseExecutor {
+public class MybatisSimpleExecutor extends AbstractBaseExecutor {
 
     public MybatisSimpleExecutor(Configuration configuration, Transaction transaction) {
         super(configuration, transaction);

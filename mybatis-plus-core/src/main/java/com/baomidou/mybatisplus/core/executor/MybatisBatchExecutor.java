@@ -42,7 +42,7 @@ import java.util.List;
  *
  * @author nieqiurong 2019/4/14.
  */
-public class MybatisBatchExecutor extends MybatisBaseExecutor {
+public class MybatisBatchExecutor extends AbstractBaseExecutor {
     public static final int BATCH_UPDATE_RETURN_VALUE = Integer.MIN_VALUE + 1002;
 
     private final List<Statement> statementList = new ArrayList<>();
