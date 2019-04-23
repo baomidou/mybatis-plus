@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.dts.config;
 
 import com.baomidou.mybatisplus.dts.parser.JacksonDtsParser;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -29,6 +30,7 @@ import org.springframework.context.annotation.Configuration;
 public class DtsAutoConfiguration {
 
     @Bean
+    @ConditionalOnMissingClass
     public JacksonDtsParser rmtParser() {
         return new JacksonDtsParser();
     }

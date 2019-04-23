@@ -68,6 +68,7 @@ public class RabbitConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingClass("org.springframework.amqp.rabbit.core.RabbitAdmin")
     public RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
         return new RabbitAdmin(connectionFactory);
     }
