@@ -19,14 +19,13 @@ import com.baomidou.mybatisplus.core.parser.ISqlParser;
 import com.baomidou.mybatisplus.core.parser.SqlInfo;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableNameParser;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.apache.ibatis.reflection.MetaObject;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
 
 /**
  * 动态表名 SQL 解析器
@@ -37,13 +36,25 @@ import java.util.List;
 @Data
 @Accessors(chain = true)
 public class DynamicTableNameParser implements ISqlParser {
-    private List<ITableNameHandler> tableNameHandlers;
+    private Map<String, ITableNameHandler> tableNameHandlerMap;
 
     @Override
     public SqlInfo parser(MetaObject metaObject, String sql) {
-        Assert.isFalse(CollectionUtils.isEmpty(tableNameHandlers), "tableNameHandlers is empty.");
+        Assert.isFalse(CollectionUtils.isEmpty(tableNameHandlerMap), "tableNameHandlerMap is empty.");
         Collection<String> tables = new TableNameParser(sql).tables();
-        // 待写完
+        if (CollectionUtils.isNotEmpty(tables)) {
+            int flag = 0;
+            for (final String table : tables) {
+                ITableNameHandler tableNameHandler = tableNameHandlerMap.get(table);
+                if (null != tableNameHandler) {
+                    tableNameHandler.process(metaObject, sql, table);
+                    ++flag;
+                }
+            }
+            if (flag > 0) {
+                return SqlInfo.newInstance().setSql(sql);
+            }
+        }
         return null;
     }
 }

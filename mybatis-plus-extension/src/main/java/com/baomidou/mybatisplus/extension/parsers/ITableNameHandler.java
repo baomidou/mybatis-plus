@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.extension.parsers;
 
+import org.apache.ibatis.reflection.MetaObject;
+
 /**
  * 动态表名处理器
  *
@@ -24,10 +26,27 @@ package com.baomidou.mybatisplus.extension.parsers;
 public interface ITableNameHandler {
 
     /**
-     * 表名处理
+     * 表名 SQL 处理
      *
-     * @param tableName
+     * @param metaObject 元对象
+     * @param sql        当前执行 SQL
+     * @param tableName  表名
      * @return
      */
-    String process(String tableName);
+    default void process(MetaObject metaObject, String sql, String tableName) {
+        String dynamicTableName = dynamicTableName(metaObject, sql, tableName);
+        if (null != dynamicTableName && !dynamicTableName.equalsIgnoreCase(tableName)) {
+            sql.replaceAll(tableName, dynamicTableName);
+        }
+    }
+
+    /**
+     * 生成动态表名，无改变返回 NULL
+     *
+     * @param metaObject 元对象
+     * @param sql        当前执行 SQL
+     * @param tableName  表名
+     * @return String
+     */
+    String dynamicTableName(MetaObject metaObject, String sql, String tableName);
 }

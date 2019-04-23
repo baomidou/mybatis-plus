@@ -43,7 +43,7 @@ public interface ISqlParser {
      * @param sql        SQL 语句
      * @return SQL 信息
      */
-    default boolean doFilter(MetaObject metaObject, String sql) {
+    default boolean doFilter(final MetaObject metaObject, final String sql) {
         // 默认 true 执行 SQL 解析, 可重写实现控制逻辑
         return true;
     }
