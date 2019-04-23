@@ -69,18 +69,18 @@ public abstract class AbstractSqlParserHandler {
                 statementHandler = metaObject.hasGetter("delegate") ? (StatementHandler) metaObject.getValue("delegate") : statementHandler;
                 if (!(statementHandler instanceof CallableStatementHandler)) {
                     // 标记是否修改过 SQL
-                    int flag = 0;
+                    boolean sqlChangedFlag = false;
                     String originalSql = (String) metaObject.getValue(PluginUtils.DELEGATE_BOUNDSQL_SQL);
                     for (ISqlParser sqlParser : this.sqlParserList) {
                         if (sqlParser.doFilter(metaObject, originalSql)) {
                             SqlInfo sqlInfo = sqlParser.parser(metaObject, originalSql);
                             if (null != sqlInfo) {
                                 originalSql = sqlInfo.getSql();
-                                ++flag;
+                                sqlChangedFlag = true;
                             }
                         }
                     }
-                    if (flag >= 1) {
+                    if (sqlChangedFlag) {
                         metaObject.setValue(PluginUtils.DELEGATE_BOUNDSQL_SQL, originalSql);
                     }
                 }
