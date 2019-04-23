@@ -33,11 +33,12 @@ public interface ITableNameHandler {
      * @param tableName  表名
      * @return
      */
-    default void process(MetaObject metaObject, String sql, String tableName) {
+    default String process(MetaObject metaObject, String sql, String tableName) {
         String dynamicTableName = dynamicTableName(metaObject, sql, tableName);
         if (null != dynamicTableName && !dynamicTableName.equalsIgnoreCase(tableName)) {
-            sql.replaceAll(tableName, dynamicTableName);
+            return sql.replaceAll(tableName, dynamicTableName);
         }
+        return sql;
     }
 
     /**
