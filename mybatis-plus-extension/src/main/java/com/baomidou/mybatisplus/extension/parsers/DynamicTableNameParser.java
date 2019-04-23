@@ -41,20 +41,34 @@ public class DynamicTableNameParser implements ISqlParser {
     @Override
     public SqlInfo parser(MetaObject metaObject, String sql) {
         Assert.isFalse(CollectionUtils.isEmpty(tableNameHandlerMap), "tableNameHandlerMap is empty.");
-        Collection<String> tables = new TableNameParser(sql).tables();
-        if (CollectionUtils.isNotEmpty(tables)) {
-            int flag = 0;
-            for (final String table : tables) {
-                ITableNameHandler tableNameHandler = tableNameHandlerMap.get(table);
-                if (null != tableNameHandler) {
-                    tableNameHandler.process(metaObject, sql, table);
-                    ++flag;
+        if (allowProcess(metaObject)) {
+            Collection<String> tables = new TableNameParser(sql).tables();
+            if (CollectionUtils.isNotEmpty(tables)) {
+                int flag = 0;
+                for (final String table : tables) {
+                    ITableNameHandler tableNameHandler = tableNameHandlerMap.get(table);
+                    if (null != tableNameHandler) {
+                        tableNameHandler.process(metaObject, sql, table);
+                        ++flag;
+                    }
                 }
-            }
-            if (flag > 0) {
-                return SqlInfo.newInstance().setSql(sql);
+                if (flag > 0) {
+                    return SqlInfo.newInstance().setSql(sql);
+                }
             }
         }
         return null;
+    }
+
+
+    /**
+     * 判断是否允许执行
+     * <p>例如：逻辑删除只解析 delete , update 操作</p>
+     *
+     * @param metaObject 元对象
+     * @return true
+     */
+    public boolean allowProcess(MetaObject metaObject) {
+        return true;
     }
 }
