@@ -1,6 +1,6 @@
 ﻿# CHANGELOG
 
-## [v3.1.1] 2019.04.24
+## [v3.1.1] 2019.04.25
 - 新增 996icu license 协议
 - 新增 mybatis-plus-dts 分布式事务 rabbit 可靠消息机制
 - 新增 DynamicTableNameParser 解析器、支持动态表名
