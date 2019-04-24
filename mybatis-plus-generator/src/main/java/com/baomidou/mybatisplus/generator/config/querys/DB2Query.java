@@ -34,13 +34,13 @@ public class DB2Query extends AbstractDbQuery {
 
     @Override
     public String tablesSql() {
-        return "SELECT * FROM SYSCAT.TABLES where tabschema=current schema";
+        return "SELECT * FROM SYSCAT.TABLES where tabschema=%s";
     }
 
 
     @Override
     public String tableFieldsSql() {
-        return "SELECT *  FROM syscat.columns WHERE tabschema=current schema AND tabname='%s'";
+        return "SELECT *  FROM syscat.columns WHERE tabschema=%s AND tabname='%s'";
     }
 
 

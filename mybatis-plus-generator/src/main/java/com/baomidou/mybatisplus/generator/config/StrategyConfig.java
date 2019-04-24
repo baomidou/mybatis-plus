@@ -40,7 +40,6 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class StrategyConfig {
-
     /**
      * 是否大写命名
      */
@@ -49,6 +48,10 @@ public class StrategyConfig {
      * 是否跳过视图
      */
     private boolean skipView = false;
+    /**
+     * 名称转换
+     */
+    private INameConvert nameConvert;
     /**
      * 数据库表映射到实体的命名策略
      */

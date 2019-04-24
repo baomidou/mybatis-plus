@@ -1,5 +1,34 @@
 ﻿# CHANGELOG
 
+## [v3.1.1] 2019.04.24
+- 新增 996icu license 协议
+- 新增 mybatis-plus-dts 分布式事务 rabbit 可靠消息机制
+- 新增 DynamicTableNameParser 解析器、支持动态表名
+- 优化 getOne 日志打印
+- sql 优化跳过存储过程
+- 优化分页查询(count为0不继续查询)
+- 修复分页一级缓存无法继续翻页问题
+- MybatisMapWrapperFactory 自动注入
+- 支持纯注解下使用 IPage 的子类作为返回值
+- 逻辑删除不再需要 LogicInject
+- GlobalConfig 加入 enableSqlRunner 属性控制是否注入 SqlRunner ,默认 false
+- SqlParser注解不再需要全局设置参数才会缓存,以及支持注解在 mapper 上
+- GlobalConfig 的 sqlParserCache 设置为过时
+- mybatis 升级到 3.5.1 , mybatis-spring 升级到 2.0.1 , jsqlparser 降级到 1.2
+- ISqlInjector 接口 移除 injectSqlRunner 方法
+- SqlFormatter 类设置为过时
+- 解决自动注入的 method 的 SqlCommandType 在逻辑删除下混乱问题
+- 新增 AlwaysUpdateSomeColumnById 选装件
+- SFunction 继承 Function
+- DbConfig 的 columnLike 和 dbType 属性设置为过时
+- DbConfig 新增 schema 和 columnFormat 属性
+- TableField 注解增加 keepGlobalFormat 属性
+- TableName 注解增加 schema 和 keepGlobalPrefix 属性
+- fixed bug tmp文件格式错乱 github #1048
+- 处理表/字段名称抽象 INameConvert 接口策略 github #1038
+- DB2支持动态 schema 配置 github #1035
+
+
 ## [v3.1.0] 2019.02.24
 - 升级 `mybatis` 到 `3.5.0` 版本
 - 升级 `mybatis-spring` 到 `2.0.0` 版本

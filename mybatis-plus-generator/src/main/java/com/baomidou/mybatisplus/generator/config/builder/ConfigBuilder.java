@@ -19,13 +19,7 @@ import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
-import com.baomidou.mybatisplus.generator.config.ConstVal;
-import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
-import com.baomidou.mybatisplus.generator.config.GlobalConfig;
-import com.baomidou.mybatisplus.generator.config.IDbQuery;
-import com.baomidou.mybatisplus.generator.config.PackageConfig;
-import com.baomidou.mybatisplus.generator.config.StrategyConfig;
-import com.baomidou.mybatisplus.generator.config.TemplateConfig;
+import com.baomidou.mybatisplus.generator.config.*;
 import com.baomidou.mybatisplus.generator.config.po.TableField;
 import com.baomidou.mybatisplus.generator.config.po.TableFill;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
@@ -320,7 +314,14 @@ public class ConfigBuilder {
     private List<TableInfo> processTable(List<TableInfo> tableList, NamingStrategy strategy, StrategyConfig config) {
         String[] tablePrefix = config.getTablePrefix();
         for (TableInfo tableInfo : tableList) {
-            String entityName = NamingStrategy.capitalFirst(processName(tableInfo.getName(), strategy, tablePrefix));
+            String entityName;
+            INameConvert nameConvert = strategyConfig.getNameConvert();
+            if (null != nameConvert) {
+                // 自定义处理实体名称
+                entityName = nameConvert.entityNameConvert(tableInfo);
+            } else {
+                entityName = NamingStrategy.capitalFirst(processName(tableInfo.getName(), strategy, tablePrefix));
+            }
             if (StringUtils.isNotEmpty(globalConfig.getEntityName())) {
                 tableInfo.setConvert(true);
                 tableInfo.setEntityName(String.format(globalConfig.getEntityName(), entityName));
@@ -409,8 +410,17 @@ public class ConfigBuilder {
             if (DbType.POSTGRE_SQL == dbQuery.dbType()) {
                 String schema = dataSourceConfig.getSchemaName();
                 if (schema == null) {
-                    //pg默认schema=public
+                    //pg 默认 schema=public
                     schema = "public";
+                    dataSourceConfig.setSchemaName(schema);
+                }
+                tablesSql = String.format(tablesSql, schema);
+            }
+            if (DbType.DB2 == dbQuery.dbType()) {
+                String schema = dataSourceConfig.getSchemaName();
+                if (schema == null) {
+                    //db2 默认 schema=current schema
+                    schema = "current schema";
                     dataSourceConfig.setSchemaName(schema);
                 }
                 tablesSql = String.format(tablesSql, schema);
@@ -418,7 +428,7 @@ public class ConfigBuilder {
             //oracle数据库表太多，出现最大游标错误
             else if (DbType.ORACLE == dbQuery.dbType()) {
                 String schema = dataSourceConfig.getSchemaName();
-                //oracle默认用户的schema=username
+                //oracle 默认 schema=username
                 if (schema == null) {
                     schema = dataSourceConfig.getUsername().toUpperCase();
                     dataSourceConfig.setSchemaName(schema);
@@ -494,7 +504,7 @@ public class ConfigBuilder {
                 includeTableList = tableList;
             }
             // 性能优化，只处理需执行表字段 github issues/219
-            includeTableList.forEach(ti -> convertTableFields(ti, config.getColumnNaming()));
+            includeTableList.forEach(ti -> convertTableFields(ti, config));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -518,10 +528,10 @@ public class ConfigBuilder {
      * 将字段信息与表信息关联
      *
      * @param tableInfo 表信息
-     * @param strategy  命名策略
+     * @param config    命名策略
      * @return ignore
      */
-    private TableInfo convertTableFields(TableInfo tableInfo, NamingStrategy strategy) {
+    private TableInfo convertTableFields(TableInfo tableInfo, StrategyConfig config) {
         boolean haveId = false;
         List<TableField> fieldList = new ArrayList<>();
         List<TableField> commonFieldList = new ArrayList<>();
@@ -531,6 +541,8 @@ public class ConfigBuilder {
             String tableFieldsSql = dbQuery.tableFieldsSql();
             Set<String> h2PkColumns = new HashSet<>();
             if (DbType.POSTGRE_SQL == dbType) {
+                tableFieldsSql = String.format(tableFieldsSql, dataSourceConfig.getSchemaName(), tableName);
+            } else if (DbType.DB2 == dbType) {
                 tableFieldsSql = String.format(tableFieldsSql, dataSourceConfig.getSchemaName(), tableName);
             } else if (DbType.ORACLE == dbType) {
                 tableName = tableName.toUpperCase();
@@ -591,7 +603,12 @@ public class ConfigBuilder {
                     // 处理其它信息
                     field.setName(columnName);
                     field.setType(results.getString(dbQuery.fieldType()));
-                    field.setPropertyName(strategyConfig, processName(field.getName(), strategy));
+                    INameConvert nameConvert = strategyConfig.getNameConvert();
+                    if (null != nameConvert) {
+                        field.setPropertyName(nameConvert.propertyNameConvert(field));
+                    } else {
+                        field.setPropertyName(strategyConfig, processName(field.getName(), config.getNaming()));
+                    }
                     field.setColumnType(dataSourceConfig.getTypeConvert().processTypeConvert(globalConfig, field.getType()));
                     field.setComment(results.getString(dbQuery.fieldComment()));
                     if (strategyConfig.includeSuperEntityColumns(field.getName())) {
@@ -665,9 +682,9 @@ public class ConfigBuilder {
     /**
      * 处理表/字段名称
      *
-     * @param name ignore
+     * @param name     ignore
      * @param strategy ignore
-     * @param prefix ignore
+     * @param prefix   ignore
      * @return 根据策略返回处理后的名称
      */
     private String processName(String name, NamingStrategy strategy, String[] prefix) {
