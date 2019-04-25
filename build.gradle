@@ -117,6 +117,7 @@ subprojects {
         header = rootProject.file("license.txt")
         includes(["**/*.java", "**/*.kt"])
         exclude "**/*Test.java"
+        exclude "**/TableNameParser.java"
         mapping "java", "SLASHSTAR_STYLE"
         mapping "kt", "SLASHSTAR_STYLE"
     }
