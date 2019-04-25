@@ -20,6 +20,8 @@ import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.SerializationUtils;
 
 import java.io.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 这个类是从 {@link java.lang.invoke.SerializedLambda} 里面 copy 过来的，
@@ -112,6 +114,16 @@ public class SerializedLambda implements Serializable {
      */
     private String normalName(String name) {
         return name.replace('/', '.');
+    }
+
+    private static final Pattern INSTANTIATED_METHOD_TYPE = Pattern.compile("\\(L(?<instantiatedMethodType>[\\S&&[^;)]]+);\\)L[\\S]+;");
+
+    public Class getInstantiatedMethodType() {
+        Matcher matcher = INSTANTIATED_METHOD_TYPE.matcher(instantiatedMethodType);
+        if (matcher.find()) {
+            return ClassUtils.toClassConfident(normalName(matcher.group("instantiatedMethodType")));
+        }
+        throw ExceptionUtils.mpe("无法从 %s 解析调用实例。。。", instantiatedMethodType);
     }
 
     /**

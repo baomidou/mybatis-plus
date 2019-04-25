@@ -80,7 +80,7 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
     private String getColumn(SerializedLambda lambda, boolean onlyColumn) throws MybatisPlusException {
         String fieldName = PropertyNamer.methodToProperty(lambda.getImplMethodName());
 
-        return Optional.ofNullable(LambdaUtils.getColumnOfProperty(lambda.getImplClass(), fieldName))
+        return Optional.ofNullable(LambdaUtils.getColumnOfProperty(lambda.getInstantiatedMethodType(), fieldName))
             .map(onlyColumn ? ColumnCache::getColumn : ColumnCache::getColumnSelect)
             .orElseThrow(() ->
                 ExceptionUtils.mpe("Your property named \"%s\" cannot find the corresponding database column name!", fieldName)
