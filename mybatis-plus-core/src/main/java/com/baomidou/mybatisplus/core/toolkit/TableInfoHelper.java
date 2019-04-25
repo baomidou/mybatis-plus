@@ -77,20 +77,7 @@ public class TableInfoHelper {
             || clazz == String.class) {
             return null;
         }
-        TableInfo tableInfo = TABLE_INFO_CACHE.get(ClassUtils.getUserClass(clazz));
-        if (null != tableInfo) {
-            return tableInfo;
-        }
-        //尝试获取父类缓存
-        Class<?> currentClass = clazz;
-        while (null == tableInfo && Object.class != currentClass) {
-            currentClass = currentClass.getSuperclass();
-            tableInfo = TABLE_INFO_CACHE.get(ClassUtils.getUserClass(currentClass));
-        }
-        if (tableInfo != null) {
-            TABLE_INFO_CACHE.put(ClassUtils.getUserClass(clazz), tableInfo);
-        }
-        return tableInfo;
+        return TABLE_INFO_CACHE.get(ClassUtils.getUserClass(clazz));
     }
 
     /**
@@ -338,7 +325,6 @@ public class TableInfoHelper {
                     }
                 }
                 tableInfo.setKeyRelated(checkRelated(underCamel, field.getName(), column))
-                    .setClazz(field.getDeclaringClass())
                     .setKeyColumn(column)
                     .setKeyProperty(field.getName());
                 return true;
@@ -370,8 +356,7 @@ public class TableInfoHelper {
                 tableInfo.setKeyRelated(checkRelated(tableInfo.isUnderCamel(), field.getName(), column))
                     .setIdType(dbConfig.getIdType())
                     .setKeyColumn(column)
-                    .setKeyProperty(field.getName())
-                    .setClazz(field.getDeclaringClass());
+                    .setKeyProperty(field.getName());
                 return true;
             } else {
                 throwExceptionId(clazz);

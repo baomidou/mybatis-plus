@@ -69,10 +69,6 @@ public class TableFieldInfo implements Constants {
      */
     private final FieldStrategy fieldStrategy;
     /**
-     * 标记该字段属于哪个类
-     */
-    private final Class<?> clazz;
-    /**
      * 是否进行 select 查询
      * <p>大字段可设置为 false 不加入 select 查询范围</p>
      */
@@ -117,7 +113,6 @@ public class TableFieldInfo implements Constants {
         this.propertyType = field.getType();
         this.isCharSequence = StringUtils.isCharSequence(this.propertyType);
         this.fieldFill = tableField.fill();
-        this.clazz = field.getDeclaringClass();
         this.update = tableField.update();
         this.el = el;
         tableInfo.setLogicDelete(this.initLogicDelete(dbConfig, field));
@@ -162,7 +157,6 @@ public class TableFieldInfo implements Constants {
         this.el = field.getName();
         this.fieldStrategy = dbConfig.getFieldStrategy();
         this.setCondition(dbConfig);
-        this.clazz = field.getDeclaringClass();
         tableInfo.setLogicDelete(this.initLogicDelete(dbConfig, field));
 
         String column = field.getName();

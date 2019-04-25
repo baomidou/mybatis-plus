@@ -96,10 +96,6 @@ public class TableInfo implements Constants {
      */
     private boolean underCamel = true;
     /**
-     * 标记该字段属于哪个类
-     */
-    private Class<?> clazz;
-    /**
      * 缓存包含主键及字段的 sql select
      */
     @Setter(AccessLevel.NONE)
