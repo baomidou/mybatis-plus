@@ -1,9 +1,10 @@
 package com.baomidou.mybatisplus.test.plugins.paginationInterceptor;
 
-import java.io.Reader;
-import java.sql.Connection;
-import java.util.List;
-
+import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.test.plugins.RandomUtils;
+import com.baomidou.mybatisplus.test.plugins.paginationInterceptor.entity.PageUser;
+import com.baomidou.mybatisplus.test.plugins.paginationInterceptor.mapper.PageUserMapper;
+import com.baomidou.mybatisplus.test.plugins.paginationInterceptor.service.PageUserService;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.ibatis.session.RowBounds;
@@ -17,11 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.test.plugins.RandomUtils;
-import com.baomidou.mybatisplus.test.plugins.paginationInterceptor.entity.PageUser;
-import com.baomidou.mybatisplus.test.plugins.paginationInterceptor.mapper.PageUserMapper;
-import com.baomidou.mybatisplus.test.plugins.paginationInterceptor.service.PageUserService;
+import java.io.Reader;
+import java.sql.Connection;
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/plugins/paginationInterceptor.xml"})
@@ -65,7 +64,7 @@ public class PaginationInterceptorTest {
     @Test
     public void pageOrderByTest() {
         // 带OrderBy
-        Page<PageUser> page2 = new Page<>(current, size, "name");
+        Page<PageUser> page2 = new Page<>(current, size, "name asc,id desc");
         Page<PageUser> result2 = pageUserService.selectPage(page2);
         Assert.assertTrue(!result2.getRecords().isEmpty());
         // 没有orderby但是设置了倒叙
@@ -97,5 +96,16 @@ public class PaginationInterceptorTest {
         RowBounds rowBounds = new RowBounds(offset, limit);
         List<PageUser> result = pageUserMapper.selectPage(rowBounds, null);
         Assert.assertTrue(!result.isEmpty());
+    }
+
+
+    @Test
+    public void pageOrderByTest2() {
+        // 带OrderBy
+        Page<PageUser> page = new Page<>(current, size);
+        page.setOrderBy("id asc,name desc");
+        Page<PageUser> result2 = pageUserService.selectPage(page);
+        //打印日志为：SELECT id,`name`,age FROM page_user ORDER BY id asc,name desc LIMIT 0,24 测试正确
+        Assert.assertTrue(!result2.getRecords().isEmpty());
     }
 }

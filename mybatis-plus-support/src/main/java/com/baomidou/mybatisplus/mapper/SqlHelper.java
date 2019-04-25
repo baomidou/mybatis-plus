@@ -15,8 +15,10 @@
  */
 package com.baomidou.mybatisplus.mapper;
 
-import java.util.List;
-
+import com.baomidou.mybatisplus.entity.TableInfo;
+import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.plugins.Page;
+import com.baomidou.mybatisplus.toolkit.*;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.Configuration;
@@ -24,13 +26,7 @@ import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import com.baomidou.mybatisplus.entity.TableInfo;
-import com.baomidou.mybatisplus.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.toolkit.MapUtils;
-import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
+import java.util.List;
 
 /**
  * <p>
@@ -194,9 +190,14 @@ public class SqlHelper {
         }
         // 排序 fixed gitee issues/IHF7N
         if (page.isOpenSort() && page.isSearchCount()) {
-            wrapper.orderAsc(page.getAscs());
-            wrapper.orderDesc(page.getDescs());
+            if (StringUtils.isNotEmpty(page.getOrderBy())) {
+                wrapper.orderBy(page.getOrderBy());
+            } else {
+                wrapper.orderAsc(page.getAscs());
+                wrapper.orderDesc(page.getDescs());
+            }
         }
+
         // MAP 参数查询
         if (MapUtils.isNotEmpty(page.getCondition())) {
             wrapper.allEq(page.getCondition());

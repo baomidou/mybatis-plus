@@ -15,14 +15,13 @@
  */
 package com.baomidou.mybatisplus.plugins.pagination;
 
+import com.baomidou.mybatisplus.toolkit.StringUtils;
+import org.apache.ibatis.session.RowBounds;
+
 import java.beans.Transient;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.ibatis.session.RowBounds;
-
-import com.baomidou.mybatisplus.toolkit.StringUtils;
 
 /**
  * <p>
@@ -75,13 +74,33 @@ public class Pagination extends RowBounds implements Serializable {
      * SQL 排序 ASC 集合
      * </p>
      */
-    private List<String> ascs;
+    private List<String> ascs = new ArrayList<>();
     /**
      * <p>
      * SQL 排序 DESC 集合
      * </p>
      */
-    private List<String> descs;
+    private List<String> descs = new ArrayList<>();
+
+    /**
+     * <p>
+     * SQL 排序 order by
+     * 增加一个字符型字段，方便排序使用，正序倒序写在一起用英文逗号隔开
+     * 例子 id asc,name asc,age desc
+     * 测试代码如下：
+     * //测试方法为： PaginationInterceptorTest.pageOrderByTest2()
+     *
+     * @Test public void pageOrderByTest2() {
+     * // 带OrderBy
+     * Page<PageUser> page = new Page<>(current, size);
+     * page.setOrderBy("id asc,name desc");
+     * Page<PageUser> result2 = pageUserService.selectPage(page);
+     * //打印日志为：SELECT id,`name`,age FROM page_user ORDER BY id asc,name desc LIMIT 0,24 测试正确
+     * Assert.assertTrue(!result2.getRecords().isEmpty());
+     * }
+     * </p>
+     */
+    private String orderBy;
 
     /**
      * 是否为升序 ASC（ 默认： true ）
@@ -216,6 +235,14 @@ public class Pagination extends RowBounds implements Serializable {
         return this;
     }
 
+    public String getOrderBy() {
+        return orderBy;
+    }
+
+    public void setOrderBy(String orderBy) {
+        this.orderBy = orderBy;
+    }
+
     @Transient
     public boolean isOpenSort() {
         return openSort;
@@ -257,6 +284,13 @@ public class Pagination extends RowBounds implements Serializable {
         return this;
     }
 
+    public Pagination setAscs(String... ascs) {
+        for (String asc : ascs) {
+            this.ascs.add(asc);
+        }
+        return this;
+    }
+
     @Transient
     public List<String> getDescs() {
         return orders(!isAsc, descs);
@@ -264,6 +298,13 @@ public class Pagination extends RowBounds implements Serializable {
 
     public Pagination setDescs(List<String> descs) {
         this.descs = descs;
+        return this;
+    }
+
+    public Pagination setDescs(String... descs) {
+        for (String desc : descs) {
+            this.descs.add(desc);
+        }
         return this;
     }
 
