@@ -20,7 +20,6 @@ import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
@@ -118,11 +117,6 @@ public class OptimisticLockerInterceptor implements Interceptor {
                 String methodName = methodId.substring(methodId.lastIndexOf(StringPool.DOT) + 1);
                 Class<?> entityClass = et.getClass();
                 TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
-                // fixed github 299
-                while (tableInfo == null && entityClass != null) {
-                    entityClass = ClassUtils.getUserClass(entityClass.getSuperclass());
-                    tableInfo = TableInfoHelper.getTableInfo(entityClass);
-                }
                 EntityField versionField = this.getVersionField(entityClass, tableInfo);
                 if (versionField == null) {
                     return invocation.proceed();

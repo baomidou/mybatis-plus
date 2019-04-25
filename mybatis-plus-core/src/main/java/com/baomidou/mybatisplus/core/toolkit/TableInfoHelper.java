@@ -77,7 +77,21 @@ public class TableInfoHelper {
             || clazz == String.class) {
             return null;
         }
-        return TABLE_INFO_CACHE.get(ClassUtils.getUserClass(clazz));
+        // https://github.com/baomidou/mybatis-plus/issues/299
+        TableInfo tableInfo = TABLE_INFO_CACHE.get(ClassUtils.getUserClass(clazz));
+        if (null != tableInfo) {
+            return tableInfo;
+        }
+        //尝试获取父类缓存
+        Class<?> currentClass = clazz;
+        while (null == tableInfo && Object.class != currentClass) {
+            currentClass = currentClass.getSuperclass();
+            tableInfo = TABLE_INFO_CACHE.get(ClassUtils.getUserClass(currentClass));
+        }
+        if (tableInfo != null) {
+            TABLE_INFO_CACHE.put(ClassUtils.getUserClass(clazz), tableInfo);
+        }
+        return tableInfo;
     }
 
     /**
