@@ -16,8 +16,10 @@
 package com.baomidou.mybatisplus.test.h2;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.entity.H2User;
 import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
@@ -74,6 +76,14 @@ class H2UserTest extends BaseTest {
         int version = 1;
         int row = userService.myInsertWithoutParam(name, version);
         Assertions.assertEquals(1, row);
+    }
+
+
+    @Test
+    @Order(6)
+    void testSelectLambdaById() {
+        H2User h2User = userService.getOne(Wrappers.<H2User>lambdaQuery().eq(H2User::getTestId, 101));
+        Assertions.assertTrue(null != h2User);
     }
 
     @Test
