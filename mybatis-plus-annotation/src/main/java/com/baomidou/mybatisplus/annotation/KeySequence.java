@@ -15,12 +15,7 @@
  */
 package com.baomidou.mybatisplus.annotation;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * 序列主键策略
@@ -44,5 +39,4 @@ public @interface KeySequence {
      * id的类型
      */
     Class<?> clazz() default Long.class;
-
 }
