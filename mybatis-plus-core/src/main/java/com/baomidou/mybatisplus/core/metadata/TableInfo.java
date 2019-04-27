@@ -337,7 +337,7 @@ public class TableInfo implements Constants {
      */
     public void initResultMapIfNeed() {
         if (StringUtils.isEmpty(resultMap)) {
-            String id = currentNamespace + DOT + MYBATIS_PLUS + UNDERSCORE + entityType.getName();
+            String id = currentNamespace + DOT + MYBATIS_PLUS + UNDERSCORE + entityType.getSimpleName();
             List<ResultMapping> resultMappings = new ArrayList<>();
             if (keyType != null) {
                 ResultMapping idMapping = new ResultMapping.Builder(configuration, keyProperty, keyColumn, keyType)
@@ -346,8 +346,8 @@ public class TableInfo implements Constants {
             }
             if (CollectionUtils.isNotEmpty(fieldList)) {
                 fieldList.forEach(f -> {
-                    ResultMapping mapping = new ResultMapping.Builder(configuration, f.getProperty(), f.getColumn(),
-                        f.getPropertyType()).build();
+                    ResultMapping mapping = new ResultMapping.Builder(configuration, f.getProperty(),
+                        StringUtils.getTargetColumn(f.getColumn()), f.getPropertyType()).build();
                     resultMappings.add(mapping);
                 });
             }

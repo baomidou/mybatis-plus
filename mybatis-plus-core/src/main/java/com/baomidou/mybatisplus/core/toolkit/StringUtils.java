@@ -160,6 +160,19 @@ public class StringUtils {
     }
 
     /**
+     * 获取真正的字段名
+     *
+     * @param column 字段名
+     * @return 字段名
+     */
+    public static String getTargetColumn(String column) {
+        if (isNotColumnName(column)) {
+            return column.substring(1, column.length() - 1);
+        }
+        return column;
+    }
+
+    /**
      * 字符串驼峰转下划线格式
      *
      * @param param 需要转换的字符串
@@ -813,8 +826,8 @@ public class StringUtils {
      *
      * @param s 原字符串
      * @param p 移除的单词
-     * @deprecated 3.1.1
      * @return ignore
+     * @deprecated 3.1.1
      */
     @Deprecated
     public static String removeWordWithComma(String s, String p) {
