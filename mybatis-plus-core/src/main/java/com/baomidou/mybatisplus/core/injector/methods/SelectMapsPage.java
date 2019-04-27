@@ -37,6 +37,6 @@ public class SelectMapsPage extends AbstractMethod {
         String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(tableInfo, true),
             tableInfo.getTableName(), sqlWhereEntityWrapper(true, tableInfo));
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, Map.class, tableInfo);
+        return this.addSelectMappedStatementForOther(mapperClass, sqlMethod.getMethod(), sqlSource, Map.class);
     }
 }

@@ -18,18 +18,20 @@ package com.baomidou.mybatisplus.core.metadata;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.apache.ibatis.mapping.ResultFlag;
+import org.apache.ibatis.mapping.ResultMap;
+import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.session.Configuration;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -45,6 +47,10 @@ import static java.util.stream.Collectors.joining;
 @Accessors(chain = true)
 public class TableInfo implements Constants {
 
+    /**
+     * 实体类型
+     */
+    private Class<?> entityType;
     /**
      * 表主键ID 类型
      */
@@ -71,7 +77,7 @@ public class TableInfo implements Constants {
      */
     private String keyProperty;
     /**
-     * 属性类型
+     * 表主键ID 属性类型
      */
     private Class<?> keyType;
     /**
@@ -111,6 +117,10 @@ public class TableInfo implements Constants {
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
     private String sqlSelect;
+
+    public TableInfo(Class<?> entityType) {
+        this.entityType = entityType;
+    }
 
     /**
      * 获得注入的 SQL Statement
@@ -320,5 +330,30 @@ public class TableInfo implements Constants {
             return logicDeleteSql;
         }
         return EMPTY;
+    }
+
+    /**
+     * 自动构建 resultMap 并注入(如果条件符合的话)
+     */
+    public void initResultMapIfNeed() {
+        if (StringUtils.isEmpty(resultMap)) {
+            String id = currentNamespace + DOT + MYBATIS_PLUS + UNDERSCORE + entityType.getName();
+            List<ResultMapping> resultMappings = new ArrayList<>();
+            if (keyType != null) {
+                ResultMapping idMapping = new ResultMapping.Builder(configuration, keyProperty, keyColumn, keyType)
+                    .flags(Collections.singletonList(ResultFlag.ID)).build();
+                resultMappings.add(idMapping);
+            }
+            if (CollectionUtils.isNotEmpty(fieldList)) {
+                fieldList.forEach(f -> {
+                    ResultMapping mapping = new ResultMapping.Builder(configuration, f.getProperty(), f.getColumn(),
+                        f.getPropertyType()).build();
+                    resultMappings.add(mapping);
+                });
+            }
+            ResultMap resultMap = new ResultMap.Builder(configuration, id, entityType, resultMappings).build();
+            configuration.addResultMap(resultMap);
+            this.resultMap = id;
+        }
     }
 }

@@ -124,7 +124,7 @@ public class TableInfoHelper {
         }
 
         /* 没有获取到缓存信息,则初始化 */
-        tableInfo = new TableInfo();
+        tableInfo = new TableInfo(clazz);
         GlobalConfig globalConfig;
         if (null != builderAssistant) {
             tableInfo.setCurrentNamespace(builderAssistant.getCurrentNamespace());
@@ -140,6 +140,8 @@ public class TableInfoHelper {
 
         /* 初始化字段相关 */
         initTableFields(clazz, globalConfig, tableInfo);
+
+        tableInfo.initResultMapIfNeed();
 
         /* 放入缓存 */
         TABLE_INFO_CACHE.put(clazz, tableInfo);

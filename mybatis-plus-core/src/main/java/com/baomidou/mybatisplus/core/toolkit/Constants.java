@@ -24,6 +24,11 @@ package com.baomidou.mybatisplus.core.toolkit;
 public interface Constants extends StringPool {
 
     /**
+     * project name
+     */
+    String MYBATIS_PLUS = "mybatis-plus";
+
+    /**
      * MD5
      */
     String MD5 = "MD5";

@@ -37,6 +37,6 @@ public class SelectByMap extends AbstractMethod {
         String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(tableInfo, false),
             tableInfo.getTableName(), sqlWhereByMap(tableInfo));
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Map.class);
-        return this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, modelClass, tableInfo);
+        return this.addSelectMappedStatementForTable(mapperClass, sqlMethod.getMethod(), sqlSource, tableInfo);
     }
 }

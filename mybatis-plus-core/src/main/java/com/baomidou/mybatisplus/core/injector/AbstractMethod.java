@@ -235,18 +235,24 @@ public abstract class AbstractMethod implements Constants {
     /**
      * 查询
      */
-    protected MappedStatement addSelectMappedStatement(Class<?> mapperClass, String id, SqlSource sqlSource,
-                                                       Class<?> resultType, TableInfo table) {
-        if (null != table) {
-            String resultMap = table.getResultMap();
-            if (null != resultMap) {
-                /* 返回 resultMap 映射结果集 */
-                return addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.SELECT, null,
-                    resultMap, null, new NoKeyGenerator(), null, null);
-            }
+    protected MappedStatement addSelectMappedStatementForTable(Class<?> mapperClass, String id, SqlSource sqlSource,
+                                                               TableInfo table) {
+        String resultMap = table.getResultMap();
+        if (null != resultMap) {
+            /* 返回 resultMap 映射结果集 */
+            return addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.SELECT, null,
+                resultMap, null, new NoKeyGenerator(), null, null);
+        } else {
+            /* 普通查询 */
+            return addSelectMappedStatementForOther(mapperClass, id, sqlSource, table.getEntityType());
         }
+    }
 
-        /* 普通查询 */
+    /**
+     * 查询
+     */
+    protected MappedStatement addSelectMappedStatementForOther(Class<?> mapperClass, String id, SqlSource sqlSource,
+                                                               Class<?> resultType) {
         return addMappedStatement(mapperClass, id, sqlSource, SqlCommandType.SELECT, null,
             null, resultType, new NoKeyGenerator(), null, null);
     }

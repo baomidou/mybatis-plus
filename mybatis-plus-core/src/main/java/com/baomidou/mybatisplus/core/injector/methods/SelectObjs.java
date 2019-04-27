@@ -35,6 +35,6 @@ public class SelectObjs extends AbstractMethod {
         String sql = String.format(sqlMethod.getSql(), sqlSelectObjsColumns(tableInfo),
             tableInfo.getTableName(), sqlWhereEntityWrapper(true, tableInfo));
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return this.addSelectMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource, Object.class, tableInfo);
+        return this.addSelectMappedStatementForOther(mapperClass, sqlMethod.getMethod(), sqlSource, Object.class);
     }
 }
