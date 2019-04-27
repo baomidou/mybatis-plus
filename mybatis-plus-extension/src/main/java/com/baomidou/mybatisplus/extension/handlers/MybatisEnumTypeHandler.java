@@ -16,10 +16,10 @@
 package com.baomidou.mybatisplus.extension.handlers;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
+import com.baomidou.mybatisplus.core.enums.IEnum;
 import com.baomidou.mybatisplus.core.toolkit.EnumUtils;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
-
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.type.BaseTypeHandler;
@@ -38,16 +38,14 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * EnumValue 注解自定义枚举属性转换器
+ * 自定义枚举属性转换器
  *
- * @author yuxiaobin
- * @date 2018-08-30
- * @deprecated  3.0.8 {@link com.baomidou.mybatisplus.extension.handlers.EnumTypeHandler}
+ * @author hubin
+ * @since 2017-10-11
  */
-@Deprecated
-public class EnumAnnotationTypeHandler<E extends Enum<E>> extends BaseTypeHandler<E> {
-    
-    private static final Log LOGGER = LogFactory.getLog(EnumAnnotationTypeHandler.class);
+public class MybatisEnumTypeHandler<E extends Enum<?>> extends BaseTypeHandler<Enum<?>> {
+
+    private static final Log LOGGER = LogFactory.getLog(MybatisEnumTypeHandler.class);
     
     private static final Map<Class<?>, Method> TABLE_METHOD_OF_ENUM_TYPES = new ConcurrentHashMap<>();
     
@@ -55,59 +53,69 @@ public class EnumAnnotationTypeHandler<E extends Enum<E>> extends BaseTypeHandle
     
     private final Method method;
 
-    public EnumAnnotationTypeHandler(Class<E> type) {
+    public MybatisEnumTypeHandler(Class<E> type) {
         if (type == null) {
             throw new IllegalArgumentException("Type argument cannot be null");
         }
         this.type = type;
-        this.method = TABLE_METHOD_OF_ENUM_TYPES.computeIfAbsent(type, k-> {
-            Field field = dealEnumType(this.type).orElseThrow(() -> new IllegalArgumentException(String.format("Could not find @EnumValue in Class: %s.", type.getName())));
-            return ReflectionKit.getMethod(this.type, field);
-        });
+        if (IEnum.class.isAssignableFrom(type)) {
+            try {
+                this.method = type.getMethod("getValue");
+            } catch (NoSuchMethodException e) {
+                throw new IllegalArgumentException(String.format("NoSuchMethod getValue() in Class: %s.", type.getName()));
+            }
+        } else {
+            this.method = TABLE_METHOD_OF_ENUM_TYPES.computeIfAbsent(type, k -> {
+                Field field = dealEnumType(this.type).orElseThrow(() -> new IllegalArgumentException(String.format("Could not find @EnumValue in Class: %s.", type.getName())));
+                return ReflectionKit.getMethod(this.type, field);
+            });
+        }
     }
-
+    
     @SuppressWarnings("Duplicates")
     @Override
-    public void setNonNullParameter(PreparedStatement ps, int i, E parameter, JdbcType jdbcType) throws SQLException {
+    public void setNonNullParameter(PreparedStatement ps, int i, Enum<?> parameter, JdbcType jdbcType)
+        throws SQLException {
         try {
-            method.setAccessible(true);
+            this.method.setAccessible(true);
             if (jdbcType == null) {
-                ps.setObject(i, method.invoke(parameter));
+                ps.setObject(i, this.method.invoke(parameter));
             } else {
                 // see r3589
-                ps.setObject(i, method.invoke(parameter), jdbcType.TYPE_CODE);
+                ps.setObject(i, this.method.invoke(parameter), jdbcType.TYPE_CODE);
             }
         } catch (IllegalAccessException e) {
             LOGGER.error("unrecognized jdbcType, failed to set StringValue for type=" + parameter);
         } catch (InvocationTargetException e) {
-            throw ExceptionUtils.mpe("Error: NoSuchMethod in %s.  Cause:", e, type.getName());
+            throw ExceptionUtils.mpe("Error: NoSuchMethod in %s.  Cause:", e, this.type.getName());
         }
     }
 
     @Override
     public E getNullableResult(ResultSet rs, String columnName) throws SQLException {
-        return getEnumResult(rs.getObject(columnName));
-    }
-
-    private E getEnumResult(Object s) {
-        if (s == null) {
+        if (null == rs.getObject(columnName) && rs.wasNull()) {
             return null;
         }
-        return EnumUtils.valueOf(type, s, method);
+        return EnumUtils.valueOf(this.type, rs.getObject(columnName), this.method);
     }
 
     @Override
     public E getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
-        return getEnumResult(rs.getObject(columnIndex));
+        if (null == rs.getObject(columnIndex) && rs.wasNull()) {
+            return null;
+        }
+        return EnumUtils.valueOf(this.type, rs.getObject(columnIndex), this.method);
     }
 
     @Override
     public E getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
-        return getEnumResult(cs.getObject(columnIndex));
+        if (null == cs.getObject(columnIndex) && cs.wasNull()) {
+            return null;
+        }
+        return EnumUtils.valueOf(this.type, cs.getObject(columnIndex), this.method);
     }
 
     public static Optional<Field> dealEnumType(Class<?> clazz) {
         return clazz.isEnum() ? Arrays.stream(clazz.getDeclaredFields()).filter(field -> field.isAnnotationPresent(EnumValue.class)).findFirst() : Optional.empty();
     }
-    
 }

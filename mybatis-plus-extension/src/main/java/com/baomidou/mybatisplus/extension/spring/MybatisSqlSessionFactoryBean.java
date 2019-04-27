@@ -27,7 +27,7 @@ import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.MybatisMapWrapperFactory;
-import com.baomidou.mybatisplus.extension.handlers.EnumTypeHandler;
+import com.baomidou.mybatisplus.extension.handlers.MybatisEnumTypeHandler;
 import com.baomidou.mybatisplus.extension.toolkit.AopUtils;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.extension.toolkit.PackageHelper;
@@ -517,8 +517,8 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             TypeHandlerRegistry typeHandlerRegistry = targetConfiguration.getTypeHandlerRegistry();
             classes.stream()
                 .filter(Class::isEnum)
-                .filter(cls -> IEnum.class.isAssignableFrom(cls) || EnumTypeHandler.dealEnumType(cls).isPresent())
-                .forEach(cls -> typeHandlerRegistry.register(cls, EnumTypeHandler.class));
+                .filter(cls -> IEnum.class.isAssignableFrom(cls) || MybatisEnumTypeHandler.dealEnumType(cls).isPresent())
+                .forEach(cls -> typeHandlerRegistry.register(cls, MybatisEnumTypeHandler.class));
         }
 
         Optional.ofNullable(this.objectFactory).ifPresent(targetConfiguration::setObjectFactory);

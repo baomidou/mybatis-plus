@@ -17,14 +17,12 @@ package com.baomidou.mybatisplus.extension.handlers;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.baomidou.mybatisplus.core.enums.IEnum;
-
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.apache.ibatis.type.JdbcType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -32,11 +30,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class EnumTypeHandlerTest extends BaseTypeHandlerTest {
-    
-    private static final EnumTypeHandler<SexEnum> SEX_ENUM_ENUM_TYPE_HANDLER = new EnumTypeHandler<>(SexEnum.class);
-    
-    private static final EnumTypeHandler<GradeEnum> GRADE_ENUM_ENUM_TYPE_HANDLER = new EnumTypeHandler<>(GradeEnum.class);
+public class MybatisEnumTypeHandlerTest extends BaseTypeHandlerTest {
+
+    private static final MybatisEnumTypeHandler<SexEnum> SEX_ENUM_ENUM_TYPE_HANDLER = new MybatisEnumTypeHandler<>(SexEnum.class);
+
+    private static final MybatisEnumTypeHandler<GradeEnum> GRADE_ENUM_ENUM_TYPE_HANDLER = new MybatisEnumTypeHandler<>(GradeEnum.class);
     
     @Getter
     @AllArgsConstructor

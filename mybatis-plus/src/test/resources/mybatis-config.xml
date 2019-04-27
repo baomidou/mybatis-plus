@@ -5,7 +5,8 @@
 <configuration>
 
     <settings>
-        <setting name="defaultEnumTypeHandler" value="com.baomidou.mybatisplus.extension.handlers.EnumTypeHandler"/>
+        <setting name="defaultEnumTypeHandler"
+                 value="com.baomidou.mybatisplus.extension.handlers.MybatisEnumTypeHandler"/>
     </settings>
 
     <mappers>

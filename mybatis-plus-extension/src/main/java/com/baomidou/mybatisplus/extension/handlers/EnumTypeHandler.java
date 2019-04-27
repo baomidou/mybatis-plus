@@ -20,7 +20,6 @@ import com.baomidou.mybatisplus.core.enums.IEnum;
 import com.baomidou.mybatisplus.core.toolkit.EnumUtils;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
-
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.type.BaseTypeHandler;
@@ -44,16 +43,17 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author hubin
  * @since 2017-10-11
  */
+@Deprecated
 public class EnumTypeHandler<E extends Enum<?>> extends BaseTypeHandler<Enum<?>> {
-    
+
     private static final Log LOGGER = LogFactory.getLog(EnumTypeHandler.class);
-    
+
     private static final Map<Class<?>, Method> TABLE_METHOD_OF_ENUM_TYPES = new ConcurrentHashMap<>();
-    
+
     private final Class<E> type;
-    
+
     private final Method method;
-    
+
     public EnumTypeHandler(Class<E> type) {
         if (type == null) {
             throw new IllegalArgumentException("Type argument cannot be null");
@@ -72,7 +72,7 @@ public class EnumTypeHandler<E extends Enum<?>> extends BaseTypeHandler<Enum<?>>
             });
         }
     }
-    
+
     @SuppressWarnings("Duplicates")
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, Enum<?> parameter, JdbcType jdbcType)
@@ -91,7 +91,7 @@ public class EnumTypeHandler<E extends Enum<?>> extends BaseTypeHandler<Enum<?>>
             throw ExceptionUtils.mpe("Error: NoSuchMethod in %s.  Cause:", e, this.type.getName());
         }
     }
-    
+
     @Override
     public E getNullableResult(ResultSet rs, String columnName) throws SQLException {
         if (null == rs.getObject(columnName) && rs.wasNull()) {
@@ -99,7 +99,7 @@ public class EnumTypeHandler<E extends Enum<?>> extends BaseTypeHandler<Enum<?>>
         }
         return EnumUtils.valueOf(this.type, rs.getObject(columnName), this.method);
     }
-    
+
     @Override
     public E getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
         if (null == rs.getObject(columnIndex) && rs.wasNull()) {
@@ -107,7 +107,7 @@ public class EnumTypeHandler<E extends Enum<?>> extends BaseTypeHandler<Enum<?>>
         }
         return EnumUtils.valueOf(this.type, rs.getObject(columnIndex), this.method);
     }
-    
+
     @Override
     public E getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
         if (null == cs.getObject(columnIndex) && cs.wasNull()) {
@@ -115,9 +115,8 @@ public class EnumTypeHandler<E extends Enum<?>> extends BaseTypeHandler<Enum<?>>
         }
         return EnumUtils.valueOf(this.type, cs.getObject(columnIndex), this.method);
     }
-    
+
     public static Optional<Field> dealEnumType(Class<?> clazz) {
         return clazz.isEnum() ? Arrays.stream(clazz.getDeclaredFields()).filter(field -> field.isAnnotationPresent(EnumValue.class)).findFirst() : Optional.empty();
     }
-    
 }
