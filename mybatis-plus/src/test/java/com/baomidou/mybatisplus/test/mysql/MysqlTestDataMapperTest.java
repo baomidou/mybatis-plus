@@ -233,59 +233,6 @@ class MysqlTestDataMapperTest extends BaseDbTest {
         assertTrue(CollectionUtils.isNotEmpty(mysqlDataPage.getRecords()));
         System.out.println(JSON.toJSONString(mysqlDataPage));
     }
-    //
-//    @Test
-//    void d7_selectPage() {
-//        Page<CommonData> page = new Page<>(1, 5);
-//        page.setDesc("c_time", "u_time");
-//        IPage<CommonData> dataPage = commonMapper.selectPage(page, null);
-//        Assertions.assertSame(dataPage, page);
-//        Assertions.assertNotEquals(0, dataPage.getRecords().size());
-//        Assertions.assertTrue(CollectionUtils.isNotEmpty(dataPage.getRecords()));
-//        System.out.println(JSON.toJSONString(dataPage));
-//        System.out.println(JSON.toJSON(dataPage.convert(CommonData::getId)));
-//
-//        Page<CommonData> commonDataPage = new Page<>(1, 5);
-//        commonDataPage.setDesc("c_time", "u_time");
-//        IPage<CommonData> commonDataDataPage = commonMapper.myPage(commonDataPage);
-//        Assertions.assertSame(commonDataDataPage, commonDataPage);
-//        Assertions.assertNotEquals(0, commonDataDataPage.getRecords().size());
-//        Assertions.assertTrue(CollectionUtils.isNotEmpty(commonDataDataPage.getRecords()));
-//        System.out.println(JSON.toJSONString(commonDataDataPage));
-//        System.out.println(JSON.toJSON(commonDataDataPage.convert(CommonData::getId)));
-//
-//        Page<CommonLogicData> logicPage = new Page<>(1, 5);
-//        IPage<CommonLogicData> logicDataPage = commonLogicDataMapper.selectPage(logicPage, null);
-//        Assertions.assertSame(logicDataPage, logicPage);
-//        Assertions.assertNotEquals(0, logicDataPage.getRecords().size());
-//        Assertions.assertTrue(CollectionUtils.isNotEmpty(logicDataPage.getRecords()));
-//        System.out.println(JSON.toJSONString(logicDataPage));
-//
-//        Page<MysqlData> mysqlPage = new Page<>(1, 5);
-//        IPage<MysqlData> mysqlDataPage = mysqlMapper.selectPage(mysqlPage, null);
-//        Assertions.assertSame(mysqlDataPage, mysqlPage);
-//        Assertions.assertNotEquals(0, mysqlDataPage.getRecords().size());
-//        Assertions.assertTrue(CollectionUtils.isNotEmpty(mysqlDataPage.getRecords()));
-//        System.out.println(JSON.toJSONString(mysqlDataPage));
-//
-//        Page<ResultMapEntity> resultMapEntityPage = new Page<>(1, 5);
-//        IPage<ResultMapEntity> resultMapEntityDataPage = resultMapEntityMapper.selectPage(resultMapEntityPage, null);
-//        Assertions.assertSame(resultMapEntityDataPage, resultMapEntityPage);
-//        Assertions.assertNotEquals(0, resultMapEntityDataPage.getRecords().size());
-//        Assertions.assertTrue(CollectionUtils.isNotEmpty(resultMapEntityDataPage.getRecords()));
-//        System.out.println(JSON.toJSONString(resultMapEntityDataPage));
-//    }
-//
-//    @Test
-//    void d7_arLambdaSelectPage() {
-//        Page<CommonData> page = new Page<>(1, 5);
-//        page.setDesc("c_time", "u_time");
-//        IPage<CommonData> dataPage = new CommonData().selectPage(page, new QueryWrapper<CommonData>().lambda());
-//        Assertions.assertSame(dataPage, page);
-//        Assertions.assertNotEquals(0, dataPage.getRecords().size());
-//        Assertions.assertTrue(CollectionUtils.isNotEmpty(dataPage.getRecords()));
-//        System.out.println(JSON.toJSONString(dataPage));
-//    }
 //
 //    @Test
 //    void d8_testApply() {

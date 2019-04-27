@@ -63,13 +63,17 @@ public class TableInfo implements Constants {
      */
     private boolean keyRelated = false;
     /**
+     * 表主键ID 字段名
+     */
+    private String keyColumn;
+    /**
      * 表主键ID 属性名
      */
     private String keyProperty;
     /**
-     * 表主键ID 字段名
+     * 属性类型
      */
-    private String keyColumn;
+    private Class<?> keyType;
     /**
      * 表主键ID Sequence
      */
@@ -124,6 +128,7 @@ public class TableInfo implements Constants {
     public void setConfiguration(Configuration configuration) {
         Assert.notNull(configuration, "Error: You need Initialize MybatisConfiguration !");
         this.configuration = (MybatisConfiguration) configuration;
+        this.underCamel = configuration.isMapUnderscoreToCamelCase();
     }
 
     /**

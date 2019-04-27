@@ -129,7 +129,6 @@ public class TableInfoHelper {
         if (null != builderAssistant) {
             tableInfo.setCurrentNamespace(builderAssistant.getCurrentNamespace());
             tableInfo.setConfiguration(builderAssistant.getConfiguration());
-            tableInfo.setUnderCamel(builderAssistant.getConfiguration().isMapUnderscoreToCamelCase());
             globalConfig = GlobalConfigUtils.getGlobalConfig(builderAssistant.getConfiguration());
         } else {
             // 兼容测试场景
@@ -340,7 +339,8 @@ public class TableInfoHelper {
                 }
                 tableInfo.setKeyRelated(checkRelated(underCamel, field.getName(), column))
                     .setKeyColumn(column)
-                    .setKeyProperty(field.getName());
+                    .setKeyProperty(field.getName())
+                    .setKeyType(field.getType());
                 return true;
             } else {
                 throwExceptionId(clazz);
@@ -370,7 +370,8 @@ public class TableInfoHelper {
                 tableInfo.setKeyRelated(checkRelated(tableInfo.isUnderCamel(), field.getName(), column))
                     .setIdType(dbConfig.getIdType())
                     .setKeyColumn(column)
-                    .setKeyProperty(field.getName());
+                    .setKeyProperty(field.getName())
+                    .setKeyType(field.getType());
                 return true;
             } else {
                 throwExceptionId(clazz);
