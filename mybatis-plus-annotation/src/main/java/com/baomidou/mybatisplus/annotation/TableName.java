@@ -53,4 +53,9 @@ public @interface TableName {
      * 实体映射结果集
      */
     String resultMap() default "";
+
+    /**
+     * 是否自动构建 resultMap 并使用
+     */
+    boolean autoResultMap() default false;
 }

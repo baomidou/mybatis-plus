@@ -64,6 +64,10 @@ public class TableInfo implements Constants {
      */
     private String resultMap;
     /**
+     * 是否是需要自动生成的 resultMap
+     */
+    private boolean autoInitResultMap;
+    /**
      * 是否是自动生成的 resultMap
      */
     private boolean initResultMap;
@@ -340,7 +344,7 @@ public class TableInfo implements Constants {
      * 自动构建 resultMap 并注入(如果条件符合的话)
      */
     public void initResultMapIfNeed() {
-        if (resultMap == null && configuration != null) {
+        if (resultMap == null && autoInitResultMap) {
             String id = currentNamespace + DOT + MYBATIS_PLUS + UNDERSCORE + entityType.getSimpleName();
             List<ResultMapping> resultMappings = new ArrayList<>();
             if (keyType != null) {

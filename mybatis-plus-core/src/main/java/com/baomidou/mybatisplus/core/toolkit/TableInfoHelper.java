@@ -184,6 +184,7 @@ public class TableInfoHelper {
             if (StringUtils.isNotEmpty(table.resultMap())) {
                 tableInfo.setResultMap(table.resultMap());
             }
+            tableInfo.setAutoInitResultMap(table.autoResultMap());
         } else {
             tableName = initTableNameWithDbConfig(tableName, dbConfig);
         }
