@@ -117,7 +117,7 @@ public abstract class AbstractMethod implements Constants {
     protected String sqlSelectColumns(TableInfo table, boolean queryWrapper) {
         /* 假设存在 resultMap 映射返回 */
         String selectColumns = ASTERISK;
-        if (table.getResultMap() == null) {
+        if (table.getResultMap() == null || (table.getResultMap() != null && table.isInitResultMap())) {
             /* 普通查询 */
             selectColumns = table.getAllSqlSelect();
         }

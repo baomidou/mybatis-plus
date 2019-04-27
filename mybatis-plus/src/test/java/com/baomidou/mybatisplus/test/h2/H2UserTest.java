@@ -88,7 +88,7 @@ class H2UserTest extends BaseTest {
     @Order(10)
     void testEntityWrapperSelectSql() {
         QueryWrapper<H2User> ew = new QueryWrapper<>();
-        ew.select("test_id as testId, name, age");
+        ew.select("test_id, name, age");
         List<H2User> list = userService.list(ew);
         for (H2User u : list) {
             Assertions.assertNotNull(u.getTestId());
