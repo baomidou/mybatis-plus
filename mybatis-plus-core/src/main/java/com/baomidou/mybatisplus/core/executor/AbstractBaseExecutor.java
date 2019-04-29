@@ -60,12 +60,12 @@ public abstract class AbstractBaseExecutor extends BaseExecutor {
             if (optional.isPresent()) {
                 IPage<?> page = (IPage) optional.get().getValue();
                 offset = page.getCurrent();
-                limit = page.getTotal();
+                limit = page.getSize();
             }
         } else if (parameterObject instanceof IPage) {
             IPage<?> page = (IPage) parameterObject;
             offset = page.getCurrent();
-            limit = page.getTotal();
+            limit = page.getSize();
         }
         cacheKey.update(offset);
         cacheKey.update(limit);
