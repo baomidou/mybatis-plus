@@ -39,6 +39,7 @@ public @interface TableField {
      * <p>支持：@TableField(el = "role, jdbcType=BIGINT)</p>
      * <p>支持：@TableField(el = "role, typeHandler=com.baomidou.springcloud.typehandler.PhoneTypeHandler")</p>
      */
+    @Deprecated
     String el() default "";
 
     /**
