@@ -43,7 +43,7 @@ public enum NamingStrategy {
             // 没必要转换
             return StringPool.EMPTY;
         }
-        String tempName = name;
+        String tempName = name.substring(0, 1).toLowerCase() + name.substring(1);;
         // 大写数字下划线组成转为小写 , 允许混合模式转为小写
         if (StringUtils.isCapitalMode(name) || StringUtils.isMixedMode(name)) {
             tempName = name.toLowerCase();
