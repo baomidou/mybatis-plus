@@ -1,0 +1,22 @@
+ext{
+    springBootVersion = "2.1.2.RELEASE"
+}
+dependencies {
+    implementation(enforcedPlatform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}" as String))
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}"
+    annotationProcessor "org.springframework.boot:spring-boot-autoconfigure-processor:${springBootVersion}"
+
+    implementation 'org.springframework.boot:spring-boot-test-autoconfigure'
+    implementation 'org.springframework:spring-test'
+    implementation 'org.springframework:spring-tx'
+    implementation 'org.junit.jupiter:junit-jupiter-api'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.springframework.boot:spring-boot-configuration-processor'
+    implementation 'org.springframework.boot:spring-boot-autoconfigure-processor'
+
+    testImplementation project(":mybatis-plus-boot-starter")
+    testImplementation 'com.h2database:h2'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+compileJava.dependsOn(processResources)
