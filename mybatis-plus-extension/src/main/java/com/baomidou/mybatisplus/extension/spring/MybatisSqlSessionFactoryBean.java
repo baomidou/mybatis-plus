@@ -26,7 +26,6 @@ import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.extension.MybatisMapWrapperFactory;
 import com.baomidou.mybatisplus.extension.handlers.MybatisEnumTypeHandler;
 import com.baomidou.mybatisplus.extension.toolkit.AopUtils;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
@@ -475,11 +474,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
         // TODO 初始化 id-work 以及 打印骚东西
         targetConfiguration.setGlobalConfig(this.globalConfig);
-
-        // TODO 自动注入 map 接收返回结果下是否下划线转驼峰
-        if (targetConfiguration.isMapUnderscoreToCamelCase()) {
-            targetConfiguration.setObjectWrapperFactory(new MybatisMapWrapperFactory());
-        }
 
         // TODO 设置元数据相关 如果用户没有配置 dbType 则自动获取
         if (globalConfig.getDbConfig().getDbType() == DbType.OTHER) {

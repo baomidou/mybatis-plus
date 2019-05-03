@@ -15,18 +15,17 @@
  */
 package com.baomidou.mybatisplus.extension;
 
-import java.util.Map;
-
+import com.baomidou.mybatisplus.extension.handlers.MybatisMapWrapper;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.wrapper.ObjectWrapper;
 import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
 
-import com.baomidou.mybatisplus.extension.handlers.MybatisMapWrapper;
+import java.util.Map;
 
 /**
  * 开启返回map结果集的下划线转驼峰
  *
- * <p>// 使用注册 Map 下划线转驼峰</p>
+ * <p> Map 的 key 下划线转驼峰 </p>
  * <p>configuration.setObjectWrapperFactory(new MybatisMapWrapperFactory());</p>
  *
  * @author yuxiaobin
@@ -40,7 +39,7 @@ public class MybatisMapWrapperFactory implements ObjectWrapperFactory {
     }
 
     @SuppressWarnings("unchecked")
-	@Override
+    @Override
     public ObjectWrapper getWrapperFor(MetaObject metaObject, Object object) {
         return new MybatisMapWrapper(metaObject, (Map<String, Object>) object);
     }

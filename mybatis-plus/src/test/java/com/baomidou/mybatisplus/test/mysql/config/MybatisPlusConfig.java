@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.core.parser.ISqlParser;
+import com.baomidou.mybatisplus.extension.MybatisMapWrapperFactory;
 import com.baomidou.mybatisplus.extension.injector.methods.additional.AlwaysUpdateSomeColumnById;
 import com.baomidou.mybatisplus.extension.injector.methods.additional.InsertBatchSomeColumn;
 import com.baomidou.mybatisplus.extension.injector.methods.additional.LogicDeleteByIdWithFill;
@@ -74,6 +75,8 @@ public class MybatisPlusConfig {
         configuration.addInterceptor(paginationInterceptor);
         /* 乐观锁插件 */
         configuration.addInterceptor(new OptimisticLockerInterceptor());
+        /* map 下划线转驼峰 */
+        configuration.setObjectWrapperFactory(new MybatisMapWrapperFactory());
         sqlSessionFactory.setConfiguration(configuration);
         /* 自动填充插件 */
         globalConfig.setMetaObjectHandler(new MysqlMetaObjectHandler());
