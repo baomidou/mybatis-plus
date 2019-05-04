@@ -97,6 +97,8 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
 
     private final List<ConfigurationCustomizer> configurationCustomizers;
 
+    private final List<MybatisPlusPropertiesCustomizer> mybatisPlusPropertiesCustomizers;
+
     private final ApplicationContext applicationContext;
 
 
@@ -105,17 +107,22 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
                                         ResourceLoader resourceLoader,
                                         ObjectProvider<DatabaseIdProvider> databaseIdProvider,
                                         ObjectProvider<List<ConfigurationCustomizer>> configurationCustomizersProvider,
+                                        ObjectProvider<List<MybatisPlusPropertiesCustomizer>> mybatisPlusPropertiesCustomizerProvider,
                                         ApplicationContext applicationContext) {
         this.properties = properties;
         this.interceptors = interceptorsProvider.getIfAvailable();
         this.resourceLoader = resourceLoader;
         this.databaseIdProvider = databaseIdProvider.getIfAvailable();
         this.configurationCustomizers = configurationCustomizersProvider.getIfAvailable();
+        this.mybatisPlusPropertiesCustomizers = mybatisPlusPropertiesCustomizerProvider.getIfAvailable();
         this.applicationContext = applicationContext;
     }
 
     @Override
     public void afterPropertiesSet() {
+        if (!CollectionUtils.isEmpty(mybatisPlusPropertiesCustomizers)) {
+            mybatisPlusPropertiesCustomizers.forEach(i -> i.customize(properties));
+        }
         checkConfigFileExists();
     }
 
