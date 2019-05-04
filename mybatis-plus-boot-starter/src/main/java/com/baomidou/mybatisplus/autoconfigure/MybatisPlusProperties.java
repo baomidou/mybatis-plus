@@ -17,8 +17,10 @@ package com.baomidou.mybatisplus.autoconfigure;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import lombok.Data;
+import lombok.experimental.Accessors;
 import org.apache.ibatis.session.ExecutorType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -38,10 +40,9 @@ import java.util.stream.Stream;
  * @author Kazuki Shimizu
  */
 @Data
-@ConfigurationProperties(prefix = MybatisPlusProperties.MYBATIS_PREFIX)
+@Accessors(chain = true)
+@ConfigurationProperties(prefix = Constants.MYBATIS_PLUS)
 public class MybatisPlusProperties {
-
-    public static final String MYBATIS_PREFIX = "mybatis-plus";
 
     private static final ResourcePatternResolver resourceResolver = new PathMatchingResourcePatternResolver();
 
@@ -52,6 +53,7 @@ public class MybatisPlusProperties {
 
     /**
      * Locations of MyBatis mapper files.
+     *
      * @since 3.1.2 add default value
      */
     private String[] mapperLocations = new String[]{"classpath*:/mapper/**/*.xml"};
