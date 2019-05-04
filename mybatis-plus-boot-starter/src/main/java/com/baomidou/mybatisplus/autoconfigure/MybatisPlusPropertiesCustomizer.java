@@ -18,6 +18,8 @@ package com.baomidou.mybatisplus.autoconfigure;
 /**
  * Callback interface that can be customized a {@link MybatisPlusProperties} object generated on auto-configuration.
  *
+ * <p> 慎用 </p>
+ *
  * @author miemie
  * @since 3.1.2
  */
