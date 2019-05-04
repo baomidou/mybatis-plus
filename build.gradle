@@ -171,15 +171,14 @@ subprojects {
         exclude("**/mysql/**")
     }
 
-    //noinspection GroovyAssignabilityCheck
     task javadocJar(type: Jar) {
         archiveClassifier = 'javadoc'
         from javadoc
     }
 
-    tasks.whenTaskAdded {
-        if (this.name.contains("signMavenJavaPublication")) {
-            this.enabled = File(project.property("signing.secretKeyRingFile") as String).isFile
+    tasks.whenTaskAdded { task ->
+        if (task.name.contains('signMavenJavaPublication')) {
+            task.enabled = new File(project.property('signing.secretKeyRingFile') as String).isFile()
         }
     }
 
