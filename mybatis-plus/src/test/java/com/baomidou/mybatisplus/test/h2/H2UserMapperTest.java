@@ -15,24 +15,6 @@
  */
 package com.baomidou.mybatisplus.test.h2;
 
-import static java.util.stream.Collectors.toList;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -43,6 +25,24 @@ import com.baomidou.mybatisplus.test.h2.entity.H2User;
 import com.baomidou.mybatisplus.test.h2.entity.SuperEntity;
 import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.mapper.H2UserMapper;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Mybatis Plus H2 Junit Test
@@ -126,7 +126,12 @@ class H2UserMapperTest extends BaseTest {
         // 根据主键更新 age = 18
         h2User.setAge(AgeEnum.TWO);
         Assertions.assertEquals(1, userMapper.updateById(h2User));
-
+        long testId = h2User.getTestId();
+        // https://github.com/baomidou/mybatis-plus/issues/299
+        Assertions.assertEquals(1, userMapper.updateById(new H2User() {{
+            setTestId(testId);
+            setAge(AgeEnum.TWO);
+        }}));
         // 查询一条记录
         Assertions.assertNotNull(userMapper.selectOne(new QueryWrapper<>(new H2User().setName("Joe").setTestType(1))));
 
