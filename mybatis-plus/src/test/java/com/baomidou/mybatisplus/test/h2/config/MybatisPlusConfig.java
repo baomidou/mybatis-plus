@@ -118,8 +118,8 @@ public class MybatisPlusConfig {
              * 测试注入自定义方法
              */
             @Override
-            public List<AbstractMethod> getMethodList() {
-                List<AbstractMethod> methodList = super.getMethodList();
+            public List<AbstractMethod> getMethodList(Class<?> mapperClass) {
+                List<AbstractMethod> methodList = super.getMethodList(mapperClass);
                 methodList.add(new LogicDeleteByIdWithFill());
                 methodList.add(new AlwaysUpdateSomeColumnById(t -> t.getFieldFill() != FieldFill.INSERT));
                 methodList.add(new InsertBatchSomeColumn(t -> !(t.getFieldFill() == FieldFill.UPDATE

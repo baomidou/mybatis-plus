@@ -31,7 +31,7 @@ import static java.util.stream.Collectors.toList;
 public class DefaultSqlInjector extends AbstractSqlInjector {
 
     @Override
-    public List<AbstractMethod> getMethodList() {
+    public List<AbstractMethod> getMethodList(Class<?> mapperClass) {
         return Stream.of(
             new Insert(),
             new Delete(),

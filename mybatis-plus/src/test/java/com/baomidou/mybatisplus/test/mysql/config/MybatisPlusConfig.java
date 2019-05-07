@@ -31,8 +31,10 @@ import com.baomidou.mybatisplus.extension.plugins.tenant.TenantHandler;
 import com.baomidou.mybatisplus.extension.plugins.tenant.TenantSqlParser;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.baomidou.mybatisplus.test.mysql.MysqlMetaObjectHandler;
+
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
+
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.JdbcType;
 import org.mybatis.spring.annotation.MapperScan;
@@ -40,9 +42,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
-import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.sql.DataSource;
 
 /**
  * Mybatis Plus Config
@@ -94,8 +97,8 @@ public class MybatisPlusConfig {
              * 注入自定义全局方法
              */
             @Override
-            public List<AbstractMethod> getMethodList() {
-                List<AbstractMethod> methodList = super.getMethodList();
+            public List<AbstractMethod> getMethodList(Class<?> mapperClass) {
+                List<AbstractMethod> methodList = super.getMethodList(mapperClass);
                 methodList.add(new LogicDeleteByIdWithFill());
                 // 不要逻辑删除字段, 不要乐观锁字段, 不要填充策略是 UPDATE 的字段
                 methodList.add(new InsertBatchSomeColumn(t -> !t.isLogicDelete() && !t.isVersion() && t.getFieldFill() != FieldFill.UPDATE));
