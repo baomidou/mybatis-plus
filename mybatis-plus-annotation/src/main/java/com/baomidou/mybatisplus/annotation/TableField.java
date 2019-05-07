@@ -66,8 +66,26 @@ public @interface TableField {
     /**
      * 字段验证策略
      * <p>默认追随全局配置</p>
+     *
+     * @deprecated 3.1.2 please use {@link #insertStrategy} and {@link #updateStrategy} and {@link #selectStrategy}
      */
+    @Deprecated
     FieldStrategy strategy() default FieldStrategy.DEFAULT;
+
+    /**
+     * 字段验证策略之 insert
+     */
+    FieldStrategy insertStrategy() default FieldStrategy.DEFAULT;
+
+    /**
+     * 字段验证策略之 update
+     */
+    FieldStrategy updateStrategy() default FieldStrategy.DEFAULT;
+
+    /**
+     * 字段验证策略之 select
+     */
+    FieldStrategy selectStrategy() default FieldStrategy.DEFAULT;
 
     /**
      * 字段自动填充策略

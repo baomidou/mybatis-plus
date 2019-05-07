@@ -27,6 +27,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.lang.reflect.Field;
+import java.util.Optional;
 
 /**
  * 数据库表字段反射信息
@@ -66,8 +67,23 @@ public class TableFieldInfo implements Constants {
     private final boolean isCharSequence;
     /**
      * 字段策略【 默认，自判断 null 】
+     *
+     * @deprecated 3.1.2 please use {@link #insertStrategy} and {@link #updateStrategy} and {@link #selectStrategy}
      */
+    @Deprecated
     private final FieldStrategy fieldStrategy;
+    /**
+     * 字段验证策略之 insert
+     */
+    private final FieldStrategy insertStrategy;
+    /**
+     * 字段验证策略之 update
+     */
+    private final FieldStrategy updateStrategy;
+    /**
+     * 字段验证策略之 select
+     */
+    private final FieldStrategy selectStrategy;
     /**
      * 是否进行 select 查询
      * <p>大字段可设置为 false 不加入 select 查询范围</p>
@@ -133,6 +149,30 @@ public class TableFieldInfo implements Constants {
         } else {
             this.fieldStrategy = tableField.strategy();
         }
+        /*
+         * 优先使用单个字段注解，否则使用全局配置
+         */
+        if (tableField.insertStrategy() == FieldStrategy.DEFAULT) {
+            this.insertStrategy = dbConfig.getInsertStrategy();
+        } else {
+            this.insertStrategy = tableField.insertStrategy();
+        }
+        /*
+         * 优先使用单个字段注解，否则使用全局配置
+         */
+        if (tableField.updateStrategy() == FieldStrategy.DEFAULT) {
+            this.updateStrategy = dbConfig.getUpdateStrategy();
+        } else {
+            this.updateStrategy = tableField.updateStrategy();
+        }
+        /*
+         * 优先使用单个字段注解，否则使用全局配置
+         */
+        if (tableField.selectStrategy() == FieldStrategy.DEFAULT) {
+            this.selectStrategy = dbConfig.getSelectStrategy();
+        } else {
+            this.selectStrategy = tableField.selectStrategy();
+        }
 
         if (StringUtils.isNotEmpty(tableField.condition())) {
             // 细粒度条件控制
@@ -156,6 +196,9 @@ public class TableFieldInfo implements Constants {
         this.isCharSequence = StringUtils.isCharSequence(this.propertyType);
         this.el = field.getName();
         this.fieldStrategy = dbConfig.getFieldStrategy();
+        this.insertStrategy = dbConfig.getInsertStrategy();
+        this.updateStrategy = dbConfig.getUpdateStrategy();
+        this.selectStrategy = dbConfig.getSelectStrategy();
         this.setCondition(dbConfig);
         tableInfo.setLogicDelete(this.initLogicDelete(dbConfig, field));
 
@@ -266,7 +309,7 @@ public class TableFieldInfo implements Constants {
         if (fieldFill == FieldFill.INSERT || fieldFill == FieldFill.INSERT_UPDATE) {
             return sqlScript;
         }
-        return convertIf(sqlScript, property);
+        return convertIf(sqlScript, property, insertStrategy);
     }
 
     /**
@@ -296,7 +339,7 @@ public class TableFieldInfo implements Constants {
         if (fieldFill == FieldFill.INSERT || fieldFill == FieldFill.INSERT_UPDATE) {
             return sqlScript;
         }
-        return convertIf(sqlScript, property);
+        return convertIf(sqlScript, property, insertStrategy);
     }
 
     /**
@@ -333,7 +376,7 @@ public class TableFieldInfo implements Constants {
             // 不进行 if 包裹
             return sqlSet;
         }
-        return convertIf(sqlSet, newPrefix + property);
+        return convertIf(sqlSet, newPrefix + property, updateStrategy);
     }
 
     /**
@@ -347,21 +390,23 @@ public class TableFieldInfo implements Constants {
         // 默认:  AND column=#{prefix + el}
         String sqlScript = " AND " + String.format(condition, column, newPrefix + el);
         // 查询的时候只判非空
-        return convertIf(sqlScript, newPrefix + property);
+        return convertIf(sqlScript, newPrefix + property, selectStrategy);
     }
 
     /**
      * 转换成 if 标签的脚本片段
      *
-     * @param sqlScript sql 脚本片段
-     * @param property  字段名
+     * @param sqlScript     sql 脚本片段
+     * @param property      字段名
+     * @param fieldStrategy 验证策略
      * @return if 脚本片段
      */
-    private String convertIf(final String sqlScript, final String property) {
-        if (fieldStrategy == FieldStrategy.IGNORED) {
+    private String convertIf(final String sqlScript, final String property, final FieldStrategy fieldStrategy) {
+        final FieldStrategy targetStrategy = Optional.ofNullable(fieldStrategy).orElse(this.fieldStrategy);
+        if (targetStrategy == FieldStrategy.IGNORED) {
             return sqlScript;
         }
-        if (fieldStrategy == FieldStrategy.NOT_EMPTY && isCharSequence) {
+        if (targetStrategy == FieldStrategy.NOT_EMPTY && isCharSequence) {
             return SqlScriptUtils.convertIf(sqlScript, String.format("%s != null and %s != ''", property, property),
                 false);
         }
