@@ -74,23 +74,27 @@ public class TableFieldInfo implements Constants {
     /**
      * 字段策略【 默认，自判断 null 】
      *
-     * @deprecated 3.1.2 please use {@link #insertStrategy} and {@link #updateStrategy} and {@link #whereStrategy}
+     * @deprecated v_3.1.2 please use {@link #insertStrategy} and {@link #updateStrategy} and {@link #whereStrategy}
+     * @since deprecated v_3.1.2 @2019-5-7
      */
     @Deprecated
     private final FieldStrategy fieldStrategy;
     /**
      * 字段验证策略之 insert
      * Refer to {@link TableField#insertStrategy()}
+     * @since added v_3.1.2 @2019-5-7
      */
     private final FieldStrategy insertStrategy;
     /**
      * 字段验证策略之 update
      * Refer to {@link TableField#updateStrategy()}
+     * @since added v_3.1.2 @2019-5-7
      */
     private final FieldStrategy updateStrategy;
     /**
      * 字段验证策略之 where
      * Refer to {@link TableField#whereStrategy()}
+     * @since added v_3.1.2 @2019-5-7
      */
     private final FieldStrategy whereStrategy;
     /**

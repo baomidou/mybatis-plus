@@ -67,7 +67,8 @@ public @interface TableField {
      * 字段验证策略
      * <p>默认追随全局配置</p>
      *
-     * @deprecated 3.1.2 please use {@link #insertStrategy} and {@link #updateStrategy} and {@link #whereStrategy}
+     * @deprecated v_3.1.2 please use {@link #insertStrategy} and {@link #updateStrategy} and {@link #whereStrategy}
+     * @since deprecated v_3.1.2 @2019-5-7
      */
     @Deprecated
     FieldStrategy strategy() default FieldStrategy.DEFAULT;
@@ -77,6 +78,7 @@ public @interface TableField {
      * IGNORED: 直接拼接 insert into table_a(column) values (#{columnProperty});
      * NOT_NULL: insert into table_a(<if test="columnProperty != null">column</if>) values (<if test="columnProperty != null">#{columnProperty}</if>)
      * NOT_EMPTY: insert into table_a(<if test="columnProperty != null and columnProperty!=''">column</if>) values (<if test="columnProperty != null and columnProperty!=''">#{columnProperty}</if>)
+     * @since added v_3.1.2 @2019-5-7
      */
     FieldStrategy insertStrategy() default FieldStrategy.DEFAULT;
 
@@ -85,6 +87,7 @@ public @interface TableField {
      * IGNORED: 直接拼接 update table_a set column=#{columnProperty}, 属性为null/空string都会被set进去
      * NOT_NULL: update table_a set <if test="columnProperty != null">column=#{columnProperty}</if>
      * NOT_EMPTY: update table_a set <if test="columnProperty != null and columnProperty!=''">column=#{columnProperty}</if>
+     * @since added v_3.1.2 @2019-5-7
      */
     FieldStrategy updateStrategy() default FieldStrategy.DEFAULT;
 
@@ -93,6 +96,7 @@ public @interface TableField {
      * IGNORED: 直接拼接 column=#{columnProperty}
      * NOT_NULL: <if test="columnProperty != null">column=#{columnProperty}</if>
      * NOT_EMPTY: <if test="columnProperty != null and columnProperty!=''">column=#{columnProperty}</if>
+     * @since added v_3.1.2 @2019-5-7
      */
     FieldStrategy whereStrategy() default FieldStrategy.DEFAULT;
 
