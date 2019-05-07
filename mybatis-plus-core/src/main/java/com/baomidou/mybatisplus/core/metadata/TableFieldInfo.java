@@ -15,19 +15,25 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
-import com.baomidou.mybatisplus.annotation.*;
+import java.lang.reflect.Field;
+import java.util.Optional;
+
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.SqlCondition;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.Version;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
+
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-
-import java.lang.reflect.Field;
-import java.util.Optional;
 
 /**
  * 数据库表字段反射信息
@@ -68,22 +74,25 @@ public class TableFieldInfo implements Constants {
     /**
      * 字段策略【 默认，自判断 null 】
      *
-     * @deprecated 3.1.2 please use {@link #insertStrategy} and {@link #updateStrategy} and {@link #selectStrategy}
+     * @deprecated 3.1.2 please use {@link #insertStrategy} and {@link #updateStrategy} and {@link #whereStrategy}
      */
     @Deprecated
     private final FieldStrategy fieldStrategy;
     /**
      * 字段验证策略之 insert
+     * Refer to {@link TableField#insertStrategy()}
      */
     private final FieldStrategy insertStrategy;
     /**
      * 字段验证策略之 update
+     * Refer to {@link TableField#updateStrategy()}
      */
     private final FieldStrategy updateStrategy;
     /**
-     * 字段验证策略之 select
+     * 字段验证策略之 where
+     * Refer to {@link TableField#whereStrategy()}
      */
-    private final FieldStrategy selectStrategy;
+    private final FieldStrategy whereStrategy;
     /**
      * 是否进行 select 查询
      * <p>大字段可设置为 false 不加入 select 查询范围</p>
@@ -168,10 +177,10 @@ public class TableFieldInfo implements Constants {
         /*
          * 优先使用单个字段注解，否则使用全局配置
          */
-        if (tableField.selectStrategy() == FieldStrategy.DEFAULT) {
-            this.selectStrategy = dbConfig.getSelectStrategy();
+        if (tableField.whereStrategy() == FieldStrategy.DEFAULT) {
+            this.whereStrategy = dbConfig.getSelectStrategy();
         } else {
-            this.selectStrategy = tableField.selectStrategy();
+            this.whereStrategy = tableField.whereStrategy();
         }
 
         if (StringUtils.isNotEmpty(tableField.condition())) {
@@ -198,7 +207,7 @@ public class TableFieldInfo implements Constants {
         this.fieldStrategy = dbConfig.getFieldStrategy();
         this.insertStrategy = dbConfig.getInsertStrategy();
         this.updateStrategy = dbConfig.getUpdateStrategy();
-        this.selectStrategy = dbConfig.getSelectStrategy();
+        this.whereStrategy = dbConfig.getSelectStrategy();
         this.setCondition(dbConfig);
         tableInfo.setLogicDelete(this.initLogicDelete(dbConfig, field));
 
@@ -390,7 +399,7 @@ public class TableFieldInfo implements Constants {
         // 默认:  AND column=#{prefix + el}
         String sqlScript = " AND " + String.format(condition, column, newPrefix + el);
         // 查询的时候只判非空
-        return convertIf(sqlScript, newPrefix + property, selectStrategy);
+        return convertIf(sqlScript, newPrefix + property, whereStrategy);
     }
 
     /**

@@ -67,25 +67,34 @@ public @interface TableField {
      * 字段验证策略
      * <p>默认追随全局配置</p>
      *
-     * @deprecated 3.1.2 please use {@link #insertStrategy} and {@link #updateStrategy} and {@link #selectStrategy}
+     * @deprecated 3.1.2 please use {@link #insertStrategy} and {@link #updateStrategy} and {@link #whereStrategy}
      */
     @Deprecated
     FieldStrategy strategy() default FieldStrategy.DEFAULT;
 
     /**
-     * 字段验证策略之 insert
+     * 字段验证策略之 insert: 当insert操作时，该字段拼接insert语句时的策略
+     * IGNORED: 直接拼接 insert into table_a(column) values (#{columnProperty});
+     * NOT_NULL: insert into table_a(<if test="columnProperty != null">column</if>) values (<if test="columnProperty != null">#{columnProperty}</if>)
+     * NOT_EMPTY: insert into table_a(<if test="columnProperty != null and columnProperty!=''">column</if>) values (<if test="columnProperty != null and columnProperty!=''">#{columnProperty}</if>)
      */
     FieldStrategy insertStrategy() default FieldStrategy.DEFAULT;
 
     /**
-     * 字段验证策略之 update
+     * 字段验证策略之 update: 当更新操作时，该字段拼接set语句时的策略
+     * IGNORED: 直接拼接 update table_a set column=#{columnProperty}, 属性为null/空string都会被set进去
+     * NOT_NULL: update table_a set <if test="columnProperty != null">column=#{columnProperty}</if>
+     * NOT_EMPTY: update table_a set <if test="columnProperty != null and columnProperty!=''">column=#{columnProperty}</if>
      */
     FieldStrategy updateStrategy() default FieldStrategy.DEFAULT;
 
     /**
-     * 字段验证策略之 select
+     * 字段验证策略之 where: 表示该字段在拼接where条件时的策略
+     * IGNORED: 直接拼接 column=#{columnProperty}
+     * NOT_NULL: <if test="columnProperty != null">column=#{columnProperty}</if>
+     * NOT_EMPTY: <if test="columnProperty != null and columnProperty!=''">column=#{columnProperty}</if>
      */
-    FieldStrategy selectStrategy() default FieldStrategy.DEFAULT;
+    FieldStrategy whereStrategy() default FieldStrategy.DEFAULT;
 
     /**
      * 字段自动填充策略
