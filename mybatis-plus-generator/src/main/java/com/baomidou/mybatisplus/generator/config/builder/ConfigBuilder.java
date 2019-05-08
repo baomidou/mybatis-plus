@@ -95,8 +95,10 @@ public class ConfigBuilder {
      * 注入配置信息
      */
     private InjectionConfig injectionConfig;
-
-
+    /**
+     * 是否支持注释
+     */
+    private boolean commentSupported;
     /**
      * 在构造器中处理配置
      *
@@ -134,6 +136,9 @@ public class ConfigBuilder {
         } else {
             this.strategyConfig = strategyConfig;
         }
+        //SQLITE 数据库不支持注释获取
+        commentSupported = !dataSourceConfig.getDbType().equals(DbType.SQLITE);
+
         handlerStrategy(this.strategyConfig);
     }
 
@@ -454,14 +459,18 @@ public class ConfigBuilder {
                 while (results.next()) {
                     String tableName = results.getString(dbQuery.tableName());
                     if (StringUtils.isNotEmpty(tableName)) {
-                        String tableComment = results.getString(dbQuery.tableComment());
-                        if (config.isSkipView() && "VIEW".equals(tableComment)) {
-                            // 跳过视图
-                            continue;
-                        }
                         tableInfo = new TableInfo();
                         tableInfo.setName(tableName);
-                        tableInfo.setComment(tableComment);
+
+                        if (commentSupported) {
+                            String tableComment = results.getString(dbQuery.tableComment());
+                            if (config.isSkipView() && "VIEW".equals(tableComment)) {
+                                // 跳过视图
+                                continue;
+                            }
+                            tableInfo.setComment(tableComment);
+                        }
+
                         if (isInclude) {
                             for (String includeTable : config.getInclude()) {
                                 // 忽略大小写等于 或 正则 true
@@ -574,7 +583,7 @@ public class ConfigBuilder {
                         isId = h2PkColumns.contains(columnName);
                     } else {
                         String key = results.getString(dbQuery.fieldKey());
-                        if (DbType.DB2 == dbType) {
+                        if (DbType.DB2 == dbType || DbType.SQLITE == dbType) {
                             isId = StringUtils.isNotEmpty(key) && "1".equals(key);
                         } else {
                             isId = StringUtils.isNotEmpty(key) && "PRI".equals(key.toUpperCase());
@@ -584,7 +593,7 @@ public class ConfigBuilder {
                     // 处理ID
                     if (isId && !haveId) {
                         field.setKeyFlag(true);
-                        if (DbType.H2 == dbType || dbQuery.isKeyIdentity(results)) {
+                        if (DbType.H2 == dbType || DbType.SQLITE == dbType|| dbQuery.isKeyIdentity(results)) {
                             field.setKeyIdentityFlag(true);
                         }
                         haveId = true;
@@ -610,7 +619,9 @@ public class ConfigBuilder {
                         field.setPropertyName(strategyConfig, processName(field.getName(), config.getNaming()));
                     }
                     field.setColumnType(dataSourceConfig.getTypeConvert().processTypeConvert(globalConfig, field.getType()));
-                    field.setComment(results.getString(dbQuery.fieldComment()));
+                    if (commentSupported) {
+                        field.setComment(results.getString(dbQuery.fieldComment()));
+                    }
                     if (strategyConfig.includeSuperEntityColumns(field.getName())) {
                         // 跳过公共字段
                         commonFieldList.add(field);
