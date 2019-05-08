@@ -140,6 +140,8 @@ public class DataSourceConfig {
             return DbType.DB2;
         } else if (str.contains("mariadb")) {
             return DbType.MARIADB;
+        } else if (str.contains("sqlite")) {
+            return DbType.MARIADB;
         } else if (str.contains("h2")) {
             return DbType.H2;
         } else {
@@ -161,6 +163,9 @@ public class DataSourceConfig {
                     break;
                 case DB2:
                     typeConvert = new DB2TypeConvert();
+                    break;
+                case SQLITE:
+                    typeConvert = new SqliteTypeConvert();
                     break;
                 case MARIADB:
                     typeConvert = new MySqlTypeConvert();
