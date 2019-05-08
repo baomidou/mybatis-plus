@@ -67,6 +67,7 @@ ext {
         "oracle"                : fileTree(dir: 'libs', includes: ['ojdbc-11.2.0.3-jdk16.jar']),
         "h2"                    : "com.h2database:h2:1.4.197",
         "mysql"                 : "mysql:mysql-connector-java:8.0.15",
+        "sqlite"                : "org.xerial:sqlite-jdbc:3.27.2.1",
         //code generator
         "velocity"              : "org.apache.velocity:velocity-engine-core:2.0",
         "freemarker"            : "org.freemarker:freemarker:2.3.28",

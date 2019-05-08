@@ -90,6 +90,9 @@ public class DataSourceConfig {
                 case H2:
                     dbQuery = new H2Query();
                     break;
+                case SQLITE:
+                    dbQuery = new SqliteQuery();
+                    break;
                 default:
                     // 默认 MYSQL
                     dbQuery = new MySqlQuery();
