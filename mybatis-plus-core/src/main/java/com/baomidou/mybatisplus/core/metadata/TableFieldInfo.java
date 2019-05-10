@@ -15,25 +15,19 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
-import java.lang.reflect.Field;
-import java.util.Optional;
-
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
-import com.baomidou.mybatisplus.annotation.SqlCondition;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.Version;
+import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
-
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+
+import java.lang.reflect.Field;
+import java.util.Optional;
 
 /**
  * 数据库表字段反射信息
@@ -74,26 +68,29 @@ public class TableFieldInfo implements Constants {
     /**
      * 字段策略【 默认，自判断 null 】
      *
-     * @deprecated v_3.1.2 please use {@link #insertStrategy} and {@link #updateStrategy} and {@link #whereStrategy}
      * @since deprecated v_3.1.2 @2019-5-7
+     * @deprecated v_3.1.2 please use {@link #insertStrategy} and {@link #updateStrategy} and {@link #whereStrategy}
      */
     @Deprecated
     private final FieldStrategy fieldStrategy;
     /**
      * 字段验证策略之 insert
      * Refer to {@link TableField#insertStrategy()}
+     *
      * @since added v_3.1.2 @2019-5-7
      */
     private final FieldStrategy insertStrategy;
     /**
      * 字段验证策略之 update
      * Refer to {@link TableField#updateStrategy()}
+     *
      * @since added v_3.1.2 @2019-5-7
      */
     private final FieldStrategy updateStrategy;
     /**
      * 字段验证策略之 where
      * Refer to {@link TableField#whereStrategy()}
+     *
      * @since added v_3.1.2 @2019-5-7
      */
     private final FieldStrategy whereStrategy;
@@ -416,6 +413,9 @@ public class TableFieldInfo implements Constants {
      */
     private String convertIf(final String sqlScript, final String property, final FieldStrategy fieldStrategy) {
         final FieldStrategy targetStrategy = Optional.ofNullable(fieldStrategy).orElse(this.fieldStrategy);
+        if (targetStrategy == FieldStrategy.NEVER) {
+            return null;
+        }
         if (targetStrategy == FieldStrategy.IGNORED) {
             return sqlScript;
         }

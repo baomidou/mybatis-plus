@@ -39,5 +39,9 @@ public enum FieldStrategy {
      * <p>1. 在全局里代表 NOT_NULL</p>
      * <p>2. 在注解里代表 跟随全局</p>
      */
-    DEFAULT
+    DEFAULT,
+    /**
+     * 在对应情况下不再加入相应的条件
+     */
+    NEVER
 }

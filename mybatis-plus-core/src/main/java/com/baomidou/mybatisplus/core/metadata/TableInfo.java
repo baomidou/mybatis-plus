@@ -33,6 +33,7 @@ import org.apache.ibatis.session.Configuration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 import static java.util.stream.Collectors.joining;
@@ -256,7 +257,7 @@ public class TableInfo implements Constants {
     public String getAllInsertSqlPropertyMaybeIf(final String prefix) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
         return getKeyInsertSqlProperty(newPrefix, true) + fieldList.stream()
-            .map(i -> i.getInsertSqlPropertyMaybeIf(newPrefix)).collect(joining(NEWLINE));
+            .map(i -> i.getInsertSqlPropertyMaybeIf(newPrefix)).filter(Objects::nonNull).collect(joining(NEWLINE));
     }
 
     /**
@@ -270,7 +271,7 @@ public class TableInfo implements Constants {
      */
     public String getAllInsertSqlColumnMaybeIf() {
         return getKeyInsertSqlColumn(true) + fieldList.stream().map(TableFieldInfo::getInsertSqlColumnMaybeIf)
-            .collect(joining(NEWLINE));
+            .filter(Objects::nonNull).collect(joining(NEWLINE));
     }
 
     /**
@@ -290,7 +291,7 @@ public class TableInfo implements Constants {
                 }
                 return true;
             })
-            .map(i -> i.getSqlWhere(newPrefix)).collect(joining(NEWLINE));
+            .map(i -> i.getSqlWhere(newPrefix)).filter(Objects::nonNull).collect(joining(NEWLINE));
         if (!withId || StringUtils.isEmpty(keyProperty)) {
             return filedSqlScript;
         }
@@ -315,7 +316,7 @@ public class TableInfo implements Constants {
                     return !(isLogicDelete() && i.isLogicDelete());
                 }
                 return true;
-            }).map(i -> i.getSqlSet(newPrefix)).collect(joining(NEWLINE));
+            }).map(i -> i.getSqlSet(newPrefix)).filter(Objects::nonNull).collect(joining(NEWLINE));
     }
 
     /**

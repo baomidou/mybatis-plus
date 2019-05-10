@@ -141,7 +141,7 @@ public class TableInfoHelper {
         /* 初始化字段相关 */
         initTableFields(clazz, globalConfig, tableInfo);
 
-        tableInfo.initResultMapIfNeed();
+// todo 暂时不开放  tableInfo.initResultMapIfNeed();
 
         /* 放入缓存 */
         TABLE_INFO_CACHE.put(clazz, tableInfo);
