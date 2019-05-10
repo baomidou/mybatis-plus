@@ -41,7 +41,7 @@ public enum FieldStrategy {
      */
     DEFAULT,
     /**
-     * 在对应情况下不再加入相应的条件
+     * 不加入 SQL
      */
     NEVER
 }
