@@ -268,7 +268,8 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
         if (ArrayUtils.isEmpty(columns)) {
             return typedThis;
         }
-        return doIt(condition, GROUP_BY, () -> columnsToString(columns));
+        return doIt(condition, GROUP_BY,
+            () -> columns.length == 1 ? columnToString(columns[0]) : columnsToString(columns));
     }
 
     @Override
@@ -470,15 +471,6 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     /**
-     * 多字段转换为逗号 "," 分割字符串
-     *
-     * @param columns 多字段
-     */
-    protected String columnsToString(R... columns) {
-        return Arrays.stream(columns).map(this::columnToString).collect(joining(StringPool.COMMA));
-    }
-
-    /**
      * 获取 columnName
      */
     protected String columnToString(R column) {
@@ -486,6 +478,15 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
             return (String) column;
         }
         throw ExceptionUtils.mpe("not support this column !");
+    }
+
+    /**
+     * 多字段转换为逗号 "," 分割字符串
+     *
+     * @param columns 多字段
+     */
+    protected String columnsToString(R... columns) {
+        return Arrays.stream(columns).map(this::columnToString).collect(joining(StringPool.COMMA));
     }
 
     @Override
