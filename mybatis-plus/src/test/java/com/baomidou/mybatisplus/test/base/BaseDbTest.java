@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.test.base;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -357,5 +358,13 @@ public abstract class BaseDbTest {
         assertNotNull(commonLogicDataChildrenMapper.selectById(id));
         commonLogicDataMapper.getByWrapper(Wrappers.lambdaQuery());
         commonLogicDataChildrenMapper.getByWrapper(Wrappers.lambdaQuery());
+    }
+
+    @Test
+    void a18_groupBy() {
+        LambdaQueryWrapper<CommonData> wrapper = Wrappers.<CommonData>lambdaQuery().groupBy(CommonData::getCreateDatetime);
+        System.out.println(wrapper.getSqlSegment());
+//        List<CommonData> commonData = commonDataMapper.selectList(wrapper);
+//        assertThat(commonData).isNotEmpty();
     }
 }
