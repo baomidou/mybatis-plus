@@ -361,9 +361,11 @@ public abstract class BaseDbTest {
     }
 
     @Test
-    void a18_groupBy() {
-        LambdaQueryWrapper<CommonData> wrapper = Wrappers.<CommonData>lambdaQuery().groupBy(CommonData::getCreateDatetime);
+    void a18_groupByOrderBy() {
+        LambdaQueryWrapper<CommonData> wrapper = Wrappers.<CommonData>lambdaQuery().groupBy(true, CommonData::getCreateDatetime);
+        LambdaQueryWrapper<CommonData> wrapper2 = Wrappers.<CommonData>lambdaQuery().orderByAsc(CommonData::getCreateDatetime);
         System.out.println(wrapper.getSqlSegment());
+        System.out.println(wrapper2.getSqlSegment());
 //        List<CommonData> commonData = commonDataMapper.selectList(wrapper);
 //        assertThat(commonData).isNotEmpty();
     }
