@@ -27,6 +27,7 @@
 - fixed bug tmp文件格式错乱 github #1048
 - 处理表/字段名称抽象 INameConvert 接口策略 github #1038
 - DB2支持动态 schema 配置 github #1035
+- 把字段缓存的key从className替换成了.class, 如果使用dev-tools会导致：MybatisPlusException: Your property named "xxxx" cannot find the corresponding database column name!(解决方案：去掉dev-tools)
 
 
 ## [v3.1.0] 2019.02.24
