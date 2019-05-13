@@ -15,15 +15,16 @@
  */
 package com.baomidou.mybatisplus.test.h2;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.test.h2.entity.H2Student;
 import com.baomidou.mybatisplus.test.h2.enums.GenderEnum;
 import com.baomidou.mybatisplus.test.h2.enums.GradeEnum;
 import com.baomidou.mybatisplus.test.h2.mapper.H2StudentMapper;
-import com.baomidou.mybatisplus.test.h2.entity.H2Student;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -90,5 +91,13 @@ class H2StudentMapperTest extends BaseTest {
         if (null != page) {
             System.out.println("total: " + page.getTotal());
         }
+    }
+
+    @Test
+    void groupByOrderBy() {
+        LambdaQueryWrapper<H2Student> wrapper = Wrappers.<H2Student>lambdaQuery().groupBy(H2Student::getAge);
+        LambdaQueryWrapper<H2Student> wrapper2 = Wrappers.<H2Student>lambdaQuery().orderByAsc(H2Student::getAge);
+        System.out.println(wrapper);
+        System.out.println(wrapper2);
     }
 }
