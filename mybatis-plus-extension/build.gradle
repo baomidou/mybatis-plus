@@ -1,3 +1,5 @@
+apply plugin: 'kotlin'
+
 dependencies {
     api(project(":mybatis-plus-core"))
     api("${lib["mybatis-spring"]}")
