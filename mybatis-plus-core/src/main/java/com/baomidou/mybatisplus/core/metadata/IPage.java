@@ -144,7 +144,7 @@ public interface IPage<T> extends Serializable {
     /**
      * 当前页，默认 1
      *
-     * @return 当然页
+     * @return 当前页
      */
     long getCurrent();
 
