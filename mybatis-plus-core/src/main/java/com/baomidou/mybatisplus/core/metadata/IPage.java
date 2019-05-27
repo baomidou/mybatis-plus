@@ -34,7 +34,9 @@ public interface IPage<T> extends Serializable {
      * 降序字段数组
      *
      * @return order by desc 的字段数组
+     * @see #orders()
      */
+    @Deprecated
     default String[] descs() {
         return null;
     }
@@ -43,10 +45,19 @@ public interface IPage<T> extends Serializable {
      * 升序字段数组
      *
      * @return order by asc 的字段数组
+     * @see #orders()
      */
+    @Deprecated
     default String[] ascs() {
         return null;
     }
+
+    /**
+     * 获取排序信息，排序的字段和正反序
+     *
+     * @return 排序信息
+     */
+    List<OrderItem> orders();
 
     /**
      * KEY/VALUE 条件

@@ -42,8 +42,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.*;
 
-import static java.util.stream.Collectors.joining;
-
 /**
  * 分页拦截器
  *
@@ -85,34 +83,14 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
      * @return ignore
      */
     public static String concatOrderBy(String originalSql, IPage<?> page, boolean orderBy) {
-        if (orderBy && (ArrayUtils.isNotEmpty(page.ascs())
-            || ArrayUtils.isNotEmpty(page.descs()))) {
-            StringBuilder buildSql = new StringBuilder(originalSql);
-            String ascStr = concatOrderBuilder(page.ascs(), " ASC");
-            String descStr = concatOrderBuilder(page.descs(), " DESC");
-            if (StringUtils.isNotEmpty(ascStr) && StringUtils.isNotEmpty(descStr)) {
-                ascStr += ", ";
-            }
-            if (StringUtils.isNotEmpty(ascStr) || StringUtils.isNotEmpty(descStr)) {
-                buildSql.append(" ORDER BY ").append(ascStr).append(descStr);
-            }
-            return buildSql.toString();
+        if (orderBy && CollectionUtils.isNotEmpty(page.orders())) {
+
+            StringJoiner joiner = new StringJoiner(StringPool.COMMA);
+            page.orders().forEach(order -> joiner.add(order.getColumn() + (order.isAsc() ? " ASC" : " DESC")));
+            return originalSql + " ORDER BY " + joiner;
+
         }
         return originalSql;
-    }
-
-    /**
-     * 拼接多个排序方法
-     *
-     * @param columns   ignore
-     * @param orderWord ignore
-     */
-    private static String concatOrderBuilder(String[] columns, String orderWord) {
-        if (ArrayUtils.isNotEmpty(columns)) {
-            return Arrays.stream(columns).filter(StringUtils::isNotEmpty)
-                .map(i -> i + orderWord).collect(joining(StringPool.COMMA));
-        }
-        return StringUtils.EMPTY;
     }
 
     /**
@@ -243,4 +221,5 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
             this.dialectClazz = dialectClazz;
         }
     }
+
 }
