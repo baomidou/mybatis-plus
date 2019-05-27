@@ -80,8 +80,7 @@ public class MybatisSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
         MybatisConfiguration configuration = (MybatisConfiguration) config;
         GlobalConfig globalConfig = configuration.getGlobalConfig();
         // 初始化 Sequence
-        if (null != globalConfig.getWorkerId()
-            && null != globalConfig.getDatacenterId()) {
+        if (null != globalConfig.getWorkerId() && null != globalConfig.getDatacenterId()) {
             IdWorker.initSequence(globalConfig.getWorkerId(), globalConfig.getDatacenterId());
         }
         if (globalConfig.isEnableSqlRunner()) {

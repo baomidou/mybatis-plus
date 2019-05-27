@@ -105,7 +105,7 @@ public class GlobalConfig implements Serializable {
         /**
          * 数据库类型
          *
-         * @deprecated 不再需要, mp不应该也不需要关心数据库类型
+         * @deprecated 3.1.1 不再需要, mp不应该也不需要关心数据库类型
          */
         @Deprecated
         private DbType dbType = DbType.OTHER;
@@ -165,23 +165,28 @@ public class GlobalConfig implements Serializable {
          */
         @Deprecated
         private FieldStrategy fieldStrategy = FieldStrategy.NOT_NULL;
-
         /**
          * 字段验证策略之 insert
          * 目前没有默认值,等 {@link #fieldStrategy} 完全去除掉,会给个默认值 NOT_NULL
          * 没配则按 {@link #fieldStrategy} 为准
+         *
+         * @since 3.1.2
          */
         private FieldStrategy insertStrategy;
         /**
          * 字段验证策略之 update
          * 目前没有默认值,等 {@link #fieldStrategy} 完全去除掉,会给个默认值 NOT_NULL
          * 没配则按 {@link #fieldStrategy} 为准
+         *
+         * @since 3.1.2
          */
         private FieldStrategy updateStrategy;
         /**
          * 字段验证策略之 select
          * 目前没有默认值,等 {@link #fieldStrategy} 完全去除掉,会给个默认值 NOT_NULL
          * 没配则按 {@link #fieldStrategy} 为准
+         *
+         * @since 3.1.2
          */
         private FieldStrategy selectStrategy;
     }
