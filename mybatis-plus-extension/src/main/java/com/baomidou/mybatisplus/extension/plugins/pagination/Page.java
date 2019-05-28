@@ -186,7 +186,9 @@ public class Page<T> implements IPage<T> {
     private String[] mapOrderToArray(Predicate<OrderItem> filter) {
         List<String> columns = new ArrayList<>(orders.size());
         orders.forEach(i -> {
-            if (filter.test(i)) columns.add(i.getColumn());
+            if (filter.test(i)) {
+                columns.add(i.getColumn());
+            }
         });
         return columns.toArray(new String[0]);
     }
@@ -198,7 +200,9 @@ public class Page<T> implements IPage<T> {
      */
     private void removeOrder(Predicate<OrderItem> filter) {
         for (int i = orders.size() - 1; i >= 0; i--) {
-            if (filter.test(orders.get(i))) orders.remove(i);
+            if (filter.test(orders.get(i))) {
+                orders.remove(i);
+            }
         }
     }
 
