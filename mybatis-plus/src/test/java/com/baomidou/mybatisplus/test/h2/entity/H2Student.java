@@ -26,6 +26,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 /**
  * 学生实体
@@ -33,6 +34,7 @@ import lombok.NoArgsConstructor;
  * @author nieqiurong 2018/7/27.
  */
 @Data
+@Accessors(chain = true)
 @TableName("h2student")
 @NoArgsConstructor
 @AllArgsConstructor

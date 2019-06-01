@@ -49,6 +49,10 @@ public abstract class Wrapper<T> implements ISqlSegment {
         return null;
     }
 
+    public String getSqlComment() {
+        return null;
+    }
+
     /**
      * 获取 MergeSegments
      */

@@ -25,6 +25,7 @@ import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.enums.SqlLike;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
+import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -72,6 +73,10 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      * 实体类型
      */
     protected Class<T> entityClass;
+    /**
+     * SQL注释
+     */
+    private String sqlCommentBody;
 
     @Override
     public T getEntity() {
@@ -93,6 +98,27 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     protected Class<T> getCheckEntityClass() {
         Assert.notNull(entityClass, "entityClass must not null,please set entity before use this method!");
         return entityClass;
+    }
+
+    protected String getSqlCommentBody() {
+        return sqlCommentBody;
+    }
+
+    /**
+     * @param sqlCommentBody SQL注释body
+     */
+    public Children setSqlCommentBody(String sqlCommentBody) {
+        this.sqlCommentBody = sqlCommentBody;
+        return typedThis;
+    }
+
+    @Override
+    public String getSqlComment() {
+        if (sqlCommentBody != null && !sqlCommentBody.isEmpty()) {
+            return "/*" + StringEscape.escapeRawString(sqlCommentBody) + "*/";
+        } else {
+            return null;
+        }
     }
 
     @Override
