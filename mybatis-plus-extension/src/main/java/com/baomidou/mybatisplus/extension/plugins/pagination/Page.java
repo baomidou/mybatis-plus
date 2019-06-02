@@ -276,7 +276,7 @@ public class Page<T> implements IPage<T> {
         if (CollectionUtils.isNotEmpty(descs)) {
             removeOrder(item -> !item.isAsc());
             for (String s : descs) {
-                addOrder(OrderItem.build(s, false));
+                addOrder(OrderItem.desc(s));
             }
         }
         return this;
