@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.extension.kotlin
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper
 import com.baomidou.mybatisplus.core.toolkit.LambdaUtils
 import com.baomidou.mybatisplus.core.toolkit.StringPool
+import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache
 import kotlin.reflect.KProperty
 
 /**
@@ -31,37 +32,31 @@ import kotlin.reflect.KProperty
 abstract class AbstractKtWrapper<T, Children : AbstractKtWrapper<T, Children>> : AbstractWrapper<T, KProperty<*>, Children>() {
 
     /**
-     * 将某一列转换为对应的数据库字符串, 将 DTO 中的字段 [kProperty] 转换为对应 SQL 语句中的形式
-     * 如果 [onlyColumn] 为 true， 则会转换为 select body 的形式
-     *
-     * <pre>
-     *     @TableField("user_id")
-     *     var userId: String? = null
-     *
-     *     assert("user_id" == columnToString(::userId, true))
-     *     assert("user_id AS "userId"" == columnToString(::userId, false))
-     *</pre>
+     * 列 Map
      */
-    //@JvmOverloads 部分测试框架无法通过测试
-    fun columnToString(kProperty: KProperty<*>, onlyColumn: Boolean): String? = columnToString0(kProperty, onlyColumn)
+    private lateinit var columnMap: Map<String, ColumnCache>
 
     /**
      * 重载方法，默认 onlyColumn = true
      */
-    override fun columnToString(kProperty: KProperty<*>) = columnToString0(kProperty)
+    override fun columnToString(kProperty: KProperty<*>): String? = columnToString(kProperty, true)
 
     /**
      * 核心实现方法，供重载使用
      */
-    private fun columnToString0(kProperty: KProperty<*>, onlyColumn: Boolean = true): String? =
-        LambdaUtils.getColumnOfProperty(entityClass, kProperty.name)?.let { if (onlyColumn) it.column else it.columnSelect }
+    private fun columnToString(kProperty: KProperty<*>, onlyColumn: Boolean): String? {
+        if (!::columnMap.isInitialized) {
+            columnMap = LambdaUtils.getColumnMap(this.checkEntityClass)
+        }
+        return columnMap[LambdaUtils.formatKey(kProperty.name)]?.let { if (onlyColumn) it.column else it.columnSelect }
+    }
 
     /**
      * 批量处理传入的属性，正常情况下的输出就像：
      *
      * "user_id" AS "userId" , "user_name" AS "userName"
      */
-    fun columnsToString(onlyColumn: Boolean = true, vararg columns: KProperty<*>): String =
+    fun columnsToString(onlyColumn: Boolean, vararg columns: KProperty<*>): String =
         columns.mapNotNull { columnToString(it, onlyColumn) }.joinToString(separator = StringPool.COMMA)
 
 }

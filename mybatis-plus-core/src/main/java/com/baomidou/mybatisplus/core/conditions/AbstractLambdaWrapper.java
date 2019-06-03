@@ -89,8 +89,8 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
         Class aClass = lambda.getInstantiatedMethodType();
         if (!initColumnMap) {
             columnMap = LambdaUtils.getColumnMap(aClass);
-            Assert.notNull(columnMap, "can not find lambda cache for this entity [%s]", aClass.getName());
         }
+        Assert.notNull(columnMap, "can not find lambda cache for this entity [%s]", aClass.getName());
         ColumnCache columnCache = columnMap.get(LambdaUtils.formatKey(fieldName));
         Assert.notNull(columnCache, "can not find lambda cache for this property [%s] of entity [%s]",
             fieldName, aClass.getName());
