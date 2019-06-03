@@ -141,10 +141,13 @@ public class TableInfoHelper {
         /* 初始化字段相关 */
         initTableFields(clazz, globalConfig, tableInfo);
 
-// todo 暂时不开放  tableInfo.initResultMapIfNeed();
-
         /* 放入缓存 */
         TABLE_INFO_CACHE.put(clazz, tableInfo);
+
+        /* 缓存 lambda */
+        LambdaUtils.installCache(tableInfo);
+
+        // todo 暂时不开放  tableInfo.initResultMapIfNeed();
 
         return tableInfo;
     }
