@@ -94,8 +94,8 @@ public interface H2UserMapper extends SuperMapper<H2User> {
         ") a")
     int selectCountWithParamInSelectItems(Map<String, Object> param);
 
-    @Select("select * from h2user")
-    List<Map<?,?>> mySelectMaps();
+    @Select("select age,name,count(age) from h2user group by age,name order by age")
+    List<Map<?,?>> mySelectMaps(IPage<H2User> page);
 
     @Select("call 1")
     @Options(statementType = StatementType.CALLABLE)

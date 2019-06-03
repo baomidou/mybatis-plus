@@ -15,6 +15,23 @@
  */
 package com.baomidou.mybatisplus.test.h2;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
@@ -22,18 +39,6 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.test.h2.entity.H2User;
 import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Mybatis Plus H2 Junit Test
@@ -126,7 +131,7 @@ class H2UserTest extends BaseTest {
 //            Assert.assertEquals(nameParam, u.getName());
 //            Assert.assertNotNull(u.getId());
 //        }
-//        Assert.assertNotEquals(0, page.getTotal());
+//        Assert.assertNotEquals(0, pagemySelectMaps.getTotal());
 //    }
 
     @Test
@@ -337,5 +342,11 @@ class H2UserTest extends BaseTest {
         Assertions.assertNotNull(tomcat, "tomcat should not be null");
         userService.query().nested(i -> i.eq("name", "Tomcat")).list();
         userService.lambdaUpdate().set(H2User::getName, "Tom").eq(H2User::getName, "Tomcat").update();
+    }
+
+
+    @Test
+    public void myQueryWithGroupByOrderBy(){
+        userService.mySelectMaps().forEach(System.out::println);
     }
 }

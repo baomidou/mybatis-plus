@@ -15,18 +15,21 @@
  */
 package com.baomidou.mybatisplus.test.h2.service.impl;
 
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.baomidou.mybatisplus.test.h2.mapper.H2UserMapper;
-import com.baomidou.mybatisplus.test.h2.entity.H2User;
-import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.test.h2.entity.H2User;
+import com.baomidou.mybatisplus.test.h2.mapper.H2UserMapper;
+import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
 
 /**
  * Service层测试
@@ -82,7 +85,9 @@ public class H2UserServiceImpl extends ServiceImpl<H2UserMapper, H2User> impleme
 
     @Override
     public List<Map<?,?>> mySelectMaps() {
-        return baseMapper.mySelectMaps();
+        Page<H2User> page = new Page<>(1,3);
+        page.addOrder(OrderItem.asc("name"));
+        return baseMapper.mySelectMaps(page);
     }
 
     @Override

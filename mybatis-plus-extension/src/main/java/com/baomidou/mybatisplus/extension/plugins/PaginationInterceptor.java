@@ -15,32 +15,57 @@
  */
 package com.baomidou.mybatisplus.extension.plugins;
 
-import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.core.MybatisDefaultParameterHandler;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.parser.ISqlParser;
-import com.baomidou.mybatisplus.core.parser.SqlInfo;
-import com.baomidou.mybatisplus.core.toolkit.*;
-import com.baomidou.mybatisplus.extension.handlers.AbstractSqlParserHandler;
-import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
-import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
-import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
-import com.baomidou.mybatisplus.extension.toolkit.SqlParserUtils;
-import lombok.Setter;
-import lombok.experimental.Accessors;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
 import org.apache.ibatis.executor.statement.StatementHandler;
-import org.apache.ibatis.mapping.*;
-import org.apache.ibatis.plugin.*;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ParameterMapping;
+import org.apache.ibatis.mapping.SqlCommandType;
+import org.apache.ibatis.mapping.StatementType;
+import org.apache.ibatis.plugin.Interceptor;
+import org.apache.ibatis.plugin.Intercepts;
+import org.apache.ibatis.plugin.Invocation;
+import org.apache.ibatis.plugin.Plugin;
+import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.RowBounds;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.*;
+import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.core.MybatisDefaultParameterHandler;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.baomidou.mybatisplus.core.parser.ISqlParser;
+import com.baomidou.mybatisplus.core.parser.SqlInfo;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.handlers.AbstractSqlParserHandler;
+import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
+import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
+import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
+import com.baomidou.mybatisplus.extension.toolkit.SqlParserUtils;
+
+import lombok.Setter;
+import lombok.experimental.Accessors;
+import net.sf.jsqlparser.JSQLParserException;
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.statement.select.OrderByElement;
+import net.sf.jsqlparser.statement.select.PlainSelect;
+import net.sf.jsqlparser.statement.select.Select;
 
 /**
  * 分页拦截器
@@ -53,6 +78,7 @@ import java.util.*;
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class})})
 public class PaginationInterceptor extends AbstractSqlParserHandler implements Interceptor {
 
+    protected static final Log logger = LogFactory.getLog(PaginationInterceptor.class);
     /**
      * COUNT SQL 解析
      */
@@ -79,16 +105,29 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
      *
      * @param originalSql 需要拼接的SQL
      * @param page        page对象
-     * @param orderBy     是否需要拼接Order By
      * @return ignore
      */
-    public static String concatOrderBy(String originalSql, IPage<?> page, boolean orderBy) {
-        if (orderBy && CollectionUtils.isNotEmpty(page.orders())) {
-
-            StringJoiner joiner = new StringJoiner(StringPool.COMMA);
-            page.orders().forEach(order -> joiner.add(order.getColumn() + (order.isAsc() ? " ASC" : " DESC")));
-            return originalSql + " ORDER BY " + joiner;
-
+    public static String concatOrderBy(String originalSql, IPage<?> page) {
+        if (CollectionUtils.isNotEmpty(page.orders())) {
+            try {
+                List<OrderItem> orderList = page.orders();
+                Select selectStatement = (Select) CCJSqlParserUtil.parse(originalSql);
+                PlainSelect plainSelect = (PlainSelect) selectStatement.getSelectBody();
+                List<OrderByElement> orderByElements = plainSelect.getOrderByElements();
+                if (orderByElements == null || orderByElements.isEmpty()) {
+                    orderByElements = new ArrayList<>(orderList.size());
+                }
+                for (OrderItem item : orderList) {
+                    OrderByElement element = new OrderByElement();
+                    element.setExpression(new Column(item.getColumn()));
+                    element.setAsc(item.isAsc());
+                    orderByElements.add(element);
+                }
+                plainSelect.setOrderByElements(orderByElements);
+                return plainSelect.toString();
+            } catch (JSQLParserException e) {
+                logger.warn("failed to concat orderBy from IPage, exception=" + e.getMessage());
+            }
         }
         return originalSql;
     }
@@ -148,17 +187,15 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
         DbType dbType = StringUtils.isNotEmpty(dialectType) ? DbType.getDbType(dialectType)
             : JdbcUtils.getDbType(connection.getMetaData().getURL());
 
-        boolean orderBy = true;
         if (page.isSearchCount()) {
             SqlInfo sqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), countSqlParser, originalSql);
-            orderBy = sqlInfo.isOrderBy();
             this.queryTotal(overflow, sqlInfo.getSql(), mappedStatement, boundSql, page, connection);
             if (page.getTotal() <= 0) {
                 return null;
             }
         }
 
-        String buildSql = concatOrderBy(originalSql, page, orderBy);
+        String buildSql = concatOrderBy(originalSql, page);
         DialectModel model = DialectFactory.buildPaginationSql(page, buildSql, dbType, dialectClazz);
         Configuration configuration = mappedStatement.getConfiguration();
         List<ParameterMapping> mappings = new ArrayList<>(boundSql.getParameterMappings());
