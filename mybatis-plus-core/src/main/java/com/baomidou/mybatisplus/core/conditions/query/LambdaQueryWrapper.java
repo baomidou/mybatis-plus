@@ -122,6 +122,6 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     @Override
     protected LambdaQueryWrapper<T> instance() {
         return new LambdaQueryWrapper<>(entity, entityClass, null, paramNameSeq, paramNameValuePairs,
-            new MergeSegments(), null, null);
+            new MergeSegments(), SharedString.emptyString(), SharedString.emptyString());
     }
 }

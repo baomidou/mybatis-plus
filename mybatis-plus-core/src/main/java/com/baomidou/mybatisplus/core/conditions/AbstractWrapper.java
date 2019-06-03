@@ -438,20 +438,20 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
         return paramNameValuePairs;
     }
 
+    /**
+     * @param sqlComment SQL注释
+     */
+    public Children sqlComment(String sqlComment) {
+        this.sqlComment = new SharedString(sqlComment);
+        return typedThis;
+    }
+
     @Override
     public String getSqlComment() {
         if (StringUtils.isNotEmpty(sqlComment.getStringValue())) {
             return "/*" + StringEscape.escapeRawString(sqlComment.getStringValue()) + "*/";
         }
         return null;
-    }
-
-    /**
-     * @param sqlComment SQL注释body
-     */
-    public Children setSqlComment(String sqlComment) {
-        this.sqlComment = new SharedString(sqlComment);
-        return typedThis;
     }
 
     /**

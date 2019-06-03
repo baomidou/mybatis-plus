@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.extension.kotlin
 
+import com.baomidou.mybatisplus.core.conditions.SharedString
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments
 import com.baomidou.mybatisplus.core.conditions.update.Update
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils
@@ -49,11 +50,13 @@ class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, Updat
     }
 
     internal constructor(entity: T, paramNameSeq: AtomicInteger, paramNameValuePairs: Map<String, Any>,
-                         mergeSegments: MergeSegments) {
+                         mergeSegments: MergeSegments, lastSql: SharedString, sqlComment: SharedString) {
         this.setEntity(entity)
         this.paramNameSeq = paramNameSeq
         this.paramNameValuePairs = paramNameValuePairs
         this.expression = mergeSegments
+        this.lastSql = lastSql
+        this.sqlComment = sqlComment
     }
 
     override fun getSqlSet(): String? {
@@ -76,6 +79,7 @@ class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, Updat
     }
 
     override fun instance(): KtUpdateWrapper<T> {
-        return KtUpdateWrapper(entity, paramNameSeq, paramNameValuePairs, expression)
+        return KtUpdateWrapper(entity, paramNameSeq, paramNameValuePairs, expression, SharedString.emptyString(),
+            SharedString.emptyString())
     }
 }

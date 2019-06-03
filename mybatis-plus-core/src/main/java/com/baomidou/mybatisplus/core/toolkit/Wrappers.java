@@ -206,12 +206,6 @@ public final class Wrappers {
             throw new UnsupportedOperationException();
         }
 
-        @SuppressWarnings("EmptyMethod")
-        @Override
-        public String getParamAlias() {
-            return super.getParamAlias();
-        }
-
         @Override
         public String getSqlSegment() {
             return null;

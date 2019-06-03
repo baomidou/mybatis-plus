@@ -102,6 +102,6 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
     @Override
     protected LambdaUpdateWrapper<T> instance() {
         return new LambdaUpdateWrapper<>(entity, sqlSet, paramNameSeq, paramNameValuePairs, new MergeSegments(),
-            null, null);
+            SharedString.emptyString(), SharedString.emptyString());
     }
 }

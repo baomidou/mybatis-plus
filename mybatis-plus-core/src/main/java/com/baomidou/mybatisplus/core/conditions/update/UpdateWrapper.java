@@ -99,6 +99,6 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
     @Override
     protected UpdateWrapper<T> instance() {
         return new UpdateWrapper<>(entity, sqlSet, paramNameSeq, paramNameValuePairs, new MergeSegments(),
-            null, null);
+            SharedString.emptyString(), SharedString.emptyString());
     }
 }

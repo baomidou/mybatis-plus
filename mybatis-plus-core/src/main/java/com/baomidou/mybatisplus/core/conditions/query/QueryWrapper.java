@@ -116,6 +116,6 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     @Override
     protected QueryWrapper<T> instance() {
         return new QueryWrapper<>(entity, entityClass, paramNameSeq, paramNameValuePairs, new MergeSegments(),
-            null, null);
+            SharedString.emptyString(), SharedString.emptyString());
     }
 }
