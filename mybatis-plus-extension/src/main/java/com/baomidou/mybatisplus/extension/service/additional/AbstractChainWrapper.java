@@ -15,11 +15,6 @@
  */
 package com.baomidou.mybatisplus.extension.service.additional;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.function.BiPredicate;
-import java.util.function.Function;
-
 import com.baomidou.mybatisplus.core.conditions.AbstractWrapper;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Compare;
@@ -28,6 +23,11 @@ import com.baomidou.mybatisplus.core.conditions.interfaces.Join;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Nested;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+
+import java.util.Collection;
+import java.util.Map;
+import java.util.function.BiPredicate;
+import java.util.function.Function;
 
 /**
  * 所有包装类都继承此抽象类,此抽象类代理了大部分生成 where 条件的方法
@@ -54,7 +54,7 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     }
 
     @SuppressWarnings("rawtypes")
-	public AbstractWrapper getWrapper() {
+    public AbstractWrapper getWrapper() {
         return (AbstractWrapper) wrapperChildren;
     }
 
@@ -226,6 +226,12 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     @Override
     public Children last(boolean condition, String lastSql) {
         getWrapper().last(condition, lastSql);
+        return typedThis;
+    }
+
+    @Override
+    public Children comment(boolean condition, String comment) {
+        getWrapper().comment(condition, comment);
         return typedThis;
     }
 

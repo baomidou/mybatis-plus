@@ -223,6 +223,14 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     @Override
+    public Children comment(boolean condition, String comment) {
+        if (condition) {
+            this.sqlComment = new SharedString(comment);
+        }
+        return typedThis;
+    }
+
+    @Override
     public Children exists(boolean condition, String existsSql) {
         return doIt(condition, EXISTS, () -> String.format("(%s)", existsSql));
     }
@@ -430,28 +438,20 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     @Override
+    public String getSqlComment() {
+        if (StringUtils.isNotEmpty(sqlComment.getStringValue())) {
+            return "/*" + StringEscape.escapeRawString(sqlComment.getStringValue()) + "*/";
+        }
+        return null;
+    }
+
+    @Override
     public MergeSegments getExpression() {
         return expression;
     }
 
     public Map<String, Object> getParamNameValuePairs() {
         return paramNameValuePairs;
-    }
-
-    /**
-     * @param sqlComment SQL注释
-     */
-    public Children sqlComment(String sqlComment) {
-        this.sqlComment = new SharedString(sqlComment);
-        return typedThis;
-    }
-
-    @Override
-    public String getSqlComment() {
-        if (StringUtils.isNotEmpty(sqlComment.getStringValue())) {
-            return "/*" + StringEscape.escapeRawString(sqlComment.getStringValue()) + "*/";
-        }
-        return null;
     }
 
     /**

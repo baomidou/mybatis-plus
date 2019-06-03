@@ -81,6 +81,22 @@ public interface Join<Children> extends Serializable {
     /**
      * ignore
      */
+    default Children comment(String comment) {
+        return comment(true, comment);
+    }
+
+    /**
+     * sql 注释(会拼接在 sql 的最后面)
+     *
+     * @param condition 执行条件
+     * @param comment   sql注释
+     * @return children
+     */
+    Children comment(boolean condition, String comment);
+
+    /**
+     * ignore
+     */
     default Children exists(String existsSql) {
         return exists(true, existsSql);
     }
