@@ -15,10 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.conditions.query;
 
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Predicate;
-
 import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper;
 import com.baomidou.mybatisplus.core.conditions.SharedString;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
@@ -26,6 +22,10 @@ import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
+
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 
 /**
  * Lambda 语法使用 Wrapper
@@ -61,13 +61,16 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
      * 不建议直接 new 该实例，使用 Wrappers.lambdaQuery(...)
      */
     LambdaQueryWrapper(T entity, Class<T> entityClass, SharedString sqlSelect, AtomicInteger paramNameSeq,
-                       Map<String, Object> paramNameValuePairs, MergeSegments mergeSegments) {
+                       Map<String, Object> paramNameValuePairs, MergeSegments mergeSegments,
+                       SharedString lastSql, SharedString sqlComment) {
         super.setEntity(entity);
         this.paramNameSeq = paramNameSeq;
         this.paramNameValuePairs = paramNameValuePairs;
         this.expression = mergeSegments;
         this.sqlSelect = sqlSelect;
         this.entityClass = entityClass;
+        this.lastSql = lastSql;
+        this.sqlComment = sqlComment;
     }
 
     /**
@@ -118,6 +121,7 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
      */
     @Override
     protected LambdaQueryWrapper<T> instance() {
-        return new LambdaQueryWrapper<>(entity, entityClass, null, paramNameSeq, paramNameValuePairs, new MergeSegments());
+        return new LambdaQueryWrapper<>(entity, entityClass, null, paramNameSeq, paramNameValuePairs,
+            new MergeSegments(), null, null);
     }
 }

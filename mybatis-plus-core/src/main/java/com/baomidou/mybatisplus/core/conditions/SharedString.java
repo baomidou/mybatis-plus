@@ -15,7 +15,11 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -26,6 +30,9 @@ import java.io.Serializable;
  * @since 2018-11-20
  */
 @Data
+@Accessors(chain = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class SharedString implements Serializable {
     private static final long serialVersionUID = -1536422416594422874L;
 
@@ -33,4 +40,11 @@ public class SharedString implements Serializable {
      * 共享的 string 值
      */
     private String stringValue;
+
+    /**
+     * SharedString 里是 ""
+     */
+    public static SharedString emptyString() {
+        return new SharedString(StringPool.EMPTY);
+    }
 }

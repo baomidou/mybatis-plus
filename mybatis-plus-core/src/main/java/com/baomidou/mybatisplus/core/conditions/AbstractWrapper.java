@@ -20,14 +20,16 @@ import com.baomidou.mybatisplus.core.conditions.interfaces.Func;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Join;
 import com.baomidou.mybatisplus.core.conditions.interfaces.Nested;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
-import com.baomidou.mybatisplus.core.conditions.segments.NormalSegmentList;
 import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.enums.SqlLike;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -47,23 +49,19 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     implements Compare<Children, R>, Nested<Children, Children>, Join<Children>, Func<Children, R> {
 
     /**
-     * 前缀
-     */
-    private static final String MP_GENERAL_PARAMNAME = "MPGENVAL";
-    private static final String DEFAULT_PARAM_ALIAS = Constants.WRAPPER;
-    /**
      * 占位符
      */
-    private static final String PLACE_HOLDER = "{%s}";
-    private static final String MYBATIS_PLUS_TOKEN = "#{%s.paramNameValuePairs.%s}";
     protected final Children typedThis = (Children) this;
-    protected final String paramAlias = null;
     /**
      * 必要度量
      */
     protected AtomicInteger paramNameSeq;
     protected Map<String, Object> paramNameValuePairs;
-    protected String lastSql = StringPool.EMPTY;
+    protected SharedString lastSql;
+    /**
+     * SQL注释
+     */
+    protected SharedString sqlComment;
     /**
      * 数据库表映射实体类
      */
@@ -73,10 +71,6 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      * 实体类型
      */
     protected Class<T> entityClass;
-    /**
-     * SQL注释
-     */
-    private String sqlCommentBody;
 
     @Override
     public T getEntity() {
@@ -98,27 +92,6 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     protected Class<T> getCheckEntityClass() {
         Assert.notNull(entityClass, "entityClass must not null,please set entity before use this method!");
         return entityClass;
-    }
-
-    protected String getSqlCommentBody() {
-        return sqlCommentBody;
-    }
-
-    /**
-     * @param sqlCommentBody SQL注释body
-     */
-    public Children setSqlCommentBody(String sqlCommentBody) {
-        this.sqlCommentBody = sqlCommentBody;
-        return typedThis;
-    }
-
-    @Override
-    public String getSqlComment() {
-        if (sqlCommentBody != null && !sqlCommentBody.isEmpty()) {
-            return "/*" + StringEscape.escapeRawString(sqlCommentBody) + "*/";
-        } else {
-            return null;
-        }
     }
 
     @Override
@@ -244,7 +217,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     @Override
     public Children last(boolean condition, String lastSql) {
         if (condition) {
-            this.lastSql = StringPool.SPACE + lastSql;
+            this.lastSql = new SharedString(StringPool.SPACE + lastSql);
         }
         return typedThis;
     }
@@ -400,9 +373,9 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
         }
         if (ArrayUtils.isNotEmpty(params)) {
             for (int i = 0; i < params.length; ++i) {
-                String genParamName = MP_GENERAL_PARAMNAME + paramNameSeq.incrementAndGet();
-                sqlStr = sqlStr.replace(String.format(PLACE_HOLDER, i),
-                    String.format(MYBATIS_PLUS_TOKEN, getParamAlias(), genParamName));
+                String genParamName = Constants.WRAPPER_PARAM + paramNameSeq.incrementAndGet();
+                sqlStr = sqlStr.replace(String.format("{%s}", i),
+                    String.format(Constants.WRAPPER_PARAM_FORMAT, Constants.WRAPPER, genParamName));
                 paramNameValuePairs.put(genParamName, params[i]);
             }
         }
@@ -426,6 +399,8 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
         paramNameSeq = new AtomicInteger(0);
         paramNameValuePairs = new HashMap<>(16);
         expression = new MergeSegments();
+        lastSql = SharedString.emptyString();
+        sqlComment = SharedString.emptyString();
     }
 
     /**
@@ -442,50 +417,17 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
         return typedThis;
     }
 
-    @SuppressWarnings("all")
-    public String getParamAlias() {
-        return StringUtils.isEmpty(paramAlias) ? DEFAULT_PARAM_ALIAS : paramAlias;
-    }
-
     @Override
     public String getSqlSegment() {
         String sqlSegment = expression.getSqlSegment();
         if (StringUtils.isNotEmpty(sqlSegment)) {
-            return sqlSegment + lastSql;
+            return sqlSegment + lastSql.getStringValue();
         }
-        if (StringUtils.isNotEmpty(lastSql)) {
-            return lastSql;
+        if (StringUtils.isNotEmpty(lastSql.getStringValue())) {
+            return lastSql.getStringValue();
         }
         return null;
     }
-
-    @Override
-    public String getCustomSqlSegment() {
-        MergeSegments expression = getExpression();
-        if (Objects.nonNull(expression)) {
-            NormalSegmentList normal = expression.getNormal();
-            String sqlSegment = getSqlSegment();
-            if (StringUtils.isNotEmpty(sqlSegment)) {
-                if (normal.isEmpty()) {
-                    return sqlSegment;
-                } else {
-                    return concatWhere(sqlSegment);
-                }
-            }
-        }
-        return StringUtils.EMPTY;
-    }
-
-    /**
-     * 拼接`WHERE`至SQL前
-     *
-     * @param sql sql
-     * @return 带 where 的 sql
-     */
-    private String concatWhere(String sql) {
-        return Constants.WHERE + " " + sql;
-    }
-
 
     @Override
     public MergeSegments getExpression() {
@@ -494,6 +436,22 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
 
     public Map<String, Object> getParamNameValuePairs() {
         return paramNameValuePairs;
+    }
+
+    @Override
+    public String getSqlComment() {
+        if (StringUtils.isNotEmpty(sqlComment.getStringValue())) {
+            return "/*" + StringEscape.escapeRawString(sqlComment.getStringValue()) + "*/";
+        }
+        return null;
+    }
+
+    /**
+     * @param sqlComment SQL注释body
+     */
+    public Children setSqlComment(String sqlComment) {
+        this.sqlComment = new SharedString(sqlComment);
+        return typedThis;
     }
 
     /**

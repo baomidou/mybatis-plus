@@ -115,4 +115,7 @@ public interface Constants extends StringPool {
     String MP_OPTLOCK_VERSION_ORIGINAL = "MP_OPTLOCK_VERSION_ORIGINAL";
     String MP_OPTLOCK_VERSION_COLUMN = "MP_OPTLOCK_VERSION_COLUMN";
     String MP_OPTLOCK_ET_ORIGINAL = "MP_OPTLOCK_ET_ORIGINAL";
+
+    String WRAPPER_PARAM = "MPGENVAL";
+    String WRAPPER_PARAM_FORMAT = "#{%s.paramNameValuePairs.%s}";
 }

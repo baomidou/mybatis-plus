@@ -15,15 +15,13 @@
  */
 package com.baomidou.mybatisplus.core.conditions;
 
-import java.util.Objects;
-
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
+import com.baomidou.mybatisplus.core.conditions.segments.NormalSegmentList;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.*;
+
+import java.util.Objects;
 
 /**
  * 条件构造抽象类
@@ -67,7 +65,21 @@ public abstract class Wrapper<T> implements ISqlSegment {
      * <p>3.用法 ${ew.customSqlSegment} (不需要where标签包裹,切记!)</p>
      * <p>4.ew是wrapper定义别名,可自行替换</p>
      */
-    public abstract String getCustomSqlSegment();
+    public String getCustomSqlSegment() {
+        MergeSegments expression = getExpression();
+        if (Objects.nonNull(expression)) {
+            NormalSegmentList normal = expression.getNormal();
+            String sqlSegment = getSqlSegment();
+            if (StringUtils.isNotEmpty(sqlSegment)) {
+                if (normal.isEmpty()) {
+                    return sqlSegment;
+                } else {
+                    return Constants.WHERE + " " + sqlSegment;
+                }
+            }
+        }
+        return StringUtils.EMPTY;
+    }
 
     /**
      * 查询条件为空(包含entity)
