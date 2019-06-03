@@ -50,12 +50,12 @@ class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Query<K
 
     internal constructor(entity: T, entityClass: Class<T>?, sqlSelect: String?, paramNameSeq: AtomicInteger,
                          paramNameValuePairs: Map<String, Any>, mergeSegments: MergeSegments) {
-        this.entity = entity
-        this.entityClass = entityClass
+        this.setEntity(entity)
         this.paramNameSeq = paramNameSeq
         this.paramNameValuePairs = paramNameValuePairs
         this.expression = mergeSegments
         this.sqlSelect = sqlSelect
+        this.entityClass = entityClass
     }
 
     /**
