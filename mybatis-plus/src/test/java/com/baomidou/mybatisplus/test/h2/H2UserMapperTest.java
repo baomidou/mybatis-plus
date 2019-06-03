@@ -172,33 +172,33 @@ class H2UserMapperTest extends BaseTest {
     @Test
     @Order(Integer.MAX_VALUE)
     void sqlCommentTest() {
-        userMapper.delete(new QueryWrapper<H2User>().sqlComment("deleteAllUsers"));
+        userMapper.delete(new QueryWrapper<H2User>().comment("deleteAllUsers"));
         String name = "name1", nameNew = "name1New";
         int insertCount = userMapper.insert(new H2User().setName(name).setAge(AgeEnum.ONE));
         Assertions.assertEquals(1, insertCount);
         int updateCount = userMapper.update(new H2User(),
-            new UpdateWrapper<H2User>().sqlComment("updateUserName1").lambda()
+            new UpdateWrapper<H2User>().comment("updateUserName1").lambda()
                 .set(H2User::getName, nameNew)
                 .eq(H2User::getName, name)
         );
         Assertions.assertEquals(1, updateCount);
         H2User h2User = userMapper.selectOne(
-            new QueryWrapper<H2User>().lambda().sqlComment("getUserByUniqueName")
+            new QueryWrapper<H2User>().lambda().comment("getUserByUniqueName")
                 .eq(H2User::getName, nameNew)
         );
         Assertions.assertNotNull(h2User);
         LambdaQueryWrapper<H2User> queryWrapper = new QueryWrapper<H2User>().lambda().ge(H2User::getAge, 1);
-        int userCount = userMapper.selectCount(queryWrapper.sqlComment("getUserCount"));
+        int userCount = userMapper.selectCount(queryWrapper.comment("getUserCount"));
         Assertions.assertEquals(1, userCount);
-        List<H2User> h2UserList = userMapper.selectList(queryWrapper.sqlComment("getUserList"));
+        List<H2User> h2UserList = userMapper.selectList(queryWrapper.comment("getUserList"));
         Assertions.assertEquals(1, h2UserList.size());
-        IPage<H2User> h2UserIPage = userMapper.selectPage(new Page<>(1, 10), queryWrapper.sqlComment("getUserPage"));
+        IPage<H2User> h2UserIPage = userMapper.selectPage(new Page<>(1, 10), queryWrapper.comment("getUserPage"));
         Assertions.assertEquals(1, h2UserIPage.getRecords().size());
-        List<Map<String, Object>> selectMaps = userMapper.selectMaps(queryWrapper.sqlComment("getUserMaps"));
+        List<Map<String, Object>> selectMaps = userMapper.selectMaps(queryWrapper.comment("getUserMaps"));
         Assertions.assertEquals(1, selectMaps.size());
-        IPage<Map<String, Object>> selectMapsPage = userMapper.selectMapsPage(new Page<>(1, 10), queryWrapper.sqlComment("getUserMapsPage"));
+        IPage<Map<String, Object>> selectMapsPage = userMapper.selectMapsPage(new Page<>(1, 10), queryWrapper.comment("getUserMapsPage"));
         Assertions.assertEquals(1, selectMapsPage.getRecords().size());
-        List<Object> selectObjs = userMapper.selectObjs(queryWrapper.sqlComment("getUserObjs"));
+        List<Object> selectObjs = userMapper.selectObjs(queryWrapper.comment("getUserObjs"));
         Assertions.assertEquals(1, selectObjs.size());
     }
 
