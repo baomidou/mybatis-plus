@@ -158,23 +158,23 @@ class ActiveRecordTest {
     void sqlCommentTest() {
         String name = "name1", nameNew = "name1New";
         H2Student student = new H2Student().setName(name).setAge(2);
-        student.delete(new QueryWrapper<H2Student>().setSqlCommentBody("deleteAllStu"));
+        student.delete(new QueryWrapper<H2Student>().sqlComment("deleteAllStu"));
         Assertions.assertTrue(student.insert());
-        boolean updated = new H2Student().setName(nameNew).update(new QueryWrapper<H2Student>().setSqlCommentBody("updateStuName1").lambda()
+        boolean updated = new H2Student().setName(nameNew).update(new QueryWrapper<H2Student>().sqlComment("updateStuName1").lambda()
             .eq(H2Student::getName, name)
         );
         Assertions.assertTrue(updated);
         H2Student h2Student = student.selectOne(
-            new QueryWrapper<H2Student>().lambda().setSqlCommentBody("getStuByUniqueName")
+            new QueryWrapper<H2Student>().lambda().sqlComment("getStuByUniqueName")
                 .eq(H2Student::getName, nameNew)
         );
         Assertions.assertNotNull(h2Student);
         LambdaQueryWrapper<H2Student> queryWrapper = new QueryWrapper<H2Student>().lambda().ge(H2Student::getAge, 1);
-        int userCount = student.selectCount(queryWrapper.setSqlCommentBody("getStuCount"));
+        int userCount = student.selectCount(queryWrapper.sqlComment("getStuCount"));
         Assertions.assertEquals(1, userCount);
-        List<H2Student> h2StudentList = student.selectList(queryWrapper.setSqlCommentBody("getStuList"));
+        List<H2Student> h2StudentList = student.selectList(queryWrapper.sqlComment("getStuList"));
         Assertions.assertEquals(1, h2StudentList.size());
-        IPage<H2Student> h2StudentIPage = student.selectPage(new Page<>(1, 10), queryWrapper.setSqlCommentBody("getStuPage"));
+        IPage<H2Student> h2StudentIPage = student.selectPage(new Page<>(1, 10), queryWrapper.sqlComment("getStuPage"));
         Assertions.assertEquals(1, h2StudentIPage.getRecords().size());
     }
 
