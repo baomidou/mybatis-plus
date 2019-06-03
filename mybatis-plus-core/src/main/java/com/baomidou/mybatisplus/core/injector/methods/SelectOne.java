@@ -34,7 +34,8 @@ public class SelectOne extends AbstractMethod {
         SqlMethod sqlMethod = SqlMethod.SELECT_ONE;
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, String.format(sqlMethod.getSql(),
             this.sqlSelectColumns(tableInfo, true), tableInfo.getTableName(),
-            this.sqlWhereEntityWrapper(true, tableInfo)), modelClass);
+            this.sqlWhereEntityWrapper(true, tableInfo), sqlComment()),
+            modelClass);
         return this.addSelectMappedStatementForTable(mapperClass, sqlMethod.getMethod(), sqlSource, tableInfo);
     }
 }

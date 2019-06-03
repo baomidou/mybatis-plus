@@ -33,7 +33,8 @@ public class SelectPage extends AbstractMethod {
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.SELECT_PAGE;
         String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(tableInfo, true),
-            tableInfo.getTableName(), sqlWhereEntityWrapper(true, tableInfo));
+            tableInfo.getTableName(), sqlWhereEntityWrapper(true, tableInfo),
+            sqlComment());
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
         return this.addSelectMappedStatementForTable(mapperClass, sqlMethod.getMethod(), sqlSource, tableInfo);
     }
