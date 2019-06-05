@@ -51,7 +51,7 @@ public class TomcatJdbcH2Test extends H2Test {
     H2UserVersionAndLogicDeleteMapper userMapper;
 
     @Test
-    public void testPerformanceInteceptor() {
+    public void testPerformanceInterceptor() {
         userMapper.selectList(new EntityWrapper<H2UserVersionAndLogicDeleteEntity>());
     }
 }

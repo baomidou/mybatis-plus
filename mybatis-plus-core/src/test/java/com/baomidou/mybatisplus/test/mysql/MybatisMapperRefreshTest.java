@@ -13,8 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test;
+package com.baomidou.mybatisplus.test.mysql;
 
+import com.baomidou.mybatisplus.test.mysql.CrudTest;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.core.io.ClassPathResource;

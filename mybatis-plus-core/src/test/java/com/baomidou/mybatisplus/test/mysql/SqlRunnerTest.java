@@ -23,7 +23,6 @@ import org.junit.Test;
 
 import com.baomidou.mybatisplus.mapper.SqlRunner;
 import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.test.CrudTest;
 import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;
 

@@ -27,7 +27,6 @@ import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
-import com.baomidou.mybatisplus.test.CrudTest;
 import com.baomidou.mybatisplus.test.mysql.entity.Role;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
 import com.baomidou.mybatisplus.test.mysql.mapper.UserMapper;

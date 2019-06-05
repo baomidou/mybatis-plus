@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test.activerecord;
+package com.baomidou.mybatisplus.test.mysql.activerecord;
 
 import java.util.List;
 import java.util.Map;
@@ -21,7 +21,7 @@ import java.util.Map;
 import org.apache.ibatis.jdbc.SQL;
 
 import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.test.CrudTest;
+import com.baomidou.mybatisplus.test.mysql.CrudTest;
 import com.baomidou.mybatisplus.test.mysql.entity.Test;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
 import com.baomidou.mybatisplus.toolkit.TableInfoHelper;

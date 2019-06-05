@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.test.plugins;
+package com.baomidou.mybatisplus.test;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Random;

@@ -22,7 +22,6 @@ import java.util.List;
 import org.apache.ibatis.session.SqlSession;
 
 import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.test.CrudTest;
 import com.baomidou.mybatisplus.test.mysql.entity.Test;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
 import com.baomidou.mybatisplus.test.mysql.mapper.TestMapper;

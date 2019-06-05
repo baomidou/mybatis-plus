@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.test.plugins.optimisticLocker.entity;
+package com.baomidou.mybatisplus.test.h2.optimisticLocker.entity;
 
 import com.baomidou.mybatisplus.annotations.Version;
 

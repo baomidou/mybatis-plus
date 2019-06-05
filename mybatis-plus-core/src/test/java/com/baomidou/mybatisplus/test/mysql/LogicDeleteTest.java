@@ -24,7 +24,6 @@ import org.junit.Test;
 
 import com.baomidou.mybatisplus.entity.GlobalConfiguration;
 import com.baomidou.mybatisplus.mapper.Condition;
-import com.baomidou.mybatisplus.test.CrudTest;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
 import com.baomidou.mybatisplus.test.mysql.mapper.UserMapper;
 import com.baomidou.mybatisplus.toolkit.IdWorker;

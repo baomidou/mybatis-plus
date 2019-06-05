@@ -29,7 +29,7 @@ ext {
         "aspectjweaver":"org.aspectj:aspectjweaver:1.8.9",
         "servlet-api":"javax.servlet:servlet-api:2.5",
         "lombok":"org.projectlombok:lombok:1.16.16",
-        "hikaricp":"com.zaxxer:HikariCP:2.7.0",
+        "hikaricp":"com.zaxxer:HikariCP-java7:2.4.13",
         "spring-test":"org.springframework:spring-test:${springVersion}",
         "spring-webmvc":"org.springframework:spring-webmvc:${springVersion}",
         "spring-context-support":"org.springframework:spring-context-support:${springVersion}",

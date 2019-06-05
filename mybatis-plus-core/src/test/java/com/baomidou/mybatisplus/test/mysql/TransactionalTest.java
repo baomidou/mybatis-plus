@@ -18,7 +18,6 @@ package com.baomidou.mybatisplus.test.mysql;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
 
-import com.baomidou.mybatisplus.test.CrudTest;
 import com.baomidou.mybatisplus.test.mysql.entity.User;
 import com.baomidou.mybatisplus.test.mysql.mapper.UserMapper;
 import com.baomidou.mybatisplus.toolkit.IdWorker;

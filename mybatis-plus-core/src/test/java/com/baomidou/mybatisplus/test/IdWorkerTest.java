@@ -27,7 +27,6 @@ import java.util.concurrent.Future;
 
 import org.junit.Assert;
 
-import com.baomidou.mybatisplus.test.plugins.RandomUtils;
 import com.baomidou.mybatisplus.toolkit.IdWorker;
 
 /**

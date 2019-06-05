@@ -22,7 +22,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.test.CrudTest;
 import com.baomidou.mybatisplus.test.mysql.entity.PhoneNumber;
 import com.baomidou.mybatisplus.test.mysql.entity.Role;
 import com.baomidou.mybatisplus.test.mysql.entity.User;

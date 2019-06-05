@@ -1,3 +1,15 @@
+test {
+    filter {
+        includeTestsMatching "com.baomidou.mybatisplus.test"
+        includeTestsMatching "com.baomidou.mybatisplus.test.proxy.*"
+        includeTestsMatching "com.baomidou.mybatisplus.test.sql.*"
+        includeTestsMatching "com.baomidou.mybatisplus.test.h2.*"
+        //默认只跑H2测试用例,下面的看需求自行打开
+//        includeTestsMatching "com.baomidou.mybatisplus.test.mysql.*"
+//        includeTestsMatching "com.baomidou.mybatisplus.test.oracle.*"
+    }
+}
+
 dependencies {
     compile project(":mybatis-plus-support")
     compile rootProject.ext.dependencies["jsqlparser"]

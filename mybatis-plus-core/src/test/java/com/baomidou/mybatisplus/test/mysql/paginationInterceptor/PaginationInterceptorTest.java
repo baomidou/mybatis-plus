@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.test.plugins.paginationInterceptor;
+package com.baomidou.mybatisplus.test.mysql.paginationInterceptor;
 
 import java.io.Reader;
 import java.sql.Connection;
@@ -18,10 +18,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.test.plugins.RandomUtils;
-import com.baomidou.mybatisplus.test.plugins.paginationInterceptor.entity.PageUser;
-import com.baomidou.mybatisplus.test.plugins.paginationInterceptor.mapper.PageUserMapper;
-import com.baomidou.mybatisplus.test.plugins.paginationInterceptor.service.PageUserService;
+import com.baomidou.mybatisplus.test.RandomUtils;
+import com.baomidou.mybatisplus.test.mysql.paginationInterceptor.entity.PageUser;
+import com.baomidou.mybatisplus.test.mysql.paginationInterceptor.mapper.PageUserMapper;
+import com.baomidou.mybatisplus.test.mysql.paginationInterceptor.service.PageUserService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/plugins/paginationInterceptor.xml"})

@@ -13,7 +13,7 @@
 	<bean id="sqlSessionFactory"
 		class="com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
-		<property name="typeAliasesPackage" value="com.baomidou.mybatisplus.test.plugins.paginationInterceptor.entity" />
+		<property name="typeAliasesPackage" value="com.baomidou.mybatisplus.test.mysql.paginationInterceptor.entity" />
 		<property name="plugins">
 			<array>
 				<bean class="com.baomidou.mybatisplus.plugins.PerformanceInterceptor" />
@@ -27,6 +27,6 @@
 	</bean>
 
 	<bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="com.baomidou.mybatisplus.test.plugins.paginationInterceptor.mapper" />
+		<property name="basePackage" value="com.baomidou.mybatisplus.test.mysql.paginationInterceptor.mapper" />
 	</bean>
 </beans>

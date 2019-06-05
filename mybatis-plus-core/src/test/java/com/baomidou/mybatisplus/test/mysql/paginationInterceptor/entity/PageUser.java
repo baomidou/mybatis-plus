@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.test.plugins.paginationInterceptor.entity;
+package com.baomidou.mybatisplus.test.mysql.paginationInterceptor.entity;
 
 import java.io.Serializable;
 

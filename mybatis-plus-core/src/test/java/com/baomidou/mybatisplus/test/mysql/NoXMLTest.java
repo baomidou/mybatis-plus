@@ -23,7 +23,6 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 
 import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.test.CrudTest;
 import com.baomidou.mybatisplus.test.mysql.entity.Test;
 import com.baomidou.mybatisplus.test.mysql.mapper.TestMapper;
 import com.baomidou.mybatisplus.toolkit.IdWorker;

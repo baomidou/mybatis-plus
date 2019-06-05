@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test;
+package com.baomidou.mybatisplus.test.mysql;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
+import com.baomidou.mybatisplus.test.mysql.CrudTest;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Assert;

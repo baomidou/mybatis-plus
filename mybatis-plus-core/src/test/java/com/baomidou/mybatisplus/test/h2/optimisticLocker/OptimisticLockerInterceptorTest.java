@@ -1,4 +1,4 @@
-package com.baomidou.mybatisplus.test.plugins.optimisticLocker;
+package com.baomidou.mybatisplus.test.h2.optimisticLocker;
 
 import java.io.Reader;
 import java.sql.Connection;
@@ -19,15 +19,15 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.test.plugins.optimisticLocker.entity.DateVersionUser;
-import com.baomidou.mybatisplus.test.plugins.optimisticLocker.entity.IntVersionUser;
-import com.baomidou.mybatisplus.test.plugins.optimisticLocker.entity.LongVersionUser;
-import com.baomidou.mybatisplus.test.plugins.optimisticLocker.entity.TimestampVersionUser;
-import com.baomidou.mybatisplus.test.plugins.optimisticLocker.mapper.DateVersionUserMapper;
-import com.baomidou.mybatisplus.test.plugins.optimisticLocker.mapper.IntVersionUserMapper;
-import com.baomidou.mybatisplus.test.plugins.optimisticLocker.mapper.LogicVersionUserMapper;
-import com.baomidou.mybatisplus.test.plugins.optimisticLocker.mapper.LongVersionUserMapper;
-import com.baomidou.mybatisplus.test.plugins.optimisticLocker.mapper.TimestampVersionUserMapper;
+import com.baomidou.mybatisplus.test.h2.optimisticLocker.entity.DateVersionUser;
+import com.baomidou.mybatisplus.test.h2.optimisticLocker.entity.IntVersionUser;
+import com.baomidou.mybatisplus.test.h2.optimisticLocker.entity.LongVersionUser;
+import com.baomidou.mybatisplus.test.h2.optimisticLocker.entity.TimestampVersionUser;
+import com.baomidou.mybatisplus.test.h2.optimisticLocker.mapper.DateVersionUserMapper;
+import com.baomidou.mybatisplus.test.h2.optimisticLocker.mapper.IntVersionUserMapper;
+import com.baomidou.mybatisplus.test.h2.optimisticLocker.mapper.LogicVersionUserMapper;
+import com.baomidou.mybatisplus.test.h2.optimisticLocker.mapper.LongVersionUserMapper;
+import com.baomidou.mybatisplus.test.h2.optimisticLocker.mapper.TimestampVersionUserMapper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/plugins/optimisticLockerInterceptor.xml"})
