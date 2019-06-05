@@ -18,6 +18,8 @@ package com.baomidou.mybatisplus.plugins;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.ibatis.executor.statement.StatementHandler;
@@ -43,10 +45,18 @@ import com.baomidou.mybatisplus.plugins.pagination.PageHelper;
 import com.baomidou.mybatisplus.plugins.pagination.Pagination;
 import com.baomidou.mybatisplus.plugins.parser.ISqlParser;
 import com.baomidou.mybatisplus.plugins.parser.SqlInfo;
+import com.baomidou.mybatisplus.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.toolkit.SqlUtils;
 import com.baomidou.mybatisplus.toolkit.StringUtils;
+
+import net.sf.jsqlparser.JSQLParserException;
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.schema.Column;
+import net.sf.jsqlparser.statement.select.OrderByElement;
+import net.sf.jsqlparser.statement.select.PlainSelect;
+import net.sf.jsqlparser.statement.select.Select;
 
 /**
  * <p>
@@ -119,16 +129,14 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
         DBType dbType = StringUtils.isNotEmpty(dialectType) ? DBType.getDBType(dialectType) : JdbcUtils.getDbType(connection.getMetaData().getURL());
         if (rowBounds instanceof Pagination) {
             Pagination page = (Pagination) rowBounds;
-            boolean orderBy = true;
             if (page.isSearchCount()) {
                 SqlInfo sqlInfo = SqlUtils.getOptimizeCountSql(page.isOptimizeCountSql(), sqlParser, originalSql);
-                orderBy = sqlInfo.isOrderBy();
                 this.queryTotal(overflowCurrent, sqlInfo.getSql(), mappedStatement, boundSql, page, connection);
                 if (page.getTotal() <= 0) {
                     return invocation.proceed();
                 }
             }
-            String buildSql = SqlUtils.concatOrderBy(originalSql, page, orderBy);
+            String buildSql = concatOrderBy(originalSql, page);
             originalSql = DialectFactory.buildPaginationSql(page, buildSql, dbType, dialectClazz);
         } else {
             // support physical Pagination for RowBounds
@@ -143,6 +151,48 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
         metaObject.setValue("delegate.rowBounds.offset", RowBounds.NO_ROW_OFFSET);
         metaObject.setValue("delegate.rowBounds.limit", RowBounds.NO_ROW_LIMIT);
         return invocation.proceed();
+    }
+
+    /**
+     * #1131 github
+     * concat Order by field in page.
+     *
+     * @param originalSql
+     * @param page
+     * @return
+     */
+    private String concatOrderBy(String originalSql, Pagination page) {
+        List<String> ascs = page.getAscs();
+        List<String> descs = page.getDescs();
+        if (CollectionUtils.isEmpty(ascs) && CollectionUtils.isEmpty(descs)) {
+            return originalSql;
+        }
+        int size = ascs.size() + descs.size();
+        try {
+            Select selectStatement = (Select) CCJSqlParserUtil.parse(originalSql);
+            PlainSelect plainSelect = (PlainSelect) selectStatement.getSelectBody();
+            List<OrderByElement> orderByElements = plainSelect.getOrderByElements();
+            if (orderByElements == null || orderByElements.isEmpty()) {
+                orderByElements = new ArrayList<>(size);
+            }
+            for (String str : ascs) {
+                OrderByElement element = new OrderByElement();
+                element.setExpression(new Column(str));
+                element.setAsc(true);
+                orderByElements.add(element);
+            }
+            for (String str : descs) {
+                OrderByElement element = new OrderByElement();
+                element.setExpression(new Column(str));
+                element.setAsc(false);
+                orderByElements.add(element);
+            }
+            plainSelect.setOrderByElements(orderByElements);
+            return plainSelect.toString();
+        } catch (JSQLParserException e) {
+            logger.warn("failed to concat orderBy from IPage, exception=" + e.getMessage());
+            return originalSql;
+        }
     }
 
     /**

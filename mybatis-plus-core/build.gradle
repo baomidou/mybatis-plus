@@ -34,4 +34,6 @@ dependencies {
     testCompile rootProject.ext.dependencies["fastjson"]
     testCompile rootProject.ext.dependencies["tomcatjdbc"]
     testCompile name: 'ojdbc-11.2.0.3-jdk16'
+    compileOnly 'org.projectlombok:lombok:1.18.6'
+    annotationProcessor 'org.projectlombok:lombok:1.18.6'
 }
