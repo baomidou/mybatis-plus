@@ -19,6 +19,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -166,6 +167,12 @@ public class PaginationInterceptor extends SqlParserHandler implements Intercept
         List<String> descs = page.getDescs();
         if (CollectionUtils.isEmpty(ascs) && CollectionUtils.isEmpty(descs)) {
             return originalSql;
+        }
+        if (ascs == null) {
+            ascs = Collections.EMPTY_LIST;
+        }
+        if (descs == null) {
+            descs = Collections.EMPTY_LIST;
         }
         int size = ascs.size() + descs.size();
         try {
