@@ -47,22 +47,22 @@ public class TenantSqlTest {
 
     // ----------------------------    insert 测试     ----------------------------
     @Test
-    public void intsertFilter() {
+    public void insertFilter() {
         SqlInfo sqlInfo = tenantSqlParser.optimizeSql(null, "INSERT INTO user (c1, c2, c3) VALUES (?, 'asd', 123)");
         Assert.assertEquals("INSERT INTO user (c1, c2, c3) VALUES (?, 'asd', 123)", sqlInfo.getSql());
     }
 
     @Test
-    public void intsert() {
+    public void insert() {
         SqlInfo sqlInfo = tenantSqlParser.optimizeSql(null, "INSERT INTO role (c1, c2, c3) VALUES (?, 'asd', 123)");
         Assert.assertEquals("INSERT INTO role (c1, c2, c3, tenant_id) VALUES (?, 'asd', 123, 1000)", sqlInfo.getSql());
     }
 
     @Test
-    public void intsertInto() {
+    public void insertInto() {
         SqlInfo sqlInfo = tenantSqlParser.optimizeSql(null, "insert into role (c1, c2, c3) SELECT * FROM bak");
         System.out.println(sqlInfo.getSql());
-        Assert.assertEquals("INSERT INTO role (c1, c2, c3, tenant_id) SELECT *, tenant_id FROM bak WHERE tenant_id = 1000", sqlInfo.getSql());
+        Assert.assertEquals("INSERT INTO role (c1, c2, c3, tenant_id) SELECT *, tenant_id FROM bak WHERE bak.tenant_id = 1000", sqlInfo.getSql());
     }
 
     // ----------------------------    delete 测试     ----------------------------
@@ -80,7 +80,7 @@ public class TenantSqlTest {
     @Test
     public void deleteOrderBy() {
         SqlInfo sqlInfo = tenantSqlParser.optimizeSql(null, "DELETE FROM tablename WHERE a = 1 AND b = 1 ORDER BY col");
-        Assert.assertEquals("DELETE FROM tablename WHERE tenant_id = 1000 AND a = 1 AND b = 1 ORDER BY col", sqlInfo.getSql());
+        Assert.assertEquals("DELETE FROM tablename WHERE tablename.tenant_id = 1000 AND a = 1 AND b = 1 ORDER BY col", sqlInfo.getSql());
     }
 
     @Test
@@ -99,13 +99,13 @@ public class TenantSqlTest {
     @Test
     public void updateSet() {
         SqlInfo sqlInfo = tenantSqlParser.optimizeSql(null, "UPDATE role set c1='as', c2=?, c3=565 Where o >= 3");
-        Assert.assertEquals("UPDATE role SET c1 = 'as', c2 = ?, c3 = 565 WHERE tenant_id = 1000 AND o >= 3", sqlInfo.getSql());
+        Assert.assertEquals("UPDATE role SET c1 = 'as', c2 = ?, c3 = 565 WHERE role.tenant_id = 1000 AND o >= 3", sqlInfo.getSql());
     }
 
     @Test
     public void updateSetJoin() {
         SqlInfo sqlInfo = tenantSqlParser.optimizeSql(null, "UPDATE role SET c1 = 5 FROM role LEFT JOIN user ON c1 = c2 Where o >= 3");
-        Assert.assertEquals("UPDATE role SET c1 = 5 FROM role LEFT JOIN user ON c1 = c2 WHERE tenant_id = 1000 AND o >= 3", sqlInfo.getSql());
+        Assert.assertEquals("UPDATE role SET c1 = 5 FROM role LEFT JOIN user ON c1 = c2 WHERE role.tenant_id = 1000 AND o >= 3", sqlInfo.getSql());
     }
 
     // ----------------------------    select 测试     ----------------------------
@@ -124,13 +124,13 @@ public class TenantSqlTest {
     @Test
     public void selectChild() {
         SqlInfo sqlInfo = tenantSqlParser.optimizeSql(null, "select aaa, bbb,(select ccc from user) as ccc from role");
-        Assert.assertEquals("SELECT aaa, bbb, (SELECT ccc FROM user) AS ccc FROM role WHERE tenant_id = 1000", sqlInfo.getSql());
+        Assert.assertEquals("SELECT aaa, bbb, (SELECT ccc FROM user) AS ccc FROM role WHERE role.tenant_id = 1000", sqlInfo.getSql());
     }
 
     @Test
     public void selectChild1() {
         SqlInfo sqlInfo = tenantSqlParser.optimizeSql(null, "select name from role where  id= (select rid from user where id=1 )");
-        Assert.assertEquals("SELECT name FROM role WHERE tenant_id = 1000 AND id = (SELECT rid FROM user WHERE id = 1)", sqlInfo.getSql());
+        Assert.assertEquals("SELECT name FROM role WHERE role.tenant_id = 1000 AND id = (SELECT rid FROM user WHERE id = 1)", sqlInfo.getSql());
     }
 
     @Test
