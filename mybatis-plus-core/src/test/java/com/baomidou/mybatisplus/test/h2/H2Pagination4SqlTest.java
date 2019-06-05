@@ -2,7 +2,10 @@ package com.baomidou.mybatisplus.test.h2;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -56,6 +59,17 @@ public class H2Pagination4SqlTest extends H2Test {
         List<H2Addr> addrList = userMapper.getAddrListByUserIdPage(101L, page);
         Assert.assertNotEquals("Should have pagination info", 0, page.getTotal());
         Assert.assertEquals(3, addrList.size());
+    }
+
+
+    @Test
+    public void testPaginationWithOrderByInPage() {
+        Page page = new Page(1, 3);
+        page.setDescs(new ArrayList<>(Collections.singletonList("age")));
+        List<Map<String, Object>> list = userMapper.queryForPageWithOrderBy(page);
+        for (Map<String, Object> mp : list) {
+            System.out.println(mp);
+        }
     }
 
 }

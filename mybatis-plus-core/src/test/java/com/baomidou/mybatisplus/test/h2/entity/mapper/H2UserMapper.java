@@ -81,4 +81,7 @@ public interface H2UserMapper extends SuperMapper<H2User> {
 
     @Select("select * from h2user")
     List<Map> mySelectMaps();
+
+    @Select("select age, test_type, count(1) from h2user group by age, test_type order by test_type")
+    public List<Map<String,Object>> queryForPageWithOrderBy(Page page);
 }
