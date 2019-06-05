@@ -49,7 +49,7 @@ ext {
 
 allprojects{
     group = 'com.baomidou'
-    version = '2.3.4-SNAPSHOT'
+    version = '2.3.4.1-SNAPSHOT'
 }
 
 
