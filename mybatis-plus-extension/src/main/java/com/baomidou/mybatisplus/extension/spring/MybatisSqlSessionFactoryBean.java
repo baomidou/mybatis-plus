@@ -476,7 +476,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         targetConfiguration.setGlobalConfig(this.globalConfig);
 
         // TODO 设置元数据相关 如果用户没有配置 dbType 则自动获取
-        if (globalConfig.getDbConfig().getDbType() == DbType.OTHER) {
+        if (globalConfig.getDbConfig().getDbType() == DbType.OTHER && globalConfig.getDbConfig().getPreConnect()) {
             try (Connection connection = AopUtils.getTargetObject(this.dataSource).getConnection()) {
                 globalConfig.getDbConfig().setDbType(JdbcUtils.getDbType(connection.getMetaData().getURL()));
             } catch (Exception e) {

@@ -189,5 +189,10 @@ public class GlobalConfig implements Serializable {
          * @since 3.1.2
          */
         private FieldStrategy selectStrategy;
+
+        /**
+         * 程序启动时是否自动进行数据库连接
+         */
+        private boolean preConnect = true;
     }
 }
