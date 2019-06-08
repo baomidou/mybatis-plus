@@ -475,8 +475,8 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         // TODO 初始化 id-work 以及 打印骚东西
         targetConfiguration.setGlobalConfig(this.globalConfig);
 
-        // TODO 设置元数据相关 如果用户没有配置 dbType 则自动获取
-        if (globalConfig.getDbConfig().getDbType() == DbType.OTHER && globalConfig.getDbConfig().getPreConnect()) {
+        // TODO 设置元数据相关 如果用户配置了 preConnect 则自动获取
+        if (globalConfig.getDbConfig().getPreConnect()) {
             try (Connection connection = AopUtils.getTargetObject(this.dataSource).getConnection()) {
                 globalConfig.getDbConfig().setDbType(JdbcUtils.getDbType(connection.getMetaData().getURL()));
             } catch (Exception e) {
