@@ -30,10 +30,7 @@ import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Parenthesis;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
-import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
-import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
-import net.sf.jsqlparser.expression.operators.relational.ItemsList;
-import net.sf.jsqlparser.expression.operators.relational.MultiExpressionList;
+import net.sf.jsqlparser.expression.operators.relational.*;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.delete.Delete;
@@ -260,6 +257,11 @@ public class TenantSqlParser extends AbstractJsqlParser {
             if (expression instanceof OrExpression) {
                 return new AndExpression(equalsTo, new Parenthesis(expression));
             } else {
+                // fix github 1201
+                if (expression instanceof InExpression) {
+                    InExpression inExp = (InExpression) expression;
+                    processSelectBody(((SubSelect) inExp.getRightItemsList()).getSelectBody());
+                }
                 return new AndExpression(equalsTo, expression);
             }
         }
