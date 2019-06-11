@@ -40,7 +40,7 @@ public class DB2Query extends AbstractDbQuery {
 
     @Override
     public String tableFieldsSql() {
-        return "SELECT *  FROM syscat.columns WHERE tabschema=%s AND tabname='%s'";
+        return "SELECT * FROM syscat.columns WHERE tabschema=%s AND tabname='%s'";
     }
 
 
