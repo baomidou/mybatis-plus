@@ -234,7 +234,7 @@ public abstract class AbstractTemplateEngine {
         objectMap.put("superServiceImplClass", getSuperClassName(config.getSuperServiceImplClass()));
         objectMap.put("superControllerClassPackage", config.getSuperControllerClass());
         objectMap.put("superControllerClass", getSuperClassName(config.getSuperControllerClass()));
-        return objectMap;
+        return config.getInjectionConfig().prepareObjectMap(objectMap);
     }
 
 

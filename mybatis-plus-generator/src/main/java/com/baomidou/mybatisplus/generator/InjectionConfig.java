@@ -59,4 +59,13 @@ public abstract class InjectionConfig {
      * 注入自定义 Map 对象
      */
     public abstract void initMap();
+
+    /**
+     * 模板待渲染 Object Map 预处理<br>
+     * com.baomidou.mybatisplus.generator.engine.AbstractTemplateEngine
+     * 方法： getObjectMap 结果处理
+     */
+    public Map<String, Object> prepareObjectMap(Map<String, Object> objectMap) {
+        return objectMap;
+    }
 }
