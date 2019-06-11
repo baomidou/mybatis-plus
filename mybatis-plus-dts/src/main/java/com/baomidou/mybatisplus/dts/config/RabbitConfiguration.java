@@ -29,6 +29,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.transaction.RabbitTransactionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -62,13 +63,13 @@ public class RabbitConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingClass("org.springframework.jdbc.datasource.DataSourceTransactionManager")
+    @ConditionalOnMissingBean
     public RabbitTransactionManager rabbitTransactionManager(ConnectionFactory connectionFactory) {
         return new RabbitTransactionManager(connectionFactory);
     }
 
     @Bean
-    @ConditionalOnMissingClass("org.springframework.amqp.rabbit.core.RabbitAdmin")
+    @ConditionalOnMissingBean
     public RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
         return new RabbitAdmin(connectionFactory);
     }
