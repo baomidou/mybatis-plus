@@ -20,6 +20,9 @@ import com.baomidou.mybatisplus.core.parser.SqlInfo;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.toolkit.SqlParserUtils;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import net.sf.jsqlparser.expression.Alias;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Function;
@@ -42,13 +45,14 @@ import java.util.Optional;
  * @author hubin
  * @since 2017-06-20
  */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class JsqlParserCountOptimize implements ISqlParser {
-
     private static final List<SelectItem> COUNT_SELECT_ITEM = countSelectItem();
-    /**
-     * 日志
-     */
     private final Log logger = LogFactory.getLog(JsqlParserCountOptimize.class);
+
+    private boolean optimizeJoin = false;
 
     /**
      * 获取jsqlparser中count的SelectItem
@@ -98,7 +102,7 @@ public class JsqlParserCountOptimize implements ISqlParser {
             }
             // 包含 join 连表,进行判断是否移除 join 连表
             List<Join> joins = plainSelect.getJoins();
-            if (CollectionUtils.isNotEmpty(joins)) {
+            if (optimizeJoin && CollectionUtils.isNotEmpty(joins)) {
                 boolean canRemoveJoin = true;
                 String whereS = Optional.ofNullable(plainSelect.getWhere()).map(Expression::toString).orElse(StringPool.EMPTY);
                 for (Join join : joins) {
