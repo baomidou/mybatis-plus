@@ -15,13 +15,10 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.tenant;
 
-import java.util.List;
-
 import com.baomidou.mybatisplus.core.parser.AbstractJsqlParser;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -35,18 +32,10 @@ import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.insert.Insert;
-import net.sf.jsqlparser.statement.select.FromItem;
-import net.sf.jsqlparser.statement.select.Join;
-import net.sf.jsqlparser.statement.select.LateralSubSelect;
-import net.sf.jsqlparser.statement.select.PlainSelect;
-import net.sf.jsqlparser.statement.select.SelectBody;
-import net.sf.jsqlparser.statement.select.SelectExpressionItem;
-import net.sf.jsqlparser.statement.select.SetOperationList;
-import net.sf.jsqlparser.statement.select.SubJoin;
-import net.sf.jsqlparser.statement.select.SubSelect;
-import net.sf.jsqlparser.statement.select.ValuesList;
-import net.sf.jsqlparser.statement.select.WithItem;
+import net.sf.jsqlparser.statement.select.*;
 import net.sf.jsqlparser.statement.update.Update;
+
+import java.util.List;
 
 /**
  * 租户 SQL 解析器（ TenantId 行级 ）
@@ -260,7 +249,10 @@ public class TenantSqlParser extends AbstractJsqlParser {
                 // fix github 1201
                 if (expression instanceof InExpression) {
                     InExpression inExp = (InExpression) expression;
-                    processSelectBody(((SubSelect) inExp.getRightItemsList()).getSelectBody());
+                    ItemsList rightItems = inExp.getRightItemsList();
+                    if (rightItems instanceof SubSelect) {
+                        processSelectBody(((SubSelect) rightItems).getSelectBody());
+                    }
                 }
                 return new AndExpression(equalsTo, expression);
             }
