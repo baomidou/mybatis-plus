@@ -15,6 +15,10 @@
  */
 package com.baomidou.mybatisplus.annotation;
 
+import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.TypeHandler;
+import org.apache.ibatis.type.UnknownTypeHandler;
+
 import java.lang.annotation.*;
 
 
@@ -33,11 +37,11 @@ public @interface TableField {
      * 字段值（驼峰命名方式，该值可无）
      */
     String value() default "";
-
+    
     /**
      * 当该Field为类对象时, 可使用#{对象.属性}来映射到数据表.
-     * <p>支持：@TableField(el = "role, jdbcType=BIGINT)</p>
-     * <p>支持：@TableField(el = "role, typeHandler=com.baomidou.springcloud.typehandler.PhoneTypeHandler")</p>
+     * <p>支持：@TableField(el = "role, jdbcType=BIGINT) 推荐使用{@link TableField#jdbcType()} </p>
+     * <p>支持：@TableField(el = "role, typeHandler=com.baomidou.springcloud.typehandler.PhoneTypeHandler") 推荐使用{@link TableField#typeHandler()} </p>
      */
     @Deprecated
     String el() default "";
@@ -119,4 +123,20 @@ public @interface TableField {
      * @since 3.1.1
      */
     boolean keepGlobalFormat() default false;
+    
+    /**
+     * JDBC类型
+     *
+     * @return JDBC类型
+     * @since 3.1.2
+     */
+    JdbcType jdbcType() default JdbcType.UNDEFINED;
+    
+    /**
+     * 类型处理器
+     *
+     * @return 类型处理器
+     * @since 3.1.2
+     */
+    Class<? extends TypeHandler<?>> typeHandler() default UnknownTypeHandler.class;
 }
