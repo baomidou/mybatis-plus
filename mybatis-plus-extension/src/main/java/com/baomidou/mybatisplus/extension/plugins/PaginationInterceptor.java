@@ -96,7 +96,8 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
      */
     private String dialectType;
     /**
-     * 方言实现类
+     * 方言实现类<br>
+     * 注意！实现 com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect 接口的子类
      */
     private String dialectClazz;
 
