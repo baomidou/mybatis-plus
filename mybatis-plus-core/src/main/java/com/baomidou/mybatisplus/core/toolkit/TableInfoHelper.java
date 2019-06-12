@@ -410,33 +410,13 @@ public class TableInfoHelper {
             columnName = tableField.value();
             columnNameFromTableField = true;
         }
-        /*
-         * el 语法支持，可以传入多个参数以逗号分开
-         */
-        String el = field.getName();
-        if (StringUtils.isNotEmpty(tableField.el())) {
-            el = tableField.el();
-        }
-        String[] columns = columnName.split(StringPool.SEMICOLON);
-
+        String el = StringUtils.isNotEmpty(tableField.el()) ? tableField.el() : field.getName();
         String columnFormat = dbConfig.getColumnFormat();
         if (StringUtils.isNotEmpty(columnFormat) && (!columnNameFromTableField || tableField.keepGlobalFormat())) {
-            for (int i = 0; i < columns.length; i++) {
-                String column = columns[i];
-                column = String.format(columnFormat, column);
-                columns[i] = column;
-            }
+            columnName = String.format(columnFormat, columnName);
         }
-
-        String[] els = el.split(StringPool.SEMICOLON);
-        if (columns.length == els.length) {
-            for (int i = 0; i < columns.length; i++) {
-                fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, columns[i], els[i], tableField));
-            }
-            return true;
-        }
-        throw ExceptionUtils.mpe("Class: %s, Field: %s, 'value' 'el' Length must be consistent.",
-            clazz.getName(), field.getName());
+        fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, columnName, el, tableField));
+        return true;
     }
 
     /**
