@@ -25,6 +25,9 @@ import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.TypeHandler;
+import org.apache.ibatis.type.UnknownTypeHandler;
 
 import java.lang.reflect.Field;
 import java.util.Optional;
@@ -128,6 +131,18 @@ public class TableFieldInfo implements Constants {
      */
     @Getter(AccessLevel.NONE)
     private String sqlSelect;
+    /**
+     * JDBC类型
+     *
+     * @since 3.1.2
+     */
+    private JdbcType jdbcType;
+    /**
+     * 类型处理器
+     *
+     * @since 3.1.2
+     */
+    private Class<? extends TypeHandler<?>> typeHandler;
 
     /**
      * 存在 TableField 注解时, 使用的构造函数
@@ -197,6 +212,95 @@ public class TableFieldInfo implements Constants {
     }
 
     /**
+     * 全新的 存在 TableField 注解并单独设置了 jdbcType 或者 typeHandler 时使用的构造函数
+     */
+    public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field, TableField tableField) {
+        this.version = field.getAnnotation(Version.class) != null;
+        this.property = field.getName();
+        this.propertyType = field.getType();
+        this.isCharSequence = StringUtils.isCharSequence(this.propertyType);
+        this.fieldFill = tableField.fill();
+        this.update = tableField.update();
+        JdbcType jdbcType = tableField.jdbcType();
+        Class<? extends TypeHandler<?>> typeHandler = tableField.typeHandler();
+        String el = this.property;
+        if (JdbcType.UNDEFINED != jdbcType) {
+            this.jdbcType = jdbcType;
+            el += (COMMA + "jdbcType=" + jdbcType.name());
+        }
+        if (UnknownTypeHandler.class != typeHandler) {
+            this.typeHandler = typeHandler;
+            el += (COMMA + "typeHandler=" + typeHandler.getName());
+        }
+        this.el = el;
+        tableInfo.setLogicDelete(this.initLogicDelete(dbConfig, field));
+
+        String column = tableField.value();
+        if (StringUtils.isEmpty(column)) {
+            column = this.property;
+            if (tableInfo.isUnderCamel()) {
+                /* 开启字段下划线申明 */
+                column = StringUtils.camelToUnderline(column);
+            }
+            if (dbConfig.isCapitalMode()) {
+                /* 开启字段全大写申明 */
+                column = column.toUpperCase();
+            }
+        }
+        String columnFormat = dbConfig.getColumnFormat();
+        if (StringUtils.isNotEmpty(columnFormat) && tableField.keepGlobalFormat()) {
+            column = String.format(columnFormat, column);
+        }
+
+        this.column = column;
+        this.related = TableInfoHelper.checkRelated(tableInfo.isUnderCamel(), this.property, this.column);
+
+        /*
+         * 优先使用单个字段注解，否则使用全局配置
+         */
+        if (tableField.strategy() == FieldStrategy.DEFAULT) {
+            this.fieldStrategy = dbConfig.getFieldStrategy();
+        } else {
+            this.fieldStrategy = tableField.strategy();
+        }
+        /*
+         * 优先使用单个字段注解，否则使用全局配置
+         */
+        if (tableField.insertStrategy() == FieldStrategy.DEFAULT) {
+            this.insertStrategy = dbConfig.getInsertStrategy();
+        } else {
+            this.insertStrategy = tableField.insertStrategy();
+        }
+        /*
+         * 优先使用单个字段注解，否则使用全局配置
+         */
+        if (tableField.updateStrategy() == FieldStrategy.DEFAULT) {
+            this.updateStrategy = dbConfig.getUpdateStrategy();
+        } else {
+            this.updateStrategy = tableField.updateStrategy();
+        }
+        /*
+         * 优先使用单个字段注解，否则使用全局配置
+         */
+        if (tableField.whereStrategy() == FieldStrategy.DEFAULT) {
+            this.whereStrategy = dbConfig.getSelectStrategy();
+        } else {
+            this.whereStrategy = tableField.whereStrategy();
+        }
+
+        if (StringUtils.isNotEmpty(tableField.condition())) {
+            // 细粒度条件控制
+            this.condition = tableField.condition();
+        } else {
+            // 全局配置
+            this.setCondition(dbConfig);
+        }
+
+        // 字段是否注入查询
+        this.select = tableField.select();
+    }
+
+    /**
      * 不存在 TableField 注解时, 使用的构造函数
      */
     public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field) {
@@ -204,7 +308,7 @@ public class TableFieldInfo implements Constants {
         this.property = field.getName();
         this.propertyType = field.getType();
         this.isCharSequence = StringUtils.isCharSequence(this.propertyType);
-        this.el = field.getName();
+        this.el = this.property;
         this.fieldStrategy = dbConfig.getFieldStrategy();
         this.insertStrategy = dbConfig.getInsertStrategy();
         this.updateStrategy = dbConfig.getUpdateStrategy();

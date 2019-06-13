@@ -37,12 +37,10 @@ import org.apache.ibatis.type.UnknownTypeHandler;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -399,7 +397,6 @@ public class TableInfoHelper {
      * @param dbConfig  数据库全局配置
      * @param tableInfo 表信息
      * @param fieldList 字段列表
-     * @param clazz     当前表对象类
      * @return true 继续下一个属性判断，返回 continue;
      */
     private static boolean initTableFieldWithAnnotation(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo,
@@ -409,45 +406,46 @@ public class TableInfoHelper {
         if (null == tableField) {
             return false;
         }
+        JdbcType jdbcType = tableField.jdbcType();
+        Class<? extends TypeHandler<?>> typeHandler = tableField.typeHandler();
+        if (JdbcType.UNDEFINED != jdbcType || UnknownTypeHandler.class != typeHandler) {
+            // todo 暂时先这么搞,后面再优化
+            fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, tableField));
+            return true;
+        }
         String columnName = field.getName();
         boolean columnNameFromTableField = false;
         if (StringUtils.isNotEmpty(tableField.value())) {
             columnName = tableField.value();
             columnNameFromTableField = true;
         }
-        JdbcType jdbcType = tableField.jdbcType();
-        Class<? extends TypeHandler<?>> typeHandler = tableField.typeHandler();
-        //#{property,javaType=int,jdbcType=NUMERIC,typeHandler=MyTypeHandler}
-        Map<String,String> els = new LinkedHashMap<>();
-        //兼容下旧代码.
+        /*
+         * el 语法支持，可以传入多个参数以逗号分开
+         */
+        String el = field.getName();
         if (StringUtils.isNotEmpty(tableField.el())) {
-            String[] split = tableField.el().split(StringPool.COMMA);
-            for (String value : split) {
-                String[] arrays = value.split(StringPool.EQUALS);
-                if (arrays.length == 2) {
-                    els.put(arrays[0].trim(), arrays[1].trim());
-                }
-            }
+            el = tableField.el();
         }
-        if (JdbcType.UNDEFINED != jdbcType) {
-            els.put("jdbcType", jdbcType.name());
-        }
-        if (UnknownTypeHandler.class != typeHandler) {
-            els.put("typeHandler", typeHandler.getName());
-        }
+        String[] columns = columnName.split(StringPool.SEMICOLON);
+
         String columnFormat = dbConfig.getColumnFormat();
         if (StringUtils.isNotEmpty(columnFormat) && (!columnNameFromTableField || tableField.keepGlobalFormat())) {
-            columnName = String.format(columnFormat, columnName);
+            for (int i = 0; i < columns.length; i++) {
+                String column = columns[i];
+                column = String.format(columnFormat, column);
+                columns[i] = column;
+            }
         }
-        //合并el属性段
-        String elContent = els.entrySet()
-            .stream()
-            .map(entry -> entry.getKey() + StringPool.EQUALS + entry.getValue())
-            .collect(Collectors.joining(StringPool.COMMA));
-        //el属性 = 字段属性 + el属性段
-        String el = StringUtils.isEmpty(elContent) ? field.getName() : field.getName() + StringPool.COMMA + elContent;
-        fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, columnName, el, tableField));
-        return true;
+
+        String[] els = el.split(StringPool.SEMICOLON);
+        if (columns.length == els.length) {
+            for (int i = 0; i < columns.length; i++) {
+                fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, columns[i], els[i], tableField));
+            }
+            return true;
+        }
+        throw ExceptionUtils.mpe("Class: %s, Field: %s, 'value' 'el' Length must be consistent.",
+            clazz.getName(), field.getName());
     }
 
     /**
