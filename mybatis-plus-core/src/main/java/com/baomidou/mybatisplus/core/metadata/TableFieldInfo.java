@@ -16,17 +16,19 @@
 package com.baomidou.mybatisplus.core.metadata;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
+import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.apache.ibatis.type.UnknownTypeHandler;
 
 import java.lang.reflect.Field;
@@ -505,6 +507,30 @@ public class TableFieldInfo implements Constants {
         String sqlScript = " AND " + String.format(condition, column, newPrefix + el);
         // 查询的时候只判非空
         return convertIf(sqlScript, newPrefix + property, whereStrategy);
+    }
+
+    /**
+     * 获取 ResultMapping
+     *
+     * @param configuration MybatisConfiguration
+     * @return ResultMapping
+     */
+    ResultMapping getResultMapping(final MybatisConfiguration configuration) {
+        ResultMapping.Builder builder = new ResultMapping.Builder(configuration, property,
+            StringUtils.getTargetColumn(column), propertyType);
+        TypeHandlerRegistry registry = configuration.getTypeHandlerRegistry();
+        if (jdbcType != null && jdbcType != JdbcType.UNDEFINED) {
+            builder.jdbcType(jdbcType);
+        }
+        if (typeHandler != null && typeHandler != UnknownTypeHandler.class) {
+            TypeHandler<?> typeHandler = registry.getMappingTypeHandler(this.typeHandler);
+            if (typeHandler == null) {
+                typeHandler = registry.getInstance(propertyType, this.typeHandler);
+                registry.register(typeHandler);
+            }
+            builder.typeHandler(typeHandler);
+        }
+        return builder.build();
     }
 
     /**

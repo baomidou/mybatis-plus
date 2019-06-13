@@ -31,7 +31,8 @@ import java.util.Map;
  */
 @Data
 @Accessors(chain = true)
-@TableName(resultMap = "resultChildren1")
+//@TableName(resultMap = "resultChildren1")
+@TableName(autoResultMap = true)
 public class ResultMapEntity {
 
     private Long id;

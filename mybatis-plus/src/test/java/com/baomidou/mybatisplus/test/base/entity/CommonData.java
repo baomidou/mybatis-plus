@@ -44,12 +44,12 @@ import java.time.LocalDateTime;
 public class CommonData extends Model<CommonData> {
 
     /**
-	 * serialVersionUID
-	 */
-	private static final long serialVersionUID = 5651603508613034190L;
-	
-	private Long id;
-    @TableField(el = "testInt, jdbcType=INTEGER", jdbcType = JdbcType.INTEGER)
+     * serialVersionUID
+     */
+    private static final long serialVersionUID = 5651603508613034190L;
+
+    private Long id;
+    @TableField(jdbcType = JdbcType.INTEGER)
     private Integer testInt;
     @TableField(strategy = FieldStrategy.DEFAULT)
     private String testStr;

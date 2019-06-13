@@ -45,6 +45,7 @@ import static java.util.stream.Collectors.joining;
  * @since 2016-01-23
  */
 @Data
+@Setter(AccessLevel.PACKAGE)
 @Accessors(chain = true)
 public class TableInfo implements Constants {
 
@@ -144,7 +145,7 @@ public class TableInfo implements Constants {
     /**
      * 设置 Configuration
      */
-    public void setConfiguration(Configuration configuration) {
+    void setConfiguration(Configuration configuration) {
         Assert.notNull(configuration, "Error: You need Initialize MybatisConfiguration !");
         this.configuration = (MybatisConfiguration) configuration;
         this.underCamel = configuration.isMapUnderscoreToCamelCase();
@@ -344,7 +345,7 @@ public class TableInfo implements Constants {
     /**
      * 自动构建 resultMap 并注入(如果条件符合的话)
      */
-    public void initResultMapIfNeed() {
+    void initResultMapIfNeed() {
         if (resultMap == null && autoInitResultMap) {
             String id = currentNamespace + DOT + MYBATIS_PLUS + UNDERSCORE + entityType.getSimpleName();
             List<ResultMapping> resultMappings = new ArrayList<>();
@@ -354,11 +355,7 @@ public class TableInfo implements Constants {
                 resultMappings.add(idMapping);
             }
             if (CollectionUtils.isNotEmpty(fieldList)) {
-                fieldList.forEach(f -> {
-                    ResultMapping mapping = new ResultMapping.Builder(configuration, f.getProperty(),
-                        StringUtils.getTargetColumn(f.getColumn()), f.getPropertyType()).build();
-                    resultMappings.add(mapping);
-                });
+                fieldList.forEach(i -> resultMappings.add(i.getResultMapping(configuration)));
             }
             ResultMap resultMap = new ResultMap.Builder(configuration, id, entityType, resultMappings).build();
             configuration.addResultMap(resultMap);

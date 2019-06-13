@@ -16,7 +16,7 @@
 package com.baomidou.mybatisplus.extension.kotlin
 
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment
-import com.baomidou.mybatisplus.core.toolkit.TableInfoHelper
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 

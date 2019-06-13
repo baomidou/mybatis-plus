@@ -13,13 +13,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.core.toolkit;
+package com.baomidou.mybatisplus.core.metadata;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
-import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.toolkit.*;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
@@ -36,10 +35,7 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.UnknownTypeHandler;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.stream.Collectors.toList;
@@ -150,7 +146,8 @@ public class TableInfoHelper {
         /* 缓存 lambda */
         LambdaUtils.installCache(tableInfo);
 
-        // todo 暂时不开放  tableInfo.initResultMapIfNeed();
+        /* 自动构建 resultMap */
+        tableInfo.initResultMapIfNeed();
 
         return tableInfo;
     }
@@ -280,8 +277,8 @@ public class TableInfoHelper {
         Assert.isTrue(fieldList.parallelStream().filter(TableFieldInfo::isLogicDelete).count() < 2L,
             String.format("annotation of @TableLogic can't more than one in class : %s.", clazz.getName()));
 
-        /* 字段列表 */
-        tableInfo.setFieldList(fieldList);
+        /* 字段列表,不可变集合 */
+        tableInfo.setFieldList(Collections.unmodifiableList(fieldList));
 
         /* 未发现主键注解，提示警告信息 */
         if (StringUtils.isEmpty(tableInfo.getKeyColumn())) {
