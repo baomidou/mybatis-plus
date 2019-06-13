@@ -17,6 +17,8 @@ package com.baomidou.mybatisplus.test.base.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.test.base.type.ListTypeHandler;
+import com.baomidou.mybatisplus.test.base.type.MapTypeHandler;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -38,8 +40,8 @@ public class ResultMapEntity {
     private String column2;
     private String column3;
     private String column4;
-    @TableField(el = "list, typeHandler=com.baomidou.mybatisplus.test.base.type.ListTypeHandler")
+    @TableField(typeHandler = ListTypeHandler.class)
     private List<String> list;
-    @TableField(el = "map, typeHandler=com.baomidou.mybatisplus.test.base.type.MapTypeHandler")
+    @TableField(typeHandler = MapTypeHandler.class)
     private Map<String, Object> map;
 }

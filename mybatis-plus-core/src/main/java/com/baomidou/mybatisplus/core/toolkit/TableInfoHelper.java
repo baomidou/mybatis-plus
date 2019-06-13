@@ -31,13 +31,18 @@ import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.scripting.LanguageDriver;
+import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.TypeHandler;
+import org.apache.ibatis.type.UnknownTypeHandler;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -410,11 +415,37 @@ public class TableInfoHelper {
             columnName = tableField.value();
             columnNameFromTableField = true;
         }
-        String el = StringUtils.isNotEmpty(tableField.el()) ? tableField.el() : field.getName();
+        JdbcType jdbcType = tableField.jdbcType();
+        Class<? extends TypeHandler<?>> typeHandler = tableField.typeHandler();
+        //#{property,javaType=int,jdbcType=NUMERIC,typeHandler=MyTypeHandler}
+        Map<String,String> els = new LinkedHashMap<>();
+        //兼容下旧代码.
+        if (StringUtils.isNotEmpty(tableField.el())) {
+            String[] split = tableField.el().split(StringPool.COMMA);
+            for (String value : split) {
+                String[] arrays = value.split(StringPool.EQUALS);
+                if (arrays.length == 2) {
+                    els.put(arrays[0].trim(), arrays[1].trim());
+                }
+            }
+        }
+        if (JdbcType.UNDEFINED != jdbcType) {
+            els.put("jdbcType", jdbcType.name());
+        }
+        if (UnknownTypeHandler.class != typeHandler) {
+            els.put("typeHandler", typeHandler.getName());
+        }
         String columnFormat = dbConfig.getColumnFormat();
         if (StringUtils.isNotEmpty(columnFormat) && (!columnNameFromTableField || tableField.keepGlobalFormat())) {
             columnName = String.format(columnFormat, columnName);
         }
+        //合并el属性段
+        String elContent = els.entrySet()
+            .stream()
+            .map(entry -> entry.getKey() + StringPool.EQUALS + entry.getValue())
+            .collect(Collectors.joining(StringPool.COMMA));
+        //el属性 = 字段属性 + el属性段
+        String el = StringUtils.isEmpty(elContent) ? field.getName() : field.getName() + StringPool.COMMA + elContent;
         fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, columnName, el, tableField));
         return true;
     }

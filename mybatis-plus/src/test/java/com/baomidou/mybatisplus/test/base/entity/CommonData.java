@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.test.base.enums.TestEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.apache.ibatis.type.JdbcType;
 
 import java.time.LocalDateTime;
 
@@ -48,7 +49,7 @@ public class CommonData extends Model<CommonData> {
 	private static final long serialVersionUID = 5651603508613034190L;
 	
 	private Long id;
-    @TableField(el = "testInt, jdbcType=INTEGER")
+    @TableField(el = "testInt, jdbcType=INTEGER", jdbcType = JdbcType.INTEGER)
     private Integer testInt;
     @TableField(strategy = FieldStrategy.DEFAULT)
     private String testStr;
