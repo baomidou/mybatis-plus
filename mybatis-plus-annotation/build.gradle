@@ -1,5 +1,3 @@
 dependencies{
-
     api "${lib.mybatis}"
-    
 }
