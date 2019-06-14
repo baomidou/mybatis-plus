@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.annotation;
 
+import org.apache.ibatis.mapping.ParameterMapping;
+import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.UnknownTypeHandler;
@@ -37,7 +39,7 @@ public @interface TableField {
      * 字段值（驼峰命名方式，该值可无）
      */
     String value() default "";
-    
+
     /**
      * 当该Field为类对象时, 可使用#{对象.属性}来映射到数据表.
      * <p>支持：@TableField(el = "role, jdbcType=BIGINT) 推荐使用{@link TableField#jdbcType()} </p>
@@ -71,8 +73,8 @@ public @interface TableField {
      * 字段验证策略
      * <p>默认追随全局配置</p>
      *
-     * @deprecated v_3.1.2 please use {@link #insertStrategy} and {@link #updateStrategy} and {@link #whereStrategy}
      * @since deprecated v_3.1.2 @2019-5-7
+     * @deprecated v_3.1.2 please use {@link #insertStrategy} and {@link #updateStrategy} and {@link #whereStrategy}
      */
     @Deprecated
     FieldStrategy strategy() default FieldStrategy.DEFAULT;
@@ -82,6 +84,7 @@ public @interface TableField {
      * IGNORED: 直接拼接 insert into table_a(column) values (#{columnProperty});
      * NOT_NULL: insert into table_a(<if test="columnProperty != null">column</if>) values (<if test="columnProperty != null">#{columnProperty}</if>)
      * NOT_EMPTY: insert into table_a(<if test="columnProperty != null and columnProperty!=''">column</if>) values (<if test="columnProperty != null and columnProperty!=''">#{columnProperty}</if>)
+     *
      * @since added v_3.1.2 @2019-5-7
      */
     FieldStrategy insertStrategy() default FieldStrategy.DEFAULT;
@@ -91,6 +94,7 @@ public @interface TableField {
      * IGNORED: 直接拼接 update table_a set column=#{columnProperty}, 属性为null/空string都会被set进去
      * NOT_NULL: update table_a set <if test="columnProperty != null">column=#{columnProperty}</if>
      * NOT_EMPTY: update table_a set <if test="columnProperty != null and columnProperty!=''">column=#{columnProperty}</if>
+     *
      * @since added v_3.1.2 @2019-5-7
      */
     FieldStrategy updateStrategy() default FieldStrategy.DEFAULT;
@@ -100,6 +104,7 @@ public @interface TableField {
      * IGNORED: 直接拼接 column=#{columnProperty}
      * NOT_NULL: <if test="columnProperty != null">column=#{columnProperty}</if>
      * NOT_EMPTY: <if test="columnProperty != null and columnProperty!=''">column=#{columnProperty}</if>
+     *
      * @since added v_3.1.2 @2019-5-7
      */
     FieldStrategy whereStrategy() default FieldStrategy.DEFAULT;
@@ -123,17 +128,23 @@ public @interface TableField {
      * @since 3.1.1
      */
     boolean keepGlobalFormat() default false;
-    
+
     /**
-     * JDBC类型
+     * JDBC类型(该默认值不代表会按照该值生效)
+     *
+     * <li> {@link ResultMapping#jdbcType} </li>
+     * <li> {@link ParameterMapping#jdbcType} </li>
      *
      * @return JDBC类型
      * @since 3.1.2
      */
     JdbcType jdbcType() default JdbcType.UNDEFINED;
-    
+
     /**
-     * 类型处理器
+     * 类型处理器(该默认值不代表会按照该值生效)
+     *
+     * <li> {@link ResultMapping#typeHandler} </li>
+     * <li> {@link ParameterMapping#typeHandler} </li>
      *
      * @return 类型处理器
      * @since 3.1.2
