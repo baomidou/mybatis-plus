@@ -405,7 +405,9 @@ public class TableInfoHelper {
         }
         JdbcType jdbcType = tableField.jdbcType();
         Class<? extends TypeHandler<?>> typeHandler = tableField.typeHandler();
-        if (JdbcType.UNDEFINED != jdbcType || UnknownTypeHandler.class != typeHandler) {
+        String numericScale = tableField.numericScale();
+        if (JdbcType.UNDEFINED != jdbcType || UnknownTypeHandler.class != typeHandler ||
+            StringUtils.isNotEmpty(numericScale)) {
             // todo 暂时先这么搞,后面再优化
             fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, tableField));
             return true;

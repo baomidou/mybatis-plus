@@ -225,6 +225,7 @@ public class TableFieldInfo implements Constants {
         this.update = tableField.update();
         JdbcType jdbcType = tableField.jdbcType();
         Class<? extends TypeHandler<?>> typeHandler = tableField.typeHandler();
+        String numericScale = tableField.numericScale();
         String el = this.property;
         if (JdbcType.UNDEFINED != jdbcType) {
             this.jdbcType = jdbcType;
@@ -233,6 +234,9 @@ public class TableFieldInfo implements Constants {
         if (UnknownTypeHandler.class != typeHandler) {
             this.typeHandler = typeHandler;
             el += (COMMA + "typeHandler=" + typeHandler.getName());
+        }
+        if (StringUtils.isNotEmpty(numericScale)) {
+            el += (COMMA + "numericScale=" + numericScale);
         }
         this.el = el;
         tableInfo.setLogicDelete(this.initLogicDelete(dbConfig, field));

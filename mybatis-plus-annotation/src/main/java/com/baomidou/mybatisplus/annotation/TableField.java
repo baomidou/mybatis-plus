@@ -36,36 +36,41 @@ import java.lang.annotation.*;
 public @interface TableField {
 
     /**
-     * 字段值（驼峰命名方式，该值可无）
+     * 字段值（驼峰命名方式,该值可无）
      */
     String value() default "";
 
     /**
      * 当该Field为类对象时, 可使用#{对象.属性}来映射到数据表.
-     * <p>支持：@TableField(el = "role, jdbcType=BIGINT) 推荐使用{@link TableField#jdbcType()} </p>
-     * <p>支持：@TableField(el = "role, typeHandler=com.baomidou.springcloud.typehandler.PhoneTypeHandler") 推荐使用{@link TableField#typeHandler()} </p>
+     * <p>
+     * 例1：@TableField(el = "role, jdbcType=BIGINT)
+     * 例2：@TableField(el = "role, typeHandler=com.baomidou.springcloud.typehandler.PhoneTypeHandler")
+     *
+     * @deprecated 3.1.2 , to use {@link #jdbcType()} and {@link #typeHandler()}
      */
     @Deprecated
     String el() default "";
 
     /**
      * 是否为数据库表字段
-     * <p>默认 true 存在，false 不存在</p>
+     * 默认 true 存在，false 不存在
      */
     boolean exist() default true;
 
     /**
      * 字段 where 实体查询比较条件
-     * <p>默认 `=` 等值</p>
+     * 默认 `=` 等值
      */
     String condition() default "";
 
     /**
      * 字段 update set 部分注入, 该注解优于 el 注解使用
-     * <p>例如：@TableField(.. , update="%s+1") 其中 %s 会填充为字段</p>
-     * <p>输出 SQL 为：update 表 set 字段=字段+1 where ...</p>
-     * <p>例如：@TableField(.. , update="now()") 使用数据库时间</p>
-     * <p>输出 SQL 为：update 表 set 字段=now() where ...</p>
+     * <p>
+     * 例1：@TableField(.. , update="%s+1") 其中 %s 会填充为字段
+     * 输出 SQL 为：update 表 set 字段=字段+1 where ...
+     * <p>
+     * 例2：@TableField(.. , update="now()") 使用数据库时间
+     * 输出 SQL 为：update 表 set 字段=now() where ...
      */
     String update() default "";
 
@@ -73,8 +78,7 @@ public @interface TableField {
      * 字段验证策略
      * <p>默认追随全局配置</p>
      *
-     * @since deprecated v_3.1.2 @2019-5-7
-     * @deprecated v_3.1.2 please use {@link #insertStrategy} and {@link #updateStrategy} and {@link #whereStrategy}
+     * @deprecated 3.1.2 , to use {@link #insertStrategy} and {@link #updateStrategy} and {@link #whereStrategy}
      */
     @Deprecated
     FieldStrategy strategy() default FieldStrategy.DEFAULT;
@@ -85,7 +89,7 @@ public @interface TableField {
      * NOT_NULL: insert into table_a(<if test="columnProperty != null">column</if>) values (<if test="columnProperty != null">#{columnProperty}</if>)
      * NOT_EMPTY: insert into table_a(<if test="columnProperty != null and columnProperty!=''">column</if>) values (<if test="columnProperty != null and columnProperty!=''">#{columnProperty}</if>)
      *
-     * @since added v_3.1.2 @2019-5-7
+     * @since 3.1.2
      */
     FieldStrategy insertStrategy() default FieldStrategy.DEFAULT;
 
@@ -95,7 +99,7 @@ public @interface TableField {
      * NOT_NULL: update table_a set <if test="columnProperty != null">column=#{columnProperty}</if>
      * NOT_EMPTY: update table_a set <if test="columnProperty != null and columnProperty!=''">column=#{columnProperty}</if>
      *
-     * @since added v_3.1.2 @2019-5-7
+     * @since 3.1.2
      */
     FieldStrategy updateStrategy() default FieldStrategy.DEFAULT;
 
@@ -105,7 +109,7 @@ public @interface TableField {
      * NOT_NULL: <if test="columnProperty != null">column=#{columnProperty}</if>
      * NOT_EMPTY: <if test="columnProperty != null and columnProperty!=''">column=#{columnProperty}</if>
      *
-     * @since added v_3.1.2 @2019-5-7
+     * @since 3.1.2
      */
     FieldStrategy whereStrategy() default FieldStrategy.DEFAULT;
 
@@ -130,24 +134,29 @@ public @interface TableField {
     boolean keepGlobalFormat() default false;
 
     /**
-     * JDBC类型(该默认值不代表会按照该值生效)
+     * JDBC类型 (该默认值不代表会按照该值生效)
+     * <p>
+     * {@link ResultMapping#jdbcType} and {@link ParameterMapping#jdbcType}
      *
-     * <li> {@link ResultMapping#jdbcType} </li>
-     * <li> {@link ParameterMapping#jdbcType} </li>
-     *
-     * @return JDBC类型
      * @since 3.1.2
      */
     JdbcType jdbcType() default JdbcType.UNDEFINED;
 
     /**
-     * 类型处理器(该默认值不代表会按照该值生效)
+     * 类型处理器 (该默认值不代表会按照该值生效)
+     * <p>
+     * {@link ResultMapping#typeHandler} and {@link ParameterMapping#typeHandler}
      *
-     * <li> {@link ResultMapping#typeHandler} </li>
-     * <li> {@link ParameterMapping#typeHandler} </li>
-     *
-     * @return 类型处理器
      * @since 3.1.2
      */
     Class<? extends TypeHandler<?>> typeHandler() default UnknownTypeHandler.class;
+
+    /**
+     * 指定小数点后保留的位数
+     * <p>
+     * {@link ParameterMapping#numericScale}
+     *
+     * @since 3.1.2
+     */
+    String numericScale() default "";
 }
