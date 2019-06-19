@@ -73,10 +73,6 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 </dependency>
 ```
 
-# 结构目录 | Architecture
-
-![项目结构说明](https://gitee.com/uploads/images/2016/0821/161516_58956b85_12260.png "项目结构说明")
-
 # 其他开源项目 | Other Project
 
 - [基于Cookie的SSO中间件 Kisso](https://gitee.com/baomidou/kisso)
@@ -104,4 +100,4 @@ Mybatis 增强工具包 - 只做增强不做改变，简化`CRUD`操作
 
 # 关注我 | About Me
 
-![程序员日记](https://gitee.com/uploads/images/2016/0121/093728_1bc1658f_12260.png "程序员日记")
+![程序员日记](https://images.gitee.com/uploads/images/2019/0619/181933_46d5b802_12260.png "程序员日记")
