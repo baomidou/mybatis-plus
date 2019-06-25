@@ -34,6 +34,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * ActiveRecord 测试
@@ -55,8 +57,12 @@ class ActiveRecordTest {
     @Order(1)
     void testInsert() {
         H2Student student = new H2Student(null, "测试学生", 2);
-        Assertions.assertTrue(student.insert());
-        Assertions.assertTrue(student.insert());
+        assertThat(student.insert()).isTrue();
+        System.out.println(student.getId());
+//        assertThat(student.getId()).isEqualTo(1);
+        assertThat(student.insert()).isTrue();
+        System.out.println(student.getId());
+//        assertThat(student.getId()).isEqualTo(2);
     }
 
     @Test
@@ -69,7 +75,7 @@ class ActiveRecordTest {
     }
 
     @Test
-    @Order(10)
+    @Order(3)
     void testSelect() {
         H2Student student = new H2Student();
         student.setId(1L);
@@ -78,7 +84,7 @@ class ActiveRecordTest {
     }
 
     @Test
-    @Order(10)
+    @Order(4)
     void testSelectList() {
         H2Student student = new H2Student();
         List<H2Student> students = student.selectList(new QueryWrapper<>(student));
@@ -87,7 +93,7 @@ class ActiveRecordTest {
     }
 
     @Test
-    @Order(10)
+    @Order(5)
     void testSelectPage() {
         IPage<H2Student> page = new Page<>(1, 10);
         H2Student student = new H2Student();
@@ -99,7 +105,7 @@ class ActiveRecordTest {
     }
 
     @Test
-    @Order(10)
+    @Order(6)
     void testSelectCount() {
         H2Student student = new H2Student();
         int count = new H2Student().selectCount(new QueryWrapper<>(student));
@@ -108,7 +114,7 @@ class ActiveRecordTest {
     }
 
     @Test
-    @Order(20)
+    @Order(7)
     void testInsertOrUpdate() {
         H2Student student = new H2Student(2L, "Jerry也长大了", 2);
         Assertions.assertTrue(student.insertOrUpdate());
@@ -117,7 +123,7 @@ class ActiveRecordTest {
     }
 
     @Test
-    @Order(21)
+    @Order(8)
     void testSelectAll() {
         H2Student student = new H2Student();
         List<H2Student> students = student.selectAll();
@@ -126,14 +132,14 @@ class ActiveRecordTest {
     }
 
     @Test
-    @Order(21)
+    @Order(9)
     void testSelectOne() {
         H2Student student = new H2Student();
         Assertions.assertNotNull(student.selectOne(new QueryWrapper<>()));
     }
 
     @Test
-    @Order(21)
+    @Order(10)
     void testTransactional() {
         try {
             h2StudentService.testTransactional();
@@ -144,7 +150,7 @@ class ActiveRecordTest {
     }
 
     @Test
-    @Order(Integer.MAX_VALUE)
+    @Order(11)
     void testDelete() {
         H2Student student = new H2Student();
         student.setId(2L);
@@ -154,7 +160,7 @@ class ActiveRecordTest {
     }
 
     @Test
-    @Order(Integer.MAX_VALUE)
+    @Order(12)
     void sqlCommentTest() {
         String name = "name1", nameNew = "name1New";
         H2Student student = new H2Student().setName(name).setAge(2);
@@ -177,5 +183,4 @@ class ActiveRecordTest {
         IPage<H2Student> h2StudentIPage = student.selectPage(new Page<>(1, 10), queryWrapper.comment("getStuPage"));
         Assertions.assertEquals(1, h2StudentIPage.getRecords().size());
     }
-
 }
