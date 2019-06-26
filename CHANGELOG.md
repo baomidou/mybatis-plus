@@ -1,5 +1,36 @@
 ﻿# CHANGELOG
 
+## [v3.1.2] 2019.06.26
+- EnumTypeHandler 更名为 MybatisEnumTypeHandler,移除 EnumAnnotationTypeHandler
+- 新增自动构建 resultMap 功能,去除转义符
+- 注解增加变量控制是否自动生成resultmap
+- 修改分页缓存Key值错误
+- TableField.el 属性标记过时
+- 取消 MybatisMapWrapperFactory 的自动注册
+- starter 增加默认xml路径扫描
+- 新增 MybatisPlusPropertiesCustomizer 及配置使用
+- ConfigurationCustomizer 内部方法入参更新为 MybatisConfiguration
+- 原有 fieldStrategy 标记过时,新增 3 种 fieldStrategy 进行区分
+- 获取注入方法时传递当前mapperClass
+- 增加sqlite代码自动生成测试代码及测试用的数据库文件
+- JsqlParserCountOptimize 对 left join 的 sql 优化 count 更精确
+- fix(AbstractWrapper.java): 修复 lambda 表达式在 order、groupBy 只有条件一个时引起的类型推断错误问
+- apply plugin: 'kotlin'
+- refactor(order): 修复排序字段优先级问题(#IX1QO)
+- 启动就缓存 lambdacache
+- Merge pull request #1213 from sandynz/feature/sqlComment 支持SQL注释
+- 去除 wrapper 的一些变量,wrapper 内部 string 传递优化
+- fix: #1160(github) 分页组件orderBy: 同时存在group by 和order by，且IPage 参数中存在排序属性时，拼接
+- Merge pull request #1253 from ShammgodYoung/patch-1 代码生成器输入表名忽略大小写
+- 新增渲染对象 MAP 信息预处理注入
+- 修改 dts rabbitAdmin bean 判断方式
+- Merge pull request #1255 from ShammgodYoung/patch-2 对serialVersionUID属性进行缩进
+- JsqlParserCountOptimize 加入 boolean 字段,判断是否优化 join
+- Merge pull request #1256 from baomidou/master Master
+- freemarker entity 模板缩进调整
+- 增加jdbcType,typeHandler属性, 合并el属性
+
+
 ## [v3.1.1] 2019.04.25
 - 新增 996icu license 协议
 - 新增 mybatis-plus-dts 分布式事务 rabbit 可靠消息机制
