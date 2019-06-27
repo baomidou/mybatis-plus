@@ -14,7 +14,7 @@
 - 获取注入方法时传递当前mapperClass
 - 增加sqlite代码自动生成测试代码及测试用的数据库文件
 - JsqlParserCountOptimize 对 left join 的 sql 优化 count 更精确
-- fix(AbstractWrapper.java): 修复 lambda 表达式在 order、groupBy 只有条件一个时引起的类型推断错误问
+- fix(AbstractWrapper.java): 修复 lambda 表达式在 order、groupBy 只有条件一个时引起的类型推断错误
 - apply plugin: 'kotlin'
 - refactor(order): 修复排序字段优先级问题(#IX1QO)
 - 启动就缓存 lambdacache
