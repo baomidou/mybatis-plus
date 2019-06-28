@@ -59,7 +59,6 @@ public class DMGenerator {
 
         // 全局配置
         GlobalConfig gc = new GlobalConfig();
-        String projectPath = System.getProperty("user.dir");
         gc.setOutputDir("D://mpg");
         gc.setAuthor("halower");
         gc.setOpen(false);
@@ -70,8 +69,8 @@ public class DMGenerator {
         DataSourceConfig dsc = new DataSourceConfig();
         dsc.setUrl("jdbc:dm://192.168.2.226:5236");
         dsc.setDriverName("dm.jdbc.driver.DmDriver");
-        dsc.setUsername("TYYW2_LCBA");
-        dsc.setPassword("tyyw2_lcba");
+        dsc.setUsername("username");
+        dsc.setPassword("password");
         dsc.setDbType(DbType.DM);
         dsc.setDbQuery(new DMQuery());
         mpg.setDataSource(dsc);
