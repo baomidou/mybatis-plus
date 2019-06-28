@@ -93,6 +93,9 @@ public class DataSourceConfig {
                 case SQLITE:
                     dbQuery = new SqliteQuery();
                     break;
+                case DM:
+                    dbQuery = new DMQuery();
+                    break;
                 default:
                     // 默认 MYSQL
                     dbQuery = new MySqlQuery();
@@ -166,6 +169,9 @@ public class DataSourceConfig {
                     break;
                 case SQLITE:
                     typeConvert = new SqliteTypeConvert();
+                    break;
+                case DM:
+                    typeConvert = new DmTypeConvert();
                     break;
                 case MARIADB:
                     typeConvert = new MySqlTypeConvert();

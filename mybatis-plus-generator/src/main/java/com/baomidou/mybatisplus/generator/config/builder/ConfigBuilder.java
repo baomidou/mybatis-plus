@@ -556,7 +556,11 @@ public class ConfigBuilder {
             } else if (DbType.ORACLE == dbType) {
                 tableName = tableName.toUpperCase();
                 tableFieldsSql = String.format(tableFieldsSql.replace("#schema", dataSourceConfig.getSchemaName()), tableName);
-            } else if (DbType.H2 == dbType) {
+            } else if (DbType.DM == dbType) {
+                tableName = tableName.toUpperCase();
+                tableFieldsSql = String.format(tableFieldsSql, tableName);
+            }
+            else if (DbType.H2 == dbType) {
                 tableName = tableName.toUpperCase();
                 try (PreparedStatement pkQueryStmt = connection.prepareStatement(String.format(H2Query.PK_QUERY_SQL, tableName));
                      ResultSet pkResults = pkQueryStmt.executeQuery()) {
