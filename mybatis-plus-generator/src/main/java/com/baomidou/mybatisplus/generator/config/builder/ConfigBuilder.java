@@ -556,7 +556,11 @@ public class ConfigBuilder {
             } else if (DbType.ORACLE == dbType) {
                 tableName = tableName.toUpperCase();
                 tableFieldsSql = String.format(tableFieldsSql.replace("#schema", dataSourceConfig.getSchemaName()), tableName);
-            } else if (DbType.H2 == dbType) {
+            } else if (DbType.DM == dbType) {
+                tableName = tableName.toUpperCase();
+                tableFieldsSql = String.format(tableFieldsSql, tableName);
+            }
+            else if (DbType.H2 == dbType) {
                 tableName = tableName.toUpperCase();
                 try (PreparedStatement pkQueryStmt = connection.prepareStatement(String.format(H2Query.PK_QUERY_SQL, tableName));
                      ResultSet pkResults = pkQueryStmt.executeQuery()) {
@@ -578,7 +582,7 @@ public class ConfigBuilder {
                     TableField field = new TableField();
                     String columnName = results.getString(dbQuery.fieldName());
                     // 避免多重主键设置，目前只取第一个找到ID，并放到list中的索引为0的位置
-                    boolean isId;
+                    boolean isId = false;
                     if (DbType.H2 == dbType) {
                         isId = h2PkColumns.contains(columnName);
                     } else {

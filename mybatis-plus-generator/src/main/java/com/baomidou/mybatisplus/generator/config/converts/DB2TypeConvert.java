@@ -26,7 +26,7 @@ import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
  * @author zhanyao
  * @since 2018-05-16
  */
-public class DB2TypeConvert implements ITypeConvert {
+public class  DB2TypeConvert implements ITypeConvert {
 
     @Override
     public IColumnType processTypeConvert(GlobalConfig globalConfig, String fieldType) {
