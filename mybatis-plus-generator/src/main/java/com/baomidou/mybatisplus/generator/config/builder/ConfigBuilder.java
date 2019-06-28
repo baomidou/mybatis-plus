@@ -582,7 +582,7 @@ public class ConfigBuilder {
                     TableField field = new TableField();
                     String columnName = results.getString(dbQuery.fieldName());
                     // 避免多重主键设置，目前只取第一个找到ID，并放到list中的索引为0的位置
-                    boolean isId = false;
+                    boolean isId;
                     if (DbType.H2 == dbType) {
                         isId = h2PkColumns.contains(columnName);
                     } else {
