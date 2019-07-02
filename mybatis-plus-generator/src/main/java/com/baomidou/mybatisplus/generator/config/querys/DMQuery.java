@@ -38,18 +38,19 @@ public class DMQuery  extends AbstractDbQuery{
     @Override
     public String tableFieldsSql() {
         return
-            "SELECT T2.COLUMN_NAME,T1.COMMENTS,T2.DATA_TYPE," +
-            "CASE WHEN CONSTRAINT_TYPE='P' THEN 'PRI' END AS KEY " +
-            "FROM  USER_COL_COMMENTS T1,USER_TAB_COLUMNS T2," +
-              "( SELECT T4.TABLE_NAME ,T4.COLUMN_NAME,T5.CONSTRAINT_TYPE " +
-               " FROM USER_CONS_COLUMNS T4,USER_CONSTRAINTS T5 " +
-               "WHERE T4.CONSTRAINT_NAME = T5.CONSTRAINT_NAME AND T5.CONSTRAINT_TYPE = 'P') T3 " +
-            "WHERE T1.TABLE_NAME = T2.TABLE_NAME AND "+
-            "T1.COLUMN_NAME=T2.COLUMN_NAME AND "+
-            "T1.COLUMN_NAME=T2.COLUMN_NAME AND "+
-            "T1.TABLE_NAME=T3.TABLE_NAME AND "+
-            "T1.COLUMN_NAME=T3.COLUMN_NAME AND "+
-             "T1.TABLE_NAME = '%s'";
+            "SELECT T2.COLUMN_NAME,T1.COMMENTS,T2.DATA_TYPE ," +
+                "CASE WHEN CONSTRAINT_TYPE='P' THEN 'PRI' END AS KEY " +
+                "FROM USER_COL_COMMENTS T1, USER_TAB_COLUMNS T2, " +
+                "(SELECT T4.TABLE_NAME, T4.COLUMN_NAME ,T5.CONSTRAINT_TYPE " +
+                "FROM USER_CONS_COLUMNS T4, USER_CONSTRAINTS T5 " +
+                "WHERE T4.CONSTRAINT_NAME = T5.CONSTRAINT_NAME " +
+                "AND T5.CONSTRAINT_TYPE = 'P')T3 " +
+                "WHERE T1.TABLE_NAME = T2.TABLE_NAME AND " +
+                "T1.COLUMN_NAME=T2.COLUMN_NAME AND " +
+                "T1.TABLE_NAME = T3.TABLE_NAME(+) AND " +
+                "T1.COLUMN_NAME=T3.COLUMN_NAME(+)   AND " +
+                "T1.TABLE_NAME = '%s' " +
+                "ORDER BY T2.TABLE_NAME,T2.COLUMN_ID";
     }
 
     @Override
