@@ -508,7 +508,12 @@ public class TableFieldInfo implements Constants {
     public String getSqlWhere(final String prefix) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
         // 默认:  AND column=#{prefix + el}
-        String sqlScript = " AND " + String.format(condition, column, newPrefix + el);
+        //TODO 解决参数中包含 % _ 这2个特殊字符
+        String value = newPrefix + el;
+        value = value.replaceAll("\\%", "\\\\%");
+        value = value.replaceAll("\\_", "\\\\_");
+        String sqlScript = " AND " + String.format(condition, column, value);
+        //String sqlScript = " AND " + String.format(condition, column, newPrefix + el);
         // 查询的时候只判非空
         return convertIf(sqlScript, newPrefix + property, whereStrategy);
     }
