@@ -18,10 +18,7 @@ package com.baomidou.mybatisplus.generator.engine;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -234,7 +231,7 @@ public abstract class AbstractTemplateEngine {
         objectMap.put("superServiceImplClass", getSuperClassName(config.getSuperServiceImplClass()));
         objectMap.put("superControllerClassPackage", config.getSuperControllerClass());
         objectMap.put("superControllerClass", getSuperClassName(config.getSuperControllerClass()));
-        return config.getInjectionConfig().prepareObjectMap(objectMap);
+        return Objects.isNull(config.getInjectionConfig()) ? objectMap : config.getInjectionConfig().prepareObjectMap(objectMap);
     }
 
 
