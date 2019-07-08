@@ -80,8 +80,9 @@ public class PostgreSqlTypeConvert implements ITypeConvert {
             return DbColumnType.STRING;
         } else if (t.contains("boolean")) {
             return DbColumnType.BOOLEAN;
+        } else if (t.contains("numeric")) {
+            return DbColumnType.BIG_DECIMAL;
         }
         return DbColumnType.STRING;
     }
-
 }
