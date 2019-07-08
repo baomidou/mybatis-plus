@@ -56,6 +56,7 @@ public enum DbColumnType implements IColumnType {
     YEAR("Year", "java.time.Year"),
     YEAR_MONTH("YearMonth", "java.time.YearMonth"),
     LOCAL_DATE_TIME("LocalDateTime", "java.time.LocalDateTime"),
+    INSTANT("Instant", "java.time.Instant"),
 
     // 其他杂类
     BYTE_ARRAY("byte[]", null),
