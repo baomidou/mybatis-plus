@@ -37,7 +37,11 @@ public class PostgreSqlTypeConvert implements ITypeConvert {
             return DbColumnType.LONG;
         } else if (t.contains("int")) {
             return DbColumnType.INTEGER;
-        } else if (t.contains("date") || t.contains("time")) {
+        }else if (t.contains("timestamp")) {
+            return DbColumnType.INSTANT;
+        }else if (t.contains("numeric")) {
+            return DbColumnType.BIG_DECIMAL;
+        }  else if (t.contains("date") || t.contains("time")) {
             switch (globalConfig.getDateType()) {
                 case ONLY_DATE:
                     return DbColumnType.DATE;
