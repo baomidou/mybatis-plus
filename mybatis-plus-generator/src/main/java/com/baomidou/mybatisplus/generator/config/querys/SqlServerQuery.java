@@ -47,7 +47,7 @@ public class SqlServerQuery extends AbstractDbQuery {
     @Override
     public String tableFieldsSql() {
         return "SELECT  cast(a.name AS VARCHAR(500)) AS TABLE_NAME,cast(b.name AS VARCHAR(500)) AS COLUMN_NAME, "
-            + "cast(c.VALUE AS VARCHAR(500)) AS COMMENTS,cast(sys.types.name AS VARCHAR (500)) AS DATA_TYPE,"
+            + "cast(c.VALUE AS NVARCHAR(500)) AS COMMENTS,cast(sys.types.name AS VARCHAR (500)) AS DATA_TYPE,"
             + "(" + " SELECT CASE count(1) WHEN 1 then 'PRI' ELSE '' END"
             + " FROM syscolumns,sysobjects,sysindexes,sysindexkeys,systypes "
             + " WHERE syscolumns.xusertype = systypes.xusertype AND syscolumns.id = object_id (a.name) AND sysobjects.xtype = 'PK'"
