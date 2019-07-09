@@ -37,6 +37,11 @@ public class GlobalConfig {
     private String outputDir = "D://";
 
     /**
+     * 资源目录文件夹
+     */
+    private String resourceDir;
+
+    /**
      * 是否覆盖已有文件
      */
     private boolean fileOverride = false;

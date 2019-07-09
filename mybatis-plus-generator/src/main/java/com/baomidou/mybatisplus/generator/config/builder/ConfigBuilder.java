@@ -124,9 +124,9 @@ public class ConfigBuilder {
         }
         // 包配置
         if (null == packageConfig) {
-            handlerPackage(this.template, this.globalConfig.getOutputDir(), new PackageConfig());
+            handlerPackage(this.template, this.globalConfig.getResourceDir(), this.globalConfig.getOutputDir(), new PackageConfig());
         } else {
-            handlerPackage(this.template, this.globalConfig.getOutputDir(), packageConfig);
+            handlerPackage(this.template, this.globalConfig.getResourceDir(), this.globalConfig.getOutputDir(), packageConfig);
         }
         this.dataSourceConfig = dataSourceConfig;
         handlerDataSource(dataSourceConfig);
@@ -224,16 +224,17 @@ public class ConfigBuilder {
      * 处理包配置
      *
      * @param template  TemplateConfig
+     * @param resourceDir resourceDir
      * @param outputDir
      * @param config    PackageConfig
      */
-    private void handlerPackage(TemplateConfig template, String outputDir, PackageConfig config) {
+    private void handlerPackage(TemplateConfig template, String resourceDir, String outputDir, PackageConfig config) {
         // 包信息
         packageInfo = new HashMap<>(8);
         packageInfo.put(ConstVal.MODULE_NAME, config.getModuleName());
         packageInfo.put(ConstVal.ENTITY, joinPackage(config.getParent(), config.getEntity()));
         packageInfo.put(ConstVal.MAPPER, joinPackage(config.getParent(), config.getMapper()));
-        packageInfo.put(ConstVal.XML, joinPackage(config.getParent(), config.getXml()));
+        packageInfo.put(ConstVal.XML, config.getXml());
         packageInfo.put(ConstVal.SERVICE, joinPackage(config.getParent(), config.getService()));
         packageInfo.put(ConstVal.SERVICE_IMPL, joinPackage(config.getParent(), config.getServiceImpl()));
         packageInfo.put(ConstVal.CONTROLLER, joinPackage(config.getParent(), config.getController()));
@@ -247,7 +248,7 @@ public class ConfigBuilder {
             pathInfo = new HashMap<>(6);
             setPathInfo(pathInfo, template.getEntity(getGlobalConfig().isKotlin()), outputDir, ConstVal.ENTITY_PATH, ConstVal.ENTITY);
             setPathInfo(pathInfo, template.getMapper(), outputDir, ConstVal.MAPPER_PATH, ConstVal.MAPPER);
-            setPathInfo(pathInfo, template.getXml(), outputDir, ConstVal.XML_PATH, ConstVal.XML);
+            setPathInfo(pathInfo, template.getXml(), resourceDir, ConstVal.XML_PATH, ConstVal.XML);
             setPathInfo(pathInfo, template.getService(), outputDir, ConstVal.SERVICE_PATH, ConstVal.SERVICE);
             setPathInfo(pathInfo, template.getServiceImpl(), outputDir, ConstVal.SERVICE_IMPL_PATH, ConstVal.SERVICE_IMPL);
             setPathInfo(pathInfo, template.getController(), outputDir, ConstVal.CONTROLLER_PATH, ConstVal.CONTROLLER);
