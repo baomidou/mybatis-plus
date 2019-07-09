@@ -57,11 +57,11 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      */
     protected AtomicInteger paramNameSeq;
     protected Map<String, Object> paramNameValuePairs;
-    protected SharedString lastSql;
+    protected SharedString lastSql = new SharedString();
     /**
      * SQL注释
      */
-    protected SharedString sqlComment;
+    protected SharedString sqlComment = new SharedString();
     /**
      * 数据库表映射实体类
      */
@@ -217,7 +217,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     @Override
     public Children last(boolean condition, String lastSql) {
         if (condition) {
-            this.lastSql = new SharedString(StringPool.SPACE + lastSql);
+            this.lastSql.setStringValue(" " + StringPool.SPACE + lastSql);
         }
         return typedThis;
     }
@@ -225,7 +225,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     @Override
     public Children comment(boolean condition, String comment) {
         if (condition) {
-            this.sqlComment = new SharedString(comment);
+            this.sqlComment.setStringValue(comment);
         }
         return typedThis;
     }
