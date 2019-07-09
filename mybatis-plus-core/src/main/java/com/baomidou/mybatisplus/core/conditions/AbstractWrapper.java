@@ -57,11 +57,11 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      */
     protected AtomicInteger paramNameSeq;
     protected Map<String, Object> paramNameValuePairs;
-    protected SharedString lastSql = new SharedString();
+    protected SharedString lastSql;
     /**
      * SQL注释
      */
-    protected SharedString sqlComment = new SharedString();
+    protected SharedString sqlComment;
     /**
      * 数据库表映射实体类
      */
