@@ -217,7 +217,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     @Override
     public Children last(boolean condition, String lastSql) {
         if (condition) {
-            this.lastSql.setStringValue(" " + StringPool.SPACE + lastSql);
+            this.lastSql.setStringValue(StringPool.SPACE + lastSql);
         }
         return typedThis;
     }
