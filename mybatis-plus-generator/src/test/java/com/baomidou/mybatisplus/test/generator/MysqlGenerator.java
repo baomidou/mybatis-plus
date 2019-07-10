@@ -15,11 +15,7 @@
  */
 package com.baomidou.mybatisplus.test.generator;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.FieldFill;
@@ -34,6 +30,7 @@ import com.baomidou.mybatisplus.generator.config.TemplateConfig;
 import com.baomidou.mybatisplus.generator.config.converts.MySqlTypeConvert;
 import com.baomidou.mybatisplus.generator.config.po.TableFill;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
+import com.baomidou.mybatisplus.generator.config.querys.MySqlQuery;
 import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
@@ -88,6 +85,19 @@ public class MysqlGenerator extends GeneratorTest {
                         //    return DbColumnType.BOOLEAN;
                         // }
                         return super.processTypeConvert(globalConfig, fieldType);
+                    }
+                })
+                .setDbQuery(new MySqlQuery() {
+
+                    /**
+                     * 重写父类预留查询自定义字段<br>
+                     * 这里查询的 SQL 对应父类 tableFieldsSql 的查询字段，默认不能满足你的需求请重写它<br>
+                     * 模板中调用：  table.fields 获取所有字段信息，
+                     * 然后循环字段获取 field.customMap 从 MAP 中获取注入字段如下  NULL 或者 PRIVILEGES
+                     */
+                    @Override
+                    public String[] fieldCustom() {
+                        return new String[]{"NULL", "PRIVILEGES"};
                     }
                 })
                 .setDriverName(Driver.class.getName())
