@@ -15,12 +15,11 @@
  */
 package com.baomidou.mybatisplus.test.h2;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
-import com.baomidou.mybatisplus.test.h2.mapper.H2StudentMapper;
-import com.baomidou.mybatisplus.test.h2.mapper.H2UserMapper;
-import com.baomidou.mybatisplus.test.h2.entity.H2Student;
-import com.baomidou.mybatisplus.test.h2.entity.H2User;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -29,7 +28,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.annotation.Resource;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.test.h2.entity.H2Student;
+import com.baomidou.mybatisplus.test.h2.entity.H2User;
+import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
+import com.baomidou.mybatisplus.test.h2.mapper.H2StudentMapper;
+import com.baomidou.mybatisplus.test.h2.mapper.H2UserMapper;
 
 /**
  * Mybatis Plus H2 Junit Test
@@ -64,7 +68,7 @@ class H2Delete1Eq1Test extends BaseTest {
         for (long i = 0; i < 10L; i++) {
             defaultMapper.insert(new H2Student(i, "Tom长大了", 1));
         }
-        log(logicDeleteMapper.selectList(new QueryWrapper<>(h2User).eq("name","2").orderByAsc("name")));
+        log(logicDeleteMapper.selectList(new QueryWrapper<>(h2User).eq("name", "2").orderByAsc("name")));
         log(defaultMapper.selectList(new QueryWrapper<H2Student>().orderByAsc("id")));
         log(defaultMapper.selectOne(new QueryWrapper<H2Student>().last("limit 1")));
 
@@ -79,5 +83,9 @@ class H2Delete1Eq1Test extends BaseTest {
     void delete() {
         logicDeleteMapper.delete(new QueryWrapper<>());
         defaultMapper.delete(new QueryWrapper<>());
+        Assertions.assertEquals(0, (int) logicDeleteMapper.selectCount(new QueryWrapper<>()));
+        List<H2User> userList = queryByName(null);
+        System.out.println(userList.size());
+        Assertions.assertNotEquals(0, userList.size());
     }
 }

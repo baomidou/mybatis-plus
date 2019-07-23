@@ -30,11 +30,23 @@ public enum AgeEnum implements IEnum<Integer> {
 
     private final int value;
     @SuppressWarnings("unused")
-	private final String desc;
+    private final String desc;
 
     AgeEnum(final int value, final String desc) {
         this.value = value;
         this.desc = desc;
+    }
+
+    public static AgeEnum parseValue(Integer v) {
+        if (v == null) {
+            return null;
+        }
+        for (AgeEnum e : AgeEnum.values()) {
+            if (e.getValue().equals(v)) {
+                return e;
+            }
+        }
+        return null;
     }
 
     @Override

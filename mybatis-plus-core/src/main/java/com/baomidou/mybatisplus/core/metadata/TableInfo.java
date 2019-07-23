@@ -15,20 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.KeySequence;
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.toolkit.*;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.Accessors;
-import org.apache.ibatis.mapping.ResultFlag;
-import org.apache.ibatis.mapping.ResultMap;
-import org.apache.ibatis.mapping.ResultMapping;
-import org.apache.ibatis.session.Configuration;
+import static java.util.stream.Collectors.joining;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,7 +23,26 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-import static java.util.stream.Collectors.joining;
+import org.apache.ibatis.mapping.ResultFlag;
+import org.apache.ibatis.mapping.ResultMap;
+import org.apache.ibatis.mapping.ResultMapping;
+import org.apache.ibatis.session.Configuration;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.KeySequence;
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
+
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * 数据库表反射信息
@@ -331,15 +337,30 @@ public class TableInfo implements Constants {
         if (logicDelete) {
             TableFieldInfo field = fieldList.stream().filter(TableFieldInfo::isLogicDelete).findFirst()
                 .orElseThrow(() -> ExceptionUtils.mpe("can't find the logicFiled from table {%s}", tableName));
-            String formatStr = field.isCharSequence() ? "'%s'" : "%s";
-            String logicDeleteSql = field.getColumn() + EQUALS +
-                String.format(formatStr, deleteValue ? field.getLogicDeleteValue() : field.getLogicNotDeleteValue());
+            String logicDeleteSql = formatLogicDeleteSql(field, deleteValue);
             if (startWithAnd) {
                 logicDeleteSql = " AND " + logicDeleteSql;
             }
             return logicDeleteSql;
         }
         return EMPTY;
+    }
+
+    /**
+     * format logic delete SQL, can be overrided by subclass
+     * github #1386
+     *
+     * @param field       TableFieldInfo
+     * @param deleteValue true: logicDeleteValue, false: logicNotDeleteValue
+     * @return
+     */
+    protected String formatLogicDeleteSql(TableFieldInfo field, boolean deleteValue) {
+        String value = deleteValue ? field.getLogicDeleteValue() : field.getLogicNotDeleteValue();
+        if (NULL.equalsIgnoreCase(value)) {
+            return field.getColumn() + " is NULL";
+        } else {
+            return field.getColumn() + EQUALS + String.format(field.isCharSequence() ? "'%s'" : "%s", value);
+        }
     }
 
     /**
