@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.generator.config.po;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.generator.config.ConstVal;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
@@ -59,21 +60,22 @@ public class TableField {
 
     protected TableField setConvert(StrategyConfig strategyConfig) {
         if (strategyConfig.isEntityTableFieldAnnotationEnable()) {
-            this.convert = true;
+            convert = true;
             return this;
         }
-        if (strategyConfig.isCapitalModeNaming(name)) {
-            this.convert = false;
-        } else {
-            // 转换字段
-            if (NamingStrategy.underline_to_camel == strategyConfig.getColumnNaming()) {
-                // 包含大写处理
-                if (StringUtils.containsUpperCase(name)) {
-                    this.convert = true;
-                }
-            } else if (!name.equals(propertyName)) {
-                this.convert = true;
-            }
+        //做过前缀处理
+        if (strategyConfig.containsFieldPrefix(name)) {
+            convert = true;
+            return this;
+        }
+        //做过命名格式处理
+        if (NamingStrategy.underline_to_camel == strategyConfig.getColumnNaming() && name.contains(ConstVal.UNDERLINE)) {
+            convert = true;
+            return this;
+        }
+        //做过其他转化 如:boolean类型移除前缀
+        if (!name.equals(propertyName)) {
+            convert = true;
         }
         return this;
     }

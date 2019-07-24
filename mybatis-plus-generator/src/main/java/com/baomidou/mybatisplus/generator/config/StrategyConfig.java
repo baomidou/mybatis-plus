@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.generator.config;
 
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
 import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -178,14 +179,20 @@ public class StrategyConfig {
      * @param tableName 表名称
      */
     public boolean containsTablePrefix(String tableName) {
-        if (null != tableName) {
-            String[] tps = getTablePrefix();
-            if (null != tps) {
-                for (String tp : tps) {
-                    if (tableName.contains(tp)) {
-                        return true;
-                    }
-                }
+        return containsPrefix(tableName, getTablePrefix());
+    }
+
+    public boolean containsFieldPrefix(String fieldName) {
+        return containsPrefix(fieldName, getFieldPrefix());
+    }
+
+    private boolean containsPrefix(String name, String[] prefixes) {
+        if (StringUtils.isEmpty(name) || ArrayUtils.isEmpty(prefixes)) {
+            return false;
+        }
+        for (String prefix : prefixes) {
+            if (name.startsWith(prefix)) {
+                return true;
             }
         }
         return false;
