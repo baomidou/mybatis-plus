@@ -8,6 +8,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-configuration-processor'
     implementation 'org.springframework.boot:spring-boot-autoconfigure-processor'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation "${lib.'mybatis-spring-boot-starter'}"
 }
 
 compileJava.dependsOn(processResources)
