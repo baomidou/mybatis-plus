@@ -27,6 +27,8 @@ public interface TenantHandler {
 
     /**
      * 获取租户值
+     * <p>
+     * 支持自定义表达式，比如：tenant_id in (1,2) @since 2019-8-2
      *
      * @return 租户值
      */
@@ -43,7 +45,7 @@ public interface TenantHandler {
      * 根据表名判断是否进行过滤
      *
      * @param tableName 表名
-     * @return 是否进行过滤
+     * @return 是否进行过滤, true:表示忽略，false:需要解析多租户字段
      */
     boolean doTableFilter(String tableName);
 }
