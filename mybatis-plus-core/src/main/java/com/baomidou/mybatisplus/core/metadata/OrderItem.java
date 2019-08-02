@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
+import java.io.Serializable;
+
 import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
@@ -28,7 +30,9 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @ToString
-public class OrderItem {
+public class OrderItem implements Serializable {
+
+    private static final long serialVersionUID = 1L;
     /**
      * 需要进行排序的字段
      */
