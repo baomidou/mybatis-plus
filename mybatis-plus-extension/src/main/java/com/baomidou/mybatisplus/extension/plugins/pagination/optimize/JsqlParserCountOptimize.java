@@ -82,11 +82,11 @@ public class JsqlParserCountOptimize implements ISqlParser {
             Select selectStatement = (Select) CCJSqlParserUtil.parse(sql);
             PlainSelect plainSelect = (PlainSelect) selectStatement.getSelectBody();
             Distinct distinct = plainSelect.getDistinct();
-            List<Expression> groupBy = plainSelect.getGroupByColumnReferences();
+            GroupByElement groupBy = plainSelect.getGroupBy();
             List<OrderByElement> orderBy = plainSelect.getOrderByElements();
 
             // 添加包含groupBy 不去除orderBy
-            if (CollectionUtils.isEmpty(groupBy) && CollectionUtils.isNotEmpty(orderBy)) {
+            if (null == groupBy && CollectionUtils.isNotEmpty(orderBy)) {
                 plainSelect.setOrderByElements(null);
                 sqlInfo.setOrderBy(false);
             }
@@ -97,7 +97,7 @@ public class JsqlParserCountOptimize implements ISqlParser {
                 }
             }
             // 包含 distinct、groupBy不优化
-            if (distinct != null || CollectionUtils.isNotEmpty(groupBy)) {
+            if (distinct != null || null != groupBy) {
                 return sqlInfo.setSql(SqlParserUtils.getOriginalCountSql(selectStatement.toString()));
             }
             // 包含 join 连表,进行判断是否移除 join 连表
