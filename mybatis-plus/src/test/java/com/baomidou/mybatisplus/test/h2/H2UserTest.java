@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.statement.select.Select;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -348,5 +350,12 @@ class H2UserTest extends BaseTest {
     @Test
     public void myQueryWithGroupByOrderBy(){
         userService.mySelectMaps().forEach(System.out::println);
+    }
+
+    @Test
+    void notLikeParser() throws Exception {
+        final String targetSql = "SELECT * FROM user WHERE id NOT LIKE ?";
+        Select select = (Select) CCJSqlParserUtil.parse(targetSql);
+        Assertions.assertTrue(select.toString().equals(targetSql));
     }
 }
