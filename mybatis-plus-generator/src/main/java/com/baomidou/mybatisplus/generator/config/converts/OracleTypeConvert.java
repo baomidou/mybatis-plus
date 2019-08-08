@@ -48,11 +48,11 @@ public class OracleTypeConvert implements ITypeConvert {
             } else if (t.matches("number\\(+\\d{2}+\\)")) {
                 return DbColumnType.LONG;
             }
-            return DbColumnType.DOUBLE;
+            return DbColumnType.BIG_DECIMAL;
         } else if (t.contains("float")) {
             return DbColumnType.FLOAT;
         } else if (t.contains("clob")) {
-            return DbColumnType.CLOB;
+            return DbColumnType.STRING;
         } else if (t.contains("blob")) {
             return DbColumnType.BLOB;
         } else if (t.contains("binary")) {
