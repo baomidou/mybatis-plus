@@ -21,15 +21,19 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.base.entity.CommonData;
 import com.baomidou.mybatisplus.test.base.entity.CommonLogicData;
+import com.baomidou.mybatisplus.test.base.entity.WeixinUserEntity;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonDataMapper;
 import com.baomidou.mybatisplus.test.base.mapper.commons.CommonLogicDataMapper;
+import com.baomidou.mybatisplus.test.base.mapper.commons.WeixinUserMapper;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @DirtiesContext
@@ -42,6 +46,9 @@ class SelectCountDistinctTest {
     private CommonLogicDataMapper commonLogicMapper;
     @Resource
     private CommonDataMapper commonDataMapper;
+
+    @Resource
+    private WeixinUserMapper weixinUserMapper;
 
     @Test
     @Order(1)
@@ -141,4 +148,14 @@ class SelectCountDistinctTest {
         Assertions.assertNotNull(page.getRecords().get(0));
     }
 
+    @Test
+    void testSuperClassInsert() {
+        WeixinUserEntity entity = new WeixinUserEntity();
+        entity.setOpenId("openId");
+        entity.setUsername("username");
+        entity.setId("1");
+        entity.setCreateTime(LocalDateTime.now());
+        /* 理想状态不应该insert username字段 */
+        weixinUserMapper.insert(entity);
+    }
 }

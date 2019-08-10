@@ -93,6 +93,12 @@ public class GlobalConfig implements Serializable {
     private MetaObjectHandler metaObjectHandler;
 
     /**
+     * 是否开启多继承指定数据库字段基础超类
+     * 默认不开启
+     */
+    private Boolean enableSuperClass = false;
+
+    /**
      * 标记全局设置 (统一所有入口)
      */
     public void signGlobalConfig(SqlSessionFactory sqlSessionFactory) {

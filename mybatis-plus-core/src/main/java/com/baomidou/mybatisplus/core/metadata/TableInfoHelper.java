@@ -244,6 +244,14 @@ public class TableInfoHelper {
         /* 数据库全局配置 */
         GlobalConfig.DbConfig dbConfig = globalConfig.getDbConfig();
         List<Field> list = getAllFields(clazz);
+        if (globalConfig.getEnableSuperClass()) {
+            list = list
+                .stream()
+                .filter(field ->
+                    field.getDeclaringClass().getName().equals(clazz.getName()) ||
+                        field.getDeclaringClass().getAnnotation(TableSuperClass.class) != null)
+                .collect(toList());
+        }
         // 标记是否读取到主键
         boolean isReadPK = false;
         // 是否存在 @TableId 注解

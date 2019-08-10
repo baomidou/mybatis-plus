@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.test.base.entity.CommonData;
 import com.baomidou.mybatisplus.test.base.entity.CommonLogicData;
+import com.baomidou.mybatisplus.test.base.entity.WeixinUserEntity;
 import org.apache.ibatis.reflection.DefaultReflectorFactory;
 import org.apache.ibatis.reflection.MetaClass;
 import org.junit.jupiter.api.Test;
@@ -64,5 +65,12 @@ class SampleTest {
     @Test
     void testPrefixOrder() {
         System.out.println(Wrappers.query().eq("order_id", 1).getSqlSegment());
+    }
+
+    @Test
+    void testSuperClass() {
+        TableInfo info = TableInfoHelper.initTableInfo(null, WeixinUserEntity.class);
+        info.getFieldList().forEach(f -> System.out.println(f.getColumn()));
+        System.out.println(info.getAllSqlSelect());
     }
 }
