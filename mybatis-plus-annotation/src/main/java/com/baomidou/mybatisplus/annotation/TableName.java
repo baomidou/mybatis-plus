@@ -58,6 +58,8 @@ public @interface TableName {
      * 是否自动构建 resultMap 并使用
      * 如果设置 resultMap 则不会进行 resultMap 的自动构建并注入
      * 只适合个别字段 设置了 typeHandler 或 jdbcType 的情况
+     *
+     * @since 3.1.2
      */
     boolean autoResultMap() default false;
 }
