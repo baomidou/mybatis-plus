@@ -32,7 +32,6 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.apache.ibatis.type.UnknownTypeHandler;
 
 import java.lang.reflect.Field;
-import java.util.Optional;
 
 /**
  * 数据库表字段反射信息
@@ -70,14 +69,6 @@ public class TableFieldInfo implements Constants {
      * 属性是否是 CharSequence 类型
      */
     private final boolean isCharSequence;
-    /**
-     * 字段策略【 默认，自判断 null 】
-     *
-     * @since deprecated v_3.1.2 @2019-5-7
-     * @deprecated v_3.1.2 please use {@link #insertStrategy} and {@link #updateStrategy} and {@link #whereStrategy}
-     */
-    @Deprecated
-    private final FieldStrategy fieldStrategy;
     /**
      * 字段验证策略之 insert
      * Refer to {@link TableField#insertStrategy()}
@@ -172,14 +163,6 @@ public class TableFieldInfo implements Constants {
         /*
          * 优先使用单个字段注解，否则使用全局配置
          */
-        if (tableField.strategy() == FieldStrategy.DEFAULT) {
-            this.fieldStrategy = dbConfig.getFieldStrategy();
-        } else {
-            this.fieldStrategy = tableField.strategy();
-        }
-        /*
-         * 优先使用单个字段注解，否则使用全局配置
-         */
         if (tableField.insertStrategy() == FieldStrategy.DEFAULT) {
             this.insertStrategy = dbConfig.getInsertStrategy();
         } else {
@@ -262,14 +245,6 @@ public class TableFieldInfo implements Constants {
         /*
          * 优先使用单个字段注解，否则使用全局配置
          */
-        if (tableField.strategy() == FieldStrategy.DEFAULT) {
-            this.fieldStrategy = dbConfig.getFieldStrategy();
-        } else {
-            this.fieldStrategy = tableField.strategy();
-        }
-        /*
-         * 优先使用单个字段注解，否则使用全局配置
-         */
         if (tableField.insertStrategy() == FieldStrategy.DEFAULT) {
             this.insertStrategy = dbConfig.getInsertStrategy();
         } else {
@@ -310,7 +285,6 @@ public class TableFieldInfo implements Constants {
         this.propertyType = field.getType();
         this.isCharSequence = StringUtils.isCharSequence(this.propertyType);
         this.el = this.property;
-        this.fieldStrategy = dbConfig.getFieldStrategy();
         this.insertStrategy = dbConfig.getInsertStrategy();
         this.updateStrategy = dbConfig.getUpdateStrategy();
         this.whereStrategy = dbConfig.getSelectStrategy();
@@ -528,14 +502,13 @@ public class TableFieldInfo implements Constants {
      * @return if 脚本片段
      */
     private String convertIf(final String sqlScript, final String property, final FieldStrategy fieldStrategy) {
-        final FieldStrategy targetStrategy = Optional.ofNullable(fieldStrategy).orElse(this.fieldStrategy);
-        if (targetStrategy == FieldStrategy.NEVER) {
+        if (fieldStrategy == FieldStrategy.NEVER) {
             return null;
         }
-        if (targetStrategy == FieldStrategy.IGNORED) {
+        if (fieldStrategy == FieldStrategy.IGNORED) {
             return sqlScript;
         }
-        if (targetStrategy == FieldStrategy.NOT_EMPTY && isCharSequence) {
+        if (fieldStrategy == FieldStrategy.NOT_EMPTY && isCharSequence) {
             return SqlScriptUtils.convertIf(sqlScript, String.format("%s != null and %s != ''", property, property),
                 false);
         }

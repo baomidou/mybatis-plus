@@ -143,35 +143,22 @@ public class GlobalConfig implements Serializable {
          */
         private String logicNotDeleteValue = "0";
         /**
-         * 字段验证策略
-         *
-         * @deprecated 3.1.2 please use {@link #insertStrategy} and {@link #updateStrategy} and {@link #selectStrategy}
-         */
-        @Deprecated
-        private FieldStrategy fieldStrategy = FieldStrategy.NOT_NULL;
-        /**
          * 字段验证策略之 insert
-         * 目前没有默认值,等 {@link #fieldStrategy} 完全去除掉,会给个默认值 NOT_NULL
-         * 没配则按 {@link #fieldStrategy} 为准
          *
          * @since 3.1.2
          */
-        private FieldStrategy insertStrategy;
+        private FieldStrategy insertStrategy = FieldStrategy.NOT_NULL;
         /**
          * 字段验证策略之 update
-         * 目前没有默认值,等 {@link #fieldStrategy} 完全去除掉,会给个默认值 NOT_NULL
-         * 没配则按 {@link #fieldStrategy} 为准
          *
          * @since 3.1.2
          */
-        private FieldStrategy updateStrategy;
+        private FieldStrategy updateStrategy = FieldStrategy.NOT_NULL;
         /**
          * 字段验证策略之 select
-         * 目前没有默认值,等 {@link #fieldStrategy} 完全去除掉,会给个默认值 NOT_NULL
-         * 没配则按 {@link #fieldStrategy} 为准
          *
          * @since 3.1.2
          */
-        private FieldStrategy selectStrategy;
+        private FieldStrategy selectStrategy = FieldStrategy.NOT_NULL;
     }
 }
