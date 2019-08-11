@@ -122,6 +122,7 @@ public class TableFieldInfo implements Constants {
     private String update;
     /**
      * where 字段比较条件
+     * todo 待优化
      */
     private String condition = SqlCondition.EQUAL;
     /**
@@ -204,9 +205,6 @@ public class TableFieldInfo implements Constants {
         if (StringUtils.isNotEmpty(tableField.condition())) {
             // 细粒度条件控制
             this.condition = tableField.condition();
-        } else {
-            // 全局配置
-            this.setCondition(dbConfig);
         }
 
         // 字段是否注入查询
@@ -297,9 +295,6 @@ public class TableFieldInfo implements Constants {
         if (StringUtils.isNotEmpty(tableField.condition())) {
             // 细粒度条件控制
             this.condition = tableField.condition();
-        } else {
-            // 全局配置
-            this.setCondition(dbConfig);
         }
 
         // 字段是否注入查询
@@ -319,7 +314,6 @@ public class TableFieldInfo implements Constants {
         this.insertStrategy = dbConfig.getInsertStrategy();
         this.updateStrategy = dbConfig.getUpdateStrategy();
         this.whereStrategy = dbConfig.getSelectStrategy();
-        this.setCondition(dbConfig);
         tableInfo.setLogicDelete(this.initLogicDelete(dbConfig, field));
 
         String column = field.getName();
@@ -371,18 +365,6 @@ public class TableFieldInfo implements Constants {
      */
     public boolean isLogicDelete() {
         return StringUtils.isNotEmpty(logicDeleteValue);
-    }
-
-    /**
-     * 全局配置开启字段 LIKE 并且为字符串类型字段
-     * <p>注入 LIKE 查询！！！</p>
-     */
-    private void setCondition(GlobalConfig.DbConfig dbConfig) {
-        if (null == condition || SqlCondition.EQUAL.equals(condition)) {
-            if (dbConfig.isColumnLike() && isCharSequence) {
-                condition = dbConfig.getDbType().getLike();
-            }
-        }
     }
 
     /**

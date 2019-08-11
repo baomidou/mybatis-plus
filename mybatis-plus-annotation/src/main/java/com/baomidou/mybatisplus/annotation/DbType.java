@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.annotation;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
@@ -24,75 +25,65 @@ import lombok.Getter;
  * @since 2018-06-23
  */
 @Getter
+@AllArgsConstructor
 public enum DbType {
     /**
      * MYSQL
      */
-    MYSQL("mysql", "%s LIKE CONCAT('%%',#{%s},'%%')", "MySql数据库"),
+    MYSQL("mysql", "MySql数据库"),
     /**
      * MARIADB
      */
-    MARIADB("mariadb", "%s LIKE CONCAT('%%',#{%s},'%%')", "MariaDB数据库"),
+    MARIADB("mariadb", "MariaDB数据库"),
     /**
      * ORACLE
      */
-    ORACLE("oracle", "%s LIKE CONCAT(CONCAT('%%',#{%s}),'%%')", "Oracle数据库"),
+    ORACLE("oracle", "Oracle数据库"),
     /**
      * DB2
      */
-    DB2("db2", "%s LIKE CONCAT(CONCAT('%%',#{%s}),'%%')", "DB2数据库"),
+    DB2("db2", "DB2数据库"),
     /**
      * H2
      */
-    H2("h2", "%s LIKE CONCAT('%%',#{%s},'%%')", "H2数据库"),
+    H2("h2", "H2数据库"),
     /**
      * HSQL
      */
-    HSQL("hsql", "%s LIKE CONCAT('%%',#{%s},'%%')", "HSQL数据库"),
+    HSQL("hsql", "HSQL数据库"),
     /**
      * SQLITE
      */
-    SQLITE("sqlite", "%s LIKE CONCAT('%%',#{%s},'%%')", "SQLite数据库"),
+    SQLITE("sqlite", "SQLite数据库"),
     /**
      * POSTGRE
      */
-    POSTGRE_SQL("postgresql", "%s LIKE CONCAT('%%',#{%s},'%%')", "Postgre数据库"),
+    POSTGRE_SQL("postgresql", "Postgre数据库"),
     /**
      * SQLSERVER2005
      */
-    SQL_SERVER2005("sqlserver2005", "%s LIKE '%%'+#{%s}+'%%'", "SQLServer2005数据库"),
+    SQL_SERVER2005("sqlserver2005", "SQLServer2005数据库"),
     /**
      * SQLSERVER
      */
-    SQL_SERVER("sqlserver", "%s LIKE '%%'+#{%s}+'%%'", "SQLServer数据库"),
+    SQL_SERVER("sqlserver", "SQLServer数据库"),
     /**
      * DM
      */
-    DM("dm", null, "达梦数据库"),
+    DM("dm", "达梦数据库"),
     /**
      * UNKONWN DB
      */
-    OTHER("other", null, "其他数据库");
+    OTHER("other", "其他数据库");
 
     /**
      * 数据库名称
      */
     private final String db;
     /**
-     * LIKE 拼接模式
-     */
-    private final String like;
-    /**
      * 描述
      */
     private final String desc;
-
-
-    DbType(String db, String like, String desc) {
-        this.db = db;
-        this.like = like;
-        this.desc = desc;
-    }
 
     /**
      * 获取数据库类型（默认 MySql）

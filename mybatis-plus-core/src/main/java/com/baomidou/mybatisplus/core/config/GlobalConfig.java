@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.config;
 
-import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
@@ -101,14 +100,6 @@ public class GlobalConfig implements Serializable {
 
     @Data
     public static class DbConfig {
-
-        /**
-         * 数据库类型
-         *
-         * @deprecated 3.1.1 不再需要, mp不应该也不需要关心数据库类型
-         */
-        @Deprecated
-        private DbType dbType = DbType.OTHER;
         /**
          * 主键类型（默认 ID_WORKER）
          */
@@ -135,13 +126,6 @@ public class GlobalConfig implements Serializable {
          * 表名、是否使用下划线命名（默认 true:默认数据库表下划线命名）
          */
         private boolean tableUnderline = true;
-        /**
-         * String 类型字段 LIKE
-         *
-         * @deprecated 3.1.1 后续将删除这个属性
-         */
-        @Deprecated
-        private boolean columnLike = false;
         /**
          * 大写命名
          */
