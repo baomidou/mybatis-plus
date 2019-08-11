@@ -113,7 +113,6 @@ public class TableFieldInfo implements Constants {
     private String update;
     /**
      * where 字段比较条件
-     * todo 待优化
      */
     private String condition = SqlCondition.EQUAL;
     /**
@@ -139,63 +138,7 @@ public class TableFieldInfo implements Constants {
     private Class<? extends TypeHandler<?>> typeHandler;
 
     /**
-     * 存在 TableField 注解时, 使用的构造函数
-     */
-    public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field,
-                          String column, String el, TableField tableField) {
-        this.version = field.getAnnotation(Version.class) != null;
-        this.property = field.getName();
-        this.propertyType = field.getType();
-        this.isCharSequence = StringUtils.isCharSequence(this.propertyType);
-        this.fieldFill = tableField.fill();
-        this.update = tableField.update();
-        this.el = el;
-        tableInfo.setLogicDelete(this.initLogicDelete(dbConfig, field));
-
-        if (StringUtils.isEmpty(tableField.value())) {
-            if (tableInfo.isUnderCamel()) {
-                column = StringUtils.camelToUnderline(column);
-            }
-        }
-        this.column = column;
-        this.related = TableInfoHelper.checkRelated(tableInfo.isUnderCamel(), this.property, this.column);
-
-        /*
-         * 优先使用单个字段注解，否则使用全局配置
-         */
-        if (tableField.insertStrategy() == FieldStrategy.DEFAULT) {
-            this.insertStrategy = dbConfig.getInsertStrategy();
-        } else {
-            this.insertStrategy = tableField.insertStrategy();
-        }
-        /*
-         * 优先使用单个字段注解，否则使用全局配置
-         */
-        if (tableField.updateStrategy() == FieldStrategy.DEFAULT) {
-            this.updateStrategy = dbConfig.getUpdateStrategy();
-        } else {
-            this.updateStrategy = tableField.updateStrategy();
-        }
-        /*
-         * 优先使用单个字段注解，否则使用全局配置
-         */
-        if (tableField.whereStrategy() == FieldStrategy.DEFAULT) {
-            this.whereStrategy = dbConfig.getSelectStrategy();
-        } else {
-            this.whereStrategy = tableField.whereStrategy();
-        }
-
-        if (StringUtils.isNotEmpty(tableField.condition())) {
-            // 细粒度条件控制
-            this.condition = tableField.condition();
-        }
-
-        // 字段是否注入查询
-        this.select = tableField.select();
-    }
-
-    /**
-     * 全新的 存在 TableField 注解并单独设置了 jdbcType 或者 typeHandler 时使用的构造函数
+     * 全新的 存在 TableField 注解时使用的构造函数
      */
     public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field, TableField tableField) {
         this.version = field.getAnnotation(Version.class) != null;

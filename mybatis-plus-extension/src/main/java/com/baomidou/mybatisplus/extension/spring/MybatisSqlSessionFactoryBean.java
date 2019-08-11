@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.extension.spring;
 
-import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.MybatisPlusVersion;
 import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
@@ -23,12 +22,9 @@ import com.baomidou.mybatisplus.core.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.enums.IEnum;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.handlers.MybatisEnumTypeHandler;
-import com.baomidou.mybatisplus.extension.toolkit.AopUtils;
-import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.extension.toolkit.PackageHelper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import lombok.Setter;
@@ -71,7 +67,6 @@ import org.springframework.util.ClassUtils;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Optional;
@@ -474,15 +469,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
         // TODO 初始化 id-work 以及 打印骚东西
         targetConfiguration.setGlobalConfig(this.globalConfig);
-
-        // TODO 设置元数据相关 如果用户没有配置 dbType 则自动获取
-        if (globalConfig.getDbConfig().getDbType() == DbType.OTHER) {
-            try (Connection connection = AopUtils.getTargetObject(this.dataSource).getConnection()) {
-                globalConfig.getDbConfig().setDbType(JdbcUtils.getDbType(connection.getMetaData().getURL()));
-            } catch (Exception e) {
-                throw ExceptionUtils.mpe("Error: GlobalConfigUtils setMetaData Fail !  Cause:" + e);
-            }
-        }
 
         // TODO 自定义枚举类扫描处理
         if (hasLength(this.typeEnumsPackage)) {

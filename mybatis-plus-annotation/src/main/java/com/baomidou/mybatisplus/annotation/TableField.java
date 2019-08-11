@@ -41,17 +41,6 @@ public @interface TableField {
     String value() default "";
 
     /**
-     * 当该Field为类对象时, 可使用#{对象.属性}来映射到数据表.
-     * <p>
-     * 例1：@TableField(el = "role, jdbcType=BIGINT)
-     * 例2：@TableField(el = "role, typeHandler=com.baomidou.springcloud.typehandler.PhoneTypeHandler")
-     *
-     * @deprecated 3.1.2 , to use {@link #jdbcType()} and {@link #typeHandler()}
-     */
-    @Deprecated
-    String el() default "";
-
-    /**
      * 是否为数据库表字段
      * 默认 true 存在，false 不存在
      */
@@ -73,15 +62,6 @@ public @interface TableField {
      * 输出 SQL 为：update 表 set 字段=now() where ...
      */
     String update() default "";
-
-    /**
-     * 字段验证策略
-     * <p>默认追随全局配置</p>
-     *
-     * @deprecated 3.1.2 , to use {@link #insertStrategy} and {@link #updateStrategy} and {@link #whereStrategy}
-     */
-    @Deprecated
-    FieldStrategy strategy() default FieldStrategy.DEFAULT;
 
     /**
      * 字段验证策略之 insert: 当insert操作时，该字段拼接insert语句时的策略

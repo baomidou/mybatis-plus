@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
@@ -65,10 +64,6 @@ public class GlobalConfigUtils {
     public static GlobalConfig getGlobalConfig(Configuration configuration) {
         Assert.notNull(configuration, "Error: You need Initialize MybatisConfiguration !");
         return ((MybatisConfiguration) configuration).getGlobalConfig();
-    }
-
-    public static DbType getDbType(Configuration configuration) {
-        return getGlobalConfig(configuration).getDbConfig().getDbType();
     }
 
     public static IKeyGenerator getKeyGenerator(Configuration configuration) {

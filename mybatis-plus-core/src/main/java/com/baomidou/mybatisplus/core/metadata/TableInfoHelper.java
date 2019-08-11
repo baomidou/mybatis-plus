@@ -30,9 +30,6 @@ import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.mapping.StatementType;
 import org.apache.ibatis.scripting.LanguageDriver;
-import org.apache.ibatis.type.JdbcType;
-import org.apache.ibatis.type.TypeHandler;
-import org.apache.ibatis.type.UnknownTypeHandler;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -265,7 +262,7 @@ public class TableInfoHelper {
                 }
             }
             /* 有 @TableField 注解的字段初始化 */
-            if (initTableFieldWithAnnotation(dbConfig, tableInfo, fieldList, field, clazz)) {
+            if (initTableFieldWithAnnotation(dbConfig, tableInfo, fieldList, field)) {
                 continue;
             }
 
@@ -397,54 +394,14 @@ public class TableInfoHelper {
      * @return true 继续下一个属性判断，返回 continue;
      */
     private static boolean initTableFieldWithAnnotation(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo,
-                                                        List<TableFieldInfo> fieldList, Field field, Class<?> clazz) {
+                                                        List<TableFieldInfo> fieldList, Field field) {
         /* 获取注解属性，自定义字段 */
         TableField tableField = field.getAnnotation(TableField.class);
         if (null == tableField) {
             return false;
         }
-        JdbcType jdbcType = tableField.jdbcType();
-        Class<? extends TypeHandler<?>> typeHandler = tableField.typeHandler();
-        String numericScale = tableField.numericScale();
-        if (JdbcType.UNDEFINED != jdbcType || UnknownTypeHandler.class != typeHandler ||
-            StringUtils.isNotEmpty(numericScale)) {
-            // todo 暂时先这么搞,后面再优化
-            fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, tableField));
-            return true;
-        }
-        String columnName = field.getName();
-        boolean columnNameFromTableField = false;
-        if (StringUtils.isNotEmpty(tableField.value())) {
-            columnName = tableField.value();
-            columnNameFromTableField = true;
-        }
-        /*
-         * el 语法支持，可以传入多个参数以逗号分开
-         */
-        String el = field.getName();
-        if (StringUtils.isNotEmpty(tableField.el())) {
-            el = tableField.el();
-        }
-        String[] columns = columnName.split(StringPool.SEMICOLON);
-
-        String columnFormat = dbConfig.getColumnFormat();
-        if (StringUtils.isNotEmpty(columnFormat) && (!columnNameFromTableField || tableField.keepGlobalFormat())) {
-            for (int i = 0; i < columns.length; i++) {
-                String column = columns[i];
-                column = String.format(columnFormat, column);
-                columns[i] = column;
-            }
-        }
-
-        String[] els = el.split(StringPool.SEMICOLON);
-        if (columns.length == els.length) {
-            for (int i = 0; i < columns.length; i++) {
-                fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, columns[i], els[i], tableField));
-            }
-            return true;
-        }
-        throw ExceptionUtils.mpe("Class: %s, Field: %s, 'value' 'el' Length must be consistent.",
-            clazz.getName(), field.getName());
+        fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, tableField));
+        return true;
     }
 
     /**

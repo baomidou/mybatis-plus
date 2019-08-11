@@ -137,7 +137,7 @@ public abstract class Wrapper<T> implements ISqlSegment {
      * 根据实体FieldStrategy属性来决定判断逻辑
      */
     private boolean fieldStrategyMatch(T entity, TableFieldInfo e) {
-        switch (e.getFieldStrategy()) {
+        switch (e.getWhereStrategy()) {
             case NOT_NULL:
                 return Objects.nonNull(ReflectionKit.getMethodValue(entity, e.getProperty()));
             case IGNORED:
