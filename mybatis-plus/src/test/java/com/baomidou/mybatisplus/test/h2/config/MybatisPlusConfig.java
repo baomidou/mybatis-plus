@@ -29,7 +29,6 @@ import com.baomidou.mybatisplus.extension.injector.methods.additional.InsertBatc
 import com.baomidou.mybatisplus.extension.injector.methods.additional.LogicDeleteByIdWithFill;
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.PerformanceInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.SqlExplainInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.baomidou.mybatisplus.test.h2.H2MetaObjectHandler;
@@ -108,8 +107,7 @@ public class MybatisPlusConfig {
         sqlSessionFactory.setPlugins(new Interceptor[]{
             pagination,
             optLock,
-            sqlExplainInterceptor,
-            new PerformanceInterceptor()
+            sqlExplainInterceptor
         });
         globalConfig.setMetaObjectHandler(new H2MetaObjectHandler());
         globalConfig.setSqlInjector(new DefaultSqlInjector() {
