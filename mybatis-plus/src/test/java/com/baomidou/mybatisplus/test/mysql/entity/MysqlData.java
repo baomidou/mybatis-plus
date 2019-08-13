@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.test.mysql.entity;
 
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -31,7 +30,7 @@ public class MysqlData {
     private Long id;
     private Integer order;
     private Integer group;
-    @TableField(value = "test_str", strategy = FieldStrategy.NOT_EMPTY)
+    @TableField(value = "test_str")
     private String testStr;
     @TableField(value = "lambda_str", keepGlobalFormat = true)
     private String yaHoStr;

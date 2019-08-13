@@ -59,7 +59,7 @@ public class H2UserStrategy extends SuperEntity {
     private BigDecimal price;
 
     /* 测试下划线字段命名类型, 字段填充 */
-    @TableField(strategy = FieldStrategy.IGNORED, fill = FieldFill.INSERT)
+    @TableField(fill = FieldFill.INSERT)
     private Integer testType;
 
     /**

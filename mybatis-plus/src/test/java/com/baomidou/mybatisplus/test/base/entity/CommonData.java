@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.test.base.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.Version;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
@@ -51,7 +50,7 @@ public class CommonData extends Model<CommonData> {
     private Long id;
     @TableField(jdbcType = JdbcType.INTEGER)
     private Integer testInt;
-    @TableField(strategy = FieldStrategy.DEFAULT)
+    @TableField
     private String testStr;
     @TableField(value = "c_time", fill = FieldFill.INSERT)
     private LocalDateTime createDatetime;

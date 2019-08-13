@@ -41,7 +41,7 @@ ext {
         "spring-aop"                 : "org.springframework:spring-aop:${springVersion}",
         "aspectjrt"                  : "org.aspectj:aspectjrt:1.8.13",
         "cglib"                      : "cglib:cglib:3.2.6",
-        "lombok"                     : "org.projectlombok:lombok:1.18.4",
+        "lombok"                     : "org.projectlombok:lombok:1.18.8",
 
         "javax.servlet-api"          : "javax.servlet:javax.servlet-api:4.0.1",
         "aspectjweaver"              : "org.aspectj:aspectjweaver:1.9.2",
