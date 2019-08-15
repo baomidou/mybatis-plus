@@ -45,4 +45,6 @@ public class ResultMapEntity {
     private List<String> list;
     @TableField(typeHandler = MapTypeHandler.class)
     private Map<String, Object> map;
+    @TableField(typeHandlerStr = "com.baomidou.mybatisplus.test.base.type.JsonTypeHandler")
+    private Map<String, Object> mapp;
 }

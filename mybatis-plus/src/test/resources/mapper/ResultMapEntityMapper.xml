@@ -14,5 +14,6 @@
         <result column="column4" property="column4"/>
         <result column="list" property="list" typeHandler="com.baomidou.mybatisplus.test.base.type.ListTypeHandler"/>
         <result column="map" property="map" typeHandler="com.baomidou.mybatisplus.test.base.type.MapTypeHandler"/>
+        <result column="map" property="mapp" typeHandler="com.baomidou.mybatisplus.test.base.type.JsonTypeHandler"/>
     </resultMap>
 </mapper>

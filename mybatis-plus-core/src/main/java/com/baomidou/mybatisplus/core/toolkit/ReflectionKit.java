@@ -15,28 +15,20 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toCollection;
-import static java.util.stream.Collectors.toMap;
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.IdentityHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.lang.reflect.*;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toCollection;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * <p>
@@ -262,5 +254,20 @@ public class ReflectionKit {
     public static boolean isPrimitiveOrWrapper(Class<?> clazz) {
         Assert.notNull(clazz, "Class must not be null");
         return (clazz.isPrimitive() || PRIMITIVE_WRAPPER_TYPE_MAP.containsKey(clazz));
+    }
+
+    /**
+     * 判断是否为基本类型或基本包装类型
+     *
+     * @param className className
+     * @return class
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> Class<T> getClass(String className) {
+        try {
+            return (Class<T>) Resources.classForName(className);
+        } catch (ClassNotFoundException e) {
+            throw new MybatisPlusException("can not fine class of " + className);
+        }
     }
 }

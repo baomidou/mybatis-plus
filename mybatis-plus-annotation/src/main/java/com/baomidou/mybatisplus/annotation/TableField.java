@@ -123,13 +123,22 @@ public @interface TableField {
     JdbcType jdbcType() default JdbcType.UNDEFINED;
 
     /**
-     * 类型处理器 (该默认值不代表会按照该值生效)
+     * 类型处理器 (该默认值不代表会按照该值生效)(和下面的都配置情况下,这个优先)
      * <p>
      * {@link ResultMapping#typeHandler} and {@link ParameterMapping#typeHandler}
      *
      * @since 3.1.2
      */
     Class<? extends TypeHandler<?>> typeHandler() default UnknownTypeHandler.class;
+
+    /**
+     * 类型处理器 (该默认值不代表会按照该值生效)(和上面的都配置情况下,上面的优先)
+     * <p>
+     * {@link ResultMapping#typeHandler} and {@link ParameterMapping#typeHandler}
+     *
+     * @since 3.1.2
+     */
+    String typeHandlerStr() default "";
 
     /**
      * 指定小数点后保留的位数
