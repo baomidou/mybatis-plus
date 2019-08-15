@@ -19,7 +19,6 @@ import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import lombok.AccessLevel;
@@ -141,6 +140,7 @@ public class TableFieldInfo implements Constants {
     /**
      * 全新的 存在 TableField 注解时使用的构造函数
      */
+    @SuppressWarnings("unchecked")
     public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field, TableField tableField) {
         this.version = field.getAnnotation(Version.class) != null;
         this.property = field.getName();
@@ -149,8 +149,7 @@ public class TableFieldInfo implements Constants {
         this.fieldFill = tableField.fill();
         this.update = tableField.update();
         JdbcType jdbcType = tableField.jdbcType();
-        final Class<? extends TypeHandler<?>> typeHandler = tableField.typeHandler();
-        final String handlerStr = tableField.typeHandlerStr();
+        final Class<? extends TypeHandler> typeHandler = tableField.typeHandler();
         final String numericScale = tableField.numericScale();
         String el = this.property;
         if (JdbcType.UNDEFINED != jdbcType) {
@@ -158,11 +157,8 @@ public class TableFieldInfo implements Constants {
             el += (COMMA + "jdbcType=" + jdbcType.name());
         }
         if (UnknownTypeHandler.class != typeHandler) {
-            this.typeHandler = typeHandler;
+            this.typeHandler = (Class<? extends TypeHandler<?>>) typeHandler;
             el += (COMMA + "typeHandler=" + typeHandler.getName());
-        } else if (StringUtils.isNotEmpty(handlerStr)) {
-            this.typeHandler = ReflectionKit.getClass(handlerStr);
-            el += (COMMA + "typeHandler=" + this.typeHandler.getName());
         }
         if (StringUtils.isNotEmpty(numericScale)) {
             el += (COMMA + "numericScale=" + numericScale);
