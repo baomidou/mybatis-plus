@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
-import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
@@ -254,20 +252,5 @@ public class ReflectionKit {
     public static boolean isPrimitiveOrWrapper(Class<?> clazz) {
         Assert.notNull(clazz, "Class must not be null");
         return (clazz.isPrimitive() || PRIMITIVE_WRAPPER_TYPE_MAP.containsKey(clazz));
-    }
-
-    /**
-     * 判断是否为基本类型或基本包装类型
-     *
-     * @param className className
-     * @return class
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> Class<T> getClass(String className) {
-        try {
-            return (Class<T>) Resources.classForName(className);
-        } catch (ClassNotFoundException e) {
-            throw new MybatisPlusException("can not fine class of " + className);
-        }
     }
 }
