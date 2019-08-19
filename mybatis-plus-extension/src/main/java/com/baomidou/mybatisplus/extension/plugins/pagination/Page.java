@@ -168,7 +168,7 @@ public class Page<T> implements IPage<T> {
      *
      * @return 正序排列的字段集合
      * @see #getOrders()
-     * @deprecated 3.1.2.2-SNAPSHOT
+     * @deprecated 3.2.0
      */
     @Override
     @Nullable
@@ -218,13 +218,24 @@ public class Page<T> implements IPage<T> {
     }
 
     /**
+     * 添加新的排序条件，构造条件可以使用工厂：{@link OrderItem#build(String, boolean)}
+     *
+     * @param items 条件
+     * @return 返回分页参数本身
+     */
+    public Page<T> addOrder(List<OrderItem> items) {
+        orders.addAll(items);
+        return this;
+    }
+
+    /**
      * 设置需要进行正序排序的字段
      * <p>
      * Replaced:{@link #addOrder(OrderItem...)}
      *
      * @param ascs 字段
      * @return 返回自身
-     * @deprecated 3.1.2.2-SNAPSHOT
+     * @deprecated 3.2.0
      */
     @Deprecated
     public Page<T> setAscs(List<String> ascs) {
@@ -237,7 +248,7 @@ public class Page<T> implements IPage<T> {
      * Replaced:{@link #addOrder(OrderItem...)}
      *
      * @param ascs 多个升序字段
-     * @deprecated 3.1.2.2-SNAPSHOT
+     * @deprecated 3.2.0
      */
     @Deprecated
     public Page<T> setAsc(String... ascs) {
@@ -255,7 +266,7 @@ public class Page<T> implements IPage<T> {
      *
      * @return 倒序排列的字段数组
      * @see #getOrders()
-     * @deprecated 3.1.2.2-SNAPSHOT
+     * @deprecated 3.2.0
      */
     @Override
     @Deprecated
@@ -268,7 +279,7 @@ public class Page<T> implements IPage<T> {
      *
      * @param descs 需要倒序排列的字段
      * @return 自身
-     * @deprecated 3.1.2.2-SNAPSHOT
+     * @deprecated 3.2.0
      */
     @Deprecated
     public Page<T> setDescs(List<String> descs) {
@@ -288,7 +299,7 @@ public class Page<T> implements IPage<T> {
      * Replaced:{@link #addOrder(OrderItem...)}
      *
      * @param descs 多个降序字段
-     * @deprecated 3.1.2.2-SNAPSHOT
+     * @deprecated 3.2.0
      */
     @Deprecated
     public Page<T> setDesc(String... descs) {
@@ -331,5 +342,4 @@ public class Page<T> implements IPage<T> {
         this.optimizeCountSql = optimizeCountSql;
         return this;
     }
-
 }

@@ -23,7 +23,6 @@ import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.core.parser.AbstractJsqlParser;
 import com.baomidou.mybatisplus.core.parser.ISqlParser;
-import com.baomidou.mybatisplus.extension.injector .LogicSqlInjector;
 import com.baomidou.mybatisplus.extension.injector.methods.additional.AlwaysUpdateSomeColumnById;
 import com.baomidou.mybatisplus.extension.injector.methods.additional.InsertBatchSomeColumn;
 import com.baomidou.mybatisplus.extension.injector.methods.additional.LogicDeleteByIdWithFill;
@@ -133,8 +132,7 @@ public class MybatisPlusConfig {
     @Bean
     public GlobalConfig globalConfiguration() {
         GlobalConfig conf = new GlobalConfig();
-        conf.setSqlInjector(new LogicSqlInjector())
-            .setEnableSqlRunner(true)
+        conf.setEnableSqlRunner(true)
             .setDbConfig(new GlobalConfig.DbConfig()
                 .setLogicDeleteValue("1")
                 .setLogicNotDeleteValue("0")

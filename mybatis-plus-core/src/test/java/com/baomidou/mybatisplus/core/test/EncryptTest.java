@@ -62,13 +62,13 @@ class EncryptTest {
         private Long id;
         @TableField(fill = FieldFill.INSERT)
         private String x1;
-        @TableField(fill = FieldFill.INSERT_UPDATE, strategy = FieldStrategy.NOT_EMPTY)
+        @TableField(fill = FieldFill.INSERT_UPDATE, whereStrategy = FieldStrategy.NOT_EMPTY)
         private String x2;
         @TableField(fill = FieldFill.UPDATE)
         private String x3;
-        @TableField(strategy = FieldStrategy.NOT_EMPTY)
+        @TableField(whereStrategy = FieldStrategy.NOT_EMPTY)
         private String x4;
-        @TableField(value = "xx5", strategy = FieldStrategy.IGNORED, update = "%s+1")
+        @TableField(value = "xx5", updateStrategy = FieldStrategy.IGNORED, update = "%s+1")
         private String x5;
         @TableLogic
         private Integer deleted;

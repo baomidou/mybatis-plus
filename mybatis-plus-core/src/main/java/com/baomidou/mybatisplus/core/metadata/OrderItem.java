@@ -15,11 +15,14 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
-import java.io.Serializable;
-
 import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 排序元素载体
@@ -49,6 +52,14 @@ public class OrderItem implements Serializable {
 
     public static OrderItem desc(String column) {
         return build(column, false);
+    }
+
+    public static List<OrderItem> ascs(String... columns) {
+        return Arrays.stream(columns).map(OrderItem::asc).collect(Collectors.toList());
+    }
+
+    public static List<OrderItem> descs(String... columns) {
+        return Arrays.stream(columns).map(OrderItem::desc).collect(Collectors.toList());
     }
 
     private static OrderItem build(String column, boolean asc) {

@@ -18,7 +18,6 @@ package com.baomidou.mybatisplus.test.postgres.config;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.parser.ISqlParser;
-import com.baomidou.mybatisplus.extension.injector.LogicSqlInjector;
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.tenant.TenantHandler;
@@ -73,11 +72,8 @@ public class MybatisPlusConfig {
 
     @Bean
     public GlobalConfig globalConfig() {
-        GlobalConfig conf = new GlobalConfig().setSqlParserCache(true);
+        GlobalConfig conf = new GlobalConfig();
         conf.setDbConfig(new GlobalConfig.DbConfig());
-        /* 逻辑删除注入器 */
-        LogicSqlInjector logicSqlInjector = new LogicSqlInjector();
-        conf.setSqlInjector(logicSqlInjector);
         return conf;
     }
 

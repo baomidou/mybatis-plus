@@ -47,13 +47,6 @@ public class GlobalConfig implements Serializable {
      */
     private boolean banner = true;
     /**
-     * 缓存 Sql 解析初始化
-     *
-     * @deprecated 3.1.1 不再需要这个属性, 现在是全局开启状态
-     */
-    @Deprecated
-    private boolean sqlParserCache = false;
-    /**
      * 机器 ID 部分
      */
     private Long workerId;

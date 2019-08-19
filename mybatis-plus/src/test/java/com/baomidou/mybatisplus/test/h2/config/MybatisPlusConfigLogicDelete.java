@@ -18,7 +18,6 @@ package com.baomidou.mybatisplus.test.h2.config;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.extension.injector.LogicSqlInjector;
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
@@ -75,8 +74,7 @@ public class MybatisPlusConfigLogicDelete {
     @Bean
     public GlobalConfig globalConfiguration() {
         GlobalConfig conf = new GlobalConfig();
-        conf.setSqlInjector(new LogicSqlInjector())
-            .setEnableSqlRunner(true)
+        conf.setEnableSqlRunner(true)
             .setDbConfig(new GlobalConfig.DbConfig()
                 .setLogicDeleteValue("NOW()")
                 .setLogicNotDeleteValue("NULL")

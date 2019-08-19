@@ -19,6 +19,7 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -323,7 +324,7 @@ public abstract class BaseDbTest {
     @Test
     void a16_selectPage() {
         Page<CommonData> page = new Page<>(1, 5);
-        page.setDesc("c_time", "u_time");
+        page.addOrder(OrderItem.descs("c_time", "u_time"));
         IPage<CommonData> dataPage = commonDataMapper.selectPage(page, null);
         assertSame(dataPage, page);
         assertNotEquals(0, dataPage.getRecords().size());
@@ -341,7 +342,7 @@ public abstract class BaseDbTest {
 
 
         Page<CommonData> commonDataPage = new Page<>(1, 5);
-        commonDataPage.setDesc("c_time", "u_time");
+        commonDataPage.addOrder(OrderItem.descs("c_time", "u_time"));
         IPage<CommonData> commonDataDataPage = commonDataMapper.myPage(commonDataPage);
         assertSame(commonDataDataPage, commonDataPage);
         assertNotEquals(0, commonDataDataPage.getRecords().size());
