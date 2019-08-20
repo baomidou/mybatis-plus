@@ -15,25 +15,6 @@
  */
 package com.baomidou.mybatisplus.test.h2;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.statement.select.Select;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
@@ -41,6 +22,20 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.test.h2.entity.H2User;
 import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.statement.select.Select;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Mybatis Plus H2 Junit Test
@@ -353,9 +348,19 @@ class H2UserTest extends BaseTest {
     }
 
     @Test
-    void notLikeParser() throws Exception {
-        final String targetSql = "SELECT * FROM user WHERE id NOT LIKE ?";
-        Select select = (Select) CCJSqlParserUtil.parse(targetSql);
-        Assertions.assertTrue(select.toString().equals(targetSql));
+    void notParser() throws Exception {
+        final String targetSql1 = "SELECT * FROM user WHERE id NOT LIKE ?";
+        final Select select = (Select) CCJSqlParserUtil.parse(targetSql1);
+        Assertions.assertEquals(select.toString(), targetSql1);
+
+
+        final String targetSql2 = "SELECT * FROM user WHERE id NOT IN (?)";
+        final Select select2 = (Select) CCJSqlParserUtil.parse(targetSql2);
+        Assertions.assertEquals(select2.toString(), targetSql2);
+
+
+        final String targetSql3 = "SELECT * FROM user WHERE id IS NOT NULL";
+        final Select select3 = (Select) CCJSqlParserUtil.parse(targetSql3);
+        Assertions.assertEquals(select3.toString(), targetSql3);
     }
 }
