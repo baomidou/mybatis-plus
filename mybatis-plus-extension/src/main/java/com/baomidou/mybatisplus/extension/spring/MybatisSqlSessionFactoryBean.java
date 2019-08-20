@@ -21,11 +21,11 @@ import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
 import com.baomidou.mybatisplus.core.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.enums.IEnum;
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.extension.handlers.MybatisEnumTypeHandler;
-import com.baomidou.mybatisplus.extension.toolkit.PackageHelper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import lombok.Setter;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
@@ -83,7 +83,8 @@ import static org.springframework.util.StringUtils.tokenizeToStringArray;
 /**
  * 拷贝类 {@link SqlSessionFactoryBean} 修改方法 buildSqlSessionFactory() 加载自定义
  * <p> MybatisXmlConfigBuilder </p>
- * <p> 移除 sqlSessionFactoryBuilder 属性,强制使用 MybatisSqlSessionFactoryBuilder </p>
+ * <p> 移除 sqlSessionFactoryBuilder 属性,强制使用 `new MybatisSqlSessionFactoryBuilder()` </p>
+ * <p> 移除 environment 属性,强制使用 `MybatisSqlSessionFactoryBean.class.getSimpleName()` </p>
  *
  * @author hubin
  * @since 2017-01-04
@@ -109,10 +110,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
     private Properties configurationProperties;
 
     private SqlSessionFactory sqlSessionFactory;
-
-    // TODO 默认值改为 MybatisSqlSessionFactoryBean.class.getSimpleName();
-    // EnvironmentAware requires spring 3.1
-    private String environment = MybatisSqlSessionFactoryBean.class.getSimpleName();
 
     private boolean failFast;
 
@@ -401,14 +398,23 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
     }
 
     /**
-     * <b>NOTE:</b> This class <em>overrides</em> any {@code Environment} you have set in the MyBatis
-     * config file. This is used only as a placeholder name. The default value is
-     * {@code SqlSessionFactoryBean.class.getSimpleName()}.
+     * Set scripting language drivers.
      *
-     * @param environment the environment name
+     * @param scriptingLanguageDrivers scripting language drivers
+     * @since 2.0.2
      */
-    public void setEnvironment(String environment) {
-        this.environment = environment;
+    public void setScriptingLanguageDrivers(LanguageDriver... scriptingLanguageDrivers) {
+        this.scriptingLanguageDrivers = scriptingLanguageDrivers;
+    }
+
+    /**
+     * Set a default scripting language driver class.
+     *
+     * @param defaultScriptingLanguageDriver A default scripting language driver class
+     * @since 2.0.2
+     */
+    public void setDefaultScriptingLanguageDriver(Class<? extends LanguageDriver> defaultScriptingLanguageDriver) {
+        this.defaultScriptingLanguageDriver = defaultScriptingLanguageDriver;
     }
 
     /**
@@ -470,21 +476,25 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             Set<Class<?>> classes;
             if (typeEnumsPackage.contains(StringPool.STAR) && !typeEnumsPackage.contains(StringPool.COMMA)
                 && !typeEnumsPackage.contains(StringPool.SEMICOLON)) {
-                classes = PackageHelper.scanTypePackage(typeEnumsPackage);
+                classes = scanClasses(typeEnumsPackage, null);
                 if (classes.isEmpty()) {
                     LOGGER.warn(() -> "Can't find class in '[" + typeEnumsPackage + "]' package. Please check your configuration.");
                 }
             } else {
+                classes = new HashSet<>();
                 String[] typeEnumsPackageArray = tokenizeToStringArray(this.typeEnumsPackage,
                     ConfigurableApplicationContext.CONFIG_LOCATION_DELIMITERS);
                 Assert.notNull(typeEnumsPackageArray, "not find typeEnumsPackage:" + typeEnumsPackage);
-                classes = new HashSet<>();
                 Stream.of(typeEnumsPackageArray).forEach(typePackage -> {
-                    Set<Class<?>> scanTypePackage = PackageHelper.scanTypePackage(typePackage);
-                    if (scanTypePackage.isEmpty()) {
-                        LOGGER.warn(() -> "Can't find class in '[" + typePackage + "]' package. Please check your configuration.");
-                    } else {
-                        classes.addAll(PackageHelper.scanTypePackage(typePackage));
+                    try {
+                        Set<Class<?>> scanTypePackage = scanClasses(typePackage, null);
+                        if (scanTypePackage.isEmpty()) {
+                            LOGGER.warn(() -> "Can't find class in '[" + typePackage + "]' package. Please check your configuration.");
+                        } else {
+                            classes.addAll(scanTypePackage);
+                        }
+                    } catch (IOException e) {
+                        throw new MybatisPlusException("Cannot scan class in '[" + typePackage + "]' package", e);
                     }
                 });
             }
@@ -501,8 +511,9 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         Optional.ofNullable(this.vfs).ifPresent(targetConfiguration::setVfsImpl);
 
         if (hasLength(this.typeAliasesPackage)) {
-            scanClasses(this.typeAliasesPackage, this.typeAliasesSuperType)
-                .forEach(targetConfiguration.getTypeAliasRegistry()::registerAlias);
+            scanClasses(this.typeAliasesPackage, this.typeAliasesSuperType).stream()
+                .filter(clazz -> !clazz.isAnonymousClass()).filter(clazz -> !clazz.isInterface())
+                .filter(clazz -> !clazz.isMemberClass()).forEach(targetConfiguration.getTypeAliasRegistry()::registerAlias);
         }
 
         if (!isEmpty(this.typeAliases)) {
@@ -520,9 +531,8 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         }
 
         if (hasLength(this.typeHandlersPackage)) {
-            scanClasses(this.typeHandlersPackage, TypeHandler.class).stream()
-                .filter(clazz -> !clazz.isInterface())
-                .filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
+            scanClasses(this.typeHandlersPackage, TypeHandler.class).stream().filter(clazz -> !clazz.isAnonymousClass())
+                .filter(clazz -> !clazz.isInterface()).filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
                 .filter(clazz -> ClassUtils.getConstructorIfAvailable(clazz) != null)
                 .forEach(targetConfiguration.getTypeHandlerRegistry()::register);
         }
@@ -564,7 +574,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             }
         }
 
-        targetConfiguration.setEnvironment(new Environment(this.environment,
+        targetConfiguration.setEnvironment(new Environment(MybatisSqlSessionFactoryBean.class.getSimpleName(),
             this.transactionFactory == null ? new SpringManagedTransactionFactory() : this.transactionFactory,
             this.dataSource));
 
@@ -592,7 +602,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             LOGGER.debug(() -> "Property 'mapperLocations' was not specified.");
         }
 
-        SqlSessionFactory sqlSessionFactory = new MybatisSqlSessionFactoryBuilder().build(targetConfiguration);
+        final SqlSessionFactory sqlSessionFactory = new MybatisSqlSessionFactoryBuilder().build(targetConfiguration);
 
         // TODO SqlRunner
         SqlHelper.FACTORY = sqlSessionFactory;

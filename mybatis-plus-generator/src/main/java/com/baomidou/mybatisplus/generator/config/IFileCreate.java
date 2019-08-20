@@ -16,11 +16,10 @@
 package com.baomidou.mybatisplus.generator.config;
 
 
-import java.io.File;
-
-import com.baomidou.mybatisplus.extension.toolkit.PackageHelper;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 import com.baomidou.mybatisplus.generator.config.rules.FileType;
+
+import java.io.File;
 
 /**
  * 文件覆盖接口
@@ -49,7 +48,7 @@ public interface IFileCreate {
         File file = new File(filePath);
         boolean exist = file.exists();
         if (!exist) {
-            PackageHelper.mkDir(file.getParentFile());
+            file.getParentFile().mkdir();
         }
     }
 }

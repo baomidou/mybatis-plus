@@ -15,18 +15,9 @@
  */
 package com.baomidou.mybatisplus.generator.engine;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.extension.toolkit.PackageHelper;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
 import com.baomidou.mybatisplus.generator.config.ConstVal;
 import com.baomidou.mybatisplus.generator.config.FileOutConfig;
@@ -35,6 +26,13 @@ import com.baomidou.mybatisplus.generator.config.TemplateConfig;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.config.rules.FileType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 
 /**
@@ -274,7 +272,7 @@ public abstract class AbstractTemplateEngine {
         File file = new File(filePath);
         boolean exist = file.exists();
         if (!exist) {
-            PackageHelper.mkDir(file.getParentFile());
+            file.getParentFile().mkdirs();
         }
         return !exist || getConfigBuilder().getGlobalConfig().isFileOverride();
     }
