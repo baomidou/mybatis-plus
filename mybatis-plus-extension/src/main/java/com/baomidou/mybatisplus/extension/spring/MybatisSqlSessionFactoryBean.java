@@ -41,7 +41,6 @@ import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
@@ -83,7 +82,8 @@ import static org.springframework.util.StringUtils.tokenizeToStringArray;
 
 /**
  * 拷贝类 {@link SqlSessionFactoryBean} 修改方法 buildSqlSessionFactory() 加载自定义
- * <p>MybatisXmlConfigBuilder</p>
+ * <p> MybatisXmlConfigBuilder </p>
+ * <p> 移除 sqlSessionFactoryBuilder 属性,强制使用 MybatisSqlSessionFactoryBuilder </p>
  *
  * @author hubin
  * @since 2017-01-04
@@ -108,9 +108,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
     private Properties configurationProperties;
 
-    // TODO 默认值改为 new MybatisSqlSessionFactoryBuilder();
-    private SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new MybatisSqlSessionFactoryBuilder();
-
     private SqlSessionFactory sqlSessionFactory;
 
     // TODO 默认值改为 MybatisSqlSessionFactoryBean.class.getSimpleName();
@@ -133,6 +130,9 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
     private LanguageDriver[] scriptingLanguageDrivers;
 
+    /**
+     * 如果设置了这个,你会失去 mp 提供的有关填充到 entity 的 property 相关的功能
+     */
     private Class<? extends LanguageDriver> defaultScriptingLanguageDriver;
 
     // issue #19. No default provider.
@@ -383,18 +383,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
     }
 
     /**
-     * Sets the {@code SqlSessionFactoryBuilder} to use when creating the {@code SqlSessionFactory}.
-     * <p>
-     * This is mainly meant for testing so that mock SqlSessionFactory classes can be injected. By
-     * default, {@code SqlSessionFactoryBuilder} creates {@code DefaultSqlSessionFactory} instances.
-     *
-     * @param sqlSessionFactoryBuilder a SqlSessionFactoryBuilder
-     */
-    public void setSqlSessionFactoryBuilder(SqlSessionFactoryBuilder sqlSessionFactoryBuilder) {
-        this.sqlSessionFactoryBuilder = sqlSessionFactoryBuilder;
-    }
-
-    /**
      * Set the MyBatis TransactionFactory to use. Default is {@code SpringManagedTransactionFactory}
      * <p>
      * The default {@code SpringManagedTransactionFactory} should be appropriate for all cases:
@@ -429,7 +417,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
     @Override
     public void afterPropertiesSet() throws Exception {
         notNull(dataSource, "Property 'dataSource' is required");
-        notNull(sqlSessionFactoryBuilder, "Property 'sqlSessionFactoryBuilder' is required");
         state((configuration == null && configLocation == null) || !(configuration != null && configLocation != null),
             "Property 'configuration' and 'configLocation' can not specified with together");
 
@@ -547,6 +534,15 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             });
         }
 
+        if (!isEmpty(this.scriptingLanguageDrivers)) {
+            Stream.of(this.scriptingLanguageDrivers).forEach(languageDriver -> {
+                targetConfiguration.getLanguageRegistry().register(languageDriver);
+                LOGGER.debug(() -> "Registered scripting language driver: '" + languageDriver + "'");
+            });
+        }
+
+        Optional.ofNullable(this.defaultScriptingLanguageDriver).ifPresent(targetConfiguration::setDefaultScriptingLanguage);
+
         if (this.databaseIdProvider != null) {//fix #64 set databaseId before parse mapper xmls
             try {
                 targetConfiguration.setDatabaseId(this.databaseIdProvider.getDatabaseId(this.dataSource));
@@ -596,7 +592,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             LOGGER.debug(() -> "Property 'mapperLocations' was not specified.");
         }
 
-        SqlSessionFactory sqlSessionFactory = this.sqlSessionFactoryBuilder.build(targetConfiguration);
+        SqlSessionFactory sqlSessionFactory = new MybatisSqlSessionFactoryBuilder().build(targetConfiguration);
 
         // TODO SqlRunner
         SqlHelper.FACTORY = sqlSessionFactory;
