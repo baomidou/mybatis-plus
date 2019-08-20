@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.ExecutorType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -83,6 +84,11 @@ public class MybatisPlusProperties {
      * Execution mode for {@link org.mybatis.spring.SqlSessionTemplate}.
      */
     private ExecutorType executorType;
+
+    /**
+     * The default scripting language driver class. (Available when use together with mybatis-spring 2.0.2+)
+     */
+    private Class<? extends LanguageDriver> defaultScriptingLanguageDriver;
 
     /**
      * Externalized properties for MyBatis configuration.
