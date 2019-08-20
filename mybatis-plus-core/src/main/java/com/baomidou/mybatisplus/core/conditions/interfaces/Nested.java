@@ -16,7 +16,7 @@
 package com.baomidou.mybatisplus.core.conditions.interfaces;
 
 import java.io.Serializable;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 /**
  * 查询条件封装
@@ -31,8 +31,8 @@ public interface Nested<Param, Children> extends Serializable {
     /**
      * ignore
      */
-    default Children and(Function<Param, Param> func) {
-        return and(true, func);
+    default Children and(Consumer<Param> consumer) {
+        return and(true, consumer);
     }
 
     /**
@@ -42,16 +42,16 @@ public interface Nested<Param, Children> extends Serializable {
      * </p>
      *
      * @param condition 执行条件
-     * @param func      函数
+     * @param consumer  消费函数
      * @return children
      */
-    Children and(boolean condition, Function<Param, Param> func);
+    Children and(boolean condition, Consumer<Param> consumer);
 
     /**
      * ignore
      */
-    default Children or(Function<Param, Param> func) {
-        return or(true, func);
+    default Children or(Consumer<Param> consumer) {
+        return or(true, consumer);
     }
 
     /**
@@ -61,16 +61,16 @@ public interface Nested<Param, Children> extends Serializable {
      * </p>
      *
      * @param condition 执行条件
-     * @param func      函数
+     * @param consumer  消费函数
      * @return children
      */
-    Children or(boolean condition, Function<Param, Param> func);
+    Children or(boolean condition, Consumer<Param> consumer);
 
     /**
      * ignore
      */
-    default Children nested(Function<Param, Param> func) {
-        return nested(true, func);
+    default Children nested(Consumer<Param> consumer) {
+        return nested(true, consumer);
     }
 
     /**
@@ -80,8 +80,8 @@ public interface Nested<Param, Children> extends Serializable {
      * </p>
      *
      * @param condition 执行条件
-     * @param func      函数
+     * @param consumer  消费函数
      * @return children
      */
-    Children nested(boolean condition, Function<Param, Param> func);
+    Children nested(boolean condition, Consumer<Param> consumer);
 }

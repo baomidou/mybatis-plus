@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.extension.service.additional.query.impl;
 
-import java.util.function.Predicate;
-
 import com.baomidou.mybatisplus.core.conditions.query.Query;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -25,13 +23,15 @@ import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.extension.service.additional.AbstractChainWrapper;
 import com.baomidou.mybatisplus.extension.service.additional.query.ChainQuery;
 
+import java.util.function.Predicate;
+
 /**
  * Query Chain Wrapper
  *
  * @author miemie
  * @since 2018-12-19
  */
-@SuppressWarnings({ "serial", "unchecked" })
+@SuppressWarnings({"serial"})
 public class QueryChainWrapper<T> extends AbstractChainWrapper<T, String, QueryChainWrapper<T>, QueryWrapper<T>>
     implements ChainQuery<T>, Query<QueryChainWrapper<T>, T, String> {
 
@@ -70,5 +70,4 @@ public class QueryChainWrapper<T> extends AbstractChainWrapper<T, String, QueryC
     public BaseMapper<T> getBaseMapper() {
         return baseMapper;
     }
-
 }

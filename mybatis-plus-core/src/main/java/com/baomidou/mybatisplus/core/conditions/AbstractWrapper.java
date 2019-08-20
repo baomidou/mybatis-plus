@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiPredicate;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.*;
 import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.*;
@@ -190,18 +190,18 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     @Override
-    public Children and(boolean condition, Function<Children, Children> func) {
-        return and(condition).addNestedCondition(condition, func);
+    public Children and(boolean condition, Consumer<Children> consumer) {
+        return and(condition).addNestedCondition(condition, consumer);
     }
 
     @Override
-    public Children or(boolean condition, Function<Children, Children> func) {
-        return or(condition).addNestedCondition(condition, func);
+    public Children or(boolean condition, Consumer<Children> consumer) {
+        return or(condition).addNestedCondition(condition, consumer);
     }
 
     @Override
-    public Children nested(boolean condition, Function<Children, Children> func) {
-        return addNestedCondition(condition, func);
+    public Children nested(boolean condition, Consumer<Children> consumer) {
+        return addNestedCondition(condition, consumer);
     }
 
     @Override
@@ -337,8 +337,10 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      *
      * @param condition 查询条件值
      */
-    protected Children addNestedCondition(boolean condition, Function<Children, Children> func) {
-        return doIt(condition, LEFT_BRACKET, func.apply(instance()), RIGHT_BRACKET);
+    protected Children addNestedCondition(boolean condition, Consumer<Children> consumer) {
+        final Children instance = instance();
+        consumer.accept(instance);
+        return doIt(condition, LEFT_BRACKET, instance, RIGHT_BRACKET);
     }
 
     /**

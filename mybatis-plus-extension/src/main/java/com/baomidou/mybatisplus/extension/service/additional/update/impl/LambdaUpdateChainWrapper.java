@@ -29,7 +29,7 @@ import com.baomidou.mybatisplus.extension.service.additional.update.ChainUpdate;
  * @author miemie
  * @since 2018-12-19
  */
-@SuppressWarnings({ "serial", "unchecked" })
+@SuppressWarnings({"serial"})
 public class LambdaUpdateChainWrapper<T> extends AbstractChainWrapper<T, SFunction<T, ?>, LambdaUpdateChainWrapper<T>, LambdaUpdateWrapper<T>>
     implements ChainUpdate<T>, Update<LambdaUpdateChainWrapper<T>, SFunction<T, ?>> {
 
