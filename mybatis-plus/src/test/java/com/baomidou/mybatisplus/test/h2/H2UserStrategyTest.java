@@ -15,19 +15,14 @@
  */
 package com.baomidou.mybatisplus.test.h2;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.test.h2.entity.H2UserStrategy;
+import com.baomidou.mybatisplus.test.h2.mapper.H2UserStrategyMapper;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.test.h2.entity.H2UserStrategy;
-import com.baomidou.mybatisplus.test.h2.mapper.H2UserStrategyMapper;
 
 /**
  * Mybatis Plus H2 Junit Test
@@ -51,7 +46,7 @@ class H2UserStrategyTest extends BaseTest {
         int row = userStrategyMapper.insert(insertUser);
         Long id = insertUser.getTestId();
         Assertions.assertEquals(1, row);
-        Assertions.assertEquals(3, userStrategyMapper.selectById(id).getTestType(),"autofilled with 3");
+        Assertions.assertEquals(3, userStrategyMapper.selectById(id).getTestType(), "autofilled with 3");
 
         QueryWrapper<H2UserStrategy> wrapper = new QueryWrapper<>(new H2UserStrategy().setDesc("updateStrategy=IGNORE").setTestType(3));
         Assertions.assertEquals(0, userStrategyMapper.selectCount(wrapper), "name is whereStrategy=IGNORE, so should have where name=null which cause count=0");
