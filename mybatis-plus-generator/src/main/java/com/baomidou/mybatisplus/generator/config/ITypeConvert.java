@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.generator.config;
 
+import com.baomidou.mybatisplus.generator.config.po.TableField;
 import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
 
 /**
@@ -24,6 +25,19 @@ import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
  * @since 2017-01-20
  */
 public interface ITypeConvert {
+
+
+    /**
+     * 执行类型转换
+     *
+     * @param globalConfig 全局配置
+     * @param tableField   字段列信息
+     * @return ignore
+     */
+    default IColumnType processTypeConvert(GlobalConfig globalConfig, TableField tableField) {
+        // 该方法提供重写
+        return processTypeConvert(globalConfig, tableField.getType());
+    }
 
 
     /**

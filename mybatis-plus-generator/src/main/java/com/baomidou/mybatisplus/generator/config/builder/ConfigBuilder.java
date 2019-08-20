@@ -622,7 +622,7 @@ public class ConfigBuilder {
                     } else {
                         field.setPropertyName(strategyConfig, processName(field.getName(), config.getNaming()));
                     }
-                    field.setColumnType(dataSourceConfig.getTypeConvert().processTypeConvert(globalConfig, field.getType()));
+                    field.setColumnType(dataSourceConfig.getTypeConvert().processTypeConvert(globalConfig, field));
                     if (commentSupported) {
                         field.setComment(results.getString(dbQuery.fieldComment()));
                     }
