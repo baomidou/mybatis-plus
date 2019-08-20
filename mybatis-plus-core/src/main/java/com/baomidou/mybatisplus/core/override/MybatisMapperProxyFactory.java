@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.override;
 
+import lombok.Getter;
 import org.apache.ibatis.binding.MapperProxyFactory;
 import org.apache.ibatis.session.SqlSession;
 
@@ -32,15 +33,12 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class MybatisMapperProxyFactory<T> {
 
+    @Getter
     private final Class<T> mapperInterface;
     private final Map<Method, MybatisMapperMethod> methodCache = new ConcurrentHashMap<>();
 
     public MybatisMapperProxyFactory(Class<T> mapperInterface) {
         this.mapperInterface = mapperInterface;
-    }
-
-    public Class<T> getMapperInterface() {
-        return mapperInterface;
     }
 
     public Map<Method, MybatisMapperMethod> getMethodCache() {
