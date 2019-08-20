@@ -127,9 +127,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
     private LanguageDriver[] scriptingLanguageDrivers;
 
-    /**
-     * 如果设置了这个,你会失去 mp 提供的有关填充到 entity 的 property 相关的功能
-     */
     private Class<? extends LanguageDriver> defaultScriptingLanguageDriver;
 
     // issue #19. No default provider.

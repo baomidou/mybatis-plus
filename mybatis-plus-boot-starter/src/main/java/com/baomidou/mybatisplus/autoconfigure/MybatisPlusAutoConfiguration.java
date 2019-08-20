@@ -65,10 +65,8 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import javax.sql.DataSource;
-import java.beans.PropertyDescriptor;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -187,21 +185,13 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
         if (!ObjectUtils.isEmpty(this.properties.resolveMapperLocations())) {
             factory.setMapperLocations(this.properties.resolveMapperLocations());
         }
-        Set<String> factoryPropertyNames = Stream
-            .of(new BeanWrapperImpl(MybatisSqlSessionFactoryBean.class).getPropertyDescriptors()).map(PropertyDescriptor::getName)
-            .collect(Collectors.toSet());
+
+        // TODO 对源码做了一定的修改(因为源码适配了老旧的mybatis版本,但我们不需要适配)
         Class<? extends LanguageDriver> defaultLanguageDriver = this.properties.getDefaultScriptingLanguageDriver();
-        if (factoryPropertyNames.contains("scriptingLanguageDrivers") && !ObjectUtils.isEmpty(this.languageDrivers)) {
-            // Need to mybatis-spring 2.0.2+
+        if (!ObjectUtils.isEmpty(this.languageDrivers)) {
             factory.setScriptingLanguageDrivers(this.languageDrivers);
-            if (defaultLanguageDriver == null && this.languageDrivers.length == 1) {
-                defaultLanguageDriver = this.languageDrivers[0].getClass();
-            }
         }
-        if (factoryPropertyNames.contains("defaultScriptingLanguageDriver")) {
-            // Need to mybatis-spring 2.0.2+
-            factory.setDefaultScriptingLanguageDriver(defaultLanguageDriver);
-        }
+        Optional.ofNullable(defaultLanguageDriver).ifPresent(factory::setDefaultScriptingLanguageDriver);
 
         // TODO 自定义枚举包
         if (StringUtils.hasLength(this.properties.getTypeEnumsPackage())) {
