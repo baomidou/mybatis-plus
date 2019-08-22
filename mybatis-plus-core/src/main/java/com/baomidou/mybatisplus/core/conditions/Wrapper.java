@@ -20,10 +20,7 @@ import com.baomidou.mybatisplus.core.conditions.segments.NormalSegmentList;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.*;
 
 import java.util.Objects;
 
@@ -78,11 +75,11 @@ public abstract class Wrapper<T> implements ISqlSegment {
                 if (normal.isEmpty()) {
                     return sqlSegment;
                 } else {
-                    return Constants.WHERE + " " + sqlSegment;
+                    return Constants.WHERE + StringPool.SPACE + sqlSegment;
                 }
             }
         }
-        return StringUtils.EMPTY;
+        return StringPool.EMPTY;
     }
 
     /**
@@ -144,6 +141,8 @@ public abstract class Wrapper<T> implements ISqlSegment {
                 return true;
             case NOT_EMPTY:
                 return StringUtils.checkValNotNull(ReflectionKit.getMethodValue(entity, e.getProperty()));
+            case NEVER:
+                return false;
             default:
                 return Objects.nonNull(ReflectionKit.getMethodValue(entity, e.getProperty()));
         }

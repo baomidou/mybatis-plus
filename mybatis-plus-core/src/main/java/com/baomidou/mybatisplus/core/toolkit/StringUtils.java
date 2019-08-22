@@ -42,7 +42,7 @@ public class StringUtils {
     /**
      * 空字符
      */
-    public static final String EMPTY = "";
+    public static final String EMPTY = StringPool.EMPTY;
     /**
      * 字符串 is
      */
@@ -51,10 +51,6 @@ public class StringUtils {
      * 下划线字符
      */
     public static final char UNDERLINE = '_';
-    /**
-     * 占位符
-     */
-    public static final String PLACE_HOLDER = "{%s}";
     /**
      * MP 内定义的 SQL 占位符表达式，匹配诸如 {0},{1},{2} ... 的形式
      */

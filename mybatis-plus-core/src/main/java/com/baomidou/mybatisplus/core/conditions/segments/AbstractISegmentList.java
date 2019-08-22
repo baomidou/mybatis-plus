@@ -74,7 +74,7 @@ public abstract class AbstractISegmentList extends ArrayList<ISqlSegment> implem
     /**
      * 刷新属性 lastValue
      */
-    private void flushLastValue(List<? extends ISqlSegment> list) {
+    private void flushLastValue(List<ISqlSegment> list) {
         lastValue = list.get(list.size() - 1);
     }
 
