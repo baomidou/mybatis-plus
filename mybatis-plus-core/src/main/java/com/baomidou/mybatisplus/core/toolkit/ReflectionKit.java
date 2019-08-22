@@ -198,16 +198,25 @@ public class ReflectionKit {
      */
     public static List<Field> doGetFieldList(Class<?> clazz) {
         if (clazz.getSuperclass() != null) {
-            List<Field> fieldList = Stream.of(clazz.getDeclaredFields())
-                /* 过滤静态属性 */
-                .filter(field -> !Modifier.isStatic(field.getModifiers()))
-                /* 过滤 transient关键字修饰的属性 */
-                .filter(field -> !Modifier.isTransient(field.getModifiers()))
-                .collect(toCollection(LinkedList::new));
-            /* 处理父类字段 */
-            Class<?> superClass = clazz.getSuperclass();
             /* 排除重载属性 */
-            return excludeOverrideSuperField(fieldList, getFieldList(superClass));
+            Map<String, Field> fieldMap = excludeOverrideSuperField(clazz.getDeclaredFields(),
+                /* 处理父类字段 */
+                getFieldList(clazz.getSuperclass()));
+            List<Field> fieldList = new ArrayList<>();
+            /*
+             * 重写父类属性过滤后处理忽略部分，支持过滤父类属性功能
+             * 场景：中间表不需要记录创建时间，忽略父类 createTime 公共属性
+             * 中间表实体重写父类属性 ` private transient Date createTime; `
+             */
+            fieldMap.forEach((k, v) -> {
+                /* 过滤静态属性 */
+                if (!Modifier.isStatic(v.getModifiers())
+                    /* 过滤 transient关键字修饰的属性 */
+                    && !Modifier.isTransient(v.getModifiers())) {
+                    fieldList.add(v);
+                }
+            });
+            return fieldList;
         } else {
             return Collections.emptyList();
         }
@@ -218,14 +227,15 @@ public class ReflectionKit {
      * 排序重置父类属性
      * </p>
      *
-     * @param fieldList      子类属性
+     * @param fields         子类属性
      * @param superFieldList 父类属性
      */
-    public static List<Field> excludeOverrideSuperField(List<Field> fieldList, List<Field> superFieldList) {
+    public static Map<String, Field> excludeOverrideSuperField(Field[] fields, List<Field> superFieldList) {
         // 子类属性
-        Map<String, Field> fieldMap = fieldList.stream().collect(toMap(Field::getName, identity()));
-        superFieldList.stream().filter(field -> !fieldMap.containsKey(field.getName())).forEach(fieldList::add);
-        return fieldList;
+        Map<String, Field> fieldMap = Stream.of(fields).collect(toMap(Field::getName, identity()));
+        superFieldList.stream().filter(field -> !fieldMap.containsKey(field.getName()))
+            .forEach(f -> fieldMap.put(f.getName(), f));
+        return fieldMap;
     }
 
     /**
