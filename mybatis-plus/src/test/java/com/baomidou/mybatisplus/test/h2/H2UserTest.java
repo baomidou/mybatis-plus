@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.select.Select;
+import org.apache.ibatis.exceptions.PersistenceException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -341,6 +342,19 @@ class H2UserTest extends BaseTest {
         userService.lambdaUpdate().set(H2User::getName, "Tom").eq(H2User::getName, "Tomcat").update();
     }
 
+
+    @Test
+    @Order(28)
+    void testSaveBatchException() {
+        try {
+            userService.saveBatch(Arrays.asList(
+                new H2User(1L, "tom"),
+                new H2User(1L, "andy")
+            ));
+        } catch (Exception e) {
+            Assertions.assertTrue(e instanceof PersistenceException);
+        }
+    }
 
     @Test
     public void myQueryWithGroupByOrderBy(){
