@@ -39,6 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 自定义枚举属性转换器
+ * 可通过继承实现无缝接入自由系统已定义的Enum
  *
  * @author hubin
  * @since 2017-10-11
@@ -46,32 +47,44 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MybatisEnumTypeHandler<E extends Enum<?>> extends BaseTypeHandler<Enum<?>> {
 
     private static final Log LOGGER = LogFactory.getLog(MybatisEnumTypeHandler.class);
-    
+
     private static final Map<Class<?>, Method> TABLE_METHOD_OF_ENUM_TYPES = new ConcurrentHashMap<>();
-    
+
     private final Class<E> type;
-    
-    private final Method method;
+
+    private Method method;
 
     public MybatisEnumTypeHandler(Class<E> type) {
         if (type == null) {
             throw new IllegalArgumentException("Type argument cannot be null");
         }
         this.type = type;
-        if (IEnum.class.isAssignableFrom(type)) {
-            try {
-                this.method = type.getMethod("getValue");
-            } catch (NoSuchMethodException e) {
-                throw new IllegalArgumentException(String.format("NoSuchMethod getValue() in Class: %s.", type.getName()));
-            }
-        } else {
+        this.method = getMethod(type);
+        if (this.method == null) {
             this.method = TABLE_METHOD_OF_ENUM_TYPES.computeIfAbsent(type, k -> {
                 Field field = dealEnumType(this.type).orElseThrow(() -> new IllegalArgumentException(String.format("Could not find @EnumValue in Class: %s.", type.getName())));
                 return ReflectionKit.getMethod(this.type, field);
             });
         }
     }
-    
+
+    /**
+     * 子类可扩展自己的Enum
+     *
+     * @param type 自定义的Enum
+     */
+    protected Method getMethod(Class<E> type) {
+        if (IEnum.class.isAssignableFrom(type)) {
+            try {
+                return type.getMethod("getValue");
+            } catch (NoSuchMethodException e) {
+                throw new IllegalArgumentException(String.format("NoSuchMethod getValue() in Class: %s.", type.getName()));
+            }
+        } else {
+            return null;
+        }
+    }
+
     @SuppressWarnings("Duplicates")
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, Enum<?> parameter, JdbcType jdbcType)
