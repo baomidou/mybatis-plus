@@ -10,9 +10,12 @@ dependencies {
     implementation("${lib["spring-jdbc"]}")
     implementation("${lib["slf4j-api"]}")
     implementation("${lib["p6spy"]}")
+    implementation("${lib["jackson"]}")
+    implementation("${lib["fastjson"]}")
 
     testImplementation("${lib["spring-web"]}")
     testImplementation("${lib["javax.servlet-api"]}")
+    testImplementation("${lib["jackson"]}")
     testImplementation("${lib["fastjson"]}")
 
     testImplementation("${lib["hikaricp"]}")

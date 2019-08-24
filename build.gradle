@@ -57,8 +57,8 @@ ext {
         "junit-jupiter-api"          : "org.junit.jupiter:junit-jupiter-api:${junitVersion}",
         "junit-jupiter-engine"       : "org.junit.jupiter:junit-jupiter-engine:${junitVersion}",
         "mockito-all"                : "org.mockito:mockito-all:1.10.19",
-        "fastjson"                   : "com.alibaba:fastjson:1.2.56",
-        "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.9.6",
+        "fastjson"                   : "com.alibaba:fastjson:1.2.59",
+        "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.9.9",
         "tomcatjdbc"                 : "org.apache.tomcat:tomcat-jdbc:9.0.16",
         "lagarto"                    : "org.jodd:jodd-lagarto:5.0.7",
         //datasource
@@ -83,7 +83,7 @@ ext {
 
 allprojects {
     group = 'com.baomidou'
-    version = "3.2.0.2-SNAPSHOT"
+    version = "3.2.0"
 }
 
 description = "Mybatis 增强工具包 - 只做增强不做改变，简化CRUD操作"
