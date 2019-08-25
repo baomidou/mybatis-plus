@@ -87,8 +87,9 @@ public class MybatisPlusConfig {
         List<ISqlParser> sqlParserList = new ArrayList<>();
         TenantSqlParser tenantSqlParser = new TenantSqlParser();
         tenantSqlParser.setTenantHandler(new TenantHandler() {
+
             @Override
-            public Expression getTenantId() {
+            public Expression getTenantId(boolean where) {
                 return new LongValue(1L);
             }
 
