@@ -361,7 +361,7 @@ public class TableInfo implements Constants {
      * 自动构建 resultMap 并注入(如果条件符合的话)
      */
     void initResultMapIfNeed() {
-        if (resultMap == null && autoInitResultMap) {
+        if (autoInitResultMap && null == resultMap) {
             String id = currentNamespace + DOT + MYBATIS_PLUS + UNDERSCORE + entityType.getSimpleName();
             List<ResultMapping> resultMappings = new ArrayList<>();
             if (keyType != null) {
