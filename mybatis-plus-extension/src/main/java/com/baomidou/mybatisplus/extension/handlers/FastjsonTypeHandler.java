@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;
+import org.apache.ibatis.type.MappedTypes;
 
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
@@ -35,6 +36,7 @@ import java.sql.SQLException;
  * @since 2019-08-25
  */
 @Slf4j
+@MappedTypes({Object.class})
 @MappedJdbcTypes(JdbcType.VARCHAR)
 public class FastjsonTypeHandler extends BaseTypeHandler<Object> {
     private Class<Object> type;
