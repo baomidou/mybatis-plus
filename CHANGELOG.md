@@ -1,5 +1,36 @@
 ﻿# CHANGELOG
 
+
+## [v3.2.0] 2019.08.26
+- 代码生成器添加达梦数据库支持
+- 修复多主键查询表字段SQL的Bug
+- 新增 updateWrapper 尝试更新，否继续执行saveOrUpdate(T)方法
+- 代码生成器 pg 增加 numeric instant 类型支持
+- 修复InjectionConfig不存在时无法生成代码的问题
+- fix: #1386(github) 逻辑删除字段为Date类型并且非删除数据日期为null
+- 升级依赖 mybatis 版本为 3.5.2
+- 升级依赖 jsqlparser 版本为 2.1
+- 应 EasyScheduler 计划提交 Apache 孵化请求移除 996NPL 协议限制
+- 调整 SQL 移除 SET 部分 Github/1460
+- 移除 SqlMethod 枚举 UPDATE_ALL_COLUMN_BY_ID 属性，推荐使用 AlwaysUpdateSomeColumnById 套
+- fix: #1412(github) github:mybatis-plus-generator can't support oracle
+- fix: github 1380
+- 移除全局配置的 dbType 和 columnLike
+- 移除 fieldStrategy, 使用上个版本新增的三个替代
+- 移除 PerformanceInterceptor 相关, 建议使用 p6spy
+- 移除 el 拆分为 jdbcType typeHandler 等具体属性
+- 升级 gradle-5.5.1,lombok-1.18.4
+- 当selectStatement.getSelectBody()的类型为SetOperationList
+- 移除 GlobalConfig#sqlParserCache 属性,移除 LogicSqlInjector, OrderItem 新增2个快捷生成的method, page 新增一个入参是 List<OrderItem> 的 addOrder method
+- Nested 接口个别入参是 `Function<Param, Param> func` 的method,入参更改为 `Consumer<Param> consumer`,不影响规范的使用
+- fixed gitee/I10XWC 允许根据 TableField 信息判断自定义类型
+- Merge pull request #1445 from kana112233/3.0
+- 支持过滤父类属性功能
+- 添加批量异常捕获测试
+- 多租户ID 值表达式，支持多个 ID 条件查询
+- 扩展新增 json 类型处理器 jackson fastjson 两种实现
+
+
 ## [v3.1.2] 2019.06.26
 - EnumTypeHandler 更名为 MybatisEnumTypeHandler,移除 EnumAnnotationTypeHandler
 - 新增自动构建 resultMap 功能,去除转义符
