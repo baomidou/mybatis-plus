@@ -127,9 +127,25 @@ public class OptimisticLockerInterceptor implements Interceptor {
                         map.put(NAME_ENTITY_WRAPPER, uw);
                         field.set(et, updatedVersionVal);
                     } else {
+                        Field expressionField = getDeclaredField(ew.getClass(),"expression");
+                        expressionField.setAccessible(true);
+                        MergeSegments expression = (MergeSegments)expressionField.get(ew);
+                        Field normalExpression = expression.getClass().getDeclaredField("normal");
+                        normalExpression.setAccessible(true);
+                        NormalSegmentList normalSegmentList = (NormalSegmentList)normalExpression.get(expression);
+                        for (int i=0;i<normalSegmentList.size();i++) {
+                            String s = normalSegmentList.get(i).getSqlSegment();
+                            Pattern versionPattern = Pattern.compile(versionField.getColumnName() + " = #\\{[^\\}]+\\}");
+                            if (versionPattern.matcher(s).find()) {
+                                Object sqlSegment = normalSegmentList.get(i);
+                                Field arg$3 = getDeclaredField(sqlSegment.getClass(), "arg$3");
+                                arg$3.setAccessible(true);
+                                Object tt = arg$3.get(sqlSegment);
+                                ((Object[])tt)[0] = originalVersionVal;
+                            }
+                        }
                         ew.apply(versionField.getColumnName() + " = {0}", originalVersionVal);
                         field.set(et, updatedVersionVal);
-                        //TODO: should remove version=oldval condition from aw; 0827 by k神
                     }
                     return invocation.proceed();
                 } else {
@@ -241,5 +257,16 @@ public class OptimisticLockerInterceptor implements Interceptor {
             this.version = version;
             this.columnName = columnName;
         }
+    }
+
+    private Field getDeclaredField(Class<?> clazz, String fieldName) {
+        try {
+            if (clazz.getDeclaredField(fieldName) != null) {
+                return clazz.getDeclaredField(fieldName);
+            }
+        } catch (NoSuchFieldException e) {
+            clazz = clazz.getSuperclass();
+        }
+        return getDeclaredField(clazz, fieldName);
     }
 }
