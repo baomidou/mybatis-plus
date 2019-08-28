@@ -31,8 +31,7 @@ public class DmTypeConvert implements ITypeConvert {
     @Override
     public IColumnType processTypeConvert(GlobalConfig globalConfig, String fieldType) {
         String t = fieldType.toLowerCase();
-        DbColumnType dbColumnType = new BasicDataTypeHandler().getDbColumnType(t);
-        return dbColumnType;
+        return new BasicDataTypeHandler().getDbColumnType(t);
     }
 
      interface Handler {
