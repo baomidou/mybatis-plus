@@ -122,6 +122,8 @@ public class DialectFactory {
                 return new SQLiteDialect();
             case DM:
                 return new DmDialect();
+            case XUGU:
+                return new XuguDialect();
             default:
                 throw ExceptionUtils.mpe("The Database's IDialect Not Supported!");
         }

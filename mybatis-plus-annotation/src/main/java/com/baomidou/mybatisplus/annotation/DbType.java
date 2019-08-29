@@ -70,6 +70,10 @@ public enum DbType {
      */
     DM("dm", null, "达梦数据库"),
     /**
+     * xugu
+     */
+    XUGU("xugu","%s LIKE CONCAT(CONCAT('%%',#{%s}),'%%')","虚谷数据库"),
+    /**
      * UNKONWN DB
      */
     OTHER("other", null, "其他数据库");
