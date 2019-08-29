@@ -74,7 +74,7 @@ public enum DbType {
     /**
      * xugu
      */
-    XUGU("xugu","%s LIKE CONCAT(CONCAT('%%',#{%s}),'%%')","虚谷数据库"),
+    XUGU("xugu", "虚谷数据库"),
     /**
      * UNKONWN DB
      */
