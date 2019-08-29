@@ -30,55 +30,55 @@ public enum DbType {
     /**
      * MYSQL
      */
-    MYSQL("mysql", "MySql数据库"),
+    MYSQL("mysql", "MySql数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.MySqlDialect"),
     /**
      * MARIADB
      */
-    MARIADB("mariadb", "MariaDB数据库"),
+    MARIADB("mariadb", "MariaDB数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.MariaDBDialect"),
     /**
      * ORACLE
      */
-    ORACLE("oracle", "Oracle数据库"),
+    ORACLE("oracle", "Oracle数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.OracleDialect"),
     /**
      * DB2
      */
-    DB2("db2", "DB2数据库"),
+    DB2("db2", "DB2数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.DB2Dialect"),
     /**
      * H2
      */
-    H2("h2", "H2数据库"),
+    H2("h2", "H2数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.H2Dialect"),
     /**
      * HSQL
      */
-    HSQL("hsql", "HSQL数据库"),
+    HSQL("hsql", "HSQL数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.HSQLDialect"),
     /**
      * SQLITE
      */
-    SQLITE("sqlite", "SQLite数据库"),
+    SQLITE("sqlite", "SQLite数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.SQLiteDialect"),
     /**
      * POSTGRE
      */
-    POSTGRE_SQL("postgresql", "Postgre数据库"),
+    POSTGRE_SQL("postgresql", "Postgre数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.PostgreDialect"),
     /**
      * SQLSERVER2005
      */
-    SQL_SERVER2005("sqlserver2005", "SQLServer2005数据库"),
+    SQL_SERVER2005("sqlserver2005", "SQLServer2005数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.SQLServer2005Dialect"),
     /**
      * SQLSERVER
      */
-    SQL_SERVER("sqlserver", "SQLServer数据库"),
+    SQL_SERVER("sqlserver", "SQLServer数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.SQLServerDialect"),
     /**
      * DM
      */
-    DM("dm", "达梦数据库"),
+    DM("dm", "达梦数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.DmDialect"),
     /**
      * xugu
      */
-    XUGU("xugu", "虚谷数据库"),
+    XUGU("xugu", "虚谷数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.XuguDialect"),
     /**
      * UNKONWN DB
      */
-    OTHER("other", "其他数据库");
+    OTHER("other", "其他数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.UnknownDialect");
 
     /**
      * 数据库名称
@@ -88,6 +88,11 @@ public enum DbType {
      * 描述
      */
     private final String desc;
+
+    /**
+     * 分页方言
+     */
+    private String dialect;
 
     /**
      * 获取数据库类型（默认 MySql）
