@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
  * @author nieqiurong 2019/2/9.
  */
 class MetadataTest {
-    
+
     @Data
     @AllArgsConstructor
     private static class Metadata {
@@ -52,7 +52,7 @@ class MetadataTest {
         private String type;
         private String sourceType;
     }
-    
+
     @Test
     void checkSpringAutoconfigureMetadataProperties() throws IOException {
         Properties properties = new Properties();
@@ -61,7 +61,7 @@ class MetadataTest {
         Assertions.assertEquals(DataSource.class.getName(), properties.getProperty(MybatisPlusAutoConfiguration.class.getName() + ".ConditionalOnSingleCandidate"));
         Assertions.assertEquals(SqlSessionFactory.class.getName() + "," + SqlSessionFactoryBean.class.getName(), properties.getProperty(MybatisPlusAutoConfiguration.class.getName() + ".ConditionalOnClass"));
     }
-    
+
     @Test
     void checkSpringConfigurationMetadataJson() throws IOException {
         DocumentContext documentContext = JsonPath.parse(new FileSystemResource("build/classes/java/main/META-INF/spring-configuration-metadata.json").getInputStream());
@@ -69,7 +69,6 @@ class MetadataTest {
         Map<String, Metadata> metadataMap = properties.stream().map(map -> new Metadata(map.get("name"), map.get("type"), map.get("sourceType"))).collect(Collectors.toMap(Metadata::getName, metadata -> metadata));
         Assertions.assertEquals(metadataMap.get("mybatis-plus.type-enums-package"), new Metadata("mybatis-plus.type-enums-package", String.class.getName(), MybatisPlusProperties.class.getName()));
         Assertions.assertEquals(metadataMap.get("mybatis-plus.type-aliases-package"), new Metadata("mybatis-plus.type-aliases-package", String.class.getName(), MybatisPlusProperties.class.getName()));
-        Assertions.assertEquals(metadataMap.get("mybatis-plus.global-config.sql-parser-cache"), new Metadata("mybatis-plus.global-config.sql-parser-cache", Boolean.class.getName(), GlobalConfig.class.getName()));
         Assertions.assertEquals(metadataMap.get("mybatis-plus.global-config.db-config.table-underline"), new Metadata("mybatis-plus.global-config.db-config.table-underline", Boolean.class.getName(), GlobalConfig.DbConfig.class.getName()));
         Assertions.assertEquals(metadataMap.get("mybatis-plus.config-location"), new Metadata("mybatis-plus.config-location", String.class.getName(), MybatisPlusProperties.class.getName()));
         Assertions.assertEquals(metadataMap.get("mybatis-plus.configuration.call-setters-on-nulls"), new Metadata("mybatis-plus.configuration.call-setters-on-nulls", Boolean.class.getName(), MybatisConfiguration.class.getName()));
