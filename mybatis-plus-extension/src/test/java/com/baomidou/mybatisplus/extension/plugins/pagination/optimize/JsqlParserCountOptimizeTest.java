@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class JsqlParserCountOptimizeTest {
 
-    private JsqlParserCountOptimize parser = new JsqlParserCountOptimize();
+    private JsqlParserCountOptimize parser = new JsqlParserCountOptimize(true);
     private MetaObject metaObject = null;
 
     @Test
