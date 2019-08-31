@@ -232,6 +232,12 @@ public abstract class AbstractTemplateEngine {
         return Objects.isNull(config.getInjectionConfig()) ? objectMap : config.getInjectionConfig().prepareObjectMap(objectMap);
     }
 
+    /**
+     * 用于渲染对象MAP信息 {@link #getObjectMap(TableInfo)} 时的superClassPacket非空校验
+     *
+     * @param classPacket ignore
+     * @return ignore
+     */
     private String verifyClassPacket(String classPacket) {
         return StringUtils.isEmpty(classPacket) ? null : classPacket;
     }
