@@ -227,11 +227,14 @@ public abstract class AbstractTemplateEngine {
         objectMap.put("superServiceClass", getSuperClassName(config.getSuperServiceClass()));
         objectMap.put("superServiceImplClassPackage", config.getSuperServiceImplClass());
         objectMap.put("superServiceImplClass", getSuperClassName(config.getSuperServiceImplClass()));
-        objectMap.put("superControllerClassPackage", config.getSuperControllerClass());
+        objectMap.put("superControllerClassPackage", verifyClassPacket(config.getSuperControllerClass()));
         objectMap.put("superControllerClass", getSuperClassName(config.getSuperControllerClass()));
         return Objects.isNull(config.getInjectionConfig()) ? objectMap : config.getInjectionConfig().prepareObjectMap(objectMap);
     }
 
+    private String verifyClassPacket(String classPacket) {
+        return StringUtils.isEmpty(classPacket) ? null : classPacket;
+    }
 
     /**
      * 获取类名
