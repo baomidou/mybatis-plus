@@ -108,12 +108,15 @@ public class StringUtils {
      * @return 判断结果
      */
     public static boolean isEmpty(final CharSequence cs) {
-        if (cs == null || cs.length() == 0) {
+        if (cs == null) {
             return true;
         }
-        for (int i = 0; i < cs.length(); i++) {
-            if (!Character.isWhitespace(cs.charAt(i))) {
-                return false;
+        int l = cs.length();
+        if (l > 0) {
+            for (int i = 0; i < l; i++) {
+                if (!Character.isWhitespace(cs.charAt(i))) {
+                    return false;
+                }
             }
         }
         return true;
