@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.override;
 
+import com.baomidou.mybatisplus.core.metadata.CachePage;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.apache.ibatis.binding.BindingException;
 import org.apache.ibatis.binding.MapperMethod;
@@ -83,7 +84,13 @@ public class MybatisMapperMethod {
                     // TODO 这里下面改了
                     if (IPage.class.isAssignableFrom(method.getReturnType()) && args != null
                         && IPage.class.isAssignableFrom(args[0].getClass())) {
-                        result = ((IPage<?>) args[0]).setRecords(executeForIPage(sqlSession, args));
+                        result = executeForIPage(sqlSession, args);
+                        if (result instanceof CachePage) {
+                            CachePage cachePage = (CachePage) result;
+                            result = cachePage.getPage();
+                        } else {
+                            result = ((IPage<?>) args[0]).setRecords(executeForIPage(sqlSession, args));
+                        }
                         // TODO 这里上面改了
                     } else {
                         result = sqlSession.selectOne(command.getName(), param);
