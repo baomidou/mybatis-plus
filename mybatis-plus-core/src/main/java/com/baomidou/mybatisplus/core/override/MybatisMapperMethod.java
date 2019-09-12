@@ -51,6 +51,7 @@ public class MybatisMapperMethod {
         this.method = new MapperMethod.MethodSignature(config, mapperInterface, method);
     }
 
+    @SuppressWarnings("unchecked")
     public Object execute(SqlSession sqlSession, Object[] args) {
         Object result;
         switch (command.getType()) {
@@ -89,7 +90,8 @@ public class MybatisMapperMethod {
                             CachePage cachePage = (CachePage) result;
                             result = cachePage.getPage();
                         } else {
-                            result = ((IPage<?>) args[0]).setRecords(executeForIPage(sqlSession, args));
+                            List list = (List<Object>) result;
+                            result = ((IPage<?>) args[0]).setRecords(list);
                         }
                         // TODO 这里上面改了
                     } else {
