@@ -202,4 +202,10 @@ class H2UserMapperTest extends BaseTest {
         Assertions.assertEquals(1, selectObjs.size());
     }
 
+    @Test
+    void test(){
+        Page<H2User> page = new Page<>();
+        userMapper.testPage1(new H2User(), page);
+        userMapper.testPage2(page, new H2User());
+    }
 }

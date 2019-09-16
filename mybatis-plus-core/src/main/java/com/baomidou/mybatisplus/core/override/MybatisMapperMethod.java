@@ -83,15 +83,23 @@ public class MybatisMapperMethod {
                 } else {
                     Object param = method.convertArgsToSqlCommandParam(args);
                     // TODO 这里下面改了
-                    if (IPage.class.isAssignableFrom(method.getReturnType()) && args != null
-                        && IPage.class.isAssignableFrom(args[0].getClass())) {
+                    if (IPage.class.isAssignableFrom(method.getReturnType())) {
+                        assert args != null;
+                        IPage<?> page = null;
+                        for (Object arg : args) {
+                            if (arg instanceof IPage) {
+                                page = (IPage) arg;
+                                break;
+                            }
+                        }
+                        assert page != null;
                         result = executeForIPage(sqlSession, args);
                         if (result instanceof CachePage) {
                             CachePage cachePage = (CachePage) result;
                             result = cachePage.getPage();
                         } else {
                             List list = (List<Object>) result;
-                            result = ((IPage<?>) args[0]).setRecords(list);
+                            result = page.setRecords(list);
                         }
                         // TODO 这里上面改了
                     } else {
