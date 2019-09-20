@@ -84,7 +84,7 @@ ext {
 
 allprojects {
     group = 'com.baomidou'
-    version = "3.2.0"
+    version = "3.2.1.0-SNAPSHOT"
 }
 
 description = "Mybatis 增强工具包 - 只做增强不做改变，简化CRUD操作"

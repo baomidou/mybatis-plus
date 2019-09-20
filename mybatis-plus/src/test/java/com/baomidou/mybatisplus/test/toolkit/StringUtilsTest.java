@@ -10,10 +10,10 @@ import org.junit.jupiter.api.Test;
  * @author XiaoBingBy
  * @since 2019-08-30
  */
-public class StringUtilsTests {
+class StringUtilsTest {
 
     @Test
-    public void isEmptyTest() {
+    void isEmptyTest() {
         Assert.isTrue(StringUtils.isEmpty(""), "error not empty");
 
         Assert.isTrue(StringUtils.isEmpty(null), "error not empty");
