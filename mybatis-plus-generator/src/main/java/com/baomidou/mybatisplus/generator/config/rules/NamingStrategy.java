@@ -45,7 +45,7 @@ public enum NamingStrategy {
         }
         String tempName = name;
         // 大写数字下划线组成转为小写 , 允许混合模式转为小写
-        if (StringUtils.isCapitalMode(name) || StringUtils.isMixedMode(name)) {
+        if (StringUtils.isCapitalMode(name) || StringUtils.isMixedMode(name) || StringUtils.containsUpperCase(name)) {
             tempName = name.toLowerCase();
         }
         StringBuilder result = new StringBuilder();
