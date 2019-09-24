@@ -112,18 +112,18 @@ public class MybatisCachingExecutor implements Executor {
             flushCacheIfRequired(ms);
             if (ms.isUseCache() && resultHandler == null) {
                 ensureNoOutParams(ms, boundSql);
-                Object object = tcm.getObject(cache, key);
-                if (object == null) {
-                    List<E> list = delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
+                Object result = tcm.getObject(cache, key);
+                if (result == null) {
+                    result = delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
                     if (page != null) {
-                        page.setRecords(list);
+                        page.setRecords((List<E>) result);
                         tcm.putObject(cache, key, page);
                         return new CachePage<>(page);
                     } else {
-                        tcm.putObject(cache, key, list); // issue #578 and #116
+                        tcm.putObject(cache, key, result); // issue #578 and #116
                     }
                 }
-                return page != null ? new CachePage<E>((IPage<E>) object) : (List<E>) object;
+                return page != null ? new CachePage<E>((IPage<E>) result) : (List<E>) result;
             }
         }
         return delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
