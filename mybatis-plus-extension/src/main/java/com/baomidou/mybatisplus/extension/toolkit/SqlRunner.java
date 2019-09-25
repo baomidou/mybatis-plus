@@ -188,17 +188,6 @@ public class SqlRunner implements ISqlRunner {
         return SqlHelper.getObject(log, selectList(sql, args));
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    @Override
-    public IPage<Map<String, Object>> selectPage(IPage page, String sql, Object... args) {
-        if (null == page) {
-            return null;
-        }
-        // TODO 待完成
-        //  page.setRecords(sqlSession().selectList(SELECT_LIST, sqlMap(sql, args), page));
-        return page;
-    }
-
     /**
      * 获取Session 默认自动提交
      */

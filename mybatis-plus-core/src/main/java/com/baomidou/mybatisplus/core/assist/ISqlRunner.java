@@ -54,5 +54,8 @@ public interface ISqlRunner {
 
     Map<String, Object> selectOne(String sql, Object... args);
 
-    IPage<Map<String, Object>> selectPage(IPage<?> page, String sql, Object... args);
+    @Deprecated
+    default IPage<Map<String, Object>> selectPage(IPage<?> page, String sql, Object... args) {
+        return null;
+    }
 }
