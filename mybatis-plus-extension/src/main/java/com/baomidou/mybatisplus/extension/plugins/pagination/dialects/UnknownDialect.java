@@ -28,5 +28,4 @@ public class UnknownDialect implements IDialect {
     public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
         throw new MybatisPlusException(" not support.");
     }
-
 }

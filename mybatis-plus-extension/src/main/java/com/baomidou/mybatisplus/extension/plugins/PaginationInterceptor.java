@@ -81,7 +81,8 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
      */
     private long limit = 500L;
     /**
-     * 方言类型
+     * 方言类型(数据库名,全小写) <br>
+     * 如果用的我们支持分页的数据库但获取数据库类型不正确则可以配置该值进行校正
      */
     private String dialectType;
     /**

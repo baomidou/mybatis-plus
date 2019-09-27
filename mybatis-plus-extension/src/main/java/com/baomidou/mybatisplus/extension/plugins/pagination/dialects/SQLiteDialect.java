@@ -15,19 +15,11 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
-
 /**
  * SQLite 数据库分页语句组装实现
  *
  * @author hubin
  * @since 2016-01-23
  */
-public class SQLiteDialect implements IDialect {
-
-    @Override
-    public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
-        String sql = originalSql + " limit " + FIRST_MARK + " offset " + SECOND_MARK;
-        return new DialectModel(sql, limit, offset).setConsumerChain();
-    }
+public class SQLiteDialect extends PostgreDialect {
 }

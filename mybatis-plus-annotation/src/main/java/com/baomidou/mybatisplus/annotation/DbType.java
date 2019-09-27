@@ -74,7 +74,7 @@ public enum DbType {
     /**
      * xugu
      */
-    XUGU("xugu", "虚谷数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.XuguDialect"),
+    XU_GU("xugu", "虚谷数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.XuguDialect"),
     /**
      * UNKONWN DB
      */

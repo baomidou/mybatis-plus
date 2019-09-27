@@ -15,20 +15,11 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
-
 /**
  * 虚谷数据库分页语句组装实现
  *
  * @author https://github.com/mj7788
  * @since 2019-08-29
  */
-public class XuguDialect implements IDialect {
-
-    @Override
-    public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
-        String sql = originalSql + " LIMIT " + FIRST_MARK + StringPool.COMMA + SECOND_MARK;
-        return new DialectModel(sql, offset, limit).setConsumerChain();
-    }
+public class XuGuDialect extends MySqlDialect {
 }

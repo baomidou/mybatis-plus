@@ -42,7 +42,7 @@ class DbTypeTest {
         DIALECT_MAP.put(DbType.SQL_SERVER2005, SQLServer2005Dialect.class);
         DIALECT_MAP.put(DbType.SQLITE, SQLiteDialect.class);
         DIALECT_MAP.put(DbType.HSQL, HSQLDialect.class);
-        DIALECT_MAP.put(DbType.XUGU, XuguDialect.class);
+        DIALECT_MAP.put(DbType.XU_GU, XuGuDialect.class);
         DIALECT_MAP.put(DbType.OTHER, UnknownDialect.class);
     }
 

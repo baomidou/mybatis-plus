@@ -18,7 +18,6 @@ package com.baomidou.mybatisplus.extension.toolkit;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
@@ -63,7 +62,7 @@ public class JdbcUtils {
         } else if (jdbcUrl.contains(":dm:")) {
             return DbType.DM;
         } else if (jdbcUrl.contains(":xugu:")) {
-            return DbType.XUGU;
+            return DbType.XU_GU;
         } else {
             logger.warn("The jdbcUrl is " + jdbcUrl + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!");
             return DbType.OTHER;
