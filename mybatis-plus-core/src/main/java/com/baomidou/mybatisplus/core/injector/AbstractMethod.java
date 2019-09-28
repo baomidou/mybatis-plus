@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.injector;
 
+import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
@@ -51,6 +52,11 @@ public abstract class AbstractMethod implements Constants {
     protected Configuration configuration;
     protected LanguageDriver languageDriver;
     protected MapperBuilderAssistant builderAssistant;
+    protected SqlMethod sqlMethod;
+    /**
+     * 自定义方法,用于设置个性化方法名称
+     */
+    protected String method;
 
     /**
      * 注入自定义方法
@@ -326,4 +332,24 @@ public abstract class AbstractMethod implements Constants {
      * @return MappedStatement
      */
     public abstract MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo);
+
+    /**
+     * 获取自定义方法名，未设置采用默认方法名
+     * @return method
+     */
+    public String getMethod() {
+        if (method == null || method.isEmpty()) {
+            method = sqlMethod.getMethod();
+        }
+        return method;
+    }
+
+    /**
+     * 设置自定义方法名
+     * @param method 方法名称
+     */
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
 }
