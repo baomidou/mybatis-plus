@@ -34,16 +34,16 @@ public class DeleteByMap extends AbstractMethod {
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         String sql;
-        SqlMethod sqlMethod = SqlMethod.LOGIC_DELETE_BY_MAP;
+        sqlMethod = SqlMethod.LOGIC_DELETE_BY_MAP;
         if (tableInfo.isLogicDelete()) {
             sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlLogicSet(tableInfo), sqlWhereByMap(tableInfo));
             SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Map.class);
-            return addUpdateMappedStatement(mapperClass, Map.class, sqlMethod.getMethod(), sqlSource);
+            return addUpdateMappedStatement(mapperClass, Map.class, getMethod(), sqlSource);
         } else {
             sqlMethod = SqlMethod.DELETE_BY_MAP;
             sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), this.sqlWhereByMap(tableInfo));
             SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, Map.class);
-            return this.addDeleteMappedStatement(mapperClass, sqlMethod.getMethod(), sqlSource);
+            return this.addDeleteMappedStatement(mapperClass, getMethod(), sqlSource);
         }
     }
 }

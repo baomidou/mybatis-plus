@@ -62,7 +62,7 @@ public class AlwaysUpdateSomeColumnById extends AbstractMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
-        SqlMethod sqlMethod = SqlMethod.UPDATE_BY_ID;
+        sqlMethod = SqlMethod.UPDATE_BY_ID;
         final String additional = optlockVersion() + tableInfo.getLogicDeleteSql(true, false);
         String sqlSet = this.filterTableFieldInfo(tableInfo.getFieldList(), getPredicate(),
             i -> i.getSqlSet(true, ENTITY_DOT), NEWLINE);
@@ -70,7 +70,7 @@ public class AlwaysUpdateSomeColumnById extends AbstractMethod {
         String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlSet,
             tableInfo.getKeyColumn(), ENTITY_DOT + tableInfo.getKeyProperty(), additional);
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return addUpdateMappedStatement(mapperClass, modelClass, MAPPER_METHOD, sqlSource);
+        return addUpdateMappedStatement(mapperClass, modelClass, getMethod(), sqlSource);
     }
 
     private Predicate<TableFieldInfo> getPredicate() {
@@ -79,5 +79,13 @@ public class AlwaysUpdateSomeColumnById extends AbstractMethod {
             return noLogic.and(predicate);
         }
         return noLogic;
+    }
+
+    @Override
+    public String getMethod() {
+        if (method == null || method.isEmpty()) {
+            method = MAPPER_METHOD;
+        }
+        return method;
     }
 }
