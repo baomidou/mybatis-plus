@@ -31,12 +31,12 @@ public class Update extends AbstractMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
-        sqlMethod = SqlMethod.UPDATE;
+        SqlMethod sqlMethod = SqlMethod.UPDATE;
         String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(),
             sqlSet(true, true, tableInfo, true, ENTITY, ENTITY_DOT),
             sqlWhereEntityWrapper(true, tableInfo),
             sqlComment());
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return this.addUpdateMappedStatement(mapperClass, modelClass, getMethod(), sqlSource);
+        return this.addUpdateMappedStatement(mapperClass, modelClass, getMethod(sqlMethod), sqlSource);
     }
 }

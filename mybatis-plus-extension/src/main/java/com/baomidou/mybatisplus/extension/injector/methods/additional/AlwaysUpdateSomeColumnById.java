@@ -49,11 +49,6 @@ import java.util.function.Predicate;
 public class AlwaysUpdateSomeColumnById extends AbstractMethod {
 
     /**
-     * mapper 对应的方法名
-     */
-    private static final String MAPPER_METHOD = "alwaysUpdateSomeColumnById";
-
-    /**
      * 字段筛选条件
      */
     @Setter
@@ -62,7 +57,7 @@ public class AlwaysUpdateSomeColumnById extends AbstractMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
-        sqlMethod = SqlMethod.UPDATE_BY_ID;
+        SqlMethod sqlMethod = SqlMethod.UPDATE_BY_ID;
         final String additional = optlockVersion() + tableInfo.getLogicDeleteSql(true, false);
         String sqlSet = this.filterTableFieldInfo(tableInfo.getFieldList(), getPredicate(),
             i -> i.getSqlSet(true, ENTITY_DOT), NEWLINE);
@@ -70,7 +65,7 @@ public class AlwaysUpdateSomeColumnById extends AbstractMethod {
         String sql = String.format(sqlMethod.getSql(), tableInfo.getTableName(), sqlSet,
             tableInfo.getKeyColumn(), ENTITY_DOT + tableInfo.getKeyProperty(), additional);
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return addUpdateMappedStatement(mapperClass, modelClass, getMethod(), sqlSource);
+        return addUpdateMappedStatement(mapperClass, modelClass, getMethod(sqlMethod), sqlSource);
     }
 
     private Predicate<TableFieldInfo> getPredicate() {
@@ -82,10 +77,8 @@ public class AlwaysUpdateSomeColumnById extends AbstractMethod {
     }
 
     @Override
-    public String getMethod() {
-        if (method == null || method.isEmpty()) {
-            method = MAPPER_METHOD;
-        }
-        return method;
+    public String getMethod(SqlMethod sqlMethod) {
+        // 自定义 mapper 方法名
+        return "alwaysUpdateSomeColumnById";
     }
 }

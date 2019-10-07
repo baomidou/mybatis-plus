@@ -52,11 +52,6 @@ public abstract class AbstractMethod implements Constants {
     protected Configuration configuration;
     protected LanguageDriver languageDriver;
     protected MapperBuilderAssistant builderAssistant;
-    protected SqlMethod sqlMethod;
-    /**
-     * 自定义方法,用于设置个性化方法名称
-     */
-    protected String method;
 
     /**
      * 注入自定义方法
@@ -335,21 +330,12 @@ public abstract class AbstractMethod implements Constants {
 
     /**
      * 获取自定义方法名，未设置采用默认方法名
+     * https://gitee.com/baomidou/mybatis-plus/pulls/88
+     *
+     * @author 义陆无忧
      * @return method
      */
-    public String getMethod() {
-        if (method == null || method.isEmpty()) {
-            method = sqlMethod.getMethod();
-        }
-        return method;
+    public String getMethod(SqlMethod sqlMethod) {
+        return sqlMethod.getMethod();
     }
-
-    /**
-     * 设置自定义方法名
-     * @param method 方法名称
-     */
-    public void setMethod(String method) {
-        this.method = method;
-    }
-
 }

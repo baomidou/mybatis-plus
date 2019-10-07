@@ -31,11 +31,11 @@ public class SelectPage extends AbstractMethod {
 
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
-        sqlMethod = SqlMethod.SELECT_PAGE;
+        SqlMethod sqlMethod = SqlMethod.SELECT_PAGE;
         String sql = String.format(sqlMethod.getSql(), sqlSelectColumns(tableInfo, true),
             tableInfo.getTableName(), sqlWhereEntityWrapper(true, tableInfo),
             sqlComment());
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return this.addSelectMappedStatementForTable(mapperClass, getMethod(), sqlSource, tableInfo);
+        return this.addSelectMappedStatementForTable(mapperClass, getMethod(sqlMethod), sqlSource, tableInfo);
     }
 }

@@ -44,11 +44,6 @@ import static java.util.stream.Collectors.toList;
  */
 public class LogicDeleteByIdWithFill extends AbstractMethod {
 
-    /**
-     * mapper 对应的方法名
-     */
-    private static final String MAPPER_METHOD = "deleteByIdWithFill";
-
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         String sql;
@@ -73,14 +68,12 @@ public class LogicDeleteByIdWithFill extends AbstractMethod {
                 tableInfo.getKeyProperty());
         }
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
-        return addUpdateMappedStatement(mapperClass, modelClass, getMethod(), sqlSource);
+        return addUpdateMappedStatement(mapperClass, modelClass, getMethod(sqlMethod), sqlSource);
     }
 
     @Override
-    public String getMethod() {
-        if (method == null || method.isEmpty()) {
-            method = MAPPER_METHOD;
-        }
-        return method;
+    public String getMethod(SqlMethod sqlMethod) {
+        // 自定义 mapper 方法名
+        return "deleteByIdWithFill";
     }
 }
