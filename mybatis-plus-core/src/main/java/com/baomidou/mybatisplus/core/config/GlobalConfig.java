@@ -128,6 +128,10 @@ public class GlobalConfig implements Serializable {
          */
         private IKeyGenerator keyGenerator;
         /**
+         * 逻辑删除全局字段 (默认无 设置会自动扫描实体字段)
+         */
+        private String logicDeleteField;
+        /**
          * 逻辑删除全局值（默认 1、表示已删除）
          */
         private String logicDeleteValue = "1";

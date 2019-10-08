@@ -15,23 +15,30 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
-import com.baomidou.mybatisplus.annotation.*;
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import java.lang.reflect.Field;
+
 import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.apache.ibatis.type.UnknownTypeHandler;
 
-import java.lang.reflect.Field;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.SqlCondition;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.Version;
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
+
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 
 /**
  * 数据库表字段反射信息
@@ -274,6 +281,13 @@ public class TableFieldInfo implements Constants {
                 this.logicDeleteValue = dbConfig.getLogicDeleteValue();
             }
             return true;
+        } else {
+            String globalLogicDeleteField = dbConfig.getLogicDeleteField();
+            if (StringUtils.isNotEmpty(globalLogicDeleteField) && globalLogicDeleteField.equalsIgnoreCase(field.getName())) {
+                this.logicNotDeleteValue = dbConfig.getLogicNotDeleteValue();
+                this.logicDeleteValue = dbConfig.getLogicDeleteValue();
+                return true;
+            }
         }
         return false;
     }
@@ -421,7 +435,7 @@ public class TableFieldInfo implements Constants {
      */
     ResultMapping getResultMapping(final MybatisConfiguration configuration) {
         ResultMapping.Builder builder = new ResultMapping.Builder(configuration, property,
-            StringUtils.getTargetColumn(column), propertyType);
+                StringUtils.getTargetColumn(column), propertyType);
         TypeHandlerRegistry registry = configuration.getTypeHandlerRegistry();
         if (jdbcType != null && jdbcType != JdbcType.UNDEFINED) {
             builder.jdbcType(jdbcType);
@@ -454,7 +468,7 @@ public class TableFieldInfo implements Constants {
         }
         if (fieldStrategy == FieldStrategy.NOT_EMPTY && isCharSequence) {
             return SqlScriptUtils.convertIf(sqlScript, String.format("%s != null and %s != ''", property, property),
-                false);
+                    false);
         }
         return SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", property), false);
     }
