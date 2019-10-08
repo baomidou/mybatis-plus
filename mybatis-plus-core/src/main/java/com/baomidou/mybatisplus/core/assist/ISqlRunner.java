@@ -37,6 +37,7 @@ public interface ISqlRunner {
     String COUNT = "com.baomidou.mybatisplus.core.mapper.SqlRunner.Count";
     String SQL_SCRIPT = "${sql}";
     String SQL = "sql";
+    String PAGE = "page";
 
     boolean insert(String sql, Object... args);
 
@@ -54,8 +55,5 @@ public interface ISqlRunner {
 
     Map<String, Object> selectOne(String sql, Object... args);
 
-    @Deprecated
-    default IPage<Map<String, Object>> selectPage(IPage<?> page, String sql, Object... args) {
-        return null;
-    }
+    IPage<Map<String, Object>> selectPage(IPage<?> page, String sql, Object... args);
 }

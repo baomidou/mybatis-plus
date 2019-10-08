@@ -54,6 +54,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 /**
  * 分页拦截器
@@ -129,18 +130,16 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
     }
 
     private static List<OrderByElement> addOrderByElements(List<OrderItem> orderList, List<OrderByElement> orderByElements) {
-        if (orderByElements == null || orderByElements.isEmpty()) {
-            orderByElements = new ArrayList<>(orderList.size());
-        }
-        for (OrderItem item : orderList) {
-            if (StringUtils.isEmpty(item.getColumn())) {
-                continue;
-            }
-            OrderByElement element = new OrderByElement();
-            element.setExpression(new Column(item.getColumn()));
-            element.setAsc(item.isAsc());
-            orderByElements.add(element);
-        }
+        orderByElements = CollectionUtils.isEmpty(orderByElements) ? new ArrayList<>(orderList.size()) : orderByElements;
+        List<OrderByElement> orderByElementList = orderList.stream()
+            .filter(item -> StringUtils.isNotEmpty(item.getColumn()))
+            .map(item -> {
+                OrderByElement element = new OrderByElement();
+                element.setExpression(new Column(item.getColumn()));
+                element.setAsc(item.isAsc());
+                return element;
+            }).collect(Collectors.toList());
+        orderByElements.addAll(orderByElementList);
         return orderByElements;
     }
 

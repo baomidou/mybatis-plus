@@ -292,13 +292,7 @@ public class TableInfoHelper {
      * @return true 为存在 @TableId 注解;
      */
     public static boolean isExistTableId(List<Field> list) {
-        for (Field field : list) {
-            TableId tableId = field.getAnnotation(TableId.class);
-            if (tableId != null) {
-                return true;
-            }
-        }
-        return false;
+        return list.stream().anyMatch(field -> field.isAnnotationPresent(TableId.class));
     }
 
     /**
