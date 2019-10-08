@@ -46,7 +46,6 @@ import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.RowBounds;
-import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -129,7 +128,6 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
         return originalSql;
     }
 
-    @NotNull
     private static List<OrderByElement> addOrderByElements(List<OrderItem> orderList, List<OrderByElement> orderByElements) {
         if (orderByElements == null || orderByElements.isEmpty()) {
             orderByElements = new ArrayList<>(orderList.size());
