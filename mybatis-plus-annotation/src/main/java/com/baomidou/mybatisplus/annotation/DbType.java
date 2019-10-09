@@ -18,6 +18,9 @@ package com.baomidou.mybatisplus.annotation;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * MybatisPlus 数据库类型
  *
@@ -94,18 +97,20 @@ public enum DbType {
      */
     private String dialect;
 
+    private static Map<String,DbType> DB_CACHE_MAP = new ConcurrentHashMap<>();
+
+    static {
+        for (DbType dbType : DbType.values()) {
+            DB_CACHE_MAP.put(dbType.getDb().toLowerCase(), dbType);
+        }
+    }
+
     /**
-     * 获取数据库类型（默认 MySql）
+     * 获取数据库类型
      *
      * @param dbType 数据库类型字符串
      */
     public static DbType getDbType(String dbType) {
-        DbType[] dts = DbType.values();
-        for (DbType dt : dts) {
-            if (dt.getDb().equalsIgnoreCase(dbType)) {
-                return dt;
-            }
-        }
-        return OTHER;
+        return DB_CACHE_MAP.getOrDefault(dbType.toLowerCase(), OTHER);
     }
 }

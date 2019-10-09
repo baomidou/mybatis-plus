@@ -55,4 +55,12 @@ class DbTypeTest {
             Assertions.assertEquals(aClass, DIALECT_MAP.get(dbType));
         }
     }
+
+    @Test
+    void testGetDbType() {
+        Assertions.assertEquals(DbType.MYSQL, DbType.getDbType("mysql"));
+        Assertions.assertEquals(DbType.MYSQL, DbType.getDbType("Mysql"));
+        Assertions.assertEquals(DbType.OTHER, DbType.getDbType("other"));
+        Assertions.assertEquals(DbType.OTHER, DbType.getDbType("unknown"));
+    }
 }

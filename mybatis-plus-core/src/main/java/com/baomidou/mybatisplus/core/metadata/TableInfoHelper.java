@@ -442,15 +442,12 @@ public class TableInfoHelper {
      */
     public static List<Field> getAllFields(Class<?> clazz) {
         List<Field> fieldList = ReflectionKit.getFieldList(ClassUtils.getUserClass(clazz));
-        if (CollectionUtils.isNotEmpty(fieldList)) {
-            return fieldList.stream()
-                .filter(i -> {
-                    /* 过滤注解非表字段属性 */
-                    TableField tableField = i.getAnnotation(TableField.class);
-                    return (tableField == null || tableField.exist());
-                }).collect(toList());
-        }
-        return fieldList;
+        return fieldList.stream()
+            .filter(field -> {
+                /* 过滤注解非表字段属性 */
+                TableField tableField = field.getAnnotation(TableField.class);
+                return (tableField == null || tableField.exist());
+            }).collect(toList());
     }
 
     /**
