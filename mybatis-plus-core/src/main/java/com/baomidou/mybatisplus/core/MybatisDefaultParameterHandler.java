@@ -190,7 +190,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
             if (isInsert && metaObjectHandler.openInsertFill()) {
                 // 插入填充
                 metaObjectHandler.insertFill(metaObject);
-            } else if (!isInsert) {
+            } else if (!isInsert && metaObjectHandler.openUpdateFill()) {
                 // 更新填充
                 metaObjectHandler.updateFill(metaObject);
             }

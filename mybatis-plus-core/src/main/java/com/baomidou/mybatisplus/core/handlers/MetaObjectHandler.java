@@ -35,13 +35,6 @@ import java.util.Optional;
 public interface MetaObjectHandler {
 
     /**
-     * 乐观锁常量
-     *
-     * @deprecated 3.1.1 {@link Constants#MP_OPTLOCK_ET_ORIGINAL}
-     */
-    String MP_OPTLOCK_ET_ORIGINAL = "MP_OPTLOCK_ET_ORIGINAL";
-
-    /**
      * 插入元对象字段填充（用于插入时对公共字段的填充）
      *
      * @param metaObject 元对象
