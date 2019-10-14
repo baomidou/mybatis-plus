@@ -193,40 +193,40 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
         }
     }
 
-    private void pluginElement(XNode parent) throws Exception {
+    private void pluginElement(XNode parent) {
         if (parent != null) {
             for (XNode child : parent.getChildren()) {
                 String interceptor = child.getStringAttribute("interceptor");
                 Properties properties = child.getChildrenAsProperties();
-                Interceptor interceptorInstance = (Interceptor) resolveClass(interceptor).newInstance();
+                Interceptor interceptorInstance = (Interceptor) createInstance(interceptor);
                 interceptorInstance.setProperties(properties);
                 configuration.addInterceptor(interceptorInstance);
             }
         }
     }
 
-    private void objectFactoryElement(XNode context) throws Exception {
+    private void objectFactoryElement(XNode context) {
         if (context != null) {
             String type = context.getStringAttribute("type");
             Properties properties = context.getChildrenAsProperties();
-            ObjectFactory factory = (ObjectFactory) resolveClass(type).newInstance();
+            ObjectFactory factory = (ObjectFactory) createInstance(type);
             factory.setProperties(properties);
             configuration.setObjectFactory(factory);
         }
     }
 
-    private void objectWrapperFactoryElement(XNode context) throws Exception {
+    private void objectWrapperFactoryElement(XNode context) {
         if (context != null) {
             String type = context.getStringAttribute("type");
-            ObjectWrapperFactory factory = (ObjectWrapperFactory) resolveClass(type).newInstance();
+            ObjectWrapperFactory factory = (ObjectWrapperFactory) createInstance(type);
             configuration.setObjectWrapperFactory(factory);
         }
     }
 
-    private void reflectorFactoryElement(XNode context) throws Exception {
+    private void reflectorFactoryElement(XNode context) {
         if (context != null) {
             String type = context.getStringAttribute("type");
-            ReflectorFactory factory = (ReflectorFactory) resolveClass(type).newInstance();
+            ReflectorFactory factory = (ReflectorFactory) createInstance(type);
             configuration.setReflectorFactory(factory);
         }
     }
@@ -311,7 +311,7 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
                 type = "DB_VENDOR";
             }
             Properties properties = context.getChildrenAsProperties();
-            databaseIdProvider = (DatabaseIdProvider) resolveClass(type).newInstance();
+            databaseIdProvider = (DatabaseIdProvider) createInstance(type);
             databaseIdProvider.setProperties(properties);
         }
         Environment environment = configuration.getEnvironment();
@@ -321,22 +321,22 @@ public class MybatisXMLConfigBuilder extends BaseBuilder {
         }
     }
 
-    private TransactionFactory transactionManagerElement(XNode context) throws Exception {
+    private TransactionFactory transactionManagerElement(XNode context) {
         if (context != null) {
             String type = context.getStringAttribute("type");
             Properties props = context.getChildrenAsProperties();
-            TransactionFactory factory = (TransactionFactory) resolveClass(type).newInstance();
+            TransactionFactory factory = (TransactionFactory) createInstance(type);
             factory.setProperties(props);
             return factory;
         }
         throw new BuilderException("Environment declaration requires a TransactionFactory.");
     }
 
-    private DataSourceFactory dataSourceElement(XNode context) throws Exception {
+    private DataSourceFactory dataSourceElement(XNode context) {
         if (context != null) {
             String type = context.getStringAttribute("type");
             Properties props = context.getChildrenAsProperties();
-            DataSourceFactory factory = (DataSourceFactory) resolveClass(type).newInstance();
+            DataSourceFactory factory = (DataSourceFactory) createInstance(type);
             factory.setProperties(props);
             return factory;
         }

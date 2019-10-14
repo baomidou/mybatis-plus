@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.extension.plugins.pagination;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect;
@@ -62,23 +63,20 @@ public class DialectFactory {
      * @return ignore
      */
     private static IDialect getDialect(DbType dbType, String dialectClazz) {
-        IDialect dialect = DIALECT_CACHE.get(dbType.getDb());
-        if (null == dialect) {
+        return DIALECT_CACHE.computeIfAbsent(dbType.getDb(), key -> {
+            IDialect dialect = null;
             String dialectClassName = StringUtils.isEmpty(dialectClazz) ? dbType.getDialect() : dialectClazz;
             try {
                 Class<?> clazz = Class.forName(dialectClassName);
                 if (IDialect.class.isAssignableFrom(clazz)) {
-                    dialect = (IDialect) clazz.newInstance();
-                    DIALECT_CACHE.put(dbType.getDb(), dialect);
+                    dialect = (IDialect) ClassUtils.newInstance(clazz);
                 }
             } catch (ClassNotFoundException e) {
                 throw ExceptionUtils.mpe("Class : %s is not found", dialectClazz);
-            } catch (IllegalAccessException | InstantiationException e) {
-                throw ExceptionUtils.mpe("Class : %s can not be instance", dialectClazz);
             }
             /* 未配置方言则抛出异常 */
             Assert.notNull(dialect, "The value of the dialect property in mybatis configuration.xml is not defined.");
-        }
-        return dialect;
+            return dialect;
+        });
     }
 }
