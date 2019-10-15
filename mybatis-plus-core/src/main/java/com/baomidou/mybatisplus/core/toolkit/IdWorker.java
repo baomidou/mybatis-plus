@@ -15,6 +15,9 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
+import com.baomidou.mybatisplus.core.incrementer.DefaultIdGenerator;
+import com.baomidou.mybatisplus.core.incrementer.IdGenerator;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
@@ -32,7 +35,7 @@ public class IdWorker {
     /**
      * 主机和进程的机器码
      */
-    private static Sequence WORKER = new Sequence();
+    private static IdGenerator ID_GENERATOR = new DefaultIdGenerator();
 
     /**
      * 毫秒格式化时间
@@ -40,11 +43,11 @@ public class IdWorker {
     public static final DateTimeFormatter MILLISECOND = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
 
     public static long getId() {
-        return WORKER.nextId();
+        return ID_GENERATOR.nextId();
     }
 
     public static String getIdStr() {
-        return String.valueOf(WORKER.nextId());
+        return String.valueOf(ID_GENERATOR.nextId());
     }
 
     /**
@@ -66,10 +69,19 @@ public class IdWorker {
      * 有参构造器
      *
      * @param workerId     工作机器 ID
-     * @param datacenterId 序列号
+     * @param dataCenterId 序列号
      */
-    public static void initSequence(long workerId, long datacenterId) {
-        WORKER = new Sequence(workerId, datacenterId);
+    public static void initSequence(long workerId, long dataCenterId) {
+        ID_GENERATOR = new DefaultIdGenerator(workerId, dataCenterId);
+    }
+
+    /**
+     * 自定义id 生成方式
+     *
+     * @param idGenerator id 生成器
+     */
+    public static void setIdGenerator(IdGenerator idGenerator) {
+        ID_GENERATOR = idGenerator;
     }
 
     /**
