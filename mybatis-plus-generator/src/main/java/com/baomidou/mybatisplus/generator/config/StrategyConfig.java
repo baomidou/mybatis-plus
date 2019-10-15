@@ -271,15 +271,13 @@ public class StrategyConfig {
         if (null != columnNaming) {
             this.columnNaming = columnNaming;
         }
-        String pkg = ClassUtils.getPackageName(clazz);
-        if (StringUtils.isNotEmpty(pkg)) {
-            pkg += "." + clazz.getSimpleName();
-        } else {
-            pkg = clazz.getSimpleName();
-        }
-        this.superEntityClass = pkg;
+        this.superEntityClass = ClassUtils.getPackageAndSimpleName(clazz);
         convertSuperEntityColumns(clazz);
         return this;
+    }
+
+    public void setSuperControllerClass(Class<?> clazz) {
+        this.superControllerClass = ClassUtils.getPackageAndSimpleName(clazz);
     }
 
     /**
