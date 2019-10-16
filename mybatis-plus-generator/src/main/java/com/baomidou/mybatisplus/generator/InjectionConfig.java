@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.generator.config.FileOutConfig;
 import com.baomidou.mybatisplus.generator.config.IFileCreate;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
 
+import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -56,9 +57,10 @@ public abstract class InjectionConfig {
     private IFileCreate fileCreate;
 
     /**
-     * 注入自定义 Map 对象
+     * 根据表相关数据 注入自定义Map对象
+     * @param tableInfo
      */
-    public abstract void initMap();
+    public abstract void initMap(TableInfo tableInfo);
 
     /**
      * 模板待渲染 Object Map 预处理<br>
