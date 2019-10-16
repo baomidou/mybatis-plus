@@ -57,10 +57,15 @@ public abstract class InjectionConfig {
     private IFileCreate fileCreate;
 
     /**
-     * 根据表相关数据 注入自定义Map对象
+     * 注入自定义 Map 对象
+     */
+    public abstract void initMap();
+
+    /**
+     * 依据表相关信息， 从三方获取到需要元数据，处理方法环境里面
      * @param tableInfo
      */
-    public abstract void initMap(TableInfo tableInfo);
+    public abstract void initTableMap(TableInfo tableInfo);
 
     /**
      * 模板待渲染 Object Map 预处理<br>
