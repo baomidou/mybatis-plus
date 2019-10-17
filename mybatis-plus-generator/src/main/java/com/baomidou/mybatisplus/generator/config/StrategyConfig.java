@@ -16,8 +16,6 @@
 package com.baomidou.mybatisplus.generator.config;
 
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.config.po.TableFill;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
@@ -28,7 +26,6 @@ import lombok.experimental.Accessors;
 
 import java.lang.reflect.Field;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 策略配置项
@@ -271,13 +268,13 @@ public class StrategyConfig {
         if (null != columnNaming) {
             this.columnNaming = columnNaming;
         }
-        this.superEntityClass = ClassUtils.getPackageAndSimpleName(clazz);
+        this.superEntityClass = clazz.getName();
         convertSuperEntityColumns(clazz);
         return this;
     }
 
     public void setSuperControllerClass(Class<?> clazz) {
-        this.superControllerClass = ClassUtils.getPackageAndSimpleName(clazz);
+        this.superControllerClass = clazz.getName();
     }
 
     /**
@@ -289,14 +286,12 @@ public class StrategyConfig {
      */
     protected void convertSuperEntityColumns(Class<?> clazz) {
         List<Field> fields = TableInfoHelper.getAllFields(clazz);
-        if (CollectionUtils.isNotEmpty(fields)) {
-            this.superEntityColumns = fields.stream().map(field -> {
-                if (null == columnNaming || columnNaming == NamingStrategy.no_change) {
-                    return field.getName();
-                }
-                return StringUtils.camelToUnderline(field.getName());
-            }).collect(Collectors.toSet()).stream().toArray(String[]::new);
-        }
+        this.superEntityColumns = fields.stream().map(field -> {
+            if (null == columnNaming || columnNaming == NamingStrategy.no_change) {
+                return field.getName();
+            }
+            return StringUtils.camelToUnderline(field.getName());
+        }).distinct().toArray(String[]::new);
     }
 
     /**

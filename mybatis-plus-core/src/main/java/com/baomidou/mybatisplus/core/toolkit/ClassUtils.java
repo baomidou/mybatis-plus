@@ -128,21 +128,6 @@ public final class ClassUtils {
         }
     }
 
-    /**
-     * 获取【 包名 + 类名 】完整路径字符串
-     *
-     * @param clazz
-     * @return
-     */
-    public static String getPackageAndSimpleName(Class<?> clazz) {
-        String pkg = getPackageName(clazz);
-        if (StringUtils.isNotEmpty(pkg)) {
-            pkg += "." + clazz.getSimpleName();
-        } else {
-            pkg = clazz.getSimpleName();
-        }
-        return pkg;
-    }
 
     /**
      * Determine the name of the package of the given class,
