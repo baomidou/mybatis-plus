@@ -410,7 +410,11 @@ public class TableFieldInfo implements Constants {
             // 不进行 if 包裹
             return sqlSet;
         }
-        return convertIf(sqlSet, newPrefix + property, updateStrategy);
+        return convertIf(sqlSet, convertIfProperty(prefix, property), updateStrategy);
+    }
+
+    private String convertIfProperty(String prefix, String property) {
+        return StringUtils.isNotEmpty(prefix) ? prefix.substring(0, prefix.length() - 1) + "['" + property + "']" : property;
     }
 
     /**
@@ -424,7 +428,7 @@ public class TableFieldInfo implements Constants {
         // 默认:  AND column=#{prefix + el}
         String sqlScript = " AND " + String.format(condition, column, newPrefix + el);
         // 查询的时候只判非空
-        return convertIf(sqlScript, newPrefix + property, whereStrategy);
+        return convertIf(sqlScript, convertIfProperty(newPrefix, property), whereStrategy);
     }
 
     /**
