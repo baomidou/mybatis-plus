@@ -25,6 +25,9 @@ import org.apache.ibatis.reflection.MetaObject;
  */
 public interface ITableNameHandler {
 
+    String SPACE = " ";
+    String POINT = ".";
+
     /**
      * 表名 SQL 处理
      *
@@ -36,7 +39,8 @@ public interface ITableNameHandler {
     default String process(MetaObject metaObject, String sql, String tableName) {
         String dynamicTableName = dynamicTableName(metaObject, sql, tableName);
         if (null != dynamicTableName && !dynamicTableName.equalsIgnoreCase(tableName)) {
-            return sql.replaceAll(tableName, dynamicTableName);
+            return sql.replaceAll(tableName + SPACE, dynamicTableName + SPACE)
+                .replaceAll(tableName + POINT, dynamicTableName + POINT);
         }
         return sql;
     }
