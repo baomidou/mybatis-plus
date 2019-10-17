@@ -58,14 +58,10 @@ public abstract class InjectionConfig {
 
     /**
      * 注入自定义 Map 对象
+     *
+     * @param tableInfo 依据表相关信息，从三方获取到需要元数据，处理方法环境里面
      */
-    public abstract void initMap();
-
-    /**
-     * 依据表相关信息， 从三方获取到需要元数据，处理方法环境里面
-     * @param tableInfo
-     */
-    public abstract void initTableMap(TableInfo tableInfo);
+    public abstract void initMap(TableInfo tableInfo);
 
     /**
      * 模板待渲染 Object Map 预处理<br>
