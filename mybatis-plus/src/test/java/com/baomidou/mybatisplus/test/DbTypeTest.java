@@ -43,6 +43,7 @@ class DbTypeTest {
         DIALECT_MAP.put(DbType.SQLITE, SQLiteDialect.class);
         DIALECT_MAP.put(DbType.HSQL, HSQLDialect.class);
         DIALECT_MAP.put(DbType.XU_GU, XuGuDialect.class);
+        DIALECT_MAP.put(DbType.KINGBASE_ES, KingbaseDialect.class);
         DIALECT_MAP.put(DbType.OTHER, UnknownDialect.class);
     }
 
