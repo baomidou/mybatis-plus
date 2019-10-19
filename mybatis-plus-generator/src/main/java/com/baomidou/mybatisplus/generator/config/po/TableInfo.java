@@ -138,7 +138,8 @@ public class TableInfo {
      * 转换filed实体为 xml mapper 中的 base column 字符串信息
      */
     public String getFieldNames() {
-        if (StringUtils.isEmpty(fieldNames)) {
+        if (StringUtils.isEmpty(fieldNames)
+            && CollectionUtils.isNotEmpty(fields)) {
             StringBuilder names = new StringBuilder();
             IntStream.range(0, fields.size()).forEach(i -> {
                 TableField fd = fields.get(i);

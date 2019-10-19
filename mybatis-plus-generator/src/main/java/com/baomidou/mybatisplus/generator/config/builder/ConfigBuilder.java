@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.generator.config.builder;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
@@ -99,6 +100,7 @@ public class ConfigBuilder {
      * 是否支持注释
      */
     private boolean commentSupported;
+
     /**
      * 在构造器中处理配置
      *
@@ -382,7 +384,8 @@ public class ConfigBuilder {
             tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotation.IdType.class.getCanonicalName());
             tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotation.TableId.class.getCanonicalName());
         }
-        if (StringUtils.isNotEmpty(strategyConfig.getVersionFieldName())) {
+        if (StringUtils.isNotEmpty(strategyConfig.getVersionFieldName())
+            && CollectionUtils.isNotEmpty(tableInfo.getFields())) {
             tableInfo.getFields().forEach(f -> {
                 if (strategyConfig.getVersionFieldName().equals(f.getName())) {
                     tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotation.Version.class.getCanonicalName());
@@ -559,8 +562,7 @@ public class ConfigBuilder {
             } else if (DbType.DM == dbType) {
                 tableName = tableName.toUpperCase();
                 tableFieldsSql = String.format(tableFieldsSql, tableName);
-            }
-            else if (DbType.H2 == dbType) {
+            } else if (DbType.H2 == dbType) {
                 tableName = tableName.toUpperCase();
                 try (PreparedStatement pkQueryStmt = connection.prepareStatement(String.format(H2Query.PK_QUERY_SQL, tableName));
                      ResultSet pkResults = pkQueryStmt.executeQuery()) {
@@ -597,7 +599,7 @@ public class ConfigBuilder {
                     // 处理ID
                     if (isId && !haveId) {
                         field.setKeyFlag(true);
-                        if (DbType.H2 == dbType || DbType.SQLITE == dbType|| dbQuery.isKeyIdentity(results)) {
+                        if (DbType.H2 == dbType || DbType.SQLITE == dbType || dbQuery.isKeyIdentity(results)) {
                             field.setKeyIdentityFlag(true);
                         }
                         haveId = true;

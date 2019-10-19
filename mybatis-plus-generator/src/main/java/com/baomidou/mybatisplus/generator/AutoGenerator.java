@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.generator;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.Version;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.generator.config.*;
@@ -162,7 +163,8 @@ public class AutoGenerator {
                 tableInfo.setImportPackages(Serializable.class.getCanonicalName());
             }
             // Boolean类型is前缀处理
-            if (config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix()) {
+            if (config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix()
+                && CollectionUtils.isNotEmpty(tableInfo.getFields())) {
                 tableInfo.getFields().stream().filter(field -> "boolean".equalsIgnoreCase(field.getPropertyType()))
                     .filter(field -> field.getPropertyName().startsWith("is"))
                     .forEach(field -> {
