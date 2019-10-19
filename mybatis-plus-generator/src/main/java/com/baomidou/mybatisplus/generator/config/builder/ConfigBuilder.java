@@ -424,6 +424,15 @@ public class ConfigBuilder {
                 }
                 tablesSql = String.format(tablesSql, schema);
             }
+            if (DbType.KINGBASE_ES == dbQuery.dbType()) {
+                String schema = dataSourceConfig.getSchemaName();
+                if (schema == null) {
+                    //kingbase 默认 schema=PUBLIC
+                    schema = "PUBLIC";
+                    dataSourceConfig.setSchemaName(schema);
+                }
+                tablesSql = String.format(tablesSql, schema);
+            }
             if (DbType.DB2 == dbQuery.dbType()) {
                 String schema = dataSourceConfig.getSchemaName();
                 if (schema == null) {
@@ -553,6 +562,8 @@ public class ConfigBuilder {
             String tableFieldsSql = dbQuery.tableFieldsSql();
             Set<String> h2PkColumns = new HashSet<>();
             if (DbType.POSTGRE_SQL == dbType) {
+                tableFieldsSql = String.format(tableFieldsSql, dataSourceConfig.getSchemaName(), tableName);
+            } else if (DbType.KINGBASE_ES == dbType) {
                 tableFieldsSql = String.format(tableFieldsSql, dataSourceConfig.getSchemaName(), tableName);
             } else if (DbType.DB2 == dbType) {
                 tableFieldsSql = String.format(tableFieldsSql, dataSourceConfig.getSchemaName(), tableName);
