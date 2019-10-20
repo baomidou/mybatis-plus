@@ -34,12 +34,21 @@ import java.util.Date;
 @Accessors(chain = true)
 @TableName("h2user")
 @EqualsAndHashCode(callSuper = true)
-public class H2User extends SuperEntity {
+public class H2User extends SuperEntity implements Cloneable {
 
     /**
 	 * serialVersionUID
 	 */
 	private static final long serialVersionUID = 2043176352335589747L;
+
+    @Override
+    public H2User clone() {
+        try {
+            return (H2User) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new InternalError(e);
+        }
+    }
 
 	/* 测试忽略验证 */
     private String name;

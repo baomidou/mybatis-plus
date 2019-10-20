@@ -104,7 +104,8 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
      */
     public LambdaQueryWrapper<T> lambda() {
         return new LambdaQueryWrapper<>(entity, entityClass, sqlSelect, paramNameSeq, paramNameValuePairs, expression,
-            lastSql, sqlComment);
+            lastSql, sqlComment)
+            .setExpectedDmlRowCount(expectedDmlRowCount);
     }
 
     /**

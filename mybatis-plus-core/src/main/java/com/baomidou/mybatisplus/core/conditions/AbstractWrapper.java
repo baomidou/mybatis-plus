@@ -25,6 +25,7 @@ import com.baomidou.mybatisplus.core.enums.SqlLike;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
+import com.baomidou.mybatisplus.core.toolkit.support.Range;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -62,6 +63,10 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      * SQL注释
      */
     protected SharedString sqlComment;
+    /**
+     * 预期的DML操作记录数
+     */
+    protected Range<Integer> expectedDmlRowCount;
     /**
      * 数据库表映射实体类
      */
@@ -445,6 +450,16 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
             return "/*" + StringEscape.escapeRawString(sqlComment.getStringValue()) + "*/";
         }
         return null;
+    }
+
+    @Override
+    public Range<Integer> getExpectedDmlRowCount() {
+        return expectedDmlRowCount;
+    }
+
+    public Children setExpectedDmlRowCount(Range<Integer> expectedDmlRowCount) {
+        this.expectedDmlRowCount = expectedDmlRowCount;
+        return typedThis;
     }
 
     @Override

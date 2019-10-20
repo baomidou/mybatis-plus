@@ -17,12 +17,16 @@ package com.baomidou.mybatisplus.test.h2;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.support.Range;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.h2.entity.H2Student;
 import com.baomidou.mybatisplus.test.h2.service.IH2StudentService;
+
+import org.apache.ibatis.exceptions.IbatisException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -160,7 +164,7 @@ class ActiveRecordTest {
     }
 
     @Test
-    @Order(12)
+    @Order(Integer.MAX_VALUE)
     void sqlCommentTest() {
         String name = "name1", nameNew = "name1New";
         H2Student student = new H2Student().setName(name).setAge(2);
@@ -183,4 +187,54 @@ class ActiveRecordTest {
         IPage<H2Student> h2StudentIPage = student.selectPage(new Page<>(1, 10), queryWrapper.comment("getStuPage"));
         Assertions.assertEquals(1, h2StudentIPage.getRecords().size());
     }
+
+    @SuppressWarnings("deprecation")
+    @Test
+    @Order(Integer.MAX_VALUE)
+    void expectedDmlRowCountTest() {
+        String name = "name1", nameNew = "name1New";
+        H2Student student = new H2Student().setName(name).setAge(20);
+        student.delete(new QueryWrapper<>());
+        int count = student.selectCount(new QueryWrapper<>());
+        Assertions.assertEquals(0, count);
+        try {
+            student.update(
+                new UpdateWrapper<H2Student>().lambda().setExpectedDmlRowCount(Range.between(1, Integer.MAX_VALUE))
+                    .eq(H2Student::getName, name)
+            );
+            Assertions.fail();
+        } catch (IbatisException e) {
+            LOGGER.info("expected update ex, exClassName={}, exMsg={}", e.getClass().getName(), e.getMessage());
+        }
+
+        student.insert();
+        count = student.selectCount(new QueryWrapper<>());
+        Assertions.assertEquals(1, count);
+
+        student.setName(nameNew).update(
+            new UpdateWrapper<H2Student>().lambda().setExpectedDmlRowCount(Range.is(1))
+                .eq(H2Student::getName, name)
+        );
+
+        count = student.selectCount(new QueryWrapper<H2Student>().lambda()
+            .eq(H2Student::getName, nameNew)
+        );
+        Assertions.assertEquals(1, count);
+
+        boolean updated = student.clone().setName(name).updateById();
+        Assertions.assertTrue(updated);
+
+        try {
+            student.delete(new QueryWrapper<H2Student>().lambda().setExpectedDmlRowCount(Range.is(1))
+                .eq(H2Student::getName, "")
+            );
+            Assertions.fail();
+        } catch (IbatisException e) {
+            LOGGER.info("expected update ex, exClassName={}, exMsg={}", e.getClass().getName(), e.getMessage());
+        }
+
+        new H2Student().setName("name2").setAge(21).insert();
+        student.delete(new QueryWrapper<H2Student>().setExpectedDmlRowCount(Range.is(2)));
+    }
+
 }

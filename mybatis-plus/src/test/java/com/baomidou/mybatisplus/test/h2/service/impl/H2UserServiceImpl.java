@@ -22,9 +22,11 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.baomidou.mybatisplus.core.toolkit.support.Range;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.test.h2.entity.H2User;
@@ -122,5 +124,16 @@ public class H2UserServiceImpl extends ServiceImpl<H2UserMapper, H2User> impleme
         saveBatch(Arrays.asList(new H2User("simpleAndBatchTx2", 0), new H2User("simpleAndBatchTx3", 0), new H2User("simpleAndBatchTx4", 0)), 1);
         saveOrUpdateBatch(Arrays.asList(new H2User("simpleAndBatchTx5", 0), new H2User("simpleAndBatchTx6", 0), new H2User("simpleAndBatchTx7", 0)), 1);
         throw new MybatisPlusException("测试事务回滚");
+    }
+
+    @Override
+    @Transactional(rollbackFor = RuntimeException.class)
+    public void testPredictionTransactional() {
+        save(new H2User("prediction1", 0));
+        update(new H2User(),
+            new UpdateWrapper<H2User>().lambda().setExpectedDmlRowCount(Range.is(100))
+                .eq(H2User::getName, "prediction1")
+                .set(H2User::getName, "prediction2")
+        );
     }
 }

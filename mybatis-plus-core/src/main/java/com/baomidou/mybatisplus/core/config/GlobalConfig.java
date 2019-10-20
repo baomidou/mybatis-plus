@@ -21,10 +21,13 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.core.mapper.Mapper;
+import com.baomidou.mybatisplus.core.toolkit.support.Range;
+
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.io.Serializable;
@@ -90,6 +93,11 @@ public class GlobalConfig implements Serializable {
     public void signGlobalConfig(SqlSessionFactory sqlSessionFactory) {
         this.sqlSessionFactory = sqlSessionFactory;
     }
+
+    /**
+     * DML操作记录数预言 配置
+     */
+    private DmlRowCountPredictionConfig dmlRowCountPredictionConfig = new DmlRowCountPredictionConfig();
 
     @Data
     public static class DbConfig {
@@ -157,5 +165,29 @@ public class GlobalConfig implements Serializable {
          * @since 3.1.2
          */
         private FieldStrategy selectStrategy = FieldStrategy.NOT_NULL;
+    }
+
+    /**
+     * DML操作记录数预言 配置类。
+     */
+    @Data
+    public static class DmlRowCountPredictionConfig {
+
+        /**
+         * DML操作记录数预言 是否开启。
+         * 默认开启。只有给SQL操作设置了期望值才会做预言匹配。
+         */
+        private boolean predictionEnabled = true;
+        /**
+         * DML操作记录数默认期望值 是否开启。
+         * 默认不开启。
+         * 大部分DML操作记录数都是1，开启全局配置之后可以减少相关代码量。
+         */
+        private boolean defaultExpectedDmlRowCountEnabled = false;
+        /**
+         * DML操作记录数默认期望值。
+         * 默认值为1。
+         */
+        private Range<Integer> defaultExpectedDmlRowCount = Range.is(1);
     }
 }

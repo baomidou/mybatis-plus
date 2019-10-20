@@ -93,7 +93,8 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
      * 返回一个支持 lambda 函数写法的 wrapper
      */
     public LambdaUpdateWrapper<T> lambda() {
-        return new LambdaUpdateWrapper<>(entity, sqlSet, paramNameSeq, paramNameValuePairs, expression, lastSql, sqlComment);
+        return new LambdaUpdateWrapper<>(entity, sqlSet, paramNameSeq, paramNameValuePairs, expression, lastSql, sqlComment)
+            .setExpectedDmlRowCount(expectedDmlRowCount);
     }
 
     @Override

@@ -39,13 +39,22 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class H2Student extends Model<H2Student> {
+public class H2Student extends Model<H2Student> implements Cloneable {
 
 
     /**
 	 * serialVersionUID
 	 */
 	private static final long serialVersionUID = 1290051894415073936L;
+
+	@Override
+    public H2Student clone() {
+        try {
+            return (H2Student) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new InternalError(e);
+        }
+    }
 
 	public H2Student(Long id, String name, Integer age) {
         this.id = id;

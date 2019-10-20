@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.support.Range;
 
 import java.util.Objects;
 
@@ -49,6 +50,18 @@ public abstract class Wrapper<T> implements ISqlSegment {
     }
 
     public String getSqlComment() {
+        return null;
+    }
+
+    /**
+     * 返回 预期的DML操作记录数。
+     * 可用于预言判断、自动回滚不符合预期的事务。
+     * 拦截器可参考{@code DmlRowCountPredictionInterceptor}。
+     * 相关配置可参考{@link com.baomidou.mybatisplus.core.config.GlobalConfig.DmlRowCountPredictionConfig}.
+     *
+     * @return range or null
+     */
+    public Range<Integer> getExpectedDmlRowCount() {
         return null;
     }
 

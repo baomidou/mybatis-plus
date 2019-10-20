@@ -28,6 +28,7 @@ import org.apache.ibatis.exceptions.PersistenceException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -353,6 +354,17 @@ class H2UserTest extends BaseTest {
             ));
         } catch (Exception e) {
             Assertions.assertTrue(e instanceof PersistenceException);
+        }
+    }
+
+    @Test
+    @Order(29)
+    void testPredictionTransactional() {
+        try {
+            userService.testPredictionTransactional();
+        } catch (DataAccessException e) {
+            List<H2User> list = userService.list(new QueryWrapper<H2User>().like("name", "prediction"));
+            Assertions.assertTrue(CollectionUtils.isEmpty(list));
         }
     }
 

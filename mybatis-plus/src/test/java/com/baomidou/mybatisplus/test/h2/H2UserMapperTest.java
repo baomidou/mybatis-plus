@@ -20,15 +20,21 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.support.Range;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.h2.entity.H2User;
 import com.baomidou.mybatisplus.test.h2.entity.SuperEntity;
 import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.mapper.H2UserMapper;
+
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -49,8 +55,12 @@ import static java.util.stream.Collectors.toList;
 @ContextConfiguration(locations = {"classpath:h2/spring-test-h2.xml"})
 class H2UserMapperTest extends BaseTest {
 
+    private static final Logger logger = LoggerFactory.getLogger(H2UserMapperTest.class);
+
     @Resource
     protected H2UserMapper userMapper;
+    @Resource
+    private TransactionTemplate transactionTemplate;
 
     @Test
     @Order(1)
@@ -200,6 +210,67 @@ class H2UserMapperTest extends BaseTest {
         Assertions.assertEquals(1, selectMapsPage.getRecords().size());
         List<Object> selectObjs = userMapper.selectObjs(queryWrapper.comment("getUserObjs"));
         Assertions.assertEquals(1, selectObjs.size());
+    }
+
+    @Test
+    @Order(Integer.MAX_VALUE)
+    void expectedDmlRowCountTest() {
+        // @TableLogic private Integer deleted;
+        userMapper.delete(new QueryWrapper<>());
+        int count = userMapper.selectCount(new QueryWrapper<>());
+        Assertions.assertEquals(0, count);
+        String name = "name1", nameNew = "name1New";
+        try {
+            userMapper.update(new H2User(),
+                new UpdateWrapper<H2User>().lambda().setExpectedDmlRowCount(Range.between(1, Integer.MAX_VALUE))
+                    .eq(H2User::getName, name)
+                    .set(H2User::getName, nameNew)
+            );
+            Assertions.fail();
+        } catch (DataAccessException e) {
+            logger.info("expected ex, exClassName={}, exMsg={}", e.getClass().getName(), e.getMessage());
+        }
+
+        H2User u1 = new H2User().setName(name).setAge(AgeEnum.ONE);
+        userMapper.insert(u1);
+        count = userMapper.selectCount(new QueryWrapper<>());
+        Assertions.assertEquals(1, count);
+
+        userMapper.update(new H2User(),
+            new UpdateWrapper<H2User>().lambda().setExpectedDmlRowCount(Range.is(1))
+                .eq(H2User::getName, name)
+                .set(H2User::getName, nameNew)
+        );
+
+        count = userMapper.selectCount(new QueryWrapper<H2User>().lambda()
+            .eq(H2User::getName, nameNew)
+        );
+        Assertions.assertEquals(1, count);
+
+        int updateCount = userMapper.updateById(u1.clone().setName(name));
+        Assertions.assertEquals(1, updateCount);
+
+        try {
+            userMapper.delete(new QueryWrapper<H2User>().lambda().setExpectedDmlRowCount(Range.is(1))
+                .eq(H2User::getName, "")
+            );
+            Assertions.fail();
+        } catch (DataAccessException e) {
+            logger.info("expected ex, exClassName={}, exMsg={}", e.getClass().getName(), e.getMessage());
+        }
+
+        userMapper.insert(new H2User().setName("name2"));
+        userMapper.delete(new QueryWrapper<H2User>().setExpectedDmlRowCount(Range.is(2)));
+
+        try {
+            Boolean executeRet = transactionTemplate.execute(transactionStatus -> {
+                userMapper.delete(new QueryWrapper<H2User>().setExpectedDmlRowCount(Range.is(2)));
+                return true;
+            });
+            Assertions.assertTrue(executeRet != null && !executeRet);
+        } catch (DataAccessException e) {
+            logger.info("expected ex, exClassName={}, exMsg={}", e.getClass().getName(), e.getMessage());
+        }
     }
 
     @Test

@@ -23,12 +23,14 @@ import com.baomidou.mybatisplus.core.injector.AbstractMethod;
 import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.core.parser.AbstractJsqlParser;
 import com.baomidou.mybatisplus.core.parser.ISqlParser;
+import com.baomidou.mybatisplus.core.toolkit.support.Range;
 import com.baomidou.mybatisplus.extension.injector.methods.additional.AlwaysUpdateSomeColumnById;
 import com.baomidou.mybatisplus.extension.injector.methods.additional.InsertBatchSomeColumn;
 import com.baomidou.mybatisplus.extension.injector.methods.additional.LogicDeleteByIdWithFill;
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.SqlExplainInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.DmlRowCountPredictionInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.baomidou.mybatisplus.test.h2.H2MetaObjectHandler;
 import net.sf.jsqlparser.statement.delete.Delete;
@@ -75,7 +77,12 @@ public class MybatisPlusConfig {
         configuration.setMapUnderscoreToCamelCase(true);
         configuration.setDefaultExecutorType(ExecutorType.REUSE);
         configuration.setDefaultEnumTypeHandler(EnumOrdinalTypeHandler.class);  //默认枚举处理
+        configuration.setGlobalConfig(globalConfig);
         sqlSessionFactory.setConfiguration(configuration);
+        GlobalConfig.DmlRowCountPredictionConfig dmlRowCountPredictionConfig = globalConfig.getDmlRowCountPredictionConfig();
+        dmlRowCountPredictionConfig.setPredictionEnabled(true).setDefaultExpectedDmlRowCountEnabled(false)
+            .setDefaultExpectedDmlRowCount(Range.between(1, 1));
+        configuration.addInterceptor(new DmlRowCountPredictionInterceptor());
         PaginationInterceptor pagination = new PaginationInterceptor();
         SqlExplainInterceptor sqlExplainInterceptor = new SqlExplainInterceptor();
         List<ISqlParser> sqlParserList = new ArrayList<>();
