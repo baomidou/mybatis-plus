@@ -236,19 +236,24 @@ class H2UserMapperTest extends BaseTest {
         count = userMapper.selectCount(new QueryWrapper<>());
         Assertions.assertEquals(1, count);
 
-        userMapper.update(new H2User(),
+        int updateCount = userMapper.update(new H2User(),
             new UpdateWrapper<H2User>().lambda().setExpectedDmlRowCount(Range.is(1))
                 .eq(H2User::getName, name)
                 .set(H2User::getName, nameNew)
         );
+        Assertions.assertEquals(1, updateCount);
+        Assertions.assertEquals(1, userMapper.selectCount(
+                new QueryWrapper<H2User>().lambda().eq(H2User::getName, nameNew)));
 
         count = userMapper.selectCount(new QueryWrapper<H2User>().lambda()
             .eq(H2User::getName, nameNew)
         );
         Assertions.assertEquals(1, count);
 
-        int updateCount = userMapper.updateById(u1.clone().setName(name));
+        updateCount = userMapper.updateById(u1.clone().setName(name));
         Assertions.assertEquals(1, updateCount);
+        Assertions.assertEquals(1, userMapper.selectCount(
+                new QueryWrapper<H2User>().lambda().eq(H2User::getName, name)));
 
         try {
             userMapper.delete(new QueryWrapper<H2User>().lambda().setExpectedDmlRowCount(Range.is(1))

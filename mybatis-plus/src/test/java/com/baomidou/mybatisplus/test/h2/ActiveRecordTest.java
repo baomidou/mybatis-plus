@@ -211,18 +211,23 @@ class ActiveRecordTest {
         count = student.selectCount(new QueryWrapper<>());
         Assertions.assertEquals(1, count);
 
-        student.setName(nameNew).update(
+        boolean updated = student.setName(nameNew).update(
             new UpdateWrapper<H2Student>().lambda().setExpectedDmlRowCount(Range.is(1))
                 .eq(H2Student::getName, name)
         );
+        Assertions.assertTrue(updated);
+        Assertions.assertEquals(1, student.selectCount(
+                new QueryWrapper<H2Student>().lambda().eq(H2Student::getName, nameNew)));
 
         count = student.selectCount(new QueryWrapper<H2Student>().lambda()
             .eq(H2Student::getName, nameNew)
         );
         Assertions.assertEquals(1, count);
 
-        boolean updated = student.clone().setName(name).updateById();
+        updated = student.clone().setName(name).updateById();
         Assertions.assertTrue(updated);
+        Assertions.assertEquals(1, student.selectCount(
+                new QueryWrapper<H2Student>().lambda().eq(H2Student::getName, name)));
 
         try {
             student.delete(new QueryWrapper<H2Student>().lambda().setExpectedDmlRowCount(Range.is(1))
