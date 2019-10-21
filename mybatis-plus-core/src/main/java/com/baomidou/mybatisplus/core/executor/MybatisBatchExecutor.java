@@ -112,9 +112,10 @@ public class MybatisBatchExecutor extends AbstractBaseExecutor {
         Connection connection = getConnection(ms.getStatementLog());
         //游标不支持返回null
         Statement stmt = handler.prepare(connection, transaction.getTimeout());
-        stmt.closeOnCompletion();
         handler.parameterize(stmt);
-        return handler.queryCursor(stmt);
+        Cursor<E> cursor = handler.queryCursor(stmt);
+        stmt.closeOnCompletion();
+        return cursor;
     }
 
     @Override
