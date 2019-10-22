@@ -6,6 +6,9 @@ dependencies {
     api 'org.springframework.boot:spring-boot-autoconfigure'
     api 'org.springframework.boot:spring-boot-starter-jdbc'
     implementation 'org.springframework.boot:spring-boot-configuration-processor'
+    implementation "${lib.'mybatis-thymeleaf'}"
+    implementation "${lib.'mybatis-velocity'}"
+    implementation "${lib.'mybatis-freemarker'}"
     implementation 'org.springframework.boot:spring-boot-autoconfigure-processor'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation "${lib.'mybatis-spring-boot-starter'}"
