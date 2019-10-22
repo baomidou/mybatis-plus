@@ -70,7 +70,10 @@ public class IdWorker {
      *
      * @param workerId     工作机器 ID
      * @param dataCenterId 序列号
+     * @see #setIdGenerator(IdGenerator)
+     * @deprecated 3.2.1
      */
+    @Deprecated
     public static void initSequence(long workerId, long dataCenterId) {
         ID_GENERATOR = new DefaultIdGenerator(workerId, dataCenterId);
     }

@@ -24,18 +24,19 @@ import com.baomidou.mybatisplus.core.toolkit.Sequence;
  * @date 2019/10/15
  */
 public class DefaultIdGenerator implements IdGenerator {
-    private static Sequence WORKER;
+
+    private Sequence sequence;
 
     public DefaultIdGenerator() {
-        WORKER = new Sequence();
+        sequence = new Sequence();
     }
 
     public DefaultIdGenerator(long workerId, long dataCenterId) {
-        WORKER = new Sequence(workerId, dataCenterId);
+        sequence = new Sequence(workerId, dataCenterId);
     }
 
     @Override
     public long nextId() {
-        return WORKER.nextId();
+        return sequence.nextId();
     }
 }

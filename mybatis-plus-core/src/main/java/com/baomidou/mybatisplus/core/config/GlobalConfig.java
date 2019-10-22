@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
+import com.baomidou.mybatisplus.core.incrementer.IdGenerator;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.core.mapper.Mapper;
 import lombok.AccessLevel;
@@ -83,7 +84,10 @@ public class GlobalConfig implements Serializable {
      * 元对象字段填充控制器
      */
     private MetaObjectHandler metaObjectHandler;
-
+    /**
+     * 主键生成器
+     */
+    private IdGenerator idGenerator;
     /**
      * 标记全局设置 (统一所有入口)
      */
