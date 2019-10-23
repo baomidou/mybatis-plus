@@ -19,6 +19,7 @@ package com.baomidou.mybatisplus.autoconfigure;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import com.baomidou.mybatisplus.core.incrementer.DefaultIdGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IdGenerator;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
@@ -218,11 +219,8 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
             ISqlInjector iSqlInjector = this.applicationContext.getBean(ISqlInjector.class);
             globalConfig.setSqlInjector(iSqlInjector);
         }
-        if (this.applicationContext.getBeanNamesForType(IdGenerator.class, false,
-            false).length > 0) {
-            IdGenerator idGenerator = this.applicationContext.getBean(IdGenerator.class);
-            globalConfig.setIdGenerator(idGenerator);
-        }
+        IdGenerator idGenerator = this.applicationContext.getBean(IdGenerator.class);
+        globalConfig.setIdGenerator(idGenerator);
         // TODO 设置 GlobalConfig 到 MybatisSqlSessionFactoryBean
         factory.setGlobalConfig(globalConfig);
         return factory.getObject();
@@ -252,6 +250,16 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
         } else {
             return new SqlSessionTemplate(sqlSessionFactory);
         }
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public IdGenerator idGenerator() {
+        GlobalConfig globalConfig = this.properties.getGlobalConfig();
+        if (globalConfig.getWorkerId() != null && globalConfig.getDatacenterId() != null) {
+            return new DefaultIdGenerator(globalConfig.getWorkerId(), globalConfig.getDatacenterId());
+        }
+        return new DefaultIdGenerator();
     }
 
     /**

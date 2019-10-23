@@ -20,7 +20,6 @@ import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
-import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
@@ -75,14 +74,7 @@ public class GlobalConfigUtils {
     }
 
     public static ISqlInjector getSqlInjector(Configuration configuration) {
-        // fix #140
-        GlobalConfig globalConfiguration = getGlobalConfig(configuration);
-        ISqlInjector sqlInjector = globalConfiguration.getSqlInjector();
-        if (sqlInjector == null) {
-            sqlInjector = new DefaultSqlInjector();
-            globalConfiguration.setSqlInjector(sqlInjector);
-        }
-        return sqlInjector;
+        return getGlobalConfig(configuration).getSqlInjector();
     }
 
     public static MetaObjectHandler getMetaObjectHandler(Configuration configuration) {

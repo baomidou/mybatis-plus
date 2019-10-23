@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IdGenerator;
+import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.core.mapper.Mapper;
 import lombok.AccessLevel;
@@ -66,7 +67,7 @@ public class GlobalConfig implements Serializable {
     /**
      * SQL注入器
      */
-    private ISqlInjector sqlInjector;
+    private ISqlInjector sqlInjector = new DefaultSqlInjector();
     /**
      * Mapper父类
      */
