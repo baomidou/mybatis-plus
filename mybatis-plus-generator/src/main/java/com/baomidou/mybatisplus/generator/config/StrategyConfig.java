@@ -277,6 +277,10 @@ public class StrategyConfig {
         this.superControllerClass = clazz.getName();
     }
 
+    public void setSuperControllerClass(String superControllerClass) {
+        this.superControllerClass = superControllerClass;
+    }
+
     /**
      * <p>
      * 父类 Class 反射属性转换为公共字段
