@@ -7,9 +7,4 @@ dependencies {
     implementation "${lib.cglib}"
     implementation "${lib.'spring-aop'}"
 
-    testCompile "${lib.aspectjweaver}"
-    testCompile "${lib.hikaricp}"
-    testCompile "${lib.druid}"
-    testCompile "${lib.fastjson}"
-    testCompile "${lib.tomcatjdbc}"
 }
