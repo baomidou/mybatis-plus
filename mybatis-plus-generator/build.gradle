@@ -13,6 +13,5 @@ dependencies {
     testCompile "${lib.h2}"
     testCompile "${lib.mysql}"
     testCompile "${lib.sqlite}"
-    testCompile "${lib.'logback-classic'}"
     testCompile "${lib.'swagger-annotations'}"
 }

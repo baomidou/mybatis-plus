@@ -19,7 +19,6 @@ dependencies {
     testImplementation("${lib["fastjson"]}")
 
     testImplementation("${lib["hikaricp"]}")
-    testImplementation("${lib["commons-dbcp2"]}")
     testImplementation("${lib["druid"]}")
     testImplementation("${lib["tomcatjdbc"]}")
 
@@ -28,5 +27,4 @@ dependencies {
     testImplementation("${lib["postgresql"]}")
     testImplementation(lib["oracle"] as ConfigurableFileTree)
     testImplementation("${lib["mysql"]}")
-    testImplementation("${lib["logback-classic"]}")
 }

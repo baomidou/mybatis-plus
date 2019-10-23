@@ -9,7 +9,6 @@ dependencies {
     testCompile "${lib.fastjson}"
 
     testCompile "${lib.hikaricp}"
-    testCompile "${lib.'commons-dbcp2'}"
     testCompile "${lib.druid}"
     testCompile "${lib.tomcatjdbc}"
 
@@ -19,7 +18,6 @@ dependencies {
     testCompile lib.oracle as ConfigurableFileTree
     testCompile "${lib.mysql}"
     testCompile "${lib.jackson}"
-    testCompile "${lib.'logback-classic'}"
 
     testCompile "${lib.'spring-context-support'}"
     testCompile "${lib.'spring-jdbc'}"

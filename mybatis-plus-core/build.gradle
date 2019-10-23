@@ -6,11 +6,6 @@ dependencies {
 
     implementation "${lib.cglib}"
     implementation "${lib.'spring-aop'}"
-    
-
-    testCompile "${lib.'mybatis-ehcache'}"
-    testCompile "${lib.'logback-classic'}"
-    testCompile "${lib.'commons-dbcp2'}"
 
     testCompile "${lib.aspectjweaver}"
     testCompile "${lib.hikaricp}"

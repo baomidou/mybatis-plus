@@ -26,7 +26,7 @@ ext {
         springVersion = '5.2.0.RELEASE',
         springBootVersion = '2.2.0.RELEASE',
         jsqlparserVersion = '3.0',
-        junitVersion = '5.4.0',
+        junitVersion = '5.5.2',
     ]
 
     lib = [
@@ -49,18 +49,15 @@ ext {
 
         "javax.servlet-api"          : "javax.servlet:javax.servlet-api:4.0.1",
         "aspectjweaver"              : "org.aspectj:aspectjweaver:1.9.4",
-        "mockito"                    : "org.mockito:mockito-core:2.24.0",
-        "mybatis-ehcache"            : "org.mybatis.caches:mybatis-ehcache:1.1.0",
-        "slf4j-api"                  : "org.slf4j:slf4j-api:1.7.25",
+        "slf4j-api"                  : "org.slf4j:slf4j-api:1.7.28",
         "logback-classic"            : "ch.qos.logback:logback-classic:1.2.3",
         //copy
         "mybatis-spring-boot-starter": "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}",
         //test
         "spring-test"                : "org.springframework:spring-test:${springVersion}",
-        "assertj-core"               : "org.assertj:assertj-core:3.12.2",
+        "assertj-core"               : "org.assertj:assertj-core:3.13.2",
         "junit-jupiter-api"          : "org.junit.jupiter:junit-jupiter-api:${junitVersion}",
         "junit-jupiter-engine"       : "org.junit.jupiter:junit-jupiter-engine:${junitVersion}",
-        "mockito-all"                : "org.mockito:mockito-all:1.10.19",
         "fastjson"                   : "com.alibaba:fastjson:1.2.62",
         "jackson"                    : "com.fasterxml.jackson.core:jackson-databind:2.10.0",
         "tomcatjdbc"                 : "org.apache.tomcat:tomcat-jdbc:9.0.16",
@@ -69,7 +66,6 @@ ext {
         "hikaricp"                   : "com.zaxxer:HikariCP:3.4.1",
         "druid"                      : "com.alibaba:druid:1.1.20",
         "p6spy"                      : "p6spy:p6spy:3.8.6",
-        "commons-dbcp2"              : "org.apache.commons:commons-dbcp2:2.5.0",
         "sqlserver"                  : "com.microsoft.sqlserver:sqljdbc4:4.0",
         "postgresql"                 : "org.postgresql:postgresql:9.4.1212",
         "oracle"                     : fileTree(dir: 'libs', includes: ['ojdbc-11.2.0.3-jdk16.jar']),
@@ -79,8 +75,8 @@ ext {
         "mysql"                      : "mysql:mysql-connector-java:8.0.15",
         "sqlite"                     : "org.xerial:sqlite-jdbc:3.27.2.1",
         //code generator
-        "velocity"                   : "org.apache.velocity:velocity-engine-core:2.0",
-        "freemarker"                 : "org.freemarker:freemarker:2.3.28",
+        "velocity"                   : "org.apache.velocity:velocity-engine-core:2.1",
+        "freemarker"                 : "org.freemarker:freemarker:2.3.29",
         "beetl"                      : "com.ibeetl:beetl:2.9.8",
         "swagger-annotations"        : "io.swagger:swagger-annotations:1.5.21"
     ]
@@ -149,9 +145,9 @@ subprojects {
         testImplementation("${lib["assertj-core"]}")
         testImplementation("${lib["junit-jupiter-api"]}")
         testRuntimeOnly("${lib["junit-jupiter-engine"]}")
-        testCompileOnly("${lib["mockito-all"]}")
-        testImplementation("org.mockito:mockito-junit-jupiter:2.24.0")
+        testImplementation("org.mockito:mockito-junit-jupiter:3.1.0")
         testImplementation("${lib["lagarto"]}")
+        testImplementation("${lib["logback-classic"]}")
     }
 
     //noinspection GroovyAssignabilityCheck
