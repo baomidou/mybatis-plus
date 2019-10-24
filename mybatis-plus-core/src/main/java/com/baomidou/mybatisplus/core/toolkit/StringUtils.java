@@ -17,27 +17,22 @@ package com.baomidou.mybatisplus.core.toolkit;
 
 import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
 import com.baomidou.mybatisplus.core.toolkit.support.BiIntFunction;
+import jdk.internal.vm.annotation.ForceInline;
 
-import java.nio.charset.StandardCharsets;
-import java.sql.Blob;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.util.stream.Collectors.joining;
 
 /**
- * <p>
  * String 工具类
- * </p>
  *
  * @author D.Yang
+ * @author hcl
  * @since 2016-08-18
  */
-public class StringUtils {
+public final class StringUtils {
 
     /**
      * 空字符
@@ -66,7 +61,6 @@ public class StringUtils {
     private static final Pattern CAPITAL_MODE = Pattern.compile("^[0-9A-Z/_]+$");
 
     private StringUtils() {
-        // to do nothing
     }
 
     /**
@@ -76,29 +70,9 @@ public class StringUtils {
      * @param params format 参数
      * @return format 后的
      */
+    @ForceInline
     public static String format(String target, Object... params) {
-        if (target.contains("%s") && ArrayUtils.isNotEmpty(params)) {
-            return String.format(target, params);
-        }
-        return target;
-    }
-
-    /**
-     * Blob 转为 String 格式
-     *
-     * @param blob Blob 对象
-     * @return 转换后的
-     */
-    public static String blob2String(Blob blob) {
-        if (null != blob) {
-            try {
-                byte[] returnValue = blob.getBytes(1, (int) blob.length());
-                return new String(returnValue, StandardCharsets.UTF_8);
-            } catch (Exception e) {
-                throw ExceptionUtils.mpe("Blob Convert To String Error!");
-            }
-        }
-        return null;
+        return String.format(target, params);
     }
 
     /**
@@ -107,23 +81,52 @@ public class StringUtils {
      * @param cs 需要判断字符串
      * @return 判断结果
      */
-    public static boolean isEmpty(final CharSequence cs) {
-        if (cs == null) {
-            return true;
-        }
-        int l = cs.length();
-        if (l > 0) {
-            for (int i = 0; i < l; i++) {
-                if (!Character.isWhitespace(cs.charAt(i))) {
-                    return false;
-                }
-            }
-        }
-        return true;
+    public static boolean isEmpty(CharSequence cs) {
+        return null == cs || 0 == cs.length();
     }
 
     /**
+     * 判断字符串是否不为空
+     *
+     * @param cs 需要判断字符串
+     * @return 判断结果
+     */
+    @ForceInline
+    public static boolean isNotEmpty(final CharSequence cs) {
+        return !isEmpty(cs);
+    }
+
+    /**
+     * 猜测方法属性对应的 Getter 名称，具体规则请参考 JavaBeans 规范
+     *
+     * @param name 属性名称
+     * @param type 属性类型
+     * @return 返回猜测的名称
+     */
+    public static String guessGetterName(String name, Class<?> type) {
+        if (ClassUtils.isBoolean(type)) {
+            return name.startsWith("is") ? name : "is" + upperFirst(name);
+        }
+        return "get" + upperFirst(name);
+    }
+
+    /**
+     * 大写第一个字母
+     *
+     * @param src 源字符串
+     * @return 返回第一个大写后的字符串
+     */
+    public static String upperFirst(String src) {
+        if (Character.isLowerCase(src.charAt(0))) {
+            return 1 == src.length() ? src.toUpperCase() : Character.toUpperCase(src.charAt(0)) + src.substring(1);
+        }
+        return src;
+    }
+
+
+    /**
      * 判断字符串是不是驼峰命名
+     *
      * <li> 包含 '_' 不算 </li>
      * <li> 首字母大写的不算 </li>
      *
@@ -137,15 +140,6 @@ public class StringUtils {
         return Character.isLowerCase(str.charAt(0));
     }
 
-    /**
-     * 判断字符串是否不为空
-     *
-     * @param cs 需要判断字符串
-     * @return 判断结果
-     */
-    public static boolean isNotEmpty(final CharSequence cs) {
-        return !isEmpty(cs);
-    }
 
     /**
      * 判断字符串是否符合数据库字段的命名
@@ -193,22 +187,6 @@ public class StringUtils {
     }
 
     /**
-     * 解析 getMethodName -> propertyName
-     *
-     * @param getMethodName 需要解析的
-     * @return 返回解析后的字段名称
-     */
-    public static String resolveFieldName(String getMethodName) {
-        if (getMethodName.startsWith("get")) {
-            getMethodName = getMethodName.substring(3);
-        } else if (getMethodName.startsWith(IS)) {
-            getMethodName = getMethodName.substring(2);
-        }
-        // 小写第一个字母
-        return StringUtils.firstToLowerCase(getMethodName);
-    }
-
-    /**
      * 字符串下划线转驼峰格式
      *
      * @param param 需要转换的字符串
@@ -248,16 +226,6 @@ public class StringUtils {
     }
 
     /**
-     * 判断字符串是否为纯大写字母
-     *
-     * @param str 要匹配的字符串
-     * @return
-     */
-    public static boolean isUpperCase(String str) {
-        return matches("^[A-Z]+$", str);
-    }
-
-    /**
      * 正则表达式匹配
      *
      * @param regex 正则表达式字符串
@@ -284,7 +252,8 @@ public class StringUtils {
     public static String sqlArgsFill(String content, Object... args) {
         if (StringUtils.isNotEmpty(content) && ArrayUtils.isNotEmpty(args)) {
             // 索引不能使用，因为 SQL 中的占位符数字与索引不相同
-            return replace(content, MP_SQL_PLACE_HOLDER, (m, i) -> sqlParam(args[Integer.parseInt(m.group("idx"))])).toString();
+            BiIntFunction<Matcher, CharSequence> handler = (m, i) -> sqlParam(args[Integer.parseInt(m.group("idx"))]);
+            return replace(content, MP_SQL_PLACE_HOLDER, handler).toString();
         }
         return content;
     }
@@ -357,7 +326,7 @@ public class StringUtils {
      */
     public static String quotaMarkList(Collection<?> coll) {
         return coll.stream().map(StringUtils::quotaMark)
-            .collect(joining(StringPool.COMMA, StringPool.LEFT_BRACKET, StringPool.RIGHT_BRACKET));
+                .collect(joining(StringPool.COMMA, StringPool.LEFT_BRACKET, StringPool.RIGHT_BRACKET));
     }
 
     /**
@@ -378,16 +347,6 @@ public class StringUtils {
         }
 
         return concatStr + Character.toTitleCase(firstChar) + str.substring(1);
-    }
-
-    /**
-     * 字符串第一个字母大写
-     *
-     * @param str 被处理的字符串
-     * @return 首字母大写后的字符串
-     */
-    public static String capitalize(final String str) {
-        return concatCapitalize(null, str);
     }
 
     /**
@@ -477,34 +436,6 @@ public class StringUtils {
     }
 
     /**
-     * Case insensitive check if a String ends with a specified suffix.
-     * <p>
-     * <code>null</code>s are handled without exceptions. Two <code>null</code>
-     * references are considered to be equal. The comparison is case
-     * insensitive.
-     * </p>
-     * <p>
-     * <pre>
-     * StringUtils.endsWithIgnoreCase(null, null)      = true
-     * StringUtils.endsWithIgnoreCase(null, "abcdef")  = false
-     * StringUtils.endsWithIgnoreCase("def", null)     = false
-     * StringUtils.endsWithIgnoreCase("def", "abcdef") = true
-     * StringUtils.endsWithIgnoreCase("def", "ABCDEF") = false
-     * </pre>
-     * </p>
-     *
-     * @param str    the String to check, may be null
-     * @param suffix the suffix to find, may be null
-     * @return <code>true</code> if the String ends with the suffix, case
-     * insensitive, or both <code>null</code>
-     * @see String#endsWith(String)
-     * @since 2.4
-     */
-    public static boolean endsWithIgnoreCase(String str, String suffix) {
-        return endsWith(str, suffix, true);
-    }
-
-    /**
      * Check if a String ends with a specified suffix (optionally case
      * insensitive).
      *
@@ -528,139 +459,6 @@ public class StringUtils {
     }
 
     /**
-     * Splits the provided text into an array, separators specified. This is an
-     * alternative to using StringTokenizer.
-     * <p>
-     * The separator is not included in the returned String array. Adjacent
-     * separators are treated as one separator. For more control over the split
-     * use the StrTokenizer class.
-     * </p>
-     * <p>
-     * A {@code null} input String returns {@code null}. A {@code null}
-     * separatorChars splits on whitespace.
-     * </p>
-     * <p>
-     * <pre>
-     * StringUtils.split(null, *)         = null
-     * StringUtils.split("", *)           = []
-     * StringUtils.split("abc def", null) = ["abc", "def"]
-     * StringUtils.split("abc def", " ")  = ["abc", "def"]
-     * StringUtils.split("abc  def", " ") = ["abc", "def"]
-     * StringUtils.split("ab:cd:ef", ":") = ["ab", "cd", "ef"]
-     * </pre>
-     * </p>
-     *
-     * @param str            the String to parse, may be null
-     * @param separatorChars the characters used as the delimiters, {@code null} splits on
-     *                       whitespace
-     * @return an array of parsed Strings, {@code null} if null String input
-     */
-    public static String[] split(final String str, final String separatorChars) {
-        List<String> strings = splitWorker(str, separatorChars, -1, false);
-        return strings.toArray(new String[0]);
-    }
-
-    /**
-     * Performs the logic for the {@code split} and
-     * {@code splitPreserveAllTokens} methods that return a maximum array
-     * length.
-     *
-     * @param str               the String to parse, may be {@code null}
-     * @param separatorChars    the separate character
-     * @param max               the maximum number of elements to include in the array. A zero
-     *                          or negative value implies no limit.
-     * @param preserveAllTokens if {@code true}, adjacent separators are treated as empty
-     *                          token separators; if {@code false}, adjacent separators are
-     *                          treated as one separator.
-     * @return an array of parsed Strings, {@code null} if null String input
-     */
-    public static List<String> splitWorker(final String str, final String separatorChars, final int max,
-                                           final boolean preserveAllTokens) {
-        // Performance tuned for 2.0 (JDK1.4)
-        // Direct code is quicker than StringTokenizer.
-        // Also, StringTokenizer uses isSpace() not isWhitespace()
-
-        if (str == null) {
-            return null;
-        }
-        final int len = str.length();
-        if (len == 0) {
-            return Collections.emptyList();
-        }
-        final List<String> list = new ArrayList<>();
-        int sizePlus1 = 1;
-        int i = 0, start = 0;
-        boolean match = false;
-        boolean lastMatch = false;
-        if (separatorChars == null) {
-            // Null separator means use whitespace
-            while (i < len) {
-                if (Character.isWhitespace(str.charAt(i))) {
-                    if (match || preserveAllTokens) {
-                        lastMatch = true;
-                        if (sizePlus1++ == max) {
-                            i = len;
-                            lastMatch = false;
-                        }
-                        list.add(str.substring(start, i));
-                        match = false;
-                    }
-                    start = ++i;
-                    continue;
-                }
-                lastMatch = false;
-                match = true;
-                i++;
-            }
-        } else if (separatorChars.length() == 1) {
-            // Optimise 1 character case
-            final char sep = separatorChars.charAt(0);
-            while (i < len) {
-                if (str.charAt(i) == sep) {
-                    if (match || preserveAllTokens) {
-                        lastMatch = true;
-                        if (sizePlus1++ == max) {
-                            i = len;
-                            lastMatch = false;
-                        }
-                        list.add(str.substring(start, i));
-                        match = false;
-                    }
-                    start = ++i;
-                    continue;
-                }
-                lastMatch = false;
-                match = true;
-                i++;
-            }
-        } else {
-            // standard case
-            while (i < len) {
-                if (separatorChars.indexOf(str.charAt(i)) >= 0) {
-                    if (match || preserveAllTokens) {
-                        lastMatch = true;
-                        if (sizePlus1++ == max) {
-                            i = len;
-                            lastMatch = false;
-                        }
-                        list.add(str.substring(start, i));
-                        match = false;
-                    }
-                    start = ++i;
-                    continue;
-                }
-                lastMatch = false;
-                match = true;
-                i++;
-            }
-        }
-        if (match || preserveAllTokens && lastMatch) {
-            list.add(str.substring(start, i));
-        }
-        return list;
-    }
-
-    /**
      * 是否为CharSequence类型
      *
      * @param clazz class
@@ -677,7 +475,7 @@ public class StringUtils {
      * @param propertyType 字段类型
      */
     public static String removeIsPrefixIfBoolean(String propertyName, Class<?> propertyType) {
-        if (isBoolean(propertyType) && propertyName.startsWith(IS)) {
+        if (ClassUtils.isBoolean(propertyType) && propertyName.startsWith(IS)) {
             String property = propertyName.replaceFirst(IS, EMPTY);
             if (isEmpty(property)) {
                 return propertyName;
@@ -687,16 +485,6 @@ public class StringUtils {
             }
         }
         return propertyName;
-    }
-
-    /**
-     * 是否为Boolean类型(包含普通类型)
-     *
-     * @param propertyCls ignore
-     * @return ignore
-     */
-    public static boolean isBoolean(Class<?> propertyCls) {
-        return propertyCls != null && (boolean.class.isAssignableFrom(propertyCls) || Boolean.class.isAssignableFrom(propertyCls));
     }
 
     /**
@@ -763,8 +551,7 @@ public class StringUtils {
             boolean previousIsWhitespace = Character.isWhitespace(previousChar);
             boolean lastOneIsNotUnderscore = (buf.length() > 0) && (buf.charAt(buf.length() - 1) != '_');
             boolean isNotUnderscore = c != '_';
-            if (lastOneIsNotUnderscore && (isUpperCaseAndPreviousIsLowerCase || previousIsWhitespace
-                || (betweenUpperCases && containsLowerCase && isUpperCaseAndPreviousIsUpperCase))) {
+            if (lastOneIsNotUnderscore && (isUpperCaseAndPreviousIsLowerCase || previousIsWhitespace)) {
                 buf.append(StringPool.UNDERSCORE);
             } else if ((Character.isDigit(previousChar) && Character.isLetter(c))) {
                 buf.append('_');
@@ -800,8 +587,8 @@ public class StringUtils {
         char lastChar = 'a';
         for (char c : s.toCharArray()) {
             if ((Character.isWhitespace(lastChar)) && (!Character.isWhitespace(c))
-                && ('-' != c) && (buf.length() > 0)
-                && (buf.charAt(buf.length() - 1) != '-')) {
+                    && ('-' != c) && (buf.length() > 0)
+                    && (buf.charAt(buf.length() - 1) != '-')) {
                 buf.append(StringPool.DASH);
             }
             if ('_' == c) {
