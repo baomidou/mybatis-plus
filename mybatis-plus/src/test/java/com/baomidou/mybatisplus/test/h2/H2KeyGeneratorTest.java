@@ -2,6 +2,7 @@ package com.baomidou.mybatisplus.test.h2;
 
 import com.baomidou.mybatisplus.test.h2.keygenerator.mapper.KeyGeneratorMapper;
 import com.baomidou.mybatisplus.test.h2.keygenerator.model.KeyGeneratorModel;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -23,6 +24,7 @@ class H2KeyGeneratorTest {
         KeyGeneratorModel keyGeneratorModel = new KeyGeneratorModel();
         keyGeneratorModel.setName("我举起了个栗子");
         keyGeneratorMapper.insert(keyGeneratorModel);
+        Assertions.assertNotNull(keyGeneratorModel.getId());
     }
 
 }

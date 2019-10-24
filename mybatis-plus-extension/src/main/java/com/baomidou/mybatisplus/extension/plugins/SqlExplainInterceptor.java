@@ -21,6 +21,7 @@ import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
@@ -56,11 +57,13 @@ public class SqlExplainInterceptor extends AbstractSqlParserHandler implements I
     public Object intercept(Invocation invocation) throws Throwable {
         Object[] args = invocation.getArgs();
         MappedStatement ms = (MappedStatement) args[0];
-        Object parameter = args[1];
-        Configuration configuration = ms.getConfiguration();
-        Object target = invocation.getTarget();
-        StatementHandler handler = configuration.newStatementHandler((Executor) target, ms, parameter, RowBounds.DEFAULT, null, null);
-        this.sqlParser(SystemMetaObject.forObject(handler));
+        if (ms.getSqlCommandType() == SqlCommandType.DELETE || ms.getSqlCommandType() == SqlCommandType.UPDATE) {
+            Object parameter = args[1];
+            Configuration configuration = ms.getConfiguration();
+            Object target = invocation.getTarget();
+            StatementHandler handler = configuration.newStatementHandler((Executor) target, ms, parameter, RowBounds.DEFAULT, null, null);
+            this.sqlParser(SystemMetaObject.forObject(handler));
+        }
         return invocation.proceed();
     }
 
