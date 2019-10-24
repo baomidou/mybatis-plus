@@ -25,6 +25,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -178,11 +179,7 @@ public class StrategyConfig {
         if (null != tableName) {
             String[] tps = getTablePrefix();
             if (null != tps) {
-                for (String tp : tps) {
-                    if (tableName.contains(tp)) {
-                        return true;
-                    }
-                }
+                return Arrays.stream(tps).anyMatch(tableName::contains);
             }
         }
         return false;
@@ -203,11 +200,7 @@ public class StrategyConfig {
 
     public boolean includeSuperEntityColumns(String fieldName) {
         if (null != superEntityColumns) {
-            for (String column : superEntityColumns) {
-                if (column.equals(fieldName)) {
-                    return true;
-                }
-            }
+            return Arrays.asList(superEntityColumns).contains(fieldName);
         }
         return false;
     }

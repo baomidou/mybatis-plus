@@ -96,7 +96,7 @@ public class InsertBatchSomeColumn extends AbstractMethod {
                 keyColumn = tableInfo.getKeyColumn();
             } else {
                 if (null != tableInfo.getKeySequence()) {
-                    keyGenerator = TableInfoHelper.genKeyGenerator(tableInfo, builderAssistant, sqlMethod.getMethod(), languageDriver);
+                    keyGenerator = TableInfoHelper.genKeyGenerator(tableInfo, builderAssistant, getMethod(sqlMethod), languageDriver);
                     keyProperty = tableInfo.getKeyProperty();
                     keyColumn = tableInfo.getKeyColumn();
                 }
