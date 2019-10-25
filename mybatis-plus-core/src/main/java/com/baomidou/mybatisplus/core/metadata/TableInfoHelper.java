@@ -20,16 +20,14 @@ import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.ibatis.builder.StaticSqlSource;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
-import org.apache.ibatis.executor.keygen.NoKeyGenerator;
 import org.apache.ibatis.executor.keygen.SelectKeyGenerator;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.SqlCommandType;
-import org.apache.ibatis.mapping.SqlSource;
-import org.apache.ibatis.mapping.StatementType;
+import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.scripting.LanguageDriver;
+import org.apache.ibatis.session.Configuration;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -452,27 +450,30 @@ public class TableInfoHelper {
 
     /**
      * 自定义 KEY 生成器
+     * @deprecated 3.1.2
+     * @see #genKeyGenerator(String, TableInfo, MapperBuilderAssistant)
      */
+    @Deprecated
     public static KeyGenerator genKeyGenerator(TableInfo tableInfo, MapperBuilderAssistant builderAssistant,
                                                String baseStatementId, LanguageDriver languageDriver) {
+        return genKeyGenerator(baseStatementId, tableInfo, builderAssistant);
+    }
+
+    public static KeyGenerator genKeyGenerator(String baseStatementId, TableInfo tableInfo, MapperBuilderAssistant builderAssistant) {
         IKeyGenerator keyGenerator = GlobalConfigUtils.getKeyGenerator(builderAssistant.getConfiguration());
         if (null == keyGenerator) {
             throw new IllegalArgumentException("not configure IKeyGenerator implementation class.");
         }
-        String id = baseStatementId + SelectKeyGenerator.SELECT_KEY_SUFFIX;
-        Class<?> resultTypeClass = tableInfo.getKeySequence().clazz();
-        StatementType statementType = StatementType.PREPARED;
-        String keyProperty = tableInfo.getKeyProperty();
-        String keyColumn = tableInfo.getKeyColumn();
-        SqlSource sqlSource = languageDriver.createSqlSource(builderAssistant.getConfiguration(),
-            keyGenerator.executeSql(tableInfo.getKeySequence().value()), null);
-        builderAssistant.addMappedStatement(id, sqlSource, statementType, SqlCommandType.SELECT, null, null, null,
-            null, null, resultTypeClass, null, false, false, false,
-            new NoKeyGenerator(), keyProperty, keyColumn, null, languageDriver, null);
-        id = builderAssistant.applyCurrentNamespace(id, false);
-        MappedStatement keyStatement = builderAssistant.getConfiguration().getMappedStatement(id, false);
-        SelectKeyGenerator selectKeyGenerator = new SelectKeyGenerator(keyStatement, true);
-        builderAssistant.getConfiguration().addKeyGenerator(id, selectKeyGenerator);
-        return selectKeyGenerator;
+        Configuration configuration = builderAssistant.getConfiguration();
+        //TODO 这里不加上builderAssistant.getCurrentNamespace()的会导致com.baomidou.mybatisplus.core.parser.SqlParserHelper.getSqlParserInfo越(chu)界(gui)
+        String id = builderAssistant.getCurrentNamespace() + StringPool.DOT + baseStatementId + SelectKeyGenerator.SELECT_KEY_SUFFIX;
+        ResultMap resultMap = new ResultMap.Builder(builderAssistant.getConfiguration(), id + "!keyResultMap", tableInfo.getKeyType(), new ArrayList<>()).build();
+        MappedStatement mappedStatement = new MappedStatement.Builder(builderAssistant.getConfiguration(), id,
+            new StaticSqlSource(configuration, keyGenerator.executeSql(tableInfo.getKeySequence().value())), SqlCommandType.SELECT)
+            .keyProperty(tableInfo.getKeyProperty())
+            .resultMaps(Collections.singletonList(resultMap))
+            .build();
+        configuration.addMappedStatement(mappedStatement);
+        return new SelectKeyGenerator(mappedStatement, true);
     }
 }
