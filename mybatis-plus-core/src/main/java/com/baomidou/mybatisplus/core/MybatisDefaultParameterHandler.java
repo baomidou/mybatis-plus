@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.core;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import com.baomidou.mybatisplus.core.incrementer.IdGenerator;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.*;
@@ -174,13 +175,14 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         // 填充主键
         if (isInsert && !StringUtils.isEmpty(tableInfo.getKeyProperty())
             && null != tableInfo.getIdType() && tableInfo.getIdType().getKey() >= 3) {
+            IdGenerator idGenerator = GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration()).getIdGenerator();
             Object idValue = metaObject.getValue(tableInfo.getKeyProperty());
             /* 自定义 ID */
             if (StringUtils.checkValNull(idValue)) {
                 if (tableInfo.getIdType() == IdType.ID_WORKER) {
-                    metaObject.setValue(tableInfo.getKeyProperty(), IdWorker.getId());
+                    metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.nextId(parameterObject));
                 } else if (tableInfo.getIdType() == IdType.ID_WORKER_STR) {
-                    metaObject.setValue(tableInfo.getKeyProperty(), IdWorker.getIdStr());
+                    metaObject.setValue(tableInfo.getKeyProperty(), String.valueOf(idGenerator.nextId(parameterObject)));
                 } else if (tableInfo.getIdType() == IdType.UUID) {
                     metaObject.setValue(tableInfo.getKeyProperty(), IdWorker.get32UUID());
                 }

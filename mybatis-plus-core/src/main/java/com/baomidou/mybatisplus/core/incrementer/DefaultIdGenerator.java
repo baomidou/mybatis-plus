@@ -36,7 +36,7 @@ public class DefaultIdGenerator implements IdGenerator {
     }
 
     @Override
-    public long nextId() {
+    public long nextId(Object entity) {
         return sequence.nextId();
     }
 }

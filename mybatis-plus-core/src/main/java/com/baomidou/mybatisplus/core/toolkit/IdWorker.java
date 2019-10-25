@@ -35,6 +35,7 @@ public class IdWorker {
     /**
      * 主机和进程的机器码
      */
+    @Deprecated
     private static IdGenerator ID_GENERATOR = new DefaultIdGenerator();
 
     /**
@@ -42,12 +43,14 @@ public class IdWorker {
      */
     public static final DateTimeFormatter MILLISECOND = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
 
+    @Deprecated
     public static long getId() {
-        return ID_GENERATOR.nextId();
+        return ID_GENERATOR.nextId(new Object());
     }
 
+    @Deprecated
     public static String getIdStr() {
-        return String.valueOf(ID_GENERATOR.nextId());
+        return String.valueOf(ID_GENERATOR.nextId(new Object()));
     }
 
     /**
@@ -60,7 +63,9 @@ public class IdWorker {
     /**
      * 时间 ID = Time + ID
      * <p>例如：可用于商品订单 ID</p>
+     * @deprecated 3.1.2  spring应用可以通过@IdGenerator,非spring应用请自行控制IdGenerator的实例化
      */
+    @Deprecated
     public static String getTimeId() {
         return getMillisecond() + getId();
     }
@@ -83,6 +88,7 @@ public class IdWorker {
      *
      * @param idGenerator id 生成器
      */
+    @Deprecated
     public static void setIdGenerator(IdGenerator idGenerator) {
         ID_GENERATOR = idGenerator;
     }

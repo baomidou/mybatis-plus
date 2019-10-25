@@ -26,7 +26,8 @@ public interface IdGenerator {
     /**
      * 生成Id
      *
+     * @param entity 实体
      * @return id
      */
-    long nextId();
+    long nextId(Object entity);
 }

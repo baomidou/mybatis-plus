@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.core;
 
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.incrementer.DefaultIdGenerator;
+import com.baomidou.mybatisplus.core.incrementer.IdGenerator;
 import com.baomidou.mybatisplus.core.injector.SqlRunnerInjector;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import org.apache.ibatis.exceptions.ExceptionFactory;
@@ -80,13 +81,17 @@ public class MybatisSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
     public SqlSessionFactory build(Configuration config) {
         MybatisConfiguration configuration = (MybatisConfiguration) config;
         GlobalConfig globalConfig = configuration.getGlobalConfig();
-        if (globalConfig.getIdGenerator() != null) {
-            IdWorker.setIdGenerator(globalConfig.getIdGenerator());
-        } else {
+        IdGenerator idGenerator = globalConfig.getIdGenerator();
+        if (globalConfig.getIdGenerator() == null) {
             if (null != globalConfig.getWorkerId() && null != globalConfig.getDatacenterId()) {
-                IdWorker.setIdGenerator(new DefaultIdGenerator(globalConfig.getWorkerId(), globalConfig.getDatacenterId()));
+                idGenerator = new DefaultIdGenerator(globalConfig.getWorkerId(), globalConfig.getDatacenterId());
+            } else {
+                idGenerator = new DefaultIdGenerator();
             }
+            globalConfig.setIdGenerator(idGenerator);
         }
+        //TODO 这里只是为了兼容下,并没多大重要,方法标记过时了.
+        IdWorker.setIdGenerator(idGenerator);
         if (globalConfig.isEnableSqlRunner()) {
             new SqlRunnerInjector().inject(configuration);
         }

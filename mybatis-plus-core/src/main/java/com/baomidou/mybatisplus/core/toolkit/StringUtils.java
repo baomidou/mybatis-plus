@@ -17,7 +17,6 @@ package com.baomidou.mybatisplus.core.toolkit;
 
 import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
 import com.baomidou.mybatisplus.core.toolkit.support.BiIntFunction;
-import jdk.internal.vm.annotation.ForceInline;
 
 import java.util.Collection;
 import java.util.regex.Matcher;
@@ -70,7 +69,6 @@ public final class StringUtils {
      * @param params format 参数
      * @return format 后的
      */
-    @ForceInline
     public static String format(String target, Object... params) {
         return String.format(target, params);
     }
@@ -81,8 +79,24 @@ public final class StringUtils {
      * @param cs 需要判断字符串
      * @return 判断结果
      */
+    @Deprecated
     public static boolean isEmpty(CharSequence cs) {
-        return null == cs || 0 == cs.length();
+        return isBlank(cs);
+    }
+
+    public static boolean isBlank(final CharSequence cs) {
+        if (cs == null) {
+            return true;
+        }
+        int l = cs.length();
+        if (l > 0) {
+            for (int i = 0; i < l; i++) {
+                if (!Character.isWhitespace(cs.charAt(i))) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -91,9 +105,13 @@ public final class StringUtils {
      * @param cs 需要判断字符串
      * @return 判断结果
      */
-    @ForceInline
+    @Deprecated
     public static boolean isNotEmpty(final CharSequence cs) {
         return !isEmpty(cs);
+    }
+
+    public static boolean isNotBlank(final CharSequence cs) {
+        return !isBlank(cs);
     }
 
     /**
