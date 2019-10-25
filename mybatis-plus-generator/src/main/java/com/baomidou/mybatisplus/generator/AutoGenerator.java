@@ -146,12 +146,12 @@ public class AutoGenerator {
                 // 逻辑删除注解
                 tableInfo.setImportPackages(TableLogic.class.getCanonicalName());
             }
-            if (StringUtils.isNotEmpty(config.getStrategyConfig().getVersionFieldName())) {
+            if (StringUtils.isNotBlank(config.getStrategyConfig().getVersionFieldName())) {
                 // 乐观锁注解
                 tableInfo.setImportPackages(Version.class.getCanonicalName());
             }
             boolean importSerializable = true;
-            if (StringUtils.isNotEmpty(config.getSuperEntityClass())) {
+            if (StringUtils.isNotBlank(config.getSuperEntityClass())) {
                 // 父实体
                 tableInfo.setImportPackages(config.getSuperEntityClass());
                 importSerializable = false;

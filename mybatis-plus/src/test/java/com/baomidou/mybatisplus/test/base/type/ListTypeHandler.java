@@ -49,7 +49,7 @@ public class ListTypeHandler extends BaseTypeHandler<List<?>> {
     @Override
     public List<?> getNullableResult(ResultSet rs, String columnName) throws SQLException {
         String result = rs.getString(columnName);
-        if (StringUtils.isNotEmpty(result)) {
+        if (StringUtils.isNotBlank(result)) {
             try {
                 return objectMapper.readValue(result, new TypeReference<List<String>>() {
                 });
@@ -63,7 +63,7 @@ public class ListTypeHandler extends BaseTypeHandler<List<?>> {
     @Override
     public List<?> getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
         String result = rs.getString(columnIndex);
-        if (StringUtils.isNotEmpty(result)) {
+        if (StringUtils.isNotBlank(result)) {
             try {
                 return objectMapper.readValue(result, new TypeReference<List<String>>() {
                 });
@@ -77,7 +77,7 @@ public class ListTypeHandler extends BaseTypeHandler<List<?>> {
     @Override
     public List<?> getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
         String result = cs.getString(columnIndex);
-        if (StringUtils.isNotEmpty(result)) {
+        if (StringUtils.isNotBlank(result)) {
             try {
                 return objectMapper.readValue(result, new TypeReference<List<String>>() {
                 });

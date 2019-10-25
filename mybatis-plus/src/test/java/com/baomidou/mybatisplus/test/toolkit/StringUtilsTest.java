@@ -13,12 +13,12 @@ import org.junit.jupiter.api.Test;
 class StringUtilsTest {
 
     @Test
-    void isEmptyTest() {
-        Assert.isTrue(StringUtils.isEmpty(""), "error not empty");
+    void isBlankTest() {
+        Assert.isTrue(StringUtils.isBlank(""), "error not empty");
 
-        Assert.isTrue(StringUtils.isEmpty(null), "error not empty");
+        Assert.isTrue(StringUtils.isBlank(null), "error not empty");
 
-        Assert.isTrue(StringUtils.isEmpty("   "), "error not empty");
+        Assert.isTrue(StringUtils.isBlank("   "), "error not empty");
     }
 
 }

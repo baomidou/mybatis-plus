@@ -71,7 +71,7 @@ public abstract class Wrapper<T> implements ISqlSegment {
         if (Objects.nonNull(expression)) {
             NormalSegmentList normal = expression.getNormal();
             String sqlSegment = getSqlSegment();
-            if (StringUtils.isNotEmpty(sqlSegment)) {
+            if (StringUtils.isNotBlank(sqlSegment)) {
                 if (normal.isEmpty()) {
                     return sqlSegment;
                 } else {
@@ -127,7 +127,7 @@ public abstract class Wrapper<T> implements ISqlSegment {
         if (tableInfo.getFieldList().stream().anyMatch(e -> fieldStrategyMatch(entity, e))) {
             return true;
         }
-        return StringUtils.isNotEmpty(tableInfo.getKeyProperty()) ? Objects.nonNull(ReflectionKit.getMethodValue(entity, tableInfo.getKeyProperty())) : false;
+        return StringUtils.isNotBlank(tableInfo.getKeyProperty()) ? Objects.nonNull(ReflectionKit.getMethodValue(entity, tableInfo.getKeyProperty())) : false;
     }
 
     /**

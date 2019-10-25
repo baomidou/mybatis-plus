@@ -100,7 +100,7 @@ public final class LambdaUtils {
         Map<String, ColumnCache> map = new HashMap<>();
 
         String kp = info.getKeyProperty();
-        if (StringUtils.isNotEmpty(kp)) {
+        if (StringUtils.isNotBlank(kp)) {
             map.put(formatKey(kp), new ColumnCache(info.getKeyColumn(), info.getKeySqlSelect()));
         }
 

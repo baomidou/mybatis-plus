@@ -167,14 +167,14 @@ public class TableFieldInfo implements Constants {
             this.typeHandler = (Class<? extends TypeHandler<?>>) typeHandler;
             el += (COMMA + "typeHandler=" + typeHandler.getName());
         }
-        if (StringUtils.isNotEmpty(numericScale)) {
+        if (StringUtils.isNotBlank(numericScale)) {
             el += (COMMA + "numericScale=" + numericScale);
         }
         this.el = el;
         tableInfo.setLogicDelete(this.initLogicDelete(dbConfig, field));
 
         String column = tableField.value();
-        if (StringUtils.isEmpty(column)) {
+        if (StringUtils.isBlank(column)) {
             column = this.property;
             if (tableInfo.isUnderCamel()) {
                 /* 开启字段下划线申明 */
@@ -186,7 +186,7 @@ public class TableFieldInfo implements Constants {
             }
         }
         String columnFormat = dbConfig.getColumnFormat();
-        if (StringUtils.isNotEmpty(columnFormat) && tableField.keepGlobalFormat()) {
+        if (StringUtils.isNotBlank(columnFormat) && tableField.keepGlobalFormat()) {
             column = String.format(columnFormat, column);
         }
 
@@ -218,7 +218,7 @@ public class TableFieldInfo implements Constants {
             this.whereStrategy = tableField.whereStrategy();
         }
 
-        if (StringUtils.isNotEmpty(tableField.condition())) {
+        if (StringUtils.isNotBlank(tableField.condition())) {
             // 细粒度条件控制
             this.condition = tableField.condition();
         }
@@ -252,7 +252,7 @@ public class TableFieldInfo implements Constants {
         }
 
         String columnFormat = dbConfig.getColumnFormat();
-        if (StringUtils.isNotEmpty(columnFormat)) {
+        if (StringUtils.isNotBlank(columnFormat)) {
             column = String.format(columnFormat, column);
         }
 
@@ -270,12 +270,12 @@ public class TableFieldInfo implements Constants {
         /* 获取注解属性，逻辑处理字段 */
         TableLogic tableLogic = field.getAnnotation(TableLogic.class);
         if (null != tableLogic) {
-            if (StringUtils.isNotEmpty(tableLogic.value())) {
+            if (StringUtils.isNotBlank(tableLogic.value())) {
                 this.logicNotDeleteValue = tableLogic.value();
             } else {
                 this.logicNotDeleteValue = dbConfig.getLogicNotDeleteValue();
             }
-            if (StringUtils.isNotEmpty(tableLogic.delval())) {
+            if (StringUtils.isNotBlank(tableLogic.delval())) {
                 this.logicDeleteValue = tableLogic.delval();
             } else {
                 this.logicDeleteValue = dbConfig.getLogicDeleteValue();
@@ -283,7 +283,7 @@ public class TableFieldInfo implements Constants {
             return true;
         } else {
             String globalLogicDeleteField = dbConfig.getLogicDeleteField();
-            if (StringUtils.isNotEmpty(globalLogicDeleteField) && globalLogicDeleteField.equalsIgnoreCase(field.getName())) {
+            if (StringUtils.isNotBlank(globalLogicDeleteField) && globalLogicDeleteField.equalsIgnoreCase(field.getName())) {
                 this.logicNotDeleteValue = dbConfig.getLogicNotDeleteValue();
                 this.logicDeleteValue = dbConfig.getLogicDeleteValue();
                 return true;
@@ -296,7 +296,7 @@ public class TableFieldInfo implements Constants {
      * 是否注解了逻辑删除
      */
     public boolean isLogicDelete() {
-        return StringUtils.isNotEmpty(logicDeleteValue);
+        return StringUtils.isNotBlank(logicDeleteValue);
     }
 
     /**
@@ -397,7 +397,7 @@ public class TableFieldInfo implements Constants {
         final String newPrefix = prefix == null ? EMPTY : prefix;
         // 默认: column=
         String sqlSet = column + EQUALS;
-        if (StringUtils.isNotEmpty(update)) {
+        if (StringUtils.isNotBlank(update)) {
             sqlSet += String.format(update, column);
         } else {
             sqlSet += SqlScriptUtils.safeParam(newPrefix + el);
@@ -414,7 +414,7 @@ public class TableFieldInfo implements Constants {
     }
 
     private String convertIfProperty(String prefix, String property) {
-        return StringUtils.isNotEmpty(prefix) ? prefix.substring(0, prefix.length() - 1) + "['" + property + "']" : property;
+        return StringUtils.isNotBlank(prefix) ? prefix.substring(0, prefix.length() - 1) + "['" + property + "']" : property;
     }
 
     /**

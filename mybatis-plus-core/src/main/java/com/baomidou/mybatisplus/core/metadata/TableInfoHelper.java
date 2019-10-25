@@ -167,19 +167,19 @@ public class TableInfoHelper {
         boolean tablePrefixEffect = true;
 
         if (table != null) {
-            if (StringUtils.isNotEmpty(table.value())) {
+            if (StringUtils.isNotBlank(table.value())) {
                 tableName = table.value();
-                if (StringUtils.isNotEmpty(tablePrefix) && !table.keepGlobalPrefix()) {
+                if (StringUtils.isNotBlank(tablePrefix) && !table.keepGlobalPrefix()) {
                     tablePrefixEffect = false;
                 }
             } else {
                 tableName = initTableNameWithDbConfig(tableName, dbConfig);
             }
-            if (StringUtils.isNotEmpty(table.schema())) {
+            if (StringUtils.isNotBlank(table.schema())) {
                 schema = table.schema();
             }
             /* 表结果集映射 */
-            if (StringUtils.isNotEmpty(table.resultMap())) {
+            if (StringUtils.isNotBlank(table.resultMap())) {
                 tableInfo.setResultMap(table.resultMap());
             }
             tableInfo.setAutoInitResultMap(table.autoResultMap());
@@ -188,10 +188,10 @@ public class TableInfoHelper {
         }
 
         String targetTableName = tableName;
-        if (StringUtils.isNotEmpty(tablePrefix) && tablePrefixEffect) {
+        if (StringUtils.isNotBlank(tablePrefix) && tablePrefixEffect) {
             targetTableName = tablePrefix + targetTableName;
         }
-        if (StringUtils.isNotEmpty(schema)) {
+        if (StringUtils.isNotBlank(schema)) {
             targetTableName = schema + StringPool.DOT + targetTableName;
         }
 
@@ -276,7 +276,7 @@ public class TableInfoHelper {
         tableInfo.setFieldList(Collections.unmodifiableList(fieldList));
 
         /* 未发现主键注解，提示警告信息 */
-        if (StringUtils.isEmpty(tableInfo.getKeyColumn())) {
+        if (StringUtils.isBlank(tableInfo.getKeyColumn())) {
             logger.warn(String.format("Warn: Could not find @TableId in Class: %s.", clazz.getName()));
         }
     }
@@ -309,7 +309,7 @@ public class TableInfoHelper {
         TableId tableId = field.getAnnotation(TableId.class);
         boolean underCamel = tableInfo.isUnderCamel();
         if (tableId != null) {
-            if (StringUtils.isEmpty(tableInfo.getKeyColumn())) {
+            if (StringUtils.isBlank(tableInfo.getKeyColumn())) {
                 /* 主键策略（ 注解 > 全局 ） */
                 // 设置 Sequence 其他策略无效
                 if (IdType.NONE == tableId.type()) {
@@ -320,7 +320,7 @@ public class TableInfoHelper {
 
                 /* 字段 */
                 String column = field.getName();
-                if (StringUtils.isNotEmpty(tableId.value())) {
+                if (StringUtils.isNotBlank(tableId.value())) {
                     column = tableId.value();
                 } else {
                     // 开启字段下划线申明
@@ -361,7 +361,7 @@ public class TableInfoHelper {
             column = column.toUpperCase();
         }
         if (DEFAULT_ID_NAME.equalsIgnoreCase(column)) {
-            if (StringUtils.isEmpty(tableInfo.getKeyColumn())) {
+            if (StringUtils.isBlank(tableInfo.getKeyColumn())) {
                 tableInfo.setKeyRelated(checkRelated(tableInfo.isUnderCamel(), field.getName(), column))
                     .setIdType(dbConfig.getIdType())
                     .setKeyColumn(column)
@@ -467,7 +467,7 @@ public class TableInfoHelper {
         Configuration configuration = builderAssistant.getConfiguration();
         //TODO 这里不加上builderAssistant.getCurrentNamespace()的会导致com.baomidou.mybatisplus.core.parser.SqlParserHelper.getSqlParserInfo越(chu)界(gui)
         String id = builderAssistant.getCurrentNamespace() + StringPool.DOT + baseStatementId + SelectKeyGenerator.SELECT_KEY_SUFFIX;
-        ResultMap resultMap = new ResultMap.Builder(builderAssistant.getConfiguration(), id + "!keyResultMap", tableInfo.getKeyType(), new ArrayList<>()).build();
+        ResultMap resultMap = new ResultMap.Builder(builderAssistant.getConfiguration(), id, tableInfo.getKeyType(), new ArrayList<>()).build();
         MappedStatement mappedStatement = new MappedStatement.Builder(builderAssistant.getConfiguration(), id,
             new StaticSqlSource(configuration, keyGenerator.executeSql(tableInfo.getKeySequence().value())), SqlCommandType.SELECT)
             .keyProperty(tableInfo.getKeyProperty())

@@ -132,7 +132,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
     private static List<OrderByElement> addOrderByElements(List<OrderItem> orderList, List<OrderByElement> orderByElements) {
         orderByElements = CollectionUtils.isEmpty(orderByElements) ? new ArrayList<>(orderList.size()) : orderByElements;
         List<OrderByElement> orderByElementList = orderList.stream()
-            .filter(item -> StringUtils.isNotEmpty(item.getColumn()))
+            .filter(item -> StringUtils.isNotBlank(item.getColumn()))
             .map(item -> {
                 OrderByElement element = new OrderByElement();
                 element.setExpression(new Column(item.getColumn()));
@@ -195,7 +195,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
 
         String originalSql = boundSql.getSql();
         Connection connection = (Connection) invocation.getArgs()[0];
-        DbType dbType = StringUtils.isNotEmpty(dialectType) ? DbType.getDbType(dialectType)
+        DbType dbType = StringUtils.isNotBlank(dialectType) ? DbType.getDbType(dialectType)
             : JdbcUtils.getDbType(connection.getMetaData().getURL());
 
         if (page.isSearchCount()) {
@@ -262,10 +262,10 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
     public void setProperties(Properties prop) {
         String dialectType = prop.getProperty("dialectType");
         String dialectClazz = prop.getProperty("dialectClazz");
-        if (StringUtils.isNotEmpty(dialectType)) {
+        if (StringUtils.isNotBlank(dialectType)) {
             this.dialectType = dialectType;
         }
-        if (StringUtils.isNotEmpty(dialectClazz)) {
+        if (StringUtils.isNotBlank(dialectClazz)) {
             this.dialectClazz = dialectClazz;
         }
     }

@@ -65,7 +65,7 @@ public class DialectFactory {
     private static IDialect getDialect(DbType dbType, String dialectClazz) {
         return DIALECT_CACHE.computeIfAbsent(dbType.getDb(), key -> {
             IDialect dialect = null;
-            String dialectClassName = StringUtils.isEmpty(dialectClazz) ? dbType.getDialect() : dialectClazz;
+            String dialectClassName = StringUtils.isBlank(dialectClazz) ? dbType.getDialect() : dialectClazz;
             try {
                 Class<?> clazz = Class.forName(dialectClassName);
                 if (IDialect.class.isAssignableFrom(clazz)) {

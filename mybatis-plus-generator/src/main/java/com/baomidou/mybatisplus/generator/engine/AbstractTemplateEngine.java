@@ -166,7 +166,7 @@ public abstract class AbstractTemplateEngine {
     public void open() {
         String outDir = getConfigBuilder().getGlobalConfig().getOutputDir();
         if (getConfigBuilder().getGlobalConfig().isOpen()
-            && StringUtils.isNotEmpty(outDir)) {
+            && StringUtils.isNotBlank(outDir)) {
             try {
                 String osName = System.getProperty("os.name");
                 if (osName != null) {
@@ -239,7 +239,7 @@ public abstract class AbstractTemplateEngine {
      * @return ignore
      */
     private String verifyClassPacket(String classPacket) {
-        return StringUtils.isEmpty(classPacket) ? null : classPacket;
+        return StringUtils.isBlank(classPacket) ? null : classPacket;
     }
 
     /**
@@ -249,7 +249,7 @@ public abstract class AbstractTemplateEngine {
      * @return ignore
      */
     private String getSuperClassName(String classPath) {
-        if (StringUtils.isEmpty(classPath)) {
+        if (StringUtils.isBlank(classPath)) {
             return null;
         }
         return classPath.substring(classPath.lastIndexOf(StringPool.DOT) + 1);

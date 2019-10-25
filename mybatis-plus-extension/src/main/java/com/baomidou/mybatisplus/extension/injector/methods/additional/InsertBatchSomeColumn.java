@@ -88,7 +88,7 @@ public class InsertBatchSomeColumn extends AbstractMethod {
         String keyProperty = null;
         String keyColumn = null;
         // 表包含主键处理逻辑,如果不包含主键当普通字段处理
-        if (StringUtils.isNotEmpty(tableInfo.getKeyProperty())) {
+        if (StringUtils.isNotBlank(tableInfo.getKeyProperty())) {
             if (tableInfo.getIdType() == IdType.AUTO) {
                 /* 自增主键 */
                 keyGenerator = new Jdbc3KeyGenerator();

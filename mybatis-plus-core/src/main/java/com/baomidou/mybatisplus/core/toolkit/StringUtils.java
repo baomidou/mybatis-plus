@@ -189,7 +189,7 @@ public final class StringUtils {
      * @return 转换好的字符串
      */
     public static String camelToUnderline(String param) {
-        if (isEmpty(param)) {
+        if (isBlank(param)) {
             return EMPTY;
         }
         int len = param.length();
@@ -211,7 +211,7 @@ public final class StringUtils {
      * @return 转换好的字符串
      */
     public static String underlineToCamel(String param) {
-        if (isEmpty(param)) {
+        if (isBlank(param)) {
             return EMPTY;
         }
         String temp = param.toLowerCase();
@@ -237,7 +237,7 @@ public final class StringUtils {
      * @return 转换好的字符串
      */
     public static String firstToLowerCase(String param) {
-        if (isEmpty(param)) {
+        if (isBlank(param)) {
             return EMPTY;
         }
         return param.substring(0, 1).toLowerCase() + param.substring(1);
@@ -268,7 +268,7 @@ public final class StringUtils {
      * @param args    填充参数
      */
     public static String sqlArgsFill(String content, Object... args) {
-        if (StringUtils.isNotEmpty(content) && ArrayUtils.isNotEmpty(args)) {
+        if (StringUtils.isNotBlank(content) && ArrayUtils.isNotEmpty(args)) {
             // 索引不能使用，因为 SQL 中的占位符数字与索引不相同
             BiIntFunction<Matcher, CharSequence> handler = (m, i) -> sqlParam(args[Integer.parseInt(m.group("idx"))]);
             return replace(content, MP_SQL_PLACE_HOLDER, handler).toString();
@@ -351,7 +351,7 @@ public final class StringUtils {
      * 拼接字符串第二个字符串第一个字母大写
      */
     public static String concatCapitalize(String concatStr, final String str) {
-        if (isEmpty(concatStr)) {
+        if (isBlank(concatStr)) {
             concatStr = EMPTY;
         }
         if (str == null || str.length() == 0) {
@@ -375,7 +375,7 @@ public final class StringUtils {
      */
     public static boolean checkValNotNull(Object object) {
         if (object instanceof CharSequence) {
-            return isNotEmpty((CharSequence) object);
+            return isNotBlank((CharSequence) object);
         }
         return object != null;
     }
@@ -495,7 +495,7 @@ public final class StringUtils {
     public static String removeIsPrefixIfBoolean(String propertyName, Class<?> propertyType) {
         if (ClassUtils.isBoolean(propertyType) && propertyName.startsWith(IS)) {
             String property = propertyName.replaceFirst(IS, EMPTY);
-            if (isEmpty(property)) {
+            if (isBlank(property)) {
                 return propertyName;
             } else {
                 String firstCharToLowerStr = firstCharToLower(property);

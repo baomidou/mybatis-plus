@@ -173,7 +173,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         /* 自定义元对象填充控制器 */
         MetaObject metaObject = ms.getConfiguration().newMetaObject(parameterObject);
         // 填充主键
-        if (isInsert && !StringUtils.isEmpty(tableInfo.getKeyProperty())
+        if (isInsert && !StringUtils.isBlank(tableInfo.getKeyProperty())
             && null != tableInfo.getIdType() && tableInfo.getIdType().getKey() >= 3) {
             IdGenerator idGenerator = GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration()).getIdGenerator();
             Object idValue = metaObject.getValue(tableInfo.getKeyProperty());

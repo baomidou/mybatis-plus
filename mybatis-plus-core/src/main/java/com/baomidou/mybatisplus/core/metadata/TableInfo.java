@@ -169,7 +169,7 @@ public class TableInfo implements Constants {
         if (sqlSelect != null) {
             return sqlSelect;
         }
-        if (StringUtils.isNotEmpty(keyProperty)) {
+        if (StringUtils.isNotBlank(keyProperty)) {
             sqlSelect = keyColumn;
             if (keyRelated) {
                 sqlSelect += (" AS " + keyProperty);
@@ -203,9 +203,9 @@ public class TableInfo implements Constants {
         String sqlSelect = getKeySqlSelect();
         String fieldsSqlSelect = fieldList.stream().filter(predicate)
             .map(TableFieldInfo::getSqlSelect).collect(joining(COMMA));
-        if (StringUtils.isNotEmpty(sqlSelect) && StringUtils.isNotEmpty(fieldsSqlSelect)) {
+        if (StringUtils.isNotBlank(sqlSelect) && StringUtils.isNotBlank(fieldsSqlSelect)) {
             return sqlSelect + COMMA + fieldsSqlSelect;
-        } else if (StringUtils.isNotEmpty(fieldsSqlSelect)) {
+        } else if (StringUtils.isNotBlank(fieldsSqlSelect)) {
             return fieldsSqlSelect;
         }
         return sqlSelect;
@@ -220,7 +220,7 @@ public class TableInfo implements Constants {
      */
     public String getKeyInsertSqlProperty(final String prefix, final boolean newLine) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
-        if (StringUtils.isNotEmpty(keyProperty)) {
+        if (StringUtils.isNotBlank(keyProperty)) {
             if (idType == IdType.AUTO) {
                 return EMPTY;
             }
@@ -237,7 +237,7 @@ public class TableInfo implements Constants {
      * @return sql 脚本片段
      */
     public String getKeyInsertSqlColumn(final boolean newLine) {
-        if (StringUtils.isNotEmpty(keyColumn)) {
+        if (StringUtils.isNotBlank(keyColumn)) {
             if (idType == IdType.AUTO) {
                 return EMPTY;
             }
@@ -293,7 +293,7 @@ public class TableInfo implements Constants {
                 return true;
             })
             .map(i -> i.getSqlWhere(newPrefix)).filter(Objects::nonNull).collect(joining(NEWLINE));
-        if (!withId || StringUtils.isEmpty(keyProperty)) {
+        if (!withId || StringUtils.isBlank(keyProperty)) {
             return filedSqlScript;
         }
         String newKeyProperty = newPrefix + keyProperty;

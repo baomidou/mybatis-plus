@@ -48,7 +48,7 @@ public class MapTypeHandler extends BaseTypeHandler<Map<?, ?>> {
     @Override
     public Map<?, ?> getNullableResult(ResultSet rs, String columnName) throws SQLException {
         String result = rs.getString(columnName);
-        if (StringUtils.isNotEmpty(result)) {
+        if (StringUtils.isNotBlank(result)) {
             try {
                 return objectMapper.readValue(result, Map.class);
             } catch (IOException e) {
@@ -61,7 +61,7 @@ public class MapTypeHandler extends BaseTypeHandler<Map<?, ?>> {
     @Override
     public Map<?, ?> getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
         String result = rs.getString(columnIndex);
-        if (StringUtils.isNotEmpty(result)) {
+        if (StringUtils.isNotBlank(result)) {
             try {
                 return objectMapper.readValue(result, Map.class);
             } catch (IOException e) {
@@ -74,7 +74,7 @@ public class MapTypeHandler extends BaseTypeHandler<Map<?, ?>> {
     @Override
     public Map<?, ?> getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
         String result = cs.getString(columnIndex);
-        if (StringUtils.isNotEmpty(result)) {
+        if (StringUtils.isNotBlank(result)) {
             try {
                 return objectMapper.readValue(result, Map.class);
             } catch (IOException e) {
