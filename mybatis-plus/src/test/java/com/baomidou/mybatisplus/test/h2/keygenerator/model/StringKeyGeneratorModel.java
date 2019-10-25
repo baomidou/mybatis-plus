@@ -13,11 +13,22 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test.h2.keygenerator.mapper;
+package com.baomidou.mybatisplus.test.h2.keygenerator.model;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.test.h2.keygenerator.model.KeyGeneratorModel;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.KeySequence;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
 
-public interface KeyGeneratorMapper extends BaseMapper<KeyGeneratorModel> {
+@Data
+@TableName(value = "key_generator_model")
+@KeySequence(value = "key_generator_model_seq")
+public class StringKeyGeneratorModel {
+
+    @TableId(type = IdType.INPUT)
+    private String id;
+
+    private String name;
 
 }

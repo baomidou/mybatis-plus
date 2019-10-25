@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.incrementer.DefaultIdGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IdGenerator;
 
@@ -43,11 +44,23 @@ public class IdWorker {
      */
     public static final DateTimeFormatter MILLISECOND = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
 
+    /**
+     * 获取唯一ID
+     *
+     * @return id
+     * @deprecated 3.1.2 spring应用可以通过@IdGenerator,非spring应用请自行控制IdGenerator的实例化
+     */
     @Deprecated
     public static long getId() {
         return ID_GENERATOR.nextId(new Object());
     }
 
+    /**
+     * 获取唯一ID
+     *
+     * @return id
+     * @deprecated 3.1.2 spring应用可以通过@IdGenerator,非spring应用请自行控制IdGenerator的实例化
+     */
     @Deprecated
     public static String getIdStr() {
         return String.valueOf(ID_GENERATOR.nextId(new Object()));
@@ -87,6 +100,8 @@ public class IdWorker {
      * 自定义id 生成方式
      *
      * @param idGenerator id 生成器
+     * @see GlobalConfig#setIdGenerator(IdGenerator)
+     * @deprecated 3.1.2
      */
     @Deprecated
     public static void setIdGenerator(IdGenerator idGenerator) {
