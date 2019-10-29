@@ -76,20 +76,14 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         if (SqlCommandType.INSERT == ms.getSqlCommandType() || SqlCommandType.UPDATE == ms.getSqlCommandType()) {
             Collection<Object> parameters = getParameters(parameterObject);
             if (null != parameters) {
-                List<Object> objList = new ArrayList<>();
-                for (Object parameter : parameters) {
-                    TableInfo tableInfo = TableInfoHelper.getTableInfo(parameter.getClass());
-                    if (null != tableInfo) {
-                        handlerFill(ms, populateKeys(ms, tableInfo, parameter));
-                        objList.add(parameter);
-                    } else {
-                        /*
-                         * 非表映射类不处理
-                         */
-                        objList.add(parameter);
+                parameters.stream().filter(Objects::nonNull).forEach(obj -> {
+                    // 感觉这里可以稍微优化一下，理论上都是同一个.
+                    TableInfo tableInfo = TableInfoHelper.getTableInfo(obj.getClass());
+                    if (tableInfo != null) {
+                        handlerFill(ms, populateKeys(ms, tableInfo, obj));
                     }
-                }
-                return objList;
+                });
+                return parameterObject;
             } else {
                 TableInfo tableInfo = null;
                 if (parameterObject instanceof Map) {
@@ -110,7 +104,9 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                 } else {
                     tableInfo = TableInfoHelper.getTableInfo(parameterObject.getClass());
                 }
-                handlerFill(ms, populateKeys(ms, tableInfo, parameterObject));
+                if (tableInfo != null) {
+                    handlerFill(ms, populateKeys(ms, tableInfo, parameterObject));
+                }
                 return parameterObject;
             }
         }
@@ -156,7 +152,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
     protected static MetaObject populateKeys(MappedStatement ms, TableInfo tableInfo, Object parameterObject) {
         MetaObject metaObject = ms.getConfiguration().newMetaObject(parameterObject);
         // 填充主键
-        if (tableInfo != null && SqlCommandType.INSERT == ms.getSqlCommandType()) {
+        if (SqlCommandType.INSERT == ms.getSqlCommandType()) {
             if (!StringUtils.isBlank(tableInfo.getKeyProperty())
                 && null != tableInfo.getIdType() && tableInfo.getIdType().getKey() >= 3) {
                 IdGenerator idGenerator = GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration()).getIdGenerator();
