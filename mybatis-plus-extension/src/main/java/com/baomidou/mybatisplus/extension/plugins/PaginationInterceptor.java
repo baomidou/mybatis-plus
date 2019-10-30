@@ -186,12 +186,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
             return invocation.proceed();
         }
 
-        /*
-         * 处理单页条数限制
-         */
-        if (limit > 0 && limit <= page.getSize()) {
-            page.setSize(limit);
-        }
+        handlerLimit(page);
 
         String originalSql = boundSql.getSql();
         Connection connection = (Connection) invocation.getArgs()[0];
@@ -200,7 +195,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
 
         if (page.isSearchCount()) {
             SqlInfo sqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), countSqlParser, originalSql);
-            this.queryTotal(overflow, sqlInfo.getSql(), mappedStatement, boundSql, page, connection);
+            this.queryTotal(sqlInfo.getSql(), mappedStatement, boundSql, page, connection);
             if (page.getTotal() <= 0) {
                 return null;
             }
@@ -218,6 +213,20 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
     }
 
     /**
+     * 处理分页限制
+     *
+     * @param page IPage
+     */
+    protected void handlerLimit(IPage<?> page) {
+        /*
+         * 处理单页条数限制
+         */
+        if (limit > 0 && limit <= page.getSize()) {
+            page.setSize(limit);
+        }
+    }
+
+    /**
      * 查询总记录条数
      *
      * @param sql             count sql
@@ -226,7 +235,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
      * @param page            IPage
      * @param connection      Connection
      */
-    protected void queryTotal(boolean overflowCurrent, String sql, MappedStatement mappedStatement, BoundSql boundSql, IPage<?> page, Connection connection) {
+    protected void queryTotal(String sql, MappedStatement mappedStatement, BoundSql boundSql, IPage<?> page, Connection connection) {
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             DefaultParameterHandler parameterHandler = new MybatisDefaultParameterHandler(mappedStatement, boundSql.getParameterObject(), boundSql);
             parameterHandler.setParameters(statement);
@@ -237,18 +246,28 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
                 }
             }
             page.setTotal(total);
-            /*
-             * 溢出总页数，设置第一页
-             */
-            long pages = page.getPages();
-            if (overflowCurrent && page.getCurrent() > pages) {
-                // 设置为第一条
-                page.setCurrent(1);
-            }
+            handlerOverflow(page);
         } catch (Exception e) {
             throw ExceptionUtils.mpe("Error: Method queryTotal execution error of sql : \n %s \n", e, sql);
         }
     }
+
+    /**
+     * 处理溢出
+     *
+     * @param page IPage
+     */
+    protected void handlerOverflow(IPage<?> page) {
+        /*
+         * 溢出总页数，设置第一页
+         */
+        if (overflow && page.getCurrent() > page.getPages()) {
+            // 设置为第一条
+            page.setCurrent(1);
+        }
+    }
+
+
 
     @Override
     public Object plugin(Object target) {
