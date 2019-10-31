@@ -113,13 +113,22 @@ public class GlobalConfig implements Serializable {
          */
         private String schema;
         /**
-         * 字段 format
+         * db字段 format
          * <li> 例: `%s` </li>
          * <p> 对主键无效 </p>
          *
          * @since 3.1.1
          */
         private String columnFormat;
+        /**
+         * entity字段 format,
+         * 只有在 column as property 这种情况下生效
+         * <li> 例: `%s` </li>
+         * <p> 对主键无效 </p>
+         *
+         * @since 3.2.1
+         */
+        private String propertyFormat;
         /**
          * 表名、是否使用下划线命名（默认 true:默认数据库表下划线命名）
          */

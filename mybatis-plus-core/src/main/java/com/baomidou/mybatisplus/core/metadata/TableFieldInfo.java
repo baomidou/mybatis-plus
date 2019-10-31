@@ -15,30 +15,20 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
-import java.lang.reflect.Field;
-
+import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
+import lombok.*;
 import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.apache.ibatis.type.UnknownTypeHandler;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
-import com.baomidou.mybatisplus.annotation.SqlCondition;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.Version;
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
-
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import java.lang.reflect.Field;
 
 /**
  * 数据库表字段反射信息
@@ -51,11 +41,6 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class TableFieldInfo implements Constants {
 
-    /**
-     * 是否有存在字段名与属性名关联
-     * <p>true: 表示要进行 as</p>
-     */
-    private final boolean related;
     /**
      * 字段名
      */
@@ -129,7 +114,7 @@ public class TableFieldInfo implements Constants {
     /**
      * 缓存 sql select
      */
-    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     private String sqlSelect;
     /**
      * JDBC类型
@@ -189,9 +174,17 @@ public class TableFieldInfo implements Constants {
         if (StringUtils.isNotBlank(columnFormat) && tableField.keepGlobalFormat()) {
             column = String.format(columnFormat, column);
         }
-
         this.column = column;
-        this.related = TableInfoHelper.checkRelated(tableInfo.isUnderCamel(), this.property, this.column);
+        if (TableInfoHelper.checkRelated(tableInfo.isUnderCamel(), this.property, this.column)) {
+            this.sqlSelect = column;
+        } else {
+            String propertyFormat = dbConfig.getPropertyFormat();
+            String asProperty = this.property;
+            if (StringUtils.isNotBlank(propertyFormat)) {
+                asProperty = String.format(propertyFormat, this.property);
+            }
+            this.sqlSelect += (" AS " + asProperty);
+        }
 
         /*
          * 优先使用单个字段注解，否则使用全局配置
@@ -257,7 +250,16 @@ public class TableFieldInfo implements Constants {
         }
 
         this.column = column;
-        this.related = TableInfoHelper.checkRelated(tableInfo.isUnderCamel(), this.property, this.column);
+        if (TableInfoHelper.checkRelated(tableInfo.isUnderCamel(), this.property, this.column)) {
+            this.sqlSelect = column;
+        } else {
+            String propertyFormat = dbConfig.getPropertyFormat();
+            String asProperty = this.property;
+            if (StringUtils.isNotBlank(propertyFormat)) {
+                asProperty = String.format(propertyFormat, this.property);
+            }
+            this.sqlSelect += (" AS " + asProperty);
+        }
     }
 
     /**
@@ -297,22 +299,6 @@ public class TableFieldInfo implements Constants {
      */
     public boolean isLogicDelete() {
         return StringUtils.isNotBlank(logicDeleteValue);
-    }
-
-    /**
-     * 获取 select sql 片段
-     *
-     * @return sql 片段
-     */
-    public String getSqlSelect() {
-        if (sqlSelect != null) {
-            return sqlSelect;
-        }
-        sqlSelect = column;
-        if (related) {
-            sqlSelect += (" AS " + property);
-        }
-        return sqlSelect;
     }
 
     /**
@@ -439,7 +425,7 @@ public class TableFieldInfo implements Constants {
      */
     ResultMapping getResultMapping(final MybatisConfiguration configuration) {
         ResultMapping.Builder builder = new ResultMapping.Builder(configuration, property,
-                StringUtils.getTargetColumn(column), propertyType);
+            StringUtils.getTargetColumn(column), propertyType);
         TypeHandlerRegistry registry = configuration.getTypeHandlerRegistry();
         if (jdbcType != null && jdbcType != JdbcType.UNDEFINED) {
             builder.jdbcType(jdbcType);
@@ -472,7 +458,7 @@ public class TableFieldInfo implements Constants {
         }
         if (fieldStrategy == FieldStrategy.NOT_EMPTY && isCharSequence) {
             return SqlScriptUtils.convertIf(sqlScript, String.format("%s != null and %s != ''", property, property),
-                    false);
+                false);
         }
         return SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", property), false);
     }

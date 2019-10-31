@@ -114,7 +114,9 @@ public @interface TableField {
     boolean keepGlobalFormat() default false;
 
     /**
-     * JDBC类型 (该默认值不代表会按照该值生效)
+     * JDBC类型 (该默认值不代表会按照该值生效),
+     * 只生效与 mp 自动注入的 method,
+     * 建议配合 {@link TableName#autoResultMap()} 一起使用
      * <p>
      * {@link ResultMapping#jdbcType} and {@link ParameterMapping#jdbcType}
      *
@@ -123,7 +125,9 @@ public @interface TableField {
     JdbcType jdbcType() default JdbcType.UNDEFINED;
 
     /**
-     * 类型处理器 (该默认值不代表会按照该值生效)
+     * 类型处理器 (该默认值不代表会按照该值生效),
+     * 只生效与 mp 自动注入的 method,
+     * 建议配合 {@link TableName#autoResultMap()} 一起使用
      * <p>
      * {@link ResultMapping#typeHandler} and {@link ParameterMapping#typeHandler}
      *
@@ -132,7 +136,9 @@ public @interface TableField {
     Class<? extends TypeHandler> typeHandler() default UnknownTypeHandler.class;
 
     /**
-     * 指定小数点后保留的位数
+     * 指定小数点后保留的位数,
+     * 只生效与 mp 自动注入的 method,
+     * 建议配合 {@link TableName#autoResultMap()} 一起使用
      * <p>
      * {@link ParameterMapping#numericScale}
      *
