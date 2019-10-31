@@ -30,13 +30,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Mybatis Plus H2 Junit Test
@@ -354,6 +352,18 @@ class H2UserTest extends BaseTest {
         } catch (Exception e) {
             Assertions.assertTrue(e instanceof PersistenceException);
         }
+    }
+
+    @Test
+    @Order(29)
+    @Transactional
+    void testClearSqlSessionCache() {
+        H2User h2User;
+        h2User = userService.getById(996102919L);
+        assert h2User == null;
+        userService.saveBatch(Collections.singletonList(new H2User(996102919L, "靓仔")));
+        h2User = userService.getById(996102919L);
+        Assertions.assertNotNull(h2User);
     }
 
     @Test

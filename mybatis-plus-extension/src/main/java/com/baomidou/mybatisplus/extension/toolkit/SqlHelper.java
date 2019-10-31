@@ -25,7 +25,9 @@ import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.SqlSessionHolder;
 import org.mybatis.spring.SqlSessionUtils;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.List;
 
@@ -148,5 +150,20 @@ public final class SqlHelper {
             return list.get(0);
         }
         return null;
+    }
+
+    /**
+     * 清理缓存.
+     * 批量插入因为无法重用sqlSession，只能新开启一个sqlSession
+     *
+     * @param clazz 实体类
+     */
+    public static void clearCache(Class<?> clazz){
+        SqlSessionFactory sqlSessionFactory = GlobalConfigUtils.currentSessionFactory(clazz);
+        SqlSessionHolder sqlSessionHolder = (SqlSessionHolder) TransactionSynchronizationManager.getResource(sqlSessionFactory);
+        if (sqlSessionHolder != null) {
+            SqlSession sqlSession = sqlSessionHolder.getSqlSession();
+            sqlSession.clearCache();
+        }
     }
 }

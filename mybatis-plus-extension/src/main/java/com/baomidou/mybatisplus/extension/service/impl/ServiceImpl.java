@@ -114,6 +114,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean saveBatch(Collection<T> entityList, int batchSize) {
+        SqlHelper.clearCache(currentModelClass());
         String sqlStatement = sqlStatement(SqlMethod.INSERT_ONE);
         try (SqlSession batchSqlSession = sqlSessionBatch()) {
             int i = 0;
@@ -155,6 +156,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     public boolean saveOrUpdateBatch(Collection<T> entityList, int batchSize) {
         Assert.notEmpty(entityList, "error: entityList must not be empty");
         Class<?> cls = currentModelClass();
+        SqlHelper.clearCache(cls);
         TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
         Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
         String keyProperty = tableInfo.getKeyProperty();
@@ -217,6 +219,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     public boolean updateBatchById(Collection<T> entityList, int batchSize) {
         Assert.notEmpty(entityList, "error: entityList must not be empty");
         String sqlStatement = sqlStatement(SqlMethod.UPDATE_BY_ID);
+        SqlHelper.clearCache(currentModelClass());
         try (SqlSession batchSqlSession = sqlSessionBatch()) {
             int i = 0;
             for (T anEntityList : entityList) {

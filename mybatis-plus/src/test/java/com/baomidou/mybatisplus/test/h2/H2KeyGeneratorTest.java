@@ -35,26 +35,30 @@ class H2KeyGeneratorTest {
     private ExtendKeyGeneratorMapper extendKeyGeneratorMapper;
 
     @Test
-    void test(){
+    void test() {
         KeyGeneratorModel keyGeneratorModel = new KeyGeneratorModel();
         keyGeneratorModel.setName("我举起了咩咩");
         keyGeneratorMapper.insert(keyGeneratorModel);
         Assertions.assertNotNull(keyGeneratorModel.getUid());
+        Assertions.assertEquals(keyGeneratorModel.getUid(), 1L);
 
         LongKeyGeneratorModel longKeyGeneratorModel = new LongKeyGeneratorModel();
         longKeyGeneratorModel.setName("我举起了个栗子");
         longKeyGeneratorMapper.insert(longKeyGeneratorModel);
         Assertions.assertNotNull(longKeyGeneratorModel.getId());
+        Assertions.assertEquals(longKeyGeneratorModel.getId(), 2L);
 
         StringKeyGeneratorModel stringKeyGeneratorModel = new StringKeyGeneratorModel();
         stringKeyGeneratorModel.setName("我举起了个锤子");
         stringKeyGeneratorMapper.insert(stringKeyGeneratorModel);
         Assertions.assertNotNull(stringKeyGeneratorModel.getId());
+        Assertions.assertEquals(stringKeyGeneratorModel.getId(), "3");
 
         ExtendKeyGeneratorModel extendKeyGeneratorModel = new ExtendKeyGeneratorModel();
         extendKeyGeneratorModel.setName("我举起了句号");
         extendKeyGeneratorMapper.insert(extendKeyGeneratorModel);
         Assertions.assertNotNull(extendKeyGeneratorModel.getUid());
+        Assertions.assertEquals(extendKeyGeneratorModel.getUid(), 4L);
     }
 
 }

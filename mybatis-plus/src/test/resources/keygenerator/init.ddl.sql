@@ -4,4 +4,4 @@ CREATE TABLE IF NOT EXISTS  key_generator_model (
 	PRIMARY KEY (id)
 );
 
-CREATE SEQUENCE key_generator_model_seq START WITH 1 INCREMENT BY 10;
+CREATE SEQUENCE key_generator_model_seq START WITH 1 INCREMENT BY 1;
