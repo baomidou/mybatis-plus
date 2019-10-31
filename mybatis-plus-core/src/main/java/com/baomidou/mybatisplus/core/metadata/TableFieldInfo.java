@@ -175,7 +175,7 @@ public class TableFieldInfo implements Constants {
             column = String.format(columnFormat, column);
         }
         this.column = column;
-        if (TableInfoHelper.checkRelated(tableInfo.isUnderCamel(), this.property, this.column)) {
+        if (!TableInfoHelper.checkRelated(tableInfo.isUnderCamel(), this.property, this.column)) {
             this.sqlSelect = column;
         } else {
             String propertyFormat = dbConfig.getPropertyFormat();
@@ -250,7 +250,7 @@ public class TableFieldInfo implements Constants {
         }
 
         this.column = column;
-        if (TableInfoHelper.checkRelated(tableInfo.isUnderCamel(), this.property, this.column)) {
+        if (!TableInfoHelper.checkRelated(tableInfo.isUnderCamel(), this.property, this.column)) {
             this.sqlSelect = column;
         } else {
             String propertyFormat = dbConfig.getPropertyFormat();
