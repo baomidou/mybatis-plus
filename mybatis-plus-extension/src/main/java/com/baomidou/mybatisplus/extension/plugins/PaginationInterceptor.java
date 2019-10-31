@@ -186,7 +186,10 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
             return invocation.proceed();
         }
 
-        handlerLimit(page);
+        if (this.limit > 0 && this.limit <= page.getSize()) {
+            //处理单页条数限制
+            handlerLimit(page);
+        }
 
         String originalSql = boundSql.getSql();
         Connection connection = (Connection) invocation.getArgs()[0];
@@ -213,17 +216,12 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
     }
 
     /**
-     * 处理分页限制
+     * 处理分页条数限制
      *
      * @param page IPage
      */
     protected void handlerLimit(IPage<?> page) {
-        /*
-         * 处理单页条数限制
-         */
-        if (limit > 0 && limit <= page.getSize()) {
-            page.setSize(limit);
-        }
+        page.setSize(this.limit);
     }
 
     /**
@@ -246,7 +244,10 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
                 }
             }
             page.setTotal(total);
-            handlerOverflow(page);
+            if (this.overflow && page.getCurrent() > page.getPages()) {
+                //溢出总页数处理
+                handlerOverflow(page);
+            }
         } catch (Exception e) {
             throw ExceptionUtils.mpe("Error: Method queryTotal execution error of sql : \n %s \n", e, sql);
         }
@@ -258,16 +259,8 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
      * @param page IPage
      */
     protected void handlerOverflow(IPage<?> page) {
-        /*
-         * 溢出总页数，设置第一页
-         */
-        if (overflow && page.getCurrent() > page.getPages()) {
-            // 设置为第一条
-            page.setCurrent(1);
-        }
+        page.setCurrent(1);
     }
-
-
 
     @Override
     public Object plugin(Object target) {
