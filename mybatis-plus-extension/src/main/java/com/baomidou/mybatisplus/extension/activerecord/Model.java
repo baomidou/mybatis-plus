@@ -180,7 +180,6 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      *
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
-
     public List<T> selectList(Wrapper<T> queryWrapper) {
         Map<String, Object> map = new HashMap<>(1);
         map.put(Constants.WRAPPER, queryWrapper);

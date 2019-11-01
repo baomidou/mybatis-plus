@@ -58,23 +58,13 @@ public final class SqlHelper {
     }
 
     /**
-     * 获取sqlSession
-     *
-     * @param clazz 对象类
-     * @return ignore
-     */
-    private static SqlSession getSqlSession(Class<?> clazz) {
-        return SqlSessionUtils.getSqlSession(GlobalConfigUtils.currentSessionFactory(clazz));
-    }
-
-    /**
      * 获取Session
      *
      * @param clazz 实体类
      * @return SqlSession
      */
     public static SqlSession sqlSession(Class<?> clazz) {
-        return SqlHelper.getSqlSession(clazz);
+        return SqlSessionUtils.getSqlSession(GlobalConfigUtils.currentSessionFactory(clazz));
     }
 
     /**
@@ -103,8 +93,8 @@ public final class SqlHelper {
      * 删除不存在的逻辑上属于成功
      *
      * @param result 数据库操作返回影响条数
-     * @deprecated  3.1.1 {@link SqlHelper#retBool(java.lang.Integer)}
      * @return boolean
+     * @deprecated 3.1.1 {@link SqlHelper#retBool(java.lang.Integer)}
      */
     @Deprecated
     public static boolean delBool(Integer result) {
@@ -158,7 +148,7 @@ public final class SqlHelper {
      *
      * @param clazz 实体类
      */
-    public static void clearCache(Class<?> clazz){
+    public static void clearCache(Class<?> clazz) {
         SqlSessionFactory sqlSessionFactory = GlobalConfigUtils.currentSessionFactory(clazz);
         SqlSessionHolder sqlSessionHolder = (SqlSessionHolder) TransactionSynchronizationManager.getResource(sqlSessionFactory);
         if (sqlSessionHolder != null) {
