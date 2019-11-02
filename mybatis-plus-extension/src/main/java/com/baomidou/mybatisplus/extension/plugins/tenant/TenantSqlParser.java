@@ -238,12 +238,8 @@ public class TenantSqlParser extends AbstractJsqlParser {
         }
         if (currentExpression instanceof BinaryExpression) {
             BinaryExpression binaryExpression = (BinaryExpression) currentExpression;
-            if (binaryExpression.getLeftExpression() instanceof FromItem) {
-                processFromItem((FromItem) binaryExpression.getLeftExpression());
-            }
-            if (binaryExpression.getRightExpression() instanceof FromItem) {
-                processFromItem((FromItem) binaryExpression.getRightExpression());
-            }
+            doExpression(binaryExpression.getLeftExpression());
+            doExpression(binaryExpression.getRightExpression());
         } else if (currentExpression instanceof InExpression) {
             InExpression inExp = (InExpression) currentExpression;
             ItemsList rightItems = inExp.getRightItemsList();
@@ -255,6 +251,18 @@ public class TenantSqlParser extends AbstractJsqlParser {
             return new AndExpression(new Parenthesis(currentExpression), appendExpression);
         } else {
             return new AndExpression(currentExpression, appendExpression);
+        }
+    }
+
+    protected void doExpression(Expression expression) {
+        if (expression instanceof FromItem) {
+            processFromItem((FromItem) expression);
+        } else if (expression instanceof InExpression) {
+            InExpression inExp = (InExpression) expression;
+            ItemsList rightItems = inExp.getRightItemsList();
+            if (rightItems instanceof SubSelect) {
+                processSelectBody(((SubSelect) rightItems).getSelectBody());
+            }
         }
     }
 
