@@ -37,10 +37,17 @@ public class TenantSqlParserTest {
 
     @Test
     public void processSelectBody() throws JSQLParserException {
-        m("select * from user", "select * from user where user.t_id = 1");
+        select("select * from user",
+            "select * from user where user.t_id = 1");
+        select("select * from user where id in (select id from user)",
+            "select * from user where id in (select id from user where user.t_id = 1) and user.t_id = 1");
+        select("select * from user where id = 1 and id in (select id from user)",
+            "select * from user where id = 1 and id in (select id from user where user.t_id = 1) and user.t_id = 1");
+        select("select * from user where id = 1 or id in (select id from user)",
+            "select * from user where (id = 1 or id in (select id from user where user.t_id = 1)) and user.t_id = 1");
     }
 
-    private void m(String sql, String target) throws JSQLParserException {
+    private void select(String sql, String target) throws JSQLParserException {
         Statements statement = CCJSqlParserUtil.parseStatements(sql);
         Select select = (Select) statement.getStatements().get(0);
         parser.processSelectBody(select.getSelectBody());
