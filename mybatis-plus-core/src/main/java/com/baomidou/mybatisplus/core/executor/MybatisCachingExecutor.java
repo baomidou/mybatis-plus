@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core.executor;
 
 import com.baomidou.mybatisplus.core.metadata.CachePage;
+import com.baomidou.mybatisplus.core.metadata.CachePageResult;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.cache.CacheKey;
@@ -116,14 +117,16 @@ public class MybatisCachingExecutor implements Executor {
                 if (result == null) {
                     result = delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
                     if (page != null) {
-                        page.setRecords((List<E>) result);
-                        tcm.putObject(cache, key, page);
-                        return new CachePage<>(page);
+                        List<E> records = (List<E>) result;
+                        CachePage<E> cachePage = new CachePage<>(records, page.getTotal());
+                        page.setRecords(records);
+                        tcm.putObject(cache, key, cachePage);
+                        return new CachePageResult((cachePage));
                     } else {
                         tcm.putObject(cache, key, result); // issue #578 and #116
                     }
                 }
-                return page != null ? new CachePage<E>((IPage<E>) result) : (List<E>) result;
+                return page != null ? new CachePageResult((CachePage) result) : (List<E>) result;
             }
         }
         return delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);

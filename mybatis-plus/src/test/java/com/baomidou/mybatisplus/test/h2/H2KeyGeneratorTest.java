@@ -19,7 +19,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(locations = {"classpath:h2/spring-keygenerator-test-h2.xml"})
+@ContextConfiguration(locations = {"classpath:h2/spring-keygenerator-h2.xml"})
 class H2KeyGeneratorTest {
 
     @Autowired

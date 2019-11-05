@@ -13,34 +13,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.core.metadata;
+package com.baomidou.mybatisplus.test.h2.cache.model;
 
-import lombok.AllArgsConstructor;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.List;
 
-/**
- * 缓存分页数据(二级缓存)
- *
- * @author nieqiuqiu
- * @since 3.2.1
- */
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public final class CachePage<T> implements Serializable {
+@TableName(value = "cache")
+public class CacheModel implements Serializable {
 
-    /**
-     * 记录数
-     */
-    private List<T> records;
+    private Long id;
 
-    /**
-     * 总数
-     */
-    private long total;
+    private String name;
 
 }
