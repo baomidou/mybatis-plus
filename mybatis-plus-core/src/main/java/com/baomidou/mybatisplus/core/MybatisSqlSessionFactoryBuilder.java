@@ -16,7 +16,7 @@
 package com.baomidou.mybatisplus.core;
 
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.incrementer.DefaultIdGenerator;
+import com.baomidou.mybatisplus.core.incrementer.SnowflakeIdGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IdGenerator;
 import com.baomidou.mybatisplus.core.injector.SqlRunnerInjector;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
@@ -84,9 +84,9 @@ public class MybatisSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
         IdGenerator idGenerator = globalConfig.getIdGenerator();
         if (globalConfig.getIdGenerator() == null) {
             if (null != globalConfig.getWorkerId() && null != globalConfig.getDatacenterId()) {
-                idGenerator = new DefaultIdGenerator(globalConfig.getWorkerId(), globalConfig.getDatacenterId());
+                idGenerator = new SnowflakeIdGenerator(globalConfig.getWorkerId(), globalConfig.getDatacenterId());
             } else {
-                idGenerator = new DefaultIdGenerator();
+                idGenerator = new SnowflakeIdGenerator();
             }
             globalConfig.setIdGenerator(idGenerator);
         }

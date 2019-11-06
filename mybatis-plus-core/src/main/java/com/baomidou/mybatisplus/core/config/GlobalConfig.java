@@ -50,11 +50,19 @@ public class GlobalConfig implements Serializable {
     private boolean banner = true;
     /**
      * 机器 ID 部分
+     *
+     * @see #setIdGenerator(IdGenerator)
+     * @deprecated 3.2.1 建议手动初始化,Spring应用直接@bean注入SnowflakeIdGenerator即可.
      */
+    @Deprecated
     private Long workerId;
     /**
      * 数据标识 ID 部分
+     *
+     * @see #setIdGenerator(IdGenerator)
+     * @deprecated 3.2.1 建议手动初始化,Spring应用直接@bean注入SnowflakeIdGenerator即可.
      */
+    @Deprecated
     private Long datacenterId;
     /**
      * 是否初始化 SqlRunner

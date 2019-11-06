@@ -16,7 +16,7 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.incrementer.DefaultIdGenerator;
+import com.baomidou.mybatisplus.core.incrementer.SnowflakeIdGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IdGenerator;
 
 import java.time.LocalDateTime;
@@ -37,7 +37,7 @@ public class IdWorker {
      * 主机和进程的机器码
      */
     @Deprecated
-    private static IdGenerator ID_GENERATOR = new DefaultIdGenerator();
+    private static IdGenerator ID_GENERATOR = new SnowflakeIdGenerator();
 
     /**
      * 毫秒格式化时间
@@ -93,7 +93,7 @@ public class IdWorker {
      */
     @Deprecated
     public static void initSequence(long workerId, long dataCenterId) {
-        ID_GENERATOR = new DefaultIdGenerator(workerId, dataCenterId);
+        ID_GENERATOR = new SnowflakeIdGenerator(workerId, dataCenterId);
     }
 
     /**
