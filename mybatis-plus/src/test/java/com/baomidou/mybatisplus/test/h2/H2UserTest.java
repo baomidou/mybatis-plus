@@ -324,10 +324,10 @@ class H2UserTest extends BaseTest {
         Assertions.assertNotEquals(0L, userService.lambdaQuery().like(H2User::getName, "a").count().longValue());
 
         List<H2User> users = userService.lambdaQuery().like(H2User::getName, "T")
-            .ne(H2User::getAge, AgeEnum.TWO)
-            .ge(H2User::getVersion, 1)
-            .isNull(H2User::getPrice)
-            .list();
+                .ne(H2User::getAge, AgeEnum.TWO)
+                .ge(H2User::getVersion, 1)
+                .isNull(H2User::getPrice)
+                .list();
         Assertions.assertTrue(users.isEmpty());
     }
 
@@ -346,8 +346,8 @@ class H2UserTest extends BaseTest {
     void testSaveBatchException() {
         try {
             userService.saveBatch(Arrays.asList(
-                new H2User(1L, "tom"),
-                new H2User(1L, "andy")
+                    new H2User(1L, "tom"),
+                    new H2User(1L, "andy")
             ));
         } catch (Exception e) {
             Assertions.assertTrue(e instanceof PersistenceException);
@@ -367,7 +367,7 @@ class H2UserTest extends BaseTest {
     }
 
     @Test
-    public void myQueryWithGroupByOrderBy(){
+    public void myQueryWithGroupByOrderBy() {
         userService.mySelectMaps().forEach(System.out::println);
     }
 
@@ -387,4 +387,41 @@ class H2UserTest extends BaseTest {
         final Select select3 = (Select) CCJSqlParserUtil.parse(targetSql3);
         Assertions.assertEquals(select3.toString(), targetSql3);
     }
+
+    /**
+     * CTO 说批量插入性能不行，让我们来分析一下问题在哪里
+     */
+    @Test
+    void batchInsertPerformanceTest() {
+        List<H2User> users = mockUser(10_000, 99989);
+        userService.saveBatch(users);
+        // 卧槽，速度挺快的
+    }
+
+    /**
+     * 模拟一群人
+     *
+     * @param size     这群人的数量
+     * @param cardinal 这群人 id 的起始值
+     * @return 返回模拟的一群人
+     */
+    private List<H2User> mockUser(int size, long cardinal) {
+        return new AbstractList<H2User>() {
+
+            @Override
+            public H2User get(int index) {
+                long id = cardinal + index + 1;
+                H2User h2User = new H2User(id, Long.toHexString(id));
+                h2User.setVersion(0);
+                h2User.setPrice(BigDecimal.ZERO);
+                return h2User;
+            }
+
+            @Override
+            public int size() {
+                return size;
+            }
+        };
+    }
+
 }
