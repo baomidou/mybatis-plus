@@ -35,6 +35,7 @@ public class IdWorker {
 
     /**
      * 主机和进程的机器码
+     * @deprecated 3.2.1
      */
     @Deprecated
     private static IdGenerator ID_GENERATOR = new SnowflakeIdGenerator();
@@ -48,7 +49,7 @@ public class IdWorker {
      * 获取唯一ID
      *
      * @return id
-     * @deprecated 3.1.2 spring应用可以通过@IdGenerator,非spring应用请自行控制IdGenerator的实例化
+     * @deprecated 3.2.1 spring应用可以通过@IdGenerator,非spring应用请自行控制IdGenerator的实例化
      */
     @Deprecated
     public static long getId() {
@@ -59,7 +60,7 @@ public class IdWorker {
      * 获取唯一ID
      *
      * @return id
-     * @deprecated 3.1.2 spring应用可以通过@IdGenerator,非spring应用请自行控制IdGenerator的实例化
+     * @deprecated 3.2.1 spring应用可以通过@IdGenerator,非spring应用请自行控制IdGenerator的实例化
      */
     @Deprecated
     public static String getIdStr() {
@@ -76,7 +77,7 @@ public class IdWorker {
     /**
      * 时间 ID = Time + ID
      * <p>例如：可用于商品订单 ID</p>
-     * @deprecated 3.1.2  spring应用可以通过@IdGenerator,非spring应用请自行控制IdGenerator的实例化
+     * @deprecated 3.2.1  spring应用可以通过@IdGenerator,非spring应用请自行控制IdGenerator的实例化
      */
     @Deprecated
     public static String getTimeId() {
@@ -101,7 +102,7 @@ public class IdWorker {
      *
      * @param idGenerator id 生成器
      * @see GlobalConfig#setIdGenerator(IdGenerator)
-     * @deprecated 3.1.2
+     * @deprecated 3.2.1
      */
     @Deprecated
     public static void setIdGenerator(IdGenerator idGenerator) {
