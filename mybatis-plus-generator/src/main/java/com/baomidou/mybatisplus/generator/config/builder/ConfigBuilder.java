@@ -39,6 +39,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * 配置汇总 传递给文件生成工具
@@ -100,6 +101,10 @@ public class ConfigBuilder {
      * 是否支持注释
      */
     private boolean commentSupported;
+    /**
+     * 过滤正则
+     */
+    private static final Pattern REGX = Pattern.compile("[~!/@#$%^&*()-_=+\\\\|[{}];:\\'\\\",<.>/?]+");
 
     /**
      * 在构造器中处理配置
@@ -489,7 +494,10 @@ public class ConfigBuilder {
                                 if (tableNameMatches(includeTable, tableName)) {
                                     includeTableList.add(tableInfo);
                                 } else {
-                                    notExistTables.add(includeTable);
+                                    //过滤正则表名
+                                    if (!REGX.matcher(includeTable).find()) {
+                                        notExistTables.add(includeTable);
+                                    }
                                 }
                             }
                         } else if (isExclude) {
@@ -498,7 +506,10 @@ public class ConfigBuilder {
                                 if (tableNameMatches(excludeTable, tableName)) {
                                     excludeTableList.add(tableInfo);
                                 } else {
-                                    notExistTables.add(excludeTable);
+                                    //过滤正则表名
+                                    if (!REGX.matcher(excludeTable).find()) {
+                                        notExistTables.add(excludeTable);
+                                    }
                                 }
                             }
                         }
