@@ -39,7 +39,7 @@ public class H2Query extends AbstractDbQuery {
 
     @Override
     public String tablesSql() {
-        return "SELECT * FROM INFORMATION_SCHEMA.TABLES";
+        return "SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE 1=1 ";
     }
 
 

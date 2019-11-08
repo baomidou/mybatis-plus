@@ -424,22 +424,7 @@ public class ConfigBuilder {
         Set<String> notExistTables = new HashSet<>();
         try {
             String tablesSql = dbQuery.tablesSql();
-            if(DbType.MYSQL == dbQuery.dbType()){
-                StringBuilder sql = new StringBuilder(tablesSql).append(" where 1 = 1 ");
-                if (StringUtils.isNotBlank(config.getLikeTable())) {
-                    sql.append(" and ").append(dbQuery.tableName()).append(" like '").append(config.getLikeTable()).append("'");
-                } else if (StringUtils.isNotBlank(config.getNotLikeTable())) {
-                    sql.append(" and ").append(dbQuery.tableName()).append(" not like '").append(config.getLikeTable()).append("'");
-                }
-                if (isInclude) {
-                    sql.append(" and ").append(dbQuery.tableName()).append(" in (")
-                        .append(Arrays.stream(config.getInclude()).map(tb -> "'" + tb + "'").collect(Collectors.joining(","))).append(")");
-                } else if (isExclude) {
-                    sql.append(" and ").append(dbQuery.tableName()).append(" not in (")
-                        .append(Arrays.stream(config.getInclude()).map(tb -> "'" + tb + "'").collect(Collectors.joining(","))).append(")");
-                }
-                tablesSql = sql.toString();
-            } else if (DbType.POSTGRE_SQL == dbQuery.dbType()) {
+            if (DbType.POSTGRE_SQL == dbQuery.dbType()) {
                 String schema = dataSourceConfig.getSchemaName();
                 if (schema == null) {
                     //pg 默认 schema=public
@@ -447,7 +432,7 @@ public class ConfigBuilder {
                     dataSourceConfig.setSchemaName(schema);
                 }
                 tablesSql = String.format(tablesSql, schema);
-            }else if (DbType.KINGBASE_ES == dbQuery.dbType()) {
+            } else if (DbType.KINGBASE_ES == dbQuery.dbType()) {
                 String schema = dataSourceConfig.getSchemaName();
                 if (schema == null) {
                     //kingbase 默认 schema=PUBLIC
@@ -473,22 +458,22 @@ public class ConfigBuilder {
                     dataSourceConfig.setSchemaName(schema);
                 }
                 tablesSql = String.format(tablesSql, schema);
-                if (isInclude) {
-                    StringBuilder sb = new StringBuilder(tablesSql);
-                    sb.append(" AND ").append(dbQuery.tableName()).append(" IN (");
-                    Arrays.stream(config.getInclude()).forEach(tbname -> sb.append(StringPool.SINGLE_QUOTE).append(tbname.toUpperCase()).append("',"));
-                    sb.replace(sb.length() - 1, sb.length(), StringPool.RIGHT_BRACKET);
-                    tablesSql = sb.toString();
-                } else if (isExclude) {
-                    StringBuilder sb = new StringBuilder(tablesSql);
-                    sb.append(" AND ").append(dbQuery.tableName()).append(" NOT IN (");
-                    Arrays.stream(config.getExclude()).forEach(tbname -> sb.append(StringPool.SINGLE_QUOTE).append(tbname.toUpperCase()).append("',"));
-                    sb.replace(sb.length() - 1, sb.length(), StringPool.RIGHT_BRACKET);
-                    tablesSql = sb.toString();
-                }
+            }
+            StringBuilder sql = new StringBuilder(tablesSql);
+            if (StringUtils.isNotBlank(config.getLikeTable())) {
+                sql.append(" AND ").append(dbQuery.tableName()).append(" LIKE '").append(config.getLikeTable()).append("'");
+            } else if (StringUtils.isNotBlank(config.getNotLikeTable())) {
+                sql.append(" AND ").append(dbQuery.tableName()).append(" NOT LIKE '").append(config.getLikeTable()).append("'");
+            }
+            if (isInclude) {
+                sql.append(" AND ").append(dbQuery.tableName()).append(" IN (")
+                    .append(Arrays.stream(config.getInclude()).map(tb -> "'" + tb + "'").collect(Collectors.joining(","))).append(")");
+            } else if (isExclude) {
+                sql.append(" AND ").append(dbQuery.tableName()).append(" NOT IN (")
+                    .append(Arrays.stream(config.getInclude()).map(tb -> "'" + tb + "'").collect(Collectors.joining(","))).append(")");
             }
             TableInfo tableInfo;
-            try (PreparedStatement preparedStatement = connection.prepareStatement(tablesSql);
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql.toString());
                  ResultSet results = preparedStatement.executeQuery()) {
                 while (results.next()) {
                     String tableName = results.getString(dbQuery.tableName());
