@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * 配置汇总 传递给文件生成工具
@@ -409,6 +410,9 @@ public class ConfigBuilder {
         if (isInclude && isExclude) {
             throw new RuntimeException("<strategy> 标签中 <include> 与 <exclude> 只能配置一项！");
         }
+        if (StringUtils.isNotBlank(config.getNotLikeTable()) && StringUtils.isNotBlank(config.getLikeTable())) {
+            throw new RuntimeException("<strategy> 标签中 <likeTable> 与 <notLikeTable> 只能配置一项！");
+        }
         //所有的表信息
         List<TableInfo> tableList = new ArrayList<>();
 
@@ -420,7 +424,22 @@ public class ConfigBuilder {
         Set<String> notExistTables = new HashSet<>();
         try {
             String tablesSql = dbQuery.tablesSql();
-            if (DbType.POSTGRE_SQL == dbQuery.dbType()) {
+            if(DbType.MYSQL == dbQuery.dbType()){
+                StringBuilder sql = new StringBuilder(tablesSql).append(" where 1 = 1 ");
+                if (StringUtils.isNotBlank(config.getLikeTable())) {
+                    sql.append(" and ").append(dbQuery.tableName()).append(" like '").append(config.getLikeTable()).append("'");
+                } else if (StringUtils.isNotBlank(config.getNotLikeTable())) {
+                    sql.append(" and ").append(dbQuery.tableName()).append(" not like '").append(config.getLikeTable()).append("'");
+                }
+                if (isInclude) {
+                    sql.append(" and ").append(dbQuery.tableName()).append(" in (")
+                        .append(Arrays.stream(config.getInclude()).map(tb -> "'" + tb + "'").collect(Collectors.joining(","))).append(")");
+                } else if (isExclude) {
+                    sql.append(" and ").append(dbQuery.tableName()).append(" not in (")
+                        .append(Arrays.stream(config.getInclude()).map(tb -> "'" + tb + "'").collect(Collectors.joining(","))).append(")");
+                }
+                tablesSql = sql.toString();
+            } else if (DbType.POSTGRE_SQL == dbQuery.dbType()) {
                 String schema = dataSourceConfig.getSchemaName();
                 if (schema == null) {
                     //pg 默认 schema=public
@@ -428,8 +447,7 @@ public class ConfigBuilder {
                     dataSourceConfig.setSchemaName(schema);
                 }
                 tablesSql = String.format(tablesSql, schema);
-            }
-            if (DbType.KINGBASE_ES == dbQuery.dbType()) {
+            }else if (DbType.KINGBASE_ES == dbQuery.dbType()) {
                 String schema = dataSourceConfig.getSchemaName();
                 if (schema == null) {
                     //kingbase 默认 schema=PUBLIC
@@ -437,8 +455,7 @@ public class ConfigBuilder {
                     dataSourceConfig.setSchemaName(schema);
                 }
                 tablesSql = String.format(tablesSql, schema);
-            }
-            if (DbType.DB2 == dbQuery.dbType()) {
+            } else if (DbType.DB2 == dbQuery.dbType()) {
                 String schema = dataSourceConfig.getSchemaName();
                 if (schema == null) {
                     //db2 默认 schema=current schema

@@ -95,12 +95,14 @@ public class StrategyConfig {
      */
     private String superControllerClass;
     /**
-     * 需要包含的表名，允许正则表达式（与exclude二选一配置）
+     * 需要包含的表名（与exclude二选一配置）
+     * @since 3.2.x 正则匹配不再支持,请使用{@link #setLikeTable(String)}
      */
     @Setter(AccessLevel.NONE)
     private String[] include = null;
     /**
-     * 需要排除的表名，允许正则表达式
+     * 需要排除的表名
+     * @since 3.2.x 正则匹配不再支持,请使用{@link #setNotLikeTable(String)}
      */
     @Setter(AccessLevel.NONE)
     private String[] exclude = null;
@@ -160,6 +162,18 @@ public class StrategyConfig {
      * 表填充字段
      */
     private List<TableFill> tableFillList = null;
+    /**
+     * 包含表名
+     *
+     * @since 3.2.x
+     */
+    private String likeTable;
+    /**
+     * 不包含表名
+     *
+     * @since 3.2.x
+     */
+    private String notLikeTable;
 
     /**
      * 大写命名、字段符合大写字母数字下划线命名
