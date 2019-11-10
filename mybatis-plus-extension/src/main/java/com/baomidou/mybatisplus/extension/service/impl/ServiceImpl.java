@@ -116,16 +116,15 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     public boolean saveBatch(Collection<T> entityList, int batchSize) {
         SqlHelper.clearCache(currentModelClass());
         String sqlStatement = sqlStatement(SqlMethod.INSERT_ONE);
+        int size = entityList.size();
         try (SqlSession batchSqlSession = sqlSessionBatch()) {
             int i = 0;
-            for (T anEntityList : entityList) {
-                batchSqlSession.insert(sqlStatement, anEntityList);
-                if (i >= 1 && i % batchSize == 0) {
+            for (T entity : entityList) {
+                batchSqlSession.insert(sqlStatement, entity);
+                if ((i++ >= 1 && i % batchSize == 0) || i == size) {
                     batchSqlSession.flushStatements();
                 }
-                i++;
             }
-            batchSqlSession.flushStatements();
         }
         return true;
     }
@@ -161,6 +160,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
         String keyProperty = tableInfo.getKeyProperty();
         Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
+        int size = entityList.size();
         try (SqlSession batchSqlSession = sqlSessionBatch()) {
             int i = 0;
             for (T entity : entityList) {
@@ -173,12 +173,10 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                     batchSqlSession.update(sqlStatement(SqlMethod.UPDATE_BY_ID), param);
                 }
                 // 不知道以后会不会有人说更新失败了还要执行插入 😂😂😂
-                if (i >= 1 && i % batchSize == 0) {
+                if ((i++ >= 1 && i % batchSize == 0) || i == size) {
                     batchSqlSession.flushStatements();
                 }
-                i++;
             }
-            batchSqlSession.flushStatements();
         }
         return true;
     }
@@ -220,18 +218,17 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         Assert.notEmpty(entityList, "error: entityList must not be empty");
         String sqlStatement = sqlStatement(SqlMethod.UPDATE_BY_ID);
         SqlHelper.clearCache(currentModelClass());
+        int size = entityList.size();
         try (SqlSession batchSqlSession = sqlSessionBatch()) {
             int i = 0;
             for (T anEntityList : entityList) {
                 MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
                 param.put(Constants.ENTITY, anEntityList);
                 batchSqlSession.update(sqlStatement, param);
-                if (i >= 1 && i % batchSize == 0) {
+                if ((i++ >= 1 && i % batchSize == 0) || i == size) {
                     batchSqlSession.flushStatements();
                 }
-                i++;
             }
-            batchSqlSession.flushStatements();
         }
         return true;
     }
