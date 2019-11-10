@@ -21,6 +21,8 @@ import org.apache.ibatis.reflection.property.PropertyNamer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
  * 测试 Lambda 解析类
  */
@@ -32,9 +34,15 @@ class LambdaUtilsTest {
     @Test
     void testResolve() {
         SerializedLambda lambda = LambdaUtils.resolve(TestModel::getId);
-        Assertions.assertEquals(TestModel.class.getName(), lambda.getImplClassName());
-        Assertions.assertEquals("getId", lambda.getImplMethodName());
-        Assertions.assertEquals("id", PropertyNamer.methodToProperty(lambda.getImplMethodName()));
+        assertEquals(Parent.class.getName(), lambda.getImplClassName());
+        assertEquals("getId", lambda.getImplMethodName());
+        assertEquals("id", PropertyNamer.methodToProperty(lambda.getImplMethodName()));
+        assertEquals(TestModel.class, lambda.getInstantiatedType());
+
+        // 测试接口泛型获取
+        lambda = new TestModelHolder().toLambda();
+        // 无法从泛型获取到实现类，即使改泛型参数已经被实现
+        assertEquals(Named.class, lambda.getInstantiatedType());
     }
 
     /**
@@ -52,12 +60,36 @@ class LambdaUtilsTest {
      * @param lambda 解析后的 lambda
      */
     private void assertInstantiatedMethodTypeIsReference(SerializedLambda lambda) {
-        Assertions.assertNotNull(lambda.getInstantiatedMethodType());
+        Assertions.assertNotNull(lambda.getInstantiatedType());
+    }
+
+    /**
+     * 用于测试的 Model
+     */
+    @Getter
+    private static class TestModel extends Parent implements Named {
+        private String name;
     }
 
     @Getter
-    private static class TestModel {
+    private static abstract class Parent {
         private int id;
+    }
+
+    // 处理 ISSUE:https://gitee.com/baomidou/mybatis-plus/issues/I13Y8Y，由于 java 本身处理的问题，这里无法获取到实例
+    private abstract static class BaseHolder<T extends Named> {
+
+        SerializedLambda toLambda() {
+            return LambdaUtils.resolve(T::getName);
+        }
+
+    }
+
+    private static class TestModelHolder extends BaseHolder<TestModel> {
+    }
+
+    private interface Named {
+        String getName();
     }
 
 }
