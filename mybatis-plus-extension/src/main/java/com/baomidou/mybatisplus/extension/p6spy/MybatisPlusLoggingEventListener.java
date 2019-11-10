@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.extension.p6spy;
 
-import com.p6spy.engine.common.ConnectionInformation;
 import com.p6spy.engine.common.StatementInformation;
 import com.p6spy.engine.logging.LoggingEventListener;
 
@@ -35,8 +34,4 @@ public class MybatisPlusLoggingEventListener extends LoggingEventListener {
         //忽略批量执行结果
     }
 
-    @Override
-    public void onAfterCommit(ConnectionInformation connectionInformation, long timeElapsedNanos, SQLException e) {
-        //忽略提交结果,可以避免打印空sql问题
-    }
 }
