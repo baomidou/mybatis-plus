@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.core.conditions.interfaces;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.function.BiPredicate;
+import java.util.function.Supplier;
 
 /**
  * 查询条件封装
@@ -95,6 +96,16 @@ public interface Compare<Children, R> extends Serializable {
     Children eq(boolean condition, R column, Object val);
 
     /**
+     * 等于 =
+     *
+     * @param condition   执行条件
+     * @param column      字段
+     * @param valSupplier 值
+     * @return children
+     */
+    Children eq(boolean condition, R column, Supplier<Object> valSupplier);
+
+    /**
      * ignore
      */
     default Children ne(R column, Object val) {
@@ -110,6 +121,16 @@ public interface Compare<Children, R> extends Serializable {
      * @return children
      */
     Children ne(boolean condition, R column, Object val);
+
+    /**
+     * 不等于 &lt;&gt;
+     *
+     * @param condition   执行条件
+     * @param column      字段
+     * @param valSupplier 值
+     * @return children
+     */
+    Children ne(boolean condition, R column, Supplier<Object> valSupplier);
 
     /**
      * ignore
@@ -129,6 +150,16 @@ public interface Compare<Children, R> extends Serializable {
     Children gt(boolean condition, R column, Object val);
 
     /**
+     * 大于 &gt;
+     *
+     * @param condition   执行条件
+     * @param column      字段
+     * @param valSupplier 值
+     * @return children
+     */
+    Children gt(boolean condition, R column, Supplier<Object> valSupplier);
+
+    /**
      * ignore
      */
     default Children ge(R column, Object val) {
@@ -144,6 +175,16 @@ public interface Compare<Children, R> extends Serializable {
      * @return children
      */
     Children ge(boolean condition, R column, Object val);
+
+    /**
+     * 大于等于 &gt;=
+     *
+     * @param condition   执行条件
+     * @param column      字段
+     * @param valSupplier 值
+     * @return children
+     */
+    Children ge(boolean condition, R column, Supplier<Object> valSupplier);
 
     /**
      * ignore
@@ -163,6 +204,16 @@ public interface Compare<Children, R> extends Serializable {
     Children lt(boolean condition, R column, Object val);
 
     /**
+     * 小于 &lt;
+     *
+     * @param condition   执行条件
+     * @param column      字段
+     * @param valSupplier 值
+     * @return children
+     */
+    Children lt(boolean condition, R column, Supplier<Object> valSupplier);
+
+    /**
      * ignore
      */
     default Children le(R column, Object val) {
@@ -178,6 +229,16 @@ public interface Compare<Children, R> extends Serializable {
      * @return children
      */
     Children le(boolean condition, R column, Object val);
+
+    /**
+     * 小于等于 &lt;=
+     *
+     * @param condition   执行条件
+     * @param column      字段
+     * @param valSupplier 值
+     * @return children
+     */
+    Children le(boolean condition, R column, Supplier<Object> valSupplier);
 
     /**
      * ignore
@@ -198,6 +259,17 @@ public interface Compare<Children, R> extends Serializable {
     Children between(boolean condition, R column, Object val1, Object val2);
 
     /**
+     * BETWEEN 值1 AND 值2
+     *
+     * @param condition    执行条件
+     * @param column       字段
+     * @param valSupplier1 值1
+     * @param valSupplier2 值2
+     * @return children
+     */
+    Children between(boolean condition, R column, Supplier<Object> valSupplier1, Supplier<Object> valSupplier2);
+
+    /**
      * ignore
      */
     default Children notBetween(R column, Object val1, Object val2) {
@@ -214,6 +286,17 @@ public interface Compare<Children, R> extends Serializable {
      * @return children
      */
     Children notBetween(boolean condition, R column, Object val1, Object val2);
+
+    /**
+     * NOT BETWEEN 值1 AND 值2
+     *
+     * @param condition    执行条件
+     * @param column       字段
+     * @param valSupplier1 值1
+     * @param valSupplier2 值2
+     * @return children
+     */
+    Children notBetween(boolean condition, R column, Supplier<Object> valSupplier1, Supplier<Object> valSupplier2);
 
     /**
      * ignore
@@ -233,6 +316,16 @@ public interface Compare<Children, R> extends Serializable {
     Children like(boolean condition, R column, Object val);
 
     /**
+     * LIKE '%值%'
+     *
+     * @param condition   执行条件
+     * @param column      字段
+     * @param valSupplier 值
+     * @return children
+     */
+    Children like(boolean condition, R column, Supplier<Object> valSupplier);
+
+    /**
      * ignore
      */
     default Children notLike(R column, Object val) {
@@ -248,6 +341,16 @@ public interface Compare<Children, R> extends Serializable {
      * @return children
      */
     Children notLike(boolean condition, R column, Object val);
+
+    /**
+     * NOT LIKE '%值%'
+     *
+     * @param condition   执行条件
+     * @param column      字段
+     * @param valSupplier 值
+     * @return children
+     */
+    Children notLike(boolean condition, R column, Supplier<Object> valSupplier);
 
     /**
      * ignore
@@ -267,6 +370,16 @@ public interface Compare<Children, R> extends Serializable {
     Children likeLeft(boolean condition, R column, Object val);
 
     /**
+     * LIKE '%值'
+     *
+     * @param condition   执行条件
+     * @param column      字段
+     * @param valSupplier 值
+     * @return children
+     */
+    Children likeLeft(boolean condition, R column, Supplier<Object> valSupplier);
+
+    /**
      * ignore
      */
     default Children likeRight(R column, Object val) {
@@ -282,4 +395,14 @@ public interface Compare<Children, R> extends Serializable {
      * @return children
      */
     Children likeRight(boolean condition, R column, Object val);
+
+    /**
+     * LIKE '值%'
+     *
+     * @param condition   执行条件
+     * @param column      字段
+     * @param valSupplier 值
+     * @return children
+     */
+    Children likeRight(boolean condition, R column, Supplier<Object> valSupplier);
 }

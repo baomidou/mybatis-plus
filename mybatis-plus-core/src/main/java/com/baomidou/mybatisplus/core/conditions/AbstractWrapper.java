@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.*;
 import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.*;
@@ -134,8 +135,18 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     @Override
+    public Children eq(boolean condition, R column, Supplier<Object> valSupplier) {
+        return addCondition(condition, column, EQ, valSupplier);
+    }
+
+    @Override
     public Children ne(boolean condition, R column, Object val) {
         return addCondition(condition, column, NE, val);
+    }
+
+    @Override
+    public Children ne(boolean condition, R column, Supplier<Object> valSupplier) {
+        return addCondition(condition, column, NE, valSupplier);
     }
 
     @Override
@@ -144,8 +155,18 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     @Override
+    public Children gt(boolean condition, R column, Supplier<Object> valSupplier) {
+        return addCondition(condition, column, GT, valSupplier);
+    }
+
+    @Override
     public Children ge(boolean condition, R column, Object val) {
         return addCondition(condition, column, GE, val);
+    }
+
+    @Override
+    public Children ge(boolean condition, R column, Supplier<Object> valSupplier) {
+        return addCondition(condition, column, GE, valSupplier);
     }
 
     @Override
@@ -154,8 +175,18 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     @Override
+    public Children lt(boolean condition, R column, Supplier<Object> valSupplier) {
+        return addCondition(condition, column, LT, valSupplier);
+    }
+
+    @Override
     public Children le(boolean condition, R column, Object val) {
         return addCondition(condition, column, LE, val);
+    }
+
+    @Override
+    public Children le(boolean condition, R column, Supplier<Object> valSupplier) {
+        return addCondition(condition, column, LE, valSupplier);
     }
 
     @Override
@@ -164,8 +195,18 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     @Override
+    public Children like(boolean condition, R column, Supplier<Object> valSupplier) {
+        return likeValue(condition, column, valSupplier, SqlLike.DEFAULT);
+    }
+
+    @Override
     public Children notLike(boolean condition, R column, Object val) {
         return not(condition).like(condition, column, val);
+    }
+
+    @Override
+    public Children notLike(boolean condition, R column, Supplier<Object> valSupplier) {
+        return not(condition).like(condition, column, valSupplier);
     }
 
     @Override
@@ -174,8 +215,18 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     @Override
+    public Children likeLeft(boolean condition, R column, Supplier<Object> valSupplier) {
+        return likeValue(condition, column, valSupplier, SqlLike.LEFT);
+    }
+
+    @Override
     public Children likeRight(boolean condition, R column, Object val) {
         return likeValue(condition, column, val, SqlLike.RIGHT);
+    }
+
+    @Override
+    public Children likeRight(boolean condition, R column, Supplier<Object> valSupplier) {
+        return likeValue(condition, column, valSupplier, SqlLike.RIGHT);
     }
 
     @Override
@@ -185,8 +236,22 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     @Override
+    public Children between(boolean condition, R column, Supplier<Object> valSupplier1, Supplier<Object> valSupplier2) {
+        if (condition) {
+            return doIt(true, () -> columnToString(column), BETWEEN, () -> formatSql("{0}", nullSafeGet(valSupplier1)), AND,
+                () -> formatSql("{0}", nullSafeGet(valSupplier2)));
+        }
+        return typedThis;
+    }
+
+    @Override
     public Children notBetween(boolean condition, R column, Object val1, Object val2) {
         return not(condition).between(condition, column, val1, val2);
+    }
+
+    @Override
+    public Children notBetween(boolean condition, R column, Supplier<Object> valSupplier1, Supplier<Object> valSupplier2) {
+        return not(condition).between(condition, column, valSupplier1, valSupplier2);
     }
 
     @Override
@@ -266,8 +331,18 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     @Override
+    public Children inSql(boolean condition, R column, Supplier<String> inValueSupplier) {
+        return doIt(condition, () -> columnToString(column), IN, () -> String.format("(%s)", inValueSupplier == null ? "" : inValueSupplier.get()));
+    }
+
+    @Override
     public Children notInSql(boolean condition, R column, String inValue) {
         return not(condition).inSql(condition, column, inValue);
+    }
+
+    @Override
+    public Children notInSql(boolean condition, R column, Supplier<String> inValueSupplier) {
+        return not(condition).inSql(condition, column, inValueSupplier);
     }
 
     @Override
@@ -321,6 +396,17 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     /**
+     * 内部自用
+     * <p>拼接 LIKE 以及 值</p>
+     */
+    protected Children likeValue(boolean condition, R column, Supplier<Object> valSupplier, SqlLike sqlLike) {
+        if (condition) {
+            return doIt(true, () -> columnToString(column), LIKE, () -> formatSql("{0}", SqlUtils.concatLike(nullSafeGet(valSupplier), sqlLike)));
+        }
+        return typedThis;
+    }
+
+    /**
      * 普通查询条件
      *
      * @param condition  是否执行
@@ -330,6 +416,21 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      */
     protected Children addCondition(boolean condition, R column, SqlKeyword sqlKeyword, Object val) {
         return doIt(condition, () -> columnToString(column), sqlKeyword, () -> formatSql("{0}", val));
+    }
+
+    /**
+     * 普通查询条件
+     *
+     * @param condition   是否执行
+     * @param column      属性
+     * @param sqlKeyword  SQL 关键词
+     * @param valSupplier 条件值
+     */
+    protected Children addCondition(boolean condition, R column, SqlKeyword sqlKeyword, Supplier<Object> valSupplier) {
+        if (condition) {
+            return doIt(true, () -> columnToString(column), sqlKeyword, () -> formatSql("{0}", nullSafeGet(valSupplier)));
+        }
+        return typedThis;
     }
 
     /**
@@ -479,5 +580,9 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     @SuppressWarnings("all")
     public Children clone() {
         return SerializationUtils.clone(typedThis);
+    }
+
+    private Object nullSafeGet(Supplier<Object> valSupplier) {
+        return valSupplier != null ? valSupplier.get() : null;
     }
 }

@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import static java.util.stream.Collectors.toList;
 
@@ -168,6 +169,19 @@ public interface Func<Children, R> extends Serializable {
     Children inSql(boolean condition, R column, String inValue);
 
     /**
+     * 字段 IN ( sql语句 )
+     * <p>!! sql 注入方式的 in 方法 !!</p>
+     * <p>例1: inSql("id", "1, 2, 3, 4, 5, 6")</p>
+     * <p>例2: inSql("id", "select id from table where id &lt; 3")</p>
+     *
+     * @param condition       执行条件
+     * @param column          字段
+     * @param inValueSupplier sql语句
+     * @return children
+     */
+    Children inSql(boolean condition, R column, Supplier<String> inValueSupplier);
+
+    /**
      * ignore
      */
     default Children notInSql(R column, String inValue) {
@@ -186,6 +200,19 @@ public interface Func<Children, R> extends Serializable {
      * @return children
      */
     Children notInSql(boolean condition, R column, String inValue);
+
+    /**
+     * 字段 NOT IN ( sql语句 )
+     * <p>!! sql 注入方式的 not in 方法 !!</p>
+     * <p>例1: notInSql("id", "1, 2, 3, 4, 5, 6")</p>
+     * <p>例2: notInSql("id", "select id from table where id &lt; 3")</p>
+     *
+     * @param condition       执行条件
+     * @param column          字段
+     * @param inValueSupplier sql语句 ---&gt; 1,2,3,4,5,6 或者 select id from table where id &lt; 3
+     * @return children
+     */
+    Children notInSql(boolean condition, R column, Supplier<String> inValueSupplier);
 
     /**
      * ignore

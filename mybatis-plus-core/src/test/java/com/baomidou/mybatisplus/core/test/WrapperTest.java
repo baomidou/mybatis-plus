@@ -17,10 +17,12 @@ package com.baomidou.mybatisplus.core.test;
 
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -57,15 +59,17 @@ class WrapperTest {
     @Test
     void test1() {
         QueryWrapper<User> ew = new QueryWrapper<User>() {
-          /**
-           *  serialVersionUID
-           */
-          private static final long serialVersionUID = 4719966531503901490L;
-        {
-            eq("xxx", 123);
-            and(i -> i.eq("andx", 65444).le("ande", 66666));
-            ne("xxx", 222);
-        }};
+            /**
+             *  serialVersionUID
+             */
+            private static final long serialVersionUID = 4719966531503901490L;
+
+            {
+                eq("xxx", 123);
+                and(i -> i.eq("andx", 65444).le("ande", 66666));
+                ne("xxx", 222);
+            }
+        };
         log(ew.getSqlSegment());
         log(ew.getSqlSegment());
         ew.gt("x22", 333);
@@ -147,6 +151,74 @@ class WrapperTest {
             .or().likeLeft("id", 1).likeRight("id", 1);
         logSqlSegment("测试 Compare 下的方法", queryWrapper);
         logParams(queryWrapper);
+    }
+
+    @Test
+    void testCompareForSupplierWithNull() {
+        TableInfoHelper.initTableInfo(null, User.class);
+        User param = null;
+        LambdaQueryWrapper<User> lambdaQueryWrapper = Wrappers.<User>lambdaQuery()
+            .eq(param != null, User::getId, () -> param.getId())
+            .gt(param != null, User::getId, () -> param.getId())
+            .ge(param != null, User::getId, () -> param.getId())
+            .lt(param != null, User::getId, () -> param.getId())
+            .le(param != null, User::getId, () -> param.getId())
+            .between(param != null, User::getId, () -> param.getId(), () -> param.getId())
+            .notBetween(param != null, User::getId, () -> param.getId(), () -> param.getId())
+            .ne(param != null, User::getId, () -> param.getId())
+            .eq(param != null, User::getId, () -> param.getId())
+            .inSql(param != null, User::getId, () -> String.valueOf(param.getId()))
+            .notInSql(param != null, User::getId, () -> String.valueOf(param.getId()));
+        logSqlSegment("lambda query wrapper", lambdaQueryWrapper);
+
+        QueryWrapper<User> queryWrapper = Wrappers.<User>query()
+            .eq(param != null, "id", () -> param.getId())
+            .gt(param != null, "id", () -> param.getId())
+            .ge(param != null, "id", () -> param.getId())
+            .lt(param != null, "id", () -> param.getId())
+            .le(param != null, "id", () -> param.getId())
+            .between(param != null, "id", () -> param.getId(), () -> param.getId())
+            .notBetween(param != null, "id", () -> param.getId(), () -> param.getId())
+            .ne(param != null, "id", () -> param.getId())
+            .eq(param != null, "id", () -> param.getId())
+            .inSql(param != null, "id", () -> String.valueOf(param.getId()))
+            .notInSql(param != null, "id", () -> String.valueOf(param.getId()));
+        logParams(queryWrapper);
+        logSqlSegment("query wrapper", queryWrapper);
+    }
+
+    @Test
+    void testCompareForSupplierWithoutNull() {
+        TableInfoHelper.initTableInfo(null, User.class);
+        User param = new User();
+        LambdaQueryWrapper<User> lambdaQueryWrapper = Wrappers.<User>lambdaQuery()
+            .eq(param != null, User::getId, () -> param.getId())
+            .gt(param != null, User::getId, () -> param.getId())
+            .ge(param != null, User::getId, () -> param.getId())
+            .lt(param != null, User::getId, () -> param.getId())
+            .le(param != null, User::getId, () -> param.getId())
+            .between(param != null, User::getId, () -> param.getId(), () -> param.getId())
+            .notBetween(param != null, User::getId, () -> param.getId(), () -> param.getId())
+            .ne(param != null, User::getId, () -> param.getId())
+            .eq(param != null, User::getId, () -> param.getId())
+            .inSql(param != null, User::getId, () -> String.valueOf(param.getId()))
+            .notInSql(param != null, User::getId, () -> String.valueOf(param.getId()));
+        logSqlSegment("lambda query wrapper", lambdaQueryWrapper);
+
+        QueryWrapper<User> queryWrapper = Wrappers.<User>query()
+            .eq(param != null, "id", () -> param.getId())
+            .gt(param != null, "id", () -> param.getId())
+            .ge(param != null, "id", () -> param.getId())
+            .lt(param != null, "id", () -> param.getId())
+            .le(param != null, "id", () -> param.getId())
+            .between(param != null, "id", () -> param.getId(), () -> param.getId())
+            .notBetween(param != null, "id", () -> param.getId(), () -> param.getId())
+            .ne(param != null, "id", () -> param.getId())
+            .eq(param != null, "id", () -> param.getId())
+            .inSql(param != null, "id", () -> String.valueOf(param.getId()))
+            .notInSql(param != null, "id", () -> String.valueOf(param.getId()));
+        logParams(queryWrapper);
+        logSqlSegment("query wrapper", queryWrapper);
     }
 
     @Test

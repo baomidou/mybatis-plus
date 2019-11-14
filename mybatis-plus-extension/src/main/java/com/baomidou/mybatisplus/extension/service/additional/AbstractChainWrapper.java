@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * 所有包装类都继承此抽象类,此抽象类代理了大部分生成 where 条件的方法
@@ -262,6 +263,90 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     @Override
     public Children nested(boolean condition, Consumer<Param> consumer) {
         getWrapper().nested(condition, consumer);
+        return typedThis;
+    }
+
+    @Override
+    public Children eq(boolean condition, R column, Supplier<Object> valSupplier) {
+        getWrapper().eq(condition, column, valSupplier);
+        return typedThis;
+    }
+
+    @Override
+    public Children ne(boolean condition, R column, Supplier<Object> valSupplier) {
+        getWrapper().ne(condition, column, valSupplier);
+        return typedThis;
+    }
+
+    @Override
+    public Children gt(boolean condition, R column, Supplier<Object> valSupplier) {
+        getWrapper().gt(condition, column, valSupplier);
+        return typedThis;
+    }
+
+    @Override
+    public Children ge(boolean condition, R column, Supplier<Object> valSupplier) {
+        getWrapper().ge(condition, column, valSupplier);
+        return typedThis;
+    }
+
+    @Override
+    public Children lt(boolean condition, R column, Supplier<Object> valSupplier) {
+        getWrapper().lt(condition, column, valSupplier);
+        return typedThis;
+    }
+
+    @Override
+    public Children le(boolean condition, R column, Supplier<Object> valSupplier) {
+        getWrapper().le(condition, column, valSupplier);
+        return typedThis;
+    }
+
+    @Override
+    public Children between(boolean condition, R column, Supplier<Object> valSupplier1, Supplier<Object> valSupplier2) {
+        getWrapper().between(condition, column, valSupplier1, valSupplier2);
+        return typedThis;
+    }
+
+    @Override
+    public Children notBetween(boolean condition, R column, Supplier<Object> valSupplier1, Supplier<Object> valSupplier2) {
+        getWrapper().notBetween(condition, column, valSupplier1, valSupplier2);
+        return typedThis;
+    }
+
+    @Override
+    public Children like(boolean condition, R column, Supplier<Object> valSupplier) {
+        getWrapper().like(condition, column, valSupplier);
+        return typedThis;
+    }
+
+    @Override
+    public Children notLike(boolean condition, R column, Supplier<Object> valSupplier) {
+        getWrapper().notLike(condition, column, valSupplier);
+        return typedThis;
+    }
+
+    @Override
+    public Children likeLeft(boolean condition, R column, Supplier<Object> valSupplier) {
+        getWrapper().likeLeft(condition, column, valSupplier);
+        return typedThis;
+    }
+
+    @Override
+    public Children likeRight(boolean condition, R column, Supplier<Object> valSupplier) {
+        getWrapper().likeRight(condition, column, valSupplier);
+        return typedThis;
+    }
+
+    @Override
+    public Children inSql(boolean condition, R column, Supplier<String> inValueSupplier) {
+        getWrapper().inSql(condition, column, inValueSupplier);
+        return typedThis;
+    }
+
+    @Override
+    public Children notInSql(boolean condition, R column, Supplier<String> inValueSupplier) {
+        getWrapper().notInSql(condition, column, inValueSupplier);
         return typedThis;
     }
 
