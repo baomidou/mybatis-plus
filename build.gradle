@@ -75,7 +75,7 @@ ext {
         "velocity"                   : "org.apache.velocity:velocity-engine-core:2.1",
         "freemarker"                 : "org.freemarker:freemarker:2.3.29",
         "beetl"                      : "com.ibeetl:beetl:3.0.13.RELEASE",
-        "swagger-annotations"        : "io.swagger:swagger-annotations:1.5.21"
+        "swagger-annotations"        : "io.swagger:swagger-annotations:1.5.24"
     ]
 }
 
