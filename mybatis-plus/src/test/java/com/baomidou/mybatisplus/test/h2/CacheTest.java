@@ -43,6 +43,18 @@ class CacheTest {
         IPage<CacheModel> cacheModelIPage7 = cacheMapper.selectPage(new Page<>(1, 3, false), new QueryWrapper<CacheModel>().ge("id", 2L));
         Assertions.assertEquals(cacheModelIPage7.getTotal(), 0L);
         Assertions.assertEquals(cacheModelIPage7.getRecords().size(), 3);
+        IPage<CacheModel> cacheModelIPage8 = cacheMapper.selectPage(new Page<>(1, 3, false), new QueryWrapper<CacheModel>().ge("id", 3L));
+        Assertions.assertEquals(cacheModelIPage8.getTotal(), 0L);
+        Assertions.assertEquals(cacheModelIPage8.getRecords().size(), 3);
+        cacheModelIPage8 = cacheMapper.selectPage(new Page<>(1, 3, false), new QueryWrapper<CacheModel>().ge("id", 3L));
+        Assertions.assertEquals(cacheModelIPage8.getTotal(), 0L);
+        Assertions.assertEquals(cacheModelIPage8.getRecords().size(), 3);
+        IPage<CacheModel> cacheModelIPage9 = cacheMapper.selectPage(new Page<>(1, 3, true), new QueryWrapper<CacheModel>().ge("id", 3L));
+        Assertions.assertEquals(cacheModelIPage9.getTotal(), 3L);
+        Assertions.assertEquals(cacheModelIPage9.getRecords().size(), 3);
+        cacheModelIPage9 = cacheMapper.selectPage(new Page<>(1, 3, true), new QueryWrapper<CacheModel>().ge("id", 3L));
+        Assertions.assertEquals(cacheModelIPage9.getTotal(), 3L);
+        Assertions.assertEquals(cacheModelIPage9.getRecords().size(), 3);
     }
 
 }

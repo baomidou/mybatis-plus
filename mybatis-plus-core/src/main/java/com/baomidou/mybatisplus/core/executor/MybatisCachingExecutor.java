@@ -27,9 +27,11 @@ import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.ExecutorException;
 import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.transaction.Transaction;
+import org.apache.ibatis.type.TypeHandlerRegistry;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -119,7 +121,7 @@ public class MybatisCachingExecutor implements Executor {
                         CacheKey countCacheKey = null;
                         if (page.isSearchCount()) {
                             // 这里的执行sql为原select语句,标准一点的是需要将此转换为count语句当做缓存key的,留做当优化把.
-                            countCacheKey = getCountCacheKey(ms, boundSql, parameterObject);
+                            countCacheKey = getCountCacheKey(ms, boundSql, parameterObject, RowBounds.DEFAULT);
                         }
                         // 切勿将这提取至上方,如果先查的话,需要提前将boundSql拷贝一份
                         result = delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
@@ -139,7 +141,7 @@ public class MybatisCachingExecutor implements Executor {
                     Long count;
                     if (page != null) {
                         if (page.isSearchCount()) {
-                            CacheKey cacheKey = getCountCacheKey(ms, boundSql, parameterObject);
+                            CacheKey cacheKey = getCountCacheKey(ms, boundSql, parameterObject, RowBounds.DEFAULT);
                             count = (Long) tcm.getObject(cache, cacheKey);
                             return new PageList((List) result, count);
                         }
@@ -165,10 +167,40 @@ public class MybatisCachingExecutor implements Executor {
             .build();
     }
 
-    private CacheKey getCountCacheKey(MappedStatement mappedStatement, BoundSql boundSql, Object parameterObject) {
-        BoundSql sourceSql = new BoundSql(mappedStatement.getConfiguration(), boundSql.getSql(), boundSql.getParameterMappings(), boundSql.getParameterObject());
+    private CacheKey getCountCacheKey(MappedStatement mappedStatement, BoundSql boundSql, Object parameterObject, RowBounds rowBounds) {
+        Configuration configuration = mappedStatement.getConfiguration();
+//        BoundSql sourceSql = new BoundSql(mappedStatement.getConfiguration(), boundSql.getSql(), boundSql.getParameterMappings(), boundSql.getParameterObject());
         MappedStatement statement = buildCountMappedStatement(mappedStatement);
-        return createCacheKey(statement, parameterObject, RowBounds.DEFAULT, sourceSql);
+        CacheKey cacheKey = new CacheKey();
+        cacheKey.update(statement.getId());
+        cacheKey.update(rowBounds.getOffset());
+        cacheKey.update(rowBounds.getLimit());
+        cacheKey.update(boundSql.getSql());
+        List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
+        TypeHandlerRegistry typeHandlerRegistry = mappedStatement.getConfiguration().getTypeHandlerRegistry();
+        // mimic DefaultParameterHandler logic
+        for (ParameterMapping parameterMapping : parameterMappings) {
+            if (parameterMapping.getMode() != ParameterMode.OUT) {
+                Object value;
+                String propertyName = parameterMapping.getProperty();
+                if (boundSql.hasAdditionalParameter(propertyName)) {
+                    value = boundSql.getAdditionalParameter(propertyName);
+                } else if (parameterObject == null) {
+                    value = null;
+                } else if (typeHandlerRegistry.hasTypeHandler(parameterObject.getClass())) {
+                    value = parameterObject;
+                } else {
+                    MetaObject metaObject = configuration.newMetaObject(parameterObject);
+                    value = metaObject.getValue(propertyName);
+                }
+                cacheKey.update(value);
+            }
+        }
+        if (configuration.getEnvironment() != null) {
+            // issue #176
+            cacheKey.update(configuration.getEnvironment().getId());
+        }
+        return cacheKey;
     }
 
     @Override
