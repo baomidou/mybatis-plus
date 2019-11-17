@@ -119,7 +119,7 @@ public class MybatisCachingExecutor implements Executor {
                         CacheKey countCacheKey = null;
                         if (page.isSearchCount()) {
                             // 这里的执行sql为原select语句,标准一点的是需要将此转换为count语句当做缓存key的,留做当优化把.
-                            countCacheKey = buildCountCacheKey(ms, boundSql, parameterObject);
+                            countCacheKey = getCountCacheKey(ms, boundSql, parameterObject);
                         }
                         // 切勿将这提取至上方,如果先查的话,需要提前将boundSql拷贝一份
                         result = delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
@@ -139,7 +139,7 @@ public class MybatisCachingExecutor implements Executor {
                     Long count;
                     if (page != null) {
                         if (page.isSearchCount()) {
-                            CacheKey cacheKey = buildCountCacheKey(ms, boundSql, parameterObject);
+                            CacheKey cacheKey = getCountCacheKey(ms, boundSql, parameterObject);
                             count = (Long) tcm.getObject(cache, cacheKey);
                             return new PageList((List) result, count);
                         }
@@ -153,10 +153,22 @@ public class MybatisCachingExecutor implements Executor {
         return delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
     }
 
-    private CacheKey buildCountCacheKey(MappedStatement mappedStatement, BoundSql boundSql, Object parameterObject) {
+    private MappedStatement buildCountMappedStatement(MappedStatement mappedStatement) {
+        // 暂时补充点属性,留着后面分离count查询,这里暂时用到的也就只有id,所以不会影响后面的流程.
+        return new MappedStatement.Builder(mappedStatement.getConfiguration(), mappedStatement.getId() + StringPool.DOT + "count", mappedStatement.getSqlSource(), SqlCommandType.SELECT)
+            .useCache(true)
+            .flushCacheRequired(false)
+            .lang(mappedStatement.getLang())
+            .resource(mappedStatement.getResource())
+            .databaseId(mappedStatement.getDatabaseId())
+            .cache(mappedStatement.getCache())
+            .build();
+    }
+
+    private CacheKey getCountCacheKey(MappedStatement mappedStatement, BoundSql boundSql, Object parameterObject) {
         BoundSql sourceSql = new BoundSql(mappedStatement.getConfiguration(), boundSql.getSql(), boundSql.getParameterMappings(), boundSql.getParameterObject());
-        MappedStatement build = new MappedStatement.Builder(mappedStatement.getConfiguration(), mappedStatement.getId() + StringPool.DOT + "count", mappedStatement.getSqlSource(), mappedStatement.getSqlCommandType()).build();
-        return createCacheKey(build, parameterObject, RowBounds.DEFAULT, sourceSql);
+        MappedStatement statement = buildCountMappedStatement(mappedStatement);
+        return createCacheKey(statement, parameterObject, RowBounds.DEFAULT, sourceSql);
     }
 
     @Override
