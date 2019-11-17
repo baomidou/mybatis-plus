@@ -15,9 +15,9 @@
  */
 package com.baomidou.mybatisplus.core.executor;
 
-import com.baomidou.mybatisplus.core.metadata.CachePage;
-import com.baomidou.mybatisplus.core.metadata.CachePageResult;
+import com.baomidou.mybatisplus.core.metadata.PageList;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.cache.TransactionalCacheManager;
@@ -115,21 +115,48 @@ public class MybatisCachingExecutor implements Executor {
                 ensureNoOutParams(ms, boundSql);
                 Object result = tcm.getObject(cache, key);
                 if (result == null) {
-                    result = delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
                     if (page != null) {
+                        CacheKey countCacheKey = null;
+                        if (page.isSearchCount()) {
+                            // 这里的执行sql为原select语句,标准一点的是需要将此转换为count语句当做缓存key的,留做当优化把.
+                            countCacheKey = buildCountCacheKey(ms, boundSql, parameterObject);
+                        }
+                        // 切勿将这提取至上方,如果先查的话,需要提前将boundSql拷贝一份
+                        result = delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
                         List<E> records = (List<E>) result;
-                        CachePage<E> cachePage = new CachePage<>(records, page.getTotal());
                         page.setRecords(records);
-                        tcm.putObject(cache, key, cachePage);
-                        return new CachePageResult((cachePage));
+                        tcm.putObject(cache, key, records);
+                        if (countCacheKey != null) {
+                            tcm.putObject(cache, countCacheKey, page.getTotal());
+                        }
+                        return new PageList(records, page.getTotal());
                     } else {
+                        result = delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
                         tcm.putObject(cache, key, result); // issue #578 and #116
+                        return (List<E>) result;
+                    }
+                } else {
+                    Long count;
+                    if (page != null) {
+                        if (page.isSearchCount()) {
+                            CacheKey cacheKey = buildCountCacheKey(ms, boundSql, parameterObject);
+                            count = (Long) tcm.getObject(cache, cacheKey);
+                            return new PageList((List) result, count);
+                        }
+                        return new PageList((List) result, 0L);
+                    } else {
+                        return (List<E>) result;
                     }
                 }
-                return page != null ? new CachePageResult((CachePage) result) : (List<E>) result;
             }
         }
         return delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
+    }
+
+    private CacheKey buildCountCacheKey(MappedStatement mappedStatement, BoundSql boundSql, Object parameterObject) {
+        BoundSql sourceSql = new BoundSql(mappedStatement.getConfiguration(), boundSql.getSql(), boundSql.getParameterMappings(), boundSql.getParameterObject());
+        MappedStatement build = new MappedStatement.Builder(mappedStatement.getConfiguration(), mappedStatement.getId() + StringPool.DOT + "count", mappedStatement.getSqlSource(), mappedStatement.getSqlCommandType()).build();
+        return createCacheKey(build, parameterObject, RowBounds.DEFAULT, sourceSql);
     }
 
     @Override

@@ -20,6 +20,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 受限于SqlSession#selectList(java.lang.String, java.lang.Object)
@@ -30,8 +31,16 @@ import java.util.ArrayList;
 @Data
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public final class CachePageResult extends ArrayList {
+public final class PageList<T> extends ArrayList<T> {
 
-    private CachePage cachePage;
+    /**
+     * 记录数
+     */
+    private List<T> records;
+
+    /**
+     * 总数
+     */
+    private long total;
 
 }
