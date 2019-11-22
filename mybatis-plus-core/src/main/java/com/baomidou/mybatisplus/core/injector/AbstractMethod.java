@@ -81,7 +81,7 @@ public abstract class AbstractMethod implements Constants {
      * @return sql set 片段
      */
     protected String sqlLogicSet(TableInfo table) {
-        return "SET " + table.getLogicDeleteSql(false, true);
+        return "SET " + table.getLogicDeleteSql(false, false);
     }
 
     /**
@@ -169,7 +169,7 @@ public abstract class AbstractMethod implements Constants {
                 " ${k} = #{v} ");
             sqlScript = SqlScriptUtils.convertForeach(sqlScript, "cm", "k", "v", "AND");
             sqlScript = SqlScriptUtils.convertIf(sqlScript, "cm != null and !cm.isEmpty", true);
-            sqlScript += (NEWLINE + table.getLogicDeleteSql(true, false));
+            sqlScript += (NEWLINE + table.getLogicDeleteSql(true, true));
             sqlScript = SqlScriptUtils.convertWhere(sqlScript);
             return sqlScript;
         } else {
@@ -195,7 +195,7 @@ public abstract class AbstractMethod implements Constants {
             String sqlScript = table.getAllSqlWhere(true, true, WRAPPER_ENTITY_DOT);
             sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", WRAPPER_ENTITY),
                 true);
-            sqlScript += (NEWLINE + table.getLogicDeleteSql(true, false) + NEWLINE);
+            sqlScript += (NEWLINE + table.getLogicDeleteSql(true, true) + NEWLINE);
             String normalSqlScript = SqlScriptUtils.convertIf(String.format("AND ${%s}", WRAPPER_SQLSEGMENT),
                 String.format("%s != null and %s != '' and %s", WRAPPER_SQLSEGMENT, WRAPPER_SQLSEGMENT,
                     WRAPPER_NONEMPTYOFNORMAL), true);
@@ -205,7 +205,7 @@ public abstract class AbstractMethod implements Constants {
                     WRAPPER_EMPTYOFNORMAL), true);
             sqlScript += normalSqlScript;
             sqlScript = SqlScriptUtils.convertChoose(String.format("%s != null", WRAPPER), sqlScript,
-                table.getLogicDeleteSql(false, false));
+                table.getLogicDeleteSql(false, true));
             sqlScript = SqlScriptUtils.convertWhere(sqlScript);
             return newLine ? NEWLINE + sqlScript : sqlScript;
         } else {

@@ -58,7 +58,7 @@ public class AlwaysUpdateSomeColumnById extends AbstractMethod {
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         SqlMethod sqlMethod = SqlMethod.UPDATE_BY_ID;
-        final String additional = optlockVersion() + tableInfo.getLogicDeleteSql(true, false);
+        final String additional = optlockVersion() + tableInfo.getLogicDeleteSql(true, true);
         String sqlSet = this.filterTableFieldInfo(tableInfo.getFieldList(), getPredicate(),
             i -> i.getSqlSet(true, ENTITY_DOT), NEWLINE);
         sqlSet = SqlScriptUtils.convertSet(sqlSet);
