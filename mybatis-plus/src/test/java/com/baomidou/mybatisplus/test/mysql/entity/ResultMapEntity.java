@@ -13,13 +13,13 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test.base.entity;
+package com.baomidou.mybatisplus.test.mysql.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.test.base.type.JsonTypeHandler;
-import com.baomidou.mybatisplus.test.base.type.ListTypeHandler;
-import com.baomidou.mybatisplus.test.base.type.MapTypeHandler;
+import com.baomidou.mybatisplus.test.mysql.type.JsonTypeHandler;
+import com.baomidou.mybatisplus.test.mysql.type.ListTypeHandler;
+import com.baomidou.mybatisplus.test.mysql.type.MapTypeHandler;
 import lombok.Data;
 import lombok.experimental.Accessors;
 

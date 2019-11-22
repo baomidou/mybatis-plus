@@ -15,8 +15,8 @@
  */
 package com.baomidou.mybatisplus.test.postgres.mapper;
 
+import com.baomidou.mybatisplus.test.mysql.MyBaseMapper;
 import com.baomidou.mybatisplus.test.postgres.entity.PgData;
-import com.baomidou.mybatisplus.test.base.mapper.MyBaseMapper;
 
 /**
  * @author miemie

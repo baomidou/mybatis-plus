@@ -13,23 +13,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test.base.mapper;
+package com.baomidou.mybatisplus.test.mysql.mapper.commons;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import org.apache.ibatis.annotations.Param;
+import com.baomidou.mybatisplus.test.mysql.entity.CommonData;
+import org.apache.ibatis.annotations.Select;
 
-import java.util.List;
+import java.util.Optional;
 
 /**
  * @author miemie
- * @since 2018-09-13
+ * @since 2019-04-11
  */
-public interface MyBaseMapper<T> extends BaseMapper<T> {
+public interface CommonDataCopyMapper {
 
-    int deleteByIdWithFill(T entity);
-
-    int insertBatchSomeColumn(List<T> entityList);
-
-    int alwaysUpdateSomeColumnById(@Param(Constants.ENTITY) T entity);
+    @Select("select * from common_data where id = #{id}")
+    Optional<CommonData> selectById(Long id);
 }

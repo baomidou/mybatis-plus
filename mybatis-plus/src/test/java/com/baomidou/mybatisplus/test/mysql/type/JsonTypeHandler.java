@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test.base.type;
+package com.baomidou.mybatisplus.test.mysql.type;
 
 import com.alibaba.fastjson.JSON;
 import org.apache.ibatis.type.BaseTypeHandler;

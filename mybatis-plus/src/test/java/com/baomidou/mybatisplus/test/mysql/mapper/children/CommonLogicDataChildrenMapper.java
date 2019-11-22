@@ -13,12 +13,12 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test.base.mapper.commons;
+package com.baomidou.mybatisplus.test.mysql.mapper.children;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.test.base.entity.CommonLogicData;
-import com.baomidou.mybatisplus.test.base.mapper.MyBaseMapper;
+import com.baomidou.mybatisplus.test.mysql.entity.CommonLogicData;
+import com.baomidou.mybatisplus.test.mysql.mapper.commons.CommonLogicDataMapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
@@ -28,8 +28,8 @@ import java.util.List;
  * @author miemie
  * @since 2018-07-06
  */
-public interface CommonLogicDataMapper extends MyBaseMapper<CommonLogicData> {
+public interface CommonLogicDataChildrenMapper extends CommonLogicDataMapper {
 
-    @Select("select * from common_logic_data ${ew.customSqlSegment}")
+    @Select("select id,test_int from common_logic_data ${ew.customSqlSegment}")
     List<CommonLogicData> getByWrapper(@Param(Constants.WRAPPER) LambdaQueryWrapper wrapper);
 }

@@ -13,30 +13,23 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test.base.enums;
+package com.baomidou.mybatisplus.test.mysql;
 
-import com.baomidou.mybatisplus.core.enums.IEnum;
-import lombok.Getter;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * @author miemie
- * @since 2018-08-19
+ * @since 2018-09-13
  */
-@Getter
-public enum TestEnum implements IEnum<Integer> {
-    ONE(1, "一"),
-    TWO(2, "二");
+public interface MyBaseMapper<T> extends BaseMapper<T> {
 
-    private final int code;
-    private final String val;
+    int deleteByIdWithFill(T entity);
 
-    TestEnum(int code, String val) {
-        this.code = code;
-        this.val = val;
-    }
+    int insertBatchSomeColumn(List<T> entityList);
 
-    @Override
-    public Integer getValue() {
-        return code;
-    }
+    int alwaysUpdateSomeColumnById(@Param(Constants.ENTITY) T entity);
 }

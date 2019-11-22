@@ -13,19 +13,30 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test.base.mapper.commons;
+package com.baomidou.mybatisplus.test.mysql.enums;
 
-import com.baomidou.mybatisplus.test.base.entity.CommonData;
-import org.apache.ibatis.annotations.Select;
-
-import java.util.Optional;
+import com.baomidou.mybatisplus.core.enums.IEnum;
+import lombok.Getter;
 
 /**
  * @author miemie
- * @since 2019-04-11
+ * @since 2018-08-19
  */
-public interface CommonDataCopyMapper {
+@Getter
+public enum TestEnum implements IEnum<Integer> {
+    ONE(1, "一"),
+    TWO(2, "二");
 
-    @Select("select * from common_data where id = #{id}")
-    Optional<CommonData> selectById(Long id);
+    private final int code;
+    private final String val;
+
+    TestEnum(int code, String val) {
+        this.code = code;
+        this.val = val;
+    }
+
+    @Override
+    public Integer getValue() {
+        return code;
+    }
 }
