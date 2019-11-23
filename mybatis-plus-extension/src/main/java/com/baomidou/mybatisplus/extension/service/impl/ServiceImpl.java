@@ -118,12 +118,13 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         String sqlStatement = sqlStatement(SqlMethod.INSERT_ONE);
         int size = entityList.size();
         try (SqlSession batchSqlSession = sqlSessionBatch()) {
-            int i = 0;
+            int i = 1;
             for (T entity : entityList) {
                 batchSqlSession.insert(sqlStatement, entity);
-                if ((i++ >= 1 && i % batchSize == 0) || i == size) {
+                if ((i % batchSize == 0) || i == size) {
                     batchSqlSession.flushStatements();
                 }
+                i++;
             }
         }
         return true;
@@ -162,7 +163,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
         int size = entityList.size();
         try (SqlSession batchSqlSession = sqlSessionBatch()) {
-            int i = 0;
+            int i = 1;
             for (T entity : entityList) {
                 Object idVal = ReflectionKit.getMethodValue(cls, entity, keyProperty);
                 if (StringUtils.checkValNull(idVal) || Objects.isNull(getById((Serializable) idVal))) {
@@ -173,9 +174,10 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                     batchSqlSession.update(sqlStatement(SqlMethod.UPDATE_BY_ID), param);
                 }
                 // 不知道以后会不会有人说更新失败了还要执行插入 😂😂😂
-                if ((i++ >= 1 && i % batchSize == 0) || i == size) {
+                if ((i % batchSize == 0) || i == size) {
                     batchSqlSession.flushStatements();
                 }
+                i++;
             }
         }
         return true;
@@ -220,14 +222,15 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         SqlHelper.clearCache(currentModelClass());
         int size = entityList.size();
         try (SqlSession batchSqlSession = sqlSessionBatch()) {
-            int i = 0;
+            int i = 1;
             for (T anEntityList : entityList) {
                 MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
                 param.put(Constants.ENTITY, anEntityList);
                 batchSqlSession.update(sqlStatement, param);
-                if ((i++ >= 1 && i % batchSize == 0) || i == size) {
+                if ((i % batchSize == 0) || i == size) {
                     batchSqlSession.flushStatements();
                 }
+                i++;
             }
         }
         return true;
