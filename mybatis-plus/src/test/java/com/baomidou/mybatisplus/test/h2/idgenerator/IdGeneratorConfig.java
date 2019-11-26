@@ -2,14 +2,8 @@ package com.baomidou.mybatisplus.test.h2.idgenerator;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.incrementer.IdGenerator;
-import com.baomidou.mybatisplus.core.metadata.TableInfo;
-import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.extension.incrementer.H2KeyGenerator;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.SqlExplainInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
-import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.EnumOrdinalTypeHandler;
@@ -34,10 +28,7 @@ public class IdGeneratorConfig {
         configuration.setDefaultEnumTypeHandler(EnumOrdinalTypeHandler.class);
         sqlSessionFactory.setConfiguration(configuration);
         PaginationInterceptor pagination = new PaginationInterceptor();
-        SqlExplainInterceptor sqlExplainInterceptor = new SqlExplainInterceptor();
-        sqlSessionFactory.setPlugins(
-            pagination,
-            sqlExplainInterceptor);
+        sqlSessionFactory.setPlugins(pagination);
         sqlSessionFactory.setGlobalConfig(globalConfig);
         return sqlSessionFactory.getObject();
     }
