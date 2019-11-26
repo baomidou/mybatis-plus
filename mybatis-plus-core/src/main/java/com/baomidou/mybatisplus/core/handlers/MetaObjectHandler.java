@@ -23,8 +23,11 @@ import com.baomidou.mybatisplus.core.toolkit.Constants;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * 元对象字段填充控制器抽象类，实现公共字段自动写入
@@ -93,7 +96,9 @@ public interface MetaObjectHandler {
      * @param fieldVal   java bean property value
      * @param metaObject meta object parameter
      * @since 3.0.7
+     * @deprecated 3.2.1 please use {@link #strictInsertFill}
      */
+    @Deprecated
     default MetaObjectHandler setInsertFieldValByName(String fieldName, Object fieldVal, MetaObject metaObject) {
         return setFieldValByName(fieldName, fieldVal, metaObject, FieldFill.INSERT);
     }
@@ -105,7 +110,9 @@ public interface MetaObjectHandler {
      * @param fieldVal   java bean property value
      * @param metaObject meta object parameter
      * @since 3.0.7
+     * @deprecated 3.2.1 please use {@link #strictUpdateFill}
      */
+    @Deprecated
     default MetaObjectHandler setUpdateFieldValByName(String fieldName, Object fieldVal, MetaObject metaObject) {
         return setFieldValByName(fieldName, fieldVal, metaObject, FieldFill.UPDATE);
     }
@@ -119,7 +126,9 @@ public interface MetaObjectHandler {
      * @param metaObject meta object parameter
      * @param fieldFill  填充策略枚举
      * @since 3.0.7
+     * @deprecated 3.2.1 please use like {@link #strictInsertFill} or {@link #strictUpdateFill}
      */
+    @Deprecated
     default MetaObjectHandler setFieldValByName(String fieldName, Object fieldVal, MetaObject metaObject, FieldFill fieldFill) {
         if (Objects.nonNull(fieldVal)) {
             if (metaObject.hasSetter(fieldName) && metaObject.hasGetter(fieldName)
@@ -136,6 +145,38 @@ public interface MetaObjectHandler {
             }
         }
         return this;
+    }
+
+    /**
+     * 填充判断
+     * <li> 如果是主键,不填充 </li>
+     * <li> 根据字段名找不到字段,不填充 </li>
+     * <li> 字段类型与填充值类型不匹配,不填充 </li>
+     * <li> 字段类型需在TableField注解里配置fill: @TableField(value="test_type", fill = FieldFill.INSERT), 没有配置或者不匹配时不填充 </li>
+     * v_3.1.0以后的版本(不包括3.1.0)，子类的值也可以自动填充，Timestamp的值也可以填入到java.util.Date类型里面
+     *
+     * @param fieldName  java bean property name
+     * @param fieldVal   java bean property value
+     * @param metaObject meta object parameter
+     * @param fieldFill  填充策略枚举
+     * @return 是否进行填充
+     * @since 3.0.7
+     * @deprecated 3.2.1
+     */
+    @Deprecated
+    default boolean isFill(String fieldName, Object fieldVal, MetaObject metaObject, FieldFill fieldFill) {
+        TableInfo tableInfo = findTableInfo(metaObject);
+        if (Objects.nonNull(tableInfo)) {
+            Optional<TableFieldInfo> first = tableInfo.getFieldList().stream()
+                //v_3.1.1+ 设置子类的值也可以通过
+                .filter(e -> e.getProperty().equals(fieldName) && e.getPropertyType().isAssignableFrom(fieldVal.getClass()))
+                .findFirst();
+            if (first.isPresent()) {
+                FieldFill fill = first.get().getFieldFill();
+                return fill.equals(fieldFill) || FieldFill.INSERT_UPDATE.equals(fill);
+            }
+        }
+        return false;
     }
 
     /**
@@ -156,38 +197,6 @@ public interface MetaObjectHandler {
     }
 
     /**
-     * check if the entity has some property will fill for insert </p>
-     * 表字段是否启用了插入填充
-     *
-     * @param metaObject metaObject meta object parameter
-     * @return yes or no
-     * @since 3.2.1
-     */
-    default boolean isWithInsertFill(MetaObject metaObject) {
-        TableInfo tableInfo = findTableInfo(metaObject);
-        if (Objects.nonNull(tableInfo)) {
-            return tableInfo.isWithInsertFill();
-        }
-        return false;
-    }
-
-    /**
-     * check if the entity has some property will fill for update </p>
-     * 表字段是否启用了更新填充
-     *
-     * @param metaObject metaObject meta object parameter
-     * @return yes or no
-     * @since 3.2.1
-     */
-    default boolean isWithUpdateFill(MetaObject metaObject) {
-        TableInfo tableInfo = findTableInfo(metaObject);
-        if (Objects.nonNull(tableInfo)) {
-            return tableInfo.isWithUpdateFill();
-        }
-        return false;
-    }
-
-    /**
      * find the tableInfo cache by metaObject </p>
      * 获取 TableInfo 缓存
      *
@@ -202,32 +211,89 @@ public interface MetaObjectHandler {
     }
 
     /**
-     * 填充判断
-     * <li> 如果是主键,不填充 </li>
-     * <li> 根据字段名找不到字段,不填充 </li>
-     * <li> 字段类型与填充值类型不匹配,不填充 </li>
-     * <li> 字段类型需在TableField注解里配置fill: @TableField(value="test_type", fill = FieldFill.INSERT), 没有配置或者不匹配时不填充 </li>
-     * v_3.1.0以后的版本(不包括3.1.0)，子类的值也可以自动填充，Timestamp的值也可以填入到java.util.Date类型里面
-     *
-     * @param fieldName  java bean property name
-     * @param fieldVal   java bean property value
-     * @param metaObject meta object parameter
-     * @param fieldFill  填充策略枚举
-     * @return 是否进行填充
-     * @since 3.0.7
+     * @param metaObject metaObject meta object parameter
+     * @since 3.2.1
      */
-    default boolean isFill(String fieldName, Object fieldVal, MetaObject metaObject, FieldFill fieldFill) {
-        TableInfo tableInfo = findTableInfo(metaObject);
-        if (Objects.nonNull(tableInfo)) {
-            Optional<TableFieldInfo> first = tableInfo.getFieldList().stream()
-                //v_3.1.1+ 设置子类的值也可以通过
-                .filter(e -> e.getProperty().equals(fieldName) && e.getPropertyType().isAssignableFrom(fieldVal.getClass()))
-                .findFirst();
-            if (first.isPresent()) {
-                FieldFill fill = first.get().getFieldFill();
-                return fill.equals(fieldFill) || FieldFill.INSERT_UPDATE.equals(fill);
-            }
+    default <T> MetaObjectHandler strictInsertFill(MetaObject metaObject, String fieldName, Class<T> fieldType, Object fieldVal) {
+        return strictInsertFill(findTableInfo(metaObject), metaObject, Collections.singletonList(StrictFill.of(fieldName, fieldType, fieldVal)));
+    }
+
+    /**
+     * @param metaObject metaObject meta object parameter
+     * @since 3.2.1
+     */
+    default <T> MetaObjectHandler strictInsertFill(MetaObject metaObject, String fieldName, Class<T> fieldType, Supplier<T> fieldVal) {
+        return strictInsertFill(findTableInfo(metaObject), metaObject, Collections.singletonList(StrictFill.of(fieldName, fieldType, fieldVal)));
+    }
+
+    /**
+     * @param metaObject metaObject meta object parameter
+     * @since 3.2.1
+     */
+    default MetaObjectHandler strictInsertFill(TableInfo tableInfo, MetaObject metaObject, List<StrictFill> strictFills) {
+        return strictFill(true, tableInfo, metaObject, strictFills);
+    }
+
+    /**
+     * @param metaObject metaObject meta object parameter
+     * @since 3.2.1
+     */
+    default <T> MetaObjectHandler strictUpdateFill(MetaObject metaObject, String fieldName, Class<T> fieldType, Supplier<T> fieldVal) {
+        return strictUpdateFill(findTableInfo(metaObject), metaObject, Collections.singletonList(StrictFill.of(fieldName, fieldType, fieldVal)));
+    }
+
+    /**
+     * @param metaObject metaObject meta object parameter
+     * @since 3.2.1
+     */
+    default <T> MetaObjectHandler strictUpdateFill(MetaObject metaObject, String fieldName, Class<T> fieldType, Object fieldVal) {
+        return strictUpdateFill(findTableInfo(metaObject), metaObject, Collections.singletonList(StrictFill.of(fieldName, fieldType, fieldVal)));
+    }
+
+    /**
+     * @param metaObject metaObject meta object parameter
+     * @since 3.2.1
+     */
+    default MetaObjectHandler strictUpdateFill(TableInfo tableInfo, MetaObject metaObject, List<StrictFill> strictFills) {
+        return strictFill(false, tableInfo, metaObject, strictFills);
+    }
+
+    /**
+     * 严格填充,只针对非主键的字段,只有该表注解了fill 并且 字段名和字段属性 能匹配到才会进行填充(null 值不填充)
+     *
+     * @param insertFill  是否验证在 insert 时填充
+     * @param tableInfo   cache 缓存
+     * @param metaObject  metaObject meta object parameter
+     * @param strictFills 填充信息
+     * @return this
+     * @since 3.2.1
+     */
+    default MetaObjectHandler strictFill(boolean insertFill, TableInfo tableInfo, MetaObject metaObject, List<StrictFill> strictFills) {
+        if (tableInfo != null && ((insertFill && tableInfo.isWithInsertFill()) || (!insertFill && tableInfo.isWithUpdateFill()))) {
+            List<TableFieldInfo> list = tableInfo.getFieldList();
+            strictFills.forEach(i -> {
+                final String fieldName = i.getFieldName();
+                Optional<TableFieldInfo> info = list.stream().filter(j -> j.getProperty().equals(fieldName) &&
+                    i.getFieldType().equals(j.getPropertyType()) &&
+                    ((insertFill && j.isWithInsertFill()) || (!insertFill && j.isWithUpdateFill())))
+                    .findFirst();
+                info.ifPresent(j -> strictFillStrategy(metaObject, fieldName, i.getFieldVal()));
+            });
         }
-        return false;
+        return this;
+    }
+
+    /**
+     * 严格填充策略,默认有值不覆盖
+     *
+     * @param metaObject metaObject meta object parameter
+     * @param fieldName  java bean property name
+     * @param fieldVal   java bean property value of Supplier
+     * @since 3.2.1
+     */
+    default void strictFillStrategy(MetaObject metaObject, String fieldName, Supplier<Object> fieldVal) {
+        if (getFieldValByName(fieldName, metaObject) == null) {
+            setFieldValByName(fieldName, fieldVal.get(), metaObject);
+        }
     }
 }

@@ -109,8 +109,23 @@ public class TableFieldInfo implements Constants {
     private String condition = SqlCondition.EQUAL;
     /**
      * 字段填充策略
+     *
+     * @deprecated 3.2.1
      */
+    @Deprecated
     private FieldFill fieldFill = FieldFill.DEFAULT;
+    /**
+     * 表字段是否启用了插入填充
+     *
+     * @since 3.2.1
+     */
+    private boolean withInsertFill;
+    /**
+     * 表字段是否启用了更新填充
+     *
+     * @since 3.2.1
+     */
+    private boolean withUpdateFill;
     /**
      * 缓存 sql select
      */
@@ -138,7 +153,10 @@ public class TableFieldInfo implements Constants {
         this.property = field.getName();
         this.propertyType = field.getType();
         this.isCharSequence = StringUtils.isCharSequence(this.propertyType);
-        this.fieldFill = tableField.fill();
+        final FieldFill fill = tableField.fill();
+        this.fieldFill = fill;
+        this.withInsertFill = fill == FieldFill.INSERT || fill == FieldFill.INSERT_UPDATE;
+        this.withUpdateFill = fill == FieldFill.UPDATE || fill == FieldFill.INSERT_UPDATE;
         this.update = tableField.update();
         JdbcType jdbcType = tableField.jdbcType();
         final Class<? extends TypeHandler> typeHandler = tableField.typeHandler();
@@ -323,7 +341,7 @@ public class TableFieldInfo implements Constants {
      */
     public String getInsertSqlPropertyMaybeIf(final String prefix) {
         String sqlScript = getInsertSqlProperty(prefix);
-        if (fieldFill == FieldFill.INSERT || fieldFill == FieldFill.INSERT_UPDATE) {
+        if (withInsertFill) {
             return sqlScript;
         }
         return convertIf(sqlScript, property, insertStrategy);
@@ -353,7 +371,7 @@ public class TableFieldInfo implements Constants {
      */
     public String getInsertSqlColumnMaybeIf() {
         final String sqlScript = getInsertSqlColumn();
-        if (fieldFill == FieldFill.INSERT || fieldFill == FieldFill.INSERT_UPDATE) {
+        if (withInsertFill) {
             return sqlScript;
         }
         return convertIf(sqlScript, property, insertStrategy);
@@ -389,7 +407,7 @@ public class TableFieldInfo implements Constants {
         if (ignoreIf) {
             return sqlSet;
         }
-        if (fieldFill == FieldFill.UPDATE || fieldFill == FieldFill.INSERT_UPDATE) {
+        if (withUpdateFill) {
             // 不进行 if 包裹
             return sqlSet;
         }

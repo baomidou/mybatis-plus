@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
-import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
@@ -131,12 +130,16 @@ public class TableInfo implements Constants {
     private String sqlSelect;
     /**
      * 表字段是否启用了插入填充
+     *
+     * @since 3.2.1
      */
     @Getter
     @Setter(AccessLevel.NONE)
     private boolean withInsertFill;
     /**
      * 表字段是否启用了更新填充
+     *
+     * @since 3.2.1
      */
     @Getter
     @Setter(AccessLevel.NONE)
@@ -394,7 +397,7 @@ public class TableInfo implements Constants {
     void setFieldList(List<TableFieldInfo> fieldList) {
         this.fieldList = fieldList;
         this.logicDelete = fieldList.parallelStream().anyMatch(TableFieldInfo::isLogicDelete);
-        this.withInsertFill = fieldList.parallelStream().anyMatch(i -> i.getFieldFill() == FieldFill.INSERT || i.getFieldFill() == FieldFill.INSERT_UPDATE);
-        this.withUpdateFill = fieldList.parallelStream().anyMatch(i -> i.getFieldFill() == FieldFill.UPDATE || i.getFieldFill() == FieldFill.INSERT_UPDATE);
+        this.withInsertFill = fieldList.parallelStream().anyMatch(TableFieldInfo::isWithInsertFill);
+        this.withUpdateFill = fieldList.parallelStream().anyMatch(TableFieldInfo::isWithUpdateFill);
     }
 }
