@@ -156,7 +156,7 @@ public class TableFieldInfo implements Constants {
             el += (COMMA + "numericScale=" + numericScale);
         }
         this.el = el;
-        tableInfo.setLogicDelete(this.initLogicDelete(dbConfig, field));
+        this.initLogicDelete(dbConfig, field);
 
         String column = tableField.value();
         if (StringUtils.isBlank(column)) {
@@ -232,7 +232,7 @@ public class TableFieldInfo implements Constants {
         this.insertStrategy = dbConfig.getInsertStrategy();
         this.updateStrategy = dbConfig.getUpdateStrategy();
         this.whereStrategy = dbConfig.getSelectStrategy();
-        tableInfo.setLogicDelete(this.initLogicDelete(dbConfig, field));
+        this.initLogicDelete(dbConfig, field);
 
         String column = field.getName();
         if (tableInfo.isUnderCamel()) {
@@ -268,7 +268,7 @@ public class TableFieldInfo implements Constants {
      * @param dbConfig 数据库全局配置
      * @param field    字段属性对象
      */
-    private boolean initLogicDelete(GlobalConfig.DbConfig dbConfig, Field field) {
+    private void initLogicDelete(GlobalConfig.DbConfig dbConfig, Field field) {
         /* 获取注解属性，逻辑处理字段 */
         TableLogic tableLogic = field.getAnnotation(TableLogic.class);
         if (null != tableLogic) {
@@ -282,23 +282,20 @@ public class TableFieldInfo implements Constants {
             } else {
                 this.logicDeleteValue = dbConfig.getLogicDeleteValue();
             }
-            return true;
         } else {
             String globalLogicDeleteField = dbConfig.getLogicDeleteField();
             if (StringUtils.isNotBlank(globalLogicDeleteField) && globalLogicDeleteField.equalsIgnoreCase(field.getName())) {
                 this.logicNotDeleteValue = dbConfig.getLogicNotDeleteValue();
                 this.logicDeleteValue = dbConfig.getLogicDeleteValue();
-                return true;
             }
         }
-        return false;
     }
 
     /**
-     * 是否注解了逻辑删除
+     * 是否启用了逻辑删除
      */
     public boolean isLogicDelete() {
-        return StringUtils.isNotBlank(logicDeleteValue);
+        return StringUtils.isNotBlank(logicDeleteValue) && StringUtils.isNotBlank(logicNotDeleteValue);
     }
 
     /**

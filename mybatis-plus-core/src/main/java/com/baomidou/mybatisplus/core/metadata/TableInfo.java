@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
@@ -77,7 +78,7 @@ public class TableInfo implements Constants {
      * 主键是否有存在字段名与属性名关联
      * <p>true: 表示要进行 as</p>
      */
-    private boolean keyRelated = false;
+    private boolean keyRelated;
     /**
      * 表主键ID 字段名
      */
@@ -110,11 +111,12 @@ public class TableInfo implements Constants {
     /**
      * 是否开启逻辑删除
      */
-    private boolean logicDelete = false;
+    @Setter(AccessLevel.NONE)
+    private boolean logicDelete;
     /**
      * 是否开启下划线转驼峰
      */
-    private boolean underCamel = true;
+    private boolean underCamel;
     /**
      * 缓存包含主键及字段的 sql select
      */
@@ -127,6 +129,18 @@ public class TableInfo implements Constants {
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
     private String sqlSelect;
+    /**
+     * 表字段是否启用了插入填充
+     */
+    @Getter
+    @Setter(AccessLevel.NONE)
+    private boolean withInsertFill;
+    /**
+     * 表字段是否启用了更新填充
+     */
+    @Getter
+    @Setter(AccessLevel.NONE)
+    private boolean withUpdateFill;
 
     public TableInfo(Class<?> entityType) {
         this.entityType = entityType;
@@ -149,15 +163,6 @@ public class TableInfo implements Constants {
         Assert.notNull(configuration, "Error: You need Initialize MybatisConfiguration !");
         this.configuration = (MybatisConfiguration) configuration;
         this.underCamel = configuration.isMapUnderscoreToCamelCase();
-    }
-
-    /**
-     * 设置逻辑删除
-     */
-    void setLogicDelete(boolean logicDelete) {
-        if (logicDelete) {
-            this.logicDelete = true;
-        }
     }
 
     /**
@@ -348,7 +353,7 @@ public class TableInfo implements Constants {
      * @param isWhere true: logicDeleteValue, false: logicNotDeleteValue
      * @return
      */
-    protected String formatLogicDeleteSql(TableFieldInfo field, boolean isWhere) {
+    private String formatLogicDeleteSql(TableFieldInfo field, boolean isWhere) {
         final String value = isWhere ? field.getLogicNotDeleteValue() : field.getLogicDeleteValue();
         if (isWhere) {
             if (NULL.equalsIgnoreCase(value)) {
@@ -384,5 +389,12 @@ public class TableInfo implements Constants {
             configuration.addResultMap(resultMap);
             this.resultMap = id;
         }
+    }
+
+    void setFieldList(List<TableFieldInfo> fieldList) {
+        this.fieldList = fieldList;
+        this.logicDelete = fieldList.parallelStream().anyMatch(TableFieldInfo::isLogicDelete);
+        this.withInsertFill = fieldList.parallelStream().anyMatch(i -> i.getFieldFill() == FieldFill.INSERT || i.getFieldFill() == FieldFill.INSERT_UPDATE);
+        this.withUpdateFill = fieldList.parallelStream().anyMatch(i -> i.getFieldFill() == FieldFill.UPDATE || i.getFieldFill() == FieldFill.INSERT_UPDATE);
     }
 }
