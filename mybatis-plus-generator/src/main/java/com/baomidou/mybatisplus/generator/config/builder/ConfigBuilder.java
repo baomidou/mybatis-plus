@@ -410,7 +410,7 @@ public class ConfigBuilder {
         if (isInclude && isExclude) {
             throw new RuntimeException("<strategy> 标签中 <include> 与 <exclude> 只能配置一项！");
         }
-        if (StringUtils.isNotBlank(config.getNotLikeTable()) && StringUtils.isNotBlank(config.getLikeTable())) {
+        if (config.getNotLikeTable() != null && config.getLikeTable() != null) {
             throw new RuntimeException("<strategy> 标签中 <likeTable> 与 <notLikeTable> 只能配置一项！");
         }
         //所有的表信息
@@ -460,10 +460,10 @@ public class ConfigBuilder {
                 tablesSql = String.format(tablesSql, schema);
             }
             StringBuilder sql = new StringBuilder(tablesSql);
-            if (StringUtils.isNotBlank(config.getLikeTable())) {
-                sql.append(" AND ").append(dbQuery.tableName()).append(" LIKE '").append(config.getLikeTable()).append("'");
-            } else if (StringUtils.isNotBlank(config.getNotLikeTable())) {
-                sql.append(" AND ").append(dbQuery.tableName()).append(" NOT LIKE '").append(config.getLikeTable()).append("'");
+            if (config.getLikeTable() != null) {
+                sql.append(" AND ").append(dbQuery.tableName()).append(" LIKE '").append(config.getLikeTable().getValue()).append("'");
+            } else if (config.getNotLikeTable() != null) {
+                sql.append(" AND ").append(dbQuery.tableName()).append(" NOT LIKE '").append(config.getNotLikeTable().getValue()).append("'");
             }
             if (isInclude) {
                 sql.append(" AND ").append(dbQuery.tableName()).append(" IN (")

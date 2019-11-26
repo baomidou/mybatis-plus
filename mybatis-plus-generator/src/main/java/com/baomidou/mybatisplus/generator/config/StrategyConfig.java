@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.generator.config;
 
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.generator.config.po.LikeTable;
 import com.baomidou.mybatisplus.generator.config.po.TableFill;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import lombok.AccessLevel;
@@ -96,13 +97,13 @@ public class StrategyConfig {
     private String superControllerClass;
     /**
      * 需要包含的表名（与exclude二选一配置）
-     * @since 3.2.x 正则匹配不再支持,请使用{@link #setLikeTable(String)}
+     * @since 3.2.1 正则匹配不再支持,请使用{@link #setLikeTable(LikeTable)}}
      */
     @Setter(AccessLevel.NONE)
     private String[] include = null;
     /**
      * 需要排除的表名
-     * @since 3.2.x 正则匹配不再支持,请使用{@link #setNotLikeTable(String)}
+     * @since 3.2.1 正则匹配不再支持,请使用{@link #setNotLikeTable(LikeTable)}}
      */
     @Setter(AccessLevel.NONE)
     private String[] exclude = null;
@@ -165,15 +166,15 @@ public class StrategyConfig {
     /**
      * 包含表名
      *
-     * @since 3.2.x
+     * @since 3.2.1
      */
-    private String likeTable;
+    private LikeTable likeTable;
     /**
      * 不包含表名
      *
-     * @since 3.2.x
+     * @since 3.2.1
      */
-    private String notLikeTable;
+    private LikeTable notLikeTable;
 
     /**
      * 大写命名、字段符合大写字母数字下划线命名

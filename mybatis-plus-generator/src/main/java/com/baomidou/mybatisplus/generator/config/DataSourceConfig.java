@@ -199,12 +199,12 @@ public class DataSourceConfig {
      * @return Connection
      */
     public Connection getConn() {
-        Connection conn = null;
+        Connection conn;
         try {
             Class.forName(driverName);
             conn = DriverManager.getConnection(url, username, password);
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return conn;
     }
