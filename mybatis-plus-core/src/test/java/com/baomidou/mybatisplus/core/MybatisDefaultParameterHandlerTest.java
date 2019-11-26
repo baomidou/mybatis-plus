@@ -1,7 +1,7 @@
 package com.baomidou.mybatisplus.core;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.baomidou.mybatisplus.core.incrementer.SnowflakeIdGenerator;
+import com.baomidou.mybatisplus.core.incrementer.DefaultGenerator;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import lombok.AllArgsConstructor;
@@ -45,7 +45,7 @@ class MybatisDefaultParameterHandlerTest {
         MappedStatement mappedStatement;
         Configuration configuration = new MybatisConfiguration();
         StaticSqlSource staticSqlSource = new StaticSqlSource(configuration, " ***********");
-        GlobalConfigUtils.getGlobalConfig(configuration).setIdGenerator(new SnowflakeIdGenerator()).setMetaObjectHandler(new MetaObjectHandler() {
+        GlobalConfigUtils.getGlobalConfig(configuration).setIdGenerator(new DefaultGenerator()).setMetaObjectHandler(new MetaObjectHandler() {
             @Override
             public void insertFill(MetaObject metaObject) {
                 setFieldValByName("insertOperator", "咩咩", metaObject);
