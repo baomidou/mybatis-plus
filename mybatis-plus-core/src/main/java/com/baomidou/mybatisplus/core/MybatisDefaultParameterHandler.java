@@ -162,9 +162,9 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                     if (tableInfo.getIdType() == IdType.ID_WORKER) {
                         metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.nextId(parameterObject));
                     } else if (tableInfo.getIdType() == IdType.ID_WORKER_STR) {
-                        metaObject.setValue(tableInfo.getKeyProperty(), String.valueOf(idGenerator.nextId(parameterObject)));
+                        metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.nextIdStr(parameterObject));
                     } else if (tableInfo.getIdType() == IdType.UUID) {
-                        metaObject.setValue(tableInfo.getKeyProperty(), IdWorker.get32UUID());
+                        metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.nextUUID(parameterObject));
                     }
                 }
             }

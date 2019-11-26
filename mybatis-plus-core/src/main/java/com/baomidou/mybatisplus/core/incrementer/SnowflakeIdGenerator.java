@@ -40,7 +40,7 @@ public class SnowflakeIdGenerator implements IdGenerator {
     }
 
     @Override
-    public long nextId(Object entity) {
+    public Long nextId(Object entity) {
         return sequence.nextId();
     }
 }

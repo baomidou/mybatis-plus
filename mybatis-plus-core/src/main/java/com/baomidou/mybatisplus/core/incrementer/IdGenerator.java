@@ -15,6 +15,8 @@
  */
 package com.baomidou.mybatisplus.core.incrementer;
 
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+
 /**
  * Id 生成器接口
  * 可以自定义id生成方式，如 baidu 的UidGenerator,美团的leaf 等
@@ -30,5 +32,25 @@ public interface IdGenerator {
      * @param entity 实体
      * @return id
      */
-    long nextId(Object entity);
+    Number nextId(Object entity);
+
+    /**
+     * 生成Id
+     *
+     * @param entity 实体
+     * @return id
+     */
+    default String nextIdStr(Object entity) {
+        return String.valueOf(nextId(entity));
+    }
+
+    /**
+     * 获取uuid
+     *
+     * @param entity 实体
+     * @return uuid
+     */
+    default String nextUUID(Object entity) {
+        return IdWorker.get32UUID();
+    }
 }

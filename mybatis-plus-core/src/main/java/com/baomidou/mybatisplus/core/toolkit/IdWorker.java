@@ -53,7 +53,7 @@ public class IdWorker {
      */
     @Deprecated
     public static long getId() {
-        return ID_GENERATOR.nextId(new Object());
+        return Long.parseLong(ID_GENERATOR.nextId(new Object()).toString());
     }
 
     /**
