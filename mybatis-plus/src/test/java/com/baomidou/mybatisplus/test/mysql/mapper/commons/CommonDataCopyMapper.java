@@ -13,9 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test.base.mapper.commons;
+package com.baomidou.mybatisplus.test.mysql.mapper.commons;
 
-import com.baomidou.mybatisplus.test.base.entity.CommonData;
+import com.baomidou.mybatisplus.test.mysql.entity.CommonData;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.Optional;

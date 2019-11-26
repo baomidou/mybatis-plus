@@ -23,6 +23,7 @@ package com.baomidou.mybatisplus.core.incrementer;
  * @date 2019/10/15
  */
 public interface IdGenerator {
+
     /**
      * 生成Id
      *

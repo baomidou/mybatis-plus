@@ -1,13 +1,7 @@
 package com.baomidou.mybatisplus.test.h2;
 
-import com.baomidou.mybatisplus.test.h2.keygenerator.mapper.ExtendKeyGeneratorMapper;
-import com.baomidou.mybatisplus.test.h2.keygenerator.mapper.KeyGeneratorMapper;
-import com.baomidou.mybatisplus.test.h2.keygenerator.mapper.LongKeyGeneratorMapper;
-import com.baomidou.mybatisplus.test.h2.keygenerator.mapper.StringKeyGeneratorMapper;
-import com.baomidou.mybatisplus.test.h2.keygenerator.model.ExtendKeyGeneratorModel;
-import com.baomidou.mybatisplus.test.h2.keygenerator.model.KeyGeneratorModel;
-import com.baomidou.mybatisplus.test.h2.keygenerator.model.LongKeyGeneratorModel;
-import com.baomidou.mybatisplus.test.h2.keygenerator.model.StringKeyGeneratorModel;
+import com.baomidou.mybatisplus.test.h2.keygenerator.mapper.*;
+import com.baomidou.mybatisplus.test.h2.keygenerator.model.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -34,6 +28,9 @@ class H2KeyGeneratorTest {
     @Autowired
     private ExtendKeyGeneratorMapper extendKeyGeneratorMapper;
 
+    @Autowired
+    private IntegerKeyGeneratorMapper integerKeyGeneratorMapper;
+
     @Test
     void test() {
         KeyGeneratorModel keyGeneratorModel = new KeyGeneratorModel();
@@ -59,6 +56,13 @@ class H2KeyGeneratorTest {
         extendKeyGeneratorMapper.insert(extendKeyGeneratorModel);
         Assertions.assertNotNull(extendKeyGeneratorModel.getUid());
         Assertions.assertEquals(extendKeyGeneratorModel.getUid(), 4L);
+
+        //这个受限数据库，如果返回是long的话,那就救不了.
+        IntegerKeyGeneratorModel integerKeyGeneratorModel = new IntegerKeyGeneratorModel();
+        integerKeyGeneratorModel.setName("我举起了K神");
+        integerKeyGeneratorMapper.insert(integerKeyGeneratorModel);
+        Assertions.assertNotNull(integerKeyGeneratorModel.getUid());
+        Assertions.assertEquals(integerKeyGeneratorModel.getUid(), 5);
     }
 
 }

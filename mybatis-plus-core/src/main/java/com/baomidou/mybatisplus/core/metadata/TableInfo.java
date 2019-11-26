@@ -324,14 +324,14 @@ public class TableInfo implements Constants {
      * 获取逻辑删除字段的 sql 脚本
      *
      * @param startWithAnd 是否以 and 开头
-     * @param deleteValue  是否需要的是逻辑删除值
+     * @param isWhere      是否需要的是逻辑删除值
      * @return sql 脚本
      */
-    public String getLogicDeleteSql(boolean startWithAnd, boolean deleteValue) {
+    public String getLogicDeleteSql(boolean startWithAnd, boolean isWhere) {
         if (logicDelete) {
             TableFieldInfo field = fieldList.stream().filter(TableFieldInfo::isLogicDelete).findFirst()
                 .orElseThrow(() -> ExceptionUtils.mpe("can't find the logicFiled from table {%s}", tableName));
-            String logicDeleteSql = formatLogicDeleteSql(field, deleteValue);
+            String logicDeleteSql = formatLogicDeleteSql(field, isWhere);
             if (startWithAnd) {
                 logicDeleteSql = " AND " + logicDeleteSql;
             }
@@ -344,16 +344,24 @@ public class TableInfo implements Constants {
      * format logic delete SQL, can be overrided by subclass
      * github #1386
      *
-     * @param field       TableFieldInfo
-     * @param deleteValue true: logicDeleteValue, false: logicNotDeleteValue
+     * @param field   TableFieldInfo
+     * @param isWhere true: logicDeleteValue, false: logicNotDeleteValue
      * @return
      */
-    protected String formatLogicDeleteSql(TableFieldInfo field, boolean deleteValue) {
-        String value = deleteValue ? field.getLogicDeleteValue() : field.getLogicNotDeleteValue();
+    protected String formatLogicDeleteSql(TableFieldInfo field, boolean isWhere) {
+        final String value = isWhere ? field.getLogicNotDeleteValue() : field.getLogicDeleteValue();
+        if (isWhere) {
+            if (NULL.equalsIgnoreCase(value)) {
+                return field.getColumn() + " IS NULL";
+            } else {
+                return field.getColumn() + EQUALS + String.format(field.isCharSequence() ? "'%s'" : "%s", value);
+            }
+        }
+        final String targetStr = field.getColumn() + EQUALS;
         if (NULL.equalsIgnoreCase(value)) {
-            return field.getColumn() + " is NULL";
+            return targetStr + NULL;
         } else {
-            return field.getColumn() + EQUALS + String.format(field.isCharSequence() ? "'%s'" : "%s", value);
+            return targetStr + String.format(field.isCharSequence() ? "'%s'" : "%s", value);
         }
     }
 

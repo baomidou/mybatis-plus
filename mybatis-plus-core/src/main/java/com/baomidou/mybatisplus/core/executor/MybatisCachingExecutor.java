@@ -15,9 +15,9 @@
  */
 package com.baomidou.mybatisplus.core.executor;
 
-import com.baomidou.mybatisplus.core.metadata.CachePage;
-import com.baomidou.mybatisplus.core.metadata.CachePageResult;
+import com.baomidou.mybatisplus.core.metadata.PageList;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.cache.TransactionalCacheManager;
@@ -27,9 +27,11 @@ import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.ExecutorException;
 import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.transaction.Transaction;
+import org.apache.ibatis.type.TypeHandlerRegistry;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -115,21 +117,90 @@ public class MybatisCachingExecutor implements Executor {
                 ensureNoOutParams(ms, boundSql);
                 Object result = tcm.getObject(cache, key);
                 if (result == null) {
-                    result = delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
                     if (page != null) {
+                        CacheKey countCacheKey = null;
+                        if (page.isSearchCount()) {
+                            // 这里的执行sql为原select语句,标准一点的是需要将此转换为count语句当做缓存key的,留做当优化把.
+                            countCacheKey = getCountCacheKey(ms, boundSql, parameterObject, RowBounds.DEFAULT);
+                        }
+                        // 切勿将这提取至上方,如果先查的话,需要提前将boundSql拷贝一份
+                        result = delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
                         List<E> records = (List<E>) result;
-                        CachePage<E> cachePage = new CachePage<>(records, page.getTotal());
                         page.setRecords(records);
-                        tcm.putObject(cache, key, cachePage);
-                        return new CachePageResult((cachePage));
+                        tcm.putObject(cache, key, records);
+                        if (countCacheKey != null) {
+                            tcm.putObject(cache, countCacheKey, page.getTotal());
+                        }
+                        return new PageList(records, page.getTotal());
                     } else {
+                        result = delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
                         tcm.putObject(cache, key, result); // issue #578 and #116
+                        return (List<E>) result;
+                    }
+                } else {
+                    Long count;
+                    if (page != null) {
+                        if (page.isSearchCount()) {
+                            CacheKey cacheKey = getCountCacheKey(ms, boundSql, parameterObject, RowBounds.DEFAULT);
+                            count = (Long) tcm.getObject(cache, cacheKey);
+                            return new PageList((List) result, count);
+                        }
+                        return new PageList((List) result, 0L);
+                    } else {
+                        return (List<E>) result;
                     }
                 }
-                return page != null ? new CachePageResult((CachePage) result) : (List<E>) result;
             }
         }
         return delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
+    }
+
+    private MappedStatement buildCountMappedStatement(MappedStatement mappedStatement) {
+        // 暂时补充点属性,留着后面分离count查询,这里暂时用到的也就只有id,所以不会影响后面的流程.
+        return new MappedStatement.Builder(mappedStatement.getConfiguration(), mappedStatement.getId() + StringPool.DOT + "count", mappedStatement.getSqlSource(), SqlCommandType.SELECT)
+            .useCache(true)
+            .flushCacheRequired(false)
+            .lang(mappedStatement.getLang())
+            .resource(mappedStatement.getResource())
+            .databaseId(mappedStatement.getDatabaseId())
+            .cache(mappedStatement.getCache())
+            .build();
+    }
+
+    private CacheKey getCountCacheKey(MappedStatement mappedStatement, BoundSql boundSql, Object parameterObject, RowBounds rowBounds) {
+        Configuration configuration = mappedStatement.getConfiguration();
+//        BoundSql sourceSql = new BoundSql(mappedStatement.getConfiguration(), boundSql.getSql(), boundSql.getParameterMappings(), boundSql.getParameterObject());
+        MappedStatement statement = buildCountMappedStatement(mappedStatement);
+        CacheKey cacheKey = new CacheKey();
+        cacheKey.update(statement.getId());
+        cacheKey.update(rowBounds.getOffset());
+        cacheKey.update(rowBounds.getLimit());
+        cacheKey.update(boundSql.getSql());
+        List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
+        TypeHandlerRegistry typeHandlerRegistry = mappedStatement.getConfiguration().getTypeHandlerRegistry();
+        // mimic DefaultParameterHandler logic
+        for (ParameterMapping parameterMapping : parameterMappings) {
+            if (parameterMapping.getMode() != ParameterMode.OUT) {
+                Object value;
+                String propertyName = parameterMapping.getProperty();
+                if (boundSql.hasAdditionalParameter(propertyName)) {
+                    value = boundSql.getAdditionalParameter(propertyName);
+                } else if (parameterObject == null) {
+                    value = null;
+                } else if (typeHandlerRegistry.hasTypeHandler(parameterObject.getClass())) {
+                    value = parameterObject;
+                } else {
+                    MetaObject metaObject = configuration.newMetaObject(parameterObject);
+                    value = metaObject.getValue(propertyName);
+                }
+                cacheKey.update(value);
+            }
+        }
+        if (configuration.getEnvironment() != null) {
+            // issue #176
+            cacheKey.update(configuration.getEnvironment().getId());
+        }
+        return cacheKey;
     }
 
     @Override

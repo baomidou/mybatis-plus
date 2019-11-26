@@ -35,6 +35,10 @@ public class SnowflakeIdGenerator implements IdGenerator {
         this.sequence = new Sequence(workerId, dataCenterId);
     }
 
+    public SnowflakeIdGenerator(Sequence sequence) {
+        this.sequence = sequence;
+    }
+
     @Override
     public long nextId(Object entity) {
         return sequence.nextId();

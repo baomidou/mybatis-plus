@@ -31,6 +31,30 @@ class CacheTest {
         IPage<CacheModel> cacheModelIPage3 = cacheMapper.selectPage(new Page<>(2, 3), new QueryWrapper<>());
         Assertions.assertEquals(cacheModelIPage1.getTotal(), cacheModelIPage3.getTotal());
         Assertions.assertEquals(cacheModelIPage3.getRecords().size(), 2);
+        IPage<CacheModel> cacheModelIPage4 = cacheMapper.selectPage(new Page<>(2, 3, false), new QueryWrapper<>());
+        Assertions.assertEquals(cacheModelIPage4.getTotal(), 0L);
+        Assertions.assertEquals(cacheModelIPage4.getRecords().size(), 2);
+        IPage<CacheModel> cacheModelIPage5 = cacheMapper.selectPage(new Page<>(2, 3, true), new QueryWrapper<>());
+        Assertions.assertEquals(cacheModelIPage5.getTotal(), cacheModelIPage3.getTotal());
+        Assertions.assertEquals(cacheModelIPage5.getRecords().size(), 2);
+        IPage<CacheModel> cacheModelIPage6 = cacheMapper.selectPage(new Page<>(1, 3, true), new QueryWrapper<CacheModel>().ge("id", 2L));
+        Assertions.assertEquals(cacheModelIPage6.getTotal(), 4);
+        Assertions.assertEquals(cacheModelIPage6.getRecords().size(), 3);
+        IPage<CacheModel> cacheModelIPage7 = cacheMapper.selectPage(new Page<>(1, 3, false), new QueryWrapper<CacheModel>().ge("id", 2L));
+        Assertions.assertEquals(cacheModelIPage7.getTotal(), 0L);
+        Assertions.assertEquals(cacheModelIPage7.getRecords().size(), 3);
+        IPage<CacheModel> cacheModelIPage8 = cacheMapper.selectPage(new Page<>(1, 3, false), new QueryWrapper<CacheModel>().ge("id", 3L));
+        Assertions.assertEquals(cacheModelIPage8.getTotal(), 0L);
+        Assertions.assertEquals(cacheModelIPage8.getRecords().size(), 3);
+        cacheModelIPage8 = cacheMapper.selectPage(new Page<>(1, 3, false), new QueryWrapper<CacheModel>().ge("id", 3L));
+        Assertions.assertEquals(cacheModelIPage8.getTotal(), 0L);
+        Assertions.assertEquals(cacheModelIPage8.getRecords().size(), 3);
+        IPage<CacheModel> cacheModelIPage9 = cacheMapper.selectPage(new Page<>(1, 3, true), new QueryWrapper<CacheModel>().ge("id", 3L));
+        Assertions.assertEquals(cacheModelIPage9.getTotal(), 3L);
+        Assertions.assertEquals(cacheModelIPage9.getRecords().size(), 3);
+        cacheModelIPage9 = cacheMapper.selectPage(new Page<>(1, 3, true), new QueryWrapper<CacheModel>().ge("id", 3L));
+        Assertions.assertEquals(cacheModelIPage9.getTotal(), 3L);
+        Assertions.assertEquals(cacheModelIPage9.getRecords().size(), 3);
     }
 
 }

@@ -17,21 +17,21 @@ package com.baomidou.mybatisplus.core.metadata;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.EqualsAndHashCode;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 缓存分页数据(二级缓存)
+ * 受限于SqlSession#selectList(java.lang.String, java.lang.Object)
  *
  * @author nieqiuqiu
  * @since 3.2.1
  */
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public final class CachePage<T> implements Serializable {
+@EqualsAndHashCode(callSuper = true)
+public final class PageList<T> extends ArrayList<T> {
 
     /**
      * 记录数

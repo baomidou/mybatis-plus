@@ -51,7 +51,7 @@ import java.util.List;
  * @since 2017/4/1
  */
 @Configuration
-@MapperScan({"com.baomidou.mybatisplus.test.base.mapper.children", "com.baomidou.mybatisplus.test.base.mapper.commons", "com.baomidou.mybatisplus.test.mysql.mapper"})
+@MapperScan("com.baomidou.mybatisplus.test.mysql.mapper")
 public class MybatisPlusConfig {
 
     @Bean("mybatisSqlSession")
@@ -61,7 +61,7 @@ public class MybatisPlusConfig {
         /* 数据源 */
         sqlSessionFactory.setDataSource(dataSource);
         /* 枚举扫描 */
-        sqlSessionFactory.setTypeEnumsPackage("com.baomidou.mybatisplus.test.base.enums");
+        sqlSessionFactory.setTypeEnumsPackage("com.baomidou.mybatisplus.test.mysql.enums");
         /* xml扫描 */
         sqlSessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver()
             .getResources("classpath:/mapper/*.xml"));

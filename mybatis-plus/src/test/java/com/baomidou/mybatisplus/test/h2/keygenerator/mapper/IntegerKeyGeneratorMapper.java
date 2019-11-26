@@ -13,24 +13,11 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test.postgres.entity;
+package com.baomidou.mybatisplus.test.h2.keygenerator.mapper;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import lombok.Data;
-import lombok.experimental.Accessors;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.test.h2.keygenerator.model.IntegerKeyGeneratorModel;
 
-/**
- * @author miemie
- * @since 2018-08-06
- */
-@Data
-@Accessors(chain = true)
-public class PgData {
+public interface IntegerKeyGeneratorMapper extends BaseMapper<IntegerKeyGeneratorModel> {
 
-    private Long id;
-    @TableField("\"pgInt\"")
-    private Integer pgInt;
-    private Integer pgInt2;
-    @TableField("\"group\"")
-    private Integer group;
 }

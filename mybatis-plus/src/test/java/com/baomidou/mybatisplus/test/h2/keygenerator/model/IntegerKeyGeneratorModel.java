@@ -13,30 +13,22 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.test.base.enums;
+package com.baomidou.mybatisplus.test.h2.keygenerator.model;
 
-import com.baomidou.mybatisplus.core.enums.IEnum;
-import lombok.Getter;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.KeySequence;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
 
-/**
- * @author miemie
- * @since 2018-08-19
- */
-@Getter
-public enum TestEnum implements IEnum<Integer> {
-    ONE(1, "一"),
-    TWO(2, "二");
+@Data
+@TableName(value = "key_generator_model")
+@KeySequence(value = "key_generator_model_seq")
+public class IntegerKeyGeneratorModel {
 
-    private final int code;
-    private final String val;
+    @TableId(type = IdType.INPUT, value = "id")
+    private Integer uid;
 
-    TestEnum(int code, String val) {
-        this.code = code;
-        this.val = val;
-    }
+    private String name;
 
-    @Override
-    public Integer getValue() {
-        return code;
-    }
 }

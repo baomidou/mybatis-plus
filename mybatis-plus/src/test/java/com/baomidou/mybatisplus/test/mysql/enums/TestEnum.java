@@ -13,25 +13,30 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.core.metadata;
+package com.baomidou.mybatisplus.test.mysql.enums;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
-import java.util.ArrayList;
+import com.baomidou.mybatisplus.core.enums.IEnum;
+import lombok.Getter;
 
 /**
- * 受限于SqlSession#selectList(java.lang.String, java.lang.Object)
- *
- * @author nieqiuqiu
- * @since 3.2.1
+ * @author miemie
+ * @since 2018-08-19
  */
-@Data
-@AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public final class CachePageResult extends ArrayList {
+@Getter
+public enum TestEnum implements IEnum<Integer> {
+    ONE(1, "一"),
+    TWO(2, "二");
 
-    private CachePage cachePage;
+    private final int code;
+    private final String val;
 
+    TestEnum(int code, String val) {
+        this.code = code;
+        this.val = val;
+    }
+
+    @Override
+    public Integer getValue() {
+        return code;
+    }
 }
