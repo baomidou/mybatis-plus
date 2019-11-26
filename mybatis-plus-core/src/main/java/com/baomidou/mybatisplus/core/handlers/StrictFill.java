@@ -15,10 +15,8 @@
  */
 package com.baomidou.mybatisplus.core.handlers;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 
 import java.util.function.Supplier;
 
@@ -40,30 +38,15 @@ public class StrictFill {
      */
     private Class<?> fieldType;
     /**
-     * 字段值
-     */
-    private Object fieldVal;
-    /**
      * 获取字段值的函数
      */
-    @Getter(AccessLevel.NONE)
-    private Supplier<Object> fieldValSupplier;
+    private Supplier<Object> fieldVal;
 
     public static StrictFill of(String fieldName, Class<?> fieldType, Object fieldVal) {
-        return new StrictFill(fieldName, fieldType, fieldVal, null);
+        return new StrictFill(fieldName, fieldType, () -> fieldVal);
     }
 
-    public static StrictFill of(String fieldName, Class<?> fieldType, Supplier<Object> fieldValSupplier) {
-        return new StrictFill(fieldName, fieldType, null, fieldValSupplier);
-    }
-
-    Supplier<Object> getFieldVal() {
-        if (fieldVal != null) {
-            return () -> fieldVal;
-        }
-        if (fieldValSupplier != null) {
-            return fieldValSupplier;
-        }
-        return () -> null;
+    public static StrictFill of(String fieldName, Class<?> fieldType, Supplier<Object> fieldVal) {
+        return new StrictFill(fieldName, fieldType, fieldVal);
     }
 }
