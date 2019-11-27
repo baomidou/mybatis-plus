@@ -61,7 +61,7 @@ public interface ChainQuery<T> extends ChainWrapper<T> {
      * @param page 分页条件
      * @return 分页数据
      */
-    default IPage<T> page(IPage<T> page) {
+    default <E extends IPage<T>> E page(E page) {
         return getBaseMapper().selectPage(page, getWrapper());
     }
 }

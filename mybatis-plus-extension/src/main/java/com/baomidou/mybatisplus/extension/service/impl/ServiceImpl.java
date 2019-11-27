@@ -108,7 +108,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      * 批量插入
      *
      * @param entityList ignore
-     * @param batchSize ignore
+     * @param batchSize  ignore
      * @return ignore
      */
     @Transactional(rollbackFor = Exception.class)
@@ -242,12 +242,12 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     @Override
-    public Collection<T> listByIds(Collection<? extends Serializable> idList) {
+    public List<T> listByIds(Collection<? extends Serializable> idList) {
         return baseMapper.selectBatchIds(idList);
     }
 
     @Override
-    public Collection<T> listByMap(Map<String, Object> columnMap) {
+    public List<T> listByMap(Map<String, Object> columnMap) {
         return baseMapper.selectByMap(columnMap);
     }
 
@@ -275,7 +275,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     @Override
-    public IPage<T> page(IPage<T> page, Wrapper<T> queryWrapper) {
+    public <E extends IPage<T>> E page(E page, Wrapper<T> queryWrapper) {
         return baseMapper.selectPage(page, queryWrapper);
     }
 
@@ -290,7 +290,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     @Override
-    public IPage<Map<String, Object>> pageMaps(IPage<T> page, Wrapper<T> queryWrapper) {
+    public <E extends IPage<Map<String, Object>>> E pageMaps(E page, Wrapper<T> queryWrapper) {
         return baseMapper.selectMapsPage(page, queryWrapper);
     }
 

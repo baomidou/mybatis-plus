@@ -173,14 +173,14 @@ public interface IService<T> {
      *
      * @param idList 主键ID列表
      */
-    Collection<T> listByIds(Collection<? extends Serializable> idList);
+    List<T> listByIds(Collection<? extends Serializable> idList);
 
     /**
      * 查询（根据 columnMap 条件）
      *
      * @param columnMap 表字段 map 对象
      */
-    Collection<T> listByMap(Map<String, Object> columnMap);
+    List<T> listByMap(Map<String, Object> columnMap);
 
     /**
      * 根据 Wrapper，查询一条记录 <br/>
@@ -253,7 +253,7 @@ public interface IService<T> {
      * @param page         翻页对象
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
-    IPage<T> page(IPage<T> page, Wrapper<T> queryWrapper);
+    <E extends IPage<T>> E page(E page, Wrapper<T> queryWrapper);
 
     /**
      * 无条件翻页查询
@@ -261,7 +261,7 @@ public interface IService<T> {
      * @param page 翻页对象
      * @see Wrappers#emptyWrapper()
      */
-    default IPage<T> page(IPage<T> page) {
+    default <E extends IPage<T>> E page(E page) {
         return page(page, Wrappers.emptyWrapper());
     }
 
@@ -320,7 +320,7 @@ public interface IService<T> {
      * @param page         翻页对象
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
-    IPage<Map<String, Object>> pageMaps(IPage<T> page, Wrapper<T> queryWrapper);
+    <E extends IPage<Map<String, Object>>> E pageMaps(E page, Wrapper<T> queryWrapper);
 
     /**
      * 无条件翻页查询
@@ -328,7 +328,7 @@ public interface IService<T> {
      * @param page 翻页对象
      * @see Wrappers#emptyWrapper()
      */
-    default IPage<Map<String, Object>> pageMaps(IPage<T> page) {
+    default <E extends IPage<Map<String, Object>>> E pageMaps(E page) {
         return pageMaps(page, Wrappers.emptyWrapper());
     }
 
@@ -405,5 +405,4 @@ public interface IService<T> {
     default boolean saveOrUpdate(T entity, Wrapper<T> updateWrapper) {
         return update(entity, updateWrapper) || saveOrUpdate(entity);
     }
-
 }
