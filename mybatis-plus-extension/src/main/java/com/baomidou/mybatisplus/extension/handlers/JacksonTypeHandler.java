@@ -40,12 +40,8 @@ import java.sql.SQLException;
 @MappedTypes({Object.class})
 @MappedJdbcTypes(JdbcType.VARCHAR)
 public class JacksonTypeHandler extends BaseTypeHandler<Object> {
-    private static ObjectMapper objectMapper;
+    private ObjectMapper objectMapper = new ObjectMapper();
     private Class<Object> type;
-
-    static {
-        objectMapper = new ObjectMapper();
-    }
 
     public JacksonTypeHandler(Class<Object> type) {
         if (log.isTraceEnabled()) {
