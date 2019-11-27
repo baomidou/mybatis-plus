@@ -120,11 +120,12 @@ subprojects {
         encoding = "UTF-8"
         header = rootProject.file("license.txt")
         includes(["**/*.java", "**/*.kt"])
+        exclude "**/test/**/*.java"
         exclude "**/*Test.java"
         exclude "**/TableNameParser.java"
         mapping "java", "SLASHSTAR_STYLE"
         mapping "kt", "SLASHSTAR_STYLE"
-        ignoreFailures = true
+        ignoreFailures = false
     }
 
     repositories {
