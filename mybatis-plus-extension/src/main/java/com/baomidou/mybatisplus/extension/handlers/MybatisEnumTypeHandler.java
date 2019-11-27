@@ -18,7 +18,9 @@ package com.baomidou.mybatisplus.extension.handlers;
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.baomidou.mybatisplus.core.enums.IEnum;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
-import org.apache.ibatis.reflection.*;
+import org.apache.ibatis.reflection.DefaultReflectorFactory;
+import org.apache.ibatis.reflection.MetaClass;
+import org.apache.ibatis.reflection.ReflectorFactory;
 import org.apache.ibatis.reflection.invoker.Invoker;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
@@ -107,7 +109,7 @@ public class MybatisEnumTypeHandler<E extends Enum<?>> extends BaseTypeHandler<E
         return clazz.isEnum() ? Arrays.stream(clazz.getDeclaredFields()).filter(field -> field.isAnnotationPresent(EnumValue.class)).findFirst() : Optional.empty();
     }
 
-    private <E extends Enum<?>> E valueOf(Class<E> enumClass, Object value) {
+    private E valueOf(Class<E> enumClass, Object value) {
         E[] es = enumClass.getEnumConstants();
         return Arrays.stream(es).filter((e) -> equalsValue(value, getValue(e))).findAny().orElse(null);
     }
