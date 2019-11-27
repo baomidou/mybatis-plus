@@ -15,7 +15,7 @@
  */
 package com.baomidou.mybatisplus.extension.handlers;
 
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -51,9 +51,7 @@ public class JacksonTypeHandler extends BaseTypeHandler<Object> {
         if (log.isTraceEnabled()) {
             log.trace("JacksonTypeHandler(" + type + ")");
         }
-        if (null == type) {
-            throw new MybatisPlusException("Type argument cannot be null");
-        }
+        Assert.notNull(type, "Type argument cannot be null");
         this.type = type;
     }
 
