@@ -28,10 +28,13 @@ import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.SqlSession;
+import org.mybatis.spring.MyBatisExceptionTranslator;
 import org.mybatis.spring.SqlSessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.sql.DataSource;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
@@ -53,6 +56,9 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
     @Autowired
     protected M baseMapper;
+
+    @Autowired
+    protected DataSource dataSource;
 
     @Override
     public M getBaseMapper() {
@@ -108,7 +114,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      * 批量插入
      *
      * @param entityList ignore
-     * @param batchSize ignore
+     * @param batchSize  ignore
      * @return ignore
      */
     @Transactional(rollbackFor = Exception.class)
@@ -126,6 +132,11 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 }
                 i++;
             }
+        } catch (RuntimeException ex) {
+//            new MyBatisExceptionTranslator(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(), true));
+            MyBatisExceptionTranslator myBatisExceptionTranslator = new MyBatisExceptionTranslator(dataSource, true);
+            DataAccessException dataAccessException = myBatisExceptionTranslator.translateExceptionIfPossible(ex);
+            throw dataAccessException;
         }
         return true;
     }
@@ -179,7 +190,13 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 }
                 i++;
             }
+        }catch (RuntimeException ex) {
+//            new MyBatisExceptionTranslator(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(), true));
+            MyBatisExceptionTranslator myBatisExceptionTranslator = new MyBatisExceptionTranslator(dataSource, true);
+            DataAccessException dataAccessException = myBatisExceptionTranslator.translateExceptionIfPossible(ex);
+            throw dataAccessException;
         }
+
         return true;
     }
 
@@ -232,6 +249,11 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 }
                 i++;
             }
+        }catch (RuntimeException ex) {
+//            new MyBatisExceptionTranslator(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(), true));
+            MyBatisExceptionTranslator myBatisExceptionTranslator = new MyBatisExceptionTranslator(dataSource, true);
+            DataAccessException dataAccessException = myBatisExceptionTranslator.translateExceptionIfPossible(ex);
+            throw dataAccessException;
         }
         return true;
     }
@@ -299,3 +321,4 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return SqlHelper.getObject(log, listObjs(queryWrapper, mapper));
     }
 }
+
