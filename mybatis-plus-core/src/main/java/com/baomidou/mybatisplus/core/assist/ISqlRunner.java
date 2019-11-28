@@ -15,10 +15,10 @@
  */
 package com.baomidou.mybatisplus.core.assist;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+
 import java.util.List;
 import java.util.Map;
-
-import com.baomidou.mybatisplus.core.metadata.IPage;
 
 /**
  * <p>
@@ -55,5 +55,5 @@ public interface ISqlRunner {
 
     Map<String, Object> selectOne(String sql, Object... args);
 
-    IPage<Map<String, Object>> selectPage(IPage<?> page, String sql, Object... args);
+    <E extends IPage<Map<String, Object>>> E selectPage(E page, String sql, Object... args);
 }
