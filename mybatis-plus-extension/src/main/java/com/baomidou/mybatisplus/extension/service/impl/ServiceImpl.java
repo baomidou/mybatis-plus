@@ -17,7 +17,6 @@ package com.baomidou.mybatisplus.extension.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
-import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
@@ -327,7 +326,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                     = new MyBatisExceptionTranslator(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(), true);
                 throw Objects.requireNonNull(myBatisExceptionTranslator.translateExceptionIfPossible((RuntimeException) unwrapped));
             }
-            throw new MybatisPlusException(unwrapped);
+            throw ExceptionUtils.mpe(unwrapped);
         }
     }
 }
