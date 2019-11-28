@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.extension.conditions.update;
 
 import com.baomidou.mybatisplus.extension.conditions.ChainWrapper;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 
 /**
  * 具有更新方法的定义
@@ -41,7 +42,7 @@ public interface ChainUpdate<T> extends ChainWrapper<T> {
      * @return 是否成功
      */
     default boolean update(T entity) {
-        return getBaseMapper().update(entity, getWrapper()) > 0;
+        return SqlHelper.retBool(getBaseMapper().update(entity, getWrapper()));
     }
 
     /**
@@ -50,6 +51,6 @@ public interface ChainUpdate<T> extends ChainWrapper<T> {
      * @return 是否成功
      */
     default boolean remove() {
-        return getBaseMapper().delete(getWrapper()) > 0;
+        return SqlHelper.retBool(getBaseMapper().delete(getWrapper()));
     }
 }

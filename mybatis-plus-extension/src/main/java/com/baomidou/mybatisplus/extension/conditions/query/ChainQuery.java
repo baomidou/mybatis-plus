@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.conditions.ChainWrapper;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 具有查询方法的定义
@@ -44,6 +45,16 @@ public interface ChainQuery<T> extends ChainWrapper<T> {
      */
     default T one() {
         return getBaseMapper().selectOne(getWrapper());
+    }
+
+    /**
+     * 获取单个
+     *
+     * @return 单个
+     * @since 3.2.1
+     */
+    default Optional<T> oneOpt() {
+        return Optional.ofNullable(one());
     }
 
     /**

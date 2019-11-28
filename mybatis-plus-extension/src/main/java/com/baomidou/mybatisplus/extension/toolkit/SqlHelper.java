@@ -21,7 +21,6 @@ import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -39,12 +38,10 @@ import java.util.List;
  */
 public final class SqlHelper {
 
-    private static final Log logger = LogFactory.getLog(SqlHelper.class);
     /**
      * 主要用于 service 和 ar
      */
     public static SqlSessionFactory FACTORY;
-
 
     /**
      * 批量操作 SqlSession
@@ -101,18 +98,6 @@ public final class SqlHelper {
     }
 
     /**
-     * 删除不存在的逻辑上属于成功
-     *
-     * @param result 数据库操作返回影响条数
-     * @return boolean
-     * @deprecated 3.1.1 {@link SqlHelper#retBool(java.lang.Integer)}
-     */
-    @Deprecated
-    public static boolean delBool(Integer result) {
-        return null != result && result >= 0;
-    }
-
-    /**
      * 返回SelectCount执行结果
      *
      * @param result ignore
@@ -120,19 +105,6 @@ public final class SqlHelper {
      */
     public static int retCount(Integer result) {
         return (null == result) ? 0 : result;
-    }
-
-    /**
-     * 从list中取第一条数据返回对应List中泛型的单个结果
-     *
-     * @param list ignore
-     * @param <E>  ignore
-     * @return ignore
-     * @deprecated 3.1.1
-     */
-    @Deprecated
-    public static <E> E getObject(List<E> list) {
-        return getObject(logger, list);
     }
 
     /**
