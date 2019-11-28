@@ -38,7 +38,7 @@ public final class ChainWrappers {
      *
      * @return QueryWrapper 的包装类
      */
-    public static <T> QueryChainWrapper<T> chainQuery(BaseMapper<T> mapper) {
+    public static <T> QueryChainWrapper<T> queryChain(BaseMapper<T> mapper) {
         return new QueryChainWrapper<>(mapper);
     }
 
@@ -48,7 +48,7 @@ public final class ChainWrappers {
      *
      * @return LambdaQueryWrapper 的包装类
      */
-    public static <T> LambdaQueryChainWrapper<T> chainLambdaQuery(BaseMapper<T> mapper) {
+    public static <T> LambdaQueryChainWrapper<T> lambdaQueryChain(BaseMapper<T> mapper) {
         return new LambdaQueryChainWrapper<>(mapper);
     }
 
@@ -57,7 +57,7 @@ public final class ChainWrappers {
      *
      * @return UpdateWrapper 的包装类
      */
-    public static <T> UpdateChainWrapper<T> chainUpdate(BaseMapper<T> mapper) {
+    public static <T> UpdateChainWrapper<T> updateChain(BaseMapper<T> mapper) {
         return new UpdateChainWrapper<>(mapper);
     }
 
@@ -67,7 +67,7 @@ public final class ChainWrappers {
      *
      * @return LambdaUpdateWrapper 的包装类
      */
-    public static <T> LambdaUpdateChainWrapper<T> chainLambdaUpdate(BaseMapper<T> mapper) {
+    public static <T> LambdaUpdateChainWrapper<T> lambdaUpdateChain(BaseMapper<T> mapper) {
         return new LambdaUpdateChainWrapper<>(mapper);
     }
 }

@@ -361,7 +361,7 @@ public interface IService<T> {
      * @return QueryWrapper 的包装类
      */
     default QueryChainWrapper<T> query() {
-        return ChainWrappers.chainQuery(getBaseMapper());
+        return ChainWrappers.queryChain(getBaseMapper());
     }
 
     /**
@@ -371,7 +371,7 @@ public interface IService<T> {
      * @return LambdaQueryWrapper 的包装类
      */
     default LambdaQueryChainWrapper<T> lambdaQuery() {
-        return ChainWrappers.chainLambdaQuery(getBaseMapper());
+        return ChainWrappers.lambdaQueryChain(getBaseMapper());
     }
 
     /**
@@ -380,7 +380,7 @@ public interface IService<T> {
      * @return UpdateWrapper 的包装类
      */
     default UpdateChainWrapper<T> update() {
-        return ChainWrappers.chainUpdate(getBaseMapper());
+        return ChainWrappers.updateChain(getBaseMapper());
     }
 
     /**
@@ -390,7 +390,7 @@ public interface IService<T> {
      * @return LambdaUpdateWrapper 的包装类
      */
     default LambdaUpdateChainWrapper<T> lambdaUpdate() {
-        return ChainWrappers.chainLambdaUpdate(getBaseMapper());
+        return ChainWrappers.lambdaUpdateChain(getBaseMapper());
     }
 
     /**
