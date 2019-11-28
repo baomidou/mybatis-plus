@@ -27,7 +27,10 @@ import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.MyBatisExceptionTranslator;
 import org.mybatis.spring.SqlSessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +40,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -75,7 +79,10 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
     /**
      * 批量操作 SqlSession
+     *
+     * @deprecated 3.2.1
      */
+    @Deprecated
     protected SqlSession sqlSessionBatch() {
         return SqlHelper.sqlSessionBatch(currentModelClass());
     }
@@ -114,19 +121,18 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean saveBatch(Collection<T> entityList, int batchSize) {
-        SqlHelper.clearCache(currentModelClass());
         String sqlStatement = sqlStatement(SqlMethod.INSERT_ONE);
         int size = entityList.size();
-        try (SqlSession batchSqlSession = sqlSessionBatch()) {
+        executeBatch(sqlSession -> {
             int i = 1;
             for (T entity : entityList) {
-                batchSqlSession.insert(sqlStatement, entity);
+                sqlSession.insert(sqlStatement, entity);
                 if ((i % batchSize == 0) || i == size) {
-                    batchSqlSession.flushStatements();
+                    sqlSession.flushStatements();
                 }
                 i++;
             }
-        }
+        });
         return true;
     }
 
@@ -156,30 +162,29 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     public boolean saveOrUpdateBatch(Collection<T> entityList, int batchSize) {
         Assert.notEmpty(entityList, "error: entityList must not be empty");
         Class<?> cls = currentModelClass();
-        SqlHelper.clearCache(cls);
         TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
         Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
         String keyProperty = tableInfo.getKeyProperty();
         Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
         int size = entityList.size();
-        try (SqlSession batchSqlSession = sqlSessionBatch()) {
+        executeBatch(sqlSession -> {
             int i = 1;
             for (T entity : entityList) {
                 Object idVal = ReflectionKit.getMethodValue(cls, entity, keyProperty);
                 if (StringUtils.checkValNull(idVal) || Objects.isNull(getById((Serializable) idVal))) {
-                    batchSqlSession.insert(sqlStatement(SqlMethod.INSERT_ONE), entity);
+                    sqlSession.insert(sqlStatement(SqlMethod.INSERT_ONE), entity);
                 } else {
                     MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
                     param.put(Constants.ENTITY, entity);
-                    batchSqlSession.update(sqlStatement(SqlMethod.UPDATE_BY_ID), param);
+                    sqlSession.update(sqlStatement(SqlMethod.UPDATE_BY_ID), param);
                 }
                 // 不知道以后会不会有人说更新失败了还要执行插入 😂😂😂
                 if ((i % batchSize == 0) || i == size) {
-                    batchSqlSession.flushStatements();
+                    sqlSession.flushStatements();
                 }
                 i++;
             }
-        }
+        });
         return true;
     }
 
@@ -219,20 +224,19 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     public boolean updateBatchById(Collection<T> entityList, int batchSize) {
         Assert.notEmpty(entityList, "error: entityList must not be empty");
         String sqlStatement = sqlStatement(SqlMethod.UPDATE_BY_ID);
-        SqlHelper.clearCache(currentModelClass());
         int size = entityList.size();
-        try (SqlSession batchSqlSession = sqlSessionBatch()) {
+        executeBatch(sqlSession -> {
             int i = 1;
             for (T anEntityList : entityList) {
                 MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
                 param.put(Constants.ENTITY, anEntityList);
-                batchSqlSession.update(sqlStatement, param);
+                sqlSession.update(sqlStatement, param);
                 if ((i % batchSize == 0) || i == size) {
-                    batchSqlSession.flushStatements();
+                    sqlSession.flushStatements();
                 }
                 i++;
             }
-        }
+        });
         return true;
     }
 
@@ -297,5 +301,23 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Override
     public <V> V getObj(Wrapper<T> queryWrapper, Function<? super Object, V> mapper) {
         return SqlHelper.getObject(log, listObjs(queryWrapper, mapper));
+    }
+
+    /**
+     * 执行批量操作
+     *
+     * @param fun fun
+     * @since 3.2.1
+     */
+    protected void executeBatch(Consumer<SqlSession> fun) {
+        Class<T> tClass = currentModelClass();
+        SqlHelper.clearCache(tClass);
+        SqlSessionFactory sqlSessionFactory = SqlHelper.sqlSessionFactory(tClass);
+        try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH)) {
+            fun.accept(sqlSession);
+        } catch (RuntimeException ex) {
+            MyBatisExceptionTranslator myBatisExceptionTranslator = new MyBatisExceptionTranslator(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(), true);
+            throw Objects.requireNonNull(myBatisExceptionTranslator.translateExceptionIfPossible(ex));
+        }
     }
 }

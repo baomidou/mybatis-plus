@@ -54,7 +54,18 @@ public final class SqlHelper {
      */
     public static SqlSession sqlSessionBatch(Class<?> clazz) {
         // TODO 暂时让能用先,但日志会显示Closing non transactional SqlSession,因为这个并没有绑定.
-        return GlobalConfigUtils.currentSessionFactory(clazz).openSession(ExecutorType.BATCH);
+        return sqlSessionFactory(clazz).openSession(ExecutorType.BATCH);
+    }
+
+    /**
+     * 获取SqlSessionFactory
+     *
+     * @param clazz 实体类
+     * @return SqlSessionFactory
+     * @since 3.2.1
+     */
+    public static SqlSessionFactory sqlSessionFactory(Class<?> clazz) {
+        return GlobalConfigUtils.currentSessionFactory(clazz);
     }
 
     /**

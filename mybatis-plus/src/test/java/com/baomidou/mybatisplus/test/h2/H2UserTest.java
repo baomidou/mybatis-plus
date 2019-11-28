@@ -24,10 +24,10 @@ import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.select.Select;
-import org.apache.ibatis.exceptions.PersistenceException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
@@ -350,7 +350,7 @@ class H2UserTest extends BaseTest {
                     new H2User(1L, "andy")
             ));
         } catch (Exception e) {
-            Assertions.assertTrue(e instanceof PersistenceException);
+            Assertions.assertTrue(e instanceof DataAccessException);
         }
     }
 
