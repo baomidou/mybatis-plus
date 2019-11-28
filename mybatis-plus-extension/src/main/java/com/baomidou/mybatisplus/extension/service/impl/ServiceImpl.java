@@ -327,6 +327,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 throw Objects.requireNonNull(myBatisExceptionTranslator.translateExceptionIfPossible((RuntimeException) unwrapped));
             }
             throw ExceptionUtils.mpe(unwrapped);
+        } finally {
+            sqlSession.close();
         }
     }
 }
