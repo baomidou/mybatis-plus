@@ -12,5 +12,5 @@ dependencies {
     implementation("${lib["p6spy"]}")
     implementation("${lib["jackson"]}")
     implementation("${lib["fastjson"]}")
-
+    implementation("${lib["gson"]}")
 }

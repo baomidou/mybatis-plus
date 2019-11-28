@@ -16,17 +16,14 @@
 package com.baomidou.mybatisplus.extension.handlers;
 
 import com.baomidou.mybatisplus.core.toolkit.Assert;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;
 import org.apache.ibatis.type.MappedTypes;
 
-import java.io.IOException;
-
 /**
- * Jackson 实现 JSON 字段类型处理器
+ * Gson 实现 JSON 字段类型处理器
  *
  * @author hubin
  * @since 2019-08-25
@@ -34,38 +31,30 @@ import java.io.IOException;
 @Slf4j
 @MappedTypes({Object.class})
 @MappedJdbcTypes(JdbcType.VARCHAR)
-public class JacksonTypeHandler extends AbstractJsonTypeHandler<Object> {
-    private static ObjectMapper objectMapper = new ObjectMapper();
+public class GsonTypeHandler extends AbstractJsonTypeHandler<Object> {
+    private static Gson gson = new Gson();
     private Class<Object> type;
 
-    public JacksonTypeHandler(Class<Object> type) {
+    public GsonTypeHandler(Class<Object> type) {
         if (log.isTraceEnabled()) {
-            log.trace("JacksonTypeHandler(" + type + ")");
+            log.trace("GsonTypeHandler(" + type + ")");
         }
         Assert.notNull(type, "Type argument cannot be null");
         this.type = type;
     }
 
-    public static void setObjectMapper(ObjectMapper objectMapper) {
-        Assert.notNull(objectMapper, "ObjectMapper should not be null");
-        JacksonTypeHandler.objectMapper = objectMapper;
+    public static void setGson(Gson gson) {
+        Assert.notNull(gson, "Gson should not be null");
+        GsonTypeHandler.gson = gson;
     }
 
     @Override
     protected Object parse(String json) {
-        try {
-            return objectMapper.readValue(json, type);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return gson.fromJson(json, type);
     }
 
     @Override
     protected String toJson(Object obj) {
-        try {
-            return objectMapper.writeValueAsString(obj);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        return gson.toJson(obj);
     }
 }
