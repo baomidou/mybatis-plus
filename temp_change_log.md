@@ -1,0 +1,3 @@
+- BaseMapper 接口两个 page 方法优化
+- IService 以及 ServiceImpl 对应 page 方法优化,个别返回 collection 的方法修改为返回 list
+- 逻辑删除字段的两个表示已删除和未删除的定义支持字符串 `"null"`
