@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  *
  * @author miemie
  * @since 2018-12-19
+ * @deprecated 3.2.1
  */
 @Deprecated
 public class QueryChainWrapper<T> extends com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper<T> {
