@@ -19,12 +19,11 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.service.additional.query.ChainQuery;
-import com.baomidou.mybatisplus.extension.service.additional.query.impl.LambdaQueryChainWrapper;
-import com.baomidou.mybatisplus.extension.service.additional.query.impl.QueryChainWrapper;
-import com.baomidou.mybatisplus.extension.service.additional.update.ChainUpdate;
-import com.baomidou.mybatisplus.extension.service.additional.update.impl.LambdaUpdateChainWrapper;
-import com.baomidou.mybatisplus.extension.service.additional.update.impl.UpdateChainWrapper;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
+import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
+import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
+import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
@@ -362,7 +361,7 @@ public interface IService<T> {
      * @return QueryWrapper 的包装类
      */
     default QueryChainWrapper<T> query() {
-        return new QueryChainWrapper<>(getBaseMapper());
+        return ChainWrappers.chainQuery(getBaseMapper());
     }
 
     /**
@@ -372,7 +371,7 @@ public interface IService<T> {
      * @return LambdaQueryWrapper 的包装类
      */
     default LambdaQueryChainWrapper<T> lambdaQuery() {
-        return new LambdaQueryChainWrapper<>(getBaseMapper());
+        return ChainWrappers.chainLambdaQuery(getBaseMapper());
     }
 
     /**
@@ -381,7 +380,7 @@ public interface IService<T> {
      * @return UpdateWrapper 的包装类
      */
     default UpdateChainWrapper<T> update() {
-        return new UpdateChainWrapper<>(getBaseMapper());
+        return ChainWrappers.chainUpdate(getBaseMapper());
     }
 
     /**
@@ -391,7 +390,7 @@ public interface IService<T> {
      * @return LambdaUpdateWrapper 的包装类
      */
     default LambdaUpdateChainWrapper<T> lambdaUpdate() {
-        return new LambdaUpdateChainWrapper<>(getBaseMapper());
+        return ChainWrappers.chainLambdaUpdate(getBaseMapper());
     }
 
     /**

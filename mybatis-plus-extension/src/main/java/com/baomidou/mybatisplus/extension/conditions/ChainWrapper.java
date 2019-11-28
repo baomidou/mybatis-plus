@@ -13,43 +13,31 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.extension.service.additional.update;
+package com.baomidou.mybatisplus.extension.conditions;
 
-import com.baomidou.mybatisplus.extension.service.additional.ChainWrapper;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
- * 具有更新方法的定义
+ * 此接口没特殊意义,只是为了减少实现类的代码量,主要在 AbstractChainWrapper 抽象类上实现
+ * <p>以及 继承该接口的子接口能直接获取到 BaseMapper 和相应的 Wrapper</p>
  *
  * @author miemie
  * @since 2018-12-19
  */
-public interface ChainUpdate<T> extends ChainWrapper<T> {
+public interface ChainWrapper<T> {
 
     /**
-     * 更新数据
+     * 获取 BaseMapper
      *
-     * @return 是否成功
+     * @return BaseMapper
      */
-    default boolean update() {
-        return update(null);
-    }
+    BaseMapper<T> getBaseMapper();
 
     /**
-     * 更新数据
+     * 获取最终拿去执行的 Wrapper
      *
-     * @param entity 实体类
-     * @return 是否成功
+     * @return Wrapper
      */
-    default boolean update(T entity) {
-        return getBaseMapper().update(entity, getWrapper()) > 0;
-    }
-
-    /**
-     * 删除数据
-     *
-     * @return 是否成功
-     */
-    default boolean remove() {
-        return getBaseMapper().delete(getWrapper()) > 0;
-    }
+    Wrapper<T> getWrapper();
 }

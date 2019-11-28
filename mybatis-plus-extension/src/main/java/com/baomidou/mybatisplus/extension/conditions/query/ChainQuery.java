@@ -13,10 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.extension.service.additional.query;
+package com.baomidou.mybatisplus.extension.conditions.query;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.service.additional.ChainWrapper;
+import com.baomidou.mybatisplus.extension.conditions.ChainWrapper;
 
 import java.util.List;
 
