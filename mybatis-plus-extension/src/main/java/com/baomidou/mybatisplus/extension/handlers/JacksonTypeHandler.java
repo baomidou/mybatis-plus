@@ -46,11 +46,6 @@ public class JacksonTypeHandler extends AbstractJsonTypeHandler<Object> {
         this.type = type;
     }
 
-    public static void setObjectMapper(ObjectMapper objectMapper) {
-        Assert.notNull(objectMapper, "ObjectMapper should not be null");
-        JacksonTypeHandler.objectMapper = objectMapper;
-    }
-
     @Override
     protected Object parse(String json) {
         try {
@@ -67,5 +62,10 @@ public class JacksonTypeHandler extends AbstractJsonTypeHandler<Object> {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static void setObjectMapper(ObjectMapper objectMapper) {
+        Assert.notNull(objectMapper, "ObjectMapper should not be null");
+        JacksonTypeHandler.objectMapper = objectMapper;
     }
 }
