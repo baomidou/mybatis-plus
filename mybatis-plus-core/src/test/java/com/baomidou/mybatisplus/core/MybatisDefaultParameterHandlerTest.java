@@ -1,5 +1,9 @@
 package com.baomidou.mybatisplus.core;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.DefaultGenerator;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
@@ -27,12 +31,14 @@ class MybatisDefaultParameterHandlerTest {
     @AllArgsConstructor
     private static class Model {
 
+        @TableId(type = IdType.INPUT)
         private Long id;
 
         private String name;
 
         private String insertOperator;
 
+        @TableField(fill = FieldFill.UPDATE)
         private String updateOperator;
 
         Model(String name) {
@@ -48,6 +54,8 @@ class MybatisDefaultParameterHandlerTest {
         GlobalConfigUtils.getGlobalConfig(configuration).setIdGenerator(new DefaultGenerator()).setMetaObjectHandler(new MetaObjectHandler() {
             @Override
             public void insertFill(MetaObject metaObject) {
+                //TODO 这种骚操作要干掉！！！！！！！！！！！！
+                setFieldValByName("id",666L,metaObject);
                 setFieldValByName("insertOperator", "咩咩", metaObject);
             }
 

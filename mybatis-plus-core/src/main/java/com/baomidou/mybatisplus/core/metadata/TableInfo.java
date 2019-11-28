@@ -400,4 +400,14 @@ public class TableInfo implements Constants {
         this.withInsertFill = fieldList.parallelStream().anyMatch(TableFieldInfo::isWithInsertFill);
         this.withUpdateFill = fieldList.parallelStream().anyMatch(TableFieldInfo::isWithUpdateFill);
     }
+
+    /**
+     * 这个不要乱调用,后面要移出掉这个骚操作的
+     *
+     * @return 是否insert填充
+     */
+    @Deprecated
+    public boolean isInsertFill() {
+        return (IdType.NONE == this.idType || IdType.INPUT == this.idType) || this.withInsertFill || this.keyType == null;
+    }
 }

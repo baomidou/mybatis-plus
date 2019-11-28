@@ -79,9 +79,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                 parameters.stream().filter(Objects::nonNull).forEach(obj -> {
                     // 感觉这里可以稍微优化一下，理论上都是同一个.
                     TableInfo tableInfo = TableInfoHelper.getTableInfo(obj.getClass());
-                    if (tableInfo != null) {
-                        handlerFill(ms, populateKeys(ms, tableInfo, obj));
-                    }
+                    process(ms, obj, tableInfo);
                 });
                 return parameterObject;
             } else {
@@ -104,14 +102,38 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                 } else {
                     tableInfo = TableInfoHelper.getTableInfo(parameterObject.getClass());
                 }
-                if (tableInfo != null) {
-                    handlerFill(ms, populateKeys(ms, tableInfo, parameterObject));
-                }
+                process(ms, parameterObject, tableInfo);
                 return parameterObject;
             }
         }
         return parameterObject;
     }
+
+    private static void process(MappedStatement ms, Object parameterObject, TableInfo tableInfo) {
+        if (tableInfo != null) {
+            MetaObject metaObject = ms.getConfiguration().newMetaObject(parameterObject);
+            if (SqlCommandType.INSERT == ms.getSqlCommandType()) {
+                // input none 且id为空  或者  无主键放入insert填充
+                if (tableInfo.isInsertFill()) {
+                    String keyProperty = tableInfo.getKeyProperty();
+                    //无主键的要兼容旧的骚操作,只能走完insert填充
+                    if (StringUtils.isBlank(keyProperty)) {
+                        handlerFill(ms, metaObject, tableInfo);
+                    } else {
+                        Object value = metaObject.getValue(keyProperty);
+                        if (value == null) {
+                            handlerFill(ms, metaObject, tableInfo);
+                        }
+                    }
+                }
+                //填充主键
+                populateKeys(ms, tableInfo, metaObject, parameterObject);
+            } else {
+                handlerFill(ms, metaObject, tableInfo);
+            }
+        }
+    }
+
 
     /**
      * 处理正常批量插入逻辑
@@ -144,13 +166,12 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
     /**
      * 自定义元对象填充控制器
      *
-     * @param ms MappedStatement
-     * @param tableInfo         数据库表反射信息
-     * @param parameterObject   插入数据库对象
+     * @param ms              MappedStatement
+     * @param tableInfo       数据库表反射信息
+     * @param parameterObject 插入数据库对象
      * @return Object
      */
-    protected static MetaObject populateKeys(MappedStatement ms, TableInfo tableInfo, Object parameterObject) {
-        MetaObject metaObject = ms.getConfiguration().newMetaObject(parameterObject);
+    protected static void populateKeys(MappedStatement ms, TableInfo tableInfo, MetaObject metaObject, Object parameterObject) {
         // 填充主键
         if (SqlCommandType.INSERT == ms.getSqlCommandType()) {
             if (!StringUtils.isBlank(tableInfo.getKeyProperty())
@@ -169,22 +190,22 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                 }
             }
         }
-        return metaObject;
     }
 
     /**
      * 填充处理
      *
      * @param ms         MappedStatement
-     * @param metaObject metaObject {@link #populateKeys(MappedStatement, TableInfo, Object)}
+     * @param metaObject metaObject
      */
-    protected static void handlerFill(MappedStatement ms, MetaObject metaObject) {
+    protected static void handlerFill(MappedStatement ms, MetaObject metaObject, TableInfo tableInfo) {
         MetaObjectHandler metaObjectHandler = GlobalConfigUtils.getMetaObjectHandler(ms.getConfiguration());
         if (metaObjectHandler != null) {
+            //TODO 这里的tableInfo.isWithInsertFill()暂时还不能加,加了就不兼容了.
             if (metaObjectHandler.openInsertFill() && SqlCommandType.INSERT == ms.getSqlCommandType()) {
                 // 插入填充
                 metaObjectHandler.insertFill(metaObject);
-            } else if (metaObjectHandler.openUpdateFill() && SqlCommandType.UPDATE == ms.getSqlCommandType()) {
+            } else if (metaObjectHandler.openUpdateFill() && SqlCommandType.UPDATE == ms.getSqlCommandType() && tableInfo.isWithUpdateFill()) {
                 // 更新填充
                 metaObjectHandler.updateFill(metaObject);
             }
