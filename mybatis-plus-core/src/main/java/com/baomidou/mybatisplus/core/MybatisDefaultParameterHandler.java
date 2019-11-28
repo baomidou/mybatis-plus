@@ -114,14 +114,18 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
             MetaObject metaObject = ms.getConfiguration().newMetaObject(parameterObject);
             if (SqlCommandType.INSERT == ms.getSqlCommandType()) {
                 // input none 且id为空  或者  无主键放入insert填充
-                if (tableInfo.isInsertFill()) {
+                // 使用insert填充
+                if (tableInfo.isWithInsertFill()) {
+                    handlerFill(ms, metaObject, tableInfo);
+                } else {
+                    // 兼容旧操作
                     String keyProperty = tableInfo.getKeyProperty();
                     //无主键的要兼容旧的骚操作,只能走完insert填充
                     if (StringUtils.isBlank(keyProperty)) {
                         handlerFill(ms, metaObject, tableInfo);
                     } else {
                         Object value = metaObject.getValue(keyProperty);
-                        if (value == null) {
+                        if (value == null && (IdType.NONE == tableInfo.getIdType() || IdType.INPUT == tableInfo.getIdType())) {
                             handlerFill(ms, metaObject, tableInfo);
                         }
                     }
