@@ -162,20 +162,15 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         // 填充主键
         if (!StringUtils.isBlank(tableInfo.getKeyProperty())
             && null != tableInfo.getIdType() && tableInfo.getIdType().getKey() >= 3) {
-            IdGenerator idGenerator = GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration()).getIdGenerator();
+            IdGenerator idGenerator = GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration()).getIdGenerator(tableInfo.getIdType());
             Object idValue = metaObject.getValue(tableInfo.getKeyProperty());
             /* 自定义 ID */
             if (StringUtils.checkValNull(idValue)) {
-                if (tableInfo.getIdType() == IdType.ASSIGN_ID || tableInfo.getIdType() == IdType.ID_WORKER) {
-                    if (Number.class.isAssignableFrom(tableInfo.getKeyType())) {
-                        metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.nextId(parameterObject));
-                    } else {
-                        metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.nextId(parameterObject).toString());
-                    }
-                } else if (tableInfo.getIdType() == IdType.ID_WORKER_STR) {
-                    metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.nextId(parameterObject).toString());
-                } else if (tableInfo.getIdType() == IdType.ASSIGN_UUID || tableInfo.getIdType() == IdType.UUID) {
-                    metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.nextUUID(parameterObject));
+                // 应该只有数值型和字符串的区别了.
+                if (Number.class.isAssignableFrom(tableInfo.getKeyType())) {
+                    metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.generate(parameterObject));
+                } else {
+                    metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.generate(parameterObject).toString());
                 }
             }
         }

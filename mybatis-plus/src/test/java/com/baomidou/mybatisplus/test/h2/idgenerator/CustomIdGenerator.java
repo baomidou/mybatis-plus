@@ -3,24 +3,12 @@ package com.baomidou.mybatisplus.test.h2.idgenerator;
 import com.baomidou.mybatisplus.core.incrementer.IdGenerator;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import org.apache.ibatis.reflection.SystemMetaObject;
 
 public class CustomIdGenerator implements IdGenerator {
 
     @Override
-    public String nextUUID(Object entity) {
-        String name = (String) SystemMetaObject.forObject(entity).getValue("name");
-        if ("旺仔".equals(name)) {
-            return "66666666666";
-        } else if ("靓仔".equals(name)) {
-            return "77777777777";
-        }
-        return IdWorker.get32UUID();
-    }
-
-    @Override
-    public Number nextId(Object entity) {
+    public Number generate(Object entity) {
         //可以将当前传入的class全类名来作为bizKey,或者提取参数来生成bizKey进行分布式Id调用生成.
         String bizKey = entity.getClass().getName();
         TableInfo tableInfo = TableInfoHelper.getTableInfo(entity.getClass());

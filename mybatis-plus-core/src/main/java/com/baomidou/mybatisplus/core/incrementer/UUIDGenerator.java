@@ -16,23 +16,19 @@
 package com.baomidou.mybatisplus.core.incrementer;
 
 
-import java.io.Serializable;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 
 /**
- * Id生成器接口
+ * UUID生成
  *
- * @author sd-wangtaicheng@sdcncsi.com.cn nieqiuqiu
- * @since 2019-10-15
+ * @author nieqiuqiu 2019-11-29
  * @since 3.3.0
  */
-public interface IdGenerator {
+public class UUIDGenerator implements IdGenerator {
 
-    /**
-     * 生成Id
-     *
-     * @param entity 实体
-     * @return id
-     */
-    Serializable generate(Object entity);
+    @Override
+    public String generate(Object entity) {
+        return IdWorker.get32UUID();
+    }
 
 }

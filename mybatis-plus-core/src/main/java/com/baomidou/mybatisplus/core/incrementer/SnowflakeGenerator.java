@@ -18,29 +18,30 @@ package com.baomidou.mybatisplus.core.incrementer;
 import com.baomidou.mybatisplus.core.toolkit.Sequence;
 
 /**
- * 默认ID生成器
+ * 雪花Id生成器
  *
- * @author sd-wangtaicheng@sdcncsi.com.cn
- * @date 2019/10/15
+ * @author sd-wangtaicheng@sdcncsi.com.cn nieqiuqiu
+ * @date 2019-10-15
+ * @since 3.3.0
  */
-public class DefaultGenerator implements IdGenerator {
+public class SnowflakeGenerator implements IdGenerator {
 
     private final Sequence sequence;
 
-    public DefaultGenerator() {
+    public SnowflakeGenerator() {
         this.sequence = new Sequence();
     }
 
-    public DefaultGenerator(long workerId, long dataCenterId) {
+    public SnowflakeGenerator(long workerId, long dataCenterId) {
         this.sequence = new Sequence(workerId, dataCenterId);
     }
 
-    public DefaultGenerator(Sequence sequence) {
+    public SnowflakeGenerator(Sequence sequence) {
         this.sequence = sequence;
     }
 
     @Override
-    public Long nextId(Object entity) {
+    public Long generate(Object entity) {
         return sequence.nextId();
     }
 }

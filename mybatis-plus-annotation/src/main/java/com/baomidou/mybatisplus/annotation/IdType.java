@@ -41,14 +41,13 @@ public enum IdType {
 
     /* 以下3种类型、只有当插入对象ID 为空，才自动填充。 */
     /**
-     * 分配ID (主键类型为 number 对应 #{@link com.baomidou.mybatisplus.core.incrementer.IdGenerator#nextId}) </p>
-     * 否则认为是 string 类型 对上值进行 toString
+     * 分配ID (主键类型为number或string）
      *
      * @since 3.3.0
      */
     ASSIGN_ID(3),
     /**
-     * 分配UUID (主键类型为 string 对应 #{@link com.baomidou.mybatisplus.core.incrementer.IdGenerator#nextUUID})
+     * 分配UUID (主键类型为 string)
      *
      * @since 3.3.0
      */
@@ -69,7 +68,7 @@ public enum IdType {
      * @deprecated 3.3.0 please use {@link #ASSIGN_ID}
      */
     @Deprecated
-    ID_WORKER_STR(5);
+    ID_WORKER_STR(3);
 
     private final int key;
 

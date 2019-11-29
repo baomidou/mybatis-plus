@@ -15,8 +15,9 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.incrementer.DefaultGenerator;
+import com.baomidou.mybatisplus.core.incrementer.SnowflakeGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IdGenerator;
 
 import java.time.LocalDateTime;
@@ -35,10 +36,11 @@ public class IdWorker {
 
     /**
      * 主机和进程的机器码
-     * @deprecated 3.2.1
+     *
+     * @deprecated 3.3.0
      */
     @Deprecated
-    private static IdGenerator ID_GENERATOR = new DefaultGenerator();
+    private static IdGenerator ID_GENERATOR = new SnowflakeGenerator();
 
     /**
      * 毫秒格式化时间
@@ -49,22 +51,22 @@ public class IdWorker {
      * 获取唯一ID
      *
      * @return id
-     * @deprecated 3.2.1 spring应用可以通过@IdGenerator,非spring应用请自行控制IdGenerator的实例化
+     * @deprecated 3.3.0
      */
     @Deprecated
     public static long getId() {
-        return Long.parseLong(ID_GENERATOR.nextId(new Object()).toString());
+        return Long.parseLong(ID_GENERATOR.generate(new Object()).toString());
     }
 
     /**
      * 获取唯一ID
      *
      * @return id
-     * @deprecated 3.2.1 spring应用可以通过@IdGenerator,非spring应用请自行控制IdGenerator的实例化
+     * @deprecated 3.3.0
      */
     @Deprecated
     public static String getIdStr() {
-        return String.valueOf(ID_GENERATOR.nextId(new Object()));
+        return String.valueOf(ID_GENERATOR.generate(new Object()));
     }
 
     /**
@@ -77,7 +79,8 @@ public class IdWorker {
     /**
      * 时间 ID = Time + ID
      * <p>例如：可用于商品订单 ID</p>
-     * @deprecated 3.2.1  spring应用可以通过@IdGenerator,非spring应用请自行控制IdGenerator的实例化
+     *
+     * @deprecated 3.3.0
      */
     @Deprecated
     public static String getTimeId() {
@@ -90,19 +93,19 @@ public class IdWorker {
      * @param workerId     工作机器 ID
      * @param dataCenterId 序列号
      * @see #setIdGenerator(IdGenerator)
-     * @deprecated 3.2.1
+     * @deprecated 3.3.0
      */
     @Deprecated
     public static void initSequence(long workerId, long dataCenterId) {
-        ID_GENERATOR = new DefaultGenerator(workerId, dataCenterId);
+        ID_GENERATOR = new SnowflakeGenerator(workerId, dataCenterId);
     }
 
     /**
      * 自定义id 生成方式
      *
      * @param idGenerator id 生成器
-     * @see GlobalConfig#setIdGenerator(IdGenerator)
-     * @deprecated 3.2.1
+     * @see GlobalConfig#registerIdGenerator(IdType, IdGenerator)
+     * @deprecated 3.3.0
      */
     @Deprecated
     public static void setIdGenerator(IdGenerator idGenerator) {

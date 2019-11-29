@@ -20,17 +20,23 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IdGenerator;
+import com.baomidou.mybatisplus.core.incrementer.SnowflakeGenerator;
+import com.baomidou.mybatisplus.core.incrementer.UUIDGenerator;
 import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.core.mapper.Mapper;
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
@@ -45,22 +51,32 @@ import java.util.concurrent.ConcurrentSkipListSet;
 public class GlobalConfig implements Serializable {
 
     /**
+     * 默认提供的主键生成器
+     */
+    private static Map<String, IdGenerator> defaultIdGeneratorMap = new ConcurrentHashMap<>();
+
+    static {
+        defaultIdGeneratorMap.put(String.valueOf(IdType.ASSIGN_UUID.getKey()),new UUIDGenerator());
+        defaultIdGeneratorMap.put(String.valueOf(IdType.ASSIGN_ID.getKey()),new SnowflakeGenerator());
+    }
+
+    /**
      * 是否开启 LOGO
      */
     private boolean banner = true;
     /**
      * 机器 ID 部分
      *
-     * @see #setIdGenerator(IdGenerator)
-     * @deprecated 3.2.1 建议手动初始化,Spring应用直接@bean注入SnowflakeIdGenerator即可.
+     * @see #registerIdGenerator(IdType, IdGenerator)
+     * @deprecated 3.3.0
      */
     @Deprecated
     private Long workerId;
     /**
      * 数据标识 ID 部分
      *
-     * @see #setIdGenerator(IdGenerator)
-     * @deprecated 3.2.1 建议手动初始化,Spring应用直接@bean注入SnowflakeIdGenerator即可.
+     * @see #registerIdGenerator(IdType, IdGenerator)
+     * @deprecated 3.3.0
      */
     @Deprecated
     private Long datacenterId;
@@ -96,7 +112,25 @@ public class GlobalConfig implements Serializable {
     /**
      * 主键生成器
      */
-    private IdGenerator idGenerator;
+    @Setter(value = AccessLevel.NONE)
+    @Getter(value = AccessLevel.NONE)
+    private Map<String, IdGenerator> idGeneratorMap = new ConcurrentHashMap<>(defaultIdGeneratorMap);
+
+    /**
+     * 注册ID生成器
+     *
+     * @param idType      idType 暂时不开放string注册
+     * @param idGenerator 生成器
+     */
+    public GlobalConfig registerIdGenerator(IdType idType, IdGenerator idGenerator) {
+        idGeneratorMap.put(String.valueOf(idType.getKey()), idGenerator);
+        return this;
+    }
+
+    public IdGenerator getIdGenerator(IdType idType) {
+        return Collections.unmodifiableMap(idGeneratorMap).get(String.valueOf(idType.getKey()));
+    }
+
     /**
      * 标记全局设置 (统一所有入口)
      */

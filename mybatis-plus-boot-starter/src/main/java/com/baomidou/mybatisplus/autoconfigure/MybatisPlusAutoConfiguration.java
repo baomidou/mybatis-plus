@@ -19,9 +19,7 @@ package com.baomidou.mybatisplus.autoconfigure;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.baomidou.mybatisplus.core.incrementer.DefaultGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
-import com.baomidou.mybatisplus.core.incrementer.IdGenerator;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import org.apache.ibatis.annotations.Mapper;
@@ -219,8 +217,6 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
             ISqlInjector iSqlInjector = this.applicationContext.getBean(ISqlInjector.class);
             globalConfig.setSqlInjector(iSqlInjector);
         }
-        IdGenerator idGenerator = this.applicationContext.getBean(IdGenerator.class);
-        globalConfig.setIdGenerator(idGenerator);
         // TODO 设置 GlobalConfig 到 MybatisSqlSessionFactoryBean
         factory.setGlobalConfig(globalConfig);
         return factory.getObject();
@@ -252,15 +248,6 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
         }
     }
 
-    @Bean
-    @ConditionalOnMissingBean
-    public IdGenerator idGenerator() {
-        GlobalConfig globalConfig = this.properties.getGlobalConfig();
-        if (globalConfig.getWorkerId() != null && globalConfig.getDatacenterId() != null) {
-            return new DefaultGenerator(globalConfig.getWorkerId(), globalConfig.getDatacenterId());
-        }
-        return new DefaultGenerator();
-    }
 
     /**
      * This will just scan the same base package as Spring Boot does. If you want more power, you can explicitly use
