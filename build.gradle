@@ -48,7 +48,7 @@ ext {
         "lombok"                     : "org.projectlombok:lombok:1.18.10",
 
         "javax.servlet-api"          : "javax.servlet:javax.servlet-api:4.0.1",
-        "aspectjweaver"              : "org.aspectj:aspectjweaver:1.9.4",
+        "aspectjweaver"              : "org.aspectj:aspectjweaver:1.9.5",
         "slf4j-api"                  : "org.slf4j:slf4j-api:1.7.29",
         "logback-classic"            : "ch.qos.logback:logback-classic:1.2.3",
         //copy
