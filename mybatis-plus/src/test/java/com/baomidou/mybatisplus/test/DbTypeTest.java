@@ -37,6 +37,7 @@ class DbTypeTest {
         DIALECT_MAP.put(DbType.MYSQL, MySqlDialect.class);
         DIALECT_MAP.put(DbType.MARIADB, MariaDBDialect.class);
         DIALECT_MAP.put(DbType.ORACLE, OracleDialect.class);
+        DIALECT_MAP.put(DbType.ORACLE_NEW, OracleNewDialect.class);
         DIALECT_MAP.put(DbType.POSTGRE_SQL, PostgreDialect.class);
         DIALECT_MAP.put(DbType.SQL_SERVER, SQLServerDialect.class);
         DIALECT_MAP.put(DbType.SQL_SERVER2005, SQLServer2005Dialect.class);
