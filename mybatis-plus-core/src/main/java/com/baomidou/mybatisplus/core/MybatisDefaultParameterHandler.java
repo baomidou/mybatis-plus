@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.core;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IdGenerator;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
@@ -76,63 +75,47 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
             }
             Collection<Object> parameters = getParameters(parameterObject);
             if (null != parameters) {
-                parameters.stream().filter(Objects::nonNull).forEach(obj -> {
-                    // 感觉这里可以稍微优化一下，理论上都是同一个.
-                    TableInfo tableInfo = TableInfoHelper.getTableInfo(obj.getClass());
-                    process(ms, obj, tableInfo);
-                });
-                return parameterObject;
+                // 感觉这里可以稍微优化一下，理论上都是同一个.
+                parameters.stream().filter(Objects::nonNull).forEach(obj -> getTableInfo(obj).ifPresent(tableInfo -> process(ms, obj, tableInfo)));
             } else {
-                TableInfo tableInfo = null;
-                if (parameterObject instanceof Map) {
-                    Map<?, ?> map = (Map<?, ?>) parameterObject;
-                    String entityKey = Constants.ENTITY;
-                    if (map.containsKey(entityKey)) {
-                        Object et = map.get(entityKey);
-                        if (et != null) {
-                            if (et instanceof Map) {
-                                Map<?, ?> realEtMap = (Map<?, ?>) et;
-                                String optLockKey = Constants.MP_OPTLOCK_ET_ORIGINAL;
-                                if (realEtMap.containsKey(optLockKey)) {
-                                    tableInfo = TableInfoHelper.getTableInfo(realEtMap.get(optLockKey).getClass());
-                                }
-                            } else {
-                                tableInfo = TableInfoHelper.getTableInfo(et.getClass());
-                            }
-                        }
-                    }
-                } else {
-                    tableInfo = TableInfoHelper.getTableInfo(parameterObject.getClass());
-                }
-                process(ms, parameterObject, tableInfo);
-                return parameterObject;
+                getTableInfo(parameterObject).ifPresent(tableInfo -> process(ms, parameterObject, tableInfo));
             }
         }
         return parameterObject;
     }
 
-    private static void process(MappedStatement ms, Object parameterObject, TableInfo tableInfo) {
-        if (tableInfo != null) {
-            MetaObject metaObject = ms.getConfiguration().newMetaObject(parameterObject);
-            if (SqlCommandType.INSERT == ms.getSqlCommandType()) {
-                // 使用insert填充
-                if (tableInfo.isWithInsertFill()) {
-                    handlerFill(ms, metaObject, tableInfo);
-                } else {
-                    String keyProperty = tableInfo.getKeyProperty();
-                    if (StringUtils.isNotBlank(keyProperty)) {
-                        // 兼容旧操作 id类型为input或none的要用填充器处理一下
-                        Object value = metaObject.getValue(keyProperty);
-                        if (value == null && (IdType.NONE == tableInfo.getIdType() || IdType.INPUT == tableInfo.getIdType())) {
-                            handlerFill(ms, metaObject, tableInfo);
+    private static Optional<TableInfo> getTableInfo(Object parameterObject) {
+        TableInfo tableInfo = null;
+        if (parameterObject instanceof Map) {
+            Map<?, ?> map = (Map<?, ?>) parameterObject;
+            String entityKey = Constants.ENTITY;
+            if (map.containsKey(entityKey)) {
+                Object et = map.get(entityKey);
+                if (et != null) {
+                    if (et instanceof Map) {
+                        Map<?, ?> realEtMap = (Map<?, ?>) et;
+                        String optLockKey = Constants.MP_OPTLOCK_ET_ORIGINAL;
+                        if (realEtMap.containsKey(optLockKey)) {
+                            tableInfo = TableInfoHelper.getTableInfo(realEtMap.get(optLockKey).getClass());
                         }
+                    } else {
+                        tableInfo = TableInfoHelper.getTableInfo(et.getClass());
                     }
                 }
-                //填充主键
-                populateKeys(tableInfo, metaObject, parameterObject);
-            } else {
-                handlerFill(ms, metaObject, tableInfo);
             }
+        } else {
+            tableInfo = TableInfoHelper.getTableInfo(parameterObject.getClass());
+        }
+        return Optional.ofNullable(tableInfo);
+    }
+
+    private static void process(MappedStatement ms, Object parameterObject, TableInfo tableInfo) {
+        MetaObject metaObject = ms.getConfiguration().newMetaObject(parameterObject);
+        if (SqlCommandType.INSERT == ms.getSqlCommandType()) {
+            insertFill(metaObject, tableInfo);
+            populateKeys(tableInfo, metaObject, parameterObject);
+        } else {
+            updateFill(metaObject, tableInfo);
         }
     }
 
@@ -191,24 +174,31 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         }
     }
 
-    /**
-     * 填充处理
-     *
-     * @param ms         MappedStatement
-     * @param metaObject metaObject
-     */
-    protected static void handlerFill(MappedStatement ms, MetaObject metaObject, TableInfo tableInfo) {
-        MetaObjectHandler metaObjectHandler = GlobalConfigUtils.getMetaObjectHandler(ms.getConfiguration());
-        if (metaObjectHandler != null) {
-            //TODO 这里的tableInfo.isWithInsertFill()暂时还不能加,加了就不兼容了.
-            if (metaObjectHandler.openInsertFill() && SqlCommandType.INSERT == ms.getSqlCommandType()) {
-                // 插入填充
-                metaObjectHandler.insertFill(metaObject);
-            } else if (metaObjectHandler.openUpdateFill() && SqlCommandType.UPDATE == ms.getSqlCommandType() && tableInfo.isWithUpdateFill()) {
-                // 更新填充
+    protected static void insertFill(MetaObject metaObject, TableInfo tableInfo) {
+        GlobalConfigUtils.getMetaObjectHandler(tableInfo.getConfiguration()).ifPresent(metaObjectHandler -> {
+            if (metaObjectHandler.openInsertFill()) {
+                if (tableInfo.isWithInsertFill()) {
+                    metaObjectHandler.insertFill(metaObject);
+                } else {
+                    // 兼容旧操作 id类型为input或none的要用填充器处理一下
+                    String keyProperty = tableInfo.getKeyProperty();
+                    if (StringUtils.isNotBlank(keyProperty)) {
+                        Object value = metaObject.getValue(keyProperty);
+                        if (value == null && (IdType.NONE == tableInfo.getIdType() || IdType.INPUT == tableInfo.getIdType())) {
+                            metaObjectHandler.insertFill(metaObject);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    protected static void updateFill(MetaObject metaObject, TableInfo tableInfo) {
+        GlobalConfigUtils.getMetaObjectHandler(tableInfo.getConfiguration()).ifPresent(metaObjectHandler -> {
+            if (metaObjectHandler.openUpdateFill() && tableInfo.isWithUpdateFill()) {
                 metaObjectHandler.updateFill(metaObject);
             }
-        }
+        });
     }
 
     @Override
