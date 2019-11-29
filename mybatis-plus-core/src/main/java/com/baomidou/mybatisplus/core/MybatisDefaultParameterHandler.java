@@ -181,11 +181,13 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                     metaObjectHandler.insertFill(metaObject);
                 } else {
                     // 兼容旧操作 id类型为input或none的要用填充器处理一下
-                    String keyProperty = tableInfo.getKeyProperty();
-                    if (StringUtils.isNotBlank(keyProperty)) {
-                        Object value = metaObject.getValue(keyProperty);
-                        if (value == null && (IdType.NONE == tableInfo.getIdType() || IdType.INPUT == tableInfo.getIdType())) {
-                            metaObjectHandler.insertFill(metaObject);
+                    if(metaObjectHandler.compatibleFillId()){
+                        String keyProperty = tableInfo.getKeyProperty();
+                        if (StringUtils.isNotBlank(keyProperty)) {
+                            Object value = metaObject.getValue(keyProperty);
+                            if (value == null && (IdType.NONE == tableInfo.getIdType() || IdType.INPUT == tableInfo.getIdType())) {
+                                metaObjectHandler.insertFill(metaObject);
+                            }
                         }
                     }
                 }

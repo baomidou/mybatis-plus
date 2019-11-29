@@ -52,6 +52,12 @@ class MybatisDefaultParameterHandlerTest {
         Configuration configuration = new MybatisConfiguration();
         StaticSqlSource staticSqlSource = new StaticSqlSource(configuration, " ***********");
         GlobalConfigUtils.getGlobalConfig(configuration).setIdGenerator(new DefaultGenerator()).setMetaObjectHandler(new MetaObjectHandler() {
+
+            @Override
+            public boolean compatibleFillId() {
+                return true;
+            }
+
             @Override
             public void insertFill(MetaObject metaObject) {
                 //TODO 这种骚操作要干掉！！！！！！！！！！！！
