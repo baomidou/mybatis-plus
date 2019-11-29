@@ -21,8 +21,8 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 /**
  * Id生成器接口
  *
- * @author sd-wangtaicheng@sdcncsi.com.cn
- * @date 2019/10/15
+ * @author sd-wangtaicheng@sdcncsi.com.cn qiuqiu
+ * @since 2019-10-15
  * @since 3.2.1
  */
 public interface IdGenerator {

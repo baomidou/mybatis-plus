@@ -19,7 +19,10 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.incrementer.IdGenerator;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.reflection.MetaObject;
@@ -167,10 +170,10 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                     if (Number.class.isAssignableFrom(tableInfo.getKeyType())) {
                         metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.nextId(parameterObject));
                     } else {
-                        metaObject.setValue(tableInfo.getKeyProperty(), String.valueOf(idGenerator.nextId(parameterObject)));
+                        metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.nextId(parameterObject).toString());
                     }
                 } else if (tableInfo.getIdType() == IdType.ID_WORKER_STR) {
-                    metaObject.setValue(tableInfo.getKeyProperty(), String.valueOf(idGenerator.nextId(parameterObject)));
+                    metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.nextId(parameterObject).toString());
                 } else if (tableInfo.getIdType() == IdType.UUID) {
                     metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.nextUUID(parameterObject));
                 }
@@ -185,7 +188,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                     metaObjectHandler.insertFill(metaObject);
                 } else {
                     // 兼容旧操作 id类型为input或none的要用填充器处理一下
-                    if(metaObjectHandler.compatibleFillId()){
+                    if (metaObjectHandler.compatibleFillId()) {
                         String keyProperty = tableInfo.getKeyProperty();
                         if (StringUtils.isNotBlank(keyProperty)) {
                             Object value = metaObject.getValue(keyProperty);
