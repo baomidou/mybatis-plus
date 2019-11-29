@@ -66,14 +66,14 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
      * @return ignore
      */
     protected static Object processBatch(MappedStatement ms, Object parameterObject) {
-        //检查 parameterObject
-        if (null == parameterObject
-            || ReflectionKit.isPrimitiveOrWrapper(parameterObject.getClass())
-            || parameterObject.getClass() == String.class) {
-            return null;
-        }
         /* 只处理插入或更新操作 */
-        if (SqlCommandType.INSERT == ms.getSqlCommandType() || SqlCommandType.UPDATE == ms.getSqlCommandType()) {
+        if (parameterObject != null
+            && (SqlCommandType.INSERT == ms.getSqlCommandType() || SqlCommandType.UPDATE == ms.getSqlCommandType())) {
+            //检查 parameterObject
+            if (ReflectionKit.isPrimitiveOrWrapper(parameterObject.getClass())
+                || parameterObject.getClass() == String.class) {
+                return null;
+            }
             Collection<Object> parameters = getParameters(parameterObject);
             if (null != parameters) {
                 parameters.stream().filter(Objects::nonNull).forEach(obj -> {
@@ -86,13 +86,15 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                 TableInfo tableInfo = null;
                 if (parameterObject instanceof Map) {
                     Map<?, ?> map = (Map<?, ?>) parameterObject;
-                    if (map.containsKey(Constants.ENTITY)) {
-                        Object et = map.get(Constants.ENTITY);
+                    String entityKey = Constants.ENTITY;
+                    if (map.containsKey(entityKey)) {
+                        Object et = map.get(entityKey);
                         if (et != null) {
                             if (et instanceof Map) {
                                 Map<?, ?> realEtMap = (Map<?, ?>) et;
-                                if (realEtMap.containsKey(Constants.MP_OPTLOCK_ET_ORIGINAL)) {
-                                    tableInfo = TableInfoHelper.getTableInfo(realEtMap.get(Constants.MP_OPTLOCK_ET_ORIGINAL).getClass());
+                                String optLockKey = Constants.MP_OPTLOCK_ET_ORIGINAL;
+                                if (realEtMap.containsKey(optLockKey)) {
+                                    tableInfo = TableInfoHelper.getTableInfo(realEtMap.get(optLockKey).getClass());
                                 }
                             } else {
                                 tableInfo = TableInfoHelper.getTableInfo(et.getClass());
@@ -127,7 +129,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                     }
                 }
                 //填充主键
-                populateKeys(ms, tableInfo, metaObject, parameterObject);
+                populateKeys(tableInfo, metaObject, parameterObject);
             } else {
                 handlerFill(ms, metaObject, tableInfo);
             }
@@ -166,27 +168,24 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
     /**
      * 自定义元对象填充控制器
      *
-     * @param ms              MappedStatement
      * @param tableInfo       数据库表反射信息
      * @param parameterObject 插入数据库对象
      * @return Object
      */
-    protected static void populateKeys(MappedStatement ms, TableInfo tableInfo, MetaObject metaObject, Object parameterObject) {
+    protected static void populateKeys(TableInfo tableInfo, MetaObject metaObject, Object parameterObject) {
         // 填充主键
-        if (SqlCommandType.INSERT == ms.getSqlCommandType()) {
-            if (!StringUtils.isBlank(tableInfo.getKeyProperty())
-                && null != tableInfo.getIdType() && tableInfo.getIdType().getKey() >= 3) {
-                IdGenerator idGenerator = GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration()).getIdGenerator();
-                Object idValue = metaObject.getValue(tableInfo.getKeyProperty());
-                /* 自定义 ID */
-                if (StringUtils.checkValNull(idValue)) {
-                    if (tableInfo.getIdType() == IdType.ID_WORKER) {
-                        metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.nextId(parameterObject));
-                    } else if (tableInfo.getIdType() == IdType.ID_WORKER_STR) {
-                        metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.nextIdStr(parameterObject));
-                    } else if (tableInfo.getIdType() == IdType.UUID) {
-                        metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.nextUUID(parameterObject));
-                    }
+        if (!StringUtils.isBlank(tableInfo.getKeyProperty())
+            && null != tableInfo.getIdType() && tableInfo.getIdType().getKey() >= 3) {
+            IdGenerator idGenerator = GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration()).getIdGenerator();
+            Object idValue = metaObject.getValue(tableInfo.getKeyProperty());
+            /* 自定义 ID */
+            if (StringUtils.checkValNull(idValue)) {
+                if (tableInfo.getIdType() == IdType.ID_WORKER) {
+                    metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.nextId(parameterObject));
+                } else if (tableInfo.getIdType() == IdType.ID_WORKER_STR) {
+                    metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.nextIdStr(parameterObject));
+                } else if (tableInfo.getIdType() == IdType.UUID) {
+                    metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.nextUUID(parameterObject));
                 }
             }
         }
