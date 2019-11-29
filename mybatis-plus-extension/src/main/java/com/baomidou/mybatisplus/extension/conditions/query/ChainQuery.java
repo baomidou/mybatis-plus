@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.extension.conditions.query;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.conditions.ChainWrapper;
+import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 
 import java.util.List;
 import java.util.Optional;
@@ -51,7 +52,7 @@ public interface ChainQuery<T> extends ChainWrapper<T> {
      * 获取单个
      *
      * @return 单个
-     * @since 3.2.1
+     * @since 3.3.0
      */
     default Optional<T> oneOpt() {
         return Optional.ofNullable(one());
@@ -63,7 +64,7 @@ public interface ChainQuery<T> extends ChainWrapper<T> {
      * @return count
      */
     default Integer count() {
-        return getBaseMapper().selectCount(getWrapper());
+        return SqlHelper.retCount(getBaseMapper().selectCount(getWrapper()));
     }
 
     /**
