@@ -36,16 +36,6 @@ public interface IdGenerator {
     Number nextId(Object entity);
 
     /**
-     * 生成Id {@link IdType#ID_WORKER_STR}
-     *
-     * @param entity 实体
-     * @return id
-     */
-    default String nextIdStr(Object entity) {
-        return String.valueOf(nextId(entity));
-    }
-
-    /**
      * 获取uuid {@link IdType#UUID}
      *
      * @param entity 实体

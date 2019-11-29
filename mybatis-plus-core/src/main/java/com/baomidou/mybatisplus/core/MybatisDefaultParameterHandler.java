@@ -164,9 +164,13 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
             /* 自定义 ID */
             if (StringUtils.checkValNull(idValue)) {
                 if (tableInfo.getIdType() == IdType.ID_WORKER) {
-                    metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.nextId(parameterObject));
+                    if (Number.class.isAssignableFrom(tableInfo.getKeyType())) {
+                        metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.nextId(parameterObject));
+                    } else {
+                        metaObject.setValue(tableInfo.getKeyProperty(), String.valueOf(idGenerator.nextId(parameterObject)));
+                    }
                 } else if (tableInfo.getIdType() == IdType.ID_WORKER_STR) {
-                    metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.nextIdStr(parameterObject));
+                    metaObject.setValue(tableInfo.getKeyProperty(), String.valueOf(idGenerator.nextId(parameterObject)));
                 } else if (tableInfo.getIdType() == IdType.UUID) {
                     metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.nextUUID(parameterObject));
                 }

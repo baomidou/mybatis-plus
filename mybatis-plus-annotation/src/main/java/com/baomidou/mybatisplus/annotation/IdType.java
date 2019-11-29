@@ -50,7 +50,10 @@ public enum IdType {
     UUID(4),
     /**
      * 字符串全局唯一ID (idWorker 的字符串表示)
+     *
+     * @deprecated 3.3.0 可使用{@link #ID_WORKER}
      */
+    @Deprecated
     ID_WORKER_STR(5);
 
     private final int key;
