@@ -22,7 +22,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  *
  * @author miemie
  * @since 2018-12-19
- * @deprecated 3.2.1
+ * @deprecated 3.3.0
  */
 @Deprecated
 public class UpdateChainWrapper<T> extends com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper<T> {

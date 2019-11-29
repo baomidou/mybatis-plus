@@ -26,7 +26,7 @@ import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
  *
  * @author miemie
  * @since 2019-11-28
- * @since 3.2.1
+ * @since 3.3.0
  */
 public final class ChainWrappers {
 
