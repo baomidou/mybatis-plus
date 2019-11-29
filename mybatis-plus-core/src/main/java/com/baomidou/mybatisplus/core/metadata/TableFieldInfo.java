@@ -109,21 +109,18 @@ public class TableFieldInfo implements Constants {
     private String condition = SqlCondition.EQUAL;
     /**
      * 字段填充策略
-     *
-     * @deprecated 3.2.1
      */
-    @Deprecated
     private FieldFill fieldFill = FieldFill.DEFAULT;
     /**
      * 表字段是否启用了插入填充
      *
-     * @since 3.2.1
+     * @since 3.3.0
      */
     private boolean withInsertFill;
     /**
      * 表字段是否启用了更新填充
      *
-     * @since 3.2.1
+     * @since 3.3.0
      */
     private boolean withUpdateFill;
     /**
@@ -153,10 +150,9 @@ public class TableFieldInfo implements Constants {
         this.property = field.getName();
         this.propertyType = field.getType();
         this.isCharSequence = StringUtils.isCharSequence(this.propertyType);
-        final FieldFill fill = tableField.fill();
-        this.fieldFill = fill;
-        this.withInsertFill = fill == FieldFill.INSERT || fill == FieldFill.INSERT_UPDATE;
-        this.withUpdateFill = fill == FieldFill.UPDATE || fill == FieldFill.INSERT_UPDATE;
+        this.fieldFill = tableField.fill();
+        this.withInsertFill = this.fieldFill == FieldFill.INSERT || this.fieldFill == FieldFill.INSERT_UPDATE;
+        this.withUpdateFill = this.fieldFill == FieldFill.UPDATE || this.fieldFill == FieldFill.INSERT_UPDATE;
         this.update = tableField.update();
         JdbcType jdbcType = tableField.jdbcType();
         final Class<? extends TypeHandler> typeHandler = tableField.typeHandler();
