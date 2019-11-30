@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.core;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.core.incrementer.IdGenerator;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
@@ -160,19 +159,19 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
      */
     protected static void populateKeys(TableInfo tableInfo, MetaObject metaObject, Object parameterObject) {
         // 填充主键
-        if (!StringUtils.isBlank(tableInfo.getKeyProperty())
-            && null != tableInfo.getIdType() && tableInfo.getIdType().getKey() >= 3) {
-            IdGenerator idGenerator = GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration()).getIdGenerator(tableInfo.getIdType());
-            Object idValue = metaObject.getValue(tableInfo.getKeyProperty());
-            /* 自定义 ID */
-            if (StringUtils.checkValNull(idValue)) {
-                // 应该只有数值型和字符串的区别了.
-                if (Number.class.isAssignableFrom(tableInfo.getKeyType())) {
-                    metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.generate(parameterObject));
-                } else {
-                    metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.generate(parameterObject).toString());
+        if (StringUtils.isNotBlank(tableInfo.getKeyProperty()) && null != tableInfo.getIdType()) {
+            GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration()).getIdGenerator(tableInfo.getIdType()).ifPresent(idGenerator -> {
+                Object idValue = metaObject.getValue(tableInfo.getKeyProperty());
+                /* 自定义 ID */
+                if (StringUtils.checkValNull(idValue)) {
+                    // 应该只有数值型和字符串的区别了.
+                    if (Number.class.isAssignableFrom(tableInfo.getKeyType())) {
+                        metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.generate(parameterObject));
+                    } else {
+                        metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.generate(parameterObject).toString());
+                    }
                 }
-            }
+            });
         }
     }
 

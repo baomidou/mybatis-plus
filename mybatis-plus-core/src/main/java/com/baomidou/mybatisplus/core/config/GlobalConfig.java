@@ -35,6 +35,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -127,8 +128,8 @@ public class GlobalConfig implements Serializable {
         return this;
     }
 
-    public IdGenerator getIdGenerator(IdType idType) {
-        return Collections.unmodifiableMap(idGeneratorMap).get(String.valueOf(idType.getKey()));
+    public Optional<IdGenerator> getIdGenerator(IdType idType) {
+        return Optional.ofNullable(Collections.unmodifiableMap(idGeneratorMap).get(String.valueOf(idType.getKey())));
     }
 
     /**
