@@ -38,7 +38,7 @@ public class IdGeneratorConfig {
     public GlobalConfig globalConfiguration() {
         GlobalConfig conf = new GlobalConfig();
         //自定义Id生成器
-        conf.registerIdGenerator(IdType.ASSIGN_UUID, new CustomUUIDGenerator()).registerIdGenerator(IdType.ASSIGN_ID, new CustomIdGenerator());
+        conf.registerIdGenerator(IdType.UUID, new CustomUUIDGenerator()).registerIdGenerator(IdType.ASSIGN_ID, new CustomIdGenerator());
         return conf;
     }
 

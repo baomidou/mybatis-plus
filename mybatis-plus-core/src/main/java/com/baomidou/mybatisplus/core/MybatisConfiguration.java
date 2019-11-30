@@ -51,8 +51,18 @@ public class MybatisConfiguration extends Configuration {
 
     // TODO 自己的 GlobalConfig
     @Setter
-    @Getter
-    private GlobalConfig globalConfig = GlobalConfigUtils.defaults();
+    private GlobalConfig globalConfig;
+
+    public GlobalConfig getGlobalConfig(){
+        if(globalConfig == null){
+            globalConfig = GlobalConfigUtils.defaults();
+        }
+        return globalConfig;
+    }
+
+    public boolean hasGlobalConfig(){
+        return globalConfig != null;
+    }
 
     public MybatisConfiguration(Environment environment) {
         this();
