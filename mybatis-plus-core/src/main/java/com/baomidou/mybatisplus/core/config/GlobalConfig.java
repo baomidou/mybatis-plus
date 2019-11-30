@@ -57,8 +57,8 @@ public class GlobalConfig implements Serializable {
     private static Map<String, IdGenerator> defaultIdGeneratorMap = new ConcurrentHashMap<>();
 
     static {
-        defaultIdGeneratorMap.put(String.valueOf(IdType.ASSIGN_UUID.getKey()),new UUIDGenerator());
-        defaultIdGeneratorMap.put(String.valueOf(IdType.ASSIGN_ID.getKey()),new SnowflakeGenerator());
+        defaultIdGeneratorMap.put(String.valueOf(IdType.UUID.getKey()), new UUIDGenerator());
+        defaultIdGeneratorMap.put(String.valueOf(IdType.ASSIGN_ID.getKey()), new SnowflakeGenerator());
     }
 
     /**
@@ -144,7 +144,7 @@ public class GlobalConfig implements Serializable {
         /**
          * 主键类型（默认 ID_WORKER）
          */
-        private IdType idType = IdType.ID_WORKER;
+        private IdType idType = IdType.ASSIGN_ID;
         /**
          * 表名前缀
          */
