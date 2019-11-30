@@ -20,6 +20,7 @@ import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.incrementer.IdGenerator;
 import com.baomidou.mybatisplus.core.incrementer.SnowflakeGenerator;
 import com.baomidou.mybatisplus.core.injector.SqlRunnerInjector;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.ErrorContext;
@@ -81,7 +82,7 @@ public class MybatisSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
     @Override
     public SqlSessionFactory build(Configuration config) {
         MybatisConfiguration configuration = (MybatisConfiguration) config;
-        GlobalConfig globalConfig = configuration.getGlobalConfig();
+        GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
         if (null != globalConfig.getWorkerId() && null != globalConfig.getDatacenterId()) {
             IdGenerator idGenerator = new SnowflakeGenerator(globalConfig.getWorkerId(), globalConfig.getDatacenterId());
             globalConfig.registerIdGenerator(IdType.ASSIGN_ID, idGenerator);

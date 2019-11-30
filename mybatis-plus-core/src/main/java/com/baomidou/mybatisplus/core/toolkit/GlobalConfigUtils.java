@@ -16,7 +16,6 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
@@ -26,8 +25,10 @@ import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Mybatis全局缓存工具类
@@ -37,6 +38,12 @@ import java.util.Set;
  */
 public class GlobalConfigUtils {
 
+    private static Map<Configuration, GlobalConfig> mybatisConfigurationGlobalConfigMap = new ConcurrentHashMap<>();
+
+    public static void addGlobalConfig(Configuration mybatisConfiguration, GlobalConfig globalConfig) {
+        mybatisConfigurationGlobalConfigMap.put(mybatisConfiguration, globalConfig);
+    }
+
     /**
      * 获取当前的SqlSessionFactory
      *
@@ -45,7 +52,7 @@ public class GlobalConfigUtils {
     public static SqlSessionFactory currentSessionFactory(Class<?> clazz) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
         Assert.notNull(tableInfo, ClassUtils.getUserClass(clazz).getName() + " Not Found TableInfoCache.");
-        return tableInfo.getConfiguration().getGlobalConfig().getSqlSessionFactory();
+        return mybatisConfigurationGlobalConfigMap.get(tableInfo.getConfiguration()).getSqlSessionFactory();
     }
 
     /**
@@ -63,7 +70,7 @@ public class GlobalConfigUtils {
      */
     public static GlobalConfig getGlobalConfig(Configuration configuration) {
         Assert.notNull(configuration, "Error: You need Initialize MybatisConfiguration !");
-        return ((MybatisConfiguration) configuration).getGlobalConfig();
+        return mybatisConfigurationGlobalConfigMap.get(configuration);
     }
 
     public static IKeyGenerator getKeyGenerator(Configuration configuration) {

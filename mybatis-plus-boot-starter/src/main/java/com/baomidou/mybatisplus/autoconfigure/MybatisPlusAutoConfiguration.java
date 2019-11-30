@@ -198,8 +198,7 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
             factory.setTypeEnumsPackage(this.properties.getTypeEnumsPackage());
         }
         // TODO 此处必为非 NULL
-        // config的优先级要大于properties
-        GlobalConfig globalConfig = factory.getConfiguration().hasGlobalConfig() ? factory.getConfiguration().getGlobalConfig() : this.properties.getGlobalConfig();
+        GlobalConfig globalConfig = this.properties.getGlobalConfig();
         // TODO 注入填充器
         if (this.applicationContext.getBeanNamesForType(MetaObjectHandler.class, false, false).length > 0) {
             MetaObjectHandler metaObjectHandler = this.applicationContext.getBean(MetaObjectHandler.class);

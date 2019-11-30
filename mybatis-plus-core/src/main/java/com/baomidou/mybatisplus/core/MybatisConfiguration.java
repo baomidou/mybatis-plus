@@ -15,13 +15,11 @@
  */
 package com.baomidou.mybatisplus.core;
 
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.executor.MybatisBatchExecutor;
 import com.baomidou.mybatisplus.core.executor.MybatisCachingExecutor;
 import com.baomidou.mybatisplus.core.executor.MybatisReuseExecutor;
 import com.baomidou.mybatisplus.core.executor.MybatisSimpleExecutor;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import lombok.Setter;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.logging.Log;
@@ -48,21 +46,6 @@ public class MybatisConfiguration extends Configuration {
      */
     protected final MybatisMapperRegistry mybatisMapperRegistry = new MybatisMapperRegistry(this);
 
-    // TODO 自己的 GlobalConfig
-    @Setter
-    private GlobalConfig globalConfig;
-
-    public GlobalConfig getGlobalConfig(){
-        if(globalConfig == null){
-            globalConfig = GlobalConfigUtils.defaults();
-        }
-        return globalConfig;
-    }
-
-    public boolean hasGlobalConfig() {
-        return globalConfig != null;
-    }
-
     public MybatisConfiguration(Environment environment) {
         this();
         this.environment = environment;
@@ -75,6 +58,8 @@ public class MybatisConfiguration extends Configuration {
         super();
         this.mapUnderscoreToCamelCase = true;
         languageRegistry.setDefaultDriverClass(MybatisXMLLanguageDriver.class);
+        //兼容一下非spring应用
+        GlobalConfigUtils.addGlobalConfig(this, GlobalConfigUtils.defaults());
     }
 
     /**
