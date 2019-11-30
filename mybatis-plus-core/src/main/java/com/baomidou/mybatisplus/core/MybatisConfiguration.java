@@ -21,7 +21,6 @@ import com.baomidou.mybatisplus.core.executor.MybatisCachingExecutor;
 import com.baomidou.mybatisplus.core.executor.MybatisReuseExecutor;
 import com.baomidou.mybatisplus.core.executor.MybatisSimpleExecutor;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.executor.Executor;
@@ -60,7 +59,7 @@ public class MybatisConfiguration extends Configuration {
         return globalConfig;
     }
 
-    public boolean hasGlobalConfig(){
+    public boolean hasGlobalConfig() {
         return globalConfig != null;
     }
 
