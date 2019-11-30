@@ -114,7 +114,14 @@ public class MybatisPlusProperties {
      * TODO 全局配置
      */
     @NestedConfigurationProperty
-    private GlobalConfig globalConfig = GlobalConfigUtils.defaults();
+    private GlobalConfig globalConfig;
+
+    public GlobalConfig getGlobalConfig() {
+        if (globalConfig == null) {
+            globalConfig = GlobalConfigUtils.defaults();
+        }
+        return globalConfig;
+    }
 
 
     public Resource[] resolveMapperLocations() {
