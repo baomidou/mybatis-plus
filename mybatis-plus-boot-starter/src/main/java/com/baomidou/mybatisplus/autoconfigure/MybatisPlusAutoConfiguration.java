@@ -201,20 +201,17 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
         // config的优先级要大于properties
         GlobalConfig globalConfig = factory.getConfiguration().hasGlobalConfig() ? factory.getConfiguration().getGlobalConfig() : this.properties.getGlobalConfig();
         // TODO 注入填充器
-        if (this.applicationContext.getBeanNamesForType(MetaObjectHandler.class,
-            false, false).length > 0) {
+        if (this.applicationContext.getBeanNamesForType(MetaObjectHandler.class, false, false).length > 0) {
             MetaObjectHandler metaObjectHandler = this.applicationContext.getBean(MetaObjectHandler.class);
             globalConfig.setMetaObjectHandler(metaObjectHandler);
         }
         // TODO 注入主键生成器
-        if (this.applicationContext.getBeanNamesForType(IKeyGenerator.class, false,
-            false).length > 0) {
+        if (this.applicationContext.getBeanNamesForType(IKeyGenerator.class, false, false).length > 0) {
             IKeyGenerator keyGenerator = this.applicationContext.getBean(IKeyGenerator.class);
             globalConfig.getDbConfig().setKeyGenerator(keyGenerator);
         }
         // TODO 注入sql注入器
-        if (this.applicationContext.getBeanNamesForType(ISqlInjector.class, false,
-            false).length > 0) {
+        if (this.applicationContext.getBeanNamesForType(ISqlInjector.class, false, false).length > 0) {
             ISqlInjector iSqlInjector = this.applicationContext.getBean(ISqlInjector.class);
             globalConfig.setSqlInjector(iSqlInjector);
         }
