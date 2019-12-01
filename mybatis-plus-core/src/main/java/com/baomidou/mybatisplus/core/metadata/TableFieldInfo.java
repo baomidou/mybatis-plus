@@ -188,10 +188,10 @@ public class TableFieldInfo implements Constants {
         if (StringUtils.isNotBlank(columnFormat) && tableField.keepGlobalFormat()) {
             column = String.format(columnFormat, column);
         }
+
         this.column = column;
-        if (!TableInfoHelper.checkRelated(tableInfo.isUnderCamel(), this.property, this.column)) {
-            this.sqlSelect = column;
-        } else {
+        this.sqlSelect = column;
+        if (TableInfoHelper.checkRelated(tableInfo.isUnderCamel(), this.property, this.column)) {
             String propertyFormat = dbConfig.getPropertyFormat();
             String asProperty = this.property;
             if (StringUtils.isNotBlank(propertyFormat)) {
