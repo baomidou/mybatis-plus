@@ -73,7 +73,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
             //检查 parameterObject
             if (ReflectionKit.isPrimitiveOrWrapper(parameterObject.getClass())
                 || parameterObject.getClass() == String.class) {
-                return null;
+                return parameterObject;
             }
             Collection<Object> parameters = getParameters(parameterObject);
             if (null != parameters) {

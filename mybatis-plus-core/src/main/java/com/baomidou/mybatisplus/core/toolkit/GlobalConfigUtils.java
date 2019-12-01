@@ -40,8 +40,8 @@ public class GlobalConfigUtils {
 
     private static Map<Configuration, GlobalConfig> mybatisConfigurationGlobalConfigMap = new ConcurrentHashMap<>();
 
-    public static void addGlobalConfig(Configuration mybatisConfiguration, GlobalConfig globalConfig) {
-        mybatisConfigurationGlobalConfigMap.put(mybatisConfiguration, globalConfig);
+    public static void addGlobalConfig(Configuration configuration, GlobalConfig globalConfig) {
+        mybatisConfigurationGlobalConfigMap.put(configuration, globalConfig);
     }
 
     /**
@@ -52,7 +52,7 @@ public class GlobalConfigUtils {
     public static SqlSessionFactory currentSessionFactory(Class<?> clazz) {
         TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
         Assert.notNull(tableInfo, ClassUtils.getUserClass(clazz).getName() + " Not Found TableInfoCache.");
-        return mybatisConfigurationGlobalConfigMap.get(tableInfo.getConfiguration()).getSqlSessionFactory();
+        return getGlobalConfig(tableInfo.getConfiguration()).getSqlSessionFactory();
     }
 
     /**
