@@ -16,9 +16,7 @@
 package com.baomidou.mybatisplus.autoconfigure;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
-import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.apache.ibatis.scripting.LanguageDriver;
@@ -109,12 +107,6 @@ public class MybatisPlusProperties {
      * TODO 枚举包扫描
      */
     private String typeEnumsPackage;
-
-    /**
-     * TODO 全局配置
-     */
-    @NestedConfigurationProperty
-    private GlobalConfig globalConfig = GlobalConfigUtils.defaults();
 
 
     public Resource[] resolveMapperLocations() {

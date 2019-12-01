@@ -470,7 +470,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         this.globalConfig.setDbConfig(Optional.ofNullable(this.globalConfig.getDbConfig()).orElseGet(GlobalConfig.DbConfig::new));
 
         // TODO 初始化 id-work 以及 打印骚东西
-        GlobalConfigUtils.addGlobalConfig(targetConfiguration, this.globalConfig);
+        targetConfiguration.setGlobalConfig(this.globalConfig);
 
         // TODO 自定义枚举类扫描处理
         if (hasLength(this.typeEnumsPackage)) {

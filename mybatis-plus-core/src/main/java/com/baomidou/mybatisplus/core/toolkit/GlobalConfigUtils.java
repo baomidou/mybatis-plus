@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
@@ -25,10 +26,8 @@ import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Mybatis全局缓存工具类
@@ -37,12 +36,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2017-06-15
  */
 public class GlobalConfigUtils {
-
-    private static Map<Configuration, GlobalConfig> mybatisConfigurationGlobalConfigMap = new ConcurrentHashMap<>();
-
-    public static void addGlobalConfig(Configuration configuration, GlobalConfig globalConfig) {
-        mybatisConfigurationGlobalConfigMap.put(configuration, globalConfig);
-    }
 
     /**
      * 获取当前的SqlSessionFactory
@@ -70,7 +63,7 @@ public class GlobalConfigUtils {
      */
     public static GlobalConfig getGlobalConfig(Configuration configuration) {
         Assert.notNull(configuration, "Error: You need Initialize MybatisConfiguration !");
-        return mybatisConfigurationGlobalConfigMap.get(configuration);
+        return ((MybatisConfiguration) configuration).getGlobalConfig();
     }
 
     public static IKeyGenerator getKeyGenerator(Configuration configuration) {

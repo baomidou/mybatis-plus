@@ -10,43 +10,127 @@
             "name": "mybatis-plus.configuration",
             "sourceMethod": "getConfiguration()",
             "type": "com.baomidou.mybatisplus.core.MybatisConfiguration"
-        },
-        {
-            "sourceType": "com.baomidou.mybatisplus.autoconfigure.MybatisPlusProperties",
-            "name": "mybatis-plus.global-config",
-            "sourceMethod": "getGlobalConfig()",
-            "type": "com.baomidou.mybatisplus.core.config.GlobalConfig"
-        },
-        {
-            "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig$DbConfig",
-            "name": "mybatis-plus.global-config.db-config",
-            "sourceMethod": "getDbConfig()",
-            "type": "com.baomidou.mybatisplus.core.config.GlobalConfig$DbConfig"
         }
     ],
     "properties": [
         {
+            "name": "mybatis-plus.configuration.global-config.banner",
+            "type": "java.lang.Boolean",
+            "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig"
+        },
+        {
+            "name": "mybatis-plus.configuration.global-config.db-config.capital-mode",
+            "type": "java.lang.Boolean",
+            "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig$DbConfig"
+        },
+        {
+            "name": "mybatis-plus.configuration.global-config.db-config.column-format",
+            "type": "java.lang.String",
+            "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig$DbConfig"
+        },
+        {
+            "name": "mybatis-plus.configuration.global-config.db-config.id-type",
+            "type": "com.baomidou.mybatisplus.annotation.IdType",
+            "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig$DbConfig"
+        },
+        {
+            "name": "mybatis-plus.configuration.global-config.db-config.insert-strategy",
+            "type": "com.baomidou.mybatisplus.annotation.FieldStrategy",
+            "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig$DbConfig"
+        },
+        {
+            "name": "mybatis-plus.configuration.global-config.db-config.logic-delete-field",
+            "type": "java.lang.String",
+            "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig$DbConfig"
+        },
+        {
+            "name": "mybatis-plus.configuration.global-config.db-config.logic-delete-value",
+            "type": "java.lang.String",
+            "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig$DbConfig"
+        },
+        {
+            "name": "mybatis-plus.configuration.global-config.db-config.logic-not-delete-value",
+            "type": "java.lang.String",
+            "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig$DbConfig"
+        },
+        {
+            "name": "mybatis-plus.configuration.global-config.db-config.property-format",
+            "type": "java.lang.String",
+            "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig$DbConfig"
+        },
+        {
+            "name": "mybatis-plus.configuration.global-config.db-config.schema",
+            "type": "java.lang.String",
+            "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig$DbConfig"
+        },
+        {
+            "name": "mybatis-plus.configuration.global-config.db-config.select-strategy",
+            "type": "com.baomidou.mybatisplus.annotation.FieldStrategy",
+            "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig$DbConfig"
+        },
+        {
+            "name": "mybatis-plus.configuration.global-config.db-config.table-prefix",
+            "type": "java.lang.String",
+            "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig$DbConfig"
+        },
+        {
+            "name": "mybatis-plus.configuration.global-config.db-config.table-underline",
+            "type": "java.lang.Boolean",
+            "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig$DbConfig"
+        },
+        {
+            "name": "mybatis-plus.configuration.global-config.db-config.update-strategy",
+            "type": "com.baomidou.mybatisplus.annotation.FieldStrategy",
+            "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig$DbConfig"
+        },
+        {
+            "name": "mybatis-plus.configuration.global-config.enable-sql-runner",
+            "type": "java.lang.Boolean",
+            "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig"
+        },
+        {
+            "name": "mybatis-plus.configuration.global-config.mapper-registry-cache",
+            "type": "java.util.Set<java.lang.String>",
+            "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig"
+        },
+        {
+            "name": "mybatis-plus.configuration.global-config.super-mapper-class",
+            "type": "java.lang.Class<?>",
+            "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig"
+        },
+        {
             "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig",
-            "name": "mybatis-plus.global-config.meta-object-handler",
+            "name": "mybatis-plus.configuration.global-config.meta-object-handler",
             "deprecation": {
-                "level": "error",
-                "reason": "3.0开始废除此属性，请使用@Bean的方式注入至Spring容器."
+                "level": "error"
             }
+        },
+        {
+            "name": "mybatis-plus.configuration.global-config.datacenter-id",
+            "type": "java.lang.Long",
+            "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig",
+            "deprecated": true,
+            "deprecation": {}
+        },
+        {
+            "name": "mybatis-plus.configuration.global-config.worker-id",
+            "type": "java.lang.Long",
+            "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig",
+            "deprecated": true,
+            "deprecation": {}
         },
         {
             "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig$DbConfig",
-            "name": "mybatis-plus.global-config.db-config.key-generator",
+            "name": "mybatis-plus.configuration.global-config.db-config.key-generator",
             "deprecation": {
-                "level": "error",
-                "reason": "3.0开始废除此属性，请使用@Bean的方式注入至Spring容器."
+                "level": "error"
             }
         },
         {
             "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig",
-            "name": "mybatis-plus.global-config.sql-injector",
+            "name": "mybatis-plus.configuration.global-config.sql-injector",
             "deprecation": {
-                "level": "error",
-                "reason": "3.0开始废除此属性，请使用@Bean的方式注入至Spring容器."
+                "level": "error"
             }
         },
         {
@@ -78,7 +162,7 @@
         },
         {
             "sourceType": "com.baomidou.mybatisplus.core.config.GlobalConfig",
-            "name": "mybatis-plus.global-config.id-generator",
+            "name": "mybatis-plus.configuration.global-config.id-generator",
             "deprecation": {
                 "level": "error"
             }
