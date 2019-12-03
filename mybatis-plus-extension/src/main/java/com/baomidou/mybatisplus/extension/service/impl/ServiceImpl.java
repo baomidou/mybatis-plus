@@ -209,6 +209,9 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
 
     @Override
     public boolean removeByIds(Collection<? extends Serializable> idList) {
+        if (CollectionUtils.isEmpty(idList)) {
+            return false;
+        }
         return SqlHelper.retBool(baseMapper.deleteBatchIds(idList));
     }
 
