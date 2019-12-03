@@ -215,7 +215,8 @@ public class StrategyConfig {
 
     public boolean includeSuperEntityColumns(String fieldName) {
         if (null != superEntityColumns) {
-            return Arrays.asList(superEntityColumns).contains(fieldName);
+            // 公共字段判断忽略大小写【 部分数据库大小写不敏感 】
+            return Arrays.stream(superEntityColumns).anyMatch(e -> e.equalsIgnoreCase(fieldName));
         }
         return false;
     }
