@@ -164,14 +164,14 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                 Object idValue = metaObject.getValue(tableInfo.getKeyProperty());
                 /* 自定义 ID */
                 if (StringUtils.checkValNull(idValue)) {
-                    if (IdType.ASSIGN_ID.getKey() == tableInfo.getIdType().getKey()) {
+                    if (tableInfo.getIdType() == IdType.ASSIGN_ID) {
                         // 应该只有数值型和字符串的区别了.
                         if (Number.class.isAssignableFrom(tableInfo.getKeyType())) {
                             metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.nextId(parameterObject));
                         } else {
                             metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.nextId(parameterObject).toString());
                         }
-                    } else if (IdType.UUID.getKey() == tableInfo.getIdType().getKey()) {
+                    } else if (tableInfo.getIdType() == IdType.UUID) {
                         metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.nextUUID(parameterObject));
                     }
                 }
