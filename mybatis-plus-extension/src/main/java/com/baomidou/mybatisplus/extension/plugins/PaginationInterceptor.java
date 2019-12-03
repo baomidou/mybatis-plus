@@ -71,25 +71,25 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
     /**
      * COUNT SQL 解析
      */
-    private ISqlParser countSqlParser;
+    protected ISqlParser countSqlParser;
     /**
-     * 溢出总页数，设置第一页
+     * 溢出总页数后是否进行处理
      */
-    private boolean overflow = false;
+    protected boolean overflow = false;
     /**
      * 单页限制 500 条，小于 0 如 -1 不受限制
      */
-    private long limit = 500L;
+    protected long limit = 500L;
     /**
      * 方言类型(数据库名,全小写) <br>
      * 如果用的我们支持分页的数据库但获取数据库类型不正确则可以配置该值进行校正
      */
-    private String dialectType;
+    protected String dialectType;
     /**
      * 方言实现类<br>
      * 注意！实现 com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect 接口的子类
      */
-    private String dialectClazz;
+    protected String dialectClazz;
 
     /**
      * 查询SQL拼接Order By
@@ -216,7 +216,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
     }
 
     /**
-     * 处理分页条数限制
+     * 处理超出分页条数限制,默认归为限制数
      *
      * @param page IPage
      */
@@ -254,7 +254,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
     }
 
     /**
-     * 处理溢出
+     * 处理页数溢出,默认设置为第一页
      *
      * @param page IPage
      */
@@ -281,5 +281,4 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
             this.dialectClazz = dialectClazz;
         }
     }
-
 }
