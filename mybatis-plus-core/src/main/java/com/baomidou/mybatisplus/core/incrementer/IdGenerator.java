@@ -16,6 +16,8 @@
 package com.baomidou.mybatisplus.core.incrementer;
 
 
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
+
 import java.io.Serializable;
 
 /**
@@ -34,5 +36,15 @@ public interface IdGenerator {
      * @return id
      */
     Serializable generate(Object entity);
+
+    /**
+     * 生成uuid
+     *
+     * @param entity 实体
+     * @return uuid
+     */
+    default String generateUUID(Object entity) {
+        return IdWorker.get32UUID();
+    }
 
 }

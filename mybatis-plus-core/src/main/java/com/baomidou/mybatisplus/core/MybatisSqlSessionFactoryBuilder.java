@@ -15,10 +15,9 @@
  */
 package com.baomidou.mybatisplus.core;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.incrementer.IdGenerator;
-import com.baomidou.mybatisplus.core.incrementer.SnowflakeGenerator;
+import com.baomidou.mybatisplus.core.incrementer.DefaultGenerator;
 import com.baomidou.mybatisplus.core.injector.SqlRunnerInjector;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
@@ -84,8 +83,8 @@ public class MybatisSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
         MybatisConfiguration configuration = (MybatisConfiguration) config;
         GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
         if (null != globalConfig.getWorkerId() && null != globalConfig.getDatacenterId()) {
-            IdGenerator idGenerator = new SnowflakeGenerator(globalConfig.getWorkerId(), globalConfig.getDatacenterId());
-            globalConfig.registerIdGenerator(IdType.ASSIGN_ID, idGenerator);
+            IdGenerator idGenerator = new DefaultGenerator(globalConfig.getWorkerId(), globalConfig.getDatacenterId());
+            globalConfig.setIdGenerator(idGenerator);
             //TODO 这里只是为了兼容下,并没多大重要,方法标记过时了.
             IdWorker.setIdGenerator(idGenerator);
         }

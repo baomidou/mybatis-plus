@@ -20,20 +20,18 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IdGenerator;
-import com.baomidou.mybatisplus.core.incrementer.SnowflakeGenerator;
+import com.baomidou.mybatisplus.core.incrementer.DefaultGenerator;
 import com.baomidou.mybatisplus.core.incrementer.UUIDGenerator;
 import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.core.mapper.Mapper;
 import lombok.AccessLevel;
 import lombok.Data;
-import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -58,7 +56,7 @@ public class GlobalConfig implements Serializable {
 
     static {
         defaultIdGeneratorMap.put(String.valueOf(IdType.UUID.getKey()), new UUIDGenerator());
-        defaultIdGeneratorMap.put(String.valueOf(IdType.ASSIGN_ID.getKey()), new SnowflakeGenerator());
+        defaultIdGeneratorMap.put(String.valueOf(IdType.ASSIGN_ID.getKey()), new DefaultGenerator());
     }
 
     /**
@@ -113,23 +111,10 @@ public class GlobalConfig implements Serializable {
     /**
      * 主键生成器
      */
-    @Setter(value = AccessLevel.NONE)
-    @Getter(value = AccessLevel.NONE)
-    private Map<String, IdGenerator> idGeneratorMap = new ConcurrentHashMap<>(defaultIdGeneratorMap);
+    private IdGenerator idGenerator = new DefaultGenerator();
 
-    /**
-     * 注册ID生成器
-     *
-     * @param idType      idType 暂时不开放string注册
-     * @param idGenerator 生成器
-     */
-    public GlobalConfig registerIdGenerator(IdType idType, IdGenerator idGenerator) {
-        idGeneratorMap.put(String.valueOf(idType.getKey()), idGenerator);
-        return this;
-    }
-
-    public Optional<IdGenerator> getIdGenerator(IdType idType) {
-        return Optional.ofNullable(Collections.unmodifiableMap(idGeneratorMap).get(String.valueOf(idType.getKey())));
+    public Optional<IdGenerator> getIdGenerator() {
+        return Optional.ofNullable(idGenerator);
     }
 
     /**

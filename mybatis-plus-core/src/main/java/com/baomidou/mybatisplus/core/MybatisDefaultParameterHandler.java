@@ -159,16 +159,20 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
      */
     protected static void populateKeys(TableInfo tableInfo, MetaObject metaObject, Object parameterObject) {
         // 填充主键
-        if (StringUtils.isNotBlank(tableInfo.getKeyProperty()) && null != tableInfo.getIdType()) {
-            GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration()).getIdGenerator(tableInfo.getIdType()).ifPresent(idGenerator -> {
+        if (StringUtils.isNotBlank(tableInfo.getKeyProperty()) && null != tableInfo.getIdType() && tableInfo.getIdType().getKey() >= 3) {
+            GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration()).getIdGenerator().ifPresent(idGenerator -> {
                 Object idValue = metaObject.getValue(tableInfo.getKeyProperty());
                 /* 自定义 ID */
                 if (StringUtils.checkValNull(idValue)) {
-                    // 应该只有数值型和字符串的区别了.
-                    if (Number.class.isAssignableFrom(tableInfo.getKeyType())) {
-                        metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.generate(parameterObject));
-                    } else {
-                        metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.generate(parameterObject).toString());
+                    if (IdType.ASSIGN_ID.getKey() == tableInfo.getIdType().getKey()) {
+                        // 应该只有数值型和字符串的区别了.
+                        if (Number.class.isAssignableFrom(tableInfo.getKeyType())) {
+                            metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.generate(parameterObject));
+                        } else {
+                            metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.generate(parameterObject).toString());
+                        }
+                    } else if (IdType.UUID.getKey() == tableInfo.getIdType().getKey()) {
+                        metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.generateUUID(parameterObject));
                     }
                 }
             });

@@ -1,6 +1,5 @@
 package com.baomidou.mybatisplus.test.h2.idgenerator;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
@@ -38,7 +37,7 @@ public class IdGeneratorConfig {
     public GlobalConfig globalConfiguration() {
         GlobalConfig conf = new GlobalConfig();
         //自定义Id生成器
-        conf.registerIdGenerator(IdType.UUID, new CustomUUIDGenerator()).registerIdGenerator(IdType.ASSIGN_ID, new CustomIdGenerator());
+        conf.setIdGenerator(new CustomIdGenerator());
         return conf;
     }
 
