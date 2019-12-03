@@ -11,6 +11,7 @@ import org.apache.ibatis.type.JdbcType;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import javax.sql.DataSource;
 
 @Configuration
@@ -37,7 +38,7 @@ public class IdGeneratorConfig {
     public GlobalConfig globalConfiguration() {
         GlobalConfig conf = new GlobalConfig();
         //自定义Id生成器
-        conf.setIdGenerator(new CustomIdGenerator());
+        conf.setIdentifierGenerator(new CustomIdGenerator());
         return conf;
     }
 

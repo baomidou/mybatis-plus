@@ -1,12 +1,12 @@
 package com.baomidou.mybatisplus.test.h2.idgenerator;
 
-import com.baomidou.mybatisplus.core.incrementer.IdGenerator;
+import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import org.apache.ibatis.reflection.SystemMetaObject;
 
-public class CustomIdGenerator implements IdGenerator {
+public class CustomIdGenerator implements IdentifierGenerator {
 
     @Override
     public Number nextId(Object entity) {

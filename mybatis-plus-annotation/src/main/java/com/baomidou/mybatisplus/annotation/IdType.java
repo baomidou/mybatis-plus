@@ -47,21 +47,24 @@ public enum IdType {
      */
     ASSIGN_ID(3),
     /**
-     * UUID (主键类型为 string)
+     * 分配UUID (主键类型为 string)
      */
-    UUID(4),
+    ASSIGN_UUID(4),
     /**
      * @deprecated 3.3.0 please use {@link #ASSIGN_ID}
      */
     @Deprecated
     ID_WORKER(3),
     /**
-     * 字符串全局唯一ID (idWorker 的字符串表示)
-     *
      * @deprecated 3.3.0 please use {@link #ASSIGN_ID}
      */
     @Deprecated
-    ID_WORKER_STR(3);
+    ID_WORKER_STR(3),
+    /**
+     * @deprecated 3.3.0 please use {@link #ASSIGN_UUID}
+     */
+    @Deprecated
+    UUID(4);
 
     private final int key;
 

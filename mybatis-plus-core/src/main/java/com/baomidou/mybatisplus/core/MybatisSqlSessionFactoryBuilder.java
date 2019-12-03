@@ -16,8 +16,8 @@
 package com.baomidou.mybatisplus.core;
 
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.incrementer.IdGenerator;
-import com.baomidou.mybatisplus.core.incrementer.DefaultGenerator;
+import com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator;
+import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.core.injector.SqlRunnerInjector;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
@@ -83,10 +83,10 @@ public class MybatisSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
         MybatisConfiguration configuration = (MybatisConfiguration) config;
         GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
         if (null != globalConfig.getWorkerId() && null != globalConfig.getDatacenterId()) {
-            IdGenerator idGenerator = new DefaultGenerator(globalConfig.getWorkerId(), globalConfig.getDatacenterId());
-            globalConfig.setIdGenerator(idGenerator);
+            IdentifierGenerator identifierGenerator = new DefaultIdentifierGenerator(globalConfig.getWorkerId(), globalConfig.getDatacenterId());
+            globalConfig.setIdentifierGenerator(identifierGenerator);
             //TODO 这里只是为了兼容下,并没多大重要,方法标记过时了.
-            IdWorker.setIdGenerator(idGenerator);
+            IdWorker.setIdGenerator(identifierGenerator);
         }
         if (globalConfig.isEnableSqlRunner()) {
             new SqlRunnerInjector().inject(configuration);
@@ -94,8 +94,8 @@ public class MybatisSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 
         SqlSessionFactory sqlSessionFactory = super.build(configuration);
 
-        // 设置全局参数属性 以及 缓存 sqlSessionFactory
-        globalConfig.signGlobalConfig(sqlSessionFactory);
+        // 缓存 sqlSessionFactory
+        globalConfig.setSqlSessionFactory(sqlSessionFactory);
 
         return sqlSessionFactory;
     }

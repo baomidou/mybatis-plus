@@ -16,8 +16,8 @@
 package com.baomidou.mybatisplus.core.toolkit;
 
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.incrementer.DefaultGenerator;
-import com.baomidou.mybatisplus.core.incrementer.IdGenerator;
+import com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator;
+import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -39,7 +39,7 @@ public class IdWorker {
      * @deprecated 3.3.0
      */
     @Deprecated
-    private static IdGenerator ID_GENERATOR = new DefaultGenerator();
+    private static IdentifierGenerator ID_GENERATOR = new DefaultIdentifierGenerator();
 
     /**
      * 毫秒格式化时间
@@ -91,24 +91,24 @@ public class IdWorker {
      *
      * @param workerId     工作机器 ID
      * @param dataCenterId 序列号
-     * @see #setIdGenerator(IdGenerator)
+     * @see #setIdGenerator(IdentifierGenerator)
      * @deprecated 3.3.0
      */
     @Deprecated
     public static void initSequence(long workerId, long dataCenterId) {
-        ID_GENERATOR = new DefaultGenerator(workerId, dataCenterId);
+        ID_GENERATOR = new DefaultIdentifierGenerator(workerId, dataCenterId);
     }
 
     /**
      * 自定义id 生成方式
      *
-     * @param idGenerator id 生成器
-     * @see GlobalConfig#setIdGenerator(IdGenerator)
+     * @param identifierGenerator id 生成器
+     * @see GlobalConfig#setIdentifierGenerator(IdentifierGenerator)
      * @deprecated 3.3.0
      */
     @Deprecated
-    public static void setIdGenerator(IdGenerator idGenerator) {
-        ID_GENERATOR = idGenerator;
+    public static void setIdGenerator(IdentifierGenerator identifierGenerator) {
+        ID_GENERATOR = identifierGenerator;
     }
 
     /**

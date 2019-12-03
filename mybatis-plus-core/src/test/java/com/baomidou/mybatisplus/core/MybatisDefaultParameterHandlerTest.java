@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.baomidou.mybatisplus.core.incrementer.DefaultGenerator;
+import com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import lombok.AllArgsConstructor;
@@ -51,7 +51,7 @@ class MybatisDefaultParameterHandlerTest {
         MappedStatement mappedStatement;
         Configuration configuration = new MybatisConfiguration();
         StaticSqlSource staticSqlSource = new StaticSqlSource(configuration, " ***********");
-        GlobalConfigUtils.getGlobalConfig(configuration).setIdGenerator(new DefaultGenerator()).setMetaObjectHandler(new MetaObjectHandler() {
+        GlobalConfigUtils.getGlobalConfig(configuration).setIdentifierGenerator(new DefaultIdentifierGenerator()).setMetaObjectHandler(new MetaObjectHandler() {
 
             @Override
             public boolean compatibleFillId() {
@@ -61,7 +61,7 @@ class MybatisDefaultParameterHandlerTest {
             @Override
             public void insertFill(MetaObject metaObject) {
                 //TODO 这种骚操作要干掉！！！！！！！！！！！！
-                setFieldValByName("id",666L,metaObject);
+                setFieldValByName("id", 666L, metaObject);
                 setFieldValByName("insertOperator", "咩咩", metaObject);
             }
 

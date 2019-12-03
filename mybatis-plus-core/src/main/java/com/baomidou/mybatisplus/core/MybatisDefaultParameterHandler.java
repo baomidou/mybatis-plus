@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
@@ -160,20 +161,19 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         final IdType idType = tableInfo.getIdType();
         final String keyProperty = tableInfo.getKeyProperty();
         if (StringUtils.isNotBlank(keyProperty) && null != idType && idType.getKey() >= 3) {
-            GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration()).getIdGenerator().ifPresent(ig -> {
-                Object idValue = metaObject.getValue(keyProperty);
-                if (StringUtils.checkValNull(idValue)) {
-                    if (idType.getKey() == IdType.ASSIGN_ID.getKey()) {
-                        if (Number.class.isAssignableFrom(tableInfo.getKeyType())) {
-                            metaObject.setValue(keyProperty, ig.nextId(parameterObject));
-                        } else {
-                            metaObject.setValue(keyProperty, ig.nextId(parameterObject).toString());
-                        }
-                    } else if (idType.getKey() == IdType.UUID.getKey()) {
-                        metaObject.setValue(keyProperty, ig.nextUUID(parameterObject));
+            final IdentifierGenerator identifierGenerator = GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration()).getIdentifierGenerator();
+            Object idValue = metaObject.getValue(keyProperty);
+            if (StringUtils.checkValNull(idValue)) {
+                if (idType.getKey() == IdType.ASSIGN_ID.getKey()) {
+                    if (Number.class.isAssignableFrom(tableInfo.getKeyType())) {
+                        metaObject.setValue(keyProperty, identifierGenerator.nextId(parameterObject));
+                    } else {
+                        metaObject.setValue(keyProperty, identifierGenerator.nextId(parameterObject).toString());
                     }
+                } else if (idType.getKey() == IdType.ASSIGN_UUID.getKey()) {
+                    metaObject.setValue(keyProperty, identifierGenerator.nextUUID(parameterObject));
                 }
-            });
+            }
         }
     }
 

@@ -14,7 +14,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-id-generator-h2.xml"})
-class IdGeneratorTest {
+class IdentifierGeneratorTest {
 
     @Autowired
     private LongIdGeneratorMapper longIdGeneratorMapper;

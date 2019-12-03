@@ -26,7 +26,7 @@ import com.baomidou.mybatisplus.core.toolkit.IdWorker;
  * @since 2019-10-15
  * @since 3.3.0
  */
-public interface IdGenerator {
+public interface IdentifierGenerator {
 
     /**
      * 生成Id
@@ -45,5 +45,4 @@ public interface IdGenerator {
     default String nextUUID(Object entity) {
         return IdWorker.get32UUID();
     }
-
 }
