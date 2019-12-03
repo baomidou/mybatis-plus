@@ -51,7 +51,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
     private final Configuration configuration;
 
     public MybatisDefaultParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
-        super(mappedStatement, processBatch(mappedStatement, parameterObject), boundSql);
+        super(mappedStatement, processParameter(mappedStatement, parameterObject), boundSql);
         this.mappedStatement = mappedStatement;
         this.configuration = mappedStatement.getConfiguration();
         this.typeHandlerRegistry = mappedStatement.getConfiguration().getTypeHandlerRegistry();
@@ -60,13 +60,13 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
     }
 
     /**
-     * 批量（填充主键 ID）
+     * 处理参数
      *
      * @param ms              MappedStatement
      * @param parameterObject 插入数据库对象
      * @return ignore
      */
-    protected static Object processBatch(MappedStatement ms, Object parameterObject) {
+    protected static Object processParameter(MappedStatement ms, Object parameterObject) {
         /* 只处理插入或更新操作 */
         if (parameterObject != null
             && (SqlCommandType.INSERT == ms.getSqlCommandType() || SqlCommandType.UPDATE == ms.getSqlCommandType())) {
