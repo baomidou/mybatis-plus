@@ -35,7 +35,7 @@ public interface IdGenerator {
      * @param entity 实体
      * @return id
      */
-    Serializable generate(Object entity);
+    Serializable generateId(Object entity);
 
     /**
      * 生成uuid

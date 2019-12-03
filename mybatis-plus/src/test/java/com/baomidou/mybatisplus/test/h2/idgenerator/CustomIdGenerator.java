@@ -9,7 +9,7 @@ import org.apache.ibatis.reflection.SystemMetaObject;
 public class CustomIdGenerator implements IdGenerator {
 
     @Override
-    public Number generate(Object entity) {
+    public Number generateId(Object entity) {
         //可以将当前传入的class全类名来作为bizKey,或者提取参数来生成bizKey进行分布式Id调用生成.
         String bizKey = entity.getClass().getName();
         TableInfo tableInfo = TableInfoHelper.getTableInfo(entity.getClass());

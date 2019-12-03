@@ -41,7 +41,7 @@ public class DefaultGenerator implements IdGenerator {
     }
 
     @Override
-    public Long generate(Object entity) {
+    public Long generateId(Object entity) {
         return sequence.nextId();
     }
 }

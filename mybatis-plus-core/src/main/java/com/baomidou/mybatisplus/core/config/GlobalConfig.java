@@ -21,7 +21,6 @@ import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IdGenerator;
 import com.baomidou.mybatisplus.core.incrementer.DefaultGenerator;
-import com.baomidou.mybatisplus.core.incrementer.UUIDGenerator;
 import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.core.mapper.Mapper;
@@ -32,10 +31,8 @@ import lombok.experimental.Accessors;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.io.Serializable;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
@@ -50,23 +47,13 @@ import java.util.concurrent.ConcurrentSkipListSet;
 public class GlobalConfig implements Serializable {
 
     /**
-     * 默认提供的主键生成器
-     */
-    private static Map<String, IdGenerator> defaultIdGeneratorMap = new ConcurrentHashMap<>();
-
-    static {
-        defaultIdGeneratorMap.put(String.valueOf(IdType.UUID.getKey()), new UUIDGenerator());
-        defaultIdGeneratorMap.put(String.valueOf(IdType.ASSIGN_ID.getKey()), new DefaultGenerator());
-    }
-
-    /**
      * 是否开启 LOGO
      */
     private boolean banner = true;
     /**
      * 机器 ID 部分
      *
-     * @see #registerIdGenerator(IdType, IdGenerator)
+     * @see #setIdGenerator(IdGenerator)
      * @deprecated 3.3.0
      */
     @Deprecated
@@ -74,7 +61,7 @@ public class GlobalConfig implements Serializable {
     /**
      * 数据标识 ID 部分
      *
-     * @see #registerIdGenerator(IdType, IdGenerator)
+     * @see #setIdGenerator(IdGenerator)
      * @deprecated 3.3.0
      */
     @Deprecated

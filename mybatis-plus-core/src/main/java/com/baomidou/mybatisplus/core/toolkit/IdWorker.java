@@ -15,7 +15,6 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.incrementer.DefaultGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IdGenerator;
@@ -55,7 +54,7 @@ public class IdWorker {
      */
     @Deprecated
     public static long getId() {
-        return Long.parseLong(ID_GENERATOR.generate(new Object()).toString());
+        return Long.parseLong(ID_GENERATOR.generateId(new Object()).toString());
     }
 
     /**
@@ -66,7 +65,7 @@ public class IdWorker {
      */
     @Deprecated
     public static String getIdStr() {
-        return String.valueOf(ID_GENERATOR.generate(new Object()));
+        return String.valueOf(ID_GENERATOR.generateId(new Object()));
     }
 
     /**
@@ -104,7 +103,7 @@ public class IdWorker {
      * 自定义id 生成方式
      *
      * @param idGenerator id 生成器
-     * @see GlobalConfig#registerIdGenerator(IdType, IdGenerator)
+     * @see GlobalConfig#setIdGenerator(IdGenerator)
      * @deprecated 3.3.0
      */
     @Deprecated
