@@ -54,7 +54,7 @@ public class IdWorker {
      */
     @Deprecated
     public static long getId() {
-        return Long.parseLong(ID_GENERATOR.generateId(new Object()).toString());
+        return (long) ID_GENERATOR.nextId(new Object());
     }
 
     /**
@@ -65,7 +65,7 @@ public class IdWorker {
      */
     @Deprecated
     public static String getIdStr() {
-        return String.valueOf(ID_GENERATOR.generateId(new Object()));
+        return String.valueOf(ID_GENERATOR.nextId(new Object()));
     }
 
     /**
