@@ -151,28 +151,26 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
     }
 
     /**
-     * 自定义元对象填充控制器
+     * 填充主键
      *
      * @param tableInfo       数据库表反射信息
      * @param parameterObject 插入数据库对象
-     * @return Object
      */
     protected static void populateKeys(TableInfo tableInfo, MetaObject metaObject, Object parameterObject) {
-        // 填充主键
-        if (StringUtils.isNotBlank(tableInfo.getKeyProperty()) && null != tableInfo.getIdType() && tableInfo.getIdType().getKey() >= 3) {
-            GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration()).getIdGenerator().ifPresent(idGenerator -> {
-                Object idValue = metaObject.getValue(tableInfo.getKeyProperty());
-                /* 自定义 ID */
+        final IdType idType = tableInfo.getIdType();
+        final String keyProperty = tableInfo.getKeyProperty();
+        if (StringUtils.isNotBlank(keyProperty) && null != idType && idType.getKey() >= 3) {
+            GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration()).getIdGenerator().ifPresent(ig -> {
+                Object idValue = metaObject.getValue(keyProperty);
                 if (StringUtils.checkValNull(idValue)) {
-                    if (tableInfo.getIdType() == IdType.ASSIGN_ID) {
-                        // 应该只有数值型和字符串的区别了.
+                    if (idType.getKey() == IdType.ASSIGN_ID.getKey()) {
                         if (Number.class.isAssignableFrom(tableInfo.getKeyType())) {
-                            metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.nextId(parameterObject));
+                            metaObject.setValue(keyProperty, ig.nextId(parameterObject));
                         } else {
-                            metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.nextId(parameterObject).toString());
+                            metaObject.setValue(keyProperty, ig.nextId(parameterObject).toString());
                         }
-                    } else if (tableInfo.getIdType() == IdType.UUID) {
-                        metaObject.setValue(tableInfo.getKeyProperty(), idGenerator.nextUUID(parameterObject));
+                    } else if (idType.getKey() == IdType.UUID.getKey()) {
+                        metaObject.setValue(keyProperty, ig.nextUUID(parameterObject));
                     }
                 }
             });
