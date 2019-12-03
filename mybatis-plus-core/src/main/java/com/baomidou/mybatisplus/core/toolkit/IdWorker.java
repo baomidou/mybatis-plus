@@ -39,7 +39,7 @@ public class IdWorker {
      * @deprecated 3.3.0
      */
     @Deprecated
-    private static IdentifierGenerator ID_GENERATOR = new DefaultIdentifierGenerator();
+    private static IdentifierGenerator IDENTIFIER_GENERATOR = new DefaultIdentifierGenerator();
 
     /**
      * 毫秒格式化时间
@@ -54,7 +54,18 @@ public class IdWorker {
      */
     @Deprecated
     public static long getId() {
-        return (long) ID_GENERATOR.nextId(new Object());
+        return getId(new Object());
+    }
+
+    /**
+     * 获取唯一ID
+     *
+     * @return id
+     * @deprecated 3.3.0
+     */
+    @Deprecated
+    public static long getId(Object entity) {
+        return IDENTIFIER_GENERATOR.nextId(entity).longValue();
     }
 
     /**
@@ -65,7 +76,18 @@ public class IdWorker {
      */
     @Deprecated
     public static String getIdStr() {
-        return String.valueOf(ID_GENERATOR.nextId(new Object()));
+        return getIdStr(new Object());
+    }
+
+    /**
+     * 获取唯一ID
+     *
+     * @return id
+     * @deprecated 3.3.0
+     */
+    @Deprecated
+    public static String getIdStr(Object entity) {
+        return IDENTIFIER_GENERATOR.nextId(entity).toString();
     }
 
     /**
@@ -91,12 +113,12 @@ public class IdWorker {
      *
      * @param workerId     工作机器 ID
      * @param dataCenterId 序列号
-     * @see #setIdGenerator(IdentifierGenerator)
+     * @see #setIdentifierGenerator(IdentifierGenerator)
      * @deprecated 3.3.0
      */
     @Deprecated
     public static void initSequence(long workerId, long dataCenterId) {
-        ID_GENERATOR = new DefaultIdentifierGenerator(workerId, dataCenterId);
+        IDENTIFIER_GENERATOR = new DefaultIdentifierGenerator(workerId, dataCenterId);
     }
 
     /**
@@ -107,8 +129,8 @@ public class IdWorker {
      * @deprecated 3.3.0
      */
     @Deprecated
-    public static void setIdGenerator(IdentifierGenerator identifierGenerator) {
-        ID_GENERATOR = identifierGenerator;
+    public static void setIdentifierGenerator(IdentifierGenerator identifierGenerator) {
+        IDENTIFIER_GENERATOR = identifierGenerator;
     }
 
     /**
@@ -118,5 +140,4 @@ public class IdWorker {
         ThreadLocalRandom random = ThreadLocalRandom.current();
         return new UUID(random.nextLong(), random.nextLong()).toString().replace(StringPool.DASH, StringPool.EMPTY);
     }
-
 }

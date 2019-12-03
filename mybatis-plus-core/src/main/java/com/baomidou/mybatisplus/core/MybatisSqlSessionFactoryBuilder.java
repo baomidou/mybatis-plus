@@ -82,12 +82,20 @@ public class MybatisSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
     public SqlSessionFactory build(Configuration config) {
         MybatisConfiguration configuration = (MybatisConfiguration) config;
         GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
-        if (null != globalConfig.getWorkerId() && null != globalConfig.getDatacenterId()) {
-            IdentifierGenerator identifierGenerator = new DefaultIdentifierGenerator(globalConfig.getWorkerId(), globalConfig.getDatacenterId());
-            globalConfig.setIdentifierGenerator(identifierGenerator);
-            //TODO 这里只是为了兼容下,并没多大重要,方法标记过时了.
-            IdWorker.setIdGenerator(identifierGenerator);
+        final IdentifierGenerator identifierGenerator;
+        if (globalConfig.getIdentifierGenerator() == null) {
+            if (null != globalConfig.getWorkerId() && null != globalConfig.getDatacenterId()) {
+                identifierGenerator = new DefaultIdentifierGenerator(globalConfig.getWorkerId(), globalConfig.getDatacenterId());
+            } else {
+                identifierGenerator = new DefaultIdentifierGenerator();
+            }
+        } else {
+            identifierGenerator = globalConfig.getIdentifierGenerator();
         }
+        globalConfig.setIdentifierGenerator(identifierGenerator);
+        //TODO 这里只是为了兼容下,并没多大重要,方法标记过时了.
+        IdWorker.setIdentifierGenerator(identifierGenerator);
+
         if (globalConfig.isEnableSqlRunner()) {
             new SqlRunnerInjector().inject(configuration);
         }

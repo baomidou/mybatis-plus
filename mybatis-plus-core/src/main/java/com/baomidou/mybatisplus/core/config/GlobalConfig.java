@@ -18,7 +18,6 @@ package com.baomidou.mybatisplus.core.config;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
@@ -94,7 +93,7 @@ public class GlobalConfig implements Serializable {
     /**
      * 主键生成器
      */
-    private IdentifierGenerator identifierGenerator = new DefaultIdentifierGenerator();
+    private IdentifierGenerator identifierGenerator;
 
     @Data
     public static class DbConfig {
