@@ -79,16 +79,17 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
             Collection<Object> parameters = getParameters(parameterObject);
             if (null != parameters) {
                 // 感觉这里可以稍微优化一下，理论上都是同一个.
-                parameters.stream().filter(Objects::nonNull).forEach(obj -> getTableInfo(obj).ifPresent(tableInfo -> process(ms, obj, tableInfo)));
+                parameters.stream().filter(Objects::nonNull).forEach(obj -> process(ms, obj));
             } else {
-                getTableInfo(parameterObject).ifPresent(tableInfo -> process(ms, parameterObject, tableInfo));
+                process(ms, parameterObject);
             }
         }
         return parameterObject;
     }
 
-    private static Optional<TableInfo> getTableInfo(Object parameterObject) {
+    private static void process(MappedStatement ms, Object parameterObject) {
         TableInfo tableInfo = null;
+        Object entity = parameterObject;
         if (parameterObject instanceof Map) {
             Map<?, ?> map = (Map<?, ?>) parameterObject;
             String entityKey = Constants.ENTITY;
@@ -99,26 +100,27 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                         Map<?, ?> realEtMap = (Map<?, ?>) et;
                         String optLockKey = Constants.MP_OPTLOCK_ET_ORIGINAL;
                         if (realEtMap.containsKey(optLockKey)) {
-                            tableInfo = TableInfoHelper.getTableInfo(realEtMap.get(optLockKey).getClass());
+                            entity = realEtMap.get(optLockKey);
+                            tableInfo = TableInfoHelper.getTableInfo(entity.getClass());
                         }
                     } else {
-                        tableInfo = TableInfoHelper.getTableInfo(et.getClass());
+                        entity = et;
+                        tableInfo = TableInfoHelper.getTableInfo(entity.getClass());
                     }
                 }
             }
         } else {
             tableInfo = TableInfoHelper.getTableInfo(parameterObject.getClass());
         }
-        return Optional.ofNullable(tableInfo);
-    }
-
-    private static void process(MappedStatement ms, Object parameterObject, TableInfo tableInfo) {
-        MetaObject metaObject = ms.getConfiguration().newMetaObject(parameterObject);
-        if (SqlCommandType.INSERT == ms.getSqlCommandType()) {
-            insertFill(metaObject, tableInfo);
-            populateKeys(tableInfo, metaObject, parameterObject);
-        } else {
-            updateFill(metaObject, tableInfo);
+        if (tableInfo != null) {
+            //到这里就应该转换到实体参数对象了,因为填充和ID处理都是争对实体对象处理的,不用传递原参数对象下去.
+            MetaObject metaObject = ms.getConfiguration().newMetaObject(entity);
+            if (SqlCommandType.INSERT == ms.getSqlCommandType()) {
+                insertFill(metaObject, tableInfo);
+                populateKeys(tableInfo, metaObject, entity);
+            } else {
+                updateFill(metaObject, tableInfo);
+            }
         }
     }
 
