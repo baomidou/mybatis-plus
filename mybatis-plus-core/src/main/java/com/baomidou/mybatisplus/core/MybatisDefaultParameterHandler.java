@@ -156,10 +156,11 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
     /**
      * 填充主键
      *
-     * @param tableInfo       数据库表反射信息
-     * @param parameterObject 插入数据库对象
+     * @param tableInfo  数据库表反射信息
+     * @param metaObject 元数据对象
+     * @param entity     实体信息
      */
-    protected static void populateKeys(TableInfo tableInfo, MetaObject metaObject, Object parameterObject) {
+    protected static void populateKeys(TableInfo tableInfo, MetaObject metaObject, Object entity) {
         final IdType idType = tableInfo.getIdType();
         final String keyProperty = tableInfo.getKeyProperty();
         if (StringUtils.isNotBlank(keyProperty) && null != idType && idType.getKey() >= 3) {
@@ -168,12 +169,12 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
             if (StringUtils.checkValNull(idValue)) {
                 if (idType.getKey() == IdType.ASSIGN_ID.getKey()) {
                     if (Number.class.isAssignableFrom(tableInfo.getKeyType())) {
-                        metaObject.setValue(keyProperty, identifierGenerator.nextId(parameterObject));
+                        metaObject.setValue(keyProperty, identifierGenerator.nextId(entity));
                     } else {
-                        metaObject.setValue(keyProperty, identifierGenerator.nextId(parameterObject).toString());
+                        metaObject.setValue(keyProperty, identifierGenerator.nextId(entity).toString());
                     }
                 } else if (idType.getKey() == IdType.ASSIGN_UUID.getKey()) {
-                    metaObject.setValue(keyProperty, identifierGenerator.nextUUID(parameterObject));
+                    metaObject.setValue(keyProperty, identifierGenerator.nextUUID(entity));
                 }
             }
         }
