@@ -41,7 +41,12 @@ public enum DbType {
     /**
      * ORACLE
      */
+
     ORACLE("oracle", "Oracle数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.OracleDialect"),
+
+
+    ORACLE_NEW("oracleNew", "Oracle新版数据库","com.baomidou.mybatisplus.extension.plugins.pagination.dialects.OracleNewDialect"),
+
     /**
      * DB2
      */
