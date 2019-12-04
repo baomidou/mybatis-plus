@@ -173,7 +173,7 @@ public interface MetaObjectHandler {
             .findFirst();
         if (first.isPresent()) {
             FieldFill fill = first.get().getFieldFill();
-            return fill.equals(fieldFill) || FieldFill.INSERT_UPDATE.equals(fill);
+            return fill == fieldFill || FieldFill.INSERT_UPDATE == fill;
         }
         return false;
     }
