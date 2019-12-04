@@ -23,7 +23,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
  * @author 廖仑辉
  * @since 2019-11-29
  */
-public class OracleNewDialect implements IDialect {
+public class Oracle12cDialect implements IDialect {
 
     @Override
     public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {

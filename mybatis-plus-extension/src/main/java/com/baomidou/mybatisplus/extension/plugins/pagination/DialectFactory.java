@@ -15,6 +15,11 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.ibatis.session.RowBounds;
+
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
@@ -22,10 +27,6 @@ import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect;
-import org.apache.ibatis.session.RowBounds;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 分页方言工厂类
@@ -48,11 +49,12 @@ public class DialectFactory {
      * @param buildSql     编译 SQL
      * @param dbType       数据类型
      * @param dialectClazz 数据库方言
+     * @param majorVersion 驱动major版本
      * @return 分页模型
      */
-    public static DialectModel buildPaginationSql(IPage<?> page, String buildSql, DbType dbType, String dialectClazz) {
+    public static DialectModel buildPaginationSql(IPage<?> page, String buildSql, DbType dbType, String dialectClazz, int majorVersion) {
         // fix #196
-        return getDialect(dbType, dialectClazz).buildPaginationSql(buildSql, page.offset(), page.getSize());
+        return getDialect(dbType, dialectClazz, majorVersion).buildPaginationSql(buildSql, page.offset(), page.getSize());
     }
 
     /**
@@ -62,10 +64,14 @@ public class DialectFactory {
      * @param dialectClazz 自定义方言实现类
      * @return ignore
      */
-    private static IDialect getDialect(DbType dbType, String dialectClazz) {
+    private static IDialect getDialect(final DbType dbType, String dialectClazz, int majorVersion) {
         return DIALECT_CACHE.computeIfAbsent(dbType.getDb(), key -> {
             IDialect dialect = null;
-            String dialectClassName = StringUtils.isBlank(dialectClazz) ? dbType.getDialect() : dialectClazz;
+            DbType dbTypeTmp = dbType;
+            if (dbTypeTmp == DbType.ORACLE && majorVersion > 11) {
+                dbTypeTmp = DbType.ORACLE_12C;
+            }
+            String dialectClassName = StringUtils.isBlank(dialectClazz) ? dbTypeTmp.getDialect() : dialectClazz;
             try {
                 Class<?> clazz = Class.forName(dialectClassName);
                 if (IDialect.class.isAssignableFrom(clazz)) {
