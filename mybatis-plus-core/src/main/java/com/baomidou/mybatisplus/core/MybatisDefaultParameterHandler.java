@@ -92,15 +92,13 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         Object entity = parameterObject;
         if (parameterObject instanceof Map) {
             Map<?, ?> map = (Map<?, ?>) parameterObject;
-            String entityKey = Constants.ENTITY;
-            if (map.containsKey(entityKey)) {
-                Object et = map.get(entityKey);
+            if (map.containsKey(Constants.ENTITY)) {
+                Object et = map.get(Constants.ENTITY);
                 if (et != null) {
                     if (et instanceof Map) {
                         Map<?, ?> realEtMap = (Map<?, ?>) et;
-                        String optLockKey = Constants.MP_OPTLOCK_ET_ORIGINAL;
-                        if (realEtMap.containsKey(optLockKey)) {
-                            entity = realEtMap.get(optLockKey);
+                        if (realEtMap.containsKey(Constants.MP_OPTLOCK_ET_ORIGINAL)) {
+                            entity = realEtMap.get(Constants.MP_OPTLOCK_ET_ORIGINAL);
                             tableInfo = TableInfoHelper.getTableInfo(entity.getClass());
                         }
                     } else {
