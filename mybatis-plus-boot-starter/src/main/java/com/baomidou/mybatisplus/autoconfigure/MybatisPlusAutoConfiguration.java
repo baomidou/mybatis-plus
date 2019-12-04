@@ -222,7 +222,7 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
      * @param <T>      泛型
      */
     private <T> void getBeanThen(Class<T> clazz, Consumer<T> consumer) {
-        if (this.applicationContext.getBeanNamesForType(ISqlInjector.class, false, false).length > 0) {
+        if (this.applicationContext.getBeanNamesForType(clazz, false, false).length > 0) {
             consumer.accept(this.applicationContext.getBean(clazz));
         }
     }
