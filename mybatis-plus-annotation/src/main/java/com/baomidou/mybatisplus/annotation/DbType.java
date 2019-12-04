@@ -15,11 +15,11 @@
  */
 package com.baomidou.mybatisplus.annotation;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * MybatisPlus 数据库类型
@@ -30,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Getter
 @AllArgsConstructor
 public enum DbType {
+
     /**
      * MYSQL
      */
@@ -41,11 +42,11 @@ public enum DbType {
     /**
      * ORACLE
      */
-
-    ORACLE("oracle", "Oracle数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.OracleDialect"),
-
-
-    ORACLE_NEW("oracleNew", "Oracle新版数据库","com.baomidou.mybatisplus.extension.plugins.pagination.dialects.OracleNewDialect"),
+    ORACLE("oracle", "Oracle11g及以下数据库(高版本推荐使用ORACLE_NEW)", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.OracleDialect"),
+    /**
+     * oracle12c new pagination
+     */
+    ORACLE_12C("oracle12c", "Oracle12c+数据库","com.baomidou.mybatisplus.extension.plugins.pagination.dialects.Oracle12cDialect"),
 
     /**
      * DB2
