@@ -116,8 +116,8 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
             //到这里就应该转换到实体参数对象了,因为填充和ID处理都是争对实体对象处理的,不用传递原参数对象下去.
             MetaObject metaObject = ms.getConfiguration().newMetaObject(entity);
             if (SqlCommandType.INSERT == ms.getSqlCommandType()) {
-                insertFill(metaObject, tableInfo);
                 populateKeys(tableInfo, metaObject, entity);
+                insertFill(metaObject, tableInfo);
             } else {
                 updateFill(metaObject, tableInfo);
             }
