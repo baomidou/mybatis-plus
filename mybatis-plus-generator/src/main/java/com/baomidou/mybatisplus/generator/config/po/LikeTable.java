@@ -23,7 +23,7 @@ import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
  *
  * @author nieqiuqiu
  * @date 2019-11-26
- * @since 3.2.1
+ * @since 3.3.0
  */
 public class LikeTable {
 

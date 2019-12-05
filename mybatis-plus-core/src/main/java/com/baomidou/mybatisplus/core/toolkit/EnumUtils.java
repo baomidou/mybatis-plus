@@ -27,7 +27,7 @@ import java.util.Objects;
  *
  * @author hubin
  * @since 2017-10-11
- * @deprecated 3.2.1
+ * @deprecated 3.3.0
  */
 @Deprecated
 public class EnumUtils {

@@ -131,7 +131,7 @@ public class TableInfo implements Constants {
     /**
      * 表字段是否启用了插入填充
      *
-     * @since 3.2.1
+     * @since 3.3.0
      */
     @Getter
     @Setter(AccessLevel.NONE)
@@ -139,7 +139,7 @@ public class TableInfo implements Constants {
     /**
      * 表字段是否启用了更新填充
      *
-     * @since 3.2.1
+     * @since 3.3.0
      */
     @Getter
     @Setter(AccessLevel.NONE)

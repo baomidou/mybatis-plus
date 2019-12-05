@@ -125,7 +125,7 @@ public class GlobalConfig implements Serializable {
          * <li> 例: `%s` </li>
          * <p> 对主键无效 </p>
          *
-         * @since 3.2.1
+         * @since 3.3.0
          */
         private String propertyFormat;
         /**

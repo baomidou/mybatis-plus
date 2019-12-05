@@ -59,7 +59,7 @@ public final class SqlHelper {
      *
      * @param clazz 实体类
      * @return SqlSessionFactory
-     * @since 3.2.1
+     * @since 3.3.0
      */
     public static SqlSessionFactory sqlSessionFactory(Class<?> clazz) {
         return GlobalConfigUtils.currentSessionFactory(clazz);

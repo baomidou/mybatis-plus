@@ -26,7 +26,7 @@ import java.util.List;
  * 受限于SqlSession#selectList(java.lang.String, java.lang.Object)
  *
  * @author nieqiuqiu
- * @since 3.2.1
+ * @since 3.3.0
  */
 @Data
 @AllArgsConstructor

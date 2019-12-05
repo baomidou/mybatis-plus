@@ -120,7 +120,7 @@ public class MybatisEnumTypeHandler<E extends Enum<?>> extends BaseTypeHandler<E
      * @param sourceValue 数据库字段值
      * @param targetValue 当前枚举属性值
      * @return 是否匹配
-     * @since 3.2.1
+     * @since 3.3.0
      */
     protected boolean equalsValue(Object sourceValue, Object targetValue) {
         if (sourceValue instanceof Number && targetValue instanceof Number

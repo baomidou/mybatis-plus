@@ -81,7 +81,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     /**
      * 批量操作 SqlSession
      *
-     * @deprecated 3.2.1
+     * @deprecated 3.3.0
      */
     @Deprecated
     protected SqlSession sqlSessionBatch() {
@@ -92,7 +92,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      * 释放sqlSession
      *
      * @param sqlSession session
-     * @deprecated 3.2.1
+     * @deprecated 3.3.0
      */
     @Deprecated
     protected void closeSqlSession(SqlSession sqlSession) {
@@ -313,7 +313,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      * 执行批量操作
      *
      * @param fun fun
-     * @since 3.2.1
+     * @since 3.3.0
      */
     protected void executeBatch(Consumer<SqlSession> fun) {
         Class<T> tClass = currentModelClass();
