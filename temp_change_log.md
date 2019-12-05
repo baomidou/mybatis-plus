@@ -4,4 +4,7 @@
 - 修复批量操作未清空二级缓存
 - 批量操作异常转换为DataAccessException
 - mybatis up 3.5.3, mybatis-spring up 2.0.3, jsqlparser up 3.1
+- mapper 选装件包调整, chainWrapper 包调整
 - 新增 ChainWrappers 工具类
+- 新增 IdentifierGenerator 接口,支持自定义id生成
+
