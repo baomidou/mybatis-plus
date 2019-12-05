@@ -1,10 +1,27 @@
 - BaseMapper 接口两个 page 方法优化
 - IService 以及 ServiceImpl 对应 page 方法优化,个别返回 collection 的方法修改为返回 list
 - 逻辑删除字段的两个表示已删除和未删除的定义支持字符串 `"null"`
-- 修复批量操作未清空二级缓存
+- 修复批量操作未清空缓存
 - 批量操作异常转换为DataAccessException
 - mybatis up 3.5.3, mybatis-spring up 2.0.3, jsqlparser up 3.1
 - mapper 选装件包调整, chainWrapper 包调整
 - 新增 ChainWrappers 工具类
 - 新增 IdentifierGenerator 接口,支持自定义id生成
-
+- 代码生成工具废弃正则表名匹配,新增likeTable与notLikeTable
+- 分页插件支持自定义处理页数限制与溢出总页数处理
+- 支持自定义主键生成器
+- 修复SqlExplainInterceptor导致的Oracle序列自增两次
+- 分页二级缓存支持
+- 扩展p6spy日志打印
+- DbConfig加入新属性propertyFormat,TableFieldInfo移除属性related
+- 优化序列生成器,过时KeySequence的clazz属性
+- Ognl表达式关键字冲突
+- 修复更新填充开关失效
+- 优化填充逻辑
+- ISqlRunner支持selectPage
+- 支持全局逻辑删除字段
+- BaseMapper的方法可自定义
+- 添加虚谷数据库分页支持
+- 添加Oracle12c分页支持
+- 解决数据库字段与实体字段名称不同时出现`null as xxx`的情况
+- 过时ID_WORKER_STR,自动识别主键类型
