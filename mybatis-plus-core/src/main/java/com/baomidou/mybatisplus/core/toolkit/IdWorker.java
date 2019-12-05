@@ -25,8 +25,7 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * 高效GUID产生算法(sequence),基于Snowflake实现64位自增ID算法。
- * <p>优化开源项目 https://gitee.com/yu120/sequence</p>
+ * id 获取器
  *
  * @author hubin
  * @since 2016-08-01
@@ -35,10 +34,7 @@ public class IdWorker {
 
     /**
      * 主机和进程的机器码
-     *
-     * @deprecated 3.3.0
      */
-    @Deprecated
     private static IdentifierGenerator IDENTIFIER_GENERATOR = new DefaultIdentifierGenerator();
 
     /**
@@ -50,9 +46,7 @@ public class IdWorker {
      * 获取唯一ID
      *
      * @return id
-     * @deprecated 3.3.0
      */
-    @Deprecated
     public static long getId() {
         return getId(new Object());
     }
@@ -61,9 +55,7 @@ public class IdWorker {
      * 获取唯一ID
      *
      * @return id
-     * @deprecated 3.3.0
      */
-    @Deprecated
     public static long getId(Object entity) {
         return IDENTIFIER_GENERATOR.nextId(entity).longValue();
     }
@@ -72,9 +64,7 @@ public class IdWorker {
      * 获取唯一ID
      *
      * @return id
-     * @deprecated 3.3.0
      */
-    @Deprecated
     public static String getIdStr() {
         return getIdStr(new Object());
     }
@@ -83,9 +73,7 @@ public class IdWorker {
      * 获取唯一ID
      *
      * @return id
-     * @deprecated 3.3.0
      */
-    @Deprecated
     public static String getIdStr(Object entity) {
         return IDENTIFIER_GENERATOR.nextId(entity).toString();
     }
@@ -100,12 +88,9 @@ public class IdWorker {
     /**
      * 时间 ID = Time + ID
      * <p>例如：可用于商品订单 ID</p>
-     *
-     * @deprecated 3.3.0
      */
-    @Deprecated
     public static String getTimeId() {
-        return getMillisecond() + getId();
+        return getMillisecond() + getIdStr();
     }
 
     /**
@@ -114,9 +99,7 @@ public class IdWorker {
      * @param workerId     工作机器 ID
      * @param dataCenterId 序列号
      * @see #setIdentifierGenerator(IdentifierGenerator)
-     * @deprecated 3.3.0
      */
-    @Deprecated
     public static void initSequence(long workerId, long dataCenterId) {
         IDENTIFIER_GENERATOR = new DefaultIdentifierGenerator(workerId, dataCenterId);
     }
@@ -126,9 +109,7 @@ public class IdWorker {
      *
      * @param identifierGenerator id 生成器
      * @see GlobalConfig#setIdentifierGenerator(IdentifierGenerator)
-     * @deprecated 3.3.0
      */
-    @Deprecated
     public static void setIdentifierGenerator(IdentifierGenerator identifierGenerator) {
         IDENTIFIER_GENERATOR = identifierGenerator;
     }
