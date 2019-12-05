@@ -267,7 +267,9 @@ public class IllegalSQLInterceptor implements Interceptor {
             ResultSet rs;
             try {
                 DatabaseMetaData metadata = conn.getMetaData();
-                rs = metadata.getIndexInfo(dbName, dbName, tableName, false, true);
+                String catalog = StringUtils.isEmpty(dbName)? conn.getCatalog():dbName;
+                String schema = StringUtils.isEmpty(dbName)? conn.getSchema():dbName;
+                rs = metadata.getIndexInfo(catalog, schema, tableName, false, true);
                 indexInfos = new ArrayList<>();
                 while (rs.next()) {
                     //索引中的列序列号等于1，才有效
