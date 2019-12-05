@@ -56,6 +56,37 @@ public final class ReflectionKit {
 
     /**
      * <p>
+     * 反射 method 方法名，例如 getId
+     * </p>
+     *
+     * @param field
+     * @param str   属性字符串内容
+     * @deprecated 3.3.0 {@link #guessGetterName(Field, String)}
+     */
+    @Deprecated
+    public static String getMethodCapitalize(Field field, final String str) {
+        Class<?> fieldType = field.getType();
+        // fix #176
+        return StringUtils.concatCapitalize(boolean.class.equals(fieldType) ? "is" : "get", str);
+    }
+
+    /**
+     * <p>
+     * 反射 method 方法名，例如 setVersion
+     * </p>
+     *
+     * @param field Field
+     * @param str   String JavaBean类的version属性名
+     * @return version属性的setter方法名称，e.g. setVersion
+     * @deprecated 3.0.8
+     */
+    @Deprecated
+    public static String setMethodCapitalize(Field field, final String str) {
+        return StringUtils.concatCapitalize("set", str);
+    }
+
+    /**
+     * <p>
      * 获取 public get方法的值
      * </p>
      *
