@@ -20,16 +20,14 @@ import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
+import org.apache.ibatis.builder.StaticSqlSource;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
-import org.apache.ibatis.executor.keygen.NoKeyGenerator;
 import org.apache.ibatis.executor.keygen.SelectKeyGenerator;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.mapping.SqlCommandType;
-import org.apache.ibatis.mapping.SqlSource;
-import org.apache.ibatis.mapping.StatementType;
+import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.scripting.LanguageDriver;
+import org.apache.ibatis.session.Configuration;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -169,19 +167,19 @@ public class TableInfoHelper {
         boolean tablePrefixEffect = true;
 
         if (table != null) {
-            if (StringUtils.isNotEmpty(table.value())) {
+            if (StringUtils.isNotBlank(table.value())) {
                 tableName = table.value();
-                if (StringUtils.isNotEmpty(tablePrefix) && !table.keepGlobalPrefix()) {
+                if (StringUtils.isNotBlank(tablePrefix) && !table.keepGlobalPrefix()) {
                     tablePrefixEffect = false;
                 }
             } else {
                 tableName = initTableNameWithDbConfig(tableName, dbConfig);
             }
-            if (StringUtils.isNotEmpty(table.schema())) {
+            if (StringUtils.isNotBlank(table.schema())) {
                 schema = table.schema();
             }
             /* 表结果集映射 */
-            if (StringUtils.isNotEmpty(table.resultMap())) {
+            if (StringUtils.isNotBlank(table.resultMap())) {
                 tableInfo.setResultMap(table.resultMap());
             }
             tableInfo.setAutoInitResultMap(table.autoResultMap());
@@ -190,10 +188,10 @@ public class TableInfoHelper {
         }
 
         String targetTableName = tableName;
-        if (StringUtils.isNotEmpty(tablePrefix) && tablePrefixEffect) {
+        if (StringUtils.isNotBlank(tablePrefix) && tablePrefixEffect) {
             targetTableName = tablePrefix + targetTableName;
         }
-        if (StringUtils.isNotEmpty(schema)) {
+        if (StringUtils.isNotBlank(schema)) {
             targetTableName = schema + StringPool.DOT + targetTableName;
         }
 
@@ -278,7 +276,7 @@ public class TableInfoHelper {
         tableInfo.setFieldList(Collections.unmodifiableList(fieldList));
 
         /* 未发现主键注解，提示警告信息 */
-        if (StringUtils.isEmpty(tableInfo.getKeyColumn())) {
+        if (StringUtils.isBlank(tableInfo.getKeyColumn())) {
             logger.warn(String.format("Warn: Could not find @TableId in Class: %s.", clazz.getName()));
         }
     }
@@ -292,13 +290,7 @@ public class TableInfoHelper {
      * @return true 为存在 @TableId 注解;
      */
     public static boolean isExistTableId(List<Field> list) {
-        for (Field field : list) {
-            TableId tableId = field.getAnnotation(TableId.class);
-            if (tableId != null) {
-                return true;
-            }
-        }
-        return false;
+        return list.stream().anyMatch(field -> field.isAnnotationPresent(TableId.class));
     }
 
     /**
@@ -317,7 +309,7 @@ public class TableInfoHelper {
         TableId tableId = field.getAnnotation(TableId.class);
         boolean underCamel = tableInfo.isUnderCamel();
         if (tableId != null) {
-            if (StringUtils.isEmpty(tableInfo.getKeyColumn())) {
+            if (StringUtils.isBlank(tableInfo.getKeyColumn())) {
                 /* 主键策略（ 注解 > 全局 ） */
                 // 设置 Sequence 其他策略无效
                 if (IdType.NONE == tableId.type()) {
@@ -328,7 +320,7 @@ public class TableInfoHelper {
 
                 /* 字段 */
                 String column = field.getName();
-                if (StringUtils.isNotEmpty(tableId.value())) {
+                if (StringUtils.isNotBlank(tableId.value())) {
                     column = tableId.value();
                 } else {
                     // 开启字段下划线申明
@@ -369,7 +361,7 @@ public class TableInfoHelper {
             column = column.toUpperCase();
         }
         if (DEFAULT_ID_NAME.equalsIgnoreCase(column)) {
-            if (StringUtils.isEmpty(tableInfo.getKeyColumn())) {
+            if (StringUtils.isBlank(tableInfo.getKeyColumn())) {
                 tableInfo.setKeyRelated(checkRelated(tableInfo.isUnderCamel(), field.getName(), column))
                     .setIdType(dbConfig.getIdType())
                     .setKeyColumn(column)
@@ -448,40 +440,40 @@ public class TableInfoHelper {
      */
     public static List<Field> getAllFields(Class<?> clazz) {
         List<Field> fieldList = ReflectionKit.getFieldList(ClassUtils.getUserClass(clazz));
-        if (CollectionUtils.isNotEmpty(fieldList)) {
-            return fieldList.stream()
-                .filter(i -> {
-                    /* 过滤注解非表字段属性 */
-                    TableField tableField = i.getAnnotation(TableField.class);
-                    return (tableField == null || tableField.exist());
-                }).collect(toList());
-        }
-        return fieldList;
+        return fieldList.stream()
+            .filter(field -> {
+                /* 过滤注解非表字段属性 */
+                TableField tableField = field.getAnnotation(TableField.class);
+                return (tableField == null || tableField.exist());
+            }).collect(toList());
     }
 
     /**
      * 自定义 KEY 生成器
+     * @deprecated 3.1.2
+     * @see #genKeyGenerator(String, TableInfo, MapperBuilderAssistant)
      */
+    @Deprecated
     public static KeyGenerator genKeyGenerator(TableInfo tableInfo, MapperBuilderAssistant builderAssistant,
                                                String baseStatementId, LanguageDriver languageDriver) {
+        return genKeyGenerator(baseStatementId, tableInfo, builderAssistant);
+    }
+
+    public static KeyGenerator genKeyGenerator(String baseStatementId, TableInfo tableInfo, MapperBuilderAssistant builderAssistant) {
         IKeyGenerator keyGenerator = GlobalConfigUtils.getKeyGenerator(builderAssistant.getConfiguration());
         if (null == keyGenerator) {
             throw new IllegalArgumentException("not configure IKeyGenerator implementation class.");
         }
-        String id = baseStatementId + SelectKeyGenerator.SELECT_KEY_SUFFIX;
-        Class<?> resultTypeClass = tableInfo.getKeySequence().clazz();
-        StatementType statementType = StatementType.PREPARED;
-        String keyProperty = tableInfo.getKeyProperty();
-        String keyColumn = tableInfo.getKeyColumn();
-        SqlSource sqlSource = languageDriver.createSqlSource(builderAssistant.getConfiguration(),
-            keyGenerator.executeSql(tableInfo.getKeySequence().value()), null);
-        builderAssistant.addMappedStatement(id, sqlSource, statementType, SqlCommandType.SELECT, null, null, null,
-            null, null, resultTypeClass, null, false, false, false,
-            new NoKeyGenerator(), keyProperty, keyColumn, null, languageDriver, null);
-        id = builderAssistant.applyCurrentNamespace(id, false);
-        MappedStatement keyStatement = builderAssistant.getConfiguration().getMappedStatement(id, false);
-        SelectKeyGenerator selectKeyGenerator = new SelectKeyGenerator(keyStatement, true);
-        builderAssistant.getConfiguration().addKeyGenerator(id, selectKeyGenerator);
-        return selectKeyGenerator;
+        Configuration configuration = builderAssistant.getConfiguration();
+        //TODO 这里不加上builderAssistant.getCurrentNamespace()的会导致com.baomidou.mybatisplus.core.parser.SqlParserHelper.getSqlParserInfo越(chu)界(gui)
+        String id = builderAssistant.getCurrentNamespace() + StringPool.DOT + baseStatementId + SelectKeyGenerator.SELECT_KEY_SUFFIX;
+        ResultMap resultMap = new ResultMap.Builder(builderAssistant.getConfiguration(), id, tableInfo.getKeyType(), new ArrayList<>()).build();
+        MappedStatement mappedStatement = new MappedStatement.Builder(builderAssistant.getConfiguration(), id,
+            new StaticSqlSource(configuration, keyGenerator.executeSql(tableInfo.getKeySequence().value())), SqlCommandType.SELECT)
+            .keyProperty(tableInfo.getKeyProperty())
+            .resultMaps(Collections.singletonList(resultMap))
+            .build();
+        configuration.addMappedStatement(mappedStatement);
+        return new SelectKeyGenerator(mappedStatement, true);
     }
 }

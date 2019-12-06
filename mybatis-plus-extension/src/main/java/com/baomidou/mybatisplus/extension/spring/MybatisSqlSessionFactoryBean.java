@@ -323,6 +323,10 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         this.configuration = configuration;
     }
 
+    public MybatisConfiguration getConfiguration(){
+        return this.configuration;
+    }
+
     /**
      * Set locations of MyBatis mapper files that are going to be merged into the {@code SqlSessionFactory} configuration
      * at runtime.

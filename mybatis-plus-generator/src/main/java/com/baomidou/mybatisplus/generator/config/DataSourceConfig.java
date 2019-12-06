@@ -96,6 +96,9 @@ public class DataSourceConfig {
                 case DM:
                     dbQuery = new DMQuery();
                     break;
+                case KINGBASE_ES:
+                    dbQuery = new KingbaseESQuery();
+                    break;
                 default:
                     // 默认 MYSQL
                     dbQuery = new MySqlQuery();
@@ -147,6 +150,8 @@ public class DataSourceConfig {
             return DbType.MARIADB;
         } else if (str.contains("h2")) {
             return DbType.H2;
+        } else if (str.contains("kingbase") || str.contains("kingbase8")) {
+            return DbType.KINGBASE_ES;
         } else {
             return null;
         }
@@ -176,6 +181,9 @@ public class DataSourceConfig {
                 case MARIADB:
                     typeConvert = new MySqlTypeConvert();
                     break;
+                case KINGBASE_ES:
+                    typeConvert = new KingbaseESTypeConvert();
+                    break;
                 default:
                     // 默认 MYSQL
                     typeConvert = new MySqlTypeConvert();
@@ -191,12 +199,12 @@ public class DataSourceConfig {
      * @return Connection
      */
     public Connection getConn() {
-        Connection conn = null;
+        Connection conn;
         try {
             Class.forName(driverName);
             conn = DriverManager.getConnection(url, username, password);
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
         return conn;
     }

@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.test;
 
-import com.alibaba.druid.pool.DruidDataSource;
-import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.handlers.MybatisEnumTypeHandler;
@@ -29,7 +27,7 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.TypeHandlerRegistry;
-import org.h2.Driver;
+import org.h2.jdbcx.JdbcDataSource;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,12 +49,9 @@ class MybatisTest {
 
     @Test
     void test() throws IOException, SQLException {
-        DruidDataSource dataSource = new DruidDataSource();
-        dataSource.setDbType(DbType.H2.getDb());
-        dataSource.setDriver(new Driver());
-        dataSource.setUsername("sa");
+        JdbcDataSource dataSource = new JdbcDataSource();
+        dataSource.setUser("sa");
         dataSource.setPassword("");
-        dataSource.setValidationQuery("select 1");
         dataSource.setUrl("jdbc:h2:mem:test;MODE=mysql;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE");
         Reader reader = Resources.getResourceAsReader("mybatis-config.xml");
         SqlSessionFactory factory = new MybatisSqlSessionFactoryBuilder().build(reader);

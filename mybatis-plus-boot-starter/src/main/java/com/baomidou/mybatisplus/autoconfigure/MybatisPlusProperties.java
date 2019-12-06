@@ -88,7 +88,7 @@ public class MybatisPlusProperties {
     /**
      * The default scripting language driver class. (Available when use together with mybatis-spring 2.0.2+)
      * <p>
-     * 如果设置了这个,你会至少失去 mp 提供的有关填充到 entity 的 property 相关的功能
+     * 如果设置了这个,你会至少失去几乎所有 mp 提供的功能
      */
     private Class<? extends LanguageDriver> defaultScriptingLanguageDriver;
 

@@ -15,17 +15,18 @@
  */
 package com.baomidou.mybatisplus.generator.config.po;
 
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.baomidou.mybatisplus.generator.config.StrategyConfig;
-import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
-import lombok.Data;
-import lombok.experimental.Accessors;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.IntStream;
+
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.generator.config.StrategyConfig;
+import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
+
+import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * 表信息，关联到当前字段信息
@@ -60,7 +61,7 @@ public class TableInfo {
     }
 
     protected TableInfo setConvert(StrategyConfig strategyConfig) {
-        if (strategyConfig.containsTablePrefix(name)) {
+        if (strategyConfig.containsTablePrefix(name) || strategyConfig.isEntityTableFieldAnnotationEnable()) {
             // 包含前缀
             this.convert = true;
         } else if (strategyConfig.isCapitalModeNaming(name)) {
@@ -137,7 +138,8 @@ public class TableInfo {
      * 转换filed实体为 xml mapper 中的 base column 字符串信息
      */
     public String getFieldNames() {
-        if (StringUtils.isEmpty(fieldNames)) {
+        if (StringUtils.isBlank(fieldNames)
+            && CollectionUtils.isNotEmpty(fields)) {
             StringBuilder names = new StringBuilder();
             IntStream.range(0, fields.size()).forEach(i -> {
                 TableField fd = fields.get(i);

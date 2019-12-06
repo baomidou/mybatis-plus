@@ -180,7 +180,6 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      *
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
-
     public List<T> selectList(Wrapper<T> queryWrapper) {
         Map<String, Object> map = new HashMap<>(1);
         map.put(Constants.WRAPPER, queryWrapper);
@@ -207,7 +206,7 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      * @param page         翻页查询条件
      * @param queryWrapper 实体对象封装操作类（可以为 null）
      */
-    public IPage<T> selectPage(IPage<T> page, Wrapper<T> queryWrapper) {
+    public <E extends IPage<T>> E selectPage(E page, Wrapper<T> queryWrapper) {
         Map<String, Object> map = new HashMap<>(2);
         map.put(Constants.WRAPPER, queryWrapper);
         map.put("page", page);

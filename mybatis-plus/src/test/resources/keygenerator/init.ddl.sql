@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS  key_generator_model (
+	id BIGINT(20) NOT NULL,
+	name VARCHAR(30) NULL DEFAULT NULL ,
+	PRIMARY KEY (id)
+);
+
+CREATE SEQUENCE key_generator_model_seq START WITH 1 INCREMENT BY 1;

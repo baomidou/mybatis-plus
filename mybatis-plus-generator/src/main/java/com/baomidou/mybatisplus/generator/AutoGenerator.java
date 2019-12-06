@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.generator;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.Version;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.generator.config.*;
@@ -145,12 +146,12 @@ public class AutoGenerator {
                 // 逻辑删除注解
                 tableInfo.setImportPackages(TableLogic.class.getCanonicalName());
             }
-            if (StringUtils.isNotEmpty(config.getStrategyConfig().getVersionFieldName())) {
+            if (StringUtils.isNotBlank(config.getStrategyConfig().getVersionFieldName())) {
                 // 乐观锁注解
                 tableInfo.setImportPackages(Version.class.getCanonicalName());
             }
             boolean importSerializable = true;
-            if (StringUtils.isNotEmpty(config.getSuperEntityClass())) {
+            if (StringUtils.isNotBlank(config.getSuperEntityClass())) {
                 // 父实体
                 tableInfo.setImportPackages(config.getSuperEntityClass());
                 importSerializable = false;
@@ -162,7 +163,8 @@ public class AutoGenerator {
                 tableInfo.setImportPackages(Serializable.class.getCanonicalName());
             }
             // Boolean类型is前缀处理
-            if (config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix()) {
+            if (config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix()
+                && CollectionUtils.isNotEmpty(tableInfo.getFields())) {
                 tableInfo.getFields().stream().filter(field -> "boolean".equalsIgnoreCase(field.getPropertyType()))
                     .filter(field -> field.getPropertyName().startsWith("is"))
                     .forEach(field -> {

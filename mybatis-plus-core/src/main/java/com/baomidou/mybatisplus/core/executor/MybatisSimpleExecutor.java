@@ -75,12 +75,10 @@ public class MybatisSimpleExecutor extends AbstractBaseExecutor {
         Configuration configuration = ms.getConfiguration();
         StatementHandler handler = configuration.newStatementHandler(wrapper, ms, parameter, rowBounds, null, boundSql);
         Statement stmt = prepareStatement(handler, ms.getStatementLog(), true);
-        if (stmt != null) {
-            stmt.closeOnCompletion();
-            return handler.queryCursor(stmt);
-        } else {
-            return null;
-        }
+        assert stmt != null;
+        Cursor<E> cursor = handler.queryCursor(stmt);
+        stmt.closeOnCompletion();
+        return cursor;
     }
 
     @Override

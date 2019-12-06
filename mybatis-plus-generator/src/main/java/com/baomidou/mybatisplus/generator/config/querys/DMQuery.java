@@ -32,7 +32,7 @@ public class DMQuery  extends AbstractDbQuery{
     @Override
     public String tablesSql() {
         return "SELECT DISTINCT T1.TABLE_NAME,T2.COMMENTS AS TABLE_COMMENT FROM USER_TAB_COLUMNS T1 " +
-            "INNER JOIN USER_TAB_COMMENTS T2 ON T1.TABLE_NAME = T2.TABLE_NAME";
+            "INNER JOIN USER_TAB_COMMENTS T2 ON T1.TABLE_NAME = T2.TABLE_NAME WHERE 1=1 ";
     }
 
     @Override

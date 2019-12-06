@@ -15,6 +15,9 @@
  */
 package com.baomidou.mybatisplus.annotation;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -27,54 +30,68 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum DbType {
+
     /**
      * MYSQL
      */
-    MYSQL("mysql", "MySql数据库"),
+    MYSQL("mysql", "MySql数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.MySqlDialect"),
     /**
      * MARIADB
      */
-    MARIADB("mariadb", "MariaDB数据库"),
+    MARIADB("mariadb", "MariaDB数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.MariaDBDialect"),
     /**
      * ORACLE
      */
-    ORACLE("oracle", "Oracle数据库"),
+    ORACLE("oracle", "Oracle11g及以下数据库(高版本推荐使用ORACLE_NEW)", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.OracleDialect"),
+    /**
+     * oracle12c new pagination
+     */
+    ORACLE_12C("oracle12c", "Oracle12c+数据库","com.baomidou.mybatisplus.extension.plugins.pagination.dialects.Oracle12cDialect"),
+
     /**
      * DB2
      */
-    DB2("db2", "DB2数据库"),
+    DB2("db2", "DB2数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.DB2Dialect"),
     /**
      * H2
      */
-    H2("h2", "H2数据库"),
+    H2("h2", "H2数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.H2Dialect"),
     /**
      * HSQL
      */
-    HSQL("hsql", "HSQL数据库"),
+    HSQL("hsql", "HSQL数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.HSQLDialect"),
     /**
      * SQLITE
      */
-    SQLITE("sqlite", "SQLite数据库"),
+    SQLITE("sqlite", "SQLite数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.SQLiteDialect"),
     /**
      * POSTGRE
      */
-    POSTGRE_SQL("postgresql", "Postgre数据库"),
+    POSTGRE_SQL("postgresql", "Postgre数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.PostgreDialect"),
     /**
      * SQLSERVER2005
      */
-    SQL_SERVER2005("sqlserver2005", "SQLServer2005数据库"),
+    SQL_SERVER2005("sqlserver2005", "SQLServer2005数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.SQLServer2005Dialect"),
     /**
      * SQLSERVER
      */
-    SQL_SERVER("sqlserver", "SQLServer数据库"),
+    SQL_SERVER("sqlserver", "SQLServer数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.SQLServerDialect"),
     /**
      * DM
      */
-    DM("dm", "达梦数据库"),
+    DM("dm", "达梦数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.DmDialect"),
+    /**
+     * xugu
+     */
+    XU_GU("xugu", "虚谷数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.XuGuDialect"),
+    /**
+     * Kingbase
+     */
+    KINGBASE_ES("kingbasees", "人大金仓数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.KingbaseDialect"),
     /**
      * UNKONWN DB
      */
-    OTHER("other", "其他数据库");
+    OTHER("other", "其他数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.UnknownDialect");
 
     /**
      * 数据库名称
@@ -86,17 +103,24 @@ public enum DbType {
     private final String desc;
 
     /**
-     * 获取数据库类型（默认 MySql）
+     * 分页方言
+     */
+    private String dialect;
+
+    private static Map<String,DbType> DB_CACHE_MAP = new ConcurrentHashMap<>();
+
+    static {
+        for (DbType dbType : DbType.values()) {
+            DB_CACHE_MAP.put(dbType.getDb().toLowerCase(), dbType);
+        }
+    }
+
+    /**
+     * 获取数据库类型
      *
      * @param dbType 数据库类型字符串
      */
     public static DbType getDbType(String dbType) {
-        DbType[] dts = DbType.values();
-        for (DbType dt : dts) {
-            if (dt.getDb().equalsIgnoreCase(dbType)) {
-                return dt;
-            }
-        }
-        return OTHER;
+        return DB_CACHE_MAP.getOrDefault(dbType.toLowerCase(), OTHER);
     }
 }

@@ -86,7 +86,7 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
      */
     private String getColumn(SerializedLambda lambda, boolean onlyColumn) throws MybatisPlusException {
         String fieldName = PropertyNamer.methodToProperty(lambda.getImplMethodName());
-        Class aClass = lambda.getInstantiatedMethodType();
+        Class aClass = lambda.getInstantiatedType();
         if (!initColumnMap) {
             columnMap = LambdaUtils.getColumnMap(aClass);
         }

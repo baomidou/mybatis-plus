@@ -51,6 +51,6 @@ public final class PluginUtils {
      */
     public static String getProperty(Properties properties, String key) {
         String value = properties.getProperty(key);
-        return StringUtils.isEmpty(value) ? null : value;
+        return StringUtils.isBlank(value) ? null : value;
     }
 }

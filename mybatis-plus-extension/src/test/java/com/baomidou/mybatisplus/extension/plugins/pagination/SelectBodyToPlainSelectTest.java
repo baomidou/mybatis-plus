@@ -50,6 +50,10 @@ class SelectBodyToPlainSelectTest {
         order.setAsc(true);
         order.setColumn("column");
         orderItems.add(order);
+        OrderItem orderEmptyColumn = new OrderItem();
+        orderEmptyColumn.setAsc(false);
+        orderEmptyColumn.setColumn("");
+        orderItems.add(orderEmptyColumn);
         page.setOrders(orderItems);
     }
 
@@ -86,6 +90,19 @@ class SelectBodyToPlainSelectTest {
         String actualSqlUnionAll = PaginationInterceptor
             .concatOrderBy("select * from test where 1 = 1 union all select * from test2 where 1 = 1 ", page);
         assertThat(actualSqlUnionAll).isEqualTo("SELECT * FROM test WHERE 1 = 1 UNION ALL SELECT * FROM test2 WHERE 1 = 1 ORDER BY column");
+    }
+
+    @Test
+    void testPaginationInterceptorOrderByEmptyColumnFix() {
+        String actualSql = PaginationInterceptor
+            .concatOrderBy("select * from test", page);
+
+        assertThat(actualSql).isEqualTo("SELECT * FROM test ORDER BY column");
+
+        String actualSqlWhere = PaginationInterceptor
+            .concatOrderBy("select * from test where 1 = 1", page);
+
+        assertThat(actualSqlWhere).isEqualTo("SELECT * FROM test WHERE 1 = 1 ORDER BY column");
     }
 
 }

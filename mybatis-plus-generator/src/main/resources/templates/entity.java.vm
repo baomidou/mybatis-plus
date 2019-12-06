@@ -23,11 +23,11 @@ import lombok.experimental.Accessors;
  */
 #if(${entityLombokModel})
 @Data
-#if(${superEntityClass})
+  #if(${superEntityClass})
 @EqualsAndHashCode(callSuper = true)
-#else
+  #else
 @EqualsAndHashCode(callSuper = false)
-#end
+  #end
 @Accessors(chain = true)
 #end
 #if(${table.convert})
@@ -54,31 +54,31 @@ public class ${entity} implements Serializable {
 #set($keyPropertyName=${field.propertyName})
 #end
 #if("$!field.comment" != "")
-#if(${swagger2})
+  #if(${swagger2})
     @ApiModelProperty(value = "${field.comment}")
-#else
+  #else
     /**
      * ${field.comment}
      */
-#end
+  #end
 #end
 #if(${field.keyFlag})
 ## 主键
-#if(${field.keyIdentityFlag})
+  #if(${field.keyIdentityFlag})
     @TableId(value = "${field.name}", type = IdType.AUTO)
-#elseif(!$null.isNull(${idType}) && "$!idType" != "")
+  #elseif(!$null.isNull(${idType}) && "$!idType" != "")
     @TableId(value = "${field.name}", type = IdType.${idType})
-#elseif(${field.convert})
+  #elseif(${field.convert})
     @TableId("${field.name}")
-#end
+  #end
 ## 普通字段
 #elseif(${field.fill})
 ## -----   存在字段填充设置   -----
-#if(${field.convert})
+  #if(${field.convert})
     @TableField(value = "${field.name}", fill = FieldFill.${field.fill})
-#else
+  #else
     @TableField(fill = FieldFill.${field.fill})
-#end
+  #end
 #elseif(${field.convert})
     @TableField("${field.name}")
 #end
@@ -96,43 +96,45 @@ public class ${entity} implements Serializable {
 
 #if(!${entityLombokModel})
 #foreach($field in ${table.fields})
-#if(${field.propertyType.equals("boolean")})
-#set($getprefix="is")
-#else
-#set($getprefix="get")
-#end
+  #if(${field.propertyType.equals("boolean")})
+    #set($getprefix="is")
+  #else
+    #set($getprefix="get")
+  #end
 
     public ${field.propertyType} ${getprefix}${field.capitalName}() {
         return ${field.propertyName};
     }
 
-#if(${entityBuilderModel})
+  #if(${entityBuilderModel})
     public ${entity} set${field.capitalName}(${field.propertyType} ${field.propertyName}) {
-#else
+  #else
     public void set${field.capitalName}(${field.propertyType} ${field.propertyName}) {
-#end
+  #end
         this.${field.propertyName} = ${field.propertyName};
-#if(${entityBuilderModel})
+  #if(${entityBuilderModel})
         return this;
-#end
+  #end
     }
 #end
+## --foreach end---
 #end
+## --end of #if(!${entityLombokModel})--
 
 #if(${entityColumnConstant})
-#foreach($field in ${table.fields})
+  #foreach($field in ${table.fields})
     public static final String ${field.name.toUpperCase()} = "${field.name}";
 
-#end
+  #end
 #end
 #if(${activeRecord})
     @Override
     protected Serializable pkVal() {
-#if(${keyPropertyName})
+  #if(${keyPropertyName})
         return this.${keyPropertyName};
-#else
+  #else
         return null;
-#end
+  #end
     }
 
 #end
@@ -140,13 +142,13 @@ public class ${entity} implements Serializable {
     @Override
     public String toString() {
         return "${entity}{" +
-#foreach($field in ${table.fields})
-#if($!{foreach.index}==0)
+  #foreach($field in ${table.fields})
+    #if($!{foreach.index}==0)
         "${field.propertyName}=" + ${field.propertyName} +
-#else
+    #else
         ", ${field.propertyName}=" + ${field.propertyName} +
-#end
-#end
+    #end
+  #end
         "}";
     }
 #end

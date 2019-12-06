@@ -19,12 +19,11 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.service.additional.query.ChainQuery;
-import com.baomidou.mybatisplus.extension.service.additional.query.impl.LambdaQueryChainWrapper;
-import com.baomidou.mybatisplus.extension.service.additional.query.impl.QueryChainWrapper;
-import com.baomidou.mybatisplus.extension.service.additional.update.ChainUpdate;
-import com.baomidou.mybatisplus.extension.service.additional.update.impl.LambdaUpdateChainWrapper;
-import com.baomidou.mybatisplus.extension.service.additional.update.impl.UpdateChainWrapper;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
+import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
+import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
+import com.baomidou.mybatisplus.extension.conditions.update.UpdateChainWrapper;
+import com.baomidou.mybatisplus.extension.toolkit.ChainWrappers;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
@@ -173,14 +172,14 @@ public interface IService<T> {
      *
      * @param idList 主键ID列表
      */
-    Collection<T> listByIds(Collection<? extends Serializable> idList);
+    List<T> listByIds(Collection<? extends Serializable> idList);
 
     /**
      * 查询（根据 columnMap 条件）
      *
      * @param columnMap 表字段 map 对象
      */
-    Collection<T> listByMap(Map<String, Object> columnMap);
+    List<T> listByMap(Map<String, Object> columnMap);
 
     /**
      * 根据 Wrapper，查询一条记录 <br/>
@@ -253,7 +252,7 @@ public interface IService<T> {
      * @param page         翻页对象
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
-    IPage<T> page(IPage<T> page, Wrapper<T> queryWrapper);
+    <E extends IPage<T>> E page(E page, Wrapper<T> queryWrapper);
 
     /**
      * 无条件翻页查询
@@ -261,7 +260,7 @@ public interface IService<T> {
      * @param page 翻页对象
      * @see Wrappers#emptyWrapper()
      */
-    default IPage<T> page(IPage<T> page) {
+    default <E extends IPage<T>> E page(E page) {
         return page(page, Wrappers.emptyWrapper());
     }
 
@@ -320,7 +319,7 @@ public interface IService<T> {
      * @param page         翻页对象
      * @param queryWrapper 实体对象封装操作类 {@link com.baomidou.mybatisplus.core.conditions.query.QueryWrapper}
      */
-    IPage<Map<String, Object>> pageMaps(IPage<T> page, Wrapper<T> queryWrapper);
+    <E extends IPage<Map<String, Object>>> E pageMaps(E page, Wrapper<T> queryWrapper);
 
     /**
      * 无条件翻页查询
@@ -328,7 +327,7 @@ public interface IService<T> {
      * @param page 翻页对象
      * @see Wrappers#emptyWrapper()
      */
-    default IPage<Map<String, Object>> pageMaps(IPage<T> page) {
+    default <E extends IPage<Map<String, Object>>> E pageMaps(E page) {
         return pageMaps(page, Wrappers.emptyWrapper());
     }
 
@@ -362,7 +361,7 @@ public interface IService<T> {
      * @return QueryWrapper 的包装类
      */
     default QueryChainWrapper<T> query() {
-        return new QueryChainWrapper<>(getBaseMapper());
+        return ChainWrappers.queryChain(getBaseMapper());
     }
 
     /**
@@ -372,7 +371,7 @@ public interface IService<T> {
      * @return LambdaQueryWrapper 的包装类
      */
     default LambdaQueryChainWrapper<T> lambdaQuery() {
-        return new LambdaQueryChainWrapper<>(getBaseMapper());
+        return ChainWrappers.lambdaQueryChain(getBaseMapper());
     }
 
     /**
@@ -381,7 +380,7 @@ public interface IService<T> {
      * @return UpdateWrapper 的包装类
      */
     default UpdateChainWrapper<T> update() {
-        return new UpdateChainWrapper<>(getBaseMapper());
+        return ChainWrappers.updateChain(getBaseMapper());
     }
 
     /**
@@ -391,7 +390,7 @@ public interface IService<T> {
      * @return LambdaUpdateWrapper 的包装类
      */
     default LambdaUpdateChainWrapper<T> lambdaUpdate() {
-        return new LambdaUpdateChainWrapper<>(getBaseMapper());
+        return ChainWrappers.lambdaUpdateChain(getBaseMapper());
     }
 
     /**
@@ -405,5 +404,4 @@ public interface IService<T> {
     default boolean saveOrUpdate(T entity, Wrapper<T> updateWrapper) {
         return update(entity, updateWrapper) || saveOrUpdate(entity);
     }
-
 }

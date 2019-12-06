@@ -36,6 +36,6 @@ public class SelectOne extends AbstractMethod {
             this.sqlSelectColumns(tableInfo, true), tableInfo.getTableName(),
             this.sqlWhereEntityWrapper(true, tableInfo), sqlComment()),
             modelClass);
-        return this.addSelectMappedStatementForTable(mapperClass, sqlMethod.getMethod(), sqlSource, tableInfo);
+        return this.addSelectMappedStatementForTable(mapperClass, getMethod(sqlMethod), sqlSource, tableInfo);
     }
 }

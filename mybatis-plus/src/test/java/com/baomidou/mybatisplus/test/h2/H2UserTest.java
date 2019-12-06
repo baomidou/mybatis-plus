@@ -24,19 +24,17 @@ import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.select.Select;
-import org.apache.ibatis.exceptions.PersistenceException;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Mybatis Plus H2 Junit Test
@@ -326,10 +324,10 @@ class H2UserTest extends BaseTest {
         Assertions.assertNotEquals(0L, userService.lambdaQuery().like(H2User::getName, "a").count().longValue());
 
         List<H2User> users = userService.lambdaQuery().like(H2User::getName, "T")
-            .ne(H2User::getAge, AgeEnum.TWO)
-            .ge(H2User::getVersion, 1)
-            .isNull(H2User::getPrice)
-            .list();
+                .ne(H2User::getAge, AgeEnum.TWO)
+                .ge(H2User::getVersion, 1)
+                .isNull(H2User::getPrice)
+                .list();
         Assertions.assertTrue(users.isEmpty());
     }
 
@@ -348,16 +346,28 @@ class H2UserTest extends BaseTest {
     void testSaveBatchException() {
         try {
             userService.saveBatch(Arrays.asList(
-                new H2User(1L, "tom"),
-                new H2User(1L, "andy")
+                    new H2User(1L, "tom"),
+                    new H2User(1L, "andy")
             ));
         } catch (Exception e) {
-            Assertions.assertTrue(e instanceof PersistenceException);
+            Assertions.assertTrue(e instanceof DataAccessException);
         }
     }
 
     @Test
-    public void myQueryWithGroupByOrderBy(){
+    @Order(29)
+    @Transactional
+    void testClearSqlSessionCache() {
+        H2User h2User;
+        h2User = userService.getById(996102919L);
+        assert h2User == null;
+        userService.saveBatch(Collections.singletonList(new H2User(996102919L, "靓仔")));
+        h2User = userService.getById(996102919L);
+        Assertions.assertNotNull(h2User);
+    }
+
+    @Test
+    public void myQueryWithGroupByOrderBy() {
         userService.mySelectMaps().forEach(System.out::println);
     }
 
@@ -377,4 +387,41 @@ class H2UserTest extends BaseTest {
         final Select select3 = (Select) CCJSqlParserUtil.parse(targetSql3);
         Assertions.assertEquals(select3.toString(), targetSql3);
     }
+
+    /**
+     * CTO 说批量插入性能不行，让我们来分析一下问题在哪里
+     */
+    @Test
+    void batchInsertPerformanceTest() {
+        List<H2User> users = mockUser(10_000, 99989);
+        userService.saveBatch(users);
+        // 卧槽，速度挺快的
+    }
+
+    /**
+     * 模拟一群人
+     *
+     * @param size     这群人的数量
+     * @param cardinal 这群人 id 的起始值
+     * @return 返回模拟的一群人
+     */
+    private List<H2User> mockUser(int size, long cardinal) {
+        return new AbstractList<H2User>() {
+
+            @Override
+            public H2User get(int index) {
+                long id = cardinal + index + 1;
+                H2User h2User = new H2User(id, Long.toHexString(id));
+                h2User.setVersion(0);
+                h2User.setPrice(BigDecimal.ZERO);
+                return h2User;
+            }
+
+            @Override
+            public int size() {
+                return size;
+            }
+        };
+    }
+
 }

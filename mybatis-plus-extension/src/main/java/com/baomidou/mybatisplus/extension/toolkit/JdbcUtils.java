@@ -18,7 +18,6 @@ package com.baomidou.mybatisplus.extension.toolkit;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
@@ -39,7 +38,7 @@ public class JdbcUtils {
      * @return ignore
      */
     public static DbType getDbType(String jdbcUrl) {
-        Assert.isFalse(StringUtils.isEmpty(jdbcUrl), "Error: The jdbcUrl is Null, Cannot read database type");
+        Assert.isFalse(StringUtils.isBlank(jdbcUrl), "Error: The jdbcUrl is Null, Cannot read database type");
         if (jdbcUrl.contains(":mysql:") || jdbcUrl.contains(":cobar:")) {
             return DbType.MYSQL;
         } else if (jdbcUrl.contains(":mariadb:")) {
@@ -62,6 +61,10 @@ public class JdbcUtils {
             return DbType.H2;
         } else if (jdbcUrl.contains(":dm:")) {
             return DbType.DM;
+        } else if (jdbcUrl.contains(":xugu:")) {
+            return DbType.XU_GU;
+        } else if (jdbcUrl.contains(":kingbase:") || jdbcUrl.contains(":kingbase8:")) {
+            return DbType.KINGBASE_ES;
         } else {
             logger.warn("The jdbcUrl is " + jdbcUrl + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!");
             return DbType.OTHER;

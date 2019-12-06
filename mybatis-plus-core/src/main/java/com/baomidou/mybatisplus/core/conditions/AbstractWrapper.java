@@ -378,7 +378,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      * @return sql
      */
     protected final String formatSqlIfNeed(boolean need, String sqlStr, Object... params) {
-        if (!need || StringUtils.isEmpty(sqlStr)) {
+        if (!need || StringUtils.isBlank(sqlStr)) {
             return null;
         }
         if (ArrayUtils.isNotEmpty(params)) {
@@ -430,10 +430,10 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     @Override
     public String getSqlSegment() {
         String sqlSegment = expression.getSqlSegment();
-        if (StringUtils.isNotEmpty(sqlSegment)) {
+        if (StringUtils.isNotBlank(sqlSegment)) {
             return sqlSegment + lastSql.getStringValue();
         }
-        if (StringUtils.isNotEmpty(lastSql.getStringValue())) {
+        if (StringUtils.isNotBlank(lastSql.getStringValue())) {
             return lastSql.getStringValue();
         }
         return null;
@@ -441,7 +441,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
 
     @Override
     public String getSqlComment() {
-        if (StringUtils.isNotEmpty(sqlComment.getStringValue())) {
+        if (StringUtils.isNotBlank(sqlComment.getStringValue())) {
             return "/*" + StringEscape.escapeRawString(sqlComment.getStringValue()) + "*/";
         }
         return null;

@@ -65,7 +65,7 @@ class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, Updat
     }
 
     override fun setSql(condition: Boolean, sql: String): KtUpdateWrapper<T> {
-        if (condition && StringUtils.isNotEmpty(sql)) {
+        if (condition && StringUtils.isNotBlank(sql)) {
             sqlSet.add(sql)
         }
         return typedThis

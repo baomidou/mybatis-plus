@@ -61,11 +61,14 @@ public abstract class AbstractBaseExecutor extends BaseExecutor {
                 IPage<?> page = (IPage) optional.get().getValue();
                 offset = page.getCurrent();
                 limit = page.getSize();
+                //折磨人的小妖精,只能当缓存条件了,避免缓存错误命中.
+                cacheKey.update(page.isSearchCount());
             }
         } else if (parameterObject instanceof IPage) {
             IPage<?> page = (IPage) parameterObject;
             offset = page.getCurrent();
             limit = page.getSize();
+            cacheKey.update(page.isSearchCount());
         }
         cacheKey.update(offset);
         cacheKey.update(limit);

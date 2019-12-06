@@ -77,7 +77,7 @@ public class TableInfo implements Constants {
      * 主键是否有存在字段名与属性名关联
      * <p>true: 表示要进行 as</p>
      */
-    private boolean keyRelated = false;
+    private boolean keyRelated;
     /**
      * 表主键ID 字段名
      */
@@ -110,11 +110,12 @@ public class TableInfo implements Constants {
     /**
      * 是否开启逻辑删除
      */
-    private boolean logicDelete = false;
+    @Setter(AccessLevel.NONE)
+    private boolean logicDelete;
     /**
      * 是否开启下划线转驼峰
      */
-    private boolean underCamel = true;
+    private boolean underCamel;
     /**
      * 缓存包含主键及字段的 sql select
      */
@@ -127,6 +128,22 @@ public class TableInfo implements Constants {
     @Setter(AccessLevel.NONE)
     @Getter(AccessLevel.NONE)
     private String sqlSelect;
+    /**
+     * 表字段是否启用了插入填充
+     *
+     * @since 3.3.0
+     */
+    @Getter
+    @Setter(AccessLevel.NONE)
+    private boolean withInsertFill;
+    /**
+     * 表字段是否启用了更新填充
+     *
+     * @since 3.3.0
+     */
+    @Getter
+    @Setter(AccessLevel.NONE)
+    private boolean withUpdateFill;
 
     public TableInfo(Class<?> entityType) {
         this.entityType = entityType;
@@ -152,15 +169,6 @@ public class TableInfo implements Constants {
     }
 
     /**
-     * 设置逻辑删除
-     */
-    void setLogicDelete(boolean logicDelete) {
-        if (logicDelete) {
-            this.logicDelete = true;
-        }
-    }
-
-    /**
      * 获取主键的 select sql 片段
      *
      * @return sql 片段
@@ -169,7 +177,7 @@ public class TableInfo implements Constants {
         if (sqlSelect != null) {
             return sqlSelect;
         }
-        if (StringUtils.isNotEmpty(keyProperty)) {
+        if (StringUtils.isNotBlank(keyProperty)) {
             sqlSelect = keyColumn;
             if (keyRelated) {
                 sqlSelect += (" AS " + keyProperty);
@@ -203,9 +211,9 @@ public class TableInfo implements Constants {
         String sqlSelect = getKeySqlSelect();
         String fieldsSqlSelect = fieldList.stream().filter(predicate)
             .map(TableFieldInfo::getSqlSelect).collect(joining(COMMA));
-        if (StringUtils.isNotEmpty(sqlSelect) && StringUtils.isNotEmpty(fieldsSqlSelect)) {
+        if (StringUtils.isNotBlank(sqlSelect) && StringUtils.isNotBlank(fieldsSqlSelect)) {
             return sqlSelect + COMMA + fieldsSqlSelect;
-        } else if (StringUtils.isNotEmpty(fieldsSqlSelect)) {
+        } else if (StringUtils.isNotBlank(fieldsSqlSelect)) {
             return fieldsSqlSelect;
         }
         return sqlSelect;
@@ -220,7 +228,7 @@ public class TableInfo implements Constants {
      */
     public String getKeyInsertSqlProperty(final String prefix, final boolean newLine) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
-        if (StringUtils.isNotEmpty(keyProperty)) {
+        if (StringUtils.isNotBlank(keyProperty)) {
             if (idType == IdType.AUTO) {
                 return EMPTY;
             }
@@ -237,7 +245,7 @@ public class TableInfo implements Constants {
      * @return sql 脚本片段
      */
     public String getKeyInsertSqlColumn(final boolean newLine) {
-        if (StringUtils.isNotEmpty(keyColumn)) {
+        if (StringUtils.isNotBlank(keyColumn)) {
             if (idType == IdType.AUTO) {
                 return EMPTY;
             }
@@ -293,7 +301,7 @@ public class TableInfo implements Constants {
                 return true;
             })
             .map(i -> i.getSqlWhere(newPrefix)).filter(Objects::nonNull).collect(joining(NEWLINE));
-        if (!withId || StringUtils.isEmpty(keyProperty)) {
+        if (!withId || StringUtils.isBlank(keyProperty)) {
             return filedSqlScript;
         }
         String newKeyProperty = newPrefix + keyProperty;
@@ -324,14 +332,14 @@ public class TableInfo implements Constants {
      * 获取逻辑删除字段的 sql 脚本
      *
      * @param startWithAnd 是否以 and 开头
-     * @param deleteValue  是否需要的是逻辑删除值
+     * @param isWhere      是否需要的是逻辑删除值
      * @return sql 脚本
      */
-    public String getLogicDeleteSql(boolean startWithAnd, boolean deleteValue) {
+    public String getLogicDeleteSql(boolean startWithAnd, boolean isWhere) {
         if (logicDelete) {
             TableFieldInfo field = fieldList.stream().filter(TableFieldInfo::isLogicDelete).findFirst()
                 .orElseThrow(() -> ExceptionUtils.mpe("can't find the logicFiled from table {%s}", tableName));
-            String logicDeleteSql = formatLogicDeleteSql(field, deleteValue);
+            String logicDeleteSql = formatLogicDeleteSql(field, isWhere);
             if (startWithAnd) {
                 logicDeleteSql = " AND " + logicDeleteSql;
             }
@@ -344,16 +352,24 @@ public class TableInfo implements Constants {
      * format logic delete SQL, can be overrided by subclass
      * github #1386
      *
-     * @param field       TableFieldInfo
-     * @param deleteValue true: logicDeleteValue, false: logicNotDeleteValue
+     * @param field   TableFieldInfo
+     * @param isWhere true: logicDeleteValue, false: logicNotDeleteValue
      * @return
      */
-    protected String formatLogicDeleteSql(TableFieldInfo field, boolean deleteValue) {
-        String value = deleteValue ? field.getLogicDeleteValue() : field.getLogicNotDeleteValue();
+    private String formatLogicDeleteSql(TableFieldInfo field, boolean isWhere) {
+        final String value = isWhere ? field.getLogicNotDeleteValue() : field.getLogicDeleteValue();
+        if (isWhere) {
+            if (NULL.equalsIgnoreCase(value)) {
+                return field.getColumn() + " IS NULL";
+            } else {
+                return field.getColumn() + EQUALS + String.format(field.isCharSequence() ? "'%s'" : "%s", value);
+            }
+        }
+        final String targetStr = field.getColumn() + EQUALS;
         if (NULL.equalsIgnoreCase(value)) {
-            return field.getColumn() + " is NULL";
+            return targetStr + NULL;
         } else {
-            return field.getColumn() + EQUALS + String.format(field.isCharSequence() ? "'%s'" : "%s", value);
+            return targetStr + String.format(field.isCharSequence() ? "'%s'" : "%s", value);
         }
     }
 
@@ -377,4 +393,12 @@ public class TableInfo implements Constants {
             this.resultMap = id;
         }
     }
+
+    void setFieldList(List<TableFieldInfo> fieldList) {
+        this.fieldList = fieldList;
+        this.logicDelete = fieldList.parallelStream().anyMatch(TableFieldInfo::isLogicDelete);
+        this.withInsertFill = fieldList.parallelStream().anyMatch(TableFieldInfo::isWithInsertFill);
+        this.withUpdateFill = fieldList.parallelStream().anyMatch(TableFieldInfo::isWithUpdateFill);
+    }
+
 }

@@ -16,7 +16,10 @@
 package com.baomidou.mybatisplus.core;
 
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator;
+import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.core.injector.SqlRunnerInjector;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.ErrorContext;
@@ -78,19 +81,29 @@ public class MybatisSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
     @Override
     public SqlSessionFactory build(Configuration config) {
         MybatisConfiguration configuration = (MybatisConfiguration) config;
-        GlobalConfig globalConfig = configuration.getGlobalConfig();
-        // 初始化 Sequence
-        if (null != globalConfig.getWorkerId() && null != globalConfig.getDatacenterId()) {
-            IdWorker.initSequence(globalConfig.getWorkerId(), globalConfig.getDatacenterId());
+        GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
+        final IdentifierGenerator identifierGenerator;
+        if (globalConfig.getIdentifierGenerator() == null) {
+            if (null != globalConfig.getWorkerId() && null != globalConfig.getDatacenterId()) {
+                identifierGenerator = new DefaultIdentifierGenerator(globalConfig.getWorkerId(), globalConfig.getDatacenterId());
+            } else {
+                identifierGenerator = new DefaultIdentifierGenerator();
+            }
+            globalConfig.setIdentifierGenerator(identifierGenerator);
+        } else {
+            identifierGenerator = globalConfig.getIdentifierGenerator();
         }
+        //TODO 这里只是为了兼容下,并没多大重要,方法标记过时了.
+        IdWorker.setIdentifierGenerator(identifierGenerator);
+
         if (globalConfig.isEnableSqlRunner()) {
             new SqlRunnerInjector().inject(configuration);
         }
 
         SqlSessionFactory sqlSessionFactory = super.build(configuration);
 
-        // 设置全局参数属性 以及 缓存 sqlSessionFactory
-        globalConfig.signGlobalConfig(sqlSessionFactory);
+        // 缓存 sqlSessionFactory
+        globalConfig.setSqlSessionFactory(sqlSessionFactory);
 
         return sqlSessionFactory;
     }

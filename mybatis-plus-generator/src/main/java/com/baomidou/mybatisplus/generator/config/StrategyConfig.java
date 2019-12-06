@@ -16,9 +16,8 @@
 package com.baomidou.mybatisplus.generator.config;
 
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.generator.config.po.LikeTable;
 import com.baomidou.mybatisplus.generator.config.po.TableFill;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import lombok.AccessLevel;
@@ -27,8 +26,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 策略配置项
@@ -97,12 +96,14 @@ public class StrategyConfig {
      */
     private String superControllerClass;
     /**
-     * 需要包含的表名，允许正则表达式（与exclude二选一配置）
+     * 需要包含的表名（与exclude二选一配置）
+     * @since 3.3.0 正则匹配不再支持,请使用{@link #setLikeTable(LikeTable)}}
      */
     @Setter(AccessLevel.NONE)
     private String[] include = null;
     /**
-     * 需要排除的表名，允许正则表达式
+     * 需要排除的表名
+     * @since 3.3.0 正则匹配不再支持,请使用{@link #setNotLikeTable(LikeTable)}}
      */
     @Setter(AccessLevel.NONE)
     private String[] exclude = null;
@@ -162,6 +163,18 @@ public class StrategyConfig {
      * 表填充字段
      */
     private List<TableFill> tableFillList = null;
+    /**
+     * 包含表名
+     *
+     * @since 3.3.0
+     */
+    private LikeTable likeTable;
+    /**
+     * 不包含表名
+     *
+     * @since 3.3.0
+     */
+    private LikeTable notLikeTable;
 
     /**
      * 大写命名、字段符合大写字母数字下划线命名
@@ -181,11 +194,7 @@ public class StrategyConfig {
         if (null != tableName) {
             String[] tps = getTablePrefix();
             if (null != tps) {
-                for (String tp : tps) {
-                    if (tableName.contains(tp)) {
-                        return true;
-                    }
-                }
+                return Arrays.stream(tps).anyMatch(tableName::contains);
             }
         }
         return false;
@@ -206,11 +215,8 @@ public class StrategyConfig {
 
     public boolean includeSuperEntityColumns(String fieldName) {
         if (null != superEntityColumns) {
-            for (String column : superEntityColumns) {
-                if (column.equals(fieldName)) {
-                    return true;
-                }
-            }
+            // 公共字段判断忽略大小写【 部分数据库大小写不敏感 】
+            return Arrays.stream(superEntityColumns).anyMatch(e -> e.equalsIgnoreCase(fieldName));
         }
         return false;
     }
@@ -271,15 +277,17 @@ public class StrategyConfig {
         if (null != columnNaming) {
             this.columnNaming = columnNaming;
         }
-        String pkg = ClassUtils.getPackageName(clazz);
-        if (StringUtils.isNotEmpty(pkg)) {
-            pkg += "." + clazz.getSimpleName();
-        } else {
-            pkg = clazz.getSimpleName();
-        }
-        this.superEntityClass = pkg;
+        this.superEntityClass = clazz.getName();
         convertSuperEntityColumns(clazz);
         return this;
+    }
+
+    public void setSuperControllerClass(Class<?> clazz) {
+        this.superControllerClass = clazz.getName();
+    }
+
+    public void setSuperControllerClass(String superControllerClass) {
+        this.superControllerClass = superControllerClass;
     }
 
     /**
@@ -291,14 +299,12 @@ public class StrategyConfig {
      */
     protected void convertSuperEntityColumns(Class<?> clazz) {
         List<Field> fields = TableInfoHelper.getAllFields(clazz);
-        if (CollectionUtils.isNotEmpty(fields)) {
-            this.superEntityColumns = fields.stream().map(field -> {
-                if (null == columnNaming || columnNaming == NamingStrategy.no_change) {
-                    return field.getName();
-                }
-                return StringUtils.camelToUnderline(field.getName());
-            }).collect(Collectors.toSet()).stream().toArray(String[]::new);
-        }
+        this.superEntityColumns = fields.stream().map(field -> {
+            if (null == columnNaming || columnNaming == NamingStrategy.no_change) {
+                return field.getName();
+            }
+            return StringUtils.camelToUnderline(field.getName());
+        }).distinct().toArray(String[]::new);
     }
 
     /**

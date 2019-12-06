@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.override;
 
+import com.baomidou.mybatisplus.core.metadata.PageList;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.apache.ibatis.binding.BindingException;
 import org.apache.ibatis.binding.MapperMethod;
@@ -50,6 +51,7 @@ public class MybatisMapperMethod {
         this.method = new MapperMethod.MethodSignature(config, mapperInterface, method);
     }
 
+    @SuppressWarnings("unchecked")
     public Object execute(SqlSession sqlSession, Object[] args) {
         Object result;
         switch (command.getType()) {
@@ -81,9 +83,26 @@ public class MybatisMapperMethod {
                 } else {
                     Object param = method.convertArgsToSqlCommandParam(args);
                     // TODO 这里下面改了
-                    if (IPage.class.isAssignableFrom(method.getReturnType()) && args != null
-                        && IPage.class.isAssignableFrom(args[0].getClass())) {
-                        result = ((IPage<?>) args[0]).setRecords(executeForIPage(sqlSession, args));
+                    if (IPage.class.isAssignableFrom(method.getReturnType())) {
+                        assert args != null;
+                        IPage<?> page = null;
+                        for (Object arg : args) {
+                            if (arg instanceof IPage) {
+                                page = (IPage) arg;
+                                break;
+                            }
+                        }
+                        assert page != null;
+                        result = executeForIPage(sqlSession, args);
+                        if (result instanceof PageList) {
+                            PageList pageList = (PageList) result;
+                            page.setRecords(pageList.getRecords());
+                            page.setTotal(pageList.getTotal());
+                            result = page;
+                        } else {
+                            List list = (List<Object>) result;
+                            result = page.setRecords(list);
+                        }
                         // TODO 这里上面改了
                     } else {
                         result = sqlSession.selectOne(command.getName(), param);

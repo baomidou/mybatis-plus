@@ -12,21 +12,5 @@ dependencies {
     implementation("${lib["p6spy"]}")
     implementation("${lib["jackson"]}")
     implementation("${lib["fastjson"]}")
-
-    testImplementation("${lib["spring-web"]}")
-    testImplementation("${lib["javax.servlet-api"]}")
-    testImplementation("${lib["jackson"]}")
-    testImplementation("${lib["fastjson"]}")
-
-    testImplementation("${lib["hikaricp"]}")
-    testImplementation("${lib["commons-dbcp2"]}")
-    testImplementation("${lib["druid"]}")
-    testImplementation("${lib["tomcatjdbc"]}")
-
-    testImplementation("${lib["h2"]}")
-    testImplementation("${lib["sqlserver"]}")
-    testImplementation("${lib["postgresql"]}")
-    testImplementation(lib["oracle"] as ConfigurableFileTree)
-    testImplementation("${lib["mysql"]}")
-    testImplementation("${lib["logback-classic"]}")
+    implementation("${lib["gson"]}")
 }

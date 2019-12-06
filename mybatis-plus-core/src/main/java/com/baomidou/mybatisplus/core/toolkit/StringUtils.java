@@ -30,14 +30,13 @@ import java.util.regex.Pattern;
 import static java.util.stream.Collectors.joining;
 
 /**
- * <p>
  * String 工具类
- * </p>
  *
  * @author D.Yang
+ * @author hcl
  * @since 2016-08-18
  */
-public class StringUtils {
+public final class StringUtils {
 
     /**
      * 空字符
@@ -66,7 +65,6 @@ public class StringUtils {
     private static final Pattern CAPITAL_MODE = Pattern.compile("^[0-9A-Z/_]+$");
 
     private StringUtils() {
-        // to do nothing
     }
 
     /**
@@ -77,11 +75,9 @@ public class StringUtils {
      * @return format 后的
      */
     public static String format(String target, Object... params) {
-        if (target.contains("%s") && ArrayUtils.isNotEmpty(params)) {
-            return String.format(target, params);
-        }
-        return target;
+        return String.format(target, params);
     }
+
 
     /**
      * Blob 转为 String 格式
@@ -107,21 +103,72 @@ public class StringUtils {
      * @param cs 需要判断字符串
      * @return 判断结果
      */
-    public static boolean isEmpty(final CharSequence cs) {
-        int strLen;
-        if (cs == null || (strLen = cs.length()) == 0) {
+    @Deprecated
+    public static boolean isEmpty(CharSequence cs) {
+        return isBlank(cs);
+    }
+
+    public static boolean isBlank(final CharSequence cs) {
+        if (cs == null) {
             return true;
         }
-        for (int i = 0; i < strLen; i++) {
-            if (!Character.isWhitespace(cs.charAt(i))) {
-                return false;
+        int l = cs.length();
+        if (l > 0) {
+            for (int i = 0; i < l; i++) {
+                if (!Character.isWhitespace(cs.charAt(i))) {
+                    return false;
+                }
             }
         }
         return true;
     }
 
     /**
+     * 判断字符串是否不为空
+     *
+     * @param cs 需要判断字符串
+     * @return 判断结果
+     */
+    @Deprecated
+    public static boolean isNotEmpty(final CharSequence cs) {
+        return !isEmpty(cs);
+    }
+
+    public static boolean isNotBlank(final CharSequence cs) {
+        return !isBlank(cs);
+    }
+
+    /**
+     * 猜测方法属性对应的 Getter 名称，具体规则请参考 JavaBeans 规范
+     *
+     * @param name 属性名称
+     * @param type 属性类型
+     * @return 返回猜测的名称
+     */
+    public static String guessGetterName(String name, Class<?> type) {
+        if (ClassUtils.isBoolean(type)) {
+            return name.startsWith("is") ? name : "is" + upperFirst(name);
+        }
+        return "get" + upperFirst(name);
+    }
+
+    /**
+     * 大写第一个字母
+     *
+     * @param src 源字符串
+     * @return 返回第一个大写后的字符串
+     */
+    public static String upperFirst(String src) {
+        if (Character.isLowerCase(src.charAt(0))) {
+            return 1 == src.length() ? src.toUpperCase() : Character.toUpperCase(src.charAt(0)) + src.substring(1);
+        }
+        return src;
+    }
+
+
+    /**
      * 判断字符串是不是驼峰命名
+     *
      * <li> 包含 '_' 不算 </li>
      * <li> 首字母大写的不算 </li>
      *
@@ -135,15 +182,6 @@ public class StringUtils {
         return Character.isLowerCase(str.charAt(0));
     }
 
-    /**
-     * 判断字符串是否不为空
-     *
-     * @param cs 需要判断字符串
-     * @return 判断结果
-     */
-    public static boolean isNotEmpty(final CharSequence cs) {
-        return !isEmpty(cs);
-    }
 
     /**
      * 判断字符串是否符合数据库字段的命名
@@ -175,7 +213,7 @@ public class StringUtils {
      * @return 转换好的字符串
      */
     public static String camelToUnderline(String param) {
-        if (isEmpty(param)) {
+        if (isBlank(param)) {
             return EMPTY;
         }
         int len = param.length();
@@ -206,6 +244,7 @@ public class StringUtils {
         return StringUtils.firstToLowerCase(getMethodName);
     }
 
+
     /**
      * 字符串下划线转驼峰格式
      *
@@ -213,7 +252,7 @@ public class StringUtils {
      * @return 转换好的字符串
      */
     public static String underlineToCamel(String param) {
-        if (isEmpty(param)) {
+        if (isBlank(param)) {
             return EMPTY;
         }
         String temp = param.toLowerCase();
@@ -239,7 +278,7 @@ public class StringUtils {
      * @return 转换好的字符串
      */
     public static String firstToLowerCase(String param) {
-        if (isEmpty(param)) {
+        if (isBlank(param)) {
             return EMPTY;
         }
         return param.substring(0, 1).toLowerCase() + param.substring(1);
@@ -280,9 +319,10 @@ public class StringUtils {
      * @param args    填充参数
      */
     public static String sqlArgsFill(String content, Object... args) {
-        if (StringUtils.isNotEmpty(content) && ArrayUtils.isNotEmpty(args)) {
+        if (StringUtils.isNotBlank(content) && ArrayUtils.isNotEmpty(args)) {
             // 索引不能使用，因为 SQL 中的占位符数字与索引不相同
-            return replace(content, MP_SQL_PLACE_HOLDER, (m, i) -> sqlParam(args[Integer.parseInt(m.group("idx"))])).toString();
+            BiIntFunction<Matcher, CharSequence> handler = (m, i) -> sqlParam(args[Integer.parseInt(m.group("idx"))]);
+            return replace(content, MP_SQL_PLACE_HOLDER, handler).toString();
         }
         return content;
     }
@@ -355,14 +395,14 @@ public class StringUtils {
      */
     public static String quotaMarkList(Collection<?> coll) {
         return coll.stream().map(StringUtils::quotaMark)
-            .collect(joining(StringPool.COMMA, StringPool.LEFT_BRACKET, StringPool.RIGHT_BRACKET));
+                .collect(joining(StringPool.COMMA, StringPool.LEFT_BRACKET, StringPool.RIGHT_BRACKET));
     }
 
     /**
      * 拼接字符串第二个字符串第一个字母大写
      */
     public static String concatCapitalize(String concatStr, final String str) {
-        if (isEmpty(concatStr)) {
+        if (isBlank(concatStr)) {
             concatStr = EMPTY;
         }
         if (str == null || str.length() == 0) {
@@ -396,7 +436,7 @@ public class StringUtils {
      */
     public static boolean checkValNotNull(Object object) {
         if (object instanceof CharSequence) {
-            return isNotEmpty((CharSequence) object);
+            return isNotBlank((CharSequence) object);
         }
         return object != null;
     }
@@ -473,6 +513,7 @@ public class StringUtils {
     public static boolean endsWith(String str, String suffix) {
         return endsWith(str, suffix, false);
     }
+
 
     /**
      * Case insensitive check if a String ends with a specified suffix.
@@ -658,6 +699,7 @@ public class StringUtils {
         return list;
     }
 
+
     /**
      * 是否为CharSequence类型
      *
@@ -675,9 +717,9 @@ public class StringUtils {
      * @param propertyType 字段类型
      */
     public static String removeIsPrefixIfBoolean(String propertyName, Class<?> propertyType) {
-        if (isBoolean(propertyType) && propertyName.startsWith(IS)) {
+        if (ClassUtils.isBoolean(propertyType) && propertyName.startsWith(IS)) {
             String property = propertyName.replaceFirst(IS, EMPTY);
-            if (isEmpty(property)) {
+            if (isBlank(property)) {
                 return propertyName;
             } else {
                 String firstCharToLowerStr = firstCharToLower(property);
@@ -692,7 +734,9 @@ public class StringUtils {
      *
      * @param propertyCls ignore
      * @return ignore
+     * @deprecated 3.3.0 {@link ClassUtils#isBoolean(Class)}
      */
+    @Deprecated
     public static boolean isBoolean(Class<?> propertyCls) {
         return propertyCls != null && (boolean.class.isAssignableFrom(propertyCls) || Boolean.class.isAssignableFrom(propertyCls));
     }
@@ -798,8 +842,8 @@ public class StringUtils {
         char lastChar = 'a';
         for (char c : s.toCharArray()) {
             if ((Character.isWhitespace(lastChar)) && (!Character.isWhitespace(c))
-                && ('-' != c) && (buf.length() > 0)
-                && (buf.charAt(buf.length() - 1) != '-')) {
+                    && ('-' != c) && (buf.length() > 0)
+                    && (buf.charAt(buf.length() - 1) != '-')) {
                 buf.append(StringPool.DASH);
             }
             if ('_' == c) {

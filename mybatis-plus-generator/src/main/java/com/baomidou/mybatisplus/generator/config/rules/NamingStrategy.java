@@ -39,7 +39,7 @@ public enum NamingStrategy {
 
     public static String underlineToCamel(String name) {
         // 快速检查
-        if (StringUtils.isEmpty(name)) {
+        if (StringUtils.isBlank(name)) {
             // 没必要转换
             return StringPool.EMPTY;
         }
@@ -53,7 +53,7 @@ public enum NamingStrategy {
         String[] camels = tempName.split(ConstVal.UNDERLINE);
         // 跳过原始字符串中开头、结尾的下换线或双重下划线
         // 处理真正的驼峰片段
-        Arrays.stream(camels).filter(camel -> !StringUtils.isEmpty(camel)).forEach(camel -> {
+        Arrays.stream(camels).filter(camel -> !StringUtils.isBlank(camel)).forEach(camel -> {
             if (result.length() == 0) {
                 // 第一个驼峰片段，全部字母都小写
                 result.append(camel);
@@ -73,7 +73,7 @@ public enum NamingStrategy {
      * @return ignore
      */
     public static String removePrefix(String name, String... prefix) {
-        if (StringUtils.isEmpty(name)) {
+        if (StringUtils.isBlank(name)) {
             return StringPool.EMPTY;
         }
         if (null != prefix) {
@@ -94,7 +94,7 @@ public enum NamingStrategy {
      * @return ignore
      */
     public static boolean isPrefixContained(String name, String... prefix) {
-        if (null == prefix || StringUtils.isEmpty(name)) {
+        if (null == prefix || StringUtils.isBlank(name)) {
             return false;
         }
         return Arrays.stream(prefix).anyMatch(pf -> name.toLowerCase().matches(StringPool.HAT + pf.toLowerCase() + ".*"));
@@ -118,7 +118,7 @@ public enum NamingStrategy {
      * @return 转换后的字符串
      */
     public static String capitalFirst(String name) {
-        if (StringUtils.isNotEmpty(name)) {
+        if (StringUtils.isNotBlank(name)) {
             return name.substring(0, 1).toUpperCase() + name.substring(1);
         }
         return StringPool.EMPTY;

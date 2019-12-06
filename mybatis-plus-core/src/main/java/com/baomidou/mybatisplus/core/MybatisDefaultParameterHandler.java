@@ -16,10 +16,13 @@
 package com.baomidou.mybatisplus.core;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.reflection.MetaObject;
@@ -49,7 +52,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
     private final Configuration configuration;
 
     public MybatisDefaultParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
-        super(mappedStatement, processBatch(mappedStatement, parameterObject), boundSql);
+        super(mappedStatement, processParameter(mappedStatement, parameterObject), boundSql);
         this.mappedStatement = mappedStatement;
         this.configuration = mappedStatement.getConfiguration();
         this.typeHandlerRegistry = mappedStatement.getConfiguration().getTypeHandlerRegistry();
@@ -58,73 +61,67 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
     }
 
     /**
-     * 批量（填充主键 ID）
+     * 处理参数
      *
      * @param ms              MappedStatement
      * @param parameterObject 插入数据库对象
      * @return ignore
      */
-    protected static Object processBatch(MappedStatement ms, Object parameterObject) {
-        //检查 parameterObject
-        if (null == parameterObject
-            || ReflectionKit.isPrimitiveOrWrapper(parameterObject.getClass())
-            || parameterObject.getClass() == String.class) {
-            //todo 这里需要处理下类型判断,逻辑删除还会进入这里,但SqlCommandType为UPDATE
-            return null;
-        }
-        // 全局配置是否配置填充器
-        MetaObjectHandler metaObjectHandler = GlobalConfigUtils.getMetaObjectHandler(ms.getConfiguration());
-        boolean isFill = false;
-        boolean isInsert = false;
+    protected static Object processParameter(MappedStatement ms, Object parameterObject) {
         /* 只处理插入或更新操作 */
-        if (ms.getSqlCommandType() == SqlCommandType.INSERT) {
-            isFill = true;
-            isInsert = true;
-        } else if (ms.getSqlCommandType() == SqlCommandType.UPDATE &&
-            metaObjectHandler != null && metaObjectHandler.openUpdateFill()) {
-            isFill = true;
-        }
-        if (isFill) {
+        if (parameterObject != null
+            && (SqlCommandType.INSERT == ms.getSqlCommandType() || SqlCommandType.UPDATE == ms.getSqlCommandType())) {
+            //检查 parameterObject
+            if (ReflectionKit.isPrimitiveOrWrapper(parameterObject.getClass())
+                || parameterObject.getClass() == String.class) {
+                return parameterObject;
+            }
             Collection<Object> parameters = getParameters(parameterObject);
             if (null != parameters) {
-                List<Object> objList = new ArrayList<>();
-                for (Object parameter : parameters) {
-                    TableInfo tableInfo = TableInfoHelper.getTableInfo(parameter.getClass());
-                    if (null != tableInfo) {
-                        objList.add(populateKeys(metaObjectHandler, tableInfo, ms, parameter, isInsert));
-                    } else {
-                        /*
-                         * 非表映射类不处理
-                         */
-                        objList.add(parameter);
-                    }
-                }
-                return objList;
+                // 感觉这里可以稍微优化一下，理论上都是同一个.
+                parameters.stream().filter(Objects::nonNull).forEach(obj -> process(ms, obj));
             } else {
-                TableInfo tableInfo = null;
-                if (parameterObject instanceof Map) {
-                    Map<?, ?> map = (Map<?, ?>) parameterObject;
-                    if (map.containsKey(Constants.ENTITY)) {
-                        Object et = map.get(Constants.ENTITY);
-                        if (et != null) {
-                            if (et instanceof Map) {
-                                Map<?, ?> realEtMap = (Map<?, ?>) et;
-                                if (realEtMap.containsKey(Constants.MP_OPTLOCK_ET_ORIGINAL)) {
-                                    tableInfo = TableInfoHelper.getTableInfo(realEtMap.get(Constants.MP_OPTLOCK_ET_ORIGINAL).getClass());
-                                }
-                            } else {
-                                tableInfo = TableInfoHelper.getTableInfo(et.getClass());
-                            }
-                        }
-                    }
-                } else {
-                    tableInfo = TableInfoHelper.getTableInfo(parameterObject.getClass());
-                }
-                return populateKeys(metaObjectHandler, tableInfo, ms, parameterObject, isInsert);
+                process(ms, parameterObject);
             }
         }
         return parameterObject;
     }
+
+    private static void process(MappedStatement ms, Object parameterObject) {
+        TableInfo tableInfo = null;
+        Object entity = parameterObject;
+        if (parameterObject instanceof Map) {
+            Map<?, ?> map = (Map<?, ?>) parameterObject;
+            if (map.containsKey(Constants.ENTITY)) {
+                Object et = map.get(Constants.ENTITY);
+                if (et != null) {
+                    if (et instanceof Map) {
+                        Map<?, ?> realEtMap = (Map<?, ?>) et;
+                        if (realEtMap.containsKey(Constants.MP_OPTLOCK_ET_ORIGINAL)) {
+                            entity = realEtMap.get(Constants.MP_OPTLOCK_ET_ORIGINAL);
+                            tableInfo = TableInfoHelper.getTableInfo(entity.getClass());
+                        }
+                    } else {
+                        entity = et;
+                        tableInfo = TableInfoHelper.getTableInfo(entity.getClass());
+                    }
+                }
+            }
+        } else {
+            tableInfo = TableInfoHelper.getTableInfo(parameterObject.getClass());
+        }
+        if (tableInfo != null) {
+            //到这里就应该转换到实体参数对象了,因为填充和ID处理都是争对实体对象处理的,不用传递原参数对象下去.
+            MetaObject metaObject = ms.getConfiguration().newMetaObject(entity);
+            if (SqlCommandType.INSERT == ms.getSqlCommandType()) {
+                populateKeys(tableInfo, metaObject, entity);
+                insertFill(metaObject, tableInfo);
+            } else {
+                updateFill(metaObject, tableInfo);
+            }
+        }
+    }
+
 
     /**
      * 处理正常批量插入逻辑
@@ -155,47 +152,59 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
     }
 
     /**
-     * 自定义元对象填充控制器
+     * 填充主键
      *
-     * @param metaObjectHandler 元数据填充处理器
-     * @param tableInfo         数据库表反射信息
-     * @param ms                MappedStatement
-     * @param parameterObject   插入数据库对象
-     * @return Object
+     * @param tableInfo  数据库表反射信息
+     * @param metaObject 元数据对象
+     * @param entity     实体信息
      */
-    protected static Object populateKeys(MetaObjectHandler metaObjectHandler, TableInfo tableInfo,
-                                         MappedStatement ms, Object parameterObject, boolean isInsert) {
-        if (null == tableInfo) {
-            /* 不处理 */
-            return parameterObject;
-        }
-        /* 自定义元对象填充控制器 */
-        MetaObject metaObject = ms.getConfiguration().newMetaObject(parameterObject);
-        // 填充主键
-        if (isInsert && !StringUtils.isEmpty(tableInfo.getKeyProperty())
-            && null != tableInfo.getIdType() && tableInfo.getIdType().getKey() >= 3) {
-            Object idValue = metaObject.getValue(tableInfo.getKeyProperty());
-            /* 自定义 ID */
+    protected static void populateKeys(TableInfo tableInfo, MetaObject metaObject, Object entity) {
+        final IdType idType = tableInfo.getIdType();
+        final String keyProperty = tableInfo.getKeyProperty();
+        if (StringUtils.isNotBlank(keyProperty) && null != idType && idType.getKey() >= 3) {
+            final IdentifierGenerator identifierGenerator = GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration()).getIdentifierGenerator();
+            Object idValue = metaObject.getValue(keyProperty);
             if (StringUtils.checkValNull(idValue)) {
-                if (tableInfo.getIdType() == IdType.ID_WORKER) {
-                    metaObject.setValue(tableInfo.getKeyProperty(), IdWorker.getId());
-                } else if (tableInfo.getIdType() == IdType.ID_WORKER_STR) {
-                    metaObject.setValue(tableInfo.getKeyProperty(), IdWorker.getIdStr());
-                } else if (tableInfo.getIdType() == IdType.UUID) {
-                    metaObject.setValue(tableInfo.getKeyProperty(), IdWorker.get32UUID());
+                if (idType.getKey() == IdType.ASSIGN_ID.getKey()) {
+                    if (Number.class.isAssignableFrom(tableInfo.getKeyType())) {
+                        metaObject.setValue(keyProperty, identifierGenerator.nextId(entity));
+                    } else {
+                        metaObject.setValue(keyProperty, identifierGenerator.nextId(entity).toString());
+                    }
+                } else if (idType.getKey() == IdType.ASSIGN_UUID.getKey()) {
+                    metaObject.setValue(keyProperty, identifierGenerator.nextUUID(entity));
                 }
             }
         }
-        if (metaObjectHandler != null) {
-            if (isInsert && metaObjectHandler.openInsertFill()) {
-                // 插入填充
-                metaObjectHandler.insertFill(metaObject);
-            } else if (!isInsert) {
-                // 更新填充
+    }
+
+    protected static void insertFill(MetaObject metaObject, TableInfo tableInfo) {
+        GlobalConfigUtils.getMetaObjectHandler(tableInfo.getConfiguration()).ifPresent(metaObjectHandler -> {
+            if (metaObjectHandler.openInsertFill()) {
+                if (tableInfo.isWithInsertFill()) {
+                    metaObjectHandler.insertFill(metaObject);
+                } else {
+                    // 兼容旧操作 id类型为input或none的要用填充器处理一下
+                    if (metaObjectHandler.compatibleFillId()) {
+                        String keyProperty = tableInfo.getKeyProperty();
+                        if (StringUtils.isNotBlank(keyProperty)) {
+                            Object value = metaObject.getValue(keyProperty);
+                            if (value == null && (IdType.NONE == tableInfo.getIdType() || IdType.INPUT == tableInfo.getIdType())) {
+                                metaObjectHandler.insertFill(metaObject);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    protected static void updateFill(MetaObject metaObject, TableInfo tableInfo) {
+        GlobalConfigUtils.getMetaObjectHandler(tableInfo.getConfiguration()).ifPresent(metaObjectHandler -> {
+            if (metaObjectHandler.openUpdateFill() && tableInfo.isWithUpdateFill()) {
                 metaObjectHandler.updateFill(metaObject);
             }
-        }
-        return metaObject.getOriginalObject();
+        });
     }
 
     @Override

@@ -36,7 +36,7 @@ class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Query<K
     /**
      * 查询字段
      */
-    private var sqlSelect: String? = null
+    private var sqlSelect: SharedString = SharedString()
 
     constructor(entity: T) {
         this.setEntity(entity)
@@ -49,7 +49,7 @@ class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Query<K
         this.initNeed()
     }
 
-    internal constructor(entity: T, entityClass: Class<T>?, sqlSelect: String?, paramNameSeq: AtomicInteger,
+    internal constructor(entity: T, entityClass: Class<T>, sqlSelect: SharedString, paramNameSeq: AtomicInteger,
                          paramNameValuePairs: Map<String, Any>, mergeSegments: MergeSegments,
                          lastSql: SharedString, sqlComment: SharedString) {
         this.setEntity(entity)
@@ -70,7 +70,7 @@ class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Query<K
     @SafeVarargs
     override fun select(vararg columns: KProperty<*>): KtQueryWrapper<T> {
         if (ArrayUtils.isNotEmpty(columns)) {
-            this.sqlSelect = this.columnsToString(false, *columns)
+            this.sqlSelect.stringValue = columnsToString(false, *columns)
         }
         return typedThis
     }
@@ -98,12 +98,12 @@ class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Query<K
      */
     override fun select(entityClass: Class<T>, predicate: Predicate<TableFieldInfo>): KtQueryWrapper<T> {
         this.entityClass = entityClass
-        this.sqlSelect = TableInfoHelper.getTableInfo(checkEntityClass).chooseSelect(predicate)
+        this.sqlSelect.stringValue = TableInfoHelper.getTableInfo(checkEntityClass).chooseSelect(predicate)
         return typedThis
     }
 
     override fun getSqlSelect(): String? {
-        return sqlSelect
+        return sqlSelect.stringValue
     }
 
     /**
@@ -112,7 +112,7 @@ class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Query<K
      * 故 sqlSelect 不向下传递
      */
     override fun instance(): KtQueryWrapper<T> {
-        return KtQueryWrapper(entity, entityClass, null, paramNameSeq, paramNameValuePairs, expression,
+        return KtQueryWrapper(entity, entityClass, sqlSelect, paramNameSeq, paramNameValuePairs, expression,
             SharedString.emptyString(), SharedString.emptyString())
     }
 }

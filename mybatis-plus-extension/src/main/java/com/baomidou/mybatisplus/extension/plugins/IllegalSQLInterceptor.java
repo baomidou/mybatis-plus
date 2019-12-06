@@ -260,7 +260,7 @@ public class IllegalSQLInterceptor implements Interceptor {
      */
     public static List<IndexInfo> getIndexInfos(String key, String dbName, String tableName, Connection conn) {
         List<IndexInfo> indexInfos = null;
-        if (StringUtils.isNotEmpty(key)) {
+        if (StringUtils.isNotBlank(key)) {
             indexInfos = indexInfoMap.get(key);
         }
         if (indexInfos == null || indexInfos.isEmpty()) {
@@ -279,7 +279,7 @@ public class IllegalSQLInterceptor implements Interceptor {
                         indexInfos.add(indexInfo);
                     }
                 }
-                if (StringUtils.isNotEmpty(key)) {
+                if (StringUtils.isNotBlank(key)) {
                     indexInfoMap.put(key, indexInfos);
                 }
             } catch (SQLException e) {
@@ -319,7 +319,7 @@ public class IllegalSQLInterceptor implements Interceptor {
         } else if (statement instanceof Update) {
             Update update = (Update) statement;
             where = update.getWhere();
-            table = update.getTables().get(0);
+            table = update.getTable();
             joins = update.getJoins();
         } else if (statement instanceof Delete) {
             Delete delete = (Delete) statement;

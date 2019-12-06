@@ -15,35 +15,34 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
-import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 import lombok.Getter;
 import org.apache.ibatis.reflection.property.PropertyNamer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+/**
+ * 测试 Lambda 解析类
+ */
 class LambdaUtilsTest {
 
+    /**
+     * 测试解析
+     */
     @Test
     void testResolve() {
-        SerializedLambda lambda = LambdaUtils.resolve(TestPojo::getId);
-        Assertions.assertEquals(TestPojo.class.getName(), lambda.getImplClassName());
-        Assertions.assertEquals("getId", lambda.getImplMethodName());
-        Assertions.assertEquals("id", PropertyNamer.methodToProperty(lambda.getImplMethodName()));
+        SerializedLambda lambda = LambdaUtils.resolve(TestModel::getId);
+        assertEquals(Parent.class.getName(), lambda.getImplClassName());
+        assertEquals("getId", lambda.getImplMethodName());
+        assertEquals("id", PropertyNamer.methodToProperty(lambda.getImplMethodName()));
+        assertEquals(TestModel.class, lambda.getInstantiatedType());
 
-        Cond<TestPojo> cond = new Cond<>();
-        System.out.println(cond.eq(TestPojo::getId, 123).toString());
-
-        // 如果连着写，必须指定后者的泛型
-        new Cond<>().eq(TestPojo::getId, 123)
-            .eq(TestPojo::getId, 123)
-            .eq(TestPojo::getId, 123);
-
-        new Cond<TestPojo>() {{
-            eq(TestPojo::getId, 123);
-            eq(TestPojo::getId, 123);
-            eq(TestPojo::getId, 456);
-        }};
+        // 测试接口泛型获取
+        lambda = new TestModelHolder().toLambda();
+        // 无法从泛型获取到实现类，即使改泛型参数已经被实现
+        assertEquals(Named.class, lambda.getInstantiatedType());
     }
 
     /**
@@ -51,36 +50,46 @@ class LambdaUtilsTest {
      */
     @Test
     void test() {
-        assertInstantiatedMethodTypeIsReference(LambdaUtils.resolve(TestPojo::getId));
+        assertInstantiatedMethodTypeIsReference(LambdaUtils.resolve(TestModel::getId));
         assertInstantiatedMethodTypeIsReference(LambdaUtils.resolve(Integer::byteValue));
     }
 
+    /**
+     * 断言当前方法所在实例的方法类型为引用类型
+     *
+     * @param lambda 解析后的 lambda
+     */
     private void assertInstantiatedMethodTypeIsReference(SerializedLambda lambda) {
-        Assertions.assertNotNull(lambda.getInstantiatedMethodType());
+        Assertions.assertNotNull(lambda.getInstantiatedType());
     }
 
+    /**
+     * 用于测试的 Model
+     */
+    @Getter
+    private static class TestModel extends Parent implements Named {
+        private String name;
+    }
 
     @Getter
-    private class TestPojo {
-
+    private static abstract class Parent {
         private int id;
     }
 
-    public class Cond<T> {
+    // 处理 ISSUE:https://gitee.com/baomidou/mybatis-plus/issues/I13Y8Y，由于 java 本身处理的问题，这里无法获取到实例
+    private abstract static class BaseHolder<T extends Named> {
 
-        private StringBuilder sb = new StringBuilder();
-
-        // 这个 TYPE 类型和 T 就没有关系了 ；
-        // 如果有需要的话，使用 extends 来建立关系，保证class一致，稍微做点编写检查
-        <TYPE extends T> Cond<T> eq(SFunction<TYPE, ?> prop, Object val) {
-            SerializedLambda lambda = LambdaUtils.resolve(prop);
-            this.sb.append(lambda.getImplMethodName()).append(" = ").append(val);
-            return this;
+        SerializedLambda toLambda() {
+            return LambdaUtils.resolve(T::getName);
         }
 
-        @Override
-        public String toString() {
-            return sb.toString();
-        }
     }
+
+    private static class TestModelHolder extends BaseHolder<TestModel> {
+    }
+
+    private interface Named {
+        String getName();
+    }
+
 }

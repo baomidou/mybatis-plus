@@ -103,11 +103,9 @@ public class MybatisPlusConfig {
         });
         sqlExplainInterceptor.setSqlParserList(sqlParserList);
         OptimisticLockerInterceptor optLock = new OptimisticLockerInterceptor();
-        sqlSessionFactory.setPlugins(new Interceptor[]{
-            pagination,
+        sqlSessionFactory.setPlugins(pagination,
             optLock,
-            sqlExplainInterceptor
-        });
+            sqlExplainInterceptor);
         globalConfig.setMetaObjectHandler(new H2MetaObjectHandler());
         globalConfig.setSqlInjector(new DefaultSqlInjector() {
 

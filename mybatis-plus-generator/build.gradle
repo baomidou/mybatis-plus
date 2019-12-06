@@ -9,9 +9,9 @@ dependencies {
     testCompile "${lib.postgresql}"
     testCompile lib.oracle as ConfigurableFileTree
     testCompile lib.dm as ConfigurableFileTree
+    testCompile lib.kingbase as ConfigurableFileTree
     testCompile "${lib.h2}"
     testCompile "${lib.mysql}"
     testCompile "${lib.sqlite}"
-    testCompile "${lib.'logback-classic'}"
     testCompile "${lib.'swagger-annotations'}"
 }

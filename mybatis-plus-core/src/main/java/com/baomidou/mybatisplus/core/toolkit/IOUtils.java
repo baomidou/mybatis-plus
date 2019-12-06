@@ -33,7 +33,9 @@ import java.sql.Statement;
  *
  * @author Caratacus
  * @since 2016-11-23
+ * @deprecated 3.3.0
  */
+@Deprecated
 public class IOUtils {
 
     private static final Log logger = LogFactory.getLog(IOUtils.class);

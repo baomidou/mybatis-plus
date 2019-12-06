@@ -46,7 +46,6 @@ import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.RowBounds;
-import org.jetbrains.annotations.NotNull;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -55,6 +54,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 /**
  * 分页拦截器
@@ -71,24 +71,25 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
     /**
      * COUNT SQL 解析
      */
-    private ISqlParser countSqlParser;
+    protected ISqlParser countSqlParser;
     /**
-     * 溢出总页数，设置第一页
+     * 溢出总页数后是否进行处理
      */
-    private boolean overflow = false;
+    protected boolean overflow = false;
     /**
      * 单页限制 500 条，小于 0 如 -1 不受限制
      */
-    private long limit = 500L;
+    protected long limit = 500L;
     /**
-     * 方言类型
+     * 方言类型(数据库名,全小写) <br>
+     * 如果用的我们支持分页的数据库但获取数据库类型不正确则可以配置该值进行校正
      */
-    private String dialectType;
+    protected String dialectType;
     /**
      * 方言实现类<br>
      * 注意！实现 com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect 接口的子类
      */
-    private String dialectClazz;
+    protected String dialectClazz;
 
     /**
      * 查询SQL拼接Order By
@@ -128,17 +129,17 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
         return originalSql;
     }
 
-    @NotNull
     private static List<OrderByElement> addOrderByElements(List<OrderItem> orderList, List<OrderByElement> orderByElements) {
-        if (orderByElements == null || orderByElements.isEmpty()) {
-            orderByElements = new ArrayList<>(orderList.size());
-        }
-        for (OrderItem item : orderList) {
-            OrderByElement element = new OrderByElement();
-            element.setExpression(new Column(item.getColumn()));
-            element.setAsc(item.isAsc());
-            orderByElements.add(element);
-        }
+        orderByElements = CollectionUtils.isEmpty(orderByElements) ? new ArrayList<>(orderList.size()) : orderByElements;
+        List<OrderByElement> orderByElementList = orderList.stream()
+            .filter(item -> StringUtils.isNotBlank(item.getColumn()))
+            .map(item -> {
+                OrderByElement element = new OrderByElement();
+                element.setExpression(new Column(item.getColumn()));
+                element.setAsc(item.isAsc());
+                return element;
+            }).collect(Collectors.toList());
+        orderByElements.addAll(orderByElementList);
         return orderByElements;
     }
 
@@ -185,21 +186,19 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
             return invocation.proceed();
         }
 
-        /*
-         * 处理单页条数限制
-         */
-        if (limit > 0 && limit <= page.getSize()) {
-            page.setSize(limit);
+        if (this.limit > 0 && this.limit <= page.getSize()) {
+            //处理单页条数限制
+            handlerLimit(page);
         }
 
         String originalSql = boundSql.getSql();
         Connection connection = (Connection) invocation.getArgs()[0];
-        DbType dbType = StringUtils.isNotEmpty(dialectType) ? DbType.getDbType(dialectType)
+        DbType dbType = StringUtils.isNotBlank(dialectType) ? DbType.getDbType(dialectType)
             : JdbcUtils.getDbType(connection.getMetaData().getURL());
 
         if (page.isSearchCount()) {
             SqlInfo sqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), countSqlParser, originalSql);
-            this.queryTotal(overflow, sqlInfo.getSql(), mappedStatement, boundSql, page, connection);
+            this.queryTotal(sqlInfo.getSql(), mappedStatement, boundSql, page, connection);
             if (page.getTotal() <= 0) {
                 return null;
             }
@@ -217,6 +216,15 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
     }
 
     /**
+     * 处理超出分页条数限制,默认归为限制数
+     *
+     * @param page IPage
+     */
+    protected void handlerLimit(IPage<?> page) {
+        page.setSize(this.limit);
+    }
+
+    /**
      * 查询总记录条数
      *
      * @param sql             count sql
@@ -225,7 +233,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
      * @param page            IPage
      * @param connection      Connection
      */
-    protected void queryTotal(boolean overflowCurrent, String sql, MappedStatement mappedStatement, BoundSql boundSql, IPage<?> page, Connection connection) {
+    protected void queryTotal(String sql, MappedStatement mappedStatement, BoundSql boundSql, IPage<?> page, Connection connection) {
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             DefaultParameterHandler parameterHandler = new MybatisDefaultParameterHandler(mappedStatement, boundSql.getParameterObject(), boundSql);
             parameterHandler.setParameters(statement);
@@ -236,17 +244,22 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
                 }
             }
             page.setTotal(total);
-            /*
-             * 溢出总页数，设置第一页
-             */
-            long pages = page.getPages();
-            if (overflowCurrent && page.getCurrent() > pages) {
-                // 设置为第一条
-                page.setCurrent(1);
+            if (this.overflow && page.getCurrent() > page.getPages()) {
+                //溢出总页数处理
+                handlerOverflow(page);
             }
         } catch (Exception e) {
             throw ExceptionUtils.mpe("Error: Method queryTotal execution error of sql : \n %s \n", e, sql);
         }
+    }
+
+    /**
+     * 处理页数溢出,默认设置为第一页
+     *
+     * @param page IPage
+     */
+    protected void handlerOverflow(IPage<?> page) {
+        page.setCurrent(1);
     }
 
     @Override
@@ -261,12 +274,11 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
     public void setProperties(Properties prop) {
         String dialectType = prop.getProperty("dialectType");
         String dialectClazz = prop.getProperty("dialectClazz");
-        if (StringUtils.isNotEmpty(dialectType)) {
+        if (StringUtils.isNotBlank(dialectType)) {
             this.dialectType = dialectType;
         }
-        if (StringUtils.isNotEmpty(dialectClazz)) {
+        if (StringUtils.isNotBlank(dialectClazz)) {
             this.dialectClazz = dialectClazz;
         }
     }
-
 }

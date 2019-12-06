@@ -37,7 +37,7 @@ class ReflectionKitTest {
         private transient String test;
 
         @SuppressWarnings("unused")
-		private static String testStatic;
+        private static String testStatic;
 
         private String name;
 
@@ -79,19 +79,6 @@ class ReflectionKitTest {
     }
 
     @Test
-    void testGetMethodCapitalize() throws NoSuchFieldException {
-        Field field = C.class.getDeclaredField("sex");
-        String getMethod = ReflectionKit.getMethodCapitalize(field, "sex");
-        Assertions.assertEquals("getSex", getMethod);
-        field = A.class.getDeclaredField("testWrap");
-        getMethod = ReflectionKit.getMethodCapitalize(field, "testWrap");
-        Assertions.assertEquals("getTestWrap", getMethod);
-        field = A.class.getDeclaredField("testSimple");
-        getMethod = ReflectionKit.getMethodCapitalize(field, "testSimple");
-        Assertions.assertEquals("isTestSimple", getMethod);
-    }
-
-    @Test
     void testGetMethodValue() {
         C c = new C();
         c.setSex("女");
@@ -102,7 +89,7 @@ class ReflectionKitTest {
     }
 
     @Test
-    void testIsPrimitiveOrWrapper(){
+    void testIsPrimitiveOrWrapper() {
         Assertions.assertFalse(ReflectionKit.isPrimitiveOrWrapper(String.class));
         Assertions.assertTrue(ReflectionKit.isPrimitiveOrWrapper(Boolean.class));
         Assertions.assertTrue(ReflectionKit.isPrimitiveOrWrapper(boolean.class));

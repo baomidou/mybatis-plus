@@ -72,7 +72,7 @@ public abstract class AbstractTemplateEngine {
                 // 自定义内容
                 InjectionConfig injectionConfig = getConfigBuilder().getInjectionConfig();
                 if (null != injectionConfig) {
-                    injectionConfig.initMap();
+                    injectionConfig.initTableMap(tableInfo);
                     objectMap.put("cfg", injectionConfig.getMap());
                     List<FileOutConfig> focList = injectionConfig.getFileOutConfigList();
                     if (CollectionUtils.isNotEmpty(focList)) {
@@ -166,7 +166,7 @@ public abstract class AbstractTemplateEngine {
     public void open() {
         String outDir = getConfigBuilder().getGlobalConfig().getOutputDir();
         if (getConfigBuilder().getGlobalConfig().isOpen()
-            && StringUtils.isNotEmpty(outDir)) {
+            && StringUtils.isNotBlank(outDir)) {
             try {
                 String osName = System.getProperty("os.name");
                 if (osName != null) {
@@ -227,11 +227,20 @@ public abstract class AbstractTemplateEngine {
         objectMap.put("superServiceClass", getSuperClassName(config.getSuperServiceClass()));
         objectMap.put("superServiceImplClassPackage", config.getSuperServiceImplClass());
         objectMap.put("superServiceImplClass", getSuperClassName(config.getSuperServiceImplClass()));
-        objectMap.put("superControllerClassPackage", config.getSuperControllerClass());
+        objectMap.put("superControllerClassPackage", verifyClassPacket(config.getSuperControllerClass()));
         objectMap.put("superControllerClass", getSuperClassName(config.getSuperControllerClass()));
         return Objects.isNull(config.getInjectionConfig()) ? objectMap : config.getInjectionConfig().prepareObjectMap(objectMap);
     }
 
+    /**
+     * 用于渲染对象MAP信息 {@link #getObjectMap(TableInfo)} 时的superClassPacket非空校验
+     *
+     * @param classPacket ignore
+     * @return ignore
+     */
+    private String verifyClassPacket(String classPacket) {
+        return StringUtils.isBlank(classPacket) ? null : classPacket;
+    }
 
     /**
      * 获取类名
@@ -240,7 +249,7 @@ public abstract class AbstractTemplateEngine {
      * @return ignore
      */
     private String getSuperClassName(String classPath) {
-        if (StringUtils.isEmpty(classPath)) {
+        if (StringUtils.isBlank(classPath)) {
             return null;
         }
         return classPath.substring(classPath.lastIndexOf(StringPool.DOT) + 1);

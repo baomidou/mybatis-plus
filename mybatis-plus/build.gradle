@@ -8,19 +8,15 @@ dependencies {
     testCompile "${lib.'spring-test'}"
     testCompile "${lib.fastjson}"
 
-    testCompile "${lib.hikaricp}"
-    testCompile "${lib.'commons-dbcp2'}"
-    testCompile "${lib.druid}"
-    testCompile "${lib.tomcatjdbc}"
-
     testCompile "${lib.h2}"
     testCompile "${lib.sqlserver}"
     testCompile "${lib.postgresql}"
     testCompile lib.oracle as ConfigurableFileTree
     testCompile "${lib.mysql}"
     testCompile "${lib.jackson}"
-    testCompile "${lib.'logback-classic'}"
 
     testCompile "${lib.'spring-context-support'}"
     testCompile "${lib.'spring-jdbc'}"
+    testCompile 'javax.annotation:javax.annotation-api:1.3.2'
+
 }

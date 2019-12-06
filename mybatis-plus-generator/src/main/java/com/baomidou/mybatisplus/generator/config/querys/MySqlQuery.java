@@ -37,7 +37,7 @@ public class MySqlQuery extends AbstractDbQuery {
 
     @Override
     public String tablesSql() {
-        return "show table status";
+        return "show table status WHERE 1=1 ";
     }
 
 

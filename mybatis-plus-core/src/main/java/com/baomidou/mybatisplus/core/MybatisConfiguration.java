@@ -17,13 +17,13 @@ package com.baomidou.mybatisplus.core;
 
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.executor.MybatisBatchExecutor;
+import com.baomidou.mybatisplus.core.executor.MybatisCachingExecutor;
 import com.baomidou.mybatisplus.core.executor.MybatisReuseExecutor;
 import com.baomidou.mybatisplus.core.executor.MybatisSimpleExecutor;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.binding.MapperRegistry;
-import org.apache.ibatis.executor.CachingExecutor;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
@@ -49,15 +49,14 @@ public class MybatisConfiguration extends Configuration {
      */
     protected final MybatisMapperRegistry mybatisMapperRegistry = new MybatisMapperRegistry(this);
 
-    // TODO 自己的 GlobalConfig
-    @Setter
-    @Getter
-    private GlobalConfig globalConfig = GlobalConfigUtils.defaults();
-
     public MybatisConfiguration(Environment environment) {
         this();
         this.environment = environment;
     }
+
+    @Setter
+    @Getter
+    private GlobalConfig globalConfig = GlobalConfigUtils.defaults();
 
     /**
      * 初始化调用
@@ -149,7 +148,7 @@ public class MybatisConfiguration extends Configuration {
         }
         getLanguageRegistry().setDefaultDriverClass(driver);
     }
-    
+
     @Override
     public Executor newExecutor(Transaction transaction, ExecutorType executorType) {
         executorType = executorType == null ? defaultExecutorType : executorType;
@@ -163,7 +162,7 @@ public class MybatisConfiguration extends Configuration {
             executor = new MybatisSimpleExecutor(this, transaction);
         }
         if (cacheEnabled) {
-            executor = new CachingExecutor(executor);
+            executor = new MybatisCachingExecutor(executor);
         }
         executor = (Executor) interceptorChain.pluginAll(executor);
         return executor;
