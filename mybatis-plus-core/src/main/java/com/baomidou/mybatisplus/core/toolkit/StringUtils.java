@@ -146,10 +146,7 @@ public final class StringUtils {
      * @return 返回猜测的名称
      */
     public static String guessGetterName(String name, Class<?> type) {
-        if (ClassUtils.isBoolean(type)) {
-            return name.startsWith("is") ? name : "is" + upperFirst(name);
-        }
-        return "get" + upperFirst(name);
+        return boolean.class == type ? name.startsWith("is") ? name : "is" + upperFirst(name) : "get" + upperFirst(name);
     }
 
     /**
