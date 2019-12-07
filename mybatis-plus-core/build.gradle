@@ -6,5 +6,7 @@ dependencies {
 
     implementation "${lib.cglib}"
     implementation "${lib.'spring-aop'}"
+    implementation "${lib.'mybatis-ehcache'}"
+    implementation "${lib.'mybatis-redis'}"
 
 }
