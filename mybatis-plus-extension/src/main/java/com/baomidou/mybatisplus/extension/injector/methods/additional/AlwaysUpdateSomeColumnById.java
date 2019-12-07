@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.extension.injector.methods.additional;
 
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
+import lombok.NoArgsConstructor;
 
 import java.util.function.Predicate;
 
@@ -25,6 +26,7 @@ import java.util.function.Predicate;
  * @deprecated
  */
 @Deprecated
+@NoArgsConstructor
 public class AlwaysUpdateSomeColumnById extends com.baomidou.mybatisplus.extension.injector.methods.AlwaysUpdateSomeColumnById {
 
     public AlwaysUpdateSomeColumnById(Predicate<TableFieldInfo> predicate) {
