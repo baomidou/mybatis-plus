@@ -2,6 +2,7 @@ package com.baomidou.mybatisplus.test.h2.tenant.model;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -10,6 +11,7 @@ import java.io.Serializable;
  */
 @Data
 @TableName(value = "student")
+@NoArgsConstructor
 public class Student implements Serializable {
 
     private Long id;
@@ -18,4 +20,7 @@ public class Student implements Serializable {
 
     private String name;
 
+    public Student(String name) {
+        this.name = name;
+    }
 }

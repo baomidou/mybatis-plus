@@ -1,6 +1,10 @@
 package com.baomidou.mybatisplus.test.h2.tenant;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.h2.tenant.mapper.StudentMapper;
+import com.baomidou.mybatisplus.test.h2.tenant.model.Student;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -21,11 +25,31 @@ class TenantTest {
     private StudentMapper studentMapper;
 
     @Test
-    void test(){
+    void testSimple(){
         TenantConfig.TENANT_ID = 2L;
-        studentMapper.selectById(1L);
+        Student student1 = studentMapper.selectById(1L);
+        Assertions.assertNull(student1);
+        student1 = studentMapper.selectById(1L);
+        Assertions.assertNull(student1);
         TenantConfig.TENANT_ID = 1L;
-        studentMapper.selectById(1L);
+        Student student2 = studentMapper.selectById(1L);
+        Assertions.assertNotNull(student2);
+        student2 = studentMapper.selectById(1L);
+        Assertions.assertNotNull(student2);
+    }
+
+    @Test
+    void testPage(){
+        TenantConfig.TENANT_ID = 2L;
+        Page<Student> page1 = studentMapper.selectPage(new Page<>(0, 10), new QueryWrapper<>());
+        Assertions.assertEquals(page1.getTotal(),1);
+        page1 = studentMapper.selectPage(new Page<>(0, 10), new QueryWrapper<>());
+        Assertions.assertEquals(page1.getTotal(),1);
+        TenantConfig.TENANT_ID = 3L;
+        Page<Student> page2 = studentMapper.selectPage(new Page<>(0,10), new QueryWrapper<>());
+        Assertions.assertEquals(page2.getTotal(),0);
+        page2 = studentMapper.selectPage(new Page<>(0,10), new QueryWrapper<>());
+        Assertions.assertEquals(page2.getTotal(),0);
     }
 
 }
