@@ -141,14 +141,14 @@ public interface IPage<T> extends Serializable {
     IPage<T> setTotal(long total);
 
     /**
-     * 当前分页总页数
+     * 获取每页显示条数
      *
-     * @return 总页数
+     * @return 每页显示条数
      */
     long getSize();
 
     /**
-     * 设置当前分页总页数
+     * 设置每页显示条数
      */
     IPage<T> setSize(long size);
 
