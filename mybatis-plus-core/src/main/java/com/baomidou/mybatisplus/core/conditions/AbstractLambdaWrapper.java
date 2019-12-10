@@ -43,15 +43,6 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
     private Map<String, ColumnCache> columnMap = null;
     private boolean initColumnMap = false;
 
-    @Override
-    protected void initEntityClass() {
-        super.initEntityClass();
-        if (entityClass != null) {
-            columnMap = LambdaUtils.getColumnMap(entityClass);
-            initColumnMap = true;
-        }
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     protected String columnsToString(SFunction<T, ?>... columns) {
@@ -86,7 +77,7 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
      */
     private String getColumn(SerializedLambda lambda, boolean onlyColumn) throws MybatisPlusException {
         String fieldName = PropertyNamer.methodToProperty(lambda.getImplMethodName());
-        Class aClass = lambda.getInstantiatedType();
+        Class<?> aClass = lambda.getInstantiatedType();
         if (!initColumnMap) {
             columnMap = LambdaUtils.getColumnMap(aClass);
         }
@@ -95,5 +86,15 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
         Assert.notNull(columnCache, "can not find lambda cache for this property [%s] of entity [%s]",
             fieldName, aClass.getName());
         return onlyColumn ? columnCache.getColumn() : columnCache.getColumnSelect();
+    }
+
+    @Override
+    protected void initNeed() {
+        super.initNeed();
+        final Class<T> entityClass = getEntityClass();
+        if (entityClass != null) {
+            initColumnMap = true;
+            columnMap = LambdaUtils.getColumnMap(entityClass);
+        }
     }
 }

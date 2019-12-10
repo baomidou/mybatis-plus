@@ -65,12 +65,12 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     /**
      * 数据库表映射实体类
      */
-    protected T entity;
+    private T entity;
     protected MergeSegments expression;
     /**
-     * 实体类型
+     * 实体类型(主要用于确定泛型以及取TableInfo缓存)
      */
-    protected Class<T> entityClass;
+    private Class<T> entityClass;
 
     @Override
     public T getEntity() {
@@ -79,19 +79,21 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
 
     public Children setEntity(T entity) {
         this.entity = entity;
-        this.initEntityClass();
         return typedThis;
     }
 
-    protected void initEntityClass() {
-        if (this.entityClass == null && this.entity != null) {
-            this.entityClass = (Class<T>) entity.getClass();
+    protected Class<T> getEntityClass() {
+        if (entityClass == null && entity != null) {
+            entityClass = (Class<T>) entity.getClass();
         }
+        return entityClass;
     }
 
-    protected Class<T> getCheckEntityClass() {
-        Assert.notNull(entityClass, "entityClass must not null,please set entity before use this method!");
-        return entityClass;
+    public Children setEntityClass(Class<T> entityClass) {
+        if (entityClass != null) {
+            this.entityClass = entityClass;
+        }
+        return typedThis;
     }
 
     @Override
@@ -405,7 +407,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     /**
      * 必要的初始化
      */
-    protected final void initNeed() {
+    protected void initNeed() {
         paramNameSeq = new AtomicInteger(0);
         paramNameValuePairs = new HashMap<>(16);
         expression = new MergeSegments();

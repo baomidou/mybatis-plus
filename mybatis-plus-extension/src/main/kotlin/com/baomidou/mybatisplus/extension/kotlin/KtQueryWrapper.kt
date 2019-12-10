@@ -39,20 +39,19 @@ class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Query<K
     private var sqlSelect: SharedString = SharedString()
 
     constructor(entity: T) {
-        this.setEntity(entity)
+        this.entity = entity
         this.initNeed()
     }
 
     constructor(entityClass: Class<T>) {
         this.entityClass = entityClass
-        this.initEntityClass()
         this.initNeed()
     }
 
     internal constructor(entity: T, entityClass: Class<T>, sqlSelect: SharedString, paramNameSeq: AtomicInteger,
                          paramNameValuePairs: Map<String, Any>, mergeSegments: MergeSegments,
                          lastSql: SharedString, sqlComment: SharedString) {
-        this.setEntity(entity)
+        this.entity = entity
         this.paramNameSeq = paramNameSeq
         this.paramNameValuePairs = paramNameValuePairs
         this.expression = mergeSegments
@@ -75,10 +74,6 @@ class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Query<K
         return typedThis
     }
 
-    override fun select(predicate: Predicate<TableFieldInfo>): KtQueryWrapper<T> {
-        return select(entityClass, predicate)
-    }
-
     /**
      * 过滤查询的字段信息(主键除外!)
      *
@@ -98,7 +93,7 @@ class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Query<K
      */
     override fun select(entityClass: Class<T>, predicate: Predicate<TableFieldInfo>): KtQueryWrapper<T> {
         this.entityClass = entityClass
-        this.sqlSelect.stringValue = TableInfoHelper.getTableInfo(checkEntityClass).chooseSelect(predicate)
+        this.sqlSelect.stringValue = TableInfoHelper.getTableInfo(getEntityClass()).chooseSelect(predicate)
         return typedThis
     }
 

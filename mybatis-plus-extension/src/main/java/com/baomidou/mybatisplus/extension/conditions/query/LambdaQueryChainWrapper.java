@@ -49,12 +49,6 @@ public class LambdaQueryChainWrapper<T> extends AbstractChainWrapper<T, SFunctio
     }
 
     @Override
-    public LambdaQueryChainWrapper<T> select(Predicate<TableFieldInfo> predicate) {
-        wrapperChildren.select(predicate);
-        return typedThis;
-    }
-
-    @Override
     public LambdaQueryChainWrapper<T> select(Class<T> entityClass, Predicate<TableFieldInfo> predicate) {
         wrapperChildren.select(entityClass, predicate);
         return typedThis;

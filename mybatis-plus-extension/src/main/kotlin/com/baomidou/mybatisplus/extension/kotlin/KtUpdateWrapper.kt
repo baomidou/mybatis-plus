@@ -39,19 +39,18 @@ class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, Updat
     private val sqlSet = ArrayList<String>()
 
     constructor(entity: T) {
-        this.setEntity(entity)
+        this.entity = entity
         this.initNeed()
     }
 
     constructor(entityClass: Class<T>) {
         this.entityClass = entityClass
-        this.initEntityClass()
         this.initNeed()
     }
 
     internal constructor(entity: T, paramNameSeq: AtomicInteger, paramNameValuePairs: Map<String, Any>,
                          mergeSegments: MergeSegments, lastSql: SharedString, sqlComment: SharedString) {
-        this.setEntity(entity)
+        this.entity = entity
         this.paramNameSeq = paramNameSeq
         this.paramNameValuePairs = paramNameValuePairs
         this.expression = mergeSegments

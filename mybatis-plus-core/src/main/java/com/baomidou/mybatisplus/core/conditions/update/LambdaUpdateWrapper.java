@@ -48,15 +48,24 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
      */
     public LambdaUpdateWrapper() {
         // 如果无参构造函数，请注意实体 NULL 情况 SET 必须有否则 SQL 异常
-        this(null);
+        this((T) null);
     }
 
     /**
      * 不建议直接 new 该实例，使用 Wrappers.lambdaUpdate(entity)
      */
     public LambdaUpdateWrapper(T entity) {
-        super.setEntity(entity);
-        super.initNeed();
+        this.setEntity(entity);
+        this.initNeed();
+        this.sqlSet = new ArrayList<>();
+    }
+
+    /**
+     * 不建议直接 new 该实例，使用 Wrappers.lambdaUpdate(entity)
+     */
+    public LambdaUpdateWrapper(Class<T> entityClass) {
+        this.setEntityClass(entityClass);
+        this.initNeed();
         this.sqlSet = new ArrayList<>();
     }
 
@@ -101,7 +110,7 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
 
     @Override
     protected LambdaUpdateWrapper<T> instance() {
-        return new LambdaUpdateWrapper<>(entity, sqlSet, paramNameSeq, paramNameValuePairs, new MergeSegments(),
+        return new LambdaUpdateWrapper<>(getEntity(), sqlSet, paramNameSeq, paramNameValuePairs, new MergeSegments(),
             SharedString.emptyString(), SharedString.emptyString());
     }
 }

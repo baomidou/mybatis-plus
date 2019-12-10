@@ -49,12 +49,6 @@ public class QueryChainWrapper<T> extends AbstractChainWrapper<T, String, QueryC
     }
 
     @Override
-    public QueryChainWrapper<T> select(Predicate<TableFieldInfo> predicate) {
-        wrapperChildren.select(predicate);
-        return typedThis;
-    }
-
-    @Override
     public QueryChainWrapper<T> select(Class<T> entityClass, Predicate<TableFieldInfo> predicate) {
         wrapperChildren.select(entityClass, predicate);
         return typedThis;

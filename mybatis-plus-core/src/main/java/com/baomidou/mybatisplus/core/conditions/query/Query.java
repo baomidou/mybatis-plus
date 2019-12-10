@@ -15,10 +15,10 @@
  */
 package com.baomidou.mybatisplus.core.conditions.query;
 
+import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
+
 import java.io.Serializable;
 import java.util.function.Predicate;
-
-import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 
 /**
  * @author miemie
@@ -33,13 +33,15 @@ public interface Query<Children, T, R> extends Serializable {
      * @return children
      */
     @SuppressWarnings("unchecked")
-	Children select(R... columns);
+    Children select(R... columns);
 
     /**
      * ignore
      * <p>注意只有内部有 entity 才能使用该方法</p>
      */
-    Children select(Predicate<TableFieldInfo> predicate);
+    default Children select(Predicate<TableFieldInfo> predicate) {
+        return select(null, predicate);
+    }
 
     /**
      * 过滤查询的字段信息(主键除外!)
