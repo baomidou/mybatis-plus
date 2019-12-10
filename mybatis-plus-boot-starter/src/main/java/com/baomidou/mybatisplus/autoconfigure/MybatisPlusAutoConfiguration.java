@@ -70,6 +70,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
+import java.lang.reflect.Constructor;
 
 /**
  * {@link EnableAutoConfiguration Auto-Configuration} for Mybatis. Contributes a
@@ -157,6 +158,11 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
     public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception {
         // TODO 使用 MybatisSqlSessionFactoryBean 而不是 SqlSessionFactoryBean
         MybatisSqlSessionFactoryBean factory = new MybatisSqlSessionFactoryBean();
+        try {
+            Constructor dataSourceProxy = Class.forName("io.seata.rm.datasource.DataSourceProxy").getConstructor(DataSource.class);
+            dataSource = (DataSource)dataSourceProxy.newInstance(dataSource);
+        } catch (Exception e) {
+        }
         factory.setDataSource(dataSource);
         factory.setVfs(SpringBootVFS.class);
         if (StringUtils.hasText(this.properties.getConfigLocation())) {
