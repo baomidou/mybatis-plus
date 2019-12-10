@@ -81,13 +81,13 @@ class ReflectionKitTest {
     @Test
     void testGetMethodCapitalize() throws NoSuchFieldException {
         Field field = C.class.getDeclaredField("sex");
-        String getMethod = ReflectionKit.getMethodCapitalize(field, "sex");
+        String getMethod = StringUtils.guessGetterName("sex",field.getType());
         Assertions.assertEquals("getSex", getMethod);
         field = A.class.getDeclaredField("testWrap");
-        getMethod = ReflectionKit.getMethodCapitalize(field, "testWrap");
+        getMethod = StringUtils.guessGetterName("testWrap",field.getType());
         Assertions.assertEquals("getTestWrap", getMethod);
         field = A.class.getDeclaredField("testSimple");
-        getMethod = ReflectionKit.getMethodCapitalize(field, "testSimple");
+        getMethod = StringUtils.guessGetterName("testSimple",field.getType());
         Assertions.assertEquals("isTestSimple", getMethod);
     }
 
