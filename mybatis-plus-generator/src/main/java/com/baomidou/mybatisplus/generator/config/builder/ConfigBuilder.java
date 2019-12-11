@@ -594,7 +594,7 @@ public class ConfigBuilder {
                      ResultSet pkResults = pkQueryStmt.executeQuery()) {
                     while (pkResults.next()) {
                         String primaryKey = pkResults.getString(dbQuery.fieldKey());
-                        if (Boolean.valueOf(primaryKey)) {
+                        if (Boolean.parseBoolean(primaryKey)) {
                             h2PkColumns.add(pkResults.getString(dbQuery.fieldName()));
                         }
                     }

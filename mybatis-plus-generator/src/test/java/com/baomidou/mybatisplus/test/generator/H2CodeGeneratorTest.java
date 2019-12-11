@@ -34,7 +34,7 @@ class H2CodeGeneratorTest {
         strategyConfig
             .setCapitalMode(true)
             .setEntityLombokModel(false)
-            .setEnableLike(false)
+            .setEnableLike(true)
             .setNaming(NamingStrategy.underline_to_camel);
         return strategyConfig;
     }
