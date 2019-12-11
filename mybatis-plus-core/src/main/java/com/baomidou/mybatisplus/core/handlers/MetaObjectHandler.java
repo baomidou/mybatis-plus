@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
 import org.apache.ibatis.reflection.MetaObject;
 
 import java.util.Collections;
@@ -187,7 +188,8 @@ public interface MetaObjectHandler {
      * @since 3.3.0
      */
     default TableInfo findTableInfo(MetaObject metaObject) {
-        return TableInfoHelper.getTableInfo(metaObject.getOriginalObject().getClass());
+        return TableInfoHelper.getTableInfo(metaObject.hasGetter(Constants.MP_OPTLOCK_ET_ORIGINAL) ?
+            metaObject.getValue(Constants.MP_OPTLOCK_ET_ORIGINAL).getClass() : metaObject.getOriginalObject().getClass());
     }
 
     /**
