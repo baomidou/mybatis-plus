@@ -60,30 +60,6 @@ import java.util.stream.Collectors;
 @Intercepts({@Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class})})
 public class OptimisticLockerInterceptor implements Interceptor {
 
-    /**
-     * 乐观锁常量
-     *
-     * @deprecated 3.1.1 {@link Constants#MP_OPTLOCK_VERSION_ORIGINAL}
-     */
-    @Deprecated
-    public static final String MP_OPTLOCK_VERSION_ORIGINAL = Constants.MP_OPTLOCK_VERSION_ORIGINAL;
-    /**
-     * 乐观锁常量
-     *
-     * @deprecated 3.1.1 {@link Constants#MP_OPTLOCK_VERSION_COLUMN}
-     */
-    @Deprecated
-    public static final String MP_OPTLOCK_VERSION_COLUMN = Constants.MP_OPTLOCK_VERSION_COLUMN;
-    /**
-     * 乐观锁常量
-     *
-     * @deprecated 3.1.1 {@link Constants#MP_OPTLOCK_ET_ORIGINAL}
-     */
-    @Deprecated
-    public static final String MP_OPTLOCK_ET_ORIGINAL = Constants.MP_OPTLOCK_ET_ORIGINAL;
-
-    private static final String NAME_ENTITY = Constants.ENTITY;
-    private static final String NAME_ENTITY_WRAPPER = Constants.WRAPPER;
     private static final String PARAM_UPDATE_METHOD_NAME = "update";
     private final Map<Class<?>, EntityField> versionFieldCache = new ConcurrentHashMap<>();
     private final Map<Class<?>, List<EntityField>> entityFieldsCache = new ConcurrentHashMap<>();
@@ -100,7 +76,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
         if (param instanceof Map) {
             Map map = (Map) param;
             //updateById(et), update(et, wrapper);
-            Object et = map.getOrDefault(NAME_ENTITY,null);
+            Object et = map.getOrDefault(Constants.ENTITY, null);
             if (et != null) {
                 // entity
                 String methodId = ms.getId();
@@ -123,11 +99,11 @@ public class OptimisticLockerInterceptor implements Interceptor {
                 if (PARAM_UPDATE_METHOD_NAME.equals(methodName)) {
                     // update(entity, wrapper)
                     // mapper.update(updEntity, QueryWrapper<>(whereEntity);
-                    AbstractWrapper<?, ?, ?> ew = (AbstractWrapper<?, ?, ?>) map.getOrDefault(NAME_ENTITY_WRAPPER, null);
+                    AbstractWrapper<?, ?, ?> ew = (AbstractWrapper<?, ?, ?>) map.getOrDefault(Constants.WRAPPER, null);
                     if (ew == null) {
                         UpdateWrapper<?> uw = new UpdateWrapper<>();
                         uw.eq(versionField.getColumnName(), originalVersionVal);
-                        map.put(NAME_ENTITY_WRAPPER, uw);
+                        map.put(Constants.WRAPPER, uw);
                         field.set(et, updatedVersionVal);
                     } else {
                         ew.apply(versionField.getColumnName() + " = {0}", originalVersionVal);
@@ -149,7 +125,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
                     entityMap.put(Constants.MP_OPTLOCK_VERSION_ORIGINAL, originalVersionVal);
                     entityMap.put(Constants.MP_OPTLOCK_VERSION_COLUMN, versionColumnName);
                     entityMap.put(Constants.MP_OPTLOCK_ET_ORIGINAL, et);
-                    map.put(NAME_ENTITY, entityMap);
+                    map.put(Constants.ENTITY, entityMap);
                     Object resultObj = invocation.proceed();
                     if (resultObj instanceof Integer) {
                         Integer effRow = (Integer) resultObj;
