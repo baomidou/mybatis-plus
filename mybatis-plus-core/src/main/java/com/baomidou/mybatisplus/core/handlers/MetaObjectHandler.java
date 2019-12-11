@@ -285,8 +285,11 @@ public interface MetaObjectHandler {
      * @since 3.3.0
      */
     default MetaObjectHandler strictFillStrategy(MetaObject metaObject, String fieldName, Supplier<Object> fieldVal) {
-        if (getFieldValByName(fieldName, metaObject) == null) {
-            setFieldValByName(fieldName, fieldVal.get(), metaObject);
+        if (metaObject.getValue(fieldName) == null) {
+            Object obj = fieldVal.get();
+            if (Objects.nonNull(obj)) {
+                metaObject.setValue(fieldName, obj);
+            }
         }
         return this;
     }
