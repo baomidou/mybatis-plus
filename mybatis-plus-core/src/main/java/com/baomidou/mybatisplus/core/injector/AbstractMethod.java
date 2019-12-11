@@ -237,7 +237,7 @@ public abstract class AbstractMethod implements Constants {
     }
 
     protected String optlockVersion(TableInfo tableInfo) {
-        if (tableInfo.isEnableVersion()) {
+        if (tableInfo.isWithVersion()) {
             return "<if test=\"oli != null\">" +
                 " AND ${oli." + Constants.MP_OPTLOCK_VERSION_COLUMN +
                 "}=#{oli." + Constants.MP_OPTLOCK_VERSION_ORIGINAL + StringPool.RIGHT_BRACE +

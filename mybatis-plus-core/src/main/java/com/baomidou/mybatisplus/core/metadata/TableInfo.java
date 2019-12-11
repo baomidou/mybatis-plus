@@ -151,9 +151,9 @@ public class TableInfo implements Constants {
      */
     @Getter
     @Setter(AccessLevel.NONE)
-    private boolean enableVersion;
+    private boolean withVersion;
     /**
-     * 表字段是否启用了乐观锁
+     * 乐观锁字段
      *
      * @since 3.3.1
      */
@@ -423,7 +423,7 @@ public class TableInfo implements Constants {
                 this.withUpdateFill = true;
             }
             if (i.isVersion()) {
-                this.enableVersion = true;
+                this.withVersion = true;
                 this.versionFieldInfo = i;
             }
         });

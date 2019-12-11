@@ -80,7 +80,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
                 String methodName = methodId.substring(methodId.lastIndexOf(StringPool.DOT) + 1);
                 Class<?> entityClass = et.getClass();
                 TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
-                if (tableInfo == null || !tableInfo.isEnableVersion()) {
+                if (tableInfo == null || !tableInfo.isWithVersion()) {
                     return invocation.proceed();
                 }
                 TableFieldInfo fieldInfo = tableInfo.getVersionFieldInfo();
