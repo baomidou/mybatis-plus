@@ -42,6 +42,12 @@ import java.lang.reflect.Field;
 public class TableFieldInfo implements Constants {
 
     /**
+     * 属性
+     *
+     * @since 3.3.1
+     */
+    private final Field field;
+    /**
      * 字段名
      */
     private final String column;
@@ -146,6 +152,7 @@ public class TableFieldInfo implements Constants {
      */
     @SuppressWarnings("unchecked")
     public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field, TableField tableField) {
+        this.field = field;
         this.version = field.getAnnotation(Version.class) != null;
         this.property = field.getName();
         this.propertyType = field.getType();
@@ -238,6 +245,7 @@ public class TableFieldInfo implements Constants {
      * 不存在 TableField 注解时, 使用的构造函数
      */
     public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field) {
+        this.field = field;
         this.version = field.getAnnotation(Version.class) != null;
         this.property = field.getName();
         this.propertyType = field.getType();

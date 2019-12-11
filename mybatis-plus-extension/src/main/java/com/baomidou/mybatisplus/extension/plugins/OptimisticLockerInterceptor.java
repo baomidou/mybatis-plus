@@ -179,7 +179,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
     }
 
     private EntityField getVersionField(Class<?> parameterClass, TableInfo tableInfo) {
-        return versionFieldCache.computeIfAbsent(parameterClass, mapping -> getVersionFieldRegular(parameterClass, tableInfo));
+        return versionFieldCache.computeIfAbsent(parameterClass, mapping -> getVersionFieldRegular(mapping, tableInfo));
     }
 
     /**
