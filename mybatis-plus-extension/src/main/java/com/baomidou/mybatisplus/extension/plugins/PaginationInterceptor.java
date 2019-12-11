@@ -137,6 +137,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
                 OrderByElement element = new OrderByElement();
                 element.setExpression(new Column(item.getColumn()));
                 element.setAsc(item.isAsc());
+                element.setAscDescPresent(true);
                 return element;
             }).collect(Collectors.toList());
         orderByElements.addAll(orderByElementList);
