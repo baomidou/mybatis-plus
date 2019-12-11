@@ -107,6 +107,9 @@ public class OptimisticLockerInterceptor implements Interceptor {
                 String methodName = methodId.substring(methodId.lastIndexOf(StringPool.DOT) + 1);
                 Class<?> entityClass = et.getClass();
                 TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
+                if (tableInfo == null || !tableInfo.isEnableVersion()) {
+                    return invocation.proceed();
+                }
                 EntityField versionField = this.getVersionField(entityClass, tableInfo);
                 if (versionField == null) {
                     return invocation.proceed();
@@ -198,7 +201,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
     public void setProperties(Properties properties) {
         // to do nothing
     }
-    
+
     private EntityField getVersionField(Class<?> parameterClass, TableInfo tableInfo) {
         return versionFieldCache.computeIfAbsent(parameterClass, mapping -> getVersionFieldRegular(parameterClass, tableInfo));
     }

@@ -144,6 +144,14 @@ public class TableInfo implements Constants {
     @Getter
     @Setter(AccessLevel.NONE)
     private boolean withUpdateFill;
+    /**
+     * 表字段是否启用了乐观锁
+     *
+     * @since 3.3.1
+     */
+    @Getter
+    @Setter(AccessLevel.NONE)
+    private boolean enableVersion;
 
     public TableInfo(Class<?> entityType) {
         this.entityType = entityType;
@@ -396,9 +404,19 @@ public class TableInfo implements Constants {
 
     void setFieldList(List<TableFieldInfo> fieldList) {
         this.fieldList = fieldList;
-        this.logicDelete = fieldList.parallelStream().anyMatch(TableFieldInfo::isLogicDelete);
-        this.withInsertFill = fieldList.parallelStream().anyMatch(TableFieldInfo::isWithInsertFill);
-        this.withUpdateFill = fieldList.parallelStream().anyMatch(TableFieldInfo::isWithUpdateFill);
+        fieldList.forEach(i -> {
+            if (i.isLogicDelete()) {
+                this.logicDelete = true;
+            }
+            if (i.isWithInsertFill()) {
+                this.withInsertFill = true;
+            }
+            if (i.isWithUpdateFill()) {
+                this.withUpdateFill = true;
+            }
+            if (i.isVersion()) {
+                this.enableVersion = true;
+            }
+        });
     }
-
 }
