@@ -236,11 +236,14 @@ public abstract class AbstractMethod implements Constants {
         return infoStream.map(function).collect(joining(joiningVal));
     }
 
-    protected String optlockVersion() {
-        return "<if test=\"et instanceof java.util.Map\">" +
-            " AND ${et." + Constants.MP_OPTLOCK_VERSION_COLUMN +
-            "}=#{et." + Constants.MP_OPTLOCK_VERSION_ORIGINAL + StringPool.RIGHT_BRACE +
-            "</if>";
+    protected String optlockVersion(TableInfo tableInfo) {
+        if (tableInfo.isEnableVersion()) {
+            return "<if test=\"oli != null\">" +
+                " AND ${oli." + Constants.MP_OPTLOCK_VERSION_COLUMN +
+                "}=#{oli." + Constants.MP_OPTLOCK_VERSION_ORIGINAL + StringPool.RIGHT_BRACE +
+                "</if>";
+        }
+        return EMPTY;
     }
 
     /**
@@ -332,8 +335,8 @@ public abstract class AbstractMethod implements Constants {
      * 获取自定义方法名，未设置采用默认方法名
      * https://gitee.com/baomidou/mybatis-plus/pulls/88
      *
-     * @author 义陆无忧
      * @return method
+     * @author 义陆无忧
      */
     public String getMethod(SqlMethod sqlMethod) {
         return sqlMethod.getMethod();

@@ -19,11 +19,13 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
+import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.reflection.MetaObject;
-import org.apache.ibatis.reflection.Reflector;
 import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.JdbcType;
@@ -85,26 +87,16 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         return parameterObject;
     }
 
-    @SuppressWarnings("unchecked")
     private static void process(MappedStatement ms, Object parameterObject) {
         TableInfo tableInfo = null;
         Object entity = parameterObject;
-        Map realEtMap = null;
         if (parameterObject instanceof Map) {
             Map<?, ?> map = (Map<?, ?>) parameterObject;
             if (map.containsKey(Constants.ENTITY)) {
                 Object et = map.get(Constants.ENTITY);
                 if (et != null) {
-                    if (et instanceof Map) {
-                        realEtMap = (Map) et;
-                        if (realEtMap.containsKey(Constants.MP_OPTLOCK_ET_ORIGINAL)) {
-                            entity = realEtMap.get(Constants.MP_OPTLOCK_ET_ORIGINAL);
-                            tableInfo = TableInfoHelper.getTableInfo(entity.getClass());
-                        }
-                    } else {
-                        entity = et;
-                        tableInfo = TableInfoHelper.getTableInfo(entity.getClass());
-                    }
+                    entity = et;
+                    tableInfo = TableInfoHelper.getTableInfo(entity.getClass());
                 }
             }
         } else {
@@ -119,22 +111,22 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
             } else {
                 updateFill(metaObject, tableInfo);
                 //覆盖乐观锁里面的字段
-                if (tableInfo.isEnableVersion() && realEtMap != null) {
-                    Reflector forClass = metaObject.getReflectorFactory().findForClass(entity.getClass());
-                    for (String property : forClass.getGetablePropertyNames()) {
-                        try {
-                            //过滤掉乐观锁属性
-                            if (!realEtMap.get(Constants.MP_OPTLOCK_VERSION_COLUMN).equals(property)) {
-                                Object value = forClass.getGetInvoker(property).invoke(entity, new Object[]{});
-                                if (value != null) {
-                                    realEtMap.put(property, value);
-                                }
-                            }
-                        } catch (ReflectiveOperationException e) {
-                            throw ExceptionUtils.mpe(e);
-                        }
-                    }
-                }
+//                if (tableInfo.isEnableVersion() && realEtMap != null) {
+//                    Reflector forClass = metaObject.getReflectorFactory().findForClass(entity.getClass());
+//                    for (String property : forClass.getGetablePropertyNames()) {
+//                        try {
+//                            //过滤掉乐观锁属性
+//                            if (!realEtMap.get(Constants.MP_OPTLOCK_VERSION_COLUMN).equals(property)) {
+//                                Object value = forClass.getGetInvoker(property).invoke(entity, new Object[]{});
+//                                if (value != null) {
+//                                    realEtMap.put(property, value);
+//                                }
+//                            }
+//                        } catch (ReflectiveOperationException e) {
+//                            throw ExceptionUtils.mpe(e);
+//                        }
+//                    }
+//                }
             }
         }
     }

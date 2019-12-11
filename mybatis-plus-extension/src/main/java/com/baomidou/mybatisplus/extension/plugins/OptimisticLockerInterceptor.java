@@ -113,19 +113,13 @@ public class OptimisticLockerInterceptor implements Interceptor {
                     return invocation.proceed();
                 } else {
                     List<EntityField> fields = entityFieldsCache.computeIfAbsent(entityClass, this::getFieldsFromClazz);
-                    Map<String, Object> entityMap = new HashMap<>(fields.size());
-                    for (EntityField ef : fields) {
-                        Field fd = ef.getField();
-                        entityMap.put(fd.getName(), fd.get(et));
-                    }
+                    Map<String, Object> entityMap = new HashMap<>(3);
                     String versionColumnName = versionField.getColumnName();
                     //update to cache
                     versionField.setColumnName(versionColumnName);
-                    entityMap.put(field.getName(), updatedVersionVal);
-                    entityMap.put(Constants.MP_OPTLOCK_VERSION_ORIGINAL, originalVersionVal);
                     entityMap.put(Constants.MP_OPTLOCK_VERSION_COLUMN, versionColumnName);
-                    entityMap.put(Constants.MP_OPTLOCK_ET_ORIGINAL, et);
-                    map.put(Constants.ENTITY, entityMap);
+                    entityMap.put(Constants.MP_OPTLOCK_VERSION_ORIGINAL, originalVersionVal);
+                    map.put(Constants.MP_OPTLOCK_INTERCEPTOR, entityMap);
                     Object resultObj = invocation.proceed();
                     if (resultObj instanceof Integer) {
                         Integer effRow = (Integer) resultObj;
