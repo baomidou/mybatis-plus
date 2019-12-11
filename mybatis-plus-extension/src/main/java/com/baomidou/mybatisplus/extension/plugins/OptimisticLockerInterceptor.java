@@ -86,41 +86,31 @@ public class OptimisticLockerInterceptor implements Interceptor {
                 TableFieldInfo fieldInfo = tableInfo.getVersionFieldInfo();
                 final String versionColumn = fieldInfo.getColumn();
                 final Field versionField = fieldInfo.getField();
-                Object originalVersionVal = versionField.get(et);
+                // 旧的 version 值
+                final Object originalVersionVal = versionField.get(et);
                 if (originalVersionVal == null) {
                     return invocation.proceed();
                 }
+                // 新的 version 值
                 final Object updatedVersionVal = this.getUpdatedVersionVal(fieldInfo.getPropertyType(), originalVersionVal);
                 if (PARAM_UPDATE_METHOD_NAME.equals(methodName)) {
-                    // update(entity, wrapper)
-                    // mapper.update(updEntity, QueryWrapper<>(whereEntity);
-                    AbstractWrapper<?, ?, ?> ew = (AbstractWrapper<?, ?, ?>) map.getOrDefault(Constants.WRAPPER, null);
-                    if (ew == null) {
+                    AbstractWrapper<?, ?, ?> aw = (AbstractWrapper<?, ?, ?>) map.get(Constants.WRAPPER);
+                    if (aw == null) {
                         UpdateWrapper<?> uw = new UpdateWrapper<>();
                         uw.eq(versionColumn, originalVersionVal);
                         map.put(Constants.WRAPPER, uw);
-                        versionField.set(et, updatedVersionVal);
                     } else {
-                        ew.apply(versionColumn + " = {0}", originalVersionVal);
-                        versionField.set(et, updatedVersionVal);
-                        //TODO: should remove version=oldval condition from aw; 0827 by k神
+                        aw.apply(versionColumn + " = {0}", originalVersionVal);
                     }
-                    return invocation.proceed();
+                    versionField.set(et, updatedVersionVal);
                 } else {
                     Map<String, Object> entityMap = new HashMap<>(3);
                     entityMap.put(Constants.MP_OPTLOCK_VERSION_COLUMN, versionColumn);
                     entityMap.put(Constants.MP_OPTLOCK_VERSION_ORIGINAL, originalVersionVal);
                     map.put(Constants.MP_OPTLOCK_INTERCEPTOR, entityMap);
-                    Object resultObj = invocation.proceed();
-                    if (resultObj instanceof Integer) {
-                        Integer effRow = (Integer) resultObj;
-                        if (updatedVersionVal != null && effRow != 0) {
-                            //updated version value set to entity.
-                            versionField.set(et, updatedVersionVal);
-                        }
-                    }
-                    return resultObj;
+                    versionField.set(et, updatedVersionVal);
                 }
+                return invocation.proceed();
             }
         }
         return invocation.proceed();
