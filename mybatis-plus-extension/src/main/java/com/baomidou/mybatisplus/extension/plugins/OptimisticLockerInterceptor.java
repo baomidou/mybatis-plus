@@ -22,9 +22,7 @@ import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import lombok.Data;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
@@ -33,9 +31,10 @@ import org.apache.ibatis.plugin.*;
 import java.lang.reflect.Field;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Optimistic Lock Light version
@@ -61,8 +60,6 @@ import java.util.stream.Collectors;
 public class OptimisticLockerInterceptor implements Interceptor {
 
     private static final String PARAM_UPDATE_METHOD_NAME = "update";
-    private final Map<Class<?>, EntityField> versionFieldCache = new ConcurrentHashMap<>();
-    private final Map<Class<?>, List<EntityField>> entityFieldsCache = new ConcurrentHashMap<>();
 
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -76,7 +73,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
         if (param instanceof Map) {
             Map map = (Map) param;
             //updateById(et), update(et, wrapper);
-            Object et = map.getOrDefault(Constants.ENTITY, null);
+            Object et = map.get(Constants.ENTITY);
             if (et != null) {
                 // entity
                 String methodId = ms.getId();
@@ -86,38 +83,32 @@ public class OptimisticLockerInterceptor implements Interceptor {
                 if (tableInfo == null || !tableInfo.isEnableVersion()) {
                     return invocation.proceed();
                 }
-                EntityField versionField = this.getVersionField(entityClass, tableInfo);
-                if (versionField == null) {
-                    return invocation.proceed();
-                }
-                Field field = versionField.getField();
-                Object originalVersionVal = versionField.getField().get(et);
+                TableFieldInfo fieldInfo = tableInfo.getVersionFieldInfo();
+                final String versionColumn = fieldInfo.getColumn();
+                final Field versionField = fieldInfo.getField();
+                Object originalVersionVal = versionField.get(et);
                 if (originalVersionVal == null) {
                     return invocation.proceed();
                 }
-                Object updatedVersionVal = getUpdatedVersionVal(originalVersionVal);
+                final Object updatedVersionVal = this.getUpdatedVersionVal(fieldInfo.getPropertyType(), originalVersionVal);
                 if (PARAM_UPDATE_METHOD_NAME.equals(methodName)) {
                     // update(entity, wrapper)
                     // mapper.update(updEntity, QueryWrapper<>(whereEntity);
                     AbstractWrapper<?, ?, ?> ew = (AbstractWrapper<?, ?, ?>) map.getOrDefault(Constants.WRAPPER, null);
                     if (ew == null) {
                         UpdateWrapper<?> uw = new UpdateWrapper<>();
-                        uw.eq(versionField.getColumnName(), originalVersionVal);
+                        uw.eq(versionColumn, originalVersionVal);
                         map.put(Constants.WRAPPER, uw);
-                        field.set(et, updatedVersionVal);
+                        versionField.set(et, updatedVersionVal);
                     } else {
-                        ew.apply(versionField.getColumnName() + " = {0}", originalVersionVal);
-                        field.set(et, updatedVersionVal);
+                        ew.apply(versionColumn + " = {0}", originalVersionVal);
+                        versionField.set(et, updatedVersionVal);
                         //TODO: should remove version=oldval condition from aw; 0827 by k神
                     }
                     return invocation.proceed();
                 } else {
-                    List<EntityField> fields = entityFieldsCache.computeIfAbsent(entityClass, this::getFieldsFromClazz);
                     Map<String, Object> entityMap = new HashMap<>(3);
-                    String versionColumnName = versionField.getColumnName();
-                    //update to cache
-                    versionField.setColumnName(versionColumnName);
-                    entityMap.put(Constants.MP_OPTLOCK_VERSION_COLUMN, versionColumnName);
+                    entityMap.put(Constants.MP_OPTLOCK_VERSION_COLUMN, versionColumn);
                     entityMap.put(Constants.MP_OPTLOCK_VERSION_ORIGINAL, originalVersionVal);
                     map.put(Constants.MP_OPTLOCK_INTERCEPTOR, entityMap);
                     Object resultObj = invocation.proceed();
@@ -125,7 +116,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
                         Integer effRow = (Integer) resultObj;
                         if (updatedVersionVal != null && effRow != 0) {
                             //updated version value set to entity.
-                            field.set(et, updatedVersionVal);
+                            versionField.set(et, updatedVersionVal);
                         }
                     }
                     return resultObj;
@@ -142,17 +133,16 @@ public class OptimisticLockerInterceptor implements Interceptor {
      * @param originalVersionVal ignore
      * @return updated version val
      */
-    protected Object getUpdatedVersionVal(Object originalVersionVal) {
-        Class<?> versionValClass = originalVersionVal.getClass();
-        if (long.class.equals(versionValClass) || Long.class.equals(versionValClass)) {
+    protected Object getUpdatedVersionVal(Class<?> clazz, Object originalVersionVal) {
+        if (long.class.equals(clazz) || Long.class.equals(clazz)) {
             return ((long) originalVersionVal) + 1;
-        } else if (int.class.equals(versionValClass) || Integer.class.equals(versionValClass)) {
+        } else if (int.class.equals(clazz) || Integer.class.equals(clazz)) {
             return ((int) originalVersionVal) + 1;
-        } else if (Date.class.equals(versionValClass)) {
+        } else if (Date.class.equals(clazz)) {
             return new Date();
-        } else if (Timestamp.class.equals(versionValClass)) {
+        } else if (Timestamp.class.equals(clazz)) {
             return new Timestamp(System.currentTimeMillis());
-        } else if (LocalDateTime.class.equals(versionValClass)) {
+        } else if (LocalDateTime.class.equals(clazz)) {
             return LocalDateTime.now();
         }
         //not supported type, return original val.
@@ -170,49 +160,5 @@ public class OptimisticLockerInterceptor implements Interceptor {
     @Override
     public void setProperties(Properties properties) {
         // to do nothing
-    }
-
-    private EntityField getVersionField(Class<?> parameterClass, TableInfo tableInfo) {
-        return versionFieldCache.computeIfAbsent(parameterClass, mapping -> getVersionFieldRegular(mapping, tableInfo));
-    }
-
-    /**
-     * 反射检查参数类是否启动乐观锁
-     *
-     * @param parameterClass 实体类
-     * @param tableInfo      实体数据库反射信息
-     * @return ignore
-     */
-    private EntityField getVersionFieldRegular(Class<?> parameterClass, TableInfo tableInfo) {
-        return Object.class.equals(parameterClass) ? null : ReflectionKit.getFieldList(parameterClass).stream().filter(e -> e.isAnnotationPresent(Version.class)).map(field -> {
-            field.setAccessible(true);
-            return new EntityField(field, true, tableInfo.getFieldList().stream().filter(e -> field.getName().equals(e.getProperty())).map(TableFieldInfo::getColumn).findFirst().orElse(null));
-        }).findFirst().orElseGet(() -> this.getVersionFieldRegular(parameterClass.getSuperclass(), tableInfo));
-    }
-
-    private List<EntityField> getFieldsFromClazz(Class<?> parameterClass) {
-        return ReflectionKit.getFieldList(parameterClass).stream().map(field -> {
-            field.setAccessible(true);
-            return new EntityField(field, field.isAnnotationPresent(Version.class));
-        }).collect(Collectors.toList());
-    }
-
-    @Data
-    private class EntityField {
-
-        private Field field;
-        private boolean version;
-        private String columnName;
-
-        EntityField(Field field, boolean version) {
-            this.field = field;
-            this.version = version;
-        }
-
-        public EntityField(Field field, boolean version, String columnName) {
-            this.field = field;
-            this.version = version;
-            this.columnName = columnName;
-        }
     }
 }

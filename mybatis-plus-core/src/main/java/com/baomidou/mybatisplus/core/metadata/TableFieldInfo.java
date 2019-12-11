@@ -152,6 +152,7 @@ public class TableFieldInfo implements Constants {
      */
     @SuppressWarnings("unchecked")
     public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field, TableField tableField) {
+        field.setAccessible(true);
         this.field = field;
         this.version = field.getAnnotation(Version.class) != null;
         this.property = field.getName();
@@ -245,6 +246,7 @@ public class TableFieldInfo implements Constants {
      * 不存在 TableField 注解时, 使用的构造函数
      */
     public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field) {
+        field.setAccessible(true);
         this.field = field;
         this.version = field.getAnnotation(Version.class) != null;
         this.property = field.getName();
