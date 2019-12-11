@@ -110,23 +110,6 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                 insertFill(metaObject, tableInfo);
             } else {
                 updateFill(metaObject, tableInfo);
-                //覆盖乐观锁里面的字段
-//                if (tableInfo.isEnableVersion() && realEtMap != null) {
-//                    Reflector forClass = metaObject.getReflectorFactory().findForClass(entity.getClass());
-//                    for (String property : forClass.getGetablePropertyNames()) {
-//                        try {
-//                            //过滤掉乐观锁属性
-//                            if (!realEtMap.get(Constants.MP_OPTLOCK_VERSION_COLUMN).equals(property)) {
-//                                Object value = forClass.getGetInvoker(property).invoke(entity, new Object[]{});
-//                                if (value != null) {
-//                                    realEtMap.put(property, value);
-//                                }
-//                            }
-//                        } catch (ReflectiveOperationException e) {
-//                            throw ExceptionUtils.mpe(e);
-//                        }
-//                    }
-//                }
             }
         }
     }
