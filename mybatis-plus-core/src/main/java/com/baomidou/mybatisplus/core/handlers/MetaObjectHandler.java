@@ -86,7 +86,7 @@ public interface MetaObjectHandler {
      * @param metaObject meta object parameter
      */
     default MetaObjectHandler setFieldValByName(String fieldName, Object fieldVal, MetaObject metaObject) {
-        if (Objects.nonNull(fieldVal)) {
+        if (Objects.nonNull(fieldVal) && metaObject.hasSetter(fieldName)) {
             metaObject.setValue(fieldName, fieldVal);
         }
         return this;
@@ -100,7 +100,7 @@ public interface MetaObjectHandler {
      * @return 字段值
      */
     default Object getFieldValByName(String fieldName, MetaObject metaObject) {
-        return metaObject.getValue(fieldName);
+        return metaObject.hasGetter(fieldName) ? metaObject.getValue(fieldName) : null;
     }
 
     /**
