@@ -11,5 +11,6 @@
 
     <mappers>
         <mapper class="com.baomidou.mybatisplus.test.h2.mapper.H2UserMapper"/>
+        <mapper class="com.baomidou.mybatisplus.test.phoenix.mapper.PhoenixTestInfoMapper"/>
     </mappers>
 </configuration>

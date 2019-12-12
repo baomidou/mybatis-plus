@@ -21,6 +21,8 @@ import com.baomidou.mybatisplus.extension.handlers.MybatisEnumTypeHandler;
 import com.baomidou.mybatisplus.test.h2.entity.H2User;
 import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.mapper.H2UserMapper;
+import com.baomidou.mybatisplus.test.phoenix.entity.PhoenixTestInfo;
+import com.baomidou.mybatisplus.test.phoenix.mapper.PhoenixTestInfoMapper;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.ibatis.session.Configuration;
@@ -32,6 +34,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -81,6 +84,32 @@ class MybatisTest {
         Assertions.assertEquals(mapper.updateById(new H2User(66L, "777777")), 1);
         Assertions.assertEquals(mapper.deleteById(66L), 1);
         Assertions.assertNull(mapper.selectById(66L));
+    }
+
+    @Test
+    void testPhoenix() throws IOException, SQLException {
+        SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
+
+        dataSource.setDriverClass(org.apache.phoenix.jdbc.PhoenixDriver.class);
+        dataSource.setUrl("jdbc:phoenix:znode01,zdnode02,zdnode03:2181");
+        dataSource.setUsername(null);
+        dataSource.setPassword(null);
+
+        // 开启Namespace需要配置，并配置hbase-site.xml开启namespace
+//        Properties properties = new Properties();
+//        properties.setProperty("schema", "TEST");
+//        dataSource.setConnectionProperties( properties );
+
+        Reader reader = Resources.getResourceAsReader("mybatis-config.xml");
+        SqlSessionFactory factory = new MybatisSqlSessionFactoryBuilder().build(reader);
+        SqlSession sqlSession = factory.openSession(dataSource.getConnection());
+
+        PhoenixTestInfoMapper mapper = sqlSession.getMapper(PhoenixTestInfoMapper.class);
+        Assertions.assertEquals(mapper.upsert(new PhoenixTestInfo().setId(100L).setName("hello")), 1);
+
+        PhoenixTestInfo testInfo = mapper.selectById(100L);
+        Assertions.assertEquals(testInfo.getName(), "hello");
+        Assertions.assertEquals(testInfo.getId(), 100L);
     }
 
 }
