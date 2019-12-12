@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Properties;
 
 
 /**
@@ -92,13 +93,11 @@ class MybatisTest {
 
         dataSource.setDriverClass(org.apache.phoenix.jdbc.PhoenixDriver.class);
         dataSource.setUrl("jdbc:phoenix:znode01,zdnode02,zdnode03:2181");
-        dataSource.setUsername(null);
-        dataSource.setPassword(null);
 
         // 开启Namespace需要配置，并配置hbase-site.xml开启namespace
-//        Properties properties = new Properties();
-//        properties.setProperty("schema", "TEST");
-//        dataSource.setConnectionProperties( properties );
+        Properties properties = new Properties();
+        properties.setProperty("schema", "TEST");
+        dataSource.setConnectionProperties( properties );
 
         Reader reader = Resources.getResourceAsReader("mybatis-config.xml");
         SqlSessionFactory factory = new MybatisSqlSessionFactoryBuilder().build(reader);
