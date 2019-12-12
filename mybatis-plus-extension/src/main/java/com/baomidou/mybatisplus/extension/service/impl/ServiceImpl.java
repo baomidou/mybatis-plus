@@ -110,6 +110,35 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     }
 
     @Override
+    public boolean upsert(T entity) {
+        return retBool(baseMapper.upsert(entity));
+    }
+
+    /**
+     * Phoenix批量插入
+     *
+     * @param entityList ignore
+     * @param batchSize  ignore
+     * @return ignore
+     */
+    @Override
+    public boolean upsertBatch(Collection<T> entityList, int batchSize) {
+        String sqlStatement = sqlStatement(SqlMethod.UPSERT_ONE);
+        int size = entityList.size();
+        executeBatch(sqlSession -> {
+            int i = 1;
+            for (T entity : entityList) {
+                sqlSession.insert(sqlStatement, entity);
+                if ((i % batchSize == 0) || i == size) {
+                    sqlSession.flushStatements();
+                }
+                i++;
+            }
+        });
+        return true;
+    }
+
+    @Override
     public boolean save(T entity) {
         return retBool(baseMapper.insert(entity));
     }

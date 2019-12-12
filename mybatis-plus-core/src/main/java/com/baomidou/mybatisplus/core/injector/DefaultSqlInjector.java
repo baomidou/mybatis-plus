@@ -33,6 +33,7 @@ public class DefaultSqlInjector extends AbstractSqlInjector {
     @Override
     public List<AbstractMethod> getMethodList(Class<?> mapperClass) {
         return Stream.of(
+            new Upsert(),
             new Insert(),
             new Delete(),
             new DeleteByMap(),

@@ -41,6 +41,31 @@ import java.util.function.Function;
 public interface IService<T> {
 
     /**
+     * Phoenix插入一条记录（选择字段，策略插入）
+     *
+     * @param entity 实体对象
+     */
+    boolean upsert(T entity);
+
+    /**
+     * Phoenix插入（批量）
+     *
+     * @param entityList 实体对象集合
+     */
+    @Transactional(rollbackFor = Exception.class)
+    default boolean upsertBatch(Collection<T> entityList) {
+        return upsertBatch(entityList, 1000);
+    }
+
+    /**
+     * Phoenix插入（批量）
+     *
+     * @param entityList 实体对象集合
+     * @param batchSize  插入批次数量
+     */
+    boolean upsertBatch(Collection<T> entityList, int batchSize);
+
+    /**
      * 插入一条记录（选择字段，策略插入）
      *
      * @param entity 实体对象

@@ -81,6 +81,12 @@ import java.util.Map;
  * @since 2016-01-23
  */
 public interface BaseMapper<T> extends Mapper<T> {
+    /**
+     * Phoenix插入一条记录
+     *
+     * @param entity 实体对象
+     */
+    int upsert(T entity);
 
     /**
      * 插入一条记录
