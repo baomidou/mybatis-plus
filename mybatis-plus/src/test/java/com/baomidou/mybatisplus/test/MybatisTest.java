@@ -101,7 +101,7 @@ class MybatisTest {
 
         Connection connection = dataSource.getConnection();
         ScriptRunner scriptRunner = new ScriptRunner(connection);
-        scriptRunner.runScript(Resources.getResourceAsReader("phoenix/user.ddl.sql"));
+        scriptRunner.runScript(Resources.getResourceAsReader("phoenix/test_info.ddl.sql"));
 
 
         Reader reader = Resources.getResourceAsReader("mybatis-config.xml");
