@@ -340,9 +340,12 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      * @param condition 查询条件值
      */
     protected Children addNestedCondition(boolean condition, Consumer<Children> consumer) {
-        final Children instance = instance();
-        consumer.accept(instance);
-        return doIt(condition, LEFT_BRACKET, instance, RIGHT_BRACKET);
+        if (condition) {
+            final Children instance = instance();
+            consumer.accept(instance);
+            return doIt(true, LEFT_BRACKET, instance, RIGHT_BRACKET);
+        }
+        return typedThis;
     }
 
     /**
