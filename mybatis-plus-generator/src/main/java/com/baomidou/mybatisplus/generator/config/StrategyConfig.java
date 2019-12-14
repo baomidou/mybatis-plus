@@ -290,12 +290,14 @@ public class StrategyConfig {
         return this;
     }
 
-    public void setSuperControllerClass(Class<?> clazz) {
+    public StrategyConfig setSuperControllerClass(Class<?> clazz) {
         this.superControllerClass = clazz.getName();
+        return this;
     }
 
-    public void setSuperControllerClass(String superControllerClass) {
+    public StrategyConfig setSuperControllerClass(String superControllerClass) {
         this.superControllerClass = superControllerClass;
+        return this;
     }
 
     /**
