@@ -460,19 +460,19 @@ public class ConfigBuilder {
                 tablesSql = String.format(tablesSql, schema);
             }
             StringBuilder sql = new StringBuilder(tablesSql);
-            if (config.isEnableLike()) {
+            if (config.isEnableSqlFilter()) {
                 if (config.getLikeTable() != null) {
                     sql.append(" AND ").append(dbQuery.tableName()).append(" LIKE '").append(config.getLikeTable().getValue()).append("'");
                 } else if (config.getNotLikeTable() != null) {
                     sql.append(" AND ").append(dbQuery.tableName()).append(" NOT LIKE '").append(config.getNotLikeTable().getValue()).append("'");
                 }
-            }
-            if (isInclude) {
-                sql.append(" AND ").append(dbQuery.tableName()).append(" IN (")
-                    .append(Arrays.stream(config.getInclude()).map(tb -> "'" + tb + "'").collect(Collectors.joining(","))).append(")");
-            } else if (isExclude) {
-                sql.append(" AND ").append(dbQuery.tableName()).append(" NOT IN (")
-                    .append(Arrays.stream(config.getExclude()).map(tb -> "'" + tb + "'").collect(Collectors.joining(","))).append(")");
+                if (isInclude) {
+                    sql.append(" AND ").append(dbQuery.tableName()).append(" IN (")
+                        .append(Arrays.stream(config.getInclude()).map(tb -> "'" + tb + "'").collect(Collectors.joining(","))).append(")");
+                } else if (isExclude) {
+                    sql.append(" AND ").append(dbQuery.tableName()).append(" NOT IN (")
+                        .append(Arrays.stream(config.getExclude()).map(tb -> "'" + tb + "'").collect(Collectors.joining(","))).append(")");
+                }
             }
             TableInfo tableInfo;
             try (PreparedStatement preparedStatement = connection.prepareStatement(sql.toString());

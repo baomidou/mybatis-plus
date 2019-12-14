@@ -18,6 +18,8 @@ import org.junit.jupiter.api.Test;
  */
 class H2CodeGeneratorTest {
 
+    private static String outPutDir = System.getProperty("os.name").toLowerCase().contains("windows") ? "D://tmp" : "tmp";
+
     private DataSourceConfig dataSourceConfig() {
         String dbUrl = "jdbc:h2:mem:test;MODE=mysql;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE";
         DataSourceConfig dataSourceConfig = new DataSourceConfig();
@@ -34,7 +36,7 @@ class H2CodeGeneratorTest {
         strategyConfig
             .setCapitalMode(true)
             .setEntityLombokModel(false)
-            .setEnableLike(true)
+            .setEnableSqlFilter(true)
             .setNaming(NamingStrategy.underline_to_camel);
         return strategyConfig;
     }
@@ -44,7 +46,7 @@ class H2CodeGeneratorTest {
         globalConfig.setActiveRecord(false)
             .setIdType(IdType.ASSIGN_ID)
             .setAuthor("test")
-            .setOutputDir("/tmp/")
+            .setOutputDir(outPutDir)
             .setOpen(true)
             .setFileOverride(true);
         return globalConfig;
