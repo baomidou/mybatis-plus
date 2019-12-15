@@ -138,12 +138,11 @@ public class MybatisCachingExecutor implements Executor {
                         return (List<E>) result;
                     }
                 } else {
-                    Long count;
                     if (page != null) {
                         if (page.isSearchCount()) {
                             CacheKey cacheKey = getCountCacheKey(ms, boundSql, parameterObject, RowBounds.DEFAULT);
-                            count = (Long) tcm.getObject(cache, cacheKey);
-                            return new PageList((List) result, count);
+                            Number count = (Number) tcm.getObject(cache, cacheKey);
+                            return new PageList((List) result, count.longValue());
                         }
                         return new PageList((List) result, 0L);
                     } else {
