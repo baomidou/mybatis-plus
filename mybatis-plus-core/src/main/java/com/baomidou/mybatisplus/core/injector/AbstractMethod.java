@@ -19,7 +19,6 @@ import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -94,7 +93,8 @@ public abstract class AbstractMethod implements Constants {
      * @param prefix 前缀
      * @return sql
      */
-    protected String sqlSet(boolean logic, boolean ew, TableInfo table, boolean judgeAliasNull, String alias, String prefix) {
+    protected String sqlSet(boolean logic, boolean ew, TableInfo table, boolean judgeAliasNull, final String alias,
+                            final String prefix) {
         String sqlScript = table.getAllSqlSet(logic, prefix);
         if (judgeAliasNull) {
             sqlScript = SqlScriptUtils.convertIf(sqlScript, String.format("%s != null", alias), true);
@@ -236,12 +236,15 @@ public abstract class AbstractMethod implements Constants {
         return infoStream.map(function).collect(joining(joiningVal));
     }
 
+    /**
+     * 获取乐观锁相关
+     *
+     * @param tableInfo 表信息
+     * @return String
+     */
     protected String optlockVersion(TableInfo tableInfo) {
         if (tableInfo.isWithVersion()) {
-            return "<if test=\"oli != null\">" +
-                " AND ${oli." + Constants.MP_OPTLOCK_VERSION_COLUMN +
-                "}=#{oli." + Constants.MP_OPTLOCK_VERSION_ORIGINAL + StringPool.RIGHT_BRACE +
-                "</if>";
+            return tableInfo.getVersionFieldInfo().getVersionOli(ENTITY, ENTITY_DOT);
         }
         return EMPTY;
     }

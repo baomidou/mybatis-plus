@@ -103,7 +103,6 @@ public class OptimisticLockerInterceptor implements Interceptor {
                     }
                 } else {
                     Map<String, Object> entityMap = new HashMap<>(3);
-                    entityMap.put(Constants.MP_OPTLOCK_VERSION_COLUMN, versionColumn);
                     entityMap.put(Constants.MP_OPTLOCK_VERSION_ORIGINAL, originalVersionVal);
                     map.put(Constants.MP_OPTLOCK_INTERCEPTOR, entityMap);
                 }

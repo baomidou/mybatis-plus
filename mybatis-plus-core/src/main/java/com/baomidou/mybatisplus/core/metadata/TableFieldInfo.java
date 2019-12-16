@@ -19,6 +19,7 @@ import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import lombok.*;
@@ -460,6 +461,16 @@ public class TableFieldInfo implements Constants {
             builder.typeHandler(typeHandler);
         }
         return builder.build();
+    }
+
+    public String getVersionOli(final String alias, final String prefix) {
+        final String oli = " AND " + column + "=#{oli." + Constants.MP_OPTLOCK_VERSION_ORIGINAL + StringPool.RIGHT_BRACE;
+        final String ognlStr = convertIfProperty(prefix, property);
+        if (isCharSequence) {
+            return SqlScriptUtils.convertIf(oli, String.format("%s != null and %s != null and %s != ''", alias, ognlStr, ognlStr), false);
+        } else {
+            return SqlScriptUtils.convertIf(oli, String.format("%s != null and %s != null", alias, ognlStr), false);
+        }
     }
 
     /**
