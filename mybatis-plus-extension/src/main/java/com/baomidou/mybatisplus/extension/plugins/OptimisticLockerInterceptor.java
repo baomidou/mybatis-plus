@@ -73,8 +73,8 @@ public class OptimisticLockerInterceptor implements Interceptor {
         if (param instanceof Map) {
             Map map = (Map) param;
             //updateById(et), update(et, wrapper);
-            Object et = map.get(Constants.ENTITY);
-            if (et != null) {
+            if (map.containsKey(Constants.ENTITY)) {
+                Object et = map.get(Constants.ENTITY);
                 // entity
                 String methodId = ms.getId();
                 String methodName = methodId.substring(methodId.lastIndexOf(StringPool.DOT) + 1);
@@ -93,7 +93,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
                 // 新的 version 值
                 Object updatedVersionVal = this.getUpdatedVersionVal(fieldInfo.getPropertyType(), originalVersionVal);
                 if (PARAM_UPDATE_METHOD_NAME.equals(methodName)) {
-                    AbstractWrapper<?, ?, ?> aw = (AbstractWrapper<?, ?, ?>) map.get(Constants.WRAPPER);
+                    AbstractWrapper<?, ?, ?> aw = (AbstractWrapper<?, ?, ?>) map.getOrDefault(Constants.WRAPPER, null);
                     if (aw == null) {
                         UpdateWrapper<?> uw = new UpdateWrapper<>();
                         uw.eq(versionColumn, originalVersionVal);
