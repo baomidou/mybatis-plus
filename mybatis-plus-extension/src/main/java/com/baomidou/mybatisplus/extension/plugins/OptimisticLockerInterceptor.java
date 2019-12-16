@@ -32,7 +32,6 @@ import java.lang.reflect.Field;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -102,9 +101,7 @@ public class OptimisticLockerInterceptor implements Interceptor {
                         aw.apply(versionColumn + " = {0}", originalVersionVal);
                     }
                 } else {
-                    Map<String, Object> entityMap = new HashMap<>(3);
-                    entityMap.put(Constants.MP_OPTLOCK_VERSION_ORIGINAL, originalVersionVal);
-                    map.put(Constants.MP_OPTLOCK_INTERCEPTOR, entityMap);
+                    map.put(Constants.MP_OPTLOCK_VERSION_ORIGINAL, originalVersionVal);
                 }
                 versionField.set(et, updatedVersionVal);
                 return invocation.proceed();
