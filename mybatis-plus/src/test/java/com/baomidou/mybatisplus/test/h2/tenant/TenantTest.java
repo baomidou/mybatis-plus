@@ -24,7 +24,7 @@ class TenantTest {
     @Autowired
     private StudentMapper studentMapper;
 
-    @Test
+//    @Test
     void testSimple(){
         TenantConfig.TENANT_ID = 2L;
         Student student1 = studentMapper.selectById(1L);
@@ -38,7 +38,7 @@ class TenantTest {
         Assertions.assertNotNull(student2);
     }
 
-    @Test
+//    @Test
     void testPage(){
         TenantConfig.TENANT_ID = 2L;
         Page<Student> page1 = studentMapper.selectPage(new Page<>(0, 10), new QueryWrapper<>());
