@@ -72,8 +72,8 @@ public class OptimisticLockerInterceptor implements Interceptor {
         if (param instanceof Map) {
             Map map = (Map) param;
             //updateById(et), update(et, wrapper);
-            if (map.containsKey(Constants.ENTITY)) {
-                Object et = map.get(Constants.ENTITY);
+            Object et = map.getOrDefault(Constants.ENTITY, null);
+            if (et != null) {
                 // entity
                 String methodId = ms.getId();
                 String methodName = methodId.substring(methodId.lastIndexOf(StringPool.DOT) + 1);
