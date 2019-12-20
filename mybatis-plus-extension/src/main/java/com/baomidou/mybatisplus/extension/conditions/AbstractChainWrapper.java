@@ -212,6 +212,12 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     }
 
     @Override
+    public Children func(Consumer<Children> consumer) {
+        getWrapper().func(consumer);
+        return typedThis;
+    }
+
+    @Override
     public Children or(boolean condition) {
         getWrapper().or(condition);
         return typedThis;

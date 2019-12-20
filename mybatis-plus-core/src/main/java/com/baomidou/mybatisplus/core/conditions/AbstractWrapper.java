@@ -298,6 +298,12 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
         return doIt(condition, HAVING, () -> formatSqlIfNeed(condition, sqlHaving, params));
     }
 
+    @Override
+    public Children func(Consumer<Children> consumer) {
+        consumer.accept(typedThis);
+        return typedThis;
+    }
+
     /**
      * 内部自用
      * <p>NOT 关键词</p>
