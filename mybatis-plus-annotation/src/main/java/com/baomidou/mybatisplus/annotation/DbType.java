@@ -88,6 +88,12 @@ public enum DbType {
      * Kingbase
      */
     KINGBASE_ES("kingbasees", "人大金仓数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.KingbaseDialect"),
+
+    /**
+     * Phoenix
+     */
+    PHOENIX("phoenix", "Phoenix HBase数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.PhoenixDialect"),
+
     /**
      * UNKONWN DB
      */
