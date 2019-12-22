@@ -55,7 +55,7 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
 
     private UpdateWrapper(T entity, List<String> sqlSet, AtomicInteger paramNameSeq,
                           Map<String, Object> paramNameValuePairs, MergeSegments mergeSegments,
-                          SharedString lastSql, SharedString sqlComment) {
+                          SharedString lastSql, SharedString sqlComment, SharedString sqlFirst) {
         this.setEntity(entity);
         this.sqlSet = sqlSet;
         this.paramNameSeq = paramNameSeq;
@@ -63,6 +63,7 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
         this.expression = mergeSegments;
         this.lastSql = lastSql;
         this.sqlComment = sqlComment;
+        this.sqlFirst = sqlFirst;
     }
 
     @Override
@@ -93,12 +94,13 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
      * 返回一个支持 lambda 函数写法的 wrapper
      */
     public LambdaUpdateWrapper<T> lambda() {
-        return new LambdaUpdateWrapper<>(getEntity(), sqlSet, paramNameSeq, paramNameValuePairs, expression, lastSql, sqlComment);
+        return new LambdaUpdateWrapper<>(getEntity(), sqlSet, paramNameSeq, paramNameValuePairs, expression,
+            lastSql, sqlComment, sqlFirst);
     }
 
     @Override
     protected UpdateWrapper<T> instance() {
         return new UpdateWrapper<>(getEntity(), sqlSet, paramNameSeq, paramNameValuePairs, new MergeSegments(),
-            SharedString.emptyString(), SharedString.emptyString());
+            SharedString.emptyString(), SharedString.emptyString(), SharedString.emptyString());
     }
 }

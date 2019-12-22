@@ -65,8 +65,9 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     /**
      * SQL起始语句
      */
-    protected SharedString sqlFirst = SharedString.emptyString();
-    /**ß
+    protected SharedString sqlFirst;
+    /**
+     * ß
      * 数据库表映射实体类
      */
     private T entity;
@@ -238,7 +239,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
 
     @Override
     public Children first(boolean condition, String firstSql) {
-        if(condition) {
+        if (condition) {
             this.sqlFirst.setStringValue(firstSql);
         }
         return typedThis;
@@ -473,7 +474,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
 
     @Override
     public String getSqlFirst() {
-        if (StringUtils.isNotEmpty(sqlFirst.getStringValue())) {
+        if (StringUtils.isNotBlank(sqlFirst.getStringValue())) {
             return StringEscape.escapeRawString(sqlFirst.getStringValue());
         }
         return null;

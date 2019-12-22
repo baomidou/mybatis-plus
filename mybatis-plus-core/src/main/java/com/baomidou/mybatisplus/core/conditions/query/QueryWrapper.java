@@ -64,7 +64,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
      */
     private QueryWrapper(T entity, Class<T> entityClass, AtomicInteger paramNameSeq,
                          Map<String, Object> paramNameValuePairs, MergeSegments mergeSegments,
-                         SharedString lastSql, SharedString sqlComment) {
+                         SharedString lastSql, SharedString sqlComment, SharedString sqlFirst) {
         this.setEntity(entity);
         this.setEntityClass(entityClass);
         this.paramNameSeq = paramNameSeq;
@@ -72,6 +72,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
         this.expression = mergeSegments;
         this.lastSql = lastSql;
         this.sqlComment = sqlComment;
+        this.sqlFirst = sqlFirst;
     }
 
     @Override
@@ -99,7 +100,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
      */
     public LambdaQueryWrapper<T> lambda() {
         return new LambdaQueryWrapper<>(getEntity(), getEntityClass(), sqlSelect, paramNameSeq, paramNameValuePairs, expression,
-            lastSql, sqlComment);
+            lastSql, sqlComment, sqlFirst);
     }
 
     /**
@@ -111,6 +112,6 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     @Override
     protected QueryWrapper<T> instance() {
         return new QueryWrapper<>(getEntity(), getEntityClass(), paramNameSeq, paramNameValuePairs, new MergeSegments(),
-            SharedString.emptyString(), SharedString.emptyString());
+            SharedString.emptyString(), SharedString.emptyString(), SharedString.emptyString());
     }
 }

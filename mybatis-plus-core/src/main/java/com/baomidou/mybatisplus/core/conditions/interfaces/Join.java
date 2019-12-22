@@ -96,8 +96,6 @@ public interface Join<Children> extends Serializable {
 
     /**
      * ignore
-     * @param firstSql
-     * @return
      */
     default Children first(String firstSql) {
         return first(true, firstSql);
@@ -105,9 +103,10 @@ public interface Join<Children> extends Serializable {
 
     /**
      * sql 起始句（会拼接在SQL语句的起始处）
+     *
      * @param condition 执行条件
      * @param firstSql  起始语句
-     * @return
+     * @return children
      */
     Children first(boolean condition, String firstSql);
 

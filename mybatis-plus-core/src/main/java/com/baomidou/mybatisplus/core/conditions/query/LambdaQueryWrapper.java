@@ -70,7 +70,7 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
      */
     LambdaQueryWrapper(T entity, Class<T> entityClass, SharedString sqlSelect, AtomicInteger paramNameSeq,
                        Map<String, Object> paramNameValuePairs, MergeSegments mergeSegments,
-                       SharedString lastSql, SharedString sqlComment) {
+                       SharedString lastSql, SharedString sqlComment, SharedString sqlFirst) {
         this.setEntity(entity);
         this.setEntityClass(entityClass);
         this.paramNameSeq = paramNameSeq;
@@ -79,6 +79,7 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
         this.sqlSelect = sqlSelect;
         this.lastSql = lastSql;
         this.sqlComment = sqlComment;
+        this.sqlFirst = sqlFirst;
     }
 
     /**
@@ -125,6 +126,6 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     @Override
     protected LambdaQueryWrapper<T> instance() {
         return new LambdaQueryWrapper<>(getEntity(), getEntityClass(), null, paramNameSeq, paramNameValuePairs,
-            new MergeSegments(), SharedString.emptyString(), SharedString.emptyString());
+            new MergeSegments(), SharedString.emptyString(), SharedString.emptyString(), SharedString.emptyString());
     }
 }

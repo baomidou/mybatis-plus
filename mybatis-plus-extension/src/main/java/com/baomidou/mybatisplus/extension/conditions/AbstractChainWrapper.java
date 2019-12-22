@@ -241,10 +241,12 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
         return typedThis;
     }
 
+    @Override
     public Children first(boolean condition, String firstSql) {
         getWrapper().first(condition, firstSql);
         return typedThis;
     }
+
     @Override
     public Children exists(boolean condition, String existsSql) {
         getWrapper().exists(condition, existsSql);
