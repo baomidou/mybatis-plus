@@ -93,6 +93,10 @@ public interface Constants extends StringPool {
      */
     String Q_WRAPPER_SQL_COMMENT = WRAPPER_DOT + "sqlComment";
     /**
+     * wrapper 类的属性 sqlFirst
+     */
+    String Q_WRAPPER_SQL_FIRST = WRAPPER_DOT + "sqlFirst";
+    /**
      * columnMap
      */
     String COLUMN_MAP = "cm";

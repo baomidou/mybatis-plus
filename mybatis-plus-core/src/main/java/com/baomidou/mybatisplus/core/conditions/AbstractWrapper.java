@@ -63,6 +63,10 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      */
     protected SharedString sqlComment;
     /**
+     * SQL起始语句
+     */
+    protected SharedString sqlFirst = SharedString.emptyString();
+    /**ß
      * 数据库表映射实体类
      */
     private T entity;
@@ -228,6 +232,14 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     public Children comment(boolean condition, String comment) {
         if (condition) {
             this.sqlComment.setStringValue(comment);
+        }
+        return typedThis;
+    }
+
+    @Override
+    public Children first(boolean condition, String firstSql) {
+        if(condition) {
+            this.sqlFirst.setStringValue(firstSql);
         }
         return typedThis;
     }
@@ -422,6 +434,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
         expression = new MergeSegments();
         lastSql = SharedString.emptyString();
         sqlComment = SharedString.emptyString();
+        sqlFirst = SharedString.emptyString();
     }
 
     /**
@@ -454,6 +467,14 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     public String getSqlComment() {
         if (StringUtils.isNotBlank(sqlComment.getStringValue())) {
             return "/*" + StringEscape.escapeRawString(sqlComment.getStringValue()) + "*/";
+        }
+        return null;
+    }
+
+    @Override
+    public String getSqlFirst() {
+        if (StringUtils.isNotEmpty(sqlFirst.getStringValue())) {
+            return StringEscape.escapeRawString(sqlFirst.getStringValue());
         }
         return null;
     }

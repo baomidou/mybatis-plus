@@ -119,6 +119,21 @@ public abstract class AbstractMethod implements Constants {
     }
 
     /**
+     * SQL 注释
+     *
+     * @return sql
+     */
+    protected String sqlFirst() {
+        return SqlScriptUtils.convertChoose(
+                String.format(
+                        "%s != null and %s != null",
+                        WRAPPER,
+                        Q_WRAPPER_SQL_FIRST
+                ),
+                SqlScriptUtils.unSafeParam(Q_WRAPPER_SQL_FIRST),
+                EMPTY);
+    }
+    /**
      * SQL 查询所有表字段
      *
      * @param table        表信息
