@@ -19,5 +19,12 @@ dependencies {
     testCompile "${lib.'spring-context-support'}"
     testCompile "${lib.'spring-jdbc'}"
     testCompile 'javax.annotation:javax.annotation-api:1.3.2'
-
+    testCompile ('com.github.flyingglass:phoenix-core-shaded:1.0.0-SNAPSHOT')
+        {
+            exclude group: 'org.apache.phoenix', module: 'phoenix-core'
+        }
+    testCompile ('com.github.flyingglass:hbase-client-shaded:1.0.0-SNAPSHOT')
+        {
+            exclude group: 'org.apache.hbase', module: 'hbase-client'
+        }
 }

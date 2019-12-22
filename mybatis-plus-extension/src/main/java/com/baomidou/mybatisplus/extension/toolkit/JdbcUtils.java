@@ -65,6 +65,8 @@ public class JdbcUtils {
             return DbType.XU_GU;
         } else if (jdbcUrl.contains(":kingbase:") || jdbcUrl.contains(":kingbase8:")) {
             return DbType.KINGBASE_ES;
+        } else if (jdbcUrl.contains(":phoenix:")) {
+            return DbType.PHOENIX;
         } else {
             logger.warn("The jdbcUrl is " + jdbcUrl + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!");
             return DbType.OTHER;
