@@ -32,7 +32,6 @@ import org.apache.ibatis.mapping.SqlSource;
  * @author fly
  * @since 2018-04-06
  */
-@SuppressWarnings("all")
 public class Upsert extends AbstractMethod {
 
     @Override
