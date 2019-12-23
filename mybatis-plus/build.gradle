@@ -13,12 +13,13 @@ dependencies {
     testCompile "${lib.postgresql}"
     testCompile lib.oracle as ConfigurableFileTree
     testCompile "${lib.mysql}"
-    testCompile "${lib.jackson}"
+//    testCompile "${lib.jackson}"
     testCompile "${lib.'mybatis-ehcache'}"
     testCompile "${lib.'mybatis-redis'}"
     testCompile "${lib.'spring-context-support'}"
     testCompile "${lib.'spring-jdbc'}"
     testCompile 'javax.annotation:javax.annotation-api:1.3.2'
+    // 与jackson会冲突
     testCompile ('com.github.flyingglass:phoenix-core-shaded:1.0.0-SNAPSHOT')
         {
             exclude group: 'org.apache.phoenix', module: 'phoenix-core'

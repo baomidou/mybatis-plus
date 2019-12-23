@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.extension.MybatisMapWrapperFactory;
 import com.baomidou.mybatisplus.extension.injector.methods.Upsert;
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.JdbcType;
@@ -44,13 +45,17 @@ import java.util.List;
 public class MybatisPlusConfig {
 
     @Bean("mybatisSqlSession")
-    public SqlSessionFactory sqlSessionFactory(DataSource dataSource, GlobalConfig globalConfig) throws Exception {
+    public SqlSessionFactory sqlSessionFactory(
+        DataSource dataSource,
+        GlobalConfig globalConfig,
+        PaginationInterceptor paginationInterceptor
+    ) throws Exception {
         MybatisSqlSessionFactoryBean sqlSessionFactory = new MybatisSqlSessionFactoryBean();
         /* 数据源 */
         sqlSessionFactory.setDataSource(dataSource);
         /* xml扫描 */
-        sqlSessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver()
-            .getResources("classpath:/mapper/*.xml"));
+//        sqlSessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver()
+//            .getResources("classpath:/mapper/*.xml"));
         /* 扫描 typeHandler */
         MybatisConfiguration configuration = new MybatisConfiguration();
         configuration.setJdbcTypeForNull(JdbcType.NULL);
@@ -58,6 +63,7 @@ public class MybatisPlusConfig {
         configuration.setMapUnderscoreToCamelCase(true);
         /* 乐观锁插件 */
         configuration.addInterceptor(new OptimisticLockerInterceptor());
+        configuration.addInterceptor(paginationInterceptor);
         /* map 下划线转驼峰 */
         configuration.setObjectWrapperFactory(new MybatisMapWrapperFactory());
         sqlSessionFactory.setConfiguration(configuration);
@@ -68,8 +74,8 @@ public class MybatisPlusConfig {
     @Bean
     public GlobalConfig globalConfig() {
         GlobalConfig conf = new GlobalConfig();
-        conf.setDbConfig(new GlobalConfig.DbConfig()
-            .setColumnFormat("`%s`"));
+//        conf.setDbConfig(new GlobalConfig.DbConfig()
+//            .setColumnFormat("`%s`"));
         DefaultSqlInjector phoenixSqlInjector = new DefaultSqlInjector() {
             /**
              * 注入自定义全局方法
@@ -83,5 +89,10 @@ public class MybatisPlusConfig {
         };
         conf.setSqlInjector(phoenixSqlInjector);
         return conf;
+    }
+
+    @Bean
+    PaginationInterceptor paginationInterceptor() {
+        return new PaginationInterceptor();
     }
 }

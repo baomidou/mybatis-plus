@@ -38,7 +38,7 @@ public class Upsert extends AbstractMethod {
     @Override
     public MappedStatement injectMappedStatement(Class<?> mapperClass, Class<?> modelClass, TableInfo tableInfo) {
         KeyGenerator keyGenerator = new NoKeyGenerator();
-        SqlMethod sqlMethod = SqlMethod.INSERT_ONE;
+        SqlMethod sqlMethod = SqlMethod.UPSERT_ONE;
         String columnScript = SqlScriptUtils.convertTrim(tableInfo.getAllInsertSqlColumnMaybeIf(),
             LEFT_BRACKET, RIGHT_BRACKET, null, COMMA);
         String valuesScript = SqlScriptUtils.convertTrim(tableInfo.getAllInsertSqlPropertyMaybeIf(null),
