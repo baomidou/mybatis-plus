@@ -1,0 +1,5 @@
+- 修复启用乐观锁下updateById时自动填充不生效的问题
+- 修复自动填充接口的default方法(`setFieldValByName`和`getFieldValByName`)某些情况下会发生异常的问题
+- `BaseMapper`部分入参为`Wrapper`的select方法支持`wrapper.first`来设置RDS的hint
+- `Wrapper`子类新增`func`方法,主要为了支持在`if else`情况下使用`Wrapper`的不同method不会导致断链(链式调用不能一链到底)
+- 新增支持hbase的选装件`Upsert`

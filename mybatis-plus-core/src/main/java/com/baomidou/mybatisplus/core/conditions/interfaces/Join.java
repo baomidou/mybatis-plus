@@ -107,6 +107,7 @@ public interface Join<Children> extends Serializable {
      * @param condition 执行条件
      * @param firstSql  起始语句
      * @return children
+     * @since 3.3.1
      */
     Children first(boolean condition, String firstSql);
 

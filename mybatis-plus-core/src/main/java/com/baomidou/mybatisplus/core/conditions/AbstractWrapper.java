@@ -312,8 +312,10 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     @Override
-    public Children func(Consumer<Children> consumer) {
-        consumer.accept(typedThis);
+    public Children func(boolean condition, Consumer<Children> consumer) {
+        if (condition) {
+            consumer.accept(typedThis);
+        }
         return typedThis;
     }
 
