@@ -61,6 +61,6 @@ public class Upsert extends AbstractMethod {
     @Override
     public String getMethod(SqlMethod sqlMethod) {
         // 自定义 mapper 方法名
-        return "upsert";
+        return sqlMethod.getMethod();
     }
 }
