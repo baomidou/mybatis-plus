@@ -462,6 +462,16 @@ public class TableFieldInfo implements Constants {
         return builder.build();
     }
 
+    public String getVersionOli(final String alias, final String prefix) {
+        final String oli = " AND " + column + EQUALS + SqlScriptUtils.safeParam(MP_OPTLOCK_VERSION_ORIGINAL);
+        final String ognlStr = convertIfProperty(prefix, property);
+        if (isCharSequence) {
+            return SqlScriptUtils.convertIf(oli, String.format("%s != null and %s != null and %s != ''", alias, ognlStr, ognlStr), false);
+        } else {
+            return SqlScriptUtils.convertIf(oli, String.format("%s != null and %s != null", alias, ognlStr), false);
+        }
+    }
+
     /**
      * 转换成 if 标签的脚本片段
      *

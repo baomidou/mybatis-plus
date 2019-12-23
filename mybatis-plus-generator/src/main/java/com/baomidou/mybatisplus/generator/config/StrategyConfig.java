@@ -164,14 +164,13 @@ public class StrategyConfig {
      */
     private List<TableFill> tableFillList = null;
     /**
-     * 启用like匹配支持
-     * 目前所知微软系需要关闭，其他数据库等待反馈，
-     * sql可能要改动一下才能支持，没数据库环境搞，请手动关闭使用内存过滤的方式。
-     * 数据库语法不能支持使用like过滤表的话，可以考虑关闭此开关.
+     * 启用sql过滤
+     * 语法不能支持使用sql过滤表的话，可以考虑关闭此开关.
+     * 目前所知微软系需要关闭，其他数据库等待反馈，sql可能要改动一下才能支持，没数据库环境搞，请手动关闭使用内存过滤的方式。
      *
      * @since 3.3.1
      */
-    private boolean enableLike = true;
+    private boolean enableSqlFilter = true;
     /**
      * 包含表名
      *
@@ -291,12 +290,14 @@ public class StrategyConfig {
         return this;
     }
 
-    public void setSuperControllerClass(Class<?> clazz) {
+    public StrategyConfig setSuperControllerClass(Class<?> clazz) {
         this.superControllerClass = clazz.getName();
+        return this;
     }
 
-    public void setSuperControllerClass(String superControllerClass) {
+    public StrategyConfig setSuperControllerClass(String superControllerClass) {
         this.superControllerClass = superControllerClass;
+        return this;
     }
 
     /**

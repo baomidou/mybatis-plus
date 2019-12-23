@@ -19,10 +19,12 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.EncryptUtils;
 import lombok.Data;
+import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -46,7 +48,7 @@ class EncryptTest {
 
     @Test
     void testTableInfoHelper() {
-        TableInfo info = TableInfoHelper.initTableInfo(null, Xx.class);
+        TableInfo info = TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), Xx.class);
         System.out.println("----------- AllInsertSqlColumn -----------");
         System.out.println(info.getAllInsertSqlColumnMaybeIf());
         System.out.println("----------- AllInsertSqlProperty -----------");

@@ -63,6 +63,11 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      */
     protected SharedString sqlComment;
     /**
+     * SQL起始语句
+     */
+    protected SharedString sqlFirst;
+    /**
+     * ß
      * 数据库表映射实体类
      */
     private T entity;
@@ -233,6 +238,14 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     @Override
+    public Children first(boolean condition, String firstSql) {
+        if (condition) {
+            this.sqlFirst.setStringValue(firstSql);
+        }
+        return typedThis;
+    }
+
+    @Override
     public Children exists(boolean condition, String existsSql) {
         return doIt(condition, EXISTS, () -> String.format("(%s)", existsSql));
     }
@@ -298,6 +311,12 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
         return doIt(condition, HAVING, () -> formatSqlIfNeed(condition, sqlHaving, params));
     }
 
+    @Override
+    public Children func(Consumer<Children> consumer) {
+        consumer.accept(typedThis);
+        return typedThis;
+    }
+
     /**
      * 内部自用
      * <p>NOT 关键词</p>
@@ -340,9 +359,12 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      * @param condition 查询条件值
      */
     protected Children addNestedCondition(boolean condition, Consumer<Children> consumer) {
-        final Children instance = instance();
-        consumer.accept(instance);
-        return doIt(condition, LEFT_BRACKET, instance, RIGHT_BRACKET);
+        if (condition) {
+            final Children instance = instance();
+            consumer.accept(instance);
+            return doIt(true, LEFT_BRACKET, instance, RIGHT_BRACKET);
+        }
+        return typedThis;
     }
 
     /**
@@ -413,6 +435,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
         expression = new MergeSegments();
         lastSql = SharedString.emptyString();
         sqlComment = SharedString.emptyString();
+        sqlFirst = SharedString.emptyString();
     }
 
     /**
@@ -445,6 +468,14 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     public String getSqlComment() {
         if (StringUtils.isNotBlank(sqlComment.getStringValue())) {
             return "/*" + StringEscape.escapeRawString(sqlComment.getStringValue()) + "*/";
+        }
+        return null;
+    }
+
+    @Override
+    public String getSqlFirst() {
+        if (StringUtils.isNotBlank(sqlFirst.getStringValue())) {
+            return StringEscape.escapeRawString(sqlFirst.getStringValue());
         }
         return null;
     }

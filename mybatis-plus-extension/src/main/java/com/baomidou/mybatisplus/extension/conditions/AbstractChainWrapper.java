@@ -212,6 +212,12 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     }
 
     @Override
+    public Children func(Consumer<Children> consumer) {
+        getWrapper().func(consumer);
+        return typedThis;
+    }
+
+    @Override
     public Children or(boolean condition) {
         getWrapper().or(condition);
         return typedThis;
@@ -232,6 +238,12 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     @Override
     public Children comment(boolean condition, String comment) {
         getWrapper().comment(condition, comment);
+        return typedThis;
+    }
+
+    @Override
+    public Children first(boolean condition, String firstSql) {
+        getWrapper().first(condition, firstSql);
         return typedThis;
     }
 

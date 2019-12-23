@@ -101,16 +101,16 @@ class MybatisDefaultParameterHandlerTest {
         Assertions.assertNotNull(model2.getId());
         Assertions.assertNotNull(model2.getInsertOperator());
         Assertions.assertNull(model2.getUpdateOperator());
-        //map参数
-        Model model3 = new Model("坦克");
-        Map<String, Object> params2 = new HashMap<>();
-        params2.put(Constants.ENTITY, new HashMap<String, Object>() {{
-            put(Constants.MP_OPTLOCK_ET_ORIGINAL, model3);
-        }});
-        MybatisDefaultParameterHandler.processParameter(mappedStatement, params2);
-        Assertions.assertNotNull(model3.getId());
-        Assertions.assertNotNull(model3.getInsertOperator());
-        Assertions.assertNull(model3.getUpdateOperator());
+//        //map参数
+//        Model model3 = new Model("坦克");
+//        Map<String, Object> params2 = new HashMap<>();
+//        params2.put(Constants.ENTITY, new HashMap<String, Object>() {{
+//            put(Constants.MP_OPTLOCK_ET_ORIGINAL, model3);
+//        }});
+//        MybatisDefaultParameterHandler.processParameter(mappedStatement, params2);
+//        Assertions.assertNotNull(model3.getId());
+//        Assertions.assertNotNull(model3.getInsertOperator());
+//        Assertions.assertNull(model3.getUpdateOperator());
         //普通更新
         Model model4 = new Model(1L,"坦克");
         mappedStatement = new MappedStatement.Builder(configuration, "***", staticSqlSource, SqlCommandType.UPDATE).build();

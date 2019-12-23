@@ -26,6 +26,8 @@ import org.apache.ibatis.executor.keygen.SelectKeyGenerator;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.*;
+import org.apache.ibatis.reflection.Reflector;
+import org.apache.ibatis.reflection.ReflectorFactory;
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 
@@ -238,6 +240,9 @@ public class TableInfoHelper {
     public static void initTableFields(Class<?> clazz, GlobalConfig globalConfig, TableInfo tableInfo) {
         /* 数据库全局配置 */
         GlobalConfig.DbConfig dbConfig = globalConfig.getDbConfig();
+        ReflectorFactory reflectorFactory = tableInfo.getConfiguration().getReflectorFactory();
+        //TODO @咩咩 有空一起来撸完这反射模块.
+        Reflector reflector = reflectorFactory.findForClass(clazz);
         List<Field> list = getAllFields(clazz);
         // 标记是否读取到主键
         boolean isReadPK = false;
@@ -251,9 +256,9 @@ public class TableInfoHelper {
              */
             if (!isReadPK) {
                 if (existTableId) {
-                    isReadPK = initTableIdWithAnnotation(dbConfig, tableInfo, field, clazz);
+                    isReadPK = initTableIdWithAnnotation(dbConfig, tableInfo, field, clazz, reflector);
                 } else {
-                    isReadPK = initTableIdWithoutAnnotation(dbConfig, tableInfo, field, clazz);
+                    isReadPK = initTableIdWithoutAnnotation(dbConfig, tableInfo, field, clazz, reflector);
                 }
                 if (isReadPK) {
                     continue;
@@ -302,10 +307,11 @@ public class TableInfoHelper {
      * @param tableInfo 表信息
      * @param field     字段
      * @param clazz     实体类
+     * @param reflector Reflector
      * @return true 继续下一个属性判断，返回 continue;
      */
     private static boolean initTableIdWithAnnotation(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo,
-                                                     Field field, Class<?> clazz) {
+                                                     Field field, Class<?> clazz, Reflector reflector) {
         TableId tableId = field.getAnnotation(TableId.class);
         boolean underCamel = tableInfo.isUnderCamel();
         if (tableId != null) {
@@ -335,7 +341,7 @@ public class TableInfoHelper {
                 tableInfo.setKeyRelated(checkRelated(underCamel, field.getName(), column))
                     .setKeyColumn(column)
                     .setKeyProperty(field.getName())
-                    .setKeyType(field.getType());
+                    .setKeyType(reflector.getGetterType(field.getName()));
                 return true;
             } else {
                 throwExceptionId(clazz);
@@ -352,10 +358,11 @@ public class TableInfoHelper {
      * @param tableInfo 表信息
      * @param field     字段
      * @param clazz     实体类
+     * @param reflector Reflector
      * @return true 继续下一个属性判断，返回 continue;
      */
     private static boolean initTableIdWithoutAnnotation(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo,
-                                                        Field field, Class<?> clazz) {
+                                                        Field field, Class<?> clazz, Reflector reflector) {
         String column = field.getName();
         if (dbConfig.isCapitalMode()) {
             column = column.toUpperCase();
@@ -366,7 +373,7 @@ public class TableInfoHelper {
                     .setIdType(dbConfig.getIdType())
                     .setKeyColumn(column)
                     .setKeyProperty(field.getName())
-                    .setKeyType(field.getType());
+                    .setKeyType(reflector.getGetterType(field.getName()));
                 return true;
             } else {
                 throwExceptionId(clazz);

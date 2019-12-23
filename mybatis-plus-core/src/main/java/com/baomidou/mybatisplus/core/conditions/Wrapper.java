@@ -52,6 +52,8 @@ public abstract class Wrapper<T> implements ISqlSegment {
         return null;
     }
 
+    public String getSqlFirst() { return null; }
+
     /**
      * 获取 MergeSegments
      */

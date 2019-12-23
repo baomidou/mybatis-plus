@@ -48,7 +48,10 @@ class SelectCountDistinctTest {
     void testCountDistinct() {
         QueryWrapper<CommonData> distinct = new QueryWrapper<>();
         distinct.select("distinct test_int");
-        distinct.eq("test_int", 25).or().eq("test_str", "test");
+        distinct.eq("test_int", 25)
+                .or()
+                .eq("test_str", "test")
+                .first("/*Force Master*/");
         int count = commonDataMapper.selectCount(distinct);
         Assertions.assertEquals(1, count);
     }
