@@ -73,7 +73,7 @@ class WrapperTest {
         ew.gt("x22", 333);
         log(ew.getSqlSegment());
         log(ew.getSqlSegment());
-        ew.orderByAsc("orderBy");
+        ew.orderByAsc("column");
         log(ew.getSqlSegment());
         log(ew.getSqlSegment());
         ew.getParamNameValuePairs().forEach((k, v) -> System.out.println("key = " + k + " ; value = " + v));
