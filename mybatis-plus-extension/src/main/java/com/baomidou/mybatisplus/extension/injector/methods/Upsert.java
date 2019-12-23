@@ -57,10 +57,4 @@ public class Upsert extends AbstractMethod {
         SqlSource sqlSource = languageDriver.createSqlSource(configuration, sql, modelClass);
         return this.addInsertMappedStatement(mapperClass, modelClass, getMethod(sqlMethod), sqlSource, keyGenerator, keyProperty, keyColumn);
     }
-
-    @Override
-    public String getMethod(SqlMethod sqlMethod) {
-        // 自定义 mapper 方法名
-        return sqlMethod.getMethod();
-    }
 }
