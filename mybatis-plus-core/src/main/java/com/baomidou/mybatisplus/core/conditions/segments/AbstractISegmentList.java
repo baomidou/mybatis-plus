@@ -57,7 +57,7 @@ public abstract class AbstractISegmentList extends ArrayList<ISqlSegment> implem
     @Override
     public boolean addAll(Collection<? extends ISqlSegment> c) {
         List<ISqlSegment> list = new ArrayList<>(c);
-        boolean goon = transformList(list, list.get(0));
+        boolean goon = transformList(list, list.get(0), list.get(list.size() - 1));
         if (goon) {
             cacheSqlSegment = false;
             if (flushLastValue) {
@@ -73,9 +73,10 @@ public abstract class AbstractISegmentList extends ArrayList<ISqlSegment> implem
      *
      * @param list         传入进来的 ISqlSegment 集合
      * @param firstSegment ISqlSegment 集合里第一个值
+     * @param lastSegment  ISqlSegment 集合里最后一个值
      * @return true 是否继续向下执行; false 不再向下执行
      */
-    protected abstract boolean transformList(List<ISqlSegment> list, ISqlSegment firstSegment);
+    protected abstract boolean transformList(List<ISqlSegment> list, ISqlSegment firstSegment, ISqlSegment lastSegment);
 
     /**
      * 刷新属性 lastValue

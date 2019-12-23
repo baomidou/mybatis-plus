@@ -32,7 +32,7 @@ import static java.util.stream.Collectors.joining;
 public class GroupBySegmentList extends AbstractISegmentList {
 
     @Override
-    protected boolean transformList(List<ISqlSegment> list, ISqlSegment firstSegment) {
+    protected boolean transformList(List<ISqlSegment> list, ISqlSegment firstSegment, ISqlSegment lastSegment) {
         list.remove(0);
         return true;
     }

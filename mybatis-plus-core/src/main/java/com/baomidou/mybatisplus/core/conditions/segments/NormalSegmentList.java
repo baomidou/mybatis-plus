@@ -40,7 +40,7 @@ public class NormalSegmentList extends AbstractISegmentList {
     }
 
     @Override
-    protected boolean transformList(List<ISqlSegment> list, ISqlSegment firstSegment) {
+    protected boolean transformList(List<ISqlSegment> list, ISqlSegment firstSegment, ISqlSegment lastSegment) {
         if (list.size() == 1) {
             /* 只有 and() 以及 or() 以及 not() 会进入 */
             if (!MatchSegment.NOT.match(firstSegment)) {
@@ -76,6 +76,10 @@ public class NormalSegmentList extends AbstractISegmentList {
             }
             if (MatchSegment.APPLY.match(firstSegment)) {
                 list.remove(0);
+            }
+            if (MatchSegment.LEFT_BRACKET.match(firstSegment) && MatchSegment.RIGHT_BRACKET.match(lastSegment)) {
+                list.remove(0);
+                list.remove(list.size() - 1);
             }
         }
         return true;
