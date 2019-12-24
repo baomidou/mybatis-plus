@@ -41,13 +41,15 @@ public enum IdType {
 
     /* 以下3种类型、只有当插入对象ID 为空，才自动填充。 */
     /**
-     * 分配ID (主键类型为number或string）
+     * 分配ID (主键类型为number或string）,
+     * 默认实现类 {@link com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator}(雪花算法)
      *
      * @since 3.3.0
      */
     ASSIGN_ID(3),
     /**
      * 分配UUID (主键类型为 string)
+     * 默认实现类 {@link com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator}(UUID.replace("-",""))
      */
     ASSIGN_UUID(4),
     /**

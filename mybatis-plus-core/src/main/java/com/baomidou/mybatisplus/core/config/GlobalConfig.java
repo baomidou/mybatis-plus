@@ -98,7 +98,7 @@ public class GlobalConfig implements Serializable {
     @Data
     public static class DbConfig {
         /**
-         * 主键类型（默认 ID_WORKER）
+         * 主键类型
          */
         private IdType idType = IdType.ASSIGN_ID;
         /**
