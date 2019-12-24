@@ -15,29 +15,13 @@
  */
 package com.baomidou.mybatisplus.test;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.DB2Dialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.DmDialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.H2Dialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.HSQLDialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.KingbaseDialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.MariaDBDialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.MySqlDialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.Oracle12cDialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.OracleDialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.PostgreDialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.SQLServer2005Dialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.SQLServerDialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.SQLiteDialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.UnknownDialect;
-import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.XuGuDialect;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author nieqiuqiu
@@ -55,6 +39,7 @@ class DbTypeTest {
         DIALECT_MAP.put(DbType.ORACLE, OracleDialect.class);
         DIALECT_MAP.put(DbType.ORACLE_12C, Oracle12cDialect.class);
         DIALECT_MAP.put(DbType.POSTGRE_SQL, PostgreDialect.class);
+        DIALECT_MAP.put(DbType.PHOENIX, PhoenixDialect.class);
         DIALECT_MAP.put(DbType.SQL_SERVER, SQLServerDialect.class);
         DIALECT_MAP.put(DbType.SQL_SERVER2005, SQLServer2005Dialect.class);
         DIALECT_MAP.put(DbType.SQLITE, SQLiteDialect.class);

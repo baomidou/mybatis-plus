@@ -15,11 +15,9 @@
  */
 package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
-
 /**
- * @author: fly
- * Created date: 2019/12/20 11:39
+ * @author fly
+ * @since 2019/12/20
  */
 public class PhoenixDialect extends PostgreDialect {
 }
