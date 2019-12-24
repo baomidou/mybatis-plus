@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.sql.Driver;
 import java.util.Properties;
 
 /**
@@ -34,13 +35,14 @@ import java.util.Properties;
  * @since 2018/6/7
  */
 @Configuration
+@SuppressWarnings("unchecked")
 @EnableTransactionManagement
 public class DBConfig {
 
     @Bean("dataSource")
-    public DataSource dataSource() {
+    public DataSource dataSource() throws ClassNotFoundException {
         SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
-        dataSource.setDriverClass(org.apache.phoenix.jdbc.PhoenixDriver.class);
+        dataSource.setDriverClass((Class<? extends Driver>) Class.forName("org.apache.phoenix.jdbc.PhoenixDriver"));
         dataSource.setUrl("jdbc:phoenix:dnode28,dnode29,dnode30:2181");
         Properties properties = new Properties();
         properties.setProperty("schema", "TEST");

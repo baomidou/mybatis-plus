@@ -177,6 +177,7 @@ subprojects {
         useJUnitPlatform()
         exclude("**/generator/**")
         exclude("**/mysql/**")
+        exclude("**/phoenix/**")
     }
 
     task javadocJar(type: Jar) {
