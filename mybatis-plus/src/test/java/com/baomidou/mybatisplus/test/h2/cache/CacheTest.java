@@ -5,10 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.h2.cache.model.CacheModel;
 import com.baomidou.mybatisplus.test.h2.cache.service.ICacheService;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -25,6 +22,7 @@ class CacheTest {
     private ICacheService cacheService;
 
     @Test
+    @Order(1)
     void testPageCache() {
         IPage<CacheModel> cacheModelIPage1 = cacheService.page(new Page<>(1, 3), new QueryWrapper<>());
         IPage<CacheModel> cacheModelIPage2 = cacheService.page(new Page<>(1, 3), new QueryWrapper<>());
@@ -60,6 +58,7 @@ class CacheTest {
     }
 
     @Test
+    @Order(2)
     void testCleanBatchCache() {
         CacheModel model = new CacheModel("靓仔");
         cacheService.save(model);
@@ -68,4 +67,27 @@ class CacheTest {
         Assertions.assertEquals(cacheService.getById(model.getId()).getName(),"旺仔");
     }
 
+    @Test
+    @Order(3)
+    void testBatchTransactionalClear1() {
+        long id = cacheService.testBatchTransactionalClear1();
+        CacheModel cacheModel = cacheService.getById(id);
+        Assertions.assertEquals(cacheModel.getName(), "旺仔");
+    }
+
+    @Test
+    @Order(4)
+    void testBatchTransactionalClear2() {
+        long id = cacheService.testBatchTransactionalClear2();
+        CacheModel cacheModel = cacheService.getById(id);
+        Assertions.assertEquals(cacheModel.getName(), "小红");
+    }
+
+    @Test
+    @Order(5)
+    void testBatchTransactionalClear3() {
+        long id = cacheService.testBatchTransactionalClear3();
+        CacheModel cacheModel = cacheService.getById(id);
+        Assertions.assertEquals(cacheModel.getName(), "小红");
+    }
 }

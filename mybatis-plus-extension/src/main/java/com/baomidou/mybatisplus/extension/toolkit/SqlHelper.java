@@ -131,6 +131,7 @@ public final class SqlHelper {
      *
      * @param clazz 实体类
      */
+    @Deprecated
     public static void clearCache(Class<?> clazz) {
         SqlSessionFactory sqlSessionFactory = GlobalConfigUtils.currentSessionFactory(clazz);
         SqlSessionHolder sqlSessionHolder = (SqlSessionHolder) TransactionSynchronizationManager.getResource(sqlSessionFactory);

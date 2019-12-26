@@ -32,9 +32,11 @@ import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.MyBatisExceptionTranslator;
+import org.mybatis.spring.SqlSessionHolder;
 import org.mybatis.spring.SqlSessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -317,12 +319,19 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      */
     protected void executeBatch(Consumer<SqlSession> fun) {
         Class<T> tClass = currentModelClass();
-        SqlHelper.clearCache(tClass);
         SqlSessionFactory sqlSessionFactory = SqlHelper.sqlSessionFactory(tClass);
+        SqlSessionHolder sqlSessionHolder = (SqlSessionHolder) TransactionSynchronizationManager.getResource(sqlSessionFactory);
+        boolean transaction = TransactionSynchronizationManager.isSynchronizationActive();
+        if (sqlSessionHolder != null) {
+            SqlSession sqlSession = sqlSessionHolder.getSqlSession();
+            //原生无法支持执行器切换，当存在批量操作时，会嵌套两个session的，优先commit上一个session。
+            sqlSession.commit();
+        }
         SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH);
         try {
             fun.accept(sqlSession);
-            sqlSession.commit();
+            //非事物情况下，强制commit。
+            sqlSession.commit(!transaction);
         } catch (Throwable t) {
             sqlSession.rollback();
             Throwable unwrapped = ExceptionUtil.unwrapThrowable(t);

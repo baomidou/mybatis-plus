@@ -5,4 +5,9 @@ import com.baomidou.mybatisplus.test.h2.cache.model.CacheModel;
 
 public interface ICacheService extends IService<CacheModel> {
 
+    long testBatchTransactionalClear1();
+
+    long testBatchTransactionalClear2();
+
+    long testBatchTransactionalClear3();
 }
