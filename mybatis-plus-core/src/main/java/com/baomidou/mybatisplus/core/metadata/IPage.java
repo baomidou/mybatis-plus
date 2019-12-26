@@ -16,11 +16,12 @@
 package com.baomidou.mybatisplus.core.metadata;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toCollection;
 
 /**
  * 分页 Page 对象接口
@@ -173,7 +174,8 @@ public interface IPage<T> extends Serializable {
      */
     @SuppressWarnings("unchecked")
     default <R> IPage<R> convert(Function<? super T, ? extends R> mapper) {
-        List<R> collect = this.getRecords().stream().map(mapper).collect(toList());
+        List<T> records = this.getRecords();
+        List<R> collect = records.stream().map(mapper).collect(toCollection(() -> new ArrayList<>(records.size())));
         return ((IPage<R>) this).setRecords(collect);
     }
 }
