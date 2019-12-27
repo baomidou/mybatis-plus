@@ -130,6 +130,7 @@ public final class SqlHelper {
      * 批量插入因为无法重用sqlSession，只能新开启一个sqlSession
      *
      * @param clazz 实体类
+     * @deprecated 3.3.1
      */
     @Deprecated
     public static void clearCache(Class<?> clazz) {

@@ -307,13 +307,13 @@ class H2UserTest extends BaseTest {
         Assertions.assertTrue(userService.saveOrUpdateBatch(Arrays.asList(new H2User(1010L, "batch1010"),
             new H2User("batch1011"), new H2User(1010L, "batch1010"), new H2User("batch1015"))));
         Assertions.assertEquals(userService.getById(1010L).getName(), "batch1010");
-        Assertions.assertEquals(userService.count(new QueryWrapper<H2User>().eq("name","batch1011")), 1);
-        Assertions.assertEquals(userService.count(new QueryWrapper<H2User>().eq("name","batch1015")), 1);
+        Assertions.assertEquals(userService.count(new QueryWrapper<H2User>().eq("name", "batch1011")), 1);
+        Assertions.assertEquals(userService.count(new QueryWrapper<H2User>().eq("name", "batch1015")), 1);
         Assertions.assertTrue(userService.saveOrUpdateBatch(Arrays.asList(new H2User(1010L, "batch1010A"),
             new H2User("batch1011AB"), new H2User(1010L, "batch1010"), new H2User("batch1016")), 1));
         Assertions.assertEquals(userService.getById(1010L).getName(), "batch1010");
-        Assertions.assertEquals(userService.count(new QueryWrapper<H2User>().eq("name","batch1011AB")), 1);
-        Assertions.assertEquals(userService.count(new QueryWrapper<H2User>().eq("name","batch1016")), 1);
+        Assertions.assertEquals(userService.count(new QueryWrapper<H2User>().eq("name", "batch1011AB")), 1);
+        Assertions.assertEquals(userService.count(new QueryWrapper<H2User>().eq("name", "batch1016")), 1);
     }
 
     @Test
@@ -387,7 +387,24 @@ class H2UserTest extends BaseTest {
     }
 
     @Test
-    public void myQueryWithGroupByOrderBy() {
+    @Order(30)
+    void testSaveBatchNoTransactional1() {
+        userService.testSaveBatchNoTransactional1();
+        Assertions.assertEquals(3, userService.count(new QueryWrapper<H2User>().like("name", "testSaveBatchNoTransactional1")));
+    }
+
+    @Test
+    @Order(30)
+    void testSaveBatchNoTransactional2() {
+        try {
+            userService.testSaveBatchNoTransactional2();
+        } catch (Exception e) {
+            Assertions.assertEquals(3, userService.count(new QueryWrapper<H2User>().like("name", "testSaveBatchNoTransactional2")));
+        }
+    }
+
+    @Test
+    void myQueryWithGroupByOrderBy() {
         userService.mySelectMaps().forEach(System.out::println);
     }
 

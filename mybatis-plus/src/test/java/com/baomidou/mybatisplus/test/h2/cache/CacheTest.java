@@ -64,7 +64,7 @@ class CacheTest {
         cacheService.save(model);
         cacheService.getById(model.getId());
         cacheService.updateBatchById(Collections.singletonList(new CacheModel(model.getId(), "旺仔")));
-        Assertions.assertEquals(cacheService.getById(model.getId()).getName(),"旺仔");
+        Assertions.assertEquals(cacheService.getById(model.getId()).getName(), "旺仔");
     }
 
     @Test
@@ -89,5 +89,37 @@ class CacheTest {
         long id = cacheService.testBatchTransactionalClear3();
         CacheModel cacheModel = cacheService.getById(id);
         Assertions.assertEquals(cacheModel.getName(), "小红");
+    }
+
+    @Test
+    @Order(6)
+    void testBatchTransactionalClear4() {
+        long id = cacheService.testBatchTransactionalClear4();
+        CacheModel cacheModel = cacheService.getById(id);
+        Assertions.assertEquals(cacheModel.getName(), "旺仔");
+    }
+
+    @Test
+    @Order(7)
+    void testBatchTransactionalClear5() {
+        long id = cacheService.testBatchTransactionalClear5();
+        CacheModel cacheModel = cacheService.getById(id);
+        Assertions.assertNull(cacheModel);
+    }
+
+    @Test
+    @Order(8)
+    void testBatchTransactionalClear6() {
+        long id = cacheService.testBatchTransactionalClear6();
+        CacheModel cacheModel = cacheService.getById(id);
+        Assertions.assertNull(cacheModel);
+    }
+
+    @Test
+    @Order(9)
+    void testBatchTransactionalClear7() {
+        long id = cacheService.testBatchTransactionalClear7();
+        CacheModel cacheModel = cacheService.getById(id);
+        Assertions.assertNull(cacheModel);
     }
 }
