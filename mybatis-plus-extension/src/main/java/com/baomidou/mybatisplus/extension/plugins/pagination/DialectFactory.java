@@ -50,6 +50,7 @@ public class DialectFactory {
      * @param dialectClazz 数据库方言
      * @return 分页模型
      */
+    @Deprecated
     public static DialectModel buildPaginationSql(IPage<?> page, String buildSql, DbType dbType, String dialectClazz) {
         // fix #196
         return getDialect(dbType, dialectClazz).buildPaginationSql(buildSql, page.offset(), page.getSize());
@@ -61,22 +62,37 @@ public class DialectFactory {
      * @param dbType       数据库类型
      * @param dialectClazz 自定义方言实现类
      * @return ignore
+     * @deprecated 3.3.1 {@link #getDialect(String)}
      */
+    @Deprecated
     private static IDialect getDialect(DbType dbType, String dialectClazz) {
-        return DIALECT_CACHE.computeIfAbsent(dbType.getDb(), key -> {
-            IDialect dialect = null;
-            String dialectClassName = StringUtils.isBlank(dialectClazz) ? dbType.getDialect() : dialectClazz;
-            try {
-                Class<?> clazz = Class.forName(dialectClassName);
-                if (IDialect.class.isAssignableFrom(clazz)) {
-                    dialect = (IDialect) ClassUtils.newInstance(clazz);
-                }
-            } catch (ClassNotFoundException e) {
-                throw ExceptionUtils.mpe("Class : %s is not found", dialectClazz);
+        String dialectClassName = StringUtils.isBlank(dialectClazz) ? dbType.getDialect() : dialectClazz;
+        return DIALECT_CACHE.computeIfAbsent(dialectClassName, DialectFactory::classToDialect);
+    }
+
+    /**
+     * 获取实现方言
+     *
+     * @param dialectClazz 方言全类名
+     * @return 方言实现对象
+     * @since 3.3.1
+     */
+    public static IDialect getDialect(String dialectClazz) {
+        return DIALECT_CACHE.computeIfAbsent(dialectClazz, DialectFactory::classToDialect);
+    }
+
+    private static IDialect classToDialect(String dialectClazz){
+        IDialect dialect = null;
+        try {
+            Class<?> clazz = Class.forName(dialectClazz);
+            if (IDialect.class.isAssignableFrom(clazz)) {
+                dialect = (IDialect) ClassUtils.newInstance(clazz);
             }
-            /* 未配置方言则抛出异常 */
-            Assert.notNull(dialect, "The value of the dialect property in mybatis configuration.xml is not defined.");
-            return dialect;
-        });
+        } catch (ClassNotFoundException e) {
+            throw ExceptionUtils.mpe("Class : %s is not found", dialectClazz);
+        }
+        /* 未配置方言则抛出异常 */
+        Assert.notNull(dialect, "The value of the dialect property in mybatis configuration.xml is not defined.");
+        return dialect;
     }
 }

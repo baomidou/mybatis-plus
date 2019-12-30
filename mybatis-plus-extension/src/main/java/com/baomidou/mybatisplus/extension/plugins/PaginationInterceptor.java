@@ -28,6 +28,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.handlers.AbstractSqlParserHandler;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
+import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.extension.toolkit.SqlParserUtils;
 import lombok.Setter;
@@ -53,6 +54,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
@@ -81,14 +83,30 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
      */
     protected long limit = 500L;
     /**
+     * 数据库类型
+     *
+     * @since 3.3.1
+     */
+    private DbType dbType;
+    /**
+     * 方言实现类
+     *
+     * @since 3.3.1
+     */
+    private IDialect dialect;
+    /**
      * 方言类型(数据库名,全小写) <br>
      * 如果用的我们支持分页的数据库但获取数据库类型不正确则可以配置该值进行校正
+     * @deprecated {@link #setDbType(DbType)}
      */
+    @Deprecated
     protected String dialectType;
     /**
      * 方言实现类<br>
      * 注意！实现 com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect 接口的子类
+     * @deprecated 3.3.1 {@link #setDialect(IDialect)}
      */
+    @Deprecated
     protected String dialectClazz;
 
     /**
@@ -194,8 +212,6 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
 
         String originalSql = boundSql.getSql();
         Connection connection = (Connection) invocation.getArgs()[0];
-        DbType dbType = StringUtils.isNotBlank(dialectType) ? DbType.getDbType(dialectType)
-            : JdbcUtils.getDbType(connection.getMetaData().getURL());
 
         if (page.isSearchCount()) {
             SqlInfo sqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), countSqlParser, originalSql);
@@ -204,9 +220,10 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
                 return null;
             }
         }
-
+        DbType dbType = Optional.ofNullable(this.dbType).orElse(JdbcUtils.getDbType(connection.getMetaData().getURL()));
+        IDialect dialect = Optional.ofNullable(this.dialect).orElse(DialectFactory.getDialect(dbType.getDialect()));
         String buildSql = concatOrderBy(originalSql, page);
-        DialectModel model = DialectFactory.buildPaginationSql(page, buildSql, dbType, dialectClazz);
+        DialectModel model = dialect.buildPaginationSql(buildSql, page.offset(), page.getSize());
         Configuration configuration = mappedStatement.getConfiguration();
         List<ParameterMapping> mappings = new ArrayList<>(boundSql.getParameterMappings());
         Map<String, Object> additionalParameters = (Map<String, Object>) metaObject.getValue("delegate.boundSql.additionalParameters");
@@ -276,10 +293,33 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
         String dialectType = prop.getProperty("dialectType");
         String dialectClazz = prop.getProperty("dialectClazz");
         if (StringUtils.isNotBlank(dialectType)) {
-            this.dialectType = dialectType;
+            setDialectType(dialectType);
         }
         if (StringUtils.isNotBlank(dialectClazz)) {
-            this.dialectClazz = dialectClazz;
+            setDialectClazz(dialectClazz);
         }
     }
+
+    /**
+     * 设置方言类型
+     *
+     * @param dialectType 数据库名,全小写
+     * @deprecated 3.3.1 {@link #setDbType(DbType)}
+     */
+    @Deprecated
+    public void setDialectType(String dialectType) {
+        setDbType(DbType.getDbType(dialectType));
+    }
+
+    /**
+     * 设置方言实现类
+     *
+     * @param dialectClazz 方言实现类
+     * @deprecated 3.3.1 {@link #setDialect(IDialect)}}
+     */
+    @Deprecated
+    public void setDialectClazz(String dialectClazz) {
+        setDialect(DialectFactory.getDialect(dialectClazz));
+    }
+
 }
