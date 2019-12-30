@@ -3,8 +3,11 @@ package com.baomidou.mybatisplus.test.h2.cache;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.test.h2.cache.mapper.CacheMapper;
 import com.baomidou.mybatisplus.test.h2.cache.model.CacheModel;
 import com.baomidou.mybatisplus.test.h2.cache.service.ICacheService;
+import org.apache.ibatis.cache.Cache;
+import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,9 @@ class CacheTest {
 
     @Autowired
     private ICacheService cacheService;
+
+    @Autowired
+    private SqlSessionFactory sqlSessionFactory;
 
     @Test
     @Order(1)
@@ -62,16 +68,24 @@ class CacheTest {
     void testCleanBatchCache() {
         CacheModel model = new CacheModel("靓仔");
         cacheService.save(model);
+        Cache cache = getCache();
+        Assertions.assertEquals(cache.getSize(), 0);
         cacheService.getById(model.getId());
+        Assertions.assertEquals(cache.getSize(), 1);
         cacheService.updateBatchById(Collections.singletonList(new CacheModel(model.getId(), "旺仔")));
+        Assertions.assertEquals(cache.getSize(), 0);
         Assertions.assertEquals(cacheService.getById(model.getId()).getName(), "旺仔");
+        Assertions.assertEquals(cache.getSize(), 1);
     }
 
     @Test
     @Order(3)
     void testBatchTransactionalClear1() {
+        Cache cache = getCache();
         long id = cacheService.testBatchTransactionalClear1();
+        Assertions.assertEquals(cache.getSize(), 0);
         CacheModel cacheModel = cacheService.getById(id);
+        Assertions.assertEquals(cache.getSize(), 1);
         Assertions.assertEquals(cacheModel.getName(), "旺仔");
     }
 
@@ -79,7 +93,10 @@ class CacheTest {
     @Order(4)
     void testBatchTransactionalClear2() {
         long id = cacheService.testBatchTransactionalClear2();
+        Cache cache = getCache();
+        Assertions.assertEquals(cache.getSize(), 0);
         CacheModel cacheModel = cacheService.getById(id);
+        Assertions.assertEquals(cache.getSize(), 1);
         Assertions.assertEquals(cacheModel.getName(), "小红");
     }
 
@@ -87,7 +104,10 @@ class CacheTest {
     @Order(5)
     void testBatchTransactionalClear3() {
         long id = cacheService.testBatchTransactionalClear3();
+        Cache cache = getCache();
+        Assertions.assertEquals(cache.getSize(), 1);
         CacheModel cacheModel = cacheService.getById(id);
+        Assertions.assertEquals(cache.getSize(), 1);
         Assertions.assertEquals(cacheModel.getName(), "小红");
     }
 
@@ -95,7 +115,10 @@ class CacheTest {
     @Order(6)
     void testBatchTransactionalClear4() {
         long id = cacheService.testBatchTransactionalClear4();
+        Cache cache = getCache();
+        Assertions.assertEquals(cache.getSize(), 0);
         CacheModel cacheModel = cacheService.getById(id);
+        Assertions.assertEquals(cache.getSize(), 1);
         Assertions.assertEquals(cacheModel.getName(), "旺仔");
     }
 
@@ -103,7 +126,10 @@ class CacheTest {
     @Order(7)
     void testBatchTransactionalClear5() {
         long id = cacheService.testBatchTransactionalClear5();
+        Cache cache = getCache();
+        Assertions.assertEquals(cache.getSize(), 0);
         CacheModel cacheModel = cacheService.getById(id);
+        Assertions.assertEquals(cache.getSize(), 1);
         Assertions.assertNull(cacheModel);
     }
 
@@ -111,7 +137,10 @@ class CacheTest {
     @Order(8)
     void testBatchTransactionalClear6() {
         long id = cacheService.testBatchTransactionalClear6();
+        Cache cache = getCache();
+        Assertions.assertEquals(cache.getSize(), 0);
         CacheModel cacheModel = cacheService.getById(id);
+        Assertions.assertEquals(cache.getSize(), 1);
         Assertions.assertNull(cacheModel);
     }
 
@@ -119,7 +148,14 @@ class CacheTest {
     @Order(9)
     void testBatchTransactionalClear7() {
         long id = cacheService.testBatchTransactionalClear7();
+        Cache cache = getCache();
+        Assertions.assertEquals(cache.getSize(), 0);
         CacheModel cacheModel = cacheService.getById(id);
+        Assertions.assertEquals(cache.getSize(), 1);
         Assertions.assertNull(cacheModel);
+    }
+
+    private Cache getCache() {
+        return sqlSessionFactory.getConfiguration().getCache(CacheMapper.class.getName());
     }
 }
