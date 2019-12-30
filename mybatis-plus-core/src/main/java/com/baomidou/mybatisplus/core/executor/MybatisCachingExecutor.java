@@ -122,13 +122,19 @@ public class MybatisCachingExecutor implements Executor {
                         if (page.isSearchCount()) {
                             // 这里的执行sql为原select语句,标准一点的是需要将此转换为count语句当做缓存key的,留做当优化把.
                             countCacheKey = getCountCacheKey(ms, boundSql, parameterObject, RowBounds.DEFAULT);
+                            // 复用count结果缓存,减少count查询.
+                            Number count = (Number) tcm.getObject(cache, countCacheKey);
+                            if (count != null) {
+                                page.hitCount(true);
+                                page.setTotal(count.longValue());
+                            }
                         }
                         // 切勿将这提取至上方,如果先查的话,需要提前将boundSql拷贝一份
                         result = delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
                         List<E> records = (List<E>) result;
                         page.setRecords(records);
                         tcm.putObject(cache, key, records);
-                        if (countCacheKey != null) {
+                        if (countCacheKey != null && !page.isHitCount()) {
                             tcm.putObject(cache, countCacheKey, page.getTotal());
                         }
                         return new PageList(records, page.getTotal());

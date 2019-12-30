@@ -30,16 +30,22 @@ class CacheTest {
     @Test
     @Order(1)
     void testPageCache() {
+        Cache cache = getCache();
         IPage<CacheModel> cacheModelIPage1 = cacheService.page(new Page<>(1, 3), new QueryWrapper<>());
         IPage<CacheModel> cacheModelIPage2 = cacheService.page(new Page<>(1, 3), new QueryWrapper<>());
+        //count+list
+        Assertions.assertEquals(cache.getSize(), 2);
         Assertions.assertEquals(cacheModelIPage1.getTotal(), cacheModelIPage2.getTotal());
         Assertions.assertEquals(cacheModelIPage1.getRecords().size(), cacheModelIPage2.getRecords().size());
         IPage<CacheModel> cacheModelIPage3 = cacheService.page(new Page<>(2, 3), new QueryWrapper<>());
         Assertions.assertEquals(cacheModelIPage1.getTotal(), cacheModelIPage3.getTotal());
         Assertions.assertEquals(cacheModelIPage3.getRecords().size(), 2);
+        //count语句命中，list翻页
+        Assertions.assertEquals(cache.getSize(), 3);
         IPage<CacheModel> cacheModelIPage4 = cacheService.page(new Page<>(2, 3, false), new QueryWrapper<>());
         Assertions.assertEquals(cacheModelIPage4.getTotal(), 0L);
         Assertions.assertEquals(cacheModelIPage4.getRecords().size(), 2);
+        Assertions.assertEquals(cache.getSize(), 4);
         IPage<CacheModel> cacheModelIPage5 = cacheService.page(new Page<>(2, 3, true), new QueryWrapper<>());
         Assertions.assertEquals(cacheModelIPage5.getTotal(), cacheModelIPage3.getTotal());
         Assertions.assertEquals(cacheModelIPage5.getRecords().size(), 2);

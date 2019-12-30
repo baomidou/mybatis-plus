@@ -117,6 +117,26 @@ public interface IPage<T> extends Serializable {
     }
 
     /**
+     * 设置是否命中count缓存
+     *
+     * @param hit 是否命中
+     * @since 3.3.1
+     */
+    default void hitCount(boolean hit) {
+
+    }
+
+    /**
+     * 是否命中count缓存
+     *
+     * @return 是否命中count缓存
+     * @since 3.3.1
+     */
+    default boolean isHitCount() {
+        return false;
+    }
+
+    /**
      * 分页记录列表
      *
      * @return 分页对象记录列表

@@ -68,6 +68,10 @@ public class Page<T> implements IPage<T> {
      * 是否进行 count 查询
      */
     private boolean isSearchCount = true;
+    /**
+     * 是否命中count缓存
+     */
+    private boolean hitCount = false;
 
     public Page() {
     }
@@ -341,5 +345,15 @@ public class Page<T> implements IPage<T> {
     public Page<T> setOptimizeCountSql(boolean optimizeCountSql) {
         this.optimizeCountSql = optimizeCountSql;
         return this;
+    }
+
+    @Override
+    public void hitCount(boolean hit) {
+        this.hitCount = hit;
+    }
+
+    @Override
+    public boolean isHitCount() {
+        return hitCount;
     }
 }
