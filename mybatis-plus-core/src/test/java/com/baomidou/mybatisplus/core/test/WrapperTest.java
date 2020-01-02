@@ -162,7 +162,7 @@ class WrapperTest {
             .or().between("id", 1, 2).notBetween("id", 1, 3)
             .like("id", 1).notLike("id", 1)
             .or().likeLeft("id", 1).likeRight("id", 1);
-        logSqlSegment("测试 Compare 下的方法", queryWrapper, null);
+        logSqlSegment("测试 Compare 下的方法", queryWrapper, "(column1 = ? AND column0 = ? AND nullColumn IS NULL AND column1 = ? AND column0 = ? AND nullColumn IS NULL AND id = ? AND id <> ? OR id > ? AND id >= ? AND id < ? AND id <= ? OR id BETWEEN ? AND ? AND id NOT BETWEEN ? AND ? AND id LIKE ? AND id NOT LIKE ? OR id LIKE ? AND id LIKE ?)");
         logParams(queryWrapper);
     }
 
@@ -176,7 +176,7 @@ class WrapperTest {
             .in("inArray").notIn("notInArray", 1, 2, 3)
             .inSql("inSql", "1,2,3,4,5").notInSql("inSql", "1,2,3,4,5")
             .having("sum(age) > {0}", 1).having("id is not null");
-        logSqlSegment("测试 Func 下的方法", queryWrapper, null);
+        logSqlSegment("测试 Func 下的方法", queryWrapper, "(nullColumn IS NULL OR notNullColumn IS NOT NULL AND inColl IN (?,?) OR notInColl NOT IN (?,?) AND inArray IN () AND notInArray NOT IN (?,?,?) AND inSql IN (1,2,3,4,5) AND inSql NOT IN (1,2,3,4,5)) GROUP BY id,name,id2,name2 HAVING sum(age) > ? AND id is not null ORDER BY id ASC,name DESC");
         logParams(queryWrapper);
     }
 
@@ -188,7 +188,7 @@ class WrapperTest {
             .apply("date_format(column,'%Y-%m-%d') = {0}", LocalDate.now())
             .or().exists("select id from table where age = 1")
             .or().notExists("select id from table where age = 1");
-        logSqlSegment("测试 Join 下的方法", queryWrapper, null);
+        logSqlSegment("测试 Join 下的方法", queryWrapper, "(date_format(column,'%Y-%m-%d') = '2008-08-08' AND date_format(column,'%Y-%m-%d') = ? OR EXISTS (select id from table where age = 1) OR NOT EXISTS (select id from table where age = 1)) limit 1");
         logParams(queryWrapper);
     }
 
@@ -198,7 +198,7 @@ class WrapperTest {
             .and(i -> i.eq("id", 1).nested(j -> j.ne("id", 2)))
             .or(i -> i.eq("id", 1).and(j -> j.ne("id", 2)))
             .nested(i -> i.eq("id", 1).or(j -> j.ne("id", 2)));
-        logSqlSegment("测试 Nested 下的方法", queryWrapper, null);
+        logSqlSegment("测试 Nested 下的方法", queryWrapper, "((id = ? AND (id <> ?)) OR (id = ? AND (id <> ?)) AND (id = ? OR (id <> ?)))");
         logParams(queryWrapper);
     }
 
@@ -208,14 +208,14 @@ class WrapperTest {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.lambda().eq(User::getName, "sss");
         queryWrapper.lambda().eq(User::getName, "sss2");
-        logSqlSegment("测试 PluralLambda", queryWrapper, null);
+        logSqlSegment("测试 PluralLambda", queryWrapper, "(username = ? AND username = ?)");
         logParams(queryWrapper);
     }
 
     @Test
     void testInEmptyColl() {
         QueryWrapper<User> queryWrapper = new QueryWrapper<User>().in("xxx", Collections.emptyList());
-        logSqlSegment("测试 empty 的 coll", queryWrapper, null);
+        logSqlSegment("测试 empty 的 coll", queryWrapper, "(xxx IN ())");
     }
 
     private List<Object> getList() {
