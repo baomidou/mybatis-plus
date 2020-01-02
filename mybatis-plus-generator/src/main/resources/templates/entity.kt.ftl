@@ -19,7 +19,7 @@ import io.swagger.annotations.ApiModelProperty;
 @TableName("${table.name}")
 </#if>
 <#if swagger2>
-    @ApiModel(value="${entity}对象", description="${table.comment!}")
+@ApiModel(value="${entity}对象", description="${table.comment!}")
 </#if>
 <#if superEntityClass??>
 class ${entity} : ${superEntityClass}<#if activeRecord><${entity}></#if> {
@@ -85,7 +85,7 @@ class ${entity} : Serializable {
     companion object {
 <#list table.fields as field>
 
-        const val ${field.name.toUpperCase()} : String = "${field.name}"
+        const val ${field.name?upper_case} : String = "${field.name}"
 
 </#list>
     }

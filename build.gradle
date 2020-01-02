@@ -3,7 +3,7 @@ import java.text.SimpleDateFormat
 buildscript {
     repositories {
         maven { url "https://maven.aliyun.com/nexus/content/groups/public" }
-        maven { url "http://maven.aliyun.com/nexus/content/repositories/gradle-plugin" }
+        maven { url "https://maven.aliyun.com/nexus/content/repositories/gradle-plugin" }
         mavenCentral()
         maven { url "https://plugins.gradle.org/m2/" }
     }
