@@ -148,7 +148,10 @@ public class MybatisCachingExecutor implements Executor {
                         if (page.isSearchCount()) {
                             CacheKey cacheKey = getCountCacheKey(ms, boundSql, parameterObject, RowBounds.DEFAULT);
                             Number count = (Number) tcm.getObject(cache, cacheKey);
-                            return new PageList((List) result, count.longValue());
+                            // 正常的缓存操作来的话，这里是不会出现list有count没有的情况。
+                            if (count != null) {
+                                return new PageList((List) result, count.longValue());
+                            }
                         }
                         return new PageList((List) result, 0L);
                     } else {
