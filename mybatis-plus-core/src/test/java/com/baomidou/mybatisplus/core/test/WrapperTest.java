@@ -122,7 +122,7 @@ class WrapperTest {
 
         logSqlSegment("嵌套,多层嵌套", new QueryWrapper<User>()
                 .and(i -> i.eq("id", 1).and(j -> j.eq("id", 2))),
-            "((id = ?) AND (id = ?))");
+            "((id = ? AND (id = ?)))");
 
         logSqlSegment("嵌套,第一个套外的 or 自动消除", new QueryWrapper<User>()
                 .or(i -> i.eq("id", 1)).eq("id", 1),
