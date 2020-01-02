@@ -50,12 +50,12 @@ class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, Updat
     }
 
     internal constructor(entity: T?, paramNameSeq: AtomicInteger, paramNameValuePairs: Map<String, Any>,
-                         mergeSegments: MergeSegments, columnMap: Map<String, ColumnCache>,
-                         lastSql: SharedString, sqlComment: SharedString, sqlFirst: SharedString) {
+                         columnMap: Map<String, ColumnCache>, lastSql: SharedString, sqlComment: SharedString,
+                         sqlFirst: SharedString) {
         this.entity = entity
         this.paramNameSeq = paramNameSeq
         this.paramNameValuePairs = paramNameValuePairs
-        this.expression = mergeSegments
+        this.expression = MergeSegments()
         this.columnMap = columnMap
         this.lastSql = lastSql
         this.sqlComment = sqlComment
@@ -82,7 +82,7 @@ class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, Updat
     }
 
     override fun instance(): KtUpdateWrapper<T> {
-        return KtUpdateWrapper(entity, paramNameSeq, paramNameValuePairs, expression, columnMap,
+        return KtUpdateWrapper(entity, paramNameSeq, paramNameValuePairs, columnMap,
             SharedString.emptyString(), SharedString.emptyString(), SharedString.emptyString())
     }
 }

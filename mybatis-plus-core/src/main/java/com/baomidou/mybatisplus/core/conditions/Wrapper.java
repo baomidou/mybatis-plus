@@ -52,7 +52,9 @@ public abstract class Wrapper<T> implements ISqlSegment {
         return null;
     }
 
-    public String getSqlFirst() { return null; }
+    public String getSqlFirst() {
+        return null;
+    }
 
     /**
      * 获取 MergeSegments
@@ -157,5 +159,9 @@ public abstract class Wrapper<T> implements ISqlSegment {
      */
     public boolean isEmptyOfEntity() {
         return !nonEmptyOfEntity();
+    }
+
+    public String getTargetSql() {
+        return getSqlSegment().replaceAll("#\\{.+?}", "?");
     }
 }

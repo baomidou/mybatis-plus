@@ -71,15 +71,14 @@ public class NormalSegmentList extends AbstractISegmentList {
                 list.add(MatchSegment.EXISTS.match(firstSegment) ? 0 : 1, SqlKeyword.NOT);
                 executeNot = true;
             }
-            if (!MatchSegment.AND_OR.match(lastValue) && !isEmpty()) {
-                add(SqlKeyword.AND);
-            }
             if (MatchSegment.APPLY.match(firstSegment)) {
                 list.remove(0);
             }
-            if (MatchSegment.LEFT_BRACKET.match(firstSegment) && MatchSegment.RIGHT_BRACKET.match(lastSegment)) {
+            if (MatchSegment.BRACKET.match(firstSegment)) {
                 list.remove(0);
-                list.remove(list.size() - 1);
+            }
+            if (!MatchSegment.AND_OR.match(lastValue) && !isEmpty()) {
+                add(SqlKeyword.AND);
             }
         }
         return true;
@@ -91,6 +90,6 @@ public class NormalSegmentList extends AbstractISegmentList {
             removeAndFlushLast();
         }
         final String str = this.stream().map(ISqlSegment::getSqlSegment).collect(Collectors.joining(SPACE));
-        return (str.startsWith(LEFT_BRACKET) && str.endsWith(RIGHT_BRACKET)) ? str : (LEFT_BRACKET + str + RIGHT_BRACKET);
+        return (LEFT_BRACKET + str + RIGHT_BRACKET);
     }
 }

@@ -50,12 +50,12 @@ class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Query<K
     }
 
     internal constructor(entity: T?, entityClass: Class<T>, sqlSelect: SharedString, paramNameSeq: AtomicInteger,
-                         paramNameValuePairs: Map<String, Any>, mergeSegments: MergeSegments, columnMap: Map<String, ColumnCache>,
+                         paramNameValuePairs: Map<String, Any>, columnMap: Map<String, ColumnCache>,
                          lastSql: SharedString, sqlComment: SharedString, sqlFirst: SharedString) {
         this.entity = entity
         this.paramNameSeq = paramNameSeq
         this.paramNameValuePairs = paramNameValuePairs
-        this.expression = mergeSegments
+        this.expression = MergeSegments()
         this.columnMap = columnMap
         this.sqlSelect = sqlSelect
         this.entityClass = entityClass
@@ -110,7 +110,7 @@ class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Query<K
      * 故 sqlSelect 不向下传递
      */
     override fun instance(): KtQueryWrapper<T> {
-        return KtQueryWrapper(entity, entityClass, sqlSelect, paramNameSeq, paramNameValuePairs, expression, columnMap,
+        return KtQueryWrapper(entity, entityClass, sqlSelect, paramNameSeq, paramNameValuePairs, columnMap,
             SharedString.emptyString(), SharedString.emptyString(), SharedString.emptyString())
     }
 }

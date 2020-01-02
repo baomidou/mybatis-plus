@@ -37,8 +37,7 @@ public enum MatchSegment {
     EXISTS(i -> i == SqlKeyword.EXISTS),
     HAVING(i -> i == SqlKeyword.HAVING),
     APPLY(i -> i == WrapperKeyword.APPLY),
-    LEFT_BRACKET(i -> i == WrapperKeyword.LEFT_BRACKET),
-    RIGHT_BRACKET(i -> i == WrapperKeyword.RIGHT_BRACKET);
+    BRACKET(i -> i == WrapperKeyword.BRACKET);
 
     private final Predicate<ISqlSegment> predicate;
 

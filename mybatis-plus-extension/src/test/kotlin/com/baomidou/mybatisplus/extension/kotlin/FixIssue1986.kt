@@ -24,6 +24,7 @@ class FixIssue1986 {
     fun test1986() {
         val wrapper = fillQueryWrapper(OpportunityWebPageQuery())
         var sql = wrapper.toSql()
+        print(sql)
         // (valid = ? AND district_id = ? AND name LIKE ? OR phone LIKE ? AND (valid = ? AND district_id = ?))
     }
 
@@ -35,49 +36,44 @@ fun KtQueryWrapper<*>.toSql() = sqlSegment?.replace(Regex("#\\{.+?}"), "?") ?: "
  * 用户代码
  */
 private fun fillQueryWrapper(query: OpportunityWebPageQuery): KtQueryWrapper<CustomerEntity> {
-    val wrapper = KtQueryWrapper(CustomerEntity::class.java)
-    wrapper.eq(CustomerEntity::valid, query.valid)
-    if (!query.districtId.isNullOrEmpty()) {
-        wrapper.eq(CustomerEntity::districtId, query.districtId)
-    } else if (!query.cityId.isNullOrEmpty()) {
-        wrapper.eq(CustomerEntity::cityId, query.cityId)
-    } else if (!query.provinceId.isNullOrEmpty()) {
-        wrapper.eq(CustomerEntity::provinceId, query.provinceId)
-    } else if (!query.region.isNullOrEmpty() && RegionType.of(query.region!!.toInt())?.areaCodes?.toList()?.isNullOrEmpty() != false) {
-        wrapper.`in`(CustomerEntity::provinceId, RegionType.of(query.region!!.toInt())?.areaCodes?.toList())
-    }
-    wrapper.entity = CustomerEntity()
-    if (!query.searchKey.isNullOrEmpty()) {
-        wrapper.and { itemWrapper ->
-            itemWrapper.like(CustomerEntity::name, query.searchKey).or()
-                    .like(CustomerEntity::phone, query.searchKey)
+//    return KtQueryWrapper(CustomerEntity::class.java)
+//        .eq(CustomerEntity::valid, query.valid)
+//        .eq(!query.districtId.isNullOrEmpty(), CustomerEntity::districtId, query.districtId)
+//        .eq(!query.cityId.isNullOrEmpty(), CustomerEntity::cityId, query.cityId)
+//        .eq(!query.provinceId.isNullOrEmpty(), CustomerEntity::provinceId, query.provinceId)
+//        .`in`(!query.region.isNullOrEmpty() && RegionType.of(query.region!!.toInt())?.areaCodes?.toList()?.isNullOrEmpty() != false,
+//            CustomerEntity::provinceId, RegionType.of(query.region!!.toInt())?.areaCodes?.toList())
+//        .and(!query.searchKey.isNullOrEmpty()) { i ->
+//            i.like(CustomerEntity::name, query.searchKey).or()
+//                .like(CustomerEntity::phone, query.searchKey)
+//        }
+//        .eq(query.opportunityType != 0, CustomerEntity::type, query.opportunityType)
+    return KtQueryWrapper(CustomerEntity::class.java)
+        .eq(CustomerEntity::valid, query.valid)
+        .and { i ->
+            i.like(CustomerEntity::name, query.searchKey).or().like(CustomerEntity::phone, query.searchKey)
         }
-    }
-    if (query.opportunityType != 0) {
-        wrapper.eq(CustomerEntity::type, query.opportunityType)
-    }
-    return wrapper
 }
 
 // 用户代码模拟补全
 class CustomerEntity(
-        var valid: String? = null,
-        var name: String? = null,
-        var phone: String? = null,
-        var provinceId: String? = null,
-        var districtId: String? = null,
-        var cityId: String? = null,
-        var type: Int = 0
+    var valid: String? = null,
+    var name: String? = null,
+    var phone: String? = null,
+    var provinceId: String? = null,
+    var districtId: String? = null,
+    var cityId: String? = null,
+    var type: Int = 0
 )
 
 class OpportunityWebPageQuery(
-        var valid: String = "123",
-        var searchKey: String? = "123",
-        var provinceId: String? = "123",
-        var districtId: String? = "123",
-        var cityId: String? = "123",
-        var region: String? = "123",
-        var opportunityType: Int = 0
+    var valid: String = "123",
+    var searchKey: String? = "123",
+    var provinceId: String? = "123",
+    var districtId: String? = "123",
+    var cityId: String? = "123",
+    var region: String? = "123",
+    var opportunityType: Int = 0
 )
 
 object RegionType {
