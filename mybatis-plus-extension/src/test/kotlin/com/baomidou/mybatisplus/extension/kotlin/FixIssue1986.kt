@@ -23,36 +23,28 @@ class FixIssue1986 {
     @Test
     fun test1986() {
         val wrapper = fillQueryWrapper(OpportunityWebPageQuery())
-        var sql = wrapper.toSql()
-        print(sql)
+        print(wrapper.targetSql)
         // (valid = ? AND district_id = ? AND name LIKE ? OR phone LIKE ? AND (valid = ? AND district_id = ?))
     }
 
 }
 
-fun KtQueryWrapper<*>.toSql() = sqlSegment?.replace(Regex("#\\{.+?}"), "?") ?: ""
-
 /**
  * 用户代码
  */
 private fun fillQueryWrapper(query: OpportunityWebPageQuery): KtQueryWrapper<CustomerEntity> {
-//    return KtQueryWrapper(CustomerEntity::class.java)
-//        .eq(CustomerEntity::valid, query.valid)
-//        .eq(!query.districtId.isNullOrEmpty(), CustomerEntity::districtId, query.districtId)
-//        .eq(!query.cityId.isNullOrEmpty(), CustomerEntity::cityId, query.cityId)
-//        .eq(!query.provinceId.isNullOrEmpty(), CustomerEntity::provinceId, query.provinceId)
-//        .`in`(!query.region.isNullOrEmpty() && RegionType.of(query.region!!.toInt())?.areaCodes?.toList()?.isNullOrEmpty() != false,
-//            CustomerEntity::provinceId, RegionType.of(query.region!!.toInt())?.areaCodes?.toList())
-//        .and(!query.searchKey.isNullOrEmpty()) { i ->
-//            i.like(CustomerEntity::name, query.searchKey).or()
-//                .like(CustomerEntity::phone, query.searchKey)
-//        }
-//        .eq(query.opportunityType != 0, CustomerEntity::type, query.opportunityType)
     return KtQueryWrapper(CustomerEntity::class.java)
         .eq(CustomerEntity::valid, query.valid)
-        .and { i ->
-            i.like(CustomerEntity::name, query.searchKey).or().like(CustomerEntity::phone, query.searchKey)
+        .eq(!query.districtId.isNullOrEmpty(), CustomerEntity::districtId, query.districtId)
+        .eq(!query.cityId.isNullOrEmpty(), CustomerEntity::cityId, query.cityId)
+        .eq(!query.provinceId.isNullOrEmpty(), CustomerEntity::provinceId, query.provinceId)
+        .`in`(!query.region.isNullOrEmpty() && RegionType.of(query.region!!.toInt())?.areaCodes?.toList()?.isNullOrEmpty() != false,
+            CustomerEntity::provinceId, RegionType.of(query.region!!.toInt())?.areaCodes?.toList())
+        .and(!query.searchKey.isNullOrEmpty()) { i ->
+            i.like(CustomerEntity::name, query.searchKey).or()
+                .like(CustomerEntity::phone, query.searchKey)
         }
+        .eq(query.opportunityType != 0, CustomerEntity::type, query.opportunityType)
 }
 
 // 用户代码模拟补全
