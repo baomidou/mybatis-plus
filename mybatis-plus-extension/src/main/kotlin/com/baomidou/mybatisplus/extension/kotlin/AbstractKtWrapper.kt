@@ -34,7 +34,7 @@ abstract class AbstractKtWrapper<T, Children : AbstractKtWrapper<T, Children>> :
     /**
      * 列 Map
      */
-    private lateinit var columnMap: Map<String, ColumnCache>
+    protected lateinit var columnMap: Map<String, ColumnCache>
 
     /**
      * 重载方法，默认 onlyColumn = true

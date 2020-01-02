@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.conditions.update.Update
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils
 import com.baomidou.mybatisplus.core.toolkit.StringPool
 import com.baomidou.mybatisplus.core.toolkit.StringUtils
+import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.stream.Collectors.joining
 import kotlin.reflect.KProperty
@@ -48,12 +49,14 @@ class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, Updat
         this.initNeed()
     }
 
-    internal constructor(entity: T, paramNameSeq: AtomicInteger, paramNameValuePairs: Map<String, Any>, mergeSegments: MergeSegments,
+    internal constructor(entity: T, paramNameSeq: AtomicInteger, paramNameValuePairs: Map<String, Any>,
+                         mergeSegments: MergeSegments, columnMap: Map<String, ColumnCache>,
                          lastSql: SharedString, sqlComment: SharedString, sqlFirst: SharedString) {
         this.entity = entity
         this.paramNameSeq = paramNameSeq
         this.paramNameValuePairs = paramNameValuePairs
         this.expression = mergeSegments
+        this.columnMap = columnMap
         this.lastSql = lastSql
         this.sqlComment = sqlComment
         this.sqlFirst = sqlFirst
@@ -79,7 +82,7 @@ class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, Updat
     }
 
     override fun instance(): KtUpdateWrapper<T> {
-        return KtUpdateWrapper(entity, paramNameSeq, paramNameValuePairs, expression, SharedString.emptyString(),
-            SharedString.emptyString(), SharedString.emptyString())
+        return KtUpdateWrapper(entity, paramNameSeq, paramNameValuePairs, expression, columnMap,
+            SharedString.emptyString(), SharedString.emptyString(), SharedString.emptyString())
     }
 }

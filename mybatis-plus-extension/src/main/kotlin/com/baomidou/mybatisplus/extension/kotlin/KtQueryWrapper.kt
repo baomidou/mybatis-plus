@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments
 import com.baomidou.mybatisplus.core.metadata.TableFieldInfo
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper
 import com.baomidou.mybatisplus.core.toolkit.ArrayUtils
+import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.Predicate
 import kotlin.reflect.KProperty
@@ -49,12 +50,13 @@ class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Query<K
     }
 
     internal constructor(entity: T, entityClass: Class<T>, sqlSelect: SharedString, paramNameSeq: AtomicInteger,
-                         paramNameValuePairs: Map<String, Any>, mergeSegments: MergeSegments,
+                         paramNameValuePairs: Map<String, Any>, mergeSegments: MergeSegments, columnMap: Map<String, ColumnCache>,
                          lastSql: SharedString, sqlComment: SharedString, sqlFirst: SharedString) {
         this.entity = entity
         this.paramNameSeq = paramNameSeq
         this.paramNameValuePairs = paramNameValuePairs
         this.expression = mergeSegments
+        this.columnMap = columnMap
         this.sqlSelect = sqlSelect
         this.entityClass = entityClass
         this.lastSql = lastSql
@@ -108,7 +110,7 @@ class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Query<K
      * 故 sqlSelect 不向下传递
      */
     override fun instance(): KtQueryWrapper<T> {
-        return KtQueryWrapper(entity, entityClass, sqlSelect, paramNameSeq, paramNameValuePairs, expression,
+        return KtQueryWrapper(entity, entityClass, sqlSelect, paramNameSeq, paramNameValuePairs, expression, columnMap,
             SharedString.emptyString(), SharedString.emptyString(), SharedString.emptyString())
     }
 }
