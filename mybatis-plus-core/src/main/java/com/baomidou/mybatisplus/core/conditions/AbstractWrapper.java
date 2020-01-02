@@ -457,14 +457,7 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
 
     @Override
     public String getSqlSegment() {
-        String sqlSegment = expression.getSqlSegment();
-        if (StringUtils.isNotBlank(sqlSegment)) {
-            return sqlSegment + lastSql.getStringValue();
-        }
-        if (StringUtils.isNotBlank(lastSql.getStringValue())) {
-            return lastSql.getStringValue();
-        }
-        return null;
+        return expression.getSqlSegment() + lastSql.getStringValue();
     }
 
     @Override

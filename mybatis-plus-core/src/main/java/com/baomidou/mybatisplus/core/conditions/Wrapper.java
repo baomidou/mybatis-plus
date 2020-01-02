@@ -161,6 +161,12 @@ public abstract class Wrapper<T> implements ISqlSegment {
         return !nonEmptyOfEntity();
     }
 
+    /**
+     * 获取格式化后的执行sql
+     *
+     * @return sql
+     * @since 3.3.1
+     */
     public String getTargetSql() {
         return getSqlSegment().replaceAll("#\\{.+?}", "?");
     }
