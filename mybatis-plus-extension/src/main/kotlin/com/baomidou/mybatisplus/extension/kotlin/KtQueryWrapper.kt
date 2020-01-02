@@ -49,7 +49,7 @@ class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Query<K
         this.initNeed()
     }
 
-    internal constructor(entity: T, entityClass: Class<T>, sqlSelect: SharedString, paramNameSeq: AtomicInteger,
+    internal constructor(entity: T?, entityClass: Class<T>, sqlSelect: SharedString, paramNameSeq: AtomicInteger,
                          paramNameValuePairs: Map<String, Any>, mergeSegments: MergeSegments, columnMap: Map<String, ColumnCache>,
                          lastSql: SharedString, sqlComment: SharedString, sqlFirst: SharedString) {
         this.entity = entity

@@ -49,7 +49,7 @@ class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, Updat
         this.initNeed()
     }
 
-    internal constructor(entity: T, paramNameSeq: AtomicInteger, paramNameValuePairs: Map<String, Any>,
+    internal constructor(entity: T?, paramNameSeq: AtomicInteger, paramNameValuePairs: Map<String, Any>,
                          mergeSegments: MergeSegments, columnMap: Map<String, ColumnCache>,
                          lastSql: SharedString, sqlComment: SharedString, sqlFirst: SharedString) {
         this.entity = entity
