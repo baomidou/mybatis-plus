@@ -85,7 +85,7 @@ ext {
 
 allprojects {
     group = 'com.baomidou'
-    version = "3.3.1.7-SNAPSHOT"
+    version = "3.3.1.8-SNAPSHOT"
 }
 
 description = "Mybatis 增强工具包 - 只做增强不做改变，简化CRUD操作"
@@ -124,6 +124,7 @@ subprojects {
         encoding = "UTF-8"
         header = rootProject.file("license.txt")
         includes(["**/*.java", "**/*.kt"])
+        exclude "**/test/**/*.kt"
         exclude "**/test/**/*.java"
         exclude "**/*Test.java"
         exclude "**/TableNameParser.java"
