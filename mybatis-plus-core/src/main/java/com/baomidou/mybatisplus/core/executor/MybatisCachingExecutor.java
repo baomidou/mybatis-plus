@@ -140,7 +140,8 @@ public class MybatisCachingExecutor implements Executor {
                         return new PageList(records, page.getTotal());
                     } else {
                         result = delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
-                        tcm.putObject(cache, key, result); // issue #578 and #116
+                        // issue #578 and #116
+                        tcm.putObject(cache, key, result);
                         return (List<E>) result;
                     }
                 } else {
@@ -148,9 +149,15 @@ public class MybatisCachingExecutor implements Executor {
                         if (page.isSearchCount()) {
                             CacheKey cacheKey = getCountCacheKey(ms, boundSql, parameterObject, RowBounds.DEFAULT);
                             Number count = (Number) tcm.getObject(cache, cacheKey);
-                            // 正常的缓存操作来的话，这里是不会出现list有count没有的情况。
                             if (count != null) {
+                                page.hitCount(true);
                                 return new PageList((List) result, count.longValue());
+                            } else {
+                                // 某些特殊情况,比如先不查count,缓存了list数据或者count缓存数据被淘汰(这几率比较小),就再查一次算了。
+                                result = delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
+                                List<E> records = (List<E>) result;
+                                tcm.putObject(cache, cacheKey, page.getTotal());
+                                return new PageList(records, page.getTotal());
                             }
                         }
                         return new PageList((List) result, 0L);
