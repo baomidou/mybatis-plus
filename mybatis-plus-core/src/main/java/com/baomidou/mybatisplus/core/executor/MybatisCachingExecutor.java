@@ -157,7 +157,7 @@ public class MybatisCachingExecutor implements Executor {
                                 result = delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
                                 List<E> records = (List<E>) result;
                                 tcm.putObject(cache, cacheKey, page.getTotal());
-                                return new PageList(records, page.getTotal());
+                                return records;
                             }
                         }
                         return new PageList((List) result, 0L);
