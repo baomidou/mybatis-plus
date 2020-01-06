@@ -161,7 +161,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
         String keyProperty = tableInfo.getKeyProperty();
         Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
-        return executeBatch(entityList, batchSize, ((sqlSession, entity) -> {
+        return executeBatch(entityList, batchSize, (sqlSession, entity) -> {
             Object idVal = ReflectionKit.getMethodValue(cls, entity, keyProperty);
             if (StringUtils.checkValNull(idVal) || Objects.isNull(getById((Serializable) idVal))) {
                 sqlSession.insert(sqlStatement(SqlMethod.INSERT_ONE), entity);
@@ -170,7 +170,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 param.put(Constants.ENTITY, entity);
                 sqlSession.update(sqlStatement(SqlMethod.UPDATE_BY_ID), param);
             }
-        }));
+        });
     }
 
     @Override
@@ -212,11 +212,11 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     public boolean updateBatchById(Collection<T> entityList, int batchSize) {
         Assert.notEmpty(entityList, "error: entityList must not be empty");
         String sqlStatement = sqlStatement(SqlMethod.UPDATE_BY_ID);
-        return executeBatch(entityList, batchSize, ((sqlSession, entity) -> {
+        return executeBatch(entityList, batchSize, (sqlSession, entity) -> {
             MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
             param.put(Constants.ENTITY, entity);
             sqlSession.update(sqlStatement, param);
-        }));
+        });
     }
 
     @Override
@@ -287,7 +287,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      *
      * @param fun fun
      * @since 3.3.0
-     * @deprecated 3.3.1
+     * @deprecated 后面我打算移除掉 {@link #executeBatch(Collection, int, BiConsumer)} }.
      */
     @Deprecated
     protected boolean executeBatch(Consumer<SqlSession> fun) {
@@ -324,22 +324,18 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         }
     }
 
+    /**
+     * 执行批量操作
+     *
+     * @param entityList 数据集合
+     * @param batchSize  批量大小
+     * @param consumer   执行方法
+     * @param <E>        泛型
+     * @return 操作结果
+     * @since 3.3.1
+     */
     protected <E> boolean executeBatch(Collection<E> entityList, int batchSize, BiConsumer<SqlSession, E> consumer) {
-        Class<T> tClass = currentModelClass();
-        SqlSessionFactory sqlSessionFactory = SqlHelper.sqlSessionFactory(tClass);
-        SqlSessionHolder sqlSessionHolder = (SqlSessionHolder) TransactionSynchronizationManager.getResource(sqlSessionFactory);
-        boolean transaction = TransactionSynchronizationManager.isSynchronizationActive();
-        if (sqlSessionHolder != null) {
-            SqlSession sqlSession = sqlSessionHolder.getSqlSession();
-            //原生无法支持执行器切换，当存在批量操作时，会嵌套两个session的，优先commit上一个session
-            //按道理来说，这里的值应该一直为false。
-            sqlSession.commit(!transaction);
-        }
-        SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH);
-        if (!transaction) {
-            log.warn("SqlSession [" + sqlSession + "] was not registered for synchronization because DataSource is not transactional");
-        }
-        try {
+        return executeBatch(sqlSession -> {
             int size = entityList.size();
             int i = 1;
             for (E entity : entityList) {
@@ -349,42 +345,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 }
                 i++;
             }
-            //非事物情况下，强制commit。
-            sqlSession.commit(!transaction);
-            return true;
-        } catch (Throwable t) {
-            sqlSession.rollback();
-            Throwable unwrapped = ExceptionUtil.unwrapThrowable(t);
-            if (unwrapped instanceof RuntimeException) {
-                MyBatisExceptionTranslator myBatisExceptionTranslator
-                    = new MyBatisExceptionTranslator(sqlSessionFactory.getConfiguration().getEnvironment().getDataSource(), true);
-                throw Objects.requireNonNull(myBatisExceptionTranslator.translateExceptionIfPossible((RuntimeException) unwrapped));
-            }
-            throw ExceptionUtils.mpe(unwrapped);
-        } finally {
-            sqlSession.close();
-        }
+        });
     }
 
-    /**
-     * 执行批量操作
-     *
-     * @param sqlSession sqlSession
-     * @param entityList 数据集合
-     * @param batchSize  批量大小
-     * @param consumer   执行方法
-     * @since 3.3.1
-     */
-    @Deprecated
-    protected <E> void execute(SqlSession sqlSession, Collection<E> entityList, int batchSize, Consumer<E> consumer) {
-        int size = entityList.size();
-        int i = 1;
-        for (E entity : entityList) {
-            consumer.accept(entity);
-            if ((i % batchSize == 0) || i == size) {
-                sqlSession.flushStatements();
-            }
-            i++;
-        }
-    }
 }
