@@ -64,4 +64,11 @@ public @interface TableName {
      * @since 3.1.2
      */
     boolean autoResultMap() default false;
+
+    /**
+     * 需要排除的属性名
+     *
+     * @since 3.3.1
+     */
+    String[] excludeProperty() default {};
 }

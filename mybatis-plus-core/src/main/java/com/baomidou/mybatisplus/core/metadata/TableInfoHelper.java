@@ -25,7 +25,9 @@ import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.SelectKeyGenerator;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.mapping.*;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ResultMap;
+import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.reflection.Reflector;
 import org.apache.ibatis.reflection.ReflectorFactory;
 import org.apache.ibatis.scripting.LanguageDriver;
@@ -132,10 +134,12 @@ public class TableInfoHelper {
         }
 
         /* 初始化表名相关 */
-        initTableName(clazz, globalConfig, tableInfo);
+        final String[] excludeProperty = initTableName(clazz, globalConfig, tableInfo);
+
+        List<String> excludePropertyList = excludeProperty != null && excludeProperty.length > 0 ? Arrays.asList(excludeProperty) : Collections.emptyList();
 
         /* 初始化字段相关 */
-        initTableFields(clazz, globalConfig, tableInfo);
+        initTableFields(clazz, globalConfig, tableInfo, excludePropertyList);
 
         /* 放入缓存 */
         TABLE_INFO_CACHE.put(clazz, tableInfo);
@@ -157,8 +161,9 @@ public class TableInfoHelper {
      * @param clazz        实体类
      * @param globalConfig 全局配置
      * @param tableInfo    数据库表反射信息
+     * @return 需要排除的字段名
      */
-    private static void initTableName(Class<?> clazz, GlobalConfig globalConfig, TableInfo tableInfo) {
+    private static String[] initTableName(Class<?> clazz, GlobalConfig globalConfig, TableInfo tableInfo) {
         /* 数据库全局配置 */
         GlobalConfig.DbConfig dbConfig = globalConfig.getDbConfig();
         TableName table = clazz.getAnnotation(TableName.class);
@@ -167,6 +172,7 @@ public class TableInfoHelper {
         String tablePrefix = dbConfig.getTablePrefix();
         String schema = dbConfig.getSchema();
         boolean tablePrefixEffect = true;
+        String[] excludeProperty = null;
 
         if (table != null) {
             if (StringUtils.isNotBlank(table.value())) {
@@ -185,6 +191,7 @@ public class TableInfoHelper {
                 tableInfo.setResultMap(table.resultMap());
             }
             tableInfo.setAutoInitResultMap(table.autoResultMap());
+            excludeProperty = table.excludeProperty();
         } else {
             tableName = initTableNameWithDbConfig(tableName, dbConfig);
         }
@@ -203,6 +210,7 @@ public class TableInfoHelper {
         if (null != dbConfig.getKeyGenerator()) {
             tableInfo.setKeySequence(clazz.getAnnotation(KeySequence.class));
         }
+        return excludeProperty;
     }
 
     /**
@@ -237,7 +245,7 @@ public class TableInfoHelper {
      * @param globalConfig 全局配置
      * @param tableInfo    数据库表反射信息
      */
-    public static void initTableFields(Class<?> clazz, GlobalConfig globalConfig, TableInfo tableInfo) {
+    public static void initTableFields(Class<?> clazz, GlobalConfig globalConfig, TableInfo tableInfo, List<String> excludeProperty) {
         /* 数据库全局配置 */
         GlobalConfig.DbConfig dbConfig = globalConfig.getDbConfig();
         ReflectorFactory reflectorFactory = tableInfo.getConfiguration().getReflectorFactory();
@@ -251,6 +259,9 @@ public class TableInfoHelper {
 
         List<TableFieldInfo> fieldList = new ArrayList<>();
         for (Field field : list) {
+            if (excludeProperty.contains(field.getName())) {
+                continue;
+            }
             /*
              * 主键ID 初始化
              */
@@ -457,8 +468,9 @@ public class TableInfoHelper {
 
     /**
      * 自定义 KEY 生成器
-     * @deprecated 3.1.2
+     *
      * @see #genKeyGenerator(String, TableInfo, MapperBuilderAssistant)
+     * @deprecated 3.1.2
      */
     @Deprecated
     public static KeyGenerator genKeyGenerator(TableInfo tableInfo, MapperBuilderAssistant builderAssistant,
