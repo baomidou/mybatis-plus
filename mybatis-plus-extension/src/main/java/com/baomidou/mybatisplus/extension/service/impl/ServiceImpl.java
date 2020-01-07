@@ -285,12 +285,12 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     /**
      * 执行批量操作
      *
-     * @param fun fun
+     * @param consumer consumer
      * @since 3.3.0
-     * @deprecated 后面我打算移除掉 {@link #executeBatch(Collection, int, BiConsumer)} }.
+     * @deprecated 3.3.1 后面我打算移除掉 {@link #executeBatch(Collection, int, BiConsumer)} }.
      */
     @Deprecated
-    protected boolean executeBatch(Consumer<SqlSession> fun) {
+    protected boolean executeBatch(Consumer<SqlSession> consumer) {
         Class<T> tClass = currentModelClass();
         SqlSessionFactory sqlSessionFactory = SqlHelper.sqlSessionFactory(tClass);
         SqlSessionHolder sqlSessionHolder = (SqlSessionHolder) TransactionSynchronizationManager.getResource(sqlSessionFactory);
@@ -306,7 +306,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
             log.warn("SqlSession [" + sqlSession + "] was not registered for synchronization because DataSource is not transactional");
         }
         try {
-            fun.accept(sqlSession);
+            consumer.accept(sqlSession);
             //非事物情况下，强制commit。
             sqlSession.commit(!transaction);
             return true;
@@ -327,19 +327,19 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     /**
      * 执行批量操作
      *
-     * @param entityList 数据集合
-     * @param batchSize  批量大小
-     * @param consumer   执行方法
-     * @param <E>        泛型
+     * @param list      数据集合
+     * @param batchSize 批量大小
+     * @param consumer  执行方法
+     * @param <E>       泛型
      * @return 操作结果
      * @since 3.3.1
      */
-    protected <E> boolean executeBatch(Collection<E> entityList, int batchSize, BiConsumer<SqlSession, E> consumer) {
+    protected <E> boolean executeBatch(Collection<E> list, int batchSize, BiConsumer<SqlSession, E> consumer) {
         return executeBatch(sqlSession -> {
-            int size = entityList.size();
+            int size = list.size();
             int i = 1;
-            for (E entity : entityList) {
-                consumer.accept(sqlSession, entity);
+            for (E element : list) {
+                consumer.accept(sqlSession, element);
                 if ((i % batchSize == 0) || i == size) {
                     sqlSession.flushStatements();
                 }
