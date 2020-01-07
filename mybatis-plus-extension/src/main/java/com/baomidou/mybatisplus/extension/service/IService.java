@@ -41,6 +41,11 @@ import java.util.function.Function;
 public interface IService<T> {
 
     /**
+     * 默认批次提交数量
+     */
+    int DEFAULT_BATCH_SIZE = 1000;
+
+    /**
      * 插入一条记录（选择字段，策略插入）
      *
      * @param entity 实体对象
@@ -54,7 +59,7 @@ public interface IService<T> {
      */
     @Transactional(rollbackFor = Exception.class)
     default boolean saveBatch(Collection<T> entityList) {
-        return saveBatch(entityList, 1000);
+        return saveBatch(entityList, DEFAULT_BATCH_SIZE);
     }
 
     /**
@@ -72,7 +77,7 @@ public interface IService<T> {
      */
     @Transactional(rollbackFor = Exception.class)
     default boolean saveOrUpdateBatch(Collection<T> entityList) {
-        return saveOrUpdateBatch(entityList, 1000);
+        return saveOrUpdateBatch(entityList, DEFAULT_BATCH_SIZE);
     }
 
     /**
@@ -142,7 +147,7 @@ public interface IService<T> {
      */
     @Transactional(rollbackFor = Exception.class)
     default boolean updateBatchById(Collection<T> entityList) {
-        return updateBatchById(entityList, 1000);
+        return updateBatchById(entityList, DEFAULT_BATCH_SIZE);
     }
 
     /**

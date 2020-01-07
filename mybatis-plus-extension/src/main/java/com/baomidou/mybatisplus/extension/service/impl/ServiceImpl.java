@@ -155,7 +155,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean saveOrUpdateBatch(Collection<T> entityList, int batchSize) {
-        Assert.notEmpty(entityList, "error: entityList must not be empty");
         Class<?> cls = currentModelClass();
         TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
         Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
@@ -210,7 +209,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean updateBatchById(Collection<T> entityList, int batchSize) {
-        Assert.notEmpty(entityList, "error: entityList must not be empty");
         String sqlStatement = sqlStatement(SqlMethod.UPDATE_BY_ID);
         return executeBatch(entityList, batchSize, (sqlSession, entity) -> {
             MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
@@ -335,7 +333,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      * @since 3.3.1
      */
     protected <E> boolean executeBatch(Collection<E> list, int batchSize, BiConsumer<SqlSession, E> consumer) {
-        return executeBatch(sqlSession -> {
+        Assert.isFalse(batchSize < 1, "batchSize must not be less than one");
+        return !CollectionUtils.isEmpty(list) && executeBatch(sqlSession -> {
             int size = list.size();
             int i = 1;
             for (E element : list) {
@@ -346,6 +345,19 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 i++;
             }
         });
+    }
+
+    /**
+     * 执行批量操作（默认批次提交数量{@link IService#DEFAULT_BATCH_SIZE}）
+     *
+     * @param list     数据集合
+     * @param consumer 执行方法
+     * @param <E>      泛型
+     * @return 操作结果
+     * @since 3.3.1
+     */
+    protected <E> boolean executeBatch(Collection<E> list, BiConsumer<SqlSession, E> consumer) {
+        return executeBatch(list, DEFAULT_BATCH_SIZE, consumer);
     }
 
 }
