@@ -47,13 +47,13 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     }
 
     public QueryWrapper(T entity) {
-        this.setEntity(entity);
-        this.initNeed();
+        super.setEntity(entity);
+        super.initNeed();
     }
 
     public QueryWrapper(T entity, String... columns) {
-        this.setEntity(entity);
-        this.initNeed();
+        super.setEntity(entity);
+        super.initNeed();
         this.select(columns);
     }
 
@@ -65,8 +65,8 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     private QueryWrapper(T entity, Class<T> entityClass, AtomicInteger paramNameSeq,
                          Map<String, Object> paramNameValuePairs, MergeSegments mergeSegments,
                          SharedString lastSql, SharedString sqlComment, SharedString sqlFirst) {
-        this.setEntity(entity);
-        this.setEntityClass(entityClass);
+        super.setEntity(entity);
+        super.setEntityClass(entityClass);
         this.paramNameSeq = paramNameSeq;
         this.paramNameValuePairs = paramNameValuePairs;
         this.expression = mergeSegments;
@@ -85,7 +85,7 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
 
     @Override
     public QueryWrapper<T> select(Class<T> entityClass, Predicate<TableFieldInfo> predicate) {
-        this.setEntityClass(entityClass);
+        super.setEntityClass(entityClass);
         this.sqlSelect.setStringValue(TableInfoHelper.getTableInfo(getEntityClass()).chooseSelect(predicate));
         return typedThis;
     }

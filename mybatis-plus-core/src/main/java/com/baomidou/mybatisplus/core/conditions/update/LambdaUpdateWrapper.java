@@ -55,8 +55,8 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
      * 不建议直接 new 该实例，使用 Wrappers.lambdaUpdate(entity)
      */
     public LambdaUpdateWrapper(T entity) {
-        this.setEntity(entity);
-        this.initNeed();
+        super.setEntity(entity);
+        super.initNeed();
         this.sqlSet = new ArrayList<>();
     }
 
@@ -64,8 +64,8 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
      * 不建议直接 new 该实例，使用 Wrappers.lambdaUpdate(entity)
      */
     public LambdaUpdateWrapper(Class<T> entityClass) {
-        this.setEntityClass(entityClass);
-        this.initNeed();
+        super.setEntityClass(entityClass);
+        super.initNeed();
         this.sqlSet = new ArrayList<>();
     }
 
@@ -76,7 +76,7 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
                         Map<String, Object> paramNameValuePairs, MergeSegments mergeSegments,
                         SharedString lastSql, SharedString sqlComment, SharedString sqlFirst) {
         super.setEntity(entity);
-        this.setEntityClass(entityClass);
+        super.setEntityClass(entityClass);
         this.sqlSet = sqlSet;
         this.paramNameSeq = paramNameSeq;
         this.paramNameValuePairs = paramNameValuePairs;

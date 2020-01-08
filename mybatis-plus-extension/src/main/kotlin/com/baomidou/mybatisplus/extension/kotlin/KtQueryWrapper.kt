@@ -41,12 +41,12 @@ class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Query<K
 
     constructor(entity: T) {
         this.entity = entity
-        this.initNeed()
+        super.initNeed()
     }
 
     constructor(entityClass: Class<T>) {
         this.entityClass = entityClass
-        this.initNeed()
+        super.initNeed()
     }
 
     internal constructor(entity: T?, entityClass: Class<T>, sqlSelect: SharedString, paramNameSeq: AtomicInteger,

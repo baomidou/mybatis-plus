@@ -53,16 +53,16 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
      * 不建议直接 new 该实例，使用 Wrappers.lambdaQuery(entity)
      */
     public LambdaQueryWrapper(T entity) {
-        this.setEntity(entity);
-        this.initNeed();
+        super.setEntity(entity);
+        super.initNeed();
     }
 
     /**
      * 不建议直接 new 该实例，使用 Wrappers.lambdaQuery(entity)
      */
     public LambdaQueryWrapper(Class<T> entityClass) {
-        this.setEntityClass(entityClass);
-        this.initNeed();
+        super.setEntityClass(entityClass);
+        super.initNeed();
     }
 
     /**
@@ -71,8 +71,8 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     LambdaQueryWrapper(T entity, Class<T> entityClass, SharedString sqlSelect, AtomicInteger paramNameSeq,
                        Map<String, Object> paramNameValuePairs, MergeSegments mergeSegments,
                        SharedString lastSql, SharedString sqlComment, SharedString sqlFirst) {
-        this.setEntity(entity);
-        this.setEntityClass(entityClass);
+        super.setEntity(entity);
+        super.setEntityClass(entityClass);
         this.paramNameSeq = paramNameSeq;
         this.paramNameValuePairs = paramNameValuePairs;
         this.expression = mergeSegments;
@@ -109,7 +109,7 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
      */
     @Override
     public LambdaQueryWrapper<T> select(Class<T> entityClass, Predicate<TableFieldInfo> predicate) {
-        this.setEntityClass(entityClass);
+        super.setEntityClass(entityClass);
         this.sqlSelect.setStringValue(TableInfoHelper.getTableInfo(getEntityClass()).chooseSelect(predicate));
         return typedThis;
     }

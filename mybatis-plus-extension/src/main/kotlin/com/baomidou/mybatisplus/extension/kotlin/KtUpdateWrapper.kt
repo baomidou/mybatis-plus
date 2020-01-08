@@ -41,12 +41,12 @@ class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, Updat
 
     constructor(entity: T) {
         this.entity = entity
-        this.initNeed()
+        super.initNeed()
     }
 
     constructor(entityClass: Class<T>) {
         this.entityClass = entityClass
-        this.initNeed()
+        super.initNeed()
     }
 
     internal constructor(entity: T?, paramNameSeq: AtomicInteger, paramNameValuePairs: Map<String, Any>,

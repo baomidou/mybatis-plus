@@ -48,15 +48,15 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
     }
 
     public UpdateWrapper(T entity) {
-        this.setEntity(entity);
-        this.initNeed();
+        super.setEntity(entity);
+        super.initNeed();
         this.sqlSet = new ArrayList<>();
     }
 
     private UpdateWrapper(T entity, List<String> sqlSet, AtomicInteger paramNameSeq,
                           Map<String, Object> paramNameValuePairs, MergeSegments mergeSegments,
                           SharedString lastSql, SharedString sqlComment, SharedString sqlFirst) {
-        this.setEntity(entity);
+        super.setEntity(entity);
         this.sqlSet = sqlSet;
         this.paramNameSeq = paramNameSeq;
         this.paramNameValuePairs = paramNameValuePairs;
