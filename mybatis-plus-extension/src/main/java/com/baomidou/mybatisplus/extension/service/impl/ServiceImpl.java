@@ -67,6 +67,8 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return baseMapper;
     }
 
+    protected Class entityClass = currentModelClass();
+
     /**
      * 判断数据库操作是否成功
      *
@@ -88,7 +90,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      */
     @Deprecated
     protected SqlSession sqlSessionBatch() {
-        return SqlHelper.sqlSessionBatch(currentModelClass());
+        return SqlHelper.sqlSessionBatch(entityClass);
     }
 
     /**
@@ -99,7 +101,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      */
     @Deprecated
     protected void closeSqlSession(SqlSession sqlSession) {
-        SqlSessionUtils.closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(currentModelClass()));
+        SqlSessionUtils.closeSqlSession(sqlSession, GlobalConfigUtils.currentSessionFactory(entityClass));
     }
 
     /**
@@ -109,7 +111,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      * @return ignore
      */
     protected String sqlStatement(SqlMethod sqlMethod) {
-        return SqlHelper.table(currentModelClass()).getSqlStatement(sqlMethod.getMethod());
+        return SqlHelper.table(entityClass).getSqlStatement(sqlMethod.getMethod());
     }
 
     @Override
@@ -155,19 +157,18 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean saveOrUpdateBatch(Collection<T> entityList, int batchSize) {
-        Class<?> cls = currentModelClass();
-        TableInfo tableInfo = TableInfoHelper.getTableInfo(cls);
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(entityClass);
         Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
         String keyProperty = tableInfo.getKeyProperty();
         Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
         return executeBatch(entityList, batchSize, (sqlSession, entity) -> {
-            Object idVal = ReflectionKit.getMethodValue(cls, entity, keyProperty);
+            Object idVal = ReflectionKit.getMethodValue(entityClass, entity, keyProperty);
             if (StringUtils.checkValNull(idVal) || Objects.isNull(getById((Serializable) idVal))) {
-                sqlSession.insert(sqlStatement(SqlMethod.INSERT_ONE), entity);
+                sqlSession.insert(tableInfo.getSqlStatement(SqlMethod.INSERT_ONE.getMethod()), entity);
             } else {
                 MapperMethod.ParamMap<T> param = new MapperMethod.ParamMap<>();
                 param.put(Constants.ENTITY, entity);
-                sqlSession.update(sqlStatement(SqlMethod.UPDATE_BY_ID), param);
+                sqlSession.update(tableInfo.getSqlStatement(SqlMethod.UPDATE_BY_ID.getMethod()), param);
             }
         });
     }
@@ -289,8 +290,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      */
     @Deprecated
     protected boolean executeBatch(Consumer<SqlSession> consumer) {
-        Class<T> tClass = currentModelClass();
-        SqlSessionFactory sqlSessionFactory = SqlHelper.sqlSessionFactory(tClass);
+        SqlSessionFactory sqlSessionFactory = SqlHelper.sqlSessionFactory(entityClass);
         SqlSessionHolder sqlSessionHolder = (SqlSessionHolder) TransactionSynchronizationManager.getResource(sqlSessionFactory);
         boolean transaction = TransactionSynchronizationManager.isSynchronizationActive();
         if (sqlSessionHolder != null) {
