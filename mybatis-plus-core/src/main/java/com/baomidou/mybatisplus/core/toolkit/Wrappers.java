@@ -235,5 +235,10 @@ public final class Wrappers {
         protected EmptyWrapper<T> instance() {
             throw new UnsupportedOperationException();
         }
+
+        @Override
+        public void clear() {
+            throw new UnsupportedOperationException();
+        }
     }
 }

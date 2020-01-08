@@ -170,4 +170,11 @@ public abstract class Wrapper<T> implements ISqlSegment {
     public String getTargetSql() {
         return getSqlSegment().replaceAll("#\\{.+?}", "?");
     }
+
+    /**
+     * 条件清空
+     *
+     * @since 3.3.1
+     */
+    abstract public void clear();
 }

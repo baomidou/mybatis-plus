@@ -112,4 +112,12 @@ public abstract class AbstractISegmentList extends ArrayList<ISqlSegment> implem
      * @return sqlSegment
      */
     protected abstract String childrenSqlSegment();
+
+    @Override
+    public void clear() {
+        super.clear();
+        lastValue = null;
+        sqlSegment = EMPTY;
+        cacheSqlSegment = true;
+    }
 }

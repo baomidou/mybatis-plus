@@ -47,4 +47,13 @@ public class SharedString implements Serializable {
     public static SharedString emptyString() {
         return new SharedString(StringPool.EMPTY);
     }
+
+    /**
+     * 条件清空
+     *
+     * @since 3.3.1
+     */
+    public void clear() {
+        stringValue = StringPool.EMPTY;
+    }
 }

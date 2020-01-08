@@ -92,4 +92,11 @@ public class NormalSegmentList extends AbstractISegmentList {
         final String str = this.stream().map(ISqlSegment::getSqlSegment).collect(Collectors.joining(SPACE));
         return (LEFT_BRACKET + str + RIGHT_BRACKET);
     }
+
+    @Override
+    public void clear() {
+        super.clear();
+        flushLastValue = true;
+        executeNot = true;
+    }
 }
