@@ -47,13 +47,13 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     }
 
     public QueryWrapper(T entity) {
-        super.setEntity(entity);
-        super.initNeed();
+        this.setEntity(entity);
+        this.initNeed();
     }
 
     public QueryWrapper(T entity, String... columns) {
-        super.setEntity(entity);
-        super.initNeed();
+        this.setEntity(entity);
+        this.initNeed();
         this.select(columns);
     }
 
@@ -113,5 +113,11 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     protected QueryWrapper<T> instance() {
         return new QueryWrapper<>(getEntity(), getEntityClass(), paramNameSeq, paramNameValuePairs, new MergeSegments(),
             SharedString.emptyString(), SharedString.emptyString(), SharedString.emptyString());
+    }
+
+    @Override
+    public void clear() {
+        super.clear();
+        sqlSelect.clear();
     }
 }

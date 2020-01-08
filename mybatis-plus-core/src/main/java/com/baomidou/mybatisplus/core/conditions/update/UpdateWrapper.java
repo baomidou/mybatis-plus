@@ -103,4 +103,10 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
         return new UpdateWrapper<>(getEntity(), sqlSet, paramNameSeq, paramNameValuePairs, new MergeSegments(),
             SharedString.emptyString(), SharedString.emptyString(), SharedString.emptyString());
     }
+
+    @Override
+    public void clear() {
+        super.clear();
+        sqlSet.clear();
+    }
 }
