@@ -311,4 +311,9 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     public void clear() {
         throw ExceptionUtils.mpe("can not use this method for \"%s\"", "clear");
     }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        throw ExceptionUtils.mpe("can not use this method for \"%s\"", "clone");
+    }
 }
