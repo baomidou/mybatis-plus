@@ -59,21 +59,6 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     }
 
     @Override
-    public T getEntity() {
-        throw ExceptionUtils.mpe("can not use this method for \"%s\"", "getEntity");
-    }
-
-    @Override
-    public MergeSegments getExpression() {
-        throw ExceptionUtils.mpe("can not use this method for \"%s\"", "getExpression");
-    }
-
-    @Override
-    public String getCustomSqlSegment() {
-        throw ExceptionUtils.mpe("can not use this method for \"%s\"", "getCustomSqlSegment");
-    }
-
-    @Override
     public <V> Children allEq(boolean condition, Map<R, V> params, boolean null2IsNull) {
         getWrapper().allEq(condition, params, null2IsNull);
         return typedThis;
@@ -280,5 +265,50 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
     @Override
     public String getSqlSegment() {
         throw ExceptionUtils.mpe("can not use this method for \"%s\"", "getSqlSegment");
+    }
+
+    @Override
+    public String getSqlFirst() {
+        throw ExceptionUtils.mpe("can not use this method for \"%s\"", "getSqlFirst");
+    }
+
+    @Override
+    public String getSqlSelect() {
+        throw ExceptionUtils.mpe("can not use this method for \"%s\"", "getSqlSelect");
+    }
+
+    @Override
+    public String getSqlSet() {
+        throw ExceptionUtils.mpe("can not use this method for \"%s\"", "getSqlSet");
+    }
+
+    @Override
+    public String getSqlComment() {
+        throw ExceptionUtils.mpe("can not use this method for \"%s\"", "getSqlComment");
+    }
+
+    @Override
+    public String getTargetSql() {
+        throw ExceptionUtils.mpe("can not use this method for \"%s\"", "getTargetSql");
+    }
+
+    @Override
+    public T getEntity() {
+        throw ExceptionUtils.mpe("can not use this method for \"%s\"", "getEntity");
+    }
+
+    @Override
+    public MergeSegments getExpression() {
+        throw ExceptionUtils.mpe("can not use this method for \"%s\"", "getExpression");
+    }
+
+    @Override
+    public String getCustomSqlSegment() {
+        throw ExceptionUtils.mpe("can not use this method for \"%s\"", "getCustomSqlSegment");
+    }
+
+    @Override
+    public void clear() {
+        throw ExceptionUtils.mpe("can not use this method for \"%s\"", "clear");
     }
 }
