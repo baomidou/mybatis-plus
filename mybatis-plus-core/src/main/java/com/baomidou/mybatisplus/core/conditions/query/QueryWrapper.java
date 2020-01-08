@@ -99,8 +99,8 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
      * 返回一个支持 lambda 函数写法的 wrapper
      */
     public LambdaQueryWrapper<T> lambda() {
-        return new LambdaQueryWrapper<>(getEntity(), getEntityClass(), sqlSelect, paramNameSeq, paramNameValuePairs, expression,
-            lastSql, sqlComment, sqlFirst);
+        return new LambdaQueryWrapper<>(getEntity(), getEntityClass(), sqlSelect, paramNameSeq, paramNameValuePairs,
+            expression, lastSql, sqlComment, sqlFirst);
     }
 
     /**

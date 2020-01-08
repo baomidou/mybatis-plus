@@ -94,13 +94,13 @@ public class UpdateWrapper<T> extends AbstractWrapper<T, String, UpdateWrapper<T
      * 返回一个支持 lambda 函数写法的 wrapper
      */
     public LambdaUpdateWrapper<T> lambda() {
-        return new LambdaUpdateWrapper<>(getEntity(), sqlSet, paramNameSeq, paramNameValuePairs, expression,
-            lastSql, sqlComment, sqlFirst);
+        return new LambdaUpdateWrapper<>(getEntity(), getEntityClass(), sqlSet, paramNameSeq, paramNameValuePairs,
+            expression, lastSql, sqlComment, sqlFirst);
     }
 
     @Override
     protected UpdateWrapper<T> instance() {
-        return new UpdateWrapper<>(getEntity(), sqlSet, paramNameSeq, paramNameValuePairs, new MergeSegments(),
+        return new UpdateWrapper<>(getEntity(), null, paramNameSeq, paramNameValuePairs, new MergeSegments(),
             SharedString.emptyString(), SharedString.emptyString(), SharedString.emptyString());
     }
 

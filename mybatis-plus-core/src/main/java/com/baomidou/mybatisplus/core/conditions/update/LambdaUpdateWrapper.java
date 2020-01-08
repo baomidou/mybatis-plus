@@ -72,10 +72,11 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
     /**
      * 不建议直接 new 该实例，使用 Wrappers.lambdaUpdate(...)
      */
-    LambdaUpdateWrapper(T entity, List<String> sqlSet, AtomicInteger paramNameSeq,
+    LambdaUpdateWrapper(T entity, Class<T> entityClass, List<String> sqlSet, AtomicInteger paramNameSeq,
                         Map<String, Object> paramNameValuePairs, MergeSegments mergeSegments,
                         SharedString lastSql, SharedString sqlComment, SharedString sqlFirst) {
         super.setEntity(entity);
+        this.setEntityClass(entityClass);
         this.sqlSet = sqlSet;
         this.paramNameSeq = paramNameSeq;
         this.paramNameValuePairs = paramNameValuePairs;
@@ -111,8 +112,8 @@ public class LambdaUpdateWrapper<T> extends AbstractLambdaWrapper<T, LambdaUpdat
 
     @Override
     protected LambdaUpdateWrapper<T> instance() {
-        return new LambdaUpdateWrapper<>(getEntity(), sqlSet, paramNameSeq, paramNameValuePairs, new MergeSegments(),
-            SharedString.emptyString(), SharedString.emptyString(), SharedString.emptyString());
+        return new LambdaUpdateWrapper<>(getEntity(), getEntityClass(), null, paramNameSeq, paramNameValuePairs,
+            new MergeSegments(), SharedString.emptyString(), SharedString.emptyString(), SharedString.emptyString());
     }
 
     @Override
