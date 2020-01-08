@@ -97,11 +97,4 @@ public abstract class AbstractLambdaWrapper<T, Children extends AbstractLambdaWr
             columnMap = LambdaUtils.getColumnMap(entityClass);
         }
     }
-
-    @Override
-    public void clear() {
-        super.clear();
-        initColumnMap = false;
-        columnMap = null;
-    }
 }

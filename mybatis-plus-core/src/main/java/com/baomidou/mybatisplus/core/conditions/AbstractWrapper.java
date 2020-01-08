@@ -444,7 +444,6 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     @Override
     public void clear() {
         entity = null;
-        entityClass = null;
         paramNameSeq.set(0);
         paramNameValuePairs.clear();
         expression.clear();
