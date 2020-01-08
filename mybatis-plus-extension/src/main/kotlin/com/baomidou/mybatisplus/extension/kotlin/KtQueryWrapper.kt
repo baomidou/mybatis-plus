@@ -113,4 +113,9 @@ class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Query<K
         return KtQueryWrapper(entity, entityClass, sqlSelect, paramNameSeq, paramNameValuePairs, columnMap,
             SharedString.emptyString(), SharedString.emptyString(), SharedString.emptyString())
     }
+
+    override fun clear() {
+        super.clear()
+        sqlSelect.clear()
+    }
 }

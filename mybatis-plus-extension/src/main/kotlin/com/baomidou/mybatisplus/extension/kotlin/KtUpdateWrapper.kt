@@ -85,4 +85,9 @@ class KtUpdateWrapper<T : Any> : AbstractKtWrapper<T, KtUpdateWrapper<T>>, Updat
         return KtUpdateWrapper(entity, paramNameSeq, paramNameValuePairs, columnMap,
             SharedString.emptyString(), SharedString.emptyString(), SharedString.emptyString())
     }
+
+    override fun clear() {
+        super.clear()
+        sqlSet.clear()
+    }
 }
