@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.DialectRegistry;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect;
 import org.apache.ibatis.session.RowBounds;
 
@@ -35,8 +36,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DialectFactory {
 
+    private static final DialectRegistry DIALECT_REGISTRY = new DialectRegistry();
+
     /**
-     * 方言缓存
+     * 自定义方言缓存
      */
     private static final Map<String, IDialect> DIALECT_CACHE = new ConcurrentHashMap<>();
 
@@ -49,6 +52,7 @@ public class DialectFactory {
      * @param dbType       数据类型
      * @param dialectClazz 数据库方言
      * @return 分页模型
+     * @deprecated 3.3.1
      */
     @Deprecated
     public static DialectModel buildPaginationSql(IPage<?> page, String buildSql, DbType dbType, String dialectClazz) {
@@ -66,8 +70,7 @@ public class DialectFactory {
      */
     @Deprecated
     private static IDialect getDialect(DbType dbType, String dialectClazz) {
-        String dialectClassName = StringUtils.isBlank(dialectClazz) ? dbType.getDialect() : dialectClazz;
-        return DIALECT_CACHE.computeIfAbsent(dialectClassName, DialectFactory::classToDialect);
+        return StringUtils.isBlank(dialectClazz) ? DIALECT_REGISTRY.getDialect(dbType) : DIALECT_CACHE.computeIfAbsent(dialectClazz, DialectFactory::classToDialect);
     }
 
     /**
@@ -81,18 +84,27 @@ public class DialectFactory {
         return DIALECT_CACHE.computeIfAbsent(dialectClazz, DialectFactory::classToDialect);
     }
 
+    public static IDialect getDialect(DbType dbType) {
+        return DIALECT_REGISTRY.getDialect(dbType);
+    }
+
+    private static IDialect newInstance(Class<? extends IDialect> dialectClazz) {
+        IDialect dialect = ClassUtils.newInstance(dialectClazz);
+        Assert.notNull(dialect, "The value of the dialect property in mybatis configuration.xml is not defined.");
+        return dialect;
+    }
+
+    @SuppressWarnings("unchecked")
     private static IDialect classToDialect(String dialectClazz){
         IDialect dialect = null;
         try {
             Class<?> clazz = Class.forName(dialectClazz);
             if (IDialect.class.isAssignableFrom(clazz)) {
-                dialect = (IDialect) ClassUtils.newInstance(clazz);
+                dialect = newInstance((Class<? extends IDialect>) clazz);
             }
         } catch (ClassNotFoundException e) {
             throw ExceptionUtils.mpe("Class : %s is not found", dialectClazz);
         }
-        /* 未配置方言则抛出异常 */
-        Assert.notNull(dialect, "The value of the dialect property in mybatis configuration.xml is not defined.");
         return dialect;
     }
 }

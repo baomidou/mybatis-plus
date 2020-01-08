@@ -28,13 +28,6 @@ import com.baomidou.mybatisplus.annotation.DbType;
  */
 public class SqlServerQuery extends AbstractDbQuery {
 
-
-    @Override
-    public DbType dbType() {
-        return DbType.SQL_SERVER;
-    }
-
-
     @Override
     public String tablesSql() {
         return "select cast(so.name as varchar(500)) as TABLE_NAME, " +

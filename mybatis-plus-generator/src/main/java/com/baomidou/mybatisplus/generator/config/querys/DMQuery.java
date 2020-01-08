@@ -24,10 +24,6 @@ import com.baomidou.mybatisplus.annotation.DbType;
  * @since 2019-06-27
  */
 public class DMQuery  extends AbstractDbQuery{
-    @Override
-    public DbType dbType() {
-        return DbType.DM;
-    }
 
     @Override
     public String tablesSql() {

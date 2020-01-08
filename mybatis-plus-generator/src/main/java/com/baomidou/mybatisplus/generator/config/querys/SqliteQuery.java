@@ -25,13 +25,6 @@ import com.baomidou.mybatisplus.annotation.DbType;
  */
 public class SqliteQuery extends AbstractDbQuery {
 
-
-    @Override
-    public DbType dbType() {
-        return DbType.SQLITE;
-    }
-
-
     @Override
     public String tablesSql() {
         return "select * from sqlite_master where type='table'";

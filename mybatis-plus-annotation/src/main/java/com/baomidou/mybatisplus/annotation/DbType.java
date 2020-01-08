@@ -15,9 +15,6 @@
  */
 package com.baomidou.mybatisplus.annotation;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -110,16 +107,11 @@ public enum DbType {
 
     /**
      * 分页方言
+     *
+     * @deprecated 3.3.1
      */
+    @Deprecated
     private String dialect;
-
-    private static Map<String,DbType> DB_CACHE_MAP = new ConcurrentHashMap<>();
-
-    static {
-        for (DbType dbType : DbType.values()) {
-            DB_CACHE_MAP.put(dbType.getDb().toLowerCase(), dbType);
-        }
-    }
 
     /**
      * 获取数据库类型
@@ -127,6 +119,12 @@ public enum DbType {
      * @param dbType 数据库类型字符串
      */
     public static DbType getDbType(String dbType) {
-        return DB_CACHE_MAP.getOrDefault(dbType.toLowerCase(), OTHER);
+        for (DbType type : DbType.values()) {
+            if (type.db.equalsIgnoreCase(dbType)) {
+                return type;
+            }
+        }
+        return OTHER;
+
     }
 }

@@ -28,13 +28,6 @@ import com.baomidou.mybatisplus.annotation.DbType;
  */
 public class MySqlQuery extends AbstractDbQuery {
 
-
-    @Override
-    public DbType dbType() {
-        return DbType.MYSQL;
-    }
-
-
     @Override
     public String tablesSql() {
         return "show table status WHERE 1=1 ";

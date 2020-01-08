@@ -66,6 +66,7 @@ public class ConfigBuilder {
      * SQL语句类型
      */
     private IDbQuery dbQuery;
+    private DbType dbType;
     private String superEntityClass;
     private String superMapperClass;
     /**
@@ -275,6 +276,7 @@ public class ConfigBuilder {
      */
     private void handlerDataSource(DataSourceConfig config) {
         connection = config.getConn();
+        dbType = config.getDbType();
         dbQuery = config.getDbQuery();
     }
 
@@ -424,7 +426,7 @@ public class ConfigBuilder {
         Set<String> notExistTables = new HashSet<>();
         try {
             String tablesSql = dbQuery.tablesSql();
-            if (DbType.POSTGRE_SQL == dbQuery.dbType()) {
+            if (DbType.POSTGRE_SQL == this.dbType) {
                 String schema = dataSourceConfig.getSchemaName();
                 if (schema == null) {
                     //pg 默认 schema=public
@@ -432,7 +434,7 @@ public class ConfigBuilder {
                     dataSourceConfig.setSchemaName(schema);
                 }
                 tablesSql = String.format(tablesSql, schema);
-            } else if (DbType.KINGBASE_ES == dbQuery.dbType()) {
+            } else if (DbType.KINGBASE_ES == this.dbType) {
                 String schema = dataSourceConfig.getSchemaName();
                 if (schema == null) {
                     //kingbase 默认 schema=PUBLIC
@@ -440,7 +442,7 @@ public class ConfigBuilder {
                     dataSourceConfig.setSchemaName(schema);
                 }
                 tablesSql = String.format(tablesSql, schema);
-            } else if (DbType.DB2 == dbQuery.dbType()) {
+            } else if (DbType.DB2 == this.dbType) {
                 String schema = dataSourceConfig.getSchemaName();
                 if (schema == null) {
                     //db2 默认 schema=current schema
@@ -450,7 +452,7 @@ public class ConfigBuilder {
                 tablesSql = String.format(tablesSql, schema);
             }
             //oracle数据库表太多，出现最大游标错误
-            else if (DbType.ORACLE == dbQuery.dbType()) {
+            else if (DbType.ORACLE == this.dbType) {
                 String schema = dataSourceConfig.getSchemaName();
                 //oracle 默认 schema=username
                 if (schema == null) {
@@ -571,7 +573,7 @@ public class ConfigBuilder {
         boolean haveId = false;
         List<TableField> fieldList = new ArrayList<>();
         List<TableField> commonFieldList = new ArrayList<>();
-        DbType dbType = dbQuery.dbType();
+        DbType dbType = this.dbType;
         String tableName = tableInfo.getName();
         try {
             String tableFieldsSql = dbQuery.tableFieldsSql();

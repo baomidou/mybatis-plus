@@ -221,7 +221,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
             }
         }
         DbType dbType = Optional.ofNullable(this.dbType).orElse(JdbcUtils.getDbType(connection.getMetaData().getURL()));
-        IDialect dialect = Optional.ofNullable(this.dialect).orElse(DialectFactory.getDialect(dbType.getDialect()));
+        IDialect dialect = Optional.ofNullable(this.dialect).orElse(DialectFactory.getDialect(dbType));
         String buildSql = concatOrderBy(originalSql, page);
         DialectModel model = dialect.buildPaginationSql(buildSql, page.offset(), page.getSize());
         Configuration configuration = mappedStatement.getConfiguration();

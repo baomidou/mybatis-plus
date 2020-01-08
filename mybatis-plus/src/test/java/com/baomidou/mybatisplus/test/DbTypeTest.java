@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.test;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -55,6 +56,8 @@ class DbTypeTest {
         Assertions.assertEquals(values.length, DIALECT_MAP.size());
         for (DbType dbType : values) {
             Class<?> aClass = Class.forName(dbType.getDialect());
+            IDialect dialect = DialectFactory.getDialect(dbType);
+            Assertions.assertEquals(dialect.getClass(), aClass);
             Assertions.assertEquals(aClass, DIALECT_MAP.get(dbType));
         }
     }

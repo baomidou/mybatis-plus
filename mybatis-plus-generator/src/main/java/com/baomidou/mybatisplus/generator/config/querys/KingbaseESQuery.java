@@ -25,13 +25,6 @@ import com.baomidou.mybatisplus.annotation.DbType;
  */
 public class KingbaseESQuery extends AbstractDbQuery {
 
-
-    @Override
-    public DbType dbType() {
-        return DbType.KINGBASE_ES;
-    }
-
-
     @Override
     public String tablesSql() {
         return "SELECT A.tablename, obj_description(relfilenode, 'sys_class') AS comments FROM sys_tables A, sys_class B WHERE A.schemaname='%s' AND A.tablename = B.relname";

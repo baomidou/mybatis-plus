@@ -25,13 +25,6 @@ import com.baomidou.mybatisplus.annotation.DbType;
  */
 public class OracleQuery extends AbstractDbQuery {
 
-
-    @Override
-    public DbType dbType() {
-        return DbType.ORACLE;
-    }
-
-
     @Override
     public String tablesSql() {
         return "SELECT * FROM ALL_TAB_COMMENTS WHERE OWNER='%s'";

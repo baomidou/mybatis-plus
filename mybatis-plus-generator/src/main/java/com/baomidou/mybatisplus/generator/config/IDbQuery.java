@@ -28,11 +28,15 @@ import com.baomidou.mybatisplus.annotation.DbType;
  */
 public interface IDbQuery {
 
-
     /**
      * 数据库类型
+     *
+     * @deprecated 3.3.1 {@link DataSourceConfig#dbType}
      */
-    DbType dbType();
+    @Deprecated
+    default DbType dbType() {
+        return null;
+    }
 
 
     /**

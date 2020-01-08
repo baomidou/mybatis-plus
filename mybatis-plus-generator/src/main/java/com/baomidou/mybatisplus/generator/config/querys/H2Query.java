@@ -30,13 +30,6 @@ public class H2Query extends AbstractDbQuery {
 
     public static final String PK_QUERY_SQL = "select * from INFORMATION_SCHEMA.INDEXES WHERE TABLE_NAME = '%s'";
 
-
-    @Override
-    public DbType dbType() {
-        return DbType.H2;
-    }
-
-
     @Override
     public String tablesSql() {
         return "SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE 1=1 ";

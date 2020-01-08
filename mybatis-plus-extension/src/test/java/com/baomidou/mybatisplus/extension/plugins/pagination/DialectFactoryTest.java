@@ -31,9 +31,13 @@ class DialectFactoryTest {
         DialectModel dialectModel;
         IPage<Object> page = new Page<>();
         //使用默认方言
+        dialectModel = DialectFactory.buildPaginationSql(page, "select * from test ", com.baomidou.mybatisplus.annotation.DbType.MYSQL, null);
+        Assertions.assertEquals(dialectModel.getDialectSql(), "select * from test  LIMIT ?,?");
         dialectModel = DialectFactory.buildPaginationSql(page, "select * from test ", DbType.MYSQL, null);
         Assertions.assertEquals(dialectModel.getDialectSql(), "select * from test  LIMIT ?,?");
         //使用默认自定义方言
+        dialectModel = DialectFactory.buildPaginationSql(page, "select * from test ", com.baomidou.mybatisplus.annotation.DbType.H2, MySqlDialect.class.getName());
+        Assertions.assertEquals(dialectModel.getDialectSql(), "select * from test  LIMIT ?,?");
         dialectModel = DialectFactory.buildPaginationSql(page, "select * from test ", DbType.H2, MySqlDialect.class.getName());
         Assertions.assertEquals(dialectModel.getDialectSql(), "select * from test  LIMIT ?,?");
     }
