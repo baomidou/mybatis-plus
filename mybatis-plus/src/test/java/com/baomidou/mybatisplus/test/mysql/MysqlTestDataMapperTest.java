@@ -99,7 +99,9 @@ class MysqlTestDataMapperTest {
                 .setTestEnum(TestEnum.ONE));
             commonLogicDataMapper.insert(new CommonLogicData().setTestInt(i).setTestStr(str).setId(id));
             resultMapEntityMapper.insert(new ResultMapEntity().setId(id).setList(list).setMap(map).setMapp(map));
-            mysqlMapper.insert(new MysqlData().setOrder(i).setGroup(i).setId(id).setTestStr(str).setYaHoStr(str));
+            MysqlData data = new MysqlData().setOrder(i).setGroup(i).setTestStr(str).setYaHoStr(str);
+            mysqlMapper.insert(data);
+            assertThat(data.getId()).isNotNull();
         }
     }
 
