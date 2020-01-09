@@ -461,4 +461,14 @@ class H2UserTest extends BaseTest {
         };
     }
 
+    @Test
+    void testClear() {
+        userService.save(new H2User("逗号", AgeEnum.TWO));
+        QueryWrapper<H2User> queryWrapper = new QueryWrapper<H2User>().eq("name", "咩咩");
+        Assertions.assertEquals(0, userService.count(queryWrapper));
+        queryWrapper.clear();
+        queryWrapper.eq("name", "逗号");
+        Assertions.assertEquals(1, userService.count(queryWrapper));
+    }
+
 }
