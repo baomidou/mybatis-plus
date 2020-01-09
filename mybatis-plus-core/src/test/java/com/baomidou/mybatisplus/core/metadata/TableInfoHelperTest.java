@@ -49,6 +49,16 @@ class TableInfoHelperTest {
         private String name;
     }
 
+    @Data
+    @EqualsAndHashCode(callSuper = true)
+    @TableName(excludeProperty = {"test", "id"})
+    private static class ModelFour extends BaseModel {
+
+        private String sex;
+
+        private String name;
+    }
+
 
     @Test
     void testIsExistTableId() {
@@ -59,6 +69,9 @@ class TableInfoHelperTest {
     @Test
     void testExcludeProperty(){
         TableInfo tableInfo = TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), ModelThree.class);
+        Assertions.assertEquals(tableInfo.getFieldList().size(), 2);
+        tableInfo.getFieldList().forEach(field -> Assertions.assertNotEquals("test", field.getProperty()));
+        tableInfo = TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), ModelFour.class);
         Assertions.assertEquals(tableInfo.getFieldList().size(), 2);
         tableInfo.getFieldList().forEach(field -> Assertions.assertNotEquals("test", field.getProperty()));
     }
