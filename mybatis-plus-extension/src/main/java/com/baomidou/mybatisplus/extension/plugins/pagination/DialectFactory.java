@@ -70,6 +70,7 @@ public class DialectFactory {
      */
     @Deprecated
     private static IDialect getDialect(DbType dbType, String dialectClazz) {
+        //这里需要注意一下，就的版本是把dbType和dialectClazz同时传进来的，所以会存在dbType是一定会有值，dialectClazz可能为空的情况，兼容需要先判断dialectClazz
         return StringUtils.isBlank(dialectClazz) ? DIALECT_REGISTRY.getDialect(dbType) : DIALECT_CACHE.computeIfAbsent(dialectClazz, DialectFactory::classToDialect);
     }
 

@@ -18,6 +18,8 @@ package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -51,5 +53,9 @@ public class DialectRegistry {
 
     public IDialect getDialect(DbType dbType) {
         return dialect_enum_map.get(dbType);
+    }
+
+    public Collection<IDialect> getDialects() {
+        return Collections.unmodifiableCollection(dialect_enum_map.values());
     }
 }
