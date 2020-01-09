@@ -447,9 +447,9 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
         paramNameSeq.set(0);
         paramNameValuePairs.clear();
         expression.clear();
-        lastSql.clear();
-        sqlComment.clear();
-        sqlFirst.clear();
+        lastSql.toEmpty();
+        sqlComment.toEmpty();
+        sqlFirst.toEmpty();
     }
 
     /**

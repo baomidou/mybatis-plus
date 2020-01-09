@@ -49,11 +49,20 @@ public class SharedString implements Serializable {
     }
 
     /**
-     * 条件清空
+     * 置 empty
      *
      * @since 3.3.1
      */
-    public void clear() {
+    public void toEmpty() {
         stringValue = StringPool.EMPTY;
+    }
+
+    /**
+     * 置 null
+     *
+     * @since 3.3.1
+     */
+    public void toNull() {
+        stringValue = null;
     }
 }

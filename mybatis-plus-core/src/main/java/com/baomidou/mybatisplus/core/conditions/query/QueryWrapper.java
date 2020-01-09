@@ -118,6 +118,6 @@ public class QueryWrapper<T> extends AbstractWrapper<T, String, QueryWrapper<T>>
     @Override
     public void clear() {
         super.clear();
-        sqlSelect.setStringValue(null);
+        sqlSelect.toNull();
     }
 }

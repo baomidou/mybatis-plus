@@ -116,6 +116,6 @@ class KtQueryWrapper<T : Any> : AbstractKtWrapper<T, KtQueryWrapper<T>>, Query<K
 
     override fun clear() {
         super.clear()
-        sqlSelect.stringValue = null
+        sqlSelect.toNull()
     }
 }
