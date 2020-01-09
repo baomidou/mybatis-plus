@@ -132,6 +132,6 @@ public class LambdaQueryWrapper<T> extends AbstractLambdaWrapper<T, LambdaQueryW
     @Override
     public void clear() {
         super.clear();
-        sqlSelect.clear();
+        sqlSelect.setStringValue(null);
     }
 }
