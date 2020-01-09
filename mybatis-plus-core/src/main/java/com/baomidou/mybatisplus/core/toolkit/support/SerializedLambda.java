@@ -18,7 +18,6 @@ package com.baomidou.mybatisplus.core.toolkit.support;
 import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.SerializationUtils;
-import sun.reflect.Reflection;
 
 import java.io.*;
 
@@ -58,17 +57,8 @@ public class SerializedLambda implements Serializable {
         }
         try (ObjectInputStream objIn = new ObjectInputStream(new ByteArrayInputStream(SerializationUtils.serialize(lambda))) {
             @Override
-            protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
-                Class<?> clazz;
-                try {
-                    clazz = super.resolveClass(desc);
-                } catch (ClassNotFoundException e) {
-                    // 应对第三方库使用自定义加载器又不注册的情况（这里对 SpringBoot 提出批评）
-                    // 最大限度降低 ClassLoader 到下级加载器
-                    Class<?> caller = Reflection.getCallerClass();
-                    String name = desc.getName();
-                    clazz = Class.forName(name, true, caller.getClassLoader());
-                }
+            protected Class<?> resolveClass(ObjectStreamClass objectStreamClass) throws IOException, ClassNotFoundException {
+                Class<?> clazz = super.resolveClass(objectStreamClass);
                 return clazz == java.lang.invoke.SerializedLambda.class ? SerializedLambda.class : clazz;
             }
         }) {
