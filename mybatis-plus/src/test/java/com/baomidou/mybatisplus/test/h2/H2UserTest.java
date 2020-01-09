@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.test.h2.entity.H2User;
 import com.baomidou.mybatisplus.test.h2.enums.AgeEnum;
 import com.baomidou.mybatisplus.test.h2.service.IH2UserService;
@@ -493,5 +494,23 @@ class H2UserTest extends BaseTest {
         lambdaUpdateWrapper.clear();
         lambdaUpdateWrapper.set(H2User::getName, "小红一号");
         Assertions.assertTrue(userService.update(lambdaUpdateWrapper.eq(H2User::getName, "小红")));
+    }
+
+    /**
+     * 观察 {@link com.baomidou.mybatisplus.core.toolkit.LambdaUtils#resolve(SFunction)}
+     */
+    @Test
+    void testLambdaCache() {
+        for (int i = 0; i < 1000; i++) {
+            lambdaCache();
+        }
+    }
+
+    private void lambdaCache() {
+        Wrappers.<H2User>lambdaQuery()
+            .eq(H2User::getAge, 2)
+            .eq(H2User::getName, 2)
+            .eq(H2User::getPrice, 2)
+            .getTargetSql();
     }
 }
