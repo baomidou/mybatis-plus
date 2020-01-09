@@ -15,7 +15,10 @@
  */
 package com.baomidou.mybatisplus.test.h2;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -462,13 +465,33 @@ class H2UserTest extends BaseTest {
     }
 
     @Test
-    void testClear() {
+    void testSimpleWrapperClear() {
         userService.save(new H2User("逗号", AgeEnum.TWO));
         QueryWrapper<H2User> queryWrapper = new QueryWrapper<H2User>().eq("name", "咩咩");
         Assertions.assertEquals(0, userService.count(queryWrapper));
         queryWrapper.clear();
         queryWrapper.eq("name", "逗号");
         Assertions.assertEquals(1, userService.count(queryWrapper));
+        UpdateWrapper<H2User> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.set("name", "逗号二号");
+        Assertions.assertFalse(userService.update(updateWrapper.eq("name", "逗号一号")));
+        updateWrapper.clear();
+        updateWrapper.set("name", "逗号一号");
+        Assertions.assertTrue(userService.update(updateWrapper.eq("name", "逗号")));
     }
 
+    @Test
+    void testLambdaWrapperClear() {
+        userService.save(new H2User("小红", AgeEnum.TWO));
+        LambdaQueryWrapper<H2User> lambdaQueryWrapper = new QueryWrapper<H2User>().lambda().eq(H2User::getName, "小宝");
+        Assertions.assertEquals(0, userService.count(lambdaQueryWrapper));
+        lambdaQueryWrapper.clear();
+        lambdaQueryWrapper.eq(H2User::getName, "小红");
+        Assertions.assertEquals(1, userService.count(lambdaQueryWrapper));
+        LambdaUpdateWrapper<H2User> lambdaUpdateWrapper = new UpdateWrapper<H2User>().lambda().set(H2User::getName, "小红二号");
+        Assertions.assertFalse(userService.update(lambdaUpdateWrapper.eq(H2User::getName, "小红一号")));
+        lambdaUpdateWrapper.clear();
+        lambdaUpdateWrapper.set(H2User::getName, "小红一号");
+        Assertions.assertTrue(userService.update(lambdaUpdateWrapper.eq(H2User::getName, "小红")));
+    }
 }
