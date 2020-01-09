@@ -262,7 +262,7 @@ public interface MetaObjectHandler {
     }
 
     /**
-     * 填充策略,默认有值不覆盖
+     * 填充策略,默认有值不覆盖,如果提供的值为null也不填充
      *
      * @param metaObject metaObject meta object parameter
      * @param fieldName  java bean property name
@@ -277,7 +277,7 @@ public interface MetaObjectHandler {
     }
 
     /**
-     * 严格模式填充策略,默认有值不覆盖
+     * 严格模式填充策略,默认有值不覆盖,如果提供的值为null也不填充
      *
      * @param metaObject metaObject meta object parameter
      * @param fieldName  java bean property name
