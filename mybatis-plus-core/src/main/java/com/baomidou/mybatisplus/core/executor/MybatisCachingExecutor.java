@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.core.executor;
 
 import com.baomidou.mybatisplus.core.metadata.PageList;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.ParameterUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.cache.CacheKey;
@@ -35,7 +36,6 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -101,23 +101,15 @@ public class MybatisCachingExecutor implements Executor {
     public <E> List<E> query(MappedStatement ms, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql)
         throws SQLException {
         Cache cache = ms.getCache();
-        IPage<E> page = null;
-        if (parameterObject instanceof Map) {
-            Map<?, ?> parameterMap = (Map<?, ?>) parameterObject;
-            Optional<? extends Map.Entry<?, ?>> optional = parameterMap.entrySet().stream().filter(entry -> entry.getValue() instanceof IPage).findFirst();
-            if (optional.isPresent()) {
-                page = (IPage) optional.get().getValue();
-            }
-        } else if (parameterObject instanceof IPage) {
-            page = (IPage) parameterObject;
-        }
+        Optional<IPage> pageOptional = ParameterUtils.findPage(parameterObject);
         if (cache != null) {
             flushCacheIfRequired(ms);
             if (ms.isUseCache() && resultHandler == null) {
                 ensureNoOutParams(ms, boundSql);
                 Object result = tcm.getObject(cache, key);
                 if (result == null) {
-                    if (page != null) {
+                    if (pageOptional.isPresent()) {
+                        IPage page = pageOptional.get();
                         CacheKey countCacheKey = null;
                         if (page.isSearchCount()) {
                             // 这里的执行sql为原select语句,标准一点的是需要将此转换为count语句当做缓存key的,留做当优化把.
@@ -145,7 +137,8 @@ public class MybatisCachingExecutor implements Executor {
                         return (List<E>) result;
                     }
                 } else {
-                    if (page != null) {
+                    if (pageOptional.isPresent()) {
+                        IPage page = pageOptional.get();
                         if (page.isSearchCount()) {
                             CacheKey cacheKey = getCountCacheKey(ms, boundSql, parameterObject, RowBounds.DEFAULT);
                             Number count = (Number) tcm.getObject(cache, cacheKey);
