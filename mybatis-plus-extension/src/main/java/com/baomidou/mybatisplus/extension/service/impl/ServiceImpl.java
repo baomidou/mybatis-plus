@@ -18,7 +18,6 @@ package com.baomidou.mybatisplus.extension.service.impl;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.enums.SqlMethod;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.*;
@@ -40,13 +39,11 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * IService 实现类（ 泛型：M 是 mapper 对象，T 是实体 ）
@@ -67,14 +64,16 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         return baseMapper;
     }
 
-    protected Class entityClass = currentModelClass();
+    protected Class<?> entityClass = currentModelClass();
 
     /**
      * 判断数据库操作是否成功
      *
      * @param result 数据库操作返回影响条数
      * @return boolean
+     * @deprecated 3.3.1
      */
+    @Deprecated
     protected boolean retBool(Integer result) {
         return SqlHelper.retBool(result);
     }
@@ -112,11 +111,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
      */
     protected String sqlStatement(SqlMethod sqlMethod) {
         return SqlHelper.table(entityClass).getSqlStatement(sqlMethod.getMethod());
-    }
-
-    @Override
-    public boolean save(T entity) {
-        return retBool(baseMapper.insert(entity));
     }
 
     /**
@@ -173,40 +167,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         });
     }
 
-    @Override
-    public boolean removeById(Serializable id) {
-        return SqlHelper.retBool(baseMapper.deleteById(id));
-    }
-
-    @Override
-    public boolean removeByMap(Map<String, Object> columnMap) {
-        Assert.notEmpty(columnMap, "error: columnMap must not be empty");
-        return SqlHelper.retBool(baseMapper.deleteByMap(columnMap));
-    }
-
-    @Override
-    public boolean remove(Wrapper<T> wrapper) {
-        return SqlHelper.retBool(baseMapper.delete(wrapper));
-    }
-
-    @Override
-    public boolean removeByIds(Collection<? extends Serializable> idList) {
-        if (CollectionUtils.isEmpty(idList)) {
-            return false;
-        }
-        return SqlHelper.retBool(baseMapper.deleteBatchIds(idList));
-    }
-
-    @Override
-    public boolean updateById(T entity) {
-        return retBool(baseMapper.updateById(entity));
-    }
-
-    @Override
-    public boolean update(T entity, Wrapper<T> updateWrapper) {
-        return retBool(baseMapper.update(entity, updateWrapper));
-    }
-
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean updateBatchById(Collection<T> entityList, int batchSize) {
@@ -216,21 +176,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
             param.put(Constants.ENTITY, entity);
             sqlSession.update(sqlStatement, param);
         });
-    }
-
-    @Override
-    public T getById(Serializable id) {
-        return baseMapper.selectById(id);
-    }
-
-    @Override
-    public List<T> listByIds(Collection<? extends Serializable> idList) {
-        return baseMapper.selectBatchIds(idList);
-    }
-
-    @Override
-    public List<T> listByMap(Map<String, Object> columnMap) {
-        return baseMapper.selectByMap(columnMap);
     }
 
     @Override
@@ -244,36 +189,6 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     @Override
     public Map<String, Object> getMap(Wrapper<T> queryWrapper) {
         return SqlHelper.getObject(log, baseMapper.selectMaps(queryWrapper));
-    }
-
-    @Override
-    public int count(Wrapper<T> queryWrapper) {
-        return SqlHelper.retCount(baseMapper.selectCount(queryWrapper));
-    }
-
-    @Override
-    public List<T> list(Wrapper<T> queryWrapper) {
-        return baseMapper.selectList(queryWrapper);
-    }
-
-    @Override
-    public <E extends IPage<T>> E page(E page, Wrapper<T> queryWrapper) {
-        return baseMapper.selectPage(page, queryWrapper);
-    }
-
-    @Override
-    public List<Map<String, Object>> listMaps(Wrapper<T> queryWrapper) {
-        return baseMapper.selectMaps(queryWrapper);
-    }
-
-    @Override
-    public <V> List<V> listObjs(Wrapper<T> queryWrapper, Function<? super Object, V> mapper) {
-        return baseMapper.selectObjs(queryWrapper).stream().filter(Objects::nonNull).map(mapper).collect(Collectors.toList());
-    }
-
-    @Override
-    public <E extends IPage<Map<String, Object>>> E pageMaps(E page, Wrapper<T> queryWrapper) {
-        return baseMapper.selectMapsPage(page, queryWrapper);
     }
 
     @Override
@@ -359,5 +274,4 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
     protected <E> boolean executeBatch(Collection<E> list, BiConsumer<SqlSession, E> consumer) {
         return executeBatch(list, DEFAULT_BATCH_SIZE, consumer);
     }
-
 }
