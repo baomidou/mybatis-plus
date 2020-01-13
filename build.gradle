@@ -70,7 +70,7 @@ ext {
         "dm"                         : fileTree(dir: 'libs', includes: ["jdbcDriver-18.jar"]),
         "kingbase"                   : fileTree(dir: 'libs', includes: ["kingbase8-8.2.0.jar"]),
         "h2"                         : "com.h2database:h2:1.4.200",
-        "mysql"                      : "mysql:mysql-connector-java:8.0.18",
+        "mysql"                      : "mysql:mysql-connector-java:8.0.19",
         "sqlite"                     : "org.xerial:sqlite-jdbc:3.30.1",
         //code generator
         "velocity"                   : "org.apache.velocity:velocity-engine-core:2.1",
