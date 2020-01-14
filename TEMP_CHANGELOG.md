@@ -3,3 +3,8 @@
 - `BaseMapper`部分入参为`Wrapper`的select方法支持`wrapper.first`来设置RDS的hint
 - `Wrapper`子类新增`func`方法,主要为了支持在`if else`情况下使用`Wrapper`的不同method不会导致断链(链式调用不能一链到底)
 - 新增支持hbase的选装件`Upsert`
+- `Wrapper`支持`clear`清空
+- `KtWrapper`修复嵌套函数问题
+- `KtUpdateWrapper#set`支持value为null
+- `Iservice`部分method调整为default方法
+- `TableName`注解新属性`excludeProperty`支持排除字段
