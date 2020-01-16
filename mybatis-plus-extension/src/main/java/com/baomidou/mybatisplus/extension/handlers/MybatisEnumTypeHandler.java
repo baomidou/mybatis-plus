@@ -61,10 +61,7 @@ public class MybatisEnumTypeHandler<E extends Enum<?>> extends BaseTypeHandler<E
         MetaClass metaClass = MetaClass.forClass(type, reflectorFactory);
         String name = "value";
         if (!IEnum.class.isAssignableFrom(type)) {
-            name = TABLE_METHOD_OF_ENUM_TYPES.computeIfAbsent(type.getName(), k -> {
-                Field field = dealEnumType(this.type).orElseThrow(() -> new IllegalArgumentException(String.format("Could not find @EnumValue in Class: %s.", type.getName())));
-                return field.getName();
-            });
+            name = findEnumValueFiledName(this.type).orElseThrow(() -> new IllegalArgumentException(String.format("Could not find @EnumValue in Class: %s.", this.type.getName())));
         }
         this.invoker = metaClass.getGetInvoker(name);
     }
@@ -105,8 +102,47 @@ public class MybatisEnumTypeHandler<E extends Enum<?>> extends BaseTypeHandler<E
         return this.valueOf(this.type, cs.getObject(columnIndex));
     }
 
+    /**
+     * 查找标记EnumValue字段
+     *
+     * @param clazz class
+     * @return EnumValue字段
+     * @deprecated 3.3.1 {@link #findEnumValueFiledName(Class)}
+     */
+    @Deprecated
     public static Optional<Field> dealEnumType(Class<?> clazz) {
         return clazz.isEnum() ? Arrays.stream(clazz.getDeclaredFields()).filter(field -> field.isAnnotationPresent(EnumValue.class)).findFirst() : Optional.empty();
+    }
+
+    /**
+     * 查找标记标记EnumValue字段
+     *
+     * @param clazz class
+     * @return EnumValue字段
+     * @since 3.3.1
+     */
+    public static Optional<String> findEnumValueFiledName(Class<?> clazz) {
+        if (clazz != null && clazz.isEnum()) {
+            String className = clazz.getName();
+            return Optional.ofNullable(TABLE_METHOD_OF_ENUM_TYPES.computeIfAbsent(className, key -> {
+                Optional<Field> optional = Arrays.stream(clazz.getDeclaredFields())
+                    .filter(field -> field.isAnnotationPresent(EnumValue.class))
+                    .findFirst();
+                return optional.map(Field::getName).orElse(null);
+            }));
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * 判断是否为MP枚举处理
+     *
+     * @param clazz class
+     * @return 是否为MP枚举处理
+     * @since 3.3.1
+     */
+    public static boolean isMpEnums(Class<?> clazz) {
+        return clazz != null && clazz.isEnum() && (IEnum.class.isAssignableFrom(clazz) || findEnumValueFiledName(clazz).isPresent());
     }
 
     private E valueOf(Class<E> enumClass, Object value) {

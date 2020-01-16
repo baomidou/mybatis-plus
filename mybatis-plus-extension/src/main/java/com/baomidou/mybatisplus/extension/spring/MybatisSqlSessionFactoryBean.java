@@ -503,7 +503,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
             TypeHandlerRegistry typeHandlerRegistry = targetConfiguration.getTypeHandlerRegistry();
             classes.stream()
                 .filter(Class::isEnum)
-                .filter(cls -> IEnum.class.isAssignableFrom(cls) || MybatisEnumTypeHandler.dealEnumType(cls).isPresent())
+                .filter(MybatisEnumTypeHandler::isMpEnums)
                 .forEach(cls -> typeHandlerRegistry.register(cls, MybatisEnumTypeHandler.class));
         }
 
