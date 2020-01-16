@@ -71,9 +71,9 @@ public class MybatisEnumTypeHandlerTest extends BaseTypeHandlerTest {
         Assertions.assertFalse(MybatisEnumTypeHandler.dealEnumType(String.class).isPresent());
         Assertions.assertTrue(MybatisEnumTypeHandler.dealEnumType(GradeEnum.class).isPresent());
         Assertions.assertFalse(MybatisEnumTypeHandler.dealEnumType(SexEnum.class).isPresent());
-        Assertions.assertFalse(MybatisEnumTypeHandler.findEnumValueFiledName(String.class).isPresent());
-        Assertions.assertTrue(MybatisEnumTypeHandler.findEnumValueFiledName(GradeEnum.class).isPresent());
-        Assertions.assertFalse(MybatisEnumTypeHandler.findEnumValueFiledName(SexEnum.class).isPresent());
+        Assertions.assertFalse(MybatisEnumTypeHandler.findEnumValueFieldName(String.class).isPresent());
+        Assertions.assertTrue(MybatisEnumTypeHandler.findEnumValueFieldName(GradeEnum.class).isPresent());
+        Assertions.assertFalse(MybatisEnumTypeHandler.findEnumValueFieldName(SexEnum.class).isPresent());
     }
 
     @Test

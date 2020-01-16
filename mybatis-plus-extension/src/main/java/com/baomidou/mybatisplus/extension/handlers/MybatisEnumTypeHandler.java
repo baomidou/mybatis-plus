@@ -61,7 +61,7 @@ public class MybatisEnumTypeHandler<E extends Enum<?>> extends BaseTypeHandler<E
         MetaClass metaClass = MetaClass.forClass(type, reflectorFactory);
         String name = "value";
         if (!IEnum.class.isAssignableFrom(type)) {
-            name = findEnumValueFiledName(this.type).orElseThrow(() -> new IllegalArgumentException(String.format("Could not find @EnumValue in Class: %s.", this.type.getName())));
+            name = findEnumValueFieldName(this.type).orElseThrow(() -> new IllegalArgumentException(String.format("Could not find @EnumValue in Class: %s.", this.type.getName())));
         }
         this.invoker = metaClass.getGetInvoker(name);
     }
@@ -107,7 +107,7 @@ public class MybatisEnumTypeHandler<E extends Enum<?>> extends BaseTypeHandler<E
      *
      * @param clazz class
      * @return EnumValue字段
-     * @deprecated 3.3.1 {@link #findEnumValueFiledName(Class)}
+     * @deprecated 3.3.1 {@link #findEnumValueFieldName(Class)}
      */
     @Deprecated
     public static Optional<Field> dealEnumType(Class<?> clazz) {
@@ -121,7 +121,7 @@ public class MybatisEnumTypeHandler<E extends Enum<?>> extends BaseTypeHandler<E
      * @return EnumValue字段
      * @since 3.3.1
      */
-    public static Optional<String> findEnumValueFiledName(Class<?> clazz) {
+    public static Optional<String> findEnumValueFieldName(Class<?> clazz) {
         if (clazz != null && clazz.isEnum()) {
             String className = clazz.getName();
             return Optional.ofNullable(TABLE_METHOD_OF_ENUM_TYPES.computeIfAbsent(className, key -> {
@@ -142,7 +142,7 @@ public class MybatisEnumTypeHandler<E extends Enum<?>> extends BaseTypeHandler<E
      * @since 3.3.1
      */
     public static boolean isMpEnums(Class<?> clazz) {
-        return clazz != null && clazz.isEnum() && (IEnum.class.isAssignableFrom(clazz) || findEnumValueFiledName(clazz).isPresent());
+        return clazz != null && clazz.isEnum() && (IEnum.class.isAssignableFrom(clazz) || findEnumValueFieldName(clazz).isPresent());
     }
 
     private E valueOf(Class<E> enumClass, Object value) {
