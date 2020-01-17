@@ -8,3 +8,15 @@
 - `KtUpdateWrapper#set`支持value为null
 - `Iservice`部分method调整为default方法
 - `TableName`注解新属性`excludeProperty`支持排除字段
+- 二级缓存兼容json序列化情况（主要出现默认缓存count出现long，反序列化回来为int的情况）
+- 二级缓存复用count查询缓存
+- 修复Freemarker生成Kotlin类的常量错误
+- 优化分页拦截器数据类型与方言实现类配置
+- 处理批量操作嵌套事物问题，新增批量执行方法，方便用户自定义批量执行操作。
+- 新增phoenix支持
+- 修复StringUtils#guessGetterName错误
+- 生成器策略配置新增enableSqlFilter属性来控制是否启用SQL过滤表支持
+- 支持SQL注释（起始语句）
+- 支持泛型主键
+- 新增ServiceImpl#entityClass属性，减少泛型提取.
+- 修复SerializationUtils资源未释放问题
