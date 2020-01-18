@@ -6,6 +6,7 @@ import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -33,12 +34,10 @@ class SelectBodyToPlainSelectTest {
             e.printStackTrace();
         }
         assert selectStatement != null;
-        try {
-            PlainSelect plainSelect = (PlainSelect) selectStatement.getSelectBody();
-            assert false;
-        } catch (Exception e) {
-            assertThat(e.getMessage()).isEqualTo("net.sf.jsqlparser.statement.select.SetOperationList cannot be cast to net.sf.jsqlparser.statement.select.PlainSelect");
-        }
+        Select finalSelectStatement = selectStatement;
+        Assertions.assertThrows(ClassCastException.class, () -> {
+            PlainSelect plainSelect = (PlainSelect) finalSelectStatement.getSelectBody();
+        });
     }
 
     private Page<?> page = new Page<>();

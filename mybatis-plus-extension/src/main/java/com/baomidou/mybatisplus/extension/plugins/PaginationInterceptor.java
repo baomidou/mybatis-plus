@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.core.parser.ISqlParser;
 import com.baomidou.mybatisplus.core.parser.SqlInfo;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
+import com.baomidou.mybatisplus.core.toolkit.ParameterUtils;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.handlers.AbstractSqlParserHandler;
@@ -186,17 +187,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
         Object paramObj = boundSql.getParameterObject();
 
         // 判断参数里是否有page对象
-        IPage<?> page = null;
-        if (paramObj instanceof IPage) {
-            page = (IPage<?>) paramObj;
-        } else if (paramObj instanceof Map) {
-            for (Object arg : ((Map<?, ?>) paramObj).values()) {
-                if (arg instanceof IPage) {
-                    page = (IPage<?>) arg;
-                    break;
-                }
-            }
-        }
+        IPage<?> page = ParameterUtils.findPage(paramObj).orElse(null);
 
         /*
          * 不需要分页的场合，如果 size 小于 0 返回结果集
