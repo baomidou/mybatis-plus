@@ -23,6 +23,8 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;
 import org.apache.ibatis.type.MappedTypes;
 
+import java.lang.reflect.Type;
+
 /**
  * Fastjson 实现 JSON 字段类型处理器
  *
@@ -33,11 +35,19 @@ import org.apache.ibatis.type.MappedTypes;
 @MappedTypes({Object.class})
 @MappedJdbcTypes(JdbcType.VARCHAR)
 public class FastjsonTypeHandler extends AbstractJsonTypeHandler<Object> {
-    private Class<Object> type;
+    private Type type;
+
+    public FastjsonTypeHandler(Type type) {
+        if (log.isTraceEnabled()) {
+            log.trace("FastjsonTypeHandler({})", type);
+        }
+        Assert.notNull(type, "Type argument cannot be null");
+        this.type = type;
+    }
 
     public FastjsonTypeHandler(Class<Object> type) {
         if (log.isTraceEnabled()) {
-            log.trace("FastjsonTypeHandler(" + type + ")");
+            log.trace("FastjsonTypeHandler({})", type);
         }
         Assert.notNull(type, "Type argument cannot be null");
         this.type = type;

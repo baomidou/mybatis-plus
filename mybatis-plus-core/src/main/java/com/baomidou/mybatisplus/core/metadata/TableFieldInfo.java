@@ -23,12 +23,11 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import lombok.*;
 import org.apache.ibatis.mapping.ResultMapping;
-import org.apache.ibatis.type.JdbcType;
-import org.apache.ibatis.type.TypeHandler;
-import org.apache.ibatis.type.TypeHandlerRegistry;
-import org.apache.ibatis.type.UnknownTypeHandler;
+import org.apache.ibatis.type.*;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 
 /**
  * 数据库表字段反射信息
@@ -454,8 +453,27 @@ public class TableFieldInfo implements Constants {
         if (typeHandler != null && typeHandler != UnknownTypeHandler.class) {
             TypeHandler<?> typeHandler = registry.getMappingTypeHandler(this.typeHandler);
             if (typeHandler == null) {
-                typeHandler = registry.getInstance(propertyType, this.typeHandler);
-                // todo 这会有影响 registry.register(typeHandler);
+                Type genericType = this.field.getGenericType();
+                if (genericType != null) {
+                    try {
+                        if (this.propertyType == genericType) {
+                            typeHandler = this.typeHandler.getConstructor(Class.class).newInstance(this.propertyType);
+                        } else {
+                            typeHandler = this.typeHandler.getConstructor(Type.class).newInstance(genericType);
+                        }
+                    } catch (NoSuchMethodException ignored) {
+                        // ignored
+                    } catch (Exception e) {
+                        throw new TypeException("Failed invoking constructor for handler " + this.typeHandler, e);
+                    }
+                } else {
+                    try {
+                        Constructor<?> c = this.typeHandler.getConstructor();
+                        typeHandler = (TypeHandler<?>) c.newInstance();
+                    } catch (Exception e) {
+                        throw new TypeException("Unable to find a usable constructor for " + this.typeHandler, e);
+                    }
+                }
             }
             builder.typeHandler(typeHandler);
         }
