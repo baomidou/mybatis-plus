@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.generator.config.querys;
 
-import com.baomidou.mybatisplus.annotation.DbType;
-
 /**
  * PostgreSql 表数据查询
  *

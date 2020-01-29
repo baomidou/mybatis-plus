@@ -18,8 +18,6 @@ package com.baomidou.mybatisplus.generator.config.querys;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.baomidou.mybatisplus.annotation.DbType;
-
 /**
  * H2Database 表数据查询
  *

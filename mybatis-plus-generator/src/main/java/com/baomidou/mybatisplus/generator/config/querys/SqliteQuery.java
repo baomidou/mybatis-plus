@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.generator.config.querys;
 
-import com.baomidou.mybatisplus.annotation.DbType;
-
 /**
  * Sqlite 表数据查询
  *

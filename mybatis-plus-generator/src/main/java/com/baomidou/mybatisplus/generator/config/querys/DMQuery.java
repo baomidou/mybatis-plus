@@ -15,8 +15,6 @@
  */
 package com.baomidou.mybatisplus.generator.config.querys;
 
-import com.baomidou.mybatisplus.annotation.DbType;
-
 /**
  * DM 表数据查询
  *
