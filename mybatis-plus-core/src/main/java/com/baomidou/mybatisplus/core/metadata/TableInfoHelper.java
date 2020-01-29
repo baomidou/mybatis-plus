@@ -30,7 +30,6 @@ import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.reflection.Reflector;
 import org.apache.ibatis.reflection.ReflectorFactory;
-import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
 
 import java.lang.reflect.Field;
@@ -464,18 +463,6 @@ public class TableInfoHelper {
                 TableField tableField = field.getAnnotation(TableField.class);
                 return (tableField == null || tableField.exist());
             }).collect(toList());
-    }
-
-    /**
-     * 自定义 KEY 生成器
-     *
-     * @see #genKeyGenerator(String, TableInfo, MapperBuilderAssistant)
-     * @deprecated 3.1.2
-     */
-    @Deprecated
-    public static KeyGenerator genKeyGenerator(TableInfo tableInfo, MapperBuilderAssistant builderAssistant,
-                                               String baseStatementId, LanguageDriver languageDriver) {
-        return genKeyGenerator(baseStatementId, tableInfo, builderAssistant);
     }
 
     public static KeyGenerator genKeyGenerator(String baseStatementId, TableInfo tableInfo, MapperBuilderAssistant builderAssistant) {

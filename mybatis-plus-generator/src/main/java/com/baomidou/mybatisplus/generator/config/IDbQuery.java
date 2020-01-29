@@ -31,7 +31,7 @@ public interface IDbQuery {
     /**
      * 数据库类型
      *
-     * @deprecated 3.3.1 {@link DataSourceConfig#dbType}
+     * @deprecated 3.3.1 {@link DataSourceConfig#setDbType(DbType)}
      */
     @Deprecated
     default DbType dbType() {
