@@ -60,9 +60,10 @@ public class SerializedLambda implements Serializable {
             protected Class<?> resolveClass(ObjectStreamClass objectStreamClass) throws IOException, ClassNotFoundException {
                 Class<?> clazz;
                 try {
-                    clazz = super.resolveClass(objectStreamClass);
-                } catch (ClassNotFoundException ex) {
                     clazz = ClassUtils.toClassConfident(objectStreamClass.getName());
+                } catch (Exception ex) {
+                    // TODO 这里应该不会再执行到了.
+                    clazz = super.resolveClass(objectStreamClass);
                 }
                 return clazz == java.lang.invoke.SerializedLambda.class ? SerializedLambda.class : clazz;
             }

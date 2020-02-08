@@ -130,13 +130,9 @@ public final class ClassUtils {
      */
     public static Class<?> toClassConfident(String name) {
         try {
-            return Class.forName(name);
+            return Class.forName(name, false, getDefaultClassLoader());
         } catch (ClassNotFoundException e) {
-            try {
-                return Class.forName(name, false, Thread.currentThread().getContextClassLoader());
-            } catch (ClassNotFoundException ex) {
-                throw ExceptionUtils.mpe("找不到指定的class！请仅在明确确定会有 class 的时候，调用该方法", e);
-            }
+            throw ExceptionUtils.mpe("找不到指定的class！请仅在明确确定会有 class 的时候，调用该方法", e);
         }
     }
 
@@ -167,5 +163,43 @@ public final class ClassUtils {
         int lastDotIndex = fqClassName.lastIndexOf(PACKAGE_SEPARATOR);
         return (lastDotIndex != -1 ? fqClassName.substring(0, lastDotIndex) : "");
     }
-
+    
+    /**
+     * Return the default ClassLoader to use: typically the thread context
+     * ClassLoader, if available; the ClassLoader that loaded the ClassUtils
+     * class will be used as fallback.
+     * <p>Call this method if you intend to use the thread context ClassLoader
+     * in a scenario where you clearly prefer a non-null ClassLoader reference:
+     * for example, for class path resource loading (but not necessarily for
+     * {@code Class.forName}, which accepts a {@code null} ClassLoader
+     * reference as well).
+     *
+     * @return the default ClassLoader (only {@code null} if even the system
+     * ClassLoader isn't accessible)
+     * @see Thread#getContextClassLoader()
+     * @see ClassLoader#getSystemClassLoader()
+     * @since 3.3.2
+     */
+    public static ClassLoader getDefaultClassLoader() {
+        ClassLoader cl = null;
+        try {
+            cl = Thread.currentThread().getContextClassLoader();
+        } catch (Throwable ex) {
+            // Cannot access thread context ClassLoader - falling back...
+        }
+        if (cl == null) {
+            // No thread context class loader -> use class loader of this class.
+            cl = ClassUtils.class.getClassLoader();
+            if (cl == null) {
+                // getClassLoader() returning null indicates the bootstrap ClassLoader
+                try {
+                    cl = ClassLoader.getSystemClassLoader();
+                } catch (Throwable ex) {
+                    // Cannot access system ClassLoader - oh well, maybe the caller can live with null...
+                }
+            }
+        }
+        return cl;
+    }
+    
 }
