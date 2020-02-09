@@ -132,7 +132,11 @@ public final class ClassUtils {
         try {
             return Class.forName(name, false, getDefaultClassLoader());
         } catch (ClassNotFoundException e) {
-            throw ExceptionUtils.mpe("找不到指定的class！请仅在明确确定会有 class 的时候，调用该方法", e);
+            try {
+                return Class.forName(name);
+            } catch (ClassNotFoundException ex) {
+                throw ExceptionUtils.mpe("找不到指定的class！请仅在明确确定会有 class 的时候，调用该方法", e);
+            }
         }
     }
 

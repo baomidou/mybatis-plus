@@ -62,7 +62,6 @@ public class SerializedLambda implements Serializable {
                 try {
                     clazz = ClassUtils.toClassConfident(objectStreamClass.getName());
                 } catch (Exception ex) {
-                    // TODO 这里应该不会再执行到了.
                     clazz = super.resolveClass(objectStreamClass);
                 }
                 return clazz == java.lang.invoke.SerializedLambda.class ? SerializedLambda.class : clazz;
