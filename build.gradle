@@ -75,7 +75,7 @@ ext {
         //code generator
         "velocity"                   : "org.apache.velocity:velocity-engine-core:2.2",
         "freemarker"                 : "org.freemarker:freemarker:2.3.29",
-        "beetl"                      : "com.ibeetl:beetl:3.0.17.RELEASE",
+        "beetl"                      : "com.ibeetl:beetl:3.0.18.RELEASE",
         "swagger-annotations"        : "io.swagger:swagger-annotations:1.6.0",
         //cache
         "mybatis-ehcache"            : "org.mybatis.caches:mybatis-ehcache:1.2.0",
