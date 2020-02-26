@@ -37,6 +37,6 @@ public class SelectById extends AbstractMethod {
             sqlSelectColumns(tableInfo, false),
             tableInfo.getTableName(), tableInfo.getKeyColumn(), tableInfo.getKeyProperty(),
             tableInfo.getLogicDeleteSql(true, true)), Object.class);
-        return this.addSelectMappedStatementForTable(mapperClass, sqlMethod.getMethod(), sqlSource, tableInfo);
+        return this.addSelectMappedStatementForTable(mapperClass, getMethod(sqlMethod), sqlSource, tableInfo);
     }
 }
