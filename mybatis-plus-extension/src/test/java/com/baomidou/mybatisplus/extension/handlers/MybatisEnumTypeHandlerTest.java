@@ -27,6 +27,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -93,20 +94,20 @@ public class MybatisEnumTypeHandlerTest extends BaseTypeHandlerTest {
         GRADE_ENUM_ENUM_TYPE_HANDLER.setParameter(preparedStatement, 6, null, JdbcType.INTEGER);
         verify(preparedStatement).setNull(6, JdbcType.INTEGER.TYPE_CODE);
     }
-
+    
     @Test
     @Override
     public void getResultFromResultSetByColumnName() throws Exception {
-        when(resultSet.getObject("column")).thenReturn(null);
+        lenient().when(resultSet.getObject("column")).thenReturn(null);
         assertNull(SEX_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
-        when(resultSet.getObject("column")).thenReturn(1);
+        lenient().when(resultSet.getObject("column")).thenReturn(1);
         assertEquals(SexEnum.MAN, SEX_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
-        when(resultSet.getObject("column")).thenReturn(2);
+        lenient().when(resultSet.getObject("column")).thenReturn(2);
         assertEquals(SexEnum.WO_MAN, SEX_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
-        when(resultSet.getObject("column")).thenReturn(null);
-
+        lenient().when(resultSet.getObject("column")).thenReturn(null);
+        
         assertNull(GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
-        when(resultSet.getObject("column")).thenReturn(1);
+        lenient().when(resultSet.getObject("column")).thenReturn(1);
         assertEquals(GradeEnum.PRIMARY, GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
         when(resultSet.getObject("column")).thenReturn(2);
         assertEquals(GradeEnum.SECONDARY, GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
