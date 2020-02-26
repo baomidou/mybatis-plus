@@ -546,7 +546,7 @@ public class ConfigBuilder {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return processTable(includeTableList, config.getNaming(), config);
+        return processTable(includeTableList, config.getColumnNaming(), config);
     }
 
 
@@ -650,7 +650,7 @@ public class ConfigBuilder {
                     if (null != nameConvert) {
                         field.setPropertyName(nameConvert.propertyNameConvert(field));
                     } else {
-                        field.setPropertyName(strategyConfig, processName(field.getName(), config.getNaming()));
+                        field.setPropertyName(strategyConfig, processName(field.getName(), config.getColumnNaming()));
                     }
                     field.setColumnType(dataSourceConfig.getTypeConvert().processTypeConvert(globalConfig, field));
                     if (commentSupported) {
