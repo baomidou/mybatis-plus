@@ -27,7 +27,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -98,18 +97,20 @@ public class MybatisEnumTypeHandlerTest extends BaseTypeHandlerTest {
     @Test
     @Override
     public void getResultFromResultSetByColumnName() throws Exception {
-        lenient().when(resultSet.getObject("column")).thenReturn(null);
+        when(resultSet.getObject("column")).thenReturn(null);
         assertNull(SEX_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
-        lenient().when(resultSet.getObject("column")).thenReturn(SexEnum.MAN.getValue());
+
+        when(resultSet.getObject("column")).thenReturn(SexEnum.MAN.getValue());
         assertEquals(SexEnum.MAN, SEX_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
         assertEquals(SexEnum.MAN, IEnum.toEnum(SexEnum.class, (Integer)resultSet.getObject("column")));
-        lenient().when(resultSet.getObject("column")).thenReturn(SexEnum.WO_MAN.getValue());
+        when(resultSet.getObject("column")).thenReturn(SexEnum.WO_MAN.getValue());
         assertEquals(SexEnum.WO_MAN, SEX_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
         assertEquals(SexEnum.WO_MAN, IEnum.toEnum(SexEnum.class, (Integer)resultSet.getObject("column")));
-        lenient().when(resultSet.getObject("column")).thenReturn(null);
+        when(resultSet.getObject("column")).thenReturn(null);
         assertNull(GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
         assertNull(IEnum.toEnum(SexEnum.class, (Integer)resultSet.getObject("column")));
-        lenient().when(resultSet.getObject("column")).thenReturn(GradeEnum.PRIMARY.getCode());
+        when(resultSet.getObject("column")).thenReturn(GradeEnum.PRIMARY.getCode());
+
         assertEquals(GradeEnum.PRIMARY, GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
         when(resultSet.getObject("column")).thenReturn(GradeEnum.SECONDARY.getCode());
         assertEquals(GradeEnum.SECONDARY, GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
