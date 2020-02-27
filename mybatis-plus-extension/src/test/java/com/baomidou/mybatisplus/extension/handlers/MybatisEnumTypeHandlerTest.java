@@ -94,34 +94,39 @@ public class MybatisEnumTypeHandlerTest extends BaseTypeHandlerTest {
         GRADE_ENUM_ENUM_TYPE_HANDLER.setParameter(preparedStatement, 6, null, JdbcType.INTEGER);
         verify(preparedStatement).setNull(6, JdbcType.INTEGER.TYPE_CODE);
     }
-    
+
     @Test
     @Override
     public void getResultFromResultSetByColumnName() throws Exception {
         lenient().when(resultSet.getObject("column")).thenReturn(null);
         assertNull(SEX_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
-        lenient().when(resultSet.getObject("column")).thenReturn(1);
+        lenient().when(resultSet.getObject("column")).thenReturn(SexEnum.MAN.getValue());
         assertEquals(SexEnum.MAN, SEX_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
-        lenient().when(resultSet.getObject("column")).thenReturn(2);
+        assertEquals(SexEnum.MAN, IEnum.toEnum(SexEnum.class, (Integer)resultSet.getObject("column")));
+        lenient().when(resultSet.getObject("column")).thenReturn(SexEnum.WO_MAN.getValue());
         assertEquals(SexEnum.WO_MAN, SEX_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
+        assertEquals(SexEnum.WO_MAN, IEnum.toEnum(SexEnum.class, (Integer)resultSet.getObject("column")));
         lenient().when(resultSet.getObject("column")).thenReturn(null);
-        
         assertNull(GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
-        lenient().when(resultSet.getObject("column")).thenReturn(1);
+        assertNull(IEnum.toEnum(SexEnum.class, (Integer)resultSet.getObject("column")));
+        lenient().when(resultSet.getObject("column")).thenReturn(GradeEnum.PRIMARY.getCode());
         assertEquals(GradeEnum.PRIMARY, GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
-        when(resultSet.getObject("column")).thenReturn(2);
+        when(resultSet.getObject("column")).thenReturn(GradeEnum.SECONDARY.getCode());
         assertEquals(GradeEnum.SECONDARY, GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, "column"));
     }
 
     @Test
     @Override
     public void getResultFromResultSetByColumnIndex() throws Exception {
-        when(resultSet.getObject(1)).thenReturn(1);
+        when(resultSet.getObject(1)).thenReturn(SexEnum.MAN.getValue());
         assertEquals(SexEnum.MAN, SEX_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, 1));
-        when(resultSet.getObject(2)).thenReturn(2);
+        assertEquals(SexEnum.MAN, IEnum.toEnum(SexEnum.class, (Integer)resultSet.getObject(1)));
+        when(resultSet.getObject(2)).thenReturn(SexEnum.WO_MAN.getValue());
         assertEquals(SexEnum.WO_MAN, SEX_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, 2));
+        assertEquals(SexEnum.WO_MAN, IEnum.toEnum(SexEnum.class, (Integer)resultSet.getObject(2)));
         when(resultSet.getObject(3)).thenReturn(null);
         assertNull(SEX_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, 3));
+        assertNull(IEnum.toEnum(SexEnum.class, (Integer)resultSet.getObject(3)));
 
         when(resultSet.getObject(4)).thenReturn(1);
         assertEquals(GradeEnum.PRIMARY, GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(resultSet, 4));
@@ -134,16 +139,18 @@ public class MybatisEnumTypeHandlerTest extends BaseTypeHandlerTest {
     @Test
     @Override
     public void getResultFromCallableStatement() throws Exception {
-        when(callableStatement.getObject(1)).thenReturn(1);
+        when(callableStatement.getObject(1)).thenReturn(SexEnum.MAN.getValue());
         assertEquals(SexEnum.MAN, SEX_ENUM_ENUM_TYPE_HANDLER.getResult(callableStatement, 1));
-        when(callableStatement.getObject(2)).thenReturn(2);
+        assertEquals(SexEnum.MAN, IEnum.toEnum(SexEnum.class, (Integer)callableStatement.getObject(1)));
+        when(callableStatement.getObject(2)).thenReturn(SexEnum.WO_MAN.getValue());
         assertEquals(SexEnum.WO_MAN, SEX_ENUM_ENUM_TYPE_HANDLER.getResult(callableStatement, 2));
+        assertEquals(SexEnum.WO_MAN, IEnum.toEnum(SexEnum.class, (Integer)callableStatement.getObject(2)));
         when(callableStatement.getObject(3)).thenReturn(null);
         assertNull(SEX_ENUM_ENUM_TYPE_HANDLER.getResult(callableStatement, 3));
-
-        when(callableStatement.getObject(4)).thenReturn(1);
+        assertNull(IEnum.toEnum(SexEnum.class, (Integer)callableStatement.getObject(3)));
+        when(callableStatement.getObject(4)).thenReturn(GradeEnum.PRIMARY.getCode());
         assertEquals(GradeEnum.PRIMARY, GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(callableStatement, 4));
-        when(callableStatement.getObject(5)).thenReturn(2);
+        when(callableStatement.getObject(5)).thenReturn(GradeEnum.SECONDARY.getCode());
         assertEquals(GradeEnum.SECONDARY, GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(callableStatement, 5));
         when(callableStatement.getObject(6)).thenReturn(null);
         assertNull(GRADE_ENUM_ENUM_TYPE_HANDLER.getResult(callableStatement, 6));

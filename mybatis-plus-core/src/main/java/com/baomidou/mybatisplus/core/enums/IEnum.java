@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core.enums;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 
 /**
  * 自定义枚举接口
@@ -28,6 +29,28 @@ public interface IEnum<T extends Serializable> {
     /**
      * 枚举数据库存储值
      */
-    T getValue();
+    default T getValue() {
+        try {
+            Class<?> clazz = getClass();
+            // 继承者Enum必须实现
+            Field field = clazz.getDeclaredField("value");
+            return (T)field.get(this);
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static <E extends Enum<E> & IEnum> E toEnum(Class<E> eClass, Integer v) {
+        if (v != null) {
+            for (final E pc : eClass.getEnumConstants()) {
+                if (v == pc.getValue()) {
+                    return pc;
+                }
+            }
+        }
+        return null;
+    }
 
 }
