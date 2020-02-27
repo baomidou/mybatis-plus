@@ -32,13 +32,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -50,6 +44,10 @@ import java.util.stream.Collectors;
  */
 public class ConfigBuilder {
 
+    /**
+     * 过滤正则
+     */
+    private static final Pattern REGX = Pattern.compile("[~!/@#$%^&*()-_=+\\\\|[{}];:\\'\\\",<.>/?]+");
     /**
      * 模板路径配置信息
      */
@@ -69,6 +67,7 @@ public class ConfigBuilder {
     private DbType dbType;
     private String superEntityClass;
     private String superMapperClass;
+    private String[] implementEntityClasses;
     /**
      * service超类定义
      */
@@ -103,10 +102,6 @@ public class ConfigBuilder {
      * 是否支持注释
      */
     private boolean commentSupported;
-    /**
-     * 过滤正则
-     */
-    private static final Pattern REGX = Pattern.compile("[~!/@#$%^&*()-_=+\\\\|[{}];:\\'\\\",<.>/?]+");
 
     /**
      * 在构造器中处理配置
@@ -182,6 +177,9 @@ public class ConfigBuilder {
         return superMapperClass;
     }
 
+    public String[] getImplementEntityClasses() {
+        return implementEntityClasses;
+    }
 
     /**
      * 获取超类定义
@@ -315,6 +313,7 @@ public class ConfigBuilder {
         }
         superEntityClass = config.getSuperEntityClass();
         superControllerClass = config.getSuperControllerClass();
+        implementEntityClasses = config.getImplementEntityClasses();
     }
 
 

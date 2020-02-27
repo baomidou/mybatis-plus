@@ -15,11 +15,11 @@
  */
 package com.baomidou.mybatisplus.generator.config.rules;
 
-import java.util.Arrays;
-
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.config.ConstVal;
+
+import java.util.Arrays;
 
 /**
  * 从数据库表到文件的命名策略

@@ -21,11 +21,11 @@ import io.swagger.annotations.ApiModelProperty
 @ApiModel(value="${entity}对象", description="${table.comment!''}")
 <% } %>
 <% if(isNotEmpty(superEntityClass)){ %>
-class ${entity} : ${superEntityClass}<% if(activeRecord){ %><${entity}><%}%>{
+class ${entity} : ${superEntityClass}<% if(activeRecord){ %><${entity}><%}%><%if(implementEntityClasses!=null && implementEntityClasses.length>0){%> implements <%var start=true;for(clazz in implementEntityClasses){%> <%if(!start){%>, <%}%>${clazz}<%start=false;}%> <%}%><%}%>{
 <% }else if(activeRecord){ %>
-class ${entity} : Model<${entity}> {
+class ${entity} : Model<${entity}><%if(implementEntityClasses!=null && implementEntityClasses.length>0){%> implements <%var start=true;for(clazz in implementEntityClasses){%> <%if(!start){%>, <%}%>${clazz}<%start=false;}%><%}%><%}%>{
 <% }else{ %>
-class ${entity} : Serializable {
+class ${entity} : Serializable <%if(implementEntityClasses!=null && implementEntityClasses.length>0){%><%for(clazz in implementEntityClasses){%>, ${clazz}<%}%><%}%>{
 <% } %>
 
 <% /** -----------BEGIN 字段循环遍历----------- **/ %>

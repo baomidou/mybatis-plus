@@ -76,6 +76,11 @@ public class StrategyConfig {
     @Setter(AccessLevel.NONE)
     private String superEntityClass;
     /**
+     * 自定义实现Entity类全称，带包名
+     */
+    @Setter(AccessLevel.NONE)
+    private String[] implementEntityClasses;
+    /**
      * 自定义基础的Entity类，公共字段
      */
     @Setter(AccessLevel.NONE)
@@ -98,12 +103,14 @@ public class StrategyConfig {
     private String superControllerClass;
     /**
      * 需要包含的表名（与exclude二选一配置）
+     *
      * @since 3.3.0 正则匹配不再支持,请使用{@link #setLikeTable(LikeTable)}}
      */
     @Setter(AccessLevel.NONE)
     private String[] include = null;
     /**
      * 需要排除的表名
+     *
      * @since 3.3.0 正则匹配不再支持,请使用{@link #setNotLikeTable(LikeTable)}}
      */
     @Setter(AccessLevel.NONE)
@@ -208,7 +215,7 @@ public class StrategyConfig {
         }
         return false;
     }
-    
+
     public NamingStrategy getColumnNaming() {
         // 未指定以 naming 策略为准
         return Optional.ofNullable(columnNaming).orElse(naming);
@@ -252,6 +259,10 @@ public class StrategyConfig {
         return this;
     }
 
+    public StrategyConfig setImplementEntityClasses(String[] implementEntityClasses) {
+        this.implementEntityClasses = implementEntityClasses;
+        return this;
+    }
 
     /**
      * <p>
@@ -314,7 +325,7 @@ public class StrategyConfig {
             return StringUtils.camelToUnderline(field.getName());
         }).distinct().toArray(String[]::new);
     }
-    
+
     /**
      * @deprecated 3.0.7  please use {@link #setEntityTableFieldAnnotationEnable(boolean)}
      */

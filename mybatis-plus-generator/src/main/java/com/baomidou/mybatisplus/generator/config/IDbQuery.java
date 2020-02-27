@@ -15,10 +15,10 @@
  */
 package com.baomidou.mybatisplus.generator.config;
 
+import com.baomidou.mybatisplus.annotation.DbType;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import com.baomidou.mybatisplus.annotation.DbType;
 
 /**
  * 表数据查询接口

@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * 生成文件
@@ -155,6 +156,9 @@ public class AutoGenerator {
                 // 父实体
                 tableInfo.setImportPackages(config.getSuperEntityClass());
                 importSerializable = false;
+            }
+            if (config.getImplementEntityClasses() != null && config.getImplementEntityClasses().length > 0) {
+                Stream.of(config.getImplementEntityClasses()).forEach(tableInfo::setImportPackages);
             }
             if (config.getGlobalConfig().isActiveRecord()) {
                 importSerializable = true;

@@ -34,8 +34,8 @@ public class DmTypeConvert implements ITypeConvert {
         return new BasicDataTypeHandler().getDbColumnType(t);
     }
 
-     interface Handler {
-         DbColumnType getDbColumnType(String fieldType);
+    interface Handler {
+        DbColumnType getDbColumnType(String fieldType);
     }
 
     /**
@@ -45,7 +45,7 @@ public class DmTypeConvert implements ITypeConvert {
         @Override
         public DbColumnType getDbColumnType(String fieldType) {
             //字符数据类型: CHAR,CHARACTER,VARCHAR
-            if(fieldType.contains("char")) {
+            if (fieldType.contains("char")) {
                 return DbColumnType.STRING;
             }
             /**
@@ -58,27 +58,22 @@ public class DmTypeConvert implements ITypeConvert {
                 || fieldType.contains("dec")
                 || fieldType.contains("money")) {
                 return DbColumnType.BIG_DECIMAL;
-            }
-            else if(fieldType.contains("bit")
+            } else if (fieldType.contains("bit")
                 || fieldType.contains("bool")
-                || fieldType.contains("boolean")){
+                || fieldType.contains("boolean")) {
                 return DbColumnType.BOOLEAN;
-            }
-            else if(fieldType.contains("integer") || fieldType.contains("int")){
+            } else if (fieldType.contains("integer") || fieldType.contains("int")) {
                 return DbColumnType.INTEGER;
-            }
-            else if(fieldType.contains("bigint") ){
+            } else if (fieldType.contains("bigint")) {
                 return DbColumnType.BIG_INTEGER;
-            }
-            else if(fieldType.contains("tinyint")
+            } else if (fieldType.contains("tinyint")
                 || fieldType.contains("byte")
                 || fieldType.contains("smallint")
-                ){
+            ) {
                 return DbColumnType.INTEGER;
-            }
-            else if (fieldType.contains("binary")
+            } else if (fieldType.contains("binary")
                 || fieldType.contains("varbinary")
-                ) {
+            ) {
                 return DbColumnType.BYTE_ARRAY;
             }
             /**
@@ -94,20 +89,20 @@ public class DmTypeConvert implements ITypeConvert {
             else if (fieldType.contains("double") || fieldType.contains("real")) {
                 return DbColumnType.DOUBLE;
             }
-           return new DateTimeDataTypeHandler().getDbColumnType(fieldType);
+            return new DateTimeDataTypeHandler().getDbColumnType(fieldType);
         }
     }
 
     /**
-     *  日期时间数据类型
+     * 日期时间数据类型
      */
-    class DateTimeDataTypeHandler implements Handler{
+    class DateTimeDataTypeHandler implements Handler {
 
         @Override
         public DbColumnType getDbColumnType(String fieldType) {
-           if (fieldType.contains("date")
-               || fieldType.contains("time")
-               || fieldType.contains("timestamp")) {
+            if (fieldType.contains("date")
+                || fieldType.contains("time")
+                || fieldType.contains("timestamp")) {
                 return DbColumnType.DATE;
             }
             return new MultimediaDataTypeHandler().getDbColumnType(fieldType);
@@ -115,14 +110,14 @@ public class DmTypeConvert implements ITypeConvert {
     }
 
     /**
-     *  多媒体数据类型
-     *  TEXT,LONGVARCHAR,CLOB,BLOB,IMAGE
+     * 多媒体数据类型
+     * TEXT,LONGVARCHAR,CLOB,BLOB,IMAGE
      */
 
-    class MultimediaDataTypeHandler implements Handler{
+    class MultimediaDataTypeHandler implements Handler {
         @Override
         public DbColumnType getDbColumnType(String fieldType) {
-            if (fieldType.contains("text")|| fieldType.contains("longvarchar")) {
+            if (fieldType.contains("text") || fieldType.contains("longvarchar")) {
                 return DbColumnType.STRING;
             } else if (fieldType.contains("clob")) {
                 return DbColumnType.CLOB;

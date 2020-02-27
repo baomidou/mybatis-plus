@@ -22,11 +22,11 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(value="${entity}对象", description="${table.comment!}")
 </#if>
 <#if superEntityClass??>
-class ${entity} : ${superEntityClass}<#if activeRecord><${entity}></#if> {
+class ${entity} : ${superEntityClass}<#if activeRecord><${entity}></#if> <#if(implementEntityClasses!=null && implementEntityClasses.length>0)> implements <#assign start=true> <#list implementEntityClasses as clazz> <#if(!start)>,</#if>${clazz} <#assign start=false></#list> </#if>{
 <#elseif activeRecord>
-class ${entity} : Model<${entity}>() {
+class ${entity} : Model<${entity}>() <#if(implementEntityClasses!=null && implementEntityClasses.length>0)> implements <#assign start=true> <#list implementEntityClasses as clazz> <#if(!start)>,</#if>${clazz} <#assign start=false></#list> </#if>{
 <#else>
-class ${entity} : Serializable {
+class ${entity} : Serializable <#if(implementEntityClasses!=null && implementEntityClasses.length>0)><#list implementEntityClasses as clazz> ,${clazz} </#list> </#if>{
 </#if>
 
 <#-- ----------  BEGIN 字段循环遍历  ---------->

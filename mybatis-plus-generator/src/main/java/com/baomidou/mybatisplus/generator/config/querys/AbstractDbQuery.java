@@ -15,10 +15,10 @@
  */
 package com.baomidou.mybatisplus.generator.config.querys;
 
+import com.baomidou.mybatisplus.generator.config.IDbQuery;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import com.baomidou.mybatisplus.generator.config.IDbQuery;
 
 /**
  * 表数据查询抽象类

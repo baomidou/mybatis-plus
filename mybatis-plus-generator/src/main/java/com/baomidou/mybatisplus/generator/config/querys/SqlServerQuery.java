@@ -25,7 +25,7 @@ import java.sql.SQLException;
  * @since 2018-01-16
  */
 public class SqlServerQuery extends AbstractDbQuery {
-    
+
     @Override
     public String tablesSql() {
         return "select * from (select cast(so.name as varchar(500)) as TABLE_NAME, " +

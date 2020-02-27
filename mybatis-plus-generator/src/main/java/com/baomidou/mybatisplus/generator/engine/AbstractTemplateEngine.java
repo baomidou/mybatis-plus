@@ -33,6 +33,8 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -221,6 +223,7 @@ public abstract class AbstractTemplateEngine {
         objectMap.put("entityLombokModel", config.getStrategyConfig().isEntityLombokModel());
         objectMap.put("entityBooleanColumnRemoveIsPrefix", config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix());
         objectMap.put("superEntityClass", getSuperClassName(config.getSuperEntityClass()));
+        objectMap.put("implementEntityClasses", getSuperClassesName(config.getImplementEntityClasses()));
         objectMap.put("superMapperClassPackage", config.getSuperMapperClass());
         objectMap.put("superMapperClass", getSuperClassName(config.getSuperMapperClass()));
         objectMap.put("superServiceClassPackage", config.getSuperServiceClass());
@@ -255,6 +258,13 @@ public abstract class AbstractTemplateEngine {
         return classPath.substring(classPath.lastIndexOf(StringPool.DOT) + 1);
     }
 
+    private List<String> getSuperClassesName(String[] classesPath) {
+        if (classesPath == null || classesPath.length < 1) {
+            return null;
+        }
+
+        return Stream.of(classesPath).map(this::getSuperClassName).collect(Collectors.toList());
+    }
 
     /**
      * 模板真实文件路径

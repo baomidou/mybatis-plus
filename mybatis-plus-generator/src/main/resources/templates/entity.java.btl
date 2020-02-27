@@ -35,11 +35,11 @@ import lombok.experimental.Accessors;
 @ApiModel(value="${entity}对象", description="${table.comment!''}")
 <% } %>
 <% if(isNotEmpty(superEntityClass)){ %>
-public class ${entity} extends ${superEntityClass}<% if(activeRecord){ %><${entity}><%}%>{
+public class ${entity} extends ${superEntityClass}<% if(activeRecord){ %><${entity}><%}%><%if(implementEntityClasses!=null && implementEntityClasses.length>0){%> implements <%var start=true;for(clazz in implementEntityClasses){%> <%if(!start){%>, <%}%>${clazz}<%start=false;}%> <%}%><%}%>{
 <% }else if(activeRecord){ %>
-public class ${entity} extends Model<${entity}> {
+public class ${entity} extends Model<${entity}><%if(implementEntityClasses!=null && implementEntityClasses.length>0){%> implements <%var start=true;for(clazz in implementEntityClasses){%> <%if(!start){%>, <%}%>${clazz}<%start=false;}%><%}%><%}%>{
 <% }else{ %>
-public class ${entity} implements Serializable {
+public class ${entity} implements Serializable <%if(implementEntityClasses!=null && implementEntityClasses.length>0){%><%for(clazz in implementEntityClasses){%>, ${clazz}<%}%><%}%>{
 <% } %>
 
 <% if(entitySerialVersionUID){ %>
