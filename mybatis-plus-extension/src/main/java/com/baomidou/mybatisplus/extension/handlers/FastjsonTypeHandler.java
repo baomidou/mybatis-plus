@@ -33,9 +33,9 @@ import org.apache.ibatis.type.MappedTypes;
 @MappedTypes({Object.class})
 @MappedJdbcTypes(JdbcType.VARCHAR)
 public class FastjsonTypeHandler extends AbstractJsonTypeHandler<Object> {
-    private Class<Object> type;
+    private Class<?> type;
 
-    public FastjsonTypeHandler(Class<Object> type) {
+    public FastjsonTypeHandler(Class<?> type) {
         if (log.isTraceEnabled()) {
             log.trace("FastjsonTypeHandler(" + type + ")");
         }
