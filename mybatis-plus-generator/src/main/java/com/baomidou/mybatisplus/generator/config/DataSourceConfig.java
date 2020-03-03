@@ -30,7 +30,7 @@ import java.util.Optional;
 /**
  * 数据库配置
  *
- * @author YangHu
+ * @author YangHu, hcl
  * @since 2016/8/30
  */
 @Data
@@ -75,7 +75,8 @@ public class DataSourceConfig {
             DbType dbType = getDbType();
             DbQueryRegistry dbQueryRegistry = new DbQueryRegistry();
             // 默认 MYSQL
-            dbQuery = Optional.ofNullable(dbQueryRegistry.getDbQuery(dbType)).orElseGet(() -> dbQueryRegistry.getDbQuery(DbType.MYSQL));
+            dbQuery = Optional.ofNullable(dbQueryRegistry.getDbQuery(dbType))
+                    .orElseGet(() -> dbQueryRegistry.getDbQuery(DbType.MYSQL));
         }
         return dbQuery;
     }
@@ -119,13 +120,13 @@ public class DataSourceConfig {
         } else if (str.contains("mariadb")) {
             return DbType.MARIADB;
         } else if (str.contains("sqlite")) {
-            return DbType.MARIADB;
+            return DbType.SQLITE;
         } else if (str.contains("h2")) {
             return DbType.H2;
         } else if (str.contains("kingbase") || str.contains("kingbase8")) {
             return DbType.KINGBASE_ES;
         } else {
-            return null;
+            return DbType.OTHER;
         }
     }
 
