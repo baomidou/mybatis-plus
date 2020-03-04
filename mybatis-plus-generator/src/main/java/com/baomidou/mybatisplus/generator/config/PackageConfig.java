@@ -41,7 +41,7 @@ public class PackageConfig {
     /**
      * 父包模块名
      */
-    private String moduleName = null;
+    private String moduleName = "";
     /**
      * Entity包名
      */
