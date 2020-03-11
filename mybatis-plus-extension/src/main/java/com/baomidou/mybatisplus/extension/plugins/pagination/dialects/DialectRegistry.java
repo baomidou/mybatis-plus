@@ -48,7 +48,6 @@ public class DialectRegistry {
         dialect_enum_map.put(DbType.XU_GU, new XuGuDialect());
         dialect_enum_map.put(DbType.KINGBASE_ES, new KingbaseDialect());
         dialect_enum_map.put(DbType.PHOENIX, new PhoenixDialect());
-        dialect_enum_map.put(DbType.OTHER, new UnknownDialect());
     }
 
     public IDialect getDialect(DbType dbType) {
