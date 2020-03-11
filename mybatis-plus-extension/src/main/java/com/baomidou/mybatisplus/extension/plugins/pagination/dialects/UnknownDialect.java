@@ -20,10 +20,13 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
 
 /**
  * 未知方言
+ *
  * @author nieqiuqiu
+ * @deprecated 3.3.2
  */
+@Deprecated
 public class UnknownDialect implements IDialect {
-
+    
     @Override
     public DialectModel buildPaginationSql(String originalSql, long offset, long limit) {
         throw new MybatisPlusException(" not support.");

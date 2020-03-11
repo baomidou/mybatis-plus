@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.test;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.*;
 import org.junit.jupiter.api.Assertions;
@@ -28,16 +29,20 @@ import org.junit.jupiter.api.Test;
 class DbTypeTest {
 
     private DialectRegistry dialectRegistry = new DialectRegistry();
-
+    
     @Test
     void test() throws ClassNotFoundException {
         DbType[] values = DbType.values();
-        Assertions.assertEquals(values.length, dialectRegistry.getDialects().size());
+        Assertions.assertEquals(values.length - 1, dialectRegistry.getDialects().size());
         for (DbType dbType : values) {
             Class<?> aClass = Class.forName(dbType.getDialect());
-            IDialect dialect = DialectFactory.getDialect(dbType);
-            Assertions.assertEquals(dialect.getClass(), aClass);
-            Assertions.assertEquals(aClass, dialectRegistry.getDialect(dbType).getClass());
+            if (DbType.OTHER != dbType) {
+                IDialect dialect = DialectFactory.getDialect(dbType);
+                Assertions.assertEquals(dialect.getClass(), aClass);
+                Assertions.assertEquals(aClass, dialectRegistry.getDialect(dbType).getClass());
+            } else {
+                Assertions.assertThrows(MybatisPlusException.class, () -> DialectFactory.getDialect(dbType));
+            }
         }
     }
 
