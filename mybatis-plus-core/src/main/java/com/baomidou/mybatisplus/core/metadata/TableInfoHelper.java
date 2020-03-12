@@ -261,19 +261,25 @@ public class TableInfoHelper {
             if (excludeProperty.contains(field.getName())) {
                 continue;
             }
-            /*
-             * 主键ID 初始化
-             */
-            if (!isReadPK) {
-                if (existTableId) {
-                    isReadPK = initTableIdWithAnnotation(dbConfig, tableInfo, field, clazz, reflector);
-                } else {
-                    isReadPK = initTableIdWithoutAnnotation(dbConfig, tableInfo, field, clazz, reflector);
+
+            /* 主键ID 初始化 */
+            if (existTableId) {
+                TableId tableId = field.getAnnotation(TableId.class);
+                if (tableId != null) {
+                    if (isReadPK) {
+                        throw ExceptionUtils.mpe("@TableId can't more than one in Class: \"%s\".", clazz.getName());
+                    } else {
+                        isReadPK = initTableIdWithAnnotation(dbConfig, tableInfo, field, tableId, reflector);
+                        continue;
+                    }
                 }
+            } else if (!isReadPK) {
+                isReadPK = initTableIdWithoutAnnotation(dbConfig, tableInfo, field, reflector);
                 if (isReadPK) {
                     continue;
                 }
             }
+
             /* 有 @TableField 注解的字段初始化 */
             if (initTableFieldWithAnnotation(dbConfig, tableInfo, fieldList, field)) {
                 continue;
@@ -285,14 +291,14 @@ public class TableInfoHelper {
 
         /* 检查逻辑删除字段只能有最多一个 */
         Assert.isTrue(fieldList.parallelStream().filter(TableFieldInfo::isLogicDelete).count() < 2L,
-            String.format("annotation of @TableLogic can't more than one in class : %s.", clazz.getName()));
+            String.format("@TableLogic can't more than one in Class: \"%s\".", clazz.getName()));
 
         /* 字段列表,不可变集合 */
         tableInfo.setFieldList(Collections.unmodifiableList(fieldList));
 
         /* 未发现主键注解，提示警告信息 */
-        if (StringUtils.isBlank(tableInfo.getKeyColumn())) {
-            logger.warn(String.format("Warn: Could not find @TableId in Class: %s.", clazz.getName()));
+        if (!isReadPK) {
+            logger.warn(String.format("Can not find table primary key in Class: \"%s\".", clazz.getName()));
         }
     }
 
@@ -316,48 +322,44 @@ public class TableInfoHelper {
      * @param dbConfig  全局配置信息
      * @param tableInfo 表信息
      * @param field     字段
-     * @param clazz     实体类
+     * @param tableId   注解
      * @param reflector Reflector
-     * @return true 继续下一个属性判断，返回 continue;
      */
     private static boolean initTableIdWithAnnotation(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo,
-                                                     Field field, Class<?> clazz, Reflector reflector) {
-        TableId tableId = field.getAnnotation(TableId.class);
+                                                     Field field, TableId tableId, Reflector reflector) {
         boolean underCamel = tableInfo.isUnderCamel();
-        if (tableId != null) {
-            if (StringUtils.isBlank(tableInfo.getKeyColumn())) {
-                /* 主键策略（ 注解 > 全局 ） */
-                // 设置 Sequence 其他策略无效
-                if (IdType.NONE == tableId.type()) {
-                    tableInfo.setIdType(dbConfig.getIdType());
-                } else {
-                    tableInfo.setIdType(tableId.type());
-                }
+        final String property = field.getName();
+        if (field.getAnnotation(TableField.class) != null) {
+            logger.warn(String.format("This \"%s\" is the table primary key by @TableId annotation in Class: \"%s\",So @TableField annotation will not work!",
+                property, tableInfo.getEntityType().getName()));
+        }
+        /* 主键策略（ 注解 > 全局 ） */
+        // 设置 Sequence 其他策略无效
+        if (IdType.NONE == tableId.type()) {
+            tableInfo.setIdType(dbConfig.getIdType());
+        } else {
+            tableInfo.setIdType(tableId.type());
+        }
 
-                /* 字段 */
-                String column = field.getName();
-                if (StringUtils.isNotBlank(tableId.value())) {
-                    column = tableId.value();
-                } else {
-                    // 开启字段下划线申明
-                    if (underCamel) {
-                        column = StringUtils.camelToUnderline(column);
-                    }
-                    // 全局大写命名
-                    if (dbConfig.isCapitalMode()) {
-                        column = column.toUpperCase();
-                    }
-                }
-                tableInfo.setKeyRelated(checkRelated(underCamel, field.getName(), column))
-                    .setKeyColumn(column)
-                    .setKeyProperty(field.getName())
-                    .setKeyType(reflector.getGetterType(field.getName()));
-                return true;
-            } else {
-                throwExceptionId(clazz);
+        /* 字段 */
+        String column = property;
+        if (StringUtils.isNotBlank(tableId.value())) {
+            column = tableId.value();
+        } else {
+            // 开启字段下划线申明
+            if (underCamel) {
+                column = StringUtils.camelToUnderline(column);
+            }
+            // 全局大写命名
+            if (dbConfig.isCapitalMode()) {
+                column = column.toUpperCase();
             }
         }
-        return false;
+        tableInfo.setKeyRelated(checkRelated(underCamel, property, column))
+            .setKeyColumn(column)
+            .setKeyProperty(property)
+            .setKeyType(reflector.getGetterType(property));
+        return true;
     }
 
     /**
@@ -367,27 +369,27 @@ public class TableInfoHelper {
      *
      * @param tableInfo 表信息
      * @param field     字段
-     * @param clazz     实体类
      * @param reflector Reflector
      * @return true 继续下一个属性判断，返回 continue;
      */
     private static boolean initTableIdWithoutAnnotation(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo,
-                                                        Field field, Class<?> clazz, Reflector reflector) {
-        String column = field.getName();
-        if (dbConfig.isCapitalMode()) {
-            column = column.toUpperCase();
-        }
-        if (DEFAULT_ID_NAME.equalsIgnoreCase(column)) {
-            if (StringUtils.isBlank(tableInfo.getKeyColumn())) {
-                tableInfo.setKeyRelated(checkRelated(tableInfo.isUnderCamel(), field.getName(), column))
-                    .setIdType(dbConfig.getIdType())
-                    .setKeyColumn(column)
-                    .setKeyProperty(field.getName())
-                    .setKeyType(reflector.getGetterType(field.getName()));
-                return true;
-            } else {
-                throwExceptionId(clazz);
+                                                        Field field, Reflector reflector) {
+        final String property = field.getName();
+        if (DEFAULT_ID_NAME.equalsIgnoreCase(property)) {
+            if (field.getAnnotation(TableField.class) != null) {
+                logger.warn(String.format("This \"%s\" is the table primary key by default name for `id` in Class: \"%s\",So @TableField will not work!",
+                    property, tableInfo.getEntityType().getName()));
             }
+            String column = property;
+            if (dbConfig.isCapitalMode()) {
+                column = column.toUpperCase();
+            }
+            tableInfo.setKeyRelated(checkRelated(tableInfo.isUnderCamel(), property, column))
+                .setIdType(dbConfig.getIdType())
+                .setKeyColumn(column)
+                .setKeyProperty(property)
+                .setKeyType(reflector.getGetterType(property));
+            return true;
         }
         return false;
     }
@@ -438,13 +440,6 @@ public class TableInfoHelper {
             // 未开启驼峰,直接判断 property 是否与 column 相同(全大写)
             return !propertyUpper.equals(columnUpper);
         }
-    }
-
-    /**
-     * 发现设置多个主键注解抛出异常
-     */
-    private static void throwExceptionId(Class<?> clazz) {
-        throw ExceptionUtils.mpe("There must be only one, Discover multiple @TableId annotation in %s", clazz.getName());
     }
 
     /**
