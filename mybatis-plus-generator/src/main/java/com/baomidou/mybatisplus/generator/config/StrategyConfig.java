@@ -297,7 +297,17 @@ public class StrategyConfig {
         this.superServiceClass = superServiceClass;
         return this;
     }
-
+    
+    public StrategyConfig setSuperServiceImplClass(Class<?> clazz) {
+        this.superServiceImplClass = clazz.getName();
+        return this;
+    }
+    
+    public StrategyConfig setSuperServiceImplClass(String superServiceImplClass) {
+        this.superServiceImplClass = superServiceImplClass;
+        return this;
+    }
+    
     public StrategyConfig setSuperControllerClass(Class<?> clazz) {
         this.superControllerClass = clazz.getName();
         return this;
