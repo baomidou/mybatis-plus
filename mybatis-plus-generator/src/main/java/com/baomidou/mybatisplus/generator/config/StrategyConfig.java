@@ -288,6 +288,16 @@ public class StrategyConfig {
         return this;
     }
 
+    public StrategyConfig setSuperServiceClass(Class<?> clazz) {
+        this.superServiceClass = clazz.getName();
+        return this;
+    }
+
+    public StrategyConfig setSuperServiceClass(String superServiceClass) {
+        this.superServiceClass = superServiceClass;
+        return this;
+    }
+
     public StrategyConfig setSuperControllerClass(Class<?> clazz) {
         this.superControllerClass = clazz.getName();
         return this;
