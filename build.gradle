@@ -149,7 +149,7 @@ subprojects {
         testImplementation("${lib["assertj-core"]}")
         testImplementation("${lib["junit-jupiter-api"]}")
         testRuntimeOnly("${lib["junit-jupiter-engine"]}")
-        testImplementation("org.mockito:mockito-junit-jupiter:3.3.1")
+        testImplementation("org.mockito:mockito-junit-jupiter:3.3.3")
         testImplementation("${lib["lagarto"]}")
         testImplementation("${lib["logback-classic"]}")
     }
