@@ -29,6 +29,7 @@ public interface ConstVal {
 
     String MODULE_NAME = "ModuleName";
 
+    String PACKAGE_PARENT = "Parent";
     String ENTITY = "Entity";
     String SERVICE = "Service";
     String SERVICE_IMPL = "ServiceImpl";
