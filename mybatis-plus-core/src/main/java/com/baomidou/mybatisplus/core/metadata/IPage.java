@@ -15,6 +15,9 @@
  */
 package com.baomidou.mybatisplus.core.metadata;
 
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -196,4 +199,23 @@ public interface IPage<T> extends Serializable {
         List<R> collect = this.getRecords().stream().map(mapper).collect(toList());
         return ((IPage<R>) this).setRecords(collect);
     }
+    
+    /**
+     * 生成缓存key值
+     *
+     * @return 缓存key值
+     * @since 3.3.2
+     */
+    default String cacheKey() {
+        StringBuilder key = new StringBuilder();
+        key.append(getCurrent()).append(StringPool.COLON).append(getSize());
+        List<OrderItem> orders = orders();
+        if (CollectionUtils.isNotEmpty(orders)) {
+            for (OrderItem item : orders) {
+                key.append(StringPool.COLON).append(item.getColumn()).append(StringPool.COLON).append(item.isAsc());
+            }
+        }
+        return key.toString();
+    }
+    
 }
