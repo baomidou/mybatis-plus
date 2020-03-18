@@ -62,6 +62,51 @@ class ReflectionKitTest {
         private String sex;
 
     }
+    
+    @Data
+    private static class EntityByLombok {
+        
+        private Long id;
+        
+        private String pId;
+        
+        private String parentId;
+        
+    }
+    
+    private static class Entity {
+        
+        private Long id;
+        
+        private String pId;
+        
+        private String parentId;
+    
+    
+        public Long getId() {
+            return id;
+        }
+    
+        public void setId(Long id) {
+            this.id = id;
+        }
+    
+        public String getpId() {
+            return pId;
+        }
+    
+        public void setpId(String pId) {
+            this.pId = pId;
+        }
+    
+        public String getParentId() {
+            return parentId;
+        }
+    
+        public void setParentId(String parentId) {
+            this.parentId = parentId;
+        }
+    }
 
     @Test
     void testGetFieldList() {
@@ -99,6 +144,19 @@ class ReflectionKitTest {
         c.setAge(18);
         Assertions.assertEquals(c.getSex(), ReflectionKit.getMethodValue(c.getClass(), c, "sex"));
         Assertions.assertEquals(c.getAge(), ReflectionKit.getMethodValue(c, "age"));
+    
+        //TODO 属性命名情况下,如果第一个aB形式,lombok会生成首字母大写的,开发工具生成的话会是小写,原生mybatis遇到属性set,get方法和属性不一致时,会推测出两个属性字段.
+        EntityByLombok entityByLombok = new EntityByLombok();
+        entityByLombok.setPId("6666");
+        entityByLombok.setParentId("123");
+        Assertions.assertEquals(entityByLombok.getPId(), ReflectionKit.getMethodValue(entityByLombok.getClass(), entityByLombok, "pId"));
+        Assertions.assertEquals(entityByLombok.getParentId(), ReflectionKit.getMethodValue(entityByLombok.getClass(), entityByLombok, "parentId"));
+    
+        Entity entity = new Entity();
+        entity.setpId("6666");
+        entity.setParentId("123");
+        Assertions.assertEquals(entity.getParentId(), ReflectionKit.getMethodValue(entity.getClass(), entity, "parentId"));
+        Assertions.assertEquals(entity.getpId(), ReflectionKit.getMethodValue(entity.getClass(), entity, "pId"));
     }
 
     @Test
