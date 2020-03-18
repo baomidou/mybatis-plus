@@ -2,11 +2,14 @@ package com.baomidou.mybatisplus.test.h2.cache;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.OrderItem;
+import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.h2.cache.mapper.CacheMapper;
 import com.baomidou.mybatisplus.test.h2.cache.model.CacheModel;
 import com.baomidou.mybatisplus.test.h2.cache.service.ICacheService;
 import org.apache.ibatis.cache.Cache;
+import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,19 +17,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {"classpath:h2/spring-cache-h2.xml"})
 class CacheTest {
-
+    
     @Autowired
     private ICacheService cacheService;
-
+    
     @Autowired
     private SqlSessionFactory sqlSessionFactory;
-
+    
     @Test
     @Order(1)
     void testPageCache() {
@@ -77,7 +81,7 @@ class CacheTest {
         Assertions.assertEquals(cacheModelIPage9.getTotal(), 3L);
         Assertions.assertEquals(cacheModelIPage9.getRecords().size(), 3);
     }
-
+    
     @Test
     @Order(2)
     void testCleanBatchCache() {
@@ -92,7 +96,7 @@ class CacheTest {
         Assertions.assertEquals(cacheService.getById(model.getId()).getName(), "旺仔");
         Assertions.assertEquals(cache.getSize(), 1);
     }
-
+    
     @Test
     @Order(3)
     void testBatchTransactionalClear1() {
@@ -103,7 +107,7 @@ class CacheTest {
         Assertions.assertEquals(cache.getSize(), 1);
         Assertions.assertEquals(cacheModel.getName(), "旺仔");
     }
-
+    
     @Test
     @Order(4)
     void testBatchTransactionalClear2() {
@@ -114,7 +118,7 @@ class CacheTest {
         Assertions.assertEquals(cache.getSize(), 1);
         Assertions.assertEquals(cacheModel.getName(), "小红");
     }
-
+    
     @Test
     @Order(5)
     void testBatchTransactionalClear3() {
@@ -125,7 +129,7 @@ class CacheTest {
         Assertions.assertEquals(cache.getSize(), 1);
         Assertions.assertEquals(cacheModel.getName(), "小红");
     }
-
+    
     @Test
     @Order(6)
     void testBatchTransactionalClear4() {
@@ -136,7 +140,7 @@ class CacheTest {
         Assertions.assertEquals(cache.getSize(), 1);
         Assertions.assertEquals(cacheModel.getName(), "旺仔");
     }
-
+    
     @Test
     @Order(7)
     void testBatchTransactionalClear5() {
@@ -147,7 +151,7 @@ class CacheTest {
         Assertions.assertEquals(cache.getSize(), 1);
         Assertions.assertNull(cacheModel);
     }
-
+    
     @Test
     @Order(8)
     void testBatchTransactionalClear6() {
@@ -158,7 +162,7 @@ class CacheTest {
         Assertions.assertEquals(cache.getSize(), 1);
         Assertions.assertNull(cacheModel);
     }
-
+    
     @Test
     @Order(9)
     void testBatchTransactionalClear7() {
@@ -169,7 +173,39 @@ class CacheTest {
         Assertions.assertEquals(cache.getSize(), 1);
         Assertions.assertNull(cacheModel);
     }
-
+    
+    @Test
+    void testOrder() {
+        Cache cache = getCache();
+        cache.clear();
+        Page<CacheModel> page = new Page<>(1, 10, false);
+        page.setOrders(Collections.singletonList(OrderItem.asc("id")));
+        cacheService.page(page);
+        Assertions.assertEquals(1, cache.getSize());
+        page.setOrders(Arrays.asList(OrderItem.asc("id"), OrderItem.asc("name")));
+        cacheService.page(page);
+        Assertions.assertEquals(2, cache.getSize());
+        page.setOrders(Arrays.asList(OrderItem.asc("name"), OrderItem.asc("id")));
+        cacheService.page(page);
+        Assertions.assertEquals(3, cache.getSize());
+        page.setOrders(Collections.singletonList(OrderItem.desc("id")));
+        cacheService.page(page);
+        Assertions.assertEquals(4, cache.getSize());
+        page = new Page<>(1, 10, true);
+        page.setOrders(Collections.singletonList(OrderItem.asc("id")));
+        cacheService.page(page);
+        Assertions.assertEquals(5, cache.getSize());
+        page.setOrders(Arrays.asList(OrderItem.asc("id"), OrderItem.asc("name")));
+        cacheService.page(page);
+        Assertions.assertEquals(5, cache.getSize());
+        page.setOrders(Arrays.asList(OrderItem.asc("name"), OrderItem.asc("id")));
+        cacheService.page(page);
+        Assertions.assertEquals(5, cache.getSize());
+        page.setOrders(Collections.singletonList(OrderItem.desc("id")));
+        cacheService.page(page);
+        Assertions.assertEquals(5, cache.getSize());
+    }
+    
     private Cache getCache() {
         return sqlSessionFactory.getConfiguration().getCache(CacheMapper.class.getName());
     }

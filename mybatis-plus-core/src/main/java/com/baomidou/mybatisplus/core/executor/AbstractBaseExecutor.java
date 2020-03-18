@@ -52,16 +52,10 @@ public abstract class AbstractBaseExecutor extends BaseExecutor {
         }
         CacheKey cacheKey = new CacheKey();
         cacheKey.update(ms.getId());
-        Object offset = rowBounds.getOffset();
-        Object limit = rowBounds.getLimit();
+        cacheKey.update(rowBounds.getOffset());
+        cacheKey.update(rowBounds.getLimit());
         Optional<IPage> pageOptional = ParameterUtils.findPage(parameterObject);
-        if (pageOptional.isPresent()) {
-            IPage<?> page = pageOptional.get();
-            offset = page.getCurrent();
-            limit = page.getSize();
-        }
-        cacheKey.update(offset);
-        cacheKey.update(limit);
+        pageOptional.ifPresent(page -> cacheKey.update(page.cacheKey()));
         cacheKey.update(boundSql.getSql());
         List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
         TypeHandlerRegistry typeHandlerRegistry = ms.getConfiguration().getTypeHandlerRegistry();
