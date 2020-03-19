@@ -317,17 +317,28 @@ public class ConfigBuilder {
         superEntityClass = config.getSuperEntityClass();
         superControllerClass = config.getSuperControllerClass();
     }
-
+    
+    /**
+     * 处理表对应的类名称
+     *
+     * @param tableList 表名称
+     * @param config    策略配置项
+     * @return 补充完整信息后的表
+     * @deprecated 3.3.2
+     */
+    @Deprecated
+    private List<TableInfo> processTable(List<TableInfo> tableList, NamingStrategy strategy, StrategyConfig config) {
+        return processTable(tableList, config);
+    }
 
     /**
      * 处理表对应的类名称
      *
      * @param tableList 表名称
-     * @param strategy  命名策略
      * @param config    策略配置项
      * @return 补充完整信息后的表
      */
-    private List<TableInfo> processTable(List<TableInfo> tableList, NamingStrategy strategy, StrategyConfig config) {
+    private List<TableInfo> processTable(List<TableInfo> tableList, StrategyConfig config) {
         String[] tablePrefix = config.getTablePrefix();
         for (TableInfo tableInfo : tableList) {
             String entityName;
@@ -336,7 +347,7 @@ public class ConfigBuilder {
                 // 自定义处理实体名称
                 entityName = nameConvert.entityNameConvert(tableInfo);
             } else {
-                entityName = NamingStrategy.capitalFirst(processName(tableInfo.getName(), strategy, tablePrefix));
+                entityName = NamingStrategy.capitalFirst(processName(tableInfo.getName(), config.getNaming(), tablePrefix));
             }
             if (StringUtils.isNotBlank(globalConfig.getEntityName())) {
                 tableInfo.setConvert(true);
@@ -547,7 +558,7 @@ public class ConfigBuilder {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return processTable(includeTableList, config.getNaming(), config);
+        return processTable(includeTableList, config);
     }
 
 
@@ -651,7 +662,7 @@ public class ConfigBuilder {
                     if (null != nameConvert) {
                         field.setPropertyName(nameConvert.propertyNameConvert(field));
                     } else {
-                        field.setPropertyName(strategyConfig, processName(field.getName(), config.getNaming()));
+                        field.setPropertyName(strategyConfig, processName(field.getName(), config.getColumnNaming()));
                     }
                     field.setColumnType(dataSourceConfig.getTypeConvert().processTypeConvert(globalConfig, field));
                     if (commentSupported) {

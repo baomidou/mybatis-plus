@@ -6,6 +6,7 @@ import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -33,12 +34,10 @@ class SelectBodyToPlainSelectTest {
             e.printStackTrace();
         }
         assert selectStatement != null;
-        try {
-            PlainSelect plainSelect = (PlainSelect) selectStatement.getSelectBody();
-            assert false;
-        } catch (Exception e) {
-            assertThat(e.getMessage()).isEqualTo("net.sf.jsqlparser.statement.select.SetOperationList cannot be cast to net.sf.jsqlparser.statement.select.PlainSelect");
-        }
+        Select finalSelectStatement = selectStatement;
+        Assertions.assertThrows(ClassCastException.class, () -> {
+            PlainSelect plainSelect = (PlainSelect) finalSelectStatement.getSelectBody();
+        });
     }
 
     private Page<?> page = new Page<>();
@@ -59,12 +58,12 @@ class SelectBodyToPlainSelectTest {
 
     @Test
     void testPaginationInterceptorConcatOrderByBefore() {
-        String actualSql = PaginationInterceptor
+        String actualSql = new PaginationInterceptor()
             .concatOrderBy("select * from test", page);
 
         assertThat(actualSql).isEqualTo("SELECT * FROM test ORDER BY column ASC");
 
-        String actualSqlWhere = PaginationInterceptor
+        String actualSqlWhere = new PaginationInterceptor()
             .concatOrderBy("select * from test where 1 = 1", page);
 
         assertThat(actualSqlWhere).isEqualTo("SELECT * FROM test WHERE 1 = 1 ORDER BY column ASC");
@@ -72,34 +71,34 @@ class SelectBodyToPlainSelectTest {
 
     @Test
     void testPaginationInterceptorConcatOrderByFix() {
-        String actualSql = PaginationInterceptor
+        String actualSql = new PaginationInterceptor()
             .concatOrderBy("select * from test union select * from test2", page);
         assertThat(actualSql).isEqualTo("SELECT * FROM test UNION SELECT * FROM test2 ORDER BY column ASC");
 
-        String actualSqlUnionAll = PaginationInterceptor
+        String actualSqlUnionAll = new PaginationInterceptor()
             .concatOrderBy("select * from test union all select * from test2", page);
         assertThat(actualSqlUnionAll).isEqualTo("SELECT * FROM test UNION ALL SELECT * FROM test2 ORDER BY column ASC");
     }
 
     @Test
     void testPaginationInterceptorConcatOrderByFixWithWhere() {
-        String actualSqlWhere = PaginationInterceptor
+        String actualSqlWhere = new PaginationInterceptor()
             .concatOrderBy("select * from test where 1 = 1 union select * from test2 where 1 = 1", page);
         assertThat(actualSqlWhere).isEqualTo("SELECT * FROM test WHERE 1 = 1 UNION SELECT * FROM test2 WHERE 1 = 1 ORDER BY column ASC");
 
-        String actualSqlUnionAll = PaginationInterceptor
+        String actualSqlUnionAll = new PaginationInterceptor()
             .concatOrderBy("select * from test where 1 = 1 union all select * from test2 where 1 = 1 ", page);
         assertThat(actualSqlUnionAll).isEqualTo("SELECT * FROM test WHERE 1 = 1 UNION ALL SELECT * FROM test2 WHERE 1 = 1 ORDER BY column ASC");
     }
 
     @Test
     void testPaginationInterceptorOrderByEmptyColumnFix() {
-        String actualSql = PaginationInterceptor
+        String actualSql = new PaginationInterceptor()
             .concatOrderBy("select * from test", page);
 
         assertThat(actualSql).isEqualTo("SELECT * FROM test ORDER BY column ASC");
 
-        String actualSqlWhere = PaginationInterceptor
+        String actualSqlWhere = new PaginationInterceptor()
             .concatOrderBy("select * from test where 1 = 1", page);
 
         assertThat(actualSqlWhere).isEqualTo("SELECT * FROM test WHERE 1 = 1 ORDER BY column ASC");

@@ -209,23 +209,19 @@ public final class ReflectionKit {
         if (clazz.getSuperclass() != null) {
             /* 排除重载属性 */
             Map<String, Field> fieldMap = excludeOverrideSuperField(clazz.getDeclaredFields(),
-                    /* 处理父类字段 */
-                    getFieldList(clazz.getSuperclass()));
-            List<Field> fieldList = new ArrayList<>();
+                /* 处理父类字段 */
+                getFieldList(clazz.getSuperclass()));
             /*
              * 重写父类属性过滤后处理忽略部分，支持过滤父类属性功能
              * 场景：中间表不需要记录创建时间，忽略父类 createTime 公共属性
              * 中间表实体重写父类属性 ` private transient Date createTime; `
              */
-            fieldMap.forEach((k, v) -> {
+            return fieldMap.values().stream()
                 /* 过滤静态属性 */
-                if (!Modifier.isStatic(v.getModifiers())
-                        /* 过滤 transient关键字修饰的属性 */
-                        && !Modifier.isTransient(v.getModifiers())) {
-                    fieldList.add(v);
-                }
-            });
-            return fieldList;
+                .filter(f -> !Modifier.isStatic(f.getModifiers()))
+                /* 过滤 transient关键字修饰的属性 */
+                .filter(f -> !Modifier.isTransient(f.getModifiers()))
+                .collect(Collectors.toList());
         } else {
             return Collections.emptyList();
         }

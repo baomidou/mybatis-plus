@@ -1,5 +1,29 @@
 ﻿# CHANGELOG
 
+## [v3.3.1] 2020.1.17
+- 新增`TableName`注解属性`excludeProperty`支持排除字段
+- 新增ServiceImpl#entityClass属性，减少泛型提取
+- 新增phoenix支持
+- 新增支持hbase的选装件`Upsert`
+- 新增生成器策略配置enableSqlFilter属性来控制是否启用SQL过滤表支持
+- 新增批量执行方法，方便用户自定义批量执行操作
+- `Wrapper`支持`clear`清空
+- `Wrapper`子类新增`func`方法,主要为了支持在`if else`情况下使用`Wrapper`的不同method不会导致断链(链式调用不能一链到底)
+- `BaseMapper`部分入参为`Wrapper`的select方法支持`wrapper.first`来设置RDS的hint
+- `KtUpdateWrapper#set`支持value为null
+- 支持泛型主键支持
+- 优化分页拦截器数据类型与方言实现类配置
+- 二级缓存复用count查询缓存
+- `IService`部分method调整为default方法
+- 二级缓存兼容json序列化情况（主要出现默认缓存count出现long反序列化回来为int的情况）
+- 处理批量操作嵌套事物问题（二级缓存更新问题）
+- 修复启用乐观锁下updateById时自动填充不生效的问题
+- 修复自动填充接口的default方法(`setFieldValByName`和`getFieldValByName`)某些情况下会发生异常的问题
+- 修复`KtWrapper`嵌套函数问题
+- 修复Freemarker生成Kotlin类的常量错误
+- 修复StringUtils#guessGetterName错误
+- 修复SerializationUtils资源未释放问题
+
 ## [v3.3.0] 2019.12.06
 - BaseMapper 接口两个 page 方法优化
 - IService 以及 ServiceImpl 对应 page 方法优化,个别返回 collection 的方法修改为返回 list

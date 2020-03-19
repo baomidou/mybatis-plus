@@ -28,6 +28,7 @@ import lombok.experimental.Accessors;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 策略配置项
@@ -207,13 +208,10 @@ public class StrategyConfig {
         }
         return false;
     }
-
+    
     public NamingStrategy getColumnNaming() {
-        if (null == columnNaming) {
-            // 未指定以 naming 策略为准
-            return naming;
-        }
-        return columnNaming;
+        // 未指定以 naming 策略为准
+        return Optional.ofNullable(columnNaming).orElse(naming);
     }
 
     public StrategyConfig setTablePrefix(String... tablePrefix) {
@@ -326,9 +324,9 @@ public class StrategyConfig {
             return StringUtils.camelToUnderline(field.getName());
         }).distinct().toArray(String[]::new);
     }
-
+    
     /**
-     * @deprecated please use `setEntityTableFieldAnnotationEnable`
+     * @deprecated 3.0.7  please use {@link #setEntityTableFieldAnnotationEnable(boolean)}
      */
     @Deprecated
     public StrategyConfig entityTableFieldAnnotationEnable(boolean isEnableAnnotation) {

@@ -185,6 +185,15 @@ public class TableInfo implements Constants {
     }
 
     /**
+     * 是否有主键
+     *
+     * @return 是否有
+     */
+    public boolean havePK() {
+        return StringUtils.isNotBlank(keyColumn);
+    }
+
+    /**
      * 获取主键的 select sql 片段
      *
      * @return sql 片段
@@ -193,7 +202,7 @@ public class TableInfo implements Constants {
         if (sqlSelect != null) {
             return sqlSelect;
         }
-        if (StringUtils.isNotBlank(keyProperty)) {
+        if (havePK()) {
             sqlSelect = keyColumn;
             if (keyRelated) {
                 sqlSelect += (" AS " + keyProperty);
@@ -244,7 +253,7 @@ public class TableInfo implements Constants {
      */
     public String getKeyInsertSqlProperty(final String prefix, final boolean newLine) {
         final String newPrefix = prefix == null ? EMPTY : prefix;
-        if (StringUtils.isNotBlank(keyProperty)) {
+        if (havePK()) {
             if (idType == IdType.AUTO) {
                 return EMPTY;
             }
@@ -261,7 +270,7 @@ public class TableInfo implements Constants {
      * @return sql 脚本片段
      */
     public String getKeyInsertSqlColumn(final boolean newLine) {
-        if (StringUtils.isNotBlank(keyColumn)) {
+        if (havePK()) {
             if (idType == IdType.AUTO) {
                 return EMPTY;
             }
@@ -396,7 +405,7 @@ public class TableInfo implements Constants {
         if (autoInitResultMap && null == resultMap) {
             String id = currentNamespace + DOT + MYBATIS_PLUS + UNDERSCORE + entityType.getSimpleName();
             List<ResultMapping> resultMappings = new ArrayList<>();
-            if (keyType != null) {
+            if (havePK()) {
                 ResultMapping idMapping = new ResultMapping.Builder(configuration, keyProperty, keyColumn, keyType)
                     .flags(Collections.singletonList(ResultFlag.ID)).build();
                 resultMappings.add(idMapping);

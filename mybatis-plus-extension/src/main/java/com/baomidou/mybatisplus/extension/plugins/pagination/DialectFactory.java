@@ -16,16 +16,17 @@
 package com.baomidou.mybatisplus.extension.plugins.pagination;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
-import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.DialectRegistry;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect;
 import org.apache.ibatis.session.RowBounds;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -84,11 +85,13 @@ public class DialectFactory {
     public static IDialect getDialect(String dialectClazz) {
         return DIALECT_CACHE.computeIfAbsent(dialectClazz, DialectFactory::classToDialect);
     }
-
+    
     public static IDialect getDialect(DbType dbType) {
-        return DIALECT_REGISTRY.getDialect(dbType);
+        return Optional.ofNullable(DIALECT_REGISTRY.getDialect(dbType))
+            .orElseThrow(() -> new MybatisPlusException(String.format("%s database not supported.", dbType.getDb())));
     }
 
+    @Deprecated
     private static IDialect newInstance(Class<? extends IDialect> dialectClazz) {
         IDialect dialect = ClassUtils.newInstance(dialectClazz);
         Assert.notNull(dialect, "The value of the dialect property in mybatis configuration.xml is not defined.");
@@ -96,16 +99,7 @@ public class DialectFactory {
     }
 
     @SuppressWarnings("unchecked")
-    private static IDialect classToDialect(String dialectClazz){
-        IDialect dialect = null;
-        try {
-            Class<?> clazz = Class.forName(dialectClazz);
-            if (IDialect.class.isAssignableFrom(clazz)) {
-                dialect = newInstance((Class<? extends IDialect>) clazz);
-            }
-        } catch (ClassNotFoundException e) {
-            throw ExceptionUtils.mpe("Class : %s is not found", dialectClazz);
-        }
-        return dialect;
+    private static IDialect classToDialect(String dialectClazz) {
+        return ClassUtils.newInstance((Class<? extends IDialect>) ClassUtils.toClassConfident(dialectClazz));
     }
 }

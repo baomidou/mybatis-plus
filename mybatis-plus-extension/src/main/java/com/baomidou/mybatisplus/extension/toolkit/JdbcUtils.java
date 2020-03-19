@@ -39,33 +39,34 @@ public class JdbcUtils {
      */
     public static DbType getDbType(String jdbcUrl) {
         Assert.isFalse(StringUtils.isBlank(jdbcUrl), "Error: The jdbcUrl is Null, Cannot read database type");
-        if (jdbcUrl.contains(":mysql:") || jdbcUrl.contains(":cobar:")) {
+        String url = jdbcUrl.toLowerCase();
+        if (url.contains(":mysql:") || url.contains(":cobar:")) {
             return DbType.MYSQL;
-        } else if (jdbcUrl.contains(":mariadb:")) {
+        } else if (url.contains(":mariadb:")) {
             return DbType.MARIADB;
-        } else if (jdbcUrl.contains(":oracle:")) {
+        } else if (url.contains(":oracle:")) {
             return DbType.ORACLE;
-        } else if (jdbcUrl.contains(":sqlserver:") || jdbcUrl.contains(":microsoft:")) {
+        } else if (url.contains(":sqlserver:") || url.contains(":microsoft:")) {
             return DbType.SQL_SERVER2005;
-        } else if (jdbcUrl.contains(":sqlserver2012:")) {
+        } else if (url.contains(":sqlserver2012:")) {
             return DbType.SQL_SERVER;
-        } else if (jdbcUrl.contains(":postgresql:")) {
+        } else if (url.contains(":postgresql:")) {
             return DbType.POSTGRE_SQL;
-        } else if (jdbcUrl.contains(":hsqldb:")) {
+        } else if (url.contains(":hsqldb:")) {
             return DbType.HSQL;
-        } else if (jdbcUrl.contains(":db2:")) {
+        } else if (url.contains(":db2:")) {
             return DbType.DB2;
-        } else if (jdbcUrl.contains(":sqlite:")) {
+        } else if (url.contains(":sqlite:")) {
             return DbType.SQLITE;
-        } else if (jdbcUrl.contains(":h2:")) {
+        } else if (url.contains(":h2:")) {
             return DbType.H2;
-        } else if (jdbcUrl.contains(":dm:")) {
+        } else if (url.contains(":dm:")) {
             return DbType.DM;
-        } else if (jdbcUrl.contains(":xugu:")) {
+        } else if (url.contains(":xugu:")) {
             return DbType.XU_GU;
-        } else if (jdbcUrl.contains(":kingbase:") || jdbcUrl.contains(":kingbase8:")) {
+        } else if (url.contains(":kingbase:") || url.contains(":kingbase8:")) {
             return DbType.KINGBASE_ES;
-        } else if (jdbcUrl.contains(":phoenix:")) {
+        } else if (url.contains(":phoenix:")) {
             return DbType.PHOENIX;
         } else {
             logger.warn("The jdbcUrl is " + jdbcUrl + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!");
