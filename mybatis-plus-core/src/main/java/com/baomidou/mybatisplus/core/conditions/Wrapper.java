@@ -131,7 +131,7 @@ public abstract class Wrapper<T> implements ISqlSegment {
         if (tableInfo.getFieldList().stream().anyMatch(e -> fieldStrategyMatch(entity, e))) {
             return true;
         }
-        return StringUtils.isNotBlank(tableInfo.getKeyProperty()) ? Objects.nonNull(ReflectionKit.getMethodValue(entity, tableInfo.getKeyProperty())) : false;
+        return StringUtils.isNotBlank(tableInfo.getKeyProperty()) ? Objects.nonNull(ReflectionKit.getFieldValue(entity, tableInfo.getKeyProperty())) : false;
     }
 
     /**
@@ -140,15 +140,15 @@ public abstract class Wrapper<T> implements ISqlSegment {
     private boolean fieldStrategyMatch(T entity, TableFieldInfo e) {
         switch (e.getWhereStrategy()) {
             case NOT_NULL:
-                return Objects.nonNull(ReflectionKit.getMethodValue(entity, e.getProperty()));
+                return Objects.nonNull(ReflectionKit.getFieldValue(entity, e.getProperty()));
             case IGNORED:
                 return true;
             case NOT_EMPTY:
-                return StringUtils.checkValNotNull(ReflectionKit.getMethodValue(entity, e.getProperty()));
+                return StringUtils.checkValNotNull(ReflectionKit.getFieldValue(entity, e.getProperty()));
             case NEVER:
                 return false;
             default:
-                return Objects.nonNull(ReflectionKit.getMethodValue(entity, e.getProperty()));
+                return Objects.nonNull(ReflectionKit.getFieldValue(entity, e.getProperty()));
         }
     }
 

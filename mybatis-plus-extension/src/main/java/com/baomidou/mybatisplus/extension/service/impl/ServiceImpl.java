@@ -142,7 +142,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
             Assert.notNull(tableInfo, "error: can not execute. because can not find cache of TableInfo for entity!");
             String keyProperty = tableInfo.getKeyProperty();
             Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
-            Object idVal = ReflectionKit.getMethodValue(cls, entity, tableInfo.getKeyProperty());
+            Object idVal = ReflectionKit.getFieldValue(entity, tableInfo.getKeyProperty());
             return StringUtils.checkValNull(idVal) || Objects.isNull(getById((Serializable) idVal)) ? save(entity) : updateById(entity);
         }
         return false;
@@ -156,7 +156,7 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
         String keyProperty = tableInfo.getKeyProperty();
         Assert.notEmpty(keyProperty, "error: can not execute. because can not find column for id from entity!");
         return executeBatch(entityList, batchSize, (sqlSession, entity) -> {
-            Object idVal = ReflectionKit.getMethodValue(entityClass, entity, keyProperty);
+            Object idVal = ReflectionKit.getFieldValue(entity, keyProperty);
             if (StringUtils.checkValNull(idVal) || Objects.isNull(getById((Serializable) idVal))) {
                 sqlSession.insert(tableInfo.getSqlStatement(SqlMethod.INSERT_ONE.getMethod()), entity);
             } else {
