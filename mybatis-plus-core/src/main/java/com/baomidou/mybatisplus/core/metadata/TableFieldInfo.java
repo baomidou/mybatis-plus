@@ -208,30 +208,9 @@ public class TableFieldInfo implements Constants {
             this.sqlSelect += (" AS " + asProperty);
         }
 
-        /*
-         * 优先使用单个字段注解，否则使用全局配置
-         */
-        if (tableField.insertStrategy() == FieldStrategy.DEFAULT) {
-            this.insertStrategy = dbConfig.getInsertStrategy();
-        } else {
-            this.insertStrategy = tableField.insertStrategy();
-        }
-        /*
-         * 优先使用单个字段注解，否则使用全局配置
-         */
-        if (tableField.updateStrategy() == FieldStrategy.DEFAULT) {
-            this.updateStrategy = dbConfig.getUpdateStrategy();
-        } else {
-            this.updateStrategy = tableField.updateStrategy();
-        }
-        /*
-         * 优先使用单个字段注解，否则使用全局配置
-         */
-        if (tableField.whereStrategy() == FieldStrategy.DEFAULT) {
-            this.whereStrategy = dbConfig.getSelectStrategy();
-        } else {
-            this.whereStrategy = tableField.whereStrategy();
-        }
+        this.insertStrategy = this.chooseFieldStrategy(tableField.insertStrategy(), dbConfig.getInsertStrategy());
+        this.updateStrategy = this.chooseFieldStrategy(tableField.updateStrategy(), dbConfig.getUpdateStrategy());
+        this.whereStrategy = this.chooseFieldStrategy(tableField.whereStrategy(), dbConfig.getSelectStrategy());
 
         if (StringUtils.isNotBlank(tableField.condition())) {
             // 细粒度条件控制
@@ -240,6 +219,13 @@ public class TableFieldInfo implements Constants {
 
         // 字段是否注入查询
         this.select = tableField.select();
+    }
+
+    /**
+     * 优先使用单个字段注解，否则使用全局配置
+     */
+    private FieldStrategy chooseFieldStrategy(FieldStrategy fromAnnotation, FieldStrategy fromDbConfig) {
+        return fromAnnotation == FieldStrategy.DEFAULT ? fromDbConfig : fromAnnotation;
     }
 
     /**
