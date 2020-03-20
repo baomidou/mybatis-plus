@@ -163,7 +163,7 @@ public class MybatisEnumTypeHandler<E extends Enum<?>> extends BaseTypeHandler<E
             && new BigDecimal(String.valueOf(sourceValue)).compareTo(new BigDecimal(String.valueOf(targetValue))) == 0) {
             return true;
         }
-        return Objects.equals(sourceValue, targetValue);
+        return Objects.equals(sourceValue.toString(), targetValue.toString());
     }
 
     private Object getValue(Object object) {
