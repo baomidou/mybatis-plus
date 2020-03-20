@@ -348,7 +348,7 @@ public class Page<T> implements IPage<T> {
     }
 
     @Override
-    public void hitCount(boolean hit) {
+    public void setHitCount(boolean hit) {
         this.hitCount = hit;
     }
 

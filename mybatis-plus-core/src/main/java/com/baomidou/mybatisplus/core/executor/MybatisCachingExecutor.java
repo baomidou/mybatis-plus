@@ -117,7 +117,7 @@ public class MybatisCachingExecutor implements Executor {
                             // 复用count结果缓存,减少count查询.
                             Number count = (Number) tcm.getObject(cache, countCacheKey);
                             if (count != null) {
-                                page.hitCount(true);
+                                page.setHitCount(true);
                                 page.setTotal(count.longValue());
                             }
                         }
@@ -143,7 +143,7 @@ public class MybatisCachingExecutor implements Executor {
                             CacheKey cacheKey = getCountCacheKey(ms, boundSql, parameterObject, RowBounds.DEFAULT);
                             Number count = (Number) tcm.getObject(cache, cacheKey);
                             if (count != null) {
-                                page.hitCount(true);
+                                page.setHitCount(true);
                                 return new PageList((List) result, count.longValue());
                             } else {
                                 // 某些特殊情况,比如先不查count,缓存了list数据或者count缓存数据被淘汰(这几率比较小),就再查一次算了。

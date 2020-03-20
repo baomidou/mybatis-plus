@@ -125,7 +125,7 @@ public interface IPage<T> extends Serializable {
      * @param hit 是否命中
      * @since 3.3.1
      */
-    default void hitCount(boolean hit) {
+    default void setHitCount(boolean hit) {
 
     }
 
