@@ -39,39 +39,39 @@ public class Page<T> implements IPage<T> {
     /**
      * 查询数据列表
      */
-    private List<T> records = Collections.emptyList();
+    protected List<T> records = Collections.emptyList();
 
     /**
      * 总数
      */
-    private long total = 0;
+    protected long total = 0;
     /**
      * 每页显示条数，默认 10
      */
-    private long size = 10;
+    protected long size = 10;
 
     /**
      * 当前页
      */
-    private long current = 1;
+    protected long current = 1;
 
     /**
      * 排序字段信息
      */
-    private List<OrderItem> orders = new ArrayList<>();
+    protected List<OrderItem> orders = new ArrayList<>();
 
     /**
      * 自动优化 COUNT SQL
      */
-    private boolean optimizeCountSql = true;
+    protected boolean optimizeCountSql = true;
     /**
      * 是否进行 count 查询
      */
-    private boolean isSearchCount = true;
+    protected boolean isSearchCount = true;
     /**
      * 是否命中count缓存
      */
-    private boolean hitCount = false;
+    protected boolean hitCount = false;
 
     public Page() {
     }
