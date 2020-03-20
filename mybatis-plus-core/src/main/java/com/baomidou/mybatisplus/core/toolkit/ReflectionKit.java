@@ -123,11 +123,11 @@ public final class ReflectionKit {
         Class cls = entity.getClass();
         Map<String, Field> fieldMaps = getFieldMap(cls);
         try {
-            Assert.notEmpty(fieldMaps, "Error: NoSuchField in %s for %s.  Cause:", cls.getSimpleName(), fieldName);
             Field field = fieldMaps.get(fieldName);
+            Assert.notNull(field, "Error: NoSuchField in %s for %s.  Cause:", cls.getSimpleName(), fieldName);
             field.setAccessible(true);
             return field.get(entity);
-        } catch (IllegalAccessException e) {
+        } catch (ReflectiveOperationException e) {
             throw ExceptionUtils.mpe("Error: Cannot read field in %s.  Cause:", e, cls.getSimpleName());
         }
     }

@@ -135,28 +135,27 @@ class ReflectionKitTest {
         getMethod = ReflectionKit.getMethodCapitalize(field, "testSimple");
         Assertions.assertEquals("isTestSimple", getMethod);
     }
-
+    
     @Test
-    void testGetMethodValue() {
+    void testGetFieldValue() {
         C c = new C();
         c.setSex("女");
         c.setName("妹纸");
         c.setAge(18);
-        Assertions.assertEquals(c.getSex(), ReflectionKit.getMethodValue(c.getClass(), c, "sex"));
-        Assertions.assertEquals(c.getAge(), ReflectionKit.getMethodValue(c, "age"));
-    
-        //TODO 属性命名情况下,如果第一个aB形式,lombok会生成首字母大写的,开发工具生成的话会是小写,原生mybatis遇到属性set,get方法和属性不一致时,会推测出两个属性字段.
+        Assertions.assertEquals(c.getSex(), ReflectionKit.getFieldValue(c, "sex"));
+        Assertions.assertEquals(c.getAge(), ReflectionKit.getFieldValue(c, "age"));
+        
         EntityByLombok entityByLombok = new EntityByLombok();
         entityByLombok.setPId("6666");
         entityByLombok.setParentId("123");
-        Assertions.assertEquals(entityByLombok.getPId(), ReflectionKit.getMethodValue(entityByLombok.getClass(), entityByLombok, "pId"));
-        Assertions.assertEquals(entityByLombok.getParentId(), ReflectionKit.getMethodValue(entityByLombok.getClass(), entityByLombok, "parentId"));
-    
+        Assertions.assertEquals(entityByLombok.getPId(), ReflectionKit.getFieldValue(entityByLombok, "pId"));
+        Assertions.assertEquals(entityByLombok.getParentId(), ReflectionKit.getFieldValue(entityByLombok, "parentId"));
+        
         Entity entity = new Entity();
         entity.setpId("6666");
         entity.setParentId("123");
-        Assertions.assertEquals(entity.getParentId(), ReflectionKit.getMethodValue(entity.getClass(), entity, "parentId"));
-        Assertions.assertEquals(entity.getpId(), ReflectionKit.getMethodValue(entity.getClass(), entity, "pId"));
+        Assertions.assertEquals(entity.getParentId(), ReflectionKit.getFieldValue(entity, "parentId"));
+        Assertions.assertEquals(entity.getpId(), ReflectionKit.getFieldValue(entity, "pId"));
     }
 
     @Test
