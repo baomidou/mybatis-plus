@@ -271,7 +271,7 @@ public abstract class Model<T extends Model<?>> implements Serializable {
      * 主键值
      */
     protected Serializable pkVal() {
-        return (Serializable) ReflectionKit.getMethodValue(this, TableInfoHelper.getTableInfo(getClass()).getKeyProperty());
+        return (Serializable) ReflectionKit.getFieldValue(this, TableInfoHelper.getTableInfo(getClass()).getKeyProperty());
     }
 
     /**

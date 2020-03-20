@@ -84,7 +84,7 @@ public final class ReflectionKit {
     public static String setMethodCapitalize(Field field, final String str) {
         return StringUtils.concatCapitalize("set", str);
     }
-
+    
     /**
      * <p>
      * 获取 public get方法的值
@@ -94,7 +94,9 @@ public final class ReflectionKit {
      * @param entity 实体
      * @param str    属性字符串内容
      * @return Object
+     * @deprecated 3.3.2
      */
+    @Deprecated
     public static Object getMethodValue(Class<?> cls, Object entity, String str) {
         Map<String, Field> fieldMaps = getFieldMap(cls);
         try {
@@ -109,17 +111,39 @@ public final class ReflectionKit {
             throw ExceptionUtils.mpe("Error: InvocationTargetException on getMethodValue.  Cause:" + e);
         }
     }
-
+    
+    /**
+     * 获取字段值
+     *
+     * @param entity    实体
+     * @param fieldName 字段名称
+     * @return 属性值
+     */
+    public static Object getFieldValue(Object entity, String fieldName) {
+        Class cls = entity.getClass();
+        Map<String, Field> fieldMaps = getFieldMap(cls);
+        try {
+            Assert.notEmpty(fieldMaps, "Error: NoSuchField in %s for %s.  Cause:", cls.getSimpleName(), fieldName);
+            Field field = fieldMaps.get(fieldName);
+            field.setAccessible(true);
+            return field.get(entity);
+        } catch (IllegalAccessException e) {
+            throw ExceptionUtils.mpe("Error: Cannot read field in %s.  Cause:", e, cls.getSimpleName());
+        }
+    }
+    
     /**
      * 猜测方法名
      *
      * @param field 字段
      * @param str   属性字符串内容
+     * @deprecated 3.3.2
      */
+    @Deprecated
     private static String guessGetterName(Field field, final String str) {
         return StringUtils.guessGetterName(str, field.getType());
     }
-
+    
     /**
      * <p>
      * 获取 public get方法的值
@@ -128,7 +152,9 @@ public final class ReflectionKit {
      * @param entity 实体
      * @param str    属性字符串内容
      * @return Object
+     * @deprecated 3.3.2
      */
+    @Deprecated
     public static Object getMethodValue(Object entity, String str) {
         if (null == entity) {
             return null;
@@ -246,14 +272,16 @@ public final class ReflectionKit {
                 .forEach(f -> fieldMap.put(f.getName(), f));
         return fieldMap;
     }
-
+    
     /**
      * 获取字段get方法
      *
      * @param cls   class
      * @param field 字段
      * @return Get方法
+     * @deprecated 3.3.2
      */
+    @Deprecated
     public static Method getMethod(Class<?> cls, Field field) {
         try {
             return cls.getDeclaredMethod(ReflectionKit.guessGetterName(field, field.getName()));

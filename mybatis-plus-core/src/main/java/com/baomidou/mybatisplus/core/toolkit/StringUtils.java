@@ -137,14 +137,16 @@ public final class StringUtils {
     public static boolean isNotBlank(final CharSequence cs) {
         return !isBlank(cs);
     }
-
+    
     /**
      * 猜测方法属性对应的 Getter 名称，具体规则请参考 JavaBeans 规范
      *
      * @param name 属性名称
      * @param type 属性类型
      * @return 返回猜测的名称
+     * @deprecated 3.3.2
      */
+    @Deprecated
     public static String guessGetterName(String name, Class<?> type) {
         return boolean.class == type ? name.startsWith("is") ? name : "is" + upperFirst(name) : "get" + upperFirst(name);
     }
