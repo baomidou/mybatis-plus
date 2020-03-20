@@ -325,7 +325,7 @@ public class Page<T> implements IPage<T> {
     }
 
     @Override
-    public boolean optimizeCountSql() {
+    public boolean isOptimizeCountSql() {
         return optimizeCountSql;
     }
 
