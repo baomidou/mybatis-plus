@@ -72,7 +72,7 @@ class ParameterUtilsTest {
     }
 
     @Test
-    void test() {
+    void testFindPage() {
         Assertions.assertFalse(ParameterUtils.findPage(null).isPresent());
         MapperMethod.ParamMap<Object> param = new MapperMethod.ParamMap<>();
         param.put(Constants.ENTITY, null);
