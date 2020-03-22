@@ -19,5 +19,6 @@ dependencies {
     testCompile "${lib.'spring-context-support'}"
     testCompile "${lib.'spring-jdbc'}"
     testCompile 'javax.annotation:javax.annotation-api:1.3.2'
+    testCompile "${lib.cglib}"
 //    testCompile ('org.apache.phoenix:phoenix-core:5.0.0-HBase-2.0')
 }
