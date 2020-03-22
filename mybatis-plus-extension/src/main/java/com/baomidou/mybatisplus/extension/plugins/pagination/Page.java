@@ -329,10 +329,6 @@ public class Page<T> implements IPage<T> {
         return optimizeCountSql;
     }
 
-    public boolean isOptimizeCountSql() {
-        return optimizeCountSql();
-    }
-
     @Override
     public boolean isSearchCount() {
         if (total < 0) {
@@ -353,10 +349,6 @@ public class Page<T> implements IPage<T> {
 
     @Override
     public void hitCount(boolean hit) {
-        this.hitCount = hit;
-    }
-
-    public void setHitCount(boolean hit) {
         this.hitCount = hit;
     }
 
