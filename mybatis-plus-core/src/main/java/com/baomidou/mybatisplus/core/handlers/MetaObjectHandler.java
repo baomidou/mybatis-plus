@@ -43,7 +43,7 @@ public interface MetaObjectHandler {
     default boolean openInsertFill() {
         return true;
     }
-
+    
     /**
      * 兼容填充主键判断开关
      * 如果启用开关:当主键值为空且主键生成策略为NONE或INPUT会进入新增填充
@@ -52,7 +52,9 @@ public interface MetaObjectHandler {
      *
      * @return 是否启用
      * @since 3.3.0
+     * @deprecated 3.3.2
      */
+    @Deprecated
     default boolean compatibleFillId() {
         return false;
     }

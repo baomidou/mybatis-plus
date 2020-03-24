@@ -45,7 +45,7 @@ class PageTest {
         Page page4 = new Page();
         BeanCopier.create(page1.getClass(), page4.getClass(), false).copy(page1, page4, null);
         //链式的set方法会导致属性BeanCopier的拷贝方法失败  https://github.com/cglib/cglib/issues/108.
-        Assertions.assertTrue(page4.isOptimizeCountSql());
+        Assertions.assertTrue(page4.optimizeCountSql());
         Assertions.assertTrue(page4.isSearchCount());
         Assertions.assertEquals(1, page4.getCurrent());
         Assertions.assertEquals(1, page4.orders().size());
