@@ -193,17 +193,35 @@ public class StrategyConfig {
     public boolean isCapitalModeNaming(String word) {
         return isCapitalMode && StringUtils.isCapitalMode(word);
     }
-
+    
     /**
      * 表名称包含指定前缀
      *
      * @param tableName 表名称
+     * @deprecated 3.3.2 {@link #startsWithTablePrefix(String)}
      */
+    @Deprecated
     public boolean containsTablePrefix(String tableName) {
         if (null != tableName) {
             String[] tps = getTablePrefix();
             if (null != tps) {
                 return Arrays.stream(tps).anyMatch(tableName::contains);
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * 表名称匹配表前缀
+     *
+     * @param tableName 表名称
+     * @since 3.3.2
+     */
+    public boolean startsWithTablePrefix(String tableName) {
+        if (null != tableName) {
+            String[] tps = getTablePrefix();
+            if (null != tps) {
+                return Arrays.stream(tps).anyMatch(tableName::startsWith);
             }
         }
         return false;
