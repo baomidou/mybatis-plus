@@ -61,7 +61,7 @@ public class TableInfo {
     }
 
     protected TableInfo setConvert(StrategyConfig strategyConfig) {
-        if (strategyConfig.containsTablePrefix(name) || strategyConfig.isEntityTableFieldAnnotationEnable()) {
+        if (strategyConfig.startsWithTablePrefix(name) || strategyConfig.isEntityTableFieldAnnotationEnable()) {
             // 包含前缀
             this.convert = true;
         } else if (strategyConfig.isCapitalModeNaming(name)) {
