@@ -19,6 +19,9 @@ import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.enums.SqlLike;
+import com.baomidou.mybatisplus.core.enums.SqlWildcard;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
@@ -26,7 +29,11 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 class WrapperTest {
 
@@ -48,13 +55,19 @@ class WrapperTest {
 
     @Test
     void test() {
+        TableInfo info = TableInfoHelper.initTableInfo(
+            new MapperBuilderAssistant(new MybatisConfiguration(), ""), User.class);
         try {
-            Wrapper<User> wrapper = new QueryWrapper<User>().lambda().eq(User::getName, 123)
+            Wrapper<User> wrapper = new QueryWrapper<User>().lambda()
+                .eq(User::getName, 123)
                 .or(c -> c.eq(User::getRoleId, 1).eq(User::getId, 2))
-                .eq(User::getId, 1);
+                .eq(User::getId, 1)
+                .like(User::getName, "tes%a_b", SqlWildcard.UNDERSCORE, SqlLike.LEFT);
             log(wrapper.getSqlSegment());
+            log(wrapper.getTargetSql());
         } catch (Exception e) {
             log(e.getMessage());
+            e.printStackTrace();
         }
     }
 

@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.core.toolkit.sql;
 
 import com.baomidou.mybatisplus.core.enums.SqlLike;
+import com.baomidou.mybatisplus.core.enums.SqlWildcard;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 
 /**
@@ -40,6 +41,26 @@ public class SqlUtils {
                 return str + StringPool.PERCENT;
             default:
                 return StringPool.PERCENT + str + StringPool.PERCENT;
+        }
+    }
+
+    /**
+     * 防止SQL注入
+     *
+     * @param str 原参数
+     * @return like 的值
+     */
+    public static Object concatLike(Object str, SqlLike type, SqlWildcard wildcard) {
+        if (wildcard == null) {
+            wildcard = SqlWildcard.PERCENT;
+        }
+        switch (type) {
+            case LEFT:
+                return wildcard.getWildcard() + str;
+            case RIGHT:
+                return str + wildcard.getWildcard();
+            default:
+                return wildcard.getWildcard() + str + wildcard.getWildcard();
         }
     }
 }

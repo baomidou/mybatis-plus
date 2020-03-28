@@ -45,7 +45,11 @@ public enum SqlKeyword implements ISqlSegment {
     EXISTS("EXISTS"),
     BETWEEN("BETWEEN"),
     ASC("ASC"),
-    DESC("DESC");
+    DESC("DESC"),
+    ESCAPE(StringPool.ESCAPE),
+    PERCENT(StringPool.PERCENT),
+    REGEXP("REGEXP"),
+    UNDERSCORE(StringPool.UNDERSCORE);
 
     private final String keyword;
 

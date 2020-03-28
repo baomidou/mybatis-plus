@@ -22,7 +22,13 @@ import com.baomidou.mybatisplus.core.conditions.interfaces.Nested;
 import com.baomidou.mybatisplus.core.conditions.segments.MergeSegments;
 import com.baomidou.mybatisplus.core.enums.SqlKeyword;
 import com.baomidou.mybatisplus.core.enums.SqlLike;
-import com.baomidou.mybatisplus.core.toolkit.*;
+import com.baomidou.mybatisplus.core.enums.SqlWildcard;
+import com.baomidou.mybatisplus.core.toolkit.ArrayUtils;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.core.toolkit.SerializationUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.StringEscape;
 
@@ -34,7 +40,26 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 
-import static com.baomidou.mybatisplus.core.enums.SqlKeyword.*;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.AND;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ASC;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.BETWEEN;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.DESC;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.EQ;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.EXISTS;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GE;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GROUP_BY;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.GT;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.HAVING;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IN;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IS_NOT_NULL;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.IS_NULL;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LE;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LIKE;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.LT;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NE;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.NOT;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.OR;
+import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ORDER_BY;
 import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.APPLY;
 import static com.baomidou.mybatisplus.core.enums.WrapperKeyword.BRACKET;
 import static java.util.stream.Collectors.joining;
@@ -167,8 +192,8 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
     }
 
     @Override
-    public Children like(boolean condition, R column, Object val) {
-        return likeValue(condition, column, val, SqlLike.DEFAULT);
+    public Children like(boolean condition, R column, Object val, SqlWildcard wildcard, SqlLike sqlLike) {
+        return likeValue(condition, column, val, wildcard, sqlLike);
     }
 
     @Override
@@ -341,7 +366,27 @@ public abstract class AbstractWrapper<T, R, Children extends AbstractWrapper<T, 
      * <p>拼接 LIKE 以及 值</p>
      */
     protected Children likeValue(boolean condition, R column, Object val, SqlLike sqlLike) {
-        return doIt(condition, () -> columnToString(column), LIKE, () -> formatSql("{0}", SqlUtils.concatLike(val, sqlLike)));
+        return likeValue(condition, column, val, SqlWildcard.PERCENT, sqlLike);
+    }
+
+
+    /**
+     * 内部自用
+     * <p>拼接 LIKE 以及 值</p>
+     */
+    protected Children likeValue(boolean condition, R column, Object val, SqlWildcard wildcard, SqlLike sqlLike) {
+        if (val.toString().contains(StringPool.UNDERSCORE) || val.toString().contains(StringPool.PERCENT)) {
+            return doIt(condition, () -> columnToString(column), LIKE,
+                () -> {
+                    String value = val.toString().replaceAll("%", "/%")
+                        .replaceAll("_", "/_");
+                    return formatSql("{0}", SqlUtils.concatLike(value, sqlLike, wildcard));
+                },
+                () -> StringPool.ESCAPE + " '/'");
+        } else {
+            return doIt(condition, () -> columnToString(column), LIKE,
+                () -> formatSql("{0}", SqlUtils.concatLike(val, sqlLike, wildcard)));
+        }
     }
 
     /**

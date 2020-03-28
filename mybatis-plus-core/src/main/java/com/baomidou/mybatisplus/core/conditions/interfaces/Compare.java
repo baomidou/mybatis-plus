@@ -15,6 +15,9 @@
  */
 package com.baomidou.mybatisplus.core.conditions.interfaces;
 
+import com.baomidou.mybatisplus.core.enums.SqlLike;
+import com.baomidou.mybatisplus.core.enums.SqlWildcard;
+
 import java.io.Serializable;
 import java.util.Map;
 import java.util.function.BiPredicate;
@@ -230,7 +233,46 @@ public interface Compare<Children, R> extends Serializable {
      * @param val       值
      * @return children
      */
-    Children like(boolean condition, R column, Object val);
+    default Children like(boolean condition, R column, Object val) {
+        return like(condition, column, val, SqlWildcard.PERCENT);
+    }
+
+    /**
+     * LIKE '%值%'
+     *
+     * @param condition 执行条件
+     * @param column    字段
+     * @param val       值
+     * @param wildcard  通配符
+     * @return children
+     */
+    default Children like(boolean condition, R column, Object val, SqlWildcard wildcard) {
+        return like(condition, column, val, wildcard, SqlLike.DEFAULT);
+    }
+
+    /**
+     * LIKE '%值%'
+     *
+     * @param column    字段
+     * @param val       值
+     * @param wildcard  通配符
+     * @return children
+     */
+    default Children like(R column, Object val, SqlWildcard wildcard, SqlLike sqlLike) {
+        return like(true, column, val, wildcard, sqlLike);
+    }
+
+    /**
+     * LIKE '%值%'
+     *
+     * @param condition 执行条件
+     * @param column    字段
+     * @param val       值
+     * @param wildcard  通配符
+     * @param sqlLike  通配符位置
+     * @return children
+     */
+    Children like(boolean condition, R column, Object val, SqlWildcard wildcard, SqlLike sqlLike);
 
     /**
      * ignore

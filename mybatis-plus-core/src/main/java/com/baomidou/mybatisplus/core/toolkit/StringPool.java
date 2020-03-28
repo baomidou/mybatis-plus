@@ -96,6 +96,7 @@ public interface StringPool {
     String DOLLAR_LEFT_BRACE = "${";
     String HASH_LEFT_BRACE = "#{";
     String CRLF = "\r\n";
+    String ESCAPE = "ESCAPE";
 
     String HTML_NBSP = "&nbsp;";
     String HTML_AMP = "&amp";
