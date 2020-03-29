@@ -20,7 +20,6 @@ import com.baomidou.mybatisplus.core.MybatisPlusVersion;
 import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
 import com.baomidou.mybatisplus.core.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.enums.IEnum;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
@@ -323,7 +322,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         this.configuration = configuration;
     }
 
-    public MybatisConfiguration getConfiguration(){
+    public MybatisConfiguration getConfiguration() {
         return this.configuration;
     }
 
@@ -534,7 +533,6 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
         if (hasLength(this.typeHandlersPackage)) {
             scanClasses(this.typeHandlersPackage, TypeHandler.class).stream().filter(clazz -> !clazz.isAnonymousClass())
                 .filter(clazz -> !clazz.isInterface()).filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
-                .filter(clazz -> ClassUtils.getConstructorIfAvailable(clazz) != null)
                 .forEach(targetConfiguration.getTypeHandlerRegistry()::register);
         }
 
@@ -554,7 +552,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
         Optional.ofNullable(this.defaultScriptingLanguageDriver).ifPresent(targetConfiguration::setDefaultScriptingLanguage);
 
-        if (this.databaseIdProvider != null) {//fix #64 set databaseId before parse mapper xmls
+        if (this.databaseIdProvider != null) {// fix #64 set databaseId before parse mapper xmls
             try {
                 targetConfiguration.setDatabaseId(this.databaseIdProvider.getDatabaseId(this.dataSource));
             } catch (SQLException e) {
