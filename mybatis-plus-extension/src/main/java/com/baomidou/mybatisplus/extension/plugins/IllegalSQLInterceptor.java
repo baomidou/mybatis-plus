@@ -59,12 +59,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>SQL是影响系统性能最重要的因素，所以拦截掉垃圾SQL语句</p>
  * <br>
  * <p>拦截SQL类型的场景</p>
- * <p>1.必须使用到索引，包含left jion连接字段，符合索引最左原则</p>
+ * <p>1.必须使用到索引，包含left join连接字段，符合索引最左原则</p>
  * <p>必须使用索引好处，</p>
  * <p>1.1 如果因为动态SQL，bug导致update的where条件没有带上，全表更新上万条数据</p>
  * <p>1.2 如果检查到使用了索引，SQL性能基本不会太差</p>
  * <br>
- * <p>2.SQL尽量单表执行，有查询left jion的语句，必须在注释里面允许该SQL运行，否则会被拦截，有left jion的语句，如果不能拆成单表执行的SQL，请leader商量在做</p>
+ * <p>2.SQL尽量单表执行，有查询left join的语句，必须在注释里面允许该SQL运行，否则会被拦截，有left join的语句，如果不能拆成单表执行的SQL，请leader商量在做</p>
  * <p>https://gaoxianglong.github.io/shark</p>
  * <p>SQL尽量单表执行的好处</p>
  * <p>2.1 查询条件简单、易于开理解和维护；</p>
