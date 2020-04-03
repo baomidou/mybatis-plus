@@ -92,6 +92,11 @@ public enum DbType {
     PHOENIX("phoenix", "Phoenix HBase数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.PhoenixDialect"),
 
     /**
+     * Gauss
+     */
+    GAUSS("zenith", "Gauss 数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.GaussDialect"),
+
+    /**
      * UNKONWN DB
      */
     OTHER("other", "其他数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.UnknownDialect");
