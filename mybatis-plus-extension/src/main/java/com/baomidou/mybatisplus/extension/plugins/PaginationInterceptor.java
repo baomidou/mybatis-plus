@@ -273,9 +273,10 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
 
     @Override
     public void setProperties(Properties prop) {
-        //根据Mybatis的configuration配置来设置参数
         String countSqlParser = prop.getProperty("countSqlParser");
-        setSqlParser(countSqlParser);
+        if (StringUtils.isNotBlank(countSqlParser)) {
+            setSqlParser(countSqlParser);
+        }
         String overflow = prop.getProperty("overflow");
         setOverflow(Boolean.parseBoolean(overflow));
         String dialectType = prop.getProperty("dialectType");
@@ -293,11 +294,10 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
      * @param countSqlParser
      */
     public void setSqlParser(String countSqlParser) {
-        ISqlParser sqlParser = null;
         try {
             Class<?> clazz = Class.forName(countSqlParser);
             if (ISqlParser.class.isAssignableFrom(clazz)) {
-                sqlParser = ClassUtils.newInstance((Class<? extends ISqlParser>) clazz);
+                ISqlParser sqlParser = ClassUtils.newInstance((Class<? extends ISqlParser>) clazz);
                 setCountSqlParser(sqlParser);
             }
         } catch (ClassNotFoundException e) {
