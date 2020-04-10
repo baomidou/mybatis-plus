@@ -18,7 +18,6 @@ package com.baomidou.mybatisplus.extension.plugins.pagination;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.DialectRegistry;
@@ -72,7 +71,7 @@ public class DialectFactory {
     @Deprecated
     private static IDialect getDialect(DbType dbType, String dialectClazz) {
         //这里需要注意一下，就的版本是把dbType和dialectClazz同时传进来的，所以会存在dbType是一定会有值，dialectClazz可能为空的情况，兼容需要先判断dialectClazz
-        return StringUtils.isBlank(dialectClazz) ? DIALECT_REGISTRY.getDialect(dbType) : DIALECT_CACHE.computeIfAbsent(dialectClazz, DialectFactory::classToDialect);
+        return StringUtils.isBlank(dialectClazz) ? DIALECT_REGISTRY.getDialect(dbType) : DIALECT_CACHE.computeIfAbsent(dialectClazz, ClassUtils::newInstance);
     }
 
     /**
@@ -83,23 +82,12 @@ public class DialectFactory {
      * @since 3.3.1
      */
     public static IDialect getDialect(String dialectClazz) {
-        return DIALECT_CACHE.computeIfAbsent(dialectClazz, DialectFactory::classToDialect);
+        return DIALECT_CACHE.computeIfAbsent(dialectClazz, ClassUtils::newInstance);
     }
     
     public static IDialect getDialect(DbType dbType) {
         return Optional.ofNullable(DIALECT_REGISTRY.getDialect(dbType))
             .orElseThrow(() -> new MybatisPlusException(String.format("%s database not supported.", dbType.getDb())));
     }
-
-    @Deprecated
-    private static IDialect newInstance(Class<? extends IDialect> dialectClazz) {
-        IDialect dialect = ClassUtils.newInstance(dialectClazz);
-        Assert.notNull(dialect, "The value of the dialect property in mybatis configuration.xml is not defined.");
-        return dialect;
-    }
-
-    @SuppressWarnings("unchecked")
-    private static IDialect classToDialect(String dialectClazz) {
-        return ClassUtils.newInstance((Class<? extends IDialect>) ClassUtils.toClassConfident(dialectClazz));
-    }
+    
 }
