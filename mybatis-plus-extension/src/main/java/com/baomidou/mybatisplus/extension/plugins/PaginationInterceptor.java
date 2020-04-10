@@ -274,37 +274,25 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
     @Override
     public void setProperties(Properties prop) {
         String countSqlParser = prop.getProperty("countSqlParser");
-        if (StringUtils.isNotBlank(countSqlParser)) {
-            setSqlParser(countSqlParser);
-        }
         String overflow = prop.getProperty("overflow");
-        setOverflow(Boolean.parseBoolean(overflow));
+        String limit = prop.getProperty("limit");
         String dialectType = prop.getProperty("dialectType");
         String dialectClazz = prop.getProperty("dialectClazz");
+        setOverflow(Boolean.parseBoolean(overflow));
+        if (StringUtils.isNotBlank(countSqlParser)) {
+            setCountSqlParser(ClassUtils.newInstance(countSqlParser));
+        }
         if (StringUtils.isNotBlank(dialectType)) {
             setDialectType(dialectType);
         }
         if (StringUtils.isNotBlank(dialectClazz)) {
             setDialectClazz(dialectClazz);
         }
-    }
-
-    /**
-     * 根据配置文件设置 countSqlParser
-     * @param countSqlParser
-     */
-    public void setSqlParser(String countSqlParser) {
-        try {
-            Class<?> clazz = Class.forName(countSqlParser);
-            if (ISqlParser.class.isAssignableFrom(clazz)) {
-                ISqlParser sqlParser = ClassUtils.newInstance((Class<? extends ISqlParser>) clazz);
-                setCountSqlParser(sqlParser);
-            }
-        } catch (ClassNotFoundException e) {
-            throw ExceptionUtils.mpe("Class : %s is not found", countSqlParser);
+        if (StringUtils.isNotBlank(limit)) {
+            setLimit(Long.parseLong(limit));
         }
     }
-
+    
     /**
      * 设置方言类型
      *
