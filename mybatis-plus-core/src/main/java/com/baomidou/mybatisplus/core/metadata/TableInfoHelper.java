@@ -255,8 +255,8 @@ public class TableInfoHelper {
         boolean isReadPK = false;
         // 是否存在 @TableId 注解
         boolean existTableId = isExistTableId(list);
-
-        List<TableFieldInfo> fieldList = new ArrayList<>();
+    
+        List<TableFieldInfo> fieldList = new ArrayList<>(list.size());
         for (Field field : list) {
             if (excludeProperty.contains(field.getName())) {
                 continue;
