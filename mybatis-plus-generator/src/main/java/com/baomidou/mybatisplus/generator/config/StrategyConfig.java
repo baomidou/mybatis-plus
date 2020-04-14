@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.generator.config;
 
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.config.po.LikeTable;
 import com.baomidou.mybatisplus.generator.config.po.TableFill;
@@ -264,10 +265,9 @@ public class StrategyConfig {
         this.fieldPrefix = fieldPrefixs;
         return this;
     }
-
+    
     public StrategyConfig setSuperEntityClass(String superEntityClass) {
-        this.superEntityClass = superEntityClass;
-        return this;
+        return setSuperEntityClass(ClassUtils.toClassConfident(superEntityClass));
     }
 
 
