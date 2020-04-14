@@ -256,7 +256,8 @@ public class TableInfoHelper {
         // 是否存在 @TableId 注解
         boolean existTableId = isExistTableId(list);
 
-        List<TableFieldInfo> fieldList = new ArrayList<>();
+        int fieldListSize = list.size();
+        List<TableFieldInfo> fieldList = new ArrayList<>(5 + fieldListSize + (fieldListSize / 10));
         for (Field field : list) {
             if (excludeProperty.contains(field.getName())) {
                 continue;
