@@ -18,7 +18,7 @@
 <% } %>
 <% for(field in table.commonFields){ %>
     <% /** 生成公共字段 **/ %>
-    <result column="${field.name}" property="${field.propertyName}" />
+        <result column="${field.name}" property="${field.propertyName}" />
 <% } %>
 <% for(field in table.fields){ %>
    <% /** 生成普通字段 **/ %>
