@@ -39,6 +39,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -165,6 +166,29 @@ public class ServiceImpl<M extends BaseMapper<T>, T> implements IService<T> {
                 sqlSession.update(tableInfo.getSqlStatement(SqlMethod.UPDATE_BY_ID.getMethod()), param);
             }
         });
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public boolean updateBatch(List<Map<T, Wrapper<T>>> paramPairList, int batchSize) {
+        Assert.notEmpty(paramPairList, "error: paramPairList must not be empty");
+        try (SqlSession batchSqlSession = sqlSessionBatch()) {
+            int i = 0;
+            for (Map<T, Wrapper<T>> paramPair : paramPairList) {
+                for(Map.Entry pa : paramPair.entrySet()){
+                    MapperMethod.ParamMap param = new MapperMethod.ParamMap();
+                    param.put(Constants.ENTITY,  pa.getKey());
+                    param.put(Constants.WRAPPER, pa.getValue());
+                    batchSqlSession.update(sqlStatement(SqlMethod.UPDATE), param);
+                    if (i >= 1 && i % batchSize == 0) {
+                        batchSqlSession.flushStatements();
+                    }
+                    i++;
+                }
+            }
+            batchSqlSession.flushStatements();
+        }
+        return true;
     }
 
     @Transactional(rollbackFor = Exception.class)

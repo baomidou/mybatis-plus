@@ -164,6 +164,14 @@ public interface IService<T> {
     }
 
     /**
+     * 批量更新
+     *
+     * @param paramPairList 实体对象与修改条件的Pair集合
+     * @param batchSize     更新批次数量
+     */
+    boolean updateBatch(List<Map<T, Wrapper<T>>> paramPairList, int batchSize);
+
+    /**
      * 根据ID 批量更新
      *
      * @param entityList 实体对象集合
