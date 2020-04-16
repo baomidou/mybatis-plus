@@ -10,7 +10,9 @@ import io.swagger.annotations.ApiModelProperty;
 <#if entityLombokModel>
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+    <#if chainModel>
 import lombok.experimental.Accessors;
+    </#if>
 </#if>
 
 /**
@@ -28,7 +30,9 @@ import lombok.experimental.Accessors;
     <#else>
 @EqualsAndHashCode(callSuper = false)
     </#if>
+    <#if chainModel>
 @Accessors(chain = true)
+    </#if>
 </#if>
 <#if table.convert>
 @TableName("${table.name}")
@@ -105,13 +109,13 @@ public class ${entity} implements Serializable {
         return ${field.propertyName};
     }
 
-    <#if entityBuilderModel>
+    <#if chainModel>
     public ${entity} set${field.capitalName}(${field.propertyType} ${field.propertyName}) {
     <#else>
     public void set${field.capitalName}(${field.propertyType} ${field.propertyName}) {
     </#if>
         this.${field.propertyName} = ${field.propertyName};
-        <#if entityBuilderModel>
+        <#if chainModel>
         return this;
         </#if>
     }
