@@ -123,8 +123,21 @@ public class StrategyConfig {
      * 【实体】是否为构建者模型（默认 false）<br>
      * -----------------------------------<br>
      * public User setName(String name) { this.name = name; return this; }
+     *
+     * @deprecated 3.3.2 {@link #setChainModel(boolean)}
      */
+    @Deprecated
     private boolean entityBuilderModel = false;
+    
+    /**
+     * 【实体】是否为链式模型（默认 false）<br>
+     * -----------------------------------<br>
+     * public User setName(String name) { this.name = name; return this; }
+     *
+     * @since 3.3.2
+     */
+    private boolean chainModel = false;
+    
     /**
      * 【实体】是否为lombok模型（默认 false）<br>
      * <a href="https://projectlombok.org/">document</a>
@@ -369,4 +382,31 @@ public class StrategyConfig {
         entityTableFieldAnnotationEnable = isEnableAnnotation;
         return this;
     }
+    
+    /**
+     * 是否为构建者模型
+     *
+     * @param entityBuilderModel entityBuilderModel
+     * @return this
+     * @deprecated 3.3.2 {@link #setChainModel(boolean)}
+     */
+    @Deprecated
+    public StrategyConfig setEntityBuilderModel(boolean entityBuilderModel) {
+        this.entityBuilderModel = entityBuilderModel;
+        this.chainModel = entityBuilderModel;
+        return this;
+    }
+    
+    /**
+     * 是否为链式模型
+     *
+     * @param chainModel 链式模型
+     * @return this
+     */
+    public StrategyConfig setChainModel(boolean chainModel) {
+        this.chainModel = chainModel;
+        this.entityBuilderModel = chainModel;
+        return this;
+    }
+    
 }
