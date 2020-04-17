@@ -124,7 +124,7 @@ public class StrategyConfig {
      * -----------------------------------<br>
      * public User setName(String name) { this.name = name; return this; }
      *
-     * @deprecated 3.3.2 {@link #setChainModel(boolean)}
+     * @deprecated 3.3.2 {@link #chainModel}
      */
     @Deprecated
     private boolean entityBuilderModel = false;
@@ -374,39 +374,16 @@ public class StrategyConfig {
         }).distinct().toArray(String[]::new);
     }
     
-    /**
-     * @deprecated 3.0.7  please use {@link #setEntityTableFieldAnnotationEnable(boolean)}
-     */
-    @Deprecated
-    public StrategyConfig entityTableFieldAnnotationEnable(boolean isEnableAnnotation) {
-        entityTableFieldAnnotationEnable = isEnableAnnotation;
-        return this;
-    }
     
     /**
      * 是否为构建者模型
      *
-     * @param entityBuilderModel entityBuilderModel
-     * @return this
-     * @deprecated 3.3.2 {@link #setChainModel(boolean)}
+     * @return 是否为构建者模型
+     * @deprecated 3.3.2 {@link #isChainModel()}
      */
     @Deprecated
-    public StrategyConfig setEntityBuilderModel(boolean entityBuilderModel) {
-        this.entityBuilderModel = entityBuilderModel;
-        this.chainModel = entityBuilderModel;
-        return this;
-    }
-    
-    /**
-     * 是否为链式模型
-     *
-     * @param chainModel 链式模型
-     * @return this
-     */
-    public StrategyConfig setChainModel(boolean chainModel) {
-        this.chainModel = chainModel;
-        this.entityBuilderModel = chainModel;
-        return this;
+    public boolean isEntityBuilderModel() {
+        return isChainModel();
     }
     
 }
