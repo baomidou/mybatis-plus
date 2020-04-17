@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
+import com.baomidou.mybatisplus.core.metadata.TableFieldInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.core.toolkit.support.ColumnCache;
@@ -23,6 +24,7 @@ import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -97,14 +99,17 @@ public final class LambdaUtils {
      * @return 缓存 map
      */
     private static Map<String, ColumnCache> createColumnCacheMap(TableInfo info) {
-        Map<String, ColumnCache> map = new HashMap<>();
+        List<TableFieldInfo> fieldList = info.getFieldList();
+        int expectedSize = fieldList.size() + 1;
+        int initialCapacity = expectedSize < 3 ? expectedSize + 1 : (int) ((float) expectedSize / 0.75F + 1.0F);
+        Map<String, ColumnCache> map = new HashMap<>(initialCapacity);
 
         String kp = info.getKeyProperty();
         if (StringUtils.isNotBlank(kp)) {
             map.put(formatKey(kp), new ColumnCache(info.getKeyColumn(), info.getKeySqlSelect()));
         }
 
-        info.getFieldList().forEach(i ->
+        fieldList.forEach(i ->
                 map.put(formatKey(i.getProperty()), new ColumnCache(i.getColumn(), i.getSqlSelect()))
         );
         return map;

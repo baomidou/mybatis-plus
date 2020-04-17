@@ -255,7 +255,7 @@ public class TableInfoHelper {
         boolean isReadPK = false;
         // 是否存在 @TableId 注解
         boolean existTableId = isExistTableId(list);
-    
+
         List<TableFieldInfo> fieldList = new ArrayList<>(list.size());
         for (Field field : list) {
             if (excludeProperty.contains(field.getName())) {
@@ -461,15 +461,16 @@ public class TableInfoHelper {
     }
 
     public static KeyGenerator genKeyGenerator(String baseStatementId, TableInfo tableInfo, MapperBuilderAssistant builderAssistant) {
-        IKeyGenerator keyGenerator = GlobalConfigUtils.getKeyGenerator(builderAssistant.getConfiguration());
+        Configuration configuration = builderAssistant.getConfiguration();
+        IKeyGenerator keyGenerator = GlobalConfigUtils.getKeyGenerator(configuration);
         if (null == keyGenerator) {
             throw new IllegalArgumentException("not configure IKeyGenerator implementation class.");
         }
-        Configuration configuration = builderAssistant.getConfiguration();
+
         //TODO 这里不加上builderAssistant.getCurrentNamespace()的会导致com.baomidou.mybatisplus.core.parser.SqlParserHelper.getSqlParserInfo越(chu)界(gui)
         String id = builderAssistant.getCurrentNamespace() + StringPool.DOT + baseStatementId + SelectKeyGenerator.SELECT_KEY_SUFFIX;
-        ResultMap resultMap = new ResultMap.Builder(builderAssistant.getConfiguration(), id, tableInfo.getKeyType(), new ArrayList<>()).build();
-        MappedStatement mappedStatement = new MappedStatement.Builder(builderAssistant.getConfiguration(), id,
+        ResultMap resultMap = new ResultMap.Builder(configuration, id, tableInfo.getKeyType(), new ArrayList<>()).build();
+        MappedStatement mappedStatement = new MappedStatement.Builder(configuration, id,
             new StaticSqlSource(configuration, keyGenerator.executeSql(tableInfo.getKeySequence().value())), SqlCommandType.SELECT)
             .keyProperty(tableInfo.getKeyProperty())
             .resultMaps(Collections.singletonList(resultMap))
