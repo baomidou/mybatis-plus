@@ -386,4 +386,16 @@ public class StrategyConfig {
         return isChainModel();
     }
     
+    /**
+     * 设置是否为构建者模型
+     *
+     * @param entityBuilderModel 是否为构建者模型
+     * @return this
+     * @deprecated 3.3.2 {@link #setChainModel(boolean)}
+     */
+    @Deprecated
+    public StrategyConfig setEntityBuilderModel(boolean entityBuilderModel) {
+        return setChainModel(entityBuilderModel);
+    }
+    
 }
