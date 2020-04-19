@@ -184,8 +184,9 @@ public class MybatisPlusAutoConfiguration implements InitializingBean {
         if (!ObjectUtils.isEmpty(this.typeHandlers)) {
             factory.setTypeHandlers(this.typeHandlers);
         }
-        if (!ObjectUtils.isEmpty(this.properties.resolveMapperLocations())) {
-            factory.setMapperLocations(this.properties.resolveMapperLocations());
+        Resource[] mapperLocations = this.properties.resolveMapperLocations();
+        if (!ObjectUtils.isEmpty(mapperLocations)) {
+            factory.setMapperLocations(mapperLocations);
         }
 
         // TODO 对源码做了一定的修改(因为源码适配了老旧的mybatis版本,但我们不需要适配)
