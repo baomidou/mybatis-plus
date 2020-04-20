@@ -3,10 +3,9 @@ package com.baomidou.mybatisplus.extension.plugins.tenant;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.LongValue;
+import net.sf.jsqlparser.expression.ValueListExpression;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
-import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.Statements;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.update.Update;
@@ -28,11 +27,10 @@ public class TenantSqlParserTest {
                 if (!where) {
                     return new LongValue(1);
                 }
-                final InExpression inExpression = new InExpression();
-                inExpression.setLeftExpression(new Column(getTenantIdColumn()));
-                final ExpressionList itemsList = new ExpressionList(new LongValue(1), new LongValue(2));
-                inExpression.setRightItemsList(itemsList);
-                return inExpression;
+                ValueListExpression expression = new ValueListExpression();
+                ExpressionList list = new ExpressionList(new LongValue(1), new LongValue(2));
+                expression.setExpressionList(list);
+                return expression;
             }
 
             @Override
@@ -49,15 +47,15 @@ public class TenantSqlParserTest {
     @Test
     public void processSelectBody() throws JSQLParserException {
         select("select * from user",
-            "select * from user where t_id = 1");
+            "select * from user where t_id in (1, 2)");
         select("select * from user u",
-            "select * from user u where u.t_id = 1");
+            "select * from user u where u.t_id in (1, 2)");
         select("select * from user where id in (select id from user)",
-            "select * from user where id in (select id from user where t_id = 1) and t_id = 1");
+            "select * from user where id in (select id from user where t_id in (1, 2)) and t_id in (1, 2)");
         select("select * from user where id = 1 and id in (select id from user)",
-            "select * from user where id = 1 and id in (select id from user where t_id = 1) and t_id = 1");
+            "select * from user where id = 1 and id in (select id from user where t_id in (1, 2)) and t_id in (1, 2)");
         select("select * from user where id = 1 or id in (select id from user)",
-            "select * from user where (id = 1 or id in (select id from user where t_id = 1)) and t_id = 1");
+            "select * from user where (id = 1 or id in (select id from user where t_id in (1, 2))) and t_id in (1, 2)");
 
         update("update user set age = 1",
             "update user set age = 1 where t_id = 1");

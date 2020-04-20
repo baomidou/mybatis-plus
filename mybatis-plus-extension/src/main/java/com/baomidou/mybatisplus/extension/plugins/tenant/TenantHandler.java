@@ -30,7 +30,7 @@ public interface TenantHandler {
      * <p>
      * 支持自定义表达式，比如：tenant_id in (1,2) @since 2019-8-2
      *
-     * @param where 参数 true 表示为 where 条件 false 表示为 insert 或者 select 条件
+     * @param where 参数 true 表示为 select 下的 where 条件,false 表示 insert/update/delete 下的条件
      * @return 租户 ID 值表达式
      */
     Expression getTenantId(boolean where);
