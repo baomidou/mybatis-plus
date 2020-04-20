@@ -78,7 +78,7 @@ ext {
         "beetl"                      : "com.ibeetl:beetl:3.1.3.RELEASE",
         "swagger-annotations"        : "io.swagger:swagger-annotations:1.6.1",
         //cache
-        "mybatis-ehcache"            : "org.mybatis.caches:mybatis-ehcache:1.2.0",
+        "mybatis-ehcache"            : "org.mybatis.caches:mybatis-ehcache:1.2.1",
         "mybatis-redis"              : "org.mybatis.caches:mybatis-redis:1.0.0-beta2"
     ]
 }
