@@ -98,14 +98,12 @@ public class StrategyConfig {
      */
     private String superControllerClass;
     /**
-     * 需要包含的表名（与exclude二选一配置）
-     * @since 3.3.0 正则匹配不再支持,请使用{@link #setLikeTable(LikeTable)}}
+     * 需要包含的表名，允许正则表达式（与exclude二选一配置）
      */
     @Setter(AccessLevel.NONE)
     private String[] include = null;
     /**
-     * 需要排除的表名
-     * @since 3.3.0 正则匹配不再支持,请使用{@link #setNotLikeTable(LikeTable)}}
+     * 需要排除的表名，允许正则表达式
      */
     @Setter(AccessLevel.NONE)
     private String[] exclude = null;
