@@ -23,8 +23,8 @@ public class TenantSqlParserTest {
     private final TenantSqlParser parser = new TenantSqlParser()
         .setTenantHandler(new TenantHandler() {
             @Override
-            public Expression getTenantId(boolean where) {
-                if (!where) {
+            public Expression getTenantId(boolean select) {
+                if (!select) {
                     return new LongValue(1);
                 }
                 ValueListExpression expression = new ValueListExpression();

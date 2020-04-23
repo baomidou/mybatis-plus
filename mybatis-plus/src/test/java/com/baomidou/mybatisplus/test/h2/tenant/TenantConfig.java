@@ -46,7 +46,7 @@ public class TenantConfig {
         TenantSqlParser tenantSqlParser = new TenantSqlParser();
         tenantSqlParser.setTenantHandler(new TenantHandler() {
             @Override
-            public Expression getTenantId(boolean where) {
+            public Expression getTenantId(boolean select) {
                 return new LongValue(TENANT_ID);
             }
 

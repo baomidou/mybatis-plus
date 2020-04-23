@@ -120,7 +120,7 @@ public class MybatisPlusConfig {
         tenantSqlParser.setTenantHandler(new TenantHandler() {
 
             @Override
-            public Expression getTenantId(boolean where) {
+            public Expression getTenantId(boolean select) {
                 return new LongValue(1L);
             }
 
