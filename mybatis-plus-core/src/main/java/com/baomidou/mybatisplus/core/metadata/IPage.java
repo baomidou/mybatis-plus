@@ -199,7 +199,7 @@ public interface IPage<T> extends Serializable {
         List<R> collect = this.getRecords().stream().map(mapper).collect(toList());
         return ((IPage<R>) this).setRecords(collect);
     }
-    
+
     /**
      * 生成缓存key值
      *
@@ -208,7 +208,7 @@ public interface IPage<T> extends Serializable {
      */
     default String cacheKey() {
         StringBuilder key = new StringBuilder();
-        key.append(getCurrent()).append(StringPool.COLON).append(getSize());
+        key.append(offset()).append(StringPool.COLON).append(getSize());
         List<OrderItem> orders = orders();
         if (CollectionUtils.isNotEmpty(orders)) {
             for (OrderItem item : orders) {
@@ -217,5 +217,5 @@ public interface IPage<T> extends Serializable {
         }
         return key.toString();
     }
-    
+
 }
