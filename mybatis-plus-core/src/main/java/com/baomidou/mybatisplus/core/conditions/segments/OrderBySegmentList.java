@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.core.conditions.segments;
 
 import com.baomidou.mybatisplus.core.conditions.ISqlSegment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.baomidou.mybatisplus.core.enums.SqlKeyword.ORDER_BY;
@@ -34,9 +35,9 @@ public class OrderBySegmentList extends AbstractISegmentList {
     @Override
     protected boolean transformList(List<ISqlSegment> list, ISqlSegment firstSegment, ISqlSegment lastSegment) {
         list.remove(0);
-        final String sql = list.stream().map(ISqlSegment::getSqlSegment).collect(joining(SPACE));
+        final List<ISqlSegment> sqlSegmentList = new ArrayList<>(list);
         list.clear();
-        list.add(() -> sql);
+        list.add(() -> sqlSegmentList.stream().map(ISqlSegment::getSqlSegment).collect(joining(SPACE)));
         return true;
     }
 
