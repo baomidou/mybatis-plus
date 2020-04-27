@@ -3,13 +3,11 @@ package com.baomidou.mybatisplus.test.h2.cache;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
-import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.h2.cache.mapper.CacheMapper;
 import com.baomidou.mybatisplus.test.h2.cache.model.CacheModel;
 import com.baomidou.mybatisplus.test.h2.cache.service.ICacheService;
 import org.apache.ibatis.cache.Cache;
-import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -204,6 +202,24 @@ class CacheTest {
         page.setOrders(Collections.singletonList(OrderItem.desc("id")));
         cacheService.page(page);
         Assertions.assertEquals(5, cache.getSize());
+    }
+    
+    @Test
+    void testCustomOffset(){
+        Cache cache = getCache();
+        cache.clear();
+        CustomPage<CacheModel> page1 = new CustomPage<>(2, 10, false);
+        Assertions.assertEquals(cache.getSize(), 0);
+        cacheService.page(page1);
+        Assertions.assertEquals(cache.getSize(), 1);
+        cacheService.page(page1);
+        Assertions.assertEquals(cache.getSize(), 1);
+        //页数其他条件不变，改变分页偏移量的骚操作.
+        page1.setOffset(12L);
+        cacheService.page(page1);
+        Assertions.assertEquals(cache.getSize(), 2);
+        cacheService.page(page1);
+        Assertions.assertEquals(cache.getSize(), 2);
     }
     
     private Cache getCache() {
