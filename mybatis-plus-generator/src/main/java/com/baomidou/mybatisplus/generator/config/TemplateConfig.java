@@ -48,4 +48,37 @@ public class TemplateConfig {
     public String getEntity(boolean kotlin) {
         return kotlin ? entityKt : entity;
     }
+    
+    /**
+     * 禁用模板
+     *
+     * @param templateTypes 模板类型
+     * @return this
+     * @since 3.3.2
+     */
+    public TemplateConfig disable(TemplateType... templateTypes) {
+        if (templateTypes != null && templateTypes.length > 0) {
+            for (TemplateType templateType : templateTypes) {
+                switch (templateType) {
+                    case XML:
+                        setXml(null);
+                        break;
+                    case ENTITY:
+                        setEntity(null).setEntityKt(null);
+                        break;
+                    case MAPPER:
+                        setMapper(null);
+                        break;
+                    case SERVICE:
+                        setService(null).setServiceImpl(null);
+                        break;
+                    case CONTROLLER:
+                        setController(null);
+                        break;
+                }
+            }
+        }
+        return this;
+    }
+    
 }
