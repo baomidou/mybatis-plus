@@ -23,9 +23,9 @@ public class MyPostgreSqlQuery extends PostgreSqlQuery {
     @Override
     public String tableFieldsSql() {
         // 固定 abc  def 内容，实际可以查询字段大小等信息
-        return "SELECT 1 AS abc, 2 AS def, A.attname AS name, format_type(A.atttypid, A.atttypmod) AS type,col_description(A.attrelid, A.attnum) AS comment, (CASE C.contype WHEN 'p' THEN 'PRI' ELSE '' END) AS key " +
-            "FROM pg_attribute A LEFT JOIN pg_constraint C ON A.attnum = C.conkey[1] AND A.attrelid = C.conrelid " +
-            "WHERE  A.attrelid = '%s.%s'::regclass AND A.attnum > 0 AND NOT A.attisdropped ORDER  BY A.attnum";
+        return "SELECT 1 AS abc, 2 AS def, A.attname AS name,format_type (A.atttypid,A.atttypmod) AS type,col_description (A.attrelid,A.attnum) AS comment,\n" +
+            "(CASE WHEN (SELECT COUNT (*) FROM pg_constraint AS PC WHERE A.attnum = PC.conkey[1] AND PC.contype = 'p') > 0 THEN 'PRI' ELSE '' END) AS key \n" +
+            "FROM pg_class AS C,pg_attribute AS A WHERE A.attrelid='%s.%s'::regclass AND A.attrelid= C.oid AND A.attnum> 0 AND NOT A.attisdropped ORDER  BY A.attnum";
     }
 
 
