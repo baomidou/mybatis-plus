@@ -33,7 +33,7 @@ public class PostgreSqlQuery extends AbstractDbQuery {
     public String tableFieldsSql() {
         return "SELECT A.attname AS name, format_type(A.atttypid, A.atttypmod) AS type,col_description(A.attrelid, A.attnum) AS comment, (CASE C.contype WHEN 'p' THEN 'PRI' ELSE '' END) AS key " +
             "FROM pg_attribute A LEFT JOIN pg_constraint C ON A.attnum = C.conkey[1] AND A.attrelid = C.conrelid " +
-            "WHERE  A.attrelid = '%s.%s'::regclass AND (C.contype = 'p' or C.contype is null) AND A.attnum > 0 AND NOT A.attisdropped ORDER  BY A.attnum";
+            "WHERE  A.attrelid = '%s.%s'::regclass AND A.attnum > 0 AND NOT A.attisdropped ORDER  BY A.attnum";
     }
 
 
