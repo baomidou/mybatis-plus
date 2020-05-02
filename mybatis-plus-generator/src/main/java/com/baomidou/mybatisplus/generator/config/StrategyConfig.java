@@ -98,12 +98,14 @@ public class StrategyConfig {
      */
     private String superControllerClass;
     /**
-     * 需要包含的表名，允许正则表达式（与exclude二选一配置）
+     * 需要包含的表名，允许正则表达式（与exclude二选一配置）<br/>
+     * 当{@link #enableSqlFilter}为true时，正则表达式无效.
      */
     @Setter(AccessLevel.NONE)
     private String[] include = null;
     /**
-     * 需要排除的表名，允许正则表达式
+     * 需要排除的表名，允许正则表达式<br/>
+     * 当{@link #enableSqlFilter}为true时，正则表达式无效.
      */
     @Setter(AccessLevel.NONE)
     private String[] exclude = null;
@@ -177,9 +179,7 @@ public class StrategyConfig {
      */
     private List<TableFill> tableFillList = null;
     /**
-     * 启用sql过滤
-     * 语法不能支持使用sql过滤表的话，可以考虑关闭此开关.
-     * 目前所知微软系需要关闭，其他数据库等待反馈，sql可能要改动一下才能支持，没数据库环境搞，请手动关闭使用内存过滤的方式。
+     * 启用sql过滤，语法不能支持使用sql过滤表的话，可以考虑关闭此开关.
      *
      * @since 3.3.1
      */
