@@ -55,7 +55,7 @@ ext {
         "mybatis-spring-boot-starter": "org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}",
         //test
         "spring-test"                : "org.springframework:spring-test:${springVersion}",
-        "assertj-core"               : "org.assertj:assertj-core:3.15.0",
+        "assertj-core"               : "org.assertj:assertj-core:3.16.0",
         "junit-jupiter-api"          : "org.junit.jupiter:junit-jupiter-api:${junitVersion}",
         "junit-jupiter-engine"       : "org.junit.jupiter:junit-jupiter-engine:${junitVersion}",
         "fastjson"                   : "com.alibaba:fastjson:1.2.68",
@@ -71,11 +71,11 @@ ext {
         "kingbase"                   : fileTree(dir: 'libs', includes: ["kingbase8-8.2.0.jar"]),
         "h2"                         : "com.h2database:h2:1.4.200",
         "mysql"                      : "mysql:mysql-connector-java:8.0.20",
-        "sqlite"                     : "org.xerial:sqlite-jdbc:3.30.1",
+        "sqlite"                     : "org.xerial:sqlite-jdbc:3.31.1",
         //code generator
         "velocity"                   : "org.apache.velocity:velocity-engine-core:2.2",
         "freemarker"                 : "org.freemarker:freemarker:2.3.30",
-        "beetl"                      : "com.ibeetl:beetl:3.1.3.RELEASE",
+        "beetl"                      : "com.ibeetl:beetl:3.1.4.RELEASE",
         "swagger-annotations"        : "io.swagger:swagger-annotations:1.6.1",
         //cache
         "mybatis-ehcache"            : "org.mybatis.caches:mybatis-ehcache:1.2.1",
