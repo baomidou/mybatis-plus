@@ -6,7 +6,8 @@ import net.sf.jsqlparser.expression.LongValue;
 import net.sf.jsqlparser.expression.ValueListExpression;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.statement.Statements;
+import net.sf.jsqlparser.statement.Statement;
+import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.update.Update;
 import org.junit.jupiter.api.Test;
@@ -59,19 +60,29 @@ public class TenantSqlParserTest {
 
         update("update user set age = 1",
             "update user set age = 1 where t_id = 1");
+
+        insert("insert into user (id, age) values (?, ?)",
+            "insert into user (id, age, t_id) values (?, ?, 1)");
     }
 
     private void select(String sql, String target) throws JSQLParserException {
-        Statements statement = CCJSqlParserUtil.parseStatements(sql);
-        Select select = (Select) statement.getStatements().get(0);
+        Statement statement = CCJSqlParserUtil.parse(sql);
+        Select select = (Select) statement;
         parser.processSelectBody(select.getSelectBody());
         assertThat(select.toString().toLowerCase()).isEqualTo(target);
     }
 
     private void update(String sql, String target) throws JSQLParserException {
-        Statements statement = CCJSqlParserUtil.parseStatements(sql);
-        Update update = (Update) statement.getStatements().get(0);
+        Statement statement = CCJSqlParserUtil.parse(sql);
+        Update update = (Update) statement;
         parser.processUpdate(update);
         assertThat(update.toString().toLowerCase()).isEqualTo(target);
+    }
+
+    private void insert(String sql, String target) throws JSQLParserException {
+        Statement statement = CCJSqlParserUtil.parse(sql);
+        Insert insert = (Insert) statement;
+        parser.processInsert(insert);
+        assertThat(insert.toString().toLowerCase()).isEqualTo(target);
     }
 }
