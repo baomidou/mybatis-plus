@@ -124,10 +124,4 @@ public final class LambdaUtils {
         });
     }
     
-    public static void main(String[] args) {
-        ConcurrentHashMap<String,String> map = new ConcurrentHashMap<>();
-        map.put("test","123456");
-        map.computeIfAbsent("123",(k)-> {return null;});
-    }
-
 }
