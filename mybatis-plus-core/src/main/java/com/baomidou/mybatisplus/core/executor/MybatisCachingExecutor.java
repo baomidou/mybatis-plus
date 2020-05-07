@@ -175,7 +175,7 @@ public class MybatisCachingExecutor implements Executor {
             .build();
     }
 
-    private CacheKey getCountCacheKey(MappedStatement mappedStatement, BoundSql boundSql, Object parameterObject, RowBounds rowBounds) {
+    protected CacheKey getCountCacheKey(MappedStatement mappedStatement, BoundSql boundSql, Object parameterObject, RowBounds rowBounds) {
         Configuration configuration = mappedStatement.getConfiguration();
 //        BoundSql sourceSql = new BoundSql(mappedStatement.getConfiguration(), boundSql.getSql(), boundSql.getParameterMappings(), boundSql.getParameterObject());
         MappedStatement statement = buildCountMappedStatement(mappedStatement);

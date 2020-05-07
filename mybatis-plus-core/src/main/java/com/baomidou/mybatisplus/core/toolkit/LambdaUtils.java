@@ -24,6 +24,7 @@ import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.Locale.ENGLISH;
@@ -58,10 +59,13 @@ public final class LambdaUtils {
     public static <T> SerializedLambda resolve(SFunction<T, ?> func) {
         Class<?> clazz = func.getClass();
         String canonicalName = clazz.getCanonicalName();
-        return FUNC_CACHE.computeIfAbsent(canonicalName, (k) -> {
-            SerializedLambda lambda = SerializedLambda.resolve(func);
-            return new WeakReference<>(lambda);
-        }).get();
+        return Optional.ofNullable(FUNC_CACHE.get(canonicalName))
+            .map(WeakReference::get)
+            .orElseGet(() -> {
+                SerializedLambda lambda = SerializedLambda.resolve(func);
+                FUNC_CACHE.put(canonicalName, new WeakReference<>(lambda));
+                return lambda;
+            });
     }
 
     /**
@@ -118,6 +122,12 @@ public final class LambdaUtils {
             TableInfo info = TableInfoHelper.getTableInfo(clazz);
             return info == null ? null : createColumnCacheMap(info);
         });
+    }
+    
+    public static void main(String[] args) {
+        ConcurrentHashMap<String,String> map = new ConcurrentHashMap<>();
+        map.put("test","123456");
+        map.computeIfAbsent("123",(k)-> {return null;});
     }
 
 }
