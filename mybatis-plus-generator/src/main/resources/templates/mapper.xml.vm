@@ -30,7 +30,7 @@
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
 #foreach($field in ${table.commonFields})
-        ${field.name},
+        ${field.columnName},
 #end
         ${table.fieldNames}
     </sql>

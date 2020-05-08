@@ -54,6 +54,11 @@ public class DataSourceConfig {
      */
     private ITypeConvert typeConvert;
     /**
+     * 关键字处理器
+     * @since 3.3.2
+     */
+    private IKeyWordsHandler keyWordsHandler;
+    /**
      * 驱动连接的URL
      */
     private String url;

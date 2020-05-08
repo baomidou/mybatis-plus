@@ -50,23 +50,23 @@ class ${entity} : Serializable {
     /*主键*/
     %>
         <% if(field.keyIdentityFlag){ %>
-    @TableId(value = "${field.name}", type = IdType.AUTO)
+    @TableId(value = "${field.annotationColumnName}", type = IdType.AUTO)
         <% }else if(isNotEmpty(idType)){ %>
-    @TableId(value = "${field.name}", type = IdType.${idType})
+    @TableId(value = "${field.annotationColumnName}", type = IdType.${idType})
         <% }else if(field.convert){ %>
-    @TableId("${field.name}")
+    @TableId("${field.columnName}")
          <% } %>
     <%
     /*普通字段*/
     %>
     <% }else if(isNotEmpty(field.fill)){ %>
         <% if(field.convert){ %>
-    @TableField(value = "${field.name}", fill = FieldFill.${field.fill})
+    @TableField(value = "${field.annotationColumnName}", fill = FieldFill.${field.fill})
         <% }else{ %>
     @TableField(fill = FieldFill.${field.fill})
         <% } %>
     <% }else if(field.convert){ %>
-    @TableField("${field.name}")
+    @TableField("${field.annotationColumnName}")
     <% } %>
     <%
     /*乐观锁注解*/

@@ -144,9 +144,9 @@ public class TableInfo {
             IntStream.range(0, fields.size()).forEach(i -> {
                 TableField fd = fields.get(i);
                 if (i == fields.size() - 1) {
-                    names.append(fd.getName());
+                    names.append(fd.getColumnName());
                 } else {
-                    names.append(fd.getName()).append(", ");
+                    names.append(fd.getColumnName()).append(", ");
                 }
             });
             fieldNames = names.toString();

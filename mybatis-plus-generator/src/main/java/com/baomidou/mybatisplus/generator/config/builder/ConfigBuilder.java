@@ -656,6 +656,16 @@ public class ConfigBuilder {
                     }
                     // 处理其它信息
                     field.setName(columnName);
+                    String newColumnName = columnName;
+                    IKeyWordsHandler keyWordsHandler = dataSourceConfig.getKeyWordsHandler();
+                    if (keyWordsHandler != null) {
+                        if (keyWordsHandler.isKeyWords(columnName)) {
+                            System.err.println(String.format("当前表[%s]存在字段[%s]为数据库关键字或保留字!", tableName, columnName));
+                            field.setKeyWords(true);
+                            newColumnName = keyWordsHandler.formatColumn(columnName);
+                        }
+                    }
+                    field.setColumnName(newColumnName);
                     field.setType(results.getString(dbQuery.fieldType()));
                     INameConvert nameConvert = strategyConfig.getNameConvert();
                     if (null != nameConvert) {
