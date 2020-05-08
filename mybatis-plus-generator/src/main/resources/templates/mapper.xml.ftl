@@ -30,7 +30,7 @@
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
 <#list table.commonFields as field>
-        ${field.name},
+        ${field.columnName},
 </#list>
         ${table.fieldNames}
     </sql>
