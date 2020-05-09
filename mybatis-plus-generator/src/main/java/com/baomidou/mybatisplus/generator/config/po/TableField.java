@@ -130,8 +130,10 @@ public class TableField {
      * @since 3.3.2
      */
     public String getAnnotationColumnName() {
-        if (columnName.startsWith("\"")) {
-            return String.format("\\%s\\", columnName);
+        if (keyWords) {
+            if (columnName.startsWith("\"")) {
+                return String.format("\\\"%s\\\"", name);
+            }
         }
         return columnName;
     }
