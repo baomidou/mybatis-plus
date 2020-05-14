@@ -174,7 +174,7 @@ public class IllegalSQLInterceptor implements Interceptor {
         }
         List<IndexInfo> indexInfos = getIndexInfos(dbName, tableName, connection);
         for (IndexInfo indexInfo : indexInfos) {
-            if (Objects.equals(columnName, indexInfo.getColumnName())) {
+            if (null != columnName && columnName.equalsIgnoreCase(indexInfo.getColumnName())) {
                 useIndexFlag = true;
                 break;
             }
