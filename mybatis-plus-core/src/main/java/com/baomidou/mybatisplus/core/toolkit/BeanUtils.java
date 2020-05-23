@@ -47,13 +47,13 @@ public final class BeanUtils {
     }
 
     /**
-     * map 装换为 java bean 对象
+     * map 转换为 java bean 对象
      *
      * @param map   转换 MAP
      * @param clazz 对象 Class
      * @return 返回 bean 对象
      */
-    public static <T> T mapToBean(Map<String, Object> map, Class<T> clazz) {
+    public static <T> T mapToBean(Map<String, ?> map, Class<T> clazz) {
         T bean = ClassUtils.newInstance(clazz);
         BeanMap.create(bean).putAll(map);
         return bean;
@@ -79,7 +79,7 @@ public final class BeanUtils {
      * @param clazz 对象 Class
      * @return 返回转换后的 bean 集合
      */
-    public static <T> List<T> mapsToBeans(List<Map<String, Object>> maps, Class<T> clazz) {
+    public static <T> List<T> mapsToBeans(List<? extends Map<String, ?>> maps, Class<T> clazz) {
         if (CollectionUtils.isEmpty(maps)) {
             return Collections.emptyList();
         }
