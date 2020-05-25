@@ -1,5 +1,45 @@
 ﻿# CHANGELOG
 
+## [v3.3.2] 2020.5.26
+- 分页参数提取,单元测试用例修复
+- 达梦数据库代码生成器表过滤支持
+- 微软数据库代码生成器表过滤支持
+- 修复代码生成器属性字段规则错误
+- SelectById 支持自定义方法名
+- 修复分页插件获取数据库类型问题
+- Json转换器空值处理
+- bugfix(mybatis-plus-generator):SQL类型返回错误问题
+- 调整未知方言异常,自动识别url转换小写匹配.
+- fix: 初始化 TableInfo 中遇到多个字段有 @TableId 注解时未能抛出异常的问题
+- SuperController有Class参数的set方法
+- 增加方法StrategyConfig.setSuperServiceImplClass(java.lang.Class<?>).
+- 代码生成器命名策略调整.
+- 扩展分页缓存key值计算.
+- 去除方法推测,直接访问属性字段.
+- 修正枚举处理器类型不匹配比较.
+- 修改表前缀匹配方式
+- 修改在Mybatis全局配置文件中设置分页插件参数不生效问题
+- 修改在Mybatis全局配置文件中设置分页插件参数不生效问
+- 修复PR未指定解析器的时候引发空指针
+- 增加分页插件limit参数配置
+- 修复指定superEntityClass重复生成父类字段问题
+- 无主键的情况无需导入IdType与TableId包
+- 调整生成BaseResultMap格式
+- 支持lombok模式下选择是否进行链式set生成
+- 修复解析器for update错误
+- 过滤PG约束列(只留下主键约束)
+- 增加生成器禁用模板生成
+- fix(kotlin): 修复动态表名 BUG，最大努力替换表名
+- 修复PG约束生成重复属性字段问题
+- fix(kotlin): 将 LambdaUtils 中缓存的 key 改为 String
+- 代码生成器增加数据库关键字处理接口
+- fix github/issues/2454 支持注解可继承
+- 新增 AES 加密数据库用户名密码
+- 优化方法入参泛型，支持更多类型
+- 修复代码生成器开启移除is前缀生成实体缺少包导入
+- fixed github issues/2470
+
+
 ## [v3.3.1] 2020.1.17
 - 新增`TableName`注解属性`excludeProperty`支持排除字段
 - 新增ServiceImpl#entityClass属性，减少泛型提取
