@@ -123,8 +123,12 @@ public class TableInfo {
     }
 
     public TableInfo setImportPackages(String pkg) {
-        importPackages.add(pkg);
-        return this;
+        if (importPackages.contains(pkg)) {
+            return this;
+        } else {
+            importPackages.add(pkg);
+            return this;
+        }
     }
 
     /**
