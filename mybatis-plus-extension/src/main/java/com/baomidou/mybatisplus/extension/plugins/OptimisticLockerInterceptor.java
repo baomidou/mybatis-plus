@@ -33,7 +33,6 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * Optimistic Lock Light version
@@ -139,10 +138,5 @@ public class OptimisticLockerInterceptor implements Interceptor {
             return Plugin.wrap(target, this);
         }
         return target;
-    }
-
-    @Override
-    public void setProperties(Properties properties) {
-        // to do nothing
     }
 }

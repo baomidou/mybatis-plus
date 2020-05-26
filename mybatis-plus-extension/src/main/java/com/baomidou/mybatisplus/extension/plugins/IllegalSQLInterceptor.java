@@ -348,11 +348,6 @@ public class IllegalSQLInterceptor implements Interceptor {
         return target;
     }
 
-    @Override
-    public void setProperties(Properties prop) {
-
-    }
-
     /**
      * 索引对象
      */
