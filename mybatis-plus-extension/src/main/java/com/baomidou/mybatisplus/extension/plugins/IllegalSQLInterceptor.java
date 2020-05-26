@@ -339,19 +339,7 @@ public class IllegalSQLInterceptor implements Interceptor {
         cacheValidResult.add(md5Base64);
         return invocation.proceed();
     }
-
-    @Override
-    public Object plugin(Object target) {
-        if (target instanceof StatementHandler) {
-            return Plugin.wrap(target, this);
-        }
-        return target;
-    }
-
-    @Override
-    public void setProperties(Properties prop) {
-
-    }
+    
 
     /**
      * 索引对象

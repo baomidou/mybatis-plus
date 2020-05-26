@@ -66,15 +66,7 @@ public class SqlExplainInterceptor extends AbstractSqlParserHandler implements I
         }
         return invocation.proceed();
     }
-
-    @Override
-    public Object plugin(Object target) {
-        if (target instanceof Executor) {
-            return Plugin.wrap(target, this);
-        }
-        return target;
-    }
-
+    
     @Override
     public void setProperties(Properties prop) {
         this.properties = prop;

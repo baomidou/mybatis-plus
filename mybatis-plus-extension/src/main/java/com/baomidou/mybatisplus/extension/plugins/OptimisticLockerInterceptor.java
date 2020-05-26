@@ -133,16 +133,5 @@ public class OptimisticLockerInterceptor implements Interceptor {
         return originalVersionVal;
     }
 
-    @Override
-    public Object plugin(Object target) {
-        if (target instanceof Executor) {
-            return Plugin.wrap(target, this);
-        }
-        return target;
-    }
-
-    @Override
-    public void setProperties(Properties properties) {
-        // to do nothing
-    }
+   
 }

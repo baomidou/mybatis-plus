@@ -262,14 +262,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
     protected void handlerOverflow(IPage<?> page) {
         page.setCurrent(1);
     }
-
-    @Override
-    public Object plugin(Object target) {
-        if (target instanceof StatementHandler) {
-            return Plugin.wrap(target, this);
-        }
-        return target;
-    }
+    
 
     @Override
     public void setProperties(Properties prop) {
