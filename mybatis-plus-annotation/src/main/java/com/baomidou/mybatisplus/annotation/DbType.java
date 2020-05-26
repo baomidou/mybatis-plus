@@ -97,6 +97,11 @@ public enum DbType {
     GAUSS("zenith", "Gauss 数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.GaussDialect"),
 
     /**
+     * GBase
+     */
+    GBASE("gbase", "南大通用数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.GBaseDialect"),
+
+    /**
      * UNKONWN DB
      */
     OTHER("other", "其他数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.UnknownDialect");
