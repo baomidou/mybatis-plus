@@ -416,6 +416,7 @@ public class TableInfo implements Constants {
             ResultMap resultMap = new ResultMap.Builder(configuration, id, entityType, resultMappings).build();
             configuration.addResultMap(resultMap);
             this.resultMap = id;
+            this.initResultMap = true;
         }
     }
 
