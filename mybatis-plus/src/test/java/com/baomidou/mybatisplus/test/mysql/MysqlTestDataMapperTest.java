@@ -62,8 +62,8 @@ class MysqlTestDataMapperTest {
 
     protected final List<String> list = Arrays.asList("1", "2", "3");
     protected final Map<String, Object> map = list.parallelStream().collect(toMap(identity(), identity()));
-    private final int success = 1;
-    private final int fail = 0;
+    private static final int success = 1;
+    private static final int fail = 0;
     @Resource(name = "commonDataMapper")
     protected CommonDataMapper commonDataMapper;
     @Resource(name = "commonDataChildrenMapper")
