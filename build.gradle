@@ -79,7 +79,8 @@ ext {
         "swagger-annotations"        : "io.swagger:swagger-annotations:1.6.1",
         //cache
         "mybatis-ehcache"            : "org.mybatis.caches:mybatis-ehcache:1.2.1",
-        "mybatis-redis"              : "org.mybatis.caches:mybatis-redis:1.0.0-beta2"
+        "mybatis-redis"              : "org.mybatis.caches:mybatis-redis:1.0.0-beta2",
+        "mybatis-caffeine"           : "org.mybatis.caches:mybatis-caffeine:1.0.0-beta1"
     ]
 }
 
@@ -144,15 +145,15 @@ subprojects {
     dependencies {
         annotationProcessor "${lib.lombok}"
         compileOnly "${lib.lombok}"
-
         testAnnotationProcessor "${lib.lombok}"
         testCompileOnly "${lib.lombok}"
-        testImplementation("${lib["assertj-core"]}")
-        testImplementation("${lib["junit-jupiter-api"]}")
-        testRuntimeOnly("${lib["junit-jupiter-engine"]}")
-        testImplementation("org.mockito:mockito-junit-jupiter:3.3.3")
-        testImplementation("${lib["lagarto"]}")
-        testImplementation("${lib["logback-classic"]}")
+
+        testImplementation "${lib["assertj-core"]}"
+        testImplementation "${lib["junit-jupiter-api"]}"
+        testRuntimeOnly "${lib["junit-jupiter-engine"]}"
+        testImplementation "org.mockito:mockito-junit-jupiter:3.3.3"
+        testImplementation "${lib["lagarto"]}"
+        testImplementation "${lib["logback-classic"]}"
     }
 
     //noinspection GroovyAssignabilityCheck

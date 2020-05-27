@@ -1,16 +1,16 @@
 apply plugin: 'kotlin'
 
 dependencies {
-    api(project(":mybatis-plus-core"))
-    api("${lib["mybatis-spring"]}")
+    api project(":mybatis-plus-core")
+    api "${lib."mybatis-spring"}"
 
-    implementation("${lib["kotlin-stdlib-jdk8"]}")
-    implementation("${lib["kotlin-reflect"]}")
-    implementation("${lib["spring-context-support"]}")
-    implementation("${lib["spring-jdbc"]}")
-    implementation("${lib["slf4j-api"]}")
-    implementation("${lib["p6spy"]}")
-    implementation("${lib["jackson"]}")
-    implementation("${lib["fastjson"]}")
-    implementation("${lib["gson"]}")
+    implementation "${lib."kotlin-stdlib-jdk8"}"
+    implementation "${lib."kotlin-reflect"}"
+    implementation "${lib."spring-context-support"}"
+    implementation "${lib."spring-jdbc"}"
+    implementation "${lib."slf4j-api"}"
+    implementation "${lib."p6spy"}"
+    implementation "${lib."jackson"}"
+    implementation "${lib."fastjson"}"
+    implementation "${lib."gson"}"
 }
