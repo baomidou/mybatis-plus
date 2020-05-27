@@ -1,12 +1,12 @@
 apply plugin: 'org.jetbrains.kotlin.jvm'
+
 dependencies {
-    api project(":mybatis-plus-annotation")
-    api "${lib.'jsqlparser'}"
-    api "${lib.mybatis}"
+    api(project(":mybatis-plus-annotation"))
+    api("${lib.'jsqlparser'}")
+    api("${lib.mybatis}")
 
-    implementation "${lib.cglib}"
-    implementation "${lib.'spring-aop'}"
-    implementation "${lib.'mybatis-ehcache'}"
-    implementation "${lib.'mybatis-redis'}"
-
+    implementation("${lib.cglib}")
+    implementation("${lib.'spring-aop'}")
+    implementation("${lib.'mybatis-ehcache'}")
+    implementation("${lib.'mybatis-redis'}")
 }
