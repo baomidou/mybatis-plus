@@ -58,6 +58,9 @@ public class TenantSqlParserTest {
         select("select * from user where id = 1 or id in (select id from user)",
             "select * from user where (id = 1 or id in (select id from user where t_id in (1, 2))) and t_id in (1, 2)");
 
+        select("select * from user group by date(date_time)",
+            "select * from user where t_id in (1, 2) group by date(date_time)");
+
         update("update user set age = 1",
             "update user set age = 1 where t_id = 1");
 
