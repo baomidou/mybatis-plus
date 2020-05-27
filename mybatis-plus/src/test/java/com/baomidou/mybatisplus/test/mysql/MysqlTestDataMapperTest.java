@@ -143,4 +143,13 @@ class MysqlTestDataMapperTest {
         map2.put("`order`", 5);
         assertEquals(fail, mysqlMapper.deleteByMap(map2));
     }
+
+    @Test
+    void a05_select() {
+        long id = 4L;
+        List<ResultMapEntity> entitys = resultMapEntityMapper.selectBatchIds(Collections.singletonList(id));
+        assertThat(entitys).isNotEmpty();
+        assertThat(entitys.size()).isEqualTo(1);
+        assertThat(entitys.get(0).getColumn4()).isNotNull();
+    }
 }
