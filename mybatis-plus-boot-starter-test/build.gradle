@@ -3,14 +3,9 @@
 dependencies {
     api(project(":mybatis-plus-boot-starter"))
     implementation(enforcedPlatform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}"))
-    api('org.springframework.boot:spring-boot-autoconfigure')
-    api('org.springframework.boot:spring-boot-test-autoconfigure')
-    api('org.springframework.boot:spring-boot-test')
-    api('org.springframework:spring-test') {
-        exclude module: "commons-logging"
-    }
-    api('org.springframework:spring-tx')
+    api("org.springframework.boot:spring-boot-autoconfigure")
+    api("org.springframework.boot:spring-boot-starter-test")
+    api("org.springframework:spring-tx")
     implementation("${lib.'junit-jupiter-api'}")
-    testCompile("${lib.h2}")
-    api('org.springframework.boot:spring-boot-starter-test')
+    testImplementation("${lib.h2}")
 }
