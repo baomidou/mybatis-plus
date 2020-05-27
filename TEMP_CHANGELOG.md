@@ -1,2 +1,2 @@
-- fix: 初始化 TableInfo 中遇到多个字段有 @TableId 注解时未能抛出异常的问题
-- feat: 初始化 TableInfo 中遇到主键字段有 @TableField 注解则打印 warn 日志进行提醒
+- fix: @TableName.autoResultMap=true 情况下, 内置的 selectBody 将不会进行 as ,使用了的需要注意!!!
+- feat: 新增 mybatis-plus-boot-starter-test 模块
