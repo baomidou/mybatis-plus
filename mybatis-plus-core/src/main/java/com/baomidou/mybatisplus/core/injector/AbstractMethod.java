@@ -136,10 +136,10 @@ public abstract class AbstractMethod implements Constants {
      * @return sql 脚本
      */
     protected String sqlSelectColumns(TableInfo table, boolean queryWrapper) {
-        /* 假设存在 resultMap 映射返回 */
+        /* 假设存在用户自定义的 resultMap 映射返回 */
         String selectColumns = ASTERISK;
-        if (table.getResultMap() == null || (table.getResultMap() != null && table.isInitResultMap())) {
-            /* 普通查询 */
+        if (table.getResultMap() == null || table.isAutoInitResultMap()) {
+            /* 未设置 resultMap 或者 resultMap 是自动构建的,视为属于mp的规则范围内 */
             selectColumns = table.getAllSqlSelect();
         }
         if (!queryWrapper) {

@@ -41,6 +41,7 @@ public class ResultMapEntity {
     private String column1;
     private String column2;
     private String column3;
+    @TableField("column_1234")
     private String column4;
     @TableField(typeHandler = ListTypeHandler.class)
     private List<String> list;

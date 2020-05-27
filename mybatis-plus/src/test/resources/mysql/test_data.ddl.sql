@@ -41,14 +41,14 @@ CREATE TABLE mysql_data
 
 CREATE TABLE result_map_entity
 (
-    id      BIGINT primary key,
-    column1 varchar(200) default '1',
-    column2 varchar(200) default '2',
-    column3 varchar(200) default '3',
-    column4 varchar(200) default '4',
-    list    varchar(200),
-    map     varchar(200),
-    mapp    varchar(200)
+    id          BIGINT primary key,
+    column1     varchar(200) default '1',
+    column2     varchar(200) default '2',
+    column3     varchar(200) default '3',
+    column_1234 varchar(200) default '4',
+    list        varchar(200),
+    map         varchar(200),
+    mapp        varchar(200)
 ) ENGINE = innodb
   DEFAULT CHARSET = utf8;
 

@@ -199,7 +199,9 @@ public class TableFieldInfo implements Constants {
 
         this.column = column;
         this.sqlSelect = column;
-        if (TableInfoHelper.checkRelated(tableInfo.isUnderCamel(), this.property, this.column)) {
+        if (tableInfo.getResultMap() == null && !tableInfo.isAutoInitResultMap() &&
+            TableInfoHelper.checkRelated(tableInfo.isUnderCamel(), this.property, this.column)) {
+            /* 未设置 resultMap 也未开启自动构建 resultMap, 字段规则又不符合 mybatis 的自动封装规则 */
             String propertyFormat = dbConfig.getPropertyFormat();
             String asProperty = this.property;
             if (StringUtils.isNotBlank(propertyFormat)) {
@@ -244,7 +246,7 @@ public class TableFieldInfo implements Constants {
         this.whereStrategy = dbConfig.getSelectStrategy();
         this.initLogicDelete(dbConfig, field);
 
-        String column = field.getName();
+        String column = this.property;
         if (tableInfo.isUnderCamel()) {
             /* 开启字段下划线申明 */
             column = StringUtils.camelToUnderline(column);
@@ -260,9 +262,10 @@ public class TableFieldInfo implements Constants {
         }
 
         this.column = column;
-        if (!TableInfoHelper.checkRelated(tableInfo.isUnderCamel(), this.property, this.column)) {
-            this.sqlSelect = column;
-        } else {
+        this.sqlSelect = column;
+        if (tableInfo.getResultMap() == null && !tableInfo.isAutoInitResultMap() &&
+            TableInfoHelper.checkRelated(tableInfo.isUnderCamel(), this.property, this.column)) {
+            /* 未设置 resultMap 也未开启自动构建 resultMap, 字段规则又不符合 mybatis 的自动封装规则 */
             String propertyFormat = dbConfig.getPropertyFormat();
             String asProperty = this.property;
             if (StringUtils.isNotBlank(propertyFormat)) {
