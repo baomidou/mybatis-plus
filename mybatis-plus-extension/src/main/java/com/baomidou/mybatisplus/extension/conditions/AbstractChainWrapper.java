@@ -58,6 +58,16 @@ public abstract class AbstractChainWrapper<T, R, Children extends AbstractChainW
         return (AbstractWrapper) wrapperChildren;
     }
 
+    public Children setEntity(T entity) {
+        getWrapper().setEntity(entity);
+        return typedThis;
+    }
+
+    public Children setEntityClass(Class<T> entityClass) {
+        getWrapper().setEntityClass(entityClass);
+        return typedThis;
+    }
+
     @Override
     public <V> Children allEq(boolean condition, Map<R, V> params, boolean null2IsNull) {
         getWrapper().allEq(condition, params, null2IsNull);

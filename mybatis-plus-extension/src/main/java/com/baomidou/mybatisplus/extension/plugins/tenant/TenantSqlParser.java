@@ -26,6 +26,7 @@ import lombok.experimental.Accessors;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Parenthesis;
+import net.sf.jsqlparser.expression.ValueListExpression;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.relational.*;
@@ -130,7 +131,7 @@ public class TenantSqlParser extends AbstractJsqlParser {
         //获得where条件表达式
         EqualsTo equalsTo = new EqualsTo();
         equalsTo.setLeftExpression(this.getAliasColumn(table));
-        equalsTo.setRightExpression(tenantHandler.getTenantId(true));
+        equalsTo.setRightExpression(tenantHandler.getTenantId(false));
         if (null != where) {
             if (where instanceof OrExpression) {
                 return new AndExpression(equalsTo, new Parenthesis(where));
@@ -227,15 +228,8 @@ public class TenantSqlParser extends AbstractJsqlParser {
      * 默认tenantId的表达式： LongValue(1)这种依旧支持
      */
     protected Expression builderExpression(Expression currentExpression, Table table) {
-        final Expression tenantExpression = tenantHandler.getTenantId(false);
-        Expression appendExpression;
-        if (!(tenantExpression instanceof SupportsOldOracleJoinSyntax)) {
-            appendExpression = new EqualsTo();
-            ((EqualsTo) appendExpression).setLeftExpression(this.getAliasColumn(table));
-            ((EqualsTo) appendExpression).setRightExpression(tenantExpression);
-        } else {
-            appendExpression = processTableAlias4CustomizedTenantIdExpression(tenantExpression, table);
-        }
+        final Expression tenantExpression = tenantHandler.getTenantId(true);
+        Expression appendExpression = this.processTableAlias4CustomizedTenantIdExpression(tenantExpression, table);
         if (currentExpression == null) {
             return appendExpression;
         }
@@ -280,26 +274,33 @@ public class TenantSqlParser extends AbstractJsqlParser {
      * @return 加上别名的多租户字段表达式
      */
     protected Expression processTableAlias4CustomizedTenantIdExpression(Expression expression, Table table) {
-        //cannot add table alias for customized tenantId expression,
-        // when tables including tenantId at the join table poistion
-        return expression;
+        Expression target;
+        if (expression instanceof ValueListExpression) {
+            InExpression inExpression = new InExpression();
+            inExpression.setLeftExpression(this.getAliasColumn(table));
+            inExpression.setRightItemsList(((ValueListExpression) expression).getExpressionList());
+            target = inExpression;
+        } else {
+            EqualsTo equalsTo = new EqualsTo();
+            equalsTo.setLeftExpression(this.getAliasColumn(table));
+            equalsTo.setRightExpression(expression);
+            target = equalsTo;
+        }
+        return target;
     }
 
     /**
      * 租户字段别名设置
-     * <p>tableName.tenantId 或 tableAlias.tenantId</p>
+     * <p>tenantId 或 tableAlias.tenantId</p>
      *
      * @param table 表对象
      * @return 字段
      */
     protected Column getAliasColumn(Table table) {
         StringBuilder column = new StringBuilder();
-        if (null == table.getAlias()) {
-            column.append(table.getName());
-        } else {
-            column.append(table.getAlias().getName());
+        if (table.getAlias() != null) {
+            column.append(table.getAlias().getName()).append(StringPool.DOT);
         }
-        column.append(StringPool.DOT);
         column.append(tenantHandler.getTenantIdColumn());
         return new Column(column.toString());
     }

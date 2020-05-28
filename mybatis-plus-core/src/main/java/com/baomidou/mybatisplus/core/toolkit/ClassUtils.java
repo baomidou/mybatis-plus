@@ -119,6 +119,20 @@ public final class ClassUtils {
             throw ExceptionUtils.mpe("实例化对象时出现错误,请尝试给 %s 添加无参的构造方法", e, clazz.getName());
         }
     }
+    
+    /**
+     * 实例化对象.
+     *
+     * @param clazzName 类名
+     * @param <T>       类型
+     * @return 实例
+     * @since 3.3.2
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T newInstance(String clazzName) {
+        return (T) newInstance(toClassConfident(clazzName));
+    }
+    
 
     /**
      * <p>

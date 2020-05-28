@@ -54,6 +54,11 @@ public class DataSourceConfig {
      */
     private ITypeConvert typeConvert;
     /**
+     * 关键字处理器
+     * @since 3.3.2
+     */
+    private IKeyWordsHandler keyWordsHandler;
+    /**
      * 驱动连接的URL
      */
     private String url;
@@ -125,6 +130,10 @@ public class DataSourceConfig {
             return DbType.H2;
         } else if (str.contains("kingbase") || str.contains("kingbase8")) {
             return DbType.KINGBASE_ES;
+        } else if (str.contains("dm")) {
+            return DbType.DM;
+        } else if (str.contains("zenith")) {
+            return DbType.GAUSS;
         } else {
             return DbType.OTHER;
         }

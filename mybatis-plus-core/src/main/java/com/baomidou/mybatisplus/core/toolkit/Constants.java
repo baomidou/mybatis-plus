@@ -33,6 +33,14 @@ public interface Constants extends StringPool {
      */
     String MD5 = "MD5";
     /**
+     * AES
+     */
+    String AES = "AES";
+    /**
+     * AES 算法
+     */
+    String AES_CBC_CIPHER = "AES/CBC/PKCS5Padding";
+    /**
      * 实体类
      */
     String ENTITY = "et";

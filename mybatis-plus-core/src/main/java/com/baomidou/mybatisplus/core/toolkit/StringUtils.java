@@ -137,7 +137,7 @@ public final class StringUtils {
     public static boolean isNotBlank(final CharSequence cs) {
         return !isBlank(cs);
     }
-    
+
     /**
      * 猜测方法属性对应的 Getter 名称，具体规则请参考 JavaBeans 规范
      *
@@ -428,7 +428,7 @@ public final class StringUtils {
     }
 
     /**
-     * 判断对象是否为空
+     * 判断对象是否不为空
      *
      * @param object ignore
      * @return ignore
@@ -487,6 +487,7 @@ public final class StringUtils {
     }
 
     /**
+     * 判断是否以某个字符串结尾（区分大小写）
      * Check if a String ends with a specified suffix.
      * <p>
      * <code>null</code>s are handled without exceptions. Two <code>null</code>
@@ -515,6 +516,7 @@ public final class StringUtils {
 
 
     /**
+     * 判断是否以某个字符串结尾（不区分大小写）
      * Case insensitive check if a String ends with a specified suffix.
      * <p>
      * <code>null</code>s are handled without exceptions. Two <code>null</code>

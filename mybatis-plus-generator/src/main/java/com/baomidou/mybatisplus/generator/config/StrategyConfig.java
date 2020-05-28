@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.generator.config;
 
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
+import com.baomidou.mybatisplus.core.toolkit.ClassUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.config.po.LikeTable;
 import com.baomidou.mybatisplus.generator.config.po.TableFill;
@@ -97,14 +98,14 @@ public class StrategyConfig {
      */
     private String superControllerClass;
     /**
-     * 需要包含的表名（与exclude二选一配置）
-     * @since 3.3.0 正则匹配不再支持,请使用{@link #setLikeTable(LikeTable)}}
+     * 需要包含的表名，允许正则表达式（与exclude二选一配置）<br/>
+     * 当{@link #enableSqlFilter}为true时，正则表达式无效.
      */
     @Setter(AccessLevel.NONE)
     private String[] include = null;
     /**
-     * 需要排除的表名
-     * @since 3.3.0 正则匹配不再支持,请使用{@link #setNotLikeTable(LikeTable)}}
+     * 需要排除的表名，允许正则表达式<br/>
+     * 当{@link #enableSqlFilter}为true时，正则表达式无效.
      */
     @Setter(AccessLevel.NONE)
     private String[] exclude = null;
@@ -122,8 +123,21 @@ public class StrategyConfig {
      * 【实体】是否为构建者模型（默认 false）<br>
      * -----------------------------------<br>
      * public User setName(String name) { this.name = name; return this; }
+     *
+     * @deprecated 3.3.2 {@link #chainModel}
      */
+    @Deprecated
     private boolean entityBuilderModel = false;
+    
+    /**
+     * 【实体】是否为链式模型（默认 false）<br>
+     * -----------------------------------<br>
+     * public User setName(String name) { this.name = name; return this; }
+     *
+     * @since 3.3.2
+     */
+    private boolean chainModel = false;
+    
     /**
      * 【实体】是否为lombok模型（默认 false）<br>
      * <a href="https://projectlombok.org/">document</a>
@@ -165,9 +179,7 @@ public class StrategyConfig {
      */
     private List<TableFill> tableFillList = null;
     /**
-     * 启用sql过滤
-     * 语法不能支持使用sql过滤表的话，可以考虑关闭此开关.
-     * 目前所知微软系需要关闭，其他数据库等待反馈，sql可能要改动一下才能支持，没数据库环境搞，请手动关闭使用内存过滤的方式。
+     * 启用sql过滤，语法不能支持使用sql过滤表的话，可以考虑关闭此开关.
      *
      * @since 3.3.1
      */
@@ -264,10 +276,17 @@ public class StrategyConfig {
         this.fieldPrefix = fieldPrefixs;
         return this;
     }
-
+    
+    /**
+     * 设置实体父类
+     *
+     * @param superEntityClass 类全名称
+     * @return this
+     * @deprecated 3.3.2 {@link #setSuperEntityClass(Class)}
+     */
+    @Deprecated
     public StrategyConfig setSuperEntityClass(String superEntityClass) {
-        this.superEntityClass = superEntityClass;
-        return this;
+        return setSuperEntityClass(ClassUtils.toClassConfident(superEntityClass));
     }
 
 
@@ -353,12 +372,28 @@ public class StrategyConfig {
         }).distinct().toArray(String[]::new);
     }
     
+    
     /**
-     * @deprecated 3.0.7  please use {@link #setEntityTableFieldAnnotationEnable(boolean)}
+     * 是否为构建者模型
+     *
+     * @return 是否为构建者模型
+     * @deprecated 3.3.2 {@link #isChainModel()}
      */
     @Deprecated
-    public StrategyConfig entityTableFieldAnnotationEnable(boolean isEnableAnnotation) {
-        entityTableFieldAnnotationEnable = isEnableAnnotation;
-        return this;
+    public boolean isEntityBuilderModel() {
+        return isChainModel();
     }
+    
+    /**
+     * 设置是否为构建者模型
+     *
+     * @param entityBuilderModel 是否为构建者模型
+     * @return this
+     * @deprecated 3.3.2 {@link #setChainModel(boolean)}
+     */
+    @Deprecated
+    public StrategyConfig setEntityBuilderModel(boolean entityBuilderModel) {
+        return setChainModel(entityBuilderModel);
+    }
+    
 }

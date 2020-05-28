@@ -45,7 +45,7 @@ public final class LambdaUtils {
     /**
      * SerializedLambda 反序列化缓存
      */
-    private static final Map<Class<?>, WeakReference<SerializedLambda>> FUNC_CACHE = new ConcurrentHashMap<>();
+    private static final Map<String, WeakReference<SerializedLambda>> FUNC_CACHE = new ConcurrentHashMap<>();
 
     /**
      * 解析 lambda 表达式, 该方法只是调用了 {@link SerializedLambda#resolve(SFunction)} 中的方法，在此基础上加了缓存。
@@ -58,13 +58,14 @@ public final class LambdaUtils {
      */
     public static <T> SerializedLambda resolve(SFunction<T, ?> func) {
         Class<?> clazz = func.getClass();
-        return Optional.ofNullable(FUNC_CACHE.get(clazz))
-                .map(WeakReference::get)
-                .orElseGet(() -> {
-                    SerializedLambda lambda = SerializedLambda.resolve(func);
-                    FUNC_CACHE.put(clazz, new WeakReference<>(lambda));
-                    return lambda;
-                });
+        String canonicalName = clazz.getCanonicalName();
+        return Optional.ofNullable(FUNC_CACHE.get(canonicalName))
+            .map(WeakReference::get)
+            .orElseGet(() -> {
+                SerializedLambda lambda = SerializedLambda.resolve(func);
+                FUNC_CACHE.put(canonicalName, new WeakReference<>(lambda));
+                return lambda;
+            });
     }
 
     /**
@@ -105,7 +106,7 @@ public final class LambdaUtils {
         }
 
         info.getFieldList().forEach(i ->
-                map.put(formatKey(i.getProperty()), new ColumnCache(i.getColumn(), i.getSqlSelect()))
+            map.put(formatKey(i.getProperty()), new ColumnCache(i.getColumn(), i.getSqlSelect()))
         );
         return map;
     }
@@ -122,5 +123,5 @@ public final class LambdaUtils {
             return info == null ? null : createColumnCacheMap(info);
         });
     }
-
+    
 }

@@ -273,16 +273,26 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
 
     @Override
     public void setProperties(Properties prop) {
+        String countSqlParser = prop.getProperty("countSqlParser");
+        String overflow = prop.getProperty("overflow");
+        String limit = prop.getProperty("limit");
         String dialectType = prop.getProperty("dialectType");
         String dialectClazz = prop.getProperty("dialectClazz");
+        setOverflow(Boolean.parseBoolean(overflow));
+        if (StringUtils.isNotBlank(countSqlParser)) {
+            setCountSqlParser(ClassUtils.newInstance(countSqlParser));
+        }
         if (StringUtils.isNotBlank(dialectType)) {
             setDialectType(dialectType);
         }
         if (StringUtils.isNotBlank(dialectClazz)) {
             setDialectClazz(dialectClazz);
         }
+        if (StringUtils.isNotBlank(limit)) {
+            setLimit(Long.parseLong(limit));
+        }
     }
-
+    
     /**
      * 设置方言类型
      *

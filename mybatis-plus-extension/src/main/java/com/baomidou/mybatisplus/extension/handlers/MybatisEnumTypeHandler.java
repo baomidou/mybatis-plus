@@ -159,8 +159,8 @@ public class MybatisEnumTypeHandler<E extends Enum<?>> extends BaseTypeHandler<E
      * @since 3.3.0
      */
     protected boolean equalsValue(Object sourceValue, Object targetValue) {
-        String sValue = Objects.toString(sourceValue);
-        String tValue = Objects.toString(targetValue);
+        String sValue = Objects.toString(sourceValue).trim();
+        String tValue = Objects.toString(targetValue).trim();
         if (sourceValue instanceof Number && targetValue instanceof Number
             && new BigDecimal(sValue).compareTo(new BigDecimal(tValue)) == 0) {
             return true;

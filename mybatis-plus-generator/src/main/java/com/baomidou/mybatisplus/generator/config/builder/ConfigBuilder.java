@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 /**
  * 配置汇总 传递给文件生成工具
  *
- * @author YangHu, tangguo, hubin
+ * @author YangHu, tangguo, hubin, Juzi
  * @since 2016-08-30
  */
 public class ConfigBuilder {
@@ -238,7 +238,7 @@ public class ConfigBuilder {
      */
     private void handlerPackage(TemplateConfig template, String outputDir, PackageConfig config) {
         // 包信息
-        packageInfo = new HashMap<>(8);
+        packageInfo = new HashMap<>(10);
         packageInfo.put(ConstVal.MODULE_NAME, config.getModuleName());
         packageInfo.put(ConstVal.ENTITY, joinPackage(config.getParent(), config.getEntity()));
         packageInfo.put(ConstVal.MAPPER, joinPackage(config.getParent(), config.getMapper()));
@@ -253,7 +253,7 @@ public class ConfigBuilder {
             pathInfo = configPathInfo;
         } else {
             // 生成路径信息
-            pathInfo = new HashMap<>(6);
+            pathInfo = new HashMap<>(10);
             setPathInfo(pathInfo, template.getEntity(getGlobalConfig().isKotlin()), outputDir, ConstVal.ENTITY_PATH, ConstVal.ENTITY);
             setPathInfo(pathInfo, template.getMapper(), outputDir, ConstVal.MAPPER_PATH, ConstVal.MAPPER);
             setPathInfo(pathInfo, template.getXml(), outputDir, ConstVal.XML_PATH, ConstVal.XML);
@@ -316,7 +316,7 @@ public class ConfigBuilder {
         superEntityClass = config.getSuperEntityClass();
         superControllerClass = config.getSuperControllerClass();
     }
-    
+
     /**
      * 处理表对应的类名称
      *
@@ -398,7 +398,7 @@ public class ConfigBuilder {
             // 无父类开启 AR 模式
             tableInfo.getImportPackages().add(com.baomidou.mybatisplus.extension.activerecord.Model.class.getCanonicalName());
         }
-        if (null != globalConfig.getIdType()) {
+        if (null != globalConfig.getIdType() && tableInfo.getFields().stream().anyMatch(TableField::isKeyFlag)) {
             // 指定需要 IdType 场景
             tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotation.IdType.class.getCanonicalName());
             tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotation.TableId.class.getCanonicalName());
@@ -602,7 +602,6 @@ public class ConfigBuilder {
                 tableName = tableName.toUpperCase();
                 tableFieldsSql = String.format(tableFieldsSql, tableName);
             } else if (DbType.H2 == dbType) {
-                tableName = tableName.toUpperCase();
                 try (PreparedStatement pkQueryStmt = connection.prepareStatement(String.format(H2Query.PK_QUERY_SQL, tableName));
                      ResultSet pkResults = pkQueryStmt.executeQuery()) {
                     while (pkResults.next()) {
@@ -656,6 +655,16 @@ public class ConfigBuilder {
                     }
                     // 处理其它信息
                     field.setName(columnName);
+                    String newColumnName = columnName;
+                    IKeyWordsHandler keyWordsHandler = dataSourceConfig.getKeyWordsHandler();
+                    if (keyWordsHandler != null) {
+                        if (keyWordsHandler.isKeyWords(columnName)) {
+                            System.err.println(String.format("当前表[%s]存在字段[%s]为数据库关键字或保留字!", tableName, columnName));
+                            field.setKeyWords(true);
+                            newColumnName = keyWordsHandler.formatColumn(columnName);
+                        }
+                    }
+                    field.setColumnName(newColumnName);
                     field.setType(results.getString(dbQuery.fieldType()));
                     INameConvert nameConvert = strategyConfig.getNameConvert();
                     if (null != nameConvert) {
@@ -667,17 +676,17 @@ public class ConfigBuilder {
                     if (commentSupported) {
                         field.setComment(results.getString(dbQuery.fieldComment()));
                     }
-                    if (strategyConfig.includeSuperEntityColumns(field.getName())) {
-                        // 跳过公共字段
-                        commonFieldList.add(field);
-                        continue;
-                    }
                     // 填充逻辑判断
                     List<TableFill> tableFillList = getStrategyConfig().getTableFillList();
                     if (null != tableFillList) {
                         // 忽略大写字段问题
                         tableFillList.stream().filter(tf -> tf.getFieldName().equalsIgnoreCase(field.getName()))
                             .findFirst().ifPresent(tf -> field.setFill(tf.getFieldFill().name()));
+                    }
+                    if (strategyConfig.includeSuperEntityColumns(field.getName())) {
+                        // 跳过公共字段
+                        commonFieldList.add(field);
+                        continue;
                     }
                     fieldList.add(field);
                 }

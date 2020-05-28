@@ -40,6 +40,7 @@ public class TypeConvertRegistry {
         type_convert_enum_map.put(DbType.MARIADB, new MySqlTypeConvert());
         type_convert_enum_map.put(DbType.KINGBASE_ES, new KingbaseESTypeConvert());
         type_convert_enum_map.put(DbType.MYSQL, new MySqlTypeConvert());
+        type_convert_enum_map.put(DbType.GAUSS, new GaussTypeConvert());
     }
 
     public ITypeConvert getTypeConvert(DbType dbType) {

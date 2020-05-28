@@ -48,6 +48,18 @@ public class TableField {
     private String comment;
     private String fill;
     /**
+     * 是否关键字
+     *
+     * @since 3.3.2
+     */
+    private boolean keyWords;
+    /**
+     * 数据库字段（关键字含转义符号）
+     *
+     * @since 3.3.2
+     */
+    private String columnName;
+    /**
      * 自定义查询字段列表
      */
     private Map<String, Object> customMap;
@@ -58,7 +70,7 @@ public class TableField {
     }
 
     protected TableField setConvert(StrategyConfig strategyConfig) {
-        if (strategyConfig.isEntityTableFieldAnnotationEnable()) {
+        if (strategyConfig.isEntityTableFieldAnnotationEnable() || isKeyWords()) {
             this.convert = true;
             return this;
         }
@@ -110,4 +122,20 @@ public class TableField {
         }
         return firstChar.toUpperCase() + setGetName.substring(1);
     }
+    
+    /**
+     * 获取注解字段名称
+     *
+     * @return 字段
+     * @since 3.3.2
+     */
+    public String getAnnotationColumnName() {
+        if (keyWords) {
+            if (columnName.startsWith("\"")) {
+                return String.format("\\\"%s\\\"", name);
+            }
+        }
+        return columnName;
+    }
+    
 }

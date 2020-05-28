@@ -13,7 +13,6 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-
 package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
 
 import com.baomidou.mybatisplus.annotation.DbType;
@@ -48,6 +47,7 @@ public class DialectRegistry {
         dialect_enum_map.put(DbType.XU_GU, new XuGuDialect());
         dialect_enum_map.put(DbType.KINGBASE_ES, new KingbaseDialect());
         dialect_enum_map.put(DbType.PHOENIX, new PhoenixDialect());
+        dialect_enum_map.put(DbType.GAUSS, new GaussDialect());
     }
 
     public IDialect getDialect(DbType dbType) {

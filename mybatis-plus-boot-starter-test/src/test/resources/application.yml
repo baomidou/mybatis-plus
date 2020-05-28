@@ -1,0 +1,8 @@
+spring:
+    datasource:
+        schema: classpath:schema.sql
+
+logging:
+    level:
+        org.springframework.jdbc: debug
+        com.baomidou.mybatisplus.test.autoconfigure: debug

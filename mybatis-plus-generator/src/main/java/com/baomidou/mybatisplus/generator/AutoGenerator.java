@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.generator;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.Version;
@@ -23,6 +24,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.activerecord.Model;
 import com.baomidou.mybatisplus.generator.config.*;
 import com.baomidou.mybatisplus.generator.config.builder.ConfigBuilder;
+import com.baomidou.mybatisplus.generator.config.po.TableField;
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.baomidou.mybatisplus.generator.engine.AbstractTemplateEngine;
 import com.baomidou.mybatisplus.generator.engine.VelocityTemplateEngine;
@@ -36,6 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 生成文件
@@ -165,12 +168,18 @@ public class AutoGenerator {
             // Boolean类型is前缀处理
             if (config.getStrategyConfig().isEntityBooleanColumnRemoveIsPrefix()
                 && CollectionUtils.isNotEmpty(tableInfo.getFields())) {
-                tableInfo.getFields().stream().filter(field -> "boolean".equalsIgnoreCase(field.getPropertyType()))
-                    .filter(field -> field.getPropertyName().startsWith("is"))
-                    .forEach(field -> {
-                        field.setConvert(true);
-                        field.setPropertyName(StringUtils.removePrefixAfterPrefixToLower(field.getPropertyName(), 2));
-                    });
+                List<TableField> tableFields = tableInfo.getFields().stream().filter(field -> "boolean".equalsIgnoreCase(field.getPropertyType()))
+                    .filter(field -> field.getPropertyName().startsWith("is")).collect(Collectors.toList());
+                tableFields.forEach(field -> {
+                    //主键为is的情况基本上是不存在的.
+                    if (field.isKeyFlag()) {
+                        tableInfo.setImportPackages(TableId.class.getCanonicalName());
+                    } else {
+                        tableInfo.setImportPackages(com.baomidou.mybatisplus.annotation.TableField.class.getCanonicalName());
+                    }
+                    field.setConvert(true);
+                    field.setPropertyName(StringUtils.removePrefixAfterPrefixToLower(field.getPropertyName(), 2));
+                });
             }
         }
         return config.setTableInfoList(tableList);
