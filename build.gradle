@@ -108,6 +108,10 @@ subprojects {
         options.compilerArgs += ["-parameters"]
     }
 
+    tasks.withType(GenerateModuleMetadata) {
+        enabled = false
+    }
+
     jar {
         afterEvaluate {
             manifest {
