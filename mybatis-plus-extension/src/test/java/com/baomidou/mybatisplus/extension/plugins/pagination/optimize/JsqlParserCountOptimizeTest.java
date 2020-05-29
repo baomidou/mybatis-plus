@@ -1,5 +1,7 @@
 package com.baomidou.mybatisplus.extension.plugins.pagination.optimize;
 
+import com.baomidou.mybatisplus.core.parser.SqlInfo;
+import com.github.pagehelper.parser.CountSqlParser;
 import org.apache.ibatis.reflection.MetaObject;
 import org.junit.jupiter.api.Test;
 
@@ -29,5 +31,99 @@ class JsqlParserCountOptimizeTest {
 
         assertThat(parser.parser(metaObject, "select * from user u LEFT JOIN role r ON r.id = u.role_id WHERE u.xax = ? AND r.cc = ? AND r.qq = ?").getSql())
             .isEqualTo("SELECT COUNT(1) FROM user u LEFT JOIN role r ON r.id = u.role_id WHERE u.xax = ? AND r.cc = ? AND r.qq = ?");
+
+        /* 复杂sql */
+
+        SqlInfo parser = this.parser.parser(metaObject, "select\n" +
+            "IF(guideScenicSpotId IS NULL,voiceScenicSpotId,guideScenicSpotId) AS  scenicSpotId,\n" +
+            "IF(guideStatisticalDate IS NULL,voiceStatisticalDate,guideStatisticalDate) AS  statisticalDate,\n" +
+            "t.*\n" +
+            "from (\n" +
+            "SELECT g.scenicSpotId      AS guideScenicSpotId,\n" +
+            "       g.orderType         AS guideOrderType,\n" +
+            "       g.orderNum          AS guideOrderNum,\n" +
+            "       g.totalGetAmount    AS guideTotalGetAmount,\n" +
+            "       g.refundNum         AS guideRefundNum,\n" +
+            "       g.totalRefundAmount AS guideTotalRefundAmount,\n" +
+            "       g.statisticalDate   AS guideStatisticalDate,\n" +
+            "       v.scenicSpotId      AS voiceScenicSpotId,\n" +
+            "       v.orderType         AS voiceOrderType,\n" +
+            "       v.orderNum          AS voiceOrderNum,\n" +
+            "       v.totalGetAmount    AS voiceTotalGetAmount,\n" +
+            "       v.refundNum         AS voiceRefundNum,\n" +
+            "       v.totalRefundAmount AS voiceTotalRefundAmount,\n" +
+            "       v.statisticalDate   AS voiceStatisticalDate\n" +
+            "             FROM `v_guideOrder_day` g LEFT JOIN `v_voiceOrder_day` v ON g.`scenicSpotId` = v.`scenicSpotId`" +
+            " AND g.`statisticalDate` = v.`statisticalDate`\n" +
+            "             UNION ALL\n" +
+            "             SELECT g.scenicSpotId      AS guideScenicSpotId,\n" +
+            "                    g.orderType         AS guideOrderType,\n" +
+            "                    g.orderNum          AS guideOrderNum,\n" +
+            "                    g.totalGetAmount    AS guideTotalGetAmount,\n" +
+            "                    g.refundNum         AS guideRefundNum,\n" +
+            "                    g.totalRefundAmount AS guideTotalRefundAmount,\n" +
+            "                    g.statisticalDate   AS guideStatisticalDate,\n" +
+            "                    v.scenicSpotId      AS voiceScenicSpotId,\n" +
+            "                    v.orderType         AS voiceOrderType,\n" +
+            "                    v.orderNum          AS voiceOrderNum,\n" +
+            "                    v.totalGetAmount    AS voiceTotalGetAmount,\n" +
+            "                    v.refundNum         AS voiceRefundNum,\n" +
+            "                    v.totalRefundAmount AS voiceTotalRefundAmount,\n" +
+            "                    v.statisticalDate   AS voiceStatisticalDate\n" +
+            "             FROM `v_guideOrder_day` g\n" +
+            "                      RIGHT JOIN `v_voiceOrder_day` v\n" +
+            "                                 ON g.`scenicSpotId` = v.`scenicSpotId` AND\n" +
+            "                                    g.`statisticalDate` = v.`statisticalDate`\n" +
+            "         ) t\n" +
+            "    where 1=1");
+        System.out.println(parser.getSql());
+    }
+
+    @Test
+    void pageHelper() {
+        CountSqlParser parser = new CountSqlParser();
+        String sql = parser.getSimpleCountSql("select\n" +
+            "IF(guideScenicSpotId IS NULL,voiceScenicSpotId,guideScenicSpotId) AS  scenicSpotId,\n" +
+            "IF(guideStatisticalDate IS NULL,voiceStatisticalDate,guideStatisticalDate) AS  statisticalDate,\n" +
+            "t.*\n" +
+            "from (\n" +
+            "SELECT g.scenicSpotId      AS guideScenicSpotId,\n" +
+            "       g.orderType         AS guideOrderType,\n" +
+            "       g.orderNum          AS guideOrderNum,\n" +
+            "       g.totalGetAmount    AS guideTotalGetAmount,\n" +
+            "       g.refundNum         AS guideRefundNum,\n" +
+            "       g.totalRefundAmount AS guideTotalRefundAmount,\n" +
+            "       g.statisticalDate   AS guideStatisticalDate,\n" +
+            "       v.scenicSpotId      AS voiceScenicSpotId,\n" +
+            "       v.orderType         AS voiceOrderType,\n" +
+            "       v.orderNum          AS voiceOrderNum,\n" +
+            "       v.totalGetAmount    AS voiceTotalGetAmount,\n" +
+            "       v.refundNum         AS voiceRefundNum,\n" +
+            "       v.totalRefundAmount AS voiceTotalRefundAmount,\n" +
+            "       v.statisticalDate   AS voiceStatisticalDate\n" +
+            "             FROM `v_guideOrder_day` g LEFT JOIN `v_voiceOrder_day` v ON g.`scenicSpotId` = v.`scenicSpotId`" +
+            " AND g.`statisticalDate` = v.`statisticalDate`\n" +
+            "             UNION ALL\n" +
+            "             SELECT g.scenicSpotId      AS guideScenicSpotId,\n" +
+            "                    g.orderType         AS guideOrderType,\n" +
+            "                    g.orderNum          AS guideOrderNum,\n" +
+            "                    g.totalGetAmount    AS guideTotalGetAmount,\n" +
+            "                    g.refundNum         AS guideRefundNum,\n" +
+            "                    g.totalRefundAmount AS guideTotalRefundAmount,\n" +
+            "                    g.statisticalDate   AS guideStatisticalDate,\n" +
+            "                    v.scenicSpotId      AS voiceScenicSpotId,\n" +
+            "                    v.orderType         AS voiceOrderType,\n" +
+            "                    v.orderNum          AS voiceOrderNum,\n" +
+            "                    v.totalGetAmount    AS voiceTotalGetAmount,\n" +
+            "                    v.refundNum         AS voiceRefundNum,\n" +
+            "                    v.totalRefundAmount AS voiceTotalRefundAmount,\n" +
+            "                    v.statisticalDate   AS voiceStatisticalDate\n" +
+            "             FROM `v_guideOrder_day` g\n" +
+            "                      RIGHT JOIN `v_voiceOrder_day` v\n" +
+            "                                 ON g.`scenicSpotId` = v.`scenicSpotId` AND\n" +
+            "                                    g.`statisticalDate` = v.`statisticalDate`\n" +
+            "         ) t\n" +
+            "    where 1=1");
+        System.out.println(sql);
     }
 }

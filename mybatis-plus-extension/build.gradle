@@ -13,4 +13,5 @@ dependencies {
     implementation "${lib."jackson"}"
     implementation "${lib."fastjson"}"
     implementation "${lib."gson"}"
+    testImplementation "com.github.pagehelper:pagehelper:5.1.11"
 }
