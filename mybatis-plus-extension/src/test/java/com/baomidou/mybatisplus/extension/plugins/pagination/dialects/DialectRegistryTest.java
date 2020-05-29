@@ -26,7 +26,7 @@ class DialectRegistryTest {
         Assertions.assertEquals(dialectRegistry.getDialect(DbType.KINGBASE_ES).getClass(), KingbaseDialect.class);
         Assertions.assertEquals(dialectRegistry.getDialect(DbType.PHOENIX).getClass(), PhoenixDialect.class);
         Assertions.assertEquals(dialectRegistry.getDialect(DbType.GAUSS).getClass(), GaussDialect.class);
-        Assertions.assertEquals(dialectRegistry.getDialect(DbType.CLICKSHOUE).getClass(), ClickhouseDialect.class);
+        Assertions.assertEquals(dialectRegistry.getDialect(DbType.CLICKHOUSE).getClass(), ClickhouseDialect.class);
         Assertions.assertNull(dialectRegistry.getDialect(DbType.OTHER));
     }
 

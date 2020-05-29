@@ -97,10 +97,10 @@ public enum DbType {
     GAUSS("zenith", "Gauss 数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.GaussDialect"),
 
     /**
-     * clickshoue
+     * clickhouse
      */
-    CLICKSHOUE("clickshoue", "clickshoue 数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.ClickhouseDialect"),
-  
+    CLICKHOUSE("clickhouse", "clickhouse 数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.ClickhouseDialect"),
+
     /**
      * GBase
      */
