@@ -100,6 +100,11 @@ public enum DbType {
      * clickshoue
      */
     CLICKSHOUE("clickshoue", "clickshoue 数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.ClickhouseDialect"),
+  
+    /**
+     * GBase
+     */
+    GBASE("gbase", "南大通用数据库", "com.baomidou.mybatisplus.extension.plugins.pagination.dialects.GBaseDialect"),
 
     /**
      * UNKONWN DB

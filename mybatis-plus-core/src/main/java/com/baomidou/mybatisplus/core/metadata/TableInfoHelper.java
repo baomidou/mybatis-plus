@@ -255,7 +255,7 @@ public class TableInfoHelper {
         boolean isReadPK = false;
         // 是否存在 @TableId 注解
         boolean existTableId = isExistTableId(list);
-    
+
         List<TableFieldInfo> fieldList = new ArrayList<>(list.size());
         for (Field field : list) {
             if (excludeProperty.contains(field.getName())) {
@@ -416,9 +416,9 @@ public class TableInfoHelper {
     }
 
     /**
-     * <p>
      * 判定 related 的值
-     * </p>
+     * <p>
+     * 为 true 表示不符合规则
      *
      * @param underCamel 驼峰命名
      * @param property   属性名
@@ -426,10 +426,7 @@ public class TableInfoHelper {
      * @return related
      */
     public static boolean checkRelated(boolean underCamel, String property, String column) {
-        if (StringUtils.isNotColumnName(column)) {
-            // 首尾有转义符,手动在注解里设置了转义符,去除掉转义符
-            column = column.substring(1, column.length() - 1);
-        }
+        column = StringUtils.getTargetColumn(column);
         String propertyUpper = property.toUpperCase(Locale.ENGLISH);
         String columnUpper = column.toUpperCase(Locale.ENGLISH);
         if (underCamel) {

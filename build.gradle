@@ -24,7 +24,7 @@ ext {
         mybatisSpringVersion = '2.0.4',
         mybatisSpringBootStarterVersion = '2.1.2',
         springVersion = '5.2.6.RELEASE',
-        springBootVersion = '2.2.7.RELEASE',
+        springBootVersion = '2.3.0.RELEASE',
         jsqlparserVersion = '3.1',
         junitVersion = '5.6.2',
     ]
@@ -79,13 +79,14 @@ ext {
         "swagger-annotations"        : "io.swagger:swagger-annotations:1.6.1",
         //cache
         "mybatis-ehcache"            : "org.mybatis.caches:mybatis-ehcache:1.2.1",
-        "mybatis-redis"              : "org.mybatis.caches:mybatis-redis:1.0.0-beta2"
+        "mybatis-redis"              : "org.mybatis.caches:mybatis-redis:1.0.0-beta2",
+        "mybatis-caffeine"           : "org.mybatis.caches:mybatis-caffeine:1.0.0-beta1"
     ]
 }
 
 allprojects {
     group = 'com.baomidou'
-    version = "3.3.2.1-SNAPSHOT"
+    version = "3.3.3.1-SNAPSHOT"
 }
 
 description = "Mybatis 增强工具包 - 只做增强不做改变，简化CRUD操作"
@@ -102,8 +103,13 @@ subprojects {
 
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
+        options.warnings = false
         options.deprecation = true
         options.compilerArgs += ["-parameters"]
+    }
+
+    tasks.withType(GenerateModuleMetadata) {
+        enabled = false
     }
 
     jar {
@@ -143,15 +149,15 @@ subprojects {
     dependencies {
         annotationProcessor "${lib.lombok}"
         compileOnly "${lib.lombok}"
-
         testAnnotationProcessor "${lib.lombok}"
         testCompileOnly "${lib.lombok}"
-        testImplementation("${lib["assertj-core"]}")
-        testImplementation("${lib["junit-jupiter-api"]}")
-        testRuntimeOnly("${lib["junit-jupiter-engine"]}")
-        testImplementation("org.mockito:mockito-junit-jupiter:3.3.3")
-        testImplementation("${lib["lagarto"]}")
-        testImplementation("${lib["logback-classic"]}")
+
+        testImplementation "${lib["assertj-core"]}"
+        testImplementation "${lib["junit-jupiter-api"]}"
+        testRuntimeOnly "${lib["junit-jupiter-engine"]}"
+        testImplementation "org.mockito:mockito-junit-jupiter:3.3.3"
+        testImplementation "${lib["lagarto"]}"
+        testImplementation "${lib["logback-classic"]}"
     }
 
     //noinspection GroovyAssignabilityCheck

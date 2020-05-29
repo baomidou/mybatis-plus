@@ -179,7 +179,7 @@ public class Assert {
     }
 
     public static void notEmpty(Collection<?> collection, IErrorCode errorCode) {
-        if (CollectionUtils.isNotEmpty(collection)) {
+        if (CollectionUtils.isEmpty(collection)) {
             fail(errorCode);
         }
     }

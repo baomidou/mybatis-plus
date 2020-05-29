@@ -1,4 +1,5 @@
 apply plugin: 'org.jetbrains.kotlin.jvm'
+
 dependencies {
     api project(":mybatis-plus-annotation")
     api "${lib.'jsqlparser'}"
@@ -8,5 +9,4 @@ dependencies {
     implementation "${lib.'spring-aop'}"
     implementation "${lib.'mybatis-ehcache'}"
     implementation "${lib.'mybatis-redis'}"
-
 }

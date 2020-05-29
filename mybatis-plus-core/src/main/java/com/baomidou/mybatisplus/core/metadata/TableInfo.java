@@ -70,10 +70,6 @@ public class TableInfo implements Constants {
      */
     private boolean autoInitResultMap;
     /**
-     * 是否是自动生成的 resultMap
-     */
-    private boolean initResultMap;
-    /**
      * 主键是否有存在字段名与属性名关联
      * <p>true: 表示要进行 as</p>
      */
@@ -114,6 +110,8 @@ public class TableInfo implements Constants {
     private boolean logicDelete;
     /**
      * 是否开启下划线转驼峰
+     * <p>
+     * 未注解指定字段名的情况下,用于自动从 property 推算 column 的命名
      */
     private boolean underCamel;
     /**
@@ -204,7 +202,7 @@ public class TableInfo implements Constants {
         }
         if (havePK()) {
             sqlSelect = keyColumn;
-            if (keyRelated) {
+            if (resultMap == null && keyRelated) {
                 sqlSelect += (" AS " + keyProperty);
             }
         } else {
