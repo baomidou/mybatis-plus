@@ -48,6 +48,7 @@ public class DialectRegistry {
         dialect_enum_map.put(DbType.KINGBASE_ES, new KingbaseDialect());
         dialect_enum_map.put(DbType.PHOENIX, new PhoenixDialect());
         dialect_enum_map.put(DbType.GAUSS, new GaussDialect());
+        dialect_enum_map.put(DbType.CLICKHOUSE, new ClickhouseDialect());
     }
 
     public IDialect getDialect(DbType dbType) {
