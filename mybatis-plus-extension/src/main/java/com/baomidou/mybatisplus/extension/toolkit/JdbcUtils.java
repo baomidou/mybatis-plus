@@ -70,7 +70,7 @@ public class JdbcUtils {
             return DbType.PHOENIX;
         } else if (jdbcUrl.contains(":zenith:")) {
             return DbType.GAUSS;
-        }  else if (jdbcUrl.contains(":clickhouse:")) {
+        } else if (jdbcUrl.contains(":clickhouse:")) {
             return DbType.CLICKHOUSE;
         } else {
             logger.warn("The jdbcUrl is " + jdbcUrl + ", Mybatis Plus Cannot Read Database type or The Database's Not Supported!");
