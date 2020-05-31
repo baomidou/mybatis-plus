@@ -276,17 +276,20 @@ public class StrategyConfig {
         this.fieldPrefix = fieldPrefixs;
         return this;
     }
-    
+
     /**
      * 设置实体父类
      *
      * @param superEntityClass 类全名称
      * @return this
-     * @deprecated 3.3.2 {@link #setSuperEntityClass(Class)}
      */
-    @Deprecated
     public StrategyConfig setSuperEntityClass(String superEntityClass) {
-        return setSuperEntityClass(ClassUtils.toClassConfident(superEntityClass));
+        try {
+            return setSuperEntityClass(ClassUtils.toClassConfident(superEntityClass));
+        } catch (Exception e) {
+            this.superEntityClass = superEntityClass;
+        }
+        return this;
     }
 
 
