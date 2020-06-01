@@ -67,7 +67,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
      * @param parameterObject 插入数据库对象
      * @return ignore
      */
-    protected static Object processParameter(MappedStatement ms, Object parameterObject) {
+    public static Object processParameter(MappedStatement ms, Object parameterObject) {
         /* 只处理插入或更新操作 */
         if (parameterObject != null
             && (SqlCommandType.INSERT == ms.getSqlCommandType() || SqlCommandType.UPDATE == ms.getSqlCommandType())) {

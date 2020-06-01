@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2020, baomidou (jobob@qq.com).
+ * Copyright (c) 2011-2019, hubin (jobob@qq.com).
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,11 +13,24 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
+package com.baomidou.mybatisplus.test.plugins.pagination.dialects;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import org.junit.jupiter.api.Test;
 
 /**
- * @author wangzhongkai
- * @since 2020/5/26
+ * @author miemie
+ * @since 2018-11-01
  */
-public class GBaseDialect extends MySqlDialect {
+class DB2DialectTest {
+
+    /**
+     * TODO 需要修复的单元测试
+     */
+    @Test
+    void m1() {
+        Page<?> page = new Page<>(2, 10);
+        System.out.println(page.offset() + 1);
+        System.out.println(page.getSize() + page.offset());
+    }
 }

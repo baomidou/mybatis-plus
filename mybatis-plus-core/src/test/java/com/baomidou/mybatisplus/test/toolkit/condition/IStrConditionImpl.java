@@ -13,11 +13,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
+package com.baomidou.mybatisplus.test.toolkit.condition;
 
 /**
- * @author wangzhongkai
- * @since 2020/5/26
+ * Create by HCL at 2018/05/29
  */
-public class GBaseDialect extends MySqlDialect {
+public class IStrConditionImpl<T, SC> extends AbstractCondition<SC, T, String>
+    implements IStrCondition<T, SC> {
+
+    @Override
+    protected String getColumn(String s) {
+        return s;
+    }
+
 }

@@ -13,11 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
+package com.baomidou.mybatisplus.test.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.test.entity.Test;
 
 /**
- * @author wangzhongkai
- * @since 2020/5/26
+ * @author nieqiurong 2019/5/4.
  */
-public class GBaseDialect extends MySqlDialect {
+public interface TestMapper extends BaseMapper<Test> {
+
 }

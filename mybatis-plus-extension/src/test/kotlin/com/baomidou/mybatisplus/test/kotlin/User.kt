@@ -13,11 +13,18 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
+package com.baomidou.mybatisplus.test.kotlin
 
-/**
- * @author wangzhongkai
- * @since 2020/5/26
- */
-public class GBaseDialect extends MySqlDialect {
+import com.baomidou.mybatisplus.annotation.TableField
+import com.baomidou.mybatisplus.annotation.TableName
+
+@TableName("sys_user")
+class User {
+
+    var id: Int? = null
+
+    @TableField("username")
+    var name: String? = null
+
+    var roleId: Int? = null
 }

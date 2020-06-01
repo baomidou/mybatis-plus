@@ -13,11 +13,16 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.extension.plugins.pagination.dialects;
+package com.baomidou.mybatisplus.test.toolkit.condition;
 
 /**
- * @author wangzhongkai
- * @since 2020/5/26
+ * 条件定义，只提需求
+ *
+ * <p>Create by HCL at 2018/05/29</p>
  */
-public class GBaseDialect extends MySqlDialect {
+public interface ICondition<This, CLASS, COLUMN> {
+
+    // 暂时定义一个方法
+    This eq(COLUMN column, Object value);
+
 }
