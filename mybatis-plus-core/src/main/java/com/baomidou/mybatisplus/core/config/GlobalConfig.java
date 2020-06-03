@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
 import com.baomidou.mybatisplus.core.injector.ISqlInjector;
 import com.baomidou.mybatisplus.core.mapper.Mapper;
+import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -97,37 +98,59 @@ public class GlobalConfig implements Serializable {
 
     @Data
     public static class DbConfig {
+
+        /**
+         * 以枚举类方式创建，默认线程安全，可防止反序列化导致重新创建新的对象
+         */
+        private enum DbConfigHolder{
+            INSTANCE;
+
+            private DbConfig dbConfig;
+
+            DbConfigHolder(){
+                dbConfig=new DbConfig();
+            }
+
+            public DbConfig getInstance(){
+                return dbConfig;
+            }
+        }
+
+        public static DbConfig instance(){
+            return DbConfigHolder.INSTANCE.getInstance();
+        }
+
         /**
          * 主键类型
          */
         private IdType idType = IdType.ASSIGN_ID;
         /**
-         * 表名前缀
+         * 表名前缀,(默认无)
          */
-        private String tablePrefix;
+        private String tablePrefix = StringPool.EMPTY;
         /**
-         * schema
+         * schema,(默认无)
          *
          * @since 3.1.1
          */
-        private String schema;
+        private String schema = StringPool.EMPTY;
         /**
-         * db字段 format
+         * db字段 format,(默认无)
          * <li> 例: `%s` </li>
          * <p> 对主键无效 </p>
          *
          * @since 3.1.1
          */
-        private String columnFormat;
+        private String columnFormat = StringPool.EMPTY;
         /**
-         * entity字段 format,
+         * entity字段 format, (默认无)
          * 只有在 column as property 这种情况下生效
          * <li> 例: `%s` </li>
          * <p> 对主键无效 </p>
          *
          * @since 3.3.0
          */
-        private String propertyFormat;
+        private String propertyFormat = StringPool.EMPTY;
         /**
          * 表名、是否使用下划线命名（默认 true:默认数据库表下划线命名）
          */
@@ -139,19 +162,19 @@ public class GlobalConfig implements Serializable {
         /**
          * 表主键生成器
          */
-        private IKeyGenerator keyGenerator;
+        private IKeyGenerator keyGenerator = null;
         /**
          * 逻辑删除全局字段 (默认无 设置会自动扫描实体字段)
          */
-        private String logicDeleteField;
+        private String logicDeleteField = StringPool.EMPTY;
         /**
          * 逻辑删除全局值（默认 1、表示已删除）
          */
-        private String logicDeleteValue = "1";
+        private String logicDeleteValue = StringPool.ONE;
         /**
          * 逻辑未删除全局值（默认 0、表示未删除）
          */
-        private String logicNotDeleteValue = "0";
+        private String logicNotDeleteValue = StringPool.ZERO;
         /**
          * 字段验证策略之 insert
          *

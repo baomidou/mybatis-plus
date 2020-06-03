@@ -50,10 +50,10 @@ public class GlobalConfigUtils {
 
     /**
      * 获取默认 MybatisGlobalConfig
-     * <p>FIXME 这可能是一个伪装成单例模式的原型模式，暂时不确定</p>
+     * 以枚举类方式创建，默认线程安全，可防止反序列化导致重新创建新的对象
      */
     public static GlobalConfig defaults() {
-        return new GlobalConfig().setDbConfig(new GlobalConfig.DbConfig());
+        return new GlobalConfig().setDbConfig(GlobalConfig.DbConfig.instance());
     }
 
     /**
