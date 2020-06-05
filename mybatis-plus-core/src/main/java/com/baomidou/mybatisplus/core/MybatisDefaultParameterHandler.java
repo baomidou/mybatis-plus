@@ -103,14 +103,15 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
             } else {
                 tableInfo = TableInfoHelper.getTableInfo(parameterObject.getClass());
             }
+            Configuration configuration = ms.getConfiguration();
             if (tableInfo != null) {
                 //到这里就应该转换到实体参数对象了,因为填充和ID处理都是争对实体对象处理的,不用传递原参数对象下去.
-                MetaObject metaObject = ms.getConfiguration().newMetaObject(entity);
+                MetaObject metaObject = configuration.newMetaObject(entity);
                 if (SqlCommandType.INSERT == ms.getSqlCommandType()) {
-                    populateKeys(tableInfo, metaObject, entity);
-                    insertFill(metaObject, tableInfo);
+                    populateKeys(tableInfo, metaObject, entity, configuration);
+                    insertFill(metaObject, tableInfo, configuration);
                 } else {
-                    updateFill(metaObject, tableInfo);
+                    updateFill(metaObject, tableInfo, configuration);
                 }
             }
         }
@@ -151,12 +152,18 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
      * @param tableInfo  数据库表反射信息
      * @param metaObject 元数据对象
      * @param entity     实体信息
+     * @deprecated 3.3.3
      */
+    @Deprecated
     protected static void populateKeys(TableInfo tableInfo, MetaObject metaObject, Object entity) {
+        populateKeys(tableInfo, metaObject, entity, tableInfo.getConfiguration());
+    }
+
+    protected static void populateKeys(TableInfo tableInfo, MetaObject metaObject, Object entity, Configuration configuration) {
         final IdType idType = tableInfo.getIdType();
         final String keyProperty = tableInfo.getKeyProperty();
         if (StringUtils.isNotBlank(keyProperty) && null != idType && idType.getKey() >= 3) {
-            final IdentifierGenerator identifierGenerator = GlobalConfigUtils.getGlobalConfig(tableInfo.getConfiguration()).getIdentifierGenerator();
+            final IdentifierGenerator identifierGenerator = GlobalConfigUtils.getGlobalConfig(configuration).getIdentifierGenerator();
             Object idValue = metaObject.getValue(keyProperty);
             if (StringUtils.checkValNull(idValue)) {
                 if (idType.getKey() == IdType.ASSIGN_ID.getKey()) {
@@ -172,8 +179,19 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         }
     }
 
+    /**
+     *
+     * @param metaObject
+     * @param tableInfo
+     * @deprecated 3.3.3
+     */
+    @Deprecated
     protected static void insertFill(MetaObject metaObject, TableInfo tableInfo) {
-        GlobalConfigUtils.getMetaObjectHandler(tableInfo.getConfiguration()).ifPresent(metaObjectHandler -> {
+        insertFill(metaObject, tableInfo, tableInfo.getConfiguration());
+    }
+
+    protected static void insertFill(MetaObject metaObject, TableInfo tableInfo,Configuration configuration) {
+        GlobalConfigUtils.getMetaObjectHandler(configuration).ifPresent(metaObjectHandler -> {
             if (metaObjectHandler.openInsertFill()) {
                 if (tableInfo.isWithInsertFill()) {
                     metaObjectHandler.insertFill(metaObject);
@@ -193,8 +211,18 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         });
     }
 
+    /**
+     *
+     * @param metaObject
+     * @param tableInfo
+     * @deprecated 3.3.3
+     */
     protected static void updateFill(MetaObject metaObject, TableInfo tableInfo) {
-        GlobalConfigUtils.getMetaObjectHandler(tableInfo.getConfiguration()).ifPresent(metaObjectHandler -> {
+        updateFill(metaObject, tableInfo, tableInfo.getConfiguration());
+    }
+
+    protected static void updateFill(MetaObject metaObject, TableInfo tableInfo, Configuration configuration) {
+        GlobalConfigUtils.getMetaObjectHandler(configuration).ifPresent(metaObjectHandler -> {
             if (metaObjectHandler.openUpdateFill() && tableInfo.isWithUpdateFill()) {
                 metaObjectHandler.updateFill(metaObject);
             }

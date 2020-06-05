@@ -112,44 +112,35 @@ public class TableInfoHelper {
      * @return 数据库表反射信息
      */
     public synchronized static TableInfo initTableInfo(MapperBuilderAssistant builderAssistant, Class<?> clazz) {
-        TableInfo tableInfo = TABLE_INFO_CACHE.get(clazz);
-        if (tableInfo != null) {
-            if (builderAssistant != null) {
+        return TABLE_INFO_CACHE.computeIfAbsent(clazz, (key) -> {
+            /* 没有获取到缓存信息,则初始化 */
+            TableInfo tableInfo = new TableInfo(key);
+            GlobalConfig globalConfig;
+            if (null != builderAssistant) {
+                tableInfo.setCurrentNamespace(builderAssistant.getCurrentNamespace());
                 tableInfo.setConfiguration(builderAssistant.getConfiguration());
+                globalConfig = GlobalConfigUtils.getGlobalConfig(builderAssistant.getConfiguration());
+            } else {
+                // 兼容测试场景
+                globalConfig = GlobalConfigUtils.defaults();
             }
+
+            /* 初始化表名相关 */
+            final String[] excludeProperty = initTableName(key, globalConfig, tableInfo);
+
+            List<String> excludePropertyList = excludeProperty != null && excludeProperty.length > 0 ? Arrays.asList(excludeProperty) : Collections.emptyList();
+
+            /* 初始化字段相关 */
+            initTableFields(key, globalConfig, tableInfo, excludePropertyList);
+
+            /* 缓存 lambda */
+            LambdaUtils.installCache(tableInfo);
+
+            /* 自动构建 resultMap */
+            tableInfo.initResultMapIfNeed();
+
             return tableInfo;
-        }
-
-        /* 没有获取到缓存信息,则初始化 */
-        tableInfo = new TableInfo(clazz);
-        GlobalConfig globalConfig;
-        if (null != builderAssistant) {
-            tableInfo.setCurrentNamespace(builderAssistant.getCurrentNamespace());
-            tableInfo.setConfiguration(builderAssistant.getConfiguration());
-            globalConfig = GlobalConfigUtils.getGlobalConfig(builderAssistant.getConfiguration());
-        } else {
-            // 兼容测试场景
-            globalConfig = GlobalConfigUtils.defaults();
-        }
-
-        /* 初始化表名相关 */
-        final String[] excludeProperty = initTableName(clazz, globalConfig, tableInfo);
-
-        List<String> excludePropertyList = excludeProperty != null && excludeProperty.length > 0 ? Arrays.asList(excludeProperty) : Collections.emptyList();
-
-        /* 初始化字段相关 */
-        initTableFields(clazz, globalConfig, tableInfo, excludePropertyList);
-
-        /* 放入缓存 */
-        TABLE_INFO_CACHE.put(clazz, tableInfo);
-
-        /* 缓存 lambda */
-        LambdaUtils.installCache(tableInfo);
-
-        /* 自动构建 resultMap */
-        tableInfo.initResultMapIfNeed();
-
-        return tableInfo;
+        });
     }
 
     /**
@@ -473,5 +464,14 @@ public class TableInfoHelper {
             .build();
         configuration.addMappedStatement(mappedStatement);
         return new SelectKeyGenerator(mappedStatement, true);
+    }
+
+    /**
+     * 清理缓存数据
+     *
+     * @since 3.3.3
+     */
+    public static void clear() {
+//        TABLE_INFO_CACHE.clear();
     }
 }
