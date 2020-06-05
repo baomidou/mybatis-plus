@@ -68,7 +68,7 @@ public class MybatisParameterHandler implements ParameterHandler {
     public Object processParameter(Object parameter) {
         /* 只处理插入或更新操作 */
         if (parameter != null
-            && (SqlCommandType.INSERT == sqlCommandType || SqlCommandType.UPDATE == sqlCommandType)) {
+            && (SqlCommandType.INSERT == this.sqlCommandType || SqlCommandType.UPDATE == this.sqlCommandType)) {
             //检查 parameterObject
             if (ReflectionKit.isPrimitiveOrWrapper(parameter.getClass())
                 || parameter.getClass() == String.class) {
@@ -87,7 +87,7 @@ public class MybatisParameterHandler implements ParameterHandler {
 
     @Override
     public Object getParameterObject() {
-        return parameterObject;
+        return this.parameterObject;
     }
 
     private void process(Object parameter) {
@@ -108,8 +108,8 @@ public class MybatisParameterHandler implements ParameterHandler {
             }
             if (tableInfo != null) {
                 //到这里就应该转换到实体参数对象了,因为填充和ID处理都是争对实体对象处理的,不用传递原参数对象下去.
-                MetaObject metaObject = configuration.newMetaObject(entity);
-                if (SqlCommandType.INSERT == mappedStatement.getSqlCommandType()) {
+                MetaObject metaObject = this.configuration.newMetaObject(entity);
+                if (SqlCommandType.INSERT == this.sqlCommandType) {
                     populateKeys(tableInfo, metaObject, entity);
                     insertFill(metaObject, tableInfo);
                 } else {
@@ -124,7 +124,7 @@ public class MybatisParameterHandler implements ParameterHandler {
         final IdType idType = tableInfo.getIdType();
         final String keyProperty = tableInfo.getKeyProperty();
         if (StringUtils.isNotBlank(keyProperty) && null != idType && idType.getKey() >= 3) {
-            final IdentifierGenerator identifierGenerator = GlobalConfigUtils.getGlobalConfig(configuration).getIdentifierGenerator();
+            final IdentifierGenerator identifierGenerator = GlobalConfigUtils.getGlobalConfig(this.configuration).getIdentifierGenerator();
             Object idValue = metaObject.getValue(keyProperty);
             if (StringUtils.checkValNull(idValue)) {
                 if (idType.getKey() == IdType.ASSIGN_ID.getKey()) {
@@ -142,7 +142,7 @@ public class MybatisParameterHandler implements ParameterHandler {
 
 
     protected void insertFill(MetaObject metaObject, TableInfo tableInfo) {
-        GlobalConfigUtils.getMetaObjectHandler(configuration).ifPresent(metaObjectHandler -> {
+        GlobalConfigUtils.getMetaObjectHandler(this.configuration).ifPresent(metaObjectHandler -> {
             if (metaObjectHandler.openInsertFill()) {
                 if (tableInfo.isWithInsertFill()) {
                     metaObjectHandler.insertFill(metaObject);
@@ -163,7 +163,7 @@ public class MybatisParameterHandler implements ParameterHandler {
     }
 
     protected void updateFill(MetaObject metaObject, TableInfo tableInfo) {
-        GlobalConfigUtils.getMetaObjectHandler(configuration).ifPresent(metaObjectHandler -> {
+        GlobalConfigUtils.getMetaObjectHandler(this.configuration).ifPresent(metaObjectHandler -> {
             if (metaObjectHandler.openUpdateFill() && tableInfo.isWithUpdateFill()) {
                 metaObjectHandler.updateFill(metaObject);
             }
@@ -200,28 +200,28 @@ public class MybatisParameterHandler implements ParameterHandler {
     @Override
     @SuppressWarnings("unchecked")
     public void setParameters(PreparedStatement ps) {
-        ErrorContext.instance().activity("setting parameters").object(mappedStatement.getParameterMap().getId());
-        List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
+        ErrorContext.instance().activity("setting parameters").object(this.mappedStatement.getParameterMap().getId());
+        List<ParameterMapping> parameterMappings = this.boundSql.getParameterMappings();
         if (parameterMappings != null) {
             for (int i = 0; i < parameterMappings.size(); i++) {
                 ParameterMapping parameterMapping = parameterMappings.get(i);
                 if (parameterMapping.getMode() != ParameterMode.OUT) {
                     Object value;
                     String propertyName = parameterMapping.getProperty();
-                    if (boundSql.hasAdditionalParameter(propertyName)) { // issue #448 ask first for additional params
-                        value = boundSql.getAdditionalParameter(propertyName);
-                    } else if (parameterObject == null) {
+                    if (this.boundSql.hasAdditionalParameter(propertyName)) { // issue #448 ask first for additional params
+                        value = this.boundSql.getAdditionalParameter(propertyName);
+                    } else if (this.parameterObject == null) {
                         value = null;
-                    } else if (typeHandlerRegistry.hasTypeHandler(parameterObject.getClass())) {
+                    } else if (this.typeHandlerRegistry.hasTypeHandler(this.parameterObject.getClass())) {
                         value = parameterObject;
                     } else {
-                        MetaObject metaObject = configuration.newMetaObject(parameterObject);
+                        MetaObject metaObject = this.configuration.newMetaObject(this.parameterObject);
                         value = metaObject.getValue(propertyName);
                     }
                     TypeHandler typeHandler = parameterMapping.getTypeHandler();
                     JdbcType jdbcType = parameterMapping.getJdbcType();
                     if (value == null && jdbcType == null) {
-                        jdbcType = configuration.getJdbcTypeForNull();
+                        jdbcType = this.configuration.getJdbcTypeForNull();
                     }
                     try {
                         typeHandler.setParameter(ps, i + 1, value, jdbcType);
