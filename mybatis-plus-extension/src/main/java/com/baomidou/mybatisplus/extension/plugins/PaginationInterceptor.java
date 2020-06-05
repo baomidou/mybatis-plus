@@ -16,7 +16,7 @@
 package com.baomidou.mybatisplus.extension.plugins;
 
 import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.core.MybatisDefaultParameterHandler;
+import com.baomidou.mybatisplus.core.MybatisParameterHandler;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.core.parser.ISqlParser;
@@ -41,7 +41,6 @@ import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.plugin.*;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
-import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.RowBounds;
 
@@ -236,7 +235,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
      */
     protected void queryTotal(String sql, MappedStatement mappedStatement, BoundSql boundSql, IPage<?> page, Connection connection) {
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            DefaultParameterHandler parameterHandler = new MybatisDefaultParameterHandler(mappedStatement, boundSql.getParameterObject(), boundSql);
+            MybatisParameterHandler parameterHandler = new MybatisParameterHandler(mappedStatement, boundSql.getParameterObject(), boundSql);
             parameterHandler.setParameters(statement);
             long total = 0;
             try (ResultSet resultSet = statement.executeQuery()) {

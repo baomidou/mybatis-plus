@@ -466,12 +466,4 @@ public class TableInfoHelper {
         return new SelectKeyGenerator(mappedStatement, true);
     }
 
-    /**
-     * 清理缓存数据
-     *
-     * @since 3.3.3
-     */
-    public static void clear() {
-//        TABLE_INFO_CACHE.clear();
-    }
 }

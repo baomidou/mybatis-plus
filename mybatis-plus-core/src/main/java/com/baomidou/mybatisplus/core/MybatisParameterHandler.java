@@ -24,9 +24,9 @@ import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.apache.ibatis.executor.ErrorContext;
+import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.reflection.MetaObject;
-import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeException;
@@ -35,66 +35,67 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 自定义 ParameterHandler 重装构造函数，填充插入方法主键 ID
  *
- * @author hubin
- * @since 2016-03-11
- * @since 3.3.3 {@link MybatisParameterHandler}
+ * @author nieqiuqiu 2020/6/5
+ * @since 3.3.3
  */
-@Deprecated
-public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
+public class MybatisParameterHandler implements ParameterHandler {
 
     private final TypeHandlerRegistry typeHandlerRegistry;
     private final MappedStatement mappedStatement;
     private final Object parameterObject;
     private final BoundSql boundSql;
     private final Configuration configuration;
+    private final SqlCommandType sqlCommandType;
 
-    public MybatisDefaultParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
-        super(mappedStatement, processParameter(mappedStatement, parameterObject), boundSql);
-        this.mappedStatement = mappedStatement;
-        this.configuration = mappedStatement.getConfiguration();
+    public MybatisParameterHandler(MappedStatement mappedStatement, Object parameter, BoundSql boundSql) {
         this.typeHandlerRegistry = mappedStatement.getConfiguration().getTypeHandlerRegistry();
-        this.parameterObject = parameterObject;
+        this.mappedStatement = mappedStatement;
         this.boundSql = boundSql;
+        this.configuration = mappedStatement.getConfiguration();
+        this.sqlCommandType = mappedStatement.getSqlCommandType();
+        this.parameterObject = processParameter(parameter);
+
     }
 
-    /**
-     * 处理参数
-     *
-     * @param ms              MappedStatement
-     * @param parameterObject 插入数据库对象
-     * @return ignore
-     */
-    public static Object processParameter(MappedStatement ms, Object parameterObject) {
+    public Object processParameter(Object parameter) {
         /* 只处理插入或更新操作 */
-        if (parameterObject != null
-            && (SqlCommandType.INSERT == ms.getSqlCommandType() || SqlCommandType.UPDATE == ms.getSqlCommandType())) {
+        if (parameter != null
+            && (SqlCommandType.INSERT == sqlCommandType || SqlCommandType.UPDATE == sqlCommandType)) {
             //检查 parameterObject
-            if (ReflectionKit.isPrimitiveOrWrapper(parameterObject.getClass())
-                || parameterObject.getClass() == String.class) {
-                return parameterObject;
+            if (ReflectionKit.isPrimitiveOrWrapper(parameter.getClass())
+                || parameter.getClass() == String.class) {
+                return parameter;
             }
-            Collection<Object> parameters = getParameters(parameterObject);
+            Collection<Object> parameters = getParameters(parameter);
             if (null != parameters) {
                 // 感觉这里可以稍微优化一下，理论上都是同一个.
-                parameters.forEach(obj -> process(ms, obj));
+                parameters.forEach(this::process);
             } else {
-                process(ms, parameterObject);
+                process(parameter);
             }
         }
+        return parameter;
+    }
+
+    @Override
+    public Object getParameterObject() {
         return parameterObject;
     }
 
-    private static void process(MappedStatement ms, Object parameterObject) {
-        if (parameterObject != null) {
+    private void process(Object parameter) {
+        if (parameter != null) {
             TableInfo tableInfo = null;
-            Object entity = parameterObject;
-            if (parameterObject instanceof Map) {
-                Map<?, ?> map = (Map<?, ?>) parameterObject;
+            Object entity = parameter;
+            if (parameter instanceof Map) {
+                Map<?, ?> map = (Map<?, ?>) parameter;
                 if (map.containsKey(Constants.ENTITY)) {
                     Object et = map.get(Constants.ENTITY);
                     if (et != null) {
@@ -103,65 +104,23 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
                     }
                 }
             } else {
-                tableInfo = TableInfoHelper.getTableInfo(parameterObject.getClass());
+                tableInfo = TableInfoHelper.getTableInfo(parameter.getClass());
             }
-            Configuration configuration = ms.getConfiguration();
             if (tableInfo != null) {
                 //到这里就应该转换到实体参数对象了,因为填充和ID处理都是争对实体对象处理的,不用传递原参数对象下去.
                 MetaObject metaObject = configuration.newMetaObject(entity);
-                if (SqlCommandType.INSERT == ms.getSqlCommandType()) {
-                    populateKeys(tableInfo, metaObject, entity, configuration);
-                    insertFill(metaObject, tableInfo, configuration);
+                if (SqlCommandType.INSERT == mappedStatement.getSqlCommandType()) {
+                    populateKeys(tableInfo, metaObject, entity);
+                    insertFill(metaObject, tableInfo);
                 } else {
-                    updateFill(metaObject, tableInfo, configuration);
+                    updateFill(metaObject, tableInfo);
                 }
             }
         }
     }
 
 
-    /**
-     * 处理正常批量插入逻辑
-     * <p>
-     * org.apache.ibatis.session.defaults.DefaultSqlSession$StrictMap 该类方法
-     * wrapCollection 实现 StrictMap 封装逻辑
-     * </p>
-     *
-     * @param parameter 插入数据库对象
-     * @return
-     */
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    protected static Collection<Object> getParameters(Object parameter) {
-        Collection<Object> parameters = null;
-        if (parameter instanceof Collection) {
-            parameters = (Collection) parameter;
-        } else if (parameter instanceof Map) {
-            Map parameterMap = (Map) parameter;
-            if (parameterMap.containsKey("collection")) {
-                parameters = (Collection) parameterMap.get("collection");
-            } else if (parameterMap.containsKey("list")) {
-                parameters = (List) parameterMap.get("list");
-            } else if (parameterMap.containsKey("array")) {
-                parameters = Arrays.asList((Object[]) parameterMap.get("array"));
-            }
-        }
-        return parameters;
-    }
-
-    /**
-     * 填充主键
-     *
-     * @param tableInfo  数据库表反射信息
-     * @param metaObject 元数据对象
-     * @param entity     实体信息
-     * @deprecated 3.3.3
-     */
-    @Deprecated
-    protected static void populateKeys(TableInfo tableInfo, MetaObject metaObject, Object entity) {
-        populateKeys(tableInfo, metaObject, entity, tableInfo.getConfiguration());
-    }
-
-    protected static void populateKeys(TableInfo tableInfo, MetaObject metaObject, Object entity, Configuration configuration) {
+    protected void populateKeys(TableInfo tableInfo, MetaObject metaObject, Object entity) {
         final IdType idType = tableInfo.getIdType();
         final String keyProperty = tableInfo.getKeyProperty();
         if (StringUtils.isNotBlank(keyProperty) && null != idType && idType.getKey() >= 3) {
@@ -181,18 +140,8 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         }
     }
 
-    /**
-     *
-     * @param metaObject
-     * @param tableInfo
-     * @deprecated 3.3.3
-     */
-    @Deprecated
-    protected static void insertFill(MetaObject metaObject, TableInfo tableInfo) {
-        insertFill(metaObject, tableInfo, tableInfo.getConfiguration());
-    }
 
-    protected static void insertFill(MetaObject metaObject, TableInfo tableInfo,Configuration configuration) {
+    protected void insertFill(MetaObject metaObject, TableInfo tableInfo) {
         GlobalConfigUtils.getMetaObjectHandler(configuration).ifPresent(metaObjectHandler -> {
             if (metaObjectHandler.openInsertFill()) {
                 if (tableInfo.isWithInsertFill()) {
@@ -213,22 +162,39 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         });
     }
 
-    /**
-     *
-     * @param metaObject
-     * @param tableInfo
-     * @deprecated 3.3.3
-     */
-    protected static void updateFill(MetaObject metaObject, TableInfo tableInfo) {
-        updateFill(metaObject, tableInfo, tableInfo.getConfiguration());
-    }
-
-    protected static void updateFill(MetaObject metaObject, TableInfo tableInfo, Configuration configuration) {
+    protected void updateFill(MetaObject metaObject, TableInfo tableInfo) {
         GlobalConfigUtils.getMetaObjectHandler(configuration).ifPresent(metaObjectHandler -> {
             if (metaObjectHandler.openUpdateFill() && tableInfo.isWithUpdateFill()) {
                 metaObjectHandler.updateFill(metaObject);
             }
         });
+    }
+
+    /**
+     * 处理正常批量插入逻辑
+     * <p>
+     * org.apache.ibatis.session.defaults.DefaultSqlSession$StrictMap 该类方法
+     * wrapCollection 实现 StrictMap 封装逻辑
+     * </p>
+     *
+     * @return
+     */
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    protected Collection<Object> getParameters(Object parameterObject) {
+        Collection<Object> parameters = null;
+        if (parameterObject instanceof Collection) {
+            parameters = (Collection) parameterObject;
+        } else if (parameterObject instanceof Map) {
+            Map parameterMap = (Map) parameterObject;
+            if (parameterMap.containsKey("collection")) {
+                parameters = (Collection) parameterMap.get("collection");
+            } else if (parameterMap.containsKey("list")) {
+                parameters = (List) parameterMap.get("list");
+            } else if (parameterMap.containsKey("array")) {
+                parameters = Arrays.asList((Object[]) parameterMap.get("array"));
+            }
+        }
+        return parameters;
     }
 
     @Override
