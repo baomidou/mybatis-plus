@@ -177,7 +177,7 @@ public class MybatisParameterHandler implements ParameterHandler {
      * wrapCollection 实现 StrictMap 封装逻辑
      * </p>
      *
-     * @return
+     * @return 集合参数
      */
     @SuppressWarnings({"rawtypes", "unchecked"})
     protected Collection<Object> getParameters(Object parameterObject) {

@@ -42,7 +42,7 @@ import java.util.*;
  *
  * @author hubin
  * @since 2016-03-11
- * @since 3.3.3 {@link MybatisParameterHandler}
+ * @deprecated 3.3.3 {@link MybatisParameterHandler}
  */
 @Deprecated
 public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
@@ -154,7 +154,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
      * @param tableInfo  数据库表反射信息
      * @param metaObject 元数据对象
      * @param entity     实体信息
-     * @deprecated 3.3.3
+     * @deprecated 3.3.3 {@link #populateKeys(TableInfo, MetaObject, Object, Configuration)}
      */
     @Deprecated
     protected static void populateKeys(TableInfo tableInfo, MetaObject metaObject, Object entity) {
@@ -185,7 +185,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
      *
      * @param metaObject
      * @param tableInfo
-     * @deprecated 3.3.3
+     * @deprecated 3.3.3 {@link #insertFill(MetaObject, TableInfo, Configuration)}
      */
     @Deprecated
     protected static void insertFill(MetaObject metaObject, TableInfo tableInfo) {
@@ -217,7 +217,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
      *
      * @param metaObject
      * @param tableInfo
-     * @deprecated 3.3.3
+     * @deprecated 3.3.3 {@link #updateFill(MetaObject, TableInfo, Configuration)}
      */
     protected static void updateFill(MetaObject metaObject, TableInfo tableInfo) {
         updateFill(metaObject, tableInfo, tableInfo.getConfiguration());
