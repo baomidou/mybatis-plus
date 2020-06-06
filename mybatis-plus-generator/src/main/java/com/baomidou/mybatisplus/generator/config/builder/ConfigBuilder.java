@@ -17,6 +17,7 @@ package com.baomidou.mybatisplus.generator.config.builder;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.baomidou.mybatisplus.core.toolkit.Maps;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.generator.InjectionConfig;
@@ -34,7 +35,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -238,7 +238,7 @@ public class ConfigBuilder {
      */
     private void handlerPackage(TemplateConfig template, String outputDir, PackageConfig config) {
         // 包信息
-        packageInfo = new HashMap<>(10);
+        packageInfo = Maps.newHashMapWithExpectedSize(7);
         packageInfo.put(ConstVal.MODULE_NAME, config.getModuleName());
         packageInfo.put(ConstVal.ENTITY, joinPackage(config.getParent(), config.getEntity()));
         packageInfo.put(ConstVal.MAPPER, joinPackage(config.getParent(), config.getMapper()));
@@ -253,7 +253,7 @@ public class ConfigBuilder {
             pathInfo = configPathInfo;
         } else {
             // 生成路径信息
-            pathInfo = new HashMap<>(10);
+            pathInfo = Maps.newHashMapWithExpectedSize(6);
             setPathInfo(pathInfo, template.getEntity(getGlobalConfig().isKotlin()), outputDir, ConstVal.ENTITY_PATH, ConstVal.ENTITY);
             setPathInfo(pathInfo, template.getMapper(), outputDir, ConstVal.MAPPER_PATH, ConstVal.MAPPER);
             setPathInfo(pathInfo, template.getXml(), outputDir, ConstVal.XML_PATH, ConstVal.XML);
@@ -647,7 +647,7 @@ public class ConfigBuilder {
                     // 自定义字段查询
                     String[] fcs = dbQuery.fieldCustom();
                     if (null != fcs) {
-                        Map<String, Object> customMap = new HashMap<>(fcs.length);
+                        Map<String, Object> customMap = Maps.newHashMapWithExpectedSize(fcs.length);
                         for (String fc : fcs) {
                             customMap.put(fc, results.getObject(fc));
                         }

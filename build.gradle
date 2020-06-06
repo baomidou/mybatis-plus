@@ -134,6 +134,7 @@ subprojects {
         exclude "**/test/**/*.java"
         exclude "**/*Test.java"
         exclude "**/TableNameParser.java"
+        exclude "**/Maps.java"
         mapping "java", "SLASHSTAR_STYLE"
         mapping "kt", "SLASHSTAR_STYLE"
         ignoreFailures = true

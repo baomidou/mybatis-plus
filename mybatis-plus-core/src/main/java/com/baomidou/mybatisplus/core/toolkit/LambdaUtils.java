@@ -22,7 +22,6 @@ import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.baomidou.mybatisplus.core.toolkit.support.SerializedLambda;
 
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -98,11 +97,15 @@ public final class LambdaUtils {
      * @return 缓存 map
      */
     private static Map<String, ColumnCache> createColumnCacheMap(TableInfo info) {
-        Map<String, ColumnCache> map = new HashMap<>();
 
         String kp = info.getKeyProperty();
+        Map<String, ColumnCache> map;
+
         if (StringUtils.isNotBlank(kp)) {
+            map = Maps.newHashMapWithExpectedSize(info.getFieldList().size() + 1);
             map.put(formatKey(kp), new ColumnCache(info.getKeyColumn(), info.getKeySqlSelect()));
+        } else {
+            map = Maps.newHashMapWithExpectedSize(info.getFieldList().size());
         }
 
         info.getFieldList().forEach(i ->
