@@ -412,7 +412,7 @@ public class TableFieldInfo implements Constants {
     }
 
     private String convertIfProperty(String prefix, String property) {
-        return prefix != null ? prefix.substring(0, prefix.length() - 1) + "['" + property + "']" : property;
+        return StringUtils.isNotBlank(prefix) ? prefix.substring(0, prefix.length() - 1) + "['" + property + "']" : property;
     }
 
     /**
