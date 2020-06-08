@@ -335,11 +335,12 @@ public class TableFieldInfo implements Constants {
      * @return sql 脚本片段
      */
     public String getInsertSqlPropertyMaybeIf(final String prefix) {
-        String sqlScript = getInsertSqlProperty(prefix);
+        final String newPrefix = prefix == null ? EMPTY : prefix;
+        String sqlScript = getInsertSqlProperty(newPrefix);
         if (withInsertFill) {
             return sqlScript;
         }
-        return convertIf(sqlScript, property, insertStrategy);
+        return convertIf(sqlScript, newPrefix + property, insertStrategy);
     }
 
     /**
@@ -364,12 +365,13 @@ public class TableFieldInfo implements Constants {
      *
      * @return sql 脚本片段
      */
-    public String getInsertSqlColumnMaybeIf() {
+    public String getInsertSqlColumnMaybeIf(final String prefix) {
+        final String newPrefix = prefix == null ? EMPTY : prefix;
         final String sqlScript = getInsertSqlColumn();
         if (withInsertFill) {
             return sqlScript;
         }
-        return convertIf(sqlScript, property, insertStrategy);
+        return convertIf(sqlScript, newPrefix + property, insertStrategy);
     }
 
     /**
@@ -406,11 +408,11 @@ public class TableFieldInfo implements Constants {
             // 不进行 if 包裹
             return sqlSet;
         }
-        return convertIf(sqlSet, convertIfProperty(prefix, property), updateStrategy);
+        return convertIf(sqlSet, convertIfProperty(newPrefix, property), updateStrategy);
     }
 
     private String convertIfProperty(String prefix, String property) {
-        return StringUtils.isNotBlank(prefix) ? prefix.substring(0, prefix.length() - 1) + "['" + property + "']" : property;
+        return prefix != null ? prefix.substring(0, prefix.length() - 1) + "['" + property + "']" : property;
     }
 
     /**

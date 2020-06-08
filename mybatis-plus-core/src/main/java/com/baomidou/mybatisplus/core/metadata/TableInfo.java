@@ -301,8 +301,9 @@ public class TableInfo implements Constants {
      *
      * @return sql 脚本片段
      */
-    public String getAllInsertSqlColumnMaybeIf() {
-        return getKeyInsertSqlColumn(true) + fieldList.stream().map(TableFieldInfo::getInsertSqlColumnMaybeIf)
+    public String getAllInsertSqlColumnMaybeIf(final String prefix) {
+        final String newPrefix = prefix == null ? EMPTY : prefix;
+        return getKeyInsertSqlColumn(true) + fieldList.stream().map(i -> i.getInsertSqlColumnMaybeIf(newPrefix))
             .filter(Objects::nonNull).collect(joining(NEWLINE));
     }
 

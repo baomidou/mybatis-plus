@@ -50,9 +50,9 @@ class EncryptTest {
     void testTableInfoHelper() {
         TableInfo info = TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), Xx.class);
         System.out.println("----------- AllInsertSqlColumn -----------");
-        System.out.println(info.getAllInsertSqlColumnMaybeIf());
+        System.out.println(info.getAllInsertSqlColumnMaybeIf("et."));
         System.out.println("----------- AllInsertSqlProperty -----------");
-        System.out.println(info.getAllInsertSqlPropertyMaybeIf(null));
+        System.out.println(info.getAllInsertSqlPropertyMaybeIf("et."));
         System.out.println("----------- AllSqlSet -----------");
         System.out.println(info.getAllSqlSet(true, "ew.entity."));
         System.out.println("----------- AllSqlWhere -----------");
