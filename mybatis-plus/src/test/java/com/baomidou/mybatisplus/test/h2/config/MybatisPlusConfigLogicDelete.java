@@ -15,9 +15,15 @@
  */
 package com.baomidou.mybatisplus.test.h2.config;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.injector.AbstractMethod;
+import com.baomidou.mybatisplus.core.injector.DefaultSqlInjector;
+import com.baomidou.mybatisplus.extension.injector.methods.AlwaysUpdateSomeColumnById;
+import com.baomidou.mybatisplus.extension.injector.methods.InsertBatchSomeColumn;
+import com.baomidou.mybatisplus.extension.injector.methods.LogicDeleteByIdWithFill;
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
@@ -32,6 +38,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 /**
  * Mybatis Plus Config
@@ -66,6 +73,21 @@ public class MybatisPlusConfigLogicDelete {
             pagination,
             optLock
         });
+        globalConfig.setSqlInjector(new DefaultSqlInjector() {
+
+            /**
+             * 测试注入自定义方法
+             */
+            @Override
+            public List<AbstractMethod> getMethodList(Class<?> mapperClass) {
+                List<AbstractMethod> methodList = super.getMethodList(mapperClass);
+                methodList.add(new LogicDeleteByIdWithFill());
+                methodList.add(new AlwaysUpdateSomeColumnById(t -> t.getFieldFill() != FieldFill.INSERT));
+                methodList.add(new InsertBatchSomeColumn(t -> !(t.getFieldFill() == FieldFill.UPDATE
+                    || t.isLogicDelete() || t.getProperty().equals("version"))));
+                return methodList;
+            }
+        });
         sqlSessionFactory.setGlobalConfig(globalConfig);
         sqlSessionFactory.setTypeEnumsPackage("com.baomidou.mybatisplus.test.h2.enums");
         return sqlSessionFactory.getObject();
@@ -78,7 +100,7 @@ public class MybatisPlusConfigLogicDelete {
             .setDbConfig(new GlobalConfig.DbConfig()
                 .setLogicDeleteValue("NOW()")
                 .setLogicNotDeleteValue("NULL")
-                .setIdType(IdType.ID_WORKER));
+                .setIdType(IdType.ASSIGN_ID));
         return conf;
     }
 }
