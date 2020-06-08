@@ -19,10 +19,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.*;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.reflection.MetaObject;
@@ -35,7 +32,10 @@ import org.apache.ibatis.type.TypeHandlerRegistry;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 自定义 ParameterHandler 重装构造函数，填充插入方法主键 ID
@@ -165,9 +165,16 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         final IdType idType = tableInfo.getIdType();
         final String keyProperty = tableInfo.getKeyProperty();
         if (StringUtils.isNotBlank(keyProperty) && null != idType && idType.getKey() >= 3) {
-            final IdentifierGenerator identifierGenerator = GlobalConfigUtils.getGlobalConfig(configuration).getIdentifierGenerator();
             Object idValue = metaObject.getValue(keyProperty);
             if (StringUtils.checkValNull(idValue)) {
+                IdentifierGenerator identifierGenerator = GlobalConfigUtils.getGlobalConfig(configuration).getIdentifierGenerator();
+                if (tableInfo.getKeyIdGenerator() != null) {
+                    IdentifierGenerator keyGenerator = IdentifierGeneratorKit.getByClass(tableInfo.getKeyIdGenerator());
+                    if (keyGenerator != null) {
+                        identifierGenerator = keyGenerator;
+                    }
+                }
+
                 if (idType.getKey() == IdType.ASSIGN_ID.getKey()) {
                     if (Number.class.isAssignableFrom(tableInfo.getKeyType())) {
                         metaObject.setValue(keyProperty, identifierGenerator.nextId(entity));
@@ -182,7 +189,6 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
     }
 
     /**
-     *
      * @param metaObject
      * @param tableInfo
      * @deprecated 3.3.3 {@link #insertFill(MetaObject, TableInfo, Configuration)}
@@ -192,7 +198,7 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
         insertFill(metaObject, tableInfo, tableInfo.getConfiguration());
     }
 
-    protected static void insertFill(MetaObject metaObject, TableInfo tableInfo,Configuration configuration) {
+    protected static void insertFill(MetaObject metaObject, TableInfo tableInfo, Configuration configuration) {
         GlobalConfigUtils.getMetaObjectHandler(configuration).ifPresent(metaObjectHandler -> {
             if (metaObjectHandler.openInsertFill()) {
                 if (tableInfo.isWithInsertFill()) {
@@ -214,7 +220,6 @@ public class MybatisDefaultParameterHandler extends DefaultParameterHandler {
     }
 
     /**
-     *
      * @param metaObject
      * @param tableInfo
      * @deprecated 3.3.3 {@link #updateFill(MetaObject, TableInfo, Configuration)}

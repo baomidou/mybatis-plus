@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.core.metadata;
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.incrementer.IKeyGenerator;
+import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import org.apache.ibatis.builder.MapperBuilderAssistant;
 import org.apache.ibatis.builder.StaticSqlSource;
@@ -346,10 +347,27 @@ public class TableInfoHelper {
                 column = column.toUpperCase();
             }
         }
+
+        Class<? extends IdentifierGenerator> idGeneratorClazz = null;
+        if (StringUtils.isNotBlank(tableId.idGenerator())) {
+            try {
+                Class<?> clazz = ClassUtils.toClassConfident(tableId.idGenerator());
+                if (IdentifierGenerator.class.isAssignableFrom(clazz)) {
+                    idGeneratorClazz = (Class<? extends IdentifierGenerator>) clazz;
+                } else {
+                    logger.error(String.format("Class %s must be extended from class com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator", clazz.getName()));
+                }
+            } catch (Exception e) {
+                logger.error(String.format("The idGenerator \"%s\" of the annotation @TableId in Class: \"%s\" is not found", tableId.idGenerator(), tableInfo.getEntityType().getName()));
+            }
+        }
+
         tableInfo.setKeyRelated(checkRelated(underCamel, property, column))
             .setKeyColumn(column)
             .setKeyProperty(property)
-            .setKeyType(reflector.getGetterType(property));
+            .setKeyType(reflector.getGetterType(property))
+            .setKeyIdGenerator(idGeneratorClazz)
+            .setKeyIdGenerator(idGeneratorClazz);
         return true;
     }
 

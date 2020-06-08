@@ -18,6 +18,7 @@ package com.baomidou.mybatisplus.core.metadata;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import lombok.AccessLevel;
@@ -90,6 +91,10 @@ public class TableInfo implements Constants {
      * 表主键ID Sequence
      */
     private KeySequence keySequence;
+    /**
+     * 表主键ID 生成器
+     */
+    private Class<? extends IdentifierGenerator> keyIdGenerator;
     /**
      * 表字段信息列表
      */

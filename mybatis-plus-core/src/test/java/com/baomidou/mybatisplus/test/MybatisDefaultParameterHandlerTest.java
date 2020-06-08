@@ -31,6 +31,87 @@ import java.util.Map;
 
 class MybatisDefaultParameterHandlerTest {
 
+    @Test
+    void testIdGenerator() {
+        MappedStatement mappedStatement;
+        Configuration configuration = new MybatisConfiguration();
+        StaticSqlSource staticSqlSource = new StaticSqlSource(configuration, " ***********");
+        GlobalConfigUtils.getGlobalConfig(configuration).setIdentifierGenerator(new DefaultIdentifierGenerator()).setMetaObjectHandler(new MetaObjectHandler() {
+
+            @Override
+            public boolean compatibleFillId() {
+                return true;
+            }
+
+            @Override
+            public void insertFill(MetaObject metaObject) {
+                //TODO 这种骚操作要干掉！！！！！！！！！！！！
+                setFieldValByName("insertOperator", "咩咩", metaObject);
+            }
+
+            @Override
+            public void updateFill(MetaObject metaObject) {
+                setFieldValByName("updateOperator", "逗号", metaObject);
+            }
+        });
+        Model2 model1 = new Model2("坦克");
+        TableInfoHelper.initTableInfo(new MapperBuilderAssistant(configuration, ""), Model2.class);
+        //查询
+        mappedStatement = new MappedStatement.Builder(configuration, "***", staticSqlSource, SqlCommandType.SELECT).build();
+        MybatisDefaultParameterHandler.processParameter(mappedStatement, model1);
+        Assertions.assertNull(model1.getId());
+        Assertions.assertNull(model1.getInsertOperator());
+        Assertions.assertNull(model1.getUpdateOperator());
+        // 普通插入
+        mappedStatement = new MappedStatement.Builder(configuration, "***", staticSqlSource, SqlCommandType.INSERT).build();
+        MybatisDefaultParameterHandler.processParameter(mappedStatement, model1);
+        Assertions.assertEquals(model1.getId(), 777L);
+        Assertions.assertNotNull(model1.getInsertOperator());
+        Assertions.assertNull(model1.getUpdateOperator());
+        mappedStatement = new MappedStatement.Builder(configuration, "***", staticSqlSource, SqlCommandType.INSERT).build();
+        //map参数
+        Model2 model2 = new Model2("坦克");
+        Map<String, Object> params1 = new HashMap<>();
+        params1.put(Constants.ENTITY, model2);
+        MybatisDefaultParameterHandler.processParameter(mappedStatement, params1);
+        Assertions.assertEquals(model2.getId(), 777L);
+        Assertions.assertNotNull(model2.getInsertOperator());
+        Assertions.assertNull(model2.getUpdateOperator());
+//        //map参数
+//        Model model3 = new Model2("坦克");
+//        Map<String, Object> params2 = new HashMap<>();
+//        params2.put(Constants.ENTITY, new HashMap<String, Object>() {{
+//            put(Constants.MP_OPTLOCK_ET_ORIGINAL, model3);
+//        }});
+//        MybatisDefaultParameterHandler.processParameter(mappedStatement, params2);
+//        Assertions.assertNotNull(model3.getId());
+//        Assertions.assertNotNull(model3.getInsertOperator());
+//        Assertions.assertNull(model3.getUpdateOperator());
+        //普通更新
+        Model2 model4 = new Model2(1L, "坦克");
+        mappedStatement = new MappedStatement.Builder(configuration, "***", staticSqlSource, SqlCommandType.UPDATE).build();
+        MybatisDefaultParameterHandler.processParameter(mappedStatement, model4);
+        Assertions.assertEquals(model4.getId(), 1L);
+        Assertions.assertNotNull(model4.getUpdateOperator());
+        //批量插入
+        List<Model2> list = Arrays.asList(new Model2("坦克一号"), new Model2("坦克二号"));
+        mappedStatement = new MappedStatement.Builder(configuration, "***", staticSqlSource, SqlCommandType.INSERT).build();
+        MybatisDefaultParameterHandler.processParameter(mappedStatement, list);
+        list.forEach(m -> {
+            Assertions.assertEquals(m.getId(), 777L);
+            Assertions.assertNotNull(m.getInsertOperator());
+            Assertions.assertNull(m.getUpdateOperator());
+        });
+        //批量更新
+        mappedStatement = new MappedStatement.Builder(configuration, "***", staticSqlSource, SqlCommandType.UPDATE).build();
+        MybatisDefaultParameterHandler.processParameter(mappedStatement, list);
+        list.forEach(m -> {
+            Assertions.assertEquals(m.getId(), 777L);
+            Assertions.assertNotNull(m.getInsertOperator());
+            Assertions.assertNotNull(m.getUpdateOperator());
+        });
+    }
+
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
@@ -138,4 +219,29 @@ class MybatisDefaultParameterHandlerTest {
         });
     }
 
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Model2 {
+
+        @TableId(type = IdType.ASSIGN_ID, idGenerator = "com.baomidou.mybatisplus.test.TestIdentifierGenerator")
+        private Long id;
+
+        private String name;
+
+        @TableField(fill = FieldFill.INSERT)
+        private String insertOperator;
+
+        @TableField(fill = FieldFill.UPDATE)
+        private String updateOperator;
+
+        Model2(String name) {
+            this.name = name;
+        }
+
+        Model2(Long id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+    }
 }

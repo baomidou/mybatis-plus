@@ -78,6 +78,7 @@ class TableInfoHelperTest {
         assertThat(tableInfo.getKeyProperty()).isEqualTo("id");
         assertThat(tableInfo.getFieldList().size()).isEqualTo(2);
         assertThat(tableInfo.getFieldList()).noneMatch(i -> i.getProperty().equals("test"));
+        assertThat(tableInfo.getKeyIdGenerator()).isNull();
 
         tableInfo = TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), ModelFour.class);
         assertThat(tableInfo.getFieldList().size()).isEqualTo(2);
@@ -119,5 +120,19 @@ class TableInfoHelperTest {
 
         @TableId
         private String realId;
+    }
+
+    @Test
+    void testTableIdIdGenerator() {
+        TableInfo tableInfo = TableInfoHelper.initTableInfo(new MapperBuilderAssistant(new MybatisConfiguration(), ""), ModelSeven.class);
+        assertThat(tableInfo.havePK()).isTrue();
+        assertThat(tableInfo.getKeyIdGenerator()).isNotNull();
+    }
+
+    @Data
+    private static class ModelSeven {
+
+        @TableId(idGenerator = "com.baomidou.mybatisplus.core.incrementer.DefaultIdentifierGenerator")
+        private String id;
     }
 }

@@ -38,4 +38,11 @@ public @interface TableId {
      * {@link IdType}
      */
     IdType type() default IdType.NONE;
+
+    /**
+     * ID 生成器 (手动指定生成器)
+     * 只有在IdType 为INPUT时候才生效
+     * {@link IdType}
+     */
+    String idGenerator() default "";
 }
