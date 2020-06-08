@@ -86,7 +86,7 @@ ext {
 
 allprojects {
     group = 'com.baomidou'
-    version = "3.3.3.1-SNAPSHOT"
+    version = "3.3.3.2-SNAPSHOT"
 }
 
 description = "Mybatis 增强工具包 - 只做增强不做改变，简化CRUD操作"
@@ -115,7 +115,7 @@ subprojects {
     jar {
         afterEvaluate {
             manifest {
-                attributes 'Implementation-Version': version
+                attributes 'Implementation-Version': archiveVersion
                 attributes 'Built-Gradle': gradle.gradleVersion
                 attributes 'Bundle-DocURL': 'https://mybatis.plus/'
                 attributes 'Build-OS': System.getProperty("os.name")
