@@ -19,10 +19,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
 import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
-import com.baomidou.mybatisplus.core.toolkit.Constants;
-import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import com.baomidou.mybatisplus.core.toolkit.ReflectionKit;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.*;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.mapping.*;
@@ -124,9 +121,16 @@ public class MybatisParameterHandler implements ParameterHandler {
         final IdType idType = tableInfo.getIdType();
         final String keyProperty = tableInfo.getKeyProperty();
         if (StringUtils.isNotBlank(keyProperty) && null != idType && idType.getKey() >= 3) {
-            final IdentifierGenerator identifierGenerator = GlobalConfigUtils.getGlobalConfig(this.configuration).getIdentifierGenerator();
             Object idValue = metaObject.getValue(keyProperty);
             if (StringUtils.checkValNull(idValue)) {
+                IdentifierGenerator identifierGenerator = GlobalConfigUtils.getGlobalConfig(this.configuration).getIdentifierGenerator();
+                if (tableInfo.getKeyIdGenerator() != null) {
+                    IdentifierGenerator keyGenerator = IdentifierGeneratorKit.getByClass(tableInfo.getKeyIdGenerator());
+                    if (keyGenerator != null) {
+                        identifierGenerator = keyGenerator;
+                    }
+                }
+
                 if (idType.getKey() == IdType.ASSIGN_ID.getKey()) {
                     if (Number.class.isAssignableFrom(tableInfo.getKeyType())) {
                         metaObject.setValue(keyProperty, identifierGenerator.nextId(entity));
