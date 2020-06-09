@@ -346,7 +346,11 @@ public class ConfigBuilder {
                 // 自定义处理实体名称
                 entityName = nameConvert.entityNameConvert(tableInfo);
             } else {
-                entityName = NamingStrategy.capitalFirst(processName(tableInfo.getName(), config.getNaming(), tablePrefix));
+                if (config.getNaming() == NamingStrategy.underline_to_camel) {
+                    entityName = NamingStrategy.capitalFirst(processName(tableInfo.getName(), config.getNaming(), tablePrefix));
+                } else if (config.getNaming() == NamingStrategy.no_change) {
+                    entityName = processName(tableInfo.getName(), config.getNaming(), tablePrefix);
+                }
             }
             if (StringUtils.isNotBlank(globalConfig.getEntityName())) {
                 tableInfo.setConvert(true);
