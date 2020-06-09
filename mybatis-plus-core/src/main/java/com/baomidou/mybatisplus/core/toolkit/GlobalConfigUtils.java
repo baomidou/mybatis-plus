@@ -50,7 +50,6 @@ public class GlobalConfigUtils {
 
     /**
      * 获取默认 MybatisGlobalConfig
-     * <p>FIXME 这可能是一个伪装成单例模式的原型模式，暂时不确定</p>
      */
     public static GlobalConfig defaults() {
         return new GlobalConfig().setDbConfig(new GlobalConfig.DbConfig());
