@@ -21,7 +21,6 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -29,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 
@@ -61,7 +61,6 @@ class MybatisParameterHandlerTest {
 
     @Test
     void test() {
-        MappedStatement mappedStatement;
         Configuration configuration = new MybatisConfiguration();
         BoundSql boundSql = mock(BoundSql.class);
         StaticSqlSource staticSqlSource = mock(StaticSqlSource.class);
@@ -83,29 +82,34 @@ class MybatisParameterHandlerTest {
                 setFieldValByName("updateOperator", "逗号", metaObject);
             }
         });
-        Model model1 = new Model("坦克");
         TableInfoHelper.initTableInfo(new MapperBuilderAssistant(configuration, ""), Model.class);
+
+        Model model = new Model("坦克");
         //查询
-        mappedStatement = new MappedStatement.Builder(configuration, "***", staticSqlSource, SqlCommandType.SELECT).build();
-        new MybatisParameterHandler(mappedStatement, model1, boundSql);
-        Assertions.assertNull(model1.getId());
-        Assertions.assertNull(model1.getInsertOperator());
-        Assertions.assertNull(model1.getUpdateOperator());
+        MappedStatement mappedStatement = new MappedStatement.Builder(configuration, "***", staticSqlSource, SqlCommandType.SELECT).build();
+        new MybatisParameterHandler(mappedStatement, model, boundSql);
+        assertThat(model.getId()).isNull();
+        assertThat(model.getInsertOperator()).isNull();
+        assertThat(model.getUpdateOperator()).isNull();
+
+
         // 普通插入
         mappedStatement = new MappedStatement.Builder(configuration, "***", staticSqlSource, SqlCommandType.INSERT).build();
-        new MybatisParameterHandler(mappedStatement, model1, boundSql);
-        Assertions.assertNotNull(model1.getId());
-        Assertions.assertNotNull(model1.getInsertOperator());
-        Assertions.assertNull(model1.getUpdateOperator());
-        mappedStatement = new MappedStatement.Builder(configuration, "***", staticSqlSource, SqlCommandType.INSERT).build();
+        new MybatisParameterHandler(mappedStatement, model, boundSql);
+        assertThat(model.getId()).isNotNull();
+        assertThat(model.getInsertOperator()).isNotNull();
+        assertThat(model.getUpdateOperator()).isNull();
+
+
         //map参数
-        Model model2 = new Model("坦克");
+        mappedStatement = new MappedStatement.Builder(configuration, "***", staticSqlSource, SqlCommandType.INSERT).build();
+        model = new Model("坦克");
         Map<String, Object> params1 = new HashMap<>();
-        params1.put(Constants.ENTITY, model2);
+        params1.put(Constants.ENTITY, model);
         new MybatisParameterHandler(mappedStatement, params1, boundSql);
-        Assertions.assertNotNull(model2.getId());
-        Assertions.assertNotNull(model2.getInsertOperator());
-        Assertions.assertNull(model2.getUpdateOperator());
+        assertThat(model.getId()).isNotNull();
+        assertThat(model.getInsertOperator()).isNotNull();
+        assertThat(model.getUpdateOperator()).isNull();
 //        //map参数
 //        Model model3 = new Model("坦克");
 //        Map<String, Object> params2 = new HashMap<>();
@@ -116,28 +120,34 @@ class MybatisParameterHandlerTest {
 //        Assertions.assertNotNull(model3.getId());
 //        Assertions.assertNotNull(model3.getInsertOperator());
 //        Assertions.assertNull(model3.getUpdateOperator());
+
+
         //普通更新
-        Model model4 = new Model(1L,"坦克");
+        model = new Model(1L, "坦克");
         mappedStatement = new MappedStatement.Builder(configuration, "***", staticSqlSource, SqlCommandType.UPDATE).build();
-        new MybatisParameterHandler(mappedStatement, model4, boundSql);
-        Assertions.assertNotNull(model4.getId());
-        Assertions.assertNotNull(model4.getUpdateOperator());
+        new MybatisParameterHandler(mappedStatement, model, boundSql);
+        assertThat(model.getId()).isNotNull();
+        assertThat(model.getUpdateOperator()).isNotNull();
+
+
         //批量插入
         List<Model> list = Arrays.asList(new Model("坦克一号"), new Model("坦克二号"));
         mappedStatement = new MappedStatement.Builder(configuration, "***", staticSqlSource, SqlCommandType.INSERT).build();
         new MybatisParameterHandler(mappedStatement, list, boundSql);
         list.forEach(m -> {
-            Assertions.assertNotNull(m.getId());
-            Assertions.assertNotNull(m.getInsertOperator());
-            Assertions.assertNull(m.getUpdateOperator());
+            assertThat(m.getId()).isNotNull();
+            assertThat(m.getInsertOperator()).isNotNull();
+            assertThat(m.getUpdateOperator()).isNull();
         });
+
+
         //批量更新
         mappedStatement = new MappedStatement.Builder(configuration, "***", staticSqlSource, SqlCommandType.UPDATE).build();
         new MybatisParameterHandler(mappedStatement, list, boundSql);
         list.forEach(m -> {
-            Assertions.assertNotNull(m.getId());
-            Assertions.assertNotNull(m.getInsertOperator());
-            Assertions.assertNotNull(m.getUpdateOperator());
+            assertThat(m.getId()).isNotNull();
+            assertThat(m.getInsertOperator()).isNotNull();
+            assertThat(m.getUpdateOperator()).isNotNull();
         });
     }
 
