@@ -55,4 +55,9 @@ public class Selector<P, T> {
         return or(() -> t);
     }
 
+    @Override
+    public String toString() {
+        return String.format("Selector{success=%s}", success);
+    }
+
 }
