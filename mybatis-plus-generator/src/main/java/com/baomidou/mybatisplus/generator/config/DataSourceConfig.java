@@ -17,7 +17,8 @@ package com.baomidou.mybatisplus.generator.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
-import com.baomidou.mybatisplus.generator.config.converts.TypeConvertRegistry;
+import com.baomidou.mybatisplus.generator.config.converts.MySqlTypeConvert;
+import com.baomidou.mybatisplus.generator.config.converts.TypeConverts;
 import com.baomidou.mybatisplus.generator.config.querys.DbQueryRegistry;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -55,6 +56,7 @@ public class DataSourceConfig {
     private ITypeConvert typeConvert;
     /**
      * 关键字处理器
+     *
      * @since 3.3.2
      */
     private IKeyWordsHandler keyWordsHandler;
@@ -81,7 +83,7 @@ public class DataSourceConfig {
             DbQueryRegistry dbQueryRegistry = new DbQueryRegistry();
             // 默认 MYSQL
             dbQuery = Optional.ofNullable(dbQueryRegistry.getDbQuery(dbType))
-                    .orElseGet(() -> dbQueryRegistry.getDbQuery(DbType.MYSQL));
+                .orElseGet(() -> dbQueryRegistry.getDbQuery(DbType.MYSQL));
         }
         return dbQuery;
     }
@@ -142,9 +144,11 @@ public class DataSourceConfig {
     public ITypeConvert getTypeConvert() {
         if (null == typeConvert) {
             DbType dbType = getDbType();
-            TypeConvertRegistry typeConvertRegistry = new TypeConvertRegistry();
             // 默认 MYSQL
-            typeConvert = Optional.ofNullable(typeConvertRegistry.getTypeConvert(dbType)).orElseGet(() -> typeConvertRegistry.getTypeConvert(DbType.MYSQL));
+            typeConvert = TypeConverts.getTypeConvert(dbType);
+            if (null == typeConvert) {
+                typeConvert = MySqlTypeConvert.INSTANCE;
+            }
         }
         return typeConvert;
     }

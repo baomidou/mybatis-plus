@@ -69,17 +69,17 @@ public class MybatisConfiguration extends Configuration {
 
     /**
      * MybatisPlus 加载 SQL 顺序：
-     * <p>1、加载XML中的SQL</p>
-     * <p>2、加载sqlProvider中的SQL</p>
-     * <p>3、xmlSql 与 sqlProvider不能包含相同的SQL</p>
-     * <p>调整后的SQL优先级：xmlSql > sqlProvider > curdSql</p>
+     * <p> 1、加载 XML中的 SQL </p>
+     * <p> 2、加载 SqlProvider 中的 SQL </p>
+     * <p> 3、XmlSql 与 SqlProvider不能包含相同的 SQL </p>
+     * <p>调整后的 SQL优先级：XmlSql > sqlProvider > CurdSql </p>
      */
     @Override
     public void addMappedStatement(MappedStatement ms) {
         logger.debug("addMappedStatement: " + ms.getId());
         if (mappedStatements.containsKey(ms.getId())) {
             /*
-             * 说明已加载了xml中的节点； 忽略mapper中的SqlProvider数据
+             * 说明已加载了xml中的节点； 忽略mapper中的 SqlProvider 数据
              */
             logger.error("mapper[" + ms.getId() + "] is ignored, because it exists, maybe from xml file");
             return;

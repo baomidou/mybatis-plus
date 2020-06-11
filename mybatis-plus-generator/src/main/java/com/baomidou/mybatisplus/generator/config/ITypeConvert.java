@@ -22,10 +22,10 @@ import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
  * 数据库字段类型转换
  *
  * @author hubin
+ * @author hanchunlin
  * @since 2017-01-20
  */
 public interface ITypeConvert {
-
 
     /**
      * 执行类型转换
@@ -35,10 +35,8 @@ public interface ITypeConvert {
      * @return ignore
      */
     default IColumnType processTypeConvert(GlobalConfig globalConfig, TableField tableField) {
-        // 该方法提供重写
         return processTypeConvert(globalConfig, tableField.getType());
     }
-
 
     /**
      * 执行类型转换
@@ -48,4 +46,5 @@ public interface ITypeConvert {
      * @return ignore
      */
     IColumnType processTypeConvert(GlobalConfig globalConfig, String fieldType);
+
 }
