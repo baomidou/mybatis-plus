@@ -1,2 +1,6 @@
-- fix: @TableName.autoResultMap=true 情况下, 内置的 selectBody 将不会进行 as ,使用了的需要注意!!!
-- feat: 新增 mybatis-plus-boot-starter-test 模块
+- fix: `@TableName.autoResultMap=true` 情况下, 内置的 `selectBody` 将不会进行 as ,使用了的需要注意!!!
+- feat: 新增 `mybatis-plus-boot-starter-test` 模块
+- fix: `MetaObjectHandler` 重载错误(解决办法是参数位置对调),填充值在泛型上支持字段类型的子类
+- feat: mybatis up to `3.5.5`, mybatis-spring up to `2.0.5`
+- feat: 新增 `MybatisParameterHandler` 并废弃老的 `MybatisDefaultParameterHandler`
+- feat: 分页方言加入 gbase 支持
