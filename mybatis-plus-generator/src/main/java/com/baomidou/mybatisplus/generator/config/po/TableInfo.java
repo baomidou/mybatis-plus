@@ -92,8 +92,8 @@ public class TableInfo {
     }
 
     public TableInfo setFields(List<TableField> fields) {
+        this.fields = fields;
         if (CollectionUtils.isNotEmpty(fields)) {
-            this.fields = fields;
             // 收集导入包信息
             for (TableField field : fields) {
                 if (null != field.getColumnType() && null != field.getColumnType().getPkg()) {
@@ -156,5 +156,15 @@ public class TableInfo {
             fieldNames = names.toString();
         }
         return fieldNames;
+    }
+
+    /**
+     * 是否含有主键
+     *
+     * @return 是否含有主键
+     * @since 3.3.3
+     */
+    public boolean hasPrimaryKey() {
+        return this.fields.stream().anyMatch(TableField::isKeyFlag);
     }
 }

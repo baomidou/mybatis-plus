@@ -398,7 +398,7 @@ public class ConfigBuilder {
             // 无父类开启 AR 模式
             tableInfo.getImportPackages().add(com.baomidou.mybatisplus.extension.activerecord.Model.class.getCanonicalName());
         }
-        if (null != globalConfig.getIdType() && tableInfo.getFields().stream().anyMatch(TableField::isKeyFlag)) {
+        if (null != globalConfig.getIdType() && tableInfo.hasPrimaryKey()) {
             // 指定需要 IdType 场景
             tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotation.IdType.class.getCanonicalName());
             tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotation.TableId.class.getCanonicalName());
