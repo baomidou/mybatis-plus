@@ -3,4 +3,4 @@
 - fix: `MetaObjectHandler` 重载错误(解决办法是参数位置对调),填充值在泛型上支持字段类型的子类
 - feat: mybatis up to `3.5.5`, mybatis-spring up to `2.0.5`
 - feat: 新增 `MybatisParameterHandler` 并废弃老的 `MybatisDefaultParameterHandler`
-- feat: 分页方言加入 gbase 支持
+- feat: 分页方言加入 gbase,clickhouse 支持
