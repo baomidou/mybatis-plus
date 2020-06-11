@@ -502,7 +502,7 @@ public class ConfigBuilder {
                                 // 跳过视图
                                 continue;
                             }
-                            tableInfo.setComment(tableComment);
+                            tableInfo.setComment(formatComment(tableComment));
                         }
 
                         if (isInclude) {
@@ -674,7 +674,7 @@ public class ConfigBuilder {
                     }
                     field.setColumnType(dataSourceConfig.getTypeConvert().processTypeConvert(globalConfig, field));
                     if (commentSupported) {
-                        field.setComment(results.getString(dbQuery.fieldComment()));
+                        field.setComment(formatComment(results.getString(dbQuery.fieldComment())));
                     }
                     // 填充逻辑判断
                     List<TableFill> tableFillList = getStrategyConfig().getTableFillList();
@@ -808,4 +808,16 @@ public class ConfigBuilder {
         this.injectionConfig = injectionConfig;
         return this;
     }
+
+    /**
+     * 格式化数据库注释内容
+     *
+     * @param comment 注释
+     * @return 注释
+     * @since 3.3.3
+     */
+    public String formatComment(String comment) {
+        return StringUtils.isBlank(comment) ? StringPool.EMPTY : comment.replaceAll("\r\n", "\t");
+    }
+
 }
