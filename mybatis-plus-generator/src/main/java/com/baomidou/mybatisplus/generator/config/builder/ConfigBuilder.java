@@ -398,7 +398,7 @@ public class ConfigBuilder {
             // 无父类开启 AR 模式
             tableInfo.getImportPackages().add(com.baomidou.mybatisplus.extension.activerecord.Model.class.getCanonicalName());
         }
-        if (null != globalConfig.getIdType() && tableInfo.hasPrimaryKey()) {
+        if (null != globalConfig.getIdType() && tableInfo.isHavePrimaryKey()) {
             // 指定需要 IdType 场景
             tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotation.IdType.class.getCanonicalName());
             tableInfo.getImportPackages().add(com.baomidou.mybatisplus.annotation.TableId.class.getCanonicalName());
@@ -636,11 +636,10 @@ public class ConfigBuilder {
 
                     // 处理ID
                     if (isId && !haveId) {
-                        field.setKeyFlag(true);
-                        if (DbType.H2 == dbType || DbType.SQLITE == dbType || dbQuery.isKeyIdentity(results)) {
-                            field.setKeyIdentityFlag(true);
-                        }
                         haveId = true;
+                        field.setKeyFlag(true);
+                        tableInfo.setHavePrimaryKey(true);
+                        field.setKeyIdentityFlag(dbQuery.isKeyIdentity(results));
                     } else {
                         field.setKeyFlag(false);
                     }

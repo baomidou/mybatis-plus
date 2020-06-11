@@ -49,6 +49,7 @@ public class TableInfo {
     private String serviceImplName;
     private String controllerName;
     private List<TableField> fields;
+    private boolean havePrimaryKey;
     /**
      * 公共字段
      */
@@ -158,13 +159,4 @@ public class TableInfo {
         return fieldNames;
     }
 
-    /**
-     * 是否含有主键
-     *
-     * @return 是否含有主键
-     * @since 3.3.3
-     */
-    public boolean hasPrimaryKey() {
-        return this.fields.stream().anyMatch(TableField::isKeyFlag);
-    }
 }
