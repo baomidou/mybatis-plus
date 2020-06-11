@@ -28,7 +28,7 @@ import java.util.function.Supplier;
  */
 @Data
 @AllArgsConstructor
-public class StrictFill {
+public class StrictFill<T, E extends T> {
     /**
      * 字段名
      */
@@ -36,17 +36,17 @@ public class StrictFill {
     /**
      * 字段类型
      */
-    private Class<?> fieldType;
+    private Class<T> fieldType;
     /**
      * 获取字段值的函数
      */
-    private Supplier<Object> fieldVal;
+    private Supplier<E> fieldVal;
 
-    public static StrictFill of(String fieldName, Class<?> fieldType, Object fieldVal) {
-        return new StrictFill(fieldName, fieldType, () -> fieldVal);
+    public static <T, E extends T> StrictFill<T, E> of(String fieldName, Class<T> fieldType, E fieldVal) {
+        return new StrictFill<>(fieldName, fieldType, () -> fieldVal);
     }
 
-    public static StrictFill of(String fieldName, Class<?> fieldType, Supplier<Object> fieldVal) {
-        return new StrictFill(fieldName, fieldType, fieldVal);
+    public static <T, E extends T> StrictFill<T, E> of(String fieldName, Supplier<E> fieldVal, Class<T> fieldType) {
+        return new StrictFill<>(fieldName, fieldType, fieldVal);
     }
 }
