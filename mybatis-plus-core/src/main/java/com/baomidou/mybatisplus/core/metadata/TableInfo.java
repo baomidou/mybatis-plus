@@ -378,7 +378,7 @@ public class TableInfo implements Constants {
      *
      * @param field   TableFieldInfo
      * @param isWhere true: logicDeleteValue, false: logicNotDeleteValue
-     * @return
+     * @return sql
      */
     private String formatLogicDeleteSql(TableFieldInfo field, boolean isWhere) {
         final String value = isWhere ? field.getLogicNotDeleteValue() : field.getLogicDeleteValue();
@@ -435,5 +435,9 @@ public class TableInfo implements Constants {
                 this.versionFieldInfo = i;
             }
         });
+    }
+
+    public List<TableFieldInfo> getFieldList() {
+        return Collections.unmodifiableList(fieldList);
     }
 }

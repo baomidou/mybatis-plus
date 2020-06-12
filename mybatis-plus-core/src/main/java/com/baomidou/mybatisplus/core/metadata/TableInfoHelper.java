@@ -100,7 +100,7 @@ public class TableInfoHelper {
      */
     @SuppressWarnings("unused")
     public static List<TableInfo> getTableInfos() {
-        return new ArrayList<>(TABLE_INFO_CACHE.values());
+        return Collections.unmodifiableList(new ArrayList<>(TABLE_INFO_CACHE.values()));
     }
 
     /**
@@ -260,7 +260,8 @@ public class TableInfoHelper {
                     if (isReadPK) {
                         throw ExceptionUtils.mpe("@TableId can't more than one in Class: \"%s\".", clazz.getName());
                     } else {
-                        isReadPK = initTableIdWithAnnotation(dbConfig, tableInfo, field, tableId, reflector);
+                        initTableIdWithAnnotation(dbConfig, tableInfo, field, tableId, reflector);
+                        isReadPK = true;
                         continue;
                     }
                 }
@@ -270,14 +271,16 @@ public class TableInfoHelper {
                     continue;
                 }
             }
+            final TableField tableField = field.getAnnotation(TableField.class);
 
             /* 有 @TableField 注解的字段初始化 */
-            if (initTableFieldWithAnnotation(dbConfig, tableInfo, fieldList, field)) {
+            if (tableField != null) {
+                fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, tableField, reflector));
                 continue;
             }
 
             /* 无 @TableField 注解的字段初始化 */
-            fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field));
+            fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, reflector));
         }
 
         /* 检查逻辑删除字段只能有最多一个 */
@@ -316,8 +319,8 @@ public class TableInfoHelper {
      * @param tableId   注解
      * @param reflector Reflector
      */
-    private static boolean initTableIdWithAnnotation(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo,
-                                                     Field field, TableId tableId, Reflector reflector) {
+    private static void initTableIdWithAnnotation(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo,
+                                                  Field field, TableId tableId, Reflector reflector) {
         boolean underCamel = tableInfo.isUnderCamel();
         final String property = field.getName();
         if (field.getAnnotation(TableField.class) != null) {
@@ -350,7 +353,6 @@ public class TableInfoHelper {
             .setKeyColumn(column)
             .setKeyProperty(property)
             .setKeyType(reflector.getGetterType(property));
-        return true;
     }
 
     /**
@@ -383,27 +385,6 @@ public class TableInfoHelper {
             return true;
         }
         return false;
-    }
-
-    /**
-     * <p>
-     * 字段属性初始化
-     * </p>
-     *
-     * @param dbConfig  数据库全局配置
-     * @param tableInfo 表信息
-     * @param fieldList 字段列表
-     * @return true 继续下一个属性判断，返回 continue;
-     */
-    private static boolean initTableFieldWithAnnotation(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo,
-                                                        List<TableFieldInfo> fieldList, Field field) {
-        /* 获取注解属性，自定义字段 */
-        TableField tableField = field.getAnnotation(TableField.class);
-        if (null == tableField) {
-            return false;
-        }
-        fieldList.add(new TableFieldInfo(dbConfig, tableInfo, field, tableField));
-        return true;
     }
 
     /**

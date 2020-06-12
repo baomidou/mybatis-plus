@@ -97,13 +97,11 @@ public final class LambdaUtils {
      * @return 缓存 map
      */
     private static Map<String, ColumnCache> createColumnCacheMap(TableInfo info) {
-
-        String kp = info.getKeyProperty();
         Map<String, ColumnCache> map;
 
-        if (StringUtils.isNotBlank(kp)) {
+        if (info.havePK()) {
             map = Maps.newHashMapWithExpectedSize(info.getFieldList().size() + 1);
-            map.put(formatKey(kp), new ColumnCache(info.getKeyColumn(), info.getKeySqlSelect()));
+            map.put(formatKey(info.getKeyProperty()), new ColumnCache(info.getKeyColumn(), info.getKeySqlSelect()));
         } else {
             map = Maps.newHashMapWithExpectedSize(info.getFieldList().size());
         }
@@ -126,5 +124,5 @@ public final class LambdaUtils {
             return info == null ? null : createColumnCacheMap(info);
         });
     }
-    
+
 }

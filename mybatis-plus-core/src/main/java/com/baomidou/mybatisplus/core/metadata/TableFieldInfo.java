@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import lombok.*;
 import org.apache.ibatis.mapping.ResultMapping;
+import org.apache.ibatis.reflection.Reflector;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
@@ -89,14 +90,14 @@ public class TableFieldInfo implements Constants {
      */
     private final FieldStrategy whereStrategy;
     /**
+     * 是否是乐观锁字段
+     */
+    private final boolean version;
+    /**
      * 是否进行 select 查询
      * <p>大字段可设置为 false 不加入 select 查询范围</p>
      */
     private boolean select = true;
-    /**
-     * 是否是乐观锁字段
-     */
-    private boolean version;
     /**
      * 逻辑删除值
      */
@@ -151,12 +152,13 @@ public class TableFieldInfo implements Constants {
      * 全新的 存在 TableField 注解时使用的构造函数
      */
     @SuppressWarnings("unchecked")
-    public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field, TableField tableField) {
+    public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field, TableField tableField,
+                          Reflector reflector) {
         field.setAccessible(true);
         this.field = field;
         this.version = field.getAnnotation(Version.class) != null;
         this.property = field.getName();
-        this.propertyType = field.getType();
+        this.propertyType = reflector.getGetterType(this.property);
         this.isCharSequence = StringUtils.isCharSequence(this.propertyType);
         this.fieldFill = tableField.fill();
         this.withInsertFill = this.fieldFill == FieldFill.INSERT || this.fieldFill == FieldFill.INSERT_UPDATE;
@@ -233,12 +235,12 @@ public class TableFieldInfo implements Constants {
     /**
      * 不存在 TableField 注解时, 使用的构造函数
      */
-    public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field) {
+    public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field, Reflector reflector) {
         field.setAccessible(true);
         this.field = field;
         this.version = field.getAnnotation(Version.class) != null;
         this.property = field.getName();
-        this.propertyType = field.getType();
+        this.propertyType = reflector.getGetterType(this.property);
         this.isCharSequence = StringUtils.isCharSequence(this.propertyType);
         this.el = this.property;
         this.insertStrategy = dbConfig.getInsertStrategy();
