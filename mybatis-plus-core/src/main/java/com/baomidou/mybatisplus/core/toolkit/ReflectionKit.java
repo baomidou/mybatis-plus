@@ -214,14 +214,7 @@ public final class ReflectionKit {
         if (Objects.isNull(clazz)) {
             return Collections.emptyList();
         }
-        List<Field> fields = CLASS_FIELD_CACHE.get(clazz);
-        if (CollectionUtils.isEmpty(fields)) {
-            synchronized (CLASS_FIELD_CACHE) {
-                fields = doGetFieldList(clazz);
-                CLASS_FIELD_CACHE.put(clazz, fields);
-            }
-        }
-        return fields;
+        return CLASS_FIELD_CACHE.computeIfAbsent(clazz, ReflectionKit::doGetFieldList);
     }
 
     /**
