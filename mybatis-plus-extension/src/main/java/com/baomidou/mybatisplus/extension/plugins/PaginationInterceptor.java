@@ -196,7 +196,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
         Connection connection = (Connection) invocation.getArgs()[0];
 
         if (page.isSearchCount() && !page.isHitCount()) {
-            SqlInfo sqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), countSqlParser, originalSql);
+            SqlInfo sqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), countSqlParser, originalSql, metaObject);
             this.queryTotal(sqlInfo.getSql(), mappedStatement, boundSql, page, connection);
             if (!this.continueLimit(page)) {
                 return null;
