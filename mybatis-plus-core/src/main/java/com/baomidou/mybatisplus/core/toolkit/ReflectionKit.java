@@ -202,7 +202,7 @@ public final class ReflectionKit {
         List<Field> fieldList = getFieldList(clazz);
         return CollectionUtils.isNotEmpty(fieldList) ? fieldList.stream().collect(Collectors.toMap(Field::getName, field -> field)) : Collections.emptyMap();
     }
-
+    
     /**
      * <p>
      * 获取该类的所有属性列表
@@ -214,23 +214,40 @@ public final class ReflectionKit {
         if (Objects.isNull(clazz)) {
             return Collections.emptyList();
         }
-        List<Field> fields = CLASS_FIELD_CACHE.get(clazz);
-        if (CollectionUtils.isEmpty(fields)) {
-            synchronized (CLASS_FIELD_CACHE) {
-                fields = doGetFieldList(clazz);
-                CLASS_FIELD_CACHE.put(clazz, fields);
+        return CLASS_FIELD_CACHE.computeIfAbsent(clazz, k -> {
+            Field[] fields = k.getDeclaredFields();
+            List<Field> superFields = new ArrayList<>();
+            Class<?> currentClass = k.getSuperclass();
+            while (currentClass != null) {
+                Field[] declaredFields = currentClass.getDeclaredFields();
+                Collections.addAll(superFields, declaredFields);
+                currentClass = currentClass.getSuperclass();
             }
-        }
-        return fields;
+            /* 排除重载属性 */
+            Map<String, Field> fieldMap = excludeOverrideSuperField(fields, superFields);
+            /*
+             * 重写父类属性过滤后处理忽略部分，支持过滤父类属性功能
+             * 场景：中间表不需要记录创建时间，忽略父类 createTime 公共属性
+             * 中间表实体重写父类属性 ` private transient Date createTime; `
+             */
+            return fieldMap.values().stream()
+                /* 过滤静态属性 */
+                .filter(f -> !Modifier.isStatic(f.getModifiers()))
+                /* 过滤 transient关键字修饰的属性 */
+                .filter(f -> !Modifier.isTransient(f.getModifiers()))
+                .collect(Collectors.toList());
+        });
     }
-
+    
     /**
      * <p>
      * 获取该类的所有属性列表
      * </p>
      *
      * @param clazz 反射类
+     * @deprecated 3.3.3
      */
+    @Deprecated
     public static List<Field> doGetFieldList(Class<?> clazz) {
         if (clazz.getSuperclass() != null) {
             /* 排除重载属性 */
