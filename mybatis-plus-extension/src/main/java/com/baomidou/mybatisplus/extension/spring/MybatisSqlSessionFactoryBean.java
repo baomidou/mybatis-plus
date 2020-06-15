@@ -442,7 +442,7 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
      */
     protected SqlSessionFactory buildSqlSessionFactory() throws Exception {
 
-        final MybatisConfiguration targetConfiguration;
+        final Configuration targetConfiguration;
 
         // TODO 使用 MybatisXmlConfigBuilder 而不是 XMLConfigBuilder
         MybatisXMLConfigBuilder xmlConfigBuilder = null;

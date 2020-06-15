@@ -79,8 +79,7 @@ public class MybatisSqlSessionFactoryBuilder extends SqlSessionFactoryBuilder {
 
     // TODO 使用自己的逻辑,注入必须组件
     @Override
-    public SqlSessionFactory build(Configuration config) {
-        MybatisConfiguration configuration = (MybatisConfiguration) config;
+    public SqlSessionFactory build(Configuration configuration) {
         GlobalConfig globalConfig = GlobalConfigUtils.getGlobalConfig(configuration);
         final IdentifierGenerator identifierGenerator;
         if (globalConfig.getIdentifierGenerator() == null) {
