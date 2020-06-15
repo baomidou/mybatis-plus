@@ -27,6 +27,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
+import com.baomidou.mybatisplus.extension.toolkit.PropertyMapper;
 import com.baomidou.mybatisplus.extension.toolkit.SqlParserUtils;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -89,6 +90,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
     /**
      * 方言类型(数据库名,全小写) <br>
      * 如果用的我们支持分页的数据库但获取数据库类型不正确则可以配置该值进行校正
+     *
      * @deprecated 3.3.1 {@link #setDbType(DbType)}
      */
     @Deprecated
@@ -96,6 +98,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
     /**
      * 方言实现类<br>
      * 注意！实现 com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect 接口的子类
+     *
      * @deprecated 3.3.1 {@link #setDialect(IDialect)}
      */
     @Deprecated
@@ -222,7 +225,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
      * @return
      */
     protected boolean continueLimit(IPage<?> page) {
-        if(page.getTotal() <= 0) {
+        if (page.getTotal() <= 0) {
             return false;
         }
         if (page.getCurrent() > page.getPages()) {
@@ -272,7 +275,6 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
         }
     }
 
-
     /**
      * 处理页数溢出,默认设置为第一页
      *
@@ -292,24 +294,12 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
 
     @Override
     public void setProperties(Properties prop) {
-        String countSqlParser = prop.getProperty("countSqlParser");
-        String overflow = prop.getProperty("overflow");
-        String limit = prop.getProperty("limit");
-        String dialectType = prop.getProperty("dialectType");
-        String dialectClazz = prop.getProperty("dialectClazz");
-        setOverflow(Boolean.parseBoolean(overflow));
-        if (StringUtils.isNotBlank(countSqlParser)) {
-            setCountSqlParser(ClassUtils.newInstance(countSqlParser));
-        }
-        if (StringUtils.isNotBlank(dialectType)) {
-            setDialectType(dialectType);
-        }
-        if (StringUtils.isNotBlank(dialectClazz)) {
-            setDialectClazz(dialectClazz);
-        }
-        if (StringUtils.isNotBlank(limit)) {
-            setLimit(Long.parseLong(limit));
-        }
+        PropertyMapper.getInstance(prop)
+            .whenNotBlack("countSqlParser", ClassUtils::newInstance, this::setCountSqlParser)
+            .whenNotBlack("overflow", Boolean::parseBoolean, this::setOverflow)
+            .whenNotBlack("dialectType", this::setDialectType)
+            .whenNotBlack("dialectClazz", this::setDialectClazz)
+            .whenNotBlack("limit", Long::parseLong, this::setLimit);
     }
 
     /**
