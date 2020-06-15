@@ -62,7 +62,6 @@ public class MybatisParameterHandler implements ParameterHandler {
         this.configuration = mappedStatement.getConfiguration();
         this.sqlCommandType = mappedStatement.getSqlCommandType();
         this.parameterObject = processParameter(parameter);
-
     }
 
     public Object processParameter(Object parameter) {

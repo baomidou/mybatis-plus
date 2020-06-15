@@ -15,6 +15,7 @@
  */
 package com.baomidou.mybatisplus.core;
 
+import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
@@ -28,8 +29,8 @@ import org.apache.ibatis.scripting.xmltags.XMLLanguageDriver;
 public class MybatisXMLLanguageDriver extends XMLLanguageDriver {
 
     @Override
-    public MybatisParameterHandler createParameterHandler(MappedStatement mappedStatement,
-                                                                 Object parameterObject, BoundSql boundSql) {
+    public ParameterHandler createParameterHandler(MappedStatement mappedStatement,
+                                                   Object parameterObject, BoundSql boundSql) {
         // TODO 使用 MybatisParameterHandler 而不是 ParameterHandler
         return new MybatisParameterHandler(mappedStatement, parameterObject, boundSql);
     }
