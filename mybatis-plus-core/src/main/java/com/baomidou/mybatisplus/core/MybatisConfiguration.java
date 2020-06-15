@@ -21,8 +21,6 @@ import com.baomidou.mybatisplus.core.executor.MybatisCachingExecutor;
 import com.baomidou.mybatisplus.core.executor.MybatisReuseExecutor;
 import com.baomidou.mybatisplus.core.executor.MybatisSimpleExecutor;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
-import lombok.Getter;
-import lombok.Setter;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.logging.Log;
@@ -54,9 +52,23 @@ public class MybatisConfiguration extends Configuration {
         this.environment = environment;
     }
 
-    @Setter
-    @Getter
-    private GlobalConfig globalConfig = GlobalConfigUtils.defaults();
+    /**
+     * @return GlobalConfig
+     * @deprecated 3.3.3 please use {@link GlobalConfigUtils#getGlobalConfig(Configuration)}
+     */
+    @Deprecated
+    public GlobalConfig getGlobalConfig() {
+        return GlobalConfigUtils.getGlobalConfig(this);
+    }
+
+    /**
+     * @param globalConfig GlobalConfig
+     * @deprecated 3.3.3 please use {@link GlobalConfigUtils#setGlobalConfig(Configuration, GlobalConfig)}
+     */
+    @Deprecated
+    public void setGlobalConfig(GlobalConfig globalConfig) {
+        GlobalConfigUtils.setGlobalConfig(this, globalConfig);
+    }
 
     /**
      * 初始化调用
