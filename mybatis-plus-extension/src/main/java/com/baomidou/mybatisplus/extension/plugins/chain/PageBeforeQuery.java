@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.parser.ISqlParser;
 import com.baomidou.mybatisplus.core.parser.SqlInfo;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ParameterUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect;
@@ -15,21 +16,23 @@ import com.baomidou.mybatisplus.extension.toolkit.SqlParserUtils;
 import lombok.Data;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.statement.select.*;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.Executor;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMapping;
+import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author miemie
@@ -37,6 +40,8 @@ import java.util.Optional;
  */
 @Data
 public class PageBeforeQuery implements BeforeQuery {
+
+    protected static final Log logger = LogFactory.getLog(PageBeforeQuery.class);
 
     /**
      * COUNT SQL 解析
@@ -105,8 +110,30 @@ public class PageBeforeQuery implements BeforeQuery {
     }
 
     private MappedStatement buildCountMappedStatement(MappedStatement ms) {
-        //todo
-        return new MappedStatement.Builder(ms.getConfiguration(), ).build();
+        MappedStatement.Builder builder = new MappedStatement.Builder(ms.getConfiguration(), ms.getId() + "_mpCount", ms.getSqlSource(), ms.getSqlCommandType());
+        builder.resource(ms.getResource());
+        builder.fetchSize(ms.getFetchSize());
+        builder.statementType(ms.getStatementType());
+        builder.keyGenerator(ms.getKeyGenerator());
+        if (ms.getKeyProperties() != null && ms.getKeyProperties().length != 0) {
+            StringBuilder keyProperties = new StringBuilder();
+            for (String keyProperty : ms.getKeyProperties()) {
+                keyProperties.append(keyProperty).append(",");
+            }
+            keyProperties.delete(keyProperties.length() - 1, keyProperties.length());
+            builder.keyProperty(keyProperties.toString());
+        }
+        builder.timeout(ms.getTimeout());
+        builder.parameterMap(ms.getParameterMap());
+        List<ResultMap> resultMaps = new ArrayList<>();
+        ResultMap resultMap = new ResultMap.Builder(ms.getConfiguration(), ms.getId(), Long.class, Collections.emptyList()).build();
+        resultMaps.add(resultMap);
+        builder.resultMaps(resultMaps);
+        builder.resultSetType(ms.getResultSetType());
+        builder.cache(ms.getCache());
+        builder.flushCacheRequired(ms.isFlushCacheRequired());
+        builder.useCache(ms.isUseCache());
+        return builder.build();
     }
 
     /**
@@ -116,7 +143,7 @@ public class PageBeforeQuery implements BeforeQuery {
      * @param page        page对象
      * @return ignore
      */
-    public String concatOrderBy(String originalSql, IPage<?> page) {
+    protected String concatOrderBy(String originalSql, IPage<?> page) {
         if (CollectionUtils.isNotEmpty(page.orders())) {
             try {
                 List<OrderItem> orderList = page.orders();
@@ -145,6 +172,21 @@ public class PageBeforeQuery implements BeforeQuery {
             }
         }
         return originalSql;
+    }
+
+    protected List<OrderByElement> addOrderByElements(List<OrderItem> orderList, List<OrderByElement> orderByElements) {
+        orderByElements = CollectionUtils.isEmpty(orderByElements) ? new ArrayList<>(orderList.size()) : orderByElements;
+        List<OrderByElement> orderByElementList = orderList.stream()
+            .filter(item -> StringUtils.isNotBlank(item.getColumn()))
+            .map(item -> {
+                OrderByElement element = new OrderByElement();
+                element.setExpression(new Column(item.getColumn()));
+                element.setAsc(item.isAsc());
+                element.setAscDescPresent(true);
+                return element;
+            }).collect(Collectors.toList());
+        orderByElements.addAll(orderByElementList);
+        return orderByElements;
     }
 
     /**
