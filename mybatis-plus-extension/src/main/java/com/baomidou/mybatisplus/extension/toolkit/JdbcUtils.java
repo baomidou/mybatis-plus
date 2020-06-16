@@ -17,9 +17,18 @@ package com.baomidou.mybatisplus.extension.toolkit;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
+import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.MappedStatement;
+
+import javax.sql.DataSource;
+import java.lang.reflect.Field;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Map;
 
 /**
  * JDBC 工具类
@@ -30,6 +39,41 @@ import org.apache.ibatis.logging.LogFactory;
 public class JdbcUtils {
 
     private static final Log logger = LogFactory.getLog(JdbcUtils.class);
+
+    private static Field additionalParametersField;
+
+    static {
+        try {
+            additionalParametersField = BoundSql.class.getDeclaredField("additionalParameters");
+            additionalParametersField.setAccessible(true);
+        } catch (NoSuchFieldException e) {
+            throw ExceptionUtils.mpe("获取 BoundSql 属性 additionalParameters 失败: " + e, e);
+        }
+    }
+
+    /**
+     * 获取 BoundSql 属性值 additionalParameters
+     *
+     * @param boundSql
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public static Map<String, Object> getAdditionalParameter(BoundSql boundSql) {
+        try {
+            return (Map<String, Object>) additionalParametersField.get(boundSql);
+        } catch (IllegalAccessException e) {
+            throw ExceptionUtils.mpe("获取 BoundSql 属性值 additionalParameters 失败: " + e, e);
+        }
+    }
+
+    public static String getJdbcUrl(MappedStatement ms) {
+        DataSource dataSource = ms.getConfiguration().getEnvironment().getDataSource();
+        try (Connection conn = dataSource.getConnection()) {
+            return conn.getMetaData().getURL();
+        } catch (SQLException e) {
+            throw ExceptionUtils.mpe(e);
+        }
+    }
 
     /**
      * 根据连接地址判断数据库类型
