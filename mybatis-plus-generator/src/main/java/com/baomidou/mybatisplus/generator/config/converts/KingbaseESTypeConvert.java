@@ -28,8 +28,7 @@ import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.*;
 /**
  * KingbaseES 字段类型转换
  *
- * @author kingbase
- * @author hanchunlin
+ * @author kingbase, hanchunlin
  * @since 2019-10-12
  */
 public class KingbaseESTypeConvert implements ITypeConvert {

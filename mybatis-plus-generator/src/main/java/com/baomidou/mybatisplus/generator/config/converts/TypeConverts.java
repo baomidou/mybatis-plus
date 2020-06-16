@@ -24,8 +24,7 @@ import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
 /**
  * 该注册器负责注册并查询类型注册器
  *
- * @author nieqiuqiu
- * @author hanchunlin
+ * @author nieqiuqiu, hanchunlin
  * @since 3.3.1
  */
 public class TypeConverts {
@@ -60,6 +59,12 @@ public class TypeConverts {
         return null;
     }
 
+    /**
+     * 使用指定参数构建一个选择器
+     *
+     * @param param 参数
+     * @return 返回选择器
+     */
     static Selector<String, IColumnType> use(String param) {
         return new Selector<>(param.toLowerCase());
     }

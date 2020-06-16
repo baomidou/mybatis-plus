@@ -22,8 +22,18 @@ public interface Branch<P, T> {
      */
     Function<P, T> factory();
 
+    /**
+     * 工厂方法，快速创建分支
+     *
+     * @param tester  测试器
+     * @param factory 值工厂
+     * @param <P>     参数类型
+     * @param <T>     值类型
+     * @return 返回一个新的分支
+     */
     static <P, T> Branch<P, T> of(Predicate<P> tester, Function<P, T> factory) {
         return new Branch<P, T>() {
+
             @Override
             public Predicate<P> tester() {
                 return tester;
@@ -33,6 +43,7 @@ public interface Branch<P, T> {
             public Function<P, T> factory() {
                 return factory;
             }
+
         };
     }
 }

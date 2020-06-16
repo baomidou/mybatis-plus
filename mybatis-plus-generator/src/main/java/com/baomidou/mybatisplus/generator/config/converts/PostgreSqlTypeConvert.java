@@ -27,8 +27,7 @@ import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.*;
 /**
  * PostgreSQL 字段类型转换
  *
- * @author hubin
- * @author hanchunlin
+ * @author hubin, hanchunlin
  * @since 2017-01-20
  */
 public class PostgreSqlTypeConvert implements ITypeConvert {

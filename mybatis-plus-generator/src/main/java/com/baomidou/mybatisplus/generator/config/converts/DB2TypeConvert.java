@@ -26,8 +26,7 @@ import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.*;
 /**
  * DB2 字段类型转换
  *
- * @author zhanyao
- * @author hanchunlin
+ * @author zhanyao, hanchunlin
  * @since 2018-05-16
  */
 public class DB2TypeConvert implements ITypeConvert {

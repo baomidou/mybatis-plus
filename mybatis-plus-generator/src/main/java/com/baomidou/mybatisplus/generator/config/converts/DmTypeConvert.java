@@ -26,8 +26,7 @@ import static com.baomidou.mybatisplus.generator.config.rules.DbColumnType.*;
 /**
  * DM 字段类型转换
  *
- * @author halower
- * @author hanchunlin
+ * @author halower, hanchunlin
  * @since 2019-06-27
  */
 public class DmTypeConvert implements ITypeConvert {
