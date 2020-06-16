@@ -15,11 +15,13 @@
  */
 package com.baomidou.mybatisplus.core.toolkit;
 
+import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Proxy;
-import java.util.Properties;
+import java.util.Map;
 
 /**
  * 插件工具类
@@ -27,11 +29,19 @@ import java.util.Properties;
  * @author TaoYu , hubin
  * @since 2017-06-20
  */
-public final class PluginUtils {
+public abstract class PluginUtils {
     public static final String DELEGATE_BOUNDSQL_SQL = "delegate.boundSql.sql";
 
-    private PluginUtils() {
-        // to do nothing
+    private final static Field additionalParametersField = initBoundSqlAdditionalParametersField();
+
+    private static Field initBoundSqlAdditionalParametersField() {
+        try {
+            Field field = BoundSql.class.getDeclaredField("additionalParameters");
+            field.setAccessible(true);
+            return field;
+        } catch (NoSuchFieldException e) {
+            throw ExceptionUtils.mpe("can not find field['additionalParameters'] from BoundSql, why?", e);
+        }
     }
 
     /**
@@ -47,10 +57,27 @@ public final class PluginUtils {
     }
 
     /**
-     * 根据 key 获取 Properties 的值
+     * 获取 BoundSql 属性值 additionalParameters
+     *
+     * @param boundSql BoundSql
+     * @return additionalParameters
      */
-    public static String getProperty(Properties properties, String key) {
-        String value = properties.getProperty(key);
-        return StringUtils.isBlank(value) ? null : value;
+    @SuppressWarnings("unchecked")
+    public static Map<String, Object> getAdditionalParameter(BoundSql boundSql) {
+        try {
+            return (Map<String, Object>) additionalParametersField.get(boundSql);
+        } catch (IllegalAccessException e) {
+            throw ExceptionUtils.mpe("获取 BoundSql 属性值 additionalParameters 失败: " + e, e);
+        }
+    }
+
+    /**
+     * 给 BoundSql 设置 additionalParameters
+     *
+     * @param boundSql             BoundSql
+     * @param additionalParameters additionalParameters
+     */
+    public static void setAdditionalParameter(BoundSql boundSql, Map<String, Object> additionalParameters) {
+        additionalParameters.forEach(boundSql::setAdditionalParameter);
     }
 }

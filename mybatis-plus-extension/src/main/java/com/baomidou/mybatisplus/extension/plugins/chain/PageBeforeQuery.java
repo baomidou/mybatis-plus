@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.parser.ISqlParser;
 import com.baomidou.mybatisplus.core.parser.SqlInfo;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ParameterUtils;
+import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
@@ -94,13 +95,13 @@ public class PageBeforeQuery implements BeforeQuery {
                 return boundSql;
             }
         }
-        DbType dbType = this.dbType == null ? JdbcUtils.getDbType(JdbcUtils.getJdbcUrl(ms)) : this.dbType;
+        DbType dbType = this.dbType == null ? JdbcUtils.getDbType(ms) : this.dbType;
         IDialect dialect = Optional.ofNullable(this.dialect).orElseGet(() -> DialectFactory.getDialect(dbType));
         String buildSql = concatOrderBy(originalSql, page);
         DialectModel model = dialect.buildPaginationSql(buildSql, page.offset(), page.getSize());
         final Configuration configuration = ms.getConfiguration();
         List<ParameterMapping> mappings = new ArrayList<>(boundSql.getParameterMappings());
-        Map<String, Object> additionalParameter = JdbcUtils.getAdditionalParameter(boundSql);
+        Map<String, Object> additionalParameter = PluginUtils.getAdditionalParameter(boundSql);
         model.consumers(mappings, configuration, additionalParameter);
         boundSql = new BoundSql(configuration, model.getDialectSql(), mappings, parameter);
         for (Map.Entry<String, Object> entry : additionalParameter.entrySet()) {
