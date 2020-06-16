@@ -109,7 +109,7 @@ public class PageBeforeQuery implements BeforeQuery {
         return boundSql;
     }
 
-    private MappedStatement buildCountMappedStatement(MappedStatement ms) {
+    protected MappedStatement buildCountMappedStatement(MappedStatement ms) {
         MappedStatement.Builder builder = new MappedStatement.Builder(ms.getConfiguration(), ms.getId() + "_mpCount", ms.getSqlSource(), ms.getSqlCommandType());
         builder.resource(ms.getResource());
         builder.fetchSize(ms.getFetchSize());
