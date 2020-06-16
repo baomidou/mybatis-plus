@@ -294,7 +294,7 @@ public class PaginationInterceptor extends AbstractSqlParserHandler implements I
 
     @Override
     public void setProperties(Properties prop) {
-        PropertyMapper.getInstance(prop)
+        PropertyMapper.newInstance(prop)
             .whenNotBlack("countSqlParser", ClassUtils::newInstance, this::setCountSqlParser)
             .whenNotBlack("overflow", Boolean::parseBoolean, this::setOverflow)
             .whenNotBlack("dialectType", this::setDialectType)

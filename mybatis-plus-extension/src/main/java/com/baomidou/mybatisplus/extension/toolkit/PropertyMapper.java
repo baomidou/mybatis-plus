@@ -16,6 +16,7 @@
 package com.baomidou.mybatisplus.extension.toolkit;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Properties;
@@ -26,11 +27,11 @@ import java.util.function.Function;
  * @author miemie
  * @since 2020-06-15
  */
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class PropertyMapper {
     private final Properties delegate;
 
-    public static PropertyMapper getInstance(Properties properties) {
+    public static PropertyMapper newInstance(Properties properties) {
         return new PropertyMapper(properties);
     }
 
