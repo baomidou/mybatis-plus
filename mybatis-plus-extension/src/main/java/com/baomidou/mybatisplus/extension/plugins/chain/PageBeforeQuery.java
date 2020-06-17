@@ -85,11 +85,15 @@ public class PageBeforeQuery implements BeforeQuery {
             //处理单页条数限制
             handlerLimit(page);
         }
+        Map<String, Object> additionalParameter = PluginUtils.getAdditionalParameter(boundSql);
         String originalSql = boundSql.getSql();
         if (page.isSearchCount()) {
             SqlInfo sqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), countSqlParser, originalSql, SystemMetaObject.forObject(parameter));
             MappedStatement countMappedStatement = buildCountMappedStatement(ms);
             BoundSql countSql = new BoundSql(countMappedStatement.getConfiguration(), sqlInfo.getSql(), boundSql.getParameterMappings(), parameter);
+            for (Map.Entry<String, Object> entry : additionalParameter.entrySet()) {
+                boundSql.setAdditionalParameter(entry.getKey(), entry.getValue());
+            }
             CacheKey cacheKey = executor.createCacheKey(countMappedStatement, parameter, rowBounds, countSql);
             long count = (long) executor.query(countMappedStatement, parameter, rowBounds, resultHandler, cacheKey, countSql).get(0);
             page.setTotal(count);
@@ -103,7 +107,6 @@ public class PageBeforeQuery implements BeforeQuery {
         DialectModel model = dialect.buildPaginationSql(buildSql, page.offset(), page.getSize());
         final Configuration configuration = ms.getConfiguration();
         List<ParameterMapping> mappings = new ArrayList<>(boundSql.getParameterMappings());
-        Map<String, Object> additionalParameter = PluginUtils.getAdditionalParameter(boundSql);
         model.consumers(mappings, configuration, additionalParameter);
         boundSql = new BoundSql(configuration, model.getDialectSql(), mappings, parameter);
         for (Map.Entry<String, Object> entry : additionalParameter.entrySet()) {
