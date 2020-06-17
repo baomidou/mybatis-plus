@@ -27,6 +27,7 @@ import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.mapping.ResultMap;
+import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
@@ -86,10 +87,10 @@ public class PageBeforeQuery implements BeforeQuery {
         }
         String originalSql = boundSql.getSql();
         if (page.isSearchCount()) {
-            SqlInfo sqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), countSqlParser, originalSql, null);
+            SqlInfo sqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), countSqlParser, originalSql, SystemMetaObject.forObject(parameter));
             MappedStatement countMappedStatement = buildCountMappedStatement(ms);
             BoundSql countSql = new BoundSql(countMappedStatement.getConfiguration(), sqlInfo.getSql(), boundSql.getParameterMappings(), parameter);
-            CacheKey cacheKey = executor.createCacheKey(countMappedStatement, parameter, rowBounds, countMappedStatement.getBoundSql(parameter));
+            CacheKey cacheKey = executor.createCacheKey(countMappedStatement, parameter, rowBounds, countSql);
             long count = (long) executor.query(countMappedStatement, parameter, rowBounds, resultHandler, cacheKey, countSql).get(0);
             page.setTotal(count);
             if (!this.continueLimit(page)) {
