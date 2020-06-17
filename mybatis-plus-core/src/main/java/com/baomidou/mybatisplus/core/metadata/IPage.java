@@ -135,6 +135,7 @@ public interface IPage<T> extends Serializable {
      * @return 是否命中count缓存
      * @since 3.3.1
      */
+    @Deprecated
     default boolean isHitCount() {
         return false;
     }

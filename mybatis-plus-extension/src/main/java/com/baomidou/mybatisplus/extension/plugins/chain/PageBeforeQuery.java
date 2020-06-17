@@ -85,11 +85,12 @@ public class PageBeforeQuery implements BeforeQuery {
             handlerLimit(page);
         }
         String originalSql = boundSql.getSql();
-        if (page.isSearchCount() && !page.isHitCount()) {
+        if (page.isSearchCount()) {
             SqlInfo sqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), countSqlParser, originalSql, null);
-            ms = buildCountMappedStatement(ms);
-            CacheKey cacheKey = executor.createCacheKey(ms, parameter, rowBounds, boundSql);
-            long count = (long) executor.query(ms, parameter, rowBounds, resultHandler, cacheKey, boundSql).get(0);
+            MappedStatement countMappedStatement = buildCountMappedStatement(ms);
+            BoundSql countSql = new BoundSql(countMappedStatement.getConfiguration(), sqlInfo.getSql(), boundSql.getParameterMappings(), parameter);
+            CacheKey cacheKey = executor.createCacheKey(countMappedStatement, parameter, rowBounds, countMappedStatement.getBoundSql(parameter));
+            long count = (long) executor.query(countMappedStatement, parameter, rowBounds, resultHandler, cacheKey, countSql).get(0);
             page.setTotal(count);
             if (!this.continueLimit(page)) {
                 return boundSql;

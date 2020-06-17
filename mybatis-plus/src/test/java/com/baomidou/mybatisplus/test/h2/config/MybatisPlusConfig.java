@@ -26,6 +26,7 @@ import com.baomidou.mybatisplus.core.parser.ISqlParser;
 import com.baomidou.mybatisplus.extension.injector.methods.AlwaysUpdateSomeColumnById;
 import com.baomidou.mybatisplus.extension.injector.methods.InsertBatchSomeColumn;
 import com.baomidou.mybatisplus.extension.injector.methods.LogicDeleteByIdWithFill;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.OptimisticLockerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.SqlExplainInterceptor;
@@ -75,7 +76,7 @@ public class MybatisPlusConfig {
         configuration.setDefaultExecutorType(ExecutorType.REUSE);
         configuration.setDefaultEnumTypeHandler(EnumOrdinalTypeHandler.class);  //默认枚举处理
         sqlSessionFactory.setConfiguration(configuration);
-        PaginationInterceptor pagination = new PaginationInterceptor();
+        MybatisPlusInterceptor pagination = new MybatisPlusInterceptor();
         SqlExplainInterceptor sqlExplainInterceptor = new SqlExplainInterceptor();
         List<ISqlParser> sqlParserList = new ArrayList<>();
         sqlParserList.add(new AbstractJsqlParser() {

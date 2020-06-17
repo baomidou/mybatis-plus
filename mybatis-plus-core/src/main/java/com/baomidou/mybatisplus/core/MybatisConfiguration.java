@@ -16,22 +16,15 @@
 package com.baomidou.mybatisplus.core;
 
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.executor.MybatisBatchExecutor;
-import com.baomidou.mybatisplus.core.executor.MybatisCachingExecutor;
-import com.baomidou.mybatisplus.core.executor.MybatisReuseExecutor;
-import com.baomidou.mybatisplus.core.executor.MybatisSimpleExecutor;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import org.apache.ibatis.binding.MapperRegistry;
-import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.transaction.Transaction;
 
 /**
  * replace default Configuration class
@@ -161,22 +154,4 @@ public class MybatisConfiguration extends Configuration {
         getLanguageRegistry().setDefaultDriverClass(driver);
     }
 
-    @Override
-    public Executor newExecutor(Transaction transaction, ExecutorType executorType) {
-        executorType = executorType == null ? defaultExecutorType : executorType;
-        executorType = executorType == null ? ExecutorType.SIMPLE : executorType;
-        Executor executor;
-        if (ExecutorType.BATCH == executorType) {
-            executor = new MybatisBatchExecutor(this, transaction);
-        } else if (ExecutorType.REUSE == executorType) {
-            executor = new MybatisReuseExecutor(this, transaction);
-        } else {
-            executor = new MybatisSimpleExecutor(this, transaction);
-        }
-        if (cacheEnabled) {
-            executor = new MybatisCachingExecutor(executor);
-        }
-        executor = (Executor) interceptorChain.pluginAll(executor);
-        return executor;
-    }
 }
