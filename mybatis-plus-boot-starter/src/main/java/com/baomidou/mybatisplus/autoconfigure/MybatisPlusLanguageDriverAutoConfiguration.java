@@ -15,6 +15,9 @@
  */
 package com.baomidou.mybatisplus.autoconfigure;
 
+import com.baomidou.mybatisplus.autoconfigure.scripting.MybatisFreeMarkerLanguageDriver;
+import com.baomidou.mybatisplus.autoconfigure.scripting.MybatisThymeleafLanguageDriver;
+import com.baomidou.mybatisplus.autoconfigure.scripting.MybatisVelocityLanguageDriver;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.mybatis.scripting.freemarker.FreeMarkerLanguageDriver;
@@ -54,7 +57,7 @@ public class MybatisPlusLanguageDriverAutoConfiguration {
         @Bean
         @ConditionalOnMissingBean
         FreeMarkerLanguageDriver freeMarkerLanguageDriver() {
-            return new FreeMarkerLanguageDriver();
+            return new MybatisFreeMarkerLanguageDriver();
         }
     }
 
@@ -67,7 +70,7 @@ public class MybatisPlusLanguageDriverAutoConfiguration {
         @Bean
         @ConditionalOnMissingBean
         FreeMarkerLanguageDriver freeMarkerLanguageDriver(FreeMarkerLanguageDriverConfig config) {
-            return new FreeMarkerLanguageDriver(config);
+            return new MybatisFreeMarkerLanguageDriver(config);
         }
 
         @Bean
@@ -75,21 +78,6 @@ public class MybatisPlusLanguageDriverAutoConfiguration {
         @ConfigurationProperties(CONFIGURATION_PROPERTY_PREFIX + ".freemarker")
         public FreeMarkerLanguageDriverConfig freeMarkerLanguageDriverConfig() {
             return FreeMarkerLanguageDriverConfig.newInstance();
-        }
-    }
-
-    /**
-     * Configuration class for mybatis-velocity 2.0 or under.
-     */
-    @Configuration
-    @ConditionalOnClass(org.mybatis.scripting.velocity.Driver.class)
-    @ConditionalOnMissingClass("org.mybatis.scripting.velocity.VelocityLanguageDriverConfig")
-    @SuppressWarnings("deprecation")
-    public static class LegacyVelocityConfiguration {
-        @Bean
-        @ConditionalOnMissingBean
-        org.mybatis.scripting.velocity.Driver velocityLanguageDriver() {
-            return new org.mybatis.scripting.velocity.Driver();
         }
     }
 
@@ -102,7 +90,7 @@ public class MybatisPlusLanguageDriverAutoConfiguration {
         @Bean
         @ConditionalOnMissingBean
         VelocityLanguageDriver velocityLanguageDriver(VelocityLanguageDriverConfig config) {
-            return new VelocityLanguageDriver(config);
+            return new MybatisVelocityLanguageDriver(config);
         }
 
         @Bean
@@ -119,7 +107,7 @@ public class MybatisPlusLanguageDriverAutoConfiguration {
         @Bean
         @ConditionalOnMissingBean
         ThymeleafLanguageDriver thymeleafLanguageDriver(ThymeleafLanguageDriverConfig config) {
-            return new ThymeleafLanguageDriver(config);
+            return new MybatisThymeleafLanguageDriver(config);
         }
 
         @Bean

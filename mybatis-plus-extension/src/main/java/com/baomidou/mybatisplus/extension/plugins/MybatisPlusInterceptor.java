@@ -18,7 +18,7 @@ import java.util.Properties;
  * @author miemie
  * @since 2020-06-16
  */
-@SuppressWarnings({"rawtypes", "unchecked"})
+@SuppressWarnings({"rawtypes"})
 @Intercepts(
     {
         @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}),
