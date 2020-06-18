@@ -70,6 +70,36 @@ public class PageBeforeQuery implements BeforeQuery {
      */
     private IDialect dialect;
 
+    /**
+     * 这里进行count,如果count为0这返回false(就是不再执行sql了)
+     */
+    @Override
+    public boolean canChange(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
+        // 判断参数里是否有page对象
+        IPage<?> page = ParameterUtils.findPage(parameter).orElse(null);
+        if (page != null) {
+            // 可能需要分页
+            long size = page.getSize();
+            if (size < 0) {
+                // 表示不分页
+                return true;
+            }
+
+            if (page.isSearchCount()) {
+                final String originalSql = boundSql.getSql();
+                SqlInfo sqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), countSqlParser, originalSql, SystemMetaObject.forObject(parameter));
+                MappedStatement countMappedStatement = buildCountMappedStatement(ms);
+                BoundSql countSql = new BoundSql(countMappedStatement.getConfiguration(), sqlInfo.getSql(), boundSql.getParameterMappings(), parameter);
+                PluginUtils.setAdditionalParameter(countSql, PluginUtils.getAdditionalParameter(boundSql));
+                CacheKey cacheKey = executor.createCacheKey(countMappedStatement, parameter, rowBounds, countSql);
+                long count = (long) executor.query(countMappedStatement, parameter, rowBounds, resultHandler, cacheKey, countSql).get(0);
+                page.setTotal(count);
+                return continueLimit(page);
+            }
+        }
+        return true;
+    }
+
     @Override
     public BoundSql change(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
         // 判断参数里是否有page对象
@@ -85,33 +115,17 @@ public class PageBeforeQuery implements BeforeQuery {
             //处理单页条数限制
             handlerLimit(page);
         }
-        Map<String, Object> additionalParameter = PluginUtils.getAdditionalParameter(boundSql);
         String originalSql = boundSql.getSql();
-        if (page.isSearchCount()) {
-            SqlInfo sqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), countSqlParser, originalSql, SystemMetaObject.forObject(parameter));
-            MappedStatement countMappedStatement = buildCountMappedStatement(ms);
-            BoundSql countSql = new BoundSql(countMappedStatement.getConfiguration(), sqlInfo.getSql(), boundSql.getParameterMappings(), parameter);
-            for (Map.Entry<String, Object> entry : additionalParameter.entrySet()) {
-                boundSql.setAdditionalParameter(entry.getKey(), entry.getValue());
-            }
-            CacheKey cacheKey = executor.createCacheKey(countMappedStatement, parameter, rowBounds, countSql);
-            long count = (long) executor.query(countMappedStatement, parameter, rowBounds, resultHandler, cacheKey, countSql).get(0);
-            page.setTotal(count);
-            if (!this.continueLimit(page)) {
-                return boundSql;
-            }
-        }
         DbType dbType = this.dbType == null ? JdbcUtils.getDbType(ms) : this.dbType;
         IDialect dialect = Optional.ofNullable(this.dialect).orElseGet(() -> DialectFactory.getDialect(dbType));
-        String buildSql = concatOrderBy(originalSql, page);
+        String buildSql = this.concatOrderBy(originalSql, page);
         DialectModel model = dialect.buildPaginationSql(buildSql, page.offset(), page.getSize());
         final Configuration configuration = ms.getConfiguration();
         List<ParameterMapping> mappings = new ArrayList<>(boundSql.getParameterMappings());
+        Map<String, Object> additionalParameter = PluginUtils.getAdditionalParameter(boundSql);
         model.consumers(mappings, configuration, additionalParameter);
         boundSql = new BoundSql(configuration, model.getDialectSql(), mappings, parameter);
-        for (Map.Entry<String, Object> entry : additionalParameter.entrySet()) {
-            boundSql.setAdditionalParameter(entry.getKey(), entry.getValue());
-        }
+        PluginUtils.setAdditionalParameter(boundSql, additionalParameter);
         return boundSql;
     }
 
