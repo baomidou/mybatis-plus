@@ -41,7 +41,7 @@ public class MybatisPlusInterceptor implements Interceptor {
         if (args.length == 4) {
             boundSql = ms.getBoundSql(parameter);
         } else {
-            // 几乎不可能走进这里面
+            // 几乎不可能走进这里面,除非使用Executor的代理对象调用query[args[6]]
             boundSql = (BoundSql) args[5];
         }
         for (BeforeQuery query : beforeQueries) {
