@@ -10,7 +10,9 @@ import org.apache.ibatis.plugin.*;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * @author miemie
@@ -43,6 +45,9 @@ public class MybatisPlusInterceptor implements Interceptor {
             boundSql = (BoundSql) args[5];
         }
         for (BeforeQuery query : beforeQueries) {
+            if (!query.canChange(executor, ms, parameter, rowBounds, resultHandler, boundSql)) {
+                return Collections.emptyList();
+            }
             boundSql = query.change(executor, ms, parameter, rowBounds, resultHandler, boundSql);
         }
         CacheKey cacheKey = executor.createCacheKey(ms, parameter, rowBounds, boundSql);
