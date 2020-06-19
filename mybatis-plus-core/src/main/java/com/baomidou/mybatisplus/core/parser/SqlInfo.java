@@ -62,7 +62,6 @@ public class SqlInfo {
         return info;
     }
 
-    @Deprecated
     public static SqlInfo newInstance() {
         return new SqlInfo().setOrderBy(true);
     }

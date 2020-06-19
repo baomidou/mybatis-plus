@@ -14,6 +14,7 @@ import java.sql.SQLException;
  * @author miemie
  * @since 2020-06-16
  */
+@SuppressWarnings({"rawtypes"})
 public interface QiuQiu {
 
     /**

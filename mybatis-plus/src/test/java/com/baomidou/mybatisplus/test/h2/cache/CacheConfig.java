@@ -17,7 +17,8 @@ package com.baomidou.mybatisplus.test.h2.cache;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.chain.PageQiuQiu;
+import com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParserCountOptimize;
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -44,7 +45,8 @@ public class CacheConfig {
         configuration.setDefaultEnumTypeHandler(EnumOrdinalTypeHandler.class);
         configuration.setCacheEnabled(true);
         sqlSessionFactory.setConfiguration(configuration);
-        MybatisPlusInterceptor pagination = new MybatisPlusInterceptor();
+        MybatisPlusInterceptor pagination = new MybatisPlusInterceptor().addQiuQiu(new PageQiuQiu()
+            .setCountSqlParser(new JsqlParserCountOptimize(true)));
 
         sqlSessionFactory.setPlugins(pagination);
         return sqlSessionFactory.getObject();

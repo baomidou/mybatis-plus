@@ -1,6 +1,5 @@
 package com.baomidou.mybatisplus.extension.plugins;
 
-import com.baomidou.mybatisplus.extension.plugins.chain.PageQiuQiu;
 import com.baomidou.mybatisplus.extension.plugins.chain.QiuQiu;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.Executor;
@@ -13,6 +12,7 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -32,7 +32,7 @@ import java.util.Properties;
 )
 public class MybatisPlusInterceptor implements Interceptor {
 
-    private final List<QiuQiu> qiuQius = Collections.singletonList(new PageQiuQiu());
+    private final List<QiuQiu> qiuQius = new ArrayList<>();
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
@@ -89,5 +89,10 @@ public class MybatisPlusInterceptor implements Interceptor {
     @Override
     public void setProperties(Properties properties) {
         // todo
+    }
+
+    public MybatisPlusInterceptor addQiuQiu(QiuQiu qiuQiu) {
+        qiuQius.add(qiuQiu);
+        return this;
     }
 }

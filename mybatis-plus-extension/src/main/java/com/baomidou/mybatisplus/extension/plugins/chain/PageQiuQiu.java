@@ -5,16 +5,14 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.core.parser.ISqlParser;
 import com.baomidou.mybatisplus.core.parser.SqlInfo;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.core.toolkit.ParameterUtils;
-import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectFactory;
 import com.baomidou.mybatisplus.extension.plugins.pagination.DialectModel;
 import com.baomidou.mybatisplus.extension.plugins.pagination.dialects.IDialect;
 import com.baomidou.mybatisplus.extension.toolkit.JdbcUtils;
 import com.baomidou.mybatisplus.extension.toolkit.SqlParserUtils;
 import lombok.Data;
+import lombok.experimental.Accessors;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Column;
@@ -34,6 +32,7 @@ import org.apache.ibatis.session.RowBounds;
 
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -41,9 +40,12 @@ import java.util.stream.Collectors;
  * @since 2020-06-16
  */
 @Data
+@Accessors(chain = true)
+@SuppressWarnings({"rawtypes"})
 public class PageQiuQiu implements QiuQiu {
 
     protected static final Log logger = LogFactory.getLog(PageQiuQiu.class);
+    protected static final Map<String, MappedStatement> countMsCache = new ConcurrentHashMap<>();
 
     /**
      * COUNT SQL 解析
@@ -88,13 +90,13 @@ public class PageQiuQiu implements QiuQiu {
             if (page.isSearchCount()) {
                 final String originalSql = boundSql.getSql();
                 SqlInfo sqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), countSqlParser, originalSql, SystemMetaObject.forObject(parameter));
-                MappedStatement countMappedStatement = buildCountMappedStatement(ms);
+                MappedStatement countMappedStatement = buildCountMappedStatement(ms, page);
                 PluginUtils.MPBoundSql mpBoundSql = PluginUtils.mpBoundSql(boundSql);
                 BoundSql countSql = new BoundSql(countMappedStatement.getConfiguration(), sqlInfo.getSql(), mpBoundSql.parameterMappings(), parameter);
                 PluginUtils.setAdditionalParameter(countSql, mpBoundSql.additionalParameters());
                 CacheKey cacheKey = executor.createCacheKey(countMappedStatement, parameter, rowBounds, countSql);
-                long count = (long) executor.query(countMappedStatement, parameter, rowBounds, resultHandler, cacheKey, countSql).get(0);
-                page.setTotal(count);
+                Object result = executor.query(countMappedStatement, parameter, rowBounds, resultHandler, cacheKey, countSql).get(0);
+                page.setTotal(Long.parseLong(result.toString()));
                 return continueLimit(page);
             }
         }
@@ -117,7 +119,7 @@ public class PageQiuQiu implements QiuQiu {
             handlerLimit(page);
         }
         String originalSql = boundSql.getSql();
-        DbType dbType = this.dbType == null ? JdbcUtils.getDbType(ms) : this.dbType;
+        DbType dbType = this.dbType == null ? JdbcUtils.getDbType(executor) : this.dbType;
         IDialect dialect = Optional.ofNullable(this.dialect).orElseGet(() -> DialectFactory.getDialect(dbType));
         String buildSql = this.concatOrderBy(originalSql, page);
         DialectModel model = dialect.buildPaginationSql(buildSql, page.offset(), page.getSize());
@@ -130,31 +132,35 @@ public class PageQiuQiu implements QiuQiu {
         mpBoundSql.parameterMappings(mappings);
     }
 
-    protected MappedStatement buildCountMappedStatement(MappedStatement ms) {
-        MappedStatement.Builder builder = new MappedStatement.Builder(ms.getConfiguration(), ms.getId() + "_mpCount", ms.getSqlSource(), ms.getSqlCommandType());
-        builder.resource(ms.getResource());
-        builder.fetchSize(ms.getFetchSize());
-        builder.statementType(ms.getStatementType());
-        builder.keyGenerator(ms.getKeyGenerator());
-        if (ms.getKeyProperties() != null && ms.getKeyProperties().length != 0) {
-            StringBuilder keyProperties = new StringBuilder();
-            for (String keyProperty : ms.getKeyProperties()) {
-                keyProperties.append(keyProperty).append(",");
+    protected MappedStatement buildCountMappedStatement(MappedStatement ms, IPage<?> page) {
+        String countId = page.countId();
+        final String id = ms.getId();
+        final Configuration configuration = ms.getConfiguration();
+        if (StringUtils.isNotBlank(countId)) {
+            if (!countId.contains(StringPool.DOT)) {
+                countId = id.substring(0, id.lastIndexOf(StringPool.DOT)) + countId;
             }
-            keyProperties.delete(keyProperties.length() - 1, keyProperties.length());
-            builder.keyProperty(keyProperties.toString());
+            try {
+                return countMsCache.computeIfAbsent(countId, key -> configuration.getMappedStatement(key, false));
+            } catch (Exception e) {
+                logger.warn(String.format("can not find this countId: [\"%s\"]", countId));
+            }
         }
-        builder.timeout(ms.getTimeout());
-        builder.parameterMap(ms.getParameterMap());
-        List<ResultMap> resultMaps = new ArrayList<>();
-        ResultMap resultMap = new ResultMap.Builder(ms.getConfiguration(), ms.getId(), Long.class, Collections.emptyList()).build();
-        resultMaps.add(resultMap);
-        builder.resultMaps(resultMaps);
-        builder.resultSetType(ms.getResultSetType());
-        builder.cache(ms.getCache());
-        builder.flushCacheRequired(ms.isFlushCacheRequired());
-        builder.useCache(ms.isUseCache());
-        return builder.build();
+        countId = id + "_mpCount";
+        return countMsCache.computeIfAbsent(countId, key -> {
+            MappedStatement.Builder builder = new MappedStatement.Builder(configuration, key, ms.getSqlSource(), ms.getSqlCommandType());
+            builder.resource(ms.getResource());
+            builder.fetchSize(ms.getFetchSize());
+            builder.statementType(ms.getStatementType());
+            builder.timeout(ms.getTimeout());
+            builder.parameterMap(ms.getParameterMap());
+            builder.resultMaps(Collections.singletonList(new ResultMap.Builder(configuration, "mybatis_plus", Long.class, Collections.emptyList()).build()));
+            builder.resultSetType(ms.getResultSetType());
+            builder.cache(ms.getCache());
+            builder.flushCacheRequired(ms.isFlushCacheRequired());
+            builder.useCache(ms.isUseCache());
+            return builder.build();
+        });
     }
 
     /**

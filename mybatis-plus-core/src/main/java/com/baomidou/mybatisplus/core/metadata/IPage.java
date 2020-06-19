@@ -34,28 +34,6 @@ import static java.util.stream.Collectors.toList;
 public interface IPage<T> extends Serializable {
 
     /**
-     * 降序字段数组
-     *
-     * @return order by desc 的字段数组
-     * @see #orders()
-     */
-    @Deprecated
-    default String[] descs() {
-        return null;
-    }
-
-    /**
-     * 升序字段数组
-     *
-     * @return order by asc 的字段数组
-     * @see #orders()
-     */
-    @Deprecated
-    default String[] ascs() {
-        return null;
-    }
-
-    /**
      * 获取排序信息，排序的字段和正反序
      *
      * @return 排序信息
@@ -177,7 +155,7 @@ public interface IPage<T> extends Serializable {
     IPage<T> setSize(long size);
 
     /**
-     * 当前页，默认 1
+     * 当前页
      *
      * @return 当前页
      */
@@ -199,6 +177,16 @@ public interface IPage<T> extends Serializable {
     default <R> IPage<R> convert(Function<? super T, ? extends R> mapper) {
         List<R> collect = this.getRecords().stream().map(mapper).collect(toList());
         return ((IPage<R>) this).setRecords(collect);
+    }
+
+    /**
+     * 老分页插件不支持
+     *
+     * @return count的method
+     * @since 3.3.3 @2020-06-19
+     */
+    default String countId() {
+        return null;
     }
 
     /**

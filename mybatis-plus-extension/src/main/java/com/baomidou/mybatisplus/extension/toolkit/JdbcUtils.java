@@ -19,11 +19,10 @@ import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.mapping.MappedStatement;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -37,9 +36,15 @@ public class JdbcUtils {
 
     private static final Log logger = LogFactory.getLog(JdbcUtils.class);
 
-    public static DbType getDbType(MappedStatement ms) {
-        DataSource dataSource = ms.getConfiguration().getEnvironment().getDataSource();
-        try (Connection conn = dataSource.getConnection()) {
+    /**
+     * 不关闭 Connection,因为是从事务里获取的,sqlSession会负责关闭
+     *
+     * @param executor Executor
+     * @return DbType
+     */
+    public static DbType getDbType(Executor executor) {
+        try {
+            Connection conn = executor.getTransaction().getConnection();
             return getDbType(conn.getMetaData().getURL());
         } catch (SQLException e) {
             throw ExceptionUtils.mpe(e);
