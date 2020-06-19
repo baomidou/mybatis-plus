@@ -13,30 +13,25 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.autoconfigure.scripting;
+package com.baomidou.mybatisplus.extension.scripting;
 
 import com.baomidou.mybatisplus.core.MybatisParameterHandler;
 import lombok.NoArgsConstructor;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
-import org.mybatis.scripting.thymeleaf.ThymeleafLanguageDriver;
-import org.mybatis.scripting.thymeleaf.ThymeleafLanguageDriverConfig;
-import org.thymeleaf.ITemplateEngine;
+import org.mybatis.scripting.velocity.VelocityLanguageDriver;
+import org.mybatis.scripting.velocity.VelocityLanguageDriverConfig;
 
 /**
  * @author miemie
  * @since 2020-06-18
  */
 @NoArgsConstructor
-public class MybatisThymeleafLanguageDriver extends ThymeleafLanguageDriver {
+public class MybatisVelocityLanguageDriver extends VelocityLanguageDriver {
 
-    public MybatisThymeleafLanguageDriver(ThymeleafLanguageDriverConfig config) {
-        super(config);
-    }
-
-    public MybatisThymeleafLanguageDriver(ITemplateEngine templateEngine) {
-        super(templateEngine);
+    public MybatisVelocityLanguageDriver(VelocityLanguageDriverConfig driverConfig) {
+        super(driverConfig);
     }
 
     @Override

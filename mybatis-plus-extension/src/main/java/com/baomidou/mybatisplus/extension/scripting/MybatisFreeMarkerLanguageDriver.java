@@ -13,24 +13,24 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.autoconfigure.scripting;
+package com.baomidou.mybatisplus.extension.scripting;
 
 import com.baomidou.mybatisplus.core.MybatisParameterHandler;
 import lombok.NoArgsConstructor;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
-import org.mybatis.scripting.velocity.VelocityLanguageDriver;
-import org.mybatis.scripting.velocity.VelocityLanguageDriverConfig;
+import org.mybatis.scripting.freemarker.FreeMarkerLanguageDriver;
+import org.mybatis.scripting.freemarker.FreeMarkerLanguageDriverConfig;
 
 /**
  * @author miemie
  * @since 2020-06-18
  */
 @NoArgsConstructor
-public class MybatisVelocityLanguageDriver extends VelocityLanguageDriver {
+public class MybatisFreeMarkerLanguageDriver extends FreeMarkerLanguageDriver {
 
-    public MybatisVelocityLanguageDriver(VelocityLanguageDriverConfig driverConfig) {
+    public MybatisFreeMarkerLanguageDriver(FreeMarkerLanguageDriverConfig driverConfig) {
         super(driverConfig);
     }
 

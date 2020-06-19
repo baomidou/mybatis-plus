@@ -13,25 +13,30 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.autoconfigure.scripting;
+package com.baomidou.mybatisplus.extension.scripting;
 
 import com.baomidou.mybatisplus.core.MybatisParameterHandler;
 import lombok.NoArgsConstructor;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
-import org.mybatis.scripting.freemarker.FreeMarkerLanguageDriver;
-import org.mybatis.scripting.freemarker.FreeMarkerLanguageDriverConfig;
+import org.mybatis.scripting.thymeleaf.ThymeleafLanguageDriver;
+import org.mybatis.scripting.thymeleaf.ThymeleafLanguageDriverConfig;
+import org.thymeleaf.ITemplateEngine;
 
 /**
  * @author miemie
  * @since 2020-06-18
  */
 @NoArgsConstructor
-public class MybatisFreeMarkerLanguageDriver extends FreeMarkerLanguageDriver {
+public class MybatisThymeleafLanguageDriver extends ThymeleafLanguageDriver {
 
-    public MybatisFreeMarkerLanguageDriver(FreeMarkerLanguageDriverConfig driverConfig) {
-        super(driverConfig);
+    public MybatisThymeleafLanguageDriver(ThymeleafLanguageDriverConfig config) {
+        super(config);
+    }
+
+    public MybatisThymeleafLanguageDriver(ITemplateEngine templateEngine) {
+        super(templateEngine);
     }
 
     @Override

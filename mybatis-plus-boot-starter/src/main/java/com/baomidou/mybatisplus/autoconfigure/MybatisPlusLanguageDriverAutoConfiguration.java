@@ -15,10 +15,10 @@
  */
 package com.baomidou.mybatisplus.autoconfigure;
 
-import com.baomidou.mybatisplus.autoconfigure.scripting.MybatisFreeMarkerLanguageDriver;
-import com.baomidou.mybatisplus.autoconfigure.scripting.MybatisThymeleafLanguageDriver;
-import com.baomidou.mybatisplus.autoconfigure.scripting.MybatisVelocityLanguageDriver;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
+import com.baomidou.mybatisplus.extension.scripting.MybatisFreeMarkerLanguageDriver;
+import com.baomidou.mybatisplus.extension.scripting.MybatisThymeleafLanguageDriver;
+import com.baomidou.mybatisplus.extension.scripting.MybatisVelocityLanguageDriver;
 import org.apache.ibatis.scripting.LanguageDriver;
 import org.mybatis.scripting.freemarker.FreeMarkerLanguageDriver;
 import org.mybatis.scripting.freemarker.FreeMarkerLanguageDriverConfig;

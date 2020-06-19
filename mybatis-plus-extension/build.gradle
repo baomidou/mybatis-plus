@@ -13,5 +13,8 @@ dependencies {
     implementation "${lib."jackson"}"
     implementation "${lib."fastjson"}"
     implementation "${lib."gson"}"
+    implementation "${lib['mybatis-thymeleaf']}"
+    implementation "${lib.'mybatis-velocity'}"
+    implementation "${lib.'mybatis-freemarker'}"
     testImplementation "com.github.pagehelper:pagehelper:5.1.11"
 }
