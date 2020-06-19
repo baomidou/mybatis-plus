@@ -41,9 +41,9 @@ import java.util.stream.Collectors;
  * @since 2020-06-16
  */
 @Data
-public class PageBeforeQuery implements BeforeQuery {
+public class PageQiuQiu implements QiuQiu {
 
-    protected static final Log logger = LogFactory.getLog(PageBeforeQuery.class);
+    protected static final Log logger = LogFactory.getLog(PageQiuQiu.class);
 
     /**
      * COUNT SQL 解析
@@ -74,7 +74,7 @@ public class PageBeforeQuery implements BeforeQuery {
      * 这里进行count,如果count为0这返回false(就是不再执行sql了)
      */
     @Override
-    public boolean canChange(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
+    public boolean willDoQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
         // 判断参数里是否有page对象
         IPage<?> page = ParameterUtils.findPage(parameter).orElse(null);
         if (page != null) {
@@ -89,8 +89,9 @@ public class PageBeforeQuery implements BeforeQuery {
                 final String originalSql = boundSql.getSql();
                 SqlInfo sqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), countSqlParser, originalSql, SystemMetaObject.forObject(parameter));
                 MappedStatement countMappedStatement = buildCountMappedStatement(ms);
-                BoundSql countSql = new BoundSql(countMappedStatement.getConfiguration(), sqlInfo.getSql(), boundSql.getParameterMappings(), parameter);
-                PluginUtils.setAdditionalParameter(countSql, PluginUtils.getAdditionalParameter(boundSql));
+                PluginUtils.MPBoundSql mpBoundSql = PluginUtils.mpBoundSql(boundSql);
+                BoundSql countSql = new BoundSql(countMappedStatement.getConfiguration(), sqlInfo.getSql(), mpBoundSql.parameterMappings(), parameter);
+                PluginUtils.setAdditionalParameter(countSql, mpBoundSql.additionalParameters());
                 CacheKey cacheKey = executor.createCacheKey(countMappedStatement, parameter, rowBounds, countSql);
                 long count = (long) executor.query(countMappedStatement, parameter, rowBounds, resultHandler, cacheKey, countSql).get(0);
                 page.setTotal(count);
@@ -101,14 +102,14 @@ public class PageBeforeQuery implements BeforeQuery {
     }
 
     @Override
-    public BoundSql change(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
+    public void beforeQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
         // 判断参数里是否有page对象
         IPage<?> page = ParameterUtils.findPage(parameter).orElse(null);
         /*
          * 不需要分页的场合，如果 size 小于 0 返回结果集
          */
         if (null == page || page.getSize() < 0) {
-            return boundSql;
+            return;
         }
 
         if (this.limit > 0 && this.limit <= page.getSize()) {
@@ -121,12 +122,12 @@ public class PageBeforeQuery implements BeforeQuery {
         String buildSql = this.concatOrderBy(originalSql, page);
         DialectModel model = dialect.buildPaginationSql(buildSql, page.offset(), page.getSize());
         final Configuration configuration = ms.getConfiguration();
-        List<ParameterMapping> mappings = new ArrayList<>(boundSql.getParameterMappings());
-        Map<String, Object> additionalParameter = PluginUtils.getAdditionalParameter(boundSql);
+        PluginUtils.MPBoundSql mpBoundSql = PluginUtils.mpBoundSql(boundSql);
+        List<ParameterMapping> mappings = mpBoundSql.parameterMappings();
+        Map<String, Object> additionalParameter = mpBoundSql.additionalParameters();
         model.consumers(mappings, configuration, additionalParameter);
-        boundSql = new BoundSql(configuration, model.getDialectSql(), mappings, parameter);
-        PluginUtils.setAdditionalParameter(boundSql, additionalParameter);
-        return boundSql;
+        mpBoundSql.sql(model.getDialectSql());
+        mpBoundSql.parameterMappings(mappings);
     }
 
     protected MappedStatement buildCountMappedStatement(MappedStatement ms) {

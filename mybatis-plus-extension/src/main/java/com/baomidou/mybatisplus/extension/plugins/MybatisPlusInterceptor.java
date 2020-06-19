@@ -1,15 +1,18 @@
 package com.baomidou.mybatisplus.extension.plugins;
 
-import com.baomidou.mybatisplus.extension.plugins.chain.BeforeQuery;
-import com.baomidou.mybatisplus.extension.plugins.chain.PageBeforeQuery;
+import com.baomidou.mybatisplus.extension.plugins.chain.PageQiuQiu;
+import com.baomidou.mybatisplus.extension.plugins.chain.QiuQiu;
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.Executor;
+import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.plugin.*;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
+import java.sql.Connection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -21,42 +24,63 @@ import java.util.Properties;
 @SuppressWarnings({"rawtypes"})
 @Intercepts(
     {
+        @Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class, Integer.class}),
+        @Signature(type = Executor.class, method = "update", args = {MappedStatement.class, Object.class}),
         @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class}),
         @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class}),
     }
 )
 public class MybatisPlusInterceptor implements Interceptor {
 
-    private final List<BeforeQuery> beforeQueries = Collections.singletonList(new PageBeforeQuery());
+    private final List<QiuQiu> qiuQius = Collections.singletonList(new PageQiuQiu());
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
+        Object target = invocation.getTarget();
         Object[] args = invocation.getArgs();
-        MappedStatement ms = (MappedStatement) args[0];
-        Object parameter = args[1];
-        RowBounds rowBounds = (RowBounds) args[2];
-        ResultHandler resultHandler = (ResultHandler) args[3];
-        Executor executor = (Executor) invocation.getTarget();
-        BoundSql boundSql;
-        if (args.length == 4) {
-            boundSql = ms.getBoundSql(parameter);
-        } else {
-            // 几乎不可能走进这里面,除非使用Executor的代理对象调用query[args[6]]
-            boundSql = (BoundSql) args[5];
-        }
-        for (BeforeQuery query : beforeQueries) {
-            if (!query.canChange(executor, ms, parameter, rowBounds, resultHandler, boundSql)) {
-                return Collections.emptyList();
+        if (target instanceof Executor) {
+            final Executor executor = (Executor) target;
+            Object parameter = args[1];
+            boolean isUpdate = args.length == 2;
+            MappedStatement ms = (MappedStatement) args[0];
+            if (!isUpdate && ms.getSqlCommandType() == SqlCommandType.SELECT) {
+                RowBounds rowBounds = (RowBounds) args[2];
+                ResultHandler resultHandler = (ResultHandler) args[3];
+                BoundSql boundSql;
+                if (args.length == 4) {
+                    boundSql = ms.getBoundSql(parameter);
+                } else {
+                    // 几乎不可能走进这里面,除非使用Executor的代理对象调用query[args[6]]
+                    boundSql = (BoundSql) args[5];
+                }
+                for (QiuQiu query : qiuQius) {
+                    if (!query.willDoQuery(executor, ms, parameter, rowBounds, resultHandler, boundSql)) {
+                        return Collections.emptyList();
+                    }
+                    query.beforeQuery(executor, ms, parameter, rowBounds, resultHandler, boundSql);
+                }
+                CacheKey cacheKey = executor.createCacheKey(ms, parameter, rowBounds, boundSql);
+                return executor.query(ms, parameter, rowBounds, resultHandler, cacheKey, boundSql);
+            } else if (isUpdate && ms.getSqlCommandType() == SqlCommandType.UPDATE) {
+                for (QiuQiu query : qiuQius) {
+                    query.update(executor, ms, parameter);
+                }
             }
-            boundSql = query.change(executor, ms, parameter, rowBounds, resultHandler, boundSql);
+        } else {
+            // StatementHandler
+            final StatementHandler sh = (StatementHandler) target;
+            Connection connections = (Connection) args[0];
+            Integer transactionTimeout = (Integer) args[1];
+            for (QiuQiu qiuQiu : qiuQius) {
+                qiuQiu.prepare(sh, connections, transactionTimeout);
+            }
         }
-        CacheKey cacheKey = executor.createCacheKey(ms, parameter, rowBounds, boundSql);
-        return executor.query(ms, parameter, rowBounds, resultHandler, cacheKey, boundSql);
+        return invocation.proceed();
     }
 
     @Override
     public Object plugin(Object target) {
-        if (target instanceof Executor) {
+        if (target instanceof Executor || target instanceof StatementHandler) {
             return Plugin.wrap(target, this);
         }
         return target;
@@ -64,6 +88,6 @@ public class MybatisPlusInterceptor implements Interceptor {
 
     @Override
     public void setProperties(Properties properties) {
-
+        // todo
     }
 }
