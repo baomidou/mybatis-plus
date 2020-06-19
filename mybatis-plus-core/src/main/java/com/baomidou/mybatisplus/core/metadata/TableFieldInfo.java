@@ -65,6 +65,12 @@ public class TableFieldInfo implements Constants {
      */
     private final Class<?> propertyType;
     /**
+     * 是否是基本数据类型
+     *
+     * @since 3.3.3 @2020-6-19
+     */
+    private final boolean isPrimitive;
+    /**
      * 属性是否是 CharSequence 类型
      */
     private final boolean isCharSequence;
@@ -159,6 +165,7 @@ public class TableFieldInfo implements Constants {
         this.version = field.getAnnotation(Version.class) != null;
         this.property = field.getName();
         this.propertyType = reflector.getGetterType(this.property);
+        this.isPrimitive = this.propertyType.isPrimitive();
         this.isCharSequence = StringUtils.isCharSequence(this.propertyType);
         this.fieldFill = tableField.fill();
         this.withInsertFill = this.fieldFill == FieldFill.INSERT || this.fieldFill == FieldFill.INSERT_UPDATE;
@@ -241,6 +248,7 @@ public class TableFieldInfo implements Constants {
         this.version = field.getAnnotation(Version.class) != null;
         this.property = field.getName();
         this.propertyType = reflector.getGetterType(this.property);
+        this.isPrimitive = this.propertyType.isPrimitive();
         this.isCharSequence = StringUtils.isCharSequence(this.propertyType);
         this.el = this.property;
         this.insertStrategy = dbConfig.getInsertStrategy();
@@ -477,7 +485,7 @@ public class TableFieldInfo implements Constants {
         if (fieldStrategy == FieldStrategy.NEVER) {
             return null;
         }
-        if (fieldStrategy == FieldStrategy.IGNORED) {
+        if (isPrimitive || fieldStrategy == FieldStrategy.IGNORED) {
             return sqlScript;
         }
         if (fieldStrategy == FieldStrategy.NOT_EMPTY && isCharSequence) {

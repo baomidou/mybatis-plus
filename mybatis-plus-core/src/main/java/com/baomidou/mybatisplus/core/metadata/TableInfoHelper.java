@@ -349,10 +349,15 @@ public class TableInfoHelper {
                 column = column.toUpperCase();
             }
         }
+        final Class<?> keyType = reflector.getGetterType(property);
+        if (keyType.isPrimitive()) {
+            logger.warn(String.format("This primary key of \"%s\" is primitive !不建议如此请使用包装类 in Class: \"%s\"",
+                property, tableInfo.getEntityType().getName()));
+        }
         tableInfo.setKeyRelated(checkRelated(underCamel, property, column))
             .setKeyColumn(column)
             .setKeyProperty(property)
-            .setKeyType(reflector.getGetterType(property));
+            .setKeyType(keyType);
     }
 
     /**
@@ -377,11 +382,16 @@ public class TableInfoHelper {
             if (dbConfig.isCapitalMode()) {
                 column = column.toUpperCase();
             }
+            final Class<?> keyType = reflector.getGetterType(property);
+            if (keyType.isPrimitive()) {
+                logger.warn(String.format("This primary key of \"%s\" is primitive !不建议如此请使用包装类 in Class: \"%s\"",
+                    property, tableInfo.getEntityType().getName()));
+            }
             tableInfo.setKeyRelated(checkRelated(tableInfo.isUnderCamel(), property, column))
                 .setIdType(dbConfig.getIdType())
                 .setKeyColumn(column)
                 .setKeyProperty(property)
-                .setKeyType(reflector.getGetterType(property));
+                .setKeyType(keyType);
             return true;
         }
         return false;
