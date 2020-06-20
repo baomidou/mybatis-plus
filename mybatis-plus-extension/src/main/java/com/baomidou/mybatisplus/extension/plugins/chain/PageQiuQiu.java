@@ -171,7 +171,7 @@ public class PageQiuQiu implements QiuQiu {
             builder.statementType(ms.getStatementType());
             builder.timeout(ms.getTimeout());
             builder.parameterMap(ms.getParameterMap());
-            builder.resultMaps(Collections.singletonList(new ResultMap.Builder(configuration, "mybatis_plus", Long.class, Collections.emptyList()).build()));
+            builder.resultMaps(Collections.singletonList(new ResultMap.Builder(configuration, Constants.MYBATIS_PLUS, Long.class, Collections.emptyList()).build()));
             builder.resultSetType(ms.getResultSetType());
             builder.cache(ms.getCache());
             builder.flushCacheRequired(ms.isFlushCacheRequired());
