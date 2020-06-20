@@ -88,14 +88,22 @@ public class PageQiuQiu implements QiuQiu {
             }
 
             if (page.isSearchCount()) {
-                final String originalSql = boundSql.getSql();
-                SqlInfo sqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), countSqlParser, originalSql, SystemMetaObject.forObject(parameter));
-                MappedStatement countMappedStatement = buildCountMappedStatement(ms, page);
-                PluginUtils.MPBoundSql mpBoundSql = PluginUtils.mpBoundSql(boundSql);
-                BoundSql countSql = new BoundSql(countMappedStatement.getConfiguration(), sqlInfo.getSql(), mpBoundSql.parameterMappings(), parameter);
-                PluginUtils.setAdditionalParameter(countSql, mpBoundSql.additionalParameters());
-                CacheKey cacheKey = executor.createCacheKey(countMappedStatement, parameter, rowBounds, countSql);
-                Object result = executor.query(countMappedStatement, parameter, rowBounds, resultHandler, cacheKey, countSql).get(0);
+                MappedStatement countMs = buildCountMappedStatement(ms, page);
+                BoundSql countSql;
+
+                if (countMs != null) {
+                    countSql = countMs.getBoundSql(parameter);
+                } else {
+                    countMs = buildAutoCountMappedStatement(ms);
+                    SqlInfo countSqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), countSqlParser,
+                        boundSql.getSql(), SystemMetaObject.forObject(parameter));
+                    PluginUtils.MPBoundSql mpBoundSql = PluginUtils.mpBoundSql(boundSql);
+                    countSql = new BoundSql(countMs.getConfiguration(), countSqlInfo.getSql(), mpBoundSql.parameterMappings(), parameter);
+                    PluginUtils.setAdditionalParameter(countSql, mpBoundSql.additionalParameters());
+                }
+
+                CacheKey cacheKey = executor.createCacheKey(countMs, parameter, rowBounds, countSql);
+                Object result = executor.query(countMs, parameter, rowBounds, resultHandler, cacheKey, countSql).get(0);
                 page.setTotal(Long.parseLong(result.toString()));
                 return continueLimit(page);
             }
@@ -118,13 +126,17 @@ public class PageQiuQiu implements QiuQiu {
             //处理单页条数限制
             handlerLimit(page);
         }
-        String originalSql = boundSql.getSql();
+
         DbType dbType = this.dbType == null ? JdbcUtils.getDbType(executor) : this.dbType;
         IDialect dialect = Optional.ofNullable(this.dialect).orElseGet(() -> DialectFactory.getDialect(dbType));
+
+        String originalSql = boundSql.getSql();
         String buildSql = this.concatOrderBy(originalSql, page);
-        DialectModel model = dialect.buildPaginationSql(buildSql, page.offset(), page.getSize());
+
         final Configuration configuration = ms.getConfiguration();
+        DialectModel model = dialect.buildPaginationSql(buildSql, page.offset(), page.getSize());
         PluginUtils.MPBoundSql mpBoundSql = PluginUtils.mpBoundSql(boundSql);
+
         List<ParameterMapping> mappings = mpBoundSql.parameterMappings();
         Map<String, Object> additionalParameter = mpBoundSql.additionalParameters();
         model.consumers(mappings, configuration, additionalParameter);
@@ -134,19 +146,24 @@ public class PageQiuQiu implements QiuQiu {
 
     protected MappedStatement buildCountMappedStatement(MappedStatement ms, IPage<?> page) {
         String countId = page.countId();
-        final String id = ms.getId();
-        final Configuration configuration = ms.getConfiguration();
         if (StringUtils.isNotBlank(countId)) {
+            final String id = ms.getId();
             if (!countId.contains(StringPool.DOT)) {
                 countId = id.substring(0, id.lastIndexOf(StringPool.DOT)) + countId;
             }
+            final Configuration configuration = ms.getConfiguration();
             try {
                 return countMsCache.computeIfAbsent(countId, key -> configuration.getMappedStatement(key, false));
             } catch (Exception e) {
                 logger.warn(String.format("can not find this countId: [\"%s\"]", countId));
             }
         }
-        countId = id + "_mpCount";
+        return null;
+    }
+
+    protected MappedStatement buildAutoCountMappedStatement(MappedStatement ms) {
+        final String countId = ms.getId() + "_mpCount";
+        final Configuration configuration = ms.getConfiguration();
         return countMsCache.computeIfAbsent(countId, key -> {
             MappedStatement.Builder builder = new MappedStatement.Builder(configuration, key, ms.getSqlSource(), ms.getSqlCommandType());
             builder.resource(ms.getResource());
