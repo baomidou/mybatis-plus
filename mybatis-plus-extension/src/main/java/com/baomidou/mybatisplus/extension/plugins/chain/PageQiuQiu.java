@@ -79,36 +79,27 @@ public class PageQiuQiu implements QiuQiu {
     public boolean willDoQuery(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
         // 判断参数里是否有page对象
         IPage<?> page = ParameterUtils.findPage(parameter).orElse(null);
-        if (page != null) {
-            // 可能需要分页
-            long size = page.getSize();
-            if (size < 0) {
-                // 表示不分页
-                return true;
-            }
-
-            if (page.isSearchCount()) {
-                MappedStatement countMs = buildCountMappedStatement(ms, page);
-                BoundSql countSql;
-
-                if (countMs != null) {
-                    countSql = countMs.getBoundSql(parameter);
-                } else {
-                    countMs = buildAutoCountMappedStatement(ms);
-                    SqlInfo countSqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), countSqlParser,
-                        boundSql.getSql(), SystemMetaObject.forObject(parameter));
-                    PluginUtils.MPBoundSql mpBoundSql = PluginUtils.mpBoundSql(boundSql);
-                    countSql = new BoundSql(countMs.getConfiguration(), countSqlInfo.getSql(), mpBoundSql.parameterMappings(), parameter);
-                    PluginUtils.setAdditionalParameter(countSql, mpBoundSql.additionalParameters());
-                }
-
-                CacheKey cacheKey = executor.createCacheKey(countMs, parameter, rowBounds, countSql);
-                Object result = executor.query(countMs, parameter, rowBounds, resultHandler, cacheKey, countSql).get(0);
-                page.setTotal(Long.parseLong(result.toString()));
-                return continueLimit(page);
-            }
+        if (page == null || page.getSize() < 0 || !page.isSearchCount()) {
+            return true;
         }
-        return true;
+
+        BoundSql countSql;
+        MappedStatement countMs = buildCountMappedStatement(ms, page);
+        if (countMs != null) {
+            countSql = countMs.getBoundSql(parameter);
+        } else {
+            countMs = buildAutoCountMappedStatement(ms);
+            SqlInfo countSqlInfo = SqlParserUtils.getOptimizeCountSql(page.optimizeCountSql(), countSqlParser,
+                boundSql.getSql(), SystemMetaObject.forObject(parameter));
+            PluginUtils.MPBoundSql mpBoundSql = PluginUtils.mpBoundSql(boundSql);
+            countSql = new BoundSql(countMs.getConfiguration(), countSqlInfo.getSql(), mpBoundSql.parameterMappings(), parameter);
+            PluginUtils.setAdditionalParameter(countSql, mpBoundSql.additionalParameters());
+        }
+
+        CacheKey cacheKey = executor.createCacheKey(countMs, parameter, rowBounds, countSql);
+        Object result = executor.query(countMs, parameter, rowBounds, resultHandler, cacheKey, countSql).get(0);
+        page.setTotal(Long.parseLong(result.toString()));
+        return continueLimit(page);
     }
 
     @Override
