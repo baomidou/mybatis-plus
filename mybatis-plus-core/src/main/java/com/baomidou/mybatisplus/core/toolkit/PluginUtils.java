@@ -67,6 +67,7 @@ public abstract class PluginUtils {
     }
 
     public static MPStatementHandler mpStatementHandler(StatementHandler statementHandler) {
+        statementHandler = realTarget(statementHandler);
         MetaObject object = SystemMetaObject.forObject(statementHandler);
         return new MPStatementHandler(SystemMetaObject.forObject(object.getValue("delegate")));
     }

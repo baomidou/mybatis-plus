@@ -44,8 +44,8 @@ import java.util.stream.Collectors;
 @SuppressWarnings({"rawtypes"})
 public class PageQiuQiu implements QiuQiu {
 
-    protected static final Log logger = LogFactory.getLog(PageQiuQiu.class);
     protected static final Map<String, MappedStatement> countMsCache = new ConcurrentHashMap<>();
+    protected final Log logger = LogFactory.getLog(this.getClass());
 
     /**
      * COUNT SQL 解析
