@@ -77,6 +77,19 @@ public class SqlParserHelper {
 
     /**
      * 获取 SqlParser 注解信息
+     */
+    public static boolean getSqlParserInfo(MappedStatement ms) {
+        String id = ms.getId();
+        Boolean value = SQL_PARSER_INFO_CACHE.get(id);
+        if (value != null) {
+            return value;
+        }
+        String mapperName = id.substring(0, id.lastIndexOf(StringPool.DOT));
+        return SQL_PARSER_INFO_CACHE.getOrDefault(mapperName, false);
+    }
+
+    /**
+     * 获取 SqlParser 注解信息
      *
      * @param metaObject 元数据对象
      */
