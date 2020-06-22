@@ -23,7 +23,7 @@ import java.util.Map;
  * @author miemie
  * @since 2020-06-21
  */
-@SuppressWarnings({"unchecked", "rawtypes"})
+@SuppressWarnings({"unchecked"})
 public class OptimisticLockerQiuQiu implements QiuQiu {
 
     private static final String PARAM_UPDATE_METHOD_NAME = "update";
@@ -34,44 +34,47 @@ public class OptimisticLockerQiuQiu implements QiuQiu {
             return;
         }
         if (parameter instanceof Map) {
-            Map map = (Map) parameter;
-            //updateById(et), update(et, wrapper);
-            Object et = map.getOrDefault(Constants.ENTITY, null);
-            if (et != null) {
-                // entity
-                String methodId = ms.getId();
-                String methodName = methodId.substring(methodId.lastIndexOf(StringPool.DOT) + 1);
-                TableInfo tableInfo = TableInfoHelper.getTableInfo(et.getClass());
-                if (tableInfo == null || !tableInfo.isWithVersion()) {
+            Map<String, Object> map = (Map<String, Object>) parameter;
+            doOptimisticLocker(map, ms.getId());
+        }
+    }
+
+    protected void doOptimisticLocker(Map<String, Object> map, String msId) {
+        //updateById(et), update(et, wrapper);
+        Object et = map.getOrDefault(Constants.ENTITY, null);
+        if (et != null) {
+            // entity
+            String methodName = msId.substring(msId.lastIndexOf(StringPool.DOT) + 1);
+            TableInfo tableInfo = TableInfoHelper.getTableInfo(et.getClass());
+            if (tableInfo == null || !tableInfo.isWithVersion()) {
+                return;
+            }
+            try {
+                TableFieldInfo fieldInfo = tableInfo.getVersionFieldInfo();
+                Field versionField = fieldInfo.getField();
+                // 旧的 version 值
+                Object originalVersionVal = versionField.get(et);
+                if (originalVersionVal == null) {
                     return;
                 }
-                try {
-                    TableFieldInfo fieldInfo = tableInfo.getVersionFieldInfo();
-                    Field versionField = fieldInfo.getField();
-                    // 旧的 version 值
-                    Object originalVersionVal = versionField.get(et);
-                    if (originalVersionVal == null) {
-                        return;
-                    }
-                    String versionColumn = fieldInfo.getColumn();
-                    // 新的 version 值
-                    Object updatedVersionVal = this.getUpdatedVersionVal(fieldInfo.getPropertyType(), originalVersionVal);
-                    if (PARAM_UPDATE_METHOD_NAME.equals(methodName)) {
-                        AbstractWrapper<?, ?, ?> aw = (AbstractWrapper<?, ?, ?>) map.getOrDefault(Constants.WRAPPER, null);
-                        if (aw == null) {
-                            UpdateWrapper<?> uw = new UpdateWrapper<>();
-                            uw.eq(versionColumn, originalVersionVal);
-                            map.put(Constants.WRAPPER, uw);
-                        } else {
-                            aw.apply(versionColumn + " = {0}", originalVersionVal);
-                        }
+                String versionColumn = fieldInfo.getColumn();
+                // 新的 version 值
+                Object updatedVersionVal = this.getUpdatedVersionVal(fieldInfo.getPropertyType(), originalVersionVal);
+                if (PARAM_UPDATE_METHOD_NAME.equals(methodName)) {
+                    AbstractWrapper<?, ?, ?> aw = (AbstractWrapper<?, ?, ?>) map.getOrDefault(Constants.WRAPPER, null);
+                    if (aw == null) {
+                        UpdateWrapper<?> uw = new UpdateWrapper<>();
+                        uw.eq(versionColumn, originalVersionVal);
+                        map.put(Constants.WRAPPER, uw);
                     } else {
-                        map.put(Constants.MP_OPTLOCK_VERSION_ORIGINAL, originalVersionVal);
+                        aw.apply(versionColumn + " = {0}", originalVersionVal);
                     }
-                    versionField.set(et, updatedVersionVal);
-                } catch (IllegalAccessException e) {
-                    throw ExceptionUtils.mpe(e);
+                } else {
+                    map.put(Constants.MP_OPTLOCK_VERSION_ORIGINAL, originalVersionVal);
                 }
+                versionField.set(et, updatedVersionVal);
+            } catch (IllegalAccessException e) {
+                throw ExceptionUtils.mpe(e);
             }
         }
     }
