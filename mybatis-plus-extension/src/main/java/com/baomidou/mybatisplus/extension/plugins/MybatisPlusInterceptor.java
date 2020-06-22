@@ -15,7 +15,6 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Properties;
 
 /**
  * @author miemie
@@ -86,13 +85,7 @@ public class MybatisPlusInterceptor implements Interceptor {
         return target;
     }
 
-    @Override
-    public void setProperties(Properties properties) {
-        // todo
-    }
-
-    public MybatisPlusInterceptor addQiuQiu(QiuQiu qiuQiu) {
+    public void addQiuQiu(QiuQiu qiuQiu) {
         qiuQius.add(qiuQiu);
-        return this;
     }
 }

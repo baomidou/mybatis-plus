@@ -45,8 +45,8 @@ public class CacheConfig {
         configuration.setDefaultEnumTypeHandler(EnumOrdinalTypeHandler.class);
         configuration.setCacheEnabled(true);
         sqlSessionFactory.setConfiguration(configuration);
-        MybatisPlusInterceptor pagination = new MybatisPlusInterceptor().addQiuQiu(new PageQiuQiu()
-            .setCountSqlParser(new JsqlParserCountOptimize(true)));
+        MybatisPlusInterceptor pagination = new MybatisPlusInterceptor();
+        pagination.addQiuQiu(new PageQiuQiu().setCountSqlParser(new JsqlParserCountOptimize(true)));
 
         sqlSessionFactory.setPlugins(pagination);
         return sqlSessionFactory.getObject();

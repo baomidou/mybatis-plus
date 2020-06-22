@@ -77,9 +77,8 @@ public class MybatisPlusConfig {
         configuration.setDefaultExecutorType(ExecutorType.REUSE);
         configuration.setDefaultEnumTypeHandler(EnumOrdinalTypeHandler.class);  //默认枚举处理
         sqlSessionFactory.setConfiguration(configuration);
-        MybatisPlusInterceptor pagination = new MybatisPlusInterceptor().addQiuQiu(new PageQiuQiu()
-            .setCountSqlParser(new JsqlParserCountOptimize(true)));
-        ;
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        interceptor.addQiuQiu(new PageQiuQiu().setCountSqlParser(new JsqlParserCountOptimize(true)));
         SqlExplainInterceptor sqlExplainInterceptor = new SqlExplainInterceptor();
         List<ISqlParser> sqlParserList = new ArrayList<>();
         sqlParserList.add(new AbstractJsqlParser() {
@@ -106,7 +105,7 @@ public class MybatisPlusConfig {
         });
         sqlExplainInterceptor.setSqlParserList(sqlParserList);
         OptimisticLockerInterceptor optLock = new OptimisticLockerInterceptor();
-        sqlSessionFactory.setPlugins(pagination,
+        sqlSessionFactory.setPlugins(interceptor,
             optLock,
             sqlExplainInterceptor);
         globalConfig.setMetaObjectHandler(new H2MetaObjectHandler());
