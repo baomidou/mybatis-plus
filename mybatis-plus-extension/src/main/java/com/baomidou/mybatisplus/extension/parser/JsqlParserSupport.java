@@ -46,10 +46,11 @@ public abstract class JsqlParserSupport {
             Statements statements = CCJSqlParserUtil.parseStatements(sql);
             int i = 0;
             for (Statement statement : statements.getStatements()) {
-                if (i++ > 0) {
+                if (i > 0) {
                     sb.append(StringPool.SEMICOLON);
                 }
                 sb.append(processParser(statement, i, obj));
+                i++;
             }
             return sb.toString();
         } catch (JSQLParserException e) {
