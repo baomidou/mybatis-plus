@@ -24,19 +24,19 @@ public abstract class JsqlParserSupport {
      */
     protected final Log logger = LogFactory.getLog(this.getClass());
 
-    protected String parserSingle(String sql) {
+    protected String parserSingle(String sql, Object obj) {
         if (logger.isDebugEnabled()) {
             logger.debug("Original SQL: " + sql);
         }
         try {
             Statement statement = CCJSqlParserUtil.parse(sql);
-            return processParser(statement);
+            return processParser(statement, 0, obj);
         } catch (JSQLParserException e) {
             throw ExceptionUtils.mpe("Failed to process, please exclude the tableName or statementId.\n Error SQL: %s", e, sql);
         }
     }
 
-    protected String parserMulti(String sql) {
+    protected String parserMulti(String sql, Object obj) {
         if (logger.isDebugEnabled()) {
             logger.debug("Original SQL: " + sql);
         }
@@ -46,12 +46,10 @@ public abstract class JsqlParserSupport {
             Statements statements = CCJSqlParserUtil.parseStatements(sql);
             int i = 0;
             for (Statement statement : statements.getStatements()) {
-                if (null != statement) {
-                    if (i++ > 0) {
-                        sb.append(StringPool.SEMICOLON);
-                    }
-                    sb.append(processParser(statement));
+                if (i++ > 0) {
+                    sb.append(StringPool.SEMICOLON);
                 }
+                sb.append(processParser(statement, i, obj));
             }
             return sb.toString();
         } catch (JSQLParserException e) {
@@ -65,15 +63,15 @@ public abstract class JsqlParserSupport {
      * @param statement JsqlParser Statement
      * @return sql
      */
-    public String processParser(Statement statement) {
+    public String processParser(Statement statement, int index, Object obj) {
         if (statement instanceof Insert) {
-            this.processInsert((Insert) statement);
+            this.processInsert((Insert) statement, index, obj);
         } else if (statement instanceof Select) {
-            this.processSelect((Select) statement);
+            this.processSelect((Select) statement, index, obj);
         } else if (statement instanceof Update) {
-            this.processUpdate((Update) statement);
+            this.processUpdate((Update) statement, index, obj);
         } else if (statement instanceof Delete) {
-            this.processDelete((Delete) statement);
+            this.processDelete((Delete) statement, index, obj);
         }
         final String sql = statement.toString();
         if (logger.isDebugEnabled()) {
@@ -85,28 +83,28 @@ public abstract class JsqlParserSupport {
     /**
      * 新增
      */
-    protected void processInsert(Insert insert) {
+    protected void processInsert(Insert insert, int index, Object obj) {
         throw new UnsupportedOperationException();
     }
 
     /**
      * 删除
      */
-    protected void processDelete(Delete delete) {
+    protected void processDelete(Delete delete, int index, Object obj) {
         throw new UnsupportedOperationException();
     }
 
     /**
      * 更新
      */
-    protected void processUpdate(Update update) {
+    protected void processUpdate(Update update, int index, Object obj) {
         throw new UnsupportedOperationException();
     }
 
     /**
      * 查询
      */
-    protected void processSelect(Select select) {
+    protected void processSelect(Select select, int index, Object obj) {
         throw new UnsupportedOperationException();
     }
 }

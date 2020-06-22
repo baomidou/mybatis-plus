@@ -25,17 +25,17 @@ public class BlockAttackQiuQiu extends JsqlParserSupport implements QiuQiu {
         SqlCommandType sct = ms.getSqlCommandType();
         if (sct == SqlCommandType.UPDATE || sct == SqlCommandType.DELETE) {
             BoundSql boundSql = handler.boundSql();
-            parserMulti(boundSql.getSql());
+            parserMulti(boundSql.getSql(), null);
         }
     }
 
     @Override
-    protected void processDelete(Delete delete) {
+    protected void processDelete(Delete delete, int index, Object obj) {
         Assert.notNull(delete.getWhere(), "Prohibition of full table deletion");
     }
 
     @Override
-    protected void processUpdate(Update update) {
+    protected void processUpdate(Update update, int index, Object obj) {
         Assert.notNull(update.getWhere(), "Prohibition of table update operation");
     }
 }

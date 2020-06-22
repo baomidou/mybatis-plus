@@ -52,7 +52,7 @@ public class TenantQiuQiu extends JsqlParserSupport implements QiuQiu {
             return;
         }
         PluginUtils.MPBoundSql mpBs = PluginUtils.mpBoundSql(boundSql);
-        mpBs.sql(parserSingle(mpBs.sql()));
+        mpBs.sql(parserSingle(mpBs.sql(), null));
     }
 
     @Override
@@ -65,12 +65,12 @@ public class TenantQiuQiu extends JsqlParserSupport implements QiuQiu {
         SqlCommandType sct = ms.getSqlCommandType();
         if (sct == SqlCommandType.INSERT || sct == SqlCommandType.UPDATE || sct == SqlCommandType.DELETE) {
             PluginUtils.MPBoundSql mpBs = mpSh.mPBoundSql();
-            mpBs.sql(parserMulti(mpBs.sql()));
+            mpBs.sql(parserMulti(mpBs.sql(), null));
         }
     }
 
     @Override
-    protected void processSelect(Select select) {
+    protected void processSelect(Select select, int index, Object obj) {
         processSelectBody(select.getSelectBody());
     }
 
@@ -91,7 +91,7 @@ public class TenantQiuQiu extends JsqlParserSupport implements QiuQiu {
     }
 
     @Override
-    protected void processInsert(Insert insert) {
+    protected void processInsert(Insert insert, int index, Object obj) {
         if (tenantHandler.doTableFilter(insert.getTable().getName())) {
             // 过滤退出执行
             return;
@@ -116,7 +116,7 @@ public class TenantQiuQiu extends JsqlParserSupport implements QiuQiu {
      * update 语句处理
      */
     @Override
-    protected void processUpdate(Update update) {
+    protected void processUpdate(Update update, int index, Object obj) {
         final Table table = update.getTable();
         if (tenantHandler.doTableFilter(table.getName())) {
             // 过滤退出执行
@@ -129,7 +129,7 @@ public class TenantQiuQiu extends JsqlParserSupport implements QiuQiu {
      * delete 语句处理
      */
     @Override
-    protected void processDelete(Delete delete) {
+    protected void processDelete(Delete delete, int index, Object obj) {
         if (tenantHandler.doTableFilter(delete.getTable().getName())) {
             // 过滤退出执行
             return;
