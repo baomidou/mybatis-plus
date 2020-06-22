@@ -60,7 +60,7 @@ public class MybatisPlusInterceptor implements Interceptor {
                 }
                 CacheKey cacheKey = executor.createCacheKey(ms, parameter, rowBounds, boundSql);
                 return executor.query(ms, parameter, rowBounds, resultHandler, cacheKey, boundSql);
-            } else if (isUpdate && ms.getSqlCommandType() == SqlCommandType.UPDATE) {
+            } else if (isUpdate) {
                 for (QiuQiu query : qiuQius) {
                     query.update(executor, ms, parameter);
                 }

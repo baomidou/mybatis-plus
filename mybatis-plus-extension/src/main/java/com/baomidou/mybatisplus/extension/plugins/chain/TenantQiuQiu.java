@@ -4,11 +4,11 @@ import com.baomidou.mybatisplus.core.parser.SqlParserHelper;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.baomidou.mybatisplus.extension.parser.JsqlParserSupport;
 import com.baomidou.mybatisplus.extension.plugins.tenant.TenantHandler;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
-import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.BinaryExpression;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.Parenthesis;
@@ -16,19 +16,14 @@ import net.sf.jsqlparser.expression.ValueListExpression;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
 import net.sf.jsqlparser.expression.operators.conditional.OrExpression;
 import net.sf.jsqlparser.expression.operators.relational.*;
-import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
-import net.sf.jsqlparser.statement.Statement;
-import net.sf.jsqlparser.statement.Statements;
 import net.sf.jsqlparser.statement.delete.Delete;
 import net.sf.jsqlparser.statement.insert.Insert;
 import net.sf.jsqlparser.statement.select.*;
 import net.sf.jsqlparser.statement.update.Update;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.statement.StatementHandler;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlCommandType;
@@ -47,8 +42,7 @@ import java.util.List;
 @Accessors(chain = true)
 @RequiredArgsConstructor
 @SuppressWarnings({"rawtypes"})
-public class TenantQiuQiu implements QiuQiu {
-    protected final Log logger = LogFactory.getLog(this.getClass());
+public class TenantQiuQiu extends JsqlParserSupport implements QiuQiu {
 
     private final TenantHandler tenantHandler;
 
@@ -58,15 +52,7 @@ public class TenantQiuQiu implements QiuQiu {
             return;
         }
         PluginUtils.MPBoundSql mpBs = PluginUtils.mpBoundSql(boundSql);
-        String sql = mpBs.sql();
-        try {
-            Select select = (Select) CCJSqlParserUtil.parse(sql);
-            SelectBody selectBody = select.getSelectBody();
-            processSelectBody(selectBody);
-            mpBs.sql(select.toString());
-        } catch (JSQLParserException e) {
-            throw ExceptionUtils.mpe("Failed to process, please exclude the tableName or statementId.\n Error SQL: %s", e, sql);
-        }
+        mpBs.sql(parserSingle(mpBs.sql()));
     }
 
     @Override
@@ -76,45 +62,16 @@ public class TenantQiuQiu implements QiuQiu {
         if (SqlParserHelper.getSqlParserInfo(ms)) {
             return;
         }
-        SqlCommandType sqlCommandType = ms.getSqlCommandType();
-        final boolean insert = sqlCommandType == SqlCommandType.INSERT;
-        final boolean update = sqlCommandType == SqlCommandType.UPDATE;
-        final boolean delete = sqlCommandType == SqlCommandType.DELETE;
-        if (insert || update || delete) {
+        SqlCommandType sct = ms.getSqlCommandType();
+        if (sct == SqlCommandType.INSERT || sct == SqlCommandType.UPDATE || sct == SqlCommandType.DELETE) {
             PluginUtils.MPBoundSql mpBs = mpSh.mPBoundSql();
-            String sql = mpBs.sql();
-            try {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Original SQL: " + sql);
-                }
-                // fixed github pull/295
-                StringBuilder sb = new StringBuilder();
-                Statements statements = CCJSqlParserUtil.parseStatements(sql);
-                int i = 0;
-                for (Statement statement : statements.getStatements()) {
-                    if (null != statement) {
-                        if (i++ > 0) {
-                            sb.append(';');
-                        }
-                        if (insert) {
-                            processInsert((Insert) statement);
-                            sb.append(statement.toString());
-                        } else if (update) {
-                            processUpdate((Update) statement);
-                            sb.append(statement.toString());
-                        } else {
-                            processDelete((Delete) statement);
-                            sb.append(statement.toString());
-                        }
-                    }
-                }
-                if (sb.length() > 0) {
-                    mpBs.sql(sb.toString());
-                }
-            } catch (JSQLParserException e) {
-                throw ExceptionUtils.mpe("Failed to process, please exclude the tableName or statementId.\n Error SQL: %s", e, sql);
-            }
+            mpBs.sql(parserMulti(mpBs.sql()));
         }
+    }
+
+    @Override
+    protected void processSelect(Select select) {
+        processSelectBody(select.getSelectBody());
     }
 
     protected void processSelectBody(SelectBody selectBody) {
@@ -133,6 +90,7 @@ public class TenantQiuQiu implements QiuQiu {
         }
     }
 
+    @Override
     protected void processInsert(Insert insert) {
         if (tenantHandler.doTableFilter(insert.getTable().getName())) {
             // 过滤退出执行
@@ -157,6 +115,7 @@ public class TenantQiuQiu implements QiuQiu {
     /**
      * update 语句处理
      */
+    @Override
     protected void processUpdate(Update update) {
         final Table table = update.getTable();
         if (tenantHandler.doTableFilter(table.getName())) {
@@ -169,6 +128,7 @@ public class TenantQiuQiu implements QiuQiu {
     /**
      * delete 语句处理
      */
+    @Override
     protected void processDelete(Delete delete) {
         if (tenantHandler.doTableFilter(delete.getTable().getName())) {
             // 过滤退出执行
