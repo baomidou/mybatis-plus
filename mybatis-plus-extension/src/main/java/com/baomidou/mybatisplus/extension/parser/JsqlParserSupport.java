@@ -24,7 +24,7 @@ public abstract class JsqlParserSupport {
      */
     protected final Log logger = LogFactory.getLog(this.getClass());
 
-    protected String parserSingle(String sql, Object obj) {
+    public String parserSingle(String sql, Object obj) {
         if (logger.isDebugEnabled()) {
             logger.debug("Original SQL: " + sql);
         }
@@ -36,7 +36,7 @@ public abstract class JsqlParserSupport {
         }
     }
 
-    protected String parserMulti(String sql, Object obj) {
+    public String parserMulti(String sql, Object obj) {
         if (logger.isDebugEnabled()) {
             logger.debug("Original SQL: " + sql);
         }
@@ -64,7 +64,7 @@ public abstract class JsqlParserSupport {
      * @param statement JsqlParser Statement
      * @return sql
      */
-    public String processParser(Statement statement, int index, Object obj) {
+    protected String processParser(Statement statement, int index, Object obj) {
         if (statement instanceof Insert) {
             this.processInsert((Insert) statement, index, obj);
         } else if (statement instanceof Select) {
