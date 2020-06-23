@@ -7,8 +7,7 @@
         <result column="gg1" property="gg1" typeHandler="com.baomidou.mybatisplus.extension.handlers.GsonTypeHandler"/>
     </resultMap>
 
-    <resultMap id="resultMap" type="com.baomidou.mybatisplus.test.resultmap.Entity"
-               extends="baseResult">
+    <resultMap id="resultMap" type="com.baomidou.mybatisplus.test.resultmap.Entity" extends="baseResult">
         <result column="gg2" property="gg2" typeHandler="com.baomidou.mybatisplus.extension.handlers.GsonTypeHandler"/>
     </resultMap>
 </mapper>
