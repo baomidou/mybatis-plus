@@ -16,14 +16,15 @@
 package com.baomidou.mybatisplus.core.metadata;
 
 import com.baomidou.mybatisplus.annotation.*;
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
+import com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import lombok.*;
 import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.reflection.Reflector;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
@@ -157,13 +158,20 @@ public class TableFieldInfo implements Constants {
     /**
      * 全新的 存在 TableField 注解时使用的构造函数
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public TableFieldInfo(GlobalConfig.DbConfig dbConfig, TableInfo tableInfo, Field field, TableField tableField,
                           Reflector reflector) {
         field.setAccessible(true);
         this.field = field;
         this.version = field.getAnnotation(Version.class) != null;
         this.property = field.getName();
+        Class<?> fieldType = field.getType();
+        if (fieldType.isEnum() && MybatisEnumTypeHandler.isMpEnums(fieldType)) {
+            TypeHandlerRegistry registry = tableInfo.getConfiguration().getTypeHandlerRegistry();
+            if (registry.getTypeHandler(fieldType) == null) {
+                registry.register(fieldType, MybatisEnumTypeHandler.class);
+            }
+        }
         this.propertyType = reflector.getGetterType(this.property);
         this.isPrimitive = this.propertyType.isPrimitive();
         this.isCharSequence = StringUtils.isCharSequence(this.propertyType);
@@ -247,6 +255,13 @@ public class TableFieldInfo implements Constants {
         this.field = field;
         this.version = field.getAnnotation(Version.class) != null;
         this.property = field.getName();
+        Class<?> fieldType = field.getType();
+        if (fieldType.isEnum() && MybatisEnumTypeHandler.isMpEnums(fieldType)) {
+            TypeHandlerRegistry registry = tableInfo.getConfiguration().getTypeHandlerRegistry();
+            if (registry.getTypeHandler(fieldType) == null) {
+                registry.register(fieldType, MybatisEnumTypeHandler.class);
+            }
+        }
         this.propertyType = reflector.getGetterType(this.property);
         this.isPrimitive = this.propertyType.isPrimitive();
         this.isCharSequence = StringUtils.isCharSequence(this.propertyType);
@@ -445,7 +460,7 @@ public class TableFieldInfo implements Constants {
      * @param configuration MybatisConfiguration
      * @return ResultMapping
      */
-    ResultMapping getResultMapping(final MybatisConfiguration configuration) {
+    ResultMapping getResultMapping(final Configuration configuration) {
         ResultMapping.Builder builder = new ResultMapping.Builder(configuration, property,
             StringUtils.getTargetColumn(column), propertyType);
         TypeHandlerRegistry registry = configuration.getTypeHandlerRegistry();

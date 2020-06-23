@@ -21,10 +21,10 @@ import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
 import com.baomidou.mybatisplus.core.MybatisXMLConfigBuilder;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.baomidou.mybatisplus.core.exceptions.MybatisPlusException;
+import com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler;
 import com.baomidou.mybatisplus.core.toolkit.Assert;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
-import com.baomidou.mybatisplus.extension.handlers.MybatisEnumTypeHandler;
 import com.baomidou.mybatisplus.extension.toolkit.SqlHelper;
 import lombok.Setter;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
@@ -139,8 +139,13 @@ public class MybatisSqlSessionFactoryBean implements FactoryBean<SqlSessionFacto
 
     private ObjectWrapperFactory objectWrapperFactory;
 
-    // TODO 自定义枚举包
+    /**
+     * TODO 自定义枚举包
+     *
+     * @deprecated 3.3.3 @2020-06-23 初始化entity时会自动把符合条件的枚举处理了
+     */
     @Setter
+    @Deprecated
     private String typeEnumsPackage;
 
     // TODO 自定义全局配置

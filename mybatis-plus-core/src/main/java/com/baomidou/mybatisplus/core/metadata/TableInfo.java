@@ -17,7 +17,6 @@ package com.baomidou.mybatisplus.core.metadata;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.toolkit.*;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
 import lombok.AccessLevel;
@@ -102,7 +101,7 @@ public class TableInfo implements Constants {
      * MybatisConfiguration 标记 (Configuration内存地址值)
      */
     @Getter
-    private MybatisConfiguration configuration;
+    private Configuration configuration;
     /**
      * 是否开启逻辑删除
      */
@@ -178,7 +177,7 @@ public class TableInfo implements Constants {
      */
     void setConfiguration(Configuration configuration) {
         Assert.notNull(configuration, "Error: You need Initialize MybatisConfiguration !");
-        this.configuration = (MybatisConfiguration) configuration;
+        this.configuration = configuration;
         this.underCamel = configuration.isMapUnderscoreToCamelCase();
     }
 

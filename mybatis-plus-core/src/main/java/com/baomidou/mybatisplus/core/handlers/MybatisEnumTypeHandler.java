@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.baomidou.mybatisplus.extension.handlers;
+package com.baomidou.mybatisplus.core.handlers;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.baomidou.mybatisplus.core.enums.IEnum;
@@ -42,15 +42,11 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author hubin
  * @since 2017-10-11
- * @deprecated 3.3.3 @2020-06-23 use {@link com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler}
  */
-@Deprecated
 public class MybatisEnumTypeHandler<E extends Enum<?>> extends BaseTypeHandler<Enum<?>> {
 
-    private static ReflectorFactory reflectorFactory = new DefaultReflectorFactory();
-
     private static final Map<String, String> TABLE_METHOD_OF_ENUM_TYPES = new ConcurrentHashMap<>();
-
+    private static ReflectorFactory reflectorFactory = new DefaultReflectorFactory();
     private final Class<E> type;
 
     private Invoker invoker;
@@ -66,42 +62,6 @@ public class MybatisEnumTypeHandler<E extends Enum<?>> extends BaseTypeHandler<E
             name = findEnumValueFieldName(this.type).orElseThrow(() -> new IllegalArgumentException(String.format("Could not find @EnumValue in Class: %s.", this.type.getName())));
         }
         this.invoker = metaClass.getGetInvoker(name);
-    }
-
-    @SuppressWarnings("Duplicates")
-    @Override
-    public void setNonNullParameter(PreparedStatement ps, int i, Enum<?> parameter, JdbcType jdbcType)
-        throws SQLException {
-        if (jdbcType == null) {
-            ps.setObject(i, this.getValue(parameter));
-        } else {
-            // see r3589
-            ps.setObject(i, this.getValue(parameter), jdbcType.TYPE_CODE);
-        }
-    }
-
-    @Override
-    public E getNullableResult(ResultSet rs, String columnName) throws SQLException {
-        if (null == rs.getObject(columnName) && rs.wasNull()) {
-            return null;
-        }
-        return this.valueOf(this.type, rs.getObject(columnName));
-    }
-
-    @Override
-    public E getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
-        if (null == rs.getObject(columnIndex) && rs.wasNull()) {
-            return null;
-        }
-        return this.valueOf(this.type, rs.getObject(columnIndex));
-    }
-
-    @Override
-    public E getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
-        if (null == cs.getObject(columnIndex) && cs.wasNull()) {
-            return null;
-        }
-        return this.valueOf(this.type, cs.getObject(columnIndex));
     }
 
     /**
@@ -145,6 +105,42 @@ public class MybatisEnumTypeHandler<E extends Enum<?>> extends BaseTypeHandler<E
      */
     public static boolean isMpEnums(Class<?> clazz) {
         return clazz != null && clazz.isEnum() && (IEnum.class.isAssignableFrom(clazz) || findEnumValueFieldName(clazz).isPresent());
+    }
+
+    @SuppressWarnings("Duplicates")
+    @Override
+    public void setNonNullParameter(PreparedStatement ps, int i, Enum<?> parameter, JdbcType jdbcType)
+        throws SQLException {
+        if (jdbcType == null) {
+            ps.setObject(i, this.getValue(parameter));
+        } else {
+            // see r3589
+            ps.setObject(i, this.getValue(parameter), jdbcType.TYPE_CODE);
+        }
+    }
+
+    @Override
+    public E getNullableResult(ResultSet rs, String columnName) throws SQLException {
+        if (null == rs.getObject(columnName) && rs.wasNull()) {
+            return null;
+        }
+        return this.valueOf(this.type, rs.getObject(columnName));
+    }
+
+    @Override
+    public E getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
+        if (null == rs.getObject(columnIndex) && rs.wasNull()) {
+            return null;
+        }
+        return this.valueOf(this.type, rs.getObject(columnIndex));
+    }
+
+    @Override
+    public E getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
+        if (null == cs.getObject(columnIndex) && cs.wasNull()) {
+            return null;
+        }
+        return this.valueOf(this.type, cs.getObject(columnIndex));
     }
 
     private E valueOf(Class<E> enumClass, Object value) {
