@@ -228,7 +228,7 @@ public class PaginationInnerInterceptor implements InnerInterceptor {
      * 判断是否继续执行 Limit 逻辑
      *
      * @param page 分页对象
-     * @return
+     * @return 是否
      */
     protected boolean continueLimit(IPage<?> page) {
         if (page.getTotal() <= 0) {
