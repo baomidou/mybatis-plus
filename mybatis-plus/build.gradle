@@ -6,14 +6,16 @@ dependencies {
     testImplementation "${lib.'javax.servlet-api'}"
 
     testImplementation "${lib.'spring-test'}"
-    testImplementation "${lib.fastjson}"
+
+    testImplementation "${lib."jackson"}"
+    testImplementation "${lib."fastjson"}"
+    testImplementation "${lib."gson"}"
 
     testImplementation "${lib.h2}"
     testImplementation "${lib.sqlserver}"
     testImplementation "${lib.postgresql}"
     testImplementation lib.oracle as ConfigurableFileTree
     testImplementation "${lib.mysql}"
-    testImplementation "${lib.jackson}"
     testImplementation "${lib.'mybatis-ehcache'}"
     testImplementation "${lib.'mybatis-redis'}"
     testImplementation "${lib.'spring-context-support'}"

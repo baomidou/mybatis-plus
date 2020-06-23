@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.GlobalConfigUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
+import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.logging.slf4j.Slf4jImpl;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.plugin.Interceptor;
@@ -17,12 +18,12 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.apache.ibatis.type.TypeReference;
 import org.h2.Driver;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -64,10 +65,10 @@ public abstract class BaseDbTest<T> extends TypeReference<T> {
         GlobalConfigUtils.setGlobalConfig(configuration, globalConfig);
         configuration.setLogImpl(Slf4jImpl.class);
         if (StringUtils.isNotBlank(mapperXml)) {
-            ClassPathResource resource = new ClassPathResource(mapperXml);
             try {
-                XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(resource.getInputStream(),
-                    configuration, resource.toString(), configuration.getSqlFragments());
+                InputStream inputStream = Resources.getResourceAsStream(mapperXml);
+                XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(inputStream,
+                    configuration, mapperXml, configuration.getSqlFragments());
                 xmlMapperBuilder.parse();
             } catch (IOException e) {
                 throw ExceptionUtils.mpe(e);
