@@ -37,6 +37,16 @@ public class PaginationTest extends BaseDbTest {
             assertThat(result.getTotal()).isEqualTo(2L);
             assertThat(result.getRecords().size()).isEqualTo(2);
         });
+
+        doTest(EntityMapper.class, m -> m.insert(new Entity()));
+
+        doTest(EntityMapper.class, m -> {
+            Page<Entity> page = new Page<>(1, 5);
+            IPage<Entity> result = m.selectPage(page, null);
+            assertThat(page).isEqualTo(result);
+            assertThat(result.getTotal()).isEqualTo(2L);
+            assertThat(result.getRecords().size()).isEqualTo(2);
+        });
     }
 
     @Override
