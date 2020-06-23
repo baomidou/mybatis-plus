@@ -17,7 +17,6 @@ package com.baomidou.mybatisplus.core.metadata;
 
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
-import com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.sql.SqlScriptUtils;
@@ -165,13 +164,6 @@ public class TableFieldInfo implements Constants {
         this.field = field;
         this.version = field.getAnnotation(Version.class) != null;
         this.property = field.getName();
-        Class<?> fieldType = field.getType();
-        if (fieldType.isEnum() && MybatisEnumTypeHandler.isMpEnums(fieldType)) {
-            TypeHandlerRegistry registry = tableInfo.getConfiguration().getTypeHandlerRegistry();
-            if (registry.getTypeHandler(fieldType) == null) {
-                registry.register(fieldType, MybatisEnumTypeHandler.class);
-            }
-        }
         this.propertyType = reflector.getGetterType(this.property);
         this.isPrimitive = this.propertyType.isPrimitive();
         this.isCharSequence = StringUtils.isCharSequence(this.propertyType);
@@ -255,13 +247,6 @@ public class TableFieldInfo implements Constants {
         this.field = field;
         this.version = field.getAnnotation(Version.class) != null;
         this.property = field.getName();
-        Class<?> fieldType = field.getType();
-        if (fieldType.isEnum() && MybatisEnumTypeHandler.isMpEnums(fieldType)) {
-            TypeHandlerRegistry registry = tableInfo.getConfiguration().getTypeHandlerRegistry();
-            if (registry.getTypeHandler(fieldType) == null) {
-                registry.register(fieldType, MybatisEnumTypeHandler.class);
-            }
-        }
         this.propertyType = reflector.getGetterType(this.property);
         this.isPrimitive = this.propertyType.isPrimitive();
         this.isCharSequence = StringUtils.isCharSequence(this.propertyType);

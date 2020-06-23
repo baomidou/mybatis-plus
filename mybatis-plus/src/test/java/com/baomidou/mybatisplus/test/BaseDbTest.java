@@ -11,6 +11,7 @@ import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.logging.slf4j.Slf4jImpl;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.plugin.Interceptor;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
@@ -42,6 +43,7 @@ public abstract class BaseDbTest<T> extends TypeReference<T> {
         String mapperXml = mapperXml();
         GlobalConfig globalConfig = globalConfig();
         List<Interceptor> interceptors = interceptors();
+        Consumer<Configuration> consumer = consumer();
         mapper = (Class<T>) getRawType();
 
         JdbcTemplate template = new JdbcTemplate(ds);
@@ -75,6 +77,9 @@ public abstract class BaseDbTest<T> extends TypeReference<T> {
         if (CollectionUtils.isNotEmpty(interceptors)) {
             interceptors.forEach(configuration::addInterceptor);
         }
+        if (consumer != null) {
+            consumer.accept(configuration);
+        }
         sqlSessionFactory = builder.build(configuration);
     }
 
@@ -87,12 +92,18 @@ public abstract class BaseDbTest<T> extends TypeReference<T> {
         return dataSource;
     }
 
-    protected SqlSession autoCommitSession() {
-        return sqlSessionFactory.openSession(true);
+    protected SqlSession autoCommitSession(boolean autoCommit) {
+        return sqlSessionFactory.openSession(autoCommit);
+    }
+
+    protected void doTest(Consumer<T> consumer) {
+        try (SqlSession sqlSession = autoCommitSession(false)) {
+            doTest(sqlSession, consumer);
+        }
     }
 
     protected void doTestAutoCommit(Consumer<T> consumer) {
-        try (SqlSession sqlSession = autoCommitSession()) {
+        try (SqlSession sqlSession = autoCommitSession(true)) {
             doTest(sqlSession, consumer);
         }
     }
@@ -120,5 +131,9 @@ public abstract class BaseDbTest<T> extends TypeReference<T> {
 
     protected GlobalConfig globalConfig() {
         return GlobalConfigUtils.defaults();
+    }
+
+    protected Consumer<Configuration> consumer() {
+        return null;
     }
 }

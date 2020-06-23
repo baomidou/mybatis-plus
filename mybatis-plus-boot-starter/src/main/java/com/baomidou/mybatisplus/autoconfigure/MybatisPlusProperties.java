@@ -107,10 +107,7 @@ public class MybatisPlusProperties {
 
     /**
      * TODO 枚举包扫描
-     *
-     * @deprecated 3.3.3 @2020-06-23 初始化entity时会自动把符合条件的枚举处理了
      */
-    @Deprecated
     private String typeEnumsPackage;
 
     /**
