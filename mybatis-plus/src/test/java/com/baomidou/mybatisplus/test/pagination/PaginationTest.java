@@ -19,14 +19,14 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author miemie
  * @since 2020-06-23
  */
-public class PaginationTest extends BaseDbTest {
+public class PaginationTest extends BaseDbTest<EntityMapper> {
 
     @Test
     void page() {
         Cache cache = sqlSessionFactory.getConfiguration().getCache(EntityMapper.class.getName());
         assertThat(cache).as("使用 @CacheNamespace 指定了使用缓存").isNotNull();
 
-        doTest(EntityMapper.class, m -> {
+        doTestAutoCommit(m -> {
             Page<Entity> page = new Page<>(1, 5);
             IPage<Entity> result = m.selectPage(page, null);
             assertThat(page).isEqualTo(result);
@@ -36,7 +36,7 @@ public class PaginationTest extends BaseDbTest {
         assertThat(cache.getSize()).as("一条count缓存一条分页缓存").isEqualTo(2);
 
 
-        doTest(EntityMapper.class, m -> {
+        doTestAutoCommit(m -> {
             Page<Entity> page = new Page<>(1, 5);
             IPage<Entity> result = m.selectPage(page, null);
             assertThat(page).isEqualTo(result);
@@ -45,10 +45,12 @@ public class PaginationTest extends BaseDbTest {
         });
         assertThat(cache.getSize()).as("一条count缓存一条分页缓存").isEqualTo(2);
 
-        doTest(EntityMapper.class, m -> m.insert(new Entity()));
+
+        doTestAutoCommit(m -> m.insert(new Entity()));
         assertThat(cache.getSize()).as("update 操作清除了所有缓存").isEqualTo(0);
 
-        doTest(EntityMapper.class, m -> {
+
+        doTestAutoCommit(m -> {
             Page<Entity> page = new Page<>(1, 5);
             IPage<Entity> result = m.selectPage(page, null);
             assertThat(page).isEqualTo(result);
@@ -63,11 +65,6 @@ public class PaginationTest extends BaseDbTest {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor());
         return Collections.singletonList(interceptor);
-    }
-
-    @Override
-    protected List<Class<?>> mappers() {
-        return Collections.singletonList(EntityMapper.class);
     }
 
     @Override

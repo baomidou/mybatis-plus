@@ -14,6 +14,7 @@ import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
+import org.apache.ibatis.type.TypeReference;
 import org.h2.Driver;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -28,10 +29,12 @@ import java.util.function.Consumer;
  * @author miemie
  * @since 2020-06-23
  */
-public abstract class BaseDbTest {
+public abstract class BaseDbTest<T> extends TypeReference<T> {
 
     protected SqlSessionFactory sqlSessionFactory;
+    protected Class<T> mapper;
 
+    @SuppressWarnings("unchecked")
     public BaseDbTest() {
         DataSource ds = dataSource();
         List<String> tableSql = tableSql();
@@ -39,7 +42,7 @@ public abstract class BaseDbTest {
         String mapperXml = mapperXml();
         GlobalConfig globalConfig = globalConfig();
         List<Interceptor> interceptors = interceptors();
-        List<Class<?>> mappers = mappers();
+        mapper = (Class<T>) getRawType();
 
         JdbcTemplate template = new JdbcTemplate(ds);
         if (CollectionUtils.isNotEmpty(tableSql)) {
@@ -68,7 +71,7 @@ public abstract class BaseDbTest {
                 throw ExceptionUtils.mpe(e);
             }
         }
-        mappers.forEach(configuration::addMapper);
+        configuration.addMapper(mapper);
         if (CollectionUtils.isNotEmpty(interceptors)) {
             interceptors.forEach(configuration::addInterceptor);
         }
@@ -84,13 +87,17 @@ public abstract class BaseDbTest {
         return dataSource;
     }
 
-    protected <T> void doTest(Class<T> mapper, Consumer<T> consumer) {
-        try (SqlSession sqlSession = sqlSessionFactory.openSession(true)) {
-            doTest(sqlSession, mapper, consumer);
+    protected SqlSession autoCommitSession() {
+        return sqlSessionFactory.openSession(true);
+    }
+
+    protected void doTestAutoCommit(Consumer<T> consumer) {
+        try (SqlSession sqlSession = autoCommitSession()) {
+            doTest(sqlSession, consumer);
         }
     }
 
-    protected <T> void doTest(SqlSession sqlSession, Class<T> mapper, Consumer<T> consumer) {
+    protected void doTest(SqlSession sqlSession, Consumer<T> consumer) {
         T t = sqlSession.getMapper(mapper);
         consumer.accept(t);
     }
@@ -110,8 +117,6 @@ public abstract class BaseDbTest {
     protected List<Interceptor> interceptors() {
         return null;
     }
-
-    protected abstract List<Class<?>> mappers();
 
     protected GlobalConfig globalConfig() {
         return GlobalConfigUtils.defaults();
