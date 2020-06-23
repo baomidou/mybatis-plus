@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.test.BaseDbTest;
+import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.plugin.Interceptor;
 import org.junit.jupiter.api.Test;
 
@@ -22,13 +23,8 @@ public class PaginationTest extends BaseDbTest {
 
     @Test
     void page() {
-        doTest(EntityMapper.class, m -> {
-            Page<Entity> page = new Page<>(1, 5);
-            IPage<Entity> result = m.selectPage(page, null);
-            assertThat(page).isEqualTo(result);
-            assertThat(result.getTotal()).isEqualTo(2L);
-            assertThat(result.getRecords().size()).isEqualTo(2);
-        });
+        Cache cache = sqlSessionFactory.getConfiguration().getCache(EntityMapper.class.getName());
+        assertThat(cache).as("使用 @CacheNamespace 指定了使用缓存").isNotNull();
 
         doTest(EntityMapper.class, m -> {
             Page<Entity> page = new Page<>(1, 5);
@@ -37,8 +33,20 @@ public class PaginationTest extends BaseDbTest {
             assertThat(result.getTotal()).isEqualTo(2L);
             assertThat(result.getRecords().size()).isEqualTo(2);
         });
+        assertThat(cache.getSize()).as("一条count缓存一条分页缓存").isEqualTo(2);
+
+
+        doTest(EntityMapper.class, m -> {
+            Page<Entity> page = new Page<>(1, 5);
+            IPage<Entity> result = m.selectPage(page, null);
+            assertThat(page).isEqualTo(result);
+            assertThat(result.getTotal()).isEqualTo(2L);
+            assertThat(result.getRecords().size()).isEqualTo(2);
+        });
+        assertThat(cache.getSize()).as("一条count缓存一条分页缓存").isEqualTo(2);
 
         doTest(EntityMapper.class, m -> m.insert(new Entity()));
+        assertThat(cache.getSize()).as("update 操作清除了所有缓存").isEqualTo(0);
 
         doTest(EntityMapper.class, m -> {
             Page<Entity> page = new Page<>(1, 5);
@@ -47,6 +55,7 @@ public class PaginationTest extends BaseDbTest {
             assertThat(result.getTotal()).isEqualTo(3L);
             assertThat(result.getRecords().size()).isEqualTo(3);
         });
+        assertThat(cache.getSize()).as("一条count缓存一条分页缓存").isEqualTo(2);
     }
 
     @Override

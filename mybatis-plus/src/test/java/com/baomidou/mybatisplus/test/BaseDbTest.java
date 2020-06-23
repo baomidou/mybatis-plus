@@ -85,7 +85,7 @@ public abstract class BaseDbTest {
     }
 
     protected <T> void doTest(Class<T> mapper, Consumer<T> consumer) {
-        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession(true)) {
             doTest(sqlSession, mapper, consumer);
         }
     }
